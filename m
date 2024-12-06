@@ -1,184 +1,127 @@
-Return-Path: <linux-kernel+bounces-435492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C77AA9E7888
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:03:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCF1C9E7890
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:07:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F71418837FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:07:16 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CB71D89EC;
+	Fri,  6 Dec 2024 19:07:10 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82FEA2898D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:03:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E01C71C3BEF;
-	Fri,  6 Dec 2024 19:03:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ovcWj4Wu"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947EB153836
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:03:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5D713D516
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733511821; cv=none; b=Yxq0mWOo/Z8R6qEH19aSp3UnJpTNyHQegbHa8X/XHeJF2tYMdsrB8WYlbsevw+npOZJOCaIsb5pPlOYc97Gu/6NKNQtXtTdpiKWkgM0hdz6+wB4DElBUeb0PjZGrOjg/1/FdjDbFNgHrrirpalC2yd91hBaonBQxiAk9N2iLKP0=
+	t=1733512030; cv=none; b=rLpJb7i5F/3kTaSq/I1nKTg9ka2feymuO7GkzKkMfCFxT7+vD4WYg7Z6iuovlP7LpVbjRhuPeBAjCP0Ld/1oRVPmhT6TERx/NWKcAIAIwgNhJ02kOEvfVxsA93Z/iORITT+hTarqFs8N3ulsGASLBkzXYoEurcIunFzM4p5B7NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733511821; c=relaxed/simple;
-	bh=bstjIh0MyH3CRWPUX8+dB/XUxxpk7UQMd6rbAngSwdU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HUFeSloHUevtGk4GfCrrqVGiiKqdCGKjV/B6G9M0HYxyI/PhqHOUmeguQACMjJBlhdDjkzZxbkbzUKotWSxfxaid+uPtgN3VE2c9N8Edfmk50oSpGqMzNhl5AxD8ilBlZVgfjkr4ChKhL6rTtbcEft4AlMVIU8uiewW/heh3FoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ovcWj4Wu; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4668194603cso10591cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:03:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733511818; x=1734116618; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/YX5vENod+T2504BLwhTU0GY18CRB3665KAzSJYvLbQ=;
-        b=ovcWj4WuSAYALkRkFKfAzUYUBglwbUNlp5cJMjHN9+voQkwFOJXNJrA7hBmhdEc3V2
-         NVoq45VNwMJwI7TOUouC7CLP4UuUqO+27q6Q8qQOrld6Bip1DY63fr00lsZKChuHuWji
-         Q/DMkV5ehwexhlBfzfgEyhFrgR9k1cVwRafb5o5CBVf9ncTHqRSC5Gjzb4ZNFLTc1hQM
-         zxOI5zBtCzgkV8aRWD1q3pucC6Y+Uuv5rw3Rrc2tXatK8k8gPdo8HkcYK6JzBaRfJ8zW
-         cfzmWPWfrFqMAuXjLKpmE5hsFg5oxOEZx7kLV96e7sC7L774S52+zG6It+0vklc1B+80
-         WAOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733511818; x=1734116618;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/YX5vENod+T2504BLwhTU0GY18CRB3665KAzSJYvLbQ=;
-        b=cvp7SgDlBBEj5eQ9gcWLDLtFkIdaeVd6YwTm/iHsv7C5n0rZ3w2OTfQ7vxpaQivdID
-         Fj9m18nDI98v4dgUFJpRkTLaJcM/IjHIwj5hsHtHJiA/A24lxdOGLTssLFHwCN3NWsmC
-         BouOoe34eo0u7hJPhXj6pQyf3MpAn6XY+t+WQC2JWvGZ5jUxLzPndIqIwhYOVYnvw+Td
-         eLqAl14wJOmougeszK2+LK6NuBI6ypdQrBSGsjHayWJ2dsnxPsZSeNz+EZzb2H24YqfA
-         8iOP665I5snGLH3EYZTBUZspLer0I+vGDAgy224F6+brpBCu/811XKt76nmh0mIRc5g6
-         lP0A==
-X-Forwarded-Encrypted: i=1; AJvYcCXea6Diwo4XyuwgwD/9klKA54CYnskRevo8hhnrmiY9aFP8hp9rb3MkpPQCgwUXqXEQLEB60hHVi8qJln0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9uE1LwHqQTiDTJ5R9d3tKZgOr763H/NEkn4W0aD6TMpDnP2wH
-	y5eSiESKQyOeiF3SGUc0OeT9hl9EX2JZYr+ZUVDxRmcFRY+zGjYii42rpgCWHlLIUlw6C2Iip62
-	TIkz+9DaGTP+SANgMCjUXkpDqb1PLOIl3dhP6
-X-Gm-Gg: ASbGncvDWWXP1c/C2Dnj7ScyjLIopdPalUbtu54m3kucnE6TLvrlg67hh72DvVTwvgC
-	wxtpsFZxozoz4toPTHOfESGPHWEpFRfg=
-X-Google-Smtp-Source: AGHT+IE7az5T85bqb0ZrEqUiq279W4MrSFYCCDOPPQ5tt2P1bmQGfOgbXDo7InMVxwIvzWVakAu/ZgfG/Rse6xCGg9w=
-X-Received: by 2002:a05:622a:2447:b0:466:9003:aae6 with SMTP id
- d75a77b69052e-46746f36854mr195891cf.2.1733511818094; Fri, 06 Dec 2024
- 11:03:38 -0800 (PST)
+	s=arc-20240116; t=1733512030; c=relaxed/simple;
+	bh=ggbwORZnlwc8YN3DJB21zCsxZm15lFShrMeQG41rm18=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=FMx0D8/VCszKihK4uBYvgSkah4ZMfU11sR7DTxzr5uEdYb9R5qzn1kCIyKmGaxDJAjbIkGAsDUWeVeL5veZkmIrWh1dGKGJS3MFYY+ylCSo+5zYgv6+B33x5y0x/Rr2GsNTRLbPhU7g0cptQF5lHIxqDtve3ZIp1PN5AkCepuFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-203-g62EFoMcPseEjHbllHyR1Q-1; Fri, 06 Dec 2024 19:07:06 +0000
+X-MC-Unique: g62EFoMcPseEjHbllHyR1Q-1
+X-Mimecast-MFC-AGG-ID: g62EFoMcPseEjHbllHyR1Q
+Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
+ (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 19:06:18 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 19:06:18 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>, Vincent Mailhol
+	<vincent.mailhol@gmail.com>
+CC: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor
+	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
+ Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>, "Yury
+ Norov" <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "uecker@tugraz.at" <uecker@tugraz.at>
+Subject: RE: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Topic: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Index: AQHbROFPJXcuwP9wN0+yRzIQ2cx/pbLWa+gggAFf14CAACMqUIABpzoGgAAClHA=
+Date: Fri, 6 Dec 2024 19:06:18 +0000
+Message-ID: <d23fe8a5dbe84bfeb18097fdef7aa4c4@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+ <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+ <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
+ <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
+ <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
+In-Reply-To: <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <43bf216e-18f7-680c-ae75-773b03c8dc00@linux.dev> <20241205170528.81000-1-hao.ge@linux.dev>
-In-Reply-To: <20241205170528.81000-1-hao.ge@linux.dev>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 6 Dec 2024 11:03:27 -0800
-Message-ID: <CAJuCfpHem_cREmXTDfV9qRviApNVgLe=LOkJTCTshHiD0uwkgA@mail.gmail.com>
-Subject: Re: [PATCH v3] mm/alloc_tag: fix vm_module_tags_populate's KASAN
- poisoning logic
-To: Hao Ge <hao.ge@linux.dev>
-Cc: kent.overstreet@linux.dev, akpm@linux-foundation.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Hao Ge <gehao@kylinos.cn>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: O-qKNLCEmd3EpS9QVvlshfRp-pCe37sMuD1k6w2ll0k_1733512024
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-On Thu, Dec 5, 2024 at 9:05=E2=80=AFAM Hao Ge <hao.ge@linux.dev> wrote:
->
-> From: Hao Ge <gehao@kylinos.cn>
->
-> After merge commit 233e89322cbe ("alloc_tag:
-> fix module allocation tags populated area calculation"),
-> We still encountered a KASAN bug.
->
-> This is because we have only actually performed
-> page allocation and address mapping here.
-> we need to unpoisoned portions of underlying memory.
->
-> Here is the log for KASAN:
->
-> [    5.041171][    T1] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> [    5.042047][    T1] BUG: KASAN: vmalloc-out-of-bounds in move_module+0=
-x2c0/0x708
-> [    5.042723][    T1] Write of size 240 at addr ffff80007e510000 by task=
- systemd/1
-> [    5.043412][    T1]
-> [    5.043523][   T72] input: QEMU QEMU USB Tablet as /devices/pci0000:00=
-/0000:00:01.1/0000:02:001
-> [    5.043614][    T1] CPU: 0 UID: 0 PID: 1 Comm: systemd Not tainted 6.1=
-3.0-rc1+ #28
-> [    5.045560][    T1] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.=
-0 02/06/2015
-> [    5.046328][    T1] Call trace:
-> [    5.046670][    T1]  show_stack+0x20/0x38 (C)
-> [    5.047127][    T1]  dump_stack_lvl+0x80/0xf8
-> [    5.047533][    T1]  print_address_description.constprop.0+0x58/0x358
-> [    5.048092][   T72] hid-generic 0003:0627:0001.0001: input,hidraw0: US=
-B HID v0.01 Mouse [QEMU 0
-> [    5.048126][    T1]  print_report+0xb0/0x280
-> [    5.049682][    T1]  kasan_report+0xb8/0x108
-> [    5.050170][    T1]  kasan_check_range+0xe8/0x190
-> [    5.050685][    T1]  memcpy+0x58/0xa0
-> [    5.051135][    T1]  move_module+0x2c0/0x708
-> [    5.051586][    T1]  layout_and_allocate.constprop.0+0x308/0x5b8
-> [    5.052219][    T1]  load_module+0x134/0x16c8
-> [    5.052671][    T1]  init_module_from_file+0xdc/0x138
-> [    5.053193][    T1]  idempotent_init_module+0x344/0x600
-> [    5.053742][    T1]  __arm64_sys_finit_module+0xbc/0x150
-> [    5.054289][    T1]  invoke_syscall+0xd4/0x258
-> [    5.054749][    T1]  el0_svc_common.constprop.0+0xb4/0x240
-> [    5.055319][    T1]  do_el0_svc+0x48/0x68
-> [    5.055743][    T1]  el0_svc+0x40/0xe0
-> [    5.056142][    T1]  el0t_64_sync_handler+0x10c/0x138
-> [    5.056658][    T1]  el0t_64_sync+0x1ac/0x1b0
->
-> Fixes: 233e89322cbe ("alloc_tag: fix module allocation tags populated are=
-a calculation")
-> Signed-off-by: Hao Ge <gehao@kylinos.cn>
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDYgRGVjZW1iZXIgMjAyNCAxODo1Mw0KPiAN
+Cj4gT24gRnJpLCA2IERlYyAyMDI0IGF0IDEwOjMxLCBWaW5jZW50IE1haWxob2wgPHZpbmNlbnQu
+bWFpbGhvbEBnbWFpbC5jb20+IHdyb3RlOg0KPiA+DQo+ID4gPiBjYXVzZXMgaXNzdWVzIHdoZW4g
+J3gnIGlzIG5vdCBhbiBpbnRlZ2VyIGV4cHJlc3Npb24gKHRoaW5rDQo+ID4gPiAiaXNfY29uc3Qo
+TlVMTCkiIG9yICJpc19jb25zdCgxID09IDIpIi4NCj4gPg0KPiA+IEJ1dCAxID09IDIgYWxyZWFk
+eSBoYXMgYW4gaW50ZWdlciB0eXBlIGFzIHByb3ZlbiBieToNCj4gDQo+IFllYWgsIEkgd2FzIGNv
+bmZ1c2VkIGFib3V0IGV4YWN0bHkgd2hhdCB0cmlnZ2VycyB0aGF0IG9kZA0KPiAnLVdpbnQtaW4t
+Ym9vbC1jb250ZXh0Jy4NCj4gDQo+IEl0J3Mgbm90IGFib3V0IHNvbWUgYWN0dWFsIGJvb2wgdHlw
+ZSwgaXQncyBsaXRlcmFsbHkgYSByYW5kb20NCj4gY29sbGVjdGlvbiBvZiBpbnRlZ2VyIG9wZXJh
+dGlvbnMgdXNlZCB3aXRoIGxvZ2ljYWwgb3BzLg0KPiANCj4gU28gaXQncyB0aGluZ3MgbGlrZSAi
+ISh2YXI8PDIpIiB0aGF0IGdlbmVyYXRlIHRoYXQgd2FybmluZywgYmVjYXVzZQ0KPiBzb21lIGNv
+bXBpbGVyIHBlcnNvbiBhdCBzb21lIHBvaW50IHdlbnQgIm1heWJlIHRoYXQgbGVmdCBzaGlmdCBz
+aG91bGQNCj4gaGF2ZSBiZWVuIGp1c3QgYSBjb21wYXJpc29uIGluc3RlYWQgJzwnIi4NCj4gDQo+
+IEJ1dCBpdCB0dXJucyBvdXQgdGhhdCAiKHZhciA8PDIpPzA6MCIgX2Fsc29fIHRyaWdnZXJzIHRo
+YXQgd2FybmluZy4NCj4gDQo+IEVuZCByZXN1bHQ6IEkgaGF2ZSAqbm8qIGlkZWEgaG93IHRvIHNo
+dXQgdGhhdCBjcmF6eSB3YXJuaW5nIHVwIGZvcg0KPiB0aGlzIGNhc2UsIGlmIHdlIHdhbnQgdG8g
+aGF2ZSBzb21lIGdlbmVyaWMgbWFjcm8gdGhhdCBzYXlzICJpcyB0aGlzDQo+IGNvbnN0YW50Ii4g
+QmVjYXVzZSBpdCBkYW1uIHdlbGwgaXMgcGVyZmVjdGx5IHNhbmUgdG8gYXNrICJpcyAoYSA8PCAz
+KQ0KPiBhIGNvbnN0YW50IGV4cHJlc3Npb24iLg0KDQpJJ20gbWlzc2luZyB0aGUgY29tcGlsZXIg
+dmVyc2lvbiBhbmQgb3B0aW9ucyB0byBnZW5lcmF0ZSB0aGUgZXJyb3IuDQpEb2VzIGEgJysgMCcg
+aGVscD8gICIodmFyIDw8IDIpICsgMCA/IDAgOiAwIg0KDQpJIHJlYWxpc2VkIHRoZToNCiNkZWZp
+bmUgY29uc3RfTlVMTCh4KSBfR2VuZXJpYygwID8gKHgpIDogKGNoYXIgKikwLCBjaGFyICo6IDEs
+IHZvaWQgKjogMCkNCiNkZWZpbmUgY29uc3RfdHJ1ZSh4KSBjb25zdF9OVUxMKCh4KSA/IE5VTEwg
+OiAodm9pZCAqKTFMKSkNCiNkZWZpbmUgY29uc3RfZXhwcih4KSBjb25zdF9OVUxMKCh4KSA/IE5V
+TEwgOiBOVUxMKSkNCkkgc2VuZCB0aGlzIG1vcm5pbmcuDQpOZWVkcyAncy9jaGFyL3N0cnVjdCBr
+amtqa2pranVpLycgYXBwbGllZC4NCg0KCURhdmlkDQoNCi0NClJlZ2lzdGVyZWQgQWRkcmVzcyBM
+YWtlc2lkZSwgQnJhbWxleSBSb2FkLCBNb3VudCBGYXJtLCBNaWx0b24gS2V5bmVzLCBNSzEgMVBU
+LCBVSw0KUmVnaXN0cmF0aW9uIE5vOiAxMzk3Mzg2IChXYWxlcykNCg==
 
-Acked-by: Suren Baghdasaryan <surenb@google.com>
-
-> ---
-> v3: Based on Suren's suggestion, I modified the code,Thank you for Suren.
->     I realized that the 'poisoned' is actually not needed, so I removed i=
-t
->     Due to these changes, update the commit message.
->
-> v2: Add comments to kasan_unpoison_vmalloc like other places.
->
-> commit 233e89322cbe ("alloc_tag: fix module allocation
-> tags populated area calculation") is currently in the
-> mm-hotfixes-unstable branch, so this patch is
-> developed based on the mm-hotfixes-unstable branch.
-> ---
->  lib/alloc_tag.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
->
-> diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-> index 4ee6caa6d2da..f942408b53ef 100644
-> --- a/lib/alloc_tag.c
-> +++ b/lib/alloc_tag.c
-> @@ -424,6 +424,15 @@ static int vm_module_tags_populate(void)
->                 vm_module_tags->nr_pages +=3D nr;
->         }
->
-> +       /*
-> +        * Mark the pages as accessible, now that they are mapped.
-> +        * With hardware tag-based KASAN, marking is skipped for
-> +        * non-VM_ALLOC mappings, see __kasan_unpoison_vmalloc().
-> +        */
-> +       kasan_unpoison_vmalloc((void *)module_tags.start_addr,
-> +                               new_end - module_tags.start_addr,
-> +                               KASAN_VMALLOC_PROT_NORMAL);
-> +
->         return 0;
->  }
->
-> --
-> 2.25.1
->
 
