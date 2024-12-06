@@ -1,138 +1,74 @@
-Return-Path: <linux-kernel+bounces-434520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ECBB9E67C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:19:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5C109E67C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:20:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99B91885343
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:19:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD121161670
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:20:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1821DC1A2;
-	Fri,  6 Dec 2024 07:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB841DC19D;
+	Fri,  6 Dec 2024 07:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="N6A5MsVK"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735AF190470;
-	Fri,  6 Dec 2024 07:19:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="F9mEJg5t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 962F4190470;
+	Fri,  6 Dec 2024 07:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733469591; cv=none; b=oQ43nM619xQ6s0j0dj5OkdrwKxaEctIn8FkgaLOvgk8THAtdAYMXJunjwXwUxl7D6H8l9X+RqbdGra2vfjgP9xeC8WHj+maYlz6ln5Q1C8680O8L/WCTXp5QarCCRtYYxFba6T0I2yf5L2d5UZMHYIEf848ope45lEu56kmyyvA=
+	t=1733469601; cv=none; b=B/Gso+x18kXS2a8GPj5GedrE+/dOfDG/D2ReUJdS7h0hDFeUKC0tk55IR728LOH1IWR2uqtObIUXcplu8HPK2IwrEbYD1D131fjt0SLdU7u0uFNIkqNvWeZe9ALszQjDJ77pnkOLowhOJahhAFFR55PDREFs0LbkL7YWToqnzb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733469591; c=relaxed/simple;
-	bh=qc847rXB/emgaSDmSWzW62whsERGti559LD/d+kyWWE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=I57HsMRibQP59nf2uZi9O3Q5kzYSlqXi6TDi5bWQIdN2jjhY+gkw2IgOLdcsxcfPH07NmiWljLtfEEGIXprw/xhAAu/n9vb8fMCgLgki2J8thTl9Xsx2xoHvn0HUVgTbhqj82219slS6fPdHcMKW7jPoWfOM/ZcvzD4OuV8iqP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=N6A5MsVK; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=8QQoNxrQTXZNpi1Cv2dfxMHY8MZth7/afGsAC9SfYVM=;
-	b=N6A5MsVKPVgQEhMEoSaf9vQEwxdI5L248rSY35bYOhx5RDMYLKbXOD2UJtV5KI
-	68TzgAqdCQU0F63IDJ8BLXlGK59LsbCm5Qm9QVXjl8DLPK997bw9EbpSJ6LbE2ZE
-	wuRJySFINBmWwC1iv+bBbNZXc0jhHIaY+emcx9Su0FiQY=
-Received: from localhost.localdomain (unknown [])
-	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3PzeBpVJnjx1eBg--.45092S2;
-	Fri, 06 Dec 2024 15:19:29 +0800 (CST)
-From: wangdicheng <wangdich9700@163.com>
-To: hare@suse.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com
-Cc: linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wangdicheng <wangdicheng@kylinos.cn>,
-	huanglei <huanglei@kylinos.cn>
-Subject: [PATCH] scsi: aic7xxx: Fix build 'aicasm' warning
-Date: Fri,  6 Dec 2024 15:19:26 +0800
-Message-Id: <20241206071926.63832-1-wangdich9700@163.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733469601; c=relaxed/simple;
+	bh=e5TxYok6IUf3ZHHSebSMjERkd9UF0ZEjLA0iPNyi4+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DWyChTfNzJV+KTzByV4IJw9aGZsUHQLI8DZXYG6+CuFt2Tj7AadHwmSO7Glfl4c+mGPVZcOBoZBNpyvxfgyW6aoK5gLEDbCsq+cfBaVNGcB0yx/eTsdeB6vS4g+jwkWxpF5bPmYF8ao7gU2KoI5wr+a7TB+q7naSb6B6BN4jEfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=F9mEJg5t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99977C4CED1;
+	Fri,  6 Dec 2024 07:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733469601;
+	bh=e5TxYok6IUf3ZHHSebSMjERkd9UF0ZEjLA0iPNyi4+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F9mEJg5t0PcL/Ndszs1OM3lquWh4oYYZVjJPMMqddjJfaKvdj+4P22/TCZJil2pEM
+	 oTYN8HFp/Y1xVsr/Dd4TwLWrPfWF9eAt4Y00a1+nkfaqESxzp1Ynk3AvikS9Gz5Csd
+	 Q8G6teoNienbjPB/2lSejxzdscBG25icS1cIjywE=
+Date: Fri, 6 Dec 2024 08:19:58 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] rust: miscdevice: Provide sample driver using the
+ new MiscDevice bindings
+Message-ID: <2024120632-hardwired-hardhead-1906@gregkh>
+References: <20241205162531.1883859-1-lee@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3PzeBpVJnjx1eBg--.45092S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxZr18Xr4rCFyxJFykKr1Utrb_yoW5XFyUpF
-	W8C3ykAw15Jr1Uuw4ktrZ2qa45ZayktrWDJF4UZ3s29FW7WasYqF45Kay3JFy8JF10qF13
-	X3Wagry7XF17A3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UNSd9UUUUU=
-X-CM-SenderInfo: pzdqwv5lfkmliqq6il2tof0z/1tbioxOtT2dSigx62AABsC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205162531.1883859-1-lee@kernel.org>
 
-From: wangdicheng <wangdicheng@kylinos.cn>
+On Thu, Dec 05, 2024 at 04:25:17PM +0000, Lee Jones wrote:
+> It has been suggested that the driver should use dev_info() instead of
+> pr_info() however there is currently no scaffolding to successfully pull
+> a 'struct device' out from driver data post register().  This is being
+> worked on and we will convert this over in due course.
 
-When building with CONFIG_AIC7XXX_BUILD_FIRMWARE=y or
-CONFIG_AIC79XX_BUILD_FIRMWARE=y,  the warning message is as follow:
+But the miscdevice.rs change provides this to you, right?  Or if not,
+why not?
 
-  aicasm_gram.tab.c:1722:16: warning: implicit declaration of function
-    ‘yylex’ [-Wimplicit-function-declaration]
+confused,
 
-  aicasm_macro_gram.c:68:25: warning: implicit declaration of function
-    ‘mmlex’ [-Wimplicit-function-declaration]
-
-  aicasm_scan.l:417:6: warning: implicit declaration of function
-    ‘mm_switch_to_buffer’
-
-  aicasm_scan.l:418:6: warning: implicit declaration of function
-    ‘mmparse’
-
-  aicasm_scan.l:421:6: warning: implicit declaration of function
-    ‘mm_delete_buffer’
-
-The solution is to add the corresponding function declaration to the
-corresponding file.
-
-Signed-off-by: wangdicheng <wangdicheng@kylinos.cn>
-Signed-off-by: huanglei <huanglei@kylinos.cn>
----
- drivers/scsi/aic7xxx/aicasm/aicasm_gram.y       | 1 +
- drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y | 1 +
- drivers/scsi/aic7xxx/aicasm/aicasm_scan.l       | 3 +++
- 3 files changed, 5 insertions(+)
-
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y b/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y
-index 65182ad9cdf8..b1c9ce477cbd 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm_gram.y
-@@ -102,6 +102,7 @@ static void add_conditional(symbol_t *symbol);
- static void add_version(const char *verstring);
- static int  is_download_const(expression_t *immed);
- static int  is_location_address(symbol_t *symbol);
-+int yylex();
- void yyerror(const char *string);
- 
- #define SRAM_SYMNAME "SRAM_BASE"
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y b/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y
-index 8c0479865f04..5c7350eb5b5c 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm_macro_gram.y
-@@ -61,6 +61,7 @@
- static symbol_t *macro_symbol;
- 
- static void add_macro_arg(const char *argtext, int position);
-+int mmlex();
- void mmerror(const char *string);
- 
- %}
-diff --git a/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l b/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l
-index c78d4f68eea5..fc7e6c58148d 100644
---- a/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l
-+++ b/drivers/scsi/aic7xxx/aicasm/aicasm_scan.l
-@@ -64,6 +64,9 @@ static char *string_buf_ptr;
- static int  parren_count;
- static int  quote_count;
- static char buf[255];
-+void mm_switch_to_buffer(YY_BUFFER_STATE);
-+void mmparse();
-+void mm_delete_buffer(YY_BUFFER_STATE);
- %}
- 
- PATH		([/]*[-A-Za-z0-9_.])+
--- 
-2.25.1
-
+greg k-h
 
