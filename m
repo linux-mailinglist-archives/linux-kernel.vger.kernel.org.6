@@ -1,171 +1,330 @@
-Return-Path: <linux-kernel+bounces-435104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59169E6FBF
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70ED79E6FBE
 	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:01:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6534016E867
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:57:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE181884E8E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:58:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B264F20B1F7;
-	Fri,  6 Dec 2024 13:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AvYoSDKS"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D87720ADCA;
+	Fri,  6 Dec 2024 13:58:25 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8591E207DF9
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92109207E10
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 13:58:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733493455; cv=none; b=mis1S68LWolhKkbO8PgCm3xOKC3SXQimxZUdmLaOni+c74ZpM4SeWx85svRiNo0uLxzoRiQZSLEmzNkkmgrL3K1rHOUjUkMby6zK7aPgNLfvSVqgYWOB0/N4dziIb7cbjLfQx+F8DBcLLdQelp1yK7ydBOdnFjnVuQVIzSVaEJw=
+	t=1733493504; cv=none; b=jnC5Ms4yl+yy9AmprOFmizZTdbpcELl+m2AREu3F8ZA0yzQ2kbENGp3BCInUXNhf+Gs9Ba3xuYcP98SxaqaP02Hb6mjze2Y7NH4L08iD3PqkqosfvVlC0wq0mJNXRwdpIwvAWX1OvRMdgmpJ4qs9ysgJUSpl1Iw7r7WnlyfCnIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733493455; c=relaxed/simple;
-	bh=fiLpHl8kskZJf92XZBCQSNQh0EM/rPino4TCddjjNa8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jh+zQ6PSbbz4kXE/PmRPk+kEyqJkbDQsjLy7kZO9beVTp2NArO9eJ69iEGZ5ojQ7HcLq17LXSRjzMiDtj1z1pOwwQihE1aVtopr7f1C+CjJocrcRhhtye67Y6VFvmfL8tgnIumW21oZRWA7u0Up2YBaIU5XdmlSUp2gGKgxo4DE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AvYoSDKS; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-385df53e559so1553592f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 05:57:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733493451; x=1734098251; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NDyT0nGxXbja5Q8/labpY0AGckKUvtd7GbprKAY57M8=;
-        b=AvYoSDKSCLxYr2qJ9WJYdJyxNdwdVzH2QpufLN34unghI9e48l4BdxZcLRoBFcWYcB
-         cbLgeg4nMqqCFrq4Uin8fFmFtKSiiQWLAndZGnMw8jf8jcvA4c9uB8zezR61m85Xwjt9
-         eAhkuUdh8u98jKE1CteId+lUsz8MCwORlo93OGUdd/Vi6Wq+U1bTDuWn2PE943AOmAzk
-         BfMAXxWdiNiCYYBQo/DN94/UNZ0PdU9MeTd9KU7lx0llZkLJGpy7NaEs51bCdAVTkLf0
-         jgBzRuZh8pEnBcWXeiayq+g08pYDKfRnUd/zAxkuyvZUfXd08R4R0WifhsEPLApu0HkR
-         76Yg==
+	s=arc-20240116; t=1733493504; c=relaxed/simple;
+	bh=Q2F40TmgJ1tTXfT8xpAFnAYBKpk+MbHcFWk76Y7/TIk=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=FYT9N/yv97j5c6WbsND+ns9EV1rMKAKjrLJ/donYmN12DgqH9V765gJPNAhPU6+Pc4+IKSFMMEOqChDzPNLfKOZHkyk786KL4F5/Li+Iwir2vJdUJRsT4MNws/m10h1KYZJ9n9hAujW9r0Ol5zoliTMlpd/7/5n3jdrk/GIusuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e0d7b804so20967555ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 05:58:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733493451; x=1734098251;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NDyT0nGxXbja5Q8/labpY0AGckKUvtd7GbprKAY57M8=;
-        b=GZiqT8hl5I6d8HIycg6ZV+zbphI4pfr9cYWzv7McbSAOR5qiVT5FI9E5Kq+pew0r0u
-         Q/xHGfnGrysU2seKD2RUN4FJoQWV6vJHO13qLIJD8nv/HcXw475YrJJbJOHZx2DJ66o0
-         mEhBLBYYh0pUkPH4rrJErI6VnqXlWYIJfVfSMDNj1oZ7WBQE0+ZWKHq1hTnp4Q3UIq+g
-         pALJWAs/RD811lqhFFNNPJ3NH3jJyT7lqjL7t4baCCDwpJBxl8MweVEruJLUkGD7BqK8
-         2iHU4l92CMfKjIRpURt78WPYIPNNmbEvTUDhbZi1/Xmi6eXDf0D2kWOv1SD38DhrIRLw
-         K3Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCXsogI9QAazUT30oh1Mb6UWQBxADC5dMXL08IlDFTpMealNmlvGIQz76NeuDkIfYLht9DH119M3NB+zwX8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxXdXgtUuesBtRk4Q5ib9VAgNMfip36XNcahzK3uac9DDgA6Xn
-	0D7SELF2w3TwtaYwvDHNKaDPDIY5VNj5rPsqedEGgldY+mLK4XxiD6dQNFWP7W99/PmF5j8LhW+
-	byekivpOzoOSaRvRIm1lczb+Igctnxos/0H8/
-X-Gm-Gg: ASbGncuj2Oipl5wibzzd6jIK0KSNDvh9vql6qLdJScJGpr5xMaAOJLq2vUnPl114qOa
-	KGVREdR2LUK76yELUQhdV1Az4E/dJNS4Y
-X-Google-Smtp-Source: AGHT+IFVl6C+eSFuu9yGxEcfzxTahR7P+lh22t4H7dnq5rZTDhoIXpqQ/0j5yDdZDKZ/gkNWcTIdlAv15QqNAyld/Ak=
-X-Received: by 2002:a05:6000:2cd:b0:386:2ebe:7ac9 with SMTP id
- ffacd0b85a97d-3862ebe7ddemr1414917f8f.33.1733493450776; Fri, 06 Dec 2024
- 05:57:30 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733493502; x=1734098302;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pDObkOj765Fglu8+R0TAdh8kvitDtM61nvPTLDd8+Lg=;
+        b=nVZ5ULMRyAAe4jrS6fUrOm0KzGT1HAiCSsZvHFcEqQ3vi9vIu5Cwbq1KRfJhh7lQWe
+         Vi989dZgGqUFpks0Ke3p4/8PYR/0y28dMOAWpdyg4I8EroDPxV7PsMRjl0EEZBfr0MxM
+         p6f2zwZvYa4wLdD6oOSRC0FSHO1nyAppNy8S8xaOXhzk9nVW2Sk+xg//Yow417PdWdam
+         VKhUoOtUvG+hHNG6NI0COrOcEPsXAVC+XrwwiKB6nT/MksmvyqItnmSPXfy/ajp63bdf
+         cpWPwafQHYu3Nfcp7y/od3CfczJ80HSjuLSVdhIHZZeBwyqFpiNdeFKzXBhMMjC+0yDK
+         kVDA==
+X-Forwarded-Encrypted: i=1; AJvYcCXGfjR/vM/pNYJF+dNc1UEeZvz1mcJn6n3EqIZtL5kauuPz71dzVFtY1YwDko0OSjXRubwQMcuHZWC77Qs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6f6POhfVtRchjP2AWLNmknvnRhMTSHmyA8OpQMiOZ9plGdzpq
+	ZnHl0etwDo4pRpPVHHAhtxqKRJtLpFuzgPwq5LDkD2GRoCJVR9133UrNBrJKriifJSZRcdmpdAR
+	k5joPTnZOZoO5TD+ZS/T9emFOpGvkEcjO/Kzffs6/RiSaSC4s8IrH/ug=
+X-Google-Smtp-Source: AGHT+IGDdd+mMJzOcmNNl7oQHze1PkX0Duxw3G3BMfOqupBwA57Ovc46Dew7MgHhVzZWV5Moy++EwKO7bt7t1+Pzkk3L1yNS6j6D
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205141533.111830-1-dakr@kernel.org> <20241205141533.111830-3-dakr@kernel.org>
-In-Reply-To: <20241205141533.111830-3-dakr@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 6 Dec 2024 14:57:19 +0100
-Message-ID: <CAH5fLghRVFAb06YYfUbuyuR1pOK0cHzGk6A25c5hX3CyvMm+sw@mail.gmail.com>
-Subject: Re: [PATCH v4 02/13] rust: implement generic driver registration
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com, 
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com, 
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, fabien.parent@linaro.org, chrisi.schrefl@gmail.com, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>
+X-Received: by 2002:a05:6e02:1ca7:b0:3a7:86ab:be6d with SMTP id
+ e9e14a558f8ab-3a811e61639mr30950815ab.16.1733493501797; Fri, 06 Dec 2024
+ 05:58:21 -0800 (PST)
+Date: Fri, 06 Dec 2024 05:58:21 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675302fd.050a0220.2477f.0004.GAE@google.com>
+Subject: [syzbot] [bpf?] possible deadlock in htab_lru_map_delete_elem
+From: syzbot <syzbot+0a26db48dcd6d80be6c0@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
+	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 5, 2024 at 3:16=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> w=
-rote:
->
-> Implement the generic `Registration` type and the `DriverOps` trait.
->
-> The `Registration` structure is the common type that represents a driver
-> registration and is typically bound to the lifetime of a module. However,
-> it doesn't implement actual calls to the kernel's driver core to register
-> drivers itself.
->
-> Instead the `DriverOps` trait is provided to subsystems, which have to
-> implement `DriverOps::register` and `DrvierOps::unregister`. Subsystems
+Hello,
 
-typo
+syzbot found the following issue on:
 
-> have to provide an implementation for both of those methods where the
-> subsystem specific variants to register / unregister a driver have to
-> implemented.
->
-> For instance, the PCI subsystem would call __pci_register_driver() from
-> `DriverOps::register` and pci_unregister_driver() from
-> `DrvierOps::unregister`.
->
-> Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+HEAD commit:    feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1476e0f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6851fe4f61792030
+dashboard link: https://syzkaller.appspot.com/bug?extid=0a26db48dcd6d80be6c0
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17d9c8df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1276e0f8580000
 
-[...]
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-feffde68.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e9751e7030ea/vmlinux-feffde68.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/f7bf928b44d6/bzImage-feffde68.xz
 
-> +/// The [`RegistrationOps`] trait serves as generic interface for subsys=
-tems (e.g., PCI, Platform,
-> +/// Amba, etc.) to provide the corresponding subsystem specific implemen=
-tation to register /
-> +/// unregister a driver of the particular type (`RegType`).
-> +///
-> +/// For instance, the PCI subsystem would set `RegType` to `bindings::pc=
-i_driver` and call
-> +/// `bindings::__pci_register_driver` from `RegistrationOps::register` a=
-nd
-> +/// `bindings::pci_unregister_driver` from `RegistrationOps::unregister`=
-.
-> +pub trait RegistrationOps {
-> +    /// The type that holds information about the registration. This is =
-typically a struct defined
-> +    /// by the C portion of the kernel.
-> +    type RegType: Default;
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+0a26db48dcd6d80be6c0@syzkaller.appspotmail.com
 
-This Default implementation doesn't seem useful. You initialize it and
-then `register` calls a C function to initialize it. Having `register`
-return an `impl PinInit` seems like it would work better here.
+======================================================
+WARNING: possible circular locking dependency detected
+6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0 Not tainted
+------------------------------------------------------
+syz-executor207/6807 is trying to acquire lock:
+ffff88802632eca0 (&htab->lockdep_key#434){....}-{2:2}, at: htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+ffff88802632eca0 (&htab->lockdep_key#434){....}-{2:2}, at: htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
 
-> +    /// Registers a driver.
-> +    ///
-> +    /// On success, `reg` must remain pinned and valid until the matchin=
-g call to
-> +    /// [`RegistrationOps::unregister`].
-> +    fn register(
-> +        reg: &mut Self::RegType,
+but task is already holding lock:
+ffff888031440e20 (&htab->lockdep_key#435){....}-{2:2}, at: htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+ffff888031440e20 (&htab->lockdep_key#435){....}-{2:2}, at: htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
 
-If the intent is that RegType is going to be the raw bindings:: type,
-then this isn't going to work because you're creating &mut references
-to the raw type without a Opaque wrapper in between.
+which lock already depends on the new lock.
 
-> +        name: &'static CStr,
-> +        module: &'static ThisModule,
-> +    ) -> Result;
-> +
-> +    /// Unregisters a driver previously registered with [`RegistrationOp=
-s::register`].
-> +    fn unregister(reg: &mut Self::RegType);
 
-I believe this handles pinning incorrectly. You can't hand out &mut
-references to pinned values.
+the existing dependency chain (in reverse order) is:
 
-Alice
+-> #1 (&htab->lockdep_key#435){....}-{2:2}:
+       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+       _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+       htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+       htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
+       bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+       bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+       __bpf_prog_run include/linux/filter.h:701 [inline]
+       bpf_prog_run include/linux/filter.h:708 [inline]
+       __bpf_trace_run kernel/trace/bpf_trace.c:2351 [inline]
+       bpf_trace_run2+0x231/0x590 kernel/trace/bpf_trace.c:2392
+       __bpf_trace_contention_begin+0xca/0x110 include/trace/events/lock.h:95
+       __traceiter_contention_begin+0x5a/0xa0 include/trace/events/lock.h:95
+       __preempt_count_dec_and_test arch/x86/include/asm/preempt.h:94 [inline]
+       class_preempt_notrace_destructor include/linux/preempt.h:481 [inline]
+       trace_contention_begin.constprop.0+0xf3/0x170 include/trace/events/lock.h:95
+       __pv_queued_spin_lock_slowpath+0x10b/0xc90 kernel/locking/qspinlock.c:402
+       pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
+       queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:51 [inline]
+       queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+       do_raw_spin_lock+0x210/0x2c0 kernel/locking/spinlock_debug.c:116
+       htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+       htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
+       bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+       bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+       __bpf_prog_run include/linux/filter.h:701 [inline]
+       bpf_prog_run include/linux/filter.h:708 [inline]
+       __bpf_trace_run kernel/trace/bpf_trace.c:2351 [inline]
+       bpf_trace_run2+0x231/0x590 kernel/trace/bpf_trace.c:2392
+       __bpf_trace_contention_begin+0xca/0x110 include/trace/events/lock.h:95
+       __traceiter_contention_begin+0x5a/0xa0 include/trace/events/lock.h:95
+       trace_contention_begin+0xd2/0x140 include/trace/events/lock.h:95
+       __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+       __mutex_lock+0x1a8/0xa60 kernel/locking/mutex.c:735
+       futex_cleanup_begin kernel/futex/core.c:1070 [inline]
+       futex_exit_release+0x2a/0x220 kernel/futex/core.c:1122
+       exit_mm_release+0x19/0x30 kernel/fork.c:1660
+       exit_mm kernel/exit.c:543 [inline]
+       do_exit+0x88b/0x2d70 kernel/exit.c:925
+       do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+       __do_sys_exit_group kernel/exit.c:1098 [inline]
+       __se_sys_exit_group kernel/exit.c:1096 [inline]
+       __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
+       x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&htab->lockdep_key#434){....}-{2:2}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+       __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+       _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+       htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+       htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
+       bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+       bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+       __bpf_prog_run include/linux/filter.h:701 [inline]
+       bpf_prog_run include/linux/filter.h:708 [inline]
+       __bpf_trace_run kernel/trace/bpf_trace.c:2351 [inline]
+       bpf_trace_run2+0x231/0x590 kernel/trace/bpf_trace.c:2392
+       __bpf_trace_contention_begin+0xca/0x110 include/trace/events/lock.h:95
+       __traceiter_contention_begin+0x5a/0xa0 include/trace/events/lock.h:95
+       __preempt_count_dec_and_test arch/x86/include/asm/preempt.h:94 [inline]
+       class_preempt_notrace_destructor include/linux/preempt.h:481 [inline]
+       trace_contention_begin.constprop.0+0xf3/0x170 include/trace/events/lock.h:95
+       __pv_queued_spin_lock_slowpath+0x10b/0xc90 kernel/locking/qspinlock.c:402
+       pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
+       queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:51 [inline]
+       queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+       do_raw_spin_lock+0x210/0x2c0 kernel/locking/spinlock_debug.c:116
+       htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+       htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
+       bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+       bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+       __bpf_prog_run include/linux/filter.h:701 [inline]
+       bpf_prog_run include/linux/filter.h:708 [inline]
+       __bpf_trace_run kernel/trace/bpf_trace.c:2351 [inline]
+       bpf_trace_run2+0x231/0x590 kernel/trace/bpf_trace.c:2392
+       __bpf_trace_contention_begin+0xca/0x110 include/trace/events/lock.h:95
+       __traceiter_contention_begin+0x5a/0xa0 include/trace/events/lock.h:95
+       trace_contention_begin+0xd2/0x140 include/trace/events/lock.h:95
+       __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+       __mutex_lock+0x1a8/0xa60 kernel/locking/mutex.c:735
+       uprobe_clear_state+0x4b/0x1a0 kernel/events/uprobes.c:1771
+       __mmput+0x79/0x4c0 kernel/fork.c:1349
+       mmput+0x62/0x70 kernel/fork.c:1375
+       exit_mm kernel/exit.c:570 [inline]
+       do_exit+0x9bf/0x2d70 kernel/exit.c:925
+       do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+       __do_sys_exit_group kernel/exit.c:1098 [inline]
+       __se_sys_exit_group kernel/exit.c:1096 [inline]
+       __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
+       x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&htab->lockdep_key#435);
+                               lock(&htab->lockdep_key#434);
+                               lock(&htab->lockdep_key#435);
+  lock(&htab->lockdep_key#434);
+
+ *** DEADLOCK ***
+
+4 locks held by syz-executor207/6807:
+ #0: ffffffff8e2d69e8 (delayed_uprobe_lock){+.+.}-{4:4}, at: uprobe_clear_state+0x4b/0x1a0 kernel/events/uprobes.c:1771
+ #1: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #1: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #1: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2350 [inline]
+ #1: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run2+0x1c2/0x590 kernel/trace/bpf_trace.c:2392
+ #2: ffff888031440e20 (&htab->lockdep_key#435){....}-{2:2}, at: htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+ #2: ffff888031440e20 (&htab->lockdep_key#435){....}-{2:2}, at: htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
+ #3: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+ #3: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
+ #3: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: __bpf_trace_run kernel/trace/bpf_trace.c:2350 [inline]
+ #3: ffffffff8e1bb500 (rcu_read_lock){....}-{1:3}, at: bpf_trace_run2+0x1c2/0x590 kernel/trace/bpf_trace.c:2392
+
+stack backtrace:
+CPU: 3 UID: 0 PID: 6807 Comm: syz-executor207 Not tainted 6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x419/0x5d0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
+ lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
+ __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+ _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+ htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+ htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
+ bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+ bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2351 [inline]
+ bpf_trace_run2+0x231/0x590 kernel/trace/bpf_trace.c:2392
+ __bpf_trace_contention_begin+0xca/0x110 include/trace/events/lock.h:95
+ __traceiter_contention_begin+0x5a/0xa0 include/trace/events/lock.h:95
+ __preempt_count_dec_and_test arch/x86/include/asm/preempt.h:94 [inline]
+ class_preempt_notrace_destructor include/linux/preempt.h:481 [inline]
+ trace_contention_begin.constprop.0+0xf3/0x170 include/trace/events/lock.h:95
+ __pv_queued_spin_lock_slowpath+0x10b/0xc90 kernel/locking/qspinlock.c:402
+ pv_queued_spin_lock_slowpath arch/x86/include/asm/paravirt.h:584 [inline]
+ queued_spin_lock_slowpath arch/x86/include/asm/qspinlock.h:51 [inline]
+ queued_spin_lock include/asm-generic/qspinlock.h:114 [inline]
+ do_raw_spin_lock+0x210/0x2c0 kernel/locking/spinlock_debug.c:116
+ htab_lock_bucket kernel/bpf/hashtab.c:167 [inline]
+ htab_lru_map_delete_elem+0x1c8/0x790 kernel/bpf/hashtab.c:1484
+ bpf_prog_2c29ac5cdc6b1842+0x43/0x47
+ bpf_dispatcher_nop_func include/linux/bpf.h:1290 [inline]
+ __bpf_prog_run include/linux/filter.h:701 [inline]
+ bpf_prog_run include/linux/filter.h:708 [inline]
+ __bpf_trace_run kernel/trace/bpf_trace.c:2351 [inline]
+ bpf_trace_run2+0x231/0x590 kernel/trace/bpf_trace.c:2392
+ __bpf_trace_contention_begin+0xca/0x110 include/trace/events/lock.h:95
+ __traceiter_contention_begin+0x5a/0xa0 include/trace/events/lock.h:95
+ trace_contention_begin+0xd2/0x140 include/trace/events/lock.h:95
+ __mutex_lock_common kernel/locking/mutex.c:587 [inline]
+ __mutex_lock+0x1a8/0xa60 kernel/locking/mutex.c:735
+ uprobe_clear_state+0x4b/0x1a0 kernel/events/uprobes.c:1771
+ __mmput+0x79/0x4c0 kernel/fork.c:1349
+ mmput+0x62/0x70 kernel/fork.c:1375
+ exit_mm kernel/exit.c:570 [inline]
+ do_exit+0x9bf/0x2d70 kernel/exit.c:925
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1096
+ x64_sys_call+0x151f/0x1720 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe3838cedf9
+Code: Unable to access opcode bytes at 0x7fe3838cedcf.
+RSP: 002b:00007ffd9c887888 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fe3838cedf9
+RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
+RBP: 00007fe38395b390 R08: ffffffffffffffb0 R09: 00007ffd9c887910
+R10: 00007ffd9c887910 R11: 0000000000000246 R12: 00007fe38395b390
+R13: 0000000000000000 R14: 00007fe38395bf20 R15: 00007fe38389c900
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
