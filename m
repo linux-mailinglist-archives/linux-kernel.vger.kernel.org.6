@@ -1,128 +1,289 @@
-Return-Path: <linux-kernel+bounces-434341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D42C99E6539
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:56:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3B059E6542
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:03:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8FC78188555E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:56:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0BC2A1884D58
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13554192D9C;
-	Fri,  6 Dec 2024 03:56:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B866FBF;
-	Fri,  6 Dec 2024 03:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6BE194ACB;
+	Fri,  6 Dec 2024 04:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E6EpELio"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D285175BF
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733457403; cv=none; b=I2bfYO/GQNP8dO8XkyZSMUi22ijEslNxrj8VTMl7o92HFK+ETRE3MdED9+HC/lpTJY9qwhQYGysxT97P3eGe6SY0jArpuDZ6CTonwjlNVDgoQxmyAJuLSMwBxVcZrazRdUZ9i+yOxe7xkz/BKHbU8u5Pcq/DLX15DCF/L5CgmUE=
+	t=1733457810; cv=none; b=s9RxNwxOR+/WXPIRX3btgVgYUuVlt3P9BaLRV/qwac7EldBd4OZI6fh0aIjn1Kng4sMd/nUBNGxl2BKfYd4rSVQs0u8dNRzcE1leQaILvLq5hc97RIrhv8mGiNj1oW5LH1DQzDqOkAnn8QNBNh8zCU9G86Nmy6ymal0A925ZkeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733457403; c=relaxed/simple;
-	bh=2OrVg2wTjxGzF3gX1FKhWEV4gZ2+cqniMAPHcV+eQlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ME7htC8kwi4SIfV0zSeUP7mrU32LyuTDxbtOKeMm+ZKlqT3HdsiLt167Hwbl1Vrm9TYWpHSid6b1fLa2Bghsoor02SvhGOOx79iM2Z3lSjGCh4KQTqglSbdT7bZqwXR6+irWBDvvP6bBEUZCYuHL/25415tRLyBKjewLdREtjps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2DF41169E;
-	Thu,  5 Dec 2024 19:57:08 -0800 (PST)
-Received: from [10.163.50.12] (unknown [10.163.50.12])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 201353F58B;
-	Thu,  5 Dec 2024 19:56:34 -0800 (PST)
-Message-ID: <e48df345-0946-4b34-a463-e89aa89680f9@arm.com>
-Date: Fri, 6 Dec 2024 09:26:32 +0530
+	s=arc-20240116; t=1733457810; c=relaxed/simple;
+	bh=A3SGk/9v6Ii1r5FgKrlhWkuWJeoFjLubfvA29s6iw2c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AAQrgx3+c8JvFuSTFZ1jJ9SyIvQ7AgVmmleAU2BVVaaATLuZDaj5Gc6lXTOtEZggVnYC+k6iF5JUYVlvgAcLTbqh1ZStfXDUczDTDXghR8gbv0CnMhUULa/Nli865RQ/DaOOwz0uUEF+2l/7aBh8omL63/xPfCvF5Kf6YNLOwfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E6EpELio; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-466ab386254so80971cf.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:03:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733457807; x=1734062607; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XRaBRImZT0bCFGOpetfgswpmtuAWTeO6WYUFKX2APEk=;
+        b=E6EpELio2X2lIOXCdEfUO45gP+Hlpo0Ao2w/G0UGYDiX4v9T3Lde/D9HEzQQZ9lDSc
+         rL2CTKu7nK/IU1hZNdNAXOy3GQwrP/bPRzX0rux/pFvP8ELZ6+NDYpYvkDMNGhMZs16q
+         Grft+EHcmMHkwhGrD7nVrY48W7TkqfWWawAgIjf0s8ThKSxbe3OTXBczdAhsGHKfTdjJ
+         6BLWUW2bTJlTRzCyxQ1QW981SvMEaitE0FkZnGnI2m56xzYAnoGOSG5EE61skjPy/5BH
+         hLl2iGlRmLGM2UhWC/aQTfP4EDRTzwOlfjoxYlLHHh7ysDWXHD1hj2j6LlsLFXa2Dk18
+         oS5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733457807; x=1734062607;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XRaBRImZT0bCFGOpetfgswpmtuAWTeO6WYUFKX2APEk=;
+        b=cpHNjkjhKZT1m4WTvNeyBuxak9RXVLjLpI6hTL6aaGVejiM649/i1Rlb2GgxKajCNa
+         5UpP46Q+vZD6JPOrGPO7XyX442EVi0RzX6ugJZtCiUHeBhoUxrsjw+CVILi66nLVN1xO
+         OBTnM/BWEpYTal/tRKLSdFS4BLuh55OhT5e85ZaaehDDDMQ/5/HufV9VLVO8VumrN4Uu
+         qaFM4y34OvyQcvn6aKuesznxt2qNWm+lQ7Dmqt/LbiA2lpWozF01ZZbTF4oeSsLThvgd
+         c5/WGFJa8feBYuLSnclBPNereWeQspdnuy85+aZlOlLSJDnQVmGofYfgHdMVA4QSFbyB
+         2h+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQSf7InWILip8QCDIwgSg9hkQrliQ5lZWfj07lmjgRCDYyC6u+4wtdMEGOmePqDhEgIIvDhij2yek6RSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhWxKYgZ4wQ2HrCCP17SiZQ+l7FAhyrvsRqSO/3RQ+Un/Y5WbB
+	wynHeW9T8OkDN/SX+Xebb25u1SJ+LH7pYD7SCuHaGUoM1h3cL2E2cyN5iSxqSPbFoS3Kq18vp0b
+	S9QjMAU0WulkVGYyNMISKwDKjZmYzQcwMDQAUjy9eXsewshHMw+MMaCY=
+X-Gm-Gg: ASbGncs7k4xIqy6AnkdjiX7vjwARAhn91H/EuVBjto4PadRyidFnXsKP+2o1Y0ghlmf
+	apA6bsDWZs6JmePuuyrCfbUJXh2O4Kkk=
+X-Google-Smtp-Source: AGHT+IGcSSMGxMrlYSk4sKwYQHoFpyylVOqUvzsP50UgoLlDDqZI4Uomn4bdXd0GSHYzl2igGS2FwKfVWS/HX8ILwNM=
+X-Received: by 2002:a05:622a:4d04:b0:466:8e4d:e981 with SMTP id
+ d75a77b69052e-46736fce6damr1141781cf.3.1733457807069; Thu, 05 Dec 2024
+ 20:03:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/4] arm64: add a new document for the fine-tuning tips
-To: Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
- will@kernel.org
-Cc: patches@amperecomputing.com, paulmck@kernel.org,
- akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
- xiongwei.song@windriver.com, ardb@kernel.org, steven.price@arm.com,
- suzuki.poulose@arm.com, mark.rutland@arm.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- cl@os.amperecomputing.com
-References: <20241126085647.4993-1-shijie@os.amperecomputing.com>
- <20241126085647.4993-5-shijie@os.amperecomputing.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20241126085647.4993-5-shijie@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241203173733.3181246-1-aleksander.lobakin@intel.com> <20241203173733.3181246-8-aleksander.lobakin@intel.com>
+In-Reply-To: <20241203173733.3181246-8-aleksander.lobakin@intel.com>
+From: Mina Almasry <almasrymina@google.com>
+Date: Thu, 5 Dec 2024 20:03:15 -0800
+Message-ID: <CAHS8izNBBOMMywC+v642S1pSD23_iVfg8beBHBxMci5zQt5+RQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 07/10] netmem: add a couple of page helper wrappers
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	=?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@redhat.com>, 
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>, Stanislav Fomichev <sdf@fomichev.me>, 
+	Magnus Karlsson <magnus.karlsson@intel.com>, nex.sw.ncis.osdt.itp.upstreaming@intel.com, 
+	bpf@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 11/26/24 14:26, Huang Shijie wrote:
-> Put some fine-tuning tips in this file:
-> 	1.) rodata=noalias
-> 	2.) slab_strict_numa
-> 	3.) CONFIG_SCHED_CLUSTER
-> 
-> We can add more tips in future.
-> 
-> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+On Tue, Dec 3, 2024 at 9:43=E2=80=AFAM Alexander Lobakin
+<aleksander.lobakin@intel.com> wrote:
+>
+> Add the following netmem counterparts:
+>
+> * virt_to_netmem() -- simple page_to_netmem(virt_to_page()) wrapper;
+> * netmem_is_pfmemalloc() -- page_is_pfmemalloc() for page-backed
+>                             netmems, false otherwise;
+>
+> and the following "unsafe" versions:
+>
+> * __netmem_to_page()
+> * __netmem_get_pp()
+> * __netmem_address()
+>
+> They do the same as their non-underscored buddies, but assume the netmem
+> is always page-backed. When working with header &page_pools, you don't
+> need to check whether netmem belongs to the host memory and you can
+> never get NULL instead of &page. Checks for the LSB, clearing the LSB,
+> branches take cycles and increase object code size, sometimes
+> significantly. When you're sure your PP is always host, you can avoid
+> this by using the underscored counterparts.
+>
+
+I can imagine future use cases where net_iov netmems are used for
+headers. I'm thinking of a memory provider backed by hugepages
+(Eric/Jakub's idea). In that case the netmem may be backed by a tail
+page underneath or may be backed by net_iov that happens to be
+readable.
+
+But if these ideas ever materialize, we can always revisit this. Some
+suggestions for consideration below but either way:
+
+Reviewed-by: Mina Almasry <almasrymina@google.com>
+
+> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
 > ---
->  Documentation/arch/arm64/fine-tuning-tips.rst | 23 +++++++++++++++++++
->  Documentation/arch/arm64/index.rst            |  1 +
->  2 files changed, 24 insertions(+)
->  create mode 100644 Documentation/arch/arm64/fine-tuning-tips.rst
-> 
-> diff --git a/Documentation/arch/arm64/fine-tuning-tips.rst b/Documentation/arch/arm64/fine-tuning-tips.rst
-> new file mode 100644
-> index 000000000000..70ef1cef92fb
-> --- /dev/null
-> +++ b/Documentation/arch/arm64/fine-tuning-tips.rst
-> @@ -0,0 +1,23 @@
-> +.. SPDX-License-Identifier: GPL-2.0
+>  include/net/netmem.h | 78 ++++++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 76 insertions(+), 2 deletions(-)
+>
+> diff --git a/include/net/netmem.h b/include/net/netmem.h
+> index 8a6e20be4b9d..1b58faa4f20f 100644
+> --- a/include/net/netmem.h
+> +++ b/include/net/netmem.h
+> @@ -72,6 +72,22 @@ static inline bool netmem_is_net_iov(const netmem_ref =
+netmem)
+>         return (__force unsigned long)netmem & NET_IOV;
+>  }
+>
+> +/**
+> + * __netmem_to_page - unsafely get pointer to the &page backing @netmem
+> + * @netmem: netmem reference to convert
+> + *
+> + * Unsafe version of netmem_to_page(). When @netmem is always page-backe=
+d,
+> + * e.g. when it's a header buffer, performs faster and generates smaller
+> + * object code (no check for the LSB, no WARN). When @netmem points to I=
+OV,
+> + * provokes undefined behaviour.
+> + *
+> + * Return: pointer to the &page (garbage if @netmem is not page-backed).
+> + */
+> +static inline struct page *__netmem_to_page(netmem_ref netmem)
+> +{
+> +       return (__force struct page *)netmem;
+> +}
 > +
-> +================
-> +fine-tuning tips
-> +================
-> +
-> +This file contains some fine-tuning tips for arm64 machines.
-> +These tips do not gurantee that you can get better performance,
-> +but you can try them with your workload.
-> +
-> +rodata=noalias
-> +----------------
-> +It can provide us more block mappings and contiguous hits
-> +to map the linear region which minimizes the TLB footprint.
-> +
-> +slab_strict_numa
-> +----------------
-> +In NUMA, it will provide the local memory allocation by SLUB.
-> +
-> +CONFIG_SCHED_CLUSTER
-> +----------------
-> +Some arm64 machines have cpu core cluster, enable it may
-> +helps you get better performance.
-> diff --git a/Documentation/arch/arm64/index.rst b/Documentation/arch/arm64/index.rst
-> index 6a012c98bdcd..36d1ef09bd71 100644
-> --- a/Documentation/arch/arm64/index.rst
-> +++ b/Documentation/arch/arm64/index.rst
-> @@ -16,6 +16,7 @@ ARM64 Architecture
->      cpu-feature-registers
->      cpu-hotplug
->      elf_hwcaps
-> +    fine-tuning-tips
->      gcs
->      hugetlbpage
->      kdump
-Although the idea for such a file makes sense, to help system admins
-tune the kernel command line for required behaviour, I am concerned
-about the overall structure and scope for such a document. Should it
-contain tips regarding all the subsystems on the platform, till what
-extent these details should be described in there and then there are
-so many aspects for a required behaviour etc ?
 
-Besides maintaining such a document might also be very difficult as
-well given how implementations will change over time thus requiring
-different tuning etc. Hence kernel source might not be a place for
-such a document.
+nit: I would name it netmem_to_page_unsafe(), just for glaringly
+obvious clarity.
+
+>  /* This conversion fails (returns NULL) if the netmem_ref is not struct =
+page
+>   * backed.
+>   */
+> @@ -80,7 +96,7 @@ static inline struct page *netmem_to_page(netmem_ref ne=
+tmem)
+>         if (WARN_ON_ONCE(netmem_is_net_iov(netmem)))
+>                 return NULL;
+>
+> -       return (__force struct page *)netmem;
+> +       return __netmem_to_page(netmem);
+>  }
+>
+>  static inline struct net_iov *netmem_to_net_iov(netmem_ref netmem)
+> @@ -103,6 +119,17 @@ static inline netmem_ref page_to_netmem(struct page =
+*page)
+>         return (__force netmem_ref)page;
+>  }
+>
+> +/**
+> + * virt_to_netmem - convert virtual memory pointer to a netmem reference
+> + * @data: host memory pointer to convert
+> + *
+> + * Return: netmem reference to the &page backing this virtual address.
+> + */
+> +static inline netmem_ref virt_to_netmem(const void *data)
+> +{
+> +       return page_to_netmem(virt_to_page(data));
+> +}
+> +
+>  static inline int netmem_ref_count(netmem_ref netmem)
+>  {
+>         /* The non-pp refcount of net_iov is always 1. On net_iov, we onl=
+y
+> @@ -127,6 +154,22 @@ static inline struct net_iov *__netmem_clear_lsb(net=
+mem_ref netmem)
+>         return (struct net_iov *)((__force unsigned long)netmem & ~NET_IO=
+V);
+>  }
+>
+> +/**
+> + * __netmem_get_pp - unsafely get pointer to the &page_pool backing @net=
+mem
+> + * @netmem: netmem reference to get the pointer from
+> + *
+> + * Unsafe version of netmem_get_pp(). When @netmem is always page-backed=
+,
+> + * e.g. when it's a header buffer, performs faster and generates smaller
+> + * object code (avoids clearing the LSB). When @netmem points to IOV,
+> + * provokes invalid memory access.
+> + *
+> + * Return: pointer to the &page_pool (garbage if @netmem is not page-bac=
+ked).
+> + */
+> +static inline struct page_pool *__netmem_get_pp(netmem_ref netmem)
+> +{
+> +       return __netmem_to_page(netmem)->pp;
+> +}
+> +
+>  static inline struct page_pool *netmem_get_pp(netmem_ref netmem)
+>  {
+>         return __netmem_clear_lsb(netmem)->pp;
+> @@ -158,12 +201,43 @@ static inline netmem_ref netmem_compound_head(netme=
+m_ref netmem)
+>         return page_to_netmem(compound_head(netmem_to_page(netmem)));
+>  }
+>
+> +/**
+> + * __netmem_address - unsafely get pointer to the memory backing @netmem
+> + * @netmem: netmem reference to get the pointer for
+> + *
+> + * Unsafe version of netmem_address(). When @netmem is always page-backe=
+d,
+> + * e.g. when it's a header buffer, performs faster and generates smaller
+> + * object code (no check for the LSB). When @netmem points to IOV, provo=
+kes
+> + * undefined behaviour.
+> + *
+> + * Return: pointer to the memory (garbage if @netmem is not page-backed)=
+.
+> + */
+> +static inline void *__netmem_address(netmem_ref netmem)
+> +{
+> +       return page_address(__netmem_to_page(netmem));
+> +}
+> +
+>  static inline void *netmem_address(netmem_ref netmem)
+>  {
+>         if (netmem_is_net_iov(netmem))
+>                 return NULL;
+>
+> -       return page_address(netmem_to_page(netmem));
+> +       return __netmem_address(netmem);
+> +}
+> +
+> +/**
+> + * netmem_is_pfmemalloc - check if @netmem was allocated under memory pr=
+essure
+> + * @netmem: netmem reference to check
+> + *
+> + * Return: true if @netmem is page-backed and the page was allocated und=
+er
+> + * memory pressure, false otherwise.
+> + */
+> +static inline bool netmem_is_pfmemalloc(netmem_ref netmem)
+> +{
+> +       if (netmem_is_net_iov(netmem))
+> +               return false;
+> +
+> +       return page_is_pfmemalloc(netmem_to_page(netmem));
+>  }
+
+Is it better to add these pfmemalloc/address helpers, or better to do:
+
+page =3D netmem_to_page_unsafe(netmem);
+page_is_pfmemalloc(page);
+page_address(page);
+
+Sure the latter is a bit more of a pain to type, but is arguably more
+elegant than having to add *_unsafe() versions of all the netmem
+helpers eventually.
+
+--
+Thanks,
+Mina
 
