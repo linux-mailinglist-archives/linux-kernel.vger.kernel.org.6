@@ -1,334 +1,903 @@
-Return-Path: <linux-kernel+bounces-434961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29BAD9E6D74
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:35:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9969E6D7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:40:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A7C283859
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:35:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5413A284046
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FC21FECC8;
-	Fri,  6 Dec 2024 11:34:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hcsrV7nh";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ukSv9X4o"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECC91FCCE9;
+	Fri,  6 Dec 2024 11:40:18 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4F61FF7D3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:34:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E749E1DF99D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:40:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733484878; cv=none; b=ncvEPqFetvCr+dXdUVWXhFKSQn3vN84OP+KZAp2r0Q1vMO49GK/JyCKCRSpZNJFGDB0QW/zW/I8j7wl0Imrx5guyDmqM80ztPdBwM5EQKZNTbQ/xrcK+1PmpQUenW+Nky9YFRO+SJO/aJn4WqW8fBEaecuzd/R43ISHxD9k6Xn4=
+	t=1733485217; cv=none; b=ISYuCJtSPA99swh64gavr9rpvyC2pceb+dD9DdoJoKCB8Oh9gHqQftgX4mRStLBsyOmZ4xXYCnBk2K1SoddDq7TNzmJBFeXdnbzQ6dwwhVvmx/BzCxnoqEDOO6hKsb3y70DBmSAelUwSo8nmEBZXCLH0AhPTanjSFk3bOn0iou0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733484878; c=relaxed/simple;
-	bh=mGgCXvquxk1TQ2QTxP4XgQrU5XNuEcIZhaifQ6gGMcY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=NZyTFZwWppzBOr+Y3QSUraGoDMMcmoE3wseaXbj8NTJDTnZG1VB3GSBd8a1/u0bZYXzJ1vLwz/MzcOx7LrLbBrdK3o70cdCroFgz2piRA8+Sul4KeZdPtiiGbfrKax+YSYOA/4/9oCVcfL1RLR2uQHFwIEsIIhteSJXcOyrEVRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hcsrV7nh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ukSv9X4o; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 6 Dec 2024 12:34:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733484872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=TVG0MNLdzcFbxnVEVl/LMDFRgZ/xtiH891JiT1QECtU=;
-	b=hcsrV7nh/IS7hjqisf2KeDZsHzfsT9wuvcZPcSYq7ZFO4S5HS6ZfGP4WQLEWptDIkcrB6R
-	Dns6CgjCwLCXpQRxAjYTEU0OMK3iJFigI9vWYNDUSEGbC+JHqs9lDxMA85J2WdUmRcYUDa
-	xeVAuMPmEmanTuXy7DuWK1sgT6i191HzKXiouevnKjS4xRInnFSvrKA+Iq9LbkA69H2+GU
-	mU0Hb1o5iueZAsCEkjnCFM86NS8mvbCCqSu7Njt8XrR+CpwPhCW8glinXG4FtnS18eOQAQ
-	dWOkNlvar/ocS/w1uTOQz4b6beDrLYg5eF8B8oHb0+bXXMr36Hh9Zy4+BVXJXA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733484872;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=TVG0MNLdzcFbxnVEVl/LMDFRgZ/xtiH891JiT1QECtU=;
-	b=ukSv9X4oRsdKfTdSyjFgu9PQAoo1/p7ULfOBcnPV4arjmooTi0mjXfHsqD9X0K2IJcILTk
-	2ZoZz7e4QZZIlwBQ==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
-Cc: Ben Segall <bsegall@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Will Deacon <will@kernel.org>, x86@kernel.org
-Subject: [RFC PATCH] preempt: Add a generic function to return the preemption
- string.
-Message-ID: <20241206113431.Q-VXMlru@linutronix.de>
+	s=arc-20240116; t=1733485217; c=relaxed/simple;
+	bh=ehR4ayXGQzgx/R3FrORqWt1kBFmo9zk7t909tW6mK04=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WZOZ+EImQISFZIA7Ag5hhaRRKJSK3wRK5QQzhVkp83I2sAouWU/Tv3JoEvKUgDSY1lZQGRQWU3QdLRVpwWzo4KyJgihHz9sw/3NCcZfIuvdt49qR7uE9oWxsYPhOmHiG6K0MaZjGJm1FIZMDa4Ld/0Pr91XMJQwegbGHOZ6p3T8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJWge-0003yo-9s; Fri, 06 Dec 2024 12:39:56 +0100
+Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJWgc-001zVW-2k;
+	Fri, 06 Dec 2024 12:39:55 +0100
+Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJWgd-001hi8-1n;
+	Fri, 06 Dec 2024 12:39:55 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: [PATCH net-next v1 1/1] net: phy: Move callback comments from struct to kernel-doc section
+Date: Fri,  6 Dec 2024 12:39:52 +0100
+Message-Id: <20241206113952.406311-1-o.rempel@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The individual architectures often add the preemption model to the begin
-of the backtrace. This is the case on X86 or ARM64 for the "die" case
-but not for regular warning. With the addition of DYNAMIC_PREEMPT for
-PREEMPT_RT we end up with CONFIG_PREEMPT and CONFIG_PREEMPT_RT set
-simultaneously. That means that everyone who tried to add that piece of
-information gets it wrong for PREEMPT_RT because PREEMPT is checked
-first.
-This is an attempt to cover all users that I identified so far with a
-generic function provided by the scheduler. While at it, extend it with
-the LAZY information and add it to dump_stack_print_info().
+Relocate all callback-related comments from the `struct phy_driver`
+definition to a dedicated `kernel-doc` section. This improves code
+readability by decluttering the structure definition and consolidating
+callback documentation in a central place for kernel-doc generation.
 
-Comments?
+No functional changes are introduced by this patch.
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- arch/arm/kernel/traps.c      | 11 ++---------
- arch/arm64/kernel/traps.c    | 12 ++----------
- arch/powerpc/kernel/traps.c  |  4 ++--
- arch/s390/kernel/dumpstack.c |  9 ++-------
- arch/x86/kernel/dumpstack.c  |  7 +------
- arch/xtensa/kernel/traps.c   |  6 +-----
- include/linux/preempt.h      |  2 ++
- kernel/sched/core.c          | 24 ++++++++++++++++++++++++
- kernel/trace/trace.c         |  6 +-----
- lib/dump_stack.c             |  4 ++--
- 10 files changed, 39 insertions(+), 46 deletions(-)
+ include/linux/phy.h | 705 ++++++++++++++++++++++++++++++++------------
+ 1 file changed, 522 insertions(+), 183 deletions(-)
 
-diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
-index 6ea645939573f..1254992184d2e 100644
---- a/arch/arm/kernel/traps.c
-+++ b/arch/arm/kernel/traps.c
-@@ -258,13 +258,6 @@ void show_stack(struct task_struct *tsk, unsigned long *sp, const char *loglvl)
- 	barrier();
- }
- 
--#ifdef CONFIG_PREEMPT
--#define S_PREEMPT " PREEMPT"
--#elif defined(CONFIG_PREEMPT_RT)
--#define S_PREEMPT " PREEMPT_RT"
--#else
--#define S_PREEMPT ""
--#endif
- #ifdef CONFIG_SMP
- #define S_SMP " SMP"
- #else
-@@ -282,8 +275,8 @@ static int __die(const char *str, int err, struct pt_regs *regs)
- 	static int die_counter;
- 	int ret;
- 
--	pr_emerg("Internal error: %s: %x [#%d]" S_PREEMPT S_SMP S_ISA "\n",
--	         str, err, ++die_counter);
-+	pr_emerg("Internal error: %s: %x [#%d] %s" S_SMP S_ISA "\n",
-+		 str, err, ++die_counter, preempt_model_str());
- 
- 	/* trap and error numbers are mostly meaningless on ARM */
- 	ret = notify_die(DIE_OOPS, str, regs, err, tsk->thread.trap_no, SIGSEGV);
-diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
-index 4e26bd356a482..0b6f92fcdb304 100644
---- a/arch/arm64/kernel/traps.c
-+++ b/arch/arm64/kernel/traps.c
-@@ -172,14 +172,6 @@ static void dump_kernel_instr(const char *lvl, struct pt_regs *regs)
- 	printk("%sCode: %s\n", lvl, str);
- }
- 
--#ifdef CONFIG_PREEMPT
--#define S_PREEMPT " PREEMPT"
--#elif defined(CONFIG_PREEMPT_RT)
--#define S_PREEMPT " PREEMPT_RT"
--#else
--#define S_PREEMPT ""
--#endif
--
- #define S_SMP " SMP"
- 
- static int __die(const char *str, long err, struct pt_regs *regs)
-@@ -187,8 +179,8 @@ static int __die(const char *str, long err, struct pt_regs *regs)
- 	static int die_counter;
- 	int ret;
- 
--	pr_emerg("Internal error: %s: %016lx [#%d]" S_PREEMPT S_SMP "\n",
--		 str, err, ++die_counter);
-+	pr_emerg("Internal error: %s: %016lx [#%d] %s" S_SMP "\n",
-+		 str, err, ++die_counter, preempt_model_str());
- 
- 	/* trap and error numbers are mostly meaningless on ARM */
- 	ret = notify_die(DIE_OOPS, str, regs, err, 0, SIGSEGV);
-diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
-index edf5cabe5dfdb..d6d77d92b3358 100644
---- a/arch/powerpc/kernel/traps.c
-+++ b/arch/powerpc/kernel/traps.c
-@@ -263,10 +263,10 @@ static int __die(const char *str, struct pt_regs *regs, long err)
- {
- 	printk("Oops: %s, sig: %ld [#%d]\n", str, err, ++die_counter);
- 
--	printk("%s PAGE_SIZE=%luK%s%s%s%s%s%s %s\n",
-+	printk("%s PAGE_SIZE=%luK%s %s %s%s%s%s %s\n",
- 	       IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? "LE" : "BE",
- 	       PAGE_SIZE / 1024, get_mmu_str(),
--	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT" : "",
-+	       preempt_model_str(),
- 	       IS_ENABLED(CONFIG_SMP) ? " SMP" : "",
- 	       IS_ENABLED(CONFIG_SMP) ? (" NR_CPUS=" __stringify(NR_CPUS)) : "",
- 	       debug_pagealloc_enabled() ? " DEBUG_PAGEALLOC" : "",
-diff --git a/arch/s390/kernel/dumpstack.c b/arch/s390/kernel/dumpstack.c
-index 1ecd0580561f6..7930fbab69dbb 100644
---- a/arch/s390/kernel/dumpstack.c
-+++ b/arch/s390/kernel/dumpstack.c
-@@ -198,13 +198,8 @@ void __noreturn die(struct pt_regs *regs, const char *str)
- 	console_verbose();
- 	spin_lock_irq(&die_lock);
- 	bust_spinlocks(1);
--	printk("%s: %04x ilc:%d [#%d] ", str, regs->int_code & 0xffff,
--	       regs->int_code >> 17, ++die_counter);
--#ifdef CONFIG_PREEMPT
--	pr_cont("PREEMPT ");
--#elif defined(CONFIG_PREEMPT_RT)
--	pr_cont("PREEMPT_RT ");
--#endif
-+	printk("%s: %04x ilc:%d [#%d] %s", str, regs->int_code & 0xffff,
-+	       regs->int_code >> 17, ++die_counter, preempt_model_str());
- 	pr_cont("SMP ");
- 	if (debug_pagealloc_enabled())
- 		pr_cont("DEBUG_PAGEALLOC");
-diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
-index a7d562697e50e..064b23a93c6fe 100644
---- a/arch/x86/kernel/dumpstack.c
-+++ b/arch/x86/kernel/dumpstack.c
-@@ -395,18 +395,13 @@ NOKPROBE_SYMBOL(oops_end);
- 
- static void __die_header(const char *str, struct pt_regs *regs, long err)
- {
--	const char *pr = "";
--
- 	/* Save the regs of the first oops for the executive summary later. */
- 	if (!die_counter)
- 		exec_summary_regs = *regs;
- 
--	if (IS_ENABLED(CONFIG_PREEMPTION))
--		pr = IS_ENABLED(CONFIG_PREEMPT_RT) ? " PREEMPT_RT" : " PREEMPT";
--
- 	printk(KERN_DEFAULT
- 	       "Oops: %s: %04lx [#%d]%s%s%s%s%s\n", str, err & 0xffff,
--	       ++die_counter, pr,
-+	       ++die_counter, preempt_model_str(),
- 	       IS_ENABLED(CONFIG_SMP)     ? " SMP"             : "",
- 	       debug_pagealloc_enabled()  ? " DEBUG_PAGEALLOC" : "",
- 	       IS_ENABLED(CONFIG_KASAN)   ? " KASAN"           : "",
-diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
-index 38092d21acf8e..0edba7d8df8c7 100644
---- a/arch/xtensa/kernel/traps.c
-+++ b/arch/xtensa/kernel/traps.c
-@@ -629,15 +629,11 @@ DEFINE_SPINLOCK(die_lock);
- void __noreturn die(const char * str, struct pt_regs * regs, long err)
- {
- 	static int die_counter;
--	const char *pr = "";
--
--	if (IS_ENABLED(CONFIG_PREEMPTION))
--		pr = IS_ENABLED(CONFIG_PREEMPT_RT) ? " PREEMPT_RT" : " PREEMPT";
- 
- 	console_verbose();
- 	spin_lock_irq(&die_lock);
- 
--	pr_info("%s: sig: %ld [#%d]%s\n", str, err, ++die_counter, pr);
-+	pr_info("%s: sig: %ld [#%d]%s\n", str, err, ++die_counter, preempt_model_str());
- 	show_regs(regs);
- 	if (!user_mode(regs))
- 		show_stack(NULL, (unsigned long *)regs->areg[1], KERN_INFO);
-diff --git a/include/linux/preempt.h b/include/linux/preempt.h
-index ca86235ac15c0..3e9808f2b5491 100644
---- a/include/linux/preempt.h
-+++ b/include/linux/preempt.h
-@@ -515,6 +515,8 @@ static inline bool preempt_model_rt(void)
- 	return IS_ENABLED(CONFIG_PREEMPT_RT);
- }
- 
-+extern const char *preempt_model_str(void);
-+
- /*
-  * Does the preemption model allow non-cooperative preemption?
+diff --git a/include/linux/phy.h b/include/linux/phy.h
+index 61a1bc81f597..e8a2e568cd32 100644
+--- a/include/linux/phy.h
++++ b/include/linux/phy.h
+@@ -934,6 +934,52 @@ struct phy_led {
+  *   supports (like interrupts)
+  * @driver_data: Static driver data
   *
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 95e40895a5190..8f5517dbe07d4 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -7642,6 +7642,30 @@ static inline void preempt_dynamic_init(void) { }
++ * @soft_reset: Perform a software reset on the PHY.
++ * @config_init: Initialize the PHY, including after a reset.
++ * @probe: Probe the PHY during device discovery.
++ * @get_features: Retrieve the PHY's supported features.
++ * @inband_caps: Query in-band signaling capabilities for a given interface.
++ * @config_inband: Configure in-band signaling for the PHY.
++ * @get_rate_matching: Get supported rate matching for a specific interface.
++ * @suspend: Suspend the PHY device, saving state if needed.
++ * @resume: Resume the PHY device, restoring state if needed.
++ * @config_aneg: Configure autonegotiation or force speed/duplex.
++ * @aneg_done: Check if autonegotiation is completed.
++ * @read_status: Retrieve the negotiated speed and duplex settings.
++ * @config_intr: Enable or disable PHY interrupts.
++ * @handle_interrupt: Handle PHY interrupts.
++ * @remove: Cleanup resources during PHY removal.
++ * @match_phy_device: Check if the driver matches a given PHY device.
++ * @set_wol: Configure Wake-on-LAN (WoL) settings.
++ * @get_wol: Retrieve current Wake-on-LAN (WoL) settings.
++ * @link_change_notify: Notify the driver of a link state change.
++ * @read_mmd: Read a register from a specific MMD.
++ * @write_mmd: Write a value to a specific MMD register.
++ * @read_page: Retrieve the current PHY register page.
++ * @write_page: Set the current PHY register page.
++ * @module_info: Retrieve size and type of the module EEPROM.
++ * @module_eeprom: Retrieve EEPROM data from the plug-in module.
++ * @cable_test_start: Start a cable test.
++ * @cable_test_tdr_start: Start a raw TDR (Time-Domain Reflectometry) cable test.
++ * @cable_test_get_status: Retrieve the status of an ongoing cable test.
++ * @get_sset_count: Retrieve the number of supported statistic counters.
++ * @get_strings: Retrieve the names of supported statistic counters.
++ * @get_stats: Retrieve values of supported statistic counters.
++ * @get_tunable: Retrieve the value of a PHY tunable parameter.
++ * @set_tunable: Configure a PHY tunable parameter.
++ * @set_loopback: Enable or disable PHY loopback mode.
++ * @get_sqi: Retrieve the signal quality indicator (SQI).
++ * @get_sqi_max: Retrieve the maximum supported signal quality indicator (SQI).
++ * @get_plca_cfg: Retrieve the current PLCA configuration.
++ * @set_plca_cfg: Configure PLCA settings for the PHY.
++ * @get_plca_status: Retrieve the current PLCA status information.
++ * @led_brightness_set: Configure the brightness of a PHY LED.
++ * @led_blink_set: Configure the blinking behavior of a PHY LED.
++ * @led_hw_is_supported: Check if hardware supports specified LED control rules.
++ * @led_hw_control_set: Configure hardware control for a PHY LED.
++ * @led_hw_control_get: Retrieve the hardware control rules for a PHY LED.
++ * @led_polarity_set: Configure the polarity modes of a PHY LED.
++ *
+  * All functions are optional. If config_aneg or read_status
+  * are not implemented, the phy core uses the genphy versions.
+  * Note that none of these functions should be called from
+@@ -951,277 +997,570 @@ struct phy_driver {
+ 	u32 flags;
+ 	const void *driver_data;
  
- #endif /* CONFIG_PREEMPT_DYNAMIC */
+-	/**
+-	 * @soft_reset: Called to issue a PHY software reset
+-	 */
+ 	int (*soft_reset)(struct phy_device *phydev);
+-
+-	/**
+-	 * @config_init: Called to initialize the PHY,
+-	 * including after a reset
+-	 */
+ 	int (*config_init)(struct phy_device *phydev);
+-
+-	/**
+-	 * @probe: Called during discovery.  Used to set
+-	 * up device-specific structures, if any
+-	 */
+ 	int (*probe)(struct phy_device *phydev);
+-
+-	/**
+-	 * @get_features: Probe the hardware to determine what
+-	 * abilities it has.  Should only set phydev->supported.
+-	 */
+ 	int (*get_features)(struct phy_device *phydev);
  
-+const char *preempt_model_str(void)
-+{
-+	if (IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY) && preempt_model_lazy()) {
-+		if (preempt_model_rt())
-+			return "PREEMPT_RT+LAZY";
-+		if (preempt_model_full())
-+			return "PREEMPT+LAZY";
-+		if (preempt_model_voluntary())
-+			return "VOLUNTARY+LAZY";
-+		if (preempt_model_none())
-+			return "NONE+LAZY";
-+	} else {
-+		if (preempt_model_rt())
-+			return "PREEMPT_RT";
-+		if (preempt_model_full())
-+			return "PREEMPT";
-+		if (preempt_model_voluntary())
-+			return "VOLUNTARY";
-+		if (preempt_model_none())
-+			return "NONE";
-+	}
-+	return "UNKNOWN-PREEMPT";
-+}
+-	/**
+-	 * @inband_caps: query whether in-band is supported for the given PHY
+-	 * interface mode. Returns a bitmask of bits defined by enum
+-	 * link_inband_signalling.
+-	 */
+ 	unsigned int (*inband_caps)(struct phy_device *phydev,
+ 				    phy_interface_t interface);
+-
+-	/**
+-	 * @config_inband: configure in-band mode for the PHY
+-	 */
+ 	int (*config_inband)(struct phy_device *phydev, unsigned int modes);
+ 
+-	/**
+-	 * @get_rate_matching: Get the supported type of rate matching for a
+-	 * particular phy interface. This is used by phy consumers to determine
+-	 * whether to advertise lower-speed modes for that interface. It is
+-	 * assumed that if a rate matching mode is supported on an interface,
+-	 * then that interface's rate can be adapted to all slower link speeds
+-	 * supported by the phy. If the interface is not supported, this should
+-	 * return %RATE_MATCH_NONE.
+-	 */
+ 	int (*get_rate_matching)(struct phy_device *phydev,
+ 				   phy_interface_t iface);
+ 
+ 	/* PHY Power Management */
+-	/** @suspend: Suspend the hardware, saving state if needed */
+ 	int (*suspend)(struct phy_device *phydev);
+-	/** @resume: Resume the hardware, restoring state if needed */
+ 	int (*resume)(struct phy_device *phydev);
+ 
+-	/**
+-	 * @config_aneg: Configures the advertisement and resets
+-	 * autonegotiation if phydev->autoneg is on,
+-	 * forces the speed to the current settings in phydev
+-	 * if phydev->autoneg is off
+-	 */
+ 	int (*config_aneg)(struct phy_device *phydev);
+-
+-	/** @aneg_done: Determines the auto negotiation result */
+ 	int (*aneg_done)(struct phy_device *phydev);
+ 
+-	/** @read_status: Determines the negotiated speed and duplex */
+ 	int (*read_status)(struct phy_device *phydev);
+ 
+-	/**
+-	 * @config_intr: Enables or disables interrupts.
+-	 * It should also clear any pending interrupts prior to enabling the
+-	 * IRQs and after disabling them.
+-	 */
+ 	int (*config_intr)(struct phy_device *phydev);
+-
+-	/** @handle_interrupt: Override default interrupt handling */
+ 	irqreturn_t (*handle_interrupt)(struct phy_device *phydev);
+ 
+-	/** @remove: Clears up any memory if needed */
+ 	void (*remove)(struct phy_device *phydev);
+ 
+-	/**
+-	 * @match_phy_device: Returns true if this is a suitable
+-	 * driver for the given phydev.	 If NULL, matching is based on
+-	 * phy_id and phy_id_mask.
+-	 */
+ 	int (*match_phy_device)(struct phy_device *phydev);
+ 
+-	/**
+-	 * @set_wol: Some devices (e.g. qnap TS-119P II) require PHY
+-	 * register changes to enable Wake on LAN, so set_wol is
+-	 * provided to be called in the ethernet driver's set_wol
+-	 * function.
+-	 */
+ 	int (*set_wol)(struct phy_device *dev, struct ethtool_wolinfo *wol);
+-
+-	/**
+-	 * @get_wol: See set_wol, but for checking whether Wake on LAN
+-	 * is enabled.
+-	 */
+ 	void (*get_wol)(struct phy_device *dev, struct ethtool_wolinfo *wol);
+ 
+-	/**
+-	 * @link_change_notify: Called to inform a PHY device driver
+-	 * when the core is about to change the link state. This
+-	 * callback is supposed to be used as fixup hook for drivers
+-	 * that need to take action when the link state
+-	 * changes. Drivers are by no means allowed to mess with the
+-	 * PHY device structure in their implementations.
+-	 */
+ 	void (*link_change_notify)(struct phy_device *dev);
+ 
+-	/**
+-	 * @read_mmd: PHY specific driver override for reading a MMD
+-	 * register.  This function is optional for PHY specific
+-	 * drivers.  When not provided, the default MMD read function
+-	 * will be used by phy_read_mmd(), which will use either a
+-	 * direct read for Clause 45 PHYs or an indirect read for
+-	 * Clause 22 PHYs.  devnum is the MMD device number within the
+-	 * PHY device, regnum is the register within the selected MMD
+-	 * device.
+-	 */
+ 	int (*read_mmd)(struct phy_device *dev, int devnum, u16 regnum);
+-
+-	/**
+-	 * @write_mmd: PHY specific driver override for writing a MMD
+-	 * register.  This function is optional for PHY specific
+-	 * drivers.  When not provided, the default MMD write function
+-	 * will be used by phy_write_mmd(), which will use either a
+-	 * direct write for Clause 45 PHYs, or an indirect write for
+-	 * Clause 22 PHYs.  devnum is the MMD device number within the
+-	 * PHY device, regnum is the register within the selected MMD
+-	 * device.  val is the value to be written.
+-	 */
+ 	int (*write_mmd)(struct phy_device *dev, int devnum, u16 regnum,
+ 			 u16 val);
+ 
+-	/** @read_page: Return the current PHY register page number */
+ 	int (*read_page)(struct phy_device *dev);
+-	/** @write_page: Set the current PHY register page number */
+ 	int (*write_page)(struct phy_device *dev, int page);
+ 
+-	/**
+-	 * @module_info: Get the size and type of the eeprom contained
+-	 * within a plug-in module
+-	 */
+ 	int (*module_info)(struct phy_device *dev,
+ 			   struct ethtool_modinfo *modinfo);
+-
+-	/**
+-	 * @module_eeprom: Get the eeprom information from the plug-in
+-	 * module
+-	 */
+ 	int (*module_eeprom)(struct phy_device *dev,
+ 			     struct ethtool_eeprom *ee, u8 *data);
+ 
+-	/** @cable_test_start: Start a cable test */
+ 	int (*cable_test_start)(struct phy_device *dev);
+-
+-	/**  @cable_test_tdr_start: Start a raw TDR cable test */
+ 	int (*cable_test_tdr_start)(struct phy_device *dev,
+ 				    const struct phy_tdr_config *config);
+-
+-	/**
+-	 * @cable_test_get_status: Once per second, or on interrupt,
+-	 * request the status of the test.
+-	 */
+ 	int (*cable_test_get_status)(struct phy_device *dev, bool *finished);
+ 
+ 	/* Get statistics from the PHY using ethtool */
+-	/** @get_sset_count: Number of statistic counters */
+ 	int (*get_sset_count)(struct phy_device *dev);
+-	/** @get_strings: Names of the statistic counters */
+ 	void (*get_strings)(struct phy_device *dev, u8 *data);
+-	/** @get_stats: Return the statistic counter values */
+ 	void (*get_stats)(struct phy_device *dev,
+ 			  struct ethtool_stats *stats, u64 *data);
+ 
+ 	/* Get and Set PHY tunables */
+-	/** @get_tunable: Return the value of a tunable */
+ 	int (*get_tunable)(struct phy_device *dev,
+ 			   struct ethtool_tunable *tuna, void *data);
+-	/** @set_tunable: Set the value of a tunable */
+ 	int (*set_tunable)(struct phy_device *dev,
+ 			    struct ethtool_tunable *tuna,
+ 			    const void *data);
+-	/** @set_loopback: Set the loopback mood of the PHY */
 +
- int io_schedule_prepare(void)
- {
- 	int old_iowait = current->in_iowait;
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index be62f0ea1814d..3861f53f9a434 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -4266,11 +4266,7 @@ print_trace_header(struct seq_file *m, struct trace_iterator *iter)
- 		   entries,
- 		   total,
- 		   buf->cpu,
--		   preempt_model_none()      ? "server" :
--		   preempt_model_voluntary() ? "desktop" :
--		   preempt_model_full()      ? "preempt" :
--		   preempt_model_rt()        ? "preempt_rt" :
--		   "unknown",
-+		   preempt_model_str(),
- 		   /* These are reserved for later use */
- 		   0, 0, 0, 0);
- #ifdef CONFIG_SMP
-diff --git a/lib/dump_stack.c b/lib/dump_stack.c
-index 388da1aea14a5..c3e59f8992279 100644
---- a/lib/dump_stack.c
-+++ b/lib/dump_stack.c
-@@ -54,7 +54,7 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
-  */
- void dump_stack_print_info(const char *log_lvl)
- {
--	printk("%sCPU: %d UID: %u PID: %d Comm: %.20s %s%s %s %.*s" BUILD_ID_FMT "\n",
-+	printk("%sCPU: %d UID: %u PID: %d Comm: %.20s %s%s %s %.*s %s" BUILD_ID_FMT "\n",
- 	       log_lvl, raw_smp_processor_id(),
- 	       __kuid_val(current_real_cred()->euid),
- 	       current->pid, current->comm,
-@@ -62,7 +62,7 @@ void dump_stack_print_info(const char *log_lvl)
- 	       print_tainted(),
- 	       init_utsname()->release,
- 	       (int)strcspn(init_utsname()->version, " "),
--	       init_utsname()->version, BUILD_ID_VAL);
-+	       init_utsname()->version, preempt_model_str(), BUILD_ID_VAL);
+ 	int (*set_loopback)(struct phy_device *dev, bool enable);
+-	/** @get_sqi: Get the signal quality indication */
++
+ 	int (*get_sqi)(struct phy_device *dev);
+-	/** @get_sqi_max: Get the maximum signal quality indication */
+ 	int (*get_sqi_max)(struct phy_device *dev);
  
- 	if (get_taint())
- 		printk("%s%s\n", log_lvl, print_tainted_verbose());
+ 	/* PLCA RS interface */
+-	/** @get_plca_cfg: Return the current PLCA configuration */
+ 	int (*get_plca_cfg)(struct phy_device *dev,
+ 			    struct phy_plca_cfg *plca_cfg);
+-	/** @set_plca_cfg: Set the PLCA configuration */
+ 	int (*set_plca_cfg)(struct phy_device *dev,
+ 			    const struct phy_plca_cfg *plca_cfg);
+-	/** @get_plca_status: Return the current PLCA status info */
+ 	int (*get_plca_status)(struct phy_device *dev,
+ 			       struct phy_plca_status *plca_st);
+ 
+-	/**
+-	 * @led_brightness_set: Set a PHY LED brightness. Index
+-	 * indicates which of the PHYs led should be set. Value
+-	 * follows the standard LED class meaning, e.g. LED_OFF,
+-	 * LED_HALF, LED_FULL.
+-	 */
+ 	int (*led_brightness_set)(struct phy_device *dev,
+ 				  u8 index, enum led_brightness value);
+-
+-	/**
+-	 * @led_blink_set: Set a PHY LED blinking.  Index indicates
+-	 * which of the PHYs led should be configured to blink. Delays
+-	 * are in milliseconds and if both are zero then a sensible
+-	 * default should be chosen.  The call should adjust the
+-	 * timings in that case and if it can't match the values
+-	 * specified exactly.
+-	 */
+ 	int (*led_blink_set)(struct phy_device *dev, u8 index,
+ 			     unsigned long *delay_on,
+ 			     unsigned long *delay_off);
+-	/**
+-	 * @led_hw_is_supported: Can the HW support the given rules.
+-	 * @dev: PHY device which has the LED
+-	 * @index: Which LED of the PHY device
+-	 * @rules The core is interested in these rules
+-	 *
+-	 * Return 0 if yes,  -EOPNOTSUPP if not, or an error code.
+-	 */
+ 	int (*led_hw_is_supported)(struct phy_device *dev, u8 index,
+ 				   unsigned long rules);
+-	/**
+-	 * @led_hw_control_set: Set the HW to control the LED
+-	 * @dev: PHY device which has the LED
+-	 * @index: Which LED of the PHY device
+-	 * @rules The rules used to control the LED
+-	 *
+-	 * Returns 0, or a an error code.
+-	 */
+ 	int (*led_hw_control_set)(struct phy_device *dev, u8 index,
+ 				  unsigned long rules);
+-	/**
+-	 * @led_hw_control_get: Get how the HW is controlling the LED
+-	 * @dev: PHY device which has the LED
+-	 * @index: Which LED of the PHY device
+-	 * @rules Pointer to the rules used to control the LED
+-	 *
+-	 * Set *@rules to how the HW is currently blinking. Returns 0
+-	 * on success, or a error code if the current blinking cannot
+-	 * be represented in rules, or some other error happens.
+-	 */
+ 	int (*led_hw_control_get)(struct phy_device *dev, u8 index,
+ 				  unsigned long *rules);
+-
+-	/**
+-	 * @led_polarity_set: Set the LED polarity modes
+-	 * @dev: PHY device which has the LED
+-	 * @index: Which LED of the PHY device
+-	 * @modes: bitmap of LED polarity modes
+-	 *
+-	 * Configure LED with all the required polarity modes in @modes
+-	 * to make it correctly turn ON or OFF.
+-	 *
+-	 * Returns 0, or an error code.
+-	 */
+ 	int (*led_polarity_set)(struct phy_device *dev, int index,
+ 				unsigned long modes);
+ };
++
++#if 0 /* For kernel-doc purposes only. */
++
++/**
++ * soft_reset - Issue a PHY software reset.
++ * @phydev: The PHY device to reset.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int soft_reset(struct phy_device *phydev);
++
++/**
++ * config_init - Initialize the PHY, including after a reset.
++ * @phydev: The PHY device to initialize.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int config_init(struct phy_device *phydev);
++
++/**
++ * probe - Set up device-specific structures during discovery.
++ * @phydev: The PHY device to probe.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int probe(struct phy_device *phydev);
++
++/**
++ * get_features - Probe the PHY hardware for supported abilities.
++ * @phydev: The PHY device to probe.
++ *
++ * Sets @phydev->supported with the PHY's capabilities.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int get_features(struct phy_device *phydev);
++
++/**
++ * inband_caps - Query in-band capabilities for a PHY interface.
++ * @phydev: The PHY device to query.
++ * @interface: The PHY interface mode to check.
++ *
++ * Returns a bitmask of supported in-band signaling modes (see
++ * enum link_inband_signalling) or 0 if unsupported.
++ */
++unsigned int inband_caps(struct phy_device *phydev, phy_interface_t interface);
++
++/**
++ * config_inband - Configure in-band mode for the PHY.
++ * @phydev: The PHY device to configure.
++ * @modes: A bitmask of in-band modes to configure.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int config_inband(struct phy_device *phydev, unsigned int modes);
++
++/**
++ * get_rate_matching - Get the supported type of rate matching for a PHY
++ *   interface.
++ * @phydev: The PHY device to query.
++ * @iface: The PHY interface to check.
++ *
++ * Returns the rate matching mode (see enum rate_match_mode) or
++ * %RATE_MATCH_NONE if not supported.
++ */
++int get_rate_matching(struct phy_device *phydev, phy_interface_t iface);
++
++/**
++ * suspend - Suspend the PHY device.
++ * @phydev: The PHY device to suspend.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int suspend(struct phy_device *phydev);
++
++/**
++ * resume - Resume the PHY device.
++ * @phydev: The PHY device to resume.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int resume(struct phy_device *phydev);
++
++/**
++ * config_aneg - Configure autonegotiation or force speed/duplex.
++ * @phydev: The PHY device to configure.
++ *
++ * If @phydev->autoneg is enabled, this configures advertisement
++ * and resets autonegotiation. Otherwise, it forces the speed and
++ * duplex settings from @phydev.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int config_aneg(struct phy_device *phydev);
++
++/**
++ * aneg_done - Check the result of autonegotiation.
++ * @phydev: The PHY device to check.
++ *
++ * Returns 0 if autonegotiation is not completed, 1 if it is completed,
++ * or a negative error code on failure.
++ */
++int aneg_done(struct phy_device *phydev);
++
++/**
++ * read_status - Get the negotiated speed and duplex settings.
++ * @phydev: The PHY device to query.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int read_status(struct phy_device *phydev);
++
++/**
++ * config_intr - Enable or disable interrupts for the PHY.
++ * @phydev: The PHY device to configure.
++ *
++ * Clears pending interrupts before enabling or after disabling IRQs.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int config_intr(struct phy_device *phydev);
++
++/**
++ * handle_interrupt - Handle a PHY interrupt.
++ * @phydev: The PHY device that triggered the interrupt.
++ *
++ * Returns an IRQ return code indicating the result of handling.
++ */
++irqreturn_t handle_interrupt(struct phy_device *phydev);
++
++/**
++ * remove - Clean up resources allocated during probe.
++ * @phydev: The PHY device to clean up.
++ */
++void remove(struct phy_device *phydev);
++
++/**
++ * match_phy_device - Check if this driver is suitable for the PHY device.
++ * @phydev: The PHY device to match.
++ *
++ * Returns 1 (true) if the driver is suitable for the given PHY device,
++ * or 0 (false) otherwise. If not provided, matching is based on
++ * `phy_id` and `phy_id_mask`.
++ */
++int match_phy_device(struct phy_device *phydev);
++
++/**
++ * set_wol - Configure Wake-on-LAN (WoL) settings for the PHY.
++ * @dev: The PHY device to configure.
++ * @wol: Pointer to a structure containing the WoL settings.
++ *
++ * Some devices require PHY register changes to enable WoL. This function
++ * should be called from the Ethernet driver's `set_wol` function to
++ * configure WoL settings.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int set_wol(struct phy_device *dev, struct ethtool_wolinfo *wol);
++
++/**
++ * get_wol - Retrieve the current Wake-on-LAN (WoL) settings for the PHY.
++ * @dev: The PHY device to query.
++ * @wol: Pointer to a structure where the WoL settings will be stored.
++ */
++void get_wol(struct phy_device *dev, struct ethtool_wolinfo *wol);
++
++/**
++ * link_change_notify - Notify the driver of a link state change.
++ * @dev: The PHY device whose link state is changing.
++ *
++ * Called to inform the PHY device driver when the core is about to change
++ * the link state. This callback should be used as a fixup hook for drivers
++ * that need to take specific actions during link state changes. Drivers
++ * must not modify the PHY device structure in this callback.
++ */
++void link_change_notify(struct phy_device *dev);
++
++/**
++ * read_mmd - Read a register from a specific MMD (Clause 45 or Clause 22).
++ * @dev: The PHY device to query.
++ * @devnum: The MMD device number within the PHY device.
++ * @regnum: The register number within the selected MMD device.
++ *
++ * Returns the register value on success or a negative error code on failure.
++ */
++int read_mmd(struct phy_device *dev, int devnum, u16 regnum);
++
++/**
++ * write_mmd - Write a value to a specific MMD register.
++ * @dev: The PHY device to configure.
++ * @devnum: The MMD device number within the PHY device.
++ * @regnum: The register number within the selected MMD device.
++ * @val: The value to write to the register.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int write_mmd(struct phy_device *dev, int devnum, u16 regnum, u16 val);
++
++/**
++ * read_page - Retrieve the current PHY register page number.
++ * @dev: The PHY device to query.
++ *
++ * Returns the current page number or a negative error code on failure.
++ */
++int read_page(struct phy_device *dev);
++
++/**
++ * write_page - Set the current PHY register page number.
++ * @dev: The PHY device to configure.
++ * @page: The page number to set.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int write_page(struct phy_device *dev, int page);
++
++/**
++ * module_info - Retrieve the size and type of the EEPROM in a plug-in module.
++ * @dev: The PHY device to query.
++ * @modinfo: Pointer to a structure where the module information will be stored.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int module_info(struct phy_device *dev, struct ethtool_modinfo *modinfo);
++
++/**
++ * module_eeprom - Retrieve EEPROM data from a plug-in module.
++ * @dev: The PHY device to query.
++ * @ee: Pointer to a structure specifying the EEPROM read parameters.
++ * @data: Buffer to store the retrieved EEPROM data.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int module_eeprom(struct phy_device *dev, struct ethtool_eeprom *ee, u8 *data);
++
++/**
++ * cable_test_start - Start a cable test.
++ * @dev: The PHY device to test.
++ *
++ * Initiates a cable test on the specified PHY device.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int cable_test_start(struct phy_device *dev);
++
++/**
++ * cable_test_tdr_start - Start a raw TDR (Time-Domain Reflectometry) cable test.
++ * @dev: The PHY device to test.
++ * @config: Configuration parameters for the TDR cable test.
++ *
++ * Initiates a raw TDR cable test with the provided configuration.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int cable_test_tdr_start(struct phy_device *dev,
++			 const struct phy_tdr_config *config);
++
++/**
++ * cable_test_get_status - Request the status of an ongoing cable test.
++ * @dev: The PHY device being tested.
++ * @finished: Pointer to a boolean where the completion status will be stored.
++ *
++ * This function should be called once per second or on an interrupt to check
++ * the status of an ongoing cable test.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int cable_test_get_status(struct phy_device *dev, bool *finished);
++
++/**
++ * get_sset_count - Retrieve the number of statistic counters.
++ * @dev: The PHY device to query.
++ *
++ * Returns the number of statistic counters available for the specified PHY
++ * device.
++ */
++int get_sset_count(struct phy_device *dev);
++
++/**
++ * get_strings - Retrieve the names of statistic counters.
++ * @dev: The PHY device to query.
++ * @data: Buffer where the statistic counter names will be stored.
++ *
++ * Populates the provided buffer with the names of statistic counters for
++ * the specified PHY device.
++ */
++void get_strings(struct phy_device *dev, u8 *data);
++
++/**
++ * get_stats - Retrieve the values of statistic counters.
++ * @dev: The PHY device to query.
++ * @stats: Pointer to the structure describing the statistics.
++ * @data: Buffer to store the statistic counter values.
++ *
++ * Retrieves the values of the statistic counters for the specified PHY device
++ * and stores them in the provided buffer.
++ */
++void get_stats(struct phy_device *dev,
++	       struct ethtool_stats *stats, u64 *data);
++
++/**
++ * get_tunable - Retrieve the value of a PHY tunable.
++ * @dev: The PHY device to query.
++ * @tuna: Pointer to a structure describing the tunable.
++ * @data: Buffer to store the tunable value.
++ *
++ * Retrieves the value of a tunable parameter for the specified PHY device.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int get_tunable(struct phy_device *dev,
++		struct ethtool_tunable *tuna, void *data);
++
++/**
++ * set_tunable - Set the value of a PHY tunable.
++ * @dev: The PHY device to configure.
++ * @tuna: Pointer to a structure describing the tunable.
++ * @data: Pointer to the value to set for the tunable parameter.
++ *
++ * Configures a tunable parameter for the specified PHY device.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int set_tunable(struct phy_device *dev,
++		struct ethtool_tunable *tuna,
++		const void *data);
++
++/**
++ * set_loopback - Configure the loopback mode of the PHY.
++ * @dev: The PHY device to configure.
++ * @enable: Boolean indicating whether to enable (true) or disable (false)
++ *   loopback mode.
++ *
++ * Configures the PHY device to operate in loopback mode.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int set_loopback(struct phy_device *dev, bool enable);
++
++/**
++ * get_sqi - Retrieve the signal quality index (SQI).
++ * @dev: The PHY device to query.
++ *
++ * Returns the current signal quality index for the specified PHY device,
++ * or a negative error code on failure.
++ */
++int get_sqi(struct phy_device *dev);
++
++/**
++ * get_sqi_max - Retrieve the maximum signal quality index (SQI).
++ * @dev: The PHY device to query.
++ *
++ * Returns the maximum signal quality index supported by the PHY device,
++ * or a negative error code on failure.
++ */
++int get_sqi_max(struct phy_device *dev);
++
++/**
++ * get_plca_cfg - Retrieve the current PLCA configuration.
++ * @dev: The PHY device to query.
++ * @plca_cfg: Pointer to a structure where the PLCA configuration will be stored.
++ *
++ * Retrieves the current PLCA (Physical Layer Collision Avoidance) configuration
++ * for the specified PHY device.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int get_plca_cfg(struct phy_device *dev, struct phy_plca_cfg *plca_cfg);
++
++/**
++ * set_plca_cfg - Configure the PLCA settings.
++ * @dev: The PHY device to configure.
++ * @plca_cfg: Pointer to a structure containing the desired PLCA configuration.
++ *
++ * Sets the PLCA configuration for the specified PHY device.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int set_plca_cfg(struct phy_device *dev, const struct phy_plca_cfg *plca_cfg);
++
++/**
++ * get_plca_status - Retrieve the current PLCA status information.
++ * @dev: The PHY device to query.
++ * @plca_st: Pointer to a structure where the PLCA status will be stored.
++ *
++ * Retrieves the current PLCA status for the specified PHY device.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int get_plca_status(struct phy_device *dev, struct phy_plca_status *plca_st);
++
++/**
++ * led_brightness_set - Configure the brightness of a PHY LED.
++ * @dev: The PHY device that controls the LED.
++ * @index: The index of the LED to configure.
++ * @value: The brightness value to set (e.g., LED_OFF, LED_HALF, LED_FULL).
++ *
++ * Sets the brightness of the specified LED for the given PHY device.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int led_brightness_set(struct phy_device *dev, u8 index,
++		       enum led_brightness value);
++
++/**
++ * led_blink_set - Configure the blinking behavior of a PHY LED.
++ * @dev: The PHY device that controls the LED.
++ * @index: The index of the LED to configure.
++ * @delay_on: Pointer to the duration (in milliseconds) for which the LED is on.
++ * @delay_off: Pointer to the duration (in milliseconds) for which the LED is
++ *   off.
++ *
++ * Configures the blinking behavior of the specified LED. If both @delay_on
++ * and @delay_off are zero, the function sets a default blinking configuration.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int led_blink_set(struct phy_device *dev, u8 index, unsigned long *delay_on,
++		  unsigned long *delay_off);
++
++/**
++ * led_hw_is_supported - Check if the hardware supports the specified LED rules.
++ * @dev: The PHY device that controls the LED.
++ * @index: The index of the LED to check.
++ * @rules: Bitmask of rules to check against the hardware capabilities.
++ *
++ * Determines if the hardware supports the specified rules for controlling the
++ * LED.
++ *
++ * Returns 0 if the rules are supported, -EOPNOTSUPP if not supported,
++ * or another negative error code on failure.
++ */
++int led_hw_is_supported(struct phy_device *dev, u8 index, unsigned long rules);
++
++/**
++ * led_hw_control_set - Configure hardware control for a PHY LED.
++ * @dev: The PHY device that controls the LED.
++ * @index: The index of the LED to configure.
++ * @rules: Bitmask of rules to use for hardware control.
++ *
++ * Sets the hardware control rules for the specified LED.
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int led_hw_control_set(struct phy_device *dev, u8 index, unsigned long rules);
++
++/**
++ * led_hw_control_get - Retrieve the current hardware control rules for a PHY
++ *   LED.
++ * @dev: The PHY device that controls the LED.
++ * @index: The index of the LED to query.
++ * @rules: Pointer to a variable where the current rules will be stored.
++ *
++ * Retrieves the hardware control rules currently applied to the specified LED.
++ *
++ * Returns 0 on success, or a negative error code if the rules cannot be
++ * represented or an error occurs.
++ */
++int led_hw_control_get(struct phy_device *dev, u8 index, unsigned long *rules);
++
++/**
++ * led_polarity_set - Configure the polarity modes of a PHY LED.
++ * @dev: The PHY device that controls the LED.
++ * @index: The index of the LED to configure.
++ * @modes: Bitmap of polarity modes to configure.
++ *
++ * Configures the LED polarity modes to ensure the LED operates correctly
++ * (turns on or off as needed).
++ *
++ * Returns 0 on success or a negative error code on failure.
++ */
++int led_polarity_set(struct phy_device *dev, int index, unsigned long modes);
++
++#endif
++
+ #define to_phy_driver(d) container_of_const(to_mdio_common_driver(d),		\
+ 				      struct phy_driver, mdiodrv)
+ 
 -- 
-2.45.2
+2.39.5
 
 
