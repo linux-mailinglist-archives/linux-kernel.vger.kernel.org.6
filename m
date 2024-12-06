@@ -1,83 +1,165 @@
-Return-Path: <linux-kernel+bounces-435160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A6B99E72B0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:12:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9F09E72DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:13:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A8F42834DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:12:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC5FC16E2F5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 323C720ADED;
-	Fri,  6 Dec 2024 15:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F144120C024;
+	Fri,  6 Dec 2024 15:12:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iFJYQ/Wj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j6tFYIKp"
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8765F207658;
-	Fri,  6 Dec 2024 15:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8734E20B1F7;
+	Fri,  6 Dec 2024 15:12:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733497912; cv=none; b=ul6dBQ3eWNy07Vdo5njyEtqkVL2DX7llxe2gPOpe8Bu1yZVBSVeHUNQ2cqp+DBqXHxOlbLqRfuwGtnGtyq3K+uVK6VIKpfH5uBM8x+WCDnUGBqLvie7jvcjWvjFuxZQHMtFkDdzGK9ZtT4fZRQPy8mwro5WaIkpc31XQEtCTBlE=
+	t=1733497957; cv=none; b=GOl8Cn1w5Y6lRW7lUmX6U7pHis4e/c5D9KbK8KbPr5WvyLd5ME2DEGcP3rHnNClcDHgPsmbPTQfFjfF8gR0G/eLCKfxKHj3rjD/IE4B9S2dBJj9zONN08sRD75aVS2mcozpxTd3CY/4ylkwAjLq1D0GGy4cA46q6hyeNQz26PwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733497912; c=relaxed/simple;
-	bh=rLWDrmR3zcc9vc638sdeGxk8lA7epp/bmqbSnvfZP+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9bsNkoVfQS8pS2c2Pmxb1d29MK6JcFIDTiNyzO71xpEhWwB0yBbBsTRa4jxrX25PGFnx2VmAjYuR1aKFnne5GQ452OoaI1lPKaRhPrbICvxeqAdgbEF4JJyNLyJ+BjQh2+YbyPR/ErzojJqFv/p9VpHN62A5GwnSSrj9rShPXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iFJYQ/Wj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38E9EC4CED1;
-	Fri,  6 Dec 2024 15:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733497912;
-	bh=rLWDrmR3zcc9vc638sdeGxk8lA7epp/bmqbSnvfZP+8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iFJYQ/WjdZDkPHG+AIBFmZL3Y+5Bb9IjO3j6XUrLY2weCp/01Np/t173fOVunnKh5
-	 PVtjtXSamZQz773ei78wwuR9B2U12VlF979jtUA7IHuCOyoekMxFy6Fgm3HMEgHJDI
-	 oZ2coAFV+6RprlWGhOQZoTGge+NiCwkExJhcwltryRAeBedP38xCuOpDayOPsg/Z4E
-	 i8tNiFBTHBR/zkDI9ATYd1JPYZ5ej1wlLgPGIrl0WCulpfOpMrpnMgtdUre8ZS88bO
-	 zcJagLiUmh7Bu//vzMmXG3hMYPUqGxIzk/MBVH+JN4LmZNjUHw3UntKKCZByHJ7Jvj
-	 fkz4EF8sWxC6g==
-Date: Fri, 6 Dec 2024 15:11:48 +0000
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next 3/4] netconsole: selftest: Delete all userdata
- keys
-Message-ID: <20241206151148.GX2581@kernel.org>
-References: <20241204-netcons_overflow_test-v1-0-a85a8d0ace21@debian.org>
- <20241204-netcons_overflow_test-v1-3-a85a8d0ace21@debian.org>
+	s=arc-20240116; t=1733497957; c=relaxed/simple;
+	bh=nBxHtdhQB5FLlrFFA527YiECEEEtLZr/yyEPczDfXps=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lYDNx8M8uesafvQ62CWLearjv07uIEgCXJfuUVMKd0i88oBHXiXzm2nOQA4lg517k5yta1CdP2tCVVBKEaZiB5KzU+6vV1sEyw+W0G3QEI54+qfXnkamn1J3GPX4UC3kchpQTsR5Sw9ADEceYOJRX//cXqbTOCvrtvjEK4N6eQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j6tFYIKp; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso27276671fa.0;
+        Fri, 06 Dec 2024 07:12:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733497953; x=1734102753; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W73679HmQ8KlBF8NSlHlv/uvxLcjA1X6Vo9+LFPoX88=;
+        b=j6tFYIKpy6upMel7KzLJZvBXYW0xnlrIVlMOOERPaIR0FBmTba6ZrAP7MQG/z9eVxE
+         t/QRe7zkIjYCoFlWlOBUi/bJXUFnJvXN2HWQxisPA76/iU8eiwaiqqm+qEpB3gpVXv/p
+         0CJDctrd2SF9anfRrt1SB0UoZp68tMU9Y8ZgRYUxKdFOm2CEKTSvh+nHWUyzVGnqyszW
+         EM8zK+QLvd/7+hzAeSOvfMn83tSMvVGjVbJLR595nS1wsyRd7Jgtxh1GbJWMsWfejRiC
+         8oYGEHtU36zNQxmbtSNoJczbS2L4ck84Nbjw/kXQLKGBzaqDuZVZkNJXSYSlbo/IUl0L
+         mmFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733497953; x=1734102753;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W73679HmQ8KlBF8NSlHlv/uvxLcjA1X6Vo9+LFPoX88=;
+        b=K3ZWGghwGZl7QnPB83ZgYIQ3fU4sro6bBM5s16DCEIFAcKZpSh4x9w4ewUtZCu4SAD
+         Q/ZIdrPIGtp4oyULrLAO5Fvc1N2uXAB0boEjAefzJV6SmHnND/i5+e03YTJRubpM7hyi
+         GCAuBtiekHHTovSZ00ACBviN+0zFv3dfqNYB7YqEMCIYs3yDSn+Dm5X018rGsY5Tr5/K
+         qE3tN1aoPYSIgnpQlL5cxtHlftWr5BoZzaDcRWpMwwtoVyQFcLd51LuNGag2v9nzoQZT
+         vOH3lbXsUbR89F8mPnXaTqM5PhrclDMo/dnSfHv6Ul74UxGnPkNPwTx7RqiT6vWFqbmJ
+         Qttw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0RLXvnvHEkv2/WCcKFC1X7DeT+1lL/boeStpaGAwFACpt88FKZ1SiTShT2vDLt25ZE/CjpqX8@vger.kernel.org, AJvYcCUWW4PpRlHV9qQ6LKFRMxOrXglh3vAwXTirTIFEU7qtuXucXoTtrWg4ItaST5IuiGrYhlyPMgtw49QR7K4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8mkh0F67MRcDYp75mmFbXdNFSKF3gCr5HcfiVU7ux7uHw1BJw
+	Si/i86P31vrnKmiMOH81XGjYIGN8h9MA/FHb1rznw4DpS4wBJdmy3grkxc9i//w/wfv87HvBW3o
+	fPiPvlquqOGt+hQ2On6Qlr0DP8g==
+X-Gm-Gg: ASbGnctMrgs88VHCYijUeWnpIkWWfE682RjPWf1yGN9lG+8SqslfAmAZ0TTkbX5ArMI
+	RgtLRXIOsXqLZCmpgXsC9kmyr3NouqDlp1B4ywDOXf9ahoA==
+X-Google-Smtp-Source: AGHT+IHwK0hARRMdu/ZslO7Jdrs0a5LHFRqi533TRz4TWoZ2vLhjJ6JLSNL1SEj9Z3vQyPSDb/d/7EYLL4Ue0VsfGbY=
+X-Received: by 2002:a05:6512:2342:b0:53d:f1cb:6258 with SMTP id
+ 2adb3069b0e04-53e2c2c23afmr2410284e87.32.1733497952400; Fri, 06 Dec 2024
+ 07:12:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204-netcons_overflow_test-v1-3-a85a8d0ace21@debian.org>
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-2-brgerst@gmail.com>
+ <20241206123207.GA2091@redhat.com> <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
+ <20241206142152.GB31748@redhat.com> <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
+In-Reply-To: <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Fri, 6 Dec 2024 10:12:21 -0500
+Message-ID: <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
+Subject: Re: [PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org, 
+	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04, 2024 at 08:40:44AM -0800, Breno Leitao wrote:
-> Modify the cleanup function to remove all userdata keys created during the
-> test, instead of just deleting a single predefined key. This ensures a
-> more thorough cleanup of temporary resources.
-> 
-> Move the KEY_PATH variable definition inside the set_user_data function
-> to reduce global variables and improve encapsulation. The KEY_PATH
-> variable is now dynamically created when setting user data.
-> 
-> This change has no effect on the current test, while improving an
-> upcoming test that would create several userdata entries.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
+On Fri, Dec 6, 2024 at 9:37=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> wro=
+te:
+>
+> On Fri, 6 Dec 2024 at 15:22, Oleg Nesterov <oleg@redhat.com> wrote:
+> >
+> > On 12/06, Ard Biesheuvel wrote:
+> > >
+> > > On Fri, 6 Dec 2024 at 13:32, Oleg Nesterov <oleg@redhat.com> wrote:
+> > > >
+> > > > +#ifdef CONFIG_STACKPROTECTOR
+> > > >  /* needed for Clang - see arch/x86/entry/entry.S */
+> > > >  PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
+> > > > +#endif
+> > > >
+> > > >  #ifdef CONFIG_X86_64
+> > > >  /*
+> > >
+> > > This shouldn't be necessary - PROVIDE() is only evaluated if a
+> > > reference exists to the symbol it defines.
+> > >
+> > > Also, I'm failing to reproduce this. Could you share your .config,
+> > > please, and the error that you get during the build?
+> >
+> > Please see the attached .config
+> >
+> > without the change above:
+> >
+> >         $ make bzImage
+> >           CALL    scripts/checksyscalls.sh
+> >           DESCEND objtool
+> >           INSTALL libsubcmd_headers
+> >           UPD     include/generated/utsversion.h
+> >           CC      init/version-timestamp.o
+> >           KSYMS   .tmp_vmlinux0.kallsyms.S
+> >           AS      .tmp_vmlinux0.kallsyms.o
+> >           LD      .tmp_vmlinux1
+> >         ./arch/x86/kernel/vmlinux.lds:154: undefined symbol `__stack_ch=
+k_guard' referenced in expression
+> >         scripts/Makefile.vmlinux:77: recipe for target 'vmlinux' failed
+> >         make[2]: *** [vmlinux] Error 1
+> >         /home/oleg/tmp/LINUX/Makefile:1225: recipe for target 'vmlinux'=
+ failed
+> >         make[1]: *** [vmlinux] Error 2
+> >         Makefile:251: recipe for target '__sub-make' failed
+> >         make: *** [__sub-make] Error 2
+> >
+> > perhaps this is because my toolchain is quite old,
+> >
+> >         $ ld -v
+> >         GNU ld version 2.25-17.fc23
+> >
+> > but according to Documentation/process/changes.rst
+> >
+> >         binutils               2.25             ld -v
+> >
+> > it is still supported.
+> >
+>
+> We're about to bump the minimum toolchain requirements to GCC 8.1 (and
+> whichever version of binutils was current at the time), so you might
+> want to consider upgrading.
+>
+> However, you are right that these are still supported today, and so we
+> need this fix this, especially because this has been backported to
+> older stable kernels too.
+>
+> For the patch,
+>
+> Acked-by: Ard Biesheuvel <ardb@kernel.org>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Using PROVIDES() is now unnecessary.
 
+
+Brian Gerst
 
