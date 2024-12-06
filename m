@@ -1,97 +1,153 @@
-Return-Path: <linux-kernel+bounces-435460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEB499E7812
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:27:17 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5E39E7813
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:27:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CD2A188622E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:27:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D79522826AD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80679204564;
-	Fri,  6 Dec 2024 18:27:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VGGpyjra"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E105E204563;
+	Fri,  6 Dec 2024 18:27:37 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29D11FFC47;
-	Fri,  6 Dec 2024 18:27:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803761FFC67
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 18:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733509631; cv=none; b=tkCaxKuQ4N2QihcgPN1g6JhNLiH5uIuhaFrLThOsPN/RDSIVvmreP3d4C/hBwyhUdRvmq7fKWCutmeqzWnYBB5gpFWn1Iz3gk4E09qam3qlJff0Jm4swtMOn14sK3F0IyiMBVX0i/OHI9CKjwd0Yyyvnv6fXSNhrigekeD1GAuQ=
+	t=1733509657; cv=none; b=TI7xQM5Gq11HmgWlfgbIsFlRZNb++K6adjJkFYvx26llMVdWiWBf49SleL2i5koCC+hV9p2CChxa0DhUJ/Kf8KrU2oLMtMBO3oJAhTxu0pddI9YuqKutIuLGHnIsK/gqpM4WkhfuhP+rN87I+oBBi8mfJJCTf+NBvgCuzZ9VOlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733509631; c=relaxed/simple;
-	bh=gQICDubasA8BeXox8HD9geLL3hPzglB8j/QXZHsNIsI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l8kP9fEDimmSnX0LYyKX4R88kZscSOuhoiTTmXtBofY0nQ18PWwZxAx9bEKH47It8pJtlSS57bnvjETUymE4BBV8EISKkK1I8ARxjVbkC0XtMSxfFUilmf0LQhIGOO2vAsBohQn+i+hdtaNISIL6DEcR2h632jhrLwabehy/GTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VGGpyjra; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BB14C4CED1;
-	Fri,  6 Dec 2024 18:27:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733509630;
-	bh=gQICDubasA8BeXox8HD9geLL3hPzglB8j/QXZHsNIsI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VGGpyjra5TaAPWlndu6mOoiPlK+tfoycDzN9aDTgWBDfwFLYdHBRkCvUMyfAy4gMz
-	 EQGyPmEhwAiByXGb5v/ACLE18ZUnUIcvHYpQUdz8oNqrdeJEVnLzRwhhMvAKCIUO53
-	 oKBLuO1hK24MQ582thKBCuYcEjkGS9U9vtn4pFsuCdJgmdpWdkpH5gL923iT9d+bGD
-	 509/nktnXyHEk+J0hDOQTOXW1DTpbHySCVoUcIXCBj0quqPsGHNTZCZk++I5jmGYqY
-	 t2U3qhGlK5Qv4X2LPu1kiFU/Hp177qAKnzQ/hlT0sLtJr9U+9SppQBeLLOOq5JTJzl
-	 2ZwfeGSE/NaPQ==
-Date: Fri, 6 Dec 2024 18:27:02 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com
-Subject: Re: [PATCH 6.6 000/676] 6.6.64-rc1 review
-Message-ID: <2904b937-bb47-4e38-903f-2277982b09e5@sirena.org.uk>
-References: <20241206143653.344873888@linuxfoundation.org>
+	s=arc-20240116; t=1733509657; c=relaxed/simple;
+	bh=TP6cJB68XMh3erEv6Zr2Biejau8BLyCLLrwZjLbctnA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RBBYHzuVo7iP2aQhFlz7yX0SvcUuvYPVBHcROfW1z1tpium2Cjows0NkENufarem7qsg530/5yqpRWaROPlvucyom6uF7zuQgg04P7Nc0p8Z9HjbX0xtaKcRqlnrYj5JgME4UbFvMGd0PHeoZXnlbWoT36PZuXsqM0zQrCY5BY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27B34C4CED1;
+	Fri,  6 Dec 2024 18:27:36 +0000 (UTC)
+Date: Fri, 6 Dec 2024 18:27:33 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] arm64 fixes for 6.13-rc2
+Message-ID: <Z1NCFeR4iBm5Bxqg@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KElxUtpqtXd90UhZ"
-Content-Disposition: inline
-In-Reply-To: <20241206143653.344873888@linuxfoundation.org>
-X-Cookie: Sales tax applies.
-
-
---KElxUtpqtXd90UhZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-On Fri, Dec 06, 2024 at 03:26:59PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.64 release.
-> There are 676 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+Hi Linus,
 
-Tested-by: Mark Brown <broonie@kernel.org>
+Please pull the arm64 fixes below. Nothing major, some left-overs from
+the recent merging window (MTE, coco) and some newly found issues like
+the ptrace() ones. More details in the tag. Thanks.
 
---KElxUtpqtXd90UhZ
-Content-Type: application/pgp-signature; name="signature.asc"
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
 
------BEGIN PGP SIGNATURE-----
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdTQfUACgkQJNaLcl1U
-h9C4aQf/eyTf3b3mfzyGC/0vIHe0WEMrrc4MhSbJsrQ3KQX9O4YE2YfppjpWlTYI
-RHbkrpB6HTtfxk75hEyWGFIpmM94lG3isr9+Mb53gH0FQQ4/hMxtmaGcZ/mnpLh4
-u+4A1I5V/yUWhLwfLV80PpVS2pKy286P/xw0CPRvvtO6IuloSG17HNzF3Bi6rPGD
-UTgz3PMUQUToFxxxNQbu2buZgGP5uO1lHoY2Fjh2ADXzRXp3Vp2Rxjod4c+clqU1
-X/+fR0oh+jhr3+1tRyJRkt7bwCvFMwca1fOKMODSorMoZ11XYi8/6v8ekTSCLZlr
-A0Zm1jgsWFteeHBsxP0o7oHBl2UC/A==
-=Qzz5
------END PGP SIGNATURE-----
+are available in the Git repository at:
 
---KElxUtpqtXd90UhZ--
+  git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux tags/arm64-fixes
+
+for you to fetch changes up to d60624f72d15862a96965b945f6ddfee9a1359e7:
+
+  arm64: ptrace: fix partial SETREGSET for NT_ARM_GCS (2024-12-05 18:05:51 +0000)
+
+----------------------------------------------------------------
+arm64 fixes for 6.13-rc2:
+
+- MTE/hugetlbfs:
+
+  - Set VM_MTE_ALLOWED in the arch code and remove it from the core code
+    for hugetlbfs mappings
+
+  - Fix copy_highpage() warning when the source is a huge page but not
+    MTE tagged, taking the wrong small page path
+
+- drivers/virt/coco:
+
+  - Add the pKVM and Arm CCA drivers under the arm64 maintainership
+
+  - Fix the pkvm driver to fall back to ioremap() (and warn) if the
+    MMIO_GUARD hypercall fails
+
+  - Keep the Arm CCA driver default 'n' rather than 'm'
+
+- A series of fixes for the arm64 ptrace() implementation, potentially
+  leading to the kernel consuming uninitialised stack variables when
+  PTRACE_SETREGSET is invoked with a length of 0
+
+- Fix zone_dma_limit calculation when RAM starts below 4GB and ZONE_DMA
+  is capped to this limit
+
+- Fix early boot warning with CONFIG_DEBUG_VIRTUAL=y triggered by a call
+  to page_to_phys() (from patch_map()) which checks pfn_valid() before
+  vmemmap has been set up
+
+- Do not clobber bits 15:8 of the ASID used for TTBR1_EL1 and TLBI ops
+  when the kernel assumes 8-bit ASIDs but running under a hypervisor on
+  a system that implements 16-bit ASIDs (found running Linux under
+  Parallels on Apple M4)
+
+- ACPI/IORT: Add PMCG platform information for HiSilicon HIP09A as it is
+  using the same SMMU PMCG as HIP09 and suffers from the same errata
+
+- Add GCS to cpucap_is_possible(), missed in the recent merge
+
+----------------------------------------------------------------
+Catalin Marinas (2):
+      arm64: Ensure bits ASID[15:8] are masked out when the kernel uses 8-bit ASIDs
+      arm64: mte: Fix copy_highpage() warning on hugetlb folios
+
+Mark Rutland (5):
+      arm64: patching: avoid early page_to_phys()
+      arm64: ptrace: fix partial SETREGSET for NT_ARM_TAGGED_ADDR_CTRL
+      arm64: ptrace: fix partial SETREGSET for NT_ARM_FPMR
+      arm64: ptrace: fix partial SETREGSET for NT_ARM_POE
+      arm64: ptrace: fix partial SETREGSET for NT_ARM_GCS
+
+Qinxin Xia (1):
+      ACPI/IORT: Add PMCG platform information for HiSilicon HIP09A
+
+Robin Murphy (1):
+      arm64: cpufeature: Add GCS to cpucap_is_possible()
+
+Suzuki K Poulose (1):
+      coco: virt: arm64: Do not enable cca guest driver by default
+
+Will Deacon (2):
+      drivers/virt: pkvm: Don't fail ioremap() call if MMIO_GUARD fails
+      MAINTAINERS: Add CCA and pKVM CoCO guest support to the ARM64 entry
+
+Yang Shi (2):
+      arm64: mte: set VM_MTE_ALLOWED for hugetlbfs at correct place
+      arm64: mm: Fix zone_dma_limit calculation
+
+ Documentation/arch/arm64/silicon-errata.rst   |  5 ++--
+ MAINTAINERS                                   |  2 ++
+ arch/arm64/include/asm/cpucaps.h              |  2 ++
+ arch/arm64/include/asm/cpufeature.h           |  3 +--
+ arch/arm64/include/asm/mman.h                 |  3 ++-
+ arch/arm64/kernel/patching.c                  | 21 +++++++---------
+ arch/arm64/kernel/ptrace.c                    | 36 +++++++++++++++++++++------
+ arch/arm64/mm/context.c                       |  4 +--
+ arch/arm64/mm/copypage.c                      |  8 +++---
+ arch/arm64/mm/init.c                          | 17 ++++++-------
+ drivers/acpi/arm64/iort.c                     |  2 ++
+ drivers/virt/coco/arm-cca-guest/Kconfig       |  1 -
+ drivers/virt/coco/pkvm-guest/arm-pkvm-guest.c |  6 +----
+ fs/hugetlbfs/inode.c                          |  2 +-
+ 14 files changed, 67 insertions(+), 45 deletions(-)
+
+-- 
+Catalin
 
