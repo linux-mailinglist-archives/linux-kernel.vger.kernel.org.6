@@ -1,129 +1,172 @@
-Return-Path: <linux-kernel+bounces-434984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E2A9E6DEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:18:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AACD9E6DF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:20:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2CB7188338A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:17:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 645C116638E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE979201033;
-	Fri,  6 Dec 2024 12:17:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90B5B201032;
+	Fri,  6 Dec 2024 12:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="SlRJ2MvL"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b="jTjz4S9w"
+Received: from mx.ssi.bg (mx.ssi.bg [193.238.174.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26FFF1FA246
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 296721FCD0F;
+	Fri,  6 Dec 2024 12:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.238.174.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733487468; cv=none; b=MnEPqZ50cR8IbN3iYeB03oSYzM9mDNs4KAdrJjFAI4Uw83eNQf2GtVNn1etVCi3ATO3thEh1XawrOSbeupOalAvx+iHaz6QdQOEnXhYZuIQH1qz7D9jOq8uwH/AoqPeTWXr+R07BfSrgDcdTNa6RRWzXlQpYLdE6NUGxZR+5R+8=
+	t=1733487591; cv=none; b=VW5uaGEls3c0W6BmVvD9YY8uHIueg/1O58txXOXcktZLMkgGQT0xubjIoZLEedLZaNlGRphIjkXx7JAE0itO4dgRnXXZjZIsIxBHNXh4KDYAOeUUcLVxCbwsyGIkUSiIrxgCXwuXyr5vjshBocDSKvYDxoroInc8aqTnY1nczqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733487468; c=relaxed/simple;
-	bh=5wkWfO+hWZHxAXWoCicEQ/+F+PuZSVuy3eYlYUHtBzA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fq/avUb5lG16LKZZran09HvOCL1NjvPgMeSB9uiU2cttYre6+Dr4QolpDAGjQN3G7wiPZ1+GcUGZz7wH/vIQreLiFFIhF/gCR6V8KZg2YFn39RnLN0aXMxreqa0UV3Xrt/9iblLLO27jbbqxqYMSxbDQlPr0PALp5t6siLc6MDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=SlRJ2MvL; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B63jgTx006170
-	for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2024 12:17:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kIc1Z7YLPTzeUFAcgBGUiX8WBgeyaJlURl7cKhkV0Mk=; b=SlRJ2MvL4q1Ukucx
-	79NnJZPYf3AwwiUZtxBtsKv4R79lDrO+981RLsN0/EeDxchjMAkki99q/m9NUTKu
-	7DkGHBiWamEjP7g9rGGQTZi0nawZ6Ysyih5WQYRC6YBZoxiHvxiYQyYiL87O9l09
-	WzQFlZ125EctI7FuHeLfqT8kuQ668ubQ2oM49CKXnCJxO6SHMWMnLUVRgjsYjW35
-	GfjtxMBWXzRtcSl1Ee3PvDy1boJ56zwwwwOv3RXPfXREieE9BhJbDx6KdTHPzi0f
-	caHK9N/ZpCSLgwnfj0tsCFUba8Sk8wXLsbOKlDQdLKwqRBGYatXxQMt2/VlrAlwG
-	qngQuQ==
-Received: from mail-qk1-f197.google.com (mail-qk1-f197.google.com [209.85.222.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bsn6sbn4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:17:45 +0000 (GMT)
-Received: by mail-qk1-f197.google.com with SMTP id af79cd13be357-7b68e634a16so14668485a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 04:17:45 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733487464; x=1734092264;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kIc1Z7YLPTzeUFAcgBGUiX8WBgeyaJlURl7cKhkV0Mk=;
-        b=YqJlb/yryXsbjRqZAlWZ34oBVQCiaYSEnQ797xk9wDVPEZ4AREg74b93duHj3Q3Lp7
-         hXU4SqcCmHtszkiky2dyLm/CfAxUnlLuKWRzh+UMfE6HmCq7z9RyDJ6q4tBadPCaBaTU
-         lkcLqYIrPIhDlgH8DitOXWNkhjiCL7/jR9TEfrn/zZzNUJqfVPeEXb+04DwtjG3J2dpl
-         TKNy2Uwi14/sbbbgt/vvZn4PUzuVRDqvUCa3T8KuX+vWq2kM7oBR6qoe466ckdApk7ej
-         HW9aUhACrAS/lldkERrPC7a1qL+OJjZs2SCb5VPwhScruVMro6AIVHHERocCwWDqWUUP
-         BDIw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5+w7jG+qjfnaPHVHbGCFHzmWQcy47RaTcQG+CIx6YmniMGpwavk4wj3MKgSvhy3QrtOXT5lQrjrk6b6I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTr/VPxz3Zz8BGRBo/9yp7rztYYyx9QaJOkQmrVpOMtNVl3hga
-	WUXnDg2gOEy5bn9UPUimY/s5ij717v/OZSZYkzKnadZGKG0HNApxIftO/Kj4nWZg21szmtZe+Pc
-	Ti0nyclTHzzEZzthkjF7h4k27IvGTvonKf6WidH9v1ZsH7KXQxwOrIK7EVaCPPXI=
-X-Gm-Gg: ASbGncsavudex7fdXCOSjnSwE7UlL2kw5PFW5AAG7yL7c8nd4ySE2e5rsqnP7Y2V/hq
-	1f6nbhZrViY8bvcaHZpsX7mOM1D3Hr4khJVI7/PU8s7vIC/CGZQ+5grYPAnsV2H8wAg1BxNes9a
-	Ts2HL7ByVrv8G6xyT7TS7VFYGQwv7I3f2S9Fk8s86pZQwf2ayeOmazQJWSOynj2yAMv/lsc4YnX
-	hLc3r+wU16gp/wKhdfCTuecsf/9kaSEBCtnNGbMMJMQumqn4AKaKiRXZx8s57Dj5iErQtf5N0f6
-	xZlB8w1updl8u+cjj4PVVMFMRgjYStE=
-X-Received: by 2002:a05:620a:190d:b0:7b1:1313:cf42 with SMTP id af79cd13be357-7b6bcb5c27cmr209648585a.14.1733487464059;
-        Fri, 06 Dec 2024 04:17:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHfEbyz/to2eX0ORRsVQ69uE30/rqBFU89xE7K3MXKBCOC+9NJDlOjylc2i3dLlYap3aPAV7Q==
-X-Received: by 2002:a05:620a:190d:b0:7b1:1313:cf42 with SMTP id af79cd13be357-7b6bcb5c27cmr209647185a.14.1733487463721;
-        Fri, 06 Dec 2024 04:17:43 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e96b0csm231761666b.58.2024.12.06.04.17.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 04:17:43 -0800 (PST)
-Message-ID: <da297f8a-a925-4ae0-9cd0-c4b7f8556c49@oss.qualcomm.com>
-Date: Fri, 6 Dec 2024 13:17:41 +0100
+	s=arc-20240116; t=1733487591; c=relaxed/simple;
+	bh=4siyzwtx0SoKFEFM6fcZ0GN4NJVmR4GccRdwKuO/JY4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=r3l/32dXs6EMMTp8IALYVm1DySJ7TL9aiM62Em31fhYwg9wN+xJFVlraTwLxQ4hvih5bfLJYNnq7HIcLztsf1IucgDdy8WT+2Y+lrIog5X0ql/pErGLpHQ3XKUhFrjmeEZsRo3vNSj9nc7vHFVMrfqFC7GB6m6OTejqrJoN34ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg; spf=pass smtp.mailfrom=ssi.bg; dkim=pass (4096-bit key) header.d=ssi.bg header.i=@ssi.bg header.b=jTjz4S9w; arc=none smtp.client-ip=193.238.174.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=ssi.bg
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ssi.bg
+Received: from mx.ssi.bg (localhost [127.0.0.1])
+	by mx.ssi.bg (Potsfix) with ESMTP id 5653D21D92;
+	Fri,  6 Dec 2024 14:19:40 +0200 (EET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ssi.bg; h=cc:cc
+	:content-type:content-type:date:from:from:in-reply-to:message-id
+	:mime-version:references:reply-to:subject:subject:to:to; s=ssi;
+	 bh=QvUxd/vxMw8Bwuy6xT8sVlJO+DjkY4zLPCCgu87quuk=; b=jTjz4S9wmd54
+	L6Dz1c6a27LaRJin11iO1/LuIDOevuvoLPkbtFgX8a9QeF+gk3Ke7ELKws4UM/wI
+	Azo277jpuO6dL16+u6kzaO4XWjIKd2oZko3mhOlnhgqboDkTx+QByVc3J0wxQWGv
+	BPhzSfB2p/spiH5Qlj6JavO65+dbOaxEtpzeJyU7aMrTMdcIoQyI02n9V6EC3cpI
+	OFhTpOfPLOUUwI2aDh4SDcYZ0w7LwI6N69heV52JFXt0MJ52b2z5+DC7G2RUU8Pt
+	47r8bhTmj+hf3eM61bUAnMMvdSFeGvqwDKlGOkP8RhoDx+LjFJKcarqGd+8UAsg3
+	5xgDSC1IMtdCP8OTzIitCsAPE8ev+Accj6IoDPSdL6380Io7pOO54slJach30Lps
+	fen1j9m5NDXNr0HLl3mgSb0FWpvM7lNpn393nmw+1ysq9TVZSrfqlxOomwFMYKY/
+	Ub26103Wle4wX/hGBv0s5fi6Qmf/A/yspu9aSOydu6A7KbW1l8hnVDawyWTd2qXQ
+	osu+i30K3PfiMBclcihy81Km6SmmF7a1FhPlBcgePEEd4KxJxJglyRHgbAFvc2eg
+	MrxupfqsU6xYRI9808PMbE/8HxhmTFbbXG2PKeuDIBpHb78GOEfNaBHZRzdY16En
+	gWsUWiNkgzoxMOsC7bIWmgECURJCLUc=
+Received: from ink.ssi.bg (ink.ssi.bg [193.238.174.40])
+	by mx.ssi.bg (Potsfix) with ESMTPS;
+	Fri,  6 Dec 2024 14:19:39 +0200 (EET)
+Received: from ja.ssi.bg (unknown [213.16.62.126])
+	by ink.ssi.bg (Postfix) with ESMTPSA id 4E9EB15F19;
+	Fri,  6 Dec 2024 14:19:31 +0200 (EET)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by ja.ssi.bg (8.18.1/8.17.1) with ESMTP id 4B6CJLt6022576;
+	Fri, 6 Dec 2024 14:19:22 +0200
+Date: Fri, 6 Dec 2024 14:19:21 +0200 (EET)
+From: Julian Anastasov <ja@ssi.bg>
+To: David Laight <David.Laight@ACULAB.COM>
+cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "'Naresh Kamboju'" <naresh.kamboju@linaro.org>,
+        "'Dan Carpenter'" <dan.carpenter@linaro.org>,
+        "'pablo@netfilter.org'" <pablo@netfilter.org>,
+        "'open list'" <linux-kernel@vger.kernel.org>,
+        "'lkft-triage@lists.linaro.org'" <lkft-triage@lists.linaro.org>,
+        "'Linux Regressions'" <regressions@lists.linux.dev>,
+        "'Linux ARM'" <linux-arm-kernel@lists.infradead.org>,
+        "'netfilter-devel@vger.kernel.org'" <netfilter-devel@vger.kernel.org>,
+        "'Arnd Bergmann'" <arnd@arndb.de>,
+        "'Anders Roxell'" <anders.roxell@linaro.org>,
+        "'Johannes Berg'" <johannes.berg@intel.com>,
+        "'toke@kernel.org'" <toke@kernel.org>,
+        "'Al Viro'" <viro@zeniv.linux.org.uk>,
+        "'kernel@jfarr.cc'" <kernel@jfarr.cc>,
+        "'kees@kernel.org'" <kees@kernel.org>
+Subject: Re: [PATCH net] Fix clamp() of ip_vs_conn_tab on small memory
+ systems.
+In-Reply-To: <33893212b1cc4a418cec09aeeed0a9fc@AcuMS.aculab.com>
+Message-ID: <5ec10e7c-d050-dab8-1f1b-d0ca2d922eef@ssi.bg>
+References: <33893212b1cc4a418cec09aeeed0a9fc@AcuMS.aculab.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] arm64: dts: qcom: qcs8300-ride: enable ethernet0
-To: Yijie Yang <quic_yijiyang@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20241206-dts_qcs8300-v5-0-422e4fda292d@quicinc.com>
- <20241206-dts_qcs8300-v5-2-422e4fda292d@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241206-dts_qcs8300-v5-2-422e4fda292d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: fvttYEMPdRPvexJtYdBVAoZ8yu_XKlxJ
-X-Proofpoint-ORIG-GUID: fvttYEMPdRPvexJtYdBVAoZ8yu_XKlxJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 impostorscore=0
- suspectscore=0 clxscore=1015 malwarescore=0 lowpriorityscore=0
- phishscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=752 adultscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060091
+Content-Type: text/plain; charset=US-ASCII
 
-On 6.12.2024 2:35 AM, Yijie Yang wrote:
-> Enable the SerDes PHY on qcs8300-ride. Add the MDC and MDIO pin functions
-> for ethernet0 on qcs8300-ride. Enable the ethernet port on qcs8300-ride.
+
+	Hello,
+
+On Fri, 6 Dec 2024, David Laight wrote:
+
+> The intention of the code seems to be that the minimum table
+> size should be 256 (1 << min).
+> However the code uses max = clamp(20, 5, max_avail) which implies
+
+	Actually, it tries to reduce max=20 (max possible) below
+max_avail: [8 .. max_avail]. Not sure what 5 is here...
+
+> the author thought max_avail could be less than 5.
+> But clamp(val, min, max) is only well defined for max >= min.
+> If max < min whether is returns min or max depends on the order of
+> the comparisons.
+
+	Looks like max_avail goes below 8 ? What value you see
+for such small system?
+
+> Change to clamp(max_avail, 5, 20) which has the expected behaviour.
+
+	It should be clamp(max_avail, 8, 20)
+
 > 
-> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+> Replace the clamp_val() on the line below with clamp().
+> clamp_val() is just 'an accident waiting to happen' and not needed here.
+
+	OK
+
+> Fixes: 4f325e26277b6
+> (Although I actually doubt the code is used on small memory systems.)
+> 
+> Detected by compile time checks added to clamp(), specifically:
+> minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
+
+	Existing or new check? Does it happen that max_avail
+is a constant, so that a compile check triggers?
+
+> 
+> Signed-off-by: David Laight <david.laight@aculab.com>
+
+	The code below looks ok to me but can you change the
+comments above to more correctly specify the values and if the
+problem is that max_avail goes below 8 (min).
+
 > ---
+>  net/netfilter/ipvs/ip_vs_conn.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_conn.c
+> index 98d7dbe3d787..c0289f83f96d 100644
+> --- a/net/netfilter/ipvs/ip_vs_conn.c
+> +++ b/net/netfilter/ipvs/ip_vs_conn.c
+> @@ -1495,8 +1495,8 @@ int __init ip_vs_conn_init(void)
+>  	max_avail -= 2;		/* ~4 in hash row */
+>  	max_avail -= 1;		/* IPVS up to 1/2 of mem */
+>  	max_avail -= order_base_2(sizeof(struct ip_vs_conn));
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+	More likely we can additionally clamp max_avail here:
 
-Konrad
+	max_avail = max(min, max_avail);
+
+	But your solution solves the problem with less lines.
+
+> -	max = clamp(max, min, max_avail);
+> -	ip_vs_conn_tab_bits = clamp_val(ip_vs_conn_tab_bits, min, max);
+> +	max = clamp(max_avail, min, max);
+> +	ip_vs_conn_tab_bits = clamp(ip_vs_conn_tab_bits, min, max);
+>  	ip_vs_conn_tab_size = 1 << ip_vs_conn_tab_bits;
+>  	ip_vs_conn_tab_mask = ip_vs_conn_tab_size - 1;
+>  
+> -- 
+> 2.17.1
+
+Regards
+
+--
+Julian Anastasov <ja@ssi.bg>
+
 
