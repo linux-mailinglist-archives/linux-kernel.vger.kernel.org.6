@@ -1,137 +1,149 @@
-Return-Path: <linux-kernel+bounces-435594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C6529E79EA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:14:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C2C59E79FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:23:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A747283436
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:14:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 725C918819D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B6A1FFC67;
-	Fri,  6 Dec 2024 20:14:38 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0666B1D61A3;
+	Fri,  6 Dec 2024 20:23:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=cirno.name header.i=@cirno.name header.b="XpptpqrD"
+Received: from forward206d.mail.yandex.net (forward206d.mail.yandex.net [178.154.239.215])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B45EA1DA619
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CAAA1C548A;
+	Fri,  6 Dec 2024 20:23:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733516078; cv=none; b=FcACHc/X2MzUzhWvrnfF3qU4qovqcbNeMtvjv2SquHsoB0RLVi73WdI3/b4DybqBZN9RkiYuMnxfkMHaNwQAtLxgmWM78CBQVNzYB98LvUYDzeOUT+Jh/DxUaj9T/KDb+o6E60E9rM4EZQKxj6KGedVnWxsZvmgwHbwvL1AQfNg=
+	t=1733516624; cv=none; b=fhtrTrwCv8FVwvxADf7KM2JpaWC7gNbmM8dT10DRugA22KVyskOVlatqRVefkR3OdVv498omej5kdV5kX1J57jZwVSa2EE8zteBiZgRsntG5tVo8B0f0J6j6sf5gc0llW29mt0msNiNvINn4xd84oKDtW0N5dEwHPPqyy7/9gLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733516078; c=relaxed/simple;
-	bh=crdrIU87cmRDRZn0i0zAKUBSB8zhN6TjPShRglgziQc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=Zhzz31g4/r7TKLccOvMxXFfHfClFPfNMDJTv3gFUnUGbDPznJTGUowUquOGNQ+65AI3zLb4PfgOnSTvtgPDtnwWApzyDlGuT/tyrDxJ4okE97djOn40x+p6KKVXcaYm0fYclNYW6XEunn6Ej92fcDOyg0wre/RvEoU8L+5O22sQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-265-SKHl7LnjO8e01avqgVl2jQ-1; Fri, 06 Dec 2024 20:14:33 +0000
-X-MC-Unique: SKHl7LnjO8e01avqgVl2jQ-1
-X-Mimecast-MFC-AGG-ID: SKHl7LnjO8e01avqgVl2jQ
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
- 2024 20:13:46 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Dec 2024 20:13:46 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>
-CC: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Peter Rosin
-	<peda@axentia.se>, Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
-	<lars@metafoo.de>
-Subject: RE: [PATCH v1 1/4] iio: afe: rescale: Don't use ^ for booleans
-Thread-Topic: [PATCH v1 1/4] iio: afe: rescale: Don't use ^ for booleans
-Thread-Index: AQHbRezm1jhKv1T7YkOoxbKwnK16YbLZNdEggAAi1wCAAEqwwA==
-Date: Fri, 6 Dec 2024 20:13:46 +0000
-Message-ID: <2a7a87267feb4c35ad9ef493236b6035@AcuMS.aculab.com>
-References: <20241204013620.862943-1-andriy.shevchenko@linux.intel.com>
- <20241204013620.862943-2-andriy.shevchenko@linux.intel.com>
- <88f281a31d8342c691b2a6b2666d4e91@AcuMS.aculab.com>
- <Z1MWBsCJsTHsqNey@smile.fi.intel.com>
-In-Reply-To: <Z1MWBsCJsTHsqNey@smile.fi.intel.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733516624; c=relaxed/simple;
+	bh=nJHqvSDEzZWwHL/QPBmZ+zkpjjhrSiB8uAjMJNM1B+I=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=rwsP2RLIS4vGLCIlSwzzIYdVyTQekq844xEuWx0+Dkf6BZ0tK1BZnvFrHh2IA6mt88y8wIu/AtgX8QAOQ4ncCogjKRZOzDeIQoPOJ98fw0oN01oo8MEr7znx1SyWGkWgE5z/oGkh+F25eEZzE9PMcD/jwBVbxXeA0789xvz/NCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cirno.name; spf=pass smtp.mailfrom=cirno.name; dkim=fail (0-bit key) header.d=cirno.name header.i=@cirno.name header.b=XpptpqrD reason="key not found in DNS"; arc=none smtp.client-ip=178.154.239.215
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cirno.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cirno.name
+Received: from forward100d.mail.yandex.net (forward100d.mail.yandex.net [IPv6:2a02:6b8:c41:1300:1:45:d181:d100])
+	by forward206d.mail.yandex.net (Yandex) with ESMTPS id F076F625CF;
+	Fri,  6 Dec 2024 23:16:41 +0300 (MSK)
+Received: from mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:26a5:0:640:547b:0])
+	by forward100d.mail.yandex.net (Yandex) with ESMTPS id 682CA60023;
+	Fri,  6 Dec 2024 23:16:34 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id UGps2S5OmW20-snDwSBOC;
+	Fri, 06 Dec 2024 23:16:33 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirno.name; s=mail;
+	t=1733516193; bh=tSqt+eXRv/K6O8RPvlHIS317PkdnNTHI6BdZrqilh44=;
+	h=Subject:From:Cc:To:Date:Message-ID;
+	b=XpptpqrDLIolv0A/quUuGeXn+lzt53oKawT8YYQVOZCgW1jLFg/mnWMRz7gLtBkmy
+	 ErjdCCOFkZk0BUDn4qqsYYtqwUVj+awWwynSHR5Hnh+83Tx6sq2aEq7I45J1n+I82p
+	 yEkXFcFBspU/fielyRYDkcTqnvg4sWRO74kNEnR4=
+Authentication-Results: mail-nwsmtp-smtp-production-main-99.klg.yp-c.yandex.net; dkim=pass header.i=@cirno.name
+Message-ID: <7d73e19b-f264-4c31-8f5a-fb17b6bc0600@cirno.name>
+Date: Sat, 7 Dec 2024 04:16:29 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: CHsCgMuE8csZy7W2G12vYy2A6sTsgbnl2pBqn96VMbw_1733516072
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+To: Sergey Senozhatsky <senozhatsky@chromium.org>,
+ Minchan Kim <minchan@kernel.org>
+Cc: Jens Axboe <axboe@kernel.dk>, Nick Terrell <terrelln@fb.com>,
+ linux-kernel@vger.kernel.org, linux-block@vger.kernel.org
+From: LiviaMedeiros <9@cirno.name>
+Subject: [PATCH] zram: make default ZSTD compression level configurable
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: 'Andy Shevchenko'
-> Sent: 06 December 2024 15:20
-...
-> ...
->=20
-> > >  =09=09 * If only one of the rescaler elements or the schan scale is
-> > >  =09=09 * negative, the combined scale is negative.
-> > >  =09=09 */
-> > > -=09=09if (neg ^ ((rescale->numerator < 0) ^ (rescale->denominator < =
-0))) {
-> > > +=09=09if (neg !=3D (rescale->numerator < 0 || rescale->denominator <=
- 0)) {
-> >
-> > That is wrong, the || would also need to be !=3D.
->=20
-> Why do you think so? Maybe it's comment(s) that is(are) wrong?
+From: LiviaMedeiros <livia@cirno.name>
 
-The old code certainly negates for each of them - so you can get the double
-and triple negative cases.
-So believe the code not the comment.
->=20
-> > Which will all generate real pile of horrid code.
-> > (I think the x86 version will stun you.)
->=20
-> I think your remark is based on something, can you show the output to ela=
-borate
-> what exactly becomes horrible in this case?
+Add support for configuring the default ZSTD compression level for zram
+devices via the CONFIG_ZRAM_DEFAULT_ZSTD_LEVEL configuration option.
+If this option is not set, fallback to zstd_default_clevel() is used.
 
-Ok it isn't quite as bad as I thought because all the compilers will use xo=
-r
-for the equality test on sign bits. See https://www.godbolt.org/z/qxz5KPcTh
-So changing ^ to !=3D makes no difference at all.
+Signed-off-by: LiviaMedeiros <livia@cirno.name>
+---
+Disclaimer:
+This probably should be implemented in userspace, I failed to find 
+relevant options in zram-init (v11.1) scripts nor zramctl (v2.40.2) utility.
+I also failed to make something like `echo "algo=zstd level=9" > 
+/sys/block/zram3/algorithm_params` work in runtime, but I assume I'm 
+just dumb and/or it requires extra steps.
 
-But f3() shows the sort of thing that can happen.
-Sometimes made worse because the x86 SETcc instruction only set 8bit regist=
-ers.
-(Odd since they got added for the 386)
+Nevertheless IMHO it makes sense to set defaults in kernel config: when 
+kernel is built for specific hardware, it would be handy to adjust it 
+depending on amount of extra CPU power or extra RAM.
+The main usecase for adjusting the compression level that I see is 
+making zram device capable of holding _a lot_ of transparently 
+compressed text data, fitting into RAM at the cost of additional CPU time.
+Hence this patch implements this only for zstd backend, which provides 
+the best compression ratio potential (perhaps implementing xz/LZMA2 
+backend would also help with it).
+If this approach looks feasible, it can be expanded to other algos as well.
 
-=09David
+I'm open for any suggestions.
+---
+  drivers/block/zram/Kconfig        | 10 ++++++++++
+  drivers/block/zram/backend_zstd.c |  8 +++++++-
+  2 files changed, 17 insertions(+), 1 deletion(-)
 
->=20
-> > I'm guessing that somewhere there is a:
-> > =09neg =3D value < 0;
->=20
-> Nope.
->=20
-> > Provided all the values are the same size (eg int/s32), in which case:
-> > =09neg =3D value;
-> > ...
-> > =09if ((neg ^ rescale->numerator ^ rescale->denominator) < 0)
-> > will be the desired test.
->=20
-> --
-> With Best Regards,
-> Andy Shevchenko
->=20
+diff --git a/drivers/block/zram/Kconfig b/drivers/block/zram/Kconfig
+index 402b7b175863..8a5e6da39834 100644
+--- a/drivers/block/zram/Kconfig
++++ b/drivers/block/zram/Kconfig
+@@ -32,6 +32,16 @@ config ZRAM_BACKEND_ZSTD
+  	select ZSTD_COMPRESS
+  	select ZSTD_DECOMPRESS
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
++config ZRAM_DEFAULT_ZSTD_LEVEL
++	int "Default zstd compression level"
++	depends on ZRAM_BACKEND_ZSTD
++	range 1 22
++	default 3
++	help
++	  Sets the default compression level for zstd compression in zram.
++	  The value can range from 1 (fastest) to 22 (maximum compression).
++	  If not set, the system uses the zstd default (typically 3).
++
+  config ZRAM_BACKEND_DEFLATE
+  	bool "deflate compression support"
+  	depends on ZRAM
+diff --git a/drivers/block/zram/backend_zstd.c 
+b/drivers/block/zram/backend_zstd.c
+index 1184c0036f44..af7b919ec11c 100644
+--- a/drivers/block/zram/backend_zstd.c
++++ b/drivers/block/zram/backend_zstd.c
+@@ -7,6 +7,12 @@
 
+  #include "backend_zstd.h"
+
++#ifdef CONFIG_ZRAM_DEFAULT_ZSTD_LEVEL
++#define ZRAM_DEFAULT_ZSTD_LEVEL CONFIG_ZRAM_DEFAULT_ZSTD_LEVEL
++#else
++#define ZRAM_DEFAULT_ZSTD_LEVEL zstd_default_clevel()
++#endif
++
+  struct zstd_ctx {
+  	zstd_cctx *cctx;
+  	zstd_dctx *dctx;
+@@ -68,7 +74,7 @@ static int zstd_setup_params(struct zcomp_params *params)
+
+  	params->drv_data = zp;
+  	if (params->level == ZCOMP_PARAM_NO_LEVEL)
+-		params->level = zstd_default_clevel();
++		params->level = ZRAM_DEFAULT_ZSTD_LEVEL;
+
+  	zp->cprm = zstd_get_params(params->level, PAGE_SIZE);
+
+-- 
+2.47.1
 
