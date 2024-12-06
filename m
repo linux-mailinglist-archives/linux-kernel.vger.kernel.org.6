@@ -1,224 +1,334 @@
-Return-Path: <linux-kernel+bounces-434957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9E29E6D6F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:30:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03BB7188352B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:30:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A80661FECC8;
-	Fri,  6 Dec 2024 11:30:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="NB1HCdDb"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2082.outbound.protection.outlook.com [40.107.244.82])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29BAD9E6D74
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:35:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A031DF99D;
-	Fri,  6 Dec 2024 11:30:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733484630; cv=fail; b=BgMbAxjkA/LHEx/UmqNG7hciTGUgM5+VF4zlQmD+6TA90c1weuzt16I4loro1EJEU3PH/Xo0zQqcZH3ok5hLvRTBO8eatqiqO+XDLiKrtvmXBYa58/5/dDU9LY3KkiJE/uhFXAamh5RRF4Moj7R+ChnvLCKJfJb8xanzFKOIH94=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733484630; c=relaxed/simple;
-	bh=iwL3JbdVUEEWEETxRq2rZ7yum0GZFyODIDxjaHvfYh8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ctAqKpbiuEgu9npRhujQiyH+tFv0yg35Sl0VQJDOLyl5dvFcZFrXFjlANXo60UsvBaqCqflph703ONHShk74gFAxBR5qnrKL+wU4XjYtjurXIFPPBT2kB/JL1acPqoEr1RXc4lVU5MYJrTxhet0rC7zbviwnLAttMzT5xyAo0rU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=NB1HCdDb; arc=fail smtp.client-ip=40.107.244.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZCngjTuy5a3xoQdmzAcpFfOqPQrixZbhY6dFi8tWJrDb4sW1dj142HEKqx/i0oAzhv9vBOgxPI63m9CucxrGyKn2f5Ya4Vw/nFzDlH/iUEm/5g1ZQOsIbB3o+z+ud9wWElyhIptG0rz0ewbbh6Z0MStquf5wMSzlJ5Pso9a/ruMVbakzfW8s3S4cb5LABRWlR5Cj72lK8vbeDwrmEQ2CO5cH4wH91XJ4VMsYFPudnPERltA6gWSRE/0Ce3ay+tAR0E2a9OLymP15IkwQl3OTbxQt8AVclqO1OcZVRDl79YFIl/3H4PcZgnx+3J9y0KjhyS80whYxyHC7MBkyvDQmnQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0UPxRa7cUiNNzMeuWBLDukxs2HucC5sSEBITWbj6kDI=;
- b=QA7jbFRwj9UAGZR8xGRMPPwWqJwBikRJBiBU134RYo/17Fz1SLsk13YHTV3ml+pTQ7CrROCP3699UYnzUjzA+89cMKoiD/AiW1D/dHi1JBTwOnfY6kWuE+g/SkYkIgB1LBcPyzoP602wyXbLj7ct7XcvZZyw/91pVUtp2WoYT1uC196MwNzUxb5X78rlcIYKADzyXAZkR1/elUYR2TSonDAh4Xyo81soRB7y/gswIxFLOWvNNzUHGCku56nXBL9NX9RzY6Z8CTT5qLXT2YPn3N5Ay9dpRJft6RM/vC82JgLch6g/hHEoX0z+ej79qzQ3+UZsQd9LNAr6HVZBSKPunA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0UPxRa7cUiNNzMeuWBLDukxs2HucC5sSEBITWbj6kDI=;
- b=NB1HCdDbHMr+xXwVjqBGXcsSiSzJ346ytYMejZfDXfoxAZEyZLPb5tyrzN0LgiaBWk77LNS8pmCAXoU4VQKp91gWNGixVFDRw7wzAkkQLwT/pfDfBa/XGi59OVqgBTS4wwnsswbblYXu9OeZK7RyM47jFR2UVSg3It416RiZcJ7SAs/KKKhL0khSIPO66i5N96SFeRF+XW3tUP/OsNYChQqKXpjlFqqp5Q19RZNZKD5cBJOBiSeVf+bpP1qEI6ZCy0Azq9CKUiqdMMQU9dvq+aqLpkNLHtSttpbfNJ0Zo8/S6PgZFwG3oD2lDaZvYezHohUxxq2f8v2SPRi7dF1plQ==
-Received: from CO1PR11MB4771.namprd11.prod.outlook.com (2603:10b6:303:9f::9)
- by SJ2PR11MB7546.namprd11.prod.outlook.com (2603:10b6:a03:4cc::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Fri, 6 Dec
- 2024 11:30:23 +0000
-Received: from CO1PR11MB4771.namprd11.prod.outlook.com
- ([fe80::bfb9:8346:56a5:e708]) by CO1PR11MB4771.namprd11.prod.outlook.com
- ([fe80::bfb9:8346:56a5:e708%4]) with mapi id 15.20.8230.010; Fri, 6 Dec 2024
- 11:30:23 +0000
-From: <Divya.Koppera@microchip.com>
-To: <andrew@lunn.ch>
-CC: <Arun.Ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<hkallweit1@gmail.com>, <linux@armlinux.org.uk>, <davem@davemloft.net>,
-	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<richardcochran@gmail.com>, <vadim.fedorenko@linux.dev>
-Subject: RE: [PATCH net-next v5 3/5] net: phy: Kconfig: Add ptp library
- support and 1588 optional flag in Microchip phys
-Thread-Topic: [PATCH net-next v5 3/5] net: phy: Kconfig: Add ptp library
- support and 1588 optional flag in Microchip phys
-Thread-Index:
- AQHbRWDdzNo+Cnt01kOqIfdpKniGbLLVUBQAgADphTCAAAeQAIAA4dWwgACYKQCAAVytMA==
-Date: Fri, 6 Dec 2024 11:30:23 +0000
-Message-ID:
- <CO1PR11MB4771E6936F63727B53F187B2E2312@CO1PR11MB4771.namprd11.prod.outlook.com>
-References: <20241203085248.14575-1-divya.koppera@microchip.com>
- <20241203085248.14575-4-divya.koppera@microchip.com>
- <67b0c8ac-5079-478c-9495-d255f063a828@lunn.ch>
- <CO1PR11MB47710AF4F801CB2EF586D453E2372@CO1PR11MB4771.namprd11.prod.outlook.com>
- <ee883c7a-f8af-4de6-b7d3-90e883af7dec@lunn.ch>
- <CO1PR11MB4771EDCFF242B8D8E5A0A1E0E2302@CO1PR11MB4771.namprd11.prod.outlook.com>
- <05eecef6-f6be-4fcd-9896-df4e04bbde19@lunn.ch>
-In-Reply-To: <05eecef6-f6be-4fcd-9896-df4e04bbde19@lunn.ch>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CO1PR11MB4771:EE_|SJ2PR11MB7546:EE_
-x-ms-office365-filtering-correlation-id: 5a0e8065-fc74-4e50-8410-08dd15e95fb8
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CO1PR11MB4771.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|7416014|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?3iqyZYZzNpbIge7iymZM8k6ZB8aj18xow8W4PozfiZVkksDodAPEaKSJjb+e?=
- =?us-ascii?Q?61MqSyCuMA+w/iaSDEsgxAKQyYn3N37zgrYPU8+XKlpl2tG0nERxWjKRux1y?=
- =?us-ascii?Q?NP2YXynQNdaiVeFIIO/njnT+F7lbmH0g/4qYqKepmGSiHWGSC6azbnoxgsDR?=
- =?us-ascii?Q?zVKaMU9cf6coJ8Y7o55+BL9TmoODF50ZcAUKZOU8uzIkD7s84m0xzgW+7IXb?=
- =?us-ascii?Q?WWKXNwpAG3eKBb1ak3XhW5Dgk4BlBMZAhY1haAObOVPd38oURaeBHcLm/hsu?=
- =?us-ascii?Q?gzRmaPf8zXPD/j49gOBcLVaGdZ7Lo7XDTaHHrtow8iK0TL39Rzu4gkYhabdz?=
- =?us-ascii?Q?QC+f+gE3FRGMXHHt4wXJbP15flpuS0t+aTcf+6neFLHL9XTQ3hCtd8d1N7PL?=
- =?us-ascii?Q?j1auaWRJwx84F2ni6GHnJ60TKP5WnbLo9RpcxjktQa78wJexJfyh5+i79XYC?=
- =?us-ascii?Q?WjaA29vZCPcMr/USjHzdPO0Jig/WEzskSlXSuWkoZElzCnS1+XK1b8oIzk5Y?=
- =?us-ascii?Q?044ppudiCIQt2hHLRea8ie+5L0XC87xdUO8DoeirHCux7p8M4jWcOQzWi9/q?=
- =?us-ascii?Q?dGDesmumbd9PM/heKz/C9j7pZDgK8/kZNsdMw6n4ENbXFMMMBnogZx7u+yQM?=
- =?us-ascii?Q?UngeVmMqoxrbmPlPIqfge16w6uHhM54lKC+BufjmRYfaKqaPjYKyKZelTLNT?=
- =?us-ascii?Q?M5fp5h2cehUoRXOlNLLcjDF6L66K4RBNrOV9h2etkU/BI5xg7XBQ/YwTx1lS?=
- =?us-ascii?Q?ppfbvIBnqxi5tYnpg9UNVUtnLcJgOtpAgb39aQGZeKSHwbX56X7mzSWixjEh?=
- =?us-ascii?Q?XLm27zLz63Yig5eCTvuLS7t1jx5Y+pWlqOOq2H0/vSRx+puc9FzyCIfCTXYW?=
- =?us-ascii?Q?dueYWuCdT2CL5rvZIE3nZl+EsgWs+HSCWNuifedx7+6OTh/648+IVAfz4WUN?=
- =?us-ascii?Q?QJTrjZi+hwsReoDPmQ9305/Qwi9Bvhq5Vt+lNDl9U4ijAdK+U9/5VBf9yPnU?=
- =?us-ascii?Q?husM130us9kJyp4Yp4cDKtvPGfU1qNvYzDiO5oMfZPSE3WcRGlPbF14xQNtJ?=
- =?us-ascii?Q?54NVUa3OQ9RXFZoOwixcHM01Hi1lCa+Xb3tqtPSjxusISXLCy5ZU8CR5p7Ds?=
- =?us-ascii?Q?D4IWWUxCnl4pNNwUWkWqhNVyW2I/jzw7oAmEFOeK7GuWfNECmtHDSPxxLjHr?=
- =?us-ascii?Q?pZ1W4oinkk1p6dFEw28H+vlkLpHQmryugCLYBa4A3OEmV93DTqhQHoJwnM6i?=
- =?us-ascii?Q?VMGLhXTLKZVPIkJE6WV/PsjDM4Ra6jmdwqJlzScu8w4UoTD/qtW5Pe4MGcvr?=
- =?us-ascii?Q?QX18RqllnU2rT8j/cq/gPbwQY73qNEy1d+0OShNprtgsD+TG58Apw1BZxrWy?=
- =?us-ascii?Q?YRU/767lVbh4vnlJbascVNnTy+860/rnuTh5mIc4hx3MlHJsXQ=3D=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?qqlQdI8n7eop6tWWmjgYEGSjClJZxsesUqpA6ZARfO46qQl3X/IMX4+T0iPt?=
- =?us-ascii?Q?5hvqsdoaqsFP6LswfbUwJDwjND8OEnxnH655oaht9uokLxGiiA9yW07hM/uJ?=
- =?us-ascii?Q?dbmQLfwvqdTeEpraRed2Yhk/CoaKynEgz98k9a0dlJMzZaPyf+cqrM50+IEh?=
- =?us-ascii?Q?ZhNKZhoZRwKMEvYHBzOB7cMhsimdizaMd7KEJcFRz9wfizVATuR/axU54Vz5?=
- =?us-ascii?Q?AHM9RDx/GLBfd7QGSA/BBfOx7ec/Q6zky0ulDBBh2SIXaSN2Y6NN3DxJhMdL?=
- =?us-ascii?Q?p79gRkOHl2vXjwDFAh7TkQWEutxbudu+j7jZxBCK0Ca1TRhfqTPkQlS5z/YQ?=
- =?us-ascii?Q?hnhOioCg3qL7QekvUPoFeBhI2xI3UyLRrUyJxYgNrItsrbg1jcute17cv5X6?=
- =?us-ascii?Q?yxJcLC+346iASsJ3QIl/DWpyVLQDVaRLDJr0rUS+VLWHzPBq6ezJW2wsNyks?=
- =?us-ascii?Q?DudTIdSB2IXff8CMssE6VEpy7xHWkr7pIrn3ZmcGm3Rig8iop94NLCUTwfow?=
- =?us-ascii?Q?gxCdeb2RuK1oV0Xi+KbNpYtej+bNDtXtjZ8tJe9P22qoG9VN5L/vayjRj4vL?=
- =?us-ascii?Q?P04yZXaMD3n7X8t5Bydmvy/tF/R5hjj5TmkyUHVtEdL87KBUuivDjphldeZp?=
- =?us-ascii?Q?0AWlin0pOyOqfaylPwo0HxLvqliZkeQAo8PI5fgim41MsHbqi1lIHkqfGi0f?=
- =?us-ascii?Q?Iqy+3NoueKE/wBFupWMPDWrT0Y5MjgMKiLJ9ZZty+GMoBIYAvsRD6Jyf5y3d?=
- =?us-ascii?Q?/35fhf/2sPgkWsWQgfjPZwjpBCRZRiDeKLsQyfViSV7rbdrXsnc5aELq9tlK?=
- =?us-ascii?Q?nVg7M+p6f6OC9ecogZsKfqY10uwf2OZ9+02K338yEmWz1vJeHMoThOa5jMw0?=
- =?us-ascii?Q?b4BqGCuj3qWxoxBnExhYMUPzTbkfgVbWO4psHo5DiG1ty6QIZ/cYMsrcU84V?=
- =?us-ascii?Q?R7jH/SjnphzDVsbap3P/SHx8nnDGRm7hNsesMgi2Ykj9oN06yBchr7bcMdIV?=
- =?us-ascii?Q?882cV35JDOqDXiQDRm+yYEaD+fKKt/4XwGDlftTGwB0iYqaxXrtxmxSgHq8I?=
- =?us-ascii?Q?mO3+sJi2IAHV5Y9TjQ72l3DmBvhJv8hMCVaWvnN3I5YHMjehu46MRY2sUGcC?=
- =?us-ascii?Q?zRm6V8533I7uM9O5li/xE+PbD6YeLftN6lZEAxRtl6/I7cu/LTTZOpf3G1pJ?=
- =?us-ascii?Q?2U9910nKR1p/oriFNjAWaGYwiyKqC738Y71JVx6fpBVku2bQhVMqKG3H9jOM?=
- =?us-ascii?Q?uDhTMLWsFmrNoFGOujLhA2WFu2NbkA4Ry81d237VGY1CzVvgXrLPLPRCSfAR?=
- =?us-ascii?Q?H1DrMa7VIwUrnDCZHrpU7SvPtsmoothi3onftcoNnb3+q2Tl4pUHRW4Wqqxb?=
- =?us-ascii?Q?9nAaaN8zoBzUXslgqd5cTbkcVsl+16FYKrLaxrHLfjagnQ92qoDpRuowwKR6?=
- =?us-ascii?Q?6izxObGEmp2W92QHRTJyXudLpBQGADU/A/j7fMe0WhzyKoc2fvDWbbr/r4TK?=
- =?us-ascii?Q?KbODY9bz9kFGqh6ezDUOa0hj3z07qPDe+XqPE1ynpa8Iqa8hodjgPODgQ9sy?=
- =?us-ascii?Q?XtqoeGI2qLummWjVzltrlvZyrWVtJmq8L/zfQzaO?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9A7C283859
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:35:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FC21FECC8;
+	Fri,  6 Dec 2024 11:34:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="hcsrV7nh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ukSv9X4o"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4F61FF7D3
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:34:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733484878; cv=none; b=ncvEPqFetvCr+dXdUVWXhFKSQn3vN84OP+KZAp2r0Q1vMO49GK/JyCKCRSpZNJFGDB0QW/zW/I8j7wl0Imrx5guyDmqM80ztPdBwM5EQKZNTbQ/xrcK+1PmpQUenW+Nky9YFRO+SJO/aJn4WqW8fBEaecuzd/R43ISHxD9k6Xn4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733484878; c=relaxed/simple;
+	bh=mGgCXvquxk1TQ2QTxP4XgQrU5XNuEcIZhaifQ6gGMcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NZyTFZwWppzBOr+Y3QSUraGoDMMcmoE3wseaXbj8NTJDTnZG1VB3GSBd8a1/u0bZYXzJ1vLwz/MzcOx7LrLbBrdK3o70cdCroFgz2piRA8+Sul4KeZdPtiiGbfrKax+YSYOA/4/9oCVcfL1RLR2uQHFwIEsIIhteSJXcOyrEVRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=hcsrV7nh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ukSv9X4o; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 6 Dec 2024 12:34:31 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733484872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=TVG0MNLdzcFbxnVEVl/LMDFRgZ/xtiH891JiT1QECtU=;
+	b=hcsrV7nh/IS7hjqisf2KeDZsHzfsT9wuvcZPcSYq7ZFO4S5HS6ZfGP4WQLEWptDIkcrB6R
+	Dns6CgjCwLCXpQRxAjYTEU0OMK3iJFigI9vWYNDUSEGbC+JHqs9lDxMA85J2WdUmRcYUDa
+	xeVAuMPmEmanTuXy7DuWK1sgT6i191HzKXiouevnKjS4xRInnFSvrKA+Iq9LbkA69H2+GU
+	mU0Hb1o5iueZAsCEkjnCFM86NS8mvbCCqSu7Njt8XrR+CpwPhCW8glinXG4FtnS18eOQAQ
+	dWOkNlvar/ocS/w1uTOQz4b6beDrLYg5eF8B8oHb0+bXXMr36Hh9Zy4+BVXJXA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733484872;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
+	bh=TVG0MNLdzcFbxnVEVl/LMDFRgZ/xtiH891JiT1QECtU=;
+	b=ukSv9X4oRsdKfTdSyjFgu9PQAoo1/p7ULfOBcnPV4arjmooTi0mjXfHsqD9X0K2IJcILTk
+	2ZoZz7e4QZZIlwBQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev
+Cc: Ben Segall <bsegall@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Mel Gorman <mgorman@suse.de>, Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Will Deacon <will@kernel.org>, x86@kernel.org
+Subject: [RFC PATCH] preempt: Add a generic function to return the preemption
+ string.
+Message-ID: <20241206113431.Q-VXMlru@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CO1PR11MB4771.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a0e8065-fc74-4e50-8410-08dd15e95fb8
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Dec 2024 11:30:23.3809
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 2ZH4G0QDaVOvl5qhE0b7zJoqXBuzU3F7TkfcPsqgnGD+r1KRmWf4zRkbXdsAGwrNZiNIdt8UvGVihdLT3dD8wAYjHH1r3a4SiLMx9YT5YFM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR11MB7546
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-Hi Andrew,
+The individual architectures often add the preemption model to the begin
+of the backtrace. This is the case on X86 or ARM64 for the "die" case
+but not for regular warning. With the addition of DYNAMIC_PREEMPT for
+PREEMPT_RT we end up with CONFIG_PREEMPT and CONFIG_PREEMPT_RT set
+simultaneously. That means that everyone who tried to add that piece of
+information gets it wrong for PREEMPT_RT because PREEMPT is checked
+first.
+This is an attempt to cover all users that I identified so far with a
+generic function provided by the scheduler. While at it, extend it with
+the LAZY information and add it to dump_stack_print_info().
 
-Thanks for your comments.
+Comments?
 
-> -----Original Message-----
-> From: Andrew Lunn <andrew@lunn.ch>
-> Sent: Thursday, December 5, 2024 8:06 PM
-> To: Divya Koppera - I30481 <Divya.Koppera@microchip.com>
-> Cc: Arun Ramadoss - I17769 <Arun.Ramadoss@microchip.com>;
-> UNGLinuxDriver <UNGLinuxDriver@microchip.com>; hkallweit1@gmail.com;
-> linux@armlinux.org.uk; davem@davemloft.net; edumazet@google.com;
-> kuba@kernel.org; pabeni@redhat.com; netdev@vger.kernel.org; linux-
-> kernel@vger.kernel.org; richardcochran@gmail.com;
-> vadim.fedorenko@linux.dev
-> Subject: Re: [PATCH net-next v5 3/5] net: phy: Kconfig: Add ptp library s=
-upport
-> and 1588 optional flag in Microchip phys
->=20
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know th=
-e
-> content is safe
->=20
-> > > And has Microchip finial decided not to keep reinventing the wheel,
-> > > and there will never be a new PHY implementation? I ask, because
-> > > what would its KCONFIG symbol be?
-> > >
-> >
->=20
-> > For all future Microchip PHYs PTP IP will be same, hence the
-> > implementation and kconfig symbol is under MICROCHIP_PHYPTP to keep it
-> > more generic.
->=20
-> So you would be happy for me to NACK all new PHY PTP implementations?
->=20
-> Are you management happy with this statement?
->=20
-> Even if they are, i still think you need a less generic KCONFIG symbol, i=
- doubt
-> somebody somewhere in Microchip can resist making yet another PTP
-> implementation.
->=20
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+---
+ arch/arm/kernel/traps.c      | 11 ++---------
+ arch/arm64/kernel/traps.c    | 12 ++----------
+ arch/powerpc/kernel/traps.c  |  4 ++--
+ arch/s390/kernel/dumpstack.c |  9 ++-------
+ arch/x86/kernel/dumpstack.c  |  7 +------
+ arch/xtensa/kernel/traps.c   |  6 +-----
+ include/linux/preempt.h      |  2 ++
+ kernel/sched/core.c          | 24 ++++++++++++++++++++++++
+ kernel/trace/trace.c         |  6 +-----
+ lib/dump_stack.c             |  4 ++--
+ 10 files changed, 39 insertions(+), 46 deletions(-)
 
-I understand your point.
+diff --git a/arch/arm/kernel/traps.c b/arch/arm/kernel/traps.c
+index 6ea645939573f..1254992184d2e 100644
+--- a/arch/arm/kernel/traps.c
++++ b/arch/arm/kernel/traps.c
+@@ -258,13 +258,6 @@ void show_stack(struct task_struct *tsk, unsigned long *sp, const char *loglvl)
+ 	barrier();
+ }
+ 
+-#ifdef CONFIG_PREEMPT
+-#define S_PREEMPT " PREEMPT"
+-#elif defined(CONFIG_PREEMPT_RT)
+-#define S_PREEMPT " PREEMPT_RT"
+-#else
+-#define S_PREEMPT ""
+-#endif
+ #ifdef CONFIG_SMP
+ #define S_SMP " SMP"
+ #else
+@@ -282,8 +275,8 @@ static int __die(const char *str, int err, struct pt_regs *regs)
+ 	static int die_counter;
+ 	int ret;
+ 
+-	pr_emerg("Internal error: %s: %x [#%d]" S_PREEMPT S_SMP S_ISA "\n",
+-	         str, err, ++die_counter);
++	pr_emerg("Internal error: %s: %x [#%d] %s" S_SMP S_ISA "\n",
++		 str, err, ++die_counter, preempt_model_str());
+ 
+ 	/* trap and error numbers are mostly meaningless on ARM */
+ 	ret = notify_die(DIE_OOPS, str, regs, err, tsk->thread.trap_no, SIGSEGV);
+diff --git a/arch/arm64/kernel/traps.c b/arch/arm64/kernel/traps.c
+index 4e26bd356a482..0b6f92fcdb304 100644
+--- a/arch/arm64/kernel/traps.c
++++ b/arch/arm64/kernel/traps.c
+@@ -172,14 +172,6 @@ static void dump_kernel_instr(const char *lvl, struct pt_regs *regs)
+ 	printk("%sCode: %s\n", lvl, str);
+ }
+ 
+-#ifdef CONFIG_PREEMPT
+-#define S_PREEMPT " PREEMPT"
+-#elif defined(CONFIG_PREEMPT_RT)
+-#define S_PREEMPT " PREEMPT_RT"
+-#else
+-#define S_PREEMPT ""
+-#endif
+-
+ #define S_SMP " SMP"
+ 
+ static int __die(const char *str, long err, struct pt_regs *regs)
+@@ -187,8 +179,8 @@ static int __die(const char *str, long err, struct pt_regs *regs)
+ 	static int die_counter;
+ 	int ret;
+ 
+-	pr_emerg("Internal error: %s: %016lx [#%d]" S_PREEMPT S_SMP "\n",
+-		 str, err, ++die_counter);
++	pr_emerg("Internal error: %s: %016lx [#%d] %s" S_SMP "\n",
++		 str, err, ++die_counter, preempt_model_str());
+ 
+ 	/* trap and error numbers are mostly meaningless on ARM */
+ 	ret = notify_die(DIE_OOPS, str, regs, err, 0, SIGSEGV);
+diff --git a/arch/powerpc/kernel/traps.c b/arch/powerpc/kernel/traps.c
+index edf5cabe5dfdb..d6d77d92b3358 100644
+--- a/arch/powerpc/kernel/traps.c
++++ b/arch/powerpc/kernel/traps.c
+@@ -263,10 +263,10 @@ static int __die(const char *str, struct pt_regs *regs, long err)
+ {
+ 	printk("Oops: %s, sig: %ld [#%d]\n", str, err, ++die_counter);
+ 
+-	printk("%s PAGE_SIZE=%luK%s%s%s%s%s%s %s\n",
++	printk("%s PAGE_SIZE=%luK%s %s %s%s%s%s %s\n",
+ 	       IS_ENABLED(CONFIG_CPU_LITTLE_ENDIAN) ? "LE" : "BE",
+ 	       PAGE_SIZE / 1024, get_mmu_str(),
+-	       IS_ENABLED(CONFIG_PREEMPT) ? " PREEMPT" : "",
++	       preempt_model_str(),
+ 	       IS_ENABLED(CONFIG_SMP) ? " SMP" : "",
+ 	       IS_ENABLED(CONFIG_SMP) ? (" NR_CPUS=" __stringify(NR_CPUS)) : "",
+ 	       debug_pagealloc_enabled() ? " DEBUG_PAGEALLOC" : "",
+diff --git a/arch/s390/kernel/dumpstack.c b/arch/s390/kernel/dumpstack.c
+index 1ecd0580561f6..7930fbab69dbb 100644
+--- a/arch/s390/kernel/dumpstack.c
++++ b/arch/s390/kernel/dumpstack.c
+@@ -198,13 +198,8 @@ void __noreturn die(struct pt_regs *regs, const char *str)
+ 	console_verbose();
+ 	spin_lock_irq(&die_lock);
+ 	bust_spinlocks(1);
+-	printk("%s: %04x ilc:%d [#%d] ", str, regs->int_code & 0xffff,
+-	       regs->int_code >> 17, ++die_counter);
+-#ifdef CONFIG_PREEMPT
+-	pr_cont("PREEMPT ");
+-#elif defined(CONFIG_PREEMPT_RT)
+-	pr_cont("PREEMPT_RT ");
+-#endif
++	printk("%s: %04x ilc:%d [#%d] %s", str, regs->int_code & 0xffff,
++	       regs->int_code >> 17, ++die_counter, preempt_model_str());
+ 	pr_cont("SMP ");
+ 	if (debug_pagealloc_enabled())
+ 		pr_cont("DEBUG_PAGEALLOC");
+diff --git a/arch/x86/kernel/dumpstack.c b/arch/x86/kernel/dumpstack.c
+index a7d562697e50e..064b23a93c6fe 100644
+--- a/arch/x86/kernel/dumpstack.c
++++ b/arch/x86/kernel/dumpstack.c
+@@ -395,18 +395,13 @@ NOKPROBE_SYMBOL(oops_end);
+ 
+ static void __die_header(const char *str, struct pt_regs *regs, long err)
+ {
+-	const char *pr = "";
+-
+ 	/* Save the regs of the first oops for the executive summary later. */
+ 	if (!die_counter)
+ 		exec_summary_regs = *regs;
+ 
+-	if (IS_ENABLED(CONFIG_PREEMPTION))
+-		pr = IS_ENABLED(CONFIG_PREEMPT_RT) ? " PREEMPT_RT" : " PREEMPT";
+-
+ 	printk(KERN_DEFAULT
+ 	       "Oops: %s: %04lx [#%d]%s%s%s%s%s\n", str, err & 0xffff,
+-	       ++die_counter, pr,
++	       ++die_counter, preempt_model_str(),
+ 	       IS_ENABLED(CONFIG_SMP)     ? " SMP"             : "",
+ 	       debug_pagealloc_enabled()  ? " DEBUG_PAGEALLOC" : "",
+ 	       IS_ENABLED(CONFIG_KASAN)   ? " KASAN"           : "",
+diff --git a/arch/xtensa/kernel/traps.c b/arch/xtensa/kernel/traps.c
+index 38092d21acf8e..0edba7d8df8c7 100644
+--- a/arch/xtensa/kernel/traps.c
++++ b/arch/xtensa/kernel/traps.c
+@@ -629,15 +629,11 @@ DEFINE_SPINLOCK(die_lock);
+ void __noreturn die(const char * str, struct pt_regs * regs, long err)
+ {
+ 	static int die_counter;
+-	const char *pr = "";
+-
+-	if (IS_ENABLED(CONFIG_PREEMPTION))
+-		pr = IS_ENABLED(CONFIG_PREEMPT_RT) ? " PREEMPT_RT" : " PREEMPT";
+ 
+ 	console_verbose();
+ 	spin_lock_irq(&die_lock);
+ 
+-	pr_info("%s: sig: %ld [#%d]%s\n", str, err, ++die_counter, pr);
++	pr_info("%s: sig: %ld [#%d]%s\n", str, err, ++die_counter, preempt_model_str());
+ 	show_regs(regs);
+ 	if (!user_mode(regs))
+ 		show_stack(NULL, (unsigned long *)regs->areg[1], KERN_INFO);
+diff --git a/include/linux/preempt.h b/include/linux/preempt.h
+index ca86235ac15c0..3e9808f2b5491 100644
+--- a/include/linux/preempt.h
++++ b/include/linux/preempt.h
+@@ -515,6 +515,8 @@ static inline bool preempt_model_rt(void)
+ 	return IS_ENABLED(CONFIG_PREEMPT_RT);
+ }
+ 
++extern const char *preempt_model_str(void);
++
+ /*
+  * Does the preemption model allow non-cooperative preemption?
+  *
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 95e40895a5190..8f5517dbe07d4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -7642,6 +7642,30 @@ static inline void preempt_dynamic_init(void) { }
+ 
+ #endif /* CONFIG_PREEMPT_DYNAMIC */
+ 
++const char *preempt_model_str(void)
++{
++	if (IS_ENABLED(CONFIG_ARCH_HAS_PREEMPT_LAZY) && preempt_model_lazy()) {
++		if (preempt_model_rt())
++			return "PREEMPT_RT+LAZY";
++		if (preempt_model_full())
++			return "PREEMPT+LAZY";
++		if (preempt_model_voluntary())
++			return "VOLUNTARY+LAZY";
++		if (preempt_model_none())
++			return "NONE+LAZY";
++	} else {
++		if (preempt_model_rt())
++			return "PREEMPT_RT";
++		if (preempt_model_full())
++			return "PREEMPT";
++		if (preempt_model_voluntary())
++			return "VOLUNTARY";
++		if (preempt_model_none())
++			return "NONE";
++	}
++	return "UNKNOWN-PREEMPT";
++}
++
+ int io_schedule_prepare(void)
+ {
+ 	int old_iowait = current->in_iowait;
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index be62f0ea1814d..3861f53f9a434 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -4266,11 +4266,7 @@ print_trace_header(struct seq_file *m, struct trace_iterator *iter)
+ 		   entries,
+ 		   total,
+ 		   buf->cpu,
+-		   preempt_model_none()      ? "server" :
+-		   preempt_model_voluntary() ? "desktop" :
+-		   preempt_model_full()      ? "preempt" :
+-		   preempt_model_rt()        ? "preempt_rt" :
+-		   "unknown",
++		   preempt_model_str(),
+ 		   /* These are reserved for later use */
+ 		   0, 0, 0, 0);
+ #ifdef CONFIG_SMP
+diff --git a/lib/dump_stack.c b/lib/dump_stack.c
+index 388da1aea14a5..c3e59f8992279 100644
+--- a/lib/dump_stack.c
++++ b/lib/dump_stack.c
+@@ -54,7 +54,7 @@ void __init dump_stack_set_arch_desc(const char *fmt, ...)
+  */
+ void dump_stack_print_info(const char *log_lvl)
+ {
+-	printk("%sCPU: %d UID: %u PID: %d Comm: %.20s %s%s %s %.*s" BUILD_ID_FMT "\n",
++	printk("%sCPU: %d UID: %u PID: %d Comm: %.20s %s%s %s %.*s %s" BUILD_ID_FMT "\n",
+ 	       log_lvl, raw_smp_processor_id(),
+ 	       __kuid_val(current_real_cred()->euid),
+ 	       current->pid, current->comm,
+@@ -62,7 +62,7 @@ void dump_stack_print_info(const char *log_lvl)
+ 	       print_tainted(),
+ 	       init_utsname()->release,
+ 	       (int)strcspn(init_utsname()->version, " "),
+-	       init_utsname()->version, BUILD_ID_VAL);
++	       init_utsname()->version, preempt_model_str(), BUILD_ID_VAL);
+ 
+ 	if (get_taint())
+ 		printk("%s%s\n", log_lvl, print_tainted_verbose());
+-- 
+2.45.2
 
-I will change the Kconfig symbol to "MICROCHIP_PHY_RDS_PTP". RDS is interna=
-l code name to identify the PHY PTP IP.=20
-
-I will also change the file names, macros, and functions to reflect the int=
-ernal code name as per macro.
-
->         Andrew
-
-Thanks,
-Divya
 
