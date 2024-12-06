@@ -1,127 +1,117 @@
-Return-Path: <linux-kernel+bounces-435177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0539E73A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:22:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF2D616CB79
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:21:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB8C1714DF;
-	Fri,  6 Dec 2024 15:21:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hkpg/LDy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C81D9E73A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:22:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B35E53A7;
-	Fri,  6 Dec 2024 15:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1BB028AE9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:22:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1136C207E14;
+	Fri,  6 Dec 2024 15:22:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="Ybjvw7ZQ"
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E033E148832;
+	Fri,  6 Dec 2024 15:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733498510; cv=none; b=WkWG7TR/TfDkCBGZNc1D0Y21qHaWGzO3cred+oiIEfkMwVtT7wfnd2DfmaNr3Rhcyv5YxWVHqzfkcWluI0L3+/PRbdkzMRmPDflaTM1PGy0V5k0a/q3irLUyqifnKitlRE5SEU5wAq3IVSuiM4T8/PsHVSL53jaRAm5O6OjEu5c=
+	t=1733498569; cv=none; b=jXtjkQ7nK2yr/TtLhzeJtsjJATiz1eb0vcsv1fRZLyEP79ha9a4sCRNRb0PiB+Yq+UahD1HgwB8DG8/ZtBONLkWLAKDnfjJqOSXzMkVv6NEG6esi5bnbJQl0sgfGRa+iqrJxhwrfEXp+JhXLj8lXTCVR4YVhIAfHpinohjpC+aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733498510; c=relaxed/simple;
-	bh=ofeOQ27/mt+A72+VoyDUfh68mFTvn5RZAaqT1YVw7zc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kMCA9my+e7ChiZBzfdmj1e01EQL7LZDuA2bhAmvHQniB+rsbTOY4HTVKruEQHgxMIEzVbG+RyqPIWOKghxzo55VQickIuqHrqsl94sxUewosKFTw6HSf7EoX3s/ZDwtxk5aNr95xzyTQpo6nVjaSSg6x8bmZlkwra0q6KqrXFWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hkpg/LDy; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733498509; x=1765034509;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=ofeOQ27/mt+A72+VoyDUfh68mFTvn5RZAaqT1YVw7zc=;
-  b=hkpg/LDypDa8ne9rxmMpFEtSdhkocmds5/n8hdvlCQVwictVWmJEFKfr
-   N4eEAolfw+ipwPDin38/ja6NzyGFQh8solf5Wos0Th/rdguV9wcdcNh/V
-   W1IlF/Q2y7ub5YJT3I+eyzxonnea4CS2YvBmmsvri+CDNfUVoOukhJV0h
-   iTHXCK3C7eOkFp8GC9cnX3xR5bFf0EKKbLQGJNMfTW/BblNSz1ZC0zggB
-   9uAwoQ+ba7u0vd0bLfz9C4c6boCn2VIeQ22YCxiOSBPe6ZXXg9hG/Nysf
-   iWGIEYGdi1yEs8c6rBK7aPUl7hhl1WDYY6OXLIzYyRmrVzxblbhferVLk
-   Q==;
-X-CSE-ConnectionGUID: t6l5hpisTfKn78iqxTFZJQ==
-X-CSE-MsgGUID: rE20G0AiRZOOL1gX787oPw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="34093361"
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="34093361"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 07:21:48 -0800
-X-CSE-ConnectionGUID: PzlCrjuYQA+MoHUFbo7Fkw==
-X-CSE-MsgGUID: VlJ6JTteSS2X7huSp3KUBw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="94289338"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 07:21:47 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tJa9I-00000004YAL-28gK;
-	Fri, 06 Dec 2024 17:21:44 +0200
-Date: Fri, 6 Dec 2024 17:21:44 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
-Cc: Matthias Maennich <maennich@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Masahiro Yamada <masahiroy@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] doc: module: Fix documented type of namespace
-Message-ID: <Z1MWiBEZEMgL1Iiy@smile.fi.intel.com>
-References: <cover.1733305665.git.ukleinek@kernel.org>
- <6fe15069c01b31aaa68c6224bec2df9f4a449858.1733305665.git.ukleinek@kernel.org>
- <Z1FbOrGjaVsGKIXa@smile.fi.intel.com>
- <mfgqf5xpjnyud3qm4hwycbnz23mfik4pzry3h7fi2k6khokbgd@facrmygrrqnh>
- <Z1H5UqN-egUs0GhJ@smile.fi.intel.com>
- <zsqtlottouotiklytvbqapexuopzxlasqod7ynohu4yhtnr7no@j2zqryrst7qc>
+	s=arc-20240116; t=1733498569; c=relaxed/simple;
+	bh=DhbQchCub9U5elTP6juJG/8cBmU+WUrbG7WOjeZ0sEg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Rn1QHlLMOS1lx8okCmyL/KD3t7KGsiimU5y51sbCjzib1DNAry+qGEMWJFDyhO4Tb6/yNFvpLIGtNe/naQU0Yzz3Sav5cTSgTXISyO/ZEQpfmLO5yEPfkRYECjIpNiXSHX23TKvWiLWMtNyq1S4JT0kxkukRVTduns2yM32TZ7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=Ybjvw7ZQ; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6CI5NC016048;
+	Fri, 6 Dec 2024 10:22:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=xxpIuAj3vCkmCNrV10X2ET//KfV
+	tu4n49xBopSsZDXg=; b=Ybjvw7ZQW3xW/KjULS5G9DEIsMmPetQhcAVqnjumsrl
+	fyXbkIgtOpw1rcTk1Y/y3qlcTINJ24yMbn6b2edqjLIAW7VvU+1gYVqWDUtf3Ecu
+	SKMWqEXW740zbIeJr+psRw5nA/nzI2mU6babvoPtqwHw+8UVUruKBoaGtqtFwZ5K
+	tkapRAnMyMwJ5XCl++NM7Lua+YD5a9mfHj34uXCPSn3Xr++MdGEVhvnuz9q5YI4f
+	OMuoVgN1sc8A8BztOnQOl+Wt3glH8t1me2GxtkKjGtrPFoiJhN/uCCqlhJB2aSde
+	7RFJiSRV+4jl/gHk0uD3pEOt7ShBq/uWNS2wAWQv6zw==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 43c15c8qe0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 10:22:33 -0500 (EST)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 4B6FMWTg020888
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 6 Dec 2024 10:22:32 -0500
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 6 Dec 2024
+ 10:22:32 -0500
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 6 Dec 2024 10:22:32 -0500
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.187])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 4B6FMM1b025340;
+	Fri, 6 Dec 2024 10:22:24 -0500
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: <jic23@kernel.org>, <robh@kernel.org>, <conor+dt@kernel.org>,
+        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pwm@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Subject: [PATCH 1/3] dt-bindings: iio: adf4371: add differential ref
+Date: Fri, 6 Dec 2024 17:22:04 +0200
+Message-ID: <20241206152207.37928-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <zsqtlottouotiklytvbqapexuopzxlasqod7ynohu4yhtnr7no@j2zqryrst7qc>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: qtoTppQDTkhRj-VdQE3V7b-EW4i2m4Zw
+X-Proofpoint-GUID: qtoTppQDTkhRj-VdQE3V7b-EW4i2m4Zw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 clxscore=1015
+ suspectscore=0 adultscore=0 impostorscore=0 mlxlogscore=999 malwarescore=0
+ priorityscore=1501 spamscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412060116
 
-On Fri, Dec 06, 2024 at 03:45:50PM +0100, Uwe Kleine-König wrote:
-> On Thu, Dec 05, 2024 at 09:04:50PM +0200, Andy Shevchenko wrote:
-> > On Thu, Dec 05, 2024 at 11:55:54AM +0100, Uwe Kleine-König wrote:
-> > > On Thu, Dec 05, 2024 at 09:50:18AM +0200, Andy Shevchenko wrote:
-> > > > On Wed, Dec 04, 2024 at 11:01:10AM +0100, Uwe Kleine-König wrote:
+Add support for differential input reference clock.
 
-...
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+---
+ Documentation/devicetree/bindings/iio/frequency/adf4371.yaml | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-> > > > > Since commit cdd30ebb1b9f ("module: Convert symbol namespace to string
-> > > > > literal") the namespace has to be a string. Fix accordingly.
-
-^^^ (1)
-
-...
-
-> > > 	... the namespace as a string constant.
-> > 
-> > ...a string literal.
-> 
-> Gcc calls it "string constant":
-> https://www.gnu.org/software/gnu-c-manual/gnu-c-manual.html#String-Constants
-> 
-> My C book (https://www.amazon.de/dp/013089592X) also calls it "string
-> constant".
-> 
-> So I tend to keep that name as it seems to be the official term.
-
-Even though we should be more consistent with the de facto usages, no?
-
-(see (1) above, for example).
-
+diff --git a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+index 1cb2adaf66f9..dd9a592d0026 100644
+--- a/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
++++ b/Documentation/devicetree/bindings/iio/frequency/adf4371.yaml
+@@ -40,6 +40,11 @@ properties:
+       output stage will shut down until the ADF4371/ADF4372 achieves lock as
+       measured by the digital lock detect circuitry.
+ 
++  adi,ref-differential-enable:
++    type: boolean
++    description:
++      If this property is present, differential input reference is enabled.
++
+ required:
+   - compatible
+   - reg
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.1
 
 
