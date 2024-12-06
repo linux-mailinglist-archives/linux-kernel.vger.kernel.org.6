@@ -1,97 +1,125 @@
-Return-Path: <linux-kernel+bounces-434877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97E2F9E6C60
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:36:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0058A9E6C47
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:32:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 58453188099A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:36:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE1D01887849
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3345201104;
-	Fri,  6 Dec 2024 10:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RkFGVu7I"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA231FCCE9;
+	Fri,  6 Dec 2024 10:28:13 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BCE1FC7CB
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 428681F9AAE
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733480792; cv=none; b=XvJm/qp5A6o5Ll/rD7SoFaf85VdwNSYZzgkXQFgUoN70v76bgJ1tOx25SDdeP0wkWD+0UTCngCPS90ZmzzrMaV4cnwndPrxrqDuqTApBn/5pHk667o8uxIRhktu/XC4bx6MoPN7D0CWNebUd/YYwrx1miEKNvhMuDwW1bwkhgws=
+	t=1733480893; cv=none; b=ocN8r3M4nvLbLBsaIIgZ48WaIZhuYX6OTaFMr/mmrFP5E96nxTcS8okYiLVb3yfOgbZwVFCy803cgLuIog5PqFXv+ASlji65UWp64JfQzxD3x+l7GmdgE0VeqmcvkVUqrnL2Hplk2m9QURN33jDPyF3a9Gxn9Lk6aEmUtZs8QJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733480792; c=relaxed/simple;
-	bh=QgY/p8o4MoYwmaB9p+ZHNIbF1pl77aGEMpBVKTpyrto=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uwpbd+8c9kA+2oQw5Pexu1cWYGGayQBQnYjzGxy+FRw41rGL1vQo0R8wATmE4KAAAX0InQOBx5V+Z3kdGeiaeFYLlXJiBuwkKXqUkq7LclBVQmZRWfen5bm6IgKMP5LSpY15KFFLfF6RMEQRzbEaPT4p63r4SwtlSZJOICbuSZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RkFGVu7I; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 930C8C4CED1;
-	Fri,  6 Dec 2024 10:26:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733480791;
-	bh=QgY/p8o4MoYwmaB9p+ZHNIbF1pl77aGEMpBVKTpyrto=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RkFGVu7IW7rr+XvPQP/stnT7EpTNaQdoyR6jjk3GerKlG0hkLkiUt1dunoTC6YYAW
-	 PeZJ9bfS1V9jxnoDxMzNeNyVem8wVYxX8TjPtc1jiMMRQ3okThA/2mCNJtbptK+iu7
-	 DF/2N09AQuyGSMotOBPTv6TW7Smm1l5Mtdf/909l+itL2fa5I/gcqwFcpp/nFyV3Dy
-	 RMU5CXSm+RvvaINkZyMr1tYPxPKof2My71Tl5mlCFeDTROS4I3m3o+Ypo56NQ441jD
-	 Vlsyi7BtCZPR6ipO1c1bxzmrRcrNpYtu5QNtzP78t8vFrrs2KntRQJyHOmTuXt3upT
-	 NSJ6l3StpaJOw==
-Date: Fri, 6 Dec 2024 12:26:20 +0200
-From: Mike Rapoport <rppt@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Marc Zyngier <maz@kernel.org>, Mike Rapoport <rppt@kernel.org>,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [GIT PULL] memblock: restore check for node validity in arch_numa
-Message-ID: <Z1LRTHMT2as5VhEU@kernel.org>
+	s=arc-20240116; t=1733480893; c=relaxed/simple;
+	bh=hthJtxRUGovk5V1RqI0hmfgY1tiYoYoWmAR9jCX9OyI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mr6Phq9mSMKKI6lWT2GfwpHGpa/lXEzyOPvc8dTIiycGz6ltr8VQOcJOrNuhROYjNqZt5BLgHsnKPzaxsKCigiUn7bnf8tHPZCB8MdLk2RvKFDf9usmMh9TCOV5NIcMMteEG0EglkgxJELIjfoNHfDd2xf1SOZ17oTAXuE4olr8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-126-71H4KnOWMoK8Apry69ITrA-1; Fri, 06 Dec 2024 10:28:08 +0000
+X-MC-Unique: 71H4KnOWMoK8Apry69ITrA-1
+X-Mimecast-MFC-AGG-ID: 71H4KnOWMoK8Apry69ITrA
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
+ 2024 10:27:23 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Fri, 6 Dec 2024 10:27:23 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: "netdev@vger.kernel.org" <netdev@vger.kernel.org>, 'Naresh Kamboju'
+	<naresh.kamboju@linaro.org>, 'Dan Carpenter' <dan.carpenter@linaro.org>,
+	Julian Anastasov <ja@ssi.bg>, "'pablo@netfilter.org'" <pablo@netfilter.org>
+CC: 'open list' <linux-kernel@vger.kernel.org>,
+	"'lkft-triage@lists.linaro.org'" <lkft-triage@lists.linaro.org>, "'Linux
+ Regressions'" <regressions@lists.linux.dev>, 'Linux ARM'
+	<linux-arm-kernel@lists.infradead.org>, "'netfilter-devel@vger.kernel.org'"
+	<netfilter-devel@vger.kernel.org>, 'Arnd Bergmann' <arnd@arndb.de>, "'Anders
+ Roxell'" <anders.roxell@linaro.org>, 'Johannes Berg'
+	<johannes.berg@intel.com>, "'toke@kernel.org'" <toke@kernel.org>, 'Al Viro'
+	<viro@zeniv.linux.org.uk>, "'kernel@jfarr.cc'" <kernel@jfarr.cc>,
+	"'kees@kernel.org'" <kees@kernel.org>
+Subject: [PATCH net] Fix clamp() of ip_vs_conn_tab on small memory systems.
+Thread-Topic: [PATCH net] Fix clamp() of ip_vs_conn_tab on small memory
+ systems.
+Thread-Index: AdtHyTlbE/fm67s0Ria1gsbgnJ6Kcg==
+Date: Fri, 6 Dec 2024 10:27:23 +0000
+Message-ID: <33893212b1cc4a418cec09aeeed0a9fc@AcuMS.aculab.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: njFt7apIhHMMDbj3SFvPyOOOAFrVL-q9W-tmHLtwlpQ_1733480887
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+The intention of the code seems to be that the minimum table
+size should be 256 (1 << min).
+However the code uses max =3D clamp(20, 5, max_avail) which implies
+the author thought max_avail could be less than 5.
+But clamp(val, min, max) is only well defined for max >=3D min.
+If max < min whether is returns min or max depends on the order of
+the comparisons.
 
-The following changes since commit bcc8eda6d34934d80b96adb8dc4ff5dfc632a53a:
+Change to clamp(max_avail, 5, 20) which has the expected behaviour.
 
-  Merge tag 'turbostat-2024.11.30' of git://git.kernel.org/pub/scm/linux/kernel/git/lenb/linux (2024-11-30 18:30:22 -0800)
+Replace the clamp_val() on the line below with clamp().
+clamp_val() is just 'an accident waiting to happen' and not needed here.
 
-are available in the Git repository at:
+Fixes: 4f325e26277b6
+(Although I actually doubt the code is used on small memory systems.)
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/rppt/memblock tags/fixes-2024-12-06
+Detected by compile time checks added to clamp(), specifically:
+minmax.h: use BUILD_BUG_ON_MSG() for the lo < hi test in clamp()
 
-for you to fetch changes up to 180bbad698641873120a48857bb3b9f3166bf684:
+Signed-off-by: David Laight <david.laight@aculab.com>
+---
+ net/netfilter/ipvs/ip_vs_conn.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-  arch_numa: Restore nid checks before registering a memblock with a node (2024-12-01 22:04:52 +0200)
+diff --git a/net/netfilter/ipvs/ip_vs_conn.c b/net/netfilter/ipvs/ip_vs_con=
+n.c
+index 98d7dbe3d787..c0289f83f96d 100644
+--- a/net/netfilter/ipvs/ip_vs_conn.c
++++ b/net/netfilter/ipvs/ip_vs_conn.c
+@@ -1495,8 +1495,8 @@ int __init ip_vs_conn_init(void)
+ =09max_avail -=3D 2;=09=09/* ~4 in hash row */
+ =09max_avail -=3D 1;=09=09/* IPVS up to 1/2 of mem */
+ =09max_avail -=3D order_base_2(sizeof(struct ip_vs_conn));
+-=09max =3D clamp(max, min, max_avail);
+-=09ip_vs_conn_tab_bits =3D clamp_val(ip_vs_conn_tab_bits, min, max);
++=09max =3D clamp(max_avail, min, max);
++=09ip_vs_conn_tab_bits =3D clamp(ip_vs_conn_tab_bits, min, max);
+ =09ip_vs_conn_tab_size =3D 1 << ip_vs_conn_tab_bits;
+ =09ip_vs_conn_tab_mask =3D ip_vs_conn_tab_size - 1;
+=20
+--=20
+2.17.1
 
-----------------------------------------------------------------
-memblock: restore check for node validity in arch_numa
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-Rework of NUMA initialization in arch_numa dropped a check that refused to
-accept configurations with invalid node IDs.
-
-Restore that check to ensure that when firmware passes invalid nodes, such
-configuration is rejected and kernel gracefully falls back to dummy NUMA.
-
-----------------------------------------------------------------
-Marc Zyngier (1):
-      arch_numa: Restore nid checks before registering a memblock with a node
-
-Mike Rapoport (Microsoft) (1):
-      memblock: allow zero threshold in validate_numa_converage()
-
- drivers/base/arch_numa.c | 4 ++++
- mm/memblock.c            | 4 ++--
- 2 files changed, 6 insertions(+), 2 deletions(-)
-
--- 
-Sincerely yours,
-Mike.
 
