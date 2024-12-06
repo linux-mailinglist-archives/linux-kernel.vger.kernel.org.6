@@ -1,102 +1,57 @@
-Return-Path: <linux-kernel+bounces-434924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98D589E6CEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:15:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02409E6D29
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D26AA188425B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:15:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 534871884BAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 189B01FF5FC;
-	Fri,  6 Dec 2024 11:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="In2/7Xdf"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C44200118;
+	Fri,  6 Dec 2024 11:16:14 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56527200111
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:14:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690221FCD1D;
+	Fri,  6 Dec 2024 11:16:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733483646; cv=none; b=ZCA0suRxuuYHQM7VB6g5Nskpj0CpBKqv8dbshTGqKRs+QGnZsXxjive944VwoHr/+7ihkUDSIHiQEAJS5Hb7VS8PkXfSsGhz3GWkjsQyNb1bOi7S6E9UULJUyVHVotwRRtOzLhx/4mqa8dAlslQjt93V+7Xt3wYknq9Eob1rQ6I=
+	t=1733483774; cv=none; b=bXo3hv5N3oOvBkjpOKsimk9ZJUcV0s5+god4L9v8+kWsNT22YHEy/2P1Ape8twPi0a9EZeBvCSd4AQR1Ni1UHnorwSm8HvgcjFGraAc/Helz2Cl1v1dKDqfAz0n0STvBh29oyyK1g9Wbq+QHG6ldnZKfUdpLjmYnBzyYGX62pvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733483646; c=relaxed/simple;
-	bh=Dwmv4o74khoBQdkptuvQ4q7nGic6CB59TAj8g4R5I2A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kuA0Vr/rjxNqZN7x6yVNdALycgBsQYckK31UW0+YqcOSQHAdtOKelBO47A593WqXCRQxU8OZgycvGBWI4JM9qBP7hEPd5SHIFZCJZyAgggrPQQz7OquJU9LtlOtN1DTqCoVLz5YtSPnZHBUtjb1bCgRyN/w120YWp4Tvx7yMiaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=In2/7Xdf; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa543c4db92so385776266b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:14:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733483643; x=1734088443; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MNUU76506eldJbwNztMYjCQxf0w88SMXCYz1DW5xFro=;
-        b=In2/7XdfuJQ+VvilHhtkD7O+e9S05Cfhzi+R9SmGf/eoYLhLxcRfqJ9RKkZG8CNXnB
-         Jbql9fJNzGnWpQlCbPvbLy/tp3Vvk3L+vUBAqRb036S88aluvlxP3qTYTVTxghQuyziZ
-         gHJnbYsb2Mk4II6juQZ+pgwZO2LH70WG5lIwUmoCGOpLo2pSqr4j8zrvpToNRb8E8hC/
-         It8F/dCDIP5mqhtkjQoqCGlYb8nY1Sqljddtk/PMwoWnpEdBPO5kKVWCkpVtSZxvhMf0
-         FBbJQPanKxlJmrvSKE6knIj3C21w5yH61mz+Ld+YUTUTmGGIztH9Xn8mpjmDccbencqa
-         /1cA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733483643; x=1734088443;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MNUU76506eldJbwNztMYjCQxf0w88SMXCYz1DW5xFro=;
-        b=qEsvgsesNh2oe57jBFj4SNS/YHiGM7aNTRhiEpc/DEzWpolV6IrhYJB9bVqDHKgfGL
-         5nwRGG2YZez2ou9gU5waRJ6XC0yhb1x8kUrfTH9J7DONIWpUau7R8WcUQ6Z8j+lgHwhk
-         fxn6MNMDJBLhVXxhaPX3sDeokHxdVgVGlQaXopiHv7GuMyf5pdtUPJFdg+ksrVK9IpOj
-         2M/4gEj+Po0jOla9R2OCNsxx7zlcrfVFN8zXH2r14lOE6iSwAky/TBfdVTWS66H4szWp
-         No2JxD/7zCQKswZ62/I9ID6wrI+qbkM0dXSfVPE4qW4oXRTPzFGPh6qjZxJwFL/gLIhC
-         7F8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV3jAYbZGogVMRgZ82ABNxVLWJjbdOlfjWB7xuZl6Ryk3aMj8r6uZSliyJuTSi1j1AplZTH7CJXvcAe8xk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkAaf3nwYWxecR0dEV7uMBgO135NINAzSbnQa6IUKxpaaKF38B
-	5kH4u7Pcmyn5kThCfRXBDjZjfmLMEhPcAjICGIxF2R583VqArx+1TIW2cZa+QRs=
-X-Gm-Gg: ASbGncsvO6G4syNTJp934f2VLz+Y8SPt4H7H4TfzhQ+8R5xEnN0PuYnwZQO4exgpD5D
-	bPu9tw3tdQeH4fpddhGkuZqdPMb64BCdHJoAD120iVyzvqGemtkdYRp6k+9+TgjG+o73BzA2z01
-	7CKszzXGCs8QRxRw+8hadIA31KLWdfa5OU0m7N0zLflIvJIsClUdh14egMSEbLm0iHTJ34SVj1C
-	thA5XUoDPW9LbCWBMFieDuJi5bTDKPCDR6qBBKcDXBhGZstvQuXBa3w/yAzQbGPbkpdHkOkPK7/
-	F1YH
-X-Google-Smtp-Source: AGHT+IH6Yt9ImiRFWWuZjkCgbEGYygXRPHwjAYhKDD1eg/rWy5S/tL1CQg/zDPDowgi1wK/HCr+qTA==
-X-Received: by 2002:a17:907:75d8:b0:aa6:2867:4dc5 with SMTP id a640c23a62f3a-aa63a285650mr203661266b.49.1733483642631;
-        Fri, 06 Dec 2024 03:14:02 -0800 (PST)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625eee2a6sm226877866b.90.2024.12.06.03.14.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 03:14:02 -0800 (PST)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: prabhakar.mahadev-lad.rj@bp.renesas.com,
-	jic23@kernel.org,
-	lars@metafoo.de,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-iio@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1733483774; c=relaxed/simple;
+	bh=iPF1dj3x0BDkShjWp5qNspvK+7h0fULDyUhS353q+i0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LTna3OZf272CqgcISRWr1scSIh+MfL5I9K6Q7iZqTh4sPIDL1IbafPqSs8PNwaOnrCBs/K6DfeXDldu8+yMAQx/IdVtLcU48LXFmWeSNkEzgOLaUPg+3HwS6mo001VyjsMnX5fTkcRpAYXilhkAOgVEcU6KoZSEKMHMwj9CYBaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y4TFw3mLfz4f3jdK;
+	Fri,  6 Dec 2024 19:15:48 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 943351A0197;
+	Fri,  6 Dec 2024 19:16:07 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.112.188])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYobu3FJnzUVKDw--.25327S4;
+	Fri, 06 Dec 2024 19:16:07 +0800 (CST)
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+To: linux-ext4@vger.kernel.org
+Cc: linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 05/15] iio: adc: rzg2l_adc: Switch to RUNTIME_PM_OPS() and pm_ptr()
-Date: Fri,  6 Dec 2024 13:13:27 +0200
-Message-Id: <20241206111337.726244-6-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
+	tytso@mit.edu,
+	adilger.kernel@dilger.ca,
+	jack@suse.cz,
+	yi.zhang@huawei.com,
+	yi.zhang@huaweicloud.com,
+	chengzhihao1@huawei.com,
+	yukuai3@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH] jbd2: add a missing data flush during file and fs synchronization
+Date: Fri,  6 Dec 2024 19:13:27 +0800
+Message-ID: <20241206111327.4171337-1-yi.zhang@huaweicloud.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,68 +59,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHYobu3FJnzUVKDw--.25327S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ww1ruryrWF4kArW3KrWUCFg_yoW8KFW8pr
+	W8Ca1YkFWqvFy2yr18XFs7JFWFvF4jyayUWrWv9Fn8tw45Xw1IkrWftryaya4qyFs5Ww45
+	XryUCw1DW34qk3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUU9014x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628v
+	n2kIc2xKxwCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7x
+	kEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E
+	67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCw
+	CI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1x
+	MIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIda
+	VFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+From: Zhang Yi <yi.zhang@huawei.com>
 
-The use of SET_RUNTIME_PM_OPS() is now deprecated and requires
-__maybe_unused annotations to avoid warnings about unused functions.
-Switching to RUNTIME_PM_OPS() and pm_ptr() eliminates the need for such
-annotations because the compiler can directly reference the runtime PM
-functions, thereby suppressing the warnings. As a result, the
-__maybe_unused markings can be removed.
+When the filesystem performs file or filesystem synchronization (e.g.,
+ext4_sync_file()), it queries the journal to determine whether to flush
+the file device through jbd2_trans_will_send_data_barrier(). If the
+target transaction has not started committing, it assumes that the
+journal will submit the flush command, allowing the filesystem to bypass
+a redundant flush command. However, this assumption is not always valid.
+If the journal is not located on the filesystem device, the journal
+commit thread will not submit the flush command unless the variable
+->t_need_data_flush is set to 1. Consequently, the flush may be missed,
+and data may be lost following a power failure or system crash, even if
+the synchronization appears to succeed.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Unfortunately, we cannot determine with certainty whether the target
+transaction will flush to the filesystem device before it commits.
+However, if it has not started committing, it must be the running
+transaction. Therefore, fix it by always set its t_need_data_flush to 1,
+ensuring that the committing thread will flush the filesystem device.
+
+Fixes: bbd2be369107 ("jbd2: Add function jbd2_trans_will_send_data_barrier()")
+Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 ---
+ fs/jbd2/journal.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
-Changes in v2:
-- none
-
- drivers/iio/adc/rzg2l_adc.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-index 780cb927eab1..482da6dcf174 100644
---- a/drivers/iio/adc/rzg2l_adc.c
-+++ b/drivers/iio/adc/rzg2l_adc.c
-@@ -454,7 +454,7 @@ static const struct of_device_id rzg2l_adc_match[] = {
- };
- MODULE_DEVICE_TABLE(of, rzg2l_adc_match);
- 
--static int __maybe_unused rzg2l_adc_pm_runtime_suspend(struct device *dev)
-+static int rzg2l_adc_pm_runtime_suspend(struct device *dev)
+diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+index 97f487c3d8fc..37632ae18a4e 100644
+--- a/fs/jbd2/journal.c
++++ b/fs/jbd2/journal.c
+@@ -609,7 +609,7 @@ int jbd2_journal_start_commit(journal_t *journal, tid_t *ptid)
+ int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
  {
- 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct rzg2l_adc *adc = iio_priv(indio_dev);
-@@ -464,7 +464,7 @@ static int __maybe_unused rzg2l_adc_pm_runtime_suspend(struct device *dev)
- 	return 0;
- }
+ 	int ret = 0;
+-	transaction_t *commit_trans;
++	transaction_t *commit_trans, *running_trans;
  
--static int __maybe_unused rzg2l_adc_pm_runtime_resume(struct device *dev)
-+static int rzg2l_adc_pm_runtime_resume(struct device *dev)
- {
- 	struct iio_dev *indio_dev = dev_get_drvdata(dev);
- 	struct rzg2l_adc *adc = iio_priv(indio_dev);
-@@ -475,9 +475,7 @@ static int __maybe_unused rzg2l_adc_pm_runtime_resume(struct device *dev)
- }
- 
- static const struct dev_pm_ops rzg2l_adc_pm_ops = {
--	SET_RUNTIME_PM_OPS(rzg2l_adc_pm_runtime_suspend,
--			   rzg2l_adc_pm_runtime_resume,
--			   NULL)
-+	RUNTIME_PM_OPS(rzg2l_adc_pm_runtime_suspend, rzg2l_adc_pm_runtime_resume, NULL)
- };
- 
- static struct platform_driver rzg2l_adc_driver = {
-@@ -485,7 +483,7 @@ static struct platform_driver rzg2l_adc_driver = {
- 	.driver		= {
- 		.name		= DRIVER_NAME,
- 		.of_match_table = rzg2l_adc_match,
--		.pm		= &rzg2l_adc_pm_ops,
-+		.pm		= pm_ptr(&rzg2l_adc_pm_ops),
- 	},
- };
- 
+ 	if (!(journal->j_flags & JBD2_BARRIER))
+ 		return 0;
+@@ -619,6 +619,16 @@ int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
+ 		goto out;
+ 	commit_trans = journal->j_committing_transaction;
+ 	if (!commit_trans || commit_trans->t_tid != tid) {
++		running_trans = journal->j_running_transaction;
++		/*
++		 * The query transaction hasn't started committing,
++		 * it must still be running.
++		 */
++		if (WARN_ON_ONCE(!running_trans ||
++				 running_trans->t_tid != tid))
++			goto out;
++
++		running_trans->t_need_data_flush = 1;
+ 		ret = 1;
+ 		goto out;
+ 	}
 -- 
-2.39.2
+2.46.1
 
 
