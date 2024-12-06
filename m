@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-435553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203FB9E7946
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:49:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9E8B165248
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:49:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32C511F3D20;
-	Fri,  6 Dec 2024 19:49:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RyduyTGj"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C3789E7949
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:50:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4DF1C548B;
-	Fri,  6 Dec 2024 19:49:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C8D42832C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:50:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22AAC1C5490;
+	Fri,  6 Dec 2024 19:50:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ER/3AA0k"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EABA61C5484
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:50:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733514578; cv=none; b=KPehtqEf3p/MMWN9Q22TaLRSfQfcjV/YDEsIIwtMFgcY6kAYHme9yqez2xOafpmAKg3L8xERHepNoTeeDRSBn8GN4YE1ZLnJPeXMsKmdwa6DG3c7KI1X4R8G4UqcNbzWRCyVUOPfiRDYsiaJ1bJ3p4kHth9CaiDFhtjOl9Sj6Zw=
+	t=1733514621; cv=none; b=cQlGYki4Q7c8iCfnje+wMe1PH1g51Pe8hQMqY4jyaSN45Xt3PxkBFo/foXxyonaMHJE8B90ZHlekc7pzqpZkTCeYRdjY4SdY+4+9r1aYIXz0MBzd9968KuAZVDJPU2aeG77TMsH++vAZVFv2vQ+tgLhukekxrqqbAL0/Xnjzkhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733514578; c=relaxed/simple;
-	bh=5kyEv2XzLe30oY3RVRSeRgah1pQyiiJWSvpMP2pqYwY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XR2JVndNz0Xvac2f2eWtBBJdzeN4bdFqNCH2iKfY9zPJJEsIlc32uKJsI2sRVdvktP9mgxs7q+KxdHR9CCo8CdjHAbriC7I6+HnyUV/+Tab8h9o/3izJVUvGB46oFPGbr8acfXHaQU0vkw8YMOqZ/+z2iHC6Ku8ZmcYyKs7wrOk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RyduyTGj; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B69US88027778;
-	Fri, 6 Dec 2024 19:49:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=0foSai
-	IAc2wM2z0WLUKCZiWxwHuAQ3XmtO4NM2jSHBs=; b=RyduyTGjoHVxgAAcqBOfe/
-	tn4HPdoOvz4vH12uHxvCCRAZTw/tRjZuOy8m9LxeelR5N7fbGAldrT+ltWXpn+Ry
-	M7dafut73xHp+GcLNU6ML7fWcz+0aq1E1t64KO2MDlDTufUpccETjI02buAlaEuf
-	XZmzfPmXdMMz0d3lIM4pVBo5jXdhF7tC5XrMLG+CxZ/++pWOyL3s5kvGEzG5heEv
-	l74cWYmG9nI/TbYou6aXyMrzEaEFv6f4bWWAIoVMU0CHmkpC6dARUJ5bw6mvRvUU
-	3Dj69pfF8yhavN/Qd1Iff6mZlVLfNGrL74U+i3hNjxNjfehDiYLO5KjOPxSHVt2w
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43bxptjk27-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 19:49:29 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B6JnSiX021895;
-	Fri, 6 Dec 2024 19:49:28 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43bxptjk25-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 19:49:28 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6H1pCl012745;
-	Fri, 6 Dec 2024 19:49:28 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 438d1sr9ju-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 19:49:28 +0000
-Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B6JnQGi32768738
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Dec 2024 19:49:26 GMT
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3E57B58056;
-	Fri,  6 Dec 2024 19:49:26 +0000 (GMT)
-Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C7D0658052;
-	Fri,  6 Dec 2024 19:49:23 +0000 (GMT)
-Received: from [9.171.74.148] (unknown [9.171.74.148])
-	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  6 Dec 2024 19:49:23 +0000 (GMT)
-Message-ID: <3710a042-cabe-4b6d-9caa-fd4d864b2fdc@linux.ibm.com>
-Date: Fri, 6 Dec 2024 20:49:23 +0100
+	s=arc-20240116; t=1733514621; c=relaxed/simple;
+	bh=7Wb7LqwxuNOLv536ZY2v738t45HETn7WLnFlPxrRhVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TfYa2GAxREsQ1ncxKDvW4+0Paj+Vhhsrl2FMR9jxz1kMcGwCopO6mdWfQM4PjEaOHzZmjmpBVTgelgtIqNMmlOo9lcap7uo4wKa+hehVXx1NHEAriG/PmBumFvyCUuyhC2ubr5oGzcOtzaVDEOXJmVAK+FjapyhYfjpjP48e7Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ER/3AA0k; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85bc7d126b2so1048991241.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:50:19 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733514619; x=1734119419; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kgYtVUqUlEZ8VSuTq+I8ySRpCil6RgGzEne2MvLY5yE=;
+        b=ER/3AA0kmA182GVHA9YrD8xXq/+Q3CHqtf7tospYx8hqK+9HTxLuMZZE4jPR+hhszf
+         9St8yIJ9zHszsi5oSaylwaQsoCz/VOj+Z/adJVJxeJSY3Ee/JYm/mCBS+/IiTUJWdILG
+         GwcnWedN2saeglmDwX20ep3kL3rlnM5zSxuq4+g4B38umnQc3gW6KzAWiRlV+AHoQlgC
+         iTNSzb8riiqvZwfCnCKxRV/b6ZFq07/ollk4YWGhcg7F+z7xbzsMtOjmz5yDO8FwwIpU
+         YjgJEspXPP+41fxXuXQZwGu9Vo/OSxuXqyk188ZAW/55A2RLkjsr9S99/lWe/iE3w3aL
+         2fSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733514619; x=1734119419;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kgYtVUqUlEZ8VSuTq+I8ySRpCil6RgGzEne2MvLY5yE=;
+        b=SH8aKaWBNHUFsFi9He1nyRdCYWPwMZByxsjRSlIzj14dxEQhj0AKLOYl4Pi83CWNzw
+         hJ2pP6am472kR9Brn68TK78ggnyAlNNTJnENYAcJA0fW8UpVhe+LZuAR3Zjh48dr86tr
+         6JnPZsIgeE3Lg2UQR5jfCGi5Capfmshn35xFcb1bjR59X6d3pDSEu+3PTBj+iMYdoJuV
+         829II32k286K79SV3jxMyqkonjYfUNtQOeglRr7eC3bAZcpXsXJY19FlJxBQOG6wDn0t
+         IfSzZuKF81p1Bmb0U/dq3pfoC1rkgKAvatOWOYOGX0TB/Vl9ArHCbjwq78PX7Ct0ANHh
+         /9qQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNN8gDNLgXeoFcU7NTGRsci8jE8JGliyXr0hZAk4W0yaITXWni3FYgx0OYWXtLOwoD66/khA6eXG/HlEE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQyZkh7+Jjbo2b/O18JVZGGQFH+TCPJBrkwG4XEJNqzXCZ3ZHT
+	ENT6nlz6dWoYU0Si9YyTmVfddE0D8e3z5hHkrRJPC9368DWKTKnxksvKqTYgHPE=
+X-Gm-Gg: ASbGncs/UqgExvsupS1KGM5gvxvyk3yLQ2O3QuyeS7CZdzRX24SGrnlr7wWTcaA2w8M
+	TO4COgwFCKJl+ColYxl9NpXdiCSEnS9roHVyKHbXvu2r1Idkkhj4al6C7G2oeThb4EYvySSSiyk
+	RRRzzK1yBsTRhyhE3TqrJHeoi2f5mAF9/2GP8giZ6UIGMeGFzYNPOpHgb2S0//8dGe8j6b37oLX
+	fCAnzfwYWlMuWjbZSosAxOav8ndpog5nsEc6QtoH+lLwcaZSMPvBu+WTwUJT3Cqn3Abwg7jG3i3
+	/l8bjicF
+X-Google-Smtp-Source: AGHT+IEeWUUJbrxyEjeWWA+oNy8sSHBMGYhIlHk+x4xxBQvnZSCGxkbHgUu85h0IP51FdasOJcUIAQ==
+X-Received: by 2002:a05:6102:5486:b0:4af:4ccf:e99 with SMTP id ada2fe7eead31-4afcaacd044mr5735787137.22.1733514618823;
+        Fri, 06 Dec 2024 11:50:18 -0800 (PST)
+Received: from [192.168.1.124] (49.93.157.89.rev.sfr.net. [89.157.93.49])
+        by smtp.googlemail.com with ESMTPSA id a1e0cc1a2514c-85c2bd4f2fasm552887241.32.2024.12.06.11.50.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 11:50:18 -0800 (PST)
+Message-ID: <2eedbbe1-6b4c-427b-a369-5b08dc27deaf@linaro.org>
+Date: Fri, 6 Dec 2024 20:50:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,174 +80,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/2] net/smc: support ipv4 mapped ipv6 addr
- client for smc-r v2
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-To: Guangguan Wang <guangguan.wang@linux.alibaba.com>,
-        Halil Pasic <pasic@linux.ibm.com>
-Cc: jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-        guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
-        kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
-        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dust Li <dust.li@linux.alibaba.com>
-References: <20241202125203.48821-1-guangguan.wang@linux.alibaba.com>
- <20241202125203.48821-3-guangguan.wang@linux.alibaba.com>
- <894d640f-d9f6-4851-adb8-779ff3678440@linux.ibm.com>
- <20241205135833.0beafd61.pasic@linux.ibm.com>
- <5ac2c5a7-3f12-48e5-83a9-ecd3867e6125@linux.alibaba.com>
- <7de81edd-86f2-4cfd-95db-e273c3436eb6@linux.ibm.com>
+Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, alim.akhtar@samsung.com,
+ linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com,
+ peter.griffin@linaro.org, javierm@redhat.com, tzimmermann@suse.de,
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
+ <20241205175345.201595-3-tudor.ambarus@linaro.org>
+ <ce757b8e-4e6c-4ba9-9483-b57e6e230fdf@linaro.org>
+ <vxqi23hxw7bmtfs5wk3u7szganpv5aa74b26xrvpmbehkltodw@dpum7zrxdz44>
 Content-Language: en-US
-In-Reply-To: <7de81edd-86f2-4cfd-95db-e273c3436eb6@linux.ibm.com>
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <vxqi23hxw7bmtfs5wk3u7szganpv5aa74b26xrvpmbehkltodw@dpum7zrxdz44>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EZK63Qtj6BQdv0vF6uj6J-PaNbmnuf7v
-X-Proofpoint-ORIG-GUID: gdPUPTOKqCqzo5vIYZRKoTH8yl1YdifA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 priorityscore=1501 bulkscore=0 impostorscore=0
- clxscore=1015 lowpriorityscore=0 adultscore=0 spamscore=0 suspectscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060146
 
-
-
-On 06.12.24 11:51, Wenjia Zhang wrote:
-> 
-> 
-> On 06.12.24 07:06, Guangguan Wang wrote:
+On 12/6/24 14:28, Krzysztof Kozlowski wrote:
+> On Fri, Dec 06, 2024 at 12:39:56AM +0100, Daniel Lezcano wrote:
+>>> +# SPDX-License-Identifier: GPL-2.0-only
+>>> +
+>>> +config EXYNOS_ACPM_PROTOCOL
+>>> +	tristate "Exynos Alive Clock and Power Manager (ACPM) Message Protocol"
 >>
+>> Given the importance of this driver where a lot of PM services rely on, does
+>> it really make sense to allow it as a module ?
 >>
->> On 2024/12/5 20:58, Halil Pasic wrote:
->>> On Thu, 5 Dec 2024 11:16:27 +0100
->>> Wenjia Zhang <wenjia@linux.ibm.com> wrote:
->>>
->>>>> --- a/net/smc/af_smc.c
->>>>> +++ b/net/smc/af_smc.c
->>>>> @@ -1116,7 +1116,12 @@ static int smc_find_proposal_devices(struct
->>>>> smc_sock *smc, ini->check_smcrv2 = true;
->>>>>        ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
->>>>>        if (!(ini->smcr_version & SMC_V2) ||
->>>>> +#if IS_ENABLED(CONFIG_IPV6)
->>>>> +        (smc->clcsock->sk->sk_family != AF_INET &&
->>>>> +
->>>>> !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
->>>> I think here you want to say !(smc->clcsock->sk->sk_family == AF_INET
->>>> && ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)), right? If
->>>> it is, the negativ form of the logical operation (a&&b) is (!a)||(!b),
->>>> i.e. here should be:
->>>> （smc->clcsock->sk->sk_family != AF_INET）||
->>>> （!ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)）
->>>
->>> Wenjia, I think you happen to confuse something here. The condition
->>> of this if statement is supposed to evaluate as true iff we don't want
->>> to propose SMCRv2 because the situation is such that SMCRv2 is not
->>> supported.
->>>
->>> We have a bunch of conditions we need to meet for SMCRv2 so
->>> logically we have (A && B && C && D). Now since the if is
->>> about when SMCRv2 is not supported we have a super structure
->>> that looks like !A || !B || !C || !D. With this patch, if
->>> CONFIG_IPV6 is not enabled, the sub-condition remains the same:
->>> if smc->clcsock->sk->sk_family is something else that AF_INET
->>> the we do not do SMCRv2!
->>>
->>> But when we do have CONFIG_IPV6 then we want to do SMCRv2 for
->>> AF_INET6 sockets too if the addresses used are actually
->>> v4 mapped addresses.
->>>
->>> Now this is where the cognitive dissonance starts on my end. I
->>> think the author assumes sk_family == AF_INET || sk_family == AF_INET6
->>> is a tautology in this context. That may be a reasonable thing to
->>> assume. Under that assumption
->>> sk_family != AF_INET &&    !ipv6_addr_v4mapped(addr) (shortened for
->>> convenience)
->>> becomes equivalent to
->>> sk_family == AF_INET6 && !ipv6_addr_v4mapped(addr)
->>> which means in words if the socket is an IPv6 sockeet and the addr is 
->>> not
->>> a v4 mapped v6 address then we *can not* do SMCRv2. And the condition
->>> when we can is sk_family != AF_INET6 || ipv6_addr_v4mapped(addr) which
->>> is equivalen to sk_family == AF_INET || ipv6_addr_v4mapped(addr) under
->>> the aforementioned assumption.
->>
->> Hi, Halil
->>
->> Thank you for such a detailed derivation.
->>
->> Yes, here assume that sk_family == AF_INET || sk_family == AF_INET6. 
->> Indeed,
->> many codes in SMC have already made this assumption, for example,
->> static int __smc_create(struct net *net, struct socket *sock, int 
->> protocol,
->>             int kern, struct socket *clcsock)
->> {
->>     int family = (protocol == SMCPROTO_SMC6) ? PF_INET6 : PF_INET;
->>     ...
->> }
->> And I also believe it is reasonable.
->>
->> Before this patch, for SMCR client, only an IPV4 socket can do SMCRv2. 
->> This patch
->> introduce an IPV6 socket with v4 mapped v6 address for SMCRv2. It is 
->> equivalen
->> to sk_family == AF_INET || ipv6_addr_v4mapped(addr) as you described.
->>
->>>
->>> But if we assume sk_family == AF_INET || sk_family == AF_INET6 then
->>> the #else does not make any sense, because I guess with IPv6 not
->>> available AF_INET6 is not available ant thus the else is always
->>> guaranteed to evaluate to false under the assumption made.
->>>
->> You are right. The #else here does not make any sense. It's my mistake.
->>
->> The condition is easier to understand and read should be like this:
->>       if (!(ini->smcr_version & SMC_V2) ||
->> +#if IS_ENABLED(CONFIG_IPV6)
->> +        (smc->clcsock->sk->sk_family == AF_INET6 &&
->> +         !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
->> +#endif
->>           !smc_clc_ueid_count() ||
->>           smc_find_rdma_device(smc, ini))
->>           ini->smcr_version &= ~SMC_V2;
+>> Some PM services may be needed very early in the boot process
 >>
 > 
-> sorry, I still don't agree on this version. You removed the condition
-> "
-> smc->clcsock->sk->sk_family != AF_INET ||
-> "
-> completely. What about the socket with neither AF_INET nor AF_INET6 family?
-> 
-> Thanks,
-> Wenjia
-> 
-I think the main problem in the original version was that
-(sk_family != AF_INET) is not equivalent to (sk_family == AF_INET6).
-Since you already in the new version above used sk_family == AF_INET6,
-the else condition could stay as it is. My suggestion:
+> If it works as module e.g. on Android, it is beneficial. I think the
+> platform was booting fine without it, at least to some shell, so I can
+> imagine this can be loaded a bit later.
 
-diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-index 8e3093938cd2..5f205a41fc48 100644
---- a/net/smc/af_smc.c
-+++ b/net/smc/af_smc.c
-@@ -1116,7 +1116,12 @@ static int smc_find_proposal_devices(struct 
-smc_sock *smc,
-         ini->check_smcrv2 = true;
-         ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
-         if (!(ini->smcr_version & SMC_V2) ||
-+#if IS_ENABLED(CONFIG_IPV6)
-+           (smc->clcsock->sk->sk_family == AF_INET6 &&
-+            !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
-+#else
-             smc->clcsock->sk->sk_family != AF_INET ||
-+#endif
-             !smc_clc_ueid_count() ||
-             smc_find_rdma_device(smc, ini))
-                 ini->smcr_version &= ~SMC_V2;
+Usually the firmware sets the frequency to the maximum in order to boot 
+the kernel as fast as possible. That may lead to thermal issues at boot 
+time where the thermal framework won't be able to kick in as some 
+components will depends on ACPM while the system stays at its highest 
+performance state.
 
-Thanks,
-Wenjia
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
