@@ -1,169 +1,117 @@
-Return-Path: <linux-kernel+bounces-434224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45269E637E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:43:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D40F9E6390
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EF6C286A42
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E314285308
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E2F13D8B5;
-	Fri,  6 Dec 2024 01:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98163186615;
+	Fri,  6 Dec 2024 01:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZnSRi1o0"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h9tUFfbg"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F3ABE46;
-	Fri,  6 Dec 2024 01:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B5617B418;
+	Fri,  6 Dec 2024 01:45:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733449431; cv=none; b=BCzck9z9E67CfDUApTHN8VUYOR1ekHH+0t75rZsE1jJeN8DPVALHRIdq46IMUziqYLBgRBvSDNxVomCCTjCJhmy8nJvoAP1oTmhjPqmI3EavTYMjefQ/N284geKiSfhvK557rj3+nsAk2Pnc1D0+zsEV9E3BWQ6hUu/agz1H9GY=
+	t=1733449517; cv=none; b=e7XiPKvKlKEG0YJN0zMyVwxf3p7yAZ7Jubd7M8PdsgPGH3JuWANEwPGg01j+nRYbeWaAe5kYbXPTH76TIfekBHXOBLXr/8ES26QQBwUDIfFfFIV9uVBnlSb/Pi0g0atL0ClTNE+qTRz/HdQhdquxj/NObYWTrDaQS4fwA4mMMbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733449431; c=relaxed/simple;
-	bh=3a28XM+kiu7wZQ5XmQFhCWh94Mx9FFtZDBQpPRXPgaU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cgjMTRHRGMkxGyce7ohIbS51yZ4nvX21ilhvlTzo36HQCalivJ+fzHcnKUufc2rJ7vwPka6WdqNaY/SFImLhFhg+1ZrGX/Qbg2rKAkINWobJ5pTxn/r7BnAqLfEoJiEOLTvPvxg1pKt8VfkJIaaPGSHfwjJ6Ki5nEFtxEMb4NWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZnSRi1o0; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1733449517; c=relaxed/simple;
+	bh=h0caQLlQqzGhCPb9mURayuOKsn7HOgiOET5d65osvOw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZbXOt1wBys/Hn9fpkQXSxK4zflPUPerPYULPNukpD/AhdaT2dCS7gjrPE3LTOym8qRZIU18t5GjiQNfxXHbhf166wwEjxtysRB4KYe523cwjo5Ez0RhS7/RD3bCXXepRU4QjOvozC+3XTtf1Ic/0cmV95nlh5qBRy2Ergsscb7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h9tUFfbg; arc=none smtp.client-ip=209.85.216.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725a84ff55dso914938b3a.3;
-        Thu, 05 Dec 2024 17:43:49 -0800 (PST)
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ee88b57ac0so1284156a91.0;
+        Thu, 05 Dec 2024 17:45:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733449429; x=1734054229; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dvMuO2LzOEcK6bZJDOQK5xJYTAbXjx0HM3xx7EXHDhI=;
-        b=ZnSRi1o0dloO7cfVzdz3Ls4l4EYKMLKBv2tq4I9vBc4vbrd60ATYKq1eU/YR9p/se9
-         AsPZNR21MYxib3aUgD0GoQ3x6WADSz3oR/KylbcOLq3AnSFI686CVxVzvmUoKFnZ52En
-         QpAmZYrePy9+JRpQqEumOWzjHNR6nuZAhjG7stvRVH5B7g3nnOTkFBm1VyC31QC5bZlg
-         RVgQ0R+5NKyUQ4B6ZpMIs6LNiBav6S2ThYWyPiTPQopZ5qjoxAKsjlvPuk58i319GcIE
-         HQtLrvGrKUvQmppyWus9w3DvF2wL4NwWysXecGvwUZTfVHzDiHD7HTA26aCKFShEjfwK
-         GutQ==
+        d=gmail.com; s=20230601; t=1733449515; x=1734054315; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+7OGBrM+Ds5/EU59L+lS8dg3ydHTx6BnOQHdjJwv4g8=;
+        b=h9tUFfbgzcuxi+5f464ztwix4OAFFqDRtHyE+JXo3T2VkXbneYGfah3tO9OTy38eRl
+         THzMVxbFHltH9fofP4ZmVHizalTJDMjvO6N3AAA6ejk2oS0qpk8H+lzGb3Yib08ibVNP
+         4clZXz7+jafsUG5c7x4JDFTiNFcPD5MOmlSLwf1dm/jfcwwCIsql05mpO4N024ZIiGBR
+         HWVHD+5coKw16SRXe2MaueBCfwNEgule55cSXDi5q7hSZygB2SQxX//yPArq/PsUA4Jk
+         9LrdE1VHMKIqdDIZ1jUs5PnlEsQ0LkdkHZlh0ORmaut+wmeqzENM1KFhQCTWG7vY1mBy
+         syWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733449429; x=1734054229;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dvMuO2LzOEcK6bZJDOQK5xJYTAbXjx0HM3xx7EXHDhI=;
-        b=uJEyIIgYvDTCmAEfoIImy5CIEGpaUblcirvSzCPunF9aegnI73VDA2ktXuy7mKQe9R
-         su8WAk5t8adlCJ+5MP3UylPND7MHRcxBK2+vLdzcuIQTmMYsE0rQPuVSgRJqwS44/TE9
-         B2t3I54RgmRHrUfIrz4F1iYoVbjzf0MkdD+fS4n0S/E8Sqx6HKsTN6amuzahB3Rrv2kw
-         nPFWjhqej6XJ5pkS5SiylNda1EeY+HAnFeOK2r1xDDmIq4/5EYINK3EB9zUIeWNkz+FR
-         TzHbGSzHJ5QKIW8ZyAz+0bigMrZ76x0hhCbpgrNsyeoe02GBRZmoDAptNpz9KSHlxfHV
-         sQ6A==
-X-Forwarded-Encrypted: i=1; AJvYcCVmQxcAatQFf7tyDohKiaYnEvkKbcQh71wtS2J114S2AlLAQHfFl1CBCfk4W0W9WALEDD64MFnzuTB2@vger.kernel.org, AJvYcCXtuYgXBu6NcS3v/CjW3LHMflMIHPF9LlLLOIJgVhg7WiE0KL83lip/YKo9X/M64sM/SVTw9qYPBLeKZhtr@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmwKUTVZt2+RfnMw6aT2+bk7SVI5bCbl1CBXTDsBw18GZzwMu8
-	cVPBlqAgUDZQYahWVG00NiPBI1rOMzDkyh9hhAhv+iWAYnTs693Y
-X-Gm-Gg: ASbGncspjxxhF44bMvAj8fs4EgBZP1qQpw7D6SSVUzCTm34Btn8zW5t6j1EhDakTjeA
-	01V3acfueyYPXOm4ucUjFshVBBCSsF40tYke5N+O/7e6dACtG1V3OZSX+t+vuNPO7T4vPuL45eZ
-	zpk3djfoibE4jUgL9GlOMRGok8hEgSVtKYNDJqP/DBPKSaHWdknm2p0zR8kf1apVHoh10G6bL7t
-	TP7+FzvBftvR36NZbHWzyMlfdOCuZ3VAilCT9zzOI2Bom/JJHmmvuZhBe0yFFPWzfblEeG/SVy5
-	SP6E8hSKis0zs5RBeKAWoz73
-X-Google-Smtp-Source: AGHT+IFYW2PobbERX0J/R0MGurhl+mv/yjucHbwp3t0d/Vn3DANq7WcMduBahQARhzIKRTXGHQSXBQ==
-X-Received: by 2002:a17:903:188:b0:215:5935:7eef with SMTP id d9443c01a7336-21614d68778mr17893035ad.22.1733449429330;
-        Thu, 05 Dec 2024 17:43:49 -0800 (PST)
-Received: from [172.19.1.53] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e5f30fsm18793305ad.74.2024.12.05.17.43.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 17:43:49 -0800 (PST)
-Message-ID: <d41c9484-6192-462d-92e8-c200192d37f8@gmail.com>
-Date: Fri, 6 Dec 2024 09:43:45 +0800
+        d=1e100.net; s=20230601; t=1733449515; x=1734054315;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+7OGBrM+Ds5/EU59L+lS8dg3ydHTx6BnOQHdjJwv4g8=;
+        b=hzrALXKJPdpyfKNM2bEi6I1IdnnPffIVfge8vR2CXLoDMEIT+piriKPvpHnlTSF514
+         yMfJyMkvkNtUerU1EvImmbpJCOaqe8aebM2Ihq4PoyRnO05aI63ko6dP9my2SJZSVH5T
+         TpkwdJApz2mdYAXSLmrSShOqpqYR55DOA/xf/hEmf1Mu7CqZXvYT92bnXnxJws5fw+1p
+         9K2soIyhxkQ4JfLkx1wOBiLEL1BRis8Bd0a9vPbf4O8aamQr3Say4OetxnucEBSL0r/k
+         zR0ExnWJFDjyYcTloe6bjTG5ZgguYcB143iJEsnvcEOoEtr+gZadBa0MLQrlGrmsDjOx
+         5O5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXLcW66cGpH6fQhr9ak2R6HU+sz8aR7/T55PEvfZJToOn5e8RCmt0p8586lwtZ+k+gOvDFFOLPFEZzxU7s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyF++DvJLNi8VN774a7wLq0YLyruodlnn/MLZE9C+ACnH/iZ3dY
+	y8iSp67WxUc3wk1g+8B+aMlDvsXQiA+9WUSv9TIiDcaUnYPErEmZ
+X-Gm-Gg: ASbGncvuXLpxtm2X6C8+SmUwsLTxcaNOJ0wLsUzwP6Qkary35tslWqMw5hOp4Gw4wxZ
+	4HP8oLsPu4FcXNdMrk7p2nhL++6PzpjzskLgbyj4RYsRzotKdtpKTT7jJVfaPXfLjzka2glYD/0
+	GfXP+me9vPnJ/qyQIxLv4Bm05/JpMmOkWTKnhunEpSkVZc3YgaGI6aX8j2yY8jyoPv8I1pkQ7gc
+	Q+Hg1oZTlYjtrhn6d5gM+redem7DPoeehNVtAhd1bGnmm4=
+X-Google-Smtp-Source: AGHT+IHFjL05H9QqEdxBhvGferOk0PgAeiYGY9/70kKdEA1TFewoP80NXEZbHvZ4XqWoW1SHDKN0wQ==
+X-Received: by 2002:a17:90b:3f44:b0:2e2:c2b0:d03e with SMTP id 98e67ed59e1d1-2ef68d99261mr2300618a91.5.1733449514616;
+        Thu, 05 Dec 2024 17:45:14 -0800 (PST)
+Received: from localhost ([129.146.253.192])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef2708becesm3962772a91.52.2024.12.05.17.45.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 17:45:14 -0800 (PST)
+Date: Fri, 6 Dec 2024 09:45:02 +0800
+From: Furong Xu <0x1207@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ andrew+netdev@lunn.ch, Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ xfr@outlook.com, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding
+ <thierry.reding@gmail.com>
+Subject: Re: [PATCH net v1] net: stmmac: TSO: Fix unaligned DMA unmap for
+ non-paged SKB data
+Message-ID: <20241206094502.000062e8@gmail.com>
+In-Reply-To: <Z1HYKh9eCwkYGlrA@shell.armlinux.org.uk>
+References: <20241205091830.3719609-1-0x1207@gmail.com>
+	<Z1HYKh9eCwkYGlrA@shell.armlinux.org.uk>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/2] Add support for nuvoton ma35 nand controller
-To: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nikita.shubin@maquefel.me, arnd@arndb.de,
- vkoul@kernel.org, esben@geanix.com, linux-arm-kernel@lists.infradead.org,
- linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241204025129.150525-1-hpchen0nvt@gmail.com>
- <878qsuwhm1.fsf@bootlin.com>
-Content-Language: en-US
-From: Hui-Ping Chen <hpchen0nvt@gmail.com>
-In-Reply-To: <878qsuwhm1.fsf@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Dear Miquel,
+Hi Russell,
 
-Thank you for your reply.
+On Thu, 5 Dec 2024 16:43:22 +0000, "Russell King (Oracle)" <linux@armlinux.org.uk> wrote:
+> I'm slightly disappointed to have my patch turned into a commit under
+> someone else's authorship before I've had a chance to do that myself.
+> Next time I won't send a patch out until I've done that.
+> 
+I am really sorry for this, I should have requested your permission first.
 
+> 
+> Please use rmk+kernel@armlinux.org.uk there.
+> 
+So another iteration is required here.
+Would you mind me send the v2 of this fix?
+I will not send v2 without your permission.
 
-On 2024/12/5 下午 06:26, Miquel Raynal wrote:
-> Hi,
->
-> On 04/12/2024 at 02:51:27 GMT, Hui-Ping Chen <hpchen0nvt@gmail.com> wrote:
->
->> This patch series adds the mtd nand driver for the nuvoton ma35 ARMv8 SoC.
->> It includes DT binding documentation and the ma35 mtd nand driver.
->>
->> v10:
->>    - Update ma35d1 mtd nand driver
->>      - Add unsupported write page handling.
-> I was about to apply it but...
->
->      [31m●[0m checkpatch.pl: 117: WARNING: please write a help paragraph that fully describes the config symbol
->      [31m●[0m checkpatch.pl: 141: WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
->      [31m●[0m checkpatch.pl: 348: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 352: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 352: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 429: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 465: CHECK: spaces preferred around that '*' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 465: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 466: CHECK: spaces preferred around that '*' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 466: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 467: CHECK: spaces preferred around that '*' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 467: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 468: CHECK: spaces preferred around that '*' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 468: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 479: CHECK: spaces preferred around that '*' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 479: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 481: CHECK: spaces preferred around that '*' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 481: CHECK: spaces preferred around that '+' (ctx:VxV)
->      [31m●[0m checkpatch.pl: 514: CHECK: Unbalanced braces around else statement
->      [31m●[0m checkpatch.pl: 611: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 650: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 665: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 675: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 689: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 699: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 715: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 756: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 805: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 935: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 950: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 953: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 975: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 1001: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 1018: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 1131: CHECK: Alignment should match open parenthesis
->      [31m●[0m checkpatch.pl: 1159: WARNING: DT compatible string "nuvoton,ma35d1-nand" appears un-documented -- check ./Documentation/devicetree/bindings/
->
-> Please fix these warnings and checks.
->
-> You might want to use --strict by default.
-
-I will fix it.
-
-
->
-> Thanks,
-> Miquèl
-
-
-Best regards,
-
-Hui-Ping Chen
-
+Thanks.
 
