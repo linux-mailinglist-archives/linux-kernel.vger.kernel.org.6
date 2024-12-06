@@ -1,100 +1,211 @@
-Return-Path: <linux-kernel+bounces-435736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 468BD9E7B8F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:16:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8820D9E7B75
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:13:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06FE2283C75
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:16:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 301DE18861DA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:13:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B235212FB0;
-	Fri,  6 Dec 2024 22:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDE91F4734;
+	Fri,  6 Dec 2024 22:13:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GvqzUsXZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9ijn6zG"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B300622C6C1;
-	Fri,  6 Dec 2024 22:15:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058CE22C6E3;
+	Fri,  6 Dec 2024 22:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733523349; cv=none; b=tRxLPDBwA8NANuwEbQlOL+A/onAmW122VRWtJdDHI+23pkeNi4ymjfuiq1xGU3lEnk5G83C5J4IpA0A6ATcFhs4lcprvszt4DZ7btiCyhz6hKq4LJcG8V6zyZk0x4nl6fRsgVRhZlZamtbwGypQDpcIPulAiMX7LI3skJ3GhJ6I=
+	t=1733523182; cv=none; b=hqhft/jq0AEmlxTgle1Kz+NozgP7YK0YFiIZh8i82PA9nV1uXHFLnO/FTY9hgt5AiDwXT6RhaOArId5UPbQKt3SH0+qaTNGoC8NF2P03YDjRkjcaBPw+ujTfc5a5NwcfdxFEeoXI9uErm3VN+3By74k6wkCbiYBsNGlE/1hKz2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733523349; c=relaxed/simple;
-	bh=5hI/uypdQ/H8IoEyLiu4ZQJXiF2mNJEIaK8PWV6n+Us=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:To:Date; b=Cydu4We1My/mMTtYM4BX+KwwbXKsRiWvOMuK+JtluvsYkqoZzq3L6JlYoEN7BFUtspqsY+hinG3b4KE1JqUFU5VhGCajJG67yr1lHsBlhpSy6jd+/SgWThYmt7YH84kJr45S16xey4BPJZC88a4+B8SUiWUm4nGsCM5gCt45neA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GvqzUsXZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E0D1C4CED1;
-	Fri,  6 Dec 2024 22:15:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733523349;
-	bh=5hI/uypdQ/H8IoEyLiu4ZQJXiF2mNJEIaK8PWV6n+Us=;
-	h=In-Reply-To:References:Subject:From:To:Date:From;
-	b=GvqzUsXZoGMcNUjVnwdwKwQVvHQX3ZGAVH/1iCL4fI1Att4BK5LiOOpASFiQUA4p1
-	 p+bONBwTrRgrlGDAOYAOmowbokEdDtazIvMBcOKBtsi+W3G4dr57OH3vGpUSlNJO1I
-	 uwcQ8VtvlQlhR/ktqYNx97hG/IBDHkThDgtQLffUYtHfZKgXIx6VZusZdp0kGT8iiG
-	 S1+5EoLHmj9ZIwfRmstGG2N7U7HRbQepRqApC7i0+qlyvQu8UGY1jlZMFXG7AZwQ10
-	 A8QMNELaAHuyoclDsPYHiFEw+CZlXv6FmrCw4R77ukLGfhUhEC9TI3FL5d42aDMEx4
-	 cm16AMPPg28sg==
-Message-ID: <c898338622625cbfc825e8d4cc5f0fff.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733523182; c=relaxed/simple;
+	bh=bA2NGoNsP1HkX5+YuFM8aDMcV6Wkpd8dXcDcdQYqcBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Q8aXYVRmQ/OdqlUPY2ImV0lvjOkfyh9mi7+HxzjwnV3BAQoOlnKSArGbA2ONxP5WiLfd/BdU7+Z+4KVhJlB9sMI40Rr8XskOa3XYca6zSoCNnVfJBenFV7/ej21KPWHWhARYObd4BllisrTEduaxNyLxGJevL2OUQGQ+cQsXy8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9ijn6zG; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6d87fea84cdso16110656d6.2;
+        Fri, 06 Dec 2024 14:12:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733523179; x=1734127979; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=q42RlzBJ7KqBAuqUYePY8IHU3p8Lx6u0Ba/+7jjyPE8=;
+        b=c9ijn6zGBeKIB22XOsEUs6tCWYnQzX/6pkiXfhy+1RYL+euB58sgZMQnLTIn9NV+JU
+         /uO0RyLNGweDPXEWWcYWe1jx5SSTyCDgBlb7kpgOp6lsgATUI63jaoaNDZG+LSZPPRI3
+         iHdUy1/m0sePgkHuTVZGe2ybOmiXhCxgjpJSgcLOd+QNA/4JP0BrR++/KUbyEYPVdU8+
+         GW3xYr9p3jKWPLAFBd+rHo2Q3eLFtju9wm2LyM+AFmUtA6am+AvAUyQKTbZ2JdMWs0S4
+         quaZ+ungqRs1orX8uLUQlQSNK9UHZwMbIu2ihZ4Rb1Wie53lptPjZWfpC3Dg0tPzZRWF
+         knPg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733523179; x=1734127979;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q42RlzBJ7KqBAuqUYePY8IHU3p8Lx6u0Ba/+7jjyPE8=;
+        b=wivVEohnBOkEclaGgVR883688jqyD+LDBBvfeveuIZ0TcCvtWkEcHVVfwXtDuYKzrQ
+         PwPjXExKoPVMDXW/03pBsuAmYGweUh+Ya6ZMmf5PgxMKvYaeiv0na420qURTiu4GnsLZ
+         P8W1Xe6R/5XpYj0BTgXOqw+mACPzY6bX6FkS1Bn+n4PbX8vxPd7yLfkRCOoDNIRCOkEa
+         NBKlql4TRg/00HHdjGPdFBb3CM0Q/1P1qZ27dz3+Jar4mnwl/XHUAkxQmhXJHl+2jNmv
+         CPMngY9tg6xffA256f9y76eNJvn2Uy+8gAVTAuO1bbthf/HDfXU2xqFufHwrFdyDbpLM
+         mBjw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAYsni1kl05U9bVjL++cCAEpp/CJKV/zAWt6avU08hxR+Fa0/k6sLJoAobeqn5MupXMuTqidPpi9bK@vger.kernel.org, AJvYcCUM3gEqq/NnBVNfFwIKSIFkPWEwjBTHjyDwhuR9BIuM+oeJM7lepMd1YXMIp0LobTJRv4SWx5wySZ/KvnK5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6jEdsPob/8Yn7v+GMpi6JNIgbhLiPQUjzJR/j/pJB6vKWkw6U
+	qpWe1vPD1IQh4fe50rtnQssAtGh9cPCwcFqOi7qKCGR+aSRSoLOW40TvoiOg
+X-Gm-Gg: ASbGncudnVCw1YKuyI1DWuKO8KnfFRLszAcnd6U8D8S/bbKh/DMoBpdfTA85ThlJwnj
+	i5v3nXdNCV4A/60QiwGcNp80sFg8EWt05Yoq0TZut7QIutQE52hvrg10vhauAGt9KaTPSTLpiKZ
+	sJ6aUD68yOWzyOLNft93mM2hQF/mOHGZqlWYULRx9AgRBsj/CTn5FT/mWnSL8RqN1X9B714DgKJ
+	0vIA1CnxhsbWZTGQ9JbzogC6BlelJG1c9wsi/d8pU6wJMOtpGrkz+9/UNvUVw==
+X-Google-Smtp-Source: AGHT+IFQFkzHlBJRc6UEiHKJ4eYO1c21bJ9G3NUU01WnmUgcxL08A7K6w/BdnqegWiG6jNv0dFMTIw==
+X-Received: by 2002:a05:6214:29e7:b0:6d8:9c92:6555 with SMTP id 6a1803df08f44-6d8e71675ecmr53676936d6.29.1733523178756;
+        Fri, 06 Dec 2024 14:12:58 -0800 (PST)
+Received: from localhost.localdomain ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da9fd1f2sm23607676d6.81.2024.12.06.14.12.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 14:12:58 -0800 (PST)
+From: Mingwei Zheng <zmw12306@gmail.com>
+To: linus.walleij@linaro.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mingwei Zheng <zmw12306@gmail.com>,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH v2] pinctrl: nomadik: Add check for clk_enable()
+Date: Fri,  6 Dec 2024 17:16:18 -0500
+Message-Id: <20241206221618.3453159-1-zmw12306@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <OS8PR06MB75418449B451224C5AB46FBFF2302@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20241028053018.2579200-1-ryan_chen@aspeedtech.com> <20241028053018.2579200-4-ryan_chen@aspeedtech.com> <287924eed186e3b6b52cd13bcf939ab6.sboyd@kernel.org> <SI6PR06MB7535F5D22E3FCCF5C610B307F2552@SI6PR06MB7535.apcprd06.prod.outlook.com> <a68516df98c8b8fb80f094e6e55fcb8d.sboyd@kernel.org> <OS8PR06MB75419637D55A022300E00850F2352@OS8PR06MB7541.apcprd06.prod.outlook.com> <9ccfb478d9a122db6c634e9559e211ff.sboyd@kernel.org> <OS8PR06MB75418449B451224C5AB46FBFF2302@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Subject: RE: [PATCH v7 3/3] clk: aspeed: add AST2700 clock driver.
-From: Stephen Boyd <sboyd@kernel.org>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, andrew@codeconstruct.com.au, conor+dt@kernel.org, devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org, joel@jms.id.au, krzk+dt@kernel.org, lee@kernel.org, linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
-Date: Fri, 06 Dec 2024 14:15:47 -0800
-User-Agent: alot/0.12.dev1+gaa8c22fdeedb
+Content-Transfer-Encoding: 8bit
 
-Quoting Ryan Chen (2024-12-04 16:48:42)
-> > > struct ast2700_clk_info {
-> > >         const char *name;
-> > >         u8 clk_idx;
-> > >         u32 reg;
-> > >         u32 type;
-> > >         union {
-> > >                 struct ast2700_clk_fixed_factor_data factor;
-> > >                 struct ast2700_clk_fixed_rate_data rate;
-> > >                 struct ast2700_clk_gate_data gate;
-> > >                 struct ast2700_clk_div_data div;
-> > >                 struct ast2700_clk_pll_data pll;
-> > >                 struct ast2700_clk_mux_data mux;
-> > >         } data;
-> > > };
-> > >
-> > > struct ast2700_clk_div_data {
-> > >         const struct clk_div_table *div_table;
-> > >         const struct clk_parent_data *parent;
-> > >         u8 bit_shift;
-> > >         u8 bit_width;
-> > >         u32 reg;
-> > > };
-> > >
-> > > static const struct ast2700_clk_info ast2700_scu0_clk_info[]
-> > > __initconst =3D { ...........................
-> > >         DIVIDER_CLK(SCU0_CLK_AHB, "soc0-ahb", soc0_ahbmux,
-> >=20
-> > Can you also show what soc0_ahbmux is?
-> It will be following.=20
->=20
-> static const struct clk_parent_data soc0_ahbmux[] =3D {
->         { .fw_name =3D "soc0-ahbmux", .name =3D "soc0-ahbmux" },
-> };
+Add check for the return value of clk_enable() to catch the potential
+error.
+Disable success clks in the error handling.
+Change return type of nmk_gpio_glitch_slpm_init casade.
 
-Instead of that, please use only the index.
+Fixes: 3a19805920f1 ("pinctrl: nomadik: move all Nomadik drivers to subdir")
+Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+Changelog:
 
- static const struct clk_parent_data soc0_ahbmux[] =3D {
-         { .index =3D <number from DT binding> },
- };
+v1 -> v2:
+
+1. Add clk_disable in error handling.
+---
+ drivers/pinctrl/nomadik/pinctrl-nomadik.c | 35 ++++++++++++++++++-----
+ 1 file changed, 28 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/pinctrl/nomadik/pinctrl-nomadik.c b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+index f4f10c60c1d2..4261541928e9 100644
+--- a/drivers/pinctrl/nomadik/pinctrl-nomadik.c
++++ b/drivers/pinctrl/nomadik/pinctrl-nomadik.c
+@@ -438,9 +438,9 @@ static void nmk_prcm_altcx_set_mode(struct nmk_pinctrl *npct,
+  *  - Any spurious wake up event during switch sequence to be ignored and
+  *    cleared
+  */
+-static void nmk_gpio_glitch_slpm_init(unsigned int *slpm)
++static int nmk_gpio_glitch_slpm_init(unsigned int *slpm)
+ {
+-	int i;
++	int i, j, ret;
+ 
+ 	for (i = 0; i < NMK_MAX_BANKS; i++) {
+ 		struct nmk_gpio_chip *chip = nmk_gpio_chips[i];
+@@ -449,11 +449,21 @@ static void nmk_gpio_glitch_slpm_init(unsigned int *slpm)
+ 		if (!chip)
+ 			break;
+ 
+-		clk_enable(chip->clk);
++		ret = clk_enable(chip->clk);
++		if (ret) {
++			for (j = 0; j < i; j++) {
++				chip = nmk_gpio_chips[j];
++				clk_disable(chip->clk);
++			}
+ 
++			return ret;
++		}
++
+ 		slpm[i] = readl(chip->addr + NMK_GPIO_SLPC);
+ 		writel(temp, chip->addr + NMK_GPIO_SLPC);
+ 	}
++
++	return 0;
+ }
+ 
+ static void nmk_gpio_glitch_slpm_restore(unsigned int *slpm)
+@@ -923,7 +933,9 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
+ 
+ 			slpm[nmk_chip->bank] &= ~BIT(bit);
+ 		}
+-		nmk_gpio_glitch_slpm_init(slpm);
++		ret = nmk_gpio_glitch_slpm_init(slpm);
++		if (ret)
++			goto out_pre_slpm_init;
+ 	}
+ 
+ 	for (i = 0; i < g->grp.npins; i++) {
+@@ -940,7 +952,10 @@ static int nmk_pmx_set(struct pinctrl_dev *pctldev, unsigned int function,
+ 		dev_dbg(npct->dev, "setting pin %d to altsetting %d\n",
+ 			g->grp.pins[i], g->altsetting);
+ 
+-		clk_enable(nmk_chip->clk);
++		ret = clk_enable(nmk_chip->clk);
++		if (ret)
++			goto out_glitch;
++
+ 		/*
+ 		 * If the pin is switching to altfunc, and there was an
+ 		 * interrupt installed on it which has been lazy disabled,
+@@ -988,6 +1003,7 @@ static int nmk_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 	struct nmk_gpio_chip *nmk_chip;
+ 	struct gpio_chip *chip;
+ 	unsigned int bit;
++	int ret;
+ 
+ 	if (!range) {
+ 		dev_err(npct->dev, "invalid range\n");
+@@ -1004,7 +1020,9 @@ static int nmk_gpio_request_enable(struct pinctrl_dev *pctldev,
+ 
+ 	find_nmk_gpio_from_pin(pin, &bit);
+ 
+-	clk_enable(nmk_chip->clk);
++	ret = clk_enable(nmk_chip->clk);
++	if (ret)
++		return ret;
+ 	/* There is no glitch when converting any pin to GPIO */
+ 	__nmk_gpio_set_mode(nmk_chip, bit, NMK_GPIO_ALT_GPIO);
+ 	clk_disable(nmk_chip->clk);
+@@ -1058,6 +1076,7 @@ static int nmk_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	unsigned long cfg;
+ 	int pull, slpm, output, val, i;
+ 	bool lowemi, gpiomode, sleep;
++	int ret;
+ 
+ 	nmk_chip = find_nmk_gpio_from_pin(pin, &bit);
+ 	if (!nmk_chip) {
+@@ -1116,7 +1135,9 @@ static int nmk_pin_config_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			output ? (val ? "high" : "low") : "",
+ 			lowemi ? "on" : "off");
+ 
+-		clk_enable(nmk_chip->clk);
++		ret = clk_enable(nmk_chip->clk);
++		if (ret)
++			return ret;
+ 		if (gpiomode)
+ 			/* No glitch when going to GPIO mode */
+ 			__nmk_gpio_set_mode(nmk_chip, bit, NMK_GPIO_ALT_GPIO);
+-- 
+2.34.1
+
 
