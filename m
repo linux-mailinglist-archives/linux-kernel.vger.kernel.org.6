@@ -1,62 +1,44 @@
-Return-Path: <linux-kernel+bounces-434477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C689E6758
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:41:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 305139E675A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:41:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71A10188321C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:41:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEE0A1882BA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 06:41:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1655B1DA309;
-	Fri,  6 Dec 2024 06:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VaIjQCuS"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64FBA1DA61D;
+	Fri,  6 Dec 2024 06:41:03 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DBB1198832;
-	Fri,  6 Dec 2024 06:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332361D7E35;
+	Fri,  6 Dec 2024 06:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733467252; cv=none; b=frHqC50E+w8DtppkAYAjLN93yEq51EUv1fX/lNY7poW5PdGVXbBnKZyerjTCVL4mVA+hN6rIyOn2gZ+zH0OOLOrwzJo/atu9LuYc0zfYVDE9xTjN5y9BsSWfOpFwFndROdY7zDNLsGanZH0WAKTXSl64XXjJz/FP1PnWSI7Vne4=
+	t=1733467263; cv=none; b=MB7VpBsKVq73S7bcDgwOZgeC7K1HMox6ls+4dk1k7kKSTvI81WQ6BhqCXA5ch9bYBWB93GYWLltAQgdoSqBPpcyAxNaIHDSTvfUc7wejMf3qEYWu2KpNSENumEVdp1pGA4lehWcinxTRUi9cQ7BfLt70qLi85lJEIy9f7TkjRdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733467252; c=relaxed/simple;
-	bh=yyIhSCx0XA91DO81BC7bRoJ+jRUnKBaBzDFdJyZaLzg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Vu0+6ZBnmWoIQheWN4HZdUEgskiCYrF19Lj7JCN9a00PqteIZTHy7HmeaaT1NdUAUUWJ3mJmfnX5y+ethAwNBSIROuPWKtgvqzJ49afU4ayZyAC1cBvKPliwKu6K6ISImsd7QPgWPtRUbFSANLXkrPVaCvGK+Mky9DzxsBqw8K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VaIjQCuS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaMnh031086;
-	Fri, 6 Dec 2024 06:40:47 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	P6D0FXW/G0kwPNdJVrfrsy+q1idFeO7YjGpMgEprFvM=; b=VaIjQCuS06pL5iuA
-	aFPAGABt0xrbkGAHe8WEUB1sKmmhaMbb+LTopdFmYKhQ8E+Ave0QEzgvL5rwMN/A
-	u+g17WvjLc85x6DqcCYFBrCNOmo9ruG2+8G+l4g2VbdJVQlJoqTr/y3uyZZLm/lc
-	eKUNYaIQjw45V9NtC/Nl1H/NZcypgC8lBpQn2yXmMUBltc96Lwo9h0wUDfBYaAhB
-	vUlI/UTBEx+qDmiCvLHauwQtM4qncDPHVn3GMEsS64eZUMA2WklSfJJM2hV2nYLd
-	HxSRH5bGTxFgnmHQmRQRLvw9iJVlJKFQG49/p5iq/txCfMjGa0+vNZ/QReLQ7ELl
-	ueHLBw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43be1727eg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 06:40:46 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B66ejh0022116
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 06:40:45 GMT
-Received: from [10.216.12.5] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 22:40:42 -0800
-Message-ID: <57ce6574-b8e8-4523-9a97-6946fad59b35@quicinc.com>
-Date: Fri, 6 Dec 2024 12:09:39 +0530
+	s=arc-20240116; t=1733467263; c=relaxed/simple;
+	bh=66+PVLJ+QChN/bHTgdHcuh9hc8K19AZ0ZHwK+EOPX7A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qQT2uBugRpv2QFxLU891Ojgd5g48Jrd0YNTH44SmqmRXejjNePoPRREUf9oIZQumKHNycSzJShjxRe0HijR8aWfmmuCybo+Wz7sSs/RM9uMB8aHQ+qI0MEGMkHrCG/6k1YoaCDaWq2z84NYbYTwZav0mz6w0siqh6rF9JguUiRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4M8L4L8Xz4f3lVM;
+	Fri,  6 Dec 2024 14:40:34 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.75])
+	by mail.maildlp.com (Postfix) with ESMTP id A8E281A0196;
+	Fri,  6 Dec 2024 14:40:54 +0800 (CST)
+Received: from [10.67.109.79] (unknown [10.67.109.79])
+	by APP2 (Coremail) with SMTP id Syh0CgA35uJ1nFJnECUdDw--.53652S2;
+	Fri, 06 Dec 2024 14:40:54 +0800 (CST)
+Message-ID: <897b04c9-dba3-44ae-8113-145ca3457cb3@huaweicloud.com>
+Date: Fri, 6 Dec 2024 14:40:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,127 +46,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcs8300: Add support for clock
- controllers
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241114-qcs8300-mm-cc-dt-patch-v1-1-7a974508c736@quicinc.com>
- <802d32f1-ff7e-4d61-83f1-f804ee1750ed@oss.qualcomm.com>
+Subject: Re: [next -v1 3/5] memcg: simplify the mem_cgroup_update_lru_size
+ function
+To: Yu Zhao <yuzhao@google.com>, Hugh Dickins <hughd@google.com>
+Cc: akpm@linux-foundation.org, mhocko@kernel.org, hannes@cmpxchg.org,
+ yosryahmed@google.com, roman.gushchin@linux.dev, shakeel.butt@linux.dev,
+ muchun.song@linux.dev, davidf@vimeo.com, vbabka@suse.cz, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+ chenridong@huawei.com, wangweiyang2@huawei.com
+References: <20241206013512.2883617-1-chenridong@huaweicloud.com>
+ <20241206013512.2883617-4-chenridong@huaweicloud.com>
+ <CAOUHufbCCkOBGcSPZqNY+FXcrH8+U7_nRvftzOzKUBS4hn+kuQ@mail.gmail.com>
 Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <802d32f1-ff7e-4d61-83f1-f804ee1750ed@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 1Shccz1ZTfL6CeHxwV4Rh7ncaQkSS4Ow
-X-Proofpoint-ORIG-GUID: 1Shccz1ZTfL6CeHxwV4Rh7ncaQkSS4Ow
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- phishscore=0 spamscore=0 bulkscore=0 priorityscore=1501 mlxscore=0
- impostorscore=0 suspectscore=0 adultscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060046
+From: Chen Ridong <chenridong@huaweicloud.com>
+In-Reply-To: <CAOUHufbCCkOBGcSPZqNY+FXcrH8+U7_nRvftzOzKUBS4hn+kuQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:Syh0CgA35uJ1nFJnECUdDw--.53652S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7ZF4rCryrGw48XFW8Ar43Wrg_yoW8ZF15pF
+	W7CFyFy3WkArW7u3s7twsaq3y2krs5JFWUXF9xX34fJw1j9FyIkF4UtrWYqrW7AFn5Cw43
+	trZxWr1vyFZ0vaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r4a6rW5
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
 
 
-On 11/30/2024 8:07 PM, Konrad Dybcio wrote:
-> On 14.11.2024 12:05 PM, Imran Shaik wrote:
->> Add support for GPU, Video, Camera and Display clock controllers on
->> Qualcomm QCS8300 platform.
+On 2024/12/6 13:33, Yu Zhao wrote:
+> On Thu, Dec 5, 2024 at 6:45 PM Chen Ridong <chenridong@huaweicloud.com> wrote:
 >>
->> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
->> ---
->> Please note that this series is dependent on [1] and [2], which adds support
->> for QCS8300 initial device tree and QCS8300 multi media clock controllers respectively.
+>> From: Chen Ridong <chenridong@huawei.com>
 >>
->> [1] https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/
->> [2] https://lore.kernel.org/all/20241106-qcs8300-mm-patches-v3-0-f611a8f87f15@quicinc.com/ 
->> ---
->>  arch/arm64/boot/dts/qcom/qcs8300.dtsi | 59 +++++++++++++++++++++++++++++++++++
->>  1 file changed, 59 insertions(+)
+>> In the `mem_cgroup_update_lru_size` function, the `lru_size` should be
+>> updated by adding `nr_pages` regardless of whether `nr_pages` is greater
+>> than 0 or less than 0. To simplify this function, add a check for
+>> `nr_pages` == 0. When `nr_pages` is not equal to 0, perform the same
+>> actions.
 >>
->> diff --git a/arch/arm64/boot/dts/qcom/qcs8300.dtsi b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> index 2c35f96c3f28..e43fada4acb5 100644
->> --- a/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/qcs8300.dtsi
->> @@ -5,6 +5,10 @@
->>  
->>  #include <dt-bindings/clock/qcom,qcs8300-gcc.h>
->>  #include <dt-bindings/clock/qcom,rpmh.h>
->> +#include <dt-bindings/clock/qcom,sa8775p-camcc.h>
->> +#include <dt-bindings/clock/qcom,sa8775p-dispcc.h>
->> +#include <dt-bindings/clock/qcom,sa8775p-gpucc.h>
->> +#include <dt-bindings/clock/qcom,sa8775p-videocc.h>
->>  #include <dt-bindings/interconnect/qcom,icc.h>
->>  #include <dt-bindings/interconnect/qcom,qcs8300-rpmh.h>
->>  #include <dt-bindings/interrupt-controller/arm-gic.h>
->> @@ -772,6 +776,20 @@ lpass_ag_noc: interconnect@3c40000 {
->>  			qcom,bcm-voters = <&apps_bcm_voter>;
->>  		};
->>  
->> +		gpucc: clock-controller@3d90000 {
->> +			compatible = "qcom,qcs8300-gpucc";
->> +			reg = <0x0 0x03d90000 0x0 0xa000>;
->> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
+>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > 
-> Missing AHB clock
+> NAK.
 > 
+> The commit that added that clearly explains why it was done that way.
 
-We are re-using the qcom,gpucc.yaml bindings for the QCS8300, which doesn't have 
-the AHB clock. Hence, followed the same approach as all other latest targets.
+Thank you for your reply.
 
->> +				 <&gcc GCC_GPU_GPLL0_CLK_SRC>,
->> +				 <&gcc GCC_GPU_GPLL0_DIV_CLK_SRC>;
->> +			clock-names = "bi_tcxo",
->> +				      "gcc_gpu_gpll0_clk_src",
->> +				      "gcc_gpu_gpll0_div_clk_src";
->> +			#clock-cells = <1>;
->> +			#reset-cells = <1>;
->> +			#power-domain-cells = <1>;
->> +		};
->> +
->>  		pmu@9091000 {
->>  			compatible = "qcom,qcs8300-llcc-bwmon", "qcom,sc7280-llcc-bwmon";
->>  			reg = <0x0 0x9091000 0x0 0x1000>;
->> @@ -882,6 +900,47 @@ gem_noc: interconnect@9100000 {
->>  			qcom,bcm-voters = <&apps_bcm_voter>;
->>  		};
->>  
->> +		videocc: clock-controller@abf0000 {
->> +			compatible = "qcom,qcs8300-videocc";
->> +			reg = <0x0 0x0abf0000 0x0 0x10000>;
->> +			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
-> 
-> And the ones you reference here and below are not registered with
-> the clock framework.. 
-> 
+I have read the commit message for ca707239e8a7 ("mm: update_lru_size
+warn and reset bad lru_size") before sending my patch. However, I did
+not quite understand why we need to deal with the difference between
+'nr_pages > 0' and 'nr_pages < 0'.
 
-Yes, but these clocks are kept always-on from GCC driver probe.
 
-Thanks,
-Imran
+The 'lru_zone_size' can only be modified in the
+'mem_cgroup_update_lru_size' function. Only subtracting 'nr_pages' or
+adding 'nr_pages' in a way that causes an overflow can make the size < 0.
 
-> So please pick one
-> 
-> Konrad
-> 
-> Konrad
+For case 1, subtracting 'nr_pages', we should issue a warning if the
+size goes below 0. For case 2, when adding 'nr_pages' results in an
+overflow, there will be no warning and the size won't be reset to 0 the
+first time it occurs . It might be that a warning will be issued the
+next time 'mem_cgroup_update_lru_size' is called to modify the
+'lru_zone_size'. However, as the commit message said, "the first
+occurrence is the most informative," and it seems we have missed that
+first occurrence.
+
+As the commit message said: "and then the vast unsigned long size draws
+page reclaim into a loop of repeatedly", I think that a warning should
+be issued and 'lru_zone_size' should be reset whenever 'size < 0' occurs
+for the first time, whether from subtracting or adding 'nr_pages'.
+
+I am be grateful if you can explain more details, it has confused me for
+a while. Thank you very much.
+
+Best regards,
+Ridong
 
 
