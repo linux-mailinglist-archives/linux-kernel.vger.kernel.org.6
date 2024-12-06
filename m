@@ -1,145 +1,133 @@
-Return-Path: <linux-kernel+bounces-434184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B42C9E62B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:57:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EEFB1636F6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:57:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87FAB38384;
-	Fri,  6 Dec 2024 00:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b="O/0Rdc5T"
-Received: from mx0b-002e3701.pphosted.com (mx0b-002e3701.pphosted.com [148.163.143.35])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19AA59E62BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:58:55 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0694F193;
-	Fri,  6 Dec 2024 00:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.143.35
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733446662; cv=none; b=jtBOwOO2ltpGWNZQDWkM9VyWt6hjlAEFdZfRAEIRqL1JeKmXScqU5fJrAL/1DNU8VkSlvhZLQuPKZXA11kgJL5C6onjNcsShjYoS9bZNdUI1WrbLmWtAPQ/fA0IB71/XeuIt/8LxvIoRP5IqqrLgBOkyUf/R9mgA1GZyGyTiBnA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733446662; c=relaxed/simple;
-	bh=kwOMnH+u5IAoSHvIY6bkC0ZWheAOiJb0SlAVXMM1Q0o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sFeaZ6MXy9oWCRp6As9kTt7iLEZbB2e/2nbrWouCCe2pQmDqbpsWUjr2nLIm7NPZ6Fmg+6suYkBGWsMX+m55OM/9gANSNtoNfRCrvthTn9p6BWwbDP0SJZpK1Wr2+UG2YOSeOzwZyL3DXs7Qd9x0lS+ZmLgAcUYyFk1/Nm7BMlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com; spf=pass smtp.mailfrom=hpe.com; dkim=pass (2048-bit key) header.d=hpe.com header.i=@hpe.com header.b=O/0Rdc5T; arc=none smtp.client-ip=148.163.143.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=hpe.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hpe.com
-Received: from pps.filterd (m0148664.ppops.net [127.0.0.1])
-	by mx0b-002e3701.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B60s4vr006020;
-	Fri, 6 Dec 2024 00:57:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hpe.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pps0720; bh=LrUSZi7g/a8xkb8UWL38FyDn1g
-	UQBK0tgVseIuMZxPU=; b=O/0Rdc5TaXrm/VGi29qXYAcgEslGan5QneGuRkD1FL
-	17ZECQJt4AhV4JRQqXyB/SnEun2OofYHuYRokfrxPS9Y1QntmZf/QdFwCmxyaUmG
-	rdXEjxfV/EdGzu13c3LPBWOIu6wOc3qT4InmnC6bN2YmbLl8jJh/JhWQAh9x25G8
-	bINVea3pxpw0SsZoNTirFejYhqHYPE9qPyo4IxkSf39hMI/U5xLgP8kW48ZM99Us
-	Cl8qTXrx7U979HcrBAgzqbXWAaZJCbK8PT7ybIBak23EVcWa0JPU3FS54SVO2cVB
-	ftcEVufuwv+5rMqm/jeyV7uapiEbPMitGAI3XSz5nJfw==
-Received: from p1lg14878.it.hpe.com ([16.230.97.204])
-	by mx0b-002e3701.pphosted.com (PPS) with ESMTPS id 43bq4800rs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 00:57:21 +0000 (GMT)
-Received: from p1lg14885.dc01.its.hpecorp.net (unknown [10.119.18.236])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EBC28408C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:58:53 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF8F79DC7;
+	Fri,  6 Dec 2024 00:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WEEcZQ9P"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by p1lg14878.it.hpe.com (Postfix) with ESMTPS id 01F8227677;
-	Fri,  6 Dec 2024 00:57:20 +0000 (UTC)
-Received: from DESKTOP-V47QP3F. (unknown [16.231.227.36])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by p1lg14885.dc01.its.hpecorp.net (Postfix) with ESMTPS id 3C8F480A244;
-	Fri,  6 Dec 2024 00:57:19 +0000 (UTC)
-Date: Thu, 5 Dec 2024 18:57:17 -0600
-From: Kyle Meyer <kyle.meyer@hpe.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: bp@alien8.de, james.morse@arm.com, mchehab@kernel.org, rric@kernel.org,
-        linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] EDAC/{i10nm,skx,skx_common}: Support multiple clumps
-Message-ID: <Z1JL7fevweCQtTnT@hpe.com>
-References: <20241205165954.7957-1-kyle.meyer@hpe.com>
- <Z1H7U9-O2LdAoa5r@agluck-desk3>
- <Z1IHkBlm_0p-0-c3@hpe.com>
- <Z1Iuk-_VdmZibOes@agluck-desk3>
- <Z1I-A0Rhc8AHhvtw@agluck-desk3>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCB8193;
+	Fri,  6 Dec 2024 00:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733446727; cv=none; b=JLtQPEJ8v6P7bpz0Air2CQbLuEAFPDeSt7eXLnn7l24VRbT5G76hBOBGMYya0loOmFlxhlMjSXVH0tCJfX2ZzT7f8HTvbe9h6tbamiUGE9Wsd52nFZ8M7+ojY9v16Rhx8AtHPoWNVijlfdb/N0oumE1tUhU8KGEMdrvPfE1v+sc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733446727; c=relaxed/simple;
+	bh=LbVTTNf9deDecb9jxHiZ7X3/6utGjYJ2dpOMPg8rKec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=g8+PWLwta34iesL1WIU/I6bb8lkpoZqo/34LZ7RyIzKspcjz4iyvxlG11WRyudCIkeXd8QBQ9i77TbvpMSoXmqrt1OGCn9SHCZ/3YMNr6cRnu1bin0Q5viO/YDiaf2tjnNSyRTzJgPkEydlzevdxXjzFIB7sszTMoLKWMVSVg9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WEEcZQ9P; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaLbR006904;
+	Fri, 6 Dec 2024 00:58:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nlcCtZFcIuIC2GCOMVB7E7zkahROSsp0KC0iSEP4E5U=; b=WEEcZQ9PHOaTUP5B
+	n2vCsunLjLIvayKIfokxCIFxbnOPameFNw3m7qLKIhe7CE3iaYgPwSHrNgdDAN5s
+	lpcp3wK2+CqDDNiECOnwj7n8xn6NC30laYVXTPsvsvKsmCPQ+wwU4HhnpsqESoPo
+	vuxyAZW/LrFRh5gUq8PvwugZz1ouPKbaBCgSY06qH89AJvMQ3PDe9hk3fJitMni2
+	5844btik+avw1Bav5/cUOPC/rFhgHqVe3r/qv3xHvfWiMeu1O1+o06E3TXlA0FxK
+	LtLI18Qjxc13F9oEKNc+is7mQzY5VTk43IFfd05ZTmIyAeKh49M+lGmxRw7yPkPa
+	tyubdA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ben89aat-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 00:58:40 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B60wdV4013982
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 00:58:39 GMT
+Received: from [10.253.33.254] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 16:58:35 -0800
+Message-ID: <323eee41-70f2-48f5-8705-a0d30666c1d3@quicinc.com>
+Date: Fri, 6 Dec 2024 08:58:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1I-A0Rhc8AHhvtw@agluck-desk3>
-X-Proofpoint-GUID: UQcTtQmVPiPioaFN6HTCjN8a9TKokAri
-X-Proofpoint-ORIG-GUID: UQcTtQmVPiPioaFN6HTCjN8a9TKokAri
-X-HPE-SCL: -1
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs8300-ride: enable ethernet0
+To: Andrew Lunn <andrew@lunn.ch>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran
+	<richardcochran@gmail.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20241123-dts_qcs8300-v4-0-b10b8ac634a9@quicinc.com>
+ <20241123-dts_qcs8300-v4-2-b10b8ac634a9@quicinc.com>
+ <cbd696c0-3b25-438b-a279-a4263308323a@lunn.ch>
+ <14682c2b-c0bc-4347-bcf2-9e4b243969a7@oss.qualcomm.com>
+ <4ecd23e2-0975-47cb-a1ea-ef0be25c93c6@lunn.ch>
+Content-Language: en-US
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+In-Reply-To: <4ecd23e2-0975-47cb-a1ea-ef0be25c93c6@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: g1faQMUgjurLLQJQr8c2flsXYVVjb7A1
+X-Proofpoint-GUID: g1faQMUgjurLLQJQr8c2flsXYVVjb7A1
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-05_02,2024-10-04_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 spamscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 mlxscore=0 bulkscore=0
- malwarescore=0 lowpriorityscore=0 mlxlogscore=999 phishscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060006
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=570 clxscore=1015
+ malwarescore=0 suspectscore=0 spamscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060007
 
-On Thu, Dec 05, 2024 at 03:57:55PM -0800, Luck, Tony wrote:
-> > +int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
-> > +{
-> > +#ifdef CONFIG_NUMA
-> > +	return skx_get_pkg_id(d, id);
-> > +#else
-> > +	u32 reg;
-> > +
-> > +	if (pci_read_config_dword(d->util_all, off, &reg)) {
-> > +		skx_printk(KERN_ERR, "Failed to read src id\n");
-> > +		return -ENODEV;
-> > +	}
-> > +
-> > +	*id = GET_BITFIELD(reg, 12, 14);
-> > +	return 0;
-> > +#endif
+
+
+On 2024-12-06 07:39, Andrew Lunn wrote:
+>>>> +&ethernet0 {
+>>>> +	phy-mode = "2500base-x";
+>>>> +	phy-handle = <&sgmii_phy0>;
+>>>
+>>> Nit picking, but your PHY clearly is not an SGMII PHY if it is using
+>>> 2500base-x. I would call it just phy0, so avoiding using SGMII
+>>> wrongly, which most vendors do use the name SGMII wrongly.
+>>
+>> Andrew, does that mean the rest of the patch looks ok?
+>>
+>> If so, I don't have any concerns either.
 > 
-> Doh ... I alwasy forget about IS_ENABLED(). This can be written:
+> Yes, this is a minor problem, the rest looks O.K, so once this is
+> fixed it can be merged.
 > 
-> 
-> int skx_get_src_id(struct skx_dev *d, int off, u8 *id)
-> {
-> 	u32 reg;
-> 
-> 	if (IS_ENABLED(CONFIG_NUMA))
-> 		return skx_get_pkg_id(d, id);
-> 
-> 	if (pci_read_config_dword(d->util_all, off, &reg)) {
-> 		skx_printk(KERN_ERR, "Failed to read src id\n");
-> 		return -ENODEV;
-> 	}
-> 
-> 	*id = GET_BITFIELD(reg, 12, 14);
-> 	return 0;
-> }
+> 	Andrew
 
-Looks good.
 
-> 1) Does this work? I tried on a non-clumpy system that is NUMA.
+I will update the PHY name and pad the register in the next version.
 
-Yes, I just tested this on a Sapphire Rapids system with multiple UPI domains.
+-- 
+Best Regards,
+Yijie
 
-> 2) Is it better (assuming #fidef factored off into a .h file)?
-
-IMO, yes, but there's one subtle difference. EDAC will not load on systems
-that have a single UPI domain when CONFIG_NUMA is enabled but numa=off, because
-pcibus_to_node() in skx_get_pkg_id() will return NUMA_NO_NODE (-1). Is that a
-case that we need to worry about?
-
-Thanks,
-Kyle Meyer
 
