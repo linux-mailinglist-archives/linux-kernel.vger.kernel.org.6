@@ -1,127 +1,132 @@
-Return-Path: <linux-kernel+bounces-434738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56D579E6A73
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:37:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8322B9E6A76
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:38:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A03F416B63B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970E81886B0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C491F6685;
-	Fri,  6 Dec 2024 09:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8071FA151;
+	Fri,  6 Dec 2024 09:37:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mzxnsOij"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qasvlkzw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D471F543E;
-	Fri,  6 Dec 2024 09:36:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1D61F9F43
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477783; cv=none; b=P3m2T2XwxbzJCtWx5FuBscnv1kpPdRdTdChvmyKshLRTxj/F4QyTfmgsevUpOXlBO5fd015DdgM+QeCDKG8JF5JUmO4KHjyo3yK17iccpKMSloGHUQTtXqIaf5K+Qh5s1uqayt3zmDP7C6TLbsY7Pu+no8amFqdPtN6jNDu3R1I=
+	t=1733477827; cv=none; b=nLC8L54890D1QrOnu8Q5Yz98e+DfqLOuUOFJ3RTRRiYbaf4KnvsDc4K6DoKEMzUPNZICjEZGpPqfzIX8xYYyeTum8vsYltzZFwjgxx+uNHR9wOXJ1l83d/bVLCxS/2zZ9Dej0axYtIf37tIPVdLtDJcyLKsmHPwFoTmyt9vSNC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477783; c=relaxed/simple;
-	bh=qgUDk+W+PIyTOGoAKRTvzyiV3ijeNBD1N4UTpLpjEhI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=C7wrOPjsDnvA1ZCULK1MOWFkPFU4qL25AYPgk4pXG+tn7KOm5uIuxECD6gD7dxCh3MXcednCKdBPHimaVQoC0RNIPXZZ+BlV2W+EmCByHMTohJN/Sqc1pAHkgsS7CyxwTGr8K6UYyp+wMBKIqpq1tebwdSlyUJoXg4/fljmu2zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mzxnsOij; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B67REtR028543;
-	Fri, 6 Dec 2024 09:36:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=N8fRNsyI6v+DciPAXUcifEKU55GUAY
-	Uh9TWGHulSCA4=; b=mzxnsOijoF3t/+ZDnyTbeT4uobmZhBxF6WLdSxpovKCOld
-	JF/pwh2gPFTOSCeyNdZCOtpVgZVIfh6FWNv4XWMXAm09BnuNt4s1nhlsJAaZDAy8
-	51NkQL774mlUpqYmB4BQcv2Hp2j/kSWKkce4/k6ZJTA7h0I2nJlYx5ysm4BKReLU
-	/XxpxFzs8t6EEVVaWA03syUflVtgJoueypCQrBkvxGePQdYi7uKKTZSK6ZdRPd0C
-	+awDussSrEPRaF0H35giGoJ53ghLRujtwVQx/UlJPstxM4fS9Q9xRUwLInxf4j76
-	IDt813vVM1sho8XrmmYa3xsV0qnPtlHnXxz2bJpA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ax661745-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 09:36:02 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B69RYVs008431;
-	Fri, 6 Dec 2024 09:36:01 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ax661741-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 09:36:01 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B69XLoA006840;
-	Fri, 6 Dec 2024 09:36:00 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 438f8jwxr1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 09:36:00 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B69ZxtV52625736
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 6 Dec 2024 09:35:59 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 153EF2004B;
-	Fri,  6 Dec 2024 09:35:59 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5049920043;
-	Fri,  6 Dec 2024 09:35:58 +0000 (GMT)
-Received: from osiris (unknown [9.171.17.195])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  6 Dec 2024 09:35:58 +0000 (GMT)
-Date: Fri, 6 Dec 2024 10:35:56 +0100
-From: Heiko Carstens <hca@linux.ibm.com>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Florent Revest <revest@chromium.org>,
-        linux-trace-kernel@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-        Alan Maguire <alan.maguire@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v20 00/19] tracing: fprobe: function_graph:
- Multi-function graph and fprobe on fgraph
-Message-ID: <20241206093556.9026-B-hca@linux.ibm.com>
-References: <173344373580.50709.5332611753907139634.stgit@devnote2>
+	s=arc-20240116; t=1733477827; c=relaxed/simple;
+	bh=0OVqSdKjz29ID2mDogu1rbXECrb7mkjLRUFXqkvFw88=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qs8P51G7kZ3NxvyP0NbhGk3jEBHpYCcXb6n+y1g3QgV+ihkn+IFqG5N7tXSYBdz33/IRtr456xQycEOEss9RC1JgH5Dw453DpLmoFRvzJqXvC2Q/AuxnisBYbtRjl078G28j5io0morPyoI8AUT9sZCAc5GQqJCO5HU583Y0aAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qasvlkzw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12B9BC4CED1;
+	Fri,  6 Dec 2024 09:37:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733477827;
+	bh=0OVqSdKjz29ID2mDogu1rbXECrb7mkjLRUFXqkvFw88=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QasvlkzwlSXhBS1XlZ6BrGuaxJd0Hl6wlwXggvqdPyoPJum3dEyJqOX1JA9eUZ5UB
+	 XfhDfOQKeN0ftjlp58am78mCVZFIC0UIISRG1V5z3+RQIyAZ5fIGatx+J+ZR7SvquL
+	 eXc1Ew1jcvXPmRz6Tjga7mBtMeATzUHsy73hR/ym5YYUxqifn8BbKxkUmhKsS4p80Y
+	 cNqSHMjl86KXKcNgAkZgFP5or6y2P4t4UkV87hVSCB2+l17/ct4AQlyez8pM9MRa0W
+	 QXuJyhm43Eh9JyZZBpeoOexfIsvHzlUuRzy+Xo0hg06nDirVlb6UQq6ksPJPhmzz7O
+	 OKgj8qL5wbUKQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tJUlk-0016ib-Gf;
+	Fri, 06 Dec 2024 09:37:04 +0000
+Date: Fri, 06 Dec 2024 09:37:04 +0000
+Message-ID: <86cyi5tanz.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: richard clark <richard.xnu.clark@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	will@kernel.org,
+	"Russell King (Oracle)" <linux@armlinux.org.uk>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: Question about interrupt prioriyt of ARM GICv3/4
+In-Reply-To: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
+References: <CAJNi4rMfhZOCT+7Ki14vUs+dZbv9cxCZ0s+jgn6=_om4NTgo_A@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173344373580.50709.5332611753907139634.stgit@devnote2>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -lHs55unlvg6qIyZj6aDfrYW0-N2M25V
-X-Proofpoint-GUID: qUwWR2oi7s5dOJ7jHDw_vlUQLLNjoFPe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0
- priorityscore=1501 mlxlogscore=415 malwarescore=0 spamscore=0
- suspectscore=0 lowpriorityscore=0 clxscore=1015 impostorscore=0
- bulkscore=0 adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412060068
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: richard.xnu.clark@gmail.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, will@kernel.org, linux@armlinux.org.uk, mark.rutland@arm.com, torvalds@linux-foundation.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Fri, Dec 06, 2024 at 09:08:56AM +0900, Masami Hiramatsu (Google) wrote:
+On Fri, 06 Dec 2024 08:33:11 +0000,
+richard clark <richard.xnu.clark@gmail.com> wrote:
+> 
 > Hi,
-> 
-> Here is the 20th version of the series to re-implement the fprobe on
-> function-graph tracer. The previous version is;
-> 
-> https://lore.kernel.org/all/173125372214.172790.6929368952404083802.stgit@devnote2/
-> 
-> This version is rebased on v6.13-rc1 and fixes to make CONFIG_FPROBE
-> "n" by default, so that it does not enable function graph tracer by
-> default.
+> Currently seems the GICv3/4 irqchip configures all the interrupts as
+> the same priority, I am thinking about to minimize the latency of the
+> interrupt for a particular device, e.g, the arm arch_timer in the RTL
+> system. The question is,
+> 1. Why don't we provide a /proc or /sys interface for the enduser to
+> set the priority of a specific interrupt(SPI/PPI)?
 
-Is there a reason why you didn't add the ACKs I provided for s390
-related patches for v19 of this series?
+I'm afraid this really has nothing to do with any particular interrupt
+architecture.
+
+Before thinking of exposing the interrupt priority to userspace, you
+should look at what this translates into for the kernel once you allow
+interrupts to be preempted by another one with a higher priority.
+
+This means that at every point where you would normally see a
+local_irq_save(), spinlock_irqsave() or equivalent, you would need to
+explicitly specify the priority that you allow for preemption. You
+should then make sure that any code that can be run during an
+interrupt is reentrant. You need to define which data structures can
+be manipulated at which priority level... The list goes on.
+
+If you want a small taste of the complexity, just look at what
+handling NMIs (or even pseudo-NMIs in the case of GICv3) means, and
+generalise it to not just two, but an arbitrary range of priorities.
+
+If you want the full blown experience, look at the BSDs and their use
+of spl*(). I don't think anyone has any plan to get there, and the RT
+patches have shown that there is little need for it.
+
+> 2. Is there any way to verify the higher priority interrupt will have
+> more dominant to be selected to the CPU (IOW, the priority is really
+> working) in case of multiple different interrupts asserted to the GIC
+> at the same time(some debug registers of GIC like GICD_REEMPT_CNT :-)
+> to record higher priority wins)?
+
+The GIC architecture makes no promise that the interrupt you
+acknowledge is the highest priority pending interrupt, because this is
+by definition a very racy process.
+
+Also, even on busy systems, you will very rarely see two interrupts
+targeting the same CPU being made pending at the same time, so that
+the interrupt delivery system would have to arbitrate between the two.
+That's because interrupts are vanishingly rare in the grand scheme of
+things.
+
+Thanks,
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
