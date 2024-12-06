@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-435468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CB449E7843
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:43:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 23A4B9E7844
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:43:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4B121886B22
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:43:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B3418869C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:43:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F365C1F3D2B;
-	Fri,  6 Dec 2024 18:42:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829731DA612;
+	Fri,  6 Dec 2024 18:43:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJ5lXDmq"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="adytRsIQ"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECC13195FF0;
-	Fri,  6 Dec 2024 18:42:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256C31D6DB1
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 18:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733510579; cv=none; b=QDxmx34J82Jkx4i3y5YglVviV9JJT34ec1qtq584pKF//Tm1of7axoBZ2uE/U7qlAS29PJhznsW7udpn1A1zJ3TJI6C1B3sDFeAioXCuRZZ7Hne6I23fuGFnxV/NwsiAR2WkSGhp2NbjF/u5XrNsbsIVZ4e3qcuk2bCHH05G10Q=
+	t=1733510610; cv=none; b=GepJqMp/zRAUsw5AeUhLUZKY7mWDnCz4q6XdayEw+ohIlRtug6OQ/8I3bU+t2F+KN0EhXgGRlCM9PERdooxkDndNYsH72tdWPpkvKStpc7rL4YAlpb8LhH/tDG6dZO7CL6cNs/etsy4plDMouBFDu/ccDYOns4XwIy9UWa0eYK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733510579; c=relaxed/simple;
-	bh=icpeG6rZXi919HAXSM1rD/h5KtAwpDPXQFR2vC1cLKk=;
+	s=arc-20240116; t=1733510610; c=relaxed/simple;
+	bh=iQcm115gWE6WA4WBEAY5qj+MCjWx6Fk8a4BOCCaxeFw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WAKjf2okeVF+weDgyeQH0Vs8pKwseiwojodRI1tI7qNSfWmHwbGa0Pg6cKTnQGQRGHsyL5oFc09hs7lLp5I067IwueDwvakgm2lDIhtLRXetZyAeaKooet/yfK+BMY24Dot05sN3P4bkEFIUSHAXWRs1Nk+1ZksgarJpcF1F2vw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RJ5lXDmq; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2eecc01b5ebso2092603a91.1;
-        Fri, 06 Dec 2024 10:42:57 -0800 (PST)
+	 To:Cc:Content-Type; b=CDxmF8VO30iLFkDHygLyFRWWCE9T9Yi9LMHYG4ztD3fwTowjmuabQ6+asqs7zLfwNHoAy3NiVedau51OY6T9Z/qtqpAZlJdKGjgYiMSGIhKqu3whY5AwxoeP2erZ8ORcnb6zQdYsVH8hiPeVvBueX0nZsUI4oQSbPpZM3U2zg8M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=adytRsIQ; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d0c939ab78so317a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 10:43:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733510577; x=1734115377; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733510607; x=1734115407; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=b2d53tzOymB0sMAyzB4RRSbvFWayMED1FyCRdpH4jKs=;
-        b=RJ5lXDmqi2rY4ETUNoIPWeexIVGg4MOSGK17X7HeB5/7VnnYflJ+mP0e2y0sg18pNv
-         ZyibKzCl1PX5Xhhi47uTQxEMrrLIrTgSEY5QHpHEErsyHsPPHRTDtAUjD8WvcPDSpcKW
-         NpnyI09xuikLj9u+AjshzAKykVxbnRs9NQXn0MPDj3nhiJLYQ0EBgxCkhj+7d4v5+sOT
-         piHI3oXIE8cDmN7DT/IR5DJKJHNkZFJWlSVhdEe8/P4pHTJMOyGALsAyjyUAe7TNEytj
-         1VMm48f48t3EYu1+WrciMI7R8NARCWfOKRve1Z+IW6mqblx69ics+p8y/BQxu7lTpkbf
-         IKRQ==
+        bh=iQcm115gWE6WA4WBEAY5qj+MCjWx6Fk8a4BOCCaxeFw=;
+        b=adytRsIQbTXDHQYjFUhTRaMsA0+TmGAS9YK3S5y+eaIQjj0DChQj4rgY9k9vNRcWGs
+         WAnN3rm9g/sIJ0SaDQ95gYhCTuBtUn2XYFYULJQm32vRaGTyQjsG9+7ErwToxfNL4ueH
+         MhlawbEPTrG5POKnZLEtEnTaUo7IUmsn3PL6HsK/z8pjNmK9IdDA2piYV9VOKJD75poT
+         awAR9Z+YccSi1gGocAhULOpl3+0gnl8tAmBBbG1VWErddxBEFbAukrCnYOoCOU8w0K3R
+         YB+t9yI4Xt2SbMPQ5vfkqYLQk0Me35os6fktosoB1LjoICTsu3RcObemH0umQNkRVvJk
+         IsVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733510577; x=1734115377;
+        d=1e100.net; s=20230601; t=1733510607; x=1734115407;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=b2d53tzOymB0sMAyzB4RRSbvFWayMED1FyCRdpH4jKs=;
-        b=UjMwtRAvOBMsb50gGn/GTUFjzq85QOka3bRtwuPpSvSYpC2QzSthAB/oc47R6lxMR1
-         QEokQbEHAAtH9uOePn4Ms8tWN7eqzeY6I7EGXn6pH/8ylHeiCPhPs2BtqC15DvWJt1Rf
-         jCIIZIibLZxoBh9dSlnpmiIFglpVxOLvL7rhh71dr1VfBwC9qtfwbFLuaxKkdILXo/jK
-         RfgwmuZCvo4vwf3TDC3dPl+Uw7N10jpNakngTYjcuNRo6ajAHyzRtCaJKUd69zTZVIdu
-         jNu+pFUK6uxstQwcfus0NwZVsSxEJCrbr8Zj7RKSCkIiPaqNnaGS1IK6BmxhL3hgVdXr
-         CEnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpAt/UyMEgBGegEmFspGvaj0gqOMF17TiG5jsPBQyPYtf8yzgh2FbuRc8RPavQWYuCh8Gz16pF@vger.kernel.org, AJvYcCVrpjvGKAHsszOxkkbt2OT1fKqf8xe9oP1wkNo4La743gIxx7JCvs2YdQeOlqMaqKePctQ=@vger.kernel.org, AJvYcCX6rwcrZ8ikEzfKTtcWa65cx1b8Mz0i+P2ueStT6dN/L4b7XUUbwEWYY24wF2Ors46/3zdXMG2joJLSTp3P@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4cZoR8s8Lzl74KqaHiAbjQGpAb2TigJLGisesozXRHIsjhVXZ
-	dLdlUBcfYgBH0bUSc/GQamevV4roB25LHguSpyVulOp7yxvvZaf1kW9K7B6hXY7qoL9hRBvOiwp
-	K+Eh6KvNNwUB6GfwQE7g//hlefxU=
-X-Gm-Gg: ASbGncuXDmamutapYsSOVx3PtoVJM2Cm452zXKf1NPO7YuuRQ8P8e2N/FDVC8CgxcLL
-	UPur/XjCDr1Zayzh25XMgE2QSpyO2hH/JwBNbqcIiZXR+orc=
-X-Google-Smtp-Source: AGHT+IHJsYAFQYMbWI7hn6EpMZ+O9odRsbqsvX09MOzFQuhCR/3Uq6XwUqsr0upKweJVXpYxZIhkD2/+ILrgk/811Go=
-X-Received: by 2002:a17:90b:4fcd:b0:2ea:3d2e:a0d7 with SMTP id
- 98e67ed59e1d1-2ef69e154e1mr7173941a91.15.1733510577232; Fri, 06 Dec 2024
- 10:42:57 -0800 (PST)
+        bh=iQcm115gWE6WA4WBEAY5qj+MCjWx6Fk8a4BOCCaxeFw=;
+        b=tUV5qwM/ZCCjquxnUKgGnekagHZrDC2H6Tpr9w91m99w7TcHxfUSA19yUqYbfPgNZX
+         qvGTRt0kJyTA6Xjmkw2KPOzBfAXGD1+G4Cn16igJmo4g5RG6Nn+/miEU2by1mRJSMTq4
+         OGDo48cBnlMBKIVxioHJoYCtFvK769heH1atNyWdCsacrxxBLsAYrVHp7wJlp5ZcB1yi
+         96ZoOobx1R9G2E/gktV7klBcdlQ1Y/j0gNF2KEUV78SIa5g42fX1UOBGgTCF+FT+LcBQ
+         rezziha7kkCWd+g2nfTtEW5zYlHjLlXgfwLJSkpFcUfkYnOjaBSID3Tc5q95W2pwLl/0
+         zpNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVihpmz7Aox2gn6YVrof5mgaued0zq4a2HkU6LT6w2p9nXIJnBDdfRIXR4by3n+dUiOp7TBy9ECx37ZauI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGgq+sffJVT4xd9R+SbrKnt2zhVmJrBVnghFA3Y3ahZ78Q2Ijf
+	SjyoHG3dtsVqRk9iiJLnKOj08MZfET+oaINJmSxVneVmW9H2vBKH4ormf56gQspubY+SBJYPryE
+	EU+3mrX1Mpm7ZzaoT/2Q84RXStBOfUqqbG/Sb
+X-Gm-Gg: ASbGnctoTfKxpASY43HS5AsIGtrVEE7qOXu2b7I6cXE42k/bczQbYGNBTaWXzI/vrlQ
+	r+BqtnkEugLCLnNWraADjS1R3xECL6XUV6G7Zhh42J6z5d3zwJkoKXoNGBq8=
+X-Google-Smtp-Source: AGHT+IG4ty4Jterfb/i6aBrFMav0nkL0Jeq7yVrGMkkkhYQ2+NYQpzP0AUUmDy8KcjUWwLhusQV9LocshbtbteglR9k=
+X-Received: by 2002:a05:6402:c0d:b0:5d0:b20c:2063 with SMTP id
+ 4fb4d7f45d1cf-5d3c2673469mr86340a12.7.1733510607054; Fri, 06 Dec 2024
+ 10:43:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206023046.2539-1-liujing@cmss.chinamobile.com>
-In-Reply-To: <20241206023046.2539-1-liujing@cmss.chinamobile.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 6 Dec 2024 10:42:45 -0800
-Message-ID: <CAEf4Bzaxp5c9SpUO_aecpPeXqUEy4JwQzqWyKHpY36PtvXKkNw@mail.gmail.com>
-Subject: Re: [PATCH] samples/bpf: Modify the incorrect format specifier
-To: liujing <liujing@cmss.chinamobile.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net, kuba@kernel.org, 
-	hawk@kernel.org, john.fastabend@gmail.com, andrii@kernel.org, 
-	martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org, 
-	yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, netdev@vger.kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241206152032.1222067-1-bgeffon@google.com>
+In-Reply-To: <20241206152032.1222067-1-bgeffon@google.com>
+From: Jann Horn <jannh@google.com>
+Date: Fri, 6 Dec 2024 19:42:51 +0100
+Message-ID: <CAG48ez0siYGB8GP5+Szgj2ovBZAkL6Zi4n6GUAjzzjFV9LTkRQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] mremap: Fix newaddr hint with MREMAP_DONTUNMAP
+To: Brian Geffon <bgeffon@google.com>, "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Marco Vanotti <mvanotti@google.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 5, 2024 at 6:31=E2=80=AFPM liujing <liujing@cmss.chinamobile.co=
-m> wrote:
->
-> Replace %d with %u in snprintf() because it is "unsigned int".
++mmap maintainers (maybe mm/mremap.c should be added to the file
+pattern for "MEMORY MAPPING" in "MAINTAINERS"? I'm not sure)
 
-The code change is fine, but the explanation is ambiguous and hard to
-follow. Just mention that we are printing integers, so we need %d
-instead of %u for snprintf. As you wrote it above, it reads as if we
-are printing unsigned int, yet code contradicts that.
+On Fri, Dec 6, 2024 at 4:20=E2=80=AFPM Brian Geffon <bgeffon@google.com> wr=
+ote:
+> mmap(2) allows for a destination address to be specified without
+> MAP_FIXED and in this situation it's a hint to get_unmapped_area().
+> This address need not be page aligned because get_unmapped_area() will
+> align the hint.
+>
+> In the case of mremap(2) with MREMAP_DONTUNMAP it shares a code path
+> with MREMAP_FIXED in mremap_to(), which means this function can be
+> called in 3 different scenarios: MREMAP_FIXED only, MREMAP_DONTUNMAP
+> only, or MREMAP_FIXED | MREMAP_DONTUNMAP. In the second case when only
+> MREMAP_DONTUNMAP is specified we don't need to do alignment or size
+> checks on newaddr because they will be passed to get_unmapped_area() and
+> dealt with appropriately.
+>
+> This patch corrects that behavior to match what non-MREMAP_DONTUNMAP
+> mremap(2) and mmap(2) do. This odd behavioral difference was reported by
+> Marco Vanotti. Additionally, I've included a self test to validate this
+> behavior.
 
-pw-bot: cr
+Marco pointed me to this; I had no idea mremap() had this undocumented
+behavior where it takes a hint address. The mremap() manpage is
+currently wrong about this, it sort of implies that the new_address
+argument is only used if MREMAP_FIXED is set.
 
->
-> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
->
-> diff --git a/samples/bpf/xdp_router_ipv4_user.c b/samples/bpf/xdp_router_=
-ipv4_user.c
-> index 266fdd0b025d..3fc1d37fee7c 100644
-> --- a/samples/bpf/xdp_router_ipv4_user.c
-> +++ b/samples/bpf/xdp_router_ipv4_user.c
-> @@ -134,11 +134,11 @@ static void read_route(struct nlmsghdr *nh, int nll=
-)
->                                         *((__be32 *)RTA_DATA(rt_attr)));
->                                 break;
->                         case RTA_OIF:
-> -                               sprintf(ifs, "%u",
-> +                               sprintf(ifs, "%d",
->                                         *((int *)RTA_DATA(rt_attr)));
->                                 break;
->                         case RTA_METRICS:
-> -                               sprintf(metrics, "%u",
-> +                               sprintf(metrics, "%d",
->                                         *((int *)RTA_DATA(rt_attr)));
->                         default:
->                                 break;
-> --
-> 2.27.0
->
->
->
+Marco also noticed that upstream glibc now assumes this behavior:
+https://sourceware.org/git/?p=3Dglibc.git;a=3Dcommit;h=3D6c40cb0e9f893d49dc=
+7caee580a055de53562206
+
+Debian also has a test that explicitly checks for this behavior:
+https://sources.debian.org/src/glibc/2.40-4/debian/patches/git-updates.diff=
+/?hl=3D22820#L22818
+
+I guess it's too late to remove that behavior at this point, and the
+right thing to do is to update the manpage?
 
