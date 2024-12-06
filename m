@@ -1,217 +1,160 @@
-Return-Path: <linux-kernel+bounces-434570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66CF99E686D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79B699E686F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:08:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22446169EA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:04:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39AA418859A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:08:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD96F1DDC01;
-	Fri,  6 Dec 2024 08:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9515D1DE2B3;
+	Fri,  6 Dec 2024 08:07:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="P5E0ktnW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oOYHLgN4"
-Received: from fout-b5-smtp.messagingengine.com (fout-b5-smtp.messagingengine.com [202.12.124.148])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XFhhaO1L"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6AF328B6;
-	Fri,  6 Dec 2024 08:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7C9328B6;
+	Fri,  6 Dec 2024 08:07:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733472292; cv=none; b=Euku6549VCrxS2v2uAt5XWBMmaaCWUNLkA5xmXjTnQnIcSaMzI0+QTQpEKkSoeWJGKVhFF0MfKBPyw/ik7bQzOItTzI69bvvX+EXrQjoykz3b1gWwRWX2S3c0VOZqHxecr8yeahaeuYfaVEJ4x+glv4DPxX/g1WVwb/Dw6BjRjI=
+	t=1733472477; cv=none; b=LNuutq6rdwikW9Ulaoo2tQufXmR96M2T8VJX783O2guMTDS7OszGrnNAoHMIgZdjMhEsgumGAE0k8BpXvVn10qgwSEfPx6oO2FIAF9NmRpFKUCJoFAZfgYA+N+IBrWWsQb6nLeO7+oXMhAkLtH8DgLlx9Ei57RHWOOdbBfNaDvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733472292; c=relaxed/simple;
-	bh=tm0KNVA21OZ4SXncAJY19lTDh7zqCvm+WsLH1NXKVgQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=efpE5I/a5JicoL5SJ9dPujafdSkgv7lyjIDqnbmtKrN1f0JSv1adsQDOZO2ZJmLPJnLqMbw4x6CRywNNMrjoTe/GJLZaOGHgCleWkdlK9oxkCnxQbO12vMWGpJLO7gDioSTDMaIpBKBtdQTUosqAiatNaL2sG0sNnyoclDnSF2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=P5E0ktnW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oOYHLgN4; arc=none smtp.client-ip=202.12.124.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.stl.internal (Postfix) with ESMTP id C9AFE114013D;
-	Fri,  6 Dec 2024 03:04:48 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 06 Dec 2024 03:04:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733472288;
-	 x=1733558688; bh=yttDIhvUtMw6e5hq3bpLC7IVE+x1nQ+E4Z0RE9OfEO0=; b=
-	P5E0ktnWTPpmP5VDREcEAwox0Q2IDJiYo1d0BqEPgSgpM2JYP31lH96fkxtZ97tT
-	uRSmk3hZN/dJuI4iBDmkeK4cCt/t+kVLy5lgb4eeYdUTvUVny3O75raQbb0i+DLi
-	tSydi+qBCJcU8ImQR+BvA0vvHTdayLFjxn/1IU/PgCZoNnJFtl7s6XmGrrboJWQ6
-	WrK5Z4+E8cp9D64+htGCoC0d4MAD9dXEgICSZBS+1K/hBJi9dcv1kvSKzmCyVsop
-	qDSAgsdMzdJ6NdPHu/+IAUoy3+Cdj9HjjO95Cces25pddvJH1jWgCtOIEwGPUAKB
-	9OounoP/dYyIIvo8Z+WLEg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733472288; x=
-	1733558688; bh=yttDIhvUtMw6e5hq3bpLC7IVE+x1nQ+E4Z0RE9OfEO0=; b=o
-	OYHLgN4PkVIR6stnw4Ngu9j7A3ItRXm5IcUROU4qruQV8SZ4RRmpK9O0iEubqtoG
-	Ds4XD5KYoyTdtl8jkE+47j9yE0xUaJsleOfe6EkIzHRGaN2Q0AnDe7EGzxVoFkbo
-	5kQfnlJG/J52fB8cVf6yx1oWKVRAejKder9YaAZtLM0GBpAT4lNwyenbjeBlbLD8
-	tC/F0jxXG6J+hRnAzMLq91ospsd6gZO7/Z4WH5D35RAwZj0s3sOfl7PG/DNzTf2Q
-	RYln0LxZrf5+1CivaM1LIXDch3wwTbLg/ZaQiWbMLAV832sUQFt18lU/VPa+R25N
-	/bBQzNXrZYn0n+VNmREig==
-X-ME-Sender: <xms:ILBSZ6z164FS0fTgeLr5-wzSY2fCehSDL-7v_hDLCsxJ-9Bx4fBRJQ>
-    <xme:ILBSZ2Q-tjp6tDfEtchI7p5_xOvU7IJSnDiKIXNpOxcrU4mmXbnU3MLLWaKSaP4Uy
-    8b8FTJW8HIu8Bda8ww>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieekgdduudefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudek
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegtrghtrghlihhnrdhmrghrihhnrg
-    hssegrrhhmrdgtohhmpdhrtghpthhtoheprghlvgigrghnughrvgdrsggvlhhlohhnihes
-    sghoohhtlhhinhdrtghomhdprhgtphhtthhopegtohhnohhrodgutheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepkhhriihkodgutheskhgvrhhnvghlrdhorhhgpdhrtghpthht
-    oheprhhosghhsehkvghrnhgvlhdrohhrghdprhgtphhtthhopeifihhllheskhgvrhhnvg
-    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhs
-    rdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohepihhmgieslhhishhtshdrlhhinh
-    hugidruggvvhdprhgtphhtthhopehghhgvnhhnrgguihdrphhrohgtohhptghiuhgtsehn
-    gihprdgtohhm
-X-ME-Proxy: <xmx:ILBSZ8XANu-RSLVdm36Vpd9abv59S-x6ku57HYkblN-EqHhXOIsrww>
-    <xmx:ILBSZwh-ANwu2jdedGwWBWeyEnD7Z8CMYEroseJhF_aQDq0B7JN7ow>
-    <xmx:ILBSZ8CdFHkRuFR07-1-ZzGno9xBri8OX5S-vJyi8fk3MdlDMhyWaA>
-    <xmx:ILBSZxJHaIG1YG60pRfFH4TwCg_2uGkGQP8l6j2wnqPzg6cvd48OYA>
-    <xmx:ILBSZ826rvu48Uz0LIEXGu08Aw7fEKkVAUbVCePg4_eiRMv9OWVbJr79>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 097F52220072; Fri,  6 Dec 2024 03:04:48 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733472477; c=relaxed/simple;
+	bh=VVjeTLw06e49HILCXDutSGBKgHH95vHDfuw49h7qGUo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cN6b1OFMAHeIDOrBEUArG6xHW16b7eVkaoRHlWWlM1E3iqSG+KATFlbCSqBRe3DwCA4U4IrWu0zEUNOszqfyWlr9X6FB9I1pQD0SFHPdYG8tRN6VYQ6FnR3p0Ee9sfXzzIkfOXyX7S4W9zrVRXEac/jwJX6wmKARomay57K07Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XFhhaO1L; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDA9EC4CED1;
+	Fri,  6 Dec 2024 08:07:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733472476;
+	bh=VVjeTLw06e49HILCXDutSGBKgHH95vHDfuw49h7qGUo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XFhhaO1L4R950UjqTiKjRb3wjy2M6ixlzw1dQlEsg9LJwQk6Xjiaj99rEJY9BLz/B
+	 Lg3MKel4VEzIHT9gw8OQd2zbCq7aUxzqkpy10TykwUNDgak3FxLQYjH1myG77CYWDF
+	 m7KmDmhGYrGK4KEjINHDFTFZTjA1cll2LGKjAWNdbL6UXaUgn0A4BCquUcb9fgeqKC
+	 QQWY1BrNo9zAFXF2zv6jYArIqzGxMve/p8OxHXfdq9SyZmdgPngXz1AvIzxeJDdwlB
+	 H/4+Mj9Oq23oAVPCdKEVTc8PxrSZU/KR+wrpQRIlgRLbBkx2Y5n3NKaMNQmcBsLsHr
+	 wh8cA3xC3XVlQ==
+Date: Fri, 6 Dec 2024 08:07:51 +0000
+From: Lee Jones <lee@kernel.org>
+To: Boqun Feng <boqun.feng@gmail.com>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+	arnd@arndb.de, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] rust: miscdevice: Provide accessor to pull out
+ miscdevice::this_device
+Message-ID: <20241206080751.GN8882@google.com>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <20241205162531.1883859-2-lee@kernel.org>
+ <2024120648-finch-shrubbery-c6f5@gregkh>
+ <20241206071646.GE8882@google.com>
+ <20241206073309.GG8882@google.com>
+ <Z1KvNQUUStyLjpwz@boqun-archlinux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 06 Dec 2024 09:04:02 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Ciprian Costea" <ciprianmarian.costea@oss.nxp.com>,
- "Alexandre Belloni" <alexandre.belloni@bootlin.com>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>, "Will Deacon" <will@kernel.org>
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- "NXP S32 Linux Team" <s32@nxp.com>, imx@lists.linux.dev,
- "Christophe Lizzi" <clizzi@redhat.com>, "Alberto Ruiz" <aruizrui@redhat.com>,
- "Enric Balletbo" <eballetb@redhat.com>,
- "Bogdan Hamciuc" <bogdan.hamciuc@nxp.com>,
- "Ghennadi Procopciuc" <Ghennadi.Procopciuc@nxp.com>
-Message-Id: <2005af5d-bdb7-4675-8f0e-82cb817801af@app.fastmail.com>
-In-Reply-To: <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
-References: <20241206070955.1503412-1-ciprianmarian.costea@oss.nxp.com>
- <20241206070955.1503412-3-ciprianmarian.costea@oss.nxp.com>
-Subject: Re: [PATCH v6 2/4] rtc: s32g: add NXP S32G2/S32G3 SoC support
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z1KvNQUUStyLjpwz@boqun-archlinux>
 
-On Fri, Dec 6, 2024, at 08:09, Ciprian Costea wrote:
-> From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
->
-> Add a RTC driver for NXP S32G2/S32G3 SoCs.
->
-> RTC tracks clock time during system suspend. It can be a wakeup source
-> for the S32G2/S32G3 SoC based boards.
->
-> The RTC module from S32G2/S32G3 is not battery-powered and it is not kept
-> alive during system reset.
->
-> Co-developed-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> Signed-off-by: Bogdan Hamciuc <bogdan.hamciuc@nxp.com>
-> Co-developed-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> Signed-off-by: Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>
-> Signed-off-by: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+On Fri, 06 Dec 2024, Boqun Feng wrote:
 
-I read through the driver and this looks all good to me, but there
-are two fairly minor things I noticed:
+> On Fri, Dec 06, 2024 at 07:33:09AM +0000, Lee Jones wrote:
+> > On Fri, 06 Dec 2024, Lee Jones wrote:
+> > 
+> > > On Fri, 06 Dec 2024, Greg KH wrote:
+> > > 
+> > > > On Thu, Dec 05, 2024 at 04:25:18PM +0000, Lee Jones wrote:
+> > > > > There are situations where a pointer to a `struct device` will become
+> > > > > necessary (e.g. for calling into dev_*() functions).  This accessor
+> > > > > allows callers to pull this out from the `struct miscdevice`.
+> > > > > 
+> > > > > Signed-off-by: Lee Jones <lee@kernel.org>
+> > > > > ---
+> > > > >  rust/kernel/miscdevice.rs | 9 +++++++++
+> > > > >  1 file changed, 9 insertions(+)
+> > > > > 
+> > > > > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > > > > index 7e2a79b3ae26..55340f316006 100644
+> > > > > --- a/rust/kernel/miscdevice.rs
+> > > > > +++ b/rust/kernel/miscdevice.rs
+> > > > > @@ -10,11 +10,13 @@
+> > > > >  
+> > > > >  use crate::{
+> > > > >      bindings,
+> > > > > +    device::Device,
+> > > > >      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> > > > >      prelude::*,
+> > > > >      str::CStr,
+> > > > >      types::{ForeignOwnable, Opaque},
+> > > > >  };
+> > > > > +
+> > > > >  use core::{
+> > > > >      ffi::{c_int, c_long, c_uint, c_ulong},
+> > > > >      marker::PhantomData,
+> > > > > @@ -84,6 +86,13 @@ pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
+> > > > >      pub fn as_raw(&self) -> *mut bindings::miscdevice {
+> > > > >          self.inner.get()
+> > > > >      }
+> > > > > +
+> > > > > +    /// Returns a pointer to the current Device
+> > > > > +    pub fn device(&self) -> &Device {
+> > > > > +        // SAFETY: This is only accessible after a successful register() which always
+> > > > > +        // initialises this_device with a valid device.
+> > > > > +        unsafe { Device::as_ref((*self.as_raw()).this_device) }
+> > > > 
+> > > > A "raw" pointer that you can do something with without incrementing the
+> > > > reference count of it?  Oh wait, no, it's the rust device structure.
+> > > > If so, why isn't this calling the get_device() interface instead?  That
+> > > > way it's properly incremented and decremented when it "leaves the scope"
+> > > > right?
+> > > > 
+> > > > Or am I missing something here as to why that wouldn't work and this is
+> > > > the only way to get access to the 'struct device' of this miscdevice?
+> > > 
+> > > Fair point.  I'll speak to Alice.
+> > 
+> > Alice isn't available yet, so I may be talking out of turn at this
+> > point, but I just found this is the Device documentation:
+> > 
+> >   /// A `Device` instance represents a valid `struct device` created by the C portion of the kernel.
+> >   ///
+> >   /// Instances of this type are always reference-counted, that is, a call to `get_device` ensures
+> >   /// that the allocation remains valid at least until the matching call to `put_device`.
+> > 
+> > And:
+> > 
+> >   // SAFETY: Instances of `Device` are always reference-counted.
+> > 
+> > Ready for some analysis from this beginner?
+> > 
+> > Since this impl for Device is AlwaysRefCounted, when any references are
+> > taken i.e. in the Device::as_ref line above, inc_ref() is implicitly
+> > called to increase the refcount.  The same will be true of dec_ref()
+> 
+> No, inc_ref() is not called implicitly in Device::as_ref().
+> 
+> The thing that might "keep" the original `miscdevice::Device` alive is
+> the lifetime, since the returned `device::Device` reference has the
+> same life at the input parameter `miscdevice::Device` reference (i.e.
+> `&self`), so the returned reference cannot outlive `&self`. That means
+> if compilers find `&self` go out of scope while the returned reference
+> be still alive, it will report an error.
 
-> +	u64 rtc_hz;
+Okay, so is there something I need to do to ensure we increase the
+refcount?  Does inc_ref() need calling manually?
 
-I see the clock rate is a 64-bit value, which is clearly what
-comes from the clk interface in the kernel
-
-> +static u64 cycles_to_sec(u64 hz, u64 cycles)
-> +{
-> +	return div_u64(cycles, hz);
-> +}
-
-and you divide by the clk rate to convert the register value
-to seconds (as expected)
-
-> +	u32 delta_cnt;
-> +
-> +	if (!seconds || seconds > cycles_to_sec(priv->rtc_hz, RTCCNT_MAX_VAL))
-> +		return -EINVAL;
-
-However, the range of the register value is only 32 bits,
-which means there is no need to ever divide it by a 64-bit
-number, and with the 32kHz clock in the binding example,
-you only have about 37 hours worth of range here.
-
-It would appear that this makes the rtc unsuitable for
-storing absolute time across reboots, and only serve during
-runtime, which is a limitation you should probably document.
-
-> +static s64 s32g_rtc_get_time_or_alrm(struct rtc_priv *priv,
-> +				     u32 offset)
-> +{
-> +	u32 counter;
-> +
-> +	counter = ioread32(priv->rtc_base + offset);
-> +
-> +	if (counter < priv->base.cycles)
-> +		return -EINVAL;
-
-If 'counter' wraps every 37 hours, this will inevitably fail,
-right? E.g. if priv->base.cycles was already at a large
-32-bit number, even reading it shortly later will produce
-a small value after the wraparound.
-
-Using something like time_before() should address this,
-but I think you may need a custom version that works on
-32-bit numbers.
-
-> +static int s32g_rtc_resume(struct device *dev)
-> +{
-> +	struct rtc_priv *priv = dev_get_drvdata(dev);
-> +	int ret;
-> +
-> +	if (!device_may_wakeup(dev))
-> +		return 0;
-> +
-> +	/* Disable wake-up interrupts */
-> +	s32g_enable_api_irq(dev, 0);
-> +
-> +	ret = rtc_clk_src_setup(priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Now RTCCNT has just been reset, and is out of sync with priv->base;
-> +	 * reapply the saved time settings.
-> +	 */
-> +	return s32g_rtc_set_time(dev, &priv->base.tm);
-> +}
-
-This also fails if the system has been suspended for more than
-37 hours, right?
-
-One more minor comment: you are using ioread32()/iowrite32()
-to access the MMIO registers, which is a bit unusual. I would
-suggest changing those to the more common readl()/writel()
-that do the exact same thing on arm64.
-
-        Arnd
+-- 
+Lee Jones [李琼斯]
 
