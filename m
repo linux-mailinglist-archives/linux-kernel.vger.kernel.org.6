@@ -1,277 +1,133 @@
-Return-Path: <linux-kernel+bounces-434578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80FE19E6896
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:13:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 022A29E6899
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:14:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E39F616A702
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:13:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 140BA1884E3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7A11E2616;
-	Fri,  6 Dec 2024 08:12:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gCTbTHkL"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8845E1DF72D;
+	Fri,  6 Dec 2024 08:13:25 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B175D1DDA0F;
-	Fri,  6 Dec 2024 08:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42BDC1D90B6;
+	Fri,  6 Dec 2024 08:13:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733472769; cv=none; b=tKeF24/mu0WT5+LAHiCTGskikkFDktEW8+ZWql7++DhmEVeM6UC3gNhm5M+HRiuA1hDye8EvGzMUjCEcDaVEWxbcMxi1J8sk9mafx2UTpZaq1feQ99ZIYoPlzgE4FlpxGMZyDib634BMEP1XeaCFB1VYN/dbByLsObUFk0/ZoTk=
+	t=1733472805; cv=none; b=Q2Vww0R2yTdpSQenILE9kPRvk02bnAnmzmRScFkVd/g3tGHHZ3MH98Qg5KJcdPWPoITbvjo6TZkyfTY88wTos74jhfUng42j1aqqSc4Ygeo4QJuCVxUxYOG27FOWmHXy8CnDilO/mQ2cZkbrqSk7mRrPlIuEoYZcvC70JRMosec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733472769; c=relaxed/simple;
-	bh=4zp8xIEIY6gFij/l6U5xJS8txUvJpjK5nVV4VMaXCrw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Yts3XwNGChuILt75wfKLzc4fTWmEJJMUOtK2o9Q8v5/Z4fUUhxw5JkQC5dw9cNC4rAZLE59zSiqz3MKTJFmc3/pc+WYZO1N05tK24df79vvK33jcCaqBVHr/GN/W1Q5W9Q6OPzzbChtMS2fA9ga6HIGv5IBk6cvlO5lc9fOnDAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gCTbTHkL; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C696B4000A;
-	Fri,  6 Dec 2024 08:12:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733472758;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iHhOnwJ3Hdk8LZG7baZNdrSouCArkr9q3HbqfhV8XLY=;
-	b=gCTbTHkLLTPpOxcvA9A31VR8jwCkpXpC3iAoLWp94qnCsu3GfdT4GEcSD7TKmoIobncWAy
-	6sydiiSyjOsg0KePH7zmp6f1PEi9gc5FeO1GEpfMR5sPjcrLb20L9cyM20UwbnZweCLRH7
-	M99/SaKFRN38x8aJuFW35la1e1H1FOVjqF3fx1Ijyka+JPMX60FugPj1O3UTKi6u6QDkm5
-	hOjUqoc4QYGmvjr+qIqkOxX13d0ELRB431S5zY3f8J1tOARWExdaN66azmO3Q+ckYnefzE
-	Ulbdx0jbopDoVFm+rCNgStB/aYb+xiB10boLTZSN9Gl1SJhPYNQfX+XtXF5yEQ==
-From: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Date: Fri, 06 Dec 2024 09:12:14 +0100
-Subject: [PATCH bpf-next 2/2] selftests/bpf: Migrate test_xdp_meta.sh into
- xdp_context_test_run.c
+	s=arc-20240116; t=1733472805; c=relaxed/simple;
+	bh=4gH76F3z/S8h4gBs3jqgD7UA9E+zfYeMzGechFnhMng=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t+uzqHhiMaagN8LFB8s7rpWqyPUfxWlf/G/1qZxTL6nJlSi8PoLHVVfYOXaOHc5z/ISyTwtvRC4+yAy1H/EARvxvR+MlnHi1P2miCM/B0h5DwgLBB1NwIN5Q21+tmvq8JR8PD8PGGqogfIiescnRTb9x7zSGawHfh5JfKBruPDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4PC26DJsz4f3jq4;
+	Fri,  6 Dec 2024 16:13:02 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id DF6F41A0196;
+	Fri,  6 Dec 2024 16:13:16 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCHYoYaslJnY_s9Dw--.20633S3;
+	Fri, 06 Dec 2024 16:13:16 +0800 (CST)
+Message-ID: <792da260-656c-4e05-9d06-90580927bc20@huaweicloud.com>
+Date: Fri, 6 Dec 2024 16:13:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 09/27] ext4: move out inode_lock into ext4_fallocate()
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+ david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-10-yi.zhang@huaweicloud.com>
+ <20241204120527.jus6ymhsddxhlqjz@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20241204120527.jus6ymhsddxhlqjz@quack3>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-xdp_meta-v1-2-5c150618f6e9@bootlin.com>
-References: <20241206-xdp_meta-v1-0-5c150618f6e9@bootlin.com>
-In-Reply-To: <20241206-xdp_meta-v1-0-5c150618f6e9@bootlin.com>
-To: Alexei Starovoitov <ast@kernel.org>, 
- Daniel Borkmann <daniel@iogearbox.net>, 
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, 
- Jesper Dangaard Brouer <hawk@kernel.org>, 
- John Fastabend <john.fastabend@gmail.com>, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Martin KaFai Lau <martin.lau@linux.dev>, 
- Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
- Jiri Olsa <jolsa@kernel.org>, Mykola Lysenko <mykolal@fb.com>, 
- Shuah Khan <shuah@kernel.org>
-Cc: Alexis Lothore <alexis.lothore@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org, 
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Bastien Curutchet <bastien.curutchet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: bastien.curutchet@bootlin.com
+X-CM-TRANSID:gCh0CgCHYoYaslJnY_s9Dw--.20633S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF48KF15Zw47XFWxJr1DJrb_yoW8JFy7pF
+	Z5Jay8KF48WF9rGF1vvFs8ZFnYyw4DKr4UXrW8ua4ku3Zxur17KF15KF1UC3Z0yr48Cr40
+	vF4Utry7u3W5A37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
+	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
+	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
+	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
+	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
+	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
+	0PfPUUUUU==
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-test_xdp_meta.sh can't be used by the BPF CI.
+On 2024/12/4 20:05, Jan Kara wrote:
+> On Tue 22-10-24 19:10:40, Zhang Yi wrote:
+>> From: Zhang Yi <yi.zhang@huawei.com>
+>>
+>> Currently, all five sub-functions of ext4_fallocate() acquire the
+>> inode's i_rwsem at the beginning and release it before exiting. This
+>> process can be simplified by factoring out the management of i_rwsem
+>> into the ext4_fallocate() function.
+>>
+>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+> 
+> Ah, nice. Feel free to add:
+> 
+> Reviewed-by: Jan Kara <jack@suse.cz>
+> 
+> and please ignore my comments about renaming 'out' labels :).
+> 
+> 								Honza
+> 
 
-Migrate test_xdp_meta.sh in a new test case in xdp_context_test_run.c.
-It uses the same BPF programs located in progs/test_xdp_meta.c and the
-same network topology.
-Remove test_xdp_meta.sh and its Makefile entry.
+...
 
-Signed-off-by: Bastien Curutchet (eBPF Foundation) <bastien.curutchet@bootlin.com>
----
- tools/testing/selftests/bpf/Makefile               |  1 -
- .../bpf/prog_tests/xdp_context_test_run.c          | 86 ++++++++++++++++++++++
- tools/testing/selftests/bpf/test_xdp_meta.sh       | 58 ---------------
- 3 files changed, 86 insertions(+), 59 deletions(-)
+>> @@ -4774,9 +4765,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>>  
+>>  	inode_lock(inode);
+>>  	ret = ext4_convert_inline_data(inode);
+>> -	inode_unlock(inode);
+>>  	if (ret)
+>> -		return ret;
+>> +		goto out;
+>>  
+>>  	if (mode & FALLOC_FL_PUNCH_HOLE)
+>>  		ret = ext4_punch_hole(file, offset, len);
+>> @@ -4788,7 +4778,8 @@ long ext4_fallocate(struct file *file, int mode, loff_t offset, loff_t len)
+>>  		ret = ext4_zero_range(file, offset, len, mode);
+>>  	else
+>>  		ret = ext4_do_fallocate(file, offset, len, mode);
+>> -
+>> +out:
+>> +	inode_unlock(inode);
+>>  	return ret;
+>>  }
+>>  
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index a1964d40a60ea5b195e6e75bde5796eea63179bb..af03527bb13ad7a0ee121d3fc00599449e1a396c 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -129,7 +129,6 @@ TEST_FILES = xsk_prereqs.sh $(wildcard progs/btf_dump_test_case_*.c)
- TEST_PROGS := test_kmod.sh \
- 	test_xdp_redirect.sh \
- 	test_xdp_redirect_multi.sh \
--	test_xdp_meta.sh \
- 	test_tunnel.sh \
- 	test_lwt_seg6local.sh \
- 	test_lirc_mode2.sh \
-diff --git a/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c b/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c
-index e6a783c7f5db9c818bd354027bae7393ee3c166b..1d4d9c9edb7dffa6d60865497c0b9d40a92278ba 100644
---- a/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c
-+++ b/tools/testing/selftests/bpf/prog_tests/xdp_context_test_run.c
-@@ -2,6 +2,14 @@
- #include <test_progs.h>
- #include <network_helpers.h>
- #include "test_xdp_context_test_run.skel.h"
-+#include "test_xdp_meta.skel.h"
-+
-+#define TX_ADDR "10.0.0.1"
-+#define RX_ADDR "10.0.0.2"
-+#define RX_NAME "veth0"
-+#define TX_NAME "veth1"
-+#define TX_NETNS "xdp_context_tx"
-+#define RX_NETNS "xdp_context_rx"
- 
- void test_xdp_context_error(int prog_fd, struct bpf_test_run_opts opts,
- 			    __u32 data_meta, __u32 data, __u32 data_end,
-@@ -103,3 +111,81 @@ void test_xdp_context_test_run(void)
- 
- 	test_xdp_context_test_run__destroy(skel);
- }
-+
-+void test_xdp_context_functional(void)
-+{
-+	LIBBPF_OPTS(bpf_tc_hook, tc_hook, .attach_point = BPF_TC_INGRESS);
-+	LIBBPF_OPTS(bpf_tc_opts, tc_opts, .handle = 1, .priority = 1);
-+	struct bpf_program *tc_prog, *xdp_prog;
-+	struct netns_obj *rx_ns, *tx_ns;
-+	struct test_xdp_meta *skel;
-+	struct nstoken *nstoken;
-+	int rx_ifindex;
-+	int ret;
-+
-+	tx_ns = netns_new(TX_NETNS, false);
-+	if (!ASSERT_OK_PTR(tx_ns, "create tx_ns"))
-+		return;
-+
-+	rx_ns = netns_new(RX_NETNS, false);
-+	if (!ASSERT_OK_PTR(rx_ns, "create rx_ns"))
-+		goto free_txns;
-+
-+	SYS(free_rxns, "ip link add " RX_NAME " netns " RX_NETNS
-+	    " type veth peer name " TX_NAME " netns " TX_NETNS);
-+
-+	nstoken = open_netns(RX_NETNS);
-+	if (!ASSERT_OK_PTR(nstoken, "setns rx_ns"))
-+		goto free_rxns;
-+
-+	SYS(free_rxns, "ip addr add " RX_ADDR "/24 dev " RX_NAME);
-+	SYS(free_rxns, "ip link set dev " RX_NAME " up");
-+
-+	skel = test_xdp_meta__open_and_load();
-+	if (!ASSERT_OK_PTR(skel, "open and load skeleton"))
-+		goto free_rxns;
-+
-+	rx_ifindex = if_nametoindex(RX_NAME);
-+	if (!ASSERT_GE(rx_ifindex, 0, "if_nametoindex rx"))
-+		goto destroy_skel;
-+
-+	tc_hook.ifindex = rx_ifindex;
-+	ret = bpf_tc_hook_create(&tc_hook);
-+	if (!ASSERT_OK(ret, "bpf_tc_hook_create"))
-+		goto destroy_skel;
-+
-+	tc_prog = bpf_object__find_program_by_name(skel->obj, "ing_cls");
-+	if (!ASSERT_OK_PTR(tc_prog, "open ing_cls prog"))
-+		goto destroy_skel;
-+
-+	tc_opts.prog_fd = bpf_program__fd(tc_prog);
-+	ret = bpf_tc_attach(&tc_hook, &tc_opts);
-+	if (!ASSERT_OK(ret, "bpf_tc_attach"))
-+		goto destroy_skel;
-+
-+	xdp_prog = bpf_object__find_program_by_name(skel->obj, "ing_xdp");
-+	if (!ASSERT_OK_PTR(xdp_prog, "open ing_xdp prog"))
-+		goto destroy_skel;
-+
-+	ret = bpf_xdp_attach(rx_ifindex,
-+			     bpf_program__fd(xdp_prog),
-+			     0, NULL);
-+	if (!ASSERT_GE(ret, 0, "bpf_xdp_attach"))
-+		goto destroy_skel;
-+
-+	nstoken = open_netns(TX_NETNS);
-+	if (!ASSERT_OK_PTR(nstoken, "setns tx_ns"))
-+		goto destroy_skel;
-+
-+	SYS(destroy_skel, "ip addr add " TX_ADDR "/24 dev " TX_NAME);
-+	SYS(destroy_skel, "ip link set dev " TX_NAME " up");
-+	SYS(destroy_skel, "ping -c 1 " RX_ADDR);
-+
-+destroy_skel:
-+	test_xdp_meta__destroy(skel);
-+free_rxns:
-+	netns_free(rx_ns);
-+free_txns:
-+	netns_free(tx_ns);
-+}
-+
-diff --git a/tools/testing/selftests/bpf/test_xdp_meta.sh b/tools/testing/selftests/bpf/test_xdp_meta.sh
-deleted file mode 100755
-index 6039b92f10949d48cd9d703d6981ae8a9388e8df..0000000000000000000000000000000000000000
---- a/tools/testing/selftests/bpf/test_xdp_meta.sh
-+++ /dev/null
-@@ -1,58 +0,0 @@
--#!/bin/sh
--
--BPF_FILE="test_xdp_meta.bpf.o"
--# Kselftest framework requirement - SKIP code is 4.
--readonly KSFT_SKIP=4
--readonly NS1="ns1-$(mktemp -u XXXXXX)"
--readonly NS2="ns2-$(mktemp -u XXXXXX)"
--
--cleanup()
--{
--	if [ "$?" = "0" ]; then
--		echo "selftests: test_xdp_meta [PASS]";
--	else
--		echo "selftests: test_xdp_meta [FAILED]";
--	fi
--
--	set +e
--	ip link del veth1 2> /dev/null
--	ip netns del ${NS1} 2> /dev/null
--	ip netns del ${NS2} 2> /dev/null
--}
--
--ip link set dev lo xdp off 2>/dev/null > /dev/null
--if [ $? -ne 0 ];then
--	echo "selftests: [SKIP] Could not run test without the ip xdp support"
--	exit $KSFT_SKIP
--fi
--set -e
--
--ip netns add ${NS1}
--ip netns add ${NS2}
--
--trap cleanup 0 2 3 6 9
--
--ip link add veth1 type veth peer name veth2
--
--ip link set veth1 netns ${NS1}
--ip link set veth2 netns ${NS2}
--
--ip netns exec ${NS1} ip addr add 10.1.1.11/24 dev veth1
--ip netns exec ${NS2} ip addr add 10.1.1.22/24 dev veth2
--
--ip netns exec ${NS1} tc qdisc add dev veth1 clsact
--ip netns exec ${NS2} tc qdisc add dev veth2 clsact
--
--ip netns exec ${NS1} tc filter add dev veth1 ingress bpf da obj ${BPF_FILE} sec tc
--ip netns exec ${NS2} tc filter add dev veth2 ingress bpf da obj ${BPF_FILE} sec tc
--
--ip netns exec ${NS1} ip link set dev veth1 xdp obj ${BPF_FILE} sec xdp
--ip netns exec ${NS2} ip link set dev veth2 xdp obj ${BPF_FILE} sec xdp
--
--ip netns exec ${NS1} ip link set dev veth1 up
--ip netns exec ${NS2} ip link set dev veth2 up
--
--ip netns exec ${NS1} ping -c 1 10.1.1.22
--ip netns exec ${NS2} ping -c 1 10.1.1.11
--
--exit 0
+I guess you may want to suggest rename this out to out_inode_lock as well.
 
--- 
-2.47.0
+Thanks,
+Yi.
+
 
 
