@@ -1,117 +1,149 @@
-Return-Path: <linux-kernel+bounces-435073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2B3B9E6F2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:19:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 874B79E6F3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:24:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9F0C1884DC8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:17:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7E061881E4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:24:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5599820764F;
-	Fri,  6 Dec 2024 13:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A61B207660;
+	Fri,  6 Dec 2024 13:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fky88nM3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="PAfOyoi0"
+Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25E11FCD11;
-	Fri,  6 Dec 2024 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B970F206F3C;
+	Fri,  6 Dec 2024 13:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733491049; cv=none; b=qjVocgZKnNFP47QIpugsp3nLouLldz5dBwjBFqW3coOBn2hqXLoSKtNpCFAa/J65n+NuSlRauTfy85nJP2rpslY/TgRoG8ZJl0M4Vx9Fuu+9cO5EcvhxGWNVqqrZv/wBi0nD/nEk3HSwgRHDgBCw6xYUJdJ0WCXXY1vnOD2l1fk=
+	t=1733491458; cv=none; b=nr03o6qGTUB/4wspEdfwLVzzDluP/KVygaNI/W645LfmHb/yrHhW+1yauYdYm6lfyqxRTxcNi2kUtjCqgw+/2C9zbUCalwSjJeyLW5122TDcdIS7WzNIHMpuKasGf78cDoeJhW547yM7r0Q3Z/W623CmBRCK6TPJC54H3Zlgfjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733491049; c=relaxed/simple;
-	bh=JSxJ/A3qBbdoVQTY0FusBl+IExWoxTKF+CRs14VxLrU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Si8zzi/YcdKq8hIo1GiMW0JonnR0SGeJyM4TNY2U/dwM8+aA1qRiOwZ6RA0qpdEtKa8UrHig8gSaYtM+pih6ZuNJUOsW1NSnjN7kaJ2oY3zy865lDNoqBtVsOKpYXWc+v6PjtLqNHbRbMEwJRif4OnwByq0n4WcAmP34JfzMKAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fky88nM3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 431E6C4CED1;
-	Fri,  6 Dec 2024 13:17:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733491049;
-	bh=JSxJ/A3qBbdoVQTY0FusBl+IExWoxTKF+CRs14VxLrU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fky88nM3uTjGKEdfnwzBY4SZ1Pz7d9YUi6vczbDEwEfGBO7y1bt/EgkBA1mD/ZBiy
-	 c/hHz1jFv3i0MKOnx3EQzGhzEOat4pT6YyW5aabfJhK3X/PqSlFByw0ZJUTY+Hd61X
-	 rKTedQSpfNIvVcNwSz+fS7cNVD4z2grHpYG6MUNjB1XLYs2MBt5udZ84eGyXLBDRXD
-	 XYAP5xcAg9gpiRj5GqOy4bYC2+Nlt7yBZItwk4Er12cI3j8AcTIMXi1Pl0TOKKP8fP
-	 +0TTDUyfu+/Mi4aHY0b6HI1hh3xbP6QKM2ykLYlrc9mr+LMtKk1WRQZQgAUDAbNz7r
-	 9huA+sxnmW1Ag==
-Date: Fri, 6 Dec 2024 13:17:16 +0000
-From: Lee Jones <lee@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] sample: rust_misc_device: Demonstrate additional
- get/set value functionality
-Message-ID: <20241206131716.GF7684@google.com>
-References: <20241206124218.165880-1-lee@kernel.org>
- <20241206124218.165880-4-lee@kernel.org>
- <2024120652-champion-chute-4e74@gregkh>
- <20241206130449.GC7684@google.com>
- <20241206130630.GD7684@google.com>
- <2024120637-handoff-monetary-c2f5@gregkh>
+	s=arc-20240116; t=1733491458; c=relaxed/simple;
+	bh=Tkvv8nbrTos3ISh3g/s4VfKOXQX2n66Cr94kyLv8jtY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=a0tsKh3rDO7Ek0HC4sZtlmspmeHOzXcQkXJajRSmk4807Hz4Nnp94bND2hN5qXCRAyhjBwgHqrNoKUcGJ6s+/j6Qpd0/zMjv3d34/KmbjutK1Yi3gwrNvBFvqJWcCJfdBraoE0ieFmR0NmsINBqZTOao5kgP/r4acM+iKv6HCJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=PAfOyoi0; arc=none smtp.client-ip=134.0.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox1.masterlogin.de (unknown [192.168.10.88])
+	by mxout1.routing.net (Postfix) with ESMTP id 7F727403F7;
+	Fri,  6 Dec 2024 13:24:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1733491447;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=2CpAbRbq9u9WtuDg3cZhOuMl7YhAj8Mt6ZON6tTJ5Ls=;
+	b=PAfOyoi0HQt9BPx4rQNXYUrByAoZD+VvnaGCs69Ep0un7VbrsSm2YYrzbk85lVkRHfEadF
+	V4ezwHEJapO4MpjdqldDhgG2dHgjczBxNnZUNyRCF9av1DXEeNzBvHozSvsIu6X7ttZII9
+	U8CkCOK7Kx6Zca0fJ74ejQ/GLFuwj2k=
+Received: from frank-u24.. (fttx-pool-194.15.84.200.bambit.de [194.15.84.200])
+	by mxbox1.masterlogin.de (Postfix) with ESMTPSA id 918A640044;
+	Fri,  6 Dec 2024 13:24:06 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v4] arm64: dts: mt7986: add overlay for SATA power socket on BPI-R3
+Date: Fri,  6 Dec 2024 14:23:59 +0100
+Message-ID: <20241206132401.70259-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024120637-handoff-monetary-c2f5@gregkh>
+X-Mail-ID: 7d988917-a59f-423f-be98-36300de87045
 
-On Fri, 06 Dec 2024, Greg KH wrote:
+From: Frank Wunderlich <frank-w@public-files.de>
 
-> On Fri, Dec 06, 2024 at 01:06:30PM +0000, Lee Jones wrote:
-> > On Fri, 06 Dec 2024, Lee Jones wrote:
-> > > On Fri, 06 Dec 2024, Greg KH wrote:
-> > > > On Fri, Dec 06, 2024 at 12:42:14PM +0000, Lee Jones wrote:
-> > > > > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
-> > > > > +        let guard = self.inner.lock();
-> > > > > +        let value = guard.value;
-> > > > > +
-> > > > > +        // Refrain from calling write() on a locked resource
-> > > > > +        drop(guard);
-> > > > > +
-> > > > > +        pr_info!("-> Copying data to userspace (value: {})\n", &value);
-> > > > > +
-> > > > > +        writer.write::<i32>(&value)?;
-> > > > > +        Ok(0)
-> > > > > +    }
-> > > > 
-> > > > I don't understand why you have to drop the mutex before calling
-> > > > pr_info() and write (i.e. copy_to_user())?  It's a mutex, not a
-> > > > spinlock, so you can hold it over that potentially-sleeping call, right?
-> > > > Or is there some other reason why here?
-> > > 
-> > > This was a request from Alice to demonstrate how to unlock a mutex.
-> > 
-> > It's common practice to apply guards only around the protected value.
-> > 
-> > Why would this be different?
-> 
-> It isn't, it's just that you are implying that the guard has to be
-> dropped because of the call to write(), which is confusing.  It's only
-> "needed" because you want to guard a single cpu instruction that is
-> guaranteed atomic by the processor :)
-> 
-> As this is an example driver, documentation is essential, so maybe the
-> comment should be:
-> 	// Drop the mutex as we can now use our local copy
-> or something like that.
+Bananapi R3 has a Power socket entended for using external SATA drives.
+This Socket is off by default but can be switched with gpio 8.
 
-Sounds reasonable.
+Add an overlay to activate it.
 
-I've ran out of time this week.  I'll take another peek next week.
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+---
+v4:
+- rebased on 6.13-rc1 without the full-dtb patch
+v3:
+- make sata overlay better readable
+v2:
+- rebase on the patch "add dtbs with applied overlays for bpi-r3"
+- add sata-overlay to the full dtbs
+---
+ arch/arm64/boot/dts/mediatek/Makefile         |  1 +
+ .../mt7986a-bananapi-bpi-r3-sata.dtso         | 35 +++++++++++++++++++
+ 2 files changed, 36 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso
 
+diff --git a/arch/arm64/boot/dts/mediatek/Makefile b/arch/arm64/boot/dts/mediatek/Makefile
+index 8fd7b2bb7a15..d844c4ce9863 100644
+--- a/arch/arm64/boot/dts/mediatek/Makefile
++++ b/arch/arm64/boot/dts/mediatek/Makefile
+@@ -17,6 +17,7 @@ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-mini.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-emmc.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nand.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-nor.dtbo
++dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sata.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-bananapi-bpi-r3-sd.dtbo
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986a-rfb.dtb
+ dtb-$(CONFIG_ARCH_MEDIATEK) += mt7986b-rfb.dtb
+diff --git a/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso
+new file mode 100644
+index 000000000000..17659545470e
+--- /dev/null
++++ b/arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-sata.dtso
+@@ -0,0 +1,35 @@
++// SPDX-License-Identifier: (GPL-2.0 OR MIT)
++/*
++ * Copyright (C) 2021 MediaTek Inc.
++ * Author: Frank Wunderlich <frank-w@public-files.de>
++ */
++
++/dts-v1/;
++/plugin/;
++
++#include <dt-bindings/gpio/gpio.h>
++
++&{/} {
++	compatible = "bananapi,bpi-r3", "mediatek,mt7986a";
++
++	reg_sata12v: regulator-sata12v {
++		compatible = "regulator-fixed";
++		regulator-name = "sata12v";
++		regulator-min-microvolt = <12000000>;
++		regulator-max-microvolt = <12000000>;
++		gpio = <&pio 8 GPIO_ACTIVE_HIGH>;
++		enable-active-high;
++		regulator-always-on;
++	};
++
++	reg_sata5v: regulator-sata5v {
++		compatible = "regulator-fixed";
++		regulator-name = "sata5v";
++		regulator-min-microvolt = <5000000>;
++		regulator-max-microvolt = <5000000>;
++		regulator-always-on;
++		vin-supply = <&reg_sata12v>;
++	};
++
++};
++
 -- 
-Lee Jones [李琼斯]
+2.43.0
+
 
