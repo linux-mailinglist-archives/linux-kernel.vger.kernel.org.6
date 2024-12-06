@@ -1,308 +1,79 @@
-Return-Path: <linux-kernel+bounces-435693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062C99E7B1A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:37:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 660A19E7B21
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:39:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48243188655F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:37:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24176188648E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88B661C5495;
-	Fri,  6 Dec 2024 21:37:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8955922C6E2;
+	Fri,  6 Dec 2024 21:39:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="oNhsjEBC"
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l00u+leM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E366322C6D3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FA722C6C6
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:39:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733521021; cv=none; b=dhkdK0wZ4vaQcYMWA1CJOTH9qhcXg7s1Lf3aeDNqe+wzwW5XD5E/psuCjqARwWDwN34hzhlqXFikhP2gveKD6qV3SCJEG+rJ8zz4bE8G0zKcKIjL6pegGZSVVPTEA4bwmXPjC6bpHADwpDpK3GUXFrdZxBuxrrSpZH0qofdZlmU=
+	t=1733521151; cv=none; b=APbyXTbSTKwS0cvpg25RKf/ziv0QEfblLJnFr+Mp0rLYG46D5nWKFNoVgW5OvcOjL9Zp0NCPNmAGMQUtyTcrjjUhugcT4aSAv0ycOTTK+pHh9hclF9AvP6yCrQ/BTSqkNQf7rm4L+lsxaYFXg+zayRBDE0zZc4fijiqhb+20Z9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733521021; c=relaxed/simple;
-	bh=WjmiODHE0RfZuzGjACtofn6r+sN4IQHw5qp4zf/KT/U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RHZF60J9xsoNoEvBPcDF6ePS0oh9dMzn1pd1z5JXGkaSA7lH6uXFNMH/qr9H4hdavjlmhBwDns0dJdKqqu00LyyBlLnKC1AdK2Sil1aFP8u19STkGKBkGMUnevcaYRtj4EjQ3LbppRmcZYkg2ZTdljl5CAa0pPOyu9Rw4aEnl2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=oNhsjEBC; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-29e91e58584so1469994fac.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 13:36:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733521018; x=1734125818; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JDGos5IYn4cUKKTCBfIOCbIdPjpC20Gkllm+9b75PHY=;
-        b=oNhsjEBCUw01NBVcpx4NTJr6yNuzstzzEKWNC+6hthsj/+VsLudssPVBx4mlfrQq07
-         hHZaFNKgs0R73JqbRyRsHGclOQOinSJrjylFhAVWabhqsLoa3wNto/5zsXKxUPFMaZCB
-         cnBa4SpjuIclGPznb3C1YUkrWMYLeClhVUgTEbAcF1jiMqvNmIrHtHUrLKJaFszC4Kfe
-         6P6RyiILqfzz+vEwtPhMSawWAyC1/yvFMzFj+qMYvnAiq7qWNH6camnLDRKkpIPn9LUP
-         ulQwvpIfF12OdLo9erRYrheS5Wdh7K3JSP+Q/dauMJZea9D/W/4/lKQFvAsSEuvBhH5d
-         nZ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733521018; x=1734125818;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JDGos5IYn4cUKKTCBfIOCbIdPjpC20Gkllm+9b75PHY=;
-        b=QvccNq3SYg/cb6rZ905yceRzq0ncVLNyPVXk68xHm2i1a4zy/f3yxl/W76NbdSny0m
-         A/rIz+TsLWqHprkyCJeZyPz3dE0oyx5eEUso6mKcI7wGK2el5yVg+VeIgxM9K70tbYO1
-         RiUA511uiz3++Qz3b1VwgoHXrC/PglR4kB4SOPa5/8ma3x3ykMylwXUihMWHt4YzGqP/
-         ZSyNbnhl73YkAPEg0wwTlBmVMKRFjVAcDI8CgOTYkjRdi7oaneNuy237QxluFiA3mEZb
-         ddPEKkypZMXo8GgVV4TDrxtl3HCC0QyLeO8b2bvU8n02PBtvYV4RuAm8FbdV/CJHNXzP
-         rGVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXyvGW4Fz0e3uE036m016J79tdfRzI1STcL7TLR/V4NQHpQmRFGtqjA2EHHET+KFNZ3uiaNIuOuztf/xvY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcESGb7ULV+ZdxVwxQUaUTSbnN55JTw7ZUtjZ2kB1kg8ZPzDyJ
-	ZAxwH/EvSekKRmlHG8oR9wixwL2sp4Ni+j2lHTmCFDZKQVRKYxDpMsphTsAjFoM=
-X-Gm-Gg: ASbGncuTXK6KNf4Pz78LWDbqQ3uCfxCnBaWPdqryvheInfZ4BWfn10f4/pOyYzv8x2N
-	YLCa5jQixaA8oLX93N9xwFd3hNtw7UgpBA5AdDq4GW9XU8BkgTCHFJ4tmA+idACZ7YHt5jOiloQ
-	IXGil047Xwl0uLGN3LL2A58b9qpC02JCdIF7kG+9nB98LAOAusvZeEWv+bbYIbtD4H85+5cyOMx
-	aKIlDxrsgjRQfgoFKESgu0b3hLlYjykf3mEQtuo6cPRxwIVn7CWL55Bf5JvqA/32tpY/yVH2P5C
-	HP/JfE5jYc4=
-X-Google-Smtp-Source: AGHT+IE68IJYDSQELPihcT43hUzjwmg2DjnIGVlMJYhA3PW3X3/SHQRZ5oUY7kB/CAv5/AIiDBBmUA==
-X-Received: by 2002:a05:6870:44d0:b0:29d:c764:f873 with SMTP id 586e51a60fabf-29f735320d5mr3072443fac.31.1733521017990;
-        Fri, 06 Dec 2024 13:36:57 -0800 (PST)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-29f5694a265sm1063557fac.34.2024.12.06.13.36.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 13:36:56 -0800 (PST)
-Message-ID: <08ccc3fd-a53c-4d0e-8659-92204d2c27a8@baylibre.com>
-Date: Fri, 6 Dec 2024 15:36:54 -0600
+	s=arc-20240116; t=1733521151; c=relaxed/simple;
+	bh=vZP4vM2AM8D0g/lVrkfB4MhuFwblDSY7KwP63Gv/D8E=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=p+O7d3NG5OQQWK/18KTXoo6dBnOl7YYQTXwBQIExJbIE+hrz0HUETLY6I7G9xydWZK1CnfP0KckCPiJlgcmBXIIRd3EvQXApOBe1cStqzBT2z74WUXazW5BpMbV/GDpew/Z2sTbnKRP5MS66CWkcW1VznbjjETjEiGAVtS2GGDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l00u+leM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BF3C4CED1;
+	Fri,  6 Dec 2024 21:39:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733521150;
+	bh=vZP4vM2AM8D0g/lVrkfB4MhuFwblDSY7KwP63Gv/D8E=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=l00u+leM5BDLoSPmGyuLQ0Ljoy+R21QZYF7G5YPm4fN9jf/lYhkYeLjuR/XQLx8yC
+	 FjhAS1x9bXNHFWKoUBk8qBe+hQ9HbsOXK/q2KKeDWtDB570U4l6vph35fYPQMapB/s
+	 2+7ANU/q3kM8Jj4SRzb0kKbs42NipjnBT7rx25UgjelGo8s+mRb5lhNksyziCtChTy
+	 54Ad0zy2MYFr1HUMnSEBB5Fcj+5q+pNyZf9Bc7us/P5BisGKZSBG6FSFyKO3NbzpHo
+	 80PL/ZrIoncZKp4eMU9hjc8Rg4wZlvBXGRiC8ygVKCZAMXJYLKWJOsjQU28O+GOmFj
+	 /iPu+6XyaYUHA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE18D380A95C;
+	Fri,  6 Dec 2024 21:39:26 +0000 (UTC)
+Subject: Re: [PULL] drm-fixes
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <Z1No0B2ZRO5kq7Yx@phenom.ffwll.local>
+References: <Z1No0B2ZRO5kq7Yx@phenom.ffwll.local>
+X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
+ <dri-devel.lists.freedesktop.org>
+X-PR-Tracked-Message-Id: <Z1No0B2ZRO5kq7Yx@phenom.ffwll.local>
+X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-12-06
+X-PR-Tracked-Commit-Id: 1995e7d05062097109ea1807778ff8654c2de7f3
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: c7cde621b2acfd6bc7d5f002b19b60ad2ed25df8
+Message-Id: <173352116553.2804777.13986947259395633354.pr-tracker-bot@kernel.org>
+Date: Fri, 06 Dec 2024 21:39:25 +0000
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Dave Airlie <airlied@gmail.com>, Simona Vetter <simona.vetter@ffwll.ch>, Linus Torvalds <torvalds@linux-foundation.org>, DRI Development <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/16] iio: buffer-dmaengine: add
- devm_iio_dmaengine_buffer_setup_ext2()
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241115-dlech-mainline-spi-engine-offload-2-v5-0-bea815bd5ea5@baylibre.com>
- <20241115-dlech-mainline-spi-engine-offload-2-v5-10-bea815bd5ea5@baylibre.com>
- <20241124171609.50c6c3a8@jic23-huawei>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241124171609.50c6c3a8@jic23-huawei>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-On 11/24/24 11:16 AM, Jonathan Cameron wrote:
-> On Fri, 15 Nov 2024 14:18:49 -0600
-> David Lechner <dlechner@baylibre.com> wrote:
-> 
->> Add a new devm_iio_dmaengine_buffer_setup_ext2() function to handle
->> cases where the DMA channel is managed by the caller rather than being
->> requested and released by the iio_dmaengine module.
->>
->> Signed-off-by: David Lechner <dlechner@baylibre.com>
-> Fresh read and I'm wondering if the lifetimes in here can be managed
-> more simply either by pushing the DMA channel get down, or dragging
-> the release up.   Basically I'd like to see them at the same level
-> of nesting in the code.  If it ends up being necessary to duplicate
-> more code that is fine if it makes this easier to reason about.
-> 
+The pull request you sent on Fri, 6 Dec 2024 22:12:48 +0100:
 
-One option could be instead of introducing a 2nd function, change
-the existing iio_dmaengine_buffer_setup_ext() to use the signature
-of the proposed devm_iio_dmaengine_buffer_setup_ext2(). There are
-only two users of these functions. So we could move the dma chan
-request/release out to the drivers for those.
+> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-fixes-2024-12-06
 
-Otherwise, we can't completly get rid of the owns_chan bit.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/c7cde621b2acfd6bc7d5f002b19b60ad2ed25df8
 
-> Jonathan
-> 
->> ---
->>
->> v5 changes: none
->>
->> v4 changes:
->> * This replaces "iio: buffer-dmaengine: generalize requesting DMA channel"
->> ---
->>  drivers/iio/buffer/industrialio-buffer-dmaengine.c | 107 +++++++++++++++------
->>  include/linux/iio/buffer-dmaengine.h               |   5 +
->>  2 files changed, 81 insertions(+), 31 deletions(-)
->>
->> diff --git a/drivers/iio/buffer/industrialio-buffer-dmaengine.c b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
->> index 054af21dfa65..602cb2e147a6 100644
->> --- a/drivers/iio/buffer/industrialio-buffer-dmaengine.c
->> +++ b/drivers/iio/buffer/industrialio-buffer-dmaengine.c
->> @@ -33,6 +33,7 @@ struct dmaengine_buffer {
->>  	struct iio_dma_buffer_queue queue;
->>  
->>  	struct dma_chan *chan;
->> +	bool owns_chan;
->>  	struct list_head active;
->>  
->>  	size_t align;
->> @@ -216,28 +217,23 @@ static const struct iio_dev_attr *iio_dmaengine_buffer_attrs[] = {
->>   * Once done using the buffer iio_dmaengine_buffer_free() should be used to
->>   * release it.
->>   */
->> -static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
->> -	const char *channel)
->> +static struct iio_buffer *iio_dmaengine_buffer_alloc(struct dma_chan *chan,
->> +						     bool owns_chan)
->>  {
->>  	struct dmaengine_buffer *dmaengine_buffer;
->>  	unsigned int width, src_width, dest_width;
->>  	struct dma_slave_caps caps;
->> -	struct dma_chan *chan;
->>  	int ret;
->>  
->>  	dmaengine_buffer = kzalloc(sizeof(*dmaengine_buffer), GFP_KERNEL);
->> -	if (!dmaengine_buffer)
->> -		return ERR_PTR(-ENOMEM);
->> -
->> -	chan = dma_request_chan(dev, channel);
->> -	if (IS_ERR(chan)) {
->> -		ret = PTR_ERR(chan);
->> -		goto err_free;
->> +	if (!dmaengine_buffer) {
->> +		ret = -ENOMEM;
->> +		goto err_release;
->>  	}
->>  
->>  	ret = dma_get_slave_caps(chan, &caps);
->>  	if (ret < 0)
->> -		goto err_release;
->> +		goto err_free;
->>  
->>  	/* Needs to be aligned to the maximum of the minimums */
->>  	if (caps.src_addr_widths)
->> @@ -252,6 +248,7 @@ static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
->>  
->>  	INIT_LIST_HEAD(&dmaengine_buffer->active);
->>  	dmaengine_buffer->chan = chan;
->> +	dmaengine_buffer->owns_chan = owns_chan;
->>  	dmaengine_buffer->align = width;
->>  	dmaengine_buffer->max_size = dma_get_max_seg_size(chan->device->dev);
->>  
->> @@ -263,10 +260,12 @@ static struct iio_buffer *iio_dmaengine_buffer_alloc(struct device *dev,
->>  
->>  	return &dmaengine_buffer->queue.buffer;
->>  
->> -err_release:
->> -	dma_release_channel(chan);
->>  err_free:
->>  	kfree(dmaengine_buffer);
->> +err_release:
-> This ends up oddly miss balanced.  If you get an error here, why
-> not just do the release at the caller instead?
+Thank you!
 
-Yes, we can do that.
-
-> 
->> +	if (owns_chan)
->> +		dma_release_channel(chan);
->> +
->>  	return ERR_PTR(ret);
->>  }
->>  
->> @@ -282,12 +281,38 @@ void iio_dmaengine_buffer_free(struct iio_buffer *buffer)
->>  		iio_buffer_to_dmaengine_buffer(buffer);
->>  
->>  	iio_dma_buffer_exit(&dmaengine_buffer->queue);
->> -	dma_release_channel(dmaengine_buffer->chan);
->> -
->>  	iio_buffer_put(buffer);
->> +
->> +	if (dmaengine_buffer->owns_chan)
->> +		dma_release_channel(dmaengine_buffer->chan);
->>  }
->>  EXPORT_SYMBOL_NS_GPL(iio_dmaengine_buffer_free, IIO_DMAENGINE_BUFFER);
->>  
->> +static struct iio_buffer
->> +*__iio_dmaengine_buffer_setup_ext(struct iio_dev *indio_dev,
->> +				  struct dma_chan *chan, bool owns_chan,
->> +				  enum iio_buffer_direction dir)
->> +{
->> +	struct iio_buffer *buffer;
->> +	int ret;
->> +
->> +	buffer = iio_dmaengine_buffer_alloc(chan, owns_chan);
->> +	if (IS_ERR(buffer))
->> +		return ERR_CAST(buffer);
->> +
->> +	indio_dev->modes |= INDIO_BUFFER_HARDWARE;
->> +
->> +	buffer->direction = dir;
->> +
->> +	ret = iio_device_attach_buffer(indio_dev, buffer);
->> +	if (ret) {
->> +		iio_dmaengine_buffer_free(buffer);
-> Note that if you did push the free out to the caller for owns_chan
-> as suggested above this would need to never free the buffer as
-> that would be done if necessary at the caller for this...
-
-We can't push iio_dmaengine_buffer_free() out here since it is balancing
-the call to iio_dmaengine_buffer_alloc() which is called just above in
-this function.
-
-But we do have a problem then with the caller not knowing if the channel
-was released or not on error. So perhaps we get rid of this helper
-function and duplicate some code as you suggested.
-
-> 
->> +		return ERR_PTR(ret);
->> +	}
->> +
->> +	return buffer;
->> +}
->> +
->>  /**
->>   * iio_dmaengine_buffer_setup_ext() - Setup a DMA buffer for an IIO device
->>   * @dev: DMA channel consumer device
->> @@ -308,24 +333,13 @@ struct iio_buffer *iio_dmaengine_buffer_setup_ext(struct device *dev,
->>  						  const char *channel,
->>  						  enum iio_buffer_direction dir)
->>  {
->> -	struct iio_buffer *buffer;
->> -	int ret;
->> -
->> -	buffer = iio_dmaengine_buffer_alloc(dev, channel);
->> -	if (IS_ERR(buffer))
->> -		return ERR_CAST(buffer);
->> -
->> -	indio_dev->modes |= INDIO_BUFFER_HARDWARE;
->> -
->> -	buffer->direction = dir;
->> +	struct dma_chan *chan;
->>  
->> -	ret = iio_device_attach_buffer(indio_dev, buffer);
->> -	if (ret) {
->> -		iio_dmaengine_buffer_free(buffer);
->> -		return ERR_PTR(ret);
->> -	}
->> +	chan = dma_request_chan(dev, channel);
->> +	if (IS_ERR(chan))
->> +		return ERR_CAST(chan);
->>  
->> -	return buffer;
->> +	return __iio_dmaengine_buffer_setup_ext(indio_dev, chan, true, dir);
-> As above, why not just free the channel here if this fails? Thus matching
-> the dma_request_chan just above.
-
-This one is manageable.
-
-> 
-> 
->>  }
->>  EXPORT_SYMBOL_NS_GPL(iio_dmaengine_buffer_setup_ext, IIO_DMAENGINE_BUFFER);
->>  
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
