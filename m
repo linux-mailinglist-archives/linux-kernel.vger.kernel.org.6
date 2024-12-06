@@ -1,226 +1,138 @@
-Return-Path: <linux-kernel+bounces-435144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7B089E7119
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:51:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9B969E7129
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:52:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 93180281EDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:51:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB6E282813
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753B020011A;
-	Fri,  6 Dec 2024 14:51:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DA5154C0D;
+	Fri,  6 Dec 2024 14:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="P7D43zKc"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="PxFerdCI"
+Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1874B1547E7
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:51:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B81474AF;
+	Fri,  6 Dec 2024 14:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733496698; cv=none; b=a9QBhyuwiw/YwVYm+KAZIOMitYwOnVUIZ27ZNn7PQf3NzxqumQz+wsMuATBEvp6MYqVmyRIYhw8omPB1sMyI/1/VuuiALcFULLhZbx9GNIWvfvzPJQfGXIBi6utx461oDvt1x+KBy1NMKLAS6ACA63Qc9GYkqJrjMWb6FXAwLcc=
+	t=1733496743; cv=none; b=X8a2DByq4Yb/iljMAOv2JrD6EVN0cPdEoOwqJefvc/zTokzd6xmHaqkN42DqcCbsnnt2c73kdOhmKAcAoDJH4MN8ouu5AkoU6PA18f7UtR/3AYJ2s13vf9aLhcVLwDjJhCZbha35LApqeT8YASOfHFDmEpnCuMgGOcjERFGrjzA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733496698; c=relaxed/simple;
-	bh=/tuYPwJTtJ4Svob5I/ujRMdmikjrzcucjhMGBvhTg/A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
-	 References:In-Reply-To; b=pCZfmCe7xbxn9gC72kukMrOwT/vaqNi1BB/Ex8ZCxuw2VWNdnAiy2LArrJp5aHVPU7EadZKZAeKXmfMgj7BgIr3TBCH0l8c6KkjUxme/8VE4Vmk3J50nFxhUCwFzltQJLwGEoC9FhrAFqomQYJ8dXyvUyJBBlBCJSWFKqMweD60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=P7D43zKc; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5cedf5fe237so3245771a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 06:51:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1733496694; x=1734101494; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=u4sWRf4hJF+nJwKhKGaqJGBfySo0Ly+PnsMhNpbfdzo=;
-        b=P7D43zKchPrhdx3fk4Ecjry55dvz3dYInI/0bHsdDgwvTvqIv+CjFOgtb5nq2NC581
-         1KIUWBnoLGanbgqju8OX0gunuamecdC07hwa0oPs2YdmkGXa6LFzdEjLlbHk6oMh0tJK
-         ZoiQu56CDMfc+VZNAY1g5dhrKdGxmDwdqzgjWFBcTeyHa8JEsJOiYJIIUof0UMQVvrM/
-         S7kzXSEk2zK7PCLtHtcOvDw3cFi7KdmZb7pD5MNyvrr0lxtomrMVFfbeUqV55CmrWd2x
-         ji+nqPLrFMeUWSS8caktjRI+X7f+P0nlUOQLwnYPg1NiBxZxUu/YxUlug9CdeJhvxmkP
-         8TSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733496694; x=1734101494;
-        h=in-reply-to:references:subject:cc:to:from:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=u4sWRf4hJF+nJwKhKGaqJGBfySo0Ly+PnsMhNpbfdzo=;
-        b=kc8D+7RThisVdpa/ZFvjZZqdUPAniIBLIQyNc2SH8UUmbsdtJ/10xm5s5Cnt9IBRbS
-         k0Z8iVvQT+twtIjwb+XfUHxVIGvNH2Jp64GUOTVhSTBdyLy+hwqd4wAhae44esVXdYTo
-         K7qnpnVciuOsqIjA1WVpG3lpWE1HQ5dcJqgMkb7fdphNdYFihnuI6NzwXTdDknnsbWY3
-         wbZbqlnKhdvbzePSkoApvCL+0NdPk5SWIMOqSDcTtW4Ap1WHfxwYx9XLOzQiyCdRvmsg
-         g/gqvAyX2/RRn1KkziN3ssg2FJVakuXmE5lA9R7XVQUK4feMcImCsHJHrFaoAPHWjXdg
-         kngg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhBUn0iH36AAnBxRFaNixcY58g5hOWAeMOheiMmjpiESFm3yLAnLMXMxs1Z+9keakaeBVvDvxyghaCZQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+NEzSUn8DCW+m7mX8bOjZZ3+gpxT19Ik4NqgRcND5C3vkUSII
-	wJeqMppR5bb1obTqqwHMcilHV+g+7YWbHA3wOwvQq/vRvd7EE1YNlpstNvNSvbw=
-X-Gm-Gg: ASbGncuIYI4t6hVdY/5IuKUk5tcce61MvH+PDbR2ITP/XKNj4IhzZpeWwrYf49BGMGo
-	ZOmGsnNCOiRPzDVT5Mpzc2HOR3kTDdysVxpbZeSCLNX9x8U7PneNwJIS/MlP3xN6nhquaY1sn5N
-	5VO5xX9Wk0PpivlQSZfAcFdeVOwGX3AQoIZfkNjvTWW5WoCoayrC36+83ytWb4OOUoiiEtIeLwn
-	UJXoK1QugRFAHxTt8udBaB8kR2utR+1iPJGQ5ilLawTSDyB5RJ1Cai/bX8BkTj4Z+5jHTG/psAG
-	3e4QrmCs2Jm1pfDyRfodeEipKWsfpqSjFwhy6D9H+AGlIps1gn/LXFl5q54u/g==
-X-Google-Smtp-Source: AGHT+IF3ycQKdVhs/GREAgOvRVra6yPFbB24y2IHadPhsDlfk3Y572eRHeBOD9F6SFeEhTxMX7fWeA==
-X-Received: by 2002:a05:6402:358a:b0:5d2:7199:ae7 with SMTP id 4fb4d7f45d1cf-5d3be6d74b2mr3641833a12.11.1733496694443;
-        Fri, 06 Dec 2024 06:51:34 -0800 (PST)
-Received: from localhost (2a02-8388-6584-6400-d322-7350-96d2-429d.cable.dynamic.v6.surfer.at. [2a02:8388:6584:6400:d322:7350:96d2:429d])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3bc829433sm1261863a12.38.2024.12.06.06.51.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 06:51:34 -0800 (PST)
+	s=arc-20240116; t=1733496743; c=relaxed/simple;
+	bh=c/8ZlkYzbi6DXqIwQK4RCNgWQVop5LJWPwZQmkhzQxs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xvdo5pd3r3DRWL5zc7MXxqI2d1wshwJQctJKGyeHZQa71lKQiZ15ZfuaUXCMEfwSuvANzXy6rAq1ByvpQYNrFkgbu7Wg/OzUsmqt75mBzrDL1V+1MnkTVPSGP/MMNNQsGqxe7OGBo92lZ+k0T+s9QalEbDH71mI1Uqo3PBWZEyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=PxFerdCI; arc=none smtp.client-ip=212.27.42.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
+Received: from bender.morinfr.org (unknown [82.66.66.112])
+	by smtp2-g21.free.fr (Postfix) with ESMTPS id 64F5B2003CA;
+	Fri,  6 Dec 2024 15:52:07 +0100 (CET)
+Authentication-Results: smtp2-g21.free.fr;
+	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=PxFerdCI;
+	dkim-atps=neutral
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
+	; s=20170427; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=Z0V41C+el6ZxU+5bWs0t+oix5z85dABjQe8DaTTtBhM=; b=PxFerdCIiCaY8kBwiLnLtlVvpK
+	hUKVkQWTVJ8G8cruN1Y9qYkReotnK48NHn0Kyfrr2LSNaq4Bca4cMHMSOb5PcwP5Yew5H+1+HbOwa
+	OWVcvvwSaM6fKsny5CFzJojc9T0RiEW5aTHr2mo8uflPzIpQVESFbFqv1Q1XB7wLZHKY=;
+Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
+	(envelope-from <guillaume@morinfr.org>)
+	id 1tJZgc-002J1j-1t;
+	Fri, 06 Dec 2024 15:52:06 +0100
+Date: Fri, 6 Dec 2024 15:52:06 +0100
+From: Guillaume Morin <guillaume@morinfr.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Heiko Carstens <hca@linux.ibm.com>,
+	Guillaume Morin <guillaume@morinfr.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Peter Xu <peterx@redhat.com>,
+	Eric Hagberg <ehagberg@janestreet.com>, linux-s390@vger.kernel.org
+Subject: Re: [PATCH v3] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
+Message-ID: <Z1MPlgsli-eA4o7z@bender.morinfr.org>
+References: <Z1EJssqd93w2erMZ@bender.morinfr.org>
+ <20241206045019.GA2215843@thelio-3990X>
+ <Z1KLLXpzrDac-oqF@bender.morinfr.org>
+ <20241206092453.9026-A-hca@linux.ibm.com>
+ <c43a3149-c84b-448b-be80-1e026740911c@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 06 Dec 2024 15:51:33 +0100
-Message-Id: <D64PAIXELZ6A.37ZSFBIRPE6MT@fairphone.com>
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Jordan Crouse" <jorcrous@amazon.com>, <linux-media@vger.kernel.org>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, "Mauro Carvalho Chehab"
- <mchehab@kernel.org>, "Robert Foss" <rfoss@kernel.org>, "Todor Tomov"
- <todor.too@gmail.com>, <linux-arm-msm@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v1 1/2] media: camss: Increase the maximum frame size
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20240802152435.35796-1-jorcrous@amazon.com>
- <20240802152435.35796-2-jorcrous@amazon.com>
-In-Reply-To: <20240802152435.35796-2-jorcrous@amazon.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c43a3149-c84b-448b-be80-1e026740911c@redhat.com>
 
-On Fri Aug 2, 2024 at 5:24 PM CEST, Jordan Crouse wrote:
-> Commit 35493d653a2d
-> ("media: camss: add support for vidioc_enum_framesizes ioctl") added a
-> maximum frame width and height but the values selected seemed to have
-> been arbitrary. In reality the cam hardware doesn't seem to have a maximu=
-m
-> size restriction so double up the maximum reported width and height to
-> allow for larger frames.
+On 06 Dec 10:29, David Hildenbrand wrote:
 >
-> Also increase the maximum size checks at each point in the pipeline so
-> the increased sizes are allowed all the way down to the sensor.
+> On 06.12.24 10:24, Heiko Carstens wrote:
+> > On Fri, Dec 06, 2024 at 06:27:09AM +0100, Guillaume Morin wrote:
+> > > On 05 Dec 21:50, Nathan Chancellor wrote:
+> > > > This looks to be one of the first uses of pud_soft_dirty() in a generic
+> > > > part of the tree from what I can tell, which shows that s390 is lacking
+> > > > it despite setting CONFIG_HAVE_ARCH_SOFT_DIRTY:
+> > > > 
+> > > >    $ make -skj"$(nproc)" ARCH=s390 CROSS_COMPILE=s390-linux- mrproper defconfig mm/gup.o
+> > > >    mm/gup.c: In function 'can_follow_write_pud':
+> > > >    mm/gup.c:665:48: error: implicit declaration of function 'pud_soft_dirty'; did you mean 'pmd_soft_dirty'? [-Wimplicit-function-declaration]
+> > > >      665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
+> > > >          |                                                ^~~~~~~~~~~~~~
+> > > >          |                                                pmd_soft_dirty
+> > > > 
+> > > > Is this expected?
+> > > 
+> > > Yikes! It does look like an oversight in the s390 code since as you said
+> > > it has CONFIG_HAVE_ARCH_SOFT_DIRTY and pud_mkdirty seems to be setting
+> > > _REGION3_ENTRY_SOFT_DIRTY. But I'll let the s390 folks opine.
+> > > 
+> > > I don't mind dropping the pud part of the change (even if that's a bit
+> > > of a shame) if it's causing too many issues.
+> > 
+> > It would be quite easy to add pud_soft_dirty() etc. helper functions
+> > for s390, but I think that would be the wrong answer to this problem.
+> > 
+> > s390 implements pud_mkdirty(), but it is only used in the context of
+> > HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD, which s390 doesn't support. So
+> > this function should probably be removed from s390's pgtable.h.
+> > 
+> > Similar the pud_soft_dirty() and friends helper functions should only
+> > be implemented if common code support for soft dirty would exist,
+> > which is currently not the case. Otherwise similar fallbacks like for
+> > pmd_soft_dirty() (-> include/linux/pgtable.h) would also need to be
+> > implemented.
+> > 
+> > So IMHO the right fix (at this time) seems to be to remove the above
+> > pud part of your patch, and in addition we should probably also drop
+> > the partially implemented pud level soft dirty bits in s390 code,
+> > since that is dead code and might cause even more confusion in future.
+> > 
+> > Does that make sense?
+> 
+> As hugetlb does not support softdirty, and PUDs are currently only possible
+> (weird DAX thing put aside) with hugetlb, it makes sense to drop the pud
+> softdirty thingy.
 
-Hi Jordan,
+Thanks all. I dropped the check and the dummy definition I had to add
+for i386 in v4 [1]
 
-Looks like this hasn't landed yet, do you plan on resending this?
+[1] https://lore.kernel.org/linux-mm/Z1MO5slZh8uWl8LH@bender.morinfr.org/T/#u
 
-Just wanted to try a 8192x6144 format but csid limiting the size to 8191
-is a bit in the way.
-
-Regards
-Luca
-
->
-> Signed-off-by: Jordan Crouse <jorcrous@amazon.com>
-> ---
->
->  drivers/media/platform/qcom/camss/camss-csid.c   | 8 ++++----
->  drivers/media/platform/qcom/camss/camss-csiphy.c | 4 ++--
->  drivers/media/platform/qcom/camss/camss-ispif.c  | 4 ++--
->  drivers/media/platform/qcom/camss/camss-vfe.c    | 4 ++--
->  drivers/media/platform/qcom/camss/camss-video.c  | 6 +++---
->  5 files changed, 13 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/media/platform/qcom/camss/camss-csid.c b/drivers/med=
-ia/platform/qcom/camss/camss-csid.c
-> index 858db5d4ca75..886c42c82612 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csid.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csid.c
-> @@ -752,8 +752,8 @@ static void csid_try_format(struct csid_device *csid,
->  		if (i >=3D csid->res->formats->nformats)
->  			fmt->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
-> =20
-> -		fmt->width =3D clamp_t(u32, fmt->width, 1, 8191);
-> -		fmt->height =3D clamp_t(u32, fmt->height, 1, 8191);
-> +		fmt->width =3D clamp_t(u32, fmt->width, 1, 16383);
-> +		fmt->height =3D clamp_t(u32, fmt->height, 1, 16383);
-> =20
->  		fmt->field =3D V4L2_FIELD_NONE;
->  		fmt->colorspace =3D V4L2_COLORSPACE_SRGB;
-> @@ -781,8 +781,8 @@ static void csid_try_format(struct csid_device *csid,
->  			if (i >=3D csid->res->formats->nformats)
->  				fmt->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
-> =20
-> -			fmt->width =3D clamp_t(u32, fmt->width, 1, 8191);
-> -			fmt->height =3D clamp_t(u32, fmt->height, 1, 8191);
-> +			fmt->width =3D clamp_t(u32, fmt->width, 1, 16383);
-> +			fmt->height =3D clamp_t(u32, fmt->height, 1, 16383);
-> =20
->  			fmt->field =3D V4L2_FIELD_NONE;
->  		}
-> diff --git a/drivers/media/platform/qcom/camss/camss-csiphy.c b/drivers/m=
-edia/platform/qcom/camss/camss-csiphy.c
-> index 2f7361dfd461..43c35ad6ac84 100644
-> --- a/drivers/media/platform/qcom/camss/camss-csiphy.c
-> +++ b/drivers/media/platform/qcom/camss/camss-csiphy.c
-> @@ -368,8 +368,8 @@ static void csiphy_try_format(struct csiphy_device *c=
-siphy,
->  		if (i >=3D csiphy->res->formats->nformats)
->  			fmt->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
-> =20
-> -		fmt->width =3D clamp_t(u32, fmt->width, 1, 8191);
-> -		fmt->height =3D clamp_t(u32, fmt->height, 1, 8191);
-> +		fmt->width =3D clamp_t(u32, fmt->width, 1, 16383);
-> +		fmt->height =3D clamp_t(u32, fmt->height, 1, 16383);
-> =20
->  		fmt->field =3D V4L2_FIELD_NONE;
->  		fmt->colorspace =3D V4L2_COLORSPACE_SRGB;
-> diff --git a/drivers/media/platform/qcom/camss/camss-ispif.c b/drivers/me=
-dia/platform/qcom/camss/camss-ispif.c
-> index a12dcc7ff438..01e2ded8da0b 100644
-> --- a/drivers/media/platform/qcom/camss/camss-ispif.c
-> +++ b/drivers/media/platform/qcom/camss/camss-ispif.c
-> @@ -912,8 +912,8 @@ static void ispif_try_format(struct ispif_line *line,
->  		if (i >=3D line->nformats)
->  			fmt->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
-> =20
-> -		fmt->width =3D clamp_t(u32, fmt->width, 1, 8191);
-> -		fmt->height =3D clamp_t(u32, fmt->height, 1, 8191);
-> +		fmt->width =3D clamp_t(u32, fmt->width, 1, 16383);
-> +		fmt->height =3D clamp_t(u32, fmt->height, 1, 16383);
-> =20
->  		fmt->field =3D V4L2_FIELD_NONE;
->  		fmt->colorspace =3D V4L2_COLORSPACE_SRGB;
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/medi=
-a/platform/qcom/camss/camss-vfe.c
-> index 83c5a36d071f..826c0fb31785 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-> @@ -1049,8 +1049,8 @@ static void vfe_try_format(struct vfe_line *line,
->  		if (i >=3D line->nformats)
->  			fmt->code =3D MEDIA_BUS_FMT_UYVY8_1X16;
-> =20
-> -		fmt->width =3D clamp_t(u32, fmt->width, 1, 8191);
-> -		fmt->height =3D clamp_t(u32, fmt->height, 1, 8191);
-> +		fmt->width =3D clamp_t(u32, fmt->width, 1, 16383);
-> +		fmt->height =3D clamp_t(u32, fmt->height, 1, 16383);
-> =20
->  		fmt->field =3D V4L2_FIELD_NONE;
->  		fmt->colorspace =3D V4L2_COLORSPACE_SRGB;
-> diff --git a/drivers/media/platform/qcom/camss/camss-video.c b/drivers/me=
-dia/platform/qcom/camss/camss-video.c
-> index cd72feca618c..5fee3733da8e 100644
-> --- a/drivers/media/platform/qcom/camss/camss-video.c
-> +++ b/drivers/media/platform/qcom/camss/camss-video.c
-> @@ -19,10 +19,10 @@
->  #include "camss.h"
-> =20
->  #define CAMSS_FRAME_MIN_WIDTH		1
-> -#define CAMSS_FRAME_MAX_WIDTH		8191
-> +#define CAMSS_FRAME_MAX_WIDTH		16833
->  #define CAMSS_FRAME_MIN_HEIGHT		1
-> -#define CAMSS_FRAME_MAX_HEIGHT_RDI	8191
-> -#define CAMSS_FRAME_MAX_HEIGHT_PIX	4096
-> +#define CAMSS_FRAME_MAX_HEIGHT_RDI	16833
-> +#define CAMSS_FRAME_MAX_HEIGHT_PIX	8192
-> =20
->  /* ---------------------------------------------------------------------=
---------
->   * Helper functions
-
+-- 
+Guillaume Morin <guillaume@morinfr.org>
 
