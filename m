@@ -1,48 +1,49 @@
-Return-Path: <linux-kernel+bounces-435053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746549E6ED9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:04:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CBDE9E6EDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 354E328454F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:04:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A55A7284381
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:05:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB864208983;
-	Fri,  6 Dec 2024 13:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB7620CCD2;
+	Fri,  6 Dec 2024 13:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/6cjzG5"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaYTzm4W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2118C20767C;
-	Fri,  6 Dec 2024 13:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236FE20C47C;
+	Fri,  6 Dec 2024 13:04:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490261; cv=none; b=uALo27/GlZb5CLcM/si4MikclglRRAdgCZ9ZLBDYHVdFGaj9Y2EfUNbYuLvtU0ZiElcZw2boaREU8aXANiX2ELPEq8Pg1Eb4r9rl4Dyi4kinZhJCwZxl69wspOQs5rQC0H7LyRcqHuw09WKhWwhwKMERoJBbdoXCt1P+q+VVM24=
+	t=1733490268; cv=none; b=OqLdFuUZbD9O2JUmEkVto3DbWm8mCx5N9rki83KaqiXvDCddsTLASE/AArciRbhBoLm5upqX0Dz0dY3tlyqWLqp9oMh1+3NCnHVKXHGxBb3dr7u5y7CDaUiBYLJD/Lu3tf/jT0GNP0V90iRA92DppeheMfyL8irYZXCF5tT9YqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490261; c=relaxed/simple;
-	bh=6M3MwJVPQVJfwZCyUXnKFfzUiBOjUgHdAX5hBQtJ7Q0=;
+	s=arc-20240116; t=1733490268; c=relaxed/simple;
+	bh=3JoSvgVSyWPdcDhFxJbqeFmv3Z/rfrPtZzh7qZxBCX8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KqEUD1XaenY9sjyQQlH3x2OR9SFDK4whqtxVoaR/o8gO5H22QsmEgTwhWzYqNbIOGrbPFeh/0O0LR1A0pcDsw4HuIPS+lZ2oTPPbjN0FMqKhWyplNvYGn3/6DhjfN5l/XcuEeMkVO2fq2ndXNZQZh78u9kwQwbYWf8DyWIVviSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/6cjzG5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E5ADC4CEDE;
-	Fri,  6 Dec 2024 13:04:17 +0000 (UTC)
+	 MIME-Version; b=ZIVTXU5OfoULJWNWAT/e9Iz64iDHlwIzx4qGsD6akpVhwp8Uc3pg3INMQxU8sxw4MAVmuGazr+8OgLZCCFtKnHeG3X1omVwmsGQoftS101FTlOH2Gr+AU8MWdM4S764/YOENpNwYEGuY0FazckxRICjrltSk0VL6HVbDIZgDQbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaYTzm4W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5524C4CED2;
+	Fri,  6 Dec 2024 13:04:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733490259;
-	bh=6M3MwJVPQVJfwZCyUXnKFfzUiBOjUgHdAX5hBQtJ7Q0=;
+	s=k20201202; t=1733490268;
+	bh=3JoSvgVSyWPdcDhFxJbqeFmv3Z/rfrPtZzh7qZxBCX8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=q/6cjzG5zZIDgkBwgqZvGzdSl48pBze2jgEk6hRe4Ym9GdrA0ri1eVBRb4x5S/9zV
-	 3LdX69qDJVqw59SRrKNeGfePaleEcdssZ+l65kNq5n+bwK/rc7+nFc3QSrLIgztFoJ
-	 ozZAf0/eX6Z6JMm6f2Xf37Lb3AlEvC2J6Ja18TRZVtMObd8ER6mLL9nHpUODhEll4V
-	 3f+dHtR2xkFOa3yzmNE2i6wyXXc/8XSKgJJCgo14GWV3nsXHlegr73844rmdf5ec+E
-	 ZO3jSA/SxJ8VpBL3ljgpqGqDrtrPiSRc79cIn74Il/+gltSygcQn+UUjnnzCwTweQb
-	 aiWkGR+nB9DYg==
+	b=HaYTzm4WPezL5jQKIv/vqxlxcLlqC6eIqwMGZkUG0FOSlkx3/WTK2SMhFX1qdMzIf
+	 FRfCsoQfeKHWczjfmu2HXKzqy/KzYuf0EQ2buVIOiMQrEeShKQeucA/gkicmSyU3jE
+	 lnqyj3ybzFgvkfmT+gQxSPkHGR2UdWXxqtsV3HSR1oMSiY/Ew9KcY0U2zWX1Nh3wSn
+	 jK4PIFtwWTqA8xYaT4TYnCStsKk0d1MJ2FxhML4aUiKIGWhUTW32EJeUy9r163OJy5
+	 GUEDg4U+m4et5EeyTYz01pIVfBiyCA3/kJPi60SPVPgkp74MdV6alW8meR4L+p3zdz
+	 G2AUXR9VFd/Ow==
 From: Frederic Weisbecker <frederic@kernel.org>
 To: LKML <linux-kernel@vger.kernel.org>
 Cc: Frederic Weisbecker <frederic@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
 	"Rafael J . Wysocki" <rafael@kernel.org>,
 	Daniel Lezcano <daniel.lezcano@linaro.org>,
 	linux-pm@vger.kernel.org,
@@ -50,11 +51,10 @@ Cc: Frederic Weisbecker <frederic@kernel.org>,
 	Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>,
 	Dave Hansen <dave.hansen@linux.intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Marcelo Tosatti <mtosatti@redhat.com>
-Subject: [PATCH 1/5] cpuidle: Remove unnecessary current_clr_polling_and_test() from haltpoll
-Date: Fri,  6 Dec 2024 14:04:04 +0100
-Message-ID: <20241206130408.18690-2-frederic@kernel.org>
+	"Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Subject: [PATCH 4/5] cpuidle: Remove call_cpuidle_s2idle()
+Date: Fri,  6 Dec 2024 14:04:07 +0100
+Message-ID: <20241206130408.18690-5-frederic@kernel.org>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <20241206130408.18690-1-frederic@kernel.org>
 References: <20241206130408.18690-1-frederic@kernel.org>
@@ -66,34 +66,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When cpuidle drivers ->enter() callback are called, the TIF_NR_POLLING
-flag is cleared already and TIF_NEED_RESCHED checked by call_cpuidle().
+This middle call is unecessary, especially now that its counterpart
+call_cpuidle() has been removed.
 
-Therefore calling current_clr_polling_and_test() is redundant here and
-further setting of TIF_NEED_RESCHED will result in an IPI and thus an
-idle loop exit. This call can be safely removed.
-
-Cc: Marcelo Tosatti <mtosatti@redhat.com>
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+Suggested-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 ---
- drivers/cpuidle/cpuidle-haltpoll.c | 3 ---
- 1 file changed, 3 deletions(-)
+ kernel/sched/idle.c | 23 ++++++-----------------
+ 1 file changed, 6 insertions(+), 17 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-haltpoll.c b/drivers/cpuidle/cpuidle-haltpoll.c
-index bcd03e893a0a..07dd9f000273 100644
---- a/drivers/cpuidle/cpuidle-haltpoll.c
-+++ b/drivers/cpuidle/cpuidle-haltpoll.c
-@@ -28,9 +28,6 @@ static enum cpuhp_state haltpoll_hp_state;
- static __cpuidle int default_enter_idle(struct cpuidle_device *dev,
- 					struct cpuidle_driver *drv, int index)
- {
--	if (current_clr_polling_and_test())
--		return index;
--
- 	arch_cpu_idle();
- 	return index;
+diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
+index 9eece3df1080..86b902eb24fe 100644
+--- a/kernel/sched/idle.c
++++ b/kernel/sched/idle.c
+@@ -126,19 +126,6 @@ void __cpuidle default_idle_call(void)
+ 	instrumentation_end();
  }
+ 
+-static int call_cpuidle_s2idle(struct cpuidle_driver *drv,
+-			       struct cpuidle_device *dev)
+-{
+-	int ret;
+-
+-	if (current_clr_polling_and_test())
+-		return -EBUSY;
+-
+-	ret = cpuidle_enter_s2idle(drv, dev);
+-	__current_set_polling();
+-	return ret;
+-}
+-
+ /**
+  * cpuidle_idle_call - the main idle function
+  *
+@@ -184,10 +171,12 @@ static void cpuidle_idle_call(void)
+ 		u64 max_latency_ns;
+ 
+ 		if (idle_should_enter_s2idle()) {
+-
+-			entered_state = call_cpuidle_s2idle(drv, dev);
+-			if (entered_state > 0)
+-				goto exit_idle;
++			if (!current_clr_polling_and_test()) {
++				entered_state = cpuidle_enter_s2idle(drv, dev);
++				__current_set_polling();
++				if (entered_state > 0)
++					goto exit_idle;
++			}
+ 
+ 			max_latency_ns = U64_MAX;
+ 		} else {
 -- 
 2.46.0
 
