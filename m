@@ -1,157 +1,220 @@
-Return-Path: <linux-kernel+bounces-435756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435757-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C26D59E7BE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:44:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5BA19E7BE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:45:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E30216D5F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:44:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8C918848C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A58201FA259;
-	Fri,  6 Dec 2024 22:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A01D212F93;
+	Fri,  6 Dec 2024 22:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NMU2V+un"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="AUoYZ9QL"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F58922C6C3;
-	Fri,  6 Dec 2024 22:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7ADC22C6D5;
+	Fri,  6 Dec 2024 22:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733525084; cv=none; b=hVeMWM7WtMtN5SF5PHttvJViFpKeUexL6ffn3n8Qf7zr/yPPpkXeBG3fk88HqE//WRgDh3N3uoQTpHhrfYQIdvw/T0GdCCzVfaTXFl0hcd2Get0JQLla19+vZ5RR5z9wZKqJ4UgKtwUjXYqxBGW9NXTxJXgBXBU65zfYXIRhqDI=
+	t=1733525141; cv=none; b=mlrYWyP+u8wBrTW3baO6futUS3qsk7fthPZBzkSR2/NofQtuERQCHz4ExIabM1ruO0/PIXCAZcF9wCBHEhSLTU3w/X5vwQWdpRcdPTQdMkz6ukghZ0XP3b1/YDyhp5SQqT6lk2hN0w/XMbMtNl+8JJpIAdpyH2gHN3cXnLYTJnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733525084; c=relaxed/simple;
-	bh=WI2J7dR0+ilHazk4wgjzpDOluD8//9je5uTiSk7GoAo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Fnfua1se44Inkgx+512q6aYyAKWjDm/N49hqEVPzVGuj7VVbkKJqLpCGFnzgQl4BFP5w3DUw83ZAwd0MBKlciwn4HJAIDk1wowAljPgPc8WLTC1XYnbsa31ctaqTrmvrRoJADWcxjDMdZ+pQyMhbZAIKHpVBGskppbpZ8RGbV/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NMU2V+un; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4668f208f5fso23278351cf.0;
-        Fri, 06 Dec 2024 14:44:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733525081; x=1734129881; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iCN7jYmq/Ly3S+/F2VYvFeB81jNT2qnKK+9AsXABa/Q=;
-        b=NMU2V+unWLlqoDVaU0IoWRABJanfLdmh9yhdowmPaFnQzlneqv4CsWN4JAbFauiteZ
-         B0cHh6c6Jb/jQ4rmQxWO04f8vuwNiRGoe9lM93FhjHAWuXIS3S/pHsXhww1go2DqXOFV
-         BUdT5FsEaAAb0JR3jj1iBjOVMJEn57diyFD0ujQOXZSm49ERPDbHJ/W7SNJwPJdhBuM8
-         4PkRUgnhTG/LGnwhm+eh/z4osWzzN5xIWC/yaDDdA6J9EYE9ak0xZa8R3GsyZ1gttiD6
-         7mWw1Bb4b0t6nyeVhF5mTQOoKLQ5EB7zMxyJLH5f2le2qhakUu1hdKmp5xqdWuoaMUHE
-         RNQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733525081; x=1734129881;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iCN7jYmq/Ly3S+/F2VYvFeB81jNT2qnKK+9AsXABa/Q=;
-        b=prnpvrRT7C9MGCMajyoblyEdcsB8XgaPJrQzCjVj8a30FRGXXWBI2hwN3ngo0zL57k
-         5Fn+YvtqktN4FW6SIJE1k0ys+l1IJIGajPAOKJL//qKyKWKv0ngaW6DrXscY4+/BJR/o
-         OJ+uCRXQWiJlj+Hl6NEph3WoQ6j0QoqVFuNsNwKBQjICTxJSsbUTjlVkKXBMhITPGw9/
-         i91Ey9Lf4sUB80TRsExpuPq5kAdZmgpIqNIhT6kUyYajFBQPQkTS8WY7WZjpny6pZkBy
-         buJeaIa7krkfS4W6lHKsCUsX8sLtPrspCVzMTKVOLVWpZqm0E4QZJTjq0YF5aaTscDTY
-         A+EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDOrfosT6DV315Yz7YL3KpvpVG4sCnR7/2oIfx/PLlWZtPU6zwL3RoxzoKODWKfYNkvBv7nbrHKaJfcx4=@vger.kernel.org, AJvYcCXSozuGR6VZk229afm1XSbYoFxDzysBf54RwtKubQlh71BMmXtFTAQMZf2hKLty8uHW7v1W2UZU@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUP130AOQcrHAHvK8NoSvpRrzC1SEyCPagKMhmhhb1qdByN9uP
-	sEy8XxwFDiZMndNtO1XWayhz1+WO7YUYDNM14KGEzXZ4VznCwOiT
-X-Gm-Gg: ASbGncsRdxo04G3rgZrr33oMZF/t5DiBVoiX2QmHZv9vsYr4p9LyM5GvDzUtcogFbav
-	Be0/n9c15H3CUGqz/QLv6W0dTKlwwoz9C64DJ1b3ZBG+q2eUiSUwrLtmFjoYRWBGN8xZsB8CD7l
-	w08ehei/EAgWnWxOotxKO2yqQGHbSZNKfY3pFgwA3h0lG2fQ7eu3/4OgMlKzB1IjoOKMusmyRJc
-	qe3+JFJEZfyEIMiZq9RaUK4WaNMYagh47I3QChuqD07o4SqY19K/P7EnKubDNcVwxF38ioTg0wZ
-	uw==
-X-Google-Smtp-Source: AGHT+IE+CaF0eGH3ZR5dX95dfeuHr9PvwB934hOYv3WA31istBnI0LMpUh2I1Nn9x0ochL1UtCrAxw==
-X-Received: by 2002:a05:622a:1a99:b0:45f:bc9e:c69c with SMTP id d75a77b69052e-46734c87a09mr106144231cf.7.1733525081432;
-        Fri, 06 Dec 2024 14:44:41 -0800 (PST)
-Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467297d6c5esm25928661cf.82.2024.12.06.14.44.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 14:44:40 -0800 (PST)
-Message-ID: <61d56813-0658-4893-994d-4e9f0175554d@gmail.com>
-Date: Fri, 6 Dec 2024 14:44:37 -0800
+	s=arc-20240116; t=1733525141; c=relaxed/simple;
+	bh=SPq6ru6KeEu7S/DJ3r40M5+WSJlUxaW6SpmQGfhX2YQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Sts0j9uB8BL/xI8GyAMolsRo9hM4sh8KSjrosdqwqX857TXzKPc8UQL2YG90KcHX7R09ps+yShzmqh3x5RXgDGgZ+zN5NGIJVv7yEmKomIb2Or2m5TLnHiBAwOW512ILglCcJtUixF4MttlvmZlmeBibugmcR45HlL0ESvY7+E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=AUoYZ9QL; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=EDv7b+GrDXjsRKtyYoIJaRrs2yTN4GiCq+PXW32/j2Y=; b=AUoYZ9QLJ9NvvzMDdANLL2Dg7S
+	yUps5jChAvRfa++KcL43tsdgZCxl6ShEJflCMZfgBejPSodAClvJ1aG3QV9XpTjfqEPnlwfD7hzOd
+	3LEIk6AAmYuuyvmghsY1+py0zdH5KHC5Dj1E2qmGIiAdpIwK5KlzHB431zoKaZRTszYVnpD1JT4mT
+	c0HN0hH9JJT00PaCpe3ilcpoGQdu0wozVcL4wN8Q7ok2bQWDlG9NwdXEJ28vQnSjHvAhNDevIKY/d
+	Rkl5eBIp026UdOV2roqctIKqCFMT2vGapc38mzmWnMCzY0nURBreSmTd+BRK6MPlBIAvLI4iP9YFr
+	cPk/DdkQ==;
+Received: from 226.206.1.85.dynamic.cust.swisscom.net ([85.1.206.226] helo=localhost)
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1tJh4q-0008Du-54; Fri, 06 Dec 2024 23:45:36 +0100
+From: Daniel Borkmann <daniel@iogearbox.net>
+To: torvalds@linux-foundation.org
+Cc: bpf@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	alexei.starovoitov@gmail.com,
+	andrii@kernel.org,
+	daniel@iogearbox.net,
+	martin.lau@kernel.org
+Subject: [GIT PULL] bpf for v6.13-rc2
+Date: Fri,  6 Dec 2024 23:45:34 +0100
+Message-ID: <20241206224535.279796-1-daniel@iogearbox.net>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6.6 000/676] 6.6.64-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
- conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-References: <20241206143653.344873888@linuxfoundation.org>
-Content-Language: en-US
-From: Florian Fainelli <f.fainelli@gmail.com>
-Autocrypt: addr=f.fainelli@gmail.com; keydata=
- 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
-In-Reply-To: <20241206143653.344873888@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 1.0.7/27479/Fri Dec  6 10:40:14 2024)
 
-On 12/6/24 06:26, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.64 release.
-> There are 676 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sun, 08 Dec 2024 14:34:52 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.64-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
+Hi Linus,
 
-On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
-BMIPS_GENERIC:
+The following changes since commit 9f16d5e6f220661f73b36a4be1b21575651d8833:
 
-Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
--- 
-Florian
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/virt/kvm/kvm (2024-11-23 16:00:50 -0800)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf.git tags/bpf-fixes
+
+for you to fetch changes up to 509df676c2d79c985ec2eaa3e3a3bbe557645861:
+
+  Merge branch 'fixes-for-lpm-trie' (2024-12-06 09:14:35 -0800)
+
+----------------------------------------------------------------
+BPF fixes:
+
+- Fix several issues for BPF LPM trie map which were found by
+  syzbot and during addition of new test cases (Hou Tao)
+
+- Fix a missing process_iter_arg register type check in the
+  BPF verifier (Kumar Kartikeya Dwivedi, Tao Lyu)
+
+- Fix several correctness gaps in the BPF verifier when
+  interacting with the BPF stack without CAP_PERFMON
+  (Kumar Kartikeya Dwivedi, Eduard Zingerman, Tao Lyu)
+
+- Fix OOB BPF map writes when deleting elements for the case of
+  xsk map as well as devmap (Maciej Fijalkowski)
+
+- Fix xsk sockets to always clear DMA mapping information when
+  unmapping the pool (Larysa Zaremba)
+
+- Fix sk_mem_uncharge logic in tcp_bpf_sendmsg to only uncharge
+  after sent bytes have been finalized (Zijian Zhang)
+
+- Fix BPF sockmap with vsocks which was missing a queue check
+  in poll and sockmap cleanup on close (Michal Luczaj)
+
+- Fix tools infra to override makefile ARCH variable if defined
+  but empty, which addresses cross-building tools. (Björn Töpel)
+
+- Fix two resolve_btfids build warnings on unresolved bpf_lsm
+  symbols (Thomas Weißschuh)
+
+- Fix a NULL pointer dereference in bpftool (Amir Mohammadi)
+
+- Fix BPF selftests to check for CONFIG_PREEMPTION instead of
+  CONFIG_PREEMPT (Sebastian Andrzej Siewior)
+
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+
+----------------------------------------------------------------
+Alexei Starovoitov (5):
+      Merge branch 'bpf-vsock-fix-poll-and-close'
+      Merge branch 'bpf-fix-oob-accesses-in-map_delete_elem-callbacks'
+      Merge branch 'fix-missing-process_iter_arg-type-check'
+      Merge branch 'fixes-for-stack-with-allow_ptr_leaks'
+      Merge branch 'fixes-for-lpm-trie'
+
+Amir Mohammadi (1):
+      bpftool: fix potential NULL pointer dereferencing in prog_dump()
+
+Björn Töpel (1):
+      tools: Override makefile ARCH variable if defined, but empty
+
+Eduard Zingerman (2):
+      samples/bpf: Remove unnecessary -I flags from libbpf EXTRA_CFLAGS
+      selftests/bpf: Introduce __caps_unpriv annotation for tests
+
+Hou Tao (9):
+      bpf: Remove unnecessary check when updating LPM trie
+      bpf: Remove unnecessary kfree(im_node) in lpm_trie_update_elem
+      bpf: Handle BPF_EXIST and BPF_NOEXIST for LPM trie
+      bpf: Handle in-place update for full LPM trie correctly
+      bpf: Fix exact match conditions in trie_get_next_key()
+      bpf: Switch to bpf mem allocator for LPM trie
+      bpf: Use raw_spinlock_t for LPM trie
+      selftests/bpf: Move test_lpm_map.c to map_tests
+      selftests/bpf: Add more test cases for LPM trie
+
+Kumar Kartikeya Dwivedi (5):
+      selftests/bpf: Add tests for iter arg check
+      bpf: Zero index arg error string for dynptr and iter
+      bpf: Don't mark STACK_INVALID as STACK_MISC in mark_stack_slot_misc
+      selftests/bpf: Add test for reading from STACK_INVALID slots
+      selftests/bpf: Add test for narrow spill into 64-bit spilled scalar
+
+Larysa Zaremba (1):
+      xsk: always clear DMA mapping information when unmapping the pool
+
+Maciej Fijalkowski (2):
+      xsk: fix OOB map writes when deleting elements
+      bpf: fix OOB devmap writes when deleting elements
+
+Michal Luczaj (4):
+      bpf, vsock: Fix poll() missing a queue
+      selftest/bpf: Add test for af_vsock poll()
+      bpf, vsock: Invoke proto::close on close()
+      selftest/bpf: Add test for vsock removal from sockmap on close()
+
+Sebastian Andrzej Siewior (1):
+      selftests/bpf: Check for PREEMPTION instead of PREEMPT
+
+Tao Lyu (2):
+      bpf: Ensure reg is PTR_TO_STACK in process_iter_arg
+      bpf: Fix narrow scalar spill onto 64-bit spilled scalar slots
+
+Thomas Weißschuh (1):
+      bpf, lsm: Remove getlsmprop hooks BTF IDs
+
+Zijian Zhang (2):
+      tcp_bpf: Fix the sk_mem_uncharge logic in tcp_bpf_sendmsg
+      selftests/bpf: Add apply_bytes test to test_txmsg_redir_wait_sndmem in test_sockmap
+
+ kernel/bpf/bpf_lsm.c                               |   2 -
+ kernel/bpf/devmap.c                                |   6 +-
+ kernel/bpf/lpm_trie.c                              | 133 ++++---
+ kernel/bpf/verifier.c                              |  27 +-
+ net/ipv4/tcp_bpf.c                                 |  11 +-
+ net/vmw_vsock/af_vsock.c                           |  70 ++--
+ net/xdp/xsk_buff_pool.c                            |   5 +-
+ net/xdp/xskmap.c                                   |   2 +-
+ samples/bpf/Makefile                               |  13 +-
+ tools/bpf/bpftool/prog.c                           |  17 +-
+ tools/scripts/Makefile.arch                        |   4 +-
+ tools/testing/selftests/bpf/.gitignore             |   1 -
+ tools/testing/selftests/bpf/Makefile               |   2 +-
+ .../lpm_trie_map_basic_ops.c}                      | 405 ++++++++++++++++++++-
+ .../selftests/bpf/map_tests/task_storage_map.c     |   4 +-
+ .../selftests/bpf/prog_tests/sockmap_basic.c       |  77 ++++
+ .../selftests/bpf/prog_tests/task_local_storage.c  |   2 +-
+ tools/testing/selftests/bpf/prog_tests/verifier.c  |  19 +-
+ tools/testing/selftests/bpf/progs/bpf_misc.h       |  12 +
+ tools/testing/selftests/bpf/progs/dynptr_fail.c    |  22 +-
+ tools/testing/selftests/bpf/progs/iters.c          |  26 ++
+ .../selftests/bpf/progs/iters_state_safety.c       |  14 +-
+ .../selftests/bpf/progs/iters_testmod_seq.c        |   4 +-
+ .../bpf/progs/read_bpf_task_storage_busy.c         |   4 +-
+ .../selftests/bpf/progs/task_storage_nodeadlock.c  |   4 +-
+ .../selftests/bpf/progs/test_kfunc_dynptr_param.c  |   2 +-
+ .../selftests/bpf/progs/verifier_bits_iter.c       |   8 +-
+ tools/testing/selftests/bpf/progs/verifier_mtu.c   |   4 +-
+ .../selftests/bpf/progs/verifier_spill_fill.c      |  35 ++
+ tools/testing/selftests/bpf/test_loader.c          |  46 +++
+ tools/testing/selftests/bpf/test_sockmap.c         |   6 +-
+ 31 files changed, 813 insertions(+), 174 deletions(-)
+ rename tools/testing/selftests/bpf/{test_lpm_map.c => map_tests/lpm_trie_map_basic_ops.c} (65%)
 
