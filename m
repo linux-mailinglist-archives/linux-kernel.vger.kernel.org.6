@@ -1,175 +1,222 @@
-Return-Path: <linux-kernel+bounces-434987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 452039E6DF7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:20:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D44839E6E0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 182EC166E34
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:20:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7800F188309D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D29A6201033;
-	Fri,  6 Dec 2024 12:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8C92010E9;
+	Fri,  6 Dec 2024 12:24:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eoHDjxEa"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="itY1J7/b";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m5GU1OWQ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0351D516B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 12:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACA5201012;
+	Fri,  6 Dec 2024 12:24:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733487626; cv=none; b=i+Tx2WaSTaqK/zSxgyK2+9ApeQeXDyxoJ5aRpPU66kNOylwZO5J7cHISlDL0DKwmUXe0Ls539FuPaZBaqg2myg+UZAF9zieFbi9IXWEQBqLP6ayobzlpgFYtfYjL8qlBIvFXNo6g/E2TbvAd0n7eNaAyEiYY4Os5G9iRZUO2Mnc=
+	t=1733487851; cv=none; b=sO9whN52F1HA2FNIKCcpebRWJm2oIzGFagBSEUdV7822ctVo8zwfuqkPrD+e0kHGC0UHn0B13rC0nCovkr7cKLWenHKrj2BpLgMUtFhdbUU3NyZPSwsLqqPgT453clbEgdgKABZIBOMLBpnHjs/8g2xG0U7lro0tHRCAttsEeIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733487626; c=relaxed/simple;
-	bh=1lDabRe7v8hzNNeM2BJUg19w6htUe29NSOeCwC/ydLM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMAtfx8arOvMW2Fnd7zwdEJy1eQpR7lz+y4+tdZyPJ5AOMyZRamKQvBlJvxFZPrumfojPwvbS08ZV+bVqNWcIR6LOlEqaKdrHPdedsncSSyCiRQKf1agUj6PH6dczRTgkZFBuBRyc40l2Bg5WUq2ly52MeZsrQyGRrj6KWE3ClU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eoHDjxEa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B68a6iM018434
-	for <linux-kernel@vger.kernel.org>; Fri, 6 Dec 2024 12:20:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9E3Q5V18pzVm0efIN2Z36r5MoCfL8CYX45xyLjaUZPo=; b=eoHDjxEay15UJjR6
-	IwX7o44jEaiQbMhdt5dcw6lLE6+/89AUfsd8ka4uEkuIOkjIOe3BTWVxheOVCCSs
-	yIZJc05bJ+Rm7FhKHG3sbiS90CAvrv2TNAlBs/LIuSdffIGx91XFAMZqxEQT5Uz0
-	3QegG+MjAZyHHGXX9ys6M5CC+dZU3ct4BabykCfgej9n3b/5b+hIhOuZ0hY/qI/L
-	X+p+7rVKrp/HkgTV123zb6rbunTRrn3l6yVbQHXXmTsc4DU9zEwkKf3S0aVO4fKB
-	f1ZwqxV+oUPj+ECEsMsY/SLIt87EBwbInIVFu5ZZLJjof9+H78mdzzU4fTq2MRQ1
-	v0tulA==
-Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bjk8t9b3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:20:23 +0000 (GMT)
-Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4669114c62dso5209721cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 04:20:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733487623; x=1734092423;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9E3Q5V18pzVm0efIN2Z36r5MoCfL8CYX45xyLjaUZPo=;
-        b=msy5bYg3w0JxuF9OTHi4Q96HeAwCOsI7mmuGUKjjOgugbZE6R0DqrIQYDjgi7e0ujp
-         bIZWjPA+pY5n+wz4fWVa4VgyvmWLB5YIZZ65mgJMuzC1/TA5Q4xtwDfsKlsQfeYGeQIn
-         TgyvkjyworjOAKPGcEV12lkJ+39mTbasoAmCJhu2P3MtFjt8NAa5ciXZe5VEfOPpZAB/
-         bmzgf2OVGe7GX1WeDCh7ZPegJelgAvzq9aAp9piNehraesYqJ9b83qydsPjOPcVFsfsc
-         Hen0GPUXyyHhwDCuIu2+b9NRs/3emoy2oSuLybxgu1RMZA4ZyaF4KE1ueNMvt6FnzOlP
-         nfgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXTc0Qx03cTt2s54Pq+SRhUqnT/mFpJnOl/2KNxq3zmJgF4Gsrwx9EFdRpee3MaFTE9AEO0AlLuVZ2ek4Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJzJCjUvmVJ5Bswl+9QKyT82sNiQgfDk/K6Xb1ChDPSSH+g5TH
-	UPy9LQdBTCrsgUr3qW1x/4JFQM1iSouGRK0KXGJC9TsZx3B/WBBAAl7KzKfKnGiWsz0P60WJM0Z
-	8yP8hVU2vbHVoY68oWuku82G4NTYIpWTEepo3EXHM8pRXrkmzSsv4YYuhw6XfLv8=
-X-Gm-Gg: ASbGnctyEvAq3QamUbjrJGzoQxnCmNpaNy4EPZtYwsSFU54e6ev82zEVARg1mOKTpmG
-	Aau4QvW/yc71pzeu3eB32Jn3MSgPg27TuvVRTv3E4JiG/1RGO3SIFVYBTGpHYGaMGNRO6uOO6XR
-	UDO56lTyuWMuUcq0L4+O/bWr5jWeirjus7FdpcCw5rWakN5JlcXj9tO3VxE22wRBVikkS9yyQyt
-	z8FIpndu84CtDJbaGFDkqQZs56207Dq6X42g1zvZ5Y8ynfP66GyHgbGRHxcu3HjI3qRYu9Fb1ui
-	Ndrd+BRl+aQX54Z8A0RpSqmDrPjITj4=
-X-Received: by 2002:a05:622a:606:b0:464:9faf:664b with SMTP id d75a77b69052e-46734c8f531mr18002181cf.2.1733487622871;
-        Fri, 06 Dec 2024 04:20:22 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFaYjuLbGBmcbEVFGiae/eyDl8MSbUHvTvfg7816ggOQFX2Cej3+/3TS1KDf5HZCvflpH7buQ==
-X-Received: by 2002:a05:622a:606:b0:464:9faf:664b with SMTP id d75a77b69052e-46734c8f531mr18002011cf.2.1733487622527;
-        Fri, 06 Dec 2024 04:20:22 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d149a25924sm2113819a12.17.2024.12.06.04.20.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 04:20:22 -0800 (PST)
-Message-ID: <d83ebaa2-1da8-4f85-9034-670e525b457b@oss.qualcomm.com>
-Date: Fri, 6 Dec 2024 13:20:18 +0100
+	s=arc-20240116; t=1733487851; c=relaxed/simple;
+	bh=Oimg2Lwl9iazcpBkgAjuxoI32E56zVULC+saQMsi2EI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=NCq12btkn+HkXMTD3WCgzsex3LmInro2apjWYmx+7gKWuJV6CuQ3AQndUYKotdxBl52Nr3bh+zhAP2SEItuvG/RNUhCB92/zkBvudXMRAV/ZupSDQEURZlkfBle+LzsLvNSCwJI2og9RqAQTGG3jKaXCUOtDuD0tRkjOtp19uSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=itY1J7/b; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m5GU1OWQ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 06 Dec 2024 12:24:06 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733487847;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOGkw6kysRZDHPO+Z1CkU1cj3iULhLAIpmaX20abSqw=;
+	b=itY1J7/bTKFiDFYXY6SS/rq8tBqgNGkv4Wq+k3xyuwowfsf6onVdHTYXBy51sMCaUGfxOs
+	04pS6JQJ55A15IxqnpEymwZ62cBBWKVgQ04pGzKYhZIP6+YStCPiU+Pmj6J4nQmnm76w2l
+	JDEnuiZ69wHS0cPCv2rlzu5loBCeFUHioUJXPfIvhSvOtDMaVlDxaN7OPym8use2TuliNb
+	N7c1EJebTU7SqH/IV2P/Vyyk9I0RuqTMx0Baaaa50YuyFJllWXR+0d/P0L6h/b7Asthyiw
+	3gvS3eF7/ZPidv1mEKV2JGX74o0Mtt0NRiW/T/qvaoOUmx0tlSRokoFQrGvUzw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733487847;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jOGkw6kysRZDHPO+Z1CkU1cj3iULhLAIpmaX20abSqw=;
+	b=m5GU1OWQlFU5G5bchFgzK+E91LtgA7GmCx54kZ8FvDlgrC8wi2YKY8tKgFqPOgeLiMXObY
+	Qi7ls8RmejgBCsBQ==
+From: "tip-bot2 for Ricardo Neri" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/cacheinfo: Delete global num_cache_leaves
+Cc: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>, stable@vger.kernel.org,
+	#@tip-bot2.tec.linutronix.de, 6.3+@tip-bot2.tec.linutronix.de,
+	x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241128002247.26726-3-ricardo.neri-calderon@linux.intel.com>
+References: <20241128002247.26726-3-ricardo.neri-calderon@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 44/45] arm64: dts: qcom: add mst support for pixel stream
- clk for DP0
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Rob Clark
- <robdclark@gmail.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Chandan Uddaraju <chandanu@codeaurora.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Kuogee Hsieh <quic_khsieh@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>,
-        Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Yongxing Mou <quic_yongmou@quicinc.com>
-References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-44-f8618d42a99a@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241205-dp_mst-v1-44-f8618d42a99a@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Message-ID: <173348784662.412.18271610759755604157.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: NVqS8H-VSmzOlxA_7D56pigoWWkJfXG8
-X-Proofpoint-GUID: NVqS8H-VSmzOlxA_7D56pigoWWkJfXG8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 bulkscore=0 phishscore=0 suspectscore=0 spamscore=0
- lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=879
- priorityscore=1501 clxscore=1015 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2411120000 definitions=main-2412060092
 
-On 6.12.2024 5:32 AM, Abhinav Kumar wrote:
-> From: Yongxing Mou <quic_yongmou@quicinc.com>
-> 
-> Populate the pixel clock for stream 1 for DP0 for sa8775p DP controller.
-> 
-> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 12 ++++++++----
->  1 file changed, 8 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 0dbaa17e5e3f06c61b2aa777e45b73a48e50e66b..0150ce27b98e9894fa9ee6cccd020528d716f543 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -3944,16 +3944,20 @@ mdss0_dp0: displayport-controller@af54000 {
->  					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_AUX_CLK>,
->  					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK>,
->  					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_INTF_CLK>,
-> -					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>;
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK>,
-> +					 <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL1_CLK>;
+The following commit has been merged into the x86/urgent branch of tip:
 
-dispcc also defines PIXEL2/3 clocks.
+Commit-ID:     9677be09e5e4fbe48aeccb06ae3063c5eba331c3
+Gitweb:        https://git.kernel.org/tip/9677be09e5e4fbe48aeccb06ae3063c5eba331c3
+Author:        Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+AuthorDate:    Wed, 27 Nov 2024 16:22:47 -08:00
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Fri, 06 Dec 2024 13:13:36 +01:00
 
->  				clock-names = "core_iface",
->  					      "core_aux",
->  					      "ctrl_link",
->  					      "ctrl_link_iface",
-> -					      "stream_pixel";
-> +					      "stream_pixel",
-> +					      "stream_1_pixel";
->  				assigned-clocks = <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_LINK_CLK_SRC>,
-> -						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>;
-> -				assigned-clock-parents = <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>;
-> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL0_CLK_SRC>,
-> +						  <&dispcc0 MDSS_DISP_CC_MDSS_DPTX0_PIXEL1_CLK_SRC>;
-> +				assigned-clock-parents = <&mdss0_dp0_phy 0>, <&mdss0_dp0_phy 1>, <&mdss0_dp0_phy 1>;
+x86/cacheinfo: Delete global num_cache_leaves
 
-Please turn this into a vertical list
+Linux remembers cpu_cachinfo::num_leaves per CPU, but x86 initializes all
+CPUs from the same global "num_cache_leaves".
 
-Konrad
+This is erroneous on systems such as Meteor Lake, where each CPU has a
+distinct num_leaves value. Delete the global "num_cache_leaves" and
+initialize num_leaves on each CPU.
+
+init_cache_level() no longer needs to set num_leaves. Also, it never had to
+set num_levels as it is unnecessary in x86. Keep checking for zero cache
+leaves. Such condition indicates a bug.
+
+  [ bp: Cleanup. ]
+
+Signed-off-by: Ricardo Neri <ricardo.neri-calderon@linux.intel.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Cc: stable@vger.kernel.org # 6.3+
+Link: https://lore.kernel.org/r/20241128002247.26726-3-ricardo.neri-calderon@linux.intel.com
+---
+ arch/x86/kernel/cpu/cacheinfo.c | 43 +++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 22 deletions(-)
+
+diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
+index 392d09c..e6fa03e 100644
+--- a/arch/x86/kernel/cpu/cacheinfo.c
++++ b/arch/x86/kernel/cpu/cacheinfo.c
+@@ -178,8 +178,6 @@ struct _cpuid4_info_regs {
+ 	struct amd_northbridge *nb;
+ };
+ 
+-static unsigned short num_cache_leaves;
+-
+ /* AMD doesn't have CPUID4. Emulate it here to report the same
+    information to the user.  This makes some assumptions about the machine:
+    L2 not shared, no SMT etc. that is currently true on AMD CPUs.
+@@ -717,20 +715,23 @@ void cacheinfo_hygon_init_llc_id(struct cpuinfo_x86 *c)
+ 
+ void init_amd_cacheinfo(struct cpuinfo_x86 *c)
+ {
++	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
+ 
+ 	if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
+-		num_cache_leaves = find_num_cache_leaves(c);
++		ci->num_leaves = find_num_cache_leaves(c);
+ 	} else if (c->extended_cpuid_level >= 0x80000006) {
+ 		if (cpuid_edx(0x80000006) & 0xf000)
+-			num_cache_leaves = 4;
++			ci->num_leaves = 4;
+ 		else
+-			num_cache_leaves = 3;
++			ci->num_leaves = 3;
+ 	}
+ }
+ 
+ void init_hygon_cacheinfo(struct cpuinfo_x86 *c)
+ {
+-	num_cache_leaves = find_num_cache_leaves(c);
++	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
++
++	ci->num_leaves = find_num_cache_leaves(c);
+ }
+ 
+ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+@@ -740,21 +741,21 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 	unsigned int new_l1d = 0, new_l1i = 0; /* Cache sizes from cpuid(4) */
+ 	unsigned int new_l2 = 0, new_l3 = 0, i; /* Cache sizes from cpuid(4) */
+ 	unsigned int l2_id = 0, l3_id = 0, num_threads_sharing, index_msb;
++	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(c->cpu_index);
+ 
+ 	if (c->cpuid_level > 3) {
+-		static int is_initialized;
+-
+-		if (is_initialized == 0) {
+-			/* Init num_cache_leaves from boot CPU */
+-			num_cache_leaves = find_num_cache_leaves(c);
+-			is_initialized++;
+-		}
++		/*
++		 * There should be at least one leaf. A non-zero value means
++		 * that the number of leaves has been initialized.
++		 */
++		if (!ci->num_leaves)
++			ci->num_leaves = find_num_cache_leaves(c);
+ 
+ 		/*
+ 		 * Whenever possible use cpuid(4), deterministic cache
+ 		 * parameters cpuid leaf to find the cache details
+ 		 */
+-		for (i = 0; i < num_cache_leaves; i++) {
++		for (i = 0; i < ci->num_leaves; i++) {
+ 			struct _cpuid4_info_regs this_leaf = {};
+ 			int retval;
+ 
+@@ -790,14 +791,14 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
+ 	 * Don't use cpuid2 if cpuid4 is supported. For P4, we use cpuid2 for
+ 	 * trace cache
+ 	 */
+-	if ((num_cache_leaves == 0 || c->x86 == 15) && c->cpuid_level > 1) {
++	if ((!ci->num_leaves || c->x86 == 15) && c->cpuid_level > 1) {
+ 		/* supports eax=2  call */
+ 		int j, n;
+ 		unsigned int regs[4];
+ 		unsigned char *dp = (unsigned char *)regs;
+ 		int only_trace = 0;
+ 
+-		if (num_cache_leaves != 0 && c->x86 == 15)
++		if (ci->num_leaves && c->x86 == 15)
+ 			only_trace = 1;
+ 
+ 		/* Number of times to iterate */
+@@ -991,14 +992,12 @@ static void ci_leaf_init(struct cacheinfo *this_leaf,
+ 
+ int init_cache_level(unsigned int cpu)
+ {
+-	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
++	struct cpu_cacheinfo *ci = get_cpu_cacheinfo(cpu);
+ 
+-	if (!num_cache_leaves)
++	/* There should be at least one leaf. */
++	if (!ci->num_leaves)
+ 		return -ENOENT;
+-	if (!this_cpu_ci)
+-		return -EINVAL;
+-	this_cpu_ci->num_levels = 3;
+-	this_cpu_ci->num_leaves = num_cache_leaves;
++
+ 	return 0;
+ }
+ 
 
