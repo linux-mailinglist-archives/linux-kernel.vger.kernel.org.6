@@ -1,112 +1,120 @@
-Return-Path: <linux-kernel+bounces-434511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAE589E67AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:13:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 318E79E67EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:28:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A13221885DB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:13:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C61D1670FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E39541DA0ED;
-	Fri,  6 Dec 2024 07:13:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F351225D6;
+	Fri,  6 Dec 2024 07:28:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bbaEyGu1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b="J/C7hIeW"
+Received: from mail-m1035.netease.com (mail-m1035.netease.com [154.81.10.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DED32C8B;
-	Fri,  6 Dec 2024 07:13:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40D5B3D6B;
+	Fri,  6 Dec 2024 07:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=154.81.10.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733469181; cv=none; b=Z6ash8QJe7NGa+2KCkxV9uX1nMzk5Nti8Qcs+7EPsih+hadnzdya+IPk7wyg+QQWnh9LOlG8qCb18NW4uZ4CQvnwkMXdb4TJFZIPp+w7Uhz864qqYHjR7GRNjMBkjHNiuTENguW9CaDxvt26khJP0OclsmmOoWctIOVSPDID40Q=
+	t=1733470120; cv=none; b=I42+2Lr/CqO+xGCXCpm0lCUKLEOHEESwT0a1mdna27rKbd0ydR7Kgn3EkdE0mN+CRrBiPRj7WKUjI1KRjBKFS6KYekTfddesTu0hPYaAzhx4X9vTt6UNBAQioD1FplQx9WggkDk53U3W++7ZSnl8PmHS6ngfy40q+ohu0mNj3gM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733469181; c=relaxed/simple;
-	bh=wqdP/q7jz5/cYPHRhOGlO8Dgz7Z7fVb1WpWpSjFHEtQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dX5Vtqu4WWkdl2AQn+BzqhtIAVEpcW455JcDmI0Xs1W+S85eZKsAjVvN9/82YTxWuhS4kFedwOcgvA4gUdLDhNKahwX4hEGNHdi6vJ1Yp89N0zspxS2F+Yczmd8YrlmIOfYPASwturd+SRv408EBXeKHp3FncxmASE+H96Lrw4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bbaEyGu1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FCA9C4CEDD;
-	Fri,  6 Dec 2024 07:12:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733469180;
-	bh=wqdP/q7jz5/cYPHRhOGlO8Dgz7Z7fVb1WpWpSjFHEtQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=bbaEyGu11/UxJoI+wxVZKQze/GAiyViGlIHkW/LeTFayFPOP21hgFvJ9UQL16Of6n
-	 oSFi59lFAGU0zrx/RohkY08DvXuR0VVpaeGxN1xx0Tf7/qXSLG8T11zP+M57cVh+JY
-	 ITT1xrXF0oS+Za3klS9l6lxOteodrT7qa1MSYCRcee8O9F/hXUqsvoavGQ/2cjk8vF
-	 CBE6z0z04SoUUDGF0JQRrm0IllLkGhUsXYZTYSU2qh3steCGZtdFaRj89WNfpctiM2
-	 0jw2uJpI/yglEHWHuKoQiZklmUMtDU8E/yd6lHsgh7uyG/VaHstYWuHKxH/pidNskB
-	 7RzhF0hivOOyw==
-Date: Fri, 6 Dec 2024 08:12:57 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Mingwei Zheng <zmw12306@gmail.com>
-Cc: fabrice.gasnier@foss.st.com, mcoquelin.stm32@gmail.com, 
-	alexandre.torgue@foss.st.com, hierry.reding@gmail.com, lee@kernel.org, 
-	linux-pwm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: Re: [PATCH V2] pwm: stm32-lp: Add check for clk_enable()
-Message-ID: <cim6rnzdvhik4kdibfmglf6jiky7xccynqwazmxmnr2f5fvu3f@lvoo3drlgaua>
-References: <20241206012605.2877412-1-zmw12306@gmail.com>
+	s=arc-20240116; t=1733470120; c=relaxed/simple;
+	bh=YL+9m+fKpEznl2nFJijfWwhBg5EzwRct9DJv4KiLwLg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XJa/kUPaSA9PrsfW1VIP4eFSzzqsTMFq+T7twvOAXJIL5n2N0zM10I9QVY+e+7VTgCRaHKdqMUCp/xZw/yzVJFs7vauUfod5GWhe+D6s8ZqNIk3B2emRCg7oL6gZUzoqzT3WaxlD78HbypLcJk0CMPdXulv/yW5mlk6iU6Yqtfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn; spf=pass smtp.mailfrom=seu.edu.cn; dkim=pass (1024-bit key) header.d=seu.edu.cn header.i=@seu.edu.cn header.b=J/C7hIeW; arc=none smtp.client-ip=154.81.10.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=seu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seu.edu.cn
+Received: from localhost.localdomain (unknown [202.119.23.198])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4e55eede;
+	Fri, 6 Dec 2024 15:13:16 +0800 (GMT+08:00)
+From: Zilin Guan <zilin@seu.edu.cn>
+To: mjguzik@gmail.com
+Cc: dhowells@redhat.com,
+	jlayton@kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfs@lists.linux.dev,
+	xujianhao01@gmail.com,
+	zilin@seu.edu.cn
+Subject: Re: [QUESTION] inconsistent use of smp_mb()
+Date: Fri,  6 Dec 2024 07:13:15 +0000
+Message-Id: <20241206071315.2958512-1-zilin@seu.edu.cn>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ulg54pf2qnlzqfj247fypypzun2yvwepqrcwaqzlr6sn3ukuab@rov7btfppktc>
+References: <ulg54pf2qnlzqfj247fypypzun2yvwepqrcwaqzlr6sn3ukuab@rov7btfppktc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="24swak54o7mx3jph"
-Content-Disposition: inline
-In-Reply-To: <20241206012605.2877412-1-zmw12306@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZQkoaVh0aTRlDQ09DGBkYHVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJS0lVSkpCVUlIVUpCQ1lXWRYaDxIVHRRZQVlPS0hVSktISk5MSVVKS0tVSk
+	JLS1kG
+X-HM-Tid: 0a939ad0cff603a1kunm4e55eede
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MjY6Hio*TjIfCVEwSTkoUR4X
+	MS0KCyJVSlVKTEhIT01CSkJMSkNPVTMWGhIXVQESFxIVOwgeDlUeHw5VGBVFWVdZEgtZQVlJS0lV
+	SkpCVUlIVUpCQ1lXWQgBWUFJSk1KNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=J/C7hIeW+cVAxKPsAOD+OCo4W1hlx1gNOp/TIOdds4T9JRa2cuOENSbs4cfX+lDxC3HsPAYSEpQlmgVkiCWFVQsV7ivF7vIq0oLizpvt+/KMqXJZXmnWzlGrHxdzHuwsBw2GpESqqO7bsvjVnhNlEeuDGb5wR+Oq0I2d+JPXWp8=; c=relaxed/relaxed; s=default; d=seu.edu.cn; v=1;
+	bh=KaeUVXapuHKSzLw5ctqEebg9c7ruMdXt2f6CPGdCRmE=;
+	h=date:mime-version:subject:message-id:from;
 
-
---24swak54o7mx3jph
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH V2] pwm: stm32-lp: Add check for clk_enable()
-MIME-Version: 1.0
-
-On Thu, Dec 05, 2024 at 08:26:05PM -0500, Mingwei Zheng wrote:
-> Add check for the return value of clk_enable() to catch the potential
-> error.
->=20
-> Fixes: e70a540b4e02 ("pwm: Add STM32 LPTimer PWM driver")
-> Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-
-In reply to (implicit) v1 you wrote:
-> We detected this through static analysis, instead of actually hit.
-
-Would be nice to mention the tool that actually found it in the commit
-log.
-
-Otherwise I'm happy with that change now.
-
-Given the issue is old (the offending commit is in v4.14-rc1), I'd note
-send it as a fix before v4.14. I'd send it along however if something
-more urgent pops up.
-
-Best regards
-Uwe
-
---24swak54o7mx3jph
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdSo/YACgkQj4D7WH0S
-/k58qQgAoaSkhGFgO/Kk52GXlgiISBHJAWIcISJ5+foNu36MAFY3eW6ti+GT0DBw
-XuYgt/Z7uV4mklpmSb0NsHU9o1Rg0wqdqPpeOydgp+nDnWRLOU7Ym5ZLGGIna4M+
-VuKtK4l3wY5wW9LXMR0YlBhNQ8LlSNIG3yGfektvc4kWLaTB1S3o3FkY3mx6PaFl
-As6hDgS2eg5rGjRaAYqiBQ0RCPVDOtH4+dgVAXC7w4LNyJo6ujdPQdaSBmq05RQi
-DDH6nEL/NVw3PSjoDcK3Q2YQ8Ch3O/XyzybATAlLlNNqN2/M1mwEK08vbeEnv5mP
-OYIkTcu2MYynEx6XzaGy1PAATeTcqw==
-=onJO
------END PGP SIGNATURE-----
-
---24swak54o7mx3jph--
+On Wed, Dec 04, 2024 at 09:27:22AM+0100, Mateusz Guzik wrote:
+> On Wed, Dec 04, 2024 at 06:48:18AM +0000, Zilin Guan wrote:
+> > Hello,
+> > 
+> > I have a question regarding the use of smp_rmb() to enforce 
+> > memory ordering in two related functions.
+> > 
+> > In the function netfs_unbuffered_write_iter_locked() from the file 
+> > fs/netfs/direct_write.c, smp_rmb() is explicitly used after the 
+> > wait_on_bit() call to ensure that the error and transferred fields are 
+> > read in the correct order following the NETFS_RREQ_IN_PROGRESS flag:
+> > 
+> > 105	wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS,
+> > 106		    TASK_UNINTERRUPTIBLE);
+> > 107	smp_rmb(); /* Read error/transferred after RIP flag */
+> > 108	ret = wreq->error;
+> > 109	if (ret == 0) {
+> > 110		ret = wreq->transferred;
+> > 111		iocb->ki_pos += ret;
+> > 112	}
+> > 
+> > However, in the function netfs_end_writethrough() from the file 
+> > fs/netfs/write_issue.c, there is no such use of smp_rmb() after 
+> > the corresponding wait_on_bit() call, despite accessing the same filed 
+> > of wreq->error and relying on the same NETFS_RREQ_IN_PROGRESS flag:
+> > 
+> > 681	wait_on_bit(&wreq->flags, NETFS_RREQ_IN_PROGRESS, 
+> > 		    TASK_UNINTERRUPTIBLE);
+> > 682	ret = wreq->error;
+> > 
+> > My question is why does the first function require a CPU memory barrier 
+> > smp_rmb() to enforce ordering, whereas the second function does not?
+> 
+> The fence is redundant.
+> 
+> Per the comment in wait_on_bit:
+>  * Returned value will be zero if the bit was cleared in which case the
+>  * call has ACQUIRE semantics, or %-EINTR if the process received a
+>  * signal and the mode permitted wake up on that signal.
+> 
+> Since both sites pass TASK_UNINTERRUPTIBLE this will only ever return
+> after the bit is sorted out, already providing the needed fence.
+ 
+Since the code does not need the fence, should I send a patch to 
+remove it? Commit 2df8654 introduced this fence during the transition 
+to a new writeback implementation. However, the author added this fence 
+as part of the changes and did not intend to address a specific CPU 
+reordering issue.
 
