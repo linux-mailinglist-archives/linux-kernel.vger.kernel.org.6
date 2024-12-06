@@ -1,95 +1,126 @@
-Return-Path: <linux-kernel+bounces-435446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7DE9E77CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:03:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA6A49E77D1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:05:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6F0D168337
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC123168C63
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:05:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06541FD7BA;
-	Fri,  6 Dec 2024 18:02:58 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9201FFC69;
+	Fri,  6 Dec 2024 18:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hLHz4X1A"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92E471F4E20
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 18:02:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAB02206A5
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 18:05:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733508178; cv=none; b=VU+pLz5zhEbgWVG9nPHqK67TESE5+U6KQKRpLryMGErd44kk4r/V+pdBWi6Ldk826C2lqdOdcxY5a9pRATX8KH1JVI+UbeUVz2+14UQOckUrkThTOwObhq4wJZ010sOqqRyogHEcTl5Wwi5hvn4yhGSkHL1WmwH6jf0zjudqsbE=
+	t=1733508315; cv=none; b=aC+h5EFBL8K3Z6H3HBNh5ieQBpgN3lhRemihE8B+Ht8LRD/N8wGWqdCFHYHzQ9yurKczjydLt2cMQoxYWyj5NxpZfYZqrvyzMP2eRqY+NBX1fip7pkLFgBkEmAj7ZbEH+DdhPee92R5WYonOLOqLgEUtZnYe69DVWs3m3uK6J4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733508178; c=relaxed/simple;
-	bh=frdiTPh5k8CmyYnrdjopta0oWe7otGMlgOrxo3XFMrs=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=QvFM1HmBWWcpLgZmXmQg0aARumxF7d8RNw9exoi9ukiOvz7zMhOi96S4zs5PxIDPE5+5pAPwwDP3CqFuOmE2/qqknImhlb8DcpN1lxNoM/+zAiUgXx17WmJpQUWkUbTxOWQzriR+oQzM3XWQEGpkILqytcpZnuoVNxoCEo8NFNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-172-DfBVzvTdMzWT01Ic5J-YWQ-1; Fri, 06 Dec 2024 18:02:53 +0000
-X-MC-Unique: DfBVzvTdMzWT01Ic5J-YWQ-1
-X-Mimecast-MFC-AGG-ID: DfBVzvTdMzWT01Ic5J-YWQ
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Fri, 6 Dec
- 2024 18:02:07 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Fri, 6 Dec 2024 18:02:07 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Dave Penkler' <dpenkler@gmail.com>, "gregkh@linuxfoundation.org"
-	<gregkh@linuxfoundation.org>, "linux-staging@lists.linux.dev"
-	<linux-staging@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: Guenter Roeck <linux@roeck-us.net>
-Subject: RE: [PATCH v5] staging: gpib: Fix i386 build issue
-Thread-Topic: [PATCH v5] staging: gpib: Fix i386 build issue
-Thread-Index: AQHbRnNeLNtjyv8mxUi5PXXR1xkkjbLZhFyw
-Date: Fri, 6 Dec 2024 18:02:07 +0000
-Message-ID: <ba3bf2c6c59f4019a3d502cb0b703d7b@AcuMS.aculab.com>
-References: <20241204162128.25617-1-dpenkler@gmail.com>
-In-Reply-To: <20241204162128.25617-1-dpenkler@gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733508315; c=relaxed/simple;
+	bh=mUrDS2bhGOV+ED2691ewuzgAYk3tK8Jmo2Es0NnHTY8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UH8HRPPby3mFBvQEURYIt2NYSB3NDMfA6Hp6MaOMNDdRU3AqxARAgnxDi4CJy7uuYnaI309k47kOFsPJgst3+D5/KY2vPohfJCiUdzTjQaF51SBf+tcHLzZ8bOhHOmwODzhh8VO5vKDx5mwpjpC2knhdLnZ64rD6XMf/Jk+aW4o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hLHz4X1A; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215b9a754fbso23152505ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 10:05:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733508313; x=1734113113; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cNSXOHpFVDvVo7qfkOEInwMhPxiBtaZSe1qpxd+NZEo=;
+        b=hLHz4X1AeNnHiFdLcWEZDj/HWW4eS0aaVEiu2O8suERNrIud/iDCqVXS/P0urStCeh
+         t3fRJQLVK4yMVsZcnXfoYKe1+ZmEQpGrrYbv6Pl/wIMShXL9+G3A8CjOBsit233sVbYr
+         7hHwf6XCFHgEHMaI5pT/dvIQFk9fu1IG5vgkBG2knrEhHLF73zci/x7IBQhojjXibZs2
+         zDR/sbYmCB3+vb2RX0BclB/snVpGfnmXmAcdPlcbWhbAo89vuloEQ4487hrc9Fvv5ySP
+         BRdlGcgMgsugnosWuFPjbFZmdOhO/nxHx6i9EfnBW2ed0c1gtn+kIOKqYbELFxLqoS/Q
+         YNpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733508313; x=1734113113;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cNSXOHpFVDvVo7qfkOEInwMhPxiBtaZSe1qpxd+NZEo=;
+        b=jEFrLkQur5siyjX8SkbryeBK8wo8cqHcM2KBYq7Kb2CYp2q1QDfJFXwoCn3IK///n1
+         ALR+7ZXXZb9Mc4DvtX09T7j42ZAX5t9W2mMoKfvefi3YiEQn+dfjKOlomWOmjpPyp0TA
+         NB/loP7wsk/XV+619ZllSZ7YejgKxNBnhFLvgdJQ5yLFimRinAnT9/GXrPfeUXS6Kgyo
+         Ik51xoIbfAQxKXD6cGtLUbhpbWxXcy4B54QxNmTTAjIviN3qKhEQIO7cF87e/O7P8EwH
+         d5zJr3GAho4ETah3Q+0hDDajZ7pGdq4cuceH2o4MpgXXJlmeFTL1AwC+y+moD29KorbZ
+         +uhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXPBY4QtqoeXgBmOAYrGGL5Lk0pfgKwjvNg55U/ZuvZKapq/pw/I++Y7PYK92V9treriY066f1DWAVPvWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/9CRB+lXtBpEXkXeOZE1a8aQGrAIDXQUKazyQ3b4iD30xcJw6
+	DqUPvq9IJCqhhsQuyJJmlM9MXGxC0giRkCeeL0gn11+thzNxNPO4Qm76iaw5UL8=
+X-Gm-Gg: ASbGncutE9gAaulc0CsFqwFF+EIIheZlRdB1mXrFO8isMDa7HCsNLH0Th5VcgpOZ0h2
+	ur9cPNRpNsIVj5y3lzuZMJVrjUBUThRCh420Y+jCUZGaMZt6GpRe6WyRW/MJt91Xx5G9izrhlnk
+	eg4dJGQzx0d/l0Bxqf6mFZh4B/Du6/g69eTo+oEKgkZqCqZHl5IQU/6Y7mll5+yyrZ+ygMLGZf4
+	HzZBtDMHwDIOkgvA2QN5kipE7AoLFNP4QmFBw3cZV5G3XGnNL1xV+Htj7Jykhgw/A==
+X-Google-Smtp-Source: AGHT+IH6K3vxjoHAACo1uwn/G9I0Nj6IP5ZDAZwjsVYIfZAvGf/tBjJZAN9zL2L3pU94t4FY59unIQ==
+X-Received: by 2002:a17:902:d4c5:b0:215:5437:e9b4 with SMTP id d9443c01a7336-21614db9f54mr41598485ad.54.1733508313507;
+        Fri, 06 Dec 2024 10:05:13 -0800 (PST)
+Received: from charlie.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2161e6d1042sm10977125ad.2.2024.12.06.10.05.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 10:05:12 -0800 (PST)
+From: Charlie Jenkins <charlie@rivosinc.com>
+Date: Fri, 06 Dec 2024 10:05:06 -0800
+Subject: [PATCH] selftests/hid: Add host-tools to .gitignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: IB78VIR14JiAatOQrI5QrRmaw-Tj5BGLiNAISPK8Hnk_1733508173
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241206-host_tools_gitignore-v1-1-e75e963456dc@rivosinc.com>
+X-B4-Tracking: v=1; b=H4sIANE8U2cC/x3MQQqAIBBA0avErBNUIqyrRITUZAPhhCMRSHdPW
+ r7F/wUEE6HA2BRIeJMQxwrTNrAePgZUtFWD1bYzVvfqYMlLZj5lCZQpRE6onHfD7pzVvjdQ0yv
+ hTs+/neb3/QC+B72vZgAAAA==
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Shuah Khan <shuah@kernel.org>
+Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=726; i=charlie@rivosinc.com;
+ h=from:subject:message-id; bh=mUrDS2bhGOV+ED2691ewuzgAYk3tK8Jmo2Es0NnHTY8=;
+ b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3qwzSXB2zyn6rQaTi5VrXHfFvuq7V926Zfu13cZVNfIs
+ wXW8Md3lLIwiHEwyIopsvBca2BuvaNfdlS0bALMHFYmkCEMXJwCMJHM2Qz/vdW9+Y3dw0z+nXWf
+ U6sy9XxEoahRvN/uzD/nxbcs8nb/x8jwt5WJ69mbDTkH16almv99v32agHTW45khS70stJfp2nx
+ nBgA=
+X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
+ fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
 
-From: Dave Penkler
-> Sent: 04 December 2024 16:21
->=20
-> These drivers cast resource_type_t to void * causing the build to fail.
->=20
-> With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsigned
-> int which cannot be cast to a 32 bit pointer.
->=20
-> Disable these drivers if X68_PAE is enabled
+When compiling these selftests the host-tools directory is generated.
+Add it to the .gitignore so git doesn't see these files as trackable.
 
-You missed the obvious typo :-)
+Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
+---
+ tools/testing/selftests/hid/.gitignore | 1 +
+ 1 file changed, 1 insertion(+)
 
-There is also a proposal to just remove PAE support.
-Mostly because it is likely to have bit-rotted and isn't really
-needed now 64bit code is common.
+diff --git a/tools/testing/selftests/hid/.gitignore b/tools/testing/selftests/hid/.gitignore
+index 746c62361f77..933f483815b2 100644
+--- a/tools/testing/selftests/hid/.gitignore
++++ b/tools/testing/selftests/hid/.gitignore
+@@ -1,5 +1,6 @@
+ bpftool
+ *.skel.h
++/host-tools
+ /tools
+ hid_bpf
+ hidraw
 
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241206-host_tools_gitignore-8a89f8820a61
+-- 
+- Charlie
 
 
