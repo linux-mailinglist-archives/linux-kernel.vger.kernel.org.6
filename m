@@ -1,248 +1,141 @@
-Return-Path: <linux-kernel+bounces-434730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA46B9E6A61
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:35:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02F529E6A25
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:33:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 595B228832C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:35:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A73E18854C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D42D91FCFD7;
-	Fri,  6 Dec 2024 09:33:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F18861E102A;
+	Fri,  6 Dec 2024 09:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Dmrs1KLl"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iQ8XAqdA"
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940B01FCF5B;
-	Fri,  6 Dec 2024 09:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26B93D6B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477627; cv=none; b=qY/IDF3j8A2p/uY4Ea6PZN5qUA5vuydZlqV3kKbr9uGYVjdT79p2QELsh4bubIRB4eCiSPKhtkzOUW7TOvypAz3Llf04LNR6da+QGJ3TaZAaVlnAEU/IulinvuVkXBFdtc6cr+AVfo+GfDxmagl5lm77SInv4mgkIRjerLZNEYw=
+	t=1733477572; cv=none; b=WGdU8kyGlqLuS1DEjSchQTCL16dfZNEvHpa5CY/zwuiEiS8Izs8lXWFPJuAuLlmmYYNbQ/mXkdLsFtL2ZG2NK58fFKKy0rbJGH8aUYSBIDplhxLMt43R49As/ox1GG1vkRNHINjbho47PgJj1Xe83siKVrwp6ZMSw/wQBu5OxHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477627; c=relaxed/simple;
-	bh=tRF43KBsvxv3hRirW7Pu5wocJ26K3VE9RSkQJeg7ABU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=f3kLaQN/ZOkZaMYHJC2g4YSrGn08nBlwUvRQL8YZkIzqqYNmCOh3R5amKVAhvh3fFvcIzgsxTL41TSawtVOLMhB5WLuN5nAtup1yyPE41vIOx3fOqpEf/iV5ghNzXq/nPZIhIpxGByuhBmCVnE/rUDZYWE8w4hQwkUiiMRc6WXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=Dmrs1KLl; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [127.0.1.1] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2CBA61F0F;
-	Fri,  6 Dec 2024 10:33:05 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733477586;
-	bh=tRF43KBsvxv3hRirW7Pu5wocJ26K3VE9RSkQJeg7ABU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dmrs1KLlMQSemD1bBMDSiUxGc6pXwsMioChvZmuOcx0d8o7bXVvoB/ujJ5AtSOl2I
-	 z2FfEv3R/qejtIZjY+RCA4NHf/LIx3X71MKA/DLAew9/7Bi5LMj4HSI50UhQxfaSk0
-	 B7U++VvkDV4ICMOTrioNF+IeDPx2ROBrndfIguIE=
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Date: Fri, 06 Dec 2024 11:32:43 +0200
-Subject: [PATCH v3 10/10] arm64: dts: renesas: gray-hawk-single: Add
- DisplayPort support
+	s=arc-20240116; t=1733477572; c=relaxed/simple;
+	bh=EmKTRyxfg9lnl9kzJeHA2gWiYkvhXSnTs3qA2lMvXCI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ilp3KxhYMazW/lgZJiBQ1QbVAzG92Zmba/GPDnDpqMzJ295YRDVMr68JahepIrycg7qvEdX/oF0+/zh/telThSu0SsyGjFZKoXdlLucJTS70bQNi03NTBqAjh3MIiW+FRX3kt0QJuL0EDrweO7qcrqzY3l4ff+8w99sPEBrmnCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iQ8XAqdA; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-3002c324e7eso11321501fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:32:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733477568; x=1734082368; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zadEHboo0cdlPFvzQWo8pskzaBuEAY7TqZ8rPSIgr8o=;
+        b=iQ8XAqdAoW4bzWYHQInHogmFX2hvpv4rlT35GSSzLmRmQXS0MNaoAKSXq7VKaigKlm
+         1P6+GKXJBIqfj+TuoPKYec1g8lIkUZ/2WBOQQX1Qxz3S03OJvyaTPkecdnAOtrKgqwCb
+         oymqD4Vn6PQt5UaTPf/CnNw0BBh+vRkCf9KSr7yDn5O9Qp41ASFdgAZe8leDPqwSO9bD
+         bAlrhodeOQTUTkjfTpZrB36c9K4g6p/Uc07456aahuyfEqgi/1x4WscmB+V8rKapTqz6
+         VIknAnutci9ZKZlLQotRukyWWyM5nCMLJIp9rbZM5WhXbAWxSAFQgUotUHccMIcwFq7J
+         T+Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733477568; x=1734082368;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zadEHboo0cdlPFvzQWo8pskzaBuEAY7TqZ8rPSIgr8o=;
+        b=FMPd4jVdRn0m0QGQST278yJF+hLWdkQgEBtDogs4BhoXiV1bZsErcZ9qx7zHblSO48
+         pvC+19IJGlfac5qLCCr9Bi9tsZI1f/2B5cLnShkKPM86N/YL6HnkAbzVTntEiX/n/7Ki
+         zWWuVYYwZOx6318nAUi/Zx24SPQRpaXq/HXKOPB9apM59OmF+pTAX3H0XWC///p0jXgP
+         awLaiDT/cwbGpyhsNpU1AomWvYqbC5TR/L4x14kwHIbxFvNcE/d1aH6GiaDubTbpA705
+         p2QUWSXAsfpQCHOp+ND80IZsXkCKGEUMEp9ju/45okM31okBffVrRXouulDBiKE+dm5b
+         3a2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVFkl6gjW54psq2Rqqnite9bwWC/ZZGuKCY5ncp1aP2zSutpHxjaIgBESGFCm8cXogXELIXTIEvu8/S4xc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlPE19KiVcYOEJgd1ulSDR3FYJs761ReyLgsUeWVxcOThLxTdX
+	uPY/eKcj6oZ2PI9LOhHC1VNXMQATaAmGxPfCoo5gBflD1V7Vnbht7YuFiqV1MX4=
+X-Gm-Gg: ASbGncsr1qPNEVJM/KmL6pKeq7rD5Hz6iysSws4zZo+cCtIPjE7aQuDQtbLAORlR0CL
+	VYHOPURwc6U9pRwyBEuQLej/MFXJ2C92ZkXPmnNb8jelxyI57NdpL9M4N9lMCCiGO3sdl59jcTT
+	HXvovGxuAKbMZlnM4OEP/8IekhBWk1ENe1yqM98xhhc+x2USJjXa8TdtHUQtKZQsIjh5Cb3O0FW
+	UvRyinRdkS/0te4OX8VGV/zucfZ3azh2NhIm6aIZiNKA63iYce2jmiYMMUXWJ3pfMw2jVLITKTw
+	6AhEfgGAJtFhnqSeIYIM30ljh5WUFQ==
+X-Google-Smtp-Source: AGHT+IFt0oQZraChA0vm7bTmEKxi678+NtImtNYWtNbmFt/Emc59radqf3VL2rny8/rMaB+weccu/w==
+X-Received: by 2002:a05:6512:31c9:b0:53d:eec4:2bfa with SMTP id 2adb3069b0e04-53e2c4fed10mr1145884e87.37.1733477567848;
+        Fri, 06 Dec 2024 01:32:47 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229ba6fdsm449887e87.151.2024.12.06.01.32.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 01:32:46 -0800 (PST)
+Date: Fri, 6 Dec 2024 11:32:44 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
+	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 29/45] drm/msm/dp: skip reading the EDID for MST cases
+Message-ID: <7khoxaafl2eclgqe2jfwgdmruvtoug5fpjdkvcrmpcynddnloa@toooyaio7rzm>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-29-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-rcar-gh-dsi-v3-10-d74c2166fa15@ideasonboard.com>
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
-In-Reply-To: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
- Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, 
- Magnus Damm <magnus.damm@gmail.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>, 
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>, 
- Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-clk@vger.kernel.org, 
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3107;
- i=tomi.valkeinen@ideasonboard.com; h=from:subject:message-id;
- bh=u9rlLJsMm1XL9+aRvQppvfNen/IBc5LxFiSkKc7jCZA=;
- b=owEBbQKS/ZANAwAIAfo9qoy8lh71AcsmYgBnUsTcLr7EbKTpYqLBEzl6EqBRoaarvIQUs14jC
- 5iA1V++5f2JAjMEAAEIAB0WIQTEOAw+ll79gQef86f6PaqMvJYe9QUCZ1LE3AAKCRD6PaqMvJYe
- 9cZBD/wN9RSVdZZzMHzOjyLnVcpV1agPQgtIhQbneeVneez5LLSJosNo7gLU1z3gAeFKlS7CSFK
- toBmHpV0D6L4aMwY+AvL3k+esuKENVC2dFbfxRj8k2G1hlWtsnjyf+wdupO340ERmxKImKELFmE
- 8/KbsSDLJxlz1VKcL4NVcFH9hZvy7pIBWsb2R8xaIz+JeBui0BtlAWJQScaJGIS5Tyk2Qvsebmq
- aZD4TAhLXdHalQfppQxTQ44JwS5WGvfxmIgQrGVkNLZk59sDlqsRPQOJuTgPwqU+0Bdc+wIAran
- lSbrL8Fsd8hzgG+b1yVo1T/8mf0aE90hS/jdIizGzFaq6OIHsTr6m99Y96hreGMaQZDZavkGCFl
- UG62/VjBuGFd9fWLA3v85uh3VfCyk+eqr4wYv651XxkYYKtZtt/SF4D6jfp1L7V4TK40FNuHdia
- yBFXbNETxTtYqf8CWbLBKlmCygXPUOs7riHYPd+An7wRlsVA+TSHjfjYMs+R866ieeyhja7OL/x
- jLAuyVeNq1LAnXRCgPDakgd6fMZRzfJm/wq/emFPOeq2XjW/YVwU/8vyZe1ZRQYuvRydF4ZzBYd
- kd7EjynZkL09ElirlpRealV1rh1p126AyRUh66JKUxJ2sdQWcSYBaJxoFMRQYTj7IQRgqzWvTyz
- L56R2MRyI7IeVaQ==
-X-Developer-Key: i=tomi.valkeinen@ideasonboard.com; a=openpgp;
- fpr=C4380C3E965EFD81079FF3A7FA3DAA8CBC961EF5
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205-dp_mst-v1-29-f8618d42a99a@quicinc.com>
 
-From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+On Thu, Dec 05, 2024 at 08:32:00PM -0800, Abhinav Kumar wrote:
+> For MST cases, EDID is handled through AUX sideband messaging.
+> Skip the EDID read during hotplug handle for MST cases.
 
-Add support for the mini DP output on the Gray Hawk board.
+But why? Isn't EDID being read at the hotplug time to update
+drm_connector's data?
 
-Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- .../boot/dts/renesas/r8a779h0-gray-hawk-single.dts | 95 ++++++++++++++++++++++
- 1 file changed, 95 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-index 057f959d67b3..7cdf07b6dde6 100644
---- a/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-+++ b/arch/arm64/boot/dts/renesas/r8a779h0-gray-hawk-single.dts
-@@ -59,6 +59,12 @@ chosen {
- 		stdout-path = "serial0:921600n8";
- 	};
- 
-+	sn65dsi86_refclk: clk-x6 {
-+		compatible = "fixed-clock";
-+		#clock-cells = <0>;
-+		clock-frequency = <38400000>;
-+	};
-+
- 	keys {
- 		compatible = "gpio-keys";
- 
-@@ -126,6 +132,27 @@ memory@480000000 {
- 		reg = <0x4 0x80000000 0x1 0x80000000>;
- 	};
- 
-+	mini-dp-con {
-+		compatible = "dp-connector";
-+		label = "CN5";
-+		type = "mini";
-+
-+		port {
-+			mini_dp_con_in: endpoint {
-+				remote-endpoint = <&sn65dsi86_out0>;
-+			};
-+		};
-+	};
-+
-+	reg_1p2v: regulator-1p2v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "fixed-1.2V";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
- 	reg_1p8v: regulator-1p8v {
- 		compatible = "regulator-fixed";
- 		regulator-name = "fixed-1.8V";
-@@ -200,6 +227,24 @@ channel1 {
- 	};
- };
- 
-+&dsi0 {
-+	status = "okay";
-+
-+	ports {
-+		port@1 {
-+			reg = <1>;
-+			dsi0_out: endpoint {
-+				remote-endpoint = <&sn65dsi86_in0>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&du {
-+	status = "okay";
-+};
-+
- &extal_clk {
- 	clock-frequency = <16666666>;
- };
-@@ -269,6 +314,51 @@ eeprom@53 {
- 	};
- };
- 
-+&i2c1 {
-+	pinctrl-0 = <&i2c1_pins>;
-+	pinctrl-names = "default";
-+
-+	status = "okay";
-+	clock-frequency = <400000>;
-+
-+	bridge@2c {
-+		compatible = "ti,sn65dsi86";
-+		reg = <0x2c>;
-+
-+		clocks = <&sn65dsi86_refclk>;
-+		clock-names = "refclk";
-+
-+		interrupt-parent = <&intc_ex>;
-+		interrupts = <0 IRQ_TYPE_LEVEL_HIGH>;
-+
-+		enable-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
-+
-+		vccio-supply = <&reg_1p8v>;
-+		vpll-supply = <&reg_1p8v>;
-+		vcca-supply = <&reg_1p2v>;
-+		vcc-supply = <&reg_1p2v>;
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			port@0 {
-+				reg = <0>;
-+				sn65dsi86_in0: endpoint {
-+					remote-endpoint = <&dsi0_out>;
-+				};
-+			};
-+
-+			port@1 {
-+				reg = <1>;
-+				sn65dsi86_out0: endpoint {
-+					remote-endpoint = <&mini_dp_con_in>;
-+				};
-+			};
-+		};
-+	};
-+};
-+
- &i2c3 {
- 	pinctrl-0 = <&i2c3_pins>;
- 	pinctrl-names = "default";
-@@ -361,6 +451,11 @@ i2c0_pins: i2c0 {
- 		function = "i2c0";
- 	};
- 
-+	i2c1_pins: i2c1 {
-+		groups = "i2c1";
-+		function = "i2c1";
-+	};
-+
- 	i2c3_pins: i2c3 {
- 		groups = "i2c3";
- 		function = "i2c3";
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_display.c | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index 033d238e956263c1212fce45aab01316ef341edb..a67bc7c1b83a5a9996435804ff7337f72dae93a0 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -420,9 +420,11 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+>  	if (rc)
+>  		goto end;
+>  
+> -	rc = msm_dp_panel_read_edid(dp->panel, connector);
+> -	if (rc)
+> -		goto end;
+> +	if (dp->max_stream <= DEFAULT_STREAM_COUNT || !msm_dp_panel_read_mst_cap(dp->panel)) {
+> +		rc = msm_dp_panel_read_edid(dp->panel, connector);
+> +		if (rc)
+> +			goto end;
+> +	}
+>  
+>  	msm_dp_link_process_request(dp->link);
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
