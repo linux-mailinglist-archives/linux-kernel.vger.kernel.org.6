@@ -1,166 +1,157 @@
-Return-Path: <linux-kernel+bounces-435453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16569E77E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:14:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF47B1883B9F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:14:02 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5809B203D78;
-	Fri,  6 Dec 2024 18:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A4PjlxcM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44F299E77EA
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:15:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2CF2206A5;
-	Fri,  6 Dec 2024 18:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0433284E1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:15:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E98204563;
+	Fri,  6 Dec 2024 18:15:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="VOJX02fW"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264AE204564;
+	Fri,  6 Dec 2024 18:15:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733508833; cv=none; b=U2n+ujvvh1vwPqPQ+1tnpOekgYPKB/sPs1U8zhNOeY/CNI+ICXRiRkw2PRnFy1iXNQ+memriJF+gxdDlPtFd7djkW2BxkZu5BkXg+lnGLBkgLfh3EidunjjYYJDksjRk0KEYuC7EFBIoQY0fdwpGvvVqj3ULc2PUW5KSXX1G81g=
+	t=1733508909; cv=none; b=qAZnRhrB2MzkXDoqPX6lBDsL07rxmQGxOty073FaF/gflip0XjaPu5Mxa8OEyq8u1c+ljUAv1Ak8mOmVPPAeawy+AzvJ0oNvrQR2rr66CXyO1Dq0UqCeTUgcKgP0nfDUeJsck5JA5R5SHGc1r4foA/FH9eyld6GjqfKTAMAH920=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733508833; c=relaxed/simple;
-	bh=4ErpPL5RKiuQcrZig3s30EOBUc46OyFFUZ5BpiI6s8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=msG4UhoqzhaFHT6nJ5+kqfBYHeUTbTRyvS9OxWSsklk0YWtg7LMRwZvYLhg6gCAuDp2bhAT/c0rK81RoZdqNWj1rJVFjE+AWk3z3Jwsd4NhPzj112YLJDTI6cqoASOl6QFhbACwAY01Cpq+gptuFLkppdzmodJwtLq1lc9EFkqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A4PjlxcM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C22AC4CED1;
-	Fri,  6 Dec 2024 18:13:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733508833;
-	bh=4ErpPL5RKiuQcrZig3s30EOBUc46OyFFUZ5BpiI6s8o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=A4PjlxcM/00JWSrZoVgU3sB06/hOdBzdPnD7f9XxmB7V5nTh+GKuLcLeohWkkS8zb
-	 Ex7oNt/TVBFXPiol8NQvZTVCIK3za2UIDXdDm2rnptZPAozPPbXDouB9au8bzMB5yb
-	 1gwhfo6rweiVkR4rqk6qRcab8wa77+CBPyLnMc3F889xvkvsfJrSZ/0h0Ca56ol0wG
-	 TgxLvQHNJgh7WTzW8a28TMD0bHpqVvs2ILHV7BKg3msMDBqLXAIl1SuFTixoMrqG++
-	 GKi/T4oaOUqr+fWf3fVFZ5QbhwhrYNwP/xuzMvKs018iNNiR2FoV2s+D3b3/Ds/xp6
-	 lu9HpaDJel0hg==
-Date: Fri, 6 Dec 2024 19:13:44 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, airlied@gmail.com,
-	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
-	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Subject: Re: [PATCH v4 02/13] rust: implement generic driver registration
-Message-ID: <Z1M-2J1wtLwEhz8D@pollux>
-References: <20241205141533.111830-1-dakr@kernel.org>
- <20241205141533.111830-3-dakr@kernel.org>
- <CAH5fLghRVFAb06YYfUbuyuR1pOK0cHzGk6A25c5hX3CyvMm+sw@mail.gmail.com>
+	s=arc-20240116; t=1733508909; c=relaxed/simple;
+	bh=acY9QYkkj2FPlaqOV9k2ALcWmvnYFb5Djq/L+K2WqAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gbAs35zQnq7MYdk8DE323BUudSMDCRG6y4HnWrSQPlUEbJ+A9MHzti38YYEe4lSUAcCuAAjVuHvzjq/ZA6m4mojlNsTa8mKIwIuX4dSzWBbafU2NkgyR8l4yprFanTA68lGK7Vvc6acCfWi/3SQdD2B8QCMnFgoEV8yE9BHuAus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=VOJX02fW; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1733508904; x=1734113704; i=w_armin@gmx.de;
+	bh=acY9QYkkj2FPlaqOV9k2ALcWmvnYFb5Djq/L+K2WqAI=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VOJX02fW6UMM2Ig/br6qRyauJ1QF8JLVRmHy9HCTz48Wd6rZf2CAVcGTa1w5BXC4
+	 bKSa6IygSk9xoecARwW1H48FfWdg6SwLMwyx/edxunPtgPnCdZum+64UoxPeytZ+x
+	 5h0V7HDswvlIDJiEFJYVdRq+JFlZSP81LtXDwoAXE95EU3jGrJc2fpGS3bYKlbzLY
+	 taZPbtLE4GTWCCrniGmax64xw88EWo7KtvZ7TRwi+EFIOCMidKb0edfNcM4ISOfLp
+	 clHDIjxTNwDsRGB1zjBP7JGFedHMvdf/7RWcE+VRzTNZdHUHVBZVe8lIcOEusBKvx
+	 oHOXWW15x8x4tXT0vQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.14] ([91.14.230.110]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MRTN9-1syUyT2l2j-00SMxY; Fri, 06
+ Dec 2024 19:15:04 +0100
+Message-ID: <bf3b9efd-6700-485a-bd0e-f81de1e11fcf@gmx.de>
+Date: Fri, 6 Dec 2024 19:15:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLghRVFAb06YYfUbuyuR1pOK0cHzGk6A25c5hX3CyvMm+sw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [REGRESSION][BISECTED] asus-wmi driver fails on my laptop
+To: Yura Strilets <yurastr100@gmail.com>, platform-driver-x86@vger.kernel.org
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <33bfcda8-3d3d-46b9-84f0-44e0e9f44230@gmail.com>
+Content-Language: en-US
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <33bfcda8-3d3d-46b9-84f0-44e0e9f44230@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:JqhSvlqpwvBpTYv7338/mK4fck667VMNfCQkH9+BWs/WWr9tOGZ
+ +Rd8cc5JI9glx4k3ekGfxdwTwKxC4mUCDUGKnc5pnRZL3X4+ZnInmS+EbXrIkacJC1quNxb
+ sPRgvFLJ1QuWLIlNV7869HvEP7+LmUOIKTa5RrC0eRgpoUUBeMCOYSlQrzirFS3U1MqEWLN
+ A/yKWS/tcUasqVBhhlyJA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/mExfcB00e0=;wdRbfLWlH151AbiciLd3nOP3XG/
+ W55jS0mdHCFOt3wrLDfv4a23GICYMdQRq3s4CPsX+B4BRqfDiVijBTWeDUlAdAcIN4saX0aXl
+ Qlt82jvP5V6I4IpNTJXAiFpx1EkGdkMtsTmvK49kflN875VRJFhfVyOMyThm7MAxR7KaR9LE0
+ e8IsUSQDJCRsSOjIAsTFoE+n2KNEyBd14dBkllBiQs3HxS46Z3py6mkD02HCjqVWCFlo46N8a
+ FiQh1vEeGnLg9fszYcNXC8SvZNrBv1qxfC8ujCN6y+4YZH63+KGVNK5IiHY+EFxqTqJ6rsedO
+ EiMr/Dk02IWW26gS6VWPdbGMKP4FrhbmIWS8Wfq7Pu37k81cfD9aK5pinYcFeQyZJZcxo/NL0
+ YZPOfPIVTFnwS35TwGC4GMrsBdror3VF1o6Fa5EJtri+xisFDE9fxELB2ZUjKf84p3wH8v0Sc
+ UvHFfRCRcgL+6UXOE41mlghuJQLmHFbqsZyDt2LoNljbSIOL7lw8rU47ZbvIV3zWMlD90eQo0
+ RwhFQRPuE0p0w4Wzl3QWOl03jZNHi53QEam3Pi2qW3AihW2ARVbFZpQJluczZOAjVTKdzZuHD
+ /waX4Bl+S3uyNhPCao76DhEAEKXwHyiTA630u6+kX3JaooQd158UeW2gKVeK69g7uqjIAQXfC
+ LWvql5eeNaB7wfNd17ekBK3KujdgFYz5mKYbwo6izPpMzYx2cEI8IhWxXXCJUo4Ny8o1a8RhC
+ cViLVl7Fk3XMxlIURC6OA/qpeRRKYHuJFBnv5T4rD5KS83OoJBnW3kJxXf7uJLTI9rfBFmSgN
+ f3evI/Fav3i/QDunwRtyI/SV/YT/TIw5QLZ0u/7D5bNd1PsJ4SYXGvO6I3DvY8OOTuJcOo+uk
+ 5iM5xQkA/4ux+/zj4RBiwdxG5/mZ0DtqwAVshUs0dYY62AOdft2P1KovRDU6Q9UePkXZU5V7U
+ evHy+Y7k1t9InBBDfkJDUhlMyML0VD9o7NPc6RHiLFKTQouHhibAhjeI8qRra+gYgnO+H6PXs
+ /dNUXEyvA8lcHOhLu7zv1FN6IdXU0F+QgGsrTle2Fttbp5i7lLZTeAc3BGg8bbAXGdd53woVj
+ XVyK5ZlNzJRiR5rHfQpPIMqiQq0yfw
 
-On Fri, Dec 06, 2024 at 02:57:19PM +0100, Alice Ryhl wrote:
-> On Thu, Dec 5, 2024 at 3:16 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > Implement the generic `Registration` type and the `DriverOps` trait.
-> >
-> > The `Registration` structure is the common type that represents a driver
-> > registration and is typically bound to the lifetime of a module. However,
-> > it doesn't implement actual calls to the kernel's driver core to register
-> > drivers itself.
-> >
-> > Instead the `DriverOps` trait is provided to subsystems, which have to
-> > implement `DriverOps::register` and `DrvierOps::unregister`. Subsystems
-> 
-> typo
-> 
-> > have to provide an implementation for both of those methods where the
-> > subsystem specific variants to register / unregister a driver have to
-> > implemented.
-> >
-> > For instance, the PCI subsystem would call __pci_register_driver() from
-> > `DriverOps::register` and pci_unregister_driver() from
-> > `DrvierOps::unregister`.
-> >
-> > Co-developed-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > Signed-off-by: Wedson Almeida Filho <wedsonaf@gmail.com>
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> 
-> [...]
-> 
-> > +/// The [`RegistrationOps`] trait serves as generic interface for subsystems (e.g., PCI, Platform,
-> > +/// Amba, etc.) to provide the corresponding subsystem specific implementation to register /
-> > +/// unregister a driver of the particular type (`RegType`).
-> > +///
-> > +/// For instance, the PCI subsystem would set `RegType` to `bindings::pci_driver` and call
-> > +/// `bindings::__pci_register_driver` from `RegistrationOps::register` and
-> > +/// `bindings::pci_unregister_driver` from `RegistrationOps::unregister`.
-> > +pub trait RegistrationOps {
-> > +    /// The type that holds information about the registration. This is typically a struct defined
-> > +    /// by the C portion of the kernel.
-> > +    type RegType: Default;
-> 
-> This Default implementation doesn't seem useful. You initialize it and
+Am 06.12.24 um 14:33 schrieb Yura Strilets:
 
-I think it is -- `RegType` is always the raw bindings:: type and in
-`Registration::new` in `Opaque::try_ffi_init` we call
-`ptr.write(T::RegType::default())` for - since `RegType` is a raw bindings::
-type - zero initialization.
+> Hello,
+>
+> After upgrading from 6.11 to 6.12 a bunch of Fn+Fx buttons(touchpad,
+> mic, kb backlight, my asus) stopped working and the
+> /sys/(...)/asus::kbd_backlight interface is missing, which,
+> considering the dmesg, looks like an asus-wmi driver issue.
+>
+> I've been able to bisect the issue to the commit
+> [b012170fed282151f7ba8988a347670c299f5ab3] "platform/x86: asus-wmi:
+> Fix thermal profile initialization"
+>
+> Additionally, here's some maybe-helpful information:
+> my laptop's model -- ASUS Zenbook UX3402VA
+> linux distro -- Arch Linux
+> .config for bisection -- was taken from /proc/config.gz at 6.12.1 arch
+> kernel(attached in [1]) and missing options are default
+> dmesg logs -- The "grep asus" parts of both good and bad scenarios can
+> be seen below and full logs are at [2] and [3]
+>
+> =3D=3D bad.log =3D=3D
+> [=C2=A0=C2=A0=C2=A0 3.664546] asus_wmi: ASUS WMI generic driver loaded
+> [=C2=A0=C2=A0=C2=A0 3.713358] asus_wmi: Initialization: 0x1
+> [=C2=A0=C2=A0=C2=A0 3.714126] asus_wmi: SFUN value: 0x21
+> [=C2=A0=C2=A0=C2=A0 3.714131] asus-nb-wmi asus-nb-wmi: Detected ATK, not=
+ ASUSWMI, use
+> DSTS
+> [=C2=A0=C2=A0=C2=A0 3.757420] asus_wmi: Failed to set throttle thermal p=
+olicy
+> (retval): 0x0
+> [=C2=A0=C2=A0=C2=A0 3.757425] asus_wmi: Failed to set default thermal pr=
+ofile
+> [=C2=A0=C2=A0=C2=A0 3.757429] asus-nb-wmi asus-nb-wmi: probe with driver=
+ asus-nb-wmi
+> failed with error -5
+> =3D=3D end =3D=3D
+>
+> =3D=3D good.log =3D=3D
+> [=C2=A0=C2=A0=C2=A0 4.557898] asus_wmi: ASUS WMI generic driver loaded
+> [=C2=A0=C2=A0=C2=A0 4.776587] asus_wmi: Initialization: 0x1
+> [=C2=A0=C2=A0=C2=A0 4.777253] asus_wmi: SFUN value: 0x21
+> [=C2=A0=C2=A0=C2=A0 4.777256] asus-nb-wmi asus-nb-wmi: Detected ATK, not=
+ ASUSWMI, use
+> DSTS
+> [=C2=A0=C2=A0=C2=A0 4.777258] asus-nb-wmi asus-nb-wmi: Detected ATK, ena=
+ble event queue
+> [=C2=A0=C2=A0=C2=A0 4.805497] input: Asus WMI hotkeys as
+> /devices/platform/asus-nb-wmi/input/input15
+> =3D=3D end =3D=3D
+>
+> [1] .config - https://pastebin.com/raw/3nDSV8Sm
+> [2] bad.log - https://pastebin.com/raw/fvR5Sjzt
+> [3] good.log - https://pastebin.com/raw/EazfLAWA
+>
+> Thanks,
+> Yurii
+>
+I am aware of this issue, the necessary fix (commit 25fb5f47f34d) was alre=
+ady submitted upstream and will likely
+show up in the stable kernels soon.
 
-> then `register` calls a C function to initialize it. Having `register`
-> return an `impl PinInit` seems like it would work better here.
+Thanks,
+Armin Wolf
 
-This would work as well, but it would effectively move the common code from
-`Registration::new` to the bus specific type.
-
-I think it's quite nice that the bus specific code does not need to care about
-messing with `try_pin_init`, `Opaque::try_ffi_init`, zero initialization, etc.,
-but just needs to assign the relevant fields and call register.
-
-> 
-> > +    /// Registers a driver.
-> > +    ///
-> > +    /// On success, `reg` must remain pinned and valid until the matching call to
-> > +    /// [`RegistrationOps::unregister`].
-> > +    fn register(
-> > +        reg: &mut Self::RegType,
-> 
-> If the intent is that RegType is going to be the raw bindings:: type,
-> then this isn't going to work because you're creating &mut references
-> to the raw type without a Opaque wrapper in between.
-
-True, that seems unsound. Since this is called from when the corresponding
-`Opaque` wrapper is created, I think we need to fall back to a raw pointer then
-and make `register` and `unregister` unsafe.
-
-I don't think that too big of a deal though, since those two should never be
-called from anywhere else than `Registration:new` or `Registration::drop`.
-
-> 
-> > +        name: &'static CStr,
-> > +        module: &'static ThisModule,
-> > +    ) -> Result;
-> > +
-> > +    /// Unregisters a driver previously registered with [`RegistrationOps::register`].
-> > +    fn unregister(reg: &mut Self::RegType);
-> 
-> I believe this handles pinning incorrectly. You can't hand out &mut
-> references to pinned values.
-
-Same as above.
-
-> 
-> Alice
 
