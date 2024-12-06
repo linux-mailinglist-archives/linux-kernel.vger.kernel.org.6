@@ -1,342 +1,160 @@
-Return-Path: <linux-kernel+bounces-435165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435166-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD179E731C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:16:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA36B9E7340
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:18:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FA9C169AC3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:16:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABB34289A65
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B72F207DED;
-	Fri,  6 Dec 2024 15:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCA2D1714DF;
+	Fri,  6 Dec 2024 15:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VE/V8grY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UARJmyrV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 409F1149C6F;
-	Fri,  6 Dec 2024 15:16:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3470B53A7;
+	Fri,  6 Dec 2024 15:18:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733498193; cv=none; b=LaBpx1l1xdQadYIXlrwxII90nTgBCJ9my31pqUxne9LqVoMoi9PsHSIMlgANtfjdCUd5ajqzCPnOs4CqBHw+b9NiLz3P9FMJMPUP1Nci7gXhLkO2YV6kQYRItpNh48WGmFJGllAVycldAKd2/DSpuIA3ovPvJ2Ve8UlggkByIt8=
+	t=1733498283; cv=none; b=CWR6Lv9LyJnps9YJKwtxxsbUw16IDwFrQh9F0/F4ByD9AGZVXZru7c88p7pKKiwMD5iUUzTTSBo5HzRPl4+LxusieKwjH8UVgjLNIOx7yn3BrQXocL0SHT4wDl+jhk5FNzKTUdrm/CJclIh67gbUKGjUY6I7rAYlZMF2Jx4FzHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733498193; c=relaxed/simple;
-	bh=AXWafu2UFfU53xHrtDLaK77qXXnP8ZGKITovm66pVOo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=L4Q2a5QWGtAdZGNcC/QXgZEhvylHslP1pWu6gAS2Hxc7j3AZ1kBceVlzjQsaQAzgt+25y1T6zrRbaCOwPfLCHFT1w+AubchDLwfcfM/BQEm3JqUvj+dM0/oM+4XkQLf6gEP9rXckZkVkpUccTMZzt49Dz5fU43vAHwVhgZ3gN1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VE/V8grY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AA82FC4CEDE;
-	Fri,  6 Dec 2024 15:16:30 +0000 (UTC)
+	s=arc-20240116; t=1733498283; c=relaxed/simple;
+	bh=7ZkkG9sI4gnvWA3PVy2tvr1W2lr2ZYeU7WA/gXOhtaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y+J7oA6Mi5qrXRQawHSq6EZg9dkIvWH6Ulatoq2XGsl3OdKnd48z7ulo1X6FeXF7sr+jSSwRVIkwkWVeX8dLRgEQ1lJaH7IzPA8wplFIsFNxHdvMhJ/cb5a2bvcxiEuSq175G68YUy18Wu8wEgVxuQwtZufosJOQBH2lP7pFI9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UARJmyrV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0302C4CEE5;
+	Fri,  6 Dec 2024 15:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733498193;
-	bh=AXWafu2UFfU53xHrtDLaK77qXXnP8ZGKITovm66pVOo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VE/V8grY0VWfhD6olBZQXlCerdKHBoPmG2n5tXW+gU/1WpbEoy+SaEDChRWasCbHW
-	 1U8znSqB1TU+5HJbaj8Ygk3Xyz37NPnEEqVRUq5gE3DHfAoxf2xc109QlOTksnduTt
-	 PeR6vEjvHLTKAkH23rlglw1BiE9cW778kdm8VToq4kzAOCyAqaI4QO3JZPs2A7n2+u
-	 LjsSC6Zb5dy94XByrgv7HbAgUNSijX3voF1Mu8rxf+Elf5HruG6d32dR3FxiQnXszp
-	 t6uq9yikR6NuMoynq5reUQ/Ki0bSoTVnbgHO9MJY8A4r1jaPJHX7ClABxGgbtgkhXC
-	 uE85rELRx8imQ==
-Date: Fri, 6 Dec 2024 16:16:28 +0100
-From: Alejandro Colomar <alx@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: "G . Branden Robinson" <g.branden.robinson@gmail.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Jonathan Corbet <corbet@lwn.net>, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-man@vger.kernel.org
-Subject: Re: [PATCH v5 1/4] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-Message-ID: <20241206151628.heqirro4hmfvwl5h@devuan>
-References: <20241206073828.1119464-1-irogers@google.com>
+	s=k20201202; t=1733498282;
+	bh=7ZkkG9sI4gnvWA3PVy2tvr1W2lr2ZYeU7WA/gXOhtaw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UARJmyrVsplk3Y4d668cEaXnOm8+YZvO8ziweiaWimxl7XfRWIQFuRDKkGBDJZtev
+	 ow2PtLYVvygcdvbNqo3HPjyMvCa1JLWP7I7Pk8moYlj4khcvgKVWBHxV3mKw407BEZ
+	 vO+l6U8I6epP0FU0St1UzfSkr5ew2/L1HFB5e5T/YChACSrRZAL+BZ6cjDu1R7IfqM
+	 W92uykTug/GG61bg63jf6DxYpMD0zp/M+aQFHvIsuKs7F8C4Su84w0CWVv3MKVeZ0P
+	 uiTb0vStL2iQBBokq8GKraoDlqZxGNgRv1jPcoAQM2BRcu2sl3O+S4uH67dO29C7iJ
+	 BhlET8it0hmyg==
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffc016f301so19066521fa.1;
+        Fri, 06 Dec 2024 07:18:02 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUyK5ByQ2qVXe5evZdwApS3VBKrrz5hLMbxX1cO82HKGFxWWmLgItfPRj2aj7ivFS9HIRj7ccSRAyx4nwg=@vger.kernel.org, AJvYcCXcvt6LCbpDS24EjXCyRy/YEB6LgvnO2jpKI8/ax2jBWbERVNtGD/IXRvlC/vz27cxRnuYc8kJE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVbKWbfmWPjrlmTMi7YwElyp2wGI8LJmiioTFtFcNW164RGEFE
+	UQIBmhWM46G5B0HFgF3Ji0kPoEyoUhpEKUhB2K384fHg1930RpfcGwQtyZseS5rzSu319qfy1qq
+	qOE4zpdxa1penlQYPLVx0OfcbeMY=
+X-Google-Smtp-Source: AGHT+IGEDJ8Is8k/WRknAfEBV/J8olF8npu0JAL2v2Ao1IHNxcz/+L+AjjCTl7mVwRDRYRvPXdXxyCZMs21ZsKuKxkU=
+X-Received: by 2002:a05:651c:1b06:b0:300:159a:1637 with SMTP id
+ 38308e7fff4ca-3002f912ae2mr10531431fa.20.1733498281007; Fri, 06 Dec 2024
+ 07:18:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wy7xndtnclfzjif3"
-Content-Disposition: inline
-In-Reply-To: <20241206073828.1119464-1-irogers@google.com>
-
-
---wy7xndtnclfzjif3
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
+References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-2-brgerst@gmail.com>
+ <20241206123207.GA2091@redhat.com> <CAMj1kXGKCJfBVqgsqjX1bA_SY=503Z-tJV893y5JAwoVs0BUfw@mail.gmail.com>
+ <20241206142152.GB31748@redhat.com> <CAMj1kXGo5yv56VvNMvYBohxgyoyDtZhr4d4kjRdGTDQchHW0Gw@mail.gmail.com>
+ <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
+In-Reply-To: <CAMzpN2iUi_q_CfDa53H8MEV_zkb8NRtXtQPvOwDrEks58=3uAg@mail.gmail.com>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 6 Dec 2024 16:17:49 +0100
+X-Gmail-Original-Message-ID: <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
+Message-ID: <CAMj1kXF8PZq4660mzNYcT=QmWywB1gOOfZGzZhi1sQxQacUX=g@mail.gmail.com>
+Subject: Re: [PATCH] x86/stackprotector: fix build failure with CONFIG_STACKPROTECTOR=n
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Uros Bizjak <ubizjak@gmail.com>, stable@vger.kernel.org, 
+	Fangrui Song <i@maskray.me>, Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 1/4] proc_pid_fdinfo.5: Reduce indent for most of the
- page
-MIME-Version: 1.0
 
-Hi Ian,
+On Fri, 6 Dec 2024 at 16:12, Brian Gerst <brgerst@gmail.com> wrote:
+>
+> On Fri, Dec 6, 2024 at 9:37=E2=80=AFAM Ard Biesheuvel <ardb@kernel.org> w=
+rote:
+> >
+> > On Fri, 6 Dec 2024 at 15:22, Oleg Nesterov <oleg@redhat.com> wrote:
+> > >
+> > > On 12/06, Ard Biesheuvel wrote:
+> > > >
+> > > > On Fri, 6 Dec 2024 at 13:32, Oleg Nesterov <oleg@redhat.com> wrote:
+> > > > >
+> > > > > +#ifdef CONFIG_STACKPROTECTOR
+> > > > >  /* needed for Clang - see arch/x86/entry/entry.S */
+> > > > >  PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
+> > > > > +#endif
+> > > > >
+> > > > >  #ifdef CONFIG_X86_64
+> > > > >  /*
+> > > >
+> > > > This shouldn't be necessary - PROVIDE() is only evaluated if a
+> > > > reference exists to the symbol it defines.
+> > > >
+> > > > Also, I'm failing to reproduce this. Could you share your .config,
+> > > > please, and the error that you get during the build?
+> > >
+> > > Please see the attached .config
+> > >
+> > > without the change above:
+> > >
+> > >         $ make bzImage
+> > >           CALL    scripts/checksyscalls.sh
+> > >           DESCEND objtool
+> > >           INSTALL libsubcmd_headers
+> > >           UPD     include/generated/utsversion.h
+> > >           CC      init/version-timestamp.o
+> > >           KSYMS   .tmp_vmlinux0.kallsyms.S
+> > >           AS      .tmp_vmlinux0.kallsyms.o
+> > >           LD      .tmp_vmlinux1
+> > >         ./arch/x86/kernel/vmlinux.lds:154: undefined symbol `__stack_=
+chk_guard' referenced in expression
+> > >         scripts/Makefile.vmlinux:77: recipe for target 'vmlinux' fail=
+ed
+> > >         make[2]: *** [vmlinux] Error 1
+> > >         /home/oleg/tmp/LINUX/Makefile:1225: recipe for target 'vmlinu=
+x' failed
+> > >         make[1]: *** [vmlinux] Error 2
+> > >         Makefile:251: recipe for target '__sub-make' failed
+> > >         make: *** [__sub-make] Error 2
+> > >
+> > > perhaps this is because my toolchain is quite old,
+> > >
+> > >         $ ld -v
+> > >         GNU ld version 2.25-17.fc23
+> > >
+> > > but according to Documentation/process/changes.rst
+> > >
+> > >         binutils               2.25             ld -v
+> > >
+> > > it is still supported.
+> > >
+> >
+> > We're about to bump the minimum toolchain requirements to GCC 8.1 (and
+> > whichever version of binutils was current at the time), so you might
+> > want to consider upgrading.
+> >
+> > However, you are right that these are still supported today, and so we
+> > need this fix this, especially because this has been backported to
+> > older stable kernels too.
+> >
+> > For the patch,
+> >
+> > Acked-by: Ard Biesheuvel <ardb@kernel.org>
+>
+> Using PROVIDES() is now unnecessary.
+>
 
-On Thu, Dec 05, 2024 at 11:38:25PM -0800, Ian Rogers wrote:
-> When /proc/pid/fdinfo was part of proc.5 man page the indentation made
-> sense. As a standalone man page the indentation doesn't need to be so
-> far over to the right. Remove the initial tagged pragraph, move the
-> "since Linux 2.6.22" to a new history subsection.
->=20
-> Suggested-by: G. Branden Robinson <g.branden.robinson@gmail.com>
+At this point, the use of -mstack-protector-guard-symbol is still
+limited to 32-bit x86. However, if we drop PROVIDE() here, the 64-bit
+kernel will also gain a symbol `__ref_stack_chk_guard` in its symbol
+table (and /proc/kallsyms, most likely).
 
-Thanks!  I've applied it, and amended with some minor tweaks.
-<https://www.alejandro-colomar.es/src/alx/linux/man-pages/man-pages.git/com=
-mit/?h=3Dcontrib&id=3Dd70b07b4f820ad801f57952cae984c07d73dee1c>
-
-Have a lovely day!
-Alex
-
-> ---
-> v5. Remove the word Since.
-> v4. Since from Alejandro Colomar <alx@kernel.org> review comment.
-> ---
->  man/man5/proc_pid_fdinfo.5 | 51 +++++++++++++++++++-------------------
->  1 file changed, 25 insertions(+), 26 deletions(-)
->=20
-> diff --git a/man/man5/proc_pid_fdinfo.5 b/man/man5/proc_pid_fdinfo.5
-> index 1e23bbe02..1c6c38423 100644
-> --- a/man/man5/proc_pid_fdinfo.5
-> +++ b/man/man5/proc_pid_fdinfo.5
-> @@ -8,8 +8,6 @@
->  .SH NAME
->  /proc/pid/fdinfo/ \- information about file descriptors
->  .SH DESCRIPTION
-> -.TP
-> -.IR /proc/ pid /fdinfo/ " (since Linux 2.6.22)"
->  This is a subdirectory containing one entry for each file which the
->  process has open, named by its file descriptor.
->  The files in this directory are readable only by the owner of the proces=
-s.
-> @@ -17,9 +15,9 @@ The contents of each file can be read to obtain informa=
-tion
->  about the corresponding file descriptor.
->  The content depends on the type of file referred to by the
->  corresponding file descriptor.
-> -.IP
-> +.P
->  For regular files and directories, we see something like:
-> -.IP
-> +.P
->  .in +4n
->  .EX
->  .RB "$" " cat /proc/12015/fdinfo/4"
-> @@ -28,7 +26,7 @@ flags:  01002002
->  mnt_id: 21
->  .EE
->  .in
-> -.IP
-> +.P
->  The fields are as follows:
->  .RS
->  .TP
-> @@ -51,7 +49,6 @@ this field incorrectly displayed the setting of
->  at the time the file was opened,
->  rather than the current setting of the close-on-exec flag.
->  .TP
-> -.I
->  .I mnt_id
->  This field, present since Linux 3.15,
->  .\" commit 49d063cb353265c3af701bab215ac438ca7df36d
-> @@ -59,13 +56,13 @@ is the ID of the mount containing this file.
->  See the description of
->  .IR /proc/ pid /mountinfo .
->  .RE
-> -.IP
-> +.P
->  For eventfd file descriptors (see
->  .BR eventfd (2)),
->  we see (since Linux 3.8)
->  .\" commit cbac5542d48127b546a23d816380a7926eee1c25
->  the following fields:
-> -.IP
-> +.P
->  .in +4n
->  .EX
->  pos:	0
-> @@ -74,16 +71,16 @@ mnt_id:	10
->  eventfd\-count:               40
->  .EE
->  .in
-> -.IP
-> +.P
->  .I eventfd\-count
->  is the current value of the eventfd counter, in hexadecimal.
-> -.IP
-> +.P
->  For epoll file descriptors (see
->  .BR epoll (7)),
->  we see (since Linux 3.8)
->  .\" commit 138d22b58696c506799f8de759804083ff9effae
->  the following fields:
-> -.IP
-> +.P
->  .in +4n
->  .EX
->  pos:	0
-> @@ -93,7 +90,7 @@ tfd:        9 events:       19 data: 74253d2500000009
->  tfd:        7 events:       19 data: 74253d2500000007
->  .EE
->  .in
-> -.IP
-> +.P
->  Each of the lines beginning
->  .I tfd
->  describes one of the file descriptors being monitored via
-> @@ -110,13 +107,13 @@ descriptor.
->  The
->  .I data
->  field is the data value associated with this file descriptor.
-> -.IP
-> +.P
->  For signalfd file descriptors (see
->  .BR signalfd (2)),
->  we see (since Linux 3.8)
->  .\" commit 138d22b58696c506799f8de759804083ff9effae
->  the following fields:
-> -.IP
-> +.P
->  .in +4n
->  .EX
->  pos:	0
-> @@ -125,7 +122,7 @@ mnt_id:	10
->  sigmask:	0000000000000006
->  .EE
->  .in
-> -.IP
-> +.P
->  .I sigmask
->  is the hexadecimal mask of signals that are accepted via this
->  signalfd file descriptor.
-> @@ -135,12 +132,12 @@ and
->  .BR SIGQUIT ;
->  see
->  .BR signal (7).)
-> -.IP
-> +.P
->  For inotify file descriptors (see
->  .BR inotify (7)),
->  we see (since Linux 3.8)
->  the following fields:
-> -.IP
-> +.P
->  .in +4n
->  .EX
->  pos:	0
-> @@ -150,7 +147,7 @@ inotify wd:2 ino:7ef82a sdev:800001 mask:800afff igno=
-red_mask:0 fhandle\-bytes:8
->  inotify wd:1 ino:192627 sdev:800001 mask:800afff ignored_mask:0 fhandle\=
--bytes:8 fhandle\-type:1 f_handle:27261900802dfd73
->  .EE
->  .in
-> -.IP
-> +.P
->  Each of the lines beginning with "inotify" displays information about
->  one file or directory that is being monitored.
->  The fields in this line are as follows:
-> @@ -168,19 +165,19 @@ The ID of the device where the target file resides =
-(in hexadecimal).
->  .I mask
->  The mask of events being monitored for the target file (in hexadecimal).
->  .RE
-> -.IP
-> +.P
->  If the kernel was built with exportfs support, the path to the target
->  file is exposed as a file handle, via three hexadecimal fields:
->  .IR fhandle\-bytes ,
->  .IR fhandle\-type ,
->  and
->  .IR f_handle .
-> -.IP
-> +.P
->  For fanotify file descriptors (see
->  .BR fanotify (7)),
->  we see (since Linux 3.8)
->  the following fields:
-> -.IP
-> +.P
->  .in +4n
->  .EX
->  pos:	0
-> @@ -190,7 +187,7 @@ fanotify flags:0 event\-flags:88002
->  fanotify ino:19264f sdev:800001 mflags:0 mask:1 ignored_mask:0 fhandle\-=
-bytes:8 fhandle\-type:1 f_handle:4f261900a82dfd73
->  .EE
->  .in
-> -.IP
-> +.P
->  The fourth line displays information defined when the fanotify group
->  was created via
->  .BR fanotify_init (2):
-> @@ -210,7 +207,7 @@ argument given to
->  .BR fanotify_init (2)
->  (expressed in hexadecimal).
->  .RE
-> -.IP
-> +.P
->  Each additional line shown in the file contains information
->  about one of the marks in the fanotify group.
->  Most of these fields are as for inotify, except:
-> @@ -228,16 +225,16 @@ The events mask for this mark
->  The mask of events that are ignored for this mark
->  (expressed in hexadecimal).
->  .RE
-> -.IP
-> +.P
->  For details on these fields, see
->  .BR fanotify_mark (2).
-> -.IP
-> +.P
->  For timerfd file descriptors (see
->  .BR timerfd (2)),
->  we see (since Linux 3.17)
->  .\" commit af9c4957cf212ad9cf0bee34c95cb11de5426e85
->  the following fields:
-> -.IP
-> +.P
->  .in +4n
->  .EX
->  pos:    0
-> @@ -296,5 +293,7 @@ fields contain the values that
->  .BR timerfd_gettime (2)
->  on this file descriptor would return.)
->  .RE
-> +.SH HISTORY
-> +Linux 2.6.22.
->  .SH SEE ALSO
->  .BR proc (5)
-> --=20
-> 2.47.0.338.g60cca15819-goog
->=20
->=20
-
---=20
-<https://www.alejandro-colomar.es/>
-
---wy7xndtnclfzjif3
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE6jqH8KTroDDkXfJAnowa+77/2zIFAmdTFUwACgkQnowa+77/
-2zJBOw//R5gkc6BqGMfc7rVFgCwT9pCZYT5trDkIN5zPqKpLP6wLuha1rc69Tn4B
-/tuWUgbv9iOrh0UAOMYlyMPcKwGslYB2xa12FSQR8lesNyO8FBcRnwMI2+lWrKQu
-fpsisaAG2Z2VRhEbdahe1ZHtN7iwyL8wz2sTPIH+G2hGllN6Ev4cYMh0lXa16qAB
-UEW2Wcyuv8D4UzKkkezFdKyyW6L94ApDTcQBvDpUJ2w6smycciwvIMct7KDpihUk
-Gf8yKota7coLhAD6uriTEyADo9c8ROEuPEj23FfxCFi8yowC74w/Js3v5cJCOY8S
-spcFsz2hUCt8S7gZTQfjU+cNm1eWOJRsOSQD3KNHN9wgF3sRMksDRktxfKRAw/d3
-sRmKmzQEfRhuT8KZoizw7/EXS05NwAFKKs04oTt/LCnGP0Cr3yrcdXVRs2UPc31U
-XR3zLDKmXdAZJNp3upu4PGT9txo/cPrnDHFr4L8SjKCEpRerfpc1NJfCORSV4uGs
-ttCEjI1rZ4pcpiXVLVkjlfEEwSXWj7vfHyaroyBa6pDkn7yoLznK3Afjh353xkqx
-O/DdImu4N48c1tGwRmboS8ZGbZIuM/2N+23BxiPyTkrHHpM96N+fgi4WtiSQp2NU
-thWE2KQlmCLhrh8XYBOdkzTicvLntKVK8O7nsZPA/qb4t0J6DWM=
-=7pID
------END PGP SIGNATURE-----
-
---wy7xndtnclfzjif3--
+Not sure whether that matters or not, but I'd rather keep the
+PROVIDE() as it doesn't do any harm.
 
