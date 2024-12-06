@@ -1,57 +1,61 @@
-Return-Path: <linux-kernel+bounces-435465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34ED69E7821
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:33:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 641E09E7823
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:34:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E913F282C51
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:33:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 251011886499
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D995E1D54E9;
-	Fri,  6 Dec 2024 18:33:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27A31D5AD4;
+	Fri,  6 Dec 2024 18:34:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DjXcnDMq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8lx7xbP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39324198837;
-	Fri,  6 Dec 2024 18:33:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BF3198837;
+	Fri,  6 Dec 2024 18:34:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733510010; cv=none; b=kzIw0ekQz2qQQD8DjLpEvmazk4b9mbYbOvt747c/nVG5ryS8kGKQF2QpuyHqCxf0fKctwmHkKGFL+FjjfCCmF8AtSvlQnp81NLJYJyDx9u+qTLVaQuzraqF8Gtf49ZJ8ClOrnVFycOritt6u4zT/xvWvPdtyRfXIYPLMubholQU=
+	t=1733510082; cv=none; b=dGhuvK6PHai6dhsYdl2qRkwn7Dg4cuLaDe9k4cwiqRZNE2pEbBH8vwzh4hOGrrVB9qtSUbxLT3gKqZc2FIy2///dEVgOE04K7YX5IgJ5K0o+bKQI6Z7NsWTXAyZ5WchnNqXpUYcArSF+HHlsEmSXqEAgr7l2E4V7p8K589KZxoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733510010; c=relaxed/simple;
-	bh=Q86J75Wlse8wJ2ag9BsAM2NfLtB+qhOPLFY/afXDp1g=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sYSOfUW/GPLy9/xOX4e/n8/0efm20m1oKMNdqNrjPdrlCSjM6VUS0nFNGWXWhROUA9b+ukciEXEOOrFbFHAkVhkylVzIhWxRNh4zh8DHDml1/g5Nnh3TNB86MqlHjhj06d4efrJ2WUMSCOVrWJ8/DcDNt9mBYzFaCTShNn68q4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DjXcnDMq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97EB5C4CED1;
-	Fri,  6 Dec 2024 18:33:28 +0000 (UTC)
+	s=arc-20240116; t=1733510082; c=relaxed/simple;
+	bh=RdAsnLVIig3dm1jYfbZcIv11UEGNzQia7i4gxWQKQfU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ldE4CW2zmculxenlofLrCAc4SpoOgIBYHgfazIRASPJi8F9uNcjTQPwSTeEw2snzqoqmV7LJqZ6+9itRI/Bb8HGaCJKyo/4f6eivc0qUToGv8HdtrPe4CfNiqZEsYVmI33sA0YxDJWYdgrE8QR5/wXDXjRDde8fJW21XHdYyKBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8lx7xbP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60500C4CED1;
+	Fri,  6 Dec 2024 18:34:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733510009;
-	bh=Q86J75Wlse8wJ2ag9BsAM2NfLtB+qhOPLFY/afXDp1g=;
+	s=k20201202; t=1733510081;
+	bh=RdAsnLVIig3dm1jYfbZcIv11UEGNzQia7i4gxWQKQfU=;
 	h=From:To:Cc:Subject:Date:From;
-	b=DjXcnDMqvMdaL7Xb8arLi3mOmq/w2e60TiTSQ7qYsBmps7Iv/GKe5BREyNPFOnFES
-	 RBSfgjEHSPKqzVaBhvH/WLnHNouPXNBH7Ya8sKhMzK7IBzm6qkNXXRcprUebZ9n5Cj
-	 XyKbzOfyehZ/QAD1B+xkF3LWx2097Pne3jA4vz66SzGd8nutUsjfIkj7ivxQu8hm6q
-	 CuTbR660fGvOIU1VmiOR+yqEH/4jxmspBVfEp0q+wU8I07VdlndtZ2stsb8c7VkNNR
-	 bz6JgS71ABpfa4LkP22eHKTmehgO1h9Glovirbj2E6zwMt3EyB8HKmWQ7aDxl/o1r0
-	 tVabPjpxAl2uQ==
-From: Mario Limonciello <superm1@kernel.org>
-To: Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc: linux-usb@vger.kernel.org (open list:THUNDERBOLT DRIVER),
+	b=J8lx7xbPeATj2Sp7CbgiJscBm5nDmqv+ag494JFHmOKsNVPGbb0IhzD9M7ZMhzS6i
+	 sZfJBLz9ekLA4+F1iuoQbWrNBuVaJbUAl/8E9GmzIvmijImseDoRORJ55QaT3NEFwE
+	 keXTQ8mDJHeDSvmUPGsUcn2k8we7G/JEyacEIi4cwlBBsNdJD8jil7HFf0Drpoz9c2
+	 8bdAtmlphb56m5jILlnfdBwPUbQboGwo5wT6caI4MtaQdsvpAQVYAF3YBwJ9iQIhAh
+	 uLT1v4p20pGw3xdcI8+b4vO9o4S0I6Sixr/CLKop4FCYqMMGBJP/uz4cUJXN3QBKDr
+	 0VuCjgJlkzPFw==
+From: Andrii Nakryiko <andrii@kernel.org>
+To: linux-trace-kernel@vger.kernel.org,
+	peterz@infradead.org,
+	mingo@kernel.org
+Cc: oleg@redhat.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	bpf@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Richard Hughes <hughsient@gmail.com>
-Subject: [PATCH] thunderbolt: Don't display retimers unless nvm was initialized
-Date: Fri,  6 Dec 2024 12:33:18 -0600
-Message-ID: <20241206183318.1701180-1-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	jolsa@kernel.org,
+	liaochang1@huawei.com,
+	kernel-team@meta.com,
+	Andrii Nakryiko <andrii@kernel.org>
+Subject: [PATCH perf/core] uprobes: guard against kmemdup() failing in dup_return_instance()
+Date: Fri,  6 Dec 2024 10:34:36 -0800
+Message-ID: <20241206183436.968068-1-andrii@kernel.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,60 +64,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+If kmemdup() failed to alloc memory, don't proceed with extra_consumers
+copy.
 
-The read will never succeed if nvm wasn't initialized.
-
-Reported-by: Richard Hughes <hughsient@gmail.com>
-Closes: https://github.com/fwupd/fwupd/issues/8200
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+Fixes: e62f2d492728 ("uprobes: Simplify session consumer tracking")
+Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
 ---
- drivers/thunderbolt/retimer.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ kernel/events/uprobes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/thunderbolt/retimer.c b/drivers/thunderbolt/retimer.c
-index 89d2919d0193e..7be435aee7217 100644
---- a/drivers/thunderbolt/retimer.c
-+++ b/drivers/thunderbolt/retimer.c
-@@ -321,9 +321,7 @@ static ssize_t nvm_version_show(struct device *dev,
- 	if (!mutex_trylock(&rt->tb->lock))
- 		return restart_syscall();
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 1af950208c2b..1f75a2f91206 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -2048,6 +2048,8 @@ static struct return_instance *dup_return_instance(struct return_instance *old)
+ 	struct return_instance *ri;
  
--	if (!rt->nvm)
--		ret = -EAGAIN;
--	else if (rt->no_nvm_upgrade)
-+	if (rt->no_nvm_upgrade)
- 		ret = -EOPNOTSUPP;
- 	else
- 		ret = sysfs_emit(buf, "%x.%x\n", rt->nvm->major, rt->nvm->minor);
-@@ -342,6 +340,18 @@ static ssize_t vendor_show(struct device *dev, struct device_attribute *attr,
- }
- static DEVICE_ATTR_RO(vendor);
+ 	ri = kmemdup(old, sizeof(*ri), GFP_KERNEL);
++	if (!ri)
++		return NULL;
  
-+static umode_t retimer_is_visible(struct kobject *kobj,
-+				      struct attribute *attr, int n)
-+{
-+	struct device *dev = kobj_to_dev(kobj);
-+	struct tb_retimer *rt = tb_to_retimer(dev);
-+
-+	if (!rt->nvm)
-+		return 0;
-+	return attr->mode;
-+
-+}
-+
- static struct attribute *retimer_attrs[] = {
- 	&dev_attr_device.attr,
- 	&dev_attr_nvm_authenticate.attr,
-@@ -351,6 +361,7 @@ static struct attribute *retimer_attrs[] = {
- };
- 
- static const struct attribute_group retimer_group = {
-+	.is_visible = retimer_is_visible,
- 	.attrs = retimer_attrs,
- };
- 
+ 	if (unlikely(old->cons_cnt > 1)) {
+ 		ri->extra_consumers = kmemdup(old->extra_consumers,
 -- 
-2.43.0
+2.43.5
 
 
