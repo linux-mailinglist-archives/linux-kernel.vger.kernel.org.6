@@ -1,167 +1,254 @@
-Return-Path: <linux-kernel+bounces-434109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9EDD9E61BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:08:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB5A9E61C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:09:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8092716415B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:08:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A744165730
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:09:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3280CECF;
-	Fri,  6 Dec 2024 00:08:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FAC1C27;
+	Fri,  6 Dec 2024 00:09:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="srGA819H"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JL/Mn36T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC30310E6
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:08:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32A5372;
+	Fri,  6 Dec 2024 00:09:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733443705; cv=none; b=gXXaYUfVROm5+c5zLki/icPEZBd/xuAUkgWUtAn+U0ACuPleOdKj8rymFixBF/lYaAeUqe7Yc5HIz/6kNBolmm1gskitQ14UK2aR3QkLvEqgntzht7GwekfxuTtp6SjZvLeRCHagfkEMn3HgxP0EVZCLwbAndL4Wqz4oME2FkYI=
+	t=1733443742; cv=none; b=HDwVuK4qpCJOZljAfIA7qiOGLZkut1GPJN7G5j28QVIyf0OEAz4Sl+oV6sUpmo7I+N5pYIEJybSwENtEFCwjWPjreHnj0tdKuIQtDqJvgNz5CnnDb3Fmu7QPcyzJ+FptoZRvoAuXc9+wu783/t3yS5snQuz8vkHELTrX5Sw1K4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733443705; c=relaxed/simple;
-	bh=wFPdTgfOGWkAoy97xgGZ2d/4NUke3YVxo76cMUT9rOs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mibl0KK4ENX92k8Vl8qVSQ+50vEXtFsw7dMKPtFl4piTQWoh1dO1zLmAWAWQ0VF3FFG1t38e5f1pj0rlQ/xkv1GLnMPR4IcTU3XdRvgOCS5zmOogpJsYL8IwNCmaMegWBB1rvnZi6TzdZVCwI8FbePcE9lIVNbmatj0s/H5OrG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=srGA819H; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53df1d1b6e8so1457507e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:08:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733443702; x=1734048502; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AyWqX2zoZLFRt3ry2g2R9lR3izotXfaeTSy8KYkYq3A=;
-        b=srGA819HN7daNwFw0P3ts+YefkxcY825IpcrPQj7GRZZh7WXCvO0DAvp1w0mtDqv9y
-         cNJCfSrSp55zxhmmIvgewpSkurpRQCB70TCi+a2LSHNpd8/uame75Kc1qDkOh4rIBLsf
-         iLAALvllWUUF7/jW16+452IrjnGfB5AeepkIeGHACMNrjoS+3Sh53u1SDE6tuHuUgZHT
-         MEZHT0OupOIqwDQacjqo0GoeSS5wbxplxiCNNrNPRLqFeKRmYk1v6W2qZBqTPdVbgTL6
-         svcncYbb+0Wdylmj/XZKhZ9rNWRdNT9JonHztaUvKx385GoKJe5jXdjXc2aTMPUMcXJx
-         BvhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733443702; x=1734048502;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AyWqX2zoZLFRt3ry2g2R9lR3izotXfaeTSy8KYkYq3A=;
-        b=TAEbnb83VsxDTZO/tlv1iUm587U3ryWL5tAOvJuZEqkJauEUdJcC8XsaVuHroF+qUi
-         XDV38WFkg/+oJYPr/vCUA8Oxt3IEQ06T1JFz/YuBJfKU0/W3sszYAYGLVPG6Jwjy76Qp
-         2BNUTzlN8kot3DGihBAGftPwIXClI7P2YzAGIhyTJ1sGx+9RkdSNJVRVbSMFMPAvd3i+
-         luhRHoeJk2q4/9nfP8fSNGFOUnkWjdpBjR1biYzSo7ALwJi1Z1188cty4DBq3fx9Ko4X
-         jDpJpVhiJZ6zemkQgUkGz108d5KjzlA/7zxmSpA+RogLQcdY5cajO5xcqFq9m1IuPWOD
-         8nwg==
-X-Gm-Message-State: AOJu0Yy32Enz6aBTZzobSONboKzuK/DINNbJsMYBupnJqaiy5pyi9iNb
-	uS6vOUGPCnsN5OegG2QLmpHh5wyKqoXPiFhB05l67cQ/jXKh5TzfhpwtFjY1hz5hJC6oMZ/XQt8
-	/CsCqeWS/mkGIqpUbAQzhQLldU9xJsUNaZ/JG
-X-Gm-Gg: ASbGncuiqkz4GxThaB1NUbdVYl33DKlP1OfRHTp7OOF37NHjTHa0xkS1paIATsEq4+6
-	0VtvQnPvVAdYwHEAfEL7EnckCLJAoxg==
-X-Google-Smtp-Source: AGHT+IEl7P8g4C6biT8pMmR7TEmB0gJQnY7JWx1axpsFaCZBcd/5qdwTwlQeic62GJWu2sWz95sDRQrA+1CjugfgIXQ=
-X-Received: by 2002:a05:6512:3993:b0:53d:ed68:3cfa with SMTP id
- 2adb3069b0e04-53e2c504c30mr241237e87.55.1733443701768; Thu, 05 Dec 2024
- 16:08:21 -0800 (PST)
+	s=arc-20240116; t=1733443742; c=relaxed/simple;
+	bh=hHbuMinCvJqQuFfDnJE0rkxUmhqg2DrE/ZO13io0jhU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F8orhB1K9WyHcNxdEn2P7ZF6RADlE5x3/lKyhk3whl/I0EBbg+tHFmxPU0imFSRL4GN90W4rDXnKcKF8qF+UhBdSa4v72CSS3GvJrCQh5Ei/OkjKZ54AiEsWlyaO0j8dxJ7MtM1KTOpeWuOFjeEmsu+lvpQ2l6783uV113/7RVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JL/Mn36T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59B99C4CEE6;
+	Fri,  6 Dec 2024 00:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733443742;
+	bh=hHbuMinCvJqQuFfDnJE0rkxUmhqg2DrE/ZO13io0jhU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=JL/Mn36TvXjSmSK1r3N0FTsAO1v4/IndctFPHZ+lPV1FtxF0t2vgccq23Mwa3BcRG
+	 8jAg1sBHhUKfm3A8W0TEiv+JB+jTn+YRT1yY8gLmtjlp/jyNNCZwKth+ZJOAm/Aal3
+	 9FymGt6spOMkvwfofZpyueYi8UMXdHREdVomxewVL6Y/+2SFQHyCAo1ZNW3eiLnJyW
+	 iGMdBDC76PXPLZFP5UyduXyliSp9qq3RQWMjBbEM71RPYNEoJqhZH88zbseSTM5tRC
+	 hDekIFqEf8FslNm8fZjjdfvDfWYkF4jCZDUrd/MjWdfxO/ZY7mgdOnHrxwkBIHluvN
+	 r/DtXSmSsaNyw==
+From: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Florent Revest <revest@chromium.org>
+Cc: linux-trace-kernel@vger.kernel.org,
+	LKML <linux-kernel@vger.kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	bpf <bpf@vger.kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Alan Maguire <alan.maguire@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arch@vger.kernel.org
+Subject: [PATCH v20 00/19] tracing: fprobe: function_graph: Multi-function graph and fprobe on fgraph
+Date: Fri,  6 Dec 2024 09:08:56 +0900
+Message-ID: <173344373580.50709.5332611753907139634.stgit@devnote2>
+X-Mailer: git-send-email 2.43.0
+User-Agent: StGit/0.19
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204221726.2247988-1-sashal@kernel.org> <20241204221726.2247988-8-sashal@kernel.org>
- <CAGETcx8bhzGZKge4qfpNR8FaTWqbo0-5J9c7whc3pn-RECJs3Q@mail.gmail.com>
-In-Reply-To: <CAGETcx8bhzGZKge4qfpNR8FaTWqbo0-5J9c7whc3pn-RECJs3Q@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 5 Dec 2024 16:07:45 -0800
-Message-ID: <CAGETcx-6yHV5xr1j7krY8LShCF5JATX0NSwjeRUL9+3TLCMq9w@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 6.11 08/15] drm: display: Set fwnode for aux bus devices
-To: Sasha Levin <sashal@kernel.org>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
-	=?UTF-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Thierry Reding <treding@nvidia.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, maarten.lankhorst@linux.intel.com, 
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
-	matthias.bgg@gmail.com, elder@kernel.org, ricardo@marliere.net, 
-	sumit.garg@linaro.org, dri-devel@lists.freedesktop.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 5, 2024 at 4:06=E2=80=AFPM Saravana Kannan <saravanak@google.co=
-m> wrote:
->
-> On Wed, Dec 4, 2024 at 3:29=E2=80=AFPM Sasha Levin <sashal@kernel.org> wr=
-ote:
-> >
-> > From: Saravana Kannan <saravanak@google.com>
-> >
-> > [ Upstream commit fe2e59aa5d7077c5c564d55b7e2997e83710c314 ]
-> >
-> > fwnode needs to be set for a device for fw_devlink to be able to
-> > track/enforce its dependencies correctly. Without this, you'll see erro=
-r
-> > messages like this when the supplier has probed and tries to make sure
-> > all its fwnode consumers are linked to it using device links:
-> >
-> > mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) w=
-ith backlight-lcd0
-> >
-> > Reported-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> > Closes: https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca459=
-8@notapiano/
-> > Tested-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> > Signed-off-by: Saravana Kannan <saravanak@google.com>
-> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Reviewed-by: Thierry Reding <treding@nvidia.com>
-> > Tested-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> > Link: https://lore.kernel.org/r/20241024061347.1771063-2-saravanak@goog=
-le.com
-> > Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Signed-off-by: Sasha Levin <sashal@kernel.org>
->
-> As mentioned in the original cover letter:
->
-> PSA: Do not pull any of these patches into stable kernels. fw_devlink
-> had a lot of changes that landed in the last year. It's hard to ensure
-> cherry-picks have picked up all the dependencies correctly. If any of
-> these really need to get cherry-picked into stable kernels, cc me and
-> wait for my explicit Ack.
->
-> Is there a pressing need for this in 4.19?
+Hi,
 
-I copy pasted this into several replies. In all those cases I meant
-the kernel version mentioned in the subject.
+Here is the 20th version of the series to re-implement the fprobe on
+function-graph tracer. The previous version is;
 
--Saravana
+https://lore.kernel.org/all/173125372214.172790.6929368952404083802.stgit@devnote2/
 
->
-> -Saravana
->
-> > ---
-> >  drivers/gpu/drm/display/drm_dp_aux_bus.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c b/drivers/gpu/drm=
-/display/drm_dp_aux_bus.c
-> > index d810529ebfb6e..ec7eac6b595f7 100644
-> > --- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
-> > +++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
-> > @@ -292,7 +292,7 @@ int of_dp_aux_populate_bus(struct drm_dp_aux *aux,
-> >         aux_ep->dev.parent =3D aux->dev;
-> >         aux_ep->dev.bus =3D &dp_aux_bus_type;
-> >         aux_ep->dev.type =3D &dp_aux_device_type_type;
-> > -       aux_ep->dev.of_node =3D of_node_get(np);
-> > +       device_set_node(&aux_ep->dev, of_fwnode_handle(of_node_get(np))=
-);
-> >         dev_set_name(&aux_ep->dev, "aux-%s", dev_name(aux->dev));
-> >
-> >         ret =3D device_register(&aux_ep->dev);
-> > --
-> > 2.43.0
-> >
+This version is rebased on v6.13-rc1 and fixes to make CONFIG_FPROBE
+"n" by default, so that it does not enable function graph tracer by
+default.
+
+Overview
+--------
+This series rewrites the fprobe on this function-graph.
+The purposes of this change are;
+
+ 1) Remove dependency of the rethook from fprobe so that we can reduce
+   the return hook code and shadow stack.
+
+ 2) Make 'ftrace_regs' the common trace interface for the function
+   boundary.
+
+1) Currently we have 2(or 3) different function return hook codes,
+ the function-graph tracer and rethook (and legacy kretprobe).
+ But since this  is redundant and needs double maintenance cost,
+ I would like to unify those. From the user's viewpoint, function-
+ graph tracer is very useful to grasp the execution path. For this
+ purpose, it is hard to use the rethook in the function-graph
+ tracer, but the opposite is possible. (Strictly speaking, kretprobe
+ can not use it because it requires 'pt_regs' for historical reasons.)
+
+2) Now the fprobe provides the 'pt_regs' for its handler, but that is
+ wrong for the function entry and exit. Moreover, depending on the
+ architecture, there is no way to accurately reproduce 'pt_regs'
+ outside of interrupt or exception handlers. This means fprobe should
+ not use 'pt_regs' because it does not use such exceptions.
+ (Conversely, kprobe should use 'pt_regs' because it is an abstract
+  interface of the software breakpoint exception.)
+
+This series changes fprobe to use function-graph tracer for tracing
+function entry and exit, instead of mixture of ftrace and rethook.
+Unlike the rethook which is a per-task list of system-wide allocated
+nodes, the function graph's ret_stack is a per-task shadow stack.
+Thus it does not need to set 'nr_maxactive' (which is the number of
+pre-allocated nodes).
+Also the handlers will get the 'ftrace_regs' instead of 'pt_regs'.
+Since eBPF mulit_kprobe/multi_kretprobe events still use 'pt_regs' as
+their register interface, this changes it to convert 'ftrace_regs' to
+'pt_regs'. Of course this conversion makes an incomplete 'pt_regs',
+so users must access only registers for function parameters or
+return value. 
+
+Design
+------
+Instead of using ftrace's function entry hook directly, the new fprobe
+is built on top of the function-graph's entry and return callbacks
+with 'ftrace_regs'.
+
+Since the fprobe requires access to 'ftrace_regs', the architecture
+must support CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS and
+CONFIG_HAVE_FTRACE_GRAPH_FUNC, which enables to call function-graph
+entry callback with 'ftrace_regs', and also
+CONFIG_HAVE_FUNCTION_GRAPH_FREGS, which passes the ftrace_regs to
+return_to_handler.
+
+All fprobes share a single function-graph ops (means shares a common
+ftrace filter) similar to the kprobe-on-ftrace. This needs another
+layer to find corresponding fprobe in the common function-graph
+callbacks, but has much better scalability, since the number of
+registered function-graph ops is limited.
+
+In the entry callback, the fprobe runs its entry_handler and saves the
+address of 'fprobe' on the function-graph's shadow stack as data. The
+return callback decodes the data to get the 'fprobe' address, and runs
+the exit_handler.
+
+The fprobe introduces two hash-tables, one is for entry callback which
+searches fprobes related to the given function address passed by entry
+callback. The other is for a return callback which checks if the given
+'fprobe' data structure pointer is still valid. Note that it is
+possible to unregister fprobe before the return callback runs. Thus
+the address validation must be done before using it in the return
+callback.
+
+Download
+--------
+This series can be applied against the ftrace/for-next branch in
+linux-trace tree.
+
+This series can also be found below branch.
+
+https://git.kernel.org/pub/scm/linux/kernel/git/mhiramat/linux.git/log/?h=topic/fprobe-on-fgraph
+
+Thank you,
+
+---
+
+Masami Hiramatsu (Google) (18):
+      fgraph: Pass ftrace_regs to entryfunc
+      fgraph: Replace fgraph_ret_regs with ftrace_regs
+      fgraph: Pass ftrace_regs to retfunc
+      fprobe: Use ftrace_regs in fprobe entry handler
+      fprobe: Use ftrace_regs in fprobe exit handler
+      tracing: Add ftrace_partial_regs() for converting ftrace_regs to pt_regs
+      tracing: Add ftrace_fill_perf_regs() for perf event
+      tracing/fprobe: Enable fprobe events with CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+      bpf: Enable kprobe_multi feature if CONFIG_FPROBE is enabled
+      ftrace: Add CONFIG_HAVE_FTRACE_GRAPH_FUNC
+      fprobe: Rewrite fprobe on function-graph tracer
+      fprobe: Add fprobe_header encoding feature
+      tracing/fprobe: Remove nr_maxactive from fprobe
+      selftests: ftrace: Remove obsolate maxactive syntax check
+      selftests/ftrace: Add a test case for repeating register/unregister fprobe
+      Documentation: probes: Update fprobe on function-graph tracer
+      ftrace: Add ftrace_get_symaddr to convert fentry_ip to symaddr
+      bpf: Use ftrace_get_symaddr() in get_entry_ip()
+
+Sven Schnelle (1):
+      s390/tracing: Enable HAVE_FTRACE_GRAPH_FUNC
+
+
+ Documentation/trace/fprobe.rst                     |   42 +
+ arch/arm64/Kconfig                                 |    2 
+ arch/arm64/include/asm/Kbuild                      |    1 
+ arch/arm64/include/asm/ftrace.h                    |   51 +-
+ arch/arm64/kernel/asm-offsets.c                    |   12 
+ arch/arm64/kernel/entry-ftrace.S                   |   32 +
+ arch/arm64/kernel/ftrace.c                         |   78 ++
+ arch/loongarch/Kconfig                             |    4 
+ arch/loongarch/include/asm/fprobe.h                |   12 
+ arch/loongarch/include/asm/ftrace.h                |   32 -
+ arch/loongarch/kernel/asm-offsets.c                |   12 
+ arch/loongarch/kernel/ftrace_dyn.c                 |   10 
+ arch/loongarch/kernel/mcount.S                     |   17 -
+ arch/loongarch/kernel/mcount_dyn.S                 |   14 
+ arch/powerpc/Kconfig                               |    1 
+ arch/powerpc/include/asm/ftrace.h                  |   13 
+ arch/powerpc/kernel/trace/ftrace.c                 |    2 
+ arch/powerpc/kernel/trace/ftrace_64_pg.c           |   10 
+ arch/riscv/Kconfig                                 |    3 
+ arch/riscv/include/asm/Kbuild                      |    1 
+ arch/riscv/include/asm/ftrace.h                    |   45 +
+ arch/riscv/kernel/ftrace.c                         |   17 -
+ arch/riscv/kernel/mcount.S                         |   24 -
+ arch/s390/Kconfig                                  |    4 
+ arch/s390/include/asm/fprobe.h                     |   10 
+ arch/s390/include/asm/ftrace.h                     |   37 +
+ arch/s390/kernel/asm-offsets.c                     |    6 
+ arch/s390/kernel/entry.h                           |    1 
+ arch/s390/kernel/ftrace.c                          |   48 -
+ arch/s390/kernel/mcount.S                          |   23 -
+ arch/x86/Kconfig                                   |    4 
+ arch/x86/include/asm/Kbuild                        |    1 
+ arch/x86/include/asm/ftrace.h                      |   54 +-
+ arch/x86/kernel/ftrace.c                           |   50 +-
+ arch/x86/kernel/ftrace_32.S                        |   13 
+ arch/x86/kernel/ftrace_64.S                        |   17 -
+ include/asm-generic/fprobe.h                       |   46 +
+ include/linux/fprobe.h                             |   62 +-
+ include/linux/ftrace.h                             |  116 +++
+ include/linux/ftrace_regs.h                        |    2 
+ kernel/trace/Kconfig                               |   22 -
+ kernel/trace/bpf_trace.c                           |   38 -
+ kernel/trace/fgraph.c                              |   57 +-
+ kernel/trace/fprobe.c                              |  664 +++++++++++++++-----
+ kernel/trace/ftrace.c                              |    6 
+ kernel/trace/trace.h                               |    6 
+ kernel/trace/trace_fprobe.c                        |  146 ++--
+ kernel/trace/trace_functions_graph.c               |   10 
+ kernel/trace/trace_irqsoff.c                       |    6 
+ kernel/trace/trace_probe_tmpl.h                    |    2 
+ kernel/trace/trace_sched_wakeup.c                  |    6 
+ kernel/trace/trace_selftest.c                      |   11 
+ lib/test_fprobe.c                                  |   51 --
+ samples/fprobe/fprobe_example.c                    |    4 
+ .../test.d/dynevent/add_remove_fprobe_repeat.tc    |   19 +
+ .../ftrace/test.d/dynevent/fprobe_syntax_errors.tc |    4 
+ 56 files changed, 1312 insertions(+), 669 deletions(-)
+ create mode 100644 arch/loongarch/include/asm/fprobe.h
+ create mode 100644 arch/s390/include/asm/fprobe.h
+ create mode 100644 include/asm-generic/fprobe.h
+ create mode 100644 tools/testing/selftests/ftrace/test.d/dynevent/add_remove_fprobe_repeat.tc
+
+--
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
