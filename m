@@ -1,84 +1,68 @@
-Return-Path: <linux-kernel+bounces-435428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 930329E7780
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:36:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 331019E7782
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:37:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73B1116A01B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:36:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE79F287A43
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EBD2206B4;
-	Fri,  6 Dec 2024 17:36:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83B42206A4;
+	Fri,  6 Dec 2024 17:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="IW+nWapV"
-Received: from sonic313-14.consmr.mail.bf2.yahoo.com (sonic313-14.consmr.mail.bf2.yahoo.com [74.6.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="OAsSaXPm"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D172206A4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D4A220683
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733506596; cv=none; b=k4biGAHOIaAnd0gL8B/kAwH2ATWLerfkkYWp7E2LGcWvr4L57Hikb8pgJ93EX/v2Ab1KcAUSJyOL6Fk/1shh7DpLP1mekf6hI1JWImAz5B4z0DMR+cKPw/T5G3TdDF46FxWJpJwuNrFpCq8bbRVbBfjCzC2gY6qPDiYD2LnmjRY=
+	t=1733506619; cv=none; b=TBv8qV3bR7e/LiV4FgV0PCHd3U8SG6SivjKR8Ih5P2OAfVbgJ9cJOQ/58v/92IJCiHEc0UVaNQN2FSen3599+USPISFGI47jkEuC/RAcIQwoO5IUvufrxj26BtHUmIROV84aMW88oTOnQApSCiQF6DzZTs9v5C5nmbiXC2Kuhrc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733506596; c=relaxed/simple;
-	bh=/mvRGvb8G6xZ5bKh/acDQjXrAyZNrDqTGhdgjSvjD/U=;
+	s=arc-20240116; t=1733506619; c=relaxed/simple;
+	bh=k0Ck9hhSE+pXdvPn6NW0n+iJgQ8WhN1qYv0YO2/srL8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OmzcbkQqFUKDMFUYKqtl89p0+WWQg6m5BoLQTA7DaIUjVn+5yZaXhZo5OkLuX/4paRyqalf02VhgIdavxzLRqA729s1C+CoQJw3RttiBm0JoqIxCwfxWBD7tJ3fWI45KgYchgfeEAwtGK5XtFiGWfND8FBzsAhQ1wzGD4ef2jKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=IW+nWapV; arc=none smtp.client-ip=74.6.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1733506588; bh=PRmZEtRle3VKbT216MubtI9sERRDGhVhmN8FOunTpLk=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=IW+nWapVr8RwZukhDbGAokhF2ivLfxGt7ZMuKUab94ErgrevQy62DaHetkx9brpykD0EiwkJ45d+RdC1PKTirCaWnLwwnTS2OwOWBaBxRvyxWrbMh+O09HDwauIpzugVrJ3B3JRvK7MS+Tk3lx3NyZR+0LPx6SwOzm0xjwtaE2HbG008xQsHAPwyuZ2s1Nu9olsuM92Vv4K8e29rYscW3IhE45wCC9l8fm0WWBtYCRJST5l3HhA3iCr2Uonhep/JmNsHs8PVpvxHF4mfbliKw8+pU0pxXP39Q/7ht69V+jpZO5OyPlVaYGRSfOlNF5nG/cvurHY6O+Ka2Ffnc5hPUg==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733506588; bh=07xCs4CMQv1OLVLggaApZ5ESZUKrvqaD/HZTIiJS0ne=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=iybAW1EJOYexTzhrbftIXcAK2t6nZsBYRMfWDghW0piz++Kmqdg6sox7EzF+BkOpsqPpGCTuU43ekVUyQrtq4890ebv4v2CcK5Xv+relaQilBjrrtth/WJSdNAr4FA0qwOw7e0ExFzYMe8bjEzoxs9xjl281eFklP5rBU1ga4Yaj/hsI9sDOmETX8QBUkiNNG2FaNqpJoERaDg1pko9IOjxWjb+LoQhZveW23OSHUwhZ1XbY5GE+PBGFU17O0/B5u9bHdJAI6y5zxxe6dN94o0zpBg7D17KRVZ4ROmEnukXQ/kEGLvmmVXdR14Mu2nAumR4HxxWx2SAf3CxHeHqDiQ==
-X-YMail-OSG: hxFP6O0VM1mz1bkfm1YC66A9Bije4KniFDecJKk6QZkArML7Kj.Ny2.6FbKfgcB
- NA66P9jZOhrmHwaHhc2G5yelGrbYoKwH70qiIEeCcbwvjgcbqzRI8mZxQtSQPIdTbB3YcQfjO94r
- 4ACibzEimSwgzh9SXfvdewio_E.16cb5Rde326OXrurdbIwwkBfx5OeCCkdJ.TxGSSRH.BTQcHpf
- 75TjoytXSKo3Ft5coeupC6ACIvq..YEIzIJLEnkoCQl75heW6oQHddyWw3iLzp6pCxO0dkZKjnvk
- Vj6hJvwFjCASTH5gbUKZAAeua7W3QMhPzdLLJml2vWFp9B6n2RXvovQEJpoGUmjaCqRnx7qVATw.
- UDFtykyaB7eVYW9Jqx72_xXvABOTMuebzmZVP0NQPjEb5ZxnECK3KW_KF2JpYvJmJ5rlZu.QhphY
- sGjT_OVQTEfYGGdehN6_tSh8DC.nM0xRxgNIyDZZ2b3cWh51LdMEAOxkXAQ.oEl8Edp7WbAGYeto
- CZDGoNTzx7S8rauyrp3WOTNhaw0aEXVJcXSoKJKNkBxIdMdwaaQgzFPQDJht.HKDI3zJWSkjtrQn
- 9rDf2NPx6bWvD3V8QEfnHYagepE7AXhNRWJmI7UKvcf9NVLL0GEtOjxfFGlum3f.wQMG57egLC_o
- I_FITiuRW0yIpGAbM1eckqU7sm_5SQiut.oXR7JkvI3OSCABB96dwY9_Qy_H.FDvuVTakdf3JNwZ
- QXIRtY9hPxT2jnI6iGbNGiKUeTX1ZxoAWsMaXPnqJpoH9f8YZyL2GneOEsQjGnaDmyPIVy_gl44n
- mf5uHfCMa7vLTdDDvxe74O_58PbtDRaJSzDGItHReO3XRaYRG7rl13UTTjQbXnfPlau.cFIXoQFB
- thvN7ukrcvOKHyEC44_pSiHMHi6ap21FQ4dQRXWeQg.NzATcP1KXXFP4Tq7aOYE3kU7nHn6Ag9Gw
- KY_Cg0Qi_dTcnA51q_DgY6gXJlcbvEt7paINPkWsNzb7FNqpqPLhBP6lLMxLsekViS8d6Ri_7Pw9
- g_0L69y_q5jHXOntNSza6vQMvvMu6FRK7iX9GvqkdkrpSggs1UqZKE39_5gYBmVlfC61jkQllVwO
- aysVitoOBjwpvhWtinCpxEk.2feFwZ.4cDqzsbX0sbpfgwdhQ1CdTag9LO2tn7SlKVCSTpWhNVNw
- dFosBzn_3yN84bpMosUERcWbrbmcHWrM._8NzfNScUUq5851cCZJZll3PFnHrekNsdZffjIr6hRR
- O9tZhRgyiPg546ltZhL5qDmXdRpUvHBbvVR9IflAypKVkM0eDL3V7ZJAPhBFtnAfc_PcxhmXOIEE
- DDtWTesqqsmVa_Iv5rGLmBB6QRLz43_FcoCVzDNmKHwrOKRGqPsTfaJTuuJWr1fYuqYHPQY9DjwO
- 1X4fVMw.JlEM2k1nJQ.f_fzJPekMP4mGTV1kQiKKUKRYq7hKAEBxkRoRSnx7l3DXGDslHGCU9CKM
- xF3A1De8Y39QI_fiSTuOck1h90eugjzb2rlGjZ1g9ru5lYVOy83aKeEJdGbmTWEcjAb3p8UGSCSP
- fCC4V.ZO99HecwtErEW4mDomnAGi8EWNnMQnrpXXy3n2Uy_7h2k2LmNd1qOVnCh1TmOmFY_UWf3B
- zCQieA3U8p3Drp_cg.ojeyEh40cO_Hu.l2FNdGl08ixf8eic3foNPZYVtcg2SNMN6HcfxYYgxTRu
- 0_I1U8oDBDdqn32psDiq0Kx1gTjkoYwXglD4wcZc7MCVhVh6JpXJwL90bxuacV1.b0eBv_4dZiSg
- kGcrpsEkB61IN6v5kogtSljaEWs2eVEo1tVeA0fChpDU7ZCMoeoptd9NyBhTnqIR_8uW8luZKgIY
- 4ehhGcm_mBNFXscJ1iGjh.mhUW62TzpMiINMtr_9oyLupIgkCVy4EJrT7cE_Pf47buIuxaG32BEq
- 1GRLEnVtnjD1MBc6QpVKje6zKsAJTJb44GLg65To8XRWwHfxTOFajT09D7KdRz0nNUOQ6vLquQQ5
- IJEVSE5lex_ZN6iMG482Ir_U70pc0zRsbLFUB8Z9wFxYxSFX1bHQnNv7G6Fiz3erharlcinQHggm
- 6TMdlP61Q9_jtRe.MeeJM6b8a1.vgLs2Z7wwWyZsujk203FVAXj2tBncwGScxAgnyJKSsXHctNSl
- U0xCOcKqnEIDlAHtVR28aJEEcvCDpEZwCSFnMWeAqAl6_Fa3PhVPI.9RjJEI4WwdKGWKX8wLELGY
- GsTti8v9qJG.Ki6pgRQEPv1onJvrGnHWZfSPuJyo9NnQeBLDzwXSfh.qtBA--
-X-Sonic-MF: <bluescreen_avenger@verizon.net>
-X-Sonic-ID: 479efaa1-4fdb-4406-8593-03a020f2f64a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Fri, 6 Dec 2024 17:36:28 +0000
-Received: by hermes--production-bf1-66bb576cbb-h2pjb (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 64cf1929a7458f2c6ec659f4a8414399;
-          Fri, 06 Dec 2024 17:36:22 +0000 (UTC)
-From: n3rdopolis <bluescreen_avenger@verizon.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH 1/2] ttynull: Add an option to allow ttynull to be used as a
- console device
-Date: Fri, 06 Dec 2024 12:36:21 -0500
-Message-ID: <3758619.RUnXabflUD@nerdopolis2>
-In-Reply-To: <6622246.K2JlShyGXD@nerdopolis2>
-References: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
- <2024120408-moneyless-stood-cda2@gregkh> <6622246.K2JlShyGXD@nerdopolis2>
+	 MIME-Version:Content-Type; b=W3WBaD3PsqiTxZL0xQwshEKuCnBKinn7ycTs+CPD2RoDBh5ofCEcRj85wg2OC03fubiqEOcDtm3IRBn87GNZa1fJLtshqivmZT/shiMyFjbQXgHsc9OwWxmhVY09+xOh3QW+S4fx+Z5Hvrd7F7l16dkxlCQCKIP9y6vOLmIgJ0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=OAsSaXPm; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jQPhfD23YTFu2k8PG7PzToLjH9H9SzaXg3NW46Iyzwk=; b=OAsSaXPmNKWbDvZAt2FfJrx+NN
+	INUzGPq8N1RuCnmRfnPcnrecc3H2wSuYkENTEjfdewM3VyK/Ta145Y7zhhTcdaWfHXXpYcz4er1Ol
+	mcWZFZtppOyfOt+L0KXOI9MLHQntSMP38xR/IOMzod27BqxmTJ3dGavZmQorAtPvY31bRmcC7eR2i
+	r6WrGUjO46+7E6vTrc4oLURq4lgF7mj56R4Z4997/z2/UrS+zpBcfqAVZISIOszZRRfKMfowKEBET
+	Uc3qFkGmmBCuRfF+DCzrOwDMWB+ho1+Id9Ey2E/MGzXC+x4YZV9DlSG1LhENOUcXRQkxhZ1hDSyHj
+	9KxtPopQ==;
+Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tJcG1-00032U-VI; Fri, 06 Dec 2024 18:36:50 +0100
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: vkoul@kernel.org, kishon@kernel.org,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Cc: linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ quentin.schulz@cherry.de, Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject:
+ Re: [PATCH 1/2] phy: phy-rockchip-samsung-hdptx: annotate regmap
+ register-callback
+Date: Fri, 06 Dec 2024 18:36:49 +0100
+Message-ID: <2287157.Dhsi8hcfAM@diego>
+In-Reply-To: <e6172204-2f3f-4a9c-892c-be85d19ad031@collabora.com>
+References:
+ <20241206103401.1780416-1-heiko@sntech.de>
+ <20241206103401.1780416-2-heiko@sntech.de>
+ <e6172204-2f3f-4a9c-892c-be85d19ad031@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,46 +71,54 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
-X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
 
-On Wednesday, December 4, 2024 2:37:55 PM EST n3rdopolis wrote:
-> On Wednesday, December 4, 2024 1:06:50 PM EST Greg Kroah-Hartman wrote:
-> > On Wed, Dec 04, 2024 at 12:06:56PM -0500, n3rdopolis wrote:
-> > > On Wednesday, December 4, 2024 10:41:44 AM EST Greg Kroah-Hartman wrote:
-> > > > On Thu, Nov 28, 2024 at 11:15:48PM -0500, n3rdopolis wrote:
-> > > > > Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
-> > > > > initialized by console_initcall() and selected as a possible console
-> > > > > device.
-> > > > > Signed-off-by: n3rdopolis <bluescreen_avenger@verizon.net>
-> > > > 
-> > > > Meta-comments, we need a blank line before the s-o-b line, AND we need a
-> > > > real name here, sorry.  I can't do anything with these (including
-> > > > reviewing them), until that happens.
-> > > > 
-> > > Oh, I thought that I didn't need a real name
-> > > 
-> > > I found a recent thread that seems like it suggests that I thought
-> > > https://lore.kernel.org/all/20241121165806.476008-40-alex.bennee@linaro.org/[1]
-> > > https://drewdevault.com/2023/10/31/On-real-names.html[2]
-> > > Or do I need to wait for that change to the guideline be merged?
+Am Freitag, 6. Dezember 2024, 12:18:56 CET schrieb Cristian Ciocaltea:
+> On 12/6/24 12:34 PM, Heiko Stuebner wrote:
+> > From: Heiko Stuebner <heiko.stuebner@cherry.de>
 > > 
-> > That change has been merged a long time ago, but as far as I can tell,
-> > this signed-off-by you used here does not meet this category.
+> > The variant of the driver in the vendor-tree contained those handy
+> > comments in the regmap register callback. Having the different ranges
+> > describe what they are looks helpful.
 > > 
-> Oh, what would it take to meet that category? I've been using this nick to
-> contribute to other projects, and it matches my GitHub name, and FreeDesktop
-> GitLab name
+> > Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
+> > ---
+> >  drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 14 +++++++-------
+> >  1 file changed, 7 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> > index 4ced1479e2dc..c5c64c209e96 100644
+> > --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> > +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+> > @@ -766,13 +766,13 @@ static struct tx_drv_ctrl tx_drv_ctrl_hbr2[4][4] = {
+> >  static bool rk_hdptx_phy_is_rw_reg(struct device *dev, unsigned int reg)
+> >  {
+> >  	switch (reg) {
+> > -	case 0x0000 ... 0x029c:
+> > -	case 0x0400 ... 0x04a4:
+> > -	case 0x0800 ... 0x08a4:
+> > -	case 0x0c00 ... 0x0cb4:
+> > -	case 0x1000 ... 0x10b4:
+> > -	case 0x1400 ... 0x14b4:
+> > -	case 0x1800 ... 0x18b4:
+> > +	case 0x0000 ... 0x029c: /* CMN Register */
+> > +	case 0x0400 ... 0x04a4: /* Sideband Register */
+> > +	case 0x0800 ... 0x08a4: /* Lane Top Register */
+> > +	case 0x0c00 ... 0x0cb4: /* Lane 0 Register */
+> > +	case 0x1000 ... 0x10b4: /* Lane 1 Register */
+> > +	case 0x1400 ... 0x14b4: /* Lane 2 Register */
+> > +	case 0x1800 ... 0x18b4: /* Lane 3 Register */
+> >  		return true;
+> >  	}
+> >  
 > 
-What if I made the signed-off-by (and committer name) this email address? would
-that work?
-> Thanks
-> > thanks,
-> > 
-> > greg k-h
-> > 
-> 
-> 
+> Nice finding!  The HDMI variant of the driver which I used as an
+> implementation reference (i.e. phy-rockchip-samsung-hdptx-hdmi.c)
+> doesn't provide these comments.
 
+yep, those comments were in the displayport variant of the phy-driver ;-) .
+I don't really understand why the vendor tree contains 2 separate drivers
+written by two different people, but at least it looks like we're getting
+one driver in mainline, thanks to Damon's work :-)
 
 
 
