@@ -1,120 +1,171 @@
-Return-Path: <linux-kernel+bounces-435096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211D99E6FA2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:55:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D4359E6FAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:57:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3E43285467
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F5E51886238
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:56:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310DE207E19;
-	Fri,  6 Dec 2024 13:55:11 +0000 (UTC)
-Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B03201269;
-	Fri,  6 Dec 2024 13:55:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DEB207E1E;
+	Fri,  6 Dec 2024 13:56:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7D8207DF8;
+	Fri,  6 Dec 2024 13:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733493310; cv=none; b=aItQkN176yqpLWxBuW0WclAVXOUDta7jD5w/XoOFG0LUZyjaEFloE8OCwKmt84Aa9yu0oqllsfLjzOz0m1zN0JC2VAcK93yB3PMOhLbC1Oy33Kze2PCUxjZAAq9qAl+to5+X0NLvX28wqkzQwB1cSyvoaqPQQ+wwYRLPoTQ72qg=
+	t=1733493395; cv=none; b=sXUNj2Ip281bNjGV/VNbyZnnYVf5MiV/qD6QChN0ILukssEpAItwMnp95xhDt31mLtU/k4q4+9LQGVbxMxC80PmfFVLIn38nP2pMzuz4tZaZh2YA3sR+UQRyTTQ+3HHg1dIWjkfDGDMdJqZfD+FUv+icwNYhNQQhsiBZUCXPLt0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733493310; c=relaxed/simple;
-	bh=35tXrHehphd8UKl5WJEOudgvnNENyraL3kMkrb/5N20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SA2Yv4PvjKOmlk4c7E1XrWKL33Xjj2/2NJk8u7hsGiWcTDsN+5DYZXigkqOVP7iX53kznWJBdoNU50jIQyTQmg5J7JYAX//kJYg3wJg4DBFBFwVRW/SAwNVuBKpkN9oLyTLufULLZvGglR6s53kUlc6UMCzm3/Sh1pdvDW4QGuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-85c529e72bcso80088241.0;
-        Fri, 06 Dec 2024 05:55:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733493306; x=1734098106;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mFx+gnmIbf6Ff/K8kUB1TzM57MX3Vguw4LO8xY75gyw=;
-        b=XT4T20I0Ia3twlO9ZoKoEgvvnOuf36oZpDqItjRSgzS4O5ZAdBZvSr6CahMHj6VLpO
-         b1phqGrDRPmFro1o9Vo9kjmv5VUUcB1Fywqt9PfcExjFyPnJvsHYLzspXglYRNZFQUM6
-         RLZADF4EC5PAxvRtN3S2nCRCJJgZSmUgwfCbiL/H9nI4oSKi5BBZWZpOdy2hRiyYb3R+
-         ktfzmzQJ/F4NIwNhVZTrdXlEfKCwV8XgZJrtSf+HROFiuRHvRobh0D4cUYwwTBz0tnOM
-         9BhXtjYKY/y1P0+qa17fiSidcaH6hIe/0nrWFOn6AvByYhZjh/CnFY+m1rx5LshR2bE6
-         z0kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUT5S60ZsJ7j0PbBfZP1bk5VBcxfsyfj6hmZljpkTexEOt3O2EpRqW8f5Yxa7/ntA5vl5zI1lL3JrBiBtF/Q/qQ1IU=@vger.kernel.org, AJvYcCV7LpoRuleAghIzYZP0QuBiysSa77rhWdQV7BNAUl3/Sajs2NGz8CUgIjMFmHHoxDy4DdMH1S3nqRsB@vger.kernel.org, AJvYcCWKGaHoLOE7m1/hlBBPou/tnIKoidMXmtq9Cqy1dUFnc3TbV6y/MQm9kKhZJHr6DgCu45quyEr9WLKIrsGu@vger.kernel.org, AJvYcCWiNq0LYKtpdn8SKXGuCHFKUcLuQF0u9f0CCEYQFMbGQbki0QOoqiHp539A8Dh3eIHf9fjDchxX0Lzz@vger.kernel.org, AJvYcCXnZ1fQTYbA7dgj3p+gqlbJsaOc0YlB55765rC9sKG8SxDhwKbwxy3dSlhcI+zGs+6EOKtoGgIOOGS9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxjw2l5DIYshNyMQobfFPDqHHyuhxuxwHGLL4mQvAe+AnRuAHJJ
-	xo5rc0bOVq1WxXfl06+co/krftzvozxS0HI4Y+MgTSqCamZhD+aSi8glmy/e
-X-Gm-Gg: ASbGncsbIxiPDc7B0qxeZTy6I4xjIwOEFJzYOoWTYEC3MwzoUvkodkkdcpnPu2QxiKV
-	B9qTukPKuc2j5fb9tHdFN06FNY/NdpNtwQ8zElgXBOFMpepFW77Bi42IssBRWbcbi86zml52pMs
-	11vxj7XW6Fvik6XjER4H/hYHi+EIWmT4Z3aKx9nXHM+fFYs0ZBQ3CKGjHPFnLETSLYzNtAVbzWt
-	N87v9uX/hJmAqEAblxoKwc11vvf1kvSh4jXVoUs5TZox47ON5LxT/BouWHSCbjuSDAITs4pjHCt
-	CaAYuW6S8Zj8
-X-Google-Smtp-Source: AGHT+IELHsyph6EjruavIZbnBltuZ6aqNdZ8QzzgBnhI6WIWB/QC1unKyTNKCavV5E3ukn211r0vlA==
-X-Received: by 2002:a05:6102:3e92:b0:4af:c435:58b5 with SMTP id ada2fe7eead31-4afcab164admr2887011137.22.1733493306530;
-        Fri, 06 Dec 2024 05:55:06 -0800 (PST)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com. [209.85.217.43])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51606dc43efsm73014e0c.32.2024.12.06.05.55.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 05:55:06 -0800 (PST)
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4aef1e4c3e7so524253137.2;
-        Fri, 06 Dec 2024 05:55:06 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUZXlqfxnsNroBqlKLet62oM9LBkng3EtmwEdXVLKWJf3saTuqGlajErnvH0k7/nLxY0CGo4XRGTi6Z@vger.kernel.org, AJvYcCUwCHpmnK9yPvSFnNitDw16g5rISOTWnyB1Co/p+1ynAiAmtXtpeSREMUYqihH6w9Xxs35liEIduzr6@vger.kernel.org, AJvYcCVf9EoYgp0vD/g+TC/xhkGl5feVmTZW01CzVEA5hYkFkz5pSahfv/ulxzbI1cC66+cdsp4V71LMPsEftjz5kUPpT2A=@vger.kernel.org, AJvYcCWU3pwkXUAnhw7/gnApWMgVYlg0sreFUIcU4gxAiFoTnwGg4UttFHxAeZZXPuPafGIkXnYlaIPh4Upg@vger.kernel.org, AJvYcCXRcr7o8dnkYEwtntz0RMhtuvShX/mWIKTLrj1eFfTeEwKrRtljTdcfN7vGtGZFOSwsCej9lHWNCMYyGPvf@vger.kernel.org
-X-Received: by 2002:a05:6102:cc6:b0:4af:4d60:2e12 with SMTP id
- ada2fe7eead31-4afcaa3dbb5mr3166643137.7.1733493305691; Fri, 06 Dec 2024
- 05:55:05 -0800 (PST)
+	s=arc-20240116; t=1733493395; c=relaxed/simple;
+	bh=bKU/vQCebGDq0D/DCCPWxrVzDVQg49dbgATsgAGCB+4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WjAwSPhS63pWVyi2uRP3ux+MkZBBfucv5UF/RC87LtsnhOJyKAG+IfzLudk3iLKP9XwB2isB1v1saybxKcZKdui6PZDC7TuaGZIl+jI9mCMeZ7vMCUw//pzXc4ZlwLxXOyOdyWDtejEAW5cH7HoAYHLYCE7RB4p+hq0ZSe7cRTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 48F9CFEC;
+	Fri,  6 Dec 2024 05:56:59 -0800 (PST)
+Received: from e125905.cambridge.arm.com (e125905.cambridge.arm.com [10.1.194.73])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 2469B3F71E;
+	Fri,  6 Dec 2024 05:56:28 -0800 (PST)
+From: Beata Michalska <beata.michalska@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-pm@vger.kernel.org,
+	ionela.voinescu@arm.com,
+	sudeep.holla@arm.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	rafael@kernel.org,
+	viresh.kumar@linaro.org
+Cc: sumitg@nvidia.com,
+	yang@os.amperecomputing.com,
+	vanshikonda@os.amperecomputing.com,
+	lihuisong@huawei.com,
+	zhanjie9@hisilicon.com,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Phil Auld <pauld@redhat.com>,
+	x86@kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v8 0/4] Add support for AArch64 AMUv1-based average freq
+Date: Fri,  6 Dec 2024 13:55:56 +0000
+Message-Id: <20241206135600.4083965-1-beata.michalska@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com> <20241206111337.726244-2-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241206111337.726244-2-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Dec 2024 14:54:54 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUo4Fy+MF6fp6oFn965pf0=ZR0or0GQ6nZLGb9PmVYe5Q@mail.gmail.com>
-Message-ID: <CAMuHMdUo4Fy+MF6fp6oFn965pf0=ZR0or0GQ6nZLGb9PmVYe5Q@mail.gmail.com>
-Subject: Re: [PATCH v2 01/15] clk: renesas: r9a08g045: Add clocks, resets and
- power domain support for the ADC IP
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	p.zabel@pengutronix.de, linux-iio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 6, 2024 at 12:13=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add clocks, resets and power domains for ADC IP available on the Renesas
-> RZ/G3S SoC.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v2:
-> - rebased on top of the latest r9a08g045-cpg version
+Hi All,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.14.
+This series adds support for obtaining an average CPU frequency based on
+a hardware provided feedback. The average frequency is being exposed via
+dedicated yet optional cpufreq sysfs attribute - cpuinfo_avg_freq.
+The architecture specific bits are being provided for AArch64, caching on
+existing implementation for FIE and AMUv1 support: the frequency scale
+factor, updated on each sched tick, serving as a base for retrieving
+the frequency for a given CPU, representing an average frequency
+reported between the ticks.
 
-Gr{oetje,eeting}s,
+The changes have been rather lightly (due to some limitations) tested on
+an FVP model.
 
-                        Geert
+Note that [PATCH 2/4] arm64: amu: Delay allocating cpumask for AMU FIE support
+can be merged independently.
+Additionally, this series depends on [6]
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Relevant discussions:
+[1] https://lore.kernel.org/all/20240229162520.970986-1-vanshikonda@os.amperecomputing.com/
+[2] https://lore.kernel.org/all/7eozim2xnepacnnkzxlbx34hib4otycnbn4dqymfziqou5lw5u@5xzpv3t7sxo3/
+[3] https://lore.kernel.org/all/20231212072617.14756-1-lihuisong@huawei.com/
+[4] https://lore.kernel.org/lkml/ZIHpd6unkOtYVEqP@e120325.cambridge.arm.com/T/#m4e74cb5a0aaa353c60fedc6cfb95ab7a6e381e3c
+[5] https://lore.kernel.org/all/20240603081331.3829278-1-beata.michalska@arm.com/
+[6] https://lore.kernel.org/all/20240827154818.1195849-1-ionela.voinescu@arm.com/
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+v8:
+- Drop introducing new function and reuse arch_freq_get_on_cpu, guarding its use
+  in scaling_cur_freq sysfs handler with dedicated config for x86
+
+v7:
+- Dropping 'arch_topology: init capacity_freq_ref to 0' patch from the series
+  as this one has been sent separately as an independent change
+  [https://lore.kernel.org/all/20240827154818.1195849-1-ionela.voinescu@arm.com/]
+- Including in the series change that introduces new sysfs entry [PATCH 1/4]
+- Consequently modifying previously arch_freq_get_on_cpu to match reqs for new
+  sysfs attribute
+- Dropping an idea of considering a CPU that has been idle for a while as a
+  valid source of information for obtaining an AMU-counter based frequency
+- Some minor cosmetic changes
+
+v6:
+ - delay allocating cpumask for AMU FIE support instead of invalidating the mask
+   upon failure to register cpufreq policy notifications
+ - drop the change to cpufreq core (for cpuinfo_cur_freq) as this one will be
+   sent as a separate change
+
+v5:
+ - Fix invalid access to cpumask
+ - Reworked finding reference cpu when getting the freq
+
+v4:
+- dropping seqcount
+- fixing identifying active cpu within given policy
+- skipping full dynticks cpus when retrieving the freq
+- bringing back plugging in arch_freq_get_on_cpu into cpuinfo_cur_freq
+
+v3:
+- dropping changes to cpufreq_verify_current_freq
+- pulling in changes from Ionela initializing capacity_freq_ref to 0
+  (thanks for that!)  and applying suggestions made by her during last review:
+	- switching to arch_scale_freq_capacity and arch_scale_freq_ref when
+	  reversing freq scale factor computation
+	- swapping shift with multiplication
+- adding time limit for considering last scale update as valid
+- updating frequency scale factor upon entering idle
+
+v2:
+- Splitting the patches
+- Adding comment for full dyntick mode
+- Plugging arch_freq_get_on_cpu into cpufreq_verify_current_freq instead
+  of in show_cpuinfo_cur_freq to allow the framework to stay more in sync
+  with potential freq changes
+
+CC: Jonathan Corbet <corbet@lwn.net>
+CC: Thomas Gleixner <tglx@linutronix.de>
+CC: Ingo Molnar <mingo@redhat.com>
+CC: Borislav Petkov <bp@alien8.de>
+CC: Dave Hansen <dave.hansen@linux.intel.com>
+CC: H. Peter Anvin <hpa@zytor.com>
+CC: Phil Auld <pauld@redhat.com>
+CC: x86@kernel.org
+CC: linux-doc@vger.kernel.org
+
+Beata Michalska (4):
+  cpufreq: Introduce an optional cpuinfo_avg_freq sysfs entry
+  arm64: amu: Delay allocating cpumask for AMU FIE support
+  arm64: Provide an AMU-based version of arch_freq_get_on_cpu
+  arm64: Update AMU-based freq scale factor on entering idle
+
+ Documentation/admin-guide/pm/cpufreq.rst |  16 ++-
+ arch/arm64/kernel/topology.c             | 144 +++++++++++++++++++----
+ arch/x86/kernel/cpu/aperfmperf.c         |   2 +-
+ arch/x86/kernel/cpu/proc.c               |   7 +-
+ drivers/cpufreq/Kconfig.x86              |  12 ++
+ drivers/cpufreq/cpufreq.c                |  36 +++++-
+ include/linux/cpufreq.h                  |   2 +-
+ 7 files changed, 188 insertions(+), 31 deletions(-)
+
+-- 
+2.25.1
+
 
