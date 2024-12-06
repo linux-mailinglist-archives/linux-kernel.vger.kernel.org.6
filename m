@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-434407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 395389E666A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:43:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E06A39E666B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:43:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A785F163CCD
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26678162472
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3594C19413B;
-	Fri,  6 Dec 2024 04:40:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33CE6198850;
+	Fri,  6 Dec 2024 04:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b6IVDyvz"
-Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ITPvaYeR"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2195145B27
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267D193426
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:40:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733460042; cv=none; b=tUq5/ho6u3fcO5RUmqTU1Yy+/Y4K8W5JW8HVd9taJYA+HTfSirQEeIzeEngvrCKn9eAZ8WPC9QRjnpDPjtwFuPnRrYTQa+hK18Z7opA89BPMJLr29Jkm07s8TXS49f/dAfyEGXRas4NxY4cgORZEImlr6POhvKc3QdwdTs4mEHs=
+	t=1733460044; cv=none; b=K3sOLKKgRtzd9bRCll5VShCY6KkYhs/qEMjjjNyqxjAcNp+mtq6qccnjZm4DiKpiPdiO8vLEUV+uqbBa1U5fdXIBINV01oV6021evmF2EX/C8lZUyJOHwOl3pJr53xOthbSqCXO13dC5DmLolGfIVUO0KuvrFv2r694EK69h58U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733460042; c=relaxed/simple;
-	bh=5XkvenvJPsMzCCUZr2E+EXPs3CWRFdkwicbk1Xz1hQ4=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=dhEL5iwQfU004n59iwYlvpZFt6VGu1E78QksUc+iR27nY0X35RKFjeICrgrz7eUKlB0Rc63CIrhCvqCnc7i9qhgOhQn+f94p62hDx9BNSm9TxTGW5mzrLLEEHbUCN3ZA12T+M47TVa1ikitoBGSKFDmVhCpUb6tVN+08OoCDrWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b6IVDyvz; arc=none smtp.client-ip=209.85.219.202
+	s=arc-20240116; t=1733460044; c=relaxed/simple;
+	bh=NvHv1JvgCIj4wxEXi2qnifVrg5VM8kZfYBZjSzBa3dg=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Content-Type; b=IOAuy4HNt/VDOc5TeNB8/Nm5gngErU+tfO0hUoEQF5FQDCxgjFwVIGtUaXDOn5G/dcOsZNKdH/rW/hKntjc1g0DTzQSqCQfljqaj5b1r+t/cjR5YsDfc3rT7VVYhj1SAhffZVzCEjgCGbESRQt9xNHL8/H7i9tFFNMVWcFMYVXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ITPvaYeR; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e3891f31330so4234169276.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:40:39 -0800 (PST)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e3a109984a5so309546276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:40:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733460039; x=1734064839; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=OswdkkJgMiXs6XmR6rq8xDeMfeIOQYMZDMPotJ12HwM=;
-        b=b6IVDyvzFCpTcJny4Nqf/AkDnXmrjaaolzREQBtVU6SBd5ZIcGEXasGozsnHTfCNCG
-         TnwxsxBt4say3tw7we0E4qVynbSmTnQBGVJ+wJgMqA4McLgSZA1tuUaJ7U7qF0Q1i/er
-         Cnj0ztbgaxfL+I8EUJh29fAktyNz8hW135b6ZjTx5YmczPQrgJXV8p3AlST0ufviMpVX
-         qe2AfFiRuT69uKxEUT0FLYZGsfjQhHdlIfeE2S2Z6Q3LMZCycit+mKIcODm1j07eNDoy
-         9zn/Kw0VnumRf+ZgQkn0u4ta7KPHInnBf7norfeKrDiXl+cfHwtmr+YaMRka5S06Vb92
-         KRKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733460039; x=1734064839;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+        d=google.com; s=20230601; t=1733460041; x=1734064841; darn=vger.kernel.org;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=OswdkkJgMiXs6XmR6rq8xDeMfeIOQYMZDMPotJ12HwM=;
-        b=ii+kzp2nDeeW7UYh9k50q/dmh8tPSUD3Ns7gjgRzwkaavY3oYKGMx9Lfycnr06sSCN
-         MwNhGM1Bphc71Rekj9nGV5ToHui2F45BqS71hfXdw5nbYp+Mv//lp33WTSpasIon3gVb
-         GzZrn0idT8Df/VFrSIEUjum+DSKefFxKt0nw3e3WNcz1xImK1sUHpDCO3/RwejprRc2E
-         FPZvuib38pBjGej/yZ++Wl0jE90mmLlba99js3gMlHc6bPx5MKxVjMt81szAt87EVP/h
-         vgHTQKY6zkDrj5srKdchrveZ7Cp8dy290ISf6APHDefxM/GdBRhA3TQkvYXyostl9FyS
-         Z2ag==
-X-Forwarded-Encrypted: i=1; AJvYcCUgOOkTCENuMwWrSRpACnqzW2T0bAcuhZhJ78a2oPWlSoVTq9Z903QHy6zSnthYjdKbfPFzv8RWAcxRz1c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyECyzU2dIfTXEnWeI7BGTfkQvrjMoMJhEPiqdLRC2HCvOKiHU4
-	erkVqDoOLrw/yMJAqzzOi6YpbSyR9UAusxQNzrATqmGL0MX45SucA7tvlzZ2kHO4e0jUn8oB83+
-	nrDavWg==
-X-Google-Smtp-Source: AGHT+IHQzMJx7SC2d02JB3ea9r0wWHts1mKvkKVlE8+5V3QWX9tVxLZUEoFSi6pDktZdzIwc8ggfLgCFMw5J
+        bh=7HooQRn/pxrZs6KSP4MCRwKNyrc2n5wJOPs3/bci4Uk=;
+        b=ITPvaYeRcgVc38hqEm+Bpq2IJRYcrWPrEtidw63fxdkb4xkrQrGPRGkr3eMrUd65PP
+         NT+brCB7suidmG6yIuhtu25HYz+RJTo9UpLHMim2ALkqkbOZ7+FTHuZfWgMBZODnkA72
+         Vzk/r3l+m7zQsGT1QeMy3+yXQDi7tcZ1ksDjQfDd8yXzNRWVVE3gSHBbwf6cYB/LNS5W
+         TEfGX15BR4/8Ko7oUm5VWveuA1LUq6VsIog0l99rEDb1sO0NOzTpdhZyIXmNtq/YmSx5
+         atpmoPDWX+vlonPr8KrmyP6g+B+ewbdBeQOoPMvrV9i+JYh9exa+rTVsmIILhKxZpU3l
+         khAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733460041; x=1734064841;
+        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7HooQRn/pxrZs6KSP4MCRwKNyrc2n5wJOPs3/bci4Uk=;
+        b=CXcH2gaKNEmOlKxf3JKE4Nzc8ULxBjeH1M3CWVvCfSSdHY7kqwsDKLAW9Hargk/gZz
+         VxNpx4oo7hhKG9zsn+cTicd0c98D8N8WXE3vbF39nL/hszB98t13MeSolRWrHUz13SEK
+         204McSZptuNhrc7+WELT+gFCDetcyEpTsJjFTjFjwiN17v1KUmGEROhoD5BN9aShrmQ/
+         y8ekS65HlRmfmeAQ2OWT3wFu9zdtZdeoWxE2thmUtQaZbBCTeVpudoBzN7hHzg3b88BB
+         UluUqW72bWOQYvVEe3KEsk3Yi8QsTWVhMJjk9wzt9RO7yrQvnyaSqOHOmopIQQRKdjEh
+         WGpw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmuZVh0ArFRUBcK/22/hAiLeiny6g+sumeG2jdUEpo8jN+p8lBHc9PDhUup3CPlfaZuC5iiZcOFHY0dJA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfqsUciM8YkQp8y2v/7LQV+i1KibmJ7FwBqwvmx6RThFFrZ1ft
+	P41q5l5gDqDEI3YrTTHWYwFNmfOkdPYw5o/CNCQ/6bN53GJlB5zDZMlRddSnq0P/yzJAWGjXz1U
+	oIscalQ==
+X-Google-Smtp-Source: AGHT+IHIgCIgWFyGcAWDY7516J4vjQr1pq+XRf6N+uB0/z07nFo7rInpoiDluy+8thojGoFnFz9roVvtzpil
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:eb75:393:2a8c:1440])
- (user=irogers job=sendgmr) by 2002:a25:7b86:0:b0:e39:8506:c03d with SMTP id
- 3f1490d57ef6-e3a0b6a149cmr753276.9.1733460038696; Thu, 05 Dec 2024 20:40:38
+ (user=irogers job=sendgmr) by 2002:a25:7c06:0:b0:e38:d1e:af86 with SMTP id
+ 3f1490d57ef6-e3a0b07413dmr731276.2.1733460040757; Thu, 05 Dec 2024 20:40:40
  -0800 (PST)
-Date: Thu,  5 Dec 2024 20:40:27 -0800
-Message-Id: <20241206044035.1062032-1-irogers@google.com>
+Date: Thu,  5 Dec 2024 20:40:28 -0800
+In-Reply-To: <20241206044035.1062032-1-irogers@google.com>
+Message-Id: <20241206044035.1062032-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241206044035.1062032-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1 0/8] Cpumap improvements for large MAX_NR_CPUS
+Subject: [PATCH v1 1/8] perf: Increase MAX_NR_CPUS to 4096
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -83,43 +86,63 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Prompted by Kyle Meyer's <kyle.meyer@hpe.com> report of the
-MAX_NR_CPUS value being too small, initiate some clean up of its
-use. Kyle's patch is at the head of the series. The additional patches
-hide MAX_NR_CPUS as exposed from cpumap.h, reduce its use by removing
-perf_cpu_map__read, and try to better size the temporary CPU array in
-perf_cpu_map__new.
+From: Kyle Meyer <kyle.meyer@hpe.com>
 
-Ian Rogers (7):
-  perf cpumap: Reduce transitive dependencies on libperf MAX_NR_CPUS
-  libperf cpumap: Hide/reduce scope of MAX_NR_CPUS
-  libperf cpumap: Be tolerant of newline at the end of a cpumask
-  perf pmu: Remove use of perf_cpu_map__read
-  libperf cpumap: Remove use of perf_cpu_map__read
-  libperf cpumap: Remove perf_cpu_map__read
-  libperf cpumap: Grow array of read CPUs in smaller increments
+Systems have surpassed 2048 CPUs. Increase MAX_NR_CPUS to 4096.
 
-Kyle Meyer (1):
-  perf: Increase MAX_NR_CPUS to 4096
+Bitmaps declared with MAX_NR_CPUS bits will increase from 256B to 512B,
+cpus_runtime will increase from 81960B to 163880B, and max_entries will
+increase from 8192B to 16384B.
 
- tools/lib/perf/Documentation/libperf.txt |  1 -
- tools/lib/perf/cpumap.c                  | 82 +++++-------------------
- tools/lib/perf/include/internal/cpumap.h |  4 --
- tools/lib/perf/include/perf/cpumap.h     |  2 -
- tools/lib/perf/libperf.map               |  1 -
- tools/perf/builtin-annotate.c            |  1 +
- tools/perf/builtin-diff.c                |  1 +
- tools/perf/builtin-kwork.c               |  1 +
- tools/perf/builtin-mem.c                 |  1 +
- tools/perf/builtin-sched.c               |  1 +
- tools/perf/perf.h                        |  2 +-
- tools/perf/util/bpf_skel/kwork_top.bpf.c |  4 +-
- tools/perf/util/kwork.h                  |  1 +
- tools/perf/util/pmu.c                    | 30 ++++++---
- tools/perf/util/session.c                |  1 +
- tools/perf/util/svghelper.c              |  1 +
- 16 files changed, 47 insertions(+), 87 deletions(-)
+Signed-off-by: Kyle Meyer <kyle.meyer@hpe.com>
+Reviewed-by: Ian Rogers <irogers@google.com>
+---
+ tools/lib/perf/include/internal/cpumap.h | 2 +-
+ tools/perf/perf.h                        | 2 +-
+ tools/perf/util/bpf_skel/kwork_top.bpf.c | 4 +++-
+ 3 files changed, 5 insertions(+), 3 deletions(-)
 
+diff --git a/tools/lib/perf/include/internal/cpumap.h b/tools/lib/perf/include/internal/cpumap.h
+index 49649eb51ce4..3cf28522004e 100644
+--- a/tools/lib/perf/include/internal/cpumap.h
++++ b/tools/lib/perf/include/internal/cpumap.h
+@@ -22,7 +22,7 @@ DECLARE_RC_STRUCT(perf_cpu_map) {
+ };
+ 
+ #ifndef MAX_NR_CPUS
+-#define MAX_NR_CPUS	2048
++#define MAX_NR_CPUS	4096
+ #endif
+ 
+ struct perf_cpu_map *perf_cpu_map__alloc(int nr_cpus);
+diff --git a/tools/perf/perf.h b/tools/perf/perf.h
+index c004dd4e65a3..3cb40965549f 100644
+--- a/tools/perf/perf.h
++++ b/tools/perf/perf.h
+@@ -3,7 +3,7 @@
+ #define _PERF_PERF_H
+ 
+ #ifndef MAX_NR_CPUS
+-#define MAX_NR_CPUS			2048
++#define MAX_NR_CPUS			4096
+ #endif
+ 
+ enum perf_affinity {
+diff --git a/tools/perf/util/bpf_skel/kwork_top.bpf.c b/tools/perf/util/bpf_skel/kwork_top.bpf.c
+index 594da91965a2..73e32e063030 100644
+--- a/tools/perf/util/bpf_skel/kwork_top.bpf.c
++++ b/tools/perf/util/bpf_skel/kwork_top.bpf.c
+@@ -18,7 +18,9 @@ enum kwork_class_type {
+ };
+ 
+ #define MAX_ENTRIES     102400
+-#define MAX_NR_CPUS     2048
++#ifndef MAX_NR_CPUS
++#define MAX_NR_CPUS     4096
++#endif
+ #define PF_KTHREAD      0x00200000
+ #define MAX_COMMAND_LEN 16
+ 
 -- 
 2.47.0.338.g60cca15819-goog
 
