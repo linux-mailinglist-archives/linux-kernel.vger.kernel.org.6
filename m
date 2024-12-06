@@ -1,186 +1,235 @@
-Return-Path: <linux-kernel+bounces-435260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE9269E7538
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:11:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D4519E754F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:13:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0C1C188543D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:11:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 555601885CB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:13:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB08B20DD4C;
-	Fri,  6 Dec 2024 16:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18A720E320;
+	Fri,  6 Dec 2024 16:12:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xVmocDZ0"
-Received: from mail-wr1-f66.google.com (mail-wr1-f66.google.com [209.85.221.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="S+rSEed0"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2045.outbound.protection.outlook.com [40.107.236.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1967E20CCE4
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:11:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.66
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733501511; cv=none; b=XxmPstavvU6RML2q1swRGzqs+BWGBn2McNBaxI2q40NmlArqNGLX74MIHG3AdhkuHbWBffyjTW39cnNyu63YwQMwMVWJ1xwoAeSZosibzs2Ir8yfwzU1mLCBNYf/F+W5cpHmOcE0u46F7NVDakTDOYYHl0i/tlxgBAnTAA14Iio=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733501511; c=relaxed/simple;
-	bh=4eGgtxw8sd5EqOnZy7TFmnGi9n+uxRuuItBO/b7qhEY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hmgIfb5dvfpwvfAPRBVN3pPYLjhQTypk9bzw1zHuvsgiC7s0CrQRWsXcWRJfL6G0gCI5UAwsuKYgxhAA6pR7BD9dfTPsp9iwzHDWpEYFVMdHXlm6ZcyDpXAagirbx2SR0yXw1ySJtpRK78ypk7nZBI350brTM+4oO/c+20yHhyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xVmocDZ0; arc=none smtp.client-ip=209.85.221.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f66.google.com with SMTP id ffacd0b85a97d-385de9f789cso1607227f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 08:11:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733501506; x=1734106306; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i/xiAS5UyfNRFlQZkgCdUkuF7g+yia9KjQjcPH1rjlc=;
-        b=xVmocDZ0Wh/5FjCXMuiBI5DI9Il+4lvRB75PyIgnHxFuewSCkbVFmG+dlp3+w/o26V
-         NjWMLRLlll4i8xbBUuUOIcJ4TQq90rqKttsscwpekPPeqYgX3m9vF4DbKUShYdQ+i6nk
-         +0YyJ8DV6zCnR4p0C03iFTd4TQSfGrgK5MNDB/mhz815mQl8eInn+/iq/ud0aa5AGpWD
-         /U/VZMaWGFZ5dv5SfA0A6DIP6kjPFxiT16OU3Z+zt8xi5X2mN7et21O9YbuYT57upmqC
-         5QIG836I5cp+DsaeKpFPLdmU9RkJssfmFfLZfu3VXLfYiwrlNv0GM6waDXnknLqrHZcF
-         jxJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733501506; x=1734106306;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i/xiAS5UyfNRFlQZkgCdUkuF7g+yia9KjQjcPH1rjlc=;
-        b=NpfH7b81/0l0Wy/+X7sFvZ9JZIr940DAaBNE7uV75yaD0y9/NWbTLZkIpYt0bKkA80
-         N4VleWRcWzPbtvnGm+wyEqNnnkRq7zs/cCBpqiWaCeeKLoNxPKjb4S9zoQBIUO7/C3Iq
-         FVHF458+Ylf6qxSQy0kj6tQgSyZTuCH93Ko2OgUEW8wRa7A6VBC7S55Q5LbXSmeUPaNZ
-         cmvp9yrG/npVWKawI0pafnny5c+pyyujqsPNijE1Z4vKWz3/C+agWU3QNeegLlImes8L
-         Gyyy38L6Dh6/pN5I0sWwDraHqAIQGU/qR4T1CzM3cdGb0reR51tYeFpWWzsm3JF8im0N
-         IOiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8N+bDto+SLoe64kx/IlGPKCKipxkayE3GXzmxF1xSi0xaSN1rycuvjjA2tPyIq9/KLC5jmAIS0pl4+eQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeOX/UUhsrGFzHnYSbJGattNqB7ArIa4WXRqEb7CRyAJ01/SeH
-	bku5jc5xpxGhlSuYCN3vqJ5v/+Y4gBI7F+q03V5h5CtUBxd26OIMoNvqmoaEpKM=
-X-Gm-Gg: ASbGncuOFsT6aQdaBd+teTZb2evRchv2+hDDzKtoZwuXWFEVlyIhyRHCV78q5Knc2lU
-	wjy+woLOIuNeDFnVljA+ylXCeDjI0vl598QwUY3whoLpnymf4SsiifzdkyeUI/Gp27MTMq0hXTQ
-	3KbIrclWa7bE+9fxfkjoeuWd2yj2FEik0+U5Z5XW255uJ8WtGLvUM9X+zvcAh/gQjFzBx/Sz1q5
-	vG/SqegSLb3Ykvw3bOYa+4DjiL1FvCQPrQ3NQP+yfkM0BGb6kjMmzuALKFDNZlhZ0Y1IJqUb2EA
-	KB/+
-X-Google-Smtp-Source: AGHT+IGkCkYOoMM7XFFXDF5B43FQA9JNOmeVeDh71DwPZFTmZAwrKvFV+4nJ0p3LDeWlzuKKvaJJNw==
-X-Received: by 2002:a05:6000:18a7:b0:385:f7d9:99f5 with SMTP id ffacd0b85a97d-3862b3cefbbmr2965189f8f.51.1733501506405;
-        Fri, 06 Dec 2024 08:11:46 -0800 (PST)
-Received: from localhost (p5dc6838f.dip0.t-ipconnect.de. [93.198.131.143])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861fc51451sm4940030f8f.47.2024.12.06.08.11.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 08:11:45 -0800 (PST)
-Date: Fri, 6 Dec 2024 17:11:44 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
-	Dumitru Ceclan <dumitru.ceclan@analog.com>, Nuno Sa <nuno.sa@analog.com>, 
-	Guillaume Ranquet <granquet@baylibre.com>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH] iio: adc: ad7124: Disable all channels at probe time
-Message-ID: <rl5h6oearvxy4dxtqd5kvcoktsyqyhvhw2qccjcbp3gbsxose2@hpuf3xacndyl>
-References: <20241104101905.845737-2-u.kleine-koenig@baylibre.com>
- <20241109152438.0135f0c2@jic23-huawei>
- <7did4jkzbsvovlinkjimbn3zdqrwi2mrs2onukfonjeexnumvh@xbzcdad4v7kd>
- <276fcd4d-5066-46b8-8468-f63d35b74894@baylibre.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1378D20D501;
+	Fri,  6 Dec 2024 16:12:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733501554; cv=fail; b=OOVeXWL9HPHglQSNuve1D+FbxluuBNCqwP2nDymAjectMfnQKHWX6MROrH4kQA+JtRME2zyJJmpFh5JuorFLchyxroLcR3E67fjv6LM7m9KeO3Cl05kuZ6sO7LKn0xLBGid14U5KHi6KBp24uFDc61MyDucwq3LPdjY1ba90Yis=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733501554; c=relaxed/simple;
+	bh=aS+2eXSXkqWuLRB6XIi/n4PS5LbuV0wjN/iVbiKXkLs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kIVavTAx4ZGrMS2oOGkjrDU85hGvPRbqByXTWAAEbQL7H7xqBPPJWbTllluxP9PhtTL7tRUAV5my83OFcX7+0/YAlkzR+4QLRoEW/DorvjK9nYQI8lhZSBqnmyeHva+hOowGxTknSOsNO7XEMe8djWjQ4adon6LZq5TULLX084g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=S+rSEed0; arc=fail smtp.client-ip=40.107.236.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mUrczr87xoqhCY9GlVZv7/hw+rtfWGnWUb8YItBfg4qjDqL3rUF+JQGG1Ls022f6VifHEoiv2cKBU3XQdfh4wJDmYNlZAF2y28aOyiIwi52ZKFdjDM2L2Y6KxIsBAiL0g8XkfImDFNP/eKYddH00IVQSB5xZZd0RMMVuzLQJvPFq5XaCqVYSTi/QZIx6FJok2XHKsRaTpf2dKkCwFSCchKotj+GFVkEgL4d6CI6ZC57ffQCu6rq2GPwWne1N/VMD86YchvjSOJql0hf2/PVTJZF3cmU9uECGKjKbMzZUa1bVUXG1L5SbfKTBTb6CYB+NzZdjo7uwR+5GDxXO3QrlEw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nzRSEWC36HwtjfHrD5e24rQ8Xe3IuD03xMcg7jMavoc=;
+ b=RIFUrXcLlgcEI/2g3HjYmvSafStHsbwkarEOgDERFxRsWPf3F86zYsGcpcI5ERsLJKah/2NVwlJ14U5tvYtXEDe/kwPU3NetwXntYdc8Enry/0gbNAoHNnDtjaVS+TByVOC9kibMgU0M+QgyW5ESVMY1lHyDnN3UA6TCCjRbrI1TqnC0TtrJNEx/bGMwYGRUjyXh5fFh4eTzUB2vQnOaHxqeiFUaGcXosISgZAagRGw62FaHSzo5WBshFspn32nvd7gisN+VOEvtRBN0c4VfzlN8RCMosJy1aS2a+Yucj1fVBCl0MBi1PGxAJP+hJ30kjLeRSCkNvWyy+z6VLBuGJA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nzRSEWC36HwtjfHrD5e24rQ8Xe3IuD03xMcg7jMavoc=;
+ b=S+rSEed0hIBSQE7RoMeeF49Mj7a5tI5RQ0ryN+xOtaAdGUOaFO7LBKAfsCcKiAAZejqTtFZUa24bQETK6pgozBb7kz5OmwUkfB1smDO1nEQvyRGFby1sb8ONYUtTfwUXpcDDJWkpIbFQqPk1lC+QTXEJYYqC/Y06NBMkATZlNxk=
+Received: from DS0PR17CA0007.namprd17.prod.outlook.com (2603:10b6:8:191::14)
+ by DS0PR12MB8564.namprd12.prod.outlook.com (2603:10b6:8:167::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.19; Fri, 6 Dec
+ 2024 16:12:25 +0000
+Received: from DS1PEPF0001708E.namprd03.prod.outlook.com
+ (2603:10b6:8:191:cafe::11) by DS0PR17CA0007.outlook.office365.com
+ (2603:10b6:8:191::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.11 via Frontend Transport; Fri,
+ 6 Dec 2024 16:12:25 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF0001708E.mail.protection.outlook.com (10.167.17.134) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Fri, 6 Dec 2024 16:12:25 +0000
+Received: from purico-9eb2host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Dec
+ 2024 10:12:24 -0600
+From: Yazen Ghannam <yazen.ghannam@amd.com>
+To: <yazen.ghannam@amd.com>, <x86@kernel.org>, Tony Luck
+	<tony.luck@intel.com>, Mario Limonciello <mario.limonciello@amd.com>, "Bjorn
+ Helgaas" <bhelgaas@google.com>, Jean Delvare <jdelvare@suse.com>, "Guenter
+ Roeck" <linux@roeck-us.net>, Clemens Ladisch <clemens@ladisch.de>, "Shyam
+ Sundar S K" <Shyam-sundar.S-k@amd.com>, Hans de Goede <hdegoede@redhat.com>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Naveen
+ Krishna Chatradhi" <naveenkrishna.chatradhi@amd.com>, Suma Hegde
+	<suma.hegde@amd.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-edac@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-hwmon@vger.kernel.org>,
+	<platform-driver-x86@vger.kernel.org>
+Subject: [PATCH v2 00/16] AMD NB and SMN rework 
+Date: Fri, 6 Dec 2024 16:11:53 +0000
+Message-ID: <20241206161210.163701-1-yazen.ghannam@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="qbo3l4jyla3udbsp"
-Content-Disposition: inline
-In-Reply-To: <276fcd4d-5066-46b8-8468-f63d35b74894@baylibre.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF0001708E:EE_|DS0PR12MB8564:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4099dfbb-4862-4eba-c2c0-08dd1610c615
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|7416014|36860700013|82310400026|1800799024|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3dTRQ616QhrmLlFQZZB6Prz5DkGr4Z1JVak+VY6A4XwO6BIX1ElPAYtFr5lS?=
+ =?us-ascii?Q?1AZk5GQmk8Ge44xlVD4zL8S8UQxrwV0ovtcMBfevt8VQBoDu6aRBCMO4nN9S?=
+ =?us-ascii?Q?CHT0BuHr2+l26mWcDCa4OtxB9cg9+noXxIqXwYM8dcX923m/W9ChaRCmyYsw?=
+ =?us-ascii?Q?lFtf9dwA30u3Fji7xveFjHBRQBR2rMoTZxEoeQkHCR19chyubNosgyWfYHsT?=
+ =?us-ascii?Q?7uXC+RYilXtBYJoieTg1CdfPojg01GJKrYGPc4k94zXOFoOQOIKt5zIwk9WO?=
+ =?us-ascii?Q?vex3wMmoNM1YgmMvZRsDH/w0huiUHO+v05kRJFnVJe5i95umq8UkRbGigOTH?=
+ =?us-ascii?Q?VklAZ3HcH6f1d59Lz9sSkQVh/tMYHW6uCeU+Ax9EMbuFQ60l9jVoPZofaQPx?=
+ =?us-ascii?Q?ixggaEOjtCXIEx2Yi7tdnggi9qSQosmbb8BXyhoTf83oY2wHxK2533syuClp?=
+ =?us-ascii?Q?QFgLHufeeBpsdaQqEV9y/y/2QEjPK/QanBRXzXXUQNZ4/1BChwRkXrqReNnF?=
+ =?us-ascii?Q?130HwUofHbY0D7gyKTNC0rsnPhrJZt8yiW+fSWk9oy3FDRVj1acLxfGT0Tof?=
+ =?us-ascii?Q?NkSOgzSlkROiUXsW9sT5xkkDZZmUpc/EK63JALAstUCc/If5nhwvVvzRzMS8?=
+ =?us-ascii?Q?fCxBQpemAvqrKQj1iDiAWDZRuqd4tN6Sim/AqyWChHgX2vJIm9lRC9sRTUbE?=
+ =?us-ascii?Q?6PFbHlJZMVgie30YprQcDInTgPJQ7OPeRBM2yXLGlz1lVbkFSEkoKv669cbB?=
+ =?us-ascii?Q?fDS+LdjMu2u2mQC3D2J1ylLvgxmwumBZIrNG6LyzOaTED/lYCd4OGY+Krx4e?=
+ =?us-ascii?Q?Pt+3JexJvZJgDdhtlqKiYSLi3nEcEx19HCYfEC59OTJFymkz0/+BVZ+q+Kuu?=
+ =?us-ascii?Q?7dQPtgI+rj0XXcfv+miElouw+hmqfEPLqNp3ak8j9o1QVQ2H4Vf7aMS6OGFv?=
+ =?us-ascii?Q?uMFk5u2pXdFcn//ORFpaQ+KzgWjgzRdZdcYllAbr2+Ra3ldzNEbYlNUB2Hwb?=
+ =?us-ascii?Q?h2eMVcSllD5T/Jf2tAfMn6O8l0ebz+0IKi03uXeYLeTNN8AUZldQQ1g4T0NX?=
+ =?us-ascii?Q?pSWssK8trKSmktQsLQXi4rv6Y+MOVFQmRq9IVpF5R1QBQ5usqgLtGcAmHtV+?=
+ =?us-ascii?Q?O5jxlQe2zfyzoOYRD0aYV8gPgczgpx3SWdfHbF43FcaVkgeKYEsUKX0d6efM?=
+ =?us-ascii?Q?PAKhuCfMDE37hUwBYKZVaIUDZvIzwOibTJoPe8KJAjvwyvPS9yG4yP4nbAL6?=
+ =?us-ascii?Q?Crftt79znrq+T2nYrenGaj+a8ByPQTyE+fQSSYBkKULR8nYA8Ada4u5ZS2k0?=
+ =?us-ascii?Q?ELAHqFdRCDMD8ZhkYh9qxC155F8bukSaF33OKOWtQ07LV94ULsUlvwoWtU4R?=
+ =?us-ascii?Q?6BwlZM81Nm0r5ZWEdFBSXXNPzSHMpYzdyZ9Ng24Vauqo/hNIHHx1N8IGLlmM?=
+ =?us-ascii?Q?9xHfrbydsEuOKzeC6eIVziLp/cmetWAxvfAYsBq2+yRS2X8Hu+QEHg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(7416014)(36860700013)(82310400026)(1800799024)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 16:12:25.3987
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4099dfbb-4862-4eba-c2c0-08dd1610c615
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF0001708E.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8564
+
+Hi all,
+
+The theme of this set is decoupling the "AMD node" concept from the
+legacy northbridge support.
+
+Additionally, AMD System Management Network (SMN) access code is
+decoupled and expanded too.
+
+Patches 1-3 begin reducing the scope of AMD_NB.
+
+Patches 4-9 begin moving generic AMD node support out of AMD_NB.
+
+Patches 10-13 move SMN support out of AMD_NB and do some refactoring.
+
+Patch 14 has HSMP reuse SMN functionality.
+
+Patches 15-16 address userspace access to SMN.
+
+I say "begin" above because there is more to do here. Ultimately, AMD_NB
+should only be needed for code used on legacy systems with northbridges.
+Also, any and all SMN users in the kernel need to be updated to use the
+central SMN code. Local solutions should be avoided.
+
+Thanks,
+Yazen
+
+Link:
+https://lore.kernel.org/r/20241023172150.659002-1-yazen.ghannam@amd.com
+
+Major changes
+v1->v2:
+* Rebase HSMP changes on latest upstream rework.
+* Keep Node and SMN code together.
 
 
---qbo3l4jyla3udbsp
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] iio: adc: ad7124: Disable all channels at probe time
-MIME-Version: 1.0
+Mario Limonciello (4):
+  x86/amd_nb, hwmon: (k10temp): Simplify amd_pci_dev_to_node_id()
+  x86/amd_nb: Move SMN access code to a new amd_node driver
+  x86/amd_node: Add SMN offsets to exclusive region access
+  x86/amd_node: Add support for debugfs access to SMN registers
 
-On Fri, Dec 06, 2024 at 09:35:15AM -0600, David Lechner wrote:
-> On 12/6/24 5:04 AM, Uwe Kleine-K=F6nig wrote:
-> > Hello Jonathan,
-> >=20
-> > On Sat, Nov 09, 2024 at 03:24:38PM +0000, Jonathan Cameron wrote:
-> >> Sadly this has probably missed 6.12, but I have queued it up as a fix
-> >> for early next cycle and marked it for stable.
-> >=20
-> > I interpreted "early next cycle" as "This will go into v6.13-rc1.". But
-> > that didn't work and didn't hit the mainline yet (as of cdd30ebb1b9f).
-> >=20
-> > This patch was included in next as
-> > 64612ec9b909b699293b7220c634f67a9fc12e06 between next-20241111 and
-> > next-20241128 and then disappeared from there.
-> >=20
-> > What is wrong here?
-> >=20
-> > Best regards
-> > Uwe
->=20
-> FYI, the iio tree is currently missing from linux-next due to [1].
->=20
-> [1]: https://lore.kernel.org/all/d707cb3b-1569-45d9-bdc3-dcc98eb88bc4@sir=
-ena.org.uk/
+Yazen Ghannam (12):
+  x86/mce/amd: Remove shared threshold bank plumbing
+  x86/amd_nb: Restrict init function to AMD-based systems
+  x86/amd_nb: Clean up early_is_amd_nb()
+  x86: Start moving AMD Node functionality out of AMD_NB
+  x86/amd_nb: Simplify function 4 search
+  x86/amd_nb: Simplify root device search
+  x86/amd_nb: Use topology info to get AMD node count
+  x86/amd_nb: Simplify function 3 search
+  x86/amd_node: Update __amd_smn_rw() error paths
+  x86/amd_node: Remove dependency on AMD_NB
+  x86/amd_node: Use defines for SMN register offsets
+  x86/amd_node, platform/x86/amd/hsmp: Have HSMP use SMN through
+    AMD_NODE
 
-I first thought that couldn't be the explanation because that conflict
-happened to late, but indeed next-20241203 is the first next tag after
-next-20241128 and
+ MAINTAINERS                           |   8 +
+ arch/x86/Kconfig                      |   6 +-
+ arch/x86/include/asm/amd_nb.h         |  53 +---
+ arch/x86/include/asm/amd_node.h       |  39 +++
+ arch/x86/kernel/Makefile              |   1 +
+ arch/x86/kernel/amd_nb.c              | 294 +--------------------
+ arch/x86/kernel/amd_node.c            | 364 ++++++++++++++++++++++++++
+ arch/x86/kernel/cpu/mce/amd.c         | 127 ++-------
+ arch/x86/pci/fixup.c                  |   4 +-
+ drivers/edac/Kconfig                  |   1 +
+ drivers/edac/amd64_edac.c             |   1 +
+ drivers/hwmon/Kconfig                 |   2 +-
+ drivers/hwmon/k10temp.c               |   7 +-
+ drivers/platform/x86/amd/hsmp/Kconfig |   2 +-
+ drivers/platform/x86/amd/hsmp/acpi.c  |   7 +-
+ drivers/platform/x86/amd/hsmp/hsmp.c  |   1 -
+ drivers/platform/x86/amd/hsmp/hsmp.h  |   3 -
+ drivers/platform/x86/amd/hsmp/plat.c  |  30 +--
+ drivers/platform/x86/amd/pmc/Kconfig  |   2 +-
+ drivers/platform/x86/amd/pmc/pmc.c    |   3 +-
+ drivers/platform/x86/amd/pmf/Kconfig  |   2 +-
+ drivers/platform/x86/amd/pmf/core.c   |   2 +-
+ drivers/ras/amd/atl/Kconfig           |   1 +
+ drivers/ras/amd/atl/internal.h        |   1 +
+ 24 files changed, 485 insertions(+), 476 deletions(-)
+ create mode 100644 arch/x86/include/asm/amd_node.h
+ create mode 100644 arch/x86/kernel/amd_node.c
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/jic23/iio.git fixes-togreg
 
-still contains my patch. Thanks for that hint.
+base-commit: ae61116b291c9358e8de38bd3505e83b85be2d0d
+prerequisite-patch-id: 0000000000000000000000000000000000000000
+-- 
+2.43.0
 
-Masahiro pointed out a merge fix in the linked thread, but I think it's
-incomplete/wrong.
-
-When merging the above branch (currently at
-1694dea95b02eff1a64c893ffee4626df533b2ab) into ceb8bf2ceaa7 ("module:
-Convert default symbol namespace to string literal") I'd do:
-
-diff --git a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c b/drivers/iio=
-/imu/inv_icm42600/inv_icm42600_core.c
-index 215731bd3c7d..ef9875d3b79d 100644
---- a/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-+++ b/drivers/iio/imu/inv_icm42600/inv_icm42600_core.c
-@@ -100,7 +100,7 @@ const struct regmap_config inv_icm42600_spi_regmap_conf=
-ig =3D {
- 	.cache_type =3D REGCACHE_RBTREE,
- 	.use_single_write =3D true,
- };
--EXPORT_SYMBOL_NS_GPL(inv_icm42600_spi_regmap_config, IIO_ICM42600);
-+EXPORT_SYMBOL_NS_GPL(inv_icm42600_spi_regmap_config, "IIO_ICM42600");
-=20
- struct inv_icm42600_hw {
- 	uint8_t whoami;
-
-The MODULE_IMPORT_NS line for
-drivers/iio/imu/inv_icm42600/inv_icm42600_core.c was already fixed in=20
-commit cdd30ebb1b9f ("module: Convert symbol namespace to string
-literal").
-
-Best regards
-Uwe
-
---qbo3l4jyla3udbsp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdTIj0ACgkQj4D7WH0S
-/k7gRgf/T6zD77gJR5j47uvhom63da9TRFQwJ0iuuvXIXZ4+yP3G42Mo52gTJebU
-N13zYGXH0tvd3gsPGrDvGZod8h4vkFzwW7nrfUJ8v0QqNy9zwuQrB1jmaQ36Oaw6
-fo92OXzrQcc3B6hvaxn7I0DORaRnAF1xndCY9KCyWY/F1z04uEyqQTZPzR5Sk/GA
-ootm/2zpwVqdk6lEkbS6QaCyIYsa5AhCf8Y95wK9pJMwkz29Aea39hpvLN+T8tuF
-srrO2b/dyRaeQjD9ICYgwiatWbLMTB8wbDIvB46IWF2WH+sAF1YJkUL3aHK0/jF0
-L0XrMGZHTRN3pmf9L4NeoPFRh3S3SQ==
-=mQKO
------END PGP SIGNATURE-----
-
---qbo3l4jyla3udbsp--
 
