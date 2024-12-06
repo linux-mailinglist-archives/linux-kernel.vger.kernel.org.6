@@ -1,145 +1,193 @@
-Return-Path: <linux-kernel+bounces-434256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04519E640B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:21:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D9B9E6421
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:29:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE1E28454F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12E8284918
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:29:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6FB167DB7;
-	Fri,  6 Dec 2024 02:21:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66D8D176AA9;
+	Fri,  6 Dec 2024 02:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dEY6M3Cw"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="R0NtjIjL"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422DD14A4F9
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:21:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4696A156F54;
+	Fri,  6 Dec 2024 02:29:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733451681; cv=none; b=gzZczoaMxicIWUXui+SS5L1xYaqr5IN62xd8S+kS2BQULAY5gXrpY+ill39M/AomUZXW4SH4BFfjRui7PRu3doYKwKqEcmhyJ3KTL2m5Gk0LpVdAuXoe1gxmhlPGT9BF3u4ZPGGgSaGNEZam9Ez7EoSr3PgSA/i+Tq+XgcbNMso=
+	t=1733452153; cv=none; b=IF6VoZ1zKqKBewBwAJZPBNYrBjkaxaazNk4BZGNn9cE7rZW4CXi76B03/8qMyukuvqOp66/LwdjaCuqmQJ02oixIJW1ZEaatOIJxZR3XmyYAJid0J07Jh4tdqZVNvPpEik5xAxMAU4GEf9uB8+mPPdU/OvhLdFYvhlq1rht6Ys0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733451681; c=relaxed/simple;
-	bh=vLk2hzOOvDlMEBh2Gzo2cdgEyGdDlfjKgTthl08JpAQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AxokD3vv0ZJcSss/VchSspYzyjlsbQzv1bByd26i2fuPDfhNHt4Yuw9NUP8SWQ1pX8APZAShWWHoTdYXN8w5s7R2HmYUJsm9r1haTPI/HDA79AFOPO/mv8hbCSfyrPlp+gXdG260wte3LfXCIkiJmsd10FSMpTq4Gr2Rn6RwXbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dEY6M3Cw; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733451679;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pboZ3VnmcTTj8kP2f77So4+NcnFeGWKwtfiLi6aYhnU=;
-	b=dEY6M3CwTimFsbzcoTjlIeGDjXdw1XAY5MYTqbKe8WBE6HlT/v5PB4DQaNBAxCjVu915NP
-	uw7Ti1ArdBpuWf7T7kTjbygxZKbNX48c8Jnim58+XOqKvBdSIbHPxg4ULyUdxJnrSbjrh0
-	wQ43pgRwzZAYs3CgzvREyfdrac4VmGQ=
-Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
- [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-588-CtmztgQSNB-dZuf8TWecAQ-1; Thu, 05 Dec 2024 21:21:18 -0500
-X-MC-Unique: CtmztgQSNB-dZuf8TWecAQ-1
-X-Mimecast-MFC-AGG-ID: CtmztgQSNB-dZuf8TWecAQ
-Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ef114d8346so1556553a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 18:21:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733451677; x=1734056477;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pboZ3VnmcTTj8kP2f77So4+NcnFeGWKwtfiLi6aYhnU=;
-        b=FNrpvT2OmuluuujFUw830L9fp4A5yUF04rg4nAXr/0ILQmbAUglE7bxVq2iBRK7Se7
-         PlDIQ5IcWZoeiJ+aqctaqZLsmF3hLza79LAlSX6OJsdcuFSOSPiTHTvRDzusS6ARPwfY
-         F6tTSkeDKzOLVgrb3xJXrbk48C6Z2t3+5FCeWtYzPS458dwKqZYYW+cAvChuZ3kmju6z
-         +YlkK34wot3rwx5kf8pwIY5ebkSd26mfB8UkZx8CTM99aVinXz6NuIQfr/kf9JHIGrdO
-         HWqNkwVsCvffBcKISnxtioQfuoqYwVkQH8ssYYSYCAbLewyHJLaawZnwnnYJxOyVg8IY
-         tW5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXy85GEEyr2LrcgN0DeQQmTQvhjF9gbKm1mBNeevVDpirEl8iCAgDgp2DnDB8G3ULkGL/u6pppVoGJUDvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBw3a1RnuoX/qN5QzOGyMK+LZqXRj7SJCYMnGxclQcsJECqARg
-	73rejkDlhK8Ngnvwm6ZR3Vm8z+bSOigJh2lzfDfcz0mpM50KC4SVVjIXtwO+HF5yyXKM9vM+2t4
-	F+LJDSStmfYylin6+Uq5SOruY+zD1//D3TdiIGBhY0KcwUFVv51UhIAYBd2U1PRtW8QGkM+i1n9
-	bwIH5iKM5SBGEjZVW258SQzBvecBKSE/lqxcum
-X-Gm-Gg: ASbGncv1W07E9yBAr2dDDnfRU/sZOd5afm7vRRyiMp/HdjqdSiBy1cMZdQsF9FG5woD
-	lDSvTux6m3ORr9NebmDp4NovMkBYUUE4blg==
-X-Received: by 2002:a17:90b:2685:b0:2ee:a76a:820 with SMTP id 98e67ed59e1d1-2ef6a6bd306mr2214630a91.18.1733451676820;
-        Thu, 05 Dec 2024 18:21:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHH1dl+mby1r2n+lqlFAVV9PyOHv14lvCGqbyM5ufLkebaJNAcXZtoHC509zXOU/tKgOZdkjx6jxpTQ+/2YkYE=
-X-Received: by 2002:a17:90b:2685:b0:2ee:a76a:820 with SMTP id
- 98e67ed59e1d1-2ef6a6bd306mr2214594a91.18.1733451676402; Thu, 05 Dec 2024
- 18:21:16 -0800 (PST)
+	s=arc-20240116; t=1733452153; c=relaxed/simple;
+	bh=DWChgoAkGjcs985ZnQGbj8bV9eoCZan6eJ0VqgGaJYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZLPTp32g/KBcpqzOtsSe2QwJeIg1kZfcenbin9kVqnPGprQZgfupWNNL5Y2TFqkVDzpvljQ4loBsX4ozhw7WemCm2hXdqhCt96EVsbcd33DOBPVhcav6EwgBd7dPmbnkeVxeD8h4kTTvJLgCfcvqy9XlKSFMSEOp+ldMGAmvp4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=R0NtjIjL; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1733452145;
+	bh=wjQ20CsYQkqMwulAzTKRahW5QkCEP8shqiUUC13vdZk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=R0NtjIjLVWaFV/Bi8zARgYeawxAuHBXvLxiWU0VJN6CHD1UIU0mJMo7lABN8GLxsZ
+	 7QSbRLJtqYTvU3FZjLe8kfTn5aumwhRUM4ZMcpxjkfFCyoGZScksEfGCxjpCIN72Ij
+	 pBb7F6PXmNeWKJwlglMZ29rQj8scBvN9Ld33vBLk=
+Received: from [10.56.52.9] ([39.156.73.10])
+	by newxmesmtplogicsvrszc13-0.qq.com (NewEsmtp) with SMTP
+	id 5A421071; Fri, 06 Dec 2024 10:22:36 +0800
+X-QQ-mid: xmsmtpt1733451756t8vy4fodi
+Message-ID: <tencent_2AC9A80622AF8180D05996E4E58A4AE6EB06@qq.com>
+X-QQ-XMAILINFO: N/WmRbclY25Go9IpGYahQRCP0JyzV4ADH1e5m6zto0pj9++PTO37OxeGClaMdO
+	 jkU5c+awKwUHfnDULYVi2qVU+Gs/QcxNJOxGb0A6wSSmhV42fR2UEP6wcxd/WN1g28umQ/UdOZkQ
+	 sBxCxtPYHU8SsYHPRFYdf+MX6e32LNc+BOccBUJkiIo6KEn1sz4h65pV6yAmzajmV3juZdSX1wEY
+	 bhJCDXjFlceKUxRemlj735P2HyKGx8UY1PRICCRBpcfh/fYHWlB/MrSCMW5bKvQFjauCjM/YJ3N8
+	 kZH3L+0+1sgFOdqpSA6IvfjxELiJC857ZX+cbbxZb4Jtj8TBn+MhA4+3QIoFQc290fd9eun590MF
+	 uDocY5fd2T9/k6Be4Rh5yl32Uz2/vSy4lzbgcEJmRKdftT5M1NRkypjdWGmGAf0L83PdqQkGoSIM
+	 UobTMTXeGSy/g/UF0c7hlHGJ1V3odXnxeQPqfgKPwefeu2Za325PihLGy6L98krixaVZqANMPmwF
+	 nSRxR8z+gnY508pVwnqj07SvgPnE2sqKbV3K4Thiz3PdE8HIPO/HVi9eBkhGnAhIS9qRwgABYMVU
+	 lbghd4Snm612LClFvymV4fgHkNzOQiT0s/PM+X43wJvopMCbe3G6LASuo23TmD9VvwozKC4QGAhG
+	 Jh7nPGZ4u1bvwaCeJ6dphTGw/EvFaaHhxMhcSaqrHbpmoR+aanorFnfnyZQ2dafVX21fQZ9z59Gx
+	 6DwExhliP379UcD888hMmojqXgpzpW0B++PUsaiXeuIsrISRGKm35ceSMABknsLXGV3505I0PnjZ
+	 kpmFCWUzbprIX435kIZnx5FH3NlJ6r9h+V8mHEaqNLsDgAmoJKxjixt6YWu/OnwA+2DcT7OaT+ht
+	 TDyAuT9XJrdRT+BaEJW8hgiKouvBp2PFk1v3PbTJTi8HCCH5RYtUHmIsNvwssLdMWRbiwtgZ/sP6
+	 t7hYsfy72jetMnEqpe505haeEfTIMepE35uahZO4U14lWLs8375Kp9uEa1KtD8+Sjxdr+ddpmIuG
+	 GXS9sABQ==
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-OQ-MSGID: <c96ecd21-2766-4742-9075-f7fef4dc2279@foxmail.com>
+Date: Fri, 6 Dec 2024 10:22:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241121134002.990285-1-sthotton@marvell.com> <20241121134002.990285-3-sthotton@marvell.com>
-In-Reply-To: <20241121134002.990285-3-sthotton@marvell.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Fri, 6 Dec 2024 10:21:05 +0800
-Message-ID: <CACGkMEt_wUm7GEZ6zxUUO=JSRLYfj8ah9pwYbT0ZhO9-pnD+Ew@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] vdpa/octeon_ep: read vendor-specific PCI capability
-To: Shijith Thotton <sthotton@marvell.com>
-Cc: virtualization@lists.linux.dev, mst@redhat.com, dan.carpenter@linaro.org, 
-	schalla@marvell.com, vattunuru@marvell.com, ndabilpuram@marvell.com, 
-	jerinj@marvell.com, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Satha Rao <skoteshwar@marvell.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3] bpftool: Fix gen object segfault
+To: Quentin Monnet <qmo@kernel.org>,
+ Andrii Nakryiko <andrii.nakryiko@gmail.com>, alexei.starovoitov@gmail.com
+Cc: ast@kernel.org, daniel@iogearbox.net, rongtao@cestc.cn,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <tencent_A7A870BF168D6A21BA193408D5645D5D920A@qq.com>
+ <0b96aa24-13ca-4e0a-8e80-f2586fbe2b57@kernel.org>
+ <CAEf4BzbLmXF9XB=fBvL7NLMoPmfD=DFFvuM8Fw5h6T7vfFXUFg@mail.gmail.com>
+ <tencent_0F0D028440B2BE2E37547C5EFF467511FD09@qq.com>
+ <77c9f13e-0162-4e92-b0b8-531122ab0f5e@kernel.org>
+Content-Language: en-US
+From: Rong Tao <rtoax@foxmail.com>
+In-Reply-To: <77c9f13e-0162-4e92-b0b8-531122ab0f5e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 21, 2024 at 9:43=E2=80=AFPM Shijith Thotton <sthotton@marvell.c=
-om> wrote:
->
-> Added support to read the vendor-specific PCI capability to identify the
-> type of device being emulated.
->
-> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
-> ---
->  drivers/vdpa/octeon_ep/octep_vdpa.h      | 24 +++++++++++++++++
->  drivers/vdpa/octeon_ep/octep_vdpa_hw.c   | 34 +++++++++++++++++++++++-
->  drivers/vdpa/octeon_ep/octep_vdpa_main.c |  4 ++-
->  3 files changed, 60 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/vdpa/octeon_ep/octep_vdpa.h b/drivers/vdpa/octeon_ep=
-/octep_vdpa.h
-> index 2d4bb07f91b3..0f83a1eca408 100644
-> --- a/drivers/vdpa/octeon_ep/octep_vdpa.h
-> +++ b/drivers/vdpa/octeon_ep/octep_vdpa.h
-> @@ -8,6 +8,7 @@
->  #include <linux/pci_regs.h>
->  #include <linux/vdpa.h>
->  #include <linux/virtio_pci_modern.h>
-> +#include <uapi/linux/virtio_crypto.h>
->  #include <uapi/linux/virtio_net.h>
->  #include <uapi/linux/virtio_blk.h>
->  #include <uapi/linux/virtio_config.h>
-> @@ -52,6 +53,28 @@ struct octep_vring_info {
->         phys_addr_t notify_pa;
->  };
->
-> +enum octep_pci_vndr_cfg_type {
-> +       OCTEP_PCI_VNDR_CFG_TYPE_VIRTIO_ID,
-> +       OCTEP_PCI_VNDR_CFG_TYPE_MAX,
-> +};
-> +
-> +struct octep_pci_vndr_data {
-> +       u8 cap_vndr;
-> +       u8 cap_next;
-> +       u8 cap_len;
-> +       u8 cfg_type;
-> +       u16 vendor_id;
 
-Is this better to define the above in uapi/linux/virtio_pci.h?
+On 12/6/24 09:56, Quentin Monnet wrote:
+> 2024-12-06 09:11 UTC+0800 ~ Rong Tao <rtoax@foxmail.com>
+>> On 12/6/24 05:34, Andrii Nakryiko wrote:
+>>> On Thu, Dec 5, 2024 at 4:22 AM Quentin Monnet <qmo@kernel.org> wrote:
+>>>> On 05/12/2024 12:09, Rong Tao wrote:
+>>>>> From: Rong Tao <rongtao@cestc.cn>
+>>>>>
+>>>>> If the input file and output file are the same, the input file is
+>>>>> cleared
+>>>>> due to opening, resulting in a NULL pointer access by libbpf.
+>>>>>
+>>>>>       $ bpftool gen object prog.o prog.o
+>>>>>       libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
+>>>>>       Segmentation fault
+>>>>>
+>>>>>       (gdb) bt
+>>>>>       #0  0x0000000000450285 in linker_append_elf_syms
+>>>>> (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>>>>>       #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized
+>>>>> out>, opts=<optimized out>) at linker.c:453
+>>>>>       #2  0x000000000040c235 in do_object ()
+>>>>>       #3  0x00000000004021d7 in main ()
+>>>>>       (gdb) frame 0
+>>>>>       #0  0x0000000000450285 in linker_append_elf_syms
+>>>>> (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>>>>>       1296              Elf64_Sym *sym = symtab->data->d_buf;
+>>>>>
+>>>>> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+>>>> Tested-by: Quentin Monnet <qmo@kernel.org>
+>>>> Reviewed-by: Quentin Monnet <qmo@kernel.org>
+>>> Isn't this papering over a deeper underlying issue? Why do we get
+>>> SIGSEGV inside the linker at all instead of just erroring out?
+>>> Comparison based on file path isn't a reliable way to check if input
+>>> and output are both the same file, so this fixes the most obvious
+>>> case, but not the actual issue.
+>> Thanks for your replay! The current scenario is similar to the following
+>> code.
+>> After a.txt is opened in read mode, it is opened in write mode again, which
+>> causes the contents of a.txt file to be cleared, resulting in no data
+>> being read,
+>>
+>>
+>>      fpr = fopen("a.txt", "r");
+>>      fpw = fopen("a.txt", "w");
+>>
+>>      /* fgets() will get nothing, It's not glibc's fault. */
+>>      while (fgets(buff, sizeof(buff), fpr))
+>>          printf("%s", buff);
+>>
+>>      fprintf(fpw, "....");
+>>
+>>      fclose(fpr);
+>>      fclose(fpw);
+>>
+>> corresponding to the SEGV of bpftool. Perhaps we can add the following
+>> warning
+>>
+>>      if (x == NULL) {
+>>          fprintf(stderr, "Maybe the file was opened for writing after
+>> opened for read\n");
+>>          return -EINVAL;
+>>      }
+>>
+>> Whether this warning can be added may depend on libelf's processing. I will
+>> try to fix this SEGV in libbpf, hopefully it can be fixed.
+> Thank you Rong, I'm not sure I followed your explanation (the above is
+> not bpftool code, is it?), but I think we just addressed the issue in
+> libbpf with:
+>
+> https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git/commit/?id=e10500b69c3f3378f3dcfc8c2fe4cdb74fc844f5
+Thanks for this, i just try this patch, there is still one problem as 
+follows:
 
-Others look good.
+    $ cd tools/bpf/bpftool
+    $ make -j8
+    $ ls -l prog.o
+    -rw-r--r--. 1 rongtao rongtao 78408 Dec  6 10:18 prog.o
+    $ ./bpftool gen object prog.o prog.o
+    libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
+    Error: failed to link 'prog.o': Invalid argument (22)
+    $ ls -l prog.o
+    -rw-r--r--. 1 rongtao rongtao 0 Dec  6 10:18 prog.o
 
-Thanks
+The input file is cleared (size=0), which is not what the user expected.
+
+Thanks,
+Rong Tao
+>
+> We can drop the patch with the check on the names (sorry!). As Andrii
+> mentioned, it's not very reliable to compare filenames. It's true that
+> users can truncate files if they pass the same input and output file,
+> but then that's the case with many command-line tools if you don't use
+> them properly.
+>
+> So, no action required. Feel free to test with the patch above, the
+> segfault should not longer occur.
+>
+> Thanks,
+> Quentin
 
 
