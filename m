@@ -1,139 +1,167 @@
-Return-Path: <linux-kernel+bounces-434273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434277-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EAAF9E643C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:37:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00C09E644A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:38:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5D96168B0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:37:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85701168C01
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:38:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1850B17C220;
-	Fri,  6 Dec 2024 02:37:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C121317B418;
+	Fri,  6 Dec 2024 02:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M3PhDeVT"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YHNRCVGt"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E99145A05;
-	Fri,  6 Dec 2024 02:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C335214D433
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452657; cv=none; b=lqDLmxUiQsnYkBrAGQQL/15ZCYciXzE9cVeSeEWm6roFaPHLfW8yMrB4LAwYdepR9zgx5nF+1ZUeIrXwJ7IQ4y6hM+FSXeQR1RiF+F5TCXTIxrECnpCmY/TClJJg0xT8PLhrjDWDo4XaY4o/nBUE211fFeed43BQTdrE9CkJhRI=
+	t=1733452714; cv=none; b=gMVTropMC+fA98Mq9aMShkGLyDRlHR2Vn0ybtc5yQEin2PY5IuxY29jUw2x830oFsmtEQb547R4pvIfwS2vZ9ZakJ384YJgUCi6FbcKf9zFzK7KPYXbFf6v8VI1kZe/xULpHIv2FFnYV1AtAivJi194BMYFku+I+XwzseB7FZ20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452657; c=relaxed/simple;
-	bh=FbSwe14eb38grB9uW3LvxKjybeQCrOht4PdodHjbv+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=fr8sgc3qZYLSFAGShcN3kn0qhnjwP22tIu8IS5F0QPCQD8xgJ0pGQw/DYwtuHlCgsuh2kO/bJn+2yGkoU3GOk34g8tZ6EJOYb4dRnwGeLff3PC0ryOE6iwOyvQ33bJ/zmrIlCVXnluN8Ys78Ta+dViEb5+eI5Kgw6ZKl0w36rDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M3PhDeVT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaFt4003703;
-	Fri, 6 Dec 2024 02:37:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Jb8iLPB5GfyIk7Ci0Qq6vj9qT1mHqgPhhTb6s4iHMwM=; b=M3PhDeVTACu9IkOz
-	L99S8zeUWXiUx1Lp9YpIKuovQeF2ljlVwmBDIJ1b56AjTmsXJl83tk9Iu42c/J8G
-	U3hTiZZf2CRNr+Vqv8FpNl0U1HWi7PR6CMN/TnaKaUZy0n3bP3VkXX744I1fpCk8
-	y5x+svWD3JQ+K9qbwZ5CCjtqmGZwbC0f8sO3MvCxydsOGVWXrI41NtW7uUGNiXb+
-	KG/sifbYDwz5IuFKKIoAPoOfXhiv1Bm1ocS6na7Xsw2gOycXhZ+H/NLoO6U9T87E
-	3a9fd/NK6Ckout7lUyt22TCgbwviwVJvDHElM5vCLPO5krwuBn1Jy9EhSzBchoXO
-	axSHGg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ba0kjbmd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 02:37:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62bVaY002235
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 02:37:31 GMT
-Received: from [10.233.17.145] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
- 18:37:27 -0800
-Message-ID: <87c9ebb9-36b2-4891-8800-2896d6d9bbfc@quicinc.com>
-Date: Fri, 6 Dec 2024 10:37:25 +0800
+	s=arc-20240116; t=1733452714; c=relaxed/simple;
+	bh=wNgTPz8AgRVXV6HrZhY9Nb41hj2wBW/WH3xQZRZYaMc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eqH8KNE1CnRrCFQqSlF3ttKagzHnAcm4IfeJ2UOQ7v/WnzeDfoZAbd+CorwuLq/TdpjGvI2ssdBZ983o0aDKpO+l/akgP8Id7cq1+bPaofE6/3aCp2/Ca4g5CWYsd++UrhefJtlc0SDpw3DjQgsaf8zdVR3k6fqgLvSG71IdYKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YHNRCVGt; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733452709;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6nT0DV9JByo+6iUSRQFf0u5MMGCTCWwzLaVplVJHUzA=;
+	b=YHNRCVGtTCOrs5MIaarewlJsBpArRaX6LXRoLIorj8QeSPaoaXFdQ4S06Lq2j0GZH1QWQU
+	4ojlm76CW5q5e09Ym9Wmi/JEmkJfskLlYWZrkmfHoyMgoaBJYS80So6y14gSS/U0TtXum5
+	/o8vvc50/ndGOUV5xqMejIZ0UQ2qh38=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-21-HbTOODgINJmoImFslz3C1A-1; Thu, 05 Dec 2024 21:38:28 -0500
+X-MC-Unique: HbTOODgINJmoImFslz3C1A-1
+X-Mimecast-MFC-AGG-ID: HbTOODgINJmoImFslz3C1A
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2ee8cdb4c40so1560343a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 18:38:28 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733452707; x=1734057507;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6nT0DV9JByo+6iUSRQFf0u5MMGCTCWwzLaVplVJHUzA=;
+        b=bLQlKOaxgtLfeGePnS9jda/gdSxuqWa6Y/83v35SPV0Yon2WhOOshesVAq3yRx7vC4
+         vn/N+0z7gtZ4QTgRT7Vi/kWKDdYF8sJBqPwx4Fs74kOnBMo33EmSdnrA2zeGuAqmDKUe
+         vd5WwevZ1VuAuVfKZWOWZgQcB5o+BctEUXf9nM30iB/9iY++AbPoKseeYu471iywre5U
+         824yqFc87dgkr0e1A3ul87W2mnjqeaE193JzZseU+ik7sv5hIme0kycev05zbbR7V74+
+         scLLpxr7iMt5w2Ca+rzvCTijiwlqV8cCDH7zG6Oe8focoN02qAhheoOdG/3PPHI9uHP5
+         mp1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWDKdfzIPcsKMIO7OMHK0HOmlliVf2x1B6nZ2q/q2HZcSyfdaxRBmRWCiAsMPrI0iXyKL4ADFtRGkaZH84=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+5mk+YocBW8wYLdKUzkpjM/5xrF84tp4t3xJhuCiYgFItEh45
+	WY1OwuYly2wpqjh4HglFfiN1LRc2KS4gx56ca3xkUpofVpt98SuJ/cknKH5ky4ZMdmQt2x2jwxW
+	KwMsmgLFbONyJxLhGazsaaQGr2Hmj7VmxfMv3uvtVPILOy/f8AOprpuUaSKeZeALhi/VkGo3FCE
+	Z6yfIxvP937wYO94SjHQ28WfprRAh7VMRDR2mq
+X-Gm-Gg: ASbGncutg1Xlck5nrXR/wYdlWi+bkSgnx9kDkGcZIl+gMWbChaCENVAN9tkgpQz3bdr
+	ZbrLhUrhS+j99fUymXMYdYjw8UMG4XPPcFg==
+X-Received: by 2002:a17:90b:3a48:b0:2ee:c9d8:d01a with SMTP id 98e67ed59e1d1-2ef69e12847mr2282969a91.11.1733452707514;
+        Thu, 05 Dec 2024 18:38:27 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGxVsjXZwpAnmXEbhbW5Xn3qF8C7Ogv9ErnhY0q29NJY1JfEkb/9EFOVWWxh5R9GTjTFyGFd6YK0d2Wj4RnD0o=
+X-Received: by 2002:a17:90b:3a48:b0:2ee:c9d8:d01a with SMTP id
+ 98e67ed59e1d1-2ef69e12847mr2282945a91.11.1733452707116; Thu, 05 Dec 2024
+ 18:38:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 0/2] Enable ethernet for qcs8300
-To: Yijie Yang <quic_yijiyang@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>
-References: <20241206-dts_qcs8300-v5-0-422e4fda292d@quicinc.com>
-From: Tingwei Zhang <quic_tingweiz@quicinc.com>
-In-Reply-To: <20241206-dts_qcs8300-v5-0-422e4fda292d@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: a-JkyvDQLg4FPm8T5eeu4TC5ookSvh-q
-X-Proofpoint-GUID: a-JkyvDQLg4FPm8T5eeu4TC5ookSvh-q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
- mlxscore=0 bulkscore=0 mlxlogscore=554 spamscore=0 malwarescore=0
- impostorscore=0 lowpriorityscore=0 clxscore=1011 priorityscore=1501
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060017
+References: <20241121134002.990285-1-sthotton@marvell.com> <20241121134002.990285-4-sthotton@marvell.com>
+In-Reply-To: <20241121134002.990285-4-sthotton@marvell.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 6 Dec 2024 10:38:15 +0800
+Message-ID: <CACGkMEtydc4q5Dc1wwN52na37uWLf24e-Tmp6rYmKyg0TDgXUg@mail.gmail.com>
+Subject: Re: [PATCH v2 4/4] vdpa/octeon_ep: add interrupt handler for virtio
+ crypto device
+To: Shijith Thotton <sthotton@marvell.com>
+Cc: virtualization@lists.linux.dev, mst@redhat.com, dan.carpenter@linaro.org, 
+	schalla@marvell.com, vattunuru@marvell.com, ndabilpuram@marvell.com, 
+	jerinj@marvell.com, Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Satha Rao <skoteshwar@marvell.com>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/6/2024 9:35 AM, Yijie Yang wrote:
-> Add dts nodes to enable ethernet interface on qcs8300-ride.
-> The EMAC, SerDes and EPHY version are the same as those in sa8775p.
-> 
-> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+On Thu, Nov 21, 2024 at 9:43=E2=80=AFPM Shijith Thotton <sthotton@marvell.c=
+om> wrote:
+>
+> Introduced an interrupt handler for the virtio crypto device, as its
+> queue usage differs from that of network devices. While virtio network
+> device receives packets only on even-indexed queues, virtio crypto
+> device utilize all available queues for processing data.
+
+I'm not sure I will get here but the recent kernel depends heavily on
+the tx interrupt for skb post processing as well.
+
+>
+> Signed-off-by: Shijith Thotton <sthotton@marvell.com>
 > ---
-> This patch series depends on below patch series:
-> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi-v2-0-494c40fa2a42@quicinc.com/ - Reviewed
+>  drivers/vdpa/octeon_ep/octep_vdpa_main.c | 52 +++++++++++++++++++++++-
+>  1 file changed, 50 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octe=
+on_ep/octep_vdpa_main.c
+> index d674b9678428..1bdf7a8111ce 100644
+> --- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+> +++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+> @@ -44,7 +44,35 @@ static struct octep_hw *vdpa_to_octep_hw(struct vdpa_d=
+evice *vdpa_dev)
+>         return oct_vdpa->oct_hw;
+>  }
+>
+> -static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
+> +static irqreturn_t octep_vdpa_crypto_irq_handler(int irq, void *data)
+> +{
+> +       struct octep_hw *oct_hw =3D data;
+> +       int i;
+> +
+> +       /* Each device interrupt (nb_irqs) maps to specific receive rings
+> +        * (nr_vring) in a round-robin fashion.
+> +        *
+> +        * For example, if nb_irqs =3D 8 and nr_vring =3D 64:
+> +        * 0 -> 0, 8, 16, 24, 32, 40, 48, 56;
+> +        * 1 -> 1, 9, 17, 25, 33, 41, 49, 57;
+> +        * ...
+> +        * 7 -> 7, 15, 23, 31, 39, 47, 55, 63;
+> +        */
 
-Above series was already applied. I would say there's no dependency to 
-block this series to be applied now. No need to respin for this but 
-update the dependency status if a new version is required.
+So this algorithm is mandated by the device?
 
-> https://lore.kernel.org/all/20241010-schema-v1-0-98b2d0a2f7a2@quicinc.com/ - Applied
-> 
-> Changes in v5:
-> - Pad the register with zero for both 'ethernet0' and 'serdes0'.
-> - Change PHY name from 'sgmii_phy0' to 'phy0'.
-> - Link to v4: https://lore.kernel.org/r/20241123-dts_qcs8300-v4-0-b10b8ac634a9@quicinc.com
-> 
-> ---
-> Yijie Yang (2):
->        arm64: dts: qcom: qcs8300: add the first 2.5G ethernet
->        arm64: dts: qcom: qcs8300-ride: enable ethernet0
-> 
->   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 112 ++++++++++++++++++++++++++++++
->   arch/arm64/boot/dts/qcom/qcs8300.dtsi     |  43 ++++++++++++
->   2 files changed, 155 insertions(+)
-> ---
-> base-commit: c83f0b825741bcb9d8a7be67c63f6b9045d30f5a
-> change-id: 20241111-dts_qcs8300-f8383ef0f5ef
-> 
-> Best regards,
+I'm asking since it's better to not have type specific policy in the
+vDPA layer. As the behaviour of the guest might change.
 
+For example, for networking devices, in the future we may switch to
+use a single interrupt/NAPI to handle both RX and TX. And note that
+this is only the behaviour of Linux, not other drivers like DPDK or
+other OSes.
 
--- 
-Thanks,
-Tingwei
+> +       for (i =3D irq - oct_hw->irqs[0]; i < oct_hw->nr_vring; i +=3D oc=
+t_hw->nb_irqs) {
+> +               if (ioread32(oct_hw->vqs[i].cb_notify_addr)) {
+> +                       /* Acknowledge the per ring notification to the d=
+evice */
+> +                       iowrite32(0, oct_hw->vqs[i].cb_notify_addr);
+> +
+> +                       if (likely(oct_hw->vqs[i].cb.callback))
+> +                               oct_hw->vqs[i].cb.callback(oct_hw->vqs[i]=
+.cb.private);
+> +                       break;
+> +               }
+> +       }
+
+Thanks
+
 
