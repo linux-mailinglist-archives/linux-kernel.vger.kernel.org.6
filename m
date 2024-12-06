@@ -1,226 +1,190 @@
-Return-Path: <linux-kernel+bounces-434746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79FC39E6A83
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:39:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16F269E6A94
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:40:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA06716CD58
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:39:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46AB318860DC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:40:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF47D1F9EC7;
-	Fri,  6 Dec 2024 09:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51A71DE8AB;
+	Fri,  6 Dec 2024 09:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ncx6ol9y";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SbtD60A0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uwElul9D"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C431DF980;
-	Fri,  6 Dec 2024 09:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 547C31EF097
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477918; cv=none; b=ZbpclUNnWrNnZh0cgb1a33SdkCXkh+ZMuL+/gZ2r3JXdE14aEb2Vz74eCL75w/c56lY5jm3enSltwCkJybzEZWsPtKg8ROPpcV2xKv2N7e/bfeO1YEjiG4np3apEsIx6KLVZcY4eMAilvcDoXshYXKD8r1WGlA9phFx/jP/UvZI=
+	t=1733477996; cv=none; b=gp5TxMikuYjynj4T55ePDLPBI2j/kQR/lFX025RrruxrqBj9jtxYt2Vfa2gk26Cl3f5q35C1dsGfZAosS8LHX5Mlyf7ryswGKPK6e095I1RWrVnfX+vQGJwS+VKuZxm/5Is1BCexUqSNFYyOLxjSxny0Zf9oolHGDwpkO8yoxdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477918; c=relaxed/simple;
-	bh=Xn0Cxv2yj2h+iexFetvih0MGVcFn3Cl0EaLuWNz1t18=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=UquLCxNgYQnnKpMYFBgZxlSUKmMYZUgmowACXawW3JKRo7XzkWoo/jgt/U1+f88lbo7myfPUwr4Lct66W9MMOT5Uq7JrEjPRFKQwRXuqNcD4yv2EAfLwmYjSNp5oDTiTZf1o2u1QFtTd+z0E4+yaroXtTwFf+C9tXUm8BoR/2Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ncx6ol9y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SbtD60A0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 06 Dec 2024 09:38:33 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733477914;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QdzC+tIBd9Y8fjjoEuOHmFl588EUxvZ96XFPl8Sv77U=;
-	b=ncx6ol9yJ8+3etaeFHsU+7G03LyvO36oGtbVeoqeWGlVr/85huyWTG6xCXlkoBnrupT1pv
-	rKmy17+9A55RJukRdlc30sLTrK02oqknJXzcPqFi1VS6Ap2+GF2HOVkmmb/DWiwhJtgmYC
-	TkJIGgITaHafokf1xK7z9wr3HHaNNu2eW6vzL8ljBlr+kzrwuNV5c50UAdB4s4d3dqTM88
-	vq15uOtvHbFqbzZZWYUen6YI5tY8MQYcKqPDMKjmmSqZJ7fHxPslbeOzssyus1frirX4M0
-	iUGnABoHgTFjj+jON6cd1T3ALZFIFvGz9ckARu++6g8EGfOM34qFRcsGrk4zAg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733477914;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QdzC+tIBd9Y8fjjoEuOHmFl588EUxvZ96XFPl8Sv77U=;
-	b=SbtD60A0eo8dGRFxjMKVSekTd/m4A5jtFygbO5wpVwB1WyxhPgO0YcNnOH807FDzOt0MI4
-	k9GXHdMdlUvGZ0Bw==
-From: "tip-bot2 for Andrii Nakryiko" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: perf/core] uprobes: Decouple return_instance list traversal and freeing
-Cc: Andrii Nakryiko <andrii@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241206002417.3295533-3-andrii@kernel.org>
-References: <20241206002417.3295533-3-andrii@kernel.org>
+	s=arc-20240116; t=1733477996; c=relaxed/simple;
+	bh=hP9AIVICyv/HViIOvkl6GKCZizMiepmoi0uyK3av/ro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r7+4iLFYclhLIxWf51JCpi/WELARwGYPfUWrzUEVmoq4VOIR7tOeqmAlHqavPblWnDLAUJCdZfwGOUgi5uP8kE2bFxlp+a/Ad1vvtNU/zLQJQki+R48ukVdpbBuwVlDpycjOXc+fN48TXJA/y1C8fA1yjYiZXIRbwlPd4OHRWf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uwElul9D; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53e23fb807dso1567926e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:39:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733477992; x=1734082792; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lyjy+B1BzCuYPV6TYOZ9W+qMOzIQt8vOgPam9Y/pajs=;
+        b=uwElul9DLy1Km94Rp5aTvm61eD509czFHJ0raIfKiaqvDJqz4nPak0iyp5R69Yhw5M
+         mDg9Vy7BJ37irliuB3yhFdVqLi/AgWWWgN6RbSadwUCfbrdQctimpTPl+2ofsZlkEiF9
+         mPQEwalwSfSeZwJSD03aThKX2l3IJl4P6zNDidSSX5jCML6ZfenJiyWC2qO2SfaDbqfM
+         szzHok+0ovdFnZc4YZX5UepXDRJWEbP2/Gm1U82gIvrtZv/ryZBtVdfIEhlEijVm/2+8
+         UZhrXpFjqHN4JWqpP5zoCs1pXg9NlI5qGek8YIBNFyOu8QKJtzNZkLRvttuNCdmJodWk
+         ADdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733477992; x=1734082792;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lyjy+B1BzCuYPV6TYOZ9W+qMOzIQt8vOgPam9Y/pajs=;
+        b=cl/JQQTLPowveSDydqIi99bXH2bc438C4wVfM1YpZ7pKnH74aImb8nbcxRPexu/kRV
+         zrlPnmHyJrNaN0Zq49kX5GM66lNdk0f4RTBdg98Br2HVr4SH4QPPfD+fI71HAbEn1f39
+         xpQL8zQn9n1+89O2AWdchA36u6a4GjwENPJ8aGbiZN0HEEccBOjpq4kHW8CQgUJXx9tw
+         LzmI0rYPWqJon9yefn0l2/oYn1GiG4LOxPmrOg/83DP7ANoSeuStFfGSIKVRBhL9dScO
+         yr961oaEkll5N1W6txHG6Kc13FuCpkgaci3O9XZnSlRJnOflXvYI6avo/VgPLiPqksdk
+         6omw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFhlkTs/YtIcItxv3DgRRAZd9EiWtscQebqDCQGjfW50d3HbGcDy/XGVZqVrMyyOuaDrR/xXNAhD+OkQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKcjOisWuN5rn/PXmkPHhq5Wm2PuobmjAHjESGCdSI/uUQxypk
+	4SM/OyavnJfGLfcje9D3P54/ZQGbcaarunsAghpZ7cVms+fUTZRdP6bjg91UK4s=
+X-Gm-Gg: ASbGncue1mhg4fB+dP79u72h8RYD4yislNa77tXTEF44n0YDvR6hoD5lyU31GC8GUAS
+	y6j/RTdDVCJ8U5myoY5V+aH1tkD4Hito56CBt1NVGrFMwmeaE9lbMGt15USWA4nE5o0lWqDDxtX
+	ynOtREzu5TnYlvCFI93ou5rOkFdx1yxcFhsLQcZQtiYQH/wAfyql1iG/P7IGneq0j0frX9RcP/X
+	BYme040bbDl8KiA9h1gGN6UoKFnk1E/EeYIxjNCbhUgsUh6A4LwlGi5yE7vMms8eVoueM3nsif1
+	0SMQmn9mA9RVuntbxWPaj78L0Y9rYQ==
+X-Google-Smtp-Source: AGHT+IGNBPdaS1w4uQtjk5trf2hXxJbni2d/hlEYqanCr4EtCYjz+uzjDBO9Y74HuWm6AMKmFcMGVQ==
+X-Received: by 2002:a05:6512:138a:b0:53e:232b:6864 with SMTP id 2adb3069b0e04-53e2c2b17f4mr621540e87.2.1733477992487;
+        Fri, 06 Dec 2024 01:39:52 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229ca4aasm448445e87.244.2024.12.06.01.39.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 01:39:51 -0800 (PST)
+Date: Fri, 6 Dec 2024 11:39:48 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
+	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 16/45] drm/msm/dp: add support for programming p1
+ register block
+Message-ID: <d6hwd3mktcgrczwiqmkuf53byjushkdxgadilcjb5dqu2sdq2n@z7tzffqkn6tg>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-16-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173347791315.412.1668780366015175567.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205-dp_mst-v1-16-f8618d42a99a@quicinc.com>
 
-The following commit has been merged into the perf/core branch of tip:
+On Thu, Dec 05, 2024 at 08:31:47PM -0800, Abhinav Kumar wrote:
+> p1 register block is needed for the second mst stream.
+> Add support in the catalog to be able to program this block.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/dp/dp_catalog.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
+> index b4c8856fb25d01dd1b30c5ec33ce821aafa9551d..ee7f2d0b23aa034428a01ef2c9752f51013c5e01 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
+> @@ -73,6 +73,7 @@ struct dss_io_data {
+>  	struct dss_io_region aux;
+>  	struct dss_io_region link;
+>  	struct dss_io_region p0;
+> +	struct dss_io_region p1;
+>  };
+>  
+>  struct msm_dp_catalog_private {
+> @@ -93,6 +94,8 @@ void msm_dp_catalog_snapshot(struct msm_dp_catalog *msm_dp_catalog, struct msm_d
+>  	msm_disp_snapshot_add_block(disp_state, dss->aux.len, dss->aux.base, "dp_aux");
+>  	msm_disp_snapshot_add_block(disp_state, dss->link.len, dss->link.base, "dp_link");
+>  	msm_disp_snapshot_add_block(disp_state, dss->p0.len, dss->p0.base, "dp_p0");
+> +
 
-Commit-ID:     fa288f5cfc18bbbe3232d9bacde92acbdb72334f
-Gitweb:        https://git.kernel.org/tip/fa288f5cfc18bbbe3232d9bacde92acbdb72334f
-Author:        Andrii Nakryiko <andrii@kernel.org>
-AuthorDate:    Thu, 05 Dec 2024 16:24:15 -08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Dec 2024 09:52:01 +01:00
+Drop extra empty line, please
 
-uprobes: Decouple return_instance list traversal and freeing
+> +	msm_disp_snapshot_add_block(disp_state, dss->p1.len, dss->p0.base, "dp_p1");
+>  }
+>  
+>  static inline u32 msm_dp_read_aux(struct msm_dp_catalog_private *catalog, u32 offset)
+> @@ -145,6 +148,26 @@ static inline u32 msm_dp_read_p0(struct msm_dp_catalog_private *catalog,
+>  	return readl_relaxed(catalog->io.p0.base + offset);
+>  }
+>  
+> +static inline void msm_dp_write_p1(struct msm_dp_catalog_private *catalog,
+> +				   u32 offset, u32 data)
+> +{
+> +	/*
+> +	 * To make sure interface reg writes happens before any other operation,
+> +	 * this function uses writel() instread of writel_relaxed()
+> +	 */
+> +	writel(data, catalog->io.p1.base + offset);
+> +}
+> +
+> +static inline u32 msm_dp_read_p1(struct msm_dp_catalog_private *catalog,
+> +				 u32 offset)
+> +{
+> +	/*
+> +	 * To make sure interface reg writes happens before any other operation,
+> +	 * this function uses writel() instread of writel_relaxed()
+> +	 */
 
-free_ret_instance() has two unrelated responsibilities: actually
-cleaning up return_instance's resources and freeing memory, and also
-helping with utask->return_instances list traversal by returning the
-next alive pointer.
+Not applicable to the actual function.
 
-There is no reason why these two aspects have to be mixed together, so
-turn free_ret_instance() into void-returning function and make callers
-do list traversal on their own.
+> +	return readl_relaxed(catalog->io.p1.base + offset);
+> +}
+> +
+>  static inline u32 msm_dp_read_link(struct msm_dp_catalog_private *catalog, u32 offset)
+>  {
+>  	return readl_relaxed(catalog->io.link.base + offset);
+> @@ -1137,6 +1160,12 @@ static int msm_dp_catalog_get_io(struct msm_dp_catalog_private *catalog)
+>  			DRM_ERROR("unable to remap p0 region: %pe\n", dss->p0.base);
+>  			return PTR_ERR(dss->p0.base);
+>  		}
+> +
+> +		dss->p1.base = msm_dp_ioremap(pdev, 4, &dss->p1.len);
 
-We'll use this simplification in the next patch that will guarantee that
-to-be-freed return_instance isn't reachable from utask->return_instances
-list.
+p1 is not populated for eDP case, it wasn't always present in DT, etc.
+So please make it optional.
 
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Link: https://lore.kernel.org/r/20241206002417.3295533-3-andrii@kernel.org
----
- kernel/events/uprobes.c | 37 +++++++++++++++++++++----------------
- 1 file changed, 21 insertions(+), 16 deletions(-)
+> +		if (IS_ERR(dss->p1.base)) {
+> +			DRM_ERROR("unable to remap p1 region: %pe\n", dss->p1.base);
+> +			return PTR_ERR(dss->p1.base);
+> +		}
+>  	}
+>  
+>  	return 0;
+> 
+> -- 
+> 2.34.1
+> 
 
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index 6beac52..cca1fe4 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1888,10 +1888,8 @@ unsigned long uprobe_get_trap_addr(struct pt_regs *regs)
- 	return instruction_pointer(regs);
- }
- 
--static struct return_instance *free_ret_instance(struct return_instance *ri, bool cleanup_hprobe)
-+static void free_ret_instance(struct return_instance *ri, bool cleanup_hprobe)
- {
--	struct return_instance *next = ri->next;
--
- 	if (cleanup_hprobe) {
- 		enum hprobe_state hstate;
- 
-@@ -1901,7 +1899,6 @@ static struct return_instance *free_ret_instance(struct return_instance *ri, boo
- 
- 	kfree(ri->extra_consumers);
- 	kfree_rcu(ri, rcu);
--	return next;
- }
- 
- /*
-@@ -1911,7 +1908,7 @@ static struct return_instance *free_ret_instance(struct return_instance *ri, boo
- void uprobe_free_utask(struct task_struct *t)
- {
- 	struct uprobe_task *utask = t->utask;
--	struct return_instance *ri;
-+	struct return_instance *ri, *ri_next;
- 
- 	if (!utask)
- 		return;
-@@ -1921,8 +1918,11 @@ void uprobe_free_utask(struct task_struct *t)
- 	timer_delete_sync(&utask->ri_timer);
- 
- 	ri = utask->return_instances;
--	while (ri)
--		ri = free_ret_instance(ri, true /* cleanup_hprobe */);
-+	while (ri) {
-+		ri_next = ri->next;
-+		free_ret_instance(ri, true /* cleanup_hprobe */);
-+		ri = ri_next;
-+	}
- 
- 	kfree(utask);
- 	t->utask = NULL;
-@@ -2111,12 +2111,15 @@ unsigned long uprobe_get_trampoline_vaddr(void)
- static void cleanup_return_instances(struct uprobe_task *utask, bool chained,
- 					struct pt_regs *regs)
- {
--	struct return_instance *ri = utask->return_instances;
-+	struct return_instance *ri = utask->return_instances, *ri_next;
- 	enum rp_check ctx = chained ? RP_CHECK_CHAIN_CALL : RP_CHECK_CALL;
- 
- 	while (ri && !arch_uretprobe_is_alive(ri, ctx, regs)) {
--		ri = free_ret_instance(ri, true /* cleanup_hprobe */);
-+		ri_next = ri->next;
- 		utask->depth--;
-+
-+		free_ret_instance(ri, true /* cleanup_hprobe */);
-+		ri = ri_next;
- 	}
- 	rcu_assign_pointer(utask->return_instances, ri);
- }
-@@ -2508,7 +2511,7 @@ static struct return_instance *find_next_ret_chain(struct return_instance *ri)
- void uprobe_handle_trampoline(struct pt_regs *regs)
- {
- 	struct uprobe_task *utask;
--	struct return_instance *ri, *next;
-+	struct return_instance *ri, *ri_next, *next_chain;
- 	struct uprobe *uprobe;
- 	enum hprobe_state hstate;
- 	bool valid;
-@@ -2528,8 +2531,8 @@ void uprobe_handle_trampoline(struct pt_regs *regs)
- 		 * or NULL; the latter case means that nobody but ri->func
- 		 * could hit this trampoline on return. TODO: sigaltstack().
- 		 */
--		next = find_next_ret_chain(ri);
--		valid = !next || arch_uretprobe_is_alive(next, RP_CHECK_RET, regs);
-+		next_chain = find_next_ret_chain(ri);
-+		valid = !next_chain || arch_uretprobe_is_alive(next_chain, RP_CHECK_RET, regs);
- 
- 		instruction_pointer_set(regs, ri->orig_ret_vaddr);
- 		do {
-@@ -2541,7 +2544,9 @@ void uprobe_handle_trampoline(struct pt_regs *regs)
- 			 * trampoline addresses on the stack are replaced with correct
- 			 * original return addresses
- 			 */
--			rcu_assign_pointer(utask->return_instances, ri->next);
-+			ri_next = ri->next;
-+			rcu_assign_pointer(utask->return_instances, ri_next);
-+			utask->depth--;
- 
- 			uprobe = hprobe_consume(&ri->hprobe, &hstate);
- 			if (valid)
-@@ -2549,9 +2554,9 @@ void uprobe_handle_trampoline(struct pt_regs *regs)
- 			hprobe_finalize(&ri->hprobe, hstate);
- 
- 			/* We already took care of hprobe, no need to waste more time on that. */
--			ri = free_ret_instance(ri, false /* !cleanup_hprobe */);
--			utask->depth--;
--		} while (ri != next);
-+			free_ret_instance(ri, false /* !cleanup_hprobe */);
-+			ri = ri_next;
-+		} while (ri != next_chain);
- 	} while (!valid);
- 
- 	return;
+-- 
+With best wishes
+Dmitry
 
