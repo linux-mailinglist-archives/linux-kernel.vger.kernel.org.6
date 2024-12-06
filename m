@@ -1,185 +1,308 @@
-Return-Path: <linux-kernel+bounces-435124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDC69E6FF8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:23:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C31B99E6FFB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:23:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1CAC188539C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:23:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E90A16B99E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E2C4207670;
-	Fri,  6 Dec 2024 14:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i7NRQ6jU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CF621F9AB6;
-	Fri,  6 Dec 2024 14:23:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45085207E13;
+	Fri,  6 Dec 2024 14:23:30 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66CA221A0B;
+	Fri,  6 Dec 2024 14:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733494984; cv=none; b=Oyq/nX0Byz2ols+9BUG1BNkVYD3d4Wq1NWNsoco+06V8HbzEFtIemrGdxwFS1IQvXAbC6vn8bp0+ksBmvYT1YoC7NUGVF9j+Gbazz3IGvW/GRhQVd1wjx9xJzZ0TGK7M1nWjxyLpiZm1iHer7Xu3c6fH4Ha37j8hdlo3dihBgVM=
+	t=1733495009; cv=none; b=LYSk5Ink0bOau25nF2IpKLkGWus3HIfJMv2y4KCX78qrmOS0bjb28VXtE0eMEkl0O9r453o+dhrf+UBOiFqTvj7A9B1u03d2tDYAVzvJ1oFSVZw5Z2+jGiFPn46zs0g9PzD8+qlW91zqNwFXj67lYUEnJyQvme4+2dYxcSzGNMQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733494984; c=relaxed/simple;
-	bh=KjGZ7RXzGwqZiqmHjguEh0tDh9nP5DfFrBU9SfrU15k=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JjJbQygTZN4zKisA5ELqePgfbLmm76r4E6ERgMUmtunp1cLOjJHGnNbhIJiWijsrlp2E4p0Fyt5ep3n3F2Wj/9Gv6ObnsCP1c/eoYKOEvdkyaCBR/aDlzKgyPL0tBL4ppdJ4i4DxK1Sz5BC6i5MXUhRAXmXZ6pgtR5PPxixoyR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i7NRQ6jU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B6CA8C4CED1;
-	Fri,  6 Dec 2024 14:23:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733494984;
-	bh=KjGZ7RXzGwqZiqmHjguEh0tDh9nP5DfFrBU9SfrU15k=;
-	h=From:Date:To:Cc:Subject:References:In-Reply-To:From;
-	b=i7NRQ6jUNAOhb8w7aT8pqsBU9WQagCvkU0JqfRg0P0mqaGYTO0EQmBBoiAvjpgccQ
-	 LSlSazpccXfaqiFOsccfqWJpQzhrgjKyCmWiso/EoKZCbnNKFWT2vNFjaSUTbrZ0NV
-	 wEF0gdbsmXHAlU6dMNfRBtdodwqxIlCMnsEShU8hn0BF23K1qzYmHmJFG5KgEfh4DO
-	 SPdfTFtl3NP5xzTS6Dq3t9R2GJaXe5upAcVClaEQLdi0Y0eLXtodBv7+OCkWCKEMOq
-	 GFlgLzCM2OuFqbfzaLgQsxlpcn+ZYBjY63ZN9UmlE/MZ+vcIYWiHGLkkOZ+zuK9rIx
-	 PzEhxJg6u+Kiw==
-From: mripard@kernel.org
-Date: Fri, 6 Dec 2024 15:23:01 +0100
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
-	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
-	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
-	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
-	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
-	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_update_edid()
-Message-ID: <20241206-speedy-beaver-from-asgard-dbed9c@houat>
-HFrom: Maxime Ripard <mripard@kernel.org>
-References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
- <20241201-drm-bridge-hdmi-connector-v5-9-b5316e82f61a@linaro.org>
- <20241202-married-bald-raven-7acd83@houat>
- <ae24x2bo736jpzi77l34hybejawwe4rp47v2idedga344ye6zr@bxsxz34dwrd2>
+	s=arc-20240116; t=1733495009; c=relaxed/simple;
+	bh=w5fW3fAgBvUrRh02El2yi1lCjRIXnseHiw4Q+x9NmWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mIIfH/zhTugLK2I4/ov90xkz6WHcmuAoU0FRHnirvmx0EKf/uOLKbX3qux6b3IMkTf12G9KjQZtQbuJ7UQ0upv6Bmuwd02VZdGWcZzkENvtFTG2oLL+eAHZKrpU7zWklXml8Bc7I2epLRJ6t0kFz9WQ+k6/7kruVSgA5h5rwYto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B9244FEC;
+	Fri,  6 Dec 2024 06:23:53 -0800 (PST)
+Received: from [10.57.68.20] (unknown [10.57.68.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11B213F71E;
+	Fri,  6 Dec 2024 06:23:22 -0800 (PST)
+Message-ID: <9f46991d-98c3-41f5-8133-6612b397e33a@arm.com>
+Date: Fri, 6 Dec 2024 15:23:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="dycgynhhneeoioiz"
-Content-Disposition: inline
-In-Reply-To: <ae24x2bo736jpzi77l34hybejawwe4rp47v2idedga344ye6zr@bxsxz34dwrd2>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] cpufreq: CPPC: Support for autonomous selection in
+ cppc_cpufreq
+To: Lifeng Zheng <zhenglifeng1@huawei.com>, rafael@kernel.org,
+ lenb@kernel.org, robert.moore@intel.com, viresh.kumar@linaro.org
+Cc: acpica-devel@lists.linux.dev, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ zhanjie9@hisilicon.com, lihuisong@huawei.com, fanghao11@huawei.com
+References: <20241114084816.1128647-1-zhenglifeng1@huawei.com>
+ <20241114084816.1128647-4-zhenglifeng1@huawei.com>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <20241114084816.1128647-4-zhenglifeng1@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Hello Lifeng,
 
---dycgynhhneeoioiz
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v5 9/9] drm/vc4: hdmi: use
- drm_atomic_helper_connector_hdmi_update_edid()
-MIME-Version: 1.0
+On 11/14/24 09:48, Lifeng Zheng wrote:
+> Add sysfs interfaces for CPPC autonomous selection in the cppc_cpufreq
+> driver.
+> 
+> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+> ---
+>   .../ABI/testing/sysfs-devices-system-cpu      |  54 +++++++
+>   drivers/cpufreq/cppc_cpufreq.c                | 141 ++++++++++++++++++
+>   2 files changed, 195 insertions(+)
+> 
+> diff --git a/Documentation/ABI/testing/sysfs-devices-system-cpu b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> index 206079d3bd5b..ba7b8ea613e5 100644
+> --- a/Documentation/ABI/testing/sysfs-devices-system-cpu
+> +++ b/Documentation/ABI/testing/sysfs-devices-system-cpu
+> @@ -268,6 +268,60 @@ Description:	Discover CPUs in the same CPU frequency coordination domain
+>   		This file is only present if the acpi-cpufreq or the cppc-cpufreq
+>   		drivers are in use.
+>   
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_select
+> +Date:		October 2024
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Autonomous selection enable
+> +
+> +		Read/write interface to control autonomous selection enable
+> +			Read returns autonomous selection status:
+> +				0: autonomous selection is disabled
+> +				1: autonomous selection is enabled
+> +
+> +			Write '1' to enable autonomous selection.
+> +			Write '0' to disable autonomous selection.
+> +
+> +		This file only presents if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/auto_act_window
+> +Date:		October 2024
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Autonomous activity window
+> +
+> +		This file indicates a moving utilization sensitivity window to
+> +		the platform's autonomous selection policy.
+> +
+> +		Read/write an integer represents autonomous activity window (in
+> +		microseconds) from/to this file. The max value to write is
+> +		1270000000 but the max significand is 127. This means that if 128
+> +		is written to this file, 127 will be stored. If the value is
+> +		greater than 130, only the first two digits will be saved as
+> +		significand.
+> +
+> +		Writing a zero value to this file enable the platform to
+> +		determine an appropriate Activity Window depending on the workload.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection is
+> +		enabled.
+> +
+> +		This file only presents if the cppc-cpufreq driver is in use.
+> +
+> +What:		/sys/devices/system/cpu/cpuX/cpufreq/energy_perf
+> +Date:		October 2024
+> +Contact:	linux-pm@vger.kernel.org
+> +Description:	Energy performance preference
+> +
+> +		Read/write an 8-bit integer from/to this file. This file
+> +		represents a range of values from 0 (performance preference) to
+> +		0xFF (energy efficiency preference) that influences the rate of
+> +		performance increase/decrease and the result of the hardware's
+> +		energy efficiency and performance optimization policies.
+> +
+> +		Writing to this file only has meaning when Autonomous Selection is
+> +		enabled.
+> +
+> +		This file only presents if the cppc-cpufreq driver is in use.
+> +
+>   
+>   What:		/sys/devices/system/cpu/cpu*/cache/index3/cache_disable_{0,1}
+>   Date:		August 2008
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 2b8708475ac7..b435e1751d0d 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -792,10 +792,151 @@ static ssize_t show_freqdomain_cpus(struct cpufreq_policy *policy, char *buf)
+>   
+>   	return cpufreq_show_cpus(cpu_data->shared_cpu_map, buf);
+>   }
+> +
+> +static ssize_t show_auto_select(struct cpufreq_policy *policy, char *buf)
+> +{
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = cppc_get_auto_sel(policy->cpu, &val);
+> +
+> +	/* show "<unsupported>" when this register is not supported by cpc */
+> +	if (ret == -EOPNOTSUPP)
+> +		return sysfs_emit(buf, "%s\n", "<unsupported>");
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "%lld\n", val);
+> +}
+> +
+> +static ssize_t store_auto_select(struct cpufreq_policy *policy,
+> +				 const char *buf, size_t count)
+> +{
+> +	unsigned long val;
+> +	int ret;
+> +
+> +	ret = kstrtoul(buf, 0, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val > 1)
+> +		return -EINVAL;
+> +
+> +	ret = cppc_set_auto_sel(policy->cpu, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return count;
+> +}
+> +
+> +#define AUTO_ACT_WINDOW_SIG_BIT_SIZE	(7)
+> +#define AUTO_ACT_WINDOW_EXP_BIT_SIZE	(3)
+> +#define AUTO_ACT_WINDOW_MAX_SIG	((1 << AUTO_ACT_WINDOW_SIG_BIT_SIZE) - 1)
+> +#define AUTO_ACT_WINDOW_MAX_EXP	((1 << AUTO_ACT_WINDOW_EXP_BIT_SIZE) - 1)
+> +/* AUTO_ACT_WINDOW_MAX_SIG is 127, so 128 and 129 will decay to 127 when writing */
+> +#define AUTO_ACT_WINDOW_SIG_CARRY_THRESH 129
 
-On Tue, Dec 03, 2024 at 02:27:44PM +0200, Dmitry Baryshkov wrote:
-> On Mon, Dec 02, 2024 at 02:27:49PM +0100, Maxime Ripard wrote:
-> > Hi,
-> >=20
-> > On Sun, Dec 01, 2024 at 02:44:13AM +0200, Dmitry Baryshkov wrote:
-> > > Use the helper function to update the connector's information. This
-> > > makes sure that HDMI-related events are handled in a generic way.
-> > > Currently it is limited to the HDMI state reporting to the sound syst=
-em.
-> > >=20
-> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 9 +++++++--
-> > >  1 file changed, 7 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4=
-_hdmi.c
-> > > index d0a9aff7ad43016647493263c00d593296a1e3ad..d83f587ab69f4b8f7d5c3=
-7a00777f11da8301bc1 100644
-> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-> > > @@ -401,13 +401,16 @@ static void vc4_hdmi_handle_hotplug(struct vc4_=
-hdmi *vc4_hdmi,
-> > >  	 */
-> > > =20
-> > >  	if (status =3D=3D connector_status_disconnected) {
-> > > +		drm_atomic_helper_connector_hdmi_update_edid(connector, NULL);
-> > >  		cec_phys_addr_invalidate(vc4_hdmi->cec_adap);
-> > >  		return;
-> > >  	}
-> > > =20
-> > >  	drm_edid =3D drm_edid_read_ddc(connector, vc4_hdmi->ddc);
-> > > =20
-> > > -	drm_edid_connector_update(connector, drm_edid);
-> > > +	// TODO: use drm_atomic_helper_connector_hdmi_update() once it gains
-> > > +	// CEC support
-> > > +	drm_atomic_helper_connector_hdmi_update_edid(connector, drm_edid);
-> >=20
-> > So, it's not just about EDID, and I think we shouldn't really focus on
-> > that either.
-> >=20
-> > As that patch points out, even if we only consider EDID's, we have
-> > different path depending on the connector status. It shouldn't be up to
-> > the drivers to get this right.
-> >=20
-> > What I had in mind was something like a
-> > drm_atomic_helper_connector_hdmi_hotplug function that would obviously
-> > deal with EDID only here, but would expand to CEC, scrambling, etc.
-> > later on.
->=20
-> I thought about it, after our discussion, but in the end I had to
-> implement the EDID-specific function, using edid =3D=3D NULL as
-> "disconnected" event. The issue is pretty simple: there is no standard
-> way to get EDID from the connector. The devices can call
-> drm_edid_read(), drm_edid_read_ddc(connector->ddc) or (especially
-> embedded bridges) use drm_edid_read_custom().
+Maybe this would be better to place these macros in include/acpi/cppc_acpi.h
+(with a CPPC_XXX prefix)
 
-And that's fine, it's to be expected.
+> +
+> +static ssize_t show_auto_act_window(struct cpufreq_policy *policy, char *buf)
+> +{
+> +	int sig, exp;
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = cppc_get_auto_act_window(policy->cpu, &val);
+> +
+> +	/* show "<unsupported>" when this register is not supported by cpc */
+> +	if (ret == -EOPNOTSUPP)
+> +		return sysfs_emit(buf, "%s\n", "<unsupported>");
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	sig = val & AUTO_ACT_WINDOW_MAX_SIG;
+> +	exp = (val >> AUTO_ACT_WINDOW_SIG_BIT_SIZE) & AUTO_ACT_WINDOW_MAX_EXP;
+> +
+> +	return sysfs_emit(buf, "%lld\n", sig * int_pow(10, exp));
+> +}
+> +
+> +static ssize_t store_auto_act_window(struct cpufreq_policy *policy,
+> +				     const char *buf, size_t count)
+> +{
+> +	unsigned long usec;
+> +	int digits = 0;
+> +	int ret;
+> +
+> +	ret = kstrtoul(buf, 0, &usec);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (usec > AUTO_ACT_WINDOW_MAX_SIG * int_pow(10, AUTO_ACT_WINDOW_MAX_EXP))
+> +		return -EINVAL;
+> +
+> +	while (usec > AUTO_ACT_WINDOW_SIG_CARRY_THRESH) {
+> +		usec /= 10;
+> +		digits += 1;
+> +	}
+> +
+> +	if (usec > AUTO_ACT_WINDOW_MAX_SIG)
+> +		usec = AUTO_ACT_WINDOW_MAX_SIG;
+> +
+> +	ret = cppc_set_auto_act_window(policy->cpu,
+> +				       (digits << AUTO_ACT_WINDOW_SIG_BIT_SIZE) + usec);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return count;
+> +}
+> +
+> +static ssize_t show_energy_perf(struct cpufreq_policy *policy, char *buf)
+> +{
+> +	u64 val;
+> +	int ret;
+> +
+> +	ret = cppc_get_epp_perf(policy->cpu, &val);
+> +
+> +	/* show "<unsupported>" when this register is not supported by cpc */
+> +	if (ret == -EOPNOTSUPP)
+> +		return sysfs_emit(buf, "%s\n", "<unsupported>");
+> +
+> +	if (ret)
+> +		return ret;
+> +
+> +	return sysfs_emit(buf, "%lld\n", val);
+> +}
+> +
+> +#define ENERGY_PERF_MAX	(0xFF)
 
-> Of course we can go with the functional way and add the
-> .read_edid(drm_connector) callback to the HDMI funcs. Then the
-> drm_atomic_helper_connector_hdmi_hotplug() function can read EDID on its
-> own.
+Same comment to move to include/acpi/cppc_acpi.h
 
-Yep, that's definitely what we should do. And then we can make a
-get_modes helper too that would also use it.
+> +
+> +static ssize_t store_energy_perf(struct cpufreq_policy *policy,
+> +				 const char *buf, size_t count)
+> +{
+> +	unsigned long val;
+> +	int ret;
+> +
+> +	ret = kstrtoul(buf, 0, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (val > ENERGY_PERF_MAX)
+> +		return -EINVAL;
+> +
+> +	ret = cppc_set_epp(policy->cpu, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return count;
+> +}
+> +
+>   cpufreq_freq_attr_ro(freqdomain_cpus);
+> +cpufreq_freq_attr_rw(auto_select);
+> +cpufreq_freq_attr_rw(auto_act_window);
+> +cpufreq_freq_attr_rw(energy_perf);
 
-> Also the function that you proposed perfectly fits the HPD notification
-> callbacks, but which function should be called from the .get_modes()?
-> The _hdmi_hotplug() doesn't fit there. Do we still end up with both
-> drm_atomic_helper_connector_hdmi_hotplug() and
-> drm_atomic_helper_connector_hdmi_update_edid()?
+It might be better from a user PoV to hide the following entries:
+- auto_act_window
+- energy_perf
+if auto_select is not available or disabled.
 
-I'd say both a get_modes helper and a hotplug helper, both using that
-read_edid hook under the hood.
+------
 
-Maxime
+Also just for reference, in ACPI 6.5, s8.4.6.1.2.3 Desired Performance Register
+"""
+When Autonomous Selection is enabled, it is not necessary for OSPM to assess processor workload performance
+demand and convey a corresponding performance delivery request to the platform via the Desired Register. If the
+Desired Performance Register exists, OSPM may provide an explicit performance requirement hint to the platform by
+writing a non-zero value.
+"""
 
---dycgynhhneeoioiz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1MIxQAKCRAnX84Zoj2+
-do5xAX4k6mKW4Bt7ybI5RhlLw9sJEo4pfcA2eh2x5DRMpHOkyzon0k434uDMFRng
-2KdcU8gBgK08VG9rHNa3FQR0uOvG+ivNuzpw60Z3iQTfDrl9j6ufNMx2bCeo7pR2
-LTKnOXxxkg==
-=7iA8
------END PGP SIGNATURE-----
-
---dycgynhhneeoioiz--
+So it seems it still makes sense to have cpufreq requesting a certain performance
+level even though autonomous selection is enabled.
 
