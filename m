@@ -1,183 +1,164 @@
-Return-Path: <linux-kernel+bounces-434709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12EC9E6A03
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:26:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 843349E6A06
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:27:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E333283418
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:26:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E196188596D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820F81E2616;
-	Fri,  6 Dec 2024 09:26:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834751E1A17;
+	Fri,  6 Dec 2024 09:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CdiKmgl8"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ib349zOm"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C661DA10C
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC301C3F2C;
+	Fri,  6 Dec 2024 09:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477159; cv=none; b=rTCpDbhIhAZ9BrLJXGnOJkcD+MrhJ0Q4kn9m2DPg4Erru5w7EE5WphaKapbtMLqpO3eFGKahxfMriRGUDcPo4U7dL7mGzxOa+uUSf3+km81dFPjOCW8tUYcEaDSInSqiOoCyywoERf1Np23nLDIeWMPkudZgWYU9rF6BJ31i2Ak=
+	t=1733477216; cv=none; b=YZxoaK8M4L2HqJwt0Abe+jbzkCTOcJ8D7CtMoxkukOfvtK1DwRxMJHy84mWA9iU+93iBYabNfU/XPjT+B2HL3yYdVrXJIROfTfMGFTx+p/eJCZz0n7rpZaRDZX014M2So7e7bS75alRJgVnlluSSerQuY2xh0xhqSicW7Q+HZDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477159; c=relaxed/simple;
-	bh=DnHGjRWsKYTW4FcAmnRONMUxDw+YrQbtkfuiDDTOiF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qlu826f0ado99swd38FTjt/vpFII1HUBUIqotTqmpIUHL+5krx5XRBMG33BhJcSLQ6cUK2vBzVCKD9dACJijCj7QEchlmcadx6HgRL40TVLM0bosi+dblkilZfg0DhgWVmolGM9tnyAhMe/cr6ShpF3RXTNKKeMhqPKrf7StG50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CdiKmgl8; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ffa974b2b0so16665631fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:25:56 -0800 (PST)
+	s=arc-20240116; t=1733477216; c=relaxed/simple;
+	bh=DOgjgIHtbvEEs4icMPXghie6iZ1iNRD3xyyVRQQWGo4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=J2uYR9n+7g88IFa8Frn+KCP0fy9d3VAaGIb9SggghaRNQQQROwWlf1j/eIAzDi3AwVGdtsil197O/eeTjcYDedAM0t6ThDpxsS3XK6qrx8KuXQld3MpzmlXfxaPnWW9ylVHGN3FuRbfGTdXT5ujWGaIZguNk9504rzADXyn7jvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ib349zOm; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd2fdcebcso2329462e87.0;
+        Fri, 06 Dec 2024 01:26:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733477155; x=1734081955; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OoUr7wn0ZUiIfTkQsgOoOd0m6IiBq8HA9tyXLM1N7tU=;
-        b=CdiKmgl83FzB28bnoyLrX4H7xmFTwSuRNE9vj80TLCgv0Yq2i27QqoWSCevZubT8L4
-         YeXhHO8/e2xe3h23AvCaB5xhKrfnHEjlmNH8/9WfA0M3NANqjH1DkDxEvQIjznAohfH9
-         dZSmz6NYEXp24pcGMN0ebsvIkO+hNjbtdYYnQzpNYZrkCV18fMZEsfIe9DNuKZBuA48y
-         gn2uc8Fn7YXjULG6HpLkI5aOM/cGncxfb0MymIU9n04qhjEyaNN0hX8oqYwXwAGxpn2S
-         e3r+pq1uurXxOJSk+QmCbVlaFu+BSkUPT/IAV6EXgsUO7qIuhz8bHyXPaqS8RH4rJMGZ
-         pI/g==
+        d=gmail.com; s=20230601; t=1733477213; x=1734082013; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UpFq1+DMaQvpewJxrv6v8zSoD14ZkAeC0fz9lQIxpy8=;
+        b=Ib349zOm6HI7ZszDLJQDQes2CAQvwZlGSVeqoyZGYIH4de9VVlxtqFkd96COgkNfQS
+         NHIGLknN7d3MHWASurWg8jGEoV5TcO45zsEiyMZAuck1oHnrVLKMlGYrCCY5BdJ+0dl3
+         rNIfE4hA1Mcru1y9EbbKhanNuvsTo+4Urr+1o4/oEmJwRX6z5eifzMgBsRS6cfubuGw2
+         60B16KSy8Vj2opv3KSl76jGdNYJdq5INiK7aw2CzihncqJMv9DqLoy/TJi3D32sAWgWf
+         6PCSVz7C4T6QNcM1yZC8dkZPdkBva751lI8UJsLSrdpbZJGbgDzUpNE66FuRuL+p84pA
+         Yybw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733477155; x=1734081955;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OoUr7wn0ZUiIfTkQsgOoOd0m6IiBq8HA9tyXLM1N7tU=;
-        b=BOs9K+L6oKgvyI/jWosJ3PvcCfVwZI5h8bQLR9QM8Yx5+RpKRmOCeJ8yLoYFcNcR6g
-         TDi6H7fW+whToBGw9GY9XOLnFUzmYcKTQKHrnb0okWqAQCZ0FJJhYmo8tFnKiWwBxGEJ
-         nzpnp9CostdSvvHy/KXp0yhBo4y5i7CFSS2bjhhqb7U6RFjN199fsDR59TKBix9GHwzg
-         6fEgUUPcXEWgtl4pAdNh9L7IQ/fJHWyO7XgRyZyjuVrT/IuhmvhUvRMVtLZfELVwKpyh
-         KshFPdZ7hqvp/tlgkv7yAU3LWdgY5jpHBkB49xQeOfMcjd4JpJGipZydNeuIguEWtmlB
-         iLjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJeZ4BcW/PXo7EQhQeE4uG4W+VJIK0I9yMbAega3mjkazZ5t9rIVhPfGkEX/zMukHhGfpuXI8mZM1sofs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTw5ZVQGqOIhZdqHEIsO3khkj8ENHF1I/PHkZm74qZb3abchP5
-	qNMj+TrsaOwH+APoO9RZIvSpEl7JUnlV+1Yhc54RVphC/KMKOXC5GdN5HkeM1Bs=
-X-Gm-Gg: ASbGncsHipws/nXuc8DEd8LFmiAu5r1yxhWh8GpveElYlATWIqvhee8nLKtbgM5BRxO
-	yIsU/QKY9B8nsZJEY5AljWwVrXTG+8MA+mtzzrGLASBrVaLpfGxPiRW3sFpw5c9QawToLKInf1T
-	sLWYghpZXjYpVPsXkFZZbVfuDpf9K0Wta6r+Gt/bp4I1kqkI2gVhlevoiAfWmNGgnSiaaKM+nnI
-	Ge7MdfQe2CwbM+4P+VaOIBayUg6FTNX2zFJ4frxdN2d9gKX8b6VHxsFDlZTQpB6qZNVrcnrYsid
-	tP0DF0eaIEExq9obfRgmU5Sq3A1r8A==
-X-Google-Smtp-Source: AGHT+IHEPjXcBrm7XkLeyj1S9Myc1Ilx1u8zaCsZKn1lMH6hzLdh64MAK0T3iqxzwepLT5rGpHD/Mw==
-X-Received: by 2002:a05:651c:553:b0:2ff:d7e8:b712 with SMTP id 38308e7fff4ca-3002f8c88b6mr7541101fa.13.1733477155305;
-        Fri, 06 Dec 2024 01:25:55 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30020d85356sm4231801fa.15.2024.12.06.01.25.52
+        d=1e100.net; s=20230601; t=1733477213; x=1734082013;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UpFq1+DMaQvpewJxrv6v8zSoD14ZkAeC0fz9lQIxpy8=;
+        b=Ugya9/4CJThKQi48mYavYBoFwaQ+nLkGWyFLZbNaXSetFVmHWbfQyk9qMp1tad6TCA
+         nHtXHcIdctRElQHkdQcz6GqwcnBPqct3f89FOSXDM8W9alx3vLOkAaKcg9fPYPS895gz
+         E6DLrkAeJ75Q2/i/yu5EUdq96A9Fx06tOwOuAsuP1lN2KzWMj1Exx+RItV/RZ3Vt2w1V
+         Xjv5hzLTDj1/aXe8TM84t3vjyngxppGPmtpUvURNxvU9G8mifDbbKYCi6dNFSfCg2H67
+         A/H45W1f1nRmTJsa3m/pyXJCYNjU58hRrVbpiT2VpbQvqzTPaYfYBRS39SLtUhXsphfm
+         ph6g==
+X-Forwarded-Encrypted: i=1; AJvYcCUIZSYbbH/Vjm5qPEMG4q3Lc+Rkc6webqBKfB2gnXVTb7gnWSv5t4bIVLCbIRmfqZwKA9FkALHOFyM=@vger.kernel.org, AJvYcCX8rxgr0bZ0CFySYJwu5bOfPsi8C3UHa0qUqFP67VwVkJ2nHvxd6QPVMRiwMnrKugxNYq8CoFbPxXE55hPd@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBqEIgMe7IYdwK4qATALKOzWGSEVN48NjOU1sJftjWPCOS63YA
+	VdwMeJOP9woLSrUqxvld7/zyPxSzj0Sx3No1ng/ob8qOmW8hBM6h
+X-Gm-Gg: ASbGnctNyL6pOncs55L6doR1sgsaoLgSjb3iMQjmmqzaRdb+2pCsjnmFjl4oZohTJAH
+	sSte2tsM9kcwNRCivDwylVTFWnfq6c0q06e8D8qMILhf/g/INvll8avZFI1LlwybEDFylpd6UO0
+	bvpLtWkLQ83eH/ehZOnfh3JoQoeMpmshZz/1ovROqwduVCAMPaowEEljiESdXVoxspuyKm/cf95
+	dizkkk5pX49Y0aJegpn0HG6wJJEtIsrqZufD7Eo5QU9ixRheQkIHONA
+X-Google-Smtp-Source: AGHT+IFyvsA+zQFzRoi2X/NTwbQxmXVEoExfyBnwbC7Oe3QZMaB61RMhwvmWEaefbh7vu3cS++0avQ==
+X-Received: by 2002:a05:6512:e9c:b0:53e:2151:4d9f with SMTP id 2adb3069b0e04-53e2c2e8a34mr1180354e87.44.1733477212853;
+        Fri, 06 Dec 2024 01:26:52 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229c95fcsm447449e87.229.2024.12.06.01.26.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 01:25:54 -0800 (PST)
-Date: Fri, 6 Dec 2024 11:25:51 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
-	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
-	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 41/45] drm/msm/dpu: use msm_dp_get_mst_intf_id() to get
- the intf id
-Message-ID: <tqxoqjrpi3smnjuipnog5idh4kjhld7jem7s637pdjhcoc4paf@75kcofgrxwdv>
-References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-41-f8618d42a99a@quicinc.com>
+        Fri, 06 Dec 2024 01:26:50 -0800 (PST)
+Date: Fri, 6 Dec 2024 11:26:42 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Mehdi Djait <mehdi.djait@linux.intel.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2] iio: kx022a: document new chip_info structure members
+Message-ID: <Z1LDUj-naUdGSM6n@mva-rohm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZRsxLEK7ScoQg9xB"
+Content-Disposition: inline
+
+
+--ZRsxLEK7ScoQg9xB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-41-f8618d42a99a@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 05, 2024 at 08:32:12PM -0800, Abhinav Kumar wrote:
-> Use msm_dp_get_mst_intf_id() to get the intf id for the DP MST
-> controller as the intf_id is unique for each MST stream of each
-> DP controller.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 25 ++++++++++++++++++++-----
->  1 file changed, 20 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> index 83de7564e2c1fe14fcf8c4f82335cafc937e1b99..ce2f0fa8ebb1efd1a229a99543593965dbccd752 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> @@ -2512,17 +2512,23 @@ static int dpu_encoder_virt_add_phys_encs(
->  
->  static int dpu_encoder_setup_display(struct dpu_encoder_virt *dpu_enc,
->  				 struct dpu_kms *dpu_kms,
-> -				 struct msm_display_info *disp_info)
-> +				 struct msm_display_info *disp_info,
-> +				 int drm_enc_mode)
+The kx022a driver supports a few different HW variants. A chip-info
+structure is used to describe sensor specific details. Support for
+sensors with different measurement g-ranges was added recently,
+introducing sensor specific scale arrays.
 
-No need to, use dpu_enc->base.encoder_type
+The members of the chip-info structure have been documented using
+kerneldoc. The newly added members omitted the documentation. It is nice
+to have all the entries documented for the sake of the consistency.
+Furthermore, the scale table format may not be self explatonary, nor how
+the amount of scales is informed.
 
->  {
->  	int ret = 0;
->  	int i = 0;
->  	struct dpu_enc_phys_init_params phys_params;
-> +	unsigned int intf_id;
-> +	struct msm_drm_private *priv;
-> +	struct drm_encoder *drm_enc;
->  
->  	if (!dpu_enc) {
->  		DPU_ERROR("invalid arg(s), enc %d\n", dpu_enc != NULL);
->  		return -EINVAL;
->  	}
->  
-> +	drm_enc = &dpu_enc->base;
-> +	priv = drm_enc->dev->dev_private;
->  	dpu_enc->cur_master = NULL;
->  
->  	memset(&phys_params, 0, sizeof(phys_params));
-> @@ -2559,9 +2565,18 @@ static int dpu_encoder_setup_display(struct dpu_encoder_virt *dpu_enc,
->  		DPU_DEBUG("h_tile_instance %d = %d, split_role %d\n",
->  				i, controller_id, phys_params.split_role);
->  
-> -		phys_params.hw_intf = dpu_encoder_get_intf(dpu_kms->catalog, &dpu_kms->rm,
-> -							   disp_info->intf_type,
-> -							   controller_id);
-> +		if (drm_enc_mode == DRM_MODE_ENCODER_DPMST) {
-> +			intf_id = msm_dp_get_mst_intf_id(priv->dp[controller_id],
-> +							 disp_info->stream_id);
-> +			DPU_DEBUG("intf_id %d for disp_info->stream_id = %d\n", intf_id,
-> +				  disp_info->stream_id);
-> +			phys_params.hw_intf = dpu_rm_get_intf(&dpu_kms->rm, intf_id);
-> +
-> +		} else {
-> +			phys_params.hw_intf = dpu_encoder_get_intf(dpu_kms->catalog, &dpu_kms->rm,
-> +								   disp_info->intf_type,
-> +								   controller_id);
-> +		}
->  
->  		if (disp_info->intf_type == INTF_WB && controller_id < WB_MAX)
->  			phys_params.hw_wb = dpu_rm_get_wb(&dpu_kms->rm, controller_id);
-> @@ -2662,7 +2677,7 @@ struct drm_encoder *dpu_encoder_init(struct drm_device *dev,
->  	mutex_init(&dpu_enc->enc_lock);
->  	mutex_init(&dpu_enc->rc_lock);
->  
-> -	ret = dpu_encoder_setup_display(dpu_enc, dpu_kms, disp_info);
-> +	ret = dpu_encoder_setup_display(dpu_enc, dpu_kms, disp_info, drm_enc_mode);
->  	if (ret) {
->  		DPU_ERROR("failed to setup encoder\n");
->  		return ERR_PTR(-ENOMEM);
-> 
-> -- 
-> 2.34.1
-> 
+Add documentation to scale table entries to maintain consistency and to
+make it more obvious how the scales should be represented.
 
--- 
-With best wishes
-Dmitry
+Suggested-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+---
+Revision history:
+v1 =3D> v2:
+- Improved wording based on discussion with Mehdi.
+
+ drivers/iio/accel/kionix-kx022a.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-k=
+x022a.h
+index 142652ff4b22..d18d56cef098 100644
+--- a/drivers/iio/accel/kionix-kx022a.h
++++ b/drivers/iio/accel/kionix-kx022a.h
+@@ -137,6 +137,14 @@ struct kx022a_data;
+  *
+  * @name:			name of the device
+  * @regmap_config:		pointer to register map configuration
++ * scale_table:			An array of tables of scaling factors for
++ *				a supported acceleration measurement range.
++ *				Each table containing a single scaling
++ *				factor consisting of two integers. The first
++ *				value in a table is the integer part, and
++ *				the second value is the	fractional part as
++ *				parts per billion.
++ * scale_table_size:		Amount of values in tables.
+  * @channels:			pointer to iio_chan_spec array
+  * @num_channels:		number of iio_chan_spec channels
+  * @fifo_length:		number of 16-bit samples in a full buffer
+
+base-commit: 05ff9c9c53c643551fe08fe52bd714310b9afc2e
+--=20
+2.47.0
+
+
+--ZRsxLEK7ScoQg9xB
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdSw00ACgkQeFA3/03a
+ocUDTwf+P4KomFZwCDODH0Wi+GgjWuc85SqsCo6G62umi9jipPr4eKZcog1DWCHj
+8mKGCI5P330uHh5j9zqbclHYR7CXR4jTCnRgkedtMPx5eTA/Rib9M2ccj6bN6Qpb
+iBb7zVEqyt96BCKDH4VxFqtplb8nSunLWGMKvSvZqZ1SfUHBn4yHf6X8SAqai9wk
+2RrIf8yI7VDyhvIT6fTPA4GeIpEFUTP7hB7X9KJslzXsMsosObwxuu1WwDYOZIBD
+iVex4yyrYOrnnR5ZCrxXyNIc+IUvpFRj6k7wPTARNNLqAd2CeaZvrMS+BVk+pm8D
+35UVFEyxmqYKHseyBEATnBkGp7WoHw==
+=aqMx
+-----END PGP SIGNATURE-----
+
+--ZRsxLEK7ScoQg9xB--
 
