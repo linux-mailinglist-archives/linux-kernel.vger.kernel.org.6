@@ -1,216 +1,217 @@
-Return-Path: <linux-kernel+bounces-434666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87B509E6995
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:02:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353929E6997
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:03:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C9F9164896
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA1321883452
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94C831EE003;
-	Fri,  6 Dec 2024 09:02:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2A11E009D;
+	Fri,  6 Dec 2024 09:03:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aujXnEVL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="q98OhgMN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ND8n3Y10";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="q98OhgMN";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ND8n3Y10"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE011E2617;
-	Fri,  6 Dec 2024 09:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF0718E050;
+	Fri,  6 Dec 2024 09:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475721; cv=none; b=YJFGbab34V1i8yXyE24onS/Evaf4qUjIl9BUGqU8XVbXJiaq6lV4xVBJB/jYbMDkDmcet8QbN37WtIJaKTOcMnm2gWOVmwbOh2CTf4nIhi5HUoio6Q8W36+DCT/KODwBcU3Jc5GRdlGHpch0fHK4Z/2MSJOWrgbrbD4d6sTakGY=
+	t=1733475802; cv=none; b=ogbs8KyzHV+tmqo+TwPTSW8g0WX68Sw2NqCTP89wvGnfQp42mkcYex3LgQskTsy2acXnLxA+8adxPRuNwJuoxJn4LOmPnOoi7G1NE0Gyr0fpfjWBjMlrxfKs3yYO1thS+0HsMn6VaJKCulowhZA+UrsYtcaJZYTt/JLFZNHct8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475721; c=relaxed/simple;
-	bh=XWD3YWdZXUE2SZt16mOKszuwLSOfo+1lXG/AOJzR51Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JLWJQUJ7NrxmMoh8NaAPSNOTClOEcu8oEWfu0MT5EC55P+zHngIsgGq6lTk2fDlp6LFXsiOgWrDT+j3x+u36jY3HiYwLqOk2a5KxgJDUfeg/f2W/nYXvq/KRMtJqxEc+7SVjlMxfQxEVcWI8/DQq1a8nz2VVjwMCvcnm9WP6Eu4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aujXnEVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78A82C4CEDF;
-	Fri,  6 Dec 2024 09:01:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733475720;
-	bh=XWD3YWdZXUE2SZt16mOKszuwLSOfo+1lXG/AOJzR51Q=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aujXnEVLRamWYUKSNF0HSFX25gxTeSm2xe3+A4k6Wmv7MfvN4Pz2AbaeLlco0nuHo
-	 inrGBt/qQZRuL3RJhgaI08Ow6j794+h3EiHR8NDk5HpQeCwYcGs1faONQxyMgjBu8i
-	 b50vrlphiFAeVm0e1EfF2BB7FXYaD6nWxNmnr/ArOBaQVehUW6LTRYeZn++xdi5ZHn
-	 oxGSZJeDvVSWxhpteg/A2M8G7ymdPWy3JXPaf1ApieG16HmhvnUQ4RQzEm/X7na3TP
-	 KPb8+l1Y7YPDyVZlluDdDiUCOifzbPAsp1drMc17e4ABtM1pH32D+91yNy99njyJ+Q
-	 yLh1jRi7sGWQA==
-Date: Fri, 6 Dec 2024 10:01:54 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] samples: rust: Provide example using the new Rust
- MiscDevice abstraction
-Message-ID: <Z1K9gk3Mel4h98gA@pollux>
-References: <20241205162531.1883859-1-lee@kernel.org>
- <20241205162531.1883859-4-lee@kernel.org>
+	s=arc-20240116; t=1733475802; c=relaxed/simple;
+	bh=PZebbAYCSWxSiPPRSvS5Vy7sEYZALfxiV6+N1A0uqlU=;
+	h=Date:Message-ID:From:To:Cc:Subject:MIME-Version:Content-Type; b=o3+0X5GWCSFAvD09Vm7ObOpuwiyE+DVuow7oZdG0aDjOAmYgor5eDCcB3N9f0K8k+K+CJkwxbPKZNkVRF5zAZiKBxLzoqc+wzxRoS7Oy6Xs87s05HeMCyyDYESYqIhHFUxnc5AoVi1Uv7aLT8sNictqjKTJewIeY5m1eX27eGY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=q98OhgMN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ND8n3Y10; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=q98OhgMN; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ND8n3Y10; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B4EE61F38E;
+	Fri,  6 Dec 2024 09:03:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733475798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=haYiRBuJD6qVdfpMmGceiz+yupXQb2bFsDT9UXN9G98=;
+	b=q98OhgMNN6zvBZANl7gQNQC19/Vp8nQ9Pm2FdnsGjnYrbgt9QW+J7/S1C+r6D97tPi603q
+	R7RL/7HL+EYxfvCcovXJxkQleIM/c5ZpWCqLniiiCcP6dhZew8X+P0XKDlwbh/qZVRRmqN
+	8gEPn8AK1oPy1idHSD6+uWBxnle/65E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733475798;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=haYiRBuJD6qVdfpMmGceiz+yupXQb2bFsDT9UXN9G98=;
+	b=ND8n3Y10bhuJyq93PSC3I4z+cEVyTZ0O/FRuRjm02oz2ylYFut9C/Wqr9n/aFFfY/WVVQm
+	1tQLJcedouq9AEBQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=q98OhgMN;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=ND8n3Y10
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733475798; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=haYiRBuJD6qVdfpMmGceiz+yupXQb2bFsDT9UXN9G98=;
+	b=q98OhgMNN6zvBZANl7gQNQC19/Vp8nQ9Pm2FdnsGjnYrbgt9QW+J7/S1C+r6D97tPi603q
+	R7RL/7HL+EYxfvCcovXJxkQleIM/c5ZpWCqLniiiCcP6dhZew8X+P0XKDlwbh/qZVRRmqN
+	8gEPn8AK1oPy1idHSD6+uWBxnle/65E=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733475798;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=haYiRBuJD6qVdfpMmGceiz+yupXQb2bFsDT9UXN9G98=;
+	b=ND8n3Y10bhuJyq93PSC3I4z+cEVyTZ0O/FRuRjm02oz2ylYFut9C/Wqr9n/aFFfY/WVVQm
+	1tQLJcedouq9AEBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 815F613647;
+	Fri,  6 Dec 2024 09:03:18 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id A9NVHta9UmeBBQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 06 Dec 2024 09:03:18 +0000
+Date: Fri, 06 Dec 2024 10:03:18 +0100
+Message-ID: <8734j1tc89.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mark Brown <broonie@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [GIT PULL] sound fixes for 6.13-rc2
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205162531.1883859-4-lee@kernel.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: B4EE61F38E
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	FAKE_REPLY(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_DN_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FREEMAIL_CC(0.00)[kernel.org,gmail.com,vger.kernel.org];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	RCVD_COUNT_TWO(0.00)[2];
+	DKIM_TRACE(0.00)[suse.de:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Dec 05, 2024 at 04:25:20PM +0000, Lee Jones wrote:
-> This sample driver demonstrates the following basic operations:
-> 
-> * Register a Misc Device
-> * Create /dev/rust-misc-device
-> * Open the aforementioned character device
-> * Operate on the character device via a simple ioctl()
-> * Close the character device
-> 
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> ---
->  samples/rust/Kconfig             | 10 ++++
->  samples/rust/Makefile            |  1 +
->  samples/rust/rust_misc_device.rs | 80 ++++++++++++++++++++++++++++++++
->  3 files changed, 91 insertions(+)
->  create mode 100644 samples/rust/rust_misc_device.rs
-> 
-> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> index b0f74a81c8f9..df384e679901 100644
-> --- a/samples/rust/Kconfig
-> +++ b/samples/rust/Kconfig
-> @@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
->  
->  	  If unsure, say N.
->  
-> +config SAMPLE_RUST_MISC_DEVICE
-> +	tristate "Misc device"
-> +	help
-> +	  This option builds the Rust misc device.
-> +
-> +	  To compile this as a module, choose M here:
-> +	  the module will be called rust_misc_device.
-> +
-> +	  If unsure, say N.
-> +
->  config SAMPLE_RUST_PRINT
->  	tristate "Printing macros"
->  	help
-> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> index c1a5c1655395..ad4b97a98580 100644
-> --- a/samples/rust/Makefile
-> +++ b/samples/rust/Makefile
-> @@ -2,6 +2,7 @@
->  ccflags-y += -I$(src)				# needed for trace events
->  
->  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
-> +obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)		+= rust_misc_device.o
->  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
->  
->  rust_print-y := rust_print_main.o rust_print_events.o
-> diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_device.rs
-> new file mode 100644
-> index 000000000000..f50925713f1a
-> --- /dev/null
-> +++ b/samples/rust/rust_misc_device.rs
-> @@ -0,0 +1,80 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +// Copyright (C) 2024 Google LLC.
-> +
-> +//! Rust misc device sample.
-> +
-> +use kernel::{
-> +    c_str,
-> +    ioctl::_IO,
-> +    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration},
-> +    prelude::*,
-> +};
-> +
-> +const RUST_MISC_DEV_HELLO: u32 = _IO('R' as u32, 9);
-> +
-> +module! {
-> +    type: RustMiscDeviceModule,
-> +    name: "rust_misc_device",
-> +    author: "Lee Jones",
-> +    description: "Rust misc device sample",
-> +    license: "GPL",
-> +}
-> +
-> +struct RustMiscDeviceModule {
-> +    _miscdev: Pin<KBox<MiscDeviceRegistration<RustMiscDevice>>>,
+Linus,
 
-Why do we add examples where we ask people to allocate those structures with
-kmalloc()?
+please pull sound fixes for v6.13-rc2 from:
 
-`MiscDevice` should switch to the generic `Registration` type in [1] and use
-`InPlaceModule`, such that those structures land in the .data section of the
-binary.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.13-rc2
 
-[1] https://lore.kernel.org/rust-for-linux/20241205141533.111830-3-dakr@kernel.org/
+The topmost commit is c34e9ab9a612ee8b18273398ef75c207b01f516d
 
-> +}
-> +
-> +impl kernel::Module for RustMiscDeviceModule {
-> +    fn init(_module: &'static ThisModule) -> Result<Self> {
-> +        pr_info!("Initialising Rust Misc Device Sample\n");
-> +
-> +        let options = MiscDeviceOptions {
-> +            name: c_str!("rust-misc-device"),
-> +        };
-> +
-> +        Ok(Self {
-> +            _miscdev: KBox::pin_init(
-> +                MiscDeviceRegistration::<RustMiscDevice>::register(options),
-> +                GFP_KERNEL,
-> +            )?,
-> +        })
-> +    }
-> +}
-> +
-> +struct RustMiscDevice;
-> +
-> +#[vtable]
-> +impl MiscDevice for RustMiscDevice {
-> +    type Ptr = KBox<Self>;
-> +
-> +    fn open() -> Result<KBox<Self>> {
-> +        pr_info!("Opening Rust Misc Device Sample\n");
-> +
-> +        Ok(KBox::new(RustMiscDevice, GFP_KERNEL)?)
-> +    }
-> +
-> +    fn ioctl(
-> +        _device: <Self::Ptr as kernel::types::ForeignOwnable>::Borrowed<'_>,
-> +        cmd: u32,
-> +        _arg: usize,
-> +    ) -> Result<isize> {
-> +        pr_info!("IOCTLing Rust Misc Device Sample\n");
-> +
-> +        match cmd {
-> +            RUST_MISC_DEV_HELLO => pr_info!("Hello from the Rust Misc Device\n"),
-> +            _ => {
-> +                pr_err!("IOCTL not recognised: {}\n", cmd);
-> +                return Err(ENOIOCTLCMD);
-> +            }
-> +        }
-> +
-> +        Ok(0)
-> +    }
-> +}
-> +
-> +impl Drop for RustMiscDevice {
-> +    fn drop(&mut self) {
-> +        pr_info!("Exiting the Rust Misc Device Sample\n");
-> +    }
-> +}
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
-> 
+----------------------------------------------------------------
+
+sound fixes for 6.13-rc2
+
+A collection of small fixes that have been gathered in the week.
+
+- Fix the missing XRUN handling in USB-audio low latency mode
+- Fix regression by the previous USB-audio hadening change
+- Clean up old SH sound driver to use the standard helpers
+- A few further fixes for MIDI 2.0 UMP handling
+- Various HD-audio and USB-audio quirks
+- Fix jack handling at PM on ASoC Intel AVS
+- Misc small fixes for ASoC SOF and Mediatek
+
+----------------------------------------------------------------
+
+Asahi Lina (1):
+      ALSA: usb-audio: Add extra PID for RME Digiface USB
+
+Chris Chiu (1):
+      ALSA: hda/realtek: fix micmute LEDs don't work on HP Laptops
+
+Colin Ian King (1):
+      ALSA: hda/realtek: Fix spelling mistake "Firelfy" -> "Firefly"
+
+Dan Carpenter (3):
+      ALSA: hda/tas2781: Fix error code tas2781_read_acpi()
+      ASoC: SOF: ipc3-topology: fix resource leaks in sof_ipc3_widget_setup_comp_dai()
+      ALSA: usb-audio: Fix a DMA to stack memory bug
+
+Marek Maslanka (1):
+      ASoC: Intel: avs: da7219: Remove suspend_pre() and resume_post()
+
+Marie Ramlow (1):
+      ALSA: usb-audio: add mixer mapping for Corsair HS80
+
+Nazar Bilinskyi (1):
+      ALSA: hda/realtek: Enable mute and micmute LED on HP ProBook 430 G8
+
+Nícolas F. R. A. Prado (1):
+      ASoC: mediatek: mt8188-mt6359: Remove hardcoded dmic codec
+
+Sahas Leelodharry (1):
+      ALSA: hda/realtek: Add support for Samsung Galaxy Book3 360 (NP730QFG)
+
+Takashi Iwai (7):
+      ALSA: seq: ump: Fix seq port updates per FB info notify
+      ALSA: ump: Don't open legacy substream for an inactive group
+      ALSA: ump: Indicate the inactive group in legacy substream names
+      ALSA: ump: Update legacy substream names upon FB info update
+      ALSA: usb-audio: Notify xrun for low-latency mode
+      ALSA: sh: Use standard helper for buffer accesses
+      ALSA: ump: Shut up truncated string warning
+
+bo liu (1):
+      ALSA: hda/conexant: fix Z60MR100 startup pop issue
+
+---
+ sound/core/seq/seq_ump_client.c           |   6 +-
+ sound/core/ump.c                          |  26 ++-
+ sound/pci/hda/patch_conexant.c            |  28 +++
+ sound/pci/hda/patch_realtek.c             |   8 +
+ sound/pci/hda/tas2781_hda_i2c.c           |   1 +
+ sound/sh/sh_dac_audio.c                   |   5 +-
+ sound/soc/intel/avs/boards/da7219.c       |  17 --
+ sound/soc/mediatek/mt8188/mt8188-mt6359.c |   4 +-
+ sound/soc/sof/ipc3-topology.c             |   7 +-
+ sound/usb/endpoint.c                      |  14 +-
+ sound/usb/mixer_maps.c                    |  10 +
+ sound/usb/mixer_quirks.c                  |   1 +
+ sound/usb/quirks-table.h                  | 341 +++++++++++++++---------------
+ sound/usb/quirks.c                        |  44 ++--
+ 14 files changed, 291 insertions(+), 221 deletions(-)
+
 
