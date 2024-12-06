@@ -1,121 +1,131 @@
-Return-Path: <linux-kernel+bounces-434263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434267-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0AA9E641E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:27:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 146DF9E6428
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:29:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D15D1885042
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:27:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE161167E8C
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24EE16F0FE;
-	Fri,  6 Dec 2024 02:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16977156F54;
+	Fri,  6 Dec 2024 02:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="WvNYmjRt"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HmdrrhjA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4432E3D6B
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56FF1741D2;
+	Fri,  6 Dec 2024 02:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452067; cv=none; b=QYN+Jun+1pwJq1/vx1LsQpmzUX3rVlgSAGZ+NdR0VhH6YjBKvjmJ1kFZyBNN33jR3d8OJ6LmYvN45xj0S7tv+fxRgnC8SHOrYfwUgd/GnLFUpFxUNXjFINYFuwN/ArQx1dc2p7izLjdOnmCajGB4wTP/YNi9gphGLmugfX7Y11M=
+	t=1733452177; cv=none; b=PqW8gyjvmwAtm3Zs712RZuAdK3cRdmMIABaoxU5Oqn07B5Ea68qb4h/NTodBD/m05r7yIICANu3z0lmVXmeKJnjxCNbM1JuceZnb0lcJcYLeek4MnjntDZ2fa17JXyLSjbrg39Jv1WFmKWciAMRPR24+33aqMusnaTgoB/XZ85c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452067; c=relaxed/simple;
-	bh=yKe7T7/JRKTYkQl/O8lDfupWwjKRZ7KWwqM+HVg6Vek=;
+	s=arc-20240116; t=1733452177; c=relaxed/simple;
+	bh=UWYkmQgJqsODlM0e3u/6lpT+QT8jC6RKy54hcLbglIU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJtReQ3WLRpeYmXhDsjzPBSv6PmlUNeOP7Dv+NW+0/ZmBMshrw5ViY3wbqBwA28Bm8RH7EqZkFgQlqd0OrUP4spnsaZjJGs1763AOUAzujm7+OviaM0nf09vHKGxfh3t8xcXZ0YUQVruo4/WLb1MG919MVrsjG/yks0HH4nFN/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=WvNYmjRt; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
-	:Subject; bh=jnj9aUQwKsN4rZkjU7PDO/ZXVs30tp1WVKFP+p29Q+4=; b=WvNYmjRtAI3EnWVr
-	LhQOxMRcyYcf9uATo95zmBdxkTrBi9Apj94rO4UFsNHPh+Fmvk91xMR2Mu3+j7aKmEGex6Xkg1W1t
-	z2+ftDp1VNE0tHdgV4ywT2KknoudlvKJ5uiMtqRiBHaMg4MiYI5PuBIWIr68LM6APE6GyJRhOYSsc
-	VlwaYJNXsw0BeyCPNDK/vtgva1dtW9oq4JVBpeMOh30xm2HJmyZY+wIFDH3cqit6kSHrJ4/d9H7BT
-	gwULiUzKkQ5dXbSBwilZUXHBUJWgqoNeYZvojkRRrnhoU4aYhB+qyPFyraj7YelL2bveu5zcE7Bwl
-	ppO1LYqW0c+22Y9dIw==;
-Received: from dg by mx.treblig.org with local (Exim 4.96)
-	(envelope-from <dg@treblig.org>)
-	id 1tJO4D-003mKu-0g;
-	Fri, 06 Dec 2024 02:27:41 +0000
-Date: Fri, 6 Dec 2024 02:27:41 +0000
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
-To: alexander.deucher@amd.com, harry.wentland@amd.com, sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com, christian.koenig@amd.com,
-	Xinhui.Pan@amd.com, chaitanya.dhere@amd.com, jun.lei@amd.com
-Cc: airlied@gmail.com, simona@ffwll.ch, amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/5] Some more drm/amd/display deadcoding
-Message-ID: <Z1JhHcaYZCzKHp-i@gallifrey>
-References: <20241104023852.492497-1-linux@treblig.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=tDtgZOEWvLnMbmIjlAh11/kkBXRMzjvP4KDjVfI8wBDswav+pVmhnhm+70aHLPLvP+3IR4ptdY5tiE43eoswAhOxhgvoVNapM0SaQuDQnZjUkk8RuWSryi79JqrCXxSzYCDElRFXeVXFdiIXt++ktmuqxWZmLpj9lmlFCOq3EzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HmdrrhjA; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733452176; x=1764988176;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=UWYkmQgJqsODlM0e3u/6lpT+QT8jC6RKy54hcLbglIU=;
+  b=HmdrrhjAd1tYBPNKhYBStFC2Ek5Ra/3vkg6oMbUgOSGkdBNqX06OepQg
+   4b/OJcw2n00fKOv37oCydkwCn6TU4FUsFlD2iK2SpfCuSRYCtBHARcQiJ
+   eu560MvoL31SGrcIr0Fz4Is1I1NR7z4x3XZsw3UqtsbzrtltxaiyD1tzI
+   u1mr50UjMkTEKhJvm7wb8xnMDWhuUaEnU+gmaTXrQPtIpHTPBY/G0Fv8K
+   QC2IveNezNnTpDjvIBrXjrym4kWHMaMMY53vmo+sPnCbU83kzPl9fKXh+
+   oks/V4V68xySlC4yanHhf3Wk97b4pRjNuWYSk/EkCIHWLf39+Ff3Q35mx
+   A==;
+X-CSE-ConnectionGUID: L3Tvmo5kRw+e4bfgRL1CNw==
+X-CSE-MsgGUID: Zvub0rilT2i0kMPml5W4KQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33943020"
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="33943020"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Dec 2024 18:29:35 -0800
+X-CSE-ConnectionGUID: lwXnpxdgQ6yYKcNCD6eNMA==
+X-CSE-MsgGUID: znHyy5KWTeu/Yt7uR8mtgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="94749549"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 05 Dec 2024 18:29:32 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJO5x-0000cl-24;
+	Fri, 06 Dec 2024 02:29:29 +0000
+Date: Fri, 6 Dec 2024 10:28:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Igor Belwon <igor.belwon@mentallysanemainliners.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] clk: samsung: Introduce Exynos990 clock
+ controller driver
+Message-ID: <202412061048.3gu75pLi-lkp@intel.com>
+References: <20241205193423.783815-4-igor.belwon@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241104023852.492497-1-linux@treblig.org>
-X-Chocolate: 70 percent or better cocoa solids preferably
-X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
-X-Uptime: 02:27:09 up 211 days, 13:41,  1 user,  load average: 0.02, 0.06,
- 0.03
-User-Agent: Mutt/2.2.12 (2023-09-09)
+In-Reply-To: <20241205193423.783815-4-igor.belwon@mentallysanemainliners.org>
 
-* linux@treblig.org (linux@treblig.org) wrote:
-> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> 
-> Hi,
->   This removes a bunch more functions (and a field) from
-> drm/amd/display that are unused.
-> 
-> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hi Igor,
 
-Hi Alex, Harry,
-  Gentle ping on this set - I think you've already pulled in all
-of the older ones (Thanks!).
+kernel test robot noticed the following build errors:
 
-Dave
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on krzk-dt/for-next clk/clk-next linus/master v6.13-rc1 next-20241205]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> Dave
-> 
-> Dr. David Alan Gilbert (5):
->   drm/amd/display: Remove unused enable_surface_flip_reporting
->   drm/amd/display: Remove unused dwb3_set_host_read_rate_control
->   drm/amd/display: Remove unused dc_stream_warmup_writeback
->   drm/amd/display: Remove unused mmhubbub_warmup field
->   drm/amd/display: Remove unused dcn_find_dcfclk_suits_all
-> 
->  .../gpu/drm/amd/display/dc/core/dc_stream.c   |  11 --
->  .../gpu/drm/amd/display/dc/core/dc_surface.c  |   7 -
->  drivers/gpu/drm/amd/display/dc/dc_stream.h    |   4 -
->  .../drm/amd/display/dc/dml/calcs/dcn_calcs.c  | 132 ------------------
->  .../drm/amd/display/dc/dwb/dcn30/dcn30_dwb.c  |  13 --
->  .../drm/amd/display/dc/dwb/dcn30/dcn30_dwb.h  |   1 -
->  .../amd/display/dc/hwss/dcn30/dcn30_init.c    |   1 -
->  .../amd/display/dc/hwss/dcn301/dcn301_init.c  |   1 -
->  .../amd/display/dc/hwss/dcn31/dcn31_init.c    |   1 -
->  .../amd/display/dc/hwss/dcn314/dcn314_init.c  |   1 -
->  .../amd/display/dc/hwss/dcn32/dcn32_init.c    |   1 -
->  .../amd/display/dc/hwss/dcn35/dcn35_init.c    |   1 -
->  .../amd/display/dc/hwss/dcn351/dcn351_init.c  |   1 -
->  .../amd/display/dc/hwss/dcn401/dcn401_init.c  |   1 -
->  .../drm/amd/display/dc/hwss/hw_sequencer.h    |   4 -
->  .../gpu/drm/amd/display/dc/inc/core_types.h   |   3 -
->  .../gpu/drm/amd/display/dc/inc/dcn_calcs.h    |   4 -
->  17 files changed, 187 deletions(-)
-> 
-> -- 
-> 2.47.0
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Igor-Belwon/clk-samsung-clk-pll-Add-support-for-pll_-0717x-0718x-0732x/20241206-043559
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241205193423.783815-4-igor.belwon%40mentallysanemainliners.org
+patch subject: [PATCH v1 3/3] clk: samsung: Introduce Exynos990 clock controller driver
+config: arc-randconfig-001-20241206 (https://download.01.org/0day-ci/archive/20241206/202412061048.3gu75pLi-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061048.3gu75pLi-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412061048.3gu75pLi-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> drivers/clk/samsung/clk-exynos990.c:13:10: fatal error: dt-bindings/clock/exynos990.h: No such file or directory
+      13 | #include <dt-bindings/clock/exynos990.h>
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +13 drivers/clk/samsung/clk-exynos990.c
+
+    12	
+  > 13	#include <dt-bindings/clock/exynos990.h>
+    14	
+
 -- 
- -----Open up your eyes, open up your mind, open up your code -------   
-/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
-\        dave @ treblig.org |                               | In Hex /
- \ _________________________|_____ http://www.treblig.org   |_______/
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
