@@ -1,138 +1,87 @@
-Return-Path: <linux-kernel+bounces-435145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9B969E7129
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:52:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5C89E7132
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB6E282813
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:52:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CFCA282F7E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68DA5154C0D;
-	Fri,  6 Dec 2024 14:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b="PxFerdCI"
-Received: from smtp2-g21.free.fr (smtp2-g21.free.fr [212.27.42.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DF22066C5;
+	Fri,  6 Dec 2024 14:52:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7B81474AF;
-	Fri,  6 Dec 2024 14:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.42.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D73FD1494B2;
+	Fri,  6 Dec 2024 14:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733496743; cv=none; b=X8a2DByq4Yb/iljMAOv2JrD6EVN0cPdEoOwqJefvc/zTokzd6xmHaqkN42DqcCbsnnt2c73kdOhmKAcAoDJH4MN8ouu5AkoU6PA18f7UtR/3AYJ2s13vf9aLhcVLwDjJhCZbha35LApqeT8YASOfHFDmEpnCuMgGOcjERFGrjzA=
+	t=1733496761; cv=none; b=rtU1QeMFEpl2T6t2+28IdFsUY0rj2RB3g3fCT4Dzmgg2v02f+kiraZOJCwfWcy4g76diz1LwgZcDJReiYhcnj5iujxMKAuMz9SDVOB99gfgwXCFDmKL3p1XgpYxCqM8V1G/G6FBXKgEMiCdD3OwdUfJ7AXZsqCpnMajTT0JODvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733496743; c=relaxed/simple;
-	bh=c/8ZlkYzbi6DXqIwQK4RCNgWQVop5LJWPwZQmkhzQxs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xvdo5pd3r3DRWL5zc7MXxqI2d1wshwJQctJKGyeHZQa71lKQiZ15ZfuaUXCMEfwSuvANzXy6rAq1ByvpQYNrFkgbu7Wg/OzUsmqt75mBzrDL1V+1MnkTVPSGP/MMNNQsGqxe7OGBo92lZ+k0T+s9QalEbDH71mI1Uqo3PBWZEyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org; spf=pass smtp.mailfrom=morinfr.org; dkim=pass (1024-bit key) header.d=morinfr.org header.i=@morinfr.org header.b=PxFerdCI; arc=none smtp.client-ip=212.27.42.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=morinfr.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=morinfr.org
-Received: from bender.morinfr.org (unknown [82.66.66.112])
-	by smtp2-g21.free.fr (Postfix) with ESMTPS id 64F5B2003CA;
-	Fri,  6 Dec 2024 15:52:07 +0100 (CET)
-Authentication-Results: smtp2-g21.free.fr;
-	dkim=pass (1024-bit key; unprotected) header.d=morinfr.org header.i=@morinfr.org header.a=rsa-sha256 header.s=20170427 header.b=PxFerdCI;
-	dkim-atps=neutral
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=morinfr.org
-	; s=20170427; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=Z0V41C+el6ZxU+5bWs0t+oix5z85dABjQe8DaTTtBhM=; b=PxFerdCIiCaY8kBwiLnLtlVvpK
-	hUKVkQWTVJ8G8cruN1Y9qYkReotnK48NHn0Kyfrr2LSNaq4Bca4cMHMSOb5PcwP5Yew5H+1+HbOwa
-	OWVcvvwSaM6fKsny5CFzJojc9T0RiEW5aTHr2mo8uflPzIpQVESFbFqv1Q1XB7wLZHKY=;
-Received: from guillaum by bender.morinfr.org with local (Exim 4.96)
-	(envelope-from <guillaume@morinfr.org>)
-	id 1tJZgc-002J1j-1t;
-	Fri, 06 Dec 2024 15:52:06 +0100
-Date: Fri, 6 Dec 2024 15:52:06 +0100
-From: Guillaume Morin <guillaume@morinfr.org>
-To: David Hildenbrand <david@redhat.com>
-Cc: Heiko Carstens <hca@linux.ibm.com>,
-	Guillaume Morin <guillaume@morinfr.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Muchun Song <muchun.song@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Xu <peterx@redhat.com>,
-	Eric Hagberg <ehagberg@janestreet.com>, linux-s390@vger.kernel.org
-Subject: Re: [PATCH v3] mm/hugetlb: support FOLL_FORCE|FOLL_WRITE
-Message-ID: <Z1MPlgsli-eA4o7z@bender.morinfr.org>
-References: <Z1EJssqd93w2erMZ@bender.morinfr.org>
- <20241206045019.GA2215843@thelio-3990X>
- <Z1KLLXpzrDac-oqF@bender.morinfr.org>
- <20241206092453.9026-A-hca@linux.ibm.com>
- <c43a3149-c84b-448b-be80-1e026740911c@redhat.com>
+	s=arc-20240116; t=1733496761; c=relaxed/simple;
+	bh=39debVxraw4col5TpQ4SJ8o+PdSVsJ/wJtW1eHmC3Xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=isiV6LyAyWuBxCMKp0lMcJjlzjoMAK1/dZUjUGGph5l1MHztUQ3KBNIuIGeBP0y9cfLPd+nIiRQH5QDBtftMFIXom6l4intFJ33uH+bJyZcS0BpnR0GwAZylj1FUJKwjuwlTvbZ21HPsozH25FbHW53UGDuXJNpedf0AF+pKGYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287ACC4CED1;
+	Fri,  6 Dec 2024 14:52:40 +0000 (UTC)
+Date: Fri, 6 Dec 2024 09:52:47 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>, Alexei Starovoitov
+ <alexei.starovoitov@gmail.com>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arch@vger.kernel.org
+Subject: Re: [PATCH v20 00/19] tracing: fprobe: function_graph:
+ Multi-function graph and fprobe on fgraph
+Message-ID: <20241206095247.798c6917@gandalf.local.home>
+In-Reply-To: <20241206093556.9026-B-hca@linux.ibm.com>
+References: <173344373580.50709.5332611753907139634.stgit@devnote2>
+	<20241206093556.9026-B-hca@linux.ibm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c43a3149-c84b-448b-be80-1e026740911c@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 06 Dec 10:29, David Hildenbrand wrote:
->
-> On 06.12.24 10:24, Heiko Carstens wrote:
-> > On Fri, Dec 06, 2024 at 06:27:09AM +0100, Guillaume Morin wrote:
-> > > On 05 Dec 21:50, Nathan Chancellor wrote:
-> > > > This looks to be one of the first uses of pud_soft_dirty() in a generic
-> > > > part of the tree from what I can tell, which shows that s390 is lacking
-> > > > it despite setting CONFIG_HAVE_ARCH_SOFT_DIRTY:
-> > > > 
-> > > >    $ make -skj"$(nproc)" ARCH=s390 CROSS_COMPILE=s390-linux- mrproper defconfig mm/gup.o
-> > > >    mm/gup.c: In function 'can_follow_write_pud':
-> > > >    mm/gup.c:665:48: error: implicit declaration of function 'pud_soft_dirty'; did you mean 'pmd_soft_dirty'? [-Wimplicit-function-declaration]
-> > > >      665 |         return !vma_soft_dirty_enabled(vma) || pud_soft_dirty(pud);
-> > > >          |                                                ^~~~~~~~~~~~~~
-> > > >          |                                                pmd_soft_dirty
-> > > > 
-> > > > Is this expected?
-> > > 
-> > > Yikes! It does look like an oversight in the s390 code since as you said
-> > > it has CONFIG_HAVE_ARCH_SOFT_DIRTY and pud_mkdirty seems to be setting
-> > > _REGION3_ENTRY_SOFT_DIRTY. But I'll let the s390 folks opine.
-> > > 
-> > > I don't mind dropping the pud part of the change (even if that's a bit
-> > > of a shame) if it's causing too many issues.
+On Fri, 6 Dec 2024 10:35:56 +0100
+Heiko Carstens <hca@linux.ibm.com> wrote:
+
+> On Fri, Dec 06, 2024 at 09:08:56AM +0900, Masami Hiramatsu (Google) wrote:
+> > Hi,
 > > 
-> > It would be quite easy to add pud_soft_dirty() etc. helper functions
-> > for s390, but I think that would be the wrong answer to this problem.
+> > Here is the 20th version of the series to re-implement the fprobe on
+> > function-graph tracer. The previous version is;
 > > 
-> > s390 implements pud_mkdirty(), but it is only used in the context of
-> > HAVE_ARCH_TRANSPARENT_HUGEPAGE_PUD, which s390 doesn't support. So
-> > this function should probably be removed from s390's pgtable.h.
+> > https://lore.kernel.org/all/173125372214.172790.6929368952404083802.stgit@devnote2/
 > > 
-> > Similar the pud_soft_dirty() and friends helper functions should only
-> > be implemented if common code support for soft dirty would exist,
-> > which is currently not the case. Otherwise similar fallbacks like for
-> > pmd_soft_dirty() (-> include/linux/pgtable.h) would also need to be
-> > implemented.
-> > 
-> > So IMHO the right fix (at this time) seems to be to remove the above
-> > pud part of your patch, and in addition we should probably also drop
-> > the partially implemented pud level soft dirty bits in s390 code,
-> > since that is dead code and might cause even more confusion in future.
-> > 
-> > Does that make sense?
+> > This version is rebased on v6.13-rc1 and fixes to make CONFIG_FPROBE
+> > "n" by default, so that it does not enable function graph tracer by
+> > default.  
 > 
-> As hugetlb does not support softdirty, and PUDs are currently only possible
-> (weird DAX thing put aside) with hugetlb, it makes sense to drop the pud
-> softdirty thingy.
+> Is there a reason why you didn't add the ACKs I provided for s390
+> related patches for v19 of this series?
 
-Thanks all. I dropped the check and the dummy definition I had to add
-for i386 in v4 [1]
+Probably just missed it.
 
-[1] https://lore.kernel.org/linux-mm/Z1MO5slZh8uWl8LH@bender.morinfr.org/T/#u
+Masami,
 
--- 
-Guillaume Morin <guillaume@morinfr.org>
+One thing I usually do when I rebase to a new series is to take my older
+patch series from Patchwork and reapply them. Because patchwork will pick
+up any acks, reviewed-bys or tested-bys. I then only drop the tags if the
+patch needs significant changes.
+
+You can also use b4 to do the same.
+
+-- Steve
 
