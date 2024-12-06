@@ -1,106 +1,94 @@
-Return-Path: <linux-kernel+bounces-435350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7ABE9E7666
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:51:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AA309E766A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:52:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6B1718873D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:51:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A521614CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:52:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A6E1F3D44;
-	Fri,  6 Dec 2024 16:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458021F3D2F;
+	Fri,  6 Dec 2024 16:52:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QaA2EEt+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="PalGbWGf"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3979D192B66;
-	Fri,  6 Dec 2024 16:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A658206262;
+	Fri,  6 Dec 2024 16:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503870; cv=none; b=YGRdPkmSZCkz5KrIjaXiy0zCJ0nA2axjOZhxZpzJu4vy519PjwxnlURgzPbZiP7j3kRnX69DvAoMjsv9KFvq2Ai36Jlz+IoZNgZ9WPOB7FbXFMqnH/YyLrLsob37wgmrkVMCe2bp1hUmuDq7Wm4gOX7FYmz5hLWtUOLZnDpJmSE=
+	t=1733503922; cv=none; b=gHWK9S3mFTogbokQkdQGtgdkC31fmO3ZiRkX6DruaShFZFb1+KfMS/+KihNHNOsp74NvHZp+QW1JpdqnaT/3loIuqy+EdTRn4DDeEm/kvs1IsvjfyOfwKDy2MsFJc9g2zc+HId0RDO0XbRxrSfRrhEV05XosA/ycloUjTuo6KKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503870; c=relaxed/simple;
-	bh=5EWq1MsWNn7cBmDKqtoVlCA6lKskrj7+wTJqOVj+Cm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XyejFGsWPGZa4mTELjBew+1lwE1J5Xe+eyjIRmyOnhzw7cQuQAGEGtQ4vul56E6oJ0RZKtqpR5gzHrTJ5Qep0pwRKPwED1VAB+SgXvGlkT+kkA0JDR1L66LEw6B+6FthM4R1gI72/DTL47hWtWJ4qM6auyNdVSW0QLwxOpvpTvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QaA2EEt+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB361C4CED1;
-	Fri,  6 Dec 2024 16:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733503869;
-	bh=5EWq1MsWNn7cBmDKqtoVlCA6lKskrj7+wTJqOVj+Cm8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QaA2EEt+jvKv3pQlCiSv9Z67oTyutNh3x6UsqAIdHKupvB1Su4ov0GL3uVYF8C6KF
-	 OCToFnZWj88fyXa2Oa2qfOOyw5D/XtzkM2YiTlV3iBgEfxdbYa3uLvlWsLDWJ75L/7
-	 YuMM5kDDJ8Dzv3esfV9GQINpjPPkQsbUIBeALG9PKp3vtoxVTMzhSUjAAPYbOAeSfk
-	 AUE/s6w/BZa9/3s/X8SILLF4xKAFuT8+CXxJBBBnzyBbpwiYOE2jtG5EiznBZS/3Zy
-	 edSFDds1Q7GybDlh4Q+HtQ1gRdvJuwuYfCBGnAG1y+Lq+nRxgSYL5RjwidkGByxqKr
-	 8gnEvFIJa8gMQ==
-Date: Fri, 6 Dec 2024 16:51:05 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Support Opensource <support.opensource@diasemi.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Roy Im <roy.im.opensource@diasemi.com>, linux-input@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: input: convert dlg,da7280.txt to
- dt-schema
-Message-ID: <20241206-charity-recital-f833c55756e6@spud>
-References: <20241206-topic-misc-da7280-convert-v2-1-1c3539f75604@linaro.org>
+	s=arc-20240116; t=1733503922; c=relaxed/simple;
+	bh=FN9nhIJzBhecUHMBE9d/uBJaiCApRdEAX5H8DyOTyFk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dksfEOpmv9Ait7Df5llBzjRbtVWzjhYg4WvRUY+B4H+Vppgk5cKF7N1TuPuEjuW3dkJlwLAMIKx6LOyuOlbMDWmxHwrXwMFksZzDPj73LeNebSnVeKoWLrR1aT1xU2MPJ22HaL/6x5dzVhcw6GYKjsEmartNlzaUdmo+FDHiz0w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=PalGbWGf; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 6B0444040A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1733503920; bh=wjHcgMg27yH6RzknTEBhDR1zWGuFwkX/16m/dqb20O8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=PalGbWGf4W2l1gvlMp8jOEsbUMOZx+jyNA61Q5kHYsz0uZe85IkNwBeiFYm70dz7o
+	 AYZ/pT+1mvqSobyU9NeX9bGlcWckvL41L45I66i6thfeB3uHPKhBR/v9XvAvt0KrNx
+	 8xV8k+z/wM9RfN/jxwpyGW29aZpbLyGPXnFSUDcVf3PAnvuLaLFvoU55JulDR/WmHp
+	 rgJIbAK1Xu5k5fAKGXFkTOxL9xuABpIVV7fh7Mgld1wAFClPMMcdOyObdTZnGUEP/b
+	 bW6JspAmc7BPoYDI6O/JycG/YQPlxLBLIvwp9N599BSYtnqR3G6ho7mpkV2qfYQTGP
+	 NbQejZga6Kp6A==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id 6B0444040A;
+	Fri,  6 Dec 2024 16:52:00 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Ruffalo Lavoisier <ruffalolavoisier@gmail.com>
+Cc: Ruffalo Lavoisier <RuffaloLavoisier@gmail.com>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] docs: remove duplicate word
+In-Reply-To: <20241120043414.78811-1-RuffaloLavoisier@gmail.com>
+References: <20241120043414.78811-1-RuffaloLavoisier@gmail.com>
+Date: Fri, 06 Dec 2024 09:51:59 -0700
+Message-ID: <87zfl8sqj4.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="h7++Js70dRAqwPEZ"
-Content-Disposition: inline
-In-Reply-To: <20241206-topic-misc-da7280-convert-v2-1-1c3539f75604@linaro.org>
+Content-Type: text/plain
 
+Ruffalo Lavoisier <ruffalolavoisier@gmail.com> writes:
 
---h7++Js70dRAqwPEZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Fri, Dec 06, 2024 at 10:59:52AM +0100, Neil Armstrong wrote:
-> Convert the Dialog Semiconductor DA7280 Low Power High-Definition
-> Haptic Driver bindings to dt-schema.
->=20
-> Due to the implementation and usage in DT the array must be
-> an uint32 array.
->=20
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> - Remove duplicate word, 'to'.
 > ---
-> Changes in v2:
-> - Switched to flag instead of boolean
-> - Switched the array to unit32_t, because this is how it was defined in t=
-he txt, DT and driver
-> - Link to v1: https://lore.kernel.org/r/20241204-topic-misc-da7280-conver=
-t-v1-1-0f89971beca9@linaro.org
+>  Documentation/admin-guide/sysctl/fs.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/admin-guide/sysctl/fs.rst b/Documentation/admin-guide/sysctl/fs.rst
+> index 30c61474dec5..43b128c0225b 100644
+> --- a/Documentation/admin-guide/sysctl/fs.rst
+> +++ b/Documentation/admin-guide/sysctl/fs.rst
+> @@ -41,7 +41,7 @@ pre-allocation or re-sizing of any kernel data structures.
+>  dentry-negative
+>  ----------------------------
+>  
+> -Policy for negative dentries. Set to 1 to to always delete the dentry when a
+> +Policy for negative dentries. Set to 1 to always delete the dentry when a
+>  file is removed, and 0 to disable it. By default, this behavior is disabled.
 
-- made more properties required
+This patch lacks a Signed-off-by line; please see
+Documentation/process/submitting-patches.rst.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+In this case, it is trivial enough that I have applied it anyway, but
+any future changes will need to be properly signed off.
 
---h7++Js70dRAqwPEZ
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ1MreQAKCRB4tDGHoIJi
-0mqoAP9hRF/MHTM+ZC1+CMd87NPwXHs12JHLjPK+FHc5zmu+TgD+NRTUP3VOVFJA
-xXyq3+eHAXNJ6siCclXJGmimm8ALEQQ=
-=2f3Y
------END PGP SIGNATURE-----
-
---h7++Js70dRAqwPEZ--
+jon
 
