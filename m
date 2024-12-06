@@ -1,224 +1,151 @@
-Return-Path: <linux-kernel+bounces-435439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59B749E77B3
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:49:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 685549E77B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:51:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3596D16CA25
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:49:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21A772830CD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC251FD7A7;
-	Fri,  6 Dec 2024 17:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B5621FD7A5;
+	Fri,  6 Dec 2024 17:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0x5eRo9w"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jzDukZsC"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A31B322068F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 17:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726A822068F;
+	Fri,  6 Dec 2024 17:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733507390; cv=none; b=fbeCiIH7N56g+4zLw3zPRfPK/1K06MMCTpaZBFAmeQYHeFsDofzHPbp2T8OMwkNscFHNXGDDPnn/9d03Ii0f8gFtd558fonyQu+UUzMpNasCLpL9NHpOxb4Zy7h0Yo539AUVdCekiTyJ3QuJDOVnSeAv2hFprYJ6yX+sm5t27Uo=
+	t=1733507453; cv=none; b=EECBOPC+g4JC0SEZjD2FdRxxvP9lNFOPuGhCSp5BuOPxsFXR51fjDR2VXJ23nAPsF1jbelE9H61hw9uBfivJ+hgArMGmw+xXlKZWACRnROBA1L07+x3e4ToRnI6IItNuZJqZTQrimwzv6pq8W2cE+Ey4t5spYwPXgIPYhJE2t/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733507390; c=relaxed/simple;
-	bh=Bre9gwXQ48//F2EbV9TQT2zjeWJlPa61yL1jM0ZFrbA=;
+	s=arc-20240116; t=1733507453; c=relaxed/simple;
+	bh=sxQpi/Re+o+nVehAG5Ly1Pzk9TSKI91Uafdr+ryfMM4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iqC1b0x/YBGhbrfwnZqXO/z5IKR6sQTXorS6FIJZ4BcaPhJuEnpS2bv9CkBSN56SPoVE+Y/17u9uiEWetQQbn0MKQnIVqw8ed4MSRAP1G+2drFx9+2zXJHlhXHw1pul8OzcvpwljNwpl3kv9RHiDpeYE8M8TlMnKShE7RdvDu10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0x5eRo9w; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21561f7d135so124045ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 09:49:47 -0800 (PST)
+	 To:Cc:Content-Type; b=sqxGBV3xkTp57iH2K8t+Q7h6vMDEWpuLOW3l9Ubnl1f2PbFbiJGdbgt39dNPcMFjWqaC8ceV2lgyWDRJ+1NAyAtbhowoU0fxyM9pBvMz9NbhWnw0iHj9HmxJEDGSsg+2/2LkfS+22l/eUjzZ/lK7T+af2Plk6ipLOGfVQWCRdbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jzDukZsC; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7fc8f0598cdso2783336a12.1;
+        Fri, 06 Dec 2024 09:50:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733507387; x=1734112187; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733507452; x=1734112252; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=xJX3AeNdAYoSbc5Ua6KEly/YydBSYF1iDHSbiQeKmAI=;
-        b=0x5eRo9wARZXefoUy/1xdN1iZ0f4zI8Rp+rCPD/WyE+qgj9b4npJwrdJ6ym+Aa+Xc6
-         jnxbLyos66o4XBJbOcwjlrxaHJmoy9GN/qqB0KwVAObF8l1tK1D07Ack5xDtSjgYmvXV
-         Le2CTWYV+6C2oojw5TtMn9JPznkTxGIrv/E7Mt/vCSkO6s+YWlYHjgvslJezzY6GqeWV
-         kpuLu6qWx1wOXlwvooha0bA23z3oNgjhs54FIuli8nhP+SQnGQ5ce9D6Wv5FJXqGzesh
-         /Ey3xUlQ1Zj0OuaghhH6n6QdgbW5TBdCFepddx5ZJG93bff0KN97SaXAuN3kIWNg8CEw
-         csiw==
+        bh=/1pwg93Dh2Ekw2uQWZ/BkEp+u1+s0Tq7PSxXVKH5GFo=;
+        b=jzDukZsCfc6fzSid4mtzUusRPb51nUQU0nrDa5n1OcSxi7jjwhAPXOm7M16nGvterR
+         dc2xsm4tRnxti0FICkPe+hca9/WjlcsdfTA+EZOXtQob+/LAIEOagX3h7F7NMWakG/Js
+         saYwumYD0GjTCXxu8jx9d1zNmEIj7ogQa022VZ4DsTzr1yIBuLEI0quszDqg4vAfUa5O
+         YmMCocLf1KtyW5f3SJp6KBbbLmA9g9SDc2RT2AOBUXAOi7CkXZmB/Kw5VyeTFFAnCjo/
+         P7R3rYrKyU6qCJcqUpjGJiW39cIZaDb8c/WXUJ8TX+IdpKvX7qkrfssRogL3eJGwPCs1
+         UD2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733507387; x=1734112187;
+        d=1e100.net; s=20230601; t=1733507452; x=1734112252;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=xJX3AeNdAYoSbc5Ua6KEly/YydBSYF1iDHSbiQeKmAI=;
-        b=o9P5gLYllCxV6sNQi4pNMrxIYClXnS4HUrm40khrLkKgybPUCrJ+ZZwN3uRqKIDpvR
-         v6DEZP0CwBAdgNVIpt9RZ643hHzW4NyoEuL30HflFDAVlS/A3gGZLc0iPtEqUgjh3RAb
-         7cgQZ6WfNNBV6HbajquZbfaC8QavQ9CgiUrkA7zTyi4uLwtrlSARi7xv0g8KRccUZGbs
-         R1szxY/pZ//qzdnxM6YWtJkpv5bRePmxklWRiHUdTamcyTbKY+AtJG+hwABM+RnmhZm5
-         KSDyFLt0UrrffMGgclsmc/N2WblRw2c97FQzR3cq9uY+wt5hzEnx4ouSn+EgRu4yPGHQ
-         rJuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXbWdJ0Rk4F1xKZGKoHu5cm7Rqh75QolmmHnKcuAJEsuu8vwNkGjIvHAZoYC5r5nureJe49loLQVDcEg6M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8KycnBkqy1Vz7vLs8DVgq0ukBLz4hkj8gt4pOO0Vwxb7TJGMb
-	7rhnQDSUqokcsPJPemsydztgoPlnCPDxqEXt2O+8IYCkqHhc/MyEMwZgL628fERxnaOU1tKIFOk
-	N9nPP//Po266BmcFJOQtRudpIuWj2eJUovu+M
-X-Gm-Gg: ASbGncsXvmejvlHci2cpeo+e40HFEBsfv1BQ1gzZ09Ll2aTABqwKtamajxarLhqjUA0
-	IaYTRH+VZx36bcMuTu2v78fqaL80mWnT9ZfDpYRVc/kqN9m3nV9Fm/R2ZJBJb2elt
-X-Google-Smtp-Source: AGHT+IGfFI/XAFWRnvadh9nU2CwBaiNbo2MVGQ6VycR/E364RCB3UsSrcfvM50twmVKO1ZLiV5wWhjjpMpQg9cmBCTM=
-X-Received: by 2002:a17:902:ce10:b0:20b:81bb:4a81 with SMTP id
- d9443c01a7336-216172772f2mr2385875ad.7.1733507386833; Fri, 06 Dec 2024
- 09:49:46 -0800 (PST)
+        bh=/1pwg93Dh2Ekw2uQWZ/BkEp+u1+s0Tq7PSxXVKH5GFo=;
+        b=g/34DPGgh/gnZ8/1KEWmBkta+3IEDoOnreZayunVcZIC45DPFgJPr6mpstjebsHz/X
+         o3B7XRKvPGaKyTCkjR3lUVKKZXiBh0fQG2UzDLul5c2iW7dnNzZ+wZvTIvPeelZR7m3f
+         Kt6wj88psNWuNaVL/KP2bFcJj+McXYSgVudavL5umD/jQFnhRKSWdeMyLmbaG+7wXYKy
+         WM+ZJaYt69XL6hhLcsbvbrmKlRA2KuWsEnLC6yUZOcTE5QhBFNpnxypzcL4QRaGHSzj7
+         ARAIVFq0HZAYiZTfidR0kJPOfYH0N4xjKZ8wKdIRkCUuLZtvCm7sJGNVq2Ratbc7+3Cd
+         YKaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVb+8Q9oe259A/kM8dpG2aYRsPnD4Xa8y9E6Z7rhULN6tlFKy5Caagztqhcr9sRq31rzb/0CqlMBVv1POp1xiOZMz3g@vger.kernel.org, AJvYcCVoieXXCEfMiVv5A8Fd+5WPzI3jepJhxEwWtuV99+eNnwwf9qxQmtA/koLpbkRILcn2SjwF3KT+pS7FT+hp@vger.kernel.org, AJvYcCXMnfv1VSCKPojCYXBmh/nO3JpOKwnJKPErKgLhYUQpDG2KB1s/Yk6Lx0nzCQuDeVKSxMU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgrYc9hqqs4/ze73kWkzHEMMpYXo9IIvAg+E8MSc7xLOfe6KWG
+	1dhqLsamvAzgUM6udLlzGgfOwMA/tb4hpWPPtb3rOkUln6k1fmXSJ/uM3C1wChX3R4E+0wuRb4R
+	ER9WyPv37VlrgBLOHbc37mDRkcmM=
+X-Gm-Gg: ASbGncuIxtRcD8hcOXJuqKtOHTMNQedBaW2pMR+aHfdZUCXedVsLuqmLYCdRhr3PoWR
+	SEQP+ZDwfcMHmaSJZvzDnrKKL7+Q+yXMCNMOgU3tRNY03iWI=
+X-Google-Smtp-Source: AGHT+IEQ2CJYqmyLFQiiRLnsPVzwFmjTsExzZT6jDDhMyx3aUJzvpb7k00ZncHKoximJN2TBdSUjJlqrwM/t51JbWV0=
+X-Received: by 2002:a17:90b:1890:b0:2ea:61c4:a443 with SMTP id
+ 98e67ed59e1d1-2ef41bbac79mr12705184a91.4.1733507451799; Fri, 06 Dec 2024
+ 09:50:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206010930.3871336-1-isaacmanjarres@google.com> <20241206010930.3871336-2-isaacmanjarres@google.com>
-In-Reply-To: <20241206010930.3871336-2-isaacmanjarres@google.com>
-From: Kalesh Singh <kaleshsingh@google.com>
-Date: Fri, 6 Dec 2024 09:49:35 -0800
-Message-ID: <CAC_TJvdVhGW+4y0JHqRVTdqAWpQRDOgWW8b1TAK3V9zdnmw0ow@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 1/2] mm/memfd: Add support for F_SEAL_FUTURE_EXEC
- to memfd
-To: "Isaac J. Manjarres" <isaacmanjarres@google.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Jeff Layton <jlayton@kernel.org>, 
-	Chuck Lever <chuck.lever@oracle.com>, Alexander Aring <alex.aring@gmail.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, Shuah Khan <shuah@kernel.org>, 
-	kernel-team@android.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	Suren Baghdasaryan <surenb@google.com>, John Stultz <jstultz@google.com>
+References: <20241206002417.3295533-1-andrii@kernel.org> <20241206002417.3295533-2-andrii@kernel.org>
+ <Z1MFHg3fd_BMQtve@krava>
+In-Reply-To: <Z1MFHg3fd_BMQtve@krava>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 6 Dec 2024 09:50:39 -0800
+Message-ID: <CAEf4Bzad08Xy3RhcKq=vk_HaZwHXnCxRHp-hC60EY5B7iWkgDg@mail.gmail.com>
+Subject: Re: [PATCH perf/core 1/4] uprobes: simplify session consumer tracking
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	peterz@infradead.org, mingo@kernel.org, oleg@redhat.com, rostedt@goodmis.org, 
+	mhiramat@kernel.org, bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	liaochang1@huawei.com, kernel-team@meta.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Dec 5, 2024 at 5:09=E2=80=AFPM Isaac J. Manjarres
-<isaacmanjarres@google.com> wrote:
+On Fri, Dec 6, 2024 at 6:07=E2=80=AFAM Jiri Olsa <olsajiri@gmail.com> wrote=
+:
 >
-> Android currently uses the ashmem driver [1] for creating shared memory
-> regions between processes. Ashmem buffers can initially be mapped with
-> PROT_READ, PROT_WRITE, and PROT_EXEC. Processes can then use the
-> ASHMEM_SET_PROT_MASK ioctl command to restrict--never add--the
-> permissions that the buffer can be mapped with.
+> On Thu, Dec 05, 2024 at 04:24:14PM -0800, Andrii Nakryiko wrote:
 >
-> Processes can remove the ability to map ashmem buffers as executable to
-> ensure that those buffers cannot be exploited to run unintended code.
-> We are currently trying to replace ashmem with memfd. However, memfd
-> does not have a provision to permanently remove the ability to map a
-> buffer as executable. Although, this should be something that can be
-> achieved via a new file seal.
+> SNIP
 >
-> There are known usecases (e.g. CursorWindow [2]) where a process
-> maps a buffer with read/write permissions before restricting the buffer
-> to being mapped as read-only for future mappings.
+> >  static struct return_instance *alloc_return_instance(void)
+> >  {
+> >       struct return_instance *ri;
+> >
+> > -     ri =3D kzalloc(ri_size(DEF_CNT), GFP_KERNEL);
+> > +     ri =3D kzalloc(sizeof(*ri), GFP_KERNEL);
+> >       if (!ri)
+> >               return ZERO_SIZE_PTR;
+> >
+> > -     ri->consumers_cnt =3D DEF_CNT;
+> >       return ri;
+> >  }
+> >
+> >  static struct return_instance *dup_return_instance(struct return_insta=
+nce *old)
+> >  {
+> > -     size_t size =3D ri_size(old->consumers_cnt);
+> > +     struct return_instance *ri;
+> > +
+> > +     ri =3D kmemdup(old, sizeof(*ri), GFP_KERNEL);
 >
-> The resulting VMA from the writable mapping has VM_MAYEXEC set, meaning
-> that mprotect() can change the mapping to be executable. Therefore,
-> implementing the seal similar to F_SEAL_WRITE would not be appropriate,
-> since it would not work with the CursorWindow usecase. This is because
-> the CursorWindow process restricts the mapping permissions to read-only
-> after the writable mapping is created. So, adding a file seal for
-> executable mappings that operates like F_SEAL_WRITE would fail.
+> missing ri =3D=3D NULL check
 >
-> Therefore, add support for F_SEAL_FUTURE_EXEC, which is handled
-> similarly to F_SEAL_FUTURE_WRITE. This ensures that CursorWindow can
-> continue to create a writable mapping initially, and then restrict the
-> permissions on the buffer to be mappable as read-only by using both
-> F_SEAL_FUTURE_WRITE and F_SEAL_FUTURE_EXEC. After the seal is
-> applied, any calls to mmap() with PROT_EXEC will fail.
->
-> [1] https://cs.android.com/android/kernel/superproject/+/common-android-m=
-ainline:common/drivers/staging/android/ashmem.c
-> [2] https://developer.android.com/reference/android/database/CursorWindow
->
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Kalesh Singh <kaleshsingh@google.com>
-> Cc: John Stultz <jstultz@google.com>
-> Signed-off-by: Isaac J. Manjarres <isaacmanjarres@google.com>
-> ---
->  include/linux/mm.h         |  5 +++++
->  include/uapi/linux/fcntl.h |  1 +
->  mm/memfd.c                 |  1 +
->  mm/mmap.c                  | 11 +++++++++++
->  4 files changed, 18 insertions(+)
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index 4eb8e62d5c67..40c03a491e45 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4096,6 +4096,11 @@ static inline bool is_write_sealed(int seals)
->         return seals & (F_SEAL_WRITE | F_SEAL_FUTURE_WRITE);
->  }
->
-> +static inline bool is_exec_sealed(int seals)
-> +{
-> +       return seals & F_SEAL_FUTURE_EXEC;
-> +}
-> +
->  /**
->   * is_readonly_sealed - Checks whether write-sealed but mapped read-only=
-,
->   *                      in which case writes should be disallowing movin=
-g
-> diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
-> index 6e6907e63bfc..ef066e524777 100644
-> --- a/include/uapi/linux/fcntl.h
-> +++ b/include/uapi/linux/fcntl.h
-> @@ -49,6 +49,7 @@
->  #define F_SEAL_WRITE   0x0008  /* prevent writes */
->  #define F_SEAL_FUTURE_WRITE    0x0010  /* prevent future writes while ma=
-pped */
->  #define F_SEAL_EXEC    0x0020  /* prevent chmod modifying exec bits */
-> +#define F_SEAL_FUTURE_EXEC     0x0040 /* prevent future executable mappi=
-ngs */
->  /* (1U << 31) is reserved for signed error codes */
->
->  /*
-> diff --git a/mm/memfd.c b/mm/memfd.c
-> index 35a370d75c9a..77b49995a044 100644
-> --- a/mm/memfd.c
-> +++ b/mm/memfd.c
-> @@ -184,6 +184,7 @@ unsigned int *memfd_file_seals_ptr(struct file *file)
->  }
->
->  #define F_ALL_SEALS (F_SEAL_SEAL | \
-> +                    F_SEAL_FUTURE_EXEC |\
->                      F_SEAL_EXEC | \
->                      F_SEAL_SHRINK | \
->                      F_SEAL_GROW | \
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index b1b2a24ef82e..c7b96b057fda 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -375,6 +375,17 @@ unsigned long do_mmap(struct file *file, unsigned lo=
-ng addr,
->                 if (!file_mmap_ok(file, inode, pgoff, len))
->                         return -EOVERFLOW;
->
-> +               if (is_exec_sealed(seals)) {
-> +                       /* No new executable mappings if the file is exec=
- sealed. */
-> +                       if (prot & PROT_EXEC)
-> +                               return -EACCES;
 
-I think this should be -EPERM to be consistent with seal_check_write()
-and mmap(2) man page:
+Doh, of course, sorry, my stupid mistake. I'll send a follow up fix.
 
-" EPERM The operation was prevented by a file seal; see fcntl(2)."
-
-Thanks,
-Kalesh
-
-> +                       /*
-> +                        * Prevent an initially non-executable mapping fr=
-om
-> +                        * later becoming executable via mprotect().
-> +                        */
-> +                       vm_flags &=3D ~VM_MAYEXEC;
-> +               }
-> +
->                 flags_mask =3D LEGACY_MAP_MASK;
->                 if (file->f_op->fop_flags & FOP_MMAP_SYNC)
->                         flags_mask |=3D MAP_SYNC;
-> --
-> 2.47.0.338.g60cca15819-goog
+> jirka
 >
+> > +
+> > +     if (unlikely(old->cons_cnt > 1)) {
+> > +             ri->extra_consumers =3D kmemdup(old->extra_consumers,
+> > +                                           sizeof(ri->extra_consumers[=
+0]) * (old->cons_cnt - 1),
+> > +                                           GFP_KERNEL);
+> > +             if (!ri->extra_consumers) {
+> > +                     kfree(ri);
+> > +                     return NULL;
+> > +             }
+> > +     }
+> >
+> > -     return kmemdup(old, size, GFP_KERNEL);
+> > +     return ri;
+> >  }
+> >
+> >  static int dup_utask(struct task_struct *t, struct uprobe_task *o_utas=
+k)
+> > @@ -2369,25 +2372,28 @@ static struct uprobe *find_active_uprobe_rcu(un=
+signed long bp_vaddr, int *is_swb
+> >       return uprobe;
+> >  }
+> >
+> > -static struct return_instance*
+>
+> SNIP
 
