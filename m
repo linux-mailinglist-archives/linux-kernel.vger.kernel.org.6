@@ -1,86 +1,107 @@
-Return-Path: <linux-kernel+bounces-435154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CC619E726C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:08:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40EF39E7283
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:10:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B59D2839B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C4C18882A9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC5FE20125C;
-	Fri,  6 Dec 2024 15:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C981B207E03;
+	Fri,  6 Dec 2024 15:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lAxHjcIr"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tM3ik0DT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45FED13AA5F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 15:08:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2601953A7;
+	Fri,  6 Dec 2024 15:09:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733497734; cv=none; b=XVwyPBxqRjoQrCl6NGdwA8GTJ0zcAO8422sZZddG/8/TX8ISMZl10/AweLmiD5OVfil6YfHYONjOLOL2EBapgz5gW/ToHVbmATAUbiWI9YiRjxoMpPq2lgnxJsR/evCrHGwJEYcfsqlYVRJbJqwNWra36J2uBHUuPa8gUMIAi64=
+	t=1733497763; cv=none; b=YKvtvZxSQr7/g9O6zC2Nft0EHn3PNBoXmOkNZC3yD6JRzGsnO0dlxxmK5elP/EVkLCC3SOzmTNeV1Dwk2v9VrWPx+xTcmZVt9MVT+NiDouyRHzCFOibShLKyMsk5lCsLsrXb1q3JpO1O0ag883S9+xGh2LaS4GmNeBCFG3HutBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733497734; c=relaxed/simple;
-	bh=X2DFbcfifLoFen+Ra01s5FegQTebcs9sJl+7t0SB9Hw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JpqFyEl04IhZj8nchrMthH+ZIS0aWdapv2aZ347K2mLs2p1SYMcsQU3UT0dAbmZSAjuP5tKH8yRc5dRykhxYXSviEdeFf+46eCfs4naCZHRbWOHzm/NP+aTufCrNYgYu19w8eEgsZwmgRiTGrI85swTfmb+BT0gDMULXRuvaVV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lAxHjcIr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 442F4C4CED1;
-	Fri,  6 Dec 2024 15:08:52 +0000 (UTC)
+	s=arc-20240116; t=1733497763; c=relaxed/simple;
+	bh=AcySnufDoHnAqbhwmrqCRJ6hJFOvsfgvt4sBL8BqwlU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aK8h3umE8PjyFX63n7/sDQfF8LqzcezY0s0oa64O4cmog6cuBwz/yXc4bmgvdRy93XzHVwZFTyyuoeaEW6K5dFrtKtk2GfKpQPoczVRmDDlgXvMMoDLXW2j3cDikaoSJz8HXIQfGtn5l+YmIvTbbXPOB0Qi4o2OF3K+PunU7cTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tM3ik0DT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32A2C4CEDC;
+	Fri,  6 Dec 2024 15:09:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733497734;
-	bh=X2DFbcfifLoFen+Ra01s5FegQTebcs9sJl+7t0SB9Hw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=lAxHjcIrMCwVXDzbd/Fs8nycOCLReNZA37YFWNJPh964Vx2BV2ITra5Uv0nKpBfy6
-	 mmiC+C97GljNlzAXZ1e1YWeckTkYwTK+EcGfBzN6aYWkcdhMfr9OWjS57XtREW/fBn
-	 PG/usixa3pvP6Y4kjgvC+sZLKZVfZKD5bPxwq86carDoofyqlGVSd64uZagQ5Wq8TI
-	 cWtYk3rXQsWpIRA23yXDdbkk2nK0rwEgjlRTrcl+0SdzQW+q/twbPb1Mz8sAwgNg50
-	 dmpnl3V81GOMXufNYkc2pQXnWWBFakbcJmaHlugfosmwzg+PatIN7GcNdb2Ary8BWI
-	 n0Cox4DTp802g==
-From: Pratyush Yadav <pratyush@kernel.org>
-To: Vishwaroop A <va@nvidia.com>
-Cc: <tudor.ambarus@linaro.org>,  <pratyush@kernel.org>,
-  <mwalle@kernel.org>,  <cmiquel.raynal@bootlin.com>,
-  <thierry.reding@gmail.com>,  <richard@nod.at>,  <vigneshr@ti.com>,
-  <linux-mtd@lists.infradead.org>,  <linux-kernel@vger.kernel.org>,
-  <jonathanh@nvidia.com>,  <kyarlagadda@nvidia.com>,
-  <smangipudi@nvidia.com>
-Subject: Re: [PATCH 2/3] mtd: spi-nor: Add support for spansion s25fs512s1
-In-Reply-To: <20241126185834.1130949-3-va@nvidia.com> (Vishwaroop A.'s message
-	of "Tue, 26 Nov 2024 18:58:33 +0000")
-References: <20241126185834.1130949-1-va@nvidia.com>
-	<20241126185834.1130949-3-va@nvidia.com>
-Date: Fri, 06 Dec 2024 15:08:51 +0000
-Message-ID: <mafs0frn04zng.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=k20201202; t=1733497762;
+	bh=AcySnufDoHnAqbhwmrqCRJ6hJFOvsfgvt4sBL8BqwlU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tM3ik0DTD6q1rL1rCHPC4mjmqbC8dIlwD9EbO4t87+XHTvD/DePJ1nwbz06rzKHtx
+	 KbN6g2+ED++WM2cQQSxvhEYNw6irQZ7ANI9Nw+mWsEn9UG62k3wiaFCEDEoSZb7vFs
+	 kuFuhdw3sXsNrsdCgIdigf22NO0ydYdn9xWbHDb6Lsm2D7SZSgL2PD/RGVDZfj8R07
+	 y3ddk3j7hULCnNIGSLmPsEpozWjvFaMsaWLXWVNEfG2WVJIguZtfp9RsrXSpIoL1Vh
+	 w1N1SexxMdFBj5KK68a8mEMrHyYdvERZhNf7eAicV8ovPs3Ss9N10LiC7nBzEWTBuT
+	 i3Tf5+vLk/fSQ==
+Date: Fri, 6 Dec 2024 15:09:18 +0000
+From: Simon Horman <horms@kernel.org>
+To: Breno Leitao <leitao@debian.org>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net-next 4/4] netconsole: selftest: verify userdata entry
+ limit
+Message-ID: <20241206150918.GU2581@kernel.org>
+References: <20241204-netcons_overflow_test-v1-0-a85a8d0ace21@debian.org>
+ <20241204-netcons_overflow_test-v1-4-a85a8d0ace21@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241204-netcons_overflow_test-v1-4-a85a8d0ace21@debian.org>
 
-On Tue, Nov 26 2024, Vishwaroop A wrote:
+On Wed, Dec 04, 2024 at 08:40:45AM -0800, Breno Leitao wrote:
+> Add a new selftest for netconsole that tests the userdata entry limit
+> functionality. The test performs two key verifications:
+> 
+> 1. Create MAX_USERDATA_ITEMS (16) userdata entries successfully
+> 2. Confirm that attempting to create an additional userdata entry fails
+> 
+> The selftest script uses the netcons library and checks the behavior
+> by attempting to create entries beyond the maximum allowed limit.
+> 
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> ---
+>  MAINTAINERS                                        |  2 +-
+>  .../selftests/drivers/net/netcons_overflow.sh      | 67 ++++++++++++++++++++++
+>  2 files changed, 68 insertions(+), 1 deletion(-)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8af5c9a28e68c4b6a785e2e6b82db20b3cf59822..62192db4641a4056d1eab911f5c141fb37eaed36 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -16092,7 +16092,7 @@ S:	Maintained
+>  F:	Documentation/networking/netconsole.rst
+>  F:	drivers/net/netconsole.c
+>  F:	tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
+> -F:	tools/testing/selftests/drivers/net/netcons_basic.sh
+> +F:	tools/testing/selftests/drivers/net/netcons\*
+>  
+>  NETDEVSIM
+>  M:	Jakub Kicinski <kuba@kernel.org>
+> diff --git a/tools/testing/selftests/drivers/net/netcons_overflow.sh b/tools/testing/selftests/drivers/net/netcons_overflow.sh
 
-> Add support for the spansion s25fs512s1 SPI NOR flash. This device has
-> a 64MB size (SZ_64M), dual/quad read capabilities and apply
-> s25fs_s_nor_fixups to handle specific chip behavior.
->
-> Erasing, reading and writing this flash device has been validated on
-> the Jetson AGX Orin platform using mtd_debug and dd utilities.
+Nit: I think you need to add netcons_overflow.sh to
+     tools/testing/selftests/drivers/net/Makefile
 
-Please read https://docs.kernel.org/driver-api/mtd/spi-nor.html for
-requirements for adding new flashes. Also, see if you even need a new
-entry at all, or the generic SFDP-based driver works for you already. If
-not, explain in your patch why.
+Other than that, this looks good to me.
 
-Same applies to patch 3/3.
+Tested-by: Simon Horman <horms@kernel.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
--- 
-Regards,
-Pratyush Yadav
+...
 
