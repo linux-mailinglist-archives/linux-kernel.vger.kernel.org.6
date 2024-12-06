@@ -1,150 +1,218 @@
-Return-Path: <linux-kernel+bounces-435612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632C79E7A23
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:43:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C10441885E8A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:43:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEF3020458E;
-	Fri,  6 Dec 2024 20:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NC1lA9kX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1159E7A27
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:45:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571ED1C54AF;
-	Fri,  6 Dec 2024 20:43:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28017281F98
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:45:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA3DC204581;
+	Fri,  6 Dec 2024 20:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K8Ctvefl"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E625113A27D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:45:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733517822; cv=none; b=BiIcj6rRFwHu3c9eug+ECSMl7XTt2j02fH3bqxuCCid/BKNNAFAKymOV7pLRdmzDB6c47jMxwsMkuPQFJa/A08X08RF8Vsd5kZmD3vUkeX+99ryA81BfddH3LsqQpAaR1k+6MlwL96pG1rZR65MXduJ/csO5hBljp3Gj8mkXZMI=
+	t=1733517936; cv=none; b=gYCZTD6KiILx4sT6fEmCC9rEDf0Z1rUpvQjOO5ex6A+hLZLN3OxFv7G6xqYYfTJGG7ZqHW1pk1AiNcqcO6Fuj+8YnHRe9PPoazdNycJFNbhZ+EQVyvTl+RXzES10FOQFOMkWKfwXjwNdO683/hmgjqeeqkGJVT+P7gfwnJ3V1KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733517822; c=relaxed/simple;
-	bh=HkUtFt5yNEyOKOT57xnkxN4TB3SkK29GTeg3yPR2eEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qipZy33vViKbPlasb2TpKxizm/Prjyu9CDMOqmSlhbPXOPaw3bkXjV9rmW1WD8nM9DhMOZqXJDu+y1zg5kLCtnfIek6lxrJMHSCfnIlfBfLcnc/2u5Oa7KVSA0wx7Pme3anA032TBro8WI/1D9cJmF4Qmf9Yor7Pn0ljOFSOcD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NC1lA9kX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6BZ57X003204;
-	Fri, 6 Dec 2024 20:43:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	HkUtFt5yNEyOKOT57xnkxN4TB3SkK29GTeg3yPR2eEA=; b=NC1lA9kXljJwRNZ/
-	jyGx38NCt6kSZMSxw27ZZQfIFXopTSQNDIoHiJnfYnod7Mm+fb87sgx76mNM19za
-	LWD8J1KHKzhJ05C31MdD0xuQ2SYc47yExWP0wfjsiNa4cuTKeMV0tlYRyHt4hDm1
-	FBMz71HGYCu7v8CgEAnlv52Uc9XA3rWVch5dkeQjLxE7XTSYF+qCfdLDPgvZY/Gn
-	wZYZ6zjftxmSzfIqHZdNw5DZmFQYv6qawfnlO6tG81rOvzCZxd3Arss7rUh4qfmf
-	EfHd9juph0xL0aVcnIC3XvqnWpwONZeFXfOkq3y4v6FdKPCz2ThZ65BpsbXeOMUe
-	aq1Wkg==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43brgp2qny-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 20:43:22 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6KhLiq013837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 20:43:21 GMT
-Received: from [10.71.112.120] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
- 12:43:21 -0800
-Message-ID: <3e246be8-22a9-4473-8c78-39788ae95650@quicinc.com>
-Date: Fri, 6 Dec 2024 12:43:20 -0800
+	s=arc-20240116; t=1733517936; c=relaxed/simple;
+	bh=m3PTfQDVngxMCgrvufrkVbQNh5egy7ThODyjfj2kRGY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ayVyoJaFFrosOcheadg1RxhFQVxIne+61htyLC6DGnjLfCBxVs9aZI+U8K6fj47HUR1gunKXpcI0iplXLsE02bXN9f9FNAHjU1S9uFwy+A0Pbhf8OxVgRfjuwAWllIBiSLdqyKdMwEQw/nwUnDbWTf0EpbajTPI1h3A6yTjpMfk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K8Ctvefl; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434a9f9a225so9575e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:45:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733517932; x=1734122732; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vL/yjtQtoNZ0gBIy+DxtflUlVpr5YddZzBAjmwp/MkA=;
+        b=K8CtveflPC8OOm58XgIJ0BHPYME804LEdiQy115Bz22B2vq5IA3DG9Tnoec4xTzbVX
+         D5Ed4kgfuzTbLdwoCGIF2qNo4Gh1BXKksECOIi9qm3rwOBY4EN/+r9ALMmgUz3Lytjkq
+         I30ObXVJh3/mOLI8/ms8FDoHCyWGoMYnLjj1wiW3dgG0Tbp/kURNyhHLtXAyOuBwHk4o
+         Ii00KKyXd7LAfb+SYMRPNmq5zlIcFJlekTVoGZdAOoWkCmbzBhsVtnvyfw33cFwJSGPc
+         J41GW3ROrtZIinEBBwWa9XkzzuP7TWFMFEKDFK5eZqtjOfgnuuHWMXg6+VMtUhF3AcW9
+         i2+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733517932; x=1734122732;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vL/yjtQtoNZ0gBIy+DxtflUlVpr5YddZzBAjmwp/MkA=;
+        b=Pil7S5T6/AAC4ZcYq8A+XpYoEfDMF5rvWtZ/yBPdaYiGVOeSubx1DBXQLRoW2Mcg0s
+         Q60K2Qh9yEA9WFuAtlI+4U+W9cNRQgVR9XaAb1JbDNmySQyTiXQnstdHOfPo/uZHsVYj
+         SiXgTPM8eP94zxvQCvZ4LFZgsrLTx1sMVHon64RsA4IAUNlWOlqrSBTC0Xetgmt4ytpQ
+         8ZNY1zQ1QP0OkNpueK5K9QT60/ZyTA99IFx3FvDwbwGMbfPgljOD3Z1nWI35t5QWOwYd
+         RvwHn4u1mUHtYbzKJys7zThf7A67fZeIZESRQqpansCMkAoCcZMzooX1OKiw+HkXXaw9
+         BlCA==
+X-Forwarded-Encrypted: i=1; AJvYcCUCRGx+pgUlIup/R3RMbT9RW9AdRNTYGBPLb36YD/R5ZYfBvzstDqGHEYhnY6iNM5zA2TWeLQIK0vXB7S0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHJ8uzfNxAcWJ9QFXtWnAizKNVw/YvkYEWh2A3RoBYjDVG0xUk
+	/YqGVoY3fDHTCau01kvo+xkL1Ja8jW+h+nCo49AX3QIJInJ72iHWyJFl/9g/dA==
+X-Gm-Gg: ASbGncsEAOMaEdD3yc04PMxzGiYvboWX3LaoyFVx8wgJLM9H6xrbkstZqL8phltlRJQ
+	e5IDwlikgkgVKQwcJRHXuq3sLFu+hIh/8S5DT69kerE7d9RfQCnVG3qLjlvEi3/t+qPn8D4LuIj
+	35nWcV5P34f1MKy2bBnS/oB1PyrTHSC7w+SiKrBySLgLv42TxYii9UnQz4EIH6i3k+koac3TOse
+	7qKW2PvbetQ5c5EKyV3oUxy6XA1JqiP42JiMw==
+X-Google-Smtp-Source: AGHT+IHfoEVwi7Atv6ROI6m52UQqMOVS5/908bxTefMRLKhkIJdwocTFIYOTCUKX87jLbZyKeTgo8Q==
+X-Received: by 2002:a05:600c:34cf:b0:42b:8ff7:bee2 with SMTP id 5b1f17b1804b1-434e844cb4emr143245e9.5.1733517931771;
+        Fri, 06 Dec 2024 12:45:31 -0800 (PST)
+Received: from localhost ([2a00:79e0:9d:4:a1dd:6aeb:389c:7fd7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f59cd35sm5327236f8f.31.2024.12.06.12.45.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 12:45:30 -0800 (PST)
+From: Jann Horn <jannh@google.com>
+Date: Fri, 06 Dec 2024 21:45:28 +0100
+Subject: [PATCH bpf v2] bpf: Fix prog_array UAF in __uprobe_perf_func()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v30 28/30] ALSA: usb-audio: Add USB offload route kcontrol
-To: Cezary Rojewski <cezary.rojewski@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
-        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
-        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <tiwai@suse.com>, <robh@kernel.org>, <gregkh@linuxfoundation.org>
-References: <20241106193413.1730413-1-quic_wcheng@quicinc.com>
- <20241106193413.1730413-29-quic_wcheng@quicinc.com>
- <1a361446-7a18-4f49-9eeb-d60d1adaa088@intel.com>
- <28023a83-04a5-4c62-85a9-ca41be0ba9e1@quicinc.com>
- <1644aa6b-a4e0-4dbd-a361-276cb95eb534@intel.com>
-Content-Language: en-US
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-In-Reply-To: <1644aa6b-a4e0-4dbd-a361-276cb95eb534@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4H_AQnMFekfz5gW6YWnFHVmnH-Jb32Ho
-X-Proofpoint-ORIG-GUID: 4H_AQnMFekfz5gW6YWnFHVmnH-Jb32Ho
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 mlxlogscore=870
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060156
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241206-bpf-fix-uprobe-uaf-v2-1-4c75c54fe424@google.com>
+X-B4-Tracking: v=1; b=H4sIAGdiU2cC/32NTQ7CIBSEr9K8tc8Uait15T1MF/w8WhItBCzRN
+ L27hAO4nJlvZnZIFB0luDU7RMouOb8WwU8N6EWuM6EzRQNv+YXxdkAVLFr3wS1Erwg3abHvzMi
+ FkqozLZRiiFSIOvqAwsNUzMWlt4/fepRZjf5tZoYMBzGMWkh25b24z97PTzpr/4LpOI4fERo6S
+ boAAAA=
+X-Change-ID: 20241206-bpf-fix-uprobe-uaf-53d928bab3d0
+To: Alexei Starovoitov <ast@kernel.org>, 
+ Daniel Borkmann <daniel@iogearbox.net>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Andrii Nakryiko <andrii@kernel.org>, 
+ Martin KaFai Lau <martin.lau@linux.dev>, 
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+ Jiri Olsa <jolsa@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+ Masami Hiramatsu <mhiramat@kernel.org>, 
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+ Delyan Kratunov <delyank@fb.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-trace-kernel@vger.kernel.org, stable@vger.kernel.org, 
+ Jann Horn <jannh@google.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733517930; l=3931;
+ i=jannh@google.com; s=20240730; h=from:subject:message-id;
+ bh=m3PTfQDVngxMCgrvufrkVbQNh5egy7ThODyjfj2kRGY=;
+ b=gEZFzYLUA38vwsxc9tx3/JTv+8w0KjkGxS3pFSw0YcKqr/X+g226yWRb+R6bSEY+mvghll05g
+ ioee4912xDxBkNE7zUGmZ64jnuMahywBXep9yxgm/swPydEtiLfNfue
+X-Developer-Key: i=jannh@google.com; a=ed25519;
+ pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
+Currently, the pointer stored in call->prog_array is loaded in
+__uprobe_perf_func(), with no RCU annotation and no RCU protection, so the
+loaded pointer can immediately be dangling. Later,
+bpf_prog_run_array_uprobe() starts a RCU-trace read-side critical section,
+but this is too late. It then uses rcu_dereference_check(), but this use of
+rcu_dereference_check() does not actually dereference anything.
 
-On 12/6/2024 1:09 AM, Cezary Rojewski wrote:
-> On 2024-12-04 12:15 AM, Wesley Cheng wrote:
->>
->> On 12/3/2024 8:13 AM, Cezary Rojewski wrote:
->>> On 2024-11-06 8:34 PM, Wesley Cheng wrote:
->>>> In order to allow userspace/applications know about USB offloading status,
->>>> expose a sound kcontrol that fetches information about which sound card
->>>> and PCM index the USB device is mapped to for supporting offloading.  In
->>>> the USB audio offloading framework, the ASoC BE DAI link is the entity
->>>> responsible for registering to the SOC USB layer.
->
-> ...
->
->>> R) += mixer_usb_offload.o
->>>> diff --git a/sound/usb/mixer_usb_offload.c b/sound/usb/mixer_usb_offload.c
->>>> new file mode 100644
->>>> index 000000000000..e0689a3b9b86
->>>> --- /dev/null
->>>> +++ b/sound/usb/mixer_usb_offload.c
->>>> @@ -0,0 +1,102 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#include <linux/usb.h>
->>>> +
->>>> +#include <sound/core.h>
->>>> +#include <sound/control.h>
->>>> +#include <sound/soc-usb.h>
->>>
->>> ALSA-components should not be dependent on ASoC ones. It should be done the other way around: ALSA <- ASoC.
->>>
->>
->> At least for this kcontrol, we need to know the status of the ASoC state, so that we can communicate the proper path to userspace.  If the ASoC path is not probed or ready, then this module isn't blocked.  It will just communicate that there isn't a valid offload path.
->
-> I'm not asking _why_ you need soc-usb.h header, your reasoning is probably perfectly fine. The code hierarchy is not though. If a sound module is dependent on soc-xxx.h i.e. ASoC symbols, it shall be part of sound/soc/ space.
+It looks like the intention was to pass a pointer to the member
+call->prog_array into bpf_prog_run_array_uprobe() and actually dereference
+the pointer in there. Fix the issue by actually doing that.
 
+Fixes: 8c7dcb84e3b7 ("bpf: implement sleepable uprobes by chaining gps")
+Cc: stable@vger.kernel.org
+Signed-off-by: Jann Horn <jannh@google.com>
+---
+To reproduce, in include/linux/bpf.h, patch in a mdelay(10000) directly
+before the might_fault() in bpf_prog_run_array_uprobe() and add an
+include of linux/delay.h.
 
-That would basically require a significant change in the current design.  Was that requirement documented somewhere, where ALSA components should not be dependent on ASoC?  What was the reasoning for making it one direction, but not the other?
+Build this userspace program:
 
+```
+$ cat dummy.c
+#include <stdio.h>
+int main(void) {
+  printf("hello world\n");
+}
+$ gcc -o dummy dummy.c
+```
 
-Thanks
+Then build this BPF program and load it (change the path to point to
+the "dummy" binary you built):
 
-Wesley Cheng
+```
+$ cat bpf-uprobe-kern.c
+#include <linux/bpf.h>
+#include <bpf/bpf_helpers.h>
+#include <bpf/bpf_tracing.h>
+char _license[] SEC("license") = "GPL";
+
+SEC("uprobe//home/user/bpf-uprobe-uaf/dummy:main")
+int BPF_UPROBE(main_uprobe) {
+  bpf_printk("main uprobe triggered\n");
+  return 0;
+}
+$ clang -O2 -g -target bpf -c -o bpf-uprobe-kern.o bpf-uprobe-kern.c
+$ sudo bpftool prog loadall bpf-uprobe-kern.o uprobe-test autoattach
+```
+
+Then run ./dummy in one terminal, and after launching it, run
+`sudo umount uprobe-test` in another terminal. Once the 10-second
+mdelay() is over, a use-after-free should occur, which may or may
+not crash your kernel at the `prog->sleepable` check in
+bpf_prog_run_array_uprobe() depending on your luck.
+---
+Changes in v2:
+- remove diff chunk in patch notes that confuses git
+- Link to v1: https://lore.kernel.org/r/20241206-bpf-fix-uprobe-uaf-v1-1-6869c8a17258@google.com
+---
+ include/linux/bpf.h         | 4 ++--
+ kernel/trace/trace_uprobe.c | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/include/linux/bpf.h b/include/linux/bpf.h
+index eaee2a819f4c150a34a7b1075584711609682e4c..00b3c5b197df75a0386233b9885b480b2ce72f5f 100644
+--- a/include/linux/bpf.h
++++ b/include/linux/bpf.h
+@@ -2193,7 +2193,7 @@ bpf_prog_run_array(const struct bpf_prog_array *array,
+  * rcu-protected dynamically sized maps.
+  */
+ static __always_inline u32
+-bpf_prog_run_array_uprobe(const struct bpf_prog_array __rcu *array_rcu,
++bpf_prog_run_array_uprobe(struct bpf_prog_array __rcu **array_rcu,
+ 			  const void *ctx, bpf_prog_run_fn run_prog)
+ {
+ 	const struct bpf_prog_array_item *item;
+@@ -2210,7 +2210,7 @@ bpf_prog_run_array_uprobe(const struct bpf_prog_array __rcu *array_rcu,
+ 
+ 	run_ctx.is_uprobe = true;
+ 
+-	array = rcu_dereference_check(array_rcu, rcu_read_lock_trace_held());
++	array = rcu_dereference_check(*array_rcu, rcu_read_lock_trace_held());
+ 	if (unlikely(!array))
+ 		goto out;
+ 	old_run_ctx = bpf_set_run_ctx(&run_ctx.run_ctx);
+diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
+index fed382b7881b82ee3c334ea77860cce77581a74d..c4eef1eb5ddb3c65205aa9d64af1c72d62fab87f 100644
+--- a/kernel/trace/trace_uprobe.c
++++ b/kernel/trace/trace_uprobe.c
+@@ -1404,7 +1404,7 @@ static void __uprobe_perf_func(struct trace_uprobe *tu,
+ 	if (bpf_prog_array_valid(call)) {
+ 		u32 ret;
+ 
+-		ret = bpf_prog_run_array_uprobe(call->prog_array, regs, bpf_prog_run);
++		ret = bpf_prog_run_array_uprobe(&call->prog_array, regs, bpf_prog_run);
+ 		if (!ret)
+ 			return;
+ 	}
+
+---
+base-commit: 509df676c2d79c985ec2eaa3e3a3bbe557645861
+change-id: 20241206-bpf-fix-uprobe-uaf-53d928bab3d0
+
+-- 
+Jann Horn <jannh@google.com>
 
 
