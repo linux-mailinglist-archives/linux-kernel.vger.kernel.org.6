@@ -1,220 +1,136 @@
-Return-Path: <linux-kernel+bounces-434280-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED81B9E6452
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:41:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE1CC9E645D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:42:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE4E01697CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:42:54 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D8C18CC13;
+	Fri,  6 Dec 2024 02:42:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TjKiYlf7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A001B284818
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:41:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7F06170A26;
-	Fri,  6 Dec 2024 02:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="UhQ3GVaO"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FDE7364A9
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:41:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D3617DE2D
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 02:42:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733452903; cv=none; b=iAZDLS66fdVVfFT8RHKkZKnKjOqPwxY7nNTMGCCnhwUg4SBu79rRxni65DhIvacbhW3hfbUs8jgLOT6FwGsZqYsPAwAOZIvhT7FneyLDxrz1cdiebSEvtK1FA84TsKy78Xks29N0zrZnuhkcZmBqVdlnZkpAU3TJgGmfiJPOndg=
+	t=1733452961; cv=none; b=Os0uWq3J/3zh7yEs2Bh/tbodF7epicNiMWWw6tX5Buv6O6XG2O2ASHFZK8iDcOKecIXdJYADIaFB7TYHp2A4qVJeTLmbzKFmO+EGvaL6eRgrEbSh8BN4Lk03Cdq7aICaFRgbBPlagXrQ6qyphjZ5c5dON39P43rYNuXK/5EbW7g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733452903; c=relaxed/simple;
-	bh=sMpaNd5ke1oeV8iepSyG4ZGV5tFg6kNXx55oc5niHac=;
+	s=arc-20240116; t=1733452961; c=relaxed/simple;
+	bh=VapI9BO8bDoxLf+txhz8n6Uf6jhZ1jCyATxFGisXxN4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BVXvUeKj+RhUu2R8RNtgPlVGWOgat5eR4D/ukG+8tmk5X7vGVIwseK6egU8FcWthaXlyjUqN52dXF56YkAAUMuzHCFnQvP09MOVsakUcg7k+zEC7QpRmYUYC6wRBzi95kack0Fe6PxY/VNq+7AVN9scdzskmofVkoyWSm4Ybjys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=UhQ3GVaO; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ee46851b5eso1152215a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 18:41:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733452899; x=1734057699; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cyI1vpJbF1lA2GSyRq3p1fE6a3Gj94zXoVwVDWf3HLY=;
-        b=UhQ3GVaOZUetr2/P5QHyc9DQ+JmtnK6inPrlNH3VFjsDGSleEkwdAS9hL1Qr+hXkze
-         jDyUeXqnxCqmf4osoL4qWkb4/p/DArZPnf0nUklHgzLijLfZ+qBRbL5WH31UpZQe2D6H
-         k9i8rKU6PcHraCLmcSBm/05e9gfnhigY8o7KMwQ8fIDvoVmjrfHH29JuxpY4wF2NFr9f
-         xcsjudGQzp9rEMyRxCFM0z6EJcCOFHocDPEBy1NpIuAWW+9odAEV7+T0pJtISBl8yprT
-         Q3zrngCitIYWN9JuDopVmQefIR2V/j3Ao4uWsPqMZQd//PScF6d5914JFBTehMDGlARC
-         74Eg==
+	 To:Cc:Content-Type; b=fD78dpVHrJkwA3PBYqhEfka1muKzwUMJrcgKPkT6IDRrrEX44dNEguoYlyWRBNUZZwhcdgFl9KcsjBtlD4lOhlxpfyK+K+gzMf25zbvMDZx2rVLT9lFUojvPvHVZ1vcjL+UwKKsBO9NwE0x2wL90ET40Pj81nvm3nlkYRt2lw8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TjKiYlf7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733452958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VapI9BO8bDoxLf+txhz8n6Uf6jhZ1jCyATxFGisXxN4=;
+	b=TjKiYlf7Hm9K42a1EFSC2JJ9QwDokUgj3dkLNLd8y+joPWb6LOhP0meFeLCuwOhzRWJTXC
+	0tEMzlK+2OzG7EauJPZEJAimtBHyx0xa0+G11+1F/Z0f3NgWyHZR8qcaB0L2EcWUkT5VOW
+	UZIFZRrnDpn+i53CnDoSyZC4mj4hYJY=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-626-ZB9WW_3FMOmR_6nQuWa_Uw-1; Thu, 05 Dec 2024 21:42:37 -0500
+X-MC-Unique: ZB9WW_3FMOmR_6nQuWa_Uw-1
+X-Mimecast-MFC-AGG-ID: ZB9WW_3FMOmR_6nQuWa_Uw
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2ee6ea04326so2606731a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 18:42:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733452899; x=1734057699;
+        d=1e100.net; s=20230601; t=1733452956; x=1734057756;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cyI1vpJbF1lA2GSyRq3p1fE6a3Gj94zXoVwVDWf3HLY=;
-        b=at9INw3wS85X4TJVBAr1otQyaPPHkeeVNZO7L2vNZgHmZ0cB1XmRK2vxQhKbbRlgOI
-         CkUCcU2E1qyGaMTX9UCvqvA9owN/dBvHlBVjU+tJfYlijmOz3+XlRqPF60p+VYRtCbAX
-         zGNWx3jTvw1V66pY2jpLSGQ/j41KbwpPlIY+Yc0OFHy9yGP60lVPWsvNizB1EXpm7CWd
-         lKxsCD10zTyD08gNjtx6v0911sXK34N/H6/BPyxEstPcCnqI7+EY7rHohvM9WNcTNP7k
-         wLLOIXr2qOPp5LwkYIZfgm80MMCb5bSUr5rq5mbCKc0EvhLnOw/ni+uU8VDXHJybH9uP
-         JFpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUCd2+crkbvNC6hjs4QbqapC1nz/Eeu/dbosCxoRgEXWMm5eyxzamtE5X+qHYH8j6hAcHVQEHKPuQQRXZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8LW+kjKb8TUQXRjfuLUGtG2W2O0JCJcnaDgKYx8ot8VCbtfFr
-	Y28DsEzYpUzbLqftJxmoLb7IHv5AIUg3jJeWxULk5mcS8dUioePVGABweotke8/WWHtqMUf+9mu
-	plDE+Hd9poHTI2nwzvhBh8Og+x619/Z93V1Adaw==
-X-Gm-Gg: ASbGncshdjULU26XzjgxuQWE0A21WX0t2jEtdcaLhQoLqisdW8SIB/+Cvf8ojnhgKmF
-	NNbh54s+rboPdx5psb9dRKwNCZuLRYJYDDTs5F4u0opgWwkSX
-X-Google-Smtp-Source: AGHT+IEUYjjxoNVonXftGirFN2eYx0YoHUjkucusrRhp2lBZDnBg/ur7q7d/l8gQ0l23mUaXrY71JWBrqUptthTQgSA=
-X-Received: by 2002:a17:90b:2ccd:b0:2ee:45fd:34ee with SMTP id
- 98e67ed59e1d1-2ef6ab29c3emr2272187a91.37.1733452899670; Thu, 05 Dec 2024
- 18:41:39 -0800 (PST)
+        bh=VapI9BO8bDoxLf+txhz8n6Uf6jhZ1jCyATxFGisXxN4=;
+        b=Y2fE0Mn2xDiHV0sOYh1mHRLiezqSF5hvx8Oa/e4gghhWYr50gp0MuBOoMVitgDhhV2
+         xCoL9BZZT+1ScZ468kRhNTag7Xr9iUDEADRaLAqQWWObeQH8BPAvuZI84rB2Hae8rJJ0
+         g0TgGQXwrve9E9Ie+OOCA+n+zt1JjddJ5yED3dXyoQ/Qr56LKbU5/whOcfzHGwNIfAqG
+         tXqJ7BgrdvehoavoABkpVjRpfbONxKbH+Zk76IXNoosgMzlivOGvSBTUMHAUzgAEMJwf
+         oDkA7gVibCKJ6Y1ie4coJ7MdLadJKywnzrRfGfJa7/LTeStOohTsxeFDMaGutt9FS6pA
+         ZZXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWlfKIAftQN/gR6+aGrQaNy+0P+6OVRwrA28zv1byWa7y5bcaApJKmiRi+ByqDfzRzsrMDJdID2ZmzQoaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSRMZsSU9FzzADS32BYZPRhFEjDIj0wsi+RTm3Uu/C0m9Lpv2B
+	nM2UV7ywlNgtasp/aIRE4HOzfdwJEwe/sGuChsxAe6G0ArmrOQuLqhQi5qqh0VUeANqbQLOf5AW
+	+zDot80+2mcMM+aVXSEbiE4sDLRf9oZs1c5gAxMX8dIM7zlkEDbQ/2EhI7lMIgXaw+9UxOiRexa
+	kqe1/Vesf7dOWNkSWoNpflqi9hrYw9OCNBH1yX
+X-Gm-Gg: ASbGncunIKFOiZKZ3I2J3+tEZIXsM2IJAk19ecY3RW/IcdMNkcZyTMcjFP9MA9lTERb
+	2fI7A1GgnMnsPmMzK3INH7Io+vJyjXzr4aw==
+X-Received: by 2002:a17:90b:4c84:b0:2ee:d63f:d77 with SMTP id 98e67ed59e1d1-2ef69e121d2mr2499915a91.9.1733452955995;
+        Thu, 05 Dec 2024 18:42:35 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFXC1PaZ/v1xzGb9UHzuP48eKxe8R8L0M0pU/SFP7iOc+J8n98g8ZduoEmx31sFn2mMYoCCNI12FCuwzw5Vn5M=
+X-Received: by 2002:a17:90b:4c84:b0:2ee:d63f:d77 with SMTP id
+ 98e67ed59e1d1-2ef69e121d2mr2499880a91.9.1733452955619; Thu, 05 Dec 2024
+ 18:42:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205103729.14798-1-luxu.kernel@bytedance.com> <F94D21C0-8189-404A-B796-BB3C6620AB89@nvidia.com>
-In-Reply-To: <F94D21C0-8189-404A-B796-BB3C6620AB89@nvidia.com>
-From: Xu Lu <luxu.kernel@bytedance.com>
-Date: Fri, 6 Dec 2024 10:41:28 +0800
-Message-ID: <CAPYmKFsODeUg69r+bjeH4tZuB4DyXNUjjduAPMbtAzVBhFgpEw@mail.gmail.com>
-Subject: Re: [External] Re: [RFC PATCH v2 00/21] riscv: Introduce 64K base page
-To: Zi Yan <ziy@nvidia.com>
-Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu, 
-	ardb@kernel.org, anup@brainfault.org, atishp@atishpatra.org, 
-	xieyongji@bytedance.com, lihangjing@bytedance.com, 
-	punit.agrawal@bytedance.com, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, Linux MM <linux-mm@kvack.org>
+References: <20241205073614.294773-1-stsp2@yandex.ru> <6751d9e5254ac_119ae629486@willemb.c.googlers.com.notmuch>
+In-Reply-To: <6751d9e5254ac_119ae629486@willemb.c.googlers.com.notmuch>
+From: Jason Wang <jasowang@redhat.com>
+Date: Fri, 6 Dec 2024 10:42:23 +0800
+Message-ID: <CACGkMEswqwz_EG0onQcOZdt6pkcaJ7zHsVpm=c2HUkyqdOMTVg@mail.gmail.com>
+Subject: Re: [PATCH net-next] tun: fix group permission check
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+Cc: Stas Sergeev <stsp2@yandex.ru>, netdev@vger.kernel.org, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Zi Yan,
-
-On Fri, Dec 6, 2024 at 10:00=E2=80=AFAM Zi Yan <ziy@nvidia.com> wrote:
+On Fri, Dec 6, 2024 at 12:50=E2=80=AFAM Willem de Bruijn
+<willemdebruijn.kernel@gmail.com> wrote:
 >
-> On 5 Dec 2024, at 5:37, Xu Lu wrote:
+> Stas Sergeev wrote:
+> > Currently tun checks the group permission even if the user have matched=
+.
+> > Besides going against the usual permission semantic, this has a
+> > very interesting implication: if the tun group is not among the
+> > supplementary groups of the tun user, then effectively no one can
+> > access the tun device. CAP_SYS_ADMIN still can, but its the same as
+> > not setting the tun ownership.
+> >
+> > This patch relaxes the group checking so that either the user match
+> > or the group match is enough. This avoids the situation when no one
+> > can access the device even though the ownership is properly set.
+> >
+> > Also I simplified the logic by removing the redundant inversions:
+> > tun_not_capable() --> !tun_capable()
+> >
+> > Signed-off-by: Stas Sergeev <stsp2@yandex.ru>
+> >
+> > CC: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+> > CC: Jason Wang <jasowang@redhat.com>
+> > CC: Andrew Lunn <andrew+netdev@lunn.ch>
+> > CC: "David S. Miller" <davem@davemloft.net>
+> > CC: Eric Dumazet <edumazet@google.com>
+> > CC: Jakub Kicinski <kuba@kernel.org>
+> > CC: Paolo Abeni <pabeni@redhat.com>
+> > CC: netdev@vger.kernel.org
+> > CC: linux-kernel@vger.kernel.org
 >
-> > This patch series attempts to break through the limitation of MMU and
-> > supports larger base page on RISC-V, which only supports 4K page size
-> > now. The key idea is to always manage and allocate memory at a
-> > granularity of 64K and use SVNAPOT to accelerate address translation.
-> > This is the second version and the detailed introduction can be found
-> > in [1].
-> >
-> > Changes from v1:
-> > - Rebase on v6.12.
-> >
-> > - Adjust the page table entry shift to reduce page table memory usage.
-> >     For example, in SV39, the traditional va behaves as:
-> >
-> >     ----------------------------------------------
-> >     | pgd index | pmd index | pte index | offset |
-> >     ----------------------------------------------
-> >     | 38     30 | 29     21 | 20     12 | 11   0 |
-> >     ----------------------------------------------
-> >
-> >     When we choose 64K as basic software page, va now behaves as:
-> >
-> >     ----------------------------------------------
-> >     | pgd index | pmd index | pte index | offset |
-> >     ----------------------------------------------
-> >     | 38     34 | 33     25 | 24     16 | 15   0 |
-> >     ----------------------------------------------
-> >
-> > - Fix some bugs in v1.
-> >
-> > Thanks in advance for comments.
-> >
-> > [1] https://lwn.net/Articles/952722/
+> Reviewed-by: Willem de Bruijn <willemb@google.com>
 >
-> This looks very interesting. Can you cc me and linux-mm@kvack.org
-> in the future? Thanks.
-
-Of course. Hope this patch can be of any help.
-
+> A lot more readable this way too.
 >
-> Have you thought about doing it for ARM64 4KB as well? ARM64=E2=80=99s co=
-ntig PTE
-> should have similar effect of RISC-V=E2=80=99s SVNAPOT, right?
 
-I have not thought about it yet. ARM64 has native 64K MMU. The kernel
-can directly configure the page size as 64K and MMU will do
-translation at corresponding granularity. So I doubt if there is a
-need to implement 64K Page Size based on CONT PTE. If you want to use
-CONT PTE for acceleration instead of 64K MMU, maybe you can have a try
-on THP_CONTPTE[1] which has been merged~
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-[1] https://lwn.net/Articles/935887/
+Thanks
 
-Best regards,
-
-Xu Lu
-
->
-> >
-> > Xu Lu (21):
-> >   riscv: mm: Distinguish hardware base page and software base page
-> >   riscv: mm: Configure satp with hw page pfn
-> >   riscv: mm: Reimplement page table entry structures
-> >   riscv: mm: Reimplement page table entry constructor function
-> >   riscv: mm: Reimplement conversion functions between page table entry
-> >   riscv: mm: Avoid pte constructor during pte conversion
-> >   riscv: mm: Reimplement page table entry get function
-> >   riscv: mm: Reimplement page table entry atomic get function
-> >   riscv: mm: Replace READ_ONCE with atomic pte get function
-> >   riscv: mm: Reimplement PTE A/D bit check function
-> >   riscv: mm: Reimplement mk_huge_pte function
-> >   riscv: mm: Reimplement tlb flush function
-> >   riscv: mm: Adjust PGDIR/P4D/PUD/PMD_SHIFT
-> >   riscv: mm: Only apply svnapot region bigger than software page
-> >   riscv: mm: Adjust FIX_BTMAPS_SLOTS for variable PAGE_SIZE
-> >   riscv: mm: Adjust FIX_FDT_SIZE for variable PMD_SIZE
-> >   riscv: mm: Apply Svnapot for base page mapping if possible
-> >   riscv: Kconfig: Introduce 64K page size
-> >   riscv: Kconfig: Adjust mmap rnd bits for 64K Page
-> >   riscv: mm: Adjust address space layout and init page table for 64K
-> >     Page
-> >   riscv: mm: Update EXEC_PAGESIZE for 64K Page
-> >
-> >  arch/riscv/Kconfig                    |  34 +-
-> >  arch/riscv/include/asm/fixmap.h       |   3 +-
-> >  arch/riscv/include/asm/hugetlb.h      |   5 +
-> >  arch/riscv/include/asm/page.h         |  56 ++-
-> >  arch/riscv/include/asm/pgtable-32.h   |  12 +-
-> >  arch/riscv/include/asm/pgtable-64.h   | 128 ++++--
-> >  arch/riscv/include/asm/pgtable-bits.h |   3 +-
-> >  arch/riscv/include/asm/pgtable.h      | 564 +++++++++++++++++++++++---
-> >  arch/riscv/include/asm/tlbflush.h     |  26 +-
-> >  arch/riscv/include/uapi/asm/param.h   |  24 ++
-> >  arch/riscv/kernel/head.S              |   4 +-
-> >  arch/riscv/kernel/hibernate.c         |  21 +-
-> >  arch/riscv/mm/context.c               |   7 +-
-> >  arch/riscv/mm/fault.c                 |  15 +-
-> >  arch/riscv/mm/hugetlbpage.c           |  30 +-
-> >  arch/riscv/mm/init.c                  |  45 +-
-> >  arch/riscv/mm/kasan_init.c            |   7 +-
-> >  arch/riscv/mm/pgtable.c               | 111 ++++-
-> >  arch/riscv/mm/tlbflush.c              |  31 +-
-> >  arch/s390/include/asm/hugetlb.h       |   2 +-
-> >  include/asm-generic/hugetlb.h         |   5 +-
-> >  include/linux/pgtable.h               |  21 +
-> >  kernel/events/core.c                  |   6 +-
-> >  mm/debug_vm_pgtable.c                 |   6 +-
-> >  mm/gup.c                              |  10 +-
-> >  mm/hmm.c                              |   2 +-
-> >  mm/hugetlb.c                          |   4 +-
-> >  mm/mapping_dirty_helpers.c            |   2 +-
-> >  mm/memory.c                           |   4 +-
-> >  mm/mprotect.c                         |   2 +-
-> >  mm/ptdump.c                           |   8 +-
-> >  mm/sparse-vmemmap.c                   |   2 +-
-> >  mm/vmscan.c                           |   2 +-
-> >  33 files changed, 1029 insertions(+), 173 deletions(-)
-> >  create mode 100644 arch/riscv/include/uapi/asm/param.h
-> >
-> > --
-> > 2.20.1
->
->
-> Best Regards,
-> Yan, Zi
 
