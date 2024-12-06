@@ -1,91 +1,100 @@
-Return-Path: <linux-kernel+bounces-435629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D91F09E7A57
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:04:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52B109E7A5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:10:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 73CCA18861A7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9E1B2850B0
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:10:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E3E203710;
-	Fri,  6 Dec 2024 21:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D69204575;
+	Fri,  6 Dec 2024 21:10:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W9+uSzXQ"
-Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="f2t0w+94"
+Received: from rcdn-iport-6.cisco.com (rcdn-iport-6.cisco.com [173.37.86.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65F871C3C18;
-	Fri,  6 Dec 2024 21:04:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 599D5212F87;
+	Fri,  6 Dec 2024 21:10:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=173.37.86.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733519084; cv=none; b=oDbGdtwSVTi8LSFjPPVKIYWJlofP+skLnn79sjnJn8DUTc/GkOaDcvbIrXOGrDyhZK1rdt4pOlDjYicxBlWQ2Ki6XGlmvYen/AfKOvyFCLOWD6WnXpd1K1Pyq44irCCZZemqYKsx3ECTgmW6bnUvg6gJhfMcEBJ2e2hvuq6bIDM=
+	t=1733519419; cv=none; b=OYy0hiKYit7vgTkm+/rjeamSYjBVn0q71U4ASbbJx+kU19ET2awOD6G8pWVn/1+6+o6lIZtvTsP7o5w2LtUPThyxkU1+hKBG4DtheiPpcZNE5r6MsREAcZ+kLl/zcODpCWImIpOIpT4Tp0NXIAElEVOJRkOhVqD29M4BdLuSPx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733519084; c=relaxed/simple;
-	bh=M83fACsut8XvBVtcUvfBH8jP+xPV8I4U2WKYEJvzyBU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UNnq+MrbcEWR9lSrKG1su1KwjSFeCUiqPcyLa69riaRtJV6IZQ20+Je6jZ9W4d1KMsOuviC8wCGTDqVICuDEeXpCoz+DbX9j73U47/KqV6ddbpe56976Ev/v09FvzIsvtm5qxTJrDiVVMQfqPjGaEPsoiSCETSliHpP7J4K0y7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W9+uSzXQ; arc=none smtp.client-ip=209.85.219.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d8a2d0588bso21601946d6.2;
-        Fri, 06 Dec 2024 13:04:43 -0800 (PST)
+	s=arc-20240116; t=1733519419; c=relaxed/simple;
+	bh=vcgDZ0oSmql7uhsB+iwfZurwuZPYS4+9GO8QL+pfcYk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ASXPtYq68NfYWd/iSnhs3XfHxa1JK8rQGii/Kbt3X571D1P1eP38YfrEIMrhZnfxy9JDYiqjupfx+M7Oszr8i51291rQqOs7z+Oedpl1YTriMgku4u5gO4LDCjc0zYt9tk35TshMhPexHS812gJ31EQ7h2vWG1ZXSvwPjo42mtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com; spf=pass smtp.mailfrom=cisco.com; dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b=f2t0w+94; arc=none smtp.client-ip=173.37.86.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cisco.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cisco.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733519082; x=1734123882; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tIsQxVZOmSisxuVH5z4x+NyiZyPKlPsv2rD1mEtYR5Y=;
-        b=W9+uSzXQC7c6x3XE015ZhyzBX9VWJJ/wOHi6NbkpRkZ2Ei1kbADx8gcof5Gtg7qcyO
-         +Y+g3SYcVeUDQSXOj8JuPTV/KYwCuK9LZP7WXFG0YgRN4FxwB7ftRr575daY1n+Ysdlx
-         AI0EMhNQOiSuNiR2MtIwwMwjo7tYuPO6hoW08Rp7atN4Es1z+6KbQSj7FqPDOaGtJhYn
-         5pXyXekq0TRgXsCxjoJ9tPyX3en1rLLaXxwaQNfNOjY1AQFaQrKMb31C7oCi2v6ChA+f
-         Um+e3RUcqDMR0g1WAH+xzacrF0BE1pRu893Y15HG9yM/02DtKI4wF7UluOE4MUtDjRJ0
-         QPWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733519082; x=1734123882;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tIsQxVZOmSisxuVH5z4x+NyiZyPKlPsv2rD1mEtYR5Y=;
-        b=N3c48uSTKB0ihZB1lSXgPDlVWrv5vuXbfPkYeTeqXeypkP1ZxVJVW0RD+7IEnoWDjM
-         sn6619aVnKMOzFqvB81TaYyJPBdENXBYbjM7ELKi/S6++NHXAe1cZ4jPwcrogZ10wB9r
-         u4Vvqtzsf2ygQscz1BJrCuNcFp5q/gipmHZo1xcZEM7uS7HiXq2Ndc8+iYyjelHaoOgp
-         Oba6DA2HO7jhoa3TE+nExFrnK/jPmah5Oq/ZC9Pi0n1RmczVaDOfCuUEERw54Lik5Rjq
-         flskKp1mcG9ZQEIjFn/qtJk2wtBXsfE58MeSFmGFNcqgzHWtxyRS2p+3mFkhdXzEReEk
-         fItw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdsoHb+hfPYPl64UE9vZxR5hIJ0/GJd9ib3iKUg+SNVKNFb4jIcmwZqTRjTcn3aHPS0TdqkY3Qobd+vj/c@vger.kernel.org, AJvYcCXdr/Rq6dD/BMBMOPHZchf5wSkpR64SVJSdXW2SXci82z9zg3JeX5oDGnC2Fu92FnU0SZHH8Zy/XtCz@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywm91FNIAlC6nWSP90nXH8GXlgy1IQ//7Dp8jvmSoXsXdIHU6x7
-	T+KQWKr7qhrxfVBToeR6VNeQ8vl3ED1NQN16tAmC1PsO4HzkK6ht
-X-Gm-Gg: ASbGncuOKmSk8rf/pgOqn0S5pUh5BAl78s6m4hflBCduGYRzncLmFLxh1yBjiNBUyM2
-	7HhVh7fkGtpIi+2D6q3aOyJ2AONZ+LUWZjiTQBVNM2t5HyGitcnTyOVBci5mKBR/xHA/09JneB2
-	thFpp0i4XBvwqT96YSmRfZOjqUDBB1zodFOy8kzBtqWX3Vun608jSvXHSyzQLwhDM3VZIkUQqd5
-	3A7pYpsAnseIojxbiOoIlOlsXB/e1qNelJA/1jAtagk8sk4RfaTHayVniY1dA==
-X-Google-Smtp-Source: AGHT+IEQdKZujTj7jjBxjOcAodQ9XvJwI3WBewZCeAsZZLW6wO5g4aM64JIpWh3fzo/92H8adS9G7Q==
-X-Received: by 2002:a05:6214:20c3:b0:6d4:36ff:4358 with SMTP id 6a1803df08f44-6d8e718552amr89532996d6.25.1733519082094;
-        Fri, 06 Dec 2024 13:04:42 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da675214sm23068256d6.11.2024.12.06.13.04.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 13:04:41 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: marex@denx.de
-Cc: linus.walleij@linaro.org,
-	mcoquelin.stm32@gmail.com,
-	alexandre.torgue@foss.st.com,
-	make24@iscas.ac.cn,
-	peng.fan@nxp.com,
-	fabien.dessenne@foss.st.com,
-	linux-gpio@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
+  d=cisco.com; i=@cisco.com; l=8851; q=dns/txt; s=iport;
+  t=1733519417; x=1734729017;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=vA/8CXH2/SH9IS7wtOylGa20PgDkYh8lgYvbnfid8UU=;
+  b=f2t0w+941NWWNBJP/6edzLmRP5KqudI3fK+Id++YyFBpkBMfccv2RHH/
+   AF2Cj9cAyt4ff4FpVJ8OlGjKCs2mP2idA1dRTEekaukF56LKzu42Y1whg
+   NZPVIaPA9fONTB40/DioOWyHr6lyGSYX2EuhCk6f9VyJXGDJB5m6JYo1m
+   8=;
+X-CSE-ConnectionGUID: fkMUhUfxShW76ZGA2iubyQ==
+X-CSE-MsgGUID: ekvbH+orRfmJtQSAQG4IDA==
+X-IPAS-Result: =?us-ascii?q?A0BaAwBwZ1Nn/4//Ja1aHgEBCxIMgggLghwvgU9DGZZyg?=
+ =?us-ascii?q?RadBYF+DwEBAQ9EBAEBhQeKagImNAkOAQIEAQEBAQMCAwEBAQEBAQEBAQEBC?=
+ =?us-ascii?q?wEBBQEBAQIBBwWBDhOGCIZdKwsBRkkBgy9YgmUDsX2BeTOBAd4zgW2BSI1Kc?=
+ =?us-ascii?q?IR3JxUGgUlEgRWCcgeCQYM5AoV6BII8hQASJU1Gg3ODep0dSIEhA1khARABV?=
+ =?us-ascii?q?RMNCgsHBYF2A4JNeiuBC4EXOoF+gRNKhQxGPYJKaUs3Ag0CNoIkfYJNhRmEa?=
+ =?us-ascii?q?WMvAwMDA4M8hiWCNEADCxgNSBEsNxQbBj5uB6VXDoEOASIrLitIOg4IHwUGO?=
+ =?us-ascii?q?JJCHQdHjz6CIIE0n02EJJoehyYaM4QEjQWZSJh7o1wxN4RmgWc8gVkzGggbF?=
+ =?us-ascii?q?YMjURkPji0WwiMlbgIHCwEBAwmTPoF7AQE?=
+IronPort-Data: A9a23:5pAw3ajFas8Z3JzZ1udpg6liX161cREKZh0ujC45NGQN5FlHY01je
+ htvXWmAPP3YZ2GkftgnYNiy9ksPvZLcz4BlSQZu/ns2EStjpJueD7x1DKtf0wB+jyHnZBg6h
+ ynLQoCYdKjYdleF+FH1dOCn9SQkvU2xbuKUIPbePSxsThNTRi4kiBZy88Y0mYcAbeKRW2thg
+ vus5ZSFULOZ82QsaD5Nsfrd8EgHUMna4Vv0gHRvPZing3eG/5UlJMp3Db28KXL+Xr5VEoaSL
+ 87fzKu093/u5BwkDNWoiN7TKiXmlZaLYGBiIlIPM0STqkAqSh4ai87XB9JAAatjsAhlqvgqo
+ Dl7WTNcfi9yVkHEsLx1vxC1iEiSN4UekFPMCSDXXcB+UyQqflO0q8iCAn3aMqUW+cNKAVxA5
+ ccYF29TXD+q3eOryqOCH7wEasQLdKEHPasFsX1miDWcBvE8TNWbHePB5MRT23E7gcUm8fT2P
+ pVCL2EwKk6dPlsWZgx/5JEWxI9EglH8eidEqVacpoI84nPYy0p6172F3N/9II3RHp4FxBrIz
+ o7A12n6HBs6d9uF8zSA0G6Vvcb2sn/adKtHQdVU8dYv2jV/3Fc7ChAUX3O/oP+kmgi/UdcZI
+ EsRkgIrpLIu9UrtVtThUgejrXisuQQVUN5dVeY97WmlzqvS/hbcBWUeSDNFQMIpudVwRjEw0
+ FKN2dTzClRHtLyTVGLY7byPrBusNiUPa2wPfykJSU0C+daLnW0opgjEQtAmFOu+icf4XGmuh
+ TuLtyM5wb4UiKbnypmGwLwOuBr0zrChc+L/zl+/sr6Nhu+hWLOYWg==
+IronPort-HdrOrdr: A9a23:awF3fa4e4nRp8Yu6NQPXwPvXdLJyesId70hD6qm+c3Bom6uj5q
+ KTdZsguyMc5Ax6ZJhCo6HiBEDjexLhHPdOiOF7AV7IZmbbUQWTQb1K3M/L3yDgFyri9uRUyK
+ tsN5RlBMaYNykesS+D2mmF+xJK+qjhzEhu7t2uq0tQcQ==
+X-Talos-CUID: 9a23:W5iPuWBhtoRXabv6Eydk0XMUJ841SX3ikyniDGbiCHtjWYTAHA==
+X-Talos-MUID: 9a23:rYQaXgp55yPgcR6Sse4ezzxhKs1IoKO0Mk4Is4k/gOC9GnBRFx7I2Q==
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-AV: E=Sophos;i="6.12,214,1728950400"; 
+   d="scan'208";a="293338248"
+Received: from rcdn-l-core-06.cisco.com ([173.37.255.143])
+  by rcdn-iport-6.cisco.com with ESMTP/TLS/TLS_AES_256_GCM_SHA384; 06 Dec 2024 21:09:06 +0000
+Received: from fedora.cisco.com (unknown [10.24.83.168])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kartilak@cisco.com)
+	by rcdn-l-core-06.cisco.com (Postfix) with ESMTPSA id 8987918000263;
+	Fri,  6 Dec 2024 21:09:05 +0000 (GMT)
+From: Karan Tilak Kumar <kartilak@cisco.com>
+To: sebaddel@cisco.com
+Cc: arulponn@cisco.com,
+	djhawar@cisco.com,
+	gcboffa@cisco.com,
+	mkai2@cisco.com,
+	satishkh@cisco.com,
+	aeasi@cisco.com,
+	jejb@linux.ibm.com,
+	martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v2] pinctrl: stm32: Add check for clk_enable()
-Date: Fri,  6 Dec 2024 16:08:00 -0500
-Message-Id: <20241206210800.3346579-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	Karan Tilak Kumar <kartilak@cisco.com>
+Subject: [PATCH v6 00/15] Introduce support for Fabric Discovery and...
+Date: Fri,  6 Dec 2024 13:08:37 -0800
+Message-ID: <20241206210852.3251-1-kartilak@cisco.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,114 +102,230 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Authenticated-User: kartilak@cisco.com
+X-Outbound-SMTP-Client: 10.24.83.168, [10.24.83.168]
+X-Outbound-Node: rcdn-l-core-06.cisco.com
 
-Convert the driver to clk_bulk*() API.
-Add check for the return value of clk_bulk_enable() to catch
-the potential error.
+...Login Services
 
-Fixes: 05d8af449d93 ("pinctrl: stm32: Keep pinctrl block clock enabled when LEVEL IRQ requested")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
+Hi Martin, reviewers,
 
-v1 -> v2:
+This cover letter describes the feature: add support for Fabric
+Discovery and Login Services (FDLS) to fnic driver.
 
-1. Convert the driver to clk_bulk*() API.
----
- drivers/pinctrl/stm32/pinctrl-stm32.c | 26 ++++++++++++--------------
- 1 file changed, 12 insertions(+), 14 deletions(-)
+This functionality is needed to support port channel RSCN (PC-RSCN)
+handling and serves as a base to create FC-NVME initiators
+(planned later), and eCPU handling (planned later).
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index 5b7fa77c1184..188de29ac281 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -86,7 +86,6 @@ struct stm32_pinctrl_group {
- 
- struct stm32_gpio_bank {
- 	void __iomem *base;
--	struct clk *clk;
- 	struct reset_control *rstc;
- 	spinlock_t lock;
- 	struct gpio_chip gpio_chip;
-@@ -108,6 +107,7 @@ struct stm32_pinctrl {
- 	unsigned ngroups;
- 	const char **grp_names;
- 	struct stm32_gpio_bank *banks;
-+	struct clk_bulk_data *clks;
- 	unsigned nbanks;
- 	const struct stm32_pinctrl_match_data *match_data;
- 	struct irq_domain	*domain;
-@@ -1308,7 +1308,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 	if (IS_ERR(bank->base))
- 		return PTR_ERR(bank->base);
- 
--	err = clk_prepare_enable(bank->clk);
-+	err = clk_prepare_enable(pctl->clks[pctl->nbanks].clk);
- 	if (err) {
- 		dev_err(dev, "failed to prepare_enable clk (%d)\n", err);
- 		return err;
-@@ -1397,7 +1397,7 @@ static int stm32_gpiolib_register_bank(struct stm32_pinctrl *pctl, struct fwnode
- 	return 0;
- 
- err_clk:
--	clk_disable_unprepare(bank->clk);
-+	clk_disable_unprepare(pctl->clks[pctl->nbanks].clk);
- 	return err;
- }
- 
-@@ -1631,11 +1631,10 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 			fwnode_handle_put(child);
- 			return -EPROBE_DEFER;
- 		}
--
--		bank->clk = of_clk_get_by_name(np, NULL);
--		if (IS_ERR(bank->clk)) {
-+		pctl->clks[i].clk = of_clk_get_by_name(np, NULL);
-+		if (IS_ERR(pctl->clks[i].clk)) {
- 			fwnode_handle_put(child);
--			return dev_err_probe(dev, PTR_ERR(bank->clk),
-+			return dev_err_probe(dev, PTR_ERR(pctl->clks[i].clk),
- 					     "failed to get clk\n");
- 		}
- 		i++;
-@@ -1647,7 +1646,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 			fwnode_handle_put(child);
- 
- 			for (i = 0; i < pctl->nbanks; i++)
--				clk_disable_unprepare(pctl->banks[i].clk);
-+				clk_disable_unprepare(pctl->clks[i].clk);
- 
- 			return ret;
- 		}
-@@ -1726,10 +1725,8 @@ static int __maybe_unused stm32_pinctrl_restore_gpio_regs(
- int __maybe_unused stm32_pinctrl_suspend(struct device *dev)
- {
- 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
--	int i;
- 
--	for (i = 0; i < pctl->nbanks; i++)
--		clk_disable(pctl->banks[i].clk);
-+	clk_bulk_disable(pctl->nbanks, pctl->clks);
- 
- 	return 0;
- }
-@@ -1738,10 +1735,11 @@ int __maybe_unused stm32_pinctrl_resume(struct device *dev)
- {
- 	struct stm32_pinctrl *pctl = dev_get_drvdata(dev);
- 	struct stm32_pinctrl_group *g = pctl->groups;
--	int i;
-+	int i, ret;
- 
--	for (i = 0; i < pctl->nbanks; i++)
--		clk_enable(pctl->banks[i].clk);
-+	ret = clk_bulk_enable(pctl->nbanks, pctl->clks);
-+	if (ret)
-+		return ret;
- 
- 	for (i = 0; i < pctl->ngroups; i++, g++)
- 		stm32_pinctrl_restore_gpio_regs(pctl, g->pin);
+It is used to discover the fabric and target ports associated with the
+fabric.
+It will then login to the target ports that are zoned to it.
+The driver uses the tport structure presented by FDLS.
+
+Port channel RSCN is a Cisco vendor specific RSCN
+event. It is applicable only to Cisco UCS fabrics.
+
+In cases where the eCPU in the UCS VIC (Unified Computing Services
+Virtual Interface Card) hangs, a fabric log out is sent to the fabric.
+Upon successful log out from the fabric, the IO path is failed over
+to a new path.
+
+Generally from a feature perspective, the code is divided into adding
+support for this functionality initially. Then, code has been added to
+modify the IO path and interfaces. Finally, support for port channel
+RSCN handling has been added.
+
+Here are the headers of some of the salient patches:
+
+o add headers and definitions for FDLS
+o add support for fabric based solicited requests and responses
+o add support for target based solicited requests and responses
+o add support for unsolicited requests and responses
+o add support for FDMI
+o add support for FIP
+o add functionality in fnic to support FDLS
+o modify IO path to use FDLS and tport
+o modify fnic interfaces to use FDLS
+o add support to handle port channel RSCN
+
+Even though the patches have been made into a series, some patches are
+heavier than others. But, every effort has been made to keep the
+purpose of each patch as a single-purpose, and to compile cleanly.
+All the individual patches compile cleanly. The compiler used is
+GCC 13.3. Some function calls have been coded as placeholders with
+appropriate comments to avoid compiler warnings.
+
+This patchset has been tested as a whole. Therefore, the tested-by
+fields have been added only to one patch in the set.
+I've refrained from adding tested-by to most of the patches,
+so as to not mislead the reviewer/reader.
+
+A brief note on the unit tests:
+
+o. Perform zone in zone out testing in a loop: remove a target
+port from the zone, add it to the zone in a loop. 1000+ iterations
+of this test have been successful.
+o. Configure multipathing, and run link flaps on single link.
+IOs drop briefly, but pick up as expected.
+o. Configure multipathing, and run link flaps on two links, with a
+30 second delay in between. IOs drop briefly, but pick up as expected.
+o. Module load/unload test.
+o. Repeat the above tests with 1 queue and 64 queues.
+All tests were successful.
+
+Please consider this patch series for the next merge window.
+
+Changes between v1 and v2:
+	Replace pr_err with printk.
+	Replace simultaneous use of fc_tport_abts_s and tport_abts with
+    just tport_abts.
+	Incorporate review comments by Hannes:
+		Replace pr_info with dev_info.
+		Replace pr_err with dev_err.
+		Restore usage of tagset iterators.
+		Replace fnic_del_tport_timer_sync macro calls with function
+		calls.
+		Use the correct kernel-doc format.
+		Replace definitions with standard definitions from
+		fc_els.h.
+		Replace htonll() with get_unaligned_be64().
+		Use standard definitions from scsi_transport_fc.h for
+		port speeds.
+		Refactor definitions in struct fnic to avoid cache holes.
+		Replace memcmp with not equal to operator.
+		Fix indentation.
+		Replace fnic_del_fabric_timer_sync macro calls to function
+		calls.
+		Rename fc_abts_s to fc_tport_abts_s.
+		Modify fc_tport_abts_s to be a global frame.
+		Rename variable pfc_abts to tport_abts.
+		Modify functions with returns in the middle to if else
+		clauses.
+		Remove double newline.
+		Fix indentation in fnic_send_frame.
+		Add fnic_del_fabric_timer_sync as an inline function.
+		Add fnic_del_tport_timer_sync as an inline function.
+		Modify fc_abts_s variable name to fc_fabric_abts_s.
+		Modify fc_fabric_abts_s to be a global frame.
+		Rename pfc_abts to fabric_abts.
+		Remove redundant patch description.
+		Replace htonll() with get_unaligned_be64().
+		Replace raw values with macro names.
+		Remove fnic_del_fabric_timer_sync macro.
+		Remove fnic_del_tport_timer_sync macro.
+		Add fnic_del_fabric_timer_sync function declaration.
+		Add fnic_del_tport_timer_sync function declaration.
+		Move FDMI function declaration.
+		Modify patch heading and description appropriately.
+	Incorporate review comments from John:
+		Remove unreferenced variable.
+		Use standard definitions of true and false.
+		Replace if else clauses with switch statement.
+		Use kzalloc instead of kmalloc.
+		Modify fnic_send_fcoe_frame to not send a return value.
+		Replace int return value with void.
+	Fix warning from kernel test robot:
+		Remove version.h
+
+Changes between v2 and v3:
+    Incorporate review comments from Hannes:
+        Replace redundant structure definitions with standard
+        definitions.
+		Replace static OXIDs with pool-based OXIDs for fabric.
+		Replace static OXIDs with pool-based OXIDs for targets.
+		Remove multiple endian macro copies.
+		Modify locking as applicable.
+	Incorporate review comments from John:
+		Replace GFP_ATOMIC with GFP_KERNEL where applicable.
+	Replace fnic->host with fnic->lport->host in some patches to
+	prevent compilation errors.
+	Fix issues found by kernel test robot.
+	Refactor fnic_std_ba_acc definition to fix compilation warning.
+	Refactor fnic_fdls_remove_tport to fix null pointer exception.
+	Modify scsi_unload to fix null pointer exception during fnic_remove.
+
+Changes between v3 and v4:
+	Fix kernel test robot warnings.
+	Rebase code to 6.12/scsi-queue.
+
+Changes between v4 and v5:
+	Remove unnecessary tabs from the bottom of fip.h.
+	Incorporate review comments from Martin:
+		Remove newline at the end of files.
+		Modify attribution appropriately.
+		Refactor call to fnic_fdls_start_flogi.
+		Refactor call to fdls_get_tgt_oxid_pool.
+		Modify fnic_get_stats to suppress compiler warning.
+
+Changes between v5 and v6:
+	Rebase to 6.14/scsi-queue.
+    Incorporate review comments from Martin:
+        Remove GCC 13.3 warnings.
+    Incorporate review comments from Hannes:
+		Refactor function definitions to top of file.
+		Modify OXID allocation and reclaim design.
+		Allocate OXID from a mempool.
+		Allocate frames from a mempool.
+		Modify frame initialization.
+		Modify frame send by avoiding memcpy in hot path.
+		Add comments.
+		Replace tag walk with scsi_host_busy_iter.
+		Replace custom definitions with standard definitions.
+		Split FDMI patch into PCI patch and FDMI patch.
+		Refactor FDMI macros into fnic_main.c.
+		Replace FDMI custom definition with standard definition.
+
+Thanks and regards,
+Karan
+
+Karan Tilak Kumar (15):
+  scsi: fnic: Replace shost_printk with dev_info/dev_err
+  scsi: fnic: Add headers and definitions for FDLS
+  scsi: fnic: Add support for fabric based solicited requests and
+    responses
+  scsi: fnic: Add support for target based solicited requests and
+    responses
+  scsi: fnic: Add support for unsolicited requests and responses
+  scsi: fnic: Add Cisco hardware model names
+  scsi: fnic: Add and integrate support for FDMI
+  scsi: fnic: Add and integrate support for FIP
+  scsi: fnic: Add functionality in fnic to support FDLS
+  scsi: fnic: Modify IO path to use FDLS
+  scsi: fnic: Modify fnic interfaces to use FDLS
+  scsi: fnic: Add stats and related functionality
+  scsi: fnic: Code cleanup
+  scsi: fnic: Add support to handle port channel RSCN
+  scsi: fnic: Increment driver version
+
+ drivers/scsi/fnic/Makefile                |    5 +-
+ drivers/scsi/fnic/fdls_disc.c             | 5019 +++++++++++++++++++++
+ drivers/scsi/fnic/fdls_fc.h               |  253 ++
+ drivers/scsi/fnic/fip.c                   | 1008 +++++
+ drivers/scsi/fnic/fip.h                   |  157 +
+ drivers/scsi/fnic/fnic.h                  |  290 +-
+ drivers/scsi/fnic/fnic_attrs.c            |   12 +-
+ drivers/scsi/fnic/fnic_debugfs.c          |   30 +-
+ drivers/scsi/fnic/fnic_fcs.c              | 1745 +++----
+ drivers/scsi/fnic/fnic_fdls.h             |  434 ++
+ drivers/scsi/fnic/fnic_fip.h              |   48 -
+ drivers/scsi/fnic/fnic_io.h               |   14 +-
+ drivers/scsi/fnic/fnic_isr.c              |   28 +-
+ drivers/scsi/fnic/fnic_main.c             |  731 +--
+ drivers/scsi/fnic/fnic_pci_subsys_devid.c |  131 +
+ drivers/scsi/fnic/fnic_res.c              |   77 +-
+ drivers/scsi/fnic/fnic_scsi.c             | 1161 +++--
+ drivers/scsi/fnic/fnic_stats.h            |   49 +-
+ drivers/scsi/fnic/fnic_trace.c            |   81 +-
+ 19 files changed, 9342 insertions(+), 1931 deletions(-)
+ create mode 100644 drivers/scsi/fnic/fdls_disc.c
+ create mode 100644 drivers/scsi/fnic/fdls_fc.h
+ create mode 100644 drivers/scsi/fnic/fip.c
+ create mode 100644 drivers/scsi/fnic/fip.h
+ create mode 100644 drivers/scsi/fnic/fnic_fdls.h
+ delete mode 100644 drivers/scsi/fnic/fnic_fip.h
+ create mode 100644 drivers/scsi/fnic/fnic_pci_subsys_devid.c
+
 -- 
-2.34.1
+2.47.0
 
 
