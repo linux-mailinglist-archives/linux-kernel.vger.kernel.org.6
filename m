@@ -1,449 +1,280 @@
-Return-Path: <linux-kernel+bounces-435654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435650-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFCD9E7AA5
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:20:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9566D9E7A93
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:18:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AADB41888936
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7085616D334
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:18:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6292D204576;
-	Fri,  6 Dec 2024 21:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="VrRE0Sm7"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225811C5495;
+	Fri,  6 Dec 2024 21:18:33 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34503212FB8
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:18:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97438213E98
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733519930; cv=none; b=lzVdG35cMr8BwFLdUCIp56x1gb097qMwvU0X5XihkVWOLUKa6OuKb3GTbOPyOfzfkMx25fwq1detwXDSYVMxVd1RkmD2u9rPtbLafaKGk4SG0vdcnsmvKVfd/MUxG/FKKZIAuUtX7VOQagJbsftL0CGI9A4xCR9Z+Plz47AGIC4=
+	t=1733519912; cv=none; b=UcW/QC8yArnLwyXeIs0jQrY3+EQAZqTiZK6wB2b20U1MP51TAaQM1um8bk3w+pCO4UXwu4lPS5i7Kl03uBPLVqoeQp/yanFN7t6diQjl999SXeB5+juws+uaTL/A2Q+sWVlcMlYnlvp7cKGpFSN3jSJlHjR0ELnhfgXtRMGDezs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733519930; c=relaxed/simple;
-	bh=8aJ3PfQubjODk4QdgG6fySgSnEM3R8Ru+ZvI0tMVZEc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rHt82SsLfRfz4JaW/Eni0gd+86SYixQi/0acgIooRhScIVnw5MpiSQwUTRr7/S+KKA4GlcmfsiKFTQ0F9wGNPSPSxg0DxMWHaxHnlduqXfpc4VZMcwIdIR3nx7O+Hlmav6DuT3B1B8a2NI9Djd9Y9TV/0db2AYQwuVrondGu+xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=VrRE0Sm7; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434a14d6bf4so24856665e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 13:18:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1733519925; x=1734124725; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9ZNS2/ZN6evv6701XGrZ2MdmYKbPXjFP4nK7Mh9RrRY=;
-        b=VrRE0Sm7m/bAgU4pDSJ9jcMkzty2J+H4rPAXhOcOwN7a4FY+sfxtbXNzOpe944hwdm
-         R+Ku13qfwDl5ho1Uw9yQryqw9Hg+14FeZcdCOoR12HQ5Q26gl4R2JTJw/3spEXrvzzTz
-         jYUjTW7luvvnPLoaHk19J8vGavIGykmNuTFrJRrTcu8K5GuVCFOS43UtpHIjsGtnJ49Y
-         vR4qNmvk3OKDUr2YF8tqsK9CPrSqdjhN0ex9/Je/UQQwfZXO9OSjwMXRwgkffhQ5pGWf
-         QqTAFOYVDaRxc29PM0jgSmD9Bvdclxk5gCXpdG0th7jSBwv5/+QwFRL965901U/NN9Fy
-         +WzQ==
+	s=arc-20240116; t=1733519912; c=relaxed/simple;
+	bh=mtOq41TrXo0ZNZtOkuJO891lOVQujSqBvbd4O8fDo1s=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=LugxvSRXL1L9uDlU9aIBQQzp3QJNgytmwACjKVn79B9VNvXiMJYY5Sl7zVGbUljr2zxOp0o1UcbyMBhDxZXTeO7KRFM3G5RYEpC43GMEIVJdhm/XtGCqTQYZAfcqJL7bqlChkgP9Zm65D5hqVHS9ykZXY728bL3n3F0+dgjVnRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so51176985ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 13:18:30 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733519925; x=1734124725;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9ZNS2/ZN6evv6701XGrZ2MdmYKbPXjFP4nK7Mh9RrRY=;
-        b=PWbKoLCbbCZySxJHsecHWaj3h8mH4p0o0w8hLEnwgmgF50qfE3JzyxsdiKXSH6jgq+
-         XY1BR3mghLpoI6gChnZzXj8qvUrfk2NtssEuTbbRZYqZq3gLb0dyKzCBpC6V2CtKafwt
-         otifvbNp9Q9cmJxBa9kcUqal/JsmACmeQSqoPu4uLSb5UFUkJFrSBaNmO1sYwQa77bRu
-         9TCqXJHsBZkMAkAEGn9wvHOi7B1zZ9X8BXskaBdKPL27WL0lTlzQcV68TWzanZoystb9
-         ugvishwyxoSPyLg1IVeAJsCGEaoLrXojIJT0qrNLr//0OEvtyX453OmhKf2e+wAeo8Sm
-         qVhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXV31mPJqxPZbPf+u3ngMyrfWTKtwgZSiRbEsqH9JBKLxgfQwwjXNk8cwjWPRUiRaHZ+W+UujHUcAe6b9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFFGYDhcCFvhsaf+oPpIcfJTxj+WJWBSLdcUDT4gMNZh2uUnVt
-	uinqkD9Lj9RpHTwq1UsLWwSyB0SwXj6ltGfOYRuaNBBKi+Cdaogqvcg8Y/x7cHY=
-X-Gm-Gg: ASbGncv6HaTaKuoD+NhZstBDu7fvvpZQlh4lpnbt6/ST/WccpnwTn4QwtOuccgV4fhB
-	f63yPbeKevZ8gC5u3FYVPHEwFAp4NY55aQZ3FUkvlFj0msEhWPYUOX0BeBND0ygOHbpwJQeiOKB
-	Dlb/8nji2ObELSM6bjDA4Tz5gSB1GSO2lCEjuwXHHM/8iX5QlLfzsINQMEuY7lPYLx3gCPGjf1C
-	I+f9sGcLd17xwthLqLrHsSsxsnB1ZmBuDnksN734noJub9PSEK8MVYjXJIJcQ==
-X-Google-Smtp-Source: AGHT+IHYBpFpN7tXH1j2JYVMy79h6SYmA9DHh3ci+u+t12yIqL95OETroFGsMMC2PUs/ch0yhgq9Xg==
-X-Received: by 2002:a05:6000:23c1:b0:385:fae7:fe50 with SMTP id ffacd0b85a97d-3862b3b59ecmr2128670f8f.42.1733519925450;
-        Fri, 06 Dec 2024 13:18:45 -0800 (PST)
-Received: from serenity.mandelbit.com ([2001:67c:2fbc:1:3cee:9adf:5d38:601e])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861fd46839sm5441302f8f.52.2024.12.06.13.18.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 13:18:45 -0800 (PST)
-From: Antonio Quartulli <antonio@openvpn.net>
-Date: Fri, 06 Dec 2024 22:18:28 +0100
-Subject: [PATCH net-next v13 03/22] ovpn: add basic interface
- creation/destruction/management routines
+        d=1e100.net; s=20230601; t=1733519909; x=1734124709;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=A/jTcw9U659NHfbVfvyGE0LV6xQht4eNjTO4MSHUBKQ=;
+        b=Z9x+digOcuBh3Vfs86CM8spLT7mVB6yCB/CsSXLBqSKNaZbhJcR9HowpyKUtCelaX7
+         2rvNI2OfUrUSxPI9vtrkL+1JhVqAAduOZpKENaBnfHI8VElhc4DgJq3CbQmMABZ/3vjL
+         NHr2X+ihMJgos1BhAJDN3mMB6kR+sG1WQkvSCx/QzN2RGTUSVs91LGq+Jq+VrOqofVFM
+         8nQknp5jsa+JDy59dFCYtObwDAt0InSa/Ym199xGkHkLV5slWOJ2cXfpeQHy6DSqBWkt
+         r/04RAd46MZDvlEvx+7OlzUWqYH/LhehvdA3IMcc6m+A6Q5BoEQ9mQqu61EQtv5WJYqU
+         dsVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXY2n5Ib0exoIhFg7h2/0hLltjRWygd8j3I92m5Jtr7GxybMDtdKulS9S2IIIR3xVki27TnHKiEx0Evd0E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp/lPtbOptURhRPUOJFqvgBnubo//5qCTsWoMrfsvLOJJzx0Ry
+	jBLbcm26G8jknTvpfJPHZwU7xvnOkb/WCO98xyFF+6uz4OiqtAZH2iYNTb3I9w86Cwev/MulCnL
+	PI2xQ4txBMgyn7VdapQRecPtbtiqm+Wj8PggX8uRexz+pq86tqQdaVGs=
+X-Google-Smtp-Source: AGHT+IGRx17FYEQ2w8eg11cCqnscOvxvcb7OopEbd3IvadfHyFoDYjmAe7ikiLwJNSkWZSKBW4xkLuG6ZxmqYx9iO9nV8zfaAtOK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-b4-ovpn-v13-3-67fb4be666e2@openvpn.net>
-References: <20241206-b4-ovpn-v13-0-67fb4be666e2@openvpn.net>
-In-Reply-To: <20241206-b4-ovpn-v13-0-67fb4be666e2@openvpn.net>
-To: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Donald Hunter <donald.hunter@gmail.com>, 
- Antonio Quartulli <antonio@openvpn.net>, Shuah Khan <shuah@kernel.org>, 
- sd@queasysnail.net, ryazanov.s.a@gmail.com, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=9741; i=antonio@openvpn.net;
- h=from:subject:message-id; bh=8aJ3PfQubjODk4QdgG6fySgSnEM3R8Ru+ZvI0tMVZEc=;
- b=owEBbQGS/pANAwAIAQtw5TqgONWHAcsmYgBnU2pWD4U0JeK/lkCPXax/UKGHskqGsmEtnPv/S
- TEFdcKFApiJATMEAAEIAB0WIQSZq9xs+NQS5N5fwPwLcOU6oDjVhwUCZ1NqVgAKCRALcOU6oDjV
- h3KlB/wOZ/w4AZlVl+AqokBG850fFbJe3qeDmWuFi+aNjd3b94BQq/vwsysBvdi1XtUnWi1KKce
- eIydRCwRotAipTnJqgg+sQBwbhikPAI5odJXMh5btlsK8hY4XKVA9QN5CUoVw7tiRH0Zdm+FTCl
- UxoQSSoLgadOl7HAW7acqFyiFlqk2Y6inuvr3mpoGiPXOpnin5bczAhj9OvdnroZLyx8z7ZCeOJ
- s3Wh2wdAG7Rth333/7ZTm97u2x6NFT+eJccIZ/YnWpvDfcdw0Twv8G1DDuqiVbuNA3adxvw2uoA
- xU84Aqvvh+i59IULrZV9snofsbpmmdS/j2PXTU+fZZeG/Vnb
-X-Developer-Key: i=antonio@openvpn.net; a=openpgp;
- fpr=CABDA1282017C267219885C748F0CCB68F59D14C
+X-Received: by 2002:a05:6e02:1a8c:b0:3a0:8c5f:90c0 with SMTP id
+ e9e14a558f8ab-3a811d87696mr53753785ab.10.1733519909710; Fri, 06 Dec 2024
+ 13:18:29 -0800 (PST)
+Date: Fri, 06 Dec 2024 13:18:29 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67536a25.050a0220.a30f1.0149.GAE@google.com>
+Subject: [syzbot] [mm?] KASAN: slab-use-after-free Read in __mmap_region
+From: syzbot <syzbot+91cf8da9401355f946c3@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, jannh@google.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-Add basic infrastructure for handling ovpn interfaces.
+Hello,
 
-Signed-off-by: Antonio Quartulli <antonio@openvpn.net>
+syzbot found the following issue on:
+
+HEAD commit:    e70140ba0d2b Get rid of 'remove_new' relic from platform d..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=13300330580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
+dashboard link: https://syzkaller.appspot.com/bug?extid=91cf8da9401355f946c3
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124130df980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=10a280f8580000
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e70140ba.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/91f313d8125b/vmlinux-e70140ba.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/a9bdf286943a/bzImage-e70140ba.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+91cf8da9401355f946c3@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KASAN: slab-use-after-free in __mmap_complete mm/vma.c:2408 [inline]
+BUG: KASAN: slab-use-after-free in __mmap_region+0x1802/0x2cd0 mm/vma.c:2469
+Read of size 8 at addr ffff8880403a6118 by task syz-executor239/5461
+
+CPU: 0 UID: 0 PID: 5461 Comm: syz-executor239 Not tainted 6.13.0-rc1-syzkaller-00001-ge70140ba0d2b #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:378 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:489
+ kasan_report+0x143/0x180 mm/kasan/report.c:602
+ __mmap_complete mm/vma.c:2408 [inline]
+ __mmap_region+0x1802/0x2cd0 mm/vma.c:2469
+ mmap_region+0x226/0x2c0 mm/mmap.c:1347
+ do_mmap+0x8f0/0x1000 mm/mmap.c:496
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:580
+ ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8522e6cb29
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 c1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc930f7e48 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f8522e6cb29
+RDX: 0000000000000000 RSI: 0000000000001008 RDI: 0000000020ffc000
+RBP: 00000000000f4240 R08: 0000000000000003 R09: 0000000000000000
+R10: 0000000000000013 R11: 0000000000000246 R12: 000000000001294d
+R13: 00007ffc930f7e6c R14: 00007ffc930f7e80 R15: 00007ffc930f7e70
+ </TASK>
+
+Allocated by task 5461:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ unpoison_slab_object mm/kasan/common.c:319 [inline]
+ __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+ kasan_slab_alloc include/linux/kasan.h:250 [inline]
+ slab_post_alloc_hook mm/slub.c:4104 [inline]
+ slab_alloc_node mm/slub.c:4153 [inline]
+ kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
+ vm_area_alloc+0x24/0x1d0 kernel/fork.c:472
+ __mmap_new_vma mm/vma.c:2340 [inline]
+ __mmap_region+0x196e/0x2cd0 mm/vma.c:2456
+ mmap_region+0x226/0x2c0 mm/mmap.c:1347
+ do_mmap+0x8f0/0x1000 mm/mmap.c:496
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:580
+ ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5295:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2338 [inline]
+ slab_free mm/slub.c:4598 [inline]
+ kmem_cache_free+0x195/0x410 mm/slub.c:4700
+ rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+ rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+ handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:554
+ do_softirq+0x11b/0x1e0 kernel/softirq.c:455
+ __local_bh_enable_ip+0x1bb/0x200 kernel/softirq.c:382
+ lock_sock include/net/sock.h:1617 [inline]
+ tcp_sendmsg+0x22/0x50 net/ipv4/tcp.c:1357
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x1a6/0x270 net/socket.c:726
+ sock_write_iter+0x2d7/0x3f0 net/socket.c:1147
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0xaeb/0xd30 fs/read_write.c:679
+ ksys_write+0x18f/0x2b0 fs/read_write.c:731
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Last potentially related work creation:
+ kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
+ __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
+ __call_rcu_common kernel/rcu/tree.c:3086 [inline]
+ call_rcu+0x167/0xa70 kernel/rcu/tree.c:3190
+ vma_complete+0x97f/0xb50 mm/vma.c:310
+ commit_merge+0x6f6/0x760 mm/vma.c:674
+ vma_merge_existing_range+0x13b8/0x16f0 mm/vma.c:897
+ __mmap_region+0x175b/0x2cd0 mm/vma.c:2466
+ mmap_region+0x226/0x2c0 mm/mmap.c:1347
+ do_mmap+0x8f0/0x1000 mm/mmap.c:496
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:580
+ ksys_mmap_pgoff+0x4eb/0x720 mm/mmap.c:542
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff8880403a60f8
+ which belongs to the cache vm_area_struct of size 184
+The buggy address is located 32 bytes inside of
+ freed 184-byte region [ffff8880403a60f8, ffff8880403a61b0)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x403a6
+flags: 0x4fff00000000000(node=1|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 04fff00000000000 ffff88801be90b40 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5461, tgid 5461 (syz-executor239), ts 76280088571, free_ts 76278589874
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+ prep_new_page mm/page_alloc.c:1564 [inline]
+ get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3474
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x140 mm/slub.c:2408
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2574
+ new_slab mm/slub.c:2627 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
+ __slab_alloc+0x58/0xa0 mm/slub.c:3905
+ __slab_alloc_node mm/slub.c:3980 [inline]
+ slab_alloc_node mm/slub.c:4141 [inline]
+ kmem_cache_alloc_noprof+0x268/0x380 mm/slub.c:4160
+ vm_area_dup+0x27/0x290 kernel/fork.c:487
+ __split_vma+0x1cb/0xc50 mm/vma.c:434
+ vms_gather_munmap_vmas+0x4c1/0x1600 mm/vma.c:1288
+ __mmap_prepare mm/vma.c:2241 [inline]
+ __mmap_region+0x7de/0x2cd0 mm/vma.c:2443
+ mmap_region+0x226/0x2c0 mm/mmap.c:1347
+ do_mmap+0x8f0/0x1000 mm/mmap.c:496
+ vm_mmap_pgoff+0x1dd/0x3d0 mm/util.c:580
+page last free pid 5457 tgid 5457 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1127 [inline]
+ free_unref_folios+0xf62/0x1a90 mm/page_alloc.c:2704
+ folios_put_refs+0x76c/0x860 mm/swap.c:962
+ free_pages_and_swap_cache+0x5c8/0x690 mm/swap_state.c:335
+ __tlb_batch_free_encoded_pages mm/mmu_gather.c:136 [inline]
+ tlb_batch_pages_flush mm/mmu_gather.c:149 [inline]
+ tlb_flush_mmu_free mm/mmu_gather.c:366 [inline]
+ tlb_flush_mmu+0x3a3/0x680 mm/mmu_gather.c:373
+ tlb_finish_mmu+0xd4/0x200 mm/mmu_gather.c:465
+ exit_mmap+0x496/0xc20 mm/mmap.c:1680
+ __mmput+0x115/0x3c0 kernel/fork.c:1353
+ exit_mm+0x220/0x310 kernel/exit.c:570
+ do_exit+0x9b2/0x28e0 kernel/exit.c:925
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1087
+ __do_sys_exit_group kernel/exit.c:1098 [inline]
+ __se_sys_exit_group kernel/exit.c:1096 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1096
+ x64_sys_call+0x26a8/0x26b0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff8880403a6000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+ ffff8880403a6080: 00 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fa
+>ffff8880403a6100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                            ^
+ ffff8880403a6180: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fa fb
+ ffff8880403a6200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
 ---
- drivers/net/ovpn/Makefile     |   1 +
- drivers/net/ovpn/io.c         |  22 +++++++++
- drivers/net/ovpn/io.h         |  24 ++++++++++
- drivers/net/ovpn/main.c       | 102 +++++++++++++++++++++++++++++++++++++++---
- drivers/net/ovpn/ovpnstruct.h |   6 +++
- drivers/net/ovpn/proto.h      |  38 ++++++++++++++++
- include/uapi/linux/if_link.h  |  15 +++++++
- 7 files changed, 203 insertions(+), 5 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/drivers/net/ovpn/Makefile b/drivers/net/ovpn/Makefile
-index 19305a39e57eede2dc391aa0423702c5321649a6..201dc001419f1d99ae95c0ee0f96e68f8a4eac16 100644
---- a/drivers/net/ovpn/Makefile
-+++ b/drivers/net/ovpn/Makefile
-@@ -8,5 +8,6 @@
- 
- obj-$(CONFIG_OVPN) := ovpn.o
- ovpn-y += main.o
-+ovpn-y += io.o
- ovpn-y += netlink.o
- ovpn-y += netlink-gen.o
-diff --git a/drivers/net/ovpn/io.c b/drivers/net/ovpn/io.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..ad3813419c33cbdfe7e8ad6f5c8b444a3540a69f
---- /dev/null
-+++ b/drivers/net/ovpn/io.c
-@@ -0,0 +1,22 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*  OpenVPN data channel offload
-+ *
-+ *  Copyright (C) 2019-2024 OpenVPN, Inc.
-+ *
-+ *  Author:	James Yonan <james@openvpn.net>
-+ *		Antonio Quartulli <antonio@openvpn.net>
-+ */
-+
-+#include <linux/netdevice.h>
-+#include <linux/skbuff.h>
-+
-+#include "io.h"
-+
-+/* Send user data to the network
-+ */
-+netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev)
-+{
-+	skb_tx_error(skb);
-+	kfree_skb(skb);
-+	return NET_XMIT_DROP;
-+}
-diff --git a/drivers/net/ovpn/io.h b/drivers/net/ovpn/io.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..a90537e9af6c0d2f38da229bdc2d8c639f2d11d1
---- /dev/null
-+++ b/drivers/net/ovpn/io.h
-@@ -0,0 +1,24 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* OpenVPN data channel offload
-+ *
-+ *  Copyright (C) 2019-2024 OpenVPN, Inc.
-+ *
-+ *  Author:	James Yonan <james@openvpn.net>
-+ *		Antonio Quartulli <antonio@openvpn.net>
-+ */
-+
-+#ifndef _NET_OVPN_OVPN_H_
-+#define _NET_OVPN_OVPN_H_
-+
-+/* DATA_V2 header size with AEAD encryption */
-+#define OVPN_HEAD_ROOM (OVPN_OPCODE_SIZE + OVPN_NONCE_WIRE_SIZE +	   \
-+			16 /* AEAD TAG length */ +			   \
-+			max(sizeof(struct udphdr), sizeof(struct tcphdr)) +\
-+			max(sizeof(struct ipv6hdr), sizeof(struct iphdr)))
-+
-+/* max padding required by encryption */
-+#define OVPN_MAX_PADDING 16
-+
-+netdev_tx_t ovpn_net_xmit(struct sk_buff *skb, struct net_device *dev);
-+
-+#endif /* _NET_OVPN_OVPN_H_ */
-diff --git a/drivers/net/ovpn/main.c b/drivers/net/ovpn/main.c
-index 3475dab4b40f3edd882e05dbdf8badd03d7c78a3..60954c5b2b9254db1d24d01ac383935765c7ce5b 100644
---- a/drivers/net/ovpn/main.c
-+++ b/drivers/net/ovpn/main.c
-@@ -10,14 +10,42 @@
- #include <linux/genetlink.h>
- #include <linux/module.h>
- #include <linux/netdevice.h>
-+#include <linux/inetdevice.h>
-+#include <net/ip.h>
- #include <net/rtnetlink.h>
--#include <uapi/linux/ovpn.h>
-+#include <uapi/linux/if_arp.h>
- 
- #include "ovpnstruct.h"
- #include "main.h"
- #include "netlink.h"
-+#include "io.h"
-+#include "proto.h"
-+
-+static int ovpn_net_open(struct net_device *dev)
-+{
-+	netif_tx_start_all_queues(dev);
-+	return 0;
-+}
-+
-+static int ovpn_net_stop(struct net_device *dev)
-+{
-+	netif_tx_stop_all_queues(dev);
-+	return 0;
-+}
- 
- static const struct net_device_ops ovpn_netdev_ops = {
-+	.ndo_open		= ovpn_net_open,
-+	.ndo_stop		= ovpn_net_stop,
-+	.ndo_start_xmit		= ovpn_net_xmit,
-+};
-+
-+static const struct device_type ovpn_type = {
-+	.name = OVPN_FAMILY_NAME,
-+};
-+
-+static const struct nla_policy ovpn_policy[IFLA_OVPN_MAX + 1] = {
-+	[IFLA_OVPN_MODE] = NLA_POLICY_RANGE(NLA_U8, OVPN_MODE_P2P,
-+					    OVPN_MODE_MP),
- };
- 
- /**
-@@ -31,16 +59,69 @@ bool ovpn_dev_is_valid(const struct net_device *dev)
- 	return dev->netdev_ops == &ovpn_netdev_ops;
- }
- 
-+static void ovpn_setup(struct net_device *dev)
-+{
-+	netdev_features_t feat = NETIF_F_SG | NETIF_F_HW_CSUM | NETIF_F_RXCSUM |
-+				 NETIF_F_GSO | NETIF_F_GSO_SOFTWARE |
-+				 NETIF_F_HIGHDMA;
-+
-+	dev->needs_free_netdev = true;
-+
-+	dev->pcpu_stat_type = NETDEV_PCPU_STAT_TSTATS;
-+
-+	dev->netdev_ops = &ovpn_netdev_ops;
-+
-+	dev->hard_header_len = 0;
-+	dev->addr_len = 0;
-+	dev->mtu = ETH_DATA_LEN - OVPN_HEAD_ROOM;
-+	dev->min_mtu = IPV4_MIN_MTU;
-+	dev->max_mtu = IP_MAX_MTU - OVPN_HEAD_ROOM;
-+
-+	dev->type = ARPHRD_NONE;
-+	dev->flags = IFF_POINTOPOINT | IFF_NOARP;
-+	dev->priv_flags |= IFF_NO_QUEUE;
-+
-+	dev->lltx = true;
-+	dev->features |= feat;
-+	dev->hw_features |= feat;
-+	dev->hw_enc_features |= feat;
-+
-+	dev->needed_headroom = ALIGN(OVPN_HEAD_ROOM, 4);
-+	dev->needed_tailroom = OVPN_MAX_PADDING;
-+
-+	SET_NETDEV_DEVTYPE(dev, &ovpn_type);
-+}
-+
- static int ovpn_newlink(struct net *src_net, struct net_device *dev,
- 			struct nlattr *tb[], struct nlattr *data[],
- 			struct netlink_ext_ack *extack)
- {
--	return -EOPNOTSUPP;
-+	struct ovpn_priv *ovpn = netdev_priv(dev);
-+	enum ovpn_mode mode = OVPN_MODE_P2P;
-+
-+	if (data && data[IFLA_OVPN_MODE]) {
-+		mode = nla_get_u8(data[IFLA_OVPN_MODE]);
-+		netdev_dbg(dev, "setting device mode: %u\n", mode);
-+	}
-+
-+	ovpn->dev = dev;
-+	ovpn->mode = mode;
-+
-+	/* turn carrier explicitly off after registration, this way state is
-+	 * clearly defined
-+	 */
-+	netif_carrier_off(dev);
-+
-+	return register_netdevice(dev);
- }
- 
- static struct rtnl_link_ops ovpn_link_ops = {
- 	.kind = "ovpn",
- 	.netns_refund = false,
-+	.priv_size = sizeof(struct ovpn_priv),
-+	.setup = ovpn_setup,
-+	.policy = ovpn_policy,
-+	.maxtype = IFLA_OVPN_MAX,
- 	.newlink = ovpn_newlink,
- 	.dellink = unregister_netdevice_queue,
- };
-@@ -49,26 +130,37 @@ static int ovpn_netdev_notifier_call(struct notifier_block *nb,
- 				     unsigned long state, void *ptr)
- {
- 	struct net_device *dev = netdev_notifier_info_to_dev(ptr);
-+	struct ovpn_priv *ovpn;
- 
- 	if (!ovpn_dev_is_valid(dev))
- 		return NOTIFY_DONE;
- 
-+	ovpn = netdev_priv(dev);
-+
- 	switch (state) {
- 	case NETDEV_REGISTER:
--		/* add device to internal list for later destruction upon
--		 * unregistration
--		 */
-+		ovpn->registered = true;
- 		break;
- 	case NETDEV_UNREGISTER:
-+		/* twiddle thumbs on netns device moves */
-+		if (dev->reg_state != NETREG_UNREGISTERING)
-+			break;
-+
- 		/* can be delivered multiple times, so check registered flag,
- 		 * then destroy the interface
- 		 */
-+		if (!ovpn->registered)
-+			return NOTIFY_DONE;
-+
-+		netif_carrier_off(dev);
-+		ovpn->registered = false;
- 		break;
- 	case NETDEV_POST_INIT:
- 	case NETDEV_GOING_DOWN:
- 	case NETDEV_DOWN:
- 	case NETDEV_UP:
- 	case NETDEV_PRE_UP:
-+		break;
- 	default:
- 		return NOTIFY_DONE;
- 	}
-diff --git a/drivers/net/ovpn/ovpnstruct.h b/drivers/net/ovpn/ovpnstruct.h
-index b4e37e922fe5a5659e030174f1e42b3935967ca0..312bc22199383fed0746335fde3339646bb68b2b 100644
---- a/drivers/net/ovpn/ovpnstruct.h
-+++ b/drivers/net/ovpn/ovpnstruct.h
-@@ -11,15 +11,21 @@
- #define _NET_OVPN_OVPNSTRUCT_H_
- 
- #include <net/net_trackers.h>
-+#include <uapi/linux/if_link.h>
-+#include <uapi/linux/ovpn.h>
- 
- /**
-  * struct ovpn_priv - per ovpn interface state
-  * @dev: the actual netdev representing the tunnel
-  * @dev_tracker: reference tracker for associated dev
-+ * @registered: whether dev is still registered with netdev or not
-+ * @mode: device operation mode (i.e. p2p, mp, ..)
-  */
- struct ovpn_priv {
- 	struct net_device *dev;
- 	netdevice_tracker dev_tracker;
-+	bool registered;
-+	enum ovpn_mode mode;
- };
- 
- #endif /* _NET_OVPN_OVPNSTRUCT_H_ */
-diff --git a/drivers/net/ovpn/proto.h b/drivers/net/ovpn/proto.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..00bb3725ac7ab7040c97eb012c2639b2d6967de1
---- /dev/null
-+++ b/drivers/net/ovpn/proto.h
-@@ -0,0 +1,38 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/*  OpenVPN data channel offload
-+ *
-+ *  Copyright (C) 2020-2024 OpenVPN, Inc.
-+ *
-+ *  Author:	Antonio Quartulli <antonio@openvpn.net>
-+ *		James Yonan <james@openvpn.net>
-+ */
-+
-+#ifndef _NET_OVPN_PROTO_H_
-+#define _NET_OVPN_PROTO_H_
-+
-+/* When the OpenVPN protocol is ran in AEAD mode, use
-+ * the OpenVPN packet ID as the AEAD nonce:
-+ *
-+ *    00000005 521c3b01 4308c041
-+ *    [seq # ] [  nonce_tail   ]
-+ *    [     12-byte full IV    ] -> OVPN_NONCE_SIZE
-+ *    [4-bytes                   -> OVPN_NONCE_WIRE_SIZE
-+ *    on wire]
-+ */
-+
-+/* nonce size (96bits) as required by AEAD ciphers */
-+#define OVPN_NONCE_SIZE			12
-+/* last 8 bytes of AEAD nonce: provided by userspace and usually derived
-+ * from key material generated during TLS handshake
-+ */
-+#define OVPN_NONCE_TAIL_SIZE		8
-+
-+/* OpenVPN nonce size reduced by 8-byte nonce tail -- this is the
-+ * size of the AEAD Associated Data (AD) sent over the wire
-+ * and is normally the head of the IV
-+ */
-+#define OVPN_NONCE_WIRE_SIZE (OVPN_NONCE_SIZE - OVPN_NONCE_TAIL_SIZE)
-+
-+#define OVPN_OPCODE_SIZE		4 /* DATA_V2 opcode size */
-+
-+#endif /* _NET_OVPN_PROTO_H_ */
-diff --git a/include/uapi/linux/if_link.h b/include/uapi/linux/if_link.h
-index 2575e0cd9b482e78984ca6528dd7d4a24f03e290..9914f8963060ba6db56fc379c3016458002bc93f 100644
---- a/include/uapi/linux/if_link.h
-+++ b/include/uapi/linux/if_link.h
-@@ -1976,4 +1976,19 @@ enum {
- 
- #define IFLA_DSA_MAX	(__IFLA_DSA_MAX - 1)
- 
-+/* OVPN section */
-+
-+enum ovpn_mode {
-+	OVPN_MODE_P2P,
-+	OVPN_MODE_MP,
-+};
-+
-+enum {
-+	IFLA_OVPN_UNSPEC,
-+	IFLA_OVPN_MODE,
-+	__IFLA_OVPN_MAX,
-+};
-+
-+#define IFLA_OVPN_MAX	(__IFLA_OVPN_MAX - 1)
-+
- #endif /* _UAPI_LINUX_IF_LINK_H */
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.45.2
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
