@@ -1,234 +1,124 @@
-Return-Path: <linux-kernel+bounces-435378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1E409E76DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:17:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248FB9E76E8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:21:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91B6C167907
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:17:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D999718823D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:21:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF211F3D5B;
-	Fri,  6 Dec 2024 17:17:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5131FFC4F;
+	Fri,  6 Dec 2024 17:21:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HKgt2+7P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="caFJ6Lyt"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4EB206296;
-	Fri,  6 Dec 2024 17:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB7D206296;
+	Fri,  6 Dec 2024 17:21:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733505461; cv=none; b=Bsfd/oDwBi+hjogxueHP/LB5JsND4uQfmKJGcObL3xG4Z4KCf9wpceEaXgNYNnlv686gQrkc/nTyUhLXQV3nc8pQfkQD1Hmg1qKTA/85CfbOHHkmAXA0kmk6T0ZLRxxSBdiKyfFIBP0B9IBjEUNNi22gGvEHAEN+luNuQTBKtc8=
+	t=1733505672; cv=none; b=WcuAFAWHdmvk9GdpxT15maJ/CfkksDNin9LSM9ptLB/+9AmFjkvhQ79aXxzKEYFPfjhq224uriyLJisWpvN+KFciNYLZE82f5VwL+CUA+aDQJWjRHS2zjIMaAHtbB+HaDBYYUU3bI5zkGD/nuLtUutfX2mkRL3K9LuK3NqjX1Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733505461; c=relaxed/simple;
-	bh=AuFd9Gw9Dc3IjuRANbTBGi5vZ1aTaRD1b70Nt5M3/Gk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KcI9Hu3bZ6GC12qVHzDr9yRT9zgm8BPNHatLhhckQcxgrCJY2A2GPTIF5vtOXi9vLcEU2aVxx2oKKDnsOVRTIubfjImrmmrwcNp1X7PqaVY7zKCQhZ/9BY6zt426Sd/9ktHZDlLNpVvp+pMIxXPo2N5aYnGZazJJwDu/AaqoNi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HKgt2+7P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15F30C4CEDC;
-	Fri,  6 Dec 2024 17:17:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733505461;
-	bh=AuFd9Gw9Dc3IjuRANbTBGi5vZ1aTaRD1b70Nt5M3/Gk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HKgt2+7PsmXp/c3SLX5DRDO4UKmcDueQlB6L8vcYDbkTVx6oxX6sdsOVjWa74rYUc
-	 BhJQgqOH9plH5nYy/Hf3ZTUYhIjBtd2RRBIkfcuD/Sl5sefeL049ABTLUDiW/TeLG8
-	 4ntM6J8akUAuppFLoFuLF+WlUgGXFhRU48p7jkskoPe4E4e7+NDZvzrgVVNgpwjSZL
-	 0xXGRimCLcOT1cgnbyrj8jri90dMOmkry36F564cOGqUNmERGzswBng49Ut0xl0Tg8
-	 mpgBsgKMYd4/U80vYNYbYFezO7D6yK+wrEBWrUVowxwA82RmE/r1bvGG6+aaATpQjo
-	 +hVc9EFOIkXOQ==
-Date: Fri, 6 Dec 2024 09:17:40 -0800
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, hannes@cmpxchg.org,
-	clm@meta.com, linux-kernel@vger.kernel.org, willy@infradead.org,
-	kirill@shutemov.name, bfoster@redhat.com
-Subject: Re: [PATCH 11/12] mm/filemap: make buffered writes work with
- RWF_UNCACHED
-Message-ID: <20241206171740.GD7820@frogsfrogsfrogs>
-References: <20241203153232.92224-2-axboe@kernel.dk>
- <20241203153232.92224-13-axboe@kernel.dk>
+	s=arc-20240116; t=1733505672; c=relaxed/simple;
+	bh=b5yfHRQ3WQZ7GoJks6OnGjxOc2bo5/DzkArzBCY+QgI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I7kYhxKv8nzs/MW4JNRkUcOoC8pBq1M/G+Zp0OldQ7mbQSMsU2Mn5AGThpbSpTyqqNvZTTM2ecnU33yqfvm2Egv4h6lba1OWdoDbEpsCXa/e2e6sF9zC43nzJLqDE7onA/zYVPDOFKiGUdrxfa/bzD9FVO+VmUj4zS5vX3bJcSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=caFJ6Lyt; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6CiBsX017977;
+	Fri, 6 Dec 2024 18:20:27 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=jnlcCs3H5ImZ7T8Lmudwer
+	0XmkeISsLyy/yE335F2HU=; b=caFJ6LytSjeVQpvsrAyiNnmOzCtcssl7+z/tar
+	2vqONMoKgX9UeoCr1vbKTNcHofsIT9AIMJGOTi3laHROiRNrImLqLSuc5gJK2mOG
+	1M9fU1lY+aa9Wnu5JC4cmXZV+6cDLcltCaS3bYbhAhg7n2Z0OI6IdBM3gq3/rwFW
+	80Ggnjvq1nt4nvfLzenBfYWEcD618JInIv7x6nuhkNsMY3LFetr12gVL7fy9VxAi
+	dyduLPyBg47ZHlaDQRtluOBRBOjkMOlucYTKvSfHbrygQw1eIq5uK+tWtHrnPIRd
+	xBsI6MEugPYXCka4G3OFo2IfHFVbVGspPKXZotALNWapo6Qg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43bwj6jan4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 18:20:27 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 1A32D40044;
+	Fri,  6 Dec 2024 18:19:27 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node4.st.com [10.75.129.133])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 034F029F32D;
+	Fri,  6 Dec 2024 18:18:22 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE4.st.com
+ (10.75.129.133) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 6 Dec
+ 2024 18:18:21 +0100
+Received: from localhost (10.48.86.121) by SAFDAG1NODE1.st.com (10.75.90.17)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 6 Dec
+ 2024 18:18:21 +0100
+From: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Fabien Dessenne <fabien.dessenne@foss.st.com>
+CC: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
+        <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] ARM: dts: stm32: Fix IPCC EXTI declaration on stm32mp151
+Date: Fri, 6 Dec 2024 18:17:59 +0100
+Message-ID: <20241206171759.135342-1-arnaud.pouliquen@foss.st.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241203153232.92224-13-axboe@kernel.dk>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SAFCAS1NODE2.st.com (10.75.90.13) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Tue, Dec 03, 2024 at 08:31:47AM -0700, Jens Axboe wrote:
-> If RWF_UNCACHED is set for a write, mark new folios being written with
-> uncached. This is done by passing in the fact that it's an uncached write
-> through the folio pointer. We can only get there when IOCB_UNCACHED was
-> allowed, which can only happen if the file system opts in. Opting in means
-> they need to check for the LSB in the folio pointer to know if it's an
-> uncached write or not. If it is, then FGP_UNCACHED should be used if
-> creating new folios is necessary.
-> 
-> Uncached writes will drop any folios they create upon writeback
-> completion, but leave folios that may exist in that range alone. Since
-> ->write_begin() doesn't currently take any flags, and to avoid needing
-> to change the callback kernel wide, use the foliop being passed in to
-> ->write_begin() to signal if this is an uncached write or not. File
-> systems can then use that to mark newly created folios as uncached.
-> 
-> This provides similar benefits to using RWF_UNCACHED with reads. Testing
-> buffered writes on 32 files:
-> 
-> writing bs 65536, uncached 0
->   1s: 196035MB/sec
->   2s: 132308MB/sec
->   3s: 132438MB/sec
->   4s: 116528MB/sec
->   5s: 103898MB/sec
->   6s: 108893MB/sec
->   7s: 99678MB/sec
->   8s: 106545MB/sec
->   9s: 106826MB/sec
->  10s: 101544MB/sec
->  11s: 111044MB/sec
->  12s: 124257MB/sec
->  13s: 116031MB/sec
->  14s: 114540MB/sec
->  15s: 115011MB/sec
->  16s: 115260MB/sec
->  17s: 116068MB/sec
->  18s: 116096MB/sec
-> 
-> where it's quite obvious where the page cache filled, and performance
-> dropped from to about half of where it started, settling in at around
-> 115GB/sec. Meanwhile, 32 kswapds were running full steam trying to
-> reclaim pages.
-> 
-> Running the same test with uncached buffered writes:
-> 
-> writing bs 65536, uncached 1
->   1s: 198974MB/sec
->   2s: 189618MB/sec
->   3s: 193601MB/sec
->   4s: 188582MB/sec
->   5s: 193487MB/sec
->   6s: 188341MB/sec
->   7s: 194325MB/sec
->   8s: 188114MB/sec
->   9s: 192740MB/sec
->  10s: 189206MB/sec
->  11s: 193442MB/sec
->  12s: 189659MB/sec
->  13s: 191732MB/sec
->  14s: 190701MB/sec
->  15s: 191789MB/sec
->  16s: 191259MB/sec
->  17s: 190613MB/sec
->  18s: 191951MB/sec
-> 
-> and the behavior is fully predictable, performing the same throughout
-> even after the page cache would otherwise have fully filled with dirty
-> data. It's also about 65% faster, and using half the CPU of the system
-> compared to the normal buffered write.
-> 
-> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> ---
->  include/linux/fs.h      |  5 +++++
->  include/linux/pagemap.h |  9 +++++++++
->  mm/filemap.c            | 12 +++++++++++-
->  3 files changed, 25 insertions(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/fs.h b/include/linux/fs.h
-> index 40383f5cc6a2..32255473f79d 100644
-> --- a/include/linux/fs.h
-> +++ b/include/linux/fs.h
-> @@ -2912,6 +2912,11 @@ static inline ssize_t generic_write_sync(struct kiocb *iocb, ssize_t count)
->  				(iocb->ki_flags & IOCB_SYNC) ? 0 : 1);
->  		if (ret)
->  			return ret;
-> +	} else if (iocb->ki_flags & IOCB_UNCACHED) {
-> +		struct address_space *mapping = iocb->ki_filp->f_mapping;
-> +
-> +		filemap_fdatawrite_range_kick(mapping, iocb->ki_pos,
-> +					      iocb->ki_pos + count);
->  	}
->  
->  	return count;
-> diff --git a/include/linux/pagemap.h b/include/linux/pagemap.h
-> index f2d49dccb7c1..e49587c40157 100644
-> --- a/include/linux/pagemap.h
-> +++ b/include/linux/pagemap.h
-> @@ -14,6 +14,7 @@
->  #include <linux/gfp.h>
->  #include <linux/bitops.h>
->  #include <linux/hardirq.h> /* for in_interrupt() */
-> +#include <linux/writeback.h>
->  #include <linux/hugetlb_inline.h>
->  
->  struct folio_batch;
-> @@ -70,6 +71,14 @@ static inline int filemap_write_and_wait(struct address_space *mapping)
->  	return filemap_write_and_wait_range(mapping, 0, LLONG_MAX);
->  }
->  
-> +/*
-> + * Value passed in to ->write_begin() if IOCB_UNCACHED is set for the write,
-> + * and the ->write_begin() handler on a file system supporting FOP_UNCACHED
-> + * must check for this and pass FGP_UNCACHED for folio creation.
-> + */
-> +#define foliop_uncached			((struct folio *) 0xfee1c001)
-> +#define foliop_is_uncached(foliop)	(*(foliop) == foliop_uncached)
+The GIC IRQ type used for IPCC RX should be IRQ_TYPE_LEVEL_HIGH.
+Replacing the interrupt with the EXTI event changes the type to
+the numeric value 1, meaning IRQ_TYPE_EDGE_RISING.
 
-Honestly, I'm not a fan of foliop_uncached or foliop_is_uncached.
+The issue is that EXTI event 61 is a direct event.The IRQ type of
+direct events is not used by EXTI and is propagated to the parent
+IRQ controller of EXTI, the GIC.
 
-The first one because it's a magic value and can you guarantee that
-0xfee1c001 will never be a pointer to an actual struct folio, even on
-32-bit?
+Align the IRQ type to the value expected by the GIC by replacing
+the second parameter "1" with IRQ_TYPE_LEVEL_HIGH.
 
-Second, they're both named "foliop" even though the first one doesn't
-return a (struct folio **) but the second one takes that as an arg.
+Fixes: 7d9802bb0e34 ("ARM: dts: stm32: remove the IPCC "wakeup" IRQ on stm32mp151")
+Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+---
+ arch/arm/boot/dts/st/stm32mp151.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-I think these two macros are only used for ext4 (or really, !iomap)
-support, right?  And that's only to avoid messing with ->write_begin?
-What if you dropped ext4 support instead? :D
+diff --git a/arch/arm/boot/dts/st/stm32mp151.dtsi b/arch/arm/boot/dts/st/stm32mp151.dtsi
+index b28dc90926bd..e7e3ce8066ec 100644
+--- a/arch/arm/boot/dts/st/stm32mp151.dtsi
++++ b/arch/arm/boot/dts/st/stm32mp151.dtsi
+@@ -129,7 +129,7 @@ ipcc: mailbox@4c001000 {
+ 			reg = <0x4c001000 0x400>;
+ 			st,proc-id = <0>;
+ 			interrupts-extended =
+-				<&exti 61 1>,
++				<&exti 61 IRQ_TYPE_LEVEL_HIGH>,
+ 				<&intc GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "rx", "tx";
+ 			clocks = <&rcc IPCC>;
+-- 
+2.25.1
 
---D
-
->  /**
->   * filemap_set_wb_err - set a writeback error on an address_space
->   * @mapping: mapping in which to set writeback error
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 826df99e294f..00f3c6c58629 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -4095,7 +4095,7 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->  	ssize_t written = 0;
->  
->  	do {
-> -		struct folio *folio;
-> +		struct folio *folio = NULL;
->  		size_t offset;		/* Offset into folio */
->  		size_t bytes;		/* Bytes to write to folio */
->  		size_t copied;		/* Bytes copied from user */
-> @@ -4123,6 +4123,16 @@ ssize_t generic_perform_write(struct kiocb *iocb, struct iov_iter *i)
->  			break;
->  		}
->  
-> +		/*
-> +		 * If IOCB_UNCACHED is set here, we now the file system
-> +		 * supports it. And hence it'll know to check folip for being
-> +		 * set to this magic value. If so, it's an uncached write.
-> +		 * Whenever ->write_begin() changes prototypes again, this
-> +		 * can go away and just pass iocb or iocb flags.
-> +		 */
-> +		if (iocb->ki_flags & IOCB_UNCACHED)
-> +			folio = foliop_uncached;
-> +
->  		status = a_ops->write_begin(file, mapping, pos, bytes,
->  						&folio, &fsdata);
->  		if (unlikely(status < 0))
-> -- 
-> 2.45.2
-> 
-> 
 
