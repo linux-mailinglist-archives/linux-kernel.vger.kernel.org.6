@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-435156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40EF39E7283
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:10:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF76E9E72AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C4C18882A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:09:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C368169B70
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C981B207E03;
-	Fri,  6 Dec 2024 15:09:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D7B20B218;
+	Fri,  6 Dec 2024 15:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tM3ik0DT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="b605QM/F"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2601953A7;
-	Fri,  6 Dec 2024 15:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3312207E13
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 15:11:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733497763; cv=none; b=YKvtvZxSQr7/g9O6zC2Nft0EHn3PNBoXmOkNZC3yD6JRzGsnO0dlxxmK5elP/EVkLCC3SOzmTNeV1Dwk2v9VrWPx+xTcmZVt9MVT+NiDouyRHzCFOibShLKyMsk5lCsLsrXb1q3JpO1O0ag883S9+xGh2LaS4GmNeBCFG3HutBQ=
+	t=1733497872; cv=none; b=oo7z7/qP6dlcBjcBIVseEdTr9yfGYhfEks/ypGy+0ulSxxnCK7r0Iz0Xo19F50Hgo/H1ra4a6VDma/TSR5/vBh5OGLIDYe4WzocCH3TLe0LAzTReCgEY5tafZe3DwUsVyZljFIZ9zN4wfCp6asaKu143lYiDcg1JlcoqtoRuYE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733497763; c=relaxed/simple;
-	bh=AcySnufDoHnAqbhwmrqCRJ6hJFOvsfgvt4sBL8BqwlU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aK8h3umE8PjyFX63n7/sDQfF8LqzcezY0s0oa64O4cmog6cuBwz/yXc4bmgvdRy93XzHVwZFTyyuoeaEW6K5dFrtKtk2GfKpQPoczVRmDDlgXvMMoDLXW2j3cDikaoSJz8HXIQfGtn5l+YmIvTbbXPOB0Qi4o2OF3K+PunU7cTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tM3ik0DT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32A2C4CEDC;
-	Fri,  6 Dec 2024 15:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733497762;
-	bh=AcySnufDoHnAqbhwmrqCRJ6hJFOvsfgvt4sBL8BqwlU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tM3ik0DTD6q1rL1rCHPC4mjmqbC8dIlwD9EbO4t87+XHTvD/DePJ1nwbz06rzKHtx
-	 KbN6g2+ED++WM2cQQSxvhEYNw6irQZ7ANI9Nw+mWsEn9UG62k3wiaFCEDEoSZb7vFs
-	 kuFuhdw3sXsNrsdCgIdigf22NO0ydYdn9xWbHDb6Lsm2D7SZSgL2PD/RGVDZfj8R07
-	 y3ddk3j7hULCnNIGSLmPsEpozWjvFaMsaWLXWVNEfG2WVJIguZtfp9RsrXSpIoL1Vh
-	 w1N1SexxMdFBj5KK68a8mEMrHyYdvERZhNf7eAicV8ovPs3Ss9N10LiC7nBzEWTBuT
-	 i3Tf5+vLk/fSQ==
-Date: Fri, 6 Dec 2024 15:09:18 +0000
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH net-next 4/4] netconsole: selftest: verify userdata entry
- limit
-Message-ID: <20241206150918.GU2581@kernel.org>
-References: <20241204-netcons_overflow_test-v1-0-a85a8d0ace21@debian.org>
- <20241204-netcons_overflow_test-v1-4-a85a8d0ace21@debian.org>
+	s=arc-20240116; t=1733497872; c=relaxed/simple;
+	bh=wCQuI8phZ1+TrN40J2JVMieza73zr1k2Fifr0E4NL/A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=s0ZlX/2rofokKs4RZ1T45hB97woDs1ZTQsm0Wq/2tP32hnNtB0PrXUZjrrxRetqzk2r0vm+J/aDGdB0lzHUogw5EGLsHhN2uzcSEMwZkZwEa590SYr6Uy5wncJY00Sw3r7FFaAohc3+x1+XVpKNn91IcqbEvlnRVJHUeo3AXbEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=b605QM/F; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffbf4580cbso24031201fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 07:11:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733497869; x=1734102669; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wCQuI8phZ1+TrN40J2JVMieza73zr1k2Fifr0E4NL/A=;
+        b=b605QM/Flasv91RWv1zl6VI/nAG1/ypSIILlPn+6CXmPMXl80NfeCUgKEaBn23QxGV
+         +oWj00BOZiN0FC35GMdD8/fqBWYwHo1/QyUzQ4gZOsnBY932aXBlNf+AqpCmMIffayQu
+         QGzNsS60kIltDud7Y7Cvk0kkExzDjQRFneOExWy9kvIbPqoWXhwQIAF4KAUKpmfFCClA
+         QTlKSmC+53qhAkE/yFDSTSRPqKVSXHtTn6pSPsuvewHLhG6BsMNNHjuBmkPH0nk1epnt
+         AOjAH58M17I4w5wbbz15fnALaVSMWgJa/QRJCkpGC2Fx/XCTJq4Md1b035T5kcIdV0z+
+         E/lQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733497869; x=1734102669;
+        h=content-transfer-encoding:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wCQuI8phZ1+TrN40J2JVMieza73zr1k2Fifr0E4NL/A=;
+        b=lICWt8eiEar36mgP5zGm7e5gCZGf/uI5bmwzUL+yjclBAuc3Q25weLTywQfMJ90EKe
+         X7mfhwlDRdtzpfpCa3apsz7imbixird9ClDcxx9efEhkQQk6XenPGe18wdpM3BY7fodR
+         Ap/WurJONe1h+MSlRcfP9mOv9F/ayfXkp0/sOmNDrZVuv/uqkNwqAlhGdtpnRyzO1rfc
+         /Su8mRDXZM9dR0lHbLUEgv97uZTHiqwTSoSWgggoXn5Qp2T4aHHtIXuUaGRwDQOQpADe
+         yiDB25VCzHgc8BA9tgKH6b25WF2Axs+HV8CRvlTSeHx4DdBnpgVu+iUcyMw4y84l9NqJ
+         IlNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6PBVTFydXQHy+R6/OQithpAcYj8rro2gQLNOkK/pRJ2NKMY3DsJeK6ZVVeCNSF9ov+ifPE1W4IzKDo0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL/virds8QrVLjk/ecvzXdph3V71PsMCsMpnPWOjpiyGUW9ffN
+	a3NHvHZomOaFwfqpJVNxVXdRQC+IEKLiOES7aG8Cc+69tWDrMfLj80axefCbMhI/cE5vPCgsdub
+	3nBIlpgMJwnhi7iDqBwAAiDrV3Qin5UkzrsMtmBczTGOEY1wrPDA=
+X-Gm-Gg: ASbGncuiKFE+5Jw5tdwlbCnBdRKveDQZzKFJvK9YPYRKkYeROnzPoYQQ3TUWmr5MY3R
+	GQ5ciwngw/MYx+tpJ+DuX2g4jvc5HjdWMxyloIw1A0xje6RjVvI6XI7hUB1YI
+X-Google-Smtp-Source: AGHT+IHZh7+eSZRrew9jvjXLeL7+e+dVGeI+ATK6u5Qf2A9dzVb3ztmytV9rXvATxrVvHBhLv+Y0gapnch4CBZ6EiOc=
+X-Received: by 2002:a2e:bc23:0:b0:2fb:45cf:5eef with SMTP id
+ 38308e7fff4ca-3002f933d39mr19247661fa.30.1733497867875; Fri, 06 Dec 2024
+ 07:11:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241204-netcons_overflow_test-v1-4-a85a8d0ace21@debian.org>
+References: <CAKPOu+9DyMbKLhyJb7aMLDTb=Fh0T8Teb9sjuf_pze+XWT1VaQ@mail.gmail.com>
+ <CAKPOu+_XVhgg7Gq=izU9QDFyaVpZTSyNWOWLi5N8S6wSYdbf3A@mail.gmail.com> <CAKPOu+8iNpKkduNqOg4kfbnOBren58xx5hQ78DAs5FjD+FysHA@mail.gmail.com>
+In-Reply-To: <CAKPOu+8iNpKkduNqOg4kfbnOBren58xx5hQ78DAs5FjD+FysHA@mail.gmail.com>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Fri, 6 Dec 2024 16:10:57 +0100
+Message-ID: <CAKPOu+9v=4qSuESQ5bc94qM=U6OEv3FXZ2gdr3z0MyD5YTRtEA@mail.gmail.com>
+Subject: Re: Oops in netfs_rreq_unlock_folios_pgpriv2
+To: David Howells <dhowells@redhat.com>, netfs@lists.linux.dev, linux-nfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Dec 04, 2024 at 08:40:45AM -0800, Breno Leitao wrote:
-> Add a new selftest for netconsole that tests the userdata entry limit
-> functionality. The test performs two key verifications:
-> 
-> 1. Create MAX_USERDATA_ITEMS (16) userdata entries successfully
-> 2. Confirm that attempting to create an additional userdata entry fails
-> 
-> The selftest script uses the netcons library and checks the behavior
-> by attempting to create entries beyond the maximum allowed limit.
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
->  MAINTAINERS                                        |  2 +-
->  .../selftests/drivers/net/netcons_overflow.sh      | 67 ++++++++++++++++++++++
->  2 files changed, 68 insertions(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8af5c9a28e68c4b6a785e2e6b82db20b3cf59822..62192db4641a4056d1eab911f5c141fb37eaed36 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16092,7 +16092,7 @@ S:	Maintained
->  F:	Documentation/networking/netconsole.rst
->  F:	drivers/net/netconsole.c
->  F:	tools/testing/selftests/drivers/net/lib/sh/lib_netcons.sh
-> -F:	tools/testing/selftests/drivers/net/netcons_basic.sh
-> +F:	tools/testing/selftests/drivers/net/netcons\*
->  
->  NETDEVSIM
->  M:	Jakub Kicinski <kuba@kernel.org>
-> diff --git a/tools/testing/selftests/drivers/net/netcons_overflow.sh b/tools/testing/selftests/drivers/net/netcons_overflow.sh
+On Tue, Nov 12, 2024 at 8:39=E2=80=AFAM Max Kellermann <max.kellermann@iono=
+s.com> wrote:
+> It has been two weeks since my crash bug report. Our servers are still
+> crashing all the time, and instead of going back to 6.6, I have
+> enabled `panic_on_oops` so the servers reboot automatically, hoping
+> that you would come up with a fix for the netfs regression soon, but I
+> cannot hold this up for much longer. Please help!
 
-Nit: I think you need to add netcons_overflow.sh to
-     tools/testing/selftests/drivers/net/Makefile
-
-Other than that, this looks good to me.
-
-Tested-by: Simon Horman <horms@kernel.org>
-Reviewed-by: Simon Horman <horms@kernel.org>
-
-...
+Nearly 6 weeks now. Currently on 6.11.10, and still many kernel
+crashes every day with NFS.
 
