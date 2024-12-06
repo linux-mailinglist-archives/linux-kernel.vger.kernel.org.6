@@ -1,38 +1,52 @@
-Return-Path: <linux-kernel+bounces-435555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FFC9E794C
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:51:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AACB29E794F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:51:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6D8416314D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:51:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC8B283326
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF6411D95B3;
-	Fri,  6 Dec 2024 19:51:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7951C5484;
-	Fri,  6 Dec 2024 19:50:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E7631DAC81;
+	Fri,  6 Dec 2024 19:51:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="k8ZCinCr"
+Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D3C21C5490;
+	Fri,  6 Dec 2024 19:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733514662; cv=none; b=SgJkJTXbvPggQZzb/+o1WoWXwwZU4DL7gubPk1i6xiOuIhK5f04EjHp4fUhkq7rD309Vp823uRXW2vAQjNgyKkrmBvpA2CosI0LHwJKR4wRcs7DdyyUsemghqOj2esehINXs83mvSJyISH1xCJZ4ugV0To/+CV6jt6v3FE5JZvU=
+	t=1733514684; cv=none; b=BhG8lyPNz8K7PA0FH5r3xAWPx1xkv2BdlX4nNjDRGRISojRENVRHdgsJmHr/D4qaJmJrsP3UBPzGjd/43BVmnQyt1JTrHazTnD2BYZi/LaFDN7AkWq/JR0nz4lQkfuG2bkE4qajGeH3elvo8lDPAWXzmGoveZ0SkBLfq+X7NMZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733514662; c=relaxed/simple;
-	bh=5HDlIGzoCBu+z5RIKlAZo4R/96IfVcAh4By7vQj2Pgk=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=neAzUpjcHC0LYuPcRnhZpFf2c3kokT2dYnfk/lZBtaaC/KrcHKz2wKt+l9w8OThj5JKf/BKWGYQp3i2pbTUttGoeAe+2U6uYmk8/ur48wleR5dX8MyJkCF+M2w1s4cHtjHVEXXjU06l/3brJI8Dne3oKm0I8VIDHLEgLZsT0TJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DE32B12FC;
-	Fri,  6 Dec 2024 11:51:26 -0800 (PST)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4CF733F58B;
-	Fri,  6 Dec 2024 11:50:57 -0800 (PST)
-Message-ID: <1f2b3af4-2b7a-4ac8-ab95-c80120ebf44c@arm.com>
-Date: Fri, 6 Dec 2024 19:50:55 +0000
+	s=arc-20240116; t=1733514684; c=relaxed/simple;
+	bh=U5Hfzz0+AAl6GEPSfxjhuaIYeEAEYiOJ8XyJDnluGow=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VTPxvLy76Len4mW9YCSxW02ph7g4R/Froyuq4YOn9p7c3NcBfWjGmoC8ESJHpjS0ozVkKivZHpuOfkv/2s3hMxZ/Yb8LRq/qXHb7HoYipKl/spq9PsuSLbcjbJg54MJ4PqrVDSyg1VZexFY8JZVZ3Pa5c6mNrOFYYVQoLbowU2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=k8ZCinCr; arc=none smtp.client-ip=136.144.140.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
+	t=1733514671; bh=U5Hfzz0+AAl6GEPSfxjhuaIYeEAEYiOJ8XyJDnluGow=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k8ZCinCrkiJn+Axj4i1Q0aSjI2sze7RuAkNyze25hQqCBrcVBlxApIo+EqZK4wlnf
+	 fniK2hKQLibhUsxiyYZmHB04X+2axk88QL5tSh6U8uo0AFK6eIxWpArjTecUpHQ5Ti
+	 ApJXxnMQQzzKpnpsvATY1YFsNabAd0l7jN75m6TQrX0eiCNmHYHAlhETYbJoktF25i
+	 m0VyjUAVIrlxhn1xQ/xBtk41a2e8x6IRywL0r2UGw7Wxv5mnpiQuhxmJ1YPSyGU9/O
+	 d1CakWiCpTY4lcsWi8nTJwl89ugwcXZCp0zpcMgEibwr1R5cNmAhnt6Y5fymbj+Vh/
+	 pG5n+UG1ED1qgIp45FGhEsifmjQ7XwY9MPNLBAbe0MilddIjBjIXZwmagzhyJgPcVm
+	 YcbmQVZjzOCdQwMRrJg3DrmVYXBE2S+neE2O/Mqj18UDcHPYAEvLwe9yG6kPInUOoR
+	 UTRwbGx5OqJw4Tn8H86JPmbsud/qK0JMe/ST1Wde7nUtdHdV8YG5mORyt7FP2koSGw
+	 QAwJ2kFSN/+cwdmjVxgLFEE++O2m3SURZ/AdVRFVUuu/7o7I8OpDqmvytdh4lw6NJF
+	 HiiJO1AiAxU2glRV87i6wPFaRRar86EmyvCO6n9huxR6qmWQzAMZjwicp7Q0q10RBP
+	 Gw6+wTjliDXS/pMnYJsX49pw=
+Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
+	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id ACA3018E22A;
+	Fri,  6 Dec 2024 20:51:05 +0100 (CET)
+Message-ID: <b547c228-df70-4137-9e96-175923f62404@ijzerbout.nl>
+Date: Fri, 6 Dec 2024 20:51:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -40,65 +54,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/8] power: ip5xxx_power: Allow for more parameters to
+ be configured
+To: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>,
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Samuel Holland <samuel@sholland.org>, Sebastian Reichel <sre@kernel.org>
+References: <20241119180741.2237692-1-csokas.bence@prolan.hu>
+ <20241119180741.2237692-3-csokas.bence@prolan.hu>
 Content-Language: en-US
-To: Mark Brown <broonie@kernel.org>, heiko@sntech.de,
- luis.dearquer@inertim.com
-Cc: linux-spi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-From: Christian Loehle <christian.loehle@arm.com>
-Subject: [PATCH] spi: rockchip: Fix PM runtime count on no-op cs
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Kees Bakker <kees@ijzerbout.nl>
+In-Reply-To: <20241119180741.2237692-3-csokas.bence@prolan.hu>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The early bail out that caused an out-of-bounds write was removed with
-commit 5c018e378f91 ("spi: spi-rockchip: Fix out of bounds array
-access")
-Unfortunately that caused the PM runtime count to be unbalanced and
-underflowed on the first call. To fix that reintroduce a no-op check
-by reading the register directly.
+Op 19-11-2024 om 19:07 schreef Csókás, Bence:
+> Other parts such as IP5306 may support other battery voltages and
+> have different constants for input voltage regulation. Allow these
+> to be passed from `struct ip5xxx_regfield_config`.
+>
+> Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
+> ---
+>   drivers/power/supply/ip5xxx_power.c | 43 ++++++++++++++++++++++++++---
+>   1 file changed, 39 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/ip5xxx_power.c
+> index 41d91504eb32..a939dbfe8d23 100644
+> --- a/drivers/power/supply/ip5xxx_power.c
+> +++ b/drivers/power/supply/ip5xxx_power.c
+> [...]
+>   /*
+> @@ -328,6 +348,9 @@ static int ip5xxx_battery_get_voltage_max(struct ip5xxx *ip5xxx, int *val)
+>   	if (ret)
+>   		return ret;
+>   
+> +	if (*val > ip5xxx->vbat_max)
+> +		return -EINVAL;
+This is introducing the read of an uninitialized variable.
+You have to check all the callers of ip5xxx_battery_get_voltage_max()
+and what variable *val is pointing to. For example in
+ip5xxx_battery_get_property() the variable vmax is not initialized,
+while its address is passed to ip5xxx_battery_get_voltage_max()
 
-Cc: stable@vger.kernel.org
-Fixes: 5c018e378f91 ("spi: spi-rockchip: Fix out of bounds array access")
-Signed-off-by: Christian Loehle <christian.loehle@arm.com>
----
-Not particularly happy with it, it's just the most straightforward
-fix for the issue at hand. I couldn't quite convince myself that
-no-op rockchip_spi_set_cs() are 100% ruled out just from spi.c after
-the first call either, but maybe someone more familiar with the code
-can. I have only seen the issue for the first call / during boot FWIW.
-Any more elegant fix suggestions welcome! The other host controller
-drivers don't need the read before CS change, so this shouldn't really
-either.
-
- drivers/spi/spi-rockchip.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/drivers/spi/spi-rockchip.c b/drivers/spi/spi-rockchip.c
-index 864e58167417..1bc012fce7cb 100644
---- a/drivers/spi/spi-rockchip.c
-+++ b/drivers/spi/spi-rockchip.c
-@@ -241,6 +241,20 @@ static void rockchip_spi_set_cs(struct spi_device *spi, bool enable)
- 	struct spi_controller *ctlr = spi->controller;
- 	struct rockchip_spi *rs = spi_controller_get_devdata(ctlr);
- 	bool cs_asserted = spi->mode & SPI_CS_HIGH ? enable : !enable;
-+	bool cs_actual;
-+
-+	/*
-+	 * SPI subsystem tries to avoid no-op calls that would break the PM
-+	 * refcount below. It can't however for the first time it is used.
-+	 * To detect this case we read it here and bail out early for no-ops.
-+	 */
-+	if (spi_get_csgpiod(spi, 0))
-+		cs_actual = !!(readl_relaxed(rs->regs + ROCKCHIP_SPI_SER) & 1);
-+	else
-+		cs_actual = !!(readl_relaxed(rs->regs + ROCKCHIP_SPI_SER) &
-+			       BIT(spi_get_chipselect(spi, 0)));
-+	if (unlikely(cs_actual == cs_asserted))
-+		return;
- 
- 	if (cs_asserted) {
- 		/* Keep things powered as long as CS is asserted */
--- 
-2.34.1
+But maybe the intention was to check rval instead of *val?
+[...]
 
