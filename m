@@ -1,126 +1,97 @@
-Return-Path: <linux-kernel+bounces-435448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA6A49E77D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:05:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EA089E77D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:06:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC123168C63
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:05:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FD05284B59
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 18:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9201FFC69;
-	Fri,  6 Dec 2024 18:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00AB11FFC6D;
+	Fri,  6 Dec 2024 18:06:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="hLHz4X1A"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkiOUZRO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DAB02206A5
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 18:05:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5330F2206A5;
+	Fri,  6 Dec 2024 18:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733508315; cv=none; b=aC+h5EFBL8K3Z6H3HBNh5ieQBpgN3lhRemihE8B+Ht8LRD/N8wGWqdCFHYHzQ9yurKczjydLt2cMQoxYWyj5NxpZfYZqrvyzMP2eRqY+NBX1fip7pkLFgBkEmAj7ZbEH+DdhPee92R5WYonOLOqLgEUtZnYe69DVWs3m3uK6J4w=
+	t=1733508366; cv=none; b=q5sL5ulfCL4AXF4IKCvcDGOC+X6hf0BwJWpIahC4awI9zUfHgEVxsqhicMvkR0lh1mttBVg4rbT5PsPuRNgxeGGDAP08knTnUXJypc22JXukO5OEZxwrHivuJlP2SyemQ+dT3sFjSH5tghsa1LisE8M07tdxrQAx1+XYCpAJUV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733508315; c=relaxed/simple;
-	bh=mUrDS2bhGOV+ED2691ewuzgAYk3tK8Jmo2Es0NnHTY8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UH8HRPPby3mFBvQEURYIt2NYSB3NDMfA6Hp6MaOMNDdRU3AqxARAgnxDi4CJy7uuYnaI309k47kOFsPJgst3+D5/KY2vPohfJCiUdzTjQaF51SBf+tcHLzZ8bOhHOmwODzhh8VO5vKDx5mwpjpC2knhdLnZ64rD6XMf/Jk+aW4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=hLHz4X1A; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-215b9a754fbso23152505ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 10:05:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733508313; x=1734113113; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cNSXOHpFVDvVo7qfkOEInwMhPxiBtaZSe1qpxd+NZEo=;
-        b=hLHz4X1AeNnHiFdLcWEZDj/HWW4eS0aaVEiu2O8suERNrIud/iDCqVXS/P0urStCeh
-         t3fRJQLVK4yMVsZcnXfoYKe1+ZmEQpGrrYbv6Pl/wIMShXL9+G3A8CjOBsit233sVbYr
-         7hHwf6XCFHgEHMaI5pT/dvIQFk9fu1IG5vgkBG2knrEhHLF73zci/x7IBQhojjXibZs2
-         zDR/sbYmCB3+vb2RX0BclB/snVpGfnmXmAcdPlcbWhbAo89vuloEQ4487hrc9Fvv5ySP
-         BRdlGcgMgsugnosWuFPjbFZmdOhO/nxHx6i9EfnBW2ed0c1gtn+kIOKqYbELFxLqoS/Q
-         YNpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733508313; x=1734113113;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cNSXOHpFVDvVo7qfkOEInwMhPxiBtaZSe1qpxd+NZEo=;
-        b=jEFrLkQur5siyjX8SkbryeBK8wo8cqHcM2KBYq7Kb2CYp2q1QDfJFXwoCn3IK///n1
-         ALR+7ZXXZb9Mc4DvtX09T7j42ZAX5t9W2mMoKfvefi3YiEQn+dfjKOlomWOmjpPyp0TA
-         NB/loP7wsk/XV+619ZllSZ7YejgKxNBnhFLvgdJQ5yLFimRinAnT9/GXrPfeUXS6Kgyo
-         Ik51xoIbfAQxKXD6cGtLUbhpbWxXcy4B54QxNmTTAjIviN3qKhEQIO7cF87e/O7P8EwH
-         d5zJr3GAho4ETah3Q+0hDDajZ7pGdq4cuceH2o4MpgXXJlmeFTL1AwC+y+moD29KorbZ
-         +uhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXPBY4QtqoeXgBmOAYrGGL5Lk0pfgKwjvNg55U/ZuvZKapq/pw/I++Y7PYK92V9treriY066f1DWAVPvWU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/9CRB+lXtBpEXkXeOZE1a8aQGrAIDXQUKazyQ3b4iD30xcJw6
-	DqUPvq9IJCqhhsQuyJJmlM9MXGxC0giRkCeeL0gn11+thzNxNPO4Qm76iaw5UL8=
-X-Gm-Gg: ASbGncutE9gAaulc0CsFqwFF+EIIheZlRdB1mXrFO8isMDa7HCsNLH0Th5VcgpOZ0h2
-	ur9cPNRpNsIVj5y3lzuZMJVrjUBUThRCh420Y+jCUZGaMZt6GpRe6WyRW/MJt91Xx5G9izrhlnk
-	eg4dJGQzx0d/l0Bxqf6mFZh4B/Du6/g69eTo+oEKgkZqCqZHl5IQU/6Y7mll5+yyrZ+ygMLGZf4
-	HzZBtDMHwDIOkgvA2QN5kipE7AoLFNP4QmFBw3cZV5G3XGnNL1xV+Htj7Jykhgw/A==
-X-Google-Smtp-Source: AGHT+IH6K3vxjoHAACo1uwn/G9I0Nj6IP5ZDAZwjsVYIfZAvGf/tBjJZAN9zL2L3pU94t4FY59unIQ==
-X-Received: by 2002:a17:902:d4c5:b0:215:5437:e9b4 with SMTP id d9443c01a7336-21614db9f54mr41598485ad.54.1733508313507;
-        Fri, 06 Dec 2024 10:05:13 -0800 (PST)
-Received: from charlie.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2161e6d1042sm10977125ad.2.2024.12.06.10.05.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 10:05:12 -0800 (PST)
-From: Charlie Jenkins <charlie@rivosinc.com>
-Date: Fri, 06 Dec 2024 10:05:06 -0800
-Subject: [PATCH] selftests/hid: Add host-tools to .gitignore
+	s=arc-20240116; t=1733508366; c=relaxed/simple;
+	bh=tDOBzYb2HXl7I0IlPve7Pi5OTtEoGEDn+/36WZdU/5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ECcSuEpGC9hUi7gJdkWF6ZKxHgXZYsHfeqwJ/bgG0ZUVTppbeziMclb/E26EgvpyudPXOGm38IVzNRe08yWO2g81Wz7O8G3GvBTy4spdCyJb2x+ofbHwcYE7SDNOZEq572Tkc2EZ3hMx297RLq6zRznIAxAbJPL3QdM31zO/LPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkiOUZRO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A990C4CED1;
+	Fri,  6 Dec 2024 18:06:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733508365;
+	bh=tDOBzYb2HXl7I0IlPve7Pi5OTtEoGEDn+/36WZdU/5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rkiOUZROLoI/GwGy/sWi/jRXc/psp/cNeKcHz9zpiBbjIHGigY6plEmKE0s94e+gj
+	 5CNwQfZ8Zv7QsQakUZVooRk1WRoQN363STfiR2SOM989y4JuKmZolpL6exCEMOgHpw
+	 AnBU5VGb09F3iuf+1uJ/rost4yYHkrxeXBVN0hdPGMK1i8J6fG1v9vd22QOVLp4GEM
+	 IRGZryWBUlzTlAxLFE1bIWFd9PCkR9uGlpsdGE1qv/UaIF1+NFN7CtWYAYZUHaeK8O
+	 +hgMzL2LqTKcrVBLRdZuKT52ra8302EQl5mjVFRzeLGbxFBcN9CiXzNdbxP/vpdhty
+	 DqsbySMCEYR1w==
+Date: Fri, 6 Dec 2024 18:05:59 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com
+Subject: Re: [PATCH 6.12 000/146] 6.12.4-rc1 review
+Message-ID: <f5a771f5-26be-47a2-a9df-ec901da6db1a@sirena.org.uk>
+References: <20241206143527.654980698@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-host_tools_gitignore-v1-1-e75e963456dc@rivosinc.com>
-X-B4-Tracking: v=1; b=H4sIANE8U2cC/x3MQQqAIBBA0avErBNUIqyrRITUZAPhhCMRSHdPW
- r7F/wUEE6HA2BRIeJMQxwrTNrAePgZUtFWD1bYzVvfqYMlLZj5lCZQpRE6onHfD7pzVvjdQ0yv
- hTs+/neb3/QC+B72vZgAAAA==
-To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
- Shuah Khan <shuah@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kselftest@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Charlie Jenkins <charlie@rivosinc.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=726; i=charlie@rivosinc.com;
- h=from:subject:message-id; bh=mUrDS2bhGOV+ED2691ewuzgAYk3tK8Jmo2Es0NnHTY8=;
- b=owGbwMvMwCHWx5hUnlvL8Y3xtFoSQ3qwzSXB2zyn6rQaTi5VrXHfFvuq7V926Zfu13cZVNfIs
- wXW8Md3lLIwiHEwyIopsvBca2BuvaNfdlS0bALMHFYmkCEMXJwCMJHM2Qz/vdW9+Y3dw0z+nXWf
- U6sy9XxEoahRvN/uzD/nxbcs8nb/x8jwt5WJ69mbDTkH16almv99v32agHTW45khS70stJfp2nx
- nBgA=
-X-Developer-Key: i=charlie@rivosinc.com; a=openpgp;
- fpr=7D834FF11B1D8387E61C776FFB10D1F27D6B1354
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aEsuThH7BwHoOIz1"
+Content-Disposition: inline
+In-Reply-To: <20241206143527.654980698@linuxfoundation.org>
+X-Cookie: Sales tax applies.
 
-When compiling these selftests the host-tools directory is generated.
-Add it to the .gitignore so git doesn't see these files as trackable.
 
-Signed-off-by: Charlie Jenkins <charlie@rivosinc.com>
----
- tools/testing/selftests/hid/.gitignore | 1 +
- 1 file changed, 1 insertion(+)
+--aEsuThH7BwHoOIz1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/tools/testing/selftests/hid/.gitignore b/tools/testing/selftests/hid/.gitignore
-index 746c62361f77..933f483815b2 100644
---- a/tools/testing/selftests/hid/.gitignore
-+++ b/tools/testing/selftests/hid/.gitignore
-@@ -1,5 +1,6 @@
- bpftool
- *.skel.h
-+/host-tools
- /tools
- hid_bpf
- hidraw
+On Fri, Dec 06, 2024 at 03:35:31PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.4 release.
+> There are 146 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241206-host_tools_gitignore-8a89f8820a61
--- 
-- Charlie
+Tested-by: Mark Brown <broonie@kernel.org>
 
+--aEsuThH7BwHoOIz1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdTPQYACgkQJNaLcl1U
+h9DBjwf+MqlAJIVrRny+siLkGs3mUfHlzsn5CNHVHXwJ8X0gUVkEU4TqRQZrW4es
+gV8Krctq04k+8lZlrAiKghQpcbWt4T/izHhBbZY3W5c75Oa+wS1HDR+8oPwY3tPw
+LvfZq76+KJ3Y+z1bwQLtk6HcEUTQ7hwNIZmbRMMyuoC6bObHAq9muaZso43Ak1V+
+IfDVPhf1hWJsyftXMCHuU5mavAv+QwHSfkb9ch2VlZGbT0b3+mOScj+1x201YiF+
+qf+CnnCeYOs9n/Jn5zEMvGTEounRgoGHSoDJpTR9b7Me0qfgIZM9/+72iKxiGCG/
+cT4NQUaMf3TSuFvdYUtGRFH0O1QMjg==
+=E8Li
+-----END PGP SIGNATURE-----
+
+--aEsuThH7BwHoOIz1--
 
