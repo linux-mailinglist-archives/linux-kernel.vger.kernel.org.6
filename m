@@ -1,264 +1,154 @@
-Return-Path: <linux-kernel+bounces-435348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB4E69E7662
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:50:28 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FA89E7665
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:51:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C638F166855
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:50:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F7451886FAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:51:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B6D01CD1FB;
-	Fri,  6 Dec 2024 16:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99DCA1F3D30;
+	Fri,  6 Dec 2024 16:51:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="T4Cr13jn"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="exZj0BRs"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F26E20627F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C7120627F;
+	Fri,  6 Dec 2024 16:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503823; cv=none; b=D84ODmPyN3h21Q+dlsxjIFaFOMOkmQtq45yc8Br7vyDCNRs9CHldtcqAHCL8c7orRc1wFrIyoYwRIjqyy70QP0n4Iskdk7WyaorcZg3DN0yL5r5tePHmoOShB1mVjTYUt4LHHY6rcpi0LK5nqj5SghmWSe/jhFzzmjoVnu0PgSY=
+	t=1733503862; cv=none; b=kK2c2FH1jPYzTw3gcVgsENyBDzjUfsmUjj/PA/WcEvMRUYUgpZG08JebZOobZbguzJpWeyBHnv9DDBWMgsodBf7CBEB+QHr6QOt/e9hKSISpPLjUMufZYxQ1QPMv6kZ1+13QF5HEjV9rNcSWcpcTbTdnOtgInL5WsZtiwOTmp/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503823; c=relaxed/simple;
-	bh=0D04ZDJQhhKbcCfZ0+z7XRpvmBxnzq8oculexf9LcKY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aDQ7I7+JFv+q0rlVGa+9H4+a8o5srbn0DBMrgRlAQezCTQJKcTDX3QYrPPJWkhRO4ji7b9FvxdtA7PXiMnv3DzAFKPv1NfV9nFZ9a0doeiThRanW7dLTYhr6dGvPRbV8u3yRGvPHxDG1LiJWdaE/9BbAcLU2xP121F6/SuFuTaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=T4Cr13jn; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434a044dce2so26136105e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 08:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733503819; x=1734108619; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y/AXLN7pGOp4uRwVstDey0ey7djZ9Y/CWN5MDPVKybg=;
-        b=T4Cr13jnMNyPWHF5fxKrgemBGhq6p2j1YOD+dSIhD3FlFu9u/J13eGPsfvUWeHBwKK
-         hORgIbCMJdOezRn8pBhPCbpIIlkdRVTKYy4x66dllIY2nM7f+qb90GJsEYUP7L9fyYLf
-         3QNw43A4OjFaOYf3qRCrPlvCPHbci2Rl7GG5s+3l2LraNnVLcrWsGlhbQYOCFxknKBxw
-         eUZ554WjYb4d6fA6h86ZO0f7A2zxIjjGc/CKlgt5SSiAVTvGKk05JbRYVvXsJMsFOVDc
-         1NfZ2aRrQgrcV9egsT5m5cTBcx+48t6uoZb6jaQJvwcq9zxpB4rRE5e17jGgXt0fivsU
-         Ok7Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733503819; x=1734108619;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Y/AXLN7pGOp4uRwVstDey0ey7djZ9Y/CWN5MDPVKybg=;
-        b=W52oEy8hBvCLkDqWpREWJvyg9+rthRUtKxpbeo7xJwT1nddG9on6CRHvDmO4fHUKwd
-         gyNXYMf+lDZEeG0oULNwkICNEiJ3IolfjPMpsnRedCW5GuasO/8hOVjYsXqShDBxldDg
-         aUX18S0SiSpA6IXoF1zv5NcEsoaT0xJd3NST2x7SXnxlf37iVhNMWr7DckAni5X8PCnG
-         mDhldGdT6N+yxZoOOMqG7dZSBqb3P3bE6s1cc6MlWDfn8YgsWPklUEnHwwceTOiO8c5H
-         pEhzYDFFiSKgK3jHiFWVDnljjKRP8WuS9WjH1mnIel+wEIkOvSHxaQX8fsMoVOcL2O81
-         fOUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUj12GVpfSOUFKFDMdDFfsEA47oqzeH35o+orNagpCfdDOofS0UwnrpPqDA7AoSSpH8rpGhlo7RE5Ze1KI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRvkU4NS6uLm4AHLURlquGVxbwQfz/Lno63LLR2grKdKK4pwX6
-	5DpOjvMNuVOewUAsuAkxDl3FVRM3xhjkCr1wUjDRxrJDC2mAW2yLr8/uVLnuu5U=
-X-Gm-Gg: ASbGncukgqFMj/07W9xm2/HNJdts1vlrUUPqEll6vBUqredohJU+BOp2hIU6wT38rcy
-	snlgNeCvhC9T7Bscg5358HRJ1wS9I3P6SxKyokF5Gq7Us61NmeIicAXl4U7lhlcB1d7B55HqDNQ
-	uSla1drEYIDJfDrsQdB8UNPEg3wpQGBPKkU4LekK9ojKTtYNSdJxoUVWZtcwtZsnUBWMRyzVRTA
-	04fWJWi1v1QaCUsCBTRf3JxWG+5N4ftPIf+u792yx3NCjtRgpXk8TgfE9M67wUgXd16qBIAFpVr
-	e8E0z9U9XdNMjgaYG3+zqeDFnCusLNE01NpP9sHQIEOSNUouyw==
-X-Google-Smtp-Source: AGHT+IEjd0/0Bv3IEzgcclSVQbheGNRcjIl0tIIjyWpUjukGx/SAq2YeahHwGZXirAS1p0eFgY6UsA==
-X-Received: by 2002:a05:600c:1c8a:b0:431:5f8c:ccb9 with SMTP id 5b1f17b1804b1-434ddeb9b30mr44571795e9.17.1733503819398;
-        Fri, 06 Dec 2024 08:50:19 -0800 (PST)
-Received: from raven.intern.cm-ag (p200300dc6f2c8700023064fffe740809.dip0.t-ipconnect.de. [2003:dc:6f2c:8700:230:64ff:fe74:809])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273131sm97737235e9.12.2024.12.06.08.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 08:50:19 -0800 (PST)
-From: Max Kellermann <max.kellermann@ionos.com>
-To: xiubli@redhat.com,
-	idryomov@gmail.com,
-	amarkuze@redhat.com,
-	ceph-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Max Kellermann <max.kellermann@ionos.com>
-Subject: [PATCH] fs/ceph/io: make ceph_start_io_*() killable
-Date: Fri,  6 Dec 2024 17:50:14 +0100
-Message-ID: <20241206165014.165614-1-max.kellermann@ionos.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733503862; c=relaxed/simple;
+	bh=qZin4s7pr/icRgVdzO97D3u6bbOWBXIsiZysGZ7DEsg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tr/TsPs1YvMRvUm1wfz1/Yip2FbvjSnyvmf+eZL1VXhs6mBc1ib+19uwJhGh8f3JCPm1NBHyNNipIeoPxj9YskI+QdbVxiuE4XamTSJIzLeHHrIwNWu/3pUT0ZZM/sGVPaUzhHBDb6FjpihERC+tguI8WPXLuy6OryY7fVh7AzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=exZj0BRs; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733503861; x=1765039861;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qZin4s7pr/icRgVdzO97D3u6bbOWBXIsiZysGZ7DEsg=;
+  b=exZj0BRsCUStHxK3ioP4wjJU3tmkKSJVqY4XBwe2LB3+lwNi3Y9ydVUf
+   USgwbJMdI2bvZLN7n1QFViz7IjxWWb0gcC8DI/SpH8o9tbrBd7bqhUYMw
+   j+fQPI2hoWSXfJFuru/tJ0b4jwRFDVlYok11BtC6zmRBw3+NciKW7DWXH
+   izegpX84P25QAYf//zfFyH4T05b6oQ/NvJosE4b3KFc7b/4LyTirxAciP
+   eq7V6xM8kcfxT3slcUL7tPbY8sgTQTLYd4Znyn5+AmHc4h+Xz+NzkOkly
+   TCJBp8XftA2UcHVNPLgKnndHX9Wk1ViPUTXMdFTeGBUYF9xUPecrOld/k
+   g==;
+X-CSE-ConnectionGUID: bU0X9C2WRSaTQbPJuoSuag==
+X-CSE-MsgGUID: 3wUCREvbSqSsVw9rmuvTVQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="37542112"
+X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
+   d="scan'208";a="37542112"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 08:51:00 -0800
+X-CSE-ConnectionGUID: oRQMPDqISjKNULJpuObSSw==
+X-CSE-MsgGUID: ZJirkQbVQ0Wc5urIA1B7ow==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
+   d="scan'208";a="94550901"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 06 Dec 2024 08:50:54 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJbXX-00025j-31;
+	Fri, 06 Dec 2024 16:50:51 +0000
+Date: Sat, 7 Dec 2024 00:50:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	andrew+netdev@lunn.ch, horms@kernel.org, gregkh@linuxfoundation.org
+Cc: oe-kbuild-all@lists.linux.dev, shenjian15@huawei.com,
+	wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+	chenhao418@huawei.com, sudongming1@huawei.com,
+	xujunsheng@huawei.com, shiyongbang@huawei.com, libaihan@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, shaojijie@huawei.com,
+	hkelam@marvell.com
+Subject: Re: [PATCH V5 net-next 1/8] debugfs: Add debugfs_create_devm_dir()
+ helper
+Message-ID: <202412070055.uUO1oKY8-lkp@intel.com>
+References: <20241206111629.3521865-2-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206111629.3521865-2-shaojijie@huawei.com>
 
-This allows killing processes that wait for a lock when one process is
-stuck waiting for the Ceph server.  This is similar to the NFS commit
-38a125b31504 ("fs/nfs/io: make nfs_start_io_*() killable").
+Hi Jijie,
 
-Signed-off-by: Max Kellermann <max.kellermann@ionos.com>
----
- fs/ceph/file.c | 22 +++++++++++++---------
- fs/ceph/io.c   | 44 +++++++++++++++++++++++++++++++++-----------
- fs/ceph/io.h   |  8 +++++---
- 3 files changed, 51 insertions(+), 23 deletions(-)
+kernel test robot noticed the following build warnings:
 
-diff --git a/fs/ceph/file.c b/fs/ceph/file.c
-index 4b8d59ebda00..d79c0774dc6e 100644
---- a/fs/ceph/file.c
-+++ b/fs/ceph/file.c
-@@ -2127,10 +2127,11 @@ static ssize_t ceph_read_iter(struct kiocb *iocb, struct iov_iter *to)
- 	if (ceph_inode_is_shutdown(inode))
- 		return -ESTALE;
- 
--	if (direct_lock)
--		ceph_start_io_direct(inode);
--	else
--		ceph_start_io_read(inode);
-+	ret = direct_lock
-+		? ceph_start_io_direct(inode)
-+		: ceph_start_io_read(inode);
-+	if (ret)
-+		return ret;
- 
- 	if (!(fi->flags & CEPH_F_SYNC) && !direct_lock)
- 		want |= CEPH_CAP_FILE_CACHE;
-@@ -2283,7 +2284,9 @@ static ssize_t ceph_splice_read(struct file *in, loff_t *ppos,
- 	    (fi->flags & CEPH_F_SYNC))
- 		return copy_splice_read(in, ppos, pipe, len, flags);
- 
--	ceph_start_io_read(inode);
-+	ret = ceph_start_io_read(inode);
-+	if (ret)
-+		return ret;
- 
- 	want = CEPH_CAP_FILE_CACHE;
- 	if (fi->fmode & CEPH_FILE_MODE_LAZY)
-@@ -2362,10 +2365,11 @@ static ssize_t ceph_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		direct_lock = true;
- 
- retry_snap:
--	if (direct_lock)
--		ceph_start_io_direct(inode);
--	else
--		ceph_start_io_write(inode);
-+	err = direct_lock
-+		? ceph_start_io_direct(inode)
-+		: ceph_start_io_write(inode);
-+	if (err)
-+		goto out_unlocked;
- 
- 	if (iocb->ki_flags & IOCB_APPEND) {
- 		err = ceph_do_getattr(inode, CEPH_STAT_CAP_SIZE, false);
-diff --git a/fs/ceph/io.c b/fs/ceph/io.c
-index c456509b31c3..2735503bc479 100644
---- a/fs/ceph/io.c
-+++ b/fs/ceph/io.c
-@@ -47,20 +47,30 @@ static void ceph_block_o_direct(struct ceph_inode_info *ci, struct inode *inode)
-  * Note that buffered writes and truncates both take a write lock on
-  * inode->i_rwsem, meaning that those are serialised w.r.t. the reads.
-  */
--void
-+int
- ceph_start_io_read(struct inode *inode)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-+	int err;
- 
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	err = down_read_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
-+
- 	if (!(READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT))
--		return;
-+		return 0;
- 	up_read(&inode->i_rwsem);
-+
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	err = down_write_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
-+
- 	ceph_block_o_direct(ci, inode);
- 	downgrade_write(&inode->i_rwsem);
-+
-+	return 0;
- }
- 
- /**
-@@ -83,11 +93,13 @@ ceph_end_io_read(struct inode *inode)
-  * Declare that a buffered write operation is about to start, and ensure
-  * that we block all direct I/O.
-  */
--void
-+int
- ceph_start_io_write(struct inode *inode)
- {
--	down_write(&inode->i_rwsem);
--	ceph_block_o_direct(ceph_inode(inode), inode);
-+	int err = down_write_killable(&inode->i_rwsem);
-+	if (!err)
-+		ceph_block_o_direct(ceph_inode(inode), inode);
-+	return err;
- }
- 
- /**
-@@ -133,20 +145,30 @@ static void ceph_block_buffered(struct ceph_inode_info *ci, struct inode *inode)
-  * Note that buffered writes and truncates both take a write lock on
-  * inode->i_rwsem, meaning that those are serialised w.r.t. O_DIRECT.
-  */
--void
-+int
- ceph_start_io_direct(struct inode *inode)
- {
- 	struct ceph_inode_info *ci = ceph_inode(inode);
-+	int err;
- 
- 	/* Be an optimist! */
--	down_read(&inode->i_rwsem);
-+	err = down_read_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
-+
- 	if (READ_ONCE(ci->i_ceph_flags) & CEPH_I_ODIRECT)
--		return;
-+		return 0;
- 	up_read(&inode->i_rwsem);
-+
- 	/* Slow path.... */
--	down_write(&inode->i_rwsem);
-+	err = down_write_killable(&inode->i_rwsem);
-+	if (err)
-+		return err;
-+
- 	ceph_block_buffered(ci, inode);
- 	downgrade_write(&inode->i_rwsem);
-+
-+	return 0;
- }
- 
- /**
-diff --git a/fs/ceph/io.h b/fs/ceph/io.h
-index fa594cd77348..08d58253f533 100644
---- a/fs/ceph/io.h
-+++ b/fs/ceph/io.h
-@@ -2,11 +2,13 @@
- #ifndef _FS_CEPH_IO_H
- #define _FS_CEPH_IO_H
- 
--void ceph_start_io_read(struct inode *inode);
-+#include <linux/compiler_attributes.h> // for __must_check
-+
-+__must_check int ceph_start_io_read(struct inode *inode);
- void ceph_end_io_read(struct inode *inode);
--void ceph_start_io_write(struct inode *inode);
-+__must_check int ceph_start_io_write(struct inode *inode);
- void ceph_end_io_write(struct inode *inode);
--void ceph_start_io_direct(struct inode *inode);
-+__must_check int ceph_start_io_direct(struct inode *inode);
- void ceph_end_io_direct(struct inode *inode);
- 
- #endif /* FS_CEPH_IO_H */
+[auto build test WARNING on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jijie-Shao/debugfs-Add-debugfs_create_devm_dir-helper/20241206-192734
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241206111629.3521865-2-shaojijie%40huawei.com
+patch subject: [PATCH V5 net-next 1/8] debugfs: Add debugfs_create_devm_dir() helper
+config: x86_64-buildonly-randconfig-003-20241206 (https://download.01.org/0day-ci/archive/20241207/202412070055.uUO1oKY8-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412070055.uUO1oKY8-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412070055.uUO1oKY8-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   fs/debugfs/inode.c: In function 'debugfs_create_devm_dir':
+>> fs/debugfs/inode.c:643:17: warning: ignoring return value of 'ERR_PTR' declared with attribute 'warn_unused_result' [-Wunused-result]
+     643 |                 ERR_PTR(ret);
+         |                 ^~~~~~~~~~~~
+
+
+vim +643 fs/debugfs/inode.c
+
+   619	
+   620	/**
+   621	 * debugfs_create_devm_dir - Managed debugfs_create_dir()
+   622	 * @dev: Device that owns the action
+   623	 * @name: a pointer to a string containing the name of the directory to
+   624	 *        create.
+   625	 * @parent: a pointer to the parent dentry for this file.  This should be a
+   626	 *          directory dentry if set.  If this parameter is NULL, then the
+   627	 *          directory will be created in the root of the debugfs filesystem.
+   628	 * Managed debugfs_create_dir(). dentry will automatically be remove on
+   629	 * driver detach.
+   630	 */
+   631	struct dentry *debugfs_create_devm_dir(struct device *dev, const char *name,
+   632					       struct dentry *parent)
+   633	{
+   634		struct dentry *dentry;
+   635		int ret;
+   636	
+   637		dentry = debugfs_create_dir(name, parent);
+   638		if (IS_ERR(dentry))
+   639			return dentry;
+   640	
+   641		ret = devm_add_action_or_reset(dev, debugfs_remove_devm, dentry);
+   642		if (ret)
+ > 643			ERR_PTR(ret);
+   644	
+   645		return dentry;
+   646	}
+   647	EXPORT_SYMBOL_GPL(debugfs_create_devm_dir);
+   648	
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
