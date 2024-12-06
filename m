@@ -1,88 +1,96 @@
-Return-Path: <linux-kernel+bounces-435621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A899E7A36
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:49:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90FF29E7A38
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:50:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8A392814D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:49:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B68816576B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 373D2206268;
-	Fri,  6 Dec 2024 20:49:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEAC20458E;
+	Fri,  6 Dec 2024 20:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cICChNTW"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y9Ol+2OJ"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE7F2204596;
-	Fri,  6 Dec 2024 20:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1971C54BB
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 20:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733518161; cv=none; b=HIWDMqVmYI39FeEDc+khWK1qYYidJ1gL4/wW2I27vzt4ue2ETTlVEc6FnRNmzPJmfgGC3EXS4aVH7i2SFaRamA5doUPihEUX+2UkbUAJ3svMiSQsTcw3WV+HH4R1NivC07GODkZSmjcD6MyRDRU0AFRK1rrw8iDrlJ6dhqVr+oI=
+	t=1733518215; cv=none; b=HliD2YdzJsdSaXyqIVlTKVKzmWMduLn+/ZlhkJUIS/TFapuBSLJTPnjsf0eH2fxjGoDHEUMjAlsIQO4onCjaFD/+ntKEx9ibH3i4CitRUhGR4uM9u5vzteY4rXByJA2NUWwk86JVUAku5qXBAPc3+emsjH4Mz2D1/EQhRK3smTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733518161; c=relaxed/simple;
-	bh=NQEA2lB9T9/wPzVSEPwWnQWXojD+VqCwm2lpgX43Roc=;
+	s=arc-20240116; t=1733518215; c=relaxed/simple;
+	bh=lG6UScKygXE0DZKpjusrU5YBmeakALe/kqRQf0bpyjc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBxufqG+u0mGLXV0CpaJVxAh/4h9Q3c0HGf7VljG2wc00yP5FrROLAyeRlrWLuILjqMqfHt0FhX4ZcfvlmcQiQkS9rXJHfKOc0aXUYQjlOnfkN29Diq5eXUMqJSZRwwW0GcxSkDZDHP9BXTCI1qpBQEcUZwW+8JowPunQzsUIXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cICChNTW; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ee8e8e29f6so1969217a91.0;
-        Fri, 06 Dec 2024 12:49:19 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=mI5Nzo41o6JsAmxGsUZbc0rAUcYCv1ttedt492RFTcBBpScPnf5+4n12+3KDUAqEcMsPlTZW6GvsDs487Jc8HylY97qvrI5vEDfNcS5jVCP5Bm2wb7oDLnqKW7IPFp7T1HkcdgvUDIOKX/hvrhwNQ74wlBojQKhud2UuniytUdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Y9Ol+2OJ; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21625b4f978so28705ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 12:50:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733518159; x=1734122959; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733518213; x=1734123013; darn=vger.kernel.org;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=hZd4xUDMM03XI/1ByYEAJjNBA2EJ8K++HTyrnX16JD4=;
-        b=cICChNTWJXt3a6JuLAvpc/yYj2L9TwBCzWp2KIGxVMVRMPrT3NtzqvQk2eRGS3nN2U
-         Jm5HOq7P40PY0dk4I9dwMrBWSz0CX+2CRtkelmhwYvrlLOnh+JTs2kQQLhKK+Ai51v0m
-         80deiEIoFvjy0N2UZoevZJr/kRE6s76KPCvEU23xsS3Vo8e/HBdSM+O/Ve7+uC1GJJKA
-         k4YChsb89CLP0ZGgTt8VMH/P/4DPYKMV2nWDY8m0GrAAStTMtJXv2Gm69L9baRClKzzK
-         tUiBW2VfUk+fpR2XT6pKK2zJYNQX5kYnjnKOpJTnNQRaJyMPIUoA6nqt1syxUeiYfQkR
-         coKw==
+        bh=kIQnC6QifSuf9C4/nsTfcLNSPKAxynKHyi8fol7mDZo=;
+        b=Y9Ol+2OJ2QZh5Zy4t++b5RtRb4iOzzf3Svy8TMnJjUVYO4yZ3hh6q/gtKAXl1qEzqc
+         GCSMjNHK3MVIPE+62AxyuAqKh/sqZ1ma1tq8xzwnUdfnXdBAlfjWkaYVDu1he+Cld46E
+         v3k5fo7SD4KlcuSTglTwAnWfSrwy1FPhUdGj+XwXw3jwN0uE+PteNbRnULs6Ebt0F8nr
+         hF92tP+q9RhLDudJEDynWQ60rNxFpK9kEoSKqf1wr0+gHtPvrA00G/wvCKodvY26v56/
+         gDo5mmcWVx/6anARekCQXD9o1qAL0QC8F6vYM/2SKXvXvbaeISE4xpZEgpqKIZ7Z64Ru
+         tsXQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733518159; x=1734122959;
+        d=1e100.net; s=20230601; t=1733518213; x=1734123013;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hZd4xUDMM03XI/1ByYEAJjNBA2EJ8K++HTyrnX16JD4=;
-        b=GoPQH12CVSWcO2JQaXv6edrf05sRjJhIwekjYk8xzLWf0RMBFaURUA0BMk4arD999V
-         DgfQdM+qgcysFjb5dzcQ6CjxY7Mf1pdlfBFIhWvb/BUF5k1fzqyYpP1vZqNMzEx5TkfA
-         7PMUXAQPf3yue1fxULThnJY/TtInpkO+8UGFaz92aDt4g1xrF4oHeWLlhh5bwFkrntTB
-         XxcW7VQWV3CPRR7f3dzLqp9tQAWEbFMuXbZjWGtmbd33IphIPsxYYiKb0sddRzMDVzhj
-         TUhrvmPDie/Z6V9WwBzN0/V7Y+bSY9DRqoTQbYV4hfMggTOTlG9ePK66a3FaJEsjzJmK
-         REhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXWfICCsc4eA8rH3VG9kUjMju7tm/ExAsa2ouZp86Wy1H2RrNMsScFrR1+UAJS9xfRFC52/6bzDXu3BdtA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytbNP/N+rHW5LMGrGUja8+f5VSov+AZCtJpAHZymlKpUTlxAcC
-	cndA9+uliP39E8ytliHbROMCtvJBmakqItfdMFfqhxQNArDZ5rPl
-X-Gm-Gg: ASbGnctAylHgmaoq3toEiJyKEgNET8gK5K0uxXM9HG/rm0WAbSom82zkSshFlxqyIhk
-	dxj5c18fjSFrug57tfjFqJIpwX55kZ5ofzihZng2GYSkQ+xiIRYrWIMBazMGDCp6lJbHkbzYh1u
-	QW9PVm9sIHJyYDvdg1Rw8UqtzqOqwiQCGclpd2hyG11f+1DplX9LvXI41vAzGj9CbfZsU8YZ1ri
-	roLw34MoBS2nVh6j9VyiVRaz570fIAjsH5GwIYbvUhkus/Fyg==
-X-Google-Smtp-Source: AGHT+IGJVrmBy31vZhXtZK6qYkNrzulb0ZKB2FLrTgbi9oxdqbvApQjgZn7xFoepcMFq6nIbnCPUDA==
-X-Received: by 2002:a17:90b:1dc5:b0:2ee:fc08:1bc1 with SMTP id 98e67ed59e1d1-2ef6ab25c8dmr6986305a91.37.1733518158884;
-        Fri, 06 Dec 2024 12:49:18 -0800 (PST)
-Received: from localhost ([216.228.125.130])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a90371sm3456333b3a.128.2024.12.06.12.49.17
+        bh=kIQnC6QifSuf9C4/nsTfcLNSPKAxynKHyi8fol7mDZo=;
+        b=mukKHmxraYiAEJ/VIx0ybmZ6nyDapzL3YpaTawVlCT86pkrQGxHrcgxPM9cefprETN
+         /ZE3kilIuEcMMAEdWyW5Clkjs9LzUrUCqpTTV1wPn/BnUR5KdQAYy5/T7lrx0ED8rNju
+         i9e5o+eKnWOPNRE5EOEmcnbzBsOBqMKLgbZQQ1bFOUIX/Y5IdN8H2AJsC+TNZkKFQuRW
+         XQpcWA09wjL8A3fD80pieK09WgyV5vf6qWyouu7C6OMoULs3ORzbk+3mJ5SaUlx33xi4
+         O02YlPifKe6K0Y0mcvMVN4HkzcZy0iCVPtkZNsLTGnHUK9tW6aYcJGSKT/BITKx2dLDP
+         P1uw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV9uSX8g7+Ijf9hEfvLke9ICqBTBLpCteDHXZMTzWWxMwoxHPqo+8PSkXY2Dc9c10a2LSgL8gDBhSebW4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP0ruZXGvX40+j93aOAr3aLWSQ4giyfg6YORSQyx7Yj5hfOBRi
+	Y9ypTsQk0+6xR0rDP/QM/yugOjHuGjrpAUKfDjrq4SLROTXMQUP1kt8zx1sMhw==
+X-Gm-Gg: ASbGnctkgy/ccMZSU80kZPlO9CH316KkddoUTYkLyxaX2Yeb1wWny/q+IUmOsl2Uwyi
+	Nj2EQLGms0HKTEGUjfxTRRd9vbNOsFRB1uCojes6RFDTmIhIQNyeJyqmp8NHxGpgvJwXgORzb25
+	7xP9wCa2XfMB2x8Jao6eh/0kQJcGgQZYzGwbQBr93OJcLgYSmBIhX/rKoHDTxuE4nS+axwUCb3E
+	DAVdwf+TuaBdO1kglGPw0R2YnxXhB21MIvLa6/ZxtmFDoF1qg==
+X-Google-Smtp-Source: AGHT+IE11QsSYdu5EzfTjQLwDvWU8Ay7LIt+L9MNUYsryjf+ALBnUiR7v52/e5aef5B1j//XzPS0RA==
+X-Received: by 2002:a17:903:174d:b0:215:a3e9:88cc with SMTP id d9443c01a7336-2162ad6a09emr331635ad.3.1733518212757;
+        Fri, 06 Dec 2024 12:50:12 -0800 (PST)
+Received: from google.com ([2620:15c:2d:3:7caa:6c4:e72a:a87d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2162c062f40sm35715ad.90.2024.12.06.12.50.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 12:49:18 -0800 (PST)
-Date: Fri, 6 Dec 2024 12:49:16 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, kees@kernel.org,
-	nathan@kernel.org, steffen.klassert@secunet.com,
-	daniel.m.jordan@oracle.com, linux-crypto@vger.kernel.org,
-	linux@weissschuh.net, gjoyce@ibm.com
-Subject: Re: [PATCHv2] cpumask: work around false-postive stringop-overread
- errors
-Message-ID: <Z1NjTCFmu8QKY7P5@yury-ThinkPad>
-References: <20241205123413.309388-1-nilay@linux.ibm.com>
- <Z1HTdtvNjm-nZSvJ@yury-ThinkPad>
- <9c99c993-c8b5-483e-af87-c94373e14e80@linux.ibm.com>
+        Fri, 06 Dec 2024 12:50:12 -0800 (PST)
+Date: Fri, 6 Dec 2024 12:50:08 -0800
+From: Isaac Manjarres <isaacmanjarres@google.com>
+To: Kalesh Singh <kaleshsingh@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>,
+	Alexander Aring <alex.aring@gmail.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Shuah Khan <shuah@kernel.org>, kernel-team@android.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	Suren Baghdasaryan <surenb@google.com>,
+	John Stultz <jstultz@google.com>
+Subject: Re: [RFC PATCH v1 1/2] mm/memfd: Add support for F_SEAL_FUTURE_EXEC
+ to memfd
+Message-ID: <Z1NjgK2wSUdeM525@google.com>
+References: <20241206010930.3871336-1-isaacmanjarres@google.com>
+ <20241206010930.3871336-2-isaacmanjarres@google.com>
+ <CAC_TJvdVhGW+4y0JHqRVTdqAWpQRDOgWW8b1TAK3V9zdnmw0ow@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,142 +100,34 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <9c99c993-c8b5-483e-af87-c94373e14e80@linux.ibm.com>
+In-Reply-To: <CAC_TJvdVhGW+4y0JHqRVTdqAWpQRDOgWW8b1TAK3V9zdnmw0ow@mail.gmail.com>
 
-On Fri, Dec 06, 2024 at 02:39:58PM +0530, Nilay Shroff wrote:
+On Fri, Dec 06, 2024 at 09:49:35AM -0800, Kalesh Singh wrote:
+> On Thu, Dec 5, 2024 at 5:09 PM Isaac J. Manjarres
+> <isaacmanjarres@google.com> wrote:
+> > --- a/mm/mmap.c
+> > +++ b/mm/mmap.c
+> > @@ -375,6 +375,17 @@ unsigned long do_mmap(struct file *file, unsigned long addr,
+> >                 if (!file_mmap_ok(file, inode, pgoff, len))
+> >                         return -EOVERFLOW;
+> >
+> > +               if (is_exec_sealed(seals)) {
+> > +                       /* No new executable mappings if the file is exec sealed. */
+> > +                       if (prot & PROT_EXEC)
+> > +                               return -EACCES;
 > 
-> Thank you Yuri for insightful comments! Please see my responses inline...
+> I think this should be -EPERM to be consistent with seal_check_write()
+> and mmap(2) man page:
 > 
-> On 12/5/24 21:53, Yury Norov wrote:
-> > On Thu, Dec 05, 2024 at 06:04:09PM +0530, Nilay Shroff wrote:
-> >> While building the powerpc code using gcc 13, I came across following
-> >> errors generated for kernel/padata.c file:
-> >>
-> >>   CC      kernel/padata.o
-> >> In file included from ./include/linux/string.h:390,
-> >>                  from ./arch/powerpc/include/asm/paca.h:16,
-> >>                  from ./arch/powerpc/include/asm/current.h:13,
-> >>                  from ./include/linux/thread_info.h:23,
-> >>                  from ./include/asm-generic/preempt.h:5,
-> >>                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
-> >>                  from ./include/linux/preempt.h:79,
-> >>                  from ./include/linux/spinlock.h:56,
-> >>                  from ./include/linux/swait.h:7,
-> >>                  from ./include/linux/completion.h:12,
-> >>                  from kernel/padata.c:14:
-> >> In function ‘bitmap_copy’,
-> >>     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-> >>     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> >> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-> >>   114 | #define __underlying_memcpy     __builtin_memcpy
-> >>       |                                 ^
-> >> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-> >>   633 |         __underlying_##op(p, q, __fortify_size);                        \
-> >>       |         ^~~~~~~~~~~~~
-> >> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-> >>   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-> >>       |                          ^~~~~~~~~~~~~~~~~~~~
-> >> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-> >>   259 |                 memcpy(dst, src, len);
-> >>       |                 ^~~~~~
-> >> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> >> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-> >>   713 |                                  cpumask_var_t pcpumask,
-> >>       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> >> In function ‘bitmap_copy’,
-> >>     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-> >>     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> >> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-> >>   114 | #define __underlying_memcpy     __builtin_memcpy
-> >>       |                                 ^
-> >> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-> >>   633 |         __underlying_##op(p, q, __fortify_size);                        \
-> >>       |         ^~~~~~~~~~~~~
-> >> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-> >>   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-> >>       |                          ^~~~~~~~~~~~~~~~~~~~
-> >> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-> >>   259 |                 memcpy(dst, src, len);
-> >>       |                 ^~~~~~
-> >> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> >> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-> >>   713 |                                  cpumask_var_t pcpumask,
-> >>       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> >>
-> >> Apparently, above errors only manifests with GCC 13.x and config option
-> >> CONFIG_FORTIFY_SOURCE. Furthermore, if I use gcc 11.x or gcc 12.x then I
-> >> don't encounter above errors. Prima facie, these errors appear to be false-
-> > 
-> > If it works for pre-GCC13, and likely for clang, you shouldn't disable it
-> > for them. It should be enabled for CONFIG_FORTIFY_SOURCE=n, as well.
-> > 
-> > Check config CC_NO_ARRAY_BOUNDS for an example of how versioned flags
-> > are implemented.
-> > 
+> " EPERM The operation was prevented by a file seal; see fcntl(2)."
 > 
-> >> positive. Brian informed me that currently some efforts are underway by
-> >> GCC developers to emit more verbose information when GCC detects string
-> >> overflow errors and that might help to further narrow down the root cause
-> >> of this error.
-> > 
-> > I'm 100% sure that Brian is a great person and his information is
-> > absolutely correct and complete. But this is just not how we write
-> > commit messages.
-> > 
-> > Please avoid personal references, vague statements and news from
-> > the future.
-> > 
-> Sure, I would do the needful for future patches.
+> Thanks,
+> Kalesh
 > 
-> >> So for now, silence these errors using -Wno-stringop-
-> >> overread gcc option while building kernel/padata.c file until we find the
-> >> root cause.
-> > 
-> > You didn't provide any evidence that this warning is specific for padata.
-> > 
-> 
-> Let me just show you the test matrix for the stringop-overread error:
-> 
-> ARCH PowerPC:
-> compiler    CONFIG_FORTIFY_SOURCE    -Werror=stringop-overread
-> gcc 11.x     Y                         N
-> gcc 11.x     N                         N  
-> gcc 12.x     Y                         N
-> gcc 12.x     N                         N
-> gcc 13.x     Y                         Y
-> gcc 13.x     N                         N
-> clang 18.x   Y                         N
-> clang 18.x   N                         N
-> 
-> ARCH x86_64:
-> compiler    CONFIG_FORTIFY_SOURCE    -Werror=stringop-overread
-> gcc 11.x     Y                         N
-> gcc 11.x     N                         N  
-> gcc 12.x     Y                         N
-> gcc 12.x     N                         N
-> gcc 13.x     Y                         N
-> gcc 13.x     N                         N
-> clang 18.x   Y                         N
-> clang 18.x   N                         N
-> 
-> >From the above matrix, we could see that the sringop-overread error is only encountered
-> when we use gcc 13 on PowerPC machine and the stringop-overread error is seen only when we 
-> enable CONFIG_FORTIFY_SOURCE. Furthermore, so far I've only encountered this error while 
-> compiling kernel/padata.c file. 
-> 
-> > And indeed the subject states that this is a cpumasks-related warninig.
-> > Cpumask is a global subsystem. If you believe that this warning is
-> > false-positive, it may show up for any other random victim. Please
-> > suppress it globally.
-> > 
-> Yes you were correct, this warning might appear for any other random victims. But as 
-> I mentioned earlier, so far I've only encountered it with kernel/padata.c file. 
-> So, if we want to reduce the blast radius then wouldn't it be sufficient to just silence 
-> it only while compiling kernel/padata.c file? Or do you still suggest disabling it at
-> global level would be more helpful? I'm OK with either way moving forward. Please let 
-> me know.
 
-You will reduce the radius significantly if you limit sringop-overread
-suppression to a specific config, compiler and architecture. Silencing 
-random files is a gambling.
+Thanks for catching that Kalesh! I agree and will fix this in v2 of the
+series.
+
+Thanks,
+Isaac
 
