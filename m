@@ -1,65 +1,206 @@
-Return-Path: <linux-kernel+bounces-435624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B461A9E7A3D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:57:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B961886BEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:57:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2C420458E;
-	Fri,  6 Dec 2024 20:57:25 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B4859E7A58
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:08:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 302021C549C;
-	Fri,  6 Dec 2024 20:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D264284F68
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 21:08:10 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B36EE203710;
+	Fri,  6 Dec 2024 21:08:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="lZziYBJI"
+Received: from sonic308-15.consmr.mail.ne1.yahoo.com (sonic308-15.consmr.mail.ne1.yahoo.com [66.163.187.38])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1BA51C3C18
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 21:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.187.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733518645; cv=none; b=QBNUD50kf7N699cJe/9UgQ4Yx+MaC0/EDND6J+Mg1FaQMdgp2sU+z2Ofn5Y7XjjsJss1n++bE3lPOWNkzd9PTp6Fer2Y7NmZoFI9KqBNQbYX+y5pU0iGuzyoMPmgkjRMYDnC9Yw3SVizaBVRs90Y2ZkouurkNiZEpiC/VP1+Ed8=
+	t=1733519286; cv=none; b=r44nuOOnr30So8fmdyjbRv4XXVFjr1N1xko1t5o3Mr5JALb54AP5lKjVNXuuNVegd3XKXfuVjohdvT+VdAe3uujq7VQKCHu7/vAxHpP3ldMcxn3tCJrWOnfHG63S0R+y5x1EewbujzZg1CFS9uund/rfOe/jgfEYfBc/sSv0mMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733518645; c=relaxed/simple;
-	bh=ZP7UiqdbBNdHAqucmBS/M5PAsBe7svsYFbqLSaYtB2k=;
-	h=From:Subject:Date:Message-ID:To; b=ckw7SDW6O/fTRbmArfBx6VSBlGqHuLNXpC1aw2MKcp3TndPOh74J5u2mUpv74MPsZOLE5Cugl/+9agFeQYTb79WKRvI+dsn7+MJQldHY+AwTnWiFm8Lf5BX8qjqesSjBOY8m8HI8ReZwxMXSuuT2X8peGcnH7B77Z94j79grJrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 918C4C4CED2;
-	Fri,  6 Dec 2024 20:57:24 +0000 (UTC)
-From: Joseph Salisbury <joseph.salisbury@oracle.com>
-Subject: [ANNOUNCE] 5.15.173-rt82
-Date: Fri, 06 Dec 2024 20:56:49 -0000
-Message-ID: <173351860930.297920.1001273895589568079@jupiter>
-To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <josephtsalisbury@gmail.com>,Joseph Salisbury <joseph.salisbury@oracle.com>
+	s=arc-20240116; t=1733519286; c=relaxed/simple;
+	bh=HFCwGUFiueafm2TV1Op5osl0zuha+uNJg5IXcEByN/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rh8t70FP1n9k9sIi1g9RZADiimjgzTzu1u8mMOCPM85Q1cAnQ3QdzjRqc66xgdlhcqHNRYY+ZeVtwSsI6q3SEjD3NpOmmDhpyBOpXrSjaKuhwAdJ6dXGGTwkD/OJG5ROaU7iZcdEvGndU7+xKCqIkDssUiNodIWS3Pb94IbwgeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=lZziYBJI; arc=none smtp.client-ip=66.163.187.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733519282; bh=HFCwGUFiueafm2TV1Op5osl0zuha+uNJg5IXcEByN/8=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=lZziYBJIbOGPFiD4+xYpNQN6/B9jGvTUO2cOYi99HECRA7tEASCvibv6Bo6ANVLuMpebjwR2K9l6nLsOzuJww1kAwOwznYv+M7nCqtU5ytpvzvwK6v6MgnqNzE6SDISPKXkPexbLUtb9PKfCc9wTwKHZQorlyxSDl3Tl+uWRR/LodaicV+FTcmW2EMwS+ARrgZ+ffQLu3u6DCgsDcjXUVRz4Nmv1iVKkv0lpp2TH5eXSwjHOc4/xJDDm4JTfmzHpG/IUrifnyjpp5fh3zHDsfaA/CuBYk0gT7Bo9vvIJP3RmHwETqAXgWV1648+PON1YlbTHsRExW7QpqHhiDS2hkg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733519282; bh=62V7mGFTNXihH2nGYoB5aLQH3fpbamEGAaAJWyXhERI=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=tKu8gj/GAS4H5ueguolN2FEogOQZN+mqadn5a/9fKF0nENvdzIfsWsBuOvkrsnYMo8AupVwVzLqypGghgPA2XxboGMlTG11KRjbpBwjXgnrPmycy9EZ81SsfIIKX7Vczkn501X9v9MFIIZaMVJHfil4rm5FdB1pLaustS64wOea/Ja63OeGHw5creJU27GFt6f/n+pMyhOrMStolf33/nTpZKR4CeyrQUx0tqbzxJF8b5fr8PnyfskuQ2GVIiuGrQhj6WDmz9FxEPdDQfhksIzaJjEwfRdC8iC/eWsKB/KFbTeuJg6kZcLORCR7yF8DWO/iVwFzlnqWxqapmq5x7cQ==
+X-YMail-OSG: 60rKrgsVM1lvY6J2WLM.ZIV0sTeFEfdmhxDvFrJ35uDWPyaYVdmmIB7OJBzGrfZ
+ vXBNEUllrZbuiNXLcCwk_0zv4vYq3XbHJ3MYgvgbh56Wi4pC22bTKOs5Y9ZuJXxz1pUfzAIgZblO
+ q78_MC.7KURHXh4zM9VlK8F2sYa98VF1bg37D4aKTrL6gswXAf6WAOU8jBUUfcmmnDUTMYcsyjYi
+ S9q_ktECMkaiJh4dEtgyOT81h5i3gfOB5MPHo5oRn9s8Ie2s3wVy3tnv.XDGnSKVXcLZSfmO.Gst
+ L1EIpOtNhVdnHbK2ZFGzKnVo6o8DDnbTDHjg8TrH5CDfiCSRqNVGsv7uVvMcJfHOLXPvG0fAfROG
+ L7buDqXdbYJuoKf3mUDlHprK30g.0mQaP2PrS4ATNmUDrmvi8RJeq2_ENRAtOcFoqciF2dfETCoc
+ tpTrRBGyH4AsEDBwdjh2dSUUqyeoeBmnSL_fObmhEjD.ZqD759JgtHCtdQsDyCJOoZAoV_7y.cFB
+ K2T4yWjrg50vxqBt7W1IvEu1opyCFCXlGva9VHQDyKUN8St0vygPG6QQSSuUjf_eaRbVLw3N9347
+ LDTHXSOxo0rQigfW5HrULXfb7c0Ryiv1chJl.MJp5amNv_VIuk7iUnT8R4pJQbPe_qaf42wT3ohK
+ BYWfo2XwRW06xSvVrnEt1Kof0xBHO1Wcj_CNae6buktTmEpw8b5fnk9xlWPsMMYBuxLOMgUftvJl
+ MOwJ1s.d6iYU0KZ7t4Eknfci3ZG_7nj8mEYlculokbcvnoOhZ0SY4EJz2S4nk62_O6RueMM8W2Ct
+ iuCbegh1X8JwiS7LSwZ5lU2JanAPhS7pcrxSTMDGqEXzSIpttM2Ya0TW28WAIfTstnzyZ4XYdell
+ mDZh0jxuZygC.GiPYfZEbnceZhOiBC3w67RRCdPObZ6vAArm2w50KTMY0K.pSj8vEvusB0byFrgI
+ xh2CW0LhS3391wQ3wb215NsUEVzSl1_DqQE4WVKEjjh5TUBNPBh5HUiyqBN4EeXVCcybNpby1GT3
+ h1lwyPdXrX075a9Apm6KL4510i8Q355pXyx4qokKysYW5MyApLlVPJnfKT_p7b13s.vuMTcLVEDt
+ pE96uEJmxlmMe76lwh2oMked9yWPM3dO0Fsb4xiTlfwEMuj_YgHxJhjjlOTqq1tdPWpqgSowJ5bi
+ jLVpXaarsBk2s3K8Dvm_JSjMcWnPWTzVYG7kHi6KzwtCyzB0NhRXoMHU1uD9qjOnbQcZX_dVKzGz
+ 4DdaMeONXGoKEdgyZjPKKyEdS0I12NxbOEbasB1NcfnSRWZsks3TIwOj8n3qi0zQ53WqSff.ODlU
+ V1tXrwaD1hUJnoJj3Cl07VbilzWIX9h9JnyroDrJGIcGMXqYZUlfesp4KzvcFF47Z.xaQia0JkGM
+ 6qwlsL6BtZ4Anf0YAXqms2TVU085N9u1dFmzi0Y6gYOjkB6tsxmiZGCmlj4yOWjV9HHU8W5bjUka
+ adOpiAj_6vL8PHytPVfiBpBRB9ZzCWymJPOtluzJqGd2M8cR6aj5JS08yiOYBLPawaqPtxJwLcge
+ UDPA014XTFBkPYYbL.KKrAHY93Bjjv13fbXiF_1ewSLSXbpbf3lKHnuabINSgrYM5ZbHix8S.Hfs
+ 0jD5La.zVX007X1ejjrBbW8xgDHj3nMHTCTeVZzjXbz86kQRMt7h0dGJ4qw5XaYQzq5XTt5dyDns
+ n3iXtoJyX8bckI3dCYPhaP5xEcYWnTFCKwgk4opxQ33mfREKPOKT5u0NmLOH9q3kdX2i.dwkp62.
+ E3i79Pli_nmjyhlE_wkdz3kJvxG9kUBaklj8a8ypPfnv4PErAo3lnj.DGBd2a5kTsHKxAgKTBbOU
+ ydL2R9U4.lgmcVdE5zDl6Nf4t0a3G3ZXZciphkKTnVZ5qQfrAeSBW849NFgRhRjp9_WISgCA6P_f
+ gaQaJi4RYFnBrnM3pVcfUgOj7XUmDAGNnrWz8S23s4sYHD2ueYyu1i4fu9LAJhME1pNsJB9ZdwvK
+ Dqy.9Uj8rGUzM7dCVtJodtmtqAxKJG9KkKQX9G.Mj0nP6na.wTyTpQJAlb3VzLolmtfVzt3bf9hd
+ H2ZhuilnGtj3xRE7Q4xi5H8Res4X5BHas3ZWyqye5a1iO01thNhVxkPA17qo9tf.Y_SV5FNozMQo
+ brtnCVLXbJMS8xm7gv4ULOLBZ9KHFD8V.l1EkpjhI673ncQNbA3wGIo2ItET.m0JeGjdp_4cWfpU
+ s_vOL_988xK_1xdx4wExY698gWSnOAB4.TB5aUtgsJ5WFOOECO7256hwENUoa2.zZCc.yZGnm33_
+ PdFHZ1ixnlyk6FnJHj6CA0_StHLY-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 07789bf7-90b0-44db-b950-a9f732bbb14d
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic308.consmr.mail.ne1.yahoo.com with HTTP; Fri, 6 Dec 2024 21:08:02 +0000
+Received: by hermes--production-gq1-5dd4b47f46-ps69l (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 3b472a536ded25bdd29cda8fa7614940;
+          Fri, 06 Dec 2024 20:57:54 +0000 (UTC)
+Message-ID: <3db0da6b-4c09-43e6-a75c-c38353e191b3@schaufler-ca.com>
+Date: Fri, 6 Dec 2024 12:57:52 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/5] LSM: Ensure the correct LSM context releaser
+To: Kees Bakker <kees@ijzerbout.nl>, paul@paul-moore.com,
+ linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
+ john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
+ stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
+ selinux@vger.kernel.org, mic@digikod.net, linux-integrity@vger.kernel.org,
+ netdev@vger.kernel.org, audit@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, linux-nfs@vger.kernel.org,
+ Todd Kjos <tkjos@google.com>, Casey Schaufler <casey@schaufler-ca.com>
+References: <20241023212158.18718-1-casey@schaufler-ca.com>
+ <20241023212158.18718-2-casey@schaufler-ca.com>
+ <78666cf5-2214-413f-9450-19377a06049e@ijzerbout.nl>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <78666cf5-2214-413f-9450-19377a06049e@ijzerbout.nl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-Hello RT-list!
+On 12/6/2024 12:05 PM, Kees Bakker wrote:
+> Op 23-10-2024 om 23:21 schreef Casey Schaufler:
+>> Add a new lsm_context data structure to hold all the information about a
+>> "security context", including the string, its size and which LSM
+>> allocated
+>> the string. The allocation information is necessary because LSMs have
+>> different policies regarding the lifecycle of these strings. SELinux
+>> allocates and destroys them on each use, whereas Smack provides a
+>> pointer
+>> to an entry in a list that never goes away.
+>>
+>> Update security_release_secctx() to use the lsm_context instead of a
+>> (char *, len) pair. Change its callers to do likewise.  The LSMs
+>> supporting this hook have had comments added to remind the developer
+>> that there is more work to be done.
+>>
+>> The BPF security module provides all LSM hooks. While there has yet to
+>> be a known instance of a BPF configuration that uses security contexts,
+>> the possibility is real. In the existing implementation there is
+>> potential for multiple frees in that case.
+>>
+>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>> Cc: linux-integrity@vger.kernel.org
+>> Cc: netdev@vger.kernel.org
+>> Cc: audit@vger.kernel.org
+>> Cc: netfilter-devel@vger.kernel.org
+>> To: Pablo Neira Ayuso <pablo@netfilter.org>
+>> Cc: linux-nfs@vger.kernel.org
+>> Cc: Todd Kjos <tkjos@google.com>
+>> ---
+>>   drivers/android/binder.c                | 24 +++++++--------
+>>   fs/ceph/xattr.c                         |  6 +++-
+>>   fs/nfs/nfs4proc.c                       |  8 +++--
+>>   fs/nfsd/nfs4xdr.c                       |  8 +++--
+>>   include/linux/lsm_hook_defs.h           |  2 +-
+>>   include/linux/security.h                | 35 ++++++++++++++++++++--
+>>   include/net/scm.h                       | 11 +++----
+>>   kernel/audit.c                          | 30 +++++++++----------
+>>   kernel/auditsc.c                        | 23 +++++++-------
+>>   net/ipv4/ip_sockglue.c                  | 10 +++----
+>>   net/netfilter/nf_conntrack_netlink.c    | 10 +++----
+>>   net/netfilter/nf_conntrack_standalone.c |  9 +++---
+>>   net/netfilter/nfnetlink_queue.c         | 13 +++++---
+>>   net/netlabel/netlabel_unlabeled.c       | 40 +++++++++++--------------
+>>   net/netlabel/netlabel_user.c            | 11 ++++---
+>>   security/apparmor/include/secid.h       |  2 +-
+>>   security/apparmor/secid.c               | 11 +++++--
+>>   security/security.c                     |  8 ++---
+>>   security/selinux/hooks.c                | 11 +++++--
+>>   19 files changed, 165 insertions(+), 107 deletions(-)
+>>
+>> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
+>> index 978740537a1a..d4229bf6f789 100644
+>> --- a/drivers/android/binder.c
+>> +++ b/drivers/android/binder.c
+>> @@ -3011,8 +3011,7 @@ static void binder_transaction(struct
+>> binder_proc *proc,
+>>       struct binder_context *context = proc->context;
+>>       int t_debug_id = atomic_inc_return(&binder_last_id);
+>>       ktime_t t_start_time = ktime_get();
+>> -    char *secctx = NULL;
+>> -    u32 secctx_sz = 0;
+>> +    struct lsm_context lsmctx;
+> Not initialized ?
 
-I'm pleased to announce the 5.15.173-rt82 stable release.
+Thank you for the review.
+It makes sense to initialize it here. I will make the change.
 
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v5.15-rt
-  Head SHA1: 558934529c41c96d730426f18fe0c9aebdcd55a0
-
-Or to build 5.15.173-rt82 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.15
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v5.x/patch-5.15.173.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/5.15/patch-5.15.173-rt82.patch.xz
-
-
-Enjoy!
-Joseph Salisbury
+>>       struct list_head sgc_head;
+>>       struct list_head pf_head;
+>>       const void __user *user_buffer = (const void __user *)
+>> @@ -3291,7 +3290,8 @@ static void binder_transaction(struct
+>> binder_proc *proc,
+>>           size_t added_size;
+>>             security_cred_getsecid(proc->cred, &secid);
+>> -        ret = security_secid_to_secctx(secid, &secctx, &secctx_sz);
+>> +        ret = security_secid_to_secctx(secid, &lsmctx.context,
+>> +                           &lsmctx.len);
+>>           if (ret) {
+>>               binder_txn_error("%d:%d failed to get security context\n",
+>>                   thread->pid, proc->pid);
+>> @@ -3300,7 +3300,7 @@ static void binder_transaction(struct
+>> binder_proc *proc,
+>>               return_error_line = __LINE__;
+>>               goto err_get_secctx_failed;
+>>           }
+>> -        added_size = ALIGN(secctx_sz, sizeof(u64));
+>> +        added_size = ALIGN(lsmctx.len, sizeof(u64));
+>>           extra_buffers_size += added_size;
+>>           if (extra_buffers_size < added_size) {
+>>               binder_txn_error("%d:%d integer overflow of
+>> extra_buffers_size\n",
+>> @@ -3334,23 +3334,23 @@ static void binder_transaction(struct
+>> binder_proc *proc,
+>>           t->buffer = NULL;
+>>           goto err_binder_alloc_buf_failed;
+>>       }
+>> -    if (secctx) {
+>> +    if (lsmctx.context) {
+> From code inspection it is not immediately obvious. Can you
+> guarantee that lsmctx is always initialized when the code
+> gets to this point? Perhaps it is safer to just initialize when
+> it is defined above (line 3014).
+>
+>
 
