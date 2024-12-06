@@ -1,201 +1,127 @@
-Return-Path: <linux-kernel+bounces-435330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADC309E7620
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:35:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20EF9E761B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:34:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A5A228B462
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:35:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9148428B0C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:34:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A26121B914;
-	Fri,  6 Dec 2024 16:32:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1F921B1BD;
+	Fri,  6 Dec 2024 16:32:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Q6m+qyP1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="APkY/E2T"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E09FD20456C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFBB1FFC76;
 	Fri,  6 Dec 2024 16:31:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733502721; cv=none; b=FWB/cAhvscsKRXVKHU8xehoSUJxeO0+kLwQT8oxt8TtKukI+NWM9ZtKZYK5h2ltmDOIHyjhM677QdEvvaulvTtu7HvZTMim8Ly+GRvpI2QIxcgvRzqC8lmRQenBnvFyCtEJl/K6rgbuHGTodgog9Tbxo+o13/g+0jEqNRIqIJlw=
+	t=1733502720; cv=none; b=BrVN3wr2gvJhO3r1R3R78lQy60RujVNnYiodc4hjbRlXuz5gZskp+K1r1OLRA2aI2T1dFq5YXQzlF+VLQvarozIbmlUOQ0SDEdR/4otGG0ivIj9tk3mR20H81xWJsMeDNJzOCiO24BMDGfBbRZ91I8JqHnhI2tc3UjK35dBU37Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733502721; c=relaxed/simple;
-	bh=mufGsWcjvtDyozFd7iwe+tJWU+9sYLk61rM7KyeLzyE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hx3HnLFKnfaiL0iqbu7MkuMHRIeUbClL3i82vnse7Lt/VXzPMqN4tZBCeAUqxe9b9hVUfgrv5mkB3fqUSTqeWgJ344fuEGiBdwshGKLKag6MfRFPPOZCiRmAcAIAf7qiS2Ab9JTMFXzrO5OgnAD+JY6BUezwYhQuYgsObWgMzwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Q6m+qyP1; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733502719; x=1765038719;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=mufGsWcjvtDyozFd7iwe+tJWU+9sYLk61rM7KyeLzyE=;
-  b=Q6m+qyP1JAu9LbqcrXh7DafN0YMuzuIp32oVgBwU0C3Wuah5vbqP9wqf
-   3t87Gl9U2K5EqngYnfp9zILPeQG+1Oj7oHa+BYdEE/456lceXD+VbiBAO
-   BRyrKuoATwlod+fLfxkqGin51pT1amm5yUSFVHxW5D93uTFOT/DrVO1dr
-   G+ji4oG/8jxlvxPFotqAI4AMGKzFs2XJ5b1Unveel2A77/Zz7SILcocHH
-   NSe6fgPd0KBxPIGkEQQCI92oxAMxRP+Qi0nKWUOyjmaAAdX9wf6Ub/1Xc
-   l16/a5v6NRRwNDEa8iChM1xNOIOTrKxlTPqo4yMJ6+Dx9oIlX3c0Gdm5C
-   w==;
-X-CSE-ConnectionGUID: S+FSd+YHRN2FPQ0bFBLfHA==
-X-CSE-MsgGUID: RYjZ5XZgSxqfAGtubzUg+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="44470426"
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="44470426"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 08:31:55 -0800
-X-CSE-ConnectionGUID: 41z0rpySRHed+lX5ID/2Nw==
-X-CSE-MsgGUID: NXRkmqPcS4qgFtGSqutT8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
-   d="scan'208";a="95258525"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 08:31:55 -0800
-From: Tony Luck <tony.luck@intel.com>
-To: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	x86@kernel.org
-Cc: James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	patches@lists.linux.dev,
-	Tony Luck <tony.luck@intel.com>
-Subject: [PATCH v11 6/8] x86/resctrl: Add "mba_MBps_event" file to CTRL_MON directories
-Date: Fri,  6 Dec 2024 08:31:46 -0800
-Message-ID: <20241206163148.83828-7-tony.luck@intel.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241206163148.83828-1-tony.luck@intel.com>
-References: <20241206163148.83828-1-tony.luck@intel.com>
+	s=arc-20240116; t=1733502720; c=relaxed/simple;
+	bh=tGxxB+XljXcuE0hRcX2Nqt/vxo0R6CzixL3bi2d2wEE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ISANPAp/fE2VINM9im2PHOlgBHGyhCy8XrfgOmVKHmALM0mlwyym+zWwNiI5UwDoG1rvvAIGkk5X9WG50KuZeY0rbbaH4T4FCV0U4pzn5FHImyQrZwJUI8RZ7qySrjqqDtc7gB+RUbS+VP1+NgONlzjQd6ngbYCjCLHZ4mB4/GI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=APkY/E2T; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=o1vL76URTK41WeEd0opGeSEdVV53xsw2rWEY8OQ/ulA=; b=APkY/E2TP7kW+DlfgfAUkVH/tJ
+	pDde5UjrykoRcsopffzWphPbr7BGeBcyrTEolWm1OPh+UB58yGKlpPpgdEcjZ41b1aE01UK8tc9Ee
+	jgVNP3Zyi+wkChgoKb4a2kXrj3S/JKuvVwxsw3xOc6elrAflggMJQYRbIasxkIY+bQFLWyNigXJ4H
+	j4bmxWn9DCnm3heXF60lcdi3QG6WsyMne2ie/Uw92po4PeVO9nhFQLRDWerbYGsvxOZ/s4hWnoi95
+	AGPCJtMiiD8bUAGou6kVvtlwaxVFdQnP9Tq21vC9HHgrfCRluPlpGMMhUMhbTijGOPFwwl/BMupTj
+	1bwuSKcw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37298)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tJbF6-0006Uj-1E;
+	Fri, 06 Dec 2024 16:31:48 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tJbF4-0007g4-3D;
+	Fri, 06 Dec 2024 16:31:47 +0000
+Date: Fri, 6 Dec 2024 16:31:46 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Lei Wei <quic_leiwei@quicinc.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_luoj@quicinc.com, srinivas.kandagatla@linaro.org,
+	bartosz.golaszewski@linaro.org, vsmuthu@qti.qualcomm.com,
+	john@phrozen.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH net-next v2 4/5] net: pcs: qcom-ipq9574: Add USXGMII
+ interface mode support
+Message-ID: <Z1Mm8nBR_sYyzBUh@shell.armlinux.org.uk>
+References: <20241204-ipq_pcs_rc1-v2-0-26155f5364a1@quicinc.com>
+ <20241204-ipq_pcs_rc1-v2-4-26155f5364a1@quicinc.com>
+ <Z1B3W94-8qjn17Sj@shell.armlinux.org.uk>
+ <dc40d847-9a98-4f46-94cb-208257334aed@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dc40d847-9a98-4f46-94cb-208257334aed@quicinc.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-The "mba_MBps" mount option provides an alternate method to
-control memory bandwidth. Instead of specifying allowable
-bandwidth as a percentage of maximum possible, the user
-provides a MiB/s limit value.
+On Sat, Dec 07, 2024 at 12:20:57AM +0800, Lei Wei wrote:
+> On 12/4/2024 11:38 PM, Russell King (Oracle) wrote:
+> > On Wed, Dec 04, 2024 at 10:43:56PM +0800, Lei Wei wrote:
+> > > +static int ipq_pcs_link_up_config_usxgmii(struct ipq_pcs *qpcs, int speed)
+> > > +{
+> > ...
+> > > +	/* USXGMII only support full duplex mode */
+> > > +	val |= XPCS_DUPLEX_FULL;
+> > 
+> > Again... this restriction needs to be implemented in .pcs_validate() by
+> > knocking out the half-duplex link modes when using USXGMII mode.
+> > 
+> > .pcs_validate() needs to be implemented whenever the PCS has
+> > restrictions beyond what is standard for the PHY interface mode.
+> > 
+> 
+> Currently, it seems there is no phylink_validate() call in
+> phylink_resolve(), to validate the resolved duplex/speed which is notified
+> by phydev when the PHY is linked up. So I am thinking to add this duplex
+> check in this link_up op, and return an appropriate error in case of
+> half-duplex. (Kindly correct me if I am wrong).
 
-In preparation to allow the user to pick the memory bandwidth
-monitoring event used as input to the feedback loop, provide
-a file in each CTRL_MON group directory that shows the event
-currently in use. Note that this file is only visible when
-the "mba_MBps" mount option is in use.
+Doing validation at that point is way too late.
 
-Suggested-by: Reinette Chatre <reinette.chatre@intel.com>
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Reviewed-by: Reinette Chatre <reinette.chatre@intel.com>
----
- arch/x86/kernel/cpu/resctrl/internal.h    |  2 ++
- arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 30 +++++++++++++++++++++++
- arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 10 ++++++++
- 3 files changed, 42 insertions(+)
+We don't want the PHY e.g. even advertising a half-duplex link mode if
+the system as a whole can not support half-duplex modes. If the system
+can't support half-duplex, then trying to trap it out at resolve time
+would be way too late - the media has already negotiated a half-duplex
+link, and that's that.
 
-diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
-index 485800055a7d..ce10a883ecf8 100644
---- a/arch/x86/kernel/cpu/resctrl/internal.h
-+++ b/arch/x86/kernel/cpu/resctrl/internal.h
-@@ -609,6 +609,8 @@ ssize_t rdtgroup_schemata_write(struct kernfs_open_file *of,
- 				char *buf, size_t nbytes, loff_t off);
- int rdtgroup_schemata_show(struct kernfs_open_file *of,
- 			   struct seq_file *s, void *v);
-+int rdtgroup_mba_mbps_event_show(struct kernfs_open_file *of,
-+				 struct seq_file *s, void *v);
- bool rdtgroup_cbm_overlaps(struct resctrl_schema *s, struct rdt_ctrl_domain *d,
- 			   unsigned long cbm, int closid, bool exclusive);
- unsigned int rdtgroup_cbm_to_size(struct rdt_resource *r, struct rdt_ctrl_domain *d,
-diff --git a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-index 200d89a64027..5fa37b4ecc7a 100644
---- a/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-+++ b/arch/x86/kernel/cpu/resctrl/ctrlmondata.c
-@@ -518,6 +518,36 @@ static int smp_mon_event_count(void *arg)
- 	return 0;
- }
- 
-+int rdtgroup_mba_mbps_event_show(struct kernfs_open_file *of,
-+				 struct seq_file *s, void *v)
-+{
-+	struct rdtgroup *rdtgrp;
-+	int ret = 0;
-+
-+	rdtgrp = rdtgroup_kn_lock_live(of->kn);
-+
-+	if (rdtgrp) {
-+		switch (rdtgrp->mba_mbps_event) {
-+		case QOS_L3_MBM_LOCAL_EVENT_ID:
-+			seq_puts(s, "mbm_local_bytes\n");
-+			break;
-+		case QOS_L3_MBM_TOTAL_EVENT_ID:
-+			seq_puts(s, "mbm_total_bytes\n");
-+			break;
-+		default:
-+			pr_warn_once("Bad event %d\n", rdtgrp->mba_mbps_event);
-+			ret = -EINVAL;
-+			break;
-+		}
-+	} else {
-+		ret = -ENOENT;
-+	}
-+
-+	rdtgroup_kn_unlock(of->kn);
-+
-+	return ret;
-+}
-+
- void mon_event_read(struct rmid_read *rr, struct rdt_resource *r,
- 		    struct rdt_mon_domain *d, struct rdtgroup *rdtgrp,
- 		    cpumask_t *cpumask, int evtid, int first)
-diff --git a/arch/x86/kernel/cpu/resctrl/rdtgroup.c b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-index 0659b8e2a71b..6eb930b8bdfd 100644
---- a/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-+++ b/arch/x86/kernel/cpu/resctrl/rdtgroup.c
-@@ -1950,6 +1950,12 @@ static struct rftype res_common_files[] = {
- 		.seq_show	= rdtgroup_schemata_show,
- 		.fflags		= RFTYPE_CTRL_BASE,
- 	},
-+	{
-+		.name		= "mba_MBps_event",
-+		.mode		= 0444,
-+		.kf_ops		= &rdtgroup_kf_single_ops,
-+		.seq_show	= rdtgroup_mba_mbps_event_show,
-+	},
- 	{
- 		.name		= "mode",
- 		.mode		= 0644,
-@@ -2355,6 +2361,7 @@ static int set_mba_sc(bool mba_sc)
- 	struct rdt_resource *r = &rdt_resources_all[RDT_RESOURCE_MBA].r_resctrl;
- 	u32 num_closid = resctrl_arch_get_num_closid(r);
- 	struct rdt_ctrl_domain *d;
-+	unsigned long fflags;
- 	int i;
- 
- 	if (!supports_mba_mbps() || mba_sc == is_mba_sc(r))
-@@ -2369,6 +2376,9 @@ static int set_mba_sc(bool mba_sc)
- 			d->mbps_val[i] = MBA_MAX_MBPS;
- 	}
- 
-+	fflags = mba_sc ? RFTYPE_CTRL_BASE | RFTYPE_MON_BASE : 0;
-+	resctrl_file_fflags_init("mba_MBps_event", fflags);
-+
- 	return 0;
- }
- 
+Instead, phylink takes the approach of restricting the media
+advertisement according to the properties of the system, thereby
+preventing invalid configurations _way_ before we get to autoneg
+completion and calling phylink_resolve().
+
 -- 
-2.47.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
