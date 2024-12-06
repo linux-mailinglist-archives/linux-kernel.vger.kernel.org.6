@@ -1,241 +1,143 @@
-Return-Path: <linux-kernel+bounces-434972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 960AB9E6DA9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:59:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44AF99E6DAC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:03:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D425A1882EB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:59:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F9E283112
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558CA200114;
-	Fri,  6 Dec 2024 11:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C57200129;
+	Fri,  6 Dec 2024 12:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wYRS3Hn+"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GJZVX+UE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B747A200109
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 929921FF604;
+	Fri,  6 Dec 2024 12:03:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733486348; cv=none; b=Xx6Or/U9Y0+bjgNYlTIF4ypXQ0t2aTA6k6i92gRewwG32KBh/Mv7/eZ75lPkAhGU6fIZv6jVsZX3BUAz9llm8mCh0Eo8yRsaZdrlV+05r5Ua/79xfFFABn2gU0McDwk7ES3cq6+XHaK3Lsf5RlsWqbnTbjZLHq0NZLAvutdEbCM=
+	t=1733486587; cv=none; b=Z+fU7Wrd6a4NDQnCgz6u7DkRW25Zb9welD6Ad533OHX8VdaHq6fhJbOY/bdyKmFnYHQKMckMhhkiB3tRyGWl+LVmexSM4+lfl55GX90VH7e+RIAaWBsXhMkPomr4ebkOKUdTmSNKZgqFuq/bNzpVfpVK0GlgNx4VVIg7iwlalm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733486348; c=relaxed/simple;
-	bh=eNm8ETrye6gjjlqkEx1ruKw8lDAuRNX8prmHn4lv3f4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KfjVHM0may6qRM7RncYIyqA79Mcv+4LHZ6EYJZ84O5e8ihqGNfy5uAONSSFI7fhihsBiXRXAmcSTw3GiFXnjR6+LlzkrqtL4iTCcr1sWngyFdj3iK5m2IIE6vJVizGh3GNB3prOQAogDuoEz0LzhSlS0tN9G6ZVWy5EIHMvRjKs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wYRS3Hn+; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3d143376dso335678a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 03:59:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733486345; x=1734091145; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fkgL71aCC+c5eU3/5Ahdd+PfY2GgDv7LSswVdp5m+AA=;
-        b=wYRS3Hn+UmwR8DVD3nmE8wz6/AcD+Y+vS+QmjB52ehqNwmFnnpGQwmJnJRpUtLYDVc
-         KvADpGuLgiT8lfF2mvAwRhRnXft9S4yUyORew+ywBzD6WpmqACnVp6WAt65HmBVjETHM
-         Pas1xTi5AFlKfZ3A/UHfm5snrTj7bAyiPa+4nAQ+e6UjCTMvIaTHSqBbHViVMiu9tKJR
-         MH58J/LdIOKXJp+SQwXM/MmTi9haBp7LcTJI9g5T/NLojcRGBn/L39nazHvp15aZ6C/k
-         iU12OIaJ6BDlKWoA6C3p+aoLl+sUuGBj+vIkWwzwV++WPO7Y5pBc7w4sEkyjbUlINyH3
-         fWzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733486345; x=1734091145;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fkgL71aCC+c5eU3/5Ahdd+PfY2GgDv7LSswVdp5m+AA=;
-        b=Xg0zRf7eA9XTQFHyVYiA/0ljycm8ZmFMS+LsPy4NSbo9sJb+aolbaYQPDKarb0bZ8N
-         4I4CwfEvMxbeXI3kiBt0aSVQ3fbhJoXBdZ14waQbyzZL3oPl3E5eDuGn6rQ9dry5ApYi
-         SJDYagsAt6bfE9ZWIm6t8ZwDq6YHIdJvSBlWrz42forsiJsHIaSfHczX9KqrT3IlA/pI
-         Lnv3aqCk6V28gyaslnBB8qzonEC0oIhNA+2nfAhPekiISC2oct14Y6xg5yerVLAhF4D4
-         GPaaV78hJkaK54y+XhLC3djbakT+MwJMoqRpkS/O/V2SNp5a3490KGk0djVM9ylsaJFn
-         PcXw==
-X-Gm-Message-State: AOJu0Yz3Qru/ckMJ3pCHSfv/iNo1jyTMz3sU/pfNje2YdVWyV7AHYkP+
-	U6GfG5fBfIfO1XUK0gnR5ab4lqI0kEtXQsKoWPUeyxBXUea16wF1lFYalFxqnXQ=
-X-Gm-Gg: ASbGncsmVkPUM0o2eEY92C/2dzzWGJcbvTmgRPjv7k1DwZUVUTm6iQABoJyEaqJQYfA
-	MPE1WpoilA65+lj+c1r26Bk3SocV29KlyhTTNAJCBDKkPTSw4krjuxZ7PEsFw6E8mGMUn8m8ejk
-	/MZ0735pBe7yv064aTAi5eCGQbuCmg3FJRQwMoplGts8f0qFbRe0DtZqSR3ji7BCrf+TSbImBUz
-	BCLf1JHaKnAXosr800Tg52IbF2N3Z1TINOZAnpdxgVUt4u1O1qLIkt17w==
-X-Google-Smtp-Source: AGHT+IEHIi9QWxcwQ/B/5PO4EWqQexTbFpihDQmGHpBVwImN5z7OBHtx4LNIPsp//1PemqEWOn6Y3w==
-X-Received: by 2002:a17:907:9385:b0:a9a:3705:9ad9 with SMTP id a640c23a62f3a-aa63a2550c2mr202722966b.50.1733486344908;
-        Fri, 06 Dec 2024 03:59:04 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.27])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260eb8b5sm229008366b.193.2024.12.06.03.59.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 03:59:04 -0800 (PST)
-Message-ID: <aa09bbe3-8f5f-42cb-a7a9-deaaef77affb@linaro.org>
-Date: Fri, 6 Dec 2024 11:59:02 +0000
+	s=arc-20240116; t=1733486587; c=relaxed/simple;
+	bh=XY5MF/T3u8Njgl/kmkEzdTj2y+pfWzit8vqHlWWkb34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=moHQK+ObY0cXysQuQ+AxUneElbxPDKU0LHm7h52OuO7uNTPhi4NksCnXFsshsmLnNdEu1I2wijmJnXiHRHg6AlhPSunXf3RgwvWADvuxiWcGsuCIvu3PMONKsfKsKn+7AKF/KXw0XDvH5O1SSj5IaY7r8oiz/WJ0XxFiyI6b+bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GJZVX+UE; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733486586; x=1765022586;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XY5MF/T3u8Njgl/kmkEzdTj2y+pfWzit8vqHlWWkb34=;
+  b=GJZVX+UEM6RPcqNZO8rOjfa79G5SoUnn7+ur3hXHfifimRw9C0HeV+w2
+   3Op+tP78D7ZUIYDTAisnXYmvg+X85pzxqpYf6/a0nHQZMsqKLqGSkbVju
+   KqAn3npAnZ3uVz6mskPeGbTtRVHLIvv4ByY5E5eokJ3tefrugozkgsX5Q
+   705Wue1C/8bf7qJOtoJx8+xdK/y3BWgSMgxZNxHlNkJf9u1MaSMXlF7Ny
+   EBlVpesPy3xHzLAWDpMnQSR7cxoYF75COWh6RGIEslJj1e/POH5bPMYmP
+   RehY5ODy+1Z/SyING/gKEI/AyoXO1Ts7dvELmmpTTOwJJsmb38Fkfg5SF
+   A==;
+X-CSE-ConnectionGUID: 2X8EBM+MTkaV7fvVd4rNLg==
+X-CSE-MsgGUID: bIanWsBsTE+jL5cffzOlQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="44306660"
+X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
+   d="scan'208";a="44306660"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 04:03:05 -0800
+X-CSE-ConnectionGUID: /yOMjzOTTAS1/UE7SxPaEA==
+X-CSE-MsgGUID: bcg0ZZ/kTV+CbItNRwQ4Og==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
+   d="scan'208";a="95201509"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 06 Dec 2024 04:03:01 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJX2w-00010j-2D;
+	Fri, 06 Dec 2024 12:02:58 +0000
+Date: Fri, 6 Dec 2024 20:02:36 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, manivannan.sadhasivam@linaro.org,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, fan.ni@samsung.com,
+	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
+	quic_nitegupt@quicinc.com, quic_krichai@quicinc.com,
+	gost.dev@samsung.com, Shradha Todi <shradha.t@samsung.com>
+Subject: Re: [PATCH v4 1/2] PCI: dwc: Add support for vendor specific
+ capability search
+Message-ID: <202412061940.WSlxZ8i1-lkp@intel.com>
+References: <20241206074456.17401-2-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
-To: Arnd Bergmann <arnd@arndb.de>, Rob Herring <robh@kernel.org>,
- krzk+dt@kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>,
- kernel-team@android.com, William McVicker <willmcvicker@google.com>,
- Peter Griffin <peter.griffin@linaro.org>,
- Javier Martinez Canillas <javierm@redhat.com>,
- Thomas Zimmermann <tzimmermann@suse.de>,
- Daniel Lezcano <daniel.lezcano@linaro.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Ulf Hansson <ulf.hansson@linaro.org>
-References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
- <20241205175345.201595-3-tudor.ambarus@linaro.org>
- <427caa87-b9ba-4797-88bd-a18a96eefdcf@app.fastmail.com>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <427caa87-b9ba-4797-88bd-a18a96eefdcf@app.fastmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206074456.17401-2-shradha.t@samsung.com>
 
-Thanks for the review, Arnd!
+Hi Shradha,
 
-On 12/6/24 6:47 AM, Arnd Bergmann wrote:
-> On Thu, Dec 5, 2024, at 18:53, Tudor Ambarus wrote:
-> 
->> +#define exynos_acpm_set_bulk(data, i)					\
->> +	(((data) & ACPM_BULK_MASK) << (ACPM_BULK_SHIFT * (i)))
->> +#define exynos_acpm_read_bulk(data, i)					\
->> +	(((data) >> (ACPM_BULK_SHIFT * (i))) & ACPM_BULK_MASK)
-> 
-> Could these be inline functions for readability?
+kernel test robot noticed the following build warnings:
 
-sure, will do.
+[auto build test WARNING on pci/next]
+[also build test WARNING on pci/for-linus mani-mhi/mhi-next linus/master v6.13-rc1 next-20241205]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-> 
->> +	cmd[3] = (u32)(sched_clock() / 1000000); /*record ktime ms*/
-> 
-> The comment does not match the implementation, sched_clock()
-> is probably not what you want here because of its limitiations.
-> 
-> Maybe ktime_to_ms(ktime_get())?
-> 
+url:    https://github.com/intel-lab-lkp/linux/commits/Shradha-Todi/PCI-dwc-Add-support-for-vendor-specific-capability-search/20241206-163620
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
+patch link:    https://lore.kernel.org/r/20241206074456.17401-2-shradha.t%40samsung.com
+patch subject: [PATCH v4 1/2] PCI: dwc: Add support for vendor specific capability search
+config: i386-buildonly-randconfig-006 (https://download.01.org/0day-ci/archive/20241206/202412061940.WSlxZ8i1-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241206/202412061940.WSlxZ8i1-lkp@intel.com/reproduce)
 
-Indeed, will use, thanks.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412061940.WSlxZ8i1-lkp@intel.com/
 
->> +/**
->> + * acpm_get_rx() - get response from RX queue.
->> + * @achan:	ACPM channel info.
->> + * @xfer:	reference to the transfer to get response for.
->> + *
->> + * Return: 0 on success, -errno otherwise.
->> + */
->> +static int acpm_get_rx(struct acpm_chan *achan, struct acpm_xfer *xfer)
->> +{
->> +	struct acpm_msg *tx = &xfer->tx;
->> +	struct acpm_msg *rx = &xfer->rx;
->> +	struct acpm_rx_data *rx_data;
->> +	const void __iomem *base, *addr;
->> +	u32 rx_front, rx_seqnum, tx_seqnum, seqnum;
->> +	u32 i, val, mlen;
->> +	bool rx_set = false;
->> +
->> +	rx_front = readl_relaxed(achan->rx.front);
->> +	i = readl_relaxed(achan->rx.rear);
-> 
-> If you have to use readl_relaxed(), please annotate why,
-> otherwise just use the normal readl().  Is this access to
-> the SRAM?
+All warnings (new ones prefixed by >>):
 
-all IO accesses in this driver are to SRAM, yes.
-
-There are no DMA accesses involved in the driver and the _relaxed()
-accessors are fully ordered for accesses to the same endpoint, so I
-thought _relaxed are fine.
-
-> 
->> +	spin_lock_irqsave(&achan->tx_lock, flags);
->> +
->> +	tx_front = readl_relaxed(achan->tx.front);
->> +	idx = (tx_front + 1) % achan->qlen;
->> +
->> +	ret = acpm_wait_for_queue_slots(achan, idx);
->> +	if (ret) {
->> +		spin_unlock_irqrestore(&achan->tx_lock, flags);
->> +		return ret;
->> +	}
-> 
-> It looks like you are calling a busy loop function inside
-> of a hardirq handler here, with a 500ms timeout. This is
-> not ok.
-
-That's true, the code assumes that the method can be called from hard
-irq context.
-
-Can't tell whether that timeout is accurate, it comes from downstream
-and the resources that I have do not specify anything about what would
-be an acceptable timeout.
-
-I see arm_scmi typically uses 30 ms for transport layers.
-
-> 
-> If you may need to wait for a long timeout, I would suggest
-> changing the interface so that this function is not allowed
-> to be called from irq-disabled context, change the spinlock
-> to a mutex and polling read to a sleeping version.
-
-I think the question I need to answer here is whether the acpm interface
-can be called from atomic context or not. On a first look, all
-downstream drivers call it from process context. Curios there's no clock
-enable though in downstream, which would require atomic context. I'll
-get back to you on this.
-
-If there's at least a client that calls the interface in hard/soft irq
-context (clocks?) then I don't think I'll be able to implement your
-suggestion. Each channel has its own TX/RX rings in SRAM. If there are
-requests from both hard irq and process context for the same channel,
-then I need to protect the accesses to the rings via spin_lock_irqsave.
-This is what the code assumes, because downstream allows calls from
-atomic context even if I can't pinpoint one right now.
-
-I guess I can switch everything to sleeping version, and worry about
-atomic context when such a client gets proposed?
-
-> 
->> +	/* Advance TX front. */
->> +	writel_relaxed(idx, achan->tx.front);
->> +
->> +	/* Flush SRAM posted writes. */
->> +	readl_relaxed(achan->tx.front);
->> +
->> +	spin_unlock_irqrestore(&achan->tx_lock, flags);
-> 
-> I don't think this sequence guarantees the serialization
-> you want. By making the access _relaxed() you explicitly
-> say you don't want serialization, so the store does
-> not have to complete before the unlock.
-> 
-
-I could benefit of the non relaxed versions indeed.
+   drivers/pci/controller/dwc/pcie-designware.c: In function 'dw_pcie_find_vsec_capability':
+>> drivers/pci/controller/dwc/pcie-designware.c:285:16: warning: suggest parentheses around assignment used as truth value [-Wparentheses]
+     285 |         while (vsec = dw_pcie_find_next_ext_capability(pci, vsec,
+         |                ^~~~
 
 
->> +		.of_match_table	= of_match_ptr(acpm_match),
-> 
-> Remove the stray of_match_ptr() here.
+vim +285 drivers/pci/controller/dwc/pcie-designware.c
 
-okay
+   279	
+   280	u16 dw_pcie_find_vsec_capability(struct dw_pcie *pci, u8 vsec_cap)
+   281	{
+   282		u16 vsec = 0;
+   283		u32 header;
+   284	
+ > 285		while (vsec = dw_pcie_find_next_ext_capability(pci, vsec,
+   286						PCI_EXT_CAP_ID_VNDR)) {
+   287			header = dw_pcie_readl_dbi(pci, vsec + PCI_VNDR_HEADER);
+   288			if (PCI_VNDR_HEADER_ID(header) == vsec_cap)
+   289				return vsec;
+   290		}
+   291	
+   292		return 0;
+   293	}
+   294	EXPORT_SYMBOL_GPL(dw_pcie_find_vsec_capability);
+   295	
 
->> --- /dev/null
->> +++ b/include/linux/soc/samsung/exynos-acpm-protocol.h
-> 
-> Why is this in include/linux/soc, and not in the firmware
-> header?
-
-right, will move.
-
-Thanks!
-ta
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
