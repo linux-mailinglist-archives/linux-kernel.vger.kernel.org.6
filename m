@@ -1,223 +1,249 @@
-Return-Path: <linux-kernel+bounces-434581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D78B39E689E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:15:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 493D29E68A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:16:18 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 930A1281C2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:15:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DCC4169DFE
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462591DDA1B;
-	Fri,  6 Dec 2024 08:14:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DD5F1DEFFE;
+	Fri,  6 Dec 2024 08:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="uIJY09Ik"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2063.outbound.protection.outlook.com [40.107.236.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MBTHIT5Q"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 715FA191F78
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 08:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733472897; cv=fail; b=HNYiTSV/VcHpcSapilnSRo6r623K7eznqDk25u7va8Jt7YFP3Eu++ZmINOO16dQxkfSpCOOhGI/h3w3k/dSaoG2uoV5s2AYY+vYebLOV1bDIgqsfA98hXMVIMo/YsP4CpIyXmYBkXM+PW4iQCVmW0f4wrR3qjzIcbk47AL8ixxI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733472897; c=relaxed/simple;
-	bh=6yM6V4NGIS0D8Ew0beVSMBCq1i+y4UuwR6de90hn1vM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Lr2l6WAKyo3bN+o4qk4AIABTP3kA+WgY3Lq7b6NzLKba2jeljWFk8CE2bHAaH26dxVWSch+1Ix4B7Vn863BGvk5gNvWJ2kELr6hvyiCKAfW4ncmWiBe87ScPytP7eJL2UYpZEa61RJ3FRICvzT9KZ4PU+JIN2FRmq+3OcUNZ7WU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=uIJY09Ik; arc=fail smtp.client-ip=40.107.236.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Ln5KeMmgMj/Ae7GTwXxxLH8ETwm3jicxTaNY8Mr1ByW3FAicwRe4eHller4hJoY9NkdJGv98Ya0SZgaswFE4ZRmqCiWwUbHLyHQE2meR5inDpUPAs5A3IcHloA+iKn0R9XAW7gpAK3tasv6BFP0WYPypJ7OM7Z1/ju1LYV4uOce/z+jyuw5FMKS13qUyk+Mjf2stksEfrz4zjRDa3NXB+299dOYp9u72GlptMWaoQhtUljUnMcYgvoYpvfKPDcxKBxA0pC0u1XnTRtjcV60h53cV3M9shTi5HSbHp8ttveakT+sB5KCXyq7mZ3fydpHyEUG0T9E5uKxk4K0qW8rmMg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=596gIwhXG/HAhDbrLEdQUtyYTFRlTFq7epkHcMI+B6o=;
- b=kk4cHud6LxeEZsbpurD7yT3ts3QOEjf0SEInq54eNmHTDU10Wa/+ZPiVgdbsH3qkkABIl1SXLDG6MSvKwsmQChaX182tl7iiAW5MT0ycqsJpzxVoEjG5XoyhU6aynnPRxfPVWE6NyqkWTVXETZpN1UDnp1gPTBZdYgPYOEVTB43iUXCPXuwJDhK8BhadPMvQgqmbUz055wJBActoUjByNlPDzCZX8jn6lpldKIQ/D9ogQ/nt47EpkH3OY6IM1d7f55a3AuHiNJmGWN/xYgA9htgjDZl6iTRqMxfP6djT6Ob8H52qPIWJQcXYG9Szu9Yb8+cFmbD+VDk9TK9C6Q7r6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=596gIwhXG/HAhDbrLEdQUtyYTFRlTFq7epkHcMI+B6o=;
- b=uIJY09IknX5b3Aa703Gv5T98PLkCVwAIb80cryydawFp4OdTnwkbME23RvjaF+fl4A8ED2XFqitrRQat9CqpocAAHomIv0AF8AgfIiQzshTqK78AjtSjuC+rijC4lruKQ+dmlDRyE9n7uhgdAW0t7RI+xOIldj/yjS4onfhU2rQ=
-Received: from MW4PR03CA0187.namprd03.prod.outlook.com (2603:10b6:303:b8::12)
- by CH2PR12MB4054.namprd12.prod.outlook.com (2603:10b6:610:a6::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Fri, 6 Dec
- 2024 08:14:50 +0000
-Received: from SJ5PEPF000001C9.namprd05.prod.outlook.com
- (2603:10b6:303:b8:cafe::8) by MW4PR03CA0187.outlook.office365.com
- (2603:10b6:303:b8::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Fri, 6
- Dec 2024 08:14:49 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ5PEPF000001C9.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8230.7 via Frontend Transport; Fri, 6 Dec 2024 08:14:49 +0000
-Received: from [10.136.46.151] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 6 Dec
- 2024 02:14:45 -0600
-Message-ID: <94bc116e-0ef0-475a-ad00-b994bf0edca9@amd.com>
-Date: Fri, 6 Dec 2024 13:44:42 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D6293D6B;
+	Fri,  6 Dec 2024 08:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733472970; cv=none; b=W2QJ2G+9ubix4+4FAJHxkp42xzxUpt9Da40lU9Qc5NEDysA8cpUnvTGw7hKZU/VIvmarQCYyTfoTGLure4urSjHEVCDSMPZAC+DNZk8oqhUYAzhaYdsfAj4f2cGZmKprkUOTePkdqTzwvh4sxtM0zn2t0TiRaW2ssD5H25FP/EM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733472970; c=relaxed/simple;
+	bh=2DqBaoY/6bV8Ds/joIGrAijaxfMvq+z9HjNtk3xzO4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8wn6R0VQ2Ok74abtyO+7xJq5OZ87iZS6wv6CoIOu13YcTORbHmCV0ZC6OxpAymG7sxuvmEP/irBNYboCHGYUZaek2dj+bnHi5B0yeTPW8jRGtSJZpEwrqFW9lLessTmVxiRjnCt+QDY8f7wSRp5jaHUGkOJBR+rD6A57u5gkd0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MBTHIT5Q; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7b6882c33acso108398485a.2;
+        Fri, 06 Dec 2024 00:16:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733472967; x=1734077767; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZZ7fz8+6bATAjuTMFpscyLNwpiLOhP1x779T9s2PTqo=;
+        b=MBTHIT5QkFQfo5qkZ5UVSU8yiw09mzWQlzSno2SLzA5R/sqKblY9acDvcKoCh20ucV
+         IvuMninL+dcdimHe4Sly0RFilhQgH+yvn8AepbrHb/qJBU2Virk6eS0NLbATyxFv8zC/
+         ekBLU7UwTaZrYT9lRTcDYN7SvBiWI0bf6aFusN5VTiyDqlOchmJwLPwPBC9bYqRHaELX
+         Yf8fh7M/q9NmqczRILWHTZ1krdUgzwyxalNJ6MGloRTLzeYk+HSACEJW1SXVeE4x8/Sn
+         Mq+Cb/fKKJdNy+Q9hU+0SJlFN+fnymWxb7Qgu6NrR68PMyRcei34odis4qV/pRr6z3KV
+         yhbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733472967; x=1734077767;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZZ7fz8+6bATAjuTMFpscyLNwpiLOhP1x779T9s2PTqo=;
+        b=Cc/yaM/O5xnvuL4mlNmkkYEIa8UuPz9q4Dc83MQzA+luLyvxOfQAvE6EnkeAoY5ymG
+         XDD7clAqPsEaRKbhJXXBnJAWppDiohuRRiZ4GV5WRy3VUPXMDaHEIQnXNfTRl05X2BWH
+         6Bz9jOFgFc0Pk4Xe0iJUaedOArGUm0HRWbHMAOnAco48hWN51nZ5X55cMOH8CfZCCYJI
+         8rj3X0kLaG4DZgnjEjj4QO56bCpj/YxHZ5liLDCe+2/4t9YnKQWVO4bgkm05Dp0uBcXU
+         eHV55oSdEqQUY3hkcSZa+cndxUKtTiDr3oQ4LIm7+XwHYixMl1RuZ/vvv52pHj3D2+IE
+         Rxzg==
+X-Forwarded-Encrypted: i=1; AJvYcCVD0iVjquBTZNvTMzvTisaIf/OMBssqQ3pX3nWMTYwYCUt7s99kdJXgeAr6lcnybyn0f3gDKDUggq5aTrA=@vger.kernel.org, AJvYcCXLEDYu2jfHIE3jy9uFDC1U+OvBvZ9fp0+vwfJJG+i1o/rFXJZFm68hLf5VurLcpZMR1VfaNGHz1Ihe0tTBmFU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjI9iSEsn7Okfx8K75qk5Jwyp10suC60JI34kxCEQphpKzqQLv
+	o8E1GtIF15+3xNIsE/wGJbEB4ADgoP2ObBJX3DnjGmyF8PpCRaz4
+X-Gm-Gg: ASbGnctslgjCuseJ+8JCmsUeb5wIYveq+g4dW7Otl025+qcJ1hv3Kk6WZkFLUop5rg7
+	Soum+RTH/QIZwoRx51geTuZldo7f23KNuUkU189DPb3XoSn16OGTe6OoD2qKZrSPd28sjGYJ6Sl
+	YGo/xZZ2IO7qVJ3s3FNhpTu+XfCCrGN7yqd7Rte4sTSOfpDxqsQTwhx0sMNHj/J37Me+Ao+/aIJ
+	a9k6kT03fE3owrSLPbw0/LOhnFyfoZR0UmDZXlTRFfZIVYtJWN4d1481uQCOzmmsC7zAoWHLIMK
+	sLpClYyX3ay9SCeuCqecDoFqVuEGXDyZBz4zYn9l
+X-Google-Smtp-Source: AGHT+IECmweIadw2XvYWlzBOFhVS+CyVHCZAq/2bjn+t0eQZCyvTC5f+bu3tGfHwIn5r4YIYRNFTgQ==
+X-Received: by 2002:a05:620a:3951:b0:7b6:6756:eeef with SMTP id af79cd13be357-7b6bcabf9d9mr359928385a.1.1733472967393;
+        Fri, 06 Dec 2024 00:16:07 -0800 (PST)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6b5a9e7cbsm152370385a.118.2024.12.06.00.16.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 00:16:07 -0800 (PST)
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 908641200074;
+	Fri,  6 Dec 2024 03:16:06 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Fri, 06 Dec 2024 03:16:06 -0500
+X-ME-Sender: <xms:xrJSZ12ctgcbL0qukXoUofTCW53FxOrdxBM3FgDljbWjINmnratagQ>
+    <xme:xrJSZ8E97mzX9U6PShI7LO-wtBV4JEQ0zYh3--zci6eMCn8uT7-fe-4KEjvNQVaix
+    EaB86L41EFuWyVBXQ>
+X-ME-Received: <xmr:xrJSZ14JOLBLBJISqDKUXC1IIkQyUVxTjwSfZD3ICFVM1F5b1YCqS8uyBjs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieekgdduudehucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdej
+    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
+    drtghomheqnecuggftrfgrthhtvghrnhepjefhieekkeffjeeggeeuvefftdegfeduteel
+    geejledvffetiefhleefhedvgeeknecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
+    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
+    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
+    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
+    rghmvgdpnhgspghrtghpthhtohepudegpdhmohguvgepshhmthhpohhuthdprhgtphhtth
+    hopehlvggvsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhgvghhkhheslhhinhhu
+    gihfohhunhgurghtihhonhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
+    esvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegrrhhnugesrghrnhgusgdr
+    uggvpdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprg
+    hlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopehgrghrhiesghgr
+    rhihghhuohdrnhgvthdprhgtphhtthhopegsjhhorhhnfegpghhhsehprhhothhonhhmrg
+    hilhdrtghomhdprhgtphhtthhopegsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhm
+    vg
+X-ME-Proxy: <xmx:xrJSZy3d0csvrhIlH39FKkfb_26ao7oARQ1poNb3J7_e78gsm9v8gw>
+    <xmx:xrJSZ4Fe0XwX-AvsPw6ixbQ4VlIJcZu7a82hyTdWCa8lYIvAqG2f-A>
+    <xmx:xrJSZz-_3736NaM8UtYlmGZ9YzVjYr_DRr-DI33qHxBF41mqZvBrlw>
+    <xmx:xrJSZ1mZyEB9V9_U6nJARVy8DkJ6K_dkEPaZy0O48Nb2b7zLZsJhdQ>
+    <xmx:xrJSZ8EN7GNlncCwWDMvAlr_g7udD-pBC8_Ey6UclS4pYJsWs_z8iwbP>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Dec 2024 03:16:06 -0500 (EST)
+Date: Fri, 6 Dec 2024 00:15:27 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Lee Jones <lee@kernel.org>
+Cc: Greg KH <gregkh@linuxfoundation.org>, linux-kernel@vger.kernel.org,
+	arnd@arndb.de, ojeda@kernel.org, alex.gaynor@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 1/5] rust: miscdevice: Provide accessor to pull out
+ miscdevice::this_device
+Message-ID: <Z1Kynwt4LpWdOiBN@boqun-archlinux>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <20241205162531.1883859-2-lee@kernel.org>
+ <2024120648-finch-shrubbery-c6f5@gregkh>
+ <20241206071646.GE8882@google.com>
+ <20241206073309.GG8882@google.com>
+ <Z1KvNQUUStyLjpwz@boqun-archlinux>
+ <20241206080751.GN8882@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched: deadline: Cleanup goto label in
- pick_earliest_pushable_dl_task
-To: John Stultz <jstultz@google.com>
-CC: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>, Vincent Guittot
-	<vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel
- Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Wanpeng
- Li <wanpeng.li@linux.intel.com>, Christophe JAILLET
-	<christophe.jaillet@wanadoo.fr>, Todd Kjos <tkjos@google.com>,
-	<kernel-team@android.com>, LKML <linux-kernel@vger.kernel.org>
-References: <20241205211632.1181715-1-jstultz@google.com>
- <20241206000009.1226085-1-jstultz@google.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20241206000009.1226085-1-jstultz@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001C9:EE_|CH2PR12MB4054:EE_
-X-MS-Office365-Filtering-Correlation-Id: 0b63caba-983d-493e-b255-08dd15ce0df1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|7416014|376014|82310400026|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?b0IwZENCMlhvZ25ITDBCK29DVFpFbDk4RzJIeHhmTDlubklFNzk4ajJid1NL?=
- =?utf-8?B?UUtWMTRtNVdRbnFmalRUbVV3NktWeklxc09jZXFYTG5QdTIyaG1YUU1UcG5L?=
- =?utf-8?B?elorRkpoTkV6YUdHd3h4WmtLaXlKNkxvYWdzYUMwV3VydVdmRXRtOTU0Rjlw?=
- =?utf-8?B?dWlPemY3Qmk1ek5IYjVhb3VJWUl2aHQ0d2tvVG9RS0EwV2xERE1ybUpYN2dE?=
- =?utf-8?B?UnA5emltYkJVckFVK1ppMHFwU3hnMFY0azdvUGNRMHFjUE4wdHBrbmlaSE91?=
- =?utf-8?B?KzdQSUJlZXc2ODN6NFNuaGJtbnBLODdjWk5HK3BlaEpaVnlmOTAxNnBTdHBZ?=
- =?utf-8?B?TEZ6R1RPYS9waE9GZHVjbFYyT2dFVHVzb1pMQ3ppbTFvSmtad2lLODROc3Vt?=
- =?utf-8?B?aFNZNzdOajVVS0ZodDJaallZSVBpTWd2SGxBNE5KMXVRMFJaVzFrN3c2clc3?=
- =?utf-8?B?Q2oxcUM3aU1wMGEvTkpqUlZZdENNU2JTdmdpQ3ovcDUyU3B4ZXcrWnJ2dDdI?=
- =?utf-8?B?cThEQTFLZUlKS0xlSlpFL202THFYWmo2a05SckhObzdqdUJwZURJSmtrZ0Fa?=
- =?utf-8?B?amtMdUJudVVGelZ0M3haQXprS0VEYS9Ca1JHZVRGM0t3U0NWRG0yRlcrR0d2?=
- =?utf-8?B?b3JFOVBRLzkrMjFSSnVpWDlPM1o0Yy9jd3NpWmduWU5sRzB1K3FHTFV3c3dF?=
- =?utf-8?B?SXhHYkRNN0Y0SS9BUEhsVGFGMXpTdzR1NUU2Y0VHV2oycEZaU3JKdHpSR1Uv?=
- =?utf-8?B?dzQ5c3FSL3ZISGg1MGtCZ3gzRSt3amZ2cTNITUt6S1c2UkxDam5zdnhEaGww?=
- =?utf-8?B?d1hHSjZuS2VVTGpJamRyVXFQRHJoNDA5azFFT3UvMVpROEtTSUQrV0czSi9B?=
- =?utf-8?B?TGsydWd2ajAvT0k4K3NsWXJURjRUdk5wN1Iza09jSDZ0N21XQnJha0Fncjd0?=
- =?utf-8?B?UjBqMGJDYWkxczAxTDc1ckxvWGZsUkJERTdCVDBCcnJVNnNwOWZpV1RuUk9O?=
- =?utf-8?B?YzlhUk5PUzk3cnNOclpDck5uWnpKOW5LYW1FM0QralVSVUFxVWdvZm5hV0pz?=
- =?utf-8?B?cEJuU2F6Q2NwUkV2aVpXcENSK3NWd0RSY1Q3NElUS2hkdXJJSHVzTEZwTkk3?=
- =?utf-8?B?SWJEK0wrbXFGYzZGTmR1cjUwY1o0cmdlbndoU1lGaW9OUkJzTFdtVktCckNn?=
- =?utf-8?B?QkxPOFlCYzVkSkFKTE93dDFUZ0ZvQnFlVTBVN2ZFd25vRnpQYVRsZDFLMVcy?=
- =?utf-8?B?OFlZVVBvdlhxWG9MVUxuTFpSMDdwWVI5Z2ZyZHBWbUJRYXk0VSthbDYyN29T?=
- =?utf-8?B?UGdoeHdiOEhjRnUyeWtEdFBVWEtXZTNvYTBnRDhjaGs2clV6bnB6MmxWNkpQ?=
- =?utf-8?B?QUg5eTNPN05UQmc0aHZHd3FxYWpoRElDcGcvcTlDelB4QnRiNFNPV1JTRTBP?=
- =?utf-8?B?SmkzSTNvMXBVeElwc0QzaWJtMkJxemJqOGxpcDZlbnB1ZWZlNHBaMzZncCt5?=
- =?utf-8?B?aEhDanBBQUJlYUE5Wm10NFF2cTZUY1U4eGNqYjRlWHNtb25NL2tDU212alBj?=
- =?utf-8?B?eXVhMEJCdzUwaFRrdFJoOEJqQm1VL0ZEZHY5ampJaG1KNkdiVm5iV3ptVVJY?=
- =?utf-8?B?ZEVaTTRFd1Y0M0pqWGoxRXBSVUU1NzhRVElLYjFidmJQMEo3Q2N5TW9wVUxP?=
- =?utf-8?B?N0diYlJHNjl4R25QTnRadTJDa1NrbG5JYVRGTlk3NmNhVkJ5WlVUOW9jcU9T?=
- =?utf-8?B?RFpuamdzZ1FlZ05IcVZkOG0weS9kSzBqNDBwb251cmZVNS9tdXEwbFB0WnMv?=
- =?utf-8?B?K0c4WXc3UkRWNlNiNnVNTkVOdnVmdEpDQ0R0RjQzVk0ycnpXVmdUNm1YNFNM?=
- =?utf-8?B?UWVkZEl4b3VycXg5eDBvL1FEbUxWdXR4bFl3d3pscUZzOHM3QzZOeFlBVnFz?=
- =?utf-8?Q?FgR2IKkZK+qyDP7/sVRrRfFaSPHfbXQP?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(376014)(82310400026)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Dec 2024 08:14:49.6305
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0b63caba-983d-493e-b255-08dd15ce0df1
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001C9.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4054
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241206080751.GN8882@google.com>
 
-Hello John,
-
-On 12/6/2024 5:29 AM, John Stultz wrote:
-> Commit 8b5e770ed7c0 ("sched/deadline: Optimize pull_dl_task()")
-> added a goto label seems would be better written as a while
-> loop.
+On Fri, Dec 06, 2024 at 08:07:51AM +0000, Lee Jones wrote:
+> On Fri, 06 Dec 2024, Boqun Feng wrote:
 > 
-> So replace the goto with a while loop, to make it easier to read.
+> > On Fri, Dec 06, 2024 at 07:33:09AM +0000, Lee Jones wrote:
+> > > On Fri, 06 Dec 2024, Lee Jones wrote:
+> > > 
+> > > > On Fri, 06 Dec 2024, Greg KH wrote:
+> > > > 
+> > > > > On Thu, Dec 05, 2024 at 04:25:18PM +0000, Lee Jones wrote:
+> > > > > > There are situations where a pointer to a `struct device` will become
+> > > > > > necessary (e.g. for calling into dev_*() functions).  This accessor
+> > > > > > allows callers to pull this out from the `struct miscdevice`.
+> > > > > > 
+> > > > > > Signed-off-by: Lee Jones <lee@kernel.org>
+> > > > > > ---
+> > > > > >  rust/kernel/miscdevice.rs | 9 +++++++++
+> > > > > >  1 file changed, 9 insertions(+)
+> > > > > > 
+> > > > > > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > > > > > index 7e2a79b3ae26..55340f316006 100644
+> > > > > > --- a/rust/kernel/miscdevice.rs
+> > > > > > +++ b/rust/kernel/miscdevice.rs
+> > > > > > @@ -10,11 +10,13 @@
+> > > > > >  
+> > > > > >  use crate::{
+> > > > > >      bindings,
+> > > > > > +    device::Device,
+> > > > > >      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
+> > > > > >      prelude::*,
+> > > > > >      str::CStr,
+> > > > > >      types::{ForeignOwnable, Opaque},
+> > > > > >  };
+> > > > > > +
+> > > > > >  use core::{
+> > > > > >      ffi::{c_int, c_long, c_uint, c_ulong},
+> > > > > >      marker::PhantomData,
+> > > > > > @@ -84,6 +86,13 @@ pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
+> > > > > >      pub fn as_raw(&self) -> *mut bindings::miscdevice {
+> > > > > >          self.inner.get()
+> > > > > >      }
+> > > > > > +
+> > > > > > +    /// Returns a pointer to the current Device
+> > > > > > +    pub fn device(&self) -> &Device {
+> > > > > > +        // SAFETY: This is only accessible after a successful register() which always
+> > > > > > +        // initialises this_device with a valid device.
+> > > > > > +        unsafe { Device::as_ref((*self.as_raw()).this_device) }
+> > > > > 
+> > > > > A "raw" pointer that you can do something with without incrementing the
+> > > > > reference count of it?  Oh wait, no, it's the rust device structure.
+> > > > > If so, why isn't this calling the get_device() interface instead?  That
+> > > > > way it's properly incremented and decremented when it "leaves the scope"
+> > > > > right?
+> > > > > 
+> > > > > Or am I missing something here as to why that wouldn't work and this is
+> > > > > the only way to get access to the 'struct device' of this miscdevice?
+> > > > 
+> > > > Fair point.  I'll speak to Alice.
+> > > 
+> > > Alice isn't available yet, so I may be talking out of turn at this
+> > > point, but I just found this is the Device documentation:
+> > > 
+> > >   /// A `Device` instance represents a valid `struct device` created by the C portion of the kernel.
+> > >   ///
+> > >   /// Instances of this type are always reference-counted, that is, a call to `get_device` ensures
+> > >   /// that the allocation remains valid at least until the matching call to `put_device`.
+> > > 
+> > > And:
+> > > 
+> > >   // SAFETY: Instances of `Device` are always reference-counted.
+> > > 
+> > > Ready for some analysis from this beginner?
+> > > 
+> > > Since this impl for Device is AlwaysRefCounted, when any references are
+> > > taken i.e. in the Device::as_ref line above, inc_ref() is implicitly
+> > > called to increase the refcount.  The same will be true of dec_ref()
+> > 
+> > No, inc_ref() is not called implicitly in Device::as_ref().
+> > 
+> > The thing that might "keep" the original `miscdevice::Device` alive is
+> > the lifetime, since the returned `device::Device` reference has the
+> > same life at the input parameter `miscdevice::Device` reference (i.e.
+> > `&self`), so the returned reference cannot outlive `&self`. That means
+> > if compilers find `&self` go out of scope while the returned reference
+> > be still alive, it will report an error.
 > 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Wanpeng Li <wanpeng.li@linux.intel.com>
-> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: kernel-team@android.com
-> Reported-by: Todd Kjos <tkjos@google.com>
-> Signed-off-by: John Stultz <jstultz@google.com>
-
-Gave it a spin on my box. Feel free to add:
-
-Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-
--- 
-Thanks and Regards,
-Prateek
-
-> ---
-> v2:
-> * Corrects my misreading of the code (as pointed out by Christophe
->    JAILLET) as already having a while loop, and switches the if to
->    a while.
-> ---
->   kernel/sched/deadline.c | 5 +----
->   1 file changed, 1 insertion(+), 4 deletions(-)
+> Okay, so is there something I need to do to ensure we increase the
+> refcount?  Does inc_ref() need calling manually?
 > 
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index d9d5a702f1a61..b2cc71984176a 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -2501,16 +2501,13 @@ static struct task_struct *pick_earliest_pushable_dl_task(struct rq *rq, int cpu
->   		return NULL;
->   
->   	next_node = rb_first_cached(&rq->dl.pushable_dl_tasks_root);
-> -
-> -next_node:
-> -	if (next_node) {
-> +	while (next_node) {
->   		p = __node_2_pdl(next_node);
->   
->   		if (task_is_pushable(rq, p, cpu))
->   			return p;
->   
->   		next_node = rb_next(next_node);
-> -		goto next_node;
->   	}
->   
->   	return NULL;
+
+When you convert a `&Device` into a `ARef<Device>`, Device::inc_ref()
+will be called. You can do that with:
+
+	ARef::from(Device::as_ref((*self.as_raw()).this_device))
+
+You will also need to change the return type. And when an `ARef<Device>`
+goes out of scope, dec_ref() will be called. 
 
 
+I had an old patch for a bit document on this part:
+
+	https://lore.kernel.org/rust-for-linux/20240710032447.2161189-1-boqun.feng@gmail.com/
+
+maybe I should send a re-spin.
+
+Regards,
+Boqun
+
+> -- 
+> Lee Jones [李琼斯]
 
