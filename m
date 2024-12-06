@@ -1,70 +1,88 @@
-Return-Path: <linux-kernel+bounces-435341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57DB39E764E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:42:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 073709E764F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:42:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07D1616AEA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:42:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB0A81881569
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2FB206299;
-	Fri,  6 Dec 2024 16:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BC5206294;
+	Fri,  6 Dec 2024 16:42:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwO/jMC8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Yg+zQBad"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA55A20628D;
-	Fri,  6 Dec 2024 16:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBCF819
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:42:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733503319; cv=none; b=M9CIi/WyoIwZICqj7rnYG1g+Kn4lgdJ7o6xHQGspxYNpH/DzE3zDs9DPfrm7C3HFnuZ7cnWpJGR09JJj0O7UNboeTg+PtNLBgYcVvo3zyurA3dWyfhn06dZp9yLq52u2GpTV9PS8QmkkNmkGpcPjgF3OIDonDKPdmef+gd6Z8k4=
+	t=1733503372; cv=none; b=tQm56SGYsAwWbKXmybxqFlxkLmnOXpIuEFzsCaPz7e25Pz0ZA49yPSnGVrlWLL95yQ0v/3vXP9v5UC0iCA7PsuF522nRl9Ll2wCY1Yn7w8JX8lOxWcpdy9qIvJxFhK+wd9VF/70Ql/2GjmVjHXlpEoEuSMn/pEvf0Z0rLKv23tY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733503319; c=relaxed/simple;
-	bh=GVom6tby0lr+M+AdlKnmYonY5gX0lhsKBw9N6+oS/bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PKsuAeEOwiABZyr6rFp0uYx6WqzE0yoMNxst/vA7mfANBfudTN3bP4mOQ3Xp+9HmKK2dn7TG5fZ9VI0Q3ihv2E2qNaqrXJPi5uDVwviPsTHcwMbObgGyQcVrqL9dWuUWxXVGmZrptaCAS9xaTb9liTHWLFc5wBb9wAkJUwj/ctk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwO/jMC8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC75FC4CED1;
-	Fri,  6 Dec 2024 16:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733503319;
-	bh=GVom6tby0lr+M+AdlKnmYonY5gX0lhsKBw9N6+oS/bw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XwO/jMC8QaCOnt3zj3h6VCYp6SCCGwoyMOAhzWRUqNn64xF6MojGsx9sWOlOeFqV3
-	 wsBwLjUHlIVI/+hUMM4RTLNsJ+6rlAcREgSPMQVUFNcaiBMg6NjrrCiN1QmcLD8oNi
-	 UGwDS9hCAh9FIqZqJ9MFtmi3vAwRlTHXMqSc0M7F6zYbhE6z8Tzd6yAwIVqZUHST2N
-	 5HziS4EYJby5A0U92JqecswBFhYO39xEQhHDpbSSAMMnyGXNf+QiGymwL/C/ghqhz8
-	 9JmxpYf1gNYRPsTs+DtBAM+GLxMIil/7cnNdRygVRCVkdxAjNj9KFOsbNVVhTebRtM
-	 JTv6LGo6YOj3Q==
-Date: Fri, 6 Dec 2024 08:41:58 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Cc: Justin Lai <justinlai0215@realtek.com>, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, andrew+netdev@lunn.ch,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, horms@kernel.org,
- michal.kubiak@intel.com, pkshih@realtek.com, larry.chiu@realtek.com
-Subject: Re: [PATCH net-next] rtase: Refine the if statement
-Message-ID: <20241206084158.172dd06d@kernel.org>
-In-Reply-To: <Z1LVqssDBEZ7nsWQ@mev-dev.igk.intel.com>
-References: <20241206084851.760475-1-justinlai0215@realtek.com>
-	<Z1LVqssDBEZ7nsWQ@mev-dev.igk.intel.com>
+	s=arc-20240116; t=1733503372; c=relaxed/simple;
+	bh=xI6iU9R30iJ3Jjx4/OlpWrJL9ovNCAtVHCgXvuY6Wf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YK1T7IZtb9TNKl8k3EO67pk9IdvC7eWyROUDpBOu258Onev4WTbe0JX7XYpGe7ei7IE0DPSbZKzTnj3oASPoczeaox+/y3Ivh/AI/DC/DNk6lRtTWk0ESKJTpuCAoRuk7jZTRZYo/VmlyF6T5VlU6zUEkdqc9Fxr/bX63HTkRkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Yg+zQBad; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=xI6iU9R30iJ3Jjx4/OlpWrJL9ovNCAtVHCgXvuY6Wf4=; b=Yg+zQBadL2RReMzhNt9YfusmTS
+	pONti2Y8NgqgQs/58L9fm3q+W60yR63GKCa55ONvHzTyVHse7xRa5GMi9xmraY96rzKeATKJkSANc
+	eixg15ipj3gMiXVtC/NeV0vX07FQW7jaI0dKByOr9JfTZ5y2zbygk4jV98fObPBDeFoYvWlfXs4LI
+	D0dJyRCJn/97mRDIt/iah2lzkHveVYs9+MLQ8Ts0cfT1MRUofD2eNEBzsLpRS5fRqORUZrFbpNPmF
+	W9MOJg5URCI0WESl8DhDPTMf2IfosD4/VR2MszUUwTBXW7F13LGyEvj0H96NIcUsvLr6MfgAr7UXk
+	8X47g7fA==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tJbPb-0000000Ek11-0LRo;
+	Fri, 06 Dec 2024 16:42:39 +0000
+Date: Fri, 6 Dec 2024 16:42:38 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	David Hildenbrand <david@redhat.com>,
+	Miaohe Lin <linmiaohe@huawei.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Alexander Potapenko <glider@google.com>,
+	Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Vineet Gupta <vgupta@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] mm: use clear_user_(high)page() for arch with special
+ user folio handling
+Message-ID: <Z1Mpfofz45bFawSq@casper.infradead.org>
+References: <20241206141938.2750393-1-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206141938.2750393-1-ziy@nvidia.com>
 
-On Fri, 6 Dec 2024 11:44:58 +0100 Michal Swiatkowski wrote:
-> I am not sure if it is worth to change.
+On Fri, Dec 06, 2024 at 09:19:38AM -0500, Zi Yan wrote:
+> For architectures setting ARCH_HAS_CPU_CACHE_ALIASING, which requires
+> flushing cache and arc, which sets folio->flags after clearing a user
+> folio
 
-True, tho, FWIW, if it's the maintainer of the codebase sending the
-change it's generally fine. Our "no pointless churn" rule is primarily
-for randoes.
+I think arc just has some legacy code left that needs to be ripped out.
+See commit d5272aaa8257 which took away ARCH_HAS_CPU_CACHE_ALIASING
+from arc.
+
+Looking at 8690bbcf3b70, I wonder if you want to use
+cpu_dcache_is_aliasing() here?
 
