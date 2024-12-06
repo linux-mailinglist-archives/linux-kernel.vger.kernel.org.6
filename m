@@ -1,407 +1,131 @@
-Return-Path: <linux-kernel+bounces-435742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FFB79E7BA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:24:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E7C59E7B96
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:21:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F152216A874
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:24:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F862838D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:21:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EB0B1EF090;
-	Fri,  6 Dec 2024 22:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC471DF96F;
+	Fri,  6 Dec 2024 22:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="EOPRLSlf"
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3swPhqB"
+Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4671322C6C0
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 22:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C0122C6C1;
+	Fri,  6 Dec 2024 22:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733523837; cv=none; b=GoMGBYt75MelGmWUe4weYE2MddJUkwhXgno/us3JNYMB0LHVSjKLvJlPO7JSFtY5Ct/h7GwGFBh3ecT8KGq0jdZCDoSXBE7+g2hXAOUWBySGzjSIo8kit/EE46CgLvcC1ZuRqY7CUWx3Va28coXpxvzDzfT9Q0pkWRtKlPCjnRo=
+	t=1733523694; cv=none; b=DoU2rCCllcMFoyWza2wcLLp4PPMPSiXWyxqH3GTZByZoVEjgFjJrUhgODFesD4ZGa1HgbVN7s9/jAAyJ+hlR+VlsHON6JpHAHYzNwEVrMUtI2+RBbW89/wBW+Rl8i8oXNA8ioVfuvQsefCiMc8p8mgWMy40zmt35fmp+Ezi4qqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733523837; c=relaxed/simple;
-	bh=BFRVP8QJ1jTTOU/kdYZzMKrkU6zcwHmiWnXiKyi48g8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nhiXU4okZZAM2iRCsb1VS+d0B+V5Sk5cKaTGF7QNBlQzsfhsxS2WnOVPVIxvIMUZ0+R/RdRkA6hq38JNiYWWjZu9gdWesjzHyv3YYEjFSPW1DvehVgcoK9S5fupKyBwoPp9I5DoUA955DhVgoQ3DAyYHC1cK1ydra2FCrrmugqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=EOPRLSlf; arc=none smtp.client-ip=209.85.128.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6ef66fd2183so24429657b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 14:23:55 -0800 (PST)
+	s=arc-20240116; t=1733523694; c=relaxed/simple;
+	bh=mhky964TRWNzFbAiRFdB5HACfgN5R0L+tLJI3tPPRw8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aoIteihppe80tDKw73X6TRXqR8mzinX3nDZpP1Y+GCcW82JgazY53+knndssWYii+Kw1fuT1HwT/Q/uvmbNphEoRDonOj50Zhs78FxCKv55ghfvANm0YYYa65R3oWgzkvGO43zQg1MNfCSBw+PNBii+eBEh29YmnMm5keKglVNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3swPhqB; arc=none smtp.client-ip=209.85.160.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-46695478d03so37239911cf.1;
+        Fri, 06 Dec 2024 14:21:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733523834; x=1734128634; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rcxqDoLcfglUDjBpzfzKd7fFBqXuxl27aRp+AD+qiWY=;
-        b=EOPRLSlfAeYdsT18rW296zhI5uVAnyK6Wo1rl4721X+ede+MRTnwoVHKwXWp7FsZKW
-         5M0h3eYPzgTCWq7vs7zavKftvppS9bQ25LDl3tvcuByJpiKJbnxgDIOGhEkAEjoCfmcg
-         GozEHgz4Jfp20YfcxzrZonRv6Ptz1Dzk++UEM=
+        d=gmail.com; s=20230601; t=1733523692; x=1734128492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZhhTP8F6A8wEtYSRjTN5029eKdbjNe9HQjo/7xvSE4=;
+        b=h3swPhqBvlj3cMaIAcRfx11GKHP+UbqsAZTnaT5iiEhTIZRrJmKu9dOZU80T0AGoX1
+         /agIf7DKAducNipQ4+F4rcOU3oDje2mMQe8lp14My4yrHuFh86vjWpypysOfrbkAuiS6
+         JboLRZlHikJvJkeqNsPXRQqFO8stNnS6vFJU5/gFXrpTf5/2aULKModoVlsvWM2FRH2I
+         IY3GeH2l3f0ksCBOuT266JekZuKmcyYgQVjRX4mVCKiATc4cnnE6V7/lgb5Jb3IPqgnG
+         BOVuJppbtPnxaS9swiwDOxcJbaH3tRz/KfcN+SM3H0L140uxGIPGXc4hJPmXpA19rRRt
+         okIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733523834; x=1734128634;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rcxqDoLcfglUDjBpzfzKd7fFBqXuxl27aRp+AD+qiWY=;
-        b=DW1pcEtOD+zsnk3iFZqikluBqbeZqjsOyhB8h40l/GezqeeCVaj6bi4vCZjbdqrF+N
-         fqXc7/xW7AsfxxGEDQ20pPbljTcMf5bQ0JFpjJsfM5BRqqTCGyP1GogFw2VuRlHHOaig
-         uQzyLsycbtmgl8FL3NzkiGtcViQu7LxpCY7caKX16nhyc4Dc7RybfjBHQElORlG7gF/Y
-         5ExMNYnB08DCHxBfZNVHfiK/5nBXRuTmJZvSNe10Y1njnl6sUrmtpl6r6FS/+KbvpPQA
-         bZ/avyI9Y5UNsXbkJt/X4fbZ9fQYLL70xL0RpGnaXDO2Cp0+duIdJxZ5wD9NqDAbeozf
-         0aMg==
-X-Forwarded-Encrypted: i=1; AJvYcCXfFwofWCxA/lSYHou2O/rirI6gqSw+hFmCkqgLBQ3Y5/z5lRd2SIdnOfYzbaPp633rWd1bo5ARB+cv+W4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEOTTzN/pDN4Qzb3jA5ga6iEQRqMIzHHMniF37J7rzKMlQYnQ8
-	Vtrw1LVqZ89DUxoAJBhbNiUek+Kh+l8aTq7pFSDywCfbJHjicZY6+VYQpH7cNtDgxGjrwDOyWJL
-	4jZtiq8YRqOAuzsNHfxoqdxUPFzyTcF5o73Nn
-X-Gm-Gg: ASbGncvQLfEl53/jgmWrGvBGaIvneZQBAPuTLjAZxEb2WIl+kVVEKNRaIE2ErWFsl2A
-	gdeg2dH7XSWf+IxZgr2TA95vU+tnWcr4=
-X-Google-Smtp-Source: AGHT+IFJZl1X/HsOmHx3MumA2Bu+aPWsN8Qnr8ieKIx6TjqjsWzLdh0pHn0IjB1Z3tjGNQ/j5r6oPDCRf6eJqgPn4RU=
-X-Received: by 2002:a05:690c:a86:b0:6ef:a227:c099 with SMTP id
- 00721157ae682-6efe3bcf5femr71483887b3.2.1733523834162; Fri, 06 Dec 2024
- 14:23:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733523692; x=1734128492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SZhhTP8F6A8wEtYSRjTN5029eKdbjNe9HQjo/7xvSE4=;
+        b=Sp+xBmFwaWaTeDcWAk0HqVIMoDZAi8iSJgxyBF1FCB8l4YBrIfMVCbaBprhttNRM3R
+         RI7WkZX1i8jkAbV9UTtWsTzRckZqryyjqcThGCKxS4m/Oaam5p9XylHR3jfm0erpmXbW
+         zgeEcOgXXaenelSQMEgDSxyZt5f/6rGkCFf5G8UBWNSLB6p1Eah/vtktgNtoq+2Cplym
+         F00v63jPYWO3km8ZFR6u8u7XX+0M9aKti8J2i1TcZrYty+eE88SHl43efVSg0qoTnbIQ
+         XcLn/z5rtOrKrO3n1yhPJ0499TXzQuHGrxM/eRrv1z/TYz2IFcGF2Z89+cR2OzMbzRTi
+         E52w==
+X-Forwarded-Encrypted: i=1; AJvYcCWoVtYdVOwyRLFUbRuavEoqR29fiN6aEMGDgiuJXuoImHHfSxxHrmzPUj87MKz8psZf0TE2bZB9aMbX9Bw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG+M0o67jxy6dpRrMss38ymTkzGS229mJ7DyUJ1+Ir63PcuWqa
+	xih1Y5/A3CDrfZI4p7q0GOqhgmFaamFNsveVrGD0NWvoOXiD95e/6FtfNBTX
+X-Gm-Gg: ASbGnctsawzyI6QWBpMs/vfdyUueg6Gx3bT1nQCZPg6E+FOmo+gqOhTjZCkjpIwe5mD
+	0k/gyw9O+Cscdti5jCEztGVrJtbQRWX+MU15PIs1TzA6L6O7gNeLnli9QnOHS3QRAAJeiLZHOFI
+	xIVxlxUAzbf6jLISD/wGvvqM6tBPNInLz4dZWg23+s+jbzhRFMvXhMxMMl/oWAq9V3I2245PvRa
+	LjkCX5zVvOEhYcMkZYdwPor7w1ib3Wsii/cQeLG3hYXam/feDfjXN9BQH28Xg==
+X-Google-Smtp-Source: AGHT+IGAKWFMT+I1wbmUOwVQpQGCERs5Xc7gz6oYPba9oF39Og5PrK1c20U2AJEQWpqDryidztUmpA==
+X-Received: by 2002:ac8:584e:0:b0:466:9018:c91f with SMTP id d75a77b69052e-46734c9e97amr78931621cf.1.1733523692059;
+        Fri, 06 Dec 2024 14:21:32 -0800 (PST)
+Received: from localhost.localdomain ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296d0e3esm25566171cf.33.2024.12.06.14.21.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 14:21:30 -0800 (PST)
+From: Mingwei Zheng <zmw12306@gmail.com>
+To: alexandre.belloni@bootlin.com,
+	gxt@mprc.pku.edu.cn,
+	linus.walleij@linaro.org,
+	haojian.zhuang@gmail.com,
+	broonie@opensource.wolfsonmicro.com,
+	akpm@linux-foundation.org
+Cc: linux-rtc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Mingwei Zheng <zmw12306@gmail.com>,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH] rtc: Add check for clk_enable()
+Date: Fri,  6 Dec 2024 17:24:52 -0500
+Message-Id: <20241206222452.3479786-1-zmw12306@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241107193021.2690050-1-abhishekpandit@chromium.org>
- <20241107112955.v3.6.Ic61ced3cdfb5d6776435356061f12307da719829@changeid>
- <zbtwtfywopvuh5b6skzxf53if7s7lxf53x6uxqnenpe3mipsdg@zdk7wfp7mqbg>
- <CANFp7mVDpi_g=9LiDZ1mu+GHwkmLVXf7_MnOewFs-Zvu9gqLUQ@mail.gmail.com> <lxu6yktosg57g4qpjua7kfqcg6x27qbojftozkeuzc2wmpsxjb@mgid32lssihf>
-In-Reply-To: <lxu6yktosg57g4qpjua7kfqcg6x27qbojftozkeuzc2wmpsxjb@mgid32lssihf>
-From: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-Date: Fri, 6 Dec 2024 14:23:42 -0800
-Message-ID: <CANFp7mWi2WXTSNeEmXcnzxJV=QuKj_=Y+f6Q_gbSj9v4a6Pt4w@mail.gmail.com>
-Subject: Re: [PATCH v3 6/7] platform/chrome: cros_ec_typec: Thunderbolt support
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: heikki.krogerus@linux.intel.com, tzungbi@kernel.org, 
-	linux-usb@vger.kernel.org, chrome-platform@lists.linux.dev, jthies@google.com, 
-	akuchynski@google.com, pmalani@chromium.org, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Nov 14, 2024 at 2:55=E2=80=AFAM Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> On Wed, Nov 13, 2024 at 08:01:57PM -0800, Abhishek Pandit-Subedi wrote:
-> > On Fri, Nov 8, 2024 at 10:41=E2=80=AFPM Dmitry Baryshkov
-> > <dmitry.baryshkov@linaro.org> wrote:
-> > >
-> > > On Thu, Nov 07, 2024 at 11:29:59AM -0800, Abhishek Pandit-Subedi wrot=
-e:
-> > > > Add support for entering and exiting Thunderbolt alt-mode using AP
-> > > > driven alt-mode.
-> > > >
-> > > > Signed-off-by: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>
-> > > > ---
-> > > >
-> > > > Changes in v3:
-> > > > - Fix usage of TBT sid and mode.
-> > > > - Removed unused vdm operations during altmode registration
-> > > >
-> > > > Changes in v2:
-> > > > - Refactored thunderbolt support into cros_typec_altmode.c
-> > > >
-> > > >  drivers/platform/chrome/Makefile             |  3 +
-> > > >  drivers/platform/chrome/cros_ec_typec.c      | 23 +++---
-> > > >  drivers/platform/chrome/cros_typec_altmode.c | 85 ++++++++++++++++=
-++++
-> > > >  drivers/platform/chrome/cros_typec_altmode.h | 14 ++++
-> > > >  4 files changed, 114 insertions(+), 11 deletions(-)
-> > > >
-> > > > diff --git a/drivers/platform/chrome/Makefile b/drivers/platform/ch=
-rome/Makefile
-> > > > index 2f90d4db8099..b9b1281de063 100644
-> > > > --- a/drivers/platform/chrome/Makefile
-> > > > +++ b/drivers/platform/chrome/Makefile
-> > > > @@ -21,6 +21,9 @@ cros-ec-typec-objs                  :=3D cros_ec_=
-typec.o cros_typec_vdm.o
-> > > >  ifneq ($(CONFIG_TYPEC_DP_ALTMODE),)
-> > > >       cros-ec-typec-objs              +=3D cros_typec_altmode.o
-> > > >  endif
-> > > > +ifneq ($(CONFIG_TYPEC_TBT_ALTMODE),)
-> > > > +     cros-ec-typec-objs              +=3D cros_typec_altmode.o
-> > > > +endif
-> > >
-> > > Doesn't this also result in the object file being included twice and
-> > > thus in a duplicate symbols declaration?
-> >
-> > I was trying to figure out how to add this file if either of those
-> > config options existed in
-> > https://docs.kernel.org/kbuild/makefiles.html#built-in-object-goals-obj=
--y
-> > and it says, "Duplicates in the lists are allowed: the first instance
-> > will be linked into built-in.a and succeeding instances will be
-> > ignored."
-> >
-> > Is there a preferred way of doing the following in the Makefile:
-> >     if (defined(CONFIG_TYPEC_TBT_ALTMODE) ||
-> > defined(CONFIG_TYPEC_DP_ALTMODE)) {...}
-> >
-> > I briefly considered the following and dropped it because it is
-> > terrible readability-wise:
-> >   ifneq ($(CONFIG_TYPEC_TBT_ALTMODE)$(CONFIG_TYPEC_DP_ALTMODE),)
->
-> The usual way would to define new Kconfig symbol:
->
-> config CROS_EC_TYPEC_ALTMODES
->         bool # Note, no description here, don't show in menuconfig
->         help
->           Selectable symbol to enable altmodes
->
-> config CROS_EC_TYPEC
->         ...
->         select CROS_EC_TYPEC_ALTMODES if CONFIG_TYPEC_DP_ALTMODE
->         select CROS_EC_TYPEC_ALTMODES if CONFIG_TYPEC_TBT_ALTMODE
->         ...
->
-> ----
->
-> cros-ec-typec-$(CONFIG_CROS_EC_TYPEC_ALTMODES) +=3D cros_typec_altmode.o
->
-> >
-> > >
-> > > >  obj-$(CONFIG_CROS_EC_TYPEC)          +=3D cros-ec-typec.o
-> > > >
-> > > >  obj-$(CONFIG_CROS_EC_LPC)            +=3D cros_ec_lpcs.o
-> > > > diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/plat=
-form/chrome/cros_ec_typec.c
-> > > > index 3a6f5f2717b9..558b618df63c 100644
-> > > > --- a/drivers/platform/chrome/cros_ec_typec.c
-> > > > +++ b/drivers/platform/chrome/cros_ec_typec.c
-> > > > @@ -302,18 +302,19 @@ static int cros_typec_register_port_altmodes(=
-struct cros_typec_data *typec,
-> > > >
-> > > >       /*
-> > > >        * Register TBT compatibility alt mode. The EC will not enter=
- the mode
-> > > > -      * if it doesn't support it, so it's safe to register it unco=
-nditionally
-> > > > -      * here for now.
-> > > > +      * if it doesn't support it and it will not enter automatical=
-ly by
-> > > > +      * design so we can use the |ap_driven_altmode| feature to ch=
-eck if we
-> > > > +      * should register it.
-> > > >        */
-> > > > -     memset(&desc, 0, sizeof(desc));
-> > > > -     desc.svid =3D USB_TYPEC_TBT_SID;
-> > > > -     desc.mode =3D TYPEC_ANY_MODE;
-> > > > -     amode =3D typec_port_register_altmode(port->port, &desc);
-> > > > -     if (IS_ERR(amode))
-> > > > -             return PTR_ERR(amode);
-> > > > -     port->port_altmode[CROS_EC_ALTMODE_TBT] =3D amode;
-> > > > -     typec_altmode_set_drvdata(amode, port);
-> > > > -     amode->ops =3D &port_amode_ops;
-> > > > +     if (typec->ap_driven_altmode) {
-> > > > +             memset(&desc, 0, sizeof(desc));
-> > > > +             desc.svid =3D USB_TYPEC_TBT_SID;
-> > > > +             desc.mode =3D TBT_MODE;
-> > > > +             amode =3D cros_typec_register_thunderbolt(port, &desc=
-);
-> > > > +             if (IS_ERR(amode))
-> > > > +                     return PTR_ERR(amode);
-> > > > +             port->port_altmode[CROS_EC_ALTMODE_TBT] =3D amode;
-> > > > +     }
-> > > >
-> > > >       port->state.alt =3D NULL;
-> > > >       port->state.mode =3D TYPEC_STATE_USB;
-> > > > diff --git a/drivers/platform/chrome/cros_typec_altmode.c b/drivers=
-/platform/chrome/cros_typec_altmode.c
-> > > > index 3598b8a6ceee..9cf2cef6c277 100644
-> > > > --- a/drivers/platform/chrome/cros_typec_altmode.c
-> > > > +++ b/drivers/platform/chrome/cros_typec_altmode.c
-> > > > @@ -8,6 +8,7 @@
-> > > >  #include "cros_ec_typec.h"
-> > > >
-> > > >  #include <linux/usb/typec_dp.h>
-> > > > +#include <linux/usb/typec_tbt.h>
-> > > >  #include <linux/usb/pd_vdo.h>
-> > > >
-> > > >  #include "cros_typec_altmode.h"
-> > > > @@ -67,6 +68,8 @@ static int cros_typec_altmode_enter(struct typec_=
-altmode *alt, u32 *vdo)
-> > > >
-> > > >       if (data->sid =3D=3D USB_TYPEC_DP_SID)
-> > > >               req.mode_to_enter =3D CROS_EC_ALTMODE_DP;
-> > > > +     else if (data->sid =3D=3D USB_TYPEC_TBT_SID)
-> > > > +             req.mode_to_enter =3D CROS_EC_ALTMODE_TBT;
-> > > >       else
-> > > >               return -EOPNOTSUPP;
-> > > >
-> > > > @@ -196,6 +199,53 @@ static int cros_typec_displayport_vdm(struct t=
-ypec_altmode *alt, u32 header,
-> > > >       return 0;
-> > > >  }
-> > > >
-> > > > +static int cros_typec_thunderbolt_vdm(struct typec_altmode *alt, u=
-32 header,
-> > > > +                                   const u32 *data, int count)
-> > > > +{
-> > > > +     struct cros_typec_altmode_data *adata =3D typec_altmode_get_d=
-rvdata(alt);
-> > > > +
-> > > > +     int cmd_type =3D PD_VDO_CMDT(header);
-> > > > +     int cmd =3D PD_VDO_CMD(header);
-> > > > +     int svdm_version;
-> > >
-> > > I suppose that with the current approach this misses the ap_mode_entr=
-y
-> > > check. If it gets moved to cros_typec_altmode_vdm(), then it should b=
-e
-> > > okay.
-> >
-> > We don't register the thunderbolt port driver if ap_mode_entry is
-> > false so it's an unnecessary check.
->
-> Why don't you register it? It would allow userspace to understand, what
-> is happening, e.g. that the Type-C has switched to the TBT mode.
+Add check for the return value of clk_enable() to catch the potential
+error.
 
-Cros-EC does not support automatic entry of Thunderbolt/USB4 (i.e. all
-firmware that supports TBT/USB4 MUST set ap_mode_entry).
+Fixes: 0c4eae66591a ("rtc: convert drivers/rtc/* to use module_platform_driver()")
+Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ drivers/rtc/rtc-spear.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
->
-> >
-> > >
-> > > > +
-> > > > +     svdm_version =3D typec_altmode_get_svdm_version(alt);
-> > > > +     if (svdm_version < 0)
-> > > > +             return svdm_version;
-> > > > +
-> > > > +     switch (cmd_type) {
-> > > > +     case CMDT_INIT:
-> > > > +             if (PD_VDO_SVDM_VER(header) < svdm_version) {
-> > > > +                     typec_partner_set_svdm_version(adata->port->p=
-artner,
-> > > > +                                                    PD_VDO_SVDM_VE=
-R(header));
-> > > > +                     svdm_version =3D PD_VDO_SVDM_VER(header);
-> > > > +             }
-> > > > +
-> > > > +             adata->header =3D VDO(adata->sid, 1, svdm_version, cm=
-d);
-> > > > +             adata->header |=3D VDO_OPOS(adata->mode);
-> > > > +
-> > > > +             switch (cmd) {
-> > > > +             case CMD_ENTER_MODE:
-> > > > +                     /* Don't respond to the enter mode vdm becaus=
-e it
-> > > > +                      * triggers mux configuration. This is handle=
-d directly
-> > > > +                      * by the cros_ec_typec driver so the Thunder=
-bolt driver
-> > > > +                      * doesn't need to be involved.
-> > > > +                      */
-> > > > +                     break;
-> > > > +             default:
-> > > > +                     adata->header |=3D VDO_CMDT(CMDT_RSP_ACK);
-> > > > +                     schedule_work(&adata->work);
-> > > > +                     break;
-> > > > +             }
-> > > > +
-> > > > +             break;
-> > > > +     default:
-> > > > +             break;
-> > > > +     }
-> > > > +
-> > > > +     return 0;
-> > > > +}
-> > > > +
-> > > > +
-> > > >  static int cros_typec_altmode_vdm(struct typec_altmode *alt, u32 h=
-eader,
-> > > >                                     const u32 *data, int count)
-> > > >  {
-> > > > @@ -204,6 +254,9 @@ static int cros_typec_altmode_vdm(struct typec_=
-altmode *alt, u32 header,
-> > > >       if (adata->sid =3D=3D USB_TYPEC_DP_SID)
-> > > >               return cros_typec_displayport_vdm(alt, header, data, =
-count);
-> > > >
-> > > > +     if (adata->sid =3D=3D USB_TYPEC_TBT_SID)
-> > > > +             return cros_typec_thunderbolt_vdm(alt, header, data, =
-count);
-> > > > +
-> > > >       return -EINVAL;
-> > > >  }
-> > > >
-> > > > @@ -273,3 +326,35 @@ cros_typec_register_displayport(struct cros_ty=
-pec_port *port,
-> > > >       return alt;
-> > > >  }
-> > > >  #endif
-> > > > +
-> > > > +#if IS_ENABLED(CONFIG_TYPEC_TBT_ALTMODE)
-> > > > +struct typec_altmode *
-> > > > +cros_typec_register_thunderbolt(struct cros_typec_port *port,
-> > > > +                             struct typec_altmode_desc *desc)
-> > > > +{
-> > > > +     struct typec_altmode *alt;
-> > > > +     struct cros_typec_altmode_data *data;
-> > > > +
-> > > > +     alt =3D typec_port_register_altmode(port->port, desc);
-> > > > +     if (IS_ERR(alt))
-> > > > +             return alt;
-> > > > +
-> > > > +     data =3D devm_kzalloc(&alt->dev, sizeof(*data), GFP_KERNEL);
-> > > > +     if (!data) {
-> > > > +             typec_unregister_altmode(alt);
-> > > > +             return ERR_PTR(-ENOMEM);
-> > > > +     }
-> > > > +
-> > > > +     INIT_WORK(&data->work, cros_typec_altmode_work);
-> > > > +     data->alt =3D alt;
-> > > > +     data->port =3D port;
-> > > > +     data->ap_mode_entry =3D true;
-> > > > +     data->sid =3D desc->svid;
-> > > > +     data->mode =3D desc->mode;
-> > > > +
-> > > > +     typec_altmode_set_ops(alt, &cros_typec_altmode_ops);
-> > > > +     typec_altmode_set_drvdata(alt, data);
-> > > > +
-> > > > +     return alt;
-> > > > +}
-> > > > +#endif
-> > > > diff --git a/drivers/platform/chrome/cros_typec_altmode.h b/drivers=
-/platform/chrome/cros_typec_altmode.h
-> > > > index c6f8fb02c99c..810b553ddcd8 100644
-> > > > --- a/drivers/platform/chrome/cros_typec_altmode.h
-> > > > +++ b/drivers/platform/chrome/cros_typec_altmode.h
-> > > > @@ -31,4 +31,18 @@ static inline int cros_typec_displayport_status_=
-update(struct typec_altmode *alt
-> > > >       return 0;
-> > > >  }
-> > > >  #endif
-> > > > +
-> > > > +#if IS_ENABLED(CONFIG_TYPEC_TBT_ALTMODE)
-> > > > +struct typec_altmode *
-> > > > +cros_typec_register_thunderbolt(struct cros_typec_port *port,
-> > > > +                             struct typec_altmode_desc *desc);
-> > > > +#else
-> > > > +static inline struct typec_altmode *
-> > > > +cros_typec_register_thunderbolt(struct cros_typec_port *port,
-> > > > +                             struct typec_altmode_desc *desc)
-> > > > +{
-> > > > +     return typec_port_register_altmode(port->port, desc);
-> > > > +}
-> > > > +#endif
-> > > > +
-> > > >  #endif /* __CROS_TYPEC_ALTMODE_H__ */
-> > > > --
-> > > > 2.47.0.277.g8800431eea-goog
-> > > >
-> > >
-> > > --
-> > > With best wishes
-> > > Dmitry
->
-> --
-> With best wishes
-> Dmitry
+diff --git a/drivers/rtc/rtc-spear.c b/drivers/rtc/rtc-spear.c
+index 26eed927f8b3..064d46b2f16e 100644
+--- a/drivers/rtc/rtc-spear.c
++++ b/drivers/rtc/rtc-spear.c
+@@ -437,7 +437,7 @@ static int spear_rtc_resume(struct device *dev)
+ {
+ 	struct platform_device *pdev = to_platform_device(dev);
+ 	struct spear_rtc_config *config = platform_get_drvdata(pdev);
+-	int irq;
++	int irq, ret;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+ 
+@@ -447,7 +447,9 @@ static int spear_rtc_resume(struct device *dev)
+ 			config->irq_wake = 0;
+ 		}
+ 	} else {
+-		clk_enable(config->clk);
++		ret = clk_enable(config->clk);
++		if (ret)
++			return ret;
+ 		spear_rtc_enable_interrupt(config);
+ 	}
+ 
+-- 
+2.34.1
+
 
