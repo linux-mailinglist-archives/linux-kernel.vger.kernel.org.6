@@ -1,45 +1,62 @@
-Return-Path: <linux-kernel+bounces-434289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70B029E646A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:50:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CC79E6472
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:50:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDF0E18846A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:50:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33BE5169BE6
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3954BE46;
-	Fri,  6 Dec 2024 02:49:56 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1562918C33B;
+	Fri,  6 Dec 2024 02:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Mk/fzamn"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5D84C9A;
-	Fri,  6 Dec 2024 02:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DECC913C677;
+	Fri,  6 Dec 2024 02:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733453396; cv=none; b=P2kcS/3ngdn09DnWTaKNT2qOmTPCXqdyTEXq97ryn2yhIXs1Yoe9pnnpzJge47VFzSFNSIvBtBuPBq0sC6kL4eVr066/byIQoIEuTQ49OLacHjXDOMQZVY0EqNT+Ep3a7/6GNZJVob9Wjt7fqLwvsLp7OnKn8RVXZ4tENWjTQSo=
+	t=1733453425; cv=none; b=LQfe0rpviiDCQHMuIG3cjs5ES7sjxuncw1ZVwXQlfD28mjeMAjm3A+R7VK6RvSoxYr14cwJzdV2yI2Y1fRUKJa9WgzOjTmgHx5m4kN677Y78x1Z9kIYmoC84JFHYVf8fmiFwcY1gUWBnAR36j+4u+ctZWEupARlkUSjX9w+kQ+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733453396; c=relaxed/simple;
-	bh=LaQW0ppd/Don9fm3kf876MvIkSbgfOpuuYUBYFkKTGg=;
+	s=arc-20240116; t=1733453425; c=relaxed/simple;
+	bh=Ndn2jxtEqosWyoI28JUucb4KFXtu4aIp4wE7cHQ5Apo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T1QESrw+Ql4F1gDZW2aCG92kgDSvfNRtM4c7a3T5UxvFb6Q9dUQnEMJIFwl5i5LSjVyxyx9zkf8j+WEgnRB9Sfepe3GQ54k5Bg831cpvGFADRP6B0WFv2SD/Vi2Ll87b9b0DzJGcTYvMDtSuzeqF6fazyvi0zjh/z0So/Vqq3NY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y4G1w1Xz4z1JDjw;
-	Fri,  6 Dec 2024 10:49:40 +0800 (CST)
-Received: from dggpemf100008.china.huawei.com (unknown [7.185.36.138])
-	by mail.maildlp.com (Postfix) with ESMTPS id 952361A0188;
-	Fri,  6 Dec 2024 10:49:49 +0800 (CST)
-Received: from [10.174.177.243] (10.174.177.243) by
- dggpemf100008.china.huawei.com (7.185.36.138) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 6 Dec 2024 10:49:48 +0800
-Message-ID: <f8713870-51c1-41ff-b4b2-9e7d9bb657b1@huawei.com>
-Date: Fri, 6 Dec 2024 10:49:48 +0800
+	 In-Reply-To:Content-Type; b=Al0UB/6s+9Y2D3uSceZ636FYRAWt713p07LGzQWcPvo93O2RpQMEAXw/bxNMDmZer1BlGTlDsZobMnsNfKsxjg20hB41YeGA10py4txugI3ZK501RWbddJi4lc5TzFSIFkzmsBPXaVOm8Qbr7V9Sm7PjLgrROA4LXgxEoeqizRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Mk/fzamn; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaO3R005965;
+	Fri, 6 Dec 2024 02:50:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Zcm4DqSYOflesfW7kwRW3Z1Ht0YyrkJRhNXH8J1FOEw=; b=Mk/fzamnUDHwWH1T
+	k8WrikGVvbEH9PTQqBTG4xU/Uy9ziSDiJRxuW8O4hydVL4iBal4XxvgkLL+EUUwH
+	TAJESiZAnW6EL+9nAflA/6VjYL3qL/RlSSn2kLmor+O+XKbgDFypZoIIUG30mNyb
+	5whicFXkQ2kRL/Dl9FvMZD7BScfUsFz4P10uvg/tq/GdDzmseD38umX64i5JGPWX
+	akKtXcqgDmkdpX3SeoIlmlmZhA/zmqPuTDneqKYc4HNTf0jHMCYqDxRCL/NT9xaU
+	0kKtasdZa9pHnD/zeDohaPLFuVGhGhgCHMxtPURulH9l32r/xdsBv6BxCkQ4dIKi
+	4KB9wg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ayemby3m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 02:50:20 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B62oJSW022937
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 6 Dec 2024 02:50:19 GMT
+Received: from [10.253.33.254] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 5 Dec 2024
+ 18:50:16 -0800
+Message-ID: <4ebf9f1d-74a9-451b-91a5-fe38a0d48e24@quicinc.com>
+Date: Fri, 6 Dec 2024 10:50:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,184 +64,90 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: Respect mmap hint address when aligning for THP
-To: Kalesh Singh <kaleshsingh@google.com>
-CC: <kernel-team@android.com>, <android-mm@google.com>, Andrew Morton
-	<akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Yang Shi
-	<yang@os.amperecomputing.com>, Rik van Riel <riel@surriel.com>, Ryan Roberts
-	<ryan.roberts@arm.com>, Suren Baghdasaryan <surenb@google.com>, Minchan Kim
-	<minchan@kernel.org>, Hans Boehm <hboehm@google.com>, Lokesh Gidra
-	<lokeshgidra@google.com>, <stable@vger.kernel.org>, "Liam R. Howlett"
-	<Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Jann
- Horn <jannh@google.com>, Yang Shi <shy828301@gmail.com>,
-	<linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>
-References: <20241118214650.3667577-1-kaleshsingh@google.com>
+Subject: Re: [PATCH v5 0/2] Enable ethernet for qcs8300
+To: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@oss.qualcomm.com>
+References: <20241206-dts_qcs8300-v5-0-422e4fda292d@quicinc.com>
+ <87c9ebb9-36b2-4891-8800-2896d6d9bbfc@quicinc.com>
 Content-Language: en-US
-From: Kefeng Wang <wangkefeng.wang@huawei.com>
-In-Reply-To: <20241118214650.3667577-1-kaleshsingh@google.com>
+From: Yijie Yang <quic_yijiyang@quicinc.com>
+In-Reply-To: <87c9ebb9-36b2-4891-8800-2896d6d9bbfc@quicinc.com>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf100008.china.huawei.com (7.185.36.138)
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6IGmeDmEgFV6xmkInLCHROVJh7DiU6zI
+X-Proofpoint-ORIG-GUID: 6IGmeDmEgFV6xmkInLCHROVJh7DiU6zI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 mlxlogscore=514 phishscore=0 malwarescore=0 mlxscore=0
+ adultscore=0 lowpriorityscore=0 bulkscore=0 suspectscore=0 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060019
 
 
 
-On 2024/11/19 5:46, Kalesh Singh wrote:
-> Commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
-> boundaries") updated __get_unmapped_area() to align the start address
-> for the VMA to a PMD boundary if CONFIG_TRANSPARENT_HUGEPAGE=y.
+On 2024-12-06 10:37, Tingwei Zhang wrote:
+> On 12/6/2024 9:35 AM, Yijie Yang wrote:
+>> Add dts nodes to enable ethernet interface on qcs8300-ride.
+>> The EMAC, SerDes and EPHY version are the same as those in sa8775p.
+>>
+>> Signed-off-by: Yijie Yang <quic_yijiyang@quicinc.com>
+>> ---
+>> This patch series depends on below patch series:
+>> https://lore.kernel.org/all/20240925-qcs8300_initial_dtsi- 
+>> v2-0-494c40fa2a42@quicinc.com/ - Reviewed
 > 
-> It does this by effectively looking up a region that is of size,
-> request_size + PMD_SIZE, and aligning up the start to a PMD boundary.
+> Above series was already applied. I would say there's no dependency to 
+> block this series to be applied now. No need to respin for this but 
+> update the dependency status if a new version is required.
 > 
-> Commit 4ef9ad19e176 ("mm: huge_memory: don't force huge page alignment
-> on 32 bit") opted out of this for 32bit due to regressions in mmap base
-> randomization.
-> 
-> Commit d4148aeab412 ("mm, mmap: limit THP alignment of anonymous
-> mappings to PMD-aligned sizes") restricted this to only mmap sizes that
-> are multiples of the PMD_SIZE due to reported regressions in some
-> performance benchmarks -- which seemed mostly due to the reduced spatial
-> locality of related mappings due to the forced PMD-alignment.
-> 
-> Another unintended side effect has emerged: When a user specifies an mmap
-> hint address, the THP alignment logic modifies the behavior, potentially
-> ignoring the hint even if a sufficiently large gap exists at the requested
-> hint location.
-> 
-> Example Scenario:
-> 
-> Consider the following simplified virtual address (VA) space:
-> 
->      ...
-> 
->      0x200000-0x400000 --- VMA A
->      0x400000-0x600000 --- Hole
->      0x600000-0x800000 --- VMA B
-> 
->      ...
-> 
-> A call to mmap() with hint=0x400000 and len=0x200000 behaves differently:
-> 
->    - Before THP alignment: The requested region (size 0x200000) fits into
->      the gap at 0x400000, so the hint is respected.
-> 
->    - After alignment: The logic searches for a region of size
->      0x400000 (len + PMD_SIZE) starting at 0x400000.
->      This search fails due to the mapping at 0x600000 (VMA B), and the hint
->      is ignored, falling back to arch_get_unmapped_area[_topdown]().
-> 
-> In general the hint is effectively ignored, if there is any
-> existing mapping in the below range:
-> 
->       [mmap_hint + mmap_size, mmap_hint + mmap_size + PMD_SIZE)
-> 
-> This changes the semantics of mmap hint; from ""Respect the hint if a
-> sufficiently large gap exists at the requested location" to "Respect the
-> hint only if an additional PMD-sized gap exists beyond the requested size".
-> 
-> This has performance implications for allocators that allocate their heap
-> using mmap but try to keep it "as contiguous as possible" by using the
-> end of the exisiting heap as the address hint. With the new behavior
-> it's more likely to get a much less contiguous heap, adding extra
-> fragmentation and performance overhead.
-> 
-> To restore the expected behavior; don't use thp_get_unmapped_area_vmflags()
-> when the user provided a hint address, for anonymous mappings.
-> 
-> Note: As, Yang Shi, pointed out: the issue still remains for filesystems
-> which are using thp_get_unmapped_area() for their get_unmapped_area() op.
-> It is unclear what worklaods will regress for if we ignore THP alignment
-> when the hint address is provided for such file backed mappings -- so this
-> fix will be handled separately.
-> 
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Vlastimil Babka <vbabka@suse.cz>
-> Cc: Yang Shi <yang@os.amperecomputing.com>
-> Cc: Rik van Riel <riel@surriel.com>
-> Cc: Ryan Roberts <ryan.roberts@arm.com>
-> Cc: Suren Baghdasaryan <surenb@google.com>
-> Cc: Minchan Kim <minchan@kernel.org>
-> Cc: Hans Boehm <hboehm@google.com>
-> Cc: Lokesh Gidra <lokeshgidra@google.com>
-> Cc: <stable@vger.kernel.org>
-> Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundaries")
-> Signed-off-by: Kalesh Singh <kaleshsingh@google.com>
-> Reviewed-by: Rik van Riel <riel@surriel.com>
-> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
-> ---
-> 
-> Changes in v2:
->    - Clarify the handling of file backed mappings, as highlighted by Yang
->    - Collect Vlastimil's and Rik's Reviewed-by's
-> 
->   mm/mmap.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 79d541f1502b..2f01f1a8e304 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -901,6 +901,7 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->   	if (get_area) {
->   		addr = get_area(file, addr, len, pgoff, flags);
->   	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
-> +		   && !addr /* no hint */
 
-Hello, any update about this patch?
+I will take care of it next time.
 
-And another question about efa7df3e3bb5 ("mm: align larger anonymous
-mappings on THP boundaries"), it said that align anon mapping, but the
-code does enable file mapping too, for fs without get_unmapped_area and
-enable CONFIG_TRANSPARENT_HUGEPAGE, we always try
-thp_get_unmapped_area_vmflags(), right?
-
-
-  if (file) {
-          if (file->f_op->get_unmapped_area)
-                  get_area = file->f_op->get_unmapped_area;
-  }
-  ...
-  if (get_area) {
-          addr = get_area(file, addr, len, pgoff, flags);
-  } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
-             && !addr /* no hint */
-             && IS_ALIGNED(len, PMD_SIZE)) {
-          /* Ensures that larger anonymous mappings are THP aligned. */
-          addr = thp_get_unmapped_area_vmflags();
-  } else {
-          addr = mm_get_unmapped_area_vmflags();
-  }
-
-Should we limit it to not call thp_get_unmapped_area_vmflags() for file?
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 16f8e8be01f8..854fe240d27d 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -894,6 +894,7 @@ __get_unmapped_area(struct file *file, unsigned long 
-addr, unsigned long len,
-                 addr = get_area(file, addr, len, pgoff, flags);
-         } else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
-                    && !addr /* no hint */
-+                  && !file
-                    && IS_ALIGNED(len, PMD_SIZE)) {
-                 /* Ensures that larger anonymous mappings are THP 
-aligned. */
-                 addr = thp_get_unmapped_area_vmflags(file, addr, len,
-
-
-Thanks
-
-
->   		   && IS_ALIGNED(len, PMD_SIZE)) {
->   		/* Ensures that larger anonymous mappings are THP aligned. */
->   		addr = thp_get_unmapped_area_vmflags(file, addr, len,
-> 
-> base-commit: 2d5404caa8c7bb5c4e0435f94b28834ae5456623
-> --
-> 2.47.0.338.g60cca15819-goog
+>> https://lore.kernel.org/all/20241010-schema- 
+>> v1-0-98b2d0a2f7a2@quicinc.com/ - Applied
+>>
+>> Changes in v5:
+>> - Pad the register with zero for both 'ethernet0' and 'serdes0'.
+>> - Change PHY name from 'sgmii_phy0' to 'phy0'.
+>> - Link to v4: https://lore.kernel.org/r/20241123-dts_qcs8300-v4-0- 
+>> b10b8ac634a9@quicinc.com
+>>
+>> ---
+>> Yijie Yang (2):
+>>        arm64: dts: qcom: qcs8300: add the first 2.5G ethernet
+>>        arm64: dts: qcom: qcs8300-ride: enable ethernet0
+>>
+>>   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 112 ++++++++++++++++++++ 
+>> ++++++++++
+>>   arch/arm64/boot/dts/qcom/qcs8300.dtsi     |  43 ++++++++++++
+>>   2 files changed, 155 insertions(+)
+>> ---
+>> base-commit: c83f0b825741bcb9d8a7be67c63f6b9045d30f5a
+>> change-id: 20241111-dts_qcs8300-f8383ef0f5ef
+>>
+>> Best regards,
 > 
 > 
+
+-- 
+Best Regards,
+Yijie
 
 
