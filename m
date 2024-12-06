@@ -1,166 +1,211 @@
-Return-Path: <linux-kernel+bounces-434886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD5659E6C5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:35:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CA729E6C53
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:34:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D782716ED27
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:33:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6BD316DFF1
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C575B201114;
-	Fri,  6 Dec 2024 10:31:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4271FCFD0;
+	Fri,  6 Dec 2024 10:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="ns8Z/+Ib";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eUkNJxI9"
-Received: from fhigh-b8-smtp.messagingengine.com (fhigh-b8-smtp.messagingengine.com [202.12.124.159])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n9cgGz64"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6AA201035;
-	Fri,  6 Dec 2024 10:31:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14B251FCD1E;
+	Fri,  6 Dec 2024 10:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733481082; cv=none; b=t/fKK3LEYsGCO+e+HqPzl17CxfiDqOEVoQc7RN7vQC+gmo0bWFriREAfZZyQ/dLi2JD8uGwNF2YM1BUm1jUqKu6Bs7BVYoAqvVLqP12odT2+gInsb+8AjTLv99hJ0O4KwlYY6YqRWoyyKelAZ2ieS8ruyzwky49o8mmVpU5D/zw=
+	t=1733480995; cv=none; b=bIKZCfeBltlxTARwxPR/Y2nB1dt1GTQTZIic/Dc89mrhoZ72erJoWwwg1a8sVmKHdCLSLIkE9ANFSDgEJkhjHsr1d2HjmJAdMZAr2UDGgQI1qWXQPF8AfuS+fcyEOy5EIN3ri0lVYvaVgbf9DuB1VV6RPteV3gvFa6nnRipVrdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733481082; c=relaxed/simple;
-	bh=gWZNdNWRxdyJxIbmFkWqSPMcmAdyUWXwTK9eTjdGkYM=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=j6UQCYTRUB3mrL+IIZ7eWAhJDU6FONnDJqUssnREuAAo1+4Bb49gCS67Yt5h19Fo4ybzcEiTLNSJFqZagxEwZh2M+VRzRziaaVykW7dc7AU9WwW0rPjWFI1MCyo6irn3zF5F6lT2YPhGz77vW4CiPpRITz7RhzALY3lEg0vocvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=ns8Z/+Ib; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eUkNJxI9; arc=none smtp.client-ip=202.12.124.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id DD4F62540134;
-	Fri,  6 Dec 2024 05:31:18 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 06 Dec 2024 05:31:19 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1733481078;
-	 x=1733567478; bh=AdLmQGIIUKBirRkpyUI0P99kdi4WSI3dP2Dl0+NVf5s=; b=
-	ns8Z/+IbhFHq/R78L834hEXScXlgOA+XC1BMnjt6gI/Ih/kLXJSbZcXvcVgu75fb
-	TngHBDHQOok0/x/CXBVU+qZa4nGvA3cPUVxV73lqAocfvxKP2Q/hMpcynyZdBab0
-	3miH9FuPsTJpkxAkyA3CDTBzTiiYvVqDyjonyNHFHhMW3QOTwkmDG+zp42/l9KTi
-	cf2LckEK7lffuAA6hKB+PVAK4L+wOlR4EM1EkYcgrDnvfHmXImIHSaRFwE6OztNL
-	K08W6ewINWJ/JKj0UuD6H18Z7yVHBeQ7mcPQYRog9kOwbX5zuRHCfOziQ1tou5gw
-	tdii2Em6dq9bRv/PPhm+ig==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733481078; x=
-	1733567478; bh=AdLmQGIIUKBirRkpyUI0P99kdi4WSI3dP2Dl0+NVf5s=; b=e
-	UkNJxI9Xi/YPf1B5zGOAUqVeyKLcpwWLv7Hw4RiM1e9iqbdxhwROfR03D033ljJn
-	vr9evcU7+MqNy8DDt+plpxGgDevytYgGJDPV1Ec+X/qlNwPkSdMypr59oKlNE1aM
-	Lygbw0AQ6IjZWXGz/LLGm8/0yS2qzawYHL715HJf3KBkkjH8r9JzDFcvnT8evnou
-	V+Srhe0/9Yii3bCGJGvHtfArNERPWoag54+WddHPIxPN4HgKRA+EeNpRtY1oK99i
-	1oBh0JGB7n5XhwG4+dkgucVk8xsiW+v50WLNiAxm3HAMcDoMl+JmN97nOBbrM552
-	A9a6+UPkrJE6v8fkCJotg==
-X-ME-Sender: <xms:dtJSZxFlZOzu9JPLtpu7KxZw3EqIIvNrNKX6E8N1SJ1Myg0bQpAn7w>
-    <xme:dtJSZ2VqLgsX1nuMnS5XhBAuQ0xyEe-rdiYVEm2x5KBKxtwZgR1V-BBSwaFbCk1id
-    EOwjzDSvnvAxV6Ox5s>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrieelgdduiecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredtjeen
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdrug
-    gvqeenucggtffrrghtthgvrhhnpedvhfdvkeeuudevfffftefgvdevfedvleehvddvgeej
-    vdefhedtgeegveehfeeljeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
-    grihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedufedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghgrrhihsehgrghrhihguhhordhnvg
-    htpdhrtghpthhtoheprghlvgigrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphht
-    thhopegsohhquhhnrdhfvghnghesghhmrghilhdrtghomhdprhgtphhtthhopegrlhhitg
-    gvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhopegrrdhhihhnuggsohhrghes
-    khgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhgvvgeskhgvrhhnvghlrdhorhhgpdhrtg
-    hpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepghhrvghgkhhh
-    sehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtohepsggvnhhnohdrlh
-    hoshhsihhnsehprhhothhonhdrmhgv
-X-ME-Proxy: <xmx:dtJSZzJj1hgbdsMbC6FkRCkHEJvWLQM57CyhC3-ing3nI-MmGXirsg>
-    <xmx:dtJSZ3GUYkO8vJTnvH_tdv6PpXfc6jglJvlic3YGWNSdLo6_1Gv3yg>
-    <xmx:dtJSZ3V-xlSAUhP-4WkBTrrDSbXUEM3kF6CexcX9dUPICnZNoBbleg>
-    <xmx:dtJSZyOS4_hScRTcvZ3v93PzYsqeqGwU11StBxiDLOy_-zBi4JpVJA>
-    <xmx:dtJSZwsyKsS00-Qkwy2adpFw9buo8R_35yq8sjFVrU6rcG3F1QtQZIcP>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4F0A12220072; Fri,  6 Dec 2024 05:31:18 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733480995; c=relaxed/simple;
+	bh=gp+daHvydwL9L3y98wTUrmvfaExcYO2fEUSPqFoPw7Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h2lDuSOFnhJFoTk8tlQmX93Yd0S1fEEJcFMGmRDcO6rVETw8Jfwwrk4VHytW4UwZho1cSuxF9ACHDchpmi7MKxZCiYa+svcdCFlUNKCZReMna3gC7wdhWANu/goICJOMOh8cN5o8lw/LIWGu62DrYResF80llzVYZARQdPsDtKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n9cgGz64; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B68HHaG010665;
+	Fri, 6 Dec 2024 10:29:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=oCucej
+	0dSF5GETRmWu6mfKUjp15NQzH2Lkd2dTmLQ4U=; b=n9cgGz646TyxyuDH6BlBR4
+	MRJ0kkmslRloN0Hrw4tsJAFQVbynl6TfaYfR+Urga4+gb4H6++BVnMgyvyS8ksBy
+	pdWGti8ZR3x+LXJrVW1/YNHawyDWq79JWG5EXSe+Fi3bMIqnZogymPyoKleD4O9W
+	DOy4NUCQvJtUZUx8QNK0wk7lFMDgmwoCPzdAA8cFiuigMC67UEvv97jS2dU2/73p
+	94nhzLEVRI/PKI0IwiZdHh6DB05j9Vbt8/aUX7G7N0j4pnPad8BFu/f+nvalp2iv
+	S794X5WU5DIfWUGKOdRUkx71Sk1PucXdn6ENJmXDPYQ+US9sCKjyy9Td0+RDV13A
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43b24rgftb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 10:29:28 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B6AOXTZ026632;
+	Fri, 6 Dec 2024 10:29:27 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43b24rgft5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 10:29:27 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B69Od0s005544;
+	Fri, 6 Dec 2024 10:29:26 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 438fr1x9m4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 06 Dec 2024 10:29:26 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B6ATMxZ17301834
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 6 Dec 2024 10:29:23 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D5E9520040;
+	Fri,  6 Dec 2024 10:29:22 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D786820049;
+	Fri,  6 Dec 2024 10:29:20 +0000 (GMT)
+Received: from [9.171.37.165] (unknown [9.171.37.165])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  6 Dec 2024 10:29:20 +0000 (GMT)
+Message-ID: <978a9ecd-47e9-442b-8daa-aee8f3d93dbb@linux.ibm.com>
+Date: Fri, 6 Dec 2024 11:29:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 06 Dec 2024 11:29:00 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Lee Jones" <lee@kernel.org>, linux-kernel@vger.kernel.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>,
- "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- "Benno Lossin" <benno.lossin@proton.me>,
- "Andreas Hindborg" <a.hindborg@kernel.org>,
- "Trevor Gross" <tmgross@umich.edu>, rust-for-linux@vger.kernel.org
-Message-Id: <2073da49-37c6-4add-9450-47842d05cd79@app.fastmail.com>
-In-Reply-To: 
- <CAH5fLgjauL-1QbnkVVK34COD_Ch_rcdpUEMKBsC9HB-TKWNscA@mail.gmail.com>
-References: <20241206090515.752267-1-lee@kernel.org>
- <20241206090515.752267-5-lee@kernel.org>
- <57c35f7f-76e8-4e21-8288-c66a1b6e7069@app.fastmail.com>
- <CAH5fLgjauL-1QbnkVVK34COD_Ch_rcdpUEMKBsC9HB-TKWNscA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] samples: rust: Provide example using the new Rust
- MiscDevice abstraction
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 07/19] unwind: Add user space unwinding API
+To: Josh Poimboeuf <jpoimboe@kernel.org>, x86@kernel.org
+Cc: Peter Zijlstra <peterz@infradead.org>,
+        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Ian Rogers <irogers@google.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+        Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+        Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Florian Weimer <fweimer@redhat.com>, Andy Lutomirski <luto@kernel.org>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <f89a9137e983902f22611e5379606062a64b2382.1730150953.git.jpoimboe@kernel.org>
+From: Jens Remus <jremus@linux.ibm.com>
+Content-Language: en-US
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <f89a9137e983902f22611e5379606062a64b2382.1730150953.git.jpoimboe@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: k71KKQ7DK_6bqgXO1_8PxnshXvpZGltg
+X-Proofpoint-ORIG-GUID: MS5ESTP1TIaET9Dps_VkxhOz71J-7aO4
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ bulkscore=0 adultscore=0 impostorscore=0 priorityscore=1501
+ lowpriorityscore=0 clxscore=1015 mlxscore=0 spamscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412060076
 
-On Fri, Dec 6, 2024, at 11:09, Alice Ryhl wrote:
-> On Fri, Dec 6, 2024 at 11:05=E2=80=AFAM Arnd Bergmann <arnd@arndb.de> =
-wrote:
->>
->> On Fri, Dec 6, 2024, at 10:05, Lee Jones wrote:
->> > This sample driver demonstrates the following basic operations:
->> >
->> > * Register a Misc Device
->> > * Create /dev/rust-misc-device
->> > * Provide open call-back for the aforementioned character device
->> > * Operate on the character device via a simple ioctl()
->> > * Provide close call-back for the character device
->> >
->> > Signed-off-by: Lee Jones <lee@kernel.org>
->>
->> Could you include a compat_ioctl() callback in the example?
->> I think it would be good to include it as a reminder for
->> authors of actual drivers that every driver implementing
->> ioctl should also implement compat_ioctl. In C drivers, this
->> can usually be done by pointing .compat_ioctl() to the
->> generic compat_ptr_ioctl() function, which assumes that 'arg'
->> is a pointer disguised as an 'unsigned long'.
->
-> The current Rust logic for building the fops table will use
-> compat_ptr_ioctl() automatically if you specify ioctl() but don't
-> specify compat_ioctl(), so this already uses compat_ptr_ioctl(). But
-> maybe that's not what we want?
+On 28.10.2024 22:47, Josh Poimboeuf wrote:
+> Introduce a user space unwinder API which provides a generic way to
+> unwind user stacks.
 
-Ok, got it. It's usually the right thing to do, but it's easy
-to get wrong if there is at least one ioctl command that actually
-needs an integer argument instead of a pointer.
+...
 
-Almost all command definitions are for either no argument or
-a pointer argument, and compat_ptr_ioctl() works fine there, by
-doing a conversion from a 32-bit pointer to a 64-bit pointer
-by zero-extending the upper 33 (on s390) or 32 bits (everywhere
-else). Integer values need to either a 32-bit sign-extension
-or a 32-bit zero-extension depending on how the argument is
-interpreted on 32-bit architectures.
+> diff --git a/kernel/unwind/user.c b/kernel/unwind/user.c
 
-I wonder if we should change the prototype of the ioctl
-callback to always pass a __user pointer and just not allow
-the few commands that pass an integer in rust drivers, and
-worry about it only when it's absolutely needed.
+...
 
-     Arnd
+> +int unwind_user_next(struct unwind_user_state *state)
+> +{
+> +	struct unwind_user_frame _frame;
+> +	struct unwind_user_frame *frame = &_frame;
+> +	unsigned long prev_ip, cfa, fp, ra = 0;
+> +
+> +	if (state->done)
+> +		return -EINVAL;
+> +
+> +	prev_ip = state->ip;
+> +
+> +	switch (state->type) {
+> +	case UNWIND_USER_TYPE_FP:
+> +		frame = &fp_frame;
+> +		break;
+> +	default:
+> +		BUG();
+> +	}
+> +
+> +	cfa = (frame->use_fp ? state->fp : state->sp) + frame->cfa_off;
+> +
+> +	if (frame->ra_off && get_user(ra, (unsigned long __user *)(cfa + frame->ra_off)))
+> +		goto the_end;
+> +
+> +	if (ra == prev_ip)
+> +		goto the_end;
+
+This seems too restrictive to me, as it effectively prevents
+unwinding from recursive functions, e.g. Glibc internal merge sort
+msort_with_tmp():
+
+$ perf record -F 9999 --call-graph fp /usr/bin/objdump -wdWF /usr/bin/objdump
+$ perf script
+...
+objdump    8314 236064.515562:     100010 task-clock:ppp:
+                  100630a compare_symbols+0x2a (/usr/bin/objdump)
+              3ffb9e58e7c msort_with_tmp.part.0+0x15c (/usr/lib64/libc.so.6)
+              3ffb9e58d76 msort_with_tmp.part.0+0x56 (/usr/lib64/libc.so.6)
+[unwinding unexpectedly stops]
+
+Would it be an option to only stop unwinding if both the IP and SP do
+not change?
+
+if (sp == prev_sp && ra == prev_ra)
+	gote the_end;
+
+> +
+> +	if (frame->fp_off && get_user(fp, (unsigned long __user *)(cfa + frame->fp_off)))
+> +		goto the_end;
+> +
+> +	state->sp = cfa;
+> +	state->ip = ra;
+> +	if (frame->fp_off)
+> +		state->fp = fp;
+> +
+> +	return 0;
+> +
+> +the_end:
+> +	state->done = true;
+> +	return -EINVAL;
+> +}
+
+...
+
+Thanks and regards,
+Jens
+-- 
+Jens Remus
+Linux on Z Development (D3303) and z/VSE Support
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
+
 
