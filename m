@@ -1,176 +1,146 @@
-Return-Path: <linux-kernel+bounces-434650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA5BC9E6962
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:55:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3C8A1188499D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:55:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA801E0E0F;
-	Fri,  6 Dec 2024 08:55:12 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 971419E6968
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:55:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 251051D9A48;
-	Fri,  6 Dec 2024 08:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4563B28355A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:55:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C83E81E04AC;
+	Fri,  6 Dec 2024 08:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2UuGPlh5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158FB1B4122;
+	Fri,  6 Dec 2024 08:55:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733475312; cv=none; b=HTHXQFkkIUayAulQI/01zelu1QwxXDDXKcXK7zES0FAo9YQhlD1HGO9Ev9EncPz6y7dFeITLi61qH9hK+zpqTn9qAI7dgxR45jJpDt074JrXM08DPlxmAA9EN2sKFg2nJ+FuOPccjuyHqy5IODG/S4i9uT5F3Rd7yp6btjsfk6c=
+	t=1733475335; cv=none; b=pZjgCTcDlDTpr0qE/fIW36HI3ByakIS2pEJJdFKnCiQsXaRiWG6ptfqnCxtGNI3uMnrMjcTyA0sfM/L3PGbjn5uY9RjOqafyGDd9tDI9aMVfbRHJL6SbBMWaszhv8SJsH5YgaN6O2M0l1zDk6Q8UxARbUgWVq1igVtrXdCeFWIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733475312; c=relaxed/simple;
-	bh=6amPin9F3atmc7mQBPJ6QiqmXojPFyeez5KUoWEI5FM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=C5/0Lkwzk57PZ+PvIjCCNsL2JmzK7kZw1R+By0ZKaMqLw/NPyhlgazkXh0dMUMMLJ/uWGNLfDoBcItVjKmd5aCqOwBz0WbYWpz8jYAxmB+haoBiwXBoOr0RPfEyAH7PORw4GHtYmkaVo4WCEnuqrqg6BH4n1jiTm/SWxKkL+kfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y4Q772vSsz4f3lVL;
-	Fri,  6 Dec 2024 16:54:43 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7611F1A07B6;
-	Fri,  6 Dec 2024 16:55:03 +0800 (CST)
-Received: from [10.174.179.80] (unknown [10.174.179.80])
-	by APP4 (Coremail) with SMTP id gCh0CgCnzoLlu1Jn6clADw--.11146S3;
-	Fri, 06 Dec 2024 16:55:03 +0800 (CST)
-Message-ID: <c831732e-38c5-4a82-ab30-de17cff29584@huaweicloud.com>
-Date: Fri, 6 Dec 2024 16:55:01 +0800
+	s=arc-20240116; t=1733475335; c=relaxed/simple;
+	bh=L6yN7mD5rKVPN+tUKvRk9yYl6zI+0cfg0Z1YEPW68Ys=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CReMah4i+VtaL37FOSJm1v1sAdvTCZhU/HhvwwWkx/En4qyf1x9waynpVLZdnBRWvwuYZ6SHZ7Xuk6PRRdboRAcW+8WASLE3Lg9Wl+fDO18661jIfE+Q0g2ZoNBzO22rwqXTUELvD1mfGss2ajVl1+RT627Tevv7efGwk7mRfqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2UuGPlh5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE7C2C4CED1;
+	Fri,  6 Dec 2024 08:55:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733475333;
+	bh=L6yN7mD5rKVPN+tUKvRk9yYl6zI+0cfg0Z1YEPW68Ys=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2UuGPlh5lVMkaJBzRw92Ro+VgeHLMjpc0xzpHzY4GGFBtTFgfbdUkTOaATmlUihTx
+	 CSKYse/KRWJUv/5C3hYmoZo/SzUU1fdy2iB/huG9QvHhr+oshcYkDrmeTZVkOEFrKw
+	 yhUj26SuCe39/PVN4g9mu/lv8jz9WT5OOm/tZGKA=
+Date: Fri, 6 Dec 2024 09:55:29 +0100
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, arnd@arndb.de,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v3 0/5] rust: miscdevice: Provide sample driver using the
+ new MiscDevice bindings
+Message-ID: <2024120609-stamina-slit-5a84@gregkh>
+References: <20241205162531.1883859-1-lee@kernel.org>
+ <2024120632-hardwired-hardhead-1906@gregkh>
+ <20241206074443.GJ8882@google.com>
+ <2024120622-unvalued-wriggle-7942@gregkh>
+ <CAH5fLgj6rqVbGHrU4008fvO60fJdRWoE2SvW7nc9njPUFuzJ_A@mail.gmail.com>
+ <2024120615-concert-oven-66f1@gregkh>
+ <CAH5fLgjb9UaFGB0fQn4hO5oWySkNdY0ZJDUaNTgiEBYu6wG5BQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/27] ext4: introduce seq counter for the extent status
- entry
-To: Jan Kara <jack@suse.cz>
-Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
- ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
- david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
- chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
-References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
- <20241022111059.2566137-13-yi.zhang@huaweicloud.com>
- <20241204124221.aix7qxjl2n4ya3b7@quack3>
-Content-Language: en-US
-From: Zhang Yi <yi.zhang@huaweicloud.com>
-In-Reply-To: <20241204124221.aix7qxjl2n4ya3b7@quack3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgCnzoLlu1Jn6clADw--.11146S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxWFy7ZryrWF1kXw4rCr18AFb_yoWrGFyfpF
-	ZIk3Z8tFs8J3WFkryIva17Zr1rGa48GrW7GF9Igw4vka98WFyfKF1UKFWjvF18WrWvqw1j
-	vF4Fk347C3Wjva7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUv0b4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0En4kS
-	14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I
-	8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8
-	ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x
-	0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_
-	Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU1
-	7KsUUUUUU==
-X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgjb9UaFGB0fQn4hO5oWySkNdY0ZJDUaNTgiEBYu6wG5BQ@mail.gmail.com>
 
-On 2024/12/4 20:42, Jan Kara wrote:
-> On Tue 22-10-24 19:10:43, Zhang Yi wrote:
->> From: Zhang Yi <yi.zhang@huawei.com>
->>
->> In the iomap_write_iter(), the iomap buffered write frame does not hold
->> any locks between querying the inode extent mapping info and performing
->> page cache writes. As a result, the extent mapping can be changed due to
->> concurrent I/O in flight. Similarly, in the iomap_writepage_map(), the
->> write-back process faces a similar problem: concurrent changes can
->> invalidate the extent mapping before the I/O is submitted.
->>
->> Therefore, both of these processes must recheck the mapping info after
->> acquiring the folio lock. To address this, similar to XFS, we propose
->> introducing an extent sequence number to serve as a validity cookie for
->> the extent. We will increment this number whenever the extent status
->> tree changes, thereby preparing for the buffered write iomap conversion.
->> Besides, it also changes the trace code style to make checkpatch.pl
->> happy.
->>
->> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+On Fri, Dec 06, 2024 at 09:51:55AM +0100, Alice Ryhl wrote:
+> On Fri, Dec 6, 2024 at 9:44 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Fri, Dec 06, 2024 at 09:31:28AM +0100, Alice Ryhl wrote:
+> > > On Fri, Dec 6, 2024 at 9:11 AM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Fri, Dec 06, 2024 at 07:44:43AM +0000, Lee Jones wrote:
+> > > > > On Fri, 06 Dec 2024, Greg KH wrote:
+> > > > >
+> > > > > > On Thu, Dec 05, 2024 at 04:25:17PM +0000, Lee Jones wrote:
+> > > > > > > It has been suggested that the driver should use dev_info() instead of
+> > > > > > > pr_info() however there is currently no scaffolding to successfully pull
+> > > > > > > a 'struct device' out from driver data post register().  This is being
+> > > > > > > worked on and we will convert this over in due course.
+> > > > > >
+> > > > > > But the miscdevice.rs change provides this to you, right?  Or if not,
+> > > > > > why not?
+> > > > >
+> > > > > This does allow us to pull the 'struct device *` out from `struct
+> > > > > miscdevice`; however, since this resides in MiscDeviceRegistration,
+> > > > > which we lose access to after .init, we have no means to call it.
+> > > > >
+> > > > > Alice is going to work on a way to use ThisModule to get the
+> > > > > MiscDeviceRegistration reference back from anywhere in the module. Until
+> > > > > that piece lands, we can't call MiscDeviceRegistration::device() outside
+> > > > > of RustMiscDeviceModule.
+> > > >
+> > > > That seems crazy, as ThisModule shouldn't be dealing with a static misc
+> > > > device, what happens for dynamically created ones like all
+> > > > normal/sane/non-example drivers do?  This should "just" be a dynamic
+> > > > object that is NOT tied to the module object, or worst case, a "static"
+> > > > structure that is tied to the module I guess?
+> > > >
+> > > > Anyway, I'll let you all work it out, good luck!
+> > >
+> > > If you store it somewhere else, you're probably okay. The current
+> > > place is just hard to access.
+> > >
+> > > The problem is that the Rust module abstractions generate a global
+> > > variable that holds an RustMiscDeviceModule which is initialized in
+> > > init_module() and destroyed in cleanup_module(). To have safe access
+> > > to this global, we need to ensure that you access it only between
+> > > init_module() and cleanup_module(). For loadable modules, the
+> > > try_module_get() logic seems perfect, so in Miscdevice::open we have a
+> > > file pointer, which implies that the fs infrastructure took a refcount
+> > > on fops->owner, which it can only do once init_module() is done.
+> > >
+> > > Unfortunately, this doesn't translate to built-in modules since the
+> > > owner pointer is just null, and try_module_get performs no checks at
+> > > all.
+> > >
+> > > Also, I'm realizing now that try_module_get() succeeds even if `state
+> > > == MODULE_STATE_COMING`. :(
+> > >
+> > > So in conclusion, I don't know of any way to provide safe access to
+> > > the global RustMiscDeviceModule value.
+> >
+> > Odd.  How is this any different than what is going to happen for
+> > platform or other drivers of any other type?  Sometimes they want to
+> > only create one single "static" object and register it with the bus they
+> > are assigned to.
+> >
+> > Do we need to have a RuscMiscDevice object somewhere instead that
+> > doesn't care about the module logic at all?  And then just use a
+> > "normal" rust module object to create a single instance of that which
+> > the misc binding will handle?
 > 
-> Overall using some sequence counter makes sense.
-> 
->> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
->> index c786691dabd3..bea4f87db502 100644
->> --- a/fs/ext4/extents_status.c
->> +++ b/fs/ext4/extents_status.c
->> @@ -204,6 +204,13 @@ static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
->>  	return es->es_lblk + es->es_len - 1;
->>  }
->>  
->> +static inline void ext4_es_inc_seq(struct inode *inode)
->> +{
->> +	struct ext4_inode_info *ei = EXT4_I(inode);
->> +
->> +	WRITE_ONCE(ei->i_es_seq, READ_ONCE(ei->i_es_seq) + 1);
->> +}
-> 
-> This looks potentially dangerous because we can loose i_es_seq updates this
-> way. Like
-> 
-> CPU1					CPU2
-> x = READ_ONCE(ei->i_es_seq)
-> 					x = READ_ONCE(ei->i_es_seq)
-> 					WRITE_ONCE(ei->i_es_seq, x + 1)
-> 					...
-> 					potentially many times
-> WRITE_ONCE(ei->i_es_seq, x + 1)
->   -> the counter goes back leading to possibly false equality checks
-> 
+> Actually, I guess we can access the miscdevice in open via the pointer
+> that misc_open() stashes into the file private data. We don't have to
+> go through the global variable.
 
-In my current implementation, I don't think this race condition can
-happen since all ext4_es_inc_seq() invocations are under
-EXT4_I(inode)->i_es_lock. So I think it works fine now, or was I
-missed something?
+Ah, nice, that's how a "normal" misc device should be doing this, so
+yes, that sounds good!
 
-> I think you'll need to use atomic_t and appropriate functions here.
-> 
->> @@ -872,6 +879,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
->>  	BUG_ON(end < lblk);
->>  	WARN_ON_ONCE(status & EXTENT_STATUS_DELAYED);
->>  
->> +	ext4_es_inc_seq(inode);
-> 
-> I'm somewhat wondering: Are extent status tree modifications the right
-> place to advance the sequence counter? The counter needs to advance
-> whenever the mapping information changes. This means that we'd be
-> needlessly advancing the counter (and thus possibly forcing retries) when
-> we are just adding new information from ordinary extent tree into cache.
-> Also someone can be doing extent tree manipulations without touching extent
-> status tree (if the information was already pruned from there). 
+thanks,
 
-Sorry, I don't quite understand here. IIUC, we can't modify the extent
-tree without also touching extent status tree; otherwise, the extent
-status tree will become stale, potentially leading to undesirable and
-unexpected outcomes later on, as the extent lookup paths rely on and
-always trust the status tree. If this situation happens, would it be
-considered a bug? Additionally, I have checked the code but didn't find
-any concrete cases where this could happen. Was I overlooked something?
-
-> So I think
-> needs some very good documentation what are the expectations from the
-> sequence counter and explanations why they are satisfied so that we don't
-> break this in the future.
-> 
-
-Yeah, it's a good suggestion, where do you suggest putting this
-documentation, how about in the front of extents_status.c?
-
-Thanks,
-Yi.
-
+greg k-h
 
