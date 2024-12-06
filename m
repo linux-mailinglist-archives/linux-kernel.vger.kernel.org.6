@@ -1,130 +1,163 @@
-Return-Path: <linux-kernel+bounces-435132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 964069E7014
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:32:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CEE2169071
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:32:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D552614A4F0;
-	Fri,  6 Dec 2024 14:32:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WELdmpke"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5217A9E7019
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:35:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE36E38384;
-	Fri,  6 Dec 2024 14:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0C3C2282BF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:35:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364D3149C51;
+	Fri,  6 Dec 2024 14:34:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgHxdjMu"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7303D32C8B;
+	Fri,  6 Dec 2024 14:34:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733495568; cv=none; b=pBKB90TXdKApuTP3IZv9HvZqwf3uuOb0ajvL29cyvbHJYxZJ+z4xl6e0nntkE+ez+WILTjs9Z1AVRatcRVmkGvUf6Q9J3fzFZQWDyDO4N30GsvcNAuhfEn/ZJCn4R4ep9O0Phpq3QdfnCz/EYjHfFIRLjshCMn8mgCmbD3IEFNs=
+	t=1733495695; cv=none; b=aGbt+ngDTAW0xkEeA11TTRy69EmQQKzSscjMV1eMuacL2CMdxXZV71T0RT1sUVaBNrM11Vdydx2b+/aKDmUzvHJG/kLA0+/HIrKf5nvWJl0E45NJt37uScEAs1vl+3wN1EDCABMsBDGxSopHLN2lMacM2EQgFkGoJ2TgGRSOKg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733495568; c=relaxed/simple;
-	bh=x1x5lZTfbcN/UYiBOy/j8SpdkEQ/Y4TzF8UlXN0Ddu4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=XpzhdhKPsySwqsZoIME4WrFu/DemFecPmBPQd1XN0XSnqFBZClCJs4KTJGqY72YWPWZupa1qgejWOCiH+Dp2ijcwTVQCIpGdvz1Y8ojGMdv4Py1nIafCCU08N9WeXsQX6T88DlOV7CP2KDyHLieLYx2sSRTFYsSmfiidl5y8UWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WELdmpke; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B6CF4Ij003155;
-	Fri, 6 Dec 2024 14:32:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	KPDZlNBlfWl08rL8S2G09TciFQAjveDqfFO68tbpYHU=; b=WELdmpkeEaK0npgH
-	GxjtdA1yDixZTduVJxoRCmQ+rBnMOfeNdWuko4eT17jTISYmPG9NPZHHr6KL/dol
-	yGW3CyhPPZ2d/Bd39HmUl062XN6WVYsMaDcDzFjbFUabCmQqFY44VPxaE5KNZIJF
-	aa/DUStK412KboG1FFYfeQ6nuwjd3+eDQHD+aw/wLG96CfO2eBVKTgL74yfvT0Re
-	WjJF8bGRJ/u/pDVW1wk2jTVrA58tRqi5lCHGpep8nVejmFxg8IT3ylaCfhExVDW8
-	4FEqEzB8fAjxFfvheKphzRMDawfzuqJQwkwE5GvydPmTCQrCDR8VOONa9BhYsWx+
-	zc41tA==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43brgp1tqn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 14:32:42 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6EWflZ003869
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 14:32:41 GMT
-Received: from [10.239.97.152] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
- 06:32:35 -0800
-Message-ID: <d5c52ecf-1606-4563-ba16-a88437c414da@quicinc.com>
-Date: Fri, 6 Dec 2024 22:32:32 +0800
+	s=arc-20240116; t=1733495695; c=relaxed/simple;
+	bh=nF5LxKv8T81leJMO/CuStFlxQDPRXw0NlSd9f5JANYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s32gfombTyxsi+AEsnb+9OU9R4yIcMfNazXDYijIofvMKcCMtrpjm6cQLL6/KJ84THIwNtei7TW0RXrgjCMvHBjpyBVbbiQiDEVYAVvk5foooNyVLGaiY3Q/KiYSh1IX4Q3xEQZUTVU8EUVV4JyzUDoH0jwbUQ6V9q2qs2oyGjQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgHxdjMu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A50DC4CED1;
+	Fri,  6 Dec 2024 14:34:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733495695;
+	bh=nF5LxKv8T81leJMO/CuStFlxQDPRXw0NlSd9f5JANYc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WgHxdjMuh7TGdSDG78OQk4528JQqnx5KRlevVafqybA+nndhgJb7Q70hQ36QphC7m
+	 5J5HKk9E6TZ9duXn4GHfgApO3OHuIlAXffiDZU129EnvSz9FhND87VGhejelBxsIvq
+	 sBLNi5O3GT4ArsiTXb+a95mquANa9oVe/eoZ27dirHsZm5LDxjFWrLYgljpvRikiYq
+	 MmlKV31TVnfvcurjE5rt1OKQoZIgxIH/EK+7WsaTtS1YWbu9imqs3Y+eKs3FPMTZX8
+	 Jx9N7bJkAiOxjE4cCX1Ke6WmOWBeRNiKX9xzpl/XzHbUaojbajwdOG+z2tSb05GFEz
+	 EBCHb6D1nP7SA==
+Date: Fri, 6 Dec 2024 15:34:52 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v6 09/10] drm/vc4: hdmi: stop rereading EDID in
+ get_modes()
+Message-ID: <20241206-caped-proficient-rattlesnake-c882f3@houat>
+References: <20241206-drm-bridge-hdmi-connector-v6-0-50dc145a9c06@linaro.org>
+ <20241206-drm-bridge-hdmi-connector-v6-9-50dc145a9c06@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/16] dt-bindings: media: camss: Add qcom,sm8550-camss
- binding
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <rfoss@kernel.org>,
-        <todor.too@gmail.com>, <mchehab@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <vladimir.zapolskiy@linaro.org>
-CC: <quic_eberman@quicinc.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <kernel@quicinc.com>,
-        Yongsheng Li
-	<quic_yon@quicinc.com>
-References: <20241205155538.250743-1-quic_depengs@quicinc.com>
- <20241205155538.250743-12-quic_depengs@quicinc.com>
- <0909a2b2-089d-41f3-82e6-f0e05682ce27@linaro.org>
- <2515c9d8-0e9d-4e1e-b8ff-764b53ea3edb@quicinc.com>
- <e5f89ace-3a22-41a7-aafe-1365f2fd9bcd@linaro.org>
-Content-Language: en-US
-From: Depeng Shao <quic_depengs@quicinc.com>
-In-Reply-To: <e5f89ace-3a22-41a7-aafe-1365f2fd9bcd@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 20zBSk_dzKd5RqAkkKwyp_bzp0nqBJ_W
-X-Proofpoint-ORIG-GUID: 20zBSk_dzKd5RqAkkKwyp_bzp0nqBJ_W
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- adultscore=0 lowpriorityscore=0 mlxscore=0 spamscore=0 suspectscore=0
- priorityscore=1501 phishscore=0 impostorscore=0 mlxlogscore=961
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060109
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="6occl6gdwf4rqri7"
+Content-Disposition: inline
+In-Reply-To: <20241206-drm-bridge-hdmi-connector-v6-9-50dc145a9c06@linaro.org>
 
-Hi Bryan,
 
-On 12/6/2024 6:06 PM, Bryan O'Donoghue wrote:
-> On 06/12/2024 02:18, Depeng Shao wrote:
->>
->> Since the camss driver just support ife, so I think only ife related 
->> iommus are needed, just like we don't add ipe,bps,jpeg related clk and 
->> register in the dt-binding.
->>
->>      msm_cam_smmu_ife {
->>
->>          compatible = "qcom,msm-cam-smmu-cb";
->>
->>          iommus = <&apps_smmu 0x800 0x20>;
->>          ......
->>      };
-> 
-> Upstream camss entries provide a long list of iommu entries, please 
-> provide as complete a table as you can here.
-> 
+--6occl6gdwf4rqri7
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v6 09/10] drm/vc4: hdmi: stop rereading EDID in
+ get_modes()
+MIME-Version: 1.0
 
-Do you mean also add jpeg, icp and cmd's iommu entries to here? Starting 
-from SM8550, IFE just has one smmu entry, SM8650 and SM8750 are same.
+Hi,
 
-Thanks,
-Depeng
+On Fri, Dec 06, 2024 at 12:16:03PM +0200, Dmitry Baryshkov wrote:
+> The vc4_hdmi_connector_detect_ctx() via vc4_hdmi_handle_hotplug()
+> already reads EDID and propagates it to the drm_connector. Stop
+> rereading EDID as a part of the .get_modes() callback and just update
+> the list of modes. This matches the behaviour of the i915 driver.
+>=20
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  drivers/gpu/drm/vc4/vc4_hdmi.c | 21 ---------------------
+>  1 file changed, 21 deletions(-)
+>=20
+> diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdm=
+i.c
+> index e5ab42f72f618b90f956482db6c9c8074c1e3bf1..3364ef90968dad3074800f029=
+26300ffceb75c69 100644
+> --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> @@ -470,31 +470,10 @@ static int vc4_hdmi_connector_detect_ctx(struct drm=
+_connector *connector,
+> =20
+>  static int vc4_hdmi_connector_get_modes(struct drm_connector *connector)
+>  {
+> -	struct vc4_hdmi *vc4_hdmi =3D connector_to_vc4_hdmi(connector);
+>  	struct vc4_dev *vc4 =3D to_vc4_dev(connector->dev);
+> -	const struct drm_edid *drm_edid;
+>  	int ret =3D 0;
+> =20
+> -	/*
+> -	 * NOTE: This function should really take vc4_hdmi->mutex, but doing so
+> -	 * results in reentrancy issues since cec_s_phys_addr() might call
+> -	 * .adap_enable, which leads to that funtion being called with our mutex
+> -	 * held.
+> -	 *
+> -	 * Concurrency isn't an issue at the moment since we don't share
+> -	 * any state with any of the other frameworks so we can ignore
+> -	 * the lock for now.
+> -	 */
+> -
+> -	drm_edid =3D drm_edid_read_ddc(connector, vc4_hdmi->ddc);
+> -	drm_edid_connector_update(connector, drm_edid);
+> -	cec_s_phys_addr(vc4_hdmi->cec_adap,
+> -			connector->display_info.source_physical_address, false);
+> -	if (!drm_edid)
+> -		return 0;
+> -
+>  	ret =3D drm_edid_connector_add_modes(connector);
+> -	drm_edid_free(drm_edid);
 
+I don't think that works though, for mostly two reasons:
+
+ 1) We're not sure we'll even have an hotplug interrupt if the system
+    boots with the connector plugged in for example.
+
+ 2) afaik, the get_modes ioctl directly calls get_modes too.
+
+Maxime
+
+--6occl6gdwf4rqri7
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1MLiwAKCRAnX84Zoj2+
+dtSXAX4hYRG+Z6tKfkagtuQh3eXutsb5V7CXdnzsxAuDpcnlgOGnrNWvE/pOo221
+IbNrcU0BgKUK8Zc+sRgjwT4hMHCUzqNxA3vJPT21KIFeOFWVKptImryaMUOS4zgh
+qNsNOpDWOQ==
+=07j8
+-----END PGP SIGNATURE-----
+
+--6occl6gdwf4rqri7--
 
