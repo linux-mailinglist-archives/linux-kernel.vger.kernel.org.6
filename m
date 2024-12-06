@@ -1,134 +1,190 @@
-Return-Path: <linux-kernel+bounces-435115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F1BB9E6FD8
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:10:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1E489E6FDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:12:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2F2A165AB7
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:10:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A59A71885218
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FA28207E0D;
-	Fri,  6 Dec 2024 14:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B931207E1A;
+	Fri,  6 Dec 2024 14:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LacXbEam"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBuKNaNZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19CC02E859;
-	Fri,  6 Dec 2024 14:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B35F201001;
+	Fri,  6 Dec 2024 14:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733494210; cv=none; b=R8JwBC8jsVhhL1DFTqBW+6jRL6UZ6PRXtkqMmAHRCuHqpeaU6YVhIYGXZ4CkQjzKyuAKP1SfYP7gL06ojpGzHe0Qm5x9uw2fYnO7a3s9RMWBtckoMcajTQkgL/sog1SzyKusAMLVMgiQv42hRc4p8nMZAN2KajOyE3hd4AH6qUY=
+	t=1733494320; cv=none; b=PvIa+ZgY9MpvrJHsSHhYoPJoF9Z+csBTPoHGGtx3tsVkN1qN1MBmBB5NGjk5mju2PKI1oiNSnRXiRDsTSh95IiW6mRoYGOG5m9rsNRJuWlJeWTn2TV0wE3jUCAAqQ9HO1Vg/5FrdZOmyesvFJ5Ktv8/s0Q6NfxOURfVctjUXyMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733494210; c=relaxed/simple;
-	bh=8PFPN7DbZZGHpYlhMxeWbMPrpnXKX3Dkt/Q2/+aIyaI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TbyLZuDRForZx60oHBg419adGb/eouI6/BGL/1ZY4/fuM8f6IN2THbG3WLMiJHUSAqVJ7W+IVIc9rk0xo608VkfK5Ayw5CPeVW1ItVvn2L4/rW/YJZVeAYB+jujvFLUM2eJpLkJYOZZL6ksnihwBjCj9sU342DuhNfPREjP2nGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LacXbEam; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53e1c3dfbb0so1946759e87.3;
-        Fri, 06 Dec 2024 06:10:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733494207; x=1734099007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WJ9IUcbryk0YazN7Sa5TOtgGdDNEInD45SiDVANUoqs=;
-        b=LacXbEamzHiOouoomoi6B/EyG1v2tdcp3UaFR46QA7a4tSiA5LpDIeiriFwNrEW9oO
-         8Plag1/sNtshuSfhg8Tvk5itIlWc1oR1Wqt0xJ+dhrAC+yLQ9DzJTsYxjiMDmAeePtZw
-         9vhpOyeYdkbVeI4fYsVrxPCxn1JPvI8Sfn0i5atOVzwKbTR85XDXVSbPkhdFkFdlpU6w
-         uhUKBKn5IjVyJrWYIkcKDE8UN5fYW5nullBxk9p9oTq+Eix8mvFby5nSBPJqG4X9jfQ3
-         ivZv+PaaJEo5ZEOnYyZRnSzoRalDBJbPGQ3my397eTmC4N0FojL4p1SGGmKCWM9tdwFY
-         lYpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733494207; x=1734099007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WJ9IUcbryk0YazN7Sa5TOtgGdDNEInD45SiDVANUoqs=;
-        b=ZytnZ1MGUzroR7rG4ZnoDeBu2Vzj3HVyU2s6OJ/q+RWntipwzV0OT/cFVPSLWnSVkg
-         tIk5QfPklaF6VQFNQkrgbTGXjZai1mDhtzn1+nehJURCx9DwpEPiVx5JmUl2F4m0Ufta
-         1Wm/STQFwZvCtKhhamP1Y+YsgOlEM3P43Uh/7kXkQEWUfqxIasLagDDaCGmUApItYtgm
-         DjxSryz8/sH8kfRbfYW5Zsbmms115+riGycHg3wWf0hBx1rePaij96iSGLnPZWoIwuuc
-         XkAWdEnFm8GwS1VsnsAtMiqsrcuQ4DvOSg5yy+NJjvvdeRmjDRn4gXMGhNRpYF6zR/5S
-         9qhw==
-X-Forwarded-Encrypted: i=1; AJvYcCV76x6c6HJEns7Wdeye5W9LtHJB3cb5W0Dqct8NZLQqTLxJ99dANUHyLpldHndQ5n+leBbNtdo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjW59x++aK9UXYvDfhBE9VnrRsoJwiUfCrz0BljwgawfZffxfX
-	rJdrsXfCF9Hf3C6wmeIzkpA9hHxRvGgnG1dudHP60m1bvcxaAxcK3eREPwAF+AEhFfx3E3VpHTc
-	RdkJlrc7WaWNC7u3KmgMeWpN/swg2
-X-Gm-Gg: ASbGncuFDssWLNlNO+0trdc4e5D10u9awVXQklPu6cbaicAjcYRY5v1wAa5lDPNv531
-	gX3HrYtEMnUpe+T62KqJS1kw9YDMlfx+v9RMUrlsWQD9JoQ==
-X-Google-Smtp-Source: AGHT+IFmPgaxVCncnxSpgGFH2NGYgVn6CI4Sy8CIqD74igkDri8YqGT7RQpReqsWcGBJ+i/X88yERPyj1yI/64Yzmfs=
-X-Received: by 2002:a05:6512:e88:b0:53e:12f2:68f7 with SMTP id
- 2adb3069b0e04-53e2c2b1a6amr767751e87.1.1733494206924; Fri, 06 Dec 2024
- 06:10:06 -0800 (PST)
+	s=arc-20240116; t=1733494320; c=relaxed/simple;
+	bh=8FH5lBgWNIAEjsKX33NT40twbgY4YS5QRxCuJsZyGS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2zLeicA/UUm4J3biXNOiQ8/Btn/B7M+wIn2sw4LxQmn/OrX8FUeh7XtOY6CRLiEqQ1Xo4aJJUOdfdE2VVVjqWee54uQQ/njo718PpiIuG4uficxAkqWFL32A545xqmKh+SwtRZWzLseyWxHzyL0EtiyDpfs5xakRew2fPRDYnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBuKNaNZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B15C4CED1;
+	Fri,  6 Dec 2024 14:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733494320;
+	bh=8FH5lBgWNIAEjsKX33NT40twbgY4YS5QRxCuJsZyGS8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SBuKNaNZWbu26ObvbPG20Bv759vrpLQnlotkOFx+diGx23XzE1XB2okn3vzE/iq9x
+	 8ZbsrDjAeiCs4pj4wMrB9ir/qWrSVOPrxDMYhDGoVOOD0W44IFlWaKAWduj1GrD+0L
+	 dSgOX/UY09zzMCI/xwoXBk+D3A+UZzLtomTwDhjfaK/rd0gjQa+ZS2+z1H00S1mE5U
+	 3HxhJtM6GL7MnpkwbiqEM7ctI62Oxq+93wd8Q+If5EkjWpr83Km+TDB+DQhteklwnc
+	 UDExjGvZYIKU+mtsTtt2/tG7abNwP/dqU2Z7gEojfnnxbolV13Z4We2lmldrp6jsso
+	 5KGUQ7bUcvhow==
+Date: Fri, 6 Dec 2024 15:11:57 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Phong LE <ple@baylibre.com>, 
+	Inki Dae <inki.dae@samsung.com>, Seung-Woo Kim <sw0312.kim@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Russell King <linux@armlinux.org.uk>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sandy Huang <hjc@rock-chips.com>, 
+	Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>, Andy Yan <andy.yan@rock-chips.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-mediatek@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
+ infrastructure
+Message-ID: <20241206-agile-tidy-avocet-c69bff@houat>
+References: <20241201-drm-bridge-hdmi-connector-v5-0-b5316e82f61a@linaro.org>
+ <20241201-drm-bridge-hdmi-connector-v5-8-b5316e82f61a@linaro.org>
+ <20241202-industrious-unnatural-beagle-7da5d4@houat>
+ <e7jngrc4nljdsksekinbkir2h76ztsth2xj4yqcyapfv43uryh@356yrxv3j4x6>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241105155801.1779119-1-brgerst@gmail.com> <20241105155801.1779119-2-brgerst@gmail.com>
- <20241206115154.GA32491@redhat.com>
-In-Reply-To: <20241206115154.GA32491@redhat.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Fri, 6 Dec 2024 09:09:55 -0500
-Message-ID: <CAMzpN2g8eenLASqXA36LwP=Zr+8Z1cO7Cpz0ijiUdOr_+7G-3A@mail.gmail.com>
-Subject: Re: [PATCH v5 01/16] x86/stackprotector: Work around strict Clang TLS
- symbol requirements
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, "H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>, 
-	stable@vger.kernel.org, Fangrui Song <i@maskray.me>, 
-	Nathan Chancellor <nathan@kernel.org>, Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="zlmn4u42a2hgjiwb"
+Content-Disposition: inline
+In-Reply-To: <e7jngrc4nljdsksekinbkir2h76ztsth2xj4yqcyapfv43uryh@356yrxv3j4x6>
+
+
+--zlmn4u42a2hgjiwb
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v5 8/9] drm/vc4: hdmi: switch to using generic HDMI Codec
+ infrastructure
+MIME-Version: 1.0
 
-On Fri, Dec 6, 2024 at 6:52=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> On 11/05, Brian Gerst wrote:
-> >
-> > --- a/arch/x86/kernel/vmlinux.lds.S
-> > +++ b/arch/x86/kernel/vmlinux.lds.S
-> > @@ -468,6 +468,9 @@ SECTIONS
-> >  . =3D ASSERT((_end - LOAD_OFFSET <=3D KERNEL_IMAGE_SIZE),
-> >          "kernel image bigger than KERNEL_IMAGE_SIZE");
-> >
-> > +/* needed for Clang - see arch/x86/entry/entry.S */
-> > +PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
->
-> Don't we need the simple fix below?
->
-> without this patch I can't build the kernel with CONFIG_STACKPROTECTOR=3D=
-n.
->
-> Oleg.
->
-> diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.=
-S
-> index fab3ac9a4574..2ff48645bab9 100644
-> --- a/arch/x86/kernel/vmlinux.lds.S
-> +++ b/arch/x86/kernel/vmlinux.lds.S
-> @@ -472,8 +472,10 @@ SECTIONS
->  . =3D ASSERT((_end - LOAD_OFFSET <=3D KERNEL_IMAGE_SIZE),
->            "kernel image bigger than KERNEL_IMAGE_SIZE");
->
-> +#ifdef CONFIG_STACKPROTECTOR
->  /* needed for Clang - see arch/x86/entry/entry.S */
->  PROVIDE(__ref_stack_chk_guard =3D __stack_chk_guard);
-> +#endif
->
->  #ifdef CONFIG_X86_64
->  /*
+On Tue, Dec 03, 2024 at 02:19:41PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Dec 02, 2024 at 02:20:04PM +0100, Maxime Ripard wrote:
+> > Hi,
+> >=20
+> > Sorry, I've been drowning under work and couldn't review that series be=
+fore.
+>=20
+> No worries, at this point I'm more concerned about my IGT series rather
+> than this one.
+>=20
+> >=20
+> > I'll review the driver API for now, and we can focus on the exact
+> > implementation later on.
+> >=20
+> > On Sun, Dec 01, 2024 at 02:44:12AM +0200, Dmitry Baryshkov wrote:
+> > > Drop driver-specific implementation and use the generic HDMI Codec
+> > > framework in order to implement the HDMI audio support.
+> > >=20
+> > > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/vc4/vc4_hdmi.c | 68 ++++++++++----------------------=
+----------
+> > >  drivers/gpu/drm/vc4/vc4_hdmi.h |  2 --
+> > >  2 files changed, 15 insertions(+), 55 deletions(-)
+> > >=20
+> > > diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4=
+_hdmi.c
+> > > index 7295834e75fb1ab0cd241ed274e675567e66870b..d0a9aff7ad43016647493=
+263c00d593296a1e3ad 100644
+> > > --- a/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > > +++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
+> > > @@ -595,6 +595,9 @@ static int vc4_hdmi_connector_init(struct drm_dev=
+ice *dev,
+> > >  	if (vc4_hdmi->variant->supports_hdr)
+> > >  		max_bpc =3D 12;
+> > > =20
+> > > +	connector->hdmi_codec.max_i2s_channels =3D 8;
+> > > +	connector->hdmi_codec.i2s =3D 1;
+> > > +
+> >=20
+> > I guess it's a similar discussion than we had with HDMI2.0+ earlier
+> > today, but I don't really like initializing by structs. Struct fields
+> > are easy to miss, and can be easily uninitialized by mistake.
+> >=20
+> > I think I'd prefer to have them as argument to the init function. And if
+> > they are optional, we can explicitly mark them as unused.
+>=20
+> Do you mean drm_connector_hdmi_init()? I think it's overloaded already,
+> but I defintely can think about:
+>=20
+> drmm_connector_hdmi_init(..., max_bpc, HDMI_CODEC_I2S_PLAYBACK(8) |
+> HDMI_CODEC_NO_CAPTURE | HDMI_CODEC_DAI_ID(4));
+>=20
+> or
+>=20
+> ... | HDMI_CODEC_NO_DAI_ID)
+>=20
+> The default (0) being equivalent to:
+>=20
+> HDMI_CODEC_NO_I2S | HDMI_CODEC_NO_SPDIF | HDMI_CODEC_NO_CAPTURE | HDMI_CO=
+DEC_NO_DAI_ID
+>=20
+> WDYT?
 
-Which compiler are you using?  It builds fine with GCC 14 and clang 18.
+I know it's kind of contradictory, but it definitely looks overcrowded.
 
+A bit after we merged the HDMI infrastructure, Thomas commented that it
+might have been better to have a secondary init function instead of an
+alloc/init function.
 
-Brian Gerst
+https://lore.kernel.org/all/5934b4b2-3a99-4b6b-b3e3-e57eb82b9b16@suse.de/
+
+It's still sitting in my inbox and haven't had the time to work on that,
+but maybe that's how we should deal with this?
+
+Switch to using drm_connector_init, then drm_connector_hdmi_init would
+only take care of the video stuff, and we could have an additional
+drm_connector_hdmi_audio_init?
+
+That way, we could have both explicit stuff, and yet not overcrowd the
+arguments list too much?
+
+Maxime
+
+--zlmn4u42a2hgjiwb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ1MGKAAKCRAnX84Zoj2+
+dsbFAYD9a9CbKAF5U+/Xm3fLE7a14J/XPBbuz9EMu0GYhSCDU8jSH+AV+9KU2ocR
+VKqXE0sBf3bndpAJ89NpeYGjJK6VbFoQ356f4QDu++x8FSywdfvKoLqiFOIjJWpk
+49TswdgyBg==
+=ehcm
+-----END PGP SIGNATURE-----
+
+--zlmn4u42a2hgjiwb--
 
