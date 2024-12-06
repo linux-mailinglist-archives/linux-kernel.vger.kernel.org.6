@@ -1,215 +1,171 @@
-Return-Path: <linux-kernel+bounces-435316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D8449E7609
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:32:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AB7F9E761A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 17:34:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D452916CD0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:33:45 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49B3B1FFC44;
+	Fri,  6 Dec 2024 16:31:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="G9h4Qf+9"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC265286683
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:32:16 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EDC92063C4;
-	Fri,  6 Dec 2024 16:31:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="S0LG+Xnj"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 408AE1F4E34
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 16:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D82BA1F63F6;
+	Fri,  6 Dec 2024 16:31:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733502669; cv=none; b=PVY6Qydzzo1+0QKJMybBgxXGxCjGmoPPxuXRVzsm+m2IHWEazzf3ftTplnrCJwgO+ubU1vI8aNVrm1o3vAC6PpXH4uFx7EbL0JLVqi/2vW6RmZj8ZS13ieRGVK/V6942oPN68fB+jM5a2+B7mH/L011EQkq4pG3nz8M/KwL28wM=
+	t=1733502715; cv=none; b=u198Kjv+gpzo5gfJH1C7CscK6azvSpkUoD32AQb0Qso93SQd01sOoP1+4Jq6YIDzgYS0nrYC4tVrR1I9jrJQPGYU92Heu65eCMr/ck9xG0ivW3Qur7wngqbBELx77EFrDoNVr1UcsNwKTFyodFDpuCBiGr7CqD4yIqBxtw2jytY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733502669; c=relaxed/simple;
-	bh=J6z5q62M8vmTkZ3jTBoKrO19txxGlcIk+1Ry1NXvBGw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=IXAUtRMZXOgUe3oCxvbMwYSiCVvQb9J9CENfW25Kx4rACeEEng95+0uIohbqmIhyjKIuMCpRJV3AZHeNIxuNc++WDnWDvQ9F7zV3GTEGfKT5l7jK/VtAde7XPB1IxTU+OUOajUlVS6j6+en6MJWJ5KnZrXcQzcVGZxyQkaw8e3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=S0LG+Xnj; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa642e45241so115210266b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 08:31:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733502665; x=1734107465; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=uFUL3kCwx3cUbzg7B5UVd/jZ4AQMlp0js1yIPxGumCU=;
-        b=S0LG+XnjbJXITJXGXbMiIo3Q58qXxxiAswNrXoFZ0Gl0m+/fe/WX4yizhX0qIiZt/b
-         G6vb4hNUnj6V5OHDolg6/JJGfzgnr7SCdvuSV8sOuc5Kb5peQ77dqlV5WhNRgkF/0OJp
-         X2R34n6Rk0iLrW+ckbQOnipWAQpyoqWaVSSdH4BSwYV8862Jw93812+QVmCmr6Fb2gPI
-         33/Q087NJE/lfsQCxiKuE2FKgxqWDpjiGIDWahD2DLNZ2pGFp+R6UC0KKuA6VHCfojQF
-         WRXuv1aikEV50i2PFGoLxvZcClN0eTi41DQ04Ixwt3tn/qX6xxQ5OmS9B3WJi6iAfgzH
-         5KPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733502665; x=1734107465;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uFUL3kCwx3cUbzg7B5UVd/jZ4AQMlp0js1yIPxGumCU=;
-        b=LFCs032hrJM5UMGEUNeTBl+RhOXran+9qzvszQVeQjKW0xUKdtLykhdbYXXev7UiJP
-         yJGv6+tAbEQ1GAFv1Y70e3TddGtD4YewPfYmZlGHABj+lr6QlKOkA4OUG8Nqpa4aewOK
-         zknVfvHVrKx/I5NXOBXOI4WfJc9Y1/al8YcG42baLxQKybjCw+ui6X+e6+teNrVu+/NB
-         UtXvZZjUOwdZsMGnM92GabwlFwBC6xXyd/nXcEgSsUcXhe4O0F83DBQS5kKiDV9Ra+vE
-         rLpKHyRhbHwJGdVMp0OaDT6amenZiK+u4bxuiAljlZf+lR69SKR9xADfQvowVAErLOI+
-         QmsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW63f0YHO0qn0jRD2YMpWePYbiDNPCWe04E4j7EjXpSfgXldXXsL98h1ssRal2zfSLasq6+JVbcorqbTnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeOeMl8sI47G597m170zWfYu4l+uGRglxWv5YYNeDmVpz36jod
-	FIFdhRL8w8J1i3sawOXEOK9sDXBLBdwVdy8MPGuB7BAsW0nHoikB/ajguI6v2P4=
-X-Gm-Gg: ASbGnctyaCzusQ5NuimGf7VaKcguKMRkrwcW1Rlv+azIjrZu7e17SgNxXNCtJVNVieS
-	s5T9/IYTeuBcZRgYDTB55LWHAmoCCv10J9kJm2gv/DdOKTw5O5/6Ejo4wn71EowG18Lkz9oRmFn
-	RyXFcI40lkOuUC0+VrOJ6C8wodUZq32EmK158xccSnXNK3kE3kLkNEAnYcv+tA+f6wG4fQIcnl7
-	Jr4A02YO82e20lZHWfq84n9Fx2J4ZpduFdlIuKKRUKbnFkRyKkbnW5PlbwKn+vtFmavY8+ZsH3r
-	AuMBzK1un02kPQsLxCjAy4CZ4c2dO6BeGA==
-X-Google-Smtp-Source: AGHT+IFdGgwrC3n71nQi/9MjgKXvQ3xt8s29XoT1ICJHQ14fSF1EZzWFJtu/VD99oVNhBiVQ1DgX2Q==
-X-Received: by 2002:a17:906:310d:b0:aa6:2ff8:d62d with SMTP id a640c23a62f3a-aa63a2419ccmr313287766b.45.1733502665369;
-        Fri, 06 Dec 2024 08:31:05 -0800 (PST)
-Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260e8af8sm257710266b.191.2024.12.06.08.31.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 08:31:05 -0800 (PST)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 06 Dec 2024 16:31:07 +0000
-Subject: [PATCH v4 7/7] phy: exynos5-usbdrd: allow DWC3 runtime suspend
- with UDC bound (E850+)
+	s=arc-20240116; t=1733502715; c=relaxed/simple;
+	bh=ZDJMo0u8Si0285Zl0KUnk0ZmV5wCKWgexdFgojmThyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GPApf1sDLil66Y5Ym2iZbIts6glwkDf3jpo7CwT73sNSAoOIYAGShoGjdin40szrYFbH/1cPdnK5fPvAgOQ7SSW+hqpeQHmgV0Mk4v0QT+6jqWtkfupJFR4Ay0ANArFP3J5bCp3J6OYz+Xc9myQAv8R95wxMAXzm9464QC1EUI0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=G9h4Qf+9; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733502714; x=1765038714;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZDJMo0u8Si0285Zl0KUnk0ZmV5wCKWgexdFgojmThyk=;
+  b=G9h4Qf+98dhIuQh1+4UW17PxK77mkjq2ey3tN5w8hFgV9hLtvmMLkwcw
+   F9ZkstqFSsA4Jj+vsDgxC7MQ80h4HIUkO3kZ9VgFRZr/JnzuZrsmhakEz
+   nTMpboZ4/6zjLqtts+1IKiLIfhnJMIfHg3/D2lJySCyrOxs2+LpugvcqW
+   1rJy9lq9ec0DrIEEXq8nU0a81T7rIpGRWO/WV55uNJSjNMSzrxmQlUxtu
+   tHsl/hPgkTm04wIrnVOAEBorfMIUaClpvKsxEkfbApwnM2C+myMUtdaST
+   HU6+QfhMWUf4AE44Wt46un8vVXvGFUgCUOU3n9pi1YrYoZdF8hCpC/I+N
+   g==;
+X-CSE-ConnectionGUID: lfX6Q4PbR+SYpvZeFW7sPQ==
+X-CSE-MsgGUID: EeyJI4jMT5CjKEhGLGPr4g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="44470364"
+X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
+   d="scan'208";a="44470364"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 08:31:53 -0800
+X-CSE-ConnectionGUID: swQFZBx+SFelYcNoLuFU+Q==
+X-CSE-MsgGUID: 05oRb8uNSG6s4x9z/65y7Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,213,1728975600"; 
+   d="scan'208";a="95258498"
+Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 08:31:53 -0800
+From: Tony Luck <tony.luck@intel.com>
+To: Fenghua Yu <fenghua.yu@intel.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	x86@kernel.org
+Cc: James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH v11 0/8] x86/resctrl: mba_MBps enhancement
+Date: Fri,  6 Dec 2024 08:31:40 -0800
+Message-ID: <20241206163148.83828-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20241206-gs101-phy-lanes-orientation-phy-v4-7-f5961268b149@linaro.org>
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
-In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Alim Akhtar <alim.akhtar@samsung.com>
-Cc: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, Roy Luo <royluo@google.com>, 
- kernel-team@android.com, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
 
-To make USB runtime suspend work when a UDC has been bound, the phy
-needs to inform the USBDRD controller (DWC3) that Vbus and bvalid are
-gone, so that it can in turn raise the respective gadget interrupt with
-event == DWC3_DEVICE_EVENT_DISCONNECT, which will cause the USB stack
-to clean up, allowing DWC3 to enter runtime suspend.
+Background
+----------
 
-On e850 and gs101 this isn't working, as the respective signals are not
-directly connected, and instead this driver uses override bits in the
-PHY IP to set those signals. It currently forcefully sets them to 'on',
-so the above mentioned interrupt will not be raised, preventing runtime
-suspend.
+The resctrl filesystem supports a mount option that allows users to
+specify a memory bandwidth limit in MiB/s for each domain of a CTRL_MON
+group.  The underlying implementation uses data collected from the local
+memory bandwidth monitoring event for the CTRL_MON group and all of
+its MON subgroups as input to a feedback loop that adjusts the memory
+bandwidth allocation control percentage up or down to keep the group
+within the limit set by the user.
 
-To detect that state, update this driver to act on the TCPC's
-orientation signal - when orientation == NONE, Vbus is gone and we can
-clear the respective bits. Similarly, for other orientation values we
-re-enable them.
+Problem statement
+-----------------
 
-This makes runtime suspend work on platforms with a TCPC (like Pixel6),
-while keeping compatibility with platforms without (e850-96).
+Hard coding the local memory bandwidth monitoring event has the following
+issues:
 
-With runtime suspend working, USB-C cable orientation detection now
-also fully works on such platforms, and the link comes up as Superspeed
-as expected irrespective of the cable orientation and whether UDC /
-gadget are configured and active.
+1) Some systems may support total memory bandwidth monitoring but
+not local.  The user cannot use this mount option on such systems.
 
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
+2) For large workloads that span NUMA domains using local bandwidth
+monitoring will not throttle jobs correctly.
 
----
-v3:
-* update exynos5_usbdrd_orien_sw_set() to not test against previous
-  orientation
----
- drivers/phy/samsung/phy-exynos5-usbdrd.c | 50 +++++++++++++++++++++++++++-----
- 1 file changed, 42 insertions(+), 8 deletions(-)
+3) Users may have a mix of large and small workloads and may want to
+use different input events per CTRL_MON group.
 
-diff --git a/drivers/phy/samsung/phy-exynos5-usbdrd.c b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-index 8fc15847cfd8..bac1dc927b26 100644
---- a/drivers/phy/samsung/phy-exynos5-usbdrd.c
-+++ b/drivers/phy/samsung/phy-exynos5-usbdrd.c
-@@ -1137,13 +1137,15 @@ static void exynos850_usbdrd_utmi_init(struct exynos5_usbdrd_phy *phy_drd)
- 	reg |= LINKCTRL_BUS_FILTER_BYPASS(0xf);
- 	writel(reg, regs_base + EXYNOS850_DRD_LINKCTRL);
- 
--	reg = readl(regs_base + EXYNOS850_DRD_UTMI);
--	reg |= UTMI_FORCE_BVALID | UTMI_FORCE_VBUSVALID;
--	writel(reg, regs_base + EXYNOS850_DRD_UTMI);
--
--	reg = readl(regs_base + EXYNOS850_DRD_HSP);
--	reg |= HSP_VBUSVLDEXT | HSP_VBUSVLDEXTSEL;
--	writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+	if (!phy_drd->sw) {
-+		reg = readl(regs_base + EXYNOS850_DRD_UTMI);
-+		reg |= UTMI_FORCE_BVALID | UTMI_FORCE_VBUSVALID;
-+		writel(reg, regs_base + EXYNOS850_DRD_UTMI);
-+
-+		reg = readl(regs_base + EXYNOS850_DRD_HSP);
-+		reg |= HSP_VBUSVLDEXT | HSP_VBUSVLDEXTSEL;
-+		writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+	}
- 
- 	reg = readl(regs_base + EXYNOS850_DRD_SSPPLLCTL);
- 	reg &= ~SSPPLLCTL_FSEL;
-@@ -1404,9 +1406,41 @@ static int exynos5_usbdrd_orien_sw_set(struct typec_switch_dev *sw,
- 				       enum typec_orientation orientation)
- {
- 	struct exynos5_usbdrd_phy *phy_drd = typec_switch_get_drvdata(sw);
-+	int ret;
-+
-+	ret = clk_bulk_prepare_enable(phy_drd->drv_data->n_clks, phy_drd->clks);
-+	if (ret) {
-+		dev_err(phy_drd->dev, "Failed to enable PHY clocks(s)\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(mutex, &phy_drd->phy_mutex) {
-+		void __iomem * const regs_base = phy_drd->reg_phy;
-+		unsigned int reg;
-+
-+		if (orientation == TYPEC_ORIENTATION_NONE) {
-+			reg = readl(regs_base + EXYNOS850_DRD_UTMI);
-+			reg &= ~(UTMI_FORCE_VBUSVALID | UTMI_FORCE_BVALID);
-+			writel(reg, regs_base +  EXYNOS850_DRD_UTMI);
-+
-+			reg = readl(regs_base + EXYNOS850_DRD_HSP);
-+			reg |= HSP_VBUSVLDEXTSEL;
-+			reg &= ~HSP_VBUSVLDEXT;
-+			writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+		} else {
-+			reg = readl(regs_base + EXYNOS850_DRD_UTMI);
-+			reg |= UTMI_FORCE_VBUSVALID | UTMI_FORCE_BVALID;
-+			writel(reg, regs_base +  EXYNOS850_DRD_UTMI);
-+
-+			reg = readl(regs_base + EXYNOS850_DRD_HSP);
-+			reg |= HSP_VBUSVLDEXTSEL | HSP_VBUSVLDEXT;
-+			writel(reg, regs_base + EXYNOS850_DRD_HSP);
-+		}
- 
--	scoped_guard(mutex, &phy_drd->phy_mutex)
- 		phy_drd->orientation = orientation;
-+	}
-+
-+	clk_bulk_disable(phy_drd->drv_data->n_clks, phy_drd->clks);
- 
- 	return 0;
- }
+Solution
+--------
 
+A) Provide a new user interface to choose which event is used for each
+   CTRL_MON group.
+
+B) Allow systems that only support total memory bandwidth monitoring to
+   use total bandwidth event.
+
+Changes since v10:
+Link: https://lore.kernel.org/all/20241122235832.27498-1-tony.luck@intel.com/
+
+Patch	Change
+-----	------
+
+2	s/filesystm/filesystem/
+	Reformat block comment above definition of mba_mbps_default_event using
+	more of 80 column width
+
+3	s/Update_mba_bw()/update_mba_bw()
+
+Added Reinette's Reviewed-by tag to parts 2-8
+
+N.B. v6.13-rc1 introduced a locking change in commit f1be1788a32e ("block:
+model freeze & enter queue as lock for supporting lockdep") that throws
+a lockdep splat when mounting the resctrl filesystem (with certain
+CONFIG options).
+
+Proposed patches that fix this are here:
+Link: https://lore.kernel.org/all/20241206111611.978870-2-ming.lei@redhat.com/
+Link: https://lore.kernel.org/all/20241206111611.978870-3-ming.lei@redhat.com/
+
+
+Babu Moger (1):
+  x86/resctrl: Introduce resctrl_file_fflags_init() to initialize fflags
+
+Tony Luck (7):
+  x86/resctrl: Prepare for per-CTRL_MON group mba_MBps control
+  x86/resctrl: Modify update_mba_bw() to use per CTRL_MON group event
+  x86/resctrl: Compute memory bandwidth for all supported events
+  x86/resctrl: Make mba_sc use total bandwidth if local is not supported
+  x86/resctrl: Add "mba_MBps_event" file to CTRL_MON directories
+  x86/resctrl: Add write option to "mba_MBps_event" file
+  x86/resctrl: Document the new "mba_MBps_event" file
+
+ Documentation/arch/x86/resctrl.rst        | 10 +++
+ include/linux/resctrl.h                   |  2 +
+ arch/x86/kernel/cpu/resctrl/internal.h    |  9 ++-
+ arch/x86/kernel/cpu/resctrl/core.c        |  9 ++-
+ arch/x86/kernel/cpu/resctrl/ctrlmondata.c | 70 +++++++++++++++++
+ arch/x86/kernel/cpu/resctrl/monitor.c     | 94 +++++++++++------------
+ arch/x86/kernel/cpu/resctrl/rdtgroup.c    | 43 +++++++----
+ 7 files changed, 171 insertions(+), 66 deletions(-)
+
+
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
 -- 
-2.47.0.338.g60cca15819-goog
+2.47.0
 
 
