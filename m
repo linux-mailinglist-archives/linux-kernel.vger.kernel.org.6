@@ -1,139 +1,155 @@
-Return-Path: <linux-kernel+bounces-434205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 142DC9E6327
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:14:03 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C999E631A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 02:13:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9E5A283B0B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:14:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EDBA1884EB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:12:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B3F618871A;
-	Fri,  6 Dec 2024 01:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D753C14A0B3;
+	Fri,  6 Dec 2024 01:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="rgB1jWUd"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b="xcuoTw9j"
+Received: from out203-205-221-202.mail.qq.com (out203-205-221-202.mail.qq.com [203.205.221.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02D5513C9D9
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 01:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF8751411C8;
+	Fri,  6 Dec 2024 01:11:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733447531; cv=none; b=e2vXzaadXA0oss+tVwrDTgcwnPeY7uioWCALh5ddWhdGKA1qxf8lWX4P+7Z3Tuzh+UyIU8dwPqQ1KWlTJXjpgYMl9cw72R/2Cs5TdzB5CWsTycNTRW01/pzk6BZ+uKOs5JXkFdv7tD/xsEYUIQxinBRt9vnK9Phq+DjjJDrSw6c=
+	t=1733447521; cv=none; b=ucpmOar5w+s8eZoazNnChunnk0EimcSoT6/f9Im1P1jRepfgFbB0QepIiIILQlf8WlmZ6csRSZTzQkevPB5dw7bp5OdMmFQkSz+GiPR5J7eyOslyXw4BABvoraRl1MN0Xpn3dBX6D6QWbKQGHmFUaqECHlDY5iXLwCCTih82gHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733447531; c=relaxed/simple;
-	bh=6hQW/GNmPuXyiRMQuoJ6EZUo9ki9tFcrjiw8b7LwAbs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=GPZDgXjxPreF66ikK5ACVKos0tp//FTtvNvVa8GmKoB0Zf0MD5j9jKiXB4Jk1HBYu51SQopoCpMv3zpi7FmxJ0vvVlOiNYKy7idfym8gELvgAsYjufaNT1LvtRVnm6LQ4tg5RxogJLjBvsl4mPpSJGJ3UWc/pqfD1Cy6aUgSwUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=rgB1jWUd; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 78BA53F2A3
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 01:12:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733447528;
-	bh=gPawsTtuEBPD/KPKBNzHBHV5THR/q5cTrBGd8UniWNk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version;
-	b=rgB1jWUdz9oWqyzNLwjxgaL/yyEMQNUW0WXxGV77IDk6tyO8oJ985gGsHzjCETp1H
-	 zWhguCVwJlc8V3RcIZ+FjGOuWLjbB3SUGsIpDEZENhepu1gON9cR/9EWuYyymJxIjU
-	 nN55ZeRSo9Hcj318+dU5KuO/m9aFiZ+BPGUdhATKqe8rmk+aooShCY19+WEQ3R9I0a
-	 FmpBxTIKkth/eEhj6gdc00uPctb8haQf4G3PePHMfAN1v6FQ/AjpRfu/YS7pi0Kjq+
-	 SaUVAHqBz6uSLBL4/PrhzMBLwIy5FQ8HaclFfSYnymnhA+3akXq5IH9h+R0ZUouoHW
-	 CjZ374EvabUgA==
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-21544fd8434so14579485ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 17:12:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733447527; x=1734052327;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gPawsTtuEBPD/KPKBNzHBHV5THR/q5cTrBGd8UniWNk=;
-        b=wEWTFOOytMEnOyyoR556zU8YKmPhCHJLWicjytdCgzu3If9uWqm8dsvu4D5NF3ZtdI
-         o7763IvIOjYbVKJTbwcO/FDutgQNse/PYviGNoyLNTE/q/Y/mkTOSVvGPwyl0pVWQFZN
-         2wrZciW7yDta2RQP2te2KKm+C1VXA/ltyS6SEenf8F0jNlx9vxnbpFaIYHIc9O63n0wM
-         d0t223Qcl9yVEtvRBv0iwlk7XtdCDKcTKs6yHn3G8AkZDP6evzjOXBYfHoOuYsxgZLgg
-         5Bx//Zoxv6zWcvNTjDhANh4jpilgQpEAh1iSLR37nJZpIWoTqcMv5sJ0DSceUhKCJcWt
-         p1cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVShR7lMbRJNnPO/HoaqmU9hl9Yx6VO3Nt0B84F9Sz903ZgAxWkRQN/NBrOxQOEpcq9VMIUBd6reeFhew4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnWrybuaqytPOOlUeBsf7V4iDhGRTBImbAUvcu5ko30BbPzt2S
-	HnFtSxiB1MsXmI7pLcA9cvfutGalnXtLaPKrJgGaOeFhWVmq91uX5e9/5tzTAsbWiv7sLUZgtzr
-	2q3ZDZGk7g/Z5yfUy6FGcMrMupW7KHVUSXUV0mSRKxHmJNz+HgwC/VpOzA7PfpNKoFF71L6cNVH
-	HDQw==
-X-Gm-Gg: ASbGncsF+NJ7+g0t3t457Ha4yXRY8XBhQFRiLdkftBkAYoi2G3COU3nNzgLfaEt8kol
-	+x/STR5cYjT03Xu0gVJfXUbBZMzoF5sVlBhsT9omB52Kw2Jqx5DV8dj0Q0RHgI+e5fd74qgAzW1
-	tYeyrLtP6NSDuHPsZGsNogZYrd9v+hJUn2OkOAEU6H/IQSV1vvOBJQOVH3hTnWv+M+YaDXZm9O4
-	Fr7OUXXYaG+8rC/zsW8cx5HeJaez550hYNu9mUl/xElLAzavjo=
-X-Received: by 2002:a17:902:d4cb:b0:215:827e:649c with SMTP id d9443c01a7336-21614da98bemr12028125ad.37.1733447526977;
-        Thu, 05 Dec 2024 17:12:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE3hKgEtavuk/lPGuhbmEd6DMI7J2o7R7dxsGfXdXbPYpoB50i9XnBvW0RBnmyBI3MXmGOMsQ==
-X-Received: by 2002:a17:902:d4cb:b0:215:827e:649c with SMTP id d9443c01a7336-21614da98bemr12027965ad.37.1733447526722;
-        Thu, 05 Dec 2024 17:12:06 -0800 (PST)
-Received: from z790sl.. ([240f:74:7be:1:9740:f048:7177:db2e])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8efa18esm17979355ad.123.2024.12.05.17.12.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 05 Dec 2024 17:12:06 -0800 (PST)
-From: Koichiro Den <koichiro.den@canonical.com>
-To: virtualization@lists.linux.dev
-Cc: mst@redhat.com,
-	jasowang@redhat.com,
-	xuanzhuo@linux.alibaba.com,
-	eperezma@redhat.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	jiri@resnulli.us,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH net v4 6/6] virtio_net: ensure netdev_tx_reset_queue is called on bind xsk for tx
-Date: Fri,  6 Dec 2024 10:10:47 +0900
-Message-ID: <20241206011047.923923-7-koichiro.den@canonical.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241206011047.923923-1-koichiro.den@canonical.com>
-References: <20241206011047.923923-1-koichiro.den@canonical.com>
+	s=arc-20240116; t=1733447521; c=relaxed/simple;
+	bh=fcP4qZk6nabIDUkPnVvFVYsoocR+VsAXZVzU64BGtzA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iwG3f7sDuWDZJ7Ne5YjPQ0880qVyigZQT9NjqhqVbelgdGvyDnChO+LgOHNdh1SiOdskj5rNExq7Tp89ECLbLna6RhYeeGFDhNodaUm8l91VqgrN9BQ0yN3xSyZNrub4MwBKFc6vtcEn5fgeQgA+ZoItz1C2q1PnR6wFLL6OFH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com; spf=pass smtp.mailfrom=foxmail.com; dkim=pass (1024-bit key) header.d=foxmail.com header.i=@foxmail.com header.b=xcuoTw9j; arc=none smtp.client-ip=203.205.221.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foxmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foxmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foxmail.com;
+	s=s201512; t=1733447508;
+	bh=lGNVgTWKnAmXQ720+QkWvitJc7cq4QaoaY6WqsdA1FE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To;
+	b=xcuoTw9ja2W07qNhUSslBHOlxpqqlz6o5fabwn2pq+BqjRaaMYmZ4/5XeSVPedY94
+	 R9dpePAs/gfGq74e1Bk8S1lC8BSOPdSB9qJ3UoruwBO4upoS8kYtL4th2GLiesXHi9
+	 DncW5BIdw2LX2My1RKxXJhjvjP5NOp1utJ1IA2vM=
+Received: from [10.56.52.9] ([39.156.73.10])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id 2ED15C15; Fri, 06 Dec 2024 09:11:45 +0800
+X-QQ-mid: xmsmtpt1733447505tja5xslbz
+Message-ID: <tencent_0F0D028440B2BE2E37547C5EFF467511FD09@qq.com>
+X-QQ-XMAILINFO: MFdGPHhuqhNoenT7vtHyF/zEcnozbjhR9bTAu7UWjTAH1UAMPTz2cbuM1RB5cK
+	 tcnognY2NyXzEnm5R8yuRf75TXByZ25XvigXRihSDOqiH3j/C9KYa9KdKAb46foGyGK9HP+SXrvv
+	 j663ItAyC2Ii6IDwNLticMic531bFv1n55jt4xUoO71KnJcO7f36e/wBw4S/EQGe6auNlEgi3hGR
+	 NXq9J8u/F6SsE0XZsH/jT4fkGvKdwlwzLPhh46ZUQuWv7XVwqO8etirC5rE7SYwo9nJkm15gVx8M
+	 ApsWEbPnPQ5EFnZ5SB3Q4utzpi1PswLgB9rMoMp9gHTO422V3c9TnSz3CH4yR1FyNhsYAnb1D4+r
+	 ilYmF9mwNn03zkrIsghHkktANe3CacNcxJIE7CVcssfp0RwZUNPeEhIpuN36Ln3jdzR3XrXEbK86
+	 fskiTjjmX8HTVXBoOLf5fv3K222ChTilgoduqZSLr2tcQyyxTiEpoqEIJzqIiKHcKLQOUVmNFV2D
+	 E9KkKnIv551WgvS5QYFZgcQA5GPiFeKoHwcikdj8a34TtIjyKoWRg5HpH4kxjyR2KQRkk9A0JwL1
+	 nw845WRAFViL+JO7MnABRPmvQm7ZB2wPyRU4ZMA+oS/jGZ5MRmLCk0TF7zCmvexFcCXiyQzR2YpO
+	 Eoy6dTvggjhAgLup5InjzBphOy5SZrBIznilyS/H4qyidMoLRTb1ln8noFuSAljDXAQEuwDh+18N
+	 5L82NiG9WZjYkBPhJmEi/JuRgpFbUteKiJdZDyELF5pxB1W4MYK6rIk42GaTFdNx7AKDD6zhVTuz
+	 fC1XkLksri/ewjTtBCneuuLQqhfe2XCbwGIpVzJZFgIsZ6kgJF+DVQ7OfhMBdwXD4mbBPedM4Ccz
+	 ML65yhRhSbWot09l7zIJPNvxc8Ep7oW6cCxsSFYlsYQ1whsWx6kss/hkcmfMY95m+fjAIdLebOg3
+	 ehmzONOYz5OymdtMHCNQ9YoMSgPTS5aUE8i+FpLfpOmYmrWJOdSg==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-OQ-MSGID: <f3b76844-f23d-4c78-ac76-528fb841df6b@foxmail.com>
+Date: Fri, 6 Dec 2024 09:11:44 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v3] bpftool: Fix gen object segfault
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+ Quentin Monnet <qmo@kernel.org>
+Cc: ast@kernel.org, daniel@iogearbox.net, rongtao@cestc.cn,
+ Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau
+ <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
+ Jiri Olsa <jolsa@kernel.org>,
+ "open list:BPF [TOOLING] (bpftool)" <bpf@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <tencent_A7A870BF168D6A21BA193408D5645D5D920A@qq.com>
+ <0b96aa24-13ca-4e0a-8e80-f2586fbe2b57@kernel.org>
+ <CAEf4BzbLmXF9XB=fBvL7NLMoPmfD=DFFvuM8Fw5h6T7vfFXUFg@mail.gmail.com>
+Content-Language: en-US
+From: Rong Tao <rtoax@foxmail.com>
+In-Reply-To: <CAEf4BzbLmXF9XB=fBvL7NLMoPmfD=DFFvuM8Fw5h6T7vfFXUFg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-virtnet_sq_bind_xsk_pool() flushes tx skbs and then resets tx queue, so
-DQL counters need to be reset when flushing has actually occurred, Add
-virtnet_sq_free_unused_buf_done() as a callback for virtqueue_resize()
-to handle this.
 
-Fixes: 21a4e3ce6dc7 ("virtio_net: xsk: bind/unbind xsk for tx")
-Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
----
- drivers/net/virtio_net.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+On 12/6/24 05:34, Andrii Nakryiko wrote:
+> On Thu, Dec 5, 2024 at 4:22 AM Quentin Monnet <qmo@kernel.org> wrote:
+>> On 05/12/2024 12:09, Rong Tao wrote:
+>>> From: Rong Tao <rongtao@cestc.cn>
+>>>
+>>> If the input file and output file are the same, the input file is cleared
+>>> due to opening, resulting in a NULL pointer access by libbpf.
+>>>
+>>>      $ bpftool gen object prog.o prog.o
+>>>      libbpf: failed to get ELF header for prog.o: invalid `Elf' handle
+>>>      Segmentation fault
+>>>
+>>>      (gdb) bt
+>>>      #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>>>      #1  bpf_linker__add_file (linker=0x4feda0, filename=<optimized out>, opts=<optimized out>) at linker.c:453
+>>>      #2  0x000000000040c235 in do_object ()
+>>>      #3  0x00000000004021d7 in main ()
+>>>      (gdb) frame 0
+>>>      #0  0x0000000000450285 in linker_append_elf_syms (linker=0x4feda0, obj=0x7fffffffe100) at linker.c:1296
+>>>      1296              Elf64_Sym *sym = symtab->data->d_buf;
+>>>
+>>> Signed-off-by: Rong Tao <rongtao@cestc.cn>
+>> Tested-by: Quentin Monnet <qmo@kernel.org>
+>> Reviewed-by: Quentin Monnet <qmo@kernel.org>
+> Isn't this papering over a deeper underlying issue? Why do we get
+> SIGSEGV inside the linker at all instead of just erroring out?
+> Comparison based on file path isn't a reliable way to check if input
+> and output are both the same file, so this fixes the most obvious
+> case, but not the actual issue.
+Thanks for your replay! The current scenario is similar to the following 
+code.
+After a.txt is opened in read mode, it is opened in write mode again, which
+causes the contents of a.txt file to be cleared, resulting in no data 
+being read,
 
-diff --git a/drivers/net/virtio_net.c b/drivers/net/virtio_net.c
-index 5cf4b2b20431..7646ddd9bef7 100644
---- a/drivers/net/virtio_net.c
-+++ b/drivers/net/virtio_net.c
-@@ -5740,7 +5740,8 @@ static int virtnet_sq_bind_xsk_pool(struct virtnet_info *vi,
- 
- 	virtnet_tx_pause(vi, sq);
- 
--	err = virtqueue_reset(sq->vq, virtnet_sq_free_unused_buf, NULL);
-+	err = virtqueue_reset(sq->vq, virtnet_sq_free_unused_buf,
-+			      virtnet_sq_free_unused_buf_done);
- 	if (err) {
- 		netdev_err(vi->dev, "reset tx fail: tx queue index: %d err: %d\n", qindex, err);
- 		pool = NULL;
--- 
-2.43.0
+
+     fpr = fopen("a.txt", "r");
+     fpw = fopen("a.txt", "w");
+
+     /* fgets() will get nothing, It's not glibc's fault. */
+     while (fgets(buff, sizeof(buff), fpr))
+         printf("%s", buff);
+
+     fprintf(fpw, "....");
+
+     fclose(fpr);
+     fclose(fpw);
+
+corresponding to the SEGV of bpftool. Perhaps we can add the following 
+warning
+
+     if (x == NULL) {
+         fprintf(stderr, "Maybe the file was opened for writing after 
+opened for read\n");
+         return -EINVAL;
+     }
+
+Whether this warning can be added may depend on libelf's processing. I will
+try to fix this SEGV in libbpf, hopefully it can be fixed.
+
+Thanks,
+Rong Tao
+>> Thank you!
 
 
