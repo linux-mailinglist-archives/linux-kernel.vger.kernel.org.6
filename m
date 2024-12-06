@@ -1,149 +1,86 @@
-Return-Path: <linux-kernel+bounces-434167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D22C9E6282
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:51:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF4689E6284
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:51:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AAFC818839F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:51:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B054E283A97
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:51:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFBDF52F9B;
-	Fri,  6 Dec 2024 00:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816A938F9C;
+	Fri,  6 Dec 2024 00:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bd2zo51O"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E2vytCP6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F4C72BB09;
-	Fri,  6 Dec 2024 00:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CADDB1EA73;
+	Fri,  6 Dec 2024 00:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733446277; cv=none; b=SkC5h6/f3V8sy77pwssuWzVmuDo2d0oBzAFyuJls57hPfhSG2ZFIOjBcSBpDuVme+ma5tJlIHF/a2WEFLqL0dI8Jts0UYxpkQJpH4+mmZ0xNzGGc6NV6LY6J43NNp24TtuIZRqaeO0DL0x1zs2f0346RR/jCygDXs6kET4zIucU=
+	t=1733446309; cv=none; b=R8qTbM1QsYPed2LH8lcfCN/Zz4XVN9WS7u38xIdMFWCSD5VyaP+kLRsddO+cw+AZXIDAwRWU6griaQ3GbKOzDE1+1XauQkjl2nGoFzhJXHBacDzRFGGVZ6MKKc/1ui5gDiCcVpZ3VemnUfd9wBVe1NZWBuUOmiSKq0QTB0HseWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733446277; c=relaxed/simple;
-	bh=78rE7sFM5hMSVUktXfM1DYZzRFvqYEeXK7x5OI2RSGM=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=gIEwusqdH49wQS/ystN6FrPrCu3o/f16zzE7PLdnc9j8J63sarcIevuoe7JsCYBZVKJMz1YFmG0ED9g4jrhrHuGAis4hqETPlbziJlOd0zhn6Y9qGFsSniDESjQpFEyuRPTFJKBHoIARJY04C1ZGIYJD3IeGRoGCP90TEWTvo+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bd2zo51O; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d882619044so11687726d6.0;
-        Thu, 05 Dec 2024 16:51:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733446274; x=1734051074; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=78rE7sFM5hMSVUktXfM1DYZzRFvqYEeXK7x5OI2RSGM=;
-        b=Bd2zo51O4YoA6ss4Xt/oj2FNumARB+wFtekUhZvPo+I/HSvgnAkDQfUmsFCD/27hOj
-         ji07Sz93vqVOdaZWt/05E5jyd5hx3eagel1lKktjgGz9u67xkdKr14G3f1sepUa24Us8
-         d+qOHYjjenw08TxmT2MkQkqjh99ew+AwqoQqm3NwHzAAfSogs2IJpO4xKenWvPxCYDAK
-         2USVT3Qq/eZuGa5nesnajCp56jEo19Ncf7WrYL0/IbYH/7fO30/Tu23GCWE2E2f1y/5B
-         huJgugZufn0PBoSt5e1Wvyw77gfs4BDUYmkRHBJ4WQn1SI9pD6WwY65K9PWPnzFsXTdK
-         tdtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733446274; x=1734051074;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=78rE7sFM5hMSVUktXfM1DYZzRFvqYEeXK7x5OI2RSGM=;
-        b=lvhMwtiTkm7Dt+BlSoKye0Q4T4gWrdODkm/ncJB9KgzVun6kAiWyCtsC1hcMf+VC7K
-         NO54GVYxmG5dX91qAj4jyiHGUzk+MV6NkXPHgkqm1GY5uH3+qA10YFyCrovDBpsLyTC6
-         CX3mOsrbRNa1t2rrxVHqKjLFxk7XoAQ+Q9BCvctatv4TVSuRsi0MxbAW+eo0+oqNnFpA
-         TCuGATFDl5jXhNbLXR+XvspJmKkvzLjvVu32p5gFY1jdy16Irp76acqh9D019VeckD0C
-         edVRb3LsgMjjXm2Kp6bbsGuTby80Q7N319oLlsgrTzY4dQtDO8+TB70exwVHeOP/XOl3
-         SxxA==
-X-Forwarded-Encrypted: i=1; AJvYcCXLAPvR+7k2zDmm9ffITnAL4rFwvtbkXxt/P3nNvp8i1Keu09/u5TE0Xvr/78HvwqA2B9BC6aMNvNFbEsU=@vger.kernel.org, AJvYcCXQhe95Za8kUYyDmdQI1U13n5O3P2hcnhQzwkOs8Nyg05RHYy285cNYHNox7alwAQTVhq681KidD7r3@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZfPq/ai2iJ1mfOeczZC7933W5AJ+5jNYPLYqizv4A8eYLF9go
-	4oseVEc/vsxaRJjAsdJIVPxEKXljkUhktSXuqsDlVQnp8R2/ID+J
-X-Gm-Gg: ASbGnctk59A5EJC+8NjMxbYkRwcF+3XyeCbAtDH4PNERn1XsVI+sKOpTyNI4j4rXPA7
-	7QQcXxAdG/BrfTad7YaM4tDMdTbsoVpjDZSnNxIScxV8v3DyeIaETfMuxDvz/hD6nvH+qpxEKZw
-	UxTYpZVWBF/vPqdZ3J8audyzmv7JlRZHKl7r9agcWH3w44TbXr3dphyPj1CjoeDEhEQyBnNQkuY
-	8Q6DGcaC/XBq07bH27tdcGaV18hdNBTgK/q5FPvBa5XLCdB8qJdVbzEmlnID3DdjogNO0dtqWc=
-X-Google-Smtp-Source: AGHT+IF/sk9ZB235pUfB0O6hz42Upg4C3T7QSAhoiMqwmiLWKznlOnX/VWzkLXPVN06gb5l37ZaJIQ==
-X-Received: by 2002:a05:6214:ac2:b0:6d8:d240:9f26 with SMTP id 6a1803df08f44-6d8e713feb7mr22257846d6.16.1733446274340;
-        Thu, 05 Dec 2024 16:51:14 -0800 (PST)
-Received: from smtpclient.apple ([2601:803:8180:ace0:901f:f4c2:743b:7118])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8dabfb438sm12583646d6.106.2024.12.05.16.51.11
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 05 Dec 2024 16:51:13 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1733446309; c=relaxed/simple;
+	bh=QZc6LCP6//qnOLJE9d9M3GmAfdrCqCSoKb3OBF56EK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VrVMQ2QP4XJOYC13y1iA4kMMrkRxayNzH+1QeQC/dMDZj6Tz83wGL98nEz2TeDKP8SkcFcj+Y0RbAJijOfjt0+q9HioJtqSu4WKeOwIvcAHrd3qAl4wA5QSkNNdBNRcb+NL73jPdIPOBxVoTM1u80IVrT+Klo7C1E+L7Jggr4zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E2vytCP6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8001FC4CED6;
+	Fri,  6 Dec 2024 00:51:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733446309;
+	bh=QZc6LCP6//qnOLJE9d9M3GmAfdrCqCSoKb3OBF56EK8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=E2vytCP6XBNqbDICE/u+XOvxlUIUXQUQ2+0yrYalTT+nY0TpZzkJ+pYbD8sI6+XWi
+	 0bQFKe2fFaBQ0IMn8w77Yikqz288s7oBDG3vElXwdluc1ctK3d47hfEaYKTBP4kXI2
+	 cOTpBjzdRLUCdR0sU28dxWbVZTGGpgZVHnWGDa2PbWy1gZC9YGima1hUoNk645qhV6
+	 kFP+jmM20Wsp18IhXdVSM2SDzrU+LZru8UuXkh3UdzOWLFeVFDtePtC+h8yOxAdXkb
+	 oGo2Cyd+eUPUBWScPej4tXzkECm4azGn6vR9EuiJWkGd6+X2XYx7Xov8eFA6Qti7eh
+	 q1ai6a3bKhK8g==
+Date: Thu, 5 Dec 2024 16:51:47 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Shinas Rasheed <srasheed@marvell.com>
+Cc: "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Haseeb Gani
+ <hgani@marvell.com>, Sathesh B Edara <sedara@marvell.com>, Vimlesh Kumar
+ <vimleshk@marvell.com>, "thaller@redhat.com" <thaller@redhat.com>,
+ "wizhao@redhat.com" <wizhao@redhat.com>, "kheib@redhat.com"
+ <kheib@redhat.com>, "egallen@redhat.com" <egallen@redhat.com>,
+ "konguyen@redhat.com" <konguyen@redhat.com>, "horms@kernel.org"
+ <horms@kernel.org>, "einstein.xue@synaxg.com" <einstein.xue@synaxg.com>,
+ Veerasenareddy Burru <vburru@marvell.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>
+Subject: Re: [EXTERNAL] Re: [PATCH net-next v3 RESEND] octeon_ep: add ndo
+ ops for VFs in PF driver
+Message-ID: <20241205165147.2f7a7ae8@kernel.org>
+In-Reply-To: <PH0PR18MB47342ED76DCB583E62078808C7302@PH0PR18MB4734.namprd18.prod.outlook.com>
+References: <20241202183219.2312114-1-srasheed@marvell.com>
+	<20241203183318.16f378d1@kernel.org>
+	<PH0PR18MB47342ED76DCB583E62078808C7302@PH0PR18MB4734.namprd18.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3731.200.110.1.12\))
-Subject: Re: [PATCH] pwm: stm32-lp: Add check for clk_enable()
-From: Mingwei Zheng <zmw12306@gmail.com>
-In-Reply-To: <geyicxufezkbu7cdvnbgnr2qeuwrn5ubz5ent3spk5biuozxrs@gsqx2chgiiot>
-Date: Thu, 5 Dec 2024 19:51:00 -0500
-Cc: fabrice.gasnier@foss.st.com,
- coquelin.stm32@gmail.com,
- alexandre.torgue@foss.st.com,
- thierry.reding@gmail.com,
- lee@kernel.org,
- linux-pwm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org,
- Jiasheng Jiang <jiashengjiangcool@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <5778D1D6-9C2B-4456-9765-213120076C62@gmail.com>
-References: <20241205051746.2465490-1-zmw12306@gmail.com>
- <geyicxufezkbu7cdvnbgnr2qeuwrn5ubz5ent3spk5biuozxrs@gsqx2chgiiot>
-To: =?utf-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-X-Mailer: Apple Mail (2.3731.200.110.1.12)
 
-
-
-> On Dec 5, 2024, at 3:34 AM, Uwe Kleine-K=C3=B6nig =
-<ukleinek@kernel.org> wrote:
+On Thu, 5 Dec 2024 15:47:29 +0000 Shinas Rasheed wrote:
+> > I don't see it ever getting set to true, why track it if it's always
+> > false?
 >=20
-> On Thu, Dec 05, 2024 at 12:17:46AM -0500, Mingwei Zheng wrote:
->> Add check for the return value of clk_enable() to catch the potential
->> error.
->=20
-> Is this something that you actually hit, or just a janitoral fix you
-> noticed while browsing the code (or reading some checker output)?
+> In case we need to support the api in the future, just added the
+> corresponding data structure to track it. Perhaps if you think that=E2=80=
+=99s
+> warranted only 'when' we support it then, maybe I can remove it. The
+> data structure was used to check for 'trusted' when vf tries to set
+> its mac.
 
-We detected this through static analysis, instead of actually hit.
-
->=20
->> Fixes: e70a540b4e02 ("pwm: Add STM32 LPTimer PWM driver")
->> Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
->> Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
->> ---
->> drivers/pwm/pwm-stm32-lp.c | 8 ++++++--
->> 1 file changed, 6 insertions(+), 2 deletions(-)
->>=20
->> diff --git a/drivers/pwm/pwm-stm32-lp.c b/drivers/pwm/pwm-stm32-lp.c
->> index 989731256f50..4abef304417d 100644
->> --- a/drivers/pwm/pwm-stm32-lp.c
->> +++ b/drivers/pwm/pwm-stm32-lp.c
->> @@ -163,12 +163,16 @@ static int stm32_pwm_lp_get_state(struct =
-pwm_chip *chip,
->> unsigned long rate =3D clk_get_rate(priv->clk);
->> u32 val, presc, prd;
->> u64 tmp;
->> + int ret;
->=20
-> Please move this variable to the block where it's used. No need for =
-such
-> a big scope.
->=20
-> Otherwise looks fine.
->=20
-> Best regards
-> Uwe
-
-Thank you! We will submit a v2 patch for you to review!
-
-Best,
-Mingwei
-
+Yes, please remove it. We try to limit merging code that's of=20
+no immediate use.
 
