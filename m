@@ -1,255 +1,234 @@
-Return-Path: <linux-kernel+bounces-434626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7FA9E691B
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:37:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2CBE9E6918
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:37:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0AC071882A83
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:37:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CD5F28361B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3C881DE8A1;
-	Fri,  6 Dec 2024 08:37:30 +0000 (UTC)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095171DF732;
+	Fri,  6 Dec 2024 08:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EhXcDZUe"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 341FF1E0DEA;
-	Fri,  6 Dec 2024 08:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369366FBF;
+	Fri,  6 Dec 2024 08:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733474250; cv=none; b=llZyPFHgy/oZuVBzAinuLyNIxeoKRQ7lAdXsysWJrdxhRrv4uddp+EjBCIg5FNB3g4guVAf1LibNlyRaMozSJjHoy9tFfwl/UtAoJ8Nbtt9fFIhoDV5PakVnOcieVrMZi+GBNCnuD8TVk0BZF7Fq6A4dzgsYJypriqh5bzjOJjU=
+	t=1733474244; cv=none; b=u89cDNnrOSpmChUyFJZ+8IaludZJuPh9lhTrxu1OrD4EVTDqy6Si7mUQNn3Xe7IhPO6JD25/mkTteU9IWsCsFpZ19em3uZTmdbo0Hhviu4nJ5bQOsTB05lB7yAs+hOUCD5eR2lK4fGKczvV2AfdozYvDN0LLl6Z78P94kDeErmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733474250; c=relaxed/simple;
-	bh=MZiZlwyJvBXLiAN8X1GJNiiIBfiMgKlUj8LxXBXDkdk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aiFib3mskdeMe3sACyizL068vA2HLphP4h/HSUZxgcz5v+IJpeQdzCZDEGINxneO/y1IFQdQ3NmPu93cUiEiPAtg7aNmy+RxV23p/mj1olmjcj26t/mHqnwRSUdTE5AhEXo3Q+2ty/qGrF7FQzvSId6pOY/T9P1UD1MPdrI9Ucw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4af5dd908bfso530243137.2;
-        Fri, 06 Dec 2024 00:37:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733474246; x=1734079046;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p52l+EzfUjM05v2ng7V2LMMN7gKNSNOhsoEffeujg0Y=;
-        b=HfZcbB5+gWJ3tbFRf1aqt5FJJkQIxOubbu2FPlMJmk18XG6LBPtmAswWYuZyxdFXuQ
-         X9mM/XdLoiL1F0L3H9PGiWybziOLVWyqNH+uTIvyrjVR/vvqXwATFsJAOjXnSbbXe1Rw
-         99exEMc0QShyl06w/fdLmNXYMkXeGQWzv3EAGHtkITfAzmxsc6NHXtEQXnFxeCY8KMfs
-         YBABkUo8elRyCe8AEFyjC0NkeBVHlQrHeb9gRqMGoDa+oEslJHlmREFuW6l7ipN04NT9
-         5oIP6l68oGuJY7BNDGo2HiKvyO9MPF32VlowTkSCTHL6GqzYV12XskysrsFPjdMLBKdS
-         DapQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX21/0CioUFPsmmqiiLOCFoKWA9+n4nL+Vyfh9rxG1rGEGxZribeqxfaDzXHu2M17J8ry7syKCEuiKfEzs=@vger.kernel.org, AJvYcCXgnom5yHUeVrusG+NGosI0czA0EBzT6apSkmnHwfzOXaIPIIPPoHyIGHkbIDZdJZCkPqw3Bpb2jfrwmg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcSHilrpvdcssP0jc9UuqHayqSTaaGC42JbMKXM2YK3h3uI5Dl
-	08ckooRvE/+6q19Yntvpi715givtI/5Swy/0RGHsqgFjAMpRAKQvAf4FIl4O
-X-Gm-Gg: ASbGnctJxgDjxNenbV6sYfmzDodDV6hu8flxMRHIa9WxW3ZJZCTeqRvVOh1A/SDHQgJ
-	sl5TXTdE3NpBp3bvSk6m3Wt48H+Mr3wXXzWUnhsPGKx6Oyd5a6Wv+EjNQNTLy81oPz1vwXD4vnQ
-	QtKXHLqjFsr33GFgtqUFuYuj5R1/9vrfnjwCSfq+rG5HiWzppbqtAFZ1YpXUbz4rXfMTnqrI1cN
-	xZ7fgRrF+Td+4vQrDWw2Gs25mU5YymUdcB3u2taSq0QUOmMrBx1c4V9yY48CfXTeQv79YU7hckM
-	/jZryyAk16nu
-X-Google-Smtp-Source: AGHT+IHKIqIv95RkbOCuh5jd+ftjHUFLudgQL3v6Rl5x/wqWAfDNqt2cJk7OjyUUTa95HNJbhHDr/Q==
-X-Received: by 2002:a05:6102:3a13:b0:4af:400e:2a9c with SMTP id ada2fe7eead31-4afcab255e3mr3112474137.25.1733474245655;
-        Fri, 06 Dec 2024 00:37:25 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afd21a2044sm50963137.29.2024.12.06.00.37.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 00:37:24 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-85c4d855fafso58276241.2;
-        Fri, 06 Dec 2024 00:37:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVjZfG62lOEDvOxHp81NRqvnCglG4e6lpVT9l4BVxkXhWIDr1q2lYTrOO160IHF6pJCXfWxqz0m23oNrQ==@vger.kernel.org, AJvYcCWdtOYXIRHmUc3La3+scWMuNIpZgtM28ICZCdqoa3AFPvyY4IU0sRYSvjyJG41djE9IAaVntBNqZgGUqVc=@vger.kernel.org
-X-Received: by 2002:a05:6102:dcd:b0:4af:cba5:e496 with SMTP id
- ada2fe7eead31-4afcba5e701mr2269468137.5.1733474244664; Fri, 06 Dec 2024
- 00:37:24 -0800 (PST)
+	s=arc-20240116; t=1733474244; c=relaxed/simple;
+	bh=JsbgN2Pws5qzquuulR3Z7RmjwzQ4j1E8bQ/Qd16QjxY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fvQY8fOkahcFXeSm8CbLIdgpXlDlrWiFSw+R6cSXhfQlDje7EDUKBMqnXc+xZ3CtJLJeSPT6lxX6a38/qe5JD8/96NliNN6+4u5VSmT0E0+0EtWnvCCkKA4gdmrUaLIacZ1FGQJ4xiI7sR9tgleBG/8PxS+6R/K6i8xPPanF9F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EhXcDZUe; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733474242; x=1765010242;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=JsbgN2Pws5qzquuulR3Z7RmjwzQ4j1E8bQ/Qd16QjxY=;
+  b=EhXcDZUexrFQp2pCmWQhO7CTN52C6weKI3PlyPZx6DTYgt3ohWYGh12E
+   UpVHPVMguH3Y0bfmlik5XQtdBJF8saTgYLVQnASpjCw7Ek2PhJet0Lcdn
+   lBqhHz+ZsaZ9wA7dlGOew8oBMBDtI/BCHJN3CPbbFmgrTDWijQibuG/Z2
+   5BH0XQwEnE5Dq2I25NenOLKtn76gjJlUNiWeiRvUf86Jmb+sK5NRHJoUM
+   ojHVrhCOSwNYHDkp9IPrZ3pk6vYcX12X9bYVGPkRke0YJ3dRy+ceo9gVf
+   xCuCSZ5CIGJutT/vJT73xOdNdh4V3U/Y5yyuFq4m/0G/yopj7n534fDB8
+   w==;
+X-CSE-ConnectionGUID: FRCWnL2RTxyDCGDlUhZiZQ==
+X-CSE-MsgGUID: 2eRCNJxdRBSt2HvvEh3lPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11277"; a="33736781"
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="33736781"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 00:37:20 -0800
+X-CSE-ConnectionGUID: IeahADspQleSUDPjsj2CwQ==
+X-CSE-MsgGUID: 5izyphEaQjS2j7V0UKJIEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,212,1728975600"; 
+   d="scan'208";a="94421358"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 00:37:17 -0800
+Message-ID: <419a166c-a4a8-46ad-a7ed-4b8ec23ca7d4@intel.com>
+Date: Fri, 6 Dec 2024 16:37:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011150304.709590-1-ziy@nvidia.com> <CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com>
- <DAFE2913-0B32-484F-83BE-080C60362DB8@nvidia.com> <f64f8a9e-fda8-4f7a-85a2-0113de2feb6c@suse.cz>
- <9942C08D-C188-461C-B731-F08DE294CD2B@nvidia.com> <Z1CDbrrTn6RgNmYn@casper.infradead.org>
- <B65776A4-D434-4D9F-9C42-1C45DAE5A72A@nvidia.com> <CAMuHMdV1hkwajxDWk6AWj_QR_qPkEni0u=tnQWdt1-M83NE0ig@mail.gmail.com>
- <EF8F5058-83CA-45FE-8721-08224B489361@nvidia.com>
-In-Reply-To: <EF8F5058-83CA-45FE-8721-08224B489361@nvidia.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 6 Dec 2024 09:37:12 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdXbugTBrK5yqRB6ysHcEq8POCu3O37BUPU4i-8rLsQY2g@mail.gmail.com>
-Message-ID: <CAMuHMdXbugTBrK5yqRB6ysHcEq8POCu3O37BUPU4i-8rLsQY2g@mail.gmail.com>
-Subject: Re: [PATCH] mm: avoid zeroing user movable page twice with init_on_alloc=1
-To: Zi Yan <ziy@nvidia.com>
-Cc: Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
-	Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
-	John Hubbard <jhubbard@nvidia.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko <glider@google.com>, 
-	Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org, 
-	linux-mips@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 03/25] x86/virt/tdx: Read essential global metadata for
+ KVM
+To: Rick Edgecombe <rick.p.edgecombe@intel.com>, pbonzini@redhat.com,
+ seanjc@google.com
+Cc: yan.y.zhao@intel.com, isaku.yamahata@gmail.com, kai.huang@intel.com,
+ kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ tony.lindgren@linux.intel.com, reinette.chatre@intel.com
+References: <20241030190039.77971-1-rick.p.edgecombe@intel.com>
+ <20241030190039.77971-4-rick.p.edgecombe@intel.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20241030190039.77971-4-rick.p.edgecombe@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Zi,
-
-On Thu, Dec 5, 2024 at 6:33=E2=80=AFPM Zi Yan <ziy@nvidia.com> wrote:
-> Can you try the patch below (it compiles locally for mips and x86) to see
-> if your issue is fixed? Can you please make THP always on in your config,
-> since THP is also affected by the same issue? The patch you tested only
-> fixed non THP config.
-
-Thanks, this works both without THP, and with
-CONFIG_TRANSPARENT_HUGEPAGE=3Dy
-CONFIG_TRANSPARENT_HUGEPAGE_ALWAYS=3Dy
-
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> Thanks. I appreciate your help. :)
-
-Thanks, I appreciate your quick responses and solutions!
-
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -224,7 +224,13 @@ static inline
->  struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
->                                    unsigned long vaddr)
->  {
-> -       return vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma,=
- vaddr);
-> +       struct folio *folio;
+On 10/31/2024 3:00 AM, Rick Edgecombe wrote:
+> From: Kai Huang <kai.huang@intel.com>
+> 
+> KVM needs two classes of global metadata to create and run TDX guests:
+> 
+>   - "TD Control Structures"
+>   - "TD Configurability"
+> 
+> The first class contains the sizes of TDX guest per-VM and per-vCPU
+> control structures.  KVM will need to use them to allocate enough space
+> for those control structures.
+> 
+> The second class contains info which reports things like which features
+> are configurable to TDX guest etc.  KVM will need to use them to
+> properly configure TDX guests.
+> 
+> Read them for KVM TDX to use.
+> 
+> The code change is auto-generated by re-running the script in [1] after
+> uncommenting the "td_conf" and "td_ctrl" part to regenerate the
+> tdx_global_metadata.{hc} and update them to the existing ones in the
+> kernel.
+> 
+>    #python tdx.py global_metadata.json tdx_global_metadata.h \
+> 	tdx_global_metadata.c
+> 
+> The 'global_metadata.json' can be fetched from [2].
+> 
+> Link: https://lore.kernel.org/kvm/0853b155ec9aac09c594caa60914ed6ea4dc0a71.camel@intel.com/ [1]
+> Link: https://cdrdv2.intel.com/v1/dl/getContent/795381 [2]
+> Signed-off-by: Kai Huang <kai.huang@intel.com>
+> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> ---
+> uAPI breakout v2:
+>   - New patch
+> ---
+>   arch/x86/include/asm/tdx_global_metadata.h  | 19 +++++++++
+>   arch/x86/virt/vmx/tdx/tdx_global_metadata.c | 46 +++++++++++++++++++++
+>   2 files changed, 65 insertions(+)
+> 
+> diff --git a/arch/x86/include/asm/tdx_global_metadata.h b/arch/x86/include/asm/tdx_global_metadata.h
+> index fde370b855f1..206090c9952f 100644
+> --- a/arch/x86/include/asm/tdx_global_metadata.h
+> +++ b/arch/x86/include/asm/tdx_global_metadata.h
+> @@ -32,11 +32,30 @@ struct tdx_sys_info_cmr {
+>   	u64 cmr_size[32];
+>   };
+>   
+> +struct tdx_sys_info_td_ctrl {
+> +	u16 tdr_base_size;
+> +	u16 tdcs_base_size;
+> +	u16 tdvps_base_size;
+> +};
 > +
-> +       folio =3D vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
-> +       if (folio && alloc_need_zeroing())
-> +               clear_user_highpage(&folio->page, vaddr);
+> +struct tdx_sys_info_td_conf {
+> +	u64 attributes_fixed0;
+> +	u64 attributes_fixed1;
+> +	u64 xfam_fixed0;
+> +	u64 xfam_fixed1;
+> +	u16 num_cpuid_config;
+> +	u16 max_vcpus_per_td;
+> +	u64 cpuid_config_leaves[32];
+> +	u64 cpuid_config_values[32][2];
+> +};
 > +
-> +       return folio;
->  }
->  #endif
->
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index c39c4945946c..6ac0308c4380 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -4175,6 +4175,23 @@ static inline int do_mseal(unsigned long start, si=
-ze_t len_in, unsigned long fla
->  }
->  #endif
->
-> +/*
-> + * alloc_need_zeroing checks if a user folio from page allocator needs t=
-o be
-> + * zeroed or not.
-> + */
-> +static inline bool alloc_need_zeroing(void)
+>   struct tdx_sys_info {
+>   	struct tdx_sys_info_version version;
+>   	struct tdx_sys_info_features features;
+>   	struct tdx_sys_info_tdmr tdmr;
+>   	struct tdx_sys_info_cmr cmr;
+> +	struct tdx_sys_info_td_ctrl td_ctrl;
+> +	struct tdx_sys_info_td_conf td_conf;
+>   };
+>   
+>   #endif
+> diff --git a/arch/x86/virt/vmx/tdx/tdx_global_metadata.c b/arch/x86/virt/vmx/tdx/tdx_global_metadata.c
+> index 2fe57e084453..44c2b3e079de 100644
+> --- a/arch/x86/virt/vmx/tdx/tdx_global_metadata.c
+> +++ b/arch/x86/virt/vmx/tdx/tdx_global_metadata.c
+> @@ -76,6 +76,50 @@ static int get_tdx_sys_info_cmr(struct tdx_sys_info_cmr *sysinfo_cmr)
+>   	return ret;
+>   }
+>   
+> +static int get_tdx_sys_info_td_ctrl(struct tdx_sys_info_td_ctrl *sysinfo_td_ctrl)
 > +{
-> +       /*
-> +        * for user folios, arch with cache aliasing requires cache flush=
- and
-> +        * arc sets folio->flags, so always return false to make caller u=
-se
-> +        * clear_user_page()/clear_user_highpage()
-> +        */
-> +       return (IS_ENABLED(CONFIG_ARCH_HAS_CPU_CACHE_ALIASING) ||
-> +               IS_ENABLED(CONFIG_ARC)) ||
-> +              !static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
-> +                                  &init_on_alloc);
+> +	int ret = 0;
+> +	u64 val;
+> +
+> +	if (!ret && !(ret = read_sys_metadata_field(0x9800000100000000, &val)))
+> +		sysinfo_td_ctrl->tdr_base_size = val;
+> +	if (!ret && !(ret = read_sys_metadata_field(0x9800000100000100, &val)))
+> +		sysinfo_td_ctrl->tdcs_base_size = val;
+> +	if (!ret && !(ret = read_sys_metadata_field(0x9800000100000200, &val)))
+> +		sysinfo_td_ctrl->tdvps_base_size = val;
+> +
+> +	return ret;
 > +}
 > +
->  int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __=
-user *status);
->  int arch_set_shadow_stack_status(struct task_struct *t, unsigned long st=
-atus);
->  int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long s=
-tatus);
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index ee335d96fc39..107130a5413a 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1176,11 +1176,12 @@ static struct folio *vma_alloc_anon_folio_pmd(str=
-uct vm_area_struct *vma,
->         folio_throttle_swaprate(folio, gfp);
->
->         /*
-> -       * When a folio is not zeroed during allocation (__GFP_ZERO not us=
-ed),
-> -       * folio_zero_user() is used to make sure that the page correspond=
-ing
-> -       * to the faulting address will be hot in the cache after zeroing.
-> +       * When a folio is not zeroed during allocation (__GFP_ZERO not us=
-ed)
-> +       * or user folios require special handling, folio_zero_user() is u=
-sed to
-> +       * make sure that the page corresponding to the faulting address w=
-ill be
-> +       * hot in the cache after zeroing.
->         */
-> -       if (!alloc_zeroed())
-> +       if (alloc_need_zeroing())
->                 folio_zero_user(folio, addr);
->         /*
->          * The memory barrier inside __folio_mark_uptodate makes sure tha=
-t
-> diff --git a/mm/internal.h b/mm/internal.h
-> index cb8d8e8e3ffa..3bd08bafad04 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -1285,12 +1285,6 @@ void touch_pud(struct vm_area_struct *vma, unsigne=
-d long addr,
->  void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
->                pmd_t *pmd, bool write);
->
-> -static inline bool alloc_zeroed(void)
-> -{
-> -       return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
-> -                       &init_on_alloc);
-> -}
-> -
->  /*
->   * Parses a string with mem suffixes into its order. Useful to parse ker=
-nel
->   * parameters.
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 75c2dfd04f72..cf1611791856 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -4733,12 +4733,12 @@ static struct folio *alloc_anon_folio(struct vm_f=
-ault *vmf)
->                         folio_throttle_swaprate(folio, gfp);
->                         /*
->                          * When a folio is not zeroed during allocation
-> -                        * (__GFP_ZERO not used), folio_zero_user() is us=
-ed
-> -                        * to make sure that the page corresponding to th=
-e
-> -                        * faulting address will be hot in the cache afte=
-r
-> -                        * zeroing.
-> +                        * (__GFP_ZERO not used) or user folios require s=
-pecial
-> +                        * handling, folio_zero_user() is used to make su=
-re
-> +                        * that the page corresponding to the faulting ad=
-dress
-> +                        * will be hot in the cache after zeroing.
->                          */
-> -                       if (!alloc_zeroed())
-> +                       if (alloc_need_zeroing())
->                                 folio_zero_user(folio, vmf->address);
->                         return folio;
->                 }
+> +static int get_tdx_sys_info_td_conf(struct tdx_sys_info_td_conf *sysinfo_td_conf)
+> +{
+> +	int ret = 0;
+> +	u64 val;
+> +	int i, j;
+> +
+> +	if (!ret && !(ret = read_sys_metadata_field(0x1900000300000000, &val)))
+> +		sysinfo_td_conf->attributes_fixed0 = val;
+> +	if (!ret && !(ret = read_sys_metadata_field(0x1900000300000001, &val)))
+> +		sysinfo_td_conf->attributes_fixed1 = val;
+> +	if (!ret && !(ret = read_sys_metadata_field(0x1900000300000002, &val)))
+> +		sysinfo_td_conf->xfam_fixed0 = val;
+> +	if (!ret && !(ret = read_sys_metadata_field(0x1900000300000003, &val)))
+> +		sysinfo_td_conf->xfam_fixed1 = val;
+> +	if (!ret && !(ret = read_sys_metadata_field(0x9900000100000004, &val)))
+> +		sysinfo_td_conf->num_cpuid_config = val;
+> +	if (!ret && !(ret = read_sys_metadata_field(0x9900000100000008, &val)))
+> +		sysinfo_td_conf->max_vcpus_per_td = val;
+> +	for (i = 0; i < sysinfo_td_conf->num_cpuid_config; i++)
 
-Gr{oetje,eeting}s,
+It is not safe. We need to check
 
-                        Geert
+	sysinfo_td_conf->num_cpuid_config <= 32.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+If the TDX module version is not matched with the json file that was 
+used to generate the tdx_global_metadata.h, the num_cpuid_config 
+reported by the actual TDX module might exceed 32 which causes 
+out-of-bound array access.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> +		if (!ret && !(ret = read_sys_metadata_field(0x9900000300000400 + i, &val)))
+> +			sysinfo_td_conf->cpuid_config_leaves[i] = val;
+> +	for (i = 0; i < sysinfo_td_conf->num_cpuid_config; i++)
+> +		for (j = 0; j < 2; j++)
+> +			if (!ret && !(ret = read_sys_metadata_field(0x9900000300000500 + i * 2 + j, &val)))
+> +				sysinfo_td_conf->cpuid_config_values[i][j] = val;
+> +
+> +	return ret;
+> +}
+> +
+>   static int get_tdx_sys_info(struct tdx_sys_info *sysinfo)
+>   {
+>   	int ret = 0;
+> @@ -84,6 +128,8 @@ static int get_tdx_sys_info(struct tdx_sys_info *sysinfo)
+>   	ret = ret ?: get_tdx_sys_info_features(&sysinfo->features);
+>   	ret = ret ?: get_tdx_sys_info_tdmr(&sysinfo->tdmr);
+>   	ret = ret ?: get_tdx_sys_info_cmr(&sysinfo->cmr);
+> +	ret = ret ?: get_tdx_sys_info_td_ctrl(&sysinfo->td_ctrl);
+> +	ret = ret ?: get_tdx_sys_info_td_conf(&sysinfo->td_conf);
+>   
+>   	return ret;
+>   }
+
 
