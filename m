@@ -1,131 +1,252 @@
-Return-Path: <linux-kernel+bounces-435738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7C59E7B96
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:21:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE879E7BB4
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 23:25:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD4F1887956
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:25:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B196C1F76A5;
+	Fri,  6 Dec 2024 22:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BPVL+eqt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 10F862838D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 22:21:39 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC471DF96F;
-	Fri,  6 Dec 2024 22:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3swPhqB"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C0122C6C1;
-	Fri,  6 Dec 2024 22:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E8741714DF;
+	Fri,  6 Dec 2024 22:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733523694; cv=none; b=DoU2rCCllcMFoyWza2wcLLp4PPMPSiXWyxqH3GTZByZoVEjgFjJrUhgODFesD4ZGa1HgbVN7s9/jAAyJ+hlR+VlsHON6JpHAHYzNwEVrMUtI2+RBbW89/wBW+Rl8i8oXNA8ioVfuvQsefCiMc8p8mgWMy40zmt35fmp+Ezi4qqc=
+	t=1733523934; cv=none; b=ozTSA+zyLAnYEad/O2hGvCzYdAMGwZxz5KmUK98gJV/eu0K0XFe66RRhJxNssgCHxoKqO1PK++mk+GSgkaiCaOrOtBkcu2SvsKONayAaTWkeLkIAxbobwg70xAjnMA81TdWFSGFdEfbQ6w0d2NNJMaUz04fmy7ng1Xygxfo5FAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733523694; c=relaxed/simple;
-	bh=mhky964TRWNzFbAiRFdB5HACfgN5R0L+tLJI3tPPRw8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aoIteihppe80tDKw73X6TRXqR8mzinX3nDZpP1Y+GCcW82JgazY53+knndssWYii+Kw1fuT1HwT/Q/uvmbNphEoRDonOj50Zhs78FxCKv55ghfvANm0YYYa65R3oWgzkvGO43zQg1MNfCSBw+PNBii+eBEh29YmnMm5keKglVNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3swPhqB; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-46695478d03so37239911cf.1;
-        Fri, 06 Dec 2024 14:21:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733523692; x=1734128492; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZhhTP8F6A8wEtYSRjTN5029eKdbjNe9HQjo/7xvSE4=;
-        b=h3swPhqBvlj3cMaIAcRfx11GKHP+UbqsAZTnaT5iiEhTIZRrJmKu9dOZU80T0AGoX1
-         /agIf7DKAducNipQ4+F4rcOU3oDje2mMQe8lp14My4yrHuFh86vjWpypysOfrbkAuiS6
-         JboLRZlHikJvJkeqNsPXRQqFO8stNnS6vFJU5/gFXrpTf5/2aULKModoVlsvWM2FRH2I
-         IY3GeH2l3f0ksCBOuT266JekZuKmcyYgQVjRX4mVCKiATc4cnnE6V7/lgb5Jb3IPqgnG
-         BOVuJppbtPnxaS9swiwDOxcJbaH3tRz/KfcN+SM3H0L140uxGIPGXc4hJPmXpA19rRRt
-         okIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733523692; x=1734128492;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SZhhTP8F6A8wEtYSRjTN5029eKdbjNe9HQjo/7xvSE4=;
-        b=Sp+xBmFwaWaTeDcWAk0HqVIMoDZAi8iSJgxyBF1FCB8l4YBrIfMVCbaBprhttNRM3R
-         RI7WkZX1i8jkAbV9UTtWsTzRckZqryyjqcThGCKxS4m/Oaam5p9XylHR3jfm0erpmXbW
-         zgeEcOgXXaenelSQMEgDSxyZt5f/6rGkCFf5G8UBWNSLB6p1Eah/vtktgNtoq+2Cplym
-         F00v63jPYWO3km8ZFR6u8u7XX+0M9aKti8J2i1TcZrYty+eE88SHl43efVSg0qoTnbIQ
-         XcLn/z5rtOrKrO3n1yhPJ0499TXzQuHGrxM/eRrv1z/TYz2IFcGF2Z89+cR2OzMbzRTi
-         E52w==
-X-Forwarded-Encrypted: i=1; AJvYcCWoVtYdVOwyRLFUbRuavEoqR29fiN6aEMGDgiuJXuoImHHfSxxHrmzPUj87MKz8psZf0TE2bZB9aMbX9Bw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG+M0o67jxy6dpRrMss38ymTkzGS229mJ7DyUJ1+Ir63PcuWqa
-	xih1Y5/A3CDrfZI4p7q0GOqhgmFaamFNsveVrGD0NWvoOXiD95e/6FtfNBTX
-X-Gm-Gg: ASbGnctsawzyI6QWBpMs/vfdyUueg6Gx3bT1nQCZPg6E+FOmo+gqOhTjZCkjpIwe5mD
-	0k/gyw9O+Cscdti5jCEztGVrJtbQRWX+MU15PIs1TzA6L6O7gNeLnli9QnOHS3QRAAJeiLZHOFI
-	xIVxlxUAzbf6jLISD/wGvvqM6tBPNInLz4dZWg23+s+jbzhRFMvXhMxMMl/oWAq9V3I2245PvRa
-	LjkCX5zVvOEhYcMkZYdwPor7w1ib3Wsii/cQeLG3hYXam/feDfjXN9BQH28Xg==
-X-Google-Smtp-Source: AGHT+IGAKWFMT+I1wbmUOwVQpQGCERs5Xc7gz6oYPba9oF39Og5PrK1c20U2AJEQWpqDryidztUmpA==
-X-Received: by 2002:ac8:584e:0:b0:466:9018:c91f with SMTP id d75a77b69052e-46734c9e97amr78931621cf.1.1733523692059;
-        Fri, 06 Dec 2024 14:21:32 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296d0e3esm25566171cf.33.2024.12.06.14.21.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 14:21:30 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: alexandre.belloni@bootlin.com,
-	gxt@mprc.pku.edu.cn,
-	linus.walleij@linaro.org,
-	haojian.zhuang@gmail.com,
-	broonie@opensource.wolfsonmicro.com,
-	akpm@linux-foundation.org
-Cc: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] rtc: Add check for clk_enable()
-Date: Fri,  6 Dec 2024 17:24:52 -0500
-Message-Id: <20241206222452.3479786-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733523934; c=relaxed/simple;
+	bh=bCffiw8OTwFgkjUxdoGc91mQ61iZQnE3xHFFCbqUAlY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSUqlniz/dg0ol0OwWpzARSfX7XKevyz5s4JPyQbvc1V7unuOmorYqFvR1j2gOUpyRCjg0K2qWZussK2Totgtd59S6cCPMPEP1BF4CJEhsJ8iS3kQaJ+tODceektTLVC2fZIitBW9+SH8cQK71beP4Y+m0r5ZdXKHbDEYopXrpo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BPVL+eqt; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733523932; x=1765059932;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=bCffiw8OTwFgkjUxdoGc91mQ61iZQnE3xHFFCbqUAlY=;
+  b=BPVL+eqtQzBzftX/283oeX6TeY3nHfk3bEIM5nnGms5QAAcCOb4CXCSr
+   CVvUp8zL2n5dRo/EaydciTP4AwTxmYHlmGct9XtzGU+pNQWEF1ZZxpWtE
+   pai7pnFP4vi/wKNOiEh1C/uxhrIR0F37xgC63YIgkmVD8tWxqimvsaS6g
+   yDe9aOSzR2XtqCShVuB0zi2EnUlCGXbJijOHqB+bs7WOxX9Uyv0yrZ4n6
+   bEpWOlWKWaC7gDN1J9o5BZu0fES4Mp5Y15DzO9T2g5aqpdpFFLbMEvkGK
+   qGX8ftseRzHjg+lEmsHBswXEiAAs2mUgTQXDjzdBRBA1RuYerGGyFSbR7
+   Q==;
+X-CSE-ConnectionGUID: YwXzhM3pRKO5Um7rlHcNuw==
+X-CSE-MsgGUID: 4a4x9xJ1QNGnYHqgUlOyAw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="44565162"
+X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
+   d="scan'208";a="44565162"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 14:25:31 -0800
+X-CSE-ConnectionGUID: YiK7CDGQR8Kyz3eZXpGVJQ==
+X-CSE-MsgGUID: NLDm8aHvRMWdUqnSlq2szA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
+   d="scan'208";a="95009660"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 06 Dec 2024 14:25:26 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tJglH-0002J7-1P;
+	Fri, 06 Dec 2024 22:25:23 +0000
+Date: Sat, 7 Dec 2024 06:24:58 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mikael Gonella-Bolduc via B4 Relay <devnull+mgonellabolduc.dimonoff.com@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>
+Cc: oe-kbuild-all@lists.linux.dev,
+	Mikael Gonella-Bolduc <m.gonella.bolduc@gmail.com>,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+	Matti Vaittinen <mazziesaccount@gmail.com>
+Subject: Re: [PATCH v2 2/2] iio: light: Add APDS9160 ALS & Proximity sensor
+ driver
+Message-ID: <202412070600.aufBle2b-lkp@intel.com>
+References: <20241206-apds9160-driver-v2-2-be2cb72ef8f4@dimonoff.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206-apds9160-driver-v2-2-be2cb72ef8f4@dimonoff.com>
 
-Add check for the return value of clk_enable() to catch the potential
-error.
+Hi Mikael,
 
-Fixes: 0c4eae66591a ("rtc: convert drivers/rtc/* to use module_platform_driver()")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
- drivers/rtc/rtc-spear.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/rtc/rtc-spear.c b/drivers/rtc/rtc-spear.c
-index 26eed927f8b3..064d46b2f16e 100644
---- a/drivers/rtc/rtc-spear.c
-+++ b/drivers/rtc/rtc-spear.c
-@@ -437,7 +437,7 @@ static int spear_rtc_resume(struct device *dev)
- {
- 	struct platform_device *pdev = to_platform_device(dev);
- 	struct spear_rtc_config *config = platform_get_drvdata(pdev);
--	int irq;
-+	int irq, ret;
- 
- 	irq = platform_get_irq(pdev, 0);
- 
-@@ -447,7 +447,9 @@ static int spear_rtc_resume(struct device *dev)
- 			config->irq_wake = 0;
- 		}
- 	} else {
--		clk_enable(config->clk);
-+		ret = clk_enable(config->clk);
-+		if (ret)
-+			return ret;
- 		spear_rtc_enable_interrupt(config);
- 	}
- 
+[auto build test ERROR on 5de07b8a24cf44cdb78adeab790704bf577c2c1d]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Mikael-Gonella-Bolduc-via-B4-Relay/dt-bindings-iio-light-Add-APDS9160-binding/20241207-001144
+base:   5de07b8a24cf44cdb78adeab790704bf577c2c1d
+patch link:    https://lore.kernel.org/r/20241206-apds9160-driver-v2-2-be2cb72ef8f4%40dimonoff.com
+patch subject: [PATCH v2 2/2] iio: light: Add APDS9160 ALS & Proximity sensor driver
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241207/202412070600.aufBle2b-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412070600.aufBle2b-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412070600.aufBle2b-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/iio/light/apds9160.c: In function 'apds9160_read_raw':
+>> drivers/iio/light/apds9160.c:911:32: error: implicit declaration of function 'FIELD_GET' [-Wimplicit-function-declaration]
+     911 |                         *val = FIELD_GET(APDS9160_PS_DATA_MASK, *val);
+         |                                ^~~~~~~~~
+   drivers/iio/light/apds9160.c: At top level:
+>> drivers/iio/light/apds9160.c:256:18: warning: 'apds9160_als_gain_avail' defined but not used [-Wunused-const-variable=]
+     256 | static const int apds9160_als_gain_avail[] = {
+         |                  ^~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +/FIELD_GET +911 drivers/iio/light/apds9160.c
+
+   889	
+   890	static int apds9160_read_raw(struct iio_dev *indio_dev,
+   891				     struct iio_chan_spec const *chan, int *val,
+   892				     int *val2, long mask)
+   893	{
+   894		struct apds9160_chip *data = iio_priv(indio_dev);
+   895		int ret = -EINVAL;
+   896	
+   897		switch (mask) {
+   898		case IIO_CHAN_INFO_RAW:
+   899			switch (chan->type) {
+   900			case IIO_PROXIMITY: {
+   901				__le16 buf;
+   902	
+   903				ret = regmap_bulk_read(data->regmap, chan->address,
+   904						       &buf, 2);
+   905				if (ret)
+   906					return ret;
+   907	
+   908				ret = IIO_VAL_INT;
+   909				*val = le16_to_cpu(buf);
+   910				/* Remove overflow bits from result */
+ > 911				*val = FIELD_GET(APDS9160_PS_DATA_MASK, *val);
+   912			} break;
+   913			case IIO_LIGHT:
+   914			case IIO_INTENSITY: {
+   915				u8 buf[3];
+   916	
+   917				ret = regmap_bulk_read(data->regmap, chan->address,
+   918						       &buf, 3);
+   919				if (ret)
+   920					return ret;
+   921	
+   922				ret = IIO_VAL_INT;
+   923				*val = get_unaligned_le24(buf);
+   924			} break;
+   925			case IIO_CURRENT:
+   926				ret = IIO_VAL_INT;
+   927				*val = data->ps_current;
+   928				break;
+   929			default:
+   930				break;
+   931			}
+   932			break;
+   933		case IIO_CHAN_INFO_HARDWAREGAIN:
+   934			switch (chan->type) {
+   935			case IIO_LIGHT:
+   936				ret = IIO_VAL_INT;
+   937				*val = data->als_hwgain;
+   938				break;
+   939			case IIO_PROXIMITY:
+   940				ret = IIO_VAL_INT;
+   941				*val = data->ps_gain;
+   942				break;
+   943			default:
+   944				break;
+   945			}
+   946			break;
+   947		case IIO_CHAN_INFO_INT_TIME:
+   948			switch (chan->type) {
+   949			case IIO_LIGHT:
+   950				ret = IIO_VAL_INT;
+   951				*val = data->als_itime;
+   952				break;
+   953			default:
+   954				break;
+   955			}
+   956			break;
+   957		case IIO_CHAN_INFO_SAMP_FREQ:
+   958			switch (chan->type) {
+   959			case IIO_PROXIMITY:
+   960				ret = IIO_VAL_INT;
+   961				*val = data->ps_rate;
+   962				break;
+   963			default:
+   964				break;
+   965			}
+   966			break;
+   967		case IIO_CHAN_INFO_CALIBSCALE:
+   968			switch (chan->type) {
+   969			case IIO_PROXIMITY:
+   970				ret = IIO_VAL_INT;
+   971				*val = data->ps_cancellation_level;
+   972				break;
+   973			default:
+   974				break;
+   975			}
+   976			break;
+   977		case IIO_CHAN_INFO_CALIBBIAS:
+   978			switch (chan->type) {
+   979			case IIO_PROXIMITY:
+   980				ret = IIO_VAL_INT;
+   981				*val = data->ps_cancellation_analog;
+   982				break;
+   983			case IIO_CURRENT:
+   984				ret = IIO_VAL_INT;
+   985				*val = data->ps_cancellation_current;
+   986			default:
+   987				break;
+   988			}
+   989			break;
+   990		case IIO_CHAN_INFO_SCALE:
+   991			switch (chan->type) {
+   992			case IIO_LIGHT:
+   993				ret = IIO_VAL_INT_PLUS_MICRO;
+   994				*val = data->als_scale1;
+   995				*val2 = data->als_scale2;
+   996				break;
+   997			default:
+   998				break;
+   999			}
+  1000			break;
+  1001		default:
+  1002			break;
+  1003		}
+  1004	
+  1005		return ret;
+  1006	};
+  1007	
+
 -- 
-2.34.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
