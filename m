@@ -1,156 +1,136 @@
-Return-Path: <linux-kernel+bounces-434536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663099E67FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:33:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5B19E67FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 08:35:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C72F2816CE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:33:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE2261883070
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 07:35:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A121DD0EC;
-	Fri,  6 Dec 2024 07:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7635B1DBB3A;
+	Fri,  6 Dec 2024 07:35:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBJ1I3oK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YFIkdjZE"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD7022F5E;
-	Fri,  6 Dec 2024 07:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FBFE193416;
+	Fri,  6 Dec 2024 07:35:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733470394; cv=none; b=IBgRO/vDg5rZRkFKWU5TGvq9xKW6wWVMgqTzwVE5O5wuSiFog8MXtmNVi2ZSNdfpI0SBsOfOV3nRH6EGFlv4jt925w6tFb2iMV8FbCiOxV5Lr9O32Gr3ov5Ftz40YtY9pRoHewZHEMV6ymnC0+QWi8Nn3BzH7rs2iXqfnyEL7tg=
+	t=1733470550; cv=none; b=fvZXZGDFtENuKOXlSdR3XzT1kn92S44fBZzHayAxDIWof1S8l3A8PAUOlPeMzWePCQoMhK0kihpuSdIWGfDYURnoRiaxOQ+AE7MeMXrKpHFOCAP/kGOd5uketg40W65EOzw+XcBCtP7ANRRGYg4UuyQxgdI6MhwS3kmas/L5jak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733470394; c=relaxed/simple;
-	bh=G6stCeTr+bKrmD0FgcE/k9lxb8p2Rn+f5pecn/oYCwg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hSWczO4lUuXQ7KIslWgEL2Y0CsvV1Tmg1VMCbgzBDUQSfGwSz9YPpdUGYGOVKiEQiovvXlE0lZ8Mp9HCSzfXXVqHDo6+sYk79+CiEBvnrlAepLln9E1iluwCNeipOzOdOTigWGNorQtH8EXCS8ADEBojHdVGh0FVVImd+abAF1Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBJ1I3oK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAFA6C4CED1;
-	Fri,  6 Dec 2024 07:33:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733470394;
-	bh=G6stCeTr+bKrmD0FgcE/k9lxb8p2Rn+f5pecn/oYCwg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VBJ1I3oKk7nK3cwfPbkkY0jDBF8BeLPLf9TZe8ypnuzcD430bnAo0BrkQtCRSuBTr
-	 Gb6VsVFIAa2UW0aQIsoW7sWtalorU4lQPxswHj9yps1OczGmo3urJ3scKFEUBA5i6m
-	 PVutI9v18Rv0LGhlnIVSwnYxZRgI5WMHLJvNeJgOsVpG4Ts60PIZF69MCx/aq/TXA8
-	 Gxq9rFjwuieer6/wgSiZiFAJriylkxVixoMNpzY148aGPORlSXWTWmnCQNX4zJ7DKu
-	 cxLOG953MajbRs5Q6FEIv+QjdEfAZ18ZMOnOwg3omTMHuwmOohyR9j/UUih/O2q8wH
-	 6TCmW12hBoaUg==
-Date: Fri, 6 Dec 2024 07:33:09 +0000
-From: Lee Jones <lee@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v3 1/5] rust: miscdevice: Provide accessor to pull out
- miscdevice::this_device
-Message-ID: <20241206073309.GG8882@google.com>
-References: <20241205162531.1883859-1-lee@kernel.org>
- <20241205162531.1883859-2-lee@kernel.org>
- <2024120648-finch-shrubbery-c6f5@gregkh>
- <20241206071646.GE8882@google.com>
+	s=arc-20240116; t=1733470550; c=relaxed/simple;
+	bh=uoBVnc/X3iISs39icolnHNEdtqyPvFkWR6P0eYgohZ4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NmjExvuZQAXfkqL0u87P73GVtIneldbO0LXsqTM2cZHNz5GusVBpelEXDZcgkIwgXMRD5zjhuajy8iUzV/38JCYc6VXmrtfZ1aP4K5dkkdbmmjdBdQUsVOwaUdTeR5jLVC7MAKRDTLUAUvv6FdfQod+DzRmnBbUQr5ZPX8Sb8so=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YFIkdjZE; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7fd23d9160dso720168a12.2;
+        Thu, 05 Dec 2024 23:35:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733470549; x=1734075349; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=VUVAK9sW01x7/UJNB//zngqTlDnV1jFf5ZhFyhScFnc=;
+        b=YFIkdjZEXR4ccuwCG1anwmZpNJ6Xs8wrKPVle+T4KGCKce6S42dBUI81iWQPyI4F1A
+         EYJE9ykWDAtdutAec8EViNHLaMzh5TmTiZKF5o5VroIK1ppsfsUh9PlQIgL3J0cxB8wX
+         hL0sjBZBPTupJ2lgGekjEuYD+uZyG7uFxy5Hs8+iwtfjVbMx0un92oHroOyr9GYx+Mqb
+         54shUIWptAXXXvV9ZOZJHU6Hf3Mgu+ZSOy3WuW+G3ukyr8R/Plz9awxDrqn1rHCRuWMH
+         kPD6vbVo9a+LrOSdgrwzarm9JckRTxceeQJ25bBVXm0BhLEc49pGItDVc+8IrQy8icfS
+         WttQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733470549; x=1734075349;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=VUVAK9sW01x7/UJNB//zngqTlDnV1jFf5ZhFyhScFnc=;
+        b=B3DJt7/ZU+MJHXSYlC3BrruF4Bs9QVPCIxQjFYyNDt8iJXCkF90hZxENKv06QorfOD
+         oZC4u8X4LIRN5BZ+cNOuPddrGbUksK/XZovARZJ35Es1vrbJvrqsmOQozx4/J5EgFVVk
+         OpU2S758OiEUkgzxIRY6VI5+AfFDLWVYgNc5UqX+4lgMOB2gc0rSkp0k65LwXfsvB+KT
+         XyRmB7H4YZmXLQss3mSgfeWqYFRb7cohGAXBFVldoa461EFvp8vpuxyID6aGLSsadJ95
+         QqbHgWzVPm+msrdsAJqNxYYthRAeg4iPwCUb1DHwJuqXcLSXhVjrxxREAzF6YDejPgVr
+         SUgw==
+X-Forwarded-Encrypted: i=1; AJvYcCUel1QPcpR8S0VrsjgU3I2Kr5HEH8uN9LaDODYzKMvzvIKI6986F38MO3ufBf8biDQsUd31DWg1jbeK2Rws6v8=@vger.kernel.org, AJvYcCX53YH4skwIufyAG/eNV1ccyKExxnOHuDw8BV+uXfZ8acX4FDwQDvqpQ8GdBbkMHuNzrQ0HPArt9v/5WV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMqSZcbrPBhvwCtbcUw6oXEF0oc0CyFQXSc6AsAm1uO3NgrDeB
+	sfrFz3ENSnUrhlGQ3edQCyRxJDFvuao3YiD1EOTYf22m7iW0d1iD
+X-Gm-Gg: ASbGncvCk56nP+eyUN8FWXHza6SZ2oeKLF3/jNuJ6jMTxY5+O/nAa5LCsRqQWYe911e
+	6g0sDQxpA4m0uBqhJLjyAr7PPujcinoYTz0tg8/LwQy7nyiAglLpG1jWOA5oc2VNNrSPhiOwvg4
+	T/W1sfExEPdq+eYX9eVf8pMDiAy1hboMxssPSXCz9XaoWwEwwoq9gpeigBluCCMi13iBE+o2aQ1
+	fFtyn96VkqQ56Gz0GV+axrfqSqDXzH1aTB5urHBD5HcPjPEQIUbS3Y=
+X-Google-Smtp-Source: AGHT+IHHKMowzfRZqo/yrxckrktsXFddOpWRgdDwk2tLcCRDBXvPAQ1jymmDN6Mz8n0W8ujCfq1Rgg==
+X-Received: by 2002:a05:6a20:7f99:b0:1e0:bedf:5902 with SMTP id adf61e73a8af0-1e1870ad3acmr3032805637.6.1733470548723;
+        Thu, 05 Dec 2024 23:35:48 -0800 (PST)
+Received: from HOME-PC ([223.185.130.193])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2ca671asm2363763b3a.153.2024.12.05.23.35.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 23:35:48 -0800 (PST)
+From: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+To: kvalo@kernel.org,
+	ath12k@lists.infradead.org
+Cc: jjohnson@kernel.org,
+	linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+Subject: [PATCH wireless-next] wifi: ath12k: Fix out-of-bounds read
+Date: Fri,  6 Dec 2024 13:05:42 +0530
+Message-Id: <20241206073542.315095-1-dheeraj.linuxdev@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241206071646.GE8882@google.com>
 
-On Fri, 06 Dec 2024, Lee Jones wrote:
+This patch addresses the Out-of-bounds read issue detected by
+Coverity (CID 1602214). The function ath12k_mac_vdev_create() accesses
+the vif->link_conf array using link_id, which is derived from
+arvif->link_id. In cases where arvif->link_id equals 15, the index
+exceeds the bounds of the array, which contains only 15 elements.This
+results in an out-of-bounds read.
 
-> On Fri, 06 Dec 2024, Greg KH wrote:
-> 
-> > On Thu, Dec 05, 2024 at 04:25:18PM +0000, Lee Jones wrote:
-> > > There are situations where a pointer to a `struct device` will become
-> > > necessary (e.g. for calling into dev_*() functions).  This accessor
-> > > allows callers to pull this out from the `struct miscdevice`.
-> > > 
-> > > Signed-off-by: Lee Jones <lee@kernel.org>
-> > > ---
-> > >  rust/kernel/miscdevice.rs | 9 +++++++++
-> > >  1 file changed, 9 insertions(+)
-> > > 
-> > > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > > index 7e2a79b3ae26..55340f316006 100644
-> > > --- a/rust/kernel/miscdevice.rs
-> > > +++ b/rust/kernel/miscdevice.rs
-> > > @@ -10,11 +10,13 @@
-> > >  
-> > >  use crate::{
-> > >      bindings,
-> > > +    device::Device,
-> > >      error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
-> > >      prelude::*,
-> > >      str::CStr,
-> > >      types::{ForeignOwnable, Opaque},
-> > >  };
-> > > +
-> > >  use core::{
-> > >      ffi::{c_int, c_long, c_uint, c_ulong},
-> > >      marker::PhantomData,
-> > > @@ -84,6 +86,13 @@ pub fn register(opts: MiscDeviceOptions) -> impl PinInit<Self, Error> {
-> > >      pub fn as_raw(&self) -> *mut bindings::miscdevice {
-> > >          self.inner.get()
-> > >      }
-> > > +
-> > > +    /// Returns a pointer to the current Device
-> > > +    pub fn device(&self) -> &Device {
-> > > +        // SAFETY: This is only accessible after a successful register() which always
-> > > +        // initialises this_device with a valid device.
-> > > +        unsafe { Device::as_ref((*self.as_raw()).this_device) }
-> > 
-> > A "raw" pointer that you can do something with without incrementing the
-> > reference count of it?  Oh wait, no, it's the rust device structure.
-> > If so, why isn't this calling the get_device() interface instead?  That
-> > way it's properly incremented and decremented when it "leaves the scope"
-> > right?
-> > 
-> > Or am I missing something here as to why that wouldn't work and this is
-> > the only way to get access to the 'struct device' of this miscdevice?
-> 
-> Fair point.  I'll speak to Alice.
+This issue occurs in the following branch of the code:
 
-Alice isn't available yet, so I may be talking out of turn at this
-point, but I just found this is the Device documentation:
+    if (arvif->link_id == ATH12K_DEFAULT_SCAN_LINK && vif->valid_links)
+        link_id = ffs(vif->valid_links) - 1;
+    else
+        link_id = arvif->link_id;
 
-  /// A `Device` instance represents a valid `struct device` created by the C portion of the kernel.
-  ///
-  /// Instances of this type are always reference-counted, that is, a call to `get_device` ensures
-  /// that the allocation remains valid at least until the matching call to `put_device`.
+When arvif->link_id equals 15 and the else branch is taken, link_id is
+set to 15.
 
-And:
+This patch adds a bounds check to ensure that link_id does not exceed
+the valid range of the vif->link_conf array. If the check fails, a
+warning is logged, and the function returns an error code (-EINVAL).
 
-  // SAFETY: Instances of `Device` are always reference-counted.
+Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+---
+ drivers/net/wireless/ath/ath12k/mac.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-Ready for some analysis from this beginner?
-
-Since this impl for Device is AlwaysRefCounted, when any references are
-taken i.e. in the Device::as_ref line above, inc_ref() is implicitly
-called to increase the refcount.  The same will be true of dec_ref()
-once it goes out of scope.
-
-  // SAFETY: Instances of `Device` are always reference-counted.
-  unsafe impl crate::types::AlwaysRefCounted for Device {
-      fn inc_ref(&self) {
-          // SAFETY: The existence of a shared reference guarantees that the refcount is non-zero.
-          unsafe { bindings::get_device(self.as_raw()) };
-      }
-
-      unsafe fn dec_ref(obj: ptr::NonNull<Self>) {
-          // SAFETY: The safety requirements guarantee that the refcount is non-zero.
-          unsafe { bindings::put_device(obj.cast().as_ptr()) }
-  }
-
+diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
+index 129607ac6c1a..c19b10e66f4a 100644
+--- a/drivers/net/wireless/ath/ath12k/mac.c
++++ b/drivers/net/wireless/ath/ath12k/mac.c
+@@ -7725,6 +7725,12 @@ int ath12k_mac_vdev_create(struct ath12k *ar, struct ath12k_link_vif *arvif)
+ 	else
+ 		link_id = arvif->link_id;
+ 
++	if (link_id >= ARRAY_SIZE(vif->link_conf)) {
++		ath12k_warn(ar->ab, "link_id %u exceeds max valid links for vif %pM\n",
++			    link_id, vif->addr);
++		return -EINVAL;
++	}
++
+ 	link_conf = wiphy_dereference(hw->wiphy, vif->link_conf[link_id]);
+ 	if (!link_conf) {
+ 		ath12k_warn(ar->ab, "unable to access bss link conf in vdev create for vif %pM link %u\n",
 -- 
-Lee Jones [李琼斯]
+2.34.1
+
 
