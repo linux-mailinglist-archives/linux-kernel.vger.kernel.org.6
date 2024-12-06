@@ -1,303 +1,141 @@
-Return-Path: <linux-kernel+bounces-434324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30ECD9E64ED
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:26:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA7F59E6522
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:43:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D44C163A14
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:26:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51BA01884D43
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 03:43:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B5A197548;
-	Fri,  6 Dec 2024 03:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64780191F78;
+	Fri,  6 Dec 2024 03:43:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="N5WNdaP4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="kPHScr15"
+Received: from mail-m12796.qiye.163.com (mail-m12796.qiye.163.com [115.236.127.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8A7919340C;
-	Fri,  6 Dec 2024 03:25:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CE113DDDF;
+	Fri,  6 Dec 2024 03:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.236.127.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733455555; cv=none; b=KnyDmCANiNPRpnMwBMQZ7ytAfcerhDsYXzMfojMO39gj4gLoQRhqIeFtgG01WKXSYjyhU8Z2cw2dRNHWlq7DvxHB3PqM4q3wrVw73W13bcBb+fERyJ/gzUYSLUzMdR7EfQBP2jH49P0tSfOcJi7emgt308XDSOAsLpbaV23f5hM=
+	t=1733456627; cv=none; b=kJW9tr1kmQaBpdlROopxGT1Y8DmV0rV0zo0mcNQvN35tWwEr0NEl6OHV8+AAUBWc+IOIhuK+AhpoLpaVaBKfuNKzftVsB0s41P6kt2ti7g99OB4OKgQxklJi7X/ltom+ZeTEGqpE1T6yZEhA9HC1IMJKr9OtaJuXZrKqv4TgW74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733455555; c=relaxed/simple;
-	bh=xMirmCHVS0lrRZ4cTLNGba8hedkBy/2Prr2PwxDJeVc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MC2Qtuc42jEGrrpqYpwTq4rmU2Foh/Sz3EZdvBISL8FTyVLLFd4gyoqsrj5/mgkIWpBMpMur3zafrPHSLsXhyzDgiKh5KMpbVdclO2CHp46XhLEGCmeHTpZI/e8wOPuvng3v6Kz69OVPaGICeZMXk1sxLOfLRmKixv2QWxvbTe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=N5WNdaP4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B5HaMpM020793;
-	Fri, 6 Dec 2024 03:25:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=SnltfcSCBo4D4mhycStlIBBn
-	/z7ImSFBCKeEvs5Nhm8=; b=N5WNdaP44+KqYxfrsXBN+ofnrM8EyvCP3MfBOsFq
-	WGsIix25pS81nuQ+cUBWGD8BUpwrVllKB+3mt8qiqUNjc75RjtKV9t9jJg05EB/J
-	aBJVu9pNqFeTr8llxoWEJgrWcSAkNazxYOMpd+2app60REAirdmagmPEexZC+y0N
-	BZxksk4BiTq9G6Mh/F5Rkhua11z2eSHI2Dq5imUVXeSnwhm9zXH1D7Ccy3zbk9/H
-	3YyKvyr7iJWMLbyexZjj2C5WQEY0htSoAQVVGxf3bK+5bRdj82CzJVvGGpvxeNwt
-	EdG3obNDDF3F2du0zwgFWdhfwlx8Gs87bB3L1ShWBvVytQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 439v801rn0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 03:25:47 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B63PknD020353
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 03:25:46 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 5 Dec 2024 19:25:43 -0800
-Date: Fri, 6 Dec 2024 11:25:38 +0800
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>
-CC: <adrian.hunter@intel.com>, <ulf.hansson@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-mmc@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_tingweiz@quicinc.com>,
-        <quic_zhgao@quicinc.com>, <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH v2] mmc: sdhci-msm: Correctly set the load for the
- regulator
-Message-ID: <Z1JusoQc0dFdPoNv@cse-cd02-lnx.ap.qualcomm.com>
-References: <20241127095029.3918290-1-quic_yuanjiey@quicinc.com>
- <lza5dbabt2eoipyrbgo47ftpsftcwggb4v6d53lqvsh7w7vp3n@f2ld34a53a2z>
+	s=arc-20240116; t=1733456627; c=relaxed/simple;
+	bh=dRuKrSs44UIo3EnTnqZjyoP90LhCHzf77THqP4gcSZg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EHIWaLPJDX6QL45TzJNbHgXLUPJoxYlwHwy4PqGvVhHQSkNfdRWS+B+FryIycuvG0bIpkKW6e4Xe0sr29RzGF0ivuVOb8gzbPDuvq10nHdkA5H/IoBENK9wVTHpNWpVblaaYbEx5Jf/lBrJc7PE/9N1rAgF+bgKSHFJXwRgHFpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=kPHScr15; arc=none smtp.client-ip=115.236.127.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
+Received: from [172.16.12.26] (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTP id 4df43c1a;
+	Fri, 6 Dec 2024 11:28:21 +0800 (GMT+08:00)
+Message-ID: <c0bc25b7-6e41-4ed8-ae8d-692a908607df@rock-chips.com>
+Date: Fri, 6 Dec 2024 11:28:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <lza5dbabt2eoipyrbgo47ftpsftcwggb4v6d53lqvsh7w7vp3n@f2ld34a53a2z>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: REQgGjyFLtKTFBsgiA4tIK-ue4Fuu7XH
-X-Proofpoint-GUID: REQgGjyFLtKTFBsgiA4tIK-ue4Fuu7XH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- impostorscore=0 adultscore=0 priorityscore=1501 clxscore=1015
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 malwarescore=0
- bulkscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060023
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 04/10] phy: phy-rockchip-samsung-hdptx: Add support for
+ eDP mode
+To: Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, rfoss@kernel.org, vkoul@kernel.org,
+ cristian.ciocaltea@collabora.com, l.stach@pengutronix.de,
+ andy.yan@rock-chips.com, hjc@rock-chips.com, algea.cao@rock-chips.com,
+ kever.yang@rock-chips.com, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-phy@lists.infradead.org
+References: <20241127075157.856029-1-damon.ding@rock-chips.com>
+ <2131853.KlZ2vcFHjT@diego>
+ <6e1f35c0-5ea8-414f-b3ea-4e7222c605ef@rock-chips.com>
+ <2886747.Y6S9NjorxK@diego>
+ <h4giob7bcrh7qmtepti6huym2llw4ujfmeff76vrgpahb5zy6x@dz6zghsifww5>
+ <2342f342-672c-447e-90d8-674b748af6a4@rock-chips.com>
+ <abzu2chif2g3urxoqbm3gbe6cciexbmqvn44qezrx4hgllfkkn@7bzi5jl3stqe>
+ <42035ebe-09b7-4005-912a-8ec72d5dabcc@rock-chips.com>
+ <5ncdog66jtc4s7vxk2yt4jkknf2es3whvweuqmrxbot3azi5ge@t6s3xadkiasp>
+Content-Language: en-US
+From: Damon Ding <damon.ding@rock-chips.com>
+In-Reply-To: <5ncdog66jtc4s7vxk2yt4jkknf2es3whvweuqmrxbot3azi5ge@t6s3xadkiasp>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZQ0JDQlYdSBoZS0sfTx0dTx9WFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a939a02e70703a3kunm4df43c1a
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MhQ6GTo4OjIpSgEZKCkWFzww
+	FhVPCilVSlVKTEhIT05OTEtITkhNVTMWGhIXVR8aFhQVVR8SFRw7CRQYEFYYExILCFUYFBZFWVdZ
+	EgtZQVlOQ1VJSVVMVUpKT1lXWQgBWUFJTUtLNwY+
+DKIM-Signature:a=rsa-sha256;
+	b=kPHScr159WsiJG96Ork6FzwSMNbCQmUyQiTo49UIfTNDjTnurol/onZC7EOZpN8egR0d5Wltmfu4s4A1J2M/lM0yadBTKzrhmL5jyZk8oBUo6Ei1RJqUkOFc+a+RMgvgkwTIS2d4wyBGm1zAptOnnzrxcMoGdC5S+7C9miLNpcc=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=OkOQFcENXzlE05E2GhFQKZHqHer5Jyvf4HzPjb5KtAk=;
+	h=date:mime-version:subject:message-id:from;
 
-On Thu, Nov 28, 2024 at 11:15:54AM -0600, Bjorn Andersson wrote:
-> On Wed, Nov 27, 2024 at 05:50:29PM +0800, Yuanjie Yang wrote:
-> > Qualcomm regulator supports two power supply modes: HPM and LPM.
-> > Currently, the sdhci-msm.c driver does not set the load to adjust
-> > the current for eMMC and SD. Therefore, if the regulator set load
-> > in LPM state, it will lead to the inability to properly initialize
-> > eMMC and SD.
-> > 
-> > Set the correct regulator current for eMMC and SD to ensure that the
-> > device can work normally even when the regulator is in LPM.
-> > 
-> > Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-> > ---
-> > Changes in v2:
-> > - Add enum msm_reg_type to optimize the code
+Hi Sebastian,
+
+On 2024/12/6 2:04, Sebastian Reichel wrote:
+> Hello Damon,
 > 
-> Please re-optimize the code to make it easy to read and understand.
-Thanks, I will re-optimize my code.
-
-> > - Delete redundant emmc type judgment
-> > - Link to v1: https://lore.kernel.org/linux-arm-msm/20241122075048.2006894-1-quic_yuanjiey@quicinc.com/
-> > 
-> > ---
-> >  drivers/mmc/host/sdhci-msm.c | 92 +++++++++++++++++++++++++++++++++++-
-> >  1 file changed, 90 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> > index e00208535bd1..fc13ef60ab61 100644
-> > --- a/drivers/mmc/host/sdhci-msm.c
-> > +++ b/drivers/mmc/host/sdhci-msm.c
-> > @@ -134,9 +134,22 @@
-> >  /* Timeout value to avoid infinite waiting for pwr_irq */
-> >  #define MSM_PWR_IRQ_TIMEOUT_MS 5000
-> >  
-> > +/* Max load for eMMC Vdd supply */
-> > +#define MMC_VMMC_MAX_LOAD_UA	570000
-> > +
-> >  /* Max load for eMMC Vdd-io supply */
-> >  #define MMC_VQMMC_MAX_LOAD_UA	325000
-> >  
-> > +/* Max load for SD Vdd supply */
-> > +#define SD_VMMC_MAX_LOAD_UA	800000
-> > +
-> > +/* Max load for SD Vdd-io supply */
-> > +#define SD_VQMMC_MAX_LOAD_UA	22000
-> > +
-> > +#define MAX_MMC_SD_VMMC_LOAD_UA  max(MMC_VMMC_MAX_LOAD_UA, SD_VMMC_MAX_LOAD_UA)
-> > +
-> > +#define MAX_MMC_SD_VQMMC_LOAD_UA max(MMC_VQMMC_MAX_LOAD_UA, SD_VQMMC_MAX_LOAD_UA)
-> > +
-> >  #define msm_host_readl(msm_host, host, offset) \
-> >  	msm_host->var_ops->msm_readl_relaxed(host, offset)
-> >  
-> > @@ -147,6 +160,11 @@
-> >  #define CQHCI_VENDOR_CFG1	0xA00
-> >  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
-> >  
-> > +enum msm_reg_type {
-> > +	VMMC_REGULATOR,
-> > +	VQMMC_REGULATOR,
-> > +};
-> > +
-> >  struct sdhci_msm_offset {
-> >  	u32 core_hc_mode;
-> >  	u32 core_mci_data_cnt;
-> > @@ -1403,11 +1421,71 @@ static int sdhci_msm_set_pincfg(struct sdhci_msm_host *msm_host, bool level)
-> >  	return ret;
-> >  }
-> >  
-> > -static int sdhci_msm_set_vmmc(struct mmc_host *mmc)
-> > +static int sdhci_msm_get_regulator_load(struct mmc_host *mmc, int max_current,
-> > +					enum msm_reg_type type)
-> > +{
-> > +	int load = 0;
-> > +
-> > +	/*
-> > +	 * When eMMC and SD are powered on for the first time, select a higher
-> > +	 * current value from the corresponding current for eMMC and SD to
-> > +	 * ensure that the eMMC and SD cards start up properly and complete
-> > +	 * initialization. After the initialization process is finished, use
-> > +	 * the corresponding current to set the eMMC and SD to ensure the
-> > +	 * normal work of the device.
-> > +	 */
-> > +
-> > +	if (!mmc->card)
-> > +		return max_current;
+> On Thu, Dec 05, 2024 at 09:13:33AM +0800, Damon Ding wrote:
+>> Firstly, the term "the HDMI and eDP dynamic switching" can be somewhat
+>> misleading, because the eDP usually does not support hot plug. The RK3588
+>> eDP is often used as DP, and it actually supports DP 1.2. Therefore, it is
+>> better to use the "the HDMI and DP dynamic switching" description.
 > 
-> max_current is type == VMMC_REGULATOR ? MAX_MMC_SD_VMMC_LOAD_UA :
-> MAX_MMC_SD_VQMMC_LOAD_UA;
-> 
-> Try to rewrite the patch so that you don't have the decisions spread
-> across multiple levels in the callstack.
-Thanks, I will optimzie this funcition in next version.
+> The part unclear to me is how the dynamic switching is supposed to
+> happen. Looking at the TRM the hotplug detect signals also seem to be
+> shared between HDMI and eDP. Can the RK3588S EVB distinguish if HDMI
+> or eDP has been plugged, or does this require some user interaction
+> to set the right mode?
 
-> > +
-> > +	if (mmc_card_mmc(mmc->card))
-> > +		load = (type == VMMC_REGULATOR) ? MMC_VMMC_MAX_LOAD_UA : MMC_VQMMC_MAX_LOAD_UA;
-> > +	else if (mmc_card_sd(mmc->card))
-> > +		load = (type == VMMC_REGULATOR) ? SD_VMMC_MAX_LOAD_UA : SD_VQMMC_MAX_LOAD_UA;
-> > +
-> > +	return load;
-> > +}
-> > +
-> > +static int msm_config_regulator_load(struct sdhci_msm_host *msm_host, struct mmc_host *mmc,
-> > +				     bool hpm, int max_current, enum msm_reg_type type)
-> > +{
-> > +	int ret;
-> > +	int load = 0;
-> > +
-> > +	/*
-> > +	 * After the initialization process is finished, Once the type of card
-> > +	 * is determined, only set the corresponding current for SD and eMMC.
-> > +	 */
-> > +
-> > +	if (mmc->card && !(mmc_card_mmc(mmc->card) || mmc_card_sd(mmc->card)))
-> > +		return 0;
-> > +
-> > +	if (hpm)
-> > +		load = sdhci_msm_get_regulator_load(mmc, max_current, type);
-> 
-> Does !hpm happen when regulators are enabled or always together with a
-> regulator_disable? (The regulator framework skips the load of disabled
-> regulators when aggregating)
-> 
-Thanks.
-When two or more consumer use the same regulator as eMMC/SD.
-When !hpm happen, the regulator state can be enabled or disabled.
+Indeed, HDMI and eDP share the same pin for hotplug detect. However, 
+some users may connect the hotplug detection pin of DP-connector with an 
+unexpected pin that can not support the iomux of hotplug detect function 
+on RK3588 SoC. This could be due to a flaw in the hardware design, a 
+conflict in pin multiplexing, or other factors. Therefore, we support 
+the GPIO HDP function for the eDP, as DP also supports this for the same 
+reasons.
 
-When the regulotor only used by eMMC/SD.
-When !hpm happen, the regulator state is enabled, set load 0 means to
-set let regulator enter LPM state.
+If the dynamic switching is enabled, HDMI detects the HPD signal through 
+  the hotplug detect function pin, while eDP uses one of the available 
+GPIO pins to do this.
 
-Recently our team are discussing this issue, when two or more consumer
-use the same regulator, one consumer set load can affect other consumer.
-
-We are trying to do some fix on DTS, just to delete "regulator-allow-set-load"
-and set regulator-allowed-modes = <RPMH_REGULATOR_MODE_HPM>.
-We are doing some experiment.
-
-> > +
-> > +	if (type == VMMC_REGULATOR)
-> > +		ret = regulator_set_load(mmc->supply.vmmc, load);
-> > +	else
-> > +		ret = regulator_set_load(mmc->supply.vqmmc, load);
-> > +	if (ret)
-> > +		dev_err(mmc_dev(mmc), "%s: set load failed: %d\n",
-> > +			mmc_hostname(mmc), ret);
-> > +	return ret;
-> > +}
-> > +
-> > +static int sdhci_msm_set_vmmc(struct sdhci_msm_host *msm_host,
-> > +			      struct mmc_host *mmc, bool hpm)
-> >  {
-> > +	int ret;
-> > +
-> >  	if (IS_ERR(mmc->supply.vmmc))
-> >  		return 0;
-> >  
-> > +	ret = msm_config_regulator_load(msm_host, mmc, hpm,
-> > +					MAX_MMC_SD_VMMC_LOAD_UA, VMMC_REGULATOR);
-> 
-> msm_config_regulator_load() is mostly 2 different functions with
-> multiple levels of conditional code paths depending on this last
-> parameter. Please try to refactor this to avoid overloading the
-> functions like that.
-Thanks, I will optimize my code in next version.
+What's more, if the user connects an HDMI cable first and than connects 
+a DP cable as well, despite our clear instruction against using HDMI and 
+eDP simultaneously, the status register of GRF will indicate that HDMI 
+has been connected. Meanwhile, during the HPD detection process for eDP, 
+it will return "connector_status_disconnected". The reverse scenario 
+also applies.
 
 > 
-> Regards,
-> Bjorn
+>> Indeed, the devm_phy_get(dp->dev, "dp") and devm_of_phy_get_by_index() will
+>> help to get the phy reference in .probe() or .bind().
+>>
+>> However, the phy_set_mode() may be still needed in the HDMI and DP dynamic
+>> switching application scenarios. We need the enum phy_mode
+>> PHY_MODE_DP/PHY_MODE_HDMI to differentiate the configuration processes in
+>> .power_on(), .power_off() and .configure() of struct phy_ops, which will be
+>> called in conjunction with plugging in and unplugging an HDMI or DP cable.
 > 
-> > +	if (ret)
-> > +		return ret;
-> > +
-> >  	return mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, mmc->ios.vdd);
-> >  }
-> >  
-> > @@ -1435,6 +1513,15 @@ static int msm_toggle_vqmmc(struct sdhci_msm_host *msm_host,
-> >  				goto out;
-> >  			}
-> >  		}
-> > +
-> > +		ret = msm_config_regulator_load(msm_host, mmc, level,
-> > +						MAX_MMC_SD_VQMMC_LOAD_UA, VQMMC_REGULATOR);
-> > +		if (ret < 0) {
-> > +			dev_err(mmc_dev(mmc), "%s: vqmmc set regulator load failed: %d\n",
-> > +				mmc_hostname(mmc), ret);
-> > +			goto out;
-> > +		}
-> > +
-> >  		ret = regulator_enable(mmc->supply.vqmmc);
-> >  	} else {
-> >  		ret = regulator_disable(mmc->supply.vqmmc);
-> > @@ -1642,7 +1729,8 @@ static void sdhci_msm_handle_pwr_irq(struct sdhci_host *host, int irq)
-> >  	}
-> >  
-> >  	if (pwr_state) {
-> > -		ret = sdhci_msm_set_vmmc(mmc);
-> > +		ret = sdhci_msm_set_vmmc(msm_host, mmc,
-> > +					 pwr_state & REQ_BUS_ON);
-> >  		if (!ret)
-> >  			ret = sdhci_msm_set_vqmmc(msm_host, mmc,
-> >  					pwr_state & REQ_BUS_ON);
-> > -- 
-> > 2.34.1
-> > 
-> >
+> I suppose you could fetch the PHY in power_on() and release it in
+> power_off(). But using phy_set_mode() might indeed be better here.
+> 
 
-Thanks,
-Yuanjie
+As a future expansion, the .set_mode() can also be helpful in the txffe 
+level adjustment for HDMI 2.1. :)
+
+> -- Sebastian
+
+Best regards,
+Damon
 
