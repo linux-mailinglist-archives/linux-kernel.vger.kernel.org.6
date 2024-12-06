@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-435526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED6A9E7906
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:35:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D5CD9E7901
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 20:33:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9B3F161FB1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:35:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58552162673
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 19:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFB852063E1;
-	Fri,  6 Dec 2024 19:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FCAE1F37CA;
+	Fri,  6 Dec 2024 19:33:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="goxFHOQ5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WIaj01zc"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257BC192B76;
-	Fri,  6 Dec 2024 19:35:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0360C1D63C0
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 19:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733513719; cv=none; b=AusVU1nEHpFDqOSJYCI1SRK8WxAIFryOQU05pmXlT/VZwKwWo+HXcQt9cSGQw3bUlllP/BRjOrgvNPF4QpZcBM5UEitLSXI/s5bh2OrM1rMMWNT1MxYtRiqdQA3OhBTuG92a79sDfu/+skbaR0RkH0bEHnZYfMgPnJKESTKWKJ4=
+	t=1733513594; cv=none; b=ri0W/0OAtlZYtfgOHL/EyfJffpp4UFgREavWZmHoTRG36fTcL7V4vOe6y3uDAJtZkwOWHpmQB0+Wtl7ZvonfdB7LXfHVErkR95Gi/yk5svPvOJXSypyOm/RwG6JuDyOJVJ62c5MM5ifAHOq5ymtQKFX7NDYvb90SB7jiJHLiHwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733513719; c=relaxed/simple;
-	bh=3cmQwvQmcHFuleBZ0JcLoMCUVXuHR5HSrNoO4gZjqeY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jZjSfcG1UK9sVFiSyM7J1k8NpjJ0t0eIooMvNMSp8pwBLf0HLvuhoNVnd72IpiITTkGTsAWsUi55J8u7p5di+fn2KIkTKKiMY5qBx9rzu7bW1CLIMBrzkwi0RKHNbB4zWxqC9vZXGNNHbt2Kem2vZB1h1LeJ0OuSzFH0egkAAUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=goxFHOQ5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13A71C4CEDD;
-	Fri,  6 Dec 2024 19:35:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733513718;
-	bh=3cmQwvQmcHFuleBZ0JcLoMCUVXuHR5HSrNoO4gZjqeY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=goxFHOQ5bauugRte1mV+UzgamMX0/6GN0K0qFgLeyhlYB8TwrhowAQhxnHGertMie
-	 /nJ286ZjYn5T/XfAUndGYjXanvbc61l9O/KGQl9rcI7PTPkOzG6HZVYCsVMkJBci8I
-	 euZonUCYAKMEbEiaa0xNjDd0Wh4+qM0Wv5N+yy1FBfZmJLGag6ZbW6rKDFfmbXNzW2
-	 bclKbGc+kM59ybRFGzSsqUQbKZs0t8SRpjPSmxoRxQ1McbY6LapfLZnpt5mA+DeCGh
-	 dlhF/3rebGrLwXVnQKy6dtwVtXw0Cov7YAxWfxTkF1ezPiQmT7SlHUj/3uMmjG81zn
-	 tVhef9QEM7L8w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-Date: Fri, 06 Dec 2024 20:33:06 +0100
-Subject: [PATCH v4 14/14] rust: hrtimer: add maintainer entry
+	s=arc-20240116; t=1733513594; c=relaxed/simple;
+	bh=kmwXrDdVSFzX1RWQbypl4/vyclBnjb9SVqQFwYrXRpQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=SF5OT881U90H+/2ggL/2yfGGGvYYYtax//WetKpQa8jPP1o1rgemdGlDPB+ooAeoVlhgacwZ5IabH/Z1slWBj81rVio2YoseqG9dXeT0FfwvSLjBSwBM3K8C2xqqSmDpPDhClNojZH3PXCUarO/1zOH79ruirz7dSSJL0qEqiO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WIaj01zc; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7eab7600800so206447a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 11:33:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733513591; x=1734118391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HltmlFi5Mtjm1w1ygcJnz7XyQYUTr+uzffhTeU486Yg=;
+        b=WIaj01zcjV8N03KzoeHjvsmbHEY1uFBaCtqQrd3ctCp5lXwCtJZ5Qf3u6srdCL7dx4
+         O2BbsdhG9YudyWBvaLZFzs1Gg6IB0Wer91bdMqNkl+Ew9MlXXS+TAyzkb3czxiB+6E3e
+         y+GNMnPvh/446pxiRm3eWa3lixq5Ag1a4pLQc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733513591; x=1734118391;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HltmlFi5Mtjm1w1ygcJnz7XyQYUTr+uzffhTeU486Yg=;
+        b=KSly+rHukbEUskljykfIgFNCdEzu7V10A/dIehOrRNuhG38ljl7bsl3M19XMeH4h/G
+         GUnd9rWOCzCjU4v3W2eaFfV0TD5RNXMCjgDxKyjBZ6ONa1fInr66V2do9OtWfN9bPvUU
+         3GoM6qPfaPPPH1S5zhUmK/eToO4b75t10iDIZKPm6SBFanlkfWPcVRKUAHLQx01/JgqS
+         9fABHFbwMqm9v3baV4PuMe4TCpOK5g50u15jvkgSlyomQjighHwFL6UtvSTDdD040ndO
+         9kkRHjXS298E7dsAV6D2jrONFEnnp1V0GyMwccvpgmAJVnsj6gexxJFJCQAH/HfKrdVc
+         gWAw==
+X-Gm-Message-State: AOJu0Ywu0rbIcSYrE2zSPCMyGlWO6ffBoCkxS3ng2vk3ISNzNoACZHW8
+	LUwWWNMqwegO1WeZsQtUseeaF5YMFYsaKmkfHjO9/dRUQ/VhKuZreRQ3BpIiag==
+X-Gm-Gg: ASbGncuScJ43mlJUAdKnLm4AO5McFU2Pu7R3zI9PZpqxSn7Kb17qQo23K9yFkEM2B60
+	jxhb9IkgvNTBuk7JjcoWOVqA/Akr7o9ZnvLfMC98C+Ud3oVttleVt5DerwOTBvT++aleOGkDHQo
+	KiTKifo940Sf1LN7zYdbZVlB1l+cfbdlnfQwv7IBLOFPmyXNP/nIf52q+F4I0l/4qUzNN5NTZF6
+	uFLOTTdYhUtSjHVA5fQarI2rDZDa6SB1lyaxz+evXyufK2Xwhrt8Tbj+lFuk+zyrRvcsklSScYD
+	1mmlPJpxzpE=
+X-Google-Smtp-Source: AGHT+IFyvwmM7rvSPgBh5Lg1uIbAIveZitsJmrI0lGdli31hAiDag50aHX/3xBKsUCxKFfbxFCRvHA==
+X-Received: by 2002:a05:6a20:918d:b0:1d8:a203:95a4 with SMTP id adf61e73a8af0-1e1870b9329mr2877161637.5.1733513591343;
+        Fri, 06 Dec 2024 11:33:11 -0800 (PST)
+Received: from localhost (238.76.127.34.bc.googleusercontent.com. [34.127.76.238])
+        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-7fd156b7964sm2997645a12.18.2024.12.06.11.33.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 11:33:10 -0800 (PST)
+From: jeffxu@chromium.org
+To: akpm@linux-foundation.org,
+	vbabka@suse.cz,
+	lorenzo.stoakes@oracle.com,
+	Liam.Howlett@Oracle.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org,
+	linux-mm@kvack.org,
+	jorgelo@chromium.org,
+	keescook@chromium.org,
+	pedro.falcato@gmail.com,
+	rdunlap@infradead.org,
+	Jeff Xu <jeffxu@google.com>
+Subject: [PATCH] mseal: remove can_do_mseal
+Date: Fri,  6 Dec 2024 19:33:09 +0000
+Message-ID: <20241206193309.3026213-1-jeffxu@google.com>
+X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
+In-Reply-To: <CABi2SkUxcgKf1Z_zYNP+LOK8w=uUEKyq3fUpjJNcavhts2g0TA@mail.gmail.com>
+References: <CABi2SkUxcgKf1Z_zYNP+LOK8w=uUEKyq3fUpjJNcavhts2g0TA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241206-hrtimer-v3-v6-12-rc2-v4-14-6cb8c3673682@kernel.org>
-References: <20241206-hrtimer-v3-v6-12-rc2-v4-0-6cb8c3673682@kernel.org>
-In-Reply-To: <20241206-hrtimer-v3-v6-12-rc2-v4-0-6cb8c3673682@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>, 
- Anna-Maria Behnsen <anna-maria@linutronix.de>, 
- Frederic Weisbecker <frederic@kernel.org>, 
- Thomas Gleixner <tglx@linutronix.de>, Danilo Krummrich <dakr@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
- Gary Guo <gary@garyguo.net>, 
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
- Trevor Gross <tmgross@umich.edu>, Lyude Paul <lyude@redhat.com>, 
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=985; i=a.hindborg@kernel.org;
- h=from:subject:message-id; bh=3cmQwvQmcHFuleBZ0JcLoMCUVXuHR5HSrNoO4gZjqeY=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkFGdEFwTDlrQTBEQUFvQjRiZ2FQb
- mtvWTNjQnl5WmlBR2RUVVhYWFJpdGFvRFZJWXROb2YyYmxySzN1CkhhYyt4REZyQnh1ZzN3Mnhh
- QUt0YjRrQ013UUFBUW9BSFJZaEJCTEIrVWRXdjN3cUZkYkFFdUc0R2o1NUtHTjMKQlFKblUxRjF
- BQW9KRU9HNEdqNTVLR04zQlU4UC9pYVpsdXY3RW5JQ2QwN1BESmtWT3RITTVRSDdVc2tuWm5ycA
- pWZ2tXOGRPZEF2U1FSTVJ2bmY3eElMSk0zd2swRXEvNld6eWRnRHhqTjJjMkVYWWE3MWxjWllwM
- DhGeHRDMGd4CjhpRkEzdkRybitLUDB5RXNnWXFEQk5USllaQ2tJSDRmQStWMktEalMrNzN1T2lK
- RTR5TE8vYlBEWUFNQ3lteFQKR0l6bzJIY0dRV2dXWWxOYzRFanVaSWpCSnhCWmlsdXAySjY4akN
- zWW8xYmVMZXkxYnhXNkpGV20vYmxlSVlycApwYk1najd1MERMR0o4Yng4Z3dUNFo2d1VCU1ZkQU
- YySnVvbzVEaGFxR2RpcmFld0FpYlRCMWkyeTdwT0VEeHlCCkVxY05kUVZnV1N2NHEzUytTZ2VMc
- HNvd3ZOMW9nMW1ycE9YK1lPc2xwY05ERlFqcGxIemtpL1pveWhNTmF1SEQKTFVuS040cmFQcTZs
- ZXc5UnFXS09rbnV5WStDUklJZVdzd2JYVWd5SjVKbm93SFpjQ2FHWEJxZlluMlV1d2djSApVYVl
- JYUt3TXlmNzVoNHVYcmQycVhXQzZxQXNEcmk0SE1DRUtZTFZWQlQyU09hWURHMkRNeG9ncDFieD
- lVZDFPCk9teklsaG5EYzBoT28zR2ZxbER4M24wSFZEeG9OR2ZBR1hQaXBwU0JTQ0ZkYjVQK0UrK
- 1ZjU2dyTDdkNGFhN0MKZ25kWFZRTXNKK3U2QTZMUjZmc1BvTEtmRDVTVVAraWFjTzNRZ3YzdG9D
- VHNHZk5SbTZNZVZNWFV1UUl1MzcyeQpMMXRQdGlweEtMakViS0tJaHcxSUNNQTFqUHJQMUdGMWF
- iRm9pMFBvb09BTXpJUEQ3OHNETWZtSTFuK0ovMG0xCnFycjhnMmxWZFRvaDBRPT0KPWp5S2IKLS
- 0tLS1FTkQgUEdQIE1FU1NBR0UtLS0tLQo=
-X-Developer-Key: i=a.hindborg@kernel.org; a=openpgp;
- fpr=3108C10F46872E248D1FB221376EB100563EF7A7
+Content-Transfer-Encoding: 8bit
 
-Add Andreas Hindborg as maintainer for Rust `hrtimer` abstractions. Also
-add Boqun Feng as reviewer.
+From: Jeff Xu <jeffxu@google.com>
 
-Signed-off-by: Andreas Hindborg <a.hindborg@kernel.org>
-Acked-by: Boqun Feng <boqun.feng@gmail.com>
+Hi Andrew,
+
+Is that possible to squash this change on top of 
+"mseal: move can_do_mseal to mseal.c" on the mm-unstable ?
+
+This is the first time I m doing this, because I saw dev did this before,
+and saying this is the prefered approach.
+
+I could also send v2 which is what I usually do.
+
+Thanks
+-Jeff
+
+Signed-off-by: Jeff Xu <jeffxu@chromium.org>
 ---
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ mm/mseal.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b13d8bbe6bf133ba7b36aa24c2b5e0..4b29b00f740bcb24d25dbcf45f265eea6b4cd980 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10251,6 +10251,16 @@ F:	kernel/time/timer_list.c
- F:	kernel/time/timer_migration.*
- F:	tools/testing/selftests/timers/
+diff --git a/mm/mseal.c b/mm/mseal.c
+index e167220a0bf0..08e6f328d9c7 100644
+--- a/mm/mseal.c
++++ b/mm/mseal.c
+@@ -225,9 +225,9 @@ int do_mseal(unsigned long start, size_t len_in, unsigned long flags)
+ 	unsigned long end;
+ 	struct mm_struct *mm = current->mm;
  
-+HIGH-RESOLUTION TIMERS [RUST]
-+M:	Andreas Hindborg <a.hindborg@kernel.org>
-+R:	Boqun Feng <boqun.feng@gmail.com>
-+L:	rust-for-linux@vger.kernel.org
-+S:	Supported
-+W:	https://rust-for-linux.com
-+B:	https://github.com/Rust-for-Linux/linux/issues
-+F:	rust/kernel/hrtimer.rs
-+F:	rust/kernel/hrtimer/
-+
- HIGH-SPEED SCC DRIVER FOR AX.25
- L:	linux-hams@vger.kernel.org
- S:	Orphan
-
+-	ret = can_do_mseal(flags);
+-	if (ret)
+-		return ret;
++	/* Verify flags not set. */
++	if (flags)
++		return -EINVAL;
+ 
+ 	start = untagged_addr(start);
+ 	if (!PAGE_ALIGNED(start))
 -- 
-2.46.0
-
+2.47.0.338.g60cca15819-goog
 
 
