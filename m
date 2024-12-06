@@ -1,107 +1,133 @@
-Return-Path: <linux-kernel+bounces-435068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 189A09E6F13
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:15:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DCA69E6F1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E107516D921
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:10:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 191C618844DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31742206F0F;
-	Fri,  6 Dec 2024 13:10:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FDD206F0F;
+	Fri,  6 Dec 2024 13:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="hIOTXNBq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pp3W6LgE"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8215046426;
-	Fri,  6 Dec 2024 13:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6689346426;
+	Fri,  6 Dec 2024 13:11:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733490631; cv=none; b=eMvG9MCMNKxHhUhHoWI+m/xHhZFy9QPeb7RamcRPVaWO0zhwlgd3lk3hMYQ5nulcx0i2LW5F062z4JliVcJayv5o8BE9ECaYUi0uB6nzaLZb8i15ZfZQSGOe5xKg0rG51FKq0kxKXJg59F8hkU3a+GhcoSjpz01caVNRSEmNPc8=
+	t=1733490695; cv=none; b=Xph2UvMTSVTM20hbRaGL1UBE4+GPawTI2tFzxzvV+FdIrT+F0Dso6TokIDAafnvHChpkNik3yxUFxdZo7bG80l30c0BCvsQYPidw47pOIidlWEaHaPpPptvoMou7wItAPcg6z/y13NfRuxrHA7o5tTUMrD4wIL/kv7tFtU0okVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733490631; c=relaxed/simple;
-	bh=lv+yLoUWzU6ZgUk5BaJ7dyYumFSPDEZpbiDsolyCWVA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sv0QQg1A1sfBzI+kDL2d92Rf4JrbxgVfeEuFKv3r62wmQRPGCIm5pRIhTj3L6DgBudFR7bw/gIIajXEtIvlSjepayc245WdYuDw8Z71qY4Wvwbn/pO+zOBnSTyUR7b4lAl09B+nb2UmvYVS4aeiRQncRfsYmWzocNsBNThUw+qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=hIOTXNBq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 738C9C4CED1;
-	Fri,  6 Dec 2024 13:10:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733490631;
-	bh=lv+yLoUWzU6ZgUk5BaJ7dyYumFSPDEZpbiDsolyCWVA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hIOTXNBqP1Ux1GLqi0HsJdqy5ctcBq2talRY2vLw+h/kONS9t14fm+lhG+CCq9N2E
-	 SPmSDBekNXmnqZy9SFp2Gdz6WWe7G3qzAVnlINIC7ROzZfi4bR/lj4yRtk6dR+w6rB
-	 DweVFN8ez5t7gCT5fB/v4SxqIj2WnyzOgMw6mIJY=
-Date: Fri, 6 Dec 2024 14:10:27 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Lee Jones <lee@kernel.org>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, ojeda@kernel.org,
-	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 3/4] sample: rust_misc_device: Demonstrate additional
- get/set value functionality
-Message-ID: <2024120637-handoff-monetary-c2f5@gregkh>
-References: <20241206124218.165880-1-lee@kernel.org>
- <20241206124218.165880-4-lee@kernel.org>
- <2024120652-champion-chute-4e74@gregkh>
- <20241206130449.GC7684@google.com>
- <20241206130630.GD7684@google.com>
+	s=arc-20240116; t=1733490695; c=relaxed/simple;
+	bh=LgIJFC/bkuiLiJ86lwprG7kL3obiSTl1MWtTblN84WM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=o9jz77V32+ShpRpr8Lav8s8ckiVR47eitbQe5iqbtCO2gNNjDZkHvCTzUCxzN7CcNYWINGggHRlXQy6jrh0FLEhdQgkUlBisy9i8xqfUU3terStyfS7cZwsxdL8/BPCv57b7z7IcdpE9ZZ8L/UsxtOo3QBAKmjeDrKX932Go+a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pp3W6LgE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2AE4C4CED1;
+	Fri,  6 Dec 2024 13:11:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733490693;
+	bh=LgIJFC/bkuiLiJ86lwprG7kL3obiSTl1MWtTblN84WM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pp3W6LgEYDULirIoE4HjXW5yaqzOBbQ0SM5Xzmx9HO4GofAHpks3qi7UrEWUmoUd9
+	 n5laU+k1gaiDTnL+b52VAz8LSAa3b9ttUnue6IE4difM42K9GPrramz/zB6foOc48D
+	 bJrEjVicCk/WUu0xUHv/em6mzjUovDMXYFWF1LPfHsZUpmWY9FMETX75iKG0gp+Pi1
+	 PDABCMArM6mIg9EyP2eoTVmNJ4lA29XDk5GA2q67DDHq+V1SDCjrIFAOo5GQEJZXjU
+	 YqCYIbCcJsBGcudcvABvYpHoUVze+ofnIdGhdKhCnHar8jsmVWch6GV1DEpMdC84y1
+	 ptYTgCeqjr+KA==
+Message-ID: <5e3e43eb-3afc-486e-aa9a-4c1074fd30b8@kernel.org>
+Date: Fri, 6 Dec 2024 14:11:28 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206130630.GD7684@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 3/4] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy S20 5G (x1s)
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Rob Herring <robh@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ igor.belwon@mentallysanemainliners.org
+References: <20241203080327.4751-1-umer.uddin@mentallysanemainliners.org>
+ <20241203080327.4751-4-umer.uddin@mentallysanemainliners.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241203080327.4751-4-umer.uddin@mentallysanemainliners.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 06, 2024 at 01:06:30PM +0000, Lee Jones wrote:
-> On Fri, 06 Dec 2024, Lee Jones wrote:
-> > On Fri, 06 Dec 2024, Greg KH wrote:
-> > > On Fri, Dec 06, 2024 at 12:42:14PM +0000, Lee Jones wrote:
-> > > > +    fn get_value(&self, mut writer: UserSliceWriter) -> Result<isize> {
-> > > > +        let guard = self.inner.lock();
-> > > > +        let value = guard.value;
-> > > > +
-> > > > +        // Refrain from calling write() on a locked resource
-> > > > +        drop(guard);
-> > > > +
-> > > > +        pr_info!("-> Copying data to userspace (value: {})\n", &value);
-> > > > +
-> > > > +        writer.write::<i32>(&value)?;
-> > > > +        Ok(0)
-> > > > +    }
-> > > 
-> > > I don't understand why you have to drop the mutex before calling
-> > > pr_info() and write (i.e. copy_to_user())?  It's a mutex, not a
-> > > spinlock, so you can hold it over that potentially-sleeping call, right?
-> > > Or is there some other reason why here?
-> > 
-> > This was a request from Alice to demonstrate how to unlock a mutex.
+On 03/12/2024 09:03, Umer Uddin wrote:
+>  arch/arm64/boot/dts/exynos/Makefile          |  1 +
+>  arch/arm64/boot/dts/exynos/exynos990-x1s.dts | 28 ++++++++++++++++++++
+>  2 files changed, 29 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s.dts
 > 
-> It's common practice to apply guards only around the protected value.
-> 
-> Why would this be different?
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index 948a2c6cb..6959acfbb 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -9,6 +9,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+>  	exynos850-e850-96.dtb		\
+>  	exynos8895-dreamlte.dtb		\
+>  	exynos990-c1s.dtb		\
+> +	exynos990-x1s.dtb		\
+>  	exynos990-r8s.dtb               \
 
-It isn't, it's just that you are implying that the guard has to be
-dropped because of the call to write(), which is confusing.  It's only
-"needed" because you want to guard a single cpu instruction that is
-guaranteed atomic by the processor :)
+Keep the order (sorted).
 
-As this is an example driver, documentation is essential, so maybe the
-comment should be:
-	// Drop the mutex as we can now use our local copy
-or something like that.
 
-thanks,
-
-greg k-h
+Best regards,
+Krzysztof
 
