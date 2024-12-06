@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-434866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F219E6C25
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:28:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D01718858DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:27:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F4A2214A88;
-	Fri,  6 Dec 2024 10:18:36 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 904309E6C20
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:27:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D8C2139C9
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F83E288400
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:27:33 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2142E215F46;
+	Fri,  6 Dec 2024 10:18:37 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9C52144B1
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 10:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733480316; cv=none; b=uvubQqaViYlPw3G3s1OVOLdRHNB/NbdQDp6XWehJSsOMNiU43wmSMluXHCs8NL/gSarmcfe3ahI8uHs8jO8YAWli22sy1aHhdsGphuTZvh2RnSaPC1A4xamlh3HXaMEePCa5+Q3EBJlBOyNnoqS09n7v1N7NZ7KMcje8zAjRcC0=
+	t=1733480316; cv=none; b=IkPgzIT+8p3ILkX76UcgFbn+mznBw03Gbef+4/V9OUSdlEL6UlzuU3c9w4N3BJCfykrmovoTMqwI0PkoYUG+HmtNhs9hVoqDwuh3mYK7yIWS1K5hqPy8uxEmli7SOkrXELO5Q415uqKVkHEe/fTnN988kx0PO97KDFmwnsxesaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733480316; c=relaxed/simple;
-	bh=P2ebTJF2keHtL38GcUMbtMHg5qQ2GTqSVGrKE4zJbmc=;
+	bh=VxaLRn3ARxNYR9P6Mzk4WJEMDHtaBCBbdJPioxFWoWw=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Lg/D5GGHtkm4ZWkREZPOTVHz/J5ZgTLAwYgWEbcE4xI/o8J87uaHAcIFCjzTBLrn2P197jGwt6ROmVLO/ejgh+y/Ym7GJGmMblsqy2aARdrptdaoj6epWIPe1PjIMrE90YIShuwY+xArZWRO4WeimOlRV5NMGi5/+xol37MupH4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+	 MIME-Version:Content-Type; b=GEcjg1fNUv2YymVw2P2pvYdjQ3d0vSV7zCY4AT17OuHqY/RJ0HtzE/SbMkEuOraLeOU8j0Kvb82zgqsfqsm1ljzKYBjaHIocj9xhapXdZdDb3kDvpx3A7WoVInia/rQ4eJyxK/+V4XjPulssAPrU24daGcD/rSDY1lFwvqK25tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y4Rx80XRtz11Pbq;
-	Fri,  6 Dec 2024 18:16:12 +0800 (CST)
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Y4RwP2rcJz1V5h9;
+	Fri,  6 Dec 2024 18:15:33 +0800 (CST)
 Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
-	by mail.maildlp.com (Postfix) with ESMTPS id 41226180106;
-	Fri,  6 Dec 2024 18:18:31 +0800 (CST)
+	by mail.maildlp.com (Postfix) with ESMTPS id 728BD1800D9;
+	Fri,  6 Dec 2024 18:18:32 +0800 (CST)
 Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
  (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 6 Dec
- 2024 18:18:29 +0800
+ 2024 18:18:31 +0800
 From: Jinjie Ruan <ruanjinjie@huawei.com>
 To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
 	<sstabellini@kernel.org>, <tglx@linutronix.de>, <peterz@infradead.org>,
@@ -57,9 +57,9 @@ To: <catalin.marinas@arm.com>, <will@kernel.org>, <oleg@redhat.com>,
 	<joey.gouly@arm.com>, <liuyuntao12@huawei.com>, <leobras@redhat.com>,
 	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<xen-devel@lists.xenproject.org>
-Subject: [PATCH -next v5 20/22] entry: Add arch_ptrace_report_syscall_entry/exit()
-Date: Fri, 6 Dec 2024 18:17:42 +0800
-Message-ID: <20241206101744.4161990-21-ruanjinjie@huawei.com>
+Subject: [PATCH -next v5 21/22] entry: Add has_syscall_work() helepr
+Date: Fri, 6 Dec 2024 18:17:43 +0800
+Message-ID: <20241206101744.4161990-22-ruanjinjie@huawei.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241206101744.4161990-1-ruanjinjie@huawei.com>
 References: <20241206101744.4161990-1-ruanjinjie@huawei.com>
@@ -74,99 +74,42 @@ Content-Type: text/plain
 X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
  kwepemg200008.china.huawei.com (7.202.181.35)
 
-Due to historical reasons, ARM64 need to save/restore during syscall
-entry/exit because ARM64 use a scratch register (ip(r12) on AArch32,
-x7 on AArch64) to denote syscall entry/exit, which differs from
-the implementation of the generic entry.
+Add has_syscall_work() heleper and use it in entry.h. The benefits of
+doing so lie in the fact that it can be used in the architecture code
+that uses generic entry.
 
-Add arch_ptrace_report_syscall_entry/exit() as the default
-ptrace_report_syscall_entry/exit() implementation. This allows arm64
-to implement the architecture specific version for switching over to
-the generic entry code.
+No functional changes.
 
-Suggested-by: Mark Rutland <mark.rutland@arm.com>
-Suggested-by: Kevin Brodsky <kevin.brodsky@arm.com>
-Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
 ---
- kernel/entry/syscall-common.c | 43 +++++++++++++++++++++++++++++++++--
- 1 file changed, 41 insertions(+), 2 deletions(-)
+ include/linux/entry-common.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/kernel/entry/syscall-common.c b/kernel/entry/syscall-common.c
-index f78285097111..9ffa6349e769 100644
---- a/kernel/entry/syscall-common.c
-+++ b/kernel/entry/syscall-common.c
-@@ -17,6 +17,25 @@ static inline void syscall_enter_audit(struct pt_regs *regs, long syscall)
- 	}
- }
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index d11bdb4679b3..3bb5d7d839f4 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -43,6 +43,11 @@
+ 				 SYSCALL_WORK_SYSCALL_EXIT_TRAP	|	\
+ 				 ARCH_SYSCALL_WORK_EXIT)
  
-+/**
-+ * arch_ptrace_report_syscall_entry - Architecture specific
-+ *				      ptrace_report_syscall_entry().
-+ *
-+ * Invoked from syscall_trace_enter() to wrap ptrace_report_syscall_entry().
-+ * Defaults to ptrace_report_syscall_entry.
-+ *
-+ * The main purpose is to support arch-specific ptrace_report_syscall_entry()
-+ * implementation.
-+ */
-+static inline int arch_ptrace_report_syscall_entry(struct pt_regs *regs);
-+
-+#ifndef arch_ptrace_report_syscall_entry
-+static inline int arch_ptrace_report_syscall_entry(struct pt_regs *regs)
++static inline bool has_syscall_work(unsigned long work)
 +{
-+	return ptrace_report_syscall_entry(regs);
++	return unlikely(work & SYSCALL_WORK_ENTER);
 +}
-+#endif
 +
- long syscall_trace_enter(struct pt_regs *regs, long syscall,
- 				unsigned long work)
+ /**
+  * syscall_enter_from_user_mode_prepare - Establish state and enable interrupts
+  * @regs:	Pointer to currents pt_regs
+@@ -90,7 +95,7 @@ static __always_inline long syscall_enter_from_user_mode_work(struct pt_regs *re
  {
-@@ -34,7 +53,7 @@ long syscall_trace_enter(struct pt_regs *regs, long syscall,
+ 	unsigned long work = READ_ONCE(current_thread_info()->syscall_work);
  
- 	/* Handle ptrace */
- 	if (work & (SYSCALL_WORK_SYSCALL_TRACE | SYSCALL_WORK_SYSCALL_EMU)) {
--		ret = ptrace_report_syscall_entry(regs);
-+		ret = arch_ptrace_report_syscall_entry(regs);
- 		if (ret || (work & SYSCALL_WORK_SYSCALL_EMU))
- 			return -1L;
- 	}
-@@ -84,6 +103,26 @@ static inline bool report_single_step(unsigned long work)
- 	return work & SYSCALL_WORK_SYSCALL_EXIT_TRAP;
- }
+-	if (work & SYSCALL_WORK_ENTER)
++	if (has_syscall_work(work))
+ 		syscall = syscall_trace_enter(regs, syscall, work);
  
-+/**
-+ * arch_ptrace_report_syscall_exit - Architecture specific
-+ *				     ptrace_report_syscall_exit.
-+ *
-+ * Invoked from syscall_exit_work() to wrap ptrace_report_syscall_exit().
-+ *
-+ * The main purpose is to support arch-specific ptrace_report_syscall_exit
-+ * implementation.
-+ */
-+static inline void arch_ptrace_report_syscall_exit(struct pt_regs *regs,
-+						   int step);
-+
-+#ifndef arch_ptrace_report_syscall_exit
-+static inline void arch_ptrace_report_syscall_exit(struct pt_regs *regs,
-+						   int step)
-+{
-+	ptrace_report_syscall_exit(regs, step);
-+}
-+#endif
-+
- static void syscall_exit_work(struct pt_regs *regs, unsigned long work)
- {
- 	bool step;
-@@ -108,7 +147,7 @@ static void syscall_exit_work(struct pt_regs *regs, unsigned long work)
- 
- 	step = report_single_step(work);
- 	if (step || work & SYSCALL_WORK_SYSCALL_TRACE)
--		ptrace_report_syscall_exit(regs, step);
-+		arch_ptrace_report_syscall_exit(regs, step);
- }
- 
- /*
+ 	return syscall;
 -- 
 2.34.1
 
