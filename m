@@ -1,135 +1,175 @@
-Return-Path: <linux-kernel+bounces-434136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 722339E621E
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:21:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 448D39E621F
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 01:22:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28ED41691C0
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:21:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83D31881A34
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 00:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D390E1CFB6;
-	Fri,  6 Dec 2024 00:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 145FD79F6;
+	Fri,  6 Dec 2024 00:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CvR0lFNd"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GieRNA3+"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E60B4A1E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A131C27
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 00:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733444491; cv=none; b=iM78l4gS43Por7scYhGXP6DhQYFMIw7d6bwxAbvHrd9OEdpJSWUiiGVRvzWyFT24T870uIfRmAig3WR2KMx7lki9FqxRml2GZovWQyE5nzKKAlb1ZcTtDssDgIrXpd3wdsjIs08mnpcDOmiAFpWlwhI8p1T3H8UIPnxmSu5YHKM=
+	t=1733444561; cv=none; b=Kp4PLoH3s9Tdo+hMcz4iXCtRKy86z1RaWRSEhk+QUZUXaIubPUdzNfRTVHqJxDtIGh+lfq/252hgfYec/QQUGeyvt3gh8MkJOj7FxMTbceHttnr1cZBu5yOnKV+vtovE4O159DS6UlJy4W2ZiHRlOVwg7F3+F3K+cWvkB0wND3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733444491; c=relaxed/simple;
-	bh=ECFPlpYx6xTXivoepudOakBW955sadKB6u8Jl+brS2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mBxAgSH0DLuSdgHD7tF+V4jeBJKFIal5qccQ+xF9qQGWActiYIvZNKHBmH8trhupimy/ItKogPn5A08RTjk4zjBbrjJpSQ1EU83I3Lrsfj7kJ7fZO48rYspKzIitak3WZzzAuFzB2IqzMiPwk7+4WRdflho4Pgp0zz47HB7bk+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CvR0lFNd; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-432d86a3085so10387715e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:21:27 -0800 (PST)
+	s=arc-20240116; t=1733444561; c=relaxed/simple;
+	bh=i4JdlSUnM94/gG2bsyQlxOyBvKgiPjebH1hDcol7NCc=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=qe+X+pqRZPuV3F2rrQkY2Kv49Fpm3Vdc+RnM6R6PAuYphUXXexJ5NaAt2aG0MU87xq1i13sw56wSNpNCWFaLqVX7oBDvJNiQwUCXX2qYszVIWU7E1pWrvxLiGRhaH7SKprVTRaRohflYJHnAaPntNmQtdiyK0tcQySOAuPOK5WQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GieRNA3+; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-6d888fc8300so7950126d6.3
+        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 16:22:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733444486; x=1734049286; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iluXuUMeyOtUOSmbmFOhlAadIgL8iqOWZsl/pbKsiiU=;
-        b=CvR0lFNdKd35z2F1dCnTp3pqQa05tWI8AlIP7Tfv9NRJGk4s+J7OAtwCkdn2YfYgoY
-         wErxx62BoO+ZDNzn3qnui32djJ8NbO5Q6rvrLVq5H56qbOWmUSBD8t0Gp5he+/fIUJ3b
-         MDKbC6iD4VMtxjSmzQ5Ctgyx8C2O/5JemBALinH1LovEdPlcQpZzA2dSCyUzDDa030dO
-         JACxC6yzEyoGoRf49QZ6b3Bc4OIYp6MnJeX23J+1O09B8eue5qES2SgyvAWDy+euj+s+
-         193rEwEmns21bPChnuV6gCHqfpngGm9s4vXH6E2iA3Va3rX6qyV6/dKUI/x8bisfiTQv
-         +MYg==
+        d=paul-moore.com; s=google; t=1733444558; x=1734049358; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tr1O8qphSQTtGbN+ih9JFjQrVSUfUd536iTICQh/quY=;
+        b=GieRNA3+mWrXvpDPBBc2I540paoHxwzuO37AL/ek/l+DDmPAcF/EY0pVxlyu06gwOh
+         8XrRBZonWQgZSOVXppKubQPu8NOPK6EF2yg5K72AGMD9CXzvJWbLo5PFI3YKa+FeVXW1
+         NPgPWX/RZe0k8GOCQP5PCvzCHogNUZQOIPYpisIpd0qmJsys4BMb01sejnGr/L4tmpkp
+         42XzSVDvOkbVjYris6egJsyQugTmkJpGj5TVoKOa/qxaaWd3hC4byF5XCWxiuWTmJdsR
+         IkwWYHyQqROnsNzMo8iwJ1Dk/3ciXiTarHvr7k4c9Og9IuFexeq+i4yfF96pIJsd+Vd8
+         l/Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733444486; x=1734049286;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iluXuUMeyOtUOSmbmFOhlAadIgL8iqOWZsl/pbKsiiU=;
-        b=p1RKls2ceW7CLWv+lMN9vSxy/YjwhKPVZDSMBD+XQK7mowWdYu+W1x1cnvf3QpIo2+
-         M0DxVR6x/0m6LLUMjUM6Cl8jnpgyKuWOQb3lB95mfL9Ywmvul1SPPkA2QwHA06vjV0j6
-         LA7XuPrGiMd8lQB5RVxOfMMt6/yHTteF0SorxiqZ6/j217NydquaiYm/IOKR+drC/7r5
-         0VgPeH6vlTXMhcfuThJviojAgPHDCLPV6EMWJTlhgyYWdrbQRUCP/toGHDVPmXLKE6Gt
-         TvT5QRQX8BKxFjJ27CaRuBi9yehU5TdDRKysOJxy1F9Y8hlCQV4cPzSvp3+N4cYmOFhg
-         eRBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzU5HH7XE+dqPIIF7NWTCySviXzs0LBYXbJVTLHA9H9+c4uRX2nGe1qrcR/aqccVTfmxp8bPEePtEWVUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlS8vLQNU5lN4HlxfZ6MORItFTCdtQezWZEPkrcokTyfzWlxR9
-	MjojkjehenkQ0VNV7EAtLPskacUVfm/YwMU0DW0KnsXt70hgUnG7XXyQwUgl+sE=
-X-Gm-Gg: ASbGnctudT1rZGL50htnTRXs5+ur9Klw33fMZS88YM7StUdWD+HF5EDU/O/Aeqt7Uft
-	MxxRyBqbHMIfYBrQkXnGu2ERBwUKuwr0lih4GkGbSMcflpvP5y0R01P6mFIr1+tbYLfngxq+qYo
-	m6TNikTj5XOd9S21xhrzdhOBSAuzUCYA1asTCCJ3BBOO+3L2CceyD4idZc/rwHnqWN2yGdlbm9p
-	wBA0hfBLPBPzxOQscRchhazhoPVZLe+v5ZPsXLk8xw1i/Ly8iR0DVjNPYrKrnE=
-X-Google-Smtp-Source: AGHT+IHHgaIuslDJ05D+6hCUGtryGORItnAkhst5F4QETKpbtAasAT/SV3liDYCmlprOqkATMFDkhw==
-X-Received: by 2002:a05:6000:401e:b0:385:dc45:ea06 with SMTP id ffacd0b85a97d-3862b35104bmr666619f8f.13.1733444486436;
-        Thu, 05 Dec 2024 16:21:26 -0800 (PST)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d5273199sm76779865e9.14.2024.12.05.16.21.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 05 Dec 2024 16:21:26 -0800 (PST)
-Message-ID: <636ef629-2298-44cd-9e0c-d009379a72a6@linaro.org>
-Date: Fri, 6 Dec 2024 00:21:25 +0000
+        d=1e100.net; s=20230601; t=1733444558; x=1734049358;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Tr1O8qphSQTtGbN+ih9JFjQrVSUfUd536iTICQh/quY=;
+        b=IGCa7YDip6JJON7lzTvOikVtWSddh2cEoJAxfsciuum+5mJiv/UL3XXTUkjyJoThFV
+         SG5sUhLx6kvA20kpHn7oEzqfdqhboq9IJn2uMOdRllgVbw2oN9NBdo6qnHWtwzfOOPze
+         Z9M5gkEBCv2uD0s/q+U1HU1ahv7obRiMzjUJ9UbBYh6sDJnBLZtUhL0m0RkhXeDghmtj
+         hm5sdHsqUl/uC2p6fl2LpNTPSZhFXe7dBTm++k/LXiucpbToltj0pPkJReZ56GsYvjAj
+         3EpwPDiJIVkDV0HOUFnMClKHfTRpRNbvZMa7gUDnfLLq78jtGjgW4HHcZUQVj/Bppr/y
+         7cBw==
+X-Forwarded-Encrypted: i=1; AJvYcCUL8FfXrmWfsn+Kv4+pInymaWAV/YE54wUCS1s9W1jq0eWZrVLH/6gvIJlZjVGREwODKKDQyjBvg1Av8Ec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUsvAdWJCk+4JrVBVNbMDFNE4Y7ohsXvVl2KFQQXw5rAFYgIBR
+	YdlkbbSOmaHZp9C/Id9dyVbzU55fOYeIsL42T1oW4O1Ey0/XPyBzMZEKGf+k1Q==
+X-Gm-Gg: ASbGnct+kPtXaDCTMuqNn1DBsbDJfSG/RCxzWqzt66y0a0fZYh3xeCZfae4hOhh3MnJ
+	twh8xzRLVn9kxK6YcZmfPaGkliiTFal+wTn9scxkDNQD6z90ubfLoR6S8WBRJvBCVVGDGYzUsjh
+	oEMRMSdf+jmZllREU3rUXk2UgMJZG+rf+3Pj/U4UIBL10JUrdUTpgpAimAAlEbsJOFeM49fSZ1l
+	NZXPkePvGX3/C+XfqaohW6FL6U5UXVSbohWRGcWPI3p
+X-Google-Smtp-Source: AGHT+IFyX74YgmwdD6rzfNwJ1I9JCn+C3lxsb0QY8X9uC3JESBN/rq4qqCLb62amp2G0Xx6ZJ3S3UA==
+X-Received: by 2002:a05:6214:19c3:b0:6d8:8a60:ef2c with SMTP id 6a1803df08f44-6d8e70d6726mr12175976d6.2.1733444558413;
+        Thu, 05 Dec 2024 16:22:38 -0800 (PST)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8dac134efsm12233476d6.128.2024.12.05.16.22.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 05 Dec 2024 16:22:37 -0800 (PST)
+Date: Thu, 05 Dec 2024 19:22:37 -0500
+Message-ID: <d3391fbff2c69be230d368c68d215be4@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 12/16] media: qcom: camss: Add default case in
- vfe_src_pad_code
-To: Depeng Shao <quic_depengs@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- vladimir.zapolskiy@linaro.org
-Cc: quic_eberman@quicinc.com, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241205155538.250743-1-quic_depengs@quicinc.com>
- <20241205155538.250743-13-quic_depengs@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241205155538.250743-13-quic_depengs@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
+Content-Transfer-Encoding: 8bit 
+X-Mailer: pstg-pwork:20241205_1904/pstg-lib:20241205_1757/pstg-pwork:20241205_1904
+From: Paul Moore <paul@paul-moore.com>
+To: Ricardo Robaina <rrobaina@redhat.com>, audit@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: eparis@redhat.com, rgb@redhat.com, viro@zeniv.linux.org.uk, Ricardo Robaina <rrobaina@redhat.com>
+Subject: Re: [PATCH v2] audit: fix suffixed '/' filename matching in  __audit_inode_child()
+References: <20241122121843.641573-1-rrobaina@redhat.com>
+In-Reply-To: <20241122121843.641573-1-rrobaina@redhat.com>
 
-On 05/12/2024 15:55, Depeng Shao wrote:
-> Add a default case in vfe_src_pad_code to get rid of a compile
-> warning if a new hw enum is added.
+On Nov 22, 2024 Ricardo Robaina <rrobaina@redhat.com> wrote:
 > 
-> Signed-off-by: Depeng Shao <quic_depengs@quicinc.com>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> When the user specifies a directory to delete with the suffix '/',
+> the audit record fails to collect the filename, resulting in the
+> following logs:
+> 
+>  type=PATH msg=audit(10/30/2024 14:11:17.796:6304) : item=2 name=(null)
+>  type=PATH msg=audit(10/30/2024 14:11:17.796:6304) : item=1 name=(null)
+> 
+> It happens because the value of the variables dname, and n->name->name
+> in __audit_inode_child() differ only by the suffix '/'. This commit
+> treats this corner case by handling pathname's trailing slashes in
+> audit_compare_dname_path().
+> 
+> Steps to reproduce the issue:
+> 
+>  # auditctl -w /tmp
+>  $ mkdir /tmp/foo
+>  $ rm -r /tmp/foo/
+>  # ausearch -i | grep PATH | tail -3
+> 
+> The first version of this patch was based on a GitHub patch/PR by
+> user @hqh2010 [1].
+> 
+> Link: https://github.com/linux-audit/audit-kernel/pull/148 [1]
+> 
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Reviewed-by: Richard Guy Briggs <rgb@redhat.com>
+> Reviewed-by: Al Viro <viro@zeniv.linux.org.uk>
+> Signed-off-by: Ricardo Robaina <rrobaina@redhat.com>
 > ---
->   drivers/media/platform/qcom/camss/camss-vfe.c | 4 ++++
->   1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/media/platform/qcom/camss/camss-vfe.c b/drivers/media/platform/qcom/camss/camss-vfe.c
-> index 58e24a043e81..1c9b6569fbe5 100644
-> --- a/drivers/media/platform/qcom/camss/camss-vfe.c
-> +++ b/drivers/media/platform/qcom/camss/camss-vfe.c
-> @@ -404,6 +404,10 @@ static u32 vfe_src_pad_code(struct vfe_line *line, u32 sink_code,
->   			return sink_code;
->   		}
->   		break;
-> +	default:
-> +		WARN(1, "Unsupported HW version: %x\n",
-> +		     vfe->camss->res->version);
-> +		break;
->   	}
->   	return 0;
->   }
+> v2: handling pathname's trailing slashes in audit_compare_dname_path()
+> v1: https://lore.kernel.org/audit/20241114040948.GK3387508@ZenIV/T/#t
+> ---
+>  kernel/auditfilter.c | 15 +++++++++++----
+>  1 file changed, 11 insertions(+), 4 deletions(-)
 
-Please re-order your patches here.
+Yes, Richard did provide a reviewed-by tag on the v1 patch, but v2 has
+enough changes that I don't think we can reasonably carry that forward;
+of course Richard re-review this iteration and provide a new tag.  I'm
+going to remove it for now.
 
-Generic fixes in a series to enable silicon are _fine_ but such fixes 
-should come before the silicon enabling portion of the series.
+Al never provided an explicit reviewed-by tag; simply commenting on a
+patch is not the same as providing a 'Reviewed-by', the reviewer will
+provide an explicit 'Reviewed-by' tag in their email.  I'm going to
+remove Al's tag too.
 
-So this patch should come before "[PATCH 11/16] dt-bindings: media: 
-camss: Add qcom,sm8550-camss binding"
+Other than those issues, I think this looks much better than v1, I'm
+going to merge this into audit/dev now, thanks!
 
----
-bod
+> diff --git a/kernel/auditfilter.c b/kernel/auditfilter.c
+> index 470041c49a44..8ddccdb4a2a7 100644
+> --- a/kernel/auditfilter.c
+> +++ b/kernel/auditfilter.c
+> @@ -1319,13 +1319,20 @@ int audit_compare_dname_path(const struct qstr *dname, const char *path, int par
+>  	if (pathlen < dlen)
+>  		return 1;
+>  
+> -	parentlen = parentlen == AUDIT_NAME_FULL ? parent_len(path) : parentlen;
+> -	if (pathlen - parentlen != dlen)
+> -		return 1;
+> +	if (parentlen == AUDIT_NAME_FULL)
+> +		parentlen = parent_len(path);
+>  
+>  	p = path + parentlen;
+>  
+> -	return strncmp(p, dname->name, dlen);
+> +	/* handle trailing slashes */
+> +	pathlen -= parentlen;
+> +	while (p[pathlen - 1] == '/')
+> +		pathlen--;
+> +
+> +	if (pathlen != dlen)
+> +		return 1;
+> +
+> +	return memcmp(p, dname->name, dlen);
+>  }
+>  
+>  int audit_filter(int msgtype, unsigned int listtype)
+> -- 
+> 2.47.0
+
+--
+paul-moore.com
 
