@@ -1,62 +1,37 @@
-Return-Path: <linux-kernel+bounces-434917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CED639E6CC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:08:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F019E6CBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 12:07:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E131167434
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:08:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5476188427A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 11:07:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9551C1FCF69;
-	Fri,  6 Dec 2024 11:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dy5rMnjI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33781FC0E1;
+	Fri,  6 Dec 2024 11:07:49 +0000 (UTC)
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9FF155C94;
-	Fri,  6 Dec 2024 11:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EA51EE01B
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 11:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733483270; cv=none; b=VjPzWPDkKkO4M8QMMRGN7N8iQMdHypVe4rynMgFPmQ933KkkpZdZHm5LeEDRy5n5DYpiM65deAKpqnJeUP76g8vyon5gZ0HZznCW4cabZMyVtlFxyGzX4oXG9MQhb0AiA4DJZPxPeFHY1A/VdWpWNAeoHkAzLlsgSl9WqQ7y/hk=
+	t=1733483269; cv=none; b=lF+/m4koXTZ5W4O1rwmX8dznMg9uYbRGnIRPhZsjAiAURyjVxQJDFpDGDHCXEJhSnWGlQKr/Wk13iUw9K5SKAigPeWEIt5Rk8jVGsWOP0z9Pgp0R9Lzq7LjNsmDqZbTYa6AlgJ9r9SRSMtUhO3jDK1yhVnr6kZB2rQ7hZXBIXAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733483270; c=relaxed/simple;
-	bh=y5vOAzuNQWniC5L3Do5/e/IVCLQaEme8W9EdB+yFzXQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=g29jR/Xpg0usg5/v5UsrAukQ/liRzzSH91ndsQ+TACZmtXpF4/KtSQtPEcKhOnwqDnayzkm9C/wkklNShTUTnz+bxNSJNOKIrphJOKU3bKQ3C/91SwbiVzKi2EbDuz22YfxF6dsh6SkWR5S5f/n7Bk+F8tyN8OgqcnMe/VQGtsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dy5rMnjI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B66kkrY016877;
-	Fri, 6 Dec 2024 11:07:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1lLeIj9ZC2mS5g76o4o6f2hDmvee13oLz6cpCNvUnj8=; b=dy5rMnjIK+eVLGV0
-	DRi3yvvhbGzm0GRgSVNXASuBB53vAacRbiImSrU42xFRiiUFtfYHMStJTfKZOtYi
-	I3aT7wmNdWEbwwjQJtzlFWjSRKQBBBRSsk8HSO6NSHmugQdN64FRgGV9ZM6u+hto
-	qpn3a67NQRov7lkdT+/bdsTOc0uoNwPYeQy9AMRlOrFyVcnbJ26cglVDDiLodQ5Y
-	FoDoR5tItjU1LATal8Umo6pjqIWmmnNhP4rVTeibkSlsiqNeTY6F8D7AUqZK2wVr
-	u9J226wOmU2KmpcUh4qlB9eXqCs4zoDEwSU8HIkFfeSVnnwJFkaegft8JrGLt2JC
-	GfpkbA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43bbnmkbv1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 06 Dec 2024 11:07:42 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B6B7f2x031107
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 6 Dec 2024 11:07:41 GMT
-Received: from [10.151.41.184] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
- 03:07:36 -0800
-Message-ID: <0b2f8734-f502-42d7-bdc5-b0d382d2aa70@quicinc.com>
-Date: Fri, 6 Dec 2024 16:37:33 +0530
+	s=arc-20240116; t=1733483269; c=relaxed/simple;
+	bh=F6EqjkS2oC/iLwIQyD7hG4MdSaBIqRN2v2g1OqMQOSk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZznoR74xhCJQVr20Ye6TpTzJfr46uXiakotrJyAAJlnG3MkAoy6D/L7IELVfkDgPd+cYba9/BTkc5oFmh20Xnex2jHwli8nOGx8VcQoGFkbFz327BVb9gJrx/IFXO1dYhjrLfXKFcG1WNy5kLTZkBtLThnkmLkhK1o8SkJ4uUic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C508240008;
+	Fri,  6 Dec 2024 11:07:39 +0000 (UTC)
+Message-ID: <b72203f9-33ea-4b20-b377-6e684109846e@ghiti.fr>
+Date: Fri, 6 Dec 2024 12:07:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,77 +39,146 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/22] wifi: ath12k: add Ath12k AHB driver support for
- IPQ5332
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        Kalle Valo
-	<kvalo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeff Johnson
-	<jjohnson@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <ou5kgedz5aga4dtda6k23uhybcjy7mfwie74p6q3qyn5bdajz7@ftejp7lqrise>
+Subject: Re: [External] Re: [PATCH v2] riscv: mm: Fix alignment of
+ phys_ram_base
 Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <ou5kgedz5aga4dtda6k23uhybcjy7mfwie74p6q3qyn5bdajz7@ftejp7lqrise>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eOj5rPgQ7y1SBrL_GUqGg7AwhE9HK2UZ
-X-Proofpoint-GUID: eOj5rPgQ7y1SBrL_GUqGg7AwhE9HK2UZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 spamscore=0 impostorscore=0 bulkscore=0
- suspectscore=0 adultscore=0 clxscore=1015 phishscore=0 mlxscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412060082
+To: Xu Lu <luxu.kernel@bytedance.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alexghiti@rivosinc.com, bjorn@rivosinc.com, lihangjing@bytedance.com,
+ xieyongji@bytedance.com, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241203144954.91731-1-luxu.kernel@bytedance.com>
+ <edba44ad-a4b6-473d-a175-142ea49add1c@ghiti.fr>
+ <CAPYmKFtAAZkY-v7Oat4dXYnm6zCcReMnDdFo3qcqtqhj1wv8eg@mail.gmail.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <CAPYmKFtAAZkY-v7Oat4dXYnm6zCcReMnDdFo3qcqtqhj1wv8eg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: alex@ghiti.fr
 
-On 10/16/2024 12:27 PM, Krzysztof Kozlowski wrote:
-> On Tue, Oct 15, 2024 at 11:56:15PM +0530, Raj Kumar Bhagat wrote:
->> Currently, Ath12k driver only supports WiFi devices that are based on
->> PCI bus. New Ath12k device IPQ5332 is based on AHB bus. Hence, add
->> Ath12k AHB support for IPQ5332.
+Hi Xu,
+
+On 06/12/2024 04:11, Xu Lu wrote:
+> Hi Alex,
+>
+> On Thu, Dec 5, 2024 at 10:34 PM Alexandre Ghiti <alex@ghiti.fr> wrote:
+>> Hi Xu,
 >>
->> IPQ5332 is IEEE802.11be 2 GHz 2x2 Wifi device. To bring-up IPQ5332
->> device:
->> - Add hardware parameters for IPQ5332.
->> - CE and CMEM register address space in IPQ5332 is separate from WCSS
->>   register space. Hence, add logic to remap CE and CMEM register
->>   address.
->> - Add support for fixed QMI firmware memory for IPQ5332.
->> - Support userPD handling for WCSS secure PIL driver to enable ath12k
->>   AHB support.
+>> On 03/12/2024 15:49, Xu Lu wrote:
+>>> This commit fixes the alignment of phys_ram_base in RISC-V.
+>>>
+>>> In sparse vmemmap model, the virtual address of vmemmap is calculated as:
+>>> ((struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT)).
+>>> And the struct page's va can be calculated with an offset:
+>>> (vmemmap + (pfn)).
+>>>
+>>> However, when initializing struct pages, kernel actually starts from the
+>>> first page from the same section that phys_ram_base belongs to. If the
+>>> first page's physical address is not (phys_ram_base >> PAGE_SHIFT), then
+>>> we get an va below VMEMMAP_START when calculating va for it's struct page.
+>>>
+>>> For example, if phys_ram_base starts from 0x82000000 with pfn 0x82000, the
+>>> first page in the same section is actually pfn 0x80000. During
+>>> init_unavailable_range(), we will initialize struct page for pfn 0x80000
+>>> with virtual address ((struct page *)VMEMMAP_START - 0x2000), which is
+>>> below VMEMMAP_START as well as PCI_IO_END.
+>>>
+>>> This commit fixes this bug by aligning phys_ram_base with SECTION_SIZE.
+>>>
+>>> Fixes: c3bcc65d4d2e ("riscv: Start of DRAM should at least be aligned on PMD size for the direct mapping")
+>>> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+>>> ---
+>>>    arch/riscv/mm/init.c | 15 ++++++++++++++-
+>>>    1 file changed, 14 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>>> index 0e8c20adcd98..974cafa7c85e 100644
+>>> --- a/arch/riscv/mm/init.c
+>>> +++ b/arch/riscv/mm/init.c
+>>> @@ -33,6 +33,9 @@
+>>>    #include <asm/pgtable.h>
+>>>    #include <asm/sections.h>
+>>>    #include <asm/soc.h>
+>>> +#ifdef CONFIG_SPARSEMEM
+>>> +#include <asm/sparsemem.h>
+>>> +#endif
+>>>    #include <asm/tlbflush.h>
+>>>
+>>>    #include "../kernel/head.h"
+>>> @@ -59,6 +62,12 @@ EXPORT_SYMBOL(pgtable_l4_enabled);
+>>>    EXPORT_SYMBOL(pgtable_l5_enabled);
+>>>    #endif
+>>>
+>>> +#ifdef CONFIG_SPARSEMEM
+>>> +#define RISCV_MEMSTART_ALIGN (1UL << SECTION_SIZE_BITS)
+>>> +#else
+>>> +#define RISCV_MEMSTART_ALIGN PMD_SIZE
+>>> +#endif
+>>> +
+>>>    phys_addr_t phys_ram_base __ro_after_init;
+>>>    EXPORT_SYMBOL(phys_ram_base);
+>>>
+>>> @@ -239,9 +248,13 @@ static void __init setup_bootmem(void)
+>>>        /*
+>>>         * Make sure we align the start of the memory on a PMD boundary so that
+>>>         * at worst, we map the linear mapping with PMD mappings.
+>>> +      *
+>>> +      * Also, make sure we align the start of the memory on a SECTION boundary
+>>> +      * when CONFIG_SPARSEMEM_VMEMMAP is enabled to ensure the correctness of
+>>> +      * pfn_to_page().
+>>>         */
+>>>        if (!IS_ENABLED(CONFIG_XIP_KERNEL))
+>>> -             phys_ram_base = memblock_start_of_DRAM() & PMD_MASK;
+>>> +             phys_ram_base = round_down(memblock_start_of_DRAM(), RISCV_MEMSTART_ALIGN);
+>>>
+>>>        /*
+>>>         * In 64-bit, any use of __va/__pa before this point is wrong as we
 >>
->> Depends-On: [PATCH V7 0/5] remove unnecessary q6 clocks
->> Depends-On: [PATCH V2 0/4] Add new driver for WCSS secure PIL loading
->> Link: https://lore.kernel.org/all/20240820055618.267554-1-quic_gokulsri@quicinc.com/
->> Link: https://lore.kernel.org/all/20240829134021.1452711-1-quic_gokulsri@quicinc.com/
-> 
-> These are series targetting other subsystems. I do not understand why
-> you created such dependency. It does not look needed and for sure is not
-> good: nothing here can be tested, nothing can be applied.
+>> That's a good catch indeed. But I'm wondering if it would be more
+>> correct to fix the macro vmemmap instead of phys_ram_base since
+>> phys_ram_base is supposed to hold the real base of the system memory,
+>> which would be wrong with your patch. I mean something like that instead
+>> (or similar, I haven't tested):
+>>
+>> #define vmemmap         ((struct page *)VMEMMAP_START -
+>> (round_down(memblock_start_of_DRAM(), RISCV_MEMSTART_ALIGN) >> PAGE_SHIFT))
+> Thanks for your comment.
+>
+> Good idea. I have thought about this. But I wasn't sure if it's OK to
+> introduce extra calculation whenever pfn_to_page() and page_to_pfn()
+> is called. So I referred to ARM which aligns memstart_addr with
+> SECTION size too and then made a similar modification.
+>
+> If it is not appropriate to change the semantics of phys_ram_base, how
+> about introducing a new variable vmemmap_start_addr and use it to
+> calculate vmemmap:
+>
+> #define vmemmap         ((struct page *)VMEMMAP_START -
+> (vmemmap_start_addr >> PAGE_SHIFT))
 
-To validate this series, the dependencies mentioned above were necessary, which
-is why they were included.
 
-Currently, the "[PATCH V7 0/5] remove unnecessary q6 clocks" has been merged,
-so this dependency will not be required in the next version.
+I agree, that's a good idea to introduce vmemmap_start_addr.
 
-The "[PATCH V2 0/4] Add new driver for WCSS secure PIL loading" series is still
-under review and is required for validation.
+Thanks,
 
-However, this series can still be applied and compiled without these dependencies.
-Please let us know if we should remove the dependency in the next version.
+Alex
+
+
+>
+> Best Regards,
+>
+> Xu Lu
+>
+>> And the fixes tag should be:
+>>
+>> Fixes: a11dd49dcb93 ("riscv: Sparse-Memory/vmemmap out-of-bounds fix")
+>>
+>> Thanks,
+>>
+>> Alex
+>>
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
