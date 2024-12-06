@@ -1,89 +1,101 @@
-Return-Path: <linux-kernel+bounces-435150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92FB29E71EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:02:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C73949E721B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 16:04:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B8501887B27
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:02:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8287E286838
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF905206F10;
-	Fri,  6 Dec 2024 15:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E47561494A8;
+	Fri,  6 Dec 2024 15:04:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e0E8HNYP"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="NYHiOjMf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="c07/TGQl";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KIobXyBB";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3FVFMlA4"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F04753A7;
-	Fri,  6 Dec 2024 15:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CF581537D4;
+	Fri,  6 Dec 2024 15:04:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733497330; cv=none; b=lL05Iu/fz/RoH3kxAHqwJDTNDkYtBl0XcKHKMx9KROu6IgRCpocrGa/t/Qy5CSs8MQHlHS0QAjtjowQdcY2ikGxR2IpqUoHxUJe61aFGYz069gj/WhrkvDUjTxBF1e8fy8IEEjdQfY3m9PfkggzHdKrU+2HHPbiv6MFyPqMz4Bk=
+	t=1733497473; cv=none; b=N5RmbLksIhgpPADM93ZphTG22l3r45Y4DAtE7fav6s7RcJg5Wg4OUIk0JRGCDlSso37I7v0ltIAspmbNCaLlDZltqBmvD/9G7VZLxdclwbSb9k5PqUqfU5iQKz5rfqY8bUrD5DgLX0bNS5CMMJ0O+a9dOzN/iacxr5YKKLveLyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733497330; c=relaxed/simple;
-	bh=/Z1yBzC1DSfZonbRjQ4t9l+K2KWN7e+E3mrJ30gIEbE=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YqPiA1FdDx2RPJMu9pMGerciDgI4IuYkr73935a8vuV797vmYm6SR9He0aYZHAe4wxTiPaPp0WLbxNn/kK4tQENFtKw6rzuItGnA3x1Uvd0oNG5T0rFv4vZnJeHqcKp6nrT2OOUmLX9OWaO1dxWA14U5Ntb+qpFh94QsxNf+YX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e0E8HNYP; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43494a20379so20878425e9.0;
-        Fri, 06 Dec 2024 07:02:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733497326; x=1734102126; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=+V1Hsla4xpDr6WwzScQTBcuA4aypiL/OoQ34HkrySpo=;
-        b=e0E8HNYPqHjyJWY7eK5TioGWZJ8HGhv2Zw80Ag/rmdArVFxKYRwhQ2pKyfod4JjRjh
-         ZpYZcI/fuZzV0sE540FKEvmCnHb0WWzrj6Q0oViOhj+qqEW5OfgqIkxLmQPkpl07Mgh0
-         5jjhBCRviBuprOY2IBc3flwCasgWf+32hN2/WBLh+TxuAYVycqnE7dMjagSBHI6jQONd
-         jZFR7A8eFJa+Y3tfhIOjJleLrvIEKKLaWL7cdojHkT28ebwC8gRWlvv0X5oLkYHyT3GN
-         IVkd/w61FunDU8Ai4nDycNMA3S+wFMt215pzwl9gEd2x+nJ1neLHp/wurCQateWRU+0x
-         8mXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733497326; x=1734102126;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+V1Hsla4xpDr6WwzScQTBcuA4aypiL/OoQ34HkrySpo=;
-        b=EpWq7spEWwdbljn9O2gtszd86OFK01W3J2YQ29cchAQd4IowNPhqSxowrWuwOb/npJ
-         7/Kp9Lo76vazvkRc5NHcgmGdl+02qmXadndZG90dVmxuuMe5hPuvOZ2mqtdqokcvGsHj
-         oydvKKjdA7BQXSh9EVS145zKrKTU3eVTSApSB9ff6gait48p82L7u+4bpyITy6kknyVn
-         UJ4qBNOlrX1XK8+4JCh6txjLOfv7QLcX8N8nLYwn0my7bbTUPI0uXvEpqgGnk+W9AQu+
-         6QMGo9eZqnrQ8b0nGtJPwdr3l23Kd78VlUF1gQWZ/iURKr7ItBb9ue/VIk/tjXPiMApe
-         z0QQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Woki7i1NtYWMRQlcUponMFpBAAdwO8kDgo/l+phMT66D+OSxjsGYnzXVpqN35SILoxM=@vger.kernel.org, AJvYcCVJB461Ap59bvqIrDJ6ErAy4crPbAPNd3atlvvSpcLItg6yFalXLLr6DvU6cQnHNzLdj+2aE4tN@vger.kernel.org, AJvYcCWXNvakfou+ECm5+ShWNkS8+skVrMFia056yc9gEUmCaUQybxHU0NGaUo2JJIOiV8mRcoo94KMljSmknBc3@vger.kernel.org
-X-Gm-Message-State: AOJu0YySrGw+PzmebKmbRw+fjSAc5SYcwpQogkkuG3wJZ6utr+BkOpdz
-	Lbry5aultXXs9SRL+OKJNQyJDERiJy1DOjjbY7hjZnXqgT9ayeCt
-X-Gm-Gg: ASbGncv3YbqcPHfjcyYocOIcAg3l5pDL9T4F8BPfugBGQ3+8CqpoRvmjv9WQPqlE/zl
-	uQEDUx/L3ZrD6xhp7jKUgLCIDPgBKTEu7wBv6xCCgPSdpnRQjP4SSjtIE1+kPTi8S6ic3jC+YyL
-	R9L6VLzlp6bQzmn/ar2LnoZx0v8kTmgSagKoPLrjMI86Clls5+rYc78Fx2yohFGO9fLbVrsRcTJ
-	XLfsR5w/j/Xn87RbhBCr/gmbZNIRQ3OqXlIw3Xzs4fZDiwczpsUu8B0oJuNezakqjzuYQLTrm4i
-	by1yijwjz0ut9kmiOty2TW8=
-X-Google-Smtp-Source: AGHT+IF+i0vfPsnJK070XBvTi/ymBApI/1gIOZMkw037qcoVXCLaFaNKfjTLZD7EwGrodlucxw6HdA==
-X-Received: by 2002:a05:600c:4447:b0:434:9c3b:7564 with SMTP id 5b1f17b1804b1-434dded7374mr27126015e9.20.1733497324584;
-        Fri, 06 Dec 2024 07:02:04 -0800 (PST)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da0d2698sm58617785e9.8.2024.12.06.07.02.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 07:02:04 -0800 (PST)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 6 Dec 2024 16:02:01 +0100
-To: syzbot <syzbot+2e0d2840414ce817aaac@syzkaller.appspotmail.com>
-Cc: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
-	john.fastabend@gmail.com, kpsingh@kernel.org,
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev,
-	netdev@vger.kernel.org, sdf@fomichev.me, song@kernel.org,
-	syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Subject: Re: [syzbot] [bpf?] general protection fault in
- bpf_prog_array_delete_safe
-Message-ID: <Z1MR6dCIKajNS6nU@krava>
-References: <67530069.050a0220.2477f.0003.GAE@google.com>
+	s=arc-20240116; t=1733497473; c=relaxed/simple;
+	bh=7UmVTncpApXnhcfwKAyt2WWJNj/LD4BxtJQC8oJwcd8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CFQbnvBUBrFdwiv6dGy7zGJHZNJUbWUpkgFEr0tgkYzHB5kF9kdpp2GDz0tD30tzev9i2kyoHAlaV545YEqMvpCtqWPEv4hywzJv3iEOobOoCu/vTMJbB3/Q6vvRRilhfXd1q/tgJgj2JTO3gkFyvOdbnppIyIZ/UGL/ucFhMZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=NYHiOjMf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=c07/TGQl; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KIobXyBB; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3FVFMlA4; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 44B3721151;
+	Fri,  6 Dec 2024 15:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733497469; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K2PfM4ar4aZOvFXqOzp0ywwZZ2Ae6bv0KEHZcP9bkXg=;
+	b=NYHiOjMficVrF6HKI6zVQt+kICBpgyDBBSbdd5snwU7EXeKa7IMagO+xwZRHXCqzoBeSeK
+	YV0L53EcHTvkbWNCd9t0PVU3MUYB0SAfrUf4XFyuFNQIJmfxhaebUqxhB6NmvUnczDe0Jc
+	MZOEauy24/3iBTO3pYkfOpTvPzcR16g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733497469;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K2PfM4ar4aZOvFXqOzp0ywwZZ2Ae6bv0KEHZcP9bkXg=;
+	b=c07/TGQlOzAvXcq+6bzmw4UpFKF/IWqfkjpD3GVWieuqjpozHoH9tRvf1RP125F4KqSKbS
+	Y5OKdpeW7YhBRgBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733497468; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K2PfM4ar4aZOvFXqOzp0ywwZZ2Ae6bv0KEHZcP9bkXg=;
+	b=KIobXyBBagDbw+5WNkmC9zXL+tWU2CxiKhRGGWuiFb4bVaGV3HWj46gzKXcyI9lX7koXKo
+	ed3zzkfI6yDwJnDGMaWXbDL+ZOZVxf7Ml9MJd7TuvpnAg2QwGFj+DLWvsi+R1AFg330gqM
+	jmNmD1Iz+TOJGM2A2DaSRyj52mplLCc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733497468;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=K2PfM4ar4aZOvFXqOzp0ywwZZ2Ae6bv0KEHZcP9bkXg=;
+	b=3FVFMlA41+MmHUA2+inkIrhvtWxQ8aDXe/iEX3KijN+qP+qRaqmgsGuOty6VRugYHnAE2E
+	nShQDVHDkH9jwwAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 353C413647;
+	Fri,  6 Dec 2024 15:04:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JaH2DHwSU2c3dAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 06 Dec 2024 15:04:28 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id CEAB0A08CD; Fri,  6 Dec 2024 16:04:27 +0100 (CET)
+Date: Fri, 6 Dec 2024 16:04:27 +0100
+From: Jan Kara <jack@suse.cz>
+To: Zhang Yi <yi.zhang@huaweicloud.com>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, tytso@mit.edu,
+	adilger.kernel@dilger.ca, jack@suse.cz, yi.zhang@huawei.com,
+	chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+Subject: Re: [PATCH] jbd2: add a missing data flush during file and fs
+ synchronization
+Message-ID: <20241206150427.fdqnme4kqpt3ohdl@quack3>
+References: <20241206111327.4171337-1-yi.zhang@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,146 +104,99 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <67530069.050a0220.2477f.0003.GAE@google.com>
+In-Reply-To: <20241206111327.4171337-1-yi.zhang@huaweicloud.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,imap1.dmz-prg2.suse.org:helo,suse.com:email]
+X-Spam-Score: -3.80
+X-Spam-Flag: NO
 
-On Fri, Dec 06, 2024 at 05:47:21AM -0800, syzbot wrote:
-> Hello,
+On Fri 06-12-24 19:13:27, Zhang Yi wrote:
+> From: Zhang Yi <yi.zhang@huawei.com>
 > 
-> syzbot found the following issue on:
+> When the filesystem performs file or filesystem synchronization (e.g.,
+> ext4_sync_file()), it queries the journal to determine whether to flush
+> the file device through jbd2_trans_will_send_data_barrier(). If the
+> target transaction has not started committing, it assumes that the
+> journal will submit the flush command, allowing the filesystem to bypass
+> a redundant flush command. However, this assumption is not always valid.
+> If the journal is not located on the filesystem device, the journal
+> commit thread will not submit the flush command unless the variable
+> ->t_need_data_flush is set to 1. Consequently, the flush may be missed,
+> and data may be lost following a power failure or system crash, even if
+> the synchronization appears to succeed.
 > 
-> HEAD commit:    e2cf913314b9 Merge branch 'fixes-for-stack-with-allow_ptr_..
-> git tree:       bpf
-> console+strace: https://syzkaller.appspot.com/x/log.txt?x=13b5ede8580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=fb680913ee293bcc
-> dashboard link: https://syzkaller.appspot.com/bug?extid=2e0d2840414ce817aaac
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132a2020580000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1291d0f8580000
+> Unfortunately, we cannot determine with certainty whether the target
+> transaction will flush to the filesystem device before it commits.
+> However, if it has not started committing, it must be the running
+> transaction. Therefore, fix it by always set its t_need_data_flush to 1,
+> ensuring that the committing thread will flush the filesystem device.
 > 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/487d8ef2aead/disk-e2cf9133.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/899f2234c9d5/vmlinux-e2cf9133.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/ea8993a0dfd6/bzImage-e2cf9133.xz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+2e0d2840414ce817aaac@syzkaller.appspotmail.com
-> 
-> Oops: general protection fault, probably for non-canonical address 0xdffffc0000000002: 0000 [#1] PREEMPT SMP KASAN PTI
-> KASAN: null-ptr-deref in range [0x0000000000000010-0x0000000000000017]
-> CPU: 0 UID: 0 PID: 5849 Comm: syz-executor326 Not tainted 6.12.0-syzkaller-09099-ge2cf913314b9 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> RIP: 0010:bpf_prog_array_delete_safe+0x2d/0xc0 kernel/bpf/core.c:2583
-> Code: 00 41 57 41 56 41 55 41 54 53 49 89 f7 49 89 fd 49 bc 00 00 00 00 00 fc ff df e8 ce 84 f0 ff 4d 8d 75 10 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 54 6b 5b 00 49 8b 1e 48 85 db 74
-> RSP: 0018:ffffc90003807970 EFLAGS: 00010202
-> RAX: 0000000000000002 RBX: 1ffff92000700f38 RCX: ffff888034eb8000
-> RDX: 0000000000000000 RSI: ffffc90000abe000 RDI: 0000000000000000
-> RBP: ffffc90003807a48 R08: ffffffff81a1aa9e R09: 1ffffffff203c816
-> R10: dffffc0000000000 R11: fffffbfff203c817 R12: dffffc0000000000
-> R13: 0000000000000000 R14: 0000000000000010 R15: ffffc90000abe000
-> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000000e738000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  perf_event_detach_bpf_prog+0x2b0/0x330 kernel/trace/bpf_trace.c:2255
->  perf_event_free_bpf_prog kernel/events/core.c:10801 [inline]
->  _free_event+0xb04/0xf60 kernel/events/core.c:5352
->  put_event kernel/events/core.c:5454 [inline]
->  perf_event_release_kernel+0x7c1/0x850 kernel/events/core.c:5579
->  perf_release+0x38/0x40 kernel/events/core.c:5589
->  __fput+0x23c/0xa50 fs/file_table.c:450
->  task_work_run+0x24f/0x310 kernel/task_work.c:239
->  exit_task_work include/linux/task_work.h:43 [inline]
->  do_exit+0xa2f/0x28e0 kernel/exit.c:938
->  do_group_exit+0x207/0x2c0 kernel/exit.c:1087
->  __do_sys_exit_group kernel/exit.c:1098 [inline]
->  __se_sys_exit_group kernel/exit.c:1096 [inline]
->  __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1096
->  x64_sys_call+0x26a8/0x26b0 arch/x86/include/generated/asm/syscalls_64.h:232
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Fixes: bbd2be369107 ("jbd2: Add function jbd2_trans_will_send_data_barrier()")
+> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
 
-ugh, it's because of the:
-  0ee288e69d03 bpf,perf: Fix perf_event_detach_bpf_prog error handling
+Looks good. Feel free to add:
 
-I'll send the fix
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-thanks,
-jirka
+								Honza
 
-> RIP: 0033:0x7f9408276e09
-> Code: Unable to access opcode bytes at 0x7f9408276ddf.
-> RSP: 002b:00007fffe6c98ad8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
-> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f9408276e09
-> RDX: 000000000000003c RSI: 00000000000000e7 RDI: 0000000000000000
-> RBP: 00007f94082f22b0 R08: ffffffffffffffb8 R09: 0000000000000006
-> R10: 0000000000000000 R11: 0000000000000246 R12: 00007f94082f22b0
-> R13: 0000000000000000 R14: 00007f94082f2d00 R15: 00007f9408248040
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:bpf_prog_array_delete_safe+0x2d/0xc0 kernel/bpf/core.c:2583
-> Code: 00 41 57 41 56 41 55 41 54 53 49 89 f7 49 89 fd 49 bc 00 00 00 00 00 fc ff df e8 ce 84 f0 ff 4d 8d 75 10 4c 89 f0 48 c1 e8 03 <42> 80 3c 20 00 74 08 4c 89 f7 e8 54 6b 5b 00 49 8b 1e 48 85 db 74
-> RSP: 0018:ffffc90003807970 EFLAGS: 00010202
-> RAX: 0000000000000002 RBX: 1ffff92000700f38 RCX: ffff888034eb8000
-> RDX: 0000000000000000 RSI: ffffc90000abe000 RDI: 0000000000000000
-> RBP: ffffc90003807a48 R08: ffffffff81a1aa9e R09: 1ffffffff203c816
-> R10: dffffc0000000000 R11: fffffbfff203c817 R12: dffffc0000000000
-> R13: 0000000000000000 R14: 0000000000000010 R15: ffffc90000abe000
-> FS:  0000000000000000(0000) GS:ffff8880b8600000(0000) knlGS:0000000000000000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000000000000000 CR3: 000000007f382000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> ----------------
-> Code disassembly (best guess):
->    0:	00 41 57             	add    %al,0x57(%rcx)
->    3:	41 56                	push   %r14
->    5:	41 55                	push   %r13
->    7:	41 54                	push   %r12
->    9:	53                   	push   %rbx
->    a:	49 89 f7             	mov    %rsi,%r15
->    d:	49 89 fd             	mov    %rdi,%r13
->   10:	49 bc 00 00 00 00 00 	movabs $0xdffffc0000000000,%r12
->   17:	fc ff df
->   1a:	e8 ce 84 f0 ff       	call   0xfff084ed
->   1f:	4d 8d 75 10          	lea    0x10(%r13),%r14
->   23:	4c 89 f0             	mov    %r14,%rax
->   26:	48 c1 e8 03          	shr    $0x3,%rax
-> * 2a:	42 80 3c 20 00       	cmpb   $0x0,(%rax,%r12,1) <-- trapping instruction
->   2f:	74 08                	je     0x39
->   31:	4c 89 f7             	mov    %r14,%rdi
->   34:	e8 54 6b 5b 00       	call   0x5b6b8d
->   39:	49 8b 1e             	mov    (%r14),%rbx
->   3c:	48 85 db             	test   %rbx,%rbx
->   3f:	74                   	.byte 0x74
-> 
-> 
 > ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>  fs/jbd2/journal.c | 12 +++++++++++-
+>  1 file changed, 11 insertions(+), 1 deletion(-)
 > 
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 97f487c3d8fc..37632ae18a4e 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -609,7 +609,7 @@ int jbd2_journal_start_commit(journal_t *journal, tid_t *ptid)
+>  int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
+>  {
+>  	int ret = 0;
+> -	transaction_t *commit_trans;
+> +	transaction_t *commit_trans, *running_trans;
+>  
+>  	if (!(journal->j_flags & JBD2_BARRIER))
+>  		return 0;
+> @@ -619,6 +619,16 @@ int jbd2_trans_will_send_data_barrier(journal_t *journal, tid_t tid)
+>  		goto out;
+>  	commit_trans = journal->j_committing_transaction;
+>  	if (!commit_trans || commit_trans->t_tid != tid) {
+> +		running_trans = journal->j_running_transaction;
+> +		/*
+> +		 * The query transaction hasn't started committing,
+> +		 * it must still be running.
+> +		 */
+> +		if (WARN_ON_ONCE(!running_trans ||
+> +				 running_trans->t_tid != tid))
+> +			goto out;
+> +
+> +		running_trans->t_need_data_flush = 1;
+>  		ret = 1;
+>  		goto out;
+>  	}
+> -- 
+> 2.46.1
 > 
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
-> 
-> If you want syzbot to run the reproducer, reply with:
-> #syz test: git://repo/address.git branch-or-commit-hash
-> If you attach or paste a git patch, syzbot will apply it before testing.
-> 
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
-> 
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
-> 
-> If you want to undo deduplication, reply with:
-> #syz undup
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
