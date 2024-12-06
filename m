@@ -1,153 +1,256 @@
-Return-Path: <linux-kernel+bounces-434749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 303F59E6A96
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:40:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB129E6A9A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:41:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE8B416CF92
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:40:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31F1016CC5A
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D06F11DE8AB;
-	Fri,  6 Dec 2024 09:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BC021EF0B5;
+	Fri,  6 Dec 2024 09:40:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HnJEeK2s";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FRDcRhgO"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EVoth1r+"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247B71E130F;
-	Fri,  6 Dec 2024 09:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01E11EC00A
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733478007; cv=none; b=jzrjJEzu852lPoFssZupBd441it51cw/rlAd7GIVFhCNjJi3dQKalNAaD/h2O2rx+GX8Fn75jFqIDlKeegv0TF6YTE81BqgwKmKkhUhwNP5qVI+X6EoWbEFNSfAQNcnj07A1kAMbpyOGqmhb/8qHr9qHgGPO6TisyEd1w41GD5M=
+	t=1733478039; cv=none; b=mXFPDGR0xrUQuWFWt77UdZD+GcM0vZSK2MR/BByXo+JTqTXmSHSZ62LNcqC6rPBUdryk8wI9OG8qgzc46xebF01R7pLHbJMuQ5o9F5epXiXV5GUvgnJOogGuOPAw7UpYLMEMyB2CYXg5e9ER8u+ysEzdkM7RysTdMrz7j1qrh0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733478007; c=relaxed/simple;
-	bh=mzSqbey6C2owWnVWQtAL9IH7gq+h4Uj033oVgO4bCro=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=kVDLgh1doj67//gGFbF9toK2h5S815c4WohB+99qZADeMBBxQ57ZBwe9Q7TIIIW2UqppfqX/0MeyY5KAs2NA+bMsdUGJEARHjFRwVe45HtoTSDecfePy8iParlLciPzu81xm87fgrozHnR2w+E/H6PcT2AfmpdVExBZXiS0azCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HnJEeK2s; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FRDcRhgO; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 06 Dec 2024 09:40:01 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733478002;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZ/J1kCyx0aTDjaWNn4/rYZ4PwXW2WS6EIyun8mwNhE=;
-	b=HnJEeK2s7WC+RPNnpQfhDWhCB7+AT8BCyzTFa/e7+TMKPg4Gl7DyrVssTLbZBUd/BoeU+P
-	ZHeVZBkaOkDOc0p/k8a0SIoedzY0cNaM1jx+C6il0gdh4WIy4gC4GogzdmJ8f0CppPhnjR
-	Mb8vBTH5R3q6YyMB4ahCrI49o7dt1MSu68df4SgT66rTkv4C0SxpwdXdL7HjdSz0/WasIj
-	MIAwnGIlvS+FCKZC34gHyUR8KNPSWMgu/VcKadeln1Ss3ButWXLXqmiw14PPHXNwFlRQEF
-	Tltx+Sc3CSz/vF70lM3ILrL4NBcYICcJq0CTUt7EEY6ZshHvv/7SRHg6WTevuQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733478002;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xZ/J1kCyx0aTDjaWNn4/rYZ4PwXW2WS6EIyun8mwNhE=;
-	b=FRDcRhgOSEuXCEWbxJnY/2GLqd2s+4StDWUE2G2q+af8unCj8/bEmEvnAhVJicm6oD0x2x
-	vBsP/9YgXl6J8SBQ==
-From: "tip-bot2 for Rik van Riel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/mm] x86/mm/tlb: Also remove local CPU from mm_cpumask if stale
-Cc: kernel test robot <oliver.sang@intel.com>, Rik van Riel <riel@surriel.com>,
- Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Linus Torvalds <torvalds@linux-foundation.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241205104630.755706ca@fangorn>
-References: <20241205104630.755706ca@fangorn>
+	s=arc-20240116; t=1733478039; c=relaxed/simple;
+	bh=TWS54qtWOUt4tbtkhVNM5u8s8m+lfvjSfdulgwfehLA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=vBM5ungWm1clKIjIvaIQlrwZE0kuWQFpmPaC1kWRaSlEnF0N4iWeNDFp849CjXEKbduchEr8iTz8DWGcUWNk87V1Wi03T5onkJAue4W8k88Q2YQQMx6G4NM9ZSpOHo4Rk9BJ7nuIQPgd4ShMsrTmot9zkJO7bADZxn9utGN2dZw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EVoth1r+; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434aa472617so12897535e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:40:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733478036; x=1734082836; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=roDsf5JZ69Vb0EVMiFOCplKdqH1R39suO8gspINBAFY=;
+        b=EVoth1r+EngQHyeBKzqdF2ba4dNWoeWjblIfn+14BjwS66sBNHaZ8DiYRoDrvrRmNj
+         wQliKUTfzWAk0ZK/0/4klWu1qQhY0OszO5LciQYmCkCmoMyLaGRKqzadAE0gKVPN/4Yn
+         CbGPdlDx01xphe4bWdi3e6W5CCGh+8DBLGiYrjBUM8mWkFSfxORWOhLpW2TgZ8qsvm6+
+         BT0Zu/Ax+ZVIOIq9dg8pwm/dX+HAB6hKL8uxrCD+g5aEDkoeS+kpXvSl0O8eJih7oxEn
+         +n7Gtp/lbWozq5PEl63o9ychjckhj46sNvpoK0EQNDdQuq5ZcnlL65xOxCbVj5nQxY8Y
+         8BqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733478036; x=1734082836;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=roDsf5JZ69Vb0EVMiFOCplKdqH1R39suO8gspINBAFY=;
+        b=QT/EoL/Z9ooK9iDYJR3LnIUy8JGl+vv5xKswwxi6ObBSUt752zHP6gR1470M6XWvGY
+         sALkxkM3gRnHfY7+bpmvkRtqwf02kN1J+1kL5i3pTyInXK8s1WEukqsb0Swm3C9ehvH5
+         mKn/09kq1lPcup8a0cM62mqFHGU+Q8ajyT71xC0D7+AiEWLFDv/zuODSsr2pPkql863B
+         VJBf3+DZyX7Th3C7uYS+qISwYSKdmhUCqyfeQtdum+vSe6GUMWGphtzDQzpU6CBiO/Df
+         9BYhZUUP5joAHjLA6nWcPBCyCf1xhFUsljjSaVcjFbN8xEmTTOneEAY4yg6vt5xj1VwF
+         PjFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVbKNDfFT+LxoV3eTh4/rf3XZgwIfZOokOQNaQZqP1aak1KK6uZyzZgfI//8rluhPUs9nirSZr+f87cwkk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykbMqpj7hOJK5cnZgescU9Ml6MtE8+XXa/zsrfob92dGSRvGeV
+	WG9JIYKzOsfqehTShoQJV2MepRJBRyi1vG75bQ/eGawkzdJQqTTA3czTQVWBJLmimThaaEa5wfT
+	TkqAslM+bQd5/1Ef2otoEykgQY9hUsT6S8Z+L
+X-Gm-Gg: ASbGncv78Dk9Rwg51gDkoPo6RpVTmOWdoAEDbqx4v+h97ev0snIxIJ4X4m0CAso/Cq0
+	k5/3Jw4RxnoRaH5EA8TezjS7o0hsFbH6a
+X-Google-Smtp-Source: AGHT+IFsWWSvAWLzPdhJb+M+fGJXNYBcqly8mjWF2TdF0iIoCLduCHfJWFjNVoFpOFvhxKnrXSbxSDlzlgGS+l5y3wE=
+X-Received: by 2002:a05:600c:450b:b0:434:a7b6:10e9 with SMTP id
+ 5b1f17b1804b1-434ddeb9b73mr22189395e9.17.1733478035843; Fri, 06 Dec 2024
+ 01:40:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173347800117.412.912187512199282211.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <20241206090515.752267-1-lee@kernel.org> <20241206090515.752267-5-lee@kernel.org>
+ <Z1LD42UsCvtAhluY@pollux>
+In-Reply-To: <Z1LD42UsCvtAhluY@pollux>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Fri, 6 Dec 2024 10:40:23 +0100
+Message-ID: <CAH5fLghS+foEe7mFVDpr+AbHkQmdkx-EH0jnq2SzH+rYQPiS2A@mail.gmail.com>
+Subject: Re: [PATCH v4 2/4] samples: rust: Provide example using the new Rust
+ MiscDevice abstraction
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org, arnd@arndb.de, 
+	gregkh@linuxfoundation.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
+	benno.lossin@proton.me, a.hindborg@kernel.org, tmgross@umich.edu, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/mm branch of tip:
+On Fri, Dec 6, 2024 at 10:29=E2=80=AFAM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Fri, Dec 06, 2024 at 09:05:06AM +0000, Lee Jones wrote:
+> > This sample driver demonstrates the following basic operations:
+> >
+> > * Register a Misc Device
+> > * Create /dev/rust-misc-device
+> > * Provide open call-back for the aforementioned character device
+> > * Operate on the character device via a simple ioctl()
+> > * Provide close call-back for the character device
+> >
+> > Signed-off-by: Lee Jones <lee@kernel.org>
+> > ---
+> >  samples/rust/Kconfig             | 10 ++++
+> >  samples/rust/Makefile            |  1 +
+> >  samples/rust/rust_misc_device.rs | 80 ++++++++++++++++++++++++++++++++
+> >  3 files changed, 91 insertions(+)
+> >  create mode 100644 samples/rust/rust_misc_device.rs
+> >
+> > diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+> > index b0f74a81c8f9..df384e679901 100644
+> > --- a/samples/rust/Kconfig
+> > +++ b/samples/rust/Kconfig
+> > @@ -20,6 +20,16 @@ config SAMPLE_RUST_MINIMAL
+> >
+> >         If unsure, say N.
+> >
+> > +config SAMPLE_RUST_MISC_DEVICE
+> > +     tristate "Misc device"
+> > +     help
+> > +       This option builds the Rust misc device.
+> > +
+> > +       To compile this as a module, choose M here:
+> > +       the module will be called rust_misc_device.
+> > +
+> > +       If unsure, say N.
+> > +
+> >  config SAMPLE_RUST_PRINT
+> >       tristate "Printing macros"
+> >       help
+> > diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+> > index c1a5c1655395..ad4b97a98580 100644
+> > --- a/samples/rust/Makefile
+> > +++ b/samples/rust/Makefile
+> > @@ -2,6 +2,7 @@
+> >  ccflags-y +=3D -I$(src)                                # needed for tr=
+ace events
+> >
+> >  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)            +=3D rust_minimal.o
+> > +obj-$(CONFIG_SAMPLE_RUST_MISC_DEVICE)                +=3D rust_misc_de=
+vice.o
+> >  obj-$(CONFIG_SAMPLE_RUST_PRINT)                      +=3D rust_print.o
+> >
+> >  rust_print-y :=3D rust_print_main.o rust_print_events.o
+> > diff --git a/samples/rust/rust_misc_device.rs b/samples/rust/rust_misc_=
+device.rs
+> > new file mode 100644
+> > index 000000000000..3837532d259e
+> > --- /dev/null
+> > +++ b/samples/rust/rust_misc_device.rs
+> > @@ -0,0 +1,80 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +// Copyright (C) 2024 Google LLC.
+> > +
+> > +//! Rust misc device sample.
+> > +
+> > +use kernel::{
+> > +    c_str,
+> > +    ioctl::_IO,
+> > +    miscdevice::{MiscDevice, MiscDeviceOptions, MiscDeviceRegistration=
+},
+> > +    prelude::*,
+> > +};
+> > +
+> > +const RUST_MISC_DEV_HELLO: u32 =3D _IO('|' as u32, 9);
+> > +
+> > +module! {
+> > +    type: RustMiscDeviceModule,
+> > +    name: "rust_misc_device",
+> > +    author: "Lee Jones",
+> > +    description: "Rust misc device sample",
+> > +    license: "GPL",
+> > +}
+> > +
+> > +struct RustMiscDeviceModule {
+> > +    _miscdev: Pin<KBox<MiscDeviceRegistration<RustMiscDevice>>>,
+> > +}
+> > +
+> > +impl kernel::Module for RustMiscDeviceModule {
+> > +    fn init(_module: &'static ThisModule) -> Result<Self> {
+> > +        pr_info!("Initialising Rust Misc Device Sample\n");
+> > +
+> > +        let options =3D MiscDeviceOptions {
+> > +            name: c_str!("rust-misc-device"),
+> > +        };
+> > +
+> > +        Ok(Self {
+> > +            _miscdev: KBox::pin_init(
+> > +                MiscDeviceRegistration::<RustMiscDevice>::register(opt=
+ions),
+> > +                GFP_KERNEL,
+> > +            )?,
+> > +        })
+>
+> Since this v4 was sent just when I was commenting on v3:
+>
+> Why do we add examples where we ask people to allocate those structures w=
+ith
+> kmalloc()?
+>
+> `MiscDevice` should switch to the generic `Registration` type in [1] and =
+use
+> `InPlaceModule`, such that those structures land in the .data section of =
+the
+> binary.
+>
+> [1] https://lore.kernel.org/rust-for-linux/20241205141533.111830-3-dakr@k=
+ernel.org/
+>
+> > +    }
+> > +}
+> > +
+> > +struct RustMiscDevice;
+> > +
+> > +#[vtable]
+> > +impl MiscDevice for RustMiscDevice {
+> > +    type Ptr =3D KBox<Self>;
+> > +
+> > +    fn open() -> Result<KBox<Self>> {
+> > +        pr_info!("Opening Rust Misc Device Sample\n");
+>
+> This should be `dev_info!`, but I see why you don't have access to the de=
+vice
+> structure here...
+>
+> @Greg: How do miscdev drivers do this in C? I looked at a couple of them,=
+ but
+> all of those seem to use pr_* macros. They can't get the device pointer f=
+rom
+> the inode or file pointer.
+>
+> However, C drivers could refer to the struct miscdevice directly since it=
+'s
+> almost always a static variable in the file scope.
+>
+> In Rust we do the static allocation part with `InPlaceModule` as mentione=
+d
+> above. However, this still doesn't let us refer to the underlying struct
+> miscdevice.
+>
+> This all would be much cleaner if there'd be a "fake" probe() callback fo=
+r a
+> struct miscdevice. This way we could perfectly align the miscdevice abstr=
+action
+> with the abstractions for all other drivers, such as PCI, platform, etc.
 
-Commit-ID:     953753db887f9d70f70f61d6ecbe5cf209107672
-Gitweb:        https://git.kernel.org/tip/953753db887f9d70f70f61d6ecbe5cf209107672
-Author:        Rik van Riel <riel@surriel.com>
-AuthorDate:    Thu, 05 Dec 2024 10:46:30 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Fri, 06 Dec 2024 10:25:53 +01:00
+It turns out that the file private data is a pointer to the `struct
+miscdevice` in fops->open(), so we can access it in open. To access it
+in other fops hooks, we need to take a refcount on the device in open
+and stash it.
 
-x86/mm/tlb: Also remove local CPU from mm_cpumask if stale
-
-The code in flush_tlb_func() that removes a remote CPU from the
-cpumask if it is no longer running the target mm is also needed
-on the originating CPU of a TLB flush, now that CPUs are no
-longer cleared from the mm_cpumask at context switch time.
-
-Flushing the TLB when we are not running the target mm is
-harmless, because the CPU's tlb_gen only gets updated to
-match the mm_tlb_gen, but it does hit this warning:
-
-        WARN_ON_ONCE(local_tlb_gen > mm_tlb_gen);
-
-  [ 210.343902][ T4668] WARNING: CPU: 38 PID: 4668 at arch/x86/mm/tlb.c:815 flush_tlb_func (arch/x86/mm/tlb.c:815)
-
-Removing both local and remote CPUs from the mm_cpumask
-when doing a flush for a not currently loaded mm avoids
-that warning.
-
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Tested-by: kernel test robot <oliver.sang@intel.com>
-Signed-off-by: Rik van Riel <riel@surriel.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Link: https://lore.kernel.org/r/20241205104630.755706ca@fangorn
-Closes: https://lore.kernel.org/oe-lkp/202412051551.690e9656-lkp@intel.com
----
- arch/x86/mm/tlb.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/arch/x86/mm/tlb.c b/arch/x86/mm/tlb.c
-index 1aac4fa..3c30817 100644
---- a/arch/x86/mm/tlb.c
-+++ b/arch/x86/mm/tlb.c
-@@ -756,13 +756,13 @@ static void flush_tlb_func(void *info)
- 	if (!local) {
- 		inc_irq_stat(irq_tlb_count);
- 		count_vm_tlb_event(NR_TLB_REMOTE_FLUSH_RECEIVED);
-+	}
- 
--		/* Can only happen on remote CPUs */
--		if (f->mm && f->mm != loaded_mm) {
--			cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(f->mm));
--			trace_tlb_flush(TLB_REMOTE_WRONG_CPU, 0);
--			return;
--		}
-+	/* The CPU was left in the mm_cpumask of the target mm. Clear it. */
-+	if (f->mm && f->mm != loaded_mm) {
-+		cpumask_clear_cpu(raw_smp_processor_id(), mm_cpumask(f->mm));
-+		trace_tlb_flush(TLB_REMOTE_WRONG_CPU, 0);
-+		return;
- 	}
- 
- 	if (unlikely(loaded_mm == &init_mm))
+Alice
 
