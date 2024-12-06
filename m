@@ -1,164 +1,161 @@
-Return-Path: <linux-kernel+bounces-434710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 843349E6A06
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:27:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C20069E6A0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 10:27:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E196188596D
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:27:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D9341885996
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 09:27:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834751E1A17;
-	Fri,  6 Dec 2024 09:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 863D41EC010;
+	Fri,  6 Dec 2024 09:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ib349zOm"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WmJmKkcW"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC301C3F2C;
-	Fri,  6 Dec 2024 09:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA8B1C3F2C
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 09:27:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733477216; cv=none; b=YZxoaK8M4L2HqJwt0Abe+jbzkCTOcJ8D7CtMoxkukOfvtK1DwRxMJHy84mWA9iU+93iBYabNfU/XPjT+B2HL3yYdVrXJIROfTfMGFTx+p/eJCZz0n7rpZaRDZX014M2So7e7bS75alRJgVnlluSSerQuY2xh0xhqSicW7Q+HZDw=
+	t=1733477229; cv=none; b=ANo3U8qbfNvYFV7nz4wEy+Kpt1qH7yM8dwLVhTUTgiyLyA5gSkz9Tnuxy3vx0u1IBhzAMYyk6e2sJqACOA4lxD+M3KyN5EtZ1DNq03+mmXqJCRfiM2wsLiVKBavN2l+HaHGBS4InSD25UILFLyGSAqn0In1ldEJq/ucDZ80G+Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733477216; c=relaxed/simple;
-	bh=DOgjgIHtbvEEs4icMPXghie6iZ1iNRD3xyyVRQQWGo4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=J2uYR9n+7g88IFa8Frn+KCP0fy9d3VAaGIb9SggghaRNQQQROwWlf1j/eIAzDi3AwVGdtsil197O/eeTjcYDedAM0t6ThDpxsS3XK6qrx8KuXQld3MpzmlXfxaPnWW9ylVHGN3FuRbfGTdXT5ujWGaIZguNk9504rzADXyn7jvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ib349zOm; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53dd2fdcebcso2329462e87.0;
-        Fri, 06 Dec 2024 01:26:54 -0800 (PST)
+	s=arc-20240116; t=1733477229; c=relaxed/simple;
+	bh=oJo/CpCSdJWkkXic5KnW81eS91w7lC3xh+a+smGHQcY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FR9JbdtZL5AQbMZdiP7QRJwnoAmbSUj9goh38J+VFqP8hnFweivukGeqtRPdU2m8J9dh/N30e7ppsVJSlNcty3RmrZW2WC3XxzI2f8MvkKspq9zjG5tuJQmdoUUGNaDLZ8EiI1T5DbFhTi9VH1DO1ioxvVB6iU4vL5nikEuJKgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WmJmKkcW; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53e2129be67so2154917e87.2
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 01:27:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733477213; x=1734082013; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UpFq1+DMaQvpewJxrv6v8zSoD14ZkAeC0fz9lQIxpy8=;
-        b=Ib349zOm6HI7ZszDLJQDQes2CAQvwZlGSVeqoyZGYIH4de9VVlxtqFkd96COgkNfQS
-         NHIGLknN7d3MHWASurWg8jGEoV5TcO45zsEiyMZAuck1oHnrVLKMlGYrCCY5BdJ+0dl3
-         rNIfE4hA1Mcru1y9EbbKhanNuvsTo+4Urr+1o4/oEmJwRX6z5eifzMgBsRS6cfubuGw2
-         60B16KSy8Vj2opv3KSl76jGdNYJdq5INiK7aw2CzihncqJMv9DqLoy/TJi3D32sAWgWf
-         6PCSVz7C4T6QNcM1yZC8dkZPdkBva751lI8UJsLSrdpbZJGbgDzUpNE66FuRuL+p84pA
-         Yybw==
+        d=linaro.org; s=google; t=1733477226; x=1734082026; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7broW1gZ7NVHflpX84N2WQlsqRcFTPMTUqNg9tqTtk8=;
+        b=WmJmKkcW5CODlS/BvXHeX0XLT5AMCIyosDENYK4SqweHaM6Swz4KhorZLMzF/hXXq2
+         4TIYgf644pGiM7QpHL3ko1NhK+qrLG4jepSQ7Z2IyW2/jQaGfA4NBJbWK6m4lpPKbLx9
+         pSnLzSCqqSE6p4m9RhwlDHGiwYwvrIhLukG5dJmsFCjg/XwAHl8W3cZArH1imuwwfFEM
+         UQQk0u8Lr/g47oN4uDu/G2QHmXIk5O823gNOZ0kG2k5vsAf1Xj6lyXHrPX1vaEVSGpzj
+         eKX8IhlliEzxRqa78nRQFDS3sLW8OmcD6U2MnCXkQeFmZLLGYbkRiYvjXcTqydAo0+z2
+         y1JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733477213; x=1734082013;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UpFq1+DMaQvpewJxrv6v8zSoD14ZkAeC0fz9lQIxpy8=;
-        b=Ugya9/4CJThKQi48mYavYBoFwaQ+nLkGWyFLZbNaXSetFVmHWbfQyk9qMp1tad6TCA
-         nHtXHcIdctRElQHkdQcz6GqwcnBPqct3f89FOSXDM8W9alx3vLOkAaKcg9fPYPS895gz
-         E6DLrkAeJ75Q2/i/yu5EUdq96A9Fx06tOwOuAsuP1lN2KzWMj1Exx+RItV/RZ3Vt2w1V
-         Xjv5hzLTDj1/aXe8TM84t3vjyngxppGPmtpUvURNxvU9G8mifDbbKYCi6dNFSfCg2H67
-         A/H45W1f1nRmTJsa3m/pyXJCYNjU58hRrVbpiT2VpbQvqzTPaYfYBRS39SLtUhXsphfm
-         ph6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUIZSYbbH/Vjm5qPEMG4q3Lc+Rkc6webqBKfB2gnXVTb7gnWSv5t4bIVLCbIRmfqZwKA9FkALHOFyM=@vger.kernel.org, AJvYcCX8rxgr0bZ0CFySYJwu5bOfPsi8C3UHa0qUqFP67VwVkJ2nHvxd6QPVMRiwMnrKugxNYq8CoFbPxXE55hPd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBqEIgMe7IYdwK4qATALKOzWGSEVN48NjOU1sJftjWPCOS63YA
-	VdwMeJOP9woLSrUqxvld7/zyPxSzj0Sx3No1ng/ob8qOmW8hBM6h
-X-Gm-Gg: ASbGnctNyL6pOncs55L6doR1sgsaoLgSjb3iMQjmmqzaRdb+2pCsjnmFjl4oZohTJAH
-	sSte2tsM9kcwNRCivDwylVTFWnfq6c0q06e8D8qMILhf/g/INvll8avZFI1LlwybEDFylpd6UO0
-	bvpLtWkLQ83eH/ehZOnfh3JoQoeMpmshZz/1ovROqwduVCAMPaowEEljiESdXVoxspuyKm/cf95
-	dizkkk5pX49Y0aJegpn0HG6wJJEtIsrqZufD7Eo5QU9ixRheQkIHONA
-X-Google-Smtp-Source: AGHT+IFyvsA+zQFzRoi2X/NTwbQxmXVEoExfyBnwbC7Oe3QZMaB61RMhwvmWEaefbh7vu3cS++0avQ==
-X-Received: by 2002:a05:6512:e9c:b0:53e:2151:4d9f with SMTP id 2adb3069b0e04-53e2c2e8a34mr1180354e87.44.1733477212853;
-        Fri, 06 Dec 2024 01:26:52 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229c95fcsm447449e87.229.2024.12.06.01.26.48
+        d=1e100.net; s=20230601; t=1733477226; x=1734082026;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7broW1gZ7NVHflpX84N2WQlsqRcFTPMTUqNg9tqTtk8=;
+        b=Y5fZ9B+V+w0rO2SiWgAobvC4m6IuGIQ9IWvDAD7aHohiYwLo0SCSjCdBclt+TxOwTr
+         9xuzgaivcXee91sV5egar54w7MN9WieE/EdrcdY+oOlDdhTZ+9qpzQkRKZ4Ji9duMB17
+         acF2UBCc7KDRm2FvWX9YSdFbHQgrb4Eg9CZt2WsLdeTBZdN5doRYdcMpzsP7iCuEpf2m
+         weyhBVuFEhnUEKGhHJb/ruHdf7b1huFpCNy+vngW2eJEo/ln2hTrkY1R/4+dqe0Q+Dr4
+         JWCeFcRFA93DfH6NbSjsDfgVl0Ll8QpY+pP5zS4EHIbahuJeod9yuoY2/rcOtw/wLKX0
+         GYug==
+X-Forwarded-Encrypted: i=1; AJvYcCUz++8bQHtmb+L2kcYORbt2cKQhNDVJMAAMil4LIl5kVT3h+ZXehdNJCYXGBuv8dN694wxGytmLs1qLBak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4dll/LeSDKSLsK64BrLNgCGbVN9CMV1FrooVLRdidvd8hUb4m
+	xY2FwqLMOLOVhXur68x1hCwOMa8+6zla2/gcRoXdL/JZfcDw0nz1t8KFUAhU/JM=
+X-Gm-Gg: ASbGncvCrDYb/jg+6NGbawbCIFYfR2dlU6a5P59JCoZRQ0I673tkypW2TqJO4YKSLvF
+	fMA1oDNjlbNJr4JWByApIQOeVbqUy6Q087AZoR2A5KJ6oLdXO9rqeTuOhdxDjV5tSym3FUKIgUa
+	kaWp4sVDm+ObgjZUTKYBjGGpRwEaXmhxCzSblQOi0EvqL4tfFDetqppeGuZQSWtv4ZJ+5et7HO4
+	DhVlWd6L3oIsVLfoa+gYuArtTa3VoFmPP6zALWUgSktTqGv22leTZtrmB2YL+jRbvX/5jdvJJNW
+	b/F4cvo+zmsrFwDKyW62y6Z3BLwctA==
+X-Google-Smtp-Source: AGHT+IE19qPwbx3UFDXuLqxlrNLClxfZsWNhadyWFpGu/ahSESOQg+xnLVgzOuZizB2iVY3wNhLDgw==
+X-Received: by 2002:a05:6512:3ba3:b0:53e:2751:84fd with SMTP id 2adb3069b0e04-53e2c28e5d1mr584353e87.1.1733477225873;
+        Fri, 06 Dec 2024 01:27:05 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e229c23d8sm445851e87.211.2024.12.06.01.27.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 01:26:50 -0800 (PST)
-Date: Fri, 6 Dec 2024 11:26:42 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Mehdi Djait <mehdi.djait@linux.intel.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] iio: kx022a: document new chip_info structure members
-Message-ID: <Z1LDUj-naUdGSM6n@mva-rohm>
+        Fri, 06 Dec 2024 01:27:04 -0800 (PST)
+Date: Fri, 6 Dec 2024 11:27:02 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
+	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
+	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: Re: [PATCH 37/45] drm/msm: add support for non-blocking commits
+Message-ID: <odawd4djmpowav7beu76s3m7xtocw7tqsqjjkl7n5xxupn5u66@wpytoudtcizb>
+References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-37-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="ZRsxLEK7ScoQg9xB"
-Content-Disposition: inline
-
-
---ZRsxLEK7ScoQg9xB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241205-dp_mst-v1-37-f8618d42a99a@quicinc.com>
 
-The kx022a driver supports a few different HW variants. A chip-info
-structure is used to describe sensor specific details. Support for
-sensors with different measurement g-ranges was added recently,
-introducing sensor specific scale arrays.
+On Thu, Dec 05, 2024 at 08:32:08PM -0800, Abhinav Kumar wrote:
+> Hook up the mst framework APIs with atomic_commit_setup() and
+> atomic_commit_tail() APIs to handle non-blocking commits.
+> 
+> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> ---
+>  drivers/gpu/drm/msm/msm_atomic.c | 2 ++
+>  drivers/gpu/drm/msm/msm_drv.h    | 1 +
+>  drivers/gpu/drm/msm/msm_kms.c    | 1 +
+>  3 files changed, 4 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/msm_atomic.c b/drivers/gpu/drm/msm/msm_atomic.c
+> index 9c45d641b5212c11078ab38c13a519663d85e10a..801399419c3d26f68d9b0a65d41fc4e1706c70be 100644
+> --- a/drivers/gpu/drm/msm/msm_atomic.c
+> +++ b/drivers/gpu/drm/msm/msm_atomic.c
+> @@ -210,6 +210,8 @@ void msm_atomic_commit_tail(struct drm_atomic_state *state)
+>  
+>  	trace_msm_atomic_commit_tail_start(async, crtc_mask);
+>  
+> +	drm_dp_mst_atomic_wait_for_dependencies(state);
+> +
+>  	kms->funcs->enable_commit(kms);
+>  
+>  	/*
+> diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
+> index d8c9a1b192632d3e29ff125bd7bb2d0bb491275d..1616a4682795f6b9b30cc0bef2baf448ccc62bc0 100644
+> --- a/drivers/gpu/drm/msm/msm_drv.h
+> +++ b/drivers/gpu/drm/msm/msm_drv.h
+> @@ -30,6 +30,7 @@
+>  #include <drm/drm_atomic_helper.h>
+>  #include <drm/drm_probe_helper.h>
+>  #include <drm/display/drm_dsc.h>
+> +#include <drm/display/drm_dp_mst_helper.h>
 
-The members of the chip-info structure have been documented using
-kerneldoc. The newly added members omitted the documentation. It is nice
-to have all the entries documented for the sake of the consistency.
-Furthermore, the scale table format may not be self explatonary, nor how
-the amount of scales is informed.
+Please don't bring extra dependencies to the global list. Individual
+files can perfectly include the header on their own.
 
-Add documentation to scale table entries to maintain consistency and to
-make it more obvious how the scales should be represented.
+>  #include <drm/msm_drm.h>
+>  #include <drm/drm_gem.h>
+>  
+> diff --git a/drivers/gpu/drm/msm/msm_kms.c b/drivers/gpu/drm/msm/msm_kms.c
+> index f3326d09bdbce19d40d0b48549c330c2b836476f..343ad9e9988f6c8d99c5867cf8e81ae625aaa90d 100644
+> --- a/drivers/gpu/drm/msm/msm_kms.c
+> +++ b/drivers/gpu/drm/msm/msm_kms.c
+> @@ -28,6 +28,7 @@ static const struct drm_mode_config_funcs mode_config_funcs = {
+>  
+>  static const struct drm_mode_config_helper_funcs mode_config_helper_funcs = {
+>  	.atomic_commit_tail = msm_atomic_commit_tail,
+> +	.atomic_commit_setup = drm_dp_mst_atomic_setup_commit,
+>  };
+>  
+>  static irqreturn_t msm_irq(int irq, void *arg)
+> 
+> -- 
+> 2.34.1
+> 
 
-Suggested-by: Mehdi Djait <mehdi.djait@linux.intel.com>
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
----
-Revision history:
-v1 =3D> v2:
-- Improved wording based on discussion with Mehdi.
-
- drivers/iio/accel/kionix-kx022a.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-k=
-x022a.h
-index 142652ff4b22..d18d56cef098 100644
---- a/drivers/iio/accel/kionix-kx022a.h
-+++ b/drivers/iio/accel/kionix-kx022a.h
-@@ -137,6 +137,14 @@ struct kx022a_data;
-  *
-  * @name:			name of the device
-  * @regmap_config:		pointer to register map configuration
-+ * scale_table:			An array of tables of scaling factors for
-+ *				a supported acceleration measurement range.
-+ *				Each table containing a single scaling
-+ *				factor consisting of two integers. The first
-+ *				value in a table is the integer part, and
-+ *				the second value is the	fractional part as
-+ *				parts per billion.
-+ * scale_table_size:		Amount of values in tables.
-  * @channels:			pointer to iio_chan_spec array
-  * @num_channels:		number of iio_chan_spec channels
-  * @fifo_length:		number of 16-bit samples in a full buffer
-
-base-commit: 05ff9c9c53c643551fe08fe52bd714310b9afc2e
---=20
-2.47.0
-
-
---ZRsxLEK7ScoQg9xB
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdSw00ACgkQeFA3/03a
-ocUDTwf+P4KomFZwCDODH0Wi+GgjWuc85SqsCo6G62umi9jipPr4eKZcog1DWCHj
-8mKGCI5P330uHh5j9zqbclHYR7CXR4jTCnRgkedtMPx5eTA/Rib9M2ccj6bN6Qpb
-iBb7zVEqyt96BCKDH4VxFqtplb8nSunLWGMKvSvZqZ1SfUHBn4yHf6X8SAqai9wk
-2RrIf8yI7VDyhvIT6fTPA4GeIpEFUTP7hB7X9KJslzXsMsosObwxuu1WwDYOZIBD
-iVex4yyrYOrnnR5ZCrxXyNIc+IUvpFRj6k7wPTARNNLqAd2CeaZvrMS+BVk+pm8D
-35UVFEyxmqYKHseyBEATnBkGp7WoHw==
-=aqMx
------END PGP SIGNATURE-----
-
---ZRsxLEK7ScoQg9xB--
+-- 
+With best wishes
+Dmitry
 
