@@ -1,135 +1,149 @@
-Return-Path: <linux-kernel+bounces-435079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9204E9E6F55
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:33:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24649E6F5D
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:35:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F078F188277A
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA62716BDAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 13:34:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82FD11F9EAF;
-	Fri,  6 Dec 2024 13:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593841FCF5B;
+	Fri,  6 Dec 2024 13:34:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P+DmwXlz"
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ooyj1zpO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49161224EA;
-	Fri,  6 Dec 2024 13:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39111F8EFF;
+	Fri,  6 Dec 2024 13:34:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733491984; cv=none; b=SA+JWTyVtI5fNFTCksm8n3H0N2w2w00D/oiTmaFFKrSGmV04ssv3ALPMY2sA+Zea6Nej9dEz3mgIEqx5oyndL4ir3IqmBTk+luhIkImEwB11W/yTUbMyN4laqn+c8BOuSYfLZMfy+ApP2F5mQRt/wp+ZwqP4gPt0sLc5UITtkE0=
+	t=1733492090; cv=none; b=B69mPJZviZco6osrk/kp1CvRbfMh19eYF+2YGLVMnkO83Msriu7aT0RWB/FzfsB73uYDiR6I6LK09WrA26nYc72ZOUHj3HF6GU3wOLrx9ybJ2qrwMT6a/r9Y/auJqaJATogbNjgQsbkxQskA3sl77xhW+nWUqv6XRKe93ElCWg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733491984; c=relaxed/simple;
-	bh=vLP1tsrLrBn5UbOMsUTvwsyw2ImcPlXlTvJJHcQ03AA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=SquCsVFBsB/VkpNQugzc/dLTgfb/CG9Vlj9g6svumuzY6HeX5ZhF2/WsfUXDWwKteUbrolNk6rIxDCGQxY1/XUJtRPpADfe+pRwjJSzzCbhasXI4sI+XGMz0on+Ta1uL+hwWpk1qdV2ffP3vWeNMNFiGCOqAdEH5zR3hAROfX0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P+DmwXlz; arc=none smtp.client-ip=209.85.208.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-30037784fceso4807271fa.2;
-        Fri, 06 Dec 2024 05:33:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733491981; x=1734096781; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GSrFoYGsGUHyZVE4nB9VSg0Tyg06nqGrBpnSKe/0vDQ=;
-        b=P+DmwXlz7vgfLv8ZmhNAbX7TbTQKO7exI5VpqDX/Z+AEMIgRhHMiRABfT6FndsxSLh
-         JhBSXfw1Rx5B4F0P8bOT7WSOhRUJoh0byCqkL+3H3TgcRsEXsQo5yZ/7G8t0ynkQ2Pd4
-         AWGda1B0T7jb2kvxv/ZvVJwcOKcDxk9XLydUdodgoMSftFkLUqXjcgISFfTuH5SJDb2T
-         MGGrS1y8r68LUAiDycu/rCNvYbBppjNMDba+Sj0g1O9kw2S3Raj0KSFNqO2j+Aug/rEx
-         kWZwf9V4bzsC+kKYYhere0Bre1rUmoxYlSKJFJ/jAGgLQHJGqz9Gs39ZEF8UKrntiOHo
-         thGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733491981; x=1734096781;
-        h=content-transfer-encoding:content-language:cc:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=GSrFoYGsGUHyZVE4nB9VSg0Tyg06nqGrBpnSKe/0vDQ=;
-        b=jTrpECgoH2ZofVyrDBDYLMtjim7s8jB/p5IMMRqxFVEgEHs12ZZXSzcABWMa0AqnBy
-         h1lUBruEX5Kp/j3nKM1bgKy5av1z3HSBbAmI1fj0g5gD5zEPAnopuloOLQSFGWsVp8cs
-         1IwSRcvXqgBbN3u44UTw3DMSgNx+k3p/0j0CLTy521Z0S/UNwJh/lmwQDJrPBci7mP29
-         P0UbBc2ev4H0KN/n5zB/pR1CYODmyewRr80zdIMdrQDSxgDZNxxejGdsVA1wvLONaBt+
-         FjfPUs9Urwf0/WZhFfcGRSt2UEMGxYCHouoPvZ+xSSaEu/nMA3YaNpvIm5tVpXWwC3Ik
-         VR8A==
-X-Forwarded-Encrypted: i=1; AJvYcCX8huDsQfaLYIidj4llbAPOpFDPWbCH7lInElnO98BlgEUqFxYDcYiBlaHxhia5b4uRpsWiYqZV72mveGw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4UPyEqkIrgUU3ZdqvKfIX5JgK6T/p1m31cDGWTdRl1NUJ9hbf
-	MiPrsg7n0X+7quvEoDIYMFRts6PoJMUke57R1ndv9eIU+sbXF6BVI7DO3JGp
-X-Gm-Gg: ASbGncsVCXEKD+EjC4uKIe0b4TbX8sQB2T9fCZj6e7IwqSWaTrtehiTITB121v+xpFL
-	nFGmcHEsrs3w0lOGMHfp6t/iM5YXLjuC9u34pS7upn0R2XLQjkXAkadeTjQe4lZQnLyVOkYctZF
-	oaFzqr9XIjzw1EWQSIvxJKRjK7m0tfOdUsza+E/DqCMH0bHaIpdlrhyftwHQDrdx/fKPFu9+fnI
-	kOiICsCO6jYV5Rw/y4JGYkdpIDUA2DqH2/CXpvbmgw4X5iC3tI0
-X-Google-Smtp-Source: AGHT+IFN6Nih4BPUS9vHqQD9JB0tRflwPG1VssIbKhDZvAyx2rQwUJqNR0m9Anlg6c9QjKZZHtkGjw==
-X-Received: by 2002:a05:651c:901:b0:2fb:4b0d:9092 with SMTP id 38308e7fff4ca-3002f89e98dmr14923121fa.1.1733491980769;
-        Fri, 06 Dec 2024 05:33:00 -0800 (PST)
-Received: from [192.168.0.205] ([45.152.72.7])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30038254e47sm794911fa.61.2024.12.06.05.32.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 06 Dec 2024 05:33:00 -0800 (PST)
-Message-ID: <33bfcda8-3d3d-46b9-84f0-44e0e9f44230@gmail.com>
-Date: Fri, 6 Dec 2024 15:33:07 +0200
+	s=arc-20240116; t=1733492090; c=relaxed/simple;
+	bh=Px5F81YeNSqDirNFTRpLwRGatcJ/pFI3iw494vD741Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=srpTewrmWW4W16JRPjJ0G/O3kBa9C3ooTiG7oDCkwfQyXMeF66ZHFKmDmHQggBSD8amYS1f0wMKNrbvW4FJ7m+9GDCzbD8N9JddgPAcxBROpBBMU0F5lmh8S+SS/KdB64Ej6+gtIan4N3TMJAUuoOLx6HT7+n23N8wwKzN60dX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ooyj1zpO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48163C4CED1;
+	Fri,  6 Dec 2024 13:34:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733492090;
+	bh=Px5F81YeNSqDirNFTRpLwRGatcJ/pFI3iw494vD741Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ooyj1zpOSC03qSu9+IRNJIhD217uuJIM8YELkts+lBdAOTw7BcD/5UqCJeYavhS6h
+	 fjB29kCgAvSCYzvlvU7x+8bNfT46UM4nGbStNmSscA2xdqHfLyk8R/6RAbQlfap1E4
+	 aGZSgalOHQrEpC7RnBzHjWayiX8tYaC4HVQ1jEexwWX2vKhE0oqeIDxkUcBiddt3yi
+	 biHDIcZKP6YBYEoOHIBWJ0wbIOTNrdeNr30Qd5D42qclzlY+2/s1wWC87zbbrdyuKT
+	 9ftjYWc0xWM/rCTotS0CWF9nF5qqKwsERL9PU6yFwGrHefhUC1nx+1MLLzdcjMvZG4
+	 YsNMD1le/TWIA==
+Date: Fri, 6 Dec 2024 14:34:44 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Lee Jones <lee@kernel.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de, gregkh@linuxfoundation.org,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] rust: miscdevice: Provide sample driver using the
+ new MiscDevice bindings
+Message-ID: <Z1L9dLyLRmLcwMne@pollux>
+References: <20241206124218.165880-1-lee@kernel.org>
+ <Z1LzOORuFpO0MXAZ@pollux>
+ <20241206125430.GB7684@google.com>
+ <Z1L2tjNrIa2Q0Awf@pollux>
+ <20241206131445.GE7684@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Yura Strilets <yurastr100@gmail.com>
-Subject: [REGRESSION][BISECTED] asus-wmi driver fails on my laptop
-To: platform-driver-x86@vger.kernel.org
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241206131445.GE7684@google.com>
 
-Hello,
+On Fri, Dec 06, 2024 at 01:14:45PM +0000, Lee Jones wrote:
+> On Fri, 06 Dec 2024, Danilo Krummrich wrote:
+> 
+> > On Fri, Dec 06, 2024 at 12:54:30PM +0000, Lee Jones wrote:
+> > > On Fri, 06 Dec 2024, Danilo Krummrich wrote:
+> > > 
+> > > > On Fri, Dec 06, 2024 at 12:42:11PM +0000, Lee Jones wrote:
+> > > > > It has been suggested that the driver should use dev_info() instead of
+> > > > > pr_info() however there is currently no scaffolding to successfully pull
+> > > > > a 'struct device' out from driver data post register().  This is being
+> > > > > worked on and we will convert this over in due course.
+> > > > 
+> > > > I think you're going too fast with this series.
+> > > > 
+> > > > Please address the comments you receive before sending out new versions.
+> > > > 
+> > > > Also, please document the changes you have made from one version to the next,
+> > > > otherwise it's gonna be very hard to review this.
+> > > 
+> > > I can add a change log.
+> > > 
+> > > What comments were missed?
+> > 
+> > I think MiscDevice should ideally use the generic `Registration` type from [1].
+> 
+> How can an in-tree driver use out-of-tree functionality?
 
-After upgrading from 6.11 to 6.12 a bunch of Fn+Fx buttons(touchpad, 
-mic, kb backlight, my asus) stopped working and the 
-/sys/(...)/asus::kbd_backlight interface is missing, which, considering 
-the dmesg, looks like an asus-wmi driver issue.
+AFAICT, this sample module is in the exact same stage as the generic device / driver
+infrastructure.
 
-I've been able to bisect the issue to the commit 
-[b012170fed282151f7ba8988a347670c299f5ab3] "platform/x86: asus-wmi: Fix 
-thermal profile initialization"
+Both are on the mailing list in discussion for inclusion into the kernel.
+Labeling one as in-tree and the other one as out-of-tree is clearly misleading.
 
-Additionally, here's some maybe-helpful information:
-my laptop's model -- ASUS Zenbook UX3402VA
-linux distro -- Arch Linux
-.config for bisection -- was taken from /proc/config.gz at 6.12.1 arch 
-kernel(attached in [1]) and missing options are default
-dmesg logs -- The "grep asus" parts of both good and bad scenarios can 
-be seen below and full logs are at [2] and [3]
+I'm just saying it would be good to align this. If the sample driver is time
+critical, I have no problem if you go ahead with the current
+`MiscDeviceRegistration` and `InPlaceModule`, but again, why not align it from
+the get-go?
 
-== bad.log ==
-[    3.664546] asus_wmi: ASUS WMI generic driver loaded
-[    3.713358] asus_wmi: Initialization: 0x1
-[    3.714126] asus_wmi: SFUN value: 0x21
-[    3.714131] asus-nb-wmi asus-nb-wmi: Detected ATK, not ASUSWMI, use DSTS
-[    3.757420] asus_wmi: Failed to set throttle thermal policy (retval): 0x0
-[    3.757425] asus_wmi: Failed to set default thermal profile
-[    3.757429] asus-nb-wmi asus-nb-wmi: probe with driver asus-nb-wmi 
-failed with error -5
-== end ==
+> 
+> > I see that you use `InPlaceModule` now, which is fine. But since this is just a
+> > sample, we could probably afford to wait until the generic type lands.
+> > 
+> > Also, there was a comment about how we can make use of the `dev_*` macros.
+> > 
+> > I really think we should fix those before we land a sample driver. It's gonna
+> > be hard to explain people later on that they shouldn't do what the example
+> > does...
+> 
+> We're authoring the sample based on what is available at the moment.
 
-== good.log ==
-[    4.557898] asus_wmi: ASUS WMI generic driver loaded
-[    4.776587] asus_wmi: Initialization: 0x1
-[    4.777253] asus_wmi: SFUN value: 0x21
-[    4.777256] asus-nb-wmi asus-nb-wmi: Detected ATK, not ASUSWMI, use DSTS
-[    4.777258] asus-nb-wmi asus-nb-wmi: Detected ATK, enable event queue
-[    4.805497] input: Asus WMI hotkeys as 
-/devices/platform/asus-nb-wmi/input/input15
-== end ==
+Well, for this I have to disagree, not being able to use the `dev_*` macros is
+simply meaning that the abstraction is incomplete (in this aspect).
 
-[1] .config - https://pastebin.com/raw/3nDSV8Sm
-[2] bad.log - https://pastebin.com/raw/fvR5Sjzt
-[3] good.log - https://pastebin.com/raw/EazfLAWA
+I don't see the need to land a sample driver that tells the user to do the wrong
+thing, i.e. use the `pr_*` macros.
 
-Thanks,
-Yurii
+As Alice mentioned, you can get the miscdevice pointer from the file private
+data in open() and then make it accessible in the other fops hooks. If we go for
+this solution it will change the callbacks of `MiscDevice` and maybe even some
+other architectural aspects.
+
+This needs to be addressed first.
+
+> 
+> There will always be something better / more convenient coming down the
+> pipe.  We don't usually put off contributors pending acceptance of
+> out-of-tree functionality, sample or otherwise.
+
+No one asks for this here. But if the example reveals shortcomings, we shouldn't
+promote them as example.
+
+> 
+> As I've already mentioned, I'd be _more than_ happy to keep improving
+> this over time as new and improved helpers / infra. arrives.
+> 
+> > [1] https://lore.kernel.org/rust-for-linux/20241205141533.111830-3-dakr@kernel.org/
+> 
+> -- 
+> Lee Jones [李琼斯]
 
