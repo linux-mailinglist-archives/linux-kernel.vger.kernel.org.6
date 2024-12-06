@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-435121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 472169E6FEE
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:19:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CE1B9E6FE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 15:16:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08D4B283CB2
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E19B3284376
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 14:16:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A82961422A2;
-	Fri,  6 Dec 2024 14:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="jFvcutz6";
-	dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b="1yoHfBet"
-Received: from mo4-p00-ob.smtp.rzone.de (mo4-p00-ob.smtp.rzone.de [85.215.255.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834C02036FA;
+	Fri,  6 Dec 2024 14:16:06 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84DC1322E
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=85.215.255.22
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733494735; cv=pass; b=hlrK1YrQFwbSK4/WMe3UanuMktBA+OCMzPe+7FrIpH3rmiI7YMJ5AE1fPQTPa8hQrqIe01OFe19aJMf26QNu0r3gC58s5cSQkwyTW6g2iRHWcErEyjN26UD/1U3ELa+q+Rb4d+jTdb5bWGJqN3t8at0cfSdgjjBsKngvszJ438w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733494735; c=relaxed/simple;
-	bh=XalW2c+XYVeD96ZB86jq2awk+W+C72TphxamegVPW7E=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=E5UZoQl7T467gKcwlC1uTUwKtGkcchPKVjZo801f1uZNO+fD66DQQJzjBVhuVt8fVvwuLbCqb5gIBHXCI5ZkySX6Tgrwvdj0/YbrHGZPwt6/zVLROBmjCoSBtd2JRKegFF4D+vrhST7JhHIHsVv4suTSyccdrKJbMNJepJd1da4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com; spf=pass smtp.mailfrom=goldelico.com; dkim=pass (2048-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=jFvcutz6; dkim=permerror (0-bit key) header.d=goldelico.com header.i=@goldelico.com header.b=1yoHfBet; arc=pass smtp.client-ip=85.215.255.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=goldelico.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goldelico.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733494542; cv=none;
-    d=strato.com; s=strato-dkim-0002;
-    b=mft91VMrMqOPpdW0b7SKcYchr31zgpbOJbCOA8X3Xh0ho3mQ6rFCeTyhOmlj4P+jEg
-    L1ym/j3TRPnqhSie82hwfMv76MC5DOFKt00iZXKxrtWMXyx48eEkj+CyC7HQR0sYVW1V
-    2MI/llLJ/7J9LL0svlvGn5bHYqauos40Eyu+DHDK+ZHdIsi702/EKiDj6+2pOG5oLobY
-    bTCp1ym2Jj9fHNRKqz+3cY38l+xXDw8iu84zh5Rar1QMfR8v1mBm+4q1Bd6rwvsuDAJC
-    53q5BHHC5bXXeVHAondQHBbfWTvK4oiDuq5RlRqE5quppwE1reTHLiVDAn8tdBFKhbhC
-    mK1w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; t=1733494542;
-    s=strato-dkim-0002; d=strato.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=Z58+uiVgBPQkke6BcCMA/Ak1YSRMhYCJjTVUw2AGcec=;
-    b=BnIdCibFXMZRPq+3fq+O2RFDeCenveNeStzpF93r2YTbwQ4jOMRbpUxP6uyjeR7crU
-    XshCGcJT6++qNzV2icUYG5fg0UyQDvQg3aTXYP1aDiCed7eksPyOx+vne0rnQQob3F84
-    v38e8UiqYQZuF5YxBmwr3wSaGtZvMJxcWxrkr0qTAq06mqhjf71NJTDV3LUfFNLZGk7g
-    cHryS5FpfOihFLbOn1PAAyfb4n8wEJSwOGSjrehrXkfJgWPugv5tAvHUAfqaNniF6LAc
-    pS0dyWFoOrNs8FLyNOpC2YduFxbrNO/iqmNbJXA8iwTPbxJnjgg8CyYyxu+JALhVo4LA
-    fzuw==
-ARC-Authentication-Results: i=1; strato.com;
-    arc=none;
-    dkim=none
-X-RZG-CLASS-ID: mo00
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1733494542;
-    s=strato-dkim-0002; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=Z58+uiVgBPQkke6BcCMA/Ak1YSRMhYCJjTVUw2AGcec=;
-    b=jFvcutz6RXCyfYwhyGr1jkrRUgx+SIgtsF/kbalTLUYAMVAFvpbV7D1/i1xaDboTTs
-    sWUVs/4bwEykV5eX8AZCEosnONtdJePeXLZURq1wOFvQjez9Tpf0RqCgEDIvUlIkUQv6
-    puH+AjlxpVhTBa3x+5zxSlo6d4srY/m1aS8tHs+dWCRSGe3mv8sMh5RF5rU1DSuR76yA
-    bSRoTK4sV/gY6xcLItxKSM3uGCtCmFKio8hxNHsrlHTtlANP36rLImjcI5IfYVWKJPp+
-    U/9LB27Tzcw2KuiooANHXmpVMukVE7nvPiArwJqPAxdQ16SWeDvdMAD7+otK4bzsXl/t
-    mEng==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1733494542;
-    s=strato-dkim-0003; d=goldelico.com;
-    h=Message-ID:Date:Subject:Cc:To:From:Cc:Date:From:Subject:Sender;
-    bh=Z58+uiVgBPQkke6BcCMA/Ak1YSRMhYCJjTVUw2AGcec=;
-    b=1yoHfBetc6222DtH2uP7I5kP8ZnzeQaoCUA2ardu61p2bVDHAHQYiNBLI5M2OL5tl2
-    g0mZk1jQSyrnZuH+XaDg==
-X-RZG-AUTH: ":JGIXVUS7cutRB/49FwqZ7WcJeFKiMhflhwDubTJ9o12DNOsPj0lFzL1yfjEZ"
-Received: from localhost.localdomain
-    by smtp.strato.de (RZmta 51.2.11 DYNA|AUTH)
-    with ESMTPSA id Qb7e400B6EFfkqc
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256 bits))
-	(Client did not present a certificate);
-    Fri, 6 Dec 2024 15:15:41 +0100 (CET)
-From: "H. Nikolaus Schaller" <hns@goldelico.com>
-To: Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Zhou Yanjie <zhouyanjie@wanyeetech.com>,
-	Paul Cercueil <paul@crapouillou.net>
-Cc: linux-phy@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	letux-kernel@openphoenux.org,
-	"H. Nikolaus Schaller" <hns@goldelico.com>
-Subject: [PATCH] phy: ingenic: fix unbalanced regulator_disable() warning
-Date: Fri,  6 Dec 2024 15:15:34 +0100
-Message-ID: <52768c120a6999ce9275bcb15d74a4255f2ef790.1733494534.git.hns@goldelico.com>
-X-Mailer: git-send-email 2.47.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8B00322E
+	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 14:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733494566; cv=none; b=sMClbc7gNf4n9UCxkm2RkhT1U94+iP30NxtKTrqrEEY66EJGy3NnI3gMFINXmv20utDQyG8MoCU0E2VKoptVnYwZ0KDWXSiKwumgPLIpmzZrEMBS6XNqzszQ10uM6lSWGjsri6Qz9gWD5vIxTe7Ir10kKodu2cecWio5/pipN4o=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733494566; c=relaxed/simple;
+	bh=Tkf99ZxUJD7B06TNovFBj5zWUG28OStkofgTtCr+JAw=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=BQri9mfj+MlYZPhBdBOIgzvZgJ9u26lhiwy6WoOmI8u/EPSwzNx0bFkJXcYbs8WdikJt/d2CP6zJlT9IgAGVzBSO3ddY/sPJzWLYbqCTuzektEpRCGzQf5UZ+hPvYeeZ0QjqqMdZq83EFX0jQAu3AEN1v+i3vWfh43EmA8s8/TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a79afe7a0bso40854245ab.3
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 06:16:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733494564; x=1734099364;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gE1TesF6ZaizCblXTChTskphRlSEFQAeYDCiQuPDQKM=;
+        b=j4wzTXxpAj0xKlguPI5noNOrXvQRj+pGYB1HRwTdWTHYCJpo+li9OXaQJuADYVZPra
+         OQD1U6JIvG1PU1/Cd/zl4kOLPaxHP8Vzg/i+NQRB0/eVehScWf3cEMgrrjVysxZXkRQD
+         lBQIcUhvRKJcNT2RjkfCCzGzabf4jTZMF6AEQD1/Y79LUFgEmXut0MV/uekB1BtZhnl+
+         W6uLKJ0SXIht/2PsD3IOdk1R8BLK4yYpshRmqzAfmQtz80WAF/DYjLWRutZIJ3Lzue8C
+         HDIrZOEUSmvoG4xVucJIUxzKyldTREYPGx13GCcKUSPaV1VaPd6fF+oaCGksQhZTcidw
+         cNKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWq75dCq6PYKyHkBcw1CYrwtFpls1CluoYQBbzHGOrgNimFYBFA905SI2ceWLyIv8Bw2nbmKT0ytMvy7lY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoWuU1QXM+fp2h1+bXp9Spb6Yhcm4i35ebO8WZOhUyNq5jT6gP
+	+v70m77rwb+GbaIRKgq/Vtlbw891C8ZfYAVMlOsoNKjR9znCdetF+FIHb7rD/NAvYWQJYy5xjCx
+	ay8Ck3x0OCeX6ALP1MrH9W0XFJm12a8bAJ+g3GayJh0kTS5TJvULFQGI=
+X-Google-Smtp-Source: AGHT+IFzPbqEOcrzl8qSgUO2fmGl5eDL+S3HaNIpt0JniopXGYcsXblVZr7ulGopiPZeoQ6SPpbeXxzInr2ShiHplzVMtFSR7yWO
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset="us-ascii"
+X-Received: by 2002:a05:6e02:1448:b0:3a7:c5c8:aa53 with SMTP id
+ e9e14a558f8ab-3a811d939a3mr36568285ab.13.1733494563834; Fri, 06 Dec 2024
+ 06:16:03 -0800 (PST)
+Date: Fri, 06 Dec 2024 06:16:03 -0800
+In-Reply-To: <000000000000d69fc4060c7d50a2@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67530723.050a0220.a30f1.013f.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] [mm?] KASAN: slab-out-of-bounds Write in shmem_file_read_iter
+From: syzbot <syzbot+3e719fc23ab95580e4c2@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, brauner@kernel.org, bvanassche@acm.org, 
+	cascardo@igalia.com, chao@kernel.org, hughd@google.com, josef@toxicpanda.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, rdunlap@infradead.org, sandeen@redhat.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-if ingenic_usb_phy_exit is called the regulator is already disabled
-through ingenic_usb_phy_power_off() leading to
+syzbot suspects this issue was fixed by commit:
 
-[    5.367301] WARNING: CPU: 0 PID: 20 at drivers/regulator/core.c:2953 _regulator_disable+0x200/0x230
-[    5.368209] unbalanced disables for regulator-dummy
-[    5.370364] Modules linked in: phy_ingenic_usb
-...
-[    5.373441] [<8054601c>] regulator_disable+0x40/0x80
-[    5.372952] [<c02450f8>] ingenic_usb_phy_exit+0x48/0x60 [phy_ingenic_usb]
-[    5.374283] [<8050839c>] phy_exit+0xd8/0x104
-[    5.373104] [<80657a24>] __dwc2_lowlevel_hw_disable+0xe0/0xe8
-[    5.373393] [<80658ad4>] dwc2_driver_probe+0x818/0x834
-...
+commit 1c82587cb57687de3f18ab4b98a8850c789bedcf
+Author: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Date:   Thu Nov 7 11:41:09 2024 +0000
 
-Signed-off-by: H. Nikolaus Schaller <hns@goldelico.com>
----
- drivers/phy/ingenic/phy-ingenic-usb.c | 1 -
- 1 file changed, 1 deletion(-)
+    hfsplus: don't query the device logical block size multiple times
 
-diff --git a/drivers/phy/ingenic/phy-ingenic-usb.c b/drivers/phy/ingenic/phy-ingenic-usb.c
-index eb2721f72a4c1..35984dd8a1bd7 100644
---- a/drivers/phy/ingenic/phy-ingenic-usb.c
-+++ b/drivers/phy/ingenic/phy-ingenic-usb.c
-@@ -124,7 +124,6 @@ static int ingenic_usb_phy_exit(struct phy *phy)
- 	struct ingenic_usb_phy *priv = phy_get_drvdata(phy);
- 
- 	clk_disable_unprepare(priv->clk);
--	regulator_disable(priv->vcc_supply);
- 
- 	return 0;
- }
--- 
-2.47.0
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=174098df980000
+start commit:   fe46a7dd189e Merge tag 'sound-6.9-rc1' of git://git.kernel..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4d90a36f0cab495a
+dashboard link: https://syzkaller.appspot.com/bug?extid=3e719fc23ab95580e4c2
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14903769180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14f25d81180000
 
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: hfsplus: don't query the device logical block size multiple times
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
