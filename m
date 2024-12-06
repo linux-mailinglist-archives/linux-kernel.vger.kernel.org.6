@@ -1,135 +1,126 @@
-Return-Path: <linux-kernel+bounces-434416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-434415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 859769E6674
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:45:24 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 779949E6672
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 05:45:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 02CE116B208
-	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:45:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 068321885F2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  6 Dec 2024 04:44:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381D41DE2B3;
-	Fri,  6 Dec 2024 04:40:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ROMvm6rU"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2EC01DC05F
-	for <linux-kernel@vger.kernel.org>; Fri,  6 Dec 2024 04:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B6351DAC81;
+	Fri,  6 Dec 2024 04:40:57 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F091D7992;
+	Fri,  6 Dec 2024 04:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733460058; cv=none; b=kaYnLr46N0VdqXApj8uv0RF0voXbMOxWWq8lS6MuH3kZZkos7Wa4hXrMOtsp/iQ6a09xtDFrD5G0RsDCVXooNX6gN1e88g+1cRDdJVsYpZaYYltidd1A7WxX8MTqc56OUmGYalRgNjrbmaNQPulQgTyf2B7YZ+YiMZa5mHVCvyg=
+	t=1733460057; cv=none; b=kDECf5yT5DCzGTCjLCZbs9Lq+dTdOYC74znWEVnmjW52SeYEsOuBTZKmjMCwKHFWUE+SAv6aSmi57uS4UA0+L/kb4EtBjNjPA4oVbO/TvyASnoj+t3COOhXrNx9S+a7RJu5HBZPSzFkvQEaYhRM889QSpTnW1huXmGAmrgDJomg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733460058; c=relaxed/simple;
-	bh=hQiLh7sZsGgCUtv2UvPu2RN6VeSmcwXkb3yt5YfihOU=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=LRZQYG6Y5ExvXWcT+N+eilosla0ZWqsFH9F67nQAPRlM+W7bDXenZx1gGTqZ1b82OxaaNpK6/6V+Z8LLspadYvM6qszQAh4WpgbfGpipfAUsUCA9FVWh2FuW9REnpksI5CoReUsg/8BK1qaxIYeM7PFUPNNcJN0WQZ72CXLPQ5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ROMvm6rU; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6ef55d44f73so12161667b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 05 Dec 2024 20:40:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733460056; x=1734064856; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K8aGNRfDoJ3pTcSjnS5URRoovO9dVtKuYf6NSgPnrbk=;
-        b=ROMvm6rUdD9dsWLRuB3lfH4USFakpAbru4HDP7Y6Wgf2lH9DBrDsXaTZDuVbpcnGvS
-         JPO/c8GSxjBZmxcMWzLjoFJrz5UdseC9WP6bnyQCa2WQcAc33QQ6/xQSb6oq9Lcgt1Em
-         aVU7PTiaHRJG+xf1hxt+Lc0CpKSvXu/r9vdgef1/UaLD90yMQB7Pt6WFfDhqBMkLbT3H
-         nN07dJN0NDBv487E/FsueRpYM/YWRqkXnnSR9DneLVCXKKO6xvEBYrwoN1nMxlz7ggHU
-         5P5kA7oXj3uIPBxf7ndfxE7SbdN3hfAngtkRSfqRuaKhyVa1RrMQrG8k6JdChituyiEk
-         JW2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733460056; x=1734064856;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K8aGNRfDoJ3pTcSjnS5URRoovO9dVtKuYf6NSgPnrbk=;
-        b=YM5OLPrsHhZbdSIqHvYC9DIX17TY986VrNagTBdazfPpzD7k6aVkkzxikPmMqfmf0s
-         zA6PsKHXd1wM2wcHee8FMdkFeTAF6UcGyXC0NmpNB2KRR2XfPm0EciTOeXdPr48TTZWZ
-         3EiCUUr5GvevGsRBToi2RqEgER0NpY2kjcQwY2JEQk4oM7aigLOnH4/AVi/o9QkniFq/
-         5wp/lWfLoSmVByrcYN3hkPXTX6Df7QG81Qv3NmIrEfBu/3cBrwjN2oQ4CNGskXzNUUOX
-         Q9a6evM13cQ+XNZ87guz5UeWz6e0nNefsUGn1Jt5oUyNvI6S/6ZOZoF5Op5m1y4ie7i2
-         jEjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIJtLAZzaGgaKD5mxoh5X/j7+T+ZbWUc1enthNfCO3bWw7SKIA7NsOn5FW1bXqAtCr61k1lN5eI60BaKA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2ta9Z7Nw3coSeEN/ZA+8mTFEvW/jCkVIxkkbMNYuF885LsYLE
-	t7xueS1mimdVrLn6HdpxGGq/XFph7gpaa7si6Sum5Qi80f8Ef+lX9f7iw1gUbOfAyKU4xX5gt53
-	RQ718WA==
-X-Google-Smtp-Source: AGHT+IHJTt6SspkYnMxQ2Ijr/i1yhHjbdWhgk+WnF1TdoCAiqORktrvqvdoCtq+W9OWyaq0CG9W7W6zO7Ul9
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:eb75:393:2a8c:1440])
- (user=irogers job=sendgmr) by 2002:a05:690c:7007:b0:6eb:ac7:b1ef with SMTP id
- 00721157ae682-6efe3bf2e89mr384737b3.1.1733460056007; Thu, 05 Dec 2024
- 20:40:56 -0800 (PST)
-Date: Thu,  5 Dec 2024 20:40:35 -0800
-In-Reply-To: <20241206044035.1062032-1-irogers@google.com>
-Message-Id: <20241206044035.1062032-9-irogers@google.com>
+	s=arc-20240116; t=1733460057; c=relaxed/simple;
+	bh=l6yU7EFV2DWH8QMiN44xfukKeyx8cYOUr0adyde+ZsY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JercXY505oWSLIPHFMVDOz11KNuq8CozUXSEjIJyrqbZkzXEmhezi5JcKTBUGWg959PeU1IRwND87+9rmTU90C81sCTAEGCk9ouJcsGidi1cpF+3b+aGBeKcQmcON4F+rq4rxj6GfxFq1wvrDIcK2RoVg9tt54spEkb93Hh8GTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 03BDC169E;
+	Thu,  5 Dec 2024 20:41:19 -0800 (PST)
+Received: from [10.163.50.12] (unknown [10.163.50.12])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 99B7B3F58B;
+	Thu,  5 Dec 2024 20:40:45 -0800 (PST)
+Message-ID: <c1f2ba9e-6f2d-4c7e-9956-6d3b183d3e05@arm.com>
+Date: Fri, 6 Dec 2024 10:10:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241206044035.1062032-1-irogers@google.com>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1 8/8] libperf cpumap: Grow array of read CPUs in smaller increments
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Kyle Meyer <kyle.meyer@hpe.com>, Ben Gainey <ben.gainey@arm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/4] arm64: remove CONFIG_RODATA_FULL_DEFAULT_ENABLED
+To: Huang Shijie <shijie@os.amperecomputing.com>, catalin.marinas@arm.com,
+ will@kernel.org
+Cc: patches@amperecomputing.com, paulmck@kernel.org,
+ akpm@linux-foundation.org, thuth@redhat.com, rostedt@goodmis.org,
+ xiongwei.song@windriver.com, ardb@kernel.org, steven.price@arm.com,
+ suzuki.poulose@arm.com, mark.rutland@arm.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ cl@os.amperecomputing.com
+References: <20241126085647.4993-1-shijie@os.amperecomputing.com>
+ <20241126085647.4993-3-shijie@os.amperecomputing.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20241126085647.4993-3-shijie@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Instead of growing the array by 2048, grow by the larger of the
-current range or 16. As ranges are typical for things like the online
-CPUs this will mean a single allocation happens. While uncore CPU maps
-will grow 16 at a time which is a value that is generous except say on
-large servers.
+On 11/26/24 14:26, Huang Shijie wrote:
+> The default kernel is rodata=on which means
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/lib/perf/cpumap.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Right but this is true only after the update in the series.
 
-diff --git a/tools/lib/perf/cpumap.c b/tools/lib/perf/cpumap.c
-index 17413d3a2221..2237505f8f5f 100644
---- a/tools/lib/perf/cpumap.c
-+++ b/tools/lib/perf/cpumap.c
-@@ -212,7 +212,7 @@ struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list)
- 					goto invalid;
- 
- 			if (nr_cpus == max_entries) {
--				max_entries += MAX_NR_CPUS;
-+				max_entries += max(end_cpu - start_cpu + 1, 16UL);
- 				tmp = realloc(tmp_cpus, max_entries * sizeof(struct perf_cpu));
- 				if (tmp == NULL)
- 					goto invalid;
-@@ -226,14 +226,15 @@ struct perf_cpu_map *perf_cpu_map__new(const char *cpu_list)
- 		cpu_list = p;
- 	}
- 
--	if (nr_cpus > 0)
-+	if (nr_cpus > 0) {
- 		cpus = cpu_map__trim_new(nr_cpus, tmp_cpus);
--	else if (*cpu_list != '\0') {
-+	} else if (*cpu_list != '\0') {
- 		pr_warning("Unexpected characters at end of cpu list ('%s'), using online CPUs.",
- 			   cpu_list);
- 		cpus = perf_cpu_map__new_online_cpus();
--	} else
-+	} else {
- 		cpus = perf_cpu_map__new_any_cpu();
-+	}
- invalid:
- 	free(tmp_cpus);
- out:
--- 
-2.47.0.338.g60cca15819-goog
+        if (!strcmp(arg, "on")) {
+                rodata_enabled = rodata_full = true;
+                return true;
+        }
 
+rodata_full is always "true" via 'rodata=on' and does not depend
+on the config RODATA_FULL_DEFAULT_ENABLED anymore, so it can be
+dropped. Please update this commit message with these context as
+well.
+
+> CONFIG_RODATA_FULL_DEFAULT_ENABLED is always enabled by default.
+> So we can remove CONFIG_RODATA_FULL_DEFAULT_ENABLED now.
+> 
+> Signed-off-by: Huang Shijie <shijie@os.amperecomputing.com>
+> ---
+>  arch/arm64/Kconfig       | 14 --------------
+>  arch/arm64/mm/pageattr.c |  2 +-
+>  2 files changed, 1 insertion(+), 15 deletions(-)
+> 
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 4316b1fe8bf8..a9ca305a31d8 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1653,20 +1653,6 @@ config MITIGATE_SPECTRE_BRANCH_HISTORY
+>  	  When taking an exception from user-space, a sequence of branches
+>  	  or a firmware call overwrites the branch history.
+>  
+> -config RODATA_FULL_DEFAULT_ENABLED
+> -	bool "Apply r/o permissions of VM areas also to their linear aliases"
+> -	default y
+> -	help
+> -	  Apply read-only attributes of VM areas to the linear alias of
+> -	  the backing pages as well. This prevents code or read-only data
+> -	  from being modified (inadvertently or intentionally) via another
+> -	  mapping of the same memory page. This additional enhancement can
+> -	  be turned off at runtime by passing rodata=[off|on] (and turned on
+> -	  with rodata=full if this option is set to 'n')
+> -
+> -	  This requires the linear region to be mapped down to pages,
+> -	  which may adversely affect performance in some cases.
+> -
+>  config ARM64_SW_TTBR0_PAN
+>  	bool "Emulate Privileged Access Never using TTBR0_EL1 switching"
+>  	depends on !KCSAN
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index 39fd1f7ff02a..6eef08d8451e 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -20,7 +20,7 @@ struct page_change_data {
+>  	pgprot_t clear_mask;
+>  };
+>  
+> -bool rodata_full __ro_after_init = IS_ENABLED(CONFIG_RODATA_FULL_DEFAULT_ENABLED);
+> +bool rodata_full __ro_after_init = true;
+>  
+>  bool can_set_direct_map(void)
+>  {
+
+This patch can still follow the first one but after folding in the
+third patch.
 
