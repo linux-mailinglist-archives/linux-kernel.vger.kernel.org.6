@@ -1,106 +1,134 @@
-Return-Path: <linux-kernel+bounces-435945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 837599E7F04
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:30:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02D379E7F01
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59D2E1883363
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF8B218833A9
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59ACB823DE;
-	Sat,  7 Dec 2024 08:30:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45A4B126C02;
+	Sat,  7 Dec 2024 08:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="K4M9MTnM"
-Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J69FVtc0"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8933F18638
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 08:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073942E406
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 08:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733560239; cv=none; b=o/TtyYN3M5lubW2s0ARVe7RpYrGZWOAsRon5FPrg3KiAycAXOegYyjz78mtCZerCtMu/JPcvmqE7ZLaTmzQMsBNN0XUxUqynUDoIziw7WJQA4Yul7fwoOBrJeTARVCufHRUcynno7tamTG6B7VfYtq6YrGyPKP1fRnj/Fwe1kSI=
+	t=1733560185; cv=none; b=qPFQbJMoFItwDBdYDl0nEujtKGhd/nHRPYnJv4b9t9NL27SKhYo8Gep53z6gdBU3DibgQjyxM0Uv2zgbD0L+VyM/bCwX6fzX3u4gJe+67xJgb5QstUyod5Vt7xmB+5dR/ppx4khjVakJtp+6p7Hpk7nax3svKC1Fk4NmVSRWMT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733560239; c=relaxed/simple;
-	bh=2S7/DaKEliSnzmrQvHZAYewUM6sNj40Q0iNUFEZC/MY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=BOB81w3MS/3tHGuNdO930EnqvwZhVjkxS2Vr9uF/v4KtFnHptWErLY3Fqq3KwtILEdv1cQJPiaVB/bwT0I/ScqZU5mW2sNFQ3RNJcuxcrArK53Vyi+Weipe06Ju3XVGImPYGavatj3xwJc68+FS+7EJT4gkkpeG8r9A2pV9wvnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=K4M9MTnM; arc=none smtp.client-ip=162.62.58.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1733560230; bh=4FT9aoBqSWgDh8FZQc8D2XKhp892BywhCV8mEuevhtY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=K4M9MTnMj2rKbLhVZCTt/tbdrLSsOGuEfTR86rO5rgzwvfQwOjqN6gDS8VgqpF4c2
-	 TNhzP3yzBtsvE5ozAcTC3SDPC24y1st/ieDYV0arUlCrB/kY7rhu6Ig0G9hbV6ISAO
-	 j5l5NCHTw3SdTTj7V098tN7wtV1BzQng5538T4iw=
-Received: from localhost.localdomain ([2409:875e:a030:1001:14::e66])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 449A50C2; Sat, 07 Dec 2024 16:17:09 +0800
-X-QQ-mid: xmsmtpt1733559429tv5j8mwvn
-Message-ID: <tencent_38F9530F8D11EC9B038B77AE97E73145DA07@qq.com>
-X-QQ-XMAILINFO: MPRquJFDOUjCaHY5a7u0HPFnAdzYWm5MsO5pcMgTq56Tu4wMmK8yhVm8nREGag
-	 R9jeN6K2CcOKeGCZYFAUECFdEAI+BvCAkBvvPPjoUj/WXEZNXNlNtT/+KSZGEfvmQED4n2QOl+Ul
-	 TuWDiXfKEVPCfuWIhMj2Xq6bZhZtdfHPuqt6FuPC9E8R6wcV65zmYRvikZW+G/Vhnp9KMGCw7XtG
-	 Vg3lwx4DPBJlNNtzkwmNqaK+00SCA1guL/rjp+LVdLy4dhtEzWc/idKikRt9NTcfIHVrLbnbzGYA
-	 1BqzzNFrrvu9iMDiK5gSFbQgz9rVLQoIB8awbvcCNDgigiBDEcFpQguqqaCMpkfuXzllN1CDixBj
-	 8j4ZKog7BTnQdeK/Lf93AI6pKJTQXxvBt5orZatvrPI6/7pqdA1P/7Jjona2JQg31GqJLHpnMyL7
-	 lybcR1eAi2z43IFVUsOU319dDgqf8svQttIzibB3O0PBnRmkUjOqnidz/4B03BaYPWnGGAWS2V+d
-	 /LYE3JT8gROCzn23Lg1ZAI8XZKNcs08FSi/m3dKx2X+p2IOYl9IrXAPRz/xWa8ernQb/Auybd0KN
-	 1PopmlcvdO5O4nrG4HrJpNevHXRd4h+qTxtq4Pg8h9fwp7F2AwTB5a70l/mr2kBSGmUD/7R0NW52
-	 wVGe2Rbimgy/s6n2c0jXuE44AqWs1LNDL6vDY+QKXRIMOCm+xCyaHOflf4fkHqoaCsyvXgvBpuok
-	 vGZvowZkacXVCjhfHwmVyXNadxMKUhBZNzKWpnlFLkp58oOkL5ymsGj4l1QKd/ZHqNTn6ZQiSBHt
-	 prxc+8FVMLDiceNfwwUsK/b5yqfLwufF1DdbbwxQUw8juHmCe+W8rHDHx5IKw3i3J6KvqaUd53st
-	 l4IRAp0X14FaEb3tXUO/ByMasy2laoHSPTH46lep6zs9JuyUw7ZuTLzIAEfu7bzNYn7T794w5my1
-	 6IPFDFubuWz5Z69nLtYg==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
-From: Junjie Fu <fujunjie1@qq.com>
-To: akpm@linux-foundation.org
-Cc: fujunjie1@qq.com,
-	gourry@gourry.net,
+	s=arc-20240116; t=1733560185; c=relaxed/simple;
+	bh=SE4q5CPZBs5Ld/6dal0Xy4JuKX+V8rPYo3V2xQehpr0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RcKf5OwCOE46gmLOTZXGEqv1jxvwXj+EjJ7TFv3r5/bMOjMNpMh09HB0aUszykTchnhsj7vJL4eB83Xd+XWgFv/s+zRwI0SGd0XkRwnOyHUqLaeE5h/wsOECtysgylDnCZUZp+9lnQmvYxl4hJ1pL9vSfBTVBw89I1ptwpLq1vM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J69FVtc0; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa6332dde13so176361366b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 00:29:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733560182; x=1734164982; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UHRpLCsjp7NA8B9f3U/OeguW63g2isrOeZ3w47qo3nE=;
+        b=J69FVtc0Uc8tlTDr+5ZzZeJEuuXlaNvy2Te1v4gTPx8J3YCfZ/1XBdsW4ZHZXFpzjM
+         0JQ3MFpF2x1YzKCPm3aXvq/pK3vUEl4H39Dq6RoOI8jADQ08a38bgPNe+bM5fskB9oSL
+         j2UjT/XnzN0cQIkU+DgLyUnOLXfGoTTA3zSZjKF0AmuFTHXWer9tvL0qm9yoMPBn/Cg1
+         HdzFk8A1k6Xq7aprmCkP9B6OTXSt6doekkMQlvFo6+cRfPyomqENunoDVaqW8jqtwMXs
+         ov6YzHOkX3mrxp87ifuOd4aiyh1an2k/C+qBAerwhaaRDvvzZUqwbdBDIFI/dTjBivBG
+         E8JA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733560182; x=1734164982;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UHRpLCsjp7NA8B9f3U/OeguW63g2isrOeZ3w47qo3nE=;
+        b=bC8DdbirXulEciw1XxLusOH68KN+7fgVDeyBhzhOMJu7ojXzvFRw462XXExqGgoa9E
+         evm6IhYMevH2iRSKdE8C/clB0sVNnneNuIbhRtFlvoFNQX77feUvQZGdZMm7QnKn0tqP
+         1T32oD3MS0SsqjskIU+aQGICpEI+BHK7B4cDRbT/y7wbjBzBRluX5bJDSlDZMbCL+lcv
+         hJLHNNrTqxwoeUx0V+n96Wek83pT1xehjdhcBtOkbUPurX6lbpFYrxnx5UUUOESf3jsb
+         Gjg/R7dI4+U/nD63DL/UzgaqzbZdXXYLFySGZ80no+0DJKGuonirIkh4cUuBMEau/BMa
+         Ileg==
+X-Forwarded-Encrypted: i=1; AJvYcCUjO2ofBtSMMTG5PJqkBpAiryXrxnXnfN108FJnsWCUGyZLkuBYW9w+yHUR+2lSVc8v2gD0J9OmP4cmM8c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH3pWh6VLQFfBAdQLPkRQtO4QWtchnHY5IfQQgOjp0+/uF55ce
+	IB2IaqvYcIng+kY4SUYLVu0LSpdPVA0G8yRDq5LvfbWq2/1iAsA0F5JBBg==
+X-Gm-Gg: ASbGncuuGvw3PMScGPK6/wj3pYDvsfNTXxTc5Jnv1wSDs5QKLOICR0JfWOIklpU38gS
+	x/UTdXQisUpvkUs8rexXwqruHFy5iqyw0lEb5ZbirN0nf7T7MXRiPLXwaSR1CEre6IXqz/ALrp+
+	ehtQ2sBJOVaL1D6SXduYw/LGyiL0DTFCvZiWJuIpQBT82xad+/n6qD/8x9W2PpjB3xlqVv/CiXD
+	0Q6Qef2Lb3mGbDlJM023ozn3L976wtoH8OTNJFTrRZHlxHCgEPtFa436NKozUC3wQ==
+X-Google-Smtp-Source: AGHT+IHHbCeDcdHrgL4CiKBpE8mvUaNfoWyY4qgAovF0EVGhfx93UBqzothSVAYiF0RUjOjLwebxYA==
+X-Received: by 2002:a17:906:4c2:b0:aa6:538e:a314 with SMTP id a640c23a62f3a-aa6538ea56cmr68764766b.37.1733560181988;
+        Sat, 07 Dec 2024 00:29:41 -0800 (PST)
+Received: from f.. (cst-prg-17-59.cust.vodafone.cz. [46.135.17.59])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6590f5457sm37579766b.195.2024.12.07.00.29.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 00:29:40 -0800 (PST)
+From: Mateusz Guzik <mjguzik@gmail.com>
+To: yuzhao@google.com
+Cc: akpm@linux-foundation.org,
+	willy@infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org,
-	mhocko@suse.com,
-	willy@infradead.org
-Subject: [PATCH] mm/mempolicy.c: include pagemap.h directly
-Date: Sat,  7 Dec 2024 16:14:30 +0800
-X-OQ-MSGID: <20241207081430.1972561-1-fujunjie1@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241206220037.5c0cd212d3269dd8a6f36e4d@linux-foundation.org>
-References: <20241206220037.5c0cd212d3269dd8a6f36e4d@linux-foundation.org>
+	Mateusz Guzik <mjguzik@gmail.com>
+Subject: [PATCH] mm: remove an avoidable load of page refcount in page_ref_add_unless
+Date: Sat,  7 Dec 2024 09:29:31 +0100
+Message-ID: <20241207082931.1707465-1-mjguzik@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Thanks for the review and suggestion. I agree that depending on indirect
-includes isn't ideal. This patch followed your suggestion and now directly
-includes pagemap.h in mempolicy.c
+Explicitly pre-checking the count adds nothing as atomic_add_unless
+starts with doing the same thing. iow no functional changes.
 
-Signed-off-by: Junjie Fu <fujunjie1@qq.com>
+disasm of stock filemap_get_read_batch from perf top while running
+readseek2_processes -t 24:
+
+  0.04 │ cb:   mov    0x34(%rbx),%eax           # first load
+ 73.11 │       test   %eax,%eax
+       │     ↓ je     1bd
+  0.09 │       mov    0x34(%rbx),%eax           # second load
+  1.01 │ d9:   test   %eax,%eax
+       │     ↓ je     1bd
+  0.06 │       lea    0x1(%rax),%edx
+  0.00 │       lea    0x34(%rbx),%r14
+  0.00 │       lock   cmpxchg %edx,0x34(%rbx)
+ 14.06 │     ↑ jne    d9
+
+Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
 ---
- mm/mempolicy.c | 2 +-
+
+I did not bother benchmarking, I don't think there is anything
+warranting it for this one. fwiw it plausibly is worth few % in a
+microbenchmark at higher core count.
+
+ include/linux/page_ref.h | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 88eef9776bb0..c3f25a7951e0 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -113,7 +113,7 @@
- #include <asm/tlbflush.h>
- #include <asm/tlb.h>
- #include <linux/uaccess.h>
--
-+#include <linux/pagemap.h>
- #include "internal.h"
+diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
+index 8c236c651d1d..fa203894876f 100644
+--- a/include/linux/page_ref.h
++++ b/include/linux/page_ref.h
+@@ -234,7 +234,7 @@ static inline bool page_ref_add_unless(struct page *page, int nr, int u)
  
- /* Internal flags */
+ 	rcu_read_lock();
+ 	/* avoid writing to the vmemmap area being remapped */
+-	if (!page_is_fake_head(page) && page_ref_count(page) != u)
++	if (!page_is_fake_head(page))
+ 		ret = atomic_add_unless(&page->_refcount, nr, u);
+ 	rcu_read_unlock();
+ 
 -- 
-2.34.1
+2.43.0
 
 
