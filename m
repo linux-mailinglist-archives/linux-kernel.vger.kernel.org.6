@@ -1,170 +1,92 @@
-Return-Path: <linux-kernel+bounces-435921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A1119E7E9E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:03:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219AD9E7E9B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:03:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 510862861B8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:03:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D9428607A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8C5A130AF6;
-	Sat,  7 Dec 2024 07:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D19F76034;
+	Sat,  7 Dec 2024 07:02:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="llKCPWre"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQn8t6Qq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD5C81ACA;
-	Sat,  7 Dec 2024 07:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9072522C6D4;
+	Sat,  7 Dec 2024 07:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733555001; cv=none; b=b/I0zLtYowrnWUYa7U8RABd0if4d8UZxzQnDbu5M14xlwoYs5hIeHwizFNOwKrZ98frfjTwiWvqN4MO9CJKBpYxN1tGdRkQ5sumtifxN68a8Ja5nyUunZrUfBdwfEA5so51CCgsegWbN6Y9YlEfTuw7Z3RaLpIW1O4qLq5EpS94=
+	t=1733554977; cv=none; b=asxBi5dGdOigHgtA1Uv3ywaYKrn7m3qzDTjuNy3EFxahXIIGdMvccQjX8BvSknWAWhEjEkWC5hLfjeuCe/e+PK0/nzsiCi122J0OjGTZfRUuxoF8o0NSruvI9L/lT6SxuU/dPSwtCQ1zNcLHyDXTlwLtCHI09VLWlglyjIeJkiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733555001; c=relaxed/simple;
-	bh=pddn0gMgqbCFPsbbxgbjcw2YxECn/Ui04cNPs5K7eVM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=PZyHzLGd38uSHllse5gg+mYW+D3qbmOYpE3r8C2xJsILlNgHWLs/8YFOF6UCfpK5SnsDoknV0jIBlVwrzjKyX4eNQRSIl+iaedYKQMB0uf1a5e5DIzYkH7lJiOvE3vEujeXDvXkp4gFQfoPjLE9MomrAoG5fNgpbpgoOYK7x0Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=llKCPWre; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-215348d1977so23318205ad.3;
-        Fri, 06 Dec 2024 23:03:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733554996; x=1734159796; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7VBksAF/T3d2c5+s8Bg+ubv6vEd7NOr/os/9LSHT35Y=;
-        b=llKCPWreM3vismNCm2ann09zawoVIiGrOwLNExs7lue98F+r4mUyQLLjIDMKwVjglx
-         YbEKPfqFqkiUYxdG8xaQKQVkrT7WS6FWr+L7elWudNgcfCmdrPRvDoyOPm1he6Ux3mzg
-         bJEwqYyFm4fVrL11Jfonyt5Nd/nQauqc2vRC9CixkXqWDNyRD0dHrN1pfXjdR2LZLao1
-         r9Ylo/9rzo5zz/sEOmPFTNH8oa3jIyYW+gowOY0UXtVNje56VaA5TViv5PlXISkFA0NP
-         auXWinBKT1AW/QnPMX4fWYS/G5krsxtoytV4RokN0CGfywLtRRkEasDRuIaYvtDjBjzH
-         Z8Rw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733554996; x=1734159796;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7VBksAF/T3d2c5+s8Bg+ubv6vEd7NOr/os/9LSHT35Y=;
-        b=ntxIcqcLYTaOVzNbdFxAE6FptVPRPC2KWhe8J1fVBQ3GpNNVmadEm2WVXbKrAfseO3
-         S1QDum/gg2J3q8Cdi4nhk5ignLwWf7N6aRXxB4yJdRGMKXBj5WjLY68O9ePVuMFq+LCM
-         XTLgNtdn5KooQMymnujBB7AJptf84x4UljvZ2ysfzBrGg/kfnhcgsR0ZHeNq9x6K5ROV
-         gcayPtI5VRLeMCNYcoW7KHI1NfjrYAI4wPh1mWopNDnwA2QD5zdYbdAVzXmzqCIOnzrA
-         P7HU5KbwGxy+quYft4fGEyva6luUy6XcdWeSKKRjYbWY8Ka6k1yLFYrsd+oR9lYwwwi/
-         WPZw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMAyrVbC5xcXStqWHrsx8gVBxJbe/WlHDFgnCVKlq0ib2GjYwJNURezg0IWuxuaAIsi8IAVDYqcixY+Dc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKrTgHFdoSyBB6QR14Xw5BqfWP2EUXczdCEwCmfrzhBKzteb10
-	OGu9RkREO4mmhHw7yT3Mm2ffRzNx4Ls16miKkvSA6I/SUReXNnQehvFJkA==
-X-Gm-Gg: ASbGncvnRY0M2pQ23FoVT4PWK80hCNC094ZxSxxRpokXBPD4ZUtY/2fSXWYbefZwCKW
-	t1bxmsPPLyBC/QgqoGGcg8j0YzDXRF+Xr2rP6Kvdld2Ewv5u0t60leKIO3G89Q7AC3+nmrzaOY1
-	kJpH6obKMDZ5ZPTUjqvjT6PGDUpzzhd9CM8ZvHPAX5z+zK8bvXsqmrLqFiXE36Jg367QEvcJPLK
-	D3onAPb8Pi2zeUIsXbbd57MdP9gxDSp0LVhrWGWxjmgUEQkdwNIZZo8nO6WryA=
-X-Google-Smtp-Source: AGHT+IGRLV9tlr/2SHhgZD19JnwDMG0W/wwF7xuVg/N9Skwvi9GkZLfzfL0GTpIhC8/5P3oAOgPTeg==
-X-Received: by 2002:a17:902:f542:b0:215:a60d:bcc9 with SMTP id d9443c01a7336-21614d1ef83mr97323535ad.2.1733554996066;
-        Fri, 06 Dec 2024 23:03:16 -0800 (PST)
-Received: from localhost.localdomain ([129.146.253.192])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-215f8efa2aesm38395105ad.142.2024.12.06.23.03.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 23:03:15 -0800 (PST)
-From: Furong Xu <0x1207@gmail.com>
-To: netdev@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
+	s=arc-20240116; t=1733554977; c=relaxed/simple;
+	bh=DIVw0duziCihwu69FqoeUc9mmHMPobwZaUalUDF9dqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pP3wUvIFRf5sADK9KY1+XXo7DeAJbKq9J+rxoDbqwd/2XvlxoQcG+pvCFT6y0Pd/3keBDu/fPbNj3M30a0Y+XiqAryIZ3uS/KSB9ENKVvVHVHwYjEKeol9GNbH7VrzWzpCxCOAA2Xs9sGIdBHBlBZERePrVL1ZjJE2er15k9PVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQn8t6Qq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB10AC4CECD;
+	Sat,  7 Dec 2024 07:02:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733554977;
+	bh=DIVw0duziCihwu69FqoeUc9mmHMPobwZaUalUDF9dqs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GQn8t6Qq+KSREKzbpRE1s9VKsITaKgmphnVGsyPp2HMrsgb1UkH/VYavZu02o6GFG
+	 pNiFEi2gM8YSFFWCj9xUmooU+IT6lHG5QDrgQl3i7vti7sxqnVOGUWhadjWCNvH44l
+	 uOojOeuL+T0BHrT25K2SxmsWLszd7ujaWeGCOBXp/cRwlnERU9mY/AQ8kcOi1nhwVA
+	 OM5UhlP9i9Zx9wIuhrLwhBeAKOUjQdfOFZ07pN1vkBFO1yom6brlITyr3vq0Ns/73B
+	 MrFggEAmlmF23IVavpGTXIztKymYldl9I/fIYsL7fMTpFA+AanGlmUraKqn8gE815H
+	 sKg8p+fwP8+MQ==
+Date: Sat, 7 Dec 2024 07:02:55 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: mhklinux@outlook.com
+Cc: kys@microsoft.com, haiyangz@microsoft.com, wei.liu@kernel.org,
+	decui@microsoft.com, gregkh@linuxfoundation.org,
+	vkuznets@redhat.com, linux-hyperv@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	xfr@outlook.com,
-	Furong Xu <0x1207@gmail.com>
-Subject: [PATCH net-next v1] net: stmmac: Move extern declarations from common.h to hwif.h
-Date: Sat,  7 Dec 2024 15:02:48 +0800
-Message-Id: <20241207070248.4049877-1-0x1207@gmail.com>
-X-Mailer: git-send-email 2.34.1
+Subject: Re: [PATCH v2 0/2] Drivers: hv: util: Two fixes in util_probe()
+Message-ID: <Z1PzH0F-3BAXpuBU@liuwe-devbox-debian-v2>
+References: <20241106154247.2271-1-mhklinux@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241106154247.2271-1-mhklinux@outlook.com>
 
-These extern declarations are referenced in hwif.c only.
-Move them to hwif.h just like the other extern declarations.
+On Wed, Nov 06, 2024 at 07:42:45AM -0800, mhkelley58@gmail.com wrote:
+> From: Michael Kelley <mhklinux@outlook.com>
+> 
+> Patch 1 fixes util_probe() to not force the error return value to
+> ENODEV when the util_init function fails -- just return the error
+> code from util_init so the real error code is displayed in messages.
+> 
+> Patch 2 fixes a more serious race condition between initialization
+> of the VMBus channel and initial operations of the user space
+> daemons for KVP and VSS. The fix reorders the initialization in
+> util_probe() so the race condition can't happen.
+> 
+> The two fixes are functionally independent, but Patch 2 introduces
+> the util_init_transport function that parallels the existing code
+> for the util_init function. Doing Patch 1 first avoids an
+> inconsistency in the error handling in similar code for these two
+> parts of util_probe().
+> 
+> This series is v2 of a single patch first posted by Dexuan Cui
+> to fix the race condition.[1] I've taken over the patch per
+> discussion with Dexuan.
+> 
+> [1] https://lore.kernel.org/linux-hyperv/20240909164719.41000-1-decui@microsoft.com/
+> 
+> Michael Kelley (2):
+>   Drivers: hv: util: Don't force error code to ENODEV in util_probe()
+>   Drivers: hv: util: Avoid accessing a ringbuffer not initialized yet
 
-Compile tested only.
-No functional change intended.
-
-Signed-off-by: Furong Xu <0x1207@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/common.h | 14 --------------
- drivers/net/ethernet/stmicro/stmmac/hwif.h   | 14 ++++++++++++++
- 2 files changed, 14 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
-index 1367fa5c9b8e..fbcf07d201cf 100644
---- a/drivers/net/ethernet/stmicro/stmmac/common.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/common.h
-@@ -543,18 +543,8 @@ struct dma_features {
- #define STMMAC_VLAN_INSERT	0x2
- #define STMMAC_VLAN_REPLACE	0x3
- 
--extern const struct stmmac_desc_ops enh_desc_ops;
--extern const struct stmmac_desc_ops ndesc_ops;
--
- struct mac_device_info;
- 
--extern const struct stmmac_hwtimestamp stmmac_ptp;
--extern const struct stmmac_hwtimestamp dwmac1000_ptp;
--extern const struct stmmac_mode_ops dwmac4_ring_mode_ops;
--
--extern const struct ptp_clock_info stmmac_ptp_clock_ops;
--extern const struct ptp_clock_info dwmac1000_ptp_clock_ops;
--
- struct mac_link {
- 	u32 caps;
- 	u32 speed_mask;
-@@ -641,8 +631,4 @@ void stmmac_dwmac4_set_mac(void __iomem *ioaddr, bool enable);
- 
- void dwmac_dma_flush_tx_fifo(void __iomem *ioaddr);
- 
--extern const struct stmmac_mode_ops ring_mode_ops;
--extern const struct stmmac_mode_ops chain_mode_ops;
--extern const struct stmmac_desc_ops dwmac4_desc_ops;
--
- #endif /* __COMMON_H__ */
-diff --git a/drivers/net/ethernet/stmicro/stmmac/hwif.h b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-index 64f8ed67dcc4..58a962e0b768 100644
---- a/drivers/net/ethernet/stmicro/stmmac/hwif.h
-+++ b/drivers/net/ethernet/stmicro/stmmac/hwif.h
-@@ -665,6 +665,20 @@ struct stmmac_regs_off {
- 	u32 est_off;
- };
- 
-+extern const struct stmmac_desc_ops ndesc_ops;
-+extern const struct stmmac_desc_ops enh_desc_ops;
-+extern const struct stmmac_desc_ops dwmac4_desc_ops;
-+
-+extern const struct stmmac_hwtimestamp stmmac_ptp;
-+extern const struct stmmac_hwtimestamp dwmac1000_ptp;
-+
-+extern const struct ptp_clock_info stmmac_ptp_clock_ops;
-+extern const struct ptp_clock_info dwmac1000_ptp_clock_ops;
-+
-+extern const struct stmmac_mode_ops ring_mode_ops;
-+extern const struct stmmac_mode_ops chain_mode_ops;
-+extern const struct stmmac_mode_ops dwmac4_ring_mode_ops;
-+
- extern const struct stmmac_ops dwmac100_ops;
- extern const struct stmmac_dma_ops dwmac100_dma_ops;
- extern const struct stmmac_ops dwmac1000_ops;
--- 
-2.34.1
-
+Acked-by: Wei Liu <wei.liu@kernel.org>
 
