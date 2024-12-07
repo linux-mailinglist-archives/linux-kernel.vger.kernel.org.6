@@ -1,53 +1,95 @@
-Return-Path: <linux-kernel+bounces-435828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E6B89E7DB4
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:21:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C929E7DB6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:24:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 412D41886F99
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:24:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19A1BBE4F;
+	Sat,  7 Dec 2024 01:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=steffo.eu header.i=@steffo.eu header.b="nMk42cf8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XVQBVqtg"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E1F0285AF5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:21:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AA219460;
-	Sat,  7 Dec 2024 01:21:43 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A74A317BA3
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:21:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE10DDAD;
+	Sat,  7 Dec 2024 01:24:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733534502; cv=none; b=iLbxf3r52044DQmScxlvbGfTMaSrBiE4UsExmltpam02lAF9/Z4EGRpUueWzYMwkKcaDrs5w4nSe8KMRj/FQ6ZVJ/ZSBesE2Bw3p84q35/x7l5B5y/Lls4AXFDkJev1MNLsP+J3e7Bv6SEGfb2QCWYzlfnK/L3Xja76+tnKu3qE=
+	t=1733534651; cv=none; b=JwPLkYzxztpvZ6RNdPy3b2HgcDBYCh0zTs/8+lab1watsR5fl51XRggKlZlyknclLPHRX//vMZAQ68jHqLekN2Gb/gM68wELElQfEAXmP9gF0JFE1D50SaOsRbCrJidFOQOtHZ4Ab8JLWBNX6N8swRpDtBB6YleUHPORso7BA1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733534502; c=relaxed/simple;
-	bh=1BHpzhlmXMBKAy9iOjhUIGUD5/Q9bpyHXoqQdyCPlNA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZAf0mgEFolDY4/xR8t8XmfCJm+dd8uh685uy4v3xpbSZwqPiV3MbYyBaPZ6jgQzcXDNuSIpVnUlTPp5N0rlZ8OfSoWIR9MTfPyo1nxNt5rH6P/wQO9bT6MPxYmACTfm0eADFID6vMzsuT7KKdDPmadPSCX7jpxv2XLATKXVqphk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DC7D512FC;
-	Fri,  6 Dec 2024 17:22:07 -0800 (PST)
-Received: from u200865.usa.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A53613F5A1;
-	Fri,  6 Dec 2024 17:21:39 -0800 (PST)
-From: Jeremy Linton <jeremy.linton@arm.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: suzuki.poulose@arm.com,
-	gshan@redhat.com,
-	steven.price@arm.com,
-	sami.mujawar@arm.com,
-	catalin.marinas@arm.com,
-	will@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jeremy Linton <jeremy.linton@arm.com>
-Subject: [PATCH v3 1/1] arm64: rsi: Add automatic arm-cca-guest module loading
-Date: Fri,  6 Dec 2024 19:21:28 -0600
-Message-ID: <20241207012128.247522-2-jeremy.linton@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241207012128.247522-1-jeremy.linton@arm.com>
-References: <20241207012128.247522-1-jeremy.linton@arm.com>
+	s=arc-20240116; t=1733534651; c=relaxed/simple;
+	bh=PoFcjLzAbYJRYSxbLlYXiOYLRzye9abGuNCylaBXdaU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=f/F1L8Tci7WUS+T6Nb5ZeTURN2WpZdRGVKx/haDrPE+sZq6oqnwcQuORGXur9C0qXm0BWhjrTqzm5lkPXm4DIHidCYZDevnGhb7SFifULlkOhDv7Oz6UbO1M91ufvcang3djTWnbuyXj74Lzn8TlhOS3L5xv53ggq3CiWag+EFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffo.eu; spf=pass smtp.mailfrom=steffo.eu; dkim=pass (2048-bit key) header.d=steffo.eu header.i=@steffo.eu header.b=nMk42cf8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XVQBVqtg; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=steffo.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=steffo.eu
+Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
+	by mailfout.stl.internal (Postfix) with ESMTP id AF8181140147;
+	Fri,  6 Dec 2024 20:24:07 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-06.internal (MEProxy); Fri, 06 Dec 2024 20:24:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=steffo.eu; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=fm2; t=1733534647; x=1733621047; bh=ElrwaWm+DWF/q4wPHrpLj
+	eFjBDa+UXNQHtYh2KqkM3A=; b=nMk42cf8/6UvJaxjtXZhh2Dqct2QUsXGbGT8F
+	6cFp3q/FMZ1xMmhv08IR8VaNEri8ZWgOWBvBA0FbxNEA5QoF4WZg4DqIUY0rZ89e
+	BMwq1yn0b4ToFenFSJg34BJFhnwO7+RwlEJ3vp5BS08zDcVgywVSqsusEluawz3f
+	1YviWx7iD3SfKwMMLdZlcisYdyJknglv3aSJ6rKci9ry77CK83Z82XV8aWy06a+T
+	2jThdJfBSqNe2Vr3iaIaDj0okh605MzaClNpCmfXyPJm9DJ6OqD6X4RGMGuAbrJz
+	e3U9WPGVtFvJ2CxU2Pdn9Cd1+7Yhe0WGv+RGm3YwZd5bI+tTg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1733534647; x=1733621047; bh=ElrwaWm+DWF/q4wPHrpLjeFjBDa+UXNQHtY
+	h2KqkM3A=; b=XVQBVqtgQiJRIQGdIAS8hro79CfOKtsSWlvmBgqfun2CrE7I4TP
+	AS3FIhN54WwfaWWkAVze5Q8samtPElCaWJAXc57kWXSts5u5zjnLujg7auMAglp3
+	E9CX+A4ixXZrtU8ZPr1EhlwXm2hnT2tLnwiRC4hIGElkU8bjjOzfRr5TVjApPaKD
+	aRUZqPeaFyFxET/L8Y/6RiSFdE6CYxZE6o/6zedNzvRXLf1K+7cNuWnsRXRj91Dp
+	Ckjz7+ozXC8YbHqY+YDwrTVPGfelkGf3IyBxDq2g62o7WOpmiCdYws2BbBYDE0g2
+	QjNIg5AXDm43JSvyoCHpR1u7lrqDojXt30g==
+X-ME-Sender: <xms:t6NTZ6-Awdg70dKpB0cL432Ewcr1L93wH3cfVCTp6S68KdRr8hW5uw>
+    <xme:t6NTZ6sgS8_TCYyeYDzxuJFgLhIDUL5RyfhmY4zxOy7CT9OzOds1dFR2PjURMliWY
+    YUHziVKzwgOVBVgMBw>
+X-ME-Received: <xmr:t6NTZwDjWiEgK0qNbvl1qwVdYXvsJX2CNC3MsVCy0oxJMemNsns9C5SzzwCEaEecrJBqUBEn9_RQdgHSa3JNu5bSqUFXUafWPmeH-aLLMUEW>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjedtgddvlecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefuff
+    fkofgggfestdekredtredttdenucfhrhhomhepufhtvghfrghnohcurfhighhoiiiiihcu
+    oehmvgesshhtvghffhhordgvuheqnecuggftrfgrthhtvghrnheptdfgvdekudeiheduff
+    fffeeuvddujeekgedthedtjeevvdeuveeggfevleeuveetnecuvehluhhsthgvrhfuihii
+    vgeptdenucfrrghrrghmpehmrghilhhfrhhomhepmhgvsehsthgvfhhfohdrvghupdhnsg
+    gprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshhhurghh
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmvgesshhtvghffhhordgvuhdprhgtph
+    htthhopehlihhnuhigqdhkshgvlhhfthgvshhtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+    pdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorh
+    hg
+X-ME-Proxy: <xmx:t6NTZycTiGQGYNlwzrwn2InweLRuz5m7ihtvc_QHYrF_Q2yuGhZ2-g>
+    <xmx:t6NTZ_P1XMVq7cpbrl9TlgrRK4ulv6gnPJEW-ksxPMDalLacujuRdQ>
+    <xmx:t6NTZ8mmd4TYKUb449uFWGkE-V3nxw4Qh1HkuFA-lh7OVQetyAehvQ>
+    <xmx:t6NTZxsrtGjdxGd0DOErBgJkqDdB-cHbdUmXiAcJniIjkKqpMeSwDQ>
+    <xmx:t6NTZ0ri17psCoSglycEDYKMRe8ocD-0ff6g-u4Y6xt-TRb8OJGwq-ZX>
+Feedback-ID: i48314939:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Dec 2024 20:24:06 -0500 (EST)
+From: Stefano Pigozzi <me@steffo.eu>
+To: shuah@kernel.org
+Cc: me@steffo.eu,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests: kselftest: Add ksft_test_result_xpass
+Date: Sat,  7 Dec 2024 02:23:25 +0100
+Message-ID: <20241207012325.56611-1-me@steffo.eu>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,91 +98,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The TSM module provides guest identification and attestation when a
-guest runs in CCA mode. By creating a dummy platform device, let's
-ensure the module is automatically loaded. The udev daemon loads the
-TSM module after it receives a device addition event. Once that
-happens, it can be used earlier in the boot process to decrypt the
-rootfs.
+The functions ksft_test_result_pass, ksft_test_result_fail,
+ksft_test_result_xfail, and ksft_test_result_skip already exist and are
+available for use in selftests, but no XPASS equivalent is
+available.
 
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Reviewed-by: Gavin Shan <gshan@redhat.com>
+This adds a new function to that family that outputs XPASS, so that it's
+available for future test writers.
+
+Signed-off-by: Stefano Pigozzi <me@steffo.eu>
 ---
- arch/arm64/include/asm/rsi.h                    |  2 ++
- arch/arm64/kernel/rsi.c                         | 15 +++++++++++++++
- drivers/virt/coco/arm-cca-guest/arm-cca-guest.c |  8 ++++++++
- 3 files changed, 25 insertions(+)
+ tools/testing/selftests/kselftest.h | 21 ++++++++++++++++++++-
+ 1 file changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/include/asm/rsi.h b/arch/arm64/include/asm/rsi.h
-index 188cbb9b23f5..b42aeac05340 100644
---- a/arch/arm64/include/asm/rsi.h
-+++ b/arch/arm64/include/asm/rsi.h
-@@ -10,6 +10,8 @@
- #include <linux/jump_label.h>
- #include <asm/rsi_cmds.h>
- 
-+#define RSI_PDEV_NAME "arm-cca-dev"
-+
- DECLARE_STATIC_KEY_FALSE(rsi_present);
- 
- void __init arm64_rsi_init(void);
-diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
-index 3031f25c32ef..5434e5496ac2 100644
---- a/arch/arm64/kernel/rsi.c
-+++ b/arch/arm64/kernel/rsi.c
-@@ -8,6 +8,7 @@
- #include <linux/psci.h>
- #include <linux/swiotlb.h>
- #include <linux/cc_platform.h>
-+#include <linux/platform_device.h>
- 
- #include <asm/io.h>
- #include <asm/mem_encrypt.h>
-@@ -140,3 +141,17 @@ void __init arm64_rsi_init(void)
- 	static_branch_enable(&rsi_present);
+diff --git a/tools/testing/selftests/kselftest.h b/tools/testing/selftests/kselftest.h
+index 29fedf609611..685d9f9554fc 100644
+--- a/tools/testing/selftests/kselftest.h
++++ b/tools/testing/selftests/kselftest.h
+@@ -18,7 +18,8 @@
+  *     ksft_print_msg(fmt, ...);
+  *     ksft_perror(msg);
+  *
+- * and finally report the pass/fail/skip/xfail state of the test with one of:
++ * and finally report the pass/fail/skip/xfail/xpass state of the test
++ * with one of:
+  *
+  *     ksft_test_result(condition, fmt, ...);
+  *     ksft_test_result_report(result, fmt, ...);
+@@ -26,6 +27,7 @@
+  *     ksft_test_result_fail(fmt, ...);
+  *     ksft_test_result_skip(fmt, ...);
+  *     ksft_test_result_xfail(fmt, ...);
++ *     ksft_test_result_xpass(fmt, ...);
+  *     ksft_test_result_error(fmt, ...);
+  *     ksft_test_result_code(exit_code, test_name, fmt, ...);
+  *
+@@ -227,6 +229,20 @@ static inline __printf(1, 2) void ksft_test_result_xfail(const char *msg, ...)
+ 	va_end(args);
  }
  
-+static struct platform_device rsi_dev = {
-+	.name = RSI_PDEV_NAME,
-+	.id = PLATFORM_DEVID_NONE
-+};
-+
-+static int __init rsi_init(void)
++static inline __printf(1, 2) void ksft_test_result_xpass(const char *msg, ...)
 +{
-+	if (is_realm_world() &&
-+	    platform_device_register(&rsi_dev))
-+		pr_err("failed to register rsi platform device\n");
-+	return 0;
++	int saved_errno = errno;
++	va_list args;
++
++	ksft_cnt.ksft_xpass++;
++
++	va_start(args, msg);
++	printf("ok %u # XPASS ", ksft_test_num());
++	errno = saved_errno;
++	vprintf(msg, args);
++	va_end(args);
 +}
 +
-+arch_initcall(rsi_init)
-diff --git a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-index 488153879ec9..87f162736b2e 100644
---- a/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-+++ b/drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
-@@ -6,6 +6,7 @@
- #include <linux/arm-smccc.h>
- #include <linux/cc_platform.h>
- #include <linux/kernel.h>
-+#include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/smp.h>
- #include <linux/tsm.h>
-@@ -219,6 +220,13 @@ static void __exit arm_cca_guest_exit(void)
- }
- module_exit(arm_cca_guest_exit);
- 
-+/* modalias, so userspace can autoload this module when RSI is available */
-+static const struct platform_device_id arm_cca_match[] __maybe_unused = {
-+	{ RSI_PDEV_NAME, 0},
-+	{ }
-+};
-+
-+MODULE_DEVICE_TABLE(platform, arm_cca_match);
- MODULE_AUTHOR("Sami Mujawar <sami.mujawar@arm.com>");
- MODULE_DESCRIPTION("Arm CCA Guest TSM Driver");
- MODULE_LICENSE("GPL");
+ static inline __printf(1, 2) void ksft_test_result_skip(const char *msg, ...)
+ {
+ 	int saved_errno = errno;
+@@ -318,6 +334,9 @@ void ksft_test_result_code(int exit_code, const char *test_name,
+ 	case KSFT_XFAIL:					\
+ 		ksft_test_result_xfail(fmt, ##__VA_ARGS__);	\
+ 		break;						\
++	case KSFT_XPASS:					\
++		ksft_test_result_xpass(fmt, ##__VA_ARGS__);	\
++		break;						\
+ 	case KSFT_SKIP:						\
+ 		ksft_test_result_skip(fmt, ##__VA_ARGS__);	\
+ 		break;						\
 -- 
-2.46.0
+2.47.1
 
 
