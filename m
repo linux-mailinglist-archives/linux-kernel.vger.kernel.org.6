@@ -1,250 +1,183 @@
-Return-Path: <linux-kernel+bounces-436153-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A9229E81D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:50:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7EC19E81DC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:52:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA0AE18842B4
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABDA4281C0D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BFA153BD7;
-	Sat,  7 Dec 2024 19:50:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B61154426;
+	Sat,  7 Dec 2024 19:51:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m5/0OEL8"
-Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="OBmID/jx"
+Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9CC29422
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 19:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BABB29422;
+	Sat,  7 Dec 2024 19:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733601033; cv=none; b=AFiYHycaZVMLJ7Q4FmwKSl90kMsX01CfIoIeXF3ibFg8IlkoWWpyhaIoXAJWcirHs9DNGIP+uvOvv/MNu+hzOaNfqDc8t3f+hhFar9ERJMJCu/3LRDkFToE0uQkDL8/VesYftnb+1BA0KtGWMG+gRgVY7+TO3VfC/glSNMR5oW8=
+	t=1733601118; cv=none; b=ngeLRG5PMpGhd/BKhIEOBEpI5CEmC1OUc7wENt3oxzMu3cXB85/r1NVF31Nt17hBFsNt4GFCRi+uuRQwXbNQlTHx+JqQ4mBCOnUw6WNEtMnT5lXL78EG1KjZ4ebui4qG1MjRs2w61q9Obi3ZLdOWNiyostwTjaTrvx1lRgpHzR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733601033; c=relaxed/simple;
-	bh=LasN9bNIN9EL+ojIMojzUljyOQcpwv3EZmeltoqkT3E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iIbdqlQeP+wZDZoBuVZ+5QuzO0Atz4kSsqJWmIU5qFl6A/NmbOrAcsKHLU4V/D/pIOZEPBv7VDbB20AG+jhIAXydnKLm351wVNo4mx6eaacnSdmTVpmdKzw0JoA/wCLfoyCdQ/+M3f3yAEq4W0YrgnD/Qw1Yt1lzr5olwxRXYcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m5/0OEL8; arc=none smtp.client-ip=209.85.217.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4afd68271b6so392356137.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 11:50:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733601031; x=1734205831; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6pMemEtN4tM9lGXkUkEycvngJOia/lhXbbiYY9m4/38=;
-        b=m5/0OEL82oKDe3tCvi5FXlLeeoBzHqz7vf0DAbDyIBwA96z+BtuXZ/ndZIuTBpoPX0
-         fJ/b96BxoKFIz4zyhBQH8B26JgGeylHZDZPcVXSe0OXLWJj6v4U3J9eFBX+MSKqxV0FM
-         kqSVxSlDcvRX/9yVIqnMwdxCBuzNzhnMVGB4ATnHbxOlrGm+2ybkJ/Tjzs4bFA8LWsUE
-         j0Xcge1PhMkYOLjmcbi3jNLaGUgF5riDSKnGErxwBl+Tj6sDmOIyzKu+sVC9z0k8hYOd
-         /vVLFoEqnuVkvduF9253oyAwByAPZAxaY8RLODE4n4OgZfcwYGRsUIxfHTLZp46FSkrM
-         X8zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733601031; x=1734205831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6pMemEtN4tM9lGXkUkEycvngJOia/lhXbbiYY9m4/38=;
-        b=Y1CRmsh5kc4xTjKLDVuKJhAqGmKKLxLGsUyT+Cp68SYAZjGsuOAEVJnSZc5jlcHoId
-         gZYY44xacnp8ZT0wH6fOTE4YIbx2H7MFiWg8cCos1zSh89kDPEAf3jz+v34ARa4wk+i6
-         +de1szhwBqEQ89AWmMvaVnTon5Ra918GZAr6MxXINdVZ1RsWqjq5IdXYnpgE8ph2SZZi
-         N7iD10+m7mSFlqqphdCVN0m5tkeOQ2hYZ2MYD6oaCtiWLUQ+Hc8QToqseAhWK+Lj5tZ4
-         FmnvOM/iO1fwRCjLc5r541Jj9sWqwgrmN5zNpwiKSILl03hJgsMHxGrw+TOTYoGcKR79
-         kBnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVY/lvtfc7OpGwF+bNAqHMUDDvCA1VVObHjCTvX4OUi5KzuQSn3bNSZJBDtJwRzon99veGh6jaE9+mzutw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOjQwe0kUtmLO2/yITbn+K+nUocq2tdBOV7TvXmiW7mtnsuiIN
-	wGZtOj3+qrOv4pEN4iz9P0uQNT93zFXf1d1hBOLXKnrt2PCfJBaA8drkmKzaR1RP33cGke6daRA
-	l3SXhamLGj48RkjRCNLzYLccdzxxy4yyJwob6VQ==
-X-Gm-Gg: ASbGnctG3m8pm0N8KreszN6sWCOuQArnbKPoGxZ1L6sXNE9pBY/gFfk5q2sKghxNICb
-	2lSMYc+eTsFONpQDtOxIOjOqjce1tyPh7/bHzlhlUSFI0EeMpK4iqSVYngOBUj5ZU
-X-Google-Smtp-Source: AGHT+IE2gENhy12bTe+/tsKANEZuiXJ3HVZ8w1wx43rB+V8qnuRXNZgT7/Z0ACMbIPN2eLAYuSn5mRKpOP10D8Fn0qc=
-X-Received: by 2002:a05:6102:5094:b0:4af:bf62:ff4a with SMTP id
- ada2fe7eead31-4afcaaa4539mr7391371137.16.1733601030992; Sat, 07 Dec 2024
- 11:50:30 -0800 (PST)
+	s=arc-20240116; t=1733601118; c=relaxed/simple;
+	bh=pJ3lkL6KRFTlQ0lGreF5+t54DgtOfeecQp8t4W0DNJk=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=aacGF7Ae8tbe0kN/N97jZyxNQCNQ2UYQKb2Rc4pmWqlDxrhBmBRcYI42xq7Mq8WVHWTBsJ/kY5ovks4+JxhZFHjkGKZza8GPynCi78jbXoEOFYQdmVgzH6uCfUhJwex6f4LP1AmijT8DPGqTmnhtc/wUF5jovX3bIEyWNzSHfFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=OBmID/jx; arc=none smtp.client-ip=134.76.10.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
+	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=pJ3lkL6KRFTlQ0lGreF5+t54DgtOfeecQp8t4W0DNJk=; b=OBmID/jxwEbbrHoC8NiXYOcyat
+	xR5qAPxMQLCqGAh6qHlL8Z0Wg6/FvdgYO1aVGFWzKUFhSmsJE4hUCpa55oHcG/YBPFk0ZzJh9pC0c
+	o+cX3u7HZmLX3mvc9AzLKjIy4w3a7TDpzZJJphPbPDtMLB6T+ta1MBZV383UBzFaYCrCpvXijVXmS
+	02Gs72zXD6OJq/chxcquRQTREZRs9fomg9cWxIkfJx1kL7sMX9QEFKTElF27Sm3TY7plA8BtylsOm
+	e5QBHRWQk7PJRI9ipEcmVjCl8IN1bocpdXgnHu84I80m0bCH2nkhCsnw/tMHUl11ObHZas9gMkOMf
+	ZL/Xvkyw==;
+Received: from xmailer.gwdg.de ([134.76.10.29]:38540)
+	by mailer.gwdg.de with esmtp (GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tK0qG-004PaM-08;
+	Sat, 07 Dec 2024 20:51:52 +0100
+Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
+	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tK0qF-00069Y-2w;
+	Sat, 07 Dec 2024 20:51:51 +0100
+Received: from [192.168.0.221] (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
+ (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sat, 7 Dec
+ 2024 20:51:50 +0100
+Message-ID: <6b8c9b942ba6e85a3f1e4eef65a9916333502881.camel@gwdg.de>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+From: Martin Uecker <muecker@gwdg.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>, Vincent Mailhol
+	<vincent.mailhol@gmail.com>
+CC: David Laight <David.Laight@aculab.com>, "w@1wt.eu" <w@1wt.eu>, "Luc Van
+ Oostenryck" <luc.vanoostenryck@gmail.com>, Nathan Chancellor
+	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
+ Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>, "Yury
+ Norov" <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Date: Sat, 7 Dec 2024 20:51:49 +0100
+In-Reply-To: <CAHk-=wjpN4GWtnsWQ8XJvf=gBQ3UvBk512xK1S35=nGXA6yTiw@mail.gmail.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+	 <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
+	 <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
+	 <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
+	 <d23fe8a5dbe84bfeb18097fdef7aa4c4@AcuMS.aculab.com>
+	 <CAHk-=win8afdcergvJ6f2=rRrff8giGUW62qmYs9Ae6aw=wcnA@mail.gmail.com>
+	 <0f5c07b827c3468c8fa3928a93a98bfa@AcuMS.aculab.com>
+	 <e806dd51b1ac4e289131297fbf30fc37@AcuMS.aculab.com>
+	 <CAMZ6RqLOR3aCRW_js2agV+VFiHdazb4S2+NdT5G4=WbDKNB8bA@mail.gmail.com>
+	 <b1ff4a65594a4d39b2e9b8b44770214e@AcuMS.aculab.com>
+	 <CAMZ6RqJFReLJTd-O8s02oQNeB0SPQh3C-Mg+Nif5vMB9gFtQww@mail.gmail.com>
+	 <CAHk-=wjpN4GWtnsWQ8XJvf=gBQ3UvBk512xK1S35=nGXA6yTiw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206143653.344873888@linuxfoundation.org>
-In-Reply-To: <20241206143653.344873888@linuxfoundation.org>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Sun, 8 Dec 2024 01:20:19 +0530
-Message-ID: <CA+G9fYtsYhXwhewSJUnGAwFmSa5AnOvuREZiOGRCsOUWb6Kx3Q@mail.gmail.com>
-Subject: Re: [PATCH 6.6 000/676] 6.6.64-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
-	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
-	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
-	broonie@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: MBX19-FMZ-05.um.gwdg.de (10.108.142.64) To
+ MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
+X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:6, sv:1733572982, ts:1733601111
+X-Virus-Scanned: (clean) by clamav
+X-Spam-Level: -
 
-On Fri, 6 Dec 2024 at 20:17, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 6.6.64 release.
-> There are 676 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sun, 08 Dec 2024 14:34:52 +0000.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
-6.6.64-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-6.6.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
+Am Samstag, dem 07.12.2024 um 10:19 -0800 schrieb Linus Torvalds:
+> On Sat, 7 Dec 2024 at 04:24, Vincent Mailhol <vincent.mailhol@gmail.com> =
+wrote:
+> >=20
+> > > No good - expands everything twice.
+> >=20
+> > And? __is_const_zero() does not evaluate its arguments, so no side effe=
+ct:
+>=20
+> No, the problem is literally the expansion.
+>=20
+> Double expansion of these fundamental helpers gets exponential,
+> because they are used in various nested ways in other fundamental
+> helpers.
+>=20
+> That's why we then spent so much effort on trying to clean up the
+> min/max macros, because a single line of code would expand to
+> literally tens of megabytes of horrific expansions.
+>=20
+> And the problem with these things is that you can't make them inline
+> functions, so they have to be macros, and then you build up other
+> macros using them (like that "clamp()" macro), and it really gets
+> horrendous and affects the build time.
+>=20
+> And yes, it is very sad. Particularly since a compiler would have a
+> really easy time with some nice helper builtins.
+>=20
+> Of course, often the compiler *does* have helper builtins, but we
+> can't use them, because they aren't *quite* the right thing. Like that
+> "__builtin_constant_p()" not actually working for some situations
+> where we absolutely need not just a constant value, but a constant
+> _expression_ due to C parsing rules.
+>=20
+> Quite a lot of the pain we tend to have with these things is directly
+> related to the fact that we often want to do these tests in contexts
+> like global array initializers etc.
+>=20
+> If there is one feature of C I would have liked it is "allow inline
+> functions and statement expressions with constant arguments as
+> constant expressions". Other languages have done that, and it really
+> does help. And yes, it means that you have to basically have a
+> language interpreter in the compiler (you do want to allow loop
+> constructions etc), but it really is very useful.
+>=20
+> Oh well. Even if compilers added that today, it would be years until
+> we could take advantage of it.
+>=20
+> At one point I literally was thinking I'd do 'sparse' as a
+> pre-processor for kernel code, in order to have extended language
+> facilities like that.
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+There exist proposals along those lines for C2Y.
 
-Tested-by: Linux Kernel Functional Testing <lkft@linaro.org>
+From a more near-term solution, I wonder if making it possible (or
+easier) to return integer constant expressions from statement
+expressions and allowing a restricted form of statement expressions=C2=A0
+at file scope would help?
 
-NOTE:
-[Not a kernel regressions]
-Powerpc clang nightly defconfig builds are failing on stable-rc linux-6.6.y
-clang: error: invalid value 'r13' in 'mstack-protector-guard-reg=3D',
-expected one of: r2
- - https://storage.tuxsuite.com/public/linaro/lkft/builds/2pqeSKGTShWpi3PB2=
-dFTogUwhpJ/
 
-## Build
-* kernel: 6.6.64-rc1
-* git: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-=
-rc.git
-* git commit: 1415e716e528f373c2804c2209aa7af6706f1e71
-* git describe: v6.6.63-677-g1415e716e528
-* test details:
-https://qa-reports.linaro.org/lkft/linux-stable-rc-linux-6.6.y/build/v6.6.6=
-3-677-g1415e716e528
+Martin
 
-## Test Regressions (compared to v6.6.62-83-g2c6a63e3d044)
-* powerpc, build
-  - clang-nightly-cell_defconfig
-  - clang-nightly-defconfig
-  - clang-nightly-ppc64e_defconfig
 
-## Metric Regressions (compared to v6.6.62-83-g2c6a63e3d044)
 
-## Test Fixes (compared to v6.6.62-83-g2c6a63e3d044)
-
-## Metric Fixes (compared to v6.6.62-83-g2c6a63e3d044)
-
-## Test result summary
-total: 157880, pass: 131063, fail: 2706, skip: 24032, xfail: 79
-
-## Build Summary
-* arc: 5 total, 5 passed, 0 failed
-* arm: 128 total, 128 passed, 0 failed
-* arm64: 40 total, 40 passed, 0 failed
-* i386: 27 total, 25 passed, 2 failed
-* mips: 26 total, 25 passed, 1 failed
-* parisc: 4 total, 4 passed, 0 failed
-* powerpc: 32 total, 28 passed, 4 failed
-* riscv: 19 total, 19 passed, 0 failed
-* s390: 14 total, 13 passed, 1 failed
-* sh: 10 total, 10 passed, 0 failed
-* sparc: 7 total, 7 passed, 0 failed
-* x86_64: 32 total, 32 passed, 0 failed
-
-## Test suites summary
-* boot
-* commands
-* kselftest-arm64
-* kselftest-breakpoints
-* kselftest-capabilities
-* kselftest-cgroup
-* kselftest-clone3
-* kselftest-core
-* kselftest-cpu-hotplug
-* kselftest-cpufreq
-* kselftest-efivarfs
-* kselftest-exec
-* kselftest-filesystems
-* kselftest-filesystems-binderfs
-* kselftest-filesystems-epoll
-* kselftest-firmware
-* kselftest-fpu
-* kselftest-ftrace
-* kselftest-futex
-* kselftest-gpio
-* kselftest-intel_pstate
-* kselftest-ipc
-* kselftest-kcmp
-* kselftest-kvm
-* kselftest-livepatch
-* kselftest-membarrier
-* kselftest-memfd
-* kselftest-mincore
-* kselftest-mqueue
-* kselftest-net
-* kselftest-net-mptcp
-* kselftest-openat2
-* kselftest-ptrace
-* kselftest-rseq
-* kselftest-rtc
-* kselftest-seccomp
-* kselftest-sigaltstack
-* kselftest-size
-* kselftest-tc-testing
-* kselftest-timers
-* kselftest-tmpfs
-* kselftest-tpm2
-* kselftest-user_events
-* kselftest-vDSO
-* kselftest-watchdog
-* kselftest-x86
-* kunit
-* kvm-unit-tests
-* libgpiod
-* libhugetlbfs
-* log-parser-boot
-* log-parser-test
-* ltp-commands
-* ltp-containers
-* ltp-controllers
-* ltp-crypto
-* ltp-cve
-* ltp-dio
-* ltp-fcntl-locktests
-* ltp-filecaps
-* ltp-fs
-* ltp-fs[
-* ltp-fs_bind
-* ltp-fs_perms_simple
-* ltp-hugetlb
-* ltp-ip[
-* ltp-ipc
-* ltp-ma[
-* ltp-math
-* ltp-mm
-* ltp-nptl
-* ltp-pty
-* ltp-sched
-* ltp-smoke
-* ltp-syscalls
-* ltp-tracing
-* perf
-* rcutorture
-
---
-Linaro LKFT
-https://lkft.linaro.org
 
