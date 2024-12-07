@@ -1,114 +1,78 @@
-Return-Path: <linux-kernel+bounces-436136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3769E81AC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:53:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 74F309E81AE
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:54:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BBE3281DD9
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:53:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36E88281E32
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58F814D2A0;
-	Sat,  7 Dec 2024 18:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE34E14A09C;
+	Sat,  7 Dec 2024 18:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kaHRsPcF"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQgcLVnl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ACF17E0;
-	Sat,  7 Dec 2024 18:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C63417E0
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 18:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733597603; cv=none; b=mU14frqTvIBlsPwCYVxb6GfKFeopwUYPdC7oUQ5jJCrgtHzg9sZg1uyazJ5AgBhgFoHoIqh2UwoBeSr1nYqfXUFdO5Fhc2Zy98dPxaKhmrDV4PABFrwXBS1Dd+RscsE0xozrvBHr99dFhHoCEaU7KtVGy9QDlZODYQ7mucYwPUw=
+	t=1733597648; cv=none; b=ZJihl+hxW4Frz3YkaXUU7snImBGSCZUDlSzzxAfw1MM7c18DGrOxvDgFSHUaXGnIm3w7YI/xCWkscPKVoFpi5kkOPHopMh8tK4ZUm5M3fTqq2XLyILJPzLs5zabhm0WXY+4n9Sx/mpWE6pl2OgMAWm498OWypKM3AWH/rb5xMAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733597603; c=relaxed/simple;
-	bh=pacVLOX0CI9AZAnXQfY60wytZYDiBYX+6woD4pseV4M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OmiH1stVHgKXAoJ+ZdIKsNF4g/j9drC9EeHuFltESMXcLME2tcFUcqnHml4hZqs3zwpy0bKBcovOVM/+XuFL9oNr7axXcpgPjpa5bSjG1I3zFayJr37cwJpsqpY0KuZ+M5AYpGePrIFgQxcncuwuyn2KpK6bZnFeNuUDYQZv9dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kaHRsPcF; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-3001e7d41c5so26287751fa.2;
-        Sat, 07 Dec 2024 10:53:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733597600; x=1734202400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pacVLOX0CI9AZAnXQfY60wytZYDiBYX+6woD4pseV4M=;
-        b=kaHRsPcF6KknAt/FYkezC8p/Nc77C0DoPA4VxA02TrsfKZqiRI1C+sdfnieT5HUt6u
-         VsxfW+QmunPo1e+HFbbQ9Kk2jHL90+xSYatC1i+vBnOiyVy3tk4ioi4vKaHlTj+SrBi/
-         hzmd/M3EbnZfw8drJZ1m3RR18dQo/J7QfkR/2Ihgj6qe9FkQhEeOE9G+ftBcyLzNCI1L
-         TfALUViX0sT4uizWaHk1FRX9c6n10Nl+kdiw9XMJ15MBUrV5IQXqt6ERquKNTN/sVRQy
-         tuOMac4g6Z4dKvzxio8GyAZGjIiejLfUHxVkR60VXQa6S6DS65y3oOrz3aOfQNIagFMQ
-         lAQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733597600; x=1734202400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pacVLOX0CI9AZAnXQfY60wytZYDiBYX+6woD4pseV4M=;
-        b=mfwjfEqrDGn9xyr/EvP8RCMrtSGNG8sTN5WwVDFqtfJ3wpqPW5wb+SMPJovFm6zeaZ
-         XLFj06gkLHtEhrLpDdaoQzXhuTidpL/PE3aMrTVisqEtEXStyGIU9++S1CUqOa1cj4LE
-         Ou33dGUiPBiF1IJinizxcEzQU6LCETGue6mM77OPOrjhBnRl/8xHHPKA8PD8D1SYqDGg
-         WHlZvihOC0GOvaMGkXUMCrsNQ5fxUcg4YL/sf5SW4sYQtyjIcAVp7JDfbzYjyy+55gv4
-         8bpClLjBnS6pEeeHEwQ+2zYt434c9BuLOuGMdwo3AfhsoyLCKsaRvM547ZKySxR+RSrO
-         11pA==
-X-Forwarded-Encrypted: i=1; AJvYcCUpbPd0D2bOWs7l5mN8giGs/auEJ6zQBrKpgq4BvnzzInzVkgKiTuyOb8AugpiLW/4wm3eu+gMza+2LVYk=@vger.kernel.org, AJvYcCXyR2L8gpIOuZEydAfKn7QwOoHh/2mYHivrGQCJl++iSiM8v6l2prU5ZUcuZUKANYPTm5pp5jz35T0csw3GPa0/@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIq2BfMfF+6g1vZumU25Nf1/0KsiaqkD4JYHldJAlY2lxm7MVI
-	4zR/PpXUzttgYwl38N/SaFIcxkunt+jxhl11KhNKKqBqGvKYegubqWfZBbfMvO+JDO9kAtm4VRE
-	ML/gi9pLByMj4Od+Fo3djpgLKOBc=
-X-Gm-Gg: ASbGncs19rQdbiI8Jgt5D7BOvfYGzBhnxrafvNjforXR0XmKHe8mukf1v8VauBDuogo
-	1yg3cGmgK2A547TgH95NzvBXEIrH+7ohJogk5L9bKJfAOAxvN/YS18Ur8U4wIQwpu
-X-Google-Smtp-Source: AGHT+IEur8XuRACsFxkMLW1ZU1E3oERTlgKeBVuXShfUEvfaIaCFlEfvVM2PCIMXGFNEpIrV6JG8Itne61qzz+URqCc=
-X-Received: by 2002:a2e:a5cb:0:b0:300:24f9:5a25 with SMTP id
- 38308e7fff4ca-3002f933d0bmr22676361fa.19.1733597599186; Sat, 07 Dec 2024
- 10:53:19 -0800 (PST)
+	s=arc-20240116; t=1733597648; c=relaxed/simple;
+	bh=9fcThNCGMeLPhb4ryZ9bUb3LapYxnmAk+VAwsL7lXZs=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Aq6wAAPtbCjsjicTrjl8ph8DA6VRMrM9TM2xSCFj5oGK3iZBLjhureOn9gyzVOe9h/O5ypGvuVRgbBG1bpmS33iCOwCHCNhtbXDcCvH6XbaKgOqX+0l2RMftSawyTjYz2nIsAnKnqqGSE90Qdl2mApaszgI8VMcirFSPXcEtRck=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQgcLVnl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C067C4CEDC;
+	Sat,  7 Dec 2024 18:54:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733597648;
+	bh=9fcThNCGMeLPhb4ryZ9bUb3LapYxnmAk+VAwsL7lXZs=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=kQgcLVnl6XJc/WY6GmV68a3h3CbCzvNpRbwwowii4WdWSfymNMoKbnO+aPBdUXpku
+	 F683twI1u33sTnDKlNcPSi57OJMKDW2uvX2NjdNzrSIo2k3jv8mBexYtil/qhs3TK/
+	 OG8JAfFwvTbjj6UxIVeus3s/RKBGh/GqwnQMlqz3AE/Zkds5OMH/5fWQp9SPFD+LXR
+	 SZWRg5Gqd66yt0ZlwHeUZAteGfraMvhnTdcvHKsW/8le1hWx9KODL3hquJOcNMy4qP
+	 NpGTZ4m+mM0jiAobWar6/YBaPgym7cW6oAmV1Hqyett6V+kqgqqocBOF0loM0dqQr8
+	 S2mlu3IjqZQRA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70C35380A95D;
+	Sat,  7 Dec 2024 18:54:24 +0000 (UTC)
+Subject: Re: [GIT PUL] JFFS2 fixes for v6.13-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <972877429.45679137.1733560825113.JavaMail.zimbra@nod.at>
+References: <972877429.45679137.1733560825113.JavaMail.zimbra@nod.at>
+X-PR-Tracked-List-Id: Linux MTD discussion mailing list <linux-mtd.lists.infradead.org>
+X-PR-Tracked-Message-Id: <972877429.45679137.1733560825113.JavaMail.zimbra@nod.at>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/ubifs-for-linus-6.13-rc2
+X-PR-Tracked-Commit-Id: b29bf7119d6bbfd04aabb8d82b060fe2a33ef890
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: a6db2a5d7df3e577c268ba7955eb48e913424599
+Message-Id: <173359766300.3037814.10654157760992073225.pr-tracker-bot@kernel.org>
+Date: Sat, 07 Dec 2024 18:54:23 +0000
+To: Richard Weinberger <richard@nod.at>
+Cc: torvalds <torvalds@linux-foundation.org>, linux-mtd <linux-mtd@lists.infradead.org>, linux-kernel <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241102-kunit-qemu-accel-macos-v2-0-9d4579fddd20@gmail.com>
- <20241102-kunit-qemu-accel-macos-v2-1-9d4579fddd20@gmail.com> <CABVgOS==_+DDRYzto6Wn21kCBQCDhAHwhORU8f+AUQ2GDArXHg@mail.gmail.com>
-In-Reply-To: <CABVgOS==_+DDRYzto6Wn21kCBQCDhAHwhORU8f+AUQ2GDArXHg@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 7 Dec 2024 13:52:43 -0500
-Message-ID: <CAJ-ks9kFEp=B9eq5JWkZNDGo4awPwu=rqGASOn9RL8EMtqBAZQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] kunit: add fallback for os.sched_getaffinity
-To: David Gow <davidgow@google.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, 
-	Alyssa Ross <hi@alyssa.is>, =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 5, 2024 at 3:36=E2=80=AFAM David Gow <davidgow@google.com> wrot=
-e:
->
-> On Sat, 2 Nov 2024 at 20:10, Tamir Duberstein <tamird@gmail.com> wrote:
-> >
-> > Python 3.13 added os.process_cpu_count as a cross-platform alternative
-> > for the Linux-only os.sched_getaffinity. Use it when it's available and
-> > provide a fallback when it's not.
-> >
-> > This allows kunit to run on macOS.
-> >
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> > ---
->
-> Looks plausible enough to me. Thanks very much!
->
-> Reviewed-by: David Gow <davidgow@google.com>
->
-> Cheers,
-> -- David
+The pull request you sent on Sat, 7 Dec 2024 09:40:25 +0100 (CET):
 
-Thanks David! While the next patch is still plausibly undergoing
-discussion, would it be possible to pick this one up? Without it
-kunit.py is not usable on macOS.
+> git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/ubifs-for-linus-6.13-rc2
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/a6db2a5d7df3e577c268ba7955eb48e913424599
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
