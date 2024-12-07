@@ -1,176 +1,167 @@
-Return-Path: <linux-kernel+bounces-435953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4537A9E7F1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:49:26 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE349E7F27
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:57:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26CF01679F2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:49:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26266283055
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E539A13D244;
-	Sat,  7 Dec 2024 08:49:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 196D114F115;
+	Sat,  7 Dec 2024 08:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jaqNOB1B"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AUkKA05b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850C413665A;
-	Sat,  7 Dec 2024 08:49:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A82013AD05;
+	Sat,  7 Dec 2024 08:56:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733561357; cv=none; b=ti3cy1SnoO7xcGRTLpGxM6Y9+W+ssijbfA9XsI8Xi+Kt9aFkyZDy0ioNGOQx8ewMM0sbuC7LfqEpDqXXw6Jdxj62zIelJnWL6r6WsZ2sEZVUuovDlHAGobUqD9/juXPJMxsT0TuKofGOEMwL+x1a6wMrFRUg8zYh13POeQAHNaY=
+	t=1733561805; cv=none; b=CnoxSB06Xv09GPaKppf4OyytnZiKqYvmH+k/mtCNkLF3DZGP3vjajEPnSnV3M+bGFuksMreChZ6mTKlZ+0v0AMTF3CuWMiH3o7zWnZoAwUby4otBPUdBWzNbUrmNUZ2eteGy05CDV41hE4Dhsc39NsI9QU1gzoi2ET99i9DQAmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733561357; c=relaxed/simple;
-	bh=5GKA+vbte+FsEYYxUpMwZCs4AtQKQ7dQr4JEctxyC3M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cS0DVkkZOfnRk1w5z1KCoQ3m1Wzh+m4advRoftkQIT4+TR7Gj7lIEEI2ntmWAeDsi7N8SQ9ps/KGEAFKwGvIjJQ5RO1g9D6bhxaZ7rnKWBaGePQGpVfXxI9zmBcun+KM05vSQq/gx4vSOYVE1YauKx+2k1orpZ6mMUZCT38bdjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jaqNOB1B; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso356206466b.1;
-        Sat, 07 Dec 2024 00:49:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733561354; x=1734166154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/hSP0puytjp0Y0zAx0eNIAWPfHJkDF0VFbADCuhWmQ4=;
-        b=jaqNOB1Bod3dvcexa8nE7cuI7QEtN8hU0oh5k58l+qal30dVZi8SCcO/9UGfO+0pLm
-         PPyox6sFHaQeCbvpoEp4UFrnKN77XtxlJoJd91QcOr26NshqJ7vLXsCkKgEJn25HNun+
-         cEnDaCiLXQBzx9hczqJkCrGFZgeTuS+D2ts3LZ1zvJdB++p6IuEU1pvYiBcDXuo8QD3N
-         hDMjU509iRgCpD1f5dXWAeUtne5O1S6RfpzX6gjQE94TymK7K9POpwr5P3ghNkSTdQqt
-         IV26qiOFWXoIqSlAynjf/6HDI/hzugU4ViEJB0/SHXdOXeWlugDrzfhZtGnAyv+ZDvfQ
-         9uUQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733561354; x=1734166154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/hSP0puytjp0Y0zAx0eNIAWPfHJkDF0VFbADCuhWmQ4=;
-        b=u6xQ295OKVNu6fkFX7AQdpEFoEEIotjb8BnLHxPih583G8H2m8H0UP20zs985uCj5d
-         0JRQ4dgkuXrhLrOjUzE9uaRUTJcoolY7JiDc7H8TIFgx5c3JFn6E08u/I2AuIsg4Di5H
-         9xnqX1jVK4EdpvkdeU8JoOllmxD1dPkyBoQN7Bn8UjvyEJBPdgXE+Jlv991oeFrEhg+U
-         ZfgQziHpFPkabB3l4+Xn7cwN0haPtRn2dTkQYNsu+5HPa+IwpXXgOFhLwhNYITr2jiQ3
-         b7xbMBeW2kUbB37lQwMXV5YgiA1cF31EmjMKC69lV94kjR5mfBXKHy/W1f24fOfl99q0
-         yU9w==
-X-Forwarded-Encrypted: i=1; AJvYcCUWoqO4HeeGPzggrc9ceMjtnWH5OMCrYCBgxStl6Zs3/Czi5ue/6+GoQghcYUh9UBAnpldcy40Rg3CzTBAF@vger.kernel.org, AJvYcCV6an9w9Q2D/h9NvXfXhDnN5f5fqpgUgYPz2JVj5B2YyxhVqHNku1oXvz4IWJnlapBP4ZbkNUiuUEuo@vger.kernel.org, AJvYcCXvAdVo3TGyaj/o3mntOPYT/tGMKc/k3Wlkqzk8FokYhbRv75B3WrZFeyo+q2WsKjF/woA03BJt65FcDH/Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YzphTQuhPPY0eJ8dVDuO8v4cJKZTVI+iu1NR4OKlGq7YV32ccBw
-	E3frM5iV+lwAO/sgbYhz1ZIuas1nZlJRHX1cUrpwkBQeGIbrtdfy3lwa8yyu061wRpkGUnQa6id
-	ljVIZOLf9xiXh7jbVhTnEld3qIv9JXFizPXU=
-X-Gm-Gg: ASbGncvWyvl5xjBwESHT1wNOR0w3aqCA2ctsYTZimBq/mY+D9PtXwPpRdYF8FhtxBAI
-	6SWMC2PWZaIV3m9Zh6icqNtbadwvrqD8=
-X-Google-Smtp-Source: AGHT+IHiPKXD6U2wEjizdAdQQpJLBRGoO27NflI25U/GTYqfvZidUlJGCeVyA9IXcSzWD+qq/+d6WVb3tjpBLX7by/o=
-X-Received: by 2002:a17:907:9507:b0:aa6:38e9:9d03 with SMTP id
- a640c23a62f3a-aa63a09a422mr349425266b.30.1733561353613; Sat, 07 Dec 2024
- 00:49:13 -0800 (PST)
+	s=arc-20240116; t=1733561805; c=relaxed/simple;
+	bh=QbRPMQdU7vqQdoBjdYpkWgl+QT/l5n9+TCQixqmCNMY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LoyLrdy5U/zokUlKqY5cyldieMy6q2NgPDvqDW39mnDvXgCMx9MGxFjdWbX+zk7NfceJRhoXE0h37ZH/K1siy6mxBLsdmu4DhdsXd7NbhgBCWgeH3xLAPfX7CZ/i+6h2NQ+LYeXBlmdIqqUkYTt252y+uN+LkwCXWzVyz9LjmZU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AUkKA05b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0461C4CEE0;
+	Sat,  7 Dec 2024 08:56:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733561805;
+	bh=QbRPMQdU7vqQdoBjdYpkWgl+QT/l5n9+TCQixqmCNMY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=AUkKA05bCKuOP02kdvZ4nktk5ZZe67DsgcTGd4zS2G7F0hhWrQr99J2fkFjKNiL0U
+	 RJkB1c09HKmbVsw7qRNPyUdZhftGIi6xLGg8JMmeK6e39gUwLr2voHkeDWB/WXB+rt
+	 cI3meEYunnuuJ6h/hK3B561J2vSFSP0Dh/ViAWPuYAGdtrwyvi9yQdxrgiwmrXj9cy
+	 JiudunAzp9EqaLIkOyC/Mh1X6XSL2aWx0DGormQc7+7NMul9tv+mPRcLXecA6PyR2Z
+	 K1oM6ksCL2wMdk2Off/DgTMB9jppxcdMvkyKRg8mZLPbvsjJ+nsliPSaWbzo5s36vq
+	 wJGZF5r3jdr5g==
+Received: from mchehab by mail.kernel.org with local (Exim 4.98)
+	(envelope-from <mchehab+huawei@kernel.org>)
+	id 1tJqcE-00000005j4V-3oB2;
+	Sat, 07 Dec 2024 09:56:42 +0100
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: "Michael S . Tsirkin" <mst@redhat.com>
+Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>,
+	Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
+	Ani Sinha <anisinha@redhat.com>,
+	Dongjiu Geng <gengdongjiu1@gmail.com>,
+	Igor Mammedov <imammedo@redhat.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Peter Maydell <peter.maydell@linaro.org>,
+	Shannon Zhao <shannon.zhaosl@gmail.com>,
+	kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	qemu-arm@nongnu.org,
+	qemu-devel@nongnu.org
+Subject: [PATCH v6 00/16] Prepare GHES driver to support error injection
+Date: Sat,  7 Dec 2024 09:54:06 +0100
+Message-ID: <cover.1733561462.git.mchehab+huawei@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <Z1D2BE2S6FLJ0tTk@infradead.org> <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
- <20241206160358.GC7820@frogsfrogsfrogs>
-In-Reply-To: <20241206160358.GC7820@frogsfrogsfrogs>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sat, 7 Dec 2024 09:49:02 +0100
-Message-ID: <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export operations
- as only supporting file handles
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Christian Brauner <brauner@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Erin Shepherd <erin.shepherd@e43.eu>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	stable <stable@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-On Fri, Dec 6, 2024 at 5:03=E2=80=AFPM Darrick J. Wong <djwong@kernel.org> =
-wrote:
->
-> On Thu, Dec 05, 2024 at 12:57:28PM +0100, Amir Goldstein wrote:
-> > On Thu, Dec 5, 2024 at 1:38=E2=80=AFAM Christoph Hellwig <hch@infradead=
-.org> wrote:
-> > >
-> > > On Sun, Dec 01, 2024 at 02:12:24PM +0100, Christian Brauner wrote:
-> > > > Hey,
-> > > >
-> > > > Some filesystems like kernfs and pidfs support file handles as a
-> > > > convenience to enable the use of name_to_handle_at(2) and
-> > > > open_by_handle_at(2) but don't want to and cannot be reliably expor=
-ted.
-> > > > Add a flag that allows them to mark their export operations accordi=
-ngly
-> > > > and make NFS check for its presence.
-> > > >
-> > > > @Amir, I'll reorder the patches such that this series comes prior t=
-o the
-> > > > pidfs file handle series. Doing it that way will mean that there's =
-never
-> > > > a state where pidfs supports file handles while also being exportab=
-le.
-> > > > It's probably not a big deal but it's definitely cleaner. It also m=
-eans
-> > > > the last patch in this series to mark pidfs as non-exportable can b=
-e
-> > > > dropped. Instead pidfs export operations will be marked as
-> > > > non-exportable in the patch that they are added in.
-> > >
-> > > Can you please invert the polarity?  Marking something as not support=
-ing
-> > > is always awkward.  Clearly marking it as supporting something (and
-> > > writing down in detail what is required for that) is much better, eve=
-n
-> > > it might cause a little more churn initially.
-> > >
-> >
-> > Churn would be a bit annoying, but I guess it makes sense.
-> > I agree with Christian that it should be done as cleanup to allow for
-> > easier backport.
-> >
-> > Please suggest a name for this opt-in flag.
-> > EXPORT_OP_NFS_EXPORT???
->
-> That's probably too specific to NFS--
->
-> AFAICT the goal here is to prevent exporting {pid,kern}fs file handles
-> to other nodes, correct?  Because we don't want to allow a process on
-> another computer to mess around with processes on the local computer?
->
-> How about:
->
-> /* file handles can be used by a process on another node */
-> #define EXPORT_OP_ALLOW_REMOTE_NODES    (...)
+Hi Michael,
 
-This has a sound of security which is incorrect IMO.
-The fact that we block nfsd export of cgroups does not prevent
-any type of userland file server from exporting cgroup file handles.
+Please ignore the patch series I sent yesterday:
+	https://lore.kernel.org/qemu-devel/20241207093922.1efa02ec@foz.lan/T/#t
 
-I hate to be a pain, but IMO, the claim that inverted polarity is clearer
-is not a consensus and there are plenty of counter examples.
-I do not object to inverting the polarity if a flag name is found
-that explains the property well, but IMO, this is not it.
+The git range was wrong, and it was supposed to be v6. This is the right one.
+It is based on the top of v9.2.0-rc3.
 
-Maybe opt-out of nfsd export is a little less safer than opt-in, but
-1. opt-out is and will remain the rare exception for export_operations
-2. at least the flag name EXPORT_OP_LOCAL_FILE_HANDLE
-    is pretty clear IMO
-
-Plus, as I wrote in another email, the fact that pidfs is SB_NOUSER,
-so userspace is not allowed to mount it into the namespace and
-userland file servers cannot export the filesystem itself.
-That property itself (SB_NOUSER), is therefore a good enough indication
-to deny nfsd export of this fs.
-So really the immediate need for an explicit flag is only to stop exporting
-kernfs/cgroupfs and I don't see this need spreading much further
-(perhaps to nsfs) and therefore, the value of inverting to opt-in is
-questionable IMO.
+Could you please merge this series for ACPI stuff? All patches were already
+reviewed by Igor. The changes against v4 are just on some patch descriptions,
+plus the addition of Reviewed-by. No Code changes.
 
 Thanks,
-Amir.
+Mauro
+
+-
+
+During the development of a patch series meant to allow GHESv2 error injections,
+it was requested a change on how CPER offsets are calculated, by adding a new
+BIOS pointer and reworking the GHES logic. See:
+
+https://lore.kernel.org/qemu-devel/cover.1726293808.git.mchehab+huawei@kernel.org/
+
+Such change ended being a big patch, so several intermediate steps are needed,
+together with several cleanups and renames.
+
+As agreed duing v10 review, I'll be splitting the big patch series into separate pull 
+requests, starting with the cleanup series. This is the first patch set, containing
+only such preparation patches.
+
+The next series will contain the shift to use offsets from the location of the
+HEST table, together with a migration logic to make it compatible with 9.1.
+
+---
+
+v5:
+- some changes at patches description and added some R-B;
+- no changes at the code.
+
+v4:
+- merged a patch renaming the function which calculate offsets to:
+  get_hw_error_offsets(), to avoid the need of such change at the next
+  patch series;
+- removed a functional change at the logic which makes
+  the GHES record generation more generic;
+- a couple of trivial changes on patch descriptions and line break cleanups.
+
+v3:
+- improved some patch descriptions;
+- some patches got reordered to better reflect the changes;
+- patch v2 08/15: acpi/ghes: Prepare to support multiple sources on ghes
+  was split on two patches. The first one is in this cleanup series:
+      acpi/ghes: Change ghes fill logic to work with only one source
+  contains just the simplification logic. The actual preparation will
+  be moved to this series:
+     https://lore.kernel.org/qemu-devel/cover.1727782588.git.mchehab+huawei@kernel.org/
+
+v2: 
+- some indentation fixes;
+- some description improvements;
+- fixed a badly-solved merge conflict that ended renaming a parameter.
+
+Mauro Carvalho Chehab (16):
+  acpi/ghes: get rid of ACPI_HEST_SRC_ID_RESERVED
+  acpi/ghes: simplify acpi_ghes_record_errors() code
+  acpi/ghes: simplify the per-arch caller to build HEST table
+  acpi/ghes: better handle source_id and notification
+  acpi/ghes: Fix acpi_ghes_record_errors() argument
+  acpi/ghes: Remove a duplicated out of bounds check
+  acpi/ghes: Change the type for source_id
+  acpi/ghes: don't check if physical_address is not zero
+  acpi/ghes: make the GHES record generation more generic
+  acpi/ghes: better name GHES memory error function
+  acpi/ghes: don't crash QEMU if ghes GED is not found
+  acpi/ghes: rename etc/hardware_error file macros
+  acpi/ghes: better name the offset of the hardware error firmware
+  acpi/ghes: move offset calculus to a separate function
+  acpi/ghes: Change ghes fill logic to work with only one source
+  docs: acpi_hest_ghes: fix documentation for CPER size
+
+ docs/specs/acpi_hest_ghes.rst  |   6 +-
+ hw/acpi/generic_event_device.c |   4 +-
+ hw/acpi/ghes-stub.c            |   2 +-
+ hw/acpi/ghes.c                 | 259 +++++++++++++++++++--------------
+ hw/arm/virt-acpi-build.c       |   5 +-
+ include/hw/acpi/ghes.h         |  16 +-
+ target/arm/kvm.c               |   2 +-
+ 7 files changed, 169 insertions(+), 125 deletions(-)
+
+-- 
+2.47.1
+
+
 
