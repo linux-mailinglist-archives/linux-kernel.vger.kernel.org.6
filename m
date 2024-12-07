@@ -1,180 +1,129 @@
-Return-Path: <linux-kernel+bounces-435929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4583D9E7EBB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:43:04 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A75EE9E7EBD
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D935285BFB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:43:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 673CB281EE1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:45:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02FBC12EBE9;
-	Sat,  7 Dec 2024 07:42:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA4F382C7E;
+	Sat,  7 Dec 2024 07:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hUrg3Bg+"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="DOFGwFOh"
+Received: from omta38.uswest2.a.cloudfilter.net (omta38.uswest2.a.cloudfilter.net [35.89.44.37])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94E2E3398A;
-	Sat,  7 Dec 2024 07:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9CE222C6E3
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 07:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733557376; cv=none; b=GWxHhAGILxZ11LvItqIwP6kXHeZoP90xYwUMKBpCRHCEDERJ5lhpCpSZuCJvQnzFlFY1w5kMMS3IpWu5vvc+s0DJAx9mYOeL7h3hGHKksC8QQSi3g4cPEpVFqvwbokL4f4WSQJ+u0qArDu7nxidWt6TUXQSGwbZeKy6ZuzkbfF0=
+	t=1733557542; cv=none; b=chggjOCOszJPj1aLSEsAtoG6nUdBNZDEPK+gQJUvzf5+mwlVe+3wOJN86dLskDhblXHdr3xi+ZTa1wgG5G0Zb6f65RGssTzemCpjSD7qNU+N8u0KhlG6nFPjkT+DKCOkgYNoDm6r1ErK6CDVOx4u0v72Z4kl/+9nEseIj7uJpg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733557376; c=relaxed/simple;
-	bh=zXC701XlS+Mku5aOxt11GhmVlqiDr7cEZoBagLZyIo4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LMSjvpkQDdOrPtt+vg4ahs/a/iNdrhlbFRjS8RqOuViTSYigrm6z/Rin2RptjqyaQWWRT2NUOY1IZHfZ8cwNmDKHRy+bY88KnORldZW+hR+OlxsyWHx3rKLBcvtcpr4nT8HM6O/TQTH8KLMdghK6BZob7F08N6p+ba0O9z8BzFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hUrg3Bg+; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa5500f7a75so372254566b.0;
-        Fri, 06 Dec 2024 23:42:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733557373; x=1734162173; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Hd+JXxg1Trx18tJn2WFf9QCw9lSZFwBnHLKDbtoBF3M=;
-        b=hUrg3Bg+3lRP9T3Yd3/S7fOPJ373gHskUmgMijO7KF4ciZ05aKt9brje2NvUmwi4xU
-         ladK+uxtGxesPmq22czwHRCchIVZWpFkt3J7QcvHahXvEMiKdjYN/2lS3s1JTdfV1H5s
-         Wv3pJGNl3NX5zTQG4HyoQJq7KRCLk/+gFO5kRpjW5SyD3XHRLsDc/S0Bo1mFFnDEyqym
-         gAlSbvaL+a5z0zcPf6AuVkRr3R7CHCLfzVWUoJqTrWy2eSMJeXkzOBlUQtxH1ySfwfdz
-         2UT1ofv+XoWSW8fbtO+EgoN1Eh7yl7BiFz1057oDHz4j8nZIy9UYrmVH5f6+p/gCK9AK
-         3P0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733557373; x=1734162173;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Hd+JXxg1Trx18tJn2WFf9QCw9lSZFwBnHLKDbtoBF3M=;
-        b=SonasElSpw4HnsuzoC6ML6Lh//HYO9b6PAPy6F6WVxgP4RpAjiy59QrZ6LChnnXhiD
-         6E4M55dZbXi6uYjQEKqEA/KOZPaTaSjjSE8lX8AUw5dnWyiJtGoEMvyVL88svFb6pNKh
-         uR7KXGMGFXxbGpFCye1/R0rZejWR4nVDpeCTfdJcaHP7ChpOMpnNV/KSptmV3g2hTuhf
-         jXlNQfkfNT3OIHNzd7iiKUoEAgz7QGK91Kz7BAjjWqbRQfjPenDjrQ9Rd63f7kLADDrM
-         J+qwLQ+bs+g5K83Oj4KV1rFcbJ6Kz98LUyEq8XxLcTvOod5N1XT8g034p6fGiurxH8vx
-         27jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxDKFRSPmYeuwJYeI3Nl9jr88V2IWuKaRzLw14OCdxFArYOLXX41ZC9KCaeaUv2rEjKFwmoYz9am9jlJRA@vger.kernel.org, AJvYcCWFd7CBqBPD2wry5LfY43Tj6DJh/u+m6dtS6Pk2aD9kJBgO/wCjYnGx9k8nKcwYE4RRS1XlmhF0te/zXqGoX04=@vger.kernel.org, AJvYcCXAmTSp7xCu+U8n1zsxlZl9HijKTUCLifGVHySl8e3hlI/TZKyILdfEvrLoOgeFV79hUO1M1OcRKQQNuHpF@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDVQErRNanC9MOp0MIS7vzIeOaRROxo28aFSD9EF/KYVC6eoGu
-	9160Rv5wrjQl1qZsVOGpGiUAhaKkIta9kDcFaVKP1nwfQR1uHacV2uHXIdHh9u93CJMjk7C55kt
-	W2OcU1+rh693zQSz8RifGYbXfOz0=
-X-Gm-Gg: ASbGncuN85PfeSmt5pCODsKRUmPPRmf4WGeVnWsrev9GczOLpjoBmXgXaT7Gnik93nA
-	l/xW8BsFhWc9JSTQ8e4KB6lPbGOx7ztE=
-X-Google-Smtp-Source: AGHT+IFtbq3U+qyH15cm3qJcpaS8xIxfktbIH2S26u2IkmcJ4yPTJg9aqWHgPR/Bx1zVWKXpdweVI0tjzLEF2jmrRv0=
-X-Received: by 2002:a17:906:31d1:b0:aa6:62d5:653 with SMTP id
- a640c23a62f3a-aa662d50b73mr25238766b.54.1733557372613; Fri, 06 Dec 2024
- 23:42:52 -0800 (PST)
+	s=arc-20240116; t=1733557542; c=relaxed/simple;
+	bh=SNpFgPdSo+t35pzmqSgf3icZ48ToM0Po88JTwUAAA4E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qxYYCsClWTyIW5h2KPf/+/xfZMU20AV/DTSewgdvcuJOhREueF1IRqapN7XbdXLVYL964xL+vEbzHcA1EOCheCqBVv2W/BpP31p6Ogxipt5JDlOAjuH6nCnD6DygIaYs3oNYAYwdqyIHv9rs1Gg2EEBwzzf842KE8v44KIOPVhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=DOFGwFOh; arc=none smtp.client-ip=35.89.44.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-6002a.ext.cloudfilter.net ([10.0.30.222])
+	by cmsmtp with ESMTPS
+	id JeO0t9gQ9umtXJpVNttjE2; Sat, 07 Dec 2024 07:45:33 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id JpVMtLhBE65gFJpVMtZ8P3; Sat, 07 Dec 2024 07:45:33 +0000
+X-Authority-Analysis: v=2.4 cv=Z58nH2RA c=1 sm=1 tr=0 ts=6753fd1d
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7vwVE5O1G3EA:10 a=VwQbUJbxAAAA:8
+ a=HaFmDPmJAAAA:8 a=49j0FZ7RFL9ueZfULrUA:9 a=QEXdDO2ut3YA:10
+ a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=uJ7QF4CZc7MYPwvNa44NzO6hHAkLkuutND+55bVBz6A=; b=DOFGwFOhXx3qrXPVpVyVNgxJEu
+	BAiwnvICa4giwoB/MrVIXS52R3jXDoYHhv8yEHrs2UmmojQS6I4MBvbCcECgE+t6jq/dxm9dCAJVF
+	aQTWFFDFvmmCr0NB7T/L6qWWDpFAcWkW6CGd4OAxAml3kXrQfcmKBNVbC2KMaLE5J4DAkS5xG2Anx
+	w21qHHOB7lyfLZ8zbDDjo8RQMlYqJTLvcnWDiDwSzZ32v+eDWmgduPUWTNxqvFwWm0re2iByBZtIk
+	YucFlMl52Jnm5KbgGHnw47Eekuho4D3QTIPDdAaStvhFTdUPmU5Vi6ejgULmLdx9/nhaBATtgHVdN
+	DBbU8ADQ==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:55222 helo=[10.0.1.115])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1tJpVL-0030kT-2C;
+	Sat, 07 Dec 2024 00:45:31 -0700
+Message-ID: <08fdec69-df68-4a94-98eb-6e71eff2d14f@w6rz.net>
+Date: Fri, 6 Dec 2024 23:45:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
- <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com> <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
- <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com> <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
- <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
- <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
- <d23fe8a5dbe84bfeb18097fdef7aa4c4@AcuMS.aculab.com> <CAHk-=win8afdcergvJ6f2=rRrff8giGUW62qmYs9Ae6aw=wcnA@mail.gmail.com>
- <0f5c07b827c3468c8fa3928a93a98bfa@AcuMS.aculab.com> <e806dd51b1ac4e289131297fbf30fc37@AcuMS.aculab.com>
-In-Reply-To: <e806dd51b1ac4e289131297fbf30fc37@AcuMS.aculab.com>
-From: Vincent Mailhol <vincent.mailhol@gmail.com>
-Date: Sat, 7 Dec 2024 16:42:41 +0900
-Message-ID: <CAMZ6RqLOR3aCRW_js2agV+VFiHdazb4S2+NdT5G4=WbDKNB8bA@mail.gmail.com>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of __is_constexpr()
-To: David Laight <David.Laight@aculab.com>, Linus Torvalds <torvalds@linux-foundation.org>, w@1wt.eu
-Cc: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"uecker@tugraz.at" <uecker@tugraz.at>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.12 000/146] 6.12.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20241206143527.654980698@linuxfoundation.org>
+Content-Language: en-US
+From: Ron Economos <re@w6rz.net>
+In-Reply-To: <20241206143527.654980698@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1tJpVL-0030kT-2C
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.115]) [73.223.253.157]:55222
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 16
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfO0xU5dmeXhqhoq8arsXgbI2IIms1HUMX1W8CfSuo1xfm1i/rtMGIvxHB5oiEvTiJhx80fDrYKiLK+8eScN48Z9Cl6Tr3hTtM9UkJcRZBgJbFGsG/4kY
+ Glv8b/MLbBh89Xg3fF+vpjVEBRLSlMNtBXrmjr1F2/GwEItvn+FGWOBpzwsqkpM1EPWJY4kRRjqGZoW92pybcgLFjXuFP7JKNHs=
 
-On Sat. 7 Dec. 2024 at 05:24, David Laight <David.Laight@aculab.com> wrote:
-> > > > #define const_NULL(x) _Generic(0 ? (x) : (char *)0, char *: 1, void *: 0)
-> > > > #define const_true(x) const_NULL((x) ? NULL : (void *)1L))
-> > > > #define const_expr(x) const_NULL((x) ? NULL : NULL))
-> > > > I send this morning.
-> > > > Needs 's/char/struct kjkjkjkjui/' applied.
-> > >
-> > > Oh Christ. You really are taking this whole ugly to another level.
-> >
-> > I sort of liked that version in a perverse sort of way.
-> > It does give you a simple test for NULL (unless you've used 'struct kjkjkjkjui').
+On 12/6/24 06:35, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.4 release.
+> There are 146 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
-> Except const_NULL() really doesn't work at all - so you are lucky :-)
+> Responses should be made by Sun, 08 Dec 2024 14:34:52 +0000.
+> Anything received after that time might be too late.
 >
-> So maybe the slightly long lines:
-> #define const_true(x) _Generic(0 ? (void *)((x) + 0 ? 0L : 1L) : (char *)0, char *: 1, void *: 0)
-> #define const_expr(x) _Generic(0 ? (void *)((x) + 0 ? 0L : 0L) : (char *)0, char *: 1, void *: 0)
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-This still throws a -Wnull-pointer-arithmetic on clang on const_expr(NULL):
+Built and booted successfully on RISC-V RV64 (HiFive Unmatched).
 
-  https://godbolt.org/z/vo5W7efdE
+Tested-by: Ron Economos <re@w6rz.net>
 
-I just do not see a method to silence that one. So three options:
-
-  1. is_const() does not accept pointers and throws a constraint
-     violation:
-
-       #define is_const(x) __is_const_zero(0 * (x))
-
-     This is my current patch.
-
-  2. is_const() accept pointers but is_const(NULL) returns false:
-
-       #define is_const(x) __is_const_zero((x) != (x))
-
-     This keeps the current __is_constexpr() behaviour.
-
-  3. is_const() accepts pointers and is_const(NULL) return true:
-
-       #define const_expr(x) _Generic(0 ? (void *)((x) + 0 ? 0L : 0L)
-: (char *)0, char *: 1, void *: 0)
-
-     David's latest proposal, it requires to remove the
-     -Wnull-pointer-arithmetic clang warning.
-
-I vote for 1. or 2. (with a preference for 1.). IMHO, we are just
-adding an unreasonable level of complexity for making the macro treat
-NULL as an integer. Would someone find a solution for 3. that does not
-yield a warning, then why not. But if we have to remove a compiler
-check for a theoretical use case that does not even exist in the
-kernel, then it is not worth the trade off.
-
-Concerning is_const(var << 2), the patch I submitted works fine as-is
-with all scalars including that (var << 2):
-
-  https://godbolt.org/z/xer4aMees
-
-And can we ignore the case (!(var << 2))? This is not a warning
-because of the macro, but because of the caller! If I do any of:
-
-          if (!(var << 2)) {}
-          (void)__builtin_constant_p(!(var << 2));
-
-I also got the warning. The point is that the macro should not
-generate *new* warnings. If the given argument already raises a
-warning, it is the caller's responsibility to fix.
-
-
-Yours sincerely,
-Vincent Mailhol
 
