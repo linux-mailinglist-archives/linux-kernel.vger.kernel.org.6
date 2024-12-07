@@ -1,157 +1,138 @@
-Return-Path: <linux-kernel+bounces-436171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 653879E8218
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:50:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 046F29E8223
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:55:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4D10166296
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:49:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AED0218846B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:55:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F2619EED3;
-	Sat,  7 Dec 2024 20:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q/DnGHL5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DEEE156661;
+	Sat,  7 Dec 2024 20:55:38 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BB18188014;
-	Sat,  7 Dec 2024 20:48:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 789441547C8
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 20:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733604507; cv=none; b=LxUAI+FrNNgi0vQdYW9WtG479b1SwVHhT2qfY0T/qcwK983yS1sEnfsDbORnbblHT8oCjlIA2aiGB9ZbWFxbyOXF4siK6IgtZgql0GiGU76zcNpEFByAmnSC5nfHA1fe0gYp5pVpUyp0Y69q6NDUJ778PxAofYPNdCNKml1HYqk=
+	t=1733604938; cv=none; b=Al13kN8iHzTJKDm0eEmLn8QatfOadMaChbjLiGwDdEqCfXXce37MwoXpbqrQYaa1iaeseUumF/LirW0Zl5wvyanFiH+YkiQWpn+c67OY07kCQ3efAItop7l0BMrssLrKh+sq7xlLVGU2aKYFeGAIppNEyxW7uECv7bDRsICITcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733604507; c=relaxed/simple;
-	bh=qn1YMqA4rbn5glPH63TElIh4bkgri3XjhyBo+7vejTw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ttCZKqvu1eBKI01F2B2Ccd0dpvK0gYrYkHftcamaL64JuRu7ZZMk5/F8Pl79PeOzFHZlL1pu3S8CtRSbzpILumELaundY/cr3/PD7mY0ZPSOaim9Jh6IkxYotzlLbZWgnni1aTA1FZ6wHWeJAjG2bfo3k8HEo/Phy6caFQsf8sM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q/DnGHL5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DCC2EC4CEF9;
-	Sat,  7 Dec 2024 20:48:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733604506;
-	bh=qn1YMqA4rbn5glPH63TElIh4bkgri3XjhyBo+7vejTw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=q/DnGHL5/MUvDdnO8kOEKzalM6sa2kblIrUOMj7i8LYRIZteewb5L7nKKtaHJaOkG
-	 xqfC65eqGva6OyfNTK5F/E1WjQYzsa1YMkNaBGxzJoHU7zXiVR7G+MamOFPlwExDGD
-	 /O2zczxRr/kewI9ZJsindr8N94i0FYkczw/RPPHun2KsrOvUjgHqmFGLPh1eLy9hUb
-	 YvT9c12WqjH19GesMBQ0EKaxFBWgB/9Kgjkx21hJbITE/z3+6z+4rCBipZ9cw7/xMP
-	 3hZkA+3YATh6hwHRKxgQOjzkKUI+1anBV2U0hJlE2ZHwb6ixMLx+Ui8lvYxx5iVhuM
-	 JyDbickaVESOg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41CDE7717D;
-	Sat,  7 Dec 2024 20:48:26 +0000 (UTC)
-From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
-Date: Sat, 07 Dec 2024 21:48:01 +0100
-Subject: [PATCH v3 12/12] media: i2c: imx214: Fix link frequency
+	s=arc-20240116; t=1733604938; c=relaxed/simple;
+	bh=e/uQG0RrQKiCa4soxG4iPB9nEUqMrZOwm6qD+LoByhQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=VCtxj9ffC6T90/X6zyo1y7ZXP1X2uFOr9UyFMQqaaJ/UFWrI5+yj8qP6nDwWaC0gO8oXRkr1V7quLqYkNa+Ry6fDPFbrn2afS7PLt8yylYSXYndPPmfaDtWA7W+7daaCrsWE/C+Hpnr4nlLj1Wv3Af2BKOMZZFI4WoTj+yregpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-29-1K7yAWunPEWHerYqwBNUTg-1; Sat, 07 Dec 2024 20:55:27 +0000
+X-MC-Unique: 1K7yAWunPEWHerYqwBNUTg-1
+X-Mimecast-MFC-AGG-ID: 1K7yAWunPEWHerYqwBNUTg
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 7 Dec
+ 2024 20:54:36 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sat, 7 Dec 2024 20:54:36 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'Linus Torvalds' <torvalds@linux-foundation.org>, Martin Uecker
+	<muecker@gwdg.de>
+CC: Vincent Mailhol <vincent.mailhol@gmail.com>, "w@1wt.eu" <w@1wt.eu>, "Luc
+ Van Oostenryck" <luc.vanoostenryck@gmail.com>, Nathan Chancellor
+	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
+ Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>, "Yury
+ Norov" <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Topic: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+Thread-Index: AQHbROFPJXcuwP9wN0+yRzIQ2cx/pbLWa+gggAFf14CAACMqUIABpzoGgAAClHCAAAPoAIAAAwjggAANnsCAAMAogIAAM0ZwgACjWkOAAAJUsA==
+Date: Sat, 7 Dec 2024 20:54:35 +0000
+Message-ID: <6b05ec695abc465e9b221fb1180a0fa1@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+ <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+ <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
+ <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
+ <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
+ <d23fe8a5dbe84bfeb18097fdef7aa4c4@AcuMS.aculab.com>
+ <CAHk-=win8afdcergvJ6f2=rRrff8giGUW62qmYs9Ae6aw=wcnA@mail.gmail.com>
+ <0f5c07b827c3468c8fa3928a93a98bfa@AcuMS.aculab.com>
+ <e806dd51b1ac4e289131297fbf30fc37@AcuMS.aculab.com>
+ <CAMZ6RqLOR3aCRW_js2agV+VFiHdazb4S2+NdT5G4=WbDKNB8bA@mail.gmail.com>
+ <b1ff4a65594a4d39b2e9b8b44770214e@AcuMS.aculab.com>
+ <CAMZ6RqJFReLJTd-O8s02oQNeB0SPQh3C-Mg+Nif5vMB9gFtQww@mail.gmail.com>
+ <CAHk-=wjpN4GWtnsWQ8XJvf=gBQ3UvBk512xK1S35=nGXA6yTiw@mail.gmail.com>
+ <6b8c9b942ba6e85a3f1e4eef65a9916333502881.camel@gwdg.de>
+ <CAHk-=whzFAaksqMdYeYC=T82tny1HnGGcYu_xJTXZF1OZwVziQ@mail.gmail.com>
+In-Reply-To: <CAHk-=whzFAaksqMdYeYC=T82tny1HnGGcYu_xJTXZF1OZwVziQ@mail.gmail.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241207-imx214-v3-12-ab60af7ee915@apitzsch.eu>
-References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
-In-Reply-To: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
-To: Ricardo Ribalda <ribalda@kernel.org>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dave Stevenson <dave.stevenson@raspberrypi.com>, 
- Vincent Knecht <vincent.knecht@mailoo.org>, 
- =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733604504; l=2742;
- i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
- bh=1Jjd3sDm2dEMqmAu5K0slF5ScHBtK4byXbl6eSmsS2E=;
- b=riASUiChd4gtqQ9AtvrOzaCBB6oR4wlAPoAKOCW2vub9+Q/0osvibbo/oYUKy1RhyMuE9lAt+
- GkqzdisS0W3AmUz2HAICmdK5ILpLvzRVChKsBn71UNRldDTQx3JOHil
-X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
- pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
-X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
- auth_id=142
-X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
-Reply-To: git@apitzsch.eu
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: R46aSGGNuRczMKlhhRAAiGu4_OTzDvlAOxU6aHVn474_1733604926
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
-From: André Apitzsch <git@apitzsch.eu>
-
-The driver defines IMX214_DEFAULT_LINK_FREQ 480000000, and then
-IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10),
-which works out as 384MPix/s. (The 8 is 4 lanes and DDR.)
-
-Parsing the PLL registers with the defined 24MHz input. We're in single
-PLL mode, so MIPI frequency is directly linked to pixel rate.  VTCK ends
-up being 1200MHz, and VTPXCK and OPPXCK both are 120MHz.  Section 5.3
-"Frame rate calculation formula" says "Pixel rate
-[pixels/s] = VTPXCK [MHz] * 4", so 120 * 4 = 480MPix/s, which basically
-agrees with my number above.
-
-3.1.4. MIPI global timing setting says "Output bitrate = OPPXCK * reg
-0x113[7:0]", so 120MHz * 10, or 1200Mbit/s. That would be a link
-frequency of 600MHz due to DDR.
-That also matches to 480MPix/s * 10bpp / 4 lanes / 2 for DDR.
-
-Keep the previous link frequency for backward compatibility.
-
-Signed-off-by: André Apitzsch <git@apitzsch.eu>
----
- drivers/media/i2c/imx214.c | 24 +++++++++++++++---------
- 1 file changed, 15 insertions(+), 9 deletions(-)
-
-diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-index 1330f13207beec0960c384681bf0b49e99fe860f..910ad03cda23345d3d10d13cd30f007954534e80 100644
---- a/drivers/media/i2c/imx214.c
-+++ b/drivers/media/i2c/imx214.c
-@@ -31,7 +31,9 @@
- #define IMX214_REG_FAST_STANDBY_CTRL	CCI_REG8(0x0106)
- 
- #define IMX214_DEFAULT_CLK_FREQ	24000000
--#define IMX214_DEFAULT_LINK_FREQ 480000000
-+#define IMX214_DEFAULT_LINK_FREQ	600000000
-+/* Keep wrong link frequency for backward compatibility */
-+#define IMX214_DEFAULT_LINK_FREQ_LEGACY	480000000
- #define IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10)
- #define IMX214_FPS 30
- 
-@@ -1216,18 +1218,22 @@ static int imx214_parse_fwnode(struct device *dev)
- 		goto done;
- 	}
- 
--	for (i = 0; i < bus_cfg.nr_of_link_frequencies; i++)
-+	for (i = 0; i < bus_cfg.nr_of_link_frequencies; i++) {
- 		if (bus_cfg.link_frequencies[i] == IMX214_DEFAULT_LINK_FREQ)
- 			break;
--
--	if (i == bus_cfg.nr_of_link_frequencies) {
--		dev_err_probe(dev, -EINVAL,
--			      "link-frequencies %d not supported, Please review your DT\n",
--			      IMX214_DEFAULT_LINK_FREQ);
--		ret = -EINVAL;
--		goto done;
-+		if (bus_cfg.link_frequencies[i] == IMX214_DEFAULT_LINK_FREQ_LEGACY) {
-+			dev_warn(dev,
-+				 "link-frequencies %d not supported, please review your DT. Continuing anyway\n",
-+				 IMX214_DEFAULT_LINK_FREQ);
-+			break;
-+		}
- 	}
- 
-+	if (i == bus_cfg.nr_of_link_frequencies)
-+		ret = dev_err_probe(dev, -EINVAL,
-+				    "link-frequencies %d not supported, please review your DT\n",
-+				    IMX214_DEFAULT_LINK_FREQ);
-+
- done:
- 	v4l2_fwnode_endpoint_free(&bus_cfg);
- 	fwnode_handle_put(endpoint);
-
--- 
-2.47.1
-
+RnJvbTogTGludXMgVG9ydmFsZHMNCj4gU2VudDogMDcgRGVjZW1iZXIgMjAyNCAyMDozMQ0KLi4u
+DQo+IFdlJ3JlIGN1cnJlbnRseSBzdGlsbCBhY2NlcHRpbmcgZ2NjLTUuMSBhcyBhIGNvbXBpbGVy
+LCBhbHRob3VnaCBpdCdzDQo+IHRpbWUgdG8gbG9vayBhdCB0aGF0IGFuZCBwcm9iYWJseSAoanVk
+Z2luZyBieSB3aGF0IHN0YWJsZSBkaXN0cm9zIHVzZSkNCj4gdXBncmFkZSB0byBzb21ldGhpbmcg
+bGlrZSBnY2MtOC4xIGFzIHRoZSBtaW5pbXVtIHN1cHBvcnRlZCBjb21waWxlcg0KPiB2ZXJzaW9u
+Lg0KDQpUaGF0J3MgZ29pbmcgdG8gYW5ub3kgbWUuDQpUaGUgc3lzdGVtIGRpc2sgaW4gdGhlIHN5
+c3RlbSBJIHRlc3QgYnVpbGQga2VybmVsIG9uIGlzIGFjdHVhbGx5IG9sZGVyDQp0aGFuIHRoZSBt
+YWNoaW5lISAobm90IGJ5IG11Y2gpLg0KQW5kIFVidW50dSAxOC4wNCAoc3RpbGwgZ2V0dGluZyBz
+b21lIGZpeGVzKSBoYXMgZ2NjIDcuNS4wLg0KDQpJdCBpc24ndCBhcyB0aG91Z2ggdGhlIDguMSB1
+cGRhdGUgaXMgYW55dGhpbmcgcmVhbGx5IG1ham9yLg0KRGlzYWJsaW5nIHN0YWNrIGNhbmFyaWVz
+IHdvdWxkIGxldCBhbiBvbGRlciBjb21waWxlciBiZSB1c2VkLg0KKGFuZCBJIG1pZ2h0IGNoYW5n
+ZSB0aGUgdGVzdHMuLi4pDQoNCk11Y2ggbW9yZSB1c2VmdWwgd291bGQgYmUgbWFuZGF0aW5nICdh
+c20gZ28gd2l0aCBvdXRwdXRzJyB3aGljaA0Kd291bGQgY3V0IG91dCBhIHdob2xlIGxvYWQgaG9y
+cmlkIGFsdGVybmF0aXZlcy4NCg0KQnV0IHRoYXQgd291bGQgbWFrZSBpdCBwcmV0dHkgY29tbW9u
+IHRoYXQgYSBrZXJuZWwgYnVpbGQgd291bGQNCm5lZWQgYSBsYXRlciBjb21waWxlciB0aGFuIHRo
+ZSBvbmUgdGhlIGRpc3RyaWJ1dGlvbiBpbnN0YWxsZWQuDQoNCkl0IG1heWJlIHRpbWUgdG8gY29u
+c2lkZXIgZGlyZWN0bHkgc3VwcG9ydGluZyBkb3dubG9hZGluZyBhbmQNCmJ1aWxkaW5nIHRoZSBy
+ZXF1aXJlZCBjb21waWxlciBhcyBwYXJ0IG9mIGEgbm9ybWFsIGtlcm5lbCBidWlsZC4NClRoYXQg
+d291bGQgYWxsb3cgdGhlIG1pbmltdW0gdmVyc2lvbiB0byBiZSBzZXQgdG8gYSB2ZXJ5IHJlY2Vu
+dA0KYnVpbGQgYW5kIGFsc28gbWFrZSBjcm9zcyBhcmNoaXRlY3R1cmUgYnVpbGQgZWFzaWVyLg0K
+KEluIGVmZmVjdCBhbGwgYnVpbGRzIGJlY29tZSBjcm9zcyBidWlsZHMuKQ0KDQpOZXRCU0QgdXNl
+ZCB0byAobWF5IHN0aWxsIGRvKSBpbXBvcnQgZ2NjIGludG8gaXRzIENWUyByZXBvc2l0b3J5Lg0K
+U28gdGhhdCBldmVyeXRoaW5nIHdhcyBidWlsdCB3aXRoIGEgJ2tub3duJyBjb21waWxlci4NCg0K
+SXQgaXMgKHByb2JhYmx5KSBsZXNzIG9mIGEgcHJvYmxlbSB3aXRoIGNsYW5nLg0KUGVvcGxlIHVz
+aW5nIGNsYW5nIGFyZSBsaWtlbHkgdG8gaGF2ZSBleHBsaWNpdGx5IGRvd25sb2FkZWQgaXQuDQoN
+CglEYXZpZA0KDQotDQpSZWdpc3RlcmVkIEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwg
+TW91bnQgRmFybSwgTWlsdG9uIEtleW5lcywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzog
+MTM5NzM4NiAoV2FsZXMpDQo=
 
 
