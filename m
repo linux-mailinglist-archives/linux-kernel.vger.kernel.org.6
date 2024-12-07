@@ -1,329 +1,191 @@
-Return-Path: <linux-kernel+bounces-435815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435816-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E5389E7D8C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:34:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3D39E7D90
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:37:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA837188689E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:34:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C561168DA6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 797D1323D;
-	Sat,  7 Dec 2024 00:34:07 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B2634C7C;
+	Sat,  7 Dec 2024 00:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jXmbjNnt"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA2ED38B
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 00:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8040323D;
+	Sat,  7 Dec 2024 00:37:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733531646; cv=none; b=Wzjyhev2F08jffz/+JC6dLha1V5AntDEtlar66eBOvjHcWLd3QN5K/7sRnLIxZIDjZD+dTbEpsvyhJnYLlnVdFV2iRQwCis3x2J6lqx/Rw5QV7vBWoAaVRwccu8CEzcm+knaGAf3os4tuYjVlGIy47ihEpvHBnYmFQc3tsnSB9I=
+	t=1733531823; cv=none; b=k7LQGpb//avDVEXDh0DFXUG2o4zFyIMVmNq01Rq7n5dkjRbxHYAFO3xpy/43wvSGUU7kT8jFT/xub2vawkrxRfVdGhvf8w9OlmCHwf8OXSn8ZNHOYfYzlvt9utgSzhxuafSdI9FozhlI1wKcqnLGRKdLOdtbd0CemM31+6Xdf6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733531646; c=relaxed/simple;
-	bh=rPtPp0Fe7lh/8pSx6dRWRLp67T6IZWkNktsDIS3qUO0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=cLqdLxdCmwGld4vAK/EDkaB5ujA8ZRfkHn0a8/zkjlBLL7JZLmQh8QRrxPwSsGwqpUwNRApI2BHj2Orljj/Klak3pWAHIbzt4+e6JQVxNci7Rp94oZhSdRCCcLqhJjf2Qkoq0ZAMKb5sDSPjgEBAp3WmNbFcY/rVj3XaXSzfWVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a81357cdc7so11905775ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 16:34:04 -0800 (PST)
+	s=arc-20240116; t=1733531823; c=relaxed/simple;
+	bh=4v/g6p9bm5VE9Uqc0MZZdMVYArqzj8HxOKi4sN82eUI=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P++0Rw0f8TAOZIBJQiOGEVLx+of9S4lRLU/xx7l1yxrlgOwFFf+18K5bsMDKtwfFOnaLHmaBfY1VYc3S3jM4J3cbitzAIBrVBB7DrpeCShzmuiH7uUuDIvY2vQ4pGuL4rB7MiXNTrjpTCaj0G58HSc9eZOAeYw8CcQD9DLZUTFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jXmbjNnt; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-38633b5dbcfso322541f8f.2;
+        Fri, 06 Dec 2024 16:37:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733531820; x=1734136620; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MRtBz9IVDwZq/k8TTptrZHd1V9qsQPyT+qMfRgVRflE=;
+        b=jXmbjNntQbYk7Nt9O5+fGIjdbpR0AgyJ21ohBxSCEcOAPSlyxQVKRtxMzdfWL5cuJv
+         B/SPlYYXO0hgPnzu+zXFpuc0jUY1YmH9CYw3aACCs2VBaDjpu6KyA8ovojGVr5VduJFk
+         jH/eOQ+lFIWMmkt2aF1WmzGzM0yob1jd8i5UfwpKA1rgpneQatduImf9dV5742R72jUR
+         s/09MSePWGdmBwXdEt7l8rjpHnNSPSIYy81R4524MNWkZvZz/lZNz5ytETMpB/DBuFb6
+         3uOW9vXFkFsXQlMdmC8qngsIYLg6mATaUim1UHHeWe98I+q2sTFxmBe2V5ccmDJMOn4j
+         p/zQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733531644; x=1734136444;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
+        d=1e100.net; s=20230601; t=1733531820; x=1734136620;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=41/CSxhNSB3sJSnXC2f01tY9/b8I7ZVmFs2laz/Pdmc=;
-        b=D4PKPlu3E3clTmEQgBF8GRI5yzQO1r+xMJ3DB84jvdX+45pDMW3RXP7MTADly9Ntid
-         R9F+Qwz5pn+Fm6g3pjEmgiDZUJhO42dUDqghf1hMWYbfdAWQV4naPYvgQBO01ITz/M9i
-         VoLhFZzHrhQdoFizvjByxe/2NRtUeE6Yw+k/lTJVuUZUSd1bRRyC4uel7WCHVSz27Zz6
-         RUk1eQdAZ0DbLHI/AGVIFoYu83Pj/5SG+///YoE1dayhK7s/jX8OnJmwtj/7RUDAOodf
-         PMM0abEgOKR1gIacNtGnX2L2R289BOqtXe1Z1mvhW8ev6TZLMM9XQZnSL6JNLwykALcF
-         JyCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWQA9BGG74Qs3dJDWPQCvNIPMBjSFYRV58SrpdS8o8dAiI1MT6zwLE0yq8j0MITdHRsquEAnO8GU4GFGMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWGH8q6/p7rSzbPpKNJBNa/bYQR0lgrjVN2nYPNe2DuNBdf5TI
-	cV9auQ30H3VZIu0GtB5Vl9h3Gl2szyxaUjJB6wUK3+nh94uAUzD3CVF0TqJ+c/qf0Xv7pMTZUkV
-	rzecvoRme0BYkg4kBNp2+fiqjlAhUy5hdeqIk3kMZYgbJN7a7ZDVhvIA=
-X-Google-Smtp-Source: AGHT+IG04VCi9La+hVsvN7F9g7HZAaAU+ELxxqXeMmWYWk5ycUEJ2ALFrO9HMBsdrKQwlA9Gbjba4r6Kpezg8BOTV5THyvEqrZFC
+        bh=MRtBz9IVDwZq/k8TTptrZHd1V9qsQPyT+qMfRgVRflE=;
+        b=i4RdW6h3cPcpo0+Iv/ipPqM8RtHEl7aX7ZqsnzypyB6+n9L+nSV78fUcZ68OttAJ9Y
+         45mwTk1+2RfBTLHilLYmyRFc3iPElzTS2F7pmNvhwvSNyxFJUk12zoPM07saV1Popfa6
+         FN1ewCQfTRtDOzsIvmCVV0Rj536Ti7LP2F8uicSRzO8oMk7N2CTRWTjTORDanW/Iliei
+         VhgyK6DbNhbn4w9O1D+xyQK7sj5yEeWuHK4cUamHazGddbYsguvV8MfRzJnNZaZP8l25
+         ky3J4qknyOCfh+Q/Nw7ioCsiuNfm6LwvcEiDFxCwdwSDaUeyO3J72cGEAUibxOTXYQ83
+         bAAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVV4WvOTDtLw6TW4VeXbj9BJOBTNw33tJrSgfGWppcC2JeU67kxKLizpgou2t0q22r1Nvrp4fz1iVvhSzx+@vger.kernel.org, AJvYcCWEIRSulvI6tTWLXYp1UV4K9SacAskYvkwBbpxjMW6j6ZWUnNqixZdLtx91WptIGan4wZ4/YVqkkA86gyHVi7W3ovPt@vger.kernel.org, AJvYcCXfNdkad2T8Jel7FDEMee2FLU6JiI3TWBnHEt+WkEFsG+l4I+c2BTownmQ4fV4uY3LSUG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzi92exHZSizSFlF6ky4FCYMvueissWa4Q6LqMyvBigmm7psGPV
+	OyAzwSy8zEHSLrtwnsNNqlk59x2AygmZblAsky5kYRD3ugJ0Y90O
+X-Gm-Gg: ASbGncvH4MyimvxqwWHwQIujO7w+KKoELWaVZ0Y2yrCs7MKYufbTJv///zKSXFXbtwb
+	f4Go/VSZiFvp79GYWyhdNNNMBl0F2DKE4Jh28CejYfkUI5oaB6T4NIoLQ+Nk+7ffgOgt56mK4kS
+	0Esxln3U1W+psc6g/BMe8WIFC4dVKnAuO9b+MSMUt6SzCakpjBGbGDdY9xwV9jQG0dIHMXeuGol
+	eXEsUwKRJdTJDdDKfSkBzzW79W7GGWeOYUuTxwOT+YfMMT5W3UzpnLYJ8w=
+X-Google-Smtp-Source: AGHT+IHw9aQbBADSr5fU8WMK/7f3LcmY1FUeT/tHdWPZC+W5EhlCLK222wEuL6CyqafKGnlFtP3rkw==
+X-Received: by 2002:a05:6000:470c:b0:385:f909:eb2c with SMTP id ffacd0b85a97d-3862b3ce0e8mr4205449f8f.38.1733531819788;
+        Fri, 06 Dec 2024 16:36:59 -0800 (PST)
+Received: from krava (85-193-35-130.rib.o2.cz. [85.193.35.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862e3fe716sm2377173f8f.7.2024.12.06.16.36.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 16:36:59 -0800 (PST)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Sat, 7 Dec 2024 01:36:57 +0100
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Jiri Olsa <olsajiri@gmail.com>, Andrii Nakryiko <andrii@kernel.org>,
+	linux-trace-kernel@vger.kernel.org, peterz@infradead.org,
+	mingo@kernel.org, oleg@redhat.com, rostedt@goodmis.org,
+	mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, liaochang1@huawei.com,
+	kernel-team@meta.com
+Subject: Re: [PATCH perf/core 4/4] uprobes: reuse return_instances between
+ multiple uretprobes within task
+Message-ID: <Z1OYqdCZXXbNGEE8@krava>
+References: <20241206002417.3295533-1-andrii@kernel.org>
+ <20241206002417.3295533-5-andrii@kernel.org>
+ <Z1MFBVRuUnuYKo8c@krava>
+ <CAEf4BzaESrHfAXZrN0VbjQvxLJ0ij0ujKpsp2T6iQtbisYPa=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:10ce:b0:3a8:13d5:bd2c with SMTP id
- e9e14a558f8ab-3a813d5bd8emr40234825ab.2.1733531644001; Fri, 06 Dec 2024
- 16:34:04 -0800 (PST)
-Date: Fri, 06 Dec 2024 16:34:03 -0800
-In-Reply-To: <20241207000507.724-1-hdanton@sina.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675397fb.050a0220.a30f1.014c.GAE@google.com>
-Subject: Re: [syzbot] [net?] [s390?] KASAN: slab-use-after-free Read in netdev_walk_all_lower_dev
-From: syzbot <syzbot+2eab87cf3100f45423ec@syzkaller.appspotmail.com>
-To: hdanton@sina.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzaESrHfAXZrN0VbjQvxLJ0ij0ujKpsp2T6iQtbisYPa=A@mail.gmail.com>
 
-Hello,
+On Fri, Dec 06, 2024 at 10:00:16AM -0800, Andrii Nakryiko wrote:
+> On Fri, Dec 6, 2024 at 6:07 AM Jiri Olsa <olsajiri@gmail.com> wrote:
+> >
+> > On Thu, Dec 05, 2024 at 04:24:17PM -0800, Andrii Nakryiko wrote:
+> >
+> > SNIP
+> >
+> > > +static void free_ret_instance(struct uprobe_task *utask,
+> > > +                           struct return_instance *ri, bool cleanup_hprobe)
+> > > +{
+> > > +     unsigned seq;
+> > > +
+> > >       if (cleanup_hprobe) {
+> > >               enum hprobe_state hstate;
+> > >
+> > > @@ -1897,8 +1923,22 @@ static void free_ret_instance(struct return_instance *ri, bool cleanup_hprobe)
+> > >               hprobe_finalize(&ri->hprobe, hstate);
+> > >       }
+> > >
+> > > -     kfree(ri->extra_consumers);
+> > > -     kfree_rcu(ri, rcu);
+> > > +     /*
+> > > +      * At this point return_instance is unlinked from utask's
+> > > +      * return_instances list and this has become visible to ri_timer().
+> > > +      * If seqcount now indicates that ri_timer's return instance
+> > > +      * processing loop isn't active, we can return ri into the pool of
+> > > +      * to-be-reused return instances for future uretprobes. If ri_timer()
+> > > +      * happens to be running right now, though, we fallback to safety and
+> > > +      * just perform RCU-delated freeing of ri.
+> > > +      */
+> > > +     if (raw_seqcount_try_begin(&utask->ri_seqcount, seq)) {
+> > > +             /* immediate reuse of ri without RCU GP is OK */
+> > > +             ri_pool_push(utask, ri);
+> >
+> > should the push be limitted somehow? I wonder you could make uprobes/consumers
+> > setup that would allocate/push many of ri instances that would not be freed
+> > until the process exits?
+> 
+> So I'm just relying on the existing MAX_URETPROBE_DEPTH limit that is
+> enforced by prepare_uretprobe anyways. But yes, we can have up to 64
+> instances in ri_pool.
+> 
+> I did consider cleaning this up from ri_timer() (that would be a nice
+> properly, because ri_timer fires after 100ms of inactivity), and my
+> initial version did use lockless llist for that, but there is a bit of
+> a problem: llist doesn't support popping single iter from the list
+> (you can only atomically take *all* of the items) in lockless way. So
+> my implementation had to swap the entire list, take one element out of
+> it, and then put N - 1 items back. Which, when there are deep chains
+> of uretprobes, would be quite an unnecessary CPU overhead. And I
+> clearly didn't want to add locking anywhere in this hot path, of
+> course.
+> 
+> So I figured that at the absolute worst case we'll just keep
+> MAX_URETPROBE_DEPTH items in ri_pool until the task dies. That's not
+> that much memory for a small subset of tasks on the system.
+> 
+> One more idea I explored and rejected was to limit the size of ri_pool
+> to something smaller than MAX_URETPROBE_DEPTH, say just 16. But then
+> there is a corner case of high-frequency long chain of uretprobes up
+> to 64 depth, then returning through all of them, and then going into
+> the same set of functions again, up to 64. So depth oscillates between
+> 0 and full 64. In this case this ri_pool will be causing allocation
+> for the majority of those invocations, completely defeating the
+> purpose.
+> 
+> So, in the end, it felt like 64 cached instances (worst case, if we
+> actually ever reached such a deep chain) would be acceptable.
+> Especially that commonly I wouldn't expect more than 3-4, actually.
+> 
+> WDYT?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: slab-use-after-free Read in netdev_walk_all_lower_dev_rcu
+ah ok, there's MAX_URETPROBE_DEPTH limit for task, 64 should be fine
 
-==================================================================
-BUG: KASAN: slab-use-after-free in netdev_next_lower_dev_rcu net/core/dev.c:7650 [inline]
-BUG: KASAN: slab-use-after-free in netdev_walk_all_lower_dev_rcu+0x131/0x390 net/core/dev.c:7755
-Read of size 8 at addr ffff8880281a41b8 by task syz.0.15/6768
+thanks,
+jirka
 
-CPU: 0 UID: 0 PID: 6768 Comm: syz.0.15 Not tainted 6.13.0-rc1-syzkaller-00172-g11776cff0b56-dirty #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:489
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- netdev_next_lower_dev_rcu net/core/dev.c:7650 [inline]
- netdev_walk_all_lower_dev_rcu+0x131/0x390 net/core/dev.c:7755
- smc_vlan_by_tcpsk+0x3ab/0x4e0 net/smc/smc_core.c:1899
- __smc_connect+0x292/0x1850 net/smc/af_smc.c:1517
- smc_connect+0x868/0xde0 net/smc/af_smc.c:1693
- __sys_connect_file net/socket.c:2055 [inline]
- __sys_connect+0x288/0x2d0 net/socket.c:2074
- __do_sys_connect net/socket.c:2080 [inline]
- __se_sys_connect net/socket.c:2077 [inline]
- __x64_sys_connect+0x7a/0x90 net/socket.c:2077
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fce44d7ff19
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fce45b0d058 EFLAGS: 00000246 ORIG_RAX: 000000000000002a
-RAX: ffffffffffffffda RBX: 00007fce44f46080 RCX: 00007fce44d7ff19
-RDX: 000000000000001c RSI: 0000000020000080 RDI: 000000000000000a
-RBP: 00007fce44df3986 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fce44f46080 R15: 00007ffee596f8c8
- </TASK>
-
-Allocated by task 6551:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4283 [inline]
- __kmalloc_node_noprof+0x290/0x4d0 mm/slub.c:4289
- __kvmalloc_node_noprof+0x72/0x190 mm/util.c:650
- alloc_netdev_mqs+0xa4/0x1080 net/core/dev.c:11209
- rtnl_create_link+0x2f9/0xc20 net/core/rtnetlink.c:3595
- rtnl_newlink_create+0x210/0xa40 net/core/rtnetlink.c:3771
- __rtnl_newlink net/core/rtnetlink.c:3896 [inline]
- rtnl_newlink+0x1b40/0x20e0 net/core/rtnetlink.c:4009
- rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6919
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- __sys_sendto+0x363/0x4c0 net/socket.c:2197
- __do_sys_sendto net/socket.c:2204 [inline]
- __se_sys_sendto net/socket.c:2200 [inline]
- __x64_sys_sendto+0xde/0x100 net/socket.c:2200
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 6759:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2338 [inline]
- slab_free mm/slub.c:4598 [inline]
- kfree+0x196/0x430 mm/slub.c:4746
- device_release+0x99/0x1c0
- kobject_cleanup lib/kobject.c:689 [inline]
- kobject_release lib/kobject.c:720 [inline]
- kref_put include/linux/kref.h:65 [inline]
- kobject_put+0x22f/0x480 lib/kobject.c:737
- netdev_run_todo+0xe79/0x1000 net/core/dev.c:10924
- rtnl_unlock net/core/rtnetlink.c:152 [inline]
- rtnl_net_unlock include/linux/rtnetlink.h:133 [inline]
- rtnl_dellink+0x760/0x8d0 net/core/rtnetlink.c:3526
- rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6919
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1147
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xaeb/0xd30 fs/read_write.c:679
- ksys_write+0x18f/0x2b0 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
- insert_work+0x3e/0x330 kernel/workqueue.c:2183
- __queue_work+0xc8b/0xf50 kernel/workqueue.c:2339
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:662 [inline]
- br_multicast_del_mdb_entry net/bridge/br_multicast.c:646 [inline]
- br_multicast_dev_del+0x342/0x5e0 net/bridge/br_multicast.c:4366
- br_dev_uninit+0x1c/0x40 net/bridge/br_device.c:155
- unregister_netdevice_many_notify+0x1735/0x1da0 net/core/dev.c:11548
- rtnl_delete_link net/core/rtnetlink.c:3476 [inline]
- rtnl_dellink+0x52b/0x8d0 net/core/rtnetlink.c:3518
- rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6919
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1147
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xaeb/0xd30 fs/read_write.c:679
- ksys_write+0x18f/0x2b0 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Second to last potentially related work creation:
- kasan_save_stack+0x3f/0x60 mm/kasan/common.c:47
- __kasan_record_aux_stack+0xac/0xc0 mm/kasan/generic.c:544
- insert_work+0x3e/0x330 kernel/workqueue.c:2183
- __queue_work+0xc8b/0xf50 kernel/workqueue.c:2339
- queue_work_on+0x1c2/0x380 kernel/workqueue.c:2390
- queue_work include/linux/workqueue.h:662 [inline]
- schedule_work include/linux/workqueue.h:723 [inline]
- __rhashtable_remove_fast_one include/linux/rhashtable.h:1069 [inline]
- __rhashtable_remove_fast include/linux/rhashtable.h:1093 [inline]
- rhashtable_remove_fast include/linux/rhashtable.h:1122 [inline]
- fdb_delete+0x100c/0x1210 net/bridge/br_fdb.c:320
- br_fdb_delete_by_port+0x1ec/0x310 net/bridge/br_fdb.c:780
- del_nbp+0x665/0xb40 net/bridge/br_if.c:357
- br_dev_delete+0x6e/0x100 net/bridge/br_if.c:386
- rtnl_delete_link net/core/rtnetlink.c:3475 [inline]
- rtnl_dellink+0x518/0x8d0 net/core/rtnetlink.c:3518
- rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6919
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
- netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
- netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1347
- netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1891
- sock_sendmsg_nosec net/socket.c:711 [inline]
- __sock_sendmsg+0x221/0x270 net/socket.c:726
- sock_write_iter+0x2d7/0x3f0 net/socket.c:1147
- new_sync_write fs/read_write.c:586 [inline]
- vfs_write+0xaeb/0xd30 fs/read_write.c:679
- ksys_write+0x18f/0x2b0 fs/read_write.c:731
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff8880281a4000
- which belongs to the cache kmalloc-cg-8k of size 8192
-The buggy address is located 440 bytes inside of
- freed 8192-byte region [ffff8880281a4000, ffff8880281a6000)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x281a0
-head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-memcg:ffff888061d19001
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801ac4f640 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000020002 00000001f5000000 ffff888061d19001
-head: 00fff00000000040 ffff88801ac4f640 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000020002 00000001f5000000 ffff888061d19001
-head: 00fff00000000003 ffffea0000a06801 ffffffffffffffff 0000000000000000
-head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd60c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_RETRY_MAYFAIL|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5920, tgid 5920 (syz-executor), ts 70312920153, free_ts 70066156251
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2408
- allocate_slab+0x5a/0x2f0 mm/slub.c:2574
- new_slab mm/slub.c:2627 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
- __slab_alloc+0x58/0xa0 mm/slub.c:3905
- __slab_alloc_node mm/slub.c:3980 [inline]
- slab_alloc_node mm/slub.c:4141 [inline]
- __do_kmalloc_node mm/slub.c:4282 [inline]
- __kmalloc_node_noprof+0x2ee/0x4d0 mm/slub.c:4289
- __kvmalloc_node_noprof+0x72/0x190 mm/util.c:650
- alloc_netdev_mqs+0xa4/0x1080 net/core/dev.c:11209
- rtnl_create_link+0x2f9/0xc20 net/core/rtnetlink.c:3595
- rtnl_newlink_create+0x210/0xa40 net/core/rtnetlink.c:3771
- __rtnl_newlink net/core/rtnetlink.c:3896 [inline]
- rtnl_newlink+0x1b40/0x20e0 net/core/rtnetlink.c:4009
- rtnetlink_rcv_msg+0x791/0xcf0 net/core/rtnetlink.c:6919
- netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2542
-page last free pid 5840 tgid 5840 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0xdef/0x1130 mm/page_alloc.c:2657
- discard_slab mm/slub.c:2673 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3142
- put_cpu_partial+0x17c/0x250 mm/slub.c:3217
- __slab_free+0x2ea/0x3d0 mm/slub.c:4468
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- __kmalloc_cache_noprof+0x1d9/0x390 mm/slub.c:4309
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- kernfs_fop_open+0x3e0/0xd10 fs/kernfs/file.c:623
- do_dentry_open+0xbe1/0x1b70 fs/open.c:945
- vfs_open+0x3e/0x330 fs/open.c:1075
- do_open fs/namei.c:3828 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3987
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_openat fs/open.c:1433 [inline]
- __se_sys_openat fs/open.c:1428 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-
-Memory state around the buggy address:
- ffff8880281a4080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880281a4100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff8880281a4180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                        ^
- ffff8880281a4200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff8880281a4280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
-Tested on:
-
-commit:         11776cff net/mlx5: DR, prevent potential error pointer..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=17383330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=2eab87cf3100f45423ec
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11f6a020580000
-
+> 
+> >
+> > jirka
+> >
+> > > +     } else {
+> > > +             /* we might be racing with ri_timer(), so play it safe */
+> > > +             ri_free(ri);
+> > > +     }
+> > >  }
+> > >
+> > >  /*
+> 
+> [...]
 
