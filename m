@@ -1,131 +1,139 @@
-Return-Path: <linux-kernel+bounces-436007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 21F639E7FCD
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:17:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A939E7FCF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 125DD165AAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38DC1188450F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A120146599;
-	Sat,  7 Dec 2024 12:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iY8lGttF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CD4146A9F;
+	Sat,  7 Dec 2024 12:17:47 +0000 (UTC)
+Received: from air.basealt.ru (air.basealt.ru [193.43.8.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D6310E0;
-	Sat,  7 Dec 2024 12:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C60A10E0;
+	Sat,  7 Dec 2024 12:17:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.43.8.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733573818; cv=none; b=mq2Uyjq/i/zbkyu1enO6drGgL67xBPbJZlQNnyEGnaH6KK95FTod7/UCAbBx71Q4tiJOsehNa/znlliWpRfJvlwX2i803+I2g1gH7KbIHqpnX4p4sr0Nxw2ccfYTkb6+QzLRHmKPAJuEAJ0BfQN2l+OrOtEdJN7xO42h3HskZ+M=
+	t=1733573867; cv=none; b=QW3BdxPV7VCkBfGFpWoGwGACrtDSCmBmTbouyMchKMIYOPIalH7F0R/O1deZeLKN6Q/gqqrTC8pFXCvC2imBZgJcW9PRJfnvE1naapByZf90N9IensbqwxxqxvPdBCvUDOC41wB7z8YBUHqDErD461NSycWfdRNjvOiFSPjVMk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733573818; c=relaxed/simple;
-	bh=CkElxWvsq/QqHUCfWutc1AcWmJQ8qL47g7SoraOle44=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=MYTB15hiLkeXN4yfhXQPCx7mI/KpXNRENDUaO7vx09+vArTuAp+nZeWVyVtSbpXxNpFPnTaluZOSWE2Ho2bvcdPCWXtyDxidRJtynMpdv1HaYMLPssJPSKfxZPXt57xHPpG8z/VR4YF7ADhboZUguyRuT1uDjYaDb57IP5AtNT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iY8lGttF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FE41C4CECD;
-	Sat,  7 Dec 2024 12:16:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733573818;
-	bh=CkElxWvsq/QqHUCfWutc1AcWmJQ8qL47g7SoraOle44=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=iY8lGttFR8MA+KR1z0mS360bSDvsEhdnjbt8UcrCnPdXwD4eE0xKCZe0z9Y8l/wQP
-	 8xo+zHAa8qqz7QbO7PkOWH1YIqj6IPKaTHPm11z5zr9/wuvxQEKaScwPGAqr69GBt0
-	 e9nOXIIaPWbjz1mb4kCsIjoIrD14p+DHxJDnwIb8Hi2i+a7tKi/x6snFxdZ02rC0lo
-	 vi+oERPY2/HMLbdoDFXg4wXmoBtFoC4naJsfFDYuN9h5rNCWiVW/2QLreXJiUkQyN4
-	 zRO4u/zwCFHCb5UnpQCp1eNWZidCN1Alm0x/1F2Uv5hJ0YdtCFOTuwtFeDHrSppzKs
-	 ICKJeuQZx6QEg==
+	s=arc-20240116; t=1733573867; c=relaxed/simple;
+	bh=GH7HC58QseC4em9A+U4vEUvrdptTywLuZbfwFW3y17g=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=e/kn41FMDCp+waUAfs4/tF0HZjos3A3umeYpZNRHcZvrSWIPnBefIxVuUY8BVOOTpItG+fV2exIp/t7Ay51RNTlN7S77wJQ7/3/NOP2GCgqjDpbK3Ne81UMaERnIoBb6jGeNFeDZwMdXP2j/ba+CJzuBt3ZS4FWfwHN5bDVvf8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org; spf=pass smtp.mailfrom=altlinux.org; arc=none smtp.client-ip=193.43.8.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=altlinux.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=altlinux.org
+Received: from altlinux.ipa.basealt.ru (unknown [178.76.204.78])
+	by air.basealt.ru (Postfix) with ESMTPSA id 6C7B423386;
+	Sat,  7 Dec 2024 15:17:33 +0300 (MSK)
+From: Vasiliy Kovalev <kovalev@altlinux.org>
+To: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kovalev@altlinux.org,
+	lvc-project@linuxtesting.org,
+	syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: [PATCH v2] hfs/hfsplus: fix slab-out-of-bounds in hfs_bnode_read_key
+Date: Sat,  7 Dec 2024 15:17:26 +0300
+Message-Id: <20241207121726.1058037-1-kovalev@altlinux.org>
+X-Mailer: git-send-email 2.33.8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 07 Dec 2024 14:16:53 +0200
-Message-Id: <D65GMNDAP2VG.1OM0JQG5Q934M@kernel.org>
-To: "Jiri Slaby" <jirislaby@kernel.org>, "Linus Torvalds"
- <torvalds@linux-foundation.org>, "Linux Kernel Mailing List"
- <linux-kernel@vger.kernel.org>
-Cc: =?utf-8?q?Peter_H=C3=BCwe?= <PeterHuewe@gmx.de>, "Jason Gunthorpe"
- <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>, "Ard Biesheuvel"
- <ardb@kernel.org>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
-Subject: Re: TPM/EFI issue [Was: Linux 6.12]
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-X-Mailer: aerc 0.18.2
-References: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com> <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org> <D5Z66HQJNNNL.1CPU2KF13269F@kernel.org> <39f16df2-9f4b-49e9-b004-b0e702d08dad@kernel.org>
-In-Reply-To: <39f16df2-9f4b-49e9-b004-b0e702d08dad@kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon Dec 2, 2024 at 9:52 AM EET, Jiri Slaby wrote:
-> On 30. 11. 24, 3:49, Jarkko Sakkinen wrote:
-> > On Wed Nov 27, 2024 at 8:46 AM EET, Jiri Slaby wrote:
-> >> Cc TPM + EFI guys.
-> >>
-> >> On 17. 11. 24, 23:26, Linus Torvalds wrote:
-> >>> But before the merge window opens, please give this a quick test to
-> >>> make sure we didn't mess anything up. The shortlog below gives you th=
-e
-> >>> summary for the last week, and nothing really jumps out at me. A
-> >>> number of last-minute reverts, and some random fairly small fixes
-> >>> fairly spread out in the tree.
-> >>
-> >> Hi,
-> >>
-> >> there is a subtle bug in 6.12 wrt TPM (in TPM, EFI, or perhaps in
-> >> something else):
-> >> https://bugzilla.suse.com/show_bug.cgi?id=3D1233752
-> >>
-> >> Our testing (openQA) fails with 6.12:
-> >> https://openqa.opensuse.org/tests/4657304#step/trup_smoke/26
-> >>
-> >> The last good is with 6.11.7:
-> >> https://openqa.opensuse.org/tests/4648526
-> >>
-> >> In sum:
-> >> TPM is supposed to provide a key for decrypting the root partitition,
-> >> but fails for some reason.
-> >>
-> >> It's extremely hard (so far) to reproduce outside of openQA (esp. when
-> >> trying custom kernels).
->
-> Mark "X".
->
-> >> Most of the 6.12 TPM stuff already ended in (good) 6.11.7. I tried to
-> >> revert:
-> >>     423893fcbe7e tpm: Disable TPM on tpm2_create_primary() failure
-> >> from 6.12 but that still fails.
-> >>
-> >> We are debugging this further, this is just so you know.
-> >>
-> >> Or maybe you have some immediate ideas?
-> >=20
-> > Nothing immediate but I've had to tweak quite a lot of TPM bus
-> > integrity protection feature so it is a possibility that I've
-> > made a mistake in a point or another.
-> >=20
-> > Can you bisect the issue possibly?
->
-> No, see mark "X" :).
->
-> But follow the downstream bug for progress:
-> https://bugzilla.suse.com/show_bug.cgi?id=3D1233752
+Syzbot reported an issue in hfs subsystem:
 
-Just came back from company retrite from BCN.
+BUG: KASAN: slab-out-of-bounds in memcpy_from_page include/linux/highmem.h:423 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+BUG: KASAN: slab-out-of-bounds in hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+Write of size 94 at addr ffff8880123cd100 by task syz-executor237/5102
 
-I can follow this but cannot comment because I've never been
-able to get a bugzilla account working for any of SUSE infra
-:-)
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+ __asan_memcpy+0x40/0x70 mm/kasan/shadow.c:106
+ memcpy_from_page include/linux/highmem.h:423 [inline]
+ hfs_bnode_read fs/hfs/bnode.c:35 [inline]
+ hfs_bnode_read_key+0x314/0x450 fs/hfs/bnode.c:70
+ hfs_brec_insert+0x7f3/0xbd0 fs/hfs/brec.c:159
+ hfs_cat_create+0x41d/0xa50 fs/hfs/catalog.c:118
+ hfs_mkdir+0x6c/0xe0 fs/hfs/dir.c:232
+ vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
+ do_mkdirat+0x264/0x3a0 fs/namei.c:4280
+ __do_sys_mkdir fs/namei.c:4300 [inline]
+ __se_sys_mkdir fs/namei.c:4298 [inline]
+ __x64_sys_mkdir+0x6c/0x80 fs/namei.c:4298
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fbdd6057a99
 
-I was actually surprised that I'm able to view the bug at
-all... Bookmarked it and this thread from lore and revisit
-like in the middle of the week (my calendar is filled with
-meetings Mon/Tue).
+Add validation for key length in hfs_bnode_read_key to prevent
+out-of-bounds memory access. Invalid key lengths, likely caused
+by corrupted file system images (potentially due to malformed
+data during image generation), now result in clearing the key
+buffer, enhancing stability and reliability.
 
-BR, Jarkko
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Reported-by: syzbot+5f3a973ed3dfb85a6683@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=5f3a973ed3dfb85a6683
+Cc: stable@vger.kernel.org
+Signed-off-by: Vasiliy Kovalev <kovalev@altlinux.org>
+---
+v2: add more information to the commit message regarding the purpose of the patch.
+---
+ fs/hfs/bnode.c     | 6 ++++++
+ fs/hfsplus/bnode.c | 6 ++++++
+ 2 files changed, 12 insertions(+)
+
+diff --git a/fs/hfs/bnode.c b/fs/hfs/bnode.c
+index 6add6ebfef8967..cb823a8a6ba960 100644
+--- a/fs/hfs/bnode.c
++++ b/fs/hfs/bnode.c
+@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+ 	else
+ 		key_len = tree->max_key_len + 1;
+ 
++	if (key_len > sizeof(hfs_btree_key) || key_len < 1) {
++		memset(key, 0, sizeof(hfs_btree_key));
++		pr_err("hfs: Invalid key length: %d\n", key_len);
++		return;
++	}
++
+ 	hfs_bnode_read(node, key, off, key_len);
+ }
+ 
+diff --git a/fs/hfsplus/bnode.c b/fs/hfsplus/bnode.c
+index 87974d5e679156..079ea80534f7de 100644
+--- a/fs/hfsplus/bnode.c
++++ b/fs/hfsplus/bnode.c
+@@ -67,6 +67,12 @@ void hfs_bnode_read_key(struct hfs_bnode *node, void *key, int off)
+ 	else
+ 		key_len = tree->max_key_len + 2;
+ 
++	if (key_len > sizeof(hfsplus_btree_key) || key_len < 1) {
++		memset(key, 0, sizeof(hfsplus_btree_key));
++		pr_err("hfsplus: Invalid key length: %d\n", key_len);
++		return;
++	}
++
+ 	hfs_bnode_read(node, key, off, key_len);
+ }
+ 
+-- 
+2.33.8
+
 
