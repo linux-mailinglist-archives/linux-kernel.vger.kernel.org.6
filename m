@@ -1,148 +1,136 @@
-Return-Path: <linux-kernel+bounces-436086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C16959E8107
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:31:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E73B09E810C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:46:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 820AF281EB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:31:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AA34166344
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CC3314B092;
-	Sat,  7 Dec 2024 16:31:29 +0000 (UTC)
-Received: from bmailout3.hostsharing.net (bmailout3.hostsharing.net [176.9.242.62])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97D8D42A81;
+	Sat,  7 Dec 2024 16:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b="zSatrhc0"
+Received: from mx-rz-3.rrze.uni-erlangen.de (mx-rz-3.rrze.uni-erlangen.de [131.188.11.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B755628F5;
-	Sat,  7 Dec 2024 16:31:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=176.9.242.62
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0673FF1;
+	Sat,  7 Dec 2024 16:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=131.188.11.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733589088; cv=none; b=gOeBtYxbS5iXqgDrJe5gL4aon1cUSrZSe9LesUdOy1aDYUiwweBWR2rSQ902xLbe7lPCbqKd3Si0bovau20lsJIyfHcVEWhHcubhcdFUdcAPvwG/yF1a7GZYi+xPqdXktoDU+XVI8W7Pg+vS8gTx7SRoIfVZUvFHheOe2n9H7xM=
+	t=1733589971; cv=none; b=msiLApEV2MzjFHduqIs2MOUqvAYtwaEXglHujcuYIDzlBl5VrCOuMUs6TOZvo+xm7xw2ed0abJUvRZX0oxtFN+hej2xEbjBL94aDQJ+FzoYPTqG4SKIlFcUXtddLa0yM+jZ05+UR2eJ5sTAovoaE5wFCZqNgS8/TOh3bbxinQzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733589088; c=relaxed/simple;
-	bh=yYFqEq2kwcktfnz+Klwd/FpVUkkIZx4E/bMB+tmEX8A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PtLYh3sXaipn3RTSi68DEKdreKufCk1yckYVPvnGax/jCUF+xSy2JUxxk9s9LHBXx2gJQQt2yUEqaXmic32AtNNdhBbxlS8MQ4pAXUPnXSZ2rtHI4SDizC8mMBf//bVW/KEr4EVGDx8834yEQio6LWnxN1UCDHQAWkL7KLac+GA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=176.9.242.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	s=arc-20240116; t=1733589971; c=relaxed/simple;
+	bh=vjo3piGQdxjqRK8NxIaEdi3jtvE1yBamRNmmGNfgHJQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OBaX8G4uGjEgulQ6sbk8GtHYF2uSYkP6lz6YkaFWpqDEYvCDrFxlDbosMEDoT1QDbKEr19v3dnRlrDThPQKAnc1M4H/Mj7jzjAISmv0tEmPVzg6tmH2mZyjtCWQudlFD0mHls04LpwZ+IaRwC18/+idFENGGmoINdHgaj4Vbdeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de; spf=pass smtp.mailfrom=fau.de; dkim=pass (2048-bit key) header.d=fau.de header.i=@fau.de header.b=zSatrhc0; arc=none smtp.client-ip=131.188.11.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fau.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fau.de
+Received: from mx-rz-smart.rrze.uni-erlangen.de (mx-rz-smart.rrze.uni-erlangen.de [IPv6:2001:638:a000:1025::1e])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout3.hostsharing.net (Postfix) with ESMTPS id 9D018100DA1C3;
-	Sat,  7 Dec 2024 17:31:16 +0100 (CET)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 5FEFE15BCCC; Sat,  7 Dec 2024 17:31:16 +0100 (CET)
-Date: Sat, 7 Dec 2024 17:31:16 +0100
-From: Lukas Wunner <lukas@wunner.de>
-To: Niklas Schnelle <niks@kernel.org>
-Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>,
-	"Maciej W . Rozycki" <macro@orcam.me.uk>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
-	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
-	linux-kernel@vger.kernel.org,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>
-Subject: Re: [PATCH v9 6/9] PCI/bwctrl: Re-add BW notification portdrv as
- PCIe BW controller
-Message-ID: <Z1R4VNwCOlh9Sg9n@wunner.de>
-References: <20241018144755.7875-1-ilpo.jarvinen@linux.intel.com>
- <20241018144755.7875-7-ilpo.jarvinen@linux.intel.com>
- <db8e457fcd155436449b035e8791a8241b0df400.camel@kernel.org>
- <91b501c0ce92de681cc699eb6064840caad28803.camel@kernel.org>
- <7a4a9d51a9105bd5ca2c850c26fed6435b5e90e9.camel@kernel.org>
- <5f27c14467aa728358ebfe1686517aabe7c1e878.camel@kernel.org>
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-rz-3.rrze.uni-erlangen.de (Postfix) with ESMTPS id 4Y5DLV4sjwz20P9;
+	Sat,  7 Dec 2024 17:37:22 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fau.de; s=fau-2021;
+	t=1733589442; bh=YXarENHHWjbfLniaZIIE4fO22MS5mtbMTeDyQtvYSUU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From:To:CC:
+	 Subject;
+	b=zSatrhc0tBwAC6cWCA/9yvnyX2U501gd1oTUKZOUaFEhpaZAnPccf/S3yioconMZt
+	 OS4lMRrVEh4A5k3AgmK/Lg+2IrgR45pjuWVz9aMdfQYBO9uvXA4DyBImjbWWdZS3T7
+	 VXgcZruuISeXgES7IHCn64NpBQCUEvspdRa0U0klPFkZahUDgG42wISUvGigID3jic
+	 nlrrvN+k7FnH4bj1V17n8fwdnmWk8g+Rl5j482yeL1+L03weEhfWZoAxa/GS3rCr8V
+	 AdRU2xXDWz+zxDQVxVH/O1g37/mnnveZaZrNB8R49/W0ntEe64IGVZ4cPOcZH508IE
+	 VX0qTnflWG+rQ==
+X-Virus-Scanned: amavisd-new at boeck1.rrze.uni-erlangen.de (RRZE)
+X-RRZE-Flag: Not-Spam
+X-RRZE-Submit-IP: 2003:d5:72f:de01:9dee:185f:b8b5:8714
+Received: from [IPV6:2003:d5:72f:de01:9dee:185f:b8b5:8714] (p200300d5072fde019dee185fb8b58714.dip0.t-ipconnect.de [IPv6:2003:d5:72f:de01:9dee:185f:b8b5:8714])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: U2FsdGVkX18vcxNlkZ3YdYeS2ZUx20eBB+l4dsqbtwA=)
+	by smtp-auth.uni-erlangen.de (Postfix) with ESMTPSA id 4Y5DLS0Y5cz20Mr;
+	Sat,  7 Dec 2024 17:37:19 +0100 (CET)
+Message-ID: <b4f59f1c-b368-49ae-a0c4-cf6bf071c693@fau.de>
+Date: Sat, 7 Dec 2024 17:37:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5f27c14467aa728358ebfe1686517aabe7c1e878.camel@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] net/sched: netem: account for backlog updates from
+ child qdisc
+To: Jamal Hadi Salim <jhs@mojatatu.com>
+Cc: Stephen Hemminger <stephen@networkplumber.org>,
+ Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241202191312.3d3c8097@kernel.org>
+ <20241204122929.3492005-1-martin.ottens@fau.de>
+ <CAM0EoMnTTQ-BtS0EBqB-5yNAAmvk9r67oX7n7S0Ywhc23s49EQ@mail.gmail.com>
+Content-Language: de-DE
+From: Martin Ottens <martin.ottens@fau.de>
+In-Reply-To: <CAM0EoMnTTQ-BtS0EBqB-5yNAAmvk9r67oX7n7S0Ywhc23s49EQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-[cc += Mika, start of thread:
-https://lore.kernel.org/all/db8e457fcd155436449b035e8791a8241b0df400.camel@kernel.org/
-]
+On 05.12.24 13:40, Jamal Hadi Salim wrote:
+> Would be nice to see the before and after (your change) output of the
+> stats to illustrate
 
-On Sat, Dec 07, 2024 at 12:06:49AM +0100, Niklas Schnelle wrote:
-> > > On Fri, 2024-12-06 at 19:12 +0100, Niklas Schnelle wrote:
-> > > > I bisected a v6.13-rc1 boot hang on my personal workstation to this
-> > > > patch. Sadly I don't have much details like a panic or so because the
-> > > > boot hangs before any kernel messages, or at least they're not visible
-> > > > long enough to see. I haven't yet looked into the code as I wanted to
-> > > > raise awareness first. Since the commit doesn't revert cleanly on
-> > > > v6.13-rc1 I also haven't tried that yet.
-> > > > 
-> > > > Here are some details on my system:
-> > > > - AMD Ryzen 9 3900X 
-> > > > - ASRock X570 Creator Motherboard
-> > > > - Radeon RX 5600 XT
-> > > > - Intel JHL7540 Thunderbolt 3 USB Controller (only USB 2 plugged)
-> > > > - Intel 82599 10 Gigabit NIC with SR-IOV enabled with 2 VFs
-> > > > - Intel n I211 Gigabit NIC
-> > > > - Intel Wi-Fi 6 AX200
-> > > > - Aquantia AQtion AQC107 NIC
-> 
-> Ok did some fiddeling and it's the thunderbolt ports. The below diff
-> works around the issue. That said I guess for a proper fix this would
-> should get filtered by the port service matching? Also as can be seen
-> in lspci the port still claims to support bandwidth management so maybe
-> other thunderbolt ports actually do.
-[...]
-> --- a/drivers/pci/pcie/bwctrl.c
-> +++ b/drivers/pci/pcie/bwctrl.c
-> @@ -294,6 +294,9 @@ static int pcie_bwnotif_probe(struct pcie_device *srv)
->         struct pci_dev *port = srv->port;
->         int ret;
-> 
-> +       if (srv->port->is_thunderbolt)
-> +               return -EOPNOTSUPP;
-> +
+Setup is as described in my patch. I used a larger limit of 
+1000 for netem so that the overshoot of the qlen becomes more 
+visible. Kernel is from the current net-next tree (the patch to 
+sch_tbf referenced in my patch is already applied (1596a135e318)).
 
-Thanks for reporting and analyzing this.
 
-The PCIe bandwidth controller is only instantiated on Downstream Ports.
-Per the spec, Thunderbolt PCIe Downstream Ports are just tunnel endpoints
-with a fake Max Link Speed of 2.5 GT/s (USB4 v2 sec 11.2.1):
+TCP before the fix (qlen is 1150p, exceeding the maximum of 1000p, 
+netem qdisc becomes "locked" and stops accepting packets):
 
-   "Max Link Speed field in the Link Capabilities Register set to 0001b
-    (data rate of 2.5 GT/s only).
-    Note: These settings do not represent actual throughput.
-    Throughput is implementation specific and based on the USB4 Fabric
-    performance."
+qdisc netem 1: root refcnt 2 limit 1000 delay 100ms
+ Sent 2760196 bytes 1843 pkt (dropped 389, overlimits 0 requeues 0)
+ backlog 4294560030b 1150p requeues 0
+qdisc tbf 10: parent 1:1 rate 50Mbit burst 1537b lat 50ms
+ Sent 2760196 bytes 1843 pkt (dropped 327, overlimits 7356 requeues 0)
+ backlog 0b 0p requeues 0
 
-So your patch does make sense in so far as the link speed of Thunderbolt
-PCIe Downstream Ports is fixed to 2.5 GT/s and cannot be throttled because
-that's already the lowest possible PCIe speed.  The actual speed is
-determined by the Thunderbolt links.
+UDP (iperf3 sends 50Mbit/s) before the fix, no issues here:
 
-The check for the is_thunderbolt bit should be moved to the if-clause in
-get_port_device_capability() which sets the PCIE_PORT_SERVICE_BWCTRL bit
-in the services mask.
+qdisc netem 1: root refcnt 2 limit 1000 delay 100ms
+ Sent 71917940 bytes 48286 pkt (dropped 2415, overlimits 0 requeues 0)
+ backlog 643680b 432p requeues 0
+qdisc tbf 10: parent 1:1 rate 50Mbit burst 1537b lat 50ms
+ Sent 71917940 bytes 48286 pkt (dropped 2415, overlimits 341057 requeues 0)
+ backlog 311410b 209p requeues 0
 
-Alternatively, it may be worth considering not to instantiate the
-bandwidth controller if the only link speed supported is 2.5 GT/s.
+TCP after the fix (UDP is not affected by the fix):
 
-We should try to find out what actually causes the boot hang
-(some interrupt storm maybe?), but that can hopefully be done
-internally at Intel if the boot hang is reproducible.
+qdisc netem 1: root refcnt 2 limit 1000 delay 100ms
+ Sent 94859934 bytes 62676 pkt (dropped 15, overlimits 0 requeues 0)
+ backlog 573806b 130p requeues 0
+qdisc tbf 10: parent 1:1 rate 50Mbit burst 1537b lat 50ms
+ Sent 94859934 bytes 62676 pkt (dropped 324, overlimits 248442 requeues 0)
+ backlog 4542b 3p requeues 0
 
-Thanks,
+> Your fix seems reasonable but I am curious: does this only happen with
+> TCP? If yes, perhaps the
+> GSO handling maybe contributing?
+> Can you run iperf with udp and see if the issue shows up again? Or
+> ping -f with size 1024.
 
-Lukas
+I was only able to reproduce this behavior with tbf and it happens 
+only when GSO packets are segmented inside the tbf child qdisc. As 
+shown above, UDP is therefore not affected. The behavior also occurs 
+if this configuration is used on the "outgoing" interface of a system 
+that just forwards packets between two networks and GRO is enabled on 
+the "incoming" interface.
 
