@@ -1,161 +1,118 @@
-Return-Path: <linux-kernel+bounces-436186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD639E823F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:31:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECBCD9E8247
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:33:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0DA1633BE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:31:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C7D21884663
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABD26154BF5;
-	Sat,  7 Dec 2024 21:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EC2215886C;
+	Sat,  7 Dec 2024 21:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SI1C6Npk"
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FuHnvg7p"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35758146A60
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 21:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2EBD27E;
+	Sat,  7 Dec 2024 21:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733607091; cv=none; b=DUHtJOn6thcBHbcwQPUE5RHU3vkMNnVPChwzRkc/z6TzEy+as8QuH5kJUjYiBVMdYAkhrNtA+273WCPPoRBaWQEd9ZE59c1TlNEE/rGh0JBl1t6/ocAsFl+zNPyQv1HRyHf8MbtWOgcZdNwn1lMKIBZmdAKOPbGrUlp4U8rIs3s=
+	t=1733607181; cv=none; b=gVTIAItcw/4EThHtgjVWWbMnlZf9bznUnzyLrGEUtZxFmMWW+FFxu2nqw311t60dmBtetDlwPoKSHh23LlWlOI47WvYdHutkUYmvvJIt9QXmDFZEGeE/SWIDfhUVpc7ROGTmjCZYYnTcdcnfVabop1YxejFCxo4q8s3F02a7ZT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733607091; c=relaxed/simple;
-	bh=DjeQFZwSMhqCtQ8nrVJXyzDK26ogxEag7xLAlAfoY5A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jr4GrK4b1wMtkfvHycDf7LfhzOXQUTJTJEZIc2W0QNG0HHr+yLyg3TeIxturPgKU/99rb1nu1OJnrDOja4drDqrfK0Za6H7C5Vyl7jkujNzBJy2Oce+ItjbNl9alJpSPN9m2QVUR+HGBn8khLLEmLph1irnncmEl7Uj/tlivsc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SI1C6Npk; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5f2af291e13so57286eaf.1
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 13:31:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733607088; x=1734211888; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dfKGW0QrWsaa6qvorIS98f1mLt8WgB4RHKxY9T6NNQ0=;
-        b=SI1C6NpkD+LU5+wh5+pkFBGAblR5BmjLldIzP6LmHMNS7c4dOOMkrinQsojR76TQxh
-         VHbrrZUUlLtC6x1fxgTY2yDmgflAqtHctrEO8BhpbTiPKaM0O0r0KMIT5fsY8rhF0ELx
-         Li0UeEE0kXFdHd6gpTtDIsTf8G1jQpfLDuqOYtq8eYvdwJJOJSArU1jpZTOzytN/Oacl
-         OAFH9HfXTBr/xveAmsPD7kYLcBDLXNrjYCm4PUM6rOzUwwg2fQfEXh4xLvW6kNDzOal6
-         1cnLJh9vcu3ywts6de/vAY7Y5pikJHiJxP+BEjqHHBfgRYFnLgV9Av6+B3CJtwSMQQyA
-         WLvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733607088; x=1734211888;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dfKGW0QrWsaa6qvorIS98f1mLt8WgB4RHKxY9T6NNQ0=;
-        b=dSxupquIkaLGWtsU1rFA4YStokri5KlDl6pbbA/q1tbiQUcIjhmzlP5yonk3rlJYqG
-         V2Z6OuPDng3irCIsWt9qvw9j5HMcIh6FE+NodlQ3szs0WofW20tg/hIBimFhAZ+CbWnJ
-         QunI6K6CKKoHLcGQ2gy8gjgxwn776iodAqmpo1AD0Au8zEQSkDjECpD0XC+O58rKRUWJ
-         ublDHphvRDEPMv59WDKABv0UJStPPbrFxVaBHJ55Qe2eJHPadAhZQ//j82/+IiesK1ER
-         6AHvQHYMk+nLldSCKdEFjilcJOYFzxJO2UOduW6cEnlijrAMkseExbH4YJsLfGGfR+lY
-         IOUA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfVZH1B5O0TKWRtH0SQYHv219Xt0zzFWJAGznLKgQSnj8jDf3bW3SldTuqXEzF0p7Wog6lK0yIvkJvrEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3hRVA5Dny16zU4e+u2v4DCXotMRryaAVHmse5xyBgAfBt4VLk
-	HhpN9F5f4YI/EEyrCgth6OAg8RNv5b0CgjrnPSTCq0m54B4d3q8vtb/fzKKNzNN8Ax8cr4e3Fk7
-	S2CBjcBnYm0+4RSxl5cKmx+l/9cIbxf4WtaDuXw==
-X-Gm-Gg: ASbGncsgLyEEROeLArjvGSzF3Rj7pYOJ/nRB0tEfB2m8Su8TpB5RxkN6AqiUcBscDY7
-	y5MUd4B8fk1u3DtZSaJQGGFAJk0tyf+8=
-X-Google-Smtp-Source: AGHT+IHrxIKj+TInrHyVvrustF8TDSTRjzN9vK1a1fqIMmmjrvizhO/kVBzPl/ZHpL1kwxUVz6dUbaTqxj9Qq62lNHQ=
-X-Received: by 2002:a4a:b604:0:b0:5eb:5eff:afbb with SMTP id
- 006d021491bc7-5f27737f2a8mr7037701eaf.1.1733607088103; Sat, 07 Dec 2024
- 13:31:28 -0800 (PST)
+	s=arc-20240116; t=1733607181; c=relaxed/simple;
+	bh=e/F5YyK5MttfQZR5pjBEF/euITS0jR40bnuYvHJXw08=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=cvh6YcWOnhWP2uW8wynCwyOOtNEfl8phcde4xAN+Ep4IQnD0CQaKhzsdgb5kPIpsD8bQhBkFh0Q4F1to+TtuRru0TwHXleLpzTfcUG4Tuz2M0bggatGg22uWr9Qq7QDIYvVmEvq8Y+hbu9FIw4f4uJiF5i0KCeG4NTzK+csqyio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FuHnvg7p; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733607171;
+	bh=e/F5YyK5MttfQZR5pjBEF/euITS0jR40bnuYvHJXw08=;
+	h=From:Subject:Date:To:Cc:From;
+	b=FuHnvg7p9ZFYZBs0s2l+Qp4zdmkfmcQyewSCFvqLzzSfDjhJfQ8h8L7HRYNtUFCVe
+	 QYMVe+Y97Fxscl1XjOasF8D8CmJCsXrD0gBU3TroAiMQILui7u4jSbq85oGY8ADPIj
+	 lQnKPq9737QDNcudJqNCNXtRhbSM0/YVmMczW6RRtxOKLO6ZLgT22xOQRiRIiC1AcH
+	 mWGJoSAWZvKoRU89qFyu6Xb+UPV4FqId5iG4s72Xm+PB31xZBcoFdemw1VfDsROBz9
+	 vh5cFeJ18IXv51kmgIH4fqEbzRzGrnbPmXkUkeYVnFlz6DPjbCla7feF93twdg7KTf
+	 j/58AyQV+Vchg==
+Received: from localhost (unknown [188.27.48.199])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 869D417E37FF;
+	Sat,  7 Dec 2024 22:32:51 +0100 (CET)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Subject: [PATCH 0/4] Add support for HDMI1 output on RK3588 SoC
+Date: Sat, 07 Dec 2024 23:32:23 +0200
+Message-Id: <20241207-rk3588-hdmi1-v1-0-ca3a99b46a40@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-gs101-phy-lanes-orientation-phy-v4-0-f5961268b149@linaro.org>
- <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
-In-Reply-To: <20241206-gs101-phy-lanes-orientation-phy-v4-6-f5961268b149@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Sat, 7 Dec 2024 21:31:17 +0000
-Message-ID: <CADrjBPoZqbAM=2zOdgXD_dTrgh-J7yE+OX_JSVJ42Lmzb-DPEw@mail.gmail.com>
-Subject: Re: [PATCH v4 6/7] phy: exynos5-usbdrd: subscribe to orientation
- notifier if required
-To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
-	Sam Protsenko <semen.protsenko@linaro.org>, Will McVicker <willmcvicker@google.com>, 
-	Roy Luo <royluo@google.com>, kernel-team@android.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOe+VGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDIwNz3aJsY1MLC92MlNxMQ11zA5PkpCTz5BRz0zQloJaCotS0zAqwcdG
+ xtbUA1V/m1F4AAAA=
+X-Change-ID: 20241207-rk3588-hdmi1-704cbb7cd75f
+To: Sandy Huang <hjc@rock-chips.com>, 
+ =?utf-8?q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+ Andy Yan <andy.yan@rock-chips.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-Hi Andr=C3=A9,
+The patches provide the basic support to handle the second HDMI output
+port found on Rockchip RK3588 SoC.
 
-Firstly, thanks for all your work getting USB on Pixel 6 / gs101
-working upstream :)
+For now I enabled it on Radxa ROCK 5B only, the board I've been using to
+validate this.
 
-On Fri, 6 Dec 2024 at 16:31, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
-wrote:
->
-> gs101's SS phy needs to be configured differently based on the
-> connector orientation, as the SS link can only be established if the
-> mux is configured correctly.
->
-> The code to handle programming of the mux is in place already, this commi=
-t
-> now adds the missing pieces to subscribe to the Type-C orientation
-> switch event.
->
-> Note that for this all to work we rely on the USB controller
-> re-initialising us. It should invoke our .exit() upon cable unplug, and
-> during cable plug we'll receive the orientation event after which we
-> expect our .init() to be called.
->
-> Above reinitialisation happens if the DWC3 controller can enter runtime
-> suspend automatically. For the DWC3 driver, this is an opt-in:
->     echo auto > /sys/devices/.../11110000.usb/power/control
-> Once done, things work as long as the UDC is not bound as otherwise it
-> stays busy because it doesn't cancel / stop outstanding TRBs. For now
-> we have to manually unbind the UDC in that case:
->      echo "" > sys/kernel/config/usb_gadget/.../UDC
->
-> Note that if the orientation-switch property is missing from the DT,
-> the code will behave as before this commit (meaning for gs101 it will
-> work in SS mode in one orientation only). Other platforms are not
-> affected either way.
->
-> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+** IMPORTANT **
 
-Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
-Tested-by: Peter Griffin <peter.griffin@linaro.org>
+The series has a runtime dependency on "phy: phy-rockchip-samsung-hdptx:
+Don't use dt aliases to determine phy-id", a patch submitted recently by
+Heiko [1].  Without applying it, the functionality on both HDMI TX ports
+will break.
 
-Notes on testing:
-
-I tested this series with the corresponding DT using a Pixel 6 device
-with 2 different USB hubs and also plugging directly into my laptop.
-I've tried various combinations of plugging / unplugging from both
-ends of the USB cable and changing cable orientation. With the latest
-series the disconnect/reconnect always seems robustly detected and
-Pixel is enumerated as a USB device by the host, adb connection to the
-phone is possible even with the cable orientation changing between
-disconnect/reconnect.
-
-One thing I did notice during testing is that in one cable orientation
-Pixel is detected as a `SuperSpeed USB device` by the host and in the
-other cable orientation it is detected as a `high-speed USB device`.
-Which suggests there is still a latent bug in the phy
-re-configuration. Although I think it is fine to fix this
-incrementally, as prior to this series the other cable orientation
-didn't work at all.
-
-I just tested my personal Pixel 6 running the downstream production
-drivers, and that is detected as a `SuperSpeed USB device` in both
-cable orientations.
+Furthermore, please note this is subject to the same limitations as
+HDMI0 when it comes to the supported display modes.  The fixes provided
+via [2] are not applicable to HDMI1, hence I will handle it separately
+as soon as all dependencies are merged.
 
 Thanks,
+Cristian
 
-Peter
+[1] https://lore.kernel.org/lkml/20241206103401.1780416-3-heiko@sntech.de/
+[2] https://lore.kernel.org/all/20241116-vop2-hdmi0-disp-modes-v1-0-2bca51db4898@collabora.com/
+
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+Cristian Ciocaltea (4):
+      drm/rockchip: dw_hdmi_qp: Add support for RK3588 HDMI1 output
+      arm64: dts: rockchip: Add PHY node for HDMI1 TX port on RK3588
+      arm64: dts: rockchip: Add HDMI1 node on RK3588
+      arm64: dts: rockchip: Enable HDMI1 on rock-5b
+
+ arch/arm64/boot/dts/rockchip/rk3588-extra.dtsi  |  62 ++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts |  42 ++++++++-
+ drivers/gpu/drm/rockchip/dw_hdmi_qp-rockchip.c  | 119 +++++++++++++++++++-----
+ 3 files changed, 198 insertions(+), 25 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241207-rk3588-hdmi1-704cbb7cd75f
+
 
