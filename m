@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-436205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7325F9E8273
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:15:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63F219E8274
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:16:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 288F128113D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:15:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1695A2819C0
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22F751547E3;
-	Sat,  7 Dec 2024 22:15:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEF04188014;
+	Sat,  7 Dec 2024 22:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mEK6QgPD"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="h0ee1oLH"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA7A1922C0
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 22:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9CD193435
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 22:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733609733; cv=none; b=GeUiQPHdEEOnnYkmkZEp7rUwhmCVHKCwpVrsHXmEV2mvQvrXaEih1O2lb/kJXoqPrd0Rr0H9RdLSBsy4moonO3Xi34lD74UJJrGeBfFeNPfyT2laBS/aBIvDi65tVFgzNqbifWj7wROQQP6lb6uVc4e/PFdj50Z8aBReQkDyCsU=
+	t=1733609736; cv=none; b=RkxWBKDw67tHyeF940iVsvvyyh2tJmTKIX9d3jrtRkQEZ7jTBqydjVc9YF3AsF9XR4CBb9BZUK3BmHHeltLa+cn6KLr5EeavFFPO5L8C0w2ovNZ7i4YPK3ew9PNcEwlMp6GUgM4Wa0ZjmBlCVau63XFv5lq+gnIEi3exdAE3ivY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733609733; c=relaxed/simple;
-	bh=vXP0qU9PAGACWPwiNw1lO5Aef0HXGX3T4TbaUosNZ7w=;
+	s=arc-20240116; t=1733609736; c=relaxed/simple;
+	bh=SdBdoFZBzDFJ4xCZGlyHPtZBQmr1hom1R/GUYtzyBBc=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fjdhUc8TccPOs7+td6GoQThwkao06CpQeuRKLvQ7qD3enuG7P4L0ICTMwcTbyGBol7Vel/SEGNdVm2jN6rnPQiFX6YyKKFLcYl/bin5A84a8RRJCHPsXUK0adJ10fzrmA9EO+5HlyPXPnDxIXD5UrhuYJUce3yF+kVH5PivgcAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mEK6QgPD; arc=none smtp.client-ip=209.85.210.202
+	 To:Cc:Content-Type; b=Pv+hvPJDuzrhd5ahWC6P3WItPXhUPOw7p5n9C3iwgTUxqfSvh04wNXhezbVPPUCcilNlSBjKR1MAVckahf1IC6mnNFKY0ldFabkUiSLVVlmPvq2nbE124mXlp/Usjae0tyu7uOOAL+9eEXxivya8cYSEn7bycxU8UVmRFOgMxIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=h0ee1oLH; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yuzhao.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-725c36cdc5cso1444383b3a.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 14:15:31 -0800 (PST)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7fd1d9a70f3so1837630a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 14:15:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733609731; x=1734214531; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1733609734; x=1734214534; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCT5euYl/qJQPeGGazPVJuZRHShIdP4mKhuDso53GD0=;
-        b=mEK6QgPDv7VfHh2Fd83PBlfig5t6fJQrG6VxF2KvCum1Q09CmN5FBcC1VbsqEx/Z3n
-         MneGykg1Tzk8t3Amj7R3HIUF3u5u0hEjpMX0v8Wec6LelSzrWzeZURfReqIDdqGHndFg
-         5TkbinCvgQOu8unC4sPj9vS4D3eaxyEXTTon6lUnIAzTzuFKN5KvRHcZpzt1bIYoD0Qg
-         wJjKo92NYBHU+nW5WHvNAfw4LxclhP57K8KnTAW8HtVNSvu3Trtu0+BZvVvcVlnbmWnk
-         Uplk9ec2h7APyB6gIuUiKMoqs6lDj5nwa7DULVLYKUh8X9k6AV4TxImtvn4Jt66p5Uf3
-         ZGHw==
+        bh=x/WXMwNfw0sDUCuQfYx8lzIKxCIUKsshP78UrWZEISs=;
+        b=h0ee1oLHo9dLa5/uzSNvXU+AYiuwb6WuS3fOtGml/Hp+9Ut+G2fwEN6GG5cO6p0UGd
+         I8qKoe6jXJRBVZQdbZ898Yr6C8zTJw8SnsBhIIKx/c8bXnv0nIDrH6rFGouo1iJVXjq4
+         PzsPbBFcY8LVyQrOdf/Id1Lt5gDICxtiOYpOK32OgYZj2Jq7Ge1bRwkvwavnge27lYuP
+         bEW+Q4HtSAH2LEV+8Mdho55IOkGl8wVWovYuCJbGDZIHkiO6jWKGkYKCI5J116larWic
+         NiPoSSCZzmkXwQPWVpYSLTldQrm0deh5PavbsCsMYGY7gp36RoWXk4GZUEG9TuNIslX/
+         RhwA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733609731; x=1734214531;
+        d=1e100.net; s=20230601; t=1733609734; x=1734214534;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CCT5euYl/qJQPeGGazPVJuZRHShIdP4mKhuDso53GD0=;
-        b=k+UKJFZj+cbiy1DA7Y+4kf2iv7putKv2NOEW5kleRVfvfJn+3IkoHh+u0PFSNvODkV
-         vSEAHswGYrZvVYY6P1duYlapAPyRRg69IxUoKl3MKnCg8vSGDoyfJWINNpre+wPX+mWB
-         L84rLuTpsHQSKGRx+fQKHPQj78j+4KtbRkC4C/hemzC16Wn3y8bG1nzU6ydlj5UVlGKX
-         xpcG8e25KsICTASDsPkcDvwewfxDsRSGZy9fyXepdoovkqVWJwkME+5uuldzwLXtwOle
-         351N+HeesoX+dAE1kOoe3DXLJJuP6U9NQt5l3qcjSbI8XH7v5iwkvl2D3IvXyU3v+6aK
-         l1fA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrH7SeodctE7AjZFGCUuDMoAFfJLjoszMgSaEMV3WR/MuIbgYsRM6FuoQH28UnbetWrFZcIvOrfaaxrNk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWNjaFNQnA0mvZgh+zhPnxWFZBlpd/e7o3HPmHq/WO+O1/hEQJ
-	O/bkI9dYF0CeJizjiDeBZbslaoYfeoHlg0OShEDTsTPLMgSOVzCzjrapCNNdOX72GLZq1fBIvgJ
-	k2A==
-X-Google-Smtp-Source: AGHT+IEX0/0XlihpBl2av7TPcnGj//5IebmVqNnUYSl/vdQwzILN65v6v1O4wV+Mrra4vxLhPsMYzWB6m58=
-X-Received: from pfbbe12.prod.google.com ([2002:a05:6a00:1f0c:b0:724:ec9d:6e1a])
- (user=yuzhao job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a00:2381:b0:71e:573f:5673
- with SMTP id d2e1a72fcca58-725b8144a42mr8420603b3a.15.1733609731167; Sat, 07
- Dec 2024 14:15:31 -0800 (PST)
-Date: Sat,  7 Dec 2024 15:15:18 -0700
+        bh=x/WXMwNfw0sDUCuQfYx8lzIKxCIUKsshP78UrWZEISs=;
+        b=cvoH8+rSOnSsvbW6+UM95TY3ULxPu+RQVtNx0T2pK8vEZtzbIZRvuhkhBlRbXLwvUd
+         +he5kAGIMcQswGwMI/Nz29M+A8BjzaHQof/aGmJXmTnzIlX2mL4yRzY4vjRqI31/f9oL
+         PpVByOoNBjZlPQowf9mX5OSqWkLh4sE3xFNVfxckUCOFkPlC+bGu7mwsw3/A7psgTIKO
+         1mpJLuZBzRF2vRoPlAwKlkKp+d/NTxfbp6aHMoiJMOR3/1WQQ48+n1X1j0P9VI9j1vxJ
+         RKlVJpYsffd2UqCssMDmqbah9nD0pyKWtDOCVkEwF3OZicG+1to9tAgJfZwCQyPSk+QG
+         v9OA==
+X-Forwarded-Encrypted: i=1; AJvYcCUIHY1ByfgwL4uTKTddT6cfIE/WZk9PnSrY26XmDQNGIuPlrfpO3tgyfmgOnplPhP2+vYo1RSx/GFR/JLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySIyE4lKidIIEuiTW+BSeiKS33Jlfot+lkIbFAPDZKRYTWJydU
+	WaTUhZ32UTyRW3DuUG+crpSrtJ5Wqx5xDfoJTSnbnpBzByeSGsHzhH0U+PvMqoucoq3R1eLITAv
+	E4g==
+X-Google-Smtp-Source: AGHT+IHUcmdXko/vEWEcYvOS+i3+2ODHT93QS00ngr4ZFLZJtDjyIBl6DFu+/mYipa85hT4Fnkiy+FUdlgI=
+X-Received: from pjh6.prod.google.com ([2002:a17:90b:3f86:b0:2ee:2761:b67a])
+ (user=yuzhao job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:d88e:b0:2ee:b66d:6576
+ with SMTP id 98e67ed59e1d1-2ef6ab10612mr12423648a91.30.1733609733903; Sat, 07
+ Dec 2024 14:15:33 -0800 (PST)
+Date: Sat,  7 Dec 2024 15:15:19 -0700
 In-Reply-To: <20241207221522.2250311-1-yuzhao@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,161 +73,630 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241207221522.2250311-1-yuzhao@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241207221522.2250311-3-yuzhao@google.com>
-Subject: [PATCH mm-unstable v3 2/6] mm/mglru: optimize deactivation
+Message-ID: <20241207221522.2250311-4-yuzhao@google.com>
+Subject: [PATCH mm-unstable v3 3/6] mm/mglru: rework aging feedback
 From: Yu Zhao <yuzhao@google.com>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Yu Zhao <yuzhao@google.com>, Bharata B Rao <bharata@amd.com>, 
+	Yu Zhao <yuzhao@google.com>, David Stevens <stevensd@chromium.org>, 
 	Kalesh Singh <kaleshsingh@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-Do not shuffle a folio in the deactivation paths if it is already in
-the oldest generation. This reduces the LRU lock contention.
+The aging feedback is based on both the number of generations and the
+distribution of folios in each generation. The number of generations
+is currently the distance between max_seq and anon min_seq. This is
+because anon min_seq is not allowed to move past file min_seq. The
+rationale for that is that file is always evictable whereas anon is
+not. However, for use cases where anon is a lot cheaper than file:
+1. Anon in the second oldest generation can be a better choice than
+   file in the oldest generation.
+2. A large amount of file in the oldest generation can skew the
+   distribution, making should_run_aging() return false negative.
 
-Before this patch, the contention is reproducible by FIO, e.g.,
+Allow anon and file min_seq to move independently, and use solely the
+number of generations as the feedback for aging. Specifically, when
+both anon and file are evictable, anon min_seq can now be greater than
+file min_seq, and therefore the number of generations becomes the
+distance between max_seq and min(min_seq[0],min_seq[1]). And
+should_run_aging() returns true if and only if the number of
+generations is less than MAX_NR_GENS.
 
-  fio -filename=/dev/nvme1n1p2 -direct=0 -thread -size=1024G \
-      -rwmixwrite=30  --norandommap --randrepeat=0 -ioengine=sync \
-      -bs=4k -numjobs=400 -runtime=25000 --time_based \
-      -group_reporting -name=mglru
+As the first step to the final optimization, this change by itself
+should not have userspace-visiable effects beyond performance. The
+next twos patch will take advantage of this change; the last patch in
+this series will better distribute folios across MAX_NR_GENS.
 
-  98.96%--_raw_spin_lock_irqsave
-          folio_lruvec_lock_irqsave
-          |
-           --98.78%--folio_batch_move_lru
-               |
-                --98.63%--deactivate_file_folio
-                          mapping_try_invalidate
-                          invalidate_mapping_pages
-                          invalidate_bdev
-                          blkdev_common_ioctl
-                          blkdev_ioctl
-
-After this patch, deactivate_file_folio() bails out early without
-taking the LRU lock.
-
-A side effect is that a folio can be left at the head of the oldest
-generation, rather than the tail. If reclaim happens at the same time,
-it cannot reclaim this folio immediately. Since there is no known
-correlation between truncation and reclaim, this side effect is
-considered insignificant.
-
-Reported-by: Bharata B Rao <bharata@amd.com>
-Closes: https://lore.kernel.org/CAOUHufawNerxqLm7L9Yywp3HJFiYVrYO26ePUb1jH-qxNGWzyA@mail.gmail.com/
+Reported-by: David Stevens <stevensd@chromium.org>
 Signed-off-by: Yu Zhao <yuzhao@google.com>
 Tested-by: Kalesh Singh <kaleshsingh@google.com>
 ---
- mm/swap.c | 49 +++++++++++++++++++++++++++++++++++++++++--------
- 1 file changed, 41 insertions(+), 8 deletions(-)
+ include/linux/mmzone.h |   6 +-
+ mm/vmscan.c            | 217 +++++++++++++++++------------------------
+ 2 files changed, 91 insertions(+), 132 deletions(-)
 
-diff --git a/mm/swap.c b/mm/swap.c
-index 3a01acfd5a89..756b6c5b9af7 100644
---- a/mm/swap.c
-+++ b/mm/swap.c
-@@ -379,11 +379,12 @@ static void __lru_cache_activate_folio(struct folio *folio)
- }
+diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+index b36124145a16..b998ccc5c341 100644
+--- a/include/linux/mmzone.h
++++ b/include/linux/mmzone.h
+@@ -446,8 +446,8 @@ struct lru_gen_folio {
+ 	unsigned long avg_refaulted[ANON_AND_FILE][MAX_NR_TIERS];
+ 	/* the exponential moving average of evicted+protected */
+ 	unsigned long avg_total[ANON_AND_FILE][MAX_NR_TIERS];
+-	/* the first tier doesn't need protection, hence the minus one */
+-	unsigned long protected[NR_HIST_GENS][ANON_AND_FILE][MAX_NR_TIERS - 1];
++	/* can only be modified under the LRU lock */
++	unsigned long protected[NR_HIST_GENS][ANON_AND_FILE][MAX_NR_TIERS];
+ 	/* can be modified without holding the LRU lock */
+ 	atomic_long_t evicted[NR_HIST_GENS][ANON_AND_FILE][MAX_NR_TIERS];
+ 	atomic_long_t refaulted[NR_HIST_GENS][ANON_AND_FILE][MAX_NR_TIERS];
+@@ -498,7 +498,7 @@ struct lru_gen_mm_walk {
+ 	int mm_stats[NR_MM_STATS];
+ 	/* total batched items */
+ 	int batched;
+-	bool can_swap;
++	int swappiness;
+ 	bool force_scan;
+ };
  
- #ifdef CONFIG_LRU_GEN
--static void folio_inc_refs(struct folio *folio)
-+
-+static void lru_gen_inc_refs(struct folio *folio)
- {
- 	unsigned long new_flags, old_flags = READ_ONCE(folio->flags);
- 
--	if (folio_test_unevictable(folio))
-+	if (!folio_test_lru(folio) || folio_test_unevictable(folio))
- 		return;
- 
- 	if (!folio_test_referenced(folio)) {
-@@ -406,10 +407,33 @@ static void folio_inc_refs(struct folio *folio)
- 		new_flags |= old_flags & ~LRU_REFS_MASK;
- 	} while (!try_cmpxchg(&folio->flags, &old_flags, new_flags));
- }
--#else
--static void folio_inc_refs(struct folio *folio)
-+
-+static bool lru_gen_clear_refs(struct folio *folio)
- {
-+	struct lru_gen_folio *lrugen;
-+	int type = folio_is_file_lru(folio);
-+
-+	if (!folio_test_lru(folio) || folio_test_unevictable(folio))
-+		return true;
-+
-+	set_mask_bits(&folio->flags, LRU_REFS_MASK | LRU_REFS_FLAGS, 0);
-+
-+	lrugen = &folio_lruvec(folio)->lrugen;
-+	/* whether can do without shuffling under the LRU lock */
-+	return folio_lru_gen(folio) == lru_gen_from_seq(READ_ONCE(lrugen->min_seq[type]));
- }
-+
-+#else /* !CONFIG_LRU_GEN */
-+
-+static void lru_gen_inc_refs(struct folio *folio)
-+{
-+}
-+
-+static bool lru_gen_clear_refs(struct folio *folio)
-+{
-+	return false;
-+}
-+
- #endif /* CONFIG_LRU_GEN */
- 
- /**
-@@ -428,7 +452,7 @@ static void folio_inc_refs(struct folio *folio)
- void folio_mark_accessed(struct folio *folio)
- {
- 	if (lru_gen_enabled()) {
--		folio_inc_refs(folio);
-+		lru_gen_inc_refs(folio);
- 		return;
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index 2a8db048d581..00a5aff3db42 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2623,11 +2623,17 @@ static bool should_clear_pmd_young(void)
+ 		READ_ONCE((lruvec)->lrugen.min_seq[LRU_GEN_FILE]),	\
  	}
  
-@@ -524,7 +548,7 @@ void folio_add_lru_vma(struct folio *folio, struct vm_area_struct *vma)
-  */
- static void lru_deactivate_file(struct lruvec *lruvec, struct folio *folio)
- {
--	bool active = folio_test_active(folio);
-+	bool active = folio_test_active(folio) || lru_gen_enabled();
- 	long nr_pages = folio_nr_pages(folio);
- 
- 	if (folio_test_unevictable(folio))
-@@ -589,7 +613,10 @@ static void lru_lazyfree(struct lruvec *lruvec, struct folio *folio)
- 
- 	lruvec_del_folio(lruvec, folio);
- 	folio_clear_active(folio);
--	folio_clear_referenced(folio);
-+	if (lru_gen_enabled())
-+		lru_gen_clear_refs(folio);
-+	else
-+		folio_clear_referenced(folio);
- 	/*
- 	 * Lazyfree folios are clean anonymous folios.  They have
- 	 * the swapbacked flag cleared, to distinguish them from normal
-@@ -657,6 +684,9 @@ void deactivate_file_folio(struct folio *folio)
- 	if (folio_test_unevictable(folio))
- 		return;
- 
-+	if (lru_gen_enabled() && lru_gen_clear_refs(folio))
-+		return;
++#define evictable_min_seq(min_seq, swappiness)				\
++	min((min_seq)[!(swappiness)], (min_seq)[(swappiness) != MAX_SWAPPINESS])
 +
- 	folio_batch_add_and_move(folio, lru_deactivate_file, true);
+ #define for_each_gen_type_zone(gen, type, zone)				\
+ 	for ((gen) = 0; (gen) < MAX_NR_GENS; (gen)++)			\
+ 		for ((type) = 0; (type) < ANON_AND_FILE; (type)++)	\
+ 			for ((zone) = 0; (zone) < MAX_NR_ZONES; (zone)++)
+ 
++#define for_each_evictable_type(type, swappiness)			\
++	for ((type) = !(swappiness); (type) <= ((swappiness) != MAX_SWAPPINESS); (type)++)
++
+ #define get_memcg_gen(seq)	((seq) % MEMCG_NR_GENS)
+ #define get_memcg_bin(bin)	((bin) % MEMCG_NR_BINS)
+ 
+@@ -2673,10 +2679,16 @@ static int get_nr_gens(struct lruvec *lruvec, int type)
+ 
+ static bool __maybe_unused seq_is_valid(struct lruvec *lruvec)
+ {
+-	/* see the comment on lru_gen_folio */
+-	return get_nr_gens(lruvec, LRU_GEN_FILE) >= MIN_NR_GENS &&
+-	       get_nr_gens(lruvec, LRU_GEN_FILE) <= get_nr_gens(lruvec, LRU_GEN_ANON) &&
+-	       get_nr_gens(lruvec, LRU_GEN_ANON) <= MAX_NR_GENS;
++	int type;
++
++	for (type = 0; type < ANON_AND_FILE; type++) {
++		int n = get_nr_gens(lruvec, type);
++
++		if (n < MIN_NR_GENS || n > MAX_NR_GENS)
++			return false;
++	}
++
++	return true;
  }
  
-@@ -670,7 +700,10 @@ void deactivate_file_folio(struct folio *folio)
-  */
- void folio_deactivate(struct folio *folio)
- {
--	if (folio_test_unevictable(folio) || !(folio_test_active(folio) || lru_gen_enabled()))
-+	if (folio_test_unevictable(folio))
-+		return;
-+
-+	if (lru_gen_enabled() ? lru_gen_clear_refs(folio) : !folio_test_active(folio))
- 		return;
+ /******************************************************************************
+@@ -3083,9 +3095,8 @@ static void read_ctrl_pos(struct lruvec *lruvec, int type, int tier, int gain,
+ 	pos->refaulted = lrugen->avg_refaulted[type][tier] +
+ 			 atomic_long_read(&lrugen->refaulted[hist][type][tier]);
+ 	pos->total = lrugen->avg_total[type][tier] +
++		     lrugen->protected[hist][type][tier] +
+ 		     atomic_long_read(&lrugen->evicted[hist][type][tier]);
+-	if (tier)
+-		pos->total += lrugen->protected[hist][type][tier - 1];
+ 	pos->gain = gain;
+ }
  
- 	folio_batch_add_and_move(folio, lru_deactivate, true);
+@@ -3112,17 +3123,15 @@ static void reset_ctrl_pos(struct lruvec *lruvec, int type, bool carryover)
+ 			WRITE_ONCE(lrugen->avg_refaulted[type][tier], sum / 2);
+ 
+ 			sum = lrugen->avg_total[type][tier] +
++			      lrugen->protected[hist][type][tier] +
+ 			      atomic_long_read(&lrugen->evicted[hist][type][tier]);
+-			if (tier)
+-				sum += lrugen->protected[hist][type][tier - 1];
+ 			WRITE_ONCE(lrugen->avg_total[type][tier], sum / 2);
+ 		}
+ 
+ 		if (clear) {
+ 			atomic_long_set(&lrugen->refaulted[hist][type][tier], 0);
+ 			atomic_long_set(&lrugen->evicted[hist][type][tier], 0);
+-			if (tier)
+-				WRITE_ONCE(lrugen->protected[hist][type][tier - 1], 0);
++			WRITE_ONCE(lrugen->protected[hist][type][tier], 0);
+ 		}
+ 	}
+ }
+@@ -3257,7 +3266,7 @@ static int should_skip_vma(unsigned long start, unsigned long end, struct mm_wal
+ 		return true;
+ 
+ 	if (vma_is_anonymous(vma))
+-		return !walk->can_swap;
++		return !walk->swappiness;
+ 
+ 	if (WARN_ON_ONCE(!vma->vm_file || !vma->vm_file->f_mapping))
+ 		return true;
+@@ -3267,7 +3276,10 @@ static int should_skip_vma(unsigned long start, unsigned long end, struct mm_wal
+ 		return true;
+ 
+ 	if (shmem_mapping(mapping))
+-		return !walk->can_swap;
++		return !walk->swappiness;
++
++	if (walk->swappiness == MAX_SWAPPINESS)
++		return true;
+ 
+ 	/* to exclude special mappings like dax, etc. */
+ 	return !mapping->a_ops->read_folio;
+@@ -3355,7 +3367,7 @@ static unsigned long get_pmd_pfn(pmd_t pmd, struct vm_area_struct *vma, unsigned
+ }
+ 
+ static struct folio *get_pfn_folio(unsigned long pfn, struct mem_cgroup *memcg,
+-				   struct pglist_data *pgdat, bool can_swap)
++				   struct pglist_data *pgdat)
+ {
+ 	struct folio *folio;
+ 
+@@ -3366,10 +3378,6 @@ static struct folio *get_pfn_folio(unsigned long pfn, struct mem_cgroup *memcg,
+ 	if (folio_memcg(folio) != memcg)
+ 		return NULL;
+ 
+-	/* file VMAs can contain anon pages from COW */
+-	if (!folio_is_file_lru(folio) && !can_swap)
+-		return NULL;
+-
+ 	return folio;
+ }
+ 
+@@ -3425,7 +3433,7 @@ static bool walk_pte_range(pmd_t *pmd, unsigned long start, unsigned long end,
+ 		if (pfn == -1)
+ 			continue;
+ 
+-		folio = get_pfn_folio(pfn, memcg, pgdat, walk->can_swap);
++		folio = get_pfn_folio(pfn, memcg, pgdat);
+ 		if (!folio)
+ 			continue;
+ 
+@@ -3510,7 +3518,7 @@ static void walk_pmd_range_locked(pud_t *pud, unsigned long addr, struct vm_area
+ 		if (pfn == -1)
+ 			goto next;
+ 
+-		folio = get_pfn_folio(pfn, memcg, pgdat, walk->can_swap);
++		folio = get_pfn_folio(pfn, memcg, pgdat);
+ 		if (!folio)
+ 			goto next;
+ 
+@@ -3722,22 +3730,26 @@ static void clear_mm_walk(void)
+ 		kfree(walk);
+ }
+ 
+-static bool inc_min_seq(struct lruvec *lruvec, int type, bool can_swap)
++static bool inc_min_seq(struct lruvec *lruvec, int type, int swappiness)
+ {
+ 	int zone;
+ 	int remaining = MAX_LRU_BATCH;
+ 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
++	int hist = lru_hist_from_seq(lrugen->min_seq[type]);
+ 	int new_gen, old_gen = lru_gen_from_seq(lrugen->min_seq[type]);
+ 
+-	if (type == LRU_GEN_ANON && !can_swap)
++	if (type ? swappiness == MAX_SWAPPINESS : !swappiness)
+ 		goto done;
+ 
+-	/* prevent cold/hot inversion if force_scan is true */
++	/* prevent cold/hot inversion if the type is evictable */
+ 	for (zone = 0; zone < MAX_NR_ZONES; zone++) {
+ 		struct list_head *head = &lrugen->folios[old_gen][type][zone];
+ 
+ 		while (!list_empty(head)) {
+ 			struct folio *folio = lru_to_folio(head);
++			int refs = folio_lru_refs(folio);
++			int tier = lru_tier_from_refs(refs);
++			int delta = folio_nr_pages(folio);
+ 
+ 			VM_WARN_ON_ONCE_FOLIO(folio_test_unevictable(folio), folio);
+ 			VM_WARN_ON_ONCE_FOLIO(folio_test_active(folio), folio);
+@@ -3747,6 +3759,9 @@ static bool inc_min_seq(struct lruvec *lruvec, int type, bool can_swap)
+ 			new_gen = folio_inc_gen(lruvec, folio, false);
+ 			list_move_tail(&folio->lru, &lrugen->folios[new_gen][type][zone]);
+ 
++			WRITE_ONCE(lrugen->protected[hist][type][tier],
++				   lrugen->protected[hist][type][tier] + delta);
++
+ 			if (!--remaining)
+ 				return false;
+ 		}
+@@ -3758,51 +3773,37 @@ static bool inc_min_seq(struct lruvec *lruvec, int type, bool can_swap)
+ 	return true;
+ }
+ 
+-static bool try_to_inc_min_seq(struct lruvec *lruvec, bool can_swap)
++static bool try_to_inc_min_seq(struct lruvec *lruvec, int swappiness)
+ {
+ 	int gen, type, zone;
+ 	bool success = false;
+ 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
+-	DEFINE_MIN_SEQ(lruvec);
+ 
+ 	VM_WARN_ON_ONCE(!seq_is_valid(lruvec));
+ 
+-	/* find the oldest populated generation */
+-	for (type = !can_swap; type < ANON_AND_FILE; type++) {
+-		while (min_seq[type] + MIN_NR_GENS <= lrugen->max_seq) {
+-			gen = lru_gen_from_seq(min_seq[type]);
++	for_each_evictable_type(type, swappiness) {
++		unsigned long seq;
++
++		for (seq = lrugen->min_seq[type]; seq + MIN_NR_GENS <= lrugen->max_seq; seq++) {
++			gen = lru_gen_from_seq(seq);
+ 
+ 			for (zone = 0; zone < MAX_NR_ZONES; zone++) {
+ 				if (!list_empty(&lrugen->folios[gen][type][zone]))
+ 					goto next;
+ 			}
+-
+-			min_seq[type]++;
+ 		}
+ next:
+-		;
+-	}
+-
+-	/* see the comment on lru_gen_folio */
+-	if (can_swap) {
+-		min_seq[LRU_GEN_ANON] = min(min_seq[LRU_GEN_ANON], min_seq[LRU_GEN_FILE]);
+-		min_seq[LRU_GEN_FILE] = max(min_seq[LRU_GEN_ANON], lrugen->min_seq[LRU_GEN_FILE]);
+-	}
+-
+-	for (type = !can_swap; type < ANON_AND_FILE; type++) {
+-		if (min_seq[type] == lrugen->min_seq[type])
+-			continue;
+-
+-		reset_ctrl_pos(lruvec, type, true);
+-		WRITE_ONCE(lrugen->min_seq[type], min_seq[type]);
+-		success = true;
++		if (seq != lrugen->min_seq[type]) {
++			reset_ctrl_pos(lruvec, type, true);
++			WRITE_ONCE(lrugen->min_seq[type], seq);
++			success = true;
++		}
+ 	}
+ 
+ 	return success;
+ }
+ 
+-static bool inc_max_seq(struct lruvec *lruvec, unsigned long seq,
+-			bool can_swap, bool force_scan)
++static bool inc_max_seq(struct lruvec *lruvec, unsigned long seq, int swappiness)
+ {
+ 	bool success;
+ 	int prev, next;
+@@ -3820,13 +3821,11 @@ static bool inc_max_seq(struct lruvec *lruvec, unsigned long seq,
+ 	if (!success)
+ 		goto unlock;
+ 
+-	for (type = ANON_AND_FILE - 1; type >= 0; type--) {
++	for (type = 0; type < ANON_AND_FILE; type++) {
+ 		if (get_nr_gens(lruvec, type) != MAX_NR_GENS)
+ 			continue;
+ 
+-		VM_WARN_ON_ONCE(!force_scan && (type == LRU_GEN_FILE || can_swap));
+-
+-		if (inc_min_seq(lruvec, type, can_swap))
++		if (inc_min_seq(lruvec, type, swappiness))
+ 			continue;
+ 
+ 		spin_unlock_irq(&lruvec->lru_lock);
+@@ -3870,7 +3869,7 @@ static bool inc_max_seq(struct lruvec *lruvec, unsigned long seq,
+ }
+ 
+ static bool try_to_inc_max_seq(struct lruvec *lruvec, unsigned long seq,
+-			       bool can_swap, bool force_scan)
++			       int swappiness, bool force_scan)
+ {
+ 	bool success;
+ 	struct lru_gen_mm_walk *walk;
+@@ -3881,7 +3880,7 @@ static bool try_to_inc_max_seq(struct lruvec *lruvec, unsigned long seq,
+ 	VM_WARN_ON_ONCE(seq > READ_ONCE(lrugen->max_seq));
+ 
+ 	if (!mm_state)
+-		return inc_max_seq(lruvec, seq, can_swap, force_scan);
++		return inc_max_seq(lruvec, seq, swappiness);
+ 
+ 	/* see the comment in iterate_mm_list() */
+ 	if (seq <= READ_ONCE(mm_state->seq))
+@@ -3906,7 +3905,7 @@ static bool try_to_inc_max_seq(struct lruvec *lruvec, unsigned long seq,
+ 
+ 	walk->lruvec = lruvec;
+ 	walk->seq = seq;
+-	walk->can_swap = can_swap;
++	walk->swappiness = swappiness;
+ 	walk->force_scan = force_scan;
+ 
+ 	do {
+@@ -3916,7 +3915,7 @@ static bool try_to_inc_max_seq(struct lruvec *lruvec, unsigned long seq,
+ 	} while (mm);
+ done:
+ 	if (success) {
+-		success = inc_max_seq(lruvec, seq, can_swap, force_scan);
++		success = inc_max_seq(lruvec, seq, swappiness);
+ 		WARN_ON_ONCE(!success);
+ 	}
+ 
+@@ -3957,13 +3956,13 @@ static bool lruvec_is_sizable(struct lruvec *lruvec, struct scan_control *sc)
+ {
+ 	int gen, type, zone;
+ 	unsigned long total = 0;
+-	bool can_swap = get_swappiness(lruvec, sc);
++	int swappiness = get_swappiness(lruvec, sc);
+ 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
+ 	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
+ 	DEFINE_MAX_SEQ(lruvec);
+ 	DEFINE_MIN_SEQ(lruvec);
+ 
+-	for (type = !can_swap; type < ANON_AND_FILE; type++) {
++	for_each_evictable_type(type, swappiness) {
+ 		unsigned long seq;
+ 
+ 		for (seq = min_seq[type]; seq <= max_seq; seq++) {
+@@ -3983,6 +3982,7 @@ static bool lruvec_is_reclaimable(struct lruvec *lruvec, struct scan_control *sc
+ {
+ 	int gen;
+ 	unsigned long birth;
++	int swappiness = get_swappiness(lruvec, sc);
+ 	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
+ 	DEFINE_MIN_SEQ(lruvec);
+ 
+@@ -3992,8 +3992,7 @@ static bool lruvec_is_reclaimable(struct lruvec *lruvec, struct scan_control *sc
+ 	if (!lruvec_is_sizable(lruvec, sc))
+ 		return false;
+ 
+-	/* see the comment on lru_gen_folio */
+-	gen = lru_gen_from_seq(min_seq[LRU_GEN_FILE]);
++	gen = lru_gen_from_seq(evictable_min_seq(min_seq, swappiness));
+ 	birth = READ_ONCE(lruvec->lrugen.timestamps[gen]);
+ 
+ 	return time_is_before_jiffies(birth + min_ttl);
+@@ -4060,7 +4059,6 @@ bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
+ 	unsigned long addr = pvmw->address;
+ 	struct vm_area_struct *vma = pvmw->vma;
+ 	struct folio *folio = pfn_folio(pvmw->pfn);
+-	bool can_swap = !folio_is_file_lru(folio);
+ 	struct mem_cgroup *memcg = folio_memcg(folio);
+ 	struct pglist_data *pgdat = folio_pgdat(folio);
+ 	struct lruvec *lruvec = mem_cgroup_lruvec(memcg, pgdat);
+@@ -4113,7 +4111,7 @@ bool lru_gen_look_around(struct page_vma_mapped_walk *pvmw)
+ 		if (pfn == -1)
+ 			continue;
+ 
+-		folio = get_pfn_folio(pfn, memcg, pgdat, can_swap);
++		folio = get_pfn_folio(pfn, memcg, pgdat);
+ 		if (!folio)
+ 			continue;
+ 
+@@ -4329,8 +4327,8 @@ static bool sort_folio(struct lruvec *lruvec, struct folio *folio, struct scan_c
+ 		gen = folio_inc_gen(lruvec, folio, false);
+ 		list_move_tail(&folio->lru, &lrugen->folios[gen][type][zone]);
+ 
+-		WRITE_ONCE(lrugen->protected[hist][type][tier - 1],
+-			   lrugen->protected[hist][type][tier - 1] + delta);
++		WRITE_ONCE(lrugen->protected[hist][type][tier],
++			   lrugen->protected[hist][type][tier] + delta);
+ 		return true;
+ 	}
+ 
+@@ -4529,7 +4527,6 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
+ {
+ 	int i;
+ 	int type;
+-	int scanned;
+ 	int tier = -1;
+ 	DEFINE_MIN_SEQ(lruvec);
+ 
+@@ -4554,21 +4551,23 @@ static int isolate_folios(struct lruvec *lruvec, struct scan_control *sc, int sw
+ 	else
+ 		type = get_type_to_scan(lruvec, swappiness, &tier);
+ 
+-	for (i = !swappiness; i < ANON_AND_FILE; i++) {
++	for_each_evictable_type(i, swappiness) {
++		int scanned;
++
+ 		if (tier < 0)
+ 			tier = get_tier_idx(lruvec, type);
+ 
++		*type_scanned = type;
++
+ 		scanned = scan_folios(lruvec, sc, type, tier, list);
+ 		if (scanned)
+-			break;
++			return scanned;
+ 
+ 		type = !type;
+ 		tier = -1;
+ 	}
+ 
+-	*type_scanned = type;
+-
+-	return scanned;
++	return 0;
+ }
+ 
+ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swappiness)
+@@ -4584,6 +4583,7 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
+ 	struct reclaim_stat stat;
+ 	struct lru_gen_mm_walk *walk;
+ 	bool skip_retry = false;
++	struct lru_gen_folio *lrugen = &lruvec->lrugen;
+ 	struct mem_cgroup *memcg = lruvec_memcg(lruvec);
+ 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
+ 
+@@ -4593,7 +4593,7 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
+ 
+ 	scanned += try_to_inc_min_seq(lruvec, swappiness);
+ 
+-	if (get_nr_gens(lruvec, !swappiness) == MIN_NR_GENS)
++	if (evictable_min_seq(lrugen->min_seq, swappiness) + MIN_NR_GENS > lrugen->max_seq)
+ 		scanned = 0;
+ 
+ 	spin_unlock_irq(&lruvec->lru_lock);
+@@ -4665,63 +4665,32 @@ static int evict_folios(struct lruvec *lruvec, struct scan_control *sc, int swap
+ }
+ 
+ static bool should_run_aging(struct lruvec *lruvec, unsigned long max_seq,
+-			     bool can_swap, unsigned long *nr_to_scan)
++			     int swappiness, unsigned long *nr_to_scan)
+ {
+ 	int gen, type, zone;
+-	unsigned long old = 0;
+-	unsigned long young = 0;
+-	unsigned long total = 0;
++	unsigned long size = 0;
+ 	struct lru_gen_folio *lrugen = &lruvec->lrugen;
+ 	DEFINE_MIN_SEQ(lruvec);
+ 
+-	/* whether this lruvec is completely out of cold folios */
+-	if (min_seq[!can_swap] + MIN_NR_GENS > max_seq) {
+-		*nr_to_scan = 0;
++	*nr_to_scan = 0;
++	/* have to run aging, since eviction is not possible anymore */
++	if (evictable_min_seq(min_seq, swappiness) + MIN_NR_GENS > max_seq)
+ 		return true;
+-	}
+ 
+-	for (type = !can_swap; type < ANON_AND_FILE; type++) {
++	for_each_evictable_type(type, swappiness) {
+ 		unsigned long seq;
+ 
+ 		for (seq = min_seq[type]; seq <= max_seq; seq++) {
+-			unsigned long size = 0;
+-
+ 			gen = lru_gen_from_seq(seq);
+ 
+ 			for (zone = 0; zone < MAX_NR_ZONES; zone++)
+ 				size += max(READ_ONCE(lrugen->nr_pages[gen][type][zone]), 0L);
+-
+-			total += size;
+-			if (seq == max_seq)
+-				young += size;
+-			else if (seq + MIN_NR_GENS == max_seq)
+-				old += size;
+ 		}
+ 	}
+ 
+-	*nr_to_scan = total;
+-
+-	/*
+-	 * The aging tries to be lazy to reduce the overhead, while the eviction
+-	 * stalls when the number of generations reaches MIN_NR_GENS. Hence, the
+-	 * ideal number of generations is MIN_NR_GENS+1.
+-	 */
+-	if (min_seq[!can_swap] + MIN_NR_GENS < max_seq)
+-		return false;
+-
+-	/*
+-	 * It's also ideal to spread pages out evenly, i.e., 1/(MIN_NR_GENS+1)
+-	 * of the total number of pages for each generation. A reasonable range
+-	 * for this average portion is [1/MIN_NR_GENS, 1/(MIN_NR_GENS+2)]. The
+-	 * aging cares about the upper bound of hot pages, while the eviction
+-	 * cares about the lower bound of cold pages.
+-	 */
+-	if (young * MIN_NR_GENS > total)
+-		return true;
+-	if (old * (MIN_NR_GENS + 2) < total)
+-		return true;
+-
+-	return false;
++	*nr_to_scan = size;
++	/* better to run aging even though eviction is still possible */
++	return evictable_min_seq(min_seq, swappiness) + MIN_NR_GENS == max_seq;
+ }
+ 
+ /*
+@@ -4729,7 +4698,7 @@ static bool should_run_aging(struct lruvec *lruvec, unsigned long max_seq,
+  * 1. Defer try_to_inc_max_seq() to workqueues to reduce latency for memcg
+  *    reclaim.
+  */
+-static long get_nr_to_scan(struct lruvec *lruvec, struct scan_control *sc, bool can_swap)
++static long get_nr_to_scan(struct lruvec *lruvec, struct scan_control *sc, int swappiness)
+ {
+ 	bool success;
+ 	unsigned long nr_to_scan;
+@@ -4739,7 +4708,7 @@ static long get_nr_to_scan(struct lruvec *lruvec, struct scan_control *sc, bool
+ 	if (mem_cgroup_below_min(sc->target_mem_cgroup, memcg))
+ 		return -1;
+ 
+-	success = should_run_aging(lruvec, max_seq, can_swap, &nr_to_scan);
++	success = should_run_aging(lruvec, max_seq, swappiness, &nr_to_scan);
+ 
+ 	/* try to scrape all its memory if this memcg was deleted */
+ 	if (nr_to_scan && !mem_cgroup_online(memcg))
+@@ -4750,7 +4719,7 @@ static long get_nr_to_scan(struct lruvec *lruvec, struct scan_control *sc, bool
+ 		return nr_to_scan >> sc->priority;
+ 
+ 	/* stop scanning this lruvec as it's low on cold folios */
+-	return try_to_inc_max_seq(lruvec, max_seq, can_swap, false) ? -1 : 0;
++	return try_to_inc_max_seq(lruvec, max_seq, swappiness, false) ? -1 : 0;
+ }
+ 
+ static bool should_abort_scan(struct lruvec *lruvec, struct scan_control *sc)
+@@ -5294,8 +5263,7 @@ static void lru_gen_seq_show_full(struct seq_file *m, struct lruvec *lruvec,
+ 				s = "rep";
+ 				n[0] = atomic_long_read(&lrugen->refaulted[hist][type][tier]);
+ 				n[1] = atomic_long_read(&lrugen->evicted[hist][type][tier]);
+-				if (tier)
+-					n[2] = READ_ONCE(lrugen->protected[hist][type][tier - 1]);
++				n[2] = READ_ONCE(lrugen->protected[hist][type][tier]);
+ 			}
+ 
+ 			for (i = 0; i < 3; i++)
+@@ -5350,7 +5318,7 @@ static int lru_gen_seq_show(struct seq_file *m, void *v)
+ 	seq_printf(m, " node %5d\n", nid);
+ 
+ 	if (!full)
+-		seq = min_seq[LRU_GEN_ANON];
++		seq = evictable_min_seq(min_seq, MAX_SWAPPINESS / 2);
+ 	else if (max_seq >= MAX_NR_GENS)
+ 		seq = max_seq - MAX_NR_GENS + 1;
+ 	else
+@@ -5390,23 +5358,14 @@ static const struct seq_operations lru_gen_seq_ops = {
+ };
+ 
+ static int run_aging(struct lruvec *lruvec, unsigned long seq,
+-		     bool can_swap, bool force_scan)
++		     int swappiness, bool force_scan)
+ {
+ 	DEFINE_MAX_SEQ(lruvec);
+-	DEFINE_MIN_SEQ(lruvec);
+-
+-	if (seq < max_seq)
+-		return 0;
+ 
+ 	if (seq > max_seq)
+ 		return -EINVAL;
+ 
+-	if (!force_scan && min_seq[!can_swap] + MAX_NR_GENS - 1 <= max_seq)
+-		return -ERANGE;
+-
+-	try_to_inc_max_seq(lruvec, max_seq, can_swap, force_scan);
+-
+-	return 0;
++	return try_to_inc_max_seq(lruvec, max_seq, swappiness, force_scan) ? 0 : -EEXIST;
+ }
+ 
+ static int run_eviction(struct lruvec *lruvec, unsigned long seq, struct scan_control *sc,
+@@ -5422,7 +5381,7 @@ static int run_eviction(struct lruvec *lruvec, unsigned long seq, struct scan_co
+ 	while (!signal_pending(current)) {
+ 		DEFINE_MIN_SEQ(lruvec);
+ 
+-		if (seq < min_seq[!swappiness])
++		if (seq < evictable_min_seq(min_seq, swappiness))
+ 			return 0;
+ 
+ 		if (sc->nr_reclaimed >= nr_to_reclaim)
 -- 
 2.47.0.338.g60cca15819-goog
 
