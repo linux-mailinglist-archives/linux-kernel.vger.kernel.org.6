@@ -1,135 +1,77 @@
-Return-Path: <linux-kernel+bounces-435905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDF339E7E73
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:52:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0919E7E74
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F38F286624
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:52:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D480A2828FB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:00:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA1D12EBE9;
-	Sat,  7 Dec 2024 05:52:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7305B1FB;
+	Sat,  7 Dec 2024 06:00:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CUgnodQG"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="z95DUuXf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A8912D758;
-	Sat,  7 Dec 2024 05:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2A8D4A24
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 06:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733550755; cv=none; b=qjBWE+1csNPEqlb6bbTWP6QBT78fj2pW52QuhVkQTiCBukCgGdLH9U3YdsFWbDL4unPGBHKwQU9R2EQji5pnaoTTe5wWrYBp+CuTccGGG+A6jrfc7Qd95GzUDxzScahmIqHKKDwuIY41dncBdNk+LNqYt+JIkHFKRUMArtqq7Bw=
+	t=1733551239; cv=none; b=LVEkyqOAuruYd0ov206o0OB8bR4ElXsS2Fa2+klrNrzTALRKfhoTxToW6mksUKzR0H/GEy92U9n1BfvpfH85cdmpN9TX09P28EMEDQ8H5uq3Hqs9onzBH5EVYP4zv/1M3Rn7axe729TaqflNjaEbS8VvB+KHHq9PFNmmCI7qzHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733550755; c=relaxed/simple;
-	bh=t2YjQfD3ZRA6ui1N8vxdn05TPEpVzLwJX1WME5Zlby0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rOab5s/361vnRE/x79lTKQU6cm1ZQp59DAbh9uqkvaHu7qA07r0xbXf/AthJcs6xdb3BkZEPuMCMGUOsEDwQeZ2qHQnFgosbie+YxmUQf11P2g6Ov2RfrcheVzouXuFGQjggSaElQ2a61TrXEulE0Oh/JIvD/oKTuuwxOhS1R+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CUgnodQG; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fc41b4c78bso1827506a12.3;
-        Fri, 06 Dec 2024 21:52:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733550753; x=1734155553; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2+IwYaynpcQ+9RTCAJedrXXepYT48CIPEoJXkJRmDR8=;
-        b=CUgnodQGoguSf07Kgmi5Cik3y2Mn6w0WcHMaZOpsv1qKvfNFXozYM4HWOvtXiIA96k
-         Kd3pU+7+4+CeZIjtqrN9wKLgyMizC6vTvdyYulhy/sWw6WDDuTujVNoPmzVd0iGrFQZ4
-         nKTeEftUUvMYi+rxTPNqA6KDedRpOazCknktT98jZjozZdeTcrXOmJrd/3x2T2f57AxK
-         TalLmLCr/N2xSLaSlc4jDWmaMurG4MU+9gZ/3cr6dkmu69N7eJQHw0Nb8LQDCSuMoGsh
-         ZwSARRIPbd5BWL6u7pYAJTi22qqL8S4B5+jV2KnuWzHhdnhE1Y4xHzaJO1Oyes+eGpv+
-         IGqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733550753; x=1734155553;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2+IwYaynpcQ+9RTCAJedrXXepYT48CIPEoJXkJRmDR8=;
-        b=lW9kg18NygWAKBexQiZKUihGz4dI7jS7o37JcRtweccVPiDQ8Cxj6co/8xFzlrymn0
-         2Z0aeHcj4kIV/PTdKA1SNAlA0fP+CoIDJlThBO6apI+82zXqgw7eDU4DeRFioirbwSAy
-         oCwwBwbBK+zYiua9uPiSL45RdPD3gJdrptaXb/YpLlHkzQU4qYV6JSv5OfrPloRhfqi1
-         AY4DJ1r8cpvR528/VVJvxLzGDm4r/vBXfNDJKrUFtyKNdiDnzFJUDLAYEr2LxxQ+fhAB
-         9Pf+qliL17u4CPkTrOKvRFSF3NarsAPkmJY9cgOuGZgylUIT5Fsg4RLa4MbUMfBsWp/l
-         l6sw==
-X-Forwarded-Encrypted: i=1; AJvYcCXGL3unPxWCesQp3wUb0aQXoC8c7LNXi5frNAJG2tqQYFp3K+cV9+4/eDrNzUFADCB8wO+Ko/Tmei7a+YI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywir7RVRZmqH9X0+Bk0Po86WN//Z5V+6VPLhpi3uR5DUweJk7lr
-	fxD0qLiA7FTvAhL0hoawfX8+WkmVWkfE21dpiMx2nC7FbmWFvAU6
-X-Gm-Gg: ASbGncuTyTl8NdYxRU/VI0EA0c7CL/5IWhKKPhFLHXGylSh551fGXQR/ZVcBGMCVI12
-	53jhTtyEVnJS+mV1AAoTOO8HNkQrFaNuDJ+/dh4AUNpp60h1TAopHmpiewW0Vx6oJ87BHyiTRxX
-	uf3FYgM9X7L8YUSJ1/s0qQDCz8K5qB4z1pKUno5EHD/aVkyH/WQWL7QK+C/rbR9QBUU67xfKyJQ
-	jyRRpdu9g7BsPiGFywcsH01tSRIkaoKiILceqvNfHpkNZM=
-X-Google-Smtp-Source: AGHT+IFd+wuygMRSPeO8wa52NvVHAGLuFfQ5jfbHspHxQMyW7jzkp1weeY7rmM4U0gg8Uv3suuUZQA==
-X-Received: by 2002:a05:6a21:3e04:b0:1e0:c3bf:7909 with SMTP id adf61e73a8af0-1e187132cf7mr8429490637.41.1733550752776;
-        Fri, 06 Dec 2024 21:52:32 -0800 (PST)
-Received: from localhost ([129.146.253.192])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a903a3sm3811288b3a.116.2024.12.06.21.52.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 21:52:32 -0800 (PST)
-Date: Sat, 7 Dec 2024 13:52:17 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- andrew+netdev@lunn.ch, Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Jose Abreu <joabreu@synopsys.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, MaximeCoquelin <mcoquelin.stm32@gmail.com>,
- xfr@outlook.com, Jon Hunter <jonathanh@nvidia.com>, Thierry Reding
- <thierry.reding@gmail.com>, Simon Horman <horms@kernel.org>, Hariprasad
- Kelam <hkelam@marvell.com>
-Subject: Re: [PATCH net] net: stmmac: fix TSO DMA API usage causing oops
-Message-ID: <20241207135217.00000f0f@gmail.com>
-In-Reply-To: <E1tJXcx-006N4Z-PC@rmk-PC.armlinux.org.uk>
-References: <E1tJXcx-006N4Z-PC@rmk-PC.armlinux.org.uk>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1733551239; c=relaxed/simple;
+	bh=dxb0Zy9wKWNA7XqTg0/T1rddBsXo4s7NLdfNncQkqz4=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=M93CECsakcnJ2qgjUQj5lcvAj529YeQoi4ttcxu74V89vf7dgTwkDcMrQblXg9GXBbhdVOXxdEHCerZz2Z87mba4Czqbp7rFxvDKNtB+5BPysCfxy3TxFCkb2klF8mKwoxM+fpJaTwofwbdbVtCT1mUOkUtEpfrZhnXLck625Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=z95DUuXf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 547E5C4CECD;
+	Sat,  7 Dec 2024 06:00:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1733551238;
+	bh=dxb0Zy9wKWNA7XqTg0/T1rddBsXo4s7NLdfNncQkqz4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=z95DUuXfwVbMM1mrsFfe3WoC/fhTpjLd0At8oG7fapXuuqv88Xrcwr1fHm+1yWoqt
+	 AeoPncQ2vy4saVAqL/J7AlPO27kTOBTy3RKuof5IhlDOnp0aM8ZsEmOCEqkXt2tuns
+	 ck5X03VIz+1AH3EHqqLAIqdyz5RWNzi3xBB6xCOI=
+Date: Fri, 6 Dec 2024 22:00:37 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Junjie Fu <fujunjie1@qq.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, willy@infradead.org,
+ mhocko@suse.com, gourry@gourry.net
+Subject: Re: [PATCH] mempolicy.h: Remove unnecessary header file inclusions
+Message-Id: <20241206220037.5c0cd212d3269dd8a6f36e4d@linux-foundation.org>
+In-Reply-To: <tencent_08B979048FE091821B290B18AE97E70DC507@qq.com>
+References: <tencent_08B979048FE091821B290B18AE97E70DC507@qq.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Fri, 06 Dec 2024 12:40:11 +0000, "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk> wrote:
+On Fri,  6 Dec 2024 23:53:49 +0800 Junjie Fu <fujunjie1@qq.com> wrote:
 
-> Commit 66600fac7a98 ("net: stmmac: TSO: Fix unbalanced DMA map/unmap
-> for non-paged SKB data") moved the assignment of tx_skbuff_dma[]'s
-> members to be later in stmmac_tso_xmit().
+> Originally, linux/mempolicy.h included linux/pagemap.h because vma_migratable()
+> was implemented inline within the header, requiring mapping_gfp_mask()
+> function to implement vma_migratable(). Now that vma_migratable() is only
+> declared in linux/mempolicy.h and its implementation has been moved to mempolicy.c,
+> the inclusion of linux/pagemap.h in the header is no longer necessary.
 > 
-> The buf (dma cookie) and len stored in this structure are passed to
-> dma_unmap_single() by stmmac_tx_clean(). The DMA API requires that
-> the dma cookie passed to dma_unmap_single() is the same as the value
-> returned from dma_map_single(). However, by moving the assignment
-> later, this is not the case when priv->dma_cap.addr64 > 32 as "des"
-> is offset by proto_hdr_len.
-> 
-> This causes problems such as:
-> 
->   dwc-eth-dwmac 2490000.ethernet eth0: Tx DMA map failed
-> 
-> and with DMA_API_DEBUG enabled:
-> 
->   DMA-API: dwc-eth-dwmac 2490000.ethernet: device driver tries to +free DMA memory it has not allocated [device address=0x000000ffffcf65c0] [size=66 bytes]
-> 
-> Fix this by maintaining "des" as the original DMA cookie, and use
-> tso_des to pass the offset DMA cookie to stmmac_tso_allocator().
-> 
-> Full details of the crashes can be found at:
-> https://lore.kernel.org/all/d8112193-0386-4e14-b516-37c2d838171a@nvidia.com/
-> https://lore.kernel.org/all/klkzp5yn5kq5efgtrow6wbvnc46bcqfxs65nz3qy77ujr5turc@bwwhelz2l4dw/
-> 
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Reported-by: Thierry Reding <thierry.reding@gmail.com>
-> Fixes: 66600fac7a98 ("net: stmmac: TSO: Fix unbalanced DMA map/unmap for non-paged SKB data")
+> Additionally, since mempolicy.c includes internal.h, and internal.h already
+> includes linux/pagemap.h, so there is no need to modify mempolicy.c after
+> removing the direct inclusion of linux/pagemap.h from linux/mempolicy.h
 
-Much appreciated for this fix.
+If mempolicy.c uses things whcih are defined in pagemap.h then
+mempolicy.c should include pagemap.h directly, and not rely upon such
+nested includes.  It's simpler, directer, expresses what's actually
+happening and avoids build breakage due to ongoing header untanglings.
 
-Reviewed-by: Furong Xu <0x1207@gmail.com>
 
 
