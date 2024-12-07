@@ -1,214 +1,363 @@
-Return-Path: <linux-kernel+bounces-436046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1DF79E806F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:30:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2AE9E8071
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:31:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D22CE16632D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:30:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D109F166337
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A2F022C6C5;
-	Sat,  7 Dec 2024 15:29:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9617C1487DD;
+	Sat,  7 Dec 2024 15:31:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iQbGnn/x"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="JuNs2Lyz"
+Received: from YT5PR01CU002.outbound.protection.outlook.com (mail-canadacentralazon11021114.outbound.protection.outlook.com [40.107.192.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5325A1448E4
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 15:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733585399; cv=none; b=gJLD0LeziZkwY0Y5oBM4JBmydZnxucqVfPS5ZHo6rysvD0yu6ZWrexCVt55jcQ6YcGL5d+7B27+xe05coqmM3G2+gvESZTaud+a4w/3UZ25DtoYzHWO/AcTk7w+W/ZHYMKzf7L2mkpWQSKVySP7GL42f7hcYxSsdPNF9TXUDc5A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733585399; c=relaxed/simple;
-	bh=++qwKaLQJK0eYuZPezy9s9pCAqz4NQG7EHyBEh/bhPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f1z9VpbF+eNApwWZA3GDllaML3wQ/h2lvVeRWZNg2zo2NPhE7a8xql3KoFgcXS5JdRqA6SafIotYqjcS/2IDd6PQ1hLiO5DUpYmMbw2QkW79EJABst4tpZkTiEa/VFSgoaIA1KZ/0JFttd85pEQw+D1+7rnz91Qfqctt2OcbA2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iQbGnn/x; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa636f6f0efso284462866b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 07:29:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733585394; x=1734190194; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=N94u8ceJE9IihGissqr+ltow5uqSpjZz+SPLJ2SzdDc=;
-        b=iQbGnn/xXpVDe2T9BJg0wVaFJ3xBRuKIfmhVzO8CvuAbIXO2rROhTWuraBGu1fB1Vc
-         v4C0RAKOCMcTN7/p0Sj2ch7t/+4bjDSc2Q9udO5oHO+M5/yy/j5J1i1xJXSdlP/CZ0UW
-         xnW8+p0R1eW6mHnWmmcb4+9eh5xmkF5lICDcsrcamwmyxRkFUqJPfJAw7zHR+nYHhFLb
-         8C1IRY2TDqcHl6GhWUTgaIYqqFe+2Fv4FldanBcQermjFVQRGtny6gQvitIaCUsggt7O
-         jCLkp2gDzLt4tJTVmoxn5GcpWiAvlGPFudjsi7edtmDB81sK9faegoXhWrmLPzKFus60
-         MjGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733585394; x=1734190194;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N94u8ceJE9IihGissqr+ltow5uqSpjZz+SPLJ2SzdDc=;
-        b=kraSk3v6iu4iGQXqMQOj1yft/NBDSIWfR0Dv48DcfIeTs5jL2DyuCqPtBzHWi4y04y
-         CVANrKp6GvWw1FKgcl0p/IirGgP8bUPXv5eaOKs7+Yuy85XQHYIMQChvHo8t3F7EdGTK
-         VXhCHWvpnMxXhz7kc85U/DXI/LtiWTyDQ2Bsjxrbu4ILtzMMzWi+N4RTZKRa5YHseMBm
-         bPGvSlLSKr789kIDbUxA3eVuai5akKoFe7DJozy6agHL3do2b35rrG4rJ7nEAhyOiulH
-         K70uSVdd9xrH7xYMF5BhfnhexIQSGzaGG7XAmWoO8thJLkkpPGqAOv8WkiDnhHKMHIU0
-         ygqg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6nWSiyzERk+ws/TbBUrBGauX7Juhanl+iSXw5f4z/FpXz8D+rju4LhQUzayU7pJvD13/YnYzskbNcbB4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp0/IZhIILMMMPV0t/hE7tb7yE+qdqN/EeLmtFsIi+xgI4zh9f
-	cHlsh/ENtEO+QeQ2yo9RBOmI1cmZy2Ur0zCINYXf3GtI9Z4HsCejN4BFXGPQ2g0wv+PzPipV35B
-	0OgBmsw==
-X-Gm-Gg: ASbGncuRhtGI+vMfj3scXn6rlhz7CWJ969pbLgoEq5jFSdOoHwXLJWlomLO7LPPy2+M
-	q52Tzy5bfjnstPdzJmkMX2wTSfMv0rjZY7CHM4eVtWJku0VJkPSAfe/Jk5A1tHXpF3J8sDoI7Pd
-	IYg0uP+tM3p/psSZgxuFI/STibd7re1aghI+wFAcQyGRErVeqtKl63Dv2d56BJApgIFqqTWRqX8
-	MjUlCw07buXtiFODVUsj4FLHGuZFfuUh1rPOL0lwdjkc81CV5/5Yg==
-X-Google-Smtp-Source: AGHT+IF4LY5WB0e2F6DNpEuhnVjdXbVwXG9srfjzrNNUuYa2L9aD5xp0wQlYa8StPx5b3r+PKQuxAA==
-X-Received: by 2002:a17:906:2189:b0:a9a:1f8:6c9b with SMTP id a640c23a62f3a-aa63a33c764mr406864066b.37.1733585394222;
-        Sat, 07 Dec 2024 07:29:54 -0800 (PST)
-Received: from localhost ([2a02:8071:b783:6940:a8d:e1d8:6f77:cd7e])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e5c660sm399012466b.19.2024.12.07.07.29.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 07:29:53 -0800 (PST)
-Date: Sat, 7 Dec 2024 16:29:51 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: jic23@kernel.org, robh@kernel.org, conor+dt@kernel.org, 
-	dlechner@baylibre.com, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v7 8/8] iio: adc: ad4851: add ad485x driver
-Message-ID: <cpfpysi6zcr7n6qy642dmhsi2a4hom2p7l4rboj4jgakuzpa5p@5xaqd3oxxlrs>
-References: <20241129153546.63584-1-antoniu.miclaus@analog.com>
- <20241129153546.63584-9-antoniu.miclaus@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DE522C6C5
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 15:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.192.114
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733585511; cv=fail; b=i6zUH+zh31MCRusUZKglxWWGU/ymGJSYfji1rU6tknxJEn9M7Td5fPToRYNs7f72XSO5kjaVjFNS9lysX4ek+w0VKGZUxyF4Z6QBCapZHHiU7vzManlA7ax80ntMpZUJs2bc1b3a/PvQh/xup1q47OlaRGZxPs2phnt4/Q9R4S4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733585511; c=relaxed/simple;
+	bh=jbiuVSkmnRcl52V6aKezfNQVM3Vq8WMa4xSVGsZ8tsQ=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=uq3rZWiiIs+1xAMLM7qFUl/GlJlQVYNm0OOt551hOXHHrmE/kQeh4jq/UyGBTEkswlMV04O8C4KOx+pOOzbbRGH41m5FFU4bxGQSyXxYQpNNwq4J3Yrs9VLuQ20ZazysPLo6C2OslAmI4jM3I+zvrO/tnpClac+ptOO1tcfmMLE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=JuNs2Lyz; arc=fail smtp.client-ip=40.107.192.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=WBg1JSMLKzo1wz6OlNoUvLySmQoSznNgeyz0MvvWBEjnXaj6RqRNbDyMV20/D/XDvNy8nxprLY6LvtJm96QjcnCjA46i5dkmMPH++LckJbSiGnkogowcXmFpmvF6dXkQdJk1w1albX5abL6nd4yC62PaSgkcV20BAo2/McBQOn3ytHzEze58yYV50vyBmETrNHWTvscSbsd7gsEyBvsihhUd/GeJNyhQ4TONM2lqXAa7WDUJ7hxQz+s041OLH3iS/WBeBQP4DhaCjFv3INVYEuOGkDkn6QvZ4awVx8EglR+AxYfKqXa4i5tMU3/nGM7tnygVuC+oydve8ph8zHPZtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=OHO6V5COfibbazAgBLZFAXLbLonaIz/tb5MCxjwHdxM=;
+ b=A21RAucxwXpEcLSOZgpExLn+1yMgPRpNr+V92c7blyL2X9ry+flLT9BdgjgPnPiJb8ICBwo8DIjQhrm3BL6YWMYF/Vw8MDAWn8DzTxbuAylyeAlWiH6hZ9K4G/07B042jVqPCCtHeZl7EgR6fnKCE9uKA/9CN1MIe6mXYmtbXtlw600/gG6Nk9o2GEpzMvylJK98ZBUPgmcvMriC3uf6Mo6uumFs7dmZOP8uBwayV81JRYJ6cJ++lZk5KPbd9VOScaacKxMrJO+MKE6ki4kYnEu4AaKwT25dWcL1bfwMTzrs3fFB8IWFIC0V3oRpJB2x008Q2gasy2kav2p49h+vJQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OHO6V5COfibbazAgBLZFAXLbLonaIz/tb5MCxjwHdxM=;
+ b=JuNs2LyzcYEKW9cFy8JICF2UTmS18FkOGiDoccJ5Mq8ZpRnXn6BLJFUs8wBaKg7uJaQp8uTathdLBPJMVGO+B1kjNcsrexXjYkOUPr0iUb//MFoFOVqRH15bzIc2XU89r7Ym4TKhY5WJeqRGw7wdS/OHe4KAA9iD73HKPZta42KyLtC94lYfou8QgeK6dnxka01LxLPjZOkW1vv7JzFL0hhPpbslOC8X9b72Cc+GA7BfmKoE1VriO3gXkMfSPDrKnekyQP4za5N+9L9Z9OUzOqx1zB/2MJvf+FMzy+tp6dEGoze6uHKoLCN3DZh+lvoXJ3QQZ02sFrZ3WIf2igPgnw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YT6PR01MB11284.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:13b::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Sat, 7 Dec
+ 2024 15:31:46 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%5]) with mapi id 15.20.8230.010; Sat, 7 Dec 2024
+ 15:31:46 +0000
+Message-ID: <acd263a4-824c-4c8d-a3e2-8b2f391fc775@efficios.com>
+Date: Sat, 7 Dec 2024 10:31:44 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: use clear_user_(high)page() for arch with special
+ user folio handling
+To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ John Hubbard <jhubbard@nvidia.com>,
+ "Huang, Ying" <ying.huang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko
+ <glider@google.com>, Kees Cook <keescook@chromium.org>,
+ Vineet Gupta <vgupta@kernel.org>, linux-kernel@vger.kernel.org,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+References: <20241206174246.2799715-1-ziy@nvidia.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20241206174246.2799715-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR0101CA0118.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:5::21) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ssuityvtqapol74n"
-Content-Disposition: inline
-In-Reply-To: <20241129153546.63584-9-antoniu.miclaus@analog.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YT6PR01MB11284:EE_
+X-MS-Office365-Filtering-Correlation-Id: b4c3d9b4-1ea2-4e6c-d593-08dd16d44276
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|7416014|10070799003|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?R1c0R2YwREgrWk9jYWd6Z0wwb2Z6dnBET2Q0UVZlakVMODR1dkpDam5FeHpP?=
+ =?utf-8?B?TWs3MXlrb1d1VG81ckdHK2JUUWlyZDg1T0RUdnJveW9wTlZRYUpwQVVTU2NC?=
+ =?utf-8?B?QTlQRG1wb0k5WDhOR2NJaDZvQU1lcmplM1M0empvdzdVdGVVVFNVazl6WU9h?=
+ =?utf-8?B?RzU2enIwTUFoeWdzcDB6RERBT2VHS0RscmFvRVZpRnE5Y0cyai9YVWM5U2RH?=
+ =?utf-8?B?OG41N0RFeFQ3aWhacENwdlpVWU15RVFMVzZPNVZZL21udlNwM0E1aWh3Uldy?=
+ =?utf-8?B?K0FGVVVUOUYyaUFGcWJ3Z2M5dmc5em1rVmdIcVhUTERxMHltcER3emRoZGtn?=
+ =?utf-8?B?WHNpYmhnblRaM3JWTEhJL2dRcXhZZnd0eEs3ZGpyUjU0emJUT2NONDdyWEdB?=
+ =?utf-8?B?ZGs0RFAvb2ZVdFdqcStwOXRKNFRYTXV2M0R4Ym0zRDVuazZGeEQ4RTFTbklS?=
+ =?utf-8?B?dnI0OXArVE00dUE0amdnSnQ3UFFacHBWamNnbUVPVm9pOXVNV0tNQ2RCNGRp?=
+ =?utf-8?B?azE4RkxQcEx5ajFoMkxrVDN3ajFDbjdsMnVxZno0SmFuMy9iQ0UybVpQVmhy?=
+ =?utf-8?B?a09lQlZVdWw4Y0Z6WXBPdUo3WGZWMkdXbzIvUG1RVVFPNlAxUS90U0J4WFJV?=
+ =?utf-8?B?YnBtK1AvWUVrNHdQN0lSK3ZPOHFYeFhvaks3dTZwM240dGNkMXFGZzhXU0Nz?=
+ =?utf-8?B?ZFhOdDZWa1VlNEpLZm9jZW00ZkdYbE1NRWZBWnhJaUVZak9yQTd0NTRzU0tU?=
+ =?utf-8?B?RlVkdjlsQk5jcXJNcDB2RGZ0QXhiTTBldGIxUlh3WVBGa0tjSE1UTVUxbU4z?=
+ =?utf-8?B?Szc2ZkNDR3dTeXhFeU5BQTZQaVpadFZqUnVhM0VvMy9BVzFDdTI3NXRBdlNj?=
+ =?utf-8?B?TjZZbzZjTHBnRGVmTnRHcHNTQ1JhbEJDRDlxMXlwcjNoTGNKOFd2RUM4MWY2?=
+ =?utf-8?B?RG9COU9KY1VvbzZoUXZobUl4YWxSMENmQkQyV3BxT21tTkZJU0NsMWk2aHhk?=
+ =?utf-8?B?WnNRQWhZOWdXOUZXd3cra3Z0VGMwUFVHU1hkNzFjVGtQTjUydFRnU2t1dmlU?=
+ =?utf-8?B?T3UyU1dzbVpCMDhnUy9ORGYxNlhHdE5qTU1iLzVCaktQZkU3ZU5KRFNieEdB?=
+ =?utf-8?B?TFVGTGNta01GYjhFNGZPem51TUFwclVBQ1JESG1hN0FDZmhjeVZudnFMOEJj?=
+ =?utf-8?B?ejVWTG02MmhXbVJLWlMzN2lnZHdLcSsyOUNpUWNGRGJBUzMzMHRVYVJuZEl4?=
+ =?utf-8?B?N3ZXcFV1Q0N0SW5TdU8wUElvbnRqc0h0VzI2dGJoM3RQaWhjUU9QK0tCQTBx?=
+ =?utf-8?B?ZDFZTWIxdFpXVTh6Sy9PVDNnZmhBL3FYOXdtU2pFbnZuMlZDcU53RnJvRWcx?=
+ =?utf-8?B?WGZlL1RyQmJ4NElYeTdYR3NmK0RpS0RxNXJlZVp0NmZFbFdoN1NFSjY1YTNv?=
+ =?utf-8?B?TW1QWUR2V0Vmb1VzNlREK1kwTml6cEN2dDdYRU1NTUVROFJHbVhtdFlXU25v?=
+ =?utf-8?B?NEFxODg0V1F0VnJZR0d2cFRjM1hzbWZ6SXVzdUVFczdxRVl5MlhIempDN29t?=
+ =?utf-8?B?TWNiOEttbklXNXl3dHhJYXRlbElwNXJzNTh3YUJobm9ZQVFmS0hVWnJLRk5Y?=
+ =?utf-8?B?UHJPK2k2TTMyZTJxdXg3SWNEMitiYVZicXZDbVNBeHF1SDBSeWkxR21OVDdT?=
+ =?utf-8?B?QXdLMWVoUUJ1ZmdZSkJPVDg1Qy8rWXJmdXl0LzlobGZKYnhpb2R3NG9PL1hu?=
+ =?utf-8?Q?QQzRyBR/Q279R8wPQ0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(10070799003)(7053199007);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Ukhpd3kxRjlGNjl4Z2pwdnA2dGVsNUlhcnlsVkRQSE5pbEllUSt0Tm9PSTVZ?=
+ =?utf-8?B?aWh5TFludkxFN090WWhBOENNbmxJU21NcFBncEZkZitWYzN0aG9IbUpFbjFy?=
+ =?utf-8?B?V3BTRDZSVk1kN0FRckpMZFlEbUVidTd3UFNPZWdwUWpSTG5jNVB5Ylg1eEp5?=
+ =?utf-8?B?WHBCakVOcDNMVElxUzdNU3RpbUFnY0tlUUVCOVNYU2xmN2N1WnAxYTNqYk1l?=
+ =?utf-8?B?c0Vja3kwV1BqblpxS2RjSjdoK1JldXVxenFQRXg2LzRlM1pmYzF2eC9ZYmZh?=
+ =?utf-8?B?dE5xVlZRYjhyS3ZoQWs3M216Mi9pSFk3OFRROGlpWXliZDVOcHFndktZSU4z?=
+ =?utf-8?B?QTZ0eEsrZWFwb1AyNDBmanYyMUhQM05QUlZUQUR0Z244OTJ2YmVmeUt5MjJ5?=
+ =?utf-8?B?QzVtcnpTbW1Ec0l3WnB0cUlnZWxKOUF2NzRvbjhBeitDQWxxTmtpUTdqTXQ3?=
+ =?utf-8?B?Y29TTWUvQ3BLejZyNk11WFRDK2IwdU5sdXFPMEx5RnphLzZ1dksyVXdBa1g5?=
+ =?utf-8?B?dUY1NVg1TERKaGdnRVRldlB6b2VrL0h0QW9MUzEzbXVoUmcwYXhKUW9xb2VS?=
+ =?utf-8?B?QWIwOUJWU0hnVmdVMlhpT3psMFZQbXNoR0htWUNKd1N6eVVCRFQ3QUJRSDlP?=
+ =?utf-8?B?aU4xUmNNaGRVUThROENYV2dOR3k2VjZBWHVaeG9PT1NUMzBwZEtlYnV4aU1D?=
+ =?utf-8?B?OUhoMm9mblI0bTN0NmpWVVNkaDVMcVp3ZzhPMEZXOGJ5VG9nRzZwcU5LS2E1?=
+ =?utf-8?B?bTlRTnZBT1ZOaXBWUG4vUkNRcnNrRGJLTW9iRjI2K05Hc2phR0NhMEdFcTVV?=
+ =?utf-8?B?S3pzU0dlWlNBdzc5OU0xNTBVS3g4dkxzOCtGbGJ4Uy94SkdzUE9COEpWM2x2?=
+ =?utf-8?B?dndEMTQzejBEZDRiWWhLa0JXSDk2QnhjU1VoNlYzRXdVV3lNNGcvKytSVHBL?=
+ =?utf-8?B?aXpOS1BWeVBxN1FwcjhubUh1YjRuQ3dITnpyeEkrdG4xZkZCNFQ1VnA3VWtx?=
+ =?utf-8?B?QWYxeXhtVEJxSGEzNmlqQk9iU01FMkR6QU5qUkNKa2hJeTloQkcwVXNaY2RW?=
+ =?utf-8?B?SFAxWWNhWlFxR3lMa09ITWc3Y3JkZ285T09jbFZ0VWV1Q2FpQnFTN0pxVkk1?=
+ =?utf-8?B?czl4dUJvT3VmeXJFbWc2SDhjMmltWnVBVWx4RXhPNExaa0MzVWtYQk5tM1RR?=
+ =?utf-8?B?aEQ0ck9DemMraWZ2bWh5Y01SVklXaXVlOHFxcCtrR2puc29tZFhBQTZzdU84?=
+ =?utf-8?B?Ni8vdzNNQjVuZnBCSDRUcGZnUzBYakVPdDQ2TTk3UnZZcGJtSzRCL0k0Wlpo?=
+ =?utf-8?B?Y2lPb3JlQ3ZIRFZDaEFEOS9CYlVnR3pUUnFPaWt4OGJ1ODdtMmR1SEtQdVVN?=
+ =?utf-8?B?aXFmbHBmKzZPVFFudU9MaXduR1V0UXVsR3NKdUJYUXJYLytqeUZNWTJ6aHBn?=
+ =?utf-8?B?eTZzNFBSWUF4WnQrM3RnNnBiWWFSdWR6U043UmhGdisyRFRFbWNMQTV3Q24v?=
+ =?utf-8?B?dCtORDE3dmZJSS9IRWRDTU9HMmxNSW9YU25DaktocldQcFdQWnNsM2xLSHdD?=
+ =?utf-8?B?aHZsczVnWk12ZndWNGVCMnFjVW5oRFY4Q2NrdzJXbTBncFAyMVZBWVJwYngz?=
+ =?utf-8?B?TlJRamhqUUJUNllkV2RGNzBScDRIVE5FNnlxL3ZZblpxWUFYSHdxYVlQalNr?=
+ =?utf-8?B?bVNrKzBaamFRY1pQZEFhVm5SM0t6TW93dTl3c1lXOGh5VHY1R2JhczhMdDFM?=
+ =?utf-8?B?K3hGZDVGZzVaejRMMmxvSlo5eGJGOHg4Q3BJSEhaTjgwb21IT1VReUx1cjVU?=
+ =?utf-8?B?c09HS1MrbGw4cE03dTdzWnJuYmh0Z2VZdmhqcVI4OHYyN2dIQjkxUnoyMjZr?=
+ =?utf-8?B?OEFob0RXMlM1K1BRbGtTdXhUQXpKcXhabk4xU21BSmEzcGRjRDY3UWR5dmNv?=
+ =?utf-8?B?ZCtBYVExWnpMUkwyYnFZK1puaTJxRm0wMzI2aHo2RnRXQkwrQ2ZjOFl4U2RC?=
+ =?utf-8?B?aVpWSDZVZXRMTWlCcGV6ZldBUjRmME9zeWppa0YrOUd2WEJYd3ZFMUVCMUpO?=
+ =?utf-8?B?WHFMRnVseGtsazd4cytHeGJndVZxV3QzRzNTK1J2UHFWTVgzOFVpRkJmbnRD?=
+ =?utf-8?B?aFZNZEdMV1UxcVZUeW51YUJQTHNsZTMzTDJZMjVTMEl5MU05Q1c4amxjOHR2?=
+ =?utf-8?B?OE9kK2hQcDBVTmoxZU0xWDR0VWZjb0J1bXZRblJva3lpUlhLL3k3RXE3VFFL?=
+ =?utf-8?Q?kEIkv8XcJbb4dSCZjL58xhEfIGPaeCglutMdv2UFwc=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b4c3d9b4-1ea2-4e6c-d593-08dd16d44276
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2024 15:31:46.1489
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: e58r12BCRcMir4c2bjFdIZhtFGj2WfFNbMofnBsVU4oTUySC6gMA1VPZms4aMaxsl1PCbMlrIS1BWTuCC8FVIyXP20uAjmW95+mQpQkwPMg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT6PR01MB11284
 
-
---ssuityvtqapol74n
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH v7 8/8] iio: adc: ad4851: add ad485x driver
-MIME-Version: 1.0
-
-Hello Antoniu,
-
-On Fri, Nov 29, 2024 at 05:35:46PM +0200, Antoniu Miclaus wrote:
-> +static int ad4851_set_sampling_freq(struct ad4851_state *st, unsigned int freq)
+On 2024-12-06 12:42, Zi Yan wrote:
+> For architectures setting cpu_dcache_is_aliasing() to true, which require
+> flushing cache, and arc, which changes folio->flags after clearing a user
+> folio, __GFP_ZERO using only clear_page() is not enough to zero user
+> folios and clear_user_(high)page() must be used. Otherwise, user data
+> will be corrupted.
+> 
+> Fix it by always clearing user folios with clear_user_(high)page() when
+> cpu_dcache_is_aliasing() is true or architecture is arc. Rename
+> alloc_zeroed() to alloc_need_zeroing() and invert the logic to clarify its
+> intend.
+> 
+> Fixes: 5708d96da20b ("mm: avoid zeroing user movable page twice with init_on_alloc=1")
+> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Closes: https://lore.kernel.org/linux-mm/CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com/
+> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>   include/linux/highmem.h |  8 +++++++-
+>   include/linux/mm.h      | 17 +++++++++++++++++
+>   mm/huge_memory.c        |  9 +++++----
+>   mm/internal.h           |  6 ------
+>   mm/memory.c             | 10 +++++-----
+>   5 files changed, 34 insertions(+), 16 deletions(-)
+> 
+> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+> index 6e452bd8e7e3..d9beb8371daa 100644
+> --- a/include/linux/highmem.h
+> +++ b/include/linux/highmem.h
+> @@ -224,7 +224,13 @@ static inline
+>   struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
+>   				   unsigned long vaddr)
+>   {
+> -	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr);
+> +	struct folio *folio;
+> +
+> +	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
+> +	if (folio && alloc_need_zeroing())
+> +		clear_user_highpage(&folio->page, vaddr);
+> +
+> +	return folio;
+>   }
+>   #endif
+>   
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index c39c4945946c..ca8df5871213 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -31,6 +31,7 @@
+>   #include <linux/kasan.h>
+>   #include <linux/memremap.h>
+>   #include <linux/slab.h>
+> +#include <linux/cacheinfo.h>
+>   
+>   struct mempolicy;
+>   struct anon_vma;
+> @@ -4175,6 +4176,22 @@ static inline int do_mseal(unsigned long start, size_t len_in, unsigned long fla
+>   }
+>   #endif
+>   
+> +/*
+> + * alloc_need_zeroing checks if a user folio from page allocator needs to be
+> + * zeroed or not.
+> + */
+> +static inline bool alloc_need_zeroing(void)
 > +{
-> +	struct pwm_state cnv_state = {
-> +		.duty_cycle = AD4851_T_CNVH_NS,
-> +		.enabled = true,
-> +	};
-> +	int ret;
-> +
-> +	freq = clamp(freq, 1, st->info->max_sample_rate_hz);
-> +
-> +	cnv_state.period = DIV_ROUND_UP_ULL(NSEC_PER_SEC, freq);
-> +
-> +	ret = pwm_apply_might_sleep(st->cnv, &cnv_state);
-> +	if (ret)
-> +		return ret;
+> +	/*
+> +	 * for user folios, arch with cache aliasing requires cache flush and
+> +	 * arc changes folio->flags, so always return false to make caller use
+> +	 * clear_user_page()/clear_user_highpage()
+> +	 */
+> +	return (cpu_dcache_is_aliasing() || IS_ENABLED(CONFIG_ARC)) ||
 
-If you want to be sure that pwm_apply_might_sleep() doesn't round down
-.period (and .duty_cycle?) too much, you might consider using
-pwm_round_waveform_might_sleep(). But note that this function only works
-for two hwpwm drivers currently.
+Nack.
 
-> +
-> +	st->sampling_freq = freq;
-> +
-> +	return 0;
+Can we please not go back to re-introducing arch-specific
+conditionals in generic mm code after the cleanup I did when
+introducing cpu_dcache_is_aliasing() in commit 8690bbcf3b70 ?
+
+Based on commit eacd0e950dc2, AFAIU what you appear to need here
+is to introduce a:
+
+cpu_icache_is_aliasing() -> note the "i" for instruction cache
+
+It would typically be directly set to
+
+#define cpu_icache_is_aliasing() cpu_dcache_is_aliasing()
+
+except on architecture like ARC when the icache vs dcache
+is aliasing, but not dcache vs dcache.
+
+So for ARC it would be defined as:
+
+#define cpu_dcache_is_aliasing() false
+#define cpu_icache_is_aliasing() true
+
+And the Kconfig ARCH_HAS_CPU_CACHE_ALIASING=y would be set for ARC
+again.
+
+I'm not entirely sure if we want to go for the wording "is_aliasing"
+or "is_incoherent" when talking about icache vs dcache, so I'm open
+to ideas here.
+
+Thanks,
+
+Mathieu
+
+> +	       !static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
+> +				   &init_on_alloc);
 > +}
 > +
-> +static const int ad4851_oversampling_ratios[] = {
-> +	1, 2, 4, 8, 16,	32, 64, 128,
-> +	256, 512, 1024, 2048, 4096, 8192, 16384, 32768,
-> +	65536,
-> +};
-> +
-> +static int ad4851_osr_to_regval(int ratio)
+>   int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __user *status);
+>   int arch_set_shadow_stack_status(struct task_struct *t, unsigned long status);
+>   int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index ee335d96fc39..107130a5413a 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -1176,11 +1176,12 @@ static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
+>   	folio_throttle_swaprate(folio, gfp);
+>   
+>          /*
+> -	* When a folio is not zeroed during allocation (__GFP_ZERO not used),
+> -	* folio_zero_user() is used to make sure that the page corresponding
+> -	* to the faulting address will be hot in the cache after zeroing.
+> +	* When a folio is not zeroed during allocation (__GFP_ZERO not used)
+> +	* or user folios require special handling, folio_zero_user() is used to
+> +	* make sure that the page corresponding to the faulting address will be
+> +	* hot in the cache after zeroing.
+>   	*/
+> -	if (!alloc_zeroed())
+> +	if (alloc_need_zeroing())
+>   		folio_zero_user(folio, addr);
+>   	/*
+>   	 * The memory barrier inside __folio_mark_uptodate makes sure that
+> diff --git a/mm/internal.h b/mm/internal.h
+> index cb8d8e8e3ffa..3bd08bafad04 100644
+> --- a/mm/internal.h
+> +++ b/mm/internal.h
+> @@ -1285,12 +1285,6 @@ void touch_pud(struct vm_area_struct *vma, unsigned long addr,
+>   void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
+>   	       pmd_t *pmd, bool write);
+>   
+> -static inline bool alloc_zeroed(void)
+> -{
+> -	return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
+> -			&init_on_alloc);
+> -}
+> -
+>   /*
+>    * Parses a string with mem suffixes into its order. Useful to parse kernel
+>    * parameters.
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 75c2dfd04f72..cf1611791856 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -4733,12 +4733,12 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
+>   			folio_throttle_swaprate(folio, gfp);
+>   			/*
+>   			 * When a folio is not zeroed during allocation
+> -			 * (__GFP_ZERO not used), folio_zero_user() is used
+> -			 * to make sure that the page corresponding to the
+> -			 * faulting address will be hot in the cache after
+> -			 * zeroing.
+> +			 * (__GFP_ZERO not used) or user folios require special
+> +			 * handling, folio_zero_user() is used to make sure
+> +			 * that the page corresponding to the faulting address
+> +			 * will be hot in the cache after zeroing.
+>   			 */
+> -			if (!alloc_zeroed())
+> +			if (alloc_need_zeroing())
+>   				folio_zero_user(folio, vmf->address);
+>   			return folio;
+>   		}
 
-This function is called with an unsigned parameter only.
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
-> +{
-> +	int i;
-> +
-> +	for (i = 1; i < ARRAY_SIZE(ad4851_oversampling_ratios); i++)
-> +		if (ratio == ad4851_oversampling_ratios[i])
-> +			return i - 1;
-
-Given that ad4851_oversampling_ratios[i] == 1 << i you could simplify
-that. Something like:
-
-	if (is_power_of_2(ratio) && ratio <= 65536 && ratio > 0)
-		return ilog2(ratio);
-
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ad4851_set_oversampling_ratio(struct ad4851_state *st,
-> +					 const struct iio_chan_spec *chan,
-> +					 unsigned int osr)
-> +{
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	if (osr == 1) {
-> +		ret = regmap_clear_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					AD4851_OS_EN_MSK);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = iio_backend_oversampling_disable(st->back);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		val = ad4851_osr_to_regval(osr);
-> +		if (val < 0)
-> +			return -EINVAL;
-> +
-> +		ret = regmap_set_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +				      AD4851_OS_EN_MSK);
-> +		if (ret)
-> +			return ret;
-> +
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_RATIO_MSK, val);
-
-You set this register twice in a row. Can this be done in a single
-register access?
-
-> +		if (ret)
-> +			return ret;
-
-Best regards
-Uwe
-
---ssuityvtqapol74n
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmdUaewACgkQj4D7WH0S
-/k55Vwf/dcyzLERHADJy0eA4I3kK1jSCddOaUpX9iL4wUcXFMi2IGBfN/aJ6hVJW
-RahHHZ0hx4S6Y+RMdyIb40mDgDxEOIzxihi7D+5KI6CV3cDd4oZkUkQ3rNFXQ3Gk
-hOuaDEasQKueh0lbjTT5eQ4t1xzfSlNjpTrbR3t+PRtXRF1Wgkg2E+IorJ8q7duR
-+tsndFiWef/2ycvM/e/RZefB9kCX+3IEiaZIzgiXIbqtZp5hcN3WQJ9iJY95s0Gq
-BN7yTVmNrknMfJopgF3JhHuwtCoEfLqS6ehITy3bd1SKWL00sg2Nvnh7IBKc/04d
-9M+ZIy+6be+xTyAXZi0ESyB20GywDg==
-=W1c1
------END PGP SIGNATURE-----
-
---ssuityvtqapol74n--
 
