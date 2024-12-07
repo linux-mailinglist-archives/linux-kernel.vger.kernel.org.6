@@ -1,255 +1,143 @@
-Return-Path: <linux-kernel+bounces-435990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EA099E7F78
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:09:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5588C165EE2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:09:42 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7726E13AA2B;
-	Sat,  7 Dec 2024 10:09:40 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B1DB9E7F79
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:10:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D857D22C6E3
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 10:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FC5281F3E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:10:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5F2140E38;
+	Sat,  7 Dec 2024 10:10:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFvsItv3"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E9B136331;
+	Sat,  7 Dec 2024 10:10:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733566180; cv=none; b=crhtYvlM817DZeXPwvtcz+4SkVw9CIez5dMOUENthPDqAVjclETZvqZ9V+VXQSeHn+3IEq7IXfyd2n3V7Ejln6YemHlkZY9eleMwwJsJwjRIvByG2bhbBBvTXuUpWNzxJZBn4hF3o12FY5uVj1zUOY1QWQcgqCrLH4FHndigSWQ=
+	t=1733566203; cv=none; b=CHCx9KU2RYfmkvoBg2kngF2NLwNk/NynayNw5TZpJSyRzjyvd7uZQACMwXZig3kjUaQ/yo6gJZrjmAs/6HYcSamD0UPfTTz9odupSz3E3gU0sNu2Zt0jknVlV+uhudJmj8ilzq4lT5S12La1y00mXfoLIBQi9rnKQXVBe5PNcrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733566180; c=relaxed/simple;
-	bh=jUG7HuO6RE00W7lLvwMjct1xB0qb2TjK9NT3SNoFs3o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SnRaDuQUrRc1YEBkeK4cRwkYo3prIv7+fKPLCdQllK7avXp39BZ8okmH2VpTyKUXMQHXytv3b0nfcI+izc0i0NnyidmZQ8h89p19oCYojdfEtPqgrZuYM4yLMgppZ290BPDqBX5wlW6ApWDGv33j/Eix6X3dVE5NN5+eR7/NHvQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Y53kx4mtdz9tLB;
-	Sat,  7 Dec 2024 11:09:29 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id C4zhMVynpln9; Sat,  7 Dec 2024 11:09:29 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Y53kx3VkZz9tL9;
-	Sat,  7 Dec 2024 11:09:29 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 68CE48B764;
-	Sat,  7 Dec 2024 11:09:29 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id UO3D8tEVi-Dm; Sat,  7 Dec 2024 11:09:29 +0100 (CET)
-Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.97])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id EE7BF8B763;
-	Sat,  7 Dec 2024 11:09:28 +0100 (CET)
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] powerpc/32: Replace mulhdu() by mul_u64_u64_shr()
-Date: Sat,  7 Dec 2024 11:09:27 +0100
-Message-ID: <f29e473c193c87bdbd36b209dfdee99d2f0c60dc.1733566130.git.christophe.leroy@csgroup.eu>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733566203; c=relaxed/simple;
+	bh=p2edH10DS2izFB/jzZz2W+zP4whcYevquQhC4IC/v/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n4EdbMf0PmzfkiFEk+zaKTD9wBDyVGhfzhXJERVqMeddndV5xtEowpB9eSH22A14fraiIZ3SS0kBK1tIDvldpAQkggQOI1Uw1AGT7xtxMU0SPxdJJUOO3gsTr/SUHeCfcvMJBUE+Nl/wFdHld+J5CmR+u9fNowL3Uf6Z9MjvnmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFvsItv3; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-725dc290c00so38150b3a.0;
+        Sat, 07 Dec 2024 02:10:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733566201; x=1734171001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6BHlvc2h6RbQcsZ4MoZvKFrwrzmCNN8+Ik8anzK5kag=;
+        b=eFvsItv3h+jzoerK6lx0qGiH3yGQpmRfJQUH1YdkcysdEp8UMn/olIrIuz7lW7K4z1
+         PqHcVFgo17wpFJ5sTQu2sXqjsvozs5CQKvJZAickDvxh46X57wVIfjQq5R/hQ9oNdt7K
+         Nm7Vl5UNrJkvgCdj/AtSaGQzjsOtrdDbf1y/exxQF344dwKXR4THTIRx44d2GIO5/rBi
+         FE5pJZkQEy3N/SKjE1/CWJNCZN/meAK349JbEEXJQLxaRJJR94eW5mikJ/8ARosyvH7A
+         PbQQNekME90pHo/xLVnEDwmSDRAJlycCUqxCoz3fZul2rKZ+RPgACqa6MMRwlgmYWArl
+         4iyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733566201; x=1734171001;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6BHlvc2h6RbQcsZ4MoZvKFrwrzmCNN8+Ik8anzK5kag=;
+        b=f5inPlWpZBKd5Gy5Qp0LKmdvTuBaeHhroApE0+u3hk1pC3vZgIlqF13/pHtIOd1Wqy
+         I6G9lTVwT1Wk7ucLo3wJat6z943noqJhHCdgVpID3nL5esQnSLi/C2kw964slA8UTaHk
+         JG6pM4+q3kSIqD9oznOMRyzhF5SYmhFLAFG05ayCPt/pxRkICpTW4sk1ovf4h6KygW9F
+         dJSBKdVNV0WB7dEEl3nSxleOyPU5f0rPciaOZ5/uq9r98v3RVrmWNYePcU/nH4teEL/C
+         GBpC585RFJ+H3kdVXb35T2aRdq1RY+myowPRTojF7PlmohWpCh5Gdt4Dn54Gq4ty/D5C
+         Mz7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUk5MAQYZIwTLzArN+acRmhVHjc5WymHA+nCUAc8f9+tTAv1gaRC8qsvx8DCPzNImvn752SbsWC5tg/V8Qv@vger.kernel.org, AJvYcCVIbPyJa5y44QP01IXoYGp3aIeJV/Q/vp/UT4qlU4x5rmv++wYbtz/c8oK9041yBOmSIj8j0WRfCbN6qm4l@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDscnCfj0/ZGbVFmTC5+Jl5ov0Bx3/Vhhj4s482KChJX6iPEo0
+	NLMdIecQ8xh9Tqqw9pWPUaYhujpDKlAvx+LNlwtN50JAlgb9rTi7
+X-Gm-Gg: ASbGncsu0HKkbB2NmeJUObJJBzfI+MB+Iru25468tNQ8ecG7bEbWE39y96NBA1r69IJ
+	/7iCTAc5yWJTHZ7ZJrfbVEjIACw8rzbbaXmcvnXc2PoJMMceoDrCzovt8yRUA87DX7hrjoEJip/
+	qjK7kGqyzUZYXSaaxLeX4KdgaYiRIt8JvlZwRC3YTdApOok+LBG7sstdUtmWfZD0uGPrH9XJFb/
+	O7GqRtXQhAJ3mwaHiiRNs8OKu5GF1G7ZG5ZuwD82/FhfxSiTUINJ+3yJ51/a4S9C6xmEN5ZrXFj
+	EjXkLpbaUt4zklyD
+X-Google-Smtp-Source: AGHT+IEwKHhlxGzah4NtZ1B9CRa8dut1jgF5vSw0cszYeuNUODXBUIVq9msGMlK35IELUgHoTm1KAw==
+X-Received: by 2002:a05:6a21:168d:b0:1e0:c166:18ba with SMTP id adf61e73a8af0-1e186c1dd91mr8250378637.12.1733566201479;
+        Sat, 07 Dec 2024 02:10:01 -0800 (PST)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29ef5b6sm4218484b3a.71.2024.12.07.02.09.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Dec 2024 02:10:01 -0800 (PST)
+Message-ID: <9cc62b69-7cfb-477b-bec1-3bbcc49a310e@gmail.com>
+Date: Sat, 7 Dec 2024 19:09:59 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733566167; l=6581; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=jUG7HuO6RE00W7lLvwMjct1xB0qb2TjK9NT3SNoFs3o=; b=cUyRHNKAVZ6+cOr7tgyg5+UYjZWiIXAvksjnEMYVKwkk5E5qQMsIvZhosz6TrpInPWKcIsRQD Gqz/bbt/BblA1NzpLPM4kGGaPSqO+ZVVXBbtDIBA256BJMIvikX/zmr
-X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] fs/netfs: Remove redundant use of smp_rmb()
+To: David Howells <dhowells@redhat.com>
+Cc: zilin@seu.edu.cn, jianhao.xu@seu.edu.cn, jlayton@kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfs@lists.linux.dev, mjguzik@gmail.com
+References: <69667b21-9491-458d-9523-6c2b29e1a7e6@gmail.com>
+ <20241207021952.2978530-1-zilin@seu.edu.cn>
+ <2011011.1733558696@warthog.procyon.org.uk>
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <2011011.1733558696@warthog.procyon.org.uk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Using mul_u64_u64_shr() provides similar calculation as mulhdu()
-assembly function, but enables inlining by the compiler.
+Hi David,
 
-The home-made assembly function had special handling for when one of
-the arguments is not a fully populated u64 but time functions use it
-to multiply timebase by a calculated scale which is constructed to
-have most significant bit set.
+On Sat, 07 Dec 2024 08:04:56 +0000, David Howells wrote:
+> Akira Yokosawa <akiyks@gmail.com> wrote:
+> 
+>> Are you sure removing the smp_rmb() is realy the right thing to do?
+> 
+> The wait_on_bit*() class functions, e.g.:
+> 
+> 	wait_on_bit(unsigned long *word, int bit, unsigned mode)
+> 	{
+> 		might_sleep();
+> 		if (!test_bit_acquire(bit, word))
+> 			return 0;
+> 		return out_of_line_wait_on_bit(word, bit,
+> 					       bit_wait,
+> 					       mode);
+> 	}
+> 
+> now unconditionally includes an appropriate barrier on the test_bit(), so the
+> smp_rmb() should be unnecessary, though netfslib should probably be using
+> clear_and_wake_up_bit().
+> 
 
-On mpc8xx sched_clock() runs 3% faster. On mpc83xx it is 2%.
+Thank you for clarifying.
 
-As you can see below, sched_clock() is not much bigger than before:
+> Probably we need to update the doc to reflect this.
 
-	c000cf68 <sched_clock>:
-	c000cf68:	7d 2d 42 a6 	mftbu   r9
-	c000cf6c:	7d 0c 42 a6 	mftb    r8
-	c000cf70:	7d 4d 42 a6 	mftbu   r10
-	c000cf74:	7c 09 50 40 	cmplw   r9,r10
-	c000cf78:	40 82 ff f0 	bne     c000cf68 <sched_clock>
-	c000cf7c:	3d 40 c1 37 	lis     r10,-16073
-	c000cf80:	38 8a b3 30 	addi    r4,r10,-19664
-	c000cf84:	80 ea b3 30 	lwz     r7,-19664(r10)
-	c000cf88:	80 64 00 14 	lwz     r3,20(r4)
-	c000cf8c:	39 40 00 00 	li      r10,0
-	c000cf90:	80 a4 00 04 	lwz     r5,4(r4)
-	c000cf94:	80 c4 00 10 	lwz     r6,16(r4)
-	c000cf98:	7c 63 40 10 	subfc   r3,r3,r8
-	c000cf9c:	80 84 00 08 	lwz     r4,8(r4)
-	c000cfa0:	7d 06 49 10 	subfe   r8,r6,r9
-	c000cfa4:	7c c7 19 d6 	mullw   r6,r7,r3
-	c000cfa8:	7d 25 18 16 	mulhwu  r9,r5,r3
-	c000cfac:	7c 08 29 d6 	mullw   r0,r8,r5
-	c000cfb0:	7c 67 18 16 	mulhwu  r3,r7,r3
-	c000cfb4:	7d 29 30 14 	addc    r9,r9,r6
-	c000cfb8:	7c a8 28 16 	mulhwu  r5,r8,r5
-	c000cfbc:	7c ca 51 14 	adde    r6,r10,r10
-	c000cfc0:	7d 67 41 d6 	mullw   r11,r7,r8
-	c000cfc4:	7d 29 00 14 	addc    r9,r9,r0
-	c000cfc8:	7c c6 01 94 	addze   r6,r6
-	c000cfcc:	7c 63 28 14 	addc    r3,r3,r5
-	c000cfd0:	7d 4a 51 14 	adde    r10,r10,r10
-	c000cfd4:	7c e7 40 16 	mulhwu  r7,r7,r8
-	c000cfd8:	7c 63 58 14 	addc    r3,r3,r11
-	c000cfdc:	7d 4a 01 94 	addze   r10,r10
-	c000cfe0:	7c 63 30 14 	addc    r3,r3,r6
-	c000cfe4:	7d 4a 39 14 	adde    r10,r10,r7
-	c000cfe8:	35 24 ff e0 	addic.  r9,r4,-32
-	c000cfec:	41 80 00 10 	blt     c000cffc <sched_clock+0x94>
-	c000cff0:	7c 63 48 30 	slw     r3,r3,r9
-	c000cff4:	38 80 00 00 	li      r4,0
-	c000cff8:	4e 80 00 20 	blr
-	c000cffc:	21 04 00 1f 	subfic  r8,r4,31
-	c000d000:	54 69 f8 7e 	srwi    r9,r3,1
-	c000d004:	7d 4a 20 30 	slw     r10,r10,r4
-	c000d008:	7d 29 44 30 	srw     r9,r9,r8
-	c000d00c:	7c 64 20 30 	slw     r4,r3,r4
-	c000d010:	7d 23 53 78 	or      r3,r9,r10
-	c000d014:	4e 80 00 20 	blr
+Agreed.
 
-Before this change:
+I see that wait_on_bit()'s kernel-doc comment mentions implicit ACQUIRE
+semantics on success, and that of wake_up_bit() mentions the need of care
+for memory ordering before calling it.
 
-	c000d0bc <sched_clock>:
-	c000d0bc:	94 21 ff f0 	stwu    r1,-16(r1)
-	c000d0c0:	7c 08 02 a6 	mflr    r0
-	c000d0c4:	90 01 00 14 	stw     r0,20(r1)
-	c000d0c8:	93 e1 00 0c 	stw     r31,12(r1)
-	c000d0cc:	7d 2d 42 a6 	mftbu   r9
-	c000d0d0:	7d 0c 42 a6 	mftb    r8
-	c000d0d4:	7d 4d 42 a6 	mftbu   r10
-	c000d0d8:	7c 09 50 40 	cmplw   r9,r10
-	c000d0dc:	40 82 ff f0 	bne     c000d0cc <sched_clock+0x10>
-	c000d0e0:	3f e0 c1 37 	lis     r31,-16073
-	c000d0e4:	3b ff b3 30 	addi    r31,r31,-19664
-	c000d0e8:	80 9f 00 14 	lwz     r4,20(r31)
-	c000d0ec:	80 7f 00 10 	lwz     r3,16(r31)
-	c000d0f0:	7c 84 40 10 	subfc   r4,r4,r8
-	c000d0f4:	80 bf 00 00 	lwz     r5,0(r31)
-	c000d0f8:	80 df 00 04 	lwz     r6,4(r31)
-	c000d0fc:	7c 63 49 10 	subfe   r3,r3,r9
-	c000d100:	48 00 37 85 	bl      c0010884 <mulhdu>
-	c000d104:	81 3f 00 08 	lwz     r9,8(r31)
-	c000d108:	35 49 ff e0 	addic.  r10,r9,-32
-	c000d10c:	41 80 00 20 	blt     c000d12c <sched_clock+0x70>
-	c000d110:	80 01 00 14 	lwz     r0,20(r1)
-	c000d114:	7c 83 50 30 	slw     r3,r4,r10
-	c000d118:	83 e1 00 0c 	lwz     r31,12(r1)
-	c000d11c:	38 80 00 00 	li      r4,0
-	c000d120:	7c 08 03 a6 	mtlr    r0
-	c000d124:	38 21 00 10 	addi    r1,r1,16
-	c000d128:	4e 80 00 20 	blr
-	c000d12c:	80 01 00 14 	lwz     r0,20(r1)
-	c000d130:	54 8a f8 7e 	srwi    r10,r4,1
-	c000d134:	21 09 00 1f 	subfic  r8,r9,31
-	c000d138:	83 e1 00 0c 	lwz     r31,12(r1)
-	c000d13c:	7c 63 48 30 	slw     r3,r3,r9
-	c000d140:	7d 4a 44 30 	srw     r10,r10,r8
-	c000d144:	7c 84 48 30 	slw     r4,r4,r9
-	c000d148:	7d 43 1b 78 	or      r3,r10,r3
-	c000d14c:	7c 08 03 a6 	mtlr    r0
-	c000d150:	38 21 00 10 	addi    r1,r1,16
-	c000d154:	4e 80 00 20 	blr
+Unfortunately, neither of those comments is included into kernel
+documentation build (Sphinx) at the moment.
 
-	c0010884 <mulhdu>:
-	c0010884:	2c 06 00 00 	cmpwi   r6,0
-	c0010888:	2c 83 00 00 	cmpwi   cr1,r3,0
-	c001088c:	7c 8a 23 78 	mr      r10,r4
-	c0010890:	7c 84 28 16 	mulhwu  r4,r4,r5
-	c0010894:	41 82 00 14 	beq     c00108a8 <mulhdu+0x24>
-	c0010898:	7c 0a 30 16 	mulhwu  r0,r10,r6
-	c001089c:	7c ea 29 d6 	mullw   r7,r10,r5
-	c00108a0:	7c e0 38 14 	addc    r7,r0,r7
-	c00108a4:	7c 84 01 94 	addze   r4,r4
-	c00108a8:	4d 86 00 20 	beqlr   cr1
-	c00108ac:	7d 23 29 d6 	mullw   r9,r3,r5
-	c00108b0:	7d 43 28 16 	mulhwu  r10,r3,r5
-	c00108b4:	41 82 00 18 	beq     c00108cc <mulhdu+0x48>
-	c00108b8:	7c 03 31 d6 	mullw   r0,r3,r6
-	c00108bc:	7d 03 30 16 	mulhwu  r8,r3,r6
-	c00108c0:	7c e0 38 14 	addc    r7,r0,r7
-	c00108c4:	7c 84 41 14 	adde    r4,r4,r8
-	c00108c8:	7d 4a 01 94 	addze   r10,r10
-	c00108cc:	7c 84 48 14 	addc    r4,r4,r9
-	c00108d0:	7c 6a 01 94 	addze   r3,r10
-	c00108d4:	4e 80 00 20 	blr
+I'm going to prepare a patch for including them somewhere under the
+core-api doc.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
----
- arch/powerpc/include/asm/time.h |  2 +-
- arch/powerpc/kernel/misc_32.S   | 26 --------------------------
- 2 files changed, 1 insertion(+), 27 deletions(-)
+WRT memory-barriers.txt, I'm not sure I can update it properly.
 
-diff --git a/arch/powerpc/include/asm/time.h b/arch/powerpc/include/asm/time.h
-index 221c8f8ff89b..9bdd8080299b 100644
---- a/arch/powerpc/include/asm/time.h
-+++ b/arch/powerpc/include/asm/time.h
-@@ -86,7 +86,7 @@ static inline unsigned long tb_ticks_since(unsigned long tstamp)
- #define mulhdu(x,y) \
- ({unsigned long z; asm ("mulhdu %0,%1,%2" : "=r" (z) : "r" (x), "r" (y)); z;})
- #else
--extern u64 mulhdu(u64, u64);
-+#define mulhdu(x, y)	mul_u64_u64_shr(x, y, 64)
- #endif
- 
- extern void div128_by_32(u64 dividend_high, u64 dividend_low,
-diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
-index 033cd00aa0fc..acb727f54e9d 100644
---- a/arch/powerpc/kernel/misc_32.S
-+++ b/arch/powerpc/kernel/misc_32.S
-@@ -27,32 +27,6 @@
- 
- 	.text
- 
--/*
-- * This returns the high 64 bits of the product of two 64-bit numbers.
-- */
--_GLOBAL(mulhdu)
--	cmpwi	r6,0
--	cmpwi	cr1,r3,0
--	mr	r10,r4
--	mulhwu	r4,r4,r5
--	beq	1f
--	mulhwu	r0,r10,r6
--	mullw	r7,r10,r5
--	addc	r7,r0,r7
--	addze	r4,r4
--1:	beqlr	cr1		/* all done if high part of A is 0 */
--	mullw	r9,r3,r5
--	mulhwu	r10,r3,r5
--	beq	2f
--	mullw	r0,r3,r6
--	mulhwu	r8,r3,r6
--	addc	r7,r0,r7
--	adde	r4,r4,r8
--	addze	r10,r10
--2:	addc	r4,r4,r9
--	addze	r3,r10
--	blr
--
- /*
-  * reloc_got2 runs through the .got2 section adding an offset
-  * to each entry.
--- 
-2.47.0
+David, may I ask you doing that part?
+
+Thanks, Akira
 
 
