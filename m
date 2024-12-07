@@ -1,172 +1,212 @@
-Return-Path: <linux-kernel+bounces-436004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6B49E7FC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:59:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB46E9E7FC6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:11:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D45A167094
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:59:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BE231670B2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAF3142624;
-	Sat,  7 Dec 2024 11:59:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D09146A72;
+	Sat,  7 Dec 2024 12:11:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="lsjcO5Jg"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxBv9g5X"
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F82813D244
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 11:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10D4A8289A;
+	Sat,  7 Dec 2024 12:10:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733572760; cv=none; b=cPAiJrNYf2claYK5SKwom6yZnSABlX4dnf7o45Obm5JbmuyMF4wyGMC6gZUv+dseuzQpwNirou1vUaVahjOqCSkZyJ9INxmt34FQax9cAY3iPB4coWzWWJSdkiCK3XHiqaRlQTifVgL0Tj7oQ/JOcY9FsIJON+zZPWxpmN9hpzU=
+	t=1733573461; cv=none; b=VH2Mp0SF0O2eJGdC7yrZNrID/LcvOioxtfJsSi3C5DCn9GHSEQmtiU4E7bBu4qHmbL53rLtHq+ppKAz9SXpiVvr71urok2yFItEHfnESfIlXkGhR1t2fOp2L0gXtgJWFneMRc/EcLXmoE3wXKPKTgUAGGC/5dcRL9uB9Wsh3QOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733572760; c=relaxed/simple;
-	bh=mGZn0CG4Ny68vFgd1+6X3q26cRYW734PaY3Qehg7YCE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZNFupuFHhuUNeGdlLNAoMHpVwGfDb0Y4ghjfLItrcxIenJ/nn/C+0/W0DnBfSQazgVs2s2XSQA66HddB6zXDU1VfIdv2V4tui9K0rtqu4P9px3cyzsqvWxmnelFvVrwVhqvi8rZjNv7t+MhU+nX0bw9i/T1c0/1V0bOYJ993XYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=lsjcO5Jg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B7BxB74028700;
-	Sat, 7 Dec 2024 11:59:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	VGXhR18Fq97qh7TbUSa0kKhL/ZByCAhy9VcD/gJL5ME=; b=lsjcO5JgY9n/l930
-	dD5YoEleoZmmaNmxtMyiIQbAl6lMueD0jtsqgwWixSfoa7rqEOUgV6NhrYKz3d9J
-	S4Ok3T/JQn+JFXBxw9HXCxHmIZ5Kl38SMgUD+7dMiTAWaqBwLJnzUnoZLQAAHKGg
-	Hjv71GKm9lThlvPa5cKpfW3B7RJgzG76JRXrLLrWxRT9j614zUS6GJyMU3kenEgi
-	oKCUKxxD1ZTwd2iyoOl5YD74POtXmVq2hMb0eE2N6h0KcnqugC4LKaCgpHCnKVcv
-	MFr5Fg6BTP7catpxvb2GjGyYP9f26lQmf7RFEEp21wzO3Sye+1X00AfU9rYVOs7D
-	s18E2A==
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com [209.85.219.72])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cc2e8sxa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 11:59:11 +0000 (GMT)
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6d3b1d1d8c1so7443706d6.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 03:59:11 -0800 (PST)
+	s=arc-20240116; t=1733573461; c=relaxed/simple;
+	bh=r87zteF2Hv61ybuLiEqk6fj4kZes/9P+raEzqFuYu1Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pVoM4kz+ixJrBbT18ikqDwXnvFUSnfzw99ZI5bWgN6qVmvBBmWmMMCQ2Dg1SHYrRBdx+DxQCus4Qm0D1j8FXdtnvbttnvCqktGw0EGjCqm5MbXHx51JqMhij3OGbP7b/azxEIbR0QAunkMAfkKu8NqZOiqF4eKZmSVSzVPagM0o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxBv9g5X; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e39885e1925so304506276.3;
+        Sat, 07 Dec 2024 04:10:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733573459; x=1734178259; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aw8Sw0c0/ZDBtbHXzSSnBq1C++U8b905nlDMZDdgykA=;
+        b=gxBv9g5Xaee0EYwQxMmCjoZ8MglKhRjAxrnbC3VnCmW0tX77vrA1AOKup2duPdyH4S
+         xFcMp8iRWDc+JyEvr/LJyBn+ass3vbWqFrreUyLVt6XodV0weDzqt7Mt5clQxF3heWIz
+         QDJkvX+7351nJuUehu2qb1iz2rRh2hX+tXPRuk/iTDO/SQI5jyiUjTCzhiDPWaVahvYp
+         JaJHnQ914lfEtg8xfd4wZkoaAYcApI5BRJtexd4jJRXUJE9I3zsaXgD5LMrWAPQLPxpi
+         o3EvD4nWtD4ZTRmELzDV5at/rKU9h5E3+RjMzAEF6RpFL3lxP46cxnTwfN+2VGI9deSw
+         jSvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733572750; x=1734177550;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VGXhR18Fq97qh7TbUSa0kKhL/ZByCAhy9VcD/gJL5ME=;
-        b=EGg3XE6NKTbxcHjXo+ivmniNTfd+eXDKPJ0h5d16RBCed9RSXQcGqKZCZFWaJBF4EB
-         Tfj5EtDpNpP/JUkmqV0Orqk3sIoV9RjwthiVNPtxBvHY2IkLqnAk8knm4X14JY3sk9VD
-         JUkxeF4vAxnSPGGxDzWncBwUYfGOlAXhBAUTzCNjvZw/xijMmRV+nSYBttJCrG7wNCBm
-         N0OBcAUaB3vqJlpsahTneOsCGGE8x0Oik9zX8Z+kIrDXGvfSiV5c8YPjPDHPEH7WpN7q
-         mpYzuWKPXFKfGggasxjcxX0IgQF2kG0iD4sXUAVd98z9cAqGERyJSyS5fpdSa1rNgfNz
-         jl6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXWS8kFPuc2iFf6MwngwiRFFQl+Sc3EImN/IaKu0dT0rY2zYtFsV4JsScpby3dGxkfhKq8M7PYV8sdjT6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwoCsCJ/DQmYV0zTckVHGJHpezu2CZGcSSQqTQANi0RBMoRno/f
-	t0Qt2VmC3gzXevVD766zAuX9ZYkVAlnGyn9UMG0ruFUayn08IGdkawI+6OSag44Ab69JmphVC4P
-	nSpvJc0gbvCjN4uuogOpzcyznlgeTNTKmCR0PO8NaRM0zxwWBMTChZjHVI98p7Xk=
-X-Gm-Gg: ASbGncsRDnAYkb1RQCBDv52Uuj+3fNtTLDvK66UTxaDjscFZdIRrCvalF/uyIEFI1FS
-	SFKn4+jvno4NApooUPeygumsRI0z9iTEJw//vNBBpk3DpCJGq/2sQu0nRkmvwZFhRMTPfT49yM1
-	66rzg1vLLfDm3JCeIGaYcGOlZYgH5w0RL3gqQ9RT9iwHp3MXRss83RlitAjAAj4fbQ1NUCjK+TF
-	VBvURUxbVU7naag3wSZ0pa7FKOAg36Z7TLZAHw3P89kRyIyLpsWZ3Em5/83oXzzlPvpzXBkgz54
-	ygex6s+na6YW3sRjIxWK82RJKH2OeJ0=
-X-Received: by 2002:ac8:578d:0:b0:463:5391:de49 with SMTP id d75a77b69052e-46734fa37b7mr39903291cf.11.1733572749706;
-        Sat, 07 Dec 2024 03:59:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGPlffbEBpmwwLn07e4NjXlSpPb++V4AbkGPE+RE6e5rhThB9Z+v/f84NfUnlbSCUlfPWRp0Q==
-X-Received: by 2002:ac8:578d:0:b0:463:5391:de49 with SMTP id d75a77b69052e-46734fa37b7mr39903151cf.11.1733572749290;
-        Sat, 07 Dec 2024 03:59:09 -0800 (PST)
-Received: from [192.168.212.163] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e96aabsm381402266b.63.2024.12.07.03.59.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 03:59:08 -0800 (PST)
-Message-ID: <b5400627-6359-4dfc-abb2-2c142217a28b@oss.qualcomm.com>
-Date: Sat, 7 Dec 2024 12:59:05 +0100
+        d=1e100.net; s=20230601; t=1733573459; x=1734178259;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aw8Sw0c0/ZDBtbHXzSSnBq1C++U8b905nlDMZDdgykA=;
+        b=UfzLqU5tqAdaiD5Dpj3wuaViAE8+crLtzGi0SeXo3Wz/puBuOdfzutW56mJ0Q+G6JC
+         Hw2thw4OPjlp60RP5dIuBy7ZYYL47mpbHHhzqIgRjlf0aByxmBuMR1rU7Z7x9s1woAh9
+         HkTGuxdZhsyDizvjgJAq+PbUY9mLSwvy0Vz6o9+xn6F5GJTM0JSKCv7FDhPoHq/BJ3km
+         F9nzuHo5U3cX44OmAxB+xMeC9M8FCqLWRhKGUR9K2zSKwUqf+bDCM00jEJ4E5r7bBtXF
+         uO4BrqTPvEy9Kv+kRVsve9d/nKvamMVvymtsiLafSm9h77+FO3A0BG1di+VruiGwrcdS
+         3a3w==
+X-Forwarded-Encrypted: i=1; AJvYcCVE+tLcZ/3kZSXFzJHCvPboiiMd9SdTi8dkCBTN39TjJuZ2sAF3mc7AZROqTCSfzM9BexlysufX0qXb@vger.kernel.org, AJvYcCXlq4kIWRX4+iVs7oLP8DHgY5QJFZmcoRaB2xAI4FkgNiFp2DK2yi9nG+xgt7YUluBh2DLidH5Pqt1KtbKc@vger.kernel.org, AJvYcCXrXpROXDbqPlGM2POY6epLO7t/0NC05t/WebKSkB66dz+grvKCgw0Q3r/2WwBNLVI/gDVUtTAydNr2@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxe7gQKaFYm40wDZbSDw7QUTL8+GWYyGMRX6n1ATWssxC2QS+sm
+	RbWrwze9SJt5oadl35u+Luxd7ZL+HKGhsejGItXBJD0y9GrdntWKnF1C4wvBwBHwAqV7BvV8A0K
+	f9CMWBNCYHuNwE6Qg16q6lDpY7ak=
+X-Gm-Gg: ASbGncvu/jwjSVGFozPQqv/rKtKAvJJDyZC9ouyV6IfhuFvQFVmnYm89vkW2KrbnfuN
+	zpV32iSvgLXbVF2qm0VhBwUszZHOlQXU=
+X-Google-Smtp-Source: AGHT+IEJLeVcUVEI1VZy0ASwSJ7JOuXlvYaZwinxmIXeobwn8KOzzEbls7GkyJmuPpoz3TJbEVUhEoKQHWM7MCvePfM=
+X-Received: by 2002:a05:690c:290c:b0:6ef:9c5e:5c7c with SMTP id
+ 00721157ae682-6efe3ac6c16mr22824827b3.0.1733573458775; Sat, 07 Dec 2024
+ 04:10:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: x1e80100: Add CCI definitions
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
-        Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-5-54075d75f654@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-5-54075d75f654@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: BlYPhSl6aF4Cw9OU4FBtfxPxoPyEbsGu
-X-Proofpoint-GUID: BlYPhSl6aF4Cw9OU4FBtfxPxoPyEbsGu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- mlxlogscore=999 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- adultscore=0 malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412070100
+References: <20241205171343.308963-1-l.rubusch@gmail.com> <20241205171343.308963-7-l.rubusch@gmail.com>
+ <20241205-fraying-overfull-4fe3eb6c5376@spud> <CAFXKEHbGcTGBNH8Hrg3i90_-xR1KYyw_97X1pPMFB6E4ztL5Aw@mail.gmail.com>
+ <20241206-settle-impulsive-280ce8dc312f@spud> <CAFXKEHb1NbV-Us3kaNyG+P90SMXsV7233dXd64_gbtCKst6gmQ@mail.gmail.com>
+In-Reply-To: <CAFXKEHb1NbV-Us3kaNyG+P90SMXsV7233dXd64_gbtCKst6gmQ@mail.gmail.com>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Sat, 7 Dec 2024 13:10:22 +0100
+Message-ID: <CAFXKEHYULs+GO4S4nUzkPC0Sx0KrDur7K3zdFvZn4A3_OEstXw@mail.gmail.com>
+Subject: Re: [PATCH v5 06/10] dt-bindings: iio: accel: add interrupt-names
+To: Conor Dooley <conor@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 19.11.2024 2:10 PM, Bryan O'Donoghue wrote:
-> Add in 2 CCI busses. One bus has two CCI bus master pinouts:
-> cci_i2c_scl0 = gpio101
-> cci_i2c_sda0 = gpio102
-> cci_i2c_scl1 = gpio103
-> cci_i2c_sda1 = gpio104
-> 
-> A second bus has a single CCI bus master pinout:
-> cci_i2c_scl2 = gpio105
-> cci_i2c_sda2 = gpio106
-> 
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 162 +++++++++++++++++++++++++++++++++
->  1 file changed, 162 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> index 5119cf64b461eb517e9306869ad0ec1b2cae629e..c19754fdc7e0fa4f674ce19f813db77fe2615cf3 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> @@ -4648,6 +4648,88 @@ usb_1_ss1_dwc3_ss: endpoint {
->  			};
->  		};
->  
-> +		cci0: cci@ac15000 {
+On Fri, Dec 6, 2024 at 6:29=E2=80=AFPM Lothar Rubusch <l.rubusch@gmail.com>=
+ wrote:
+>
+> On Fri, Dec 6, 2024 at 6:08=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
+ote:
+> >
+> > On Thu, Dec 05, 2024 at 08:41:52PM +0100, Lothar Rubusch wrote:
+> > > On Thu, Dec 5, 2024 at 6:54=E2=80=AFPM Conor Dooley <conor@kernel.org=
+> wrote:
+> > > >
+> > > > On Thu, Dec 05, 2024 at 05:13:39PM +0000, Lothar Rubusch wrote:
+> > > > > Add interrupt-names INT1 and INT2 for the two interrupt lines of =
+the
+> > > > > sensor. Only one line will be connected for incoming events. The =
+driver
+> > > > > needs to be configured accordingly. If no interrupt line is set u=
+p, the
+> > > > > sensor will still measure, but no events are possible.
+> > > > >
+> > > > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > > > > ---
+> > > > >  .../devicetree/bindings/iio/accel/adi,adxl345.yaml         | 7 +=
+++++++
+> > > > >  1 file changed, 7 insertions(+)
+> > > > >
+> > > > > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl=
+345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+> > > > > index 280ed479ef5..67e2c029a6c 100644
+> > > > > --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yam=
+l
+> > > > > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yam=
+l
+> > > > > @@ -37,6 +37,11 @@ properties:
+> > > > >    interrupts:
+> > > > >      maxItems: 1
+> > > > >
+> > > > > +  interrupt-names:
+> > > > > +    description: Use either INT1 or INT2 for events, or ignore e=
+vents.
+> > > > > +    items:
+> > > > > +      - enum: [INT1, INT2]
+> > > >
+> > > > The description for this ", or ignore events" does not make sense. =
+Just
+> > > > drop it, it's clear what happens if you don't provide interrupts.
+> > > >
+> > > > However, interrupts is a required property but interrupt-names is n=
+ot.
+> > > > Seems rather pointless not making interrupt-names a required proper=
+ty
+> > > > (in the binding!) since if you only add interrupts and not
+> > > > interrupt-names you can't even use the interrupt as you do not know
+> > > > whether or not it is INT1 or INT2?
+> > >
+> > > What I meant is, yes, the sensor needs an interrupt line.
+> > > Interrupt-names is optional. The sensor always can measure. When
+> > > interrupt-names is specified, though, the sensor will setup a FIFO an=
+d
+> > > can use events, such as data ready, watermark, single tap, freefall,
+> > > etc. Without the interrupt-names, the sensor goes into a "FIFO bypass
+> > > mode" without its specific events.
+> >
+> > What I'm talking about here is how it is ultimately pointless for
+> > interrupts to be a required property if it can never be used without
+> > interrupt-names as you cannot know which interrupt is in use. I think
+> > both should be made mandatory or neither.
+> >
+>
+> Ah, now I can see your point. I agree that it should be equally
+> mandatory as the interrupt. Legacy implementations used simply always
+> just INT1. I'd like to make it configurable in the IIO driver but
+> tried to avoid the DT topic for now (which was not a smart decision
+> either). Hence, I added the interrupt-names.
+> I'm unsure should I make "interrupt-names" a required property now?
+> What about the existing DTS files using this sensor? There are no
+> interrupt-names specified, so if made required, the missing
+> interrupt-names there would break binding check, or not?
+>
 
-[...]
+Sorry, I have to clarify myself, yesterday I was not focussed..
 
-> +			cci0_default: cci0-default-state {
-> +				cci0_i2c0_default: cci0-i2c0-default-pins {
-> +					/* cci_i2c_sda0, cci_i2c_scl0 */
-> +					pins = "gpio101", "gpio102";
-> +					function = "cci_i2c";
-> +
-> +					bias-pull-up;
-> +					drive-strength = <2>; /* 2 mA */
-> +				};
+1. I agree this is kind of half way. Either, both are required or none of t=
+hem.
+If both were required, also the older DTS files using the ADXL345 would
+need to be "fixed". If I add interrupt-names, it works with my patches for =
+the
+"newer" IIO driver, because since I implement it it's using interrupt-names=
+.
+The older input driver for that using interrupt, does not use interrupt-nam=
+es.
+Hence, it requires the interrupt in the DT. But it does not require
+interrupt-names
+(historical stuff).
 
-Please match the style of other nodes (flip drive-strength and bias, remove
-the newline and remove the mA comment)
+2. AFAIK the sensor can operate w/o interrupts.
+A) w/o INT line: measuring is possible; FIFO bypassed; no events
+B) w/ INT line: measuring is possible; can use FIFO; events are possible
+When setting the interrupt in DT, the interrupt line name can/could be
+configured also via SW (setting up the registers of the sensor). So, it's n=
+ot
+impossible. This is AFAIR the approach in the legacy input driver. Now, the=
+re
+is devicetree, and both should probably be better configured somewhere in
+the DT
 
-Otherwise looks good and I can attest to this working, as the sensor on the
-SL7 happily talks back
+3. IMHO neither one, not the interrupt, nor the interrupt-names need to be
+a required DT-binding.
+If interrupt is required and interrupt-names not, it's a half-way approach,
+which leaves specifying the IRQ line open to be solved partly in DT
+(declaration of the interrupt) and partly in SW (configuration of the
+interrupt line to use), e.g. hardcoded or configurable somewhere in the
+driver via sysfs or the like. Not nice.
 
-Konrad
+Pls, let me know what you think, and in case, if I need to take some
+action, here.
+Best,
+L
+
+
+> > > Hence, I better drop the description entirely, since it rather seems
+> > > to be confusing.
 
