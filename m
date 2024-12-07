@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-435969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 845009E7F40
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:59:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B43F79E7F28
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:57:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06730188417A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:59:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A9111883DC8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:57:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED0E197A6C;
-	Sat,  7 Dec 2024 08:56:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 148F714F10F;
+	Sat,  7 Dec 2024 08:56:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hkEbqYwQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iw+LZ8h0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7ACF14036E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877CB13D244
 	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 08:56:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733561805; cv=none; b=OpN63L+v/O7wjxq61/YfXcv11AvgwwNbqg7OqZVL2lwgNd2UrpGSQoZrCiSsVBvwUN7kvxcoodNeREZWUN3tu2hQARX96vRlE7dfe9wis0JUQUbuCKlQlcRH4KX8h9XbB9UJCbfw3UQY+otp7zYHUU0GxArq4goK7K8jANyJLWY=
+	t=1733561805; cv=none; b=bET1uOYCTigkUXjRffN26lohUI+D1R2sL3MDSsgwpP62iU/yeVBAFHwzrVKX+f5pzYLydmfgnn7oFXnJTzHsI7D8v4d7QyE+x3bwmwrdVjBo3XjTUaiKeBiSK7IV3x8YFp7TD9uyXVMa3ujxiOl/vNwanVR1GGUMmnAYQEdVsXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733561805; c=relaxed/simple;
-	bh=mtr3SAhcJul8SH7gyq7dWJqCajR+YSKyCDlfSYBqOeM=;
+	bh=PPyhW6VsW+yo+jj9o/izTT956e12rFUm5rYlBvONhoQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aRCv+q8l3xOEceJgMAx+S/5D8fxdVl43tN7H9WSIngTdCRV6adhANd//VtscUOZMyFQKS8byePp/RGsEg6dibXHZkm1gDASRhUwNX9TgsTFM2RdNYAuKsMJ2IA8sQKjfjtF/W0M4Ah94GumZdjgN/lXsD1lTaKVOWrb9OeWIW9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hkEbqYwQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21287C4CEEC;
+	 MIME-Version; b=T0e16IMeZI6CmMtYuvuRKHll6drEWgDZuMiNngMjLRoJFaKlBzJSmbasjspkYEJDRmMzz0iC2/UAo2azr74KC3Eq2kRoIB6diWTh4zS8dpOA93n4M27q8L/AJYlMrb+v0nMNx3YJe57QCinfA67wjRQZOVH1gFLY17ymx71X6vU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iw+LZ8h0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17A82C4AF0B;
 	Sat,  7 Dec 2024 08:56:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733561805;
-	bh=mtr3SAhcJul8SH7gyq7dWJqCajR+YSKyCDlfSYBqOeM=;
+	bh=PPyhW6VsW+yo+jj9o/izTT956e12rFUm5rYlBvONhoQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hkEbqYwQTY5uiu/lKTsURRYpI6v7GvZ6iFhzckZy7RZick0q/rDvJxR3bSigMr5cR
-	 RTD0U/pNBmoYoz8iPRayPb8t62jd9KI3dYcFsEhZN0jzPpDWr76LE0F7I2aWDrY8JU
-	 CZUqztGaZ3eKASBH5rXvmNgK2JjgBapdgCwm0ufZqvG1b+qYAKVq17GQH4YFtaG/iS
-	 46j7CqGzLXjIyGKJ+eaqHZ3+1hCZf/Ho2SFTGDTu+uBWYwYA1ApSp8HsxOgoNf0lR6
-	 arxajX6b7xz+ij71E9ba4KvvZnkNq7BIee+D6s4eatk8jcUlZ4mfNesDN9bOfgw5c9
-	 tpLCVZC7IubmA==
+	b=iw+LZ8h0/17m4TSXr7lf1cAsNoKDDRiiUarmQeobZbxITDLUx+qRcmg4DFPHgzFhq
+	 UcJibwstj/b+U15xvGefp18Ta0K808fvEckhmYauRrguTful+4vl+35nX+CfwszU5j
+	 dqq2I2KNuPESsBXrSycIxru1VhB/2QU+iNy2G2rZWdRdM+PS9MN9oy/XECFahEMK2F
+	 mFj/QyQOzWCAN4nLzumk3rDhhq5usfFSTRc+iDIxY34TiWlX77mMSF7A+hHXbVmkhQ
+	 TIozMCAk94jOjAJ7Kyh/sD23AfHqe3AMS5xpUnXDRzTE34a4A+ILiHhlR7WLToEI/L
+	 KXwaXcNjcDPVQ==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tJqcF-00000005j4s-0Ihi;
+	id 1tJqcF-00000005j4w-0Phi;
 	Sat, 07 Dec 2024 09:56:43 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: "Michael S . Tsirkin" <mst@redhat.com>
@@ -55,9 +55,9 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	linux-kernel@vger.kernel.org,
 	qemu-arm@nongnu.org,
 	qemu-devel@nongnu.org
-Subject: [PATCH v6 06/16] acpi/ghes: Remove a duplicated out of bounds check
-Date: Sat,  7 Dec 2024 09:54:12 +0100
-Message-ID: <3447853c8f174a8f2a1a0e8c029c73c403a85ba0.1733561462.git.mchehab+huawei@kernel.org>
+Subject: [PATCH v6 07/16] acpi/ghes: Change the type for source_id
+Date: Sat,  7 Dec 2024 09:54:13 +0100
+Message-ID: <905c6c7329c39bde6f67f6f6636245de8baeca14.1733561462.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <cover.1733561462.git.mchehab+huawei@kernel.org>
 References: <cover.1733561462.git.mchehab+huawei@kernel.org>
@@ -70,32 +70,62 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-acpi_ghes_record_errors() has an assert() at the beginning
-to ensure that source_id will be lower than
-ACPI_GHES_ERROR_SOURCE_COUNT. Remove a duplicated check.
+As described at: ACPI 6.5 spec at:
+	18.3.2. ACPI Error Source
+
+In particular at GHES/GHESv2 table:
+	Table 18.10 Generic Hardware Error Source Structure
+
+HEST source ID is actually a 16-bit value.
 
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reviewed-by: Igor Mammedov <imammedo@redhat.com>
 ---
- hw/acpi/ghes.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ hw/acpi/ghes-stub.c    | 2 +-
+ hw/acpi/ghes.c         | 2 +-
+ include/hw/acpi/ghes.h | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/hw/acpi/ghes-stub.c b/hw/acpi/ghes-stub.c
+index c315de1802d6..2b64cbd2819a 100644
+--- a/hw/acpi/ghes-stub.c
++++ b/hw/acpi/ghes-stub.c
+@@ -11,7 +11,7 @@
+ #include "qemu/osdep.h"
+ #include "hw/acpi/ghes.h"
+ 
+-int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
++int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+ {
+     return -1;
+ }
 diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-index 29cd7e4d8171..5f67322bf0f2 100644
+index 5f67322bf0f2..edc74c38bf8a 100644
 --- a/hw/acpi/ghes.c
 +++ b/hw/acpi/ghes.c
-@@ -404,9 +404,7 @@ int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
-         return -1;
-     }
+@@ -383,7 +383,7 @@ void acpi_ghes_add_fw_cfg(AcpiGhesState *ags, FWCfgState *s,
+     ags->present = true;
+ }
  
--    if (source_id < ACPI_GHES_ERROR_SOURCE_COUNT) {
--        start_addr += source_id * sizeof(uint64_t);
--    }
-+    start_addr += source_id * sizeof(uint64_t);
+-int acpi_ghes_record_errors(uint8_t source_id, uint64_t physical_address)
++int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+ {
+     uint64_t error_block_addr, read_ack_register_addr, read_ack_register = 0;
+     uint64_t start_addr;
+diff --git a/include/hw/acpi/ghes.h b/include/hw/acpi/ghes.h
+index 50e3a25ea384..9295e46be25e 100644
+--- a/include/hw/acpi/ghes.h
++++ b/include/hw/acpi/ghes.h
+@@ -73,7 +73,7 @@ void acpi_build_hest(GArray *table_data, GArray *hardware_errors,
+                      const char *oem_id, const char *oem_table_id);
+ void acpi_ghes_add_fw_cfg(AcpiGhesState *vms, FWCfgState *s,
+                           GArray *hardware_errors);
+-int acpi_ghes_record_errors(uint8_t source_id, uint64_t error_physical_addr);
++int acpi_ghes_record_errors(uint16_t source_id, uint64_t error_physical_addr);
  
-     cpu_physical_memory_read(start_addr, &error_block_addr,
-                              sizeof(error_block_addr));
+ /**
+  * acpi_ghes_present: Report whether ACPI GHES table is present
 -- 
 2.47.1
 
