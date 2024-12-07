@@ -1,158 +1,113 @@
-Return-Path: <linux-kernel+bounces-436179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D9609E822E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:12:38 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F154B1652E8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:12:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C44154425;
-	Sat,  7 Dec 2024 21:12:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="HV87ou+p"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158F99E8234
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:19:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF0E34CC4
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 21:12:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A3B36281BA5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:19:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F967155A4E;
+	Sat,  7 Dec 2024 21:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="kwOMFSzv"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62D21F602;
+	Sat,  7 Dec 2024 21:19:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733605952; cv=none; b=RhE5BK6AHZerahPmaVklbviMOleat0NrGOTEVL9AR+y7rsn4il3e6HWurDqLJwbohZatFckCBazaKEzJi0SVww4McDEyYQmdVGZvKiztwf+LNNGbE21FmjWor91sJNI3MBfOVm/TWFjG1V4Xj/yorn9AFyn7EanW+i1lLngKMRQ=
+	t=1733606353; cv=none; b=i7AGmJQtjGF8VCl7/gTHTgo6+gVBzar26y4iaOuh/ZLp1g3/pAfD46mD2Tyr6UEIlPew7epcLuKW/YiN1GZw5KD/V8UQoBJ/Nrnim/b2HCmUZVfxcTbxq7/eC3YgxqJaGOv2TiTh0Yg8xehc9Qe6ik04oYizckKPovnz8BH43Es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733605952; c=relaxed/simple;
-	bh=vATbQ0NFVS0vjRVtkwEvWTym4PU7RrVnbFcpx1QcfyU=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=CVMmbt4GloJhcAbRNwuqHCGhEx6NnIqnlloebS1UVlPD+8304ERRxVNXi23o/qAVX/T1uTtsyvh7iA3OWAx9cI/W8U4imiRJm9cFM6PQ57PeziTBVqlMrvu2pbqlK9XmLert9yS+bszQZXj8C295pognL6d8iUZz6ES5GWeXGRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=HV87ou+p; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 4B7LBNPM2935190
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 7 Dec 2024 13:11:24 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 4B7LBNPM2935190
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024111601; t=1733605885;
-	bh=yrVV+ZiikcAW1cNetUD0nXbzS6VssMUyBuMSsCC1jYI=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=HV87ou+pXyEzXrRpZPxTi/z148+mGhfiHYDgqLwFVuJN5hoQlfk2Dd3XijmydinwZ
-	 TzV27xaweCYU96Kf5qq6kGzMlyjW8myWo3p+lUVB78ZPZoxL51Q1N33uVEKpvU+wv+
-	 ZYlGkj6slJO0QX+gGJpDVN/bqw4DIN72oXc0zq7YGVd0YckXbI4IGoMU9gXP+OmLfS
-	 u66ZtCTuB9fJFrw5lLFLc4uUxSBU+gS1tWJLKx4OWa2xYZTD0CE0qxaP7i8dXou2Gs
-	 MQIhB4CHoLGIV+dWFB2HO3turAmNmI9U8uZWRwua/J1COoCLCh3Tx5hHC+Dw3YmeJS
-	 0fwMqMpQ53uow==
-Date: Sat, 07 Dec 2024 13:11:23 -0800
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
-        Borislav Petkov <bp@alien8.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-        Uros Bizjak <ubizjak@gmail.com>, Sandipan Das <sandipan.das@amd.com>,
-        Sean Christopherson <seanjc@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Nikolay Borisov <nik.borisov@suse.com>,
-        Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>,
-        Alexander Shishkin <alexander.shishkin@intel.com>,
-        Kirill Shutemov <kirill.shutemov@linux.intel.com>,
-        linux-kernel@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v3_2/2=5D_x86/cpufeature=3A_Ad?=
- =?US-ASCII?Q?d_a_debug_print_for_unmet_dependencies?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20241207004126.2054658-2-sohil.mehta@intel.com>
-References: <20241207004126.2054658-1-sohil.mehta@intel.com> <20241207004126.2054658-2-sohil.mehta@intel.com>
-Message-ID: <A62E8AE8-A7C8-4223-A914-CF5130F77E68@zytor.com>
+	s=arc-20240116; t=1733606353; c=relaxed/simple;
+	bh=NedThzF3R/DnBOZe2/t3C2mwOwMI6DS1cmuWzpWb8yk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MF8ynqPlcdLBV1usk8RZCW/Qi/Z9C7fAp1QXo0IYorZXZ5j84ZHT7ZwS+dfpzh3mrUInu/hzWXjQukpDL81D6bsIiKqNeese47Bgj5ZUZy1+oS9F2WOCyqCI5XxCLIMsmTiJS7zxM8pVnsjzc8yPLt4seMUf3jpYXNco9Zw5BKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=kwOMFSzv; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=Cc:To:Content-Transfer-Encoding:Content-Type:MIME-Version:
+	Message-Id:Date:Subject:From:From:Sender:Reply-To:Subject:Date:Message-ID:To:
+	Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CSpTw1WsMcL4wL9s+yWHcnrb8i7Nz6p+hxmJQSUiZjY=; b=kwOMFSzvNoW65z052Ihfa0J+ln
+	EVb+PI2sNVyVd1f94T2qHIbQVgdjsgpANkez++9vBLVVacrTnaHe4qvw5O+ZSk7UAqCZ79MEX2YiL
+	3qKwM24gBG2HN1ekFRPLM6Cn/EABFcAIiED9a9Hozz4Ml/ib5g521guSA4Hxyn2IGI1E=;
+Received: from c-68-46-73-62.hsd1.mn.comcast.net ([68.46.73.62] helo=thinkpad.home.lunn.ch)
+	by vps0.lunn.ch with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tK2CV-00FVTF-Ln; Sat, 07 Dec 2024 22:19:04 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+Subject: [PATCH 0/2] dsa: mv88e6xxx: Refactor statistics ready for RMU
+ support
+Date: Sat, 07 Dec 2024 15:18:43 -0600
+Message-Id: <20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-v1-0-b9960f839846@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALO7VGcC/x2NQQrDMAwEvxJ0riB2g2P6ldKDaiutDnWKZIwh5
+ O81PcxhGNg9wFiFDW7TAcpNTPYyxF0mSG8qL0bJw8HPfnF+XrEFdFfU5LBwHfSKnxYjh947WqV
+ qqLxRqrtipDVRTjn78ISx+B1F+v/t/jjPH7/dRd19AAAA
+X-Change-ID: 20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-8a7cadcdd26b
+To: Vladimir Oltean <olteanv@gmail.com>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Andrew Lunn <andrew@lunn.ch>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1082; i=andrew@lunn.ch;
+ h=from:subject:message-id; bh=NedThzF3R/DnBOZe2/t3C2mwOwMI6DS1cmuWzpWb8yk=;
+ b=owEBbQKS/ZANAwAIAea/DcumaUyEAcsmYgBnVLvG1UEVAkfAvPcAT/eWnRt1AGQsaG+QJ9/zJ
+ Ii+TPql2gGJAjMEAAEIAB0WIQRh+xAly1MmORb54bfmvw3LpmlMhAUCZ1S7xgAKCRDmvw3LpmlM
+ hKiaEADUycl2Vx9eanJwyEsaw1jQI7LvzC7eHxm0SnhZn7+TyfQLZy8wmpVbnvD08sHlX4t/5CH
+ L8tE36beIOK+FrwmDXVNzJsi7aND288gWz6pTNCb6VVbbebakZTVRNbAUdNCND3+83RPCEACTLR
+ kk89jlcbFcEs17dOxmZQq9jqf4wJTWSLFi7pJv3hH2tNwHUJnj5FV8tQAWAbl9kf5RxPL9OfSfX
+ YQKDn9OiWFq4T4kbflGRcBmHTZYnaf93iag5S8qAZZYepDSwSD2xo/gt+qdz9VJApx9ku29YCsr
+ vzvajFhCm2wGszV4KHZZ2j2hY5cg8lOoo6gfTuA5Juy2tA2eeWRlcOS2aEOU21U7qRiZkW5bowr
+ Fd8aujw1bFRPJ4hQHvSgcLFvOVMtF8eEF2vQar1Mjw/25Aw3gr+tkxQqyQQV9lPMQItts4euUAC
+ MiuBJB+SFPiebOZWmfb/UagPnwQ0cCiwKQv1y9efSRh2irNy6+Q30QLL4+1hgukgQwnUhL0k+JE
+ Tv7M6D5KUX0wmqM050mZ7E2TvBwMwow5COu1tknG7UB0O6CM9mBc7LMSJh3ePYD/RGJVRbilSO0
+ +KvQ7QdS6XPLBlsgr/YovlF+1ElTGe8RFnxUjN9p2NQB+veXPg1jhS7lPFu+eZgkrB26LxTv720
+ hUGzwu61Ofs4jIg==
+X-Developer-Key: i=andrew@lunn.ch; a=openpgp;
+ fpr=61FB1025CB53263916F9E1B7E6BF0DCBA6694C84
 
-On December 6, 2024 4:41:26 PM PST, Sohil Mehta <sohil=2Emehta@intel=2Ecom>=
- wrote:
->Instead of silently disabling features, add a print which might be
->useful to users if their favorite feature gets unexpectedly disabled=2E
->
->Features are typically represented through unsigned integers though some
->of them have user friendly names if they are exposed via cpuinfo=2E  Show
->the friendlier name if available otherwise display the X86_FEATURE_*
->numerals to make it easier to identify the feature=2E
->
->Use pr_debug() to avoid spamming the kernel log and generating false
->alarms=2E Note that the print will occur once per disabled feature on
->every CPU=2E Show this information only when someone is really looking fo=
-r
->it=2E
->
->Suggested-by: Tony Luck <tony=2Eluck@intel=2Ecom>
->Signed-off-by: Sohil Mehta <sohil=2Emehta@intel=2Ecom>
->---
->Sent as a separate patch to make it easier to review and drop if it
->feels unnecessary=2E
->
->I can see both sides of the argument=2E The pr_debug() serves a
->compromise between the two=2E
->
->v3: New patch=2E
->
->---
-> arch/x86/kernel/cpu/cpuid-deps=2Ec | 22 +++++++++++++++++++++-
-> 1 file changed, 21 insertions(+), 1 deletion(-)
->
->diff --git a/arch/x86/kernel/cpu/cpuid-deps=2Ec b/arch/x86/kernel/cpu/cpu=
-id-deps=2Ec
->index 8bea5c5e4fd2=2E=2Ec72f2dd77d72 100644
->--- a/arch/x86/kernel/cpu/cpuid-deps=2Ec
->+++ b/arch/x86/kernel/cpu/cpuid-deps=2Ec
->@@ -147,12 +147,32 @@ void setup_clear_cpu_cap(unsigned int feature)
-> 	do_clear_cpu_cap(NULL, feature);
-> }
->=20
->+/*
->+ * Return the feature "name" if available otherwise return
->+ * the X86_FEATURE_* numerals to make it easier to identify
->+ * the feature=2E
->+ */
->+static const char *x86_feature_name(unsigned int feature, char *buf)
->+{
->+	if (x86_cap_flags[feature])
->+		return x86_cap_flags[feature];
->+
->+	snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
->+
->+	return buf;
->+}
->+
-> void filter_feature_dependencies(struct cpuinfo_x86 *c)
-> {
->+	char feature_buf[12], depends_buf[12];
-> 	const struct cpuid_dep *d;
->=20
-> 	for (d =3D cpuid_deps; d->feature; d++) {
->-		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends))
->+		if (cpu_has(c, d->feature) && !cpu_has(c, d->depends)) {
->+			pr_debug("x86/cpu: Disabling feature %s since feature %s is missing\n=
-",
->+				 x86_feature_name(d->feature, feature_buf),
->+				 x86_feature_name(d->depends, depends_buf));
-> 			do_clear_cpu_cap(c, d->feature);
->+		}
-> 	}
-> }
+Marvell Ethernet switches support sending commands to the switch
+inside Ethernet frames, which the Remote Management Unit, RMU,
+handles. One such command retries all the RMON statistics. The
+switches however have other statistics which cannot be retried by this
+bulk method, so need to be gathered individually.
 
-Ok, I realize that the x86 maintainers **very legitimately** don't want mo=
-re crap in /proc/cpuinfo, but perhaps we could include the strings for prin=
-ting debug messages in cleartext? Add a bitmap for which entries should go =
-into /proc/cpuinfo=2E
+This patch series refactors the existing statistics code into a
+structure that will allow RMU integration in a future patchset.
+
+There should be no functional change as a result of this refactoring.
+
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
+---
+Andrew Lunn (2):
+      dsa: mv88e6xxx: Move available stats into info structure
+      dsa: mv88e6xxx: Centralise common statistics check
+
+ drivers/net/dsa/mv88e6xxx/chip.c | 49 ++++++++++++++++++++++++++++++----------
+ drivers/net/dsa/mv88e6xxx/chip.h |  1 +
+ 2 files changed, 38 insertions(+), 12 deletions(-)
+---
+base-commit: 860dbab69ad8d07a91117ed9c9eb5fb64adf7e0e
+change-id: 20241207-v6-13-rc1-net-next-mv88e6xxx-stats-refactor-8a7cadcdd26b
+
+Best regards,
+-- 
+Andrew Lunn <andrew@lunn.ch>
+
 
