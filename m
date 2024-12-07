@@ -1,72 +1,109 @@
-Return-Path: <linux-kernel+bounces-435842-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435843-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 37F099E7DD6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:51:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730FA9E7DD9
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:51:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8416D1886C2D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:51:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7ABB161862
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530C517C8D;
-	Sat,  7 Dec 2024 01:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DAB1863F;
+	Sat,  7 Dec 2024 01:51:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="efQPzkK7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="l3FVDh9j"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A87278F64;
-	Sat,  7 Dec 2024 01:50:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A8E1BC3F
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:51:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733536252; cv=none; b=NI1WBHJMEMUFjE3JyIT3uDpP3ZmwUXnozhMZ15UgjmCpwBxdB9DAk7vKp9FLKrMEOPs0PILV0D2NjiV/kGt1meV111vhw9HqI1CRQmlZehZE3DYFwVpjpoRNfa9HzHUPl/H02Pdc4q5NagyCgpenGTLrdQH2O+ZTuLu/GlonnwU=
+	t=1733536278; cv=none; b=Hvdw1ZRvBCd/ySIgamRfxjZBxDqY4n6JdZv2+2ESCZg17hJseQic8QdWOa24WangiyobUZdO7ow85tRH51LKRb/sh1e3kG1CY8FS0nHUOE4PrdNBJNIQe5w2WjdyO3OwBHNnOJ2zTtXbnNwxmxBUBB1jUYGHeLJdUqADPfiMWwA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733536252; c=relaxed/simple;
-	bh=kzWxelifGoKO74BTdss29VG8y7iq1uEeYrocjxaQnM0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fw49qLKTp3KK+KiiYZn9Ef9E5uO4q5+Y19J+h4gqqgms8+BxRPVkOodxRQTwSIxgDE6ewrnS10s1u3NHOfdCQLhIu6XJU9r2xHXOPRv23VzRoY6pkQcaRRQG9EZ83tk4D5xJAdvUnjbvrqLTRv8wcLqg8hVDq/bat0wdOgf73yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=efQPzkK7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C56ABC4CED1;
-	Sat,  7 Dec 2024 01:50:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733536252;
-	bh=kzWxelifGoKO74BTdss29VG8y7iq1uEeYrocjxaQnM0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=efQPzkK7BzO8xnEjJLgGZCosfX3S5GtUf7awwmQAu79igyo8v2gVVoXi8LLj8dbmq
-	 /lMuLFIyjNdtFZ4aWNXn8iL0ITXcLIHqG8xL6AhaEFkTYF+1+kkJI07jhp/W3VWAlw
-	 6qLzJNscba2ylQooiitr7Crz5T57MbDKmvsNGzlCxMK9IvSUteCZVElDRlmyizCuj9
-	 KGk4jk5Cp3AyInG0F9l4r5BydHPwDN60015RL/U1kb736XxQHtZlT2dWeoU73dMRRl
-	 ieNguyhxgqZnK8Bnoqlkex7/oa5kgAsVajvaJnZyVBTF65ehTlblIklBRX+zzj/JL0
-	 qYwc58OaN2Vlw==
-Date: Fri, 6 Dec 2024 17:50:50 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Simon Horman <horms@kernel.org>
-Cc: Zhu Jun <zhujun2@cmss.chinamobile.com>, davem@davemloft.net,
- edumazet@google.com, pabeni@redhat.com, shuah@kernel.org,
- netdev@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] selftests: net: Fix typo in psock_tpacket.c
-Message-ID: <20241206175050.28c93659@kernel.org>
-In-Reply-To: <20241206125955.GO2581@kernel.org>
-References: <20241204075756.11561-1-zhujun2@cmss.chinamobile.com>
-	<20241206125955.GO2581@kernel.org>
+	s=arc-20240116; t=1733536278; c=relaxed/simple;
+	bh=fL7UgSvlHvMOgpr+wPg1Prhg27LhYkeiNrwhukxPxjA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k+BIraYo29kxIjDhDGo7JG21JEyYOGRERfuq/FGS0SKcZvZMBJiUuFbUgCwSAZI78u8dlnMgHNzXdVZubfwA/0OMrtsrQUYWf20TZHDq78CRz4uIArpZ0dOvFVyLG+YgPmBS8hLc4KKuZ6Ag9I2eHCjxnEbgWpKg6IrDFr8bOPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=l3FVDh9j; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <8da87bf2-0084-4a47-b138-5dc380e7435e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733536263;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=4hHDUiCEzwKu1N3+3UCTS+tkCA5hseC4uMepQ7EbCmQ=;
+	b=l3FVDh9j0DesQ/bzbfzNcrC0HfvbklRHq9WKxticSISzdnSwGz8FCUBgsXM87X/UsjfAxH
+	iDAwzLh1ZtG/ecH26S3ZhGhVmUHg5tOI5QJUplC6p7XrK6vdfg0JfAezoWgFmjUigmlydu
+	EGcLT1SSSlzIvqoggx3zt3u5Jnim1Yo=
+Date: Fri, 6 Dec 2024 17:50:51 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Subject: Re: [PATCH bpf-next] bpftool: btf: Support dumping a single type from
+ file
+To: Daniel Xu <dxu@dxuuu.xyz>
+Cc: ast@kernel.org, kuba@kernel.org, andrii@kernel.org, hawk@kernel.org,
+ qmo@kernel.org, john.fastabend@gmail.com, davem@davemloft.net,
+ daniel@iogearbox.net, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, antony@phenome.org,
+ toke@kernel.org
+References: <8ae2c1261be36f7594a7ba0ac2d1e0eeb10b457d.1733527691.git.dxu@dxuuu.xyz>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+In-Reply-To: <8ae2c1261be36f7594a7ba0ac2d1e0eeb10b457d.1733527691.git.dxu@dxuuu.xyz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, 6 Dec 2024 12:59:55 +0000 Simon Horman wrote:
-> FTR, I'm not sure that I understand the grammar in the comment.
+On 12/6/24 3:29 PM, Daniel Xu wrote:
+> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+> index d005e4fd6128..668ff0d10469 100644
+> --- a/tools/bpf/bpftool/btf.c
+> +++ b/tools/bpf/bpftool/btf.c
+> @@ -953,6 +953,7 @@ static int do_dump(int argc, char **argv)
+>   		NEXT_ARG();
+>   	} else if (is_prefix(src, "file")) {
+>   		const char sysfs_prefix[] = "/sys/kernel/btf/";
+> +		char *end;
+>   
+>   		if (!base_btf &&
+>   		    strncmp(*argv, sysfs_prefix, sizeof(sysfs_prefix) - 1) == 0 &&
+> @@ -967,6 +968,17 @@ static int do_dump(int argc, char **argv)
+>   			goto done;
+>   		}
+>   		NEXT_ARG();
+> +
+> +		if (argc && is_prefix(*argv, "root_id")) {
+> +			NEXT_ARG();
+> +			root_type_ids[root_type_cnt++] = strtoul(*argv, &end, 0);
 
-+1
+I only looked at the do_dump(). Other existing root_type_ids are from the kernel 
+map_get_info and they should be valid. I haven't looked at the dump_btf_*, so 
+ask a lazy question, is an invalid root_id handled properly?
 
-Looks like the author didn't do much due diligence.
--- 
-pw-bot: reject
+Others lgtm.
+
+> +			if (*end) {
+> +				err = -1;
+> +				p_err("can't parse %s as root ID", *argv);
+> +				goto done;
+> +			}
+> +			NEXT_ARG();
+> +		}
+>   	} else {
+>   		err = -1;
+>   		p_err("unrecognized BTF source specifier: '%s'", src);
+
 
