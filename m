@@ -1,86 +1,98 @@
-Return-Path: <linux-kernel+bounces-435831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E5CC9E7DBB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:29:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0634F9E7DBF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:37:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3D916D08F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:29:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8DB916D26A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:37:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEA3C8FF;
-	Sat,  7 Dec 2024 01:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16CB125D5;
+	Sat,  7 Dec 2024 01:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BL8xitGn"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MI8U9Hx8"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF151BF24;
-	Sat,  7 Dec 2024 01:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0882CAB;
+	Sat,  7 Dec 2024 01:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733534983; cv=none; b=QQuhxVwxrw/O23/m7NOnqGcjxmmND5XxW/sA/i9GyUdHyu9SU3fWdvYMNtwwkq6OSSR6bjNYR+AoZhlyPln5DgHqTmWxjpyi6PFpMNIPNwi92ltTi3Mffc7XWuqB3pnjtK1zNmFK1yZ2PI9S5qLvfuNulpE/UjMPRsSDHsBjELA=
+	t=1733535465; cv=none; b=YEm17We6ocW/ak/xpLvmrPrwmqBvMgRj8WmvuEdPxg9WbvWffrFbbuhJRbWx1FnriEySyq7VJdlFZtN2CtIViKc8a3mJ2HQJu1C08z8wOrhFTSA35i0u5l8HQuc/M9uWvY6yKisPylz/Mp1VP4yUi1jRTpn/LUpcOJVNf8fvMvo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733534983; c=relaxed/simple;
-	bh=pf2BxcyY1+GxOIa+dmB0408E08YUlmbwGhO92jMegAE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YuT0yj9e/4BzhR02tgpqCpDunqRUFFFohKoH3cIgGhRDHOh35osaXshB2+0rSpLN8rq3LkCoMYdY69AY/XPqtlM1AzCBBIX5BPCRzKGLytVJ0OQm4edvmsOIHtn9j8NqzpVQxU8EDAnLZ/WfS5wLy1j/u5GxBdXLftgFJqp+JVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BL8xitGn; arc=none smtp.client-ip=209.85.160.182
+	s=arc-20240116; t=1733535465; c=relaxed/simple;
+	bh=/0t6h5qZGBxEMwWnlGqKXSqLaAajCkGzTcCexy7o/9I=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cGsMOuzBKqkkDp1Mu/9HG/sv2sUXi8ZwuzThwAyXxaUQqGd9rTG/Ejo5ROgGpbF6mpLEFhSwk2U9Xk4qiX5cSNU7Dgii9vu+ss2CPDuFIvCdcUq0GLiDntBy8aoIGcSBQnH+YmRC3I9+7wrVBPHF29JuDG04UWrIzfNbbhAqrXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MI8U9Hx8; arc=none smtp.client-ip=209.85.215.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4668f208f10so25561261cf.3;
-        Fri, 06 Dec 2024 17:29:41 -0800 (PST)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so2206288a12.0;
+        Fri, 06 Dec 2024 17:37:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733534980; x=1734139780; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=RH3o/9bbeFcVlZkIN5EOi+1jWB15nl+IjEgrvkeWavI=;
-        b=BL8xitGn8Qloe5gE+758fCwzJEhftsqQqJihsNRr3LgYokjiJZsZF+BmGrRZ5+znAI
-         Gw5De5f4GCq4iaUooA9dhxXfjHwauK5lI3gbAuouuKgV0/bqxj12vY5zbyMosAFII2ux
-         +/OmSohmPK7LoE7YWFY214XOJml0xpaqRAYR+4jbiVcUrW+9AQq3oWR5XHLTHLuDjFRJ
-         3utCMMfexuegc6G9Osf0W5UOIusH7KPDgldw7ZtEd8+XuOI+4tOc42+7eBiPl92qDwQo
-         tezggn+PhwVYjcpUdKkbHz/ff1klD8VVYwaQ7hh8Q3B7d9mlV0zSaLfi/vEOEXnCdCXx
-         r22Q==
+        d=gmail.com; s=20230601; t=1733535463; x=1734140263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=imJSuHRPRBE6YfDMYMKrQ6pZ3Ojs7qrzBdRNSgqW+Uo=;
+        b=MI8U9Hx8j0ao1qPPHlfKxH9GCm1YFCeRPGn70DCjsqmIRmJp66uTiX0Ic8EIB3a7BT
+         B42Bs6ykN4I8qnLpvY0iHZ4KR3vCodQDlLOcCovyLndrHJs3vHHUvZ3zjsG1TxUQ9lXC
+         AeBrGI8PXQNIPKPV3mhwztRjCRGhA7lKNNJYGDxPNANzVB7rwVKKLW1LwPPu/0lGL9N3
+         XOnQKrWVOAIEJj7usJiuy/D+4iIgiga0VDmbNb51uTN4r66lTuATvkfPaFU2FF3yLFFn
+         TBKnt1eWNlYYJXtBBcJF29MlSW4/pcMwoouVbMGmlVckBN3LQ/h/3fgVcsHcQ/ulecyf
+         TE0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733534980; x=1734139780;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RH3o/9bbeFcVlZkIN5EOi+1jWB15nl+IjEgrvkeWavI=;
-        b=DLl2791Hntwi+4FUzUNm3nK7Kc+1EX1BxB3nWFsgXK8e2GLJTI8uM18xeaSi1CA0SY
-         ZlRTXMBeaqH5MB9VC4qS1PvHVtjQ5LvhLzDGU4hkMY7KVwNTpxuPkCvF9a2lcDEMH88o
-         qH/x+mdtky4ZcNLZpOTolslUCl1rDb5H8eEGLfBrF8wgXKoN5MfCM5HJjFxFRBidHXTe
-         R9tWaipqL+zOSqt6cNiWcuxYumA5MIBsPvHT/Mbdjb0oHaEJERmPVr21HQnYZ++hE0oR
-         VQi/rLux1g4tHpeUmuDnJmjl6pzX7aFSaDLDy1MUTb9EfFXVL6LHa8WFBlfj3/JrF95L
-         M6Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCVXJk9VolorGR79fnPYhqVXOiMdqUqmNx2anyBldf/dWGkD7tNoTWMSzFjNxOkk88diLTyDBcEz1O+CxQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysqIG+PLbUJ5C5vwwuoSGeHqgORTK+AUFkERvC6JVPHisabQYQ
-	4+3zUV9U9ttO3UQdznQsLSED1s1zrQTengtXCsMuc0cNfs3g7kHE
-X-Gm-Gg: ASbGncsXNAiCz2rptaU55S4Zdcla1JcIVVP8yNVv1WfEFuI18ADr53QR7/dyRdiFn4d
-	VlaCYuTMtRBYa+AESn1OgYk5eW2MGSEdwWwBCbskwa+bj1HE/58TIL2NXkKGxjaKDHnXTmYCcJh
-	G17+JNMX07/La/DEygRKwoO51i57T3wTxab0Y2LrGWUzgEnZHfL+PXLtBakRHkYhALKLUpzhmjx
-	bT1+6uF6d6cd3Eoff0rZSuVyg+SXgSlwExpQEZ8Eap6noUoRSrwt5uwUiRpaQ==
-X-Google-Smtp-Source: AGHT+IHryNFp2D/1XDHNwPuVlv5N6khcikGDnn64EfjaaFrKAlmCc89G8uNfZpWRrcmN/09WPQHi+w==
-X-Received: by 2002:a05:622a:22a9:b0:466:ac03:a714 with SMTP id d75a77b69052e-46734db8b01mr93986971cf.36.1733534980510;
-        Fri, 06 Dec 2024 17:29:40 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296cb98csm27101141cf.30.2024.12.06.17.29.38
+        d=1e100.net; s=20230601; t=1733535463; x=1734140263;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=imJSuHRPRBE6YfDMYMKrQ6pZ3Ojs7qrzBdRNSgqW+Uo=;
+        b=eqFC3s87M84g9PEyl/0ned0by7V+uQ0T5akxP12ERwHry06LmFT1hCrFQRY9r1DGnR
+         PAK+xWgV9vzeEsTpjxNc1ISiBSeq1RgrlwHRrkFZZ04s8Ly0vZSoFR5L/p7puvK7vRe5
+         PhRhAwTTxNYSPMnuaC3FwWl+ift+eB/tUThkWQ8VJlUTQVd4BoDChSNc8jg1iZf3jzRf
+         BVs/4sYV70Jgo3zN8ivWGOfhf9VY0w4pY9f086PsxtnwIc0XEdjxs0zfjvJU9t1yw40J
+         QZnJzxFLXyq8Q8LBddAa1bI8A4/hnGM5opHGhaT5k6UYX+ZCa3kLoOQc1pKDqfP+5ZJ9
+         3nCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrsCP3X4aeQp+BBk4+ZgZSbv2AuIC5qVAHoCtKQ591aOV0pTFuRk8YL27HNHIJWMZ/nVpoUI9K4KQ/f3RSXOQ=@vger.kernel.org, AJvYcCXgSs3sfR71IqCcTearlNCHbY1LscJpaAp8lCkFIFPXO6t6b9XWiXEmivAO7KbrQfPDZZ1fQTWQ7gw6Knc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpFvMBWPW2RiWtd1Xtp0jzeZ773XeluXSQMYrUGNNnozfLxyB6
+	awFzFTSqJzth8f98lvOXDwFpcal+doyKmWfzfqX94OLOrLK8aGpbhX+Dk0G3
+X-Gm-Gg: ASbGncs4yIKbF3meDDz3BDAh3hL4ZN/OmvjorMqpmUKhVpFCuHWvLRU71iV0CHouEWt
+	sIm3TQOAP3l4lVhExRgo60G1C6lGhYpK2l828w4YkYuDduZJm2akHmKYvvEWghKbb7RMMl0Ww3c
+	W/SVDwnpVpE0nn6II0pSF1Dr0raeEHFa6cphV5GzfNl4n0BfnvIPn+RJLzVvEqCbXtEBNVDF2ky
+	5y0me1C5n0MJRGG90GRuNfHKoABosPZk/hAHl6gXxSwOe6Xm5/MkhE3HhCVSCKmLo8661DIh+WO
+	XYuxEYxOGx18oqP0UCyIheZ9s0Va
+X-Google-Smtp-Source: AGHT+IG7baZNA4xPcAkDMuxW5yrTyC0HKpWTfswaF6d4+BjwR69ntaEyFjfdn2T9mHWiPOz4suawqw==
+X-Received: by 2002:a05:6a21:1349:b0:1db:f0af:2277 with SMTP id adf61e73a8af0-1e187141ac3mr7275533637.38.1733535462606;
+        Fri, 06 Dec 2024 17:37:42 -0800 (PST)
+Received: from lordgoatius.clients.willamette.edu ([158.104.202.234])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725ceb7c02dsm254032b3a.136.2024.12.06.17.37.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 17:29:39 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: broonie@kernel.org,
-	michal.simek@amd.com,
-	linus.walleij@linaro.org
-Cc: linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+        Fri, 06 Dec 2024 17:37:42 -0800 (PST)
+From: Jimmy Ostler <jtostler1@gmail.com>
+To: dakr@kernel.org
+Cc: a.hindborg@kernel.org,
+	alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	felipe_life@live.com,
+	gary@garyguo.net,
+	jtostler1@gmail.com,
+	kernel@valentinobst.de,
 	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] spi: zynq-qspi: Add check for clk_enable()
-Date: Fri,  6 Dec 2024 20:32:58 -0500
-Message-Id: <20241207013258.3615645-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tmgross@umich.edu
+Subject: Re: [PATCH v2] rust: alloc: Add doctest for `ArrayLayout`
+Date: Fri,  6 Dec 2024 17:37:38 -0800
+Message-ID: <20241207013741.351172-1-jtostler1@gmail.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <Z1LYjiwaE8iDPj3H@pollux>
+References: <Z1LYjiwaE8iDPj3H@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,42 +102,91 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add check for the return value of clk_enable() to catch the potential
-error.
+On Fri, Dec 6, 2024 at 2:57 AM Danilo Krummrich <dakr@kernel.org> wrote:
+>
+> On Thu, Dec 05, 2024 at 03:04:28PM -0800, Jimmy Ostler wrote:
+> > On Thu, Dec 5, 2024 at 3:35 AM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > > Hi Jimmy,
+> > >
+> > > Thanks for the patch!
+> > >
+> > > On Thu, Dec 05, 2024 at 02:56:27AM -0800, Jimmy Ostler wrote:
+> > > > Add a rustdoc example and Kunit test to the `ArrayLayout` struct's
+> > > > `ArrayLayout::new()` function.
+> > > >
+> > > > Add an implementation of `From<LayoutError> for Error` for the
+> > > > `kernel::alloc::LayoutError`. This is necessary for the new test to
+> > > > compile.
+> > >
+> > > Please split this into a separate patch.
+> >
+> > Got it, the next version will be split into separate patches.
+> >
+> > > > diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> > > > index 52c502432447..ac8526140d7a 100644
+> > > > --- a/rust/kernel/error.rs
+> > > > +++ b/rust/kernel/error.rs
+> > > > @@ -4,9 +4,10 @@
+> > > >  //!
+> > > >  //! C header: [`include/uapi/asm-generic/errno-base.h`](srctree/include/uapi/asm-generic/errno-base.h)
+> > > >
+> > > > -use crate::{alloc::AllocError, str::CStr};
+> > > > -
+> > > > -use core::alloc::LayoutError;
+> > > > +use crate::{
+> > > > +    alloc::{layout::LayoutError, AllocError},
+> > > > +    str::CStr,
+> > > > +};
+> > >
+> > > I think this part of the change would be enough, since we don't make use of the
+> > > `From` implementation of `core::alloc::LayoutError` anywhere.
+> > >
+> > > I think we can add it (again), once it's needed.
+> >
+> > Okay, that makes sense. It is still used in the documentation for the
+> > macro `stack_try_pin_init`, and it is hidden and not used as a test, but
+> > it would probably be prudent to change that for consistency, as
+> > `Box::new` no longer returns `core::alloc::AllocError`.
+>
+> It seems you're confusing `LayoutError` and `AllocError` here.
+>
+> This is about the former. But you're right that `AllocError` can be fixed up in
+> a few places too.
 
-Fixes: c618a90dcaf3 ("spi: zynq-qspi: Drop GPIO header")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
- drivers/spi/spi-zynq-qspi.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Oops, you're totally right, I noticed it when grepping through error 
+types in documentation, and mixed them up.
 
-diff --git a/drivers/spi/spi-zynq-qspi.c b/drivers/spi/spi-zynq-qspi.c
-index dee9c339a35e..ae8a955bb6f1 100644
---- a/drivers/spi/spi-zynq-qspi.c
-+++ b/drivers/spi/spi-zynq-qspi.c
-@@ -379,12 +379,18 @@ static int zynq_qspi_setup_op(struct spi_device *spi)
- {
- 	struct spi_controller *ctlr = spi->controller;
- 	struct zynq_qspi *qspi = spi_controller_get_devdata(ctlr);
-+	int ret;
- 
- 	if (ctlr->busy)
- 		return -EBUSY;
- 
--	clk_enable(qspi->refclk);
--	clk_enable(qspi->pclk);
-+	ret = clk_enable(qspi->refclk);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_enable(qspi->pclk);
-+	if (ret)
-+		return ret;
- 	zynq_qspi_write(qspi, ZYNQ_QSPI_ENABLE_OFFSET,
- 			ZYNQ_QSPI_ENABLE_ENABLE_MASK);
- 
--- 
-2.34.1
+> Do you plan to send a patch for this as well?
 
+Yes, I've already got a fix for that locally.
+
+> > I can add that into the v3 patchset, unless there's some reason we
+> > should leave it.
+> >
+> > > >
+> > > >  use core::fmt;
+> > > >  use core::num::NonZeroI32;
+> > > > @@ -223,6 +224,12 @@ fn from(_: LayoutError) -> Error {
+> > > >      }
+> > > >  }
+> > > >
+> > > > +impl From<core::alloc::LayoutError> for Error {
+> > > > +    fn from(_: core::alloc::LayoutError) -> Error {
+> > > > +        code::ENOMEM
+> > > > +    }
+> > > > +}
+> > > > +
+> > > >  impl From<core::fmt::Error> for Error {
+> > > >      fn from(_: core::fmt::Error) -> Error {
+> > > >          code::EINVAL
+> > > >
+> > > > base-commit: 1dc707e647bc919834eff9636c8d00b78c782545
+> > > > --
+> > > > 2.47.1
+> > > >
+> >
+> > Thanks!
+> >
+> > Jimmy Ostler
 
