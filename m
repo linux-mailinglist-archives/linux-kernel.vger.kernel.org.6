@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-435993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 321409E7F7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:15:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 852069E7F81
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:21:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 026321883B90
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:15:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E56C165ED7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:21:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7A3145FE8;
-	Sat,  7 Dec 2024 10:15:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF6313D53A;
+	Sat,  7 Dec 2024 10:21:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b="jJ3cLZmm"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YTdsj2E4"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A418126C0D
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 10:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB28F7711F
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 10:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733566508; cv=none; b=kHUnzAJ3Mis8jxaG+qwNUmAFETpEFCNwxn0+2VUYzOHmJb6dhOIJKt4+NiTPvl2M+hey3gummyMG5TozXPxD+KHadRV2Y7xSJclJBbxGzfdTL5htfnDennCw8rTj8oIFgAzdcp/QlVKn2CE056hMitzrSTbR5MvPjNG0BXcxqCQ=
+	t=1733566901; cv=none; b=IIFLeJsgQjmK/EuzqDuYl9eBnmBuxG8rtoPC/BIstc/zMYSusKk4ORf697ys6ECGOzLQvWZdeOErONg90orCNV6Xn4Yb8EMgumSyG9UlP2t3jwU/gT6Ta7jiOekPspKp6j6LDBnjwTF4po093IHBZtrSbLQJ2tG2itHe8MuqjVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733566508; c=relaxed/simple;
-	bh=N7PAAdcZXi4j4vcHrnM2RRLxkONJyCqaRZbhJPQCyhI=;
+	s=arc-20240116; t=1733566901; c=relaxed/simple;
+	bh=QXiSoNTWVCratAFwPXras/dFvgRcZIwl9XGZ8yxUR28=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mu/t0iZ22k3zLzC4bbBjQy0pMTF2VxGngXpQ/J9AJHNRvVaR55gFBQdwGq0px7L6ac42fxDaI9q9E/gXD+ez+UhLKGcwxeGTpvnqayCfmxmHkTQCwpPs+awahqG43lsjFM2EiMDUxIJ0LIg9Hk4uUP+uMqUf7U8w+LtcNchSpHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev; spf=none smtp.mailfrom=sedlak.dev; dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b=jJ3cLZmm; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=sedlak.dev
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3ab136821so2534316a12.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 02:15:05 -0800 (PST)
+	 In-Reply-To:Content-Type; b=r+YfIOuI9KWZ8QuWjSmy27xPlCn/gYgxCzMhUGwnrQQWIc8wHVUMQ0vFTAK3ROx3pw4M26I48+v6sp0gSFsE0oC/OCF5UZsJRpb+pgj783mdyoVqITMrfcLaKGhQQQwri9fceKYSz1rz+AnxY064ti+N3RvMQYgsXqGEBW7dELI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YTdsj2E4; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5d3e8f64d5dso112854a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 02:21:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sedlak-dev.20230601.gappssmtp.com; s=20230601; t=1733566504; x=1734171304; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=tuxon.dev; s=google; t=1733566897; x=1734171697; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=ObfMZ37SmD1QbR1Jv5JuQm+mGo6MMRPDunc4/bEgt70=;
-        b=jJ3cLZmm1a4D/hudmsPWOIwFAtD0912TaAmuxfrf2Kl/bAD4EuWPP+S3juXxse208Q
-         it6w0N0+SapjJHHHd23aR8KMLg373vXeBurhJBl8MHU0jl6qt7RKP3UkrPgaKvDQAA7d
-         NY97a3VG/NzV1D77MlnR3Whoxi+f9AxLUcmAN16DtFprRO2uNzU3CMugpOhYmOZY4CbH
-         XMovwRRe2EUDBaV1VAT8paOS0eKGse7hPF6JgkY9k0ty2LGklzwompAmZJr5yp6Wcql/
-         qJWONrMZFbzH/7kjt1JMCKO766SMVxBjPjjd22NT+hMCnKt1iWQyPC/hhSg7QCM7L7OC
-         rcCA==
+        bh=JJZayt2vt6q0EzZrV2lCwTY2P8mZkwCpfazLi0rUktQ=;
+        b=YTdsj2E4j5omKzpVXO1P02UJZtuXWK1bNkJkND8p3M7IQcTijCV8aKJvIMCyEUaChG
+         zVqJ0JKjG+FvGp38ztMHP8Z5g66kKvoM4lMkzhygWWivF3kY+YwboNhNoMta9gIlACFe
+         dMc6gUK1q3htJeCpXthGfVgNcmKvAsy07cOMO0i9R2XWGFdD0TgYnjY13NimXhN1iQJ7
+         yvv8TlqZS7/EwZp8RbVpyqnT4c0PPPkPWIJsE5AYimD2Uu6qGyfGZLjjz1BSSzz0REju
+         nFkpgddk1axVMo2HtTLLIxxbPwtl8mvzKgL2t3Ne5aUISY+R854v/NJQkIRqmZOyCKpO
+         SCTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733566504; x=1734171304;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733566897; x=1734171697;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObfMZ37SmD1QbR1Jv5JuQm+mGo6MMRPDunc4/bEgt70=;
-        b=vSeSaBIjFimakfTnnf2/EUxod4x2MLNLCKFljnhgSHzmRtaRGGE0MeOxxQdUgu4a2u
-         9rdGh8ci/f3pvh7kv0PuaYUDDbbHAty2CTImxp9/M2MBkF+hW9/WT82FuS1GSQuf5wS1
-         DZAu2PbonEd1DXXFlE6H/4aYNWK8m3OLiP9ywk9adtdsvNwHZTnezz7Xfiv8UUI2YOyD
-         +VqQVkHAGHPxH0CDFnnJ1GwJErk0zcWmICT5znZ2Qfk505ChtsW6DevIhZig87SWSmDC
-         I/3qkXTkL/6id5c0jF5J7o5mVIX4dqqwC8iuwnynvBxmr/XkPJe9gs+ZQw+V9Db5PAMG
-         4O2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXrYnRzDKZGJzrzm1/4skqifzWLTgXBDEMEfO9oyK8xqBlG0IcJMwj5/kIs5jxsXYS8blYyiCAc7c7Lwp4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOW6auyByiAVqsCzojBN35ICx896TWo6oF4oZk/8eEE3OadvTP
-	FSPZh8TbVihNeDN51dkYWvZsaEyWpF8VUZ7E+fTyvSKMsRx4RyGzKc/u41CAzcQ=
-X-Gm-Gg: ASbGncvj9YtAiQJd2Fb5ITmSRd7PspYo5Hsic08DmSjOtjlidb5F7MJT4Zxu3SnBaVv
-	atODzC/GFnPXrQ56xEo1wHqd9Cd1a5Jp/Pmy6nPwRLW5+RUZNehyjTRAyONTyYu3TRlVsZkxvqG
-	WjNRF5+mk0z3fST7l7fyXpKrfDhCwG8ykntUQrcC/1SFBVX3W4TY4WwJBiYl8HAVwoilu8zPOrq
-	wqyxGpNWUMQeDBCZgV+gLO7h1236V4Wm2J4xapUXjlyKeX7Ic4=
-X-Google-Smtp-Source: AGHT+IEqrtuo9wLe8auYpHiND4zw6vEIDKTZXy8pZhJR+nf10wlmcqvAIubi8QS9wcA5sqCFHiMvlQ==
-X-Received: by 2002:a05:6402:2350:b0:5d0:c9e6:30bc with SMTP id 4fb4d7f45d1cf-5d3be688a3amr5792105a12.10.1733566504084;
-        Sat, 07 Dec 2024 02:15:04 -0800 (PST)
-Received: from [192.168.88.249] ([95.85.217.110])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3d51c3c4fsm1212169a12.64.2024.12.07.02.15.01
+        bh=JJZayt2vt6q0EzZrV2lCwTY2P8mZkwCpfazLi0rUktQ=;
+        b=SiIRA+3b71jXMFI/m4ibPFLf2W6eA5MEpGUAVk2X2Sx0Q/J3w7+f213TND0PFulXah
+         qj+EpfckAgWLDuGUFOW6HWn9Pv/7NAYQN2I0hLaWq6tVPPmVdKQeaZM6Z3OW72mWFfmp
+         IgurbkucqIQu8qPjWaieYHiLOIRzHx61/ZZ6IlAkArhfM/Ic6QCjNgfohwglpQmsNL/D
+         CAKIwk473bA5KM+8xG5/tsu4o8tIAjyZdW0W+JWMekAlhaUU1EboeeTZ2bLMNnBKVh4I
+         Bo4ZL97M6HeWdfV+RM1lLdJhb6rHghZ9HShh8/It3vKXfYi7FsypraaDlw775vE15BrG
+         3fvw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2D+qreUp4WOa4nyXQz4MmsZ3P4GTM6eLyCkROCwMDY0TAf0825hRjdXNYoPtOS6+69vaabzIh9oRR/6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0+AtozQ0oER95pNhcCJjP7Ccq84bbTLWolUrdk5ScLbv3BH7n
+	ipj5kZVH/WF4/qZt0750iXLz8jjT4DX7CqKUTgfLGMzZgVFhAeffqu0fx6UqtE8=
+X-Gm-Gg: ASbGncvItiR0wqn4C0f2JVwvMrPD9Mnix5s0oMlfbxaS+IsmDx4yGRGN3TfF0FE+VVi
+	mVJvLjuvqPGZKX29vSDERzWJIIXLY835ERH08cq/gPXciGlb6YsGIv2vC4VX7M12wkDJ+/zhdbu
+	tSYm9dyqqmSQNg90XxNY48+AozzkwJev5rDbnynywCVI5x69xFhC57ZZ+QJeNQ8r9gW/wtbB7T+
+	Ym5ldJsURVJtOuq8QfkLONn+C/xr9j3fCGoJsHO2cX0AILTOqmnDFBNcpA=
+X-Google-Smtp-Source: AGHT+IEUW9q8xF1+fkOhH8DfZdZAdiJH5QSmufreCICdcRy5sNSRiEsOZ1CT8Ac9bQeTafNvpxQjJA==
+X-Received: by 2002:a05:6402:11c6:b0:5d0:f9f1:cd73 with SMTP id 4fb4d7f45d1cf-5d3be67cf40mr4595640a12.13.1733566896858;
+        Sat, 07 Dec 2024 02:21:36 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c798fbasm3292509a12.59.2024.12.07.02.21.34
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 02:15:02 -0800 (PST)
-Message-ID: <30ddfc7f-4b13-4caf-8859-2cd2e72ef878@sedlak.dev>
-Date: Sat, 7 Dec 2024 11:14:59 +0100
+        Sat, 07 Dec 2024 02:21:35 -0800 (PST)
+Message-ID: <98d54d6e-4511-49ae-8def-ff711152a3ad@tuxon.dev>
+Date: Sat, 7 Dec 2024 12:21:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,60 +79,298 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [PATCH] rust: macros: add authors
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
- guilherme giacomo simoes <trintaeoitogc@gmail.com>,
- Wayne Campbell <wcampbell1995@gmail.com>
-Cc: ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
- gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
- a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
- walmeida@microsoft.com, fujita.tomonori@gmail.com,
- tahbertschinger@gmail.com, rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241206192244.443486-1-trintaeoitogc@gmail.com>
- <CANiq72neo_RtANWJu_GW5LxsR5KWxriS1L8nsXkNn7ioiaEQKQ@mail.gmail.com>
+Subject: Re: [PATCH 3/5] soc: renesas: rz-sysc: Add support for RZ/G3E family
 Content-Language: en-US
-From: Daniel Sedlak <daniel@sedlak.dev>
-In-Reply-To: <CANiq72neo_RtANWJu_GW5LxsR5KWxriS1L8nsXkNn7ioiaEQKQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: John Madieu <john.madieu.xa@bp.renesas.com>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Biju Das <biju.das.jz@bp.renesas.com>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Cc: john.madieu@gmail.com, linux-renesas-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241206212559.192705-1-john.madieu.xa@bp.renesas.com>
+ <20241206212559.192705-4-john.madieu.xa@bp.renesas.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20241206212559.192705-4-john.madieu.xa@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
+Hi, John,
 
-
-On 12/6/24 9:17 PM, Miguel Ojeda wrote:
-> There are several ways we could do this:
+On 06.12.2024 23:25, John Madieu wrote:
+> Add SoC detection support for RZ/G3E SoC. Also add support for detecting the
+> number of cores and ETHOS-U55 NPU and also detect PLL mismatch for SW settings
+> other than 1.7GHz.
 > 
->    - A single field, that only accepts a list.
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> ---
+>  drivers/soc/renesas/Kconfig          |  6 +++
+>  drivers/soc/renesas/Makefile         |  1 +
+>  drivers/soc/renesas/r9a09g047-sysc.c | 70 ++++++++++++++++++++++++++++
+>  drivers/soc/renesas/rz-sysc.c        | 44 +++++++++++------
+>  drivers/soc/renesas/rz-sysc.h        |  7 +++
+>  5 files changed, 114 insertions(+), 14 deletions(-)
+>  create mode 100644 drivers/soc/renesas/r9a09g047-sysc.c
 > 
->    - A single field that accepts both a string or a list.
+> diff --git a/drivers/soc/renesas/Kconfig b/drivers/soc/renesas/Kconfig
+> index a792a3e915fe..9e46b0ee6e80 100644
+> --- a/drivers/soc/renesas/Kconfig
+> +++ b/drivers/soc/renesas/Kconfig
+> @@ -348,6 +348,7 @@ config ARCH_R9A09G011
+>  
+>  config ARCH_R9A09G047
+>  	bool "ARM64 Platform support for RZ/G3E"
+> +	select SYSC_R9A09G047
+>  	help
+>  	  This enables support for the Renesas RZ/G3E SoC variants.
+>  
+> @@ -386,9 +387,14 @@ config RST_RCAR
+>  
+>  config SYSC_RZ
+>  	bool "System controller for RZ SoCs" if COMPILE_TEST
+> +	depends on MFD_SYSCON
+>  
+>  config SYSC_R9A08G045
+>  	bool "Renesas RZ/G3S System controller support" if COMPILE_TEST
+>  	select SYSC_RZ
+>  
+> +config SYSC_R9A09G047
+> +	bool "Renesas RZ/G3E System controller support" if COMPILE_TEST
+> +	select SYSC_RZ
+> +
+>  endif # SOC_RENESAS
+> diff --git a/drivers/soc/renesas/Makefile b/drivers/soc/renesas/Makefile
+> index 8cd139b3dd0a..3256706112d9 100644
+> --- a/drivers/soc/renesas/Makefile
+> +++ b/drivers/soc/renesas/Makefile
+> @@ -7,6 +7,7 @@ ifdef CONFIG_SMP
+>  obj-$(CONFIG_ARCH_R9A06G032)	+= r9a06g032-smp.o
+>  endif
+>  obj-$(CONFIG_SYSC_R9A08G045)	+= r9a08g045-sysc.o
+> +obj-$(CONFIG_SYSC_R9A09G047)	+= r9a09g047-sysc.o
+>  
+>  # Family
+>  obj-$(CONFIG_PWC_RZV2M)		+= pwc-rzv2m.o
+> diff --git a/drivers/soc/renesas/r9a09g047-sysc.c b/drivers/soc/renesas/r9a09g047-sysc.c
+> new file mode 100644
+> index 000000000000..32bdab9f1774
+> --- /dev/null
+> +++ b/drivers/soc/renesas/r9a09g047-sysc.c
+> @@ -0,0 +1,70 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * RZ/G3E System controller driver
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/bits.h>
+> +#include <linux/device.h>
+> +#include <linux/init.h>
+> +#include <linux/io.h>
+> +
+> +#include "rz-sysc.h"
+> +
+> +/* Register definitions */
+> +#define SYS_LSI_DEVID	0x304
+> +#define SYS_LSI_MODE	0x300
+> +#define SYS_LSI_PRR	0x308
+> +#define SYS_LSI_DEVID_REV	GENMASK(31, 28)
+> +#define SYS_LSI_DEVID_SPECIFIC	GENMASK(27, 0)
+> +#define SYS_LSI_PRR_CA55_DIS	BIT(8)
+> +#define SYS_LSI_PRR_NPU_DIS	BIT(1)
+> +/*
+> + * BOOTPLLCA[1:0]
+> + *	[0,0] => 1.1GHZ
+> + *	[0,1] => 1.5GHZ
+> + *	[1,0] => 1.6GHZ
+> + *	[1,1] => 1.7GHZ
+> + */
+> +#define SYS_LSI_MODE_STAT_BOOTPLLCA55	GENMASK(12, 11)
+> +#define SYS_LSI_MODE_CA55_1_7GHz	0x3
+> +
+> +static void rzg3e_extended_device_identification(struct device *dev,
+> +				void __iomem *sysc_base,
+> +				struct soc_device_attribute *soc_dev_attr)
 
-Since module is a macro, if we would allow syntax in the macro like:
+Not strong preference here, I think it can still be aligned to (
 
-	authors: ["author1", "author2", ...]
+> +{
+> +	u32 prr_val, mode_val;
+> +	bool is_quad_core, npu_enabled;
 
-I think we could fight with the code formatting, because when it comes 
-to the rust macros, rustfmt is often very confused and we could end up 
-with variations like:
+Reverse christmass tree order?
 
-	authors: ["author1", "author2",
-			"author3"]
+> +
+> +	prr_val = readl(sysc_base + SYS_LSI_PRR);
+> +	mode_val = readl(sysc_base + SYS_LSI_MODE);
+> +
+> +	/* Check CPU and NPU configuration */
+> +	is_quad_core = !(prr_val & SYS_LSI_PRR_CA55_DIS);
+> +	npu_enabled = !(prr_val & SYS_LSI_PRR_NPU_DIS);
+> +
+> +	dev_info(dev, "Detected Renesas %s Core %s %s Rev %s  %s\n",
 
-or
+I think you have an extra space towards the end: "%s  %s"
 
-	authors: [
-		   "author1",
-		   "author2",
-		  ]
+> +		 is_quad_core ? "Quad" : "Dual",
+> +		 soc_dev_attr->family,
+> +		 soc_dev_attr->soc_id,
+> +		 soc_dev_attr->revision,
+> +		 npu_enabled ? "with Ethos-U55" : "");
+> +
+> +	/* Check CA55 PLL configuration */
+> +	if (FIELD_GET(SYS_LSI_MODE_STAT_BOOTPLLCA55, mode_val) != SYS_LSI_MODE_CA55_1_7GHz)
+> +		dev_warn(dev, "CA55 PLL is not set to 1.7GHz\n");
+> +}
+> +
+> +static const struct rz_sysc_soc_id_init_data rzg3e_sysc_soc_id_init_data __initconst = {
+> +	.family = "RZ/G3E",
+> +	.id = 0x8679447,
+> +	.offset = SYS_LSI_DEVID,
+> +	.revision_mask = SYS_LSI_DEVID_REV,
+> +	.specific_id_mask = SYS_LSI_DEVID_SPECIFIC,
+> +	.extended_device_identification = rzg3e_extended_device_identification,
+> +};
+> +
+> +const struct rz_sysc_init_data rzg3e_sysc_init_data = {
+> +	.soc_id_init_data = &rzg3e_sysc_soc_id_init_data,
+> +};
+> diff --git a/drivers/soc/renesas/rz-sysc.c b/drivers/soc/renesas/rz-sysc.c
+> index d34d295831b8..515eca249b6e 100644
+> --- a/drivers/soc/renesas/rz-sysc.c
+> +++ b/drivers/soc/renesas/rz-sysc.c
+> @@ -231,7 +231,7 @@ static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *mat
+>  
+>  	soc_id_start = strchr(match->compatible, ',') + 1;
+>  	soc_id_end = strchr(match->compatible, '-');
+> -	size = soc_id_end - soc_id_start;
+> +	size = soc_id_end - soc_id_start + 1;
 
-and rustfmt would be totally ok with both of them.
+This may worth a different patch.
 
-> 
->    - Two fields like this (that cannot coexist).
-> 
->    - Accepting several "author" fields and append them all into a list.
-> 
+>  	if (size > 32)
+>  		size = 32;
+>  	strscpy(soc_id, soc_id_start, size);
+> @@ -257,8 +257,16 @@ static int rz_sysc_soc_init(struct rz_sysc *sysc, const struct of_device_id *mat
+>  		return -ENODEV;
+>  	}
+>  
+> -	dev_info(sysc->dev, "Detected Renesas %s %s Rev %s\n", soc_dev_attr->family,
+> -		 soc_dev_attr->soc_id, soc_dev_attr->revision);
+> +	/* Try to call SoC-specific device identification */
+> +	if (soc_data->extended_device_identification) {
+> +		soc_data->extended_device_identification(sysc->dev, sysc->base,
+> +							 soc_dev_attr);
+> +	} else {
+> +		dev_info(sysc->dev, "Detected Renesas %s %s Rev %s\n",
+> +			 soc_dev_attr->family,
+> +			 soc_dev_attr->soc_id,
+> +			 soc_dev_attr->revision);
+> +	}
+>  
+>  	soc_dev = soc_device_register(soc_dev_attr);
+>  	if (IS_ERR(soc_dev))
+> @@ -283,6 +291,9 @@ static struct regmap_config rz_sysc_regmap = {
+>  static const struct of_device_id rz_sysc_match[] = {
+>  #ifdef CONFIG_SYSC_R9A08G045
+>  	{ .compatible = "renesas,r9a08g045-sysc", .data = &rzg3s_sysc_init_data },
+> +#endif
+> +#ifdef CONFIG_SYSC_R9A09G047
+> +	{ .compatible = "renesas,r9a09g047-sys", .data = &rzg3e_sysc_init_data },
+>  #endif
+>  	{ }
+>  };
+> @@ -315,20 +326,25 @@ static int rz_sysc_probe(struct platform_device *pdev)
+>  		return ret;
+>  
+>  	data = match->data;
+> -	if (!data->max_register_offset)
+> -		return -EINVAL;
 
-I think accepting several "author" fields is the best one because it 
-mirrors the C API, where in C when you want to specify more authors you 
-just repeat the MODULE_AUTHOR("author<N>") macro.
+The idea with this was to still have the syscon regmap registered no matter
+the signals are available or not. This may be needed for other use cases.
+
+> +	if (data->signals_init_data) {
+
+I'd prefer to have this check in rz_sysc_signals_init(). In this way you
+have everything signal init specific in a single function.
+
+> +		if (!data->max_register_offset)
+> +			return -EINVAL;
+>  
+> -	ret = rz_sysc_signals_init(sysc, data->signals_init_data, data->num_signals);
+> -	if (ret)
+> -		return ret;
+> +		ret = rz_sysc_signals_init(sysc, data->signals_init_data, data->num_signals);
+> +		if (ret)
+> +			return ret;
+> +
+> +		rz_sysc_regmap.max_register = data->max_register_offset;
+> +		dev_set_drvdata(dev, sysc);
+
+Why changed the initial order?
+
+Thank you,
+Claudiu
+
+>  
+> -	dev_set_drvdata(dev, sysc);
+> -	rz_sysc_regmap.max_register = data->max_register_offset;
+> -	regmap = devm_regmap_init(dev, NULL, sysc, &rz_sysc_regmap);
+> -	if (IS_ERR(regmap))
+> -		return PTR_ERR(regmap);
+> +		regmap = devm_regmap_init(dev, NULL, sysc, &rz_sysc_regmap);
+> +		if (IS_ERR(regmap))
+> +			return PTR_ERR(regmap);
+>  
+> -	return of_syscon_register_regmap(dev->of_node, regmap);
+> +		return of_syscon_register_regmap(dev->of_node, regmap);
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static struct platform_driver rz_sysc_driver = {
+> diff --git a/drivers/soc/renesas/rz-sysc.h b/drivers/soc/renesas/rz-sysc.h
+> index babca9c743c7..2b5ad41cef9e 100644
+> --- a/drivers/soc/renesas/rz-sysc.h
+> +++ b/drivers/soc/renesas/rz-sysc.h
+> @@ -8,7 +8,9 @@
+>  #ifndef __SOC_RENESAS_RZ_SYSC_H__
+>  #define __SOC_RENESAS_RZ_SYSC_H__
+>  
+> +#include <linux/device.h>
+>  #include <linux/refcount.h>
+> +#include <linux/sys_soc.h>
+>  #include <linux/types.h>
+>  
+>  /**
+> @@ -42,6 +44,7 @@ struct rz_sysc_signal {
+>   * @offset: SYSC SoC ID register offset
+>   * @revision_mask: SYSC SoC ID revision mask
+>   * @specific_id_mask: SYSC SoC ID specific ID mask
+> + * @extended_device_identification: SoC-specific extended device identification
+>   */
+>  struct rz_sysc_soc_id_init_data {
+>  	const char * const family;
+> @@ -49,6 +52,9 @@ struct rz_sysc_soc_id_init_data {
+>  	u32 offset;
+>  	u32 revision_mask;
+>  	u32 specific_id_mask;
+> +	void (*extended_device_identification)(struct device *dev,
+> +		void __iomem *sysc_base,
+> +		struct soc_device_attribute *soc_dev_attr);
+>  };
+>  
+>  /**
+> @@ -65,6 +71,7 @@ struct rz_sysc_init_data {
+>  	u32 max_register_offset;
+>  };
+>  
+> +extern const struct rz_sysc_init_data rzg3e_sysc_init_data;
+>  extern const struct rz_sysc_init_data rzg3s_sysc_init_data;
+>  
+>  #endif /* __SOC_RENESAS_RZ_SYSC_H__ */
 
