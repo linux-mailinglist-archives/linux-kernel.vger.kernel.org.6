@@ -1,190 +1,147 @@
-Return-Path: <linux-kernel+bounces-435901-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18999E7E6A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:39:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 736989E7E44
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:10:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DA452865E0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:39:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8C81887539
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:10:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332544594A;
-	Sat,  7 Dec 2024 05:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="JmvvEx1U"
-Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E58E6A8D2;
+	Sat,  7 Dec 2024 05:10:29 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B65117591;
-	Sat,  7 Dec 2024 05:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3997724B34
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733549974; cv=none; b=bwDDchGghG4+Vidix1Xl30s3hLjeE6LbO0rHMVC9ZwERRUBg9k9lhiyQ+4Yr9A3yExVyT9W5WkBatevcTGr0Eo8wdTwvryMSKCnm0NZN7v14mrVoG9J+brX6fcvOLXjMF2NCSwM8QL3XPkIpxsuSFtss00as7FHa9nlmovqMm/U=
+	t=1733548228; cv=none; b=tJlJYCj4GjXxqrfWt91ax7HSMC0JudG89DRPrr9Njn57NjRnbhl/r+/fn/OJ2jRUR8t32vCvGzLbTmTuwCrzBlhcLm19JxVg6Ac4NbS6wzlO2ynjPnzty3/Tsr957ai5PoKfYYa1xZTH07rur8xBGb/6n6eofF3se/TOD5SdsXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733549974; c=relaxed/simple;
-	bh=gG3hzY7MHlAi9KcZyaLalqsMDvFVa2GEYwMxbrVqTi0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=nJdHTqj2UR9547qJJytX3alOnBtv/tJEDPkgNG1Ptnu/32HXQbTMwVSIejCKXSI5ksXxVFkIbfNMD0bHt4uZDcSGy64YM+/aULXCsMGxETDi1Hn201gGW2wbXJY1S7037eEd3FcYDbadp7ZMpJPsxU+onybqpGMC+ID9IKLKEaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=JmvvEx1U; arc=none smtp.client-ip=193.252.22.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-ed1-f48.google.com ([209.85.208.48])
-	by smtp.orange.fr with ESMTPSA
-	id JnXGtNdLxrVFvJnXGtI2No; Sat, 07 Dec 2024 06:39:23 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733549963;
-	bh=GBRrBlRLVT7TL533lKb1vFLdI9Y/T44KcDVsiEUWS/k=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=JmvvEx1UPqRlipXPGnEc1HLuLgslUqQld1j/8im5ifw3b3FIEKt+j0rkjGffyvtJ0
-	 1ZFX8MX9QQIYRu6CEWzPUWXI8Lcb7LPLMxbAjVm3DXNFSaYRWyKho1e18M4LH9M6w/
-	 QwU3cpkhD7Wi5wn4GbHuLxwwc6ILkca2CWzmMnwQP5B6Js9dTKD1oIGtPG+0efVasg
-	 cE1sNjGNSTEF3LBb7u266RyIK2K/JDdz+NqxwIO/bt1uRibcKmPMWG17ts0H8o/vJr
-	 /tBPZaPy08d08bknX0zwHq7KgPilp4uZP+qI53zzIu0/44j0uoaUIuAlGYwnxiB/i8
-	 +MkdZkLVkJYjg==
-X-ME-Helo: mail-ed1-f48.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Dec 2024 06:39:23 +0100
-X-ME-IP: 209.85.208.48
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5d0d32cd31aso3189879a12.0;
-        Fri, 06 Dec 2024 21:39:22 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV4WB3vP4YImrIVbQ3L27CP7IKcmVvelScLvxD+x4CdsBwwr81RanUolgGLEUvvJSzZ5DYC3nrDwO1KrI8D8Ug=@vger.kernel.org, AJvYcCX5gLPKoIQHuGxfyvZGLWq7qdQaWW4MCFSsEmQRgjPhfa5cuPyLIX7MTC3tF3MGUcf1Chb2lHHaA3Gq1RCz@vger.kernel.org, AJvYcCXoRxdefqWTSrhZuUqeXouznCVMrSaJarO7/9lmif1ezQCkCk6swPRQBKXTgKtGhUUtJUeCpTAV2T9Ljnu5@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws9p4RbtEwo/wCUaOUwQsX73iALRgMQMitwoucgcDH/UDSNlwt
-	dT9pcY9I1dEFNqJO5m6jOl9emy0W/bwLXLttwTYg8Mila8njx9NIu2ceti+vf0TDoOubkjYKAfx
-	6+6iBTPNAN17J3AM8P1ZvZoBtsto=
-X-Google-Smtp-Source: AGHT+IFeJU5P21g2+KpTjso/RWJ0896W/J65sLmbtkloH76ZizTy87kZbTnF4kB92tm0ezpnDi5dm2fIynDl5PgBmTs=
-X-Received: by 2002:a05:6402:5253:b0:5d1:2377:5af3 with SMTP id
- 4fb4d7f45d1cf-5d3be661fc5mr3945565a12.5.1733469604117; Thu, 05 Dec 2024
- 23:20:04 -0800 (PST)
+	s=arc-20240116; t=1733548228; c=relaxed/simple;
+	bh=et1z/KUmz8usDOn7via7XGKSBW4cSCbTg4tBkTkfDL8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f1yZA5vb0zATvttx3YLG/Eh6W2TEr50vPSyuwD1b5S/NPiE1/M0rdwJ2j0Sv0hNgdvF2rspBfr3xBpYrsZBdVTvu4LNWMbC/6CM4bIoMVxEL3U4vSJj/Kq+p/b9ajztMx7GaK9Qb+hlJLTqTigk/B7A4J3l/UvPYXFFTry9u8Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-841896ec108so450630839f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 21:10:25 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733548225; x=1734153025;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8f2I+1uZRwsWPiIe3GqMd//ZCSLDRADHYVc75cI1Ges=;
+        b=k1E0zo7cGs1hJYu2bRN8V0CYeRV9QSCPG8iCTLKrv3d9d3jjen4eOcNV2VWbKl8D+s
+         3Acx9GMmxkgu6toXBwL6jb84E1rN+ua6altqH1opUm8p/3nfLWYHJksWwbYE4iq3tShv
+         i5yH9i/ZbJfkB5+Xy0/d/00InR6bZaq3znaWu5UVNqkESJIVyAlJVWQggu96yudwUOxj
+         koZUq+aT7uygv3z1PwShElH9Tzt6q5Yf2sw6ZRuqv4ULeQr+Ftnz5wjTOsviu/YBp0sP
+         QjitD8dTwapRJ/bxU+VLPba9t1/p2Fs2xJ14S81SrlT6dkKBMwx1vS94OCPePH7Bzv6w
+         pH+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVQZEw13Rz2QcE/GGKDSzDeV4vHfjg3BxJkBJxf1mFzqkWO53uSq2S7NBGNEHMLRWxVmr9hOPvvNC862o8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqfDFbvypyw9HhNqzL2vbkuSQWO+zCJMCEM+w0Ef8kGHB1YHCs
+	M+Yuj91TDsVPKi/DHCanOFmB/XxrIBk5l6AlD/TNt9xPD1zM3KTKVR88I/l9GKssZ0x+uVAfWZX
+	4jWjMA4Hc+8ttnwG/SLuU0r9eby22No0KHuB9u3Hn0NDj+4hJV5+w6Fk=
+X-Google-Smtp-Source: AGHT+IHKs3Fulw6z20FvxC3nCjkPPZgRJVQIWaH8JYYw6aFE/qX9/QQo2Bpa3i3xa8SuyDIF3kNC8FJNEbCfy3s1DIQRvZNybRwh
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
- <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com> <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
- <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com> <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
-In-Reply-To: <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Fri, 6 Dec 2024 16:19:52 +0900
-X-Gmail-Original-Message-ID: <CAMZ6RqKLrDB-xkm2G242yU7L=tzxCR9NTwca-1yuWSSEHAOrxQ@mail.gmail.com>
-Message-ID: <CAMZ6RqKLrDB-xkm2G242yU7L=tzxCR9NTwca-1yuWSSEHAOrxQ@mail.gmail.com>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of __is_constexpr()
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: David Laight <David.Laight@aculab.com>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, uecker@tugraz.at
+X-Received: by 2002:a05:6e02:12c5:b0:3a7:a3a4:2cb3 with SMTP id
+ e9e14a558f8ab-3a811e06230mr60927205ab.15.1733548225288; Fri, 06 Dec 2024
+ 21:10:25 -0800 (PST)
+Date: Fri, 06 Dec 2024 21:10:25 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6753d8c1.050a0220.a30f1.0151.GAE@google.com>
+Subject: [syzbot] [net?] WARNING in NUM
+From: syzbot <syzbot+3f059ffbdd539a3f6bc9@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Fri. 6 Dec. 2024 at 15:14, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
-> On Thu, 5 Dec 2024 at 18:26, David Laight <David.Laight@aculab.com> wrote:
-> >
-> > From: Vincent Mailhol
-> > > ACK. Would adding a suggested--by Linus tag solve your concern?
->
-> I'm genberally the one person who doesn't need any more credit ;)
->
-> > I actually suspect the first patches to change __is_constexpr() to
-> > use _Generic were from myself.
->
-> Yes. And David was also I think the one who suggested something else
-> than "!!" originally too.
+Hello,
 
-Ack. Then, I will add a suggested-by tag to credit David!
+syzbot found the following issue on:
 
-> I may have liked "!!" for being very idiomatic and traditional C, but
-> there were those pesky compilers that warn about "integer in bool
-> context" or whatever the annoying warning was when then doing the
-> "multiply by zero" to turn a constant expression into a constant zero
-> expression.
->
-> So that
->
->   #define is_const(x) __is_const_zero(0 * (x))
->
-> causes issues when 'x' is not an integer expression (think
-> "is_const(NULL)" or "is_const(1 == 2)".
+HEAD commit:    cdd30ebb1b9f module: Convert symbol namespace to string li..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=146c8330580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6851fe4f61792030
+dashboard link: https://syzkaller.appspot.com/bug?extid=3f059ffbdd539a3f6bc9
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-But 1 == 2 has already an integer type as proven by:
+Unfortunately, I don't have any reproducer for this issue yet.
 
-  #define is_int(x) _Generic(x, int: 1, default: 0)
-  static_assert(is_int(1 == 2));
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-cdd30ebb.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/35bb9b3cd157/vmlinux-cdd30ebb.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9c6bbf481907/bzImage-cdd30ebb.xz
 
-So, it leaves us with the case is_const(pointer). To which I would
-question if we really want to support this. By definition, an
-expression with a pointer type can not be an *integer* constant
-expression. So one part of me tells me that it is a sane thing to
-*not* support this case and throw a warning if the user feeds
-is_cont() with a pointer.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3f059ffbdd539a3f6bc9@syzkaller.appspotmail.com
 
-If we just what to accept pointer arguments but still return false
-(because those are not integers), one solution is:
+Dec  3 05:04:02 syzkaller daemon.info dhcpcd[5653]: eth3: IAID d8:df:c9:55
+Dec  3 05:04:02 syzkaller daemon.info dhcpcd[5653]: eth3: adding address fe80::7[   49.690919][ T6466] ------------[ cut here ]------------
+f27:c3e8:bb45:52[   49.693207][ T6466] WARNING: CPU: 3 PID: 6466 at net/ipv6/ip6mr.c:419 ip6mr_free_table+0xbd/0x120 net/ipv6/ip6mr.c:419
+df
+Dec  3 05:04:02 [   49.710042][ T6466] Code: 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 58 49 83 bc 24 c0 0e 00 00 00 74 09 e8 c4 c5 af f7 90 <0f> 0b 90 e8 bb c5 af f7 48 8d 7b 38 e8 22 86 9c f7 48 89 df be 0f
+syzkaller kern.w[   49.717312][ T6466] RSP: 0018:ffffc90003487bd8 EFLAGS: 00010293
+arn kernel: [   [   49.719598][ T6466] RAX: 0000000000000000 RBX: ffff888108508000 RCX: ffffffff89ea4014
+49.690919][ T646[   49.725534][ T6466] RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
+6] ------------[[   49.725548][ T6466] R10: 0000000000000001 R11: 0000000000000001 R12: ffff88804e965ac0
+ cut here ]-----[   49.725561][ T6466] R13: ffff888108508000 R14: ffff888108508008 R15: dead000000000100
+-------
+Dec  3 05:04:02 [   49.739536][ T6466] CR2: 00007f4fd5157580 CR3: 0000000035ea8000 CR4: 0000000000352ef0
+syzkaller kern.w[   49.742428][ T6466] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+arn kernel: [   [   49.746956][ T6466] Call Trace:
+49.693207][ T646[   49.748809][ T6466]  ? __warn+0xea/0x3c0 kernel/panic.c:746
+6] WARNING: CPU:[   49.750217][ T6466]  ? ip6mr_free_table+0xbd/0x120 net/ipv6/ip6mr.c:419
+ 3 PID: 6466 at [   49.751877][ T6466]  ? __report_bug lib/bug.c:199 [inline]
+ 3 PID: 6466 at [   49.751877][ T6466]  ? report_bug+0x3c0/0x580 lib/bug.c:219
+net/ipv6/ip6mr.c[   49.751908][ T6466]  ? exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:309
+:419 ip6mr_free_[   49.751922][ T6466]  ? asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
+table+0xbd/0x120[   49.759463][ T6466]  ? ip6mr_free_table+0xbc/0x120 net/ipv6/ip6mr.c:419
 
-  #define is_const(x) __is_const_zero((long)(x) * 0l)
-
-This would be consistent with __is_constexpr(): it does accept NULL
-(i.e. no warnings), but does not recognize it as an integer constant
-expression, e.g.:
-
-  is_const(NULL);
-
-returns false with no warnings.
-
-> Side note: I think "(x) == 0" will make sparse unhappy when 'x' is a
-> pointer, because it results that horrid "use integer zero as NULL
-> without a cast" thing when the plain zero gets implicitly cast to a
-> pointer. Which is a really nasty and broken C pattern and should never
-> have been silent.
->
-> I think David suggested using ((x)?0:0) at some point. Silly
-> nonsensical and complex expression, but maybe that finally gets rid of
-> all the warnings:
->
->      #define is_const(x) __is_const_zero((x)?0:0)
->
-> might work regardless of the type of 'x'.
->
-> Or does that trigger some odd case too?
-
-Following a quick test, this seems to work and to return true if given
-NULL as an argument (contrary to the current __is_const_expr()). So if
-we want to go beyond the C standard and extend the meaning of integer
-constant expression in the kernel to also include constant pointers, I
-agree that this is the way to go!
-
-Side question, Linus, what do you think about the __is_const_zero()
-documentation in
-
-  https://lore.kernel.org/all/20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr/
-
-Do you think I am too verbose as pointed out by David? Some people
-(including me and Yuri) like it that way, but if you also think this
-is too much, I will make it shorter.
-
-Thanks,
+Dec  3 05:04:02 syzkaller kern[   49.762545][ T6466]  ? ip6mr_free_table+0xbc/0x120 net/ipv6/ip6mr.c:419
+.warn kernel: [ [   49.765091][ T6466]  ip6mr_rules_exit+0x176/0x2d0 net/ipv6/ip6mr.c:283
+  49.696818][ T6[   49.767196][ T6466]  ip6mr_net_exit_batch+0x53/0xa0 net/ipv6/ip6mr.c:1388
+466] Modules lin[   49.768971][ T6466]  ? __pfx_ip6mr_net_exit_batch+0x10/0x10 net/ipv6/ip6mr.c:285
+ked in:
+Dec  3 05:04:02 [   49.769038][ T6466]  setup_net+0x4fe/0x860 net/core/net_namespace.c:394
+syzkaller kern.w[   49.769059][ T6466]  ? __pfx_setup_net+0x10/0x10 net/core/net_namespace.c:185
+arn kernel: [   [   49.778049][ T6466]  ? __down_read_common kernel/locking/rwsem.c:1255 [inline]
+arn kernel: [   [   49.778049][ T6466]  ? __down_read_killable kernel/locking/rwsem.c:1271 [inline]
+arn kernel: [   [   49.778049][ T6466]  ? down_read_killable+0xcc/0x380 kernel/locking/rwsem.c:1549
+49.699801][ T646[   49.781754][ T6466]  ? lockdep_init_map_waits include/linux/lockdep.h:135 [inline]
+49.699801][ T646[   49.781754][ T6466]  ? lockdep_init_map_wait include/linux/lockdep.h:142 [inline]
+49.699801][ T646[   49.781754][ T6466]  ? __raw_spin_lock_init+0x3a/0x110 kernel/locking/spinlock_debug.c:25
+6] CPU: 3 UID: 0 PID: 6466 Comm: syz.2.106 Not tainted 6.13.0-rc1-syzkaller-00002-gcdd30ebb1b9f #0
 
 
-Yours sincerely,
-Vincent Mailhol
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
