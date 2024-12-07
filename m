@@ -1,541 +1,104 @@
-Return-Path: <linux-kernel+bounces-436049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 788C99E8078
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:35:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77FC39E807A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3192E1884359
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A31316667C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDABB149DF7;
-	Sat,  7 Dec 2024 15:35:28 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8234F14A0A8;
+	Sat,  7 Dec 2024 15:36:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lW57hqRv"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 461B33B2BB
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 15:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6436B22C6C5;
+	Sat,  7 Dec 2024 15:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733585727; cv=none; b=KP/Qlr+tt3SzTTEfsChjecfpJ5TryyEIhoBbV7m9iHu8ekFA+8WA6ZpFSUhDCmeFIBLuWJ1vLPx4MKuZaJmBarNHtAWXVtKclPrjy1kxh1Z3NsKUHEztFZ/lx7Z7VwGXeGBXVjNmQxknKC9OWYmqEugtC22CUMwQYmGGbyigGTM=
+	t=1733585782; cv=none; b=k4+5+p4AZZ5IPLdkvg7pbklUB4zChRcZyaxvGRZaeQ2aCNmsRbRBBfD2ycR77F1fihkgMrn0QhOtXHKE3Ku4Tgs0s2wpEHS1VwjBnMK+JgkGJOfh1QB59bMHNEI81FgMtST5PT8T+mRzyJ936Yn/ueL/6MUMV5MzvbmaHW0dASo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733585727; c=relaxed/simple;
-	bh=s2SCfEm1LgqcbPSUt0+EhxV2wa96dK80wzsh1usPJng=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=i6or3dl5SObHssRwEEUvWr3m5sos0zIcPS9WX9FBSE/jB8IzidzgEiDdM+q32kTwtxOurjDKNnG3rPslfolaL5DlmjCcCMCC6tVzZ1bMj0HN8fPxFMuUvleVPJZstn9abfPhWWhCvqxYOG6skzQ2KAPMVmDlFg5+eteBEPtGPpY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-8419aa81d6aso287200039f.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 07:35:25 -0800 (PST)
+	s=arc-20240116; t=1733585782; c=relaxed/simple;
+	bh=zHshuIbQ0xcfAgQEwx29QMAXvcTcz+8gOhp7tdrMGD4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YBWYyr9Tm5YvPifc19EZOgtcb8J7BmgRiwR0PxbIqXuUgGQ4RmNvueN2DEsf0pxbkoYv6yRBhq2s7T28vSlFwjwphW0Xlu+pOjzK4ej3wgHiNcB50GWYnHTyK0z8a9nG2OubuuD90SWWOZ16XyQajIeKBsj/E2g3uoLIErJqb1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lW57hqRv; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3e9f60bf4so365617a12.3;
+        Sat, 07 Dec 2024 07:36:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733585779; x=1734190579; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zHshuIbQ0xcfAgQEwx29QMAXvcTcz+8gOhp7tdrMGD4=;
+        b=lW57hqRvhheT7DjrZE08a4kPYTRm84Ojk7YC4AzV8L/ujXDAHnxBLh39KP1ih9XfAX
+         JuRtTLfsFPGOBa+PyGUYBsm7sLg40DCoEMNaMy9kKunNo0ufM3o+bdVGSASnvxyFblhh
+         5Uy3T830QeKc+Gxqcy86CluOePgoBpVC7MM8HCyojfmQpHZCBo+U0/i5S44BV/SwVK+k
+         rMNnVpONyKZjt82uq1PbImHWoGqUBmcm0XadLR3g3636EsxtJAMOczz6iHY3otuZ389j
+         sZhCkZLxUrZ8Oa/93RlVrOE7mAU6RsGuVQ0QWtRaOV3AGlQHZ2dmyT1ON1dMTkOVzple
+         b5jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733585724; x=1734190524;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=c+z0/PQ5AYnouHdZso5mFn1Prprug/Y/RXiw7P2HQS8=;
-        b=EV/TardvT3G7y+1KHkaWDNVsoWi5FUiH8MQyVDHtIGW6gBOtuYlVRYOtjlThG6Knux
-         lwSjE2+P6a8d1ZnVCsGbUCIejOCocLmKXVWjCjgHYoD0r+tEJcotHeq7O5cKlR2bS5yY
-         U0d7sk3n/obSdceELqsaeAASMsUPHnZX4lWU/B8sXBMjrfZ7zmGctgEPl1tqkLeUc4Po
-         /1Gb6Jga1nki62HU0BUQ7hgRJTB4BQLiPA+h97abwYSm2ZJDKy1kF96OPjKdVzwmK6bc
-         l7py2FKMEX03HxzY78gjzbc4i6rt0husb4OVq/J4C77js2HcYeJHaT434sSxLwIsbRQn
-         w2qg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+PAWTD4i0Hl9/yivYDX44p9FFm/KF2K/+aftRboyA7xXRCv6TZw/asK72EwWBrfE2sv6amiDBgn7erm0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykMANZVtFatltyaaKZvjtTVSbdcCYevFCaiaHUk4inQr+Htc3w
-	KOucK0kc99LZsuRHT3YuSOSxF4m9o8gsVboX1Wje8W6Oh76VLp7excS3x9H9i94WvwxQ36jPnrI
-	Sq0Oi11DfXG5dUIGf/sxdX9AAnJaRe2tTyGm6fgKARMw2pSvHbPdLShQ=
-X-Google-Smtp-Source: AGHT+IFxsFBIrLuEDWsXXzUUIAu3WJoEJYuFqF7DRHb1ZDA1p+H0tZQGoCCk2x57cHmCbksPlniIIa3D3fgBXzxIjRSQmHuPwf43
+        d=1e100.net; s=20230601; t=1733585779; x=1734190579;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zHshuIbQ0xcfAgQEwx29QMAXvcTcz+8gOhp7tdrMGD4=;
+        b=J1aq+8AJVRKSEwPewykSGaiIUpaRVqa6tYrRgY6VrYsMTnBsyxfuk/jkXu2u0WQICA
+         zpZRTxb7gwTpGgF0W2GMaT3qF4mInpRwFQT+XOXk9WueXjcdOCkfl/LYKoJ1SM9phdYQ
+         HYExKIemsx8xePkw/I6qynOnI51YH5Cde1I40BQCeplws8IfFV3s6FXBvQt2bGvyQRGa
+         27AXza1laWQI50EA0R9Q9renSIVwiio9L9lKnolyCEdLW/SaCxqTWY0L2QxtXDGLTfpj
+         r5ixx+GMwjbG9hrYzhUONYD6BUqI6pnshvlxKX4LRYK47DFFH8t7wM2778SgbqI5/cot
+         JRNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLtSOzUFukzQFEr2ToU73+XE75aHG+MSBy1VWwdLHHa09UGoetIDQ7ciWYGLq+6BKd4nfFDgCzYKqadYk5@vger.kernel.org, AJvYcCXyPW5oav8Uk7EySb7caOoOzBMkuWferdkdUVoutlckHZdVOnDuOTgSg15M9WDc4OtB42NPdfwn/EUY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7gKj8OtqoTRXETlhh5ezrgVxYIw/BsLX7Rbqpq1TYH5oGAsLy
+	m4AVK6er0fUEopWBZ93Qj1sx4twG3fWJ03Ybht2LENQmbMdFa/uGUfW9Pghna5465JpTQY5QcWl
+	RJpDQzbvZyp4NjWB0L9jZ9cKPYbA=
+X-Gm-Gg: ASbGncu+OyzpaMkPrUL/87GNJZrnGwnJnaBAKZwk8I3IMfYkWvalYa2kcyvjy4WHnts
+	B9nfk5GpYF7zel52p7bjk3F3MLs7l/w3o64faLQ==
+X-Google-Smtp-Source: AGHT+IHoE7hywdceZP0ecmajv5RJm+ghgmXaAnuTlzMBTgY9GRfcN1HHtpkho9YdPt49H//MD+lGW3RvLAllEHGkS/Q=
+X-Received: by 2002:a17:906:4ca:b0:aa6:2d86:bd2c with SMTP id
+ a640c23a62f3a-aa63a0ed36cmr473776266b.21.1733585778375; Sat, 07 Dec 2024
+ 07:36:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:168a:b0:3a7:e528:6ee6 with SMTP id
- e9e14a558f8ab-3a811dbbe4cmr68278935ab.13.1733585724342; Sat, 07 Dec 2024
- 07:35:24 -0800 (PST)
-Date: Sat, 07 Dec 2024 07:35:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67546b3c.050a0220.a30f1.0155.GAE@google.com>
-Subject: [syzbot] [bcachefs?] possible deadlock in __bch2_fsck_err
-From: syzbot <syzbot+38641fcbda1aaffefdd4@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <20241204111424.263055-1-bigunclemax@gmail.com>
+ <CAJM55Z-YAMtRN=K5KxCH1+++Xw4uMM_c49z8tGzi3snU+-KrYA@mail.gmail.com> <Z1Hs5smgFV4C6c90@x1>
+In-Reply-To: <Z1Hs5smgFV4C6c90@x1>
+From: Maxim Kiselev <bigunclemax@gmail.com>
+Date: Sat, 7 Dec 2024 18:36:06 +0300
+Message-ID: <CALHCpMg_CEUKGVXnkJbwcDEUNzq_N1Cac=Umjra=KL6vEpLcsg@mail.gmail.com>
+Subject: Re: [PATCH v1] riscv: dts: thead: Fix TH1520 emmc and shdci clock rate
+To: Drew Fustini <drew@pdp7.com>
+Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>, Guo Ren <guoren@kernel.org>, 
+	Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+Hi Emil, Drew
 
-syzbot found the following issue on:
+> Did you look into the documentation
 
-HEAD commit:    7b1d1d4cfac0 Merge remote-tracking branch 'iommu/arm/smmu'..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
-console output: https://syzkaller.appspot.com/x/log.txt?x=13254330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9bc44a6de1ceb5d6
-dashboard link: https://syzkaller.appspot.com/bug?extid=38641fcbda1aaffefdd4
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
+Yes, I looked into th1520 user manual but found only
+mention of emmc sdio ref clk which is 792Mhz.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+> That is a good point about checking the thead vendor kernel.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/4d4a0162c7c3/disk-7b1d1d4c.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/a8c47a4be472/vmlinux-7b1d1d4c.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/0e173b91f83e/Image-7b1d1d4c.gz.xz
+Drew, thanks for the suggestion to look at Revy's BSP.
+I'll make a patch for the clk controller in v2.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+38641fcbda1aaffefdd4@syzkaller.appspotmail.com
-
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 7589ab5e0c11cc7a written 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0, fixing
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-syzkaller-g7b1d1d4cfac0 #0 Not tainted
-------------------------------------------------------
-syz.2.179/7607 is trying to acquire lock:
-ffff0000e0661548 (&c->fsck_error_msgs_lock){+.+.}-{3:3}, at: __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
-
-but task is already holding lock:
-ffff0000e06049d0 (&c->mark_lock){++++}-{0:0}, at: bch2_check_fix_ptrs+0x2dc/0x515c fs/bcachefs/buckets.c:263
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #7 (&c->mark_lock){++++}-{0:0}:
-       percpu_down_read+0x5c/0x2e8 include/linux/percpu-rwsem.h:51
-       __bch2_disk_reservation_add+0xc4/0x9f4 fs/bcachefs/buckets.c:1170
-       bch2_disk_reservation_add+0x29c/0x4f4 fs/bcachefs/buckets.h:367
-       __bch2_folio_reservation_get+0x2dc/0x798 fs/bcachefs/fs-io-pagecache.c:428
-       bch2_folio_reservation_get fs/bcachefs/fs-io-pagecache.c:477 [inline]
-       bch2_page_mkwrite+0xa70/0xe44 fs/bcachefs/fs-io-pagecache.c:637
-       do_page_mkwrite+0x140/0x2dc mm/memory.c:3162
-       do_shared_fault mm/memory.c:5373 [inline]
-       do_fault mm/memory.c:5435 [inline]
-       do_pte_missing mm/memory.c:3965 [inline]
-       handle_pte_fault mm/memory.c:5766 [inline]
-       __handle_mm_fault+0x1e1c/0x66e8 mm/memory.c:5909
-       handle_mm_fault+0x29c/0x8b4 mm/memory.c:6077
-       do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
-       do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
-       do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
-       el0_da+0x60/0x178 arch/arm64/kernel/entry-common.c:604
-       el0t_64_sync_handler+0xcc/0x108 arch/arm64/kernel/entry-common.c:765
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #6 (sb_pagefaults#3){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1716 [inline]
-       sb_start_pagefault include/linux/fs.h:1881 [inline]
-       bch2_page_mkwrite+0x280/0xe44 fs/bcachefs/fs-io-pagecache.c:614
-       do_page_mkwrite+0x140/0x2dc mm/memory.c:3162
-       do_shared_fault mm/memory.c:5373 [inline]
-       do_fault mm/memory.c:5435 [inline]
-       do_pte_missing mm/memory.c:3965 [inline]
-       handle_pte_fault mm/memory.c:5766 [inline]
-       __handle_mm_fault+0x1e1c/0x66e8 mm/memory.c:5909
-       handle_mm_fault+0x29c/0x8b4 mm/memory.c:6077
-       do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
-       do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
-       do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
-       el0_da+0x60/0x178 arch/arm64/kernel/entry-common.c:604
-       el0t_64_sync_handler+0xcc/0x108 arch/arm64/kernel/entry-common.c:765
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #5 (&mm->mmap_lock){++++}-{3:3}:
-       __might_fault+0xc4/0x124 mm/memory.c:6716
-       drm_mode_atomic_ioctl+0x52c/0x13d4 drivers/gpu/drm/drm_atomic_uapi.c:1437
-       drm_ioctl_kernel+0x26c/0x368 drivers/gpu/drm/drm_ioctl.c:745
-       drm_ioctl+0x624/0xb14 drivers/gpu/drm/drm_ioctl.c:842
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:907 [inline]
-       __se_sys_ioctl fs/ioctl.c:893 [inline]
-       __arm64_sys_ioctl+0x14c/0x1c8 fs/ioctl.c:893
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
-       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #4 (crtc_ww_class_acquire){+.+.}-{0:0}:
-       ww_acquire_init include/linux/ww_mutex.h:149 [inline]
-       drm_modeset_acquire_init+0x194/0x330 drivers/gpu/drm/drm_modeset_lock.c:250
-       drm_client_modeset_commit_atomic+0xe0/0x730 drivers/gpu/drm/drm_client_modeset.c:1007
-       drm_client_modeset_commit_locked+0xd0/0x4a8 drivers/gpu/drm/drm_client_modeset.c:1171
-       drm_client_modeset_commit+0x50/0x7c drivers/gpu/drm/drm_client_modeset.c:1197
-       __drm_fb_helper_restore_fbdev_mode_unlocked+0xd4/0x178 drivers/gpu/drm/drm_fb_helper.c:237
-       drm_fb_helper_set_par+0xc4/0x110 drivers/gpu/drm/drm_fb_helper.c:1345
-       fbcon_init+0xf34/0x1eb8 drivers/video/fbdev/core/fbcon.c:1113
-       visual_init+0x27c/0x548 drivers/tty/vt/vt.c:1011
-       do_bind_con_driver+0x7dc/0xe04 drivers/tty/vt/vt.c:3833
-       do_take_over_console+0x4ac/0x5f0 drivers/tty/vt/vt.c:4399
-       do_fbcon_takeover+0x158/0x260 drivers/video/fbdev/core/fbcon.c:549
-       do_fb_registered drivers/video/fbdev/core/fbcon.c:2988 [inline]
-       fbcon_fb_registered+0x370/0x4ec drivers/video/fbdev/core/fbcon.c:3008
-       do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
-       register_framebuffer+0x470/0x610 drivers/video/fbdev/core/fbmem.c:515
-       __drm_fb_helper_initial_config_and_unlock+0x13b0/0x19a4 drivers/gpu/drm/drm_fb_helper.c:1869
-       drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1934
-       drm_fbdev_shmem_client_hotplug+0x158/0x22c drivers/gpu/drm/drm_fbdev_shmem.c:250
-       drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:141
-       drm_fbdev_shmem_setup+0x11c/0x2cc drivers/gpu/drm/drm_fbdev_shmem.c:309
-       vkms_create drivers/gpu/drm/vkms/vkms_drv.c:228 [inline]
-       vkms_init+0x4f0/0x600 drivers/gpu/drm/vkms/vkms_drv.c:254
-       do_one_initcall+0x24c/0x9c0 init/main.c:1269
-       do_initcall_level+0x154/0x214 init/main.c:1331
-       do_initcalls+0x58/0xac init/main.c:1347
-       do_basic_setup+0x8c/0xa0 init/main.c:1366
-       kernel_init_freeable+0x324/0x478 init/main.c:1580
-       kernel_init+0x24/0x2a0 init/main.c:1469
-       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-
--> #3 (&client->modeset_mutex){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       drm_client_modeset_probe+0x318/0x3f78 drivers/gpu/drm/drm_client_modeset.c:832
-       __drm_fb_helper_initial_config_and_unlock+0xf0/0x19a4 drivers/gpu/drm/drm_fb_helper.c:1846
-       drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1934
-       drm_fbdev_shmem_client_hotplug+0x158/0x22c drivers/gpu/drm/drm_fbdev_shmem.c:250
-       drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:141
-       drm_fbdev_shmem_setup+0x11c/0x2cc drivers/gpu/drm/drm_fbdev_shmem.c:309
-       vkms_create drivers/gpu/drm/vkms/vkms_drv.c:228 [inline]
-       vkms_init+0x4f0/0x600 drivers/gpu/drm/vkms/vkms_drv.c:254
-       do_one_initcall+0x24c/0x9c0 init/main.c:1269
-       do_initcall_level+0x154/0x214 init/main.c:1331
-       do_initcalls+0x58/0xac init/main.c:1347
-       do_basic_setup+0x8c/0xa0 init/main.c:1366
-       kernel_init_freeable+0x324/0x478 init/main.c:1580
-       kernel_init+0x24/0x2a0 init/main.c:1469
-       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-
--> #2 (&helper->lock){+.+.}-{3:3}:
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       __drm_fb_helper_restore_fbdev_mode_unlocked+0xb4/0x178 drivers/gpu/drm/drm_fb_helper.c:228
-       drm_fb_helper_set_par+0xc4/0x110 drivers/gpu/drm/drm_fb_helper.c:1345
-       fbcon_init+0xf34/0x1eb8 drivers/video/fbdev/core/fbcon.c:1113
-       visual_init+0x27c/0x548 drivers/tty/vt/vt.c:1011
-       do_bind_con_driver+0x7dc/0xe04 drivers/tty/vt/vt.c:3833
-       do_take_over_console+0x4ac/0x5f0 drivers/tty/vt/vt.c:4399
-       do_fbcon_takeover+0x158/0x260 drivers/video/fbdev/core/fbcon.c:549
-       do_fb_registered drivers/video/fbdev/core/fbcon.c:2988 [inline]
-       fbcon_fb_registered+0x370/0x4ec drivers/video/fbdev/core/fbcon.c:3008
-       do_register_framebuffer drivers/video/fbdev/core/fbmem.c:449 [inline]
-       register_framebuffer+0x470/0x610 drivers/video/fbdev/core/fbmem.c:515
-       __drm_fb_helper_initial_config_and_unlock+0x13b0/0x19a4 drivers/gpu/drm/drm_fb_helper.c:1869
-       drm_fb_helper_initial_config+0x48/0x64 drivers/gpu/drm/drm_fb_helper.c:1934
-       drm_fbdev_shmem_client_hotplug+0x158/0x22c drivers/gpu/drm/drm_fbdev_shmem.c:250
-       drm_client_register+0x144/0x1e0 drivers/gpu/drm/drm_client.c:141
-       drm_fbdev_shmem_setup+0x11c/0x2cc drivers/gpu/drm/drm_fbdev_shmem.c:309
-       vkms_create drivers/gpu/drm/vkms/vkms_drv.c:228 [inline]
-       vkms_init+0x4f0/0x600 drivers/gpu/drm/vkms/vkms_drv.c:254
-       do_one_initcall+0x24c/0x9c0 init/main.c:1269
-       do_initcall_level+0x154/0x214 init/main.c:1331
-       do_initcalls+0x58/0xac init/main.c:1347
-       do_basic_setup+0x8c/0xa0 init/main.c:1366
-       kernel_init_freeable+0x324/0x478 init/main.c:1580
-       kernel_init+0x24/0x2a0 init/main.c:1469
-       ret_from_fork+0x10/0x20 arch/arm64/kernel/entry.S:862
-
--> #1 (console_lock){+.+.}-{0:0}:
-       console_lock+0x19c/0x1f4 kernel/printk/printk.c:2808
-       __bch2_print_string_as_lines fs/bcachefs/util.c:267 [inline]
-       bch2_print_string_as_lines+0x2c/0xd4 fs/bcachefs/util.c:286
-       __bch2_fsck_err+0x1864/0x2544 fs/bcachefs/error.c:411
-       __btree_err+0x7bc/0xb04 fs/bcachefs/btree_io.c:582
-       validate_bset_keys+0xbc4/0x1204 fs/bcachefs/btree_io.c:930
-       bch2_btree_node_read_done+0x1a68/0x4b78 fs/bcachefs/btree_io.c:1130
-       btree_node_read_work+0x50c/0xe08 fs/bcachefs/btree_io.c:1323
-       bch2_btree_node_read+0x1f3c/0x27f8 fs/bcachefs/btree_io.c:1708
-       __bch2_btree_root_read fs/bcachefs/btree_io.c:1749 [inline]
-       bch2_btree_root_read+0x2b0/0x40c fs/bcachefs/btree_io.c:1771
-       read_btree_roots+0x24c/0x794 fs/bcachefs/recovery.c:523
-       bch2_fs_recovery+0x328c/0x55dc fs/bcachefs/recovery.c:853
-       bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1037
-       bch2_fs_get_tree+0x938/0x1030 fs/bcachefs/fs.c:2170
-       vfs_get_tree+0x90/0x28c fs/super.c:1814
-       do_new_mount+0x278/0x900 fs/namespace.c:3507
-       path_mount+0x590/0xe04 fs/namespace.c:3834
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount fs/namespace.c:4034 [inline]
-       __arm64_sys_mount+0x4d4/0x5ac fs/namespace.c:4034
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
-       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
--> #0 (&c->fsck_error_msgs_lock){+.+.}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain kernel/locking/lockdep.c:3904 [inline]
-       __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
-       lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
-       __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
-       __mutex_lock kernel/locking/mutex.c:752 [inline]
-       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
-       __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
-       bch2_check_fix_ptr fs/bcachefs/buckets.c:137 [inline]
-       bch2_check_fix_ptrs+0x19f0/0x515c fs/bcachefs/buckets.c:266
-       bch2_trigger_extent+0x71c/0x814 fs/bcachefs/buckets.c:856
-       bch2_key_trigger fs/bcachefs/bkey_methods.h:87 [inline]
-       bch2_gc_mark_key+0x4b4/0xb70 fs/bcachefs/btree_gc.c:634
-       bch2_gc_btree fs/bcachefs/btree_gc.c:698 [inline]
-       bch2_gc_btrees fs/bcachefs/btree_gc.c:729 [inline]
-       bch2_check_allocations+0x1574/0x48f4 fs/bcachefs/btree_gc.c:1133
-       bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:191
-       bch2_run_recovery_passes+0x30c/0x73c fs/bcachefs/recovery_passes.c:244
-       bch2_fs_recovery+0x32d8/0x55dc fs/bcachefs/recovery.c:861
-       bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1037
-       bch2_fs_get_tree+0x938/0x1030 fs/bcachefs/fs.c:2170
-       vfs_get_tree+0x90/0x28c fs/super.c:1814
-       do_new_mount+0x278/0x900 fs/namespace.c:3507
-       path_mount+0x590/0xe04 fs/namespace.c:3834
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount fs/namespace.c:4034 [inline]
-       __arm64_sys_mount+0x4d4/0x5ac fs/namespace.c:4034
-       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
-       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
-       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
-       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
-       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
-       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
-       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-
-other info that might help us debug this:
-
-Chain exists of:
-  &c->fsck_error_msgs_lock --> sb_pagefaults#3 --> &c->mark_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&c->mark_lock);
-                               lock(sb_pagefaults#3);
-                               lock(&c->mark_lock);
-  lock(&c->fsck_error_msgs_lock);
-
- *** DEADLOCK ***
-
-5 locks held by syz.2.179/7607:
- #0: ffff0000e0600278 (&c->state_lock){+.+.}-{3:3}, at: bch2_fs_start+0x50/0x53c fs/bcachefs/super.c:1007
- #1: ffff0000e06266d0 (&c->gc_lock){++++}-{3:3}, at: bch2_check_allocations+0x1a0/0x48f4 fs/bcachefs/btree_gc.c:1115
- #2: ffff0000e0604398 (&c->btree_trans_barrier){.+.+}-{0:0}, at: srcu_lock_acquire+0x18/0x54 include/linux/srcu.h:150
- #3: ffff0000f02cc128 (bcachefs_btree){+.+.}-{0:0}, at: trans_set_locked+0x5c/0x1a4 fs/bcachefs/btree_locking.h:193
- #4: ffff0000e06049d0 (&c->mark_lock){++++}-{0:0}, at: bch2_check_fix_ptrs+0x2dc/0x515c fs/bcachefs/buckets.c:263
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 7607 Comm: syz.2.179 Not tainted 6.12.0-syzkaller-g7b1d1d4cfac0 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call trace:
- show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:484 (C)
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
- dump_stack+0x1c/0x28 lib/dump_stack.c:129
- print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2074
- check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain kernel/locking/lockdep.c:3904 [inline]
- __lock_acquire+0x33f8/0x77c8 kernel/locking/lockdep.c:5202
- lock_acquire+0x240/0x728 kernel/locking/lockdep.c:5825
- __mutex_lock_common+0x190/0x21a0 kernel/locking/mutex.c:608
- __mutex_lock kernel/locking/mutex.c:752 [inline]
- mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:804
- __bch2_fsck_err+0x344/0x2544 fs/bcachefs/error.c:282
- bch2_check_fix_ptr fs/bcachefs/buckets.c:137 [inline]
- bch2_check_fix_ptrs+0x19f0/0x515c fs/bcachefs/buckets.c:266
- bch2_trigger_extent+0x71c/0x814 fs/bcachefs/buckets.c:856
- bch2_key_trigger fs/bcachefs/bkey_methods.h:87 [inline]
- bch2_gc_mark_key+0x4b4/0xb70 fs/bcachefs/btree_gc.c:634
- bch2_gc_btree fs/bcachefs/btree_gc.c:698 [inline]
- bch2_gc_btrees fs/bcachefs/btree_gc.c:729 [inline]
- bch2_check_allocations+0x1574/0x48f4 fs/bcachefs/btree_gc.c:1133
- bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x30c/0x73c fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x32d8/0x55dc fs/bcachefs/recovery.c:861
- bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0x938/0x1030 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x90/0x28c fs/super.c:1814
- do_new_mount+0x278/0x900 fs/namespace.c:3507
- path_mount+0x590/0xe04 fs/namespace.c:3834
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount fs/namespace.c:4034 [inline]
- __arm64_sys_mount+0x4d4/0x5ac fs/namespace.c:4034
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
- el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
- el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
- el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
- el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
-bucket 0:38 data type btree ptr gen 0 missing in alloc btree
-while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 7589ab5e0c11cc7a written 24 min_key POS_MIN durability: 1 ptr: 0:38:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 9aa2895aefce4bdf written 24 min_key POS_MIN durability: 1 ptr: 0:41:0 gen 0, fixing
-bucket 0:41 data type btree ptr gen 0 missing in alloc btree
-while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq 9aa2895aefce4bdf written 24 min_key POS_MIN durability: 1 ptr: 0:41:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
-bucket 0:35 data type btree ptr gen 0 missing in alloc btree
-while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07ceb940 written 16 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ebb8d5a9e3463bdb written 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0, fixing
-bucket 0:32 data type btree ptr gen 0 missing in alloc btree
-while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq ebb8d5a9e3463bdb written 16 min_key POS_MIN durability: 1 ptr: 0:32:0 gen 0, fixing
-btree ptr not marked in member info btree allocated bitmap
-  u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 21 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
-bucket 0:29 data type btree ptr gen 0 missing in alloc btree
-while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 21 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
-bucket 0:3 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:3 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:4 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:4 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:5 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:5 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:6 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:6 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:7 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:7 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:8 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:8 gen 0 data type sb has wrong dirty_sectors: got 0, should be 8, fixing
-bucket 0:9 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:9 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:10 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:10 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:11 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:11 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:12 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:12 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:13 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:13 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:14 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:14 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:15 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:15 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:16 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:16 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:17 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:17 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:18 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:18 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:19 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:19 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:20 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:20 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:21 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:21 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:22 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:22 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:23 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:23 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:24 gen 0 has wrong data_type: got free, should be journal, fixing
-bucket 0:24 gen 0 data type journal has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:29 gen 0 has wrong data_type: got free, should be btree, fixing
-bucket 0:29 gen 0 data type btree has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:32 gen 0 has wrong data_type: got free, should be btree, fixing
-bucket 0:32 gen 0 data type btree has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:35 gen 0 has wrong data_type: got free, should be btree, fixing
-bucket 0:35 gen 0 data type btree has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:38 gen 0 has wrong data_type: got free, should be btree, fixing
-bucket 0:38 gen 0 data type btree has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:41 gen 0 has wrong data_type: got free, should be btree, fixing
-bucket 0:41 gen 0 data type btree has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:120 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:120 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:121 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:121 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:122 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:122 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:123 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:123 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:124 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:124 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:125 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:125 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:126 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:126 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
-bucket 0:127 gen 0 has wrong data_type: got free, should be sb, fixing
-bucket 0:127 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
- done
-bcachefs (loop2): going read-write
-bcachefs (loop2): journal_replay...
- done
-bcachefs (loop2): check_inodes...
-inode points to missing dirent
-inum: 536870913:4294967295 
-  mode=100755
-  flags=(15300000)
-  journal_seq=5
-  hash_seed=b68791a594a6d5ae
-  hash_type=siphash
-  bi_size=9000
-  bi_sectors=24
-  bi_version=0
-  bi_atime=2780562352
-  bi_ctime=2780562352
-  bi_mtime=2780562352
-  bi_otime=2780562352
-  bi_uid=0
-  bi_gid=0
-  bi_nlink=1
-  bi_generation=0
-  bi_dev=0
-  bi_data_checksum=0
-  bi_compression=0
-  bi_project=0
-  bi_background_compression=0
-  bi_data_replicas=0
-  bi_promote_target=0
-  bi_foreground_target=0
-  bi_background_target=0
-  bi_erasure_code=0
-  bi_fields_set=0
-  bi_dir=4096
-  bi_dir_offset=1896155912177158345
-  bi_subvol=0
-  bi_parent_subvol=0
-  bi_nocow=0, fixing
- done
-bcachefs (loop2): resume_logged_ops... done
-bcachefs (loop2): delete_dead_inodes... done
-bcachefs (loop2): done starting filesystem
-bcachefs (loop2): going read-only
-bcachefs (loop2): finished waiting for writes to stop
-bcachefs (loop2): flushing journal and stopping allocators, journal seq 22
-bcachefs (loop2): flushing journal and stopping allocators complete, journal seq 22
-bcachefs (loop2): unshutdown complete, journal seq 22
-bcachefs (loop2): done going read-only, filesystem not clean
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Best wishes,
+Maksim
 
