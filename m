@@ -1,187 +1,114 @@
-Return-Path: <linux-kernel+bounces-436016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1979E7FF1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:53:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC0AF9E7FF6
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:54:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58D0716691C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:53:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94672166ABB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9927139566;
-	Sat,  7 Dec 2024 12:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DE0148827;
+	Sat,  7 Dec 2024 12:54:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tn7ow+TS"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vZcbW689"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A264422C6E7;
-	Sat,  7 Dec 2024 12:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D801DDEA
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 12:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733575993; cv=none; b=RW9I4VnMvHqery/qYgJMDhNgDpOXldAacJcXk1FxhPyfXANpzJPRZGmQPdQgafMVgRE7RelN1eEId8nA+aBKyoNVIgwU9ph2KD9AEdzlHah6NVG2fWP1vv1Z0oUOgBnOFIIeLhPgJS43v103WZrGmzIN6XIe225RKDqOWTDVWWw=
+	t=1733576052; cv=none; b=YUutUpBKXsrHup5KKak3d9EXApbvt3kAVE+IutH+ow+d3JhETTX0DU4Wny7sCFL0tS8Mm5hF1bpleHv2AsII0ZRjfGf2W+YzUJLKZYKcZ0ezr8YSNrwmyIoeqR3RkK2f6b2tN2ALb6uNubZrqoVvZm+VP/LkTwkgXjLuF7fn0Vo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733575993; c=relaxed/simple;
-	bh=4tRicKgihdN7vzankbrBgJlICBgc0A4MsUdOpS6Zyi4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rFWnQWA9VMvB/25sgmgB5lXUx5jBrQjczofllmvcS5KRWAtUbADvKMc7kRb9ccPKXlh5P9L3QyBR02n8cfZFy9tegL0ESPwTcmJiGCFEFA8XFHnaLybNwKls1S48lPBiAWVggIoCvc/2XSeEcqm/67OrZkkJwlpi8Ob/A6NxLPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tn7ow+TS; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-7258ed68cedso2981821b3a.1;
-        Sat, 07 Dec 2024 04:53:11 -0800 (PST)
+	s=arc-20240116; t=1733576052; c=relaxed/simple;
+	bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NjtyKUs9fm4RFu0l7BUAkCUDXWUwo0OTI569DW1b4cDa3ijoDjHDA8Fc0Z8E/Cpq/vBAsJf0gemIW0THD2uJXn7btp/sE/iGbT+44NAboTbxxuBSTVv2+dITq9xHYy9N3Vk3e6J8Red2VCKNNs0Gjw6MIEA6ZDvBpl6iTEWbxN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vZcbW689; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa650ccbe0eso72838166b.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 04:54:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733575991; x=1734180791; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gpUxiu0t8qgQqyKloRPNPfmECQPMznPWyKHpW180u4Y=;
-        b=Tn7ow+TS4BoFgVYe5lVtC1d2HuHF65+8UoNUtXhlVcSJG4+DpSoTyNjDvJ59mbUlXj
-         ShCS7jPrn5qEgfYIj6sf0QPX778FMbx7Gw3BbTqEpLcYye+HjiqMLSftJ5eN0/Qyl7MY
-         GbJjbVG6B+Wqa8JCgs03wrpDe/UwEx+kXAQ6U+OY8jAXsxKp1nLP+/zOhgPQvhI7vf47
-         TybWFvJnsFatwJv9iU5zSocgK9b6Mt8gUi9dHotdge9xcFsoIyehVTl02icAybLK8mUt
-         rqcSlp7KllAS/8AbS6Jz3r3vK+t/tCGafFyT6i9ho40yqzoq5Ua7BfJrekuT6+DV1bBZ
-         gJOQ==
+        d=linaro.org; s=google; t=1733576049; x=1734180849; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
+        b=vZcbW689fo9hzgFT96Kn11WBOtOmQxJIb0z1krKuK/Z4iKbkLRRwB5pv3My+Ec7mO0
+         v1Y1DJUC5O0af/NyvYZQ1EteMj1qnoGXF2m549WDFNmrpHtGYvGvOEUs9KBWMnk09LeE
+         i1ZK9HohEIofn7JLQP0ZNdkZr6+5YqyDe86AAEm33SpYEz6mzcB0d1GF3wWpkyoE7oKA
+         wDJNwXkU2kTfjHS6JRgfbADXToFAy4sSpZY7YPJdIqlXVibmVN2Ds+lTEvR7cOTnFltG
+         te6zqD5lZnmHHAk2n/3fwVdFf2vob419E2deYM++vHOBuMTBBxROTCa6xyOSKGd0kbKB
+         OlPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733575991; x=1734180791;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gpUxiu0t8qgQqyKloRPNPfmECQPMznPWyKHpW180u4Y=;
-        b=lRPguco6lJdUlEboQbyw6WCaWJ+naRresh5sKAOWd7WMrQeWaYnupyorWr70UJECHk
-         vl6IW2pbqWQa7l4D9jNdJZc0CNn/k7Dnrsq1iXwkTK90iYu/4CxVfbrlURpzzwLPDQyF
-         LmGjeOPqzsbcQMe9Pd6g+yN2o64OT/Xfzm0PSPZSiQJy7CDE/f6M1GSNLZA0Hm7lTWL8
-         d3fOWvrurVKzlekWZOELnXlzpaXzEfvpfV4k3dPImPFSD/gav6qa0de2enyeISiwnIqx
-         FdsUdCFWPHUVVFH5dK7jxqNar5WnMGKd8oyq2Za9+9e3lvATqsGhK9QU2+8rYT7SfI4C
-         b9ug==
-X-Forwarded-Encrypted: i=1; AJvYcCUC/xfDlujMFyHLunORDxIWT+H2CvnVDg7WLeUQsKRtfF0WYPAZWITFWI8y2ACDS0rEitBT1CfZVGkzqjmNmg==@vger.kernel.org, AJvYcCXcEILD4KatzVK8xmUkm4jHJwUeHdO7zV+M7R7HRdjG+Hc6TZhMIliTZ9tfpqQCQKFW6PmlJDaGf3LaIIgL@vger.kernel.org
-X-Gm-Message-State: AOJu0YybwtfU0D6QLANLYO25PxGxUj2HENNs7w2BrfTiZOxnJZmRAaMH
-	DajELU/LMqtxKqGCWt2GzbLtYgvdIuEwCg7ovz/+4u1vUHRKjdyK
-X-Gm-Gg: ASbGncv9AUHbU7s5BwKFGkBMqBWchlKXqQjcntiokggYUjcbe/IvaVh61dnIXVs0VKX
-	Ocv7g0ilZ77KpqDG8C4D+WUL+elyA1vVMoNCiybyRZh7SMvenElNY9jZMvcgpbkr9PXonn+gIqH
-	YZ0nlXiLdSM18L41QnLnmvRgAzjKs9ISRAmLL0S8JxPPJAUGu6RadRAdqzFUPf8XjjsvjPFzSOV
-	17oPx0whrbiIjOyHNTtajokOweb/8iuJBGAbzgN0oofQ6nXHmkk0OhtqeeHMNICxPIW0WnTgp8N
-	LsIB
-X-Google-Smtp-Source: AGHT+IF1a6fuobjwEFnwh8GLrlVY+56BcUkwpkbJYzrt8ZkhDKaPiuNuFCOw1qqp7VuZbikK5+IT6w==
-X-Received: by 2002:a05:6a00:9292:b0:71e:6b8:2f4a with SMTP id d2e1a72fcca58-725b813e32dmr11187391b3a.12.1733575990968;
-        Sat, 07 Dec 2024 04:53:10 -0800 (PST)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725def37e0asm120509b3a.193.2024.12.07.04.53.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 04:53:10 -0800 (PST)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: irogers@google.com,
-	colyli@suse.de,
-	peterz@infradead.org,
-	akpm@linux-foundation.org,
-	jserv@ccns.ncku.edu.tw,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] lib min_heap: Use size_t for array size and index variables
-Date: Sat,  7 Dec 2024 20:53:05 +0800
-Message-Id: <20241207125305.1849876-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1733576049; x=1734180849;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
+        b=XZhoQzhIrM/Kw6pGurHeaffEUukhesfPdI49XjDWJrkqlocyG81vAha9YB5QVFgZST
+         8z76zwuj1usCoO5DsenpAbIK/cmOhCPAQ1v+CZXuTolRAZ3S4nzg9gs4O2WylEu5lMRi
+         wLeGUOw0OJUN6QIDhbr38lQa4HMLSKrzEsXksWSxOC+rx1ROG3WfFnrv/JZpDS3KZx5V
+         pVmXKkzDeKuIS5sbjnuRh/Bj98BUnQ6nqF+2Hzs+cEaiuNtMi/AL/k8jjdOow8+Lwa1m
+         mRizVuxCBCYVm2FtSoXMrc5E3XKfTGSollwia+HrZTElVAMoMuGgAZO5AFP6jRcPgwuQ
+         WDjw==
+X-Forwarded-Encrypted: i=1; AJvYcCXoIiZKsAabAcyJ2yi5uwIBt2v6VJuOjE80IrgXGGz72SbvCWR+hui+w4+DwZl/aPSd2WUdeldvcfrdpnc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMSWv7Nkgp8tlUZKZRCuHDPntkUFA0hDWNRWZCJw0kvp7PIFoa
+	kaBVORNdDB64laMDItjzQ+QvG4CUeyNWr/aRLRMSg6/ohcG1pXXS9/DglyarAOg=
+X-Gm-Gg: ASbGncuwgrqw20H/q0OrT7E/FXlIPJ3Q9ugk3e7OZtsOVUpMDwhgrIGADvp6NFxD3wq
+	0kzkx9n3MJyX45ckg0G/Hv/3PX9svW+xda6SgNrHF1ECGpnLaiDQ59glYql18rByxMUAiEvvnYd
+	i+1yd5e58LI7MBdnex631KUX1TLlfSGfxxsJSa2bYsfNl18WokFhdbgL3dhH9i19D2h6KA0st/0
+	BuqHajwqUtR837Gd1FcESQjvqXaGER45btAYb0YM1BTm4TVNcQOgQA2NBcahUo=
+X-Google-Smtp-Source: AGHT+IFc59lrx1M6saKGPjF02Omnnsj0HLfp4v7ByL1sRkcUPHF3WsyaIILgsB+Yi9QNF0Qp9YtwjA==
+X-Received: by 2002:a17:907:7814:b0:aa6:19f3:d083 with SMTP id a640c23a62f3a-aa63a07357dmr584148866b.30.1733576048745;
+        Sat, 07 Dec 2024 04:54:08 -0800 (PST)
+Received: from [192.168.0.27] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm19541366b.159.2024.12.07.04.54.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 07 Dec 2024 04:54:08 -0800 (PST)
+Message-ID: <444a0d03-7518-4f54-a29d-2d3c85d9743d@linaro.org>
+Date: Sat, 7 Dec 2024 12:54:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 5/6] arm64: dts: qcom: x1e80100: Add CCI definitions
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-media@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
+ <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-5-54075d75f654@linaro.org>
+ <b5400627-6359-4dfc-abb2-2c142217a28b@oss.qualcomm.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <b5400627-6359-4dfc-abb2-2c142217a28b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Replace the int type with size_t for variables representing array sizes
-and indices in the min-heap implementation. Using size_t aligns with
-standard practices for size-related variables and avoids potential
-issues on platforms where int may be insufficient to represent all
-valid sizes or indices.
+On 07/12/2024 11:59, Konrad Dybcio wrote:
+> Otherwise looks good and I can attest to this working, as the sensor on the
+> SL7 happily talks back
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+:x
+
 ---
-Note: This patch is expected to go through the bcachefs tree after the
-size field in the min heap struct is changed to size_t.
-
- include/linux/min_heap.h | 12 ++++++------
- lib/min_heap.c           |  4 ++--
- 2 files changed, 8 insertions(+), 8 deletions(-)
-
-diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-index 6325f6ffb895..9b94df4f5981 100644
---- a/include/linux/min_heap.h
-+++ b/include/linux/min_heap.h
-@@ -207,7 +207,7 @@ static size_t parent(size_t i, unsigned int lsbit, size_t size)
- 
- /* Initialize a min-heap. */
- static __always_inline
--void __min_heap_init_inline(min_heap_char *heap, void *data, int size)
-+void __min_heap_init_inline(min_heap_char *heap, void *data, size_t size)
- {
- 	heap->nr = 0;
- 	heap->size = size;
-@@ -242,7 +242,7 @@ bool __min_heap_full_inline(min_heap_char *heap)
- 
- /* Sift the element at pos down the heap. */
- static __always_inline
--void __min_heap_sift_down_inline(min_heap_char *heap, int pos, size_t elem_size,
-+void __min_heap_sift_down_inline(min_heap_char *heap, size_t pos, size_t elem_size,
- 				 const struct min_heap_callbacks *func, void *args)
- {
- 	const unsigned long lsbit = elem_size & -elem_size;
-@@ -312,7 +312,7 @@ static __always_inline
- void __min_heapify_all_inline(min_heap_char *heap, size_t elem_size,
- 			      const struct min_heap_callbacks *func, void *args)
- {
--	int i;
-+	ssize_t i;
- 
- 	for (i = heap->nr / 2 - 1; i >= 0; i--)
- 		__min_heap_sift_down_inline(heap, i, elem_size, func, args);
-@@ -365,7 +365,7 @@ bool __min_heap_push_inline(min_heap_char *heap, const void *element, size_t ele
- 			    const struct min_heap_callbacks *func, void *args)
- {
- 	void *data = heap->data;
--	int pos;
-+	size_t pos;
- 
- 	if (WARN_ONCE(heap->nr >= heap->size, "Pushing on a full heap"))
- 		return false;
-@@ -414,10 +414,10 @@ bool __min_heap_del_inline(min_heap_char *heap, size_t elem_size, size_t idx,
- 	__min_heap_del_inline((min_heap_char *)_heap, __minheap_obj_size(_heap), _idx,	\
- 			      _func, _args)
- 
--void __min_heap_init(min_heap_char *heap, void *data, int size);
-+void __min_heap_init(min_heap_char *heap, void *data, size_t size);
- void *__min_heap_peek(struct min_heap_char *heap);
- bool __min_heap_full(min_heap_char *heap);
--void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
-+void __min_heap_sift_down(min_heap_char *heap, size_t pos, size_t elem_size,
- 			  const struct min_heap_callbacks *func, void *args);
- void __min_heap_sift_up(min_heap_char *heap, size_t elem_size, size_t idx,
- 			const struct min_heap_callbacks *func, void *args);
-diff --git a/lib/min_heap.c b/lib/min_heap.c
-index 4485372ff3b1..96f01a4c5fb6 100644
---- a/lib/min_heap.c
-+++ b/lib/min_heap.c
-@@ -2,7 +2,7 @@
- #include <linux/export.h>
- #include <linux/min_heap.h>
- 
--void __min_heap_init(min_heap_char *heap, void *data, int size)
-+void __min_heap_init(min_heap_char *heap, void *data, size_t size)
- {
- 	__min_heap_init_inline(heap, data, size);
- }
-@@ -20,7 +20,7 @@ bool __min_heap_full(min_heap_char *heap)
- }
- EXPORT_SYMBOL(__min_heap_full);
- 
--void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
-+void __min_heap_sift_down(min_heap_char *heap, size_t pos, size_t elem_size,
- 			  const struct min_heap_callbacks *func, void *args)
- {
- 	__min_heap_sift_down_inline(heap, pos, elem_size, func, args);
--- 
-2.34.1
-
+bod
 
