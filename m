@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-435917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5EF79E7E93
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:49:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC97A9E7E95
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:51:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A1EF1886E28
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0C5285A52
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:50:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6EAC7E59A;
-	Sat,  7 Dec 2024 06:49:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3324984A5E;
+	Sat,  7 Dec 2024 06:50:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yKaL4R+r"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e+dNS5VE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9819D2581
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 06:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8608C2581;
+	Sat,  7 Dec 2024 06:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733554171; cv=none; b=TqUWrbXtYIxpo8x/KnJ3fmHLXYattYRLuQW6jmT4AJahp+SdDylFYjH+0RppRTdHFC0BllgL4x8UtLh6A7ZbRFgzvkaUgXDVh0EooeT6HVIyMg+iJt5QpVeijbl4SYDPm9Qxuortk7e+9OFCRcYRH6A+3YNv0hZQMxqyk355rFE=
+	t=1733554254; cv=none; b=oDFMjqLtUhmpABYiHB/RW76Yajji42atXcXFipPZVVep92UlXmT+9HoRIsF7ATSL3QlMIJnRs8F+4yk+c7fnzDTS1i3VszVP3NFmrgRAORhftXb/l7NEqS9dcWvB5rIFQeE7eUk6f+YtZjHvpyXrv3Jutt+g5KLrgKi8No/s3T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733554171; c=relaxed/simple;
-	bh=40y1sc/2XM3qemaBKf/6rCWzdLQbvf9/HrMHhV90Y/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fKmqCqIuumbNrrwQW9cC/AYT3R+RsgMR9T2vHzDIcua5XCnGQJ9BfyeNDpes+O8AEkfelz0BHLu1rRRIl+lLgPPLf/bZ/v3KWZ3TWPtNz7g7RRf7012rasPMrgRp5GP9Z/tg62eJ7d8HEi6yY9+W3UDZZDF0YnQ7Uv2xE2ocVJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yKaL4R+r; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4afa525d6bdso783719137.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 22:49:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733554168; x=1734158968; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+nTfQ78QLlRnib2YldHJNBdc7qUX8VwYhMyb+NYQ1vM=;
-        b=yKaL4R+rXpE8wTmTOXQsTWeexGFLsWyDCGgtbP6OoWc1VtE/rulKOqGNSe2LVl3tK/
-         66NsCqc/zy3uwG2lSFkJmgM5vPdphHnhzh3JWOEyonn0KtIlHLOUQtAzx9P0SAr1z/p2
-         EzX1hfdlIGnBB7hq3FUqpX81OT7anCOJ94Tw0A8WDyc75/HN+qQ3UeoJ6pBKLS6oFIyK
-         FqIUmRKI72LaVNjk57RADvm2E6JrZo/BikRNHHGdNiWSRcs+UYYuX1TuQo+l1HNkJxz2
-         smY7f+NACKUMd7Tzw5C84P54BpyPGxMSrW/y8jC4Y5LngJrnaXhQ2+d3vW83Rq17Kq8/
-         /Snw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733554168; x=1734158968;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+nTfQ78QLlRnib2YldHJNBdc7qUX8VwYhMyb+NYQ1vM=;
-        b=omdAokWZdpxkeBc6JgQYGc71BbX/Z4r5d1mU982WxQe3TLfSBK4ov9npXkjvMugCLS
-         sg2LcdQJqwLv7CZcP3XCz/X+DJSMUKJi/obmrXa5BwvT0JCukAFkaFXb0k9DcFCu+WaH
-         HEuSYjsWD9XEHTy/TPfx1N5UDMEMksh37JvrvpJlY++8wxGW/g8nLkZfQwqHr+wQ/P//
-         o71PAL8zz+B1uqYdFhGYjOyIt3JUnYWVkzoi3qlATjTj7VidZzrRbOVu1sl3e/Ekx6de
-         ggzP1OocF6VYwa3FPlhWBRulQngs1e8SaFKlOyQ+WsTY0HZ+I/pIEB9ZzAQg5KJ4YJgm
-         DlJQ==
-X-Gm-Message-State: AOJu0YwktsCZ3vpM343gAY4T/x13RINrccPjf1qvKmDsT6dUW+NjdYak
-	s5GsB3RdnA8woTMOop6qiSqgsotfaeRmehxl3ptFYWIYRn/V3luIL3U51Kw2EtJRRfk/glFVSUw
-	BIO4/1lP0KmQw1elnKtx37YUz1kCtMHQDnpDY
-X-Gm-Gg: ASbGnctW8EZ+dUIwg6ia2gsBuhUPrpM9VoZRahItX7yXH9PU0JfEs/p59bS2YjOJlk7
-	D+ERTr10gXgjvnahXS0gSYog1+nXnZ+how8LEnbELpg7xGjZEjl4W9k/ibdf3tqAp
-X-Google-Smtp-Source: AGHT+IEDYKQWn4RpDYL5VcZE/5orrgWkfRQYbI9Ft0YtuhnijS3UgMYLBHyoJ+B4J4AHgfzzEobWozQd+BCencQQJrU=
-X-Received: by 2002:a05:6102:4408:b0:4af:c3ed:b926 with SMTP id
- ada2fe7eead31-4afcab15941mr6903850137.23.1733554168303; Fri, 06 Dec 2024
- 22:49:28 -0800 (PST)
+	s=arc-20240116; t=1733554254; c=relaxed/simple;
+	bh=kBodLiWnDz6YMe+dckTErs6BiwvhICgio0VYQl4n9pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNpeo5mBDyoczl42L3fD6HUPi/B6pHKgenatQMmq/yJRGuZMCxvvwBSyfmTqmfbLmuhlqP9Zz89yLWErVLqMOzJk2cXPy3ShkgYJAs/gZ8HCudRBWVdTsJATdJ0w4zoVk/LLyO5XbjzEidRpn+CqOxg2gQU8KggP9BMZDWP8baw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e+dNS5VE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9697CC4CECD;
+	Sat,  7 Dec 2024 06:50:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733554254;
+	bh=kBodLiWnDz6YMe+dckTErs6BiwvhICgio0VYQl4n9pk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e+dNS5VE9pAeW959FC8VZz2GTZ4Uo+B3TJyHNYky4DY9GXsK9HcXD8p9pmD2ADAZz
+	 pNI11H45Y1iSUd7CRKiPoVsCc53D7+NltZJCHEXlEeDx69aY9dLtJ4WGADKOd/mZAL
+	 KQnxvDAsfktkUDIa5PRwWZwD0W6FNp629zcfq8FA=
+Date: Sat, 7 Dec 2024 07:50:50 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: n3rdopolis <bluescreen_avenger@verizon.net>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jiri Slaby <jirislaby@kernel.org>
+Subject: Re: [PATCH 1/2] ttynull: Add an option to allow ttynull to be used
+ as a console device
+Message-ID: <2024120700-expansion-pretense-b6e9@gregkh>
+References: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
+ <2024120408-moneyless-stood-cda2@gregkh>
+ <6622246.K2JlShyGXD@nerdopolis2>
+ <3758619.RUnXabflUD@nerdopolis2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206095951.98007-1-david@redhat.com> <20241206095951.98007-2-david@redhat.com>
-In-Reply-To: <20241206095951.98007-2-david@redhat.com>
-From: Yu Zhao <yuzhao@google.com>
-Date: Fri, 6 Dec 2024 23:48:51 -0700
-Message-ID: <CAOUHufbYxEByFv6H8kgbrAkgzkoNb=PTY1zBO0-Mniz6ADtk3A@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] mm/page_alloc: conditionally split >
- pageblock_order pages in free_one_page() and move_freepages_block_isolate()
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Zi Yan <ziy@nvidia.com>, 
-	Vlastimil Babka <vbabka@suse.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3758619.RUnXabflUD@nerdopolis2>
 
-On Fri, Dec 6, 2024 at 3:00=E2=80=AFAM David Hildenbrand <david@redhat.com>=
- wrote:
->
-> Let's special-case for the common scenarios that:
->
-> (a) We are freeing pages <=3D pageblock_order
-> (b) We are freeing a page <=3D MAX_PAGE_ORDER and all pageblocks match
->     (especially, no mixture of isolated and non-isolated pageblocks)
->
-> When we encounter a > MAX_PAGE_ORDER page, it can only come from
-> alloc_contig_range(), and we can process MAX_PAGE_ORDER chunks.
->
-> When we encounter a >pageblock_order <=3D MAX_PAGE_ORDER page,
-> check whether all pageblocks match, and if so (common case), don't
-> split them up just for the buddy to merge them back.
->
-> This makes sure that when we free MAX_PAGE_ORDER chunks to the buddy,
-> for example during system startups, memory onlining, or when isolating
-> consecutive pageblocks via alloc_contig_range()/memory offlining, that
-> we don't unnecessarily split up what we'll immediately merge again,
-> because the migratetypes match.
->
-> Rename split_large_buddy() to __free_one_page_maybe_split(), to make it
-> clearer what's happening, and handle in it only natural buddy orders,
-> not the alloc_contig_range(__GFP_COMP) special case: handle that in
-> free_one_page() only.
->
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+On Fri, Dec 06, 2024 at 12:36:21PM -0500, n3rdopolis wrote:
+> On Wednesday, December 4, 2024 2:37:55 PM EST n3rdopolis wrote:
+> > On Wednesday, December 4, 2024 1:06:50 PM EST Greg Kroah-Hartman wrote:
+> > > On Wed, Dec 04, 2024 at 12:06:56PM -0500, n3rdopolis wrote:
+> > > > On Wednesday, December 4, 2024 10:41:44 AM EST Greg Kroah-Hartman wrote:
+> > > > > On Thu, Nov 28, 2024 at 11:15:48PM -0500, n3rdopolis wrote:
+> > > > > > Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
+> > > > > > initialized by console_initcall() and selected as a possible console
+> > > > > > device.
+> > > > > > Signed-off-by: n3rdopolis <bluescreen_avenger@verizon.net>
+> > > > > 
+> > > > > Meta-comments, we need a blank line before the s-o-b line, AND we need a
+> > > > > real name here, sorry.  I can't do anything with these (including
+> > > > > reviewing them), until that happens.
+> > > > > 
+> > > > Oh, I thought that I didn't need a real name
+> > > > 
+> > > > I found a recent thread that seems like it suggests that I thought
+> > > > https://lore.kernel.org/all/20241121165806.476008-40-alex.bennee@linaro.org/[1]
+> > > > https://drewdevault.com/2023/10/31/On-real-names.html[2]
+> > > > Or do I need to wait for that change to the guideline be merged?
+> > > 
+> > > That change has been merged a long time ago, but as far as I can tell,
+> > > this signed-off-by you used here does not meet this category.
+> > > 
+> > Oh, what would it take to meet that category? I've been using this nick to
+> > contribute to other projects, and it matches my GitHub name, and FreeDesktop
+> > GitLab name
+> > 
+> What if I made the signed-off-by (and committer name) this email address? would
+> that work?
 
-Acked-by: Yu Zhao <yuzhao@google.com>
+Do you sign documents with your bank with an email address in the line
+that says "name"?
 
