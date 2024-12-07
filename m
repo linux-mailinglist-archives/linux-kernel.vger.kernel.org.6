@@ -1,180 +1,89 @@
-Return-Path: <linux-kernel+bounces-435949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D255A9E7F11
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:40:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B5699E7F12
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 753311883615
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:40:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 045871883788
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AAD513B59A;
-	Sat,  7 Dec 2024 08:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="CiksJ+6m"
-Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3D4813BC18;
+	Sat,  7 Dec 2024 08:40:36 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3342E13D882;
-	Sat,  7 Dec 2024 08:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36F89139CEF
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 08:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733560815; cv=none; b=VdSQexViZivseLfyzItgR1mEnqpmoWvWBPyrnDdK5EgQWDbxwqLVHuZDVthtDUrEOOhVeRkbjNp6aQ/zZWtd1bpjvtJcBXzsRn/tk+wsvruGI1JtrRxKAmZVwt5aTrdzE9zCc8zjc4UjP+G+e2DnD/TMDog5mtbXU3bDI8nbO6w=
+	t=1733560836; cv=none; b=ESnCXYnI88/XnFRsgdkd09xy+wC39SyFC+Af5w1YYu5ht8IeOSsG19Amz67hLTAwu4KquIjMOfm5zsmPQ9bcFMzM8mju1+/ssv6rv4yOtBxHU6kxCjPzbyfZZoOGEqRmgDIbs3u5jix5UKW736B6Qa2GNBRlFofxt3ABKwgekLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733560815; c=relaxed/simple;
-	bh=PdxvATUKG43ydKCs9xklflch8LG5kpMBPRXQw/UGABA=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Jt007+yG7jH/WaquQC/VAXHC17S8uR9tkXZ9bNIbmzSFKgwIQOpPvYjhc1qoDgNuc9spN5tycp0mvVKhm8hp/2fJ5wCe5wSsLT9rVZxzaaTLJ4+TAXyecCh6l6rFu0sO+XFAFrrctWa0jfm6vu0DDl9YnkLqW1R0AWW6LTsUIhg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=CiksJ+6m; arc=none smtp.client-ip=134.76.10.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
-	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=eDkgUwCcQtOfovebMtMEsFmujecvWxrMcPeoL9u2wnU=; b=CiksJ+6m8UmWKFBUT4L/0cUbuN
-	C2UvpC0fRZA2CSeNutopy7iKy2C12ANDY6G6H0B/uxReaJNEIPaeY3ebCrxfeOzGx5pwqNVSmRPlU
-	o6FQjobun/MRucwBD2aNzNxLXFPoypwhurD6uMWTFg2q95Im/tq1I1E9+YMsU1PU04htPNWMRo4PV
-	ZBb0Av9a09UnWZyPJLeLOngtbpcJShTr8KzGy5biE/3Biekx7a6xEUh+7NgtwsXeC9dA9SeYs+RAi
-	Egh4AChbnI2w/jqtX55O0t+utYob6SjBTpHqckqcPhu1gzM9qe/ZUSHTtvwyZ7RgGwHWyswSJGdWZ
-	4yJRz9CQ==;
-Received: from xmailer.gwdg.de ([134.76.10.29]:40719)
-	by mailer.gwdg.de with esmtp (GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tJqM3-004Jfy-1D;
-	Sat, 07 Dec 2024 09:39:59 +0100
-Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
-	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-	(GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tJqM3-000Qkk-0p;
-	Sat, 07 Dec 2024 09:39:59 +0100
-Received: from [192.168.0.221] (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
- (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sat, 7 Dec
- 2024 09:39:51 +0100
-Message-ID: <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-From: Martin Uecker <muecker@gwdg.de>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-CC: David Laight <David.Laight@aculab.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Date: Sat, 7 Dec 2024 09:39:50 +0100
-In-Reply-To: <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
-	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
-	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
-	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
-	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
-	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
-	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1733560836; c=relaxed/simple;
+	bh=FAwhwGver0Xink7EnbCQjsDv1FnYh/KNAx8FytEofH8=;
+	h=Date:From:To:Cc:Message-ID:Subject:MIME-Version:Content-Type; b=sX8FXq33yq5pcPxfktj7mliJHf7+7crsawf8QNXlJHFoapyHMk9HN3HCbfGYeOnOAYvfg3XZi/LEY0iRICFXP9JGl4No01uhE5rFbH2xbf1aVPUjwsqTIVqYBiDPxjTOoAk0E078i0DP1tiFFDdXNi1200+FC5b1wBTCLcEJEp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 96F002E6145;
+	Sat,  7 Dec 2024 09:40:25 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id qPy_3ZzQQ0Pu; Sat,  7 Dec 2024 09:40:25 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 520E32E6150;
+	Sat,  7 Dec 2024 09:40:25 +0100 (CET)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Vvl3TawRBc6n; Sat,  7 Dec 2024 09:40:25 +0100 (CET)
+Received: from lithops.sigma-star.at (lithops.sigma-star.at [195.201.40.130])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 33B032E6145;
+	Sat,  7 Dec 2024 09:40:25 +0100 (CET)
+Date: Sat, 7 Dec 2024 09:40:25 +0100 (CET)
+From: Richard Weinberger <richard@nod.at>
+To: torvalds <torvalds@linux-foundation.org>
+Cc: linux-mtd <linux-mtd@lists.infradead.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>
+Message-ID: <972877429.45679137.1733560825113.JavaMail.zimbra@nod.at>
+Subject: [GIT PUL] JFFS2 fixes for v6.13-rc2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: mbx19-fmz-02.um.gwdg.de (10.108.142.53) To
- MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
-X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:5, sv:1733541190, ts:1733560793
-X-Virus-Scanned: (clean) by clamav
-X-Spam-Level: -
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.12_GA_3807 (ZimbraWebClient - FF133 (Linux)/8.8.12_GA_3809)
+Thread-Index: 33KlDEGjZjqXAp/6Bdh5OoiTVbwAZg==
+Thread-Topic: JFFS2 fixes for v6.13-rc2
 
-Am Freitag, dem 06.12.2024 um 16:26 +0900 schrieb Vincent Mailhol:
-> > On Fri. 6 Dec. 2024 at 15:40, Martin Uecker <muecker@gwdg.de> wrote:
-> > > > Am Freitag, dem 06.12.2024 um 02:25 +0000 schrieb David Laight:
-> > > > > > From: Vincent Mailhol
-> > > > > > > > Sent: 05 December 2024 15:31
-> > > > > > > >=20
-> > > > > > > > -CC: Martin Uecker <Martin.Uecker@med.uni-goettingen.de>
-> > > > > > > > +CC: Martin Uecker <muecker@gwdg.de>
-> > > > > > > > (seems that Martin changed his address)
-> > > >=20
-> > > > My current one is this: uecker@tugraz.at
-> >=20
-> > Ack
-> >=20
-> > (...)
-> >=20
-> > > > > > > > > > > > + *
-> > > > > > > > > > > > + * Glory to Martin Uecker <Martin.Uecker@med.uni-g=
-oettingen.de>
-> > > > > > > > > >=20
-> > > > > > > > > > IIRC Martin has agreed in the past that the accreditati=
-on can
-> > > > > > > > > > be removed - especially since it refers to the 'sizeof =
-(void)' trick.
-> > > > > > > >=20
-> > > > > > > > I tried to look for such message:
-> > > > > > > >=20
-> > > > > > > >   https://lore.kernel.org/all/?q=3Df%3A%22martin+uecker%22+=
-__is_constexpr
-> > > > > > > >=20
-> > > > > > > > but couldn't find it. Do you have the link?
-> > > > > > > >=20
-> > > > > > > > @Martin, do you agree that I remove the accreditation?
-> >=20
-> > So, do you agree to have the accreditation removed in compiler.h?
-> > Personally, I do not mind. I am also OK to remove you from the
-> > documentation and add you to the CREDITS file if you'd like to.
+Linus,
 
-Sorry, I somehow didn't read this part. Please do whatever you think is
-most appropriate (but please update my email to the new above if it
-still appears anywhere).
+The following changes since commit feffde684ac29a3b7aec82d2df850fbdbdee55e4:
 
+  Merge tag 'for-6.13-rc1-tag' of git://git.kernel.org/pub/scm/linux/kernel/git/kdave/linux (2024-12-03 11:02:17 -0800)
 
-I find it amazing how much time the Linux kernel community spends
-revising code to make it work perfectly.
+are available in the Git repository at:
 
-Still, I am wondering whether some of this time and effort should not
-be targeted at C compilers and language work to make these macro
-hacks unnecessary?
+  git://git.kernel.org/pub/scm/linux/kernel/git/rw/ubifs.git tags/ubifs-for-linus-6.13-rc2
 
-I already found the original motivation for these macros very questionable.
-Removing VLAs at the cost having imprecise worst-case bounds strikes
-me as fundamentally misguided - at least if security is the motivation.
+for you to fetch changes up to b29bf7119d6bbfd04aabb8d82b060fe2a33ef890:
 
-So maybe there are other good reasons for this, e.g. bad code
-for VLAs or risk of jumping the guard page if the attacker can somehow
-influence its size (but for this there is -Wvla-larger-than). But even then=
-,
-wouldn't it be a more worthwhile and interesting investment of engineering
-resources to improving code generation / warnings at the compiler level?
+  jffs2: Fix rtime decompressor (2024-12-05 12:31:40 +0100)
 
-Also the fortification of strlen and co seems something which could be
-much better solved with annotations and proper compiler support.=20
+----------------------------------------------------------------
+This pull request contains fixes for JFFS2:
 
-Martin
+- Fixup rtime compressor bounds checking
 
+----------------------------------------------------------------
+Richard Weinberger (1):
+      jffs2: Fix rtime decompressor
 
-
-
+ fs/jffs2/compr_rtime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
