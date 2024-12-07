@@ -1,153 +1,164 @@
-Return-Path: <linux-kernel+bounces-436027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58DF49E8023
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:19:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2CF49E8024
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:20:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A4D4166D2B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF331883D01
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:20:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70B041474A9;
-	Sat,  7 Dec 2024 13:19:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DA2146D65;
+	Sat,  7 Dec 2024 13:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="nlZOjo7O"
-Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrkSBdZF"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DC41DDEA;
-	Sat,  7 Dec 2024 13:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF351DDEA;
+	Sat,  7 Dec 2024 13:19:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733577544; cv=none; b=d598JqnQPKo4Ak21uqaTIlT1UZJtjQRRQ8/pcMbWFRaOiFxAuq1wuQU7MNU1tedFvRmhJwDck8B5UWg9gTzOZdstR0lyhhjqtotXIIG8E9zYUyA3cdlDUpB9W29ELrJ8ZC+axSCgeG82imSctkXbalRDZr0pdjkVplzjrSZHfi8=
+	t=1733577597; cv=none; b=bTJidv/C8UjztmQgVAUvAOTOE8EoD6t0OVoM9x7TCw0RL3BbxVs2OoEnk7WguWgncxJzbUCUMPjhGw32x2bw1Ijsz6sQ1l6cyv8w+5XBNRt4CT+GC7cBUaVAwXNl/caJlWIwfRKDeaX54Ru4GlIumQULx7/SfYeW0hdwKaUQLyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733577544; c=relaxed/simple;
-	bh=bXtsBV+MYk/rysb9Dw8t/uPASeHAvg8lgVq2KjuxAeQ=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OYT9qrj8oHMZ1e72yHTiIxF3pXMdnv+F3egltzrWM5HXdd5tnFm6HGxUAy9CSaykv4W9p1yKa83gLjqewND7LvMe+vv5xKVYPYPuoR/FixWTPQ8nnx8Irq8kQZo5aOZVsQpozuqAeg9PT/YKqnK4b6ha6QR1R/wuL8O9XGMwQec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=nlZOjo7O; arc=none smtp.client-ip=134.76.10.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
-	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=QtEZslqpqRuxYvtGPLjVYcKkcoEu6YBxNA5Etheid2U=; b=nlZOjo7Owmolyq2qsHnQmXqibt
-	Dqt8nqNi50iL01gaJxVADHoXQRXuZVqJnDGaKncFKSciJL08oiHOqnRCq/8Bhd9L/YPm5HnaGubZo
-	TWfu4QJoi48Fu+RpJIaUN0WQn0ivWFBCx5VTzJaGUpVzPsH0lkDH6bWf2x7wL/7txAPfpUA7riwXl
-	cUrF634rzqRKibxfMrv3EpfFg2XOXWBTSygA34+DXqorJdBaTmVTumrYsV1FrbAh5E1a+H0DJSIzr
-	u8GXkBM6vZ74qe4CL74mUWovI8zcusiovsFfruUUufF3I6vPeBe8RWH9G30aEkgiIotfruNXHtcxI
-	iaVfsiJA==;
-Received: from xmailer.gwdg.de ([134.76.10.29]:37196)
-	by mailer.gwdg.de with esmtp (GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tJui3-004MAv-0o;
-	Sat, 07 Dec 2024 14:18:59 +0100
-Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
-	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-	(GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tJui3-000VzV-0S;
-	Sat, 07 Dec 2024 14:18:59 +0100
-Received: from [192.168.0.221] (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
- (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sat, 7 Dec
- 2024 14:18:57 +0100
-Message-ID: <429e7c6713ecc94494d9107e5f5a1f0c8e854f23.camel@gwdg.de>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-From: Martin Uecker <muecker@gwdg.de>
-To: Vincent Mailhol <vincent.mailhol@gmail.com>
-CC: David Laight <David.Laight@aculab.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Date: Sat, 7 Dec 2024 14:18:51 +0100
-In-Reply-To: <CAMZ6RqJGqBqvgxzp5yPFY1pk0WkkwEMM34qU-dZ3kXfsnKaqEg@mail.gmail.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
-	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
-	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
-	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
-	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
-	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
-	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
-	 <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
-	 <CAMZ6RqJGqBqvgxzp5yPFY1pk0WkkwEMM34qU-dZ3kXfsnKaqEg@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1733577597; c=relaxed/simple;
+	bh=iuCsw+WfqbPsOmS1nJ9WB0REkyl0evY9QKZWW0MOJbs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oS0Hn/AfodsSy6GRoO0aJKG0uTELJN1v9rhudqQdw9kO+RHNYddSviLR2unOvayuvLA8euyg6cv0xu88KBgZlengAX7bOl+tVSn529Va4JafuMQzGInZ1WOTGk50memCDl9ykK2VreHw5t2oPHytsvWynM+cdnaYpCvS0vUvp6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrkSBdZF; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ef89dbd8eeso287178a91.0;
+        Sat, 07 Dec 2024 05:19:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733577595; x=1734182395; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FDBZpTvNiR/DiXDOnPKbSZlVKfo3SdqCEnbL2Ljivn8=;
+        b=QrkSBdZFyiPQYKcy/2tSvjvH7JICNEjNPTT9AV3M5uY6p9WbyncSuZ/e0mTs9WcP0o
+         0dvje5ZorfH3v6juRw36qZnKb3goJ0J/CzMIaGJgmNaJ7bdGhhUP1mkSW/BCVbM8xpbD
+         Si4WBVeV3jrB1MKYzDGECTb6JGgaClNszuxIpB67EfqT+5B1+WAzJO4cUCGu6pgr1oc/
+         koN15mKFd6puEBKBWfwPXk/QQN0qLFXltDGJFwtOr1ZWiSJZe4FyPQ8nEpEOHOlj2PVx
+         CAco7ThOGN+uLnb5Fx5jQ3PhxMXUKUKUhtl6p0rvD5az6zWeDjADr/Cu4Kr06zBzeKsM
+         0xcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733577595; x=1734182395;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FDBZpTvNiR/DiXDOnPKbSZlVKfo3SdqCEnbL2Ljivn8=;
+        b=d0krr/OBKv+VLxFO+ZwtWJ3OZAMsrSe2q5SC18G+mwY9MCrGdeYXhEfdt6VR5gmYTM
+         oKf0BoLabvW0NYCESY1BcfK0RkzGVWgcbfWqMs6LbXN6PKKkiOBhSQfqDPZbK/snRrrE
+         EzSaueyF/xw2PdP5Odo8Spsc6CM9UK0tJFUfz6m+BPqK7ajTZhWusy58Z+PviQECsyFK
+         AlEhjN43URsuUoqs5ThLmfths+XkosIW1b4+O0dqNj+Q8YGtarNUUBz3j2yPPoMHSGn+
+         SqY+XNT4EJPLIrxAa2iqPfgJ8IpHXH+sYkwvx701srk04tti3vkw/ZFi+gRRQlZgqFmU
+         +Xag==
+X-Forwarded-Encrypted: i=1; AJvYcCU9t39QXdFPdhwgTms0iVYnaYMAjM52d+goKitsT3QnoIjrKuhm/KdGeoltjH1/NNDUMVbbzUujj1uMJPXjLw==@vger.kernel.org, AJvYcCVkm54UKp/3rB+8WNHDKLOLrsj7Ac0Rh+uyXXm/HklQ22h83AQIjw3OiZfnKGbVONmoews+ZtUwWrDT2Y3b@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkbElgbbDjwZIp5ECkuY6v3KVybby5pnSmfHEyBcIgLtPJkzzT
+	1EkCgnfefbcFB8/YvDecMTgUm0Q0tfvCRjCzPF5hap/d7WTKOJMD
+X-Gm-Gg: ASbGncuUSvy4d0cscsB5Zg+heAbAmk8RRVi1tDG5upOB6a/9S3Jba2NLCOsCLJmLfOG
+	YNabC224CK0LP27exL1wFGsFnuc3s79BLo41oQRfZX5YIoKrMg/2uyFgKyxCGi6Cdp/U+DFj/Q0
+	TZ4RnnzRHLhllQFPKi+oV8f4KjNxON5ZdK1tn0KvmrOTPR8rhKM1PNHg80PeXjWilYycN7tJ/ZY
+	B7eVw1wSyjFGPOsM7QpN6YgF2kdoX+NjXBjElGfjI62kuKbPxxJ4s2baYGyeqyNmG9azpkQN0Ah
+	/1Bt
+X-Google-Smtp-Source: AGHT+IHf3PzcsFhRJwfL8oUaq3bTjI83mlsZWslYAeGnBswT9OCvEzi2Bb0eQ6J6qn9bWsP8uV/IwA==
+X-Received: by 2002:a17:90b:3d4c:b0:2ee:a58d:cd8b with SMTP id 98e67ed59e1d1-2ef6a6c11a6mr8754864a91.18.1733577594826;
+        Sat, 07 Dec 2024 05:19:54 -0800 (PST)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef94b62561sm120716a91.1.2024.12.07.05.19.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 05:19:54 -0800 (PST)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: kent.overstreet@linux.dev
+Cc: irogers@google.com,
+	colyli@suse.de,
+	peterz@infradead.org,
+	akpm@linux-foundation.org,
+	jserv@ccns.ncku.edu.tw,
+	linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH] lib min_heap: Add min_heap_empty()
+Date: Sat,  7 Dec 2024 21:19:48 +0800
+Message-Id: <20241207131948.1881301-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: MBX19-FMZ-06.um.gwdg.de (10.108.142.65) To
- MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
-X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:7, sv:1733541190, ts:1733577539
-X-Virus-Scanned: (clean) by clamav
-X-Spam-Level: -
+Content-Transfer-Encoding: 8bit
 
-Am Samstag, dem 07.12.2024 um 21:45 +0900 schrieb Vincent Mailhol:
-> On Sat. 7 Dec. 2024 at 17:39, Martin Uecker <muecker@gwdg.de> wrote:
-> > Am Freitag, dem 06.12.2024 um 16:26 +0900 schrieb Vincent Mailhol:
+Add min_heap_empty() which returns a boolean value indicating whether
+the heap is empty.
 
-...
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+Hi Kent,  
+If you plan to use min_heap_empty(), feel free to take this patch.
 
-> > I find it amazing how much time the Linux kernel community spends
-> > revising code to make it work perfectly.
-> >=20
-> > Still, I am wondering whether some of this time and effort should not
-> > be targeted at C compilers and language work to make these macro
-> > hacks unnecessary?
->=20
-> It seems to me that the long term solution to this problem are the
-> constexpr functions.
+ include/linux/min_heap.h | 13 +++++++++++++
+ lib/min_heap.c           |  6 ++++++
+ 2 files changed, 19 insertions(+)
 
-How would constexpr functions help here?  (I am a bit sceptical about
-constexpr functions.)
-
->=20
-> But the core issue is that before getting this support in Linux, we
-> have to wait for this to be added to the C2Y draft, then implemented
-> in the compilers (probably just reusing the C++ constexpr functions)
-> and finally wait maybe one more decade for the C2Y support to reach
-> the kernel. For reference the kernel supports C11 only from 2022=E2=80=A6=
- So
-> maybe we will see those in the kernel around 2037? Meanwhile, we have
-> to deal with those hacks.
-
-If we do not collaborate on proper solutions, then you might have=C2=A0
-to wait much longer.
-
-Martin
-
-
->=20
->=20
-> Yours sincerely,
-> Vincent Mailhol
+diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
+index e781727c8916..bba01453c522 100644
+--- a/include/linux/min_heap.h
++++ b/include/linux/min_heap.h
+@@ -240,6 +240,16 @@ bool __min_heap_full_inline(min_heap_char *heap)
+ #define min_heap_full_inline(_heap)	\
+ 	__min_heap_full_inline((min_heap_char *)_heap)
+ 
++/* Check if the heap is empty. */
++static __always_inline
++bool __min_heap_empty_inline(min_heap_char *heap)
++{
++	return !heap->nr;
++}
++
++#define min_heap_empty_inline(_heap)	\
++	__min_heap_empty_inline(container_of(&(_heap)->nr))
++
+ /* Sift the element at pos down the heap. */
+ static __always_inline
+ void __min_heap_sift_down_inline(min_heap_char *heap, int pos, size_t elem_size,
+@@ -417,6 +427,7 @@ bool __min_heap_del_inline(min_heap_char *heap, size_t elem_size, size_t idx,
+ void __min_heap_init(min_heap_char *heap, void *data, int size);
+ void *__min_heap_peek(struct min_heap_char *heap);
+ bool __min_heap_full(min_heap_char *heap);
++bool __min_heap_empty(min_heap_char *heap);
+ void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
+ 			  const struct min_heap_callbacks *func, void *args);
+ void __min_heap_sift_up(min_heap_char *heap, size_t elem_size, size_t idx,
+@@ -438,6 +449,8 @@ bool __min_heap_del(min_heap_char *heap, size_t elem_size, size_t idx,
+ 	(__minheap_cast(_heap) __min_heap_peek((min_heap_char *)_heap))
+ #define min_heap_full(_heap)	\
+ 	__min_heap_full((min_heap_char *)_heap)
++#define min_heap_empty(_heap)	\
++	__min_heap_empty(container_of(&(_heap)->nr))
+ #define min_heap_sift_down(_heap, _pos, _func, _args)	\
+ 	__min_heap_sift_down((min_heap_char *)_heap, _pos, __minheap_obj_size(_heap), _func, _args)
+ #define min_heap_sift_up(_heap, _idx, _func, _args)	\
+diff --git a/lib/min_heap.c b/lib/min_heap.c
+index 4485372ff3b1..f546cd110cea 100644
+--- a/lib/min_heap.c
++++ b/lib/min_heap.c
+@@ -20,6 +20,12 @@ bool __min_heap_full(min_heap_char *heap)
+ }
+ EXPORT_SYMBOL(__min_heap_full);
+ 
++bool __min_heap_empty(min_heap_char *heap)
++{
++	return __min_heap_empty_inline(heap);
++}
++EXPORT_SYMBOL(__min_heap_empty);
++
+ void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
+ 			  const struct min_heap_callbacks *func, void *args)
+ {
+-- 
+2.34.1
 
 
