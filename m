@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-435971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9701F9E7F45
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:00:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257AE9E7F47
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:03:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A342A163CC7
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:59:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA972188098C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB1B4136331;
-	Sat,  7 Dec 2024 08:58:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72FE13665A;
+	Sat,  7 Dec 2024 09:03:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/xyDkYe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="Rv7bX8kZ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1BB82C7E;
-	Sat,  7 Dec 2024 08:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733561935; cv=none; b=EltPDnGReQ6rRkW0sFvwdhgRQB7bNXzV0IrskPcVv4oucIqAwvxL4vUCelssZIclE7uMhXYXLaoBxmY2FHJoklA/ghYBwl5CsB3NpUq5JzkmQAe/RIw+Dt2AkczD666oo5yv3e8Oo/4vrpnHXpADiUNdXLRe7Z84wyxxx+rILO8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733561935; c=relaxed/simple;
-	bh=CbfyyJMoHWuUmJ99TbtFahf95hfhbR9G+s3+jsfdbRU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GD7geE+o1YicVR5YiMgGPbtr9UjDuiNgfu0E3kSQ5Pmo0GlZZN5BbcOakpmDBeDFE4XWG2VmggiOi0ZH/4/O/e+RMipe7LSD7qVsT+9+4pipk3tQkKJw3u4OiwLMMY0rubEWNw80qzXn0fzspZZ4ZN7S2iLtKrrAM9H7Tb7i3Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F/xyDkYe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF06C4CEE3;
-	Sat,  7 Dec 2024 08:58:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733561934;
-	bh=CbfyyJMoHWuUmJ99TbtFahf95hfhbR9G+s3+jsfdbRU=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=F/xyDkYeq5KyZ7A/fHdGmpxNbg78iC7W9im/EKoG+aQbitXxV2O83isOjplD/L5Wb
-	 DvCtCOzPq73gLu9TQKRqgo2XDKZPST5uhn4ZGsQCUfqvF4m3R57e1ahyd9meeGCDXp
-	 DS2GFZ71LIevPgsz07f/t0B/d5u2GqTsSi2TaP11ov4ZZAJK5fPDdJ+1xOkw53RaYE
-	 Pa/cVXe6HfzCjaWaVp167el/fuIQEiKaiJHe9FajJzkFh6QrZ5kZEof3I3EiERStnb
-	 xjPypw/z80MJ2MQcyIeYEjFsjkjvhpwy8cTTmw8D0waowrmPmlX4rpH75qi6wBKRFH
-	 cU2x4y9fSG+Mw==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa62f0cb198so318113366b.2;
-        Sat, 07 Dec 2024 00:58:54 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUA9QDu/+dDtdd4VfvWBbBATYhJ2ZEm3p/1Sc2/dKENpJGx2JLhf5HvEsmKuJXfCeJJSnaamL8pYmRZVtE=@vger.kernel.org, AJvYcCWWhv1OGolN4zvA230PQzfV/aFHawdlF7sYb8fHJ/5/BmQmIYOwF/clPG6wHko/T84VU2NADSJ177Dj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx47He7pD/9H4oORB0z1BTG6ImVp6ya8noXLSf58GmZFT9Al38n
-	1km7Px4iRUYKca7zLctOs/afZNEl7u0D6BLjA29KT3IpbLs3X0W/CizOXDD8EQ7ix1z7aigtwo1
-	tdm9Pnum5JD8lpOazejXl1GT8jrM=
-X-Google-Smtp-Source: AGHT+IEv1AWReTZ5Xlw0WY0CbfDwUkiT2YzQ/An/+llmTeLIq6HAECdh/u8A/wjwSWXJdJF9rVqTdtgnqf64w+3oDz4=
-X-Received: by 2002:a17:906:9d2:b0:aa6:4181:9d04 with SMTP id
- a640c23a62f3a-aa64181a14cmr315227566b.56.1733561933235; Sat, 07 Dec 2024
- 00:58:53 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6553D27E;
+	Sat,  7 Dec 2024 09:03:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733562188; cv=pass; b=l9PlkPc1h9QWAK0Fp+y/6nCKX51TD553mCea5s/Yl6ulbT64V3Yku1wV9M/SGmpBaltr3XMg81QOXBS8dJyS84IXPVQ+KWFDOZRnHTOzmV9jrxEHGTYfu7if4oergTMZC/UcMpRSN02EFECDiMPq/SZM4T2rSaJGPj9hM0J4VLE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733562188; c=relaxed/simple;
+	bh=L2LIOUCvRcR7jZshB2PLw+tAEKABqaTdFKGOUdcuSYg=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=nDIeIR0z/CdtJQBLzcKps/BRqjftCfR+ux5o+SOqWK04HobsGvh2jqZMO7nyBBTSRFukRa72JZTrwsm0IPi/NeaeeDC8YmPw5GXdwxfigeHo8VDptXFoEbYymTHTSTRXKfgavZhP9QVGMsP3UH2X2lkvlb7pS11l7zpGeVvWd6I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=Rv7bX8kZ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733562140; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=I+uJ9hf3zgNOoCn/PdMjGHQ4uJaIYAV9URdzmh58avlyWsv9xNWNlDtEcKbo8FBiakn9BxLfRep0A5Wm0PFEIGywV75ZPHiAntXfO2fCTKoPflJfgggwacvLqbktuXGbawSedAiSke5xN5qb73gcxOiTzz8Huq8R0uWTO5F4RtU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733562140; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=fWaPHbQlQ8a672jJSJ50+u/C4nQekxrMIUfOuBB+fQE=; 
+	b=lkyRekQHMIiRfZnCuSJdYkeqs5gsmZR5of7LI5Avq/v3hZaLJRm1wIYBqwmHWptXcgf0szHGZzr6mhbCS93FzJyeaWg4Esjy/8zGrZks02iF+HLXSTQMj34fpCR2IZgC9CbudJK+/q3I1SQwNLvE/Fy7S6JG5TV2dyM1GRCViM8=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733562140;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=fWaPHbQlQ8a672jJSJ50+u/C4nQekxrMIUfOuBB+fQE=;
+	b=Rv7bX8kZD9IpxRXgHWbKGaYEPZIAZea2EMoo97n+C/fVEkRLjgxU3EDH6yIqiZkd
+	XfcMkzAVCcFiRwuZWUTj3HSNzDetMa0ZIsCCTYwx7VGP39+HAnDYRFSYiBYcKIzhoAK
+	B4GV6smfDuPXFumLMYSZezEKbKyzuSVzdo9W4j34=
+Received: by mx.zohomail.com with SMTPS id 1733562136875407.58675020965495;
+	Sat, 7 Dec 2024 01:02:16 -0800 (PST)
+Message-ID: <4b0cb363-1eb4-4203-bf05-fd3d495a9806@collabora.com>
+Date: Sat, 7 Dec 2024 14:02:16 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205114307.1891418-1-wangming01@loongson.cn>
-In-Reply-To: <20241205114307.1891418-1-wangming01@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 7 Dec 2024 16:58:41 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4VpAF7OjAbbBqoJh7kXyoq_NV_dtkSCOAPBCsH247stw@mail.gmail.com>
-Message-ID: <CAAhV-H4VpAF7OjAbbBqoJh7kXyoq_NV_dtkSCOAPBCsH247stw@mail.gmail.com>
-Subject: Re: [PATCH v2] rtc: loongson: clear TOY_MATCH0_REG in loongson_rtc_isr()
-To: Ming Wang <wangming01@loongson.cn>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Keguang Zhang <keguang.zhang@gmail.com>, 
-	Jiaxun Yang <jiaxun.yang@flygoat.com>, WANG Xuerui <git@xen0n.name>, 
-	Binbin Zhou <zhoubinbin@loongson.cn>, linux-rtc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, lixuefeng@loongson.cn, gaojuxin@loongson.cn
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.12 000/146] 6.12.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241206143527.654980698@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241206143527.654980698@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Reviewed-by: Huacai Chen <chenhuacai@loongson.cn>
+On 12/6/24 7:35 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.12.4 release.
+> There are 146 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sun, 08 Dec 2024 14:34:52 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.12.4-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+OVERVIEW
 
-On Thu, Dec 5, 2024 at 7:43=E2=80=AFPM Ming Wang <wangming01@loongson.cn> w=
-rote:
->
-> The TOY_MATCH0_REG should be cleared to 0 in the RTC interrupt handler,
-> otherwise the interrupt cannot be cleared, which will cause the
-> loongson_rtc_isr() to be triggered multiple times.
->
-> The previous code cleared TOY_MATCH0_REG in the loongson_rtc_handler(),
-> which is an ACPI interrupt. This did not prevent loongson_rtc_isr()
-> from being triggered multiple times.
->
-> This commit moves the clearing of TOY_MATCH0_REG to the
-> loongson_rtc_isr() to ensure that the interrupt is properly cleared.
->
-> Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
-> Signed-off-by: Ming Wang <wangming01@loongson.cn>
-> ---
-> v1 -> v2: Fix commit message function name format and add missing blank l=
-ine.
-> ---
->  drivers/rtc/rtc-loongson.c | 13 ++++++++-----
->  1 file changed, 8 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
-> index e8ffc1ab90b0..90e9d97a86b4 100644
-> --- a/drivers/rtc/rtc-loongson.c
-> +++ b/drivers/rtc/rtc-loongson.c
-> @@ -114,6 +114,13 @@ static irqreturn_t loongson_rtc_isr(int irq, void *i=
-d)
->         struct loongson_rtc_priv *priv =3D (struct loongson_rtc_priv *)id=
-;
->
->         rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
-> +
-> +       /*
-> +        * The TOY_MATCH0_REG should be cleared 0 here,
-> +        * otherwise the interrupt cannot be cleared.
-> +        */
-> +       regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
-> +
->         return IRQ_HANDLED;
->  }
->
-> @@ -131,11 +138,7 @@ static u32 loongson_rtc_handler(void *id)
->         writel(RTC_STS, priv->pm_base + PM1_STS_REG);
->         spin_unlock(&priv->lock);
->
-> -       /*
-> -        * The TOY_MATCH0_REG should be cleared 0 here,
-> -        * otherwise the interrupt cannot be cleared.
-> -        */
-> -       return regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
-> +       return ACPI_INTERRUPT_HANDLED;
->  }
->
->  static int loongson_rtc_set_enabled(struct device *dev)
-> --
-> 2.43.0
->
+        Builds: 29 passed, 0 failed
+
+    Boot tests: 70 passed, 1 failed
+
+    CI systems: maestro
+
+REVISION
+
+    Commit
+        name: v6.12.3-146-ge572189f6a25
+        hash: 91ba615b0f093358fd3961fb76f3479193cd18f6
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.12.y
+
+
+BUILDS
+
+    No build failures found
+
+BOOT TESTS
+
+    Failures
+
+      i386:(defconfig)
+      -hp-14b-na0052xx-zork
+      CI system: maestro
+      UBSAN: shift-out-of-bounds in drivers/net/wireless/intel/iwlwifi/iwl-dbg-tlv.c:1333:47
+      https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=$__all&var-build_config_name=$__all&var-id=maestro:6753358b6de2c3ffbb72658a&from=now-100y&to=now&timezone=browser&var-test_path=&var-issue_presence=$__all
+
+See complete and up-to-date report at:
+
+    https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-git_commit_hash=91ba615b0f093358fd3961fb76f3479193cd18f6&var-patchset_hash=
+
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
+
 
