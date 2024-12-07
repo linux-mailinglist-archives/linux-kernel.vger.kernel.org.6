@@ -1,96 +1,133 @@
-Return-Path: <linux-kernel+bounces-435918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC97A9E7E95
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:51:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AE879E7E98
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:51:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A0C5285A52
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:50:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30005285A53
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3324984A5E;
-	Sat,  7 Dec 2024 06:50:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0305136357;
+	Sat,  7 Dec 2024 06:51:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e+dNS5VE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DRx5tH8Y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8608C2581;
-	Sat,  7 Dec 2024 06:50:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288E4137742;
+	Sat,  7 Dec 2024 06:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733554254; cv=none; b=oDFMjqLtUhmpABYiHB/RW76Yajji42atXcXFipPZVVep92UlXmT+9HoRIsF7ATSL3QlMIJnRs8F+4yk+c7fnzDTS1i3VszVP3NFmrgRAORhftXb/l7NEqS9dcWvB5rIFQeE7eUk6f+YtZjHvpyXrv3Jutt+g5KLrgKi8No/s3T0=
+	t=1733554302; cv=none; b=ElYovQsLpwAZeoKKW/dNMN2pz9vj5Co0axUMMlTVL+MyFt6srDpmkPjpCE0vlE8xJrh7OyzhO5+fZEchE59I9LCKP6n1V4STHRGRCz4WPRZP+Hrve+L/647vbzI8+n0btW50f5OYpWOzo2SXexOkeI1P1904MIr89C7b8EyyOfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733554254; c=relaxed/simple;
-	bh=kBodLiWnDz6YMe+dckTErs6BiwvhICgio0VYQl4n9pk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNpeo5mBDyoczl42L3fD6HUPi/B6pHKgenatQMmq/yJRGuZMCxvvwBSyfmTqmfbLmuhlqP9Zz89yLWErVLqMOzJk2cXPy3ShkgYJAs/gZ8HCudRBWVdTsJATdJ0w4zoVk/LLyO5XbjzEidRpn+CqOxg2gQU8KggP9BMZDWP8baw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e+dNS5VE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9697CC4CECD;
-	Sat,  7 Dec 2024 06:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733554254;
-	bh=kBodLiWnDz6YMe+dckTErs6BiwvhICgio0VYQl4n9pk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e+dNS5VE9pAeW959FC8VZz2GTZ4Uo+B3TJyHNYky4DY9GXsK9HcXD8p9pmD2ADAZz
-	 pNI11H45Y1iSUd7CRKiPoVsCc53D7+NltZJCHEXlEeDx69aY9dLtJ4WGADKOd/mZAL
-	 KQnxvDAsfktkUDIa5PRwWZwD0W6FNp629zcfq8FA=
-Date: Sat, 7 Dec 2024 07:50:50 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: n3rdopolis <bluescreen_avenger@verizon.net>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH 1/2] ttynull: Add an option to allow ttynull to be used
- as a console device
-Message-ID: <2024120700-expansion-pretense-b6e9@gregkh>
-References: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
- <2024120408-moneyless-stood-cda2@gregkh>
- <6622246.K2JlShyGXD@nerdopolis2>
- <3758619.RUnXabflUD@nerdopolis2>
+	s=arc-20240116; t=1733554302; c=relaxed/simple;
+	bh=uVcyYlEo+aVEflvwSPE8gGd/NeFheVCCOd+rbfBKnk0=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=f2RprX/uCJ7BnQFw5UOSrfMt1wo+o+dnAyiL7FAErtKImdNRW9y3MInRIKKzhrhtnrQZdHQH07XZy4nWRJ3o3qMsCEybh1CM5uKqRT2DTA+8T9tfeAWyuLP2N9n77Rl3iOcI4plTy1C7kIQF+Inih7EQticFxfq8k4IHLruxxUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DRx5tH8Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8395BC4CECD;
+	Sat,  7 Dec 2024 06:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733554301;
+	bh=uVcyYlEo+aVEflvwSPE8gGd/NeFheVCCOd+rbfBKnk0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DRx5tH8Y9zM32SDXlEYViKnr8vRulr8P8Fgeu+8gY9BBn9I+9ZrXtiRRsSjK29kAj
+	 gNajk3L/qRjQ3mDQIIxsPMOo+4N8TkYfqdp+ivwpzrMXFd4hI9CyBoTWolVbqYW+WW
+	 7wBSYRApFNNhKoKD+ANhluaqphviC42/l8ljGY8ntAHgTFYQ9sewpb2iaZB7Rx6gpb
+	 S+ujoucY48Ao0Nblma7yVjLHSwp8CAWudA5jpsbAcC1A/4S4iq9o4/V7sKtXRvDnIL
+	 7e6FsnDksDw7fVRrqonD1b4X6mpZlTW8hude/5BVCnaUKrZtbSEdLksg0OdmX86QyU
+	 dQjlcvlg6WI5w==
+Date: Sat, 7 Dec 2024 15:51:36 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
+ <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
+ linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+ Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei
+ Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
+ <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
+ linux-arch@vger.kernel.org
+Subject: Re: [PATCH v20 00/19] tracing: fprobe: function_graph:
+ Multi-function graph and fprobe on fgraph
+Message-Id: <20241207155136.dd69fbace1ae248c38b27d4b@kernel.org>
+In-Reply-To: <20241206172003.21af8b50ceed0b5e93a7771c@kernel.org>
+References: <173344373580.50709.5332611753907139634.stgit@devnote2>
+	<20241206172003.21af8b50ceed0b5e93a7771c@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3758619.RUnXabflUD@nerdopolis2>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Dec 06, 2024 at 12:36:21PM -0500, n3rdopolis wrote:
-> On Wednesday, December 4, 2024 2:37:55 PM EST n3rdopolis wrote:
-> > On Wednesday, December 4, 2024 1:06:50 PM EST Greg Kroah-Hartman wrote:
-> > > On Wed, Dec 04, 2024 at 12:06:56PM -0500, n3rdopolis wrote:
-> > > > On Wednesday, December 4, 2024 10:41:44 AM EST Greg Kroah-Hartman wrote:
-> > > > > On Thu, Nov 28, 2024 at 11:15:48PM -0500, n3rdopolis wrote:
-> > > > > > Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
-> > > > > > initialized by console_initcall() and selected as a possible console
-> > > > > > device.
-> > > > > > Signed-off-by: n3rdopolis <bluescreen_avenger@verizon.net>
-> > > > > 
-> > > > > Meta-comments, we need a blank line before the s-o-b line, AND we need a
-> > > > > real name here, sorry.  I can't do anything with these (including
-> > > > > reviewing them), until that happens.
-> > > > > 
-> > > > Oh, I thought that I didn't need a real name
-> > > > 
-> > > > I found a recent thread that seems like it suggests that I thought
-> > > > https://lore.kernel.org/all/20241121165806.476008-40-alex.bennee@linaro.org/[1]
-> > > > https://drewdevault.com/2023/10/31/On-real-names.html[2]
-> > > > Or do I need to wait for that change to the guideline be merged?
-> > > 
-> > > That change has been merged a long time ago, but as far as I can tell,
-> > > this signed-off-by you used here does not meet this category.
-> > > 
-> > Oh, what would it take to meet that category? I've been using this nick to
-> > contribute to other projects, and it matches my GitHub name, and FreeDesktop
-> > GitLab name
-> > 
-> What if I made the signed-off-by (and committer name) this email address? would
-> that work?
+On Fri, 6 Dec 2024 17:20:03 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
 
-Do you sign documents with your bank with an email address in the line
-that says "name"?
+> Hi,
+> 
+> Sorry, I found a problem on arm64 on qemu. Let me recheck it.
+> 
+> [  592.422044]     # test_fprobe_entry: EXPECTATION FAILED at lib/test_fprobe.c:38
+> [  592.422044]     Expected (preempt_count() == 0 && !({ unsigned long _flags; do { ({ unsigned long __dummy; typeof(_flags) __dummy2; (void)(&__dummy == &__dummy2); 1; }); _flags = arch_local_save_flags(); } while (0); ({ ({ unsigned long __dummy; typeof(_flags) __dummy2; (void)(&__dummy == &__dummy2); 1; }); arch_irqs_disabled_flags(_flags); }); })) to be false, but is true
+
+This checks the handler is called with preempt off.
+
+On x86_64, the ftrace_graph_func calls function_graph_enter_regs() with
+ftrace_test_recursion_trylock() as below;
+
+void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
+		       struct ftrace_ops *op, struct ftrace_regs *fregs)
+{
+	struct pt_regs *regs = &arch_ftrace_regs(fregs)->regs;
+	unsigned long *stack = (unsigned long *)kernel_stack_pointer(regs);
+	unsigned long return_hooker = (unsigned long)&return_to_handler;
+	unsigned long *parent = (unsigned long *)stack;
+	int bit;
+
+	if (unlikely(skip_ftrace_return()))
+		return;
+
+	bit = ftrace_test_recursion_trylock(ip, *parent);
+	if (bit < 0)
+		return;
+
+	if (!function_graph_enter_regs(*parent, ip, 0, parent, fregs))
+		*parent = return_hooker;
+
+	ftrace_test_recursion_unlock(bit);
+}
+
+However, arm64 version does not;
+
+void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
+		       struct ftrace_ops *op, struct ftrace_regs *fregs)
+{
+	unsigned long return_hooker = (unsigned long)&return_to_handler;
+	unsigned long frame_pointer = arch_ftrace_regs(fregs)->fp;
+	unsigned long *parent = &arch_ftrace_regs(fregs)->lr;
+	unsigned long old;
+
+	if (unlikely(atomic_read(&current->tracing_graph_pause)))
+		return;
+
+	old = *parent;
+
+	if (!function_graph_enter_regs(old, ip, frame_pointer,
+				       (void *)frame_pointer, fregs)) {
+		*parent = return_hooker;
+	}
+}
+
+Is it a bug or intended?
+
+Thank you,
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
