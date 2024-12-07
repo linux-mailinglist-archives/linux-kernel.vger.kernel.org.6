@@ -1,131 +1,123 @@
-Return-Path: <linux-kernel+bounces-436192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88E059E8250
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:34:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 620F19E8251
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:35:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D00B18821CF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:35:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CBF154435;
+	Sat,  7 Dec 2024 21:35:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="oWTrBWvG"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49B62281D35
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:34:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6A715575F;
-	Sat,  7 Dec 2024 21:34:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435D0D27E;
-	Sat,  7 Dec 2024 21:34:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75CBD27E
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 21:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733607281; cv=none; b=W8pBJGDLUkqooUnyKxSGRzCBSQf0clStBget8RfXyffx5RIgDHWjqFMyGMQTi3nLQme7r88fLbWTkpCU/DrEZmtewKBQOsHA8fP5WwScMInkbKw73g34dIeIC2zsXp5k+qVWp48rd/xOegK3M+aAVuZoRnKrCMGo5OXT3HSzjbs=
+	t=1733607341; cv=none; b=e0FU4avlu0kwj6zwVhy5f8ZFKFkPND0z9e9MwrYRQSoRaLYf6sQm/wlqoSroO6YUr5Jy+Gpn/drM/Cij8oNjwnm80ZxHjrdiqFK2wzDNvjKavyL3HDNfbtUj3S+9Vqrz9jAOp82rPLUGOv3nbOJcraZIU7/BsJ8ZjBMiNOLzzq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733607281; c=relaxed/simple;
-	bh=Glg67YFBv7gXpUn7D881The/wTomsWbvNSc6lIBii4E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Sow9wPcgDpf/SCSWgLGcfmhu0PNKEfqwLf8UyFInRM5xOsnUid/NS4Y1tTrEYYWWIJ+xtodWfETwUkRoU5W2um0Cj3cs78qXqvKhGCmdOM163PLrsT+DH0Smdy8M2TlXckvPYA0u7HkzKvdxtBTSkeATPYlF4z7U3+Hg1Ctkx38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BD8D113E;
-	Sat,  7 Dec 2024 13:34:59 -0800 (PST)
-Received: from [192.168.0.54] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2E07B3F58B;
-	Sat,  7 Dec 2024 13:34:29 -0800 (PST)
-Message-ID: <e34a5b25-95c8-4111-baf1-c5ac4ad66cff@arm.com>
-Date: Sat, 7 Dec 2024 21:34:27 +0000
+	s=arc-20240116; t=1733607341; c=relaxed/simple;
+	bh=l52dFGLHGTqFMz+PPK1bTD97WwJw4J0tyC8BdjHB3JY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BosjrSyyXnQ3FORxerkSG2vixrMVaSIWBopjEPACUNTdFgRJKyfVbH1G/dmCN5SrrSisnJVTtHaq+6YE4SIY7UR3staE6ctk5zn9Ld2PU5KHygK5LPTCfJHTo8Sry0PuT3hc7q3EcQz5VMrk/5UtHrFymrrvR+B1EbIzyy50TMw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=oWTrBWvG; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=H/THJ6MK8FAxWM9go2fH8jyav9zXsKFgHcGRTFxSEWw=; b=oWTrBWvGOUApsdxq
+	JE89lKtzPUWaJZmkjyDmMNlt/O0BtxSx+H5Q1q7fKRRPAhqats9YfzriwBQ2vDjtX5i+rZ01M94oI
+	C2NJeTeCaglBFXUQhATcXi/xijuCW+SXfUPCWMYGfmzPWkyuWl2iI3ajYpuZn9nLU+drbUNY+5vTG
+	LEWvpgHYtnxbk59kww14vzDKs0xMgPYsKFe2E44R3yeBPl9YJAjS8dIoTLM+9MvDoqwHwrLNqCkVs
+	mBIevTM1XOd4ICg5dr5o6stAKNq74Exozc6tfl90DB5vq2AOkhghCMYCQ2GS4O4wLXSEpof7uT6mp
+	AA/ibP9LFtMDJJFCNg==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tK2Se-0042oX-39;
+	Sat, 07 Dec 2024 21:35:36 +0000
+Date: Sat, 7 Dec 2024 21:35:36 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: MyungJoo Ham <myungjoo.ham@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] extcon: Remove deadcode
+Message-ID: <Z1S_qH4M-5Tubk3r@gallifrey>
+References: <Z1Jg2zRT9ecClJH7@gallifrey>
+ <20241103160535.268705-1-linux@treblig.org>
+ <CGME20241206022643epcas1p1db6da634d4da398f553b7dd3cfa3339f@epcms1p2>
+ <20241207045814epcms1p21e267fe70a87d06cdd4c531248f193e9@epcms1p2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH AUTOSEL 6.12 15/36] mfd: axp20x: Allow multiple regulators
-To: Sasha Levin <sashal@kernel.org>, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-Cc: Chen-Yu Tsai <wens@csie.org>, Lee Jones <lee@kernel.org>,
- Chris Morgan <macroalpha82@gmail.com>
-References: <20241204154626.2211476-1-sashal@kernel.org>
- <20241204154626.2211476-15-sashal@kernel.org>
-Content-Language: en-US
-From: Andre Przywara <andre.przywara@arm.com>
-In-Reply-To: <20241204154626.2211476-15-sashal@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+In-Reply-To: <20241207045814epcms1p21e267fe70a87d06cdd4c531248f193e9@epcms1p2>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 21:34:40 up 213 days,  8:48,  1 user,  load average: 0.03, 0.01,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
-Hi Sasha,
+* MyungJoo Ham (myungjoo.ham@samsung.com) wrote:
+> From: Dr. David Alan Gilbert / linux@treblig.org
+> >* linux@treblig.org (linux@treblig.org) wrote:
+> >> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >> 
+> >> extcon_get_edev_name() has been unused since it was added in 2015 by
+> >> commit 707d7550875a ("extcon: Add extcon_get_edev_name() API to get the
+> >> extcon device name")
+> >> 
+> >> extcon_get_property_capability() has been unused since it was added
+> >> in 2016 by
+> >> commit ceaa98f442cf ("extcon: Add the support for the capability of each
+> >> property")
+> >> (It seems everyone just uses extcon_get_property)
+> >> 
+> >> extcon_set_property_sync() has been unused since it was added in 2016
+> >> by
+> >> commit a580982f0836 ("extcon: Add the synchronization extcon APIs to
+> >> support the notification")
+> >> Everyone seems to use the none _sync version, and there's one place
+> >> where they just call sync after it.
+> >> 
+> >> Remove them.
+> >> 
+> >> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> >
+> >Gentle ping please; no rush.
+> >
+> >Dave
 
+Thanks for the reply,
 
-On 04/12/2024 15:45, Sasha Levin wrote:
-> From: Andre Przywara <andre.przywara@arm.com>
+> It's not a dead code.
 > 
-> [ Upstream commit e37ec32188701efa01455b9be42a392adab06ce4 ]
-
-can you hold back those backports, please? Chris reported a regression
-in mainline[1]. He is working on a fix, but it doesn't look like to be
-trivial. In fact we only really need this patch for an upcoming board
-support, so there isn't an immediate need in stable kernels anyway.
-
-Cheers,
-Andre
-
-[1] https://lore.kernel.org/linux-sunxi/675489c1.050a0220.8d73f.6e90@mx.google.com/T/#u
-
-
-> At the moment trying to register a second AXP chip makes the probe fail,
-> as some sysfs registration fails due to a duplicate name:
+> Example: https://github.com/diphons/D8G_Kernel_oxygen/blob/b0717c360f5485badf824fb51cdc8174e2e0a7cb/drivers/usb/dwc3/dwc3-msm.c#L2992
 > 
-> ...
-> [    3.688215] axp20x-i2c 0-0035: AXP20X driver loaded
-> [    3.695610] axp20x-i2c 0-0036: AXP20x variant AXP323 found
-> [    3.706151] sysfs: cannot create duplicate filename '/bus/platform/devices/axp20x-regulator'
-> [    3.714718] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Not tainted 6.12.0-rc1-00026-g50bf2e2c079d-dirty #192
-> [    3.724020] Hardware name: Avaota A1 (DT)
-> [    3.728029] Call trace:
-> [    3.730477]  dump_backtrace+0x94/0xec
-> [    3.734146]  show_stack+0x18/0x24
-> [    3.737462]  dump_stack_lvl+0x80/0xf4
-> [    3.741128]  dump_stack+0x18/0x24
-> [    3.744444]  sysfs_warn_dup+0x64/0x80
-> [    3.748109]  sysfs_do_create_link_sd+0xf0/0xf8
-> [    3.752553]  sysfs_create_link+0x20/0x40
-> [    3.756476]  bus_add_device+0x64/0x104
-> [    3.760229]  device_add+0x310/0x760
-> [    3.763717]  platform_device_add+0x10c/0x238
-> [    3.767990]  mfd_add_device+0x4ec/0x5c8
-> [    3.771829]  mfd_add_devices+0x88/0x11c
-> [    3.775666]  axp20x_device_probe+0x70/0x184
-> [    3.779851]  axp20x_i2c_probe+0x9c/0xd8
-> ...
+> There are drivers (usually .ko) using them, usually Android mobile devices.
+
+Ah hmm;  ok, I'll drop that.
+Of course it would be great to get some of these upstreamed rather than us
+having mysterious interfaces lying around for ~10 years!
+
+Dave
+
+> Cheers,
+> MyungJoo
 > 
-> This is because we use PLATFORM_DEVID_NONE for the mfd_add_devices()
-> call, which would number the child devices in the same 0-based way, even
-> for the second (or any other) instance.
-> 
-> Use PLATFORM_DEVID_AUTO instead, which automatically assigns
-> non-conflicting device numbers.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> Link: https://lore.kernel.org/r/20241007001408.27249-4-andre.przywara@arm.com
-> Signed-off-by: Lee Jones <lee@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   drivers/mfd/axp20x.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mfd/axp20x.c b/drivers/mfd/axp20x.c
-> index 4051551757f2d..f438c5cb694ad 100644
-> --- a/drivers/mfd/axp20x.c
-> +++ b/drivers/mfd/axp20x.c
-> @@ -1419,7 +1419,7 @@ int axp20x_device_probe(struct axp20x_dev *axp20x)
->   		}
->   	}
->   
-> -	ret = mfd_add_devices(axp20x->dev, -1, axp20x->cells,
-> +	ret = mfd_add_devices(axp20x->dev, PLATFORM_DEVID_AUTO, axp20x->cells,
->   			      axp20x->nr_cells, NULL, 0, NULL);
->   
->   	if (ret) {
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
