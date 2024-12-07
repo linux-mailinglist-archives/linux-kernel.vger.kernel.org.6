@@ -1,143 +1,171 @@
-Return-Path: <linux-kernel+bounces-435991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1DB9E7F79
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:10:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F199E7F7D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:13:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39FC5281F3E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D977282501
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:13:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5F2140E38;
-	Sat,  7 Dec 2024 10:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CA714036E;
+	Sat,  7 Dec 2024 10:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eFvsItv3"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="hkOlp2GT"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E9B136331;
-	Sat,  7 Dec 2024 10:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64BDB126C0D;
+	Sat,  7 Dec 2024 10:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733566203; cv=none; b=CHCx9KU2RYfmkvoBg2kngF2NLwNk/NynayNw5TZpJSyRzjyvd7uZQACMwXZig3kjUaQ/yo6gJZrjmAs/6HYcSamD0UPfTTz9odupSz3E3gU0sNu2Zt0jknVlV+uhudJmj8ilzq4lT5S12La1y00mXfoLIBQi9rnKQXVBe5PNcrg=
+	t=1733566413; cv=none; b=jer5JjlqAi4XPItMRwUKuv0mwzd0uA1XtBGdaBBvVvC76O47cMdoLmk1U5BNyuV7lzeCjjVDOQHatGM7sesTrvLojXuFKTgv3PTecsV+lkocEbIDWXIH2RQDeSBvSOLi27GK37t5o6leF1wevfG1ohFZimiJ0nrAbA9UVUaN4Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733566203; c=relaxed/simple;
-	bh=p2edH10DS2izFB/jzZz2W+zP4whcYevquQhC4IC/v/Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n4EdbMf0PmzfkiFEk+zaKTD9wBDyVGhfzhXJERVqMeddndV5xtEowpB9eSH22A14fraiIZ3SS0kBK1tIDvldpAQkggQOI1Uw1AGT7xtxMU0SPxdJJUOO3gsTr/SUHeCfcvMJBUE+Nl/wFdHld+J5CmR+u9fNowL3Uf6Z9MjvnmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eFvsItv3; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-725dc290c00so38150b3a.0;
-        Sat, 07 Dec 2024 02:10:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733566201; x=1734171001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6BHlvc2h6RbQcsZ4MoZvKFrwrzmCNN8+Ik8anzK5kag=;
-        b=eFvsItv3h+jzoerK6lx0qGiH3yGQpmRfJQUH1YdkcysdEp8UMn/olIrIuz7lW7K4z1
-         PqHcVFgo17wpFJ5sTQu2sXqjsvozs5CQKvJZAickDvxh46X57wVIfjQq5R/hQ9oNdt7K
-         Nm7Vl5UNrJkvgCdj/AtSaGQzjsOtrdDbf1y/exxQF344dwKXR4THTIRx44d2GIO5/rBi
-         FE5pJZkQEy3N/SKjE1/CWJNCZN/meAK349JbEEXJQLxaRJJR94eW5mikJ/8ARosyvH7A
-         PbQQNekME90pHo/xLVnEDwmSDRAJlycCUqxCoz3fZul2rKZ+RPgACqa6MMRwlgmYWArl
-         4iyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733566201; x=1734171001;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6BHlvc2h6RbQcsZ4MoZvKFrwrzmCNN8+Ik8anzK5kag=;
-        b=f5inPlWpZBKd5Gy5Qp0LKmdvTuBaeHhroApE0+u3hk1pC3vZgIlqF13/pHtIOd1Wqy
-         I6G9lTVwT1Wk7ucLo3wJat6z943noqJhHCdgVpID3nL5esQnSLi/C2kw964slA8UTaHk
-         JG6pM4+q3kSIqD9oznOMRyzhF5SYmhFLAFG05ayCPt/pxRkICpTW4sk1ovf4h6KygW9F
-         dJSBKdVNV0WB7dEEl3nSxleOyPU5f0rPciaOZ5/uq9r98v3RVrmWNYePcU/nH4teEL/C
-         GBpC585RFJ+H3kdVXb35T2aRdq1RY+myowPRTojF7PlmohWpCh5Gdt4Dn54Gq4ty/D5C
-         Mz7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUk5MAQYZIwTLzArN+acRmhVHjc5WymHA+nCUAc8f9+tTAv1gaRC8qsvx8DCPzNImvn752SbsWC5tg/V8Qv@vger.kernel.org, AJvYcCVIbPyJa5y44QP01IXoYGp3aIeJV/Q/vp/UT4qlU4x5rmv++wYbtz/c8oK9041yBOmSIj8j0WRfCbN6qm4l@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDscnCfj0/ZGbVFmTC5+Jl5ov0Bx3/Vhhj4s482KChJX6iPEo0
-	NLMdIecQ8xh9Tqqw9pWPUaYhujpDKlAvx+LNlwtN50JAlgb9rTi7
-X-Gm-Gg: ASbGncsu0HKkbB2NmeJUObJJBzfI+MB+Iru25468tNQ8ecG7bEbWE39y96NBA1r69IJ
-	/7iCTAc5yWJTHZ7ZJrfbVEjIACw8rzbbaXmcvnXc2PoJMMceoDrCzovt8yRUA87DX7hrjoEJip/
-	qjK7kGqyzUZYXSaaxLeX4KdgaYiRIt8JvlZwRC3YTdApOok+LBG7sstdUtmWfZD0uGPrH9XJFb/
-	O7GqRtXQhAJ3mwaHiiRNs8OKu5GF1G7ZG5ZuwD82/FhfxSiTUINJ+3yJ51/a4S9C6xmEN5ZrXFj
-	EjXkLpbaUt4zklyD
-X-Google-Smtp-Source: AGHT+IEwKHhlxGzah4NtZ1B9CRa8dut1jgF5vSw0cszYeuNUODXBUIVq9msGMlK35IELUgHoTm1KAw==
-X-Received: by 2002:a05:6a21:168d:b0:1e0:c166:18ba with SMTP id adf61e73a8af0-1e186c1dd91mr8250378637.12.1733566201479;
-        Sat, 07 Dec 2024 02:10:01 -0800 (PST)
-Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29ef5b6sm4218484b3a.71.2024.12.07.02.09.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 02:10:01 -0800 (PST)
-Message-ID: <9cc62b69-7cfb-477b-bec1-3bbcc49a310e@gmail.com>
-Date: Sat, 7 Dec 2024 19:09:59 +0900
+	s=arc-20240116; t=1733566413; c=relaxed/simple;
+	bh=1iTUbXSWwCLDOdH7t33vQs0Dneg7nd5dct2F7dqwPhw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rp4Svwg8QxxogD45L2tnNm9w6jm9AAGd4JeT4ENqqgYsOpZ0uR8yFV763FLV5bFfKn+fVGOqHifRtWYxA47ryoBYEImsQrGQc5xU2EgcQPeyyfUphIJD6GVXtCLqi/E2vMaqS7ECwZJcuofuO1uKmo/Obm+3kf0tZ5hNAAKjGzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=hkOlp2GT; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=9m4W93mYJLzHPiDSNn2VKBwMS0KHXEKg2K2lKwcgsic=; b=hkOlp2GT+CFyuoN3LOa5axR6b/
+	gUBV11fEHXr4WfIdXtN7VbNn+IVNk/YuLNGLLJtOSH06P+rGRFlNFa5ggxm0jwQhVxLa1D1O8uSuv
+	nrU+Gvk5NwIDU+9H6XFBjCWxPSiFREzlNzKdPrwwQNsAPBP/VYskW7iZWIY9WcjGNyuCkls8GhliI
+	f3eNXluxUoHGtGFZfrelPz99UeEZv3RTLN3lagIHt+eW78ZzhQ9yB8tmMGCwbPgS+b316AQWA7y7d
+	DwMmgy1mzRt2Z0R2Bvc2EmecR2bTnBOuMLQ0sw6wsUhyI6zupSUTfV0F7hsmJv+KDt1hf3ceQV57g
+	c0xrjZ7A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45680)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tJroO-0007FL-2B;
+	Sat, 07 Dec 2024 10:13:21 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tJroI-0008RP-2w;
+	Sat, 07 Dec 2024 10:13:14 +0000
+Date: Sat, 7 Dec 2024 10:13:14 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Furong Xu <0x1207@gmail.com>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, xfr@outlook.com
+Subject: Re: [PATCH net-next v1] net: stmmac: Move extern declarations from
+ common.h to hwif.h
+Message-ID: <Z1QfupFfg07jTMUc@shell.armlinux.org.uk>
+References: <20241207070248.4049877-1-0x1207@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] fs/netfs: Remove redundant use of smp_rmb()
-To: David Howells <dhowells@redhat.com>
-Cc: zilin@seu.edu.cn, jianhao.xu@seu.edu.cn, jlayton@kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfs@lists.linux.dev, mjguzik@gmail.com
-References: <69667b21-9491-458d-9523-6c2b29e1a7e6@gmail.com>
- <20241207021952.2978530-1-zilin@seu.edu.cn>
- <2011011.1733558696@warthog.procyon.org.uk>
-Content-Language: en-US
-From: Akira Yokosawa <akiyks@gmail.com>
-In-Reply-To: <2011011.1733558696@warthog.procyon.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241207070248.4049877-1-0x1207@gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Hi David,
+On Sat, Dec 07, 2024 at 03:02:48PM +0800, Furong Xu wrote:
+> These extern declarations are referenced in hwif.c only.
+> Move them to hwif.h just like the other extern declarations.
 
-On Sat, 07 Dec 2024 08:04:56 +0000, David Howells wrote:
-> Akira Yokosawa <akiyks@gmail.com> wrote:
+We normally have declarations in a header file that corresponds to their
+definition, rather than where they are used.
+
+> Compile tested only.
+> No functional change intended.
 > 
->> Are you sure removing the smp_rmb() is realy the right thing to do?
+> Signed-off-by: Furong Xu <0x1207@gmail.com>
+> ---
+>  drivers/net/ethernet/stmicro/stmmac/common.h | 14 --------------
+>  drivers/net/ethernet/stmicro/stmmac/hwif.h   | 14 ++++++++++++++
+>  2 files changed, 14 insertions(+), 14 deletions(-)
 > 
-> The wait_on_bit*() class functions, e.g.:
-> 
-> 	wait_on_bit(unsigned long *word, int bit, unsigned mode)
-> 	{
-> 		might_sleep();
-> 		if (!test_bit_acquire(bit, word))
-> 			return 0;
-> 		return out_of_line_wait_on_bit(word, bit,
-> 					       bit_wait,
-> 					       mode);
-> 	}
-> 
-> now unconditionally includes an appropriate barrier on the test_bit(), so the
-> smp_rmb() should be unnecessary, though netfslib should probably be using
-> clear_and_wake_up_bit().
-> 
+> diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+> index 1367fa5c9b8e..fbcf07d201cf 100644
+> --- a/drivers/net/ethernet/stmicro/stmmac/common.h
+> +++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+> @@ -543,18 +543,8 @@ struct dma_features {
+>  #define STMMAC_VLAN_INSERT	0x2
+>  #define STMMAC_VLAN_REPLACE	0x3
+>  
+> -extern const struct stmmac_desc_ops enh_desc_ops;
 
-Thank you for clarifying.
+Defined in enh_desc.c, but no header for it, so either common.h or
+hwif.h seems sensible.
 
-> Probably we need to update the doc to reflect this.
+> -extern const struct stmmac_desc_ops ndesc_ops;
 
-Agreed.
+Defined in norm_desc.c, same situation as previous one.
 
-I see that wait_on_bit()'s kernel-doc comment mentions implicit ACQUIRE
-semantics on success, and that of wake_up_bit() mentions the need of care
-for memory ordering before calling it.
+> -
+>  struct mac_device_info;
+>  
+> -extern const struct stmmac_hwtimestamp stmmac_ptp;
 
-Unfortunately, neither of those comments is included into kernel
-documentation build (Sphinx) at the moment.
+Defined in stmmac_hwtstamp.c, same as above.
 
-I'm going to prepare a patch for including them somewhere under the
-core-api doc.
+> -extern const struct stmmac_hwtimestamp dwmac1000_ptp;
 
-WRT memory-barriers.txt, I'm not sure I can update it properly.
+Ditto.
 
-David, may I ask you doing that part?
+> -extern const struct stmmac_mode_ops dwmac4_ring_mode_ops;
 
-Thanks, Akira
+Defined in dwmac4_descs.c, maybe dwmac4_descs.h or dwmac4.h would make
+more sense than hwif.c ?
 
+> -
+> -extern const struct ptp_clock_info stmmac_ptp_clock_ops;
+
+Defined in stmmac_ptp.c, and there is stmmac_ptp.h which contains a
+number of function declarations, so maybe moving that there would
+make more sense?
+
+> -extern const struct ptp_clock_info dwmac1000_ptp_clock_ops;
+
+Same as stmmac_ptp_clock_ops.
+
+> -
+>  struct mac_link {
+>  	u32 caps;
+>  	u32 speed_mask;
+> @@ -641,8 +631,4 @@ void stmmac_dwmac4_set_mac(void __iomem *ioaddr, bool enable);
+>  
+>  void dwmac_dma_flush_tx_fifo(void __iomem *ioaddr);
+>  
+> -extern const struct stmmac_mode_ops ring_mode_ops;
+
+Defined in ring_mode.c, same as enh_desc_ops.
+
+> -extern const struct stmmac_mode_ops chain_mode_ops;
+
+Defined in chain_mode.c, same as enh_desc_ops.
+
+> -extern const struct stmmac_desc_ops dwmac4_desc_ops;
+
+Defined in dwmac4_descs.c, similar situation to dwmac4_ring_mode_ops
+above.
+
+
+So I think rather than bulk moving these to hwif.h, where some of them
+remain out of place, maybe placing some in a more appropriate header
+would be better.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
