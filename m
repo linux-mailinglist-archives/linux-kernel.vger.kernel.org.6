@@ -1,141 +1,109 @@
-Return-Path: <linux-kernel+bounces-436042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 858D59E805B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:10:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 02EB59E8061
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:16:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 770CB165D19
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8A27166206
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 537FA149C57;
-	Sat,  7 Dec 2024 15:10:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852092E628;
+	Sat,  7 Dec 2024 15:16:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="NxJqX4GH"
-Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ELaWexY8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC0D433B1;
-	Sat,  7 Dec 2024 15:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BA422C6C5
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 15:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733584239; cv=none; b=Jnwm6/SUlmJ3bRKcLMRiYctQRKlB+vTa/Y2+5FEBn5IAaha6ea6EWpzSYeFthnb72YFK8G6DTiJRMEW2l64fUIzb3mmjjwcQatN+u5CB9Zy00HOcE//+HDuDpOMdFNv/EMVNpEC6ERY2sg6lF/SgXfMSgHuIsc/nLxNdtKiPn7E=
+	t=1733584606; cv=none; b=LXfm8YDHkk8xUtePReXC3r/ZQ2W1y9AY2RuiCg1QDfcPv5uWd2+hUgO5FUVCmcYo7BxoDnZDRNu5wdcAic8TTNgtsMvWziS282/rTwqdQVYRiY6889MEzWrVAzYBcB30E2bkoAmdN3eQMDjQ4b8vvdoo8f8ITskOsWFvu+mPwAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733584239; c=relaxed/simple;
-	bh=9zSMATOiqkvNthQAcnjGV0PH4lqkQEbU2UaufD3546E=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hkWWjZrs9Mn0rZHisBecfTfDfm0SIaZB11rQpiMWwOUlmRPFbhG4cqOmG7edwcLQRUuy10xroQPCh3G7c9U9fy5xbl0yS/5pvaGL+KKVZQ066ChjIQrZIVFpSga1z5doj0k/2LjUTHiyGGq2tJ8v5iSlQCKpAM2B51SpnDMO2qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=NxJqX4GH; arc=none smtp.client-ip=134.76.10.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
-	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=DjAsF8rGOz50pw9dHufxGpGm6fT/5+Pfxa1ngA4zURE=; b=NxJqX4GHTHAkvVvqWRYSblHpNx
-	xRORMBuWj52AYsJt7hsl+bNsLSbMJbQftZCU0GGaC/ggwlUkADRTL4RycoNy8UbRQXowZd8XTuKVH
-	A6g5k+b2fpGBmaekFaf47URPQJf9agf48U0FbAFTfwKhYvl21khhPJdAHlyLqGrDIWQenvNXnjmDi
-	4DzHK8DSoxEy32pR6/UzxeXJcSQf0Vzjgho5v3bqB8+DU/IHvQ4qUG0xALZPJVKaMmYT5kg/j0wx0
-	chjZmLJvxLvtY/Gz1TGkZ8JYqUocH+ZxNnOgZQ69jfYiCxSoRKspMST9B/0ORsfFRfWlsI6yA5Usp
-	VmhKOsLQ==;
-Received: from xmailer.gwdg.de ([134.76.10.29]:55546)
-	by mailer.gwdg.de with esmtp (GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tJwS1-004NGV-2v;
-	Sat, 07 Dec 2024 16:10:33 +0100
-Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
-	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-	(GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tJwS1-000BiJ-2a;
-	Sat, 07 Dec 2024 16:10:33 +0100
-Received: from [192.168.0.221] (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
- (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sat, 7 Dec
- 2024 16:10:32 +0100
-Message-ID: <b3bd6d4ef485dbb5db4c784f4e42f76adce502dc.camel@gwdg.de>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-From: Martin Uecker <muecker@gwdg.de>
-To: Vincent Mailhol <vincent.mailhol@gmail.com>
-CC: David Laight <David.Laight@aculab.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Date: Sat, 7 Dec 2024 16:10:31 +0100
-In-Reply-To: <CAMZ6RqL+iS6GVsY20=O6GdQakRpp7XdewZJsUbmE5OCsKaHR6Q@mail.gmail.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
-	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
-	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
-	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
-	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
-	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
-	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
-	 <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
-	 <CAMZ6RqJGqBqvgxzp5yPFY1pk0WkkwEMM34qU-dZ3kXfsnKaqEg@mail.gmail.com>
-	 <429e7c6713ecc94494d9107e5f5a1f0c8e854f23.camel@gwdg.de>
-	 <CAMZ6RqL+iS6GVsY20=O6GdQakRpp7XdewZJsUbmE5OCsKaHR6Q@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1733584606; c=relaxed/simple;
+	bh=x/KMFEIVqax4T/aG/WHn7WGXnsRDVrcyjhCbfHSeBIQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IeTzgIb3TEy4NXZfX0Mxf9MSKDELYS+O0cj8z++X4KTM8HXv9imHnBM+if9EH864VxyCbYwrmHA5XVik+ufyLKQT1gruI70+NgJs8S47niJIVDGJr8H+GpmV6zYPfIPKMqDP5EMCGE0EVShGLy378ZM6p/it7pxpq8r6amQpX8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ELaWexY8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733584602;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=buWahY26YGerNzLHfmySJVio+/sH3JcpVBTbZ+QbVEk=;
+	b=ELaWexY84OBo85+luZcmNmQxRslQ7UPTLd6QvkRNDyOgzOnyGhJPEOvsdZToyi3pXc7wbC
+	MtT3qLLpFGJnhtb4O+/+XvSjuQ5tcmttJoS7lgVbCfubXujkd+DWQ9TO48P0N/QsTm/0dL
+	nZR3h9TB7/OuGnA8QSvzSV6RHHyMdSI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-396-ra82krBVOB2rHcR1JLV2jA-1; Sat,
+ 07 Dec 2024 10:16:39 -0500
+X-MC-Unique: ra82krBVOB2rHcR1JLV2jA-1
+X-Mimecast-MFC-AGG-ID: ra82krBVOB2rHcR1JLV2jA
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8843919560AA;
+	Sat,  7 Dec 2024 15:16:35 +0000 (UTC)
+Received: from blackfin.pond.sub.org (unknown [10.39.194.102])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id F31C31955F3E;
+	Sat,  7 Dec 2024 15:16:33 +0000 (UTC)
+Received: by blackfin.pond.sub.org (Postfix, from userid 1000)
+	id A692321E66D2; Sat,  7 Dec 2024 16:16:31 +0100 (CET)
+From: Markus Armbruster <armbru@redhat.com>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>,  Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>,  Shiju Jose <shiju.jose@huawei.com>,
+  Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <philmd@linaro.org>,  Ani Sinha
+ <anisinha@redhat.com>,  Cleber Rosa <crosa@redhat.com>,  Dongjiu Geng
+ <gengdongjiu1@gmail.com>,  Eduardo Habkost <eduardo@habkost.net>,  Eric
+ Blake <eblake@redhat.com>,  Igor Mammedov <imammedo@redhat.com>,  John
+ Snow <jsnow@redhat.com>,  Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
+  Michael Roth <michael.roth@amd.com>,  Paolo Bonzini
+ <pbonzini@redhat.com>,  Peter Maydell <peter.maydell@linaro.org>,  Shannon
+ Zhao <shannon.zhaosl@gmail.com>,  Yanan Wang <wangyanan55@huawei.com>,
+  Zhao Liu <zhao1.liu@intel.com>,  kvm@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  qemu-arm@nongnu.org,
+  qemu-devel@nongnu.org
+Subject: Re: [PATCH 00/31] Prepare GHES driver to support error injection
+In-Reply-To: <20241207093922.1efa02ec@foz.lan> (Mauro Carvalho Chehab's
+	message of "Sat, 7 Dec 2024 09:39:22 +0100")
+References: <cover.1733504943.git.mchehab+huawei@kernel.org>
+	<87frn03tun.fsf@pond.sub.org> <87wmgc2f48.fsf@pond.sub.org>
+	<20241207093922.1efa02ec@foz.lan>
+Date: Sat, 07 Dec 2024 16:16:31 +0100
+Message-ID: <87o71no75c.fsf@pond.sub.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: MBX19-GWD-04.um.gwdg.de (10.108.142.57) To
- MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
-X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:9, sv:1733541190, ts:1733584233
-X-Virus-Scanned: (clean) by clamav
-X-Spam-Level: -
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Am Samstag, dem 07.12.2024 um 22:50 +0900 schrieb Vincent Mailhol:
-> On Sat. 7 Dec. 2024 =C3=A0 22:19, Martin Uecker <muecker@gwdg.de> wrote:
-> >=20
-...
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
->=20
-> I was invited to WG14 this September. For now, I am only lurking. The
-> thing I have in mind right now is to write a paper to allow the use of
-> static_assert() in expressions (i.e. make it return 0 on success).
-> That should be a relatively small change, but would bring a nice
-> quality of life improvement.
->=20
-> For context, look at this:
->=20
->   https://lore.kernel.org/all/CAHk-=3DwjLSEcZ5LdW+3C+9rtjvNPHZT6zdk0POj67=
-T5k2ZpDbgA@mail.gmail.com/T/#m1ba33a804b4041154b72a1d0333f90ec7204c461
+[...]
 
-What one can do is put it into a structure.
+>> However, it doesn't apply for me.  What's your base?
+>
+> That's weird. Despite my mistake, the series is based on v9.2.0-rc3 
+> (which was identical to master last time I rebased).
 
-#define const_assert(x) \
-    (sizeof(struct { _Static_assert(x, ""); }))
+Either something conflicting got committed meanwhile, or I screwed up
+somehow.
 
-but yeah, also a hack to work around a limitation of the standard
-feature.
+> Should it be based against some other branch?
 
-Martin
+No, master is fine.
+
 
