@@ -1,184 +1,151 @@
-Return-Path: <linux-kernel+bounces-435891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CBCB9E7E4D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:21:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2C89E7E4F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:22:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A6216B9F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:22:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9643A73477;
+	Sat,  7 Dec 2024 05:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GNFVt4gn"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47BFA285BA1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:21:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB7503EA83;
-	Sat,  7 Dec 2024 05:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Br+44kLB"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85F1A13C690
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 301EB5B1FB
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733548899; cv=none; b=Xj5XBkdJ7Wf/7p7LCPVy/9+hqLMQbJqyeI+2dZs+T1SdgKJ1OZVGJ9cKVlO2uQrZc0oIOfuBgKgcbfjc0FnKIRbLCW4cFdfX+RSZjdurFPFrWDElrgreaC2hd6Pk7dGu4maduhA2zcyr2UxFMcstqhDbm3W/6g6c8e4Z4puyHto=
+	t=1733548935; cv=none; b=KcsurnKQeCcYDJv04wY0OKKqQUt/H2H4cIEmRLdWAyfhd8kO+n0Zitc48Cz98jEb9i9kGAIL1GZ7i7hBo2njpcTZVELigGAWuKlrz/+TL7hfoVi2c5fsC5dnp74U6bqWGnr/dsvDRhnZPGyDMbi2V03oH5r0DwuirkN03X5tzvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733548899; c=relaxed/simple;
-	bh=59JyblyIutLvUKEhP7mnHqGeq0rntjJy0UC24HCSh6k=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=DmDJtwu2y9GFVmTGW4VXKUWPucyoWtyBrkqNfGiXbkr4TiKWC3UEWBD0kNiJiBZlxswl8NiBAf1L6R2mnTWPXoCN920cw6rjIM3yRJMeYHBiDJnCLgobc9Di/YkWh85l3Gjy0g8e8oYUUbpR73vVxRimsTwa9hCcy4MjxgR0/bY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Br+44kLB; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6ef7c67eeb8so26373087b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 21:21:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733548896; x=1734153696; darn=vger.kernel.org;
-        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=xLon7XSyUPwjTsFm/4gR7+qNav8R9JC1iiVeHS6j/O4=;
-        b=Br+44kLBT53VEgLMdksf4pT58D3G0v0GHzrUibJxDn/w8GpS10Z+mhppJ4gmswVN5X
-         2XlEGG1g4ccFHOZC+cZfRrccR3h11NSXn92Y3igjD9eSToMTh2YfrdG/TLpwxgcUxYMk
-         lHgmONOlLa4D4oAJdN+gh61VZ1B40ArIsZInAwuUgpAiwivebIgx4GAknXIwgZdvHYrt
-         xQtAL+24vyJPx0kWyUkIizk7v9FMTQFsk1rqSiKNcTDoE5cswW7pdxXWr8NIa5Zjlev1
-         q2xXdAWsLmKcWSLZcczyblpJbkQ9AkNX0EGSwynDnxx50qVuDvkz0nAc9kgZTUoACsB6
-         mJIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733548896; x=1734153696;
-        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xLon7XSyUPwjTsFm/4gR7+qNav8R9JC1iiVeHS6j/O4=;
-        b=J9of2d0Fiv2z2ObbEVT/VrSBAiuvzQ3m6ps8BoZwxKrrpez0h2NukILoiW8zSdPreE
-         14S7HbFQxulUdlXxMarGuuCBIM6vqv4ijOZFEgPpWAHV9y+sS91h5S+rTbzdjfoe4tZb
-         +Bkj6vPguzpPY1XSK/4ygzPHqKSABbwDtGTKY3K+8Bm+6+YAfT2DgPyZQmbwu3F4ldqS
-         YlMCp84rgNSP7Wr025iJiUSZaXiKLr17ak9+8XDhCpXfxyGWZzKt97IT6l0NU5v09BhI
-         +K+NsohAyjecD8L+lzlle0QNfJXJt+8a/mJISsM97G+jJhkqFHqMkDIcWSx/W5u0V5wU
-         CWGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIqckwq4XS4M2jyuei/k5eWe6ipgVpSx991cOLQouGk+amB9lDdrkwvmtTTj9D85Gj+T6msP+gR8a8Vxg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz2J90HwWJsi5JYkpa0Lm9T2qwbRzsRX0hevIcb2qXo78qsjX7
-	1SBOK/XCJJ3i6udmYpvKECsURxJJLunVPXMGoLMvhoQNGmDF/9fsB81X4AVRF+cUW/N7C7RF5Ob
-	DuP3slg==
-X-Google-Smtp-Source: AGHT+IH+fXx0bYWssoFcE7HUKGApjhCNtZqf2R5ASFIjVo19wS3+ep+HzZKXWN7Pdi49a1J5WOifTWQLXAeq
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:dfe4:4b6f:235e:bf6b])
- (user=irogers job=sendgmr) by 2002:a05:690c:3143:b0:6ea:ecc3:ec61 with SMTP
- id 00721157ae682-6efe3bceae7mr82897b3.1.1733548896528; Fri, 06 Dec 2024
- 21:21:36 -0800 (PST)
-Date: Fri,  6 Dec 2024 21:21:33 -0800
-Message-Id: <20241207052133.102829-1-irogers@google.com>
+	s=arc-20240116; t=1733548935; c=relaxed/simple;
+	bh=zrcTlF0qLVXhLkImc+yMqP9DZOJQ0haUmEV5cjEQFtU=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=MRl2UzVzKrc3qVp2STWoU/EB7RT4rUCmBiPj0Ijz2xXgToeg1lQU/zJ1SzN5+NozGf1lnsrMDlpSUmhnLTrRN7domB4gvOj5f7rcSsHkKfT9JKIlNFLxc8mf5R2docKQRse2URdj4LkNWnTO4oJihnTL+D6gwO0upS/xq1sm1jk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=GNFVt4gn; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241207052210epoutp0152a256cc90a8992067e3556bdad0435d~OzZFampw90823808238epoutp01d
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:22:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241207052210epoutp0152a256cc90a8992067e3556bdad0435d~OzZFampw90823808238epoutp01d
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733548930;
+	bh=sTB/Ibdf9VV3DvUuDDRzZSG4Ryd7mNnDpcZrkAkmKkU=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=GNFVt4gnDSBNJTWeGzRq8v0aMvghQKlfT3ZkfkDnj1LnABWy9KyB+CiUVmZxuWmHt
+	 WFruPkxkJBiLgYWiw3mkcpaZJKZ+HrPc7a5U1ROXL5aFB+5jzIhYQ8Drbqa6NwIDxB
+	 ugO6MD2F10a/EClTD0DMW5LS8/JJh1cNzoxhTD+4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+	20241207052210epcas1p47c59109d74aca5ec07e0864f9342eb9b~OzZE_X9130317603176epcas1p4S;
+	Sat,  7 Dec 2024 05:22:10 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.36.133]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y4xMP2vFlz4x9Pw; Sat,  7 Dec
+	2024 05:22:09 +0000 (GMT)
+X-AuditID: b6c32a36-6f5e970000005d3d-5b-6753db81a33f
+Received: from epcas1p3.samsung.com ( [182.195.41.47]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	51.A3.23869.18BD3576; Sat,  7 Dec 2024 14:22:09 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Subject: [PATCH v1] perf cpumap: Reduce cpu size from int to int16_t
-From: Ian Rogers <irogers@google.com>
-To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
-	Tim Chen <tim.c.chen@linux.intel.com>, Yicong Yang <yangyicong@hisilicon.com>, 
-	Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>, 
-	Kyle Meyer <kyle.meyer@hpe.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: RE: Re: [PATCH] PM / devfreq: Remove unused
+ devm_devfreq_(un)register_notifier
+Reply-To: myungjoo.ham@samsung.com
+Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+CC: Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <Z0iWPCzjv9YQ4kO_@gallifrey>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241207052209epcms1p45818db425ba84821003b6d735bc0e957@epcms1p4>
+Date: Sat, 07 Dec 2024 14:22:09 +0900
+X-CMS-MailID: 20241207052209epcms1p45818db425ba84821003b6d735bc0e957
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDKsWRmVeSWpSXmKPExsWy7bCmvm7j7eB0g80XRC2uf3nOanG26Q27
+	xcK2JSwWl3fNYbP43HuE0WL98xtMDmwefVtWMXqsXD6B3ePzJrkA5qhsm4zUxJTUIoXUvOT8
+	lMy8dFsl7+B453hTMwNDXUNLC3MlhbzE3FRbJRefAF23zBygvUoKZYk5pUChgMTiYiV9O5ui
+	/NKSVIWM/OISW6XUgpScAtMCveLE3OLSvHS9vNQSK0MDAyNToMKE7IwJDx0KtnFVfJ4Q1MDY
+	ztnFyMkhIWAisaWjhw3EFhLYwShx559AFyMHB6+AoMTfHcIgYWGBSIlTO7awQ5QoSTTc3McM
+	EdeX6HiwjRHEZhPQldi64S4LiC0iYCCx+dd+pi5GLg5mgS4mibPrzzBD7OKVmNH+lAXClpbY
+	vnwrWDOngKbElGdroGpEJW6ufssOY78/Np8RwhaRaL13FqpGUOLBz91QcUmJvjt7wZZJCGxj
+	lNhxZA4bhLOfUWLKwzaoSfoSZ+aeBPuSV8BX4tGsmUwgNouAqsSLLbehprpIbJ52CqyGWUBe
+	YvvbOcygkGAGum79Ln2IMJ/Eu689rDDP7Jj3hAnCVpM4tHsJ1CoZidPTF0KN9JCYvxzkBC5g
+	yM1jlNh66jDLBEb5WYgAnoVk2yyEbQsYmVcxiqUWFOempxYbFhjBIzQ5P3cTIzjZaZntYJz0
+	9oPeIUYmDsZDjBIczEoivJVhgelCvCmJlVWpRfnxRaU5qcWHGE2B/pzILCWanA9Mt3kl8YYm
+	lgYmZkbGJhaGZoZK4rxnrpSlCgmkJ5akZqemFqQWwfQxcXBKNTA5sxcdK2gIX9DyevfxjPOe
+	j/9fzzh99eSJ/CWrzIzMgwtu7F+56/zrHQflLFZavW8tvNpb0pZxq+ZT9uEEe/fa71l2/zjE
+	g2onv/rYPfGd5kNryciU4An6e6YLzedJVGmakW93yYM9xPxAb0eulezT5yqBN5v2XMv9c+WF
+	4sUt/nu0919nUrnwi135/ZUokcxVm+oOxW//luu5fvoB2Vu36yR2Ol8/Y8DUsfLbs5RbB3qf
+	vC2/YbB8NefiZTyr9pz4m2l+dfuyeVpyuuapflHtXhVxaUvKU9Z+ZHVbYFv46MUnBflNtzfr
+	PF5V8DD4YZvL996uIoGTb9prrx7dsHP6ZZeXi2ru1IY7vVLccTLyoxJLcUaioRZzUXEiANGJ
+	lx7/AwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241128161146epcas1p46768d7685092deaa817119db30fd12f2
+References: <Z0iWPCzjv9YQ4kO_@gallifrey>
+	<20241028021344.477984-1-linux@treblig.org>
+	<CGME20241128161146epcas1p46768d7685092deaa817119db30fd12f2@epcms1p4>
 
-Fewer than 32k CPUs are currently supported by perf. A cpumap stores
-an int per CPU, so its size is 4 times the number of CPUs in the
-cpumap. We can reduce the size of the int to an int16_t, saving 2
-bytes per CPU in the map.
+>* linux@treblig.org (linux@treblig.org) wrote:
+>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>> 
+>> devm_devfreq_register_notifier() and devm_devfreq_unregister_notifier()
+>> have been unused since 2019's
+>> commit 0ef7c7cce43f ("PM / devfreq: passive: Use non-devm notifiers")
+>> 
+>> Remove them, and the helpers they used.
+>> 
+>> Note, devm_devfreq_register_notifier() is still used as an example
+>> in Documentation/doc-guide/contributing.rst but that's just
+>> an example of an old doc bug rather than anything about the function
+>> itself.
+>> 
+>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+>
+>Ping.
+>
+>Thanks,
+>
+>Dave
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
-This change is on top of:
-https://lore.kernel.org/lkml/20241206044035.1062032-1-irogers@google.com/
----
- tools/lib/perf/include/perf/cpumap.h |  3 ++-
- tools/perf/util/cpumap.c             | 13 ++++++++-----
- tools/perf/util/env.c                |  2 +-
- 3 files changed, 11 insertions(+), 7 deletions(-)
+When I search github, it appears that vendors are using this API.
 
-diff --git a/tools/lib/perf/include/perf/cpumap.h b/tools/lib/perf/include/perf/cpumap.h
-index cbb65e55fc67..760a9aae9884 100644
---- a/tools/lib/perf/include/perf/cpumap.h
-+++ b/tools/lib/perf/include/perf/cpumap.h
-@@ -4,10 +4,11 @@
- 
- #include <perf/core.h>
- #include <stdbool.h>
-+#include <stdint.h>
- 
- /** A wrapper around a CPU to avoid confusion with the perf_cpu_map's map's indices. */
- struct perf_cpu {
--	int cpu;
-+	int16_t cpu;
- };
- 
- struct perf_cache {
-diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-index 27094211edd8..85e224d8631b 100644
---- a/tools/perf/util/cpumap.c
-+++ b/tools/perf/util/cpumap.c
-@@ -427,7 +427,7 @@ static void set_max_cpu_num(void)
- {
- 	const char *mnt;
- 	char path[PATH_MAX];
--	int ret = -1;
-+	int max, ret = -1;
- 
- 	/* set up default */
- 	max_cpu_num.cpu = 4096;
-@@ -444,10 +444,12 @@ static void set_max_cpu_num(void)
- 		goto out;
- 	}
- 
--	ret = get_max_num(path, &max_cpu_num.cpu);
-+	ret = get_max_num(path, &max);
- 	if (ret)
- 		goto out;
- 
-+	max_cpu_num.cpu = max;
-+
- 	/* get the highest present cpu number for a sparse allocation */
- 	ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
- 	if (ret >= PATH_MAX) {
-@@ -455,8 +457,9 @@ static void set_max_cpu_num(void)
- 		goto out;
- 	}
- 
--	ret = get_max_num(path, &max_present_cpu_num.cpu);
--
-+	ret = get_max_num(path, &max);
-+	if (!ret)
-+		max_present_cpu_num.cpu = max;
- out:
- 	if (ret)
- 		pr_err("Failed to read max cpus, using default of %d\n", max_cpu_num.cpu);
-@@ -606,7 +609,7 @@ size_t cpu_map__snprint(struct perf_cpu_map *map, char *buf, size_t size)
- #define COMMA first ? "" : ","
- 
- 	for (i = 0; i < perf_cpu_map__nr(map) + 1; i++) {
--		struct perf_cpu cpu = { .cpu = INT_MAX };
-+		struct perf_cpu cpu = { .cpu = INT16_MAX };
- 		bool last = i == perf_cpu_map__nr(map);
- 
- 		if (!last)
-diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-index e2843ca2edd9..f1d7d22e7e98 100644
---- a/tools/perf/util/env.c
-+++ b/tools/perf/util/env.c
-@@ -531,7 +531,7 @@ int perf_env__numa_node(struct perf_env *env, struct perf_cpu cpu)
- 
- 		for (i = 0; i < env->nr_numa_nodes; i++) {
- 			nn = &env->numa_nodes[i];
--			nr = max(nr, perf_cpu_map__max(nn->map).cpu);
-+			nr = max(nr, (int)perf_cpu_map__max(nn->map).cpu);
- 		}
- 
- 		nr++;
--- 
-2.47.0.338.g60cca15819-goog
 
+NVIDIA:
+https://github.com/NX-Development/android_kernel_nvidia_nvidia/blob/c9ade3b5e32a12b8cf6f33a632dc39209194e4e8/drivers/devfreq/governor_wmark_active.c#L624
+
+Samsung:
+https://github.com/Vaz15k/android_kernel_samsung_a54x/blob/8ac517c37c606746213064857dc240e99eba80d2/drivers/soc/samsung/exynos-llcgov.c#L107
+
+Realtek:
+https://github.com/BPI-SINOVOIP/BPI-M4-bsp/blob/25f5b88ec4ba34029f964693dc34028b26e6c67c/linux-rtk/drivers/devfreq/realtek/governor_rtk_ltl.c#L114
+
+
+
+Please don't remove ABIs used by vendors even if
+they didn't upstream their drivers.
+
+Cheers,
+MyungJoo.
 
