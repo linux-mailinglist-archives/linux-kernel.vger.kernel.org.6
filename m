@@ -1,147 +1,145 @@
-Return-Path: <linux-kernel+bounces-435887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736989E7E44
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:10:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC1789E7E45
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:13:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE8C81887539
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:10:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B0718874DD
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:13:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E58E6A8D2;
-	Sat,  7 Dec 2024 05:10:29 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CFF03D994;
+	Sat,  7 Dec 2024 05:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uk9VnxYn"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3997724B34
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:10:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A623122C6E3
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:13:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733548228; cv=none; b=tJlJYCj4GjXxqrfWt91ax7HSMC0JudG89DRPrr9Njn57NjRnbhl/r+/fn/OJ2jRUR8t32vCvGzLbTmTuwCrzBlhcLm19JxVg6Ac4NbS6wzlO2ynjPnzty3/Tsr957ai5PoKfYYa1xZTH07rur8xBGb/6n6eofF3se/TOD5SdsXc=
+	t=1733548398; cv=none; b=Z+vQTf8XGEU8iogaKJxIUo4a/NleQlxTLUqRZd2yHlyjTiA6GGvrEg1lCXt5fJY0JlX70wb/6vkediNEDZC66B1bqp8D11t1DRgKS/R9T0e1ZyuvNr4KxHHvuJFqIacrTu2XDc6amVdNXBX+yB0s32f2qFsP3qQdxEXQS/WPgwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733548228; c=relaxed/simple;
-	bh=et1z/KUmz8usDOn7via7XGKSBW4cSCbTg4tBkTkfDL8=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=f1yZA5vb0zATvttx3YLG/Eh6W2TEr50vPSyuwD1b5S/NPiE1/M0rdwJ2j0Sv0hNgdvF2rspBfr3xBpYrsZBdVTvu4LNWMbC/6CM4bIoMVxEL3U4vSJj/Kq+p/b9ajztMx7GaK9Qb+hlJLTqTigk/B7A4J3l/UvPYXFFTry9u8Lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-841896ec108so450630839f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 21:10:25 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733548225; x=1734153025;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8f2I+1uZRwsWPiIe3GqMd//ZCSLDRADHYVc75cI1Ges=;
-        b=k1E0zo7cGs1hJYu2bRN8V0CYeRV9QSCPG8iCTLKrv3d9d3jjen4eOcNV2VWbKl8D+s
-         3Acx9GMmxkgu6toXBwL6jb84E1rN+ua6altqH1opUm8p/3nfLWYHJksWwbYE4iq3tShv
-         i5yH9i/ZbJfkB5+Xy0/d/00InR6bZaq3znaWu5UVNqkESJIVyAlJVWQggu96yudwUOxj
-         koZUq+aT7uygv3z1PwShElH9Tzt6q5Yf2sw6ZRuqv4ULeQr+Ftnz5wjTOsviu/YBp0sP
-         QjitD8dTwapRJ/bxU+VLPba9t1/p2Fs2xJ14S81SrlT6dkKBMwx1vS94OCPePH7Bzv6w
-         pH+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVQZEw13Rz2QcE/GGKDSzDeV4vHfjg3BxJkBJxf1mFzqkWO53uSq2S7NBGNEHMLRWxVmr9hOPvvNC862o8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqfDFbvypyw9HhNqzL2vbkuSQWO+zCJMCEM+w0Ef8kGHB1YHCs
-	M+Yuj91TDsVPKi/DHCanOFmB/XxrIBk5l6AlD/TNt9xPD1zM3KTKVR88I/l9GKssZ0x+uVAfWZX
-	4jWjMA4Hc+8ttnwG/SLuU0r9eby22No0KHuB9u3Hn0NDj+4hJV5+w6Fk=
-X-Google-Smtp-Source: AGHT+IHKs3Fulw6z20FvxC3nCjkPPZgRJVQIWaH8JYYw6aFE/qX9/QQo2Bpa3i3xa8SuyDIF3kNC8FJNEbCfy3s1DIQRvZNybRwh
+	s=arc-20240116; t=1733548398; c=relaxed/simple;
+	bh=pSGawhxNpkahZpa3CMrsrawjBiV++nvJ40tdvZ922Io=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=actYvepSg424iM5S/soJ2QzXiZW5xoGA+b5pZpTLmieWshJHDfZCWz7niUL1s2g2x01MZA2rE8FlWPwmBYBA/hkydetajk4rWSPjPUN+sIe7sHaslGjk1pCAztNd3sC6/zjeTvecHwUe0WqpiSooRrJLElhLPA0MqvZ2LIF+11I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=uk9VnxYn; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241207051311epoutp03a9a66e4e53d9b0ce8577b7ec6ee766e9~OzRPNaFrU2050320503epoutp03c
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:13:11 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241207051311epoutp03a9a66e4e53d9b0ce8577b7ec6ee766e9~OzRPNaFrU2050320503epoutp03c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733548391;
+	bh=pSGawhxNpkahZpa3CMrsrawjBiV++nvJ40tdvZ922Io=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=uk9VnxYnPN0lL2xkxh4M3k7hKxvBf2jZlI6LuTH6KhQt/LccFRyzJVF0Q/0x5S8b/
+	 yc+iAleMvZC14xtTQueyCnxudwZ0U27RgU0VqogWZ8IOHZsNI6nDgb2yHl/YgG2WZq
+	 qh7idb3aYhrvdqQ8m1ciGeFq+UasIAi333EB7Pbk=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241207051310epcas1p26d547f08bdb0277a60a3be277f1e6ccf~OzROMPljK2276122761epcas1p2B;
+	Sat,  7 Dec 2024 05:13:10 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.235]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Y4x913LRhz4x9Ps; Sat,  7 Dec
+	2024 05:13:09 +0000 (GMT)
+X-AuditID: b6c32a33-5b18370000005ad5-d7-6753d9651d89
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	F6.93.23253.569D3576; Sat,  7 Dec 2024 14:13:09 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:12c5:b0:3a7:a3a4:2cb3 with SMTP id
- e9e14a558f8ab-3a811e06230mr60927205ab.15.1733548225288; Fri, 06 Dec 2024
- 21:10:25 -0800 (PST)
-Date: Fri, 06 Dec 2024 21:10:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6753d8c1.050a0220.a30f1.0151.GAE@google.com>
-Subject: [syzbot] [net?] WARNING in NUM
-From: syzbot <syzbot+3f059ffbdd539a3f6bc9@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH] extcon: Drop explicit initialization of struct
+ i2c_device_id::driver_data to 0
+Reply-To: myungjoo.ham@samsung.com
+Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: =?UTF-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@baylibre.com>
+CC: Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <3dgr7brrcsux4bhywmdu7v4ibmieb3wotb7t5qlent64su7z4x@qapri6zyjfbe>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241207051308epcms1p7e8315738f47c9bbeb252807b08edfc38@epcms1p7>
+Date: Sat, 07 Dec 2024 14:13:08 +0900
+X-CMS-MailID: 20241207051308epcms1p7e8315738f47c9bbeb252807b08edfc38
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOKsWRmVeSWpSXmKPExsWy7bCmgW7qzeB0g22HJSyuf3nOanH+/AZ2
+	i8u75rBZzP/6ic2BxeP9jVZ2j02rOtk8+rasYvT4vEkugCUq2yYjNTEltUghNS85PyUzL91W
+	yTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMHaKWSQlliTilQKCCxuFhJ386mKL+0JFUh
+	I7+4xFYptSAlp8C0QK84Mbe4NC9dLy+1xMrQwMDIFKgwITtj15R/bAU7RCrmLN/J2MB4W7iL
+	kZNDQsBE4sqR2exdjFwcQgI7GCXWfprL1MXIwcErICjxdwdYjbBApkRn00smEFtIQEmi4eY+
+	Zoi4vkTHg22MIDabgK7E1g13WUBaRQTcJaZPNQcZySwwiVFiwa8+RohdvBIz2p+yQNjSEtuX
+	bwWLcwr4SXzcsRGqRlTi5uq37DD2+2PzoeIiEq33zjJD2IISD37uhopLSvTd2csEskxCYBuj
+	xI4jc9ggnP2MElMetkFN0pc4M/ckG8RjvhLXN0qDmCwCqhJfVhhBVLhI/NzfClbNLKAtsWzh
+	a2aQEmYBTYn1u/QhwnwS7772sMK8smPeEyYIW03i0O4lUItkJE5PXwh1pofEyq7rbJCg/cUk
+	MfX7H7YJjPKzEKE7C8m2WQjbFjAyr2IUSy0ozk1PTTYsMIRHaHJ+7iZGcIrTMt7BeHn+P71D
+	jEwcjIcYJTiYlUR4K8MC04V4UxIrq1KL8uOLSnNSiw8xmgK9OZFZSjQ5H5hk80riDU0sDUzM
+	jIxNLAzNDJXEec9cKUsVEkhPLEnNTk0tSC2C6WPi4JRqYPIUOPCr77e5enT4zYfyTU5VzN/n
+	Giu19JesmO+9dt3itLO/FjpW709L8457Iso+P9zg+cVe/san61QFFTjnRpcFBmZmdCZe+t/h
+	0cawc9f063bfOSJXKXD1MnnVvDtgdM+8xPpYNWuTe9qEm9se8VwM2cTacfam32XLUgn19aG7
+	pFZlbjqzt/jsowlPtuocECvL+esc+ji6UPJs2jVHBq8C2caTxgUf5efYd5uVH5TffiWqaI3D
+	3BNn5BhfiXl3Zk17591/rO3zPJ/0N0KZa3v2XZ7/pKuW65wwh3l/+u19qzyPn5/R4mrf9u3u
+	1TizM/vnxzpPSHZ8aOltc+hQifAcTUOVZYbq5o8vpe18oMRSnJFoqMVcVJwIAL3/mSr6AwAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241204103802epcas1p3bb95970c978894677e1087ac20dc8450
+References: <3dgr7brrcsux4bhywmdu7v4ibmieb3wotb7t5qlent64su7z4x@qapri6zyjfbe>
+	<la6csftzuntp3w2etea5s2u63yjxvxcgicg7tbehnild4d736g@uqod6luq4bth>
+	<20240918123150.1540161-6-u.kleine-koenig@baylibre.com>
+	<556725552.2924666.1733371094684@v8mail-kr1-0.v8mail-kr1.knoxportal-kr-prod-green.svc.cluster.local>
+	<CGME20241204103802epcas1p3bb95970c978894677e1087ac20dc8450@epcms1p7>
 
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    cdd30ebb1b9f module: Convert symbol namespace to string li..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=146c8330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6851fe4f61792030
-dashboard link: https://syzkaller.appspot.com/bug?extid=3f059ffbdd539a3f6bc9
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-cdd30ebb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/35bb9b3cd157/vmlinux-cdd30ebb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9c6bbf481907/bzImage-cdd30ebb.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+3f059ffbdd539a3f6bc9@syzkaller.appspotmail.com
-
-Dec  3 05:04:02 syzkaller daemon.info dhcpcd[5653]: eth3: IAID d8:df:c9:55
-Dec  3 05:04:02 syzkaller daemon.info dhcpcd[5653]: eth3: adding address fe80::7[   49.690919][ T6466] ------------[ cut here ]------------
-f27:c3e8:bb45:52[   49.693207][ T6466] WARNING: CPU: 3 PID: 6466 at net/ipv6/ip6mr.c:419 ip6mr_free_table+0xbd/0x120 net/ipv6/ip6mr.c:419
-df
-Dec  3 05:04:02 [   49.710042][ T6466] Code: 00 00 48 b8 00 00 00 00 00 fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 58 49 83 bc 24 c0 0e 00 00 00 74 09 e8 c4 c5 af f7 90 <0f> 0b 90 e8 bb c5 af f7 48 8d 7b 38 e8 22 86 9c f7 48 89 df be 0f
-syzkaller kern.w[   49.717312][ T6466] RSP: 0018:ffffc90003487bd8 EFLAGS: 00010293
-arn kernel: [   [   49.719598][ T6466] RAX: 0000000000000000 RBX: ffff888108508000 RCX: ffffffff89ea4014
-49.690919][ T646[   49.725534][ T6466] RBP: 0000000000000001 R08: 0000000000000005 R09: 0000000000000000
-6] ------------[[   49.725548][ T6466] R10: 0000000000000001 R11: 0000000000000001 R12: ffff88804e965ac0
- cut here ]-----[   49.725561][ T6466] R13: ffff888108508000 R14: ffff888108508008 R15: dead000000000100
--------
-Dec  3 05:04:02 [   49.739536][ T6466] CR2: 00007f4fd5157580 CR3: 0000000035ea8000 CR4: 0000000000352ef0
-syzkaller kern.w[   49.742428][ T6466] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-arn kernel: [   [   49.746956][ T6466] Call Trace:
-49.693207][ T646[   49.748809][ T6466]  ? __warn+0xea/0x3c0 kernel/panic.c:746
-6] WARNING: CPU:[   49.750217][ T6466]  ? ip6mr_free_table+0xbd/0x120 net/ipv6/ip6mr.c:419
- 3 PID: 6466 at [   49.751877][ T6466]  ? __report_bug lib/bug.c:199 [inline]
- 3 PID: 6466 at [   49.751877][ T6466]  ? report_bug+0x3c0/0x580 lib/bug.c:219
-net/ipv6/ip6mr.c[   49.751908][ T6466]  ? exc_invalid_op+0x17/0x50 arch/x86/kernel/traps.c:309
-:419 ip6mr_free_[   49.751922][ T6466]  ? asm_exc_invalid_op+0x1a/0x20 arch/x86/include/asm/idtentry.h:621
-table+0xbd/0x120[   49.759463][ T6466]  ? ip6mr_free_table+0xbc/0x120 net/ipv6/ip6mr.c:419
-
-Dec  3 05:04:02 syzkaller kern[   49.762545][ T6466]  ? ip6mr_free_table+0xbc/0x120 net/ipv6/ip6mr.c:419
-.warn kernel: [ [   49.765091][ T6466]  ip6mr_rules_exit+0x176/0x2d0 net/ipv6/ip6mr.c:283
-  49.696818][ T6[   49.767196][ T6466]  ip6mr_net_exit_batch+0x53/0xa0 net/ipv6/ip6mr.c:1388
-466] Modules lin[   49.768971][ T6466]  ? __pfx_ip6mr_net_exit_batch+0x10/0x10 net/ipv6/ip6mr.c:285
-ked in:
-Dec  3 05:04:02 [   49.769038][ T6466]  setup_net+0x4fe/0x860 net/core/net_namespace.c:394
-syzkaller kern.w[   49.769059][ T6466]  ? __pfx_setup_net+0x10/0x10 net/core/net_namespace.c:185
-arn kernel: [   [   49.778049][ T6466]  ? __down_read_common kernel/locking/rwsem.c:1255 [inline]
-arn kernel: [   [   49.778049][ T6466]  ? __down_read_killable kernel/locking/rwsem.c:1271 [inline]
-arn kernel: [   [   49.778049][ T6466]  ? down_read_killable+0xcc/0x380 kernel/locking/rwsem.c:1549
-49.699801][ T646[   49.781754][ T6466]  ? lockdep_init_map_waits include/linux/lockdep.h:135 [inline]
-49.699801][ T646[   49.781754][ T6466]  ? lockdep_init_map_wait include/linux/lockdep.h:142 [inline]
-49.699801][ T646[   49.781754][ T6466]  ? __raw_spin_lock_init+0x3a/0x110 kernel/locking/spinlock_debug.c:25
-6] CPU: 3 UID: 0 PID: 6466 Comm: syz.2.106 Not tainted 6.13.0-rc1-syzkaller-00002-gcdd30ebb1b9f #0
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>Hello MyungJoo,
+>
+>On Thu, Dec 05, 2024 at 12:58:14PM +0900, MyungJoo Ham wrote:
+>> >On Wed, Sep 18, 2024 at 02:31:48PM +0200, Uwe Kleine-K=C3=B6nig=20wrote=
+:=0D=0A>>=20>>=20These=20drivers=20don't=20use=20the=20driver_data=20member=
+=20of=20struct=20i2c_device_id,=0D=0A>>=20>>=20so=20don't=20explicitly=20in=
+itialize=20this=20member.=0D=0A>>=20>>=20=0D=0A>>=20>>=20This=20prepares=20=
+putting=20driver_data=20in=20an=20anonymous=20union=20which=20requires=0D=
+=0A>>=20>>=20either=20no=20initialization=20or=20named=20designators.=20But=
+=20it's=20also=20a=20nice=0D=0A>>=20>>=20cleanup=20on=20its=20own.=0D=0A>>=
+=20>>=20=0D=0A>>=20>>=20Signed-off-by:=20Uwe=20Kleine-K=C3=B6nig=20<u.klein=
+e-koenig=40baylibre.com>=0D=0A>>=20>=0D=0A>>=20>That=20patch=20got=20some=
+=20positive=20feedback=20by=20Krzysztof=20but=20wasn't=20applied.=0D=0A>>=
+=20>Is=20this=20still=20on=20someone's=20radar=20for=20application?=0D=0A>>=
+=20=0D=0A>>=20Can=20you=20provide=20a=20link=20to=20a=20commit=20that=20req=
+uires=20this=20change?=0D=0A>>=20=0D=0A>>=20For=20now,=20I=20don't=20see=20=
+any=20benefit=20from=20this=20change.=0D=0A>=0D=0A>So=20the=20explicit=20in=
+itialisation=20of=20.driver_data=20that=20then=20isn't=20used=0D=0A>doesn't=
+=20look=20strange=20enough=20to=20you=20to=20drop=20it?=0D=0A>=0D=0A>Would=
+=20you=20prefer=20=0D=0A>=0D=0A>---=20a/drivers/extcon/extcon-fsa9480.c=0D=
+=0A>+++=20b/drivers/extcon/extcon-fsa9480.c=0D=0A>=40=40=20-350,7=20+350,7=
+=20=40=40=20static=20const=20struct=20dev_pm_ops=20fsa9480_pm_ops=20=3D=20=
+=7B=0D=0A>=20=7D;=0D=0A>=0D=0A>=20static=20const=20struct=20i2c_device_id=
+=20fsa9480_id=5B=5D=20=3D=20=7B=0D=0A>-=09=7B=20=22fsa9480=22,=200=20=7D,=
+=0D=0A>+=09=7B=20.name=20=3D=20=22fsa9480=22,=20.driver_data=20=3D=200,=20=
+=7D,=0D=0A>=20=09=7B=7D=0D=0A>=20=7D;=0D=0A>=20MODULE_DEVICE_TABLE(i2c,=20f=
+sa9480_id);=0D=0A>=0D=0A>then?=0D=0A>=0D=0A>Anyhow:=20The=20most=20recent=
+=20presentation=20of=20the=20quest=20is=20at=0D=0A>https://lore.kernel.org/=
+linux-iio/20241204150036.1695824-2-u.kleine-koenig=40baylibre.com.=0D=0A=0D=
+=0AHi,=0D=0A=0D=0AThat=20link=20explains=20it.=0D=0A=0D=0AIt'd=20have=20bee=
+n=20easier=20to=20see=20if=20that=20link=20or=20the=20pending=20changes=20o=
+n=20i2c_device_id=0D=0Awere=20mentioned.=0D=0A=0D=0AChanwoo:=20please=20tak=
+e=20a=20look.=0D=0A=0D=0ACheers,=0D=0AMyungJoo=0D=0A=0D=0A=0D=0A(For=20the=
+=20original=20=22extcon:=20Drop=20explicit=20initialization=20of=20struct=
+=20i2c_device_id::driver_data=20to=200=22)=0D=0AAcked-by:=20MyungJoo=20Ham=
+=20<myungjoo.ham=40samsung.com>=0D=0A=0D=0A=0D=0A=0D=0A
 
