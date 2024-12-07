@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-435869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2358D9E7E1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 04:32:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C80269E7E1C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 04:38:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2AA81887511
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 03:32:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DD09286980
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 03:38:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A061825761;
-	Sat,  7 Dec 2024 03:31:55 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4218717C7C;
-	Sat,  7 Dec 2024 03:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 535FD24B34;
+	Sat,  7 Dec 2024 03:38:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XSCyo5Ze"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E79E717C7C
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 03:38:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733542315; cv=none; b=jWvMOgMhpMG+weH9EPeE2MhlM6oSyWSjBQ/vW/19+hB6Kwxut2cFg486Xepjinv/nM02bwaRcIoO+XrLkjMminfFlM+s0sUQrWXKdZjsOuQhJbKgP+SDs6FVeEuxKocHjIJ0F2y82FdSLlzHvelyQmwv2esrZ+khDBGAyKFTPlw=
+	t=1733542728; cv=none; b=tov6hWf1WPikSMMenNh6xNKNhRHzSmzXxCoL6az530EfqY03mHF5AnhMGaMvv5mP4ac9W87ESyLkW5M4uBysCp1+7XFDROCDlr3arcw+jygv2IkHt2J/bwnRMPh1c/p1IzI+zsvkzXAv4NJEVIUFZ7pEcTP19TWsZbUVyQ1v+FI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733542315; c=relaxed/simple;
-	bh=c/zfDTlJjLWyLEAaKXkccdygHFnfSqWAximJP+kKsf8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BT+U5JT4ADyiXGv/SmVqHB9jFU4o17KRHPwZ9HN7MWRo0CC6DnnTfj/Sr3JkPZA+lvFOSmhBp2dkmGywMqt/uGzhgXUAWZRczQM4p/diAj3zbOoUY2X1vY5Q4EgLIQQwQ4m+0llMZ50FxlNpchM9LzYx2Qt1Hjl4q6AJLv8iYE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.10.34])
-	by gateway (Coremail) with SMTP id _____8CxieGmwVNnC7RSAA--.32789S3;
-	Sat, 07 Dec 2024 11:31:50 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.10.34])
-	by front1 (Coremail) with SMTP id qMiowMDxPEelwVNnjYJ5AA--.65188S2;
-	Sat, 07 Dec 2024 11:31:49 +0800 (CST)
-From: Tianyang Zhang <zhangtianyang@loongson.cn>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name,
-	tglx@linutronix.de
-Cc: loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: [PATCH] irqchip/loongarch-avec:Add multi-nodes topology support
-Date: Sat,  7 Dec 2024 11:31:46 +0800
-Message-Id: <20241207033146.20938-1-zhangtianyang@loongson.cn>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1733542728; c=relaxed/simple;
+	bh=dZ5jVhw0FRrEkCyjfU/utgfXAZv13iP1+qgcvddW/rU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UP7rXsSRTb8GtgcWE9nsDSH/pvwqzNh6qPKJxO6bW8wd0RWgWbETdZE1XsxkDmMkjCWmfXsr5Qpdk6MFIG0goKWWRm6/VyKpPa16nQrJjHMaiqnIHX3RqwJE8s0FPICHnR61kYm0tWSjIaNA9EndNtmg4RzaEihcDemykra/oaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XSCyo5Ze; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733542725;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RFp/fFnnxbfvLePj4dYZIgYWo9EKhOrPAamJCrcM1WQ=;
+	b=XSCyo5ZeskF0Rp7r3AW2Oqne8uaAMoPTM7BClEOg8xVQvXjipzqDiKpKKy2/VLJhgRj3DY
+	tj/UBYc3be3LEbA08Tq0bOZL0fp9J8hPxU/SE24CkuZpBsuBhoiPoqdcOFroPYEcsGehQd
+	WIQo9sGeQyKDw4wCnxaIEUjytfwBgOg=
+Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
+ [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-687-BpnVHLD0OCK6fqh1IUtKtQ-1; Fri, 06 Dec 2024 22:38:44 -0500
+X-MC-Unique: BpnVHLD0OCK6fqh1IUtKtQ-1
+X-Mimecast-MFC-AGG-ID: BpnVHLD0OCK6fqh1IUtKtQ
+Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5d34c8fbca7so2027394a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 19:38:44 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733542723; x=1734147523;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RFp/fFnnxbfvLePj4dYZIgYWo9EKhOrPAamJCrcM1WQ=;
+        b=VxPYZm3iqIwUozxsT7kaTh3CPU2Bz6iYmboBH7jjx44jparimh9XvWDIEx1SbUtHhK
+         406NVTBjbI7Cw3XpqTNtLicsIeV7mnFhGU4uIpPFSB+i3W8OV8AFicWM/Nc8iEejJYHh
+         eL3gOWufT2qIYXUoCb0Amh6oCPBhTwEYafyTindVNay05DgAQtHh+QZVfgPfAKP2X11S
+         nlYgUxfbOP0r0IZDLRAyX2gIpdjgGlMP/pXwMDBBPyCiKA3z8WM1EJDTaVDVzP4B/MyW
+         5jS7MvNZsfdBwW5gz4e7DM7CqxQVEiBe7lH1Inrv37NmLsYvLsFXZQ8rI5MulAIq1Xoj
+         B4kQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWQKNeYjiqJbvwiBLmKuB3kwpWYbQKmjWeD+RmyFsFx+NzqqfCZJWDGb1fEL58N6lPC7arhhEIR+ZmkHEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyivjdrw1vwkueHyZw+WVwFtPUII1F/fP9llxd2YZ+LZ6RM9/vj
+	WDwnHktJ+HwmjpIx9BotsvE/VNjZqwb1TBf+KniPGbNKczkv74/113CpoXVEQtRaHXuMSUabHQu
+	S5RxL4H/J9dnQJ/vuFh5yP5TlOMe4dl4JHJMxxcw1euufeIc618zzaQOXCfvW2D6OZgni2ELdXQ
+	i/l7myOemZrG7uvfMzdthziNNW4MEPhHhtE/i1
+X-Gm-Gg: ASbGncsJCD6Gis3V7nBuJWOjEtU7s/btoQU16ecU95nz+GLGhVkfMOtedbyC5jYpu20
+	StMJekGpQ0wEhdaXwE1Hps1YicLfbc6A=
+X-Received: by 2002:a05:6402:254b:b0:5d0:e73c:b7f6 with SMTP id 4fb4d7f45d1cf-5d3be721b71mr5354691a12.31.1733542723372;
+        Fri, 06 Dec 2024 19:38:43 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHtVbuEbxdGC7AbxegIn7KPLfh2Jki7IR9rZfsiL1LWLv415Cz4Y6lZHtQHRtVhxHQy8DAfeqJQUR1tmYKuJyk=
+X-Received: by 2002:a05:6402:254b:b0:5d0:e73c:b7f6 with SMTP id
+ 4fb4d7f45d1cf-5d3be721b71mr5354684a12.31.1733542723058; Fri, 06 Dec 2024
+ 19:38:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxPEelwVNnjYJ5AA--.65188S2
-X-CM-SenderInfo: x2kd0wxwld05hdqjqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj93XoW7tr4kCFy5tF1fuFy7uw4rWFX_yoW8Kr1rpa
-	y5Za45Jr4Ut3Z7WF9xK34DXry3Jr4xKrW7ta43C3W3WrZ8G34q9ry0qFy5ZF18C397Z3WF
-	vr48JFWUu3W5ZFgCm3ZEXasCq-sJn29KB7ZKAUJUUUU5529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUk0b4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4j6r4UJwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYIkI8VC2zVCFFI0UMc
-	02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAF
-	wI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JMxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWUJVW8JwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_MaUUUUU
+References: <cover.1733504943.git.mchehab+huawei@kernel.org> <6f427a02c2c20512d5da178b47c64d553851a60e.1733504943.git.mchehab+huawei@kernel.org>
+In-Reply-To: <6f427a02c2c20512d5da178b47c64d553851a60e.1733504943.git.mchehab+huawei@kernel.org>
+From: Ani Sinha <anisinha@redhat.com>
+Date: Sat, 7 Dec 2024 09:08:31 +0530
+Message-ID: <CAK3XEhNNZyRDgjm5Hjes-Xnj4CxtO2eQcs7AyTNOOFcKa3LusA@mail.gmail.com>
+Subject: Re: [PATCH 27/31] DEBUG
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: "Michael S . Tsirkin" <mst@redhat.com>, Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
+	Shiju Jose <shiju.jose@huawei.com>, Dongjiu Geng <gengdongjiu1@gmail.com>, 
+	Igor Mammedov <imammedo@redhat.com>, linux-kernel@vger.kernel.org, qemu-arm@nongnu.org, 
+	qemu-devel@nongnu.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch enables the advanced interrupt controller function under
-multiple-node of 3C600. The topology of the advanced interrupt controller
-is consistent with NUMA node. We check the enable status of the node where
-each CPU is located once when it goes online, which may cause some
-additional operations, but it can ensure that the advanced interrupt
-controller can still be used in situations where some CPUs cannot start
+On Fri, Dec 6, 2024 at 10:51=E2=80=AFPM Mauro Carvalho Chehab
+<mchehab+huawei@kernel.org> wrote:
+>
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> ---
+>  hw/acpi/ghes.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> index abca351b18de..1fe4c536611a 100644
+> --- a/hw/acpi/ghes.c
+> +++ b/hw/acpi/ghes.c
+> @@ -534,9 +534,11 @@ void ghes_record_cper_errors(const void *cper, size_=
+t len,
+>      ags =3D &acpi_ged_state->ghes_state;
+>
+>      if (!ags->hest_lookup) {
+> +        fprintf(stderr,"Using old GHES lookup\n");
 
-Signed-off-by: Tianyang Zhang <zhangtianyang@loongson.cn>
----
- drivers/irqchip/irq-loongarch-avec.c | 20 ++++++++++++++++----
- 1 file changed, 16 insertions(+), 4 deletions(-)
+I don't like this. If you must please have them under #ifdef DEBUG or
+somesuch. See ich9.c
 
-diff --git a/drivers/irqchip/irq-loongarch-avec.c b/drivers/irqchip/irq-loongarch-avec.c
-index 0f6e465dd309..9e30198fa7e4 100644
---- a/drivers/irqchip/irq-loongarch-avec.c
-+++ b/drivers/irqchip/irq-loongarch-avec.c
-@@ -56,6 +56,18 @@ struct avecintc_data {
- 	unsigned int		moving;
- };
- 
-+static inline void avecintc_enable(void)
-+{
-+	u64 value;
-+
-+	if (!loongarch_avec.domain)
-+		return;
-+
-+	value = iocsr_read64(LOONGARCH_IOCSR_MISC_FUNC);
-+	value |= IOCSR_MISC_FUNC_AVEC_EN;
-+	iocsr_write64(value, LOONGARCH_IOCSR_MISC_FUNC);
-+}
-+
- static inline void avecintc_ack_irq(struct irq_data *d)
- {
- }
-@@ -127,6 +139,8 @@ static int avecintc_cpu_online(unsigned int cpu)
- 
- 	guard(raw_spinlock)(&loongarch_avec.lock);
- 
-+	avecintc_enable();
-+
- 	irq_matrix_online(loongarch_avec.vector_matrix);
- 
- 	pending_list_init(cpu);
-@@ -339,7 +353,6 @@ static int __init irq_matrix_init(void)
- static int __init avecintc_init(struct irq_domain *parent)
- {
- 	int ret, parent_irq;
--	unsigned long value;
- 
- 	raw_spin_lock_init(&loongarch_avec.lock);
- 
-@@ -378,14 +391,13 @@ static int __init avecintc_init(struct irq_domain *parent)
- 				  "irqchip/loongarch/avecintc:starting",
- 				  avecintc_cpu_online, avecintc_cpu_offline);
- #endif
--	value = iocsr_read64(LOONGARCH_IOCSR_MISC_FUNC);
--	value |= IOCSR_MISC_FUNC_AVEC_EN;
--	iocsr_write64(value, LOONGARCH_IOCSR_MISC_FUNC);
-+	avecintc_enable();
- 
- 	return ret;
- 
- out_remove_domain:
- 	irq_domain_remove(loongarch_avec.domain);
-+	loongarch_avec.domain = NULL;
- out_free_handle:
- 	irq_domain_free_fwnode(loongarch_avec.fwnode);
- out:
--- 
-2.20.1
+>          get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
+>                               &cper_addr, &read_ack_register_addr);
+>      } else {
+> +        fprintf(stderr,"Using new HEST lookup\n");
+>          get_ghes_source_offsets(source_id, le64_to_cpu(ags->hest_addr_le=
+),
+>                                  &cper_addr, &read_ack_register_addr, err=
+p);
+>      }
+> --
+> 2.47.1
+>
 
 
