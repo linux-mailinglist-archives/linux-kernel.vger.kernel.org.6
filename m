@@ -1,357 +1,177 @@
-Return-Path: <linux-kernel+bounces-436051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 992CB9E8081
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:58:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78587166935
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:58:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3B6914A615;
-	Sat,  7 Dec 2024 15:58:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WfwYER6y"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58AF39E8082
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:04:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97A41E4BE;
-	Sat,  7 Dec 2024 15:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23CD2281D1F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:04:41 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F69E1448E4;
+	Sat,  7 Dec 2024 16:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Ty92Kd72"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB328ECF
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 16:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733587086; cv=none; b=WVEvrc9/QTBOMoVenNrHIZ74XojR64nRb5xKD7AntdPgD84U7hKDThk678SqcBBtVnk69KYNx6P+SAhmMRPnq9cNz7yETin8J6ZtgKQwxGbzSTI6/kdwLKB3vtsAKDo+OKzt7t2lbENsGrFi+2pAixkCIKlw0TP761X86rdNQcM=
+	t=1733587476; cv=none; b=I91KJ1MjRb3/GHdVjvELKUnOilXHhdeGgC9cMgoy89W4fmhppJc8jpnOnV01UlLW0Wdxla3yLeIcRtOQoM5me9lY/E3hibq8Fc9NtMYYKVvWLUn+d8m3AYPNwxqdUN+ZLa7wty/NZkLgTmqKd90DmxIEh4v5kY8cUGIKmJu7xiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733587086; c=relaxed/simple;
-	bh=1MzOEiTqomiP0+Qd2CQIBE5l6drKje65N+HIRSp886Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=joIsm0C9oAgUlkgUeR55WeggJF05S7lWvq0Lr7VIWdhYE5zvRLVwTbQkOs+KhVM6B2FFcpiGA5Bp4gaPEjdp9wSUROENYUT0NFr3QFVg2NHfIQOIn9EKCmNOzwVoC0LUB4K3DL5hgTUfsAH2vTl63r2V56PwIQ7JQaLAq49sCwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WfwYER6y; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B7EJlUt025698;
-	Sat, 7 Dec 2024 15:58:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	h+JwaMLqriEtjjSkTLpNHyzDUUHvFRo5kkfsH2Izqls=; b=WfwYER6ykXAxoA7+
-	wUfJlp2xs7Vh8gGJO80dZ+iBi/Q4oQePdYVYvIs8fpJdqXZgkSePqc/C+D9Y603z
-	wsMmWenEFj0gMpG4qVsOCMLWdYmcFnx0rlKp/B9L9q8mLxvtvKSsOyP4UHXr0WZO
-	s+rbIsdCWLoHSwVmHr6lhiSP3nzx8RjLOdWSvKZ7pPgbFkhLwQZD6S8fctSb5Vw6
-	Pg6mYoGVdw1zDNT6z85QpABbsa++C/XIY53XMcy68fmDWqa8QHFqyprAX21V6j8u
-	rg6nnInwtqaOkUdjEC7rmUcDBnQ2mZhsIuphWfqLcN4n3gCAFpS9YERmwXL5X3OO
-	y6wIjA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cek1ruhw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 07 Dec 2024 15:58:00 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B7FvxPm032070
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 7 Dec 2024 15:57:59 GMT
-Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sat, 7 Dec 2024
- 07:57:57 -0800
-Message-ID: <01d0b807-6201-43fb-8286-df04d722610f@quicinc.com>
-Date: Sat, 7 Dec 2024 23:57:54 +0800
+	s=arc-20240116; t=1733587476; c=relaxed/simple;
+	bh=h/gfrjcG6QzHZ0wUgv/qMhsA4m4rPaFrBDAR2Mx8i4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i0CRLJREgUP1QKQ/A1XN0GewuGPFansc1JDAegdK5z79fvEwrACxDaweVYIhTKD7UCzyTbdVmk/4u5HHfhQiUAdc1NL80Rp4J5wmyF4rT9HuSsgG/pjeFt25sCQqzpfBK5ZP0ZgAjGmvpoNNF1xL7RoGVYOGtb1OJ+wN4WdmDIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Ty92Kd72; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6076340E01A2;
+	Sat,  7 Dec 2024 16:04:26 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id F4RsM7jkQtwI; Sat,  7 Dec 2024 16:04:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733587462; bh=bNejE0pr6QI0murC285qHwFbNcoC3uJ3M5IYTto9fVc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ty92Kd72LC11EcEzUET0gUzW6eG/wbI0M17tjAczdzWjm7Fs2WfAQ6Pqw/BwGq3P4
+	 pgaZwkXuEaPB+dNcnr1Jh1UKsW9x0vEAd1ezIBnWsMHfybYMCe8meo4THQ+zyqNQJa
+	 0GKGy45VmgXjpSY4LUz1+rqhrQkXDazrh9nfaZyRpuVRFIHbNxV2A4FUNJ6N2Tn76S
+	 feFrNRMo4ujE4FZFGXQQfI6NzvNHVum0O4Pd9k/gY66q/vMU8bA+Z868CwfKeSJ9gf
+	 yq6iKKImzKBpPD8j+GnGLSk1t/MbFrz8435SieJ+HFqqGTudDYwXdzYOeaKsP7JYFF
+	 ILsvEPAZa1GYUlu9/N0+Lahq6GzqHH4NkUmQ6SQyQh2xv+gvnVQMFgELsWJqXZANiV
+	 4w7j53JuiehZhd2drJhA0Sd+E+3VloBJRI8N7eg2xi3XnnJQeYuMI69aYsI9uTVNnV
+	 wBh/WabzFE+DhSO4FfFJO8tLhOMf05xoKYEO5zIF0raRgGm5oi50tGppfblv7p1E6L
+	 XBMt0t8A0puHmzQtHaozcwnRINQug3kPuECohdGk5C1srKhyhIuDy1HySccSuVaVkf
+	 u92h8gkh66JEmGf8u5IsuAhe+o72RHV73+DOk3ykJLE5V2JC8RZkXBIrCXetacYEx9
+	 Iy3o3J8iMTt5vhU8mYw/jTpo=
+Received: from zn.tnic (p200300eA971F9358329c23fFfEA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9358:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4A23040E016C;
+	Sat,  7 Dec 2024 16:04:17 +0000 (UTC)
+Date: Sat, 7 Dec 2024 17:04:11 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Baoquan He <bhe@redhat.com>
+Cc: mingo@kernel.org, thomas.lendacky@amd.com, linux-kernel@vger.kernel.org,
+	x86@kernel.org
+Subject: Re: [PATCH v3 1/3] x86/ioremap: introduce helper to implement
+ xxx_is_setup_data()
+Message-ID: <20241207160411.GAZ1Rx-9eQHH1IXOwP@fat_crate.local>
+References: <20241123114221.149383-1-bhe@redhat.com>
+ <20241123114221.149383-2-bhe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100-pmics: Enable all SMB2360
- separately
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Abel Vesa
-	<abel.vesa@linaro.org>, Johan Hovold <johan@kernel.org>
-References: <20241203-x1e80100-disable-smb2360-v1-1-80942b7f73da@linaro.org>
-From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20241203-x1e80100-disable-smb2360-v1-1-80942b7f73da@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MhJrAcKsOHnyqQF34hAo7qvlEjHfWGKG
-X-Proofpoint-ORIG-GUID: MhJrAcKsOHnyqQF34hAo7qvlEjHfWGKG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- mlxscore=0 adultscore=0 clxscore=1011 malwarescore=0 phishscore=0
- spamscore=0 mlxlogscore=766 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412070134
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241123114221.149383-2-bhe@redhat.com>
 
-
-
-On 12/4/2024 12:27 AM, Stephan Gerhold wrote:
-> At the moment, x1e80100-pmics.dtsi enables two of the SMB2360 PMICs by
-> default and only leaves the third disabled. This was introduced in commit
-
-One correction: it’s not only the third PMIC that is disabled. Both the
-third (smb2360_2) and fourth (smb2360_3) are disabled. This information
-is verified from link[1]:
-[1]https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-
-> a237b8da413c ("arm64: dts: qcom: x1e80100: Disable SMB2360_2 by default").
-> This is inconsistent and confusing. Some laptops will even need SMB2360_1
-> disabled by default if they just have a single USB-C port.
+On Sat, Nov 23, 2024 at 07:42:19PM +0800, Baoquan He wrote:
+> Functions memremap_is_setup_data() and early_memremap_is_setup_data()
+> share completely the same process and handling, except of the
+> different memremap/unmap invocations.
 > 
-> Make this consistent by keeping all SMB2360 disabled in x1e80100-pmics.dtsi
-> and enable them separately for all boards where needed. That way it is
-> always clear which ones are available and avoids accidentally trying to
-> read/write from missing chips when some of the PMICs are not present.
+> So add helper __memremap_is_setup_data() to extract the common part,
+> parameter 'early' is used to decide what kind of memremap/unmap
+> APIs are called. This simplifies codes a lot by removing the duplicated
+> codes, and also removes the similar code comment above them.
 > 
-> Signed-off-by: Stephan Gerhold <stephan.gerhold@linaro.org>
+> And '__ref' is added to __memremap_is_setup_data() to suppress below
+> section mismatch warning:
+> 
+> ARNING: modpost: vmlinux: section mismatch in reference: __memremap_is_setup_data+0x5f (section: .text) ->
+> early_memunmap (section: .init.text)
+> 
+> Signed-off-by: Baoquan He <bhe@redhat.com>
 > ---
->  arch/arm64/boot/dts/qcom/x1e001de-devkit.dts               | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts    | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts                  | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts      | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts   | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi   | 8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi               | 4 ++++
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts                  | 8 ++++++++
->  9 files changed, 68 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> index c9db6298d528ed505bae08e91bf4da02faef7d76..c3ec0bb2c42dfed9f5e9f56f18874b4ae6c0632c 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
-> @@ -1062,11 +1062,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l2b_3p0>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l14b_3p0>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-> index 975550139e1024420ed335a2a46e4d54df7ee423..4097d2677285757ce67eef76d8d17669c7130001 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
-> @@ -635,11 +635,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l2b_3p0>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l14b_3p0>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> index f25991b887de3fca0092c5f81c881c5d8bd71aac..10f140ed08f47f2cd96e953d4ad3c75f3aad002a 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
-> @@ -501,11 +501,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l2b_3p0>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l14b_3p0>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> index 39f9d9cdc10d8e79824b72288e2529536144fa9e..81c519e690f325f2d4d36c4a99061649da65ec87 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-> @@ -932,11 +932,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l2b_3p0>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l14b_3p0>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> index b112092fbb9fd955adca1ae8a76294c776fa2d1e..288e818961670be0d25b696730e7186a8d61b56e 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-dell-xps13-9345.dts
-> @@ -905,11 +905,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l2b_3p0>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l14b_3p0>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> index ca5a808f2c7df66a861a933df407fd4bdaea3fe1..3d7e0230dc0381a2c2a3b0c5b766f5b854777937 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-> @@ -717,11 +717,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l2b_3p0>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l14b_3p0>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> index 6835fdeef3aec10206e8b2839d23e4f3494afe1e..6941945b2f9a7e7b11598705fa22d3a6f2cc01c7 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-> @@ -718,11 +718,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d>;
->  	vdd3-supply = <&vreg_l2b>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d>;
->  	vdd3-supply = <&vreg_l14b>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> index 5b54ee79f048e3208cbcd6f91e0cec073420fe63..d7a2a2b8fc6c30bdb10df81eac7d92306998838f 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-pmics.dtsi
-> @@ -491,6 +491,8 @@ smb2360_0: pmic@7 {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  
-> +		status = "disabled";
-> +
->  		smb2360_0_eusb2_repeater: phy@fd00 {
->  			compatible = "qcom,smb2360-eusb2-repeater";
->  			reg = <0xfd00>;
-> @@ -504,6 +506,8 @@ smb2360_1: pmic@a {
->  		#address-cells = <1>;
->  		#size-cells = <0>;
->  
-> +		status = "disabled";
-> +
->  		smb2360_1_eusb2_repeater: phy@fd00 {
->  			compatible = "qcom,smb2360-eusb2-repeater";
->  			reg = <0xfd00>;
-> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> index 5ef030c60abe2998d093ee60a6754a90cd5aaf72..ffd28fd8059895ec345f4ee8fe6a2c37e7989747 100644
-> --- a/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> +++ b/arch/arm64/boot/dts/qcom/x1e80100-qcp.dts
-> @@ -731,11 +731,19 @@ &remoteproc_cdsp {
->  	status = "okay";
->  };
->  
-> +&smb2360_0 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_0_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l2b_3p0>;
->  };
->  
-> +&smb2360_1 {
-> +	status = "okay";
-> +};
-> +
->  &smb2360_1_eusb2_repeater {
->  	vdd18-supply = <&vreg_l3d_1p8>;
->  	vdd3-supply = <&vreg_l14b_3p0>;
-> 
-> ---
-> base-commit: 12b080aaf4275c579c91106ed926044b4d5df0af
-> change-id: 20241129-x1e80100-disable-smb2360-20cec1656411
-> 
-> Best regards,
+>  arch/x86/mm/ioremap.c | 104 ++++++++++++++----------------------------
+>  1 file changed, 35 insertions(+), 69 deletions(-)
+
+Some touchups ontop:
+
+diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
+index aaf40a712b04..fe44e8180bdd 100644
+--- a/arch/x86/mm/ioremap.c
++++ b/arch/x86/mm/ioremap.c
+@@ -632,9 +632,9 @@ static bool memremap_is_efi_data(resource_size_t phys_addr,
+  * Examine the physical address to determine if it is boot data by checking
+  * it against the boot params setup_data chain.
+  */
+-static bool __ref __memremap_is_setup_data(resource_size_t phys_addr,
+-						bool early)
++static bool __ref __memremap_is_setup_data(resource_size_t phys_addr, bool early)
+ {
++	unsigned int setup_data_sz = sizeof(struct setup_data);
+ 	struct setup_indirect *indirect;
+ 	struct setup_data *data;
+ 	u64 paddr, paddr_next;
+@@ -647,24 +647,23 @@ static bool __ref __memremap_is_setup_data(resource_size_t phys_addr,
+ 			return true;
+ 
+ 		if (early)
+-			data = early_memremap_decrypted(paddr, sizeof(*data));
++			data = early_memremap_decrypted(paddr, setup_data_sz);
+ 		else
+-			data = memremap(paddr, sizeof(*data),
+-					MEMREMAP_WB | MEMREMAP_DEC);
++			data = memremap(paddr, setup_data_sz, MEMREMAP_WB | MEMREMAP_DEC);
+ 		if (!data) {
+-			pr_warn("failed to memremap setup_data entry\n");
++			pr_warn("failed to remap setup_data entry\n");
+ 			return false;
+ 		}
+ 
+-		size = sizeof(*data);
++		size = setup_data_sz;
+ 
+ 		paddr_next = data->next;
+ 		len = data->len;
+ 
+ 		if ((phys_addr > paddr) &&
+-		    (phys_addr < (paddr + sizeof(*data) + len))) {
++		    (phys_addr < (paddr + setup_data_sz + len))) {
+ 			if (early)
+-				early_memunmap(data, sizeof(*data));
++				early_memunmap(data, setup_data_sz);
+ 			else
+ 				memunmap(data);
+ 			return true;
+@@ -673,15 +672,14 @@ static bool __ref __memremap_is_setup_data(resource_size_t phys_addr,
+ 		if (data->type == SETUP_INDIRECT) {
+ 			size += len;
+ 			if (early) {
+-				early_memunmap(data, sizeof(*data));
++				early_memunmap(data, setup_data_sz);
+ 				data = early_memremap_decrypted(paddr, size);
+ 			} else {
+ 				memunmap(data);
+-				data = memremap(paddr, size,
+-						MEMREMAP_WB | MEMREMAP_DEC);
++				data = memremap(paddr, size, MEMREMAP_WB | MEMREMAP_DEC);
+ 			}
+ 			if (!data) {
+-				pr_warn("failed to memremap indirect setup_data\n");
++				pr_warn("failed to remap indirect setup_data\n");
+ 				return false;
+ 			}
+ 
 
 -- 
-Thx and BRs,
-Aiqun(Maria) Yu
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
