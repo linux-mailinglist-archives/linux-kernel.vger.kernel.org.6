@@ -1,389 +1,128 @@
-Return-Path: <linux-kernel+bounces-435913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 862B49E7E86
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:17:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1B49E7E81
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:16:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D46E166D6A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7225D281004
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B12B85626;
-	Sat,  7 Dec 2024 06:17:23 +0000 (UTC)
-Received: from 189.cn (ptr.189.cn [183.61.185.104])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7654A1C;
-	Sat,  7 Dec 2024 06:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.61.185.104
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C9178C90;
+	Sat,  7 Dec 2024 06:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Kp/sSpVN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAD544A1C
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 06:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733552242; cv=none; b=fvW6zMWV5lDmi44c+jgZLEwaAQHqWSzrinSF/sM3VswKef0YlRVyzaWaZMZ8StVWAvFMwkYOOyYIz8EV5rZUBrxPRCzu4yK4Ml96rgcnte/1QrEr/z/gemyREJQbH/LrODZCeQD9tTU1vqoh8XvTpY/kNaISdpYETt2+L8/bSZc=
+	t=1733552201; cv=none; b=AyDiBLTeraEiDD5xWHUDk2iAzV3LP/TBy6P2ZFx7r+tF/OV4D6EiWweztAq1QsWM6FXQ5RRiiBNQ8qzzz4BT0BWIYChA4UGj5ADWf4GmUBgPh+AvZTtdYuhapD8QqJPLDwKK9CyMBz6kNigZvnsjVgDN5y8oYYMTAHTen6Zy4rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733552242; c=relaxed/simple;
-	bh=PoUmVQMj3+HZCDXmBV4HeEJkCnlPVo35nDRSSlrdUUI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nTpxQw8MHekrvla+q4muNsemDeVBDNnH1ASTx8J6pBwzp7aUXLtJY/BEX0xLTs6HjMbUfgyoeMnbQJ8puW8BkHV5pNvyw7WFEaGY3J6X55DjzEfwlAHteIdIoOLPS/eKstfhpmDgIqaKcI959Vi9epGp1nmFwFHWZHrenH2qI2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn; spf=pass smtp.mailfrom=189.cn; arc=none smtp.client-ip=183.61.185.104
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=189.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=189.cn
-HMM_SOURCE_IP:10.158.242.145:58104.1057134893
-HMM_ATTACHE_NUM:0000
-HMM_SOURCE_TYPE:SMTP
-Received: from clientip-60.27.225.139 (unknown [10.158.242.145])
-	by 189.cn (HERMES) with SMTP id DA81410299D;
-	Sat,  7 Dec 2024 14:17:08 +0800 (CST)
-Received: from  ([60.27.225.139])
-	by gateway-153622-dep-5c5f88b874-qw5z2 with ESMTP id eb863826ac1c4ecf96d13ba9377e9762 for krzk@kernel.org;
-	Sat, 07 Dec 2024 14:17:09 CST
-X-Transaction-ID: eb863826ac1c4ecf96d13ba9377e9762
-X-Real-From: chensong_2000@189.cn
-X-Receive-IP: 60.27.225.139
-X-MEDUSA-Status: 0
-Sender: chensong_2000@189.cn
-Message-ID: <862662aa-c5a2-4e15-b97f-ca1b4757ab25@189.cn>
-Date: Sat, 7 Dec 2024 14:16:22 +0800
+	s=arc-20240116; t=1733552201; c=relaxed/simple;
+	bh=yTdSpqoD5Wo8lytAenLlCl4aoNvxFahwiv6XfLPtJZQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=g7e+7V99ZITyY/To0TbOoDEAtrrwK+75mUkafg0Dbz+vJIODVmnN71yYxGklrr+DlWuqhHc6M+kp6K0gsRVrZKRg8ecntIaJiP/KbiAM9AV8wK9wXcXFnuOsH409Puz/zIFgOHjBXSRnY6l4QWsRau0IU2UPcVBM0fBTbaiIbu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Kp/sSpVN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733552198;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IndLci3qH0rNwV6wj/O0mA1mXhMlv9zVXl1VfWtqCCE=;
+	b=Kp/sSpVNI3X5d9MiBILcQmvPvfHsjhzEg5DzJLdVBUQm0m8uwUN1IDanawmHDNB7DxHrey
+	qSa3SMyAQYS/OT9OQFYSkc4STSdH15y71r2tZBnCiUuDBG+432+tS+6xwm65qrfMJQ/Lmi
+	yaK2m6TswUvFWqvcRDkKFRa1iGbqbtE=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-558-QpACtTbuNpWzAJcCiT1t4w-1; Sat,
+ 07 Dec 2024 01:16:35 -0500
+X-MC-Unique: QpACtTbuNpWzAJcCiT1t4w-1
+X-Mimecast-MFC-AGG-ID: QpACtTbuNpWzAJcCiT1t4w
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 13B051956086;
+	Sat,  7 Dec 2024 06:16:34 +0000 (UTC)
+Received: from blackfin.pond.sub.org (unknown [10.39.194.102])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 91881300019E;
+	Sat,  7 Dec 2024 06:16:33 +0000 (UTC)
+Received: by blackfin.pond.sub.org (Postfix, from userid 1000)
+	id 4847921E66E2; Sat,  7 Dec 2024 07:16:31 +0100 (CET)
+From: Markus Armbruster <armbru@redhat.com>
+To: Ani Sinha <anisinha@redhat.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,  "Michael S .
+ Tsirkin" <mst@redhat.com>,  Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>,  Shiju Jose <shiju.jose@huawei.com>,
+  Dongjiu Geng <gengdongjiu1@gmail.com>,  Igor Mammedov
+ <imammedo@redhat.com>,  linux-kernel@vger.kernel.org,
+  qemu-arm@nongnu.org,  qemu-devel@nongnu.org
+Subject: Re: [PATCH 27/31] DEBUG
+In-Reply-To: <CAK3XEhNNZyRDgjm5Hjes-Xnj4CxtO2eQcs7AyTNOOFcKa3LusA@mail.gmail.com>
+	(Ani Sinha's message of "Sat, 7 Dec 2024 09:08:31 +0530")
+References: <cover.1733504943.git.mchehab+huawei@kernel.org>
+	<6f427a02c2c20512d5da178b47c64d553851a60e.1733504943.git.mchehab+huawei@kernel.org>
+	<CAK3XEhNNZyRDgjm5Hjes-Xnj4CxtO2eQcs7AyTNOOFcKa3LusA@mail.gmail.com>
+Date: Sat, 07 Dec 2024 07:16:31 +0100
+Message-ID: <87ser02f28.fsf@pond.sub.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] regulator:s5m8767 Fully convert to GPIO descriptors
-To: Krzysztof Kozlowski <krzk@kernel.org>, lgirdwood@gmail.com,
- broonie@kernel.org, lee@kernel.org, linus.walleij@linaro.org, brgl@bgdev.pl
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org
-References: <20241206051358.496832-1-chensong_2000@189.cn>
- <17a4dbd7-56cb-4c20-a913-0df5c39fc3ff@kernel.org>
-Content-Language: en-US
-From: Song Chen <chensong_2000@189.cn>
-In-Reply-To: <17a4dbd7-56cb-4c20-a913-0df5c39fc3ff@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-Hi Krzysztof,
+Ani Sinha <anisinha@redhat.com> writes:
 
-Only a question needs to be clarified, the rest of your comments is 
-accepted and will be fixed accordingly.
-
-Many thanks and best regards,
-
-Song
-
-在 2024/12/6 16:33, Krzysztof Kozlowski 写道:
-> On 06/12/2024 06:13, Song Chen wrote:
->> This converts s5m8767 regulator driver to use GPIO
->> descriptors.
-> 
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-> 
-> Subject: missing : after s5m prefix.
-> 
+> On Fri, Dec 6, 2024 at 10:51=E2=80=AFPM Mauro Carvalho Chehab
+> <mchehab+huawei@kernel.org> wrote:
 >>
->> Signed-off-by: Song Chen <chensong_2000@189.cn>
+>> Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 >> ---
->>   drivers/regulator/s5m8767.c      | 110 ++++++++++---------------------
->>   include/linux/mfd/samsung/core.h |   5 +-
->>   2 files changed, 37 insertions(+), 78 deletions(-)
+>>  hw/acpi/ghes.c | 2 ++
+>>  1 file changed, 2 insertions(+)
 >>
->> diff --git a/drivers/regulator/s5m8767.c b/drivers/regulator/s5m8767.c
->> index d25cd81e3f36..d0b1eed4dfa0 100644
->> --- a/drivers/regulator/s5m8767.c
->> +++ b/drivers/regulator/s5m8767.c
->> @@ -5,7 +5,7 @@
->>   
->>   #include <linux/cleanup.h>
->>   #include <linux/err.h>
->> -#include <linux/of_gpio.h>
->> +//#include <linux/of_gpio.h>
-> 
-> Some development code was left.
-> 
->>   #include <linux/gpio/consumer.h>
->>   #include <linux/module.h>
->>   #include <linux/platform_device.h>
->> @@ -15,6 +15,7 @@
->>   #include <linux/mfd/samsung/s5m8767.h>
->>   #include <linux/regulator/of_regulator.h>
->>   #include <linux/regmap.h>
->> +#include <linux/of.h>
->>   
->>   #define S5M8767_OPMODE_NORMAL_MODE 0x1
->>   
->> @@ -23,6 +24,8 @@ struct s5m8767_info {
->>   	struct sec_pmic_dev *iodev;
->>   	int num_regulators;
->>   	struct sec_opmode_data *opmode;
->> +	struct gpio_desc *buck_gpios[3];
->> +	struct gpio_desc *buck_ds[3];
->>   
->>   	int ramp_delay;
->>   	bool buck2_ramp;
->> @@ -35,8 +38,7 @@ struct s5m8767_info {
->>   	u8 buck2_vol[8];
->>   	u8 buck3_vol[8];
->>   	u8 buck4_vol[8];
->> -	int buck_gpios[3];
->> -	int buck_ds[3];
-> 
-> Don't move them.
-> 
->> +
-> 
-> No need.
-> 
->>   	int buck_gpioindex;
->>   };
->>   
->> @@ -272,9 +274,9 @@ static inline int s5m8767_set_high(struct s5m8767_info *s5m8767)
->>   {
->>   	int temp_index = s5m8767->buck_gpioindex;
->>   
->> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
->> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
->> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
->> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
->> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
->> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
->>   
->>   	return 0;
->>   }
->> @@ -283,9 +285,9 @@ static inline int s5m8767_set_low(struct s5m8767_info *s5m8767)
->>   {
->>   	int temp_index = s5m8767->buck_gpioindex;
->>   
->> -	gpio_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
->> -	gpio_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
->> -	gpio_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
->> +	gpiod_set_value(s5m8767->buck_gpios[2], temp_index & 0x1);
->> +	gpiod_set_value(s5m8767->buck_gpios[1], (temp_index >> 1) & 0x1);
->> +	gpiod_set_value(s5m8767->buck_gpios[0], (temp_index >> 2) & 0x1);
->>   
->>   	return 0;
->>   }
->> @@ -486,16 +488,22 @@ static int s5m8767_pmic_dt_parse_dvs_gpio(struct sec_pmic_dev *iodev,
->>   			struct sec_platform_data *pdata,
->>   			struct device_node *pmic_np)
->>   {
->> -	int i, gpio;
->> +	int i;
->> +	char label[32];
->>   
->>   	for (i = 0; i < 3; i++) {
->> -		gpio = of_get_named_gpio(pmic_np,
->> -					"s5m8767,pmic-buck-dvs-gpios", i);
->> -		if (!gpio_is_valid(gpio)) {
->> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
->> +		pdata->buck_gpios[i] = devm_gpiod_get_index(iodev->dev,
->> +					"s5m8767,pmic-buck-dvs", i, GPIOD_OUT_LOW);
->> +		if (IS_ERR(pdata->buck_gpios[i])) {
->> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
-> 
-> Why not printing error msg? This should be also return dev_err_probe
-> 
->>   			return -EINVAL;
->>   		}
->> -		pdata->buck_gpios[i] = gpio;
->> +
->> +		/* SET GPIO*/
-> 
-> What is a SET GPIO?
-> 
->> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 SET", i + 1);
-> 
-> Why using "SET" as name, not the actual name it is used for? Buck DVS?
+>> diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+>> index abca351b18de..1fe4c536611a 100644
+>> --- a/hw/acpi/ghes.c
+>> +++ b/hw/acpi/ghes.c
+>> @@ -534,9 +534,11 @@ void ghes_record_cper_errors(const void *cper, size=
+_t len,
+>>      ags =3D &acpi_ged_state->ghes_state;
+>>
+>>      if (!ags->hest_lookup) {
+>> +        fprintf(stderr,"Using old GHES lookup\n");
+>
+> I don't like this. If you must please have them under #ifdef DEBUG or
+> somesuch. See ich9.c
 
-from below snippets:
-s5m8767_pmic_probe of drivers/regulator/s5m8767.c
-         ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
-                     "S5M8767 SET1");
-         if (ret)
-             return ret;
+Judging from the subject line, it's not meant to be posted, let alone
+merged :)
 
-         ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
-                     "S5M8767 SET2");
-         if (ret)
-             return ret;
-
-         ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
-                     "S5M8767 SET3");
-
-and arch/arm/boot/dts/samsung/exynos5250-spring.dts
-
-         s5m8767,pmic-buck-dvs-gpios = <&gpd1 0 GPIO_ACTIVE_LOW>, /* DVS1 */
-                           <&gpd1 1 GPIO_ACTIVE_LOW>, /* DVS2 */
-                           <&gpd1 2 GPIO_ACTIVE_LOW>; /* DVS3 */
-
-         s5m8767,pmic-buck-ds-gpios = <&gpx2 3 GPIO_ACTIVE_LOW>, /* SET1 */
-                          <&gpx2 4 GPIO_ACTIVE_LOW>, /* SET2 */
-                          <&gpx2 5 GPIO_ACTIVE_LOW>; /* SET3 */
-
-> 
->> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
->> +		gpiod_direction_output(pdata->buck_gpios[i],
->> +					(pdata->buck_default_idx >> (2 - i)) & 0x1);
-> 
-> This is not an equivalent code. You set values for GPIOs 0-1 even if
-> requesting GPIO 2 fails.
-> 
-> On which board did you test it?
-
-You are right ,it's not equivalent with original code, i will fix it. 
-but i have a question here:
-
-         ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
-                     "S5M8767 SET1");
-         if (ret)
-             return ret;
-
-         ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
-                     "S5M8767 SET2");
-         if (ret)
-             return ret;
-
-         ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
-                     "S5M8767 SET3");
-         if (ret)
-             return ret;
-
-if it fails to request buck_gpios[2] after successfully requests 
-buck_gpios[0] and buck_gpios[1], the probe fails as well, should it call 
-gpiod_put to return gpio resource?
-
-
-
-> 
->>   	}
->>   	return 0;
->>   }
->> @@ -504,16 +512,21 @@ static int s5m8767_pmic_dt_parse_ds_gpio(struct sec_pmic_dev *iodev,
->>   			struct sec_platform_data *pdata,
->>   			struct device_node *pmic_np)
->>   {
->> -	int i, gpio;
->> +	int i;
->> +	char label[32];
->>   
->>   	for (i = 0; i < 3; i++) {
->> -		gpio = of_get_named_gpio(pmic_np,
->> -					"s5m8767,pmic-buck-ds-gpios", i);
->> -		if (!gpio_is_valid(gpio)) {
->> -			dev_err(iodev->dev, "invalid gpio[%d]: %d\n", i, gpio);
->> +		pdata->buck_ds[i] = devm_gpiod_get_index(iodev->dev,
->> +					"s5m8767,pmic-buck-ds", i, GPIOD_OUT_LOW);
->> +		if (IS_ERR(pdata->buck_ds[i])) {
->> +			dev_err(iodev->dev, "invalid gpio[%d]\n", i);
->>   			return -EINVAL;
->>   		}
->> -		pdata->buck_ds[i] = gpio;
->> +
->> +		/* SET GPIO*/
->> +		snprintf(label, sizeof(label), "%s%d", "S5M8767 DS", i + 2);
->> +		gpiod_set_consumer_name(pdata->buck_gpios[i], label);
->> +		gpiod_direction_output(pdata->buck_gpios[i], 0);
->>   	}
->>   	return 0;
->>   }
->> @@ -785,61 +798,6 @@ static int s5m8767_pmic_probe(struct platform_device *pdev)
->>   		}
->>   	}
->>   
->> -	if (pdata->buck2_gpiodvs || pdata->buck3_gpiodvs ||
->> -						pdata->buck4_gpiodvs) {
->> -
->> -		if (!gpio_is_valid(pdata->buck_gpios[0]) ||
->> -			!gpio_is_valid(pdata->buck_gpios[1]) ||
->> -			!gpio_is_valid(pdata->buck_gpios[2])) {
->> -			dev_err(&pdev->dev, "GPIO NOT VALID\n");
->> -			return -EINVAL;
->> -		}
->> -
->> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[0],
->> -					"S5M8767 SET1");
->> -		if (ret)
->> -			return ret;
->> -
->> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[1],
->> -					"S5M8767 SET2");
->> -		if (ret)
->> -			return ret;
->> -
->> -		ret = devm_gpio_request(&pdev->dev, pdata->buck_gpios[2],
->> -					"S5M8767 SET3");
->> -		if (ret)
->> -			return ret;
->> -
->> -		/* SET1 GPIO */
->> -		gpio_direction_output(pdata->buck_gpios[0],
->> -				(s5m8767->buck_gpioindex >> 2) & 0x1);
->> -		/* SET2 GPIO */
->> -		gpio_direction_output(pdata->buck_gpios[1],
->> -				(s5m8767->buck_gpioindex >> 1) & 0x1);
->> -		/* SET3 GPIO */
->> -		gpio_direction_output(pdata->buck_gpios[2],
->> -				(s5m8767->buck_gpioindex >> 0) & 0x1);
->> -	}
->> -
->> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[0], "S5M8767 DS2");
->> -	if (ret)
->> -		return ret;
->> -
->> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[1], "S5M8767 DS3");
->> -	if (ret)
->> -		return ret;
->> -
->> -	ret = devm_gpio_request(&pdev->dev, pdata->buck_ds[2], "S5M8767 DS4");
->> -	if (ret)
->> -		return ret;
->> -
->> -	/* DS2 GPIO */
->> -	gpio_direction_output(pdata->buck_ds[0], 0x0);
->> -	/* DS3 GPIO */
->> -	gpio_direction_output(pdata->buck_ds[1], 0x0);
->> -	/* DS4 GPIO */
->> -	gpio_direction_output(pdata->buck_ds[2], 0x0);
->> -
->>   	regmap_update_bits(s5m8767->iodev->regmap_pmic,
->>   			   S5M8767_REG_BUCK2CTRL, 1 << 1,
->>   			   (pdata->buck2_gpiodvs) ? (1 << 1) : (0 << 1));
->> diff --git a/include/linux/mfd/samsung/core.h b/include/linux/mfd/samsung/core.h
->> index 750274d41fc0..b757f15877a3 100644
->> --- a/include/linux/mfd/samsung/core.h
->> +++ b/include/linux/mfd/samsung/core.h
->> @@ -33,6 +33,7 @@
->>   #define STEP_12_5_MV		12500
->>   #define STEP_6_25_MV		6250
->>   
->> +#define BULK_GPIO_COUNT		3
-> 
-> Where do you use ot?
-> 
->>   struct gpio_desc;
->>   
->>   enum sec_device_type {
->> @@ -77,10 +78,10 @@ int sec_irq_resume(struct sec_pmic_dev *sec_pmic);
->>   struct sec_platform_data {
->>   	struct sec_regulator_data	*regulators;
->>   	struct sec_opmode_data		*opmode;
->> +	struct gpio_desc			*buck_gpios[3];
->> +	struct gpio_desc			*buck_ds[3];
->>   	int				num_regulators;
->>   
->> -	int				buck_gpios[3];
->> -	int				buck_ds[3];
-> 
-> Don't move the code.
-> 
->>   	unsigned int			buck2_voltage[8];
->>   	bool				buck2_gpiodvs;
->>   	unsigned int			buck3_voltage[8];
-> 
-> 
-> Best regards,
-> Krzysztof
-> 
+>>          get_hw_error_offsets(le64_to_cpu(ags->hw_error_le),
+>>                               &cper_addr, &read_ack_register_addr);
+>>      } else {
+>> +        fprintf(stderr,"Using new HEST lookup\n");
+>>          get_ghes_source_offsets(source_id, le64_to_cpu(ags->hest_addr_l=
+e),
+>>                                  &cper_addr, &read_ack_register_addr, er=
+rp);
+>>      }
+>> --
+>> 2.47.1
+>>
 
 
