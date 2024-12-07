@@ -1,145 +1,116 @@
-Return-Path: <linux-kernel+bounces-436130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB20D9E8196
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:31:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD06F9E8192
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:30:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D005D165592
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D68E188442C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:30:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73B22E822;
-	Sat,  7 Dec 2024 18:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BA71509B4;
+	Sat,  7 Dec 2024 18:30:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RbEvdJT3"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Xtwx+wvc"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2FFF1448E4
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 18:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25991DFE1;
+	Sat,  7 Dec 2024 18:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733596289; cv=none; b=PyEoYzRJBIV9INAmJ0i1cKQB7eo8/M0bIfkqFIcqMMIsjG3prYg1NzYM6+fZdWOc3ZGQz++km5TVmMXSAe661+GLEx4ZHBpZi75hKLhkBQeV4jjRLiZUI+6kA0H0EVlOFYHsLameJTdpNL8kX07KA3zSCtwGmT5WxrmMshDq9qM=
+	t=1733596252; cv=none; b=lI7KGQWqvqmAVYIQRL6hFiOsiRZ8I/psSHvO25pGdzrTywa38sfktGRRP2nke4/7pu73738e3ZRpVgq8dIb3WZfKQuCy8XroPnaaW2JmYS1DwaEu/sZQEtd8rhL7ZeVlXgmm5034QN42vAUkEanacj5fmAtT/toWc8kEe5qxy7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733596289; c=relaxed/simple;
-	bh=pCyqxQB1wqSB6HSVhdTXB/6ltiXA8UsqI4BL9ES1zGU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PYob0CaYaQrIZ1cLKjC6tqGmg1HsnKmJDSoNcypSwHpGzBGEdBrWkV13tETB3TvGozWoN784aoQTd1EoGydWV4SxyfEyBXfZHEacTsrunGcjMbqQx77oBsdO6EJS+gWJHd2WAOudkCYt1OaQmF4Su87dD2GiMxEexGIQfv8oMqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RbEvdJT3; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cf9ef18ae9so7324894a12.1
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 10:31:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1733596285; x=1734201085; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=V/vNc5nALUWVUmfD8b/aC22BtPTbXjUkByw6MJHP530=;
-        b=RbEvdJT3JIZNs/PCvCg/fAj0fxcBUFoehpw3bJVyi1ddMI9CbBBGPLT1lKuRCLVNit
-         JdarUD4QMCVzHnoUyb8VdwsgLz5F2sz48A0S7AYtMwYEiuVIV8rdFXffYwx/knCwLbyz
-         PKFHx9syTCtRlHuHyIeJLkf7KrDRdxagg7NYk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733596285; x=1734201085;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=V/vNc5nALUWVUmfD8b/aC22BtPTbXjUkByw6MJHP530=;
-        b=qYgVVQkzAyBC38emFAnn/VSyPBWhKRos0ivZS/0DFofwY1e5tls1YOEk8FVqjbq+1f
-         NIcnzR8s54e7MFfuiKx4mbLnDKH8Dp+KrrdBvbgMhVP6Ns3rxt6IZfdeGjzj3I/5Jf5B
-         rz8ftZJTa3gIsCoOEJb1g78yR7e6Y1JLbyiZDZfyUj8dGvEaBZFP7h6UObcDHVBTKkTV
-         gEjSWlVApIiKWCUgaY1w7mH1zsyAPIncnJu4U9UT5YFUh94Yu04SS9rfQmMMrvJ96hiz
-         k7oEDRI4fIRactxnltNgSVGRphHTMIEJQPzo7TeniNzPPA+IMnjh5HHoN+TRnXiiYGc9
-         YQVg==
-X-Forwarded-Encrypted: i=1; AJvYcCXUPLZSFXm7jkCex1Qp3zMO+Jn3Q6W/1uTQzmtOIEbcsUFSDJaPZ4/UNMw8bQWOSC4W68YjszoZlguOT30=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYzJXTsTdula06MPAM2sclvBMiutIcPDyYM+acU3IZK2GQAa26
-	EtaJvj2cls+zG7eP+80E04fVCAKPgX08i1K0CwL0hjTruZYOfzwSvicHeshDC/sRpWXVfp/d+JB
-	IK0sFrg==
-X-Gm-Gg: ASbGnct8MvkvymC88HV2zlAcFgDrV3bCq5uhdqqqGC5NwBPFrhJEkC7lhpv+GMpw2oQ
-	pNG+5jfx0PC3osSxcNEYFm8YpsioslWCEOBF8Ymd9YWzJeQQtkcSARqWpWRcwYrX5vj6QFm9Eaj
-	qMfLanv+RurlB3Nq3S6EtrN7tjgwsGWVpQfI9CJWwoYq7LvckQjbMgjy6gixc9NWkB9NZ5JB56b
-	xTKeT3dl9fDtDGrYYxk0Q7UA/qMquGEwqlvVzChc+OuDeuh4u0l3vJIpd1mx0fSwpPAb7sbfY/7
-	4TuILJgkrQte8AbLmho6/1lz
-X-Google-Smtp-Source: AGHT+IHoAk7B41qZbjVarLikf0ZqBqVnq2YdkOLYq7x+DEJ0U/xRqrSpMRnWPYu8VKhzGEQRtvjz8w==
-X-Received: by 2002:a05:6402:5388:b0:5d0:ee81:f4f2 with SMTP id 4fb4d7f45d1cf-5d3bdccdd70mr7270997a12.16.1733596285075;
-        Sat, 07 Dec 2024 10:31:25 -0800 (PST)
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com. [209.85.218.42])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3c270ccdasm2477974a12.63.2024.12.07.10.31.23
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 10:31:24 -0800 (PST)
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa647af6804so187740766b.1
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 10:31:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVXPaN3okP9tmlHmouCHXesCFv4CZi91kyrEhn8CFrfYtel3BP9xFOL+PQGnBRL+Wk5+gBhhGOcy1t1bzA=@vger.kernel.org
-X-Received: by 2002:a17:906:32c2:b0:a9e:85f8:2a3a with SMTP id
- a640c23a62f3a-aa6373494a2mr765427966b.2.1733595978237; Sat, 07 Dec 2024
- 10:26:18 -0800 (PST)
+	s=arc-20240116; t=1733596252; c=relaxed/simple;
+	bh=UcRUAoyevshtUTI50E53rSGPikA3EEs10vxHqbChKgU=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=jX9dhpO/FPrb1p8QOegSdSVezrhiPwhH8A7+0rDjMksEb3kY58slXd/0Y6RGSRM3udC4mq+JJYfLVFk4nPHXcf6TLnRIhaF/uNYYzDgNyCioPNvAKCWGfCHvmInfN+bj3+DX1nSqM/FRbsWZDqccTxCrJ7LKLRIcs3xWfxY0a7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Xtwx+wvc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 513D5C4CECD;
+	Sat,  7 Dec 2024 18:30:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733596251;
+	bh=UcRUAoyevshtUTI50E53rSGPikA3EEs10vxHqbChKgU=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Xtwx+wvcEfkSDsB7w38jsIVJ8034q3dz6Xv+MJdRSTMp+nbGsbeY6Vi+WOKIW7ivg
+	 BQAyhOgStiP9AFRWAQrghBXq7QVWFlgn5BV40AYOoIrYccJFOcfhaKvt+TMLaroT2X
+	 FLScwldlVLGdBgowN+uhr+bis7SdgjOxW8nLVf5SeALp1AHygOm8tW6Z3S5Wt5QCVy
+	 YmTISiFUbqyfVs66wPFVWRdjdp3gg74hPc6CpPVr7rvtPIS0M+gkd+U1adMYnR/IZF
+	 DDRWlhe3b8LrfbN/uAExukRmvVZl4SSeP4AEy1I/hUaCb5WeeBgByH1YNXdK/Oq0VP
+	 ULj/PEIVZ6KQw==
+Date: Sat, 07 Dec 2024 12:30:49 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
- <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com> <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
- <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com> <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
- <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
- <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de> <344b4cf41a474377b3d2cbf6302de703@AcuMS.aculab.com>
- <9a0c041b6143ba07c2b3e524572fccd841f5374b.camel@gwdg.de>
-In-Reply-To: <9a0c041b6143ba07c2b3e524572fccd841f5374b.camel@gwdg.de>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 7 Dec 2024 10:26:01 -0800
-X-Gmail-Original-Message-ID: <CAHk-=wjpVXEjX16PP=-hi4CgLqEGJ_U-WvKWq+J3C+FW-hSSfg@mail.gmail.com>
-Message-ID: <CAHk-=wjpVXEjX16PP=-hi4CgLqEGJ_U-WvKWq+J3C+FW-hSSfg@mail.gmail.com>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of __is_constexpr()
-To: Martin Uecker <muecker@gwdg.de>
-Cc: David Laight <David.Laight@aculab.com>, Vincent Mailhol <mailhol.vincent@wanadoo.fr>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+ michal.simek@amd.com, kw@linux.com, krzk+dt@kernel.org, 
+ linux-kernel@vger.kernel.org, conor+dt@kernel.org, jingoohan1@gmail.com, 
+ bharat.kumar.gogada@amd.com, lpieralisi@kernel.org, bhelgaas@google.com, 
+ manivannan.sadhasivam@linaro.org
+To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+In-Reply-To: <20241207171134.3253027-2-thippeswamy.havalige@amd.com>
+References: <20241207171134.3253027-1-thippeswamy.havalige@amd.com>
+ <20241207171134.3253027-2-thippeswamy.havalige@amd.com>
+Message-Id: <173359624889.3074557.9170426259183871962.robh@kernel.org>
+Subject: Re: [PATCH v4 1/3] dt-bindings: PCI: dwc: Add AMD Versal2 mdb slcr
+ support
 
-On Sat, 7 Dec 2024 at 05:07, Martin Uecker <muecker@gwdg.de> wrote:
->
-> VLA use *less* stack than a fixed size arrays with fixed bound.
 
-Not really. You end up with tons of problems, not the least of which
-is how to actually analyze the stack size. It also gets *very* nasty
-to have code that declares the VLA size using an argument that is then
-checked afterwards - and if you have a strong preference for
-"declarations before code", you end up with *horrific* issues.
+On Sat, 07 Dec 2024 22:41:32 +0530, Thippeswamy Havalige wrote:
+> Add support for mdb slcr aperture that is only supported for AMD Versal2
+> devices.
+> 
+> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+> ---
+> Changes in v4:
+> --------------
+> Change enum to const.
+> 
+> Changes in v3:
+> -------------
+> - Introduced below changes in dwc yaml schema.
+> ---
+>  Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
 
-And even if you are super-careful, and you solved the analysis
-problem, in practice VLAs will cause huge stack issues simply due to
-code generation issues.  The compiler will end up doing extra
-alignment and extra frame handling and saving, to the point where any
-advantages the VLA would bring is completely dwarfed by all the
-disadvantages.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-We went through this. We are so *much* better off without VLAs that
-it's not even funny.
+yamllint warnings/errors:
 
-Now when the compiler says "your stack size is big", you just look
-"Oh, that struct should be allocated with kmalloc, not on the stack".
-Boom. Done.
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml: properties:reg-names:items: 'oneOf' conditional failed, one must be fixed:
+	{'oneOf': [{'description': 'Basic DWC PCIe controller configuration-space accessible over the DBI interface. This memory space is either activated with CDM/ELBI = 0 and CS2 = 0 or is a contiguous memory region with all spaces. Note iATU/eDMA CSRs are indirectly accessible via the PL viewports on the DWC PCIe controllers older than v4.80a.', 'const': 'dbi'}, {'description': "Shadow DWC PCIe config-space registers. This space is selected by setting CDM/ELBI = 0 and CS2 = 1. This is an intermix of the PCI-SIG PCIe CFG-space with the shadow registers for some PCI Header space, PCI Standard and Extended Structures. It's mainly relevant for the end-point controller configuration, but still there are some shadow registers available for the Root Port mode too.", 'const': 'dbi2'}, {'description': "External Local Bus registers. It's an application-dependent registers normally defined by the platform engineers. The space can be selected by setting CDM/ELBI = 1 and CS2 = 0 wires or can be acces
+ sed over some platform-specific means (for instance as a part of a system controller).", 'enum': ['elbi', 'app']}, {'description': "iATU/eDMA registers common for all device functions. It's an unrolled memory space with the internal Address Translation Unit and Enhanced DMA, which is selected by setting CDM/ELBI = 1 and CS2 = 1. For IP-core releases prior v4.80a, these registers have been programmed via an indirect addressing scheme using a set of viewport CSRs mapped into the PL space. Note iATU is normally mapped to the 0x0 address of this region, while eDMA is available at 0x80000 base address.", 'const': 'atu'}, {'description': 'Platform-specific eDMA registers. Some platforms may have eDMA CSRs mapped in a non-standard base address. The registers offset can be changed or the MS/LS-bits of the address can be attached in an additional RTL block before the MEM-IO transactions reach the DW PCIe slave interface.', 'const': 'dma'}, {'description': 'PHY/PCS configuration registers. So
+ me platforms can have the PCS and PHY CSRs accessible over a dedicated memory mapped region, but mainly these registers are indirectly accessible either by means of the embedded PHY viewport schema or by some platform-specific method.', 'const': 'phy'}, {'description': 'Outbound iATU-capable memory-region which will be used to access the peripheral PCIe devices configuration space.', 'const': 'config'}, {'description': 'Vendor-specific CSR names. Consider using the generic names above for new bindings.', 'oneOf': [{'description': "See native 'elbi/app' CSR region for details.", 'enum': ['apb', 'mgmt', 'link', 'ulreg', 'appl']}, {'description': "See native 'atu' CSR region for details.", 'enum': ['atu_dma']}, {'description': 'Syscon-related CSR regions.', 'enum': ['smu', 'mpu']}, {'description': 'Tegra234 aperture', 'enum': ['ecam']}, {'description': 'AMD MDB PCIe slcr region', 'const': ['mdb_pcie_slcr']}]}]} is not of type 'array'
+	['mdb_pcie_slcr'] is not of type 'integer', 'string'
+	from schema $id: http://devicetree.org/meta-schemas/keywords.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/snps,dw-pcie.yaml: properties:reg-names:items:oneOf:7:oneOf:4:const: ['mdb_pcie_slcr'] is not of type 'string'
+	from schema $id: http://devicetree.org/meta-schemas/string-array.yaml#
 
-            Linus
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241207171134.3253027-2-thippeswamy.havalige@amd.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
