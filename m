@@ -1,182 +1,216 @@
-Return-Path: <linux-kernel+bounces-435821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 349CB9E7D9E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:49:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722409E7DA1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:50:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97DA286B82
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:49:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF8D0286B87
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43439460;
-	Sat,  7 Dec 2024 00:49:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C10968F49;
+	Sat,  7 Dec 2024 00:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OpS0FShT"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="OL8coNuA"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [67.231.154.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CC3122C6DC;
-	Sat,  7 Dec 2024 00:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 000B310F4
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 00:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.154.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733532552; cv=none; b=UdvbvoUYX6xnpBUknpBlP4Ljoa0zkBUUPrDdgOpMmiQooW7UiSmTl771BrXo1JsVuzY/Rj1ZW5cqHfPAx0zLaQ0qOmeDPNU1OCVU4g7j7L5+waZK0U2DP56gXqYuv6bevslDD1pil0nRpV2Ti0vNXJ+jxnnlo8Ba+ArJtlGCJBQ=
+	t=1733532615; cv=none; b=Dgbr9mkh29AOnxMl51GGkmCBRqhcMrPJP+ipdyRRCFIW+ZpHq2YUhpMAjLEVKvLIYgODrZOGivZsds5tsRpKyapp1Dygw2Ur2NeTrYXu+H8YkjEMnayZuqSf7gR3Kb7erTh265W2PCXeNdNKMyV/FMIi0nM7M5vNFCLSuQ41an4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733532552; c=relaxed/simple;
-	bh=kBTarmwfIO+GCCWNjyURqN3Jc9erv0BphZuS6jWcWdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=BTt8PrSKmH8C5EZ1oRD0FoeN/xg/uB+tKOh4w8C2hBUYNWiGTs6QGu6c4B+qXoPzeL4y0QrH9QhT58lonai2v9fy2qj4gaYNxZj9OIRyPjHfmqEkGJ8at9c2wqCvPog37Vt7I5ZuTzYpFrEW71rW9dNzIXzS1HaWZ5zFFz+LNIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OpS0FShT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B70JxQX023369;
-	Sat, 7 Dec 2024 00:48:46 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	AK74VPG6A9e2QYgKpR9cQJBVCOoLg7G7LnluO38hQd4=; b=OpS0FShTGFm0IoR/
-	6a64wEG/tISKcsQYtnmqcQQVyFbhRSZDPkh+D/Y/UUzcqL80PTLKhKl8xgDUbbLF
-	6vxADF+2/CztOaUPLELPJC7FbWbf3YbZJKsJRl6sqNUJWcA9mL63+EZdIJ6VN2CN
-	2gvvpwsbsDCC/+5T7IBMsra+cFIpRPrdRDMGGV9pPEHIndEjzugHM3ZG1dOwUnsh
-	ybHwv5y77qP0o6htqAFDlfP0geOckmGewnGz+/s87BK1aeutBU8840IYzan04gPG
-	DsQb+Ogelkz0Fn6rED2K54b2J0t/lboOiY1uzy833azMCB/tQOHZlEztvbtA1S8L
-	Fepf9A==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cbqn019d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 07 Dec 2024 00:48:45 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B70miY1011072
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sat, 7 Dec 2024 00:48:44 GMT
-Received: from [10.134.70.212] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 6 Dec 2024
- 16:48:44 -0800
-Message-ID: <80d08449-71de-4a7f-8b2a-8af565d8d701@quicinc.com>
-Date: Fri, 6 Dec 2024 16:48:43 -0800
+	s=arc-20240116; t=1733532615; c=relaxed/simple;
+	bh=YZpBsaC1xhfe2qREt85maDoM9mOg7g/MhAhwuGl0NCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KTyAefg0l3hBpOjttNmoGh7phCFORzKaBlN75ZWAr1+MHyQMV4pbRdTdiGsV3GTVO+SuTTWNW5A0wFcUSytXMQ/7Vr+iZMt6oMmjJmRbn+/5E2tcxnvcKTVR3cJA33nMp+OEtgeX6/n60YmXy12NVo03pWuEE52sotAQh3iAzmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=OL8coNuA; arc=none smtp.client-ip=67.231.154.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 89DA63C0070;
+	Sat,  7 Dec 2024 00:50:10 +0000 (UTC)
+Received: from [192.168.100.159] (unknown [50.251.239.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id 036F413C2B0;
+	Fri,  6 Dec 2024 16:50:09 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 036F413C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1733532610;
+	bh=YZpBsaC1xhfe2qREt85maDoM9mOg7g/MhAhwuGl0NCY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OL8coNuAUScZKoTv7TE1p59d3+axkBAJr+qxYVJMdw9GiPPywvAxnoAsNu5/FWmy8
+	 5NZN3C6wVrZZWf1Jg1MGYUVxyjjktJDDbHM34h9CfyA1+jPUcqXMiX3/rHk+i/frfT
+	 xiS2gEB6ZDORIPJLBHgYuKrPtGXi6fFel/nXtuAc=
+Message-ID: <eca69b03-9b89-af2a-d1b0-38f76675b165@candelatech.com>
+Date: Fri, 6 Dec 2024 16:50:09 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/22] drm: Add valid clones check
-To: Maxime Ripard <mripard@kernel.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <quic_abhinavk@quicinc.com>, Sean Paul
-	<sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        "David
- Airlie" <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "Maarten
- Lankhorst" <maarten.lankhorst@linux.intel.com>,
-        Thomas Zimmermann
-	<tzimmermann@suse.de>, <quic_ebharadw@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        Rob Clark
-	<robdclark@chromium.org>,
-        =?UTF-8?B?VmlsbGUgU3lyasOkbMOk?=
-	<ville.syrjala@linux.intel.com>
-References: <20240924-concurrent-wb-v2-0-7849f900e863@quicinc.com>
- <20240924-concurrent-wb-v2-2-7849f900e863@quicinc.com>
- <20240925-hasty-bald-caribou-eedbf5@houat>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: BISECTED: 'alloc_tag: populate memory for module tags as needed'
+ crashes on boot.
 Content-Language: en-US
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-In-Reply-To: <20240925-hasty-bald-caribou-eedbf5@houat>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -zKcDFja7cx9ZYMB7kSujIe0CKHcr77J
-X-Proofpoint-GUID: -zKcDFja7cx9ZYMB7kSujIe0CKHcr77J
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- spamscore=0 bulkscore=0 adultscore=0 clxscore=1015 mlxlogscore=999
- malwarescore=0 phishscore=0 lowpriorityscore=0 impostorscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412070003
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <1ba0cc57-e2ed-caa2-1241-aa5615bee01f@candelatech.com>
+ <CAJuCfpGk6kyAAEUakMTNvJWmo98Gfbrk22+yZNEwO0eMbRc1Og@mail.gmail.com>
+ <dcec571e-4f84-b12b-b931-4dbfb3f8bd98@candelatech.com>
+ <CAJuCfpEwmTXkMHRdY0USwPFoWcC3d3j6r=6SRV39uP3KG6b5iA@mail.gmail.com>
+ <CAJuCfpGUey5wAmL1Cgi2d-RQ=b0cqWXbo3HxvD-bomodg+GJrw@mail.gmail.com>
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+In-Reply-To: <CAJuCfpGUey5wAmL1Cgi2d-RQ=b0cqWXbo3HxvD-bomodg+GJrw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-MDID: 1733532611-C5Dj7ewo51hW
+X-MDID-O:
+ us5;at1;1733532611;C5Dj7ewo51hW;<greearb@candelatech.com>;b4c026870a3b52e78af0ca2564020f08
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-
-
-On 9/25/2024 12:23 AM, Maxime Ripard wrote:
-> On Tue, Sep 24, 2024 at 03:59:18PM GMT, Jessica Zhang wrote:
->> Check that all encoders attached to a given CRTC are valid
->> possible_clones of each other.
+On 12/6/24 16:15, Suren Baghdasaryan wrote:
+> On Fri, Dec 6, 2024 at 2:55 PM Suren Baghdasaryan <surenb@google.com> wrote:
 >>
->> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
->> ---
->>   drivers/gpu/drm/drm_atomic_helper.c | 23 +++++++++++++++++++++++
->>   1 file changed, 23 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
->> index 43cdf39019a4..cc4001804fdc 100644
->> --- a/drivers/gpu/drm/drm_atomic_helper.c
->> +++ b/drivers/gpu/drm/drm_atomic_helper.c
->> @@ -574,6 +574,25 @@ mode_valid(struct drm_atomic_state *state)
->>   	return 0;
->>   }
->>   
->> +static int drm_atomic_check_valid_clones(struct drm_atomic_state *state,
->> +					 struct drm_crtc *crtc)
->> +{
->> +	struct drm_encoder *drm_enc;
->> +	struct drm_crtc_state *crtc_state = drm_atomic_get_new_crtc_state(state,
->> +									  crtc);
->> +
->> +	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask) {
->> +		if ((crtc_state->encoder_mask & drm_enc->possible_clones) !=
->> +		    crtc_state->encoder_mask) {
->> +			DRM_DEBUG("crtc%d failed valid clone check for mask 0x%x\n",
->> +				  crtc->base.id, crtc_state->encoder_mask);
->> +			return -EINVAL;
->> +		}
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->>   /**
->>    * drm_atomic_helper_check_modeset - validate state object for modeset changes
->>    * @dev: DRM device
->> @@ -745,6 +764,10 @@ drm_atomic_helper_check_modeset(struct drm_device *dev,
->>   		ret = drm_atomic_add_affected_planes(state, crtc);
->>   		if (ret != 0)
->>   			return ret;
->> +
->> +		ret = drm_atomic_check_valid_clones(state, crtc);
->> +		if (ret != 0)
->> +			return ret;
->>   	}
+>> On Fri, Dec 6, 2024 at 2:43 PM Ben Greear <greearb@candelatech.com> wrote:
+>>>
+>>> On 12/6/24 14:03, Suren Baghdasaryan wrote:
+>>>> On Fri, Dec 6, 2024 at 1:50 PM Ben Greear <greearb@candelatech.com> wrote:
+>>>>>
+>>>>> Hello Suren,
+>>>>>
+>>>>> My system crashes on bootup, and I bisected to this commit.
+>>>>>
+>>>>> 0f9b685626daa2f8e19a9788625c9b624c223e45 is the first bad commit
+>>>>> commit 0f9b685626daa2f8e19a9788625c9b624c223e45
+>>>>> Author: Suren Baghdasaryan <surenb@google.com>
+>>>>> Date:   Wed Oct 23 10:07:57 2024 -0700
+>>>>>
+>>>>>        alloc_tag: populate memory for module tags as needed
+>>>>>
+>>>>>        The memory reserved for module tags does not need to be backed by physical
+>>>>>        pages until there are tags to store there.  Change the way we reserve this
+>>>>>        memory to allocate only virtual area for the tags and populate it with
+>>>>>        physical pages as needed when we load a module.
+>>>>>
+>>>>> The crash looks like this:
+>>>>>
+>>>>> BUG: unable to handle page fault for address: fffffbfff4041000
+>>>>> #PF: supervisor read access in kernel mode
+>>>>> #PF: error_code(0x0000) - not-present page
+>>>>> PGD 44d0e7067 P4D 44d0e7067 PUD 44d0e3067 PMD 10bb38067 PTE 0
+>>>>> Oops: Oops: 0000 [#1] PREEMPT SMP KASAN
+>>>>> CPU: 0 UID: 0 PID: 319 Comm: systemd-udevd Not tainted 6.12.0-rc6+ #21
+>>>>> Hardware name: Default string Default string/SKYBAY, BIOS 5.12 02/15/2023
+>>>>> RIP: 0010:kasan_check_range+0xa5/0x190
+>>>>> Code: 8d 5a 07 4c 0f 49 da 49 c1 fb 03 45 85 db 0f 84 ce 00 00 00 45 89 db 4a 8d 14 d8 eb 0d 48 83 c0 08 48 39 d0 0f 84 b29
+>>>>> RSP: 0018:ffff88812c26f980 EFLAGS: 00010206
+>>>>> RAX: fffffbfff4041000 RBX: fffffbfff404101e RCX: ffffffff814ec29b
+>>>>> [  OK  DX: fffffbfff4041018 RSI: 00000000000000f0 RDI: ffffffffa0208000
+>>>>> 0m] Finished BP: fffffbfff4041000 R08: 0000000000000001 R09: fffffbfff404101d
+>>>>> ;1;39msystemd-udR10: ffffffffa02080ef R11: 0000000000000003 R12: ffffffffa0208000
+>>>>> ev-trig…e R13: ffffc90000dac7c8 R14: ffffc90000dac7e8 R15: dffffc0000000000
+>>>>> - Coldplug All uFS:  00007fe869216b40(0000) GS:ffff88841da00000(0000) knlGS:0000000000000000
+>>>>> dev Devices.
+>>>>> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>> CR2: fffffbfff4041000 CR3: 0000000121e86002 CR4: 00000000003706f0
+>>>>> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>> Call Trace:
+>>>>>     <TASK>
+>>>>> [  OK  ? __die+0x1f/0x60
+>>>>> 0m] Reached targ ? page_fault_oops+0x258/0x910
+>>>>> et sysi ? dump_pagetable+0x690/0x690
+>>>>> nit.target - ? search_bpf_extables+0x22/0x250
+>>>>>     System Initiali ? trace_page_fault_kernel+0x120/0x120
+>>>>> zation.
+>>>>>     ? search_bpf_extables+0x164/0x250
+>>>>>     ? kasan_check_range+0xa5/0x190
+>>>>>     ? fixup_exception+0x4d/0xc70
+>>>>>     ? exc_page_fault+0xe1/0xf0
+>>>>> [  OK  ? asm_exc_page_fault+0x22/0x30
+>>>>> 0m] Reached targ ? load_module+0x3d7b/0x7560
+>>>>> et netw ? kasan_check_range+0xa5/0x190
+>>>>> ork.target - __asan_memcpy+0x38/0x60
+>>>>>     Network.
+>>>>>     load_module+0x3d7b/0x7560
+>>>>>     ? module_frob_arch_sections+0x30/0x30
+>>>>>     ? lockdep_lock+0xbe/0x1b0
+>>>>>     ? rw_verify_area+0x18d/0x5e0
+>>>>>     ? kernel_read_file+0x246/0x870
+>>>>>     ? __x64_sys_fspick+0x290/0x290
+>>>>>     ? init_module_from_file+0xd1/0x130
+>>>>>     init_module_from_file+0xd1/0x130
+>>>>>     ? __ia32_sys_init_module+0xa0/0xa0
+>>>>>     ? lock_acquire+0x2d/0xb0
+>>>>>     ? idempotent_init_module+0x116/0x790
+>>>>>     ? do_raw_spin_unlock+0x54/0x220
+>>>>>     idempotent_init_module+0x226/0x790
+>>>>>     ? init_module_from_file+0x130/0x130
+>>>>>     ? vm_mmap_pgoff+0x203/0x2e0
+>>>>>     __x64_sys_finit_module+0xba/0x130
+>>>>>     do_syscall_64+0x69/0x160
+>>>>>     entry_SYSCALL_64_after_hwframe+0x4b/0x53
+>>>>> RIP: 0033:0x7fe869de327d
+>>>>> Code: 5d c3 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 248
+>>>>> RSP: 002b:00007ffe34a828d8 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
+>>>>> RAX: ffffffffffffffda RBX: 0000557fa8f3f3f0 RCX: 00007fe869de327d
+>>>>> RDX: 0000000000000000 RSI: 00007fe869f4943c RDI: 0000000000000006
+>>>>> RBP: 00007fe869f4943c R08: 0000000000000000 R09: 0000000000000000
+>>>>> R10: 0000000000000006 R11: 0000000000000246 R12: 0000000000020000
+>>>>> R13: 0000557fa8f3f030 R14: 0000000000000000 R15: 0000557fa8f3d110
+>>>>>     </TASK>
+>>>>> Modules linked in:
+>>>>> CR2: fffffbfff4041000
+>>>>> ---[ end trace 0000000000000000 ]---
+>>>>>
+>>>>> I suspect you only hit this with an unlucky amount of debugging enabled.  The kernel config I used
+>>>>> is found here:
+>>>>>
+>>>>> http://www.candelatech.com/downloads/cfg-kasan-crash-regression.config
+>>>>>
+>>>>> I will be happy to test fixes.
+>>>>
+>>>> Hi Ben,
+>>>> Thanks for reporting the issue. Do you have these recent fixes in your tree:
+>>>>
+>>>> https://lore.kernel.org/all/20241130001423.1114965-1-surenb@google.com/
+>>>> https://lore.kernel.org/all/20241205170528.81000-1-hao.ge@linux.dev/
+>>>>
+>>>> If not, couple you please apply them and see if the issue is still happening?
+>>>> Thanks,
+>>>> Suren.
+>>>
+>>> Hello Suren,
+>>>
+>>> Thanks for the quick response.  The first patch is already in latest Linus tree,
 > 
-> Pretty much the same comment, we should have kunit tests for this.
+> Hmm. Could you please double-check which tree you are using? I don't
+> see the first patch
+> (https://lore.kernel.org/all/20241130001423.1114965-1-surenb@google.com/)
+> in Linus' tree. Maybe you are using linux-next?
 
-Hey Maxime,
+Sorry, you are correct.  I must have mangled something when trying to apply
+the patch and I didn't look hard enough when patch said changes were already applied.
 
-I'm working on the kunit test for this and had a question on the design 
-for the unit test:
-
-Since this is a static helper that returns a pretty common error code, 
-how would you recommend going about making sure that 
-`drm_atomic_check_valid_clones()` specifically is returning the error 
-(and not a different part of check_modeset) when testing the 
-check_valid_clones() failure path?
+I can re-test this next week...and for reference, kernel boots fine when you disable
+KASAN and other debugging.
 
 Thanks,
+Ben
 
-Jessica Zhang
 
-> 
-> Maxime
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
+
 
 
