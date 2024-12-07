@@ -1,86 +1,156 @@
-Return-Path: <linux-kernel+bounces-436162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 990E99E8201
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:39:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC4DE9E8208
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:48:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A766281D85
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:39:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14EA918846BA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95DB156880;
-	Sat,  7 Dec 2024 20:39:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 802C71922F9;
+	Sat,  7 Dec 2024 20:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Tb0xHJ86"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VMKkkuat"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF2522C6FA;
-	Sat,  7 Dec 2024 20:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76D214A0B9;
+	Sat,  7 Dec 2024 20:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733603946; cv=none; b=kPAGvbU+3ne/h7owaWwThUgiW6A3IngLHBPWTvz00EjzY3ZTlnO3ulR/zUnmygNvVQqP3Eq0T8JJXrFNUxb5uPpmE66+f0En1QernfQeBHEGqzaPLS30BA3McajIyxI1oLlNfOYogdApMk3uUswulpjp3qvCS7s9oN/T12ataoI=
+	t=1733604506; cv=none; b=oRiKDjiz9tgomkcS2sz0r/zd43TGk6hEARBKGbBvxNyMpA4pOqYCYhNi1aLh9hs5lu7fJNLlrBBzR+/Ml+ktsx0oqzm6wCxqILgzkGSk94c+WbQMFTbJCmxTYcfiSVLNt2e0dJEdv9IVX99INCPBpRILvrieS8yqFfopYurwGck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733603946; c=relaxed/simple;
-	bh=qL+9ChYPsqY4C77/Sy8OOVm/lI/zb17cDXk+ooYqc5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XRnyUIL1cS5Llg/9pMcBf9eAF92vFIQAq8nGYUF/E67jU8sDUGRaXcG553U7hPpKKeL2pYEaghb0g0qhNysBynY1pU2sImvfXc2ziL5OAnLTqD09iVlNTN3WRIdh3ZqMBMx7TBh5Pn/vQQgcvsDW9W3ke0PZ6MNc+MRX2WLM2ig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Tb0xHJ86; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=HS5+8cf/NT9XGki+xRoxATzUF6H4RE8i/SF969wIAc8=; b=Tb0xHJ8619TX2/pPW3q1qBNZW8
-	NRpcElkBH2teVe3cUg3g73tMO4rn7PpO15lfgUmDbL7LD96kGh6EwYPf+KON/NiFFCzJlyaXvMnSU
-	wcNwHCvlpAHW4Ycov7XDpsJi6OZvypnklVq2kvH/9eVF+88i6dA8FK0DLR2l47JwSwd0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tK1Zk-00FVKw-Ba; Sat, 07 Dec 2024 21:38:52 +0100
-Date: Sat, 7 Dec 2024 21:38:52 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Simon Horman <horms@kernel.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	linux-doc@vger.kernel.org
-Subject: Re: [PATCH net-next v1 1/1] net: phy: Move callback comments from
- struct to kernel-doc section
-Message-ID: <1b012a63-c644-4079-b590-34c5f54b207f@lunn.ch>
-References: <20241206113952.406311-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1733604506; c=relaxed/simple;
+	bh=rWz9GxnchMLN6fSpu6IMZqkDL9a3pSZ+wb6rekAUHzY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AYmUgKz6dW0yc1+7z4gK4gLfkCB+Na5R78R0n88rYsQGMGkhCpCID5XgLLpjTsZNbwYLt+pHUhMZ0ILV7lXCMmRpqL5NKtQ8LOBjGislNT92OVfurElKVr/MGnb9hTz4Tgd4HZRU64xJ2EwiDbpgE+wTUm3TXZTEP2TMvNRRoLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VMKkkuat; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 1EB12C4CECD;
+	Sat,  7 Dec 2024 20:48:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733604506;
+	bh=rWz9GxnchMLN6fSpu6IMZqkDL9a3pSZ+wb6rekAUHzY=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=VMKkkuatp//a6q58hLMpDx9SiOix3UeRZOXDnNJMNH7PebGPlhGbWnNixquF7Zw3B
+	 ESnJnvvoXH4mau2SDzgxlSbh+XEhEWfn2R1skhDEf+vH6MDeBPcFcC9Op9prk+JnKJ
+	 ZHa5uWIgjEesHKpJr2opf7Aw30A05QErekrGdU38ECDn+hwYPph3qq9ghKPxzZBdim
+	 g/MH0wY+hw04BvejNLvb5qUeA5ecTHYamhUyLGiU56S+auhQKNOJxJcd48gjct9VQ0
+	 02W88E5jW7aemKGfCpfh9SK1FALV9LtF+crMqmuvpTj1O3duQ+pL5ANt360P4OY8pE
+	 1RMahSSE+VDkA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03360E7717B;
+	Sat,  7 Dec 2024 20:48:26 +0000 (UTC)
+From: =?utf-8?q?Andr=C3=A9_Apitzsch_via_B4_Relay?= <devnull+git.apitzsch.eu@kernel.org>
+Subject: [PATCH v3 00/12] media: i2c: imx214: Miscellaneous cleanups and
+ improvements
+Date: Sat, 07 Dec 2024 21:47:49 +0100
+Message-Id: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206113952.406311-1-o.rempel@pengutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAHW0VGcC/1WMwQ6CMBAFf4X0bE13W6T15H8YD1AW6UEgLTYo4
+ d8tGEk8zsubmVkg7yiwczYzT9EF13cJ5CFjti27O3FXJ2YoUAkNmrvHhKC4lqgKrWxREbF0Hjw
+ 1btpC11vi1oWx96+tG2Fdvwkj8JeIwAW35mSr0mgjIb+UgxvfwbZHerI1EnEXQSDsIiaxqWqUZ
+ EyugP7FZVk+/2K1HNcAAAA=
+X-Change-ID: 20240818-imx214-8324784c7bee
+To: Ricardo Ribalda <ribalda@kernel.org>, 
+ Sakari Ailus <sakari.ailus@linux.intel.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+ Vincent Knecht <vincent.knecht@mailoo.org>, 
+ =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733604504; l=2879;
+ i=git@apitzsch.eu; s=20240325; h=from:subject:message-id;
+ bh=rWz9GxnchMLN6fSpu6IMZqkDL9a3pSZ+wb6rekAUHzY=;
+ b=bGLVRCS/O8ECvYhfAvnZFfe5jzV8wf+QLCRW2vAi6smx/TEFXdNQOdNs19XxOqCb7zvkXHOTV
+ ie0Obio8ulgCPeubzMnCEaFp9sT4Rd81gzsi7EE6R+5Z7J8PXrVuG1o
+X-Developer-Key: i=git@apitzsch.eu; a=ed25519;
+ pk=wxovcZRfvNYBMcTw4QFFtNEP4qv39gnBfnfyImXZxiU=
+X-Endpoint-Received: by B4 Relay for git@apitzsch.eu/20240325 with
+ auth_id=142
+X-Original-From: =?utf-8?q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Reply-To: git@apitzsch.eu
 
-> +#if 0 /* For kernel-doc purposes only. */
-> +
-> +/**
-> + * soft_reset - Issue a PHY software reset.
-> + * @phydev: The PHY device to reset.
-> + *
-> + * Returns 0 on success or a negative error code on failure.
-> + */
-> +int soft_reset(struct phy_device *phydev);
+This patch series is a collection of miscellaneous cleanups and
+improvements to the imx214 driver.
 
-We should probably ask the kdoc maintainers about how to do this, or
-if they can extend kdoc for this use case.
+The series converts the driver to the CCI helpers and adds controls
+needed to make the driver work with libcamera.
 
-	Andrew
+The changes are inspired by the imx219 driver.
+
+Signed-off-by: André Apitzsch <git@apitzsch.eu>
+---
+Changes in v3:
+- Also keep previous link freq for backward compatibility
+- Move link freq patch to the end of the series
+- Remove return-early check from imx214_set_format()
+- Remove unneeded struct imx214 function parameter
+- Use correct ret value on number of data lanes error
+- Revert changing order (imx214_parse_fwnode, devm_kzalloc)
+- Fix typo
+- Remove unused definition IMX214_EXPOSURE_MAX
+- Don't set FPS to default
+- Simplify exposure_def definition
+- Set state and format only if control id is V4L2_CID_VBLANK
+- Restore Ricardo's message to Sony
+- Drop "media: i2c: imx214: Extract format and crop settings" patch
+- Add A-b tag
+- Link to v2: https://lore.kernel.org/r/20241021-imx214-v2-0-fbd23e99541e@apitzsch.eu
+
+Changes in v2:
+- Add patch to fix link frequency
+- Don't use and remove fmt and crop from struct imx214
+- Squash patch 1/13 and 2/13
+- Only check if #lanes == 4
+- Add comment that enum_frame_interval() shouldn't be used by userspace
+- Set V4L2_CID_VBLANK step size to 2 (according to datasheet Table 4-4)
+- Increase IMX214_VBLANK_MIN to limit max frame rate of full resolution
+  to the documented 30 fps
+- As bpp is always 10, simplify setting IMX214_REG_CSI_DATA_FORMAT and
+  IMX214_REG_OPPXCK_DIV
+- Simplify imx214_get_format_code()
+- Cluster hflip and vflip
+- Remove kernel log note from 11/13, issue was fixed by a kernel update
+- Add A-b tags
+- Link to v1: https://lore.kernel.org/r/20240902-imx214-v1-0-c96cba989315@apitzsch.eu
+
+---
+André Apitzsch (12):
+      media: i2c: imx214: Use subdev active state
+      media: i2c: imx214: Simplify with dev_err_probe()
+      media: i2c: imx214: Convert to CCI register access helpers
+      media: i2c: imx214: Replace register addresses with macros
+      media: i2c: imx214: Drop IMX214_REG_EXPOSURE from mode reg arrays
+      media: i2c: imx214: Check number of lanes from device tree
+      media: i2c: imx214: Add vblank and hblank controls
+      media: i2c: imx214: Implement vflip/hflip controls
+      media: i2c: imx214: Add analogue/digital gain control
+      media: i2c: imx214: Verify chip ID
+      media: i2c: imx214: Add test pattern control
+      media: i2c: imx214: Fix link frequency
+
+ drivers/media/i2c/Kconfig  |    1 +
+ drivers/media/i2c/imx214.c | 1253 ++++++++++++++++++++++++++------------------
+ 2 files changed, 739 insertions(+), 515 deletions(-)
+---
+base-commit: 7c537db2474dd5b1acf4ee9bb665113127e2d013
+change-id: 20240818-imx214-8324784c7bee
+
+Best regards,
+-- 
+André Apitzsch <git@apitzsch.eu>
+
+
 
