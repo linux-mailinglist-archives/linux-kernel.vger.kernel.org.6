@@ -1,160 +1,175 @@
-Return-Path: <linux-kernel+bounces-436001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84189E7FB2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:20:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7305618842C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:20:06 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512A0146000;
-	Sat,  7 Dec 2024 11:20:00 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC8F9E8007
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:05:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16947140E2E
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 11:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD1C282215
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:05:03 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39044149C57;
+	Sat,  7 Dec 2024 13:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="SJ2E6PLM"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1C413B792
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 13:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733570399; cv=none; b=LmZ3DFw93IO6ANA/ad6Cbq3V/H9fXmO42lCokWQ1FVz2xntXdHaSsFsnAwGHOekPJedcj5OQ97mLvLzmyXk0UHh+3JHkqdUD5su/QgMtgk3cGd60Z57RFDge5JugsD7Z7ILxklvYWKsbeeIFq+PpDvGLu05r0G8BtSghGRqq2yE=
+	t=1733576691; cv=none; b=eN978w6vD8BokU/SN3iJ4w4IA2mc08oywvFjW51S3YkdAqiwaZxVC5ASWNJ3S0ucNHFgSIaSYQ7bZtW3G+ZuYpnO3rBNJmHVUw59jI5yuoTxC+Rsg1qZch1rfNiRDnXL+SHlbY2t9P+S0QVKe/M+5rydr0Ip1mlXTaow7QoxqKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733570399; c=relaxed/simple;
-	bh=Wt2ZHmxW6c/l0ZfetqXCLnlXK50FBLicV0IX1qwEeKI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=RxpLSrZuDJZ+h/mTkXdvqpv0bHKU71sbh1wT89LV5fGy+jud+E4i74wtzk6DYOE8woQ+Vw1nZgplwSK1HjZhUL4l9yjU9pcxFty0HyTLzbJesomL2yAPX2GP6JLUlvTq+9W0U44Ckj1Z5k5A1fCfQIeU2zNnNn/tx+y+CApdDTE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-182-BmtRSwgZMaSkxWJpDbvf-w-1; Sat, 07 Dec 2024 11:19:55 +0000
-X-MC-Unique: BmtRSwgZMaSkxWJpDbvf-w-1
-X-Mimecast-MFC-AGG-ID: BmtRSwgZMaSkxWJpDbvf-w
-Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
- (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sat, 7 Dec
- 2024 11:19:05 +0000
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Sat, 7 Dec 2024 11:19:05 +0000
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Vincent Mailhol' <vincent.mailhol@gmail.com>, Linus Torvalds
-	<torvalds@linux-foundation.org>, "w@1wt.eu" <w@1wt.eu>
-CC: Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor
-	<nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, "Bill
- Wendling" <morbo@google.com>, Justin Stitt <justinstitt@google.com>, "Yury
- Norov" <yury.norov@gmail.com>, Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Jani Nikula <jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "uecker@tugraz.at" <uecker@tugraz.at>
-Subject: RE: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-Thread-Topic: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-Thread-Index: AQHbROFPJXcuwP9wN0+yRzIQ2cx/pbLWa+gggAFf14CAACMqUIABpzoGgAAClHCAAAPoAIAAAwjggAANnsCAAMAogIAAM0Zw
-Date: Sat, 7 Dec 2024 11:19:05 +0000
-Message-ID: <b1ff4a65594a4d39b2e9b8b44770214e@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
- <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
- <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
- <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
- <CAHk-=wjmeU6ahyuwAymqkSpxX-gCNa3Qc70UXjgnxNiC8eiyOw@mail.gmail.com>
- <CAMZ6Rq+SzTA25XcMZnMnOJcrrq1VZpeT1xceinarqbXgDDo8VA@mail.gmail.com>
- <CAHk-=wiP8111QZZJNbcDNsYQ_JC-xvwRKr0qV9UdKn3HKK+-4Q@mail.gmail.com>
- <d23fe8a5dbe84bfeb18097fdef7aa4c4@AcuMS.aculab.com>
- <CAHk-=win8afdcergvJ6f2=rRrff8giGUW62qmYs9Ae6aw=wcnA@mail.gmail.com>
- <0f5c07b827c3468c8fa3928a93a98bfa@AcuMS.aculab.com>
- <e806dd51b1ac4e289131297fbf30fc37@AcuMS.aculab.com>
- <CAMZ6RqLOR3aCRW_js2agV+VFiHdazb4S2+NdT5G4=WbDKNB8bA@mail.gmail.com>
-In-Reply-To: <CAMZ6RqLOR3aCRW_js2agV+VFiHdazb4S2+NdT5G4=WbDKNB8bA@mail.gmail.com>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1733576691; c=relaxed/simple;
+	bh=kClcMY84bRDMrCgbaYSYUH0ISfT13XXwNi27Fnp92hk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PF5X5HdJotu1VV52zmVSPFmyhvo4McdoVCd32MVRab7APTHQJssrSAJqzRr7KzbGev8SyDuQmIbmt4RlImu+We18wVlcFF+E2eRzx5cIhAKBHZ9vkbFerGyrAWzBcJMNWbbjD61nwri84TLk4QTjaro2qJGkW3WOihd+hs2zveQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=SJ2E6PLM; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id B78B08911A;
+	Sat,  7 Dec 2024 13:58:55 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1733576337;
+	bh=FNv/5Cv+x11a4sjW5/N0RcInYummpunJ7d3yH6WZA/Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SJ2E6PLM1QO2Z7ud1LLFtXKeQrnRg2MHEUF1ytDpdUdiX2QkJf4uOEjqZB3e9lUFn
+	 53rKeATCrjJesC4fDqDAdHEa81ZKejo0HFiajiMhOARn8jwIK49KULeXeuIyryc/Lw
+	 4AnIGcRTiPYGCIapzfsPn8oJXlKio0L8MKowf6D1gM53SHgifCrRzAwIli4966NJQQ
+	 2VHBF4LjQdVHYpWp01PoxP0pLHbZQ/rvrnOSb+3GkgQBK4XA6qbzWQllSRtRMHH2Ya
+	 j3q6y1cqhRDQgNTzLscJdQPeqdNsM6nmGBslnYlN18ga8N+hPrejxryRT/EQVNwvYS
+	 vPogOGvRNB4BA==
+Message-ID: <897b3787-8246-4509-94a1-129488297150@denx.de>
+Date: Sat, 7 Dec 2024 12:30:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-MFC-PROC-ID: 03ry0NrPna-wDWWUIW-N5py_-GWE7NE-g5hbuBceeoI_1733570393
-X-Mimecast-Originator: aculab.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+To: Nikolaus Voss <nv@vosn.de>
+Cc: Liu Ying <victor.liu@oss.nxp.com>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Fabio Estevam <festevam@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ nikolaus.voss@haag-streit.com, miquel.raynal@bootlin.com
+References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
+ <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
+ <000b34cdd1591c82265ce1f9848828d1@vosn.de>
+ <2c950130-84b4-4a81-84a2-b5e08af43616@oss.nxp.com>
+ <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
+ <808d4092a9e97b95480d47c1bd84d930@vosn.de>
+ <b86666cc-da63-405d-9036-96cb4e69dafb@denx.de>
+ <21ea39dba5e35e99ea499b4408cb1bdf@vosn.de>
 Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <21ea39dba5e35e99ea499b4408cb1bdf@vosn.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDA3IERlY2VtYmVyIDIwMjQgMDc6NDMNCi4u
-Lg0KPiA+IFNvIG1heWJlIHRoZSBzbGlnaHRseSBsb25nIGxpbmVzOg0KPiA+ICNkZWZpbmUgY29u
-c3RfdHJ1ZSh4KSBfR2VuZXJpYygwID8gKHZvaWQgKikoKHgpICsgMCA/IDBMIDogMUwpIDogKGNo
-YXIgKikwLCBjaGFyICo6IDEsIHZvaWQgKjogMCkNCj4gPiAjZGVmaW5lIGNvbnN0X2V4cHIoeCkg
-X0dlbmVyaWMoMCA/ICh2b2lkICopKCh4KSArIDAgPyAwTCA6IDBMKSA6IChjaGFyICopMCwgY2hh
-ciAqOiAxLCB2b2lkICo6IDApDQoNCkNsZWFybHkgdGhleSBjYW4gYmUgaW1wbGVtZW50ZWQgaW4g
-dGVybXMgb2YgYSBjb21tb24gZGVmaW5lLg0KQnV0IEkgZG9uJ3Qgc2VlIGEgbmVlZCBmb3IgYSBj
-b25zdF96ZXJvKCkgYW5kIG5lc3RlZCBleHBhbnNpb25zIG1ha2UgZXh0cmENCndvcmsgZm9yIHRo
-ZSBjb21waWxlci4NCg0KPiANCj4gVGhpcyBzdGlsbCB0aHJvd3MgYSAtV251bGwtcG9pbnRlci1h
-cml0aG1ldGljIG9uIGNsYW5nIG9uIGNvbnN0X2V4cHIoTlVMTCk6DQo+ICAgaHR0cHM6Ly9nb2Ri
-b2x0Lm9yZy96L3ZvNVc3ZWZkRQ0KDQpJIHdhcyB3b3JyaWVkIGFib3V0IHRoYXQgb25lLg0KDQo+
-IEkganVzdCBkbyBub3Qgc2VlIGEgbWV0aG9kIHRvIHNpbGVuY2UgdGhhdCBvbmUuIFNvIHRocmVl
-IG9wdGlvbnM6DQo+IA0KPiAgIDEuIGlzX2NvbnN0KCkgZG9lcyBub3QgYWNjZXB0IHBvaW50ZXJz
-IGFuZCB0aHJvd3MgYSBjb25zdHJhaW50IHZpb2xhdGlvbjoNCj4gICAgICAgICNkZWZpbmUgaXNf
-Y29uc3QoeCkgX19pc19jb25zdF96ZXJvKDAgKiAoeCkpDQo+ICAgICAgVGhpcyBpcyBteSBjdXJy
-ZW50IHBhdGNoLg0KDQpJcyB0aGF0IGdvaW5nIHRvIGFmZmVjdCB0aGluZ3MgbGlrZSBjb25zdF90
-cnVlKHggPDwgeSk/DQpEaXNhbGxvd2luZyB0aGF0IHNlZW1zIGNvdW50ZXItcHJvZHVjdGl2ZS4N
-CihSZW1lbWJlciBpdCBtaWdodCBiZSBwYXNzZWQgaW50byBhICNkZWZpbmUgdGhhdCBpcyB0aGVu
-DQpjaGVja2luZyBpdHMgYXJndW1lbnQgZm9yIGJlaW5nIGNvbnN0YW50LikNCg0KPiAgIDIuIGlz
-X2NvbnN0KCkgYWNjZXB0IHBvaW50ZXJzIGJ1dCBpc19jb25zdChOVUxMKSByZXR1cm5zIGZhbHNl
-Og0KPiAgICAgICAgI2RlZmluZSBpc19jb25zdCh4KSBfX2lzX2NvbnN0X3plcm8oKHgpICE9ICh4
-KSkNCj4gICAgICBUaGlzIGtlZXBzIHRoZSBjdXJyZW50IF9faXNfY29uc3RleHByKCkgYmVoYXZp
-b3VyLg0KDQpObyBnb29kIC0gZXhwYW5kcyBldmVyeXRoaW5nIHR3aWNlLg0KDQo+ICAgMy4gaXNf
-Y29uc3QoKSBhY2NlcHRzIHBvaW50ZXJzIGFuZCBpc19jb25zdChOVUxMKSByZXR1cm4gdHJ1ZToN
-Cj4gDQo+ICAgICAgICAjZGVmaW5lIGNvbnN0X2V4cHIoeCkgX0dlbmVyaWMoMCA/ICh2b2lkICop
-KCh4KSArIDAgPyAwTCA6IDBMKQ0KPiA6IChjaGFyICopMCwgY2hhciAqOiAxLCB2b2lkICo6IDAp
-DQo+IA0KPiAgICAgIERhdmlkJ3MgbGF0ZXN0IHByb3Bvc2FsLCBpdCByZXF1aXJlcyB0byByZW1v
-dmUgdGhlDQo+ICAgICAgLVdudWxsLXBvaW50ZXItYXJpdGhtZXRpYyBjbGFuZyB3YXJuaW5nLg0K
-DQpPbmx5IGZvciBjb25zdF9leHByKE5VTEwpIC0gYW5kIHNpbmNlIGNsYW5nIGdldHMgdGhhdCB3
-cm9uZw0KbWF5YmUgdGhlIHdhcm5pbmcgaXMgYSBnb29kIHRoaW5nLg0KDQpZb3UgY2FuIGp1c3Qg
-YWRkOg0KI2RlZmluZSBjb25zdF9OVUxMKHB0cikgY29uc3RfdHJ1ZSghKHB0cikpDQpQcm9iYWJs
-eSB0aGUgb25seSBwbGFjZSB3aGVyZSB5b3UgYWN0dWFsbHkgd2FudCB0byB0ZXN0IGZvciB6ZXJv
-Lg0KDQo+IA0KPiBJIHZvdGUgZm9yIDEuIG9yIDIuICh3aXRoIGEgcHJlZmVyZW5jZSBmb3IgMS4p
-LiBJTUhPLCB3ZSBhcmUganVzdA0KPiBhZGRpbmcgYW4gdW5yZWFzb25hYmxlIGxldmVsIG9mIGNv
-bXBsZXhpdHkgZm9yIG1ha2luZyB0aGUgbWFjcm8gdHJlYXQNCj4gTlVMTCBhcyBhbiBpbnRlZ2Vy
-LiBXb3VsZCBzb21lb25lIGZpbmQgYSBzb2x1dGlvbiBmb3IgMy4gdGhhdCBkb2VzIG5vdA0KPiB5
-aWVsZCBhIHdhcm5pbmcsIHRoZW4gd2h5IG5vdC4gQnV0IGlmIHdlIGhhdmUgdG8gcmVtb3ZlIGEg
-Y29tcGlsZXINCj4gY2hlY2sgZm9yIGEgdGhlb3JldGljYWwgdXNlIGNhc2UgdGhhdCBkb2VzIG5v
-dCBldmVuIGV4aXN0IGluIHRoZQ0KPiBrZXJuZWwsIHRoZW4gaXQgaXMgbm90IHdvcnRoIHRoZSB0
-cmFkZSBvZmYuDQo+IA0KPiBDb25jZXJuaW5nIGlzX2NvbnN0KHZhciA8PCAyKSwgdGhlIHBhdGNo
-IEkgc3VibWl0dGVkIHdvcmtzIGZpbmUgYXMtaXMNCj4gd2l0aCBhbGwgc2NhbGFycyBpbmNsdWRp
-bmcgdGhhdCAodmFyIDw8IDIpOg0KPiANCj4gICBodHRwczovL2dvZGJvbHQub3JnL3oveGVyNGFN
-ZWVzDQo+IA0KPiBBbmQgY2FuIHdlIGlnbm9yZSB0aGUgY2FzZSAoISh2YXIgPDwgMikpPyBUaGlz
-IGlzIG5vdCBhIHdhcm5pbmcNCj4gYmVjYXVzZSBvZiB0aGUgbWFjcm8sIGJ1dCBiZWNhdXNlIG9m
-IHRoZSBjYWxsZXIhIElmIEkgZG8gYW55IG9mOg0KPiANCj4gICAgICAgICAgIGlmICghKHZhciA8
-PCAyKSkge30NCj4gICAgICAgICAgICh2b2lkKV9fYnVpbHRpbl9jb25zdGFudF9wKCEodmFyIDw8
-IDIpKTsNCj4gDQo+IEkgYWxzbyBnb3QgdGhlIHdhcm5pbmcuIFRoZSBwb2ludCBpcyB0aGF0IHRo
-ZSBtYWNybyBzaG91bGQgbm90DQo+IGdlbmVyYXRlICpuZXcqIHdhcm5pbmdzLiBJZiB0aGUgZ2l2
-ZW4gYXJndW1lbnQgYWxyZWFkeSByYWlzZXMgYQ0KPiB3YXJuaW5nLCBpdCBpcyB0aGUgY2FsbGVy
-J3MgcmVzcG9uc2liaWxpdHkgdG8gZml4Lg0KDQpFeGNlcHQgaXQgY291bGQgZWFzaWx5IGhhcHBl
-biB3YXkgaW5zaWRlIHNvbWUgb3RoZXIgZXhwYW5zaW9uLg0KUGVyaGFwcyBzb21lb25lIG9wdGlt
-aXNlcyBmcm9ibmljYXRlKHgpIGZvciBjb25zdGFudCBpbnB1dC4NClN1ZGRlbmx5IGZyb2JuaWNh
-dGUoISh2YXIgPDwgMikpIGdlbmVyYXRlcyBhIGNvbXBpbGUgZXJyb3IuDQoNCglEYXZpZA0KDQo+
-IA0KPiANCj4gWW91cnMgc2luY2VyZWx5LA0KPiBWaW5jZW50IE1haWxob2wNCg0KLQ0KUmVnaXN0
-ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1vdW50IEZhcm0sIE1pbHRvbiBL
-ZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEzOTczODYgKFdhbGVzKQ0K
+On 12/4/24 11:55 AM, Nikolaus Voss wrote:
+> Hi Marek,
 
+Hi,
+
+>>>>>>> I doubt that pixel clock tree cannot find appropriate division 
+>>>>>>> ratios
+>>>>>>> for some pixel clock rates, especially for dual-link LVDS on i.MX8MP
+>>>>>>> and i.MX93 platforms, because PLL clock rate should be 7x faster 
+>>>>>>> than
+>>>>>>> pixel clock rate and 2x faster than "ldb" clock rate so that the 3.5
+>>>>>>> folder between "ldb" clock and pixel clock can be met. That means 
+>>>>>>> the
+>>>>>>> PLL clock rate needs to be explicitly set first for this case.
+>>>>>>>
+>>>>>>> Can you assign the PLL clock rate in DT to satisfy the "ldb" and 
+>>>>>>> pixel
+>>>>>>> clock rates like the below commit does, if you use a LVDS panel?
+>>>>>>>
+>>>>>>> 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video PLL1
+>>>>>>> frequency to 506.8 MHz")
+>>>>>>
+>>>>>> I probably could. The point of my patch is you don't have to know in
+>>>>>> advance which LVDS panel is connected, and you don't have to 
+>>>>>> calculate
+>>>>>> the base PLL clock by hand and store it in the device tree.
+>>>>>>
+>>>>>> In my test system, I have three different LVDS panels with EDID 
+>>>>>> EEPROM,
+>>>>>> none of which worked with the stock driver, but all work with this
+>>>>>> patch.
+>>>>>> With slightly adapted pixel clocks though.
+>>>>>
+>>>>> If each of the three LVDS panels has only one display mode, you may
+>>>>> assign the PLL clock rates in DT overlays for the panels.
+>>>> I temporarily agree.
+>>>>
+>>>> I also currently use DTOs for various panels including their PLL
+>>>> setting, but in the end, I think/hope the work of Miquel and co. is
+>>>> going to make that PLL setting part unnecessary.
+>>>
+>>> That is exactly what my patch is about. I want to use one DT for all
+>>> panels
+>>
+>> Right
+>>
+>>> and store the panel's timing in EDID EEPROM.
+>> Oh, that is a new one. Does the EDID EEPROM store the entirety of
+>> 'struct display_timing {}' somehow , or is that a custom format ?
+> 
+> Well, sort of ;-). VESA has taken care of this 30 years ago
+> (https://en.wikipedia.org/wiki/Extended_Display_Identification_Data).
+> 
+> DRM handles this with drm_get_edid() and siblings, e.g. :
+
+EDID can not encode all the information in struct display_timing {} , or 
+can it ?
+
+I think what you would be missing are bus_flags , bus_format and 
+possibly the single/dual link and channel (odd/even) mapping, won't you ?
+
+> @@ -86,16 +92,36 @@ static int panel_lvds_get_modes(struct drm_panel 
+> *panel,
+>   {
+>          struct panel_lvds *lvds = to_panel_lvds(panel);
+>          struct drm_display_mode *mode;
+> +       int num = 0;
+> +
+> +       /* probe EDID if a DDC bus is available */
+> +       if (lvds->ddc) {
+> +               pm_runtime_get_sync(lvds->dev);
+> +
+> +               if (!lvds->edid)
+> +                       lvds->edid = drm_get_edid(connector, lvds->ddc);
+> +
+> +               if (lvds->edid)
+> +                       num += drm_add_edid_modes(connector, lvds->edid);
+> +
+> +               pm_runtime_mark_last_busy(lvds->dev);
+> +               pm_runtime_put_autosuspend(lvds->dev);
+> +       }
+> 
+> panel-simple.c does that in mainline, I added it to panel-lvds.c.
+> The kernel subdir tools/edid has some code to generate the EEPROM data
+> from timings and flags.
+> 
+> We keep the DDC EEPROM on a small adapter glued to to back of the panel
+> so we can replace the usually short-lived panel with a successor.
+OK
 
