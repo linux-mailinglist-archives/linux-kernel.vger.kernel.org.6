@@ -1,93 +1,97 @@
-Return-Path: <linux-kernel+bounces-435909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 947D69E7E79
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:12:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B15FA9E7E7D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:14:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 828C916B42E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:12:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87C1416C676
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3813986252;
-	Sat,  7 Dec 2024 06:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C626576025;
+	Sat,  7 Dec 2024 06:14:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UBUzQ1yL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="fo46We9z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6BCD2B9A6
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 06:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A8CD4A24
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 06:14:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733551922; cv=none; b=ZFOuSQq99tKvdDVnxu3rvhaso/4QKRiF7Fy8GPFZphHFFdvWEXEzJTKFRgraFNcFxTDU0XR+4j7T1gS6/o3XNtVF6P03KltcRRB18GNcBB9lEAujSfgzjVz7mpFIN9+Gsaw8r7N9HPD88l97EXwgK3l5Jok5vlKFMWewyD+zuro=
+	t=1733552088; cv=none; b=cMWCdu4WRR3QheSQkP31SIjyx6GelvXDJfYAQoe5ZJfqv1IfN18E5djV/P6sJNALMMAyaG0HynRuorYYk55r/wNsUquqCz0mtMRgD/IQbOeXqf6qMOtxNs40OHbZFyp1upV/MPJTPE9qLZpKxhJqsw7cMBKCYLICa/cF2DA/XW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733551922; c=relaxed/simple;
-	bh=JAegydEK5SrtzTkPOXHrT+W/4/CJo0xAyxfDyv2CBHQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kwKn8+2XGRqZQi0OLGSKdwKGYS4Mj4WYmB1G0W/RFLK8C967dSeu1jVf76zH22akWZywh9nZBNIlGZ096hd2d1+XHjcwZj6XzEBwHuENR36pPARdyhhngT5ZBf1fiDvEQ1nkKc7mHiu0ApLdgtCd1yqXfy6dwAdedur7Sfy+4fY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UBUzQ1yL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733551919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JAegydEK5SrtzTkPOXHrT+W/4/CJo0xAyxfDyv2CBHQ=;
-	b=UBUzQ1yLXYTwrdEd+4yYMPrc1gZfXo9NqRvZnVoc2jD8kDct6Cr5esi+L6Sd7kb5cD4dKI
-	ZWmrXV/iftew+Bjx5gXgvf6kkQAIk7DJQr96jLRk0y2x7AV/OU/Legmt73Sa0iPgUCWHQW
-	NLJOfJtCuHFLO4oBh4ejF0+lBdGakZ0=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-503-toCfbjYRNISInvXD0fdnEw-1; Sat,
- 07 Dec 2024 01:11:55 -0500
-X-MC-Unique: toCfbjYRNISInvXD0fdnEw-1
-X-Mimecast-MFC-AGG-ID: toCfbjYRNISInvXD0fdnEw
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CFD66195608B;
-	Sat,  7 Dec 2024 06:11:47 +0000 (UTC)
-Received: from blackfin.pond.sub.org (unknown [10.39.194.102])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7D7E81955F3F;
-	Sat,  7 Dec 2024 06:11:46 +0000 (UTC)
-Received: by blackfin.pond.sub.org (Postfix, from userid 1000)
-	id 4AD2621E66D2; Sat,  7 Dec 2024 07:11:44 +0100 (CET)
-From: Markus Armbruster <armbru@redhat.com>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: "Michael S . Tsirkin" <mst@redhat.com>,  Jonathan Cameron
- <Jonathan.Cameron@huawei.com>,  Shiju Jose <shiju.jose@huawei.com>,
-  Philippe =?utf-8?Q?Mathieu-Daud=C3=A9?= <philmd@linaro.org>,  Ani Sinha
- <anisinha@redhat.com>,  Cleber Rosa <crosa@redhat.com>,  Dongjiu Geng
- <gengdongjiu1@gmail.com>,  Eduardo Habkost <eduardo@habkost.net>,  Eric
- Blake <eblake@redhat.com>,  Igor Mammedov <imammedo@redhat.com>,  John
- Snow <jsnow@redhat.com>,  Marcel Apfelbaum <marcel.apfelbaum@gmail.com>,
-  Michael Roth <michael.roth@amd.com>,  Paolo Bonzini
- <pbonzini@redhat.com>,  Peter Maydell <peter.maydell@linaro.org>,  Shannon
- Zhao <shannon.zhaosl@gmail.com>,  Yanan Wang <wangyanan55@huawei.com>,
-  Zhao Liu <zhao1.liu@intel.com>,  kvm@vger.kernel.org,
-  linux-kernel@vger.kernel.org,  qemu-arm@nongnu.org,
-  qemu-devel@nongnu.org
-Subject: Re: [PATCH 00/31] Prepare GHES driver to support error injection
-In-Reply-To: <cover.1733504943.git.mchehab+huawei@kernel.org> (Mauro Carvalho
-	Chehab's message of "Fri, 6 Dec 2024 18:12:22 +0100")
-References: <cover.1733504943.git.mchehab+huawei@kernel.org>
-Date: Sat, 07 Dec 2024 07:11:44 +0100
-Message-ID: <87frn03tun.fsf@pond.sub.org>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1733552088; c=relaxed/simple;
+	bh=FR4jyYVvGAc/QK1Xv+schhqBTtRlolGYuXRzbKnnX1c=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=bbnzdUKuf+OXgtHtlN4KinhfUyaF9wNsYrYEZKhVcf5hJTUjqcYh/Gu0tpaZ9UNCo0B1K/alLi/ARLvJ1yZHIeG8fF4PmYRWBYfh5cohHManOCS/mxVgfMOtwWyFJJNsYeinFhfigpA6fmYsCW3pnrl5Shuv2+uGmx1pxUhWzrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=fo46We9z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B3AAC4CECD;
+	Sat,  7 Dec 2024 06:14:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1733552087;
+	bh=FR4jyYVvGAc/QK1Xv+schhqBTtRlolGYuXRzbKnnX1c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=fo46We9zcOKYJ5ZyyFgLQkHdqkJZ2+uqkkvcCqqRLfaeDplZY6Qd1+CTu6hOCmIck
+	 HDp8TfGzq2ACTP47vjooMiJJSDUk9puaZZWW034/K7AFWAOqYcrVaLOBH2jYNkth35
+	 adR74FV6p73bFYQYB/JZM9jMDrGxAiqfJV7HE9xU=
+Date: Fri, 6 Dec 2024 22:14:46 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+Cc: <catalin.marinas@arm.com>, <will@kernel.org>, <ardb@kernel.org>,
+ <ryan.roberts@arm.com>, <mark.rutland@arm.com>, <joey.gouly@arm.com>,
+ <dave.hansen@linux.intel.com>, <chenfeiyang@loongson.cn>,
+ <chenhuacai@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/2] Fix subsection vmemmap_populate logic
+Message-Id: <20241206221446.e5e8ea4ed85d0f2884216b82@linux-foundation.org>
+In-Reply-To: <b2681eed-d4d5-43c9-90e0-3e706db3e201@quicinc.com>
+References: <20241121071256.487220-1-quic_zhenhuah@quicinc.com>
+	<eb4d6674-494a-4a84-bade-481b0c89eb93@quicinc.com>
+	<b2681eed-d4d5-43c9-90e0-3e706db3e201@quicinc.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-This is v10, right?
+On Fri, 6 Dec 2024 17:13:39 +0800 Zhenhua Huang <quic_zhenhuah@quicinc.com> wrote:
+
+> 
+> 
+> On 2024/11/28 15:26, Zhenhua Huang wrote:
+> > 
+> > 
+> > On 2024/11/21 15:12, Zhenhua Huang wrote:
+> >> To perform memory hotplug operations, the memmap (aka struct page) 
+> >> will be
+> >> updated. For arm64 with 4K page size, the typical granularity is 128M,
+> >> which corresponds to a 2M memmap buffer.
+> >> Commit 2045a3b8911b ("mm/sparse-vmemmap: generalise 
+> >> vmemmap_populate_hugepages()")
+> >> optimizes this 2M buffer to be mapped with PMD huge pages. However,
+> >> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+> >> which supports 2M subsection hotplug granularity, causes other issues
+> >> (refer to the change log of patch #1). The logic is adjusted to populate
+> >> with huge pages only if the hotplug address/size is section-aligned.
+> > 
+> > Could any expert please help review ?
+> 
+> Gentle reminder for review..
+> 
+
+
+MM developers work on the linux-mm mailing list, which was not cc'ed.
+
+Please address Catalin's review comment
+(https://lkml.kernel.org/r/Z1Mwo5OajFZQYlOg@arm.com) then resend a v2
+series with the appropriate cc's.
+
 
 
