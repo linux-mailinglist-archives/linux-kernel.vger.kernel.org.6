@@ -1,239 +1,113 @@
-Return-Path: <linux-kernel+bounces-436036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B12F19E804A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:33:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98EE89E804C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:41:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FCE0188220F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:33:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575F01883804
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:41:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72B7148310;
-	Sat,  7 Dec 2024 14:33:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D92B14830A;
+	Sat,  7 Dec 2024 14:41:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W4FCpqOK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LzgoruFX"
+Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 268AAECF;
-	Sat,  7 Dec 2024 14:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69493ECF;
+	Sat,  7 Dec 2024 14:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733581984; cv=none; b=qW7eKVPBTVxJYrWscqF/+9xv6dRCVJqf8xbsboFNSF7GAIb9TXxdTYD3v3rAxViI7iJVnrA0zcWKAPiTjWy+jTMQcrwkVMRTcVzGClFqB7pXH79YuW6+5RpXnqIYNy3s4rNoSS+RTYXLibtIhA3N44g0ynZY6A71NUI4ImxORcc=
+	t=1733582473; cv=none; b=RBg7WHaCRuCZrnbW2IjwhS9clNlyN/O6PbY0MS1ixviKGMMKj+Vdu/tTSyz/AyxgaOAxvrycT2/8XMSYNmdO0I4t42CEDiQ0V1Ixv5T/jbQmjmoQKAU1RAo+sS1j/lPaL1e7lik1FxbK8PsJuDatYxrgpNM7v2TD/gkJmsphuQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733581984; c=relaxed/simple;
-	bh=A+wcKv7PGP2QN83cnqM8XjpwyUzscFbwcDfV3Kry5lI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uqJP+r1N2+BNsHNDZggK4mOUHLiVK/rTmiTkAltRhCUY4PEmRGG8Yk5sqC8o/vOqP8sECZC36484XtpCI4nHQdGc8lEM8+OwGH7NefwyDciEP/tTN9sCa/VOw6yCZ87L9OXrU8A6UonZfVKkq+qQs0asClt0zDpY6b9aSmj04vg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W4FCpqOK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 04898C4CECD;
-	Sat,  7 Dec 2024 14:33:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733581983;
-	bh=A+wcKv7PGP2QN83cnqM8XjpwyUzscFbwcDfV3Kry5lI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=W4FCpqOKGQ515PZo+rHz3oJzAZxxVGB9jeqtWjCfDbZRJriJtF89Loj7kH54lMpvd
-	 w156Y6RoOqqlYMKOG+Y9E65xhhzh8Frn1yf6Tbe2iObmcKuo+5ldJiD3MUtc0l+lJ4
-	 8PJy9ysCOcsajtiqUF0nEvdkRiqmyWPatnb2MxnIyOD4XsKOoCBV2TpCwYlmcGQcrO
-	 m1okKozclRlErt7GtH5nzYCM70FI0Ex1t//mXJBa6AvqJ4iymUmRAsu8hk8J/KL1JD
-	 rjmKtKuSSA/Q0qm8W/dw30YNp/WOR1z8IhSzHFwIB1cXdqmGdvEwGafWPUVjoJWVM+
-	 gHxBUwO3mR56Q==
-Date: Sat, 7 Dec 2024 11:33:00 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: dwarves@vger.kernel.org
-Cc: Alan Maguire <alan.maguire@oracle.com>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Jan Alexander Steffens <heftig@archlinux.org>,
-	Domenico Andreoli <cavok@debian.org>,
-	Matthias Schwarzott <zzam@gentoo.org>,
-	Dominique Leuenberger <dimstar@opensuse.org>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	Viktor Malik <vmalik@redhat.com>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	Ihor Solodrai <ihor.solodrai@pm.me>,
-	Miguel Ojeda <ojeda@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>, Song Liu <song@kernel.org>,
-	Stephen Brennan <stephen.s.brennan@oracle.com>,
-	Tom Stellard <tstellar@redhat.com>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Willy Tarreau <w@1wt.eu>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org
-Subject: ANNOUNCE: pahole v1.28 (flex arrays, bpf_fastcall, global vars, btf
- endianness, distilled BTF base, reg tests)
-Message-ID: <Z1RcnB8WD8wZphcr@x1>
+	s=arc-20240116; t=1733582473; c=relaxed/simple;
+	bh=VBx/TgwHauBV07LNa9AngagEudxpmCUEs+BBokNMpmE=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=JAgZPfLekbRAAWSLiCbqxS/2R2oTGY+KPOJMIot9NFW9O43tcQZKLaWI4IowSJCkweEKYER5mbjlA9xN844tsSS2VBs/isnM0yTbZizLSySP8Sla5w6K5C7b1jSR9qd0ej7x2FvjoVjmS7ajvRuyEP7hphvR3PH42y7UfHLfMoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=LzgoruFX; arc=none smtp.client-ip=162.62.57.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1733582157; bh=j/ZbQl9W1wyOuJ0jHZ6jIl/gij9r9S4BpbjWGWYD/aY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=LzgoruFXvsndxpEHZ/KeUNsdyLB6Iw7kXlnX+9rqJkDpopQIhIR9xHuQk/ID+RG+9
+	 RCffBzzYpRJ0NuWaBhCm20u8wN8OEmYmDVu+9EezB7fKB5yQ679Zjn0o6BPPLieNFL
+	 iZ6G5fp5YSvb+/8ZpledxA5FInV59HP7bjK/L35E=
+Received: from jckeep-Lenovo-XiaoXinAir-14IIL-2020.bbrouter ([124.240.48.126])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 8F70F2A1; Sat, 07 Dec 2024 22:35:55 +0800
+X-QQ-mid: xmsmtpt1733582155ta6yz52i5
+Message-ID: <tencent_4237DDAC9DC29A9774F0F24D438C0ED31C05@qq.com>
+X-QQ-XMAILINFO: MgvSnRA+QZIWFa0Wq3p1t6TXosCLuFwe3R/mUkJu3pMnoKd3h13tzbxLqERM2P
+	 ZHWkZN0fu+2b6H+Ioba1sjiwIkWpgWBYTlCBk3MFK/3zUVy+vkbJP+Jd+y4SQhMkvelV1byz1c6J
+	 caLAlYvbdXu1GYjskGo0gynJ0RM11iV96wVCoSa/xBQLnGEDDnYHhMa3Bf21isJ5AzKqnUSZqLlM
+	 9rQOGHswIJScvx0fEeVrBqBAhvv7o4rVPMx7G9OSkw3pZbBV1DrK+V+oj67Teg5c/d8AKdHOPhAn
+	 Iim4kTvoymm1BfUzz9ZhGwhPbUXuOAaIMopq+MPq3gTHYM2rWK5sK5po7mNq415mllEK1kV1RFeg
+	 oWMoZT9whsj7+DjcaWoJ2D4SD8LsalB1K0024U97/FM5mBMYCGP8U0WzniaVc+w5gF4N6wGxpIn9
+	 EiOREihvpDNlnFg5v+BMyBFIXWASj0N5eLHH5NtGF1+f5n4YQODz63V7LKG/EoGPKglyVyBAwW90
+	 PyVWTL9pqXXKM0Emhr2Pty8hw02hdu/y+mQAhOOTZX4yJNYJlhZOla0WNYWOHGWCwaMKv7Nai7vo
+	 aQ10YXKwL3dNzw/SMrJA6LSClOHZXL6eQvex/+UsTJNEXaoVFOH46m45JJDrhvTt6GZ+6yx+QPgq
+	 v7Y81cxSSMcTlIiFoJofdpDelI9Ul0ujrxAYo0FKpIB9FotaJ5SZ/tUqWW3e1tPlZyb6/m9B0uB5
+	 cIwPVhavYDdRbTnC3mJ932Y9/EW1NZU8AsLlEGQEvsxErh3afR1qYPqZjxQ8LP/bYcUfuQGVkZLW
+	 E8zM7p+N1PJnh/b7wnZs2k2H8rBRUYqZbrpL9QYXFNUfNqVBjkkNPP9R2ZpcuA1uHsT2hp2dy5Cr
+	 5/VYPlp5lRCV0A0Tuy4QGONMfLa0cxdWjtPpusf4CyxFPafAsor+OfyqbyLZ1sp22BREx0pdrfug
+	 8F2Tj/8vy9cvdrfLBB8w==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Guangbo Cui <2407018371@qq.com>
+To: a.hindborg@kernel.org
+Cc: alex.gaynor@gmail.com,
+	aliceryhl@google.com,
+	anna-maria@linutronix.de,
+	benno.lossin@proton.me,
+	bjorn3_gh@protonmail.com,
+	boqun.feng@gmail.com,
+	dakr@kernel.org,
+	frederic@kernel.org,
+	gary@garyguo.net,
+	linux-kernel@vger.kernel.org,
+	lyude@redhat.com,
+	ojeda@kernel.org,
+	rust-for-linux@vger.kernel.org,
+	tglx@linutronix.de,
+	tmgross@umich.edu
+Subject: Re: [PATCH v4 02/14] rust: hrtimer: introduce hrtimer support
+Date: Sat,  7 Dec 2024 22:35:54 +0800
+X-OQ-MSGID: <20241207143554.899948-1-2407018371@qq.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241206-hrtimer-v3-v6-12-rc2-v4-2-6cb8c3673682@kernel.org>
+References: <20241206-hrtimer-v3-v6-12-rc2-v4-2-6cb8c3673682@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi,
- 
-	The v1.28 release of pahole and its friends is out, supporting
-optionally encoding BTF for all global variables, enhanced pretty
-printing of flexible arrays, distilled BTF base, bpf_fastcall BTF decl
-tags, and a growing suite of regression tests.
+> +#[macro_export]
+> +macro_rules! impl_has_timer {
+> +    (
+> +        impl$({$($generics:tt)*})?
+> +            HasTimer<$timer_type:ty>
+> +            for $self:ty
+> +        { self.$field:ident }
+> +        $($rest:tt)*
+> +    ) => {
+> +        // SAFETY: This implementation of `raw_get_timer` only compiles if the
+> +        // field has the right type.
+> +        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasTimer<$timer_type> for $self {
+> +            const OFFSET: usize = ::core::mem::offset_of!(Self, $field) as usize;
+> +
+> +            #[inline]
+> +            unsafe fn raw_get_timer(ptr: *const Self) ->
+> +                *const $crate::::time::hrtimer::Timer<$timer_type>
 
-Main git repo:
+Hi Andreas, an extra `::` here.
 
-   https://git.kernel.org/pub/scm/devel/pahole/pahole.git
+Best regards,
+Guangbo Cui
 
-Mirror git repo:
-
-   https://github.com/acmel/dwarves.git
-
-tarball + gpg signature:
-
-   https://fedorapeople.org/~acme/dwarves/dwarves-1.28.tar.xz
-   https://fedorapeople.org/~acme/dwarves/dwarves-1.28.tar.bz2
-   https://fedorapeople.org/~acme/dwarves/dwarves-1.28.tar.sign
-
-	We'll then try to release v1.29 shortly after Linus releases
-v6.13, and so on.
- 
-	Alan Maguire accepted to co-maintain pahole and as soon as he
-gets a kernel.org account he'll be able to help me in processing
-patches, that we expect to continue with the current fashion of being
-tested and reviewed by as many developers as possible, its greatly
-appreciated and a good way for us to keep this codebase in shape.
-
-	We have added 121 non-merge commits, with 
-30 files changed, 2806 insertions(+), 939 deletions(-).
-
-	Thanks a lot to all the contributors and distro packagers,
-you're on the CC list, we appreciate a lot the work you put into these
-tools,
-
-Best Regards,
-
-- Arnaldo
-
-pahole:
-
-- Various improvements to reduce the memory footprint of pahole, notably when
-  doing BTF encoding.
-
-- Show flexible arrays statistics, it detects them at the end of member types,
-  in the middle, etc. This should help with the efforts to spot problematic
-  usage of flexible arrays in the kernel sources, examples:
-
-  https://git.kernel.org/pub/scm/devel/pahole/pahole.git/commit/?id=6ab5318f536927cb
-
-- Introduce --with_embedded_flexible_array option.
-
-- Add '--padding N' to show only structs with N bytes of padding.
-
-- Add '--padding_ge N' to show only structs with at least N bytes of padding.
-
-- Introduce --running_kernel_vmlinux to find a vmlinux that matches the
-  build-id of the running kernel, e.g.:
-
-    $ pahole --running_kernel_vmlinux
-    /usr/lib/debug/lib/modules/6.11.7-200.fc40.x86_64/vmlinux
-    $ rpm -qf /usr/lib/debug/lib/modules/6.11.7-200.fc40.x86_64/vmlinux
-    kernel-debuginfo-6.11.7-200.fc40.x86_64
-    $
-
-  This is a shortcut to find the right vmlinux to use for the running kernel
-  and helps with regression tests.
-
-pfunct:
-
-- Don't stop at the first function that matches a filter, show all of them.
-
-BTF Encoder:
-    
-- Allow encoding data about all global variables, not just per CPU ones.
-    
-  There are several reasons why type information for all global variables to be
-  useful in the kernel, including drgn without DWARF, __ksym BPF programs return
-  type.
-
-  This is non-default, experiment with it using 'pahole --btf-features=+global_var'
-
-- Handle .BTF_ids section endianness, allowing for cross builds involving
-  machines with different endianness to work.
-
-  For instance, encoding BTF info on a s390 vmlinux file on a x86_64 workstation.
-
-- Generate decl tags for bpf_fastcall for eligible kfuncs.
-
-- Add "distilled_base" BTF feature to split BTF generation.
-
-- Use the ELF_C_READ_MMAP mode with libelf, reducing peak memory utilization.
-
-BTF Loader:
-
-- Allow overiding /sys/kernel/btf/vmlinux with some other file, for testing,
-  via the PAHOLE_VMLINUX_BTF_FILENAME environment variable.
-
-DWARF loader:
-
-- Allow setting the list of compile units produced from languages to skip via
-  the PAHOLE_LANG_EXCLUDE environment variable.
-
-- Serialize access to elfutils dwarf_getlocation() to avoid elfutils internal
-  data structure corruption when running multithreaded pahole.
-
-- Honour --lang_exclude when merging LTO built CUs.
-
-- Add the debuginfod client cache directory to the vmlinux search path.
-
-- Print the CU's language when a tag isn't supported.
-
-- Initial support for the DW_TAG_GNU_formal_parameter_pack,
-  DW_TAG_GNU_template_parameter_pack, DW_TAG_template_value_param and
-  DW_TAG_template_type_param DWARF tags.
-
-- Improve the parameter parsing by checking DW_OP_[GNU_]entry_value, this
-  makes some more functions to be made eligible by the BTF encoder, for instance
-  the perf_event_read() in the 6.11 kernel.
-
-Core:
-
-- Use pahole to help in reorganizing its data structures to reduce its memory
-  footprint.
-
-Regression tests:
-
-- Introduce a tests/ directory for adding regression tests, run it with:
-
-  $ tests/tests
-
-  Or run the individual tests directly.
-
-- Add a regression test for the reproducible build feature that establishes
-  as a baseline a detached BTF file without asking for a reproducible build and
-  then compares the output of 'bpftool btf dump file' for this file with the one
-  from BTF reproducible build encodings done with a growing number or threads.
-
-- Add a regression test for the flexible arrays features, checking if the various
-  comments about flexible arrays match the statistics at the final of the pahole
-  pretty print output.
-
-- Add a test that checks if pahole fails when running on a BTF system and BTF was
-  requested, previously it was falling back to DWARF silently.
-
-- Add test validating BTF encoding, reasons we skip functions: DWARF functions
-  that made it into BTF match signatures, functions we say we skipped, we did
-  indeed skip them in BTF encoding and that it was correct to skip these
-  functions.
-
-- Add regression test for 'pahole --prettify' that uses perf to record a simple
-  workload and then pretty print the resulting perf.data file to check that what
-  is produced are the expected records for such a file.
-
-Link: https://lore.kernel.org/all/Z0jVLcpgyENlGg6E@x1/
-Tested-by: Alan Maguire <alan.maguire@oracle.com>
-Tested-by: Jiri Olsa <jolsa@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
