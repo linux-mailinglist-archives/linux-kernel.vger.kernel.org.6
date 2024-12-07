@@ -1,92 +1,164 @@
-Return-Path: <linux-kernel+bounces-436216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33B79E828D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:59:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 337819E82B4
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 00:16:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 016AD281C0A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:59:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E255A281CC3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:16:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BCBC156641;
-	Sat,  7 Dec 2024 22:59:05 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E600A18754F;
+	Sat,  7 Dec 2024 23:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="T5xvrChB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="kliv8WYM"
+Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EC41F602
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 22:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7906335C0;
+	Sat,  7 Dec 2024 23:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733612345; cv=none; b=VX2GJb5ddXiuglkgm2l2vc2umK0VXOwqBvPV3QMRMJP8+/C17NO8fDGb7CzL+qOd5NvF6M8fs10MvdAoofs317oYWkIjdSdpw5xVSnR5JTfRoeB1bxIAuplkSUL3Qx7zO1kDUIhyOb+vvFUMyqmmJloR8WDujac6sFGGNJ6mwXA=
+	t=1733613359; cv=none; b=jTbaYIC6MdxtZOx6HnTQeMYEFac/ipbCq0CCkV+mHeSPLbdmpR3Rhim2GOn5HOhN+sKOBbLu/DELJOWNipZLpQaqCpp91klg5alJLrvvJrB1GuMEPZDDxPs6X/4nr7dtBXnUw8o/6IiWb4Plvgo1BrsBYuyUtN9aJbp52riuDeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733612345; c=relaxed/simple;
-	bh=VbfwDvpDkp4rqaMWSCWi7xCEr81XyjMqVFINXcn7O0U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Nrsy4c1BJu4MWbfuOVd5dHtRMKIkOg7Td3SlE+WYoXP9jvxO6HMqEIA2nC3+mdjsy64ETEs/Zly4bbz2PLwXPKi3KqJTC5Lc4eY+TV4s15v2OPe1T8Vlqfv2I5wQSaVjyhCqbDRli9hmsTuwCLi0MI5HxE7VQUE/CDfz8YBFoao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a81777ab57so13427165ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 14:59:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733612343; x=1734217143;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=R/VmBNzolQEI+3BQ4hjo9q3nxk8T9gmXnBExH9+rR2g=;
-        b=PoXzwi3aqw4G7LCpvLUKKtHWjBe0FbPd57e29UFui9BZjaHGaRpdML7E/3ztnvgHqH
-         co0tWFV6yRtyuWH/swCl4lh/d9d7wdtPTN6+h/g/YPmlW+pmMUOEvfeAfGcLcmmVFzEh
-         c37cemsK1hxB33VbTlsTDfZpM49ncaO2V38F1H56lyM7y8RYmXmPsz6ch1c9Qr1SfWVK
-         Bnsc1+ESXHYiq7JidDBChSwZAxNiAIlRw5L9+9QxoNbSGdmU5QVUlxRAd4rcCiCjsgZg
-         bEWSmOrcFdVhNf0WztuSRtZPDxrdWxvz7XVB0CveZoQ76ARQcZBvABIshTanviDLIAWT
-         dGvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWj5UaLME/AovN9Fj6UxjyvczEJESMKx3zEB842Ogn9/hPa0KqsOL6Zyr9w0UW7UiNXE7oaRjtaVl4CNFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzovJTz9Vi3M407HU/IDCSYsYQ9iFsszgz7fGtMwd/DKCL3HJkc
-	09JcagM/7/P10RNqN9L1/oS+KlnVaHivEttAknol8oSlYgQp1qlQYfrkOIZRdaQY8P0Cu+tcZ+Q
-	GfdZf320WqdKC/Zf1mCGLiGIVqzbsZgM1QnrwnrlzIe+4OYMGz29LnAk=
-X-Google-Smtp-Source: AGHT+IGlJLJ9elp4FLJhcyLSM6CNErXuufBhJOtN9fIxLINJ1c1Ag+4uv70DCO8ksH4V205lktYKJPZIPvzSVZfJhizmWkXy9fvC
+	s=arc-20240116; t=1733613359; c=relaxed/simple;
+	bh=93QMHm37WkezH+cncGqIf+PWHiEaJmdlvWMX66Qblvo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=nf44jD9hi7xKghetyy108PE/81X/wwlXx8sR+ujzOGPSe2cQp3Z4eBhtbDWSlJhIAGzG5rXli6zCVDi+E07tmqWRwoNkIXqyleXoJ1YmY44pejhLi+YUne5hRT+P78cucVNtXNe0Nid2LQfibBzGEBwaZCQXR6YDwOW7+BotDyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=T5xvrChB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=kliv8WYM; arc=none smtp.client-ip=103.168.172.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailflow.phl.internal (Postfix) with ESMTP id BCB1D2005E2;
+	Sat,  7 Dec 2024 18:15:55 -0500 (EST)
+Received: from phl-imap-08 ([10.202.2.84])
+  by phl-compute-03.internal (MEProxy); Sat, 07 Dec 2024 18:15:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733613355;
+	 x=1733620555; bh=GZeLGUQSlgrpcYlHaZgXjTJDLDoQgyOhF9e5lkHQDYk=; b=
+	T5xvrChBb8PG/pBryugusd1QZjNWlywuoPFitoZRdE7IG7+CqyBVSNjUvstodnp6
+	HsHS5ZpjOuYtEsh0sag7SO6z8Y1oF8voYBfvL67lmOn3FuyJJPuVk7DFDf5zRbSz
+	qCaVVid9mNg/aRYid9AIIpFE1VQH16ydS4+joNcUNwjMThE89aDvVB+9j8DygGMa
+	rT6UZf8Vrx4IapRpzXdcQ2oicmEybLy94VRvstULnNdvG7YlvROMH8NyCUgmo3e1
+	JDpCLQ0sPUDhuXnVfv9SdiD1Tqy5Ogo1Xh433FGI6RUjwdduBcUVor2JREPAqcTD
+	k/hR22apYeqMl0jhLvDz0w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733613355; x=
+	1733620555; bh=GZeLGUQSlgrpcYlHaZgXjTJDLDoQgyOhF9e5lkHQDYk=; b=k
+	liv8WYMKZbUh1FY0u7GKSx0yGyzaJOgoHmq29QTU4rb+gbOhdWnv970Wx0xPmvU/
+	DwMLp5Gq+qfvRG9K//90HtTIlHlxvYfTyJXQypZH9U37vo0OdMpoh0Ful0DohXND
+	MjUUYoZzr9Yvoj0cyK5OtfI2tQaJe0OVv6CtDrNmnNfOGeAoUoYcwfiUHzLdQ3mz
+	61KuBTFBgBTkBXIzOEYTTlAOZAdftVBsEgsiS6GacJ7ZIJ9zSZGTrP5DIwyiOu+Z
+	EcKoy0x6WoF0sQ4YS0XRW1FuYIXlrIeSqX6qqlchldsY8+wTkmuHqP0Yp01L8skR
+	I/p5/N4Y70iy7vYx6bYgg==
+X-ME-Sender: <xms:KtdUZ3Wd2cHW8TuX261JnGKHEUhLcHR8GcDuMgoyr92z5PDJy4dAkw>
+    <xme:KtdUZ_lE8fJKOT_7iPFXWNVujSwlopKmqbn77akYpEBr_k7cQNivBR_MO2lrkH2iJ
+    3peJWzHgEUtMbbgpA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjedvgddtiecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenfghrlhcuvffnffculdefhedmnecujfgurhepofggfffhvfevkfgj
+    fhfutgfgsehtjeertdertddtnecuhfhrohhmpedfffgrnhhivghlucgiuhdfuceougiguh
+    esugiguhhuuhdrgiihiieqnecuggftrfgrthhtvghrnhepgeelieffhfduudeukefhieef
+    gfffgeduleevjeefffeukefgtdelvddvfeefiedunecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiidpnhgspghr
+    tghpthhtohepvddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmse
+    gurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepshgufhesfhhomhhitghhvghvrdhm
+    vgdprhgtphhtthhopegvugguhiiikeejsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjh
+    hohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohephhgrohhl
+    uhhosehgohhoghhlvgdrtghomhdprhgtphhtthhopegurghnihgvlhesihhoghgvrghrsg
+    hogidrnhgvthdprhgtphhtthhopegrnhgurhhiiheskhgvrhhnvghlrdhorhhgpdhrtghp
+    thhtoheprghstheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohephhgrfihksehkvghrnh
+    gvlhdrohhrgh
+X-ME-Proxy: <xmx:KtdUZzZsnq93LWP5NqQhUkaW8BmBQXAYNSxHqUFVRSvxGapljDfVqw>
+    <xmx:KtdUZyUDWPYx4RXfj7T6VKPWecr3BY5Llb8w0IGWwjmkPeG-FCYDuA>
+    <xmx:KtdUZxlZrC7StRBQaRpnDzcBEuAelKXuXEqF662I2giG2xc8xHPzsQ>
+    <xmx:KtdUZ_cBYQmWIwLrOkAXc9VbYVx-KfDX6VaA_qS3cR6FgkaspenNOA>
+    <xmx:K9dUZ8pPW0TdUiazAXyHbJjUt6cvK7hcoYAUGg3lS3pt_quB8f0m_Y_a>
+Feedback-ID: i6a694271:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D5F9F18A0068; Sat,  7 Dec 2024 18:15:54 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b4a:b0:3a7:e67f:3c5b with SMTP id
- e9e14a558f8ab-3a811d775dfmr78128785ab.2.1733612342844; Sat, 07 Dec 2024
- 14:59:02 -0800 (PST)
-Date: Sat, 07 Dec 2024 14:59:02 -0800
-In-Reply-To: <67388dcc.050a0220.bb738.0008.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6754d336.050a0220.2477f.0021.GAE@google.com>
-Subject: Re: [syzbot] [f2fs?] kernel BUG in f2fs_evict_inode (4)
-From: syzbot <syzbot+5c81eb8c0a380fa578b5@syzkaller.appspotmail.com>
-To: chao@kernel.org, drosen@google.com, jaegeuk@kernel.org, 
-	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Date: Sat, 07 Dec 2024 15:15:34 -0800
+From: "Daniel Xu" <dxu@dxuuu.xyz>
+To: "Martin KaFai Lau" <martin.lau@linux.dev>
+Cc: "Alexei Starovoitov" <ast@kernel.org>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Andrii Nakryiko" <andrii@kernel.org>,
+ "Jesper Dangaard Brouer" <hawk@kernel.org>, qmo@kernel.org,
+ "John Fastabend" <john.fastabend@gmail.com>,
+ "David Miller" <davem@davemloft.net>,
+ "Daniel Borkmann" <daniel@iogearbox.net>,
+ "Eduard Zingerman" <eddyz87@gmail.com>, "Song Liu" <song@kernel.org>,
+ "Yonghong Song" <yonghong.song@linux.dev>, "KP Singh" <kpsingh@kernel.org>,
+ "Stanislav Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>,
+ "Jiri Olsa" <jolsa@kernel.org>, "bpf@vger.kernel.org" <bpf@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ "Antony Antony" <antony@phenome.org>,
+ =?UTF-8?Q?Toke_H=C3=B8iland-J=C3=B8rgensen?= <toke@kernel.org>
+Message-Id: <7a5067a7-2a76-45d3-8995-87eff3e5996d@app.fastmail.com>
+In-Reply-To: <8da87bf2-0084-4a47-b138-5dc380e7435e@linux.dev>
+References: 
+ <8ae2c1261be36f7594a7ba0ac2d1e0eeb10b457d.1733527691.git.dxu@dxuuu.xyz>
+ <8da87bf2-0084-4a47-b138-5dc380e7435e@linux.dev>
+Subject: Re: [PATCH bpf-next] bpftool: btf: Support dumping a single type from file
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-syzbot has bisected this issue to:
 
-commit acff9409dd40beaca2bd982678d222e2740ad84b
-Author: Jaegeuk Kim <jaegeuk@kernel.org>
-Date:   Tue Nov 12 01:04:58 2024 +0000
 
-    Revert "f2fs: remove unreachable lazytime mount option parsing"
+On Fri, Dec 6, 2024, at 5:50 PM, Martin KaFai Lau wrote:
+> On 12/6/24 3:29 PM, Daniel Xu wrote:
+>> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+>> index d005e4fd6128..668ff0d10469 100644
+>> --- a/tools/bpf/bpftool/btf.c
+>> +++ b/tools/bpf/bpftool/btf.c
+>> @@ -953,6 +953,7 @@ static int do_dump(int argc, char **argv)
+>>   		NEXT_ARG();
+>>   	} else if (is_prefix(src, "file")) {
+>>   		const char sysfs_prefix[] = "/sys/kernel/btf/";
+>> +		char *end;
+>>   
+>>   		if (!base_btf &&
+>>   		    strncmp(*argv, sysfs_prefix, sizeof(sysfs_prefix) - 1) == 0 &&
+>> @@ -967,6 +968,17 @@ static int do_dump(int argc, char **argv)
+>>   			goto done;
+>>   		}
+>>   		NEXT_ARG();
+>> +
+>> +		if (argc && is_prefix(*argv, "root_id")) {
+>> +			NEXT_ARG();
+>> +			root_type_ids[root_type_cnt++] = strtoul(*argv, &end, 0);
+>
+> I only looked at the do_dump(). Other existing root_type_ids are from 
+> the kernel 
+> map_get_info and they should be valid. I haven't looked at the 
+> dump_btf_*, so 
+> ask a lazy question, is an invalid root_id handled properly?
+>
+> Others lgtm.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=130903e8580000
-start commit:   b8f52214c61a Merge tag 'audit-pr-20241205' of git://git.ke..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=108903e8580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=170903e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=335e39020523e2ed
-dashboard link: https://syzkaller.appspot.com/bug?extid=5c81eb8c0a380fa578b5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155bd0f8580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=13cad330580000
+Good question. Passing an invalid btf ID results in half the
+boilerplate being printed to terminal before an early exit and
+an unclean return code.
 
-Reported-by: syzbot+5c81eb8c0a380fa578b5@syzkaller.appspotmail.com
-Fixes: acff9409dd40 ("Revert "f2fs: remove unreachable lazytime mount option parsing"")
+Probably not be the best way to error. I'll send v2 with an
+earlier error check.
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Thanks,
+Daniel
 
