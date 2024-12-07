@@ -1,139 +1,81 @@
-Return-Path: <linux-kernel+bounces-435808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54E29E7D24
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:02:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19CC167FAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:02:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB742DDD9;
-	Sat,  7 Dec 2024 00:02:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gs2GpkxI"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3C09E7D47
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:11:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ED5C13C
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 00:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4169E28244E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 00:10:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63F37139B;
+	Sat,  7 Dec 2024 00:10:55 +0000 (UTC)
+Received: from mail115-76.sinamail.sina.com.cn (mail115-76.sinamail.sina.com.cn [218.30.115.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFF7196
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 00:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733529764; cv=none; b=mMd65jDPkKNKgml25eQfl2fiy4WDMmWY1X+aPBrsWIqH7JH0psHOc9v/wIgDIctpTlnYvLrGgcv26YZo7Oh06zIS5vKRZAQas471MHf6YKjx36kOkMiKi4t8+ccx8ovYJ1CVWLU1l/rapYVQefn6KRAmsfJQaLTvQUF4Y/cW50g=
+	t=1733530255; cv=none; b=Vore4pKZHHbLm3cvYXgNp1MjeL7n0Uv5LmzbIpZeAmHi78vs8Z4cl4yX6p4G32YL4DGaHp3H1LrP7EGG6zsBs3f8l1/gxJ/3GYkP9fLXM55tCa2HNm+Z4er4a0UcNT+dtAoW793s97om45uxts5A3xuzcOmhBiKSm8PKemkcKxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733529764; c=relaxed/simple;
-	bh=Kmyov0RfbE5fiVB/uXlrWmVQlhlvoypjGbI6ngA1SDo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qMbV6v3oil1WkkCbYZ/PBN92vaEclbvwrQWm+zAv9EkgwyE9q6CzOqZv0YssiuQqhZydpaPiYUjucaAQ7LwOdgVNjoVu78InMbQgYsOWEjHojrDQYigydgx+oQtLsXLyFrMjG/22ocAgzxjrlsw9DzSvm/Lxg1rvjfXsR6YMGHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gs2GpkxI; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733529763; x=1765065763;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Kmyov0RfbE5fiVB/uXlrWmVQlhlvoypjGbI6ngA1SDo=;
-  b=gs2GpkxI3oLwuFVYglHh9us0b8fBwpFdHdnkMSemePElfaUmUV+gX66L
-   G+j21jBQM07mv+rifq2baH4ubkUhL3QGAh7CAdkfoOol/XSy0jG9HOuA/
-   1d5f27f/mGBfu+G9NC7weTB9oEAJaWG+TXlLVyoH98mO/DcdJ0tphPkw8
-   oTq9pI419kB/IJvwdqvc0soTFEvGiCXSTaI4on9GqUzPzdyPawZxbtWwt
-   gtsOGraCkc00ywpF1NFcyUQvmEDmXPmg3RzJ/gj3YQNjPOOA8HzDw1Wv3
-   VHVd9SVl/zJ5msruNSCAJJRzruj7JTe+5+A42TeFaQ0IK/X/38Wkdw4Ip
-   A==;
-X-CSE-ConnectionGUID: IF0BUtPsQ1auILW3JPyK8g==
-X-CSE-MsgGUID: PhuSMmVMSA6oIug67FU3OA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="44503182"
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="44503182"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 16:02:40 -0800
-X-CSE-ConnectionGUID: iVjLms+OSHi2+4VfTyoXbg==
-X-CSE-MsgGUID: V5xQGTXfQlypi00M43pqsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
-   d="scan'208";a="99607130"
-Received: from mdroper-mobl2.amr.corp.intel.com (HELO [10.124.220.211]) ([10.124.220.211])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 16:02:39 -0800
-Message-ID: <c4865084-f52f-4304-b029-802bde676d7d@intel.com>
-Date: Fri, 6 Dec 2024 16:02:38 -0800
+	s=arc-20240116; t=1733530255; c=relaxed/simple;
+	bh=cyX2KMEOws6GIiD4mwBWj+STXCVX5S81kBdlljRS90k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=uNf5EKRwp9DY00HLFX0SLZTv4TnIBW4WDWQdSVvU2oY7zqcKK3vAV4zKaFaOqbTtXW8Tf7ool/PuXqwp6N8FzVYgt6pfXTm8zKx8GCUN+Xd1G9TgSGLetLX1q2T8XZo62hXTvzg2sCmaEMu5DCJmVHlXAuAurzGk/GN3I53eAy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.51.203])
+	by sina.com (10.185.250.22) with ESMTP
+	id 6753913C00002248; Sat, 7 Dec 2024 08:05:21 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 6978697602722
+X-SMAIL-UIID: 26B55BE698D5405C81E72A9D01EF5BA1-20241207-080521-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+2eab87cf3100f45423ec@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] [s390?] KASAN: slab-use-after-free Read in netdev_walk_all_lower_dev
+Date: Sat,  7 Dec 2024 08:05:07 +0800
+Message-Id: <20241207000507.724-1-hdanton@sina.com>
+In-Reply-To: <67531f5d.050a0220.2477f.0006.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] x86/cpu: Replace PEBS use of 'x86_cpu_desc' use with
- 'x86_cpu_id'
-To: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Dave Hansen <dave.hansen@linux.intel.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
- bp@alien8.de, kan.liang@linux.intel.com, mingo@kernel.org,
- peterz@infradead.org, tony.luck@intel.com
-References: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
- <20241206193834.3ABE2E95@davehans-spike.ostc.intel.com>
- <20241206235812.g56p6p353fgbxm5h@desk>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241206235812.g56p6p353fgbxm5h@desk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 12/6/24 15:58, Pawan Gupta wrote:
->> +	X86_MATCH_VFM_STEPPINGS(INTEL_SKYLAKE_L,	 3,  3, 0x0000007c),
->> +	X86_MATCH_VFM_STEPPINGS(INTEL_SKYLAKE,		 3,  3, 0x0000007c),
->> +	X86_MATCH_VFM_STEPPINGS(INTEL_KABYLAKE,		 9,  9, 0x0000004e),
-> This ...
+On Fri, 06 Dec 2024 07:59:25 -0800
+> syzbot found the following issue on:
 > 
->> +	X86_MATCH_VFM_STEPPINGS(INTEL_KABYLAKE_L,	 9, 12, 0x0000004e),
->> +	X86_MATCH_VFM_STEPPINGS(INTEL_KABYLAKE,		10, 13, 0x0000004e),
-> ... and this can also be combined into a single entry.
+> HEAD commit:    896d8946da97 Merge tag 'net-6.13-rc2' of git://git.kernel...
+> git tree:       net
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10de5330580000
 
-Good catch, thanks!
+#syz test
+
+--- x/net/smc/smc_core.c
++++ y/net/smc/smc_core.c
+@@ -1896,7 +1896,7 @@ int smc_vlan_by_tcpsk(struct socket *clc
+ 
+ 	priv.data = (void *)&ini->vlan_id;
+ 	rtnl_lock();
+-	netdev_walk_all_lower_dev(ndev, smc_vlan_by_tcpsk_walk, &priv);
++	netdev_walk_all_lower_dev_rcu(ndev, smc_vlan_by_tcpsk_walk, &priv);
+ 	rtnl_unlock();
+ 
+ out_rel:
+--
 
