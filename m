@@ -1,164 +1,171 @@
-Return-Path: <linux-kernel+bounces-436028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2CF49E8024
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:20:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 722399E8034
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:51:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBF331883D01
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54A6F1668F7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7DA2146D65;
-	Sat,  7 Dec 2024 13:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9013714830A;
+	Sat,  7 Dec 2024 13:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QrkSBdZF"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RZXJ8bn4"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EF351DDEA;
-	Sat,  7 Dec 2024 13:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E08F1E529;
+	Sat,  7 Dec 2024 13:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733577597; cv=none; b=bTJidv/C8UjztmQgVAUvAOTOE8EoD6t0OVoM9x7TCw0RL3BbxVs2OoEnk7WguWgncxJzbUCUMPjhGw32x2bw1Ijsz6sQ1l6cyv8w+5XBNRt4CT+GC7cBUaVAwXNl/caJlWIwfRKDeaX54Ru4GlIumQULx7/SfYeW0hdwKaUQLyQ=
+	t=1733579456; cv=none; b=HroVBm4Feoec/NyAwldlOJOKOgbIbhuTVqvzco2CYCxGqHuJwHI2ZdfQ482/pIG0bUAETAyuCHMnPTnCc9oNAaOcJoBB2MuoJut8mS3cDH663+xYJXgZEPSe3KkQpUbYtZQUIvGYPjqwARLQbaXGJ+POajIL8FdMsY+lqrK60aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733577597; c=relaxed/simple;
-	bh=iuCsw+WfqbPsOmS1nJ9WB0REkyl0evY9QKZWW0MOJbs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oS0Hn/AfodsSy6GRoO0aJKG0uTELJN1v9rhudqQdw9kO+RHNYddSviLR2unOvayuvLA8euyg6cv0xu88KBgZlengAX7bOl+tVSn529Va4JafuMQzGInZ1WOTGk50memCDl9ykK2VreHw5t2oPHytsvWynM+cdnaYpCvS0vUvp6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QrkSBdZF; arc=none smtp.client-ip=209.85.216.51
+	s=arc-20240116; t=1733579456; c=relaxed/simple;
+	bh=tqpi9D9V12ZhYD/Eo2oo1VJUJRZoXZAOBye2Q9k0rME=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aHWmRs/bjGRop7D/YZNoQ27TOFAf6/O/5W28DDeL5VPG1vQ/KjVbiUE3OKuNHOKag35NgTRB3KNf2ndifuScQrNN5+x+m0IFtEJ8XqWs7F5Q0gNOxw6i28lXSm1WZM2XHpYkFYTeM9PiVJ7OeYMaAa/Ax9QpylsO7uyKjp34DJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RZXJ8bn4; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2ef89dbd8eeso287178a91.0;
-        Sat, 07 Dec 2024 05:19:55 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so470249566b.1;
+        Sat, 07 Dec 2024 05:50:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733577595; x=1734182395; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FDBZpTvNiR/DiXDOnPKbSZlVKfo3SdqCEnbL2Ljivn8=;
-        b=QrkSBdZFyiPQYKcy/2tSvjvH7JICNEjNPTT9AV3M5uY6p9WbyncSuZ/e0mTs9WcP0o
-         0dvje5ZorfH3v6juRw36qZnKb3goJ0J/CzMIaGJgmNaJ7bdGhhUP1mkSW/BCVbM8xpbD
-         Si4WBVeV3jrB1MKYzDGECTb6JGgaClNszuxIpB67EfqT+5B1+WAzJO4cUCGu6pgr1oc/
-         koN15mKFd6puEBKBWfwPXk/QQN0qLFXltDGJFwtOr1ZWiSJZe4FyPQ8nEpEOHOlj2PVx
-         CAco7ThOGN+uLnb5Fx5jQ3PhxMXUKUKUhtl6p0rvD5az6zWeDjADr/Cu4Kr06zBzeKsM
-         0xcg==
+        d=gmail.com; s=20230601; t=1733579453; x=1734184253; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xHFw9+ZFS/5kCWej9Q2r4cNs9qWMsdVVVFbrLzYifFk=;
+        b=RZXJ8bn4UfsSbL81PCYYSYu2+C6r9uIsZnYejqWiTa6mbpTrv5IPS0mtV4DJAW1Lqa
+         nSmgsbnjfVNbTb67ybCeD4ShwUXnhcKXXcKbo2Pzlx7sKt6TGKHmdOLXdr5XHcVwpp5C
+         SGi+uiXozLRlkNLzX6Ajeihnrw0CvxLFWErUT7q/L6VL8KT3WOm7tdez4ofpdNPG+1O3
+         3MvPrXgmFvxtWWKOdfiKJySORn6HZ5TeGpDOz1FXNoBt/II1u9Cr3Y1kwvb+YgN1av2P
+         khuCv+3nZvgIMIxuVk6W3KDZZ8jAphEctGAgKq0H6plUNT9I16qSrRN9LEE1lsthSq5U
+         ZtrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733577595; x=1734182395;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FDBZpTvNiR/DiXDOnPKbSZlVKfo3SdqCEnbL2Ljivn8=;
-        b=d0krr/OBKv+VLxFO+ZwtWJ3OZAMsrSe2q5SC18G+mwY9MCrGdeYXhEfdt6VR5gmYTM
-         oKf0BoLabvW0NYCESY1BcfK0RkzGVWgcbfWqMs6LbXN6PKKkiOBhSQfqDPZbK/snRrrE
-         EzSaueyF/xw2PdP5Odo8Spsc6CM9UK0tJFUfz6m+BPqK7ajTZhWusy58Z+PviQECsyFK
-         AlEhjN43URsuUoqs5ThLmfths+XkosIW1b4+O0dqNj+Q8YGtarNUUBz3j2yPPoMHSGn+
-         SqY+XNT4EJPLIrxAa2iqPfgJ8IpHXH+sYkwvx701srk04tti3vkw/ZFi+gRRQlZgqFmU
-         +Xag==
-X-Forwarded-Encrypted: i=1; AJvYcCU9t39QXdFPdhwgTms0iVYnaYMAjM52d+goKitsT3QnoIjrKuhm/KdGeoltjH1/NNDUMVbbzUujj1uMJPXjLw==@vger.kernel.org, AJvYcCVkm54UKp/3rB+8WNHDKLOLrsj7Ac0Rh+uyXXm/HklQ22h83AQIjw3OiZfnKGbVONmoews+ZtUwWrDT2Y3b@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkbElgbbDjwZIp5ECkuY6v3KVybby5pnSmfHEyBcIgLtPJkzzT
-	1EkCgnfefbcFB8/YvDecMTgUm0Q0tfvCRjCzPF5hap/d7WTKOJMD
-X-Gm-Gg: ASbGncuUSvy4d0cscsB5Zg+heAbAmk8RRVi1tDG5upOB6a/9S3Jba2NLCOsCLJmLfOG
-	YNabC224CK0LP27exL1wFGsFnuc3s79BLo41oQRfZX5YIoKrMg/2uyFgKyxCGi6Cdp/U+DFj/Q0
-	TZ4RnnzRHLhllQFPKi+oV8f4KjNxON5ZdK1tn0KvmrOTPR8rhKM1PNHg80PeXjWilYycN7tJ/ZY
-	B7eVw1wSyjFGPOsM7QpN6YgF2kdoX+NjXBjElGfjI62kuKbPxxJ4s2baYGyeqyNmG9azpkQN0Ah
-	/1Bt
-X-Google-Smtp-Source: AGHT+IHf3PzcsFhRJwfL8oUaq3bTjI83mlsZWslYAeGnBswT9OCvEzi2Bb0eQ6J6qn9bWsP8uV/IwA==
-X-Received: by 2002:a17:90b:3d4c:b0:2ee:a58d:cd8b with SMTP id 98e67ed59e1d1-2ef6a6c11a6mr8754864a91.18.1733577594826;
-        Sat, 07 Dec 2024 05:19:54 -0800 (PST)
-Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef94b62561sm120716a91.1.2024.12.07.05.19.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 05:19:54 -0800 (PST)
-From: Kuan-Wei Chiu <visitorckw@gmail.com>
-To: kent.overstreet@linux.dev
-Cc: irogers@google.com,
-	colyli@suse.de,
-	peterz@infradead.org,
-	akpm@linux-foundation.org,
-	jserv@ccns.ncku.edu.tw,
-	linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kuan-Wei Chiu <visitorckw@gmail.com>
-Subject: [PATCH] lib min_heap: Add min_heap_empty()
-Date: Sat,  7 Dec 2024 21:19:48 +0800
-Message-Id: <20241207131948.1881301-1-visitorckw@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1733579453; x=1734184253;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xHFw9+ZFS/5kCWej9Q2r4cNs9qWMsdVVVFbrLzYifFk=;
+        b=G5lsEG3M+OccCu5VQBnX1CH/OtcNdfnvQ6IXDOLIa/71CjHdPC9EdUUopEHXBL45QZ
+         rJbG0d4f7zuStv6DNx4RR5tgRfnudAE+x4To5b4Y95vdQ0EaERWBHmISslkGz9PAR3Wl
+         uZ/Iu6cCZdnuN7aQtaYZghXSuOoiJXSsFn51Hvs74QL12YsWAQxRIQXgBS0vmO+jDJNV
+         yqFnoYBExUmI+QGbYeA8FWiAkb2q8k368FhV/hQo2us5QHEE9kHLIkphVUiU5dZqX+pC
+         d8UZbsZvmSMWLDyW6KjDRalk7gIUaiwu+V+H6SBp0QqnYAJd3QzdrwHVltHc8JRr/9cf
+         ma6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVs0cKj2PJMlk2F3F8sJkW2QBCDhoTupqOX4Dqsj6I0WW0Mjwjrc+8P8cPrsB1Ybq/D8IjcTOB+m4c0gTX/@vger.kernel.org, AJvYcCW05vw9hvNI91UcmBLkA2k5uQ4C8vK7sjN6yreqBjpdvQHNjQQPS5H6xHGauCyndvLDCGOlaUxhTU54SFWoT80=@vger.kernel.org, AJvYcCXQR+Guu9SvOWUlzXJ6kkCfTDBOYDXJ/NUBabTVFW79+Nf7ooXui8Ni5Dqcs6eifm3DYcJyzpIAkgkS5CDI@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz55p9tYMgSlwKUi474MmCrlB+MkKVb0AUA+EKYPerZoQjHxH87
+	qsoAyup0B2Uh6VYp7GhpyrL127j/tFQ5OnUiw1Cn6oUarATba373uZ9/rPJNJgDHDMXxkb2INId
+	lEuAO3ubGw2+ye1rGZzmaL9hJt2g=
+X-Gm-Gg: ASbGncvFS0pbPOYSZSGI1LhqoPuxgDqW+PnTLD5iDupclcqcvvnLIMUCHFGem4D/lQd
+	Jd3uyyQw8mIlyYApO7MqOgE+Bv9dZXDo=
+X-Google-Smtp-Source: AGHT+IH6k2GyIlgxnGFl/g0StSGsvarnhcm9pbDRqjwA6P99KliYB7aZHWQfO50sclN4sezlsrdFqfGV/df1a3TMj88=
+X-Received: by 2002:aa7:cf83:0:b0:5d3:d7c2:ca58 with SMTP id
+ 4fb4d7f45d1cf-5d3d7c2cad3mr7104642a12.24.1733579453216; Sat, 07 Dec 2024
+ 05:50:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com> <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com> <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
+ <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
+ <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de> <CAMZ6RqJGqBqvgxzp5yPFY1pk0WkkwEMM34qU-dZ3kXfsnKaqEg@mail.gmail.com>
+ <429e7c6713ecc94494d9107e5f5a1f0c8e854f23.camel@gwdg.de>
+In-Reply-To: <429e7c6713ecc94494d9107e5f5a1f0c8e854f23.camel@gwdg.de>
+From: Vincent Mailhol <vincent.mailhol@gmail.com>
+Date: Sat, 7 Dec 2024 22:50:41 +0900
+Message-ID: <CAMZ6RqL+iS6GVsY20=O6GdQakRpp7XdewZJsUbmE5OCsKaHR6Q@mail.gmail.com>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of __is_constexpr()
+To: Martin Uecker <muecker@gwdg.de>
+Cc: David Laight <David.Laight@aculab.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add min_heap_empty() which returns a boolean value indicating whether
-the heap is empty.
+On Sat. 7 Dec. 2024 =C3=A0 22:19, Martin Uecker <muecker@gwdg.de> wrote:
+> Am Samstag, dem 07.12.2024 um 21:45 +0900 schrieb Vincent Mailhol:
+> > On Sat. 7 Dec. 2024 at 17:39, Martin Uecker <muecker@gwdg.de> wrote:
+> > > Am Freitag, dem 06.12.2024 um 16:26 +0900 schrieb Vincent Mailhol:
+>
+> ...
+>
+> > > I find it amazing how much time the Linux kernel community spends
+> > > revising code to make it work perfectly.
+> > >
+> > > Still, I am wondering whether some of this time and effort should not
+> > > be targeted at C compilers and language work to make these macro
+> > > hacks unnecessary?
+> >
+> > It seems to me that the long term solution to this problem are the
+> > constexpr functions.
+>
+> How would constexpr functions help here?  (I am a bit sceptical about
+> constexpr functions.)
 
-Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
----
-Hi Kent,  
-If you plan to use min_heap_empty(), feel free to take this patch.
+I was thinking of some of the "side features" of constexpr functions. Namel=
+y:
 
- include/linux/min_heap.h | 13 +++++++++++++
- lib/min_heap.c           |  6 ++++++
- 2 files changed, 19 insertions(+)
+  - std::is_constant_evaluated
+  Link: https://en.cppreference.com/w/cpp/types/is_constant_evaluated
 
-diff --git a/include/linux/min_heap.h b/include/linux/min_heap.h
-index e781727c8916..bba01453c522 100644
---- a/include/linux/min_heap.h
-+++ b/include/linux/min_heap.h
-@@ -240,6 +240,16 @@ bool __min_heap_full_inline(min_heap_char *heap)
- #define min_heap_full_inline(_heap)	\
- 	__min_heap_full_inline((min_heap_char *)_heap)
- 
-+/* Check if the heap is empty. */
-+static __always_inline
-+bool __min_heap_empty_inline(min_heap_char *heap)
-+{
-+	return !heap->nr;
-+}
-+
-+#define min_heap_empty_inline(_heap)	\
-+	__min_heap_empty_inline(container_of(&(_heap)->nr))
-+
- /* Sift the element at pos down the heap. */
- static __always_inline
- void __min_heap_sift_down_inline(min_heap_char *heap, int pos, size_t elem_size,
-@@ -417,6 +427,7 @@ bool __min_heap_del_inline(min_heap_char *heap, size_t elem_size, size_t idx,
- void __min_heap_init(min_heap_char *heap, void *data, int size);
- void *__min_heap_peek(struct min_heap_char *heap);
- bool __min_heap_full(min_heap_char *heap);
-+bool __min_heap_empty(min_heap_char *heap);
- void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
- 			  const struct min_heap_callbacks *func, void *args);
- void __min_heap_sift_up(min_heap_char *heap, size_t elem_size, size_t idx,
-@@ -438,6 +449,8 @@ bool __min_heap_del(min_heap_char *heap, size_t elem_size, size_t idx,
- 	(__minheap_cast(_heap) __min_heap_peek((min_heap_char *)_heap))
- #define min_heap_full(_heap)	\
- 	__min_heap_full((min_heap_char *)_heap)
-+#define min_heap_empty(_heap)	\
-+	__min_heap_empty(container_of(&(_heap)->nr))
- #define min_heap_sift_down(_heap, _pos, _func, _args)	\
- 	__min_heap_sift_down((min_heap_char *)_heap, _pos, __minheap_obj_size(_heap), _func, _args)
- #define min_heap_sift_up(_heap, _idx, _func, _args)	\
-diff --git a/lib/min_heap.c b/lib/min_heap.c
-index 4485372ff3b1..f546cd110cea 100644
---- a/lib/min_heap.c
-+++ b/lib/min_heap.c
-@@ -20,6 +20,12 @@ bool __min_heap_full(min_heap_char *heap)
- }
- EXPORT_SYMBOL(__min_heap_full);
- 
-+bool __min_heap_empty(min_heap_char *heap)
-+{
-+	return __min_heap_empty_inline(heap);
-+}
-+EXPORT_SYMBOL(__min_heap_empty);
-+
- void __min_heap_sift_down(min_heap_char *heap, int pos, size_t elem_size,
- 			  const struct min_heap_callbacks *func, void *args)
- {
--- 
-2.34.1
+  - if consteval
+  Link: https://en.cppreference.com/w/cpp/language/if#Consteval_if
 
+I did not try it, but looking at these, I believe that this would
+allow us to rewrite most of our macros into some constexpr functions.
+
+> > But the core issue is that before getting this support in Linux, we
+> > have to wait for this to be added to the C2Y draft, then implemented
+> > in the compilers (probably just reusing the C++ constexpr functions)
+> > and finally wait maybe one more decade for the C2Y support to reach
+> > the kernel. For reference the kernel supports C11 only from 2022=E2=80=
+=A6 So
+> > maybe we will see those in the kernel around 2037? Meanwhile, we have
+> > to deal with those hacks.
+>
+> If we do not collaborate on proper solutions, then you might have
+> to wait much longer.
+
+I was invited to WG14 this September. For now, I am only lurking. The
+thing I have in mind right now is to write a paper to allow the use of
+static_assert() in expressions (i.e. make it return 0 on success).
+That should be a relatively small change, but would bring a nice
+quality of life improvement.
+
+For context, look at this:
+
+  https://lore.kernel.org/all/CAHk-=3DwjLSEcZ5LdW+3C+9rtjvNPHZT6zdk0POj67T5=
+k2ZpDbgA@mail.gmail.com/T/#m1ba33a804b4041154b72a1d0333f90ec7204c461
+
+And I will definitely follow the progress of constexpr functions in C2Y.
+
+
+Yours sincerely,
+Vincent Mailhol
 
