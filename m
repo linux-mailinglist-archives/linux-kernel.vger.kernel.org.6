@@ -1,144 +1,167 @@
-Return-Path: <linux-kernel+bounces-436003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B0909E7FBC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:44:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6498A16702B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:44:50 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C05C91465BB;
-	Sat,  7 Dec 2024 11:44:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="EN6HytxB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F20019E8006
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:05:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F82140E30;
-	Sat,  7 Dec 2024 11:44:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB74282221
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:04:59 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB4E61494A3;
+	Sat,  7 Dec 2024 13:04:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="w1in2OrS"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A60256D
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 13:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733571887; cv=none; b=etQLru+LEwbEA8uROfPoHZx+7jnrgNQm8QsrPUKkMzqYbh5EoC1DRJx+0Vsb8Nm2BtHKJTxmMweGX1XIwIkgPcNy9fMOfOKLLFHLe8NCAXT05CWIkTSFSUNL7vzlMoyoipl8547chIjkEqyF4GisxVjOEvdEgx3941cgV3J1pRA=
+	t=1733576691; cv=none; b=tEs8Cq8SCYq4pX5/ZitOiBtYpT+aMfcK0wwMyLt2+w1u5KyPS+AEJeQPbs1BHGVSD1p+EqHjcfXBupuVF3TOzi/wkAg9XhoBsTCc8d/4Glr6FaOebUKPuahckzCWrVe2oab6JF5kXoHgeZARMaSbRzob19UJnDv03nCSW4XVW1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733571887; c=relaxed/simple;
-	bh=pzD+GEhU2+NKjNhpQTajOEjiaseCjjcyjSgJTaWgVDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FiAV6H7FULmRW2/eqIeNquQeLMn5IOnGWii1eHx7ynXvNdnZvaCcySWTEhMhXvJvG47PQBaKxcSL66IMXg91lEpvV3yxu+wjVd38Jg3EgiNer/fnlh6v/qp653CoyfVVafcR3+4JKHTpZhdL9zId1/D/s4405tk95jvxrll0Nq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=EN6HytxB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D98DFC4CECD;
-	Sat,  7 Dec 2024 11:44:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733571886;
-	bh=pzD+GEhU2+NKjNhpQTajOEjiaseCjjcyjSgJTaWgVDo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EN6HytxB0EzyLdYK23OItkSn6/KjG+eLry+YakVtLSYXnMxqdVyn1xCncctYbujR0
-	 ZncaVPqEzEMDonk3EQ6rNoHRSADO2bnEIu8/Pnt4mx+h0dyR+eCdik4kqhs4/mMkEN
-	 frSxC6Jq4EEHyAC0X0bNDQ11ZNq7/lQ+2hNdCW0A=
-Date: Sat, 7 Dec 2024 12:44:42 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org, kees@kernel.org,
-	nathan@kernel.org, yury.norov@gmail.com,
-	steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
-	linux-crypto@vger.kernel.org, linux@weissschuh.net, gjoyce@ibm.com
-Subject: Re: [PATCHv2] cpumask: work around false-postive stringop-overread
- errors
-Message-ID: <2024120710-cahoots-obituary-d32d@gregkh>
-References: <20241205123413.309388-1-nilay@linux.ibm.com>
- <2024120757-lustrous-equinox-77f0@gregkh>
+	s=arc-20240116; t=1733576691; c=relaxed/simple;
+	bh=BtGh4vD85boalg8SEfqHN/RChwl93Q9pDcfciYeVLlI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RO2Cuwo5zR+bvmvxURqePb99SzNS5rgctPwlQKKPt6H1WGCnsUfkkvAqrFppaeyXwWPMQjeSD/9qiYojTa4WWPdiL4zDfjodfwp6a3VmQ07QYZhy6+XvT8LikW+gutQHHF+BAA5A5tSgGCSeXMvbd4yasef59Z+bNSuumWv76uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=w1in2OrS; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id A0CCB89189;
+	Sat,  7 Dec 2024 13:59:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1733576341;
+	bh=7jvUGToMgi/9xHKjwBVv+KG7oBqg7mzOct80Gxkc0dg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=w1in2OrStApeE/WFBr6GJYJE7SSm/IIdjz1Pb9bLVG7cIVIz2MGNGT+eNUIQ8S09Y
+	 jS2eItDqgHQPINFAld0PhY4dlLVV0kGti1Kdcbw8Juo/VQZPjYXxEfM7ruIE7/FA3l
+	 2S/qdqLVqvjUUh6BsuUMgutY26o4WwMy3f8DFnZ60QLepgL6Wf6wOdYXNOL+vOno9N
+	 05TCcI3vYSaFebCKm35VxhJotJWJW6SWID/xpHN9PJmVODXYNjkaO3T7XcHJ/7J7oS
+	 StLiBqdrRO4mHG2khYyNt23k69YP++jN/NlDyGIsdxcZwVFSLi5EnFSue1/d2/YnAZ
+	 Y1a8tYFZzXKIw==
+Message-ID: <5a6ab24d-6c74-497f-828e-b3e7645d664a@denx.de>
+Date: Sat, 7 Dec 2024 12:46:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] drm: bridge: fsl-ldb: fixup mode on freq mismatch
+To: Nikolaus Voss <nv@vosn.de>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Fabio Estevam <festevam@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ miquel.raynal@bootlin.com, nikolaus.voss@haag-streit.com,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241203191111.47B56F7@mail.steuer-voss.de>
+ <2d7f8afc-119a-4080-93be-bf3daf017e5e@denx.de>
+ <abcc89936f44fd884b9c5da65ea64c42@vosn.de>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <abcc89936f44fd884b9c5da65ea64c42@vosn.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024120757-lustrous-equinox-77f0@gregkh>
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Sat, Dec 07, 2024 at 12:43:19PM +0100, Greg KH wrote:
-> On Thu, Dec 05, 2024 at 06:04:09PM +0530, Nilay Shroff wrote:
-> > While building the powerpc code using gcc 13, I came across following
-> > errors generated for kernel/padata.c file:
-> > 
-> >   CC      kernel/padata.o
-> > In file included from ./include/linux/string.h:390,
-> >                  from ./arch/powerpc/include/asm/paca.h:16,
-> >                  from ./arch/powerpc/include/asm/current.h:13,
-> >                  from ./include/linux/thread_info.h:23,
-> >                  from ./include/asm-generic/preempt.h:5,
-> >                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
-> >                  from ./include/linux/preempt.h:79,
-> >                  from ./include/linux/spinlock.h:56,
-> >                  from ./include/linux/swait.h:7,
-> >                  from ./include/linux/completion.h:12,
-> >                  from kernel/padata.c:14:
-> > In function ‘bitmap_copy’,
-> >     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-> >     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> > ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-> >   114 | #define __underlying_memcpy     __builtin_memcpy
-> >       |                                 ^
-> > ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-> >   633 |         __underlying_##op(p, q, __fortify_size);                        \
-> >       |         ^~~~~~~~~~~~~
-> > ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-> >   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-> >       |                          ^~~~~~~~~~~~~~~~~~~~
-> > ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-> >   259 |                 memcpy(dst, src, len);
-> >       |                 ^~~~~~
-> > kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> > kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-> >   713 |                                  cpumask_var_t pcpumask,
-> >       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> > In function ‘bitmap_copy’,
-> >     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
-> >     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> > ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
-> >   114 | #define __underlying_memcpy     __builtin_memcpy
-> >       |                                 ^
-> > ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
-> >   633 |         __underlying_##op(p, q, __fortify_size);                        \
-> >       |         ^~~~~~~~~~~~~
-> > ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
-> >   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
-> >       |                          ^~~~~~~~~~~~~~~~~~~~
-> > ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
-> >   259 |                 memcpy(dst, src, len);
-> >       |                 ^~~~~~
-> > kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> > kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
-> >   713 |                                  cpumask_var_t pcpumask,
-> >       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> > 
-> > Apparently, above errors only manifests with GCC 13.x and config option
-> > CONFIG_FORTIFY_SOURCE. Furthermore, if I use gcc 11.x or gcc 12.x then I
-> > don't encounter above errors. Prima facie, these errors appear to be false-
-> > positive. Brian informed me that currently some efforts are underway by
-> > GCC developers to emit more verbose information when GCC detects string
-> > overflow errors and that might help to further narrow down the root cause
-> > of this error. So for now, silence these errors using -Wno-stringop-
-> > overread gcc option while building kernel/padata.c file until we find the
-> > root cause.
+On 12/4/24 11:40 AM, Nikolaus Voss wrote:
+
+Hi,
+
+>>> LDB clock has to be a fixed multiple of the pixel clock.
+>>> As LDB and pixel clock are derived from different clock sources
+>>
+>> Can you please share the content of /sys/kernel/debug/clk/clk_summary ?
 > 
-> I'm hitting this now on Linus's tree using gcc14 on x86-64 so this isn't
-> just a problem with your arch.
+> Sure. Without my patch:
 > 
-> Let me try this patch locally and see if it helps...
+>      video_pll1_ref_sel               1       1        0        24000000 
+>    0          0     50000      Y      deviceless no_connection_id
+>         video_pll1                    1       1        0 1039500000  
+> 0          0     50000      Y         deviceless          no_connection_id
+>            video_pll1_bypass          1       1        0 1039500000  
+> 0          0     50000      Y            deviceless             
+> no_connection_id
+>               video_pll1_out          2       2        0 1039500000  
+> 0          0     50000      Y               deviceless                
+> no_connection_id
+>                  media_ldb            1       1        0        
+> 346500000   0          0     50000      Y 32ec0000.blk- 
+> ctrl:bridge@5c     ldb
+>                                                   deviceless         
+> no_connection_id
+>                     media_ldb_root_clk 0       0        0 346500000   
+> 0          0     50000      Y                     deviceless 
+>                       no_connection_id
+>                  media_disp2_pix      1       1        0        51975000 
+>    0          0     50000      Y                  deviceless         
+> no_connection_id
+>                     media_disp2_pix_root_clk 1       1        0 
+> 51975000    0          0     50000      Y 32e90000.display- 
+> controller     pix
+> 
+> Here 346500000 (media_ldb) != 7 * 51975000 (media_disp2_pix)
+>    -> distorted panel image (if any).
+> The requested panel pixel clock from EDID is 51200000.
 
-Yes, fixes the build for me, so either this is a real fix, or something
-else needs to be done for it, so I'll give a:
+Right, this is what Miquel is trying to solve with their series.
 
-Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> This is the same with my patch:
+> 
+>      video_pll1_ref_sel               1       1        0        24000000 
+>    0          0     50000      Y      deviceless no_connection_id
+>         video_pll1                    1       1        0 1039500000  
+> 0          0     50000      Y         deviceless          no_connection_id
+>            video_pll1_bypass          1       1        0 1039500000  
+> 0          0     50000      Y            deviceless             
+> no_connection_id
+>               video_pll1_out          2       2        0 1039500000  
+> 0          0     50000      Y               deviceless                
+> no_connection_id
+>                  media_ldb            1       1        0        
+> 346500000   0          0     50000      Y 32ec0000.blk- 
+> ctrl:bridge@5c     ldb
+>                                                   deviceless         
+> no_connection_id
+>                     media_ldb_root_clk 0       0        0 346500000   
+> 0          0     50000      Y                     deviceless 
+>                       no_connection_id
+>                  media_disp2_pix      1       1        0        49500000 
+>    0          0     50000      Y                  deviceless         
+> no_connection_id
+>                     media_disp2_pix_root_clk 1       1        0 
+> 49500000    0          0     50000      Y 32e90000.display- 
+> controller     pix
+> 
+> So, here 346500000 (media_ldb) = 7 * 49500000 (media_disp2_pix).
+>    -> stable panel image, but pixel clock reduced to 49.5 MHz from 
+> requested 51.2 MHz.
 
-for now.
+Inaccurate pixel clock and non-60Hz frame rate is not a win either.
 
-thanks,
+> My conclusion: The clock source is the same
 
-greg k-h
+I agree .
+
+You wrote "derived from different clock sources" above, 
+keyword:different, which is not correct.
+
+> , nevertheless the
+> ldb/pixel clock constraint cannot be satisfied without either
+> modifying the pll clock or the pixel clock.
+In this particular case, you surely do want to modify the PLL settings 
+to achieve accurate pixel clock.
 
