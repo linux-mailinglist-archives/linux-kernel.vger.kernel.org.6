@@ -1,78 +1,86 @@
-Return-Path: <linux-kernel+bounces-435899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435900-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76F1F9E7E65
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:36:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36EE59E7E68
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:39:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 137BA284C50
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:36:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEEFE188787F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53AC413D504;
-	Sat,  7 Dec 2024 05:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77F0870807;
+	Sat,  7 Dec 2024 05:39:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QM1qZEbA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4/FKX+b"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F137112E1CD;
-	Sat,  7 Dec 2024 05:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AC024594A;
+	Sat,  7 Dec 2024 05:39:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733549778; cv=none; b=ru3Phdb5zbko3TN0vfeb3+3I5tkQuk/lF3FaslLERaljH5Vumw/yM1uXRuTSaUs+JeefXHT9VG+WOASrIUTeHGJWZ1IbBXrQw0Os+fG1BW5EYpurMaHybQDRb5L267SAxw73LR3rTGWMKCqxjmXSLKpjh1zVv8vHvnCgPirADj0=
+	t=1733549955; cv=none; b=uMkbH6jo1xU+mx82d3R35ydeFDZUId4kC5lQX6XsuTaOqZ0YfyxqLj/udYPv0w23dnokz3Z7a4Myual8Tej9L/DVxMDCJHX3Cst0f2430/aJ7ybtUA9lqz28sxBIM+2wptV99aiwPDYLRbupyydwm0gavHvG+kAoO1K+eMJYCE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733549778; c=relaxed/simple;
-	bh=ZDnid7P/ElsWL/SYsOcVI6Pqhb0ywhKCOnvLannCwmI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UT+wMGY2WhOrNmF5NlK5nVBw30RvNuPrVpNmHsDe3XukIOwlayM/ERCdZxcYNVtbyR4KIOC4liuFCGFFGG43qpKQAvDUgIacsvwb5bJOBN0e3pvNP/YLHet0zgIBfAN8l1Isd1fkX+6nhFVzaOKHR56ZxC0hP96xyvjYcMpWCcg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QM1qZEbA; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733549777; x=1765085777;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=ZDnid7P/ElsWL/SYsOcVI6Pqhb0ywhKCOnvLannCwmI=;
-  b=QM1qZEbAki9goXBBanISiQOiFo0kBlq8IN1keNmr45uY8f/lQ+kOEBU/
-   E6ZoQQ9AQTvIKUhN0ubIxpYJxl2qyuf0DH7nPXQiBEtpWGm5iQX+DJIH6
-   Z1Yo/kxnXgVDshmCknJiA6gXUnyJpDqkSR+fKrgQajhqxr21RyLmrVdO3
-   R6lyrz+KvPI1DE4aiLL1orIY/8PfvIcFo5jkDIYTRJj1fpC3pblO+rol5
-   qY7JBA8aCLRSbdGDx+1aOVEOuYlWjRiBwRlxXsbsUEOgNlgVmTSe+Hnp2
-   K17Ip3nzTymZwE3xKh12iBPK1UAI/sCODBXlaGNFDn5eKE4wXZRFUO1qy
-   w==;
-X-CSE-ConnectionGUID: ByUnqraBTOOHqVrfxsz1LA==
-X-CSE-MsgGUID: VFqwe91gRJa5qJKHQgjvqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="37590273"
-X-IronPort-AV: E=Sophos;i="6.12,215,1728975600"; 
-   d="scan'208";a="37590273"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 21:36:17 -0800
-X-CSE-ConnectionGUID: PUfuc2ePRdyB8GKKXxOx8w==
-X-CSE-MsgGUID: JGa0J1oaT0K+H2fqNdVu8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,215,1728975600"; 
-   d="scan'208";a="99543371"
-Received: from sramkris-mobl1.amr.corp.intel.com (HELO xpardee-desk.lan) ([10.124.221.37])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Dec 2024 21:36:16 -0800
-From: Xi Pardee <xi.pardee@linux.intel.com>
-To: xi.pardee@linux.intel.com,
-	rajvi0912@gmail.com,
-	irenic.rajneesh@gmail.com,
-	david.e.box@linux.intel.com,
+	s=arc-20240116; t=1733549955; c=relaxed/simple;
+	bh=YWWkAPLgsC9HvBC/5hchGcJwyExXfdwOh0yeoajTagI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZxGJIMUKPxvFqCYH/z4WIhEvQzSZZfIHKXEbvFipKBdiBqfp7Eo8dTt4ILImSpg1pGPzXOMrPrTIx3JhV0atcl89rIT6if/alLOzaEgDKDFb2z1asXCQinFxSMsfpluhk9iMUTqlskFJpn88LhFPmpE0cwj+XxPnI6WSyJ1ciPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U4/FKX+b; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-7256dc42176so3020221b3a.3;
+        Fri, 06 Dec 2024 21:39:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733549953; x=1734154753; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kb0QGhP4oxqcwOF1zvyWqvtr758gkOk3hVsSW2fV0lg=;
+        b=U4/FKX+bwLgq7Mtj6XHdiE6O9nAMuMD61Ox1Y8qkB7RsTQSfOSyQKNLekpV+wL5ye6
+         +9JRBnXHs0IxyyFpuJdMBpj7qMd7WUNP/n1dLpXEPpfYApiQOs9eAOOYtkJqWx3SlKro
+         LqGZX+G83QNbVhJHkVw686l/3fSx3TeFmfOj4WNujcN3zEFZ9E7qDDupjg1YBojYcK3Z
+         AXKWd5Wr2HwZq5zc/b9M/65zqoe0rByg7uh7L6nfRESnYhW8t60EIDln3dX4grsZgyNr
+         mwCLpMy+LHY2L7KcWoqMAEAlosMQO2MoyKziPr39uKvhxCU9C5FTrPeOczUNw/S4o03Q
+         QweA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733549953; x=1734154753;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Kb0QGhP4oxqcwOF1zvyWqvtr758gkOk3hVsSW2fV0lg=;
+        b=e7MGfbXPeF+mt7LVcNiZnZD0SLD3GXycqt1SnP9TeIoc66+3QgzA9l/S2UGxavWxJF
+         c8dAjslap+7+r8eS4XWCaje+/80xkq7oZ+VVc71dGVD06Bf7fPcDJR62mQ2B9QDAlRCq
+         pVor/e0uCxWbx6jnlWj5n7aqoHyY3REwp/mdiMHVkArzn+SXUnWYp6/kWvHFnz/nKrei
+         tFvclMX5QvsIx0ME+t/7sFoYXEMW+DwXUEbz12/psxbAt0m5/Dlnts7nQRiydAvS9mI5
+         zyGyDk4UFH2c/iaywk8T2lKnlu7DlRg6mY0vlbxFvv7uOMYTShFjOr+Mkh+L8oa/PelC
+         P/IQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXhn5ySGb6WtMFjJ6fk0WvXCG8Uiz5MUXHtuVC+D6G8y2fMYTflnEwVo24w0jSxkiNxpvdVcDsxk0iFjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjNTDD+YabzxToKus1Dst/tcDQ7lVE5gs2BbBi2551pmq9c6jj
+	FFFas+OhJzpv4uL8ohaAvVp3FDj0EcpOxoUgI1CmSrgMfkpUjvd12FfQyg==
+X-Gm-Gg: ASbGncsvy1xSBd2tNd/IWCEJUgtQnj+TNpJA0K/AKWMGBbDt01aqNyzoNtyNOlGLDOj
+	gf7B6Y2gB1Vcp1hSOl7hHdrjXuIoRvCPP9V72gHw4bQ/R9j2gn4o6xWfBvRwSlNWnwHZy5QJMot
+	pUm9JF5tLBqPs3upVIwqTq9chgBgujZxiG/dYxVQee0KS4RgVShwWaBH+L4KiRhdgcEGS0jxIMq
+	Ib4lnNBSmHF71WKKrHaBa8UXUPfMVizclohFVI8tzIgWNV2VBt/yvKJo/V8e5DrGWSxxsjFjuCo
+	PFQQYGGTKxPGz4Oi+O0=
+X-Google-Smtp-Source: AGHT+IHU8UD9g3l/0tAj1CDKXl9g5F9vriFRMXYYRcE6+tsugcKTLARXo0ZBNOVjRxHMYEhXVGgTRA==
+X-Received: by 2002:a05:6a00:2e1f:b0:725:2b93:3583 with SMTP id d2e1a72fcca58-725b8185650mr7142136b3a.21.1733549953119;
+        Fri, 06 Dec 2024 21:39:13 -0800 (PST)
+Received: from localhost.localdomain (host111.181-10-101.telecom.net.ar. [181.10.101.111])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29c6ffdsm3806929b3a.14.2024.12.06.21.39.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 21:39:12 -0800 (PST)
+From: Kurt Borja <kuurtb@gmail.com>
+To: platform-driver-x86@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com
+Cc: Dell.Client.Kernel@dell.com,
 	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH 3/3] platform/x86/intel/pmc: Add Arrow Lake U/H support to intel_pmc_core driver
-Date: Fri,  6 Dec 2024 21:35:53 -0800
-Message-ID: <20241207053607.14806-4-xi.pardee@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241207053607.14806-1-xi.pardee@linux.intel.com>
-References: <20241207053607.14806-1-xi.pardee@linux.intel.com>
+	Kurt Borja <kuurtb@gmail.com>,
+	Armin Wolf <W_Armin@gmx.de>
+Subject: [PATCH] alienware-wmi: Fix X Series and G Series quirks
+Date: Sat,  7 Dec 2024 02:38:00 -0300
+Message-ID: <20241207053759.99608-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,166 +89,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add Arrow Lake U and Arrow Lake H support in intel_pmc_core driver.
+Devices that are known to support the WMI thermal interface do not
+support the legacy LED control interface. Make `.num_zones = 0` and
+avoid calling alienware_zone_init() if that's the case.
 
-Signed-off-by: Rajvi Jingar <rajvi.jingar@linux.intel.com>
-Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+Verified by reading the ACPI tables of all supported devices.
+
+Fixes: 9f6c43041552 ("alienware-wmi: added platform profile support")
+Fixes: 1c1eb70e7d23 ("alienware-wmi: extends the list of supported models")
+
+Suggested-by: Armin Wolf <W_Armin@gmx.de>
+Signed-off-by: Kurt Borja <kuurtb@gmail.com>
 ---
- drivers/platform/x86/intel/pmc/arl.c  | 64 +++++++++++++++++++++++----
- drivers/platform/x86/intel/pmc/core.c |  2 +
- drivers/platform/x86/intel/pmc/core.h |  1 +
- 3 files changed, 59 insertions(+), 8 deletions(-)
+Suggested here:
 
-diff --git a/drivers/platform/x86/intel/pmc/arl.c b/drivers/platform/x86/intel/pmc/arl.c
-index 05dec4f5019f3..d16e1dea63e7d 100644
---- a/drivers/platform/x86/intel/pmc/arl.c
-+++ b/drivers/platform/x86/intel/pmc/arl.c
-@@ -16,6 +16,7 @@
- #define IOEP_LPM_REQ_GUID	0x5077612
- #define SOCS_LPM_REQ_GUID	0x8478657
- #define PCHS_LPM_REQ_GUID	0x9684572
-+#define SOCM_LPM_REQ_GUID	0x2625030
- 
- static const u8 ARL_LPM_REG_INDEX[] = {0, 4, 5, 6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 20};
- 
-@@ -650,6 +651,7 @@ const struct pmc_reg_map arl_pchs_reg_map = {
- 	.etr3_offset = ETR3_OFFSET,
+[1] https://lore.kernel.org/platform-driver-x86/38399b6a-e31c-4b99-a10e-01dc20649c24@gmx.de/
+---
+ drivers/platform/x86/dell/alienware-wmi.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
+index 77465ed9b449..e69bf9a7b6c8 100644
+--- a/drivers/platform/x86/dell/alienware-wmi.c
++++ b/drivers/platform/x86/dell/alienware-wmi.c
+@@ -190,7 +190,7 @@ static struct quirk_entry quirk_asm201 = {
  };
  
-+#define PMC_DEVID_SOCM 0x777f
- #define PMC_DEVID_SOCS 0xae7f
- #define PMC_DEVID_IOEP 0x7ecf
- #define PMC_DEVID_PCHS 0x7f27
-@@ -669,11 +671,17 @@ static struct pmc_info arl_pmc_info_list[] = {
- 		.devid	= PMC_DEVID_PCHS,
- 		.map	= &arl_pchs_reg_map,
- 	},
-+	{
-+		.guid	= SOCM_LPM_REQ_GUID,
-+		.devid	= PMC_DEVID_SOCM,
-+		.map	= &mtl_socm_reg_map,
-+	},
- 	{}
+ static struct quirk_entry quirk_g_series = {
+-	.num_zones = 2,
++	.num_zones = 0,
+ 	.hdmi_mux = 0,
+ 	.amplifier = 0,
+ 	.deepslp = 0,
+@@ -199,7 +199,7 @@ static struct quirk_entry quirk_g_series = {
  };
  
- #define ARL_NPU_PCI_DEV			0xad1d
- #define ARL_GNA_PCI_DEV			0xae4c
-+#define ARL_H_GNA_PCI_DEV		0x774c
- /*
-  * Set power state of select devices that do not have drivers to D3
-  * so that they do not block Package C entry.
-@@ -684,6 +692,12 @@ static void arl_d3_fixup(void)
- 	pmc_core_set_device_d3(ARL_GNA_PCI_DEV);
- }
- 
-+static void arl_h_d3_fixup(void)
-+{
-+	pmc_core_set_device_d3(ARL_NPU_PCI_DEV);
-+	pmc_core_set_device_d3(ARL_H_GNA_PCI_DEV);
-+}
-+
- static int arl_resume(struct pmc_dev *pmcdev)
+ static struct quirk_entry quirk_x_series = {
+-	.num_zones = 2,
++	.num_zones = 0,
+ 	.hdmi_mux = 0,
+ 	.amplifier = 0,
+ 	.deepslp = 0,
+@@ -687,6 +687,9 @@ static void alienware_zone_exit(struct platform_device *dev)
  {
- 	arl_d3_fixup();
-@@ -691,26 +705,46 @@ static int arl_resume(struct pmc_dev *pmcdev)
- 	return cnl_resume(pmcdev);
- }
+ 	u8 zone;
  
--int arl_core_init(struct pmc_dev *pmcdev)
-+static int arl_h_resume(struct pmc_dev *pmcdev)
-+{
-+	arl_h_d3_fixup();
++	if (!quirks->num_zones)
++		return;
 +
-+	return cnl_resume(pmcdev);
-+}
-+
-+static struct pmc_dev_info arl_pmc_dev = {
-+	.func = 0,
-+	.map = &arl_socs_reg_map,
-+	.suspend = cnl_suspend,
-+	.resume = arl_resume,
-+};
-+
-+static struct pmc_dev_info arl_h_pmc_dev = {
-+	.func = 2,
-+	.map = &mtl_socm_reg_map,
-+	.suspend = cnl_suspend,
-+	.resume = arl_h_resume,
-+};
-+
-+static int arl_core_generic_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info)
- {
--	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_SOC];
- 	int ret;
--	int func = 0;
- 	bool ssram_init = true;
-+	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_SOC];
-+
-+	pmcdev->suspend = pmc_dev_info->suspend;
-+	pmcdev->resume = pmc_dev_info->resume;
+ 	sysfs_remove_group(&dev->dev.kobj, &zone_attribute_group);
+ 	led_classdev_unregister(&global_led);
+ 	if (zone_dev_attrs) {
+@@ -1229,9 +1232,11 @@ static int __init alienware_wmi_init(void)
+ 			goto fail_prep_thermal_profile;
+ 	}
  
--	arl_d3_fixup();
--	pmcdev->suspend = cnl_suspend;
--	pmcdev->resume = arl_resume;
- 	pmcdev->regmap_list = arl_pmc_info_list;
- 
- 	/*
- 	 * If ssram init fails use legacy method to at least get the
- 	 * primary PMC
- 	 */
--	ret = pmc_core_ssram_init(pmcdev, func);
-+	ret = pmc_core_ssram_init(pmcdev, pmc_dev_info->func);
- 	if (ret) {
- 		ssram_init = false;
--		pmc->map = &arl_socs_reg_map;
-+		pmc->map = pmc_dev_info->map;
- 
- 		ret = get_primary_reg_base(pmc);
- 		if (ret)
-@@ -728,3 +762,17 @@ int arl_core_init(struct pmc_dev *pmcdev)
+-	ret = alienware_zone_init(platform_device);
+-	if (ret)
+-		goto fail_prep_zones;
++	if (quirks->num_zones > 0) {
++		ret = alienware_zone_init(platform_device);
++		if (ret)
++			goto fail_prep_zones;
++	}
  
  	return 0;
- }
-+
-+int arl_h_core_init(struct pmc_dev *pmcdev)
-+{
-+	arl_h_d3_fixup();
-+
-+	return arl_core_generic_init(pmcdev, &arl_h_pmc_dev);
-+}
-+
-+int arl_core_init(struct pmc_dev *pmcdev)
-+{
-+	arl_d3_fixup();
-+
-+	return arl_core_generic_init(pmcdev, &arl_pmc_dev);
-+}
-diff --git a/drivers/platform/x86/intel/pmc/core.c b/drivers/platform/x86/intel/pmc/core.c
-index 3e7f99ac8c941..fbc43e090e7cc 100644
---- a/drivers/platform/x86/intel/pmc/core.c
-+++ b/drivers/platform/x86/intel/pmc/core.c
-@@ -1367,6 +1367,8 @@ static const struct x86_cpu_id intel_pmc_core_ids[] = {
- 	X86_MATCH_VFM(INTEL_RAPTORLAKE_S,	adl_core_init),
- 	X86_MATCH_VFM(INTEL_METEORLAKE_L,	mtl_core_init),
- 	X86_MATCH_VFM(INTEL_ARROWLAKE,		arl_core_init),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE_H,	arl_h_core_init),
-+	X86_MATCH_VFM(INTEL_ARROWLAKE_U,	arl_h_core_init),
- 	X86_MATCH_VFM(INTEL_LUNARLAKE_M,	lnl_core_init),
- 	{}
- };
-diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
-index 3124315d2b925..76ef2f56d897b 100644
---- a/drivers/platform/x86/intel/pmc/core.h
-+++ b/drivers/platform/x86/intel/pmc/core.h
-@@ -615,6 +615,7 @@ int tgl_l_core_init(struct pmc_dev *pmcdev);
- int adl_core_init(struct pmc_dev *pmcdev);
- int mtl_core_init(struct pmc_dev *pmcdev);
- int arl_core_init(struct pmc_dev *pmcdev);
-+int arl_h_core_init(struct pmc_dev *pmcdev);
- int lnl_core_init(struct pmc_dev *pmcdev);
  
- void cnl_suspend(struct pmc_dev *pmcdev);
 -- 
-2.43.0
+2.47.1
 
 
