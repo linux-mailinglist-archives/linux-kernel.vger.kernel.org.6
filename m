@@ -1,254 +1,125 @@
-Return-Path: <linux-kernel+bounces-436097-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A639E811C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:02:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA77E165919
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:02:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A957146000;
-	Sat,  7 Dec 2024 17:01:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lqzn8ZBJ"
-Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020134.outbound.protection.outlook.com [52.101.191.134])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86ED49E811F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:05:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C495722C6CD
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 17:01:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.134
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733590918; cv=fail; b=IK5NiZlySxjwx2cRojloPZUaSjVGu+GCavt+6aqZeLaT4LoRUKqUyiOLnlsYyIbJDKIfziUvgh88MLxpIhPwHQEQNAGulyvv5jfGKvpSHbNheinKraq6tYh3cH0iTI6cCfLdquSpx6YfG4VZ4MleLV3kQFogp7HsLUMNsFU7gjw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733590918; c=relaxed/simple;
-	bh=GmIZSt8mjFSq3I1CF+gF8I1wQNzyHn68Wc42TIR1N4I=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZlY/Seas9zc7JYkkoD70O3py32vLpi6Kwe828L00rluaZxIDXobc1kMy7rTwrKdybq6iLMTLkumUCdIilUpXhWQbGga9pgLHaRQu7Tt71eNWMrFaiD+1SmXilB2RbKLg3+tYQJMOsdqiHkWpLncaLyp356QJjWnQUQk4ePHu3LU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=lqzn8ZBJ; arc=fail smtp.client-ip=52.101.191.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pKSioBecGlthAdyw2f3C36LmE61/C0S9w3gY7Mz/HkNR/vd3WJhhNFeB1f+X1oX8G+QH6LwMlKoUPyuGzJ20PBAtdkJ3dtsRWs6/fPQTRW+6LJ0U2Q5tRunBQBImsWNVb+t2dpuVGesrv0gd7FgwOrdj0hBqA3/gVTG8edwGm8VINem2mnaXzlNSZtSizeZZKVV/GecLPY8YtUVIZxemOheDu/zW4v8k1aY8N044iu8ET7MZ4k9wrVaNpFCor+JqZakGahGVmCFXbgY4h2MQFGZwyD/+FF6BpIO424h/B9XGGVtLu8aqzMNSWbBRBeOUVWc0N0Os/VqHc3TnFKbjHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/N395xd/vHQKl3jYNGQ/D2En/0GGwiQc2FnRrL6ZIuM=;
- b=hE6WWnUrQUipHV0fLjMGy9Ep4So7hlQllTv3CsplyAX3Xq6qE14LlcSrHSRQfb94H4P4SrWgxnOya/e4QjpU0ctSka0+8Ja9q/l4hxGQ+JGhKvQNCUeAAWvULgK9HqPuzKxAeMLReT6uFRfCDGSNIdezlat+jzorxl5WxUxl/YczOImr1ZEV1o3wpu4TiryjV3iMYlzhPxtZbnUZ75l3u8piDwcGbmcLryU9DSvoOy4Fu4GWDGRXEcI4QabxJqcaLHtW/X7yO2jvdoy+KqZjO1uzsc7vFNk68g728NBrD+py1pU9el+Zl4HdXVsY0BS5WQQkYaQvMbCx+GdxOWrdsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
- dkim=pass header.d=efficios.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/N395xd/vHQKl3jYNGQ/D2En/0GGwiQc2FnRrL6ZIuM=;
- b=lqzn8ZBJtv+D56ngUoAb+CIxIc2A/IJ6+W80f9u8GASVvTVgJuJXYrZUEbBFWSkdQw/QnuA3Gkba9Y/JIDJrJTlsnFkMDuxwQQAjri7iRLaNLGIckZDs5qYYqAlvsCMSOSwbalrM9te7+1ojkz9usI8DHsrtSMKgeerCK8e5SK9pyxd+QG6I5wM4ZJzxQiANDlIa04RspUq+7iYkyRkFILnY8EGv3ZzykfQ1IjJeXb9IitZQ+0JcPsD+PDGJBrKY4M7J62EthXrCCnaJKuFm4FSmqInKlEX2XuNlR+J1Awvjnxhcm3U8+W6hD4GyBhR1Z5ICbr64OJx+vBJ9n4g1eQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=efficios.com;
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
- by TO1PPF260681B1A.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::625) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Sat, 7 Dec
- 2024 17:01:53 +0000
-Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- ([fe80::50f1:2e3f:a5dd:5b4%5]) with mapi id 15.20.8230.010; Sat, 7 Dec 2024
- 17:01:53 +0000
-Message-ID: <a3fd2a24-16ff-4fa5-9510-148f66c19ca9@efficios.com>
-Date: Sat, 7 Dec 2024 12:01:52 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] Introduce cpu_icache_is_aliasing() across all
- architectures
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- John Hubbard <jhubbard@nvidia.com>,
- "Huang, Ying" <ying.huang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko
- <glider@google.com>, Kees Cook <keescook@chromium.org>,
- Vineet Gupta <vgupta@kernel.org>, linux-kernel@vger.kernel.org,
- linux-snps-arc@lists.infradead.org
-References: <20241207165504.2852058-1-ziy@nvidia.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <20241207165504.2852058-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: YQBPR01CA0119.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:1::19) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:b01:be::5)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FC3E281C8E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:05:57 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCFA14A09C;
+	Sat,  7 Dec 2024 17:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bcr+dO47"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04ACC1BC3F
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 17:05:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733591150; cv=none; b=h5gqWqvvJ2WrF53Tjl2i1r2qNhzMvxGIW1n34V7jCi5Q0LiwRTeZqoQ2XbK3xpFCP1PDvU8cM0QSe4tjjw2NvdZW2QVN+H7Y+c5dwXVaVNcmA/T16+R7zCvmM42SM0E4VpfN40ZzzZIvldY+PcECtt5ivU8OnInXu+BUKNKl8QU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733591150; c=relaxed/simple;
+	bh=5Ltu9nIauUB0tWOUssK/hP/8hcg18CelCLFC1SSLQJM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wmy3kyCGB/2/QQkM8+FI1cnox1jHTYc+mtMCL7RFjmTeH9h/kKXCqYEhbRP/ji6fvzfWkk7La2NkyA2H0vMpWxHnspaFiiJMwnImvW+3Blxc2fnNOYHg0bArQ6KN0nx9bBqwiT9bH8LfeXdSzjQET8O5HZ4bWKyhGKoJaI9TOu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bcr+dO47; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-434e398d28cso6652685e9.3
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 09:05:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733591147; x=1734195947; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=pk4dOE8x4+OW5hLEkb16n/k4Vd2DfXIi8+SR8qfyj+w=;
+        b=bcr+dO47vMOaSD5a+6sJxsU1oXgRm+0gLLgqcuMD3UaLGGQnP6VcLS395tjNePGNKC
+         mFGc67UOD2UoR3ihYCA+N3veFSKX0smWBbEH4PCJxMBiMdkhv8D2dk8o/wJhc6CDYRkm
+         yfPgzdgb+G9brsl1OVgPDeCPtj5bok3yHeMaMfn4LgrFN+SCCpAzLi6ayYGLdV6ryr0k
+         NS9+1jG+tXcT9E38iyTzMfLijM0Iq12obKERnF6zO1ncllUAot7MXI19GFWLdbvNjaaT
+         pVBlAjaycgnmpRbr3mip3BDTxoDuEVjCAObSdMTQbFs4Ai/+EoRqScSs3Zy2yReD3B7M
+         I1aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733591147; x=1734195947;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pk4dOE8x4+OW5hLEkb16n/k4Vd2DfXIi8+SR8qfyj+w=;
+        b=czrGklaikw83wL+yFEKFXs99L0PBXckWNoskOtN2uwoZe60zm05AuM1wBDfQj1QkHH
+         5l10ELQp5iQsRXwdUm4RebuQmAr9UQGF/RWRYg4B2u72V/wfvgnzmKSKeJt/9fxV8K5u
+         rtcuUQHPYYnW1XRcNz3mh7DKVTwr7+33VLyEwmcTzArt+cszYy29xeXUvrfDmsFP6NmM
+         JI0Ua4BM1yS6EvMvL9zV+HyeLWMhTVzeZAVabkCCjnP0tPplSeK7m6tAXm376/6kx7gZ
+         SaNVTSngNijKj3lNYVuomu4/Tor3yNCtdwzpzN/3lM+mjaK9QAN5r9QQa7AZAy3VI1Y7
+         Abkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhxMIOnWjiDwXVGTxAYXII0eM2qTwpaRZJrHgolaKQ2Oaahm7k3tqFyGw4TziwNMAabUx5r6IJmd5O7yE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDSseuQqa0Z2QsaGk9V0WiOAF/FykNTUsJBy94ihKB1ZT/D6aI
+	YiLWcjnSCpenWzUwZJ3htw+HYlXU3KLlg6esj+cWN+ch+5nfKa5RhT3gEPj+RyI=
+X-Gm-Gg: ASbGncskeZGSlLPlAVP+YzUMu1LYmy8MJEXmDpp8AcnIVNgBbOMbsLygrakrwqYQE/2
+	0yTAdZzkfZPZ4DNUEXhLi4DNvFnPxhUHmTDhC/jny6KC4LcKq8wZhdhGylrP1MJ3qYYYmOiAIrm
+	lekPL9OIQQKkMh/yuPPjxtjQXg9y2L7qVGdF0Fa/mv3IGhTk0kAeT0XYSe9OPoKmHPJaVO8u9d5
+	BXiZhCzLuDdJi4aCK11NFwGqCi1ekgpHf3dfUnRohHddHwSY1ChIV8=
+X-Google-Smtp-Source: AGHT+IGg5h+0E5Jyx7sVuRubySPLaxRCj0fP8G8xiSLkhV7eNH7cjkBRQQuiu07DAS3WYMNZao+pPg==
+X-Received: by 2002:a05:6000:784:b0:385:f7ef:a57f with SMTP id ffacd0b85a97d-3862b368e64mr4977264f8f.27.1733591147326;
+        Sat, 07 Dec 2024 09:05:47 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f59ceb6sm7779925f8f.42.2024.12.07.09.05.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 09:05:46 -0800 (PST)
+Date: Sat, 7 Dec 2024 20:05:43 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: =?utf-8?B?TWljaGHFgiBLxJlwaWXFhA==?= <kernel@kempniu.pl>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] mtdchar: fix integer overflow in read/write ioctls
+Message-ID: <6b4f7a14-297f-4fc7-bc4b-a9e7d822fb23@stanley.mountain>
+References: <020f98d2-eee1-434e-8236-775cca9fd157@stanley.mountain>
+ <e3da1bba-9740-6b6f-385a-1bdf25f056a9@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|TO1PPF260681B1A:EE_
-X-MS-Office365-Filtering-Correlation-Id: 12dd9358-739b-4d54-c1c8-08dd16e0d989
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y0tCRmMvTFJwQ1pmUXo1WXpPeURZVkY0a1dpZGNxUzVIU2hEODRHcXZ2TkNZ?=
- =?utf-8?B?V1E1TWN6YldoVUx3dVU3K0pBNEE5b0tyS3RId05oUkVOcmxLbjl1TlQ0dG05?=
- =?utf-8?B?dEVRYWpiN3RmZ0lZeXZOVGhLazZta1E1MVBFVVluNXFIMWpmZlRlcnRZWHRn?=
- =?utf-8?B?RUMzQ0ZDRytMU1BGUWdDVG8rci85U3VvUG5KdGxLZWVCc2dnR05kVURNa2px?=
- =?utf-8?B?RmI5dmY4cERYV3BGcnpzNTlTbE9DZitjZVpHaHFLeW83SlRROWZrZWpFZ04w?=
- =?utf-8?B?YnNrVEM3MEQrQzQwVVFxWk43NFEzajY4d21TU3NXK3h5Qkk5TkxGNUNXS0Ur?=
- =?utf-8?B?U3BXa3QzenlrRzF2ejJPbFQxQ3Vod0swcUxnSDlNU1p6cHU2cEw5bDl2S1Rx?=
- =?utf-8?B?UTgrN0JxRUIxdkhtTVMweU1PdXp6S01rVFZOVlRlTkQ1ZzM4TGVGRG14YWk2?=
- =?utf-8?B?VWRtYmF2TVY3SjA1eFg2QmtLZS9wc2JpSHlaR1Rxd25Cc3FLc3d4SmEySmZM?=
- =?utf-8?B?Z3FqdEFQbkc1RVk1ckUrdVM1TjJ2VjE5VU5PNUhZNmp5QnZkcldBTmhMTm5i?=
- =?utf-8?B?RjM2VGpTUWIrOEp5bDFmVGhFTi9MbisreldPRGJMQzQvK1ZNWU5SUjRWSFF4?=
- =?utf-8?B?amRTc3VhUEM4dml4YXdOQ2MwNCsvRDVnblYzUUN5cVB6YWpJVHZKa2ExVDAx?=
- =?utf-8?B?MUlkZGZ2N3VzdUo0cFdYMHB5MG5VZHdwdDVtaFZNMHVnTGFmdVpJdGhzdTRF?=
- =?utf-8?B?Q0Q3L3lmNHE4eWNsaXhOZHpiOFgrREJuUzd2c3picDd3eGlsbzVuR1FtSDY3?=
- =?utf-8?B?T20xbWMwRU1iOXdZdzBRc1lFNXQ4bHlNbnh1MkRFWGdCREd6SWluT1RyeFor?=
- =?utf-8?B?MnZvT3BqYTh0ejlTblE2S0dRR2MyUnZIaEZ5MFJ6bXVyT3FVNC9rSDVKbkxj?=
- =?utf-8?B?N0VhaGMvcnYvSFdHUEtRRTZMdWVUNmpLb3hUOENzd0o3U2liMHVKQVhjenBu?=
- =?utf-8?B?OFA4b2h1NGh1VWNXVFJXZWs1eFR6NDk4SWMzTWw2aThZK2MwT1M3RWVwZnJJ?=
- =?utf-8?B?bjkrNXJ1Z0VPTWhub1F2RU92MkFsQmk0QzFMbWVTakRXL1F0Yks3QUlHajkw?=
- =?utf-8?B?Z0licE5IR0s3VThYZTdCRUMwalVjWmNFT2N2UnFQZldaOFIyUk13TXg2WnFP?=
- =?utf-8?B?RDMrWUt5OVJRTmcrdzI1MTZ0amhrWGN4elRGTUUzMDQvTUxOL1ZhYWpHY1Zr?=
- =?utf-8?B?ZjBhVEY4cjhKNlNVeENFQkt3RWN3ZlJMcHZaa0M3eUZwdVJTQ3JDcEtMV0lP?=
- =?utf-8?B?MzRlODM4T3pRMThoSGNyZmU1Y2MzbHdvbUhqNjdVYytjMWNpSlVBbkRVTmxW?=
- =?utf-8?B?a0dGMFRadHA5b2NhaTlwRER0WHVoVnlJSkJtNTR6NGJsODFCQ1F6NXJ5VDRD?=
- =?utf-8?B?eitLeHV1TlRtZWpQbWxrcXFGZWw3UklJK3IxSDAzdUVJWU5WbVA3NTNtWGVh?=
- =?utf-8?B?RVkwTTF1aGN1OERWZHc2YnhyeE9rWjVzK0tMU2ZaYU5WcGQ2WTZ5M2xCd2dk?=
- =?utf-8?B?d3ozZmk3SVo1S3N2U1RiS3ZMT0JnaDRhREhkdGZCUjB4R2lGa1YyMWU1NldR?=
- =?utf-8?B?QUlKa21nbzJTQjZwUWRiOTV1M2IzNE93M05ZOEJwOWtuNGZWMEh5V3F1NGFy?=
- =?utf-8?B?dGRkVi9UT3VUUlZnbUJFUjR1ZXhqcjM2OEhGYUZqOXh6Z01KYmtiME80eUJI?=
- =?utf-8?Q?S9cyq35XpxgkfekSZE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(7053199007);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RXVRR1Vrb2hNUXdjeEV3WWFjSnc2SjQzTndwNjlsVVUxcjhmZ2ZrRkN6TnJu?=
- =?utf-8?B?L3MrWUVORVd6V1k5SVpmZ0oxdXlyTTQ1T2h2a0RtZlpGRUM1MG45VTB0UWdU?=
- =?utf-8?B?MlJZdTBldXlFb1hOcFFpazE3S2g2QUZtRm90M25pUjd4UkVOSEh5Q09sUmww?=
- =?utf-8?B?SWtrL3RBRXo2TXJlSExVTEdwcmlpYUFvS1VPdnJxQlNRNExDSEV0Y3JoV29l?=
- =?utf-8?B?R0NncjA3RHpmRjczU05xMlUxQXRZWFgwSkVZeFJHNm9WL0RRM2swYjNYdkVX?=
- =?utf-8?B?anhLT2JlampaL0YvbjJ0ZnFxQ08weFJ6WHFzS0N0Mi9acDRFOVlmUVlnUmcw?=
- =?utf-8?B?SXZtdllIVFZJQ2dwbkZ5RzB1RFE3QWp2d2FLbXRVWkJ4ckg4c2tuYjNlZDdR?=
- =?utf-8?B?a0RSVCtqcElYTjB0VGNYWFpFNW5ySUlWYWZsSS9EMzRSbGpVZHhTdHVzMlJk?=
- =?utf-8?B?eXRGbnFRZXd0OEhFcndoK2h5NStZZGJOQm1DMlQ2THdaalNCajFDZmpsWmsy?=
- =?utf-8?B?bUhONmdEY3FuUkFRVWlCazBKY2VQYXhSQkVzZkErdzdIRmo3N1hNeHMwMWdO?=
- =?utf-8?B?V1p0R1RIZCtmZGRGeDN5alB3UGFrSmgxYjRpdnlQY1dNU2V0NUpaSG1NUk9X?=
- =?utf-8?B?cGRoTVZLQU41cFZGOHBtKzRDRFBZaHRnblFYYURFQzYvd0NobDVYeW9rTFBH?=
- =?utf-8?B?djYvMzlvUVlROW1TWEk0NzI2dUxZZlhsZnk5MzVPRnRJM01Ea2l0ZUJOZDFn?=
- =?utf-8?B?M2FXMHJjQVJDUDBzRXhoSjZ0WUVWTE9MOUQ3ajRVbHRRdTFXdjljZlZJMlhj?=
- =?utf-8?B?dlRiVTRhQnVHT3Q2NkU0VW5rZ1ZtQXY5dm5vUCsrUzhDaklhL1ZSaysycGtB?=
- =?utf-8?B?OW5NZG5ZNkxZcmtxRWhVUHZaeE4xeVRqVmJyZGJmM0lFTkFQbXVuWG51M1JX?=
- =?utf-8?B?bzRmcTUxQUNxcVlaVHZBZzlwTU9ETmkyR2krT2RXa2FOOGdjWjBveEJHU3B4?=
- =?utf-8?B?RHBiSURZSysrUGVHL3hjNFBRNVhzd3NVMmZMeHp6dkY1c2J0THhzTHVxVXV5?=
- =?utf-8?B?akJZdFlYbDRNeTVNZFNla2QwTEw2emZObi9mTGZ3MHFkK1lucno2Q05RQjgw?=
- =?utf-8?B?Z3RsR3RjZ2hEYmNEbEhZVkhlRms3UmtMMUdNUVZNTWhQanRPdGZYbjZHS0tm?=
- =?utf-8?B?MXFtRTRLcVoxVnBSRWYyVVAxejdmS29mMnFmWTlUYnJyb3M4ZkM3SEFQai9P?=
- =?utf-8?B?bjAwN2pyM1oySzdMWmxHb2V5Y1FlK05XNTVjTmVIU3c3ZHZ0RzJvMVV0QTBy?=
- =?utf-8?B?ZWdJRmU1UERrMFl4Szg1K0hzamVoem9CTVZIM0dHM0h0MnFhVWZTSjZCOWR2?=
- =?utf-8?B?N2NYbE1adFZwUktHUnIyZW0rR1k1VkVpRU5UWU1wMU56R3JHalI2SysxSXFH?=
- =?utf-8?B?SHEvUEI3Tm9Nd1h3QzUwQnZXcVlHUE8wdEhMWGRPemJWeWJ3RnFCUUZBaTQw?=
- =?utf-8?B?VmZmWWdLcWszV3pvMmNHNk1YK3RsOUtuZkpEUlhyeTVxNEluL2hLSlRPWUhy?=
- =?utf-8?B?dVVtTFBldnR1aktQbU4xWWs4dlJLSHFBeDVoTHk3c21CS2l2WGdpbU9qNHo2?=
- =?utf-8?B?d0tqQUpFdjBia1R4TTJqTGRqZ0NRcHJLSi9SMUMzOFV4R2tTWUdOZzFQV042?=
- =?utf-8?B?L3JRM3ZIcVVvOGNkSmFJWUtKZnhtdUI4RlJGV1RmZGgrNjZsV2c1bkhMUUdr?=
- =?utf-8?B?OVVlaVdRL3BZRm96Z2xkY0Erazh0WHk4QzNhaEI0NERvc3ZkYkhwY3RnM3gx?=
- =?utf-8?B?MWZycWV4eXRuamdaenZNc2k3b1lTeEF2cWYzZlQ4cEl4UFRNK0dRYThyZzZa?=
- =?utf-8?B?QU55UjFyRHVDaDIyVlZUWGFpTHBsLzFwSHZyMDkwam5JWEZPYlhWZDArY1NB?=
- =?utf-8?B?bVRrN2hudmdncWlGazcvY0Z0cmhXQUxBNjgxN3dqYXVMRE1kSktiY3pmcUJy?=
- =?utf-8?B?T05YT3hrZHpYdm1NYzYrdDFRMnRCL1grNHkrVVZCZXBBVXZFNGdQdU5wTUdp?=
- =?utf-8?B?T09GellxdXlubnlwVzJUdlh5UU0wSlFabUN6Z255WWc0TVkrNzN4NUZodGhX?=
- =?utf-8?B?Y08zZWtOR1BmbGQ5VFcralF6ZFRvSEMzanRsWW0wbkdzT0UxNmNWajRGUnlN?=
- =?utf-8?B?RFVKS2ZBL2VlL2c3dHg5RkRMRnVjN1BnL3FXemVWYVUvSE9BUmxIa05CT0c2?=
- =?utf-8?Q?hIM2mZ6cC/r+3tobJj/BNyFoiKMJ3sg1ZPg6VQihV4=3D?=
-X-OriginatorOrg: efficios.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12dd9358-739b-4d54-c1c8-08dd16e0d989
-X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2024 17:01:53.5651
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Hjo/DbOv2KjP1eb/FUuc74xvLnyXw26h1Ynbyhtkl1Ie6KkpOs5+cjxWU9sR6yXU9Y1EqY30cQmggfoUBbwTArAdn8B+ltCKYt3/hTzPyGA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TO1PPF260681B1A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <e3da1bba-9740-6b6f-385a-1bdf25f056a9@huawei.com>
 
-On 2024-12-07 11:55, Zi Yan wrote:
-> In commit eacd0e950dc2 ("ARC: [mm] Lazy D-cache flush (non aliasing
-> VIPT)"), arc adds the need to flush dcache to make icache see the code
-> page change. This also requires special handling for
-> clear_user_(high)page(). Introduce cpu_icache_is_aliasing() to make
-> MM code query special clear_user_(high)page() easier. This will be used
-> by the following commit.
+On Sat, Dec 07, 2024 at 12:17:33PM +0800, Zhihao Cheng wrote:
+> 在 2024/12/7 4:26, Dan Carpenter 写道:
+> > The "req.start" and "req.len" variables are u64 values that come from the
+> > user at the start of the function.  We mask away the high 32 bits of
+> > "req.len" so that's capped at U32_MAX but the "req.start" variable can go
+> > up to U64_MAX.
+> > 
+> > Use check_add_overflow() to fix this bug.
+> > 
+> > Fixes: 6420ac0af95d ("mtdchar: prevent unbounded allocation in MEMWRITE ioctl")
 > 
-> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-
-Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-
-> ---
->   arch/arc/Kconfig                 | 1 +
->   arch/arc/include/asm/cachetype.h | 8 ++++++++
->   include/linux/cacheinfo.h        | 6 ++++++
->   3 files changed, 15 insertions(+)
->   create mode 100644 arch/arc/include/asm/cachetype.h
+> Hi, Dan. Why this fix tag? I think the adding result('req.start' and
+> 'req.len') could be overflow too before this commit.
 > 
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> index 5b2488142041..e96935373796 100644
-> --- a/arch/arc/Kconfig
-> +++ b/arch/arc/Kconfig
-> @@ -6,6 +6,7 @@
->   config ARC
->   	def_bool y
->   	select ARC_TIMERS
-> +	select ARCH_HAS_CPU_CACHE_ALIASING
->   	select ARCH_HAS_CACHE_LINE_SIZE
->   	select ARCH_HAS_DEBUG_VM_PGTABLE
->   	select ARCH_HAS_DMA_PREP_COHERENT
-> diff --git a/arch/arc/include/asm/cachetype.h b/arch/arc/include/asm/cachetype.h
-> new file mode 100644
-> index 000000000000..acd3b6cb4bf5
-> --- /dev/null
-> +++ b/arch/arc/include/asm/cachetype.h
-> @@ -0,0 +1,8 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __ASM_ARC_CACHETYPE_H
-> +#define __ASM_ARC_CACHETYPE_H
-> +
-> +#define cpu_dcache_is_aliasing()	false
-> +#define cpu_icache_is_aliasing()	true
-> +
-> +#endif
-> diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
-> index 108060612bb8..7ad736538649 100644
-> --- a/include/linux/cacheinfo.h
-> +++ b/include/linux/cacheinfo.h
-> @@ -155,8 +155,14 @@ static inline int get_cpu_cacheinfo_id(int cpu, int level)
->   
->   #ifndef CONFIG_ARCH_HAS_CPU_CACHE_ALIASING
->   #define cpu_dcache_is_aliasing()	false
-> +#define cpu_icache_is_aliasing()	cpu_dcache_is_aliasing()
->   #else
->   #include <asm/cachetype.h>
-> +
-> +#ifndef cpu_icache_is_aliasing
-> +#define cpu_icache_is_aliasing()	cpu_dcache_is_aliasing()
-> +#endif
-> +
->   #endif
->   
->   #endif /* _LINUX_CACHEINFO_H */
 
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
+I've looked at this again, and I still don't see the bug before the
+commit.  Secondly, commit a1eda864c04c ("mtdchar: prevent integer
+overflow in a safety check") is missing a Fixes tag but the message says
+that it's this commit which introduced the bug.
+
+Which commit should get the fixes tag?
+
+I should have added a CC to the stable tree though.  I did that correctly
+in an earlier draft of this patch but I messed up in this version. :/
+
+regards,
+dan carpenter
 
 
