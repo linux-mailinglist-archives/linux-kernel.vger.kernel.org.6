@@ -1,102 +1,93 @@
-Return-Path: <linux-kernel+bounces-436038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B069E804F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:46:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 349749E8052
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:47:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B942E18842BB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:46:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263B2162EE3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424D91494B0;
-	Sat,  7 Dec 2024 14:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UvAHBs6i"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75466149E0E;
+	Sat,  7 Dec 2024 14:47:14 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6082CA6;
-	Sat,  7 Dec 2024 14:46:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096ED2CA6;
+	Sat,  7 Dec 2024 14:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733582786; cv=none; b=SGh7Am9UdnHc5MqHZnuuarfLpWl+eRVii14ZC6fm2xKYB93ue5lCP/fbNf5kipCQidFSVQtc2inUUZDUfHklBAvYnD7uZscXiITttYNsQryz+oTbICX4lmy7XyVj35ycrXD2MN+Eh+PH8QhhEwMR0xgFhW0Tq6vRRVfHKvc1p+E=
+	t=1733582834; cv=none; b=YlvEOEL/LYa5L0s3O2A8TYzdbtwsIQ07DquBYNfcO+VfzVtvDS0Ry9x65R0ArVDP495fUrwsq4ultjofuc/Ndw+JBlknhddDL5fq+ssS9kFQ0UkzEHC0bgyc2mCOf7W9f36b/S437TbpNk0jBFiqSXJV8kw6VX7+siuRTHPG5PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733582786; c=relaxed/simple;
-	bh=JrW/F2czD0j3SAFMSsWsnfxsb/gzYrG6taqhPvTMf00=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mh5MyBHn1J/8Fhoss3Oc/r6nmucwUOmJI0tZx7enLinfd4Ny/BSj1Oo3rT0/27FF4USZmLInoqcf5llOOARQNjh0z5+PybrhFg3YUEW9TqWSzv7J5SHDaEXqaPPhEQ6k9W+m2M2w8Uv6SzSrtvoVxAV1i+Qb3DWXTCGKgUvdH9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UvAHBs6i; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733582785; x=1765118785;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=JrW/F2czD0j3SAFMSsWsnfxsb/gzYrG6taqhPvTMf00=;
-  b=UvAHBs6ixyIII/ocz5P3tAg8+z0tgo+LQBw892WnTnCEG0gs6v8jreKO
-   TsVWeL6jDLd+y0xFonKQRd1Cz+VW4kp2X4CqnGEnyVgF8JAZjtJIbQGCO
-   ExsQ9f2DyrnffbQEqFgStv4dHFgwIc2irC/yqRpX5i8mjcoY1BFzc5LgL
-   72T1ueD/3j11vnZKJUUJUcze5eYY4neBALVvqIl0sO5HmEATk30N06Qpj
-   wxAwUwb2PQ4OexkLU1GgA2vistUUWHaAa3T9foFp2UYosAFSUhIM+AMkc
-   cYz5LjSP7PvvRfzO4Sk2Pkz7DoF4oXQwj0PRPpmELyhwGn5GaAclGh5yt
-   Q==;
-X-CSE-ConnectionGUID: Arq29U96SWSnNoelsC31qQ==
-X-CSE-MsgGUID: x4cFTnY/S4+8e/yRRP5Irw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11279"; a="33812920"
-X-IronPort-AV: E=Sophos;i="6.12,216,1728975600"; 
-   d="scan'208";a="33812920"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2024 06:46:24 -0800
-X-CSE-ConnectionGUID: M+MFbYbRQpye6TweuzoGag==
-X-CSE-MsgGUID: w87wJ9PsSbCKxDaNYcDcLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,216,1728975600"; 
-   d="scan'208";a="95144361"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2024 06:46:21 -0800
-Date: Sat, 7 Dec 2024 16:46:18 +0200
-From: Raag Jadav <raag.jadav@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	gregkh@linuxfoundation.org
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	mika.westerberg@linux.intel.com, dmitry.torokhov@gmail.com,
-	broonie@kernel.org, pierre-louis.bossart@linux.dev,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH v2 0/6] Introduce devm_kmemdup_array() helper
-Message-ID: <Z1Rfuo3jq7rO0cqb@black.fi.intel.com>
-References: <20241126172240.6044-1-raag.jadav@intel.com>
- <CACRpkdZqdE8gQCre=zR2cN17oKfwBSnWuVwzQsbRO7-ENVnPNg@mail.gmail.com>
- <Z0nNnsmYIil0OZpy@smile.fi.intel.com>
+	s=arc-20240116; t=1733582834; c=relaxed/simple;
+	bh=3wd4+gXuTLZE8SpMlj3+qphVLMObdDz6MedcOny20Sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r32Sc+856P8RT9v/EWEKH9nBcpsCluTGhZ/LVD6b7vtD1vG6TyeJuny7yRGgbGGEqfET9qjQw6ib0iSP/vcFMBOOr3Cb/+QSgDYDnnEil68hPL73+dJsoYlzQukbEg1VpoYm5GRI4cIVEggUhAeLE5HEMBirDVTxOsQ73CMXFR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E36A3C4CECD;
+	Sat,  7 Dec 2024 14:47:11 +0000 (UTC)
+Date: Sat, 7 Dec 2024 09:47:10 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Florent Revest
+ <revest@chromium.org>, linux-trace-kernel@vger.kernel.org, LKML
+ <linux-kernel@vger.kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ bpf <bpf@vger.kernel.org>, Alexei Starovoitov <ast@kernel.org>, Jiri Olsa
+ <jolsa@kernel.org>, Alan Maguire <alan.maguire@oracle.com>, Mark Rutland
+ <mark.rutland@arm.com>, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v20 00/19] tracing: fprobe: function_graph:
+ Multi-function graph and fprobe on fgraph
+Message-ID: <20241207094710.21cdaceb@rorschach.local.home>
+In-Reply-To: <20241207155136.dd69fbace1ae248c38b27d4b@kernel.org>
+References: <173344373580.50709.5332611753907139634.stgit@devnote2>
+	<20241206172003.21af8b50ceed0b5e93a7771c@kernel.org>
+	<20241207155136.dd69fbace1ae248c38b27d4b@kernel.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0nNnsmYIil0OZpy@smile.fi.intel.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Nov 29, 2024 at 04:20:14PM +0200, Andy Shevchenko wrote:
-> On Fri, Nov 29, 2024 at 11:17:02AM +0100, Linus Walleij wrote:
-> > On Tue, Nov 26, 2024 at 6:22 PM Raag Jadav <raag.jadav@intel.com> wrote:
-> > 
-> > > This series introduces a more robust and cleaner devm_kmemdup_array()
-> > > helper and uses it across drivers.
-> > 
-> > For the series:
-> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-> > 
-> > It seems like Andy will push it to me which is excellent.
+On Sat, 7 Dec 2024 15:51:36 +0900
+Masami Hiramatsu (Google) <mhiramat@kernel.org> wrote:
+
+> This checks the handler is called with preempt off.
 > 
-> Yep, that's the plan after we get all necessary ACKs.
+> On x86_64, the ftrace_graph_func calls function_graph_enter_regs() with
+> ftrace_test_recursion_trylock() as below;
+> 
+> void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
+> 		       struct ftrace_ops *op, struct ftrace_regs *fregs)
+> {
+> 	struct pt_regs *regs = &arch_ftrace_regs(fregs)->regs;
+> 	unsigned long *stack = (unsigned long *)kernel_stack_pointer(regs);
+> 	unsigned long return_hooker = (unsigned long)&return_to_handler;
+> 	unsigned long *parent = (unsigned long *)stack;
+> 	int bit;
+> 
+> 	if (unlikely(skip_ftrace_return()))
+> 		return;
+> 
+> 	bit = ftrace_test_recursion_trylock(ip, *parent);
+> 	if (bit < 0)
+> 		return;
+> 
+> 	if (!function_graph_enter_regs(*parent, ip, 0, parent, fregs))
+> 		*parent = return_hooker;
+> 
+> 	ftrace_test_recursion_unlock(bit);
+> }
+> 
+> However, arm64 version does not;
 
-Greg, anything I can do to move this forward?
+Hmm, I think we can move that recursion check out of the arch/x86 code
+and into ftrace_graph_enter_regs().
 
-Raag
+-- Steve
 
