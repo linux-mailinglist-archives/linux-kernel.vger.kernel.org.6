@@ -1,89 +1,90 @@
-Return-Path: <linux-kernel+bounces-435874-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435875-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 394DB9E7E24
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:00:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F1279E7E27
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:03:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E994B16CB0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 04:00:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D6AE1885918
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 04:03:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE93BA49;
-	Sat,  7 Dec 2024 04:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E8E53BBE5;
+	Sat,  7 Dec 2024 04:03:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gxtkVHWS"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b3zPHHx5"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39D2145038
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 04:00:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F01A48;
+	Sat,  7 Dec 2024 04:03:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733544014; cv=none; b=EBHumOt1XI1VBBLoEPMMLiuSMzlqaQScML4I7UHk+NZ0dxLVxpqrAXI7vF4Yz9k3GbGIj9piCK4Yut2uqB2kq1jiunkKbK24903vnHSO/0ia1HpwceDSuC/jzCCpVqWsMNhwH5sRR1XwBIYjNV+ptoKRofrqCtYMFk9GEO+pMwg=
+	t=1733544224; cv=none; b=jLT59/n/f/pPv5yTEWFOgV4oshuTjnW95Njt8CigeNpmPmaG1UBL2ZsP5uAqdn7fCY2mPbuuVir1HC42ct30xa/BSFPjW78cMl+HZuBbS08rVKJ6Geg8EbqAeR/B596quAJLjD7ULKUKtrB9N9JnFGoKKLJM8/yIy/5H+qUr32o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733544014; c=relaxed/simple;
-	bh=KxPUpGxCXPbny5Scxopyn/Kb7EHxic1JJJU0QM9y2hw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XvbyWAErUFa2JsZ2PLWjkLuJ3A4ChS12SXLOqmQ3TNDgS9s/6fYV509eOfa9hdup58i4IEoBeh2QA4q3zJD4YOW4Ce6uXf/cNzoobVguOMjPOIPM36Lz1nnumbxVbcCOhNCsFQtC7nhn4wczfMIl5bHvail9pQ1czy+21jsYqn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gxtkVHWS; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1733544224; c=relaxed/simple;
+	bh=4RlvqMTU9HOz51t+4LuZNogBP/7G9XL+0b7859+52rE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WCga5sIr1OOCfdmOKy1W8gluQLC2Na0z7IUjW+6q10HjepcV78Mj5txvhVd4XOgyVFkvdrapeGgHpvPvBCJteqRKKZeRpWjsoy6OWY20oEYkRcODwzzK3xztgFqiHrOHQCoP6flVWBXWAO5oRWpT9o0ZNEGpzwaL45+CJdtHEbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b3zPHHx5; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2155157c58cso17425895ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 20:00:12 -0800 (PST)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6d8a3e99e32so23236116d6.2;
+        Fri, 06 Dec 2024 20:03:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733544012; x=1734148812; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KxPUpGxCXPbny5Scxopyn/Kb7EHxic1JJJU0QM9y2hw=;
-        b=gxtkVHWSGbO+dabWzTKfU9spj/8OrF9fjdd+CScJi11b1KCmHPbU5FwCYYFl/8d2NM
-         hVUW/oAvcI3CVLPcu4xRqhISghRo+vSUqf+B84OsV1vvCVBrU4vNPWIONq2rx5KNuzGZ
-         hErV+vZLnsTylSlbt1UrglkrcPBzyyQvHJxaQ6gb9U6jPOdP3+iBDjL8W09emXhA6sfT
-         1jaGfPoWJ/K96Wzi8U5QmcrgEpRt2KKRnP16PNhe/cW3sO4xy8zWqoRW0PFZKwrtr32C
-         uesViLQk1ZQWJjfF4/LhlP57k9cOPKB/A6mhNZVeVr4Pb/r0jjPMgnwiwanBMXNiOPpf
-         ay/g==
+        d=gmail.com; s=20230601; t=1733544222; x=1734149022; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=02lDdtpT/lKjI8tL6uwlMK+INEuKJZDy985KEGjX8WU=;
+        b=b3zPHHx56hmwYpNq9pgILz8k+G/7yTUWB1ri+H85R+IiR7OpD/q18qZEZO+fEW0U7o
+         j69VUbE4AvBiIz2w1CpT7uWbekaff2ASbkle1HF6x95CsRMgSB2p/HDVCJfgXB6Szw17
+         /CK42mb88AU84tMdZQ1Q5R539gesQaFcQnNhN7iBqaceapdjmrYpxKb74CprRkf19Wy2
+         JoZV1nlVtVJqVSoRK8WFIfMnSg7VywnIzgZk3EZiNYM9/ZLrFwlx3H2zRaewWEV7T3MM
+         +p39i5/th/cXgXTcpAdGh9BEQbRdhyxhAhiD9Z8CLP6IsrNfaEprtlSmuIqmAbDo8yiI
+         2RFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733544012; x=1734148812;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KxPUpGxCXPbny5Scxopyn/Kb7EHxic1JJJU0QM9y2hw=;
-        b=erFI1KyvZ1CIkamjhK5iM2b/+aN54IwQhVw/61ygnwgnHrEiXoATpz/Zx3S16QzSUc
-         FsJDs8o2twbF6mBFJ2QgcGRU/LXypXZf+ki/tS4/FMigTrnZq++wS3s8LrVKaUZKwvOV
-         ie+PbMh9PqEjd94+tl0I+Dly5UY1GjbVXSDjQGFSOsDPvVxnePAZQvXi8ZeuGpaND3hU
-         mpyMTMf9Gh0KdrsfJzCqarflkTXdtZegZfmlLddih5P3+BWRQHbeLJH7vcVkYCPrKfZ/
-         ZYEMjO/qIyYcgjwOjnPBSNpFtdWYpI+7B28f7ZkshJjVfm7NpnSTIuOhgv+joXmY35lC
-         ugvw==
-X-Forwarded-Encrypted: i=1; AJvYcCVdLfmbdyELO+soHUWQ6rup7wqBUByGzsp2/iV3QDKqvNPTq8HBNQvYS2fIwVOynPDt49MWBMgUGLOV3Lk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwI4hKtVvFb8GHsuCXB2/NhkGSHjww8eSx4QgVMYrxBsBXPBhnX
-	gHD9Y/iBtadN+9h9YVzUrSVVdajafN3MqMxxXMJTk6J3JmJizyha
-X-Gm-Gg: ASbGncs2i0dCr9g1Ue+MHQfBo6DN4GDhjesRTnR9f7Tar+0tkm2MG9dePBLc9DmzhJT
-	WKn9F/Hf6yrtmczJQJC976EzWr9sGpn9trCcRN39hxf2jTtNqXNr1CMpkmAnTdMIHZfMSgcG1a5
-	iFqZV6s+btatT2iEjRQWeyVOP0eJTHADXQzsAdxCbBXeX2b67XPeNSO11e4kx7Pp5ecqYbBfrGE
-	d6Ti0tTw8sF/16mT8KkaX6sapS0q61Pq9LO164ICFNo4nGBML8BsE7yIVg5JNM=
-X-Google-Smtp-Source: AGHT+IFqm4ORse/wXivucw1HWwPP+d49S1d+HpAtb2hy/Ls+PeUgB4UJQVofScI44fedpDlbORpONg==
-X-Received: by 2002:a17:902:c406:b0:215:9d58:6f35 with SMTP id d9443c01a7336-21614d1f241mr84521255ad.1.1733544012437;
-        Fri, 06 Dec 2024 20:00:12 -0800 (PST)
-Received: from noel.flets-west.jp ([2405:6586:4480:a10:fa8f:7c3e:835f:c642])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2162c0ab697sm3022435ad.131.2024.12.06.20.00.10
+        d=1e100.net; s=20230601; t=1733544222; x=1734149022;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=02lDdtpT/lKjI8tL6uwlMK+INEuKJZDy985KEGjX8WU=;
+        b=EBCb8TO4O6ml+ucvVo4MZzWuu6LGlwJ5JF6b9CVT/8wBSYlZtO/VCV9v6hqQJYw6Jt
+         ZA5Qima7HYwa4tEEUTHaK8os0/ckkStoDv1mvu1vwZtPoofdma3wQ4Qp6qoiuU6+fGWx
+         vae7ODp+K5o2+55p2uyjchWVKwwZTbq4SxeJ39lVpCoX9PBG4+uvje3CfslIIAYVnQ7s
+         VNWK6I/W7gP4OlwsJiD7b5iurOBLiKtumEO+HAJe5O53v1bToJ5jKzXEEEuyW+50g2uU
+         y6/SmIlVouKNKMA10M/sXdCirLvxhZE3QuGeCRSG87o8mzBVwDLnwQ4r3pQUdceyaOHZ
+         Oy5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUHSC7AjT+IjOZgvds9AI8ySFCmiFSz4TlhdjroCvazXI2/4RW7y45OX8U+CrPSxndzDoA7jq0u3THG9Q==@vger.kernel.org, AJvYcCVs/3ocK/8cqr1p4JEwa65RJTxQ43piRVqwGe8flDjEJIRcFPKs6FumLwz8miZDuzQiWq/0/4vBN555k9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG3ZDzKzcOKCzAzdcE2oT+S4F+o7CLn/rs3JWx0IrsAHcGigAI
+	k8335z3fQZJt5ZRWkafQqRZV8TWOMrZaat3MzBVAcl0fbIaBPUNQ
+X-Gm-Gg: ASbGncsJ/GLJt7HdTwcFQ2N7567G0oHaHbVK/m+z9+C2uup/XIVPEnn3GkKg9gp0DTt
+	Sc50UFwxxs4Nprz/LzIyhJjeDSsaZXQIY6l7d6dD1xTIyLpehzDHR9mTz6tBBtt/vaCWSGigPpN
+	khzu15yQQmUbRRBhprA5pWpwlQ2+mWRehIRC+GJx+ZWH0TiJe1RSdIe9kGVmMi2K8B+NVF7TiX2
+	8P1U6hGIVr9ISkSL0FnVoiB8CyYsJ5wfDoyycTRKvn+103+FkGFAgPvF1FReg==
+X-Google-Smtp-Source: AGHT+IHFEkPerHwP6yCxf3ANfLes1TowE4jo7/D+KJYqa58QiNfj2wWA5MuV3T84faKmInh/rlO2KQ==
+X-Received: by 2002:a05:6214:b6a:b0:6d8:aa52:74a3 with SMTP id 6a1803df08f44-6d8e71ad674mr83014906d6.28.1733544222419;
+        Fri, 06 Dec 2024 20:03:42 -0800 (PST)
+Received: from localhost.localdomain ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8ff0231c0sm168556d6.65.2024.12.06.20.03.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 20:00:11 -0800 (PST)
-From: Hironori KIKUCHI <kikuchan98@gmail.com>
-To: Philippe Simons <simons.philippe@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Carlo Caione <carlo@caione.org>,
+        Fri, 06 Dec 2024 20:03:42 -0800 (PST)
+From: Mingwei Zheng <zmw12306@gmail.com>
+To: edubezval@gmail.com,
+	j-keerthy@ti.com,
+	rafael@kernel.org,
+	daniel.lezcano@linaro.org,
+	rui.zhang@intel.com,
+	lukasz.luba@arm.com,
+	aford173@gmail.com
+Cc: linux-pm@vger.kernel.org,
+	linux-omap@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Hironori KIKUCHI <kikuchan98@gmail.com>
-Subject: Re: [PATCH] regulator: axp20x: AXP717: set ramp_delay
-Date: Sat,  7 Dec 2024 12:58:06 +0900
-Message-ID: <20241207035807.1360835-1-kikuchan98@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241206123751.981977-1-simons.philippe@gmail.com>
-References: <20241206123751.981977-1-simons.philippe@gmail.com>
+	Mingwei Zheng <zmw12306@gmail.com>,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH] thermal: ti-soc-thermal: Add check for clk_enable()
+Date: Fri,  6 Dec 2024 23:07:02 -0500
+Message-Id: <20241207040702.4075128-1-zmw12306@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,7 +93,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch resolves the freezing issue. Tested on Anbernic RG35XX Plus with AXP717 PMIC.
+Add check for the return value of clk_enable() to catch the potential
+error.
 
-Tested-by: Hironori KIKUCHI <kikuchan98@gmail.com>
+Fixes: 5093402e5b44 ("thermal: ti-soc-thermal: Enable addition power management")
+Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ drivers/thermal/ti-soc-thermal/ti-bandgap.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/thermal/ti-soc-thermal/ti-bandgap.c b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+index ba43399d0b38..da3e5dec8709 100644
+--- a/drivers/thermal/ti-soc-thermal/ti-bandgap.c
++++ b/drivers/thermal/ti-soc-thermal/ti-bandgap.c
+@@ -1189,6 +1189,7 @@ static int bandgap_omap_cpu_notifier(struct notifier_block *nb,
+ 				  unsigned long cmd, void *v)
+ {
+ 	struct ti_bandgap *bgp;
++	int ret;
+ 
+ 	bgp = container_of(nb, struct ti_bandgap, nb);
+ 
+@@ -1206,8 +1207,11 @@ static int bandgap_omap_cpu_notifier(struct notifier_block *nb,
+ 	case CPU_CLUSTER_PM_EXIT:
+ 		if (bgp->is_suspended)
+ 			break;
+-		if (TI_BANDGAP_HAS(bgp, CLK_CTRL))
+-			clk_enable(bgp->fclock);
++		if (TI_BANDGAP_HAS(bgp, CLK_CTRL)) {
++			ret = clk_enable(bgp->fclock);
++			if (ret)
++				return NOTIFY_BAD;
++		}
+ 		ti_bandgap_power(bgp, true);
+ 		ti_bandgap_restore_ctxt(bgp);
+ 		break;
+-- 
+2.34.1
+
 
