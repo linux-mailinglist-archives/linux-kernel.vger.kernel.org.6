@@ -1,99 +1,144 @@
-Return-Path: <linux-kernel+bounces-435940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A0E9E7ED4
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:56:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE2CE9E7ED5
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:00:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8177B2829AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 07:56:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A102616318B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 08:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3611126C02;
-	Sat,  7 Dec 2024 07:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fhItVw+p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B67C8136345;
+	Sat,  7 Dec 2024 08:00:55 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C71222C6E3;
-	Sat,  7 Dec 2024 07:56:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E71C28F5
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 08:00:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733558175; cv=none; b=HE12vpM2YiLA/zNM+cDuXrVut2Nu6EjyV2xi8Ib1vR8+vDGJ3svIP1lzvIDg7K4VPgZJxWi/MmY/K9B6vx9B/ZWBBGIC4GnCVuXqA/CVP9Mgerv7zZXqMd6feZVN9grk42jyt2XcFt+KP4aXWtBACse91koON4gVzCTacBTThnk=
+	t=1733558455; cv=none; b=uKxTxDAHeW3KOD4mQNMhr4OTUvnImlHfNkgUqrld36tnPMNPQxXqY+lu45D7/3vTJpOBuxEKOcmdxWLlnzo8MfDKecEa3/75CvSZxvX8ED6nt7wFba7Rm3Pub74QltiAvQyIAjQ161yIFI4iIPcATIdTcShmJZqCpmMe3NhVXCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733558175; c=relaxed/simple;
-	bh=EQPHhX7xYQfHkB/M4JeCSCExwDjxIj9Ff6puySF7OC0=;
+	s=arc-20240116; t=1733558455; c=relaxed/simple;
+	bh=bulXPnQNHNpWHhSyrqhdpYMUDxHnpSJESZklGOTCKbI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ei7B+0pJ+wHD5zB2YkblPqr4ln/OtNihUYkRn/izDL+gOVuk4PUKzfDvT+AIOZrBm4s1BO9OUd/kbc0KqoHb0ldQy90OZ1uTc+PCqG1u3gbLuG1hPF1WlZCi5l5C9Cs3n2b8kKgL8g3AHpbVlNGam5MaC8R7jf2DmbkxsiozzQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fhItVw+p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AECAEC4CECD;
-	Sat,  7 Dec 2024 07:56:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733558174;
-	bh=EQPHhX7xYQfHkB/M4JeCSCExwDjxIj9Ff6puySF7OC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fhItVw+pGIMBNt6M7+j8SdFU0YQJQkGM8ZIDL+rQgjb9vNv0Rv6nHaWIMbkJgfcp0
-	 4+LQ2QGRYeMO60XWSB0jsvYaH6mfHsZZ+PQ3IP7bm+eLQdr5vu7OBtYOkU97D7h7Ci
-	 DiFmt/ekjmJCeqIB4h2ryjtmDP2eUBl9Hmq3zxS6Cnaq1OU8ZXGg+WmD7eT+ZE/2e6
-	 namZAGr6niiLhx7bH1q6n9QYI/Du7ZTsp9Om9IzKL62JTC1VTWzGX1sdqwx1io17NJ
-	 2GXY0qk7NlrO4x7OixUzzIZ0GWlSn9olBZBmSzsi3yQXHGE4VO8jgcjQEGBIoPwWg0
-	 mGm+G9aNSKLxw==
-Date: Sat, 7 Dec 2024 07:56:13 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc: linux-hyperv@vger.kernel.org, mhklinux@outlook.com,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hv/hv_kvp_daemon: Pass NIC name to hv_get_dns_info as
- well
-Message-ID: <Z1P_naD-PjHimswj@liuwe-devbox-debian-v2>
-References: <20241112150401.217094-1-vkuznets@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=maKxIO1tLu50QC75JBrk+FuRBKj/gKR6DxX4gZpucSKHZtJf9q4YyeUJUuSp+e4r0D6PRIT7GXTGhPVEFN5JCV3aLj1pp//2MO967532DkFXuAusS6hRlz8aP/ULie4j2OhYqyxmaB6qwnty+V0RmorGHU0bxVFLAhV3MZPnkbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJpju-00061t-9k; Sat, 07 Dec 2024 09:00:34 +0100
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJpjr-0028W7-1K;
+	Sat, 07 Dec 2024 09:00:32 +0100
+Received: from ore by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <ore@pengutronix.de>)
+	id 1tJpjs-002fei-0E;
+	Sat, 07 Dec 2024 09:00:32 +0100
+Date: Sat, 7 Dec 2024 09:00:32 +0100
+From: Oleksij Rempel <o.rempel@pengutronix.de>
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Woojung Huh <woojung.huh@microchip.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH v1 1/5] dt-bindings: net: Add TI DP83TD510 10BaseT1L PHY
+Message-ID: <Z1QAoAmXlBoixIS4@pengutronix.de>
+References: <20241205125640.1253996-1-o.rempel@pengutronix.de>
+ <20241205125640.1253996-2-o.rempel@pengutronix.de>
+ <20241205-immortal-sneak-8c5a348a8563@spud>
+ <Z1KxZmRekrYGSdd4@pengutronix.de>
+ <20241206-wrought-jailbreak-52cc4a21a713@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241112150401.217094-1-vkuznets@redhat.com>
+In-Reply-To: <20241206-wrought-jailbreak-52cc4a21a713@spud>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: ore@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Tue, Nov 12, 2024 at 04:04:01PM +0100, Vitaly Kuznetsov wrote:
-> The reference implementation of hv_get_dns_info which is in the tree uses
-> /etc/resolv.conf to get DNS servers and this does not require to know which
-> NIC is queried. Distro specific implementations, however, may want to
-> provide per-NIC, fine grained information. E.g. NetworkManager keeps track
-> of DNS servers per connection.
+On Fri, Dec 06, 2024 at 04:57:01PM +0000, Conor Dooley wrote:
+> On Fri, Dec 06, 2024 at 09:10:14AM +0100, Oleksij Rempel wrote:
+> > On Thu, Dec 05, 2024 at 05:18:59PM +0000, Conor Dooley wrote:
+> > > On Thu, Dec 05, 2024 at 01:56:36PM +0100, Oleksij Rempel wrote:
+> > > > Introduce devicetree binding for the Texas Instruments DP83TD510
+> > > > Ultra Low Power 802.3cg 10Base-T1L Single Pair Ethernet PHY.
+> > > > 
+> > > > Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+> > > > ---
+> > > >  .../devicetree/bindings/net/ti,dp83td510.yaml | 35 +++++++++++++++++++
+> > > >  1 file changed, 35 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/net/ti,dp83td510.yaml b/Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..cf13e86a4017
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/net/ti,dp83td510.yaml
+> > > > @@ -0,0 +1,35 @@
+> > > > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/net/ti,dp83td510.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: TI DP83TD510 10BaseT1L PHY
+> > > > +
+> > > > +maintainers:
+> > > > +  - Oleksij Rempel <o.rempel@pengutronix.de>
+> > > > +
+> > > > +description:
+> > > > +  DP83TD510E Ultra Low Power 802.3cg 10Base-T1L 10M Single Pair Ethernet PHY
+> > > > +
+> > > > +allOf:
+> > > > +  - $ref: ethernet-phy.yaml#
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    enum:
+> > > > +      - ethernet-phy-id2000.0181
+> > > 
+> > > There's nothing specific here, can someone remind me why the generic
+> > > binding is not enough?
+> > 
+> > The missing binding was blamed by checkpatch. Haw should I proceed with this
+> > patch?
 > 
-> Similar to hv_get_dhcp_info, pass NIC name as a parameter to
-> hv_get_dns_info script.
-> 
-> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> Does dtbs_check complain when you use it in a dts? What you have here
+> matches against the pattern ^ethernet-phy-id[a-f0-9]{4}\\.[a-f0-9]{4}$
+> so I think it won't. checkpatch might be too dumb to evaluate the regex?
 
-Applied. Thanks.
+dtbs_check didn't complained about it, only checkpatch.
 
-> ---
->  tools/hv/hv_kvp_daemon.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-> index ae57bf69ad4a..296a7a62c54d 100644
-> --- a/tools/hv/hv_kvp_daemon.c
-> +++ b/tools/hv/hv_kvp_daemon.c
-> @@ -725,7 +725,7 @@ static void kvp_get_ipconfig_info(char *if_name,
->  	 * .
->  	 */
->  
-> -	sprintf(cmd, KVP_SCRIPTS_PATH "%s",  "hv_get_dns_info");
-> +	sprintf(cmd, KVP_SCRIPTS_PATH "%s %s", "hv_get_dns_info", if_name);
->  
->  	/*
->  	 * Execute the command to gather DNS info.
-> -- 
-> 2.47.0
-> 
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
