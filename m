@@ -1,233 +1,222 @@
-Return-Path: <linux-kernel+bounces-436218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436219-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7411D9E82B6
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 00:24:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C4899E82CC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 00:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71A51884305
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:24:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 513E2165963
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F61619049B;
-	Sat,  7 Dec 2024 23:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB62F172767;
+	Sat,  7 Dec 2024 23:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b="NKCaP4xB";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="1DWJbQky"
-Received: from flow-a3-smtp.messagingengine.com (flow-a3-smtp.messagingengine.com [103.168.172.138])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="CmNrZE4P"
+Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 905571E505;
-	Sat,  7 Dec 2024 23:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C940D27E;
+	Sat,  7 Dec 2024 23:52:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733613873; cv=none; b=tHYIHoJWUSePI2yE+45y5t+thSD7Wy9upkUAc53lGlZ1zRXv3wOkAGdGQpMIFRyRgxAaQvtOJLDJu4TkR4NVo7poW/q1QWUAStPpB9BnucRBV378xiFs12MmA00VFLfVcusHSSgGMYhnK8HiSFeu1yOMCAARZ4Zx/PaTxXUjy0w=
+	t=1733615545; cv=none; b=k0zb6DLQmGfqHpEruat94Y6conCKScrD1Yry7TK+1//jyTFCFBK44yGcFDP7SZOn5AL9R1M2uuS+5HLdxGbTLzK06Ao4RAQcJnfX2GnGlaUitiGB3BHfqnc/Ilij6Z3RX11GhxW6FkdMg7nM5FEk1iZU5r7ka6MZhWfbSh8XGWA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733613873; c=relaxed/simple;
-	bh=5IFUFCiYtsai/07kVA3PfphOxOjYhSgOJ3PFXuaGdto=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hXpKYYA6OwqNDSHj8un7cl6LjfCb7uNJ8cU+JnKRwY9iZYSRW99mP+c0nVEHfGc8K4ZSEqlbs1xhzXWDoS65K73tTk8sAm6lebiiI/6Nz+UaQ1mvLwqIUY7tGWWsDxqOR/Quh9ZnrYxKBm4t2GDOiCRMZbHCr5VdQJvWnoAikDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz; spf=pass smtp.mailfrom=dxuuu.xyz; dkim=pass (2048-bit key) header.d=dxuuu.xyz header.i=@dxuuu.xyz header.b=NKCaP4xB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=1DWJbQky; arc=none smtp.client-ip=103.168.172.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dxuuu.xyz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dxuuu.xyz
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailflow.phl.internal (Postfix) with ESMTP id 8F5D02005DE;
-	Sat,  7 Dec 2024 18:24:30 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-12.internal (MEProxy); Sat, 07 Dec 2024 18:24:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dxuuu.xyz; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=fm3; t=1733613870; x=1733621070; bh=Wq6/yEYJvLYOrMEjDKkEb
-	WlNkXH5vFnrMRy2imIzA8k=; b=NKCaP4xBJCwAwFDhvVZR5J/+bWRxm2PducfmB
-	1BrMu4GES9AR2i7Wo0cWO8ePNaiw3H4CrerSTDVrcN9OsMkrj9oDTVAZHpM7H6l7
-	cNbvC/n6jxPv2ehZ8yA2Eh1j4ab93v05Y7o2L81TuHxlZJ83XDFbehISI3I9Pvef
-	Bx2U3HTWO3oBi33Y2JJ50TL0gyZx/vqGU3VfztwGaeIp7cjTL0Tj3wbrCSLt0mE9
-	YCc4DGeBvwzA1LmfDW6rLunhhSuZTmjoURTPBI9yMzVP/8UiddjTSfKbU2BPqg3m
-	Nsxy4PDJM3Ca2LbYic6HWY2pSn1XSUZFnsXWGcsUZV26LvCkw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733613870; x=1733621070; bh=Wq6/yEYJvLYOrMEjDKkEbWlNkXH5vFnrMRy
-	2imIzA8k=; b=1DWJbQkymYcB7St5r1awZaALu1jrfZ5uF/StikqCYA41oxG/4fa
-	xzrFPfHQMXquUXbIP5jm89YE88zutMmk2HWOXSLWYgaL/KOgHL6nKRogM3E1ZKvk
-	/H4gMymEdK6lk+QLCPLmW2z34HWhY3NtbaS22J6lS5Lsmueq9YWecUstHFA8ntdj
-	p/y3kU9CXa0tyBYOPnBcRYRk7/s02sCa643q6q20QpjdxTfM2JtoC8UNwGxJhLIK
-	kl9YoSjgDRqRq8ylAMtYg2tIr7Sfo5QhR+mo1alU0+lS6A5k8omDui2emfcppKku
-	fBdXP+BehDMLI+qMy087rPKawBGbOBQXwDw==
-X-ME-Sender: <xms:LtlUZ3RVDZ6u2oBfQUnmhcQfdtDPjOmw95fw8IoMAkRVGvxxUzVbfQ>
-    <xme:LtlUZ4y2We0PL_xLtVS_g409Pf7ig5fxvtSzDAbbL3wDvOH1z5sj5PlTT6ziEC1Y_
-    DJhEvKCOnOXNRcnCw>
-X-ME-Received: <xmr:LtlUZ83ZpFFf9uijtsUnyUiSWLSSlQfRK79HRrsSW48ZkZ1HHRQL8sz9MmfmY-dBXR3ROEDuJLpDfDUIJsLUm18F-iwAVVqC_6bUhEINuWmWFAE71fLO>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjedvgddtkecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecufghrlhcuvffnffculdefhe
-    dmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfhrhhomhepffgrnhhi
-    vghlucgiuhcuoegugihusegugihuuhhurdighiiiqeenucggtffrrghtthgvrhhnpeeitd
-    ekgfduveetveevgfeuhfegieekleegheeftdekffefjefgteetfeeukefgkeenucffohhm
-    rghinhepghhithhhuhgsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomhepugiguhesugiguhhuuhdrgiihiidpnhgspghrtghpthhtohep
-    vddupdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehhrgifkheskhgvrhhnvghlrd
-    horhhgpdhrtghpthhtohepjhhohhhnrdhfrghsthgrsggvnhgusehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrshhtse
-    hkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhn
-    vghtpdhrtghpthhtohepqhhmoheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggrnh
-    hivghlsehiohhgvggrrhgsohigrdhnvghtpdhrtghpthhtoheprghnughrihhisehkvghr
-    nhgvlhdrohhrghdprhgtphhtthhopehmrghrthhinhdrlhgruheslhhinhhugidruggvvh
-X-ME-Proxy: <xmx:LtlUZ3BWvrK6kSh95mb_TZDmwOoItPnSrEqFdHvXs3DTW5f5_q7yRA>
-    <xmx:LtlUZwgyNyjIeqyIxW9A_FOGru-zDk_XwXyQiM4tEvdGnF0owbc0Cw>
-    <xmx:LtlUZ7oZukZgq_MAT0c0ZOdgWWg2ER7VoRaUqSUcsBG9Sh6RcHxb7A>
-    <xmx:LtlUZ7ihb8ZjuWbtOixQjxasoCimFvNfPRNUcmBUIBILZ83fbin-cg>
-    <xmx:LtlUZ5Z8C7vCo5a6e3JH5zVNi_krY42X5MZQZ4pcm4Rpa054hG5OHeHz>
-Feedback-ID: i6a694271:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 7 Dec 2024 18:24:28 -0500 (EST)
-From: Daniel Xu <dxu@dxuuu.xyz>
-To: hawk@kernel.org,
-	john.fastabend@gmail.com,
-	kuba@kernel.org,
-	ast@kernel.org,
-	davem@davemloft.net,
-	qmo@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org
-Cc: martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	antony@phenome.org,
-	toke@kernel.org
-Subject: [PATCH bpf-next v2] bpftool: btf: Support dumping a single type from file
-Date: Sat,  7 Dec 2024 16:24:17 -0700
-Message-ID: <c8e6a2dfb64d76e61a20b1e2470fccbddf167499.1733613798.git.dxu@dxuuu.xyz>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1733615545; c=relaxed/simple;
+	bh=fMljadNkuQaXIMXtcQdJRDjlJvWXspolv+L9pLQGgfk=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=d3ytSZ2Te94Ct6PdTKCBXOgCUw+5e+vhN0aKCzFDs/Bv+pVGnZONwlQpjjt3jW50cOqVJBtNAM9Go7xypb/bk0dlN3pzXARF9msPI+T0EFGPT1S96faMuPB74HAMxRb95sy1Yzl2gF9ZAg/rHpK0T2THePXNbowZmkBpASsS8qs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=CmNrZE4P; arc=none smtp.client-ip=134.76.10.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
+	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=4uofQeVCfnQS/5OITtdlzxLujIg8zrMXJkUnTf7oWBc=; b=CmNrZE4P0jxONYJaat4jzQewi8
+	uviBe33yEVa7I0YkPQYqPfFDMhdBnEgOmcsT+oObSFspautqyD9K7+NUXXtVxu1XeVIXl6JC7KGl6
+	H6dwOxhRXZGe6XnBirdKdXQD6LIY0tRuUo/UcGk0PrdzKMabz+9Bry1vxR9krdGuWviTpxm90c2oU
+	C1U77A1oqRpy5DDRDHlLzzYJEL8XxhcDuZKTw7y5Rs/jkPhje8H0m5nayd+t7j6X7VkwPld3tqoO0
+	aTyetAYnzQh1W2IYsEdIGGWhQ/okasKlcP4uRfPZkhMo2XKkY+q3YVydoDqjEBe21wZoD4GGOsKNd
+	5YC4gkig==;
+Received: from xmailer.gwdg.de ([134.76.10.29]:41255)
+	by mailer.gwdg.de with esmtp (GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tK4an-004RbV-2s;
+	Sun, 08 Dec 2024 00:52:09 +0100
+Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
+	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tK4an-000QaK-2S;
+	Sun, 08 Dec 2024 00:52:09 +0100
+Received: from [192.168.0.221] (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
+ (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sun, 8 Dec
+ 2024 00:52:08 +0100
+Message-ID: <9d9567dbdaf39688bbd0d240e29dec826a5931ee.camel@gwdg.de>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+From: Martin Uecker <muecker@gwdg.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: David Laight <David.Laight@aculab.com>, Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Date: Sun, 8 Dec 2024 00:52:07 +0100
+In-Reply-To: <CAHk-=wjsfYYKBYuW8_6yKjdwHih0MMa2GwUJh_LHcuUNFR7-QA@mail.gmail.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
+	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
+	 <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
+	 <344b4cf41a474377b3d2cbf6302de703@AcuMS.aculab.com>
+	 <9a0c041b6143ba07c2b3e524572fccd841f5374b.camel@gwdg.de>
+	 <CAHk-=wjpVXEjX16PP=-hi4CgLqEGJ_U-WvKWq+J3C+FW-hSSfg@mail.gmail.com>
+	 <0a2996a7c63930b9d9a8d3792358dd9e494e27c1.camel@gwdg.de>
+	 <CAHk-=wjsfYYKBYuW8_6yKjdwHih0MMa2GwUJh_LHcuUNFR7-QA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MBX19-SUB-07.um.gwdg.de (10.108.142.72) To
+ MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
+X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:5, sv:1733599764, ts:1733615529
+X-Virus-Scanned: (clean) by clamav
+X-Spam-Level: -
 
-Some projects, for example xdp-tools [0], prefer to check in a minimized
-vmlinux.h rather than the complete file which can get rather large.
+Am Samstag, dem 07.12.2024 um 12:28 -0800 schrieb Linus Torvalds:
+> On Sat, 7 Dec 2024 at 11:19, Martin Uecker <muecker@gwdg.de> wrote:
+> >=20
+> > But that all seem solvable issues on the compiler side.
+>=20
+[... Itanium, value range analysis, no assertions in kernel...]
 
-However, when you try to add a minimized version of a complex struct (eg
-struct xfrm_state), things can get quite complex if you're trying to
-manually untangle and deduplicate the dependencies.
 
-This commit teaches bpftool to do a minimized dump of a single type by
-providing an optional root_id argument.
+> Now, would we want to have proper value *static* range analysis in the
+> kernel for other reasons? Oh yes. It would often be very nice to have
+> the ability to state "this value is trusted and is in this range", and
+> have it percolate all the way down, both for optimization purposes but
+> also for various sanity check purposes.
 
-Example usage:
+__bos should give you some access to it, but it seems not as
+good as it could be (relative to what the optimizer knows)
+and then the information is also not available in the front-end.=20
 
-    $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
-    [12643] STRUCT 'xfrm_state' size=912 vlen=58
+>=20
+> But it's simply not sanely available in the generic case.
 
-    $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
-    #ifndef __VMLINUX_H__
-    #define __VMLINUX_H__
+I was not talking about future still-to-be-invented compiler
+technology, but about things that work today.
 
-    [..]
+While the compiler can not automatically prove every use
+of VLA bounded, it can reliably diagnose the cases where it
+can=C2=A0*not* see that it is bounded. Consider this example:
 
-    struct xfrm_type_offload;
+void oob(int n, char p[n]);
+void f(unsigned int n)
+{
+    char buf[MIN(n, 100)]; // bounded
+    oob(n + 10, buf); // warning
+}
 
-    struct xfrm_sec_ctx;
+void h(unsigned int n)
+{
+    char buf[100];  // static with worst case size
+    oob(n + 10, buf); // no warning
+}
 
-    struct xfrm_state {
-            possible_net_t xs_net;
-            union {
-                    struct hlist_node gclist;
-                    struct hlist_node bydst;
-            };
-            union {
-                    struct hlist_node dev_gclist;
-                    struct hlist_node bysrc;
-            };
-            struct hlist_node byspi;
-    [..]
+void i(unsigned int n)
+{
+    char buf[n]; // warning!
+    oob(n + 10, buf);
+}
 
-[0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
+void test_f() { f(50); }
+void test_h() { h(50); }
+void test_i() { i(50); }
 
-Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
----
-Changes in v2:
-* Add early error check for invalid BTF ID
+https://godbolt.org/z/b15ajTPda
 
- .../bpf/bpftool/Documentation/bpftool-btf.rst |  5 +++--
- tools/bpf/bpftool/btf.c                       | 19 +++++++++++++++++++
- 2 files changed, 22 insertions(+), 2 deletions(-)
+For both 'f' and 'h' stack is bounded and generally smaller in 'f'.
+Also any worst-case stack size analysis that applies to 'h' also
+applies to 'f' (and could potentially be improved).
 
-diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-index 3f6bca03ad2e..5abd0e99022f 100644
---- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-+++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
-@@ -27,7 +27,7 @@ BTF COMMANDS
- | **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
- | **bpftool** **btf help**
- |
--| *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
-+| *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* [**root_id** *ROOT_ID*] }
- | *FORMAT* := { **raw** | **c** [**unsorted**] }
- | *MAP* := { **id** *MAP_ID* | **pinned** *FILE* }
- | *PROG* := { **id** *PROG_ID* | **pinned** *FILE* | **tag** *PROG_TAG* | **name** *PROG_NAME* }
-@@ -60,7 +60,8 @@ bpftool btf dump *BTF_SRC*
- 
-     When specifying *FILE*, an ELF file is expected, containing .BTF section
-     with well-defined BTF binary format data, typically produced by clang or
--    pahole.
-+    pahole. You can choose to dump a single type and all its dependent types
-+    by providing an optional *ROOT_ID*.
- 
-     **format** option can be used to override default (raw) output format. Raw
-     (**raw**) or C-syntax (**c**) output formats are supported. With C-style
-diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
-index d005e4fd6128..a75e17efaf5e 100644
---- a/tools/bpf/bpftool/btf.c
-+++ b/tools/bpf/bpftool/btf.c
-@@ -953,6 +953,8 @@ static int do_dump(int argc, char **argv)
- 		NEXT_ARG();
- 	} else if (is_prefix(src, "file")) {
- 		const char sysfs_prefix[] = "/sys/kernel/btf/";
-+		__u32 root_id;
-+		char *end;
- 
- 		if (!base_btf &&
- 		    strncmp(*argv, sysfs_prefix, sizeof(sysfs_prefix) - 1) == 0 &&
-@@ -967,6 +969,23 @@ static int do_dump(int argc, char **argv)
- 			goto done;
- 		}
- 		NEXT_ARG();
-+
-+		if (argc && is_prefix(*argv, "root_id")) {
-+			NEXT_ARG();
-+			root_id = strtoul(*argv, &end, 0);
-+			if (*end) {
-+				err = -1;
-+				p_err("can't parse %s as root ID", *argv);
-+				goto done;
-+			}
-+			if (root_id >= btf__type_cnt(btf)) {
-+				err = -EINVAL;
-+				p_err("invalid root ID: %u", root_id);
-+				goto done;
-+			}
-+			root_type_ids[root_type_cnt++] = root_id;
-+			NEXT_ARG();
-+		}
- 	} else {
- 		err = -1;
- 		p_err("unrecognized BTF source specifier: '%s'", src);
--- 
-2.46.0
+In 'f' one gets a warning because 'oob' will try to do an OOB
+access.  This is only possibly because the compiler sees the true
+size of the array.  (One can also get precise information
+about the size with __bdos.)
+
+In 'h' the error can not be detected. The information is lost.
+One can get a warning only when the static worst-case size is
+exceeded, but otherwise the error remains hidden.
+
+In 'i' one gets the warning about the OOB access and with=C2=A0
+-Wvla-larget-than=3D100  one gets a warning that the VLA size may
+be unbounded.  These case should then not be allowed of course.
+
+Note that this works today in GCC and seems to have better
+information than __bos available (not sure why though).
+
+>=20
+> > a) this is not guaranteed in a specific situation (-Wvla-larher-than)
+>=20
+> We'd either get horrendous numbers of false positives that we then
+> have to manually add special code for, or
+>
+
+> > b) transform the array automatically to fixed size array
+> > of size X *or* something smaller when it can show this.
+>=20
+> we'd just do this by hand *once* and for all, and say "VLA's didn't work =
+out".
+>=20
+> So yeah. We did (b) by hand.
+>=20
+> We used to have VLA's in the kernel. It was a disaster. We got rid of
+> them, because the (big) pain wasn't worth the (few) places it was
+> actually useful.
+
+Can you point me to some horror stories?=20
+
+
+> So we have been VLA-free for the last five years, and it's been good.
+> Simplify.
+
+These macro discussions I get CC-ed on sometimes leave a different=20
+impression ;-)
+
+
+Martin
+
 
 
