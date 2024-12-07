@@ -1,126 +1,168 @@
-Return-Path: <linux-kernel+bounces-435825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3B629E7DAC
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:14:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8667F9E7DB2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:20:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F601887A53
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:20:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEEC125D5;
+	Sat,  7 Dec 2024 01:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bTFOpAdc"
+Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82E77286932
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:14:23 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F8AC179A7;
-	Sat,  7 Dec 2024 01:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Dz8iq5f9"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09256C13C
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:14:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B9F4A24
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:19:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733534054; cv=none; b=QCDuAItAALWXk7dTOqAPhXVjTKRGSLn1V7+9YNgn5tcxqqCcncijWLwn4NTkw5Gsm2KOZQ4CBtm4hZhRcKk1sqBBfTswGrHWWwqmbYdHKMJDxts4Xw1v355Gg8aSi/T/XJldcwxXMa5OBl3v9fIDSbkxuau4g9KxNTcXcZAmMJw=
+	t=1733534400; cv=none; b=Y14/lNRdauNZzTCLUZg4eKwkEbH4S4uI0nQYGcdvCj+tT5uDbQcUBtv1i7cpAcTgOe+rx2wzqeDdzjBpqaqraQvO1tfdJcvMk8Zg7U8M9/eNgFUI+Fc6qelzAk5AB5fUS/rp5uA1U9v5AiAVNgZOUqwk58hwF1fArWlx8YbyTKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733534054; c=relaxed/simple;
-	bh=1UDNfOgAXHiNS1laqsuNcIe0CfMA9SfD/bj3xh3ULE4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UWYrTdd5eDdvjJ1Rd2REeFJpiVuK8d1obX7X1y/kGgQpNRLZkkf/vsbXSyawp2CAqSp4mgW7EWj5AG3KKnUoVPa3AGOE53QVRV6b+WVA2hG2UHW2SQcns57nWIdc7S6FG9Kxu5QLDU0uQbqr7WNH36UwWEzT4itMjpDGaK+QgZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Dz8iq5f9; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-385e87b25f0so2212792f8f.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 17:14:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733534051; x=1734138851; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kc4i0kJQLOWcBEfKkh0Mird9pq2rATpCYMpyHBDNC9Q=;
-        b=Dz8iq5f9DSBrGG+VSu3ISHBYgs7VrSh10cEknSughBmoHAmqiComy73O9E+KtcNV66
-         eSLlY/QcZYW8PqmEpNVZNhhl6tHLg6g0MVtK47aFlsWGzoPoXH3x91GpySNxbaIh/tQK
-         IkY4ODuUmmOMkT5Hl6O31YsxsV6YJDuFk8Pvlg/QDL4NUqXLwQYunbkksLiuja6CVjVm
-         pq3b0dGgIGf5C8OKuXEZfkbxUkcLBjW09dbTd3PVEWlIsCLqRTxz8R3XPGK4M4HwAyIN
-         jO/DFNH20FpkAGwHRv8NCS8NqaoTRrjJIPIgxUyIkBv3gtD9X1GuPKVbIaoePw+RWO3w
-         yyPA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733534051; x=1734138851;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kc4i0kJQLOWcBEfKkh0Mird9pq2rATpCYMpyHBDNC9Q=;
-        b=n5A5R/Gx5R3V9ZRrLu/2i+jyDs+8VcdXC5Ai04atFKe00wotybT4Uju3kp5+oZ3lOf
-         yEs9lzyXNNv3esKCJhpLisRd++ytK+LpR2O8ufeTdpFgaYVMJBnTOWx6ls9DlHF0/MeZ
-         De8XeFamSXiS/KKTW6DdVtZIk+q9mu1gqwIZQZ7wDnzOgzt/QIej7ZgQ4LRbficgSrQz
-         reAnsJ8uoL+svtHsFRyxc4TPnhIHOc8EFuT/qHxuBUxYIuH5uHcn7bB6xi3ejbpKY4s/
-         SGSK9IUYp51pBt6QftI7XuLrcLRWTkLFcRV4zVDkreD13qkHmGCkdOrOLKixCXBfh/qZ
-         lz4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW+3WJh06QHa556DXa60DawoH1NrzFuPQiNJX0GIGHBDsSTaJJtuO28UqO2dQAmbOrL3IvCV4mGjWhcKQc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzABAo1FTYLz6UXx40uKA13yM6eZ04vvXW2smD41kFp9RJsGQfu
-	Y5hWzU+ujYWC44ciD957yrQwro+7R7JPsGJDIf9dfPbXR5Hr/pulmXxYMd9M2Hn7plLjnxHvvXK
-	rOUI9levjiOHWuimNnwFIJVS1QqoOPFxhUST7vQ==
-X-Gm-Gg: ASbGnctZJnJO2//bFMIRYcvxbKib7hIsA0oIps2uKz7YMl7LUi5f7XDkAxYmvPH595L
-	Vyg0K9nrRpTmkS6jGN5snnTwOVkwwJKvNc9UhYjUahVPkcLkIHzO2pCUa5Zma8y4=
-X-Google-Smtp-Source: AGHT+IEXUUe0fWZt4pPEQxVTHw6twtVV/mHWiQX4ajOGKuM43alY918V0NbCArXqqS7AFHkv/75t0ILgA7HTIDbSd1o=
-X-Received: by 2002:a05:6000:42c7:b0:386:2e8c:e26d with SMTP id
- ffacd0b85a97d-3862e8ce40emr1978498f8f.0.1733534051301; Fri, 06 Dec 2024
- 17:14:11 -0800 (PST)
+	s=arc-20240116; t=1733534400; c=relaxed/simple;
+	bh=ZukOdbFvqasZZ3raYS3UoqCZujhq4RIJwfsY74HV72Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mOXN5+7csFD1nmBFsMAefXeaiZ7ckiofbdiAbcD4hjzbYbjD+DCwc0dBjTomEd+SH3Ku5+z+Cg8Vc4Vmm/0GC7pG6l46wFTIwMuyuLDQf+9HN0/x5n+sI/avnjSa5VdNvG1NnGEH6tYSEW0Ge43eF+DpTXW0oKvWWBYYihePycg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bTFOpAdc; arc=none smtp.client-ip=91.218.175.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9c9074c1-a079-42aa-b1c0-a3fd5523e9f7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733534385;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/uNOUD5sUn4ce0l5tkusY9QEAAd1axiX1bAYXIZx728=;
+	b=bTFOpAdc9qgYckcfW/FXYYyH0X8YZcu0ITbbplcG7JaVg2gPW0uslJuCuWpcUgTvZWMqEc
+	1eNy5B9s9OltQEWkZ0kgF3FU5RIddwMumVreSENBbJD/1WE490ANBlYlSaVuyMT4Yxk02/
+	BDpmAzWqW4LkPK/y8atgPByoS0q9rVY=
+Date: Fri, 6 Dec 2024 17:19:35 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205141533.111830-1-dakr@kernel.org> <20241205141533.111830-4-dakr@kernel.org>
-In-Reply-To: <20241205141533.111830-4-dakr@kernel.org>
-From: Fabien Parent <fabien.parent@linaro.org>
-Date: Fri, 6 Dec 2024 17:14:00 -0800
-Message-ID: <CAPFo5VJ9=VAghiUGbzPjDDdG8tg6xNQaRtBduHk8R70jktPQNg@mail.gmail.com>
-Subject: Re: [PATCH v4 03/13] rust: implement `IdArray`, `IdTable` and `RawDeviceId`
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com, 
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com, 
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me, 
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com, 
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net, 
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org, 
-	daniel.almeida@collabora.com, saravanak@google.com, dirk.behme@de.bosch.com, 
-	j@jannau.net, chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
-	devicetree@vger.kernel.org, Wedson Almeida Filho <wedsonaf@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Migrate test_xdp_meta.sh into
+ xdp_context_test_run.c
+To: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
+ <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
+ Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
+ KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+ Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
+ Alexis Lothore <alexis.lothore@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
+ bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241206-xdp_meta-v1-0-5c150618f6e9@bootlin.com>
+ <20241206-xdp_meta-v1-2-5c150618f6e9@bootlin.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Martin KaFai Lau <martin.lau@linux.dev>
+Content-Language: en-US
+In-Reply-To: <20241206-xdp_meta-v1-2-5c150618f6e9@bootlin.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Danilo,
+On 12/6/24 12:12 AM, Bastien Curutchet wrote:
+> +void test_xdp_context_functional(void)
+> +{
+> +	LIBBPF_OPTS(bpf_tc_hook, tc_hook, .attach_point = BPF_TC_INGRESS);
+> +	LIBBPF_OPTS(bpf_tc_opts, tc_opts, .handle = 1, .priority = 1);
+> +	struct bpf_program *tc_prog, *xdp_prog;
+> +	struct netns_obj *rx_ns, *tx_ns;
+> +	struct test_xdp_meta *skel;
+> +	struct nstoken *nstoken;
+> +	int rx_ifindex;
+> +	int ret;
+> +
+> +	tx_ns = netns_new(TX_NETNS, false);
+> +	if (!ASSERT_OK_PTR(tx_ns, "create tx_ns"))
+> +		return;
+> +
+> +	rx_ns = netns_new(RX_NETNS, false);
+> +	if (!ASSERT_OK_PTR(rx_ns, "create rx_ns"))
+> +		goto free_txns;
+> +
+> +	SYS(free_rxns, "ip link add " RX_NAME " netns " RX_NETNS
+> +	    " type veth peer name " TX_NAME " netns " TX_NETNS);
+> +
+> +	nstoken = open_netns(RX_NETNS);
 
-> +/// Create device table alias for modpost.
-> +#[macro_export]
-> +macro_rules! module_device_table {
-> +    ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
-> +        #[rustfmt::skip]
-> +        #[export_name =
-> +            concat!("__mod_", $table_type,
-> +                    "__", module_path!(),
-> +                    "_", line!(),
-> +                    "_", stringify!($table_name),
-> +                    "_device_table")
+close_netns(nstoken) is needed.
 
-This doesn't work on top of v6.13-rc1. The alias symbol name has been
-renamed by commit 054a9cd395a7 (modpost: rename alias
-symbol for MODULE_DEVICE_TABLE())
+> +	if (!ASSERT_OK_PTR(nstoken, "setns rx_ns"))
+> +		goto free_rxns;
+> +
+> +	SYS(free_rxns, "ip addr add " RX_ADDR "/24 dev " RX_NAME);
+> +	SYS(free_rxns, "ip link set dev " RX_NAME " up");
+> +
+> +	skel = test_xdp_meta__open_and_load();
+> +	if (!ASSERT_OK_PTR(skel, "open and load skeleton"))
+> +		goto free_rxns;
+> +
+> +	rx_ifindex = if_nametoindex(RX_NAME);
+> +	if (!ASSERT_GE(rx_ifindex, 0, "if_nametoindex rx"))
+> +		goto destroy_skel;
+> +
+> +	tc_hook.ifindex = rx_ifindex;
+> +	ret = bpf_tc_hook_create(&tc_hook);
+> +	if (!ASSERT_OK(ret, "bpf_tc_hook_create"))
+> +		goto destroy_skel;
+> +
+> +	tc_prog = bpf_object__find_program_by_name(skel->obj, "ing_cls");
+> +	if (!ASSERT_OK_PTR(tc_prog, "open ing_cls prog"))
+> +		goto destroy_skel;
+> +
+> +	tc_opts.prog_fd = bpf_program__fd(tc_prog);
+> +	ret = bpf_tc_attach(&tc_hook, &tc_opts);
+> +	if (!ASSERT_OK(ret, "bpf_tc_attach"))
+> +		goto destroy_skel;
+> +
+> +	xdp_prog = bpf_object__find_program_by_name(skel->obj, "ing_xdp");
+> +	if (!ASSERT_OK_PTR(xdp_prog, "open ing_xdp prog"))
+> +		goto destroy_skel;
+> +
+> +	ret = bpf_xdp_attach(rx_ifindex,
+> +			     bpf_program__fd(xdp_prog),
+> +			     0, NULL);
+> +	if (!ASSERT_GE(ret, 0, "bpf_xdp_attach"))
+> +		goto destroy_skel;
+> +
+> +	nstoken = open_netns(TX_NETNS);
 
-I applied the following change to make it work again:
--            concat!("__mod_", $table_type,
-+            concat!("__mod_device_table__", $table_type,
-                     "__", module_path!(),
-                     "_", line!(),
--                    "_", stringify!($table_name),
--                    "_device_table")
-+                    "_", stringify!($table_name))
+Same here.
 
+pw-bot: cr
 
-> +        ]
-> +        static $module_table_name: [core::mem::MaybeUninit<u8>; $table_name.raw_ids().size()] =
-> +            unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
-> +    };
+> +	if (!ASSERT_OK_PTR(nstoken, "setns tx_ns"))
+> +		goto destroy_skel;
+> +
+> +	SYS(destroy_skel, "ip addr add " TX_ADDR "/24 dev " TX_NAME);
+> +	SYS(destroy_skel, "ip link set dev " TX_NAME " up");
+> +	SYS(destroy_skel, "ping -c 1 " RX_ADDR);
+> +
+> +destroy_skel:
+> +	test_xdp_meta__destroy(skel);
+> +free_rxns:
+> +	netns_free(rx_ns);
+> +free_txns:
+
+nit. test_xdp_meta__destroy, netns_free, and the to-be-added close_netns can 
+handle NULL. Init the variables to NULL at the beginning could save a few goto 
+labels, probably only one label is needed.
+
+> +	netns_free(tx_ns);
 > +}
 
