@@ -1,54 +1,49 @@
-Return-Path: <linux-kernel+bounces-435835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DF29E7DC3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:38:46 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B3F459E7DC7
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:40:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 497E328658D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:38:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72B18285866
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:40:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B65EC8FF;
-	Sat,  7 Dec 2024 01:38:41 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2EC18638;
+	Sat,  7 Dec 2024 01:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzq+flkb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 822B02BCF5
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:38:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3442317597;
+	Sat,  7 Dec 2024 01:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733535521; cv=none; b=rBX4U5jKGDC6bSZf36P3JDXx0P1pSt8bBZLia8WSqrbxze9lnOTIV4hB+vo2FG4PL96DdH5DyWpv/SAQ8yoebCfDcN7MBvKZCS4uh6W+9myFlE3qmP7xvWO3t8sjO2AZ2tj5pyI3OxIiLsd+1yFIeW+0ycJKGWTWuSVAMU3RWcw=
+	t=1733535618; cv=none; b=KKx+BL5HA1APdTeaHMqOpigDmej5rWzTq+ZdCSwNRTo1i2uPtMGGNt3ju7mAQ6VKi+vnLnQLgsLHanL+0mLNruKc19ddCB1zQ72h08h77A3XaIK9AK7bb46fo6PfnGs5J0dxdCrIGf20YVESC3vLUSqMxEW/ioXBLodDszoBbO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733535521; c=relaxed/simple;
-	bh=GJHhE+C4To8nQ7emTFZtyy14U07UsWHedkCTr0UoH5U=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OE74LN4FQqdS63hcZAmUuHgGbfEtT0Z7nBIF0HiMpQNgKJMS/Ymt8QTquUO8O0FDdIY+DiMIUEyrr2cF3NC4Fe6HwJv8vSgFk+r9qIqWtZ5YhsHaWDwxbE7793daQjJEzFmq+9wGuD7di+MiUBQqeT+KSSEmjI7nFBPNZGri1Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.88.51.203])
-	by sina.com (10.185.250.23) with ESMTP
-	id 6753A70E00000564; Sat, 7 Dec 2024 09:38:27 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 2482978913239
-X-SMAIL-UIID: BE8080519555448094550566EDCEBB1A-20241207-093827-1
-From: Hillf Danton <hdanton@sina.com>
-To: syzbot <syzbot+2eab87cf3100f45423ec@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [net?] [s390?] KASAN: slab-use-after-free Read in netdev_walk_all_lower_dev
-Date: Sat,  7 Dec 2024 09:38:13 +0800
-Message-Id: <20241207013813.782-1-hdanton@sina.com>
-In-Reply-To: <67531f5d.050a0220.2477f.0006.GAE@google.com>
-References: 
+	s=arc-20240116; t=1733535618; c=relaxed/simple;
+	bh=A/0Yl74m2xBiA/+jaRSTm70HYXXe2llIlRgyWbOAj8k=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=tekm3QVGAa5rNT6cB8LQYuY09Ii+otpi/qKbpVy1bQuJqglDsFHpm2adzgc68d2tTUMRCAMn0xn8vTcXbHB0vimK4sa7THPM5UiABH5YmwZ0bi1nqCwxiJ3jeobnP4lcPFcwMDfcHt9uOu5J72GsM22KPcvsOpQ7piuGpgH9hlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzq+flkb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B70FAC4CED1;
+	Sat,  7 Dec 2024 01:40:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733535617;
+	bh=A/0Yl74m2xBiA/+jaRSTm70HYXXe2llIlRgyWbOAj8k=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=lzq+flkbUQjfDw0tQy+ft4Xgf/dVBnuydRKwgHt5iOZfcRssjWSxAHDXcE/Wz8Rwx
+	 CuiHEgQkiDj8ZDtuej/C4Nmw6jt49+XNkO3gAOp9XtZ4YeMAEf/8rRxzZG3wnipSfw
+	 zYQkIRmL4Ta+2YJ4LpHhY/pkOkoKoUGqkQFB+45lE3Gr3YdqY9Q4EaJitnNVpO9bWv
+	 ldDNHQb9a3aN0At47vMZkM0wQStCN8rocee57bXL407hpKL9ftPwJLZrR6uk+18rXQ
+	 +fEo+ogYErrfkfkfly/5qZuEISp6LLnkNETT/xT/4iUXQTew1W3ZBZv5p2ElzSOoq+
+	 L7e66r76KqEjA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB387380A95C;
+	Sat,  7 Dec 2024 01:40:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,27 +51,42 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net v2] ptp: kvm: x86: Return EOPNOTSUPP instead of ENODEV
+ from kvm_arch_ptp_init()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173353563276.2868165.3680363675119521922.git-patchwork-notify@kernel.org>
+Date: Sat, 07 Dec 2024 01:40:32 +0000
+References: <20241203-kvm_ptp-eopnotsuppp-v2-1-d1d060f27aa6@weissschuh.net>
+In-Reply-To: <20241203-kvm_ptp-eopnotsuppp-v2-1-d1d060f27aa6@weissschuh.net>
+To: =?utf-8?q?Thomas_Wei=C3=9Fschuh_=3Clinux=40weissschuh=2Enet=3E?=@codeaurora.org
+Cc: richardcochran@gmail.com, jonathanh@nvidia.com, maz@kernel.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Fri, 06 Dec 2024 07:59:25 -0800
-> syzbot found the following issue on:
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Tue, 03 Dec 2024 18:09:55 +0100 you wrote:
+> The caller, ptp_kvm_init(), emits a warning if kvm_arch_ptp_init() exits
+> with any error which is not EOPNOTSUPP:
 > 
-> HEAD commit:    896d8946da97 Merge tag 'net-6.13-rc2' of git://git.kernel...
-> git tree:       net
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10de5330580000
+> 	"fail to initialize ptp_kvm"
+> 
+> Replace ENODEV with EOPNOTSUPP to avoid this spurious warning,
+> aligning with the ARM implementation.
+> 
+> [...]
 
-#syz test
+Here is the summary with links:
+  - [net,v2] ptp: kvm: x86: Return EOPNOTSUPP instead of ENODEV from kvm_arch_ptp_init()
+    https://git.kernel.org/netdev/net/c/5e7aa97c7acf
 
---- x/net/smc/smc_core.c
-+++ y/net/smc/smc_core.c
-@@ -1896,7 +1896,9 @@ int smc_vlan_by_tcpsk(struct socket *clc
- 
- 	priv.data = (void *)&ini->vlan_id;
- 	rtnl_lock();
-+	rcu_read_lock();
- 	netdev_walk_all_lower_dev(ndev, smc_vlan_by_tcpsk_walk, &priv);
-+	rcu_read_unlock();
- 	rtnl_unlock();
- 
- out_rel:
---
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
