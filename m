@@ -1,100 +1,92 @@
-Return-Path: <linux-kernel+bounces-436159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBFE49E81F3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:26:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A688216614A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:26:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11EF8155743;
-	Sat,  7 Dec 2024 20:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=radix.lt header.i=povilas@radix.lt header.b="RqFG+goD"
-Received: from sender4-op-o11.zoho.com (sender4-op-o11.zoho.com [136.143.188.11])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04DAF9E81F1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 21:26:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7892F153565;
-	Sat,  7 Dec 2024 20:26:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.11
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733603213; cv=pass; b=hsYWbVBzD1Lmpd2oBxjriX2SFyqZGT7QrFxeQm/4k2rsykXhY+V+jDrCquQsaJErlVxRHwvUxFYLIJRq2BqpDJ729D/OCl+Cf5ytogd/CMxv4v89v9RL4tLWjRQ4xMrjXk+w7bqw7jDgLjPI5N6TKGgIy33P3ivnWCmcFDt2QxY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733603213; c=relaxed/simple;
-	bh=NopiB1Eb/FaQydMT34A+1eoTBGATjEMq82DdMXzQ+9Y=;
-	h=Message-ID:Date:MIME-Version:From:To:Cc:Subject:Content-Type; b=E+BveGmH+XWNCH06lE5uvW4LltPOvQZvBDCzY5hRMBdplVbv0tIjzL1rw4ag+wfCvcpVTTFLU0XtXTy1vHqtwOnQ1PJydtP40HKF7jtEzUv0jnK+ydCxRZ9HvDloX7HGbSdWR2k5nBdaOINcudSDq4dsE17KyyZPxpElHXQk02Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radix.lt; spf=pass smtp.mailfrom=radix.lt; dkim=pass (1024-bit key) header.d=radix.lt header.i=povilas@radix.lt header.b=RqFG+goD; arc=pass smtp.client-ip=136.143.188.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radix.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radix.lt
-ARC-Seal: i=1; a=rsa-sha256; t=1733603192; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=MgAg4k9iLl3skhOUWxA0x1U/Vcn6XFSv5APC3/vl7zUlM9Ha9inMTMA1zbaneA6OZtP2TuuQ4KFTjHqk+Ya4n7soB9a80ILVD+fVUuT/dglCPB6E9JoHKa/J3Rdm6W9ML0oCyM9NJsOnMKIZvQjr/LaEymghhPUkBXOXYvBOY/A=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733603192; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=esyrfn6zed3J0aX33DmPQ/m2ecvc1j+MAt8KepMxEsY=; 
-	b=hW/V+vqiePEMpruzJ+EFKvWGkaPIXFXZQFx+ua45gP2h/npMqe5Pss3WTMc/EA0ElnhHkGrvpcBVb75DkHZJJjXAdzZ992Yk+3EfoL99j5mvUgRmjUDMhquEPYbQuN9A8MmETXdyM76ZfcyBL4qz++fccglSksoYzgOL/IkGGxc=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=radix.lt;
-	spf=pass  smtp.mailfrom=povilas@radix.lt;
-	dmarc=pass header.from=<povilas@radix.lt>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733603192;
-	s=zoho; d=radix.lt; i=povilas@radix.lt;
-	h=Message-ID:Date:Date:MIME-Version:From:From:To:To:Cc:Cc:Subject:Subject:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=esyrfn6zed3J0aX33DmPQ/m2ecvc1j+MAt8KepMxEsY=;
-	b=RqFG+goDENquupD8LHbkhDmwo63dcbyRTYSwzYFzcgbHIIU/JU9+ZWL9pUNqEz15
-	lI9818USN9j12dUmFfTodj1M7mEZPfHUr2etUd50jjuBMRqa5THaYtjWhXtatQJdyDc
-	ACCjfsHkIZhvrorVuJ1ksYvjPlG7Sg+9rJXyjur0=
-Received: by mx.zohomail.com with SMTPS id 1733603189997314.9608378018047;
-	Sat, 7 Dec 2024 12:26:29 -0800 (PST)
-Message-ID: <e5d65c8a-4785-4635-ad77-d5155f517155@radix.lt>
-Date: Sat, 7 Dec 2024 22:26:26 +0200
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9A94281DB1
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 20:26:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FCBB156641;
+	Sat,  7 Dec 2024 20:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Poap3r8c"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16BD34CC4;
+	Sat,  7 Dec 2024 20:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733603192; cv=none; b=i3ishPLItsekz8+KbrdFsp8ppynUleCyPo/1V8nJWpXL3pGnwwrjH4fdLHkFdsCKkJRDKhadHHZkHSkhcqRYR7gS4JQ2K0p91hHM6oSGBqnoaSmXQRW3ZBleQ+CbRweI3Qr/TScqe8lpHFdjm6WZBN6kBPNFaq4OtI5Dfk40zAk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733603192; c=relaxed/simple;
+	bh=uUbianTua1fqJ3xsTd9AIf0EsuQrYK4M6Llw6yFInFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iF7Eu00VULn2bKc9zJY73J16Uvs6kaLYyYQXsQlZWrojIrGEjTLLeDqVBaVWa2BdGB50SENA+KMwp7IL5VlXkhMb4vZME+NnRVYmUvCTj1dRXy4T6lv48BRF/h4ExxGa4vgXCWL1C1iy16BjQlsJw3XZbz2/QQBfjboDFtWoiqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Poap3r8c; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=39pDgSNiUk/hOnbnaEPvFVAZbZyU2gLC1/FdQLOqz98=; b=Poap3r8cL36LdEf/kxUIjmPFEK
+	+ENesw96BbTmgqtLpseJlLdjdKhMmrH6YEKBKwIrnpBjDCBfIsv4Zp0k6+TA9Tu+T7lwvoLaTDpRs
+	2v2vfywg8fsbSbAOtdwOwWYXo0LAPwlzKUoes7+/mnEuHUE87wyW51E7QSe8mWT7JYrI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tK1Nj-00FVHZ-L9; Sat, 07 Dec 2024 21:26:27 +0100
+Date: Sat, 7 Dec 2024 21:26:27 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Steffen Trumtrar <s.trumtrar@pengutronix.de>
+Cc: Dinh Nguyen <dinguyen@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-clk@vger.kernel.org, kernel@pengutronix.de,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 6/6] arm64: dts: agilex5: initial support for Arrow
+ AXE5-Eagle
+Message-ID: <4ba6d338-9910-487e-8b98-1f576f9f0366@lunn.ch>
+References: <20241205-v6-12-topic-socfpga-agilex5-v3-0-2a8cdf73f50a@pengutronix.de>
+ <20241205-v6-12-topic-socfpga-agilex5-v3-6-2a8cdf73f50a@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Povilas Kanapickas <povilas@radix.lt>
-Content-Language: en-US
-To: pali@kernel.org
-Cc: jdelvare@suse.com, linux@roeck-us.net, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: [PATCH] hwmon: (dell-smm) Add Dell XPS 9370 to fan control whitelist
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205-v6-12-topic-socfpga-agilex5-v3-6-2a8cdf73f50a@pengutronix.de>
 
-Add the Dell XPS 9370 to the fan control whitelist to allow
-for manual fan control.
+>    - 2x 1Gb Ethernet
 
-Signed-off-by: Povilas Kanapickas <povilas@radix.lt>
----
- drivers/hwmon/dell-smm-hwmon.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+> +&gmac2 {
+> +	status = "okay";
+> +	phy-mode = "rgmii-id";
+> +	phy-handle = <&emac2_phy0>;
+> +
+> +	mdio0 {
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +		compatible = "snps,dwmac-mdio";
+> +		emac2_phy0: ethernet-phy@1 {
+> +			reg = <0x1>;
+> +		};
+> +	};
+> +};
 
-diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
-index f5bdf842040e..bcb295ea3319 100644
---- a/drivers/hwmon/dell-smm-hwmon.c
-+++ b/drivers/hwmon/dell-smm-hwmon.c
-@@ -1544,6 +1544,14 @@ static const struct dmi_system_id i8k_whitelist_fan_control[] __initconst = {
-                },
-                .driver_data = (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
-        },
-+       {
-+               .ident = "Dell XPS 13 9370",
-+               .matches = {
-+                       DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+                       DMI_EXACT_MATCH(DMI_PRODUCT_NAME, "XPS 13 9370"),
-+               },
-+               .driver_data = (void *)&i8k_fan_control_data[I8K_FAN_34A3_35A3],
-+       },
-        {
-                .ident = "Dell Optiplex 7000",
-                .matches = {
--- 
-2.39.5
+
+No gmac1?
+
+	Andrew
 
