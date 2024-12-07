@@ -1,120 +1,120 @@
-Return-Path: <linux-kernel+bounces-436121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6538E9E8170
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:02:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D599E9E8171
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:03:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 082942818BA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:02:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D2B9281771
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 483061494DC;
-	Sat,  7 Dec 2024 18:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A0357F460;
+	Sat,  7 Dec 2024 18:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D51a5frh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UEz0cKV6"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A26A51F602;
-	Sat,  7 Dec 2024 18:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89AF1F602
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 18:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733594530; cv=none; b=o8H7aszayZmvNxohaJZVMnmlYLLgjiZBIuw+NOBJRl58mvxlw6A9Fh++Pdug3uAHkfZC+92rDm36RFs4u5uw5CwEjCBMEMrLXvZy/aN18E1bM8hl77i+HO6CCb7NUpgB6/ET7BdXlinFyWf+M2e0kHVzPw1P2uizrmATBZ+9omI=
+	t=1733594604; cv=none; b=mf3Nc/YqzRDoHqwpvuTHV6fC/lGVHlr3T8g/iAKPlIf3jkYQdP4mTZl3NPFyeuiFc1YRahQT7hb6zndZ90KAa+YJlAhaXl8O9v6o1YMDwGxGEuj63477F04RHga/G9Dl5XhHrWTXJglMkcQt9d0bmejvDLK4Bhy3o8ObaVBpxqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733594530; c=relaxed/simple;
-	bh=Jxot+HTaLU1cfK7uzk3/7NQ3O+57RfGJvvYTPRIrdn0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JvA+/caMoYzgbRBAUIikZPjSXKS+/o2jDPprFU1H2vW6nPMvT4r/OKxHL2HQL4GR9BQnoykwnh0bM4nuGx9i4hmEtZQnJH9IADdSQrMxHzGX5CuN7ArpWqCBMGsi3v1NJkRK9CzuIxW0Ffasyi+Hh+e12T6oYRlkCUS1yGLJVFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D51a5frh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F08AC4CECD;
-	Sat,  7 Dec 2024 18:02:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733594530;
-	bh=Jxot+HTaLU1cfK7uzk3/7NQ3O+57RfGJvvYTPRIrdn0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=D51a5frhTXDeYuGxp/LWuRSrsieCcCnGdcbZArScctOgdSRq2CTDCS8p32OwRnVva
-	 Vd/V9bB3vXF014ebgivJAm+Eg0gDyw99L++1sr2a+QznoLb/cgdDUqZd+10iNi+gNQ
-	 5vuHdyoxV1f4TTZtMkuy6cUbGDzHgipJLm2piNuLttEAEvSGxkcy4LUD9IRWSax7kF
-	 P0M5WrZBImPY0eY9+FpRDC8R1q4oIcsZdIFymHmqVaWVJV5pL5VKj5d5K13k+YhjQI
-	 o5Y2L3Cw3WyuVo+G1A6EFZN831FFG3kww5SRO2u0bPyTTTuOz4ZZ2YFRJa18/hR5I1
-	 ESutZRXedFFog==
-Date: Sat, 7 Dec 2024 18:02:01 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
- <lars@metafoo.de>, Mehdi Djait <mehdi.djait@linux.intel.com>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] iio: kx022a: document new chip_info structure
- members
-Message-ID: <20241207180201.51deb7ce@jic23-huawei>
-In-Reply-To: <Z1LDUj-naUdGSM6n@mva-rohm>
-References: <Z1LDUj-naUdGSM6n@mva-rohm>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733594604; c=relaxed/simple;
+	bh=B+6CWqvcr1EXVCuNE1QR3lG4sRiBYIMemfiMFAzc6NU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g4x/fnRgk+cbQVJwIKXBLIdI49+5Zw3LJccBALO79POUsF/9q+Mo4lclyyO7w4o9OMH7Re+k/a8G92P3b9r0FEOsYRhH7hJY7BPnAwEZjwsEYYLVeOmAj3h1LOxx/P+q3dVlgUqKW1eP8beK0xOsACsshdYEfPyq9MhFaJnlwn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UEz0cKV6; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so4022090a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 10:03:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733594601; x=1734199401; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QAM1ejACCgzwtGZ317f04iGWR3vRaZlARtBj3sdN7kc=;
+        b=UEz0cKV6mhxNg9YMxEhJe6koR0xMkLS2I0ajDA/FZjoJvDHTNx+RrMu4DfM7y6MX+J
+         HWrSU+4e9AHquYcFKWRz+VkU7dMhlx7Twz8r63JjNP/KJIsndVRGTera01VL7fTyKdhz
+         pjtNx006IfGiLnXfapKTWJzUt+dJ3T9pyWrpt5GYA/vjtdWecjDXYcrffBxdN3pzjTgW
+         BQU7ClW7BlYepXX2il31c4w9JUUHSZSKyL9iaSbCx5Dy2baY7j8AdafUI+F+D+Yv3IlU
+         a9hh/NpVIedEOh9Y5ytZkUJHqx2ExCTyyC9JRriL1+xp0suVus+fgvNnn7ajR7N5+4/c
+         RJqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733594601; x=1734199401;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QAM1ejACCgzwtGZ317f04iGWR3vRaZlARtBj3sdN7kc=;
+        b=sG8fEnu++eZTAR1KAeSF0yM/6ff45MYDIro1x4HNaVopHbY+i/FZ4P1ntklzMxOvPa
+         wfGqNC2INvi+NpCk3LZjKrMlO7MB97/gyv0ptUC3GWKjuPnwFFPYsoOTzmNiSSYvibG4
+         XB7CLhce9zgQXHFJcrGr5D58xGuio9kN6Nf9YPQ9r6cjrdpXDUHGyJBALozZ7EARoDw/
+         qO3BImWSq+ykrwKK8ZYXdcmukrhlTF1+5TKer7FalohhhS2sSlF1ATdOoCJJ+tNBJQE0
+         Xg+f8G6OZzhwuJ17LMhAGHuhYqOoJnHxDk1/Xxt3Rs39lvKO2im/wlLzKOy5LFCt/sYw
+         V7lQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5oZHYG0LMqOZ2cmjI79BDcEkXUv0bBLPX/eSonEWuSdN9MZwxK3Z8gSpxgjHrb062JL4dKBgtpCZKujA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd7YvDwux8rWznKNfuJ2Z1FRSwmyBnwwl0vBVdo9o1PCoTSDYF
+	EH1FcxNq9un+rwromYk1FCj2qCN3JePnFlDp6qAwCet8u1kXtEp4Xj7KmKh+nStyOIMYrRfPFJa
+	Y3P8lozUhpkuKf4H7Tz+3wXOVB1M=
+X-Gm-Gg: ASbGncvjPsYDFxFfy5SJzfi4QY/THUzClcsw7sElVoCLqGtonkCREIqzweXlGaIXQv+
+	G5cLwu/+l/+Vr1mx4KyAWwlYa8kZ7KUpQ
+X-Google-Smtp-Source: AGHT+IGAye18gAHqZ9L2Lr8q5n9wtcP/p7ADT0zM7BSTAQNqS6J3MjlTsob+61cxDEMmI523pVCiblUDvARThzh1XG8=
+X-Received: by 2002:a05:6402:3485:b0:5d0:b040:4616 with SMTP id
+ 4fb4d7f45d1cf-5d3be742d60mr6739486a12.28.1733594600824; Sat, 07 Dec 2024
+ 10:03:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241206125258.9212-1-quic_pintu@quicinc.com> <e43da923-0184-d41e-a273-a02848f3b671@huawei.com>
+In-Reply-To: <e43da923-0184-d41e-a273-a02848f3b671@huawei.com>
+From: Pintu Agarwal <pintu.ping@gmail.com>
+Date: Sat, 7 Dec 2024 23:33:08 +0530
+Message-ID: <CAOuPNLgPmq6DyjQVQkmRi3Ap8UXURaU7w_g_zJ3yzheaNNZa2A@mail.gmail.com>
+Subject: Re: [PATCH] ubifs/debug: remove return from end of void function
+To: Zhihao Cheng <chengzhihao1@huawei.com>
+Cc: Pintu Kumar <quic_pintu@quicinc.com>, richard@nod.at, linux-mtd@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 6 Dec 2024 11:26:42 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+Hi Zhihao,
 
-> The kx022a driver supports a few different HW variants. A chip-info
-> structure is used to describe sensor specific details. Support for
-> sensors with different measurement g-ranges was added recently,
-> introducing sensor specific scale arrays.
-> 
-> The members of the chip-info structure have been documented using
-> kerneldoc. The newly added members omitted the documentation. It is nice
-> to have all the entries documented for the sake of the consistency.
-> Furthermore, the scale table format may not be self explatonary, nor how
-> the amount of scales is informed.
-> 
-> Add documentation to scale table entries to maintain consistency and to
-> make it more obvious how the scales should be represented.
-> 
-> Suggested-by: Mehdi Djait <mehdi.djait@linux.intel.com>
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-Applied to the togreg branch of iio.git. Initially pushed out as testing.
+On Sat, 7 Dec 2024 at 08:25, Zhihao Cheng <chengzhihao1@huawei.com> wrote:
+>
+> =E5=9C=A8 2024/12/6 20:52, Pintu Kumar =E5=86=99=E9=81=93:
+> > Noticed that there is a useless return statement at the end of void
+> > function ubifs_dump_leb().
+> > Just removed it.
+> >
+> > Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
+> > ---
+> >   fs/ubifs/debug.c | 1 -
+> >   1 file changed, 1 deletion(-)
+>
+> Hi, Pintu. The title of the patch should be something like "ubifs:
+> ubifs_dump_leb: remove return at end of void function". See
+> Documentation/process/submitting-patches.rst. Otherwise,
+>
+> Reviewed-by: Zhihao Cheng <chengzhihao1@huawei.com>
+>
+Thank you so much for your review and comments.
+Oh, normally I follow "subsystem: filename: <title>" for the other patches.
+Okay, no worries, I can follow your suggestion as "subsystem: function-name=
+"
+and push changes again for both the patches.
 
-Mehdi, if you want to give a tag (or more feedback) I am happy to rebase
-for a few days.
+Actually, sometimes, function-name can be quite big, so I avoid it in
+subject titles.
+But no issues, I can change it and push again.
 
-Jonathan
-
-> ---
-> Revision history:
-> v1 => v2:
-> - Improved wording based on discussion with Mehdi.
-> 
->  drivers/iio/accel/kionix-kx022a.h | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-kx022a.h
-> index 142652ff4b22..d18d56cef098 100644
-> --- a/drivers/iio/accel/kionix-kx022a.h
-> +++ b/drivers/iio/accel/kionix-kx022a.h
-> @@ -137,6 +137,14 @@ struct kx022a_data;
->   *
->   * @name:			name of the device
->   * @regmap_config:		pointer to register map configuration
-> + * scale_table:			An array of tables of scaling factors for
-> + *				a supported acceleration measurement range.
-> + *				Each table containing a single scaling
-> + *				factor consisting of two integers. The first
-> + *				value in a table is the integer part, and
-> + *				the second value is the	fractional part as
-> + *				parts per billion.
-> + * scale_table_size:		Amount of values in tables.
->   * @channels:			pointer to iio_chan_spec array
->   * @num_channels:		number of iio_chan_spec channels
->   * @fifo_length:		number of 16-bit samples in a full buffer
-> 
-> base-commit: 05ff9c9c53c643551fe08fe52bd714310b9afc2e
-
+Thank you,
+Regards,
+Pintu
 
