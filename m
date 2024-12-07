@@ -1,91 +1,87 @@
-Return-Path: <linux-kernel+bounces-436096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C73F9E8117
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:55:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A639E811C
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:02:04 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55728281B0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 16:55:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA77E165919
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91CA914A08E;
-	Sat,  7 Dec 2024 16:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A957146000;
+	Sat,  7 Dec 2024 17:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ZHnwWI8t"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2078.outbound.protection.outlook.com [40.107.95.78])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="lqzn8ZBJ"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020134.outbound.protection.outlook.com [52.101.191.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6723288DB
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 16:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C495722C6CD
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 17:01:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.134
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733590519; cv=fail; b=ExDxYFItEIbiekP+BCggVVif1ZijJyrh5b/6wwDW9GqDU0mQtmlgbao7C25DOu620ZJuKBSFYVGa4iKqvr8WwIm1yHGn65+LaSKCgtz7lAkhOsGlL/e4oDqGHVubbtsfi3Ah6sQ641SEsQ/QSvpARIkGlJnWuirR1UX0Eew678Y=
+	t=1733590918; cv=fail; b=IK5NiZlySxjwx2cRojloPZUaSjVGu+GCavt+6aqZeLaT4LoRUKqUyiOLnlsYyIbJDKIfziUvgh88MLxpIhPwHQEQNAGulyvv5jfGKvpSHbNheinKraq6tYh3cH0iTI6cCfLdquSpx6YfG4VZ4MleLV3kQFogp7HsLUMNsFU7gjw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733590519; c=relaxed/simple;
-	bh=yf2Z392RN3cseJ0PkFeeelB000N0aeUIFW5qGYjFA6A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pnHFpWV7DWdn0WfLyDJflEsfHViuZKUD60b6yp0+lHpuGQA1A6lJpP70DyBo8BXP/atrzSjaOw9CVoX+Djp4bYvjcPC6yrdZGq04ywtZ550KqzD4mqI/y4ksmluNUyQ6HxvtuOuV+460F6W7KspSYeeVNMP3blXhzrBUBbSY2VE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ZHnwWI8t; arc=fail smtp.client-ip=40.107.95.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+	s=arc-20240116; t=1733590918; c=relaxed/simple;
+	bh=GmIZSt8mjFSq3I1CF+gF8I1wQNzyHn68Wc42TIR1N4I=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=ZlY/Seas9zc7JYkkoD70O3py32vLpi6Kwe828L00rluaZxIDXobc1kMy7rTwrKdybq6iLMTLkumUCdIilUpXhWQbGga9pgLHaRQu7Tt71eNWMrFaiD+1SmXilB2RbKLg3+tYQJMOsdqiHkWpLncaLyp356QJjWnQUQk4ePHu3LU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=lqzn8ZBJ; arc=fail smtp.client-ip=52.101.191.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KRDU83OkNRVGutl0w4MmMFptf8/NmNjBGb6n6fli3OL+8O3msTsRQoYxsWMYO2eUd53+GjyxfIjpQX/i5bH0NEpcaEDdTEjqlksmGas9hCw/R44UKA6lsZRtyvcIvIBG/5mebMOIpHaIEN9Kud5v8l2AkD/2GirOPzsrHBeAow+WxKSsfxRY8qjy5232K8aPDPhwnoGPDtQi1O9yYpKdIpdZi7+mqSGGUEvZyx1dj9CdOA081zU524KYPYYcPFWTDDbGfxEHpliWfwX75BSuzOUrjTp7tGlMtFFtUWg6+zYgQ6lTjaYZ+Dbda0SBigvEQUODCmwdtQvW0C0qwU0i1A==
+ b=pKSioBecGlthAdyw2f3C36LmE61/C0S9w3gY7Mz/HkNR/vd3WJhhNFeB1f+X1oX8G+QH6LwMlKoUPyuGzJ20PBAtdkJ3dtsRWs6/fPQTRW+6LJ0U2Q5tRunBQBImsWNVb+t2dpuVGesrv0gd7FgwOrdj0hBqA3/gVTG8edwGm8VINem2mnaXzlNSZtSizeZZKVV/GecLPY8YtUVIZxemOheDu/zW4v8k1aY8N044iu8ET7MZ4k9wrVaNpFCor+JqZakGahGVmCFXbgY4h2MQFGZwyD/+FF6BpIO424h/B9XGGVtLu8aqzMNSWbBRBeOUVWc0N0Os/VqHc3TnFKbjHw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lFymnYIwzybc1lYwKoXrwnk6I4MsTHm/oq5M30dD9SA=;
- b=WfMpszucI8OD2QLMmQdUCjyXD6UzoDuurnWr3Rihe7bXuEqWIc6VX/5z1XcieWIp9aeajr8BmNaZeK/JeboBJzYV4LRdWtcFCYFTT4o3FvfFcwxhoGkLfRdezl2pcy8b2W2Hnc2jY7V3hGXzHcj4YA1RU1ZLOd7Nbezqw92Yvczw0MMFebhU3/6tO3gPaKOWIiqc1MpmCustJX66oFoPUcuz2W316krF0kxIKYNcciXS3/VERFJ6WorrIHsJ6BWtUznFjrzMpKj7Jlu8hL0Ij1jPzgNWpst/yGKHxHLQHjhX8FGCJ8Hmvdjxqc4HkZz93NN9t6hD/2qDsYaBQ+vj6g==
+ bh=/N395xd/vHQKl3jYNGQ/D2En/0GGwiQc2FnRrL6ZIuM=;
+ b=hE6WWnUrQUipHV0fLjMGy9Ep4So7hlQllTv3CsplyAX3Xq6qE14LlcSrHSRQfb94H4P4SrWgxnOya/e4QjpU0ctSka0+8Ja9q/l4hxGQ+JGhKvQNCUeAAWvULgK9HqPuzKxAeMLReT6uFRfCDGSNIdezlat+jzorxl5WxUxl/YczOImr1ZEV1o3wpu4TiryjV3iMYlzhPxtZbnUZ75l3u8piDwcGbmcLryU9DSvoOy4Fu4GWDGRXEcI4QabxJqcaLHtW/X7yO2jvdoy+KqZjO1uzsc7vFNk68g728NBrD+py1pU9el+Zl4HdXVsY0BS5WQQkYaQvMbCx+GdxOWrdsg==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lFymnYIwzybc1lYwKoXrwnk6I4MsTHm/oq5M30dD9SA=;
- b=ZHnwWI8tw1GAvxMP1xppA733jAVQ/gm7+QTbrBOk9AAEu3RFUJmu0Ci7l5bUTiLaVNC2nj1PFEj/+q5ggig//LBcVaZ5z8mxw23mvtCskNZtEm87TSvyCZafausfSp7GDK6AY0Toduw1S6l0lDKuxt09MhwbcJARaqP2d5RVChhK/ZC30071acM9qEJf2tvgsTdRjlr6FaaYBgd0ePsCCV1DMprDhK0Uf0t3e8jbDC2VEvwjTrtqtqW/+VuRKEBHMbcjxbT+Yw+cKe9eumOzrTdG8VF3AIoTVJIqvt3d1BBVOR9B/tUD4ktTWEHhrvz/9WcMg53VmWtKDFKg+fZjyg==
+ bh=/N395xd/vHQKl3jYNGQ/D2En/0GGwiQc2FnRrL6ZIuM=;
+ b=lqzn8ZBJtv+D56ngUoAb+CIxIc2A/IJ6+W80f9u8GASVvTVgJuJXYrZUEbBFWSkdQw/QnuA3Gkba9Y/JIDJrJTlsnFkMDuxwQQAjri7iRLaNLGIckZDs5qYYqAlvsCMSOSwbalrM9te7+1ojkz9usI8DHsrtSMKgeerCK8e5SK9pyxd+QG6I5wM4ZJzxQiANDlIa04RspUq+7iYkyRkFILnY8EGv3ZzykfQ1IjJeXb9IitZQ+0JcPsD+PDGJBrKY4M7J62EthXrCCnaJKuFm4FSmqInKlEX2XuNlR+J1Awvjnxhcm3U8+W6hD4GyBhR1Z5ICbr64OJx+vBJ9n4g1eQ==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SJ0PR12MB6735.namprd12.prod.outlook.com (2603:10b6:a03:479::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8230.12; Sat, 7 Dec 2024 16:55:11 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%3]) with mapi id 15.20.8230.016; Sat, 7 Dec 2024
- 16:55:11 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Alexander Potapenko <glider@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Vineet Gupta <vgupta@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	Zi Yan <ziy@nvidia.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v3 2/2] mm: use clear_user_(high)page() for arch with special user folio handling
-Date: Sat,  7 Dec 2024 11:55:04 -0500
-Message-ID: <20241207165504.2852058-2-ziy@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241207165504.2852058-1-ziy@nvidia.com>
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by TO1PPF260681B1A.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b08::625) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Sat, 7 Dec
+ 2024 17:01:53 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%5]) with mapi id 15.20.8230.010; Sat, 7 Dec 2024
+ 17:01:53 +0000
+Message-ID: <a3fd2a24-16ff-4fa5-9510-148f66c19ca9@efficios.com>
+Date: Sat, 7 Dec 2024 12:01:52 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] Introduce cpu_icache_is_aliasing() across all
+ architectures
+To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ John Hubbard <jhubbard@nvidia.com>,
+ "Huang, Ying" <ying.huang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko
+ <glider@google.com>, Kees Cook <keescook@chromium.org>,
+ Vineet Gupta <vgupta@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-snps-arc@lists.infradead.org
 References: <20241207165504.2852058-1-ziy@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BL1P223CA0021.NAMP223.PROD.OUTLOOK.COM
- (2603:10b6:208:2c4::26) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20241207165504.2852058-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: YQBPR01CA0119.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:1::19) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,220 +89,166 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SJ0PR12MB6735:EE_
-X-MS-Office365-Filtering-Correlation-Id: af7466e2-8880-4c69-543e-08dd16dfe97e
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|TO1PPF260681B1A:EE_
+X-MS-Office365-Filtering-Correlation-Id: 12dd9358-739b-4d54-c1c8-08dd16e0d989
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|10070799003|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?zlI+7oHK89o3KMZqk96F14Hc8k8mwdZvpKJKp98yRmJQ6CXx3fLNmldTzaXi?=
- =?us-ascii?Q?yxIOAxf7nqOSofZdMr6gLAkpz1eiddHwP5WxVzidt/FFNLSXdlz8ioLaYMgy?=
- =?us-ascii?Q?c82v0JaoWWt901yVJG/lyhNAHigPVHXnOe/Sc8zwr/GmM9ZUri+t/rzcMZu6?=
- =?us-ascii?Q?HhNDhaJJ4Gjlzkg3mScWkqTP68MJt6De3VhPO177r/Ebxd0ZQDbK36jaBiEB?=
- =?us-ascii?Q?OUcyuCDKSyj9cXv83c0plxdpUM8+dTM/WV5fbL3p+f0xw1oag98M7PxHawTF?=
- =?us-ascii?Q?K8DYI9eIhjWWnJXHTSH52cCe5FuCGTu4rsTfsKZMVg9LmAqcIyIbwH2p+NGB?=
- =?us-ascii?Q?twt/jcPulvFK3KOS6j2KeYpFFTJYcoYIMu4lOFGjkLoP7qje3HY68Lpe+Vxf?=
- =?us-ascii?Q?AcUhF+7GER72jrKk41opT3rcv1vanoY6to0G1jzaiI4On9SVkG39s0lcrmAn?=
- =?us-ascii?Q?cdIXYByYgINVVKNuxr/F6WjJ/VY+hg98cYj1DVn4zL+wElCpebeS6Ks+91Rj?=
- =?us-ascii?Q?/qTpMUYIHPlJnpp/5M2qToMIW2o5Eo16jg6t/3OevTjGvrEzPmySQYfazMRA?=
- =?us-ascii?Q?+kRnM4X1iZdlTtblXf371CXXuTu0KNxxU3tYOXaoZJM4FAEVDe1/FU9h978W?=
- =?us-ascii?Q?JuCbjK5P0Jgp5Y5LfMglgo8Zjdrdwt3MACCDQaLwZUjMTevCyDmx+i/UHYqS?=
- =?us-ascii?Q?KjeHEIzhv6+Qsuc/LPLHAFP7l1h0eiEm7ULUXqAuZndkw6EGxpI6GE03JQiO?=
- =?us-ascii?Q?8/vr6A9oJnigltzuXOALHEXaS8kZHkPKnTxbEsyot63gs4BdjvaC/JVbNUcs?=
- =?us-ascii?Q?BJCyL3JzrJ77riEmWOvcI6EqRUJpRk3GFZuX1+tt4YtQDdtifjukj5nXyW9t?=
- =?us-ascii?Q?DDBVnSSgz+9yYmO+LO0XeFhWFJeyHz37w1vVujBpnJS3BgqVgSde0IyZ3m5L?=
- =?us-ascii?Q?BYbZwKttzVHd+GU2CfXavp74swRlXVTCnOsRapMEyLJYM955Y+gGAC7Wnkr2?=
- =?us-ascii?Q?HywyWX+ZVChTed0igEIUTVfWaOvwGep5yDVN/xp1aSr2L7yZir9wepmTyRQD?=
- =?us-ascii?Q?/rPCpSu1z4rlnDRRPQgSNul1rlf1YPPbUrHPZv+8eCbjD/CkD2gWOXL5mr1v?=
- =?us-ascii?Q?CMbb3lVQsbM0X/cGqS0u1tDH0TdJ1Tvp1D08FqLn/p6GsiXuXwY/Qnwsv0lP?=
- =?us-ascii?Q?6lmBMY3+4/fAqq/2QJG5arrBgx4qhFYPrj1BdpFIhXjDBV+rXCdo/wULzUZ8?=
- =?us-ascii?Q?S1iY1BSipq9k1uOFEupgRifdx1Io679fPMoG69gVqtUVJdn20wNJO1SxRFTI?=
- =?us-ascii?Q?vEle5QICDx5lgVcLuFAG41GIdWbBG51Mhl4ix0aIMwdtj2z9PMEqwpNIFMKD?=
- =?us-ascii?Q?J2Q6BSY=3D?=
+	=?utf-8?B?Y0tCRmMvTFJwQ1pmUXo1WXpPeURZVkY0a1dpZGNxUzVIU2hEODRHcXZ2TkNZ?=
+ =?utf-8?B?V1E1TWN6YldoVUx3dVU3K0pBNEE5b0tyS3RId05oUkVOcmxLbjl1TlQ0dG05?=
+ =?utf-8?B?dEVRYWpiN3RmZ0lZeXZOVGhLazZta1E1MVBFVVluNXFIMWpmZlRlcnRZWHRn?=
+ =?utf-8?B?RUMzQ0ZDRytMU1BGUWdDVG8rci85U3VvUG5KdGxLZWVCc2dnR05kVURNa2px?=
+ =?utf-8?B?RmI5dmY4cERYV3BGcnpzNTlTbE9DZitjZVpHaHFLeW83SlRROWZrZWpFZ04w?=
+ =?utf-8?B?YnNrVEM3MEQrQzQwVVFxWk43NFEzajY4d21TU3NXK3h5Qkk5TkxGNUNXS0Ur?=
+ =?utf-8?B?U3BXa3QzenlrRzF2ejJPbFQxQ3Vod0swcUxnSDlNU1p6cHU2cEw5bDl2S1Rx?=
+ =?utf-8?B?UTgrN0JxRUIxdkhtTVMweU1PdXp6S01rVFZOVlRlTkQ1ZzM4TGVGRG14YWk2?=
+ =?utf-8?B?VWRtYmF2TVY3SjA1eFg2QmtLZS9wc2JpSHlaR1Rxd25Cc3FLc3d4SmEySmZM?=
+ =?utf-8?B?Z3FqdEFQbkc1RVk1ckUrdVM1TjJ2VjE5VU5PNUhZNmp5QnZkcldBTmhMTm5i?=
+ =?utf-8?B?RjM2VGpTUWIrOEp5bDFmVGhFTi9MbisreldPRGJMQzQvK1ZNWU5SUjRWSFF4?=
+ =?utf-8?B?amRTc3VhUEM4dml4YXdOQ2MwNCsvRDVnblYzUUN5cVB6YWpJVHZKa2ExVDAx?=
+ =?utf-8?B?MUlkZGZ2N3VzdUo0cFdYMHB5MG5VZHdwdDVtaFZNMHVnTGFmdVpJdGhzdTRF?=
+ =?utf-8?B?Q0Q3L3lmNHE4eWNsaXhOZHpiOFgrREJuUzd2c3picDd3eGlsbzVuR1FtSDY3?=
+ =?utf-8?B?T20xbWMwRU1iOXdZdzBRc1lFNXQ4bHlNbnh1MkRFWGdCREd6SWluT1RyeFor?=
+ =?utf-8?B?MnZvT3BqYTh0ejlTblE2S0dRR2MyUnZIaEZ5MFJ6bXVyT3FVNC9rSDVKbkxj?=
+ =?utf-8?B?N0VhaGMvcnYvSFdHUEtRRTZMdWVUNmpLb3hUOENzd0o3U2liMHVKQVhjenBu?=
+ =?utf-8?B?OFA4b2h1NGh1VWNXVFJXZWs1eFR6NDk4SWMzTWw2aThZK2MwT1M3RWVwZnJJ?=
+ =?utf-8?B?bjkrNXJ1Z0VPTWhub1F2RU92MkFsQmk0QzFMbWVTakRXL1F0Yks3QUlHajkw?=
+ =?utf-8?B?Z0licE5IR0s3VThYZTdCRUMwalVjWmNFT2N2UnFQZldaOFIyUk13TXg2WnFP?=
+ =?utf-8?B?RDMrWUt5OVJRTmcrdzI1MTZ0amhrWGN4elRGTUUzMDQvTUxOL1ZhYWpHY1Zr?=
+ =?utf-8?B?ZjBhVEY4cjhKNlNVeENFQkt3RWN3ZlJMcHZaa0M3eUZwdVJTQ3JDcEtMV0lP?=
+ =?utf-8?B?MzRlODM4T3pRMThoSGNyZmU1Y2MzbHdvbUhqNjdVYytjMWNpSlVBbkRVTmxW?=
+ =?utf-8?B?a0dGMFRadHA5b2NhaTlwRER0WHVoVnlJSkJtNTR6NGJsODFCQ1F6NXJ5VDRD?=
+ =?utf-8?B?eitLeHV1TlRtZWpQbWxrcXFGZWw3UklJK3IxSDAzdUVJWU5WbVA3NTNtWGVh?=
+ =?utf-8?B?RVkwTTF1aGN1OERWZHc2YnhyeE9rWjVzK0tMU2ZaYU5WcGQ2WTZ5M2xCd2dk?=
+ =?utf-8?B?d3ozZmk3SVo1S3N2U1RiS3ZMT0JnaDRhREhkdGZCUjB4R2lGa1YyMWU1NldR?=
+ =?utf-8?B?QUlKa21nbzJTQjZwUWRiOTV1M2IzNE93M05ZOEJwOWtuNGZWMEh5V3F1NGFy?=
+ =?utf-8?B?dGRkVi9UT3VUUlZnbUJFUjR1ZXhqcjM2OEhGYUZqOXh6Z01KYmtiME80eUJI?=
+ =?utf-8?Q?S9cyq35XpxgkfekSZE=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(10070799003)(7053199007);DIR:OUT;SFP:1102;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?nRZIhenbTdBVJSHcopmStKGcc4DeMe+3FUunW6jBSAHcJ3XTKWrcFZCxtyxa?=
- =?us-ascii?Q?jehpGEVv8hpsZ5VbritZGDseP92+6zJurde9e+CndBCSnPmvm4jWAAOxCDf/?=
- =?us-ascii?Q?fOoXZQGShgsrh9DKWrxJGA/+y9LbNqETez8HawkH6xblFOTogfjWFsnoHR41?=
- =?us-ascii?Q?NOsKyaW3rR9xIfR/LhoosMwcvYCSyozvOpQIbQYuXryPQPf5a9XihbJAMlYl?=
- =?us-ascii?Q?hvbvgo8ScLTNFUUTpyA8GNg4VxR+q8+7ePTusJyhcPqpr0OxSn5VpG1kCTbs?=
- =?us-ascii?Q?ojovuxaTF8QsUctIf208b0FiUxBVZN6auHULJcxu/hbzR+1dWpghVqBHue7l?=
- =?us-ascii?Q?ZnbgoDuWTjxP2Pc/nlgRLqXCix9GpVb0kB617m6Pf/VMtYBZqENobFz25g25?=
- =?us-ascii?Q?oVz3tt+2JQ/avBcVPkrZVP3+lEaI+zW4JlBYQ99dC6m5N5GRNjR+/FsX3gQ6?=
- =?us-ascii?Q?Ct7DihuJPk3T+BhwwCdk5c0VC0HOLA3b1V+rd821UCsFgJzirCq8duaxLvV3?=
- =?us-ascii?Q?Z+J/l9BKL5X/tywuxNCYp/kdb3lKeH4/W16WRgeSlTsA2dQ7anxRM2fkm/ni?=
- =?us-ascii?Q?i4O05InPo9UdX+nVmefNVMavaQFsU02Mjc/gwWqVl09EUyzm3w2QCIhSD8pe?=
- =?us-ascii?Q?+ImZo8cE4ih7pMWkiJOqCp+Nx2tMQ8rKAkmE6W5rL+EaAgJxEwmJP7nbTEyX?=
- =?us-ascii?Q?qcHT5jQINkvTb8dwNFAAHFXLoQyTXjGfkY6BFTU1yTmk05GaYYsUsBrGShgZ?=
- =?us-ascii?Q?7MVnXlK6rTIHC6DQ8zv2yjRO+eevFA9hvU4zwuGs6ulssD8jp2OWvhs6Pzqg?=
- =?us-ascii?Q?VM1YcXa2+UxRH1fmADOj7xV1kDI33UIHr2D1+niCNkw89Nmql8F/kXRXYL+E?=
- =?us-ascii?Q?++G75G8uP/ItYsJ3T0vP4i0F1S/WmV5u7m/cI4l+0ZCQ7DQme8ph1KNFKt8c?=
- =?us-ascii?Q?UQKZq3eMDS1P/84j0j8jH8qVkboDVP7uuEtIFtGJWnm6cKg02Po/1LlYHyrW?=
- =?us-ascii?Q?LIAEc0dY8rIuGriCVcu4Db7xIyIGzCtjMrZd4nAUMnFiVCZQdZb+2C9qeyFR?=
- =?us-ascii?Q?X8eYqrNVgYKqYqfVJsPZftHuymPb9tBGw5VlxGpHIDxTyphFe3O4yakEhkqB?=
- =?us-ascii?Q?pMxG7Vyj9SZG2ZEk5lUtgF2cai1Mk35CNgdOO/QWtD6DadiOmz7wI2G/DfQC?=
- =?us-ascii?Q?+8T2QSuC4xsdYolpJsY+yWR2x7KfuPOekC/s6LdsIwotaRMyXpR/siHEa0bi?=
- =?us-ascii?Q?OtNHxR9oTIHCHIdZ5ezG/ulU7amHOzHpDv8WSzCvtzP0tlQSigWa53gEmvw0?=
- =?us-ascii?Q?hxrKOWm/0dKZvwpBLxUo85/mv0zIvFSjqg5qfPJf1WDNRyya08a5UwD8ZOb/?=
- =?us-ascii?Q?Zztxa56wH2JBG8ghQtr6WbHifPoLUdRv3t3W9KCMUXcY6AIsDBqhVg3F0CSy?=
- =?us-ascii?Q?Ueic5PHDh3fiCbv5toJIMb+7nAgqNtqpaslT8AZOEaz4dUnitp6h5Nr9jQ7B?=
- =?us-ascii?Q?IlbOWx11CMAn5n8qtco4c9KH1Y7e/xm3xvUr/VdwuzTD5eU4I/5r90dCH1fx?=
- =?us-ascii?Q?RLu5Oa/hD0K5NX62S875vqcJrLpyR5xO8+jw9aXF?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: af7466e2-8880-4c69-543e-08dd16dfe97e
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+	=?utf-8?B?RXVRR1Vrb2hNUXdjeEV3WWFjSnc2SjQzTndwNjlsVVUxcjhmZ2ZrRkN6TnJu?=
+ =?utf-8?B?L3MrWUVORVd6V1k5SVpmZ0oxdXlyTTQ1T2h2a0RtZlpGRUM1MG45VTB0UWdU?=
+ =?utf-8?B?MlJZdTBldXlFb1hOcFFpazE3S2g2QUZtRm90M25pUjd4UkVOSEh5Q09sUmww?=
+ =?utf-8?B?SWtrL3RBRXo2TXJlSExVTEdwcmlpYUFvS1VPdnJxQlNRNExDSEV0Y3JoV29l?=
+ =?utf-8?B?R0NncjA3RHpmRjczU05xMlUxQXRZWFgwSkVZeFJHNm9WL0RRM2swYjNYdkVX?=
+ =?utf-8?B?anhLT2JlampaL0YvbjJ0ZnFxQ08weFJ6WHFzS0N0Mi9acDRFOVlmUVlnUmcw?=
+ =?utf-8?B?SXZtdllIVFZJQ2dwbkZ5RzB1RFE3QWp2d2FLbXRVWkJ4ckg4c2tuYjNlZDdR?=
+ =?utf-8?B?a0RSVCtqcElYTjB0VGNYWFpFNW5ySUlWYWZsSS9EMzRSbGpVZHhTdHVzMlJk?=
+ =?utf-8?B?eXRGbnFRZXd0OEhFcndoK2h5NStZZGJOQm1DMlQ2THdaalNCajFDZmpsWmsy?=
+ =?utf-8?B?bUhONmdEY3FuUkFRVWlCazBKY2VQYXhSQkVzZkErdzdIRmo3N1hNeHMwMWdO?=
+ =?utf-8?B?V1p0R1RIZCtmZGRGeDN5alB3UGFrSmgxYjRpdnlQY1dNU2V0NUpaSG1NUk9X?=
+ =?utf-8?B?cGRoTVZLQU41cFZGOHBtKzRDRFBZaHRnblFYYURFQzYvd0NobDVYeW9rTFBH?=
+ =?utf-8?B?djYvMzlvUVlROW1TWEk0NzI2dUxZZlhsZnk5MzVPRnRJM01Ea2l0ZUJOZDFn?=
+ =?utf-8?B?M2FXMHJjQVJDUDBzRXhoSjZ0WUVWTE9MOUQ3ajRVbHRRdTFXdjljZlZJMlhj?=
+ =?utf-8?B?dlRiVTRhQnVHT3Q2NkU0VW5rZ1ZtQXY5dm5vUCsrUzhDaklhL1ZSaysycGtB?=
+ =?utf-8?B?OW5NZG5ZNkxZcmtxRWhVUHZaeE4xeVRqVmJyZGJmM0lFTkFQbXVuWG51M1JX?=
+ =?utf-8?B?bzRmcTUxQUNxcVlaVHZBZzlwTU9ETmkyR2krT2RXa2FOOGdjWjBveEJHU3B4?=
+ =?utf-8?B?RHBiSURZSysrUGVHL3hjNFBRNVhzd3NVMmZMeHp6dkY1c2J0THhzTHVxVXV5?=
+ =?utf-8?B?akJZdFlYbDRNeTVNZFNla2QwTEw2emZObi9mTGZ3MHFkK1lucno2Q05RQjgw?=
+ =?utf-8?B?Z3RsR3RjZ2hEYmNEbEhZVkhlRms3UmtMMUdNUVZNTWhQanRPdGZYbjZHS0tm?=
+ =?utf-8?B?MXFtRTRLcVoxVnBSRWYyVVAxejdmS29mMnFmWTlUYnJyb3M4ZkM3SEFQai9P?=
+ =?utf-8?B?bjAwN2pyM1oySzdMWmxHb2V5Y1FlK05XNTVjTmVIU3c3ZHZ0RzJvMVV0QTBy?=
+ =?utf-8?B?ZWdJRmU1UERrMFl4Szg1K0hzamVoem9CTVZIM0dHM0h0MnFhVWZTSjZCOWR2?=
+ =?utf-8?B?N2NYbE1adFZwUktHUnIyZW0rR1k1VkVpRU5UWU1wMU56R3JHalI2SysxSXFH?=
+ =?utf-8?B?SHEvUEI3Tm9Nd1h3QzUwQnZXcVlHUE8wdEhMWGRPemJWeWJ3RnFCUUZBaTQw?=
+ =?utf-8?B?VmZmWWdLcWszV3pvMmNHNk1YK3RsOUtuZkpEUlhyeTVxNEluL2hLSlRPWUhy?=
+ =?utf-8?B?dVVtTFBldnR1aktQbU4xWWs4dlJLSHFBeDVoTHk3c21CS2l2WGdpbU9qNHo2?=
+ =?utf-8?B?d0tqQUpFdjBia1R4TTJqTGRqZ0NRcHJLSi9SMUMzOFV4R2tTWUdOZzFQV042?=
+ =?utf-8?B?L3JRM3ZIcVVvOGNkSmFJWUtKZnhtdUI4RlJGV1RmZGgrNjZsV2c1bkhMUUdr?=
+ =?utf-8?B?OVVlaVdRL3BZRm96Z2xkY0Erazh0WHk4QzNhaEI0NERvc3ZkYkhwY3RnM3gx?=
+ =?utf-8?B?MWZycWV4eXRuamdaenZNc2k3b1lTeEF2cWYzZlQ4cEl4UFRNK0dRYThyZzZa?=
+ =?utf-8?B?QU55UjFyRHVDaDIyVlZUWGFpTHBsLzFwSHZyMDkwam5JWEZPYlhWZDArY1NB?=
+ =?utf-8?B?bVRrN2hudmdncWlGazcvY0Z0cmhXQUxBNjgxN3dqYXVMRE1kSktiY3pmcUJy?=
+ =?utf-8?B?T05YT3hrZHpYdm1NYzYrdDFRMnRCL1grNHkrVVZCZXBBVXZFNGdQdU5wTUdp?=
+ =?utf-8?B?T09GellxdXlubnlwVzJUdlh5UU0wSlFabUN6Z255WWc0TVkrNzN4NUZodGhX?=
+ =?utf-8?B?Y08zZWtOR1BmbGQ5VFcralF6ZFRvSEMzanRsWW0wbkdzT0UxNmNWajRGUnlN?=
+ =?utf-8?B?RFVKS2ZBL2VlL2c3dHg5RkRMRnVjN1BnL3FXemVWYVUvSE9BUmxIa05CT0c2?=
+ =?utf-8?Q?hIM2mZ6cC/r+3tobJj/BNyFoiKMJ3sg1ZPg6VQihV4=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12dd9358-739b-4d54-c1c8-08dd16e0d989
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2024 16:55:10.8389
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2024 17:01:53.5651
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: zJPdy7woxaLIwUhFOFwDNMQwlkScUHWjgGUAfWRhYEoV3vNRimhLVbBi0A1iPnpQ
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6735
+X-MS-Exchange-CrossTenant-UserPrincipalName: Hjo/DbOv2KjP1eb/FUuc74xvLnyXw26h1Ynbyhtkl1Ie6KkpOs5+cjxWU9sR6yXU9Y1EqY30cQmggfoUBbwTArAdn8B+ltCKYt3/hTzPyGA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TO1PPF260681B1A
 
-For architectures setting cpu_dcache_is_aliasing() to true, which require
-flushing dcache, and arc setting cpu_icache_is_aliasing() to true changes
-folio->flags to make icache coherent to dcache after clearing a user
-folio, __GFP_ZERO using only clear_page() is not enough to zero user
-folios and clear_user_(high)page() must be used. Otherwise, user data
-will be corrupted.
+On 2024-12-07 11:55, Zi Yan wrote:
+> In commit eacd0e950dc2 ("ARC: [mm] Lazy D-cache flush (non aliasing
+> VIPT)"), arc adds the need to flush dcache to make icache see the code
+> page change. This also requires special handling for
+> clear_user_(high)page(). Introduce cpu_icache_is_aliasing() to make
+> MM code query special clear_user_(high)page() easier. This will be used
+> by the following commit.
+> 
+> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
 
-Fix it by always clearing user folios with clear_user_(high)page() when
-cpu_dcache_is_aliasing() is true or cpu_icache_is_aliasing() is true.
-Rename alloc_zeroed() to alloc_need_zeroing() and invert the logic to
-clarify its intend.
+Reviewed-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
 
-Fixes: 5708d96da20b ("mm: avoid zeroing user movable page twice with init_on_alloc=1")
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/linux-mm/CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com/
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- include/linux/highmem.h |  8 +++++++-
- include/linux/mm.h      | 18 ++++++++++++++++++
- mm/huge_memory.c        |  9 +++++----
- mm/internal.h           |  6 ------
- mm/memory.c             | 10 +++++-----
- 5 files changed, 35 insertions(+), 16 deletions(-)
+> ---
+>   arch/arc/Kconfig                 | 1 +
+>   arch/arc/include/asm/cachetype.h | 8 ++++++++
+>   include/linux/cacheinfo.h        | 6 ++++++
+>   3 files changed, 15 insertions(+)
+>   create mode 100644 arch/arc/include/asm/cachetype.h
+> 
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index 5b2488142041..e96935373796 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -6,6 +6,7 @@
+>   config ARC
+>   	def_bool y
+>   	select ARC_TIMERS
+> +	select ARCH_HAS_CPU_CACHE_ALIASING
+>   	select ARCH_HAS_CACHE_LINE_SIZE
+>   	select ARCH_HAS_DEBUG_VM_PGTABLE
+>   	select ARCH_HAS_DMA_PREP_COHERENT
+> diff --git a/arch/arc/include/asm/cachetype.h b/arch/arc/include/asm/cachetype.h
+> new file mode 100644
+> index 000000000000..acd3b6cb4bf5
+> --- /dev/null
+> +++ b/arch/arc/include/asm/cachetype.h
+> @@ -0,0 +1,8 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __ASM_ARC_CACHETYPE_H
+> +#define __ASM_ARC_CACHETYPE_H
+> +
+> +#define cpu_dcache_is_aliasing()	false
+> +#define cpu_icache_is_aliasing()	true
+> +
+> +#endif
+> diff --git a/include/linux/cacheinfo.h b/include/linux/cacheinfo.h
+> index 108060612bb8..7ad736538649 100644
+> --- a/include/linux/cacheinfo.h
+> +++ b/include/linux/cacheinfo.h
+> @@ -155,8 +155,14 @@ static inline int get_cpu_cacheinfo_id(int cpu, int level)
+>   
+>   #ifndef CONFIG_ARCH_HAS_CPU_CACHE_ALIASING
+>   #define cpu_dcache_is_aliasing()	false
+> +#define cpu_icache_is_aliasing()	cpu_dcache_is_aliasing()
+>   #else
+>   #include <asm/cachetype.h>
+> +
+> +#ifndef cpu_icache_is_aliasing
+> +#define cpu_icache_is_aliasing()	cpu_dcache_is_aliasing()
+> +#endif
+> +
+>   #endif
+>   
+>   #endif /* _LINUX_CACHEINFO_H */
 
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 6e452bd8e7e3..d9beb8371daa 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -224,7 +224,13 @@ static inline
- struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
- 				   unsigned long vaddr)
- {
--	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr);
-+	struct folio *folio;
-+
-+	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
-+	if (folio && alloc_need_zeroing())
-+		clear_user_highpage(&folio->page, vaddr);
-+
-+	return folio;
- }
- #endif
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c39c4945946c..72d644cc8d9d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -31,6 +31,7 @@
- #include <linux/kasan.h>
- #include <linux/memremap.h>
- #include <linux/slab.h>
-+#include <linux/cacheinfo.h>
- 
- struct mempolicy;
- struct anon_vma;
-@@ -4175,6 +4176,23 @@ static inline int do_mseal(unsigned long start, size_t len_in, unsigned long fla
- }
- #endif
- 
-+/*
-+ * alloc_need_zeroing checks if a user folio from page allocator needs to be
-+ * zeroed or not.
-+ */
-+static inline bool alloc_need_zeroing(void)
-+{
-+	/*
-+	 * for user folios, arch with cache aliasing requires cache flush and
-+	 * arc changes folio->flags to make icache coherent with dcache, so
-+	 * always return false to make caller use
-+	 * clear_user_page()/clear_user_highpage()
-+	 */
-+	return (cpu_dcache_is_aliasing() || cpu_icache_is_aliasing()) ||
-+	       !static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
-+				   &init_on_alloc);
-+}
-+
- int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __user *status);
- int arch_set_shadow_stack_status(struct task_struct *t, unsigned long status);
- int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index ee335d96fc39..107130a5413a 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1176,11 +1176,12 @@ static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
- 	folio_throttle_swaprate(folio, gfp);
- 
-        /*
--	* When a folio is not zeroed during allocation (__GFP_ZERO not used),
--	* folio_zero_user() is used to make sure that the page corresponding
--	* to the faulting address will be hot in the cache after zeroing.
-+	* When a folio is not zeroed during allocation (__GFP_ZERO not used)
-+	* or user folios require special handling, folio_zero_user() is used to
-+	* make sure that the page corresponding to the faulting address will be
-+	* hot in the cache after zeroing.
- 	*/
--	if (!alloc_zeroed())
-+	if (alloc_need_zeroing())
- 		folio_zero_user(folio, addr);
- 	/*
- 	 * The memory barrier inside __folio_mark_uptodate makes sure that
-diff --git a/mm/internal.h b/mm/internal.h
-index cb8d8e8e3ffa..3bd08bafad04 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1285,12 +1285,6 @@ void touch_pud(struct vm_area_struct *vma, unsigned long addr,
- void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
- 	       pmd_t *pmd, bool write);
- 
--static inline bool alloc_zeroed(void)
--{
--	return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
--			&init_on_alloc);
--}
--
- /*
-  * Parses a string with mem suffixes into its order. Useful to parse kernel
-  * parameters.
-diff --git a/mm/memory.c b/mm/memory.c
-index 75c2dfd04f72..cf1611791856 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4733,12 +4733,12 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
- 			folio_throttle_swaprate(folio, gfp);
- 			/*
- 			 * When a folio is not zeroed during allocation
--			 * (__GFP_ZERO not used), folio_zero_user() is used
--			 * to make sure that the page corresponding to the
--			 * faulting address will be hot in the cache after
--			 * zeroing.
-+			 * (__GFP_ZERO not used) or user folios require special
-+			 * handling, folio_zero_user() is used to make sure
-+			 * that the page corresponding to the faulting address
-+			 * will be hot in the cache after zeroing.
- 			 */
--			if (!alloc_zeroed())
-+			if (alloc_need_zeroing())
- 				folio_zero_user(folio, vmf->address);
- 			return folio;
- 		}
 -- 
-2.45.2
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
