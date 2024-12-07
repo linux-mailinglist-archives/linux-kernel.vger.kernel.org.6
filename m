@@ -1,168 +1,78 @@
-Return-Path: <linux-kernel+bounces-435826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8667F9E7DB2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:20:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B03C9E7DB3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:21:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66F601887A53
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:20:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30F9F1886E80
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:21:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEEC125D5;
-	Sat,  7 Dec 2024 01:20:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bTFOpAdc"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B9F4A24
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88AAB9460;
+	Sat,  7 Dec 2024 01:21:36 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92F584C79
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:21:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733534400; cv=none; b=Y14/lNRdauNZzTCLUZg4eKwkEbH4S4uI0nQYGcdvCj+tT5uDbQcUBtv1i7cpAcTgOe+rx2wzqeDdzjBpqaqraQvO1tfdJcvMk8Zg7U8M9/eNgFUI+Fc6qelzAk5AB5fUS/rp5uA1U9v5AiAVNgZOUqwk58hwF1fArWlx8YbyTKo=
+	t=1733534496; cv=none; b=H9SsLbwvzOjhXofjRPHeEIM1qwZWBjG3ODWUhRp4oFTIL08beRj/yraOj+FnuKj/Appd7HkcRKMScU3lCUGdN0JBzonjbYrABMw94EjpH70f8OLqikWYK7TahOShGJHyzRbAxfQLMrEOW8NE1S1q6W0wmSzS8qZDNczQVuGZS8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733534400; c=relaxed/simple;
-	bh=ZukOdbFvqasZZ3raYS3UoqCZujhq4RIJwfsY74HV72Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mOXN5+7csFD1nmBFsMAefXeaiZ7ckiofbdiAbcD4hjzbYbjD+DCwc0dBjTomEd+SH3Ku5+z+Cg8Vc4Vmm/0GC7pG6l46wFTIwMuyuLDQf+9HN0/x5n+sI/avnjSa5VdNvG1NnGEH6tYSEW0Ge43eF+DpTXW0oKvWWBYYihePycg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bTFOpAdc; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9c9074c1-a079-42aa-b1c0-a3fd5523e9f7@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733534385;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/uNOUD5sUn4ce0l5tkusY9QEAAd1axiX1bAYXIZx728=;
-	b=bTFOpAdc9qgYckcfW/FXYYyH0X8YZcu0ITbbplcG7JaVg2gPW0uslJuCuWpcUgTvZWMqEc
-	1eNy5B9s9OltQEWkZ0kgF3FU5RIddwMumVreSENBbJD/1WE490ANBlYlSaVuyMT4Yxk02/
-	BDpmAzWqW4LkPK/y8atgPByoS0q9rVY=
-Date: Fri, 6 Dec 2024 17:19:35 -0800
+	s=arc-20240116; t=1733534496; c=relaxed/simple;
+	bh=UZnzwChy5gMF1uihxG6r1yF51WkftqCzWMG7Zr0FIV0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mbcdtqs2AIFNihhlTy7SR1YjjEh/YJwwrBX+cZmV6mUc5lJsDyjy3pK874bSBmpBmHA7TPD5MmbnHDSYwni6Kp/OknHLDrRsiEm2cWzfic9aL9QP8MtgiO40hc+4ftkSfgWnxUsVCQUP7964vKuMNGUxAPaILXJ9etFtiJ/UqDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8502711FB;
+	Fri,  6 Dec 2024 17:22:00 -0800 (PST)
+Received: from u200865.usa.arm.com (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 439923F5A1;
+	Fri,  6 Dec 2024 17:21:32 -0800 (PST)
+From: Jeremy Linton <jeremy.linton@arm.com>
+To: linux-arm-kernel@lists.infradead.org
+Cc: suzuki.poulose@arm.com,
+	gshan@redhat.com,
+	steven.price@arm.com,
+	sami.mujawar@arm.com,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jeremy Linton <jeremy.linton@arm.com>
+Subject: [PATCH v3 0/1] arm64: CCA TSM module autoloading
+Date: Fri,  6 Dec 2024 19:21:27 -0600
+Message-ID: <20241207012128.247522-1-jeremy.linton@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Migrate test_xdp_meta.sh into
- xdp_context_test_run.c
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, "David S. Miller"
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>,
- Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>,
- KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
- Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
- Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>,
- Alexis Lothore <alexis.lothore@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, netdev@vger.kernel.org,
- bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241206-xdp_meta-v1-0-5c150618f6e9@bootlin.com>
- <20241206-xdp_meta-v1-2-5c150618f6e9@bootlin.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Martin KaFai Lau <martin.lau@linux.dev>
-Content-Language: en-US
-In-Reply-To: <20241206-xdp_meta-v1-2-5c150618f6e9@bootlin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On 12/6/24 12:12 AM, Bastien Curutchet wrote:
-> +void test_xdp_context_functional(void)
-> +{
-> +	LIBBPF_OPTS(bpf_tc_hook, tc_hook, .attach_point = BPF_TC_INGRESS);
-> +	LIBBPF_OPTS(bpf_tc_opts, tc_opts, .handle = 1, .priority = 1);
-> +	struct bpf_program *tc_prog, *xdp_prog;
-> +	struct netns_obj *rx_ns, *tx_ns;
-> +	struct test_xdp_meta *skel;
-> +	struct nstoken *nstoken;
-> +	int rx_ifindex;
-> +	int ret;
-> +
-> +	tx_ns = netns_new(TX_NETNS, false);
-> +	if (!ASSERT_OK_PTR(tx_ns, "create tx_ns"))
-> +		return;
-> +
-> +	rx_ns = netns_new(RX_NETNS, false);
-> +	if (!ASSERT_OK_PTR(rx_ns, "create rx_ns"))
-> +		goto free_txns;
-> +
-> +	SYS(free_rxns, "ip link add " RX_NAME " netns " RX_NETNS
-> +	    " type veth peer name " TX_NAME " netns " TX_NETNS);
-> +
-> +	nstoken = open_netns(RX_NETNS);
+Provide module tables and a platform device so that the
+CCA TSM module will autoload when needed.
 
-close_netns(nstoken) is needed.
+v2->v3:
+	Fix __maybe_used placement, it does fix CLANG builds now.
+	Add reviewed-by tag, Thanks Gavin!
+	Ugly commit message cleanup.
+v1->v2:
+	Various comment updates/variable renames
+	Add missing __maybe_unused to the platform_device_id
 
-> +	if (!ASSERT_OK_PTR(nstoken, "setns rx_ns"))
-> +		goto free_rxns;
-> +
-> +	SYS(free_rxns, "ip addr add " RX_ADDR "/24 dev " RX_NAME);
-> +	SYS(free_rxns, "ip link set dev " RX_NAME " up");
-> +
-> +	skel = test_xdp_meta__open_and_load();
-> +	if (!ASSERT_OK_PTR(skel, "open and load skeleton"))
-> +		goto free_rxns;
-> +
-> +	rx_ifindex = if_nametoindex(RX_NAME);
-> +	if (!ASSERT_GE(rx_ifindex, 0, "if_nametoindex rx"))
-> +		goto destroy_skel;
-> +
-> +	tc_hook.ifindex = rx_ifindex;
-> +	ret = bpf_tc_hook_create(&tc_hook);
-> +	if (!ASSERT_OK(ret, "bpf_tc_hook_create"))
-> +		goto destroy_skel;
-> +
-> +	tc_prog = bpf_object__find_program_by_name(skel->obj, "ing_cls");
-> +	if (!ASSERT_OK_PTR(tc_prog, "open ing_cls prog"))
-> +		goto destroy_skel;
-> +
-> +	tc_opts.prog_fd = bpf_program__fd(tc_prog);
-> +	ret = bpf_tc_attach(&tc_hook, &tc_opts);
-> +	if (!ASSERT_OK(ret, "bpf_tc_attach"))
-> +		goto destroy_skel;
-> +
-> +	xdp_prog = bpf_object__find_program_by_name(skel->obj, "ing_xdp");
-> +	if (!ASSERT_OK_PTR(xdp_prog, "open ing_xdp prog"))
-> +		goto destroy_skel;
-> +
-> +	ret = bpf_xdp_attach(rx_ifindex,
-> +			     bpf_program__fd(xdp_prog),
-> +			     0, NULL);
-> +	if (!ASSERT_GE(ret, 0, "bpf_xdp_attach"))
-> +		goto destroy_skel;
-> +
-> +	nstoken = open_netns(TX_NETNS);
+Jeremy Linton (1):
+  arm64: rsi: Add automatic arm-cca-guest module loading
 
-Same here.
+ arch/arm64/include/asm/rsi.h                    |  2 ++
+ arch/arm64/kernel/rsi.c                         | 15 +++++++++++++++
+ drivers/virt/coco/arm-cca-guest/arm-cca-guest.c |  8 ++++++++
+ 3 files changed, 25 insertions(+)
 
-pw-bot: cr
+-- 
+2.46.0
 
-> +	if (!ASSERT_OK_PTR(nstoken, "setns tx_ns"))
-> +		goto destroy_skel;
-> +
-> +	SYS(destroy_skel, "ip addr add " TX_ADDR "/24 dev " TX_NAME);
-> +	SYS(destroy_skel, "ip link set dev " TX_NAME " up");
-> +	SYS(destroy_skel, "ping -c 1 " RX_ADDR);
-> +
-> +destroy_skel:
-> +	test_xdp_meta__destroy(skel);
-> +free_rxns:
-> +	netns_free(rx_ns);
-> +free_txns:
-
-nit. test_xdp_meta__destroy, netns_free, and the to-be-added close_netns can 
-handle NULL. Init the variables to NULL at the beginning could save a few goto 
-labels, probably only one label is needed.
-
-> +	netns_free(tx_ns);
-> +}
 
