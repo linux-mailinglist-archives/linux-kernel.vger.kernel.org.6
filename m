@@ -1,131 +1,141 @@
-Return-Path: <linux-kernel+bounces-435859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFE6F9E7DF5
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 03:02:58 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49DA99E7DA8
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E5762882D8
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:02:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74262286918
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:13:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C375912B73;
-	Sat,  7 Dec 2024 02:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DB38467;
+	Sat,  7 Dec 2024 01:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="efBNFOkY"
-Received: from out.smtpout.orange.fr (out-17.smtpout.orange.fr [193.252.22.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="fgjYJARg";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lKAhxmXN"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0797128F5;
-	Sat,  7 Dec 2024 02:02:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 289134C79
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 01:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733536971; cv=none; b=bxcVT75nR8wKNL8L2LF1/Y3+PRKjTVvtbXSuwnf17TThc44r/dQ2lcYYQtJSfZ4J+bEPhDbGJAzzvwzgGuHFMRwQhhURU3k9VRPNoZSsfLdTb+SCekCPBGbVyIBOv2k1mQQX3vyde86S9i7onkCQJWVXl7X7WeRVNvE1bM3HjoQ=
+	t=1733534005; cv=none; b=ozPj5QvyjZmkYZag1JXW/ZE5TFi7AATtdnQHZZUuvX4lI78DUZVbPUu9+cj25/VK/wRDr7GkIAgV7HowmDQfq/gJMm2WPDslG9f/dokMDZEP1uMlIGtC3y/b6jeyfQmT4b6TMq8f+8sMQ5EK/Fpo/RJGodCofUaIrGCuk5M4Z6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733536971; c=relaxed/simple;
-	bh=M3tRBIMiUGbNOtYs/WiqckLr+eGNBUTYriamxyCBEEE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GcxHpODIXGrX6rRFI1Ksi77t4BzW4WCLbZiF6d9YyTjWiOR1+ZWLLepHVgLIMLdd6ZVz16Yiykfdufd75o7udTfGleP1tFDr/SnhU6vhdBSIk4KD/sYZHeX4Uow+dx7mNwzRRsT5VSG7uQQoFTade5r55uAEPGJZKMjA+WWWL+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=efBNFOkY; arc=none smtp.client-ip=193.252.22.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-ej1-f53.google.com ([209.85.218.53])
-	by smtp.orange.fr with ESMTPSA
-	id Jk9XtkHz401M2Jk9Yt7ejV; Sat, 07 Dec 2024 03:02:40 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733536960;
-	bh=1FRoHoQWpZzbjWYvjotIUGh9Pf5+Jx2FZlKpO4hH6NM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=efBNFOkY+cV8avqyYvv/XZTk9CSlCAOtxOTVoZW0Mm6G5Ejy9p8h9RAHZ3RXeCxVZ
-	 DQ33if63YUgMnR5r76sYSUXmjhocTon9aKksjsrLDbJPIiYcqJ7E8cbNdLtLkpNwFU
-	 1gv5RO/PHzdTeu94CyIONg036fSEPyBCEwKxhFuzXDWS3mK9iuz7KELjJV6CpZDlgW
-	 jP3hyBr8+1NdVpp2R9hx7uVuGKI66YUtDcBn07plPG0WbCHtMKIMETuk+HjeP7WeEq
-	 Ls/lvYaQzVW3Ysyw8FJrWHjvo7i7QwVENBI4H/On82OOYxpf6iVHac96DPf7xs8HtD
-	 gfZS8i8M2AwLg==
-X-ME-Helo: mail-ej1-f53.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Dec 2024 03:02:40 +0100
-X-ME-IP: 209.85.218.53
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aa503cced42so371719866b.3;
-        Fri, 06 Dec 2024 18:02:40 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVHRGWUejAM917mjPVNhIKO6iGDF0g54NU+87ZchYsZTy0U/pnSIaNQ3t3ix3WIylE4jkX9iImd9xQixgpe@vger.kernel.org, AJvYcCW4rKkreCdeZkxsHNzlN91Ng7bNawxj4vPa2O8UUXmYFRSZ58UpGlpP25QxzPVCYxAWAOFlf+HbcmbzIZ+b7yk=@vger.kernel.org, AJvYcCXgIxalHTYmJoly1hq+cMYeACt7kXWUSVbUTYKxVBTp9kqGb+zyCGjdfymyYIYwWVWwbiTqF5AN1b86/hHL@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOeWCYdm7jHevU/OL8gDyEwMozVSUUxJTe2wo9aHgte/m5r3m2
-	lobpc5AQJwaqOLDZR4KcAe4oIttiDlVYTFM90xgl0l4xZBtrLXx5j1iAo0oA5KzsBWfzf0AmKPf
-	U1FLz2a34wO3L0kEe4eprpOucRSA=
-X-Google-Smtp-Source: AGHT+IFYWIvr/wb1ttWAqU3XdgmdbVRXgljv2wGXYHxZGru+z8zfXAuY4J7uLgYbwqJhFyewdEilCwKv6EaVf4E+2bE=
-X-Received: by 2002:a17:907:270f:b0:a9e:b5d0:e5c with SMTP id
- a640c23a62f3a-aa5f7f6f2f8mr768523566b.61.1733414207483; Thu, 05 Dec 2024
- 07:56:47 -0800 (PST)
+	s=arc-20240116; t=1733534005; c=relaxed/simple;
+	bh=AYoHdGQowcWo9x3vDT2j/hIca5ZEUEnEFJHZj/2mLGo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZkYf8VbbR9Y8TccVfer4CCHPvOvekCMeR08OAkQbbw0bf5IiHfEezZfChEMlyGmLoL3elB8GCzwzYBscEtWjRIbpe/y1uuxE9W/NxDA7gIeMLoMeqA8cKh95n7TqGX74DK74UN+2bAPWFhS5rb015buRK+A6BlaLoFDscE+Y3Do=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=fgjYJARg; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lKAhxmXN; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id E610E11401BF;
+	Fri,  6 Dec 2024 20:13:21 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Fri, 06 Dec 2024 20:13:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1733534001; x=
+	1733620401; bh=g7z1jVtmM7j1+OaUW/MUyU9UTEWnAzeQ4ULDFVf3T88=; b=f
+	gjYJARgaAAUx45IrJLKp3Pajs8OlZ49IYPytf6I2u/EPzkwG0m2Wktp6zQi3Z03T
+	7XDtVRbd/kINubttopLzejkTXYdGNnUxkayHLq94+qN51iOr5uvbIralyb7Butxx
+	4S2ZSXOKc0tPsRnuOWiLgm4KmMr5co1zSIPcwu682dz0OMbNv6iTfwZjBDJPRyM+
+	sfv1seReAGpb8UsTw412L97lnplrEuKHH3q9Sn/DcAWVBc0RvrkUA1wleGsjleNt
+	O6nqbZp4cl53HnqdXefe85/2ZP9FCFNfBY1b7tarXUHiGJjxok4Rp22QEATA6YFj
+	HyAACcZCUc9p61AOaPR6A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1733534001; x=1733620401; bh=g7z1jVtmM7j1+OaUW/MUyU9UTEWnAzeQ4UL
+	DFVf3T88=; b=lKAhxmXN9IqjDz02bvfwla2x4yr7r+CAOJde6np4NhaoshsEgDc
+	yYqCTst63+bi33GT/B+hSbR1eM/CDRXQiOXN9WOE0ITs6AfMJueFzKhin4qiciWd
+	s0MUsy9qakgi33ucpFDG1Sqkp2u2bdYmnzWgd01utwP1TYswpxhe92GApA5e1Vft
+	TLrWx5tgwWfRNR7W/eVPYjtS5t9i6wlpZqQhYlbtIVrYG78YWc48gP3bKDG0ztDW
+	KP/kHzMZlKE64YYr2fmyZWDbTXuPLZ7BAYNq2abPfscuqUVDz6pPhLbABXEOH73G
+	PVd5h54zHkFfmanSvIR4D3290Z4QdwYWmdg==
+X-ME-Sender: <xms:MaFTZ9A_glOoSnrux4PTfH2hO0yRAdOONQV1mCHIHzKFss4mrj9ylQ>
+    <xme:MaFTZ7gngA9QjeVB7xJwP_35K6CFUp_scQ2ACgmKapVapz02uzGDKYxwbygMxQtE0
+    Gy5rNonZyKh35SEyTA>
+X-ME-Received: <xmr:MaFTZ4mRQOKqZZG6POTkdLS8LUGpqsSHntwIy0O1ZzhcZj0q4acTesC3LR7jt8V1fCXjCHO4WLfbAWWvY0Mo48odPfD4-SkYN0M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjedtgddvjecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecu
+    hfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhisehsrg
+    hkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeehhffhteetgfekvdeiueff
+    veevueeftdelhfejieeitedvleeftdfgfeeuudekueenucevlhhushhtvghrufhiiigvpe
+    dtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehoqdhtrghkrghshhhisehsrghkrghmohgt
+    tghhihdrjhhppdhnsggprhgtphhtthhopeegpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopehvrghisghhrghvghhuphhtrgegtdesghhmrghilhdrtghomhdprhgtphhtthho
+    pehhvghlghgrrghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigudefle
+    egqdguvghvvghlsehlihhsthhsrdhsohhurhgtvghfohhrghgvrdhnvghtpdhrtghpthht
+    oheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:MaFTZ3x5bpVxUY06GYMmyjwTlauOCN33DSY-dIchJg5LcaBEEqTNuw>
+    <xmx:MaFTZyTmwqNXsU6xRgc2vyurX8NCJgBC79zhMa0L_3SN6lj0pV1Yag>
+    <xmx:MaFTZ6bx1rY-w1D8AqbfPNG3w7VgmuwaEQteQGCjtzzkX7Is_9DTcQ>
+    <xmx:MaFTZzSZRSIXmRfFh_8ia2QwUt8wcJs3jHg47EOAKDfldD9i6DejIw>
+    <xmx:MaFTZ4OalWqTpUzHhOKT8ZDsoeG70GHqYL6A-spJufsxevF4Gq3-Vc6d>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 6 Dec 2024 20:13:20 -0500 (EST)
+Date: Sat, 7 Dec 2024 10:13:16 +0900
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1] firewire: ohci: use generic power management
+Message-ID: <20241207011316.GA148867@workstation.local>
+Mail-Followup-To: Vaibhav Gupta <vaibhavgupta40@gmail.com>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+References: <20200720150715.624520-1-vaibhavgupta40@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-8-4e4cbaecc216@wanadoo.fr> <6597979088eb4ee7b98cfb99815a402e@AcuMS.aculab.com>
-In-Reply-To: <6597979088eb4ee7b98cfb99815a402e@AcuMS.aculab.com>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Fri, 6 Dec 2024 00:56:35 +0900
-X-Gmail-Original-Message-ID: <CAMZ6Rq+XhOb+yn5A1dHD=qkbB1_FQXMA7_ydBB4nPTSnys3jkA@mail.gmail.com>
-Message-ID: <CAMZ6Rq+XhOb+yn5A1dHD=qkbB1_FQXMA7_ydBB4nPTSnys3jkA@mail.gmail.com>
-Subject: Re: [PATCH 08/10] drm/i915/reg: replace __is_const_expr() by
- is_const_true() or is_const()
-To: David Laight <David.Laight@aculab.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
-	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20200720150715.624520-1-vaibhavgupta40@gmail.com>
 
-On Thu. 5 Dec 2024 at 04:00, David Laight <David.Laight@aculab.com> wrote:
-> From: Vincent Mailhol
-> > Sent: 02 December 2024 17:34
-> >
-> > Most of the use of __is_const_expr() in i915_reg_defs.h are just to
-> > test whether an expression is known to be true. Because those checks
-> > are all done in a BUILD_BUG_ON_ZERO(), replace those with
-> > is_const_true().
->
-> Another place that could use statically_true() and BUILD_BUG_ON_MSG().
+Hi,
 
-Here also, BUILD_BUG_ON_MSG() is not suitable because it does not
-return a value.
+On Mon, Jul 20, 2020 at 08:37:16PM +0530, Vaibhav Gupta wrote:
+> Drivers using legacy PM have to manage PCI states and device's PM states
+> themselves. They also need to take care of configuration registers.
+> 
+> With improved and powerful support of generic PM, PCI Core takes care of
+> above mentioned, device-independent, jobs.
+> 
+> This driver makes use of PCI helper functions like
+> pci_save/restore_state(), pci_disable_device() and pci_set_power_state() to
+> do required operations. In generic mode, they are no longer needed.
+> 
+> Change function parameter in both .suspend() and .resume() to
+> "struct device*" type. Use to_pci_dev() to get "struct pci_dev*" variable.
+> 
+> Compile-tested only.
+> 
+> Signed-off-by: Vaibhav Gupta <vaibhavgupta40@gmail.com>
+> ---
+>  drivers/firewire/ohci.c | 43 ++++++++++++-----------------------------
+>  1 file changed, 12 insertions(+), 31 deletions(-)
 
-__BUILD_BUG_ON_ZERO_MSG() could be used; but there is less benefit to
-do this at a driver scope. In this i915_reg_defs.h,
-BUILD_BUG_ON_ZERO() is used 20 times. Adding an error message each
-time will just make things ugly.
+Although it takes a long time since the patch was posted, I applied it
+now to for-next branch with my handy changes to optimize to v6.13-rc1. 
 
-If we want more readable error messages here, the solution for me is
-just to redefine BUILD_BUG_ON_ZERO() to print a more meaningful error
-message by default. But this is not the scope of this series. I sent a
-separate patch for this:
-
-  https://lore.kernel.org/all/20241205151316.1480255-2-mailhol.vincent@wanadoo.fr/
-
-Concerning statically_true() instead of is_const_true(), let me test,
-and if this works, then I will replace these in v2.
+I still have a slight concern about the operation specific to powermac
+platforms, however let us fix when receiving any reports from the users.
 
 
-Yours sincerely,
-Vincent Mailhol
+Regards
+
+Takashi Sakamoto
 
