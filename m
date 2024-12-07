@@ -1,104 +1,153 @@
-Return-Path: <linux-kernel+bounces-436131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7809D9E8197
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:31:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A5229E8187
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 19:23:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7C8E165555
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 367DF188430B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:23:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D657155333;
-	Sat,  7 Dec 2024 18:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF1C1537C6;
+	Sat,  7 Dec 2024 18:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="CDwwac4X"
-Received: from out203-205-221-209.mail.qq.com (out203-205-221-209.mail.qq.com [203.205.221.209])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OSy1Nm2u"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067157F460
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 18:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7463A3FF1;
+	Sat,  7 Dec 2024 18:23:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733596293; cv=none; b=J5B2eKP9Af+/TaU3Q4DpnPPYtLp7ghG51Ll2M2Oa09IWB3afOA71Q87ZTLPPOMuIbnDFaca1Z1pe0kosxtqAK7u+5FZsPMi3GvSFjzyn36EDP5XVjMwsKRDkXsDR0y9c5IJK19d57XS/4ujZrlWFJVb80p8C7UcOLpt94ylsx/4=
+	t=1733595823; cv=none; b=jN13tm66xvQV+mm+Hg1jI3YRzuYGFcFstuRwStcq/3sPMxHRuk3Xr9WNQ87HhChCLWRX13DStSWJh/dqk7aNVa/7ve2O1gJG428yE+H9+RcmFSDFb3gEyPZbhtLTRZUtSDq1qWdeLpWY5y+Rd0Rq4mXaZ+LCcoNCP5EXpeT6y+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733596293; c=relaxed/simple;
-	bh=E4/GnEGOiwFWyL9KAJfQrncQUSKogIxZCl8d60Y8qRI=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Pzh/I0pWfWRvr9juCVfUl1LSAvHg2h/+40wtc5NfrLms8fy8yoM6dWiu3680AYFMo5PSWtvi0ru9AINBMBV9kKZsQs7AXrNzL0wmnBw6FbRYdq7n74DXWq9Ri4oY62HRtDDnIU9FiuJRUxsfJ3wnEnAUF62qk8ogxoD+4vqBrBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=CDwwac4X; arc=none smtp.client-ip=203.205.221.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1733595986; bh=9qhSSZGytDtmqRydm2WL1+ju+J8htuPsQkE5rbonJRA=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=CDwwac4XN1KQmS6jVXtkEfcC3X1K9qYMtiqZU/LCKNgC0DGKFK1JJeSbCyDCXp3jG
-	 rJSpm7tEul18SaTt+IL9NAZX7P7Tk0ZKxdMY+wQIuUU4ygDVCO0JoS7fSnLEVj01oq
-	 8+W5kViBWKa1diMDymAxwTlnKj1acuBPwzEFpC9s=
-Received: from localhost.localdomain ([2409:875e:a030:1001:14::e66])
-	by newxmesmtplogicsvrsza15-1.qq.com (NewEsmtp) with SMTP
-	id 698BD20F; Sun, 08 Dec 2024 02:26:24 +0800
-X-QQ-mid: xmsmtpt1733595984tgl3f3asw
-Message-ID: <tencent_035C5CCF018A15F3131E0F2375370B163008@qq.com>
-X-QQ-XMAILINFO: Mm/8i8/T4yneV8CiMgyLbibTvBjO92aLjUG0bWyC32Jy/IHV9Grfb8CpXvrTeN
-	 Wm0mxZY9ZfrVFv/z9vOJrHZMOMxwk7vpVpCt9OBL9MR8VEefOVciYZI+KjdiNtqVKgShFC04/QRT
-	 x4byjK4O4EtNFbGZ8QLSgLYA8zJnsP1gvWGr0PGr/eqxUB3S0PoSNUyFm5ZWAnWM96Jc9tybL+BV
-	 2uSqhsMJI2xK1URdhIKEdOlS0DXqG4JBx175IZFVPjnuHdjThooSZDyQPI4WAvP/xuQoGHT+m/Il
-	 4Fq2dXn0L8IAvIYYlOftqgD1PSLwiF6L/NkgfIBgMecdcMg2tqFzVl0ZQWhvaDa+0VlPayXSgIhG
-	 YZxFYxkU1WaogKMFeObL8+PRnk69QdO44pMkYbGtwhOibnfGMa+NZ0THFz7CYCg+/Q7B5Fkq5EFM
-	 PMd54VA/SYGeaWIohP6R9GTGjkrr1CjdGhLWtkDzP44g2C5Svqmqrn2vW9aNP9p34cjEJ9uo1Lut
-	 Cdslh3Pu9wi7MldcmWvpUD/2rZwTUk7gAOxrfgw3bCeNVE+OSsvN8TB5q6Tq9KScmbX1IMqGEsNp
-	 homKDLmh588qZs4JTl2lDs1i/ut9O5Gteq+hpKTftwT1CK84Rgkek2JHRe5bGBQWy8hR3ccOwdtn
-	 t8hcj3izgQIGFaFm7mIktTSb+SbNj3TkSLAS+jqQFVtRause2oXV43DqO2TdGsUmlJ/jHBExg1Wv
-	 pbsvgDHfDubZnGzE8E5OXipEJWWxfPslaw0OoXDG6kbP3dTB/kg80U7SLfwURrxSRNzeGXJ+ER4D
-	 DXwSNKZJ/HJDgohsiq+WbigGt/GBNeu4cppJr0T0hBYVg3sy8AdHx89GV/CRM1h3GN/KG5jToANV
-	 gJqP9J1P8WVnzAoetL1HFEML9vQ6YmWVlVDr3qjqk5MMDqqPSdyRIT1sGGoVwXXdPW5qhYWAy15P
-	 gjSQ8/VErQzMVC1HT3cw==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Junjie Fu <fujunjie1@qq.com>
-To: willy@infradead.org
-Cc: akpm@linux-foundation.org,
-	fujunjie1@qq.com,
-	gourry@gourry.net,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	mhocko@suse.com
-Subject: [PATCH] mm/mempolicy.c: include pagemap.h directly in right place
-Date: Sun,  8 Dec 2024 02:22:50 +0800
-X-OQ-MSGID: <20241207182250.2140678-1-fujunjie1@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <Z1SCZlMcjBCzHOxf@casper.infradead.org>
-References: <Z1SCZlMcjBCzHOxf@casper.infradead.org>
+	s=arc-20240116; t=1733595823; c=relaxed/simple;
+	bh=6jJ9hrDq2Vko12yWvek+YEszmdvXKFWq1vKnooFBH1k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s+iHBIRPuUMnIY6PGEVF5GElBazjqnAZmGk9v2RgXfYf6P9hPSiEljDPgOK4nFSbTeLGyaZCaXQywtwzQwVKdlTo2nU77CjsV+JHUWoA1S4cXRRl6xPtpqLqpRZp6Fvdgd9cK2Y0/9yIBkd+zSnNkc8FLW03tZGPvERIfTFM4/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OSy1Nm2u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 335BFC4CECD;
+	Sat,  7 Dec 2024 18:23:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733595823;
+	bh=6jJ9hrDq2Vko12yWvek+YEszmdvXKFWq1vKnooFBH1k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OSy1Nm2ujbr2e9KnONQJ1EnuRVNUUafOUvN+eJUPuI6f/eVfYYpjXa9VB6ylyKtax
+	 ckPhd0zFAWF/w6TZHI+Ho9lW8eiI/ZK8sLk4lfD+TU9q11JYUPXIcC/mWmsTJdfSs1
+	 k/AmOVYVM9Lr1F9DJ1wde/xrGsRZANI+b1SabNInM8nJE7MM64VZKLrubXzfL679jH
+	 jSKiD12YIx6mvwkT+XNVBhgxMjxGUqMaGiP5TaluL4OFESAhSj3oaRRU2H98G85sw0
+	 Bs9fKTBNVEL/hlmC/B5OUINl2uP5y8rK/MIO96YrXcU4Tth+7cCcn+UGgBXSA72K5B
+	 07ZAn/wrueDaQ==
+Date: Sat, 7 Dec 2024 18:23:33 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 03/15] iio: adc: rzg2l_adc: Use devres helpers to
+ request pre-deasserted reset controls
+Message-ID: <20241207182333.00a23c47@jic23-huawei>
+In-Reply-To: <20241206111337.726244-4-claudiu.beznea.uj@bp.renesas.com>
+References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241206111337.726244-4-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Thank you for your reminder. I have changed the place where the header
-file was imported again.
+On Fri,  6 Dec 2024 13:13:25 +0200
+Claudiu <claudiu.beznea@tuxon.dev> wrote:
 
-Signed-off-by: Junjie Fu <fujunjie1@qq.com>
----
- mm/mempolicy.c | 1 +
- 1 file changed, 1 insertion(+)
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Starting with commit d872bed85036 ("reset: Add devres helpers to request
+> pre-deasserted reset controls"), devres helpers are available to simplify
+> the process of requesting pre-deasserted reset controls. Update the
+> rzg2l_adc driver to utilize these helpers, reducing complexity in this
+> way.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v2:
+> - rebased on top of patch 2/15 from this version
+> - used "failed to get/deassert" failure messages
+> 
+>  drivers/iio/adc/rzg2l_adc.c | 37 ++++++-------------------------------
+>  1 file changed, 6 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index 8a804f81c04b..c0c13e99aa92 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -411,11 +411,6 @@ static void rzg2l_adc_pm_runtime_set_suspended(void *data)
+>  	pm_runtime_set_suspended(dev->parent);
+>  }
+>  
+> -static void rzg2l_adc_reset_assert(void *data)
+> -{
+> -	reset_control_assert(data);
+> -}
+> -
+>  static int rzg2l_adc_probe(struct platform_device *pdev)
+>  {
+>  	struct device *dev = &pdev->dev;
+> @@ -448,34 +443,14 @@ static int rzg2l_adc_probe(struct platform_device *pdev)
+>  	if (IS_ERR(adc->adclk))
+>  		return dev_err_probe(dev, PTR_ERR(adc->adclk), "Failed to get adclk");
+>  
+> -	adc->adrstn = devm_reset_control_get_exclusive(dev, "adrst-n");
+> +	adc->adrstn = devm_reset_control_get_exclusive_deasserted(dev, "adrst-n");
+>  	if (IS_ERR(adc->adrstn))
+> -		return dev_err_probe(dev, PTR_ERR(adc->adrstn), "failed to get adrstn\n");
+> -
+> -	adc->presetn = devm_reset_control_get_exclusive(dev, "presetn");
+> -	if (IS_ERR(adc->presetn))
+> -		return dev_err_probe(dev, PTR_ERR(adc->presetn), "failed to get presetn\n");
+> -
+> -	ret = reset_control_deassert(adc->adrstn);
+> -	if (ret)
+> -		return dev_err_probe(&pdev->dev, ret, "failed to deassert adrstn pin, %d\n", ret);
+> -
+> -	ret = devm_add_action_or_reset(&pdev->dev,
+> -				       rzg2l_adc_reset_assert, adc->adrstn);
+> -	if (ret) {
+Huh. Missed this in previous. These brackets shouldn't be there.
+> -		return dev_err_probe(&pdev->dev, ret,
+> -				     "failed to register adrstn assert devm action, %d\n", ret);
+> -	}
+> +		return dev_err_probe(dev, PTR_ERR(adc->adrstn), "failed to get/deassert adrst-n\n");
+>  
+> -	ret = reset_control_deassert(adc->presetn);
+> -	if (ret)
+> -		return dev_err_probe(&pdev->dev, ret, "failed to deassert presetn pin, %d\n", ret);
+> -
+> -	ret = devm_add_action_or_reset(&pdev->dev,
+> -				       rzg2l_adc_reset_assert, adc->presetn);
+> -	if (ret) {
+> -		return dev_err_probe(&pdev->dev, ret,
+> -				     "failed to register presetn assert devm action, %d\n", ret);
+> +	adc->presetn = devm_reset_control_get_exclusive_deasserted(dev, "presetn");
+> +	if (IS_ERR(adc->presetn)) {
+Adding bracket here both makes limited sense and messes up the diff. I dropped them.
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 88eef9776bb0..9ee22263591d 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -109,6 +109,7 @@
- #include <linux/mmu_notifier.h>
- #include <linux/printk.h>
- #include <linux/swapops.h>
-+#include <linux/pagemap.h>
- 
- #include <asm/tlbflush.h>
- #include <asm/tlb.h>
--- 
-2.34.1
+Jonathan
+
+> +		return dev_err_probe(dev, PTR_ERR(adc->presetn),
+> +				     "failed to get/deassert presetn\n");
+>  	}
+>  
+>  	ret = rzg2l_adc_hw_init(adc);
 
 
