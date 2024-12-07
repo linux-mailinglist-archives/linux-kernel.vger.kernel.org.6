@@ -1,213 +1,168 @@
-Return-Path: <linux-kernel+bounces-436113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85B09E8144
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:37:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3F8916662A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:37:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA68514AD29;
-	Sat,  7 Dec 2024 17:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAryukcp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E77369E815D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:40:44 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12921494AD;
-	Sat,  7 Dec 2024 17:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2C5728194D
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:40:43 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B2514F9CC;
+	Sat,  7 Dec 2024 17:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yq7y/5DV"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A21BE38FA3
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 17:40:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733593064; cv=none; b=f2X6bV/68v22ivs08KKP/AE0CRxyxE+WT4IcJ0jIJpXO5VGVZQrlSD2+5zam9/J0nnCE70Gz2sA+6yOpPW94Y3dwqyFJkn81IEm79gJOn/z0inDctcUFcbAeWHQehBmdiJswviFTI9cEGFGUTCv3r6QZWVrdmKTgfriYz5BUpy8=
+	t=1733593239; cv=none; b=Lv9KKRsFnB9N8j2SVJJLpbsS2SVIMgOnCI1KaJ75xthlIw/FRbH7hez1U9RzqSZmLPPEJIIte4pIIjtXs3cBWwyqsgTfwRVpbrOvpxxOMHBgRbDN8pEUjQkhy5ed4+4Npo8J1nkOwx73o7NTL01LU2XV2hj0EPCLgoWu83JlI5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733593064; c=relaxed/simple;
-	bh=ox1B8to36A/KHcuaMZ8cKSQ7KleVJ/upW6RNLQBXHCU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ds6qGEJo9EebrzRfYOsyNzZokzp2Mcyw/4ML6vn82/HkO4VzXZ7K/aCNGNnZpghBn+E4HLdtRbsNArU/AowOK0b4dDGPHS/yKz5nMg6cFeUAc76cEQizXkCUXi8udlTZg390WDeAXmC4jGOOrkKSQPtLxsmWFBTLr/o1QC2kNXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAryukcp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28863C4CECD;
-	Sat,  7 Dec 2024 17:37:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733593063;
-	bh=ox1B8to36A/KHcuaMZ8cKSQ7KleVJ/upW6RNLQBXHCU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=LAryukcphYBSkaUrTHag+XyG8cjAF4kRY4aayo7dZwPzeY7AwtVCKmgGneWBw4XvT
-	 g/+yOHZfURmVzejw95Bru6ZU3uxh2CrVMNGIzZcJfJxo8YvZKDW4MIk8E3ux9xsqQI
-	 DOiU4xbUp2bnRoa2TAUUU43cXFRa4SQDZvBpuppFNv4rkl0OKPr0LfNVNkf2MwYIhj
-	 VaCbsWvqrTsX0cZzasapxH7DnS5Xz5p604vsAGIBwh75NRFbAPaema06r/9K9LyvfH
-	 eJAR4VedFHdsOBIIyen4OteZEaxNaftD+Oe81KsAvj5tqpxrzXxOhW9CVS7hSQ1+/b
-	 XxzRZOtIgunUg==
-Date: Sat, 7 Dec 2024 17:37:31 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>,
- prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
- magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
- <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 08/14] iio: adc: rzg2l_adc: Prepare for the addition of
- RZ/G3S support
-Message-ID: <20241207173731.523ce96b@jic23-huawei>
-In-Reply-To: <CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
-References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
-	<20241203111314.2420473-9-claudiu.beznea.uj@bp.renesas.com>
-	<20241203200941.03ec9ea3@jic23-huawei>
-	<CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733593239; c=relaxed/simple;
+	bh=S6cDraT/UqzDuLNKup/5Vv4l1cs9hja6FBfWxW28RXo=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lvWipmSdXSptWhhN3Rsl80Mp5CkBrwCVgK7PPJTg0mTIfUqWJ8HR8MG9RIUowpTBRyytcH5n6P2tonbu7CaiNFCN/nK99Ki+qg0f4fh5jhhIwslEV8gvazLrpXHFY2n1+GfW7DLIph44ml96Jua9lyUeKeNF7MB8hO3F3MwKTlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Yq7y/5DV; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71de0a43937so104245a34.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 09:40:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733593237; x=1734198037; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=7JFE2TSFDzv+768sc7DXISjbbLokOwhfjQgaEcTQpmc=;
+        b=Yq7y/5DVNS1Ab6Ip95uhPsYvuXUvVoytB3OoQ5IK81cESU81qSesuNHxA/XK69VvWG
+         O7InkWbmuuGKZThJc5f78JJbMilRHFzXEButU7mrnLD53hNl3Vf6a3e8oCIpl36tM0ux
+         By/G2OvhN6GHWt+ecPxq7GMBEoK1WdKIPUyDrk4i6J/gN4TMoQ65pOlJF22cktHFnr6c
+         ai05u6O5UqfTCf+ExuduLnn2cHFgUEO1Z/IZMkiSisIwXK8rlH+9TEPg364MHFxRb8GF
+         xsWRHcC10FxIsbXnP1BWZ91hsjB5LS7BfMOGe3iJcpQZEs0w9tewKbzWzq+lkowR4gSj
+         5RzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733593237; x=1734198037;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7JFE2TSFDzv+768sc7DXISjbbLokOwhfjQgaEcTQpmc=;
+        b=qMSEduQ96VsT2Zzu5is+pGf5+s8qd6llzBWhAzXwRVi28yjpdTCEWb+GJ4YOYEebm+
+         PsFhDHxegLZKgbYlNn4MNEVbFXwK1AIck54XS7zc9FLx1b85L3A3qgIfkJSUAKl9ugRn
+         Fn/cOAMM+ZUj3izVZMiqbSluarYBVf+Xx18JzjosWCS8Ay2AgAXSulRi9ulXMsya8ieg
+         NGGVcW6pF5NkDrqGyZNTfvzWCngLyJSr8RXfyHhrxdrm06OfrbsgZszr5KuUzK5PlTxt
+         Qoz5S0iI5N/VhlSBDdjhySqXTixUxef/p8m300h8xYVivylvYV/K0lEb1zoz7hv517d2
+         wulw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgYj9bbYSxB9H57Os8GhB+Lwl8DIRd76zJb7R5jnn2ZHNnF/xPn3aBkDot7bAuFDcfi3YUs8lJvDXbI6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy44o31oErZTbVAqfyhQJA7tevp4UmN5e4FpPVk0UxtO3pKezIr
+	icDVX3H2gMhicBW88rslxFjfeqpPFvWgW3Q2tLeHciq8vYu71wHn
+X-Gm-Gg: ASbGncs4E3Z1/SHnzkmf6wvD2DrEw3rkr9RwKxlm8B74v+J2NHc0TBIF39SVPv0qFaE
+	zgGSHcstJnuy3yHTbbIlWXviiV8s+57ZnkINYgZCpBngmjWd74vxt3xzlXcMDDMlSf1l3gB4cbq
+	aLE5YxnRcVrngbvyzEvkot2WbNL7AY3FYZXQN+vFPq3Fu52XNNIuxYzh5j+J25BD9Yvww2zdKHv
+	TYHCIsXFCyrWTXx+Pc56hLLEXxUHjgHAxqK
+X-Google-Smtp-Source: AGHT+IG4WgUGLt5SCW6fIP2m8vJVsykzHILxM+8C5MYlecI86j3b8ocFx5B0WxwLHxUtTyVt9fHCoA==
+X-Received: by 2002:a05:6830:65ce:b0:718:7c3:f86a with SMTP id 46e09a7af769-71dcf4b0f49mr4344673a34.6.1733593236687;
+        Sat, 07 Dec 2024 09:40:36 -0800 (PST)
+Received: from neuromancer. ([2600:1700:fb0:1bcf::54])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71dc493b1e3sm1348170a34.1.2024.12.07.09.40.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 09:40:36 -0800 (PST)
+Message-ID: <67548894.050a0220.2032bf.693e@mx.google.com>
+X-Google-Original-Message-ID: <Z1SIk8CCSlFdu_RR@neuromancer.>
+Date: Sat, 7 Dec 2024 11:40:35 -0600
+From: Chris Morgan <macroalpha82@gmail.com>
+To: Philippe Simons <simons.philippe@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	"open list:VOLTAGE AND CURRENT REGULATOR FRAMEWORK" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] regulator: axp20x: AXP717: set ramp_delay
+References: <20241206123751.981977-1-simons.philippe@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206123751.981977-1-simons.philippe@gmail.com>
 
-On Wed, 4 Dec 2024 10:40:58 +0100
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+On Fri, Dec 06, 2024 at 01:37:51PM +0100, Philippe Simons wrote:
+> AXP717 datasheet says that regulator ramp delay is 15.625 us/step,
+> which is 10mV in our case.
+> 
+> Add a AXP_DESC_RANGES_DELAY macro and update AXP_DESC_RANGES macro to
+> expand to AXP_DESC_RANGES_DELAY with ramp_delay = 0
+> 
+> Signed-off-by: Philippe Simons <simons.philippe@gmail.com>
+> ---
+>  drivers/regulator/axp20x-regulator.c | 23 +++++++++++++++--------
+>  1 file changed, 15 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+> index a8e91d9d0..8f035db13 100644
+> --- a/drivers/regulator/axp20x-regulator.c
+> +++ b/drivers/regulator/axp20x-regulator.c
+> @@ -419,8 +419,8 @@
+>  		.ops		= &axp20x_ops_fixed				\
+>  	}
+>  
+> -#define AXP_DESC_RANGES(_family, _id, _match, _supply, _ranges, _n_voltages,	\
+> -			_vreg, _vmask, _ereg, _emask)				\
+> +#define AXP_DESC_RANGES_DELAY(_family, _id, _match, _supply, _ranges, _n_voltages,	\
+> +			_vreg, _vmask, _ereg, _emask, _ramp_delay)	\
+>  	[_family##_##_id] = {							\
+>  		.name		= (_match),					\
+>  		.supply_name	= (_supply),					\
+> @@ -437,8 +437,15 @@
+>  		.linear_ranges	= (_ranges),					\
+>  		.n_linear_ranges = ARRAY_SIZE(_ranges),				\
+>  		.ops		= &axp20x_ops_range,				\
+> +		.ramp_delay = (_ramp_delay),			\
+>  	}
+>  
+> +#define AXP_DESC_RANGES(_family, _id, _match, _supply, _ranges, _n_voltages,	\
+> +			_vreg, _vmask, _ereg, _emask)				\
+> +	AXP_DESC_RANGES_DELAY(_family, _id, _match, _supply, _ranges, _n_voltages,	\
+> +		_vreg, _vmask, _ereg, _emask, 0)
+> +
+> +
+>  static const int axp209_dcdc2_ldo3_slew_rates[] = {
+>  	1600,
+>  	 800,
+> @@ -781,18 +788,18 @@ static const struct linear_range axp717_dcdc3_ranges[] = {
+>  };
+>  
+>  static const struct regulator_desc axp717_regulators[] = {
+> -	AXP_DESC_RANGES(AXP717, DCDC1, "dcdc1", "vin1",
+> +	AXP_DESC_RANGES_DELAY(AXP717, DCDC1, "dcdc1", "vin1",
+>  			axp717_dcdc1_ranges, AXP717_DCDC1_NUM_VOLTAGES,
+>  			AXP717_DCDC1_CONTROL, AXP717_DCDC_V_OUT_MASK,
+> -			AXP717_DCDC_OUTPUT_CONTROL, BIT(0)),
+> -	AXP_DESC_RANGES(AXP717, DCDC2, "dcdc2", "vin2",
+> +			AXP717_DCDC_OUTPUT_CONTROL, BIT(0), 640),
+> +	AXP_DESC_RANGES_DELAY(AXP717, DCDC2, "dcdc2", "vin2",
+>  			axp717_dcdc2_ranges, AXP717_DCDC2_NUM_VOLTAGES,
+>  			AXP717_DCDC2_CONTROL, AXP717_DCDC_V_OUT_MASK,
+> -			AXP717_DCDC_OUTPUT_CONTROL, BIT(1)),
+> -	AXP_DESC_RANGES(AXP717, DCDC3, "dcdc3", "vin3",
+> +			AXP717_DCDC_OUTPUT_CONTROL, BIT(1), 640),
+> +	AXP_DESC_RANGES_DELAY(AXP717, DCDC3, "dcdc3", "vin3",
+>  			axp717_dcdc3_ranges, AXP717_DCDC3_NUM_VOLTAGES,
+>  			AXP717_DCDC3_CONTROL, AXP717_DCDC_V_OUT_MASK,
+> -			AXP717_DCDC_OUTPUT_CONTROL, BIT(2)),
+> +			AXP717_DCDC_OUTPUT_CONTROL, BIT(2), 640),
+>  	AXP_DESC(AXP717, DCDC4, "dcdc4", "vin4", 1000, 3700, 100,
+>  		 AXP717_DCDC4_CONTROL, AXP717_DCDC_V_OUT_MASK,
+>  		 AXP717_DCDC_OUTPUT_CONTROL, BIT(3)),
+> -- 
+> 2.47.1
+> 
 
-> Hi Jonathan,
->=20
-> On Tue, Dec 3, 2024 at 9:09=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
-> wrote:
-> > On Tue,  3 Dec 2024 13:13:08 +0200
-> > Claudiu <claudiu.beznea@tuxon.dev> wrote: =20
-> > > The ADC IP available on the RZ/G3S differs slightly from the one foun=
-d on
-> > > the RZ/G2L. The identified differences are as follows:
-> > > - different number of channels (one being used for temperature conver=
-sion);
-> > >   consequently, various registers differ
-> > > - different default sampling periods
-> > > - the RZ/G3S variant lacks the ADVIC register.
-> > >
-> > > To accommodate these differences, the rzg2l_adc driver has been updat=
-ed by
-> > > introducing the struct rzg2l_adc_hw_params, which encapsulates the
-> > > hardware-specific differences between the IP variants. A pointer to an
-> > > object of type struct rzg2l_adc_hw_params is embedded in
-> > > struct rzg2l_adc_data.
-> > >
-> > > Additionally, the completion member of struct rzg2l_adc_data was relo=
-cated
-> > > to avoid potential padding, if any.
-> > >
-> > > The code has been adjusted to utilize hardware-specific parameters st=
-ored
-> > > in the new structure instead of relying on plain macros.
-> > >
-> > > The check of chan->channel in rzg2l_adc_read_raw() function, against =
-the
-> > > driver specific mask was removed as the subsystem should have already
-> > > been done this before reaching the rzg2l_adc_read_raw() function.
-> > >
-> > > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > > ---
-> > >  drivers/iio/adc/rzg2l_adc.c | 92 ++++++++++++++++++++++++++---------=
---
-> > >  1 file changed, 64 insertions(+), 28 deletions(-)
-> > >
-> > > diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> > > index fda8b42ded81..aff41152ebf8 100644
-> > > --- a/drivers/iio/adc/rzg2l_adc.c
-> > > +++ b/drivers/iio/adc/rzg2l_adc.c
-> > > @@ -32,20 +32,15 @@
-> > >  #define RZG2L_ADM1_MS                        BIT(2)
-> > >  #define RZG2L_ADM1_BS                        BIT(4)
-> > >  #define RZG2L_ADM1_EGA_MASK          GENMASK(13, 12)
-> > > -#define RZG2L_ADM2_CHSEL_MASK                GENMASK(7, 0)
-> > >  #define RZG2L_ADM3_ADIL_MASK         GENMASK(31, 24)
-> > >  #define RZG2L_ADM3_ADCMP_MASK                GENMASK(23, 16)
-> > > -#define RZG2L_ADM3_ADCMP_E           FIELD_PREP(RZG2L_ADM3_ADCMP_MAS=
-K, 0xe)
-> > > -#define RZG2L_ADM3_ADSMP_MASK                GENMASK(15, 0)
-> > >
-> > >  #define RZG2L_ADINT                  0x20
-> > > -#define RZG2L_ADINT_INTEN_MASK               GENMASK(7, 0)
-> > >  #define RZG2L_ADINT_CSEEN            BIT(16)
-> > >  #define RZG2L_ADINT_INTS             BIT(31)
-> > >
-> > >  #define RZG2L_ADSTS                  0x24
-> > >  #define RZG2L_ADSTS_CSEST            BIT(16)
-> > > -#define RZG2L_ADSTS_INTST_MASK               GENMASK(7, 0)
-> > >
-> > >  #define RZG2L_ADIVC                  0x28
-> > >  #define RZG2L_ADIVC_DIVADC_MASK              GENMASK(8, 0)
-> > > @@ -56,12 +51,26 @@
-> > >  #define RZG2L_ADCR(n)                        (0x30 + ((n) * 0x4))
-> > >  #define RZG2L_ADCR_AD_MASK           GENMASK(11, 0)
-> > >
-> > > -#define RZG2L_ADSMP_DEFAULT_SAMPLING 0x578
-> > > -
-> > > -#define RZG2L_ADC_MAX_CHANNELS               8
-> > > -#define RZG2L_ADC_CHN_MASK           0x7
-> > >  #define RZG2L_ADC_TIMEOUT            usecs_to_jiffies(1 * 4)
-> > >
-> > > +/**
-> > > + * struct rzg2l_adc_hw_params - ADC hardware specific parameters
-> > > + * @default_adsmp: default ADC sampling period (see ADM3 register)
-> > > + * @adsmp_mask: ADC sampling period mask (see ADM3 register)
-> > > + * @adint_inten_mask: conversion end interrupt mask (see ADINT regis=
-ter)
-> > > + * @default_adcmp: default ADC cmp (see ADM3 register)
-> > > + * @num_channels: number of supported channels
-> > > + * @adivc: specifies if ADVIC register is available
-> > > + */
-> > > +struct rzg2l_adc_hw_params {
-> > > +     u16 default_adsmp;
-> > > +     u16 adsmp_mask;
-> > > +     u16 adint_inten_mask;
-> > > +     u8 default_adcmp;
-> > > +     u8 num_channels;
-> > > +     bool adivc;
-> > > +};
-> > > +
-> > >  struct rzg2l_adc_data {
-> > >       const struct iio_chan_spec *channels;
-> > >       u8 num_channels;
-> > > @@ -71,10 +80,11 @@ struct rzg2l_adc {
-> > >       void __iomem *base;
-> > >       struct reset_control *presetn;
-> > >       struct reset_control *adrstn;
-> > > -     struct completion completion;
-> > >       const struct rzg2l_adc_data *data;
-> > > +     const struct rzg2l_adc_hw_params *hw_params;
-> > > +     u16 *last_val;
-> > > +     struct completion completion;
-> > >       struct mutex lock;
-> > > -     u16 last_val[RZG2L_ADC_MAX_CHANNELS]; =20
-> >
-> > Just make this big enough for the max device.  Chances are it will make=
- little or
-> > no difference to this allocation and nice to avoid the dynamic part.
-> >
-> > Feel free to add a runtime check to make sure this is big enough to avo=
-id any
-> > future problems with forgetting to update it. =20
->=20
-> Flexible array member and the new __counted_by() attribute?
-Messy as it's embedded in iio_dev via a rather round about route.
-It happens to be at the end of that structure but that's an implementation =
-detail.
+This series solves the immediate crashes I get on startup when I use
+schedutil as my cpu scheduler.
 
-So in this particular case I'd go with no for flexible array and __counted_=
-by.
-It is very unlikely the difference in size will actually result in a bigger=
- allocation
-as it's a substantial allocation however big this is.
-
-Jonathan
-
->=20
-> Gr{oetje,eeting}s,
->=20
->                         Geert
->=20
-
+Tested-by: Chris Morgan <macromorgan@hotmail.com>
 
