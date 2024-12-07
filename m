@@ -1,143 +1,134 @@
-Return-Path: <linux-kernel+bounces-435885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0522B9E7E3F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:58:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C545316AB58
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 04:58:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA18381B9;
-	Sat,  7 Dec 2024 04:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ofm58Ahx"
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E75A89E7E42
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:04:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6467422C6D4
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 04:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6A32866FF
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:04:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E9032E401;
+	Sat,  7 Dec 2024 05:04:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b="aQBFvtUv"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B16C2629F
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:04:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733547504; cv=none; b=JhugAsWdwjR1sQtYp9DVwtU52f/FY6J2Q98vi5AC0lSdtnJcxBvBXzuX9cgHG23MY//Le4P+H8DI5f4ElTZR7juToe030GJqGaFFBTCCjPfHrkacHTGegmEyJVckjoLL+c+Mmao1njvB7zteOl5aT98UrrJjJJuZhYpoj+XPhS8=
+	t=1733547884; cv=none; b=FYCVj2QNCJHEQGVioy1iIXpjC5pJocFv6Yc4vkbr8/TtPqx4vPaxCu1URr3DaVG81rk139Sh0ONuzlLABwK4yCzqV5GRzFHx5flxuExTmJZRbf9hH6J+ZI47JX8+1xJPy3vIuxwfcRKClDyU+W59yNBUdJCH8ZZSLTJ7iiS4Dkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733547504; c=relaxed/simple;
-	bh=gh3dWE0k96FzKp5eJhj32bvAqL6eBaXY32TQjJAzF8A=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=pEUjGUkYMpeZISxeHvPu1cG/9jB8VrKUQxgce0C+WH4RZeaVXOPqogSpUKhCHPiwUZba3Ba0EybSSEHoI4DqjLJrNzTnpibu0TuF3JmKgMSb/0BmMjZ8GWGJY7StOQ3efQaAz+/Nb5AUm6LzEG0Kn0bHuID89h9yZ1ocUrpFBYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ofm58Ahx; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241207045817epoutp0122c7ea91f8f7cb6b2fd928b1197f9de6~OzEPC7Eaq2020220202epoutp01x
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 04:58:17 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241207045817epoutp0122c7ea91f8f7cb6b2fd928b1197f9de6~OzEPC7Eaq2020220202epoutp01x
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733547498;
-	bh=V8Y1VDl9VeD7JeczT+wKLXz/GxXZYR70pIX0yAVHCl4=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=ofm58AhxluUGJbK1Vc/IP8PRrYP9pycDxzQ32I1QcqsDayYqWxbGphLc/k6LddHXS
-	 tZmI1a2eWnxLbX5UWW1MKy+aslesMo1iO/QawEjYWJ5j8o+jcNyZe5hwOIEdk5R9k4
-	 TQPv6GYSBeHMKCFBj9sLNLC2B9DSAml0n1BZooU0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20241207045817epcas1p19a5dc289c6bc5e720c8916d6b2994084~OzEOj47Wa2762327623epcas1p1b;
-	Sat,  7 Dec 2024 04:58:17 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.133]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y4wqr6v2kz4x9Pt; Sat,  7 Dec
-	2024 04:58:16 +0000 (GMT)
-X-AuditID: b6c32a36-6f5e970000005d3d-e1-6753d5e761f3
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	38.92.23869.7E5D3576; Sat,  7 Dec 2024 13:58:15 +0900 (KST)
+	s=arc-20240116; t=1733547884; c=relaxed/simple;
+	bh=VUi6E6Tz/yc2Q0GE6Mu6Gat67zGMtdy2Gi4v3kMP7w8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s8eKprkGLNBOsexRGJJlIVtSFTxdmf1hJ7XmwQFgTqx42DbUsib33sLWDiJNRaJnRV3bQDdeoryay3UWR13vurhU4wlbHNfFxSNaeJR/cZPMjTDAwoR3+q8M8VloRM8Vbcb9r9I2QDrzV6y3BNSxARx3RffjB6qEzHbzjrXBDD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com; spf=pass smtp.mailfrom=futuring-girl.com; dkim=pass (2048-bit key) header.d=futuring-girl-com.20230601.gappssmtp.com header.i=@futuring-girl-com.20230601.gappssmtp.com header.b=aQBFvtUv; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=futuring-girl.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=futuring-girl.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-7259d6ae0c8so2602908b3a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 21:04:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=futuring-girl-com.20230601.gappssmtp.com; s=20230601; t=1733547882; x=1734152682; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Ddt2VEuIOo1iVu76Orar/Zo/Mdp1ppf8GycmQvRWHA=;
+        b=aQBFvtUvdaNhi/TLylLZkoJdRugoLtLobGm381iAIkR5OVtnhPcbyxlRBqzEvK5LzX
+         JV0JkIvIskohWoU1Z3lJNH7jI4usjaIL6U/FGKikvvpD+aecrrp21RbBA3xpZi7hcMbR
+         Tipkgjffa3QitsRMUdd4Qr6MZLPxD1Y3sYsgGZfO8JhGMu3evNvFgrg7/YUsfhQAznG1
+         QuMPRFhoxWK4BiaCSi/H8Iima/ICUj+4ueQLhiKAaB6BihuF/13KPQl7D9v1rwLObGuK
+         XLJ5QdFMDLOFNPrvz8SLC107qiY+xUX8sXJO3CqawLdfk9iiW13djd7E2z8zQX/eP4Wl
+         sOmQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733547882; x=1734152682;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Ddt2VEuIOo1iVu76Orar/Zo/Mdp1ppf8GycmQvRWHA=;
+        b=N3GDrzYN7E5xU2hK6BB6GskPS/BjInkcAg2QyFcgO61zQDck5zsVDH58kWn+t8iJUE
+         E0ElivrQExY00OOsM4vPlkwRVbn+1xzer9JkSvgoyJ68D18POamLDFq5cc227uGu1hjS
+         HGsYQ9WtTD6EEtPHIN+2gB/HxSXw/gtW6ejMlPEguhUN5lXvLZ84lrzt5L17tgtoOChQ
+         tRILLN0Kv4e2elWzpbtuARJlvrYOmcJStk1jKr0nmjJykzU4aZBJNI5KalIEdcdklfq+
+         wNfZR81Vpj7P82xtVfVCSoDx2T4rFa2FmgQx2/E1eTpHgAupL8COCibNgLQis5xc8Yjz
+         dyPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVy8KUPhgl0k8KcYU1tC+NNuk7MWvH80/bsdeWZb1wV9bgOPpY/5Xbmz17Zd1OrhP0v+VWc9lMW37Sf2XA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7ZE5VGwsD+YAvR9elqJ7AZwA/cYj14Onq0ElGbIp1FD7ipSpy
+	D3gcDmdb1+X/cVWLGB/R25Mgefpie4//RxZkM9HMC/tByqT2F8AbUSwFlHpL92B1mi5uHQdStFv
+	70R00QhVN+hMXIbJqtl0Pk2dr9DKFMt30zTg3kA==
+X-Gm-Gg: ASbGncvhxdXwq8+I2UFrMrP3dvLlyTlyAI239Zkwqn0reVVAeAEC+S3tdszdeZpeTrC
+	BjHWPMUM3jiT/LoC7YRYJARH4R/HFIw==
+X-Google-Smtp-Source: AGHT+IEyb3xya9vheBrL7IJRZCeTEEHlKpHt0HNZJAo076PAOtifRmW78Meq4o9kgxdcg0vlyTCPwLyJMgs9Bqw3+vg=
+X-Received: by 2002:a17:90a:da84:b0:2ee:cd83:8fd3 with SMTP id
+ 98e67ed59e1d1-2ef6aadd741mr7528991a91.33.1733547881868; Fri, 06 Dec 2024
+ 21:04:41 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: Re: [PATCH] extcon: Remove deadcode
-Reply-To: myungjoo.ham@samsung.com
-Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
-From: MyungJoo Ham <myungjoo.ham@samsung.com>
-To: "Dr. David Alan Gilbert" <linux@treblig.org>, Chanwoo Choi
-	<cw00.choi@samsung.com>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <Z1Jg2zRT9ecClJH7@gallifrey>
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20241207045814epcms1p21e267fe70a87d06cdd4c531248f193e9@epcms1p2>
-Date: Sat, 07 Dec 2024 13:58:14 +0900
-X-CMS-MailID: 20241207045814epcms1p21e267fe70a87d06cdd4c531248f193e9
-Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrNKsWRmVeSWpSXmKPExsWy7bCmge7zq8HpBh8OWlpc//Kc1eLyrjls
-	Fuuf32ByYPbo27KK0WPl8gnsHp83yQUwR2XbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjq
-	GlpamCsp5CXmptoqufgE6Lpl5gAtUlIoS8wpBQoFJBYXK+nb2RTll5akKmTkF5fYKqUWpOQU
-	mBboFSfmFpfmpevlpZZYGRoYGJkCFSZkZ0zfPJWt4Btnxbv2KYwNjHM5uhg5OSQETCTWflnM
-	BGILCexglFj9NriLkYODV0BQ4u8OYZCwsICBxKf//YwQJUoSDTf3MUPE9SU6HmwDi7MJ6Eps
-	3XCXBaRVRCBC4s7WTJAws4CjxO29b5kgNvFKzGh/ygJhS0tsX76VEaScU0BT4slsEYiwqMTN
-	1W/ZYez3x+YzQtgiEq33zjJD2IISD37uhopLSvTd2Qs0ngvI3sYosePIHDYIZz+jxJSHbVCT
-	9CXOzD3JBvGWr8T+1ZogYRYBVYlDxxawQpS4SDz//4UJ4mZ5ie1v5zCDlDMD3bZ+lz5EmE/i
-	3dceVphXdsx7AvWWmsSh3UugNslInJ6+EOpOD4mHlz6CnSMkMI9R4tLZZ6wTGOVnIQJ3FpJt
-	sxC2LWBkXsUollpQnJueWmxYYASPzuT83E2M4FSmZbaDcdLbD3qHGJk4GA8xSnAwK4nwVoYF
-	pgvxpiRWVqUW5ccXleakFh9iNAX6cyKzlGhyPjCZ5pXEG5pYGpiYGRmbWBiaGSqJ8565UpYq
-	JJCeWJKanZpakFoE08fEwSnVwNRR1D89TL2ht9Pm6ccbGx4bPj65iuP+wnLezisN53L0NDI9
-	BBZIM+aevaHz0FopbO0zsz/hev+eflm3LtdQZhevLYP+lkLtWfMSdYpsdG23L3z2g/tT/CGT
-	/a/V65YHzrRySbZXMZQ8+GSafK6w+Bfz5vV3czuTPl0V/h84S3/agyC7lzpaRQXeE77eflo2
-	SUZzflhOnv62PaxNZ/+aTN8tpdLxoHO3o1GokMrnvbPsjm/ery22c469f9XaLa0vecUqZDJF
-	uGQUrFsvsN3gT7uveWYbZ/DfrQonlhfGs0e1/o76/2Xr+Ve+zMZiK+Z+L34vdP8n591257sd
-	kbMavO1KGMpS+bo+NlzlrXCSUGIpzkg01GIuKk4EAKS5DS7uAwAA
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241206022643epcas1p1db6da634d4da398f553b7dd3cfa3339f
-References: <Z1Jg2zRT9ecClJH7@gallifrey>
-	<20241103160535.268705-1-linux@treblig.org>
-	<CGME20241206022643epcas1p1db6da634d4da398f553b7dd3cfa3339f@epcms1p2>
+MIME-Version: 1.0
+References: <20241206143527.654980698@linuxfoundation.org>
+In-Reply-To: <20241206143527.654980698@linuxfoundation.org>
+From: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
+Date: Sat, 7 Dec 2024 14:04:30 +0900
+Message-ID: <CAKL4bV60tq-6dDy86C-8nKOf20iHygyW6ZK47DxiE_8zhHuD1A@mail.gmail.com>
+Subject: Re: [PATCH 6.12 000/146] 6.12.4-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org, 
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org, 
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de, 
+	jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, 
+	srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org, hargar@microsoft.com, 
+	broonie@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Dr. David Alan Gilbert / linux@treblig.org
->* linux@treblig.org (linux@treblig.org) wrote:
->> From: "Dr. David Alan Gilbert" <linux@treblig.org>
->> 
->> extcon_get_edev_name() has been unused since it was added in 2015 by
->> commit 707d7550875a ("extcon: Add extcon_get_edev_name() API to get the
->> extcon device name")
->> 
->> extcon_get_property_capability() has been unused since it was added
->> in 2016 by
->> commit ceaa98f442cf ("extcon: Add the support for the capability of each
->> property")
->> (It seems everyone just uses extcon_get_property)
->> 
->> extcon_set_property_sync() has been unused since it was added in 2016
->> by
->> commit a580982f0836 ("extcon: Add the synchronization extcon APIs to
->> support the notification")
->> Everyone seems to use the none _sync version, and there's one place
->> where they just call sync after it.
->> 
->> Remove them.
->> 
->> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+Hi Greg
+
+On Fri, Dec 6, 2024 at 11:39=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
->Gentle ping please; no rush.
+> This is the start of the stable review cycle for the 6.12.4 release.
+> There are 146 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 >
->Dave
+> Responses should be made by Sun, 08 Dec 2024 14:34:52 +0000.
+> Anything received after that time might be too late.
+>
+> The whole patch series can be found in one patch at:
+>         https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-=
+6.12.4-rc1.gz
+> or in the git tree and branch at:
+>         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
+-rc.git linux-6.12.y
+> and the diffstat can be found below.
+>
+> thanks,
+>
+> greg k-h
 
-It's not a dead code.
+6.12.4-rc1 tested.
 
-Example: https://github.com/diphons/D8G_Kernel_oxygen/blob/b0717c360f5485badf824fb51cdc8174e2e0a7cb/drivers/usb/dwc3/dwc3-msm.c#L2992
+Build successfully completed.
+Boot successfully completed.
+No dmesg regressions.
+Video output normal.
+Sound output normal.
 
-There are drivers (usually .ko) using them, usually Android mobile devices.
+Lenovo ThinkPad X1 Carbon Gen10(Intel i7-1260P(x86_64) arch linux)
 
-Cheers,
-MyungJoo
+Linux version 6.12.4-rc1rv (takeshi@ThinkPadX1Gen10J0764) (gcc (GCC)
+14.2.1 20240910, GNU ld (GNU Binutils) 2.43.0) #1 SMP PREEMPT_DYNAMIC
+Sat Dec  7 13:07:21 JST 2024
 
+Thanks
+
+Tested-by: Takeshi Ogasawara <takeshi.ogasawara@futuring-girl.com>
 
