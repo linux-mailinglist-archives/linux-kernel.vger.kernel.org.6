@@ -1,312 +1,171 @@
-Return-Path: <linux-kernel+bounces-436110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD8389E8138
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:16:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 608CD9E813E
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:34:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1E9E16590A
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:16:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45901166722
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D98F14D2AC;
-	Sat,  7 Dec 2024 17:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49E11494AD;
+	Sat,  7 Dec 2024 17:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="jiz1glDA"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2089.outbound.protection.outlook.com [40.107.95.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1EbPgKt2"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0969E42A81
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 17:16:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733591805; cv=fail; b=ZVKmsJlWwVrwpJnzNVYirNLg0+SPDeXpYtwi2HIlJTqqpaf7eKER2JITQkhvg2yQHRT0YWxhpB11uqSHNW1YSAAjzsu6q7953VCsW7H46MymwYdg2bCSWCTP9VXEWISYErIAVd+9lN7dX0hqJTOGm02PPpArwWCSCGjZP+KxE94=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733591805; c=relaxed/simple;
-	bh=9pxEnGKn6TmWcdAdS1ZDOcauEQgc8RyCWgp5eiIlr/0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=O2qJ7PX7OTpyQjJDbh+DuOuakYYW/nnv7zmtgwhj5OvHyo1P5ofClARpDw4YrfVlzAUVwtjiT/zj10P+UItHKUWtcziiYub6ZZmb1sPLoUKw1UYZMvIjwYGugco0ICBjxbzxij9HTz1PyAmM30DdCHpL6uoCjXcc8U0B41k8NPI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=jiz1glDA; arc=fail smtp.client-ip=40.107.95.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Z4IBbr01Tn2UW6VLPX9QvdB1HUCheC320LdUH5KbdGE1WE/NrDEOLBDDEa6quzbUsqeK5jSmZ99+C7GBXKZvPwnkZpKCWa/m1osBK/k700ydXb/ygtStx7JsvOemMLL7hRRhsW7/6JMksG+3GL/IDex/skspaZoRNp9tROOdttR5cMTw/7t96N4TNvD7zdarXjfd41ralYZuFh7l6J853jwTtgaTCGvxmgNd4eqHcvgNklQNpdUDjD0OYoE7P+6PkgZFEBMnEFs+qiQ5RW4C75QESi69msLReR2mc8hi5amulk4ZaLQ6dPlJPWobhS5/vWmBmtyg8hBEbNRQ9V1aeQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OE5AjSKRmuU6Rd5zudSUyT6TNtRUji94cy+vQKppN38=;
- b=omNqsIqZWRuVZ4QN0EN+3pcklZxWn1oHkmzPYOmlYxdAbJYUMiHI02v0MJ8cAeBarwK2LkC01mAc82Gnfvv8aG6znwakMSWLzOylxT39jgA1dSnaSjG1f4PJd/S82FgBlgLwZuprlGJ7PLKxbLE+R6rI70QlJ69Ng3VHpsG9NtMdo7eFS4BI8dPpiL44UOUpzOxGZslxZgm1EaOgT4Z9KBkxA+cBWtNC47eKtAHmDpWNMBy/PxMgnM64AgSKc/A9R3ISlUihH34cP+XiIbPafz2Eva679kr/LZrPlM/8sAXZkJQtjQdTFzzBkC6Ie6PbP83bhj0A1Ex7YZ4tkJwwpQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OE5AjSKRmuU6Rd5zudSUyT6TNtRUji94cy+vQKppN38=;
- b=jiz1glDAiJppLPmO19LYEzRDIACo4xrlZ3v2ggEYOxgO18VgYEOATThsk2WLZ1YGj8k/+H00GeChByjXk1j4901G1n8qkRW8ZLyWayqD4vZtAsMZn04ZMeF6exy+wMtJnGYHMW0HgUoH0HyBuygHX6Ibiyc6ZrX3eVKRbHE2DpiOS4vYorJtCM4Dz0nNTvAfTZMAjvbgI7fU8PzWGGNqtbPxoNGRrzN8nP3tvWeBpqRw/yfJmJiE4Lo4SnqdhEvAM0G+UvhbPNbs+MDrL5V6UtREiqRDuGl63MhfymNxprFFlN+TF1+K2I91L1eiWW4BL1EGZ980zChZ7xwLxQuvcg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- BL3PR12MB6449.namprd12.prod.outlook.com (2603:10b6:208:3b8::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.18; Sat, 7 Dec 2024 17:16:38 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%3]) with mapi id 15.20.8230.016; Sat, 7 Dec 2024
- 17:16:38 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>,
-	David Hildenbrand <david@redhat.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Miaohe Lin <linmiaohe@huawei.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Alexander Potapenko <glider@google.com>,
-	Kees Cook <keescook@chromium.org>,
-	Vineet Gupta <vgupta@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	Zi Yan <ziy@nvidia.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v4 2/2] mm: use clear_user_(high)page() for arch with special user folio handling
-Date: Sat,  7 Dec 2024 12:16:31 -0500
-Message-ID: <20241207171631.2853336-2-ziy@nvidia.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241207171631.2853336-1-ziy@nvidia.com>
-References: <20241207171631.2853336-1-ziy@nvidia.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: BN1PR14CA0001.namprd14.prod.outlook.com
- (2603:10b6:408:e3::6) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9BE1E885
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 17:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733592850; cv=none; b=q8PsWWh15kitWXIgPO3vL1aAhhteVHpQA/e23RXWC4BZiP4rHEWlfJXsiwAgqMu0b1rZ3Zg7XjlmwlGAY4MiWs3jEgAT1mr3okuepLUF/NyZ8sDBVJf0qtltbKIAsSciyxsyNbJKzX25rC5QSj8O+zfpINbeL2mCoPU1DQV64ow=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733592850; c=relaxed/simple;
+	bh=Rpf8E5FXJkeGiG6tZpqF9Ks5ZX9sIxkc3b0iY5CmVKM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kQVJZfzfWqBP8qV1YSKyrBGFuvaoRtPwzcIfphQnarvAwBh3t4r2oMbZKBt/subulsEcfb4L5lsECQlDol1EeXL1ke9tDiGw17OUu6kXUC6CH+fksU76nGJlOOTIlCS9lFZR9fY973w4+/Aom3AHPbxy7QQZ6N7QLSkNPXeMLm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1EbPgKt2; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4674a47b7e4so149271cf.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 09:34:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733592847; x=1734197647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UU3FQ4ZkY7U9wnJO4OcRHOUU8vnahLn5gnv1cleLmoM=;
+        b=1EbPgKt2j7b84X7tFFN7DV1k0ieRj6DchRYFGNLtDgT6ZbTLyUJwXQJMFaid6Dtynu
+         MuSh9ttd4EFyyYfnUtcimV1SoB3hmi5cKtziNUhONT16lFx8b9mf/9E4uEXWCLxMrS6p
+         5QFsVp8Ys1HFVI+Umic0a64ib5EzZ9Esxiom7w4tibBPCtYICZUbsYIHJPvpNmReXX9v
+         b3SKeccTbOsIcOCGyFBLlvpuzJ7y8FapX7iHldGG6e5snlY7N3wPrKMlBUBoOQPI4GZT
+         aSSjr6F4Vg7ohBV1P8AcoliG+8vK/o0UKSdEI7RfcVT+Iml0G7Cnwejnw/gg0oKBnwXp
+         zarw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733592847; x=1734197647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UU3FQ4ZkY7U9wnJO4OcRHOUU8vnahLn5gnv1cleLmoM=;
+        b=mDky2D5adJrnEoU2IaYS93quzeyv0vmvHHRR2ymTTETMYR/aeMZoMAPRYm/62j6Tbz
+         0StDD9DQS2dabKk63kZZsCnXydQ3daEDuN4knMs0jgA6YTLMHIjOEVWw7ijPGlVHqcBg
+         c5oEXWnVL75MgKWR+nr6lOhpzDM0Sfs6aVBO3nEkCL7G+4hSvsDrBeaAMI14v0MiGV/7
+         pcnFmZ68qdgao2EOEyLtG0PZYPbHfZlJr0DDSEaEJPd1Jq9TSa9dBdFTmQlqS99wr6fq
+         DtpqGIjZrIwxSIMyD7E+EnkICjQRyUvBu/yb0zL7gXyMShQo2AlMTVjrPeVJsWG4ZHcP
+         N4cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAk8+IesE9z0f/IzyLRiTBLCHYyed+KOROzM5Ey7a6XX1Jvg6J2EHgbTXzfoYOwZufCWv6CDBIzdpmdoU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYxwdSaqstpJXHJlsJgHoi4vnjoqenDjYrCUfo+LS5i+/aVDmJ
+	MvieDrfCu4n8zUSN5SlQuouHU11EOQ6Bd0diqdDGDHbaolzE0cIej3EBB46VMOW5pareGbzUQ4h
+	fFpaUJaJYQm3hr1kx2zDLE+XT6seIRdp7a0gb
+X-Gm-Gg: ASbGncu2JV/JuBt+EmBOJfoOcz5OaNwIbOoemRLTpDNR08CrMaNbEckGXsuW+hEXYiD
+	oaAEoq175isxyu6QOLvqNGQ+iqfkgDts=
+X-Google-Smtp-Source: AGHT+IF3WJ8kN8Ix9U0Qnr/PX5i4gdPvUR5eenqNxqgXSzETlC2SUkrWRpzKenUtPrjZAw3s3C92n+OXtqfTezUq44Y=
+X-Received: by 2002:a05:622a:909:b0:466:91fd:74c4 with SMTP id
+ d75a77b69052e-46746d6677emr3351631cf.0.1733592847299; Sat, 07 Dec 2024
+ 09:34:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|BL3PR12MB6449:EE_
-X-MS-Office365-Filtering-Correlation-Id: a6720ab1-6ec6-4de6-1bbf-08dd16e2e8ba
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/Y2XFwm26cw2QCdK2B0hx1zRuQ5iStogSx0h+O8oEj0+X/aTB/mmGfscQhqu?=
- =?us-ascii?Q?Cja7rJvp4CoScdX35deP7ErRnWKcYurx2onJ66gfA+TDyFKyxwDaUxk5QjvS?=
- =?us-ascii?Q?qrJT+zQPDzORlvIjzNk24BpyFcg29r6KBL4NPMg9Z1q9xbDKfvhak12bxee6?=
- =?us-ascii?Q?bRZcLm941iGWUOkM7YWj+RwxXR5KsN2UpU5AysKkD5nkrFYPU6KLPJiAcKGE?=
- =?us-ascii?Q?BvI26bKmnQNJdS9/kq4ZkHcg/Did8BpY6inWINbHWfhx1ICnJwRnt/Opc3ct?=
- =?us-ascii?Q?CaeMAZwU0KWMu4YofYPLTpCaW/TL+UueuTv1ecMsvh/W+1H7kyCPvpWy3KBW?=
- =?us-ascii?Q?X7khJBvpCgRTePFLJZE0I6rOmPE8Pbek4k0+SwHn/4fyPo2dOedkZMB2YTcu?=
- =?us-ascii?Q?HiLf9h3TRRp5uZkqxa/jDbFBP0AxRNtQIQlhymy7WOsGY/TIyxqUxWQ2lo3s?=
- =?us-ascii?Q?o3i27IPDPr0Ipqrmx1PtfkGqTnB9czlmfrL3kZhT+IOHYH7YeKTdY2fCP4RC?=
- =?us-ascii?Q?K36+vxPhfzvgU1tj7f+IObnYGaDHuob/5bZFrFG9CO074wYH+yIiLVgGNnu5?=
- =?us-ascii?Q?a+Ug+/MM4tTX4Wb59985mgrZfeqpRFNm7tSV2K0Can1b0mpXfGLoYOeKOS9r?=
- =?us-ascii?Q?6x4MdoUnUBLV4Im2o5FbHb90l/XTOu50haAFG8gGFozoeG4kcnSbNrEJaZFw?=
- =?us-ascii?Q?MgX7FG/1Qg/mqGUUbTWwvIKsGKBgwWWhm9GTiE/320Q/p80caRURFJEXAX7s?=
- =?us-ascii?Q?XeQJk9KYmWN6SOeFJR0PTHuPE65Y3H9FDESL02lMukNYcIVxT3SSlb3c1gV+?=
- =?us-ascii?Q?s0qZlUzO5IGWcM7/BN4oqYejXB+Rk1AuNT/CRkABOA0hfJ3aKRziahu0bR/s?=
- =?us-ascii?Q?QKBoyGvvDVQ4QooCJeFlH5rAIRlWOz/5rWDuPXOAcgvLKcQ+B6pWq9HvIVxe?=
- =?us-ascii?Q?Q8+e6eqpvtHcpoSJWvAXzqMwh/rYKP4oyScXe1hIFGqLnGyVSin/9me6TyQf?=
- =?us-ascii?Q?eyMGdgRvczRLScPB/1TxjiOOqBs7hOvpTpy0VQb3Ius8ymGGhFapS+2Ij367?=
- =?us-ascii?Q?k4l2d8ROh76ACQ/+7ZZ94/7GYJ+aROqYh1Fmll1MPk547n/glbOTUllx5aXC?=
- =?us-ascii?Q?TE91Tpr1Frc/9KamjUiH12eV2CxD8z0Vu02Fn3EA5YJlRQpod815nsjJUSmk?=
- =?us-ascii?Q?cvRIPol1zRQvvw2dPCz7HpaePH0xRXF5fcNsW1EmYAMoabLCiMusLY475Q+/?=
- =?us-ascii?Q?Bsy3hXM36j4JoEO5GebpKFmL70yE9Zzs7dEc728Lu4Du81s4L03yVFJ+jYHg?=
- =?us-ascii?Q?H888pr/mUci09pbCwR+WV6FOgsVItDpvcs40g4PnTQhOv6lnY2fzl0YLXswO?=
- =?us-ascii?Q?30FLTzw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?uLWnkDnmofnhgIeLGaNsC4QTWKQU7U0amFvuILfg1qoGjJq1IW+74rm0HnPk?=
- =?us-ascii?Q?YsyLpjuHQokpMC2E7ekKWiO8Lp5YfjUH/p6fyEE7XtXEb7QzqKvmhcB33jzk?=
- =?us-ascii?Q?xsNQiL28N9hOjEJrRbNh7Kyc+Yb5eV9c4U+DUasK5qZMG+CbgH8+3Nv3GERn?=
- =?us-ascii?Q?VDsZ9LxTbD9mv6dj8cP8yhJ35/tEGVXnXKs8BBSpjVWscNut1T+UKZ7eH+17?=
- =?us-ascii?Q?P+RZCDxaDsxMK9e9XBJ+mm/uJJBmZDRXhJPwgPrCerDkR5stianevzkKTdyG?=
- =?us-ascii?Q?kGqbbTB7CgVf5dbLQOZ3j1nC4RXMjwK59LHyy7w4Nva2TFBFHFVmP2sKn5R5?=
- =?us-ascii?Q?bNg6xTTg0EfaBKkPv0kSj1N1TOVdXR2uLnDnk59M+rA05mqFwU+Zo209gG5a?=
- =?us-ascii?Q?d3blUiWRhm9aFjRUtF4wWJEe7Zcrj+fqxLH+qyVtWK8Jle7s26fLUDJoOq8y?=
- =?us-ascii?Q?Ieup0TOqGoEWLZ6wHFakWadAxLI4IlCsSYI/Rt+Ex4XRYpeRWE3PQU85mctA?=
- =?us-ascii?Q?FYP1GHLHXDpy08cI0kUx/wU0dAPSBejEBM3Ef8qZqRMV2E8FMlVgwe8wxMxn?=
- =?us-ascii?Q?vPASKzIicOY3AzLS4T5qj77skfUc+uygmncFnW4EWF+/gQlHEh8KJ6x56xIw?=
- =?us-ascii?Q?mjq0CXgzmN1cGxjI3D2xScoZDelcIQ1elQlYTpVY5OHL6MSokOSn1fHPD0q5?=
- =?us-ascii?Q?qrjCHlY2gMmfzTt3u2IQml799PHG7uEezOPfC8h+Eyhq0lTJ2y1lkE0hl4eW?=
- =?us-ascii?Q?NQgbIjY/bq0cJpK5GiZn00fAgLYnRaOZZ2u4U55Cj7wg0ETbMOvHPoAwrncV?=
- =?us-ascii?Q?bsYkpYAFq+A81ZHb/ssUhm6rSe58WiDhZNGXgRIE/7a6WHGSnprYOKuoEXv5?=
- =?us-ascii?Q?guSF9MpKbG2POoDd7Xr9n9nsgcls5h5vVViJuflc/G7Bs867EL+G0stfakv6?=
- =?us-ascii?Q?z1xGXuEMVPCiUEfjkG8i7o62RSS8YdMsozmu5p3tkaTsUuEnnoB9mxQh+mOu?=
- =?us-ascii?Q?EhcB4CmVRsjuOCGRb+5GdBt9wMVSCp2Nthcr0MIO38PP1+Mj9W/QFLMqJ5yb?=
- =?us-ascii?Q?3Qt1fLCcmuFvm2cK/JNTsqmUtxf5NCPV/iZpRQQKI23wEslf1kFIG1JRkXBX?=
- =?us-ascii?Q?BQ1Uzgwo4KWhly1IECLcfQOC2Y8/j+MfrZL7UA3MS1vVIfwvHnmCZ8jshs+f?=
- =?us-ascii?Q?bdGKL/Y32XHVdXMSdBOYumrjDfWkzQm2rbZfFIyIMAWPBt2p6FtjO8mNKQWR?=
- =?us-ascii?Q?xC0LhEAArPUWbMtTB3WHnu7Dt0GN6IYHkDemQvE13AfPZQsqqOfBE6xIuIGw?=
- =?us-ascii?Q?zbti4JiSh/2TxQfRlRYsgkxx6ckTHeLIVuOc2ksnkLjcp8u9HB1gS1aqyonZ?=
- =?us-ascii?Q?nQzuRa0DavbVoVxuNUOKX76xjIcVY996JHHLjhsUbMAHWoQjz0oq0+VE8rsw?=
- =?us-ascii?Q?xQwM96KTP2odmFGT+AVQlUEc1MjfeH7QcUcWbxsXzBCO7JbgWL/yM3IHiYbu?=
- =?us-ascii?Q?/WcW5BBiYwSWuijIbxaSjjdhkM1oVvLWCmHlgeKlJCojFDur7IxkWn+LZRfP?=
- =?us-ascii?Q?T66+cHMqAF1SlCOomLw=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a6720ab1-6ec6-4de6-1bbf-08dd16e2e8ba
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 Dec 2024 17:16:38.0532
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Ox5ibJ/iTdeXkxOjKZ09C0Rfw9WAURpn4E/GHUTKXZq3iCzr1JhH6CB5Ant5tlrc
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6449
+References: <9baeaab7-61d8-4121-8aa5-cf1c129daa40@infradead.org> <c7cee2d4-5bbd-4867-ac12-a0a2f73f6c44@gmail.com>
+In-Reply-To: <c7cee2d4-5bbd-4867-ac12-a0a2f73f6c44@gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Sat, 7 Dec 2024 09:33:56 -0800
+Message-ID: <CAJuCfpFgZUG28md9K=WZjUFoihOUSd4aBSuW-4V6JNdQS_8c9w@mail.gmail.com>
+Subject: Re: [PATCH v5 6/6] docs/mm: document latest changes to vm_lock
+To: Akira Yokosawa <akiyks@gmail.com>, lorenzo.stoakes@oracle.com
+Cc: rdunlap@infradead.org, akpm@linux-foundation.org, brauner@kernel.org, 
+	corbet@lwn.net, dave@stgolabs.net, david@redhat.com, dhowells@redhat.com, 
+	hannes@cmpxchg.org, hdanton@sina.com, hughd@google.com, jannh@google.com, 
+	kernel-team@android.com, liam.howlett@oracle.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mgorman@techsingularity.net, 
+	mhocko@suse.com, minchan@google.com, mjguzik@gmail.com, oleg@redhat.com, 
+	oliver.sang@intel.com, pasha.tatashin@soleen.com, paulmck@kernel.org, 
+	peterx@redhat.com, shakeel.butt@linux.dev, souravpanda@google.com, 
+	vbabka@suse.cz, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some architectures have special handling after clearing user folios:
-architectures, which set cpu_dcache_is_aliasing() to true, require
-flushing dcache; arc, which sets cpu_icache_is_aliasing() to true, changes
-folio->flags to make icache coherent to dcache. So __GFP_ZERO using only
-clear_page() is not enough to zero user folios and clear_user_(high)page()
-must be used. Otherwise, user data will be corrupted.
+On Fri, Dec 6, 2024 at 8:24=E2=80=AFPM Akira Yokosawa <akiyks@gmail.com> wr=
+ote:
+>
+> On Fri, 6 Dec 2024 19:23:59 -0800, Randy Dunlap wrote:
+> > Hi,
+> >
+> > Can someone explain what the (consistent) usage of '!' does in this fil=
+e?
+> > This is the only file in Documentation/ that uses this syntax.
+> >
+> >
+> > E.g.:
+> >
+> >> diff --git a/Documentation/mm/process_addrs.rst b/Documentation/mm/pro=
+cess_addrs.rst
+> >> index 81417fa2ed20..92cf497a9e3c 100644
+> >> --- a/Documentation/mm/process_addrs.rst
+> >> +++ b/Documentation/mm/process_addrs.rst
+> >> @@ -716,7 +716,11 @@ calls :c:func:`!rcu_read_lock` to ensure that the=
+ VMA is looked up in an RCU
+> >>  critical section, then attempts to VMA lock it via :c:func:`!vma_star=
+t_read`,
+> >>  before releasing the RCU lock via :c:func:`!rcu_read_unlock`.
+> >>
+> >> -VMA read locks hold the read lock on the :c:member:`!vma->vm_lock` se=
+maphore for
+> >> +In cases when the user already holds mmap read lock, :c:func:`!vma_st=
+art_read_locked`
+> >> +and :c:func:`!vma_start_read_locked_nested` can be used. These functi=
+ons always
+> >> +succeed in acquiring VMA read lock.
+> >
+>
+> Quoting from https://www.sphinx-doc.org/en/master/usage/referencing.html#=
+syntax
+>
+>   * Suppressed link: Prefixing with an exclamation mark (!) prevents the
+>     creation of a link but otherwise keeps the visual output of the role.
+>
+>     For example, writing :py:func:`!target` displays target(), with no li=
+nk
+>     generated.
+>
+>     This is helpful for cases in which the link target does not exist; e.=
+g.
+>     changelog entries that describe removed functionality, or third-party
+>     libraries that don=E2=80=99t support intersphinx. Suppressing the lin=
+k prevents
+>     warnings in nitpicky mode.
+>
+> But in kernel documentation, there is a preferred alternative.
+> Referencing by function names is the way to go.  For example:
+>
+>   calls rcu_read_lock() to ensure that the VMA is looked up in an RCU
+>   critical section, then attempts to VMA lock it via vma_start_read(),
+>   before releasing the RCU lock via rcu_read_unlock().
+>
+>   In cases when the user already holds mmap read lock, vma_start_read_loc=
+ked()
+>   and vma_start_read_locked_nested() can be used. These functions always
+>   succeed in acquiring VMA read lock.
+>
+> They work regardless of link target's existence.
+> Kernel-specific Sphinx extension named "automarkup" does conversions
+> for you.
 
-Fix it by always clearing user folios with clear_user_(high)page() when
-cpu_dcache_is_aliasing() is true or cpu_icache_is_aliasing() is true.
-Rename alloc_zeroed() to alloc_need_zeroing() and invert the logic to
-clarify its intend.
+Thanks for the information. I was simply following the same style the
+document was written in. Sounds like converting it to the preferred
+alternative in a separate patch would be best. Lorenzo, WDYT?
 
-Fixes: 5708d96da20b ("mm: avoid zeroing user movable page twice with init_on_alloc=1")
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Closes: https://lore.kernel.org/linux-mm/CAMuHMdV1hRp_NtR5YnJo=HsfgKQeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com/
-Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Zi Yan <ziy@nvidia.com>
----
- include/linux/highmem.h |  8 +++++++-
- include/linux/mm.h      | 18 ++++++++++++++++++
- mm/huge_memory.c        |  9 +++++----
- mm/internal.h           |  6 ------
- mm/memory.c             | 10 +++++-----
- 5 files changed, 35 insertions(+), 16 deletions(-)
-
-diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-index 6e452bd8e7e3..d9beb8371daa 100644
---- a/include/linux/highmem.h
-+++ b/include/linux/highmem.h
-@@ -224,7 +224,13 @@ static inline
- struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
- 				   unsigned long vaddr)
- {
--	return vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr);
-+	struct folio *folio;
-+
-+	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr);
-+	if (folio && alloc_need_zeroing())
-+		clear_user_highpage(&folio->page, vaddr);
-+
-+	return folio;
- }
- #endif
- 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index c39c4945946c..9330b60b926f 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -31,6 +31,7 @@
- #include <linux/kasan.h>
- #include <linux/memremap.h>
- #include <linux/slab.h>
-+#include <linux/cacheinfo.h>
- 
- struct mempolicy;
- struct anon_vma;
-@@ -4175,6 +4176,23 @@ static inline int do_mseal(unsigned long start, size_t len_in, unsigned long fla
- }
- #endif
- 
-+/*
-+ * alloc_need_zeroing checks if a user folio from page allocator needs to be
-+ * zeroed or not.
-+ */
-+static inline bool alloc_need_zeroing(void)
-+{
-+	/*
-+	 * for user folios, arch with cache aliasing requires cache flush and
-+	 * arc changes folio->flags to make icache coherent with dcache, so
-+	 * always return false to make caller use
-+	 * clear_user_page()/clear_user_highpage().
-+	 */
-+	return cpu_dcache_is_aliasing() || cpu_icache_is_aliasing() ||
-+	       !static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
-+				   &init_on_alloc);
-+}
-+
- int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __user *status);
- int arch_set_shadow_stack_status(struct task_struct *t, unsigned long status);
- int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index ee335d96fc39..107130a5413a 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -1176,11 +1176,12 @@ static struct folio *vma_alloc_anon_folio_pmd(struct vm_area_struct *vma,
- 	folio_throttle_swaprate(folio, gfp);
- 
-        /*
--	* When a folio is not zeroed during allocation (__GFP_ZERO not used),
--	* folio_zero_user() is used to make sure that the page corresponding
--	* to the faulting address will be hot in the cache after zeroing.
-+	* When a folio is not zeroed during allocation (__GFP_ZERO not used)
-+	* or user folios require special handling, folio_zero_user() is used to
-+	* make sure that the page corresponding to the faulting address will be
-+	* hot in the cache after zeroing.
- 	*/
--	if (!alloc_zeroed())
-+	if (alloc_need_zeroing())
- 		folio_zero_user(folio, addr);
- 	/*
- 	 * The memory barrier inside __folio_mark_uptodate makes sure that
-diff --git a/mm/internal.h b/mm/internal.h
-index cb8d8e8e3ffa..3bd08bafad04 100644
---- a/mm/internal.h
-+++ b/mm/internal.h
-@@ -1285,12 +1285,6 @@ void touch_pud(struct vm_area_struct *vma, unsigned long addr,
- void touch_pmd(struct vm_area_struct *vma, unsigned long addr,
- 	       pmd_t *pmd, bool write);
- 
--static inline bool alloc_zeroed(void)
--{
--	return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
--			&init_on_alloc);
--}
--
- /*
-  * Parses a string with mem suffixes into its order. Useful to parse kernel
-  * parameters.
-diff --git a/mm/memory.c b/mm/memory.c
-index 75c2dfd04f72..cf1611791856 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4733,12 +4733,12 @@ static struct folio *alloc_anon_folio(struct vm_fault *vmf)
- 			folio_throttle_swaprate(folio, gfp);
- 			/*
- 			 * When a folio is not zeroed during allocation
--			 * (__GFP_ZERO not used), folio_zero_user() is used
--			 * to make sure that the page corresponding to the
--			 * faulting address will be hot in the cache after
--			 * zeroing.
-+			 * (__GFP_ZERO not used) or user folios require special
-+			 * handling, folio_zero_user() is used to make sure
-+			 * that the page corresponding to the faulting address
-+			 * will be hot in the cache after zeroing.
- 			 */
--			if (!alloc_zeroed())
-+			if (alloc_need_zeroing())
- 				folio_zero_user(folio, vmf->address);
- 			return folio;
- 		}
--- 
-2.45.2
-
+>
+> HTH, Akira
+>
+> > thanks.
+> > --
+> > ~Randy
+>
 
