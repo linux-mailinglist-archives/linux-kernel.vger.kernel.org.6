@@ -1,126 +1,130 @@
-Return-Path: <linux-kernel+bounces-436211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DB219E827D
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:23:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 578BF9E8280
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 23:24:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D80281546
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:23:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D1B2281550
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 22:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A365315746B;
-	Sat,  7 Dec 2024 22:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43BE1822F4;
+	Sat,  7 Dec 2024 22:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGzkS/Dr"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B40OcDl9"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FCD3126BF9;
-	Sat,  7 Dec 2024 22:22:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A33612C7FD
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 22:24:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733610178; cv=none; b=u9hHY8Z5bgEIHQTihARzLgnQAVJBdM/o46hfSyBQBBARWugWlwzkpr5zkQR7yDSboh+AobemZObPvV9pY/yvbE/4FYVboQKm3Bgn+WgBeYq2EunZKi/KUJFYDvOWa+V9CYGNGUMcrrf/CYzYei5MFds1T1rmBnKR6FLT5TkgYxo=
+	t=1733610284; cv=none; b=fZhDYUFdCuyi5+ZhtS6+GDxAO/PG0XezmfDRYuSb8g7iWw1Kxq8wwPGZxX+8MTuTXX9Wy+qKZeVhAkK1XZ2TqMeJxJbVYuYm2x2jnRlClaePidYu535OnxHOZBBc8p6ZSCUHp6liHU8v8Dhbqh+gl9GIsXyMhpsHADyj3xHzuMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733610178; c=relaxed/simple;
-	bh=AJELeyno/lxCErGWfe1uIuBsCiCosW9aJknx5oSLG4Q=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=f23uI7va5lwJP4IOrvIlf+szzZIoHE86vih+J+izNo8lhBmcAN9cmVHRRT13L/UvBfjxeM3xdPGpovzMPLoWe+me9lsOEVXjXgBB9uXoFt2y9Jkt4Amz0DzSbrEgc5eFIzk0SlLqw3Q4dXdNfwWdaLl/6frmf1F7wd+X1OM1HIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGzkS/Dr; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-5401bd6cdb4so58495e87.2;
-        Sat, 07 Dec 2024 14:22:55 -0800 (PST)
+	s=arc-20240116; t=1733610284; c=relaxed/simple;
+	bh=ORKkPR3lCS13tjEXw3DRFksTzLOWpRmU5eCFSQ7CQbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SFkIoKUr+azTPjTzERr1liInpr9RELVIzSFxTPoH6mw8XCm7w8L+fU6zFoztfs3I5va0Rn00oXVtF2OO3heu+HmUfgqElhVgY2HmpZw3YRyAfG5scsKBhcQLlhsEpVazkKiwR299VkKuudvAteqUez3AX1T8hIuulwNg5eHP7Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B40OcDl9; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-29f7c3bcf45so1094453fac.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 14:24:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733610174; x=1734214974; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FYcS3kK1mI+zB2no3lgHwxCym7Ppt8Og1OLk8bPMxlw=;
-        b=nGzkS/Drnmy8Bn7c6gWUmco/ihjJGwSZ1Ur4TPDBSASfX5vT860DjQRAXWmaTS0lJx
-         3pVMYH2u3CPPb1c9E/6toF9V9QpJr284DYylRCGrWEKu3mQUlcb+AgP+QO7mXKP03NMK
-         V9WcUVnTh5BktiRaqkIy7pXgB/KckdRPbTUruklRxzWOC0jTm5A7rBlyhfvXB6U7cV0C
-         fidW1sKPq0FIdEjyLI3mDfeM81BcTRwzfHOzJUXmp5HOXEG7FaUwL9HZenr2Oilr7a4I
-         kRChLE3RlYK2lcvSfvgahAI7trT6cs72bKqJyiZtPofuI8XYaT3KXNXNviMENvhomnWW
-         8lww==
+        d=linaro.org; s=google; t=1733610280; x=1734215080; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bS1hvfaKylLHS7jj/oKkEYDNADp1T2afpk8Swl56rFM=;
+        b=B40OcDl9ZyeCAwFzoFVCUw1K0L/Kbncn/NS+O4lcMdkGe/PBKXyE2ML5Y5p7xdDH0d
+         MZXXuj35YDrZlj7XgLuUeP8ho/qiww21KKrQsjJIKdNxEKVvjovI/NoNfKil3UvZoK4M
+         B3kkobgAO0reOoQKeKfOsa3qYhRuyIFP11CNFynxidlLMZ0iaRgdx3ajZ0QKkItQhTTw
+         BzdyU9V4BEz4g3hTU00KJrI1Q443UTo0PtG3/l9fIGGBBazPG+NX3s6M3Joio6BI1oWG
+         K7wkP2Y8RmoJf+lRnZmdW63uuFttcpNMmYi/3388Td1D5qXsIIKzTVuZlWjM6c7ZcNjB
+         yb6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733610174; x=1734214974;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FYcS3kK1mI+zB2no3lgHwxCym7Ppt8Og1OLk8bPMxlw=;
-        b=vyEkG+h7X7HMtxqtIP9LQ3PK8s57DGWY+ByG9GH5iLDWKOonpUa+DwsafpzoJRFYDo
-         iAM8G3ZKyEVoqeCDB8HVOsE9qbGG3jonF8aJl6bg5C/OF0ts6ny3QBqW31g9VbW+Wi80
-         8/P4sQVxAoV4Ve5stoxzsfqjggC5j+1APXXnepqlWsNyv9yjtFXhgV5cm3SI5ftBMKBB
-         lMDRysJNxgXK3JTQpDofYml4FW6jwYHZr5prDGhqu3QW7y8qQFXtxhlIu3qa27XcIBtr
-         KOTrBwB6MR24VmesnixXHwJ09Qh1CwsNcHQY3oTZRixay5A64ETaPv7Zy8/y0TEusZvH
-         UtuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVi4cOmj0fsUAJe3gQY+YwYsC2DmP7F8AglkgizODwgvvYjmf8oIUTsnM/seSG5Ee5Oom5WsYH3dnYHO3A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZNGcXew8QIvcco2BJG/ESeejGnYP48O+zug5JeRz6ndIfOmbn
-	M6aIlV/9vkyNfuEVY3iTY3Svt9Ne5T/+Zt9/D1paxe57ES5u77xFJCscMS383Ts/yptwlfwoiea
-	wpC1aDgq3/1g1uNjm9FPrv3H0ank1p74H
-X-Gm-Gg: ASbGncunt/Sqi1V1TNTRr7GAnb/Gc33PxIbTiBFhUpTiHisc6X2mVVF3JnVfCBDg0e7
-	s8095IJn4dV9qTB4Ufvo4W+uRk3uZCA2wyGXnft3VmOV79PsWL0LNbTb0YcOWA259kw==
-X-Google-Smtp-Source: AGHT+IElkYwue1sraAIl6xu+fWssvIR7Ss5w6WER45aGlKBABtxcHRHEWxPOe+eO0fSlr1ekngeW5El/JkQLcS7hoP4=
-X-Received: by 2002:a05:6512:3051:b0:53e:398c:bf9e with SMTP id
- 2adb3069b0e04-53e398cc127mr1306066e87.55.1733610174199; Sat, 07 Dec 2024
- 14:22:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733610280; x=1734215080;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=bS1hvfaKylLHS7jj/oKkEYDNADp1T2afpk8Swl56rFM=;
+        b=azzApIXc2BpGqZP48hPttEvWWasACiVFdK67yQ83dezHGFpz3rRh4V6MAap+Octncf
+         51xp6DEEno6cShXgZJQLdpjlC6bu+c7wYK+RJ9hiwW06NWeNBW92+Qw6+oKys9UdcoZV
+         8SkYfC2h4ZxBQt8QpY1xhK0af4ksDrwyQ+1yOfRho2ZKW9liHUHZZ04lB6bSDYSeA2fI
+         AGBfVPH/GuRO8uqkz4Cp4dBWbPTSKQ260Xilq4YDf2dS1grIz19JL5uSo41wZ0lwv8D6
+         tM3M0jLmsmlaegYIIu/6kJmtbLd9MsEqdH9YMPJ9QmbGigBrErNloSeIunvkQjIpsy+W
+         dwDw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2eCbXzaBjSQ6CUfbjYgNXnH6JKWinClH+wliW3c9Pu15CJ6hwQGidk33czU1/2E55PvREhMzBHIf8KsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/c5tc9rrS11vjU+Kj4VtKweRzN6+gKgYd6rxqImDwJVdbWAdf
+	hTgV1/txlGrRiut1SjVC9j6dNUv3njFDmNQ5OaUKQIPsii+03pvL+EU+3HFbj4vwAphudBtXEzw
+	LEMgqNiUPvKO5ZxknkUa1ilQ7TcnUgZsZZIEC7w==
+X-Gm-Gg: ASbGncvzxKBFh+4DES7uZ+9+Zj0t61n+GQet9MxsNgCajVZU18CKR+fcc1bK28xeZhK
+	HvDVZiO8UisZFlwaknDdL5zfeKbLMwmg=
+X-Google-Smtp-Source: AGHT+IH7dpjGK8nTZ9EvDFkMr9yeFM4lyfcPUg1SR244FGu9JUs01IRhEHCG1lRzya39HH/6fRYzq1Ljlzi0KVwXmPY=
+X-Received: by 2002:a05:6871:216:b0:29e:74a0:e03f with SMTP id
+ 586e51a60fabf-29f73330a9bmr4017020fac.24.1733610280730; Sat, 07 Dec 2024
+ 14:24:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Steve French <smfrench@gmail.com>
-Date: Sat, 7 Dec 2024 16:22:42 -0600
-Message-ID: <CAH2r5mus1UqScCCqqWoPO_9Zu0yr6=DMf4cu+YOusFn9HVX3nQ@mail.gmail.com>
-Subject: [GIT PULL] smb3 client fixes
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <20241203-gs101-phy-lanes-orientation-dts-v2-0-1412783a6b01@linaro.org>
+ <20241203-gs101-phy-lanes-orientation-dts-v2-4-1412783a6b01@linaro.org>
+In-Reply-To: <20241203-gs101-phy-lanes-orientation-dts-v2-4-1412783a6b01@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Sat, 7 Dec 2024 22:24:30 +0000
+Message-ID: <CADrjBPpC-qo22ZH1s=KoRgnnj6g90N6ADvU=HkRPJmwOBYAXoA@mail.gmail.com>
+Subject: Re: [PATCH v2 4/5] arm64: dts: exynos: gs101-oriole: enable Maxim
+ max77759 TCPCi
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alim Akhtar <alim.akhtar@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Sam Protsenko <semen.protsenko@linaro.org>, Will McVicker <willmcvicker@google.com>, 
+	Roy Luo <royluo@google.com>, kernel-team@android.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Please pull the following changes since commit
-40384c840ea1944d7c5a392e8975ed088ecf0b37:
+On Tue, 3 Dec 2024 at 12:40, Andr=C3=A9 Draszik <andre.draszik@linaro.org> =
+wrote:
+>
+> On Pixel 6 (and Pro), a max77759 companion PMIC for USB Type-C
+> applications is used, which contains four functional blocks (at
+> distinct I2C addresses):
+>   * top (including GPIO)
+>   * charger
+>   * fuel gauge
+>   * TCPCi
+>
+> While in the same package, TCPCi and Fuel Gauge have separate I2C
+> addresses, interrupt lines and interrupt status registers and can be
+> treated independently.
+>
+> The TCPCi is required to detect and handle connector orientation in
+> Pixel's USB PHY driver, and to configure the USB controller's role
+> (host vs device).
+>
+> This change adds the TCPCi part as it can be independent and doesn't
+> need a top-level MFD.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+>
+> ---
 
-  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+Reviewed-by: Peter Griffin <peter.griffin@linaro.org>
+Tested-by: Peter Griffin <peter.griffin@linaro.org>
 
-are available in the Git repository at:
+Notes on testing:
 
-  git://git.samba.org/sfrench/cifs-2.6.git tags/6.13-rc1-smb3-client-fixes
+Verified that type-c orientation notifications are sent to usb phy
+driver and that Pixel is enumerated as a USB device with both cable
+orientations
 
-for you to fetch changes up to c32b624fa4f7ca5a2ff217a0b1b2f1352bb4ec11:
-
-  smb: client: fix potential race in cifs_put_tcon() (2024-12-06 09:14:38 -0600)
-
-----------------------------------------------------------------
-Five SMB3 client fixes, also for stable
-- DFS fix (for race with tree disconnect and dfs cache worker)
-- Four fixes for SMB3.1.1 posix extensions
-       - improving special file support e.g. to Samba, retrieving the
-file type earlier
-       - reducing roundtrips (e.g. on ls -l, in some cases)
-----------------------------------------------------------------
-Paulo Alcantara (1):
-      smb: client: fix potential race in cifs_put_tcon()
-
-Ralph Boehme (3):
-      fs/smb/client: avoid querying SMB2_OP_QUERY_WSL_EA for SMB3 POSIX
-      fs/smb/client: Implement new SMB3 POSIX type
-      fs/smb/client: cifs_prime_dcache() for SMB3 POSIX reparse points
-
-Steve French (1):
-      smb3.1.1: fix posix mounts to older servers
-
- fs/smb/client/cifsproto.h |  1 +
- fs/smb/client/connect.c   |  4 +--
- fs/smb/client/inode.c     | 94
-++++++++++++++++++++++++++++++++++++++++++++++++++++++------
- fs/smb/client/readdir.c   | 54 +++++++++++++++++++++-------------
- fs/smb/client/reparse.c   | 84
-++++++++++++++++++++++++++++++++---------------------
- fs/smb/client/smb2inode.c |  3 +-
- 6 files changed, 175 insertions(+), 65 deletions(-)
-
--- 
-Thanks,
-
-Steve
+[..]
 
