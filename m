@@ -1,114 +1,137 @@
-Return-Path: <linux-kernel+bounces-436017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC0AF9E7FF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:54:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26D5B9E800B
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:05:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94672166ABB
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:54:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC81828226A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4DE0148827;
-	Sat,  7 Dec 2024 12:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1A0256D;
+	Sat,  7 Dec 2024 13:04:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vZcbW689"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G6zvbTIs"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D801DDEA
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 12:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F5914A4F3;
+	Sat,  7 Dec 2024 13:04:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733576052; cv=none; b=YUutUpBKXsrHup5KKak3d9EXApbvt3kAVE+IutH+ow+d3JhETTX0DU4Wny7sCFL0tS8Mm5hF1bpleHv2AsII0ZRjfGf2W+YzUJLKZYKcZ0ezr8YSNrwmyIoeqR3RkK2f6b2tN2ALb6uNubZrqoVvZm+VP/LkTwkgXjLuF7fn0Vo=
+	t=1733576694; cv=none; b=sO1tHNWI6vIxaPgqo2ysBlCzmlE1dhA9YlhB8SPeoaRh+bMxUXs9ickMgO4Q1aoTEP9nGjzoRiqx8miV928hT7RgXesKntQKXY5YjMSDY003po754URLwDdeeVVmXQX//dVfQ1v7Or0ttKYsFhFX4pdHou46QB0OBvCKsRnBRfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733576052; c=relaxed/simple;
-	bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NjtyKUs9fm4RFu0l7BUAkCUDXWUwo0OTI569DW1b4cDa3ijoDjHDA8Fc0Z8E/Cpq/vBAsJf0gemIW0THD2uJXn7btp/sE/iGbT+44NAboTbxxuBSTVv2+dITq9xHYy9N3Vk3e6J8Red2VCKNNs0Gjw6MIEA6ZDvBpl6iTEWbxN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vZcbW689; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa650ccbe0eso72838166b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 04:54:10 -0800 (PST)
+	s=arc-20240116; t=1733576694; c=relaxed/simple;
+	bh=xbMDhkWnVIJmZc2hbDYYC8Fz8jfR0f5DvBXM5oOGGqg=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=iFY/qIiaFyY7JNj5a932ZrRNPqt0jnhSpRjfc9G+xupozyqGNh6kvY6K45c6yIKq7Ysoz4qPbw45FnqBPx429obDap01nwIDI4itMookUT0t/tnjyF0AhwY0jB7/J6uIMXfkd96c2BSD0RlfFNfCxWxaGolhtWljZ6sFDZxID0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G6zvbTIs; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-215e194b65aso28676595ad.1;
+        Sat, 07 Dec 2024 05:04:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733576049; x=1734180849; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
-        b=vZcbW689fo9hzgFT96Kn11WBOtOmQxJIb0z1krKuK/Z4iKbkLRRwB5pv3My+Ec7mO0
-         v1Y1DJUC5O0af/NyvYZQ1EteMj1qnoGXF2m549WDFNmrpHtGYvGvOEUs9KBWMnk09LeE
-         i1ZK9HohEIofn7JLQP0ZNdkZr6+5YqyDe86AAEm33SpYEz6mzcB0d1GF3wWpkyoE7oKA
-         wDJNwXkU2kTfjHS6JRgfbADXToFAy4sSpZY7YPJdIqlXVibmVN2Ds+lTEvR7cOTnFltG
-         te6zqD5lZnmHHAk2n/3fwVdFf2vob419E2deYM++vHOBuMTBBxROTCa6xyOSKGd0kbKB
-         OlPg==
+        d=gmail.com; s=20230601; t=1733576692; x=1734181492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=moWB21d17IXR2Ld3TZN2U112qJtHW3wGr/Qsd74h1mg=;
+        b=G6zvbTIsprkrfZasHgZn8TSWpkcQYF3duuxIAVYxorthK5+vRZVk6ne9TesqSd5msk
+         7iaAnBfpl02zn9AmT44BofRiS7y6CWvEB6F6axYYnjx2hXx+dbrAhqnwTPFAEw48tQ8L
+         KsjhGgAggC3CbhJOlDbpsf5RR6fYLCfOuw38Y6bcBOclBNalApetGFfu1yC8MqZwiQ/R
+         ECN/y0fh4mEkJpsQLZGeMXHfY/arN6PNIt+qcjetW9UZQLoh5ZhpvLKvxejrnG2qHpYu
+         TYZ+WfjTUetwfZUaljtonqrTVfHAoTHovhZbPH6YEJpJYJOSIptBhmAA1ImkjrW+9jGe
+         m0vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733576049; x=1734180849;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+xpWbnlKN0xIcwG1gfDbBIpqe9Xe15ljIylCd0kf7zg=;
-        b=XZhoQzhIrM/Kw6pGurHeaffEUukhesfPdI49XjDWJrkqlocyG81vAha9YB5QVFgZST
-         8z76zwuj1usCoO5DsenpAbIK/cmOhCPAQ1v+CZXuTolRAZ3S4nzg9gs4O2WylEu5lMRi
-         wLeGUOw0OJUN6QIDhbr38lQa4HMLSKrzEsXksWSxOC+rx1ROG3WfFnrv/JZpDS3KZx5V
-         pVmXKkzDeKuIS5sbjnuRh/Bj98BUnQ6nqF+2Hzs+cEaiuNtMi/AL/k8jjdOow8+Lwa1m
-         mRizVuxCBCYVm2FtSoXMrc5E3XKfTGSollwia+HrZTElVAMoMuGgAZO5AFP6jRcPgwuQ
-         WDjw==
-X-Forwarded-Encrypted: i=1; AJvYcCXoIiZKsAabAcyJ2yi5uwIBt2v6VJuOjE80IrgXGGz72SbvCWR+hui+w4+DwZl/aPSd2WUdeldvcfrdpnc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMSWv7Nkgp8tlUZKZRCuHDPntkUFA0hDWNRWZCJw0kvp7PIFoa
-	kaBVORNdDB64laMDItjzQ+QvG4CUeyNWr/aRLRMSg6/ohcG1pXXS9/DglyarAOg=
-X-Gm-Gg: ASbGncuwgrqw20H/q0OrT7E/FXlIPJ3Q9ugk3e7OZtsOVUpMDwhgrIGADvp6NFxD3wq
-	0kzkx9n3MJyX45ckg0G/Hv/3PX9svW+xda6SgNrHF1ECGpnLaiDQ59glYql18rByxMUAiEvvnYd
-	i+1yd5e58LI7MBdnex631KUX1TLlfSGfxxsJSa2bYsfNl18WokFhdbgL3dhH9i19D2h6KA0st/0
-	BuqHajwqUtR837Gd1FcESQjvqXaGER45btAYb0YM1BTm4TVNcQOgQA2NBcahUo=
-X-Google-Smtp-Source: AGHT+IFc59lrx1M6saKGPjF02Omnnsj0HLfp4v7ByL1sRkcUPHF3WsyaIILgsB+Yi9QNF0Qp9YtwjA==
-X-Received: by 2002:a17:907:7814:b0:aa6:19f3:d083 with SMTP id a640c23a62f3a-aa63a07357dmr584148866b.30.1733576048745;
-        Sat, 07 Dec 2024 04:54:08 -0800 (PST)
-Received: from [192.168.0.27] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm19541366b.159.2024.12.07.04.54.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 04:54:08 -0800 (PST)
-Message-ID: <444a0d03-7518-4f54-a29d-2d3c85d9743d@linaro.org>
-Date: Sat, 7 Dec 2024 12:54:06 +0000
+        d=1e100.net; s=20230601; t=1733576692; x=1734181492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=moWB21d17IXR2Ld3TZN2U112qJtHW3wGr/Qsd74h1mg=;
+        b=repD5++Fp0lkniej+cJtZiX8QdAOAQtxncHlEM0mKnWXg6qwPRaeBimaST9UH1QCZj
+         0wM+3XC2HVeh42v4t3emTsls9mR1MfDmoHnEUPx+r79QQGtXIRHz1SbG2cFtgvQ5wd14
+         i4nbojTNtxQFcDu1reNEa/HSDWxEkFxf3m1uyu4Ps2cymJYYwmyJrJ6WX+pTBZWgtIbP
+         /5VpmUWTthvfbI+UEg19oqLLqYZFnFXLsZuPUNYeVUJYDB7jKh8BKUsjlau8BV/QoC5a
+         dHm6WWFQetUL6FGnXjjCcItI8X4LLsGRYNpIDSh8wtHQx2gWG4TEbHhq8rub7dFpgAJ2
+         AUHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUm3ETEY38saUqyO9sL3saxApIJB/KGWwpgpPWqildgL/ddDhjzX83OaMbjqSn24q3fO/WoQWk1pZv@vger.kernel.org, AJvYcCUvwbpOrnD0d19mZmZ4e9wDBDGRqLs8nJDk6Zlfaj1wOix7/arnp0BCJsnj220rBDbmgGZXYEhoqM3Midk=@vger.kernel.org, AJvYcCXMiCudZe6RjC2fdDm9Uk1QLVpLeboGPDFaGHg264hCROBNiGaOdsJ2CexnIXmN/knH0Wcfte0C6Gmv6uJp@vger.kernel.org, AJvYcCXPOcyFkXPh40tmK4hqaOwlzGzC49XESk57ll5B6NwaRtuYNEKpWcTKn1xXw+YCpZuel25+dLDX9LiGwA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw4tqEu0CjW7qw8MWjeeCVu/QS2aW9vXM6LExsJyYPyoU7OAHel
+	gyZMJV/dLNRfG+KrVSXW/p9I/8s8tkRMVGgyTtl9RZUNnLEcFDmnTOjA4g==
+X-Gm-Gg: ASbGnctKvhvXUfsQDKW9RTcnaMxIMHiAJDctrcjzfoxT2fg2rKEPIZjoEgahc9Dn0Al
+	Pho7WqRTCR2LM6jIyNXcAY45g33+Hkf3lQHNh+E0drA/+5KCBFrWgN3UW3WUkPDaEpre/RgDXEg
+	CFH+W3+kOA1w8WwzSsSyopqy2+0PwqDOaO9F0XLtr834Z6rFAM/0a2aPeatq5PAwSRF1lFkEzop
+	1+W4F+T0DXs6JkR6vOKFe0pdL1ylEimWJhcfVWNywr/1roARwms2oL0KJdMvxYfjw==
+X-Google-Smtp-Source: AGHT+IEXK6h1lriVkUgeA8NkzsgEpDjD4uXCqmEP1oor2nMQ4lKCeHQ2ggi4Xw9LEbdrlC3ZH0E/BA==
+X-Received: by 2002:a17:903:124a:b0:215:5ea2:654b with SMTP id d9443c01a7336-21614d5435fmr111914685ad.1.1733576692163;
+        Sat, 07 Dec 2024 05:04:52 -0800 (PST)
+Received: from localhost.localdomain ([59.188.211.160])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21628c59730sm12779715ad.105.2024.12.07.05.04.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 05:04:51 -0800 (PST)
+From: Nick Chan <towinchenmi@gmail.com>
+To: Lee Jones <lee@kernel.org>,
+	Daniel Thompson <danielt@kernel.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Helge Deller <deller@gmx.de>,
+	Hector Martin <marcan@marcan.st>,
+	Sven Peter <sven@svenpeter.dev>,
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
+	Nick Chan <towinchenmi@gmail.com>,
+	dri-devel@lists.freedesktop.org,
+	linux-leds@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-fbdev@vger.kernel.org,
+	asahi@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 0/3] Apple DWI backlight driver
+Date: Sat,  7 Dec 2024 21:03:13 +0800
+Message-ID: <20241207130433.30351-1-towinchenmi@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/6] arm64: dts: qcom: x1e80100: Add CCI definitions
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Loic Poulain <loic.poulain@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-0-54075d75f654@linaro.org>
- <20241119-b4-linux-next-24-11-18-dtsi-x1e80100-camss-v1-5-54075d75f654@linaro.org>
- <b5400627-6359-4dfc-abb2-2c142217a28b@oss.qualcomm.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <b5400627-6359-4dfc-abb2-2c142217a28b@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 07/12/2024 11:59, Konrad Dybcio wrote:
-> Otherwise looks good and I can attest to this working, as the sensor on the
-> SL7 happily talks back
+Apple SoCs come with a 2-wire interface named DWI. On some iPhones, iPads
+and iPod touches the backlight controller is connected via this interface.
+This series adds a backlight driver for backlight controllers connected
+this way.
 
-:x
+Changes since v1:
+- Fixed dt-bindings $id.
+- Make power-domains an optional property in dt-bindings.
+- Added missing error checking after devm_ioremap_resource() in
+dwi_bl_probe().
 
+v1: https://lore.kernel.org/asahi/20241206172735.4310-1-towinchenmi@gmail.com/T
+
+Nick Chan
 ---
-bod
+Nick Chan (3):
+  dt-bindings: leds: backlight: apple,dwi-bl: Add bindings for Apple DWI
+    backlight
+  backlight: dwi_bl: Add Apple DWI backlight driver
+  MAINTAINERS: Add entries for Apple DWI backlight controller
+
+ .../bindings/leds/backlight/apple,dwi-bl.yaml |  54 ++++++++
+ MAINTAINERS                                   |   2 +
+ drivers/video/backlight/Kconfig               |  12 ++
+ drivers/video/backlight/Makefile              |   1 +
+ drivers/video/backlight/dwi_bl.c              | 124 ++++++++++++++++++
+ 5 files changed, 193 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
+ create mode 100644 drivers/video/backlight/dwi_bl.c
+
+
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+-- 
+2.47.1
+
 
