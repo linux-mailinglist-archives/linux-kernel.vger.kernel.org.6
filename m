@@ -1,145 +1,153 @@
-Return-Path: <linux-kernel+bounces-435893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB0B9E7E51
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:24:32 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 192FF9E7E53
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:25:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A03163476
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:25:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A0745C1C;
+	Sat,  7 Dec 2024 05:25:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sIs67msF"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD1E282075
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:24:31 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1744228FC;
-	Sat,  7 Dec 2024 05:24:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="huRuDuNE"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C54B45C1C
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A76B28FC
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733549066; cv=none; b=qd+lKRyc1c6kfgMuk9FwGO8upJ8OfqYfqBybLmay+SNvP4EDqgojcP5UfU/Ssj8QVXYMi1Ez50qFL/v9M13bFiONybugz44RSpo9ilU9ik4H1knoBiKRgeDM992IU64FEGLGi4cpZd4og0XY2dQtBZXdtVgmWy1419u/mLi7xU4=
+	t=1733549102; cv=none; b=PEh/FgFhuZFozLWWhNs/O7nUmilZJZSRd7rlbYqiuCKtR89JgLLz8T7xkpLp9GZBwIq3FxstPdzF+8bp3oZP1ASVJEEb+J2oUbHFtKD417uS7qBPoYmyTaK6h79+ZrL3Wqo0dG1Nq/xj3IQNRGbXAMwTmfkDei2PW/GE4aXv4mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733549066; c=relaxed/simple;
-	bh=2K0emPQqgBQ9oBcqR0nFbQartjnpOFBMsUE2xkjHNOk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=titRLd6Uo0LsNzCrQd4HG5opum2oH4wsB8C5UMZ8Wg+taQoXILy0znR9HlxbVE2CHZAqMyqc6WGP5phomdyKRnJhz5QvpEIjZC3pcL76CWuSlmbaAwhPRKP3bpauG8eHvwnbjKTSNPXPKtAeGFeuGDvH0/3Ke657ps12k4PAu50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=huRuDuNE; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a7dfcd40fcso45095ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 21:24:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733549064; x=1734153864; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1OxJ2iCjWZ16KBHYZLjraakAvQeFU/uCVYCOXfPgYGw=;
-        b=huRuDuNEJnpkbgaAtnZ47ikHVZ1lmSCLMAwufVc6A24paKMf4Yobid7vzOkcyGpoTm
-         woiSSpb8GEl1aDDaR1vvxlhxp8mO9nwNr8+O2hdJX79n9clGOqKhM44Qicmec8NgVFpN
-         t9q9AFJyjfEAfnBhdohaul607bxgiaLW6ThUunNaUFVnzFivO6U9AgCXrs4Umw2alXvR
-         gjpPYrcxWhTLE4YqIHjjjCpLK6tXJBFquQq2wNH6pcVTeCh1vw+aXrlCCie5RQYZOgKv
-         zFs2IjiUIKg7OKMkD1GYP9j4/2Yv4xmTfA93J5W6zcQmqS8ERxfmn59sA6k+d99gyObC
-         gNDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733549064; x=1734153864;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1OxJ2iCjWZ16KBHYZLjraakAvQeFU/uCVYCOXfPgYGw=;
-        b=vdTuOgrIRO0rup8rX4nE9HJT7qXogov+hO3JMDVbkN4IL5xHaz9rN9gqNRzoqfE3TL
-         LiT0VqvE5qhoqVhJU8PkvA+HP7KBZD6ek6oQfJXx6Cl65QA3MIuU9dwjtYiQ4kKrKyWZ
-         R0UwyYc/du+XxUuO+VSi2UwrKx5/lXkz2PouY1YmVJnSI3WYtj1LJkJyPpt0BAZX4+tI
-         RV8S7nZp+0bclyg+eSHSINAWHXiDWi6VDo5PFcan/hFQgBQo+JqXDUZhnYRHgLeTEa0I
-         QMM9hLHS92BlNLQ9zwoDtac5UoTjAK+bC4WuUB6H0phemJWnXpsR/iwZAIkHymz7xodx
-         W3Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCW4+efw87vrhdWuOmR8RmrT8klS3qFlznG8Zoc4Eg+FOqXCCreCCeMSfpBqtOtOeiQyQp7KziihKbhqz1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQY76mTExWBWHqyGfWTc8Jk0L/xx2123bviIRSuOafDOQrWYly
-	Coa7IxForFfMAccyVdq5udd0tLw8eoKsl86h4wx9f1R9SW7JuGi/RlzWKg/micK1IrenYtYvDDN
-	2rXFD+DQl/CgUyj13JYpIXvQUtspCALTCQs5fULfebhmwUStQ6G+bfw4=
-X-Gm-Gg: ASbGncuwjdRvudHMgJi3y/L5IqcNoLMw+W9UeO66qCyExaxSqEWMt5CNwsL5N4fr4Rs
-	w3WWW1Tk4HIUEAi1xSBfvvqDzHMpZGqbc
-X-Google-Smtp-Source: AGHT+IFkSFn4ONKPsuCGA6zIMysWQnkXZs+/dkzRq4qJpLOGbhmBC7NLoEDCri7N7KdHttdePnUXKl65JqZd0MtpqgA=
-X-Received: by 2002:a05:6e02:3309:b0:3a7:6126:ca3 with SMTP id
- e9e14a558f8ab-3a8717725b2mr1703685ab.24.1733549064069; Fri, 06 Dec 2024
- 21:24:24 -0800 (PST)
+	s=arc-20240116; t=1733549102; c=relaxed/simple;
+	bh=cl0XzP8EOE6+HOKD2e9J2O14aBngARKE65eQBSD5XS8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L/MiVDh4kBvdtrvMGElVHA+WABB9/6ClvI7M62qI3rqfqCQhi9CgMJZgArlviqzoGKgXaY1GVQkVrnNVPZENyHn93E7wbek/M9VRxqqW2b4fOWvo92AE3XUhT/tMxoTpsMzDcDQ85Xwnk4rwYLKdMCHiO8CHycqGhSuhj86WKdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sIs67msF; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B74UOUA003578;
+	Sat, 7 Dec 2024 05:24:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=N3Q3as1ACfTfuibeOglQhdTA62gqQa
+	XHP2IPz/1/1wg=; b=sIs67msFnL1rObqd4feD1CCqKTzjhVlpUqf2uv8G/Vpu5l
+	D0tueu/OeIamC9mmZ9p/dWqXv85u+EEY3ZgZP7roV9lyzR+msDJIqU0bsJAB1swP
+	xFuyoYuFUcBkm9sk13Wwhkwtg/+BNJkdt93pwVvaQiPzgRsK2lk3dxBKqh5N5reo
+	k7AT0G0LRtqdU1lnhdLOXyuQGyFXa+c5n7Snj3+Cw3p9+YKsY2yQPhD+aF+54yQ0
+	CAMPBPqF+v/SjPqBwMzUOQU2hyf9J/55FPzemBtg/xmeqTbduwJmlhrgDpejf6QC
+	Egqtph3nd7jvG8oSInMTZ5SjqowjtCvITXyySd6w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv88cuc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 07 Dec 2024 05:24:44 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B75Oi2J013976;
+	Sat, 7 Dec 2024 05:24:44 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv88cu9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 07 Dec 2024 05:24:43 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B740Cqi005286;
+	Sat, 7 Dec 2024 05:24:43 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 438fr225r3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 07 Dec 2024 05:24:42 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B75Od9018415924
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 7 Dec 2024 05:24:39 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9847120043;
+	Sat,  7 Dec 2024 05:24:39 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7993520040;
+	Sat,  7 Dec 2024 05:24:34 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.39.29.4])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat,  7 Dec 2024 05:24:34 +0000 (GMT)
+Date: Sat, 7 Dec 2024 10:54:27 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Srikar Dronamraju <srikar@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, mingo@redhat.com, peterz@infradead.org,
+        juri.lelli@redhat.com, vincent.guittot@linaro.org,
+        dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+        mgorman@suse.de, vschneid@redhat.com, sshegde@linux.ibm.com
+Subject: Re: [PATCH] sched/fair: Fix CPU bandwidth limit bypass during CPU
+ hotplug
+Message-ID: <Z1PcC2h-VWOIAkaG@linux.ibm.com>
+References: <20241126064812.809903-2-vishalc@linux.ibm.com>
+ <v7lpjkr7stdkm6qnmv5dnbxlekovrsa26wxofcsnblisscbgdw@ph2rmplamzkt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206044035.1062032-1-irogers@google.com> <20241206044035.1062032-2-irogers@google.com>
- <20241206102451.GA3418674@e132581.arm.com> <CAP-5=fVDH6k7rW3_LXK5Y9Givs3WO5MQ8XMKsuUXXY5nQ66qDg@mail.gmail.com>
- <20241206230321.GA5430@e132581.arm.com>
-In-Reply-To: <20241206230321.GA5430@e132581.arm.com>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 6 Dec 2024 21:24:12 -0800
-Message-ID: <CAP-5=fXOE3k9bmYOykpN6M9bBwLqP54MWWMGxutJ4SS2G_3MZQ@mail.gmail.com>
-Subject: Re: [PATCH v1 1/8] perf: Increase MAX_NR_CPUS to 4096
-To: Leo Yan <leo.yan@arm.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	James Clark <james.clark@linaro.org>, Kyle Meyer <kyle.meyer@hpe.com>, 
-	Ben Gainey <ben.gainey@arm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <v7lpjkr7stdkm6qnmv5dnbxlekovrsa26wxofcsnblisscbgdw@ph2rmplamzkt>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 30aav4PWm6nhizhZQD8ZocSbYknA5Xuf
+X-Proofpoint-ORIG-GUID: jdyYriSw1xEuQgJl5UfQsIfx8CpeFyuS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=987
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412070034
 
-On Fri, Dec 6, 2024 at 3:03=E2=80=AFPM Leo Yan <leo.yan@arm.com> wrote:
->
-> Hi Ian,
->
-> On Fri, Dec 06, 2024 at 08:25:06AM -0800, Ian Rogers wrote:
->
-> [...]
->
-> > > This series is fine for me.  Just wandering if we can use a central
-> > > place to maintain the macro, e.g. lib/perf/include/perf/cpumap.h.  It
-> > > is pointless to define exactly same macros in different headers.  As
-> > > least, I think we can unify this except the kwork bpf program?
-> > >
-> > > P.s. for dynamically allocating per CPU maps in eBPF program, we can
-> > > refer to the code samples/bpf/xdp_sample_user.c, but this is another
-> > > topic.
-> >
-> > Thanks Leo,
-> >
-> > can I take this as an acked-by?
->
-> Yeah.  I will give my review tags in the cover letter.
->
-> > Wrt a single constant I agree,
-> > following these changes MAX_NR_CPUS is just used for a warning in
-> > libperf's cpumap.c. I think we're agreed that getting rid of the
-> > constant would be best. I also think the cpumap logic is duplicating
-> > something that libc is providing in cpu_set.
-> >
-> > And we have more than one representation in perf for the sake of the
-> > disk representation:
->
-> Thanks for sharing the info.
->
-> > Just changing the int to be a s16 would lower the memory overhead,
-> > which is why I'd kind of like the abstraction to be minimal.
->
-> Here I am not clear what for "changing the int to be a s16".  Could you
-> elaberate a bit for this?
+On Fri, Dec 06, 2024 at 02:37:54PM +0530, Srikar Dronamraju wrote:
+> * Vishal Chourasia <vishalc@linux.ibm.com> [2024-11-26 12:18:13]:
+> 
+> > CPU controller limits are not properly enforced during CPU hotplug operations,
+> > particularly during CPU offline. When a CPU goes offline, throttled
+> > processes are unintentionally being unthrottled across all CPUs in the system,
+> > allowing them to exceed their assigned quota limits.
+> > 
+> <snip>
+> 
+> > Signed-off-by: Vishal Chourasia <vishalc@linux.ibm.com>
+> > ---
+> >  kernel/sched/fair.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > index fbdca89c677f..c436e2307e6f 100644
+> > --- a/kernel/sched/fair.c
+> > +++ b/kernel/sched/fair.c
+> > @@ -6684,7 +6684,8 @@ static void __maybe_unused unthrottle_offline_cfs_rqs(struct rq *rq)
+> >  	list_for_each_entry_rcu(tg, &task_groups, list) {
+> >  		struct cfs_rq *cfs_rq = tg->cfs_rq[cpu_of(rq)];
+> >  
+> > -		if (!cfs_rq->runtime_enabled)
+> > +		/* Don't unthrottle an active cfs_rq unnecessarily */
+> 
+> Per the patch description, its not just unnecessary but unthrottling is
+> buggy. Unnecessary would mean its just an overhead. Here we dont want to
+> unthrottle. Other than that this seems to be fine to me.
+sure.
 
-I meant this :-)
-https://lore.kernel.org/lkml/20241207052133.102829-1-irogers@google.com/
 
-> Lastly, I also found multiple files use "MAX_CPUS" rather than
-> "MAX_NR_CPUS".  Polish them in a new series?
+Also, I missed running the patch against checkpatch.pl 
 
-Makes sense.
+Will be sending out v2 with the updates.
 
-Thanks,
-Ian
+vishalc
+> 
+> > +		if (!cfs_rq->runtime_enabled || cpumask_test_cpu(cpu_of(rq), cpu_active_mask))
+> >  			continue;
+> 
+> -- 
+> Thanks and Regards
+> Srikar Dronamraju
 
