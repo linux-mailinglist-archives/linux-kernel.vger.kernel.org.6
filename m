@@ -1,349 +1,255 @@
-Return-Path: <linux-kernel+bounces-435989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDADC9E7F75
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:54:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EA099E7F78
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 11:09:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6505D1883901
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 09:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5588C165EE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 10:09:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782831384BF;
-	Sat,  7 Dec 2024 09:54:27 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7726E13AA2B;
+	Sat,  7 Dec 2024 10:09:40 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47FE61FDF
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 09:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D857D22C6E3
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 10:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733565266; cv=none; b=IhX6kVJOCNZCCVjisMIy+rTonPq0YLBFSdt7UAx+Y9s4mw7ExeaTVW279MiIxQeHPtlo7WS+h6zbKZPhWEj2I0oCQg/XJp9fo8/UZVQSWHUDn6AdoVnNerXaR95e6SCbHY4Cw80TASW74YbZerFCPznDd0FqHSZMotNd/ZI32DI=
+	t=1733566180; cv=none; b=crhtYvlM817DZeXPwvtcz+4SkVw9CIez5dMOUENthPDqAVjclETZvqZ9V+VXQSeHn+3IEq7IXfyd2n3V7Ejln6YemHlkZY9eleMwwJsJwjRIvByG2bhbBBvTXuUpWNzxJZBn4hF3o12FY5uVj1zUOY1QWQcgqCrLH4FHndigSWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733565266; c=relaxed/simple;
-	bh=u9wGb17ASdV0B8NdwIq/eJhE34QufYW97MwhU1mAdfA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=PjSpkBJTAI28rWtBmdO1a7JbKGYGQUPTMXeo2KtyZoq/RhmjVOts+FJzEp5Azqpy2lxC6jZE8kbK4mcz/48eeMGabyM9O2WCJu6nwf4pcc8kWqRzUpILd5DF/YceEY/1gEx5PlliIqeNmf4jqVxB0EtuhqQiEyz3DWgcwjA96eU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-843eac1b9dbso257843939f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 01:54:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733565264; x=1734170064;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=kSggsx+iqFcas++QFTyZtwy4xjWtKYfgMIOuDxA72Ec=;
-        b=EDtrhf0QzcQ07raghIAnIWExg9lDtlTEyR0LYAXvWLnI3xBxw6k9bmMaL1X0t9ql9j
-         sRzlFJP21/pDwtDEzezd6VRxesc8qQc31u5MflwKxJqKuUcNvf13m/QUbAVjBETKU1qq
-         yvwK8Z+QpyVPgDk50QKbFWFD2Mqhktp5NIcrF8PHRxwwmZAj7lBFnFjKAhbarn8oWogh
-         aHc+pTllBXS97GFQtlu3Bd8Z9ceEoDMR9QI/LRTkMXB75/BXU6+0O4n2qWcmrTvr5fsF
-         NHdly6oSH2jrzHlsE7FGpvg66YCz7VTsyk5STgJlRPxUcAqh7Mr3gi0MWyejn7xh6GcO
-         zQJg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxAg/aIYaKUJMR+eN8Xqoqc3zSHNWv+nITq6G7V4bv8ZlaVhmyxjKXoU7NDxhO0qjLdGrvBki8QNRQynI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2OwrKagIEbjo6jQoxFigNbpDnuUMcV30OYHlh+tVzIfBOSHU9
-	/fgbivuLJmOSiqtk/tusSL6xE/jliQkzuu4pl/E4p2zaIIGef8nuMXdC1AZpzFGq44VrTVPmgOu
-	lL8XVnBfMIhZZhKi1fbvHm82TmFPQamvhengcBqKUFiEb1LQa995x5kg=
-X-Google-Smtp-Source: AGHT+IEP31vHJe78FU+hJSeCgdxIc3yKTotBVB85gGdHzDX+82CzbqJ1gT9XacMDomVNbK/dLgD5+3yB7xsltlr2HHwQe1mPEkBS
+	s=arc-20240116; t=1733566180; c=relaxed/simple;
+	bh=jUG7HuO6RE00W7lLvwMjct1xB0qb2TjK9NT3SNoFs3o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SnRaDuQUrRc1YEBkeK4cRwkYo3prIv7+fKPLCdQllK7avXp39BZ8okmH2VpTyKUXMQHXytv3b0nfcI+izc0i0NnyidmZQ8h89p19oCYojdfEtPqgrZuYM4yLMgppZ290BPDqBX5wlW6ApWDGv33j/Eix6X3dVE5NN5+eR7/NHvQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Y53kx4mtdz9tLB;
+	Sat,  7 Dec 2024 11:09:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id C4zhMVynpln9; Sat,  7 Dec 2024 11:09:29 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Y53kx3VkZz9tL9;
+	Sat,  7 Dec 2024 11:09:29 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 68CE48B764;
+	Sat,  7 Dec 2024 11:09:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id UO3D8tEVi-Dm; Sat,  7 Dec 2024 11:09:29 +0100 (CET)
+Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.232.97])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id EE7BF8B763;
+	Sat,  7 Dec 2024 11:09:28 +0100 (CET)
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+To: Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linux-kernel@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH] powerpc/32: Replace mulhdu() by mul_u64_u64_shr()
+Date: Sat,  7 Dec 2024 11:09:27 +0100
+Message-ID: <f29e473c193c87bdbd36b209dfdee99d2f0c60dc.1733566130.git.christophe.leroy@csgroup.eu>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a22:b0:3a7:e800:7d26 with SMTP id
- e9e14a558f8ab-3a811dc35e7mr61544865ab.8.1733565264156; Sat, 07 Dec 2024
- 01:54:24 -0800 (PST)
-Date: Sat, 07 Dec 2024 01:54:24 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67541b50.050a0220.2477f.0013.GAE@google.com>
-Subject: [syzbot] [nilfs?] possible deadlock in nilfs_page_mkwrite
-From: syzbot <syzbot+992e362a20499e2e3e60@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733566167; l=6581; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=jUG7HuO6RE00W7lLvwMjct1xB0qb2TjK9NT3SNoFs3o=; b=cUyRHNKAVZ6+cOr7tgyg5+UYjZWiIXAvksjnEMYVKwkk5E5qQMsIvZhosz6TrpInPWKcIsRQD Gqz/bbt/BblA1NzpLPM4kGGaPSqO+ZVVXBbtDIBA256BJMIvikX/zmr
+X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Using mul_u64_u64_shr() provides similar calculation as mulhdu()
+assembly function, but enables inlining by the compiler.
 
-syzbot found the following issue on:
+The home-made assembly function had special handling for when one of
+the arguments is not a fully populated u64 but time functions use it
+to multiply timebase by a calculated scale which is constructed to
+have most significant bit set.
 
-HEAD commit:    cdd30ebb1b9f module: Convert symbol namespace to string li..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=179675e8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ad7dafcfaa48849c
-dashboard link: https://syzkaller.appspot.com/bug?extid=992e362a20499e2e3e60
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+On mpc8xx sched_clock() runs 3% faster. On mpc83xx it is 2%.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+As you can see below, sched_clock() is not much bigger than before:
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/9acca520618c/disk-cdd30ebb.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4fa9e0fa6b05/vmlinux-cdd30ebb.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f902822d291c/bzImage-cdd30ebb.xz
+	c000cf68 <sched_clock>:
+	c000cf68:	7d 2d 42 a6 	mftbu   r9
+	c000cf6c:	7d 0c 42 a6 	mftb    r8
+	c000cf70:	7d 4d 42 a6 	mftbu   r10
+	c000cf74:	7c 09 50 40 	cmplw   r9,r10
+	c000cf78:	40 82 ff f0 	bne     c000cf68 <sched_clock>
+	c000cf7c:	3d 40 c1 37 	lis     r10,-16073
+	c000cf80:	38 8a b3 30 	addi    r4,r10,-19664
+	c000cf84:	80 ea b3 30 	lwz     r7,-19664(r10)
+	c000cf88:	80 64 00 14 	lwz     r3,20(r4)
+	c000cf8c:	39 40 00 00 	li      r10,0
+	c000cf90:	80 a4 00 04 	lwz     r5,4(r4)
+	c000cf94:	80 c4 00 10 	lwz     r6,16(r4)
+	c000cf98:	7c 63 40 10 	subfc   r3,r3,r8
+	c000cf9c:	80 84 00 08 	lwz     r4,8(r4)
+	c000cfa0:	7d 06 49 10 	subfe   r8,r6,r9
+	c000cfa4:	7c c7 19 d6 	mullw   r6,r7,r3
+	c000cfa8:	7d 25 18 16 	mulhwu  r9,r5,r3
+	c000cfac:	7c 08 29 d6 	mullw   r0,r8,r5
+	c000cfb0:	7c 67 18 16 	mulhwu  r3,r7,r3
+	c000cfb4:	7d 29 30 14 	addc    r9,r9,r6
+	c000cfb8:	7c a8 28 16 	mulhwu  r5,r8,r5
+	c000cfbc:	7c ca 51 14 	adde    r6,r10,r10
+	c000cfc0:	7d 67 41 d6 	mullw   r11,r7,r8
+	c000cfc4:	7d 29 00 14 	addc    r9,r9,r0
+	c000cfc8:	7c c6 01 94 	addze   r6,r6
+	c000cfcc:	7c 63 28 14 	addc    r3,r3,r5
+	c000cfd0:	7d 4a 51 14 	adde    r10,r10,r10
+	c000cfd4:	7c e7 40 16 	mulhwu  r7,r7,r8
+	c000cfd8:	7c 63 58 14 	addc    r3,r3,r11
+	c000cfdc:	7d 4a 01 94 	addze   r10,r10
+	c000cfe0:	7c 63 30 14 	addc    r3,r3,r6
+	c000cfe4:	7d 4a 39 14 	adde    r10,r10,r7
+	c000cfe8:	35 24 ff e0 	addic.  r9,r4,-32
+	c000cfec:	41 80 00 10 	blt     c000cffc <sched_clock+0x94>
+	c000cff0:	7c 63 48 30 	slw     r3,r3,r9
+	c000cff4:	38 80 00 00 	li      r4,0
+	c000cff8:	4e 80 00 20 	blr
+	c000cffc:	21 04 00 1f 	subfic  r8,r4,31
+	c000d000:	54 69 f8 7e 	srwi    r9,r3,1
+	c000d004:	7d 4a 20 30 	slw     r10,r10,r4
+	c000d008:	7d 29 44 30 	srw     r9,r9,r8
+	c000d00c:	7c 64 20 30 	slw     r4,r3,r4
+	c000d010:	7d 23 53 78 	or      r3,r9,r10
+	c000d014:	4e 80 00 20 	blr
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+992e362a20499e2e3e60@syzkaller.appspotmail.com
+Before this change:
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.13.0-rc1-syzkaller-00002-gcdd30ebb1b9f #0 Not tainted
-------------------------------------------------------
-syz.7.1218/10445 is trying to acquire lock:
-ffff888022f78610 (sb_internal#2){.+.+}-{0:0}, at: nilfs_page_mkwrite+0x96c/0xcf0 fs/nilfs2/file.c:95
+	c000d0bc <sched_clock>:
+	c000d0bc:	94 21 ff f0 	stwu    r1,-16(r1)
+	c000d0c0:	7c 08 02 a6 	mflr    r0
+	c000d0c4:	90 01 00 14 	stw     r0,20(r1)
+	c000d0c8:	93 e1 00 0c 	stw     r31,12(r1)
+	c000d0cc:	7d 2d 42 a6 	mftbu   r9
+	c000d0d0:	7d 0c 42 a6 	mftb    r8
+	c000d0d4:	7d 4d 42 a6 	mftbu   r10
+	c000d0d8:	7c 09 50 40 	cmplw   r9,r10
+	c000d0dc:	40 82 ff f0 	bne     c000d0cc <sched_clock+0x10>
+	c000d0e0:	3f e0 c1 37 	lis     r31,-16073
+	c000d0e4:	3b ff b3 30 	addi    r31,r31,-19664
+	c000d0e8:	80 9f 00 14 	lwz     r4,20(r31)
+	c000d0ec:	80 7f 00 10 	lwz     r3,16(r31)
+	c000d0f0:	7c 84 40 10 	subfc   r4,r4,r8
+	c000d0f4:	80 bf 00 00 	lwz     r5,0(r31)
+	c000d0f8:	80 df 00 04 	lwz     r6,4(r31)
+	c000d0fc:	7c 63 49 10 	subfe   r3,r3,r9
+	c000d100:	48 00 37 85 	bl      c0010884 <mulhdu>
+	c000d104:	81 3f 00 08 	lwz     r9,8(r31)
+	c000d108:	35 49 ff e0 	addic.  r10,r9,-32
+	c000d10c:	41 80 00 20 	blt     c000d12c <sched_clock+0x70>
+	c000d110:	80 01 00 14 	lwz     r0,20(r1)
+	c000d114:	7c 83 50 30 	slw     r3,r4,r10
+	c000d118:	83 e1 00 0c 	lwz     r31,12(r1)
+	c000d11c:	38 80 00 00 	li      r4,0
+	c000d120:	7c 08 03 a6 	mtlr    r0
+	c000d124:	38 21 00 10 	addi    r1,r1,16
+	c000d128:	4e 80 00 20 	blr
+	c000d12c:	80 01 00 14 	lwz     r0,20(r1)
+	c000d130:	54 8a f8 7e 	srwi    r10,r4,1
+	c000d134:	21 09 00 1f 	subfic  r8,r9,31
+	c000d138:	83 e1 00 0c 	lwz     r31,12(r1)
+	c000d13c:	7c 63 48 30 	slw     r3,r3,r9
+	c000d140:	7d 4a 44 30 	srw     r10,r10,r8
+	c000d144:	7c 84 48 30 	slw     r4,r4,r9
+	c000d148:	7d 43 1b 78 	or      r3,r10,r3
+	c000d14c:	7c 08 03 a6 	mtlr    r0
+	c000d150:	38 21 00 10 	addi    r1,r1,16
+	c000d154:	4e 80 00 20 	blr
 
-but task is already holding lock:
-ffff888022f78518 (sb_pagefaults#7){.+.+}-{0:0}, at: do_page_mkwrite+0x17a/0x380 mm/memory.c:3176
+	c0010884 <mulhdu>:
+	c0010884:	2c 06 00 00 	cmpwi   r6,0
+	c0010888:	2c 83 00 00 	cmpwi   cr1,r3,0
+	c001088c:	7c 8a 23 78 	mr      r10,r4
+	c0010890:	7c 84 28 16 	mulhwu  r4,r4,r5
+	c0010894:	41 82 00 14 	beq     c00108a8 <mulhdu+0x24>
+	c0010898:	7c 0a 30 16 	mulhwu  r0,r10,r6
+	c001089c:	7c ea 29 d6 	mullw   r7,r10,r5
+	c00108a0:	7c e0 38 14 	addc    r7,r0,r7
+	c00108a4:	7c 84 01 94 	addze   r4,r4
+	c00108a8:	4d 86 00 20 	beqlr   cr1
+	c00108ac:	7d 23 29 d6 	mullw   r9,r3,r5
+	c00108b0:	7d 43 28 16 	mulhwu  r10,r3,r5
+	c00108b4:	41 82 00 18 	beq     c00108cc <mulhdu+0x48>
+	c00108b8:	7c 03 31 d6 	mullw   r0,r3,r6
+	c00108bc:	7d 03 30 16 	mulhwu  r8,r3,r6
+	c00108c0:	7c e0 38 14 	addc    r7,r0,r7
+	c00108c4:	7c 84 41 14 	adde    r4,r4,r8
+	c00108c8:	7d 4a 01 94 	addze   r10,r10
+	c00108cc:	7c 84 48 14 	addc    r4,r4,r9
+	c00108d0:	7c 6a 01 94 	addze   r3,r10
+	c00108d4:	4e 80 00 20 	blr
 
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #7 (sb_pagefaults#7){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1725 [inline]
-       sb_start_pagefault include/linux/fs.h:1890 [inline]
-       nilfs_page_mkwrite+0x24c/0xcf0 fs/nilfs2/file.c:57
-       do_page_mkwrite+0x17a/0x380 mm/memory.c:3176
-       do_shared_fault mm/memory.c:5398 [inline]
-       do_fault mm/memory.c:5460 [inline]
-       do_pte_missing+0x29e/0x3e70 mm/memory.c:3979
-       handle_pte_fault mm/memory.c:5801 [inline]
-       __handle_mm_fault+0x103c/0x2a40 mm/memory.c:5944
-       handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6112
-       do_user_addr_fault+0x7a3/0x13f0 arch/x86/mm/fault.c:1389
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
--> #6 (&mm->mmap_lock){++++}-{4:4}:
-       __might_fault mm/memory.c:6751 [inline]
-       __might_fault+0x11b/0x190 mm/memory.c:6744
-       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
-       _copy_from_user+0x29/0xd0 lib/usercopy.c:18
-       copy_from_user include/linux/uaccess.h:212 [inline]
-       __blk_trace_setup+0xa8/0x180 kernel/trace/blktrace.c:626
-       blk_trace_ioctl+0x163/0x290 kernel/trace/blktrace.c:740
-       blkdev_ioctl+0x109/0x6d0 block/ioctl.c:682
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #5 (&q->debugfs_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
-       blk_mq_init_sched+0x42b/0x640 block/blk-mq-sched.c:473
-       elevator_init_mq+0x2cd/0x420 block/elevator.c:610
-       add_disk_fwnode+0x113/0x1300 block/genhd.c:413
-       sd_probe+0xa86/0x1000 drivers/scsi/sd.c:4024
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x241/0xa90 drivers/base/dd.c:658
-       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
-       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
-       __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
-       bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
-       async_run_entry_fn+0x9f/0x530 kernel/async.c:129
-       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
-       process_scheduled_works kernel/workqueue.c:3310 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-       kthread+0x2c4/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #4 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
-       blk_queue_enter+0x50f/0x640 block/blk-core.c:328
-       blk_mq_alloc_request+0x59b/0x950 block/blk-mq.c:651
-       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
-       scsi_execute_cmd+0x1eb/0xf40 drivers/scsi/scsi_lib.c:304
-       read_capacity_16+0x213/0xe10 drivers/scsi/sd.c:2655
-       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
-       sd_revalidate_disk.isra.0+0x1a06/0xa8d0 drivers/scsi/sd.c:3734
-       sd_probe+0x904/0x1000 drivers/scsi/sd.c:4010
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x241/0xa90 drivers/base/dd.c:658
-       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
-       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
-       __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
-       bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
-       async_run_entry_fn+0x9f/0x530 kernel/async.c:129
-       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
-       process_scheduled_works kernel/workqueue.c:3310 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-       kthread+0x2c4/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #3 (&q->limits_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
-       queue_limits_start_update include/linux/blkdev.h:949 [inline]
-       loop_reconfigure_limits+0x407/0x8c0 drivers/block/loop.c:998
-       loop_set_block_size drivers/block/loop.c:1473 [inline]
-       lo_simple_ioctl drivers/block/loop.c:1496 [inline]
-       lo_ioctl+0x901/0x18b0 drivers/block/loop.c:1559
-       blkdev_ioctl+0x279/0x6d0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (&q->q_usage_counter(io)#24){++++}-{0:0}:
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1fb6/0x24c0 block/blk-mq.c:3091
-       __submit_bio+0x384/0x540 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x698/0xd70 block/blk-core.c:739
-       submit_bio_noacct+0x93a/0x1e20 block/blk-core.c:868
-       nilfs_mdt_submit_block+0x33e/0x870 fs/nilfs2/mdt.c:153
-       nilfs_mdt_read_block+0xa4/0x3b0 fs/nilfs2/mdt.c:178
-       nilfs_mdt_get_block+0xd8/0xac0 fs/nilfs2/mdt.c:253
-       nilfs_palloc_get_block+0xb5/0x300 fs/nilfs2/alloc.c:219
-       nilfs_palloc_get_desc_block+0x131/0x180 fs/nilfs2/alloc.c:268
-       nilfs_palloc_prepare_alloc_entry+0x21e/0xc50 fs/nilfs2/alloc.c:548
-       nilfs_ifile_create_inode+0x129/0x320 fs/nilfs2/ifile.c:62
-       nilfs_new_inode+0x207/0x760 fs/nilfs2/inode.c:313
-       nilfs_create fs/nilfs2/namei.c:93 [inline]
-       nilfs_create+0x121/0x320 fs/nilfs2/namei.c:83
-       lookup_open.isra.0+0x1177/0x14c0 fs/namei.c:3649
-       open_last_lookups fs/namei.c:3748 [inline]
-       path_openat+0x904/0x2d60 fs/namei.c:3984
-       do_filp_open+0x20c/0x470 fs/namei.c:4014
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
-       do_sys_open fs/open.c:1417 [inline]
-       __do_sys_open fs/open.c:1425 [inline]
-       __se_sys_open fs/open.c:1421 [inline]
-       __x64_sys_open+0x154/0x1e0 fs/open.c:1421
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (&nilfs->ns_segctor_sem){++++}-{4:4}:
-       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
-       nilfs_transaction_begin+0x326/0xa40 fs/nilfs2/segment.c:223
-       nilfs_ioctl_set_suinfo fs/nilfs2/ioctl.c:1268 [inline]
-       nilfs_ioctl+0x1763/0x1e00 fs/nilfs2/ioctl.c:1391
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (sb_internal#2){.+.+}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain kernel/locking/lockdep.c:3904 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1725 [inline]
-       sb_start_intwrite include/linux/fs.h:1908 [inline]
-       nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
-       nilfs_page_mkwrite+0x96c/0xcf0 fs/nilfs2/file.c:95
-       do_page_mkwrite+0x17a/0x380 mm/memory.c:3176
-       do_shared_fault mm/memory.c:5398 [inline]
-       do_fault mm/memory.c:5460 [inline]
-       do_pte_missing+0x29e/0x3e70 mm/memory.c:3979
-       handle_pte_fault mm/memory.c:5801 [inline]
-       __handle_mm_fault+0x103c/0x2a40 mm/memory.c:5944
-       handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6112
-       do_user_addr_fault+0x7a3/0x13f0 arch/x86/mm/fault.c:1389
-       handle_page_fault arch/x86/mm/fault.c:1481 [inline]
-       exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
-       asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-
-other info that might help us debug this:
-
-Chain exists of:
-  sb_internal#2 --> &mm->mmap_lock --> sb_pagefaults#7
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_pagefaults#7);
-                               lock(&mm->mmap_lock);
-                               lock(sb_pagefaults#7);
-  rlock(sb_internal#2);
-
- *** DEADLOCK ***
-
-2 locks held by syz.7.1218/10445:
- #0: ffff88807a8d6d20 (&mm->mmap_lock){++++}-{4:4}, at: mmap_read_trylock include/linux/mmap_lock.h:163 [inline]
- #0: ffff88807a8d6d20 (&mm->mmap_lock){++++}-{4:4}, at: get_mmap_lock_carefully mm/memory.c:6149 [inline]
- #0: ffff88807a8d6d20 (&mm->mmap_lock){++++}-{4:4}, at: lock_mm_and_find_vma+0x35/0x6a0 mm/memory.c:6209
- #1: ffff888022f78518 (sb_pagefaults#7){.+.+}-{0:0}, at: do_page_mkwrite+0x17a/0x380 mm/memory.c:3176
-
-stack backtrace:
-CPU: 1 UID: 0 PID: 10445 Comm: syz.7.1218 Not tainted 6.13.0-rc1-syzkaller-00002-gcdd30ebb1b9f #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x419/0x5d0 kernel/locking/lockdep.c:2074
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain kernel/locking/lockdep.c:3904 [inline]
- __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
- percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
- __sb_start_write include/linux/fs.h:1725 [inline]
- sb_start_intwrite include/linux/fs.h:1908 [inline]
- nilfs_transaction_begin+0x21b/0xa40 fs/nilfs2/segment.c:220
- nilfs_page_mkwrite+0x96c/0xcf0 fs/nilfs2/file.c:95
- do_page_mkwrite+0x17a/0x380 mm/memory.c:3176
- do_shared_fault mm/memory.c:5398 [inline]
- do_fault mm/memory.c:5460 [inline]
- do_pte_missing+0x29e/0x3e70 mm/memory.c:3979
- handle_pte_fault mm/memory.c:5801 [inline]
- __handle_mm_fault+0x103c/0x2a40 mm/memory.c:5944
- handle_mm_fault+0x3fa/0xaa0 mm/memory.c:6112
- do_user_addr_fault+0x7a3/0x13f0 arch/x86/mm/fault.c:1389
- handle_page_fault arch/x86/mm/fault.c:1481 [inline]
- exc_page_fault+0x5c/0xc0 arch/x86/mm/fault.c:1539
- asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
-RIP: 0033:0x7f0fd0e453e1
-Code: 48 8b 54 24 08 48 85 d2 74 17 8b 44 24 18 0f c8 89 c0 48 89 44 24 18 48 83 fa 01 0f 85 b3 01 00 00 48 8b 44 24 10 8b 54 24 18 <89> 10 e9 15 fd ff ff 48 8b 44 24 10 8b 10 48 8b 44 24 08 48 85 c0
-RSP: 002b:00007fff411a4cf0 EFLAGS: 00010246
-RAX: 0000000020000180 RBX: 0000000000000004 RCX: 0000000000000000
-RDX: 00000000000007ff RSI: 0000000000000000 RDI: 000055556d6533c8
-RBP: 00007fff411a4e08 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000001 R12: 0000000000078d5d
-R13: 00007f0fd1145fa0 R14: 0000000000000032 R15: fffffffffffffffe
- </TASK>
-
-
+Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/powerpc/include/asm/time.h |  2 +-
+ arch/powerpc/kernel/misc_32.S   | 26 --------------------------
+ 2 files changed, 1 insertion(+), 27 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/arch/powerpc/include/asm/time.h b/arch/powerpc/include/asm/time.h
+index 221c8f8ff89b..9bdd8080299b 100644
+--- a/arch/powerpc/include/asm/time.h
++++ b/arch/powerpc/include/asm/time.h
+@@ -86,7 +86,7 @@ static inline unsigned long tb_ticks_since(unsigned long tstamp)
+ #define mulhdu(x,y) \
+ ({unsigned long z; asm ("mulhdu %0,%1,%2" : "=r" (z) : "r" (x), "r" (y)); z;})
+ #else
+-extern u64 mulhdu(u64, u64);
++#define mulhdu(x, y)	mul_u64_u64_shr(x, y, 64)
+ #endif
+ 
+ extern void div128_by_32(u64 dividend_high, u64 dividend_low,
+diff --git a/arch/powerpc/kernel/misc_32.S b/arch/powerpc/kernel/misc_32.S
+index 033cd00aa0fc..acb727f54e9d 100644
+--- a/arch/powerpc/kernel/misc_32.S
++++ b/arch/powerpc/kernel/misc_32.S
+@@ -27,32 +27,6 @@
+ 
+ 	.text
+ 
+-/*
+- * This returns the high 64 bits of the product of two 64-bit numbers.
+- */
+-_GLOBAL(mulhdu)
+-	cmpwi	r6,0
+-	cmpwi	cr1,r3,0
+-	mr	r10,r4
+-	mulhwu	r4,r4,r5
+-	beq	1f
+-	mulhwu	r0,r10,r6
+-	mullw	r7,r10,r5
+-	addc	r7,r0,r7
+-	addze	r4,r4
+-1:	beqlr	cr1		/* all done if high part of A is 0 */
+-	mullw	r9,r3,r5
+-	mulhwu	r10,r3,r5
+-	beq	2f
+-	mullw	r0,r3,r6
+-	mulhwu	r8,r3,r6
+-	addc	r7,r0,r7
+-	adde	r4,r4,r8
+-	addze	r10,r10
+-2:	addc	r4,r4,r9
+-	addze	r3,r10
+-	blr
+-
+ /*
+  * reloc_got2 runs through the .got2 section adding an offset
+  * to each entry.
+-- 
+2.47.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
