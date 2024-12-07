@@ -1,166 +1,212 @@
-Return-Path: <linux-kernel+bounces-436031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436025-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9129E803B
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:22:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A1D19E801A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:07:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C04342820D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:22:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C5AA280CBA
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:07:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 415B61474BF;
-	Sat,  7 Dec 2024 14:21:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62C9C1474A9;
+	Sat,  7 Dec 2024 13:07:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gwiP4BfJ"
-Received: from out.smtpout.orange.fr (out-14.smtpout.orange.fr [193.252.22.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="e2Qd1tAB"
+Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A5641DFE1;
-	Sat,  7 Dec 2024 14:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E5CBBA49;
+	Sat,  7 Dec 2024 13:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733581315; cv=none; b=fcnAqFlZaFmLbkGSs0Lm8vaIorbSjYZ4wH9RrnHHueWP05Ppqb2P1WV47mJgPcTpXKnyv1Z2U6FfolTHuDFBsT+LKK7WtjeXBSxP0AEH6eDLnJqmuuvta95SgZxqO4wrNGp/BnOgUU/0GeTXUbxBWlit97jmUUSr0vR/sd52bPs=
+	t=1733576850; cv=none; b=UX7CDvvQiBilQZ+EgMtgRu+2HBnmgqk1vP0SxnfOsOPqVBUlaZKwyzR8UtkAjXPXkEeSyZgnG1Ont1ULoATWKv1PFZprXhsaKBZvtWHYWJhyFtZKS1cJbSR019gZk813dvnZsSOFIm86It4an0Z7H+lxOBFe+LIR6axFUPRTL5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733581315; c=relaxed/simple;
-	bh=r7zPRKW+PjxixSGhr3dPnkSnW+fktu4xG/vmEVmcVkA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZoEZA7/RsOKFJq9laWdQ7NLmwLkdB3YZHDJ4+joDOXcdxJiHnqFNbsH8wriKF0yl69N9WPpxYM3c2kQwcFteUTmqNAjFUGhawx2ah393mTafUTNq3hYzjYBq+pI7x4owcTg0EXmZnhRhxo6ieh2EoBD7P/hpEXaamYXxT9Xhslg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gwiP4BfJ; arc=none smtp.client-ip=193.252.22.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from mail-lj1-f179.google.com ([209.85.208.179])
-	by smtp.orange.fr with ESMTPSA
-	id JvgrtuN8m3iIjJvgstKW2Z; Sat, 07 Dec 2024 15:21:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733581310;
-	bh=Q1k59tg7g6ZR0AiJKHkbtvAsnBjYlK49uTsKYbfsQyM=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To;
-	b=gwiP4BfJB71AFH3NlbdaJwDel7cPzPPXg0vuSj7JZByhSqT+cBvwkzuAYyIk7h4N4
-	 05AbkCLcsrKVksURZx4/E3wM4BbsSlLMl+22w5XuTUWdAXi3Sl2XUO0zUVbC7xZ+5M
-	 S6Vwtd6VkjvK4aw46/gH66/e/MjTbXNwqHK7/tKWCXt2GEE5AjtYKMela907v/cZP5
-	 XXbQed7fwJKaaejBXlI93a44UAazx7dGWUwT49ZI2QiDPsN8SzNXz+sSXi2yB8zlQ0
-	 25mh4SD0cvH1SRzKW7k0m9bx3rhJkfXKYeE9BrusuEI5JoSTZOLEKToTMscJepCpPi
-	 aXRugyRs8HwLQ==
-X-ME-Helo: mail-lj1-f179.google.com
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Sat, 07 Dec 2024 15:21:50 +0100
-X-ME-IP: 209.85.208.179
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-3004028c714so6068451fa.2;
-        Sat, 07 Dec 2024 06:21:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV87MpYCQwszEpVkgVkcQvfgZzoawDRf0xod9PClB5RnxaSX5vIP86K91CoAdTT/pUDWG2bkvJjhXaliS/3dwk=@vger.kernel.org, AJvYcCW4Z1azu+t6dpwSASzF381kdKgNUMyzF1XJ/5OOaFA7otEetdhFISYTEOlXnyzSx/VbdUuohvjkOl6NxNxA@vger.kernel.org, AJvYcCWOuaxsg9nGrvzsk9Vbg4y7y9qYWFjP5bGA2zOyfZhZ+9giO2Lom6a4e9yO0izlwBVVrCIqCeGA5pAurmXy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyx6CKhoYOl8dvLiDezDdYSIlhF67n3QdgIu93xWHBzKBEZmX9S
-	vcncWUU/JkS1rc3i+tWdTAy8LPkg4kRdGG999btXHvvNPE2VIU5rAYaJa0m4EPWdta/yvVnFAVg
-	F28HVftbQK7fDIrNXfQnS952nAjQ=
-X-Google-Smtp-Source: AGHT+IHLXgFQhA/c3KQxjVrMyKCAmSqwk42Fqpsfdz6EK+jIFFcEtdXEZClHZQiPmD1jBbv/RGy99L+br5F0PLvN22o=
-X-Received: by 2002:a17:907:7392:b0:aa5:427d:b101 with SMTP id
- a640c23a62f3a-aa63a1109camr127306566b.36.1733460187056; Thu, 05 Dec 2024
- 20:43:07 -0800 (PST)
+	s=arc-20240116; t=1733576850; c=relaxed/simple;
+	bh=fOYGJZfgk0YynlbEA5Sp+VYIW2sBwcX+hdhV7N1wLtQ=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=G0RMBLVSn0VADt87k4dV+UwhU4u3hOAtDv/vsqVjwNjhmj1Vs5Mz0eFArk85RhM5uoWpc+Rhb3NNASfdYXQJzzQXTi7+Z1c7ed1QYazbVJe1HvpbcWZAPSX2nqIj1AldYBsAFWNypZU8D781kqhZlTnpG9M/p6ZoZuPo5t17yqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=e2Qd1tAB; arc=none smtp.client-ip=134.76.10.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
+	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=/uO1DmifJTy9zLn5kLoz0yWzTcVA7p32pVfQJYIukvo=; b=e2Qd1tABJB3so0uW5yOeFNTh2m
+	bAgdqHapE4ARaSqoPh0wuuYfkFJiN6fzQw25oMXqezvMZhvs8kwWkdhWJqA9wx2m+4uh5kl3iXXWR
+	qD1BX8N+9Bgie0PF2OleNUfi3Pzu330Smp9qtupvT+WFdjA4vpNd3x/Xo+pidd75LM2IrPPoiH1GB
+	j1+KANv8/8ZEscTVeL/Qrri3V1yz1nuRxuKe1Po4Gs3OK6ceQg9+p8OdFsiFDULdOuMsi2j2hC3oZ
+	Kfqzp1Os0LeI/3TSUiX2jy6rjZ0u8HpCdthdsHmWuIN/14fGhDhA8pFyO8Q9kdyTPMQYM4NuQwuzi
+	mi5Ys46A==;
+Received: from xmailer.gwdg.de ([134.76.10.29]:50730)
+	by mailer.gwdg.de with esmtp (GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tJuWk-004M5Z-0k;
+	Sat, 07 Dec 2024 14:07:18 +0100
+Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
+	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tJuWk-000UX0-0P;
+	Sat, 07 Dec 2024 14:07:18 +0100
+Received: from [192.168.0.221] (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
+ (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sat, 7 Dec
+ 2024 14:07:16 +0100
+Message-ID: <9a0c041b6143ba07c2b3e524572fccd841f5374b.camel@gwdg.de>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+From: Martin Uecker <muecker@gwdg.de>
+To: David Laight <David.Laight@ACULAB.COM>, Vincent Mailhol
+	<mailhol.vincent@wanadoo.fr>
+CC: Linus Torvalds <torvalds@linux-foundation.org>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Date: Sat, 7 Dec 2024 14:07:08 +0100
+In-Reply-To: <344b4cf41a474377b3d2cbf6302de703@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
+	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
+	 <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
+	 <344b4cf41a474377b3d2cbf6302de703@AcuMS.aculab.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-1-4e4cbaecc216@wanadoo.fr>
- <e115a4245e5342a994a7e596cc6357fa@AcuMS.aculab.com> <CAMZ6Rq+n0vG9zObF-kY-Xo+iP_Y3P8A6_nEfB8F=UhqeQBepRw@mail.gmail.com>
- <b48e2f5dd8d64cbab471629ae03c7511@AcuMS.aculab.com>
-In-Reply-To: <b48e2f5dd8d64cbab471629ae03c7511@AcuMS.aculab.com>
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Date: Fri, 6 Dec 2024 13:42:56 +0900
-X-Gmail-Original-Message-ID: <CAMZ6RqKUH5VGHAuqv+dR_0o1JFTvV_gNV2qUwoMfcWCQUSX2Lg@mail.gmail.com>
-Message-ID: <CAMZ6RqKUH5VGHAuqv+dR_0o1JFTvV_gNV2qUwoMfcWCQUSX2Lg@mail.gmail.com>
-Subject: Re: [PATCH 01/10] compiler.h: add statically_false()
-To: David Laight <David.Laight@aculab.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
-	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+X-ClientProxiedBy: MBX19-FMZ-04.um.gwdg.de (10.108.142.63) To
+ MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
+X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:5, sv:1733541190, ts:1733576838
+X-Virus-Scanned: (clean) by clamav
+X-Spam-Level: -
 
-On Fri. 6 Dec. 2024 at 12:39, David Laight <David.Laight@aculab.com> wrote:
-> From: Vincent Mailhol
-> > Sent: 05 December 2024 15:26
-> >
-> > On Thu. 5 Dec 2024 at 03:30, David Laight <David.Laight@aculab.com> wrote:
-> > > From: Vincent Mailhol
-> > > > Sent: 02 December 2024 17:33
-> > > >
-> > > > From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> > > >
-> > > > For completion, add statically_false() which is the equivalent of
-> > > > statically_true() except that it will return true only if the input is
-> > > > known to be false at compile time.
-> > >
-> > > This is pretty much pointless.
-> > > It is just as easy to invert the condition at the call site.
-> >
-> > To start with, I will argue that:
-> >
-> >   statically_false(foo)
-> >
-> > is more pretty than
-> >
-> >   statically_true(!(foo))
+Am Samstag, dem 07.12.2024 um 10:33 +0000 schrieb David Laight:
+> From: Martin Uecker
+> > Sent: 07 December 2024 08:40
+> ...
+> > I find it amazing how much time the Linux kernel community spends
+> > revising code to make it work perfectly.
+> >=20
+> > Still, I am wondering whether some of this time and effort should not
+> > be targeted at C compilers and language work to make these macro
+> > hacks unnecessary?
+>=20
+> I'm probably not alone in thinking that sometimes the compiler writers
+> are doing their hardest to make life hard for people writing low level co=
+de.
+
+GCC and Clang are open-source projects just like the kernel. One can=C2=A0
+go there and contribute.  I am not saying that it is always easy to
+find consensus and there also projects that have other requirements
+than the kernel. But I started to contribute to GCC (with very limited
+time) to address some of my own issues, and I found the community very
+welcoming.
+
+>=20
+> > I already found the original motivation for these macros very questiona=
+ble.
+> > Removing VLAs at the cost having imprecise worst-case bounds strikes
+> > me as fundamentally misguided - at least if security is the motivation.
+>=20
+> VLA basically cannot be allowed because of the very limited stack space.
+> Even the per-frame limits aren't a real solution - they just catch the
+> places that most likely to cause issues. Very deep call chains and any
+> recursion (that isn't tightly bounded) can cause grief.
+
+VLA use *less* stack than a fixed size arrays with fixed bound.
+>=20
+> > So maybe there are other good reasons for this, e.g. bad code
+> > for VLAs or risk of jumping the guard page if the attacker can somehow
+> > influence its size (but for this there is -Wvla-larger-than). But even =
+then,
+> > wouldn't it be a more worthwhile and interesting investment of engineer=
+ing
+> > resources to improving code generation / warnings at the compiler level=
+?
+>=20
+> This is kernel code, any access into a stack guard page is basically
+> unrecoverable for the entire system - a kernel lock/mutex could be held.
 >
-> Except that the test is more likely to be:
->         statically_false(x > y)
-> and the invert is then
->         statically_true(x <= y)
->
-> No different from C itself, there is no 'ifnot (condition) {...}'
-> (don't talk to me about perl...)
+> With a list of (calling_fn, called_fn, stack_offset) it is possible
+> calculate an accurate maximum stack usage.
+> Indirect calls would need to use the (IIRC) FINE_IBT hashes to identify
+> the possible functions (and I'm not sure than has an attribute for a 'see=
+d'
+> so that 'int (*)(void *)' functions can be separated into groups.
+> I've not looked at whether objtool could generate the output - but is has
+> to be easier for the compiler to do it.
+>=20
+> I have done that calculation in the past (parsing a compiler listing file=
+)
+> and basically discovered the system didn't actually have enough memory
+> to allocate 'safe' stacks! The max stack was pretty much always (the
+> equivalent of) printf() inside an error path that never happens.
+> It might be interesting to see how bad linux is (after sorting out
+> how to handle recursive calls - hopefully there won't be too many
+> unexpected ones.
 
-No need to talk about perl, just staying in C, it has both the #ifdef
-and the #ifndef directives (and since C23, it even has the #elifndef).
+Compiler and ISO C language support to guarantee bounded stack usage
+would indeed be a very interesting feature.
 
-Regardless, this was just a nitpick. You convinced me, I will remove
-both statically_false() and is_const_false() in v2.
+>=20
+> > Also the fortification of strlen and co seems something which could be
+> > much better solved with annotations and proper compiler support.
+>=20
+> That might be nice, but kernel have to be buildable with relatively
+> old compilers.
 
-> I suspect you need to pretty much remove all the comments that
-> cross-refer to statically_true() from the other patches.
->
-> So is_const_true() is just 'return true if the expression
-> is a 'non-zero constant integer expression'.
+Yes, but it could make use of it at some point in the future (or
+optionally).
 
-No. Linus made it clear in
+> Some things might need language/ABI changes to better handle ptr+size.
+> The ability to return such a pair in registers would probably be useful
+> (without doing horrid games with a union and __int128).
 
-  https://lore.kernel.org/all/CAHk-=wh5SNYdgx8-X+ggHP+ojbG2F7oyt3TLmMgqejYd5zn0Aw@mail.gmail.com/
+ptr + size is something we are looking into.
 
-that we need an explanation of why statically_true() may not work in
-some contexts and I agree with this.
+You can already do quite a bit by using C99's syntax for variably modified
+types. For example, you would get UBSan trap for the following OOB access:
 
-As far as I like using proper nuances between the terms 'integer
-constant expression' and 'compile time constant', treating
-statically_true() and is_const_true() as completely different things
-as you are suggesting is not constructive. At the end, what matters
-the most in a comment, is that the final user properly understands how
-to use the thing correctly.
+int foo(int n, char (*buf)[n])
+{
+  (*buf)[n] =3D 1;
+}
 
-Removing the cross reference would increase the risk of people using
-is_const_true() in places where it is not needed. I will keep the
-cross reference to statically_true().
+This does not require an ABI change.=20
+
+Martin
 
 
-Yours sincerely,
-Vincent Mailhol
+
+
 
