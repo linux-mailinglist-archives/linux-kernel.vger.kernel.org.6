@@ -1,126 +1,154 @@
-Return-Path: <linux-kernel+bounces-436013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436014-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F0DB9E7FE3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:37:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249089E7FEC
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:45:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B8631884551
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:37:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF1B71883D8A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:45:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9B3146A6C;
-	Sat,  7 Dec 2024 12:37:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6300522C6EF;
+	Sat,  7 Dec 2024 12:45:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FyYEtqsP"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hQcGFIm9"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBAF4E1CA
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 12:37:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3111E507;
+	Sat,  7 Dec 2024 12:45:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733575064; cv=none; b=rU56QPaSW7dvlSHVW5A02a04IglnbdXdJBM4VdPLiE9rzjExP2Ppjd1HrFpuZXvTYgNXXtxHTJS2O5/gO9W8xulAlhKYMya0s/1L4AGL45jSOwNjY8L7HgbhbrJW+rm6C66gYFo1TXDWEr5PrArY9ZnnjzhhPJOuxRlUZTVfyTQ=
+	t=1733575520; cv=none; b=oAp8NI4SsN/DSZpdhmSzPqm32PLzB6vmj5Vm5A1PWWMCdsanN4dHWaEhNKzJKhAUBx8OdcvPgQfCG0tvhyb/2VtlAT0iEIFGAL2GSXPPMB88iqMTqc0T7wIxaHjBrtvvfYaldKIkruoc6pYnGAsw3SeaQqITdFcwWLZRxZfhbXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733575064; c=relaxed/simple;
-	bh=gAx2GsIKUg/y/jNLoObi1Q9vAfzx51AqCld5wFLpLaA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dPvqEl3ekCQBczgrj3PVLM587lnSFWxkrmKnnAvgmYLh0UuH2nvh144OhGr2x1XHQaZcyEBwXVEkQf83ki0M5SqkTpSMDqLqWiCxHOAS1M76td3ooJgDF0VVLu3oe/nG1blLenTrcdEYNsjA0lfVgS18UGGAwvE8foLOSadKr+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FyYEtqsP; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1733575520; c=relaxed/simple;
+	bh=WM9dhS+XJ8Y/DlkDR1zqqAPj4j/n4NFEAeMDfBwNaZw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DLu0RGhOMhgU5i2IFROuPOpG/cCmuE48jJV+HPwvQJaPtuaHwubgxnTGqihDNs+6tFmpSqSlBoUCRP2Tw9X7oKW65dh5lYFsdIVmymrw7gEH7NWZ0Rf6JGVx4gmiVXCpZe0KkpPBxyUArStCTkQmusrfIF1dPbReBD7qoyaMP0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hQcGFIm9; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38632b8ae71so613157f8f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 04:37:42 -0800 (PST)
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa636f6f0efso264753666b.0;
+        Sat, 07 Dec 2024 04:45:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733575061; x=1734179861; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmtD4L1/SX4Fv/KBhC5LSYN3L3RfR4TRHNghsMrCU4w=;
-        b=FyYEtqsPu82C04ApW1p2gJ3PhSd+LDXS4WEqxEU67IydRmxmqWStpILQJ6iQ+T5NB7
-         cTsoGtNg4To/UVIrGK3ABGV4h7KxRRY/cbwbVzjr0SW5wfy6JePzupJINytKrKGdNanK
-         SNCKgYL6Kcjm2YdLTaskomF9PvGdieIMABKtXq7b/BOk3KI35UlJv8JFP1iWwisTvxgm
-         tFKjAzIHvMJz9emPddovrCu1EoqLfBbn8AHEd/jozKeO6im6QPNjG/CkGFhB+QiPdu7K
-         rKpSXf3Wf+s4PVpURT/HxheEeiDp0AqYH4iq2Vtxcvz/eCHYc5UYkiYm4noJEyd7hUyP
-         DoKg==
+        d=gmail.com; s=20230601; t=1733575517; x=1734180317; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wGQkzKFSDY9TmwP9AaO3pZHfF41YjBH8/yCe8njtTKs=;
+        b=hQcGFIm9NpxPCVlSsqLhT9DwlD8o0LLwIZyC16qMZXlkm6lskOdBuHWQanIbm90hZf
+         7McP/ytZXQP5X3UH1CDz/1XC4QH7ei46el1D1Gx6pgoiGT07wqXUfCm4UZItahg5YKNn
+         rCAMDTqxxDp3yf1JjFwvjkR7mEnUQ4dXDgbl61rtwiUXiJYwsCdM99S6lTB4NypNhyqg
+         nOSdULVykcDsJCKAAXskFsOLCkoHeLWaeujORG3SQBMbb+j1L0U6cs9PLsXTRTqj0Z4k
+         wi1bndIE40ZBSNqt/6rV8a8iKmb85QlbKLOziL7vlGlXJRPO8jF7uv53W8IUAdDxNkzW
+         Tfqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733575061; x=1734179861;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jmtD4L1/SX4Fv/KBhC5LSYN3L3RfR4TRHNghsMrCU4w=;
-        b=hfjGvrn8BmAaakd4S4VdauB2TcfX1b3NXRZM2OHU316gwQzgeHuEhaz882uwiz5HWt
-         HuwJZiWeaJnb0h/t4aFnhy9Y6D6h8bwt2w/ZZwstpaXR7wCvKKJC8LdH91AvM+wLyPy1
-         2EbfWEYyFPOLtyne9c9VkhJLc2bEC5+4NwK2SU13hf4QXD0D9EgSEyhttpsRFlSKNdDa
-         qlzCenFfrd85iuOQzRFXpYIyPL/1CPNq4isGeW7mKRAneYR+16Ao0h5XTrJRUkDeJLOf
-         Tzrbcz6olxy/MZFejcFIv4hD+90x1XVrFQBwEC1c+dzuGGrQ/TmuIMwbs8oOs+K2gwJ2
-         SI4w==
-X-Forwarded-Encrypted: i=1; AJvYcCXJQh50j6fuRKQT13dURbxIabKZ9dtaOyD94820tYFqL0RVhNJlDmpm7xREG7M+ig1hneTTvsbSyUUWORI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPRH+v18tlrJvxBR9Xacp3JE4cAh4PnqlUDjrmPZ62shyVlwMw
-	PG5AA5fiYdYWay0ZCTN/a/Oh0Gg21d63I6FDyAHCkly5xk4IHHjQ
-X-Gm-Gg: ASbGncsCp2S/tGJJeAL5pjFcX8Eb/djFTD7nyZ+ugtgzN1bZdmYD4SXnaQ8m7KE0adv
-	DDFv9U10MK4RhOB9RK1g98eO59ivCkzcp4qDO1qvknF2Dfrd9EQLQE/wfnwiSaQg7STnmPo44MK
-	QNQD+NbVTiqYGfSeyaTsJuwsWLKdPQfF5g9m4b3M9lsq7P60HT2pquzMHFfPG3k+VtaxtXz95nZ
-	609fp08XOxVH9FYIUSkhxK08croIr7MIjJTDk5h7BgqwwYTce8Zg8pLpvZ/Bl3pD70PBEY9z12w
-	C550Mk98qg==
-X-Google-Smtp-Source: AGHT+IF4kmrsXWCslu/q1LRta0lEfN+z67D6i2YlSKQPoUjkULf74sFamCgkUBJV+DRNNtozWYE/6A==
-X-Received: by 2002:a05:6000:1787:b0:385:f7d2:7e55 with SMTP id ffacd0b85a97d-3862b355a26mr5148854f8f.19.1733575061246;
-        Sat, 07 Dec 2024 04:37:41 -0800 (PST)
-Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526b14csm124615875e9.2.2024.12.07.04.37.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 04:37:39 -0800 (PST)
-From: Dave Penkler <dpenkler@gmail.com>
-To: gregkh@linuxfoundation.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>
-Subject: [PATCH] staging: gpib: Add lower bound check for secondary address
-Date: Sat,  7 Dec 2024 13:34:10 +0100
-Message-ID: <20241207123410.28759-1-dpenkler@gmail.com>
-X-Mailer: git-send-email 2.47.1
+        d=1e100.net; s=20230601; t=1733575517; x=1734180317;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wGQkzKFSDY9TmwP9AaO3pZHfF41YjBH8/yCe8njtTKs=;
+        b=iIcWSiX7Muz42wAEwOZ/xDuMcfWO7eMkba6I0vNcE1bLZkIvM/sQnr3NlmFkAWzNg7
+         UN04PKQBSh7vnm5CV+8sNDOXIR7Z4EpegFNKY2+Tp0KyCDnY8XRwgPnnkpjyST+cI9QM
+         tFOc/bvAQZn20TgofklfMa50Z2W25jKwj7c9QFgZ11BXnL+HimJB9aTMSf8Xk9Gn6mfw
+         RFkoGe+rtdA2DXxEympyD0pb2kONf+7z8RK+BvaXnv3G+0Zf3vwWftp9B+Q1ZhrbM7sO
+         WI1tBQ6esa7K9VFd7aQK+BjyRpR3CvKvNOE4zZNcAdD1uRenopxS1xdbGDnTcKOQmknA
+         S1xg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+RTkufRxjmTgtpPBoU2BmdsXjc+OO5xGy7eGo1nl9+Y2FtDuEJ3bZD4DQSzWPrUC8PcY0NTMdxhFo8aqA274=@vger.kernel.org, AJvYcCVvPH9tqKAEkO0cj2qaQmyu+XIEO7cpbTb8A4KGe26UIpnooSLwzMcNZxD3zFQPlhyIbrt/vZYksZKlQdPM@vger.kernel.org, AJvYcCXMnEnhn7i4zsmE1ZRPHzyJJwIQXGbIop5mhxC/nyiRcf4gFiNXyifZo5NUAZTmwDpHbvdgtYs1MAW4aSZb@vger.kernel.org
+X-Gm-Message-State: AOJu0YyucdFMtO1S/92WAbvf9KDOSazLWqt9P1hNETruETx05Ni9ArA/
+	MZZjc5mUH/QYLSbj73fOG7voCeWG2+rcnU0Rch4+TpgbOC0kz/Io5qp7bgjrLhciqcDwyZHP7e6
+	s4NWE21jrIyTkcK2bxyd55eN759M=
+X-Gm-Gg: ASbGncuPZHu7u0wOyXpd5qmM7A9ta3IfxVCShRiFgiustcrGeyJ6FapJ8N7vXjECUfo
+	U3IrBOy/N9BtDS8cYUfRuPm8kvLwRfX0=
+X-Google-Smtp-Source: AGHT+IFKLT/0vBLq8e4+Q9cBsFCmjYKYarCQPpvMXUHvXes9qzmJwCAEBQoHpEZanqb6oPfHlcskXKrazzFRS2f9zhw=
+X-Received: by 2002:a17:907:9516:b0:aa6:1ee0:c111 with SMTP id
+ a640c23a62f3a-aa63a33cbf7mr437084566b.42.1733575517044; Sat, 07 Dec 2024
+ 04:45:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+ <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com> <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+ <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com> <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
+ <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com> <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
+In-Reply-To: <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
+From: Vincent Mailhol <vincent.mailhol@gmail.com>
+Date: Sat, 7 Dec 2024 21:45:05 +0900
+Message-ID: <CAMZ6RqJGqBqvgxzp5yPFY1pk0WkkwEMM34qU-dZ3kXfsnKaqEg@mail.gmail.com>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of __is_constexpr()
+To: Martin Uecker <muecker@gwdg.de>
+Cc: David Laight <David.Laight@aculab.com>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Commit 9dde4559e939 ("staging: gpib: Add GPIB common core driver")
-from Sep 18, 2024 (linux-next), leads to the following Smatch static
-checker warning:
+On Sat. 7 Dec. 2024 at 17:39, Martin Uecker <muecker@gwdg.de> wrote:
+> Am Freitag, dem 06.12.2024 um 16:26 +0900 schrieb Vincent Mailhol:
+> > > On Fri. 6 Dec. 2024 at 15:40, Martin Uecker <muecker@gwdg.de> wrote:
+> > > > > Am Freitag, dem 06.12.2024 um 02:25 +0000 schrieb David Laight:
+> > > > > > > From: Vincent Mailhol
+> > > > > > > > > Sent: 05 December 2024 15:31
 
-	drivers/staging/gpib/common/gpib_os.c:541 dvrsp()
-	warn: no lower bound on 'sad' rl='s32min-30'
+(...)
 
-The value -1 was introduced in user land to signify No secondary address
-to the driver so that a lower bound check could be added.
+> > > > > > > > > @Martin, do you agree that I remove the accreditation?
+> > >
+> > > So, do you agree to have the accreditation removed in compiler.h?
+> > > Personally, I do not mind. I am also OK to remove you from the
+> > > documentation and add you to the CREDITS file if you'd like to.
+>
+> Sorry, I somehow didn't read this part. Please do whatever you think is
+> most appropriate (but please update my email to the new above if it
+> still appears anywhere).
 
-This patch adds that check.
+OK. Then I will remove the accreditation from the  compiler.h
+documentation and instead add an entry in the CREDITS file in a
+separate patch. I think this is the most appropriate way.
 
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-staging/4efd91f3-4259-4e95-a4e0-925853b98858@stanley.mountain/
+> I find it amazing how much time the Linux kernel community spends
+> revising code to make it work perfectly.
+>
+> Still, I am wondering whether some of this time and effort should not
+> be targeted at C compilers and language work to make these macro
+> hacks unnecessary?
 
-Signed-off-by: Dave Penkler <dpenkler@gmail.com>
----
- drivers/staging/gpib/common/gpib_os.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It seems to me that the long term solution to this problem are the
+constexpr functions.
 
-diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
-index 405237d8cb47..f25e7c458581 100644
---- a/drivers/staging/gpib/common/gpib_os.c
-+++ b/drivers/staging/gpib/common/gpib_os.c
-@@ -536,7 +536,7 @@ int dvrsp(gpib_board_t *board, unsigned int pad, int sad,
- 		return -1;
- 	}
- 
--	if (pad > MAX_GPIB_PRIMARY_ADDRESS || sad > MAX_GPIB_SECONDARY_ADDRESS) {
-+	if (pad > MAX_GPIB_PRIMARY_ADDRESS || sad > MAX_GPIB_SECONDARY_ADDRESS || sad < -1) {
- 		pr_err("gpib: bad address for serial poll");
- 		return -1;
- 	}
--- 
-2.47.1
+But the core issue is that before getting this support in Linux, we
+have to wait for this to be added to the C2Y draft, then implemented
+in the compilers (probably just reusing the C++ constexpr functions)
+and finally wait maybe one more decade for the C2Y support to reach
+the kernel. For reference the kernel supports C11 only from 2022=E2=80=A6 S=
+o
+maybe we will see those in the kernel around 2037? Meanwhile, we have
+to deal with those hacks.
 
+
+Yours sincerely,
+Vincent Mailhol
 
