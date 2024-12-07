@@ -1,113 +1,102 @@
-Return-Path: <linux-kernel+bounces-436037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98EE89E804C
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:41:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B069E804F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 15:46:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575F01883804
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:41:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B942E18842BB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 14:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D92B14830A;
-	Sat,  7 Dec 2024 14:41:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424D91494B0;
+	Sat,  7 Dec 2024 14:46:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="LzgoruFX"
-Received: from out162-62-57-64.mail.qq.com (out162-62-57-64.mail.qq.com [162.62.57.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UvAHBs6i"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69493ECF;
-	Sat,  7 Dec 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6082CA6;
+	Sat,  7 Dec 2024 14:46:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733582473; cv=none; b=RBg7WHaCRuCZrnbW2IjwhS9clNlyN/O6PbY0MS1ixviKGMMKj+Vdu/tTSyz/AyxgaOAxvrycT2/8XMSYNmdO0I4t42CEDiQ0V1Ixv5T/jbQmjmoQKAU1RAo+sS1j/lPaL1e7lik1FxbK8PsJuDatYxrgpNM7v2TD/gkJmsphuQE=
+	t=1733582786; cv=none; b=SGh7Am9UdnHc5MqHZnuuarfLpWl+eRVii14ZC6fm2xKYB93ue5lCP/fbNf5kipCQidFSVQtc2inUUZDUfHklBAvYnD7uZscXiITttYNsQryz+oTbICX4lmy7XyVj35ycrXD2MN+Eh+PH8QhhEwMR0xgFhW0Tq6vRRVfHKvc1p+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733582473; c=relaxed/simple;
-	bh=VBx/TgwHauBV07LNa9AngagEudxpmCUEs+BBokNMpmE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=JAgZPfLekbRAAWSLiCbqxS/2R2oTGY+KPOJMIot9NFW9O43tcQZKLaWI4IowSJCkweEKYER5mbjlA9xN844tsSS2VBs/isnM0yTbZizLSySP8Sla5w6K5C7b1jSR9qd0ej7x2FvjoVjmS7ajvRuyEP7hphvR3PH42y7UfHLfMoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=LzgoruFX; arc=none smtp.client-ip=162.62.57.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1733582157; bh=j/ZbQl9W1wyOuJ0jHZ6jIl/gij9r9S4BpbjWGWYD/aY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=LzgoruFXvsndxpEHZ/KeUNsdyLB6Iw7kXlnX+9rqJkDpopQIhIR9xHuQk/ID+RG+9
-	 RCffBzzYpRJ0NuWaBhCm20u8wN8OEmYmDVu+9EezB7fKB5yQ679Zjn0o6BPPLieNFL
-	 iZ6G5fp5YSvb+/8ZpledxA5FInV59HP7bjK/L35E=
-Received: from jckeep-Lenovo-XiaoXinAir-14IIL-2020.bbrouter ([124.240.48.126])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 8F70F2A1; Sat, 07 Dec 2024 22:35:55 +0800
-X-QQ-mid: xmsmtpt1733582155ta6yz52i5
-Message-ID: <tencent_4237DDAC9DC29A9774F0F24D438C0ED31C05@qq.com>
-X-QQ-XMAILINFO: MgvSnRA+QZIWFa0Wq3p1t6TXosCLuFwe3R/mUkJu3pMnoKd3h13tzbxLqERM2P
-	 ZHWkZN0fu+2b6H+Ioba1sjiwIkWpgWBYTlCBk3MFK/3zUVy+vkbJP+Jd+y4SQhMkvelV1byz1c6J
-	 caLAlYvbdXu1GYjskGo0gynJ0RM11iV96wVCoSa/xBQLnGEDDnYHhMa3Bf21isJ5AzKqnUSZqLlM
-	 9rQOGHswIJScvx0fEeVrBqBAhvv7o4rVPMx7G9OSkw3pZbBV1DrK+V+oj67Teg5c/d8AKdHOPhAn
-	 Iim4kTvoymm1BfUzz9ZhGwhPbUXuOAaIMopq+MPq3gTHYM2rWK5sK5po7mNq415mllEK1kV1RFeg
-	 oWMoZT9whsj7+DjcaWoJ2D4SD8LsalB1K0024U97/FM5mBMYCGP8U0WzniaVc+w5gF4N6wGxpIn9
-	 EiOREihvpDNlnFg5v+BMyBFIXWASj0N5eLHH5NtGF1+f5n4YQODz63V7LKG/EoGPKglyVyBAwW90
-	 PyVWTL9pqXXKM0Emhr2Pty8hw02hdu/y+mQAhOOTZX4yJNYJlhZOla0WNYWOHGWCwaMKv7Nai7vo
-	 aQ10YXKwL3dNzw/SMrJA6LSClOHZXL6eQvex/+UsTJNEXaoVFOH46m45JJDrhvTt6GZ+6yx+QPgq
-	 v7Y81cxSSMcTlIiFoJofdpDelI9Ul0ujrxAYo0FKpIB9FotaJ5SZ/tUqWW3e1tPlZyb6/m9B0uB5
-	 cIwPVhavYDdRbTnC3mJ932Y9/EW1NZU8AsLlEGQEvsxErh3afR1qYPqZjxQ8LP/bYcUfuQGVkZLW
-	 E8zM7p+N1PJnh/b7wnZs2k2H8rBRUYqZbrpL9QYXFNUfNqVBjkkNPP9R2ZpcuA1uHsT2hp2dy5Cr
-	 5/VYPlp5lRCV0A0Tuy4QGONMfLa0cxdWjtPpusf4CyxFPafAsor+OfyqbyLZ1sp22BREx0pdrfug
-	 8F2Tj/8vy9cvdrfLBB8w==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-From: Guangbo Cui <2407018371@qq.com>
-To: a.hindborg@kernel.org
-Cc: alex.gaynor@gmail.com,
-	aliceryhl@google.com,
-	anna-maria@linutronix.de,
-	benno.lossin@proton.me,
-	bjorn3_gh@protonmail.com,
-	boqun.feng@gmail.com,
-	dakr@kernel.org,
-	frederic@kernel.org,
-	gary@garyguo.net,
-	linux-kernel@vger.kernel.org,
-	lyude@redhat.com,
-	ojeda@kernel.org,
-	rust-for-linux@vger.kernel.org,
-	tglx@linutronix.de,
-	tmgross@umich.edu
-Subject: Re: [PATCH v4 02/14] rust: hrtimer: introduce hrtimer support
-Date: Sat,  7 Dec 2024 22:35:54 +0800
-X-OQ-MSGID: <20241207143554.899948-1-2407018371@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241206-hrtimer-v3-v6-12-rc2-v4-2-6cb8c3673682@kernel.org>
-References: <20241206-hrtimer-v3-v6-12-rc2-v4-2-6cb8c3673682@kernel.org>
+	s=arc-20240116; t=1733582786; c=relaxed/simple;
+	bh=JrW/F2czD0j3SAFMSsWsnfxsb/gzYrG6taqhPvTMf00=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mh5MyBHn1J/8Fhoss3Oc/r6nmucwUOmJI0tZx7enLinfd4Ny/BSj1Oo3rT0/27FF4USZmLInoqcf5llOOARQNjh0z5+PybrhFg3YUEW9TqWSzv7J5SHDaEXqaPPhEQ6k9W+m2M2w8Uv6SzSrtvoVxAV1i+Qb3DWXTCGKgUvdH9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UvAHBs6i; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733582785; x=1765118785;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JrW/F2czD0j3SAFMSsWsnfxsb/gzYrG6taqhPvTMf00=;
+  b=UvAHBs6ixyIII/ocz5P3tAg8+z0tgo+LQBw892WnTnCEG0gs6v8jreKO
+   TsVWeL6jDLd+y0xFonKQRd1Cz+VW4kp2X4CqnGEnyVgF8JAZjtJIbQGCO
+   ExsQ9f2DyrnffbQEqFgStv4dHFgwIc2irC/yqRpX5i8mjcoY1BFzc5LgL
+   72T1ueD/3j11vnZKJUUJUcze5eYY4neBALVvqIl0sO5HmEATk30N06Qpj
+   wxAwUwb2PQ4OexkLU1GgA2vistUUWHaAa3T9foFp2UYosAFSUhIM+AMkc
+   cYz5LjSP7PvvRfzO4Sk2Pkz7DoF4oXQwj0PRPpmELyhwGn5GaAclGh5yt
+   Q==;
+X-CSE-ConnectionGUID: Arq29U96SWSnNoelsC31qQ==
+X-CSE-MsgGUID: x4cFTnY/S4+8e/yRRP5Irw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11279"; a="33812920"
+X-IronPort-AV: E=Sophos;i="6.12,216,1728975600"; 
+   d="scan'208";a="33812920"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2024 06:46:24 -0800
+X-CSE-ConnectionGUID: M+MFbYbRQpye6TweuzoGag==
+X-CSE-MsgGUID: w87wJ9PsSbCKxDaNYcDcLw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,216,1728975600"; 
+   d="scan'208";a="95144361"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2024 06:46:21 -0800
+Date: Sat, 7 Dec 2024 16:46:18 +0200
+From: Raag Jadav <raag.jadav@intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	gregkh@linuxfoundation.org
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	mika.westerberg@linux.intel.com, dmitry.torokhov@gmail.com,
+	broonie@kernel.org, pierre-louis.bossart@linux.dev,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH v2 0/6] Introduce devm_kmemdup_array() helper
+Message-ID: <Z1Rfuo3jq7rO0cqb@black.fi.intel.com>
+References: <20241126172240.6044-1-raag.jadav@intel.com>
+ <CACRpkdZqdE8gQCre=zR2cN17oKfwBSnWuVwzQsbRO7-ENVnPNg@mail.gmail.com>
+ <Z0nNnsmYIil0OZpy@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z0nNnsmYIil0OZpy@smile.fi.intel.com>
 
-> +#[macro_export]
-> +macro_rules! impl_has_timer {
-> +    (
-> +        impl$({$($generics:tt)*})?
-> +            HasTimer<$timer_type:ty>
-> +            for $self:ty
-> +        { self.$field:ident }
-> +        $($rest:tt)*
-> +    ) => {
-> +        // SAFETY: This implementation of `raw_get_timer` only compiles if the
-> +        // field has the right type.
-> +        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasTimer<$timer_type> for $self {
-> +            const OFFSET: usize = ::core::mem::offset_of!(Self, $field) as usize;
-> +
-> +            #[inline]
-> +            unsafe fn raw_get_timer(ptr: *const Self) ->
-> +                *const $crate::::time::hrtimer::Timer<$timer_type>
+On Fri, Nov 29, 2024 at 04:20:14PM +0200, Andy Shevchenko wrote:
+> On Fri, Nov 29, 2024 at 11:17:02AM +0100, Linus Walleij wrote:
+> > On Tue, Nov 26, 2024 at 6:22 PM Raag Jadav <raag.jadav@intel.com> wrote:
+> > 
+> > > This series introduces a more robust and cleaner devm_kmemdup_array()
+> > > helper and uses it across drivers.
+> > 
+> > For the series:
+> > Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> > 
+> > It seems like Andy will push it to me which is excellent.
+> 
+> Yep, that's the plan after we get all necessary ACKs.
 
-Hi Andreas, an extra `::` here.
+Greg, anything I can do to move this forward?
 
-Best regards,
-Guangbo Cui
-
+Raag
 
