@@ -1,127 +1,126 @@
-Return-Path: <linux-kernel+bounces-436012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED12D9E7FE1
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:33:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F0DB9E7FE3
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 13:37:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05ABE2821D3
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:32:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B8631884551
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 12:37:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C80E142903;
-	Sat,  7 Dec 2024 12:32:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9B3146A6C;
+	Sat,  7 Dec 2024 12:37:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ekSiNk2O"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FyYEtqsP"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9389B13DDB9
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 12:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DBAF4E1CA
+	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 12:37:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733574762; cv=none; b=mrK5zRw+bkiB66EI+ONXOm7vvaiWefuHDW6JUXMeLb9QfXGtZKIWvkEDKSNyaYWOBAVFBkjqZFd0GMlicuMbkSQuUlr+FEza/8fpTBIpmg1UQb03Arcun1/vKrxS7N7RgPWauu4XzfCE3Qpnu1tdh8w186B0Rdv9FYC+IeZz7aw=
+	t=1733575064; cv=none; b=rU56QPaSW7dvlSHVW5A02a04IglnbdXdJBM4VdPLiE9rzjExP2Ppjd1HrFpuZXvTYgNXXtxHTJS2O5/gO9W8xulAlhKYMya0s/1L4AGL45jSOwNjY8L7HgbhbrJW+rm6C66gYFo1TXDWEr5PrArY9ZnnjzhhPJOuxRlUZTVfyTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733574762; c=relaxed/simple;
-	bh=azUX6QjhKkZXkY6xijKfOhHqxkK6wJmGsZLPCnqm44c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RrBSU/VE0FqT4+RA+138douzV2hqWbH7yxKqDVyCi/qiA2y+8TGrlarkr7ojX7a0/bOh1UVnrKTbqOBMDrT8p5Na3j0LZDLc67ZbX1KtBszIgBW8uViwzlDBGv7UFHAdMBMicUbiEa1ifMDEqeEeaxm5kfGJAbBQXRuajor3PhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ekSiNk2O; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B79p2tK013881
-	for <linux-kernel@vger.kernel.org>; Sat, 7 Dec 2024 12:32:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M92CAdkic6Iwv4reDSMoGjp/K6oYfQp/wrqMiHWSzvI=; b=ekSiNk2Ox6mo4Y81
-	3mzkonUlxfEJAYcBwP0h9jYedTY0ks7CLKOEhnK97G6vEEFOS9kvnyc7NndAdwRN
-	neTR34x8dM4CXeZpCkiM8YhgXDxUKGW2ZO+S+8i2oPJwZgXWSK8SL3qTR2JePIWC
-	hiMRGZ9BlO8FSDc/UdivcLvaIxD0wqwkU059Yyb2OFALVJFZaIa+GiZ+DnGBq9nh
-	kcvMQf6fQSZdl3+nEZxyGMPniKVhJkJVjlyXZv+yssKLaqcA+E6tP1R2LtyymY7m
-	S0xNw6eI2QP/zWeE7RaP0t3bf/5j4vjDzoGJCETb6AyDibZokVPDLOzwFMTqIi+z
-	YVglTw==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetgmey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 12:32:39 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-6d880eea0a1so8035396d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 04:32:39 -0800 (PST)
+	s=arc-20240116; t=1733575064; c=relaxed/simple;
+	bh=gAx2GsIKUg/y/jNLoObi1Q9vAfzx51AqCld5wFLpLaA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dPvqEl3ekCQBczgrj3PVLM587lnSFWxkrmKnnAvgmYLh0UuH2nvh144OhGr2x1XHQaZcyEBwXVEkQf83ki0M5SqkTpSMDqLqWiCxHOAS1M76td3ooJgDF0VVLu3oe/nG1blLenTrcdEYNsjA0lfVgS18UGGAwvE8foLOSadKr+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FyYEtqsP; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38632b8ae71so613157f8f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 04:37:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733575061; x=1734179861; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jmtD4L1/SX4Fv/KBhC5LSYN3L3RfR4TRHNghsMrCU4w=;
+        b=FyYEtqsPu82C04ApW1p2gJ3PhSd+LDXS4WEqxEU67IydRmxmqWStpILQJ6iQ+T5NB7
+         cTsoGtNg4To/UVIrGK3ABGV4h7KxRRY/cbwbVzjr0SW5wfy6JePzupJINytKrKGdNanK
+         SNCKgYL6Kcjm2YdLTaskomF9PvGdieIMABKtXq7b/BOk3KI35UlJv8JFP1iWwisTvxgm
+         tFKjAzIHvMJz9emPddovrCu1EoqLfBbn8AHEd/jozKeO6im6QPNjG/CkGFhB+QiPdu7K
+         rKpSXf3Wf+s4PVpURT/HxheEeiDp0AqYH4iq2Vtxcvz/eCHYc5UYkiYm4noJEyd7hUyP
+         DoKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733574758; x=1734179558;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=M92CAdkic6Iwv4reDSMoGjp/K6oYfQp/wrqMiHWSzvI=;
-        b=Ipi6oU5dxaYDAq1v3RxVBJgfi7dd6YrlhU9Oks2GQyhI5BubVVekBvUQhLXoWF7s5G
-         JEvbEKBY1kmKY2f5407BwOOA4+biylFHPDrTqJeJlHv8Omt/bzbivEsq0Vc+ztXRYof7
-         Jb4pDB3kLGQB/JOM4la48YHL+IgZD3Bd42DAu/vECCtzIOzWbaIf5+enSBO6kGZ5KJn+
-         23RNMgx36XtA8PCZtu/SV0sPbQ8y78Px9jDvtsVEE8Z+l9ILGtB3JjsraVGIdGnbwNnm
-         4gDEL8e4DyH753j6nRGHJzhNRHSkvDo0v6do6L7zamF0xwWErbqCfn3GdH5P3B/gHTk2
-         QyvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUlS2ho47NsBF4IhfTFicSHRIzM78C0UCdL5xrLmHVwFECYMJ3EI+jJHUAkI9xfhlxGFcHN5ky1vs/TkKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrLB94l+M8n7vqO/vt//eWHZ5tM5bN/2HhS8DW3wLpur+Ldw1i
-	IqRQaqeLZkUQC2/PuyL/rm6vBFm9fqJzbKT2F92Gq48ca+1Bu5nyUXa6H9dyjcYkRh44Fp3+5Ns
-	5FppuxtIL4Ewwx3bOc4nk8teME3odbXrvAiXGSwKt6SvQfMUXHVUCBLUGLOi12GDAKHAEsXg=
-X-Gm-Gg: ASbGncuI+R+JNu3TdJ+0mc0ZpYAxoECtZvPF9wecZ2MU9UalK9zXMKA5Bgrl/sAuCYA
-	pHZz6UckPNVDDL3mqYh4xpvC9MBupRv7vEYeh8GTT+CVU76B9XoZ03JwkIgqmqSPEy5HsBOKQy/
-	8KJoQH4UN04pl0dd0R76+SkvrlMNxztkMFSRLkB0Bfl5uD31imBJA1dtXCYZMCbFTxEoOUJK6s5
-	TNbg6hCFHE38nj4pyg06Al65JSBxe2FQ69DMsda9hY2qyGTeD9HcJht2VeB/xIVIJLRSOOlkGWq
-	KHlYLK9y5pqCYlrDwxG+tGwlB6eQ4CE=
-X-Received: by 2002:a05:622a:1106:b0:458:21b2:4905 with SMTP id d75a77b69052e-46734e23e91mr47843401cf.15.1733574758470;
-        Sat, 07 Dec 2024 04:32:38 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH3wWXdprg/kZHC+CBFAeMYZnaaMhc8iBKhfLMgGFCoCHZ6CdKvwoIOqu1ehiQUHy2+VrE+Xg==
-X-Received: by 2002:a05:622a:1106:b0:458:21b2:4905 with SMTP id d75a77b69052e-46734e23e91mr47843151cf.15.1733574758072;
-        Sat, 07 Dec 2024 04:32:38 -0800 (PST)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62602cf52sm374919366b.115.2024.12.07.04.32.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 07 Dec 2024 04:32:37 -0800 (PST)
-Message-ID: <05e15b8e-d7b5-4af0-a811-4222bce0f99f@oss.qualcomm.com>
-Date: Sat, 7 Dec 2024 13:32:35 +0100
+        d=1e100.net; s=20230601; t=1733575061; x=1734179861;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jmtD4L1/SX4Fv/KBhC5LSYN3L3RfR4TRHNghsMrCU4w=;
+        b=hfjGvrn8BmAaakd4S4VdauB2TcfX1b3NXRZM2OHU316gwQzgeHuEhaz882uwiz5HWt
+         HuwJZiWeaJnb0h/t4aFnhy9Y6D6h8bwt2w/ZZwstpaXR7wCvKKJC8LdH91AvM+wLyPy1
+         2EbfWEYyFPOLtyne9c9VkhJLc2bEC5+4NwK2SU13hf4QXD0D9EgSEyhttpsRFlSKNdDa
+         qlzCenFfrd85iuOQzRFXpYIyPL/1CPNq4isGeW7mKRAneYR+16Ao0h5XTrJRUkDeJLOf
+         Tzrbcz6olxy/MZFejcFIv4hD+90x1XVrFQBwEC1c+dzuGGrQ/TmuIMwbs8oOs+K2gwJ2
+         SI4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXJQh50j6fuRKQT13dURbxIabKZ9dtaOyD94820tYFqL0RVhNJlDmpm7xREG7M+ig1hneTTvsbSyUUWORI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPRH+v18tlrJvxBR9Xacp3JE4cAh4PnqlUDjrmPZ62shyVlwMw
+	PG5AA5fiYdYWay0ZCTN/a/Oh0Gg21d63I6FDyAHCkly5xk4IHHjQ
+X-Gm-Gg: ASbGncsCp2S/tGJJeAL5pjFcX8Eb/djFTD7nyZ+ugtgzN1bZdmYD4SXnaQ8m7KE0adv
+	DDFv9U10MK4RhOB9RK1g98eO59ivCkzcp4qDO1qvknF2Dfrd9EQLQE/wfnwiSaQg7STnmPo44MK
+	QNQD+NbVTiqYGfSeyaTsJuwsWLKdPQfF5g9m4b3M9lsq7P60HT2pquzMHFfPG3k+VtaxtXz95nZ
+	609fp08XOxVH9FYIUSkhxK08croIr7MIjJTDk5h7BgqwwYTce8Zg8pLpvZ/Bl3pD70PBEY9z12w
+	C550Mk98qg==
+X-Google-Smtp-Source: AGHT+IF4kmrsXWCslu/q1LRta0lEfN+z67D6i2YlSKQPoUjkULf74sFamCgkUBJV+DRNNtozWYE/6A==
+X-Received: by 2002:a05:6000:1787:b0:385:f7d2:7e55 with SMTP id ffacd0b85a97d-3862b355a26mr5148854f8f.19.1733575061246;
+        Sat, 07 Dec 2024 04:37:41 -0800 (PST)
+Received: from localhost.localdomain (82-64-73-52.subs.proxad.net. [82.64.73.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d526b14csm124615875e9.2.2024.12.07.04.37.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 07 Dec 2024 04:37:39 -0800 (PST)
+From: Dave Penkler <dpenkler@gmail.com>
+To: gregkh@linuxfoundation.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: Dave Penkler <dpenkler@gmail.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Subject: [PATCH] staging: gpib: Add lower bound check for secondary address
+Date: Sat,  7 Dec 2024 13:34:10 +0100
+Message-ID: <20241207123410.28759-1-dpenkler@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] arm64: dts: qcom: ipq5424: Add watchdog node
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, wim@linux-watchdog.org,
-        linux@roeck-us.net, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        quic_rjendra@quicinc.com, linux-arm-msm@vger.kernel.org,
-        linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: quic_srichara@quicinc.com, quic_varada@quicinc.com
-References: <20241120055248.657813-1-quic_mmanikan@quicinc.com>
- <20241120055248.657813-3-quic_mmanikan@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241120055248.657813-3-quic_mmanikan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 1g-XHGJSmFqYQ0uShJcJR_oVcAipaHu0
-X-Proofpoint-ORIG-GUID: 1g-XHGJSmFqYQ0uShJcJR_oVcAipaHu0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=859
- bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412070105
+Content-Transfer-Encoding: 8bit
 
-On 20.11.2024 6:52 AM, Manikanta Mylavarapu wrote:
-> Add the watchdog node for IPQ5424 SoC.
-> 
-> Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-> ---
+Commit 9dde4559e939 ("staging: gpib: Add GPIB common core driver")
+from Sep 18, 2024 (linux-next), leads to the following Smatch static
+checker warning:
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+	drivers/staging/gpib/common/gpib_os.c:541 dvrsp()
+	warn: no lower bound on 'sad' rl='s32min-30'
 
-Konrad
+The value -1 was introduced in user land to signify No secondary address
+to the driver so that a lower bound check could be added.
+
+This patch adds that check.
+
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-staging/4efd91f3-4259-4e95-a4e0-925853b98858@stanley.mountain/
+
+Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+---
+ drivers/staging/gpib/common/gpib_os.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/staging/gpib/common/gpib_os.c b/drivers/staging/gpib/common/gpib_os.c
+index 405237d8cb47..f25e7c458581 100644
+--- a/drivers/staging/gpib/common/gpib_os.c
++++ b/drivers/staging/gpib/common/gpib_os.c
+@@ -536,7 +536,7 @@ int dvrsp(gpib_board_t *board, unsigned int pad, int sad,
+ 		return -1;
+ 	}
+ 
+-	if (pad > MAX_GPIB_PRIMARY_ADDRESS || sad > MAX_GPIB_SECONDARY_ADDRESS) {
++	if (pad > MAX_GPIB_PRIMARY_ADDRESS || sad > MAX_GPIB_SECONDARY_ADDRESS || sad < -1) {
+ 		pr_err("gpib: bad address for serial poll");
+ 		return -1;
+ 	}
+-- 
+2.47.1
 
 
