@@ -1,128 +1,171 @@
-Return-Path: <linux-kernel+bounces-435903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9C29E7E6E
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:52:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 338119E7E70
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 06:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1CF7116D0E2
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:52:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22CDF18878D9
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 05:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 780B95FB8D;
-	Sat,  7 Dec 2024 05:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62E1375809;
+	Sat,  7 Dec 2024 05:52:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ih3D2Gpv"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GszL8tvW"
+Received: from mail-pg1-f195.google.com (mail-pg1-f195.google.com [209.85.215.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9151A270
-	for <linux-kernel@vger.kernel.org>; Sat,  7 Dec 2024 05:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A1B1A270;
+	Sat,  7 Dec 2024 05:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733550735; cv=none; b=fNs+4prnQkcsvguWT4Tum02GvaJpOF6Hm8aCKIm/iL1N8wD7CMkRGN9qY8QR+LxQbdeITpt3rypX0ykl9tKITiPBVhMYREBAqBiaxmv0I42+0SqHfcUnRz5Ytg49P5pTPt/9C72UOJyCT7czZR4vkIwc4qSX0LXpMl6Kmroowqk=
+	t=1733550741; cv=none; b=boGDtk08rDIR5s3l+tIO4EdxXbRU1lBaLpI+X/6g2e5DSGudZIyUFtHv3bwtA60bbCGZo9hvBUQVIZBZtVUPd8WNb9hQ+sp1/vnInHVJARas0pxfwRpjB/3czvW8Gr8k4c3rhfiPJUiShN//LLmR+knBy4u5CUScQFnq+lzkT/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733550735; c=relaxed/simple;
-	bh=0FM9srz/QgrdixQmzQvfRg/ckQemKOXP7hM6wSYyw5k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tXM+TumKbunYRBcD08K4D09Xh/75MF11muYoU6GFYIjHTAwVNC0W3985S2CNx43ZSgKVqIhXozulAwLzT/QyoqI7VfI7r++/G4SS7QZR9IwUUNCWPFQARCWf9rYcKDCc54KsL75e+OrCK+LY0AX1Oh59sRNEAr4LyTeU4b9skEY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ih3D2Gpv; arc=none smtp.client-ip=209.85.216.49
+	s=arc-20240116; t=1733550741; c=relaxed/simple;
+	bh=aqDCM0KsocK2et+w7xx3eEN9UJyf4EVPP5BSEH8TBtM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qqpPsuPlXGni/CxjCBUieYEP7VyoiyAdwaL28FFraE+YFgig3sQFTNORvPWKH5jzC9fbzqm33fYBtbvPv4fvW7LHuLQF22/3fCbIZa36+LNJZZw/OkDIdZgDeLYC52ipflfzppXuqbb6NpQ0CBymd4/lgxogM1iIVhUMYUGjKys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GszL8tvW; arc=none smtp.client-ip=209.85.215.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ee8e8e29f6so2179229a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 06 Dec 2024 21:52:14 -0800 (PST)
+Received: by mail-pg1-f195.google.com with SMTP id 41be03b00d2f7-7f71f2b1370so1834796a12.1;
+        Fri, 06 Dec 2024 21:52:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733550734; x=1734155534; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0FM9srz/QgrdixQmzQvfRg/ckQemKOXP7hM6wSYyw5k=;
-        b=Ih3D2Gpvve215g+RHUQ+v0oHpN/f6WvTu8mvhK7VYLmexU4NSZ2Kw4qRQcTsiPeOW7
-         vY0+OFzUhrc0lJMgEPGfrBZ9KS0nvUXnl6SDZs+QJ16ywtw7hmWvaJwlpN73yjUj6gQc
-         KLaRNDGu1hOWKUiyv7pKnhDrGX9w8e6hQbRhJS6JX7PR0rtlAXoGPqslqVfEuvdr315C
-         BvZNIah6Q9KUXJWrFdhwf2alozufTeAUwvTh9dwPmYj3YPUQCyvQ6Mn3Crwvou/wISH0
-         MjECdh8EwK413pgbjl30KkrJtHquZyB/ZkQEvZJRUBYGK8i89eJjvj4suhPlYivXOacz
-         bQxw==
+        d=gmail.com; s=20230601; t=1733550738; x=1734155538; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mJgh6HZ29MQRitMQg2IixJr8vYmFNlOQ56zSD16GOxk=;
+        b=GszL8tvWAG3J4O/2q1thXAwZgZqzLIn6eMt7yYlIc5Z7PmuIIf8XNi9aPrjSiHa3V0
+         euMjqxpoUi+NYExJeYGxbdtY+tFfm1zIN3r0aiRqXtlbCx5sGMbMBrTla0mzZ2X5at1H
+         GQZ997v+X0QEK9mp0lOuW0iackuSVg6ESDkyokEQi8HTLZQJBFXn2qg7zG2tUvLfMOV8
+         UxRbMoKIFIVURPA2u/ekZGEvG11L9hRqfz4P5gvbwZrzYm+Pht5sMw/rBesZw3VKi5vV
+         OXoiZVM9WnD7ldwYT2cRXJo2sGUbSixkaFgX9jKgakuy4W9aLF9XVdpDuEECOvwG7Pim
+         y6Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733550734; x=1734155534;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0FM9srz/QgrdixQmzQvfRg/ckQemKOXP7hM6wSYyw5k=;
-        b=iSieRCa5mAUmM1ALYimgTGuiy72wUHILoJrum0r3LCCm/OPo6RpjXmarB50/VXFVtl
-         3W+Zp1dfn37NEv8nl9QwyyotemeMD39A5Fy2hiIyvkcvtx70bL+yTS7HU2NnnKTM2A1m
-         74cQT3ixJUeRadfTWPryV74zFPccxeYIPUUnIf1c135/vJSZyiRMvD6mDywK9a9pK8EO
-         6MitFsfjVHhUTa5aRQjbKD+dTLFplObEx62/7X2WaWKT88a+NW/AZZHnmBAxRNOJudDu
-         9bBnQae7zLhSxVFxJNfA3Ugx5jr/S9bIO1sujpMcQKAb+EluhDqiGVuldWDCvyMZ93tM
-         cDpw==
-X-Gm-Message-State: AOJu0YzB638zuSMQpFtAEkanOHhVmv5wAG5LJb1qQzbKNpe0vVDxXlmd
-	MtKjTD62CM8MpqH23UGdVdORr0IuvSY9c8s3f5AfaFrZxUtONGn0
-X-Gm-Gg: ASbGncvqAw94Gtg8jfnOF0lMbfIGWhMz5KRztP39w2whHAXQYFltfT0sMt4Jelneash
-	+sXmNuvzxsfT4Nu/QpCEgFC8Js/xGb4rEEEBkepxiYJDSOl1Li7aMFKdQeT9fkRvpPujwe/mUvo
-	+I968u6hlUMLQ5sJx133y4lUFgZm8auivClLWdLozzawRExUVNNSQ4ntZF/UjlDWRLDedXQEus7
-	lYuVYiMdUXNv6ZJfb503CCwMW9+LwIcFWL8FW4ry+VTs8yhPw==
-X-Google-Smtp-Source: AGHT+IHwQ6WOOnaN6G7vBY90oGbLgh/9U7n18PbMAmQ9jBl1NozBNwfcNOU4u/ki/etqkxFDgxn3zg==
-X-Received: by 2002:a17:90b:3a48:b0:2ee:c9d8:d01a with SMTP id 98e67ed59e1d1-2ef69e12847mr8511268a91.11.1733550733536;
-        Fri, 06 Dec 2024 21:52:13 -0800 (PST)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef27078b03sm6530425a91.38.2024.12.06.21.52.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 21:52:12 -0800 (PST)
-Received: by archie.me (Postfix, from userid 1000)
-	id 1A3414630038; Sat, 07 Dec 2024 12:52:06 +0700 (WIB)
-Date: Sat, 7 Dec 2024 12:52:05 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Charlie Jenkins <charlie@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Cc: linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] MAINTAINERS: Remove Albert Ou from riscv
-Message-ID: <Z1PihReuTF3Gx5K6@archie.me>
-References: <20241205-remove_albert-v1-1-17eb850f1540@rivosinc.com>
+        d=1e100.net; s=20230601; t=1733550738; x=1734155538;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mJgh6HZ29MQRitMQg2IixJr8vYmFNlOQ56zSD16GOxk=;
+        b=BtJBhZQJ1Id+OW3Df9cT1ABNq1U5GcPd5NST9zV0WVqgL842BLiX6i3hpu3Ao4co1W
+         eLjw6eTJsSJnafUXMhYIy8b0WLju6lbDv5+UBq1R4VEI7YVUO/06WYcto4CqGobdnoCY
+         OH0W+zYvbjdI3yrNpdxMDGAQRzEYyMbLquWFCSIH83TIvQdYksq1oDDpOyyjogjjUz5D
+         DLqC7JajNwbCDuRebqn4quAuVcQBRKuOUglqzUFKBwXQkNNfL5FODSYlfN2urtLIyeRj
+         5Ll/fxOAA4yro7x8ICNARAj5EvIvaCtbIlp6oNoPIq8O9y6U9Lf9xDC2objlcOVH//aD
+         +POg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMrPGaLKX/aBW+1aI2gyDMgONJOx1zPLx5fMsobm8+H9afjD0MJHAjpjVxZ5Gno6SdkUO/c+gz/pEiGdo=@vger.kernel.org, AJvYcCXIt9yF/5Zc4wM9Fzi4Dmch/2wUCI3ZsChYwW9DPJY42/z+xCkzBm8YqO14I+4DaKBGPhvn2zUp@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdmAU6UhRWOAD+Jr7ZQxnj37spX046sSjqob0OspssiUjHG3ym
+	BYfjwMvM/NzeQjP8tbJBXVxOxE51ITibjdu6JhmHg8EVB40cRdOi
+X-Gm-Gg: ASbGncsuV81fTNE2VvMAfVINXMoa/1wQLa48+DxfvzI7UV6T3gM/X+Q7aGsP4Rr1Vqa
+	dsIRv9Gf8ekl7Sffjv7traHaGFXNm8ERwIbBMTBHrwH+ryvN4xyUZpnu/mv95um66ZjEJ4MhrE2
+	dAk00Jc4FNE/gA4BK+0Byw5V1leC6/m5sy+T82rZgrAuykLyb17kIW48S+b5KjJXYdcTEfUr87L
+	1TMrZDk0ctgLwFTQ5b2CwocMGszZc8f5LME9b6KXWdj8PgPPGhIADJBVHjeG7YoR6x0+DawEKMD
+	SzEGlRazndoSXe4co/gcG5XO2MsKZLkDqbqjwg==
+X-Google-Smtp-Source: AGHT+IEZwNvdgEXpe5iTA98ZGxPdI4RrVKAOyDuL03IRKSXh5VOdXTUzoNWf8W7H7pG+xSFjVjvRWQ==
+X-Received: by 2002:a05:6a21:890d:b0:1e0:d229:253 with SMTP id adf61e73a8af0-1e18711a4c9mr8352029637.32.1733550738486;
+        Fri, 06 Dec 2024 21:52:18 -0800 (PST)
+Received: from ?IPV6:2409:8a55:301b:e120:2dd9:b3de:f5f4:bfdf? ([2409:8a55:301b:e120:2dd9:b3de:f5f4:bfdf])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29ebdacsm3832507b3a.74.2024.12.06.21.52.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 06 Dec 2024 21:52:18 -0800 (PST)
+Message-ID: <87a40a3f-1f96-4a21-a546-f057e78bd44f@gmail.com>
+Date: Sat, 7 Dec 2024 13:52:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="iLNBBf4HmemCN1hw"
-Content-Disposition: inline
-In-Reply-To: <20241205-remove_albert-v1-1-17eb850f1540@rivosinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v4 1/3] page_pool: fix timing for checking and
+ disabling napi_local
+To: Jakub Kicinski <kuba@kernel.org>, Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, pabeni@redhat.com, liuyonglong@huawei.com,
+ fanghaiqing@huawei.com, zhangkun09@huawei.com,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+ Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ David Wei <dw@davidwei.uk>, Shailend Chand <shailend@google.com>,
+ Michael Chan <michael.chan@broadcom.com>
+References: <20241120103456.396577-1-linyunsheng@huawei.com>
+ <20241120103456.396577-2-linyunsheng@huawei.com>
+ <20241202184954.3a4095e3@kernel.org>
+ <e053e75a-bde1-4e69-9a8d-d1f54be06bdb@huawei.com>
+ <20241204172846.5b360d32@kernel.org>
+ <70aefeb1-6a78-494c-9d5b-e03696948d11@huawei.com>
+ <20241205164233.64512141@kernel.org>
+ <c2b306af-4817-4169-814b-adbf25803919@huawei.com>
+ <20241206080943.32da477c@kernel.org>
+Content-Language: en-US
+From: Yunsheng Lin <yunshenglin0825@gmail.com>
+In-Reply-To: <20241206080943.32da477c@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 12/7/2024 12:09 AM, Jakub Kicinski wrote:
 
---iLNBBf4HmemCN1hw
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-On Thu, Dec 05, 2024 at 02:46:19PM -0800, Charlie Jenkins wrote:
-> Albert is not an active maintainer and his inbox rejects all emails.
-> Remove him from the maintainer's list to put an end to everybody who
-> interacts with the riscv linux mailing list from getting spammed with
-> rejection emails.
+>>
+>> It seems the napi_disable() is called before netdev_rx_queue_restart()
+>> and napi_enable() and ____napi_schedule() are called after
+>> netdev_rx_queue_restart() as there is no napi API called in the
+>> implementation of 'netdev_queue_mgmt_ops' for bnxt driver?
+>>
+>> If yes, napi->list_owner is set to -1 before step 1 and only set to
+>> a valid cpu in step 6 as below:
+>> 1. napi_disable()
+>> 2. allocate new queue memory & create new page_pool.
+>> 3. stop old rx queue.
+>> 4. start new rx queue with new page_pool.
+>> 5. free old queue memory + destroy old page_pool.
+>> 6. napi_enable() & ____napi_schedule()
+>>
+>> And there are at least three flows involved here:
+>> flow 1: calling napi_complete_done() and set napi->list_owner to -1.
+>> flow 2: calling netdev_rx_queue_restart().
+>> flow 3: calling skb_defer_free_flush() with the page belonging to the old
+>>         page_pool.
+>>
+>> The only case of page_pool_napi_local() returning true in flow 3 I can
+>> think of is that flow 1 and flow 3 might need to be called in the softirq
+>> of the same CPU and flow 3 might need to be called before flow 1.
+>>
+>> It seems impossible that page_pool_napi_local() will return true between
+>> step 1 and step 6 as updated napi->list_owner is always seen by flow 3
+>> when they are both called in the softirq context of the same CPU or
+>> napi->list_owner != CPU that calling flow 3, which seems like an implicit
+>> assumption for the case of napi scheduling between different cpus too.
+>>
+>> And old page_pool is destroyed in step 5, I am not sure if it is necessary
+>> to call page_pool_disable_direct_recycling() in step 3 if page_pool_destroy()
+>> already have the synchronize_rcu() in step 5 before enabling napi.
+>>
+>> If not, maybe I am missing something here.
+> 
+> Yes, I believe you got the steps 5 and 6 backwards.
 
-I didn't get bounce message on my spam folder when sending to Albert,
-though.
+Maybe, but I am not sure how is it possible that step 6 is called before
+step 5 yet.
+As it seems two drivers implement 'netdev_queue_mgmt_ops' now and
+only bnxt calls page_pool_disable_direct_recycling(), and its
+implementation doesn't call napi related API, see bnxt_queue_mgmt_ops:
+https://elixir.bootlin.com/linux/v6.13-rc1/source/drivers/net/ethernet/broadcom/bnxt/bnxt.c#L15539
 
-BTW, have you contact him off-band, confirming that he no longer wants
-to maintain?
+And netdev_rx_queue_restart() seems to call the above ops without
+calling any napi related API:
+https://elixir.bootlin.com/linux/v6.12.3/source/net/core/netdev_rx_queue.c#L9
 
-Thanks.
+The napi related API seems to be only called in bnxt_open_nic() and
+bnxt_close_nic() in bnxt driver, and they don't seems to be related
+directly to the queue_mgmt_ops.
 
---=20
-An old man doll... just what I always wanted! - Clara
-
---iLNBBf4HmemCN1hw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ1PibwAKCRD2uYlJVVFO
-o+5oAP4jYdfVjpvxdgksoGfeT21R8gMOOMDkjQeSkhvQSPAEaAD/Zv2ZnBe5vKSo
-xaXWuaFtE7t4dnTEl6popwfQ6KhkBgM=
-=bC26
------END PGP SIGNATURE-----
-
---iLNBBf4HmemCN1hw--
++cc relevant author and maintainer to see if there is some clarifying
+from them as I am not really similar with queue mgmt related sequence.
 
