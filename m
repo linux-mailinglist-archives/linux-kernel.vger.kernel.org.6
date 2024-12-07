@@ -1,70 +1,131 @@
-Return-Path: <linux-kernel+bounces-435832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C0BD9E7DBE
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:32:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E5CC9E7DBB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:29:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53C881887844
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:32:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B3D916D08F
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:29:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4517DDAD;
-	Sat,  7 Dec 2024 01:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEA3C8FF;
+	Sat,  7 Dec 2024 01:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dQDgy4wD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BL8xitGn"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4615722C6E8;
-	Sat,  7 Dec 2024 01:32:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BF151BF24;
+	Sat,  7 Dec 2024 01:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733535131; cv=none; b=XE1q8s+tZoA5tllA1TtCA1bPx/nosUhW86g/SMqD3Vc9a9XvaGphLhe1VcrxV/9zaDNsVTxTUVefaMBvqxuL27jT9H+ucNC+6X5A6ZmaST+vIDuY2wObu0VCfHGYHDInfqkbS/omFkuy5JOpeBNbAJ6dfNeC8aFlDWMz7QNmsq4=
+	t=1733534983; cv=none; b=QQuhxVwxrw/O23/m7NOnqGcjxmmND5XxW/sA/i9GyUdHyu9SU3fWdvYMNtwwkq6OSSR6bjNYR+AoZhlyPln5DgHqTmWxjpyi6PFpMNIPNwi92ltTi3Mffc7XWuqB3pnjtK1zNmFK1yZ2PI9S5qLvfuNulpE/UjMPRsSDHsBjELA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733535131; c=relaxed/simple;
-	bh=L/w6Rf42nzOgdNeNz21pHGIFlrSPjNLkdvscmHfU6J4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=p0fTzIWAUAlbxtJCDIr9VsmgkdFPC4yr6+9aU0dNcB72pNJ573nTDkgA2OTlMQVCo0kJ0rb3Q7MxiWKAipJ1v5mWN4MD9dgTijW2uR0v3L4rjAWRPQarBpTkc2JA8C2UAh5vRmXQyvTmz4Yv6FsUAzOERkmBnMTLwCRkRcPcCiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dQDgy4wD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60A0FC4CED1;
-	Sat,  7 Dec 2024 01:32:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733535130;
-	bh=L/w6Rf42nzOgdNeNz21pHGIFlrSPjNLkdvscmHfU6J4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dQDgy4wDBGNgYU9b6Zw6HzHN+xI1synkMjbQbtADR1bRoZEY+pgZLswF39sHrBB4N
-	 f1c4ysEKhejt0RmGzC0AKBL8MydUO+N1axjhLquvszlq8bcCb/18Ncgnt9kZ3PeNsp
-	 acIcy85U4Ing1U4dMhNlVeJKTLIxkcfH5CJ+H44LzDohcHY77dBWNwNn6bTm0232pd
-	 lPKunEHupQuYX8MfyE4LYRJy2aW30PZ66bArS5GwGftcsp2PWUgIrwMDzNNIdD9u67
-	 4KUZT3QQ7O3pb3lgygcwCyJro2cU2YpNZBs997whQ6TLbJsMwK0YTF6qnh8tXrivra
-	 RcOidGKA+IyRg==
-Date: Fri, 6 Dec 2024 17:32:09 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- intel-wired-lan@lists.osuosl.org (moderated list:INTEL ETHERNET DRIVERS),
- linux-kernel@vger.kernel.org (open list)
-Subject: Re: [PATCHv4 net-next iwl-next] net: intel: use ethtool string
- helpers
-Message-ID: <20241206173209.6f9fd5fe@kernel.org>
-In-Reply-To: <20241207004737.33936-1-rosenp@gmail.com>
-References: <20241207004737.33936-1-rosenp@gmail.com>
+	s=arc-20240116; t=1733534983; c=relaxed/simple;
+	bh=pf2BxcyY1+GxOIa+dmB0408E08YUlmbwGhO92jMegAE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=YuT0yj9e/4BzhR02tgpqCpDunqRUFFFohKoH3cIgGhRDHOh35osaXshB2+0rSpLN8rq3LkCoMYdY69AY/XPqtlM1AzCBBIX5BPCRzKGLytVJ0OQm4edvmsOIHtn9j8NqzpVQxU8EDAnLZ/WfS5wLy1j/u5GxBdXLftgFJqp+JVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BL8xitGn; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4668f208f10so25561261cf.3;
+        Fri, 06 Dec 2024 17:29:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733534980; x=1734139780; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RH3o/9bbeFcVlZkIN5EOi+1jWB15nl+IjEgrvkeWavI=;
+        b=BL8xitGn8Qloe5gE+758fCwzJEhftsqQqJihsNRr3LgYokjiJZsZF+BmGrRZ5+znAI
+         Gw5De5f4GCq4iaUooA9dhxXfjHwauK5lI3gbAuouuKgV0/bqxj12vY5zbyMosAFII2ux
+         +/OmSohmPK7LoE7YWFY214XOJml0xpaqRAYR+4jbiVcUrW+9AQq3oWR5XHLTHLuDjFRJ
+         3utCMMfexuegc6G9Osf0W5UOIusH7KPDgldw7ZtEd8+XuOI+4tOc42+7eBiPl92qDwQo
+         tezggn+PhwVYjcpUdKkbHz/ff1klD8VVYwaQ7hh8Q3B7d9mlV0zSaLfi/vEOEXnCdCXx
+         r22Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733534980; x=1734139780;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RH3o/9bbeFcVlZkIN5EOi+1jWB15nl+IjEgrvkeWavI=;
+        b=DLl2791Hntwi+4FUzUNm3nK7Kc+1EX1BxB3nWFsgXK8e2GLJTI8uM18xeaSi1CA0SY
+         ZlRTXMBeaqH5MB9VC4qS1PvHVtjQ5LvhLzDGU4hkMY7KVwNTpxuPkCvF9a2lcDEMH88o
+         qH/x+mdtky4ZcNLZpOTolslUCl1rDb5H8eEGLfBrF8wgXKoN5MfCM5HJjFxFRBidHXTe
+         R9tWaipqL+zOSqt6cNiWcuxYumA5MIBsPvHT/Mbdjb0oHaEJERmPVr21HQnYZ++hE0oR
+         VQi/rLux1g4tHpeUmuDnJmjl6pzX7aFSaDLDy1MUTb9EfFXVL6LHa8WFBlfj3/JrF95L
+         M6Qw==
+X-Forwarded-Encrypted: i=1; AJvYcCVXJk9VolorGR79fnPYhqVXOiMdqUqmNx2anyBldf/dWGkD7tNoTWMSzFjNxOkk88diLTyDBcEz1O+CxQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysqIG+PLbUJ5C5vwwuoSGeHqgORTK+AUFkERvC6JVPHisabQYQ
+	4+3zUV9U9ttO3UQdznQsLSED1s1zrQTengtXCsMuc0cNfs3g7kHE
+X-Gm-Gg: ASbGncsXNAiCz2rptaU55S4Zdcla1JcIVVP8yNVv1WfEFuI18ADr53QR7/dyRdiFn4d
+	VlaCYuTMtRBYa+AESn1OgYk5eW2MGSEdwWwBCbskwa+bj1HE/58TIL2NXkKGxjaKDHnXTmYCcJh
+	G17+JNMX07/La/DEygRKwoO51i57T3wTxab0Y2LrGWUzgEnZHfL+PXLtBakRHkYhALKLUpzhmjx
+	bT1+6uF6d6cd3Eoff0rZSuVyg+SXgSlwExpQEZ8Eap6noUoRSrwt5uwUiRpaQ==
+X-Google-Smtp-Source: AGHT+IHryNFp2D/1XDHNwPuVlv5N6khcikGDnn64EfjaaFrKAlmCc89G8uNfZpWRrcmN/09WPQHi+w==
+X-Received: by 2002:a05:622a:22a9:b0:466:ac03:a714 with SMTP id d75a77b69052e-46734db8b01mr93986971cf.36.1733534980510;
+        Fri, 06 Dec 2024 17:29:40 -0800 (PST)
+Received: from localhost.localdomain ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296cb98csm27101141cf.30.2024.12.06.17.29.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 06 Dec 2024 17:29:39 -0800 (PST)
+From: Mingwei Zheng <zmw12306@gmail.com>
+To: broonie@kernel.org,
+	michal.simek@amd.com,
+	linus.walleij@linaro.org
+Cc: linux-spi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Mingwei Zheng <zmw12306@gmail.com>,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH] spi: zynq-qspi: Add check for clk_enable()
+Date: Fri,  6 Dec 2024 20:32:58 -0500
+Message-Id: <20241207013258.3615645-1-zmw12306@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri,  6 Dec 2024 16:47:37 -0800 Rosen Penev wrote:
-> Cleans up the code quite well.
+Add check for the return value of clk_enable() to catch the potential
+error.
 
-Maybe the ixgbevf changes, yes, but the rest of it is just churn.
+Fixes: c618a90dcaf3 ("spi: zynq-qspi: Drop GPIO header")
+Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ drivers/spi/spi-zynq-qspi.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/spi/spi-zynq-qspi.c b/drivers/spi/spi-zynq-qspi.c
+index dee9c339a35e..ae8a955bb6f1 100644
+--- a/drivers/spi/spi-zynq-qspi.c
++++ b/drivers/spi/spi-zynq-qspi.c
+@@ -379,12 +379,18 @@ static int zynq_qspi_setup_op(struct spi_device *spi)
+ {
+ 	struct spi_controller *ctlr = spi->controller;
+ 	struct zynq_qspi *qspi = spi_controller_get_devdata(ctlr);
++	int ret;
+ 
+ 	if (ctlr->busy)
+ 		return -EBUSY;
+ 
+-	clk_enable(qspi->refclk);
+-	clk_enable(qspi->pclk);
++	ret = clk_enable(qspi->refclk);
++	if (ret)
++		return ret;
++
++	ret = clk_enable(qspi->pclk);
++	if (ret)
++		return ret;
+ 	zynq_qspi_write(qspi, ZYNQ_QSPI_ENABLE_OFFSET,
+ 			ZYNQ_QSPI_ENABLE_ENABLE_MASK);
+ 
+-- 
+2.34.1
+
 
