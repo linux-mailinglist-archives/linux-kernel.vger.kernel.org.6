@@ -1,139 +1,70 @@
-Return-Path: <linux-kernel+bounces-435840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-435844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35C5A9E7DD0
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:48:56 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D67D9E7DDB
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 02:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21D6916D2EA
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:48:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 797C5161CF2
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 01:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 294D9134BD;
-	Sat,  7 Dec 2024 01:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CFC517BA3;
+	Sat,  7 Dec 2024 01:55:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoQ0y+6W"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MDSKl1io"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2002022C6C2;
-	Sat,  7 Dec 2024 01:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BE34A24;
+	Sat,  7 Dec 2024 01:55:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733536130; cv=none; b=b8Yq8eC3bITQWCTAs2uPgOksi4NGEh9A4RUJeTaN/2MVrEZF4WzC3wOPzcd79OiQiwfKQMhekzvuDnWNU4JkxYZrLypvk/uvLkUa887tBZrT9eyir2vZ6qSs1zKNUoqkzmHtsCrj835DMau+MC8j4nBrlw4EoRzrhRPPhJlmFSc=
+	t=1733536542; cv=none; b=n8p7s8Eym/WTtLMWXDTOW8zamIX9KC0QVKQHurItXAm618BsPnDDnnY8WahB7rh6KeL7UGekqBYmoVmniB2k4b+xgqPnwvLG7ZTW7opGoB2rms/VyoYlFylcAFFfRg1WZlFjBFVRUL9wWOuwN4xq1qPXOyov4VMWXxGKpLjHZro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733536130; c=relaxed/simple;
-	bh=jlW7i0i1xxdiIzCTmV5BNdwwj6plJBb52kQYU4D0tgM=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HyqWk+fgikSNCdcAx+W+bRontVxjWqKM5T+HR9A9yvCLw0+Lj8vd4iPSPpy/Pib394EqgrWKgdmqLYhFZvwtw7on06Df1aosNan73dh/A4ik8s0C+GVmMOo7R7UKSL1Xu9nkKqXSCl1u2VSdiz/S0e3ogCO/Yi0+DpcGz0KyvYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoQ0y+6W; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4674f142846so313191cf.2;
-        Fri, 06 Dec 2024 17:48:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733536128; x=1734140928; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ajfi+wkQFyaWasmE+q4KW/J7MFmGlCQy0rOceUXZD+Q=;
-        b=JoQ0y+6WQpPPDk5fnlXCXo6kaC5yVy6t22we7LFU6I0qYL2Q84qh97Jiv5na/DYtvD
-         Qawu09Y3GZPaiyfmhjOLKqoRz7reuhgAgcQYryxZQQt9pIstvNPh+FXN4tb1etRTYwYL
-         WkPbQdo5Pkg3sYVi+BEC2C9ajF0cd6lWW83dMPAHCJuARWDkRqc48j2dyVHmsaPHdVns
-         JKjeqXGg+GW8c5B63sDZWKhLdeeF645TtrVx0wmSKZZ81salOM3YTk5wzq0vhtdapgEm
-         43COA8Oskap++GHEKYBxskZM2dbPEBqNbPUVkTIx6LY1cfP0RXfgtwwhn2qQBM9OzziD
-         KXwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733536128; x=1734140928;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ajfi+wkQFyaWasmE+q4KW/J7MFmGlCQy0rOceUXZD+Q=;
-        b=fLC2Xb9BnbgPSobe79BAKDLHBItK2K1FfrJUe0wHoZcE2VlCcMM/3Bsj7P1ze91ZXq
-         Ub74vFVyP/cdROV1dZLSUvz0i7J/pPvIBaQyDNPTgP6n/KGmCQ/XtumJ6Jkpu1LJ1yMV
-         mULxPh5ikjdk9ilZER1BJ/saexwPvi2IvxxSL4DujgtThauQlCfsaWK15GVO8s9kzelB
-         GCX+hmJCwROUSwk2ZUVAkzwnPRUWyV60IKNqkhwNB5XIW/mftgK/meBEjIP9rVcDWPzd
-         z/75nzL07il9AeUD+g/QoyCrTw1d9Ezp2s7QTE5B8mz53sUkUOeLQwV5NJOg8HNvmnTr
-         b1Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCWWwd6iCwQBm/2tD/Hjs+S/BptwUxp4VJHLPxQ7rjLGvlqLijVX/hX6ASFc6zC/u9dP2hO5g4Hds0wbRVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzykIZ98mUmf/AVocnYCN8QchSzTkoDcky7mvTvqY362qyV2GDY
-	7LFK3faCoXO2FIhM2xHPy5s9jOeWrQyO2fQyfa5RY2RhZeIE8IwZ
-X-Gm-Gg: ASbGncvFr+iZ5gePJgciBT6TShRPbQbMToWV9NFkI+01ikL9igdlCsSaTVsT6bbggOo
-	U0EPci9RweF9OFEiowx3cAGDAy6MztxkbDtt4+XiTqA58+Trm9I3LyMrurIZJ/0sSFS/y5Ry5Kj
-	swiRG+CqBwK+g1tD/X0uXZTJIsteiGe3m0/3yywui5CC2o1Kbh4qVgNaH/fctX8mCT7KDT4kgz3
-	5YXlqjJKH7GmyIgqhLax9wtgrXaLGtXVvEwZc5zplkrwuFI0o8ksBGih1PTHQ==
-X-Google-Smtp-Source: AGHT+IE4NLqq67Nz90hVIj+QuOGnN+1RySBoeoLm48wEmZGUAS+YgYXJAD6JG1I0V+XjWUCLcketbg==
-X-Received: by 2002:a05:622a:8e16:b0:467:4c21:e396 with SMTP id d75a77b69052e-4674c2206cdmr11685731cf.55.1733536128078;
-        Fri, 06 Dec 2024 17:48:48 -0800 (PST)
-Received: from localhost.localdomain ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6b5a84506sm228443185a.81.2024.12.06.17.48.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 06 Dec 2024 17:48:46 -0800 (PST)
-From: Mingwei Zheng <zmw12306@gmail.com>
-To: broonie@kernel.org,
-	michal.simek@amd.com,
-	linus.walleij@linaro.org
-Cc: linux-spi@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Mingwei Zheng <zmw12306@gmail.com>,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH v2] spi: zynq-qspi: Add check for clk_enable()
-Date: Fri,  6 Dec 2024 20:52:06 -0500
-Message-Id: <20241207015206.3689364-1-zmw12306@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733536542; c=relaxed/simple;
+	bh=WJ7p03UAhGBbeH5VsLF8GFV4wbIeBicMt/KdoTSC+Zg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QG9XrlJFglQ/GmenaXJll65zFt6+Y7J22uCAGjEQHvuyMDtKTlQLNWsuG3Np4iCV6ELlFPiDI7IQPmYI/IbhSvoGgN+gmto7k99mZOfcIkpnvenYVYOunCFWGmWKwX1pMBafwAlS6Hpf2VbyYtH/k2T2QRrrFO0RMUkMGshxLqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MDSKl1io; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD8FC4CED1;
+	Sat,  7 Dec 2024 01:55:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733536541;
+	bh=WJ7p03UAhGBbeH5VsLF8GFV4wbIeBicMt/KdoTSC+Zg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=MDSKl1ioxROw1yHxVWFqiEUFQQNwxf363ZajahXXGQxtVibR+lY5mA3rziuOFkgKJ
+	 IdMbUkBBqtVP/vTyOUwR1xG0Y1uiiumkELJ0ZcohOZTLt8iinInBSrUmazf36pXxa1
+	 SDP80269K63VaLg/UlMNMzyvJ6lOH6gAKROIGVw5gdS9qQk5IYF6MvUx4pYRPEzJM4
+	 Py2XKYYMbxjI3xyclQoTYprDiJWrXG2h1NBi9lSnM7m+WPkMMvwC3m7+jebC/PSx5E
+	 MpulLRFFNc6B1tsOUXpcBDj5DK8MRmZTZcjila5UrGjuuM1P78LUHix71FzgYOn1xj
+	 NoQcmwxN2c+ew==
+Date: Fri, 6 Dec 2024 17:55:40 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Oleksij Rempel <o.rempel@pengutronix.de>
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Woojung Huh
+ <woojung.huh@microchip.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ kernel@pengutronix.de, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, UNGLinuxDriver@microchip.com, Phil Elwell
+ <phil@raspberrypi.org>
+Subject: Re: [PATCH net-next v2 00/21] lan78xx: Preparations for PHYlink
+Message-ID: <20241206175540.284c6351@kernel.org>
+In-Reply-To: <20241204084142.1152696-1-o.rempel@pengutronix.de>
+References: <20241204084142.1152696-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Add check for the return value of clk_enable() to catch the potential
-error.
+On Wed,  4 Dec 2024 09:41:32 +0100 Oleksij Rempel wrote:
+> Subject: [PATCH net-next v2 00/21] lan78xx: Preparations for PHYlink
 
-Fixes: c618a90dcaf3 ("spi: zynq-qspi: Drop GPIO header")
-Signed-off-by: Mingwei Zheng <zmw12306@gmail.com>
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
-Changelog:
-
-v1 -> v2:
-
-1. Add clk_disable in error handling.
----
- drivers/spi/spi-zynq-qspi.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/spi/spi-zynq-qspi.c b/drivers/spi/spi-zynq-qspi.c
-index dee9c339a35e..da6c2800d6b5 100644
---- a/drivers/spi/spi-zynq-qspi.c
-+++ b/drivers/spi/spi-zynq-qspi.c
-@@ -379,12 +379,21 @@ static int zynq_qspi_setup_op(struct spi_device *spi)
- {
- 	struct spi_controller *ctlr = spi->controller;
- 	struct zynq_qspi *qspi = spi_controller_get_devdata(ctlr);
-+	int ret;
- 
- 	if (ctlr->busy)
- 		return -EBUSY;
- 
--	clk_enable(qspi->refclk);
--	clk_enable(qspi->pclk);
-+	ret = clk_enable(qspi->refclk);
-+	if (ret)
-+		return ret;
-+
-+	ret = clk_enable(qspi->pclk);
-+	if (ret) {
-+		clk_disable(qspi->refclk);
-+		return ret;
-+	}
-+
- 	zynq_qspi_write(qspi, ZYNQ_QSPI_ENABLE_OFFSET,
- 			ZYNQ_QSPI_ENABLE_ENABLE_MASK);
- 
--- 
-2.34.1
-
+Be careful when reusing cover letters, the 21 here makes patchwork think
+the series will have 21 patches, even tho patches say /10.
 
