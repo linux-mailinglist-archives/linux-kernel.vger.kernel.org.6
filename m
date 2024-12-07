@@ -1,115 +1,213 @@
-Return-Path: <linux-kernel+bounces-436112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57FB09E813F
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:37:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85B09E8144
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 18:37:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8CCD1884661
-	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:37:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3F8916662A
+	for <lists+linux-kernel@lfdr.de>; Sat,  7 Dec 2024 17:37:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D435149DF7;
-	Sat,  7 Dec 2024 17:36:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA68514AD29;
+	Sat,  7 Dec 2024 17:37:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MMaTT/uF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LAryukcp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F36921E885;
-	Sat,  7 Dec 2024 17:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F12921494AD;
+	Sat,  7 Dec 2024 17:37:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733593014; cv=none; b=UYy+wBaf5vEmmWTPvhWEeoej5k1f+Ep1R1m2veflk8jxDDNkufC0Pn8dpMuxeLhEauc6o9QqUAIULGRng3kZgJ1ouh77Nm9V2ZG7hhxcWns02pVvIyVwYiFVV+PP0g2agUv95wCdW/M4qjJiRBEaFYb4bvCnT3fULunxUwB6oFQ=
+	t=1733593064; cv=none; b=f2X6bV/68v22ivs08KKP/AE0CRxyxE+WT4IcJ0jIJpXO5VGVZQrlSD2+5zam9/J0nnCE70Gz2sA+6yOpPW94Y3dwqyFJkn81IEm79gJOn/z0inDctcUFcbAeWHQehBmdiJswviFTI9cEGFGUTCv3r6QZWVrdmKTgfriYz5BUpy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733593014; c=relaxed/simple;
-	bh=HXQMatuQjoBSRT4KfGjYzRE+8IcDuZDzHozZhWD1sok=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lQbtwjiOjAIyJpGul3sQcaA4SIsCdEuBf+hX7EXLwg/pWZnZpJavuPCNZ2///xdWfJ6bTvh7uMjGpAQ6WFemK7DvYey8y5fJKPpkqjHc9q4YV/yRYZ3HMMagmDZjddp4qBU82SNNo3FywYZX7ZM9+PD/g1tSqjpim8kYnuA2Zj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MMaTT/uF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE333C4CECD;
-	Sat,  7 Dec 2024 17:36:49 +0000 (UTC)
+	s=arc-20240116; t=1733593064; c=relaxed/simple;
+	bh=ox1B8to36A/KHcuaMZ8cKSQ7KleVJ/upW6RNLQBXHCU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ds6qGEJo9EebrzRfYOsyNzZokzp2Mcyw/4ML6vn82/HkO4VzXZ7K/aCNGNnZpghBn+E4HLdtRbsNArU/AowOK0b4dDGPHS/yKz5nMg6cFeUAc76cEQizXkCUXi8udlTZg390WDeAXmC4jGOOrkKSQPtLxsmWFBTLr/o1QC2kNXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LAryukcp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28863C4CECD;
+	Sat,  7 Dec 2024 17:37:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733593013;
-	bh=HXQMatuQjoBSRT4KfGjYzRE+8IcDuZDzHozZhWD1sok=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=MMaTT/uFByeC2KuJFJmoc0rCL9kpu1IMqZGTogdr9eAyu/bBo+R4/WV4aQ+vxzs+g
-	 ZEpf2MXp4wuPdWkIjU80b6FaiiKCIkruuN/0frnk+bL1PK5yDIC//HaHLHzrgnMPch
-	 8sdah4eumO9xuIfwKhFWtcc1X9slcZpZpobXq5RZMV2CjYPD20rTXVD/10N00r2ww4
-	 1mXAl3rdUiSqv+mloiXZBL4d7k0a1Z84STuy2cocq6Ls+jUhszUrYTUtpHXImwv41/
-	 R5CgZmgebn2RE9eq0HLLdbvRhdGXc1f3nc8V2QjgW00i651/JLfFzJFzPK/j4WLRGW
-	 N6mcIFREXDalA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Guangbo Cui" <2407018371@qq.com>
-Cc: <alex.gaynor@gmail.com>,  <aliceryhl@google.com>,
-  <anna-maria@linutronix.de>,  <benno.lossin@proton.me>,
-  <bjorn3_gh@protonmail.com>,  <boqun.feng@gmail.com>,  <dakr@kernel.org>,
-  <frederic@kernel.org>,  <gary@garyguo.net>,
-  <linux-kernel@vger.kernel.org>,  <lyude@redhat.com>,  <ojeda@kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <tglx@linutronix.de>,
-  <tmgross@umich.edu>
-Subject: Re: [PATCH v4 02/14] rust: hrtimer: introduce hrtimer support
-In-Reply-To: <tencent_4237DDAC9DC29A9774F0F24D438C0ED31C05@qq.com> (Guangbo
-	Cui's message of "Sat, 07 Dec 2024 22:35:54 +0800")
-References: <20241206-hrtimer-v3-v6-12-rc2-v4-2-6cb8c3673682@kernel.org>
-	<tmL-yhuAhBzpYcPmWBdsjQYKx9M0gIyF4wfwrRA36zzhI_E-w0rZiJmA_Y68oBXPVAi6YwPepy3YIqAsBang9A==@protonmail.internalid>
-	<tencent_4237DDAC9DC29A9774F0F24D438C0ED31C05@qq.com>
-Date: Sat, 07 Dec 2024 18:36:39 +0100
-Message-ID: <87o71ne6oo.fsf@kernel.org>
+	s=k20201202; t=1733593063;
+	bh=ox1B8to36A/KHcuaMZ8cKSQ7KleVJ/upW6RNLQBXHCU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LAryukcphYBSkaUrTHag+XyG8cjAF4kRY4aayo7dZwPzeY7AwtVCKmgGneWBw4XvT
+	 g/+yOHZfURmVzejw95Bru6ZU3uxh2CrVMNGIzZcJfJxo8YvZKDW4MIk8E3ux9xsqQI
+	 DOiU4xbUp2bnRoa2TAUUU43cXFRa4SQDZvBpuppFNv4rkl0OKPr0LfNVNkf2MwYIhj
+	 VaCbsWvqrTsX0cZzasapxH7DnS5Xz5p604vsAGIBwh75NRFbAPaema06r/9K9LyvfH
+	 eJAR4VedFHdsOBIIyen4OteZEaxNaftD+Oe81KsAvj5tqpxrzXxOhW9CVS7hSQ1+/b
+	 XxzRZOtIgunUg==
+Date: Sat, 7 Dec 2024 17:37:31 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>,
+ prabhakar.mahadev-lad.rj@bp.renesas.com, lars@metafoo.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, geert+renesas@glider.be,
+ magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, linux-iio@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Claudiu Beznea
+ <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 08/14] iio: adc: rzg2l_adc: Prepare for the addition of
+ RZ/G3S support
+Message-ID: <20241207173731.523ce96b@jic23-huawei>
+In-Reply-To: <CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
+References: <20241203111314.2420473-1-claudiu.beznea.uj@bp.renesas.com>
+	<20241203111314.2420473-9-claudiu.beznea.uj@bp.renesas.com>
+	<20241203200941.03ec9ea3@jic23-huawei>
+	<CAMuHMdVGXqn2AMfEmTHfOc2pYWs3KB9cJoCEW3gV8d1zsCqg_w@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-"Guangbo Cui" <2407018371@qq.com> writes:
+On Wed, 4 Dec 2024 10:40:58 +0100
+Geert Uytterhoeven <geert@linux-m68k.org> wrote:
 
->> +#[macro_export]
->> +macro_rules! impl_has_timer {
->> +    (
->> +        impl$({$($generics:tt)*})?
->> +            HasTimer<$timer_type:ty>
->> +            for $self:ty
->> +        { self.$field:ident }
->> +        $($rest:tt)*
->> +    ) =3D> {
->> +        // SAFETY: This implementation of `raw_get_timer` only compiles=
- if the
->> +        // field has the right type.
->> +        unsafe impl$(<$($generics)*>)? $crate::time::hrtimer::HasTimer<=
-$timer_type> for $self {
->> +            const OFFSET: usize =3D ::core::mem::offset_of!(Self, $fiel=
-d) as usize;
->> +
->> +            #[inline]
->> +            unsafe fn raw_get_timer(ptr: *const Self) ->
->> +                *const $crate::::time::hrtimer::Timer<$timer_type>
->
-> Hi Andreas, an extra `::` here.
+> Hi Jonathan,
+>=20
+> On Tue, Dec 3, 2024 at 9:09=E2=80=AFPM Jonathan Cameron <jic23@kernel.org=
+> wrote:
+> > On Tue,  3 Dec 2024 13:13:08 +0200
+> > Claudiu <claudiu.beznea@tuxon.dev> wrote: =20
+> > > The ADC IP available on the RZ/G3S differs slightly from the one foun=
+d on
+> > > the RZ/G2L. The identified differences are as follows:
+> > > - different number of channels (one being used for temperature conver=
+sion);
+> > >   consequently, various registers differ
+> > > - different default sampling periods
+> > > - the RZ/G3S variant lacks the ADVIC register.
+> > >
+> > > To accommodate these differences, the rzg2l_adc driver has been updat=
+ed by
+> > > introducing the struct rzg2l_adc_hw_params, which encapsulates the
+> > > hardware-specific differences between the IP variants. A pointer to an
+> > > object of type struct rzg2l_adc_hw_params is embedded in
+> > > struct rzg2l_adc_data.
+> > >
+> > > Additionally, the completion member of struct rzg2l_adc_data was relo=
+cated
+> > > to avoid potential padding, if any.
+> > >
+> > > The code has been adjusted to utilize hardware-specific parameters st=
+ored
+> > > in the new structure instead of relying on plain macros.
+> > >
+> > > The check of chan->channel in rzg2l_adc_read_raw() function, against =
+the
+> > > driver specific mask was removed as the subsystem should have already
+> > > been done this before reaching the rzg2l_adc_read_raw() function.
+> > >
+> > > Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> > > ---
+> > >  drivers/iio/adc/rzg2l_adc.c | 92 ++++++++++++++++++++++++++---------=
+--
+> > >  1 file changed, 64 insertions(+), 28 deletions(-)
+> > >
+> > > diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> > > index fda8b42ded81..aff41152ebf8 100644
+> > > --- a/drivers/iio/adc/rzg2l_adc.c
+> > > +++ b/drivers/iio/adc/rzg2l_adc.c
+> > > @@ -32,20 +32,15 @@
+> > >  #define RZG2L_ADM1_MS                        BIT(2)
+> > >  #define RZG2L_ADM1_BS                        BIT(4)
+> > >  #define RZG2L_ADM1_EGA_MASK          GENMASK(13, 12)
+> > > -#define RZG2L_ADM2_CHSEL_MASK                GENMASK(7, 0)
+> > >  #define RZG2L_ADM3_ADIL_MASK         GENMASK(31, 24)
+> > >  #define RZG2L_ADM3_ADCMP_MASK                GENMASK(23, 16)
+> > > -#define RZG2L_ADM3_ADCMP_E           FIELD_PREP(RZG2L_ADM3_ADCMP_MAS=
+K, 0xe)
+> > > -#define RZG2L_ADM3_ADSMP_MASK                GENMASK(15, 0)
+> > >
+> > >  #define RZG2L_ADINT                  0x20
+> > > -#define RZG2L_ADINT_INTEN_MASK               GENMASK(7, 0)
+> > >  #define RZG2L_ADINT_CSEEN            BIT(16)
+> > >  #define RZG2L_ADINT_INTS             BIT(31)
+> > >
+> > >  #define RZG2L_ADSTS                  0x24
+> > >  #define RZG2L_ADSTS_CSEST            BIT(16)
+> > > -#define RZG2L_ADSTS_INTST_MASK               GENMASK(7, 0)
+> > >
+> > >  #define RZG2L_ADIVC                  0x28
+> > >  #define RZG2L_ADIVC_DIVADC_MASK              GENMASK(8, 0)
+> > > @@ -56,12 +51,26 @@
+> > >  #define RZG2L_ADCR(n)                        (0x30 + ((n) * 0x4))
+> > >  #define RZG2L_ADCR_AD_MASK           GENMASK(11, 0)
+> > >
+> > > -#define RZG2L_ADSMP_DEFAULT_SAMPLING 0x578
+> > > -
+> > > -#define RZG2L_ADC_MAX_CHANNELS               8
+> > > -#define RZG2L_ADC_CHN_MASK           0x7
+> > >  #define RZG2L_ADC_TIMEOUT            usecs_to_jiffies(1 * 4)
+> > >
+> > > +/**
+> > > + * struct rzg2l_adc_hw_params - ADC hardware specific parameters
+> > > + * @default_adsmp: default ADC sampling period (see ADM3 register)
+> > > + * @adsmp_mask: ADC sampling period mask (see ADM3 register)
+> > > + * @adint_inten_mask: conversion end interrupt mask (see ADINT regis=
+ter)
+> > > + * @default_adcmp: default ADC cmp (see ADM3 register)
+> > > + * @num_channels: number of supported channels
+> > > + * @adivc: specifies if ADVIC register is available
+> > > + */
+> > > +struct rzg2l_adc_hw_params {
+> > > +     u16 default_adsmp;
+> > > +     u16 adsmp_mask;
+> > > +     u16 adint_inten_mask;
+> > > +     u8 default_adcmp;
+> > > +     u8 num_channels;
+> > > +     bool adivc;
+> > > +};
+> > > +
+> > >  struct rzg2l_adc_data {
+> > >       const struct iio_chan_spec *channels;
+> > >       u8 num_channels;
+> > > @@ -71,10 +80,11 @@ struct rzg2l_adc {
+> > >       void __iomem *base;
+> > >       struct reset_control *presetn;
+> > >       struct reset_control *adrstn;
+> > > -     struct completion completion;
+> > >       const struct rzg2l_adc_data *data;
+> > > +     const struct rzg2l_adc_hw_params *hw_params;
+> > > +     u16 *last_val;
+> > > +     struct completion completion;
+> > >       struct mutex lock;
+> > > -     u16 last_val[RZG2L_ADC_MAX_CHANNELS]; =20
+> >
+> > Just make this big enough for the max device.  Chances are it will make=
+ little or
+> > no difference to this allocation and nice to avoid the dynamic part.
+> >
+> > Feel free to add a runtime check to make sure this is big enough to avo=
+id any
+> > future problems with forgetting to update it. =20
+>=20
+> Flexible array member and the new __counted_by() attribute?
+Messy as it's embedded in iio_dev via a rather round about route.
+It happens to be at the end of that structure but that's an implementation =
+detail.
 
-One of these days I hope to have refined my workflow to a degree that
-would prevent things like this. I thought I was there, but not yet it
-seems. Thanks for spotting.
+So in this particular case I'd go with no for flexible array and __counted_=
+by.
+It is very unlikely the difference in size will actually result in a bigger=
+ allocation
+as it's a substantial allocation however big this is.
 
-I _did_ actually fix this, but the fix was hiding in a commit with test
-code that did not make it in to the series =F0=9F=A4=A6 And when ran my scr=
-ipt to
-make sure all the commits build, this macro was no longer invoked and
-the typo was hiding.
+Jonathan
 
-For reference, I am holding the examples back until we get either a
-spinlock/condvar combo that can work in irq disabled context, or atomics
-that work with LKMM.
-
-Best regards,
-Andreas Hindborg
-
-
-
-
+>=20
+> Gr{oetje,eeting}s,
+>=20
+>                         Geert
+>=20
 
 
