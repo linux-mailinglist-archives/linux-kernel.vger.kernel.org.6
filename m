@@ -1,169 +1,127 @@
-Return-Path: <linux-kernel+bounces-436256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B61799E8350
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:30:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B238D9E837A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:55:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934C01884168
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:30:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75A0B1884968
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2B71EF1D;
-	Sun,  8 Dec 2024 03:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515FD3E47B;
+	Sun,  8 Dec 2024 03:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rvinjgZM"
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+	dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b="p8MVGDLv"
+Received: from mail.envs.net (mail.envs.net [5.199.136.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C449BA4B;
-	Sun,  8 Dec 2024 03:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C8F618E2A;
+	Sun,  8 Dec 2024 03:55:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.199.136.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733628631; cv=none; b=IPzOPUpNUN1HausvqiFAOtadQ9KCTbpSUt6V3mbzSHe2Z8io6yfdaJTNj5mTyeC8cT5iJs1QRms+OogTwcUnMnHCO1PWzzARLiU77XBKuBqrSAITYXTgyrZvd0RHGOYOCkZ6Jhu4oUQQ9jzOKQvi2cQ0rs181nq8m35QKSKJ1eg=
+	t=1733630136; cv=none; b=ugGebyRcJwxvrlBwqXw9nupyXcwAn2WcQcz42wHJ/kH4kVXR/SIlq9aTuLoLsAYl4CadEM4drRxPdiKbNCZSdepwShMfsft3qVxeTrUvlX1OzOlSdmuOD820MEiuv6EefFDx661HV7exTgcNsgAkE/A/LZ0D8gAQvpzVa3VmtKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733628631; c=relaxed/simple;
-	bh=BG57EQmQThxd+ozN5Q3bUFeu+y3rNtF+xMAEuOgrpDU=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=SjGJKd35eBfJekUVtkZ+xcaDVbCqMcQhyttuQV9mgtv+a06NbQIoRf+fsbBgTZydtT5QhLZ1C7v7YNAP74YdtX+y0HSWzDYtwYkhlmFSNEZ90QIqw1r3u+XNAKnqoFjX+5TE11LcSONhm3mOeo55cN5L20NHI2s+5Qv3UvDsSPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rvinjgZM; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1733628623; bh=ucp257+OUZPko0+d8LLFYd48yVVz9Ih0yzGEGWfpmcs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=rvinjgZMHuf0hZL4uz9eu/1ttHXYRDSjhDwjSQcaWa0o7JouOmZEC/TuBde97t7Hb
-	 u+nt6lv8huQxNGWy3BrhTQlrhG79JEty6LbWzXqVx/CyirKl0SwSEmef6+OCguj088
-	 i5loZIqLi5zhMKKEikdx5Xs2+Z03l3akPpfWRhsE=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
-	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
-	id 60E12254; Sun, 08 Dec 2024 11:24:14 +0800
-X-QQ-mid: xmsmtpt1733628254tbvwesve5
-Message-ID: <tencent_B7D4EAEAED76CDAC79026EF02F4D6D5C950A@qq.com>
-X-QQ-XMAILINFO: MANJig+gdatzOacpMEVq+EeZdgfeZOASGsbV3JnXN7FZbBkOhNlC/5+2Akyb1S
-	 WAjhmDt0ll4fExjqdqFWli3/WUtmDhcbyfQ0x2DJL3vpt57CjKk8SKsugbtdo0xp/XSpTJ4pRDjd
-	 ESx5MzHYCPiJSyQ3FTeNBSF95JZ82ndFiL7rhE7pnmm/epjPAEQRi/Sn7unruck4PwX4f1+ukNsY
-	 9KFxiabQr8U3HM1UjdXx+yZUa6oNpLjamBTfzCKt5pVzSd+6yOO7Pr5egNOIPBXfHpruNlo9VwXJ
-	 cJ9XbciqXw29o/qkFApwpaM9qJPW4yQlIe2pATO+kh7h2Ueq/2K/99HwhYXB/2V5bCT8qp/K8OgT
-	 rbOs5ryLAKs7OrRrzOggDWq56j7sk2tx6wm9jIrAbvfc0UppAI13afHj11MnxraqgNUfWgeGPYft
-	 3aWGDQSgdCdPOidxqBi+WwgVBftXnbvbJy/GoWM3nsjhGoHGs1gj9yKvoXoYJRZjSoWdbTdK+GyC
-	 zhfCgZTfNOevLF951v2m1pZ/WQ9/AC0faEKw2E0lMvVRHZKIbuL4RyP9zZHq3AvJCXi67cs2R11j
-	 LAgipeZrKIB0zVvVr6qc7UfaTiLPgQeBGgVoCR491t0acO7KTC0qqe4XRNgsLWw9vki29mM/01Dg
-	 TdksqTqLdGtG4qmgcd5tuhtAXkLCTDu3xbFf/LHXMxtOMJwrYAfP8wqWj0kYQc6LYTJmd6vWt41A
-	 ZEjkauDcCLVCRWBeKIIAp2lpNR+dM13OpmCUGhzvMBKN32025yGpjoXVWLDTGJzSJU4KN90yB1iK
-	 kM9ujJMyR6jeSKO0qla6p1PXyWu61nlw1xktPt6DmazWQrakpIZS9/l8A4FiD5IH9Mo027beSMNc
-	 mZNrEiNNoCbV8G72rov55I6O28m4hkryvG1NGFQXfRYAEWPWt3gOg=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: Edward Adam Davis <eadavis@qq.com>
-To: konishi.ryusuke@gmail.com
-Cc: eadavis@qq.com,
+	s=arc-20240116; t=1733630136; c=relaxed/simple;
+	bh=xAmSa2wmvqGf1lGLgOH9ojlWkb6b6Iz9ykFs+KUJMDY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TzrufKhGA3flh+Jw5+sbnB+rwn8T7gUsLTNGMw4YLGaBnCvj5QTGMsN3TiixM3M7cRW2kN1Dkcy+PLNsF1byJYVcKDBHdCZ+6egftWXBvk9qi7BVmTPmRgW07WAhogCiyfBll4KcDTwDe3QKn0QaRijs4AEA8W8ICCDHxmrWinw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net; spf=pass smtp.mailfrom=envs.net; dkim=pass (4096-bit key) header.d=envs.net header.i=@envs.net header.b=p8MVGDLv; arc=none smtp.client-ip=5.199.136.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=envs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=envs.net
+Received: from localhost (mail.envs.net [127.0.0.1])
+	by mail.envs.net (Postfix) with ESMTP id 16B4B38A3DB5;
+	Sun,  8 Dec 2024 03:55:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=envs.net; s=modoboa;
+	t=1733630116; bh=sMUgAdv1UYnveXfCZj+caAO4EoyTts+ar0T4j7DKx5g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=p8MVGDLvZ2DjI2dDUTvpLS4Uu1qiFbOHcJ+q9SHRNTpB/b2x3A8NCF6oWzT2Ee0Au
+	 tp0AuiXiHo4GsC1YEaH1mt28adK4CSgXKx7Phw9EGVqY5b4JcxEN7Nk1aTsms8VjMZ
+	 9BpLjLTGlUuu+yLngU5G6BfbyHm51dMmtotkFXxti1+pWM6vg9Z72EpctKPYAjHoLs
+	 iGR++67RnBmzlc3bE6ZPOdc3ck4V8aOw2lgAmXzuR9ZG0IRjgY8Uu/PS74n1IuBLuF
+	 dNEoP5RF7QP9bGnTuUiGJuT+TL7XdKBokO3JyC85E5TfSS/WrlW8MVmsMmTw/C4eFe
+	 eK9kGpAOzH5ZnYMSvNXe/C/k4fnhKtsMJl5MgTk/KY4+IDJ1HmU/8cFA4plbKF+wWt
+	 y4CZI51euc3CwnTyqWT0kWQIYsM5B8LSvi2w/Ja/WRjayKkZ2QfAAqFkZKzSsAmlGf
+	 MO4v3/ckgDgGDNW66vgQZvgJMShBBdwgCo9zy/H3pJkyHZMXRj9CbQoEsGmuXXAMwA
+	 ULoRpBpwp/E6R+awAf3v2MQ8NKNIvwxV5KRnOx8dA2mBnD640Dv3LnD/7wdH3bDFaq
+	 O1x40Yws4hWETfW9kC4OolO23Vmm4IObAP0HK2mVK7jWtGRZLCc3TuEmCpeOGGz9Mt
+	 r7jmOpYqK4hzLxOog9JU1bXk=
+X-Virus-Scanned: Debian amavisd-new at mail.envs.net
+Received: from mail.envs.net ([127.0.0.1])
+	by localhost (mail.envs.net [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id w9f5h8Xf5DVg; Sun,  8 Dec 2024 03:55:11 +0000 (UTC)
+Received: from xtexx.eu.org (unknown [120.230.227.80])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.envs.net (Postfix) with ESMTPSA;
+	Sun,  8 Dec 2024 03:55:11 +0000 (UTC)
+From: Bingwu Zhang <xtex@envs.net>
+To: Jonathan Corbet <corbet@lwn.net>,
+	Miklos Szeredi <miklos@szeredi.hu>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Cc: Bingwu Zhang <xtex@aosc.io>,
+	linux-fsdevel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-nilfs@vger.kernel.org,
-	syzbot+9260555647a5132edd48@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] nilfs2: prevent use of deleted inode
-Date: Sun,  8 Dec 2024 11:24:14 +0800
-X-OQ-MSGID: <20241208032413.2213943-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <CAKFNMono7BGpLOOjF1TcUpj7GM=x-aATHUv+fCXTs6=WVhYMUw@mail.gmail.com>
-References: <CAKFNMono7BGpLOOjF1TcUpj7GM=x-aATHUv+fCXTs6=WVhYMUw@mail.gmail.com>
+	linux-unionfs@vger.kernel.org,
+	linux-xfs@vger.kernel.org,
+	~xtex/staging@lists.sr.ht
+Subject: [PATCH] Documentation: filesystems: fix two misspells
+Date: Sun,  8 Dec 2024 11:54:47 +0800
+Message-ID: <20241208035447.162465-2-xtex@envs.net>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2008; i=xtex@aosc.io; h=from:subject; bh=hjZ2QViAYHrS5s534bTXhzG7XzBTMciy149RrZNXASU=; b=owGbwMvMwCW2U4Ij7wZL9ETG02pJDOmhEu0PF/41P/nawMPRcl1ngL2V0tK600ERb3rvOu+cy HRDgv91RykLgxgXg6yYIkuRYYM3q046v+iyclmYOaxMIEMYuDgFYCK22gz/FK/qbH4xQy0imcGz Xzay0uj4C8ZH91Q5HjFu36+jK7FIiOF/1joNDZPSBzMLInbZWl2Ouf5877otcltmP2h56Te99wU 7BwA=
+X-Developer-Key: i=xtex@aosc.io; a=openpgp; fpr=7231804B052C670F15A6771DB918086ED8045B91
 Content-Transfer-Encoding: 8bit
 
-syzbot reported a WARNING in nilfs_rmdir. [1]
+From: Bingwu Zhang <xtex@aosc.io>
 
-Because the inode bitmap is corrupted, an inode with an inode number
-that should exist as a ".nilfs" file was reassigned by nilfs_mkdir for
-"file0", causing an inode duplication during execution.
-And this causes an underflow of i_nlink in rmdir operations.
+This fixes two small misspells in the filesystems documentation.
 
-Avoid to this issue, check i_nlink in nilfs_iget(), if it is 0, it means
-that this inode has been deleted, and iput is executed to reclaim it.
-
-[1]
-WARNING: CPU: 1 PID: 5824 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
-Modules linked in:
-CPU: 1 UID: 0 PID: 5824 Comm: syz-executor223 Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
-Code: bb 70 07 00 00 be 08 00 00 00 e8 57 0b e6 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 4c 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
-RSP: 0018:ffffc900037f7c70 EFLAGS: 00010293
-RAX: ffffffff822124a3 RBX: 1ffff1100e7ae034 RCX: ffff88807cf53c00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: ffffffff82212423 R09: 1ffff1100f8ba8ee
-R10: dffffc0000000000 R11: ffffed100f8ba8ef R12: ffff888073d701a0
-R13: 1ffff1100e79f5c4 R14: ffff888073d70158 R15: dffffc0000000000
-FS:  0000555558d1e480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000555558d37878 CR3: 000000007d920000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- nilfs_rmdir+0x1b0/0x250 fs/nilfs2/namei.c:342
- vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
- do_rmdir+0x3b5/0x580 fs/namei.c:4453
- __do_sys_rmdir fs/namei.c:4472 [inline]
- __se_sys_rmdir fs/namei.c:4470 [inline]
- __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Reported-and-tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+Signed-off-by: Bingwu Zhang <xtex@aosc.io>
 ---
-V1 -> V2: Adjust the patch as suggested by Ryusuke Konishi
+I found these typos when learning about OverlayFS recently.
+---
+ Documentation/filesystems/iomap/operations.rst | 2 +-
+ Documentation/filesystems/overlayfs.rst        | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
- fs/nilfs2/inode.c | 8 +++++++-
- fs/nilfs2/namei.c | 6 ++++++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+index ef082e5a4e0c..2c7f5df9d8b0 100644
+--- a/Documentation/filesystems/iomap/operations.rst
++++ b/Documentation/filesystems/iomap/operations.rst
+@@ -104,7 +104,7 @@ iomap calls these functions:
+ 
+     For the pagecache, races can happen if writeback doesn't take
+     ``i_rwsem`` or ``invalidate_lock`` and updates mapping information.
+-    Races can also happen if the filesytem allows concurrent writes.
++    Races can also happen if the filesystem allows concurrent writes.
+     For such files, the mapping *must* be revalidated after the folio
+     lock has been taken so that iomap can manage the folio correctly.
+ 
+diff --git a/Documentation/filesystems/overlayfs.rst b/Documentation/filesystems/overlayfs.rst
+index 4c8387e1c880..d2a277e3976e 100644
+--- a/Documentation/filesystems/overlayfs.rst
++++ b/Documentation/filesystems/overlayfs.rst
+@@ -156,7 +156,7 @@ A directory is made opaque by setting the xattr "trusted.overlay.opaque"
+ to "y".  Where the upper filesystem contains an opaque directory, any
+ directory in the lower filesystem with the same name is ignored.
+ 
+-An opaque directory should not conntain any whiteouts, because they do not
++An opaque directory should not contain any whiteouts, because they do not
+ serve any purpose.  A merge directory containing regular files with the xattr
+ "trusted.overlay.whiteout", should be additionally marked by setting the xattr
+ "trusted.overlay.opaque" to "x" on the merge directory itself.
 
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index cf9ba481ae37..b7d4105f37bf 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -544,8 +544,14 @@ struct inode *nilfs_iget(struct super_block *sb, struct nilfs_root *root,
- 	inode = nilfs_iget_locked(sb, root, ino);
- 	if (unlikely(!inode))
- 		return ERR_PTR(-ENOMEM);
--	if (!(inode->i_state & I_NEW))
-+
-+	if (!(inode->i_state & I_NEW)) {
-+		if (!inode->i_nlink) {
-+			iput(inode);
-+			return ERR_PTR(-ESTALE);
-+		}
- 		return inode;
-+	}
- 
- 	err = __nilfs_read_inode(sb, root, ino, inode);
- 	if (unlikely(err)) {
-diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-index 9b108052d9f7..7037f47c454f 100644
---- a/fs/nilfs2/namei.c
-+++ b/fs/nilfs2/namei.c
-@@ -67,6 +67,12 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
- 		inode = NULL;
- 	} else {
- 		inode = nilfs_iget(dir->i_sb, NILFS_I(dir)->i_root, ino);
-+		if (inode == ERR_PTR(-ESTALE)) {
-+			nilfs_error(dir->i_sb, __func__,
-+					"deleted inode referenced: %lu",
-+					(unsigned long) ino);
-+			return ERR_PTR(-EIO);
-+		}
- 	}
- 
- 	return d_splice_alias(inode, dentry);
+base-commit: 7503345ac5f5e82fd9a36d6e6b447c016376403a
 -- 
-2.47.0
+2.47.1
 
 
