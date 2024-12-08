@@ -1,97 +1,253 @@
-Return-Path: <linux-kernel+bounces-436446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 677329E85F9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:40:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA3F9E85FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:47:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EEE2813C9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBDC6281060
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AD1158D8B;
-	Sun,  8 Dec 2024 15:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4B71581E0;
+	Sun,  8 Dec 2024 15:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkYeFAWG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="IbVxRtn/"
+Received: from fhigh-a5-smtp.messagingengine.com (fhigh-a5-smtp.messagingengine.com [103.168.172.156])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB2E13AD03;
-	Sun,  8 Dec 2024 15:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ADD14600D;
+	Sun,  8 Dec 2024 15:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.156
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733672395; cv=none; b=HbC85TpqCtQX+5mp8q3EdUa85ridkLOdZ1Js9Nzlrzi04lbp27ZCBi6b3pYqrowWjyi/E7/GoYgonNN6/OdYtXZGsFFXS2MxFuTWr5D7PVBK9+eVL7SxxZQm5h4b0x9bqo6Ww6sZrDeSVfNG1E0Q8XWIIxSTMMfGjIdiLr8t7PU=
+	t=1733672855; cv=none; b=PPrfCGDXSYOirf9+if4MarduifAOg0gPSennrk3jq2BCEp6vuhCaYVmq3ZI5MOfqHvkPTxg86zqnLYqLjiJdQ5Z7CiOtEQ7nfRHgKREkdvYxHNT27JQJqtwAV3pOrSuD1efdTLz0qLY/l2eFzpzsDJ+1U4WwEHsbnohwf9jHLoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733672395; c=relaxed/simple;
-	bh=Gx5f3shkmroS7Y09AqZgaEyC/C5onrqzjrHhIwJpBz0=;
+	s=arc-20240116; t=1733672855; c=relaxed/simple;
+	bh=wNUOxvL83TzsGifq3IVokVvTfxVKq3AXSvoF49vydRw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nB5CjX26CjLv+pyCayQyy+JFxJqKbJV0ESkArm03y6eGeFHD4BG8eCkECp+GWyOpisvt5Yp6rtzPy9C863maH+prLl13B71Oz5ykxDP6DD4k7AdHUQxnT8zkk9T5vkUXbDNNp48hSIcI6XeJSKjAXIu/4GKCB2H97/e3niKZDvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkYeFAWG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEB7C4CED2;
-	Sun,  8 Dec 2024 15:39:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733672394;
-	bh=Gx5f3shkmroS7Y09AqZgaEyC/C5onrqzjrHhIwJpBz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YkYeFAWGk6JHOupu1GMUBk0SlM6p+IOAw9vlYwa0MdY/jyia66J1rVBvr/o3RIC8S
-	 gtskvfoaAZFs5C8SAqaXYDnPNwsYvZhraWxfqO4v2TvvTS4Lp6uMKfVR7OJr2ZtIf8
-	 2aiiJ2ySwZvRm0/tdxuCG/5P4StdL8Cm7cgSCx38HaZOq6qAjLMc7WpH8s3hcfobDb
-	 FAEe/XSVC3MUk/4xLqw78bqG9ZgBl3jxtEHuneG/fmn9zAvmj2CvYGl1+ShGv/Nlhk
-	 IWvPp/lKaqvnyobiwzi4QO1W+pQOcZ+NFIA2R8mMGN2D9J3ROC0TdW0Ol7jEhwgDcS
-	 T5mOXoYq+tECg==
-Date: Sun, 8 Dec 2024 21:09:50 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Peter Griffin <peter.griffin@linaro.org>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Sam Protsenko <semen.protsenko@linaro.org>,
-	Will McVicker <willmcvicker@google.com>,
-	Roy Luo <royluo@google.com>, kernel-team@android.com,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v3 5/8] phy: exynos5-usbdrd: gs101: ensure power is gated
- to SS phy in phy_exit()
-Message-ID: <Z1W9xuCrn40uPWbr@vaman>
-References: <20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org>
- <20241205-gs101-phy-lanes-orientation-phy-v3-5-32f721bed219@linaro.org>
- <2024120528-poker-thinness-6cfb@gregkh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hc7XX7ksG0wLFGtJHzoBgZJ/x0Vb2MFhM6Cqbrr2+wQDpfe5/YBr9nd7k6LHogVNlfFBid86dZtz917ODV4aytxYGDjRL9sk9JeNecRBQaadaICRqgnnHPFdmKp3XaCM52WRIu8D7RcGDUCWlP9iPKljXwu/z4y9+aTY0r4C3j0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org; spf=none smtp.mailfrom=idosch.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=IbVxRtn/; arc=none smtp.client-ip=103.168.172.156
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=idosch.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=idosch.org
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 5B6FD1140152;
+	Sun,  8 Dec 2024 10:47:32 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Sun, 08 Dec 2024 10:47:32 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733672852; x=
+	1733759252; bh=0JUvzhJNY3ZdO4SAnbwz1UN2DckRSUWEHcK7aapXk8I=; b=I
+	bVxRtn/HaV9RKcTFVke0iVCvuOKTf7VjU9dMAZMx1V0dJJcZJNJeM7VVJa+6G8D6
+	Bl7casc3F4G+D6ndWId6cRtX8DD/CJtY8WqVcnRimSzv7f8GbDOkXORo/EvsYTY7
+	V6GbBjgLEftIdCTJ0AvglO4rlsHm1/WOs4DpLxi18Q/jUJOfbjDeeKAz8Ojf2nof
+	Qv4y06Md8x4ChSIr3ue/zDzx8hf+ylXyyG6Ry5XmOAHoAZQ0H2Q/jLOgo+YL8Smu
+	nNvg8b2pnT83QMxDbefbpGMvX8cLyRT39pRbSfw6cfq+R/Z3zutJYfEcM/cb0es4
+	jo46W34SZgYDaqCPlGuvg==
+X-ME-Sender: <xms:k79VZ6xMbzYQQPERLxP0eES253SM-_X-JWJA6XY-DMEj-lyjrin4mw>
+    <xme:k79VZ2RJzEqMQVhewpHyG1__nOADq_ipTQX6PVkEZmpRHixAjFALij13iTKJomvoH
+    zGulveFqmDMW58>
+X-ME-Received: <xmr:k79VZ8Vve7rI6cIC4Xeka3bAPsjGz163rXzjjjTLdCbxPcOMmFlblHIhX7m9>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeefgdekudcutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
+    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
+    hsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeen
+    ucfhrhhomhepkfguohcuufgthhhimhhmvghluceoihguohhstghhsehiughoshgthhdroh
+    hrgheqnecuggftrfgrthhtvghrnhephfdvudeileeiteejkedtgffhgfdtvdevgedtheeh
+    vedufeffkeevhfetvdeggfehnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpnhgvth
+    hfihhlthgvrhdrohhrghdpnhgvthguvghvtghonhhfrdhinhhfohenucevlhhushhtvghr
+    ufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehiughoshgthhesihguohhstg
+    hhrdhorhhgpdhnsggprhgtphhtthhopeduhedpmhhouggvpehsmhhtphhouhhtpdhrtghp
+    thhtohepfigvihdrfhgrnhhgsehngihprdgtohhmpdhrtghpthhtohepthhomheshhgvrh
+    gsvghrthhlrghnugdrtghomhdprhgtphhtthhopehhohhrmhhssehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopegtlhgruhguihhurdhmrghnohhilhesnhigphdrtghomhdprhgtph
+    htthhopehvlhgrughimhhirhdrohhlthgvrghnsehngihprdgtohhmpdhrtghpthhtohep
+    gihirghonhhinhhgrdifrghnghesnhigphdrtghomhdprhgtphhtthhopegrnhgurhgvfi
+    donhgvthguvghvsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhl
+    ohhfthdrnhgvthdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
+X-ME-Proxy: <xmx:k79VZwgBeXFgKJ4a_0jCt_hxhl6LmPLYrOrymJ4FTsVMXRpUkrdggA>
+    <xmx:k79VZ8BkFicNaUmRtUF0TEMFO-wt8xpgA8_fijiVtOlFvMNHzEyP-g>
+    <xmx:k79VZxIC9KSS-DYHjlSZ7-BjmBUftlXWvZNFGLfE8HFn7O2F2Vb_sA>
+    <xmx:k79VZzCf9mwfPtTKYPYvZhTBZRw-KJBwOmyYcPBfGdUlF7kgJf_FWg>
+    <xmx:lL9VZ0btcnBu4SMcSmVsMQIbbj0h8B6UFYjbkZOuylDpsNJvSa5GWQnS>
+Feedback-ID: i494840e7:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 8 Dec 2024 10:47:30 -0500 (EST)
+Date: Sun, 8 Dec 2024 17:47:29 +0200
+From: Ido Schimmel <idosch@idosch.org>
+To: Wei Fang <wei.fang@nxp.com>, tom@herbertland.com
+Cc: Simon Horman <horms@kernel.org>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Clark Wang <xiaoning.wang@nxp.com>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	Frank Li <frank.li@nxp.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>
+Subject: Re: [PATCH v6 RESEND net-next 1/5] net: enetc: add Rx checksum
+ offload for i.MX95 ENETC
+Message-ID: <Z1W_kSMUp3lsLPr_@shredder>
+References: <20241204052932.112446-1-wei.fang@nxp.com>
+ <20241204052932.112446-2-wei.fang@nxp.com>
+ <20241206092329.GH2581@kernel.org>
+ <PAXPR04MB85101D0EE82ED8EEF48A588988312@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <20241206123030.GM2581@kernel.org>
+ <PAXPR04MB85107FD857F1AB33BBE4F70988312@PAXPR04MB8510.eurprd04.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2024120528-poker-thinness-6cfb@gregkh>
+In-Reply-To: <PAXPR04MB85107FD857F1AB33BBE4F70988312@PAXPR04MB8510.eurprd04.prod.outlook.com>
 
-On 05-12-24, 09:04, Greg KH wrote:
-> On Thu, Dec 05, 2024 at 07:33:16AM +0000, Andr� Draszik wrote:
-> > We currently don't gate the power to the SS phy in phy_exit().
+On Fri, Dec 06, 2024 at 12:45:02PM +0000, Wei Fang wrote:
+> > -----Original Message-----
+> > From: Simon Horman <horms@kernel.org>
+> > Sent: 2024年12月6日 20:31
+> > To: Wei Fang <wei.fang@nxp.com>
+> > Cc: Claudiu Manoil <claudiu.manoil@nxp.com>; Vladimir Oltean
+> > <vladimir.oltean@nxp.com>; Clark Wang <xiaoning.wang@nxp.com>;
+> > andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
+> > kuba@kernel.org; pabeni@redhat.com; Frank Li <frank.li@nxp.com>;
+> > netdev@vger.kernel.org; linux-kernel@vger.kernel.org; imx@lists.linux.dev
+> > Subject: Re: [PATCH v6 RESEND net-next 1/5] net: enetc: add Rx checksum
+> > offload for i.MX95 ENETC
 > > 
-> > Shuffle the code slightly to ensure the power is gated to the SS phy as
-> > well.
+> > On Fri, Dec 06, 2024 at 10:33:15AM +0000, Wei Fang wrote:
+> > > > -----Original Message-----
+> > > > From: Simon Horman <horms@kernel.org>
+> > > > Sent: 2024年12月6日 17:23
+> > > > To: Wei Fang <wei.fang@nxp.com>
+> > > > Cc: Claudiu Manoil <claudiu.manoil@nxp.com>; Vladimir Oltean
+> > > > <vladimir.oltean@nxp.com>; Clark Wang <xiaoning.wang@nxp.com>;
+> > > > andrew+netdev@lunn.ch; davem@davemloft.net; edumazet@google.com;
+> > > > kuba@kernel.org; pabeni@redhat.com; Frank Li <frank.li@nxp.com>;
+> > > > netdev@vger.kernel.org; linux-kernel@vger.kernel.org; imx@lists.linux.dev
+> > > > Subject: Re: [PATCH v6 RESEND net-next 1/5] net: enetc: add Rx checksum
+> > > > offload for i.MX95 ENETC
+> > > >
+> > > > On Wed, Dec 04, 2024 at 01:29:28PM +0800, Wei Fang wrote:
+> > > > > ENETC rev 4.1 supports TCP and UDP checksum offload for receive, the bit
+> > > > > 108 of the Rx BD will be set if the TCP/UDP checksum is correct. Since
+> > > > > this capability is not defined in register, the rx_csum bit is added to
+> > > > > struct enetc_drvdata to indicate whether the device supports Rx
+> > checksum
+> > > > > offload.
+> > > > >
+> > > > > Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> > > > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > > > > Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+> > > > > ---
+> > > > > v2: no changes
+> > > > > v3: no changes
+> > > > > v4: no changes
+> > > > > v5: no changes
+> > > > > v6: no changes
+> > > > > ---
+> > > > >  drivers/net/ethernet/freescale/enetc/enetc.c       | 14
+> > ++++++++++----
+> > > > >  drivers/net/ethernet/freescale/enetc/enetc.h       |  2 ++
+> > > > >  drivers/net/ethernet/freescale/enetc/enetc_hw.h    |  2 ++
+> > > > >  .../net/ethernet/freescale/enetc/enetc_pf_common.c |  3 +++
+> > > > >  4 files changed, 17 insertions(+), 4 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/net/ethernet/freescale/enetc/enetc.c
+> > > > b/drivers/net/ethernet/freescale/enetc/enetc.c
+> > > > > index 35634c516e26..3137b6ee62d3 100644
+> > > > > --- a/drivers/net/ethernet/freescale/enetc/enetc.c
+> > > > > +++ b/drivers/net/ethernet/freescale/enetc/enetc.c
+> > > > > @@ -1011,10 +1011,15 @@ static void enetc_get_offloads(struct
+> > enetc_bdr
+> > > > *rx_ring,
+> > > > >
+> > > > >  	/* TODO: hashing */
+> > > > >  	if (rx_ring->ndev->features & NETIF_F_RXCSUM) {
+> > > > > -		u16 inet_csum = le16_to_cpu(rxbd->r.inet_csum);
+> > > > > -
+> > > > > -		skb->csum = csum_unfold((__force
+> > __sum16)~htons(inet_csum));
+> > > > > -		skb->ip_summed = CHECKSUM_COMPLETE;
+> > > > > +		if (priv->active_offloads & ENETC_F_RXCSUM &&
+> > > > > +		    le16_to_cpu(rxbd->r.flags) &
+> > ENETC_RXBD_FLAG_L4_CSUM_OK)
+> > > > {
+> > > > > +			skb->ip_summed = CHECKSUM_UNNECESSARY;
+> > > > > +		} else {
+> > > > > +			u16 inet_csum = le16_to_cpu(rxbd->r.inet_csum);
+> > > > > +
+> > > > > +			skb->csum = csum_unfold((__force
+> > __sum16)~htons(inet_csum));
+> > > > > +			skb->ip_summed = CHECKSUM_COMPLETE;
+> > > > > +		}
+> > > > >  	}
+> > > >
+> > > > Hi Wei,
+> > > >
+> > > > I am wondering about the relationship between the above and
+> > > > hardware support for CHECKSUM_COMPLETE.
+> > > >
+> > > > Prior to this patch CHECKSUM_COMPLETE was always used, which seems
+> > > > desirable. But with this patch, CHECKSUM_UNNECESSARY is conditionally
+> > used.
+> > > >
+> > > > If those cases don't work with CHECKSUM_COMPLETE then is this a
+> > bug-fix?
+> > > >
+> > > > Or, alternatively, if those cases do work with CHECKSUM_COMPLETE, then
+> > > > I'm unsure why this change is necessary or desirable. It's my understanding
+> > > > that from the Kernel's perspective CHECKSUM_COMPLETE is preferable to
+> > > > CHECKSUM_UNNECESSARY.
+> > > >
+> > > > ...
+> > >
+> > > Rx checksum offload is a new feature of ENETC v4. We would like to exploit
+> > this
+> > > capability of the hardware to save CPU cycles in calculating and verifying
+> > checksum.
+> > >
 > > 
-> > Fixes: 32267c29bc7d ("phy: exynos5-usbdrd: support Exynos USBDRD 3.1 combo phy (HS & SS)")
-> > CC: stable@vger.kernel.org # 6.11+
+> > Understood, but CHECKSUM_UNNECESSARY is usually the preferred option as
+> > it
+> > is more flexible, e.g. allowing low-cost calculation of inner checksums
+> > in the presence of encapsulation.
 > 
-> Why is a patch 5/8 a stable thing?  If this is such an important bugfix,
-> it should be sent separately as a 1/1 patch, right?
+> I think you mean 'CHECKSUM_COMPLETE' is the preferred option. But there is no
+> strong reason against using CHECKSUM_UNNECESSARY. So I hope to keep this patch.
 
-Correct, one should move fixes to top of the series..
+I was also under the impression that CHECKSUM_COMPLETE is more desirable
+than CHECKSUM_UNNECESSARY. Maybe Tom can help.
 
--- 
-~Vinod
+Tom:
+
+If a device can report both CHECKSUM_UNNECESSARY and CHECKSUM_COMPLETE,
+is there any advantage in reporting CHECKSUM_UNNECESSARY? The only
+advantage I can think of is that when the kernel pulls headers (IPv6 for
+example) it wouldn't need to compute their checksum in order to adjust
+skb->csum, but I am not sure how critical that is.
+
+I am asking because I am interested in knowing what is the
+recommendation for future devices: Implement both or only
+CHECKSUM_COMPLETE?
+
+Original patch is here [1] and I did read your paper [2] and David's
+presentation [3].
+
+Thanks
+
+[1] https://lore.kernel.org/netdev/20241204052932.112446-1-wei.fang@nxp.com/T/#mf89bb4c6c72e8dd4a697551cbc9485217366d013
+[2] https://people.netfilter.org/pablo/netdev0.1/papers/UDP-Encapsulation-in-Linux.pdf
+[3] https://www.netdevconf.info/1.1/proceedings/slides/miller-hardware-checksumming.pdf
 
