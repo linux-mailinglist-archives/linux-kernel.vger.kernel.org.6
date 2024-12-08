@@ -1,62 +1,63 @@
-Return-Path: <linux-kernel+bounces-436406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CCA99E8586
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 14:50:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7ADD9E858D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 14:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C8932814AB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:50:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9937A28166D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:55:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5437314E2CF;
-	Sun,  8 Dec 2024 13:50:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0AB614883C;
+	Sun,  8 Dec 2024 13:55:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QJMLWZNU"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="S6N+gtE3"
+Received: from out203-205-221-245.mail.qq.com (out203-205-221-245.mail.qq.com [203.205.221.245])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F09A4A3C;
-	Sun,  8 Dec 2024 13:50:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2B3A13B59A
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 13:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733665821; cv=none; b=ZpV3wOduRqyUluHrTRwm3m5WRIDH+jC9/lHvvMUMLsWjWAeNgdHgSIoK1YXlDPJzciCFonGDszSS7L70NZjl77HPQ0N7JENDPTjNvdj+P5dAcWxN9gT6vI5BCFV+w9ZCwwVclNR+Q+tjWhloCXBeN5dyU7Jv/KRiEttn7MGe34M=
+	t=1733666123; cv=none; b=IDg2VPQ331rTUk7u2KeFw5P/xX29CzBLIZm8VEn/yKp8XOlC3a/65LcdOXoLmKckawb3aw8Hefz7z9aljQCvManK/BCF+uSsXuQ38EWb91QD6ldSCkgcPJUrNWGYn73jbndQJGqJrcfjHpxNUWC9cXsouNreCnvHF7NsI5UGVKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733665821; c=relaxed/simple;
-	bh=LxmDDqYbaja4yoa1NRmDWttnyg7U8BpMJIm0fa6JNkA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Nlbo3vlYppQjgAKWPlHD91E0XFoSmBHWijGdfE0qpXu9xwUAQliMdC3o6p6jDuD1t8EJ+iYfGaurfesZvdg8Y2309xyN45fAFu15Qyyr8cjdQOKJAbxusRJ++fFxlvB+g8HiwFZ5VWuedasx+gOE+FzQYCi73PkIUA8TrRXIo9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QJMLWZNU; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8BcCQj025532;
-	Sun, 8 Dec 2024 13:50:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kSY3DabKpvKQm1e3Iv1xKNvSWSQ2t4BSi/1v6tcaeG4=; b=QJMLWZNUDdKw6K2a
-	6zhlWdHX7MeZ4nHCluBQWzMG/AQUr/gJaeeiGjibg52gq1qZHscaRlJ8YmxC2wNt
-	rINLgY02GEqFSUoryHfYuRPnIxsTIYOK0vQcnUNB3m3fkGxPO6Y3bwT+SgBlrhMp
-	mD+UGDj8Oh3GVJfmhu2XHvIIgEDrNeo5yT+hCwNw6lB4vehRJKb6wXbXei1K87sf
-	Ztoh+MbYNO7Hrn3iQaE2iUNZbCWbN17OmWnyM6ytK6S9fQZ18RU4clSxjgdu5SJH
-	PcWYA+dfRymvvu/7fJLTNbInI5d2qsOyORjTRMjrvXBSJb0iktI3W9c7zDDuFD7h
-	O1pfEw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cfhka59n-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 08 Dec 2024 13:50:00 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B8Dnx2F012911
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 8 Dec 2024 13:49:59 GMT
-Received: from [10.216.28.219] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 05:49:55 -0800
-Message-ID: <ef4d978d-f530-4988-8da9-9b32a5f16c21@quicinc.com>
-Date: Sun, 8 Dec 2024 19:15:32 +0530
+	s=arc-20240116; t=1733666123; c=relaxed/simple;
+	bh=oZliOEkC0ZvWc5JlqrpBQPEHcKqVJEOSPtpnDWIvozc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=VBTm8ODOc6eVDmLilDNEmAPkRw0IQjHuDfMcH6iPLo3vqjP9lKg/PVjJ7MxCusqgewFppuyUMMjQi4O6uF8sWL6Mj69A7TDPejR+OsZmpYVSV40DzC4TW5m7d7fAuqJSZZz4G5SLXXmhN7hH89p52qOw9amu/OhlCpt0dpUCbXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=S6N+gtE3; arc=none smtp.client-ip=203.205.221.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1733665809; bh=BZYvJo1qCFozwUl5OiMXNjuTzLKS0lZbicCI5uzJH4Q=;
+	h=Date:Subject:To:References:From:Cc:In-Reply-To;
+	b=S6N+gtE3rDmWdeugiypaCxaD74gxiEFMvbTagdRP1tPE2PiGiRDiGs2hUH+zV34lO
+	 /ancf8WGvGm5IO9P8FGYkicYb+3lZWPkiSrcR95mv4hWRY60Yru88w4Zjh1RuAKF8g
+	 hNjV06DVRu83iyLq2Dum4ZtfCWmbnBNQnjbvgGJk=
+Received: from [IPV6:2409:875e:a030:1001:14::e66] ([2409:875e:a030:1001:14::e66])
+	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
+	id C8790CAD; Sun, 08 Dec 2024 21:50:07 +0800
+X-QQ-mid: xmsmtpt1733665807tjgkympcs
+Message-ID: <tencent_C722D2FCAA87D408E78D8E452E17C6F3B906@qq.com>
+X-QQ-XMAILINFO: MB5+LsFw85No6iy5gp/z4MecSTaeEqWcjw/8utYM7xr3RYG95WO4LQR4iS3BYg
+	 +DN58pYutgQ5HtBkrPnE2IaXlcmzqjpOdwvWHcdyu0ipuWEd8UJ//ksdAQmyv80hmIoM0/obQROa
+	 g6IO1Nlqb2VxkAl777jE+QiTum99++AdS1YjYMw/O+f3u1tHvwoeGhXENKx5ANP0Cgyc8etUaROP
+	 XMFbYpV5kYR2aYVFobxU6vjLzopjhhS/yrVI0x1d8mB4JmBqY8U95qIisGwxyGJRFZZq/7ym4+XD
+	 qXTqII+6OeeN0VAtyP3gmc6A1OnTfNhiWOv5Q7fLcmdKnohgt+6brQrrNYAt5yRZcdXHdaoLrFtD
+	 HltqtxWehKJAIZPEHDt/7EF1hqLaTBiBrGFk6NF0U5OMhuOezWCEeOjwO79LlLK+qR/8CmlMlcAS
+	 47C6KbjJmmAoa+k+NGlq3P+kOXrWJEnk/Xat65qWLuN55BrKH8atbc9r+aX+pKwgDf9+LPn36lbJ
+	 tc9wc+hwMlpI326yfMIDN4HcyxiCfxAoVju8KyMUbumiVN5J5sN8ZXnOu5qoBYNbAo/b//LvymsG
+	 VWiGNvnb7UpMm4s7Je8wdoZW1k0SYFKlQlQugUC1jq1EldrZcQqHr+VDx8h0Uv2bKa9nlwJ9Dr/M
+	 Fa2KWHzD2TA2DYVkajPv2j+/H+rxuL10NeCRuaarktheAJI7roLUcgoa4zFIBjgHww73Mo3xAdy7
+	 HhiQcD2zlEdE/pl97lRhiOK8VCgjhDmk+oM3+YMWXurBRcBRw6QMnt/cOr2HtlUE8jIZqAvEtqyV
+	 0eVprEBg7A7JTV7taTazclBZ39ANZth+dhaEcIGzooRfXmmLXDTbGkt8xVGhp9BMFe3BQSqJ/sZX
+	 6h8zOLdB6MLKnr3+rTC366mgm0OBXpSm6mM0wiYc9NhJ0cM5ZD/tFg6HU3Xypop7ST2yTKPUVDel
+	 kGLcKv5qX2CO5eMMK5Fo8OBbb4s59f
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-OQ-MSGID: <ce9fac4b-8d1d-453b-be50-74802dbc230e@qq.com>
+Date: Sun, 8 Dec 2024 21:50:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,79 +65,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/22] wifi: ath12k: add Ath12k AHB driver support for
- IPQ5332
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <ath12k@lists.infradead.org>, <linux-wireless@vger.kernel.org>,
-        Kalle Valo
-	<kvalo@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Jeff Johnson
-	<jjohnson@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <ou5kgedz5aga4dtda6k23uhybcjy7mfwie74p6q3qyn5bdajz7@ftejp7lqrise>
- <0b2f8734-f502-42d7-bdc5-b0d382d2aa70@quicinc.com>
- <cda109c9-a1e2-42cb-b830-6764c6eef519@kernel.org>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <cda109c9-a1e2-42cb-b830-6764c6eef519@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 83HwiWuzEg6npDPjLJZef7u1Beekarbe
-X-Proofpoint-GUID: 83HwiWuzEg6npDPjLJZef7u1Beekarbe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412080115
+Subject: Re: [PATCH] mempolicy.h: Remove unnecessary header file inclusions
+To: SeongJae Park <sj@kernel.org>
+References: <20241207195341.279560-1-sj@kernel.org>
+From: Junjie Fu <fujunjie1@qq.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, willy@infradead.org,
+ Michal Hocko <mhocko@suse.com>, akpm@linux-foundation.org,
+ gourry@gourry.net, fujunjie1@qq.com
+In-Reply-To: <20241207195341.279560-1-sj@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On 12/6/2024 6:25 PM, Krzysztof Kozlowski wrote:
-> On 06/12/2024 12:07, Raj Kumar Bhagat wrote:
->> On 10/16/2024 12:27 PM, Krzysztof Kozlowski wrote:
->>> On Tue, Oct 15, 2024 at 11:56:15PM +0530, Raj Kumar Bhagat wrote:
->>>> Currently, Ath12k driver only supports WiFi devices that are based on
->>>> PCI bus. New Ath12k device IPQ5332 is based on AHB bus. Hence, add
->>>> Ath12k AHB support for IPQ5332.
->>>>
->>>> IPQ5332 is IEEE802.11be 2 GHz 2x2 Wifi device. To bring-up IPQ5332
->>>> device:
->>>> - Add hardware parameters for IPQ5332.
->>>> - CE and CMEM register address space in IPQ5332 is separate from WCSS
->>>>   register space. Hence, add logic to remap CE and CMEM register
->>>>   address.
->>>> - Add support for fixed QMI firmware memory for IPQ5332.
->>>> - Support userPD handling for WCSS secure PIL driver to enable ath12k
->>>>   AHB support.
->>>>
->>>> Depends-On: [PATCH V7 0/5] remove unnecessary q6 clocks
->>>> Depends-On: [PATCH V2 0/4] Add new driver for WCSS secure PIL loading
->>>> Link: https://lore.kernel.org/all/20240820055618.267554-1-quic_gokulsri@quicinc.com/
->>>> Link: https://lore.kernel.org/all/20240829134021.1452711-1-quic_gokulsri@quicinc.com/
->>>
->>> These are series targetting other subsystems. I do not understand why
->>> you created such dependency. It does not look needed and for sure is not
->>> good: nothing here can be tested, nothing can be applied.
->>
->> To validate this series, the dependencies mentioned above were necessary, which
->> is why they were included.
-> 
-> What does it mean "validate"? You are supposed to describe how upstream
-> can consume this.
-> 
 
-"validate" here means building an image, bring-up DUT in AP, STA or Mesh mode,
-associate Station and run bi-directional data traffic.
+
+On December 8, 2024 at 3:53, SeongJae Park wrote:
+> I noticed kunit UM build errors as below on mm-unstable, and git bisect points
+> this patch.
+> 
+>      $ ./tools/testing/kunit/kunit.py run --kunitconfig ./mm/damon/tests/
+>      [...]
+>      fs/aio.c:525:71: error: ‘FGP_CREAT’ undeclared (first use in this function); did you mean ‘IPC_CREAT’?
+>        525 |                                             FGP_LOCK | FGP_ACCESSED | FGP_CREAT,
+>            |                                                                       ^~~~~~~~~
+>            |                                                                       IPC_CREAT
+>      fs/aio.c:532:17: error: implicit declaration of function ‘folio_end_read’; did you mean ‘folio_test_head’? [-Werror=implicit-function-declaration]
+>        532 |                 folio_end_read(folio, true);
+>            |                 ^~~~~~~~~~~~~~
+>            |                 folio_test_head
+>      [...]
+> 
+> I also confirmed including pagemap.h on fs/aio.c as below fixes the issue.  I
+> would like to hear you or others opinions though, since I'm not familiar with
+> the inclusion routes of the file.
+
+Including unnecessary header files in a .h file is not a good practice. 
+It can lead to troublesome dependency issues in the future. However, 
+based on the testing on your side, this change might cause some other 
+compilation issues, as indicated in your patch. I think all these issues 
+should be resolvable by including the pagemap.h in the .c files instead.
+
+
 
