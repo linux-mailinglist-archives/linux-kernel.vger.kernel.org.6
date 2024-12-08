@@ -1,84 +1,173 @@
-Return-Path: <linux-kernel+bounces-436495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24AE89E86BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:56:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47449E86BF
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CBA81884DED
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D0021884E97
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:58:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D57B187554;
-	Sun,  8 Dec 2024 16:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B7CB1885BF;
+	Sun,  8 Dec 2024 16:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="sXXG7uY2"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CF1E20323;
-	Sun,  8 Dec 2024 16:56:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tKFgh8Fi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9B120323;
+	Sun,  8 Dec 2024 16:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733676964; cv=none; b=lQD/sZHx+tB5/z5IGz3gNw1pIiLMd5wMz8h3YAuGr9YufKaiZDUlY1bUOe5txPV5Cn9N4c31oNT1d+FnQlHfsGxqsptGfk5TuIFO4m+AFSTmIyfTU0CHiatHI3A1GotOWxG2+hbF4lvmg1Ep7oFbeGUGslROx625yYpePtG8ExU=
+	t=1733677090; cv=none; b=fdmIoNqtVPTGUhCzltmhwH+rUZI9107zNKafbLiST494PVg0aVSvxdWVLIWAorYa5uW8LsyQg6qEbFa41nDnYvxpmfGuh6vT1fItCQRuxLbcQJH5kaTdCER6zH+eYakgphEHeVaJIaOy4GWcvB7A1DNxgGi89AzXRcGKoNb0jr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733676964; c=relaxed/simple;
-	bh=ny8mXLIdAupvpyUpKQoQ+xdHWHAeocwZ77i9RZL1inc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dEH5pJvQWi2wzS49qOsr1o1W0dViA4okXf81wE//x+3dHzV5+W2b025kEABLdR1JByE3P8FMqm0I9h4P/UQGV2MfKrhR+A81F4JSh9KOkyv0f8CiUZreLK16GDG25CE+mtSP0XGjoBVq4m6c51L15EsefkEG5kc+xSPsUtq8LQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=sXXG7uY2; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id B9CAD205368C; Sun,  8 Dec 2024 08:55:56 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com B9CAD205368C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733676956;
-	bh=fqoAooQBnbwo+j3cFKVyrDsnRKcuOZ6qs+N3hEmk6Jk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sXXG7uY2RACfwKW/H7GEVcb8SLbB+fFTVlZxPy3Mw4yRZdFvdDNujVB7ZV0leRWrJ
-	 CzuhGbDpXXvlsexpT831admkSWfWELRLiC+flUQ1qWsfrL6aonbvn2k0DjSNGAXf06
-	 EyqMZLNILKrh7Z+CJuWAZmJ9bfZjDeGrbt0QkPE4=
-Date: Sun, 8 Dec 2024 08:55:56 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Olaf Hering <olaf@aepfle.de>
-Cc: linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH v1] tools/hv: add a .gitignore file
-Message-ID: <20241208165556.GA9638@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20241202124107.28650-1-olaf@aepfle.de>
+	s=arc-20240116; t=1733677090; c=relaxed/simple;
+	bh=ZupYwODzz1JZIpwYvnLeAs3GYHnLlQAmCgPJ5BKpR5Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BdIU8cgOz6ob4UBFDi110dkCzHDAE0WKise7yGDyBQTs6W5TGiBGkqW5qHIzNiBaREcQZGRMNi3OwHg77HRtp2U5jJWDbTrfW91UvCnVzy32G093Z6dpdJJLdaN2umQbprpF5mAxDulN+EaXfBaGJnOWQeVLdC7NNjmEQGPvdLI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tKFgh8Fi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73174C4CED2;
+	Sun,  8 Dec 2024 16:58:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733677090;
+	bh=ZupYwODzz1JZIpwYvnLeAs3GYHnLlQAmCgPJ5BKpR5Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=tKFgh8FiS8FbRTFkK2N+FlA7iqzGWZknrBXFt8WYBZ8DtYjuE5gSiiWqTM9CNI56G
+	 fjeOd1LWq2bILNNh+9jeOvowOvhohfDcNzI65UVz0jiojk4b4/T/culUhkplgEtRDD
+	 zQ75TY9PgTECJH08yI43oLajI9aN/VZ6NhoCrFmXY8/HlsHKKD+5OsJVynKVEz730N
+	 pz4bro2tW+HiOZWGXRTSamb3qBw9NCn4Z5O+qdarOilS6zVKSm+UHFqc9ZQU5kxO9c
+	 Lnhkrju45GcVM9kYoGpc8onf6R5SXzzCxjVCRNKOuM3ks9/8pSRmEPTzGKwN7zqbRn
+	 I/jlR5A60YWHw==
+Date: Sun, 8 Dec 2024 16:58:00 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Christian Eggers <ceggers@arri.de>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Antoni Pokusinski
+ <apokusinski01@gmail.com>, Francesco Dolcini <francesco@dolcini.it>,
+ =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29uw6dhbHZlcw==?=
+ <jpaulo.silvagoncalves@gmail.com>, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, <linux-iio@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, =?UTF-8?B?Sm/Do28=?= Paulo =?UTF-8?B?R29u?=
+ =?UTF-8?B?w6dhbHZlcw==?= <joao.goncalves@toradex.com>, Francesco Dolcini
+ <francesco.dolcini@toradex.com>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] iio: light: as73211: fix channel handling in
+ only-color triggered buffer
+Message-ID: <20241208165800.1f4504a9@jic23-huawei>
+In-Reply-To: <3614353.dWV9SEqChM@n9w6sw14>
+References: <20241204-iio_memset_scan_holes-v2-0-3f941592a76d@gmail.com>
+	<20241204-iio_memset_scan_holes-v2-2-3f941592a76d@gmail.com>
+	<3614353.dWV9SEqChM@n9w6sw14>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241202124107.28650-1-olaf@aepfle.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 02, 2024 at 01:40:52PM +0100, Olaf Hering wrote:
-> Remove generated files from 'git status' output after 'make -C tools/hv'.
+On Wed, 4 Dec 2024 17:20:47 +0100
+Christian Eggers <ceggers@arri.de> wrote:
+
+> On Wednesday, 4 December 2024, 00:55:32 CET, Javier Carrasco wrote:
+> > The channel index is off by one unit if AS73211_SCAN_MASK_ALL is not
+> > set (optimized path for color channel readings), and it must be shifted
+> > instead of leaving an empty channel for the temperature when it is off.
+> > 
+> > Once the channel index is fixed, the uninitialized channel must be set
+> > to zero to avoid pushing uninitialized data.
+> > 
+> > Cc: stable@vger.kernel.org
+> > Fixes: 403e5586b52e ("iio: light: as73211: New driver")
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> > ---
+> >  drivers/iio/light/as73211.c | 17 +++++++++++++----
+> >  1 file changed, 13 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/drivers/iio/light/as73211.c b/drivers/iio/light/as73211.c
+> > index be0068081ebb..2d45dfeda406 100644
+> > --- a/drivers/iio/light/as73211.c
+> > +++ b/drivers/iio/light/as73211.c
+> > @@ -672,9 +672,12 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
+> >  
+> >  		/* AS73211 starts reading at address 2 */
+> >  		ret = i2c_master_recv(data->client,
+> > -				(char *)&scan.chan[1], 3 * sizeof(scan.chan[1]));
+> > +				(char *)&scan.chan[0], 3 * sizeof(scan.chan[0]));
+> >  		if (ret < 0)
+> >  			goto done;
+> > +
+> > +		/* Avoid pushing uninitialized data */
+> > +		scan.chan[3] = 0;
+> >  	}
+> >  
+> >  	if (data_result) {
+> > @@ -682,9 +685,15 @@ static irqreturn_t as73211_trigger_handler(int irq __always_unused, void *p)
+> >  		 * Saturate all channels (in case of overflows). Temperature channel
+> >  		 * is not affected by overflows.
+> >  		 */
+> > -		scan.chan[1] = cpu_to_le16(U16_MAX);
+> > -		scan.chan[2] = cpu_to_le16(U16_MAX);
+> > -		scan.chan[3] = cpu_to_le16(U16_MAX);
+> > +		if (*indio_dev->active_scan_mask == AS73211_SCAN_MASK_ALL) {
+> > +			scan.chan[1] = cpu_to_le16(U16_MAX);
+> > +			scan.chan[2] = cpu_to_le16(U16_MAX);
+> > +			scan.chan[3] = cpu_to_le16(U16_MAX);
+> > +		} else {
+> > +			scan.chan[0] = cpu_to_le16(U16_MAX);
+> > +			scan.chan[1] = cpu_to_le16(U16_MAX);
+> > +			scan.chan[2] = cpu_to_le16(U16_MAX);
+> > +		}
+> >  	}
+> >  
+> >  	iio_push_to_buffers_with_timestamp(indio_dev, &scan, iio_get_time_ns(indio_dev));
+> > 
+> >   
 > 
-> Signed-off-by: Olaf Hering <olaf@aepfle.de>
-> ---
->  tools/hv/.gitignore | 3 +++
->  1 file changed, 3 insertions(+)
->  create mode 100644 tools/hv/.gitignore
+> With this change, having only X, Y and Z in the scan_mask (without the
+> temperature channel) works fine.
 > 
-> diff --git a/tools/hv/.gitignore b/tools/hv/.gitignore
-> new file mode 100644
-> index 000000000000..0c5bc15d602f
-> --- /dev/null
-> +++ b/tools/hv/.gitignore
-> @@ -0,0 +1,3 @@
-> +hv_fcopy_uio_daemon
-> +hv_kvp_daemon
-> +hv_vss_daemon
+> But it looks that there is still another problem if a single color channel
+> (e.g. X) is omitted from the scan mask (which probably wouldn't make much
+> sense in practice).  If I am right, the layout of scan.chan[] is also wrong for
+> that case, so e.g. if omitting X, the application will get the X values where
+> it expects the temperature value (which isn't read from the hardware at all).
+> 
+> Does it make sense to write a follow-up patch for this? I fear that taking all
+> possible combinations into account could make the driver more complicated than
+> necessary.  Or is there a good example how to handle such combinations?
+> 
+Good spot. I'd fallen for assuming a driver worked the way I thought it would
+and not checked everything necessary was there.
 
-Changes looks fine to me,
+Hmm. This is a bit odd. Driver seems to be written with assumption that the IIO
+core is doing demux.  That doesn't work unless available_scan_masks is set.
 
-Reviewed-by: Saurabh Sengar <ssengar@linux.microsoft.com>
+Make that
+{
+	AS73211_SCAN_MASK_ALL,
+	AS73211_SCAN_MASK_COLOR,
+	0,
+};
+
+And then if you enable fewer channels, the IIO core will still enable one of the
+sets in available_scan_masks and then do the relevant data manipulation to repack
+as necessary.
+
+I'll not pick this patch up as it makes sense to fix both issues together.
+
+Thanks
+
+Jonathan
+
+> 
+> Tested-by: Christian Eggers <ceggers@arri.de>
+> 
+> 
+> 
+> 
+
 
