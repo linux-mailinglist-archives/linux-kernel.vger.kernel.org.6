@@ -1,217 +1,212 @@
-Return-Path: <linux-kernel+bounces-436534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39BEA9E8739
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:11:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 585119E873B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:15:46 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E518A2814F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:11:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20AA1188562A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:15:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DF718C02E;
-	Sun,  8 Dec 2024 18:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD5EB18871F;
+	Sun,  8 Dec 2024 18:15:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="CJKS3qLo"
-Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OS5bHq1k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA86D4690;
-	Sun,  8 Dec 2024 18:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3E81EA65;
+	Sun,  8 Dec 2024 18:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733681464; cv=none; b=iw+Um61UULrAhqsj2l9/KUend7jcegqQ07Jw3zke2CSPSrb/3jUXpvputGOUJbsa+Lc4SBG/eXPD1zMM0/dq6DtSuUUw/aibpR1Qj6aGsrKJduh4ZZoHAP9J9qlrR/W7qFYFOLBd3YSXYZfUu7xkCeeUA1e9YzbwT5BF8uMoXL8=
+	t=1733681739; cv=none; b=OZdnZp0QXiE0lIAZAm7rTY39J44udn7jsVDEM1CSULHdcrgO13/y5GxUt2R2lTGY95md8LYShKTOT1fJDZ95pJwk1JnyuVlB9QZr706Mb7EAWzML3dVvz+eDwzIXK8Ux2QXaG2vhUAoGVggL9JFwKC3ikIp3YidPR5RWMoGBiu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733681464; c=relaxed/simple;
-	bh=9CnchKfxWy5z81rg/thnHuLoK1IGJfcPdUPOZRSDVlE=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ARZ6c9IgexGDTboh6vuRJPp2UGqso7xwIt/Gmm1gMyo1AyQAFZbIMFHQh/v3IDZvnT3YR0FnmknMKcE6IXX4Am9BcbI+jFO7pV++M+RZayOP062Gcevuh5sFebznx39Za+PBIH1ymvwzcyrRnvgEjQ9gDCOPgsMtn4uJ7PYOIqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=CJKS3qLo; arc=none smtp.client-ip=134.76.10.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
-	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=9FB2GPk7COCoX9cEFVKvQVosxysJZseEWA2qS7zkWkM=; b=CJKS3qLo2nmU8RTYUGjkHdxbqz
-	ns3qD6CiJJHSo/fxpi0OkfvH8JDQQZdboDlvM/X5DcOKtxOEKZHO1DDbUS7ibZ6KyG6Zk/SU7+Rph
-	Te6kIRiApeS89pXKvOVY+/VJ3wXYA9Z9G+I2/zCcCa/XvLG7AmRxVqASLRJcXP5LXQrdAXnUEcvrs
-	O2/01MVDPrEC4QD/XJf1NbP4rjXcQJ8Qs8VhOvKcazkXGe4hH97QTcLqKzLARCv8+BY4s5fBYP0Go
-	K8CQW9PwNvu3ayOiSb1QPTX1xyvg4/5600xSFeHb+Ar6vPZsB/cK/rcDMH/V4blTmcT3RaT4DwSed
-	W3JC06dw==;
-Received: from xmailer.gwdg.de ([134.76.10.29]:57248)
-	by mailer.gwdg.de with esmtp (GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tKLk3-004b6U-2I;
-	Sun, 08 Dec 2024 19:10:51 +0100
-Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
-	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-	(GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tKLk3-000BW3-1w;
-	Sun, 08 Dec 2024 19:10:51 +0100
-Received: from vra-173-64.tugraz.at (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
- (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sun, 8 Dec
- 2024 19:10:49 +0100
-Message-ID: <87dd9b7b52e7cea874c1899f56efdd3d7c5b7243.camel@gwdg.de>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-From: Martin Uecker <muecker@gwdg.de>
-To: David Laight <David.Laight@ACULAB.COM>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-CC: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Date: Sun, 8 Dec 2024 19:10:49 +0100
-In-Reply-To: <e71fffb7ff0e4bf29692d006c0fe77c2@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
-	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
-	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
-	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
-	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
-	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
-	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
-	 <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
-	 <344b4cf41a474377b3d2cbf6302de703@AcuMS.aculab.com>
-	 <9a0c041b6143ba07c2b3e524572fccd841f5374b.camel@gwdg.de>
-	 <CAHk-=wjpVXEjX16PP=-hi4CgLqEGJ_U-WvKWq+J3C+FW-hSSfg@mail.gmail.com>
-	 <0a2996a7c63930b9d9a8d3792358dd9e494e27c1.camel@gwdg.de>
-	 <CAHk-=wjsfYYKBYuW8_6yKjdwHih0MMa2GwUJh_LHcuUNFR7-QA@mail.gmail.com>
-	 <9d9567dbdaf39688bbd0d240e29dec826a5931ee.camel@gwdg.de>
-	 <b71056c1b9e04aa383f2e5608c27290f@AcuMS.aculab.com>
-	 <6658618490381cf5ec35edbb66f1478024174e67.camel@gwdg.de>
-	 <e71fffb7ff0e4bf29692d006c0fe77c2@AcuMS.aculab.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1733681739; c=relaxed/simple;
+	bh=iD0RWwS5DdYUkCd5ss4s0ut3URr2GPqXxKSjtRwe0vM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bx48HAXq12BFPSYLL6206ib6frFJ5kqcPA704GYIKGKaacWoaE40Fzl7cu5cZdGZTv+lCfG1LyTlfWimBhVnNLC0tqBuzFF9mHun6s8YHuRIX2+nJ4ea4R6uU2avGkuKlMNDGiwL/Q8os9DVvW3OZqNKUqevaTKWbYdMNbj+P7k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OS5bHq1k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65AEEC4CED2;
+	Sun,  8 Dec 2024 18:15:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733681738;
+	bh=iD0RWwS5DdYUkCd5ss4s0ut3URr2GPqXxKSjtRwe0vM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OS5bHq1kLCPXFTTadlHcmikvIE1HBRuuHSp3nU1zC5dSG+ETdk999EKFZn0Zq5IdY
+	 DFkPjKs9SCh+Q7rXYbpg4JNqi48sbdaoxdx0Jx2/lJ8GLkD5ANJEhSoYceeFuISySu
+	 NSqzSqbMb/ZJ0YgAlyqrVCo/CGXVGGrEv0HLBoco8A7C1iYlv/msbz1+DYawxacpGD
+	 mhZE182vcjwkLAqwTYESZV7q3aOcWKEKMvLR/oPXAJI7l7q0Luu7HIByXYd/GY7lQG
+	 Mw/TJ9yJF79U4RbZlK3pcjF5UnYHLwrIBnBVeZ1zrYMSB+NSpfQOOm89xOcUI0YXrc
+	 A7agbhHIwYY4g==
+Date: Sun, 8 Dec 2024 18:15:31 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Peter Rosin <peda@axentia.se>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] iio: iio-mux: kzalloc instead of devm_kzalloc to
+ ensure page alignment
+Message-ID: <20241208181531.47997ab4@jic23-huawei>
+In-Reply-To: <20241202-iio-kmalloc-align-v1-2-aa9568c03937@gmail.com>
+References: <20241202-iio-kmalloc-align-v1-0-aa9568c03937@gmail.com>
+	<20241202-iio-kmalloc-align-v1-2-aa9568c03937@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: MBX19-GWD-03.um.gwdg.de (10.108.142.56) To
- MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
-X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:5, sv:1733649613, ts:1733681451
-X-Virus-Scanned: (clean) by clamav
-X-Spam-Level: -
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Am Sonntag, dem 08.12.2024 um 16:48 +0000 schrieb David Laight:
-> From: Martin Uecker
-> > Sent: 08 December 2024 12:38
+On Mon, 02 Dec 2024 16:11:08 +0100
+Matteo Martelli <matteomartelli3@gmail.com> wrote:
 
-...
-> ...
-> > So a lot of this macro business seems to be necessary
-> > to avoid creating warnings for ISO VLAs when instead you really
-> > care about the created code not having a dynamic allocation on
-> > the stack.
->=20
-> A lot of the 'macro business' for min/max is avoiding unexpected
-> conversion of negative values to very large unsigned ones.
-> And no, -Wsign-compare is spectacularly useless.
+> During channel configuration, the iio-mux driver allocates a page with
+> devm_kzalloc(PAGE_SIZE) to read channel ext_info. However, the resulting
+> buffer points to an offset of the page due to the devres header sitting
+> at the beginning of the allocated area. This leads to failure in the
+> provider driver when sysfs_emit* helpers are used to format the ext_info
+> attributes.
+> 
+> Switch to plain kzalloc version. The devres version is not strictly
+> necessary as the buffer is only accessed during the channel
+> configuration phase. Rely on __free cleanup to deallocate the buffer.
+> Also, move the ext_info handling into a new function to have the page
+> buffer definition and assignment in one statement as suggested by
+> cleanup documentation.
+> 
+> Signed-off-by: Matteo Martelli <matteomartelli3@gmail.com>
+This seems fine to me, but the diff ended up a bit complex, so I'd like
+Peter to take a look as well before I apply it.
 
-This is a different topic, but what would be needed here?
->=20
-> ..
-> > The issue here is that we miss a language feature in C to
-> > introduce local variables that help avoid multiple expansion
-> > of macro arguments.  GCC's statement expressions and __auto_type
-> > are a solution
->=20
-> or historically 'typeof(x) _x =3D x'
->=20
-> > #define foo(x) ({ __auto_type __x =3D (x); ... })
-> >=20
-> > but this runs into the current limitations that ({ }) can not be used
-> > at file-scope and can not return constant expressions.
-> >=20
-> >=20
-> > For other reasons I was thinking about adding names to _Generic,
-> > as in
-> >=20
-> > _Generic(x, int i: (i + 1));
-> >=20
-> > because one design issues with _Generic is that it typechecks
-> > also the untaken associations and there the 'x' then has the wrong
-> > type.  Having an 'i' with the right type which is set to the value
-> > of 'x' when the branch is taken would fix this issue.
->=20
-> That looks even more syntactically obscure than _Generic itself.
-> Why does it need to do more than very simple syntax analysis of
-> the unwanted branches=C2=A0
+Do you have a board that is hitting this?  If so, a fixes tag is definitely
+appropriate. I think it is probably appropriate even it not.
 
-This would be possible and GCC does turn of some warnings in
-the unwanted branches.  I added this to GCC 14 I think.
+Jonathan
 
-But so far, ISO C requires that all branches are valid and this
-was an intentional design decision to detect errors.
-
-> - or they could automatically be analysed
-> with the named variable have the specified type?
-
-Inside a macro there is no variable 'x' but
-the macro argument 'x' is replaced by some expression.
-
-Also there is the general problem of multiple expansion which
-can only be addressed by introducing an identifier.
-
->=20
-> > But this feature might also allow writing macros that avoid
-> > double expansion without requiring statement expressions (which
-> > are more difficult to fix):
-> >=20
-> > #define foo(x) _Generic(x, int i: (i + i));
->=20
-> How can that work for things like min() that have multiple arguments?
-
-You would need to nest it:
-
-#define foo(x, y) _Generic(x, int i: _Generic(y, int j: i + j))
-
-Otherwise one could invent syntax for matching multiple arguments
-at the same time.
-
-There is still the problem of name collision, but this is already
-a problem with=C2=A0
-
-({ int i =3D (x); int j =3D (x); i + j; })=20
-
-> Not going to work if you need __auto_type either.
-
-If we allowed an identifier for the default branch too, this
-would work:  _Generic(x, default i: (2 * i))
-
-
-But hey, I am not saying  this is perfect, it is just
-a possible improvement I was thinking about and which could be
-implemented easily, would automatically return constant expressions,
-and could be used at file scope without further changes.
-
-There are certainly better long-term solutions.
-
-Martin
+> ---
+>  drivers/iio/multiplexer/iio-mux.c | 84 +++++++++++++++++++++------------------
+>  1 file changed, 46 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/iio/multiplexer/iio-mux.c b/drivers/iio/multiplexer/iio-mux.c
+> index 2953403bef53bbe47a97a8ab1c475ed88d7f86d2..c309d991490c63ba4299f1cda7102f10dcf54982 100644
+> --- a/drivers/iio/multiplexer/iio-mux.c
+> +++ b/drivers/iio/multiplexer/iio-mux.c
+> @@ -7,6 +7,7 @@
+>   * Author: Peter Rosin <peda@axentia.se>
+>   */
+>  
+> +#include <linux/cleanup.h>
+>  #include <linux/err.h>
+>  #include <linux/iio/consumer.h>
+>  #include <linux/iio/iio.h>
+> @@ -237,49 +238,18 @@ static ssize_t mux_write_ext_info(struct iio_dev *indio_dev, uintptr_t private,
+>  	return ret;
+>  }
+>  
+> -static int mux_configure_channel(struct device *dev, struct mux *mux,
+> -				 u32 state, const char *label, int idx)
+> +static int mux_configure_chan_ext_info(struct device *dev, struct mux *mux,
+> +				       int idx, int num_ext_info)
+>  {
+>  	struct mux_child *child = &mux->child[idx];
+> -	struct iio_chan_spec *chan = &mux->chan[idx];
+>  	struct iio_chan_spec const *pchan = mux->parent->channel;
+> -	char *page = NULL;
+> -	int num_ext_info;
+>  	int i;
+>  	int ret;
+>  
+> -	chan->indexed = 1;
+> -	chan->output = pchan->output;
+> -	chan->datasheet_name = label;
+> -	chan->ext_info = mux->ext_info;
+> -
+> -	ret = iio_get_channel_type(mux->parent, &chan->type);
+> -	if (ret < 0) {
+> -		dev_err(dev, "failed to get parent channel type\n");
+> -		return ret;
+> -	}
+> -
+> -	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_RAW))
+> -		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
+> -	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_SCALE))
+> -		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
+> -
+> -	if (iio_channel_has_available(pchan, IIO_CHAN_INFO_RAW))
+> -		chan->info_mask_separate_available |= BIT(IIO_CHAN_INFO_RAW);
+> -
+> -	if (state >= mux_control_states(mux->control)) {
+> -		dev_err(dev, "too many channels\n");
+> -		return -EINVAL;
+> -	}
+> -
+> -	chan->channel = state;
+> +	char *page __free(kfree) = kzalloc(PAGE_SIZE, GFP_KERNEL);
+> +	if (!page)
+> +		return -ENOMEM;
+>  
+> -	num_ext_info = iio_get_channel_ext_info_count(mux->parent);
+> -	if (num_ext_info) {
+> -		page = devm_kzalloc(dev, PAGE_SIZE, GFP_KERNEL);
+> -		if (!page)
+> -			return -ENOMEM;
+> -	}
+>  	child->ext_info_cache = devm_kcalloc(dev,
+>  					     num_ext_info,
+>  					     sizeof(*child->ext_info_cache),
+> @@ -318,8 +288,46 @@ static int mux_configure_channel(struct device *dev, struct mux *mux,
+>  		child->ext_info_cache[i].size = ret;
+>  	}
+>  
+> -	if (page)
+> -		devm_kfree(dev, page);
+> +	return 0;
+> +}
+> +
+> +static int mux_configure_channel(struct device *dev, struct mux *mux, u32 state,
+> +				 const char *label, int idx)
+> +{
+> +	struct iio_chan_spec *chan = &mux->chan[idx];
+> +	struct iio_chan_spec const *pchan = mux->parent->channel;
+> +	int num_ext_info;
+> +	int ret;
+> +
+> +	chan->indexed = 1;
+> +	chan->output = pchan->output;
+> +	chan->datasheet_name = label;
+> +	chan->ext_info = mux->ext_info;
+> +
+> +	ret = iio_get_channel_type(mux->parent, &chan->type);
+> +	if (ret < 0) {
+> +		dev_err(dev, "failed to get parent channel type\n");
+> +		return ret;
+> +	}
+> +
+> +	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_RAW))
+> +		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_RAW);
+> +	if (iio_channel_has_info(pchan, IIO_CHAN_INFO_SCALE))
+> +		chan->info_mask_separate |= BIT(IIO_CHAN_INFO_SCALE);
+> +
+> +	if (iio_channel_has_available(pchan, IIO_CHAN_INFO_RAW))
+> +		chan->info_mask_separate_available |= BIT(IIO_CHAN_INFO_RAW);
+> +
+> +	if (state >= mux_control_states(mux->control)) {
+> +		dev_err(dev, "too many channels\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	chan->channel = state;
+> +
+> +	num_ext_info = iio_get_channel_ext_info_count(mux->parent);
+> +	if (num_ext_info)
+> +		return mux_configure_chan_ext_info(dev, mux, idx, num_ext_info);
+>  
+>  	return 0;
+>  }
+> 
 
 
