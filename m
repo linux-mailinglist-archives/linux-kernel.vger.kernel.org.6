@@ -1,119 +1,125 @@
-Return-Path: <linux-kernel+bounces-436529-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A41279E8729
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:50:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A10D9E872B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:53:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D9E281A9D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:50:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 595681885507
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:53:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87A818BC3F;
-	Sun,  8 Dec 2024 17:50:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE94B189B83;
+	Sun,  8 Dec 2024 17:53:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YwE5ETXL"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JG4BftGV"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE6A176240
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC4B914601C
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733680218; cv=none; b=k33hy7qSzsOzxR46o1NS52aDmMsHUGYES6xQEzZZQHlHu1EgTvXLlWfsc0u1PTTsx15Dq5QmIlr5WT4gDlJYG+4BCfuCaApvZJU0NWdW8DPb5pDu5nWLmEXl4by6ppDk9H5Ng7J07Bf0/eH0Et9ZGdxDDOevkbPqOLBkXIYCd+c=
+	t=1733680413; cv=none; b=NT7TyEQj8BvIrdh/t+Y3sZQQ+Rmv0pWFy2wTYU4XdFYEvDsuidtDdHZDksPf1yMpugHRFUWTcn7ZRzc6HaBWWq2nV7ngEE84WpcOqVwGxai/RrF3w8JHknxwnCZyXBSMFx9qQGME7d07dTsRn5DCSviL7EA8Ceh6KzBXQOnOu4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733680218; c=relaxed/simple;
-	bh=NMYKVwOZ9ghfzC4m+4A/KuTL24A3wsDJ9KyStazQPDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPwGSW0ShnSW2j/KxDWyUSyldzHXUzk//bNJJd5XQVWmdjNSG0AFSV+sW9vkqPR6bkcQJABBMHQGQdFL+cQcuSRcH80LltY/JUvDwv3+jP91BncK4N3oceWTdOiThqHFyx6im7FyZmZqhvt2oSlAUOj/ZjBJ2P89vApkWhL/Lno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YwE5ETXL; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53f22fd6887so921053e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 09:50:16 -0800 (PST)
+	s=arc-20240116; t=1733680413; c=relaxed/simple;
+	bh=EfQ3q09C1m5D3DWM50HHT9wlsO6zMZWYwUCT5g8OuVo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SKiKAn9rkopRssd7uuqgtCJTQ6LU5qYVkKN0mxOohmC2GzH+YA1QRzl4DMDIIyRENd0OjlVEkr99JMz2/bOIW+uGTSWCfpZY9pnyKdmij3xvGOIXm9evxeidkVDnyPVHNHGxeYwzXeizQpX/F+V1gXBddRY6h2Yf70z57oTqyoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JG4BftGV; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6d902aea641so4872926d6.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 09:53:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733680215; x=1734285015; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=5u+YWQpYadE0OMjiReHLCH4W+mWwJz1CAGoagd9qERs=;
-        b=YwE5ETXL45dR3NiDyBkaiLAjde/o6JdC74ASIRrZBPm1RgSPgIyfbdLhnybLP5P0ze
-         6GhaIVanz6olFKz0KjT9lJb/zH1IFNy/zgtF8Q82XvlltCB/IYqfwwwbyBMg/5QQZ+Rr
-         V/X2nyLkybPWPD4wJdCaL2k6axem1qYEzMU9wBb3/a9NpDgfkPPUrVjp+Zsoe+CPIoQG
-         8RL3EgJPbualIL+ZocEqCpOfTsOSV8YLGnKtybFQTrLCrTPhg4h073nKPFk3NyIq9lTn
-         fcTdK4ZZRX1UC+PlO5xTb1rvLd8X+K6cye4mO8zu6qjJzOy7aPtPUB/h96p40g7tRp6+
-         f71A==
+        d=gmail.com; s=20230601; t=1733680410; x=1734285210; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mogfde4HD2tesO+IHIV06pNlbHgCI2p0y0QxJlMrRW4=;
+        b=JG4BftGVVycNMbNp6gOhcuTstqnnqEM69z3LORLJQfO+1++OtASUW13hW0BlxO/7SN
+         j4bD4FZgigWMLasPghnaco6kKpqMX1gKLcRoUIXkHyI4VNLYwx4yn9dXPDYXAWE/2OKo
+         cDydEw+9/bGy3l5FXcjrk47OfyjNibmbvb6A+7qp7Pg/vSnJSvx1q77n2BWC/sxo0HJr
+         6wNGwOGjwtkEl02cbTvL1EYmPfTTFtI1ildSPhtxnr16fOOkwXiNcGM4yP0rpAQQ3620
+         fXqvuF+F1vH2fkN57rrUOTH0aYsyYf2LWRGdhQ+95HFf0N3dnCQe3livihKZFou8hNB2
+         KfSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733680215; x=1734285015;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5u+YWQpYadE0OMjiReHLCH4W+mWwJz1CAGoagd9qERs=;
-        b=pBDD5TnGVco6ehCJYSldfEOkKIQ03lT0rNBfBbEfx92wZTC74T9ioHq2PnnQWOC3t0
-         N9/AJhY4dFvtntn0/0xdH8nsEwYEpktrsf0xYhAv9rSGJId+r2y7zsmycTe9pqjYqih0
-         KnAJnAkZHGSIR7MZ0wP4J/iMgELa/w1Ckg68v3D/L3dSnLOuixip0NXc03EToPKG26BY
-         H/izZYqOeDgb3wzsJX8ZwMa588TEEItf6qN9AuEMVTG30DhEyCnIVzeaM2NoCq8zf50Q
-         oxVkPfwwb/Ls3oqyptKzPtNAHZO/MCyVXJqJ3NKZvqidIo1Gnbn0O6o7+rNbP8uohPuy
-         vmzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVlgL95laVSm3JauzaFsMND+5PYeJL4xyjYIE9W+IcgESura6xb84HazyLteBodFtOhJIzspHFSoQWeCQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwvk/IJXwDZigJ/VLb9Iy0zcZh7mmmgGNoJQBLHX1FQKQXtfBA
-	GBorcvcOdauMCEcGqer7onrCMvv6JtOGLnpQyw/Zof+1P0E5jTIKu5RAtM93YLk=
-X-Gm-Gg: ASbGncvp3/e4mzAyZ/TmtQ/37294n1G50TjwMazukGF9v7bN5eec1kHWHChNUekSPk9
-	oGbz9dAL+pP8p8JxkQ/SgrxDpUeLZaVEIyds9sSzSf/Yj73PW+QroaCXH/sSRGCaq8UKXFFHLPr
-	d9tkO34EuKWZv1btGXYDtAKf8r427ackbhj7mFPeuQk/jp+fQxGf03dRYvFyi6d1oGXzcaBfmqo
-	FxRPlbH78fpIcUR5+OYHeL45eWBSmM3jcJ2xDzQNCEPNxNTAZK3C9Gzt7n2OVHzg8vDkJKPV1L3
-	6xjglgYfEXrspZIEcW/2l6qvzjaFRg==
-X-Google-Smtp-Source: AGHT+IEVJLXOPnyFmKaPz9KPMKbv70YRlg73dziKIo45JVQh26G1HQVfDj7ebpdmC8hy5ZJT275q6A==
-X-Received: by 2002:a05:6512:33d0:b0:53d:cfdb:c65c with SMTP id 2adb3069b0e04-53e2c504c25mr3188513e87.52.1733680214661;
-        Sun, 08 Dec 2024 09:50:14 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3968850dsm659447e87.31.2024.12.08.09.50.12
+        d=1e100.net; s=20230601; t=1733680410; x=1734285210;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mogfde4HD2tesO+IHIV06pNlbHgCI2p0y0QxJlMrRW4=;
+        b=kE/QaMvns4vdk82BqhaUNLr8sdNf3XNo2E7wk4a1bIJXCH8bYPPhq9rSQJXCHEZvu+
+         BR8ZxmV2hSagrOReI+3iUCH3TgJ8YvB47UWzvRWXur0i5j4YFY32jQSn038DCH9xWtWn
+         6415n8hwF+2xFnP+3SW5GBt6OAl/5ba89wCJBJwEkoANIWLzJQH6WvAfxsmJ0gKhqU7M
+         8Ov6oMVeGLYLHod9LTUfqPZpYwh+JOPtj2i8bcdq8aqLNbZ9JF+C8fozUunRpqwNHM0+
+         jHIGMxbB/AI1gYwgDntxxTXk1Yuuyp4OhLIp5AqgO3RHfGXeFORvyZQg8pYzyqGwllsr
+         KTQA==
+X-Gm-Message-State: AOJu0Yzy3T7xAI316wjMAICcsEIu+oYguRhg6q+s82TMNmScCspp4W52
+	d9R79hhJNeyDrqyJ0+hYvTFwq/nUhCdkQx3RVflkzJW/iyx4wjVp
+X-Gm-Gg: ASbGncvVvdew0YiA4U6opotQ9v0eRyh760HoLDtPX3S7W/VCJOmxDKNAeMf+IhYoKFu
+	3V5nqzzorbh6k7p9tpqPO9rEJLmVwahNldH0eXUT6ga27rOckcgri49ZUgNTq1Nnd+ljO7AK2mv
+	hYYFZ5FQiLAlL38ooJ5EKrkmu3K+T80ssAHrltRO7QqVnXZzfeJ3vpCjkghezmfc+3OEzs+DDeK
+	flmbu/bBt8jzvOeY+V9cmLB3fFuu8I9WxsYb4SVq62Fy65D98HmdCAfQ8h3u3tQVR8vjXtUnjoR
+	r5i6o+K/gaF1rmdvoc1a9BBS47U3
+X-Google-Smtp-Source: AGHT+IEuV++ppUuVlAS1PRse28GLtcZHBJtSvyEBx9LecOF2uDS0wPVg7p19uYzVfSC0hVh2qfS/oA==
+X-Received: by 2002:a05:6214:20a8:b0:6d8:a188:369f with SMTP id 6a1803df08f44-6d8e7114890mr158277376d6.14.1733680410600;
+        Sun, 08 Dec 2024 09:53:30 -0800 (PST)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6d8dabfb438sm40539386d6.106.2024.12.08.09.53.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 09:50:13 -0800 (PST)
-Date: Sun, 8 Dec 2024 19:50:10 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
-	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
-	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 01/45] drm/msm/dp: dont call
- dp_catalog_ctrl_mainlink_ctrl in dp_ctrl_configure_source_params()
-Message-ID: <vemardbn3siohtg74hgjsnugkm4adqw6ekc4xhvjq3fty2rfov@5yhhsvjsnp6z>
-References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-1-f8618d42a99a@quicinc.com>
+        Sun, 08 Dec 2024 09:53:28 -0800 (PST)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: richard@nod.at,
+	chengzhihao1@huawei.com,
+	miquel.raynal@bootlin.com,
+	vigneshr@ti.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	Dennis Lam <dennis.lamerice@gmail.com>
+Subject: [PATCH] MTD: fix slab-use-after-free due to dangling pointer in notifier chain
+Date: Sun,  8 Dec 2024 12:52:12 -0500
+Message-ID: <20241208175211.9406-2-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-1-f8618d42a99a@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 05, 2024 at 08:31:32PM -0800, Abhinav Kumar wrote:
-> Once the link has already been setup there is no need to call
-> dp_catalog_ctrl_mainlink_ctrl() as this does a reset on the mainlink
-> thereby tearing down the link briefly.
-> 
-> Fixes: c943b4948b58 ("drm/msm/dp: add displayPort driver support")
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/dp/dp_ctrl.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
+When attaching MTDs, a reboot notifier is added to the blocking
+notification chain. However, when detaching a MTD and freeing its
+related objects, the notifier is never unregistered from the
+notification chain and is freed during the detaching process. This
+results in the slab-use-after-free.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To fix this, I added an unregister notifier function in the ubi_wl_close
+function to ensure that the notifier is removed from the chain after the
+device has been detached.
 
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
+Reported-by: syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67409091.050a0220.363a1b.013d.GAE@google.com/T/
+---
+ drivers/mtd/ubi/wl.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 4f6f339d8fb8..31a1e5515d98 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1995,6 +1995,7 @@ static void protection_queue_destroy(struct ubi_device *ubi)
+ void ubi_wl_close(struct ubi_device *ubi)
+ {
+ 	dbg_wl("close the WL sub-system");
++	unregister_reboot_notifier(&ubi->wl_reboot_notifier);
+ 	ubi_fastmap_close(ubi);
+ 	shutdown_work(ubi);
+ 	protection_queue_destroy(ubi);
 -- 
-With best wishes
-Dmitry
+2.47.0
+
 
