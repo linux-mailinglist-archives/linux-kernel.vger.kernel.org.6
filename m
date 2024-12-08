@@ -1,146 +1,142 @@
-Return-Path: <linux-kernel+bounces-436375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436376-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FD39E851C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:53:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C24A9E851F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:59:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EACD281780
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:53:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BFD0281760
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D87D149C7B;
-	Sun,  8 Dec 2024 12:53:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D96146D53;
+	Sun,  8 Dec 2024 12:59:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V+oQBo/a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SnoM76V2"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5A545BEC;
-	Sun,  8 Dec 2024 12:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527D7146D6E
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733662412; cv=none; b=q+fSnc9Blo4WyJkV9t0ALb/lsipP4BWDDB7WZ4lVd/KGFauV5+l+dj0oAQj8n+AsB/ygbxLD4RF335/alipVnPHLwW3uVwr9b2X4r2BE9dtrLjYWLNQHhBvslAQYI05pNnUSMMpL9ttAAKoOmkNJUTa2HwL/SazRVXOMfZjDwkA=
+	t=1733662747; cv=none; b=WO3/AVY0YkxiaBu+fmv9AMpf3uJFicE+/PZmUvrHYwWg5agx0O2SkmHjXyqz3dFF/IV4GFEu/Rpqjqvk5dlcDD0/0DdlJuzxOAPRCANwcSrwc2MvgaDiu0NOa1wFVIb7lbZVnwA++UBhGaOOmzd+64aDZLIAip+idl7vkBz/3fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733662412; c=relaxed/simple;
-	bh=Yx900HJVTUyYPR7FkyIH9aTbaonayusFBDIiHQD6H48=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oKFZJS3OP3RAKPEjdjDPmGN+iw2DyaNjtXc6SbQtL5Rx9ku1QEWnzkTCknbnribwPfUZ1mJAVnBKTuG+vn2TADV0JM7quM4Ao2LawkbTuSgjUNQbdjhyYDnj0pfp7JDjQLJtrwYxp4+vzyjjYFAkBw2qZkxJlSscI3Z3DRMF+iE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V+oQBo/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 501FEC4CEE1;
-	Sun,  8 Dec 2024 12:53:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733662412;
-	bh=Yx900HJVTUyYPR7FkyIH9aTbaonayusFBDIiHQD6H48=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=V+oQBo/avRNunACKzvOLpD9MGxZt6gf4A4w129BuF7nKnhrt5kUIqFyD9CHuYgf0O
-	 LBx0OO62mUzoOtmtRul/CQZCWiGEBZtdONURXbXFrhQKzNhnIs5DA3bM8dHHitOctV
-	 4VrGCwUbJSQQiHv2tbo0eULB29PNdtWFkUALoZtj4/yLQ+F5eteIO4JPEVFO6g9wiM
-	 +oKMiBTAT9SUGU0CmnGopZmj1fY4DdFTcYwTbxi0ERUUBSCqNaE2GLaTVu8mrb2zt6
-	 6pTfH4pPJgWb6Qztb81qM2vdMzZy0G6umauv1vBkVONZgyM4ckFF+QUVKHZAk0NV08
-	 eWKUJhYDWLFuQ==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5d0ac27b412so4290707a12.1;
-        Sun, 08 Dec 2024 04:53:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0qg9/8VwZZw2SPDVjt09IhDYKkF7OspHEEC+fy0cq/t3cCTqAcbJOK29xEmZs2srwKQQd2DbidrE=@vger.kernel.org, AJvYcCVkDIbyf4EEUPuskCZJRUgKG6GRNGtoGxX5zGBEixdPp4HD3Rtgj80bDz8tazd/ic0S4eE4YRR7Qts=@vger.kernel.org, AJvYcCW7iAPSGcAIdHpQoCS/NK/YWS1/a5GjRZy89ibA2n85KRmqz6vvXsdnmzCn1tsBHo2g9AXi5Gw2gB1HA5j2@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNoDj8XLimZC/81Qi9gfsf07mbtRvvMfoaJikcUTNLeJLCB6Yo
-	oKZ8acY7VJ4YF1cgKKQBe5Y7K9tyYcAFj7QF+mQNqbuThLgedrKEx3b+/s35Clj3pyzSXQOD5WE
-	umr/LcNzDIdZ5xXU9efdjtXCr6Cw=
-X-Google-Smtp-Source: AGHT+IGwo7Cy4yY8H60EoHZMYS7t82Hdhwwmgp/hd1/GR1huLk0AH+TGZqGgIYbuBP00Q1axVqFfkmsD6Ysrxn1jt0A=
-X-Received: by 2002:a17:906:1ba1:b0:aa6:4a5b:b72d with SMTP id
- a640c23a62f3a-aa64a5bb77emr500626766b.23.1733662411114; Sun, 08 Dec 2024
- 04:53:31 -0800 (PST)
+	s=arc-20240116; t=1733662747; c=relaxed/simple;
+	bh=qfboI2JEzglBgUiX6GwJaX8ACsXX93fcly9pP3dAhjM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ppILa6wJxHdDHdIkUKGfLSNa/PdZhlWIKL22LBb/zgMfPmR6/DrW10viiRFqUA+xvP9NpkajWHKMM/pLLqDiYUF1Avx4O/4QiGGuKZcun7oQM57eD8iuhEakOo2rltioC8gX5Xo+zBTkByhCDV1ksiU9XfLEnv6xx2WY8AqZv4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SnoM76V2; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ef83c68b47so793673a91.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 04:59:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733662745; x=1734267545; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=PkDi47df4w40KWTcb5cXC5QjvFJDjRmn08x5U23uXOc=;
+        b=SnoM76V297rGqFd1H//F+GV9PlMDBcPdA+4+h3CgiOgdhR7TlFYEH3oBv/DsAkAWOr
+         wD08WGlJ+9cT7wjXQqNZD8xyNZrljWagavHtjQEqL2a5bpwmEqJ10WuBqfIQ2RBHaYDI
+         dgw3/lHCDWXNZv5n8rboU8ULYjTpd5kqLiwUlZIMxsghRd54ADd9bxTg/0o2KyhzVTvQ
+         BfMdwRMsK9zqGp1mFrGQfXbNch29asL8Xlx/FXUvOsdqe6OLH7vQgpI9A+QdtLxpZtu3
+         fHX4A5vRrNtxmTsSCSTahFHKgi0an27npXfe6qdOJ7cvELxrR+3TKQv2WTVu+YQ/TM19
+         Qqrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733662745; x=1734267545;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PkDi47df4w40KWTcb5cXC5QjvFJDjRmn08x5U23uXOc=;
+        b=tkT87HtQLDdXrJq1++ABnB1m58Af1r2ubfEasjZ5SxdV3wydQAh6OedXwCaGs7zC1w
+         edpcJmiTPocxyQYWlcXtn4N2V+EowGFGgXTB3rO2dnneERVqjudBpy7d32xFvjQKav0F
+         pqnMfJ7cjb9q6rnFFziUtQTZlSN16GVQtLrYjkkikHPd4uuHvyeVm8JP6dfT6Z5MhKOH
+         Fd0IzupT9DYEjN4+WaesK0/sjW0yLhin+7RvjlrwIPNMKMqq7OeV1wvNuUpHSRAQAZVQ
+         TL01ckytkM/0wyrQSPZNfe27khMeHVheEojJahRB/JQs1ImIapjMFJPhZZvzswe8vTmP
+         ApPg==
+X-Forwarded-Encrypted: i=1; AJvYcCXn2cxaIdeqf38aZRYE71hAWVDI10ODiP8/wGIDVitAX7xrn2rqfwaR6N1miru7RWFCSgIHAVEpjZXt2wI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx57h6++cMPynsieEBvgymiCUSyFF6zBdu/SemMDNyKerLXjAty
+	/xsokwu8QFO2nwMWZcjAWUw8l/ObPICu9NO4LbuKZSr1mQmBXixr6igfhmwD6Q==
+X-Gm-Gg: ASbGncvCNYKBq2JUFw+l6cDZp1FTeVK7s99jRwkSei+1ZaZ0NOt6/DNvKrSURyVokr/
+	5EYFeOLX8gq/mqq9l3BmMp2cV/f77c91sgXGHZel60Qs7hFPGoGUQQ6c6K4YucKhBlZ8HBwT7tt
+	MbWz8Lu8R7UITtKEPomFVfD/cYxHSjt18Z1nOrLWFW3owR4brf40sK+sIdQAfp9lKrwQldjxdhz
+	2I50VejcJs8/3V+Rl3t8KYUf6L5gyl3sjEXqzAq2htqIDfZCMxx6zjKPJg=
+X-Google-Smtp-Source: AGHT+IHnhUVK9JHD0Nbg157D2tYLCZPvpbGaZMt6ugQdpbPZ+L62KfObJPkXd8gqt06CrhFVbhdPKA==
+X-Received: by 2002:a17:90b:2548:b0:2ef:19d0:2261 with SMTP id 98e67ed59e1d1-2ef69f0b061mr15208744a91.16.1733662745572;
+        Sun, 08 Dec 2024 04:59:05 -0800 (PST)
+Received: from thinkpad ([36.255.19.23])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef4600d14fsm6228921a91.45.2024.12.08.04.59.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 04:59:04 -0800 (PST)
+Date: Sun, 8 Dec 2024 18:28:58 +0530
+From: "manivannan.sadhasivam@linaro.org" <manivannan.sadhasivam@linaro.org>
+To: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	"bhelgaas@google.com" <bhelgaas@google.com>,
+	"lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+	"kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+	"Simek, Michal" <michal.simek@amd.com>,
+	"Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>
+Subject: Re: [PATCH 2/2] PCI: amd-mdb: Add AMD MDB Root Port driver
+Message-ID: <20241208125858.u2f3tk63bxmww3l6@thinkpad>
+References: <20241127115804.2046576-3-thippeswamy.havalige@amd.com>
+ <20241129202202.GA2771092@bhelgaas>
+ <SN7PR12MB72011B385AD20A70DB8B56338B352@SN7PR12MB7201.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Z0iWPCzjv9YQ4kO_@gallifrey> <20241028021344.477984-1-linux@treblig.org>
- <CGME20241128161146epcas1p46768d7685092deaa817119db30fd12f2@epcms1p4>
- <20241207052209epcms1p45818db425ba84821003b6d735bc0e957@epcms1p4> <Z1RD3Ec1IJ2jY5TZ@gallifrey>
-In-Reply-To: <Z1RD3Ec1IJ2jY5TZ@gallifrey>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Date: Sun, 8 Dec 2024 21:52:44 +0900
-X-Gmail-Original-Message-ID: <CAGTfZH3YkBOruDcqj8gAy0jVzdsESJo0ntL4SF9ooR_QiFjgVA@mail.gmail.com>
-Message-ID: <CAGTfZH3YkBOruDcqj8gAy0jVzdsESJo0ntL4SF9ooR_QiFjgVA@mail.gmail.com>
-Subject: Re: [PATCH] PM / devfreq: Remove unused devm_devfreq_(un)register_notifier
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: MyungJoo Ham <myungjoo.ham@samsung.com>, Kyungmin Park <kyungmin.park@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, 
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>, 
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN7PR12MB72011B385AD20A70DB8B56338B352@SN7PR12MB7201.namprd12.prod.outlook.com>
 
-On Sat, Dec 7, 2024 at 9:47=E2=80=AFPM Dr. David Alan Gilbert <linux@trebli=
-g.org> wrote:
->
-> * MyungJoo Ham (myungjoo.ham@samsung.com) wrote:
-> > >* linux@treblig.org (linux@treblig.org) wrote:
-> > >> From: "Dr. David Alan Gilbert" <linux@treblig.org>
-> > >>
-> > >> devm_devfreq_register_notifier() and devm_devfreq_unregister_notifie=
-r()
-> > >> have been unused since 2019's
-> > >> commit 0ef7c7cce43f ("PM / devfreq: passive: Use non-devm notifiers"=
-)
-> > >>
-> > >> Remove them, and the helpers they used.
-> > >>
-> > >> Note, devm_devfreq_register_notifier() is still used as an example
-> > >> in Documentation/doc-guide/contributing.rst but that's just
-> > >> an example of an old doc bug rather than anything about the function
-> > >> itself.
-> > >>
-> > >> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
-> > >
-> > >Ping.
-> > >
-> > >Thanks,
-> > >
-> > >Dave
-> >
-> > When I search github, it appears that vendors are using this API.
->
-> Hmm OK.
-> Of course there's a lot of random junk on github, so it can be tricky
-> to know what's current/real/relevant.
->
-> > NVIDIA:
-> > https://github.com/NX-Development/android_kernel_nvidia_nvidia/blob/c9a=
-de3b5e32a12b8cf6f33a632dc39209194e4e8/drivers/devfreq/governor_wmark_active=
-.c#L624
-> >
-> > Samsung:
-> > https://github.com/Vaz15k/android_kernel_samsung_a54x/blob/8ac517c37c60=
-6746213064857dc240e99eba80d2/drivers/soc/samsung/exynos-llcgov.c#L107
-> >
-> > Realtek:
-> > https://github.com/BPI-SINOVOIP/BPI-M4-bsp/blob/25f5b88ec4ba34029f96469=
-3dc34028b26e6c67c/linux-rtk/drivers/devfreq/realtek/governor_rtk_ltl.c#L114
-> >
-> >
-> >
-> > Please don't remove ABIs used by vendors even if
-> > they didn't upstream their drivers.
->
-> Hmm OK.
-> Do you think they should be using this ABI or do they have the same bug a=
-s
-> is fixed in 0ef7c7cce43f ?
-> I guess they don't care.
+On Mon, Dec 02, 2024 at 08:21:36AM +0000, Havalige, Thippeswamy wrote:
 
+[...]
 
-According to Myungjoo's comment, I'll keep this code.
+> > > +	d = irq_domain_get_irq_data(pcie->mdb_domain, irq);
+> > > +	if (intr_cause[d->hwirq].str)
+> > > +		dev_warn(dev, "%s\n", intr_cause[d->hwirq].str);
+> > > +	else
+> > > +		dev_warn(dev, "Unknown IRQ %ld\n", d->hwirq);
+> > > +
+> > > +	return IRQ_HANDLED;
+> > 
+> > I see that some of these messages are "Correctable/Non-Fatal/Fatal error
+> > message"; I assume this Root Port doesn't have an AER Capability, and this
+> > interrupt is the "System Error" controlled by the Root Control Error Enable bits in the
+> > PCIe Capability?  (See PCIe r6.0, sec 6.2.6)
+> > 
+> > Is there any way to hook this into the AER handling so we can do something about
+> > it, since the devices *below* the Root Port may support AER and may have useful
+> > information logged?
+> > 
+> > Since this is DWC-based, I suppose these are general questions that apply to all
+> > the similar drivers.
+> 
+> 
+> Thanks for review, We have this in our plan to hook platform specific error interrupts 
+> to AER in future will add this support.
+> 
 
+So on your platform, AER (also PME) interrupts are reported over SPI interrupt
+only and not through MSI/MSI-X? Most of the DWC controllers have this weird
+behavior of reporting AER/PME only through SPI, but that should be legacy
+controllers. Newer ones does support MSI.
 
-Thanks,
+- Mani
 
-
---=20
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+-- 
+மணிவண்ணன் சதாசிவம்
 
