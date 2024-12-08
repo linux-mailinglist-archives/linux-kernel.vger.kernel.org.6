@@ -1,166 +1,127 @@
-Return-Path: <linux-kernel+bounces-436370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200A89E850E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:43:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B3CB9E8502
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:37:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5A9328174E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:43:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FC71884B30
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:37:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 965AB14A084;
-	Sun,  8 Dec 2024 12:43:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2199D148850;
+	Sun,  8 Dec 2024 12:37:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="XmV1O4Sf"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FTd3aPuA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4087A148FF5;
-	Sun,  8 Dec 2024 12:43:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B4F13B7A1;
+	Sun,  8 Dec 2024 12:37:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733661813; cv=none; b=ZRlYnHw3ZUzBtBs5dSF5QAwzfG+N+8kgPEdLIsnFBqkqGIqfwHj9zMBeqw7UAlgC1DX1g2epZ2hH1nD+uThAkw6p70VwmHjRsDwGdmeTHwsu9n3JOv4dX34++uii4kk06XKT01j0j0ZPc6hlsIRqOp7T7GCtcZn/jWc1ZpysrGo=
+	t=1733661434; cv=none; b=jmJ7/KT4VBVrphQKMqVNuvO1CTSrJO2YmdflvV9jZoTgafseRrEY+IRISYI313R4NJZMeaGfJf2ev0+jHSER3pDa+uE1lGpFAaCdydAmkHBzQ4oHS3QTB/eUFl0xnS6g8mp48nzQYhkAM8ASZ6q4ytJD4Ocl5tDAbKqnGBzNrdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733661813; c=relaxed/simple;
-	bh=lk5PCBXILsORnwats/dVp90MjS9CyLpDw6Nievrao44=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=bbfybWB3mH4PSw28+7QPbUR8oQYzCtOX3WQfw56ZwEMSjIGKXhLwYeGgj2QLV3YDMj0UdBIFfKOPZQhlRns9sf8tNvLB3ThUsAzzRpPMoZt90lNZCKj3s3oc0vbRKIIXcRHv+YB8fuTXmsczmZFjk5bs97wER+iBTq5OabU0R+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=XmV1O4Sf; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 5AD85A00A5;
-	Sun,  8 Dec 2024 13:43:21 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:message-id:mime-version:reply-to:subject:subject:to
-	:to; s=mail; bh=i05HWD7K+WuvMLkFj25EzNitUBPDdxgibXgH/rNxbxU=; b=
-	XmV1O4SfUox3W6oPoc03JCuTPlBy0yzLF23OUJdXuPH9o3z/QNBGqtjmI36AC0kY
-	xTCLxa8WfR7D05I9/EJ1m+6Ai68po3vVgEGYANgP8qy9cIzbOqdTydgppaV8k18v
-	bXx5BX3bFv3t2l/hmU0YSqQR8DpiQPdxDJlyej6OSkclJbA18/Rt5UOO3zydl6+J
-	vKAfQ/rSs0i/o+SdwjJIOqvXZL/wI8M+X2H5Ii2RQktXv4Ou7cgPF2EKrj0ZnXgT
-	bcOGh4+KdsFCGflUFLvY/gjePNqJ5z2oe7X1FDydhHRMh1RaAqaCwgbh2jG535V1
-	JRKFZtp7r//iHDHEMHyfVG1n2TMBV1D6mNBPSRS179abhP+wLh3YgSXxAMbdz6bQ
-	zcVsVT9Iba7/4i6LxMoQ9Q5COi1nC6Qe+a0apx4qDDCnc9Mb3G6aVMFHg4okkGq/
-	8iY7vLsific30uT3ne3OHz2t9jjeNmN+j2rMo079gNQPIOJU4Zn3RKQWilQqQlff
-	ztjIMWoRPDLUMBo9PX3cLfxxCKLhS27VdOL0fNizsbjUIO1MqLke4hLhF5DOGQFc
-	KHDY9F0hADNFUrINLuUPCPYkJI4brW6+vOFaWiUfNQfBoCu9kbWxTiDm4JyLVXUf
-	V29+PaA8o8SpsdbF/eCKtJloy1FPGit2ODts7PuLk30=
-From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
-To: <dmaengine@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>, "Chen-Yu
- Tsai" <wens@kernel.org>, Vinod Koul <vkoul@kernel.org>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>
-Subject: [PATCH] dma-engine: sun4i: Use devm functions in probe()
-Date: Sun, 8 Dec 2024 13:36:19 +0100
-Message-ID: <20241208123619.1007413-1-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733661434; c=relaxed/simple;
+	bh=DmMoUIBrwMXZutmShh9Bgg9DdQdHmUc5FikzbPs4BQo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pn+b/GGw/aXWBXGnqRiPbiWNZEPhXnoXYUlmiHYgh1djB4ReAbv/QiNYMqI66B+khODIEb3cdpEb4bzCbFwSWNxSiJOJJV7QoemFJC3/ljEgd6TzdpeI8yGQRBlTv7pNHqUv0ahjfPWh5LahYUlPFSrr+GH8+bFBg1hNnc2lzbc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FTd3aPuA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E53E1C4CEDF;
+	Sun,  8 Dec 2024 12:37:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733661433;
+	bh=DmMoUIBrwMXZutmShh9Bgg9DdQdHmUc5FikzbPs4BQo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FTd3aPuAAGDJ0M0CpvAHrUzrxiI5HSdYT6o9bn7lzks5QL7Ocw1NIVqjb40BVeRUG
+	 T3/Ry9SAQtdjCXvLF0zBXUM6iJ6Fu1uxZ3BixC35ianVrg2OEcn/0UJEdcO24Z3gC6
+	 E98sRBPsY0VAMi9q/69eepto/ALj9bJx4O4R2Qz69QLa/vWNr45THGf8aVdzUjPzwv
+	 6wAdNgsqv+0m75sMJd+MyfytMYv0oRLhXr9b5pymcOlJn9bab2zOMcCIJynIY1clO8
+	 AwkeVhde//DL7LYe5iRY28GTi+P4DOfDWjhdFHB5K86VXYjHNR6WkXmJQ72jhj3FVI
+	 CXiwQTjfBJTuA==
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3d143376dso2298163a12.3;
+        Sun, 08 Dec 2024 04:37:13 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXDhdn2SFJHiQ5Icq1K9nsSBJtQ+2oJkBq5o5P99yJlPqDuZBtoLCwPiuJft/EDw2rqIdv6FRyXm9xSIS4WMiU=@vger.kernel.org, AJvYcCXTJa1djDM9ZB4znuLVB8vhkvVPrJXtaC49VA3hknbfgob3SaWozO0R7f3WroQvbMu8pvO43buXcUFJC76H@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX9gy3iw46Wg979JRQI7D3KUXvjdxQZnIlr2qhBTu83XcmxqaQ
+	XwgfqEkYJ8qWkVr+qPzNjucYfunz9zme+MMhBiWv8zCGCuR9feveokYjSpUmGrnLwRteCLWZG05
+	K7kn4Fh/OqqO2DMD/A5i+OHPwVIk=
+X-Google-Smtp-Source: AGHT+IGZ1cfW6HylZROHWM5wryBiSSEJ8/qGwc7HNG9IdNJ6RXwiUEKdAUMu0osWRSOptwV3GKQ4WFRb3HYYYrSPze8=
+X-Received: by 2002:a05:6402:1f4d:b0:5d2:723c:a57e with SMTP id
+ 4fb4d7f45d1cf-5d3be6b2d84mr10669410a12.16.1733661432747; Sun, 08 Dec 2024
+ 04:37:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <0f103384-376c-41f0-a35c-8ad98327d6cb@web.de>
+In-Reply-To: <0f103384-376c-41f0-a35c-8ad98327d6cb@web.de>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Sun, 8 Dec 2024 21:36:29 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH3jRPZrepiS31GzXpr26xser9hdQmBcnXbsr1O7VoY0yA@mail.gmail.com>
+Message-ID: <CAGTfZH3jRPZrepiS31GzXpr26xser9hdQmBcnXbsr1O7VoY0yA@mail.gmail.com>
+Subject: Re: [PATCH] PM / devfreq: event: Call of_node_put() only once in devfreq_event_get_edev_by_phandle()
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-pm@vger.kernel.org, Chanwoo Choi <cw00.choi@samsung.com>, 
+	Kyungmin Park <kyungmin.park@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>, 
+	LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1733661800;VERSION=7982;MC=3252012965;ID=300616;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D9485562766B
+Content-Transfer-Encoding: quoted-printable
 
-Clean up error handling by using devm functions
-and dev_err_probe(). This should make it easier
-to add new code, as we can eliminate the "goto
-ladder" in probe().
+Hi,
 
-Suggested-by: Chen-Yu Tsai <wens@kernel.org>
-Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
----
- drivers/dma/sun4i-dma.c | 31 ++++++-------------------------
- 1 file changed, 6 insertions(+), 25 deletions(-)
+Applied it. Thanks.
 
-diff --git a/drivers/dma/sun4i-dma.c b/drivers/dma/sun4i-dma.c
-index 24796aaaddfa..b10639720efd 100644
---- a/drivers/dma/sun4i-dma.c
-+++ b/drivers/dma/sun4i-dma.c
-@@ -1249,10 +1249,9 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 	if (priv->irq < 0)
- 		return priv->irq;
- 
--	priv->clk = devm_clk_get(&pdev->dev, NULL);
-+	priv->clk = devm_clk_get_enabled(&pdev->dev, NULL);
- 	if (IS_ERR(priv->clk)) {
--		dev_err(&pdev->dev, "No clock specified\n");
--		return PTR_ERR(priv->clk);
-+		return dev_err_probe(&pdev->dev, PTR_ERR(priv->clk), "Couldn't start the clock");
- 	}
- 
- 	if (priv->cfg->has_reset) {
-@@ -1328,12 +1327,6 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 		vchan_init(&vchan->vc, &priv->slave);
- 	}
- 
--	ret = clk_prepare_enable(priv->clk);
--	if (ret) {
--		dev_err(&pdev->dev, "Couldn't enable the clock\n");
--		return ret;
--	}
--
- 	/*
- 	 * Make sure the IRQs are all disabled and accounted for. The bootloader
- 	 * likes to leave these dirty
-@@ -1344,32 +1337,23 @@ static int sun4i_dma_probe(struct platform_device *pdev)
- 	ret = devm_request_irq(&pdev->dev, priv->irq, sun4i_dma_interrupt,
- 			       0, dev_name(&pdev->dev), priv);
- 	if (ret) {
--		dev_err(&pdev->dev, "Cannot request IRQ\n");
--		goto err_clk_disable;
-+		return dev_err_probe(&pdev->dev, ret, "Cannot request IRQ");
- 	}
- 
--	ret = dma_async_device_register(&priv->slave);
-+	ret = dmaenginem_async_device_register(&priv->slave);
- 	if (ret) {
--		dev_warn(&pdev->dev, "Failed to register DMA engine device\n");
--		goto err_clk_disable;
-+		return dev_err_probe(&pdev->dev, ret, "Failed to register DMA engine device");
- 	}
- 
- 	ret = of_dma_controller_register(pdev->dev.of_node, sun4i_dma_of_xlate,
- 					 priv);
- 	if (ret) {
--		dev_err(&pdev->dev, "of_dma_controller_register failed\n");
--		goto err_dma_unregister;
-+		return dev_err_probe(&pdev->dev, ret, "Failed to register translation function");
- 	}
- 
- 	dev_dbg(&pdev->dev, "Successfully probed SUN4I_DMA\n");
- 
- 	return 0;
--
--err_dma_unregister:
--	dma_async_device_unregister(&priv->slave);
--err_clk_disable:
--	clk_disable_unprepare(priv->clk);
--	return ret;
- }
- 
- static void sun4i_dma_remove(struct platform_device *pdev)
-@@ -1380,9 +1364,6 @@ static void sun4i_dma_remove(struct platform_device *pdev)
- 	disable_irq(priv->irq);
- 
- 	of_dma_controller_free(pdev->dev.of_node);
--	dma_async_device_unregister(&priv->slave);
--
--	clk_disable_unprepare(priv->clk);
- }
- 
- static struct sun4i_dma_config sun4i_a10_dma_cfg = {
--- 
-2.34.1
+On Thu, Oct 3, 2024 at 6:15=E2=80=AFPM Markus Elfring <Markus.Elfring@web.d=
+e> wrote:
+>
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Thu, 3 Oct 2024 11:01:30 +0200
+>
+> An of_node_put(node) call was immediately used after a null pointer check
+> for the local variable =E2=80=9Cedev=E2=80=9D at the end of this function=
+ implementation.
+> Thus call such a function only once instead directly before the check.
+>
+> This issue was transformed by using the Coccinelle software.
+>
+> Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> ---
+>  drivers/devfreq/devfreq-event.c | 8 ++------
+>  1 file changed, 2 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/devfreq/devfreq-event.c b/drivers/devfreq/devfreq-ev=
+ent.c
+> index 3ebac2496679..70219099c604 100644
+> --- a/drivers/devfreq/devfreq-event.c
+> +++ b/drivers/devfreq/devfreq-event.c
+> @@ -244,13 +244,9 @@ struct devfreq_event_dev *devfreq_event_get_edev_by_=
+phandle(struct device *dev,
+>         edev =3D NULL;
+>  out:
+>         mutex_unlock(&devfreq_event_list_lock);
+> -
+> -       if (!edev) {
+> -               of_node_put(node);
+> -               return ERR_PTR(-ENODEV);
+> -       }
+> -
+>         of_node_put(node);
+> +       if (!edev)
+> +               return ERR_PTR(-ENODEV);
+>
+>         return edev;
+>  }
+> --
+> 2.46.1
+>
+>
 
 
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
