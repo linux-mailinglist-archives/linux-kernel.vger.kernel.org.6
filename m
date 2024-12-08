@@ -1,154 +1,86 @@
-Return-Path: <linux-kernel+bounces-436601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 889F79E882F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:54:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EA79E8830
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 23:06:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77113163E32
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:54:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25AD01884DF9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB753190685;
-	Sun,  8 Dec 2024 21:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lKffhqSS"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A83318B495;
+	Sun,  8 Dec 2024 22:06:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E83C46B8;
-	Sun,  8 Dec 2024 21:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B59051DA23
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 22:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733694853; cv=none; b=Oxq6MRXGOMVANVebOYJveUAdvub49kujfKysVwvVWxBuE0yvJGe7kw8TMctABUr6fydJxgM6B5ctH+F5sOJE5MzL3rgzNcvqJLpsdHMM2iLWvyZK+/bkrDXkOVsd19hsIuCGRspYbyPlOflaanftSPi4oRVKvVWifSjyIx4ikoI=
+	t=1733695565; cv=none; b=eDDAYheKL18pOKO6u0qEIt3i+cOvbIrzV7ADn8R6bjHAEMfn/ng1+58NbHhzrXLbE5JgjpWT08HSWRVrBCo58Ao2s8xCltw7tk0IDiEHfe4FW9rKnzjpw6qfnwp3L6iR0VQgJLORgNWasYBIWvG/8GKUGNiNfGKEjn1cj75CDAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733694853; c=relaxed/simple;
-	bh=Mq+VPWVIG9wr5pqaJFzKdWHDyQDUJXBqwFz/MHb1Q4w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hYI+wZoo7Vp2Ahc+quMaB2pbiqk2R7xuuPzyGD9OlVRnibEAPPJMWsRY6SwL8nYWWsuo+9dj4dhkt5OK9rqglHQ/7IVdOse2Tn6C9OibQxOxcbSnAZu4I8b4BjzZCXyq6hLi5U3vyXjcZDzQv3ZDosgdh1T8ms2E5oOTN+rFUUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lKffhqSS; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9e44654ae3so604181166b.1;
-        Sun, 08 Dec 2024 13:54:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733694850; x=1734299650; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=TrypHxkyw4j+G7IUAR+t3qATf3kM2IpTXn84QXvFgk0=;
-        b=lKffhqSSh5Xzwbk4046JCZk0rb5WT0XiNcYyKLKjzI1uIRr0pJmp7NFhFM0AvJI0e3
-         S2uwP/8YMweXo9xKG2gHg2L8aMIfCKmpcT7/CDKfnqx5xe3E6QJUvjgvOvsAFBxnvJ91
-         nZarajYIaQA4FbA3gDZBPfTG+JR7LPG4BYCN8Yey29TG0/eN1cy2E8YoKMlgSX3Uhc2L
-         xw0BBNWMO+X5z6ePEkvNRhH6Nm6CT9yz6Oo/FulNwNSmgKCTH+00AG+9b2UlPHYg+MVF
-         jlwyo2se6cTA7ob+1wp4WKjTesNPauO0+C7OEXnmanFP3auAMitoTEOTBscQlvo2juD6
-         ojMQ==
+	s=arc-20240116; t=1733695565; c=relaxed/simple;
+	bh=2IaNsbXXC/snz3oE1gSm8BKSElrm9tP+HPTwWnIE+zY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=g6LQDgKqXiEwxUYDaxdtoId4OuKnoIiRFNcPqw/u2FwjbGqmZ9rqzerQBwXcd9iinE5rHa5lLflb6pbpUkOZo/N3V9nK3cncMzwgaE5yHHhl77JgICNoZOwwxs98uoSfytEo1Zn7yTOoJbv4sCh5BlC6BDrqu4wWpIOTmF0w6t0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a9cc5c246bso11099555ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 14:06:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733694850; x=1734299650;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TrypHxkyw4j+G7IUAR+t3qATf3kM2IpTXn84QXvFgk0=;
-        b=qFy3os8sK2g6DUDDnVQ5p265AJdT7RJAd7XMO42qETBQhls5ekZdkgZJWNmwDBcMdV
-         xMKeOgmNIDPuDyTJqCmLLF3Fu73wb8HpH4MEz6TEveKYKa+MIbCQm+5B66oHh0aBk2z0
-         7MqHw8XuNvXOErtj62wo35B7xgZNzCs3HU+6I3/0qaeDseBrVBW9kBAdpwp3iqCO2+6y
-         kvw5yj5wTLkIb5wrgmvLmNFHlr6jyjQ1ggoUv85qnKk8ykqG4AVMQRO6w1MdGP+ExeZ5
-         tbOa2pNaxz8jwTbl4QBbISdSVWFAdCTAFVu+zWFHyZkB3avYWpRXkcd36CWGlnmcOoXe
-         xGbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV4qIGo15ZdIzUn1Y06Xdp5eyVIZFXnUrPq82NmEwrg2ZewCa1ZFrM6afLvq+Yci4wuJSSEV9doh+uZhJE=@vger.kernel.org, AJvYcCVXBK9D3WWvu7PizRYBrKumnBGXB5itEGkYCPqiXo04AHfz4NUSS4H1ucNdUrMajw3W21ey6o7r@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBSRDd8Lscqy7ETdoegSd5uoksq3NDpeo8bBBDiLuO85PY/OD2
-	uKQIa2phZsYausa1vYXF2AL0vttOKqopvwJwp1bih/KiEB077+th
-X-Gm-Gg: ASbGncsRgdBuFSebFM4gEpWW7vCDO0CYbdTx3zvNIEb/4X6faq3MhNCJic0zZhWiENW
-	LjrBnr+h7DURZeZY4gCYghfPnUSXNlJPp5YMKfg/mNk1UlrYGjROK+RIUOUYUm2e8oGILAgnX7v
-	odw7uDuhLBJdxKcZpjKGNhLd9rHkSCruh4svG6h2AuWR9mwWaOmPQT2Y4XF5MlQv0bBkMPlAU4i
-	0YnWD8E1Qmg/fM1AkMJa4n9yU2IKddqahmxhJm/hLviVv8atIV323Xnk0yj2u3mScPAyGPgYnii
-	1jiIw6EZ0P6febQbia7rrtTkVVG/egIWsLY8prEtm1lhYchWwZKqzfGdpsQx2d+StHyY236+QrT
-	C9x4u6HY7nfIzxyaQjGroJ5RpoQXJ17WnZ6FBqW4=
-X-Google-Smtp-Source: AGHT+IF3rOtmR070H6E5skFwq7zkuh7wyP/uVgl5djJs94i83xJLZYIyQbetkjbLaIEX6WSKxsvEbw==
-X-Received: by 2002:a17:906:329a:b0:aa6:7d76:f21b with SMTP id a640c23a62f3a-aa67d76f3d5mr291851566b.51.1733694849447;
-        Sun, 08 Dec 2024 13:54:09 -0800 (PST)
-Received: from ?IPV6:2a02:3100:a0a2:300:591f:8fe7:8c1e:2d69? (dynamic-2a02-3100-a0a2-0300-591f-8fe7-8c1e-2d69.310.pool.telefonica.de. [2a02:3100:a0a2:300:591f:8fe7:8c1e:2d69])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa68c4b52b8sm30005466b.52.2024.12.08.13.54.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Dec 2024 13:54:08 -0800 (PST)
-Message-ID: <c33e5b03-ae7a-44a3-88a5-d74d9bf035f9@gmail.com>
-Date: Sun, 8 Dec 2024 22:54:07 +0100
+        d=1e100.net; s=20230601; t=1733695563; x=1734300363;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hSZMauOgrEjsql57BcG21QotuDMF0fkMj3KvE0hMnso=;
+        b=e7AUFPGMKvvfweknC7ZHc+EbApOsHv4niKe4Q42jz1hwP11zzUM+FFKvqheiFWsE4x
+         neALKeyZh5XMMeVF6NTkyuxx8awe6gbSTxoD3/qvYbaTXbA8y2AGLElngufxb0u8fLlk
+         5HRiJnNP2mef1V+OKhwPXCI2T3m3Y1FspuK4grzXQCK5lpNKp7DJQN8xKaRskwtryAnC
+         ZPXZtwpWQ82Llx6JMXOSIq3ENq11UdJe6rRd9+v0mdhpgBvahWcqOE7HKdKYSS/dCOvx
+         XAzml8mmYn30rreOYOy1d/AsHGSiD4omyH3tG7s14WMim1Eaow6CcU5g11jUTad0cVVk
+         vNwA==
+X-Gm-Message-State: AOJu0YweRxprT/1DpNUrn4cOfX2NpAU2Qz/TM/LBJjJ9h1fZJIDSm5gc
+	Wsy4Fgo1186SXoavkobcGKrFTLbE9oD0VHcOfijDlMTZ1LpHpMWVwy45sWb0BXaZhTEh7bT5f53
+	+NqxyN5ogQAuVF33Jg3VJ8fJM57OuJHLMvt4C0LDzHdhgcpXD8ucehDc=
+X-Google-Smtp-Source: AGHT+IHpXMlFeFmqlSjAu5rxFeELzsFmWM34Pd+jVXD651NZXxZ461hvyZw22cssPi0qNMmpQr4BTtyp7AhrxMT2kTM7OI0ZR9Kz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] r8169: Add quirks to enable ASPM on Dell platforms
-To: Guy Chronister <guyc.linux.patches@gmail.com>
-Cc: nic_swsd@realtek.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Koba Ko <koba.ko@canonical.com>, Timo Aaltonen
- <timo.aaltonen@canonical.com>, Andrea Righi <andrea.righi@canonical.com>
-References: <20241208191039.2240-1-guyc.linux.patches@gmail.com>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <20241208191039.2240-1-guyc.linux.patches@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:c265:0:b0:3a7:7ee3:109b with SMTP id
+ e9e14a558f8ab-3a811e03747mr113122465ab.16.1733695562894; Sun, 08 Dec 2024
+ 14:06:02 -0800 (PST)
+Date: Sun, 08 Dec 2024 14:06:02 -0800
+In-Reply-To: <D66NBTS05F94.363JPCPCZ9AZS@getstate.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6756184a.050a0220.a30f1.0188.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in mgmt_remove_adv_monitor_sync
+From: syzbot <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mazin@getstate.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 08.12.2024 20:10, Guy Chronister wrote:
-> Some non-Dell platforms equipped with r8168h/r8111 have issues with ASPM. It's very hard to fix all known issues in a short time and r8168h/r8111 is not a brand new NIC chip, so introduce the quirk for Dell platforms. It's also easier to track the Dell platform and ask for Realtek's effort.
-> Make the original matching logic more explicit.
-> 
-> Signed-off-by: Koba Ko <koba.ko@canonical.com>
-> Signed-off-by: Timo Aaltonen <timo.aaltonen@canonical.com>
-> Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
-> Signed-off-by: Guy Chronister <guyc.linux.patches@gmail.com>
-> ---
+Hello,
 
-My response to Koba Ko and Andrea Righi bounced. So it seems they don't work
-for canonical (any longer?).
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+
+Reported-by: syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com
+Tested-by: syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         0b6809a7 Merge tag 'kbuild-fixes-v6.13' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14409944580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
+dashboard link: https://syzkaller.appspot.com/bug?extid=479aff51bb361ef5aa18
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=147d14df980000
+
+Note: testing is done by a robot and is best-effort only.
 
