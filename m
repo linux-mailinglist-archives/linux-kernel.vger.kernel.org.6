@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-436523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDD889E8714
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:31:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133F29E8718
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC19D1883D2F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 049F716213A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD8B18732C;
-	Sun,  8 Dec 2024 17:31:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94DD189F54;
+	Sun,  8 Dec 2024 17:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqGSYWHM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBLjx57j"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B463F22EE4;
-	Sun,  8 Dec 2024 17:31:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FB6B22EE4;
+	Sun,  8 Dec 2024 17:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733679083; cv=none; b=Bh+XCE6Gnb+kQRRB0P6sRrMoMH87Ba3puoyWH0zrsEyD8Kdo7L8edu19mRVLXj4SynLjrqlgbNWM2b9i5ZOwU52UUPWWZI3BeSkKAuvBmktiiAFt1vzpSsjN0mt4fXER/ecnrqDUJaq1/629ZGBUg7+hJjeLXuuMR6TvOI8+X0g=
+	t=1733679226; cv=none; b=fzWqpLnn1CLDAbAIMLwqW8i4rBYnrfEkEHmq+qm4HjBC+eibyCJAFZ6UcO85kSke2i4kOv9FhVgscy4+VPgVBspo5VmqC3HSJSSf578/96YTcc5nD018gjE+/xyLvZGVhuUmT/eJBRblCh8Hn+4dSByW8mMq8LKqKMkR3Jy5nw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733679083; c=relaxed/simple;
-	bh=q/TyKpoVPIP7p6c7NZd6xrYMUu6HCwMO/LrR/oJt/Ns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8Pzu7yXQUyrOiR3r+h6waCX92xmu/9exFjPkGjtm0dgrP1+y9XYXDp1EfHfVmhGQja0wePnNSoPyE6x0FqqRYXkxyd8Z1a02ZPBEzdOBKgVfHTe9bPsQMIsG2zMiYEf/bflgw3T7R9GK98i87ClRNTY0WZSSbTZZ7iuRM3NJ+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqGSYWHM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 070E8C4CED2;
-	Sun,  8 Dec 2024 17:31:21 +0000 (UTC)
+	s=arc-20240116; t=1733679226; c=relaxed/simple;
+	bh=tLuUoayLLlT2eNWkFArfaB8W5balZwTzE5ssrWn4He0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Qlb1Hl58FqGVj6AISTv7ESProHqff3K25Cj847zUnJT20oD+WybZOtb2arzzVJvFUaUuqzAtv6R8sIM9r617n4JleRbV06vZz96ABixMu0zf2mVEWfw4omLPqllmsqwmqQ1cpO8l7LCclnej5+rbd0riJ5rWkA3BrcusZD8iZ0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBLjx57j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9767C4CED2;
+	Sun,  8 Dec 2024 17:33:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733679083;
-	bh=q/TyKpoVPIP7p6c7NZd6xrYMUu6HCwMO/LrR/oJt/Ns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fqGSYWHMV40sjHasWSQJM+UIhWMIg0oymxZU8Mfq9yOrpjI4lhJsH+/+fDQ7Myl8m
-	 cJ6NyegCCtVi1KHfDSVIBRY0B4kN/N4vyDp3xNCvWdo/f8KEk+JTfL63qtF4SQHB7b
-	 SPq1x+9RiKuiupvISlAdfoSRaAmJsBx88pdNYwcegUvCRBcEfzSDtsn1CLad4gseQP
-	 1ouNwf2ARgUF5RMZPwTdWTzzHWrxlBaLRqqr/t2wlqxlm3+/pRDzcAQS9CgDQKbT58
-	 /HeKQTe3eZHGNfCK6lW9Kyfqzlu15wOzz7gTurXAlCIIpkTbSwZ4gd8BroS64cab34
-	 72XQ+OPLTLgsg==
-Date: Sun, 8 Dec 2024 10:31:19 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Leon Romanovsky <leon@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: suppress stdout from merge_config for silent
- builds
-Message-ID: <20241208173119.GA3365428@ax162>
-References: <20241208144622.605523-1-masahiroy@kernel.org>
+	s=k20201202; t=1733679225;
+	bh=tLuUoayLLlT2eNWkFArfaB8W5balZwTzE5ssrWn4He0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=CBLjx57jd9zdjZLLtC2DhVDHa36uS0qYAsRAS/Xb7HClfbuYzbJ7FgEYzliA4n/Rq
+	 UJ/IqIzS1bg9V7Ih67bnrOXpSqloUtYXg/w9DGUbiRTy8xOmzAhvB6AC6s54AOvy8+
+	 +HPVulRqCLRQ6R5kd7tEuOTvyakCy8IFpt2ScXb+QWM7l8IWcx0Jav+d0vJj8D9qbl
+	 jgPxb8wC/FbhhJc74pX/1l4St0zs6FPlYi9ewuIb8zE9V62HuBvkGXKZAGEdl1WA1J
+	 ye17Zq+gdbf9Uh9GNeIpXzx6EBDY18+WieP38/9/SpvIvv3vtZ6UwFmhlaygdqnJpC
+	 f9arBdF+T8G6A==
+Date: Sun, 8 Dec 2024 17:33:36 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Vasileios Amoiridis <vassilisamir@gmail.com>, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 3/3] iio: chemical: bme680: add power management
+Message-ID: <20241208173336.6a09c9b2@jic23-huawei>
+In-Reply-To: <Z078vIxRoQf_zLsy@smile.fi.intel.com>
+References: <20241202192341.33187-1-vassilisamir@gmail.com>
+	<20241202192341.33187-4-vassilisamir@gmail.com>
+	<Z04N6GUSL2H0zt6_@smile.fi.intel.com>
+	<Z04aJg7eoBR9CYKe@vamoirid-laptop>
+	<Z078vIxRoQf_zLsy@smile.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208144622.605523-1-masahiroy@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 08, 2024 at 11:46:14PM +0900, Masahiro Yamada wrote:
-> merge_config does not respect the Make's -s (--silent) option.
-> 
-> Let's sink the stdout from merge_config for silent builds.
-> 
-> This commit does not cater to the direct invocation of merge_config.sh
-> (e.g. arch/mips/Makefile).
-> 
-> Reported-by: Leon Romanovsky <leon@kernel.org>
-> Closes: https://lore.kernel.org/all/e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com/
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/Makefile.defconf | 13 +++++++------
->  scripts/kconfig/Makefile |  4 +++-
->  2 files changed, 10 insertions(+), 7 deletions(-)
-> 
-> diff --git a/scripts/Makefile.defconf b/scripts/Makefile.defconf
-> index 226ea3df3b4b..97bc5161d6bf 100644
-> --- a/scripts/Makefile.defconf
-> +++ b/scripts/Makefile.defconf
-> @@ -1,6 +1,11 @@
->  # SPDX-License-Identifier: GPL-2.0
->  # Configuration heplers
->  
-> +cmd_merge_fragments = \
-> +	$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
-> +	$4 -m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$2 \
-> +	$(foreach config,$3,$(srctree)/arch/$(SRCARCH)/configs/$(config).config)
-> +
->  # Creates 'merged defconfigs'
->  # ---------------------------------------------------------------------------
->  # Usage:
-> @@ -8,9 +13,7 @@
->  #
->  # Input config fragments without '.config' suffix
->  define merge_into_defconfig
-> -	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
-> -		-m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$(1) \
-> -		$(foreach config,$(2),$(srctree)/arch/$(SRCARCH)/configs/$(config).config)
-> +	$(call cmd,merge_fragments,$1,$2)
->  	+$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
->  endef
->  
-> @@ -22,8 +25,6 @@ endef
->  #
->  # Input config fragments without '.config' suffix
->  define merge_into_defconfig_override
-> -	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh \
-> -		-Q -m -O $(objtree) $(srctree)/arch/$(SRCARCH)/configs/$(1) \
-> -		$(foreach config,$(2),$(srctree)/arch/$(SRCARCH)/configs/$(config).config)
-> +	$(call cmd,merge_fragments,$1,$2,-Q)
->  	+$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
->  endef
-> diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
-> index a0a0be38cbdc..fb50bd4f4103 100644
-> --- a/scripts/kconfig/Makefile
-> +++ b/scripts/kconfig/Makefile
-> @@ -105,9 +105,11 @@ configfiles = $(wildcard $(srctree)/kernel/configs/$(1) $(srctree)/arch/$(SRCARC
->  all-config-fragments = $(call configfiles,*.config)
->  config-fragments = $(call configfiles,$@)
->  
-> +cmd_merge_fragments = $(srctree)/scripts/kconfig/merge_config.sh -m $(KCONFIG_CONFIG) $(config-fragments)
+On Tue, 3 Dec 2024 14:42:36 +0200
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
 
-Did you mean to drop $(CONFIG_SHELL) here? I noticed you kept it in the
-other command.
-
-> +
->  %.config: $(obj)/conf
->  	$(if $(config-fragments),, $(error $@ fragment does not exists on this architecture))
-> -	$(Q)$(CONFIG_SHELL) $(srctree)/scripts/kconfig/merge_config.sh -m $(KCONFIG_CONFIG) $(config-fragments)
-> +	$(call cmd,merge_fragments)
->  	$(Q)$(MAKE) -f $(srctree)/Makefile olddefconfig
->  
->  PHONY += tinyconfig
-> -- 
-> 2.43.0
+> On Mon, Dec 02, 2024 at 09:35:50PM +0100, Vasileios Amoiridis wrote:
+> > On Mon, Dec 02, 2024 at 09:43:36PM +0200, Andy Shevchenko wrote:  
+> > > On Mon, Dec 02, 2024 at 08:23:41PM +0100, Vasileios Amoiridis wrote:  
+> > > > Add runtime power management to the device.  
 > 
+> ...
+> 
+> > > > +	ret = pm_runtime_resume_and_get(dev);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = __bme680_read_raw(indio_dev, chan, val, val2, mask);
+> > > > +	pm_runtime_mark_last_busy(dev);
+> > > > +	pm_runtime_put_autosuspend(dev);  
+> > > 
+> > > Side note: as long as idle method is not defined (NULL) the above dance is
+> > > already taken into account in the regular put.  
+> 
+> > Thanks again for the review! Indeed by looking at the code a bit, it
+> > looks like the suspend callback is being called if the idle one is not
+> > found. But I have seen this dance that you mention much more often in
+> > the IIO that's why I used it. We can see what Jonathan has to say as
+> > well, I think what you propose, simplifies things.  
+> 
+> Yeah, this is cargo cult by many people (including me :-) who missed that
+> detail. If any, this can be addressed in a different series.
+> 
+> ...
+> 
+> > > > +static int bme680_buffer_preenable(struct iio_dev *indio_dev)
+> > > > +{
+> > > > +	struct bme680_data *data = iio_priv(indio_dev);
+> > > > +	struct device *dev = regmap_get_device(data->regmap);
+> > > > +	int ret;  
+> > >   
+> > > > +	ret = pm_runtime_resume_and_get(dev);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	return 0;  
+> > > 
+> > > Either this is broken (if the above can return positive codes), or can be
+> > > replaced with direct return:
+> > > 
+> > > 	return pm_...
+> > > 
+> > > (but I believe it's the former and you wanted something like if (ret < 0)
+> > >  there).
+> > >   
+> > > > +}  
+> > 
+> > Well, pm_runtime_resume_and_get() looks like it returns 0 on success and
+> > negative value on error so I think the if (ret) is correct, no? But I
+> > agree with you that it can be simplified as you proposed.  
+> 
+> Please, go ahead with the simplification!
+> 
+I tweaked it and applied the series to the togreg branch of iio.git and
+pushed out as testing for all the normal reasons.
+
+There was some mess because of the EXPORT_SYMBOL() macro changes this raced
+against.  Please sanity check I didn't mess it up.
+
+Jonathan
+
+
 
