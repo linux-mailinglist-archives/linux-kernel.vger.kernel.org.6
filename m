@@ -1,57 +1,62 @@
-Return-Path: <linux-kernel+bounces-436502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F1659E86D5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:02:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303AB9E86D8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:03:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF002814BA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:02:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 378B31884D8A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5A315ECDF;
-	Sun,  8 Dec 2024 17:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B8C158DC6;
+	Sun,  8 Dec 2024 17:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJAKPGEb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VmCNVXhV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2948B13AD03
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13EB14F102;
+	Sun,  8 Dec 2024 17:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677364; cv=none; b=YzEdth8zcUV1jGZP4GvtQgJTdUjD0LDXVOHJcgvAiNhXR6aXUuBVnWhGzevyHCOy6isYGBmqljnIBcP0rzc8eNhTQFjJHLqqE8Yy0cJY09DBDcH7DsOJ9zm7wJBvR/FU7yj75GnBSvdW/PqMlPsA4BADQ6H2npvigeCrsQ4Ag5Q=
+	t=1733677371; cv=none; b=amas4ZqmpGAooxO2/htODg8BRWqz1Qx9rq+TsDUpomQytMevd47iBGEO5QDK/hI+lm66GCEPiL9T2nJWsV6qf7w5wj/EHCuzmr/WIuR6Ot3zgZkuRXbqUiZQfadOYLrynd3w28XKToiMe9sGmuPbO7Yv6x74S+3WaWNj3ydwx+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677364; c=relaxed/simple;
-	bh=IQCzJX9mzqFx0k8wCqsYT0do0fUE/zPwysTrpnz5vb0=;
+	s=arc-20240116; t=1733677371; c=relaxed/simple;
+	bh=HCHmFGhqgwiw+/GQHlPW56J6axCw7STGcQpRvYj2W3w=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PkReFHatA2igHxYqLkMxmzkIn4x0Ssa9EBuAbwDmpD/2S87AUo9te+z+MgrmKfGpSfVU0jC/diTXSip+rX9w1PQPNEQBILgoZ0CPd5KjkJ6RvRYiDdUmz7ZQtsa66vNvgYdu4nDEv9YE+1UCPZngqj4BIY1Qc3AUTj4zDsno7Mg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJAKPGEb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B46F1C4CED2;
-	Sun,  8 Dec 2024 17:02:40 +0000 (UTC)
+	 MIME-Version:Content-Type; b=NhdjD4Nbh51+cUOOvRxgiHdd8I1lTBEIKFxglCk91c+S62QWJUbdNExVN/AZoUpGaUoG+Te6RJSX7uc3N1IMM9s6zBerxTcfvhV4nwvPZdt9CDJ7zw6LPBcS7eH65XeZ0CoO7nThNc0C0KCKw7HHpjjynF+lTYZiv/gN+xgg1X8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VmCNVXhV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50046C4CEDD;
+	Sun,  8 Dec 2024 17:02:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677363;
-	bh=IQCzJX9mzqFx0k8wCqsYT0do0fUE/zPwysTrpnz5vb0=;
+	s=k20201202; t=1733677371;
+	bh=HCHmFGhqgwiw+/GQHlPW56J6axCw7STGcQpRvYj2W3w=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iJAKPGEbZzt4UwPydnM0avSvGXaRy6T1hLicejUhXPu3YuBoPGosCRX2Ad1RH0y+5
-	 8AzrKuD7p5StOgU2d6lfkcXv90XQjaSUAHnakt85jEy4DC6qPlHiykaMK7YxplNJF1
-	 ETWQAp/OK5umo+T+z4ChoRCKg/5PzDwdmQ6uR4noIlpYBKzUgpkAK34SCo7iL22HIv
-	 ndJWgudL2sEQfEXeGGW+4ktgRDpgK8TI00cUPO4oAKYSwt+6DK+VVN6oPUTYhyW6vR
-	 YhpfA5AVnaEwkpGhskVrQDt568Iiqm57U2VBGJu9ZQnVkdkdo+kvRDrEBO4NtLbted
-	 jVWPc52Lc6VZg==
+	b=VmCNVXhVyAuGESKLdZYpRnoiBVbx8uUR7z2HN0Taja3QoXPvanJ+R9dgLHpQfT9t9
+	 f11/8V0csqwELM5/x6LacT21ffpxnjsd7/mQiJqIog8Od37BQGQhurOfTAds5TKUUl
+	 SErXJUCFRZ5Y8q4QCL6OtNFxnY8urDxVYILGicA5x1dDItWnI9EBP9qZoWGe3Deyw3
+	 AiaGab+8AsXM2vj9RCN7seMvGnXRv5UrFXJyIOBO7ylEQhU7VyGmd9oO8SSLfXAxBK
+	 e08yPoxK2+xujhmjiQFTkgLW8OSS2nhwWg3R9HEbNAyljkctlR/I7cQvz54JNbdpv5
+	 JT1Dc9PThP6dQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
- linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Anand Moon <linux.amoon@gmail.com>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>
-In-Reply-To: <20241012071919.3726-1-linux.amoon@gmail.com>
-References: <20241012071919.3726-1-linux.amoon@gmail.com>
-Subject: Re: [PATCH v3 0/6] RK3399: PCie Phy using new helper function
-Message-Id: <173367736033.1042266.11057456243557400488.b4-ty@kernel.org>
-Date: Sun, 08 Dec 2024 22:32:40 +0530
+To: kishon@kernel.org, robh+dt@kernel.org, manivannan.sadhasivam@linaro.org, 
+ bhelgaas@google.com, kw@linux.com, lpieralisi@kernel.org, 
+ quic_qianyu@quicinc.com, conor+dt@kernel.org, neil.armstrong@linaro.org, 
+ andersson@kernel.org, konradybcio@kernel.org, 
+ Ziyue Zhang <quic_ziyuzhan@quicinc.com>
+Cc: quic_tsoni@quicinc.com, quic_shashim@quicinc.com, 
+ quic_kaushalk@quicinc.com, quic_tdas@quicinc.com, quic_tingweiz@quicinc.com, 
+ quic_aiquny@quicinc.com, kernel@quicinc.com, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-phy@lists.infradead.org, 
+ Krishna chaitanya chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
+References: <20241122023314.1616353-1-quic_ziyuzhan@quicinc.com>
+Subject: Re: (subset) [PATCH v2 0/6] pci: qcom: Add QCS615 PCIe support
+Message-Id: <173367736385.1042266.3592021837823660516.b4-ty@kernel.org>
+Date: Sun, 08 Dec 2024 22:32:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,33 +68,24 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Sat, 12 Oct 2024 12:49:02 +0530, Anand Moon wrote:
-> Few clean of the phy change and Using guard notation makes the code
-> more compact and error handling for mutex_lock/mutex_unlock.
+On Fri, 22 Nov 2024 10:33:08 +0800, Ziyue Zhang wrote:
+> This series adds document, phy, configs support for PCIe in QCS615.
+> The series depend on the following devicetree and smmu.
 > 
-> Plz review te code changes, I tend to do silly mistake.
+> Base DT:
+> https://lore.kernel.org/all/20241104-add_initial_support_for_qcs615-v5-0-9dde8d7b80b0@quicinc.com/
 > 
-> v1:
-> [1] https://lore.kernel.org/all/20240901183221.240361-5-linux.amoon@gmail.com/
-> v2: Fix some typo in the subjects.
-> [2] https://lore.kernel.org/all/20241006182445.3713-1-linux.amoon@gmail.com/
+> APPS SMMU:
+> https://lore.kernel.org/all/20241105032107.9552-1-quic_qqzhou@quicinc.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] phy: rockchip-pcie: Simplify error handling with dev_err_probe()
-      commit: 84de918083d09500d93d991d8989addfaae1611e
-[2/6] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
-      commit: e96397db55e5fbe290ff1462ddf6c24ed94eb7df
-[3/6] phy: rockchip-pcie: Use regmap_read_poll_timeout() for PCIe reference clk PLL status
-      commit: cb0ba26ad09398d3d0d10f518af4ccae69c8b64e
-[4/6] phy: rockchip-pcie: Refactor mutex handling in rockchip_pcie_phy_power_off()
-      commit: bb70d1aae565fd52e6a50e643d1ad6e7d419c2a5
-[5/6] phy: rockchip-pcie: Refactor mutex handling in rockchip_pcie_phy_power_on()
-      commit: 96522eeb8735449957272e9c6f8ea3b72dcbdeb8
-[6/6] phy: rockchip-pcie: Use guard notation when acquiring mutex
-      commit: c90a7a685a5d90228cedf7a5068f50b3da23ddfc
+[1/6] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the QCS615 QMP PCIe PHY Gen3 x1
+      commit: 1e889f2bd8373229ce48be5860b8383e75393e13
+[2/6] phy: qcom: qmp: Add phy register and clk setting for QCS615 PCIe
+      commit: 21364b0fe378646fa301f29f714140a1f465561b
 
 Best regards,
 -- 
