@@ -1,137 +1,136 @@
-Return-Path: <linux-kernel+bounces-436341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CD309E84A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:27:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B60649E84A7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:27:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48D051884AD0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 11:27:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DECD61884B5D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 11:27:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC48145335;
-	Sun,  8 Dec 2024 11:27:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6519D1474CF;
+	Sun,  8 Dec 2024 11:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kBGx2a+P"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V0IH9upu"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B226EEEB2;
-	Sun,  8 Dec 2024 11:27:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1176113AD22
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 11:27:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733657231; cv=none; b=iFk3ICcL1Wa9C+bQC84xevALf1mWSvsXapPEzdliBqseR9DtramrxUHXuPRVu6+KKvu70evdD+7s++bo5OYiVk49g0OrSw066ILblSy0HCjSsGgRngS91biectCkaHYEnaFHBCKaGvOEoP++xpdZwdSYhRXMJXcIyvC2aFlrVCE=
+	t=1733657239; cv=none; b=QbmdAFI0JivVHF/ZhykO6zlAOf9DmdhCyUmquz1t72PWynv/QHb5izE6vmEX1FHnVNxE0iY1WEup5GwG+0fW5At51K7QhmHeCsYBxxXzl8+/dWq0G0u+GuTxF01X1EHXBRfBWRPmSeN8oMf3tZdJWi8nvG6yK7M39/8lGQX85kE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733657231; c=relaxed/simple;
-	bh=lbMgVCEochd8cBdIcmYjZ4Tv+9aAwL7sabZWZz0vNBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MTuJ82JaigCXy7BO0ZCd7tk9+Z2nRJ+3FG/KwFYj/5DI9XD2WkgGkyYpF1W+uAjA6j8KM8G63mkLgp2jsMsNHviYL0Cb/aUN0Zl0TN7zrnIJHggC/MTqT+qgT2g8m3rCG1LLZoQ9WwNFfu399280sTToDnaM8vLz44QjMwXrD9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kBGx2a+P; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa62f1d2b21so465673266b.1;
-        Sun, 08 Dec 2024 03:27:09 -0800 (PST)
+	s=arc-20240116; t=1733657239; c=relaxed/simple;
+	bh=f0Jo04c/T2mEssbQZfNecevl2eZUZV/9cEdpBG53Pu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t35LnFSh5SAeDn+ZRKaP5OJGN64qwtkbTUX4EhQIdggqfXiGX7KWfJ2AuXNWzt93MlrYD6vHoqDc0lp8sJr+XzNujxI9tlmM6v6NkxBQygj+2eitQCbsDXTS/SEYj3OFexFy8odo9YdsnIGtAjjyvaSJJGc+O4BbLpdHXFyBaks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V0IH9upu; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385e87b25f0so2621339f8f.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 03:27:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733657228; x=1734262028; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sUW+2iId8Zd5sw8XkFZ1jsrcHJHTv4++FpqEFyDMn8Q=;
-        b=kBGx2a+PjhMEjiuJ1V0/E21m2S+wnPA0+d1rda9Wwor0UBTT6itgtp5QaZMLYdiUR9
-         tVy8GDLKyc5Bp8y6WEX2wFuL6yTIL1Km2Z6VhfAVhBDAndwOCl/Rw4DrMpRlcvt5/1aU
-         q1UjsJfcsqKTMszA0/l4HSjJkKpZ9gxN//m+fA/hD35CoXhCump+J+thVNdZFJ03GFGf
-         3LaajREQkZ0ZquLiNz/qXVfX72Vrg0Trqsv28UOLf3eT1pxRMTgrsEJqFDnb4HReviZz
-         HJZ3pbI0+mCNEc3ZLdPSX0wKG1dcvl1tBLqaJP42X4q7IIfbgmpMeoHZbX55J55nGwNT
-         pXlg==
+        d=linaro.org; s=google; t=1733657235; x=1734262035; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CsVvC94nl2+83Y2oLBYdgCRMUN1ZyQsu5kZ8QEDXwqU=;
+        b=V0IH9upuOgAkkRZjlkrU0Dmw5gHwzfLvi74Ag7cMDEC3L+crwxac+Uwbm0K9st8szB
+         cR2jFbISYyTNWCIOPwaUCEegR8zhm/BIap/bIJLGMPkVEHldvE0igGZIT9NDx5O5HV0g
+         tqdeTtwpUCuhPZtaHDa+S+FCW6C74+zJPKgZMuR/xpkJ6TSkME0qI5n6KxFKpvH2TW+2
+         G938cU4p6LbaiUT/s6LM9tX2kh5W51ln4kuECy6D/e/ScPfMVDLpPMrm4/JQ26mV9dK+
+         a13oofKQ6pRpR0sDAbLKoh6RtYx+ZnhwUL+jdwu/nZtiRJiz4Q4bAl0xGYdEp3+VZ9VY
+         NZNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733657228; x=1734262028;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=sUW+2iId8Zd5sw8XkFZ1jsrcHJHTv4++FpqEFyDMn8Q=;
-        b=eLCZOelWVRQTzoK87vLQQXbd2MD/E2b274LmISf+Bslr86PdoXQKFIW6hXB0Z9DGFB
-         z7wlDKTQlheh/pGOFNkBIoOnS5drG0Il6AuZmxhbjovH59w+bOXB0wbE9jWZ2rxXCi2p
-         XC1YTnYgdKP7l3P3Uq6MEJEGFl6uFTH5+CMAIgkc0hbanG+aISvvcHb5Hd3b+ZBkAavH
-         rz7w3CvUkgHatdKxuWG/X4wFvJ75DX2genwJ/khyb8NWaOEk1/ckyxYzQw3h/bGMV2lm
-         /P8gHDxu2FvuAd5l4DbG2+jIctUhQu46HhlN7V/Cf7jUrnuaiRe075T+1Qwfm1MX35xk
-         A9WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/hcBhY+Qwa3clSfVfzdLV5+j0Kyb44EndzSiw7wGELqdyNFwMi839fhJnV+QjnNe0A15uYk6tnf/DpWDc@vger.kernel.org, AJvYcCWOxNIlsaXmLlxqFmQDI30pEKcgv+rhLR0QR3H6gwgAfYrp7Cyf5C8MFGWubnhG9aEs7dCdXIlakpiWDLD8@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDEkWqYYHDrRd9W+fRdxEhBgf/cBMY6jVXxqqtyu4Ea/ptro+t
-	nGywtU50jJl25tvp7/c34zEkZvWf9Ez0uvkqG8CV4N6kTFRD851l
-X-Gm-Gg: ASbGncuHRjAlrNcEVMPEyPxtXwQ2aMRfnNEYbpH0Ut+/FXELJpMcKaYv++PaFLXehwE
-	w201S7v6WhGJ/91IAMqzfqAElHbL6uR8r1Uyaep6nIfx7HD3aFdtbtoWwmXpwQoU9mIQ6FPGObs
-	mZE2dauBn9qidayFBzt9OmkzvJvO/0DZnnH9trkrRYBOb5bJ/Ke8HJvqXSviIn4GBiIoNcags5s
-	s3sx+dlR17ty5IHc9yC2rKFXdKKXDKrEpV6grrpqgRTvK6ZNg==
-X-Google-Smtp-Source: AGHT+IHS+B0iRGQt5BsO9uK/gwQVsu2n4QHvr0IM+ThzUnPuEmYlYuveqnSOHlPIygXmvjWWlZdwtA==
-X-Received: by 2002:a17:906:9d2:b0:aa6:841a:dff0 with SMTP id a640c23a62f3a-aa6841b1083mr46573466b.32.1733657227714;
-        Sun, 08 Dec 2024 03:27:07 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6260ae4e8sm520122566b.163.2024.12.08.03.27.06
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 08 Dec 2024 03:27:06 -0800 (PST)
-Date: Sun, 8 Dec 2024 11:27:06 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Wei Yang <richard.weiyang@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/5] mm: abstract get_arg_page() stack expansion and mmap
- read lock
-Message-ID: <20241208112706.cmzyrotgnjflv47h@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <cover.1733248985.git.lorenzo.stoakes@oracle.com>
- <5295d1c70c58e6aa63d14be68d4e1de9fa1c8e6d.1733248985.git.lorenzo.stoakes@oracle.com>
- <20241205001819.derfguaft7oummr6@master>
- <e300dfde-b6a5-4934-abc9-186f7fef6956@lucifer.local>
+        d=1e100.net; s=20230601; t=1733657235; x=1734262035;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CsVvC94nl2+83Y2oLBYdgCRMUN1ZyQsu5kZ8QEDXwqU=;
+        b=gVKzUVR9oJm3tmHf0AG43i/nt/xh8/jKrfsXcbKt/ffilBJIJBKozggMvbBoz+1kHv
+         42KzzC1kJuDXi5EM2oRqBROv8d1Q+Oy9zc1B4wYTj8V8BeeoBiJZRqohr18atj+6ktlH
+         33QWFm4laW1Ie9eFTgojBuwMP0F0+tb7pmFve2W/QWX0w147oKQbHxBRnX6egmzpq8IJ
+         4GbTUHnKJSf4yT6FMAXqZifDXBEIbl1sMZBHpQkLYWUD7n5sLMnCdxDOfFCZWRgZrL9B
+         YltIpovuQpm39M/OWYWjNX7TVr+zhSTeui1cEJ7jPyZfviEyWUWQATNNHpnjSyqdrUyS
+         V/GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW1e60Ve7kNYovVkzRhekh1KigdSHGebBAAeZ5KErblrMyKY7NrhWyFzMNtfWqeFWlMxBXVwUPHYvdIIkM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEs++mNDUYNzD39LDEPK5zgQR9VUD02JQdfdjnIbxHN190AyRu
+	Svd0dJUTI1kLWr+VVTKy6oNPHvKnpWGuJaDalh7jD2GbzpzWafpqb6nvlLYjj38=
+X-Gm-Gg: ASbGncuZUstbhoNKfWuZFLvmlAc8ovWQoiNZ01glW3RmDiori8oNwdRmlo9WI14psKH
+	mBF387tr1lx3CgfUW14U0CSa/Oc/mPVVQWyA6zPzxdkRv/w/aGN+0XuCBtiCd5l8ssp7Agllk7p
+	Z+qjfCPBRPIuzsqGhEDdmVRPwRSwt4PEYAua57n9BqUPr7EBH/Xbe72arrv+vPE2S3ynjSdb/Sk
+	CPP1ri557+41X8tpJFL8kzO1zbst6ubsBQe+KIQOWiRLPSfI6GetoD2FLHpjxM=
+X-Google-Smtp-Source: AGHT+IH//Ct388igxpj5Bg2HRBO2RyulR3RmoCk+xAmpaxF9sT8ZNwoRAF+tNrtLfoOXVJ033QX4iQ==
+X-Received: by 2002:a5d:5889:0:b0:386:3d33:a61a with SMTP id ffacd0b85a97d-3863d33a7d8mr433893f8f.27.1733657235343;
+        Sun, 08 Dec 2024 03:27:15 -0800 (PST)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861ecf4008sm9654693f8f.22.2024.12.08.03.27.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2024 03:27:14 -0800 (PST)
+Message-ID: <fd8538b6-4c9f-411c-89db-6936ebed7464@linaro.org>
+Date: Sun, 8 Dec 2024 11:27:14 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e300dfde-b6a5-4934-abc9-186f7fef6956@lucifer.local>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: qcom: camss: Add sm845 named power-domain support
+To: David Heidelberg <david@ixit.cz>, Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>, Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Caleb Connolly <caleb.connolly@linaro.org>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241208040055.30509-1-david@ixit.cz>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241208040055.30509-1-david@ixit.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 05, 2024 at 07:01:14AM +0000, Lorenzo Stoakes wrote:
-[...]
->>
->> Maybe we just leave this done in one place is enough?
->
->Wei, I feel like I have repeated myself about 'mathematically smallest
->code' rather too many times at this stage. Doing an unsolicited drive-by
->review applying this concept, which I have roundly and clearly rejected, is
->not appreciated.
->
+On 08/12/2024 04:00, David Heidelberg wrote:
+> From: Caleb Connolly <caleb.connolly@linaro.org>
+> 
+> Declare power-domain names "top", "ife0" and "ife1" eponymously for the
+> power-domains TITAN_TOP_GDSC, IFE_0_GDSC and IFE_1_GDSC respectively.
+> 
+> Signed-off-by: Caleb Connolly <caleb.connolly@linaro.org>
+> Signed-off-by: David Heidelberg <david@ixit.cz>
+> ---
+>   drivers/media/platform/qcom/camss/camss.c | 3 +++
+>   1 file changed, 3 insertions(+)
+> 
+> diff --git ./drivers/media/platform/qcom/camss/camss.c ./drivers/media/platform/qcom/camss/camss.c
+> index 67fb11cbe865..62c556c4fcf8 100644
+> --- ./drivers/media/platform/qcom/camss/camss.c
+> +++ ./drivers/media/platform/qcom/camss/camss.c
+> @@ -927,6 +927,7 @@ static const struct camss_subdev_resources vfe_res_845[] = {
+>   		.interrupt = { "vfe0" },
+>   		.vfe = {
+>   			.line_num = 4,
+> +			.pd_name = "ife0",
+>   			.has_pd = true,
+>   			.hw_ops = &vfe_ops_170,
+>   			.formats_rdi = &vfe_formats_rdi_845,
+> @@ -954,6 +955,7 @@ static const struct camss_subdev_resources vfe_res_845[] = {
+>   		.interrupt = { "vfe1" },
+>   		.vfe = {
+>   			.line_num = 4,
+> +			.pd_name = "ife1",
+>   			.has_pd = true,
+>   			.hw_ops = &vfe_ops_170,
+>   			.formats_rdi = &vfe_formats_rdi_845,
+> @@ -2647,6 +2649,7 @@ static const struct camss_resources sdm660_resources = {
+>   
+>   static const struct camss_resources sdm845_resources = {
+>   	.version = CAMSS_845,
+> +	.pd_name = "top",
+>   	.csiphy_res = csiphy_res_845,
+>   	.csid_res = csid_res_845,
+>   	.vfe_res = vfe_res_845,
 
-Hi, Lorenzo
-
-I would apologize for introducing this un-pleasant mail. Would be more
-thoughtful next time.
-
->At any rate, we are checking this _before the mmap lock is acquired_. It is
->also self-documenting.
->
->Please try to take on board the point that there are many factors when it
->comes to writing kernel code, aversion to possibly generated branches being
->only one of them.
->
-
-Thanks for this suggestion.
-
-I am trying to be as professional as you are. In case you have other
-suggestions, they are welcome.
-
-
--- 
-Wei Yang
-Help you, Help me
+Acked-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
