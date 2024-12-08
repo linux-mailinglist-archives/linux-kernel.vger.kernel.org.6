@@ -1,217 +1,86 @@
-Return-Path: <linux-kernel+bounces-436597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06B2D9E8821
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:36:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0AAE49E8828
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:42:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03BC1163E50
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:36:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A9A992811BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E4D1940B2;
-	Sun,  8 Dec 2024 21:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7Jk3Gh7"
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EC37190685;
+	Sun,  8 Dec 2024 21:42:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476C11DA23;
-	Sun,  8 Dec 2024 21:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A1631DA23
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 21:42:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733693778; cv=none; b=LeJzLnHM9/GGh2QI1nrfMByWPKBH4H8+NDlLF2CaGpcIZG652ce1c3T+lLlM/E0FQdv+/qa2qkrUtRGDMlSbeF/4FKVexdEVZXHJGmcPbumchL94bobydH4LDDIAT0QV0KIxd7OBptABOyMkKdJTxu7uofl6QzUfj23PWy5BQYE=
+	t=1733694124; cv=none; b=aEugY7EuubWJa/lAr9SSI+ogYiuNxW9x88PgsWdJfApxqe0oDQtsacSnZdytXg3dJUnP1+eufDIeM+mBhR9YbHpJPrjQGwbNavr3icqO+/kpYWmg/gC8DMa1gze1EfStjsqtduXBH/iW6iK8ZyUi6iLnMhzef3zIgpuO60tyOW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733693778; c=relaxed/simple;
-	bh=9pVA9WOuYnFsgbESCnSlf+R0EmB4xmD9+WiiUvtgJh0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=GKy+L/JJDCAzinvHDMNJz9evHzcpxeW0oqlG+AIa374X5U3uO4XcQoykRSdR9D1Y+RIyNPjHVqOB4ZCQO3XrW76G1IUJCgkdfz7/PUiPP/YP4k4yAIgtohYuXRWMj7xIpAny9+8DL9Xj6zRno+yxcucB8c5TKtMgOJKyVjtfft4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L7Jk3Gh7; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-85b95896cefso701341241.2;
-        Sun, 08 Dec 2024 13:36:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733693776; x=1734298576; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UiCkakQWqIBf09dONNb85NToTD/BUIER2ZS+n3sEdS8=;
-        b=L7Jk3Gh79KC2z27Aubi+LUG0+dX4F3U4WaBX5LSg7JPo0xvVpfrssBvu2I4h9TU5l2
-         UDyYtrDzXUMT9pzK5E8PpBosjR8SiWw+h/cIhUXPZtTd3JYJq9fWaD1YgxsDKRY8/4Xl
-         z2t+0gMVUr9hwPt3QuC6vjco9HZKCTaEprMeXjao1ngDwyuq8wkEGJ/PA4jyB+2dclIg
-         ltFWrln+dyo7dBYVCgFE5OZsFXQGqpmedgdyTqjedoyiP+mTE5BvC03aU3/e4ZY9Eiib
-         VasOxVJMVQ4kukVFcg3zjhXT/kr4mRMyV4mG8zpr5gh47iYRtBTwXomczcWufK+ZDCYh
-         3XAA==
+	s=arc-20240116; t=1733694124; c=relaxed/simple;
+	bh=XBWOSBf53+iA748lOp4Y79K6ZcvUEzuF7zfpE65XhV4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=A9gGdgpA/kgN0DMsctcUzluqpQt7umHH879S/A5LkaPoN6VHem6XuA/tQ5Zq/MK/a6//ztR+1Bk30m0fJUhe3Afe3UTauBiOF4kz6jI8d/UUT1pqG0juCPKK1gKZabumLlmmultF/WWliGe6/xJZ9TeAPIQoVzrqkXbyyz/h4+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a91a13f63fso13606805ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 13:42:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733693776; x=1734298576;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UiCkakQWqIBf09dONNb85NToTD/BUIER2ZS+n3sEdS8=;
-        b=F/Wkv9TQCxMCDou36Exaci6xW5/hL/1vAqe2i1xbwoXnlzISg7ClRfcLpXnkUx+0Dp
-         M9I7hjwEUewuvuAwewdkJmvGyflD71J5tUgZdIXQdJwCAB5P6mE0uPkHlzY+TrVemLwy
-         fE7DM9jdb0d3631x6PyELBeZPdtNiC/9jHVhpq7MUM+LBxjT3iEycvjWNGyPxZir2mdF
-         HR7cvShpqAM4p6zbL5qcKAcRV5JnAM4IqSKjS++eglu0lCetc0SpwonWZwU4BQcnqtc+
-         4J31mPkWWD1PhIGuVcvlNaEiHys9vJzCdaDR6v8K7iOBrqCHpT67DuKk/2l325I6Z5EB
-         eScw==
-X-Forwarded-Encrypted: i=1; AJvYcCU7E3LbQ0WlD/KIGQy29B2XliSKW6fmUqVQxkzH4KbM8O3q3y++yR1fnUdT5MkD0Nvra+Y1FUyQC1tSPkhkxCNKMzg=@vger.kernel.org, AJvYcCVa0z1MJsQTena8pqTX9kDPbW/gnF+ouOaLhEPesBYeX5ctajTFF1zWd0dXrRDnU/z6oqN5oiA8Fx5m9Jkq@vger.kernel.org, AJvYcCVbnSJJo5JjKHUvRLGCZmMCpF9635j+vpMRlaS5nTZPAAWZ4ykuSEFvtJB+8uzOJC7mKhTjfbbpTBs6@vger.kernel.org, AJvYcCVnqbNYAuwD9S+IpDS8zphRMNjxYa7rbIZIbmoj9O3YEu+oo9Z3rauxeFPbDw8z29WbAHiK0iP5Te39@vger.kernel.org, AJvYcCXS6Xigb/dEUnRN/fX/gi1GJb+9UXkp0gnC5YdbYtAQbBs9RgFGKFq+Nhg1nEEVbIei8JCHJb7UWA7Q@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL1rhgRW0D/7PexZBqu0gYN39QEFgfyAmrwAZWZx/9mVJGWlW7
-	Ly+902Zb1S4uMj8jQpSx1IRKjPrJtegM6yyTCz3beZjJt521zv61uTJGXhGd7vBCFTQyWNNuD53
-	fsieRg4yaiw2ymTdrdpvZIDdcCc4=
-X-Gm-Gg: ASbGnctW5FKvRKDBy9sEmaAtm1y6sQPnpVPMWbQ/j8ePlaVCNaysJksPpJeyaQ9ui+V
-	B1ST2SwpPrmYswcU09nQqmXr1KbKc+mpE
-X-Google-Smtp-Source: AGHT+IEuRFUxxnKiMRjUikQDSTAAVTMrFs9uHL9UmppnkCZPo+jjdxm0+Y/FUv2KQkfIor84awR/Jn0Kv+1RwP6hpWY=
-X-Received: by 2002:a05:6122:1c0b:b0:515:c769:9d32 with SMTP id
- 71dfb90a1353d-515fca18638mr10363003e0c.4.1733693776090; Sun, 08 Dec 2024
- 13:36:16 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733694122; x=1734298922;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QNHqcpZhIDAiN2PJPD4BSlffjPjpIVffvBbxLKtQY0o=;
+        b=UhMzMKaxh7dSBWoHv2f/tIiIDs/JuJ3vYM4sEGwM5AFcnYfZH33Twzh9F7WhIu/uJq
+         HYT/0IuSmr09Dx+9utbVuXLP+zPpjO48HjYC+cKm5Hfrz+k8oax+M0ak//tgRPVq317S
+         rxCCqm4vi3imU1oAYCcMdvC/jcQNOILdoy8MStTGFGhr9GCxFNDQy01kHsdjnxsmj5I+
+         BLhB/45KLvuS8FaxBdMoyKp2JzB1iX9A05z2FrsXXeuQzMUeux+3aE6Q6UmuRbmozVSm
+         fF0uU/0NF9zx1jMmsq7BAXONjucGAaf25HXV2IuXg1lnMThg2f6OHyTsKKdF7phqnFqA
+         H+OQ==
+X-Gm-Message-State: AOJu0YwuEHmq58Q6tWO1U6dkUw43YolZAZmEFro7jiJAT/pqKTiUBzwq
+	aU4Q+csMlGfkB2ACCnvZis7vnj+wKsjJCHWwnqhcpnxjDXZx+Ahczgn+Qo/ilMsOIk8TOvu4aO1
+	5/vgpo5/yd9MExsbKXskhuvt0UyYmLBK2ranI93t6s8CUy3srFxGmC4o=
+X-Google-Smtp-Source: AGHT+IHcEDM0oZswHzT/BTC4xA1T4GGxsbQkRYVS+FEFVmn+RdY/PBq8H01axTfVHtDmpwPyRVzqJQTQjrPHPBa0JcvO/qvyf6ii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com> <20241206111337.726244-12-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241206111337.726244-12-claudiu.beznea.uj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Sun, 8 Dec 2024 21:35:50 +0000
-Message-ID: <CA+V-a8vHovd7L2bcY61n_Ox_hKvTvhUZMZPKgHFtd5DHQeZNMw@mail.gmail.com>
-Subject: Re: [PATCH v2 11/15] iio: adc: rzg2l_adc: Add suspend/resume support
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+X-Received: by 2002:a05:6e02:156e:b0:3a7:e701:bd1b with SMTP id
+ e9e14a558f8ab-3a811e38cc8mr128573445ab.20.1733694122309; Sun, 08 Dec 2024
+ 13:42:02 -0800 (PST)
+Date: Sun, 08 Dec 2024 13:42:02 -0800
+In-Reply-To: <D66K3G6JFJ4C.1UV5Z5BMPMJDB@getstate.dev>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675612aa.050a0220.2477f.0030.GAE@google.com>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in mgmt_remove_adv_monitor_sync
+From: syzbot <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, mazin@getstate.dev, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 11:16=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
->
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The Renesas RZ/G3S SoC features a power-saving mode where power to most o=
-f
-> the SoC components is turned off, including the ADC IP.
->
-> Suspend/resume support has been added to the rzg2l_adc driver to restore
-> functionality after resuming from this power-saving mode. During suspend,
-> the ADC resets are asserted, and the ADC is powered down. On resume, the
-> ADC resets are de-asserted, the hardware is re-initialized, and the ADC
-> power is restored using the runtime PM APIs.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v2:
-> - none
->
->  drivers/iio/adc/rzg2l_adc.c | 70 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 70 insertions(+)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hello,
 
-Cheers,
-Prabhakar
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index e8dbc5dfbea1..2a911269a358 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -88,6 +88,7 @@ struct rzg2l_adc {
->         struct completion completion;
->         struct mutex lock;
->         u16 last_val[RZG2L_ADC_MAX_CHANNELS];
-> +       bool was_rpm_active;
->  };
->
->  /**
-> @@ -527,8 +528,77 @@ static int rzg2l_adc_pm_runtime_resume(struct device=
- *dev)
->         return 0;
->  }
->
-> +static int rzg2l_adc_suspend(struct device *dev)
-> +{
-> +       struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +       struct rzg2l_adc *adc =3D iio_priv(indio_dev);
-> +       struct reset_control_bulk_data resets[] =3D {
-> +               { .rstc =3D adc->presetn },
-> +               { .rstc =3D adc->adrstn },
-> +       };
-> +       int ret;
-> +
-> +       if (pm_runtime_suspended(dev)) {
-> +               adc->was_rpm_active =3D false;
-> +       } else {
-> +               ret =3D pm_runtime_force_suspend(dev);
-> +               if (ret)
-> +                       return ret;
-> +               adc->was_rpm_active =3D true;
-> +       }
-> +
-> +       ret =3D reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-> +       if (ret)
-> +               goto rpm_restore;
-> +
-> +       return 0;
-> +
-> +rpm_restore:
-> +       if (adc->was_rpm_active)
-> +               pm_runtime_force_resume(dev);
-> +
-> +       return ret;
-> +}
-> +
-> +static int rzg2l_adc_resume(struct device *dev)
-> +{
-> +       struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +       struct rzg2l_adc *adc =3D iio_priv(indio_dev);
-> +       struct reset_control_bulk_data resets[] =3D {
-> +               { .rstc =3D adc->adrstn },
-> +               { .rstc =3D adc->presetn },
-> +       };
-> +       int ret;
-> +
-> +       ret =3D reset_control_bulk_deassert(ARRAY_SIZE(resets), resets);
-> +       if (ret)
-> +               return ret;
-> +
-> +       if (adc->was_rpm_active) {
-> +               ret =3D pm_runtime_force_resume(dev);
-> +               if (ret)
-> +                       goto resets_restore;
-> +       }
-> +
-> +       ret =3D rzg2l_adc_hw_init(dev, adc);
-> +       if (ret)
-> +               goto rpm_restore;
-> +
-> +       return 0;
-> +
-> +rpm_restore:
-> +       if (adc->was_rpm_active) {
-> +               pm_runtime_mark_last_busy(dev);
-> +               pm_runtime_put_autosuspend(dev);
-> +       }
-> +resets_restore:
-> +       reset_control_bulk_assert(ARRAY_SIZE(resets), resets);
-> +       return ret;
-> +}
-> +
->  static const struct dev_pm_ops rzg2l_adc_pm_ops =3D {
->         RUNTIME_PM_OPS(rzg2l_adc_pm_runtime_suspend, rzg2l_adc_pm_runtime=
-_resume, NULL)
-> +       SYSTEM_SLEEP_PM_OPS(rzg2l_adc_suspend, rzg2l_adc_resume)
->  };
->
->  static struct platform_driver rzg2l_adc_driver =3D {
-> --
-> 2.39.2
->
->
+Reported-by: syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com
+Tested-by: syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com
+
+Tested on:
+
+commit:         0b6809a7 Merge tag 'kbuild-fixes-v6.13' of git://git.k..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=158148f8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
+dashboard link: https://syzkaller.appspot.com/bug?extid=479aff51bb361ef5aa18
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=10814b30580000
+
+Note: testing is done by a robot and is best-effort only.
 
