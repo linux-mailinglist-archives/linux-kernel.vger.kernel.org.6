@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-436271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9542A9E83B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:45:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CFD19E83B8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:45:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F2F61659B4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:45:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D572281B48
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:45:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DA1C1F92A;
-	Sun,  8 Dec 2024 05:45:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EB811E515;
+	Sun,  8 Dec 2024 05:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yODCoYdJ"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GPPYQbbr"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913E21E515
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 05:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1904B17BCE
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 05:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733636716; cv=none; b=mNgj3FOdpCcFppyek/5GJG7Af+VmWYqwIAJNlxjOf+9gwEHu5B2u7kLRSvq6ufAJNArKLEly6WJp8Fnz7f11FLCBnfpQz7y9CUVHkDeQDQ36lKbRHbQZ1tSeYKbdPE56mHTe1CUIfhjuDxdX6zhhVxtL2PAUOR9qmazwnTiDZdI=
+	t=1733636741; cv=none; b=I1/swUMJRD6mktQct7VtQ01avurp/mDBPLXSqaJ1TcKucz18m9GHlc1z7QY2Cu58H8BoLRVOJOCmTZxGkJSAAWU0bGfc6yMkcUj+cyVw3rDfQwGOHLdLmRxiayEdMjvpX+xjrbFeAhJyVqCAv6xOVS8FGa9402YpVa3vJMdBO+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733636716; c=relaxed/simple;
-	bh=QeuxdPlZ8A1UtxdrJXK1xYLuQ7YDuNofzqH2sa36Zw4=;
+	s=arc-20240116; t=1733636741; c=relaxed/simple;
+	bh=jQSd9Q6HiFF0J5oME229u0l+WJO4Iu+JBiIo7xSLM9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQURzfTHXS58jgyWmF+XNjdy7/gvjaxN6++ZZYHQaLa2TFXgAuEy2pz6GP0azqjx/9sqxVqYXWps9cTwX+g5mNHSNYqiYOMZPxNCalqTvqwhX15VOobNgJStfyrDSvVtwlIOLBrJOyTUCfL9wJbhf6oWEefZyMwj9rqnLRvjrjs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yODCoYdJ; arc=none smtp.client-ip=209.85.208.179
+	 Content-Type:Content-Disposition:In-Reply-To; b=WIPLADTvN7M9611dyQhbiAyvEL6O8e/O1md56SHUCnJgyHsOpEfEyu5ApE/yfz+2+GuHU8i0KpkcLl0L11jre5f4Osv2MhmY2eNF+lSAKHPFfTe5bwgQu2W4DOZGON67OT5CjWowMShD5qB1E7FXuWfxzGT7Se45GuBKptB5LBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GPPYQbbr; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so31411881fa.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 21:45:14 -0800 (PST)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ffc357ea33so29979451fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 21:45:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733636713; x=1734241513; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733636738; x=1734241538; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Fle41cIyCa2AFu7iBoMXJgQt0wW2JWBUvbsPg3liEc=;
-        b=yODCoYdJfbe/Ukem5+0cHW4sBdN/y/RvfVFVMzuzkiPvsmLt14YCGI4cdrAYw8cwwh
-         DnS/FdbrWCTCi8oyoi4DgarBOiW6NqR2Fhi0biz7K8Zv33UQbSVFpGf7Q5wW687KkkB3
-         NjMzdozM3j6BmZdE7oxOl5AzEcpeZYLzwNnP9MtFvVlDafA3TbLtowjhkiDNzL+QRG0R
-         +nAdPpkfoghSitIkssKcRqFyh5TmUpIqTFWaJuuwjfCCKnZItP1FLRQODA51ED0u1BJt
-         u48qFDbasI39L69E+8U7I2zkNqdvrb1ez0Y26IyMHSJVciYAnejTPhSKUwe5p17H9Wrd
-         85Pw==
+        bh=Y1HYv1e1G167UjBW6qsx3MDds+0Rx8yGRk5hPMxbh1c=;
+        b=GPPYQbbrJ7bul9vYdgtSISjSDJN7+pS/g7QUBee/YwNeOVpkl41uMe9C2+tuxKAVOx
+         UMmCphJ6HCemWzNQFinWVKjWyeSvVvTOFdR6o2ZC5EjRQuCrzddGACxVYwuZV204DAlC
+         3u0IeDoRJRix1+6vBUFe5GsSGBbNpiKo+MSCn9JnzsSYq6bEyRLf0owPYUHicrcfpoOk
+         ULuzhr9ipZIbO8LavH17JnMihee2+0SJQWU/iH1Pp3tvoIigWfclfI3JKsC/MEA+sii6
+         1ciUkFy+12YTyoCgCXhj4k/CnaS6/PTENwPDWsn2pqFT+XQAg3SGJtArA6hvHapctKVI
+         MIMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733636713; x=1734241513;
+        d=1e100.net; s=20230601; t=1733636738; x=1734241538;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7Fle41cIyCa2AFu7iBoMXJgQt0wW2JWBUvbsPg3liEc=;
-        b=Uq3EeEkaN5BeyRTPH0WAhHhiszTKtOF67PhCRiFL4BApcuO+McsOqwdHoK6ecsIppx
-         qKnMQ+JfWNvg5FCd6ode21Ia01oRnE27dn0RJrpVVI5e/RfhJEt7q18iIImwqcMSc2CM
-         +at40l68B0zGfHXKPmwp7b4OT69Ohx4wGFOUbFiU45AaNxBssIDkQDuOWsSZ5zQEHKmz
-         ssId6+LEMR90RYR6HK7btcjuiP/dM7T/KVzcu3yDMj2q2ur9XOGh7QHI2XL0wdb8ae0r
-         g0XNCCj4ttI5bJE3/zDxTcq9//0gavqgdzyVEpHnskPbjK5r90FHMwjsvuJXA/ToDDLx
-         fIfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxl4+jL99yElP6c8RMDEAunjKxv08bODUZdZPeimbuKQv21lcy5dzHYqmL/amUcR5+HH89Zt9+edc4c1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwFn40257u+14aXou3c6ptwFX046F9p9ZV3x5x0ahgtqgiP/321
-	5LyR0oBBZFggTk7hWbvA7zi3hIMXxLBwVY0Bq0DcBnS6auMAkBl8sih+fWZbIeA=
-X-Gm-Gg: ASbGncvRNXV1sNtbb0A/nN7Xu9TldTHCiigKGT4Veqp8fDLsucK9XnoZMLCOJHvfI2K
-	+QguKZvVe0p6N6pVcrLDRqJYExMd79pRC0Uwn6Eqmq8WNk/pTRhrRmPrqNKoPzTiEuRE+V2YZF/
-	7xCmNVRcq1LWeuxEfskIXWxIB95KG0QFGrRq9b6xE8dMXtDdMnAvlBYS9uEIQzBMFg+Tx1MjpTj
-	28gKREk293AfQ/QtDQ/Y0qh1HHUb4WBb7eklUzLahBmgcFslNl7HBMjxRJceRC9+K/R4f5A0zRN
-	JA1T6kMYrkjLF90qutCsE6ITlmT+0Q==
-X-Google-Smtp-Source: AGHT+IGC5Xjo5gGspPBZLcvyJdqkRcpNB6yRjkeLampG39JkgzJPFZHmnBF0RK4tynS4xq4+GDxksQ==
-X-Received: by 2002:a05:651c:210f:b0:300:25f6:9b3d with SMTP id 38308e7fff4ca-3002f677456mr19192501fa.10.1733636712711;
-        Sat, 07 Dec 2024 21:45:12 -0800 (PST)
+        bh=Y1HYv1e1G167UjBW6qsx3MDds+0Rx8yGRk5hPMxbh1c=;
+        b=DXYH0RNv31LBVy7lpVcdoV3FSJ6I/5y79/L/INbwpVQv47ahpcdSRHdFYXZg6+xx3O
+         RxUmHj8uLIIcRlNNwq2qFLQAEGGOGUcruYbrK/xVqrLJ27Syo+dcZXY5MjTUjpzWkajV
+         qesklPO2p/9CCniAdQ/sFJWpn1kS0q8WB/ve5uU7Zs3kT9GtwaieQGmg4W1cntEBL/Pa
+         J6O0FQFpmtSptvbeGL/wMGmWddvAD73MKOdQl+PdDr5MEFunvj2vQ6u7SpRN8sEZK4le
+         XCcvwQoiEwQ/CueJ/OjjC9k/TBNnO1/FrVkKy6q9HPXQ+bbKaToOVfd3TM4uJPK8IjZa
+         2ZUA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh7+Dwn98t8JiDGiE8yNy7LQo6YD4vJCDWN0iPeH7wL4h35mkg6TFnP4JnRmA+BxfDMxKze7Vu5B4dRVA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxckXrLYIczLBhUtl4cn4syCG8k5F+e7XKNAwEEY7S2e5QxZcCQ
+	kx8NNuiOe9w+WF/h/xNSLj2sKbrdhniTZUR+m3S9FruPEnVSVFkvcryyuriwbdw=
+X-Gm-Gg: ASbGncvSaVG4ylZPVsemxVUVai1a6pqoQiVwNNKekuQe/WqXyNrbqqWWEf3cEAMKvi6
+	2jtVDmgx/XmPQxCEtzRY2g5Ql58a+E8fr+Qp5gn5DWDG1iUk+dfr+kbya76xOoAEKdHqE75pV6L
+	OdhAUbsG0TgCwcpuyzxrqUzZdp1aFRz8323yj0ndl33+/3tMOmB3befP77AudepaHK+0QJ6uA2u
+	HLvqFqsbnOuteMZ/nBRc9dCE36CK6Qw/y0Y8Nq9fkE+y73IKQUuvAEU+HsXHkSL0gTSVwssMkxy
+	/86jmjofu7UdpfiP4DXxF/GSFuBq3A==
+X-Google-Smtp-Source: AGHT+IH1C2lNwnSo3DwPCOigAB6lGnv6/ya51zVyeab7Dq7ZnU+VYU4q8UWGtOmfbv3xMxYL+3XXBg==
+X-Received: by 2002:a05:651c:507:b0:2fe:e44d:6162 with SMTP id 38308e7fff4ca-3002fc92bb5mr23529331fa.26.1733636738247;
+        Sat, 07 Dec 2024 21:45:38 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-301f2e48b01sm2611731fa.31.2024.12.07.21.45.10
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3003162f64dsm6112391fa.97.2024.12.07.21.45.35
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 21:45:11 -0800 (PST)
-Date: Sun, 8 Dec 2024 07:45:09 +0200
+        Sat, 07 Dec 2024 21:45:36 -0800 (PST)
+Date: Sun, 8 Dec 2024 07:45:34 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>
 Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
@@ -84,10 +84,11 @@ Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
 	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
 	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
 	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 18/45] drm/msm/dp: add support to send ACT packets for MST
-Message-ID: <qhvaqqzam3ru74r3ydfxyachedsgizilnx4op4bt73ie72pmhy@g4oedv27jp4q>
+Subject: Re: [PATCH 20/45] drm/msm/dp: no need to update tu calculation for
+ mst
+Message-ID: <ycu6maap7jonzybk4spyee5maq4if4eapzs3w4hhdmfzajjbst@5wiax7ve33oa>
 References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-18-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-20-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,265 +97,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-18-f8618d42a99a@quicinc.com>
+In-Reply-To: <20241205-dp_mst-v1-20-f8618d42a99a@quicinc.com>
 
-On Thu, Dec 05, 2024 at 08:31:49PM -0800, Abhinav Kumar wrote:
-> Whenever virtual channel slot allocation changes, the DP
-> source must send the action control trigger sequence to notify
-> the sink about the same. This would be applicable during the
-> start and stop of the pixel stream. Add the infrastructure
-> to be able to send ACT packets for the DP controller when
-> operating in MST mode.
+On Thu, Dec 05, 2024 at 08:31:51PM -0800, Abhinav Kumar wrote:
+> DP stream is transmitted in transfer units only for SST
+> case there is no need to calculate and program TU parameters
+> for MST case. Skip the TU programming for MST cases.
 > 
 > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > ---
->  drivers/gpu/drm/msm/dp/dp_catalog.c | 21 +++++++++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_catalog.h |  4 ++++
->  drivers/gpu/drm/msm/dp/dp_ctrl.c    | 36 ++++++++++++++++++++++++++++++++++--
->  drivers/gpu/drm/msm/dp/dp_ctrl.h    |  3 ++-
->  drivers/gpu/drm/msm/dp/dp_display.c |  6 +++++-
->  drivers/gpu/drm/msm/dp/dp_display.h |  1 +
->  drivers/gpu/drm/msm/dp/dp_reg.h     |  3 +++
->  7 files changed, 70 insertions(+), 4 deletions(-)
+>  drivers/gpu/drm/msm/dp/dp_ctrl.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> index e6f6edf617898241c74580eb0ae6bc58f06a154f..88d6262a972ef2d30c467ef5ff5c58ef3299ae7d 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> @@ -1078,6 +1078,27 @@ void msm_dp_catalog_panel_disable_vsc_sdp(struct msm_dp_catalog *msm_dp_catalog)
->  	msm_dp_catalog_panel_update_sdp(msm_dp_catalog);
->  }
->  
-> +void msm_dp_catalog_trigger_act(struct msm_dp_catalog *msm_dp_catalog)
-> +{
-> +	struct msm_dp_catalog_private *catalog;
-> +
-> +	catalog = container_of(msm_dp_catalog, struct msm_dp_catalog_private, msm_dp_catalog);
-> +
-> +	msm_dp_write_link(catalog, REG_DP_MST_ACT, 0x1);
-> +
-> +	/* make sure ACT signal is performed */
-> +	wmb();
-> +}
-> +
-> +bool msm_dp_catalog_read_act_complete_sts(struct msm_dp_catalog *msm_dp_catalog)
-> +{
-> +	struct msm_dp_catalog_private *catalog;
-> +
-> +	catalog = container_of(msm_dp_catalog, struct msm_dp_catalog_private, msm_dp_catalog);
-> +
-> +	return msm_dp_read_link(catalog, REG_DP_MST_ACT);
-> +}
-> +
 
-Hopefully after [1] this becomes inline in the corresponding dp_ctrl
-functions.
-
-[1] https://patchwork.freedesktop.org/patch/626816/?series=141074&rev=2
-
->  void msm_dp_catalog_panel_tpg_enable(struct msm_dp_catalog *msm_dp_catalog,
->  				struct drm_display_mode *drm_mode)
->  {
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> index c020b7cfa008241e937f6a53764b136431f1dbd9..c91c52d40209b8bcb63db9c0256f6ef721dace8a 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> @@ -135,4 +135,8 @@ void msm_dp_catalog_audio_config_sdp(struct msm_dp_catalog *catalog);
->  void msm_dp_catalog_audio_init(struct msm_dp_catalog *catalog);
->  void msm_dp_catalog_audio_sfe_level(struct msm_dp_catalog *catalog, u32 safe_to_exit_level);
->  
-> +/* DP MST APIs */
-> +void msm_dp_catalog_trigger_act(struct msm_dp_catalog *dp_catalog);
-> +bool msm_dp_catalog_read_act_complete_sts(struct msm_dp_catalog *dp_catalog);
-> +
->  #endif /* _DP_CATALOG_H_ */
-> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> index ba39b009032dd6f5cb708988963cd6acb6838e4a..2bfe2aac3c02b02b12713dbd98e79ed4a75b85d0 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> @@ -97,6 +97,8 @@ struct msm_dp_ctrl_private {
->  
->  	bool core_clks_on;
->  	bool link_clks_on;
-> +
-> +	bool mst_active;
->  	bool stream_clks_on[DP_STREAM_MAX];
->  };
->  
-> @@ -1625,6 +1627,26 @@ static int msm_dp_ctrl_deinitialize_mainlink(struct msm_dp_ctrl_private *ctrl)
->  	return 0;
->  }
->  
-> +int msm_dp_ctrl_mst_send_act(struct msm_dp_ctrl *msm_dp_ctrl)
-> +{
-> +	struct msm_dp_ctrl_private *ctrl;
-> +	bool act_complete;
-> +
-> +	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
-> +
-> +	msm_dp_catalog_trigger_act(ctrl->catalog);
-> +	msleep(20); /* needs 1 frame time */
-> +
-> +	act_complete = msm_dp_catalog_read_act_complete_sts(ctrl->catalog);
-> +
-> +	if (!act_complete)
-> +		DRM_ERROR("mst ACT trigger complete SUCCESS\n");
-> +	else
-> +		drm_dbg_dp(ctrl->drm_dev, "mst ACT trigger complete failed\n");
-> +
-> +	return 0;
-> +}
-> +
->  static int msm_dp_ctrl_link_maintenance(struct msm_dp_ctrl_private *ctrl)
->  {
->  	int ret = 0;
-> @@ -1643,6 +1665,9 @@ static int msm_dp_ctrl_link_maintenance(struct msm_dp_ctrl_private *ctrl)
->  
->  	msm_dp_catalog_ctrl_state_ctrl(ctrl->catalog, DP_STATE_CTRL_SEND_VIDEO);
->  
-> +	if (ctrl->mst_active)
-> +		msm_dp_ctrl_mst_send_act(&ctrl->msm_dp_ctrl);
-> +
->  	ret = msm_dp_ctrl_wait4video_ready(ctrl);
->  end:
->  	return ret;
-> @@ -1745,7 +1770,7 @@ static int msm_dp_ctrl_process_phy_test_request(struct msm_dp_ctrl_private *ctrl
->  	msm_dp_ctrl_stream_clk_off(&ctrl->msm_dp_ctrl, msm_dp_panel);
->  	msm_dp_ctrl_off_link(&ctrl->msm_dp_ctrl);
->  
-> -	ret = msm_dp_ctrl_on_link(&ctrl->msm_dp_ctrl);
-> +	ret = msm_dp_ctrl_on_link(&ctrl->msm_dp_ctrl, ctrl->mst_active);
->  	if (ret) {
->  		DRM_ERROR("failed to enable DP link controller\n");
->  		return ret;
-> @@ -1825,7 +1850,7 @@ static bool msm_dp_ctrl_channel_eq_ok(struct msm_dp_ctrl_private *ctrl)
->  	return drm_dp_channel_eq_ok(link_status, num_lanes);
->  }
->  
-> -int msm_dp_ctrl_on_link(struct msm_dp_ctrl *msm_dp_ctrl)
-> +int msm_dp_ctrl_on_link(struct msm_dp_ctrl *msm_dp_ctrl, bool mst_active)
->  {
->  	int rc = 0;
->  	struct msm_dp_ctrl_private *ctrl;
-> @@ -1844,6 +1869,7 @@ int msm_dp_ctrl_on_link(struct msm_dp_ctrl *msm_dp_ctrl)
->  	rate = ctrl->panel->link_info.rate;
->  	pixel_rate = ctrl->panel->msm_dp_mode.drm_mode.clock;
->  
-> +	ctrl->mst_active = mst_active;
->  	msm_dp_ctrl_core_clk_enable(&ctrl->msm_dp_ctrl);
->  
->  	if (ctrl->link->sink_request & DP_TEST_LINK_PHY_TEST_PATTERN) {
-> @@ -2035,6 +2061,9 @@ int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl, struct msm_dp_panel *
->  
->  	msm_dp_catalog_ctrl_state_ctrl(ctrl->catalog, DP_STATE_CTRL_SEND_VIDEO);
->  
-> +	if (ctrl->mst_active)
-> +		msm_dp_ctrl_mst_send_act(msm_dp_ctrl);
-> +
->  	ret = msm_dp_ctrl_wait4video_ready(ctrl);
->  	if (ret)
->  		return ret;
-> @@ -2104,6 +2133,8 @@ void msm_dp_ctrl_off_link(struct msm_dp_ctrl *msm_dp_ctrl)
->  
->  	msm_dp_catalog_ctrl_mainlink_ctrl(ctrl->catalog, false);
->  
-> +	ctrl->mst_active = false;
-> +
->  	dev_pm_opp_set_rate(ctrl->dev, 0);
->  	msm_dp_ctrl_link_clk_disable(&ctrl->msm_dp_ctrl);
->  
-> @@ -2264,6 +2295,7 @@ struct msm_dp_ctrl *msm_dp_ctrl_get(struct device *dev, struct msm_dp_link *link
->  	ctrl->catalog  = catalog;
->  	ctrl->dev      = dev;
->  	ctrl->phy      = phy;
-> +	ctrl->mst_active = false;
->  
->  	ret = msm_dp_ctrl_clk_init(&ctrl->msm_dp_ctrl);
->  	if (ret) {
-> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.h b/drivers/gpu/drm/msm/dp/dp_ctrl.h
-> index d422fd683b65d6f5e459710d0327e472a12c30b0..81c05b1b2baac63e1f1888f3f517e62a98e230a7 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.h
-> @@ -17,7 +17,7 @@ struct msm_dp_ctrl {
->  
->  struct phy;
->  
-> -int msm_dp_ctrl_on_link(struct msm_dp_ctrl *msm_dp_ctrl);
-> +int msm_dp_ctrl_on_link(struct msm_dp_ctrl *msm_dp_ctrl, bool mst_active);
->  int msm_dp_ctrl_on_stream(struct msm_dp_ctrl *msm_dp_ctrl, struct msm_dp_panel *msm_dp_panel);
->  int msm_dp_ctrl_prepare_stream_on(struct msm_dp_ctrl *dp_ctrl, bool force_link_train);
->  void msm_dp_ctrl_off_link_stream(struct msm_dp_ctrl *msm_dp_ctrl);
-> @@ -46,5 +46,6 @@ void msm_dp_ctrl_clear_vsc_sdp_pkt(struct msm_dp_ctrl *msm_dp_ctrl,
->  				   struct msm_dp_panel *msm_dp_panel);
->  void msm_dp_ctrl_psm_config(struct msm_dp_ctrl *msm_dp_ctrl);
->  void msm_dp_ctrl_reinit_phy(struct msm_dp_ctrl *msm_dp_ctrl);
-> +int msm_dp_ctrl_mst_send_act(struct msm_dp_ctrl *ctrl);
->  
->  #endif /* _DP_CTRL_H_ */
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index 5fa6c003cf6c51eae77573549a555a00dc33f476..e19860ef3493fb100afbf04b09d14a136fd6b887 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -370,6 +370,7 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
->  	struct drm_connector *connector = dp->msm_dp_display.connector;
->  	const struct drm_display_info *info = &connector->display_info;
->  	int rc = 0;
-> +	struct msm_dp *dp_display = &dp->msm_dp_display;
->  
->  	rc = msm_dp_panel_read_link_caps(dp->panel, connector);
->  	if (rc)
-> @@ -399,7 +400,7 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
->  	msm_dp_link_psm_config(dp->link, &dp->panel->link_info, false);
->  
->  	msm_dp_link_reset_phy_params_vx_px(dp->link);
-> -	rc = msm_dp_ctrl_on_link(dp->ctrl);
-> +	rc = msm_dp_ctrl_on_link(dp->ctrl, dp_display->mst_active);
->  	if (rc) {
->  		DRM_ERROR("failed to complete DP link training\n");
->  		goto end;
-> @@ -1628,6 +1629,9 @@ void msm_dp_display_atomic_disable(struct msm_dp *dp)
->  	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
->  
->  	msm_dp_ctrl_push_idle(msm_dp_display->ctrl);
-> +
-> +	if (dp->mst_active)
-> +		msm_dp_ctrl_mst_send_act(msm_dp_display->ctrl);
->  }
->  
->  static void msm_dp_display_unprepare(struct msm_dp_display_private *dp)
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.h b/drivers/gpu/drm/msm/dp/dp_display.h
-> index 8ce8ba254b1bfe5b4c000df83eceef5823772780..38ca25491b1ccfd95e027a9c8f659abb3cd576d3 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.h
-> @@ -22,6 +22,7 @@ struct msm_dp {
->  	bool audio_enabled;
->  	bool power_on;
->  	bool prepared;
-> +	bool mst_active;
->  	unsigned int connector_type;
->  	bool is_edp;
->  	bool internal_hpd;
-> diff --git a/drivers/gpu/drm/msm/dp/dp_reg.h b/drivers/gpu/drm/msm/dp/dp_reg.h
-> index 6c534fde6034fced2cb428e9a29de31ed5c5fcc4..46400973eb499066e9e805b16df759b1db34cf22 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_reg.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_reg.h
-> @@ -330,6 +330,9 @@
->  #define REG_DP_PHY_AUX_BIST_CFG			(0x00000050)
->  #define REG_DP_PHY_AUX_INTERRUPT_STATUS         (0x000000BC)
->  
-> +/* DP MST related registers */
-> +#define REG_DP_MST_ACT                          (0x00000500)
-
-This looks completely out of place.
-
-> +
->  /* DP HDCP 1.3 registers */
->  #define DP_HDCP_CTRL                                   (0x0A0)
->  #define DP_HDCP_STATUS                                 (0x0A4)
-> 
-> -- 
-> 2.34.1
-> 
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
