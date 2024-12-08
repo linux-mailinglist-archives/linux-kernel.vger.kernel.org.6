@@ -1,230 +1,126 @@
-Return-Path: <linux-kernel+bounces-436367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 697E59E8506
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:38:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5213F1650BF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:38:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC7B1487FE;
-	Sun,  8 Dec 2024 12:38:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="byU3IfeK"
-Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39F1A9E8507
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:40:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D051442F6;
-	Sun,  8 Dec 2024 12:38:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0508C281663
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:40:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C4B1487C1;
+	Sun,  8 Dec 2024 12:40:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iQXdm3+z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 108B0145B16
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733661504; cv=none; b=cDbbYQer2L+31Cts8uZWhGohc+VoCNtP9SbBybMErYy8jvnYL7gDqn7CUCFA2SHM0emYFVcro0hJbF+DXjmSJ9+4IQ4jy34tWgS6+ahnQ6sqZRkdiojMb84KIR9Jyzn5sV9vQRmSlRbMkUe3bOAzbl9WK5n6CJhZRTsptFAdpjw=
+	t=1733661605; cv=none; b=OVTltvcmO1osvKJg4HBRaZXO8s+TdYmJizb1mJgHB+VWxXbsg+sN7TwK94SIsPq/soZUU521i4KckbCWPC86UaErCoBBaBvQ3xsnl/ue/KGG87+mFmHkr0imqvMha2NVUVtFAGOngZoCTxElI32iuDu5DPUtTXjIL0yxy2Y1ptY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733661504; c=relaxed/simple;
-	bh=eERcuawd5J1MVjtrw/DRwxxwUZq2oPg8NGbVxZ6hKuY=;
-	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SWYTeSNpZBBOXDS281FEsXjfKwl6CzC3vBP18HVzr5SMxDSf62iBjnq81v+oxPuIvi+z3rwDwjrJU2w+VvCnIyGHykD28MoKenUaIc6HbBPSAQPsMmu0hjqtUqGM7WhLhX4X6E9sePHX2zA/AgFRvtnHjBvZ8vP/7PDJoKSa+RI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=byU3IfeK; arc=none smtp.client-ip=134.76.10.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
-	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
-	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=CYPZ6zhZQZZegU5YKzAwbOa7JzOMQMMoi9xo6uKq+Yo=; b=byU3IfeK/Jszh3px4gBXWsVxW4
-	/Uy3hONFmadHud3NLgWfq93VfyrCzySJiBjGY46NRtsG0PTQ8UVc4PR7AgDtSIJqLAJkLA3syPYL6
-	nkFWCkAkLylaC6XsqCc0WsaNIOKeN2D8IOjdmo//of3IyUSS/sgrXcfheXQ4zpEoatupVAUiGoAVl
-	EomUTq2W0/3CLTbnEmtixebgfjOVO7rkINYp3CSPnt6aPMdKEfxYw7RQy6DGK3/S30Erx3MkajS49
-	pF7KWi6Qami3L7TVwTQ6MUSACAnhnv+/wG2V4IQHLwhiacw28v9qP97n6GWPhzQScMCOGUH5OX7MT
-	bFFz2glA==;
-Received: from xmailer.gwdg.de ([134.76.10.29]:42336)
-	by mailer.gwdg.de with esmtp (GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tKGY8-004Y8O-3C;
-	Sun, 08 Dec 2024 13:38:13 +0100
-Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
-	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-	(GWDG Mailer)
-	(envelope-from <muecker@gwdg.de>)
-	id 1tKGY8-0006nC-2q;
-	Sun, 08 Dec 2024 13:38:12 +0100
-Received: from vra-173-64.tugraz.at (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
- (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sun, 8 Dec
- 2024 13:38:11 +0100
-Message-ID: <6658618490381cf5ec35edbb66f1478024174e67.camel@gwdg.de>
-Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
- __is_constexpr()
-From: Martin Uecker <muecker@gwdg.de>
-To: David Laight <David.Laight@ACULAB.COM>, Linus Torvalds
-	<torvalds@linux-foundation.org>
-CC: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Luc Van Oostenryck
-	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
- Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Joonas Lahtinen
-	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
-	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
-	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
-	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
-	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
-	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
-	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Date: Sun, 8 Dec 2024 13:38:10 +0100
-In-Reply-To: <b71056c1b9e04aa383f2e5608c27290f@AcuMS.aculab.com>
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
-	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
-	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
-	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
-	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
-	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
-	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
-	 <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
-	 <344b4cf41a474377b3d2cbf6302de703@AcuMS.aculab.com>
-	 <9a0c041b6143ba07c2b3e524572fccd841f5374b.camel@gwdg.de>
-	 <CAHk-=wjpVXEjX16PP=-hi4CgLqEGJ_U-WvKWq+J3C+FW-hSSfg@mail.gmail.com>
-	 <0a2996a7c63930b9d9a8d3792358dd9e494e27c1.camel@gwdg.de>
-	 <CAHk-=wjsfYYKBYuW8_6yKjdwHih0MMa2GwUJh_LHcuUNFR7-QA@mail.gmail.com>
-	 <9d9567dbdaf39688bbd0d240e29dec826a5931ee.camel@gwdg.de>
-	 <b71056c1b9e04aa383f2e5608c27290f@AcuMS.aculab.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1733661605; c=relaxed/simple;
+	bh=1G0B02VSoGkWDXtIBDZj/zP6yBb1MBFc5EqSbXewlu8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r9bbsCbZqufzi9/YLPyVb0plY6R0K9983jgxu+0sv1pneAXLjcq1usTzwKAr6x28HGPlNzvyf8J7qX5XtWfKIzWnjR2qwjHTk/9Xc0nUbqdA/4ZJIMjPqlpvLkE0o3FVvekf6jRIaaZnepErVYCm+3mQyVfMhQZb3ZZ+lNHKtlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iQXdm3+z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85CAEC4CEE1
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733661604;
+	bh=1G0B02VSoGkWDXtIBDZj/zP6yBb1MBFc5EqSbXewlu8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=iQXdm3+zw20iJe3pJV5Vb8Vx/+GrBAeEDoSItnR2Wk3sx37k0LkoTyC+MQ35Oo6OT
+	 YMjP7aRGc7sMsKZybDUZKm4GuR8sdMhi+RVjjMcuFpOG2pn+H/SP3jYkg9ER9QFUEi
+	 A8FFLVhQ3gJa3RUCniPtqDNtIdth3VrMhHx8IicOcUDrQexmk0bV7TbCNTmPmd6SvF
+	 ktHWCb3tK0km8pzXRx5d42LSGOGCS/t4u0KgnZDPdxrdps1mjTeluHpgOoeg6/ed+b
+	 Cv6+FSE1DQYg5tgZG3DkA1jgZCil7C/3xAY7ztwvaJ0IwP5CGSD5m4O7POWfZi116n
+	 KGd34LABdzU4w==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8e52so5494647a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 04:40:04 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWiflHVyODnmBimPp8DKeFQf1BMc7/ZGIr4PuZ/jQLpMoqQ19TSg0pSV+b5gkbyyD+VP747P1xzAFSikC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBRzYUlIvfuGKDwk/ARUm4zZFcqxlIhO/cd0dXYKj9aHgimt3Q
+	EML3bbAA0p42BNQx3t+wOLkdyYdU2sVPyEMIkWJjBBocVfQ0QEt6Qyk3mu5ulpyB8sOVVmQc+Cv
+	36bE5CXZ5reM6kDxjOVFptAU/kt4=
+X-Google-Smtp-Source: AGHT+IGeaLx3f1Ac4EO/HPEAwItXWDi5rNg1fdgeBLLyBEtQj6/hZFg8rbokXWrth1F/IG9LztUHgNYrOeJryi1WhUU=
+X-Received: by 2002:a05:6402:360a:b0:5d0:f81d:f555 with SMTP id
+ 4fb4d7f45d1cf-5d3be695eb7mr11026027a12.5.1733661603364; Sun, 08 Dec 2024
+ 04:40:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ClientProxiedBy: MBX19-GWD-05.um.gwdg.de (10.108.142.58) To
- MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
-X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:6, sv:1733639668, ts:1733661492
-X-Virus-Scanned: (clean) by clamav
-X-Spam-Level: -
+References: <cover.1729864823.git.namcao@linutronix.de> <f32741a5ad67d4cee6323757f3b8108084127cd5.1729864823.git.namcao@linutronix.de>
+In-Reply-To: <f32741a5ad67d4cee6323757f3b8108084127cd5.1729864823.git.namcao@linutronix.de>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Sun, 8 Dec 2024 21:39:21 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH3=3_VEDHfco-eLy9acipngN5KnJZh61k6+BqbS_M75Pg@mail.gmail.com>
+Message-ID: <CAGTfZH3=3_VEDHfco-eLy9acipngN5KnJZh61k6+BqbS_M75Pg@mail.gmail.com>
+Subject: Re: [PATCH 29/31] PM / devfreq: rockchip-dfi: Switch to use hrtimer_setup()
+To: Nam Cao <namcao@linutronix.de>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Kees Cook <kees@kernel.org>, 
+	linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am Sonntag, dem 08.12.2024 um 11:26 +0000 schrieb David Laight:
-> From: Martin Uecker
-> > Sent: 07 December 2024 23:52
-> ...
-> > While the compiler can not automatically prove every use
-> > of VLA bounded, it can reliably diagnose the cases where it
-> > can=C2=A0*not* see that it is bounded. Consider this example:
-> >=20
-> > void oob(int n, char p[n]);
-> > void f(unsigned int n)
-> > {
-> >     char buf[MIN(n, 100)]; // bounded
-> >     oob(n + 10, buf); // warning
-> > }
-> ...
->=20
-> The kernel stack has to have enough space for the [100]
-> so the full amount might as well always be allocated.
-> The chance of 'trading off' stack usage with another function
-> in the same call stack that is guaranteed to use less than
-> its maximum is about zero.
+Hi,
 
-In numerical computing this is a big motivation because
-you can reduce stack usage in recursive divide-and-conquer
-algorithms.  For the kernel, I agree this is not a
-compelling use case, and the better motivation would be
-precise bounds checking and clearer semantics for buffer
-management. =C2=A0
+Acked-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-But don't get me wrong, if the kernel is happier without VLA
-this is fine with me, I am just trying to understand the
-underlying issues better and the "VLAs are security problem"
-or "VLA use more stack"  arguments do not convince me, while
-the points Linus raises make much more sense to me.
+Thanks,
 
->=20
-> The VLA code also adds an extra stack frame, this pretty much
-> pessimises everything.
-
-Yes, but this is something which seems could be improved
-on the compiler side, e.g. by simply transforming
-small VLAs automatically to a fixed size array while
-preserving their semantics for bound checking.
-
-
-> This happened for 'constant' sizes from min(16, sizeof (struct))
-> because min() needs to be a statement function to avoid re-evaluating
-> its arguments.
-
-Can you clarify this?  If the VLA size is constant, even when
-it is not an integer constant expression according to ISO C,
-the compiler should not produce worse code.  For example,
-
-void g(void*);
-
-void foo()
-{
-    int n =3D 10;
-    char buf[n];
-    g(buf);
-}
-
-void bar()
-{
-    char buf[10];
-    g(buf);
-}
-
-So a lot of this macro business seems to be necessary
-to avoid creating warnings for ISO VLAs when instead you really
-care about the created code not having a dynamic allocation on
-the stack.
-
-So one might wonder whether a compiler warning that warns more
-specifically about this would help.
-
-> (The version of min() that managed to return constant from constant
-> input just exploded in cpp, partially responsible for 18MB lines
-> being fed into the compiler part.)
-
-The issue here is that we miss a language feature in C to
-introduce local variables that help avoid multiple expansion
-of macro arguments.  GCC's statement expressions and __auto_type
-are a solution
-
-#define foo(x) ({ __auto_type __x =3D (x); ... })
-
-but this runs into the current limitations that ({ }) can not be used
-at file-scope and can not return constant expressions.
+On Mon, Oct 28, 2024 at 4:42=E2=80=AFPM Nam Cao <namcao@linutronix.de> wrot=
+e:
+>
+> There is a newly introduced hrtimer_setup() which will replace
+> hrtimer_init(). This new function is similar to the old one, except that =
+it
+> also sanity-checks and initializes the timer's callback function.
+>
+> Switch to use this new function.
+>
+> Patch was created by using Coccinelle.
+>
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+> Cc: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/devfreq/event/rockchip-dfi.c | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+>
+> diff --git a/drivers/devfreq/event/rockchip-dfi.c b/drivers/devfreq/event=
+/rockchip-dfi.c
+> index e2a1e4463b6f..0470d7c175f4 100644
+> --- a/drivers/devfreq/event/rockchip-dfi.c
+> +++ b/drivers/devfreq/event/rockchip-dfi.c
+> @@ -642,8 +642,7 @@ static int rockchip_ddr_perf_init(struct rockchip_dfi=
+ *dfi)
+>         if (ret)
+>                 return ret;
+>
+> -       hrtimer_init(&dfi->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+> -       dfi->timer.function =3D rockchip_dfi_timer;
+> +       hrtimer_setup(&dfi->timer, rockchip_dfi_timer, CLOCK_MONOTONIC, H=
+RTIMER_MODE_REL);
+>
+>         switch (dfi->ddr_type) {
+>         case ROCKCHIP_DDRTYPE_LPDDR2:
+> --
+> 2.39.5
+>
+>
 
 
-For other reasons I was thinking about adding names to _Generic,
-as in
-
-_Generic(x, int i: (i + 1));
-
-because one design issues with _Generic is that it typechecks=C2=A0
-also the untaken associations and there the 'x' then has the wrong
-type.  Having an 'i' with the right type which is set to the value
-of 'x' when the branch is taken would fix this issue.
-
-But this feature might also allow writing macros that avoid
-doublel expansion without requiring statement expressions (which
-are more difficult to fix):
-
-#define foo(x) _Generic(x, int i: (i + i));
-
-
-Martin
-
-
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
