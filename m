@@ -1,293 +1,194 @@
-Return-Path: <linux-kernel+bounces-436279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 279339E83DE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 07:25:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7739D9E83E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 07:31:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1D8D188470D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:25:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0AFD2818DE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B0B54279;
-	Sun,  8 Dec 2024 06:25:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A052F81749;
+	Sun,  8 Dec 2024 06:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HJxxKwbi"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="h3HnSkLy"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2071.outbound.protection.outlook.com [40.107.244.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C431EEEB2
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 06:25:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733639120; cv=none; b=LTo65pPpeLH0qrUTJaKZNyHWsduPoSlVFgseRY4P9ly6LurGTwtAnxs1dfevHNo7rc64OxXFksbW9zkGlVvfPboOyf1qiNmJ0ARWwVkOej66FjtKT6ed12oRxPP+r4zQQFN82gQ3+C1oeANEa2fd8Ytnv7hi7bJlNOWPaRvUsTE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733639120; c=relaxed/simple;
-	bh=tjPxzmEid0ktMri0N6SNinB0M1uftQA3QuvagWpSqZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gI8gHyZe0v9R0mfiBBH+gses5zaj1rm3rDZy4A9y9+2d98kMiSq7pRkpK6UJ+cpkTl7CH5/eJrOHPV4FSOHIBv9eVES1K43Z0Dml9czr7re7qCEuUrbXhmb0EHDV1Cb6YnUJVBA45+nUA2CXUBKno2r1k5hlWYpYhG+jS4Uza5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HJxxKwbi; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ffc1009a06so28506161fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 22:25:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733639117; x=1734243917; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yv4ZZLZ8246YBWnXODcwZp0cvCag8q8Zfn9GevZqfKI=;
-        b=HJxxKwbiDKalBgcNJZsd+GfpBmgwIMG06vbj/MaUa6j+vl+2bM1HKq1OSREHQW/q4e
-         5Y6SksRB3o+IEJZgFiqAQ6377i5JyAeSVbxplNJD/tWzyEEGqNNvKqpwEU890xFyhDKk
-         hu6lLT9FRYgp1Urf6YC2E20HZkHO7qsoMsBl720fSBFREupFLfMhOOz3yhiRA84YuKHw
-         40Ac8SsmGwcrWz/dNQ1LJ+ahs9zRRkfbQs7PYSAIuvoV41GmwhvPk0NhJDpx8rtSOt/O
-         jGP19GHDzTbvxJ8NagIU1qK6GW08yT2CxJBU/drqrXzZ0EJVd09l5adjQIMMtrlCf437
-         BnbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733639117; x=1734243917;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Yv4ZZLZ8246YBWnXODcwZp0cvCag8q8Zfn9GevZqfKI=;
-        b=AokHhuU4iCDyj8XMDC4biM+ASnbKB0P2bV3G3CUkXxXPM0cY1MBStSy1K0w5pT9wEO
-         /TiuZvWiQZs27SijatE9s6/J8NTtY+DcZDvTtJOIFoxtYpZd+Gaiv9KRy79LdZ+FObeU
-         N3QNQvP74tVpSj1Af/ojdPu4SqIUGoVdkbDyS3cgknbldeCOPOVfCJuUHu1rIce/KsLr
-         MwQdwpQSrZzXkwlhLp2E/i4GBaL48CVm3ElARblwKR6eYZx60uENE8gHfrEIpeo5hdQa
-         PywjKu+BWM9jQP104SYAKjysgFt+TrPx6bXU2ZNXq076/7VLqvu+V8atc3Q7Atu7yCPY
-         OaIg==
-X-Forwarded-Encrypted: i=1; AJvYcCU2H+4QSdjXVPYPui55wZDWeDDyorJ74ZDvIh9hbNL8XlaJQXHvYyaG1gJq0m7AwSiLYENV2cRpFB6EETE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpLojPqe6n6Y/x4Ziv6X06oxL+mqzwyFHhmLDzp00mN4rDMg7r
-	zmw9uNMK6FBTi0SZWWTf0TJCcImnsAKqqc975GDappYeGunZ0p+1BMevWBg09jk=
-X-Gm-Gg: ASbGnct2ScrDT2L0/n2NltQqKqZvP/4jbGfoFp0LqO1eu2Tm7zMhVhZBKXHDPBDXXzF
-	sw4vwD/pljV98nWc8zjxnV62gCx6pS3ipJoJAdyjLxCTaA8U1+y/2xJTN7f7czU4cZg7izX93RW
-	vYWcIF9vRFrpwoDaA8bP3YohmGJ+gDHh7L7uxghbWMFFZ6eYm+IeYZa8B21uciDV8PnFw/cgnhZ
-	oGtPyTv8B6jmQ3J9rFx14tm3HiLeZPHXwnUrBuIjBkbhu9JWaHHubUUNTkN77+8tclUyeJvhVok
-	WRTE9c4hpKYHCf05/k5Bins/lDHy6g==
-X-Google-Smtp-Source: AGHT+IGa1+MAojS5l8TzrI/MuTB4uRPj9iAMmq7CXItu4qXq8cd0Vcz5ffDdDRwGNtUlkqf4/FMk3g==
-X-Received: by 2002:a05:6512:691:b0:53e:1ee1:25b3 with SMTP id 2adb3069b0e04-53e2c2bc74dmr2506384e87.27.1733639116847;
-        Sat, 07 Dec 2024 22:25:16 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54019f8afdesm246135e87.165.2024.12.07.22.25.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 22:25:15 -0800 (PST)
-Date: Sun, 8 Dec 2024 08:25:13 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Stephen Boyd <swboyd@chromium.org>, 
-	Chandan Uddaraju <chandanu@codeaurora.org>, Guenter Roeck <groeck@chromium.org>, 
-	Kuogee Hsieh <quic_khsieh@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vara Reddy <quic_varar@quicinc.com>, Rob Clark <robdclark@chromium.org>, 
-	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 38/45] drm/msm: initialize DRM MST encoders for DP
- controllers
-Message-ID: <ce67owjhtxwa3oy6fmmkmosqzzojny2ajofjjnk3lessly7t2b@artmywxh6hzq>
-References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-38-f8618d42a99a@quicinc.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384D83D66;
+	Sun,  8 Dec 2024 06:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.71
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733639457; cv=fail; b=argJ0pnBZZ71YVIV9wqzk4tbgn0WPoX0cqcm/2oKEbYdt0WMLrfoHFCX1tMftyF230pzNPSZUBINLUxmtSSydycddqThdkDmTK1d7Lh4tiCP1Pp4lrBeia0HeoNHXYb0ZtcvDUZxM7iKRH2ahrj9moF0o269SKdQVGyZhWuaY98=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733639457; c=relaxed/simple;
+	bh=KY8gtsG7yRhX9pyFzTD04V/UjNNDnyCXoxNoVeAC+jQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dumbdbfKVkNVclRYx3YzKcDcdj/5r5Yep9GarEI9XKw7eZQLX2WmGiRXgxiDRqJ9DDwcr/ZwsB1rX5bCdWEn0F9mTKr64EoHoEv2FWjwyzul3EKSMDIR0NVu2dIy/VlQ8gr9ggs+t5Ncb8m1f7N1KirxHdvIU4Iho5vewmaP1Rw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=h3HnSkLy; arc=fail smtp.client-ip=40.107.244.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=CPHxq1uxhotjfKFfFFbNKrv5Xat8eLc7wECPjWcFOa2Ic2ljOWGvUksGHG6LME22eikBwhkXCm4DIgTC+UcCmIBHIMfaBk85f6W1SXFAC1UbePYLByEvL8okwXJIKm2LaUr50LZnmoRa3J4MUxm+zzjGZn/Rq7FpLZ5ZhNNbHp9dasZA52IAQIY1o56xXM46GRwWP01JuzXGFF9c8ouCiO3KEe6x+nMGdnNq1Kg8uOiVH5r1TIT3DZ42zTBQKe7S3BKBGngI1/xyZCQlN3xDASoYqtgATouKGjmY3CU+ivtsRxM/lHe7WDRX433hXpn07xDF7hJ0Pp5IMW7ANAkHrA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=e8VXuOUcT8OJ0nouVz2cdYJLliZI0S4JCIXB0+Ra+K8=;
+ b=OFYgb/M+VENAEMQOGWkp+9JjRNoQikEpuwiDqDAosXw60XzkKQ2z8i1dlbur6APFl77QJ9APZcDqCGP/HN3mLY50kT31dYPAZ9AOW0LB+JqoJH5x6Op3PvUgUUnFr/LEGMadEglxWAg5YCraYTVq5iFRhEpAd6/sSdcbt9KVc+/H2DEFc7O8sAKLfPsSIvjAZ+ldhskPMuVEFFFGPz7/t5oa1X2yX7VzGQp5jBMl2ev1zZM3QSAg8XS7MrAy9Pf2zUK99+12rKQsPlW54wN/rPaWcyAnJ82rXB2sNzLn6lIqDQGrow94eHLswOy25H6+8kwlPnI1YcAn0IInT4B22A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=e8VXuOUcT8OJ0nouVz2cdYJLliZI0S4JCIXB0+Ra+K8=;
+ b=h3HnSkLy+xpN/nBfGgCq9QG9Vw2TZBBhQn2k0dmG5LOU44HWxKIZl8bYBKckpERPqCxU5TGBXoItcG3oxG1YHcjzslICdfm+t7lrIBUYwS2xsX3HrHXJrtpU5d9/VhLG8LxJS05+cxnk2wEW1Y+A/GuVgIp/ZIhjoneB39d50dk=
+Received: from DS7P220CA0011.NAMP220.PROD.OUTLOOK.COM (2603:10b6:8:1ca::16) by
+ MW4PR12MB6875.namprd12.prod.outlook.com (2603:10b6:303:209::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8230.11; Sun, 8 Dec 2024 06:30:52 +0000
+Received: from CY4PEPF0000E9D8.namprd05.prod.outlook.com
+ (2603:10b6:8:1ca:cafe::14) by DS7P220CA0011.outlook.office365.com
+ (2603:10b6:8:1ca::16) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.14 via Frontend Transport; Sun,
+ 8 Dec 2024 06:30:51 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000E9D8.mail.protection.outlook.com (10.167.241.71) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Sun, 8 Dec 2024 06:30:51 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 8 Dec
+ 2024 00:30:49 -0600
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+CC: Perry Yuan <perry.yuan@amd.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v2 00/16] amd-pstate fixes and improvements for 6.14
+Date: Sun, 8 Dec 2024 00:30:15 -0600
+Message-ID: <20241208063031.3113-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-38-f8618d42a99a@quicinc.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D8:EE_|MW4PR12MB6875:EE_
+X-MS-Office365-Filtering-Correlation-Id: 95c86aee-922f-422e-d3e7-08dd1751dca0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/x6N2Ltp3fuZINjghXQ5VqjizzPqSh/C/rZGd2YPYLAzZl9Dbvzd5h+O3jdf?=
+ =?us-ascii?Q?GMPGIIDMMdx4zXjJr4s3m+PRCcIGlMetlkObu0Z0weClPYNZXj8oUvvjsPCM?=
+ =?us-ascii?Q?do9DPytMI0UoryeXpiQ/u534D9cYr7ya8h0tyoh1fK3nis9FR1XqyqnHYiGW?=
+ =?us-ascii?Q?Vy9utVEfDJzDmumBryoRKqNTusV5xUXrqRkMS/w/b0/RmuMEEnpoD/VVrDFj?=
+ =?us-ascii?Q?VRwTMDwajmfx8QVg0Wz22JQJUAt3rNvMwcOMqjSgCa2FIC0mhVaoZ8ZT1JZP?=
+ =?us-ascii?Q?iAkeyzQCdQg+cMmPa3+En2FL00BwjB15EFK7O1ox/fQrFH+GHFkyD5vPLtpV?=
+ =?us-ascii?Q?54eUX8bfHlLE91lHHKowDN0J7OC2c/ql0P6+ZZR7iEE0OK5rP2ScUFrL4R6Q?=
+ =?us-ascii?Q?EIhu4hHMkKGLwfsmRHO+SG7L9yW1k6B7/XRFErUfcaqXFdVlMgfTFOXg3t0/?=
+ =?us-ascii?Q?l2PPZpzYEbJkdqzZXdCSbnSqTH4zEd458BcG0oUMwHi5D6pPTgpAc5IxEtHu?=
+ =?us-ascii?Q?7U0FynWbrt+25l84uVgBdX1KVu7ptTqNlK1MyFz+u4D/8QfGzoCHh2X52awS?=
+ =?us-ascii?Q?U2o0dq7UaTE4Xywfc5O2uc3qJWFxfBJC/NUCMNe4Agaer2MB9AcgyqDMgrxn?=
+ =?us-ascii?Q?Od2HVuoesSa5nebRxv/a9B7v0lk10OSSXG+PMdNYR7a7cWis6WSc+FORiSBs?=
+ =?us-ascii?Q?gWdE1y/UyoG39/NpGL/nLf6wFPHnpDmphxspvFvjFj321JAFud4iPks0xmod?=
+ =?us-ascii?Q?AusBtY3v+8DqUHBi7Z8NpSoHr1zPLkEaWtoTAZGJ4cyCYq8EWh+6nNxIGlwn?=
+ =?us-ascii?Q?LHNxTFCLeL5CcP2bsEhZ3Ph0d9B3T8/UxpH5/p3CiQHYgtHbnaQY5IwzaD5x?=
+ =?us-ascii?Q?g65oeNY0qq1bAcpElpQykgj6pnkIHfJi5pxlQMqEkRQ0w1PDGTzvSLi1Uix7?=
+ =?us-ascii?Q?SaZm3ETAZC7mVp9NEG9xaYsRGy9sBuTMoJTk8h2MegKNlTtn++nym8ijri9N?=
+ =?us-ascii?Q?0Ixrtcj1brR6/ovTGG65ezdavSI2n6LFBgZGmI+snILtJBNphGiT5S3UeIj2?=
+ =?us-ascii?Q?pPwI/h8F1UIVNhBBdHxp6JqrnycH68RANV2kC49GLiGF2lnilNftU/ptuPXF?=
+ =?us-ascii?Q?fLo+aPvwO1o5uOHkJJ7Ym9Q1ABpp/hUGkjt5qB3NxO3mzc9arHmEGpDSx/1H?=
+ =?us-ascii?Q?T7EACE8K1ZCuLGFXOvmD9sZGzcVVAIH6UMBojvwxlGgycr4UxlFKxZn2qnf6?=
+ =?us-ascii?Q?QrmmFrdGKRo/4IQ2un1OIHVNvsIZJkDnfNasL0EgZCIgmhTK1dmN/00Ke1Nl?=
+ =?us-ascii?Q?rYRsaXa/vOpGA23mAUWLdrUDYwZBL+MSqqynxgvo7W2aDpApSWZZDxiudATP?=
+ =?us-ascii?Q?WyvlHAlN6iewYVjs0N+rvhPwcGSC5JIvhjAhW0PW+i7/vY+YlYOOCbSieClA?=
+ =?us-ascii?Q?7zOintfVOCaHXIMuS1Md4+q5zDHemqI0?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2024 06:30:51.6077
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 95c86aee-922f-422e-d3e7-08dd1751dca0
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D8.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6875
 
-On Thu, Dec 05, 2024 at 08:32:09PM -0800, Abhinav Kumar wrote:
-> Initiliaze a DPMST encoder for each  MST capable DP controller
-> and the number of encoders it supports depends on the number
-> of streams it supports. Replace the opencoded instances of max_stream
-> with the newly introduced API to centralize the usage.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  2 ++
->  drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c     | 23 ++++++++++++++++++++++-
->  drivers/gpu/drm/msm/dp/dp_display.c         | 26 +++++++++++++++++++++-----
->  drivers/gpu/drm/msm/msm_drv.h               | 14 ++++++++++++++
+This series started as work on the behavior around boost numerator that
+was changed in the last few kernels to make it more expected.
 
-Split into two commits
+As part of the process of these improvements I found various other
+optimizations that made a lot of sense in the context of the code.
 
->  4 files changed, 59 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-> index 92b5ee390788d16e85e195a664417896a2bf1cae..618a5b6f8222882ed8c972a78a26f8c25ca389a8 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
-> @@ -28,6 +28,7 @@
->   * @h_tile_instance:    Controller instance used per tile. Number of elements is
->   *                      based on num_of_h_tiles
->   * @is_cmd_mode		Boolean to indicate if the CMD mode is requested
-> + * @stream_id		stream id for which the interface needs to be acquired
->   * @vsync_source:	Source of the TE signal for DSI CMD devices
->   */
->  struct msm_display_info {
-> @@ -35,6 +36,7 @@ struct msm_display_info {
->  	uint32_t num_of_h_tiles;
->  	uint32_t h_tile_instance[MAX_H_TILES_PER_DISPLAY];
->  	bool is_cmd_mode;
-> +	int stream_id;
->  	enum dpu_vsync_source vsync_source;
->  };
->  
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> index 8b251f87a0520da0807b9b7aed17493990e41627..359de04abf4bbead3daa5e8b357a3c34216e3e65 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
-> @@ -636,7 +636,8 @@ static int _dpu_kms_initialize_displayport(struct drm_device *dev,
->  	struct msm_display_info info;
->  	bool yuv_supported;
->  	int rc;
-> -	int i;
-> +	int i, stream_id;
-> +	int stream_cnt;
->  
->  	for (i = 0; i < ARRAY_SIZE(priv->dp); i++) {
->  		if (!priv->dp[i])
-> @@ -659,6 +660,26 @@ static int _dpu_kms_initialize_displayport(struct drm_device *dev,
->  			DPU_ERROR("modeset_init failed for DP, rc = %d\n", rc);
->  			return rc;
->  		}
-> +
-> +		stream_cnt = msm_dp_get_mst_max_stream(priv->dp[i]);
+While I was working on the issues I found it was really helpful to have
+ftrace for EPP, so it introduces that as well.
 
-Is there any reason for this not being a part of the DPU catalog? DPU
-can support required number of DPMST streams even if DP doesn't
+Lastly a bug was reported requesting that amd-pstate default policy be
+changed for client systems that don't use other software after bootup
+so it includes that change too.
 
-> +
-> +		if (stream_cnt > 1) {
-> +			for (stream_id = 0; stream_id < stream_cnt; stream_id++) {
-> +				info.stream_id = stream_id;
-> +				encoder = dpu_encoder_init(dev, DRM_MODE_ENCODER_DPMST, &info);
-> +				if (IS_ERR(encoder)) {
-> +					DPU_ERROR("encoder init failed for dp mst display\n");
-> +					return PTR_ERR(encoder);
-> +				}
-> +
-> +				rc = msm_dp_mst_bridge_init(priv->dp[i], encoder);
-> +				if (rc) {
-> +					DPU_ERROR("dp mst bridge %d init failed, %d\n",
-> +						  stream_id, rc);
-> +					continue;
-> +				}
-> +			}
-> +		}
->  	}
->  
->  	return 0;
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index 80df79a7c2077d49184cdeb7b801bf0699ff4ece..eafec9ab4f83cb44e861687e7550748b4d9b7ece 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -432,7 +432,8 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
->  	if (rc)
->  		goto end;
->  
-> -	if (dp->max_stream <= DEFAULT_STREAM_COUNT || !msm_dp_panel_read_mst_cap(dp->panel)) {
-> +	if (msm_dp_get_mst_max_stream(dp_display) <= DEFAULT_STREAM_COUNT ||
-> +	    !msm_dp_panel_read_mst_cap(dp->panel)) {
->  		rc = msm_dp_panel_read_edid(dp->panel, connector);
->  		if (rc)
->  			goto end;
-> @@ -457,7 +458,8 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
->  	 */
->  	msm_dp_link_psm_config(dp->link, &dp->panel->link_info, false);
->  
-> -	if (dp->max_stream > DEFAULT_STREAM_COUNT && msm_dp_panel_read_mst_cap(dp->panel))
-> +	if (msm_dp_get_mst_max_stream(dp_display) > DEFAULT_STREAM_COUNT &&
-> +	    msm_dp_panel_read_mst_cap(dp->panel))
->  		msm_dp_display_mst_init(dp);
->  
->  	msm_dp_link_reset_phy_params_vx_px(dp->link);
-> @@ -977,7 +979,7 @@ static int msm_dp_display_enable(struct msm_dp_display_private *dp,
->  
->  	drm_dbg_dp(dp->drm_dev, "sink_count=%d\n", dp->link->sink_count);
->  
-> -	rc = msm_dp_ctrl_on_stream(dp->ctrl, msm_dp_panel, dp->max_stream);
-> +	rc = msm_dp_ctrl_on_stream(dp->ctrl, msm_dp_panel, msm_dp_get_mst_max_stream(&dp->msm_dp_display));
->  
->  	return rc;
->  }
-> @@ -1444,6 +1446,20 @@ static int msm_dp_display_get_connector_type(struct platform_device *pdev,
->  	return connector_type;
->  }
->  
-> +int msm_dp_get_mst_max_stream(const struct msm_dp *dp_display)
-> +{
-> +	struct msm_dp_display_private *dp_priv;
-> +
-> +	dp_priv = container_of(dp_display, struct msm_dp_display_private, msm_dp_display);
-> +
-> +	return dp_priv->max_stream;
-> +}
-> +
-> +int msm_dp_mst_bridge_init(struct msm_dp *dp_display, struct drm_encoder *encoder)
-> +{
-> +	return msm_dp_mst_drm_bridge_init(dp_display, encoder);
-> +}
-> +
->  static int msm_dp_display_probe(struct platform_device *pdev)
->  {
->  	int rc = 0;
-> @@ -1745,12 +1761,12 @@ void msm_dp_display_disable_helper(struct msm_dp *dp, struct msm_dp_panel *msm_d
->  		return;
->  	}
->  
-> -	if (msm_dp_display->max_stream > DEFAULT_STREAM_COUNT)
-> +	if (msm_dp_get_mst_max_stream(dp) > DEFAULT_STREAM_COUNT)
->  		msm_dp_ctrl_push_vcpf(msm_dp_display->ctrl, msm_dp_panel);
->  	else
->  		msm_dp_ctrl_push_idle(msm_dp_display->ctrl);
->  
-> -	if (msm_dp_display->max_stream > DEFAULT_STREAM_COUNT) {
-> +	if (msm_dp_get_mst_max_stream(dp) > DEFAULT_STREAM_COUNT) {
->  		msm_dp_ctrl_mst_stream_channel_slot_setup(msm_dp_display->ctrl,
->  							  msm_dp_display->max_stream);
->  		msm_dp_ctrl_mst_send_act(msm_dp_display->ctrl);
-> diff --git a/drivers/gpu/drm/msm/msm_drv.h b/drivers/gpu/drm/msm/msm_drv.h
-> index 1616a4682795f6b9b30cc0bef2baf448ccc62bc0..12b50a797772f574122481cd8a1c7c88aacb8250 100644
-> --- a/drivers/gpu/drm/msm/msm_drv.h
-> +++ b/drivers/gpu/drm/msm/msm_drv.h
-> @@ -372,6 +372,10 @@ bool msm_dp_needs_periph_flush(const struct msm_dp *dp_display,
->  			       const struct drm_display_mode *mode);
->  bool msm_dp_wide_bus_available(const struct msm_dp *dp_display);
->  
-> +int msm_dp_get_mst_max_stream(const struct msm_dp *dp_display);
-> +
-> +int msm_dp_mst_bridge_init(struct msm_dp *dp_display, struct drm_encoder *encoder);
-> +
->  #else
->  static inline int __init msm_dp_register(void)
->  {
-> @@ -388,6 +392,16 @@ static inline int msm_dp_modeset_init(struct msm_dp *dp_display,
->  	return -EINVAL;
->  }
->  
-> +static inline int msm_dp_get_mst_max_stream(struct msm_dp *dp_display)
-> +{
-> +	return -EINVAL;
-> +}
-> +
-> +int msm_dp_mst_bridge_init(struct msm_dp *dp_display, struct drm_encoder *encoder)
-> +{
-> +	return -EINVAL;
-> +}
-> +
->  static inline void msm_dp_snapshot(struct msm_disp_state *disp_state, struct msm_dp *dp_display)
->  {
->  }
-> 
-> -- 
-> 2.34.1
-> 
+---
+v2:
+ * Pick up tags
+ * Fix boost in some calls for tracing
+ * Rename macro from AMD_PSTATE to AMD_CPPC
+ * Use nominal freq for consistency
+ * Drop unused lowest_perf variable
+ * Drop extra mutex
+ * Add patch to drop another unused variable
 
+Mario Limonciello (16):
+  cpufreq/amd-pstate: Store the boost numerator as highest perf again
+  cpufreq/amd-pstate: Use boost numerator for upper bound of frequencies
+  cpufreq/amd-pstate: Add trace event for EPP perf updates
+  cpufreq/amd-pstate: convert mutex use to guard()
+  cpufreq/amd-pstate: Drop cached epp_policy variable
+  cpufreq/amd-pstate: Use FIELD_PREP and FIELD_GET macros
+  cpufreq/amd-pstate: Only update the cached value in msr_set_epp() on
+    success
+  cpufreq/amd-pstate: store all values in cpudata struct in khz
+  cpufreq/amd-pstate: Change amd_pstate_update_perf() to return an int
+  cpufreq/amd-pstate: Move limit updating code
+  cpufreq/amd-pstate: Cache EPP value and use that everywhere
+  cpufreq/amd-pstate: Always write EPP value when updating perf
+  cpufreq/amd-pstate: Check if CPPC request has changed before writing
+    to the MSR or shared memory
+  cpufreq/amd-pstate: Drop ret variable from
+    amd_pstate_set_energy_pref_index()
+  cpufreq/amd-pstate: Set different default EPP policy for Epyc and
+    Ryzen
+  cpufreq/amd-pstate: Drop boost_state variable
+
+ Documentation/admin-guide/pm/amd-pstate.rst |   4 +-
+ drivers/cpufreq/amd-pstate-trace.h          |  52 ++-
+ drivers/cpufreq/amd-pstate-ut.c             |  12 +-
+ drivers/cpufreq/amd-pstate.c                | 411 ++++++++++----------
+ drivers/cpufreq/amd-pstate.h                |   3 -
+ 5 files changed, 250 insertions(+), 232 deletions(-)
+
+
+base-commit: ab9e5b2eb56412cb8c63b46b935878d29205418e
 -- 
-With best wishes
-Dmitry
+2.43.0
+
 
