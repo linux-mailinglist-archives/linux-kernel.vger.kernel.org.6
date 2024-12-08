@@ -1,129 +1,120 @@
-Return-Path: <linux-kernel+bounces-436336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 628689E848E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 11:45:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85429E8492
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:04:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12C0B1884A96
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 10:45:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF98A164CE7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 11:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0EF13B7A3;
-	Sun,  8 Dec 2024 10:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="A17DUSOA"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A9013AD22;
+	Sun,  8 Dec 2024 11:04:22 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.86.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8983018E1F
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 10:45:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D2D17C77
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 11:04:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.86.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733654722; cv=none; b=hm584ZP7shtyassxYog3g9kX1M7lPRCFWhfWOok22iIxI77x4xvTTYeuTX7sRNjDS+lZkMckSNbXOSCmzioQCeOYu3Iwt6Llz1eE0ZPsH6bgAKwpNL5x/IUesKxFM3JkfpsxoyMPtcsgnKMU1GCqvbiF0J3e5SGOLukfcqCxGNs=
+	t=1733655862; cv=none; b=jELrGFngvsnkYNYmIIp205xOdmfahqIZoDb3UGEQTN81LmKwNCoiucUhrXOJXAW64Wzdyy9fwP3z8v67flteIjHkd35bD9VXqtMtbSKIsJevduLCCkZjK4KyLeJymioGqKR6I52CIoicASwnGsg9AUQ7OqaNqH/jFvqUD8QmYhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733654722; c=relaxed/simple;
-	bh=RII0E6R1B+ih2dUA2cVncIXtg+lPTwX7AenSELVmqf0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=TEIyBbHkFC8r9lsXw/pDjBQgwUvXZG/L0zOqTtYB0EawoHDJgk2kKpDhSYdz8BDPcpT1KrAezJv9363tegHLqcls8bMl3pP8cbUX/4VAq2IEbboQazQHgYW+DuP8N9OLTj492fYOkkXtVLQ6JYUP/vCMXMATFGWvIDKqnUg6CvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=A17DUSOA; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 94AD440E0269;
-	Sun,  8 Dec 2024 10:45:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id jnNIHt8bZ2p5; Sun,  8 Dec 2024 10:45:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733654713; bh=QF1ZF2147QzrzNT+j3tg/zjdW2n2/exWUN/WYlP5LW8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=A17DUSOATv/NrTT99mk6qeGAA4y+DDqtV7gwRUkG/uWgP2VKAZuWiZRO73phqG93V
-	 kcMTPJgwbMcF2Cb5Z565SsGjEtOd53thlEueJxBpgiICpNLrZdEOzVA4xvwTEvNj9m
-	 csJp03niJtksbjhDZcOaDt4MDxq7llzV/R9bmMNMtm2ZJLx07jTZy7ZgW+BLPeerMw
-	 rcIrCwib6r2STJceqbu9IARjkevztE93eFWSnJwSCV+eD6Wk5gtXeV+NNoXkny9PSy
-	 wOAwEOUcztGiN/gONLBssb6M+1/r9JrRLOUP3evsiWof0BXAb0X2hD31TuafUEXD/Y
-	 n6RmRjXbR2EuyJCR4/BJBZwsSJmsCXaH6BfSfTYt5uMGGbKcue6+mxY/BTVTpPkNVR
-	 RaSCwRuix2C7u/wvEf3vYPWbgBZU3jLdgqqN8cAVmqeLtSBPRKXwH9oDt2wQ8vDLMf
-	 SHS7VOfUCZbaX7BS2Qp/8FsideHm4G+QbB7LMYZS3u6+wBV+f7un107LYul/NCf2SK
-	 j5nDqgQameEmOFTOow5Ujnh5kEeD3iIUhZQaKCnHh8TuXMVmmuh7YvMlmvFAeQeqyx
-	 vih+iFByI8NgA1S457AdecfUXlCJVUrh+SNIH0VRS4EpgoYvCXhJXphKy8pNERl9x0
-	 DWR7DElRoAH752/k33mbwITQ=
-Received: from zn.tnic (p200300eA971f9358329C23fffeA6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9358:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0C95840E019C;
-	Sun,  8 Dec 2024 10:45:10 +0000 (UTC)
-Date: Sun, 8 Dec 2024 11:45:03 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL] irq/urgent for v6.13-rc2
-Message-ID: <20241208104503.GAZ1V4ry-o8Pf3jrGR@fat_crate.local>
+	s=arc-20240116; t=1733655862; c=relaxed/simple;
+	bh=8szes4WhxJYVAHlGL6+ESDjvolj5FsPEmfkxpOockI8=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=biMgG8g/6L3kDE0/YYKV2uuQkQUgQDH7qvWN4DlQunoc7mhUAUs6f3Fm/NlMNdbB9WgYzJeTHrrXWopU1BWm1LdR2QSNdpfA0UeEH5AxD7JiFgGMGs8f6qg+jtOotRusE7jovLxdBdYiFeUOJu5ZfRr8y2gO8p2BZ7kuv+YlygY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.86.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-43-mXI9IeoNPBGuVCQiajEE1Q-1; Sun, 08 Dec 2024 11:04:16 +0000
+X-MC-Unique: mXI9IeoNPBGuVCQiajEE1Q-1
+X-Mimecast-MFC-AGG-ID: mXI9IeoNPBGuVCQiajEE1Q
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Sun, 8 Dec
+ 2024 11:03:23 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Sun, 8 Dec 2024 11:03:23 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: 'liujing' <liujing@cmss.chinamobile.com>, "davem@davemloft.net"
+	<davem@davemloft.net>, "andreas@gaisler.com" <andreas@gaisler.com>
+CC: "sparclinux@vger.kernel.org" <sparclinux@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] sparc: Move va_end() before exit()
+Thread-Topic: [PATCH] sparc: Move va_end() before exit()
+Thread-Index: AQHbR8CT2AXjnDzB7U6Mtud49E641LLcMLug
+Date: Sun, 8 Dec 2024 11:03:23 +0000
+Message-ID: <b3596c1fb07e4c6bbe347e742dbb7126@AcuMS.aculab.com>
+References: <20241206092346.6003-1-liujing@cmss.chinamobile.com>
+In-Reply-To: <20241206092346.6003-1-liujing@cmss.chinamobile.com>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: sxnjDrYdHfICKFnn97XDNpCNjzHi52Lk7zTezSeuR4U_1733655855
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Linus,
+From: liujing
+> Sent: 06 December 2024 09:24
+>=20
+> There is a static checker warning, so move the va_end call before
+> exit(1). Since the exit(1) function terminates the program, any code
+> after exit(1) is unreachable thus notexecuted. Placing va_end() before
+> exit() ensures that the va_list is properly cleaned up.
 
-please pull the irq/urgent lineup for v6.13-rc2.
+Aren't you just adding 'bloat' to the vdso?
+(It might even be space limited?)
 
-Thx.
+If you are calling exit() then there is no need to tidy up the va_list.
+Much the same as there is no need to call free() or close() all fd.
 
----
+I'd probably have written it as:
+=09// va_end(ap);
+=09exit(1);
 
-The following changes since commit cc47268cb4841c84d54f0ac73858986bcd515eb4:
+=09David
+>=20
+> Signed-off-by: liujing <liujing@cmss.chinamobile.com>
+> ---
+> V1 -> V2: Modify the commit information and title description
+>=20
+> diff --git a/arch/sparc/vdso/vdso2c.c b/arch/sparc/vdso/vdso2c.c
+> index dc81240aab6f..372e3330850a 100644
+> --- a/arch/sparc/vdso/vdso2c.c
+> +++ b/arch/sparc/vdso/vdso2c.c
+> @@ -90,8 +90,8 @@ static void fail(const char *format, ...)
+>  =09vfprintf(stderr, format, ap);
+>  =09if (outfilename)
+>  =09=09unlink(outfilename);
+> -=09exit(1);
+>  =09va_end(ap);
+> +=09exit(1);
+>  }
+>=20
+>  /*
+> --
+> 2.27.0
+>=20
+>=20
+>=20
 
-  irqchip: Switch back to struct platform_driver::remove() (2024-11-26 20:09:06 +0100)
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
+PT, UK
+Registration No: 1397386 (Wales)
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/irq_urgent_for_v6.13_rc2
-
-for you to fetch changes up to 9151299ee5101e03eeed544c1280b0e14b89a8a4:
-
-  irqchip/stm32mp-exti: CONFIG_STM32MP_EXTI should not default to y when compile-testing (2024-12-03 17:40:30 +0100)
-
-----------------------------------------------------------------
-- Fix a /proc/interrupts formatting regression
-
-- Have the BCM2836 interrupt controller enter power management states properly
-
-- Other fixlets
-
-----------------------------------------------------------------
-Geert Uytterhoeven (1):
-      irqchip/stm32mp-exti: CONFIG_STM32MP_EXTI should not default to y when compile-testing
-
-Lorenzo Pieralisi (1):
-      irqchip/gic-v3: Fix irq_complete_ack() comment
-
-Stefan Wahren (1):
-      irqchip/bcm2836: Enable SKIP_SET_WAKE and MASK_ON_SUSPEND
-
-Thomas Gleixner (1):
-      genirq/proc: Add missing space separator back
-
- drivers/irqchip/Kconfig       | 2 +-
- drivers/irqchip/irq-bcm2836.c | 3 +++
- drivers/irqchip/irq-gic-v3.c  | 2 +-
- kernel/irq/proc.c             | 7 ++++---
- 4 files changed, 9 insertions(+), 5 deletions(-)
-
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
