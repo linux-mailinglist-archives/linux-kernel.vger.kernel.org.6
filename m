@@ -1,83 +1,90 @@
-Return-Path: <linux-kernel+bounces-436247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C6F79E832F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:47:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8989D9E8331
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:50:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 032C916484E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 02:47:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F9BC1649CB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 02:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A92B17C77;
-	Sun,  8 Dec 2024 02:47:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65D4B20311;
+	Sun,  8 Dec 2024 02:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LYwakqWz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oBts3ut7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F313F14A85;
-	Sun,  8 Dec 2024 02:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE56154728;
+	Sun,  8 Dec 2024 02:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733626063; cv=none; b=Y9UdJDDRCfjMy8EpJ58vVBFAXE7oiJWKAZIoE2lXv5apXBwlp6dqFFDpqGq9puIhEMMgDcyWTTkhzLKxuc1YUl0D0MinjVpWOfXSZDfY2YRaA6ZPltm9uT5rtVssfra4eRfBFGSDT4kVQ994CMf9VybQnMfTIVTxlzs914J5oJg=
+	t=1733626214; cv=none; b=FU9zLsS69bnpEBJuvI8lSQSTQNGQh6eMlv+qADHxSvsxW59DKAonuAKFERG2GE48o5coPioeC7Y2OApTfFGauNA/Gojmg2+KPpYefnmieGQaH4EzVmDTN92Dn2EpdWhl/xcLk22CDZ6Vh+VIlok4g57AXCnd6nO1JUXmV4V+4vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733626063; c=relaxed/simple;
-	bh=NHJyeLRRWCQfj/dV5DQVg7AEGWqhmlfi6p74bANGV3I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Kkdhr0YkHISQM5E56NrbtQLLTo5s5jWnIntk9ktTt0xggPU8fHsOgNayBxKzsuQ568JGh1BKHLCvM9uId7F+rf9tBGsUWU9R6rLTEiVqW1L9NwP8e1ya09LIMey7/gOm4eQzrre5s0OPQ6K+dhcoGOriOeAGB84R++kha8yayKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LYwakqWz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822C1C4CECD;
-	Sun,  8 Dec 2024 02:47:38 +0000 (UTC)
+	s=arc-20240116; t=1733626214; c=relaxed/simple;
+	bh=MySWfTYS/uH0Ue/1Ic0M//3SDlEiMfhIVgio1AebwVI=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=KRTaWOHEUdx/EonjSoEJ89i7iW6ZhqIBjO2hn3WbNHo5y7Q2ORcKdcHilPFw+L4xb8SeclXB/5OnDYcJqSMb6wL/5YOOc/hwsE67yRl0NNKPM4gh5hg5oPoHO6za/6kSSznSxS5qbXk82tktvEnVZK9zqreKRDbZ5yZiOfNI2MQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oBts3ut7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4001CC4CECD;
+	Sun,  8 Dec 2024 02:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733626062;
-	bh=NHJyeLRRWCQfj/dV5DQVg7AEGWqhmlfi6p74bANGV3I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LYwakqWzLHhgQ0LnSYRCcAampaWNh4CCP0KqRGRP/ZY3bJxtksUMvI/zSEBFzW5gB
-	 yWalZGiRH/srfwE1p/Jbzg0FxrnOyRPRF4CvuqnFqaLxzQZGYYo2VSnVEM9qjLmqUQ
-	 kAHytqH8fHABXWNXY/6hCk/0Qs9ZvbvmIjRJpg7DC/t3m/XeDrdSVOUiLgMHhkQAsr
-	 XJ1wTZJh1OFXf0TJCnyUoFPEWaJrVgEFExyFpTGgqAOGSbAerUrOlv4/bpR0ThmLgf
-	 XcV8uKaTeh3saSz/5lX4GOBEbYP1/YTVIaoVB8ha6H6w8Jk/LF0c1BijvVAUVvLBOo
-	 EkndhUfiuW57g==
-Date: Sat, 7 Dec 2024 19:47:36 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: stable@vger.kernel.org, patches@lists.linux.dev,
-	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
-	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
-	jonathanh@nvidia.com, f.fainelli@gmail.com,
-	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
-	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 000/676] 6.6.64-rc1 review
-Message-ID: <20241208024736.GA2495976@ax162>
-References: <20241206143653.344873888@linuxfoundation.org>
- <CA+G9fYtsYhXwhewSJUnGAwFmSa5AnOvuREZiOGRCsOUWb6Kx3Q@mail.gmail.com>
+	s=k20201202; t=1733626214;
+	bh=MySWfTYS/uH0Ue/1Ic0M//3SDlEiMfhIVgio1AebwVI=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=oBts3ut7QOnnM7m56NHMaWOp4IS9a6E+DcbmplXi9jlKGO14kRL8Q43eKtn9o76OV
+	 R4AIBYxrU5cfoJHUc2bcLzgmG+0YezaMu5kNl+78+M0JU9pzScABd7KshmyjgH69eW
+	 c6AFJJr+jS+Z26Vdz6UJYz6+GgN5Z7g/Dyr7Dqataucf61kTichsv/fvlg2Rwd+0wl
+	 zd93LHdsuZ/M2pD3KvE0jwegCGN0pQ1qF87sxaT9c3nC97yp5+g6vmBPvP3Qxqzkf7
+	 hSrwfvV5eArWETUBwkELjq8NZ/I28Cf3Wzh7i4MZZMBazt0Vbul85H4+bKcRutnKdn
+	 ArZg4JJXYY19Q==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE37C380A95D;
+	Sun,  8 Dec 2024 02:50:30 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+G9fYtsYhXwhewSJUnGAwFmSa5AnOvuREZiOGRCsOUWb6Kx3Q@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] rtase: Refine the if statement
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173362622953.3141063.1221958910878945135.git-patchwork-notify@kernel.org>
+Date: Sun, 08 Dec 2024 02:50:29 +0000
+References: <20241206084851.760475-1-justinlai0215@realtek.com>
+In-Reply-To: <20241206084851.760475-1-justinlai0215@realtek.com>
+To: Justin Lai <justinlai0215@realtek.com>
+Cc: kuba@kernel.org, davem@davemloft.net, edumazet@google.com,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, horms@kernel.org, michal.kubiak@intel.com,
+ pkshih@realtek.com, larry.chiu@realtek.com
 
-On Sun, Dec 08, 2024 at 01:20:19AM +0530, Naresh Kamboju wrote:
-> NOTE:
-> [Not a kernel regressions]
-> Powerpc clang nightly defconfig builds are failing on stable-rc linux-6.6.y
-> clang: error: invalid value 'r13' in 'mstack-protector-guard-reg=',
-> expected one of: r2
->  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2pqeSKGTShWpi3PB2dFTogUwhpJ/
+Hello:
 
-It is a kernel regression, it is fixed by taking
-https://lore.kernel.org/stable/20241206220926.2099603-1-nathan@kernel.org/
-atomically with the other powerpc stack protector clang fixes in this
-series, which matches upstream.
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
 
-Cheers,
-Nathan
+On Fri, 6 Dec 2024 16:48:51 +0800 you wrote:
+> Refine the if statement to improve readability.
+> 
+> Signed-off-by: Justin Lai <justinlai0215@realtek.com>
+> ---
+>  drivers/net/ethernet/realtek/rtase/rtase_main.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+
+Here is the summary with links:
+  - [net-next] rtase: Refine the if statement
+    https://git.kernel.org/netdev/net-next/c/7ea2745766d7
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
