@@ -1,268 +1,127 @@
-Return-Path: <linux-kernel+bounces-436315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B1CD9E8442
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 09:40:41 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0764D9E844A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 09:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A20D418849B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 08:40:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D95D618849F2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 08:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D26A142E9F;
-	Sun,  8 Dec 2024 08:40:22 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA291384BF;
+	Sun,  8 Dec 2024 08:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="djR/T4vW"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5FB143C40
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 08:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16D801B7F4
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 08:51:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733647221; cv=none; b=U4Td9LKTAH7/3r4MEviNhrtkAmXU4jPI+qGNzumf3So75lhrJtpNrXyoG0epy3yJ0WXnCjFSHY+p1xTvsPLMKzRMTiOnWEO7us2CFnMBWwZdHsVi6wc9ljL8/SmYCSCuz6DWUGUzdALLIGHwI6fX3K/b2QkJn5DnW23MtK5k+RY=
+	t=1733647897; cv=none; b=LIes5X4ihbwZ993wKvbVPw47cipy3r4szfS/ww/UkLm5FTIAnm0Y3Nw5bAQyhNwI/fvWl3N3Ybj0yoF4XJeyf+GkCgPAnU2AL+8qTHG32AdGs3ZZZ1dNBqvUu8HE8qisvEsgvIfhJHHvoB3OxIn1MlUo+b4sdL7Q65HDa7rX4vg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733647221; c=relaxed/simple;
-	bh=4QF2XpCCEeA9k4McCNbrQXfYSzEwl2hedT8LHcNwRzw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XnF/v0urszEwP5pWjyUPe5SGHz8L1GULJO4WJEujKhXrv8IO5Iwr/gIsrKvuG0C3q+PbaFDwTeUu0rVcKBpQJg1KDDwS4yRTcoUht2WJv/DUH4k9PbNR4kBSVjbYGplrlJXUkTNiaqtPXZmkGSFrxoLHmLg3+8/d5BcNuRkO1Aw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7cf41b54eso70249785ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 00:40:19 -0800 (PST)
+	s=arc-20240116; t=1733647897; c=relaxed/simple;
+	bh=Avpt0DavYQhK37MRViyLzXclUmDDOhpjQ4RwJEJrV1c=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b8pD2v4Ivqnj82d9D75jS0USGeg/ewyBmkazLDVe4CFL9zCsLWvYUB3NMjRMUf5L69H1hEj0WhWnaqJqlPNDjRiC4C6CcwxguO4yTguw79xU25aIB5qiRZR4GjUlaLJqSDt56N5BaSGxOpc+NE1mk0+dH7f57QcVzo3oudCyjBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=djR/T4vW; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d8f99cb0d9so8179616d6.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 00:51:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733647895; x=1734252695; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tVvqWdbxf/H6jRAhod1WVWJ8TNzuw0kAnIVXqhdFydo=;
+        b=djR/T4vWoso1y859NTYNTJgi/LkuE5/dk9mkVAtBhQ6D2Mi2vj9u7130e8BqQcd8T0
+         naz44ApPbUyc4Yia98B++RqTCwh4CYcfJyWbtl+Is1YdJipxAhqTPh2FUVVbQVZrRRar
+         HJTGloM+0yLRVOZfRpS8fz0B/bqW2rBlp2q0sWARAOG/qScBAYZULy0ix/IUz4rBNnJL
+         uRMWsgFopL6olrzi69i5sItkZad6OtvuklzqMNAZsYKv4f74SJns7qFKbe1vc5VbgyYU
+         3fHLVCftBcqgLW5CCxRdTJc72ifzHv5g9F4Gh69Vfptfv9JGyVMaSNhJjF50XDX4aa2R
+         27iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733647218; x=1734252018;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QLkSHq64Nxjaqz10qyDTcTJAhlmCroB71Qgc3dg7NN4=;
-        b=EGbkLyu1QjhV9iel+fCeNeAlF86CS9GnLUIds22Z1CKL96r4mO6ILm5kGqrknYywCT
-         VSdjV9DWvSzlTvHL3YeGN5cOmEtiMxLT3U0MXLky30y4AuLk/XDGaKLS9mQ2HZT8SuWF
-         h4CAC8ooGHuMAgnq14Te8NYeAqRZ5HxpDW2p2LL5KB1xV2ZteXvbEB3+vi+A/vMZB3bS
-         xsMD2UDfZPKKpw+sHdM4YUoPzvbyZAgyOL0O0+4tShKy3ugLert/1Q6dWrISVreSDAE6
-         jdLmKOcBxL0301MveVU/uZdO3yvmF2MgQTJMr3fCsScAzk214pWLa1bngwGrMLijF31h
-         INdg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6b/SZGW7qTFL+0emfbbfaqLY0XNtdDKN3HVDrQHCRjeiD4xu1IqTIt4d4RqH9SRlLGvjKbZLkTd84LuA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQO/r8qwmvYgibAvogB8Myn2vhlOGsKosWzH0Rsb80nS+Mo/Qn
-	2YHqfibp6hTSjmnuNGFoQxsQlPJFeHzDy3iyzp30UTTbOEHdWpj91iJjukMEMChHD1dboap4apZ
-	+twWcsrd9jTzCIr+dr6CEF5FBIeETrAyUiqhCLxsExskk8zOQbz9Oavs=
-X-Google-Smtp-Source: AGHT+IExX0I4T9wezoV91nHo4rRkDkD8Ajfozz9/9EUWYmnn9+JGBZaWFJGdfMjnIgM3DJLGfQNNeXKe+A+ftPmzxdQG4wCCsZNU
+        d=1e100.net; s=20230601; t=1733647895; x=1734252695;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tVvqWdbxf/H6jRAhod1WVWJ8TNzuw0kAnIVXqhdFydo=;
+        b=aL9RYFMZxgayleraxfNdSnPYNpjWgEmmvHPfQ04vc/UbhNdDBZ81gLvwdjIQU6XJsP
+         jKSRFgISzEZ2qYmHViE0ssAx4/EOTGbqoSCvO+umcT7IQNporUhTUuvCGhhy8V4As5kE
+         ELJATpGn/5Bl8bT5iZ7MdQa4ytxrquz3yLkW2yT0N6hqPERWUcEnKNZ/lni1ZDeZJqR3
+         l8iRUVaT791bK1b8/02hnnotSkRSPlXWLoXU9IB9kUlsqPG+O9B05ijUKvX0eY1UcJDI
+         vtVEkDaXLzOuEpytBNJQvz7SpEfwRJXj7Z+qLlICDoq/soLXefstKAIHV7pW9yPDDyoW
+         Z9UQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyLNY1IiP6qcNADOCBu+HVy6TwdRvWaBPEEqsmuhPGglezTUxP/EXjlYK0ChlXVWnFQAaj42QoWXZJY0I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9CcUu1XnqDtmVfxjOiIc2uRWXWIsoaEX5j9uNLt1f5XITAcS4
+	0XqrQvHmScmQZJBwz4uyhrggKk48Wc62+95QLQnOUBjAcpP6lep5
+X-Gm-Gg: ASbGnctoYFUNzDWwz5k1anZ858kwXR4zzcchKHNk+KsIeSgA1b2OGCYBcVMbZFOoWsX
+	m/H9+MxtYcAN5vvOVA7lKYV/e8o52+bVzkJBDUXD1iFQ5hn1CKIgUGQIPBPun00vsUM4R5IFaEr
+	XBazG0U5oixLWvY9qz2OyGA+A+O2kcL+7y8DjETGw7d3SZ2RyaWVwwkSHQtFYzjGmKKlSIFp+e5
+	z+CWUQHo5bJH70yGeQPIq4mHOfQN2HO+u+MSgZ3yYuzUAvDzLDqpkV5X3XCA7O2o5WHfCIukSXU
+	eNrq/pSx1Rjdo1m4kz5Uu/JnNOe2
+X-Google-Smtp-Source: AGHT+IGKXpOFhEG+cldwUV3LOiwRTsB7qVtq7s8BEE3ykr2xumtKNi/IcShLrgQaeTaZypL/IOTtOg==
+X-Received: by 2002:ad4:5ae5:0:b0:6d8:a188:369a with SMTP id 6a1803df08f44-6d8e72512camr159088336d6.48.1733647894874;
+        Sun, 08 Dec 2024 00:51:34 -0800 (PST)
+Received: from localhost.localdomain (d24-150-189-55.home.cgocable.net. [24.150.189.55])
+        by smtp.googlemail.com with ESMTPSA id 6a1803df08f44-6d8da66db6fsm36966536d6.10.2024.12.08.00.51.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 00:51:34 -0800 (PST)
+From: Dennis Lam <dennis.lamerice@gmail.com>
+To: richard@nod.at,
+	chengzhihao1@huawei.com,
+	miquel.raynal@bootlin.com,
+	vigneshr@ti.com
+Cc: syzkaller-bugs@googlegroups.com,
+	syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com,
+	linux-kernel@vger.kernel.org,
+	linux-mtd@lists.infradead.org,
+	Dennis Lam <dennis.lamerice@gmail.com>
+Subject: [[PATCH] MTD: fix slab-use-after-free due to dangling pointer in notifier chain]  MTD: fix slab-use-after-free due to dangling pointer in notifier chain
+Date: Sun,  8 Dec 2024 03:44:38 -0500
+Message-ID: <20241208085121.53415-1-dennis.lamerice@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:20cf:b0:3a7:4674:d637 with SMTP id
- e9e14a558f8ab-3a811d7716cmr115044625ab.3.1733647218605; Sun, 08 Dec 2024
- 00:40:18 -0800 (PST)
-Date: Sun, 08 Dec 2024 00:40:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67555b72.050a0220.2477f.0026.GAE@google.com>
-Subject: [syzbot] [mm?] INFO: rcu detected stall in sys_umount (3)
-From: syzbot <syzbot+1ec0f904ba50d06110b1@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, martin.lau@linux.dev, 
-	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
-	yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+When attaching MTDs, a reboot notifier is added to the blocking
+notification chain. However, when detaching a MTD and freeing its
+related objects, the notifier is never unregistered from the
+notification chain. Thus, when the chain is iterated there is a
+possibility of finding the address of the reboot notifier which has
+already been freed, resulting in a slab-use-after-free error.
 
-syzbot found the following issue on:
+To fix this, I added an unregister notifier function in the ubi_wl_close
+function to ensure that the notifier is removed from the chain after the
+device has been detached.
 
-HEAD commit:    feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1420a330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=1ec0f904ba50d06110b1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c060f8580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/3bb09093023b/disk-feffde68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9e37e48dc48a/vmlinux-feffde68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/36b46b3a6421/bzImage-feffde68.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+1ec0f904ba50d06110b1@syzkaller.appspotmail.com
-
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P5930/1:b..l
-rcu: 	(detected by 0, t=10503 jiffies, g=6361, q=569 ncpus=2)
-task:syz-executor    state:R  running task     stack:20208 pid:5930  tgid:5930  ppid:5919   flags:0x00000002
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- preempt_schedule_irq+0xfb/0x1c0 kernel/sched/core.c:7078
- irqentry_exit+0x5e/0x90 kernel/entry/common.c:354
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:rcu_preempt_read_enter kernel/rcu/tree_plugin.h:390 [inline]
-RIP: 0010:__rcu_read_lock+0x27/0xb0 kernel/rcu/tree_plugin.h:413
-Code: 90 90 90 f3 0f 1e fa 55 41 57 41 56 53 49 be 00 00 00 00 00 fc ff df 65 4c 8b 3c 25 00 d6 03 00 49 81 c7 44 04 00 00 4c 89 fb <48> c1 eb 03 42 0f b6 04 33 84 c0 75 35 41 8b 2f ff c5 42 0f b6 04
-RSP: 0018:ffffc900035f77e0 EFLAGS: 00000286
-RAX: ffffffff81ae868a RBX: ffff888026cd5e44 RCX: ffff888026cd5a00
-RDX: 0000000000000000 RSI: ffffffff8c5f63c0 RDI: 00007fc1f8581247
-RBP: 0000000000000001 R08: ffffffff810a464d R09: ffffc900035f7990
-R10: ffffc900035f78f0 R11: ffffffff818b36f0 R12: ffff888026cd5a00
-R13: ffffffff818b36f0 R14: dffffc0000000000 R15: ffff888026cd5e44
- rcu_read_lock include/linux/rcupdate.h:847 [inline]
- is_bpf_text_address+0x1f/0x2a0 kernel/bpf/core.c:768
- kernel_text_address+0xa7/0xe0 kernel/extable.c:125
- __kernel_text_address+0xd/0x40 kernel/extable.c:79
- unwind_get_return_address+0x4d/0x90 arch/x86/kernel/unwind_orc.c:369
- arch_stack_walk+0xfd/0x150 arch/x86/kernel/stacktrace.c:26
- stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
- save_stack+0xfb/0x1f0 mm/page_owner.c:156
- __reset_page_owner+0x76/0x430 mm/page_owner.c:297
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0xdef/0x1130 mm/page_alloc.c:2657
- __slab_free+0x31b/0x3d0 mm/slub.c:4509
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
- getname_flags+0xb7/0x540 fs/namei.c:139
- user_path_at+0x24/0x60 fs/namei.c:3069
- ksys_umount fs/namespace.c:2033 [inline]
- __do_sys_umount fs/namespace.c:2041 [inline]
- __se_sys_umount fs/namespace.c:2039 [inline]
- __x64_sys_umount+0xf1/0x170 fs/namespace.c:2039
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fc1f8581247
-RSP: 002b:00007fc1f886ecc8 EFLAGS: 00000246 ORIG_RAX: 00000000000000a6
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fc1f8581247
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 00007fc1f886ed80
-RBP: 00007fc1f886ed80 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000246 R12: 00007fc1f886fe00
-R13: 00007fc1f85f3824 R14: 000000000000f97b R15: 00007fc1f886fe40
- </TASK>
-rcu: rcu_preempt kthread starved for 10527 jiffies! g6361 f0x0 RCU_GP_WAIT_FQS(5) ->state=0x0 ->cpu=1
-rcu: 	Unless rcu_preempt kthread gets sufficient CPU time, OOM is now expected behavior.
-rcu: RCU grace-period kthread stack dump:
-task:rcu_preempt     state:R  running task     stack:26264 pid:17    tgid:17    ppid:2      flags:0x00004000
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5369 [inline]
- __schedule+0x1850/0x4c30 kernel/sched/core.c:6756
- __schedule_loop kernel/sched/core.c:6833 [inline]
- schedule+0x14b/0x320 kernel/sched/core.c:6848
- schedule_timeout+0x15a/0x290 kernel/time/sleep_timeout.c:99
- rcu_gp_fqs_loop+0x2df/0x1330 kernel/rcu/tree.c:2045
- rcu_gp_kthread+0xa7/0x3b0 kernel/rcu/tree.c:2247
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-rcu: Stack dump where RCU GP kthread last ran:
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 24 Comm: ksoftirqd/1 Not tainted 6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:unwind_get_return_address+0x56/0x90 arch/x86/kernel/unwind_orc.c:369
-Code: 83 c3 48 49 89 df 49 c1 ef 03 43 80 3c 37 00 74 08 48 89 df e8 7b b2 be 00 48 8b 3b e8 c3 73 1e 00 85 c0 74 14 43 80 3c 37 00 <74> 08 48 89 df e8 60 b2 be 00 48 8b 03 eb 02 31 c0 5b 41 5e 41 5f
-RSP: 0018:ffffc900001e6d20 EFLAGS: 00000246
-RAX: 0000000000000001 RBX: ffffc900001e6d88 RCX: ffffffff91790000
-RDX: ffffffff91940701 RSI: ffffc900001e0000 RDI: ffffffff81fe1859
-RBP: ffffc900001e6dd0 R08: ffffc900001e7120 R09: 0000000000000000
-R10: ffffc900001e6d90 R11: fffff5200003cdb4 R12: ffff88801d2e8000
-R13: ffffffff818b36f0 R14: dffffc0000000000 R15: 1ffff9200003cdb1
-FS:  0000000000000000(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fc1f886ecdc CR3: 000000007d414000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <NMI>
- </NMI>
- <TASK>
- arch_stack_walk+0xfd/0x150 arch/x86/kernel/stacktrace.c:26
- stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
- __skb_ext_alloc net/core/skbuff.c:6924 [inline]
- skb_ext_add+0x14d/0x910 net/core/skbuff.c:7027
- nf_bridge_alloc include/net/netfilter/br_netfilter.h:12 [inline]
- br_nf_pre_routing_ipv6+0x131/0x770 net/bridge/br_netfilter_ipv6.c:172
- nf_hook_entry_hookfn include/linux/netfilter.h:154 [inline]
- nf_hook_bridge_pre net/bridge/br_input.c:277 [inline]
- br_handle_frame+0x9fd/0x1530 net/bridge/br_input.c:424
- __netif_receive_skb_core+0x14eb/0x4690 net/core/dev.c:5566
- __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
- __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
- process_backlog+0x662/0x15b0 net/core/dev.c:6117
- __napi_poll+0xcb/0x490 net/core/dev.c:6877
- napi_poll net/core/dev.c:6946 [inline]
- net_rx_action+0x89b/0x1240 net/core/dev.c:7068
- handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:554
- run_ksoftirqd+0xca/0x130 kernel/softirq.c:943
- smpboot_thread_fn+0x544/0xa30 kernel/smpboot.c:164
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-net_ratelimit: 52114 callbacks suppressed
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-net_ratelimit: 58692 callbacks suppressed
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-bridge0: received packet on bridge_slave_0 with own address as source address (addr:aa:aa:aa:aa:aa:1b, vlan:0)
-
-
+Reported-by: syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com
+Closes: https://lore.kernel.org/all/67409091.050a0220.363a1b.013d.GAE@google.com/T/
+Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/mtd/ubi/wl.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
+index 4f6f339d8fb8..31a1e5515d98 100644
+--- a/drivers/mtd/ubi/wl.c
++++ b/drivers/mtd/ubi/wl.c
+@@ -1995,6 +1995,7 @@ static void protection_queue_destroy(struct ubi_device *ubi)
+ void ubi_wl_close(struct ubi_device *ubi)
+ {
+ 	dbg_wl("close the WL sub-system");
++	unregister_reboot_notifier(&ubi->wl_reboot_notifier);
+ 	ubi_fastmap_close(ubi);
+ 	shutdown_work(ubi);
+ 	protection_queue_destroy(ubi);
+-- 
+2.47.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
