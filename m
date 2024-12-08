@@ -1,156 +1,103 @@
-Return-Path: <linux-kernel+bounces-436458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56989E8618
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:55:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 368999E8619
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:55:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74FCB1647FA
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30F3E164844
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:55:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB80D15957D;
-	Sun,  8 Dec 2024 15:54:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCC91581E0;
+	Sun,  8 Dec 2024 15:55:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="imTp3Ie9"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfHa6MCA"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D831155A4E
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 052B614F9FF
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733673299; cv=none; b=QIw1oAL2wvAd11HzPJbXJCQ5g0OcYboXghMbxbjCFsMjdo3IT06IPUteX40pc58xiHuPFL6GKj0dg73A0g4RzvYvlmlq9rDojGe1CiJkaS6KFtGGqXO6jZv16k9HqVL0ulkVOZgrzCuWsnLRntClo4YgF0Bx2oug0rV2J6CQIWs=
+	t=1733673334; cv=none; b=KfH4JJziQ7KaqAc5cvA9P9yixAPkeoGxNPaNXC/yy+F1+dXnCrP16GelrGwup/pKAtGwLf9WOcebdxq0Bq8gDM+Kn+6KXDg5XsdwHtZdTdSl7MQQYInzj6YOwZ2guoVhhiDy60CotfjlNxGdelBayfsEk+S+9SQ/Etq9fDP3wxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733673299; c=relaxed/simple;
-	bh=sLGXgrOtyFUCSrAr0PZXAw3CO+iv36B75V8uwsPkqk8=;
+	s=arc-20240116; t=1733673334; c=relaxed/simple;
+	bh=VOJBXBT9KHP6qO77x8aTnN+lP+X2U3kOYe5lpVyrkg0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=J4MAqezOqZsMJ/axDt+S1O0F7q/zsbVSsnKk9eml6EWBmF4xsJ+LWrwGMRn+rvDhlsZKSSvzETrZ+oFMVK947z3KigIJS/2RxuKw7LFWqXTCPuOh7/27HcH+yD2B7uD7wFonh3fL5Bbnww4waJ5sDSQUMY2WnvsM2wE4eNrqxAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=imTp3Ie9; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cecbddb574so4358987a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 07:54:57 -0800 (PST)
+	 To:Cc:Content-Type; b=d2Syt8tJ2iHm+kG88beIiO63IWIu2pyRfTBp7oqwnP7KU+VkfaZ0L6906MLde3V5O7TjUc2K88VJJZs/ZIL0uKREe2700HBRIYNb1wAgTFoU7kEhglWFn7qPHgHbNyqFrUXuuQ8CltgBf3HPJy9Jo1bIZLDg3yd2o2AOb33CFDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfHa6MCA; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa650ccbe0eso202576166b.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 07:55:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733673296; x=1734278096; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733673331; x=1734278131; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n8Ir5Ze5F+Cakp++YqE/4K5mzAf5gGTj0H2toLbkGXQ=;
-        b=imTp3Ie9f6Nu41ws/jRN2gZjI2TogcgKWipxSOtO1TTM0EQrhUhmswizQlLM+9JRwL
-         1/VPWoOaLCP45fSCeqXhhaUW04qaYQaNexyMEKi3jdbcX0nxJrVN8VlsUX32FLS6ZVWY
-         duKxmj9Bweljp5MZ/OIicf8oeRcqXdITCxwMspL7FrF2aEbbuIkkHd2N6T8oR/PCpnbw
-         MzIonAYKdzQjOVR84rT104X1VFVKC+T3Xf2cdlf1QFOfE3TLH5VlIh0d7/baokMz6WeS
-         TSdRAVyvKmmHUbj45gnIcx2cjCDtpR7/yRgb2rxuDHnqXzHpV+QljMqgSCm60/RJCdEn
-         PxuA==
+        bh=VOJBXBT9KHP6qO77x8aTnN+lP+X2U3kOYe5lpVyrkg0=;
+        b=RfHa6MCA5kb8/JkTonLPvs6eqMUKCrXZZUyt4Ub97Q/OB2+1ZrfSif/oxk7tchrUmV
+         b9IEyBRuKUiSS0GG5OywfJize/Kru1g5wMdQOpxB96Oj8bOyW9QW+cB6iX/1pmgPhpa5
+         U6OICEMS2X9SF8jl6gx8k38oxJPQ7xHCNJAK3RB4qiG2yFC5/J130f2EVWNw97L5I0sQ
+         eJ191+1jtseJaOinzds4fDs8vJUwfN34rICD3vv1pqVhFGAqn9OtErXxUK5UNWx2YBYG
+         4UWi3ZA8JyW7v62l0UmHD/JH96Y5mOvT1YMaS3ElipRCRsLkbvmsWIpNObso9p3cjPQh
+         uLFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733673296; x=1734278096;
+        d=1e100.net; s=20230601; t=1733673331; x=1734278131;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n8Ir5Ze5F+Cakp++YqE/4K5mzAf5gGTj0H2toLbkGXQ=;
-        b=Ynh5UuaSNuWWjzyxmzp4y54/zBTYlGwp+l1rH/yZLgcC+ie2apuZGD9xbQ7f3g1J2C
-         FiP4/C4GMh/rhl58llNM0//WxqOdsmTz2TbM8fBs6HMQUClyfhHVaOydma/LoyYwXWxS
-         WLw+1IwuPDO234NHG9JrLheipTlihD4dj7yawuG/0j2nVuGD6gs//CUtffD0BlpCufuk
-         YYeqSU90BySW427ieKVEduCF7WtHcZydY/MNi0IuxM9VtE+XA1deI16dQiq25i7FJNYc
-         y9W3x2t1Mtt/LpzsZMJ5eVJMWjhnFg/+dL13SG1Z+/4EPdqSWE3UcIGCdOYMCo441eL3
-         Xakg==
-X-Forwarded-Encrypted: i=1; AJvYcCUG+WWORvYO+o9wSHI98OzxFubQ9rJgWpeKLuQFt8J/+sfx4MpHeTI9uCgWQ/6RPjqQ6rNAcmJGy1hmsEI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG2WSboI3+FGOSH2UpxhaSD4+zdNb4yy3sG5RxSuMGCGk7Yn1z
-	sL6je3pyPrCEND1aTx+oW2rngNL/sYHIdCGPq0IfqfHWHJqeu9yFai1+FBDapHjPbUxHMHnCqio
-	cjY4I2qXIEcfUIdRtQinc1ZwmOKlIjKqZNCNA
-X-Gm-Gg: ASbGncuUVWhe7Zt4CFpl1L66HTKHmbvwmG45vAreriVLncg+fWVKXPj6nc+oSSRCODP
-	B7Mz9C1yhowQ5mr5HZt52CrrQiXyZM2A=
-X-Google-Smtp-Source: AGHT+IHNDCZtWupPE2CKmpqwWgSSxU8NjMFFGRWVi+JYDVnnaUFSF2Bl/ZJ1PGYqEOpPVp+J3GCHhK5AwFATV2K8lgg=
-X-Received: by 2002:a05:6402:4586:b0:5d0:bf27:ef8a with SMTP id
- 4fb4d7f45d1cf-5d3be715323mr8666902a12.26.1733673295651; Sun, 08 Dec 2024
- 07:54:55 -0800 (PST)
+        bh=VOJBXBT9KHP6qO77x8aTnN+lP+X2U3kOYe5lpVyrkg0=;
+        b=V0e58km7XWdRG6Xb2bH3Bb+rF2TFHvpih93XxqoLeFR/DXtSEkIJ4tNSX9VYr2B6Ie
+         hN0PCNrqzEpnLyoxU61Ae3Y6H5dAxG0dI8GmD9E15t7A0V9hPsrH6mgr3tSSd/MjlsRD
+         6L1SDtBju9pAo9AaMjIegxduY/0vwLHy2TP2ootWuELTk7mRl0/y8jIOly9XBGbMmMse
+         xOF9wNe6PwR1OYf464mD3eRpAAXl91oV9qIMDKtxkjy7QAg/m6oDjc/xi0Ct/roKx7Fa
+         rbKZgMOdx1v0pubSpBHnQncjB0F51gZs8yOF/BDwiLEd5fblSbvz2fPEJc/5oeGrS50x
+         9D+g==
+X-Forwarded-Encrypted: i=1; AJvYcCW+fVGyz2BGbqOYFWGQponDQ2E9KwfIgtbrxREHHIryRN+swZkB5iSzzaQ3CbY7Z3wfQsssyzWyHfoGXxI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjLRTyCxoUqNmifRwrkVTfJ4bR2ctITC0+w9cQLDt1PgA1No8U
+	wChA6pCIBK3BXzBkgSeT6E/kYn/WqLpoDtdjZm19lv1F5eI2hkLRKj9rzax/oXTjpWa6qqV1rFn
+	uqTlVQc2WOgwyDi8ClNjE2Sq0dDo=
+X-Gm-Gg: ASbGnctaei0mu7itFmaROIzTi1By800/Mxu5TkOwAdevbcm/2wweol5xgEl9Aie5Z3X
+	CdYAJcV50FO2z6q5oNmqhAgkFEaCs6/M=
+X-Google-Smtp-Source: AGHT+IHaHReW6obouKTepWbLjlODk30vepCGJfn0QbNJ/om7EpgYxwGWH2WsfMEkpffh94gUB0TVkv4zRUwNpV3OXDw=
+X-Received: by 2002:a17:906:30db:b0:aa6:61bb:17df with SMTP id
+ a640c23a62f3a-aa661bb1953mr358459366b.49.1733673330984; Sun, 08 Dec 2024
+ 07:55:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204052932.112446-1-wei.fang@nxp.com> <20241204052932.112446-6-wei.fang@nxp.com>
- <Z1W2lp5jNPqJZi4C@shredder>
-In-Reply-To: <Z1W2lp5jNPqJZi4C@shredder>
-From: Eric Dumazet <edumazet@google.com>
-Date: Sun, 8 Dec 2024 16:54:44 +0100
-Message-ID: <CANn89i+E+kCZCNBtu=XnyLHsMNF=Ks9BkK1+qTQNxrPDQX-Mcw@mail.gmail.com>
-Subject: Re: [PATCH v6 RESEND net-next 5/5] net: enetc: add UDP segmentation
- offload support
-To: Ido Schimmel <idosch@idosch.org>
-Cc: Wei Fang <wei.fang@nxp.com>, claudiu.manoil@nxp.com, vladimir.oltean@nxp.com, 
-	xiaoning.wang@nxp.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	kuba@kernel.org, pabeni@redhat.com, frank.li@nxp.com, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev
+References: <20241208150028.325349-1-hdegoede@redhat.com>
+In-Reply-To: <20241208150028.325349-1-hdegoede@redhat.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sun, 8 Dec 2024 17:54:54 +0200
+Message-ID: <CAHp75VeoRh+SM_vr=KSf-JR5simc9PR=eUjHMAZXmzxLEYmw1w@mail.gmail.com>
+Subject: Re: [PATCH v2] mfd: intel_soc_pmic_chtdc_ti: Fix invalid
+ regmap-config max_register value
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Andy Shevchenko <andy@kernel.org>, Lee Jones <lee@kernel.org>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Dec 8, 2024 at 4:09=E2=80=AFPM Ido Schimmel <idosch@idosch.org> wro=
-te:
+On Sun, Dec 8, 2024 at 5:00=E2=80=AFPM Hans de Goede <hdegoede@redhat.com> =
+wrote:
 >
-> On Wed, Dec 04, 2024 at 01:29:32PM +0800, Wei Fang wrote:
-> > Set NETIF_F_GSO_UDP_L4 bit of hw_features and features because i.MX95
-> > enetc and LS1028A driver implements UDP segmentation.
-> >
-> > - i.MX95 ENETC supports UDP segmentation via LSO.
-> > - LS1028A ENETC supports UDP segmentation since the commit 3d5b459ba0e3
-> > ("net: tso: add UDP segmentation support").
-> >
-> > Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > ---
-> > v2: rephrase the commit message
-> > v3: no changes
-> > v4: fix typo in commit message
-> > v5: no changes
-> > v6: no changes
-> > ---
-> >  drivers/net/ethernet/freescale/enetc/enetc_pf_common.c | 6 ++++--
-> >  drivers/net/ethernet/freescale/enetc/enetc_vf.c        | 6 ++++--
-> >  2 files changed, 8 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf_common.c b/d=
-rivers/net/ethernet/freescale/enetc/enetc_pf_common.c
-> > index 82a67356abe4..76fc3c6fdec1 100644
-> > --- a/drivers/net/ethernet/freescale/enetc/enetc_pf_common.c
-> > +++ b/drivers/net/ethernet/freescale/enetc/enetc_pf_common.c
-> > @@ -110,11 +110,13 @@ void enetc_pf_netdev_setup(struct enetc_si *si, s=
-truct net_device *ndev,
-> >       ndev->hw_features =3D NETIF_F_SG | NETIF_F_RXCSUM |
-> >                           NETIF_F_HW_VLAN_CTAG_TX | NETIF_F_HW_VLAN_CTA=
-G_RX |
-> >                           NETIF_F_HW_VLAN_CTAG_FILTER | NETIF_F_LOOPBAC=
-K |
-> > -                         NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
-> > +                         NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6 =
-|
-> > +                         NETIF_F_GSO_UDP_L4;
-> >       ndev->features =3D NETIF_F_HIGHDMA | NETIF_F_SG | NETIF_F_RXCSUM =
-|
-> >                        NETIF_F_HW_VLAN_CTAG_TX |
-> >                        NETIF_F_HW_VLAN_CTAG_RX |
-> > -                      NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6;
-> > +                      NETIF_F_HW_CSUM | NETIF_F_TSO | NETIF_F_TSO6 |
-> > +                      NETIF_F_GSO_UDP_L4;
-> >       ndev->vlan_features =3D NETIF_F_SG | NETIF_F_HW_CSUM |
-> >                             NETIF_F_TSO | NETIF_F_TSO6;
+> The max_register =3D 128 setting in the regmap config is not valid.
 >
-> I didn't see any wording about it in the commit message / cover letter
-> so I will ask: Any reason not to enable UDP segmentation offload on
-> upper VLAN devices by setting the feature in 'ndev->vlan_features'?
+> The Intel Dollar Cove TI PMIC has an eeprom unlock register at address 0x=
+88
+> and a number of EEPROM registers at 0xF?. Increase max_register to 0xff s=
+o
+> that these registers can be accessed.
 
-Going to back to my commit, it stated that net/core/tso.c was only
-dealing with basic stuff.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-Adding vlan support would need some changes there, I guess this should
-be done if there is enough interest and testing.
-
-    commit 3d5b459ba0e3788ab471e8cb98eee89964a9c5e8    net: tso: add
-UDP segmentation support
-
-    Note that like TCP, we do not support additional encapsulations,
-    and that checksums must be offloaded to the NIC.
+--=20
+With Best Regards,
+Andy Shevchenko
 
