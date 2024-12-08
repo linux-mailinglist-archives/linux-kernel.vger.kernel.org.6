@@ -1,375 +1,177 @@
-Return-Path: <linux-kernel+bounces-436514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F8079E86F8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:10:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC3BD9E86FC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:15:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D0EE164427
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:10:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B91C21644BC
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48596188A0D;
-	Sun,  8 Dec 2024 17:10:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C5A18A6C2;
+	Sun,  8 Dec 2024 17:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsP/eHrl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vyzlni3H"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C99614658C;
-	Sun,  8 Dec 2024 17:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324F5189F3B
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677810; cv=none; b=hKCOxLuWb7ZmDejZOQr32tJ9DMQEGFBDaVKO+Old+6MGgmh8G2ojHzGfvFb7mcjmlfq3utqb2fRiHE3GvxBEfPFvJnutpeYVKkg416YXURSlpjTtrldNPHpPOBJke690Mi7pZec7WquC+QmK/gci3IWkJgvr0hEy31T7qOdHf7E=
+	t=1733678105; cv=none; b=fel8pBXPjH0qH3EcLu7xbA3+zXoc+3O5AzFUj+pXd6ujU9QcerIb3cFHvRepN+NdA1jP/bY19E4GfC+kJRsGlp255MDcAikAE+KF28MADr6P89AlrVsHDhbiFl8DJFpO5r2be9UIgiTVCzrghvBpCyLOzSsw8uXTwEf7QhadEnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677810; c=relaxed/simple;
-	bh=KF8nbs+k0tFoE1SZ40LOhno5q9rxhSVZ249lTbeBlnA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=icfdZclKszaJ/yeJNn8poFUnM2sZWS+zw1LNgUZEmeZJB/AVBf5DivYW07DBmmEuoOv42vSNbW7lIDraNw79/Ihd4/VeIVcMi8IPFLggzfNpR3xy/VhijcJWKPfn35KZLj1mlqtxxMx5o6l8sA9UhVNHjAVYYbAbiHb4LEAgajQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsP/eHrl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17C05C4CED2;
-	Sun,  8 Dec 2024 17:10:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677809;
-	bh=KF8nbs+k0tFoE1SZ40LOhno5q9rxhSVZ249lTbeBlnA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jsP/eHrl/Ng+QAqedYRBLU4HSpqfWDBIRJ0lxWobs4ySjYs4N9OWPJ5dAQQTMtw21
-	 9M+zDDmwLWK+NTWoAHOhYGHbT6TYxZNZcYDrJJh2NKqY/D1xsgY/QwD6qK2FzdIyJw
-	 G453NcA1wQeyI+xG2lGFpCg5kwQUwqhjqoegk0RDOO7Mvfr+Bs9eMu/IxeQiErrLdQ
-	 BHBZ34K09uryxWB5kZFYCRx3+IzjNf7/nkTXw9B6lr3AYcGADQ1OK/FvsBO0TIwzFd
-	 Kmko0nQTF/PFGszKouIUg3HPAPQuJ0xNCQ1e7y5VPdO0XBItldnpeFntjAvVUBxTL6
-	 UmDjkQgR+4R+Q==
-Date: Sun, 8 Dec 2024 17:10:01 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: "andy.shevchenko@gmail.com" <andy.shevchenko@gmail.com>,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Lars-Peter Clausen
- <lars@metafoo.de>, gregkh@linuxfoundation.org, "Rafael J. Wysocki"
- <rafael@kernel.org>
-Subject: Re: [PATCH v1 1/2] driver core: Split devres APIs to
- device/devres.h
-Message-ID: <20241208171001.4994e749@jic23-huawei>
-In-Reply-To: <20241203195340.855879-2-andriy.shevchenko@linux.intel.com>
-References: <20241203195340.855879-1-andriy.shevchenko@linux.intel.com>
-	<20241203195340.855879-2-andriy.shevchenko@linux.intel.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733678105; c=relaxed/simple;
+	bh=CNbRGW8g8fcfrwiNfo+C/cJDf1YMo9RhfdZTo8iq2f4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZshP6rv6hyLd1um5+Um3CGIzjKJJ6ZjxnQuoOTxxOYtA/fDs2vzFXX0JJmNCQSUyZkGNA0Sm4R3G6YcUqmhYBTAUsbSPlfrJ9nJU8JZgvfgAlAOxGZcn4AMRRSZa/qRWdMjsFr+T+YmEzbjrsIwQMXM1dLUuyFX8xU+4f/knkXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vyzlni3H; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5401bd6cdb7so468465e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 09:15:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733678101; x=1734282901; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dqFplj0uMB8EInw65XscKncVTRnpYupnLVJWyaDnZYI=;
+        b=Vyzlni3HuXPl2eCGwnRBEuKwFbjlFI/vrgF8eNTCVYJycVrd/JUVoSEGQsTSi0yAlD
+         ylFdN/AiR1Q2ZVnQkypXxYeKcuvDkhfnwC9koj1IxOTUxB9J9/JaHGBaTqwkrpDL7PyZ
+         3qweteucYvi5cFNWRHrF0hE8fJPgz65MpcuYk84oSordFKr8/lvUG4BItSY/CBAxljOk
+         lnnw2NF/jwlgthtfz3RQnR/PUo2Oz7zT56988HtuvaR4dzkhwdXlIROEcma1MhvLc2vP
+         +mE0p9FirEA5nwu5RzhluLVxArLjDvW/R2XXrhGlLkphq8G20P8mqbN2wVEM+heHK1m1
+         jxXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733678101; x=1734282901;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dqFplj0uMB8EInw65XscKncVTRnpYupnLVJWyaDnZYI=;
+        b=JYR4uWmQqowjBGJB5HEIOJ8Fz35Jmt+1/Alhw6YJzmYXzeWIbwddUAscEigYm7zDo2
+         fmbtMKT27L/Nf5ksvJTWEd9u6U824qy2WfrgF/Ebq5+DVmtJRqbviw5pkP3fWJjlLW5a
+         PFCAHSB1DXSM4Hhw4iOt/YmYVeBSduxRC6un44B40FzS0vFomsto0KwZs3DiKlGBBZ+w
+         GW2bDsKogNDPHUZIRj9It5r+H8lBIq05a7YSnz7y4G/gv6JuUQE4Lkgt6pzacKQQOAtM
+         jzWjtex25xg9te9DHQ+c5SL+ZmJKR3YADxIYUz9DBIJD0u5HEHFGEZFHoM7KjH2PTWjA
+         vdNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh/3hP7VGFEJ7LkgC1vDxDeM/rGXXsImgNFGDyDMZLSQB8X4CzbsFaKto6eA2vMp7HpvaD0yVoiQYUp0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMexRU+U6mLiW71qCeYQNDPnauB7uFSdIy0NJ53ffsAISygQqm
+	cEn4IounzME1HwjOBnLLFqW5Ry8ogsT15dNd6YF+AUgWBan7BRluJCUW4z7JZ30=
+X-Gm-Gg: ASbGnctnCXMCQNa6MR2vysGY9aO2sWhm4pGNPvpvBXOv0zazdISgMDvlynuK/MEDuPe
+	XFG9j7L8sN3tkrsGCiKEVchk9swQeN425i0BQDfqW5iyXOK24W5atWW58U1BL1lkrTxqwNe1X2A
+	jMTUi6g/3qqImidJaQd3jR76a6qdy72s+EG3QzhmiaSDMdUOGdAKGREhPv5WTjY1977VF5VfITA
+	rcb7ZVLRZ9VpzaAo6u3Q2Jzidm4rtn0HZ7wu1/G7brvW6SKCcKxccecVhOFoi23p2j9kYn+0L+y
+	5EabadoikJlM9LWCaD1WJQcfkg+25A==
+X-Google-Smtp-Source: AGHT+IFkgC4CY00uHOEhGCDb+lElZAAae4ogeFkb0UE5GLOs3gylH/vk0xRefOvLftIPM6MTtA/XpQ==
+X-Received: by 2002:a05:6512:138f:b0:53e:1b94:7279 with SMTP id 2adb3069b0e04-53e2c2b9319mr3748035e87.23.1733678100986;
+        Sun, 08 Dec 2024 09:15:00 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e33ac12fesm787746e87.108.2024.12.08.09.14.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 09:15:00 -0800 (PST)
+Date: Sun, 8 Dec 2024 19:14:58 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_mohamull@quicinc.com, 
+	quic_hbandi@quicinc.com, quic_anubhavg@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v4 2/4] arm64: dts: qcom: qcs6490-rb3gen: add and enable
+ BT node
+Message-ID: <7y6mu2mtujloctxwi5voszmeo4ctheceiypbnbslyxv34jknm4@ewkooz5fi4w6>
+References: <20241204131706.20791-1-quic_janathot@quicinc.com>
+ <20241204131706.20791-3-quic_janathot@quicinc.com>
+ <pzkijkdswskaq6232uldapz3b6v6zplif7uah24iwq3ymlezft@skbcy2vod3c5>
+ <53d44689-798e-4b5f-a0f1-8a39bea2f19b@quicinc.com>
+ <hjui7cn4iuo4id2q4mmqx2i7c3eyu6ae43fcft6psflypb3aya@ia5i5s4ya45e>
+ <d68907f0-15e4-486a-9077-31e8a8659e02@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d68907f0-15e4-486a-9077-31e8a8659e02@quicinc.com>
 
-On Tue,  3 Dec 2024 21:48:51 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> device.h is a huge header which is hard to follow and easy to miss
-> something. Improve that by splitting devres APIs to device/devres.h.
+On Sun, Dec 08, 2024 at 09:42:21PM +0530, Janaki Ramaiah Thota wrote:
 > 
-> In particular this helps to speedup the build of the code that includes
-> device.h solely for a devres APIs.
 > 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  include/linux/device.h        | 122 +--------------------------------
->  include/linux/device/devres.h | 124 ++++++++++++++++++++++++++++++++++
->  2 files changed, 127 insertions(+), 119 deletions(-)
->  create mode 100644 include/linux/device/devres.h
+> On 12/8/2024 5:35 PM, Dmitry Baryshkov wrote:
+> > On Fri, Dec 06, 2024 at 08:15:35PM +0530, Janaki Ramaiah Thota wrote:
+> > > 
+> > > 
+> > > On 12/5/2024 4:29 AM, Dmitry Baryshkov wrote:
+> > > > On Wed, Dec 04, 2024 at 06:47:04PM +0530, Janaki Ramaiah Thota wrote:
+> > > > > Add a node for the PMU module of the WCN6750 present on the
+> > > > > qcs6490-rb3gen board and assign its power outputs to the Bluetooth
+> > > > > module.
+> > > > > 
+> > > > > Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+> > > > > ---
+> > > > >    arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 165 ++++++++++++++++++-
+> > > > >    1 file changed, 164 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > index 27695bd54220..07650648214e 100644
+> > > > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+> > > > > @@ -1,6 +1,6 @@
+> > > > >    // SPDX-License-Identifier: BSD-3-Clause
+> > > > >    /*
+> > > > > - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> > > > > + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> > > > >     */
+> > > > >    /dts-v1/;
+> > > > > @@ -33,6 +33,7 @@
+> > > > >    	aliases {
+> > > > >    		serial0 = &uart5;
+> > > > > +		serial1 = &uart7;
+> > > > >    	};
+> > > > >    	chosen {
+> > > > > @@ -217,6 +218,63 @@
+> > > > >    		regulator-min-microvolt = <3700000>;
+> > > > >    		regulator-max-microvolt = <3700000>;
+> > > > >    	};
+> > > > > +
+> > > > > +	wcn6750-pmu {
+> > > > > +		compatible = "qcom,wcn6750-pmu";
+> > > > > +		pinctrl-names = "default";
+> > > > > +		pinctrl-0 = <&bt_en>;
+> > > > > +		vddaon-supply = <&vreg_s7b_0p972>;
+> > > > > +		vddasd-supply = <&vreg_l11c_2p8>;
+> > > > > +		vddpmu-supply = <&vreg_s7b_0p972>;
+> > > > > +		vddrfa0p8-supply = <&vreg_s7b_0p972>;
+> > > > > +		vddrfa1p2-supply = <&vreg_s8b_1p272>;
+> > > > > +		vddrfa1p7-supply = <&vreg_s1b_1p872>;
+> > > > > +		vddrfa2p2-supply = <&vreg_s1c_2p19>;
+> > > > > +
+> > > > > +		bt-enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
+> > > > 
+> > > > Doesn't WCN6750 also have SW_CTRL and wifi-enable pins?
+> > > > 
+> > > 
+> > > For Bluetooth, these pins are not needed. We have verified Bluetooth
+> > > functionality, and it is working fine.
+> > 
+> > You are describing the hardware (PMU), not "a part of the PMU for the
+> > BT". Please check if there should be a wifi enable pin and adjust
+> > accordingly.
+> > 
 > 
-> diff --git a/include/linux/device.h b/include/linux/device.h
-> index 667cb6db9019..ad8ffbfc8651 100644
-> --- a/include/linux/device.h
-> +++ b/include/linux/device.h
-> @@ -12,6 +12,7 @@
->  #ifndef _DEVICE_H_
->  #define _DEVICE_H_
->  
-> +#include <linux/cleanup.h>
->  #include <linux/dev_printk.h>
->  #include <linux/energy_model.h>
->  #include <linux/ioport.h>
-> @@ -26,11 +27,11 @@
->  #include <linux/atomic.h>
->  #include <linux/uidgid.h>
->  #include <linux/gfp.h>
-> -#include <linux/overflow.h>
-> +
-Unrelated change.
->  #include <linux/device/bus.h>
->  #include <linux/device/class.h>
-> +#include <linux/device/devres.h>
->  #include <linux/device/driver.h>
-> -#include <linux/cleanup.h>
-This header movement is unrelated.
+> We further checked with WiFi team. For wcn6750, sw_ctrl and wifi-enable pins
+> handled from WiFi firmware/controller. So it is not needed to handle in PMU.
 
-I agree both are good but probably want to be a separate patch.
+Please mention that in the commit message and add a brief comment in the
+PMU node.
 
-Otherwise this seems sensible to me, but your cc list seems a little short!
-
-Greg and Rafael seems a good starting point so I've added them.
-
-Jonathan
-
-
->  #include <asm/device.h>
->  
->  struct device;
-> @@ -281,123 +282,6 @@ int __must_check device_create_bin_file(struct device *dev,
->  void device_remove_bin_file(struct device *dev,
->  			    const struct bin_attribute *attr);
->  
-> -/* device resource management */
-> -typedef void (*dr_release_t)(struct device *dev, void *res);
-> -typedef int (*dr_match_t)(struct device *dev, void *res, void *match_data);
-> -
-> -void *__devres_alloc_node(dr_release_t release, size_t size, gfp_t gfp,
-> -			  int nid, const char *name) __malloc;
-> -#define devres_alloc(release, size, gfp) \
-> -	__devres_alloc_node(release, size, gfp, NUMA_NO_NODE, #release)
-> -#define devres_alloc_node(release, size, gfp, nid) \
-> -	__devres_alloc_node(release, size, gfp, nid, #release)
-> -
-> -void devres_for_each_res(struct device *dev, dr_release_t release,
-> -			 dr_match_t match, void *match_data,
-> -			 void (*fn)(struct device *, void *, void *),
-> -			 void *data);
-> -void devres_free(void *res);
-> -void devres_add(struct device *dev, void *res);
-> -void *devres_find(struct device *dev, dr_release_t release,
-> -		  dr_match_t match, void *match_data);
-> -void *devres_get(struct device *dev, void *new_res,
-> -		 dr_match_t match, void *match_data);
-> -void *devres_remove(struct device *dev, dr_release_t release,
-> -		    dr_match_t match, void *match_data);
-> -int devres_destroy(struct device *dev, dr_release_t release,
-> -		   dr_match_t match, void *match_data);
-> -int devres_release(struct device *dev, dr_release_t release,
-> -		   dr_match_t match, void *match_data);
-> -
-> -/* devres group */
-> -void * __must_check devres_open_group(struct device *dev, void *id, gfp_t gfp);
-> -void devres_close_group(struct device *dev, void *id);
-> -void devres_remove_group(struct device *dev, void *id);
-> -int devres_release_group(struct device *dev, void *id);
-> -
-> -/* managed devm_k.alloc/kfree for device drivers */
-> -void *devm_kmalloc(struct device *dev, size_t size, gfp_t gfp) __alloc_size(2);
-> -void *devm_krealloc(struct device *dev, void *ptr, size_t size,
-> -		    gfp_t gfp) __must_check __realloc_size(3);
-> -__printf(3, 0) char *devm_kvasprintf(struct device *dev, gfp_t gfp,
-> -				     const char *fmt, va_list ap) __malloc;
-> -__printf(3, 4) char *devm_kasprintf(struct device *dev, gfp_t gfp,
-> -				    const char *fmt, ...) __malloc;
-> -static inline void *devm_kzalloc(struct device *dev, size_t size, gfp_t gfp)
-> -{
-> -	return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-> -}
-> -static inline void *devm_kmalloc_array(struct device *dev,
-> -				       size_t n, size_t size, gfp_t flags)
-> -{
-> -	size_t bytes;
-> -
-> -	if (unlikely(check_mul_overflow(n, size, &bytes)))
-> -		return NULL;
-> -
-> -	return devm_kmalloc(dev, bytes, flags);
-> -}
-> -static inline void *devm_kcalloc(struct device *dev,
-> -				 size_t n, size_t size, gfp_t flags)
-> -{
-> -	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
-> -}
-> -static inline __realloc_size(3, 4) void * __must_check
-> -devm_krealloc_array(struct device *dev, void *p, size_t new_n, size_t new_size, gfp_t flags)
-> -{
-> -	size_t bytes;
-> -
-> -	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
-> -		return NULL;
-> -
-> -	return devm_krealloc(dev, p, bytes, flags);
-> -}
-> -
-> -void devm_kfree(struct device *dev, const void *p);
-> -char *devm_kstrdup(struct device *dev, const char *s, gfp_t gfp) __malloc;
-> -const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
-> -void *devm_kmemdup(struct device *dev, const void *src, size_t len, gfp_t gfp)
-> -	__realloc_size(3);
-> -
-> -unsigned long devm_get_free_pages(struct device *dev,
-> -				  gfp_t gfp_mask, unsigned int order);
-> -void devm_free_pages(struct device *dev, unsigned long addr);
-> -
-> -#ifdef CONFIG_HAS_IOMEM
-> -void __iomem *devm_ioremap_resource(struct device *dev,
-> -				    const struct resource *res);
-> -void __iomem *devm_ioremap_resource_wc(struct device *dev,
-> -				       const struct resource *res);
-> -
-> -void __iomem *devm_of_iomap(struct device *dev,
-> -			    struct device_node *node, int index,
-> -			    resource_size_t *size);
-> -#else
-> -
-> -static inline
-> -void __iomem *devm_ioremap_resource(struct device *dev,
-> -				    const struct resource *res)
-> -{
-> -	return ERR_PTR(-EINVAL);
-> -}
-> -
-> -static inline
-> -void __iomem *devm_ioremap_resource_wc(struct device *dev,
-> -				       const struct resource *res)
-> -{
-> -	return ERR_PTR(-EINVAL);
-> -}
-> -
-> -static inline
-> -void __iomem *devm_of_iomap(struct device *dev,
-> -			    struct device_node *node, int index,
-> -			    resource_size_t *size)
-> -{
-> -	return ERR_PTR(-EINVAL);
-> -}
-> -
-> -#endif
-> -
->  /* allows to add/remove a custom action to devres stack */
->  void devm_remove_action(struct device *dev, void (*action)(void *), void *data);
->  void devm_release_action(struct device *dev, void (*action)(void *), void *data);
-> diff --git a/include/linux/device/devres.h b/include/linux/device/devres.h
-> new file mode 100644
-> index 000000000000..128d65defafc
-> --- /dev/null
-> +++ b/include/linux/device/devres.h
-> @@ -0,0 +1,124 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef _DEVICE_DEVRES_H_
-> +#define _DEVICE_DEVRES_H_
-> +
-> +#include <linux/err.h>
-> +#include <linux/gfp_types.h>
-> +#include <linux/numa.h>
-> +#include <linux/overflow.h>
-> +#include <linux/stdarg.h>
-> +#include <linux/types.h>
-> +
-> +struct device;
-> +struct device_node;
-> +struct resource;
-> +
-> +/* device resource management */
-> +typedef void (*dr_release_t)(struct device *dev, void *res);
-> +typedef int (*dr_match_t)(struct device *dev, void *res, void *match_data);
-> +
-> +void * __malloc
-> +__devres_alloc_node(dr_release_t release, size_t size, gfp_t gfp, int nid, const char *name);
-> +#define devres_alloc(release, size, gfp) \
-> +	__devres_alloc_node(release, size, gfp, NUMA_NO_NODE, #release)
-> +#define devres_alloc_node(release, size, gfp, nid) \
-> +	__devres_alloc_node(release, size, gfp, nid, #release)
-> +
-> +void devres_for_each_res(struct device *dev, dr_release_t release,
-> +			 dr_match_t match, void *match_data,
-> +			 void (*fn)(struct device *, void *, void *),
-> +			 void *data);
-> +void devres_free(void *res);
-> +void devres_add(struct device *dev, void *res);
-> +void *devres_find(struct device *dev, dr_release_t release, dr_match_t match, void *match_data);
-> +void *devres_get(struct device *dev, void *new_res, dr_match_t match, void *match_data);
-> +void *devres_remove(struct device *dev, dr_release_t release, dr_match_t match, void *match_data);
-> +int devres_destroy(struct device *dev, dr_release_t release, dr_match_t match, void *match_data);
-> +int devres_release(struct device *dev, dr_release_t release, dr_match_t match, void *match_data);
-> +
-> +/* devres group */
-> +void * __must_check devres_open_group(struct device *dev, void *id, gfp_t gfp);
-> +void devres_close_group(struct device *dev, void *id);
-> +void devres_remove_group(struct device *dev, void *id);
-> +int devres_release_group(struct device *dev, void *id);
-> +
-> +/* managed devm_k.alloc/kfree for device drivers */
-> +void * __alloc_size(2)
-> +devm_kmalloc(struct device *dev, size_t size, gfp_t gfp);
-> +void * __must_check __realloc_size(3)
-> +devm_krealloc(struct device *dev, void *ptr, size_t size, gfp_t gfp);
-> +static inline void *devm_kzalloc(struct device *dev, size_t size, gfp_t gfp)
-> +{
-> +	return devm_kmalloc(dev, size, gfp | __GFP_ZERO);
-> +}
-> +static inline void *devm_kmalloc_array(struct device *dev, size_t n, size_t size, gfp_t flags)
-> +{
-> +	size_t bytes;
-> +
-> +	if (unlikely(check_mul_overflow(n, size, &bytes)))
-> +		return NULL;
-> +
-> +	return devm_kmalloc(dev, bytes, flags);
-> +}
-> +static inline void *devm_kcalloc(struct device *dev, size_t n, size_t size, gfp_t flags)
-> +{
-> +	return devm_kmalloc_array(dev, n, size, flags | __GFP_ZERO);
-> +}
-> +static inline __realloc_size(3, 4) void * __must_check
-> +devm_krealloc_array(struct device *dev, void *p, size_t new_n, size_t new_size, gfp_t flags)
-> +{
-> +	size_t bytes;
-> +
-> +	if (unlikely(check_mul_overflow(new_n, new_size, &bytes)))
-> +		return NULL;
-> +
-> +	return devm_krealloc(dev, p, bytes, flags);
-> +}
-> +
-> +void devm_kfree(struct device *dev, const void *p);
-> +
-> +void * __realloc_size(3)
-> +devm_kmemdup(struct device *dev, const void *src, size_t len, gfp_t gfp);
-> +
-> +char * __malloc
-> +devm_kstrdup(struct device *dev, const char *s, gfp_t gfp);
-> +const char *devm_kstrdup_const(struct device *dev, const char *s, gfp_t gfp);
-> +char * __printf(3, 0) __malloc
-> +devm_kvasprintf(struct device *dev, gfp_t gfp, const char *fmt, va_list ap);
-> +char * __printf(3, 4) __malloc
-> +devm_kasprintf(struct device *dev, gfp_t gfp, const char *fmt, ...);
-> +
-> +unsigned long devm_get_free_pages(struct device *dev, gfp_t gfp_mask, unsigned int order);
-> +void devm_free_pages(struct device *dev, unsigned long addr);
-> +
-> +#ifdef CONFIG_HAS_IOMEM
-> +
-> +void __iomem *devm_ioremap_resource(struct device *dev, const struct resource *res);
-> +void __iomem *devm_ioremap_resource_wc(struct device *dev, const struct resource *res);
-> +
-> +void __iomem *devm_of_iomap(struct device *dev, struct device_node *node, int index,
-> +			    resource_size_t *size);
-> +#else
-> +
-> +static inline
-> +void __iomem *devm_ioremap_resource(struct device *dev, const struct resource *res)
-> +{
-> +	return ERR_PTR(-EINVAL);
-> +}
-> +
-> +static inline
-> +void __iomem *devm_ioremap_resource_wc(struct device *dev, const struct resource *res)
-> +{
-> +	return ERR_PTR(-EINVAL);
-> +}
-> +
-> +static inline
-> +void __iomem *devm_of_iomap(struct device *dev, struct device_node *node, int index,
-> +			    resource_size_t *size)
-> +{
-> +	return ERR_PTR(-EINVAL);
-> +}
-> +
-> +#endif
-> +
-> +#endif /* _DEVICE_DEVRES_H_ */
-
+-- 
+With best wishes
+Dmitry
 
