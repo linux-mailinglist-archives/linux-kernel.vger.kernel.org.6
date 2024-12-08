@@ -1,96 +1,207 @@
-Return-Path: <linux-kernel+bounces-436362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E9B9E84F7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:13:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC7FB9E84FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1515628170D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:13:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 693D128174F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72541146D76;
-	Sun,  8 Dec 2024 12:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90E18145A07;
+	Sun,  8 Dec 2024 12:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T6ZXlYea"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=friedrich.vock@gmx.de header.b="EdKPHgJw"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369B222C6C5
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:13:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD38BA4B;
+	Sun,  8 Dec 2024 12:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733660014; cv=none; b=oMGu/B2PjadZr3zIJRb5BROD5ATydLAuqTIiKIt9u0CxoY8G9xwWggoHWxy+xDWwImISZLvCYQ9OjqE9XN52B3kRFYT6exIbHZSdHq4j8v+qCwruvnRULRk0gZutcyEH9QWIMdz4larOvKM6OPJiJxe/AdMninQq93fsREMYu1E=
+	t=1733660159; cv=none; b=jnkj5rlF3iJhHKueo/oK2hJs1UfviStEhyMQSrbvLsdEo/7TU+Rg4HRIHPqblFXRjKZfJDHJUAIopE1hODY828tNh15JKvxP4IgJrd+VbR2uLtY2IcPbDQZ2MSiru8HVVd+0RiyfmGtYF2XT9H6hUZgmntsnsZTDdqGxikgblOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733660014; c=relaxed/simple;
-	bh=9k55SSvilJwIU2K6+1S00Q1l/GJx19QY0LEzQMQV8wY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cIEzdjphXPgWLnKv/CUVWQrJTz4gAuAEV0uujLg0siH98YagU/2zHbXGouU18BNBxrzKUvSTQ+jz8bnQSZqVOmsgBCf2IXQ+P7zcv6XpMcEsjkIfPC3n7uCXj8TrdGSY51yjbQkgTxoqi9ABizdlVWDiNfp71adNkFobyUSV1DA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T6ZXlYea; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733660012;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9k55SSvilJwIU2K6+1S00Q1l/GJx19QY0LEzQMQV8wY=;
-	b=T6ZXlYea99CTNHNNgEoS/hy2INr0RaXx+XIKcKeRVL/M1F/oK89MbFrqUdnSmTPQm0zAUG
-	aRCamIukMt3PHD2txdnjl6o1oLZWqgc/U1iDOUQoVcR+gvYyheqbcGE/xYERRlvLGTIcqk
-	09c0qNCPtY63W3hM1iQqMkaw8Qqfm70=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-KL5y-vUDPw6ByRwbPHd4WA-1; Sun,
- 08 Dec 2024 07:13:28 -0500
-X-MC-Unique: KL5y-vUDPw6ByRwbPHd4WA-1
-X-Mimecast-MFC-AGG-ID: KL5y-vUDPw6ByRwbPHd4WA
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2EBA919560AB;
-	Sun,  8 Dec 2024 12:13:27 +0000 (UTC)
-Received: from fedora.redhat.com (unknown [10.39.192.61])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ED13E1956095;
-	Sun,  8 Dec 2024 12:13:22 +0000 (UTC)
-From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-To: quic_yuzha@quicinc.com
-Cc: ath11k@lists.infradead.org,
-	jjohnson@kernel.org,
-	jtornosm@redhat.com,
-	kvalo@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org,
-	quic_cjhuang@quicinc.com,
-	vbenes@redhat.com
-Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations are supported
-Date: Sun,  8 Dec 2024 13:13:21 +0100
-Message-ID: <20241208121321.9760-1-jtornosm@redhat.com>
-In-Reply-To: <0f24e115-e76d-4c8a-8a1b-591a157ee78e@quicinc.com>
-References: <0f24e115-e76d-4c8a-8a1b-591a157ee78e@quicinc.com>
+	s=arc-20240116; t=1733660159; c=relaxed/simple;
+	bh=n3hMlh35N4fAdrNPeUjRyYjFwN7yyswQbJ1QgvMueA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uDhuh8+yG1BK95nOE8j1K5nVr7GxdgSyuTGFl1eg6V8QgZjujINiwwWnnWZD+lad9PExiQBF10Kxqw8U421vm9jEk3DS8kx+s4qULXryTiajLFJmbH+jQFnfBcwR2bFczGOHZd+E8Qw3ImuyqS6+9iX8foyw5hJhxIWV4loJPT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=friedrich.vock@gmx.de header.b=EdKPHgJw; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1733660136; x=1734264936; i=friedrich.vock@gmx.de;
+	bh=BLAbvkpLslpLzb0lubH4OtDMnvi3SfW5XkcUzyWKVW4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=EdKPHgJwS5oEAs0DAmTwgWExnkDV5Fyrkrfdr3HuVZRRQ4ipNlKrXM683f54O279
+	 lg4oKYcyFlZj1wAro+5mYBUskrd6bgpm4HmRCP3AKEs3zwk69mOEtle59yU5D9o1l
+	 9YL45oRUXhtxpeI6ZQnjydmQ3lWwYOwCe5g9OU8o5QD0h1EBrZoc7Adz3skxPrac8
+	 47ZYSs0RqVg1g4uCdZ9uLsIzyZj6dsGoIjXogGNqx944VxQrLV2/rUg691Od1mGXN
+	 wB8ec3e7zrKQM4ale9+vbW9UgQEsy/YOSIO7dPDh2wmRtG8TFnvj42ZjGQygMcA5L
+	 v0BILk4yK1/8jgGcLg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.0.3] ([109.91.201.165]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MMGRA-1t2B5C1wYg-00W7PB; Sun, 08
+ Dec 2024 13:15:36 +0100
+Message-ID: <29a71119-04de-4c76-a98a-d0fcb906390f@gmx.de>
+Date: Sun, 8 Dec 2024 13:15:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/7] kernel/cgroups: Add "dmem" memory accounting
+ cgroup.
+To: Maarten Lankhorst <dev@lankhorst.se>, linux-kernel@vger.kernel.org,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
+ Johannes Weiner <hannes@cmpxchg.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Maxime Ripard <mripard@kernel.org>
+Cc: cgroups@vger.kernel.org, linux-mm@kvack.org,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+References: <20241204134410.1161769-1-dev@lankhorst.se>
+Content-Language: en-US
+From: Friedrich Vock <friedrich.vock@gmx.de>
+Autocrypt: addr=friedrich.vock@gmx.de; keydata=
+ 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
+ f7+xmX0X3AMtWz/15Y+7cPO2
+In-Reply-To: <20241204134410.1161769-1-dev@lankhorst.se>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w7dNuTyuZ4TNQ5hpfnJCIfhCruXm3YA39650Wbp2o5G6DWCPayq
+ sCwH/Q8UJcrIfs3y6+NDLqeid9rkeIEahxaG1ltE49BO7ujXuBXCwKwLwq+NCLasDjS5NRi
+ IE2VsH5P2rOXkUlkIxtLeeSZcX0KhPODBYfGFFuXGjWwTnDgtNbOn3ex0XCa7ulELX8KyvN
+ 3HgPrbl0Jo4hXtdv1cOWw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:9AqCQq5rpO0=;GNb/YoPjSN5jUZMfQmXl+Q8muWw
+ YCQilh65p8v4u4FtDBZBA/ZJKBkeZjc7k0GEYS0gUa7alSHCINprxzUASsKjfGYudWSYEV919
+ 5mmvR7nQUa/A9+chPJp/SKgvj6GlErKyVTtZnl9gMKKA9R06LL/3EEsTvtKIJ+lrwg6bfu7qb
+ C4QTFXg3BCZhT/Fl+fJVLOgGGtFJwFXHCfnRXtkFBqiahb/jtSqd4sasTBFNJmxqyfwN281mK
+ 0Hu5Jvd0Uggj3usvC3+WFZUMTIFu2qWVf2IcNV1eVlb/0ZhVuf6YQwXOWFtFYKVcDKewLbVa1
+ Un7fE62Phs282W9TzCeEnMog0IM+nI8oXi2sh/5ecHxQW0cnvluhrTLZ4iZ5jXXbugyVRE0yp
+ 90hcBXzOcNGH8QQsfsxamh3a9LBiHFMzh9KLoKAGKUNgywSwIFWfYWH02Yeipmvq/IaHO9eK7
+ uTytnvA7D9866hkwqGWTVdrXgfrGfLyNkiwRFoqO4zCz+fk+J27fqKdIEHZbvbLak8HbtyImn
+ KIlbZUJOab3cqMmXdc7tNGFoEtGN6wvS5QR+xuyMFACkurMe47MQrWQ24v3BOk/Pyd5YPlW4w
+ YdGLQAfAqA4j3zIHEZzcMc/5tQp+mvJE0guUuLLLaJ2rexsQM13nM6N20pjKFblV5L/FtRcln
+ 99QH35FHhhbV3DY9odCK6sMCXEjlgEbnN9pUvNol8GYQKTU2Fc//m94RApjgq4iWZUiVa251P
+ 5CF3tD1YxdvDzKoJts9pA6D367FSv2o1Zvgwi45MvyoU4tBN1JAe1qcBq99rEpSlznErWiig3
+ 9JYtUrsEWI1+Hr4hywoiRFI0F73EO9CFylWlUIZq7fNZd24uN9Jv3ad3u1INVf5Y58AOwX9Dw
+ fOHvCLY0CNGTw1PxAIFEsnIzAX/X0m2iulXrTaukhFaFmynO7gQvncdy/ajPETytpCd5wWtYh
+ Fbf9E+5QsDPHFUGuGNJeeZoWI+AUzQL88jFMoj1AT63Qwdc2tsUiE7jORxC+6pbtlIOfWY9F0
+ YvGmGIFcuIyYVS7xIoLL8lohTEns6FT6wNGIavEUBywKHpCfs1ZWQWirJdMkr6PpPlENlzQvW
+ o5ozclGn3Q+LK5M6jf7AINUSTIcmFN
 
->My point is that you can try setup with ap type interface,
-This is what I am doing!
-> now combination limits not allow up 3 inferfaces with managed interface.
-Why? The limits were bigger previously.
-Why cannot allow the old configuration (previous to the commit f019f4dff2e4
-("wifi: ath11k: support 2 station interfaces"a))?
-In another way, your proposed configuration is limited for me.
+Hi,
 
-Thanks
+On 04.12.24 14:44, Maarten Lankhorst wrote:
+> New update. Instead of calling it the 'dev' cgroup, it's now the 'dmem' =
+cgroup.
 
-Best regards
-Jose Ignacio
+Thanks! I think this version looks pretty good.
+
+>
+> Because it only deals with memory regions, the UAPI has been updated to =
+use dmem.min/low/max/current, and to make the API cleaner, the names are c=
+hanged too.
+>
+> dmem.current could contain a line like:
+> "drm/0000:03:00.0/vram0 1073741824"
+>
+> But I think using "drm/card0/vram0" instead of PCIID would perhaps be go=
+od too. I'm open to changing it to that based on feedback.
+
+Agree, allowing userspace to reference DRM devices via "cardN" syntax
+sounds good. What about other subsystems potentially using dmem cgroups?
+I'm not familiar with the media subsystem, but I imagine we might be
+dealing with things like USB devices there? Is something like a
+"deviceN" possible there as well, or would device IDs look completely
+different?
+
+Regards,
+Friedrich
+
+>
+> I've created an IGT test for min and max, and found the changes
+> from Friedrich Vock sent as feedback were needed.
+> I've integrated those into the first patch.
+>
+> Maarten Lankhorst (5):
+>    kernel/cgroup: Add "dmem" memory accounting cgroup
+>    drm/ttm: Handle cgroup based eviction in TTM
+>    drm/xe: Implement cgroup for vram
+>    drm/amdgpu: Add cgroups implementation
+>    drm/xe: Hack to test with mapped pages instead of vram.
+>
+> Maxime Ripard (2):
+>    drm/drv: Add drmm managed registration helper for dmem cgroups.
+>    drm/gem: Add cgroup memory accounting for VRAM helper.
+>
+>   Documentation/admin-guide/cgroup-v2.rst       |  58 +-
+>   Documentation/core-api/cgroup.rst             |   9 +
+>   Documentation/core-api/index.rst              |   1 +
+>   Documentation/gpu/drm-compute.rst             |  54 ++
+>   drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c  |   4 +
+>   drivers/gpu/drm/drm_drv.c                     |  32 +
+>   drivers/gpu/drm/drm_gem_vram_helper.c         |  15 +-
+>   drivers/gpu/drm/ttm/tests/ttm_bo_test.c       |  18 +-
+>   .../gpu/drm/ttm/tests/ttm_bo_validate_test.c  |   4 +-
+>   drivers/gpu/drm/ttm/tests/ttm_resource_test.c |   2 +-
+>   drivers/gpu/drm/ttm/ttm_bo.c                  |  54 +-
+>   drivers/gpu/drm/ttm/ttm_resource.c            |  23 +-
+>   drivers/gpu/drm/xe/xe_ttm_sys_mgr.c           |   5 +
+>   drivers/gpu/drm/xe/xe_ttm_vram_mgr.c          |   8 +
+>   include/drm/drm_drv.h                         |   5 +
+>   include/drm/ttm/ttm_resource.h                |  12 +-
+>   include/linux/cgroup_dmem.h                   |  67 ++
+>   include/linux/cgroup_subsys.h                 |   4 +
+>   include/linux/page_counter.h                  |   2 +-
+>   init/Kconfig                                  |  10 +
+>   kernel/cgroup/Makefile                        |   1 +
+>   kernel/cgroup/dmem.c                          | 861 ++++++++++++++++++
+>   mm/page_counter.c                             |   4 +-
+>   23 files changed, 1219 insertions(+), 34 deletions(-)
+>   create mode 100644 Documentation/core-api/cgroup.rst
+>   create mode 100644 Documentation/gpu/drm-compute.rst
+>   create mode 100644 include/linux/cgroup_dmem.h
+>   create mode 100644 kernel/cgroup/dmem.c
+>
 
 
