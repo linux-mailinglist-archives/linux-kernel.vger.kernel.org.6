@@ -1,170 +1,433 @@
-Return-Path: <linux-kernel+bounces-436599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2449E882A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:44:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E029E882D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:47:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37418280F14
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:44:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDB6C16399F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEB46190685;
-	Sun,  8 Dec 2024 21:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC72F1917F1;
+	Sun,  8 Dec 2024 21:47:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b="NCvZ9oAQ";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="5xdPwd+W"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SFLZX7ZX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37DE21DA23
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 21:44:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF35E46B8;
+	Sun,  8 Dec 2024 21:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733694279; cv=none; b=BdCyAxEIolGchFIeg1FlpYL+D4zlEO3u303xqx3RMlLf12Xg2CAhE8SLYvUrmsN60uq/TNRs9EpDLe2eRtW7JFHE8xLxwNRyfZbb7tDV68xmQvceSTk9nKKDb/isvmQMOpfav5oFTu8k7I0zsYP3CNZRMue/r60MrmDDVDtXlek=
+	t=1733694456; cv=none; b=WzkSkHiYAQ2LKv7JztTvx88/bwwM0lp5v58TUFWe7ck/rsxucJZbVB9CsWelzSHj4gI+Va9qfGoT+0FhMZQSBenE8X7PzioYNna1mFXGGD/AnfrbJ6r5VxfWeb3BL31jk76X3fNNCmt5aAb7n2Gw8h0Ihv4S7zM3kxX//ZFj4f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733694279; c=relaxed/simple;
-	bh=hqhBCRPrqdg+w1wtoxjl1UnEdlYe3LA9omWqbb64ifc=;
-	h=Content-Type:Mime-Version:Date:Message-Id:From:To:Subject:
-	 References:In-Reply-To; b=qsdX0lOe4+3E+hNC2l4z3osFQGtVEVuroPGEsD3IDIZNp/o8GLB2CQzRaRzbRJalZIlr/g6Y2Q4t4GJVm2ZcA2IQgyaCEGyIKF9i/h+aTnI8KBkebhVYgDBwfQLf2FXYwI7pF/m1AK6Xx9grHFsB8g1bLWwc4X5KS8F11CVBI88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev; spf=pass smtp.mailfrom=getstate.dev; dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b=NCvZ9oAQ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=5xdPwd+W; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getstate.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfout.stl.internal (Postfix) with ESMTP id 08B951140108;
-	Sun,  8 Dec 2024 16:44:34 -0500 (EST)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-08.internal (MEProxy); Sun, 08 Dec 2024 16:44:34 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=getstate.dev; h=
-	cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1733694273; x=1733780673; bh=hqhBCRPrqd
-	g+w1wtoxjl1UnEdlYe3LA9omWqbb64ifc=; b=NCvZ9oAQWJObdNXAbxcFNGYpra
-	9cFCNst0NuzicdTi0JiI465N5R/lhI3zb6mjfhjlzh7fTngiAvfsDqDAt285M10N
-	JfoP2cLGr8ZMOTkpr90OqRu9ZWT5pejIBtDSBxCuF33tCNX6Ce+c0tseKNmmNph7
-	KJewGeY255bZjQQk5mxn6HiGa4Q75566kZjQszJWBFup6eh6f6sVEOhkJnjpxyl5
-	H7chDDAOyicFeGIwdZr1OI0Xg0h8+4ma6icS01ativIX5MV31CX8fUZs/ucnbmdr
-	5VAcU4/17K8vqV1Wted0wXzzq5+aimwMBtrAzu53wVDJPS8oH0xhZvV8wsZw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733694273; x=1733780673; bh=hqhBCRPrqdg+w1wtoxjl1UnEdlYe3LA9omW
-	qbb64ifc=; b=5xdPwd+WrBV0VJ/D9wdCHqCU8TubCxrCdSuI3ris9V36gc5W6wQ
-	RmnFONkRhePiizca2peqMRWEHoj/gIeCYRyJna1M+JyZ1VhKsbipSSQRPJLDRByj
-	K6i7l72/GcLT5RwXJIPFQqYKQgrE9bqp8LkZHk2D5hEz1yA0hMU+wum/pgcqplyb
-	+5GRlF3/bMUDo4Ls14Zsb+KgE+KvY8WAH1HLDuoTV6y98gDSDg4mMf6QVPU/sVgQ
-	tkRNd6H7TT2r72/CsJGDdFzTwfHdd/FFbr6AYi6XItnAFoKhKVXr+foBMihP+KVQ
-	aCN/XmLxLqG9qMs37KtX/0qbF3rCbPeZiAA==
-X-ME-Sender: <xms:QRNWZzJ3h5Y_zJiw_-nKordmoM0h56a0YGpEooNBK-xE5v_7NMUgiQ>
-    <xme:QRNWZ3LI0lJJnlqe1carr_yQmXaBRyu7Keun21n8qF88o81kw6XkxVqbGDzOURKJ4
-    zSvkxY2cqpVD7OmwFI>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeefgdduheehucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefotgggff
-    fkhffvuffofhgjsehmtderreertdejnecuhfhrohhmpedfofgriihinhcutehlhhgruggu
-    rggufdcuoehmrgiiihhnsehgvghtshhtrghtvgdruggvvheqnecuggftrfgrthhtvghrnh
-    epheeiuefhgeeihedtleekiefhkeelvddvjefhuddvkeejudetveevhedvveffhfdunecu
-    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehmrgiiihhnsehgvghtshhtrghtvgdruggvvhdpnhgs
-    pghrtghpthhtohepfedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepshihiihkrg
-    hllhgvrhdqsghughhssehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehs
-    hiiisghothdogeejlegrfhhfhedusggsfeeiudgvfhehrggrudeksehshiiikhgrlhhlvg
-    hrrdgrphhpshhpohhtmhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:QRNWZ7scTkDPWKhaMdCuOBI3XUqjFjI2pg160sX_lmlM9IRHrkS6Pw>
-    <xmx:QRNWZ8apWXqxLEJr6YZFZdO-zQFVQ_4htuH3lxTs7FfPF-xJhblZEw>
-    <xmx:QRNWZ6bxgBn01fXzNHwaVrteZgYsAUHyKA33Dh_9oSLOsbcgwJDW1g>
-    <xmx:QRNWZwCk8O6Kp44gmGw7zEaj2SFYxH1ZwaU1-sXCQh9s7YVIi6zyFQ>
-    <xmx:QRNWZ5lNfiPiJP8fGxoleEFNFPoEpgWHB554G4TfcoEux-t806FCkMbJ>
-Feedback-ID: i0ed1493d:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 94C821C20066; Sun,  8 Dec 2024 16:44:33 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-Content-Type: multipart/mixed;
- boundary=10ce97ee9d4055c2cd560c150fbab082d97aab7447bd15c6836e7b912b06
+	s=arc-20240116; t=1733694456; c=relaxed/simple;
+	bh=vas7s9vNu57er7TEfccv5igCkYFNhTYZyH7eo+ELXnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gJLzOGqry5PMrY2QrOhQEr9Esc0AqRWTdEC9lCF/ZYgZECDN4Ti6n+Loiroel95YD4cY6wVjmywHIxmGmTgYPMdJQbY1nDZGpU7X2gAFeUmUTpRL1U6QyZGLwOLuKNF2XHcIZ87okyBZmiuu7kemfZheYeGK3PiLb8q1IS/dUos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SFLZX7ZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45636C4AF0C;
+	Sun,  8 Dec 2024 21:47:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733694456;
+	bh=vas7s9vNu57er7TEfccv5igCkYFNhTYZyH7eo+ELXnY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=SFLZX7ZXT+sz5o+GHsKxDUjb/iyzDr0HSo8Hf4GJzH1enWtkkM2wE4t1hX1xmx+uw
+	 DxxHkk4Tww25F391sOmUZnLQS1t54JK4WbDkJ44kSv4riCBIlhAEp0QWnscoBCNnXv
+	 Laz2LtyBJyHSDnvC6MoXPXCB2/4UFDqcgRTY4EAPW1TyOKj9YJFcJYQpZMcmxPkf+B
+	 3juHJKtUiOPaVZwfIgS6p+AZv+35AkSTxI8tUbbjeikA+w+WDbRaKEwUNSLwf6c10g
+	 Iv/BqQGoq7NcFBznyGIEUfukw3CNWKx3SgGlFQNMqn7raqV6GGrSeAesXeylWXsXSp
+	 SRHbtHxJC4P4Q==
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-85bc5d0509bso721781241.1;
+        Sun, 08 Dec 2024 13:47:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUsVFzougFxz1weeA/oRu2Ax+kzYenmADSrQOH1AuK5qgkllkpKRdlU18+/JD0w6QGEzOAwBH94Kl6N62w=@vger.kernel.org, AJvYcCXdcYxJDwPYCGAftRS9kHhqn958jcgMDusSnQJjeVE9PfpyRZ8ijS+5pTSadLqXXhtnY4ParXTAzag4TGw=@vger.kernel.org, AJvYcCXuFMU+nj6/FGRUWUl8Z8wTtnGNpeF/nWW26mxsguSHPEPaHqZC/CWPdsklg+Tum7resjT7bDEN/7esmUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3y3jPlG6o+a6KngiLNmIohrBDxw6eSnaLNI/mDhoKuXRjeNl1
+	RJH+QYMxusYWbkn3GpJyopHdjonQW7NyQXKoV/FZV0V1+sbj41BAQh9q76M61CNc9Pr3U0ZI+RM
+	rUvBIHlWQnqaJAjJ/HIARE31N7ls=
+X-Google-Smtp-Source: AGHT+IHedwXw/7Tyuv1doiWX1sdVC7Rc8G54sbsDSqQgXGbmFmcRBQ4U2GL0zM7Qdhpj2rfeHMjxNuUETMK/pR8uAR4=
+X-Received: by 2002:a05:6122:1c0b:b0:515:c769:9d32 with SMTP id
+ 71dfb90a1353d-515fca18638mr10368983e0c.4.1733694455212; Sun, 08 Dec 2024
+ 13:47:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Mon, 09 Dec 2024 00:44:32 +0300
-Message-Id: <D66NBTS05F94.363JPCPCZ9AZS@getstate.dev>
-From: "Mazin Alhaddad" <mazin@getstate.dev>
-To: "syzbot" <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>,
- <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- mgmt_remove_adv_monitor_sync
-X-Mailer: aerc 0.18.2
-References: <D66K3G6JFJ4C.1UV5Z5BMPMJDB@getstate.dev>
- <675612aa.050a0220.2477f.0030.GAE@google.com>
-In-Reply-To: <675612aa.050a0220.2477f.0030.GAE@google.com>
-
---10ce97ee9d4055c2cd560c150fbab082d97aab7447bd15c6836e7b912b06
-Content-Type: multipart/alternative;
- boundary=19bc651f2bf0854b3243ff56aaf84006065b1afde67caf2ec395b7917eea
-
---19bc651f2bf0854b3243ff56aaf84006065b1afde67caf2ec395b7917eea
+MIME-Version: 1.0
+References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
+ <20241207-imx214-v3-7-ab60af7ee915@apitzsch.eu> <CAPybu_0Bdc03UrJNO42S1fBTvpuHUUExvkR1ont7VKdw2XBuKg@mail.gmail.com>
+ <8c43e3c15335b650ac7b0ccfd7e1f66e7fd8fdaa.camel@apitzsch.eu>
+In-Reply-To: <8c43e3c15335b650ac7b0ccfd7e1f66e7fd8fdaa.camel@apitzsch.eu>
+From: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Date: Sun, 8 Dec 2024 22:47:19 +0100
+X-Gmail-Original-Message-ID: <CAPybu_1Ao_ExWft1HozsC4dBa9Ujp8tYipjEPU56xwZQP9jdhA@mail.gmail.com>
+Message-ID: <CAPybu_1Ao_ExWft1HozsC4dBa9Ujp8tYipjEPU56xwZQP9jdhA@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] media: i2c: imx214: Add vblank and hblank controls
+To: =?UTF-8?Q?Andr=C3=A9_Apitzsch?= <git@apitzsch.eu>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Vincent Knecht <vincent.knecht@mailoo.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-Content-Type: text/plain; charset=UTF-8
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
- master
+On Sun, Dec 8, 2024 at 10:35=E2=80=AFPM Andr=C3=A9 Apitzsch <git@apitzsch.e=
+u> wrote:
+>
+> Hi Ricardo,
+>
+> Am Sonntag, dem 08.12.2024 um 21:59 +0100 schrieb Ricardo Ribalda
+> Delgado:
+> > In general it looks good to me (besides the comments, ignore the nits
+> > if you want to).
+> >
+> > I'd recommend that you test with lockdep to make sure that we are not
+> > missing anything, and I'd like to hear back from Sakari regarding the
+> > get_locked_active
+> >
+> > Thanks!
+> >
+> > On Sat, Dec 7, 2024 at 9:48=E2=80=AFPM Andr=C3=A9 Apitzsch via B4 Relay
+> > <devnull+git.apitzsch.eu@kernel.org> wrote:
+> > >
+> > > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > >
+> > > Add vblank control to allow changing the framerate /
+> > > higher exposure values.
+> > >
+> > > The vblank and hblank controls are needed for libcamera support.
+> > >
+> > > While at it, fix the minimal exposure time according to the
+> > > datasheet.
+> > >
+> > > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > > ---
+> > >  drivers/media/i2c/imx214.c | 106
+> > > ++++++++++++++++++++++++++++++++++++++++-----
+> > >  1 file changed, 94 insertions(+), 12 deletions(-)
+> > >
+> > > diff --git a/drivers/media/i2c/imx214.c
+> > > b/drivers/media/i2c/imx214.c
+> > > index
+> > > f1c72db0775eaf4810f762e8798d301c5ad9923c..a7f49dbafe0f54af3c02f5534
+> > > 460fdee88a22fe2 100644
+> > > --- a/drivers/media/i2c/imx214.c
+> > > +++ b/drivers/media/i2c/imx214.c
+> > > @@ -34,11 +34,17 @@
+> > >
+> > >  /* V-TIMING internal */
+> > >  #define IMX214_REG_FRM_LENGTH_LINES    CCI_REG16(0x0340)
+> > > +#define IMX214_VTS_MAX                 0xffff
+> > > +
+> > > +#define IMX214_VBLANK_MIN              890
+> > > +
+> > > +/* HBLANK control - read only */
+> > > +#define IMX214_PPL_DEFAULT             5008
+> > >
+> > >  /* Exposure control */
+> > >  #define IMX214_REG_EXPOSURE            CCI_REG16(0x0202)
+> > > -#define IMX214_EXPOSURE_MIN            0
+> > > -#define IMX214_EXPOSURE_MAX            3184
+> > > +#define IMX214_EXPOSURE_OFFSET         10
+> > > +#define IMX214_EXPOSURE_MIN            1
+> > >  #define IMX214_EXPOSURE_STEP           1
+> > >  #define IMX214_EXPOSURE_DEFAULT                3184
+> > >  #define IMX214_REG_EXPOSURE_RATIO      CCI_REG8(0x0222)
+> > > @@ -187,6 +193,8 @@ struct imx214 {
+> > >         struct v4l2_ctrl_handler ctrls;
+> > >         struct v4l2_ctrl *pixel_rate;
+> > >         struct v4l2_ctrl *link_freq;
+> > > +       struct v4l2_ctrl *vblank;
+> > > +       struct v4l2_ctrl *hblank;
+> > >         struct v4l2_ctrl *exposure;
+> > >         struct v4l2_ctrl *unit_size;
+> > >
+> > > @@ -202,8 +210,6 @@ static const struct cci_reg_sequence
+> > > mode_4096x2304[] =3D {
+> > >         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> > >         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH
+> > > },
+> > >         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> > > -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> > > -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+> > >         { IMX214_REG_X_ADD_STA, 56 },
+> > >         { IMX214_REG_Y_ADD_STA, 408 },
+> > >         { IMX214_REG_X_ADD_END, 4151 },
+> > > @@ -274,8 +280,6 @@ static const struct cci_reg_sequence
+> > > mode_1920x1080[] =3D {
+> > >         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> > >         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH
+> > > },
+> > >         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> > > -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> > > -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+> > >         { IMX214_REG_X_ADD_STA, 1144 },
+> > >         { IMX214_REG_Y_ADD_STA, 1020 },
+> > >         { IMX214_REG_X_ADD_END, 3063 },
+> > > @@ -359,6 +363,7 @@ static const struct cci_reg_sequence
+> > > mode_table_common[] =3D {
+> > >         { IMX214_REG_ORIENTATION, 0 },
+> > >         { IMX214_REG_MASK_CORR_FRAMES, IMX214_CORR_FRAMES_MASK },
+> > >         { IMX214_REG_FAST_STANDBY_CTRL, 1 },
+> > > +       { IMX214_REG_LINE_LENGTH_PCK, IMX214_PPL_DEFAULT },
+> > >         { CCI_REG8(0x4550), 0x02 },
+> > >         { CCI_REG8(0x4601), 0x00 },
+> > >         { CCI_REG8(0x4642), 0x05 },
+> > > @@ -462,18 +467,24 @@ static const struct cci_reg_sequence
+> > > mode_table_common[] =3D {
+> > >  static const struct imx214_mode {
+> > >         u32 width;
+> > >         u32 height;
+> > > +
+> > > +       /* V-timing */
+> > > +       unsigned int vts_def;
+> > > +
+> > >         unsigned int num_of_regs;
+> > >         const struct cci_reg_sequence *reg_table;
+> > >  } imx214_modes[] =3D {
+> > >         {
+> > >                 .width =3D 4096,
+> > >                 .height =3D 2304,
+> > > +               .vts_def =3D 3194,
+> > >                 .num_of_regs =3D ARRAY_SIZE(mode_4096x2304),
+> > >                 .reg_table =3D mode_4096x2304,
+> > >         },
+> > >         {
+> > >                 .width =3D 1920,
+> > >                 .height =3D 1080,
+> > > +               .vts_def =3D 3194,
+> > >                 .num_of_regs =3D ARRAY_SIZE(mode_1920x1080),
+> > >                 .reg_table =3D mode_1920x1080,
+> > >         },
+> > > @@ -626,9 +637,36 @@ static int imx214_set_format(struct
+> > > v4l2_subdev *sd,
+> > >         __crop->width =3D mode->width;
+> > >         __crop->height =3D mode->height;
+> > >
+> > > -       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE)
+> > > +       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+> > > +               int exposure_max;
+> > > +               int exposure_def;
+> > > +               int hblank;
+> > > +
+> > >                 imx214->cur_mode =3D mode;
+> > >
+> > > +               /* Update FPS limits */
+> > nit: Update blank limits
+> > > +               __v4l2_ctrl_modify_range(imx214->vblank,
+> > > IMX214_VBLANK_MIN,
+> > > +                                        IMX214_VTS_MAX - mode-
+> > > >height, 2,
+> > > +                                        mode->vts_def - mode-
+> > > >height);
+> >
+> > Is the handler->lock held when we call this function? Can you try
+> > running the code with lockdep?
+> > > +
+> > > +               /* Update max exposure while meeting expected
+> > > vblanking */
+> > > +               exposure_max =3D mode->vts_def -
+> > > IMX214_EXPOSURE_OFFSET;
+> > > +               exposure_def =3D min(exposure_max,
+> > > IMX214_EXPOSURE_DEFAULT);
+> > > +               __v4l2_ctrl_modify_range(imx214->exposure,
+> > > +                                        imx214->exposure->minimum,
+> > > +                                        exposure_max, imx214-
+> > > >exposure->step,
+> > > +                                        exposure_def);
+> > > +
+> > > +               /*
+> > > +                * Currently PPL is fixed to IMX214_PPL_DEFAULT, so
+> > > hblank
+> > > +                * depends on mode->width only, and is not
+> > > changeable in any
+> > > +                * way other than changing the mode.
+> > > +                */
+> > > +               hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> > > +               __v4l2_ctrl_modify_range(imx214->hblank, hblank,
+> > > hblank, 1,
+> > > +                                        hblank);
+> > > +       }
+> > > +
+> > >         return 0;
+> > >  }
+> > >
+> > > @@ -678,8 +716,25 @@ static int imx214_set_ctrl(struct v4l2_ctrl
+> > > *ctrl)
+> > >  {
+> > >         struct imx214 *imx214 =3D container_of(ctrl->handler,
+> > >                                              struct imx214, ctrls);
+> > > +       const struct v4l2_mbus_framefmt *format;
+> > > +       struct v4l2_subdev_state *state;
+> > >         int ret;
+> > >
+> > > +       if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
+> > > +               int exposure_max, exposure_def;
+> > > +
+> > > +               state =3D
+> > > v4l2_subdev_get_locked_active_state(&imx214->sd);
+> >
+> > Sakari, I see that other drivers assume that the active is locked in
+> > set_ctrl. Is this correct?
+> >
+> > > +               format =3D v4l2_subdev_state_get_format(state, 0);
+>
+> (*) The format is read here.
+>
+> > > +
+> > > +               /* Update max exposure while meeting expected
+> > > vblanking */
+> > > +               exposure_max =3D format->height + ctrl->val -
+> > > IMX214_EXPOSURE_OFFSET;
+> > > +               exposure_def =3D min(exposure_max,
+> > > IMX214_EXPOSURE_DEFAULT);
+> > > +               __v4l2_ctrl_modify_range(imx214->exposure,
+> > > +                                        imx214->exposure->minimum,
+> > > +                                        exposure_max, imx214-
+> > > >exposure->step,
+> > > +                                        exposure_def);
+> > > +       }
+> > > +
+> > >         /*
+> > >          * Applying V4L2 control value only happens
+> > >          * when power is up for streaming
+> > > @@ -691,7 +746,10 @@ static int imx214_set_ctrl(struct v4l2_ctrl
+> > > *ctrl)
+> > >         case V4L2_CID_EXPOSURE:
+> > >                 cci_write(imx214->regmap, IMX214_REG_EXPOSURE,
+> > > ctrl->val, &ret);
+> > >                 break;
+> > > -
+> > > +       case V4L2_CID_VBLANK:
+> >  No need to read the format here?
+> >                       format =3D v4l2_subdev_state_get_format(state,
+> > 0);
+>
+> The format is read above (*), so no need to do it here. Note, in both
+> locations we have ctrl->id =3D=3D V4L2_CID_VBLANK.
 
---19bc651f2bf0854b3243ff56aaf84006065b1afde67caf2ec395b7917eea--
+Can you init format to NULL at the declaration part to make the compiler ha=
+ppy?
 
---10ce97ee9d4055c2cd560c150fbab082d97aab7447bd15c6836e7b912b06
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=0001-TEST.patch
-Content-Type: text/plain; charset=utf-8; name=0001-TEST.patch
+https://gitlab.freedesktop.org/linux-media/users/patchwork/-/pipelines/1325=
+516/test_report?job_name=3Dbuild
 
-RnJvbSBjNGYyZWJkNzQzYzYxOTZiOWMyNWU4MjljMDdhODJkNWFlZjgwMzQ5IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXppbiBBbEhhZGRhZCA8bWF6aW5AZ2V0c3RhdGUuZGV2PgpE
-YXRlOiBTdW4sIDggRGVjIDIwMjQgMTg6NTI6NTQgKzAzMDAKU3ViamVjdDogW1BBVENIXSBURVNU
-CgotLS0KIG5ldC9ibHVldG9vdGgvaGNpX3N5bmMuYyB8ICA1ICsrKy0tCiBuZXQvYmx1ZXRvb3Ro
-L21nbXQuYyAgICAgfCAxOCArKysrKysrKysrKysrKysrLS0KIDIgZmlsZXMgY2hhbmdlZCwgMTkg
-aW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9uZXQvYmx1ZXRvb3Ro
-L2hjaV9zeW5jLmMgYi9uZXQvYmx1ZXRvb3RoL2hjaV9zeW5jLmMKaW5kZXggYzg2ZjRlNDJlLi5h
-YTVhYTNmZWQgMTAwNjQ0Ci0tLSBhL25ldC9ibHVldG9vdGgvaGNpX3N5bmMuYworKysgYi9uZXQv
-Ymx1ZXRvb3RoL2hjaV9zeW5jLmMKQEAgLTUxOTcsNiArNTE5Nyw5IEBAIGludCBoY2lfZGV2X2Ns
-b3NlX3N5bmMoc3RydWN0IGhjaV9kZXYgKmhkZXYpCiAJICovCiAJZHJhaW5fd29ya3F1ZXVlKGhk
-ZXYtPndvcmtxdWV1ZSk7CiAKKwkvKiBmbHVzaCBjbWQgIHdvcmsgKi8KKwlmbHVzaF93b3JrKCZo
-ZGV2LT5jbWRfd29yayk7CisKIAloY2lfZGV2X2xvY2soaGRldik7CiAKIAloY2lfZGlzY292ZXJ5
-X3NldF9zdGF0ZShoZGV2LCBESVNDT1ZFUllfU1RPUFBFRCk7CkBAIC01MjM0LDggKzUyMzcsNiBA
-QCBpbnQgaGNpX2Rldl9jbG9zZV9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQogCQljbGVhcl9i
-aXQoSENJX0lOSVQsICZoZGV2LT5mbGFncyk7CiAJfQogCi0JLyogZmx1c2ggY21kICB3b3JrICov
-Ci0JZmx1c2hfd29yaygmaGRldi0+Y21kX3dvcmspOwogCiAJLyogRHJvcCBxdWV1ZXMgKi8KIAlz
-a2JfcXVldWVfcHVyZ2UoJmhkZXYtPnJ4X3EpOwpkaWZmIC0tZ2l0IGEvbmV0L2JsdWV0b290aC9t
-Z210LmMgYi9uZXQvYmx1ZXRvb3RoL21nbXQuYwppbmRleCBiMzExOTJkNDcuLmZhMzY5Yjg0NSAx
-MDA2NDQKLS0tIGEvbmV0L2JsdWV0b290aC9tZ210LmMKKysrIGIvbmV0L2JsdWV0b290aC9tZ210
-LmMKQEAgLTU1MTksOSArNTUxOSwxOCBAQCBzdGF0aWMgdm9pZCBtZ210X3JlbW92ZV9hZHZfbW9u
-aXRvcl9jb21wbGV0ZShzdHJ1Y3QgaGNpX2RldiAqaGRldiwKIHsKIAlzdHJ1Y3QgbWdtdF9ycF9y
-ZW1vdmVfYWR2X21vbml0b3IgcnA7CiAJc3RydWN0IG1nbXRfcGVuZGluZ19jbWQgKmNtZCA9IGRh
-dGE7Ci0Jc3RydWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcCA9IGNtZC0+cGFyYW07
-CisJc3RydWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcDsKKwkKKwlpZiAoc3RhdHVz
-ID09IC1FSU5WQUwgfHwgY21kICE9IHBlbmRpbmdfZmluZChNR01UX09QX1JFTU9WRV9BRFZfTU9O
-SVRPUiwgaGRldikpeworCQlyZXR1cm47CisJfQogCiAJaGNpX2Rldl9sb2NrKGhkZXYpOworCS8v
-IGlmIGNhbGxlZCB3aGlsZSBkZXZpY2UgaXMgY2xvc2luZywgc3RhdHVzIHdpbGwgYmUgaW52YWxp
-ZC4KKwkvLyBhbmQgY21kIGlzIGNsZWFyZWQgYnkgX19tZ210X3Bvd2VyX29mZgorCQorCisJY3Ag
-PSBjbWQtPnBhcmFtOwogCiAJcnAubW9uaXRvcl9oYW5kbGUgPSBjcC0+bW9uaXRvcl9oYW5kbGU7
-CiAKQEAgLTU1NDAsNiArNTU0OSw4IEBAIHN0YXRpYyB2b2lkIG1nbXRfcmVtb3ZlX2Fkdl9tb25p
-dG9yX2NvbXBsZXRlKHN0cnVjdCBoY2lfZGV2ICpoZGV2LAogc3RhdGljIGludCBtZ210X3JlbW92
-ZV9hZHZfbW9uaXRvcl9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2LCB2b2lkICpkYXRhKQogewog
-CXN0cnVjdCBtZ210X3BlbmRpbmdfY21kICpjbWQgPSBkYXRhOworCWlmIChjbWQgIT0gcGVuZGlu
-Z19maW5kKE1HTVRfT1BfUkVNT1ZFX0FEVl9NT05JVE9SLCBoZGV2KSkKKwkJcmV0dXJuIC1FSU5W
-QUw7CiAJc3RydWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcCA9IGNtZC0+cGFyYW07
-CiAJdTE2IGhhbmRsZSA9IF9fbGUxNl90b19jcHUoY3AtPm1vbml0b3JfaGFuZGxlKTsKIApAQCAt
-OTU0NCw4ICs5NTU1LDExIEBAIHZvaWQgX19tZ210X3Bvd2VyX29mZihzdHJ1Y3QgaGNpX2RldiAq
-aGRldikKIAkgKi8KIAlpZiAoaGNpX2Rldl90ZXN0X2ZsYWcoaGRldiwgSENJX1VOUkVHSVNURVIp
-KQogCQltYXRjaC5tZ210X3N0YXR1cyA9IE1HTVRfU1RBVFVTX0lOVkFMSURfSU5ERVg7Ci0JZWxz
-ZQorCWVsc2UgeworCQltYXRjaC5tZ210X3N0YXR1cyA9IE1HTVRfU1RBVFVTX0JVU1k7CisJCW1n
-bXRfcGVuZGluZ19mb3JlYWNoKE1HTVRfT1BfUkVNT1ZFX0FEVl9NT05JVE9SLCBoZGV2LCBjbWRf
-c3RhdHVzX3JzcCwgJm1hdGNoKTsKIAkJbWF0Y2gubWdtdF9zdGF0dXMgPSBNR01UX1NUQVRVU19O
-T1RfUE9XRVJFRDsKKwl9CiAKIAltZ210X3BlbmRpbmdfZm9yZWFjaCgwLCBoZGV2LCBjbWRfY29t
-cGxldGVfcnNwLCAmbWF0Y2gpOwogCi0tIAoyLjQ2LjAKCg==
---10ce97ee9d4055c2cd560c150fbab082d97aab7447bd15c6836e7b912b06--
+>
+> > > +               cci_write(imx214->regmap,
+> > > IMX214_REG_FRM_LENGTH_LINES,
+> > > +                         format->height + ctrl->val, &ret);
+> > > +               break;
+> > >         default:
+> > >                 ret =3D -EINVAL;
+> > >         }
+> > > @@ -714,8 +772,11 @@ static int imx214_ctrls_init(struct imx214
+> > > *imx214)
+> > >                 .width =3D 1120,
+> > >                 .height =3D 1120,
+> > >         };
+> > > +       const struct imx214_mode *mode =3D &imx214_modes[0];
+> > >         struct v4l2_fwnode_device_properties props;
+> > >         struct v4l2_ctrl_handler *ctrl_hdlr;
+> > > +       int exposure_max, exposure_def;
+> > > +       int hblank;
+> > >         int ret;
+> > >
+> > >         ret =3D v4l2_fwnode_device_parse(imx214->dev, &props);
+> > > @@ -723,7 +784,7 @@ static int imx214_ctrls_init(struct imx214
+> > > *imx214)
+> > >                 return ret;
+> > >
+> > >         ctrl_hdlr =3D &imx214->ctrls;
+> > > -       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 6);
+> > > +       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 8);
+> > >         if (ret)
+> > >                 return ret;
+> > >
+> > > @@ -749,12 +810,27 @@ static int imx214_ctrls_init(struct imx214
+> > > *imx214)
+> > >          *
+> > >          * Yours sincerely, Ricardo.
+> > >          */
+> > > +
+> > > +       /* Initial vblank/hblank/exposure parameters based on
+> > > current mode */
+> > > +       imx214->vblank =3D v4l2_ctrl_new_std(ctrl_hdlr,
+> > > &imx214_ctrl_ops,
+> > > +                                          V4L2_CID_VBLANK,
+> > > IMX214_VBLANK_MIN,
+> > > +                                          IMX214_VTS_MAX - mode-
+> > > >height, 2,
+> > > +                                          mode->vts_def - mode-
+> > > >height);
+> > > +
+> > > +       hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> > > +       imx214->hblank =3D v4l2_ctrl_new_std(ctrl_hdlr,
+> > > &imx214_ctrl_ops,
+> > > +                                          V4L2_CID_HBLANK, hblank,
+> > > hblank,
+> > > +                                          1, hblank);
+> > > +       if (imx214->hblank)
+> > > +               imx214->hblank->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
+> > > +
+> > > +       exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFSET;
+> > > +       exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFAULT);
+> > >         imx214->exposure =3D v4l2_ctrl_new_std(ctrl_hdlr,
+> > > &imx214_ctrl_ops,
+> > >                                              V4L2_CID_EXPOSURE,
+> > > -                                            IMX214_EXPOSURE_MIN,
+> > > -                                            IMX214_EXPOSURE_MAX,
+> > > +                                            IMX214_EXPOSURE_MIN,
+> > > exposure_max,
+> > nit: I think it looks nicer with exposure_max in the next line, but
+> > ignore if you prefer this way :)
+> > >                                              IMX214_EXPOSURE_STEP,
+> > > -
+> > > IMX214_EXPOSURE_DEFAULT);
+> > > +                                            exposure_def);
+> > >
+> > >         imx214->unit_size =3D v4l2_ctrl_new_std_compound(ctrl_hdlr,
+> > >                                 NULL,
+> > > @@ -876,6 +952,12 @@ static int imx214_get_frame_interval(struct
+> > > v4l2_subdev *subdev,
+> > >         return 0;
+> > >  }
+> > >
+> > > +/*
+> > > + * Raw sensors should be using the VBLANK and HBLANK controls to
+> > > determine
+> > > + * the frame rate. However this driver was initially added using
+> > > the
+> > > + * [S|G|ENUM]_FRAME_INTERVAL ioctls with a fixed rate of 30fps.
+> > > + * Retain the frame_interval ops for backwards compatibility, but
+> > > they do nothing.
+> > > + */
+> >
+> > Now that these controls are useless... maybe we can do a
+> > dev_warn_once
+> > when the user calls it to leave some output in dmesg?
+>
+> Sure. We the following be a proper warning?
+>
+
+nit: What about?
+"frame_interval functions returns an unreliable value for
+compatibility reasons. Use the VBLANK and HBLANK controls to determine
+the correct frame rate.\n"
+
+
+
+>
+> > >  static int imx214_enum_frame_interval(struct v4l2_subdev *subdev,
+> > >                                 struct v4l2_subdev_state *sd_state,
+> > >                                 struct
+> > > v4l2_subdev_frame_interval_enum *fie)
+> > >
+> > > --
+> > > 2.47.1
+> > >
+> > >
+>
 
