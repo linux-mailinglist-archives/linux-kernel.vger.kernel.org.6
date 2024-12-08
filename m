@@ -1,166 +1,114 @@
-Return-Path: <linux-kernel+bounces-436393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9B29E8558
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 14:15:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F6E9E855A
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 14:15:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 708F81884414
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:15:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F409B164706
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:15:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176F314AD29;
-	Sun,  8 Dec 2024 13:14:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64A1213D891;
+	Sun,  8 Dec 2024 13:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j2sF9HBS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="YUnWpuGK"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646F780BFF;
-	Sun,  8 Dec 2024 13:14:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48FB95A4D5;
+	Sun,  8 Dec 2024 13:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733663692; cv=none; b=BrxTeDsiTC5iYQ3ZoVDJ4s6TauZtXowUZflJRLMkpbQ1Ns9D8D4Eu24OXdgGlgQFXOuwJ3In9m8FFfPXBk8Nt++uYKFOpNWffSp+3uPyhw+gwGScDZ/LcVMxjey7LdXqk+tJ+Sg5whxTzxmBIj6IMr8nabSyhG9Thb2NbRM9lJ4=
+	t=1733663751; cv=none; b=or3TyxR4Iyr1jNf1j1M1cx+okdwTh5H2Gr9ujx5QV8uCd5ydWv4I16Cp3N7tZo89GOnLlBlLY1OlOlPKSIKviyGgHvfh0ZoFzmf8Uk2y7p3QRNX8r1aYaeII58ebVyv3ncCIsfD5knx4M7X7K8ifbS8hVL36RKJbtlK93jSJ5is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733663692; c=relaxed/simple;
-	bh=QyUFy65Vch1JoMxvnX2ceiKNS1/udfKefKOYbQGKJbE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=exJn/7SeScSyEKQhA39/WYp+FlqJbs2XSfoZKkTXZG5pxFnvzJXUACksVYF2xHbjUcpuxJaXp9A/5ZCr06CGYqq3wuIwAZsQqkE8z9WbBJeafWTdDEVIP2sYubNXzxl0wooEfWrTz5s6HYtuf7a37LtuDc0Ywq9f1poLFLkfs88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j2sF9HBS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7443C4CED2;
-	Sun,  8 Dec 2024 13:14:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733663691;
-	bh=QyUFy65Vch1JoMxvnX2ceiKNS1/udfKefKOYbQGKJbE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j2sF9HBShsxumBLG1HZmoodRz4+qjhT6WUe2D0qa4nLXatG/qn7GBKCJs2Ay4exOu
-	 8Rlb3H0ZPkYK1lioH54pcu/kYyI3VMLK5qjVztO0G396jqQ7eCuUYbAfa64I6IsrQ5
-	 krY/rpwWxmnhBqbZC7GkPbOSvOR+wJsLcjWmyQpz5kCLqU40xCvquMzE3I+d7Xuehr
-	 xCj/RB9P2FeiQeyf69FVMc8/FL23JrlHFeW2d56u2eHYNlDToZQ7uhIpl7Wk0dR7w4
-	 YpKs9a16iJaR1OGEWdReGTLtkarrp7MhgXQiyux4bJim005vNo9scCfg08deBAi15X
-	 M41JrmW79ndZg==
-Date: Sun, 8 Dec 2024 13:14:42 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: Conor Dooley <conor@kernel.org>, lars@metafoo.de,
- Michael.Hennerich@analog.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, eraretuya@gmail.com
-Subject: Re: [PATCH v5 06/10] dt-bindings: iio: accel: add interrupt-names
-Message-ID: <20241208131442.29d7d2c0@jic23-huawei>
-In-Reply-To: <CAFXKEHb1NbV-Us3kaNyG+P90SMXsV7233dXd64_gbtCKst6gmQ@mail.gmail.com>
-References: <20241205171343.308963-1-l.rubusch@gmail.com>
-	<20241205171343.308963-7-l.rubusch@gmail.com>
-	<20241205-fraying-overfull-4fe3eb6c5376@spud>
-	<CAFXKEHbGcTGBNH8Hrg3i90_-xR1KYyw_97X1pPMFB6E4ztL5Aw@mail.gmail.com>
-	<20241206-settle-impulsive-280ce8dc312f@spud>
-	<CAFXKEHb1NbV-Us3kaNyG+P90SMXsV7233dXd64_gbtCKst6gmQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733663751; c=relaxed/simple;
+	bh=Zy+BiXCgJkXzmbZKNg4JIOZSni09+NJt26bJv765OeE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DWOeGox8h0cHPuDEIWJ59AsyNQVy1hrmGql3dfF9E8YvDgoaT+aoeJuWjq7f/sP6zevhI2PKyT4m9X9mD29PSfsHN/Wcg0MOQWT2eh+89wRUjJDz0ncWvoao/V/q5VYrtGUfFFUpdbv1mlye7HLa9JEWz2UG7CXL7LgQj9hCpQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=YUnWpuGK; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id D19C2A0ABF;
+	Sun,  8 Dec 2024 14:15:46 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:message-id:mime-version:reply-to:subject:subject:to
+	:to; s=mail; bh=g0j7uEQzEdIZe0t6bf6kIsjV47fqKToNQDecUmLy4A8=; b=
+	YUnWpuGKYtOySFxuFCBGxvwcY0eX4vaufP/kui0yrTIQhYE7kcAq252q2WRwQWBn
+	BIhM9umwFUUGsZERIWKgOGaTIObhcf0awUs5aIQffKMlmKcWed0RnSnJz1J5M3Xn
+	qid6RiMAIRnMSwv5gwd3xYZ0fJoJJ1Ge8poRuM5AVW7bfMUg27HBJuSqmfGhB/3n
+	xs1GYGJqQEM9hMAfxSU8Cwem6cq6+VRIdPejTHwHrmqQKJWciWkgBWA155xLOnW/
+	G4/joorSMJmMJEm74bHNddGrdoK8O5Cg7QLoyiwF5HyDnBelq7QB6oBaJdsyjVuk
+	+Yng+17nOaaqau0O1ULqTGQZr84eadX4FC8oITMI6VGBx8WTNYNuzN4xLb4vvXi0
+	nT8hl5uyhHfOpJGehimpthAYsQgIjjztWEM2G9F6jZzpVMqGyk01aei9UPgtqsJr
+	BxcP1h/YXM5vpOcE6JU3rwS/e+X9oPBjdPF0LRi3OM8qq9s9/opc1Gk9itxDCVap
+	hBSWyzNwkqKZeV80JGKlKxIadU3VpU06CXiBWIhGJxUWyCT9QCB7pMhtTHFx7lnE
+	a4leoj/vzLkKTryY52b6sjz/W7tZ5qamAjkY1bjA4PtipH4bJgFdlAqFWpgpBmCE
+	D+pRytKQiRekhOC2PTnz8WrKnBAOrmRiEiKHE5HQa3s=
+From: =?UTF-8?q?Bence=20Cs=C3=B3k=C3=A1s?= <csokas.bence@prolan.hu>
+To: Sebastian Reichel <sebastian.reichel@collabora.com>,
+	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>,
+	<linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: Kees Bakker <kees@ijzerbout.nl>, Samuel Holland <samuel@sholland.org>,
+	Sebastian Reichel <sre@kernel.org>
+Subject: [PATCH] power: ip5xxx_power: Fix uninitialized variable read
+Date: Sun, 8 Dec 2024 14:15:31 +0100
+Message-ID: <20241208131532.1028581-1-csokas.bence@prolan.hu>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1733663746;VERSION=7982;MC=3149856342;ID=289680;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
+X-ESET-Antispam: OK
+X-EsetResult: clean, is OK
+X-EsetId: 37303A29ACD9485562766B
 
-On Fri, 6 Dec 2024 18:29:48 +0100
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
+The check for whether a charger supports the requested
+battery voltage was incorrectly added to the
+`ip5xxx_battery_get_voltage_max()` function, instead of
+`set_voltage_max()`. This commit fixes it.
 
-> On Fri, Dec 6, 2024 at 6:08=E2=80=AFPM Conor Dooley <conor@kernel.org> wr=
-ote:
-> >
-> > On Thu, Dec 05, 2024 at 08:41:52PM +0100, Lothar Rubusch wrote: =20
-> > > On Thu, Dec 5, 2024 at 6:54=E2=80=AFPM Conor Dooley <conor@kernel.org=
-> wrote: =20
-> > > >
-> > > > On Thu, Dec 05, 2024 at 05:13:39PM +0000, Lothar Rubusch wrote: =20
-> > > > > Add interrupt-names INT1 and INT2 for the two interrupt lines of =
-the
-> > > > > sensor. Only one line will be connected for incoming events. The =
-driver
-> > > > > needs to be configured accordingly. If no interrupt line is set u=
-p, the
-> > > > > sensor will still measure, but no events are possible.
-> > > > >
-> > > > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> > > > > ---
-> > > > >  .../devicetree/bindings/iio/accel/adi,adxl345.yaml         | 7 +=
-++++++
-> > > > >  1 file changed, 7 insertions(+)
-> > > > >
-> > > > > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adxl=
-345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-Side note, but patch name must include what device it is!
+Reported-by: Kees Bakker <kees@ijzerbout.nl>
+Closes: https://lore.kernel.org/linux-kernel/b547c228-df70-4137-9e96-175923f62404@ijzerbout.nl/
+Fixes: 8584bc5df539 ("power: ip5xxx_power: Allow for more parameters to be configured")
+Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
+---
+ drivers/power/supply/ip5xxx_power.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-dt-bindings: iio: accel: adxl345: ...
+diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/ip5xxx_power.c
+index 46f8eb7100c1..d076b4e46194 100644
+--- a/drivers/power/supply/ip5xxx_power.c
++++ b/drivers/power/supply/ip5xxx_power.c
+@@ -367,9 +367,6 @@ static int ip5xxx_battery_get_voltage_max(struct ip5xxx *ip5xxx, int *val)
+ 	if (ret)
+ 		return ret;
+ 
+-	if (*val > ip5xxx->vbat_max)
+-		return -EINVAL;
+-
+ 	/*
+ 	 * It is not clear what this will return if
+ 	 * IP5XXX_CHG_CTL4_BAT_TYPE_SEL_EN is not set...
+@@ -504,6 +501,9 @@ static int ip5xxx_battery_set_voltage_max(struct ip5xxx *ip5xxx, int val)
+ 	unsigned int rval;
+ 	int ret;
+ 
++	if (val > ip5xxx->vbat_max)
++		return -EINVAL;
++
+ 	switch (val) {
+ 	case 4200000:
+ 		rval = IP5XXX_BAT_TYPE_4_2V;
+-- 
+2.34.1
 
-> > > > > index 280ed479ef5..67e2c029a6c 100644
-> > > > > --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
-> > > > > @@ -37,6 +37,11 @@ properties:
-> > > > >    interrupts:
-> > > > >      maxItems: 1
-> > > > >
-> > > > > +  interrupt-names:
-> > > > > +    description: Use either INT1 or INT2 for events, or ignore e=
-vents.
-> > > > > +    items:
-> > > > > +      - enum: [INT1, INT2] =20
-> > > >
-> > > > The description for this ", or ignore events" does not make sense. =
-Just
-> > > > drop it, it's clear what happens if you don't provide interrupts.
-> > > >
-> > > > However, interrupts is a required property but interrupt-names is n=
-ot.
-> > > > Seems rather pointless not making interrupt-names a required proper=
-ty
-> > > > (in the binding!) since if you only add interrupts and not
-> > > > interrupt-names you can't even use the interrupt as you do not know
-> > > > whether or not it is INT1 or INT2? =20
-> > >
-> > > What I meant is, yes, the sensor needs an interrupt line.
-> > > Interrupt-names is optional. The sensor always can measure. When
-> > > interrupt-names is specified, though, the sensor will setup a FIFO and
-> > > can use events, such as data ready, watermark, single tap, freefall,
-> > > etc. Without the interrupt-names, the sensor goes into a "FIFO bypass
-> > > mode" without its specific events. =20
-> >
-> > What I'm talking about here is how it is ultimately pointless for
-> > interrupts to be a required property if it can never be used without
-> > interrupt-names as you cannot know which interrupt is in use. I think
-> > both should be made mandatory or neither.
-> > =20
->=20
-> Ah, now I can see your point. I agree that it should be equally
-> mandatory as the interrupt. Legacy implementations used simply always
-> just INT1. I'd like to make it configurable in the IIO driver but
-> tried to avoid the DT topic for now (which was not a smart decision
-> either). Hence, I added the interrupt-names.
-> I'm unsure should I make "interrupt-names" a required property now?
-> What about the existing DTS files using this sensor? There are no
-> interrupt-names specified, so if made required, the missing
-> interrupt-names there would break binding check, or not?
-
-Neither should be required.  The driver isn't currently using interrupts
-and I presume it is functional?  So I'd just drop the required on interrupt=
-s.
-Now a condition that says interrupt-names is needed if interrupts is suppli=
-ed
-would be a useful addition (IIRC there are examples of that in tree).
-
-So interrupts being required is a bug that we should fix by just
-dropping that. =20
-
-Jonathan
-
-
-
->=20
-> > > Hence, I better drop the description entirely, since it rather seems
-> > > to be confusing. =20
 
 
