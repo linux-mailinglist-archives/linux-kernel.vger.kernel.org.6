@@ -1,217 +1,170 @@
-Return-Path: <linux-kernel+bounces-436261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2CD29E8388
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:39:43 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74AC89E838B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:40:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11A95188488B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:40:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93DF545C14;
+	Sun,  8 Dec 2024 04:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="fpKxK//O"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2049.outbound.protection.outlook.com [40.107.94.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E05281532
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:39:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7713F2744C;
-	Sun,  8 Dec 2024 04:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EqSecl9h"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03697BA4B;
-	Sun,  8 Dec 2024 04:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733632776; cv=none; b=kUTOHISMvO0r+tbeuz0E566NimWAXt3nac0IcebdLTWovayrsje9IcX98sl9MB0GxWdyKjt3E/7AWyzYCPJYbZ6DISVy8p/5XtzySFonKsm2F3yPRqsWTzSEEXgPqz3E2EmiOsopBeTdv31PTjXNn+tMvjktlNv5Ha9ipWIW25s=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733632776; c=relaxed/simple;
-	bh=pkkzHq6er3jft3L8kNA49RK8jL7CCMKkFfUZBulzWLA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NLUuYYj0RI24TBDyQjvI4JLsqjDWUAU28jC+A503IetQBXDiZW7cybZiUCY0qrZ13n9dfC5CkzQN6A8y8U+Dalte9n+xlzVJu1mlix0PQqdqIHsUWRij/BP7HLiPgxGGgyzuwreltmXUzE5r5lY+9hQK5jj6KivOT7wd3KFRHzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EqSecl9h; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ffc1009a06so28186381fa.2;
-        Sat, 07 Dec 2024 20:39:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733632773; x=1734237573; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hDmA4E/w7Y1zlmTtPBdUx0AO+F4OE6eC+B0K2GmURIg=;
-        b=EqSecl9htYSG7zbVrNYM6wDeovBsWXA7cV/dSiQvfjHGXMK+iA8Hv6nxww5h3SNgM9
-         Rn49MbCUz/y5fkvWWGfAZJcdhu/BsD0ub1N+FseGebcPq+GhUhoov5agtw1xTirKmuMB
-         t4Cf7VcTOR/6ELSYT/nTXNBnPwr5Pk31BiH7pi/rfZmTloDysyvR+Cao/z/E0oLq6pcp
-         FYfJdkgkNvoUzRVLh7QcGGMBgwdST5omz5fjiQ0ys50QMbeaFcWq4a7fiUqRXK6D+yn3
-         kKLQ6lZ2NXrAseCJW57bS8iWs/p9mQJ9X9xK21WQxWxKAcvT1lJFheJt1J1p7T+Q0BGS
-         mVeA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733632773; x=1734237573;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hDmA4E/w7Y1zlmTtPBdUx0AO+F4OE6eC+B0K2GmURIg=;
-        b=WsAFYN42Jc7QKzfG88GUg/unfT2FmQgnYOqIsmba8AFVStP8eUsojTMjPp/USZ5f1n
-         gcwOLEZwy7jfbIZ6Kp0zHNCWaEvHFe2mVhnqdBaUZl8M1Ri9Nwn6GZKcxKbORdRaK59G
-         k/sMy88Y/KIQb603mucgTnyBhuBnhaE7vdz9JB3syYMVwriWwLaJ/twZuenIivIFsN52
-         UMJHt5jP7Ufw+FcWzPuaJ6PsU1Qo05oO7aiKwu9rKlsA/bXsBZoaTMyHwS/+WayiykeJ
-         Olax89vcyPyxHNyLgKmAkzuQCDiSWWIn11eNBiYLZuou0gHwD7HgS2uJqCslyATxXxzR
-         GObA==
-X-Forwarded-Encrypted: i=1; AJvYcCVOuJ7iuLAOIrzYVaPhaxwSGmNvbnl1r0XC52SrLi+AlHOprIM1ZizFZGdn5C72pw0TX4vINB/UzQIReg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+32w5AHAjlEruIXEVT5ejKkzsVC3uxoDk/0C79zdXwWtNqWfd
-	UWBOFl8haNFQkvWQqxlFiDUxYoItb6utZOCKOyj7jdJ0JMX+QmA7MOEdxZPxy+qo6B+0KcgIHfz
-	yk9WNAOgh/+CBIoRhr68ko0UG+yY=
-X-Gm-Gg: ASbGncsEB/Rwq8e6TxT71QN67e/1ff95OjqbHowwHhzBcRzGtAXYGxa8TupLW3lAiVT
-	zlRKaD/TMw4ECuUShkvOYN3dUXJA/16UaZx4Nc1R5owu7RHwNvdEpD+iKQsMu05IysQ==
-X-Google-Smtp-Source: AGHT+IECUaVU4zV83VhdiZTVoCAwk2dTu2ZTEAm1nhXbNLEnl9L8XmVPln1y96NovN6Jw0Hv9+KIXA2jbhkULqHHBk4=
-X-Received: by 2002:a05:6512:1589:b0:540:17ac:b372 with SMTP id
- 2adb3069b0e04-54017acb52cmr637150e87.30.1733632772848; Sat, 07 Dec 2024
- 20:39:32 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A16F20B22;
+	Sun,  8 Dec 2024 04:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733632797; cv=fail; b=l2WKWrRH/L3IIV73rYrc7LnNCxwPEXuaMsioAfYMJHokW6tH1q6zfPfi/r+5tZecYlZ34p6Dsi3KfNN3LEMQsRBLsm5DPRcybXRGbxgR4++M3EKRIXv7tOSYpJ3E3cWasiHQ7ftYoLBObCyROGEVBr5Y01uekXYwZAonoObp4VE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733632797; c=relaxed/simple;
+	bh=V061oBFHHdLp7jlGcAQ1o8Z5TQhPnPInVfL7fYSs3LE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o5AjEMGZitMCjxq/YOCqOUaH7EfKA1eGrDaaVwXr57id4sVr0VGPXOkEBemadRbnx7n1zhnXFbfXHHqrHhYqBoSDYG/SH5y64Qi2RyGEAjTk1RX1B4xXXYfUSn/Ae+Kl7R9yjkSYcX13nLLQxyLrqOi5TZ8u+SYzpqaSOUaXpK0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=fpKxK//O; arc=fail smtp.client-ip=40.107.94.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=GAiIqCRL+1XNzxpiGbf18aDZJrG5G0LdEFzkqzzXYtLi07WJc32qKVYGoVXOYGQW9uozsaLQAqPkIpN/qbdJxj+m8605N6L1zPkTIxmhnUf2EAlF6Ruxa1KQw2M9At1V9kZeAdKW2Pi+VoPEhz1xh3yD1TjGr9i6cG1qEYUvlKIaubastB9MA6z864OBHiq+xElZ8V7MHifQN2rhdOQqeifwCLtEoGyW+YtmQcSAz1BsVd6JakmFF9hd/xRRLXXfnEXiTk3JgTzXOrsJeeAYs1TIMo/izKDLCJGQpz5TJhLYbLhdXoGlRnuyzkIMJYhwdDfDgwNqXD0hA2W+QpgGQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4m02f2/2AsUPomL2Kqnwz2/k6uTiueWOZI8zM+/ReIA=;
+ b=grZ2gMN61feRyeRJAqOQbbHYK1XjpD8gon/L1pykPFEatq/8mDct/kWqu0BA1fkEbq6lPwquDTZK3vlPAqe0RBkYxaBeFRj/tua6J33H3SgIljm11hwpOVZuwAIGVzmM/wR1zBE5EK+9zX6tAJ+nW4G+KS8rg3ireRCwzr6SEfJgu32P0Y9UJbrdW3XaX9ZaUHJIdZd2EkvwS5AWyNj55hawGPp9LG7EVT6/Fbg2IeylIDCjo3LLPbsyNFyUoNke04KEmjoGXMGUFo8iYefFBMQy7BCK3V0evA2wMc2fg9KbfE0brwWYh9lbaiHE0Zzzt0QLiekkqEJ+Nm1BcRtLAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4m02f2/2AsUPomL2Kqnwz2/k6uTiueWOZI8zM+/ReIA=;
+ b=fpKxK//OPf+KMp3jplWo1oms2NYqfGklDOn+Q5kIpQHdm2LCx7Tw7ARWUJFhCMqFo4MGfs9D4Y7mYnvIBuaT0YOrgGr9Gi/NsM0Hsaphi1sJaAKIP4++MJ4J1tZgcPrqfluFfwxVmKU//uxDecj6pKsm7hvQb7fBcjokcxyn18c=
+Received: from BYAPR01CA0061.prod.exchangelabs.com (2603:10b6:a03:94::38) by
+ SJ1PR12MB6051.namprd12.prod.outlook.com (2603:10b6:a03:48a::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Sun, 8 Dec
+ 2024 04:39:51 +0000
+Received: from SJ5PEPF000001CC.namprd05.prod.outlook.com
+ (2603:10b6:a03:94:cafe::61) by BYAPR01CA0061.outlook.office365.com
+ (2603:10b6:a03:94::38) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.12 via Frontend Transport; Sun,
+ 8 Dec 2024 04:39:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ5PEPF000001CC.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Sun, 8 Dec 2024 04:39:51 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 7 Dec
+ 2024 22:39:50 -0600
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 7 Dec
+ 2024 22:39:34 -0600
+Received: from xhdthippesw40.xilinx.com (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Sat, 7 Dec 2024 22:39:31 -0600
+From: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
+To: <bhelgaas@google.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+	<manivannan.sadhasivam@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+	<conor+dt@kernel.org>
+CC: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <jingoohan1@gmail.com>,
+	<michal.simek@amd.com>, <bharat.kumar.gogada@amd.com>, Thippeswamy Havalige
+	<thippeswamy.havalige@amd.com>
+Subject: [PATCH v5 0/3] Add support for AMD MDB IP as Root Port
+Date: Sun, 8 Dec 2024 10:09:25 +0530
+Message-ID: <20241208043928.3287585-1-thippeswamy.havalige@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKFNMono7BGpLOOjF1TcUpj7GM=x-aATHUv+fCXTs6=WVhYMUw@mail.gmail.com>
- <tencent_B7D4EAEAED76CDAC79026EF02F4D6D5C950A@qq.com>
-In-Reply-To: <tencent_B7D4EAEAED76CDAC79026EF02F4D6D5C950A@qq.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sun, 8 Dec 2024 13:39:16 +0900
-Message-ID: <CAKFNMo=ck+c2NJHVOFszzT02ksF1a0KG9vA5zU+Woa7noLeFrA@mail.gmail.com>
-Subject: Re: [PATCH V2] nilfs2: prevent use of deleted inode
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzbot+9260555647a5132edd48@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+Received-SPF: None (SATLEXMB05.amd.com: thippeswamy.havalige@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001CC:EE_|SJ1PR12MB6051:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0e7265f4-6d8f-4da3-bc72-08dd17425a9f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|1800799024|36860700013|376014|7416014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?uho8vGophtH2eBVwiOMHSo1xwWJUW46gc08tTb9sH8FEqcBqc1CfxOZQIFoN?=
+ =?us-ascii?Q?JqCOn0Kl5EnruWm4Ni3BlRZ1INsxCn6oXIprPAujg2n8s5FuRsSp3IRkFRAT?=
+ =?us-ascii?Q?SLCs7IaC5HPP0tKY5LtSPtueBeOVnwIHYqpja4p4bQ4bagf6pCTCrI2gla4u?=
+ =?us-ascii?Q?eijSKP0HqewabWTFamgbAy1MqpuGvpUm6CbGSC8nYDmQFVSX6RnQhwiw6SC5?=
+ =?us-ascii?Q?VHwyZf2FDD/qqWROlocAORQIbMJZo9z8agOyI+4WzALnIUeGj13vkhpAjorR?=
+ =?us-ascii?Q?Q8UvB8AYVnKNLf1rvr/onvdlSjBOfSxd2BCW7D52wOJl77Lmvu8g5rzGIVJU?=
+ =?us-ascii?Q?wh0VEsTJfHo6p8fs7eKJG+LvOqagoSJf5vvWJ4dPpZ5hLPgvGMRSgqHStQC3?=
+ =?us-ascii?Q?XG9++lO/qmGs301CmNjbYFYhUh8MgesZPZtNyEyWb23ngIxlJgVobquJsygK?=
+ =?us-ascii?Q?0vqP7hpN6kBT6LCcd6G5sAvY75FopezBFIpq2UPy/kuDCRIXvZW0or1jgTDL?=
+ =?us-ascii?Q?VGJ1oa/afHIRbIkuB0NPsLoph/MSVh+YBuC8lFQWzEgxd6MRgoeiDoG9uZHU?=
+ =?us-ascii?Q?AknibmBSCU0DjnU2/rH4zkL7MjrMNqigyVYuxYjdlGFvgv56UFnj1sDpQ/CO?=
+ =?us-ascii?Q?1VtP7yD4A0mWPF6ySFmfc1MCVCa9pIYClJ3pgACYB+AQ5RuQVds90HgLX5x7?=
+ =?us-ascii?Q?BFcwwoOuQ3SSrwZE8auEcQuPle1DAnk8mRjQZKhzRe5vI6jHgS+U8evYJQzP?=
+ =?us-ascii?Q?RC63FIyxtKqefd+Cha8+Jqs1tiRuaC9AxQ4XL4+nZppD4XZYBnYu8jxsiDp9?=
+ =?us-ascii?Q?iJK18sZzgSRzxrxcbvrCrQFjsrNuoP/XXEtKgZM2sFRXArKS2OzcdQVbDcxn?=
+ =?us-ascii?Q?szeWI6DOne3vv1IuOpL+3KvNyckfXTH0jJxomWLymvWdHqdrpPAo2iXaQl3/?=
+ =?us-ascii?Q?LxnROdaNICS0EeTtRRIBqNTTpRaRlJrlkTRSAn57KOfSy8SBVkvsaj8LdmzY?=
+ =?us-ascii?Q?6VnH2BjKlyZ2I+gXflJZJcuU9Tz5KhGR2FHYZTpYMlmezPsGjZrEyslxrImi?=
+ =?us-ascii?Q?/tSrQbTi+GHcsOp4z92LKkLPZSQC1m2EtyklEOtHfxs2AALJdtSUSVQj/oxg?=
+ =?us-ascii?Q?oggI0tSqT9LgVZJaumeCoB56fTI+fKCgowV8H7kmwDgT6esoKyCzwq4o+f24?=
+ =?us-ascii?Q?Ee/N5ey91Md1yZnlH2PuDGtL414sS+G+90Y/VL2lDYJRrhGrksgCLVeiYbEa?=
+ =?us-ascii?Q?Two99w/4nfhbTrLdBJ+D+vmkcWa6C6vp1BGzIj1UR4FW5Sb3b7Z3rynBemJp?=
+ =?us-ascii?Q?FoGgjAMoJgIshW3UuDG69eKLTkEMp68xJrjAzUILRNd4p8SSdixrYEC0B0LY?=
+ =?us-ascii?Q?emKRpxFA+r1BB/CfR102QVlOPLPhij6RHggdfWNDnxxNXr6brWDIGQCjleDz?=
+ =?us-ascii?Q?qg5W5ep0lHrUnyGROqGgvUVBEgr98bs3?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(1800799024)(36860700013)(376014)(7416014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2024 04:39:51.1239
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0e7265f4-6d8f-4da3-bc72-08dd17425a9f
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001CC.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ1PR12MB6051
 
-On Sun, Dec 8, 2024 at 12:24=E2=80=AFPM Edward Adam Davis wrote:
->
-> syzbot reported a WARNING in nilfs_rmdir. [1]
->
-> Because the inode bitmap is corrupted, an inode with an inode number
-> that should exist as a ".nilfs" file was reassigned by nilfs_mkdir for
-> "file0", causing an inode duplication during execution.
-> And this causes an underflow of i_nlink in rmdir operations.
->
-> Avoid to this issue, check i_nlink in nilfs_iget(), if it is 0, it means
-> that this inode has been deleted, and iput is executed to reclaim it.
->
-> [1]
-> WARNING: CPU: 1 PID: 5824 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inod=
-e.c:407
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 5824 Comm: syz-executor223 Not tainted 6.12.0-syzkalle=
-r-12113-gbcc8eda6d349 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 09/13/2024
-> RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
-> Code: bb 70 07 00 00 be 08 00 00 00 e8 57 0b e6 ff f0 48 ff 83 70 07 00 0=
-0 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 4c 7e ff 90 <0f> 0b 90 eb 83=
- 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
-> RSP: 0018:ffffc900037f7c70 EFLAGS: 00010293
-> RAX: ffffffff822124a3 RBX: 1ffff1100e7ae034 RCX: ffff88807cf53c00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffffffff82212423 R09: 1ffff1100f8ba8ee
-> R10: dffffc0000000000 R11: ffffed100f8ba8ef R12: ffff888073d701a0
-> R13: 1ffff1100e79f5c4 R14: ffff888073d70158 R15: dffffc0000000000
-> FS:  0000555558d1e480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555558d37878 CR3: 000000007d920000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  nilfs_rmdir+0x1b0/0x250 fs/nilfs2/namei.c:342
->  vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
->  do_rmdir+0x3b5/0x580 fs/namei.c:4453
->  __do_sys_rmdir fs/namei.c:4472 [inline]
->  __se_sys_rmdir fs/namei.c:4470 [inline]
->  __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
+This series of patch add support for AMD MDB IP as Root Port.
 
-I'll make a few comments.
+The AMD MDB IP support's 32 bit and 64bit BAR's at Gen5 speed.
+As Root Port it supports MSI and legacy interrupts.
 
-> Reported-and-tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail=
-.com
+Thippeswamy Havalige (3):
+  dt-bindings: PCI: dwc: Add AMD Versal2 mdb slcr support
+  dt-bindings: PCI: amd-mdb: Add AMD Versal2 MDB PCIe Root Port Bridge
+  PCI: amd-mdb: Add AMD MDB Root Port driver
 
-First please separate "Reported-and-tested-by" into two tags.
-Although it is still seen occasionally, it causes warnings for the
-checkpatch script. (It has already been explicitly deprecated in some
-subtrees, because it just complicates automatic tag extraction.)
+ .../bindings/pci/amd,versal2-mdb-host.yaml    | 121 +++++
+ .../devicetree/bindings/pci/snps,dw-pcie.yaml |   2 +
+ drivers/pci/controller/dwc/Kconfig            |  10 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-amd-mdb.c     | 439 ++++++++++++++++++
+ 5 files changed, 573 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/amd,versal2-mdb-host.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-amd-mdb.c
 
-> Closes: https://syzkaller.appspot.com/bug?extid=3D9260555647a5132edd48
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
-> V1 -> V2: Adjust the patch as suggested by Ryusuke Konishi
->
->  fs/nilfs2/inode.c | 8 +++++++-
->  fs/nilfs2/namei.c | 6 ++++++
->  2 files changed, 13 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-> index cf9ba481ae37..b7d4105f37bf 100644
-> --- a/fs/nilfs2/inode.c
-> +++ b/fs/nilfs2/inode.c
-> @@ -544,8 +544,14 @@ struct inode *nilfs_iget(struct super_block *sb, str=
-uct nilfs_root *root,
->         inode =3D nilfs_iget_locked(sb, root, ino);
->         if (unlikely(!inode))
->                 return ERR_PTR(-ENOMEM);
-> -       if (!(inode->i_state & I_NEW))
-> +
-> +       if (!(inode->i_state & I_NEW)) {
-> +               if (!inode->i_nlink) {
-> +                       iput(inode);
-> +                       return ERR_PTR(-ESTALE);
-> +               }
->                 return inode;
-> +       }
->
->         err =3D __nilfs_read_inode(sb, root, ino, inode);
->         if (unlikely(err)) {
-> diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-> index 9b108052d9f7..7037f47c454f 100644
-> --- a/fs/nilfs2/namei.c
-> +++ b/fs/nilfs2/namei.c
-> @@ -67,6 +67,12 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry,=
- unsigned int flags)
->                 inode =3D NULL;
->         } else {
->                 inode =3D nilfs_iget(dir->i_sb, NILFS_I(dir)->i_root, ino=
-);
-> +               if (inode =3D=3D ERR_PTR(-ESTALE)) {
+-- 
+2.34.1
 
-> +                       nilfs_error(dir->i_sb, __func__,
-> +                                       "deleted inode referenced: %lu",
-> +                                       (unsigned long) ino);
-
-Unlink ext2_error(), nilfs_error() does not require __func__, to be
-passed as an argument.
-nilfs_error() is a wrapper macro for the actual error output function
-__nilfs_error(), which hides __func__ there.
-(I should have mentioned the difference, sorry.)
-
-Another comment:  "ino" is of type "ino_t", which is of type "unsigned
-long", so the typecast to "unsigned long" for the argument "ino" is
-not necessary.
-I don't know why the ext2 implementation does it, but even if this
-patch is backported to stable trees, this typecast is not necessary.
-
-Thanks,
-Ryusuke Konishi
-
-> +                       return ERR_PTR(-EIO);
-> +               }
->         }
->
->         return d_splice_alias(inode, dentry);
-> --
-> 2.47.0
->
 
