@@ -1,75 +1,91 @@
-Return-Path: <linux-kernel+bounces-436557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 492659E8794
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 20:56:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC2C29E876C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 20:10:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 087CA2813EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:56:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A812C28147F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:10:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCC3192B74;
-	Sun,  8 Dec 2024 19:56:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D749158862;
+	Sun,  8 Dec 2024 19:10:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i3eKrgVx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUyd5ByJ"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0D91547C5;
-	Sun,  8 Dec 2024 19:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42395211C;
+	Sun,  8 Dec 2024 19:10:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733687802; cv=none; b=rgORbN5m8aFLKBNr34uTUMsp7+KX/MRhtCUkJKDsZaunsKKafOP/qg53O28mM7rfUJLYiLydZ4ecj/IdNtmdlQckGNVDehkhZ1UG9cT0aA7skmnv/j2fm5oiy3jDo89QwLnVNkSXqDAn8udwvnuwe3EXtlBKoLTUmfmqkpvj7JY=
+	t=1733685048; cv=none; b=YPxKYORBT3WIVkdZTwQ+AtyWXzy9jQzMC9nPfuadSq3bM9/lrgF1m9pI5pSfOoWmQumN5s/WqsQ8LO25jdW9Ppy3bIfrKWywUqzw2PiBBK11SPT/u9ZOM1zxxFCmIvAixSEHQHn4+oZsQYbBdauclaIzQ/Vrh4mQ9WRkVVEVvFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733687802; c=relaxed/simple;
-	bh=UVYOMh1kZEgr2A915NBnpaJaxt1QLu79qEQ2ILCqlXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DZr7r0IP/jvhqeskFllN8iYcijQE8sTaovTdGo3qdxL27GIayKv6nfxXuKCzHGW4D9R18ExPW8edaOZ6JdP99vVrzTH4TCrAmZ1ju2Tm8zdFgyC1SfExIV13VoOCGcMXR1yXkjclam3cKzcmGQt0SumdMTMlnckzWcZl0btEA+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i3eKrgVx; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733687800; x=1765223800;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=UVYOMh1kZEgr2A915NBnpaJaxt1QLu79qEQ2ILCqlXQ=;
-  b=i3eKrgVxtd4/+wcDJtMoX3mWc/pKg8/oqLo2DcanX85Fqsc0/ud3A8jM
-   MBDKxVD0MZ5n+XaqGAbILyFKzpYHY6Dv99CItMcw3MKQIGQxOl+/SsFtm
-   UC/9BcpsC7QczWb6ETzGLEdraCcJU4eK4GGNwa9DGiso9q7aP2HE6aW0V
-   5pNC1hBZaDJX/BHqVKQkgfq7E9jVqWCYDypbsA6MfNCrA4HuLyptj4Wup
-   fbtRNywKsyP8/uhYXyppe5COMqa/ko3rbXq0ulk9hokO6f+zEDFTyPoJP
-   hdasBsOB3/fOkNw6OFC8jxfg/z0MPj96+AJrYjw/WG5WG+sr00fsVTFUO
-   g==;
-X-CSE-ConnectionGUID: 7btlaIPxTjWE21ic8UdlrQ==
-X-CSE-MsgGUID: 06cwOHSIRfqSIh8Y/1tWvQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="44663067"
-X-IronPort-AV: E=Sophos;i="6.12,217,1728975600"; 
-   d="scan'208";a="44663067"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 11:56:39 -0800
-X-CSE-ConnectionGUID: ReM3beMNQvOyNsFn5OMHKg==
-X-CSE-MsgGUID: AmLt/O4WRnyNrpO/G1EgiQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,217,1728975600"; 
-   d="scan'208";a="132274258"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 08 Dec 2024 11:56:39 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 11380426; Sun, 08 Dec 2024 21:56:37 +0200 (EET)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Mark Brown <broonie@kernel.org>,
-	linux-spi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 2/2] spi: Deduplicate deferred probe checks in spi_probe()
-Date: Sun,  8 Dec 2024 18:03:17 +0200
-Message-ID: <20241208195635.1271656-3-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
-In-Reply-To: <20241208195635.1271656-1-andriy.shevchenko@linux.intel.com>
-References: <20241208195635.1271656-1-andriy.shevchenko@linux.intel.com>
+	s=arc-20240116; t=1733685048; c=relaxed/simple;
+	bh=9TfDDRf4EzVGBFnJ44ZU5tjgLq9zoLHMnvsie7QraM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ntVO7R1Tq6YLpa//N820SIllpqojaJHypo3GKhr/ZQgEsGt+ClTInudR+Eo1qFc/OuB2sEHXSyP4wwoFwVMRP6FcH/TXBXcAco3MlGX9hIlZ2KPKYmsK+yuLHGOYz7tLngclc3p+VHXi3vBRvwgnOcLLFTc7fvY32fs74yCn2fA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUyd5ByJ; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-8418ecda126so144067839f.3;
+        Sun, 08 Dec 2024 11:10:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733685046; x=1734289846; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SG5reo1dXIq31bXS85h7E4Iq3GMFsNfzE/E+ItcldH4=;
+        b=NUyd5ByJE5hj+3Qg5q+zjCYdP8gixBEeiG0Hw831LBgfeyKDgVx6Wf53nJhZxgjVz5
+         pXBzXIY33NoA3zx3MR/W/z+Z+2bT2PbDDzagNmw0LY3wJLWPf5rB3PcgyMdzK1Gee693
+         F0bQqFkAaR5jbisCFh8jAtJfQcg8EEQ6p5yn5ae714RGoc1/sBEaLRylITOS0dFUuWfo
+         uK4MUACBwj/jkjcm8yaU2Fvut85SmwGNtL7J69SgCldub002/MGNFkSrX7MQEy5BPToA
+         5Fh+43kty1UPZYZMhBl6Dos7szFsVKiXmbrG8UIG9Suekd6Nh/rAGmd6vxly32Z9Grmv
+         v+aw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733685046; x=1734289846;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SG5reo1dXIq31bXS85h7E4Iq3GMFsNfzE/E+ItcldH4=;
+        b=O/PtadBBWCBT6NqDNqZ/xlRUoTdluBts1lvsDRrb2Y1Cig2QZjBdlDnb/XNspfOMEq
+         2/N2iohzfwqwl9yh4OFSeWW26XpSeGCzQPLiK/ZbzrQLErqNren/Z/oNVdmn35KNQQUV
+         6S3uV6fG3bya9VJmpT6O4Zfpe9bwsCEbrxm6T3tt1okWUyzCoVbnq5/rWJ5ubgfMzQEf
+         P+5jidZNdzkqFbZzlpMiQIVEC+16NqkhbaxM/sYwX6GDvajbAhxix2u/I3b5HL+fXwNU
+         pJ8RWtULC5ZoHo/XvbrZxcEbOtBxd7wIrN9+c+rzGI4nFqMEOIsk5aXLyyvFFd+ORFsq
+         kJ0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWAhMwfrZi/7+WPIUxN5w2e1phDbJuwz4RXMa0MTAQ1Sba0arOA+5xArnlkjASljpEl/KOtCKtu@vger.kernel.org, AJvYcCWkwp5WiNtJ0OCvWC7ZPcJcjw+rpHysC8JVZg/uhuv8cap99Eyb5oYnbBmqHN2zXAzvGaZIcutf/sKZFjY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw43a0Jw/d+5HXIJj9J29FOzyIRywYbSP73j0iffgNItuIaDrLQ
+	nVCd15sLRZwzPyO990r+WiQUd3w5V4izA5ZKvcSnsH3B9taR5IOg
+X-Gm-Gg: ASbGncsdkbEZQOITMBj3o+CbpDA3AXkHMqSarvO8qC8Jgt+vEXFYQn+Tn7hDFHlKw3U
+	490y1c1REC/2Vk6N4rfgjfdHqgpQnF5W0Tm0z/w+weJYIs/85I4pQFzL6KqNapz+0M4BYhIcCZu
+	m+uZl4AA9gPIxZatXqhe6XS0PSxRwE0fJnsHgnoG0iMOJVQFpuvy9xHwNLj3f0bmaFLfJ6CL3jY
+	F71p9MvqM0/k9HgWl+VUQMAjC69XECCODJdWlBSszxbb9/EwILww5uBCSWc2q72/bM3SrZKogot
+X-Google-Smtp-Source: AGHT+IGuo9Kvv/tHvSoPyZKt0NC4Sr/HfxAUeB26jhjZIlHSLuNwmlFFE2bHFKJeqSew9Vz7KZBjHw==
+X-Received: by 2002:a05:6e02:b4a:b0:3a7:98c4:86a9 with SMTP id e9e14a558f8ab-3a811e226b8mr125132395ab.20.1733685046171;
+        Sun, 08 Dec 2024 11:10:46 -0800 (PST)
+Received: from inspiron7620plus.lan ([172.59.229.198])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2bb66b174sm339580173.151.2024.12.08.11.10.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 11:10:44 -0800 (PST)
+From: Guy Chronister <guyc.linux.patches@gmail.com>
+To: hkallweit1@gmail.com
+Cc: nic_swsd@realtek.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Guy Chronister <guyc.linux.patches@gmail.com>,
+	Koba Ko <koba.ko@canonical.com>,
+	Timo Aaltonen <timo.aaltonen@canonical.com>,
+	Andrea Righi <andrea.righi@canonical.com>
+Subject: [PATCH] r8169: Add quirks to enable ASPM on Dell platforms
+Date: Sun,  8 Dec 2024 13:10:39 -0600
+Message-ID: <20241208191039.2240-1-guyc.linux.patches@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,45 +94,123 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Deduplicate deferred probe checks in spi_probe() and enable
-the error message for ACPI case as well.
+Some non-Dell platforms equipped with r8168h/r8111 have issues with ASPM. It's very hard to fix all known issues in a short time and r8168h/r8111 is not a brand new NIC chip, so introduce the quirk for Dell platforms. It's also easier to track the Dell platform and ask for Realtek's effort.
+Make the original matching logic more explicit.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Koba Ko <koba.ko@canonical.com>
+Signed-off-by: Timo Aaltonen <timo.aaltonen@canonical.com>
+Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
+Signed-off-by: Guy Chronister <guyc.linux.patches@gmail.com>
 ---
- drivers/spi/spi.c | 17 ++++++-----------
- 1 file changed, 6 insertions(+), 11 deletions(-)
+ drivers/net/ethernet/realtek/r8169_main.c | 83 ++++++++++++++++++++++-
+ 1 file changed, 80 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 88f785b9e6ec..e0f79773be70 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -417,19 +417,14 @@ static int spi_probe(struct device *dev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
+index 6934bdee2a91..3c1cf704492f 100644
+--- a/drivers/net/ethernet/realtek/r8169_main.c
++++ b/drivers/net/ethernet/realtek/r8169_main.c
+@@ -15,6 +15,7 @@
+ #include <linux/etherdevice.h>
+ #include <linux/clk.h>
+ #include <linux/delay.h>
++#include <linux/dmi.h>
+ #include <linux/ethtool.h>
+ #include <linux/hwmon.h>
+ #include <linux/phy.h>
+@@ -5322,13 +5323,89 @@ static void rtl_init_mac_address(struct rtl8169_private *tp)
+ 	rtl_rar_set(tp, mac_addr);
+ }
  
--	if (is_of_node(fwnode)) {
-+	if (is_of_node(fwnode))
- 		spi->irq = of_irq_get(dev->of_node, 0);
--		if (spi->irq == -EPROBE_DEFER)
--			return dev_err_probe(dev, -EPROBE_DEFER, "Failed to get irq\n");
--		if (spi->irq < 0)
--			spi->irq = 0;
--	} else if (is_acpi_device_node(fwnode) && spi->irq < 0) {
-+	else if (is_acpi_device_node(fwnode) && spi->irq < 0)
- 		spi->irq = acpi_dev_gpio_irq_get(to_acpi_device_node(fwnode), 0);
--		if (spi->irq == -EPROBE_DEFER)
--			return -EPROBE_DEFER;
--		if (spi->irq < 0)
--			spi->irq = 0;
--	}
-+	if (spi->irq == -EPROBE_DEFER)
-+		return dev_err_probe(dev, spi->irq, "Failed to get irq\n");
-+	if (spi->irq < 0)
-+		spi->irq = 0;
++static bool rtl_aspm_dell_workaround(struct rtl8169_private *tp)
++{
++	static const struct dmi_system_id sysids[] = {
++		{
++			.ident = "Dell",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++				DMI_MATCH(DMI_PRODUCT_NAME, "Vostro 16 5640"),
++				DMI_MATCH(DMI_PRODUCT_SKU, "0CA0"),
++			},
++		},
++		{
++			.ident = "Dell",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++				DMI_MATCH(DMI_PRODUCT_NAME, "Vostro 14 3440"),
++				DMI_MATCH(DMI_PRODUCT_SKU, "0CA5"),
++			},
++		},
++		{
++			.ident = "Dell",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++				DMI_MATCH(DMI_PRODUCT_NAME, "Vostro 14 3440"),
++				DMI_MATCH(DMI_PRODUCT_SKU, "0CA6"),
++			},
++		},
++		{
++			.ident = "Dell",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3450"),
++				DMI_MATCH(DMI_PRODUCT_SKU, "0C99"),
++			},
++		},
++		{
++			.ident = "Dell",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3450"),
++				DMI_MATCH(DMI_PRODUCT_SKU, "0C97"),
++			},
++		},
++		{
++			.ident = "Dell",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3550"),
++				DMI_MATCH(DMI_PRODUCT_SKU, "0C9A"),
++			},
++		},
++		{
++			.ident = "Dell",
++			.matches = {
++				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
++				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3550"),
++				DMI_MATCH(DMI_PRODUCT_SKU, "0C98"),
++			},
++		},
++		{}
++	};
++
++	if (tp->mac_version == RTL_GIGA_MAC_VER_46 && dmi_check_system(sysids))
++		return true;
++
++	return false;
++}
++
+ /* register is set if system vendor successfully tested ASPM 1.2 */
+ static bool rtl_aspm_is_safe(struct rtl8169_private *tp)
+ {
+-	if (tp->mac_version >= RTL_GIGA_MAC_VER_61 &&
+-	    r8168_mac_ocp_read(tp, 0xc0b2) & 0xf)
++	 /* definition of 0xc0b2,
++	  * 0: L1
++	  * 1: ASPM L1.0
++	  * 2: ASPM L0s
++	  * 3: CLKEREQ
++	  * 4-7: Reserved
++	  */
++	if ((tp->mac_version >= RTL_GIGA_MAC_VER_61 &&
++		 (r8168_mac_ocp_read(tp, 0xc0b2) & 0x0F)) ||
++		rtl_aspm_dell_workaround(tp)) {
+ 		return true;
+-
++	}
+ 	return false;
+ }
  
- 	ret = dev_pm_domain_attach(dev, true);
- 	if (ret)
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+2.45.2
 
 
