@@ -1,373 +1,393 @@
-Return-Path: <linux-kernel+bounces-436593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52CB99E8812
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:20:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FF6F9E8814
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:20:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C84F1643CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:20:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BF37C281192
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502AC19343B;
-	Sun,  8 Dec 2024 21:20:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA2E197A8E;
+	Sun,  8 Dec 2024 21:20:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OMtxr4z6"
-Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c0PxlYG2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A081E14F12D;
-	Sun,  8 Dec 2024 21:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D188619539F;
+	Sun,  8 Dec 2024 21:20:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733692805; cv=none; b=S+piP/5IMRvlJHnaCh+J3SOEPC7r4El1YBdvpeHyQSiA7dCsRwS+BY99Nu9rCmR5rslxK3RDQxbdJiH68VJEE/lwcZrrMpkf8ER7YcadoA25ZOm9wlor+Gxt0yfcXHXJ5/2JUZNAPiWorc1ofK+nYOUb1e6jf39DiiEhCDirntI=
+	t=1733692808; cv=none; b=XlIT6zOFN1cQZsREbzq+Krjxr+83l+Nz6/9Ji+ezjKHUgy/ZBdkVfTl82eJCdecM1MqQ+HI6chDuURQg8p9ukEqJKCgvrOsQIQRWOYAERMaBGeemxzkOikde3R+ozJSJl5Uw5Nqj7msNNC0kPrfDv3bqbbuTeSpMpXNIMdeGlRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733692805; c=relaxed/simple;
-	bh=MYZaKTEGw/6f08Oh4I7OXjkjcKPbLv7UQtW7xU+AIAc=;
+	s=arc-20240116; t=1733692808; c=relaxed/simple;
+	bh=wIW+JFihL//iGZ5HvtbeKBYPkZZaH/4gSrwRmP8cFjo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KY8WDP5Nh3/SYV3elmu11r7YyFusYztAF7EmxTr0VyR1hno6MU4BTEcZOhtg9Law3JjmijvZ05gqyMtN0f5cNh09acobhN1568IsBFvCAd0XUUaet2w2oiQ6967O3HtFqvbkKmrQ2SQBoSiJSCCc6ks8WP2bc50SteXXQAaxblE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OMtxr4z6; arc=none smtp.client-ip=209.85.221.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-517aea3ee2aso252971e0c.2;
-        Sun, 08 Dec 2024 13:20:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733692802; x=1734297602; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qd0L3F3mQCmTB4pf+gzTeCqXtfXN9Be4txbdBbA91C0=;
-        b=OMtxr4z6eU/XYmrb44iolBgIJrbdINcKiFhKQFHRbd9J7J1wjnaTEp8akPiRLkegRp
-         yKNsmMkRTJceyJtEyESD+HUUXOqWdDl/qbXNuYSyU3qtiwF6XfF7ATM/PitmGmyGMJD/
-         AMyq/HepN4Qzz/l7zDA18bt3qKG2B7JipaPhaLjMS7xG8sI5o0sYoC4+EV+F/zavNQ81
-         vmd1vbyfQCHMMRQ0G80aMHzAo8V1qJ2WI76LOAEoYDzUrMlK+WitK8/LO4q24HkSbOTs
-         baLkzcjMy7V7I4osEcu50pHCRaVa8zh1WbBico0Wmq4MTiepPQMQQz5I+WdeogMj2OoZ
-         APRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733692802; x=1734297602;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qd0L3F3mQCmTB4pf+gzTeCqXtfXN9Be4txbdBbA91C0=;
-        b=dxWDBSnRNBYI8kR/YUXgwwtjWbYehafpiJMyUiLq2y5nLk+nLLgNHwb2eHd8LlU5K3
-         PIVKzNAL2YBfkNEDsUItevcEuuAsdKAfv3sljyBxJtYKswjvFKtdejKLy/0ATXi8UeWS
-         TELdaSoeHZzL1zUHweJn57TW5B/i073ACQhPjjgwU+vUoLRz5iJtw+REtHB/uRNDkfNl
-         eOLeT4/1b5TTWmBGsHtYuiOOebKRCSpjMVcqQdedUK80dSQ+Tm2bHrYdsb6wP4fnwuHI
-         ZemdMU+O3gpwpiUrOIAnxvmDZA6mA4DMn8q8+EsvCEw2CDeY7c850pg9j7zUBeC5lRO9
-         YXZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbagKhh2GRGHr6RjMFoz8CWpwB5+/+Z2qLLA4FtMQGNcKet0N97uj1WPbdVniZn40+Mai/IwU/PiSt2Pucap+m7Jo=@vger.kernel.org, AJvYcCVLvdZ8P0gezBYcAN91DC4WHREjzCS9RCgISD8/Rx9IFfjRMbs/QI8Fh4ca/MLrqgVy22NDY4zrYpBW40Dn@vger.kernel.org, AJvYcCVaZdIlzG/Jl1XTl6DPb1wccLm4wbGQfpxr5EaDyacUuiZ4QJg3b4oqOjN5w1dtUfjR99FxKQ7gq0Jb@vger.kernel.org, AJvYcCWcMAMYnE6viEY2f56BpIQfrU88nuiLjSz1BCxFUqowQPKI1/5s4FJXIuDeLPsfr3eQmz7z9WUImVHe@vger.kernel.org, AJvYcCX0J/0lQcAwSP648ti7UrSBfCV3PDUQeNoPtXQ1YhpuEq/6TidpCI+O2VJFBMwkZkzBiy+IWjzNYp3Q@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywt50N3f1QUW0v8Qt+P2JWoWC20dCU16yh8vH9iQZhrnkl20Nlt
-	LqDWviD1L/8QIJqlTtRmH5avSvZdg4oFHCnuhPQWChfnUnkY15YRlr2fEgini/7W12E0hwfIdNE
-	nbZHdhJCex6GVuZNt+aXJ2OMDkQc=
-X-Gm-Gg: ASbGncsv6Jiw18UcawHGYBzIdryBRXW5GH8d3NZFsKrhbUQ9tTWENph3KPQUy7mY3ip
-	LOoI7pKatGfkQPfmGAk7tgXjhomax82FX
-X-Google-Smtp-Source: AGHT+IFb4A5vebbrF1bexBVFS0v5rQ0hGc4KhoH18W3fHDxyTnstJJ+DkgT2RbZ9IzoWopboHvUklYEgOsjRMKazeFY=
-X-Received: by 2002:a05:6122:3d0b:b0:50a:d1e3:82f7 with SMTP id
- 71dfb90a1353d-515fcad53f9mr11224596e0c.8.1733692802358; Sun, 08 Dec 2024
- 13:20:02 -0800 (PST)
+	 To:Cc:Content-Type; b=gu2G+GuXR0IWNEVJ9bV2b43JBIYCqS2+Ws0adSqGrUU0JxPuxo9K9nIPctVFCncyiLCozQokJc9loj4larWhSGnvXD3hLGolRVFza3nMYMnfrXtlR8Ywc4ONMqpeCPne49KmJq0I5CjroxEneYYc+nuAkU0OkTor+Pz5LVD3nAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c0PxlYG2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E4BAC4CEE2;
+	Sun,  8 Dec 2024 21:20:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733692808;
+	bh=wIW+JFihL//iGZ5HvtbeKBYPkZZaH/4gSrwRmP8cFjo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=c0PxlYG2gfLgEXPjAnsP+xFNNopHIiAhEkTiwr+Tjs9YQHPwt1iA0Xk+Ix1LcDmqT
+	 3K+BXe3KZmRlTo6yofClo0AqXv+M4AWF9oWiSyC5lNotLhdP8agi25yzfmV6euWuYT
+	 9YqCRLpwhYmfObrb3taW6RQDhGWK1vyPBkdnktwRFC7yRrIxBPJwoJPE1ARvt9fd9V
+	 jdDupmfR9wu7tpL6K9WcvqAV8P4HsKxnvD+cJTUTweNivql7Ur/i6KMW8g0gt0/2yj
+	 4LfQTNIsSmztxOu1ug/iAh4Kw1XiSC1U8twxJ/fReQ7sftBIuNC5y5fVM/olVjTq9T
+	 M+AJU0U5/xkww==
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4afe1009960so385163137.0;
+        Sun, 08 Dec 2024 13:20:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU+S5+9ehPagcnCcXU4PZS4DGCNflOYzmUvcIP56cGwXQqG/6C3P7HCsoiORJa2lQq1nB5QV2GisAQ5RCA=@vger.kernel.org, AJvYcCUM0JAkyaTnGCsOLetznAMGYZYAyhvXrry+l3yT+vBu3cnCDwbm8bbn5QReEUWBlsUpW7YCva4IWv4akes=@vger.kernel.org, AJvYcCUnUPB52sM7z0n/ikJbWaYLXyH7VUmIeIR4noRMQ5Ni77Oh2cm4VGvQDQM3tlnvaXxBONisueswZ7g1t00=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyDTm9/XENKpEl1A8nNBtPgh9VEiF/iuX9h9rm95+v61m5e59Hp
+	Wo/MGwQWz8Z9jYsigI9L6rCh9LNJSlT67DbEkHJSmiYzvwIO80T26Q+cb60yC6AXtgzJE7DUzsC
+	gsCX9JoYlHHoz7Yksfj6KXleVxQ8=
+X-Google-Smtp-Source: AGHT+IEAEQtQ/0qOA/qy1SI4QszuXuAGYuv9A2rmXdIICft0a3QIdyGkMq5+81siMjQPr3J6ej4/tQz/oSUGC5ClSes=
+X-Received: by 2002:a05:6102:3ed0:b0:4af:f541:912f with SMTP id
+ ada2fe7eead31-4aff54192b6mr1592867137.10.1733692807428; Sun, 08 Dec 2024
+ 13:20:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com> <20241206111337.726244-11-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241206111337.726244-11-claudiu.beznea.uj@bp.renesas.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Sun, 8 Dec 2024 21:19:36 +0000
-Message-ID: <CA+V-a8tDpqtRH0KC3nTEbkCZ+E0ahUEPdMQXeh6htqAOg8r2bA@mail.gmail.com>
-Subject: Re: [PATCH v2 10/15] iio: adc: rzg2l_adc: Add support for channel 8
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
-	sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu>
+ <20241207-imx214-v3-7-ab60af7ee915@apitzsch.eu> <CAPybu_0Bdc03UrJNO42S1fBTvpuHUUExvkR1ont7VKdw2XBuKg@mail.gmail.com>
+In-Reply-To: <CAPybu_0Bdc03UrJNO42S1fBTvpuHUUExvkR1ont7VKdw2XBuKg@mail.gmail.com>
+From: Ricardo Ribalda Delgado <ribalda@kernel.org>
+Date: Sun, 8 Dec 2024 22:19:51 +0100
+X-Gmail-Original-Message-ID: <CAPybu_0Nk+p1rikH_t_zpEHx=KGnXfG+npr-XEnwtA4EnfJjuQ@mail.gmail.com>
+Message-ID: <CAPybu_0Nk+p1rikH_t_zpEHx=KGnXfG+npr-XEnwtA4EnfJjuQ@mail.gmail.com>
+Subject: Re: [PATCH v3 07/12] media: i2c: imx214: Add vblank and hblank controls
+To: git@apitzsch.eu
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
+	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Vincent Knecht <vincent.knecht@mailoo.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 6, 2024 at 11:16=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
+On Sun, Dec 8, 2024 at 9:59=E2=80=AFPM Ricardo Ribalda Delgado
+<ribalda@kernel.org> wrote:
 >
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> In general it looks good to me (besides the comments, ignore the nits
+> if you want to).
 >
-> The ADC on the Renesas RZ/G3S SoC includes an additional channel (channel
-> 8) dedicated to reading temperature values from the Thermal Sensor Unit
-> (TSU). There is a direct in-SoC connection between the ADC and TSU IPs.
+> I'd recommend that you test with lockdep to make sure that we are not
+> missing anything, and I'd like to hear back from Sakari regarding the
+> get_locked_active
 >
-> To read the temperature reported by the TSU, a different sampling rate
-> (compared to channels 0-7) must be configured in the ADM3 register.
+> Thanks!
 >
-> The rzg2l_adc driver has been updated to support reading the TSU
-> temperature.
+> On Sat, Dec 7, 2024 at 9:48=E2=80=AFPM Andr=C3=A9 Apitzsch via B4 Relay
+> <devnull+git.apitzsch.eu@kernel.org> wrote:
+> >
+> > From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> >
+> > Add vblank control to allow changing the framerate /
+> > higher exposure values.
+> >
+> > The vblank and hblank controls are needed for libcamera support.
+> >
+> > While at it, fix the minimal exposure time according to the datasheet.
+> >
+> > Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
+> > ---
+> >  drivers/media/i2c/imx214.c | 106 +++++++++++++++++++++++++++++++++++++=
++++-----
+> >  1 file changed, 94 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
+> > index f1c72db0775eaf4810f762e8798d301c5ad9923c..a7f49dbafe0f54af3c02f55=
+34460fdee88a22fe2 100644
+> > --- a/drivers/media/i2c/imx214.c
+> > +++ b/drivers/media/i2c/imx214.c
+> > @@ -34,11 +34,17 @@
+> >
+> >  /* V-TIMING internal */
+> >  #define IMX214_REG_FRM_LENGTH_LINES    CCI_REG16(0x0340)
+> > +#define IMX214_VTS_MAX                 0xffff
+> > +
+> > +#define IMX214_VBLANK_MIN              890
+> > +
+> > +/* HBLANK control - read only */
+> > +#define IMX214_PPL_DEFAULT             5008
+> >
+> >  /* Exposure control */
+> >  #define IMX214_REG_EXPOSURE            CCI_REG16(0x0202)
+> > -#define IMX214_EXPOSURE_MIN            0
+> > -#define IMX214_EXPOSURE_MAX            3184
+> > +#define IMX214_EXPOSURE_OFFSET         10
+> > +#define IMX214_EXPOSURE_MIN            1
+> >  #define IMX214_EXPOSURE_STEP           1
+> >  #define IMX214_EXPOSURE_DEFAULT                3184
+> >  #define IMX214_REG_EXPOSURE_RATIO      CCI_REG8(0x0222)
+> > @@ -187,6 +193,8 @@ struct imx214 {
+> >         struct v4l2_ctrl_handler ctrls;
+> >         struct v4l2_ctrl *pixel_rate;
+> >         struct v4l2_ctrl *link_freq;
+> > +       struct v4l2_ctrl *vblank;
+> > +       struct v4l2_ctrl *hblank;
+> >         struct v4l2_ctrl *exposure;
+> >         struct v4l2_ctrl *unit_size;
+> >
+> > @@ -202,8 +210,6 @@ static const struct cci_reg_sequence mode_4096x2304=
+[] =3D {
+> >         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> >         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
+> >         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> > -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> > -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+> >         { IMX214_REG_X_ADD_STA, 56 },
+> >         { IMX214_REG_Y_ADD_STA, 408 },
+> >         { IMX214_REG_X_ADD_END, 4151 },
+> > @@ -274,8 +280,6 @@ static const struct cci_reg_sequence mode_1920x1080=
+[] =3D {
+> >         { IMX214_REG_HDR_MODE, IMX214_HDR_MODE_OFF },
+> >         { IMX214_REG_HDR_RES_REDUCTION, IMX214_HDR_RES_REDU_THROUGH },
+> >         { IMX214_REG_EXPOSURE_RATIO, 1 },
+> > -       { IMX214_REG_FRM_LENGTH_LINES, 3194 },
+> > -       { IMX214_REG_LINE_LENGTH_PCK, 5008 },
+> >         { IMX214_REG_X_ADD_STA, 1144 },
+> >         { IMX214_REG_Y_ADD_STA, 1020 },
+> >         { IMX214_REG_X_ADD_END, 3063 },
+> > @@ -359,6 +363,7 @@ static const struct cci_reg_sequence mode_table_com=
+mon[] =3D {
+> >         { IMX214_REG_ORIENTATION, 0 },
+> >         { IMX214_REG_MASK_CORR_FRAMES, IMX214_CORR_FRAMES_MASK },
+> >         { IMX214_REG_FAST_STANDBY_CTRL, 1 },
+> > +       { IMX214_REG_LINE_LENGTH_PCK, IMX214_PPL_DEFAULT },
+> >         { CCI_REG8(0x4550), 0x02 },
+> >         { CCI_REG8(0x4601), 0x00 },
+> >         { CCI_REG8(0x4642), 0x05 },
+> > @@ -462,18 +467,24 @@ static const struct cci_reg_sequence mode_table_c=
+ommon[] =3D {
+> >  static const struct imx214_mode {
+> >         u32 width;
+> >         u32 height;
+> > +
+> > +       /* V-timing */
+> > +       unsigned int vts_def;
+> > +
+> >         unsigned int num_of_regs;
+> >         const struct cci_reg_sequence *reg_table;
+> >  } imx214_modes[] =3D {
+> >         {
+> >                 .width =3D 4096,
+> >                 .height =3D 2304,
+> > +               .vts_def =3D 3194,
+> >                 .num_of_regs =3D ARRAY_SIZE(mode_4096x2304),
+> >                 .reg_table =3D mode_4096x2304,
+> >         },
+> >         {
+> >                 .width =3D 1920,
+> >                 .height =3D 1080,
+> > +               .vts_def =3D 3194,
+> >                 .num_of_regs =3D ARRAY_SIZE(mode_1920x1080),
+> >                 .reg_table =3D mode_1920x1080,
+> >         },
+> > @@ -626,9 +637,36 @@ static int imx214_set_format(struct v4l2_subdev *s=
+d,
+> >         __crop->width =3D mode->width;
+> >         __crop->height =3D mode->height;
+> >
+> > -       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE)
+> > +       if (format->which =3D=3D V4L2_SUBDEV_FORMAT_ACTIVE) {
+> > +               int exposure_max;
+> > +               int exposure_def;
+> > +               int hblank;
+> > +
+> >                 imx214->cur_mode =3D mode;
+> >
+> > +               /* Update FPS limits */
+> nit: Update blank limits
+> > +               __v4l2_ctrl_modify_range(imx214->vblank, IMX214_VBLANK_=
+MIN,
+> > +                                        IMX214_VTS_MAX - mode->height,=
+ 2,
+> > +                                        mode->vts_def - mode->height);
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v2:
-> - adjusted the RZG2L_ADC_MAX_CHANNELS
-> - introduced rzg2l_adc_ch_to_adsmp_index() and used it accordingly
-> - made the IIO_TEMP channel as raw channel as requested in the
->   review process. I also realized having it as scale channel is
->   wrong as the ADC doesn't actually report a temperature but a
->   raw value that is then converted to a temperature with the
->   help of the TSU (Thermal Sensor Unit) driver. Code from the
->   TSU driver (not yet published) that reads the TSU sensor through
->   the ADC and coverts the raw value to a temperature value is as
->   follows:
->
->
-> // ...
->
-> #define TSU_READ_STEPS          8
->
-> /* Default calibration values, if FUSE values are missing */
-> #define SW_CALIB0_VAL   1297
-> #define SW_CALIB1_VAL   751
->
-> #define MCELSIUS(temp)          (temp * MILLIDEGREE_PER_DEGREE)
->
-> struct rzg3s_thermal_priv {
->         void __iomem *base;
->         struct device *dev;
->         struct thermal_zone_device *tz;
->         struct reset_control *rstc;
->         struct iio_channel *channel;
->         u16 calib0;
->         u16 calib1;
-> };
->
-> // ...
->
-> static int rzg3s_thermal_get_temp(struct thermal_zone_device *tz, int *te=
-mp)
-> {
->         struct rzg3s_thermal_priv *priv =3D thermal_zone_device_priv(tz);
->         struct device *dev =3D priv->dev;
->         u32 ts_code_ave =3D 0;
->         int ret, val;
->
->         ret =3D pm_runtime_resume_and_get(dev);
->         if (ret)
->                 return ret;
->
->         for (u8 i =3D 0; i < TSU_READ_STEPS; i++) {
->                 ret =3D iio_read_channel_raw(priv->channel, &val);
->                 if (ret < 0)
->                         goto rpm_put;
->
->                 ts_code_ave +=3D val;
->                 /*
->                  * According to HW manual (section 40.4.4 Procedure for M=
-easuring the Temperature)
->                  * we need to wait here at leat 3us.
->                  */
->                 usleep_range(5, 10);
->         }
->
->         ret =3D 0;
->         ts_code_ave =3D DIV_ROUND_CLOSEST(ts_code_ave, TSU_READ_STEPS);
->
->         /*
->          * According to HW manual (section 40.4.4 Procedure for Measuring=
- the Temperature)
->          * the formula to compute the temperature is as follows;
->          *
->          * Tj =3D (ts_code_ave - priv->calib0) * (165 / (priv->calib0 - p=
-riv->calib1)) - 40
->          */
->         *temp =3D DIV_ROUND_CLOSEST_ULL(((u64)(ts_code_ave - priv->calib1=
-) * 165),
->                                       (priv->calib0 - priv->calib1)) - 40=
+> Is the handler->lock held when we call this function? Can you try
+> running the code with lockdep?
+> > +
+> > +               /* Update max exposure while meeting expected vblanking=
+ */
+> > +               exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFSET=
 ;
+> > +               exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFA=
+ULT);
+> > +               __v4l2_ctrl_modify_range(imx214->exposure,
+> > +                                        imx214->exposure->minimum,
+> > +                                        exposure_max, imx214->exposure=
+->step,
+> > +                                        exposure_def);
+> > +
+> > +               /*
+> > +                * Currently PPL is fixed to IMX214_PPL_DEFAULT, so hbl=
+ank
+> > +                * depends on mode->width only, and is not changeable i=
+n any
+> > +                * way other than changing the mode.
+> > +                */
+> > +               hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> > +               __v4l2_ctrl_modify_range(imx214->hblank, hblank, hblank=
+, 1,
+> > +                                        hblank);
+> > +       }
+> > +
+> >         return 0;
+> >  }
+> >
+> > @@ -678,8 +716,25 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctrl)
+> >  {
+> >         struct imx214 *imx214 =3D container_of(ctrl->handler,
+> >                                              struct imx214, ctrls);
+> > +       const struct v4l2_mbus_framefmt *format;
+> > +       struct v4l2_subdev_state *state;
+> >         int ret;
+> >
+> > +       if (ctrl->id =3D=3D V4L2_CID_VBLANK) {
+> > +               int exposure_max, exposure_def;
+> > +
+> > +               state =3D v4l2_subdev_get_locked_active_state(&imx214->=
+sd);
 >
->         /* Round it up to 0.5 degrees Celsius and report it in Mili Celsi=
-us. */
->         *temp =3D roundup(MCELSIUS(*temp), 500);
->
-> rpm_put:
->         pm_runtime_mark_last_busy(dev);
->         pm_runtime_put_autosuspend(dev);
->
->         return ret;
-> }
->
-> // ...
->
->
->  drivers/iio/adc/rzg2l_adc.c | 62 ++++++++++++++++++++++++++-----------
->  1 file changed, 44 insertions(+), 18 deletions(-)
->
-Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Sakari, I see that other drivers assume that the active is locked in
+> set_ctrl. Is this correct?
 
-Cheers,
-Prabhakar
+imx214->sd.state_lock =3D imx214->ctrls.lock;
 
-> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
-> index 6740912f83c5..e8dbc5dfbea1 100644
-> --- a/drivers/iio/adc/rzg2l_adc.c
-> +++ b/drivers/iio/adc/rzg2l_adc.c
-> @@ -52,12 +52,13 @@
->  #define RZG2L_ADCR(n)                  (0x30 + ((n) * 0x4))
->  #define RZG2L_ADCR_AD_MASK             GENMASK(11, 0)
+So I guess it is fine :)
+
+
 >
-> -#define RZG2L_ADC_MAX_CHANNELS         8
-> +#define RZG2L_ADC_MAX_CHANNELS         9
->  #define RZG2L_ADC_TIMEOUT              usecs_to_jiffies(1 * 4)
+> > +               format =3D v4l2_subdev_state_get_format(state, 0);
+> > +
+> > +               /* Update max exposure while meeting expected vblanking=
+ */
+> > +               exposure_max =3D format->height + ctrl->val - IMX214_EX=
+POSURE_OFFSET;
+> > +               exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFA=
+ULT);
+> > +               __v4l2_ctrl_modify_range(imx214->exposure,
+> > +                                        imx214->exposure->minimum,
+> > +                                        exposure_max, imx214->exposure=
+->step,
+> > +                                        exposure_def);
+> > +       }
+> > +
+> >         /*
+> >          * Applying V4L2 control value only happens
+> >          * when power is up for streaming
+> > @@ -691,7 +746,10 @@ static int imx214_set_ctrl(struct v4l2_ctrl *ctrl)
+> >         case V4L2_CID_EXPOSURE:
+> >                 cci_write(imx214->regmap, IMX214_REG_EXPOSURE, ctrl->va=
+l, &ret);
+> >                 break;
+> > -
+> > +       case V4L2_CID_VBLANK:
+>  No need to read the format here?
+>                       format =3D v4l2_subdev_state_get_format(state, 0);
+> > +               cci_write(imx214->regmap, IMX214_REG_FRM_LENGTH_LINES,
+> > +                         format->height + ctrl->val, &ret);
+> > +               break;
+> >         default:
+> >                 ret =3D -EINVAL;
+> >         }
+> > @@ -714,8 +772,11 @@ static int imx214_ctrls_init(struct imx214 *imx214=
+)
+> >                 .width =3D 1120,
+> >                 .height =3D 1120,
+> >         };
+> > +       const struct imx214_mode *mode =3D &imx214_modes[0];
+> >         struct v4l2_fwnode_device_properties props;
+> >         struct v4l2_ctrl_handler *ctrl_hdlr;
+> > +       int exposure_max, exposure_def;
+> > +       int hblank;
+> >         int ret;
+> >
+> >         ret =3D v4l2_fwnode_device_parse(imx214->dev, &props);
+> > @@ -723,7 +784,7 @@ static int imx214_ctrls_init(struct imx214 *imx214)
+> >                 return ret;
+> >
+> >         ctrl_hdlr =3D &imx214->ctrls;
+> > -       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 6);
+> > +       ret =3D v4l2_ctrl_handler_init(&imx214->ctrls, 8);
+> >         if (ret)
+> >                 return ret;
+> >
+> > @@ -749,12 +810,27 @@ static int imx214_ctrls_init(struct imx214 *imx21=
+4)
+> >          *
+> >          * Yours sincerely, Ricardo.
+> >          */
+> > +
+> > +       /* Initial vblank/hblank/exposure parameters based on current m=
+ode */
+> > +       imx214->vblank =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_op=
+s,
+> > +                                          V4L2_CID_VBLANK, IMX214_VBLA=
+NK_MIN,
+> > +                                          IMX214_VTS_MAX - mode->heigh=
+t, 2,
+> > +                                          mode->vts_def - mode->height=
+);
+> > +
+> > +       hblank =3D IMX214_PPL_DEFAULT - mode->width;
+> > +       imx214->hblank =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_op=
+s,
+> > +                                          V4L2_CID_HBLANK, hblank, hbl=
+ank,
+> > +                                          1, hblank);
+> > +       if (imx214->hblank)
+> > +               imx214->hblank->flags |=3D V4L2_CTRL_FLAG_READ_ONLY;
+> > +
+> > +       exposure_max =3D mode->vts_def - IMX214_EXPOSURE_OFFSET;
+> > +       exposure_def =3D min(exposure_max, IMX214_EXPOSURE_DEFAULT);
+> >         imx214->exposure =3D v4l2_ctrl_new_std(ctrl_hdlr, &imx214_ctrl_=
+ops,
+> >                                              V4L2_CID_EXPOSURE,
+> > -                                            IMX214_EXPOSURE_MIN,
+> > -                                            IMX214_EXPOSURE_MAX,
+> > +                                            IMX214_EXPOSURE_MIN, expos=
+ure_max,
+> nit: I think it looks nicer with exposure_max in the next line, but
+> ignore if you prefer this way :)
+> >                                              IMX214_EXPOSURE_STEP,
+> > -                                            IMX214_EXPOSURE_DEFAULT);
+> > +                                            exposure_def);
+> >
+> >         imx214->unit_size =3D v4l2_ctrl_new_std_compound(ctrl_hdlr,
+> >                                 NULL,
+> > @@ -876,6 +952,12 @@ static int imx214_get_frame_interval(struct v4l2_s=
+ubdev *subdev,
+> >         return 0;
+> >  }
+> >
+> > +/*
+> > + * Raw sensors should be using the VBLANK and HBLANK controls to deter=
+mine
+> > + * the frame rate. However this driver was initially added using the
+> > + * [S|G|ENUM]_FRAME_INTERVAL ioctls with a fixed rate of 30fps.
+> > + * Retain the frame_interval ops for backwards compatibility, but they=
+ do nothing.
+> > + */
 >
->  /**
->   * struct rzg2l_adc_hw_params - ADC hardware specific parameters
-> - * @default_adsmp: default ADC sampling period (see ADM3 register)
-> + * @default_adsmp: default ADC sampling period (see ADM3 register); inde=
-x 0 is
-> + * used for voltage channels, index 1 is used for temperature channel
->   * @adsmp_mask: ADC sampling period mask (see ADM3 register)
->   * @adint_inten_mask: conversion end interrupt mask (see ADINT register)
->   * @default_adcmp: default ADC cmp (see ADM3 register)
-> @@ -65,7 +66,7 @@
->   * @adivc: specifies if ADVIC register is available
->   */
->  struct rzg2l_adc_hw_params {
-> -       u16 default_adsmp;
-> +       u16 default_adsmp[2];
->         u16 adsmp_mask;
->         u16 adint_inten_mask;
->         u8 default_adcmp;
-> @@ -89,15 +90,26 @@ struct rzg2l_adc {
->         u16 last_val[RZG2L_ADC_MAX_CHANNELS];
->  };
->
-> -static const char * const rzg2l_adc_channel_name[] =3D {
-> -       "adc0",
-> -       "adc1",
-> -       "adc2",
-> -       "adc3",
-> -       "adc4",
-> -       "adc5",
-> -       "adc6",
-> -       "adc7",
-> +/**
-> + * struct rzg2l_adc_channel - ADC channel descriptor
-> + * @name: ADC channel name
-> + * @type: ADC channel type
-> + */
-> +struct rzg2l_adc_channel {
-> +       const char * const name;
-> +       enum iio_chan_type type;
-> +};
-> +
-> +static const struct rzg2l_adc_channel rzg2l_adc_channels[] =3D {
-> +       { "adc0", IIO_VOLTAGE },
-> +       { "adc1", IIO_VOLTAGE },
-> +       { "adc2", IIO_VOLTAGE },
-> +       { "adc3", IIO_VOLTAGE },
-> +       { "adc4", IIO_VOLTAGE },
-> +       { "adc5", IIO_VOLTAGE },
-> +       { "adc6", IIO_VOLTAGE },
-> +       { "adc7", IIO_VOLTAGE },
-> +       { "adc8", IIO_TEMP },
->  };
->
->  static unsigned int rzg2l_adc_readl(struct rzg2l_adc *adc, u32 reg)
-> @@ -163,9 +175,18 @@ static void rzg2l_set_trigger(struct rzg2l_adc *adc)
->         rzg2l_adc_writel(adc, RZG2L_ADM(1), reg);
->  }
->
-> +static u8 rzg2l_adc_ch_to_adsmp_index(u8 ch)
-> +{
-> +       if (rzg2l_adc_channels[ch].type =3D=3D IIO_VOLTAGE)
-> +               return 0;
-> +
-> +       return 1;
-> +}
-> +
->  static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
->  {
->         const struct rzg2l_adc_hw_params *hw_params =3D adc->hw_params;
-> +       u8 index =3D rzg2l_adc_ch_to_adsmp_index(ch);
->         u32 reg;
->
->         if (rzg2l_adc_readl(adc, RZG2L_ADM(0)) & RZG2L_ADM0_ADBSY)
-> @@ -179,6 +200,11 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_a=
-dc *adc, u8 ch)
->         reg |=3D BIT(ch);
->         rzg2l_adc_writel(adc, RZG2L_ADM(2), reg);
->
-> +       reg =3D rzg2l_adc_readl(adc, RZG2L_ADM(3));
-> +       reg &=3D ~hw_params->adsmp_mask;
-> +       reg |=3D hw_params->default_adsmp[index];
-> +       rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
-> +
->         /*
->          * Setup ADINT
->          * INTS[31] - Select pulse signal
-> @@ -235,7 +261,7 @@ static int rzg2l_adc_read_raw(struct iio_dev *indio_d=
-ev,
->
->         switch (mask) {
->         case IIO_CHAN_INFO_RAW: {
-> -               if (chan->type !=3D IIO_VOLTAGE)
-> +               if (chan->type !=3D IIO_VOLTAGE && chan->type !=3D IIO_TE=
-MP)
->                         return -EINVAL;
->
->                 guard(mutex)(&adc->lock);
-> @@ -258,7 +284,7 @@ static int rzg2l_adc_read_label(struct iio_dev *iio_d=
-ev,
->                                 const struct iio_chan_spec *chan,
->                                 char *label)
->  {
-> -       return sysfs_emit(label, "%s\n", rzg2l_adc_channel_name[chan->cha=
-nnel]);
-> +       return sysfs_emit(label, "%s\n", rzg2l_adc_channels[chan->channel=
-].name);
->  }
->
->  static const struct iio_info rzg2l_adc_iio_info =3D {
-> @@ -332,11 +358,11 @@ static int rzg2l_adc_parse_properties(struct platfo=
-rm_device *pdev, struct rzg2l
->                 if (channel >=3D hw_params->num_channels)
->                         return -EINVAL;
->
-> -               chan_array[i].type =3D IIO_VOLTAGE;
-> +               chan_array[i].type =3D rzg2l_adc_channels[channel].type;
->                 chan_array[i].indexed =3D 1;
->                 chan_array[i].channel =3D channel;
->                 chan_array[i].info_mask_separate =3D BIT(IIO_CHAN_INFO_RA=
-W);
-> -               chan_array[i].datasheet_name =3D rzg2l_adc_channel_name[c=
-hannel];
-> +               chan_array[i].datasheet_name =3D rzg2l_adc_channels[chann=
-el].name;
->                 i++;
->         }
->
-> @@ -386,7 +412,7 @@ static int rzg2l_adc_hw_init(struct device *dev, stru=
-ct rzg2l_adc *adc)
->         reg &=3D ~RZG2L_ADM3_ADCMP_MASK;
->         reg &=3D ~hw_params->adsmp_mask;
->         reg |=3D FIELD_PREP(RZG2L_ADM3_ADCMP_MASK, hw_params->default_adc=
-mp) |
-> -              hw_params->default_adsmp;
-> +              hw_params->default_adsmp[0];
->
->         rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
->
-> @@ -469,7 +495,7 @@ static int rzg2l_adc_probe(struct platform_device *pd=
-ev)
->  static const struct rzg2l_adc_hw_params rzg2l_hw_params =3D {
->         .num_channels =3D 8,
->         .default_adcmp =3D 0xe,
-> -       .default_adsmp =3D 0x578,
-> +       .default_adsmp =3D { 0x578 },
->         .adsmp_mask =3D GENMASK(15, 0),
->         .adint_inten_mask =3D GENMASK(7, 0),
->         .adivc =3D true
-> --
-> 2.39.2
->
->
+> Now that these controls are useless... maybe we can do a dev_warn_once
+> when the user calls it to leave some output in dmesg?
+> >  static int imx214_enum_frame_interval(struct v4l2_subdev *subdev,
+> >                                 struct v4l2_subdev_state *sd_state,
+> >                                 struct v4l2_subdev_frame_interval_enum =
+*fie)
+> >
+> > --
+> > 2.47.1
+> >
+> >
 
