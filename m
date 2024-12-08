@@ -1,136 +1,114 @@
-Return-Path: <linux-kernel+bounces-436371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D5779E8512
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:44:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E309E8516
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:46:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 872F8165049
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:44:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD9E81883D46
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15A8E149C54;
-	Sun,  8 Dec 2024 12:44:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93C40146D76;
+	Sun,  8 Dec 2024 12:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ij84obFk"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RBuqr+zJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95E91474B8
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00A5445BEC
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733661884; cv=none; b=jDFTSfGj/0NBhbqxvX2IQ9yyAzd2Vkwrqw590TbSwUfWiXVokkFJIdEv4png6ZI4pHt5Xx/viuYAW+nWSyZBDEl3nqVbALHUmV+PQJCAsLGp4N9BNrBNHgU3PRgR2s1J3KH3v/0a6i15ht14yQ6rtrPAbEsVQ6NR3j+uOzlOp9E=
+	t=1733661979; cv=none; b=W/0ab/s6OeYhSOm3eLBRnMfZ5gCQJYz7AMyKLPV+jYNhYRlEBDrDpMZElclRz7RbkQwD4wrUNbubGlC6sTP3rC4ZCYBYJl8LNww09QXXcO8ewr0gH4GxBU/ncgN6qEGaFT5/GYDT7FCUkzxhcvYdCFnh226T/3XSiriOvzQhpJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733661884; c=relaxed/simple;
-	bh=pFIGxvFPsv5hV0g3ScDxxRxCjlmfbMjHw/GW2NH5Nbg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W6wkoiStUe1SY3Rywr+hRlUB5PQuSufzaoPg9BCsN5Nxyi/wziu+ziH+PFiSja3fOYd9SQ849Xwc653WEv5bq7hE1FDxHq+Ok9FHjlxtposk7GsXB5/GAzihLWnsmUe1yw+GEnN10bg4mHZsgFNExauRSgIcCcs7a0scsyInS40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ij84obFk; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-215b9a754fbso32510135ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 04:44:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733661882; x=1734266682; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=ObzuBtRvdTYYc5ZI72EO8xxEXcCsf9XtGeinrNeixuA=;
-        b=Ij84obFk02xlqNvUtEpru4/h3dwDOu4zP1LWgByzo0GR3/YmHY5qwBTHzNfbV9Y6gk
-         9PJPzHFNunXpmqJ4rxKtxhpMcN7UJkDD2dOoDJuw4Xg6SlIWDJ6auWpN3DXIqVJQ1ZeN
-         Dt3o7azh/lq5rFijtE4n0hI/wbzwC7bBOqlgzRVGidGAZXakKtQxtO4xK2pkFR/5jtgM
-         +jO2RAL1i+emM8zT/rszl+w/YL18lJyv7akJju3pp7Y2BIbKe52gzdYgQUMQ/9isdLU2
-         VAHRNVfwexmqFYbYAkB6xiQxCm8spJcr71DrlIk3Z6IYCfocmBDxrGRG40q/2KzvHKo2
-         7H/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733661882; x=1734266682;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObzuBtRvdTYYc5ZI72EO8xxEXcCsf9XtGeinrNeixuA=;
-        b=sDSZcocXAP8sGyLkqSjKzmLCtWcuSZ1340Mwh8zOJRirck7jBwX8qmivwIgvA1QU7d
-         NdPE6hI1t6t7Br17KrzRdB8+qmpPPnGlZH/SSWGmyVLB7rZkZ620ZDf9He3sCd2+kRxk
-         VDst2JKvmao0fReJPPiZ53tr7ePtVZX9sT4HSVFh24noYGtD1TZjABwnGCSb5nL5EDo4
-         fAppv8TWW/XKPSudR2suE9IdnegJWuFEb9C1ga7afScb07XTmek6qUsBLvbxS7rbaiQl
-         LvFAZhFxNSHThKKg3Ct+Z8VFXuyVB3zfpaQJQskIMFG9JQsETDrgQzQ9DV1LYdzxkyAH
-         5hRw==
-X-Forwarded-Encrypted: i=1; AJvYcCW7fSSDOY9WSwULkjINl/K5amxjsW0eavRVuLuiKNOEyVYitSXSacHqBuUWPJl2qzRYwqGob6Z+QgPSDYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz6ntdVTZ8QDy9AScx1U0wX0ZxZ7pPJcsRxnQJhSNyVFJXgeAu0
-	p0mo5TJnYwnwfYmuO9/DpKbeBfevhxtAxhrCe5V8twHoXPk/pN0g4EIm/OM2fHEuxodWd5wHl4P
-	nMw==
-X-Gm-Gg: ASbGncuk7wu61GicxQgMSNzyvtsCHPq9OpOrg8n+UvQUYDoX1/WmIai0+wJP5s2wgSA
-	yj+3Q/hc0TZ7Hzul/tXDsmFUNKPFlGCA3BZD9HZIExIAtY4gQ6CixSIsNviUiR2jJnga4P+KmHc
-	A5n876yIpFHxUiSmkXqThWbmKiTkFnd9rFrQtm+U95oQFlJ5O8leNx1T4qTDfbEE467/gDBnQ+u
-	GsKgnK4n4OYca15IKQWGQj70ERZq/reM4ankk8O8XoRvo+TLKUHEe/Xb/A=
-X-Google-Smtp-Source: AGHT+IFWStgtABEgXeuwa+0us5wTIZE6ArS1wlJLYxBQNATuRowJR77uhfkJK4Vk9aSU1pZvjciMaw==
-X-Received: by 2002:a17:902:e5cd:b0:215:9a73:6c45 with SMTP id d9443c01a7336-21614d45334mr158926955ad.22.1733661882268;
-        Sun, 08 Dec 2024 04:44:42 -0800 (PST)
-Received: from thinkpad ([36.255.19.23])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21617531ba7sm39465845ad.106.2024.12.08.04.44.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 04:44:41 -0800 (PST)
-Date: Sun, 8 Dec 2024 18:14:36 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Damien Le Moal <dlemoal@kernel.org>,
-	Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>, linux-pci@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] PCI: rockchip-ep: Fix error code in
- rockchip_pcie_ep_init_ob_mem()
-Message-ID: <20241208124436.vicbi72xyomahp3s@thinkpad>
-References: <Z014ylYz_xrrgI4W@stanley.mountain>
+	s=arc-20240116; t=1733661979; c=relaxed/simple;
+	bh=G+p6aefG5yTpC04xhnXMg+zxOzq9PDrkHv1FtQWhmjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DMtQ9FGYlRMBXxFOFAUh+2J3LOVyn3zzp2V5WkE61W+VQGuV3hmTKrxRqEz5im2UN8Z8IRvmHinZWnKMODisKMmlf0nk/Q6tXDE28tWO/5ikokaGnIaFX77CGmQIV5FRbQ4d8Kg3/0OhhsL4wlfIErTVcorXkM41A/uOGMN6b0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RBuqr+zJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87AC8C4CEE0
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:46:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733661978;
+	bh=G+p6aefG5yTpC04xhnXMg+zxOzq9PDrkHv1FtQWhmjg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=RBuqr+zJhG7T7ETBCjD5wUuICT9Ijq5dM4p0zCt65JTCLyUDKQB8/SuXpyVAP++AH
+	 A2rllN39igG2Hx6nAOB7Mmlg6pdhQJaVNIB3ukUggTTtELO643c3Q/M3Mx8KsUf3Be
+	 vPhhPa5iKSNenvL3MPVOaVdyEsy2vJtMjb5td5x+N99Kp0+AJC4e6GZZDJGLLVxp2D
+	 e0z8esvPno9QOwr8eNWrwCVHE2Z8z1IrsL1CjkeRTo5inPG/5dU+OWsWwKbXsSH2/Q
+	 T0771uIfqZLLE0xCin/8kgVuhnyYt3t18Wys9Ip9UFs8MaslaZNktnfozrWM1sE4Gm
+	 FfR2Sz9wvMx4Q==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5ceb03aadb1so4529271a12.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 04:46:18 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVwnAf/ctPmAqN79kOdDG6nZgQppGia5yqpvWFq9qTGutUe8j15ImKFCTAl8Pz4/omXfn9ZhRpIycdgA7U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCyo/niOWxAShJx5Pq+LDRwTi1qcaKTGJxpWVqWSztnzcX6jiy
+	VIuz3c9WgYgE0TnndRJUp5sHwgetwbRLsdazXeh9uz4+inGbgW8w10IlCHAKzEszzZKl5H5Ac9n
+	iS1VPAR8KVbRM0NYgTXnf4Zehzqc=
+X-Google-Smtp-Source: AGHT+IH3ogGJ5uTEHqVPnkSRuDUt4C4nLjG3FPP0Jee8N3ikUt+9YXllbY96+wrPitK4OC9qpZnMjPBzUCCeAoV7X48=
+X-Received: by 2002:a05:6402:1d12:b0:5d3:cdb3:a60 with SMTP id
+ 4fb4d7f45d1cf-5d3cdb312e4mr7386739a12.34.1733661977372; Sun, 08 Dec 2024
+ 04:46:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z014ylYz_xrrgI4W@stanley.mountain>
+References: <20241025094650.253599-1-hanchunchao@inspur.com>
+In-Reply-To: <20241025094650.253599-1-hanchunchao@inspur.com>
+From: Chanwoo Choi <chanwoo@kernel.org>
+Date: Sun, 8 Dec 2024 21:45:14 +0900
+X-Gmail-Original-Message-ID: <CAGTfZH2fMx6-Aitn8y3hFmtpdxaYJGUNoVePBrfDgFi-opWeOw@mail.gmail.com>
+Message-ID: <CAGTfZH2fMx6-Aitn8y3hFmtpdxaYJGUNoVePBrfDgFi-opWeOw@mail.gmail.com>
+Subject: Re: [PATCH] extcon: realtek: fix NULL deref check in extcon_rtk_type_c_probe
+To: Charles Han <hanchunchao@inspur.com>
+Cc: stanley_chang@realtek.com, myungjoo.ham@samsung.com, cw00.choi@samsung.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 02, 2024 at 12:07:22PM +0300, Dan Carpenter wrote:
-> Return -ENOMEM if pci_epc_mem_alloc_addr() fails.  Don't return success.
-> 
-> Fixes: 945648019466 ("PCI: rockchip-ep: Refactor rockchip_pcie_ep_probe() memory allocations")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Hi,
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Applied it. Thanks.
 
-- Mani
-
-> Reviewed-by: Damien Le Moal <dlemoal@kernel.org>
+On Fri, Oct 25, 2024 at 6:55=E2=80=AFPM Charles Han <hanchunchao@inspur.com=
+> wrote:
+>
+> In extcon_rtk_type_c_probe() devm_kzalloc() may return NULL but this
+> returned value is not checked.
+>
+> Fixes: 8a590d7371f0 ("extcon: add Realtek DHC RTD SoC Type-C driver")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
 > ---
-> v2: Update the git hash for the Fixes tag because the tree was rebased I guess.
-> 
->  drivers/pci/controller/pcie-rockchip-ep.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/pcie-rockchip-ep.c b/drivers/pci/controller/pcie-rockchip-ep.c
-> index 1064b7b06cef..34162ca14093 100644
-> --- a/drivers/pci/controller/pcie-rockchip-ep.c
-> +++ b/drivers/pci/controller/pcie-rockchip-ep.c
-> @@ -784,6 +784,7 @@ static int rockchip_pcie_ep_init_ob_mem(struct rockchip_pcie_ep *ep)
->  						  SZ_1M);
->  	if (!ep->irq_cpu_addr) {
->  		dev_err(dev, "failed to reserve memory space for MSI\n");
-> +		err = -ENOMEM;
->  		goto err_epc_mem_exit;
->  	}
->  
-> -- 
-> 2.45.2
-> 
+>  drivers/extcon/extcon-rtk-type-c.c | 2 ++
+>  1 file changed, 2 insertions(+)
+>
+> diff --git a/drivers/extcon/extcon-rtk-type-c.c b/drivers/extcon/extcon-r=
+tk-type-c.c
+> index 19a01e663733..2820c7e82481 100644
+> --- a/drivers/extcon/extcon-rtk-type-c.c
+> +++ b/drivers/extcon/extcon-rtk-type-c.c
+> @@ -1369,6 +1369,8 @@ static int extcon_rtk_type_c_probe(struct platform_=
+device *pdev)
+>         }
+>
+>         type_c->type_c_cfg =3D devm_kzalloc(dev, sizeof(*type_c_cfg), GFP=
+_KERNEL);
+> +       if (!type_c->type_c_cfg)
+> +               return -ENOMEM;
+>
+>         memcpy(type_c->type_c_cfg, type_c_cfg, sizeof(*type_c_cfg));
+>
+> --
+> 2.31.1
+>
+>
 
--- 
-மணிவண்ணன் சதாசிவம்
+
+--=20
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
 
