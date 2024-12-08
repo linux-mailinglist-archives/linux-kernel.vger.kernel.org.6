@@ -1,284 +1,217 @@
-Return-Path: <linux-kernel+bounces-436533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D40D19E8736
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:08:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39BEA9E8739
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:11:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87029281A34
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:08:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E518A2814F0
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9227C18D63A;
-	Sun,  8 Dec 2024 18:08:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86DF718C02E;
+	Sun,  8 Dec 2024 18:11:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rmv8U/aW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b="CJKS3qLo"
+Received: from mx-2023-1.gwdg.de (mx-2023-1.gwdg.de [134.76.10.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0B254690;
-	Sun,  8 Dec 2024 18:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA86D4690;
+	Sun,  8 Dec 2024 18:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.76.10.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733681307; cv=none; b=LKyMQe0fDFGp6EWLBu0QgWvAY4yJctMfSSVMqNBqC1OjyDB6oNLqMvDtdijfxMW0uCuPGeHhxeR/oarG3X4Ug63yu2O31lWgKLJA6io0svS49c6XK0RIYVsdIv/lF56ij+og8KJEnRSZ4nFds18RQ2K5XwP0ycG5SzOeqoIiBbw=
+	t=1733681464; cv=none; b=iw+Um61UULrAhqsj2l9/KUend7jcegqQ07Jw3zke2CSPSrb/3jUXpvputGOUJbsa+Lc4SBG/eXPD1zMM0/dq6DtSuUUw/aibpR1Qj6aGsrKJduh4ZZoHAP9J9qlrR/W7qFYFOLBd3YSXYZfUu7xkCeeUA1e9YzbwT5BF8uMoXL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733681307; c=relaxed/simple;
-	bh=OVqwOBaTyEMtO7x5illPKc4qASGbs/PWWbDa/DSlb3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lWZ0ZAYsEN+vA1dazZm49cXpgP2JQjfJsBR3AuZUHdfkcj6D0ZFHrtvJRLcmYeWjrWY12RDAE3BG1oXixYNoWhCAxaQA+MrNIzLlQ7xTxGDiMMTGJS9ViqsTx4OdwhZHuNIeL+l361Kc9OCtsYTyxKFV7tKFlGdgQ4NuH0zak94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rmv8U/aW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 033C1C4CED2;
-	Sun,  8 Dec 2024 18:08:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733681305;
-	bh=OVqwOBaTyEMtO7x5illPKc4qASGbs/PWWbDa/DSlb3o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=rmv8U/aWbetsZAI+xmtNlApn6m3csBN5XJQqvPqm0+iHmSi48f6cGpx6amZ0bmSKU
-	 0piuZGbetyg4fQw1lxFJc9BOFRhmOJ/glLO+qybU0jpHFQPNv8q9gdbLHAZh4emYSN
-	 RXHX7xrNLnbydm/pcLeSX1puEZPP7TicVo9jPtgy5FDYDaPRokp9iRm9oNFA5f6Mgm
-	 M8jxFEixn4Am8Xx7NniLkN77EsiJXw2BiSqTYvVrBgKMaMhJqCeuThEQ8k0awGjXg9
-	 epCPVFTD/ATC+ys2U7vBP9OEedRbFxugE3V1M7SP8mdjQ+Xr7Ad+GP6bvPKBCLln9v
-	 vg8ZAKPnwoqSA==
-Date: Sun, 8 Dec 2024 18:08:17 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Amoiridis <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, andriy.shevchenko@linux.intel.com, ajarizzo@gmail.com,
- ak@it-klinger.de, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 3/3] iio: pressure: bmp280: Make time vars intuitive
- and move to fsleep
-Message-ID: <20241208180817.6ae939db@jic23-huawei>
-In-Reply-To: <20241202181907.21471-4-vassilisamir@gmail.com>
-References: <20241202181907.21471-1-vassilisamir@gmail.com>
-	<20241202181907.21471-4-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733681464; c=relaxed/simple;
+	bh=9CnchKfxWy5z81rg/thnHuLoK1IGJfcPdUPOZRSDVlE=;
+	h=Message-ID:Subject:From:To:CC:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ARZ6c9IgexGDTboh6vuRJPp2UGqso7xwIt/Gmm1gMyo1AyQAFZbIMFHQh/v3IDZvnT3YR0FnmknMKcE6IXX4Am9BcbI+jFO7pV++M+RZayOP062Gcevuh5sFebznx39Za+PBIH1ymvwzcyrRnvgEjQ9gDCOPgsMtn4uJ7PYOIqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de; spf=pass smtp.mailfrom=gwdg.de; dkim=pass (2048-bit key) header.d=gwdg.de header.i=@gwdg.de header.b=CJKS3qLo; arc=none smtp.client-ip=134.76.10.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gwdg.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gwdg.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=gwdg.de;
+	s=2023-rsa; h=MIME-Version:Content-Transfer-Encoding:Content-Type:References:
+	In-Reply-To:Date:CC:To:From:Subject:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=9FB2GPk7COCoX9cEFVKvQVosxysJZseEWA2qS7zkWkM=; b=CJKS3qLo2nmU8RTYUGjkHdxbqz
+	ns3qD6CiJJHSo/fxpi0OkfvH8JDQQZdboDlvM/X5DcOKtxOEKZHO1DDbUS7ibZ6KyG6Zk/SU7+Rph
+	Te6kIRiApeS89pXKvOVY+/VJ3wXYA9Z9G+I2/zCcCa/XvLG7AmRxVqASLRJcXP5LXQrdAXnUEcvrs
+	O2/01MVDPrEC4QD/XJf1NbP4rjXcQJ8Qs8VhOvKcazkXGe4hH97QTcLqKzLARCv8+BY4s5fBYP0Go
+	K8CQW9PwNvu3ayOiSb1QPTX1xyvg4/5600xSFeHb+Ar6vPZsB/cK/rcDMH/V4blTmcT3RaT4DwSed
+	W3JC06dw==;
+Received: from xmailer.gwdg.de ([134.76.10.29]:57248)
+	by mailer.gwdg.de with esmtp (GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tKLk3-004b6U-2I;
+	Sun, 08 Dec 2024 19:10:51 +0100
+Received: from mbx19-fmz-06.um.gwdg.de ([10.108.142.65] helo=email.gwdg.de)
+	by mailer.gwdg.de with esmtps (TLS1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+	(GWDG Mailer)
+	(envelope-from <muecker@gwdg.de>)
+	id 1tKLk3-000BW3-1w;
+	Sun, 08 Dec 2024 19:10:51 +0100
+Received: from vra-173-64.tugraz.at (10.250.9.200) by MBX19-FMZ-06.um.gwdg.de
+ (10.108.142.65) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.14; Sun, 8 Dec
+ 2024 19:10:49 +0100
+Message-ID: <87dd9b7b52e7cea874c1899f56efdd3d7c5b7243.camel@gwdg.de>
+Subject: Re: [PATCH 02/10] compiler.h: add is_const() as a replacement of
+ __is_constexpr()
+From: Martin Uecker <muecker@gwdg.de>
+To: David Laight <David.Laight@ACULAB.COM>, Linus Torvalds
+	<torvalds@linux-foundation.org>
+CC: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Luc Van Oostenryck
+	<luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, "Nick
+ Desaulniers" <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Joonas Lahtinen
+	<joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Rikard Falkeborn
+	<rikard.falkeborn@gmail.com>, "linux-sparse@vger.kernel.org"
+	<linux-sparse@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "llvm@lists.linux.dev"
+	<llvm@lists.linux.dev>, "linux-hardening@vger.kernel.org"
+	<linux-hardening@vger.kernel.org>, "intel-gfx@lists.freedesktop.org"
+	<intel-gfx@lists.freedesktop.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "coresight@lists.linaro.org"
+	<coresight@lists.linaro.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Date: Sun, 8 Dec 2024 19:10:49 +0100
+In-Reply-To: <e71fffb7ff0e4bf29692d006c0fe77c2@AcuMS.aculab.com>
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+	 <20241203-is_constexpr-refactor-v1-2-4e4cbaecc216@wanadoo.fr>
+	 <1d807c7471b9434aa8807e6e86c964ec@AcuMS.aculab.com>
+	 <CAMZ6RqLJLP+4d8f5gLfBdFeDVgqy23O+Eo8HRgKCthqBjSHaaw@mail.gmail.com>
+	 <9ef03cebb4dd406885d8fdf79aaef043@AcuMS.aculab.com>
+	 <abdd7862f136aa676b2d2c324369f4a43ff9909c.camel@gwdg.de>
+	 <CAMZ6RqKzGiRNMeLsQKRNrxvW_bXB-kEi11udQ82kKX6tGCrqcg@mail.gmail.com>
+	 <9607300dfca5d71ca9570b1e1de0864e524f356b.camel@gwdg.de>
+	 <344b4cf41a474377b3d2cbf6302de703@AcuMS.aculab.com>
+	 <9a0c041b6143ba07c2b3e524572fccd841f5374b.camel@gwdg.de>
+	 <CAHk-=wjpVXEjX16PP=-hi4CgLqEGJ_U-WvKWq+J3C+FW-hSSfg@mail.gmail.com>
+	 <0a2996a7c63930b9d9a8d3792358dd9e494e27c1.camel@gwdg.de>
+	 <CAHk-=wjsfYYKBYuW8_6yKjdwHih0MMa2GwUJh_LHcuUNFR7-QA@mail.gmail.com>
+	 <9d9567dbdaf39688bbd0d240e29dec826a5931ee.camel@gwdg.de>
+	 <b71056c1b9e04aa383f2e5608c27290f@AcuMS.aculab.com>
+	 <6658618490381cf5ec35edbb66f1478024174e67.camel@gwdg.de>
+	 <e71fffb7ff0e4bf29692d006c0fe77c2@AcuMS.aculab.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MBX19-GWD-03.um.gwdg.de (10.108.142.56) To
+ MBX19-FMZ-06.um.gwdg.de (10.108.142.65)
+X-EndpointSecurity-0xde81-EV: v:7.9.17.458, d:out, a:y, w:t, t:5, sv:1733649613, ts:1733681451
+X-Virus-Scanned: (clean) by clamav
+X-Spam-Level: -
 
-On Mon,  2 Dec 2024 19:19:07 +0100
-Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+Am Sonntag, dem 08.12.2024 um 16:48 +0000 schrieb David Laight:
+> From: Martin Uecker
+> > Sent: 08 December 2024 12:38
 
-> Move sleep functions to the new fsleep() implementation. While at it,
-> add time unit abbreviation as a suffix of time describing variables to
-> make them more intuitive.
-> 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-Applied this one.  So only patch 1 needs an update.
+...
+> ...
+> > So a lot of this macro business seems to be necessary
+> > to avoid creating warnings for ISO VLAs when instead you really
+> > care about the created code not having a dynamic allocation on
+> > the stack.
+>=20
+> A lot of the 'macro business' for min/max is avoiding unexpected
+> conversion of negative values to very large unsigned ones.
+> And no, -Wsign-compare is spectacularly useless.
 
-Thanks,
+This is a different topic, but what would be needed here?
+>=20
+> ..
+> > The issue here is that we miss a language feature in C to
+> > introduce local variables that help avoid multiple expansion
+> > of macro arguments.  GCC's statement expressions and __auto_type
+> > are a solution
+>=20
+> or historically 'typeof(x) _x =3D x'
+>=20
+> > #define foo(x) ({ __auto_type __x =3D (x); ... })
+> >=20
+> > but this runs into the current limitations that ({ }) can not be used
+> > at file-scope and can not return constant expressions.
+> >=20
+> >=20
+> > For other reasons I was thinking about adding names to _Generic,
+> > as in
+> >=20
+> > _Generic(x, int i: (i + 1));
+> >=20
+> > because one design issues with _Generic is that it typechecks
+> > also the untaken associations and there the 'x' then has the wrong
+> > type.  Having an 'i' with the right type which is set to the value
+> > of 'x' when the branch is taken would fix this issue.
+>=20
+> That looks even more syntactically obscure than _Generic itself.
+> Why does it need to do more than very simple syntax analysis of
+> the unwanted branches=C2=A0
 
-Jonathan
+This would be possible and GCC does turn of some warnings in
+the unwanted branches.  I added this to GCC 14 I think.
 
-> ---
->  drivers/iio/pressure/bmp280-core.c | 39 +++++++++++++++---------------
->  drivers/iio/pressure/bmp280.h      |  4 +--
->  2 files changed, 22 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> index e5ec8137961f..b39ef30f8eda 100644
-> --- a/drivers/iio/pressure/bmp280-core.c
-> +++ b/drivers/iio/pressure/bmp280-core.c
-> @@ -1002,7 +1002,7 @@ static int bmp280_preinit(struct bmp280_data *data)
->  	 * after resetting, the device uses the complete power-on sequence so
->  	 * it needs to wait for the defined start-up time.
->  	 */
-> -	fsleep(data->start_up_time);
-> +	fsleep(data->start_up_time_us);
->  
->  	ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
->  	if (ret)
-> @@ -1161,7 +1161,7 @@ const struct bmp280_chip_info bmp280_chip_info = {
->  	.chip_id = bmp280_chip_ids,
->  	.num_chip_id = ARRAY_SIZE(bmp280_chip_ids),
->  	.regmap_config = &bmp280_regmap_config,
-> -	.start_up_time = 2000,
-> +	.start_up_time_us = 2000,
->  	.channels = bmp280_channels,
->  	.num_channels = ARRAY_SIZE(bmp280_channels),
->  	.avail_scan_masks = bmp280_avail_scan_masks,
-> @@ -1347,7 +1347,7 @@ const struct bmp280_chip_info bme280_chip_info = {
->  	.chip_id = bme280_chip_ids,
->  	.num_chip_id = ARRAY_SIZE(bme280_chip_ids),
->  	.regmap_config = &bme280_regmap_config,
-> -	.start_up_time = 2000,
-> +	.start_up_time_us = 2000,
->  	.channels = bme280_channels,
->  	.num_channels = ARRAY_SIZE(bme280_channels),
->  	.avail_scan_masks = bme280_avail_scan_masks,
-> @@ -1414,7 +1414,7 @@ static int bmp380_cmd(struct bmp280_data *data, u8 cmd)
->  		return ret;
->  	}
->  	/* Wait for 2ms for command to be processed */
-> -	usleep_range(data->start_up_time, data->start_up_time + 100);
-> +	fsleep(data->start_up_time_us);
->  	/* Check for command processing error */
->  	ret = regmap_read(data->regmap, BMP380_REG_ERROR, &reg);
->  	if (ret) {
-> @@ -1806,7 +1806,7 @@ static int bmp380_chip_config(struct bmp280_data *data)
->  		 * formula in datasheet section 3.9.2 with an offset of ~+15%
->  		 * as it seen as well in table 3.9.1.
->  		 */
-> -		msleep(150);
-> +		fsleep(150 * USEC_PER_MSEC);
->  
->  		/* Check config error flag */
->  		ret = regmap_read(data->regmap, BMP380_REG_ERROR, &tmp);
-> @@ -1957,7 +1957,7 @@ const struct bmp280_chip_info bmp380_chip_info = {
->  	.num_chip_id = ARRAY_SIZE(bmp380_chip_ids),
->  	.regmap_config = &bmp380_regmap_config,
->  	.spi_read_extra_byte = true,
-> -	.start_up_time = 2000,
-> +	.start_up_time_us = 2000,
->  	.channels = bmp380_channels,
->  	.num_channels = ARRAY_SIZE(bmp380_channels),
->  	.avail_scan_masks = bmp280_avail_scan_masks,
-> @@ -2006,7 +2006,8 @@ static int bmp580_soft_reset(struct bmp280_data *data)
->  		dev_err(data->dev, "failed to send reset command to device\n");
->  		return ret;
->  	}
-> -	usleep_range(2000, 2500);
-> +	/* From datasheet's table 4: electrical characteristics */
-> +	fsleep(2000);
->  
->  	/* Dummy read of chip_id */
->  	ret = regmap_read(data->regmap, BMP580_REG_CHIP_ID, &reg);
-> @@ -2208,7 +2209,7 @@ static int bmp580_nvmem_read_impl(void *priv, unsigned int offset, void *val,
->  		goto exit;
->  	}
->  	/* Wait standby transition time */
-> -	usleep_range(2500, 3000);
-> +	fsleep(2500);
->  
->  	while (bytes >= sizeof(*dst)) {
->  		addr = bmp580_nvmem_addrs[offset / sizeof(*dst)];
-> @@ -2274,7 +2275,7 @@ static int bmp580_nvmem_write_impl(void *priv, unsigned int offset, void *val,
->  		goto exit;
->  	}
->  	/* Wait standby transition time */
-> -	usleep_range(2500, 3000);
-> +	fsleep(2500);
->  
->  	while (bytes >= sizeof(*buf)) {
->  		addr = bmp580_nvmem_addrs[offset / sizeof(*buf)];
-> @@ -2458,7 +2459,7 @@ static int bmp580_chip_config(struct bmp280_data *data)
->  		return ret;
->  	}
->  	/* From datasheet's table 4: electrical characteristics */
-> -	usleep_range(2500, 3000);
-> +	fsleep(2500);
->  
->  	/* Set default DSP mode settings */
->  	reg_val = FIELD_PREP(BMP580_DSP_COMP_MASK, BMP580_DSP_PRESS_TEMP_COMP_EN) |
-> @@ -2649,7 +2650,7 @@ const struct bmp280_chip_info bmp580_chip_info = {
->  	.chip_id = bmp580_chip_ids,
->  	.num_chip_id = ARRAY_SIZE(bmp580_chip_ids),
->  	.regmap_config = &bmp580_regmap_config,
-> -	.start_up_time = 2000,
-> +	.start_up_time_us = 2000,
->  	.channels = bmp580_channels,
->  	.num_channels = ARRAY_SIZE(bmp580_channels),
->  	.avail_scan_masks = bmp280_avail_scan_masks,
-> @@ -2720,7 +2721,7 @@ static int bmp180_wait_for_eoc(struct bmp280_data *data, u8 ctrl_meas)
->  			delay_us =
->  				conversion_time_max[data->oversampling_press];
->  
-> -		usleep_range(delay_us, delay_us + 1000);
-> +		fsleep(delay_us);
->  	}
->  
->  	ret = regmap_read(data->regmap, BMP280_REG_CTRL_MEAS, &ctrl);
-> @@ -2988,7 +2989,7 @@ const struct bmp280_chip_info bmp180_chip_info = {
->  	.chip_id = bmp180_chip_ids,
->  	.num_chip_id = ARRAY_SIZE(bmp180_chip_ids),
->  	.regmap_config = &bmp180_regmap_config,
-> -	.start_up_time = 2000,
-> +	.start_up_time_us = 2000,
->  	.channels = bmp280_channels,
->  	.num_channels = ARRAY_SIZE(bmp280_channels),
->  	.avail_scan_masks = bmp280_avail_scan_masks,
-> @@ -3066,7 +3067,7 @@ const struct bmp280_chip_info bmp085_chip_info = {
->  	.chip_id = bmp180_chip_ids,
->  	.num_chip_id = ARRAY_SIZE(bmp180_chip_ids),
->  	.regmap_config = &bmp180_regmap_config,
-> -	.start_up_time = 2000,
-> +	.start_up_time_us = 2000,
->  	.channels = bmp280_channels,
->  	.num_channels = ARRAY_SIZE(bmp280_channels),
->  	.avail_scan_masks = bmp280_avail_scan_masks,
-> @@ -3175,7 +3176,7 @@ int bmp280_common_probe(struct device *dev,
->  	data->oversampling_temp = chip_info->oversampling_temp_default;
->  	data->iir_filter_coeff = chip_info->iir_filter_coeff_default;
->  	data->sampling_freq = chip_info->sampling_freq_default;
-> -	data->start_up_time = chip_info->start_up_time;
-> +	data->start_up_time_us = chip_info->start_up_time_us;
->  
->  	/* Bring up regulators */
->  	regulator_bulk_set_supply_names(data->supplies,
-> @@ -3201,7 +3202,7 @@ int bmp280_common_probe(struct device *dev,
->  		return ret;
->  
->  	/* Wait to make sure we started up properly */
-> -	usleep_range(data->start_up_time, data->start_up_time + 100);
-> +	fsleep(data->start_up_time_us);
->  
->  	/* Bring chip out of reset if there is an assigned GPIO line */
->  	gpiod = devm_gpiod_get_optional(dev, "reset", GPIOD_OUT_HIGH);
-> @@ -3287,7 +3288,7 @@ int bmp280_common_probe(struct device *dev,
->  	 * Set autosuspend to two orders of magnitude larger than the
->  	 * start-up time.
->  	 */
-> -	pm_runtime_set_autosuspend_delay(dev, data->start_up_time / 10);
-> +	pm_runtime_set_autosuspend_delay(dev, data->start_up_time_us / 10);
->  	pm_runtime_use_autosuspend(dev);
->  	pm_runtime_put(dev);
->  
-> @@ -3306,7 +3307,7 @@ static int bmp280_runtime_suspend(struct device *dev)
->  
->  	data->chip_info->set_mode(data, BMP280_SLEEP);
->  
-> -	fsleep(data->start_up_time);
-> +	fsleep(data->start_up_time_us);
->  	return regulator_bulk_disable(BMP280_NUM_SUPPLIES, data->supplies);
->  }
->  
-> @@ -3320,7 +3321,7 @@ static int bmp280_runtime_resume(struct device *dev)
->  	if (ret)
->  		return ret;
->  
-> -	usleep_range(data->start_up_time, data->start_up_time + 100);
-> +	fsleep(data->start_up_time_us);
->  
->  	ret = data->chip_info->chip_config(data);
->  	if (ret)
-> diff --git a/drivers/iio/pressure/bmp280.h b/drivers/iio/pressure/bmp280.h
-> index a3631bc0e188..5b2ee1d0ee46 100644
-> --- a/drivers/iio/pressure/bmp280.h
-> +++ b/drivers/iio/pressure/bmp280.h
-> @@ -434,7 +434,7 @@ struct bmp280_data {
->  		struct bmp380_calib bmp380;
->  	} calib;
->  	struct regulator_bulk_data supplies[BMP280_NUM_SUPPLIES];
-> -	unsigned int start_up_time; /* in microseconds */
-> +	unsigned int start_up_time_us;
->  
->  	/* log of base 2 of oversampling rate */
->  	u8 oversampling_press;
-> @@ -490,7 +490,7 @@ struct bmp280_chip_info {
->  
->  	const struct iio_chan_spec *channels;
->  	int num_channels;
-> -	unsigned int start_up_time;
-> +	unsigned int start_up_time_us;
->  	const unsigned long *avail_scan_masks;
->  
->  	const int *oversampling_temp_avail;
+But so far, ISO C requires that all branches are valid and this
+was an intentional design decision to detect errors.
+
+> - or they could automatically be analysed
+> with the named variable have the specified type?
+
+Inside a macro there is no variable 'x' but
+the macro argument 'x' is replaced by some expression.
+
+Also there is the general problem of multiple expansion which
+can only be addressed by introducing an identifier.
+
+>=20
+> > But this feature might also allow writing macros that avoid
+> > double expansion without requiring statement expressions (which
+> > are more difficult to fix):
+> >=20
+> > #define foo(x) _Generic(x, int i: (i + i));
+>=20
+> How can that work for things like min() that have multiple arguments?
+
+You would need to nest it:
+
+#define foo(x, y) _Generic(x, int i: _Generic(y, int j: i + j))
+
+Otherwise one could invent syntax for matching multiple arguments
+at the same time.
+
+There is still the problem of name collision, but this is already
+a problem with=C2=A0
+
+({ int i =3D (x); int j =3D (x); i + j; })=20
+
+> Not going to work if you need __auto_type either.
+
+If we allowed an identifier for the default branch too, this
+would work:  _Generic(x, default i: (2 * i))
+
+
+But hey, I am not saying  this is perfect, it is just
+a possible improvement I was thinking about and which could be
+implemented easily, would automatically return constant expressions,
+and could be used at file scope without further changes.
+
+There are certainly better long-term solutions.
+
+Martin
 
 
