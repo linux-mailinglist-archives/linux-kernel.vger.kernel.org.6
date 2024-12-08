@@ -1,88 +1,189 @@
-Return-Path: <linux-kernel+bounces-436499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B97329E86CC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:59:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74899E86CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:59:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69081164230
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:59:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01FE51885393
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A573189B83;
-	Sun,  8 Dec 2024 16:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A66E18952C;
+	Sun,  8 Dec 2024 16:59:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Htw7HIZd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AOnJoTG9"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B73220323
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462A18754F
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:59:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677146; cv=none; b=U3XykvhAFJiX///oXWuLairaomTU5NlGIgCUsXO1sUlWbPVESJNXmJ++6PL/17UzfrN7povyY5UCzz7URDFWeYL8p7WA9IDIFYDYtDAMJoh1UhfcSK/N3cRp3QCdG1WkPDkQI2+OftWRJWM3rum725z09NRYjtPIeHVygiXNM7g=
+	t=1733677176; cv=none; b=XicqIVKVgMkdHvzO8pKh/kfPHu4Am9uYKl49K3SaAKAoCGVhgmS5SGhwQOUmdReQdywxX7aunqjd0ug4NCd1k+NL9jLq1hhOwIwI32pqcT9IbpPspyWDepbTShKnAgJtqJ/IYx43LFyt5ToCbyYPCANlIgukqMkk+koTR2xvFLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677146; c=relaxed/simple;
-	bh=csE7uy0VuBahmgf5oPd1u9Pm9Uuc0fog2i/ia7R4hUU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=iNPrFDL5x/JLLWNOIK1dWq65n6P0qXxwnPHb18s1H2NoMKwzJWCjnpHredrqXwzfTvq04C/9s3UQ0eJGcXfdEWoEK+zwWkP3sal13viyAAGRCg+pkvqm5dVsK0EoEv0QvCX9NnsTeEhl60aXO6To1E/SkYBzUKFJza7YcTa5FVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Htw7HIZd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A92D3C4CED2;
-	Sun,  8 Dec 2024 16:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677146;
-	bh=csE7uy0VuBahmgf5oPd1u9Pm9Uuc0fog2i/ia7R4hUU=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Htw7HIZdEhe2LScDIEdOM+f1t+IatbxgCkTl9b3LP718mi7na7alIiOpLSxG+JICo
-	 umt8rYK0wr+amLvDz8KOXr7b7jOe3uiCD37W7IAQSUDBdYQ9sa3q+otw9UelCNoAsu
-	 xYuX2h9qNRv77t3X3GHauTM1+BW4C+IvD3Gg1yoYlVriNAoVtBrCBwXbjSHTPNX+wh
-	 L+oSYYouNXI/08BOwkm/zqExYNCBz03HM1gqceE1BocBGzjqb6y3YYOdIFe5XOERJ8
-	 T3QC5YX75OTcz8d9hAQYJkk6UWTPD0ZHsfNOKxDckN8TkDMDuwxTFrOgpclIYdO3NJ
-	 B8d8lrUdUiaqQ==
-From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>, 
- Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Cc: kernel@collabora.com, linux-phy@lists.infradead.org, 
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
- linux-kernel@vger.kernel.org, 
- Dmitry Osipenko <dmitry.osipenko@collabora.com>
-In-Reply-To: <20241023-phy-sam-hdptx-rpm-fix-v1-1-87f4c994e346@collabora.com>
-References: <20241023-phy-sam-hdptx-rpm-fix-v1-1-87f4c994e346@collabora.com>
-Subject: Re: [PATCH] phy: rockchip: samsung-hdptx: Set drvdata before
- enabling runtime PM
-Message-Id: <173367714219.1031947.13630149874442977785.b4-ty@kernel.org>
-Date: Sun, 08 Dec 2024 22:29:02 +0530
+	s=arc-20240116; t=1733677176; c=relaxed/simple;
+	bh=azq1B8QuNnX4C8HwV3S96dnhxIhN0sy//FVR989QCMw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OCQ3O8FSsiwctdCJSFJaMIieFa0IQPVT+eLWowStHGyKikgB6I9Uo4oDfASVDToxTO9fhlE3HQR5bFXYKnASYal1MJL3MR91fUx60RsrPY0S+GOAnafYY58Jt0apzx+m+gATqW1COuHAzcWGYl2yWPllpTZy/Ojs3L/ltsFxnHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=AOnJoTG9; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6efe4e3d698so22273387b3.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 08:59:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1733677174; x=1734281974; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AlFfwVqRXK/paRpbQAVFV3F3tMqaWvPJwZQA+19pyHg=;
+        b=AOnJoTG9p2WTiuOX21wG2tfNrHtxElmyUm8i+ieHRJ877b+Fp4/uY74Jyli20N0Dv2
+         KB2Abi53ZVGJznrbhvACI9+nc9YfnO5Mqwrktp6iQjwndUPBT4Tguv+SKN7/trb0QjPK
+         s8TBQfnQqPn06STQn1EJY7t+QPan58cMwgv9E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733677174; x=1734281974;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AlFfwVqRXK/paRpbQAVFV3F3tMqaWvPJwZQA+19pyHg=;
+        b=SSA21RwuP6nToUQ+0xOFWTOfLVben3zhbwjC/32h9jRdxWDaRaTQ8v22mz9P7zjIfz
+         Bl267hZTJ9l1qJpCkM6pgdACsTL8KE5Xxz5zJhoTotv/sFKq0Z4FMBzm0oVGH6tJukD8
+         pkDprnC8jP7iVZFdu7y0ThRM+jz6JbykhsoqyUS3eu6HxMnfJ69WWqfmz8isd2U5qRLW
+         BHg/AuyGUL1a1bA5JUVNHMA41IAEDQR2smZ5h8bpSse36W3i9EtwbYFc3+oG6OqQ7dde
+         7LInyC55tagS2ipzFdQXBTOvQJjMBVwqXQFsE2H2/92r6MR5eFd+Z9Wz1DhuLvy68GD5
+         +80w==
+X-Gm-Message-State: AOJu0Yy9mA99a82iZNGLDTjWfjLgkdGilu8uqQaDgCChvQf/w3FdKp6h
+	KK63rsYhonQ15VYvNQhogSziwa830Utm1Zr+5InlV9YkyEeBe0LvW6Qm/iE9VIJ9Zg22V49vx8G
+	QJ5PO49KNMsdRdXAFBYiiAmKSDy4CF0J/FtfENrQIz6dF/Kq40wI=
+X-Gm-Gg: ASbGncuAAg0uKhzkWphDRQJep75CR+eTHYf3c2KNsom+s3LjE1McnYBpukOMFhgIMKH
+	6IC479kb28ez+kPDqFQeInaT8qhiW
+X-Google-Smtp-Source: AGHT+IHc2fwFI+591nR9iKIG3YHjGTjB6Bxuk5sHYVwNbNdHEzV9blLi8vqQvdYTmxx4bc63U1c9ZKmKAJezuz8XeJ8=
+X-Received: by 2002:a05:6902:268a:b0:e39:6c6a:f2da with SMTP id
+ 3f1490d57ef6-e3a0b0b6415mr8620220276.19.1733677173884; Sun, 08 Dec 2024
+ 08:59:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+References: <20241029114622.2989827-1-dario.binacchi@amarulasolutions.com>
+In-Reply-To: <20241029114622.2989827-1-dario.binacchi@amarulasolutions.com>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sun, 8 Dec 2024 17:59:23 +0100
+Message-ID: <CABGWkvp=VdpOUGdHep8E6p8C+gFGsZyhMEtcjkx-zNaG-X_r3g@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 0/6] Add helpers for stats and error frames
+To: linux-kernel@vger.kernel.org
+Cc: linux-amarula@amarulasolutions.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Frank Li <Frank.Li@nxp.com>, 
+	Gal Pressman <gal@nvidia.com>, Haibo Chen <haibo.chen@nxp.com>, Han Xu <han.xu@nxp.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Kory Maincent <kory.maincent@bootlin.com>, 
+	Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, 
+	Rahul Rameshbabu <rrameshbabu@nvidia.com>, Rob Herring <robh@kernel.org>, 
+	Sabrina Dubroca <sd@queasysnail.net>, Shannon Nelson <shannon.nelson@amd.com>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org, 
+	netdev@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 29, 2024 at 12:46=E2=80=AFPM Dario Binacchi
+<dario.binacchi@amarulasolutions.com> wrote:
+>
+> This series originates from some tests I ran on a CAN communication for
+> one of my clients that reports sporadic errors. After enabling BERR
+> reporting, I was surprised that the command:
+>
+> ip -details -statistics link show can0
+>
+> did not display the occurrence of different types of errors, but only the
+> generic ones for reception and transmission. In trying to export this
+> information, I felt that the code related to managing statistics and hand=
+ling
+> CAN errors (CRC, STUF, BIT, ACK, and FORM) was quite duplicated in the
+> implementation of various drivers, and there wasn't a generic function li=
+ke
+> in the case of state changes (i. e. can_change_state). This led to the id=
+ea
+> of adding can_update_bus_error_stats() and the helpers for setting up the
+> CAN error frame.
+>
+> Regarding patch 5/6 ("can: netlink: extend stats to the error types (ack,
+> CRC, form, ..."), I ran
+>
+> ./scripts/check-uapi.sh
+>
+> which found
+>
+> "error - 1/934 UAPI headers compatible with x86 appear _not_ to be backwa=
+rds
+> compatible."
+>
+> I included it in the series because I am currently interested in understa=
+nding
+> whether the idea behind each of the submitted patches makes sense, and I =
+can
+> adjust them later if the response is positive, following your suggestions=
+.
+>
+> Changes in v3:
+> - Drop double assignement of "priv" variable.
+> - Check "dev" parameter is not NULL.
+> - Drop the check of "cf" parameter not NULL
+>
+> Changes in v2:
+> - Replace macros with static inline functions
+> - Update the commit message
+> - Replace the macros with static inline funcions calls.
+> - Update the commit message
+>
+> Dario Binacchi (6):
+>   can: dev: add generic function can_update_bus_error_stats()
+>   can: flexcan: use can_update_bus_error_stats()
+>   can: dev: add helpers to setup an error frame
+>   can: flexcan: use helpers to setup the error frame
+>   can: netlink: extend stats to the error types (ack, CRC, form, ...)
+>   can: dev: update the error types stats (ack, CRC, form, ...)
+>
+>  drivers/net/can/dev/dev.c              | 45 ++++++++++++++++++++++++++
+>  drivers/net/can/flexcan/flexcan-core.c | 29 +++++------------
+>  include/linux/can/dev.h                | 38 ++++++++++++++++++++++
+>  include/uapi/linux/can/netlink.h       |  6 ++++
+>  4 files changed, 97 insertions(+), 21 deletions(-)
+>
+> --
+> 2.43.0
+>
+
+A gentle ping to remind you of this series.
+
+Could this series or some of its patches make sense to consider?
+IMHO, if all the controllers indicate the type of error, I would expect
+the user space to be aware of it as well.
+Or is there something I might be missing?
+
+Thanks and regards,
+Dario
 
 
-On Wed, 23 Oct 2024 20:29:54 +0300, Cristian Ciocaltea wrote:
-> In some cases, rk_hdptx_phy_runtime_resume() may be invoked before
-> platform_set_drvdata() is executed in ->probe(), leading to a NULL
-> pointer dereference when using the return of dev_get_drvdata().
-> 
-> Ensure platform_set_drvdata() is called before devm_pm_runtime_enable().
-> 
-> 
-> [...]
+--=20
 
-Applied, thanks!
+Dario Binacchi
 
-[1/1] phy: rockchip: samsung-hdptx: Set drvdata before enabling runtime PM
-      commit: 9d23e48654620fdccfcc74cc2cef04eaf7353d07
+Senior Embedded Linux Developer
 
-Best regards,
--- 
-~Vinod
+dario.binacchi@amarulasolutions.com
+
+__________________________________
 
 
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
