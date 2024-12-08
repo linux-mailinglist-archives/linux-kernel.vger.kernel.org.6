@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-436352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694959E84D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:51:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C22069E84DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:56:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19A221651BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 11:51:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD15F164652
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 11:56:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 041AA145B26;
-	Sun,  8 Dec 2024 11:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A232A1474CF;
+	Sun,  8 Dec 2024 11:56:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hzv4VF/w"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JGvh3o1E"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82F113D896
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 11:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41EC5145346
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 11:56:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733658671; cv=none; b=UQpP4/Bh+iboVUa0VsMH4C6xsU6GAv1Ftqi40O53hx8DJ1cuRcHvtas+J5BrN8peIzhbbid//Pmy1py9ood93tzmzmIfJztgvTwzEbH/PzLtGtb+muazEFkRYTjRPynMebAq7g+5sjNEG7VsYCo0n7ivaEeYcu7FNoQGOc028zo=
+	t=1733658999; cv=none; b=mH7L0P0X49paOQT1s6t+JCR2JX239hBpiIxzytAueOwz5k71a2CA5yZvuNeTmewsaYFm9N2db/nX5lDhMVdiL0UfWyqBWTbbOA1IunioD5DqKlGRj/QZsK4xIoVtEse+8zLFiSIGnVAANyQ2xVdOtl6AwGFjAMJWgdwyqDZREwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733658671; c=relaxed/simple;
-	bh=EJBI7ckWwHleaAAyKHfoAVyz5AfHC8lsTPOMhnMxmcM=;
+	s=arc-20240116; t=1733658999; c=relaxed/simple;
+	bh=VmlsOWxzrS1Noa1Caa2HARbWaJt1C9KgrLAlAN0Er10=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ge/R0YYyB+e+Pc+sp+7cPk6dPihfZMV4udfPdpvDEWCPHYVxMqkSzgDQInpsPWsQr7w+jmytGgQCFFlynPYyaGBbSly8RCGr3zaQHNj1DYvYMxphBFb4DPA3CZmTFI3daCH8nqiyk76JbnMEoWmgTxufTiAY8qiDjokYqJlIkCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hzv4VF/w; arc=none smtp.client-ip=209.85.208.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=DftM9ObYOH2gbQdhZXsw0pOarUjS8X3BAWITb6vMGXDSD1nZMDoTMBAJlskPC7TyModSsTpmLZ+D61B0oN5Q+nW10tQ/eucsQc1n1tAlXAddl4BPKd9JPv7+d4SQqdvcNkteAwtolUjsg7LvvkqdvmUxI8TizNtheXVxMX/kZ7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JGvh3o1E; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso39006501fa.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 03:51:09 -0800 (PST)
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53e23fb807dso3161028e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 03:56:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733658668; x=1734263468; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733658995; x=1734263795; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BjiC5PAenMu08TFijRNbc2fm2ozHjMgrzs8cxLgoxyE=;
-        b=hzv4VF/wW0EAuiuJJuGwbbry2w/uj7Ix/MKQaFz6KkozvVMJIuA1eCM/8xfLb4WlZJ
-         r1whh9t4lA4c40b4X+96kKZtePlrdniygyOhpKXcFzQm1f/gBgOXuii3KNPYLG6JmIgl
-         2DVckgPAEXiLkQX3un4oASUDk/zA4NIO8wK8x41Jb3Vd2PvJnAk2j1VD6/HbiYCOzhhF
-         VwKJWb6YSjD5cLeS3scyC5zgaRHJAPDZ7ZmWfI3mTJydWYcRN8WU+cvCDJ0yoFcTu499
-         ya8ksPnyGFhSq5UtBauxNk5ZYIFyLbzeKrBGo6tU6mAkRdYNZjap1qpenIH/Cyv0scx1
-         OLrA==
+        bh=pOAwyqX0ldTVE84PV+ORU4SPmAJDMuBSaqC47OQg++s=;
+        b=JGvh3o1EOGrsQkXk0UUCaQn0i8ci8FOfW+zQ0nnog6azhdtlbgFDhewfNWCtp5KHAo
+         b5p/yENLo4MuUKd5mJINlkjz9YWwMF5UzeWcTbOgheWEfW8PDSsou8WV2lLJAGvM93gV
+         Jl3VXcr0A6wjVBaPRdHOtbaLF0QY97CsQ6k8wSqoe2tC9skXsBl87U33yh6ayca5Ofl0
+         CWTItohHVmRc9EpTKylW2oAifRum5yHW+Zu/+GqnzEz/9RzRo3dE6qJ5laP8gQ352quo
+         nrEAF5eCY+oWPP1GDJM+IvGzkpptGVdQz3ZnWgrCOk2Y5g/2iK7BKrnUE/5O6/ACOEGh
+         KYjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733658668; x=1734263468;
+        d=1e100.net; s=20230601; t=1733658995; x=1734263795;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BjiC5PAenMu08TFijRNbc2fm2ozHjMgrzs8cxLgoxyE=;
-        b=j8ApGmz0E3dsU/jmcLSZv8XolUdTvva9lcEgaJf6s8TKHRxkf4qzsZCaPsHguTzvQo
-         6frwkWjAuh7hnpg9pr1+CXcLkfhVW99w8oT5JkRgc4fET14TgxKnFw+WDMxGLi3wOv9Z
-         2L1mOcHheV8/G31mZNqqAcrBqabn/KXAxpOA5uOq5mXyKI2YkLHlSnn5zl3JIpcS/WZh
-         QXIi8coHlbuhvSzuHwV2WNnkqg3CNHgDIWi9T8Pq7O/QA7V3kjWUVdPZHZ010FlZIcA8
-         QbIf/EJ7duSkkKFqLYuZEwQoz0uXaftJF3AwBOFhFc7ACKJOH+eBPvtRfl0f0bf3II3t
-         DMLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVK0CKzI+V0Jtv8N5G2+YP9P0o4iERzoOeq8lkpy7eGDyjfNPKwXKg8KJ1xJhLMNn7lvWtISdgS7r+5yTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Dtn7WTPFgftczOm9WRth+w2MTxNIyXebzKP0XV4nmh+FN4zp
-	25g+eW8mefiQDj80ySBwbTKlT8ueSXkL7HMWuYQjjv8jyN2ivhXUdT1LXJvt2ho=
-X-Gm-Gg: ASbGnctDWnfJ7rTNnp/CLBOpMcqt9N0A/HdHZJJKD/3SvOuKQLOqMzHwiYIbhSJ9zPn
-	lusV0p02Dq2Np1590px9NFJaZzh+IqTa4BiVSAH8iwFwQnOv2M28Ty/2oN9N3rfpEkRnozV3QBH
-	fcmzD/u5Eu9/TkU+zIAqt0dP7U3mrwE967rHWdIE7V6G4s1ckZNjLeSCgaETiq1sp2x35SSrXA+
-	4mDW2n8aJcZYg5HJRhDvOEXAfGPl5ikdU3pm8vQrLo7Vvyb0toAGlEeOHuVCBM+MVkJQ0+0OCh9
-	SZqtvsElsfacPaps3cVFn8XmQSEWLw==
-X-Google-Smtp-Source: AGHT+IETn40N7+7crT4iVG8T/A8ynVmzE/UWImTWcqofhQT1b5XaQk0o+SD2OB6XC+TybBpfRfOZsQ==
-X-Received: by 2002:a05:6512:12c1:b0:540:1be6:f15e with SMTP id 2adb3069b0e04-5401be6f545mr507128e87.0.1733658667917;
-        Sun, 08 Dec 2024 03:51:07 -0800 (PST)
+        bh=pOAwyqX0ldTVE84PV+ORU4SPmAJDMuBSaqC47OQg++s=;
+        b=obj8kcxzzFKpL9fWqkMz5N3y8bvgaOuG0SDzXtkVVEnj5Ci1qebao1YuGyWCEnNNzb
+         KjI2qYGG9hfzK1JWBdeH+DxN4B1v4LVpb6pZBpqTk8vh1cBUuNjbX5tc83+5Ulr3YKlI
+         BoFnFlAqW7vZ7/4TRupb/qFSo2kilGFV9lSMszq+yWaeN0/q7CmvdP4hgcHmJ1bkaypU
+         Mo5NKuUKq/DlGAuA0PAzOzm4pI5YjdtQE9gf3yB4u/iiPVfeQ3CqUWVwg5biKtC2T5Eu
+         Y63OmTFCIA4KqvdiA2YdGqz5Eqctpac1YpdnaYFcl/bl0ooIMjzckwvJvi9PKDbpipvO
+         QDQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXbeRxzyhvUAC5EhJtJf1GDSEaQHTq+L5Co8AB2HL7RO3cfD8iHL2EDmeIAQ5Bs0xXME6NVYGu4TvHjZWY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPVHvcPeV9T3EmbX37xUKK6NVFBeG4Sp4XlYb5BMjsigK1Rn3D
+	j9CQeI4Ol43d5F12y8TbaVr5gYrq/mMrKXfoC1/Zd73oIHHPbLhGnHfIzRaopyQ=
+X-Gm-Gg: ASbGncuin03MN0k8Cyv59mEAayHKROw73wZeHgyWo3pjNCvIJaMEej28YmBss6W8yXI
+	mrKHglIyaiCf7Nw5YHaiikycxyGjXRIRBaR1HZh3wjjtXwTVcCTJZq5VzOTyQ3krCZcWCiYFJKn
+	I+tzKmrwVaeUTT9AkZBIsWznEcqcE6hNRfCc00bLmrQgcxQ9I4wgSXHQYnGg6lgw2AaRVkjt4B4
+	ykP9DgnnfwjdiToELojXD+gi8NcT8ODv8wYmGcgn7N4xNF8Bc2/gc/Xr6xH6r+OFh9iVXjtfVhi
+	111a3MVnJRuMdYu8kDWJYLZb6llK+g==
+X-Google-Smtp-Source: AGHT+IElZN3RNDN+oy40fWovlokmqjWYMAvL7r94k082zliwfNbajhQWzK7ZKlu/0oW09/kjFwm7PA==
+X-Received: by 2002:a05:6512:131d:b0:53e:23ec:b2e7 with SMTP id 2adb3069b0e04-53e2c2c4b9dmr3131142e87.34.1733658995453;
+        Sun, 08 Dec 2024 03:56:35 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53f93369b98sm354427e87.280.2024.12.08.03.51.05
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53f232a9629sm387293e87.25.2024.12.08.03.56.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 03:51:06 -0800 (PST)
-Date: Sun, 8 Dec 2024 13:51:04 +0200
+        Sun, 08 Dec 2024 03:56:34 -0800 (PST)
+Date: Sun, 8 Dec 2024 13:56:31 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>
 Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
@@ -84,11 +84,11 @@ Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
 	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
 	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
 	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 27/45] drm/msm/dp: make the SST bridge disconnected when
- mst is active
-Message-ID: <mzo5hjocxp666mfadqdmzzbkcbzcga3aatqtv7p5jfrlfeide2@hmmamwhvbfik>
+Subject: Re: [PATCH 28/45] drm/msm/dp: add an API to initialize MST on sink
+ side
+Message-ID: <6xqscvg7kuxd6l3kjfhrbqedijjfmaql5j3ie2lsnsxt2htx76@4u5iub577mg4>
 References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-27-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-28-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,30 +97,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-27-f8618d42a99a@quicinc.com>
+In-Reply-To: <20241205-dp_mst-v1-28-f8618d42a99a@quicinc.com>
 
-On Thu, Dec 05, 2024 at 08:31:58PM -0800, Abhinav Kumar wrote:
-
-missing commit message
-
+On Thu, Dec 05, 2024 at 08:31:59PM -0800, Abhinav Kumar wrote:
+> If the DP controller is capable of supporting multiple streams
+> then initialize the DP sink in MST mode by programming the DP_MSTM_CTRL
+> DPCD register to enable MST mode.
+> 
 > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > ---
->  drivers/gpu/drm/msm/dp/dp_drm.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/gpu/drm/msm/dp/dp_display.c | 32 ++++++++++++++++++++++++++++++++
+>  1 file changed, 32 insertions(+)
 > 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_drm.c b/drivers/gpu/drm/msm/dp/dp_drm.c
-> index 920392b3c688821bccdc66d50fb7052ac3a9a85a..225858c6240512cf2c5ca3b5eb52cf9b7f4db3e3 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_drm.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_drm.c
-> @@ -27,7 +27,7 @@ static enum drm_connector_status msm_dp_bridge_detect(struct drm_bridge *bridge)
->  	drm_dbg_dp(dp->drm_dev, "link_ready = %s\n",
->  		(dp->link_ready) ? "true" : "false");
->  
-> -	return (dp->link_ready) ? connector_status_connected :
-> +	return (dp->link_ready && !dp->mst_active) ? connector_status_connected :
->  					connector_status_disconnected;
+> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
+> index e69cdfbbe10484e47475ef189849f8ff6628bd7a..033d238e956263c1212fce45aab01316ef341edb 100644
+> --- a/drivers/gpu/drm/msm/dp/dp_display.c
+> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
+> @@ -380,6 +380,35 @@ static int msm_dp_display_send_hpd_notification(struct msm_dp_display_private *d
+>  	return 0;
 >  }
 >  
+> +static void msm_dp_display_mst_init(struct msm_dp_display_private *dp)
+> +{
+> +	const unsigned long clear_mstm_ctrl_timeout_us = 100000;
+> +	u8 old_mstm_ctrl;
+> +	struct msm_dp *msm_dp = &dp->msm_dp_display;
+> +	int ret;
+> +
+> +	/* clear sink mst state */
+> +	drm_dp_dpcd_readb(dp->aux, DP_MSTM_CTRL, &old_mstm_ctrl);
+> +	drm_dp_dpcd_writeb(dp->aux, DP_MSTM_CTRL, 0);
+> +
+> +	/* add extra delay if MST state is not cleared */
+> +	if (old_mstm_ctrl) {
+> +		drm_dbg_dp(dp->drm_dev, "MSTM_CTRL is not cleared, wait %luus\n",
+> +			   clear_mstm_ctrl_timeout_us);
+
+"is not cleared" usually means that we wrote 0 to it, but the value
+still stays on. Please rephrase the message, drop wait time.
+
+> +		usleep_range(clear_mstm_ctrl_timeout_us,
+> +			     clear_mstm_ctrl_timeout_us + 1000);
+> +	}
+> +
+> +	ret = drm_dp_dpcd_writeb(dp->aux, DP_MSTM_CTRL,
+> +				 DP_MST_EN | DP_UP_REQ_EN | DP_UPSTREAM_IS_SRC);
+> +	if (ret < 0) {
+
+if (ret != 1) ?
+
+> +		DRM_ERROR("sink mst enablement failed\n");
+> +		return;
+> +	}
+> +
+> +	msm_dp->mst_active = true;
+> +}
+> +
+>  static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+>  {
+>  	struct drm_connector *connector = dp->msm_dp_display.connector;
+> @@ -414,6 +443,9 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
+>  	 */
+>  	msm_dp_link_psm_config(dp->link, &dp->panel->link_info, false);
+>  
+> +	if (dp->max_stream > DEFAULT_STREAM_COUNT && msm_dp_panel_read_mst_cap(dp->panel))
+> +		msm_dp_display_mst_init(dp);
+> +
+>  	msm_dp_link_reset_phy_params_vx_px(dp->link);
+>  	rc = msm_dp_ctrl_on_link(dp->ctrl, dp_display->mst_active);
+>  	if (rc) {
 > 
 > -- 
 > 2.34.1
