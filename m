@@ -1,133 +1,249 @@
-Return-Path: <linux-kernel+bounces-436517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801469E8703
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:21:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 406D59E8706
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CF22281511
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:21:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 012582814B0
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:22:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43554161321;
-	Sun,  8 Dec 2024 17:21:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2121D188014;
+	Sun,  8 Dec 2024 17:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ab+Vwb+E"
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYt4e97a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B2D145324
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FCDE145324;
+	Sun,  8 Dec 2024 17:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733678477; cv=none; b=rDnh1IQINKEkFNJ0n5+Uw8BrsTUXRPx5atqz3UeOPtp7jgNuQ7iE84WCQTZvlYHaSm68sqiLB4zMTlf19UfsxuOft/WNN6BIiVcLQaTwuF4wTsEZ4MZkub7dIfniR9JFanY+2nxiUA+nqrqHdMmXMBp0t+BzJ/tGmsacTkUajnQ=
+	t=1733678569; cv=none; b=elRBelxZCW4+1KS7983+n1tuVwTXooQhw5KpM788VKsDDlBmktOKqw6F+ZSa7u+DpN7cWP+S2fm8Jro8jzqbT+5kQxwnsW5TMW/w94/ygKuNGdZ8RzDVFLAf018CtzfOSw414gXCkS1bEQL7Vjle08bJvwmTOg81ZxheR6N9ewk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733678477; c=relaxed/simple;
-	bh=KC2J+w0iBj8OcuinmQpzfXEGOHSOWYkW34S836kDE4Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=UrjUe51/X8VqH/zOt9wmOkD/sxnRJVcJf7bnokZ1qbUeWVenJ8E351BMiBcW7Leb8eqmPSVXRLE/f1lVdF08Fd7OVfVJ38h8U0aQZ0bsKpB/uIyBoOu8/1m/PR6BuHoXMivc6GsP5x+ADqRMzRDXSLpqGSFBCBby+bxFrz5RG6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ab+Vwb+E; arc=none smtp.client-ip=209.85.222.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-85c4e74e2baso560713241.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 09:21:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733678475; x=1734283275; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=V1KyqoBFomxOl77+ZU6CgcKwfPXNaWogS1j6njglFyc=;
-        b=Ab+Vwb+EnvIMyYxdrOXiEWj9Y8pDACnTBVGnT2dy0CzYlgdzyT8so602w8O4cbltsa
-         KCIOmPH01OTKHsurDFDRwVbRIbOBBgc86ZMMRmueTC9MYoOYQYY1F2Bv8ziWJoJ/mICE
-         QP87tQdIULPz6dUCJ0187OoZgytG6NlV5zTWLjmiAewvCpe2blZMNADmppp3DUrPGj/l
-         +p3HV60JEa7KJ2DfQDwBPN/9LIJrK22wxSt8RUnt56/PbvSkzktc0isEzxgLQtgmJTxE
-         HS9Su9f7PWI7Ll0WllwPMS11ue/W7WO6OEU1Mm6jAFUSHSFjTNzKHiaMNN3EO8R6hJhW
-         rJYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733678475; x=1734283275;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V1KyqoBFomxOl77+ZU6CgcKwfPXNaWogS1j6njglFyc=;
-        b=LcxU4eANpgIqCXp1g7jYVAnIL1d4BEMbxUxfSfsE5Om641vHTnsI42osnWrAhVTOQF
-         0pDt713jNjFTHfR8JaGAoJ4IDBKzJIqwuNKgW6Pg/RHFPLnfZnGQ+HSaEXwqTw3/0LJy
-         NGBvVDk22FkCSwLcHFPHWaLsBLmBaTonHg9UkVoXhjE5JqPDTygFV/rurvAIFYxH1Dnq
-         JVm88iJcQUHuSNq7zWb0XJiR8JS6M1hhxdA1TYhZoF3kQ10Lzvb7jQ1/DzBnNwsqyeQB
-         KKXwiM/sTA+DgOwDEi1/B5rne/NUzCkDyswNOm61pPnPvkD1Yry9zqW7kvWn6gCfchgY
-         lbCA==
-X-Forwarded-Encrypted: i=1; AJvYcCURKSs5mpN8Oxo7EUzEy8IwqyZn07wGJGRxkna9/ye78IhZ70sYG4/6ftyi64a+34XEkobCR2B7VNE9vwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVNWTLsvswAuSvkTsZSh2GPS5zo4OAOiV1o315Np/vdumok3ui
-	UGPtWq1KltWE06zqmmLKiA82PDXWACgkeu5uKoDWVDnqul/xmkvjSuo5E82PT9PjP+Tl7tFy36D
-	V3wEduUWwgisnMOpyUsg90KbxZZQ=
-X-Gm-Gg: ASbGncuZtWcp8JK5Q03jTuSe0BYwiAogb8seqGgISRoRi5zpZ4qNl3WgbDinScBjIPS
-	CzZZ/qbEnKLgBg1FLUfesjqnkh1E+SGY=
-X-Google-Smtp-Source: AGHT+IENR3UDThiIkJ+SdvhzuoTwx351q+c6wziFhMmU0b7Us4aOGgMoAOxhZzKj+op8m8ZuFO7bymg3EaHJn4nQtH0=
-X-Received: by 2002:a05:6122:4690:b0:518:773b:39f with SMTP id
- 71dfb90a1353d-518773b0536mr874128e0c.4.1733678474919; Sun, 08 Dec 2024
- 09:21:14 -0800 (PST)
+	s=arc-20240116; t=1733678569; c=relaxed/simple;
+	bh=CnFzzpu/t2T7ISYlDidZoBSSn6jeFN2Utrep7B+tRzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gKj92LzMVLIqi406ZzqXHQMhj8AROqtA2/+Xn0PGAs2YaWY6k0iXG+R50q2drHwczQPht8x8jbMA+Niwexb7tldZu+GTKwxKymaTHuBZ/RgcgHKyJetbQkt4Npjjp6EoN/NUhUq0jEbEe3/IQM2n0soHy8w5UWjL1VzQKOxfYrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYt4e97a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8476C4CED2;
+	Sun,  8 Dec 2024 17:22:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733678569;
+	bh=CnFzzpu/t2T7ISYlDidZoBSSn6jeFN2Utrep7B+tRzo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jYt4e97aZhp8uhaJI0bJ4bqU//5L97mLWWacgXBbkWexcLA3XQoIfIFTakx9/XxsN
+	 76e3M3KLDGhDV9MMwHpY/ACOI8kT7G6Hi8KiK5AZd1WTfq6MxDU7gPKvpVRXzH0V6W
+	 B8t5xTEB/FELMvAcsXb96x1uiYsn74PnG0ytRAF1PlnqVmA4qMLSV76ddnaftflcu/
+	 JFlDonzNdSXBdJymUMUzHXhZZNKE+OLcvyju2j3TJPWl+p3Lnl/DIe4bO88keCG+F1
+	 SrLYS1BdKlsaCwFzfv9Y+hRZc5sxBePyFgVAgSXZRDrkyYsMk0nrAXAsWr8KHW4HBc
+	 VpShZ6Gqq+iKw==
+Date: Sun, 8 Dec 2024 17:22:36 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Eason Yang <j2anfernee@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+ venture@google.com, yuenn@google.com, benjaminfair@google.com,
+ lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ nuno.sa@analog.com, dlechner@baylibre.com, javier.carrasco.cruz@gmail.com,
+ andriy.shevchenko@linux.intel.com, marcelo.schmitt@analog.com,
+ olivier.moysan@foss.st.com, mitrutzceclan@gmail.com, tgamblin@baylibre.com,
+ matteomartelli3@gmail.com, alisadariana@gmail.com, gstols@baylibre.com,
+ thomas.bonnefille@bootlin.com, ramona.nechita@analog.com,
+ mike.looijmans@topic.nl, chanh@os.amperecomputing.com, KWLIU@nuvoton.com,
+ yhyang2@nuvoton.com, openbmc@lists.ozlabs.org, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] iio: adc: add Nuvoton NCT720x ADC driver
+Message-ID: <20241208172236.18441e64@jic23-huawei>
+In-Reply-To: <20241203091540.3695650-3-j2anfernee@gmail.com>
+References: <20241203091540.3695650-1-j2anfernee@gmail.com>
+	<20241203091540.3695650-3-j2anfernee@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241208085121.53415-1-dennis.lamerice@gmail.com>
-In-Reply-To: <20241208085121.53415-1-dennis.lamerice@gmail.com>
-From: Dennis Lam <dennis.lamerice@gmail.com>
-Date: Sun, 8 Dec 2024 12:21:04 -0500
-Message-ID: <CAGZfcdneGPsAwUZmC6Wv7BWSaQw2rkjDby9nhZFweYOgXvNDbw@mail.gmail.com>
-Subject: Re: [[PATCH] MTD: fix slab-use-after-free due to dangling pointer in
- notifier chain] MTD: fix slab-use-after-free due to dangling pointer in
- notifier chain
-To: richard@nod.at, chengzhihao1@huawei.com, miquel.raynal@bootlin.com, 
-	vigneshr@ti.com
-Cc: syzkaller-bugs@googlegroups.com, 
-	syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com, 
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 8, 2024 at 3:51=E2=80=AFAM Dennis Lam <dennis.lamerice@gmail.co=
-m> wrote:
->
-> When attaching MTDs, a reboot notifier is added to the blocking
-> notification chain. However, when detaching a MTD and freeing its
-> related objects, the notifier is never unregistered from the
-> notification chain. Thus, when the chain is iterated there is a
-> possibility of finding the address of the reboot notifier which has
-> already been freed, resulting in a slab-use-after-free error.
->
-> To fix this, I added an unregister notifier function in the ubi_wl_close
-> function to ensure that the notifier is removed from the chain after the
-> device has been detached.
->
-> Reported-by: syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/67409091.050a0220.363a1b.013d.GAE@goo=
-gle.com/T/
-> Signed-off-by: Dennis Lam <dennis.lamerice@gmail.com>
-> ---
->  drivers/mtd/ubi/wl.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/mtd/ubi/wl.c b/drivers/mtd/ubi/wl.c
-> index 4f6f339d8fb8..31a1e5515d98 100644
-> --- a/drivers/mtd/ubi/wl.c
-> +++ b/drivers/mtd/ubi/wl.c
-> @@ -1995,6 +1995,7 @@ static void protection_queue_destroy(struct ubi_dev=
-ice *ubi)
->  void ubi_wl_close(struct ubi_device *ubi)
->  {
->         dbg_wl("close the WL sub-system");
-> +       unregister_reboot_notifier(&ubi->wl_reboot_notifier);
->         ubi_fastmap_close(ubi);
->         shutdown_work(ubi);
->         protection_queue_destroy(ubi);
-> --
-> 2.47.0
->
+On Tue,  3 Dec 2024 17:15:40 +0800
+Eason Yang <j2anfernee@gmail.com> wrote:
 
-My apologies everyone, please ignore this email. My mailing script
-seems to have changed my email header and commit message. I will send
-another better formatted email later.
+> Add Nuvoton NCT7201/NCT7202 system voltage monitor 12-bit ADC driver
+> 
+> NCT7201/NCT7202 supports up to 12 analog voltage monitor inputs and up to
+> 4 SMBus addresses by ADDR pin. Meanwhile, ALERT# hardware event pins for
+> independent alarm signals, and the all threshold values could be set for
+> system protection without any timing delay. It also supports reset input
+> RSTIN# to recover system from a fault condition.
+> 
+> Currently, only single-edge mode conversion and threshold events support.
+> 
+> Signed-off-by: Eason Yang <j2anfernee@gmail.com>
+Hi Eason,
+
+Given you have some good reviews already I only took a very quick glance
+through.  A few things inline
+
+Jonathan
+
+> diff --git a/drivers/iio/adc/nct720x.c b/drivers/iio/adc/nct720x.c
+> new file mode 100644
+> index 000000000000..b28b5f4d7d70
+> --- /dev/null
+> +++ b/drivers/iio/adc/nct720x.c
+
+> +
+> +static int nct720x_write_event_value(struct iio_dev *indio_dev,
+> +				     const struct iio_chan_spec *chan,
+> +				     enum iio_event_type type,
+> +				     enum iio_event_direction dir,
+> +				     enum iio_event_info info,
+> +				     int val, int val2)
+> +{
+> +	struct nct720x_chip_info *chip = iio_priv(indio_dev);
+> +	int index, err = 0;
+> +	long v1, v2, volt;
+> +
+> +	index = nct720x_chan_to_index[chan->address];
+> +	volt = (val * NCT720X_IN_SCALING_FACTOR) / NCT720X_IN_SCALING;
+> +	v1 = volt >> 5;
+> +	v2 = (volt & REG_VIN_LIMIT_LSB_MASK) << 3;
+> +
+> +	if (chan->type != IIO_VOLTAGE)
+> +		return -EOPNOTSUPP;
+> +
+> +	if (info == IIO_EV_INFO_VALUE) {
+> +		if (dir == IIO_EV_DIR_FALLING) {
+> +			guard(mutex)(&chip->access_lock);
+
+Might as well move this up one level as it is called in both legs.
+
+> +			err = regmap_write(chip->regmap, REG_VIN_LOW_LIMIT[index], v1);
+> +			if (err < 0)
+> +				dev_err(&indio_dev->dev, "Failed to write REG_VIN%d_LOW_LIMIT\n",
+> +					index + 1);
+> +
+> +			err = regmap_write(chip->regmap, REG_VIN_LOW_LIMIT_LSB[index], v2);
+> +			if (err < 0)
+> +				dev_err(&indio_dev->dev, "Failed to write REG_VIN%d_LOW_LIMIT_LSB\n",
+> +					index + 1);
+> +
+> +		} else {
+> +			guard(mutex)(&chip->access_lock);
+> +			err = regmap_write(chip->regmap, REG_VIN_HIGH_LIMIT[index], v1);
+> +			if (err < 0)
+> +				dev_err(&indio_dev->dev, "Failed to write REG_VIN%d_HIGH_LIMIT\n",
+> +					index + 1);
+> +
+> +			err = regmap_write(chip->regmap, REG_VIN_HIGH_LIMIT_LSB[index], v2);
+> +			if (err < 0)
+> +				dev_err(&indio_dev->dev, "Failed to write REG_VIN%d_HIGH_LIMIT_LSB\n",
+> +					index + 1);
+> +		}
+> +	}
+> +	return err;
+> +}
+
+> +
+> +static const struct iio_info nct720x_info = {
+> +	.read_raw = nct720x_read_raw,
+> +	.read_event_config = nct720x_read_event_config,
+> +	.write_event_config = nct720x_write_event_config,
+> +	.read_event_value = nct720x_read_event_value,
+> +	.write_event_value = nct720x_write_event_value,
+
+Given you are supporting with and without interrupts, should probably pick between
+versions of this that have the event config part and one that doesn't.
+
+> +};
+> +
+> +static const struct nct720x_adc_model_data nct7201_model_data = {
+> +	.model_name = "nct7201",
+> +	.channels = nct7201_channels,
+> +	.num_channels = ARRAY_SIZE(nct7201_channels),
+> +	.vin_max = 8,
+> +};
+> +
+> +static const struct nct720x_adc_model_data nct7202_model_data = {
+> +	.model_name = "nct7202",
+> +	.channels = nct7202_channels,
+> +	.num_channels = ARRAY_SIZE(nct7202_channels),
+> +	.vin_max = 12,
+> +};
+> +
+> +static int nct720x_init_chip(struct nct720x_chip_info *chip)
+> +{
+> +	u8 data[2];
+> +	unsigned int value;
+> +	int err;
+> +
+> +	err = regmap_write(chip->regmap, REG_CONFIGURATION, BIT_CONFIGURATION_RESET);
+> +	if (err) {
+> +		dev_err(&chip->client->dev, "Failed to write REG_CONFIGURATION\n");
+> +		return err;
+> +	}
+> +
+> +	/*
+> +	 * After about 25 msecs, the device should be ready and then
+> +	 * the Power Up bit will be set to 1. If not, wait for it.
+> +	 */
+> +	mdelay(25);
+> +	err  = regmap_read(chip->regmap, REG_BUSY_STATUS, &value);
+> +	if (err < 0)
+> +		return err;
+> +	if (!(value & BIT_PWR_UP))
+> +		return err;
+> +
+> +	/* Enable Channel */
+> +	err = regmap_write(chip->regmap, REG_CHANNEL_ENABLE_1, REG_CHANNEL_ENABLE_1_MASK);
+> +	if (err) {
+> +		dev_err(&chip->client->dev, "Failed to write REG_CHANNEL_ENABLE_1\n");
+> +		return err;
+> +	}
+> +
+> +	if (chip->vin_max == 12) {
+> +		err = regmap_write(chip->regmap, REG_CHANNEL_ENABLE_2, REG_CHANNEL_ENABLE_2_MASK);
+> +		if (err) {
+> +			dev_err(&chip->client->dev, "Failed to write REG_CHANNEL_ENABLE_2\n");
+> +			return err;
+> +		}
+> +	}
+> +
+> +	guard(mutex)(&chip->access_lock);
+> +	err  = regmap_read(chip->regmap, REG_CHANNEL_ENABLE_1, &value);
+> +	if (err < 0)
+> +		return err;
+> +	data[0] = (u8)value;
+> +
+> +	err  = regmap_read(chip->regmap, REG_CHANNEL_ENABLE_2, &value);
+> +	if (err < 0)
+> +		return err;
+
+Here I think you can use a bulk read as the registers are next to each other.
+
+> +	data[1] = (u8)value;
+> +
+> +	value = get_unaligned_le16(data);
+> +	chip->vin_mask = value;
+> +
+> +	/* Start monitoring if needed */
+> +	err = regmap_read(chip->regmap, REG_CONFIGURATION, &value);
+> +	if (err < 0) {
+> +		dev_err(&chip->client->dev, "Failed to read REG_CONFIGURATION\n");
+> +		return value;
+> +	}
+> +
+> +	value |= BIT_CONFIGURATION_START;
+> +	err = regmap_write(chip->regmap, REG_CONFIGURATION, value);
+> +	if (err < 0) {
+> +		dev_err(&chip->client->dev, "Failed to write REG_CONFIGURATION\n");
+> +		return err;
+> +	}
+> +
+> +	return 0;
+> +}
 
