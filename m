@@ -1,97 +1,99 @@
-Return-Path: <linux-kernel+bounces-436501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED3449E86D0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:59:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F1659E86D5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:02:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9BB281419
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:59:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF002814BA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881CB18858E;
-	Sun,  8 Dec 2024 16:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5A315ECDF;
+	Sun,  8 Dec 2024 17:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqWLOjol"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iJAKPGEb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FF120323;
-	Sun,  8 Dec 2024 16:59:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2948B13AD03
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:02:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677192; cv=none; b=W9mIdOQZ8izQPEBYfiUoR18nZaQPD1OOzG8HZAl4oNeskxwqtW5hKhZRJg3xVUtRsuIBCZu7/rleXllDi2XZ2Tu/07lNUwoImM1JCQJA1vtWTbTTpjBkZSDVAY/weKjOnrTSfHSOJdS4nierh9dUPzm/SebTPKEDoSgXdHtczv4=
+	t=1733677364; cv=none; b=YzEdth8zcUV1jGZP4GvtQgJTdUjD0LDXVOHJcgvAiNhXR6aXUuBVnWhGzevyHCOy6isYGBmqljnIBcP0rzc8eNhTQFjJHLqqE8Yy0cJY09DBDcH7DsOJ9zm7wJBvR/FU7yj75GnBSvdW/PqMlPsA4BADQ6H2npvigeCrsQ4Ag5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677192; c=relaxed/simple;
-	bh=o5+e4VKhCq8v7S94ioflyoTxDxaWLCbTsckcliIW1kI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RSJjeBOJ9IkkZ4rmdXyerQo4n8aAJTCaI4X88VvCKImmf4C5Q+GlU/Xy0glLLzuGF4ZJUSJoIXC0NjFiWPErRGWok3vqwl1BgEfjlbdUDWUPApid2NNdyj3uGdN9SOZrtCKrMhAlgwxQ6Pns0ppBYqdtZVMjHIGlyrJ3/UnzGnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqWLOjol; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731C0C4CED2;
-	Sun,  8 Dec 2024 16:59:48 +0000 (UTC)
+	s=arc-20240116; t=1733677364; c=relaxed/simple;
+	bh=IQCzJX9mzqFx0k8wCqsYT0do0fUE/zPwysTrpnz5vb0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PkReFHatA2igHxYqLkMxmzkIn4x0Ssa9EBuAbwDmpD/2S87AUo9te+z+MgrmKfGpSfVU0jC/diTXSip+rX9w1PQPNEQBILgoZ0CPd5KjkJ6RvRYiDdUmz7ZQtsa66vNvgYdu4nDEv9YE+1UCPZngqj4BIY1Qc3AUTj4zDsno7Mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iJAKPGEb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B46F1C4CED2;
+	Sun,  8 Dec 2024 17:02:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677191;
-	bh=o5+e4VKhCq8v7S94ioflyoTxDxaWLCbTsckcliIW1kI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EqWLOjolkrK48OCPgW3J+QmuJ3pwD3uXNseiCQNPA3QtPc3y5/XL5joyja5lrSGXD
-	 bOfh6N1CWnIuX8U89uDuSmXavhOZlX0bH3AzLpYcbmoDi2gtyXjaabp+zVW4O8Z/gL
-	 UvrugHCW2taNQ5l3+YCFREbR1fqXrMtG7onHNAV1QcPM23fJicxKnJglKHIFe7fK6d
-	 F9FX6YmtWzroswGYYVNL4Ny3Ny21U0RbXUdmqb8Pxbw7SWxRZXgT5RAX+dg8Xxqr8i
-	 5RWoL+cKjnM87kjjmxtU+hD2Zzcn4uH8923xPzerHkAXwd74XvOwpVD5qA0Mu3yu95
-	 PiofOPPxuOXYA==
-Date: Sun, 8 Dec 2024 16:59:44 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Francesco Dolcini <francesco@dolcini.it>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, =?UTF-8?B?Sm/Do28=?=
- Paulo =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>,
- Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?B?Sm/Do28=?= Paulo
- =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>, Francesco
- Dolcini <francesco.dolcini@toradex.com>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: adc: ti-ads1119: fix sample size in scan struct
- for triggered buffer
-Message-ID: <20241208165944.1ca1d08b@jic23-huawei>
-In-Reply-To: <20241202194622.GA70146@francesco-nb>
-References: <20241202-ti-ads1119_s16_chan-v1-1-fafe3136dc90@gmail.com>
-	<20241202194622.GA70146@francesco-nb>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1733677363;
+	bh=IQCzJX9mzqFx0k8wCqsYT0do0fUE/zPwysTrpnz5vb0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=iJAKPGEbZzt4UwPydnM0avSvGXaRy6T1hLicejUhXPu3YuBoPGosCRX2Ad1RH0y+5
+	 8AzrKuD7p5StOgU2d6lfkcXv90XQjaSUAHnakt85jEy4DC6qPlHiykaMK7YxplNJF1
+	 ETWQAp/OK5umo+T+z4ChoRCKg/5PzDwdmQ6uR4noIlpYBKzUgpkAK34SCo7iL22HIv
+	 ndJWgudL2sEQfEXeGGW+4ktgRDpgK8TI00cUPO4oAKYSwt+6DK+VVN6oPUTYhyW6vR
+	 YhpfA5AVnaEwkpGhskVrQDt568Iiqm57U2VBGJu9ZQnVkdkdo+kvRDrEBO4NtLbted
+	 jVWPc52Lc6VZg==
+From: Vinod Koul <vkoul@kernel.org>
+To: Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Anand Moon <linux.amoon@gmail.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>
+In-Reply-To: <20241012071919.3726-1-linux.amoon@gmail.com>
+References: <20241012071919.3726-1-linux.amoon@gmail.com>
+Subject: Re: [PATCH v3 0/6] RK3399: PCie Phy using new helper function
+Message-Id: <173367736033.1042266.11057456243557400488.b4-ty@kernel.org>
+Date: Sun, 08 Dec 2024 22:32:40 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-On Mon, 2 Dec 2024 20:46:22 +0100
-Francesco Dolcini <francesco@dolcini.it> wrote:
 
-> On Mon, Dec 02, 2024 at 08:18:44PM +0100, Javier Carrasco wrote:
-> > This device returns signed, 16-bit samples as stated in its datasheet
-> > (see 8.5.2 Data Format). That is in line with the scan_type definition
-> > for the IIO_VOLTAGE channel, but 'unsigned int' is being used to read
-> > and push the data to userspace.
-> > 
-> > Given that the size of that type depends on the architecture (at least
-> > 2 bytes to store values up to 65535, but its actual size is often 4
-> > bytes), use the 's16' type to provide the same structure in all cases.
-> > 
-> > Fixes: a9306887eba4 ("iio: adc: ti-ads1119: Add driver")
-> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+On Sat, 12 Oct 2024 12:49:02 +0530, Anand Moon wrote:
+> Few clean of the phy change and Using guard notation makes the code
+> more compact and error handling for mutex_lock/mutex_unlock.
 > 
-> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
-> Cc: stable@vger.kernel.org
+> Plz review te code changes, I tend to do silly mistake.
 > 
-> Thanks,
-> Francesco
+> v1:
+> [1] https://lore.kernel.org/all/20240901183221.240361-5-linux.amoon@gmail.com/
+> v2: Fix some typo in the subjects.
+> [2] https://lore.kernel.org/all/20241006182445.3713-1-linux.amoon@gmail.com/
 > 
+> [...]
 
-Applied to the fixes-togreg branch of iio.git and marked for stable.
+Applied, thanks!
 
-Thanks,
+[1/6] phy: rockchip-pcie: Simplify error handling with dev_err_probe()
+      commit: 84de918083d09500d93d991d8989addfaae1611e
+[2/6] phy: rockchip-pcie: Use devm_clk_get_enabled() helper
+      commit: e96397db55e5fbe290ff1462ddf6c24ed94eb7df
+[3/6] phy: rockchip-pcie: Use regmap_read_poll_timeout() for PCIe reference clk PLL status
+      commit: cb0ba26ad09398d3d0d10f518af4ccae69c8b64e
+[4/6] phy: rockchip-pcie: Refactor mutex handling in rockchip_pcie_phy_power_off()
+      commit: bb70d1aae565fd52e6a50e643d1ad6e7d419c2a5
+[5/6] phy: rockchip-pcie: Refactor mutex handling in rockchip_pcie_phy_power_on()
+      commit: 96522eeb8735449957272e9c6f8ea3b72dcbdeb8
+[6/6] phy: rockchip-pcie: Use guard notation when acquiring mutex
+      commit: c90a7a685a5d90228cedf7a5068f50b3da23ddfc
 
-Jonathan
+Best regards,
+-- 
+~Vinod
+
+
 
