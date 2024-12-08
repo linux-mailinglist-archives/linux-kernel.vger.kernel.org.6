@@ -1,216 +1,177 @@
-Return-Path: <linux-kernel+bounces-436430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436431-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 181489E85C0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:12:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E16B9E85C3
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:14:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 865EB1884FF4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B060164EA9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:14:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 015FD14D456;
-	Sun,  8 Dec 2024 15:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F8014AD22;
+	Sun,  8 Dec 2024 15:14:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GC495VKC"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="tA5gxY/b"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848B017BA5;
-	Sun,  8 Dec 2024 15:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C7D0208D7
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:14:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733670757; cv=none; b=rNnyq79SCs8Sicbk8F81NRsfmDJQskvtyI3bwxxiiRuqKl5NulPomwXAFvTgaa+u0TyXlcdq2kAhyiUTSzu2WdQdm4+HRhrXImjL0HlFQ3uDsZv+5WKlRr+XX/hGgeXboy66vGf7yfypHsF9K07PSkMJ2zEIezpkrmid92vT97I=
+	t=1733670842; cv=none; b=OMevcb0ZPNUlhxvWRmWOHqnDrBQbmun/uArsmbx2C1KVLcmZBl5e5jxEkyiQBMUnYFogBqiuU9NMuRwg0vrRF+yUxakXvhxQAVSbwJK0hap3vdh0sIfWUI/IMc+94AIsH7JxJ9mJOJEhA9NoG9geK6/eLoq2YUbM+VQ1cKwqMIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733670757; c=relaxed/simple;
-	bh=gcFaRUNaDsnyDl2My6iI9MElicnxRF2lXYW6WwymHZM=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oHFM5Gm4Zb6H9Sh67e76Omzic+He9z+dlxZf05cBZrcWZcnJFXPebVP4w0wiDvhC8PzhYEpzsRwnQqSdH6KWYxRczJ+ICE8LwMGQXdY1seR2Qm7S7JljpFotNnjXZ3UzLy6O0s5pXRVcnN9q+OcaAD0aJvBpxo/Iv3yaPA+KCK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GC495VKC; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-434a7ee3d60so26577765e9.1;
-        Sun, 08 Dec 2024 07:12:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733670754; x=1734275554; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6svUt4iTKLUfioqlz6n+zi3gVpzojRZdfSEAIIkW1Pw=;
-        b=GC495VKCwJmh6MIN9OHbDdnjSki/5M4UwfluVOD8BxYkAm/xIRhKAS8TemVusRIBeX
-         nOOq4Z+heRT9g/DZFoGDQQZ8Lylfts90nIY2o7ET0W/PUcT8GaEiCwSKkkmvQQwQy/0a
-         Iq0/6HPa2EC86ujbc3bFk6MGB0UuCxVFLeL+oC+KBGUl2rSnAt50W0g/3tW2NL9IyO2y
-         a6sUgToCx7UeNgmEt32CelissyN2DYcNGv6/6DkSUbLVceujbEvKkW5TaRroKCJmr4xn
-         jV7DZtxpVj7pKwwJl2gSXPdRHzGAZRtx+utO+T0BTaefs7uIQPJkArQfjgP1V+rJPxpJ
-         3UEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733670754; x=1734275554;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:subject:cc:to:from:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6svUt4iTKLUfioqlz6n+zi3gVpzojRZdfSEAIIkW1Pw=;
-        b=OIrK0iA8RusfuDLyzi9XkqqNehm2UfKTIDm0hKah8vc7n/KFEU4jQd76Rru6TNQbFi
-         VS8PpaDBArTRSNgbT8NzsqSNkLlLF9Y7PG8a0og4uXTCEX/AThq1h2D30fp/tY4VNA05
-         Eu1zKx16AJ4cMznpwMPrAvXdGGFVBhGqXkP3xE2PpU3Xe5uRo+Vd2n0Dq2TI3xsZxxCG
-         OWgjsbNvqmyZdFo6eboKRL7uGfuGxmBFX+JxMs8pAJ/FERvzRSZ3aMCx+BegiFqCxmXZ
-         h93YdxprJwql4Dqnc3btzzuO2eQuxVZZbUEyfvG2MoSdvAUAhFjchZCDqlh4gkcNdRws
-         705Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUqcfWXLpMG9gvaSlwDJNdwxf7kK4wU4YLO2DFP8tKtEuR/3hr/TpF/inEgkvuVPPLcNr13AITr@vger.kernel.org, AJvYcCV+0LFuwGM5ujkwQAEGEM40MJrGopybmXyjlwKtjlqb49DeuTY64gfTia0NP8CEFErxUAwFlifRKRgP@vger.kernel.org, AJvYcCWY9eG1QY3+z6KsFWWlzuWpbNfgObMzlgk5jfYBq4wu+UbtAQ+H0O9aTDHcYQb+NtZvtRkGCmU+C8Y+ZomJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt6kUn2m4Uxxi8gLPBSLKAHdshwM0fyIMkdKmzNr/Au33XPy61
-	r4/bP4n3kNlNZod95HFw1MZhVBulmbN1WnGbK8LWArDEJXhoxZTD
-X-Gm-Gg: ASbGnct0zNI0UvBRhc0snBCdsM+QBuS8ZbqS2pWU8rJ35j3qcSCPeSy7TmYe8/jEdZ8
-	OXzfEK91/66+41uKthHQenY/RqARhiyBUtDwwdnIvdYoR7NV/GkCnNawbSZ4yU80p2BZIuTOf0S
-	kiicP5zIchtxTR1ZWHBgUOFwZaffqT5k9cacNtCItYAKxASKqnV/mG2S/EJkWDAPfw3Bdy0Y1dA
-	J3bk72sixEPSe1gCncqyQ1rHzCwZuq9LQdCXtiWME0WUqI3P6BtrJ5O5UbvDrLnk7EzH6bTumUh
-	pYW2fQ==
-X-Google-Smtp-Source: AGHT+IE8MWiF0ZIMr/Rqxq6z65CLXruJETdntJZe3cATM5wP/XUEsgObmORo8sJbHeUy7FtBYkm9/Q==
-X-Received: by 2002:a05:600c:3ca1:b0:42c:b8c9:16c8 with SMTP id 5b1f17b1804b1-434dded7ad7mr69333975e9.10.1733670753440;
-        Sun, 08 Dec 2024 07:12:33 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113580sm123459485e9.29.2024.12.08.07.12.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 07:12:33 -0800 (PST)
-Message-ID: <6755b761.050a0220.223761.2b14@mx.google.com>
-X-Google-Original-Message-ID: <Z1W3XKvIVTsuClew@Ansuel-XPS.>
-Date: Sun, 8 Dec 2024 16:12:28 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	"AngeloGioacchino Del Regno," <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	upstream@airoha.com
-Subject: Re: [net-next PATCH v10 5/9] mfd: an8855: Add support for Airoha
- AN8855 Switch MFD
-References: <20241208002105.18074-1-ansuelsmth@gmail.com>
- <20241208002105.18074-6-ansuelsmth@gmail.com>
- <8e9cf879-b188-4bfe-8200-f6a6ae285cb5@wanadoo.fr>
+	s=arc-20240116; t=1733670842; c=relaxed/simple;
+	bh=CkJQvnReDSLSTn4ch3u3NkQYpbvbS77PpbeAHCkAxKA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=k0vZ5v3vIPGRDNo6Y1Mzi1Xaltjtrv1OdckfBuNYZ+WNgPBxMeKZ+rsqLI8Olo8Ukc8k7YcIC7DRMDbL0Tofn2hx1Rt6HDZRtbdckUq+ZmORlkFc7m74Rc/vVpPHPICh2rg5/SHGwn1TMc3oA2N9GDuD45VbBFoIpf+2OLjGby8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=tA5gxY/b; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241208151352epoutp03678750fa20372ff6b9d632bc629c7f48~PPG-lzvnP2740427404epoutp03T
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:13:52 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241208151352epoutp03678750fa20372ff6b9d632bc629c7f48~PPG-lzvnP2740427404epoutp03T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733670832;
+	bh=235I6kPicedHwlRboGp2aBJ4my88rhMe2fIVTNmR7fU=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=tA5gxY/baTXrDHFkxAZNst2UD6IC/D/vj4Dg46NPje51w6JzSdPiKUXE28aSosWyo
+	 Z0zfmvAnyeiiSKAulnJ/f4HCkmQy+wYgpzSmZmZfM4oD+SoZ5Sf3BbSzY1XWeGMvdN
+	 tLBpqMyaIHJRIj+moBaUJ2pw19NNOrQBp9r84Z2I=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20241208151351epcas5p2746bfdf04c23d10219830ce6d069781c~PPG_iT4VI2463624636epcas5p2K;
+	Sun,  8 Dec 2024 15:13:51 +0000 (GMT)
+Received: from epsmgec5p1-new.samsung.com (unknown [182.195.38.178]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4Y5pRf3qLdz4x9Pq; Sun,  8 Dec
+	2024 15:13:50 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmgec5p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	B4.F0.29212.EA7B5576; Mon,  9 Dec 2024 00:13:50 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
+	20241208151349epcas5p1a94ca45020318f54885072d4987160b3~PPG8Mbjce3020230202epcas5p1x;
+	Sun,  8 Dec 2024 15:13:49 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241208151349epsmtrp2cd3e7a68dab94fd191db992fe8c0d65a~PPG8LlnV23147231472epsmtrp2W;
+	Sun,  8 Dec 2024 15:13:49 +0000 (GMT)
+X-AuditID: b6c32a50-7ebff7000000721c-b6-6755b7ae32da
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	67.DB.18729.DA7B5576; Mon,  9 Dec 2024 00:13:49 +0900 (KST)
+Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20241208151346epsmtip1b0991e1038d8971f7e54e5d946d91236~PPG5qH4TH3235832358epsmtip1Y;
+	Sun,  8 Dec 2024 15:13:46 +0000 (GMT)
+From: Faraz Ata <faraz.ata@samsung.com>
+To: gregkh@linuxfoundation.org, quic_jjohnson@quicinc.com, kees@kernel.org,
+	abdul.rahim@myyahoo.com, m.grzeschik@pengutronix.de,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
+	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
+	alim.akhtar@samsung.com, Selvarasu Ganesan <selvarasu.g@samsung.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded issue
+ during MIDI bind retries
+Date: Sun,  8 Dec 2024 20:43:13 +0530
+Message-ID: <20241208151314.1625-1-faraz.ata@samsung.com>
+X-Mailer: git-send-email 2.46.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8e9cf879-b188-4bfe-8200-f6a6ae285cb5@wanadoo.fr>
+X-Brightmail-Tracker: H4sIAAAAAAAAA01TaUxUVxT2vm0epIOvA4QbtDh9jaUYlpky4GXT2pJmghpRoo1aO7zCc4bC
+	LJ1FuxAjoSiQgmWTAMM4VaLJoFDosMhi4zhKa4tdqK0JYJHYxiAgBWWpMXQeT1v/feec75zv
+	fufeS+Oyi1QonWOw8mYDl8dS/kTnlYjwqJau3VqFvTYE1Z5sI9HkTReJxhydFBpxnsTQ9XNf
+	YqjwTCuFKvs6CDR6Z5FALVM/kmiox06h02eLcOQ+9iuGZq8uk6jAPUoiV4mdQN5zf2NoaOEi
+	jpxt4wBVXg5+I1Dd7iqh1N80npeor90bkKhPPFGoK/qOqMvdLqCeaw9Ll+zLTdbxXDZvlvOG
+	LGN2jkGbwm7N0LyliYtXKKOUCWgjKzdwej6FTd2WHvV2Tp7PCSs/xOXZfKl0zmJhYzYlm402
+	Ky/XGS3WFJY3ZeeZVKZoC6e32AzaaANvTVQqFK/H+YiZubrh4z2EqS3gI89YMXYUnHihFPjR
+	kFHBb2frgIBlTB+A7VXhpcDfh2cBLDs1h4mFeQAnR5OfNTwqd1AiqR/AhsG7mBgsAFgzOUMK
+	LIoJh3W3vIRQCBLGDt52S4QAZ3ox6Br7QyKwAhkedtzsXxEnmPXws6+9vrk0LWUS4NLSh6Jc
+	BLzQ37dyDCnzIvyu7i4hYJxZBws7GnBhJmS6adi7eAkXG1Lhn43DlIgD4cSAWyLiUDg33f80
+	vw1WXZ0HghZkdHDkQpCY3gybnT+QQhr36bb2xIhSAbDssWBSYEth8TGZyF4PrxcMPR24Bt5u
+	+o0UsRpOzlwhxMUdgBPjrZIvQFj9cwbqnzNQ/7+YE+AuEMqbLHotnxVnUkYZ+MP/3WWWUd8O
+	Vt7whvRu0PzVk2gPwGjgAZDG2SApvXW3VibN5j7+hDcbNWZbHm/xgDjfVivw0OAso+8TGKwa
+	pSpBoYqPj1clxMYr2RDp/aLGbBmj5ax8Ls+bePOzPoz2Cz2KvboqDf2040xTrvFeUre3ev5A
+	1ZGRWPnaamlzwwdUV1riZOfPul3XUOoNmk2UKXpLkzDnnodv5i/eSokko9KazC7HuMZct5Sm
+	AcMP9zQevlyxPAxj3k2qyZ/eoffuW9MQ1mj5vhaURfOXMjI34kOzDybIvjtq21qnI6Tzr9hy
+	237dO6c8lcx0gB3XrHZPOTL9FnauSjLt8h98z76d9C4+/h0FR26pjiiZf183nLicsWl/7H3d
+	Lz2byfbq7pZ/HvkRXU7KWnTw5ZoH7s/LBgrbZkoce9dxU5H2s1Z4KCdEXpu15YZnb8bBlwpe
+	M6zePo2hT8eJCur4eTIxLL84JfIVlrDoOOUG3Gzh/gXhjFNvTAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSnO7a7aHpBjdXsllMn7aR1eLN1VWs
+	Fg/mbWOzuLNgGpPFqeULmSyaF69ns5i0ZyuLxd2HP1gs1r09z2pxedccNotFy1qZLba0XWGy
+	+HT0P6tF45a7rBarOuewWBxZ/pHJ4vL3ncwWCzY+YrSYdFDUQdhj06pONo/9c9ewexx7cZzd
+	o/+vgcfEPXUefVtWMXp83iQXwB7FZZOSmpNZllqkb5fAlXG7fRdLwUa+ikMPOpgaGPt5uhg5
+	OSQETCS+9s1j62Lk4hAS2M0o0fhxKgtEQlri9awuRghbWGLlv+fsEEVfGSU6/39gA0mwCahL
+	zLxxhAUkISJwhFFi9f+brCAOs8BJJonmr4/ARgkLJEtMbbsJ1sEioCrRsvkIkM3BwStgKfHz
+	ZyHEBk2JtXv3MIHYvAKCEidnPgFrZRaQl2jeOpt5AiPfLCSpWUhSCxiZVjFKphYU56bnFhsW
+	GOallusVJ+YWl+al6yXn525iBMeLluYOxu2rPugdYmTiYDzEKMHBrCTCy+Edmi7Em5JYWZVa
+	lB9fVJqTWnyIUZqDRUmcV/xFb4qQQHpiSWp2ampBahFMlomDU6qBKepfyjYW1RmTmo2tezhe
+	vJ33+9C2jPlRVTnzdm9drZJ1Ll/U1UGiZvqlSc3JG1smdTyYJmnoPJX7+627+3R01uuU3JT9
+	/f3rJHlLocs6k2JWPWoIvH2vciPHnSQbb78FS38+bLU88uXfjHcK3R9LnrNXL8y5e2gqQ0T2
+	CSnd7etvt6nHeguaSLy456Y4obexd2WeBa+asKimbMtH/dbTAp43ZswpYZ3M1CtpFFpbXsU/
+	6cJz32ZprpyX5qbrmf6YcU74sdiraGuyrcqMa10NGibPjm5PfH1BTLlSZW+t0I+VNd1NfHob
+	Nm0/E3liy5azLpfTKvh0ejY0v2usnBMmVbPe28qzT+WUVO4055YpSizFGYmGWsxFxYkAqr4/
+	ewYDAAA=
+X-CMS-MailID: 20241208151349epcas5p1a94ca45020318f54885072d4987160b3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241208151349epcas5p1a94ca45020318f54885072d4987160b3
+References: <CGME20241208151349epcas5p1a94ca45020318f54885072d4987160b3@epcas5p1.samsung.com>
 
-On Sun, Dec 08, 2024 at 04:09:25PM +0100, Christophe JAILLET wrote:
-> Le 08/12/2024 à 01:20, Christian Marangi a écrit :
-> > Add support for Airoha AN8855 Switch MFD that provide support for a DSA
-> > switch and a NVMEM provider. Also provide support for a virtual MDIO
-> > passthrough as the PHYs address for the switch are shared with the switch
-> > address
-> > 
-> > Signed-off-by: Christian Marangi <ansuelsmth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
-> > ---
-> >   MAINTAINERS                           |   1 +
-> >   drivers/mfd/Kconfig                   |   9 +
-> >   drivers/mfd/Makefile                  |   1 +
-> >   drivers/mfd/airoha-an8855.c           | 279 ++++++++++++++++++++++++++
-> >   include/linux/mfd/airoha-an8855-mfd.h |  41 ++++
-> >   5 files changed, 331 insertions(+)
-> >   create mode 100644 drivers/mfd/airoha-an8855.c
-> >   create mode 100644 include/linux/mfd/airoha-an8855-mfd.h
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index f3e3f6938824..7f4d7c48b6e1 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -721,6 +721,7 @@ F:	Documentation/devicetree/bindings/mfd/airoha,an8855-mfd.yaml
-> >   F:	Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
-> >   F:	Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
-> >   F:	Documentation/devicetree/bindings/nvmem/airoha,an8855-efuse.yaml
-> > +F:	drivers/mfd/airoha-an8855.c
-> >   AIROHA ETHERNET DRIVER
-> >   M:	Lorenzo Bianconi <lorenzo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
-> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > index ae23b317a64e..a83db24336d9 100644
-> > --- a/drivers/mfd/Kconfig
-> > +++ b/drivers/mfd/Kconfig
-> > @@ -53,6 +53,15 @@ config MFD_ALTERA_SYSMGR
-> >   	  using regmap_mmio accesses for ARM32 parts and SMC calls to
-> >   	  EL3 for ARM64 parts.
-> > +config MFD_AIROHA_AN8855
-> > +	bool "Airoha AN8855 Switch MFD"
-> > +	depends on MDIO && OF
-> > +	select MFD_CORE
-> > +	help
-> > +	  Support for the Airoha AN8855 Switch MFD. This is a SoC Switch
-> > +	  that provide various peripherals. Currently it provides a
-> 
-> provides?
-> 
-> > +	  DSA switch and a NVMEM provider.
-> > +
-> >   config MFD_ACT8945A
-> >   	tristate "Active-semi ACT8945A"
-> >   	select MFD_CORE
-> 
-> ...
-> 
-> > +static int an8855_mfd_probe(struct mdio_device *mdiodev)
-> > +{
-> > +	struct an8855_mfd_priv *priv;
-> > +	struct regmap *regmap;
-> > +
-> > +	priv = devm_kzalloc(&mdiodev->dev, sizeof(*priv), GFP_KERNEL);
-> > +	if (!priv)
-> > +		return -ENOMEM;
-> > +
-> > +	priv->bus = mdiodev->bus;
-> > +	priv->dev = &mdiodev->dev;
-> > +	priv->switch_addr = mdiodev->addr;
-> > +	/* no DMA for mdiobus, mute warning for DMA mask not set */
-> > +	priv->dev->dma_mask = &priv->dev->coherent_dma_mask;
-> > +
-> > +	regmap = devm_regmap_init(priv->dev, NULL, priv,
-> > +				  &an8855_regmap_config);
-> > +	if (IS_ERR(regmap)) {
-> > +		dev_err(priv->dev, "regmap initialization failed");
-> 
-> Nitpick: Missing ending \n.
-> Also, return dev_err_probe() could be used.
->
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
 
-Can regmap PROBE_DEFER? Or it's just common practice?
+The current implementation sets the wMaxPacketSize of bulk in/out
+endpoints to 1024 bytes at the end of the f_midi_bind function. However,
+in cases where there is a failure in the first midi bind attempt,
+consider rebinding. This scenario may encounter an f_midi_bind issue due
+to the previous bind setting the bulk endpoint's wMaxPacketSize to 1024
+bytes, which exceeds the ep->maxpacket_limit where configured TX/RX
+FIFO's maxpacket size of 512 bytes for IN/OUT endpoints in support HS
+speed only.
+This commit addresses this issue by resetting the wMaxPacketSize before
+endpoint claim
 
-> > +		return PTR_ERR(priv->dev);
-> > +	}
-> > +
-> > +	dev_set_drvdata(&mdiodev->dev, priv);
-> 
-> Is it needed?
-> There is no dev_get_drvdata() in this patch
-> 
+Fixes: 46decc82ffd5 ("usb: gadget: unconditionally allocate hs/ss descriptor in bind operation")
+Cc: stable@vger.kernel.org
+Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+---
+ drivers/usb/gadget/function/f_midi.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-Yes it is, MFD child makes use of dev_get_drv_data(dev->parent) to
-access the bug and current_page.
-
-> > +
-> > +	return devm_mfd_add_devices(priv->dev, PLATFORM_DEVID_AUTO, an8855_mfd_devs,
-> > +				    ARRAY_SIZE(an8855_mfd_devs), NULL, 0,
-> > +				    NULL);
-> > +}
-> 
-> ...
-> 
-> CJ
-
+diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
+index 837fcdfa3840..5caa0e4eb07e 100644
+--- a/drivers/usb/gadget/function/f_midi.c
++++ b/drivers/usb/gadget/function/f_midi.c
+@@ -907,6 +907,15 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
+ 
+ 	status = -ENODEV;
+ 
++	/*
++	 * Reset wMaxPacketSize with maximum packet size of FS bulk transfer before
++	 * endpoint claim. This ensures that the wMaxPacketSize does not exceed the
++	 * limit during bind retries where configured TX/RX FIFO's maxpacket size
++	 * of 512 bytes for IN/OUT endpoints in support HS speed only.
++	 */
++	bulk_in_desc.wMaxPacketSize = cpu_to_le16(64);
++	bulk_out_desc.wMaxPacketSize = cpu_to_le16(64);
++
+ 	/* allocate instance-specific endpoints */
+ 	midi->in_ep = usb_ep_autoconfig(cdev->gadget, &bulk_in_desc);
+ 	if (!midi->in_ep)
 -- 
-	Ansuel
+2.17.1
+
 
