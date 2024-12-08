@@ -1,154 +1,152 @@
-Return-Path: <linux-kernel+bounces-436484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 220CE9E8694
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:36:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DF739E868E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:36:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D74CC281A59
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:36:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 098B42811AD
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:36:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C4D175D34;
-	Sun,  8 Dec 2024 16:36:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51705170A15;
+	Sun,  8 Dec 2024 16:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oaPqqLwk"
-Received: from smtp.smtpout.orange.fr (smtp-23.smtpout.orange.fr [80.12.242.23])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JObvEVMr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 610ED14658C;
-	Sun,  8 Dec 2024 16:36:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.23
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEFA914658C;
+	Sun,  8 Dec 2024 16:36:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733675772; cv=none; b=VF3BU/TrbWDei+rzt46iT8J9t4230rv2iawT7YxvnSLkA4mmtIbXl1BZzc3nD9QaBA20CCkKmDdvv/j62H4qv645n8WkBi/Wl7SsfYMRDFgEBF8C1RxGBEZSvlp4nca68Uij019VBkBsBwqbNdkokbx16uNEE0tHyCBhlHvAJxA=
+	t=1733675762; cv=none; b=UCHKe4334KIk+bIT2ZGv53pkg16KClwI5wf6XRwIwQ3q5NaOmeBYG5CRCZwMxgHgDLcfWWDvL/+e81rYHuT4f1Btx/17u9jRSHHmCdHWAH7hklz/cs+A70ek6swq/NLn/IuD1ifKgZM6jAQ5yB+nv0XqUbtnDkp2xgzOBdjapRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733675772; c=relaxed/simple;
-	bh=qCa4kvxOl0P1sVVRedcdgekkUruVWwO2292zPpbn3FE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TWTBxcvexPLCg3gqK4d2ZkjfhcFZPu0HyyJ3Lc2eQAD0iXFzt4ba39fWeT2S3ygnqGibLY90t4ymCEsABJTh7N/wYkffUXByUuJsEgcw7F6XcPfzTM5s0ZaQd23feRyV0smUPOd2oQNe4b2k5UQ9SZJ5MWwqI52MAHrmVLpott8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oaPqqLwk; arc=none smtp.client-ip=80.12.242.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id KKGDtRDVse9OfKKGDtIAcu; Sun, 08 Dec 2024 17:35:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733675759;
-	bh=1BlT9mAMhtajgq5Sd0M9ZitjekhFYHZJ1fMhlgsmQME=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=oaPqqLwkZj+zm7i/P9ZqQgbYwnRGFFByToDoE4AWI2LJSDz5XDKfStPNvFpJVjBvW
-	 fMvggSBAaQvdZLqSsqEuyue4ZU/TxLkRZdwwU44dyzm3W7yMPyQad3QDmQAFSy+nxF
-	 DE5Ns8YnoBnZYi2rWWi3hcnNLZoPVS+GBwvSe95purO+KldUNPmkwfpcU2AuDFaxfH
-	 SE7FLGhsbEqu8eMsPESAnMNuIUR4WtBTrAV/UAg+mN6SSWchH2dOHvfWnv2FH+iTu3
-	 eIMbmVnZzUprp1ySl0VVwal/CYoW/F6ifZ/QeD76cn5yR0FLEKSv/FnLEI3znS+pDV
-	 baKMmheO6xhqw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 08 Dec 2024 17:35:59 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <c0206c74-33d3-4715-9a01-256394919fc8@wanadoo.fr>
-Date: Sun, 8 Dec 2024 17:35:56 +0100
+	s=arc-20240116; t=1733675762; c=relaxed/simple;
+	bh=9RO2zHeCmsiZrM8LnP7f43r9twDntIzP7k1BH5Stuj4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UMYTIJORm2Ujr1lPKWhU7IY2Ba/aPHWhbz4vs+0QgeGTKGX1zLUEztd3gM43HgipJY5A6z6KVJJt5lugGh8m7HXUnL+Jhs2hqq68wvGKAU/s3ki2JfH81vLkNdSCjeCyL5Zq38xyDtGsPmV0PkYpu+8vjflZJfjf1N420382AIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JObvEVMr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F38CC4CED2;
+	Sun,  8 Dec 2024 16:36:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733675762;
+	bh=9RO2zHeCmsiZrM8LnP7f43r9twDntIzP7k1BH5Stuj4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JObvEVMrtvnb2iHeyDi87VgFaBGnrnNpvSEBAoax6VepzL6uqOBG9a7JEPkIrSJG0
+	 SaEKovyEEj0EeKSgAH1RBGGv+2O857y+5ctXGbHS4BsCaod+fwAhGisdb2UNY4aNP6
+	 c0ES8c0TsluqvLeL0JegFvW2Pkg2ZR94p0xvI9KKyxFLzjXOb4fUDECtftN6HrJgiw
+	 YLWZD/PTfI/OQX3yjD+Nizgankk+/3i7tT+b0wKSXx3518Opl5XeJU8Ry05/B7DZpw
+	 qOv5mgy0lmGXP7iK4Tgz2e6kV8X4rZwjNASF1u4r2K1FiB+i01krVLpKJs5cu9Amd+
+	 AZBdUbBLF33Ig==
+Date: Sun, 8 Dec 2024 18:35:57 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH rdma-next] kbuild: Respect request to silent output when
+ merging configs
+Message-ID: <20241208163557.GA1245331@unreal>
+References: <e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com>
+ <CAK7LNATU2OKEWh6p9QuUXtYmYmqTkN5nspBq9DbCh9yUjqW5xA@mail.gmail.com>
+ <20241204084943.GM1245331@unreal>
+ <CAK7LNATGbTxu9cYGfW6FK5VFfJ2+ut_e1dSFOfo+q6CgM4XHtQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/13] clk: at91: sama7d65: add sama7d65 pmc driver
-To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
- mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de
-Cc: dharma.b@microchip.com, mihai.sain@microchip.com,
- romain.sioen@microchip.com, varshini.rajendran@microchip.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
- <6cf9921c6d312193c34f6f5cbd9eda7d0f9f317c.1733505542.git.Ryan.Wanner@microchip.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6cf9921c6d312193c34f6f5cbd9eda7d0f9f317c.1733505542.git.Ryan.Wanner@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAK7LNATGbTxu9cYGfW6FK5VFfJ2+ut_e1dSFOfo+q6CgM4XHtQ@mail.gmail.com>
 
-Le 06/12/2024 à 20:59, Ryan.Wanner@microchip.com a écrit :
-> From: Ryan Wanner <Ryan.Wanner@microchip.com>
+On Sun, Dec 08, 2024 at 11:49:12PM +0900, Masahiro Yamada wrote:
+> On Wed, Dec 4, 2024 at 5:49 PM Leon Romanovsky <leon@kernel.org> wrote:
+> >
+> > On Wed, Dec 04, 2024 at 05:25:50PM +0900, Masahiro Yamada wrote:
+> > > On Tue, Dec 3, 2024 at 10:55 PM Leon Romanovsky <leon@kernel.org> wrote:
+> > > >
+> > > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > >
+> > > > Builds with -s option (silent) are supposed to silence all output
+> > > > which is not an error. It is the case for target builds but not
+> > > > for configs. These builds generate prints like this:
+> > > >
+> > > > ➜  kernel git:(rdma-next) make -s defconfig debug.config
+> > > >  Using .config as base
+> > > >  Merging ./kernel/configs/debug.config
+> > > >  #
+> > > >  # merged configuration written to .config (needs make)
+> > > >  #
+> > > >  ...
+> > > >  Value of CONFIG_FUNCTION_TRACER is redefined by fragment ./kernel/configs/debug.config:
+> > > >  Previous value: # CONFIG_FUNCTION_TRACER is not set
+> > > >  New value: CONFIG_FUNCTION_TRACER=y
+> > > >  ----
+> > > >
+> > > > Let's honor -s option and hide all non-error output.
+> > >
+> > >
+> > > Is it necessary to add the --quiet option to every script?
+> > >
+> > > Kbuild already provides a generic way to suppress the stdout
+> > > with 'make -s'.
+> > >
+> > > The following code works for me.
+> > > 'make defconfig debug.config' is as verbose as before.
+> > > 'make -s defconfig debug.config' is really silent.
+> >
+> > This is exactly what I'm doing. I'm using -s option and added -q to very
+> > specific merge_config script, because "-s" is already in use in that
+> > script.
+> >
+> > Before my change on 40384c840ea1 ("Linux 6.13-rc1"):
+> > [leonro@e534d5fa4327 kernel]$ make -s defconfig debug.config
+> > Using .config as base
+> > Merging ./kernel/configs/debug.config
+> > Value of CONFIG_DYNAMIC_DEBUG is redefined by fragment ./kernel/configs/debug.config:
+> > Previous value: # CONFIG_DYNAMIC_DEBUG is not set
+> > New value: CONFIG_DYNAMIC_DEBUG=y
+> >
+> > Value of CONFIG_PRINTK_CALLER is redefined by fragment ./kernel/configs/debug.config:
+> > Previous value: # CONFIG_PRINTK_CALLER is not set
+> > New value: CONFIG_PRINTK_CALLER=y
+> > ...
+> >
+> > After my change:
+> > [leonro@4dd2c2078dff kernel]$ make -s defconfig debug.config <--- silent
 > 
-> Add clock support for SAMA7D65 SoC.
 > 
-> Increase maximum number of valid master clocks. The PMC for the SAMA7D65
-> requires 9 master clocks.
+> Not sure if you checked the attached code diff in my previous reply.
 > 
-> Increase maximum amount of PLLs to 9 to support SAMA7D65 SoC PLL
-> requirements.
+> To make my question clearer, does this suffice your needs?
+> https://lore.kernel.org/all/20241208144622.605523-1-masahiroy@kernel.org/T/#u
+
+Unfortunately no, as both my development suite and our CI rely on
+merge_config script to create right config.
+
+In CI, they run add very specific config options to already
+well-established .config.
+In my development suite, I'm removing extra options with merge_config
+script.
+
+        subprocess.call(cmd + ['defconfig', 'kvm_guest.config', 'nopm.config', 'debug.config'])
+        subprocess.call(['scripts/kconfig/merge_config.sh', '-y', '-m', '-q',
+                         '.config', '/plugins/kernel.config'])
+        subprocess.call(cmd + ['olddefconfig'])
+
+https://github.com/Mellanox/mkt/blob/master/plugins/do-build.py#L19
+https://github.com/Mellanox/mkt/commit/26d7cbd776f508ab506f6d33cfe0e9b0bf44d557
+
+I need both chunks, silence make ... and silence merge_config script.
+
+Thanks
+
 > 
-> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-
-...
-
-> +	for (i = 0; i < ARRAY_SIZE(sama7d65_gck); i++) {
-> +		u8 num_parents = 4 + sama7d65_gck[i].pp_count;
-> +		struct clk_hw *tmp_parent_hws[8];
-> +		u32 *mux_table;
-> +
-> +		mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
-> +					  GFP_KERNEL);
-> +		if (!mux_table)
-> +			goto err_free;
-> +
-> +		PMC_INIT_TABLE(mux_table, 4);
-> +		PMC_FILL_TABLE(&mux_table[4], sama7d65_gck[i].pp_mux_table,
-> +			       sama7d65_gck[i].pp_count);
-> +		for (j = 0; j < sama7d65_gck[i].pp_count; j++) {
-> +			u8 pll_id = sama7d65_gck[i].pp[j].pll_id;
-> +			u8 pll_compid = sama7d65_gck[i].pp[j].pll_compid;
-> +
-> +			tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
-> +		}
-> +		PMC_FILL_TABLE(&parent_hws[4], tmp_parent_hws,
-> +			       sama7d65_gck[i].pp_count);
-> +
-> +		hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
-> +						 &sama7d65_pcr_layout,
-> +						 sama7d65_gck[i].n, NULL,
-> +						 parent_hws, mux_table,
-> +						 num_parents,
-> +						 sama7d65_gck[i].id,
-> +						 &sama7d65_gck[i].r,
-> +						 sama7d65_gck[i].pp_chg_id);
-> +		if (IS_ERR(hw))
-
-If we fail here, mux_table is not freed, because it is not stored yet in 
-alloc_mem.
-
-> +			goto err_free;
-> +
-> +		sama7d65_pmc->ghws[sama7d65_gck[i].id] = hw;
-> +		alloc_mem[alloc_mem_size++] = mux_table;
-> +	}
-> +
-> +	of_clk_add_hw_provider(np, of_clk_hw_pmc_get, sama7d65_pmc);
-> +	kfree(alloc_mem);
-> +
-> +	return;
-> +
-> +err_free:
-> +	if (alloc_mem) {
-> +		for (i = 0; i < alloc_mem_size; i++)
-> +			kfree(alloc_mem[i]);
-> +		kfree(alloc_mem);
-> +	}
-> +
-> +	kfree(sama7d65_pmc);
-> +}
-> +
-> +/* Some clks are used for a clocksource */
-> +CLK_OF_DECLARE(sama7d65_pmc, "microchip,sama7d65-pmc", sama7d65_pmc_setup);
-
-CJ
-
+> 
+> -- 
+> Best Regards
+> Masahiro Yamada
 
