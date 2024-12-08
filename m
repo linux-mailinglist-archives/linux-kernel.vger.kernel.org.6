@@ -1,207 +1,184 @@
-Return-Path: <linux-kernel+bounces-436464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0379E862F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:11:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F2B9E8635
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:13:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A77A6161891
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:11:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F1FF160524
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:13:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F5C15A856;
-	Sun,  8 Dec 2024 16:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E02F15B984;
+	Sun,  8 Dec 2024 16:12:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SkSbf4EZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iFZmwuLc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6E613B2B6;
-	Sun,  8 Dec 2024 16:11:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DCB13B2B6;
+	Sun,  8 Dec 2024 16:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733674284; cv=none; b=bLY6EhB+Lb/Xepe9vAPsS+xf+TI3sqJONEeTgQ7SZXUnhuefWjFlDEo94qYyvF2Diy8XKyV1rmxx/OEtilB3MrX5sAujT0/45xRy701ihpL/ysOy4e+9Eb8ZfUhKPP9i06MtZ2vxiLwqGfSgJEhvC41+7VnCRRGwuo6s6lyu7f8=
+	t=1733674376; cv=none; b=hj+hPGhFm62MpWw+MyidlVgynvZsIz73HDp//Lu//FqXwmeeCIoJg+VMBFY89iR9HpaSgLl72L1yeOOXZ2HBUi0mqpc6Haoi1ok5wALnwk2W0aJ02N5RavQkGDqAz4MlRtGrBVoCmCDz/EHYgPt7rSkt0hTpYnf6lp6ametxf84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733674284; c=relaxed/simple;
-	bh=30yXLnHhtopFcKkDCWFHVmDRTU+Ly8pTdHjAfA8tUFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s/zgt98tgJCj6LKGMIKeXzWNrrw3ZTChMQkWF1eY3qhyg7ynoYGfS0b2b0CWBeIKDQ4jcnsRA2YMqdn9PahkMmifJzjSS5WK4ox2nLnF9jnyZQIbMPNRhi5ICEgj3m9DeWIg2Hl61XDbS42Be6pNK0vwBeJxOo8d4Lq8FudpRuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SkSbf4EZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08191C4CED2;
-	Sun,  8 Dec 2024 16:11:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733674284;
-	bh=30yXLnHhtopFcKkDCWFHVmDRTU+Ly8pTdHjAfA8tUFg=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SkSbf4EZnkGbQKEn1BU/IXnSUybublY6sCIYhTEzZJseVwE/UnTueHq18lUW/b8ei
-	 3qNT1W7bAVfDvD7XnaUFIkHkZQrff+Z6msAh+/JM8hsREtBBx1kHkINaP65zHbu8CY
-	 zFMveMFALFFzlMTxiHXplSHPCFdD4gsR1AEI8EMDrauogFzfMNSr40GoNNu1E+rjkC
-	 /fWyBKQVjXeRSHOfuylXqOiD+zzZlxhcl14rQlqpW+TRIg2bizzVW5LRuTUeTIYnno
-	 f+q6L4lBlfR4MtskNHmMCYcBPhiWQArJHQR1FysaXvpwvRBzZFMsfzOHFfnTZPwlI6
-	 oDhdkJHamlDTQ==
-Date: Sun, 8 Dec 2024 16:11:14 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v5 05/10] iio: accel: adxl345: complete list of defines
-Message-ID: <20241208161114.2891b783@jic23-huawei>
-In-Reply-To: <20241205171343.308963-6-l.rubusch@gmail.com>
-References: <20241205171343.308963-1-l.rubusch@gmail.com>
-	<20241205171343.308963-6-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733674376; c=relaxed/simple;
+	bh=TsI8s95ukz52F4dFjZU0phGSfOtwTyjzbFM/oksHDWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V0lNZ2oGg83b7qZmTOnqT0NF3P1N+MsJJXsCXU8mTYcAwkovBN1hDHA/L1//zK1Q/OJesCH840IgdpPctJzaeINq0l1cpHloVTM2V5WmObsVEZ5e1wH3mclIsxp96c4fFolAj1l5feazhIRjKlx0qc68ZSIBwujL8yGr0d1j5Pg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iFZmwuLc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8EnNce016104;
+	Sun, 8 Dec 2024 16:12:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tfYZlBzDBXMUAgDb2EyeHqUuMw1X88nJinjqD5B5u5k=; b=iFZmwuLcOBjmJ80B
+	B/K3aE/WSKPqI785kf8OCQmdt1Nr6ak0MkscfAUl8ZuGKi+S+XYniZXd4827w4qm
+	AmHjq05Tvt1uZHYrwdibo3kqaDd+5RaHHnhxKup2U65KzaTFM9s+t+w3YfqNpOhk
+	KAFDFCMHfo8lIczevb6OSYl25evobSKtML3r9jDjWzsghdx1NIkFCSPP6uOH/gIt
+	Ii1eDIYUpfobMrIZjK9QFhkg50C4n/6fegDdtWzJsbhuN7yDXZUYA8xtY6HGc8iu
+	32somT5NxxssupDAOVE13xsr8SAc5eCJsQTbSd0a4jxL2vipOBz4WcTk2+IkwIvX
+	IZIQnA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdpgjekj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 08 Dec 2024 16:12:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B8GCVuo005677
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 8 Dec 2024 16:12:31 GMT
+Received: from [10.216.58.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
+ 08:12:25 -0800
+Message-ID: <d68907f0-15e4-486a-9077-31e8a8659e02@quicinc.com>
+Date: Sun, 8 Dec 2024 21:42:21 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/4] arm64: dts: qcom: qcs6490-rb3gen: add and enable
+ BT node
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_mohamull@quicinc.com>,
+        <quic_hbandi@quicinc.com>, <quic_anubhavg@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+References: <20241204131706.20791-1-quic_janathot@quicinc.com>
+ <20241204131706.20791-3-quic_janathot@quicinc.com>
+ <pzkijkdswskaq6232uldapz3b6v6zplif7uah24iwq3ymlezft@skbcy2vod3c5>
+ <53d44689-798e-4b5f-a0f1-8a39bea2f19b@quicinc.com>
+ <hjui7cn4iuo4id2q4mmqx2i7c3eyu6ae43fcft6psflypb3aya@ia5i5s4ya45e>
+Content-Language: en-US
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+In-Reply-To: <hjui7cn4iuo4id2q4mmqx2i7c3eyu6ae43fcft6psflypb3aya@ia5i5s4ya45e>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 2sbgzf7YqgO8AauF1AblMxRu4vkbnUU-
+X-Proofpoint-ORIG-GUID: 2sbgzf7YqgO8AauF1AblMxRu4vkbnUU-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412080135
 
-On Thu,  5 Dec 2024 17:13:38 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-> Extend the list of constants. Keep them the header file for readability.
-> The defines allow the implementation of events like watermark, single
-> tap, double tap, freefall, etc.
+
+On 12/8/2024 5:35 PM, Dmitry Baryshkov wrote:
+> On Fri, Dec 06, 2024 at 08:15:35PM +0530, Janaki Ramaiah Thota wrote:
+>>
+>>
+>> On 12/5/2024 4:29 AM, Dmitry Baryshkov wrote:
+>>> On Wed, Dec 04, 2024 at 06:47:04PM +0530, Janaki Ramaiah Thota wrote:
+>>>> Add a node for the PMU module of the WCN6750 present on the
+>>>> qcs6490-rb3gen board and assign its power outputs to the Bluetooth
+>>>> module.
+>>>>
+>>>> Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+>>>> ---
+>>>>    arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 165 ++++++++++++++++++-
+>>>>    1 file changed, 164 insertions(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>>> index 27695bd54220..07650648214e 100644
+>>>> --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>>> +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+>>>> @@ -1,6 +1,6 @@
+>>>>    // SPDX-License-Identifier: BSD-3-Clause
+>>>>    /*
+>>>> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>>>     */
+>>>>    /dts-v1/;
+>>>> @@ -33,6 +33,7 @@
+>>>>    	aliases {
+>>>>    		serial0 = &uart5;
+>>>> +		serial1 = &uart7;
+>>>>    	};
+>>>>    	chosen {
+>>>> @@ -217,6 +218,63 @@
+>>>>    		regulator-min-microvolt = <3700000>;
+>>>>    		regulator-max-microvolt = <3700000>;
+>>>>    	};
+>>>> +
+>>>> +	wcn6750-pmu {
+>>>> +		compatible = "qcom,wcn6750-pmu";
+>>>> +		pinctrl-names = "default";
+>>>> +		pinctrl-0 = <&bt_en>;
+>>>> +		vddaon-supply = <&vreg_s7b_0p972>;
+>>>> +		vddasd-supply = <&vreg_l11c_2p8>;
+>>>> +		vddpmu-supply = <&vreg_s7b_0p972>;
+>>>> +		vddrfa0p8-supply = <&vreg_s7b_0p972>;
+>>>> +		vddrfa1p2-supply = <&vreg_s8b_1p272>;
+>>>> +		vddrfa1p7-supply = <&vreg_s1b_1p872>;
+>>>> +		vddrfa2p2-supply = <&vreg_s1c_2p19>;
+>>>> +
+>>>> +		bt-enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
+>>>
+>>> Doesn't WCN6750 also have SW_CTRL and wifi-enable pins?
+>>>
+>>
+>> For Bluetooth, these pins are not needed. We have verified Bluetooth
+>> functionality, and it is working fine.
 > 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/iio/accel/adxl345.h | 89 ++++++++++++++++++++++++++++++++-----
->  1 file changed, 77 insertions(+), 12 deletions(-)
+> You are describing the hardware (PMU), not "a part of the PMU for the
+> BT". Please check if there should be a wifi enable pin and adjust
+> accordingly.
 > 
-> diff --git a/drivers/iio/accel/adxl345.h b/drivers/iio/accel/adxl345.h
-> index 3d5c8719db3..ed81d5cf445 100644
-> --- a/drivers/iio/accel/adxl345.h
-> +++ b/drivers/iio/accel/adxl345.h
-> @@ -9,37 +9,102 @@
->  #define _ADXL345_H_
->  
->  #define ADXL345_REG_DEVID		0x00
-> +#define ADXL345_REG_THRESH_TAP	0x1D
->  #define ADXL345_REG_OFSX		0x1E
->  #define ADXL345_REG_OFSY		0x1F
->  #define ADXL345_REG_OFSZ		0x20
-> -#define ADXL345_REG_OFS_AXIS(index)	(ADXL345_REG_OFSX + (index))
-> +/* Tap duration */
-> +#define ADXL345_REG_DUR		0x21
-> +/* Tap latency */
-> +#define ADXL345_REG_LATENT		0x22
-> +/* Tap window */
-> +#define ADXL345_REG_WINDOW		0x23
-> +/* Activity threshold */
-> +#define ADXL345_REG_THRESH_ACT		0x24
-> +/* Inactivity threshold */
-> +#define ADXL345_REG_THRESH_INACT	0x25
-> +/* Inactivity time */
-> +#define ADXL345_REG_TIME_INACT	0x26
-> +/* Axis enable control for activity and inactivity detection */
-> +#define ADXL345_REG_ACT_INACT_CTRL	0x27
-> +/* Free-fall threshold */
-> +#define ADXL345_REG_THRESH_FF		0x28
-> +/* Free-fall time */
-> +#define ADXL345_REG_TIME_FF		0x29
-> +/* Axis control for single tap or double tap */
-> +#define ADXL345_REG_TAP_AXIS		0x2A
-> +/* Source of single tap or double tap */
-> +#define ADXL345_REG_ACT_TAP_STATUS	0x2B
-> +/* Data rate and power mode control */
->  #define ADXL345_REG_BW_RATE		0x2C
->  #define ADXL345_REG_POWER_CTL		0x2D
-> +#define ADXL345_REG_INT_ENABLE		0x2E
-> +#define ADXL345_REG_INT_MAP		0x2F
-> +#define ADXL345_REG_INT_SOURCE		0x30
->  #define ADXL345_REG_DATA_FORMAT		0x31
-> -#define ADXL345_REG_DATAX0		0x32
-> -#define ADXL345_REG_DATAY0		0x34
-> -#define ADXL345_REG_DATAZ0		0x36
-> -#define ADXL345_REG_DATA_AXIS(index)	\
-> -	(ADXL345_REG_DATAX0 + (index) * sizeof(__le16))
-> +#define ADXL345_REG_XYZ_BASE		0x32
-> +#define ADXL345_REG_DATA_AXIS(index)				\
-> +	(ADXL345_REG_XYZ_BASE + (index) * sizeof(__le16))
-> +
-> +#define ADXL345_REG_FIFO_CTL		0x38
-> +#define ADXL345_REG_FIFO_STATUS		0x39
-> +
-> +#define ADXL345_DEVID			0xE5
-> +
-> +#define ADXL345_FIFO_CTL_SAMLPES(x)	(0x1f & (x))
 
-SAMPLES?
+We further checked with WiFi team. For wcn6750, sw_ctrl and wifi-enable 
+pins handled from WiFi firmware/controller. So it is not needed to 
+handle in PMU.
 
-> +#define ADXL345_FIFO_CTL_TRIGGER(x)	(0x20 & ((x) << 5)) /* 0: INT1, 1: INT2 */
-> +#define ADXL345_FIFO_CTL_MODE(x)	(0xc0 & ((x) << 6))
-
-Supply the mask only and use FIELD_PREP() for these.
-
-
->  
-> +#define ADXL345_INT_DATA_READY		BIT(7)
-> +#define ADXL345_INT_SINGLE_TAP		BIT(6)
-> +#define ADXL345_INT_DOUBLE_TAP		BIT(5)
-> +#define ADXL345_INT_ACTIVITY		BIT(4)
-> +#define ADXL345_INT_INACTIVITY		BIT(3)
-> +#define ADXL345_INT_FREE_FALL		BIT(2)
-> +#define ADXL345_INT_WATERMARK		BIT(1)
-> +#define ADXL345_INT_OVERRUN		BIT(0)
-> +
-> +#define ADXL345_S_TAP_MSK	ADXL345_INT_SINGLE_TAP
-> +#define ADXL345_D_TAP_MSK	ADXL345_INT_DOUBLE_TAP
-> +
-> +#define ADXL345_INT1			0
-> +#define ADXL345_INT2			1
-> +
-> +/*
-> + * BW_RATE bits - Bandwidth and output data rate. The default value is
-> + * 0x0A, which translates to a 100 Hz output data rate
-> + */
->  #define ADXL345_BW_RATE			GENMASK(3, 0)
-> +#define ADXL345_BW_LOW_POWER	BIT(4)
->  #define ADXL345_BASE_RATE_NANO_HZ	97656250LL
->  
-> -#define ADXL345_POWER_CTL_MEASURE	BIT(3)
->  #define ADXL345_POWER_CTL_STANDBY	0x00
-> +#define ADXL345_POWER_CTL_WAKEUP	GENMASK(1, 0)
-> +#define ADXL345_POWER_CTL_SLEEP	BIT(2)
-> +#define ADXL345_POWER_CTL_MEASURE	BIT(3)
-> +#define ADXL345_POWER_CTL_AUTO_SLEEP	BIT(4)
-> +#define ADXL345_POWER_CTL_LINK	BIT(5)
->  
->  #define ADXL345_DATA_FORMAT_RANGE	GENMASK(1, 0)	/* Set the g range */
-> -#define ADXL345_DATA_FORMAT_JUSTIFY	BIT(2)	/* Left-justified (MSB) mode */
-> +#define ADXL345_DATA_FORMAT_IS_LEFT_JUSTIFIED	BIT(2)
->  #define ADXL345_DATA_FORMAT_FULL_RES	BIT(3)	/* Up to 13-bits resolution */
-> -#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)	/* 3-wire SPI mode */
-> -#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)	/* Enable a self test */
-> -
-> +#define ADXL345_DATA_FORMAT_SPI_3WIRE	BIT(6)
-> +#define ADXL345_DATA_FORMAT_SELF_TEST	BIT(7)
->  #define ADXL345_DATA_FORMAT_2G		0
->  #define ADXL345_DATA_FORMAT_4G		1
->  #define ADXL345_DATA_FORMAT_8G		2
->  #define ADXL345_DATA_FORMAT_16G		3
->  
-> -#define ADXL345_DEVID			0xE5
-> +#define ADXL345_REG_OFS_AXIS(index)	(ADXL345_REG_OFSX + (index))
-I'm not sure on logic of moving this to the end. Seems fine next
-to the definitions of the individual axis to me.
-
-> +
-> +/*
-> + * FIFO stores a maximum of 32 entries, which equates to a maximum of 33 entries
-> + * available at any given time because an additional entry is available at the
-> + * output filter of the device.
-> + *
-> + * (see datasheet FIFO_STATUS description on "Entries Bits")
-> + */
-> +#define ADXL345_FIFO_SIZE  33
->  
->  /*
->   * In full-resolution mode, scale factor is maintained at ~4 mg/LSB
+Thanks,
+Janakiram
 
 
