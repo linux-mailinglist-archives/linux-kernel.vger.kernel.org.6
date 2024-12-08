@@ -1,86 +1,90 @@
-Return-Path: <linux-kernel+bounces-436267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F7809E83A3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:29:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E13649E83A5
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:30:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 756FC165A6E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:29:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77AF18848F6
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:30:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959E83A1B6;
-	Sun,  8 Dec 2024 05:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E35C4174A;
+	Sun,  8 Dec 2024 05:30:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNSOCCeq"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mx0o2C2U"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9446C1EA65
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 05:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EAF46B8
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 05:30:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733635765; cv=none; b=YW1rA9nwOxZXxubvyJDFAVYMFHyKHy6eBctkyTtoqVmoME11/+KwFJLu/KO1kvXlaCI9xOb3WAJ+ecEKlrEndcXh/JaQEAA+Kxi5zGafU8jZbznqSZHXDwjWWVcmaaYCbzYEv71uQQ43lktmXll9j9Iz4k71PKnQOjwgwlGPLUs=
+	t=1733635831; cv=none; b=bRGIWYfjCqcR/Ukc+d9wfLiCXnhwcaTOhYjZQZlHQKDahrDBIRXIw80s7MaZPL2bbfw0Dj3kEo7SuB158xxOIVAVqRhQQaGMdfzsf3FclQ4lTMEhOfJ6XLHjzNtDeT+Sn4L4v61/i0o6Rl0FgAV1Fv7NFdmmkzS532YUPccvYnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733635765; c=relaxed/simple;
-	bh=Wd3Y7R3P9afqvPtxDb/Fjp+QCeKJHKSYfvw1Ti8lhTU=;
+	s=arc-20240116; t=1733635831; c=relaxed/simple;
+	bh=KvnIfFf8P+FLDr+t06zo2ANjcZmqdeZgnkbH9neKfp8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YyafZGq6pPoHads1PpqJzjAFosA3NF+UuR9Lptlk0ytoZG3DMFX/4CX8oGsqiSq/RiXabu6/SunmwnUbtRE3oXaVRGx9xXTF/JxiPEDtHHSgt4fgDI8cyN7VAZz+lJzOcC/03BgOIEL0rLibQ1q7/M8WrK70ZIApyfbNRIEWwAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TNSOCCeq; arc=none smtp.client-ip=209.85.167.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=uXhCWt3oU+ORjTFTddqA4tO7ZEXVIxtGPXLOfVNQRsFok5j5J2y9wAqML3lk0Yr16C90Hflm1bQRaHilVpHxZ4nV1oW+8FQbjQSCw0p/A12ahF0FuIv7cSfzdGaEyEGBIzvrsvtussz96oWzEBYlWZCtVYgJNMUK1hJNI+ZPj2Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mx0o2C2U; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53e0844ee50so3323300e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 21:29:21 -0800 (PST)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3001e7d41c5so28326741fa.2
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 21:30:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733635760; x=1734240560; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733635828; x=1734240628; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vNGx5T/kut2PnS1TJVU24AmFFsWO3iytxgtvJA9Xvfs=;
-        b=TNSOCCeqjFz/jnKJOHO1z4FVr/iCD5JC1Y/BslPTK17MxPsIdKT/LukftpTQG2sBxf
-         wSEmBEa6iV+GB2Bvp+rRF+6OPZotKLs0/99RQX3gHIM97W0+i3vX7Vh7/ab9O3v4j/5i
-         v2614WVxXuJlxCxOrN0O0M8s1Rc3xQTgws2FDhCMh0tkoj73zNQScA6twKL9Kd6Ve9ew
-         Tx7QowvhsonQptbcoM38LoTJdWr+aTp8lMrycXkLnYziopXUPQ/NyInpV6Q/0j5z5i+8
-         Rkechkze9XEZWV1h6ZAqw1Qw2kXhqtnDr2xURmBGNdPt6FksDwrQACQ2/nC56UKx3pDy
-         1SmQ==
+        bh=Wvacb83oMug8ZaJH3xcieEjmfoUkx49WyZ97VXV3ZeM=;
+        b=mx0o2C2UYAfyxuPhYQ4zF+/r38aKN9+/2jiaOtQfv5vlKbXYKwBNfy2bB52g9jOtR2
+         dcSW/16Y9mVFUOOrzwMBBp+2dUyUoMBlpn9fHbfS2r9HMH2sbBJRYA4w7mQW15ri8kZm
+         T8rkTuccUp6OUALmooc7B/lVKEBntNpFN+R/Uk+xxMljs6p2qnOh9gUFzepWB7qoyHKo
+         l8mmUFdphT1cs/GfaESue2UC3N5bs9K4sFopCUOUbeF7V2v9pA/JRUNndAMhli9zV4G6
+         DP+s5snisJKACnsl9hkIDHbcQ+870UdzBEbc/YZ3VbCg628GnWwJEDQn8+QE7QG//Fa0
+         OzUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733635760; x=1734240560;
+        d=1e100.net; s=20230601; t=1733635828; x=1734240628;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vNGx5T/kut2PnS1TJVU24AmFFsWO3iytxgtvJA9Xvfs=;
-        b=ImU0HgAPH05BQCSW7wjj1bOO9f2ostqGiEff/ycQOQpDC++fbT/P0DxEgenJ+jGPfz
-         4J9bvHS2n2ScttWMDZSX3dCp/2gJBXaYaxlK4YtQD4j6cFLY0F1QSjWOghrrrHQx/T/M
-         2ZtneLBKfgCbiWnOUaMslA344/xrPNPxvWpQSZGch6od53jCh8Xw/O8EMbzee+UydPiB
-         Kfbqt7Y6wHxI2FjBKVdFg4cwWcZYAB45Q+BkuRoaXaV/G8nLIrV72rc9kshh72tLArvs
-         gkVUt6twPNg4srTvgrWLR74LDm60qnDEQOumUtItcMgGU2OuUcWHYIjpO9mFELTTe+Pa
-         a5bg==
-X-Forwarded-Encrypted: i=1; AJvYcCWfDiCYrCImRosaI5TSnpepXyzmuZtpNpvjQ1fT4nuDL62AHw1YnCZWLcZ7WYOHX+VkKNgf7s9n9Hlr2gw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKa6fSDoyd16xUUcuBgwvvFaR0TYKwUUDcN3Qmq5HzkqsbEjJz
-	lMZsm7CUCR3+Q6V9Sn0ts20hbEDUoVg6NBZXARnA7rIB2CD8izticW0dURoAqIM=
-X-Gm-Gg: ASbGncuAcQCxitmzWRx5RmBVZdCuEDBQjECJh1mGpbt94KvtKmQ6xPA90cB339DdYrI
-	kwSX+5OYWnmcSDmmuIvbHtccopBZrMCIr1uD78T6tRwYyxKqesLB9kQPYKL+oM5uMQLb5klVOEH
-	s6xn1wflM0Ab6VEkDle2QdO3zJ7SkzO73NiUgK/geIWAgxfSwpo28zSK/0iJi+f69zvjjRFRcBY
-	BDWnZ5BxntXBedy+SwoIteICcTWAugIBCjbyuqSXJfrT4Dl8ig+NTzgA3/rdtocHcgtax7+SVDI
-	pVwZA8ssNg6hDky7Bue9UYGOQixanA==
-X-Google-Smtp-Source: AGHT+IGOhQSpceSZ9KEm21ZiMJVHBV/c3kQtKDrxqIsT6LPxNRV9WJHBnedhtMHtbPhWJEJ/Z4HNTg==
-X-Received: by 2002:ac2:4c4d:0:b0:53f:8c46:42b0 with SMTP id 2adb3069b0e04-53f8c46432cmr719545e87.42.1733635758999;
-        Sat, 07 Dec 2024 21:29:18 -0800 (PST)
+        bh=Wvacb83oMug8ZaJH3xcieEjmfoUkx49WyZ97VXV3ZeM=;
+        b=s9n0u/6v7EfJhtPDp7KmjnvPJbvIZMWCuQBxmsyvCHqw16CvlefyiFtk8z81QudMVp
+         j7PF4mfumGG9sEAFIxx4p52JvHAXcPZqIvSQGCgPDVcyvKs8ckKqcq4Ja1zALbyje5mt
+         2sfR0iwuBE0y75de+kgolKIwVKiMEZ9EZW4yXKgzZYpBL2tqoAQD8JcWkuz38zfPfINR
+         2iJKVoF9syx5nP5H8ofEFnlgiAMZeMyqkCavrJvqKgfQI6v4MRYmAU9P2Rpcjov1oHxt
+         isHPYvMaq1BuV5q8pwYBM8FdhsuCCtq4sJmkIDZjmceO4MxU23R6QgrfWbMz+JAJ6hfX
+         jgaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLazExb+6fS5Myf5Qaj5OBC5lRkWJtbK43JFB3dBIVVQu9AD2QpR5KfmL1qojURUqYGt/9H26+yob2o/A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEQA5hdlg9qfgYSaSYe3x2LRGjL0nOr2K2tVu+BTPHEawyUBhN
+	wGah3kGErjzr4IgiTPVZF+Ft17+/aAkIp2VUZ0nb7+Y/rKjDuDcNW3Rv+WWkRP0ileC6bWTnIgL
+	K
+X-Gm-Gg: ASbGncu6nm5G2Vv9IEKnJTLvtghmyZLGFTsq37MAr8sk9yJlBZ4a8Y1hZuSGkPCjFlO
+	UYW5PBwjYoM8G5wJrkFvlueCe7+0LsPnil5ieproIJcDRurk9kfQApQ6WwWPvo/LPbUcuYSKnvD
+	KJK9lWruwzWX5Mlr41/Oc8kDqFlySF8R2E5ltlnrI5lemJnvP19Bo2v/yxo/0bajJkYs9/YRu4y
+	7A8CAdXDvYsVjLE6rEbEME3XgpMjwEZtVuPlldjO5zKJEXrhcxelW+k3ddenSASEsoSFTGGp7xH
+	w8ftk2mxG9ZfDkpgET70D76sgH5KKg==
+X-Google-Smtp-Source: AGHT+IEGWyfmfMdOOWg2y1WPhvOD4Je6bh0ZK678xD9W3i2q/SCD+U4JO0yDb00ekQtqi9O1yIIVaw==
+X-Received: by 2002:a05:6512:3d07:b0:53e:3ac2:9c03 with SMTP id 2adb3069b0e04-53e3ac29ca4mr1184966e87.31.1733635827566;
+        Sat, 07 Dec 2024 21:30:27 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3a90336fsm420105e87.265.2024.12.07.21.29.16
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e378c4264sm574040e87.239.2024.12.07.21.30.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 21:29:17 -0800 (PST)
-Date: Sun, 8 Dec 2024 07:29:15 +0200
+        Sat, 07 Dec 2024 21:30:26 -0800 (PST)
+Date: Sun, 8 Dec 2024 07:30:23 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drm/msm/dpu: filter out too wide modes if no 3dmux is
- present
-Message-ID: <zae7rlojv5iiq2dx7bxhdsmmzj73o65cwk7kmryxsst36gy2of@k3vcm6omcias>
-References: <20241206-no_3dmux-v1-1-72ad2677a323@quicinc.com>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/3] clk: qcom: branch: Extend invert logic for branch2
+ mem clocks
+Message-ID: <oylnao5wjtqyczivesfg46eexfb5oj6o2azprtwf4bl7yhko2c@saqzbycbixqk>
+References: <20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com>
+ <20241206-sm8750_videocc-v1-1-5da6e7eea2bd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,70 +93,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206-no_3dmux-v1-1-72ad2677a323@quicinc.com>
+In-Reply-To: <20241206-sm8750_videocc-v1-1-5da6e7eea2bd@quicinc.com>
 
-On Fri, Dec 06, 2024 at 12:00:53PM -0800, Abhinav Kumar wrote:
-> On chipsets such as QCS615, there is no 3dmux present. In such
-> a case, a layer exceeding the max_mixer_width cannot be split,
-> hence cannot be supported.
+On Fri, Dec 06, 2024 at 11:07:11PM +0530, Taniya Das wrote:
+> Extend the support for mem ops implementation to handle the
+> sequence of enable/disable of the memories for the invert
+> logic.
+
+This mostly duplicates the patch contents. Instead commit message should
+explain what is the "invert logic" and why it is relevant.
+
 > 
-> Filter out the modes which exceed the max_mixer_width when there
-> is no 3dmux present. Also, add a check in the dpu_crtc_atomic_check()
-> to return failure for such modes.
-> 
-> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
-> Note: this was only compile tested, so its pending validation on QCS615
-> ---
->  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+>  drivers/clk/qcom/clk-branch.c | 14 +++++++++++---
+>  drivers/clk/qcom/clk-branch.h |  4 ++++
+>  2 files changed, 15 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> index 9f6ffd344693ecfb633095772a31ada5613345dc..e6e5540aae83be7c20d8ae29115b8fdd42056e55 100644
-> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> @@ -732,6 +732,13 @@ static int _dpu_crtc_check_and_setup_lm_bounds(struct drm_crtc *crtc,
->  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
->  	int i;
+> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
+> index 229480c5b075a0e70dc05b1cb15b88d29fd475ce..6caded8688c081e51ad0649f9c2f82919e461668 100644
+> --- a/drivers/clk/qcom/clk-branch.c
+> +++ b/drivers/clk/qcom/clk-branch.c
+> @@ -142,8 +142,12 @@ static int clk_branch2_mem_enable(struct clk_hw *hw)
+>  	u32 val;
+>  	int ret;
 >  
-> +	/* if we cannot merge 2 LMs (no 3d mux) better to fail earlier
-> +	 * before even checking the width after the split
-> +	 */
-> +	if (!dpu_kms->catalog->caps->has_3d_merge
-> +	    && adj_mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
-> +		return -E2BIG;
-
-Is it the same as checking that there are LMs which support
-DPU_MIXER_SOURCESPLIT ?
-
-> +
->  	for (i = 0; i < cstate->num_mixers; i++) {
->  		struct drm_rect *r = &cstate->lm_bounds[i];
->  		r->x1 = crtc_split_width * i;
-> @@ -1251,6 +1258,12 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
+> -	regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
+> -			   mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
+> +	if (mem_br->mem_enable_invert)
+> +		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
+> +				mem_br->mem_enable_mask, 0);
+> +	else
+> +		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
+> +			mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
+>  
+>  	ret = regmap_read_poll_timeout(branch.clkr.regmap, mem_br->mem_ack_reg,
+>  				       val, val & mem_br->mem_enable_ack_mask, 0, 200);
+> @@ -159,7 +163,11 @@ static void clk_branch2_mem_disable(struct clk_hw *hw)
 >  {
->  	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+>  	struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
 >  
-> +	/* if there is no 3d_mux block we cannot merge LMs so we cannot
-> +	 * split the large layer into 2 LMs, filter out such modes
-> +	 */
-> +	if (!dpu_kms->catalog->caps->has_3d_merge
-> +	    && mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
-> +		return MODE_BAD;
-
-This can be more specific, like MODE_BAD_HVALUE.
-
->  	/*
->  	 * max crtc width is equal to the max mixer width * 2 and max height is 4K
->  	 */
+> -	regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
+> +	if (mem_br->mem_enable_invert)
+> +		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
+> +			   mem_br->mem_enable_mask, mem_br->mem_enable_mask);
+> +	else
+> +		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
+>  			   mem_br->mem_enable_ack_mask, 0);
+>  
+>  	return clk_branch2_disable(hw);
+> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
+> index 292756435f53648640717734af198442a315272e..6bc2ba2b5350554005b7f0c84f933580b7582fc7 100644
+> --- a/drivers/clk/qcom/clk-branch.h
+> +++ b/drivers/clk/qcom/clk-branch.h
+> @@ -44,6 +44,8 @@ struct clk_branch {
+>   * @mem_enable_reg: branch clock memory gating register
+>   * @mem_ack_reg: branch clock memory ack register
+>   * @mem_enable_ack_mask: branch clock memory enable and ack field in @mem_ack_reg
+> + * @mem_enable_mask: branch clock memory enable mask
+> + * @mem_enable_invert: branch clock memory enable and disable has invert logic
+>   * @branch: branch clock gating handle
+>   *
+>   * Clock which can gate its memories.
+> @@ -52,6 +54,8 @@ struct clk_mem_branch {
+>  	u32	mem_enable_reg;
+>  	u32	mem_ack_reg;
+>  	u32	mem_enable_ack_mask;
+> +	u32	mem_enable_mask;
+> +	bool	mem_enable_invert;
+>  	struct clk_branch branch;
+>  };
+>  
 > 
-> ---
-> base-commit: af2ea8ab7a546b430726183458da0a173d331272
-> change-id: 20241206-no_3dmux-521a55ea0669
-> 
-> Best regards,
 > -- 
-> Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 2.45.2
 > 
 
 -- 
