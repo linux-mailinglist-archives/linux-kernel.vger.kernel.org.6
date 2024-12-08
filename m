@@ -1,102 +1,93 @@
-Return-Path: <linux-kernel+bounces-436605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D59D9E8844
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 23:45:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7893D163CE0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:45:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8467194091;
-	Sun,  8 Dec 2024 22:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="he1+1lIw"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7239E8889
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:03:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6733F28691;
-	Sun,  8 Dec 2024 22:45:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E339281184
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 23:03:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED10E192584;
+	Sun,  8 Dec 2024 23:03:23 +0000 (UTC)
+Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 120253E47B
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 23:03:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733697952; cv=none; b=KbEwMNmeRlPh4P8euT1zk/z1z4mp2WWzzWXIqUf+2JWrBBQe25bhBEV6RWvmXucu/pVU0UMWgODR1Iwe+WLVyLbxSYMJRntc/nr8ZBjNJ1CgtLLJIv5faWjL8N5B0FS5ktmxN3VPEBC/kOOLPdhnQjD5WCpmCkoB0XmqS64NO20=
+	t=1733699003; cv=none; b=pUImQBFUHLow0OLaxj/gDvn+gGAPlK5h7NVLc5HG6cY0vicywHzq6dbvaG8IWOw98QqNPqMGw3Tj6IpGJCVXFh+hqVmmSIOf2++Tq/Hqt44F2vrPFmZ3ct81JzQYhC3CpBf1+t59J44l8hgws6+e2Rje9byWwVMqoeVz3oq4xRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733697952; c=relaxed/simple;
-	bh=/BhxffA6tvHD3nkiwpEpbGuQ13IJzIzOTU87F9V6aP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=gnrZjOLjeSd5FaT+CXl4pWQF04K+EFoTrI12uUXFq/QFPTfM8Ac9x2A8+GakeJwngn79koKr6jExzkH6v7A8vQWeipJlVu/kaVjgzeugwTmi7TxYYsHuS55o+qRMPMEG4OQEZlI6cgtf1nPKZ4yuZjgfKHcu9mnmFOVtoi5PjSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=he1+1lIw; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1733697939;
-	bh=zk63qEbQVhPu6bJ0/veud/5I82SeARWDUAnGP3VjwGg=;
-	h=Date:From:To:Cc:Subject:From;
-	b=he1+1lIwqQxQmxnaCw0u0u+lY0FsyMcBN6jlSwKCRhGSChpsvUPTofqeCuRMDGeAY
-	 47kc546hw00Jr7+f5M49MztrMVRza7Ar+R1RAUHTJ2pADER4iof+mrAVl8z2B71GeR
-	 AfAJN7wUCUc2WYmEnLYI8SExIDFCxgtXtDuzgNkGDkxzNmjxfs4VCGuHorZH0N2BSQ
-	 9u2EN8lTNBJmGztUIEXuaLVtAM3zFry0LCiOxVyJeYmylgeaK8hGVO+46HbYGJA6GQ
-	 EBqL/yVFBsNsdFs7fa/T9xT+QYHPXe+Tv7ZNskxn+Bq66f5sErdpM48vscXNCuDDmo
-	 Hko0lrvHZQlPA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	s=arc-20240116; t=1733699003; c=relaxed/simple;
+	bh=40veVCVirRVktaqVPrM2p4Qks7Saw4ORgWg04SUdY50=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=RoqBg9pZlD1n+zhgr6goil7eJ/fkPqusDtia8f9kXaVE2+B8xazEcloXDDOZe3NEcpzRFXqxsVE83i7SCkPDZCbiXncDzcuJP1Q2xkfuXt45iA2qRuxw3oImpQAd8Al/qGM7W7WI/nmDDtePA/LUqEcWTpK5++/obS9Wkw/HM9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+	by mail-out.m-online.net (Postfix) with ESMTP id 4Y60gg08dmz1sB7H;
+	Sun,  8 Dec 2024 23:54:54 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
+	by mail.m-online.net (Postfix) with ESMTP id 4Y60gf6RgRz1qqlW;
+	Sun,  8 Dec 2024 23:54:54 +0100 (CET)
+X-Virus-Scanned: amavis at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+ by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
+ with ESMTP id T0-rdDGm_aRI; Sun,  8 Dec 2024 23:54:54 +0100 (CET)
+X-Auth-Info: p2dcipIOeCHJ4WzOEzV4hDpcyOeAurrqSICwrZBUAPVj2EEyzsLx8mpKpH+qJ2m1
+Received: from igel.home (aftr-82-135-83-17.dynamic.mnet-online.de [82.135.83.17])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y60Sz2sTxz4w2R;
-	Mon,  9 Dec 2024 09:45:39 +1100 (AEDT)
-Date: Mon, 9 Dec 2024 09:45:42 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: David Sterba <dsterba@suse.cz>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the btrfs tree
-Message-ID: <20241209094542.3897f8cd@canb.auug.org.au>
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.mnet-online.de (Postfix) with ESMTPSA;
+	Sun,  8 Dec 2024 23:54:54 +0100 (CET)
+Received: by igel.home (Postfix, from userid 1000)
+	id C74EA2C19F2; Sun,  8 Dec 2024 23:54:53 +0100 (CET)
+From: Andreas Schwab <schwab@linux-m68k.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,  LKML
+ <linux-kernel@vger.kernel.org>,  x86@kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] futex: improve user space accesses
+In-Reply-To: <20241122193305.7316-1-torvalds@linux-foundation.org> (Linus
+	Torvalds's message of "Fri, 22 Nov 2024 11:33:05 -0800")
+References: <20241122193305.7316-1-torvalds@linux-foundation.org>
+X-Yow: I had a lease on an OEDIPUS COMPLEX back in '81...
+Date: Sun, 08 Dec 2024 23:54:53 +0100
+Message-ID: <87bjxl6b0i.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/gLkieVWtdd.YAyBA7+ds4/O";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/gLkieVWtdd.YAyBA7+ds4/O
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Nov 22 2024, Linus Torvalds wrote:
 
-Hi all,
+> Josh Poimboeuf reports that he got a "will-it-scale.per_process_ops 1.9%
+> improvement" report for his patch that changed __get_user() to use
+> pointer masking instead of the explicit speculation barrier.  However,
+> that patch doesn't actually work in the general case, because some (very
+> bad) architecture-specific code actually depends on __get_user() also
+> working on kernel addresses.
+>
+> A profile showed that the offending __get_user() was the futex code,
+> which really should be fixed up to not use that horrid legacy case.
+> Rewrite futex_get_value_locked() to use the modern user acccess helpers,
+> and inline it so that the compiler not only avoids the function call for
+> a few instructions, but can do CSE on the address masking.
 
-The following commit is also in the btrfs-fixes tree as a different commit
-(but the same patch):
+This breaks userspace on ppc32.  As soon as /init in the initrd is
+started the kernel hangs (without any messages).
 
-  e9627e09313a ("btrfs: handle bio_split() error")
-
-This is commit
-
-  c7c97ceff98c ("btrfs: handle bio_split() errors")
-
-in the btrfs-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/gLkieVWtdd.YAyBA7+ds4/O
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWIZYACgkQAVBC80lX
-0Gz8zQf+JLpBH4Qfzr3IOswhQ/J9gpmtR9s0BAQI/Vb7JolHY589gDgNd2BdKubJ
-KAQH3UHtx/OczoPRIwkIWIWg5h5xqQoP58TknEc2+fE2snH55hBr//IbaHl7ySXD
-kYIQ5kt0NR54z3OmgA5KB/SJYoh5AE0nWR+O+v8ZPZhoF4NftOYFBvkcJguw3G8K
-xFKdWD8o5KiFVom//WNwpv65zuB3jxPD4R4kOuMFHk1feAJe+Ft1dckOdR/adKTk
-ALBYDIMF0yimLyEicxYR9xIH4iyletV348/mv7Lpf5vic8BsZufclDZxH9pLNsud
-8xwkE32Jc6bO/8UUuseY0KIBUxnTtQ==
-=QqTg
------END PGP SIGNATURE-----
-
---Sig_/gLkieVWtdd.YAyBA7+ds4/O--
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
 
