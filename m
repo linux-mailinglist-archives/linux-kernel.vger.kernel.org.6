@@ -1,179 +1,166 @@
-Return-Path: <linux-kernel+bounces-436589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03BA99E8802
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:06:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E16B9E8804
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB11016433B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:06:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0AE1883B1D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:06:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B61192D66;
-	Sun,  8 Dec 2024 21:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640AF18C008;
+	Sun,  8 Dec 2024 21:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDXfwjrU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="tBZLCt2R"
+Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 134DF13A865;
-	Sun,  8 Dec 2024 21:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5FE189F3B;
+	Sun,  8 Dec 2024 21:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733691969; cv=none; b=SAk4HrZ3dTWc43aZtJGv+ssake+jrVnM/HTAzv3S26fb7sa8IQiBV+G9a7CpZsCr1tVrQqWziQ8QtIUEIj/wMOpWmsgwCcat+SfgZYg1SolT1A3k7hkF6VEEknBTLS0lkGA1Ld4M19vg6fd+Oq7c2YE9oflLuVULAxMqg2fQ2YI=
+	t=1733691986; cv=none; b=GASW3INrygjNDMgCE1Byq6ueHZ1tqjR+2FJUksnJg9MPCe1APX6l04gf8VeVXpHdqIwBjTfvbh/3tcoQ+c99qPWyv7l63IWx7y4Lypz7EUSk0nMwJ8JU18rKxcAW9HUoGEg9ehjXu8a3nf8QBZblBp/hmAQezXzDvcu9jM6VMjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733691969; c=relaxed/simple;
-	bh=XWXWbSHyOmnQ3nClYUfXghWqO3MXF4bE2l/sCzWy168=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fpg7i4js6qu9H9yKpgtFjUy78En+P2rpBKT5sqvd5urbvdqvBZMBjcOFVY1BZyZObvunh7vmzjhGO9D6zZnAQMLDvjGVzsyWKG34Y/bMTi7ypsLXwibpuGJM6Datj/8fVIRHDjSUSW4/J3F4U8hB3lstkOO47LcSpGumu1PvSDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDXfwjrU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9018C4CED2;
-	Sun,  8 Dec 2024 21:06:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733691968;
-	bh=XWXWbSHyOmnQ3nClYUfXghWqO3MXF4bE2l/sCzWy168=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WDXfwjrUgjUvznQ302K8Zu/4231Xy1aCkkIrrJEi85P2I/qnqf6pFl/8gPxzMRt9g
-	 mJQ2Y6VxRglGpfWN7PSb5gRqbkbh1NErXelk7CIIHeqqYsPGR45S5jYxEAEWoUDr9x
-	 00x+ZyGFNvgVQbUFpiTcG61u3yEqkLkXYpCm2exY520v5e1VkK5wEGsi+G3HvsgiAO
-	 Zdhg9ZitdxzKj/BpwaCrp2nitgYmjFlJXpI8tUlZ+xPwVgQvIDVhcGTTDUnpI9ZpOO
-	 hCQ9ruy9WmU33wJiFP7v9lg/B1Hj3C5gfQcxvJsh3uLp+S3k1SGRZEqzSibtoLpyGw
-	 zZhX0GgMIvikg==
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4aff5b3845eso115432137.2;
-        Sun, 08 Dec 2024 13:06:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUWx4jvfWDj7vAqj8WrXK0RuG6yCycTadVnrqB82pB/ab3PHh+0Fk83KBs753ZXSsf7ZR5C3yRUzHqGggI=@vger.kernel.org, AJvYcCVTITPujUzR+W8OM/PuER0q+DjY8Tj10av3B5+7vhRhgfv0jcbJPNqHefSqUdolrCIr/KNknUeiD71mVto=@vger.kernel.org, AJvYcCVv5vadnlgeGi3InUQ5JGKLJyuYVJ51GPI7yWVdq4lmA0x7w5RCpQmoqLJFG8e53wn/ZreCNsXrtyLjIR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRtCclYrEiUPCXLbJHowWzYVgaAZckfDo1pMA8bnr4pJ3/c88A
-	3ehuveWG7kfZiBE0P2FGFWzXju3r0DEiIiWMfkx0SOAbVY7Af/I64o6yOm1I4EQ756gxeYWeOCE
-	wC+p8vO2KMOmrrIJbfvbW1DHplsw=
-X-Google-Smtp-Source: AGHT+IHy+1SnJMbE+C+RfB+8fLLmnxwE2hNerqElAz4I/P8HU58GhAcP04n8fOtc7RUCchehSFcTWsF8n0p6UdhrbP0=
-X-Received: by 2002:a05:6102:b05:b0:4ac:fe47:1bcf with SMTP id
- ada2fe7eead31-4afcab15935mr10028036137.24.1733691967986; Sun, 08 Dec 2024
- 13:06:07 -0800 (PST)
+	s=arc-20240116; t=1733691986; c=relaxed/simple;
+	bh=TNrJNz8/f0CavaubT6JPMvUn9xlSfhYaI7hUALfck40=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HvuhGuQ5Z7iZUhHKyBYyY4fLNuQ9RBxa6jJAfXzbl7gyMRmG2JgBSONz4kII8tD9k6wP/aBbtDXjhzjrVpefzvBmhE63r0A47Flmgek2/FBi7UrlAzau15OJY+1aoh2PG1Nd5osOa2qnI5ngdkllN6G/P1gzpxjdotcDRIp0Y6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=tBZLCt2R; arc=none smtp.client-ip=185.125.188.120
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from [192.168.192.84] (unknown [50.39.104.138])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 880CE3FB5C;
+	Sun,  8 Dec 2024 21:06:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1733691975;
+	bh=cX7GJ7sNrdE006M6dOvd3MpjBBGorsWdgwQGvVR8vm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type;
+	b=tBZLCt2RQcJfskdQ7j0i/E7Ub9W6YzF0O/YdfXT40B1TivlnfrP4u6TMwrNCbcSsn
+	 BQar+2ILdPBWhLbpFDWUF9ugeDD7rLjaAKWhM9GxNLg4m6Mpizzf2mzAzns1UPAZq7
+	 yPmGqaAJgi5t4UJSNpBa/Za387qw7xQ5v2oC/7ySqcNe2yEztyskYCtO1uKWz6h4a6
+	 3XcXuOfB+gzi2hKJnbGjEFqUJuomNusdpjFIsWsl/rr6kAzE4TfIW4xmhcNtVslGWK
+	 hssoIWiBdWVw1camDTJq2/JnouOWr3fZvYMUHNc6w9W6uXVuE5jzkeEQ4Js/kY055m
+	 D2Ai4YFlGfHBQ==
+Message-ID: <aa6fe535-c6f5-4cec-b5fd-2a11899ad453@canonical.com>
+Date: Sun, 8 Dec 2024 13:06:11 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241207-imx214-v3-0-ab60af7ee915@apitzsch.eu> <20241207-imx214-v3-12-ab60af7ee915@apitzsch.eu>
-In-Reply-To: <20241207-imx214-v3-12-ab60af7ee915@apitzsch.eu>
-From: Ricardo Ribalda Delgado <ribalda@kernel.org>
-Date: Sun, 8 Dec 2024 22:05:52 +0100
-X-Gmail-Original-Message-ID: <CAPybu_2hEzpDbQ-RHTOEcEm4BqL7ctZ0EzvnTMW6xbJBjsoTSg@mail.gmail.com>
-Message-ID: <CAPybu_2hEzpDbQ-RHTOEcEm4BqL7ctZ0EzvnTMW6xbJBjsoTSg@mail.gmail.com>
-Subject: Re: [PATCH v3 12/12] media: i2c: imx214: Fix link frequency
-To: git@apitzsch.eu
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, ~postmarketos/upstreaming@lists.sr.ht, 
-	phone-devel@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>, 
-	Vincent Knecht <vincent.knecht@mailoo.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: linux-next: duplicate patches in the apparmor tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20241209074350.0f91cd13@canb.auug.org.au>
+Content-Language: en-US
+From: John Johansen <john.johansen@canonical.com>
+Autocrypt: addr=john.johansen@canonical.com; keydata=
+ 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 lT9Q
+Organization: Canonical
+In-Reply-To: <20241209074350.0f91cd13@canb.auug.org.au>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Acked-by: Ricardo Ribalda <ribalda@chromium.org>
+On 12/8/24 12:43, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commits are also in Linus Torvalds' tree as different
+> commits (but the same patches):
+> 
 
-nit:  media: i2c: imx214: Fix link frequency validation
+Sorry, looks like the push of my 6.13~rc1 merge failed for some reason. I have manually done it
+and it should be fixed now
 
+>    1432b850e9f3 ("apparmor: lift new_profile declaration to remove C23 extension warning")
+>    e2d0dd4fbff2 ("apparmor: replace misleading 'scrubbing environment' phrase in debug print")
+>    2b8b30835a39 ("parser: drop dead code for XXX_comb macros")
+>    4ce19f6feaf3 ("apparmor: Remove unused parameter L1 in macro next_comb")
+>    9a7d70cd5b7e ("Docs: Update LSM/apparmor.rst")
+>    572b0240ab22 ("apparmor: audit_cap dedup based on subj_cred instead of profile")
+>    3262d1f3a44d ("apparmor: add a cache entry expiration time aging out capability audit cache")
+>    db448fcb9f42 ("apparmor: document capability.c:profile_capable ad ptr not being NULL")
+>    973e9b1e8e76 ("apparmor: fix 'Do simple duplicate message elimination'")
+>    2d7d55704a7b ("apparmor: document first entry is in packed perms struct is reserved")
+>    dd977e6130f0 ("apparmor: test: Fix memory leak for aa_unpack_strdup()")
+>    e81345416df0 ("apparmor: Remove deadcode")
+>    81eae8aed8a5 ("apparmor: Remove unnecessary NULL check before kvfree()")
+>    08c7de530d83 ("apparmor: domain: clean up duplicated parts of handle_onexec()")
+>    30c434a8acc9 ("apparmor: Use IS_ERR_OR_NULL() helper function")
+>    e7e0f73d0ab2 ("apparmor: add support for 2^24 states to the dfa state machine.")
+>    ee650b3820f3 ("apparmor: properly handle cx/px lookup failure for complain")
+>    2b05c4cd52bc ("apparmor: allocate xmatch for nullpdb inside aa_alloc_null")
+> 
+> These are commits
+> 
+>    04b5f0a5bfee ("apparmor: lift new_profile declaration to remove C23 extension warning")
+>    8acf7ad02d1b ("apparmor: replace misleading 'scrubbing environment' phrase in debug print")
+>    9133493a76d7 ("parser: drop dead code for XXX_comb macros")
+>    211551768291 ("apparmor: Remove unused parameter L1 in macro next_comb")
+>    d00c2359fc18 ("Docs: Update LSM/apparmor.rst")
+>    74a96bbe1294 ("apparmor: audit_cap dedup based on subj_cred instead of profile")
+>    fee7a2340f18 ("apparmor: add a cache entry expiration time aging out capability audit cache")
+>    8532503eac69 ("apparmor: document capability.c:profile_capable ad ptr not being NULL")
+>    9b897132424f ("apparmor: fix 'Do simple duplicate message elimination'")
+>    a2081b78e212 ("apparmor: document first entry is in packed perms struct is reserved")
+>    7290f5923191 ("apparmor: test: Fix memory leak for aa_unpack_strdup()")
+>    75535669c9c1 ("apparmor: Remove deadcode")
+>    648e45d724ed ("apparmor: Remove unnecessary NULL check before kvfree()")
+>    ab6875fbb9d3 ("apparmor: domain: clean up duplicated parts of handle_onexec()")
+>    c03093730616 ("apparmor: Use IS_ERR_OR_NULL() helper function")
+>    9208c05f9fdf ("apparmor: add support for 2^24 states to the dfa state machine.")
+>    db93ca15e5ae ("apparmor: properly handle cx/px lookup failure for complain")
+>    17d0d04f3c99 ("apparmor: allocate xmatch for nullpdb inside aa_alloc_null")
+> 
+> in Linus' tree.
+> 
 
-
-On Sat, Dec 7, 2024 at 9:49=E2=80=AFPM Andr=C3=A9 Apitzsch via B4 Relay
-<devnull+git.apitzsch.eu@kernel.org> wrote:
->
-> From: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
->
-> The driver defines IMX214_DEFAULT_LINK_FREQ 480000000, and then
-> IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10),
-> which works out as 384MPix/s. (The 8 is 4 lanes and DDR.)
->
-> Parsing the PLL registers with the defined 24MHz input. We're in single
-> PLL mode, so MIPI frequency is directly linked to pixel rate.  VTCK ends
-> up being 1200MHz, and VTPXCK and OPPXCK both are 120MHz.  Section 5.3
-> "Frame rate calculation formula" says "Pixel rate
-> [pixels/s] =3D VTPXCK [MHz] * 4", so 120 * 4 =3D 480MPix/s, which basical=
-ly
-> agrees with my number above.
->
-> 3.1.4. MIPI global timing setting says "Output bitrate =3D OPPXCK * reg
-> 0x113[7:0]", so 120MHz * 10, or 1200Mbit/s. That would be a link
-> frequency of 600MHz due to DDR.
-> That also matches to 480MPix/s * 10bpp / 4 lanes / 2 for DDR.
->
-> Keep the previous link frequency for backward compatibility.
->
-> Signed-off-by: Andr=C3=A9 Apitzsch <git@apitzsch.eu>
-> ---
->  drivers/media/i2c/imx214.c | 24 +++++++++++++++---------
->  1 file changed, 15 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/media/i2c/imx214.c b/drivers/media/i2c/imx214.c
-> index 1330f13207beec0960c384681bf0b49e99fe860f..910ad03cda23345d3d10d13cd=
-30f007954534e80 100644
-> --- a/drivers/media/i2c/imx214.c
-> +++ b/drivers/media/i2c/imx214.c
-> @@ -31,7 +31,9 @@
->  #define IMX214_REG_FAST_STANDBY_CTRL   CCI_REG8(0x0106)
->
->  #define IMX214_DEFAULT_CLK_FREQ        24000000
-> -#define IMX214_DEFAULT_LINK_FREQ 480000000
-> +#define IMX214_DEFAULT_LINK_FREQ       600000000
-> +/* Keep wrong link frequency for backward compatibility */
-> +#define IMX214_DEFAULT_LINK_FREQ_LEGACY        480000000
->  #define IMX214_DEFAULT_PIXEL_RATE ((IMX214_DEFAULT_LINK_FREQ * 8LL) / 10=
-)
->  #define IMX214_FPS 30
->
-> @@ -1216,18 +1218,22 @@ static int imx214_parse_fwnode(struct device *dev=
-)
->                 goto done;
->         }
->
-
-Now that I think about this... We only support
-buf_cfg.no_of_link_frequencies =3D=3D1.
-Maybe you can add a check before the loop
-if (bus_cfg.nr_of_link_frequencies !=3D 1)
-                       dev_warn(dev, "Only one link-frequency
-supported, please review your DT. Continuing anyway\n ")
-
-
-> -       for (i =3D 0; i < bus_cfg.nr_of_link_frequencies; i++)
-> +       for (i =3D 0; i < bus_cfg.nr_of_link_frequencies; i++) {
->                 if (bus_cfg.link_frequencies[i] =3D=3D IMX214_DEFAULT_LIN=
-K_FREQ)
->                         break;
-> -
-> -       if (i =3D=3D bus_cfg.nr_of_link_frequencies) {
-> -               dev_err_probe(dev, -EINVAL,
-> -                             "link-frequencies %d not supported, Please =
-review your DT\n",
-> -                             IMX214_DEFAULT_LINK_FREQ);
-> -               ret =3D -EINVAL;
-> -               goto done;
-> +               if (bus_cfg.link_frequencies[i] =3D=3D IMX214_DEFAULT_LIN=
-K_FREQ_LEGACY) {
-> +                       dev_warn(dev,
-> +                                "link-frequencies %d not supported, plea=
-se review your DT. Continuing anyway\n",
-> +                                IMX214_DEFAULT_LINK_FREQ);
-> +                       break;
-> +               }
->         }
->
-> +       if (i =3D=3D bus_cfg.nr_of_link_frequencies)
-> +               ret =3D dev_err_probe(dev, -EINVAL,
-> +                                   "link-frequencies %d not supported, p=
-lease review your DT\n",
-> +                                   IMX214_DEFAULT_LINK_FREQ);
-> +
->  done:
->         v4l2_fwnode_endpoint_free(&bus_cfg);
->         fwnode_handle_put(endpoint);
->
-> --
-> 2.47.1
->
->
->
 
