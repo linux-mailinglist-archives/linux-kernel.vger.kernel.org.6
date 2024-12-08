@@ -1,164 +1,96 @@
-Return-Path: <linux-kernel+bounces-436361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C9079E84F4
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:06:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59E9B9E84F7
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:13:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C51FD1884B9B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1515628170D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 12:13:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13A9113C9A4;
-	Sun,  8 Dec 2024 12:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72541146D76;
+	Sun,  8 Dec 2024 12:13:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HjadUx1o"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="T6ZXlYea"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B1122C6C5
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:06:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 369B222C6C5
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 12:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733659564; cv=none; b=qfVCaW77Ynej6xYQjiNfKSb8I8RGfH6KR/mAqg6UWJUL8cXrU7eU9SiHwaF+1qCx6/2XV4I61o3Ar3p1opHuc/9lC6giaZ2C9ftmSR5Ozt6Qq5/29YGn4VPn8oTMgGFcfWOiAjJ2hav9P0NMvf0at1pUeGPGP1CkO6s/WD47aGY=
+	t=1733660014; cv=none; b=oMGu/B2PjadZr3zIJRb5BROD5ATydLAuqTIiKIt9u0CxoY8G9xwWggoHWxy+xDWwImISZLvCYQ9OjqE9XN52B3kRFYT6exIbHZSdHq4j8v+qCwruvnRULRk0gZutcyEH9QWIMdz4larOvKM6OPJiJxe/AdMninQq93fsREMYu1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733659564; c=relaxed/simple;
-	bh=7OLu/I3KbdAmUn3E2jNeRFtg91yq17Itmd5TAN+jdFs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K1otERVO1WwVxoObnFCmtxol5zsSWWO9FALIqKcERJjyASan8pLzwk6nLW8zx5nhQ4jhJhHj4zjfokFll06nkBxxm8Up+ylQkxTo+bVxGkZG4sbeiQNWtdWePxXR/2DlGOjoTeRlBavyLxYRtrrwDj2i0FSZvkm8Edsqf8I86H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HjadUx1o; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5401c52000dso237727e87.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 04:06:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733659560; x=1734264360; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lx68hB7Zpl0dAySaNA/WYlqeVEbWVfGCTLK0VrOdlAY=;
-        b=HjadUx1oRbUREzkeK2E4143dNrFG+BRiCMGdRFjk73bGv0xsYZt9pgPfMVQ2FApvAR
-         AObJIr10VQe8aBv1vF1us3et8j07o5d19poJb/tFA3h2jAnXg9rpPmL1nCEtV011IJzU
-         iJXw9kEfet9c/irdnTZYLInlWNo4OYWUmD2DzsqZxUu5RXUI90m3PGG4gNlVj5+v2XMX
-         nek2VCUVVt/n1fSRPt7YLURN78GA5PJwwIP6/drgHA57ziYu9O0YGEg/wx3CZkjmfpPZ
-         ivIjOblGvVk3J86mBnekohqNv8pf1/HTe1hN/22gmtFkfLy96TVkZP+rrMUWMl8i+Ijr
-         jvhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733659560; x=1734264360;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Lx68hB7Zpl0dAySaNA/WYlqeVEbWVfGCTLK0VrOdlAY=;
-        b=fozZMhSRwmtG2Zc9985deKmnH+1PvuoTD3OIa5SCNvf+j/twwA6tiJXDE43XRbjQcf
-         Jj5FVZIQ9bTwwTYp9WdlFC7fGi2Sp8ANlVPTDjJJuNd7p+rWaLvuTYO0ITcf4Jw9AGcZ
-         IGewue5PItvtTZskybunzD082yY75oehYfnFdFKEqAkrF/Nwdcj9SzKCEukw9/wPIPfc
-         l18COx31Ujia2BLNDc3DqMtZrYdPYNxsHG1/i1EfeKlKxX0Zf+Wj+l2niOExwOrmC9Bv
-         OOIrN9vijr3FCJfgZCs06m5a2dthmtfRSky0ys5a/lA0zAO3bQ3EdMnjvGZ2+bnvevm/
-         EfZg==
-X-Forwarded-Encrypted: i=1; AJvYcCXe1402BY+Om+S6coFaZkClhEpE2RjG7oDkqV3aLspxDKw93Z0rU469YpzAchjM9kz5ptCxpb6lCi2EnMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuNJ/TEOVcMCqgu3xLNK4NkYgWflNa0eGXT2v2y6K61KxZOHjk
-	dIatYCqoKOwSJ8+vhNj4cNqofrCn1eBJNYzbnWwWcOas5dJHOmRmLj5dIoTm0P8=
-X-Gm-Gg: ASbGnctSy+lq7bBbaxlS2GXtrLl2e85wjOjjOzUC563ZHvwQNL6es0rtE0FVjQJpvRf
-	NTzoqLf3PTSvfbi+Y62ux8Ou0Y6y6AyZT29BU9TT4Ev4JWJOGEdRSvKJfiH6OEMJUKcBJEJvRYK
-	S0xJP6MqQi16KRLdQ1tWUfW8rjxovejE+EERAhxRqW3AQb+r2rNdt16N5EF1MYFTl7l/ZXmTcqh
-	0aPpi+hA0XXijIn5u/yxlV4kek7jGFSM6pRBg2hXwY9nTMfvfAqG9M/5dsYkqiVSdoWNPXi+2ev
-	YrIrK99Lmd1pVuDWdBoouTZKJbxvoQ==
-X-Google-Smtp-Source: AGHT+IGvsRQ2B7XobCDNbx1+tDzWDsM8MW8qgWQNqGXtl3/Y/aZoodCtsatud1RQBz8SZrVJpchqVg==
-X-Received: by 2002:a05:6512:3988:b0:53e:df2b:df25 with SMTP id 2adb3069b0e04-53edf2be017mr1390532e87.16.1733659559586;
-        Sun, 08 Dec 2024 04:05:59 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401a26babesm304562e87.11.2024.12.08.04.05.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 04:05:57 -0800 (PST)
-Date: Sun, 8 Dec 2024 14:05:56 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Marcel Holtmann <marcel@holtmann.org>, 
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>, Bartosz Golaszewski <brgl@bgdev.pl>, quic_mohamull@quicinc.com, 
-	quic_hbandi@quicinc.com, quic_anubhavg@quicinc.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-bluetooth@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 2/4] arm64: dts: qcom: qcs6490-rb3gen: add and enable
- BT node
-Message-ID: <hjui7cn4iuo4id2q4mmqx2i7c3eyu6ae43fcft6psflypb3aya@ia5i5s4ya45e>
-References: <20241204131706.20791-1-quic_janathot@quicinc.com>
- <20241204131706.20791-3-quic_janathot@quicinc.com>
- <pzkijkdswskaq6232uldapz3b6v6zplif7uah24iwq3ymlezft@skbcy2vod3c5>
- <53d44689-798e-4b5f-a0f1-8a39bea2f19b@quicinc.com>
+	s=arc-20240116; t=1733660014; c=relaxed/simple;
+	bh=9k55SSvilJwIU2K6+1S00Q1l/GJx19QY0LEzQMQV8wY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cIEzdjphXPgWLnKv/CUVWQrJTz4gAuAEV0uujLg0siH98YagU/2zHbXGouU18BNBxrzKUvSTQ+jz8bnQSZqVOmsgBCf2IXQ+P7zcv6XpMcEsjkIfPC3n7uCXj8TrdGSY51yjbQkgTxoqi9ABizdlVWDiNfp71adNkFobyUSV1DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=T6ZXlYea; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733660012;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9k55SSvilJwIU2K6+1S00Q1l/GJx19QY0LEzQMQV8wY=;
+	b=T6ZXlYea99CTNHNNgEoS/hy2INr0RaXx+XIKcKeRVL/M1F/oK89MbFrqUdnSmTPQm0zAUG
+	aRCamIukMt3PHD2txdnjl6o1oLZWqgc/U1iDOUQoVcR+gvYyheqbcGE/xYERRlvLGTIcqk
+	09c0qNCPtY63W3hM1iQqMkaw8Qqfm70=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-530-KL5y-vUDPw6ByRwbPHd4WA-1; Sun,
+ 08 Dec 2024 07:13:28 -0500
+X-MC-Unique: KL5y-vUDPw6ByRwbPHd4WA-1
+X-Mimecast-MFC-AGG-ID: KL5y-vUDPw6ByRwbPHd4WA
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 2EBA919560AB;
+	Sun,  8 Dec 2024 12:13:27 +0000 (UTC)
+Received: from fedora.redhat.com (unknown [10.39.192.61])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id ED13E1956095;
+	Sun,  8 Dec 2024 12:13:22 +0000 (UTC)
+From: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+To: quic_yuzha@quicinc.com
+Cc: ath11k@lists.infradead.org,
+	jjohnson@kernel.org,
+	jtornosm@redhat.com,
+	kvalo@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	quic_cjhuang@quicinc.com,
+	vbenes@redhat.com
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations are supported
+Date: Sun,  8 Dec 2024 13:13:21 +0100
+Message-ID: <20241208121321.9760-1-jtornosm@redhat.com>
+In-Reply-To: <0f24e115-e76d-4c8a-8a1b-591a157ee78e@quicinc.com>
+References: <0f24e115-e76d-4c8a-8a1b-591a157ee78e@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <53d44689-798e-4b5f-a0f1-8a39bea2f19b@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Fri, Dec 06, 2024 at 08:15:35PM +0530, Janaki Ramaiah Thota wrote:
-> 
-> 
-> On 12/5/2024 4:29 AM, Dmitry Baryshkov wrote:
-> > On Wed, Dec 04, 2024 at 06:47:04PM +0530, Janaki Ramaiah Thota wrote:
-> > > Add a node for the PMU module of the WCN6750 present on the
-> > > qcs6490-rb3gen board and assign its power outputs to the Bluetooth
-> > > module.
-> > > 
-> > > Signed-off-by: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 165 ++++++++++++++++++-
-> > >   1 file changed, 164 insertions(+), 1 deletion(-)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > index 27695bd54220..07650648214e 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
-> > > @@ -1,6 +1,6 @@
-> > >   // SPDX-License-Identifier: BSD-3-Clause
-> > >   /*
-> > > - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> > > + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-> > >    */
-> > >   /dts-v1/;
-> > > @@ -33,6 +33,7 @@
-> > >   	aliases {
-> > >   		serial0 = &uart5;
-> > > +		serial1 = &uart7;
-> > >   	};
-> > >   	chosen {
-> > > @@ -217,6 +218,63 @@
-> > >   		regulator-min-microvolt = <3700000>;
-> > >   		regulator-max-microvolt = <3700000>;
-> > >   	};
-> > > +
-> > > +	wcn6750-pmu {
-> > > +		compatible = "qcom,wcn6750-pmu";
-> > > +		pinctrl-names = "default";
-> > > +		pinctrl-0 = <&bt_en>;
-> > > +		vddaon-supply = <&vreg_s7b_0p972>;
-> > > +		vddasd-supply = <&vreg_l11c_2p8>;
-> > > +		vddpmu-supply = <&vreg_s7b_0p972>;
-> > > +		vddrfa0p8-supply = <&vreg_s7b_0p972>;
-> > > +		vddrfa1p2-supply = <&vreg_s8b_1p272>;
-> > > +		vddrfa1p7-supply = <&vreg_s1b_1p872>;
-> > > +		vddrfa2p2-supply = <&vreg_s1c_2p19>;
-> > > +
-> > > +		bt-enable-gpios = <&tlmm 85 GPIO_ACTIVE_HIGH>;
-> > 
-> > Doesn't WCN6750 also have SW_CTRL and wifi-enable pins?
-> > 
-> 
-> For Bluetooth, these pins are not needed. We have verified Bluetooth
-> functionality, and it is working fine.
+>My point is that you can try setup with ap type interface,
+This is what I am doing!
+> now combination limits not allow up 3 inferfaces with managed interface.
+Why? The limits were bigger previously.
+Why cannot allow the old configuration (previous to the commit f019f4dff2e4
+("wifi: ath11k: support 2 station interfaces"a))?
+In another way, your proposed configuration is limited for me.
 
-You are describing the hardware (PMU), not "a part of the PMU for the
-BT". Please check if there should be a wifi enable pin and adjust
-accordingly.
+Thanks
 
--- 
-With best wishes
-Dmitry
+Best regards
+Jose Ignacio
+
 
