@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-436510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2AF9E86EC
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 872A99E86EE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:04:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A07581885A1E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:04:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CF81885B0B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4FC1917E4;
-	Sun,  8 Dec 2024 17:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386E1922C0;
+	Sun,  8 Dec 2024 17:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iTfHEF4Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7L43cy7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71EC197556;
-	Sun,  8 Dec 2024 17:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5728C191F8E;
+	Sun,  8 Dec 2024 17:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677411; cv=none; b=cKAiohq3VEUbs0OvE23aMSG5j2fHDoFslwCkSx1apg5QoGFwFa6TQI+3o1cA5Rmp0lOufVB77c9eF+QCrwuZ1Itfl6l29NTBYtSav+hWFakZ3ZxLgF5jvsEYomnM0f5OBSeEOBhL90+adKAY300Ij7xWPyIKOMo9lQCQAl8Bm+Y=
+	t=1733677416; cv=none; b=HLEOtIXHpzy6S9zwUoGdAf6sJHA8mtk6pCvr99qx+uw/2tK17Mtz6QTqargUQ7VLivEPI47emoU1K/gf5DF4w0MAd35iFvOiCP4DlM8Yaug2fhgYvKnwwiCCV6VVZyS10ZjBvUODWGgdo5EYZ2nXYO1cX5Ujrbq4+7KRnc474tI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677411; c=relaxed/simple;
-	bh=4DLbhNUt1rZLuRTKjHMzvV35gikgvbLvyqJyge1WD1Y=;
+	s=arc-20240116; t=1733677416; c=relaxed/simple;
+	bh=OjcAvwB2AK9aiYDMht3s2YvA/tWmdDIQS+AqF6PppMk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=Nx1JGJt4/37+JakXAPmXKVtHYhB5hodhQ83gUsxcaKSM7DOxM9g0ks/X15rT4YZG1Psutji2og6baEFLDk+N3BlWlHhX33yvwqwQREIM/h1ALsQ0h/9eJVDswLOS4goAduYULONH+HPopFBuB/Do805gb+T5NdSRM3Gx+JYJbxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iTfHEF4Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 302A9C4CEDD;
-	Sun,  8 Dec 2024 17:03:27 +0000 (UTC)
+	 MIME-Version:Content-Type; b=I69ST4oDn2cxbm7J3Do9DCBVAsNWfgehbvQBgXbaVwMcKrIi7JaCsWFnpqBrx1zj9GWWznBnu8+oATixDqBeWPOI7SQBNeJqgRVnrrtb+modXfnm07rAivqxaVTN1b823+rDVIcRbnA3w4tYhxS37n2osQJxgZEmToRiaB7Oyd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7L43cy7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4247CC4CEDD;
+	Sun,  8 Dec 2024 17:03:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677411;
-	bh=4DLbhNUt1rZLuRTKjHMzvV35gikgvbLvyqJyge1WD1Y=;
+	s=k20201202; t=1733677416;
+	bh=OjcAvwB2AK9aiYDMht3s2YvA/tWmdDIQS+AqF6PppMk=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=iTfHEF4Zm0qZbr67p5d3FDX0u772gh+FvZMRy1GrrxHhbCTO5S0HL6z1IyPxZexlM
-	 nuWWA2Lfb57QgHCQk5XFv4cSNOKaSwjezH2I81ywE/rdqRsrZnkQ2FZ84kacuFmr+C
-	 J+ZuVbfOLO+23hCXvRHnSVknDUBdJMWOPS0rkpzemMbyZlCVS3R3BFDd6P0ZFFRaum
-	 hr8LfcQpDGYDnG72VcHU1CBKAlZMu6OizQ+pDy7IKYmUKxxHjW3zyVc3xmQcH2FK9d
-	 /g+OSLd4uICsxjC6xONbRDYPuYxY6PYRC4dEWwKhXediQ5spARGjHmRJmnI9+nmfId
-	 UogXe71UAlJlQ==
+	b=D7L43cy7tkH0KdAvN/EPahuuY5iAJ04EP85dKfeMN/DrSxJYzSy42DI8XMMwI+vOu
+	 8j01hnxuCeJH9KxOQiIkCmKTxyKd5zsqj5M0Dj2FCRbCRPdad9EfZjNPhmjv6hBXCi
+	 yntWkfMrByjJO/O7+ovF1L855z5fk8PXsML6CLzpVFPlWvjSWoicTRrqZWrL3t9oLA
+	 kIjGlJ2PsZfVCnUB87CbNkbEdS9wWf034+QcWElpOwqGbfibbW5zv48jBLS39Ah4aC
+	 yvzrxSXsOGiJ/ICdij94RXFWetBy+BTIePWSpJM1wnMRkjC/xaRBCHZB80fhuqtdBC
+	 wATiMitUlCzPQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: Kishon Vijay Abraham I <kishon@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org, 
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-In-Reply-To: <20241021-sar2130p-phys-v2-0-d883acf170f7@linaro.org>
-References: <20241021-sar2130p-phys-v2-0-d883acf170f7@linaro.org>
-Subject: Re: [PATCH v2 0/6] phy: qualcomm: add support for USB+DP and PCIe
- PHYs on SAR2130P
-Message-Id: <173367740776.1042266.16055715564369091503.b4-ty@kernel.org>
-Date: Sun, 08 Dec 2024 22:33:27 +0530
+To: kishon@kernel.org, krzysztof.kozlowski@linaro.org, 
+ alim.akhtar@samsung.com, Peter Griffin <peter.griffin@linaro.org>
+Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
+ kernel-team@android.com, willmcvicker@google.com, 
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+In-Reply-To: <20241029192107.2344279-1-peter.griffin@linaro.org>
+References: <20241029192107.2344279-1-peter.griffin@linaro.org>
+Subject: Re: [PATCH] phy: samsung-ufs: switch back to
+ syscon_regmap_lookup_by_phandle()
+Message-Id: <173367741186.1042266.15067476399278032405.b4-ty@kernel.org>
+Date: Sun, 08 Dec 2024 22:33:31 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,30 +64,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 21 Oct 2024 13:33:06 +0300, Dmitry Baryshkov wrote:
-> Add support for the USB+DP Combo PHY and PCIe PHY on the Qualcomm
-> SAR2130P platform.
+On Tue, 29 Oct 2024 19:21:07 +0000, Peter Griffin wrote:
+> Now exynos-pmu can register its custom regmap for gs101 via
+> of_syscon_register_regmap() we can switch back to the standard
+> syscon_regmap_lookup_by_phandle() api for obtaining the regmap.
 > 
-> The DP part of the combo PHY wasn't yet tested, but it is not possible
-> to support just the USB part of the PHY. DP part might require
-> additional fixes later.
+> Additionally add a Kconfig dependency for MFD_SYSCON.
+> 
 > 
 > [...]
 
 Applied, thanks!
 
-[1/6] dt-bindings: phy: qcom,sc8280xp-qmp-usb43dp: Add SAR2130P compatible
-      commit: d1cfda3b1e4dba015d7cbceb49fb35fdf10b743a
-[2/6] dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Add SAR2130P compatible
-      commit: 5c4bfe3ee5c412379b54ef53f09fceb93f42f619
-[3/6] phy: qualcomm: qmp-combo: add support for SAR2130P
-      commit: 545069bcf39e9f025e8e3d749505e52423433e37
-[4/6] phy: qualcomm: qmp-pcie: split PCS_LANE1 region
-      commit: f9d35dd39bf44d01012119b146a27c29e55d8ad8
-[5/6] phy: qualcomm: qmp-pcie: define several new registers
-      commit: 8114f34dd0baa972085280610ad5be89a41d1414
-[6/6] phy: qualcomm: qmp-pcie: add support for SAR2130P
-      commit: 0fd0b31965b0d4a2caa9267c7aee43f1f78870e8
+[1/1] phy: samsung-ufs: switch back to syscon_regmap_lookup_by_phandle()
+      commit: 0d9fff6c57fee5cccba414a0c40d75812121bdd8
 
 Best regards,
 -- 
