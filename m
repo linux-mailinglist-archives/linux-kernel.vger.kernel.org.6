@@ -1,87 +1,119 @@
-Return-Path: <linux-kernel+bounces-436310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 111D09E8432
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 09:21:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FED59E8437
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 09:33:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC563281ACF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 08:21:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 574E11884451
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 08:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85CDB7C6E6;
-	Sun,  8 Dec 2024 08:21:06 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA7112D758;
+	Sun,  8 Dec 2024 08:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCNPAKcn"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1DCE28691
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 08:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA961EEB2;
+	Sun,  8 Dec 2024 08:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733646066; cv=none; b=dNZlcEbyBaUx/bLiXci16V9rnb9g0sx5A3R6hnGJcaCSqtcqXDkNPJVHM01Gd1uWUyl4xXasp93aUMCKh8cm3jXMDJdsPZAmXQMLNAdqd4+xKDql7BUOVD6ZgcfTSs1qBiG8z/WBryw/JfJLaLlZUgIRC6dBLLaRcuVmnUQo0wA=
+	t=1733646832; cv=none; b=s0eSVd+4BWCVK46nQcQD2F5K9E1Z+j46rHvWPP4oB3/lvff3dGs93btrFnWzVyIU/XkSqiCVjVbFzf6VUV/P3zos2gDGV34gF6aiBfmllvrlAg6wCxdlTla81J/RD7G7M7Hu3nAuNsdFUU4o9UOltnm5791H3vDXyOeTSrop64s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733646066; c=relaxed/simple;
-	bh=K6n9Hg7yg3kRa5AwkvKWmbxqvP0JXjfsAooeYKJ3dqw=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=hH69O4Hq7XIS5O0E14ucCFAm+/FquvxyI04tHHDIfN8wdFkpNNs9j2OsgHElXDwsokMkz712wfFAJYEiRwR7pYIs0I92GMk5VNiIsKU0HLYONK7bc0oUDGazSAfJCcWQ1JM8adSXuAVONN9lgBo0TM3xuPAoD/7qxZIfZEdI4Eg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-841aa90930cso315755139f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 00:21:04 -0800 (PST)
+	s=arc-20240116; t=1733646832; c=relaxed/simple;
+	bh=LsixBaNQBztp8+7IVMfzPngbtALIlUbTwASBXYGGbtY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=J1WEKhYX4VKdZBPmPNjUVQIANAjMVbsFMV9+5oW9tlq/srLaoIKolbeCm46B4RZ1q1cKulszHCpLcDGC4gTBse+gGKQythG4xcyfyc5JWczlZyU8k98yx1YxZ+viqvZ+kf2V7kjgLLJLzrFtMeH1tD9sE6f8Ml3ZicUNARvv7jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCNPAKcn; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-21636268e43so6196305ad.2;
+        Sun, 08 Dec 2024 00:33:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733646830; x=1734251630; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Dw3/MnPygfVwqBQ+Lnx4ztMSGybvWCwzMsFDEjO+5IA=;
+        b=CCNPAKcn42405TQteucywjKFJR0hFt/aJtfcpaaag/nIQPS69UTr35O2i/Uyvdz+RP
+         5XvmpJhJwXNwrnJj5/1MRGqyyNspW/siQDBsqPLzX8Vde2dAZAvbJg82fGVjrK0HA+dv
+         i0Xiqz24fkZmTXiaFCZEUbqYSJDXiMZI4DjFx3M902ZWU++T+A3OYyF3H6l8ISzbEOS1
+         +EtqS3iT5SHCPi1CWMZOsrP5HTWcPR+3vwfLHu8SeBmvTp9lUHvx/XI0yYHQVnuEPdrp
+         1fewaUhXAsjREbqW6vjH6eyW29DTUy222eK9+847YeQLCom1yKVy8KAkyL4x5ipqwPSR
+         TXrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733646064; x=1734250864;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HSxII9Zkal/cqf97D7R42a7rJvgYvLT14C2bf6snPok=;
-        b=ENq54hdFymBAd5H+2jgYZ2wUnP4WcDi+34RHYsJ5/6drHy7sXknKscx8vvb45B25uG
-         7TDcNET5BV+zNFlhrUFXXOecCsoG5TnXapWPJq6Po2VtkgcBDLZMeZn2Pn9KCNOB8BKQ
-         oszlKJy+2AAQo7w32Mgr6i2TlDbTTkpUgSyUFwhfMYBj/aWGgUI8pwqgEIoiAosktJzL
-         ycGNERYhWJ4k9hi1DAdAQBGBTh7eMB+uR3iJJbbneS8oplGSg2L1VCFpdecljctB5qZ6
-         Io0A0Z5nGlcFKOW8w5twkF0yn1EQu6g9wyiqeu1OoqVY97x6ShPVJS+T+b/RxbrirEt0
-         eqCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWC6qpi87nU6N1rnRMbAhjlnDp4oyXMB7QfordBj6C4gnW6O9JLv2lElZ2cGXDsAcxMLrFmTFtmnqbdPkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoLsYXOBWo36PH75YmszVYFx9WZIWxcb4Z0vTohE/MI3qITEKP
-	gNfuOnABHq6KDjXL+1cg8FzoJgZkfcnVfGR1XaVT+3vrGsJS6Yrk6v2koWGVNVfWrwqNX1Nn2ph
-	2xWmbzocDsG7vus2Uzn9f5109RHK5RBX2GNvnIeRNNxcfYZeX4OnAJeA=
-X-Google-Smtp-Source: AGHT+IEMSBaFk0ArHb79ZzPaYoCzAvg7K/58PDvYg10807cVacnmRH8gDee8ZOBNRELQRAS/cGScABzQQ3xmzafqvUHyCCafQj7A
+        d=1e100.net; s=20230601; t=1733646830; x=1734251630;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Dw3/MnPygfVwqBQ+Lnx4ztMSGybvWCwzMsFDEjO+5IA=;
+        b=VbowdKCP8oq4zKhbkcMkY1kCCEiG/EGf2W/0VjvOIZVQ1gypzYrVuNQqPomTiX4Vus
+         t8X5uEla8WQx05bVRSxs3Od1ykXtRhjQqGfHF2SrV/9kHK9myv40tfQB6gQrja6bU7kd
+         7hm2Fhj7XgDPjPsZW7HMbtabcnoU3/47GMv4QdC+7Wq8Fwk1lamd6ZMWb0cAI3ywc1gM
+         tICM+dvidmRVVBFNxk+Ph/BehSvcCQ/qNEdgvbx05Zyix1IsRru3MihJ6+KciyGGs99M
+         2j/axTEqVMy96A5eJLLWxHOGVqeU5ofeNYpknRdNOpHRvWMBZ3L21B0J0PYaDv94+hOg
+         3Z/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWY10q7IDqChRXkv+dOGlHcdHMjI+IUiHmEhba4E0npAz6tZIMZdZ92NBosrw/wwKej7GNiaoF5UXeQnuw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx3P4sKFzbqKVUc4et1DzIghKbXAwLauAd4D1SMpVWhi5TeUtjt
+	QHxa8DK1jgDqM9NoXZp+mYte7Hz3yvQxoW/3TlRZaTYKoMxk5ske
+X-Gm-Gg: ASbGncs8qDmKUOBYiiw2/ge2u/dfQw+bSJPa0IWtwCuTcWt5/+PPSU4k55hq9gcmlSZ
+	k2wDKj8JYf70KwRVC2p25skEpbrUY58egntZjOUHsMZMN+MyYUvh0jAhB7WdDLXoTWGP0WpEdCx
+	QLZjYqKKGqvSZugfvLB6ZlbhZq5nAoXXAAF0ivAQDkWJP2yu2aeBni8WEucPZeUD3kNAKPa+XCY
+	GKEenwwk3pJlcsV4npNVAq3YR2jvejBoV5FfGdLc4mcUV7rdm9bkew1sNxvQfxPoQ==
+X-Google-Smtp-Source: AGHT+IFURXnikmIuPy808nl59u0diMFBQpfZ/DgZlI44giGlkMlKRrocXhrb2cbHC0UfL7/XIu5qkA==
+X-Received: by 2002:a17:902:cf4b:b0:215:773a:c168 with SMTP id d9443c01a7336-21614d1aeddmr158483645ad.1.1733646829744;
+        Sun, 08 Dec 2024 00:33:49 -0800 (PST)
+Received: from localhost.localdomain ([49.206.118.78])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e3e7cdsm53400155ad.10.2024.12.08.00.33.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 00:33:49 -0800 (PST)
+From: Saru2003 <sarvesh20123@gmail.com>
+To: bsingharora@gmail.com,
+	corbet@lwn.net
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Saru2003 <sarvesh20123@gmail.com>
+Subject: [PATCH] Documentation/accounting: Fix typo in taskstats-struct.rst
+Date: Sun,  8 Dec 2024 14:03:20 +0530
+Message-Id: <20241208083320.16190-1-sarvesh20123@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <878qssu5d3.fsf@trenco.lwn.net>
+References: <878qssu5d3.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1888:b0:3a7:783d:93d7 with SMTP id
- e9e14a558f8ab-3a811d774b6mr95088935ab.4.1733646063827; Sun, 08 Dec 2024
- 00:21:03 -0800 (PST)
-Date: Sun, 08 Dec 2024 00:21:03 -0800
-In-Reply-To: <20241208075058.48814-1-dennis.lamerice@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675556ef.050a0220.a30f1.0173.GAE@google.com>
-Subject: Re: [syzbot] [kernel?] KASAN: slab-use-after-free Read in notifier_chain_register
-From: syzbot <syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com>
-To: dennis.lamerice@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Corrected a typo in the 'taskstats-struct.rst' documentation. The macro
+name 'TAKSTATS_VERSION' was mistakenly mentioned instead of the correct
+'TASKSTATS_VERSION'. The corrected line now references the proper macro
+'TASKSTATS_VERSION', defined in '<linux/taskstats.h>'.
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Signed-off-by: Sarveshwaar SS <sarvesh20123@gmail.com>
+---
+ Documentation/accounting/taskstats-struct.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reported-by: syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com
-Tested-by: syzbot+0988a383ae7c57b99dd9@syzkaller.appspotmail.com
+diff --git a/Documentation/accounting/taskstats-struct.rst b/Documentation/accounting/taskstats-struct.rst
+index ca90fd489c9a..acca51c34157 100644
+--- a/Documentation/accounting/taskstats-struct.rst
++++ b/Documentation/accounting/taskstats-struct.rst
+@@ -47,7 +47,7 @@ should not change the relative position of each field within the struct.
+ 1) Common and basic accounting fields::
+ 
+ 	/* The version number of this struct. This field is always set to
+-	 * TAKSTATS_VERSION, which is defined in <linux/taskstats.h>.
++	 * TASKSTATS_VERSION, which is defined in <linux/taskstats.h>.
+ 	 * Each time the struct is changed, the value should be incremented.
+ 	 */
+ 	__u16	version;
+-- 
+2.34.1
 
-Tested on:
-
-commit:         7503345a Merge tag 'block-6.13-20241207' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=142f4820580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=9d99f0bff41614d0
-dashboard link: https://syzkaller.appspot.com/bug?extid=0988a383ae7c57b99dd9
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=11b3f40f980000
-
-Note: testing is done by a robot and is best-effort only.
 
