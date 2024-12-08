@@ -1,200 +1,97 @@
-Return-Path: <linux-kernel+bounces-436448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D7F9E85FE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:48:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 677329E85F9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:40:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB8CC164706
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:47:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27EEE2813C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:40:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBCE1537CB;
-	Sun,  8 Dec 2024 15:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07AD1158D8B;
+	Sun,  8 Dec 2024 15:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="gCsCg3wX"
-Received: from smtp.smtpout.orange.fr (smtp-20.smtpout.orange.fr [80.12.242.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YkYeFAWG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C50E415A856;
-	Sun,  8 Dec 2024 15:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB2E13AD03;
+	Sun,  8 Dec 2024 15:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733672860; cv=none; b=uHdwddKW2CCskiixN+oFnSMEZFVkSvhTMiWgU5usPnlqV+HhNuA0IKGyGozScJjdCSB5VqrRx6Wv05TE00gpSq/Dr1TYUaoNN8wSL5tNlefnM4TRpGxqNVvR27uIw7xBBEva2QBkS9qMsGszl9IGmjr3wx5Aem4AT2hZ61ObfJc=
+	t=1733672395; cv=none; b=HbC85TpqCtQX+5mp8q3EdUa85ridkLOdZ1Js9Nzlrzi04lbp27ZCBi6b3pYqrowWjyi/E7/GoYgonNN6/OdYtXZGsFFXS2MxFuTWr5D7PVBK9+eVL7SxxZQm5h4b0x9bqo6Ww6sZrDeSVfNG1E0Q8XWIIxSTMMfGjIdiLr8t7PU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733672860; c=relaxed/simple;
-	bh=xQ4K1exiIRG5IAYZjc8fndqK1WCMWyXSPBTQIJnOpdQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ry5LfCTB1Q2QWPoYmMCo4x2IOtpv0JG40BnXTKRAZ1Y8DirJtqoSi04nVH4VyEsT1Kenpnc+7yaTHRZwL1ejBjTvxZKvECx2wXqOsT8XvzBocaL0FAi4iACtsVyRLKJTA/XUrNeiwb9kbXwaWuM+mxnFvFSVMcrWummtHgJJlaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=gCsCg3wX; arc=none smtp.client-ip=80.12.242.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id KJMAt37SE3iIjKJMAttwqx; Sun, 08 Dec 2024 16:38:09 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1733672289;
-	bh=jkP4yA0W2YYcfH7OhgCU7OQTCVOg6mRF/p3ZKoISHKo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=gCsCg3wXWXtrA8/cwqt3m8V00Ppe79nUtznNwNqBibPZN+OA03rl2CIpkOL2+p7/g
-	 Exg7Vb3ssawiNNMHd4CpQnezTdm4nCv4xw9GDzCtjSZ2THh0uu8wH2AskDJgYHawtC
-	 OuCDMxvntOj2Qu1EC9nhkg3VQmo3sPM1hKUwJsgTPUGr7IrcimCygl4xHYJ92mjFb0
-	 u4xW6bsIs26P+XAxvHbrBONNllOYKxb5LqddozMoVkoxv9NBiFda6amJDWSNRdSj02
-	 Bflcrsiu4JXQzU7bWMDwX54lu0bQfIoyTPNRcfdVEWUorRriBCaIIptIGdltb/X6J6
-	 eF7JiXnijx3Bw==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Sun, 08 Dec 2024 16:38:09 +0100
-X-ME-IP: 90.11.132.44
-Message-ID: <f8d990ef-203e-479a-838e-13780e758ab8@wanadoo.fr>
-Date: Sun, 8 Dec 2024 16:38:02 +0100
+	s=arc-20240116; t=1733672395; c=relaxed/simple;
+	bh=Gx5f3shkmroS7Y09AqZgaEyC/C5onrqzjrHhIwJpBz0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nB5CjX26CjLv+pyCayQyy+JFxJqKbJV0ESkArm03y6eGeFHD4BG8eCkECp+GWyOpisvt5Yp6rtzPy9C863maH+prLl13B71Oz5ykxDP6DD4k7AdHUQxnT8zkk9T5vkUXbDNNp48hSIcI6XeJSKjAXIu/4GKCB2H97/e3niKZDvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YkYeFAWG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEB7C4CED2;
+	Sun,  8 Dec 2024 15:39:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733672394;
+	bh=Gx5f3shkmroS7Y09AqZgaEyC/C5onrqzjrHhIwJpBz0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YkYeFAWGk6JHOupu1GMUBk0SlM6p+IOAw9vlYwa0MdY/jyia66J1rVBvr/o3RIC8S
+	 gtskvfoaAZFs5C8SAqaXYDnPNwsYvZhraWxfqO4v2TvvTS4Lp6uMKfVR7OJr2ZtIf8
+	 2aiiJ2ySwZvRm0/tdxuCG/5P4StdL8Cm7cgSCx38HaZOq6qAjLMc7WpH8s3hcfobDb
+	 FAEe/XSVC3MUk/4xLqw78bqG9ZgBl3jxtEHuneG/fmn9zAvmj2CvYGl1+ShGv/Nlhk
+	 IWvPp/lKaqvnyobiwzi4QO1W+pQOcZ+NFIA2R8mMGN2D9J3ROC0TdW0Ol7jEhwgDcS
+	 T5mOXoYq+tECg==
+Date: Sun, 8 Dec 2024 21:09:50 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Sam Protsenko <semen.protsenko@linaro.org>,
+	Will McVicker <willmcvicker@google.com>,
+	Roy Luo <royluo@google.com>, kernel-team@android.com,
+	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, stable@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v3 5/8] phy: exynos5-usbdrd: gs101: ensure power is gated
+ to SS phy in phy_exit()
+Message-ID: <Z1W9xuCrn40uPWbr@vaman>
+References: <20241205-gs101-phy-lanes-orientation-phy-v3-0-32f721bed219@linaro.org>
+ <20241205-gs101-phy-lanes-orientation-phy-v3-5-32f721bed219@linaro.org>
+ <2024120528-poker-thinness-6cfb@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [net-next PATCH v10 5/9] mfd: an8855: Add support for Airoha
- AN8855 Switch MFD
-To: Christian Marangi <ansuelsmth@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Vladimir Oltean <olteanv@gmail.com>,
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
- Heiner Kallweit <hkallweit1@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Matthias Brugger <matthias.bgg@gmail.com>,
- "AngeloGioacchino Del Regno," <angelogioacchino.delregno@collabora.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- netdev@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, upstream@airoha.com
-References: <20241208002105.18074-1-ansuelsmth@gmail.com>
- <20241208002105.18074-6-ansuelsmth@gmail.com>
- <8e9cf879-b188-4bfe-8200-f6a6ae285cb5@wanadoo.fr>
- <6755b761.050a0220.223761.2b14@mx.google.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <6755b761.050a0220.223761.2b14@mx.google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <2024120528-poker-thinness-6cfb@gregkh>
 
-Le 08/12/2024 à 16:12, Christian Marangi a écrit :
-> On Sun, Dec 08, 2024 at 04:09:25PM +0100, Christophe JAILLET wrote:
->> Le 08/12/2024 à 01:20, Christian Marangi a écrit :
->>> Add support for Airoha AN8855 Switch MFD that provide support for a DSA
->>> switch and a NVMEM provider. Also provide support for a virtual MDIO
->>> passthrough as the PHYs address for the switch are shared with the switch
->>> address
->>>
->>> Signed-off-by: Christian Marangi <ansuelsmth-Re5JQEeQqe8AvxtiuMwx3w@public.gmane.org>
->>> ---
->>>    MAINTAINERS                           |   1 +
->>>    drivers/mfd/Kconfig                   |   9 +
->>>    drivers/mfd/Makefile                  |   1 +
->>>    drivers/mfd/airoha-an8855.c           | 279 ++++++++++++++++++++++++++
->>>    include/linux/mfd/airoha-an8855-mfd.h |  41 ++++
->>>    5 files changed, 331 insertions(+)
->>>    create mode 100644 drivers/mfd/airoha-an8855.c
->>>    create mode 100644 include/linux/mfd/airoha-an8855-mfd.h
->>>
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index f3e3f6938824..7f4d7c48b6e1 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -721,6 +721,7 @@ F:	Documentation/devicetree/bindings/mfd/airoha,an8855-mfd.yaml
->>>    F:	Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
->>>    F:	Documentation/devicetree/bindings/net/dsa/airoha,an8855-switch.yaml
->>>    F:	Documentation/devicetree/bindings/nvmem/airoha,an8855-efuse.yaml
->>> +F:	drivers/mfd/airoha-an8855.c
->>>    AIROHA ETHERNET DRIVER
->>>    M:	Lorenzo Bianconi <lorenzo-DgEjT+Ai2ygdnm+yROfE0A@public.gmane.org>
->>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
->>> index ae23b317a64e..a83db24336d9 100644
->>> --- a/drivers/mfd/Kconfig
->>> +++ b/drivers/mfd/Kconfig
->>> @@ -53,6 +53,15 @@ config MFD_ALTERA_SYSMGR
->>>    	  using regmap_mmio accesses for ARM32 parts and SMC calls to
->>>    	  EL3 for ARM64 parts.
->>> +config MFD_AIROHA_AN8855
->>> +	bool "Airoha AN8855 Switch MFD"
->>> +	depends on MDIO && OF
->>> +	select MFD_CORE
->>> +	help
->>> +	  Support for the Airoha AN8855 Switch MFD. This is a SoC Switch
->>> +	  that provide various peripherals. Currently it provides a
->>
->> provides?
->>
->>> +	  DSA switch and a NVMEM provider.
->>> +
->>>    config MFD_ACT8945A
->>>    	tristate "Active-semi ACT8945A"
->>>    	select MFD_CORE
->>
->> ...
->>
->>> +static int an8855_mfd_probe(struct mdio_device *mdiodev)
->>> +{
->>> +	struct an8855_mfd_priv *priv;
->>> +	struct regmap *regmap;
->>> +
->>> +	priv = devm_kzalloc(&mdiodev->dev, sizeof(*priv), GFP_KERNEL);
->>> +	if (!priv)
->>> +		return -ENOMEM;
->>> +
->>> +	priv->bus = mdiodev->bus;
->>> +	priv->dev = &mdiodev->dev;
->>> +	priv->switch_addr = mdiodev->addr;
->>> +	/* no DMA for mdiobus, mute warning for DMA mask not set */
->>> +	priv->dev->dma_mask = &priv->dev->coherent_dma_mask;
->>> +
->>> +	regmap = devm_regmap_init(priv->dev, NULL, priv,
->>> +				  &an8855_regmap_config);
->>> +	if (IS_ERR(regmap)) {
->>> +		dev_err(priv->dev, "regmap initialization failed");
->>
->> Nitpick: Missing ending \n.
->> Also, return dev_err_probe() could be used.
->>
+On 05-12-24, 09:04, Greg KH wrote:
+> On Thu, Dec 05, 2024 at 07:33:16AM +0000, Andr� Draszik wrote:
+> > We currently don't gate the power to the SS phy in phy_exit().
+> > 
+> > Shuffle the code slightly to ensure the power is gated to the SS phy as
+> > well.
+> > 
+> > Fixes: 32267c29bc7d ("phy: exynos5-usbdrd: support Exynos USBDRD 3.1 combo phy (HS & SS)")
+> > CC: stable@vger.kernel.org # 6.11+
 > 
-> Can regmap PROBE_DEFER? Or it's just common practice?
+> Why is a patch 5/8 a stable thing?  If this is such an important bugfix,
+> it should be sent separately as a 1/1 patch, right?
 
-It is a common practice to easily log the error code in a human readable 
-format, even when PROBE_DEFER can't happen.
+Correct, one should move fixes to top of the series..
 
-It sometimes also saves 1 or 2 LoC because it may save the { } and the 
-line with return.
-
-Leaving it as-is is obviously also just fine ;-).
-
-CJ
-
-> 
->>> +		return PTR_ERR(priv->dev);
->>> +	}
->>> +
->>> +	dev_set_drvdata(&mdiodev->dev, priv);
->>
->> Is it needed?
->> There is no dev_get_drvdata() in this patch
->>
-> 
-> Yes it is, MFD child makes use of dev_get_drv_data(dev->parent) to
-> access the bug and current_page.
-> 
->>> +
->>> +	return devm_mfd_add_devices(priv->dev, PLATFORM_DEVID_AUTO, an8855_mfd_devs,
->>> +				    ARRAY_SIZE(an8855_mfd_devs), NULL, 0,
->>> +				    NULL);
->>> +}
->>
->> ...
->>
->> CJ
-> 
-
+-- 
+~Vinod
 
