@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-436277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C78DE9E83CF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 07:20:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6B959E83DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 07:22:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8283D1884918
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:20:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDCF31659FA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C664F5A4D5;
-	Sun,  8 Dec 2024 06:20:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F385A4D5;
+	Sun,  8 Dec 2024 06:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7tZYAjR"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vNQsg0+X"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBA2946B8
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 06:20:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C07ED46B8
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 06:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733638826; cv=none; b=LYMPST8gvqu0zyZPvsLgrqjOJT8VOySuHD5eadRgeCrkn+vZLxVrE6R2HgzB5osHavvcD5dPcF0jH90rWn3bURE4wROhS0GhQKUMBGP7w6bsF4uvoudy4OwXMab5xj8v0LzJ/BZKD1Db0js+TTtvs07WqS+NBtQ+RDNLCRiApOU=
+	t=1733638970; cv=none; b=Y66L8yUvJD/v2N7Xwd02ZTXaLdVwKF5qSJpObNVFLxh1moVh113gfn9tw4S7cqKd0QNLjWhDO/VOZTGwg5ia5mKBfc2lyiZ05DI/pSp+3fPU+fHtLbEpUwjfmLpoOvrmXJewMaJsv5N2YJKUxM83HeSXxsekZjuWJfG+G5wpQ3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733638826; c=relaxed/simple;
-	bh=3fiK5xpOs/3MMK3l9oFjiRimQNH4kk/slTL8dPbJeEY=;
+	s=arc-20240116; t=1733638970; c=relaxed/simple;
+	bh=AS3azZ+PfLiRvJ+8Za68SmM9j3QMKamcxS6Oj0hfhCg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vCKKNZuZLSd2/6EJe3e9I4m4Fdj05KDTmLmY2NcxPzBBvZ9yAIjGGERouXHiUqYv2cxllrn748rZX+25RviKX/8B+xUM+lLW2siTHVLW8XiLC7Q8CBSkTOmjRbGBNbNVooEC9hz5/qkxuJNtgo3VbViMZxasMxUCPswDiRS3IEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=b7tZYAjR; arc=none smtp.client-ip=209.85.167.50
+	 Content-Type:Content-Disposition:In-Reply-To; b=SXP5du61/eVReMhsTg/mOFNCI4S/JoAVEYu1fFzluOeCz/C+5IeaeXcsDkAyVAUY55k1EZKq1TJYiAQrjCK9g2o3myCe0sCQrUFJKnsJitW3BIpkk5f0jnwANggPG47kuh49tZX5JRrB/Rj8NZo2EJCJH8kWGcPHQd9VbHYLZEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vNQsg0+X; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53e389d8dc7so1783291e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 22:20:24 -0800 (PST)
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53dd668c5easo3540738e87.1
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 22:22:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733638823; x=1734243623; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733638966; x=1734243766; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=y3wSwCt3nKeuuPfdzyH1suAvu05oEqo8AcKRL8aHLAI=;
-        b=b7tZYAjRE0kjzr1sK1unZ7YnKukvXG3X3So4wYHEAWKIbYd2PgPFBr5sls7K7r+lEK
-         2Rp/Yd0lF//6xF/Z2N8FYzy5Tdwi6bfnkoavTtwbRex+tDm4w6iu1x8Hzk9zNZI0YHKQ
-         SBEu4k7a/gakxygwdaIq/yC1O/0DsnMfFUakuk/bnmqWvGyPC3d8FGEg8FKPkq+aoBan
-         koOX5ZvlOgtqA5isE3ohNDUWDvHIXw28lzq7ZQnL3+GusKarvcDmNL5ZyZOGGcucbUVB
-         kdoKPx/7tC2Z1WcpdJeTfILWVoZ8jPHKWgJdqqJAwpn+S71f3fbjf+WOkVJKLZyhar6r
-         vY7Q==
+        bh=38gctL7UTrHCs9qA1LF95XHQwmYDkv868rO2ODhNpiw=;
+        b=vNQsg0+XbJA/50xOX5QhhNHOkcpjGDe0dPR0n1Og2Y7qXki+XSWHcYhrYhS1cOXIKf
+         uYnGlrIeWH8Ra4E6BovXVAhuO9DmU39OjELj+bdhMWVhgB6bSGpxNbKXW6t3dn/tcdAv
+         RqXPwEKm/agWQY70/miDXS0z1NjHoRAzdUq61PwwYuQEsOlyXEcaW4r586LjHnuluYZQ
+         Hq+dOXoVNs06I2MNBgvQx7IiGh/wY6hYtb/eVMABespHGLpFd3TTAFV6dLOUDUgMe3Bq
+         VAq4aBcenP8BZ8zVDTW1DXgUOJ2x+lDw/ZVV338J2vw9YPryyXB7Gyj9l5PwECJ14sEW
+         FBhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733638823; x=1734243623;
+        d=1e100.net; s=20230601; t=1733638966; x=1734243766;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=y3wSwCt3nKeuuPfdzyH1suAvu05oEqo8AcKRL8aHLAI=;
-        b=O/ULNqHbTTmv0NQ9pj0zjJtwrhcVsoa+AfL62y53eZcG7EJVScEVC589LGk7e2lrjJ
-         mdaqZ94MHeFowottSLLatdv1zmc2GPhdemCvnmBojkqxXuWhudNb2/yPrQU0T57SHv/Y
-         QLK7iHG+gBk6oqiB0ID6AJnvogogy42UZ1ok9XOaF3SWHf+CWJT5RxlR6l8oFmT3UQ6h
-         Y+Lz/ol6YOEgWWO1udmaGESgyh+g0b+5MYnpx3yfVp6dW52FSh5C/XDvxSGYNK8bwLxq
-         WU1FdVoe1HBEQbfDlcPPzhTR7IKSZNIL9k3Yeet+qBsLsquC5g1D9H+5nbbW6Y36d1jB
-         Gjqw==
-X-Forwarded-Encrypted: i=1; AJvYcCU2rq25U5YftcAVItFC/54ao7OXZKof01BVI1NH04ZJ9r8J/Ud15ZTEJ2iwAb0Rmbq06jdI2XHARSeQ76A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwD7mBxGfGliZKAi2dZS3Ilshwy0QUyHTxL9SJ5XHS3iD/2lpjR
-	2ixJrK4zglWSA2j0GsXxyhbz0nmlkc8prp8QLFQzd6P2RQrxyJLPi5DSJg09wGk=
-X-Gm-Gg: ASbGncum/2ri9BXYdceZnWOsT+qzt1C9k3/ewT+247CA3aWSJeHMB36BxuTZu+WW07u
-	xJH/MVLZxOKn9DP9xjv7gqacaxS2r7J70puVSP7Vhh6YyIf9BatrS7also0WkoSfd/WqkNWp3Oa
-	nX2qMNIt6Puia/dFN1MDD2nnM/bjAL8B/y/bn8yT0lzp5MFLh6aao+NgzbgGw0TvA+FMT+H2O72
-	ChDLS/MzQVoU5k0wH8a8VVkXiJGyia/6m1B9XfKV2rrZF9/74N0iIGvSR+Ez2X8qymF7Cke4LLW
-	8CYgkwuwxEMvaQtgBv29xOKsbK1sLw==
-X-Google-Smtp-Source: AGHT+IFtDegnYyy2d+nTJaRADWEp+LFhxCsAwHtfkRa6kEJEsstkB9Dl/Phdlpt1fq4uhf+/TTKexA==
-X-Received: by 2002:a05:6512:402a:b0:53e:39c2:f02b with SMTP id 2adb3069b0e04-53e39c2f164mr1605041e87.42.1733638823022;
-        Sat, 07 Dec 2024 22:20:23 -0800 (PST)
+        bh=38gctL7UTrHCs9qA1LF95XHQwmYDkv868rO2ODhNpiw=;
+        b=HJsaNtGcQ9Zqz5JCwlyYTC9PK+ER8jfJGBaUPPSQ2l+NX1eofTMG/n2SZLg7P6+kEW
+         V4UuLoHU/+fhfoR0YUvK3Juaa00UHMMpMfEoEx6CuePesbjgHKk5UBlBZSml4z7YDx9B
+         sWB1c9Gb+Ue6xyhsLmusVG1rnLPkUuyMypLl1yFJ3VpNARlMfhPsJYPZjAFlFEFLrYqt
+         yxUfoS4NZUFxHt0a63ibHtqe5Udt4NsJk+nwopNR7eyX+sTQ2BIyH//oMRL9p3CvbcLm
+         flvUL9MLABQZyhzHa76njVIme75KMzki2kzGPNS69OxJEj4u+a2GTtbcN/Njnq0wZNAn
+         IYlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfeGuvLVL7Z9ZhU9SS9e4o1Gs9Vz7ZGOaqfyH+5JvKDMF7wMZiWeer37xbrQUIEIV38pDLEyv7kTHeVPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7prdJWMY4swZH8U++6/BTS4QYE57psC85wEyrv0OcQxohDWuJ
+	gtLWYTWo76UclRfW3XGkqUCkV8VmXeEoK9v+RcONBtMJxeOOthWkxqROhnMKWQQ=
+X-Gm-Gg: ASbGncu7WTqQ/Ty3y68sUmDn/yo4y1snHpn/2fTuaAMJ92h1dY+RLbjg+ZAJWYkrZmx
+	Bu7TJLVby7VuCRiGdiL8TpB5sagob8jDQnt5uBdqQMYMVxOCfAVomXG4hykflyJ4MIPo8WpyD3W
+	Yq2pYgPss3+LmeUQQmbMQ+hYlq0iqhm41aiQOZBhF1qERgjCl0BweSClbfMb9yZkXrVgw6WXf+4
+	i1jqbPCA+GEoHjeN1apsppaZDDsfHc4iVGkcjHqdKT4X6ujeyb4Q3ABoXoqR6wamPJ5M4i7n7mH
+	FsGycHcK98kR2OdXnEJAFGtL0cDejQ==
+X-Google-Smtp-Source: AGHT+IH0qp1aPQA+2OpPaXQ/vPvKw2/kQ5aoewjrbzmt3QID8qu4PyXFLKKH22VCjIXIHCP65iqmvA==
+X-Received: by 2002:a05:6512:3dac:b0:540:1bc3:1061 with SMTP id 2adb3069b0e04-5401bc31213mr349243e87.11.1733638965870;
+        Sat, 07 Dec 2024 22:22:45 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3836ab8bsm573224e87.251.2024.12.07.22.20.20
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401c2c700fsm99554e87.86.2024.12.07.22.22.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 22:20:21 -0800 (PST)
-Date: Sun, 8 Dec 2024 08:20:19 +0200
+        Sat, 07 Dec 2024 22:22:45 -0800 (PST)
+Date: Sun, 8 Dec 2024 08:22:42 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Abhinav Kumar <quic_abhinavk@quicinc.com>
 Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
@@ -84,11 +84,11 @@ Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
 	Tanmay Shah <tanmay@codeaurora.org>, linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
 	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
 	Jessica Zhang <quic_jesszhan@quicinc.com>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: Re: [PATCH 22/45] drm/msm/dp: add support to send vcpf packets in dp
- controller
-Message-ID: <myumofurrdyjpfs7k6m2q4wmfcot3pdnymtoj4wd3zwlgmkhtq@mjtlpsb5by2j>
+Subject: Re: [PATCH 16/45] drm/msm/dp: add support for programming p1
+ register block
+Message-ID: <ku6ytypptjtydcgscdvwsi62cgxokxn6svwwzs2ce3otnnlrrl@uvr6st3365kv>
 References: <20241205-dp_mst-v1-0-f8618d42a99a@quicinc.com>
- <20241205-dp_mst-v1-22-f8618d42a99a@quicinc.com>
+ <20241205-dp_mst-v1-16-f8618d42a99a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,224 +97,48 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241205-dp_mst-v1-22-f8618d42a99a@quicinc.com>
+In-Reply-To: <20241205-dp_mst-v1-16-f8618d42a99a@quicinc.com>
 
-On Thu, Dec 05, 2024 at 08:31:53PM -0800, Abhinav Kumar wrote:
-> VC payload fill sequence is inserted by the DP controller in the
-> absence of stream symbols that is before stream is disabled. Add
-> support to send the VCPF sequence for msm dp controller.
+On Thu, Dec 05, 2024 at 08:31:47PM -0800, Abhinav Kumar wrote:
+> p1 register block is needed for the second mst stream.
+> Add support in the catalog to be able to program this block.
 > 
 > Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 > ---
->  drivers/gpu/drm/msm/dp/dp_catalog.c | 25 +++++++++++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_catalog.h |  4 ++++
->  drivers/gpu/drm/msm/dp/dp_ctrl.c    | 40 +++++++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/msm/dp/dp_ctrl.h    |  1 +
->  drivers/gpu/drm/msm/dp/dp_display.c |  5 ++++-
->  drivers/gpu/drm/msm/dp/dp_reg.h     |  3 ++-
->  6 files changed, 76 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.c b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> index f9d21444d7891bcd043d282b31ae75711add4817..4826a698979ce7c37112812299879411c5743fa9 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.c
-> @@ -50,6 +50,11 @@
->  	(PSR_UPDATE_INT | PSR_CAPTURE_INT | PSR_EXIT_INT | \
->  	PSR_UPDATE_ERROR_INT | PSR_WAKE_ERROR_INT)
->  
-> +#define DP_INTERRUPT_STATUS5 \
-> +	(DP_INTR_DP0_VCPF_SENT | DP_INTR_DP1_VCPF_SENT)
-> +#define DP_INTERRUPT_STATUS5_MASK \
-> +	(DP_INTERRUPT_STATUS5 << DP_INTERRUPT_STATUS_MASK_SHIFT)
-> +
->  #define DP_INTERRUPT_MASK4 \
->  	(PSR_UPDATE_MASK | PSR_CAPTURE_MASK | PSR_EXIT_MASK | \
->  	PSR_UPDATE_ERROR_MASK | PSR_WAKE_ERROR_MASK)
-> @@ -694,9 +699,12 @@ void msm_dp_catalog_ctrl_enable_irq(struct msm_dp_catalog *msm_dp_catalog,
->  				DP_INTERRUPT_STATUS1_MASK);
->  		msm_dp_write_ahb(catalog, REG_DP_INTR_STATUS2,
->  				DP_INTERRUPT_STATUS2_MASK);
-> +		msm_dp_write_ahb(catalog, REG_DP_INTR_STATUS5,
-> +				 DP_INTERRUPT_STATUS5_MASK);
->  	} else {
->  		msm_dp_write_ahb(catalog, REG_DP_INTR_STATUS, 0x00);
->  		msm_dp_write_ahb(catalog, REG_DP_INTR_STATUS2, 0x00);
-> +		msm_dp_write_ahb(catalog, REG_DP_INTR_STATUS5, 0x00);
->  	}
+>  drivers/gpu/drm/msm/dp/dp_catalog.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+
+> @@ -145,6 +148,26 @@ static inline u32 msm_dp_read_p0(struct msm_dp_catalog_private *catalog,
+>  	return readl_relaxed(catalog->io.p0.base + offset);
 >  }
 >  
-> @@ -850,6 +858,23 @@ int msm_dp_catalog_ctrl_get_interrupt(struct msm_dp_catalog *msm_dp_catalog)
->  	return intr;
->  }
->  
-> +int msm_dp_catalog_ctrl_get_interrupt_5(struct msm_dp_catalog *msm_dp_catalog)
+> +static inline void msm_dp_write_p1(struct msm_dp_catalog_private *catalog,
+> +				   u32 offset, u32 data)
 > +{
-> +	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> +							      struct msm_dp_catalog_private,
-> +							      msm_dp_catalog);
-> +	u32 intr, intr_ack;
-> +
-> +	intr = msm_dp_read_ahb(catalog, REG_DP_INTR_STATUS5);
-> +	intr &= ~DP_INTERRUPT_STATUS5_MASK;
-> +	intr_ack = (intr & DP_INTERRUPT_STATUS5)
-> +			<< DP_INTERRUPT_STATUS_ACK_SHIFT;
-> +	msm_dp_write_ahb(catalog, REG_DP_INTR_STATUS5,
-> +			 intr_ack | DP_INTERRUPT_STATUS5_MASK);
-> +
-> +	return intr;
+> +	/*
+> +	 * To make sure interface reg writes happens before any other operation,
+> +	 * this function uses writel() instread of writel_relaxed()
+> +	 */
+> +	writel(data, catalog->io.p1.base + offset);
 > +}
 > +
->  void msm_dp_catalog_ctrl_phy_reset(struct msm_dp_catalog *msm_dp_catalog)
->  {
->  	struct msm_dp_catalog_private *catalog = container_of(msm_dp_catalog,
-> diff --git a/drivers/gpu/drm/msm/dp/dp_catalog.h b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> index 560016e2f929d4b92d6ea764d81a099c09c0e668..323858c587f85996d296156c7b8b201cdb7b7eb4 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_catalog.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_catalog.h
-> @@ -28,6 +28,9 @@
->  #define DP_INTR_FRAME_END		BIT(6)
->  #define DP_INTR_CRC_UPDATED		BIT(9)
->  
-> +#define DP_INTR_DP0_VCPF_SENT		BIT(0)
-> +#define DP_INTR_DP1_VCPF_SENT		BIT(3)
-> +
->  #define DP_HW_VERSION_1_0	0x10000000
->  #define DP_HW_VERSION_1_2	0x10020000
->  
-> @@ -103,6 +106,7 @@ u32 msm_dp_catalog_link_is_connected(struct msm_dp_catalog *msm_dp_catalog);
->  u32 msm_dp_catalog_hpd_get_intr_status(struct msm_dp_catalog *msm_dp_catalog);
->  void msm_dp_catalog_ctrl_phy_reset(struct msm_dp_catalog *msm_dp_catalog);
->  int msm_dp_catalog_ctrl_get_interrupt(struct msm_dp_catalog *msm_dp_catalog);
-> +int msm_dp_catalog_ctrl_get_interrupt_5(struct msm_dp_catalog *msm_dp_catalog);
->  u32 msm_dp_catalog_ctrl_read_psr_interrupt_status(struct msm_dp_catalog *msm_dp_catalog);
-
-I'd prefer some uniformity here. read_psr_interrupt_status() returns
-REG_DP_INTR_STATUS4, get_interrupt() returns REG_DP_INTR_STATUS2 value,
-Now you are adding get_interrupt_5(). Could you please make that similar
-and logical?
-
->  void msm_dp_catalog_ctrl_update_transfer_unit(struct msm_dp_catalog *msm_dp_catalog,
->  				u32 msm_dp_tu, u32 valid_boundary,
-> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.c b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> index 14562def1e70b769434243d1ce72661a7b4d4c6b..2288c379283c721a01c81302f8d307d0b3c76527 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.c
-> @@ -27,6 +27,11 @@
->  
->  #define DP_CTRL_INTR_READY_FOR_VIDEO     BIT(0)
->  #define DP_CTRL_INTR_IDLE_PATTERN_SENT  BIT(3)
-> +#define DP_CTRL_INTR_DP0_VCPF_SENT       BIT(0)
-> +#define DP_CTRL_INTR_DP1_VCPF_SENT       BIT(3)
-> +
-> +#define MST_DP0_PUSH_VCPF		BIT(12)
-> +#define MST_DP1_PUSH_VCPF		BIT(14)
->  
->  #define MR_LINK_TRAINING1  0x8
->  #define MR_LINK_SYMBOL_ERM 0x80
-> @@ -144,6 +149,34 @@ void msm_dp_ctrl_push_idle(struct msm_dp_ctrl *msm_dp_ctrl)
->  	drm_dbg_dp(ctrl->drm_dev, "mainlink off\n");
->  }
->  
-> +void msm_dp_ctrl_push_vcpf(struct msm_dp_ctrl *msm_dp_ctrl, struct msm_dp_panel *msm_dp_panel)
+> +static inline u32 msm_dp_read_p1(struct msm_dp_catalog_private *catalog,
+> +				 u32 offset)
 > +{
-> +	u32 state = 0x0;
-> +	struct msm_dp_ctrl_private *ctrl;
-> +
-> +	ctrl = container_of(msm_dp_ctrl, struct msm_dp_ctrl_private, msm_dp_ctrl);
-> +
-> +	if (msm_dp_panel->stream_id >= DP_STREAM_MAX) {
-> +		DRM_ERROR("invalid input\n");
-> +		return;
-> +	}
-> +
-> +	if (msm_dp_panel->stream_id == DP_STREAM_0)
-> +		state |= MST_DP0_PUSH_VCPF;
-> +	else
-> +		state |= MST_DP1_PUSH_VCPF;
-> +
-> +	reinit_completion(&ctrl->idle_comp);
-> +
-> +	msm_dp_catalog_ctrl_state_ctrl(ctrl->catalog, state);
-> +
-> +	if (!wait_for_completion_timeout(&ctrl->idle_comp,
-> +					 IDLE_PATTERN_COMPLETION_TIMEOUT_JIFFIES))
-> +		pr_warn("PUSH_VCPF pattern timedout\n");
-> +
-> +	drm_dbg_dp(ctrl->drm_dev, "mainlink off\n");
-
-??
-
-The comment seems misplaced or wrong to me. The msm_dp_ctrl_push_vcpf()
-doesn't turn link off.
-
+> +	/*
+> +	 * To make sure interface reg writes happens before any other operation,
+> +	 * this function uses writel() instread of writel_relaxed()
+> +	 */
+> +	return readl_relaxed(catalog->io.p1.base + offset);
 > +}
+
+After looking at the actual code, please implement
+msm_dp_read_pn(stream_id)  / msm_dp_write_pn(stream_id)
+
 > +
->  static void msm_dp_ctrl_config_ctrl(struct msm_dp_ctrl_private *ctrl,
->  				    struct msm_dp_panel *msm_dp_panel)
+>  static inline u32 msm_dp_read_link(struct msm_dp_catalog_private *catalog, u32 offset)
 >  {
-> @@ -2332,6 +2365,13 @@ irqreturn_t msm_dp_ctrl_isr(struct msm_dp_ctrl *msm_dp_ctrl)
->  		ret = IRQ_HANDLED;
->  	}
->  
-> +	isr = msm_dp_catalog_ctrl_get_interrupt_5(ctrl->catalog);
-> +	if (isr & (DP_INTR_DP0_VCPF_SENT | DP_INTR_DP1_VCPF_SENT)) {
-> +		drm_dbg_dp(ctrl->drm_dev, "vcpf sent\n");
-> +		complete(&ctrl->idle_comp);
-> +		ret = IRQ_HANDLED;
-> +	}
-> +
->  	return ret;
->  }
->  
-> diff --git a/drivers/gpu/drm/msm/dp/dp_ctrl.h b/drivers/gpu/drm/msm/dp/dp_ctrl.h
-> index b126651da24b3abdaf540268758b37dca9fe1291..9ad7022d6217572395d69294c3cc4d4dbaddf0ac 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_ctrl.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_ctrl.h
-> @@ -52,5 +52,6 @@ void msm_dp_ctrl_mst_stream_channel_slot_setup(struct msm_dp_ctrl *msm_dp_ctrl,
->  void msm_dp_ctrl_set_mst_channel_info(struct msm_dp_ctrl *msm_dp_ctrl,
->  				      enum msm_dp_stream_id strm,
->  				      u32 start_slot, u32 tot_slots);
-> +void msm_dp_ctrl_push_vcpf(struct msm_dp_ctrl *dp_ctrl, struct msm_dp_panel *msm_dp_panel);
->  
->  #endif /* _DP_CTRL_H_ */
-> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
-> index 2a4a79317153817cb24537ea95fad07c9bc20715..1dfc82211c50bb4ed239f9730b91c33c4897c78f 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_display.c
-> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
-> @@ -1646,7 +1646,10 @@ void msm_dp_display_atomic_disable(struct msm_dp *dp)
->  
->  	msm_dp_display = container_of(dp, struct msm_dp_display_private, msm_dp_display);
->  
-> -	msm_dp_ctrl_push_idle(msm_dp_display->ctrl);
-> +	if (msm_dp_display->max_stream > DEFAULT_STREAM_COUNT)
-
-Same comment regarding default vs SST
-
-> +		msm_dp_ctrl_push_vcpf(msm_dp_display->ctrl, msm_dp_display->panel);
-> +	else
-> +		msm_dp_ctrl_push_idle(msm_dp_display->ctrl);
->  
->  	if (msm_dp_display->max_stream > DEFAULT_STREAM_COUNT) {
->  		msm_dp_ctrl_mst_stream_channel_slot_setup(msm_dp_display->ctrl,
-> diff --git a/drivers/gpu/drm/msm/dp/dp_reg.h b/drivers/gpu/drm/msm/dp/dp_reg.h
-> index 8bc2a431462fc1fb45b1fe8e43a0a0ec7f75e5b1..c7532217b369c6235b2fe5fe9c86642d5c2712cb 100644
-> --- a/drivers/gpu/drm/msm/dp/dp_reg.h
-> +++ b/drivers/gpu/drm/msm/dp/dp_reg.h
-> @@ -24,8 +24,9 @@
->  #define REG_DP_INTR_STATUS			(0x00000020)
->  #define REG_DP_INTR_STATUS2			(0x00000024)
->  #define REG_DP_INTR_STATUS3			(0x00000028)
-> -
->  #define REG_DP_INTR_STATUS4			(0x0000002C)
-> +#define REG_DP_INTR_STATUS5			(0x00000034)
-> +
->  #define PSR_UPDATE_INT				(0x00000001)
->  #define PSR_CAPTURE_INT				(0x00000004)
->  #define PSR_EXIT_INT				(0x00000010)
-> 
-> -- 
-> 2.34.1
-> 
+>  	return readl_relaxed(catalog->io.link.base + offset);
 
 -- 
 With best wishes
