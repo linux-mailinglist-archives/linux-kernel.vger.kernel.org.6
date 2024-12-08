@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-436511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 872A99E86EE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:04:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAFFC9E86ED
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:04:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29CF81885B0B
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:04:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35D1A281470
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F386E1922C0;
-	Sun,  8 Dec 2024 17:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 475DB1990BD;
+	Sun,  8 Dec 2024 17:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7L43cy7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VRzEtejj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5728C191F8E;
-	Sun,  8 Dec 2024 17:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB3E6198E76
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:03:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677416; cv=none; b=HLEOtIXHpzy6S9zwUoGdAf6sJHA8mtk6pCvr99qx+uw/2tK17Mtz6QTqargUQ7VLivEPI47emoU1K/gf5DF4w0MAd35iFvOiCP4DlM8Yaug2fhgYvKnwwiCCV6VVZyS10ZjBvUODWGgdo5EYZ2nXYO1cX5Ujrbq4+7KRnc474tI=
+	t=1733677418; cv=none; b=pPqWtDSYI8sEVTWYbOdRnjSvk8eQKrjWgCdujfYGmJX2i5jGDE17xz0/mCVE8QtFli21+E9ts+lTpROKUCtwb24fKOxGwcl4eCeaUsN/dKKeVpF2EMdrX/RFeo8OCD1+7KyfvEYemZjGFvc1eTbw9wYOuuk8MK0W3FX09sN5TXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677416; c=relaxed/simple;
-	bh=OjcAvwB2AK9aiYDMht3s2YvA/tWmdDIQS+AqF6PppMk=;
+	s=arc-20240116; t=1733677418; c=relaxed/simple;
+	bh=wZtQx4LbWSSY/m3QW/D7okTuQMfDvyrzXVuuIlkX6kQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=I69ST4oDn2cxbm7J3Do9DCBVAsNWfgehbvQBgXbaVwMcKrIi7JaCsWFnpqBrx1zj9GWWznBnu8+oATixDqBeWPOI7SQBNeJqgRVnrrtb+modXfnm07rAivqxaVTN1b823+rDVIcRbnA3w4tYhxS37n2osQJxgZEmToRiaB7Oyd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7L43cy7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4247CC4CEDD;
-	Sun,  8 Dec 2024 17:03:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=rLmLDibN+rC+Y6IM+iCkEIIiazKNTDcykRHMP2HmZaqiTZIl+0nyhnMl3dXVzv8RX/O6YGjEbAYeegCK9nKwOmc+sRN45lMCsVHR1CfNS7GupoR6EhZ1kWwQZPCbTIv6WGVFfmZkZULCkdHSRGPRdGD+gk/ehz1vGb/FCl9kuBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VRzEtejj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3809C4CED2;
+	Sun,  8 Dec 2024 17:03:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677416;
-	bh=OjcAvwB2AK9aiYDMht3s2YvA/tWmdDIQS+AqF6PppMk=;
+	s=k20201202; t=1733677418;
+	bh=wZtQx4LbWSSY/m3QW/D7okTuQMfDvyrzXVuuIlkX6kQ=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=D7L43cy7tkH0KdAvN/EPahuuY5iAJ04EP85dKfeMN/DrSxJYzSy42DI8XMMwI+vOu
-	 8j01hnxuCeJH9KxOQiIkCmKTxyKd5zsqj5M0Dj2FCRbCRPdad9EfZjNPhmjv6hBXCi
-	 yntWkfMrByjJO/O7+ovF1L855z5fk8PXsML6CLzpVFPlWvjSWoicTRrqZWrL3t9oLA
-	 kIjGlJ2PsZfVCnUB87CbNkbEdS9wWf034+QcWElpOwqGbfibbW5zv48jBLS39Ah4aC
-	 yvzrxSXsOGiJ/ICdij94RXFWetBy+BTIePWSpJM1wnMRkjC/xaRBCHZB80fhuqtdBC
-	 wATiMitUlCzPQ==
+	b=VRzEtejjJbPuAp3DzWKUycxKEnDUvtHOiWF11H6Hnbuy7JLDq3l1iONkEpirH+4l+
+	 ozzK1mxXBwz77NTxbvhbFLE+AtdDrKW2rtuLyW10tm7tlHP651JOUQeydy4Ulj1XUN
+	 w2thzoclFYyZYFDyTQ91HAYqzGpJfX4zzhMHiApFwtUUefWWJdenyf3gTPGjwNz3Lh
+	 oQV6G2r1WqaFLGs3caQjw8Pq3yc5zVZQxhJiVx/NyLu7uoQO+hf/L+faQDTjX3Chnn
+	 pf9rsG80cou41mbwlG5crZW3n56fYMA1iQObiJSTJ3jaXfhgcn61EaF3Y8rSwM0K9E
+	 dVwdyd5RfLvTQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: kishon@kernel.org, krzysztof.kozlowski@linaro.org, 
- alim.akhtar@samsung.com, Peter Griffin <peter.griffin@linaro.org>
-Cc: tudor.ambarus@linaro.org, andre.draszik@linaro.org, 
- kernel-team@android.com, willmcvicker@google.com, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20241029192107.2344279-1-peter.griffin@linaro.org>
-References: <20241029192107.2344279-1-peter.griffin@linaro.org>
-Subject: Re: [PATCH] phy: samsung-ufs: switch back to
- syscon_regmap_lookup_by_phandle()
-Message-Id: <173367741186.1042266.15067476399278032405.b4-ty@kernel.org>
-Date: Sun, 08 Dec 2024 22:33:31 +0530
+To: linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Kishon Vijay Abraham I <kishon@kernel.org>
+In-Reply-To: <20241031104401.2454179-1-andriy.shevchenko@linux.intel.com>
+References: <20241031104401.2454179-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/1] phy: HiSilicon: Don't use "proxy" headers
+Message-Id: <173367741643.1042266.13809719892889387610.b4-ty@kernel.org>
+Date: Sun, 08 Dec 2024 22:33:36 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,20 +60,16 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Tue, 29 Oct 2024 19:21:07 +0000, Peter Griffin wrote:
-> Now exynos-pmu can register its custom regmap for gs101 via
-> of_syscon_register_regmap() we can switch back to the standard
-> syscon_regmap_lookup_by_phandle() api for obtaining the regmap.
-> 
-> Additionally add a Kconfig dependency for MFD_SYSCON.
+On Thu, 31 Oct 2024 12:44:01 +0200, Andy Shevchenko wrote:
+> Update header inclusions to follow IWYU (Include What You Use)
+> principle.
 > 
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] phy: samsung-ufs: switch back to syscon_regmap_lookup_by_phandle()
-      commit: 0d9fff6c57fee5cccba414a0c40d75812121bdd8
+[1/1] phy: HiSilicon: Don't use "proxy" headers
+      commit: 80738c3f1e1b7bd664481d73d64e42e139c7002d
 
 Best regards,
 -- 
