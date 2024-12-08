@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-436456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 016B69E8613
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:53:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218FC9E8616
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:54:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E450D1885393
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:53:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37FC018854FB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B51A17085C;
-	Sun,  8 Dec 2024 15:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD741175D47;
+	Sun,  8 Dec 2024 15:52:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="HuLz2byx"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="x0Wk2VkA"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CC121607AC
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D93D16DEBB
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:52:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733673171; cv=none; b=l4FXJb5J1zCbua+71V/rDzCxRP7VrlkT4vldsgYRPSpOo/CLiVN3sWthl224dh1tpMoSCASNvGAezFc7QOFbiSW/oQIPO5j7P+qk7zcsDjCMqZxaLgg0WpF5nHM0vQtbSwOHBvYOY0CMm6wn1X19c0suwsRvKUTf+x0YBY/X+xU=
+	t=1733673173; cv=none; b=uhdfR/i9MK/sdsX6yMZyEA+ZMDY3z9FFrN1jmlWgs6YagKhcJEOnbgZRjIJHFWlRcyfdjLi/sUp3OicjE0dumsL2O/sbctu+JV3Yo9aHslOYVSX35i9BK+b2UfX1o2yK49j3kONQ4PMmnBfIXYtEc3wY+L07PqYxTrLARul7bzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733673171; c=relaxed/simple;
-	bh=W3XAcV3Mjj3KVk9T8n9IytlKibEylzK1ulVMw68GUA4=;
+	s=arc-20240116; t=1733673173; c=relaxed/simple;
+	bh=HyyWUkVImKTbnfUbDT8H94jFhoM3eDYkpcrXi4gTshE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=W7D6crHftrXbgERbBfqBCqQCAzISBMKGkH7IegZZO0VtoJ4nKWBcrneaAIg7prZOH1o/DCgfvz0b9/W9ER252LCndddkhQmBUEAhdJbTRlSXF9b3g6ejZHja/eheyWLIR51SI0qzyJLgAuMwlZOf3BxiG9RZhNzSNiUWdUq4OAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=HuLz2byx; arc=none smtp.client-ip=209.85.167.43
+	 MIME-Version; b=Z5FqyDjrcFYTC1D1pVC07scsGvlz45JkRdLLrdhYFWPqxV2o/4siJoZCR5dE6h5SXvfpBnY1ShIbfaxG1H4d8KxYTYQ3f2K/xy1pFUbfGakEqHH3FshE4LR6wKZsa8z+v3aERHakZYD45Q9NDwvopZBzZPIijstCK4xxRirybKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=x0Wk2VkA; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-53dd59a2bc1so3384932e87.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 07:52:49 -0800 (PST)
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5401fb9fa03so78324e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 07:52:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733673168; x=1734277968; darn=vger.kernel.org;
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733673169; x=1734277969; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vg2upxs4mtRpSPhYhiU3jXij7s08m89bnWpedFCJNHI=;
-        b=HuLz2byxSDwXg7Ngw6/TGXKO3ZQGrdWYyTTAfKt814qaQ59AVddF5sjAJJ/ibUKjqU
-         8xa4WrlIMNb1Ce/G6aoZwDFmWJeFU30rmDyaFyR8B009rtLoiCdnYe1tkxtocCbmS5WI
-         e6NS/PCRkBAfRvFBAANObn+4Lp/Hvkt0+VHvxuAFMB/fUKV9RICYpaGPCttlkXhslRkv
-         zkWL97p2900mVTl9bsNCSx1d40OJccRZqFinJfXqCYRFHeUY4JzWi9FUQDuNSiG+JjXt
-         eTsyXnc0GDcCk2F3cKcD2uv8+75sL5CbGcUgmSZF061zV6cJhMQVWt6225xLfjpwfZhQ
-         7SPQ==
+        bh=gJl98tLA1KqA94ObFzxMBXTp9IXq9js5q87hBKbnvrg=;
+        b=x0Wk2VkAF0goOOK9oA5ZQyOFU7541kKbRDUhCxBiBiP13EQpMeUSKSrSqThZcm7wFG
+         BWCNbrThqdrJDPbgzoBc9XjN9x7/eh2pNT/HErJPJNx6yoLK5EnADw/7DozfAyWyNPvE
+         h8/3n5yfZ2TYGY2rVOnVDzttFCE8SYVwib1Kirq+v2558bEIRb0SEc43PKJNSjvLi8AJ
+         tG8SCmRhCdSw0YgX9/0wII4vH9fCU6CAoHNQo3qvAby1iZiV+RMvFbhdq8FPnNicYaDw
+         DsGrcwjOxml7PyNKBnJlLCxLf2FbuttzNP+gEB5Ix2zZUGdwaJeOwDHzDBss6BwuUDHT
+         i7Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733673168; x=1734277968;
+        d=1e100.net; s=20230601; t=1733673169; x=1734277969;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Vg2upxs4mtRpSPhYhiU3jXij7s08m89bnWpedFCJNHI=;
-        b=taOaQqN1aWyP7PCiU9xh9wrjY1/kkFVL8UABNqWIAtsnWgOD7mzxkGRydk53yft9jK
-         jJu2YFWnsx6bS4XDgbyeLk55v0o9X/GteZsurS5O1NkJkmUFxZOulDgoEjYMtKRAqf1w
-         YnJK+WZqbFsL3piPaEmtDDVy5mKPeqzWU1U995aT9b1XtxiAfLp2+7g2muVbbmZdfQRc
-         bLx8PHWp3UFw5M4EuhHWFwobIxjHxDtzsVI/TGGhSBg8mhKVM4NpbSV3qpkqFLB0Fk7P
-         psPewsX0douNEwoklxBqJhfHpg40FofbBFWDH9TVfAMYO3ty9xf/E5cQu94VXgb/VEw2
-         IVbA==
-X-Forwarded-Encrypted: i=1; AJvYcCXmrCsPrSaUG7hR55I8gMJbygsiCi2mcv+a93DNbmVX0TJS3ytKAFWajuRHQDKmYQqVbI1SOO7mZZOQTZQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn+zNVnM/g/WagrS3HvcA+YhTv9gn7b7hA3HBx0UrOBGln1Cd0
-	+i8oBNm+cqifcam5gURElvovvYDdHQNHBJnqjp/XeZFbRhKUbpO5xCdDvi4Zr4s=
-X-Gm-Gg: ASbGncvLsJJPHOpxCyazKyxRj/216fScrGXi0Rf595Oym4Bs7u48prh9cBuLNOAJ9gC
-	IYTF/2XpsE8EZApYregSvY6QPTTTNSR3nQ14lII6x0sbymg+C3SZLckIrZV0BdOzLzRQV/AYMbF
-	oQxYoW3PZlZ7nwI8tR49Kn7MDrrL/RMXdYE75Dlt5qnYPSxyO/pbODwgCyw205+onxcHF0dyTvG
-	AMxj/9TBHed2X5/XubwknXndR6GBfWXQzt4vqVUqEEH4YXxAgQWmBHPt6X73I+j
-X-Google-Smtp-Source: AGHT+IFqYHH7wOS5mwp8GRa50qvmO5IVTtwcTYIqm5zeEE/lumQiP2cK0ka70R8JpyU75hFUVIIn4g==
-X-Received: by 2002:a05:6512:138a:b0:53f:a8c0:22a7 with SMTP id 2adb3069b0e04-53fa8c023aemr1206069e87.38.1733673167473;
-        Sun, 08 Dec 2024 07:52:47 -0800 (PST)
+        bh=gJl98tLA1KqA94ObFzxMBXTp9IXq9js5q87hBKbnvrg=;
+        b=YSW+h/TSI9nlgQt1MHB6R8zTK7YuyQYXjbqm6Cdg7PFfWSzgIpZv7KJK7yZNnx1yHq
+         Tbil3cr/lmN1YrxS/jAHE4SoM4OFVmZSRI3qzg3RNKAwGAeuE61pTDitw+jrgdUEJeYY
+         niLKez7dh/lgz7oxRYepnN+c4+8bODpAEskIXu+/jPC/h0o+qeFAC4Ll65olGiOtHxjL
+         K56ky2oo1hC9xvh8sJiUZFf2HzyWwwWy5bEPsUCUWf/c8rkL3j0kF8q+gFM5d7iddQmh
+         wfztLO7j0f/6koLyH7w/NeFMBQFKTsO+3PotYfYWHrpH4q+n8iBu2jRwFZcWeYSd+7ed
+         8lqg==
+X-Forwarded-Encrypted: i=1; AJvYcCX13DA8Tg5ogfiP/wSLRFKFtU97Tfri/7ZNCmrQzo6wbhJjA5Z9eZQNdce+buUD76I37lPk3xfaSEhZJYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7eI7WTepYtNhsJ3vuHdJIEoMeHm5K62GewZ9abV6zd1QxiUAW
+	tOOjU/z8QXQv7Mf60oZaxpcZCkxZDc+7aC+aH511Wrlop3xn4jUEGLg3y4uWovU=
+X-Gm-Gg: ASbGncvIOKH0jCw2JyLHMt3HMmoJaBwt6wcy1h+G+krlrQwjg27Hg0iJvp6kBCUuKge
+	722lKNFYzD4+YQU+39Vpwak3QJO0ORpI/HAOv3yzYkMpZnIVLaYLCF4ElPicEvM38nWJeQ9Y7Us
+	0cHaTR1oqIuB2BBZQ2+fr3gzzv0YieKgl1bkX0gAkc/87UmUMWs9QdS5jHa/og3neiz7bdTTCYC
+	hWy+tRuyDMfEE2fzU8HR23zwXIoz9ftDcXog2UCytbkF7V284EroLKyFW61vpxd
+X-Google-Smtp-Source: AGHT+IH3PSTZTHavCvoa1I3kEsvmuL+iD0caZGd6QozHV+KkfcwNGoYPhdqy84lNEnLmvIZv5Ekjcg==
+X-Received: by 2002:a05:6512:6d2:b0:53e:16eb:d845 with SMTP id 2adb3069b0e04-53e2b7328d9mr3358489e87.18.1733673169476;
+        Sun, 08 Dec 2024 07:52:49 -0800 (PST)
 Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3a1ce70bsm580882e87.66.2024.12.08.07.52.45
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3a1ce70bsm580882e87.66.2024.12.08.07.52.47
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 07:52:47 -0800 (PST)
+        Sun, 08 Dec 2024 07:52:49 -0800 (PST)
 From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
 	Andrew Lunn <andrew@lunn.ch>,
@@ -85,9 +85,9 @@ Cc: netdev@vger.kernel.org,
 	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
 	Dennis Ostermann <dennis.ostermann@renesas.com>,
 	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH net-next 3/4] net: renesas: rswitch: use generic MPSM operation for mdio C45
-Date: Sun,  8 Dec 2024 20:52:35 +0500
-Message-Id: <20241208155236.108582-4-nikita.yoush@cogentembedded.com>
+Subject: [PATCH net-next 4/4] net: renesas: rswitch: add mdio C22 support
+Date: Sun,  8 Dec 2024 20:52:36 +0500
+Message-Id: <20241208155236.108582-5-nikita.yoush@cogentembedded.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241208155236.108582-1-nikita.yoush@cogentembedded.com>
 References: <20241208155236.108582-1-nikita.yoush@cogentembedded.com>
@@ -99,135 +99,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce rswitch_etha_mpsm_op() that accepts values for MPSM register
-fields and executes the transaction.
+The generic MPSM operation added by the previous patch can be used both
+for C45 and C22.
 
-This avoids some code duptication, and can be used both for C45 and C22.
-
-Convert C45 read and write operations to use that.
+Add handlers for C22 operations.
 
 Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 ---
- drivers/net/ethernet/renesas/rswitch.c | 51 +++++++++++++++-----------
- drivers/net/ethernet/renesas/rswitch.h | 17 ++++++---
- 2 files changed, 40 insertions(+), 28 deletions(-)
+ drivers/net/ethernet/renesas/rswitch.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
 diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index 120d56754692..8dc5ddfee01d 100644
+index 8dc5ddfee01d..444e7576b31c 100644
 --- a/drivers/net/ethernet/renesas/rswitch.c
 +++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -1167,36 +1167,29 @@ static int rswitch_etha_hw_init(struct rswitch_etha *etha, const u8 *mac)
- 	return rswitch_etha_change_mode(etha, EAMC_OPC_OPERATION);
+@@ -1225,6 +1225,23 @@ static int rswitch_etha_mii_write_c45(struct mii_bus *bus, int addr, int devad,
+ 				    MPSM_POP_WRITE, val);
  }
  
--static int rswitch_etha_set_access(struct rswitch_etha *etha, bool read,
--				   int phyad, int devad, int regad, int data)
-+static int rswitch_etha_mpsm_op(struct rswitch_etha *etha, bool read,
-+				unsigned int mmf, unsigned int pda,
-+				unsigned int pra, unsigned int pop,
-+				unsigned int prd)
- {
--	int pop = read ? MDIO_READ_C45 : MDIO_WRITE_C45;
- 	u32 val;
- 	int ret;
- 
--	if (devad == 0xffffffff)
--		return -ENODEV;
--
--	val = MPSM_PSME | MPSM_MFF_C45;
--	iowrite32((regad << 16) | (devad << 8) | (phyad << 3) | val, etha->addr + MPSM);
-+	val = MPSM_PSME |
-+	      FIELD_PREP(MPSM_MFF, mmf) |
-+	      FIELD_PREP(MPSM_PDA, pda) |
-+	      FIELD_PREP(MPSM_PRA, pra) |
-+	      FIELD_PREP(MPSM_POP, pop) |
-+	      FIELD_PREP(MPSM_PRD, prd);
-+	iowrite32(val, etha->addr + MPSM);
- 
- 	ret = rswitch_reg_wait(etha->addr, MPSM, MPSM_PSME, 0);
- 	if (ret)
- 		return ret;
- 
- 	if (read) {
--		writel((pop << 13) | (devad << 8) | (phyad << 3) | val, etha->addr + MPSM);
--
--		ret = rswitch_reg_wait(etha->addr, MPSM, MPSM_PSME, 0);
--		if (ret)
--			return ret;
--
--		ret = (ioread32(etha->addr + MPSM) & MPSM_PRD_MASK) >> 16;
--	} else {
--		iowrite32((data << 16) | (pop << 13) | (devad << 8) | (phyad << 3) | val,
--			  etha->addr + MPSM);
--
--		ret = rswitch_reg_wait(etha->addr, MPSM, MPSM_PSME, 0);
-+		val = ioread32(etha->addr + MPSM);
-+		ret = FIELD_GET(MPSM_PRD, val);
- 	}
- 
- 	return ret;
-@@ -1206,16 +1199,30 @@ static int rswitch_etha_mii_read_c45(struct mii_bus *bus, int addr, int devad,
- 				     int regad)
- {
- 	struct rswitch_etha *etha = bus->priv;
-+	int ret;
- 
--	return rswitch_etha_set_access(etha, true, addr, devad, regad, 0);
-+	ret = rswitch_etha_mpsm_op(etha, false, MPSM_MMF_C45, addr, devad,
-+				   MPSM_POP_ADDRESS, regad);
-+	if (ret)
-+		return ret;
++static int rswitch_etha_mii_read_c22(struct mii_bus *bus, int phyad, int regad)
++{
++	struct rswitch_etha *etha = bus->priv;
 +
-+	return rswitch_etha_mpsm_op(etha, true, MPSM_MMF_C45, addr, devad,
-+				    MPSM_POP_READ_C45, 0);
- }
- 
- static int rswitch_etha_mii_write_c45(struct mii_bus *bus, int addr, int devad,
- 				      int regad, u16 val)
- {
- 	struct rswitch_etha *etha = bus->priv;
-+	int ret;
++	return rswitch_etha_mpsm_op(etha, true, MPSM_MMF_C22, phyad, regad,
++				    MPSM_POP_READ_C22, 0);
++}
 +
-+	ret = rswitch_etha_mpsm_op(etha, false, MPSM_MMF_C45, addr, devad,
-+				   MPSM_POP_ADDRESS, regad);
-+	if (ret)
-+		return ret;
- 
--	return rswitch_etha_set_access(etha, false, addr, devad, regad, val);
-+	return rswitch_etha_mpsm_op(etha, false, MPSM_MMF_C45, addr, devad,
++static int rswitch_etha_mii_write_c22(struct mii_bus *bus, int phyad,
++				      int regad, u16 val)
++{
++	struct rswitch_etha *etha = bus->priv;
++
++	return rswitch_etha_mpsm_op(etha, false, MPSM_MMF_C22, phyad, regad,
 +				    MPSM_POP_WRITE, val);
- }
- 
++}
++
  /* Call of_node_put(port) after done */
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 303883369b94..9ac55b4f5b14 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -732,13 +732,18 @@ enum rswitch_etha_mode {
- #define MPIC_LSC_1G		(2 << MPIC_LSC_SHIFT)
- #define MPIC_LSC_2_5G		(3 << MPIC_LSC_SHIFT)
+ static struct device_node *rswitch_get_port_node(struct rswitch_device *rdev)
+ {
+@@ -1307,6 +1324,8 @@ static int rswitch_mii_register(struct rswitch_device *rdev)
+ 	mii_bus->priv = rdev->etha;
+ 	mii_bus->read_c45 = rswitch_etha_mii_read_c45;
+ 	mii_bus->write_c45 = rswitch_etha_mii_write_c45;
++	mii_bus->read = rswitch_etha_mii_read_c22;
++	mii_bus->write = rswitch_etha_mii_write_c22;
+ 	mii_bus->parent = &rdev->priv->pdev->dev;
  
--#define MDIO_READ_C45		0x03
--#define MDIO_WRITE_C45		0x01
--
- #define MPSM_PSME		BIT(0)
--#define MPSM_MFF_C45		BIT(2)
--#define MPSM_PRD_SHIFT		16
--#define MPSM_PRD_MASK		GENMASK(31, MPSM_PRD_SHIFT)
-+#define MPSM_MFF		BIT(2)
-+#define MPSM_MMF_C22		0
-+#define MPSM_MMF_C45		1
-+#define MPSM_PDA		GENMASK(7, 3)
-+#define MPSM_PRA		GENMASK(12, 8)
-+#define MPSM_POP		GENMASK(14, 13)
-+#define MPSM_POP_ADDRESS	0
-+#define MPSM_POP_WRITE		1
-+#define MPSM_POP_READ_C22	2
-+#define MPSM_POP_READ_C45	3
-+#define MPSM_PRD		GENMASK(31, 16)
- 
- /* Completion flags */
- #define MMIS1_PAACS             BIT(2) /* Address */
+ 	mdio_np = of_get_child_by_name(rdev->np_port, "mdio");
 -- 
 2.39.5
 
