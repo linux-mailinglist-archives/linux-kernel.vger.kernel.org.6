@@ -1,302 +1,350 @@
-Return-Path: <linux-kernel+bounces-436252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778B89E8347
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:04:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51E10165641
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:04:13 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FCB171A7;
-	Sun,  8 Dec 2024 03:04:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mFrnc8K8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBF499E8346
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:01:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAF1956446
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 03:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733627050; cv=none; b=gQgdazeysKCEFu6w1mROwMnSmYaCD81G1VD695KprPp7v0mOmnl+fg7lshOjQXuMSToR81tG9oGCLuFqPtzGrj7jGhPh8wo2wmUtgAcC01pm4u3ymLFziC6wdDATarjbZl+vSrqrzZXzGOVPty+CihaIZGOzV0AyStaVyMQ/ne8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733627050; c=relaxed/simple;
-	bh=jxfRgSXLibC/js8OF5+rSs+sBV811ZlvoyNJeBDJuL8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=PQht4Ql776nHyQQyo4t+P1yvGJTUXBwuZzKOQ443P7nJN74j1NtBpneOuV/SmWn/0lxEkgczxq3vsNa7NMlkAY3KyJdL946F+uOYJuyRmN+CY41wo6ObWFtQMFyccXDRPv/FEg5PDEwQWfy2OYoZ8uJ1I6XE4GzNjxzzHWEFkjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mFrnc8K8; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733627048; x=1765163048;
-  h=date:from:to:cc:subject:message-id;
-  bh=jxfRgSXLibC/js8OF5+rSs+sBV811ZlvoyNJeBDJuL8=;
-  b=mFrnc8K8q6X3mMGdcJQWrVBfbrS2yJGp8zdHVLMJJGA83YQm17xWn/YI
-   wUA8qj588/ciECF3u81Z6ZW8CDHcpUzFXfbS3vVlDz4Z4VQq7sj8hoHEY
-   FxwZckob5owlEoRTuh03V7zalgyyhzkV4pJzPMDyElHPTl3YORuI0pQ76
-   0pbqRTYcEo8+GdiHFGDEEQDwY45+xiOtMU37ldS4zNuyn50BAR7FnaCX6
-   BuD6r4dQ4AG78LrMT0d5R7Vpew2TLofxnPyqvdnkUK942lMZQZcOBjENg
-   INTigwJJMI0qkzWwMFtlQ/ZwUJ/6DhpxJa50tnvAQKZwVa2NkJET8tchN
-   w==;
-X-CSE-ConnectionGUID: iHVydcChRXWvYBUP3fNd/g==
-X-CSE-MsgGUID: k7+bNKkoT2ehR04vgEqYgA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11279"; a="34093208"
-X-IronPort-AV: E=Sophos;i="6.12,216,1728975600"; 
-   d="scan'208";a="34093208"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 07 Dec 2024 19:04:08 -0800
-X-CSE-ConnectionGUID: 0Je2KJjPQY2n75QencD4gA==
-X-CSE-MsgGUID: dBUttoT4QdidI6IhI/s5yQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="99790953"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 07 Dec 2024 19:04:06 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tK7aV-00036P-1C;
-	Sun, 08 Dec 2024 03:04:03 +0000
-Date: Sun, 08 Dec 2024 11:00:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/urgent] BUILD SUCCESS
- b4d83c8323b0c4a899a996fed919cfe10720d289
-Message-ID: <202412081126.MGtxTWG9-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5B202281C69
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:01:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076E81E515;
+	Sun,  8 Dec 2024 03:01:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="iXfjNvk5"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11olkn2066.outbound.protection.outlook.com [40.92.19.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B7B2595;
+	Sun,  8 Dec 2024 03:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.19.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733626904; cv=fail; b=W0XsJXVa6RpUla78FnX2FsfcXpjdH9kZ1bAgo7ZzOBnx1+5Drw84nhQk4MfUH8+9eE2/H3I/p81uQ/q728l4/GqSrHBhuyif2n8sB0tMSLg7meA4rB5r1sPR3AzZejaqxe+QMAHTssmZZJP42GV8V6B3OlnsZlnLwWIyB9d3RTQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733626904; c=relaxed/simple;
+	bh=KrI0o++4qdoQ+k512gk8RxbpVJw1Ax1dqHiyqsMZCKI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Uq2susD+cOWHLOrxQD43rPg+fYbg4G2PMamf4v2bUWfosn5hepyNed/WCk6WReuC/TueDB/uDU3an1biezSsr7yle6oTJRy2fl4bbj+W7+cWh0G31XTdgNGAJIHTR7yxM5bNm+Z4s1u9ChEVEwBadQzalKPyKdusXxc2kDeou88=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=iXfjNvk5; arc=fail smtp.client-ip=40.92.19.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=MTbvmMItKIKRG73wDf2S1PDxlLTHQfuqp37AIdznOOLETsnwFyXQbhQHO0CzWBGn7qOgEyOpLCnX6XNOx8XBjfHtyiksD0RHQxy/2dfuB3lQfaUmHG/6pGELoL3JHQeKPDdK6rdkapVOBukGZ4f6b74pSVbpZ2c7BA20BfpLK3AxTI4ZijQnCe9UFPzeE9ye0TCaBZs6uczqe9qnglWtSkqJTrHXWb0mDHnlDv5okE3FHQOOdiPn5K8UQbJteF0W9sd0DQmheLQIxHrrZDyOmwxlZOtukk+cPUwrAX9IfxC5RHvZe8TEU04ltbveBpO7y5X/yD2dH1fVnhTIh8lZSw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gMpB2zmwbtNHoCnj8KE12gin4kuY+riNAOeSYHAWEL0=;
+ b=tapMNmkfK1BLW7AQ/FK29Dwk8/4dBtk0l35M8OR6qwcuj5tFF1hiPPl6pGzI1sXy2l29bvcD6VGRomt1I0NYRK39LTJs9hLexis2UXi56wi59/IoRlrJJIH2gmke+DCzR2Zh0x89jyaSVuxyi1X8AgCLvFVu3ZHIEFgtSywBrRTz2dnbwwiWdR17llHRHxX4yBRimCVGUFt68KO1aL2dmvkQ5HV7S5nDGhKICxayMNPktTWLBj6wXTafy8TIAtoDlOBQQh6ysLA1VFJSnkJ8umLEtWrlJqcQXxqhBoCQ4fSwJBdTmQPz6ogFX/bSyGDPs5eMnzyQ4cuD43VO2T81zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gMpB2zmwbtNHoCnj8KE12gin4kuY+riNAOeSYHAWEL0=;
+ b=iXfjNvk57BHkazlowtJQn5VlKtGP2TW2NmrSiFQ4J0gP8d2awOj3ICxBKeVgzFtuH+USWH1KHYcN4SV0pPlWZ9ML62r66rKMNLRTaBxYPDRIqTeJFNSxbon/8OagrjjWTreis3opcy+kucgTUo4LoDlU51gvoLl9BfLxWhFnGUY9JMiTqJckJ/HbOtaHtOVaJSAtu/2o1YCwZzGr5yBVcEvJ3bojyYBUrwrEKHh9fI+jKK00R3uf3VdvTuAiIMjaJP2nO1KWzR0DTaNvRHXr0QEqL3HXPiPwTZ99inIQ1dP76UdLIVFNbXG2lwMNA+VL2xOT+zNpiMb9Ecyj+0qoWw==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by PH0PR02MB8485.namprd02.prod.outlook.com (2603:10b6:510:10e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Sun, 8 Dec
+ 2024 03:01:37 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%4]) with mapi id 15.20.8207.020; Sun, 8 Dec 2024
+ 03:01:37 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
+	<mingo@redhat.com>, "bp@alien8.de" <bp@alien8.de>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>, "x86@kernel.org"
+	<x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>, "arnd@arndb.de"
+	<arnd@arndb.de>, "jinankjain@linux.microsoft.com"
+	<jinankjain@linux.microsoft.com>, "muminulrussell@gmail.com"
+	<muminulrussell@gmail.com>, "skinsburskii@linux.microsoft.com"
+	<skinsburskii@linux.microsoft.com>, "mukeshrathor@microsoft.com"
+	<mukeshrathor@microsoft.com>
+Subject: RE: [PATCH 1/2] hyperv: Move hv_current_partition_id to arch-generic
+ code
+Thread-Topic: [PATCH 1/2] hyperv: Move hv_current_partition_id to arch-generic
+ code
+Thread-Index: AQHbSC1SlKeIbxTgOEeBI9kSVxnqxLLa+6tw
+Date: Sun, 8 Dec 2024 03:01:37 +0000
+Message-ID:
+ <SN6PR02MB4157E39FBEFB18EB9A695EECD4332@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1733523707-15954-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1733523707-15954-2-git-send-email-nunodasneves@linux.microsoft.com>
+In-Reply-To:
+ <1733523707-15954-2-git-send-email-nunodasneves@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH0PR02MB8485:EE_
+x-ms-office365-filtering-correlation-id: e9eebfb9-7abe-4c1a-11db-08dd1734a1ad
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|15080799006|8060799006|19110799003|8062599003|461199028|102099032|440099028|3412199025;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?UmKylziJvcpwPz7JFAn0K1uXqlPQeqb4ENlVxxM2JSHdk1XPuPgzjIo/SS3i?=
+ =?us-ascii?Q?nRnvpiBMoqYCuFz1+Z2PbdLDagxSpwsIUpPCoq7QQno34zRJ0XVZyleg2RTW?=
+ =?us-ascii?Q?+L2XKBro/MIRuKlYhrXG6wCzwZPZMNqPbQwf8OfN6vJDyOSEf5j00G/T3sDS?=
+ =?us-ascii?Q?iz1J0xzIHEI9rPTZsyTE6JQBWiw4poOcBDWnRo6C7TopJC5oaf8iJlGhCc6c?=
+ =?us-ascii?Q?Cdhz1nD7pXQ+hgjuqTYmuuuXoNRafN19RvAL0tulF6WYgBkUO/g+uUmbiqJD?=
+ =?us-ascii?Q?Ru6k9VH6miycaPk9F/LgMMP4hD0yFRviGB1wBUZKxB226LTaBAtBQA0Vmu0s?=
+ =?us-ascii?Q?ZwwGShzyzQzJNrSaWbMcun0DX2fRNI3insi6oVhSVikyPqqv3XSbb+jvvuPo?=
+ =?us-ascii?Q?Kjaq7vFxTZOlZFNk2tY2NTkdtu3ZTaUQi893TbzlJf10WpzmJF4kKogzeeUh?=
+ =?us-ascii?Q?TtopRmwLWNvb+/Bc3/xJZK4rI8GwjqYdhxPImizMM6zRV0Ncs0qOA/fLvYTr?=
+ =?us-ascii?Q?/qFbuPTNKB/cBhw4cl+eS4ZOe2KE6zKVGZU1mq4UmG48BIluOKhO5FW0nRie?=
+ =?us-ascii?Q?9RGi5VrW8rQo/8GnHg2So+jmzn40cZ3ZcGSjYc7+cyrcTkr5Q4CHTvKKQ1Ef?=
+ =?us-ascii?Q?TlVu2vOOLKOhh8M3unSM/poggnkURDNWm6apWHahI9MpmHW1YB/4sIIUdVbU?=
+ =?us-ascii?Q?cDJ/fDkhiIEBRfIV2fKex/yk4Tzw05dYWjY35C0qIZKQQPmdrpeqVkzoQNBm?=
+ =?us-ascii?Q?KMmDiaYlXXxRJcgxgiLjLVydXZ8cLozNOZQRZnc4rp+KYFpNjwJpJIHeXmqO?=
+ =?us-ascii?Q?neid7Lym1ZbPAUwc5kMAYsFuodUCHNQynVV/WaW0fOOITgxkM6Zo1X0Pl0gG?=
+ =?us-ascii?Q?+ZJqVwmUg8g14uDXmSbs0654fIG1I6Fz6Hsi1+tgQ7y+S/x39Pwk8fozitGi?=
+ =?us-ascii?Q?KI9BzqwKsJfojC7ecUOdk78012AWXVDmb1FLLcsIRcVLs6oOZOzW8CrldUSa?=
+ =?us-ascii?Q?NeG1v7ar5UG7vy+sa0HhOKSiyg=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?X+jOPJEFeyKFxQfdUsZlJXAsWCiT8wiq2kAdQ3DuuPv91IYwmTYw+ZKM9Mvl?=
+ =?us-ascii?Q?622bPj+aRxu5KsnaxYSDwOB6aj7+Gq8jJ1qMyBUMIU1MxPeJ9OhJPHO4BNX/?=
+ =?us-ascii?Q?efoW7T1pESS9U/6yYprFq0T/tm5wsQvVeXFvZTl7Jp+4phPIIDTHj8V4lOlP?=
+ =?us-ascii?Q?D82tyt3RCz4mIF9kvH39xBZSyxKqehL8KZQNHE3vsT6L1sz+OSkgpeJgevO1?=
+ =?us-ascii?Q?rcGONh3yjEPPdE4FiJvkfYkEKQreWMy9VdQZ8mErmTQaDmgxY6tcNKQZu2ia?=
+ =?us-ascii?Q?i3tYd4mMLbLk0aSpSOo39o+sh85E/DHSlRgnXbtL44vy+IuxOo0jjGR8Pd+l?=
+ =?us-ascii?Q?uXc+JSdbf3sFJZ1pa6fgmNRGZ3RMG4+eqBmX6p/PTUtYq7HYnXy70ApnsHiS?=
+ =?us-ascii?Q?/YMONNUPrygukdBDdaLfhmlOFT7u4ibI2hxVswp70JAYgJRPqyKjTPht47q1?=
+ =?us-ascii?Q?d0pxOBeNKgVjiQYtc3ZxPREmfU7LJ8kIbQfzaht0Ihv4v3N9F585xVvlZgDh?=
+ =?us-ascii?Q?4SbEJozw715VS6qe2xgq2sth5PeWL+2jdJT+HSx89ZKmEsF81ryJU1K5G/qi?=
+ =?us-ascii?Q?MwhMDdpSjpw6sh3Ssp2b/Rf7JbrA96bN7wJTUzu3e4gjTgCoORPzItgT5bM/?=
+ =?us-ascii?Q?/AkzrPEB5UcJ3DSvm0Bp2hSIwYkaQh5MPFDgyyLtmxSrO56EAUATo2nesZih?=
+ =?us-ascii?Q?6r9P9K+l7H2jWmNYwDbFZNBbSFK7Jguux7rGJ8gSWTwQXgIzzby3Ed/BgvXO?=
+ =?us-ascii?Q?CYkmGlXRefv+SxeU7Z04cVsgWpkLFus6uoipAKl+M9KB+dXYmggTiVvWUCCp?=
+ =?us-ascii?Q?bh3Zqhnh6PnAPIUMh5bXqnsbKg/Aw0mJLRyuWLBBJ2e8gEAqR9bBIfWoUC44?=
+ =?us-ascii?Q?xymhGJawZ+FtfPFYm3uQYVLgD0hztQk7Gp2GUydBy65jChBqAqZoyma5EMTF?=
+ =?us-ascii?Q?owehYlHXAD7SSEQyxvPzEC9HgQrdMLy10g3WyUiy2N2G6CDX9NQV/UGXi+oA?=
+ =?us-ascii?Q?wcZeSkacsd3lpI8PGpWoMILCDRcEhth68oxxpFaFzv/9QpZYU4tQIuoaztg7?=
+ =?us-ascii?Q?/0KFPQfIXdi4gqWHOP8mCbFZqONu0ZsbxRzxHCSYbjx3v8iLmSSvS+SkMtFM?=
+ =?us-ascii?Q?BEn41874t3ktr3EoUT2BUI8OmMTJiJWoGpyhFtp+7JiW/AeCWMUTUbnuV9Lc?=
+ =?us-ascii?Q?YFtfOgYY48m54XWy+xTtVDJGj0Hya14PHe9V4xOmEHqFb0BVovIfbKgq1hg?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: e9eebfb9-7abe-4c1a-11db-08dd1734a1ad
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 08 Dec 2024 03:01:37.4566
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR02MB8485
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/urgent
-branch HEAD: b4d83c8323b0c4a899a996fed919cfe10720d289  headers/cleanup.h: Remove the if_not_guard() facility
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, Decem=
+ber 6, 2024 2:22 PM
+>=20
+> Make hv_current_partition_id available in both x86_64 and arm64.
+> This feature isn't specific to x86_64 and will be needed by common
+> code.
+>=20
+> While at it, replace the BUG()s with WARN()s. Failing to get the id
+> need not crash the machine (although it is a very bad sign).
+>=20
+> Signed-off-by: Nuno Das Neves <nudasnev@microsoft.com>
+> ---
+>  arch/arm64/hyperv/mshyperv.c    |  3 +++
+>  arch/x86/hyperv/hv_init.c       | 25 +------------------------
+>  arch/x86/include/asm/mshyperv.h |  2 --
+>  drivers/hv/hv_common.c          | 23 +++++++++++++++++++++++
+>  include/asm-generic/mshyperv.h  |  2 ++
+>  5 files changed, 29 insertions(+), 26 deletions(-)
+>=20
+> diff --git a/arch/arm64/hyperv/mshyperv.c b/arch/arm64/hyperv/mshyperv.c
+> index b1a4de4eee29..5050e748d266 100644
+> --- a/arch/arm64/hyperv/mshyperv.c
+> +++ b/arch/arm64/hyperv/mshyperv.c
+> @@ -19,6 +19,9 @@
+>=20
+>  static bool hyperv_initialized;
+>=20
+> +u64 hv_current_partition_id =3D HV_PARTITION_ID_SELF;
+> +EXPORT_SYMBOL_GPL(hv_current_partition_id);
+> +
 
-elapsed time: 939m
+Instead of adding a definition of hv_current_partition_id on
+the arm64 side, couldn't the definition on the x86 side in
+hv_init.c be moved to hv_common.c (or maybe somewhere
+else that is specific to running in the root partition, per my
+comments in the cover letter), so there is only one definition
+shared by both architectures?
 
-configs tested: 210
-configs skipped: 13
+>  int hv_get_hypervisor_version(union hv_hypervisor_version_info *info)
+>  {
+>  	hv_get_vpreg_128(HV_REGISTER_HYPERVISOR_VERSION,
+> diff --git a/arch/x86/hyperv/hv_init.c b/arch/x86/hyperv/hv_init.c
+> index 95eada2994e1..950f5ccdb9d9 100644
+> --- a/arch/x86/hyperv/hv_init.c
+> +++ b/arch/x86/hyperv/hv_init.c
+> @@ -35,7 +35,7 @@
+>  #include <clocksource/hyperv_timer.h>
+>  #include <linux/highmem.h>
+>=20
+> -u64 hv_current_partition_id =3D ~0ull;
+> +u64 hv_current_partition_id =3D HV_PARTITION_ID_SELF;
+>  EXPORT_SYMBOL_GPL(hv_current_partition_id);
+>=20
+>  void *hv_hypercall_pg;
+> @@ -394,24 +394,6 @@ static void __init hv_stimer_setup_percpu_clockev(vo=
+id)
+>  		old_setup_percpu_clockev();
+>  }
+>=20
+> -static void __init hv_get_partition_id(void)
+> -{
+> -	struct hv_get_partition_id *output_page;
+> -	u64 status;
+> -	unsigned long flags;
+> -
+> -	local_irq_save(flags);
+> -	output_page =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> -	status =3D hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, output_page);
+> -	if (!hv_result_success(status)) {
+> -		/* No point in proceeding if this failed */
+> -		pr_err("Failed to get partition ID: %lld\n", status);
+> -		BUG();
+> -	}
+> -	hv_current_partition_id =3D output_page->partition_id;
+> -	local_irq_restore(flags);
+> -}
+> -
+>  #if IS_ENABLED(CONFIG_HYPERV_VTL_MODE)
+>  static u8 __init get_vtl(void)
+>  {
+> @@ -606,11 +588,6 @@ void __init hyperv_init(void)
+>=20
+>  	register_syscore_ops(&hv_syscore_ops);
+>=20
+> -	if (cpuid_ebx(HYPERV_CPUID_FEATURES) & HV_ACCESS_PARTITION_ID)
+> -		hv_get_partition_id();
+> -
+> -	BUG_ON(hv_root_partition && hv_current_partition_id =3D=3D ~0ull);
+> -
+>  #ifdef CONFIG_PCI_MSI
+>  	/*
+>  	 * If we're running as root, we want to create our own PCI MSI domain.
+> diff --git a/arch/x86/include/asm/mshyperv.h b/arch/x86/include/asm/mshyp=
+erv.h
+> index 5f0bc6a6d025..9eeca2a6d047 100644
+> --- a/arch/x86/include/asm/mshyperv.h
+> +++ b/arch/x86/include/asm/mshyperv.h
+> @@ -44,8 +44,6 @@ extern bool hyperv_paravisor_present;
+>=20
+>  extern void *hv_hypercall_pg;
+>=20
+> -extern u64 hv_current_partition_id;
+> -
+>  extern union hv_ghcb * __percpu *hv_ghcb_pg;
+>=20
+>  bool hv_isolation_type_snp(void);
+> diff --git a/drivers/hv/hv_common.c b/drivers/hv/hv_common.c
+> index 7a35c82976e0..819bcfd2b149 100644
+> --- a/drivers/hv/hv_common.c
+> +++ b/drivers/hv/hv_common.c
+> @@ -278,11 +278,34 @@ static void hv_kmsg_dump_register(void)
+>  	}
+>  }
+>=20
+> +static void __init hv_get_partition_id(void)
+> +{
+> +	struct hv_get_partition_id *output_page;
+> +	u64 status;
+> +	unsigned long flags;
+> +
+> +	local_irq_save(flags);
+> +	output_page =3D *this_cpu_ptr(hyperv_pcpu_output_arg);
+> +	status =3D hv_do_hypercall(HVCALL_GET_PARTITION_ID, NULL, output_page);
+> +	if (!hv_result_success(status)) {
+> +		local_irq_restore(flags);
+> +		WARN(true, "Failed to get partition ID: %lld\n", status);
+> +		return;
+> +	}
+> +	hv_current_partition_id =3D output_page->partition_id;
+> +	local_irq_restore(flags);
+> +}
+> +
+>  int __init hv_common_init(void)
+>  {
+>  	int i;
+>  	union hv_hypervisor_version_info version;
+>=20
+> +	if (ms_hyperv.priv_high & HV_ACCESS_PARTITION_ID)
+> +		hv_get_partition_id();
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+hv_get_partition_id() uses the hyperv_pcpu_output_arg, and at
+this point, hyperv_pcpu_output_arg isn't set. That setup
+is done later in hv_common_init().
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    clang-20
-alpha                            allyesconfig    gcc-14.2.0
-alpha                               defconfig    clang-20
-alpha                               defconfig    gcc-14.2.0
-arc                              allmodconfig    clang-18
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-14.2.0
-arc                              allyesconfig    clang-18
-arc                              allyesconfig    gcc-13.2.0
-arc                                 defconfig    gcc-14.2.0
-arc                            hsdk_defconfig    gcc-13.2.0
-arc                   randconfig-001-20241207    gcc-13.2.0
-arc                   randconfig-002-20241207    gcc-13.2.0
-arm                              allmodconfig    clang-18
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                               allnoconfig    gcc-14.2.0
-arm                              allyesconfig    clang-18
-arm                              allyesconfig    gcc-14.2.0
-arm                                 defconfig    gcc-14.2.0
-arm                          ep93xx_defconfig    clang-20
-arm                       multi_v4t_defconfig    clang-18
-arm                       multi_v4t_defconfig    clang-20
-arm                        multi_v5_defconfig    clang-18
-arm                        multi_v7_defconfig    gcc-14.2.0
-arm                            qcom_defconfig    clang-15
-arm                   randconfig-001-20241207    gcc-14.2.0
-arm                   randconfig-002-20241207    gcc-14.2.0
-arm                   randconfig-003-20241207    clang-19
-arm                   randconfig-004-20241207    clang-20
-arm                         socfpga_defconfig    gcc-14.2.0
-arm                       versatile_defconfig    clang-18
-arm                         vf610m4_defconfig    clang-17
-arm                         wpcm450_defconfig    clang-20
-arm64                            alldefconfig    clang-20
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                               defconfig    gcc-14.2.0
-arm64                 randconfig-001-20241207    gcc-14.2.0
-arm64                 randconfig-002-20241207    gcc-14.2.0
-arm64                 randconfig-003-20241207    clang-20
-arm64                 randconfig-004-20241207    clang-15
-csky                              allnoconfig    gcc-14.2.0
-csky                                defconfig    gcc-14.2.0
-csky                  randconfig-001-20241207    gcc-14.2.0
-csky                  randconfig-002-20241207    gcc-14.2.0
-hexagon                          allmodconfig    clang-20
-hexagon                           allnoconfig    clang-20
-hexagon                           allnoconfig    gcc-14.2.0
-hexagon                          allyesconfig    clang-18
-hexagon                          allyesconfig    clang-20
-hexagon                             defconfig    gcc-14.2.0
-hexagon               randconfig-001-20241207    clang-14
-hexagon               randconfig-002-20241207    clang-16
-i386                             allmodconfig    clang-19
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    clang-19
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    clang-19
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20241207    clang-19
-i386        buildonly-randconfig-002-20241207    clang-19
-i386        buildonly-randconfig-003-20241207    gcc-12
-i386        buildonly-randconfig-004-20241207    clang-19
-i386        buildonly-randconfig-005-20241207    clang-19
-i386        buildonly-randconfig-006-20241207    clang-19
-i386                                defconfig    clang-19
-loongarch                        allmodconfig    gcc-14.2.0
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch                           defconfig    gcc-14.2.0
-loongarch                 loongson3_defconfig    gcc-14.2.0
-loongarch             randconfig-001-20241207    gcc-14.2.0
-loongarch             randconfig-002-20241207    gcc-14.2.0
-m68k                             allmodconfig    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-m68k                             allyesconfig    gcc-14.2.0
-m68k                          atari_defconfig    clang-20
-m68k                                defconfig    gcc-14.2.0
-microblaze                       allmodconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-microblaze                       allyesconfig    gcc-14.2.0
-microblaze                          defconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-mips                          ath79_defconfig    gcc-14.2.0
-mips                        bcm47xx_defconfig    clang-20
-mips                      bmips_stb_defconfig    clang-18
-mips                            gpr_defconfig    clang-20
-mips                           ip22_defconfig    clang-15
-mips                           ip22_defconfig    clang-18
-mips                           ip28_defconfig    clang-18
-mips                           jazz_defconfig    clang-18
-mips                        maltaup_defconfig    clang-17
-mips                          rb532_defconfig    clang-17
-mips                        vocore2_defconfig    clang-15
-nios2                             allnoconfig    gcc-14.2.0
-nios2                               defconfig    gcc-14.2.0
-nios2                 randconfig-001-20241207    gcc-14.2.0
-nios2                 randconfig-002-20241207    gcc-14.2.0
-openrisc                          allnoconfig    clang-20
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-openrisc                            defconfig    gcc-12
-openrisc                            defconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    clang-20
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                              defconfig    gcc-12
-parisc                              defconfig    gcc-14.2.0
-parisc                randconfig-001-20241207    gcc-14.2.0
-parisc                randconfig-002-20241207    gcc-14.2.0
-parisc64                            defconfig    gcc-14.2.0
-powerpc                     akebono_defconfig    clang-17
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    clang-20
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc                          allyesconfig    gcc-14.2.0
-powerpc                      bamboo_defconfig    clang-20
-powerpc                 canyonlands_defconfig    clang-18
-powerpc                        cell_defconfig    gcc-14.2.0
-powerpc                      cm5200_defconfig    clang-20
-powerpc                       holly_defconfig    clang-20
-powerpc                      mgcoge_defconfig    clang-18
-powerpc                      mgcoge_defconfig    clang-20
-powerpc                 mpc8315_rdb_defconfig    clang-20
-powerpc                  mpc885_ads_defconfig    clang-20
-powerpc                    mvme5100_defconfig    clang-15
-powerpc                      pasemi_defconfig    clang-20
-powerpc               randconfig-001-20241207    gcc-14.2.0
-powerpc               randconfig-002-20241207    clang-20
-powerpc               randconfig-003-20241207    clang-15
-powerpc                     stx_gp3_defconfig    clang-20
-powerpc                     tqm8555_defconfig    clang-15
-powerpc64                        alldefconfig    clang-18
-powerpc64             randconfig-001-20241207    gcc-14.2.0
-powerpc64             randconfig-002-20241207    clang-19
-powerpc64             randconfig-003-20241207    clang-17
-riscv                            allmodconfig    clang-20
-riscv                            allmodconfig    gcc-14.2.0
-riscv                             allnoconfig    clang-20
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-20
-riscv                            allyesconfig    gcc-14.2.0
-riscv                               defconfig    clang-19
-riscv                               defconfig    clang-20
-riscv                               defconfig    gcc-12
-riscv                 randconfig-001-20241208    gcc-14.2.0
-riscv                 randconfig-002-20241208    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-20
-s390                             allyesconfig    gcc-14.2.0
-s390                                defconfig    clang-15
-s390                                defconfig    gcc-12
-s390                  randconfig-001-20241208    gcc-14.2.0
-s390                  randconfig-002-20241208    gcc-14.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                         ap325rxa_defconfig    clang-17
-sh                                  defconfig    gcc-12
-sh                                  defconfig    gcc-14.2.0
-sh                        edosk7760_defconfig    gcc-14.2.0
-sh                             espt_defconfig    clang-18
-sh                          r7780mp_defconfig    clang-15
-sh                    randconfig-001-20241208    gcc-14.2.0
-sh                    randconfig-002-20241208    gcc-14.2.0
-sh                          sdk7780_defconfig    clang-18
-sh                           se7712_defconfig    clang-20
-sh                           se7724_defconfig    gcc-14.2.0
-sh                   sh7724_generic_defconfig    gcc-14.2.0
-sparc                            alldefconfig    clang-18
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20241208    gcc-14.2.0
-sparc                 randconfig-002-20241208    gcc-14.2.0
-sparc64                          alldefconfig    gcc-14.2.0
-sparc64                             defconfig    gcc-12
-sparc64                             defconfig    gcc-14.2.0
-sparc64               randconfig-001-20241208    gcc-14.2.0
-sparc64               randconfig-002-20241208    gcc-14.2.0
-um                               allmodconfig    clang-20
-um                                allnoconfig    clang-18
-um                                allnoconfig    clang-20
-um                               allyesconfig    clang-20
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-20
-um                                  defconfig    gcc-12
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20241208    gcc-14.2.0
-um                    randconfig-002-20241208    gcc-14.2.0
-um                           x86_64_defconfig    clang-15
-um                           x86_64_defconfig    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20241207    clang-19
-x86_64      buildonly-randconfig-002-20241207    clang-19
-x86_64      buildonly-randconfig-003-20241207    gcc-11
-x86_64      buildonly-randconfig-004-20241207    clang-19
-x86_64      buildonly-randconfig-005-20241207    clang-19
-x86_64      buildonly-randconfig-006-20241207    gcc-12
-x86_64                              defconfig    clang-19
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                       common_defconfig    clang-20
-xtensa                generic_kc705_defconfig    clang-18
-xtensa                randconfig-001-20241208    gcc-14.2.0
-xtensa                randconfig-002-20241208    gcc-14.2.0
+> +
+> +	WARN_ON(hv_root_partition && hv_current_partition_id =3D=3D HV_PARTITIO=
+N_ID_SELF);
+> +
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Since the hypercall will fail cleanly if the calling VM doesn't
+have the HV_ACCESS_PARTITION_ID privilege, could the
+above be simplified to just this?
+
+	if (hv_root_partition)
+		hv_get_partition_id():
+
+A non-root partition VM doesn't need to get the partition ID, while a
+root partition should have the privilege. If the hypercall fails, there's
+already a WARN, so there's no value in doing another WARN. Also if
+the hypercall succeeds, it presumably returns a specific partitionID, not
+HV_PARTITION_ID_SELF, so we know we have what we want.
+
+There's already an "if (hv_root_partition)" statement for setting up
+the hyperv_pcpu_output_arg. The call to hv_get_partition_id() could
+go under that existing "if" *after* the hyperv_pcpu_output_arg is
+set. :-)
+
+Michael
+
+>  	/* Get information about the Hyper-V host version */
+>  	if (!hv_get_hypervisor_version(&version))
+>  		pr_info("Hyper-V: Host Build %d.%d.%d.%d-%d-%d\n",
+> diff --git a/include/asm-generic/mshyperv.h b/include/asm-generic/mshyper=
+v.h
+> index 8fe7aaab2599..8c4ff6e9aae7 100644
+> --- a/include/asm-generic/mshyperv.h
+> +++ b/include/asm-generic/mshyperv.h
+> @@ -60,6 +60,8 @@ struct ms_hyperv_info {
+>  extern struct ms_hyperv_info ms_hyperv;
+>  extern bool hv_nested;
+>=20
+> +extern u64 hv_current_partition_id;
+> +
+>  extern void * __percpu *hyperv_pcpu_input_arg;
+>  extern void * __percpu *hyperv_pcpu_output_arg;
+>=20
+> --
+> 2.34.1
+
 
