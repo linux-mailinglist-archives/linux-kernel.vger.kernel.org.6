@@ -1,161 +1,149 @@
-Return-Path: <linux-kernel+bounces-436461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 249BA9E861E
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:01:10 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D80AC9E8623
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:03:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8112E2817C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:01:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97FB828177C
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23F5159209;
-	Sun,  8 Dec 2024 16:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B125E159565;
+	Sun,  8 Dec 2024 16:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Blj8lxaz"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="btlmEvN7"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CE980BFF
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F99913B2B6;
+	Sun,  8 Dec 2024 16:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733673660; cv=none; b=eQ70tvB3+QkvzoEIkdi0GXQoPaEXPQ7Ty4/Dq75YqYityQEjr2Hgqgaz431cZlizWPEYpy8HBORdjyS/0w0C0UfKqlynjiOkogYQgdoeYmf4uiDYE6yfKwtQcQOkhv/KL1GBjHMb85KyybhoMa4isDnRiDIijyZFfI1AJ08Y00A=
+	t=1733673798; cv=none; b=jZpe1sd6jvuVb7kd52iLPnAvmIsmec+EsFSKGdoxbZSIWcCylgjvzq+5NJks4cHbJyWLv3/wgofoc09dHgtVcnvyYnKCVq2NMl4ioLkESlQY3ShgOAITUn07wn4SRUCfgVDAJbyU6SfXczBMnWj3lsLKTSkfB6xZ1KPx6+lKwa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733673660; c=relaxed/simple;
-	bh=tc1mgW5PK5ygm6MHNIYT+f+xz3FXBUJynWj95Qcz6B8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=dNdRkMavFdayLrll+TYVtvTvfLSX49+d2Wfb7aYOCT+7RLeknoAdJWejZtW7dIkX0C3A3Jr/rpbeoxqWAJaj0ueD2HRkEwW/FPO13hqz+dPxZbirQcEeXXnnMtSnxvJIRK3Lygf8hm2I5ZwfJKf5mqAHde58kMLpstebH44Bu8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Blj8lxaz; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241208160055epoutp04f92344fe88797afef155038d6e83faff~PPwEfxbSc0886608866epoutp041
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:00:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241208160055epoutp04f92344fe88797afef155038d6e83faff~PPwEfxbSc0886608866epoutp041
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733673655;
-	bh=tc1mgW5PK5ygm6MHNIYT+f+xz3FXBUJynWj95Qcz6B8=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=Blj8lxazXZ+SzLivOM6g97/+ygtB4MVLGAJPghnrZ4OasDUhX/BTIa+FWNHv65FNO
-	 eyyY5cMZmqQdcgSAUMy18zHquyI8jfAVWgiEL276Yw3CE80rxDJjSygz/LdvIhxm/M
-	 5UlWg+gkFbXTilRWJ+E7ZxiFuDFddCgieN9YBmS0=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20241208160054epcas5p309433a674397ddd7349591b8527ffd45~PPwD6V0b71913419134epcas5p3E;
-	Sun,  8 Dec 2024 16:00:54 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y5qTx5v2nz4x9Pt; Sun,  8 Dec
-	2024 16:00:53 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	E0.66.19956.5B2C5576; Mon,  9 Dec 2024 01:00:53 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
-	20241208160052epcas5p3eeba799ad78f0269ba04fabb28fa6a4c~PPwB3slq41913419134epcas5p3C;
-	Sun,  8 Dec 2024 16:00:52 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241208160052epsmtrp29e8ed21f8f687b3989c0cd6a5a2e4b52~PPwB2iZBc2725827258epsmtrp2i;
-	Sun,  8 Dec 2024 16:00:52 +0000 (GMT)
-X-AuditID: b6c32a4b-fe9f470000004df4-be-6755c2b50d88
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	16.2D.18949.4B2C5576; Mon,  9 Dec 2024 01:00:52 +0900 (KST)
-Received: from [107.122.5.126] (unknown [107.122.5.126]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241208160050epsmtip20eb6acf7e18c6f35546a61be5e06621b~PPv-S7fZx0093200932epsmtip2Y;
-	Sun,  8 Dec 2024 16:00:49 +0000 (GMT)
-Message-ID: <78fd3960-6c7f-48a1-a12a-04190640c001@samsung.com>
-Date: Sun, 8 Dec 2024 21:30:48 +0530
+	s=arc-20240116; t=1733673798; c=relaxed/simple;
+	bh=GaFyTA7f+D92e8/6ECS9c1uYp74xBQ0xKi3Wf9y3Ieg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cNStrWNnsKfbTDA2lGfMSjNVDaL6SkdpuPnh3ttnIp0OGCWIZo6bwU+v52gOPrpFuFEEYMSdT8efT/MT25dg/LlqxrqwkPSPxrMz9Wz5w5HACLncCqQtN6HjeDLhZYDAhLgvctaIG5hWDAJNdh/CKg0Agw15kFDe+pCMCVgzUfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=btlmEvN7; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=VZ8VRmiKJwkt/GYZB70TA69WOCgOy6/6A6FCtWbmeu4=; b=btlmEvN7EvWs2yI3x1wGfGlvQk
+	qNjp3GT9mYlIiZxcbrRufWO4s0XRmZRSM2zw+V+/0NGcA4ZJYh0ppcKvrXpEaXQ1Xl2Z/XX/2wocq
+	OOQJU9f56/RQCF3DfYx8ckJIZ7qOEJpn/GTtd3ImEInmC0s2HwuNLkqf64T/pcbXR+hI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKJk8-00FZvL-Nc; Sun, 08 Dec 2024 17:02:48 +0100
+Date: Sun, 8 Dec 2024 17:02:48 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	upstream@airoha.com
+Subject: Re: [net-next PATCH v10 2/9] dt-bindings: net: Document support for
+ Airoha AN8855 Switch Virtual MDIO
+Message-ID: <656c4f9d-ff6b-4c98-84f4-d20b6e562c13@lunn.ch>
+References: <20241208002105.18074-1-ansuelsmth@gmail.com>
+ <20241208002105.18074-3-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded
- issue during MIDI bind retries
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Faraz Ata <faraz.ata@samsung.com>, quic_jjohnson@quicinc.com,
-	kees@kernel.org, abdul.rahim@myyahoo.com, m.grzeschik@pengutronix.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
-	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
-	alim.akhtar@samsung.com, stable@vger.kernel.org
-Content-Language: en-US
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-In-Reply-To: <2024120809-frostlike-dingy-1113@gregkh>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJsWRmVeSWpSXmKPExsWy7bCmuu7WQ6HpBp1N2hbTp21ktXhzdRWr
-	xYN529gs7iyYxmRxavlCJotrNxayWzQvXs9mMWnPVhaLuw9/sFise3ue1eLyrjlsFouWtTJb
-	bGm7wmTx6eh/VovGLXdZLVZ1zmGxuPx9J7PFgo2PGC0mHRR1EPbYtKqTzWP/3DXsHsdeHGf3
-	6P9r4DFxT51H35ZVjB6fN8kFsEdl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgr
-	KeQl5qbaKrn4BOi6ZeYAfaKkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtO
-	zC0uzUvXy0stsTI0MDAyBSpMyM5YPL2VseAjc8Wy3vesDYxzmLsYOTkkBEwkps3YzdbFyMUh
-	JLCbUWL1h3PMEM4nRonGte3sEM43Roll81eww7Sc/boTqmUvo0Tf349QLW8ZJXb/28wEUsUr
-	YCdx5tRKsCUsAioS1y/tZ4aIC0qcnPmEBcQWFZCXuH9rBthUYYFMia/TuxhBbBEBDYmXR2+x
-	gAxlFjjPLPHh/XNWkASzgLjErSfzgRZwcLAJGEo8O2EDEuYUMJU4//oME0SJvMT2tzDPfeGQ
-	eDy/CMJ2kWg69Q3qA2GJV8e3QNlSEp/f7WWDsJMl9kz6AhXPkDi06hDUHHuJ1QvOsIKsZRbQ
-	lFi/Sx9iFZ9E7+8nYNdICPBKdLQJQVSrSpxqvAw1UVri3pJrrBC2h8SbD4dZ4EE1b+cPlgmM
-	CrOQQmUWkidnIflmFsLmBYwsqxglUwuKc9NTi00LjPNSy+ERnpyfu4kRnNC1vHcwPnrwQe8Q
-	IxMH4yFGCQ5mJRFeDu/QdCHelMTKqtSi/Pii0pzU4kOMpsDomcgsJZqcD8wpeSXxhiaWBiZm
-	ZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1MPk9+vFmNVfRlM6dL+J+S/C+ZXfZ
-	51lwf8l5f4+ueZOvvpj7TnrStFu+D6badE9I4/GeKvA9vVBl4UITbq+dZ87uuWVTZ5M2OVmo
-	N+3PnEVT9nhPlrbnnrdGa4WW6+wcjZCfX/fHud97eUsuSeX0dc7jAaKfnPRZk/uD+8OOnXP0
-	OeN87Vb+mzSf3aXqhV3c9hXcruaVaqbWEovO3eyV2RyxPjTmz0blTpfV/nuN1t45m/jlsuw9
-	Rt/TDQe7dDZc2cl8/OUSk7A7cum9bc6z768/lKB1dvJVtudaypd++c9+JGcntHbjIXvOJXpO
-	+0tUz3fKs4QuK5h6/4K6V9+cnSd1OWL/cbmU2FWvmrfq9mUlluKMREMt5qLiRACfewzdcQQA
-	AA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsWy7bCSvO6WQ6HpBj0TNSymT9vIavHm6ipW
-	iwfztrFZ3Fkwjcni1PKFTBbXbixkt2hevJ7NYtKerSwWdx/+YLFY9/Y8q8XlXXPYLBYta2W2
-	2NJ2hcni09H/rBaNW+6yWqzqnMNicfn7TmaLBRsfMVpMOijqIOyxaVUnm8f+uWvYPY69OM7u
-	0f/XwGPinjqPvi2rGD0+b5ILYI/isklJzcksSy3St0vgylg8vZWx4CNzxbLe96wNjHOYuxg5
-	OSQETCTOft3J1sXIxSEksJtRYv7MKewQCWmJ17O6GCFsYYmV/56zQxS9ZpSYsP0LK0iCV8BO
-	4syplWCTWARUJK5f2s8MEReUODnzCQuILSogL3H/1gywocICmRL3Ts1kA7FFBDQkXh69xQIy
-	lFngPLPE7cuPWSA2vGWU+HL8FVg3s4C4xK0n85m6GDk42AQMJZ6dsAEJcwqYSpx/fYYJosRM
-	omsrxKXMQMu2v53DPIFRaBaSO2YhmTQLScssJC0LGFlWMUqmFhTnpucWGxYY5aWW6xUn5haX
-	5qXrJefnbmIEx6+W1g7GPas+6B1iZOJgPMQowcGsJMLL4R2aLsSbklhZlVqUH19UmpNafIhR
-	moNFSZz32+veFCGB9MSS1OzU1ILUIpgsEwenVANT8GdO1QeVy41lXi84pvRR0aCOO3Tilofr
-	vHX4XSIr7X4lGP1SMCrnXnCJ9QmD3a78gGSpreblUvVTc4Nle+dLCKzaGN7Y+zTw8rKMmR+q
-	0mS2hQQYOjP1XfasNfY6NUfeYtb1mLlLNs+QvRelJ8XLZdnAWaqSqR2SkXjR4NWU51t9Lju4
-	+zbVPfl/PvrRJqHetzOzXb5s0s/LtlisLPRi1uvvm6eaNMc8u3rnyc05lWzGpQWvOu6UFb7J
-	UZFpqk9c21Owdp+aYOCD0kWswTrH94ltPn0tZ9Pah8EPotnu/ujd+Grv0WUPhetfCoVe87V8
-	NydY+7l3e4P3JZG1M3dXnXKrmXTEk686Ou3omVtKLMUZiYZazEXFiQBbSs/vTgMAAA==
-X-CMS-MailID: 20241208160052epcas5p3eeba799ad78f0269ba04fabb28fa6a4c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241208151349epcas5p1a94ca45020318f54885072d4987160b3
-References: <CGME20241208151349epcas5p1a94ca45020318f54885072d4987160b3@epcas5p1.samsung.com>
-	<20241208151314.1625-1-faraz.ata@samsung.com>
-	<5d4e59f0-76a7-43bf-8a96-9aa4f9e2a9ac@samsung.com>
-	<2024120809-frostlike-dingy-1113@gregkh>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208002105.18074-3-ansuelsmth@gmail.com>
+
+On Sun, Dec 08, 2024 at 01:20:37AM +0100, Christian Marangi wrote:
+> Document support for Airoha AN8855 Virtual MDIO Passtrough. This is needed
+> as AN8855 require special handling as the same address on the MDIO bus is
+> shared for both Switch and PHY and special handling for the page
+> configuration is needed to switch accessing to Switch address space
+> or PHY.
+> 
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> ---
+>  .../bindings/net/airoha,an8855-mdio.yaml      | 86 +++++++++++++++++++
+>  MAINTAINERS                                   |  1 +
+>  2 files changed, 87 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml b/Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
+> new file mode 100644
+> index 000000000000..2211df3cc3b7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/airoha,an8855-mdio.yaml
+> @@ -0,0 +1,86 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/net/airoha,an8855-mdio.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Airoha AN8855 MDIO Passtrough
+> +
+> +maintainers:
+> +  - Christian Marangi <ansuelsmth@gmail.com>
+> +
+> +description:
+> +  Airoha AN8855 Virtual MDIO Passtrough. This is needed as AN8855
+> +  require special handling as the same address on the MDIO bus is
+> +  shared for both Switch and PHY and special handling for the page
+> +  configuration is needed to switch accessing to Switch address space
+> +  or PHY.
+> +
+> +$ref: /schemas/net/mdio.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: airoha,an8855-mdio
+> +
+> +required:
+> +  - compatible
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    mdio {
+> +        compatible = "airoha,an8855-mdio";
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +
+> +        internal_phy1: phy@1 {
+> +            reg = <1>;
+> +
+> +            nvmem-cells = <&shift_sel_port0_tx_a>,
+> +                <&shift_sel_port0_tx_b>,
+> +                <&shift_sel_port0_tx_c>,
+> +                <&shift_sel_port0_tx_d>;
+> +            nvmem-cell-names = "tx_a", "tx_b", "tx_c", "tx_d";
 
 
-On 12/8/2024 9:18 PM, Greg KH wrote:
-> On Sun, Dec 08, 2024 at 08:58:32PM +0530, Selvarasu Ganesan wrote:
->> Hello Maintainers,
->>
->> Please ignore this commit as this duplicate copy of
->> https://lore.kernel.org/linux-usb/20241208152322.1653-1-selvarasu.g@samsung.com/
-> So which is correct?
->
-> confused,
-Sorry for the confusion. The below is the correct one.
+For this example nvmem is not relevant. Those are PHY properties, not
+MDIO properties. So you could simplify this.
 
-https://lore.kernel.org/linux-usb/20241208152322.1653-1-selvarasu.g@samsung.com/
-
-
-Thanks,
-Selva
->
-> greg k-h
->
->
+	Andrew
 
