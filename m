@@ -1,189 +1,97 @@
-Return-Path: <linux-kernel+bounces-436500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B74899E86CE
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:59:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED3449E86D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:59:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01FE51885393
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:59:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9BB281419
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A66E18952C;
-	Sun,  8 Dec 2024 16:59:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 881CB18858E;
+	Sun,  8 Dec 2024 16:59:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="AOnJoTG9"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EqWLOjol"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0462A18754F
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:59:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FF120323;
+	Sun,  8 Dec 2024 16:59:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677176; cv=none; b=XicqIVKVgMkdHvzO8pKh/kfPHu4Am9uYKl49K3SaAKAoCGVhgmS5SGhwQOUmdReQdywxX7aunqjd0ug4NCd1k+NL9jLq1hhOwIwI32pqcT9IbpPspyWDepbTShKnAgJtqJ/IYx43LFyt5ToCbyYPCANlIgukqMkk+koTR2xvFLc=
+	t=1733677192; cv=none; b=W9mIdOQZ8izQPEBYfiUoR18nZaQPD1OOzG8HZAl4oNeskxwqtW5hKhZRJg3xVUtRsuIBCZu7/rleXllDi2XZ2Tu/07lNUwoImM1JCQJA1vtWTbTTpjBkZSDVAY/weKjOnrTSfHSOJdS4nierh9dUPzm/SebTPKEDoSgXdHtczv4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677176; c=relaxed/simple;
-	bh=azq1B8QuNnX4C8HwV3S96dnhxIhN0sy//FVR989QCMw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OCQ3O8FSsiwctdCJSFJaMIieFa0IQPVT+eLWowStHGyKikgB6I9Uo4oDfASVDToxTO9fhlE3HQR5bFXYKnASYal1MJL3MR91fUx60RsrPY0S+GOAnafYY58Jt0apzx+m+gATqW1COuHAzcWGYl2yWPllpTZy/Ojs3L/ltsFxnHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=AOnJoTG9; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6efe4e3d698so22273387b3.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 08:59:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1733677174; x=1734281974; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AlFfwVqRXK/paRpbQAVFV3F3tMqaWvPJwZQA+19pyHg=;
-        b=AOnJoTG9p2WTiuOX21wG2tfNrHtxElmyUm8i+ieHRJ877b+Fp4/uY74Jyli20N0Dv2
-         KB2Abi53ZVGJznrbhvACI9+nc9YfnO5Mqwrktp6iQjwndUPBT4Tguv+SKN7/trb0QjPK
-         s8TBQfnQqPn06STQn1EJY7t+QPan58cMwgv9E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733677174; x=1734281974;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AlFfwVqRXK/paRpbQAVFV3F3tMqaWvPJwZQA+19pyHg=;
-        b=SSA21RwuP6nToUQ+0xOFWTOfLVben3zhbwjC/32h9jRdxWDaRaTQ8v22mz9P7zjIfz
-         Bl267hZTJ9l1qJpCkM6pgdACsTL8KE5Xxz5zJhoTotv/sFKq0Z4FMBzm0oVGH6tJukD8
-         pkDprnC8jP7iVZFdu7y0ThRM+jz6JbykhsoqyUS3eu6HxMnfJ69WWqfmz8isd2U5qRLW
-         BHg/AuyGUL1a1bA5JUVNHMA41IAEDQR2smZ5h8bpSse36W3i9EtwbYFc3+oG6OqQ7dde
-         7LInyC55tagS2ipzFdQXBTOvQJjMBVwqXQFsE2H2/92r6MR5eFd+Z9Wz1DhuLvy68GD5
-         +80w==
-X-Gm-Message-State: AOJu0Yy9mA99a82iZNGLDTjWfjLgkdGilu8uqQaDgCChvQf/w3FdKp6h
-	KK63rsYhonQ15VYvNQhogSziwa830Utm1Zr+5InlV9YkyEeBe0LvW6Qm/iE9VIJ9Zg22V49vx8G
-	QJ5PO49KNMsdRdXAFBYiiAmKSDy4CF0J/FtfENrQIz6dF/Kq40wI=
-X-Gm-Gg: ASbGncuAAg0uKhzkWphDRQJep75CR+eTHYf3c2KNsom+s3LjE1McnYBpukOMFhgIMKH
-	6IC479kb28ez+kPDqFQeInaT8qhiW
-X-Google-Smtp-Source: AGHT+IHc2fwFI+591nR9iKIG3YHjGTjB6Bxuk5sHYVwNbNdHEzV9blLi8vqQvdYTmxx4bc63U1c9ZKmKAJezuz8XeJ8=
-X-Received: by 2002:a05:6902:268a:b0:e39:6c6a:f2da with SMTP id
- 3f1490d57ef6-e3a0b0b6415mr8620220276.19.1733677173884; Sun, 08 Dec 2024
- 08:59:33 -0800 (PST)
+	s=arc-20240116; t=1733677192; c=relaxed/simple;
+	bh=o5+e4VKhCq8v7S94ioflyoTxDxaWLCbTsckcliIW1kI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RSJjeBOJ9IkkZ4rmdXyerQo4n8aAJTCaI4X88VvCKImmf4C5Q+GlU/Xy0glLLzuGF4ZJUSJoIXC0NjFiWPErRGWok3vqwl1BgEfjlbdUDWUPApid2NNdyj3uGdN9SOZrtCKrMhAlgwxQ6Pns0ppBYqdtZVMjHIGlyrJ3/UnzGnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EqWLOjol; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731C0C4CED2;
+	Sun,  8 Dec 2024 16:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733677191;
+	bh=o5+e4VKhCq8v7S94ioflyoTxDxaWLCbTsckcliIW1kI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=EqWLOjolkrK48OCPgW3J+QmuJ3pwD3uXNseiCQNPA3QtPc3y5/XL5joyja5lrSGXD
+	 bOfh6N1CWnIuX8U89uDuSmXavhOZlX0bH3AzLpYcbmoDi2gtyXjaabp+zVW4O8Z/gL
+	 UvrugHCW2taNQ5l3+YCFREbR1fqXrMtG7onHNAV1QcPM23fJicxKnJglKHIFe7fK6d
+	 F9FX6YmtWzroswGYYVNL4Ny3Ny21U0RbXUdmqb8Pxbw7SWxRZXgT5RAX+dg8Xxqr8i
+	 5RWoL+cKjnM87kjjmxtU+hD2Zzcn4uH8923xPzerHkAXwd74XvOwpVD5qA0Mu3yu95
+	 PiofOPPxuOXYA==
+Date: Sun, 8 Dec 2024 16:59:44 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, =?UTF-8?B?Sm/Do28=?=
+ Paulo =?UTF-8?B?R29uw6dhbHZlcw==?= <jpaulo.silvagoncalves@gmail.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, =?UTF-8?B?Sm/Do28=?= Paulo
+ =?UTF-8?B?R29uw6dhbHZlcw==?= <joao.goncalves@toradex.com>, Francesco
+ Dolcini <francesco.dolcini@toradex.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ti-ads1119: fix sample size in scan struct
+ for triggered buffer
+Message-ID: <20241208165944.1ca1d08b@jic23-huawei>
+In-Reply-To: <20241202194622.GA70146@francesco-nb>
+References: <20241202-ti-ads1119_s16_chan-v1-1-fafe3136dc90@gmail.com>
+	<20241202194622.GA70146@francesco-nb>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241029114622.2989827-1-dario.binacchi@amarulasolutions.com>
-In-Reply-To: <20241029114622.2989827-1-dario.binacchi@amarulasolutions.com>
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Date: Sun, 8 Dec 2024 17:59:23 +0100
-Message-ID: <CABGWkvp=VdpOUGdHep8E6p8C+gFGsZyhMEtcjkx-zNaG-X_r3g@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 0/6] Add helpers for stats and error frames
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Frank Li <Frank.Li@nxp.com>, 
-	Gal Pressman <gal@nvidia.com>, Haibo Chen <haibo.chen@nxp.com>, Han Xu <han.xu@nxp.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Kory Maincent <kory.maincent@bootlin.com>, 
-	Marc Kleine-Budde <mkl@pengutronix.de>, Paolo Abeni <pabeni@redhat.com>, 
-	Rahul Rameshbabu <rrameshbabu@nvidia.com>, Rob Herring <robh@kernel.org>, 
-	Sabrina Dubroca <sd@queasysnail.net>, Shannon Nelson <shannon.nelson@amd.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>, linux-can@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 29, 2024 at 12:46=E2=80=AFPM Dario Binacchi
-<dario.binacchi@amarulasolutions.com> wrote:
->
-> This series originates from some tests I ran on a CAN communication for
-> one of my clients that reports sporadic errors. After enabling BERR
-> reporting, I was surprised that the command:
->
-> ip -details -statistics link show can0
->
-> did not display the occurrence of different types of errors, but only the
-> generic ones for reception and transmission. In trying to export this
-> information, I felt that the code related to managing statistics and hand=
-ling
-> CAN errors (CRC, STUF, BIT, ACK, and FORM) was quite duplicated in the
-> implementation of various drivers, and there wasn't a generic function li=
-ke
-> in the case of state changes (i. e. can_change_state). This led to the id=
-ea
-> of adding can_update_bus_error_stats() and the helpers for setting up the
-> CAN error frame.
->
-> Regarding patch 5/6 ("can: netlink: extend stats to the error types (ack,
-> CRC, form, ..."), I ran
->
-> ./scripts/check-uapi.sh
->
-> which found
->
-> "error - 1/934 UAPI headers compatible with x86 appear _not_ to be backwa=
-rds
-> compatible."
->
-> I included it in the series because I am currently interested in understa=
-nding
-> whether the idea behind each of the submitted patches makes sense, and I =
-can
-> adjust them later if the response is positive, following your suggestions=
-.
->
-> Changes in v3:
-> - Drop double assignement of "priv" variable.
-> - Check "dev" parameter is not NULL.
-> - Drop the check of "cf" parameter not NULL
->
-> Changes in v2:
-> - Replace macros with static inline functions
-> - Update the commit message
-> - Replace the macros with static inline funcions calls.
-> - Update the commit message
->
-> Dario Binacchi (6):
->   can: dev: add generic function can_update_bus_error_stats()
->   can: flexcan: use can_update_bus_error_stats()
->   can: dev: add helpers to setup an error frame
->   can: flexcan: use helpers to setup the error frame
->   can: netlink: extend stats to the error types (ack, CRC, form, ...)
->   can: dev: update the error types stats (ack, CRC, form, ...)
->
->  drivers/net/can/dev/dev.c              | 45 ++++++++++++++++++++++++++
->  drivers/net/can/flexcan/flexcan-core.c | 29 +++++------------
->  include/linux/can/dev.h                | 38 ++++++++++++++++++++++
->  include/uapi/linux/can/netlink.h       |  6 ++++
->  4 files changed, 97 insertions(+), 21 deletions(-)
->
-> --
-> 2.43.0
->
+On Mon, 2 Dec 2024 20:46:22 +0100
+Francesco Dolcini <francesco@dolcini.it> wrote:
 
-A gentle ping to remind you of this series.
+> On Mon, Dec 02, 2024 at 08:18:44PM +0100, Javier Carrasco wrote:
+> > This device returns signed, 16-bit samples as stated in its datasheet
+> > (see 8.5.2 Data Format). That is in line with the scan_type definition
+> > for the IIO_VOLTAGE channel, but 'unsigned int' is being used to read
+> > and push the data to userspace.
+> > 
+> > Given that the size of that type depends on the architecture (at least
+> > 2 bytes to store values up to 65535, but its actual size is often 4
+> > bytes), use the 's16' type to provide the same structure in all cases.
+> > 
+> > Fixes: a9306887eba4 ("iio: adc: ti-ads1119: Add driver")
+> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
+> 
+> Reviewed-by: Francesco Dolcini <francesco.dolcini@toradex.com>
+> Cc: stable@vger.kernel.org
+> 
+> Thanks,
+> Francesco
+> 
 
-Could this series or some of its patches make sense to consider?
-IMHO, if all the controllers indicate the type of error, I would expect
-the user space to be aware of it as well.
-Or is there something I might be missing?
+Applied to the fixes-togreg branch of iio.git and marked for stable.
 
-Thanks and regards,
-Dario
+Thanks,
 
-
---=20
-
-Dario Binacchi
-
-Senior Embedded Linux Developer
-
-dario.binacchi@amarulasolutions.com
-
-__________________________________
-
-
-Amarula Solutions SRL
-
-Via Le Canevare 30, 31100 Treviso, Veneto, IT
-
-T. +39 042 243 5310
-info@amarulasolutions.com
-
-www.amarulasolutions.com
+Jonathan
 
