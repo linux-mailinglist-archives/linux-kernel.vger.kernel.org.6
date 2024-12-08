@@ -1,166 +1,429 @@
-Return-Path: <linux-kernel+bounces-436590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E16B9E8804
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:06:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9659E8809
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 22:07:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A0AE1883B1D
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:06:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0011643BB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 21:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640AF18C008;
-	Sun,  8 Dec 2024 21:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C909119343B;
+	Sun,  8 Dec 2024 21:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="tBZLCt2R"
-Received: from smtp-relay-canonical-0.canonical.com (smtp-relay-canonical-0.canonical.com [185.125.188.120])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cwcx4bBi"
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5FE189F3B;
-	Sun,  8 Dec 2024 21:06:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.120
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0570213A865;
+	Sun,  8 Dec 2024 21:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733691986; cv=none; b=GASW3INrygjNDMgCE1Byq6ueHZ1tqjR+2FJUksnJg9MPCe1APX6l04gf8VeVXpHdqIwBjTfvbh/3tcoQ+c99qPWyv7l63IWx7y4Lypz7EUSk0nMwJ8JU18rKxcAW9HUoGEg9ehjXu8a3nf8QBZblBp/hmAQezXzDvcu9jM6VMjQ=
+	t=1733692033; cv=none; b=c4JeYP03AVTo//TUef24JzYyAqfn9ZjROYR0y77U6kMaTEQ2MkL/H9pxTk47KPq4Q9cc9aNmfKZeUYcEPmbVNt4KNp26ddrh9RHSDv/4SjoHIh12K+p+kM1njU6R8Fb+wfQcsG8Wf7QeqGDepe6N2q6XVUqDzV0QUWczMj2X9ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733691986; c=relaxed/simple;
-	bh=TNrJNz8/f0CavaubT6JPMvUn9xlSfhYaI7hUALfck40=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HvuhGuQ5Z7iZUhHKyBYyY4fLNuQ9RBxa6jJAfXzbl7gyMRmG2JgBSONz4kII8tD9k6wP/aBbtDXjhzjrVpefzvBmhE63r0A47Flmgek2/FBi7UrlAzau15OJY+1aoh2PG1Nd5osOa2qnI5ngdkllN6G/P1gzpxjdotcDRIp0Y6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=tBZLCt2R; arc=none smtp.client-ip=185.125.188.120
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from [192.168.192.84] (unknown [50.39.104.138])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-canonical-0.canonical.com (Postfix) with ESMTPSA id 880CE3FB5C;
-	Sun,  8 Dec 2024 21:06:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1733691975;
-	bh=cX7GJ7sNrdE006M6dOvd3MpjBBGorsWdgwQGvVR8vm8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type;
-	b=tBZLCt2RQcJfskdQ7j0i/E7Ub9W6YzF0O/YdfXT40B1TivlnfrP4u6TMwrNCbcSsn
-	 BQar+2ILdPBWhLbpFDWUF9ugeDD7rLjaAKWhM9GxNLg4m6Mpizzf2mzAzns1UPAZq7
-	 yPmGqaAJgi5t4UJSNpBa/Za387qw7xQ5v2oC/7ySqcNe2yEztyskYCtO1uKWz6h4a6
-	 3XcXuOfB+gzi2hKJnbGjEFqUJuomNusdpjFIsWsl/rr6kAzE4TfIW4xmhcNtVslGWK
-	 hssoIWiBdWVw1camDTJq2/JnouOWr3fZvYMUHNc6w9W6uXVuE5jzkeEQ4Js/kY055m
-	 D2Ai4YFlGfHBQ==
-Message-ID: <aa6fe535-c6f5-4cec-b5fd-2a11899ad453@canonical.com>
-Date: Sun, 8 Dec 2024 13:06:11 -0800
+	s=arc-20240116; t=1733692033; c=relaxed/simple;
+	bh=9tNYOV5TqqYbyBebVauc7ebsVmi+8QDg5NKUsfQMpSM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Sr+zoMYVXPNH5mZf6WnHLXG1B+CUpTEzcSteZL7CjZ43DHdpH/UvWWPMzolwYoWKW0hmKrjDRog18NnTHucG/CfytqDW4DvPOkvw5jNsiCtjsn518K4J7BI14O+I67KZB2mk2dgmszI8Tsqf3lfYAVB+4Vq3dfftu12p4G4Tdz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cwcx4bBi; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-517aea3ee2aso250028e0c.2;
+        Sun, 08 Dec 2024 13:07:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733692031; x=1734296831; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=k4+OM9OGW2I6P+0c+wJAxM/Lz27zv2jMkUrN0t15gVY=;
+        b=Cwcx4bBiO0I06HL2wEv4xpDcclCOOGAFK7FwH7ClIwS6Nt1g04jcniNwu8VIN+c9Mo
+         kbLqvaWmiHwHUjTK4fAAvom5olpGhMwz19UhNv5kICbs+oJLZOcK6nvXL9Hr7mj+7hNB
+         M78MlJTGYNyvDmgxRcSr1MufMLDwN7QdV8kna9K9TMLkxG/EkNeilkj4dlNAA2ilcTXq
+         Fpg7A8ivw8cuePdDyRO5sLLNs65HphIugpncVpCGsW3j8OMvRcnxd/3wCPPHP1yKaepM
+         tM0gxp+YygEIgB2PILrkj88lXeua5BQ/jXX4mPxycP3rA1FOmYZKTFGgOvTxPhmY2zvr
+         7yfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733692031; x=1734296831;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=k4+OM9OGW2I6P+0c+wJAxM/Lz27zv2jMkUrN0t15gVY=;
+        b=dzy48C4DID7d/zIiE7GHeXC9JhpwGBYS2HX1fEOGPzwyjInG1/HGlSExKo3Vz7kVkY
+         GCMoJzHnBZ4wa0xZt5aFbMv/dqGXWll5xr3PkQCgZnCJuSchEE+gjRPw9WE3D0DLTOXx
+         Se08Wa8TMi9NRe4Lp83nen9FEmqn6xAyZb02TsqtqT6UqHktUElKn2C6BOcU/6iyly3n
+         TKXQlDrlhYfN9+R/D9d43S3XQLpQK6QawI5zg1yaV6b5955n1N4+gy/cuke2RG67Ij7f
+         8nufpfrqoHZdCZuE754NOJc3BWIwGAllFKe1XJpwTnnjyQxD3dbbD9/9figyTEaF970i
+         Xc0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVApJCjrJClqXzB2ZKxoANw1xoV1qX4etW1VniK+37/42+NH5fbuChZ5y+P9jz41WeU4Jl0TRs81+O065G/rGIXmek=@vger.kernel.org, AJvYcCViBPnmK+1qHG8HFezVH9MMUfecIah6PmUz1/CzIyuMamt/Pc/cST15y0PzNFbeyLp6sCVW7VZK9hh6nDHC@vger.kernel.org, AJvYcCWZb73TLdHhCD7KG2PPGlN0JG81xIExUOnuKncsqi+YXgyYSDA638JaP8eepftMUg2AoTtNQnrYGzgl@vger.kernel.org, AJvYcCWe/BLRW/DS/LDyQwZsOBPyKn7LSB5uqce/EkzjgmNlBbrXo9K5j3c4RExpo45LKspQ/0Y5MYzMcViU@vger.kernel.org, AJvYcCWnQnwQoutP3Vs1QCxh2jGNCOSdxqIIBYtXPBTGDYnuvjUbzV9OBHiEH7Q5z/p004UwhTleOuuH8Adq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjCNpcCnshRYF3WeJvWBjc23/Mo/Dn7mdCIqYwcInuf1iVL2W8
+	WThExHEIDzHCYn4RT9DB+pp2buiSzih8+bac4BEsdCUp/vNq4Nh53hKQPplJDxSS3z0AQftx0wB
+	csVQ52OzpnoTf2jUsi9gaFlyXKfs=
+X-Gm-Gg: ASbGnctqqZbn+JnqOHf4H6ugq8dsHWJ1MSztAaUt9JjAkPJixSa5FtavGk3XXum3Oos
+	zb/GMLc4v1TmPE34fPV8eZjIPMDxqhofP
+X-Google-Smtp-Source: AGHT+IEUVEUG85etVq+sE0bbhoitub03G0rIJjZ9yYz1CiNrUaLq4inTuWLZupc8vg7TvOR6oGnRVoE6IIaabCKF410=
+X-Received: by 2002:a05:6122:2009:b0:50d:3ec1:1546 with SMTP id
+ 71dfb90a1353d-515fca1233emr10297600e0c.4.1733692030811; Sun, 08 Dec 2024
+ 13:07:10 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: duplicate patches in the apparmor tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241209074350.0f91cd13@canb.auug.org.au>
-Content-Language: en-US
-From: John Johansen <john.johansen@canonical.com>
-Autocrypt: addr=john.johansen@canonical.com; keydata=
- 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 lT9Q
-Organization: Canonical
-In-Reply-To: <20241209074350.0f91cd13@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241206111337.726244-1-claudiu.beznea.uj@bp.renesas.com> <20241206111337.726244-10-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241206111337.726244-10-claudiu.beznea.uj@bp.renesas.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Sun, 8 Dec 2024 21:06:45 +0000
+Message-ID: <CA+V-a8vQm+JDL19TwjcNBD-xGzFApZywJCqVisBVRBNC2xwLHA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/15] iio: adc: rzg2l_adc: Prepare for the addition of
+ RZ/G3S support
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, p.zabel@pengutronix.de, linux-iio@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/8/24 12:43, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commits are also in Linus Torvalds' tree as different
-> commits (but the same patches):
-> 
+On Fri, Dec 6, 2024 at 11:16=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The ADC IP available on the RZ/G3S differs slightly from the one found on
+> the RZ/G2L. The identified differences are as follows:
+> - different number of channels (one being used for temperature conversion=
+);
+>   consequently, various registers differ
+> - different default sampling periods
+> - the RZ/G3S variant lacks the ADVIC register.
+>
+> To accommodate these differences, the rzg2l_adc driver has been updated b=
+y
+> introducing the struct rzg2l_adc_hw_params, which encapsulates the
+> hardware-specific differences between the IP variants. A pointer to an
+> object of type struct rzg2l_adc_hw_params is embedded in
+> struct rzg2l_adc_data.
+>
+> Additionally, the completion member of struct rzg2l_adc_data was relocate=
+d
+> to avoid potential padding, if any.
+>
+> The code has been adjusted to utilize hardware-specific parameters stored
+> in the new structure instead of relying on plain macros.
+>
+> The check of chan->channel in rzg2l_adc_read_raw() function, against the
+> driver specific mask was removed as the subsystem should have already
+> been done this before reaching the rzg2l_adc_read_raw() function. Along
+> with it the local variable ch was dropped as chan->channel could be used
+> instead.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>
+> Changes in v2:
+> - kept the RZG2L_ADC_MAX_CHANNELS as suggested in the review process;
+>   along with it, last_val[] is now again statically alocated; code
+>   from v1 around last_val has been adjusted to align with the new
+>   approach
+> - dropped ch variable from rzg2l_adc_read_raw() and adjusted the
+>   patch description to reflect it.
+>
+>  drivers/iio/adc/rzg2l_adc.c | 87 +++++++++++++++++++++++++------------
+>  1 file changed, 59 insertions(+), 28 deletions(-)
+>
+Reviewed-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Sorry, looks like the push of my 6.13~rc1 merge failed for some reason. I have manually done it
-and it should be fixed now
+Cheers,
+Prabhakar
 
->    1432b850e9f3 ("apparmor: lift new_profile declaration to remove C23 extension warning")
->    e2d0dd4fbff2 ("apparmor: replace misleading 'scrubbing environment' phrase in debug print")
->    2b8b30835a39 ("parser: drop dead code for XXX_comb macros")
->    4ce19f6feaf3 ("apparmor: Remove unused parameter L1 in macro next_comb")
->    9a7d70cd5b7e ("Docs: Update LSM/apparmor.rst")
->    572b0240ab22 ("apparmor: audit_cap dedup based on subj_cred instead of profile")
->    3262d1f3a44d ("apparmor: add a cache entry expiration time aging out capability audit cache")
->    db448fcb9f42 ("apparmor: document capability.c:profile_capable ad ptr not being NULL")
->    973e9b1e8e76 ("apparmor: fix 'Do simple duplicate message elimination'")
->    2d7d55704a7b ("apparmor: document first entry is in packed perms struct is reserved")
->    dd977e6130f0 ("apparmor: test: Fix memory leak for aa_unpack_strdup()")
->    e81345416df0 ("apparmor: Remove deadcode")
->    81eae8aed8a5 ("apparmor: Remove unnecessary NULL check before kvfree()")
->    08c7de530d83 ("apparmor: domain: clean up duplicated parts of handle_onexec()")
->    30c434a8acc9 ("apparmor: Use IS_ERR_OR_NULL() helper function")
->    e7e0f73d0ab2 ("apparmor: add support for 2^24 states to the dfa state machine.")
->    ee650b3820f3 ("apparmor: properly handle cx/px lookup failure for complain")
->    2b05c4cd52bc ("apparmor: allocate xmatch for nullpdb inside aa_alloc_null")
-> 
-> These are commits
-> 
->    04b5f0a5bfee ("apparmor: lift new_profile declaration to remove C23 extension warning")
->    8acf7ad02d1b ("apparmor: replace misleading 'scrubbing environment' phrase in debug print")
->    9133493a76d7 ("parser: drop dead code for XXX_comb macros")
->    211551768291 ("apparmor: Remove unused parameter L1 in macro next_comb")
->    d00c2359fc18 ("Docs: Update LSM/apparmor.rst")
->    74a96bbe1294 ("apparmor: audit_cap dedup based on subj_cred instead of profile")
->    fee7a2340f18 ("apparmor: add a cache entry expiration time aging out capability audit cache")
->    8532503eac69 ("apparmor: document capability.c:profile_capable ad ptr not being NULL")
->    9b897132424f ("apparmor: fix 'Do simple duplicate message elimination'")
->    a2081b78e212 ("apparmor: document first entry is in packed perms struct is reserved")
->    7290f5923191 ("apparmor: test: Fix memory leak for aa_unpack_strdup()")
->    75535669c9c1 ("apparmor: Remove deadcode")
->    648e45d724ed ("apparmor: Remove unnecessary NULL check before kvfree()")
->    ab6875fbb9d3 ("apparmor: domain: clean up duplicated parts of handle_onexec()")
->    c03093730616 ("apparmor: Use IS_ERR_OR_NULL() helper function")
->    9208c05f9fdf ("apparmor: add support for 2^24 states to the dfa state machine.")
->    db93ca15e5ae ("apparmor: properly handle cx/px lookup failure for complain")
->    17d0d04f3c99 ("apparmor: allocate xmatch for nullpdb inside aa_alloc_null")
-> 
-> in Linus' tree.
-> 
-
+> diff --git a/drivers/iio/adc/rzg2l_adc.c b/drivers/iio/adc/rzg2l_adc.c
+> index c3f9f95cdbba..6740912f83c5 100644
+> --- a/drivers/iio/adc/rzg2l_adc.c
+> +++ b/drivers/iio/adc/rzg2l_adc.c
+> @@ -33,20 +33,15 @@
+>  #define RZG2L_ADM1_MS                  BIT(2)
+>  #define RZG2L_ADM1_BS                  BIT(4)
+>  #define RZG2L_ADM1_EGA_MASK            GENMASK(13, 12)
+> -#define RZG2L_ADM2_CHSEL_MASK          GENMASK(7, 0)
+>  #define RZG2L_ADM3_ADIL_MASK           GENMASK(31, 24)
+>  #define RZG2L_ADM3_ADCMP_MASK          GENMASK(23, 16)
+> -#define RZG2L_ADM3_ADCMP_E             FIELD_PREP(RZG2L_ADM3_ADCMP_MASK,=
+ 0xe)
+> -#define RZG2L_ADM3_ADSMP_MASK          GENMASK(15, 0)
+>
+>  #define RZG2L_ADINT                    0x20
+> -#define RZG2L_ADINT_INTEN_MASK         GENMASK(7, 0)
+>  #define RZG2L_ADINT_CSEEN              BIT(16)
+>  #define RZG2L_ADINT_INTS               BIT(31)
+>
+>  #define RZG2L_ADSTS                    0x24
+>  #define RZG2L_ADSTS_CSEST              BIT(16)
+> -#define RZG2L_ADSTS_INTST_MASK         GENMASK(7, 0)
+>
+>  #define RZG2L_ADIVC                    0x28
+>  #define RZG2L_ADIVC_DIVADC_MASK                GENMASK(8, 0)
+> @@ -57,12 +52,27 @@
+>  #define RZG2L_ADCR(n)                  (0x30 + ((n) * 0x4))
+>  #define RZG2L_ADCR_AD_MASK             GENMASK(11, 0)
+>
+> -#define RZG2L_ADSMP_DEFAULT_SAMPLING   0x578
+> -
+>  #define RZG2L_ADC_MAX_CHANNELS         8
+> -#define RZG2L_ADC_CHN_MASK             0x7
+>  #define RZG2L_ADC_TIMEOUT              usecs_to_jiffies(1 * 4)
+>
+> +/**
+> + * struct rzg2l_adc_hw_params - ADC hardware specific parameters
+> + * @default_adsmp: default ADC sampling period (see ADM3 register)
+> + * @adsmp_mask: ADC sampling period mask (see ADM3 register)
+> + * @adint_inten_mask: conversion end interrupt mask (see ADINT register)
+> + * @default_adcmp: default ADC cmp (see ADM3 register)
+> + * @num_channels: number of supported channels
+> + * @adivc: specifies if ADVIC register is available
+> + */
+> +struct rzg2l_adc_hw_params {
+> +       u16 default_adsmp;
+> +       u16 adsmp_mask;
+> +       u16 adint_inten_mask;
+> +       u8 default_adcmp;
+> +       u8 num_channels;
+> +       bool adivc;
+> +};
+> +
+>  struct rzg2l_adc_data {
+>         const struct iio_chan_spec *channels;
+>         u8 num_channels;
+> @@ -72,8 +82,9 @@ struct rzg2l_adc {
+>         void __iomem *base;
+>         struct reset_control *presetn;
+>         struct reset_control *adrstn;
+> -       struct completion completion;
+>         const struct rzg2l_adc_data *data;
+> +       const struct rzg2l_adc_hw_params *hw_params;
+> +       struct completion completion;
+>         struct mutex lock;
+>         u16 last_val[RZG2L_ADC_MAX_CHANNELS];
+>  };
+> @@ -154,6 +165,7 @@ static void rzg2l_set_trigger(struct rzg2l_adc *adc)
+>
+>  static int rzg2l_adc_conversion_setup(struct rzg2l_adc *adc, u8 ch)
+>  {
+> +       const struct rzg2l_adc_hw_params *hw_params =3D adc->hw_params;
+>         u32 reg;
+>
+>         if (rzg2l_adc_readl(adc, RZG2L_ADM(0)) & RZG2L_ADM0_ADBSY)
+> @@ -163,7 +175,7 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_ad=
+c *adc, u8 ch)
+>
+>         /* Select analog input channel subjected to conversion. */
+>         reg =3D rzg2l_adc_readl(adc, RZG2L_ADM(2));
+> -       reg &=3D ~RZG2L_ADM2_CHSEL_MASK;
+> +       reg &=3D ~GENMASK(hw_params->num_channels - 1, 0);
+>         reg |=3D BIT(ch);
+>         rzg2l_adc_writel(adc, RZG2L_ADM(2), reg);
+>
+> @@ -175,7 +187,7 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_ad=
+c *adc, u8 ch)
+>          */
+>         reg =3D rzg2l_adc_readl(adc, RZG2L_ADINT);
+>         reg &=3D ~RZG2L_ADINT_INTS;
+> -       reg &=3D ~RZG2L_ADINT_INTEN_MASK;
+> +       reg &=3D ~hw_params->adint_inten_mask;
+>         reg |=3D (RZG2L_ADINT_CSEEN | BIT(ch));
+>         rzg2l_adc_writel(adc, RZG2L_ADINT, reg);
+>
+> @@ -184,6 +196,7 @@ static int rzg2l_adc_conversion_setup(struct rzg2l_ad=
+c *adc, u8 ch)
+>
+>  static int rzg2l_adc_conversion(struct iio_dev *indio_dev, struct rzg2l_=
+adc *adc, u8 ch)
+>  {
+> +       const struct rzg2l_adc_hw_params *hw_params =3D adc->hw_params;
+>         struct device *dev =3D indio_dev->dev.parent;
+>         int ret;
+>
+> @@ -201,7 +214,7 @@ static int rzg2l_adc_conversion(struct iio_dev *indio=
+_dev, struct rzg2l_adc *adc
+>
+>         if (!wait_for_completion_timeout(&adc->completion, RZG2L_ADC_TIME=
+OUT)) {
+>                 rzg2l_adc_writel(adc, RZG2L_ADINT,
+> -                                rzg2l_adc_readl(adc, RZG2L_ADINT) & ~RZG=
+2L_ADINT_INTEN_MASK);
+> +                                rzg2l_adc_readl(adc, RZG2L_ADINT) & ~hw_=
+params->adint_inten_mask);
+>                 ret =3D -ETIMEDOUT;
+>         }
+>
+> @@ -219,7 +232,6 @@ static int rzg2l_adc_read_raw(struct iio_dev *indio_d=
+ev,
+>  {
+>         struct rzg2l_adc *adc =3D iio_priv(indio_dev);
+>         int ret;
+> -       u8 ch;
+>
+>         switch (mask) {
+>         case IIO_CHAN_INFO_RAW: {
+> @@ -228,12 +240,11 @@ static int rzg2l_adc_read_raw(struct iio_dev *indio=
+_dev,
+>
+>                 guard(mutex)(&adc->lock);
+>
+> -               ch =3D chan->channel & RZG2L_ADC_CHN_MASK;
+> -               ret =3D rzg2l_adc_conversion(indio_dev, adc, ch);
+> +               ret =3D rzg2l_adc_conversion(indio_dev, adc, chan->channe=
+l);
+>                 if (ret)
+>                         return ret;
+>
+> -               *val =3D adc->last_val[ch];
+> +               *val =3D adc->last_val[chan->channel];
+>
+>                 return IIO_VAL_INT;
+>         }
+> @@ -258,6 +269,7 @@ static const struct iio_info rzg2l_adc_iio_info =3D {
+>  static irqreturn_t rzg2l_adc_isr(int irq, void *dev_id)
+>  {
+>         struct rzg2l_adc *adc =3D dev_id;
+> +       const struct rzg2l_adc_hw_params *hw_params =3D adc->hw_params;
+>         unsigned long intst;
+>         u32 reg;
+>         int ch;
+> @@ -270,11 +282,11 @@ static irqreturn_t rzg2l_adc_isr(int irq, void *dev=
+_id)
+>                 return IRQ_HANDLED;
+>         }
+>
+> -       intst =3D reg & RZG2L_ADSTS_INTST_MASK;
+> +       intst =3D reg & GENMASK(hw_params->num_channels - 1, 0);
+>         if (!intst)
+>                 return IRQ_NONE;
+>
+> -       for_each_set_bit(ch, &intst, RZG2L_ADC_MAX_CHANNELS)
+> +       for_each_set_bit(ch, &intst, hw_params->num_channels)
+>                 adc->last_val[ch] =3D rzg2l_adc_readl(adc, RZG2L_ADCR(ch)=
+) & RZG2L_ADCR_AD_MASK;
+>
+>         /* clear the channel interrupt */
+> @@ -287,6 +299,7 @@ static irqreturn_t rzg2l_adc_isr(int irq, void *dev_i=
+d)
+>
+>  static int rzg2l_adc_parse_properties(struct platform_device *pdev, stru=
+ct rzg2l_adc *adc)
+>  {
+> +       const struct rzg2l_adc_hw_params *hw_params =3D adc->hw_params;
+>         struct iio_chan_spec *chan_array;
+>         struct rzg2l_adc_data *data;
+>         unsigned int channel;
+> @@ -302,7 +315,7 @@ static int rzg2l_adc_parse_properties(struct platform=
+_device *pdev, struct rzg2l
+>         if (!num_channels)
+>                 return dev_err_probe(&pdev->dev, -ENODEV, "no channel chi=
+ldren\n");
+>
+> -       if (num_channels > RZG2L_ADC_MAX_CHANNELS)
+> +       if (num_channels > hw_params->num_channels)
+>                 return dev_err_probe(&pdev->dev, -EINVAL, "num of channel=
+ children out of range\n");
+>
+>         chan_array =3D devm_kcalloc(&pdev->dev, num_channels, sizeof(*cha=
+n_array),
+> @@ -316,7 +329,7 @@ static int rzg2l_adc_parse_properties(struct platform=
+_device *pdev, struct rzg2l
+>                 if (ret)
+>                         return ret;
+>
+> -               if (channel >=3D RZG2L_ADC_MAX_CHANNELS)
+> +               if (channel >=3D hw_params->num_channels)
+>                         return -EINVAL;
+>
+>                 chan_array[i].type =3D IIO_VOLTAGE;
+> @@ -336,6 +349,7 @@ static int rzg2l_adc_parse_properties(struct platform=
+_device *pdev, struct rzg2l
+>
+>  static int rzg2l_adc_hw_init(struct device *dev, struct rzg2l_adc *adc)
+>  {
+> +       const struct rzg2l_adc_hw_params *hw_params =3D adc->hw_params;
+>         u32 reg;
+>         int ret;
+>
+> @@ -353,11 +367,13 @@ static int rzg2l_adc_hw_init(struct device *dev, st=
+ruct rzg2l_adc *adc)
+>         if (ret)
+>                 goto exit_hw_init;
+>
+> -       /* Only division by 4 can be set */
+> -       reg =3D rzg2l_adc_readl(adc, RZG2L_ADIVC);
+> -       reg &=3D ~RZG2L_ADIVC_DIVADC_MASK;
+> -       reg |=3D RZG2L_ADIVC_DIVADC_4;
+> -       rzg2l_adc_writel(adc, RZG2L_ADIVC, reg);
+> +       if (hw_params->adivc) {
+> +               /* Only division by 4 can be set */
+> +               reg =3D rzg2l_adc_readl(adc, RZG2L_ADIVC);
+> +               reg &=3D ~RZG2L_ADIVC_DIVADC_MASK;
+> +               reg |=3D RZG2L_ADIVC_DIVADC_4;
+> +               rzg2l_adc_writel(adc, RZG2L_ADIVC, reg);
+> +       }
+>
+>         /*
+>          * Setup AMD3
+> @@ -368,8 +384,10 @@ static int rzg2l_adc_hw_init(struct device *dev, str=
+uct rzg2l_adc *adc)
+>         reg =3D rzg2l_adc_readl(adc, RZG2L_ADM(3));
+>         reg &=3D ~RZG2L_ADM3_ADIL_MASK;
+>         reg &=3D ~RZG2L_ADM3_ADCMP_MASK;
+> -       reg &=3D ~RZG2L_ADM3_ADSMP_MASK;
+> -       reg |=3D (RZG2L_ADM3_ADCMP_E | RZG2L_ADSMP_DEFAULT_SAMPLING);
+> +       reg &=3D ~hw_params->adsmp_mask;
+> +       reg |=3D FIELD_PREP(RZG2L_ADM3_ADCMP_MASK, hw_params->default_adc=
+mp) |
+> +              hw_params->default_adsmp;
+> +
+>         rzg2l_adc_writel(adc, RZG2L_ADM(3), reg);
+>
+>  exit_hw_init:
+> @@ -392,6 +410,10 @@ static int rzg2l_adc_probe(struct platform_device *p=
+dev)
+>
+>         adc =3D iio_priv(indio_dev);
+>
+> +       adc->hw_params =3D device_get_match_data(dev);
+> +       if (!adc->hw_params || adc->hw_params->num_channels > RZG2L_ADC_M=
+AX_CHANNELS)
+> +               return -EINVAL;
+> +
+>         ret =3D rzg2l_adc_parse_properties(pdev, adc);
+>         if (ret)
+>                 return ret;
+> @@ -444,8 +466,17 @@ static int rzg2l_adc_probe(struct platform_device *p=
+dev)
+>         return devm_iio_device_register(dev, indio_dev);
+>  }
+>
+> +static const struct rzg2l_adc_hw_params rzg2l_hw_params =3D {
+> +       .num_channels =3D 8,
+> +       .default_adcmp =3D 0xe,
+> +       .default_adsmp =3D 0x578,
+> +       .adsmp_mask =3D GENMASK(15, 0),
+> +       .adint_inten_mask =3D GENMASK(7, 0),
+> +       .adivc =3D true
+> +};
+> +
+>  static const struct of_device_id rzg2l_adc_match[] =3D {
+> -       { .compatible =3D "renesas,rzg2l-adc",},
+> +       { .compatible =3D "renesas,rzg2l-adc", .data =3D &rzg2l_hw_params=
+ },
+>         { /* sentinel */ }
+>  };
+>  MODULE_DEVICE_TABLE(of, rzg2l_adc_match);
+> --
+> 2.39.2
+>
+>
 
