@@ -1,216 +1,171 @@
-Return-Path: <linux-kernel+bounces-436548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC2C29E876C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 20:10:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937669E876F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 20:12:43 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835DF163FE1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:12:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A837D14D2B9;
+	Sun,  8 Dec 2024 19:12:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b="XnKh72I5";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Bk6h9pUs"
+Received: from fout-b1-smtp.messagingengine.com (fout-b1-smtp.messagingengine.com [202.12.124.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A812C28147F
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:10:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D749158862;
-	Sun,  8 Dec 2024 19:10:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUyd5ByJ"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42395211C;
-	Sun,  8 Dec 2024 19:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B0DF3E47B
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 19:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733685048; cv=none; b=YPxKYORBT3WIVkdZTwQ+AtyWXzy9jQzMC9nPfuadSq3bM9/lrgF1m9pI5pSfOoWmQumN5s/WqsQ8LO25jdW9Ppy3bIfrKWywUqzw2PiBBK11SPT/u9ZOM1zxxFCmIvAixSEHQHn4+oZsQYbBdauclaIzQ/Vrh4mQ9WRkVVEVvFs=
+	t=1733685158; cv=none; b=Dym/Y9puPW/ntcSUvp7BPgINqG5gNOw+PV3G6XJjaKWjzooOfpSPy/IiLZ2mwhIXU4uWSF+OJExXsy9OkaF9803UiErGmSKG5FYUu0BDyU0yy9g8gvy2zFPGU0WYNcnbhx4EbKMgTGpo2+AOx8RYJDLHBOoCYhUs8fu/mOidBYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733685048; c=relaxed/simple;
-	bh=9TfDDRf4EzVGBFnJ44ZU5tjgLq9zoLHMnvsie7QraM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ntVO7R1Tq6YLpa//N820SIllpqojaJHypo3GKhr/ZQgEsGt+ClTInudR+Eo1qFc/OuB2sEHXSyP4wwoFwVMRP6FcH/TXBXcAco3MlGX9hIlZ2KPKYmsK+yuLHGOYz7tLngclc3p+VHXi3vBRvwgnOcLLFTc7fvY32fs74yCn2fA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUyd5ByJ; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-8418ecda126so144067839f.3;
-        Sun, 08 Dec 2024 11:10:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733685046; x=1734289846; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=SG5reo1dXIq31bXS85h7E4Iq3GMFsNfzE/E+ItcldH4=;
-        b=NUyd5ByJE5hj+3Qg5q+zjCYdP8gixBEeiG0Hw831LBgfeyKDgVx6Wf53nJhZxgjVz5
-         pXBzXIY33NoA3zx3MR/W/z+Z+2bT2PbDDzagNmw0LY3wJLWPf5rB3PcgyMdzK1Gee693
-         F0bQqFkAaR5jbisCFh8jAtJfQcg8EEQ6p5yn5ae714RGoc1/sBEaLRylITOS0dFUuWfo
-         uK4MUACBwj/jkjcm8yaU2Fvut85SmwGNtL7J69SgCldub002/MGNFkSrX7MQEy5BPToA
-         5Fh+43kty1UPZYZMhBl6Dos7szFsVKiXmbrG8UIG9Suekd6Nh/rAGmd6vxly32Z9Grmv
-         v+aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733685046; x=1734289846;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SG5reo1dXIq31bXS85h7E4Iq3GMFsNfzE/E+ItcldH4=;
-        b=O/PtadBBWCBT6NqDNqZ/xlRUoTdluBts1lvsDRrb2Y1Cig2QZjBdlDnb/XNspfOMEq
-         2/N2iohzfwqwl9yh4OFSeWW26XpSeGCzQPLiK/ZbzrQLErqNren/Z/oNVdmn35KNQQUV
-         6S3uV6fG3bya9VJmpT6O4Zfpe9bwsCEbrxm6T3tt1okWUyzCoVbnq5/rWJ5ubgfMzQEf
-         P+5jidZNdzkqFbZzlpMiQIVEC+16NqkhbaxM/sYwX6GDvajbAhxix2u/I3b5HL+fXwNU
-         pJ8RWtULC5ZoHo/XvbrZxcEbOtBxd7wIrN9+c+rzGI4nFqMEOIsk5aXLyyvFFd+ORFsq
-         kJ0w==
-X-Forwarded-Encrypted: i=1; AJvYcCWAhMwfrZi/7+WPIUxN5w2e1phDbJuwz4RXMa0MTAQ1Sba0arOA+5xArnlkjASljpEl/KOtCKtu@vger.kernel.org, AJvYcCWkwp5WiNtJ0OCvWC7ZPcJcjw+rpHysC8JVZg/uhuv8cap99Eyb5oYnbBmqHN2zXAzvGaZIcutf/sKZFjY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw43a0Jw/d+5HXIJj9J29FOzyIRywYbSP73j0iffgNItuIaDrLQ
-	nVCd15sLRZwzPyO990r+WiQUd3w5V4izA5ZKvcSnsH3B9taR5IOg
-X-Gm-Gg: ASbGncsdkbEZQOITMBj3o+CbpDA3AXkHMqSarvO8qC8Jgt+vEXFYQn+Tn7hDFHlKw3U
-	490y1c1REC/2Vk6N4rfgjfdHqgpQnF5W0Tm0z/w+weJYIs/85I4pQFzL6KqNapz+0M4BYhIcCZu
-	m+uZl4AA9gPIxZatXqhe6XS0PSxRwE0fJnsHgnoG0iMOJVQFpuvy9xHwNLj3f0bmaFLfJ6CL3jY
-	F71p9MvqM0/k9HgWl+VUQMAjC69XECCODJdWlBSszxbb9/EwILww5uBCSWc2q72/bM3SrZKogot
-X-Google-Smtp-Source: AGHT+IGuo9Kvv/tHvSoPyZKt0NC4Sr/HfxAUeB26jhjZIlHSLuNwmlFFE2bHFKJeqSew9Vz7KZBjHw==
-X-Received: by 2002:a05:6e02:b4a:b0:3a7:98c4:86a9 with SMTP id e9e14a558f8ab-3a811e226b8mr125132395ab.20.1733685046171;
-        Sun, 08 Dec 2024 11:10:46 -0800 (PST)
-Received: from inspiron7620plus.lan ([172.59.229.198])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e2bb66b174sm339580173.151.2024.12.08.11.10.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 11:10:44 -0800 (PST)
-From: Guy Chronister <guyc.linux.patches@gmail.com>
-To: hkallweit1@gmail.com
-Cc: nic_swsd@realtek.com,
-	andrew+netdev@lunn.ch,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guy Chronister <guyc.linux.patches@gmail.com>,
-	Koba Ko <koba.ko@canonical.com>,
-	Timo Aaltonen <timo.aaltonen@canonical.com>,
-	Andrea Righi <andrea.righi@canonical.com>
-Subject: [PATCH] r8169: Add quirks to enable ASPM on Dell platforms
-Date: Sun,  8 Dec 2024 13:10:39 -0600
-Message-ID: <20241208191039.2240-1-guyc.linux.patches@gmail.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733685158; c=relaxed/simple;
+	bh=d+MDNW2pYqKc7KCSkvzHVQC6JYFEGq5XNoP7a+PR72U=;
+	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:
+	 References:In-Reply-To; b=clA4lx/n71XUGg/eJ+9mG8x+P3ZSIhllmP+YU7WCWc0rxF+XxNXy4I5jl1W1gMQRy46NLCbuoZpt189mblsIFdkacH/6iDQcDmczK8X6tfUsjOBXBKoIisS+GKSiie5e2P5d8woqPJ8Nar1DNl3vQ7Ua/S6vZ5MFIoRIYfwIWys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev; spf=pass smtp.mailfrom=getstate.dev; dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b=XnKh72I5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Bk6h9pUs; arc=none smtp.client-ip=202.12.124.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getstate.dev
+Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
+	by mailfout.stl.internal (Postfix) with ESMTP id 38DDF11400C7;
+	Sun,  8 Dec 2024 14:12:34 -0500 (EST)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-08.internal (MEProxy); Sun, 08 Dec 2024 14:12:34 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=getstate.dev; h=
+	cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm3; t=1733685154; x=1733771554; bh=d+MDNW2pYq
+	Kc7KCSkvzHVQC6JYFEGq5XNoP7a+PR72U=; b=XnKh72I535m603FOb13Xa9p9bG
+	N6/aEZWI0LyahmMcjcYnLfLHtrh3yw1GHsKdWl9jyzuYqdhMJkG9dX0Tl6tblOlf
+	K2gWbNN8TU1qywKFw3C1E6PQ2nlkvxaGYDv7WhX13p+m648kdzyfSA0RZDatCR2C
+	RURZlaQ1zwmXkdezk3puXcoq4uH0CTdS8zCvwc6UpcISRgsCdHmJxx+Ny+BDyZEW
+	EFdKbgVIsicjUQRS3EVlWmeGI2+kJXBudJ0SEVOYNOAWlMQYqljS7iul5hhzuWp9
+	7yPB2WWzT6wkWJZ1i0FQY4ii2v5WxGQqknVbghKRbgCvp4oheoOh/5m6yA3A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1733685154; x=1733771554; bh=d+MDNW2pYqKc7KCSkvzHVQC6JYFEGq5XNoP
+	7a+PR72U=; b=Bk6h9pUs4+rBx9Gfc5UtAfZUoOKbVaDC4+Cxc0/ULoUCOMNev8G
+	otwhI/0g+ErElUo/aaAEVarSarldc8gT0BAwys08kNyGPssv9cH6xjHHGFVQnbi0
+	oPf3MgsvOW/k5e1/9odmeklG4/Gd1EE7GEdYuh/kfwhjpLqNL6ECCCPsVW6Oqe7X
+	ljSkBmCbW92UjmvdKxAYpmK+dw6+1yv2eaGutA6noHJ3c/CGwN2koG3I0ANBUok4
+	NI2c8uLckjn8EjkXbQ2xnee6zFZ2AVX2oCkBcFSJ2xxZwzQVufQlDqwaQuB11Z2h
+	KwWee4+jhxg5rC8LBWXLzm0Ju0BW2M4XtOA==
+X-ME-Sender: <xms:oe9VZ63_4mHSOJKV0JWZohdytKFy7fBwFCBUSnPr7mdngzvSQoZEmA>
+    <xme:oe9VZ9FmzqBjJ-yneDw8lYlVU28FyUybxpHDlLusFoMd--WMIQrUtqW7jpuImH2qk
+    WHAzAldMN5R4aCdqdk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeefgdduvdefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucenucfjughrpefotgggff
+    fkuffhvffofhgjsehmtderreertdejnecuhfhrohhmpedfofgriihinhcutehlhhgruggu
+    rggufdcuoehmrgiiihhnsehgvghtshhtrghtvgdruggvvheqnecuggftrfgrthhtvghrnh
+    epkefggfetgfejheffieevleevgeeftdehkeeuffffleelfeefiedtteetudfgffdvnecu
+    ffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehmrgiiihhnsehgvghtshhtrghtvgdruggvvhdpnhgs
+    pghrtghpthhtohepgedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgriihinh
+    esghgvthhsthgrthgvrdguvghvpdhrtghpthhtohepshihiihkrghllhgvrhdqsghughhs
+    sehgohhoghhlvghgrhhouhhpshdrtghomhdprhgtphhtthhopehshiiisghothdogeejle
+    grfhhfhedusggsfeeiudgvfhehrggrudeksehshiiikhgrlhhlvghrrdgrphhpshhpohht
+    mhgrihhlrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:oe9VZy7lTebuKRJNAQnR3gluhguvnjRhutNKDthod9jodVZbb3xGVQ>
+    <xmx:oe9VZ71UXXqd4PE7ykK0o0GorwXi9Y1KG32eDFDxqmgRU2WKgdrsEQ>
+    <xmx:oe9VZ9GmXjSaMG99uPOXRGdKRZnqEbIPkhdIRS622Tjoiu_5rFP8ww>
+    <xmx:oe9VZ09pv92B4RTxIzDxjBDpvttfdEUICAEYlwNXQoJkd4X1HbyaQQ>
+    <xmx:ou9VZ9AJKKckA__AnM5OlGaBhmIXs9JW5r5DKEnDshQZcQ-HHDcVBkrL>
+Feedback-ID: i0ed1493d:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id AB5B71C20068; Sun,  8 Dec 2024 14:12:33 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
+Content-Type: multipart/mixed;
+ boundary=d2b98651a55833052975bec3182971688e20ea76c29171ac77536078d22d
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Date: Sun, 08 Dec 2024 22:12:32 +0300
+Message-Id: <D66K3G6JFJ4C.1UV5Z5BMPMJDB@getstate.dev>
+Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
+ mgmt_remove_adv_monitor_sync
+From: "Mazin Alhaddad" <mazin@getstate.dev>
+To: "Mazin Alhaddad" <mazin@getstate.dev>, "syzbot"
+ <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>,
+ <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
+X-Mailer: aerc 0.18.2
+References: <D66FXFUEV6V3.3SKKXVBD0Q1OY@getstate.dev>
+ <6755cc1f.050a0220.2477f.002b.GAE@google.com>
+ <D66J2UCA2K95.14GOLVW7ECBK2@getstate.dev>
+In-Reply-To: <D66J2UCA2K95.14GOLVW7ECBK2@getstate.dev>
 
-Some non-Dell platforms equipped with r8168h/r8111 have issues with ASPM. It's very hard to fix all known issues in a short time and r8168h/r8111 is not a brand new NIC chip, so introduce the quirk for Dell platforms. It's also easier to track the Dell platform and ask for Realtek's effort.
-Make the original matching logic more explicit.
+--d2b98651a55833052975bec3182971688e20ea76c29171ac77536078d22d
+Content-Type: multipart/alternative;
+ boundary=657d74f73129d993ed32d6e4d0f46405fa488573636d9dce1cdd2974fe38
 
-Signed-off-by: Koba Ko <koba.ko@canonical.com>
-Signed-off-by: Timo Aaltonen <timo.aaltonen@canonical.com>
-Signed-off-by: Andrea Righi <andrea.righi@canonical.com>
-Signed-off-by: Guy Chronister <guyc.linux.patches@gmail.com>
----
- drivers/net/ethernet/realtek/r8169_main.c | 83 ++++++++++++++++++++++-
- 1 file changed, 80 insertions(+), 3 deletions(-)
+--657d74f73129d993ed32d6e4d0f46405fa488573636d9dce1cdd2974fe38
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
 
-diff --git a/drivers/net/ethernet/realtek/r8169_main.c b/drivers/net/ethernet/realtek/r8169_main.c
-index 6934bdee2a91..3c1cf704492f 100644
---- a/drivers/net/ethernet/realtek/r8169_main.c
-+++ b/drivers/net/ethernet/realtek/r8169_main.c
-@@ -15,6 +15,7 @@
- #include <linux/etherdevice.h>
- #include <linux/clk.h>
- #include <linux/delay.h>
-+#include <linux/dmi.h>
- #include <linux/ethtool.h>
- #include <linux/hwmon.h>
- #include <linux/phy.h>
-@@ -5322,13 +5323,89 @@ static void rtl_init_mac_address(struct rtl8169_private *tp)
- 	rtl_rar_set(tp, mac_addr);
- }
- 
-+static bool rtl_aspm_dell_workaround(struct rtl8169_private *tp)
-+{
-+	static const struct dmi_system_id sysids[] = {
-+		{
-+			.ident = "Dell",
-+			.matches = {
-+				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+				DMI_MATCH(DMI_PRODUCT_NAME, "Vostro 16 5640"),
-+				DMI_MATCH(DMI_PRODUCT_SKU, "0CA0"),
-+			},
-+		},
-+		{
-+			.ident = "Dell",
-+			.matches = {
-+				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+				DMI_MATCH(DMI_PRODUCT_NAME, "Vostro 14 3440"),
-+				DMI_MATCH(DMI_PRODUCT_SKU, "0CA5"),
-+			},
-+		},
-+		{
-+			.ident = "Dell",
-+			.matches = {
-+				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+				DMI_MATCH(DMI_PRODUCT_NAME, "Vostro 14 3440"),
-+				DMI_MATCH(DMI_PRODUCT_SKU, "0CA6"),
-+			},
-+		},
-+		{
-+			.ident = "Dell",
-+			.matches = {
-+				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3450"),
-+				DMI_MATCH(DMI_PRODUCT_SKU, "0C99"),
-+			},
-+		},
-+		{
-+			.ident = "Dell",
-+			.matches = {
-+				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3450"),
-+				DMI_MATCH(DMI_PRODUCT_SKU, "0C97"),
-+			},
-+		},
-+		{
-+			.ident = "Dell",
-+			.matches = {
-+				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3550"),
-+				DMI_MATCH(DMI_PRODUCT_SKU, "0C9A"),
-+			},
-+		},
-+		{
-+			.ident = "Dell",
-+			.matches = {
-+				DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-+				DMI_MATCH(DMI_PRODUCT_NAME, "Latitude 3550"),
-+				DMI_MATCH(DMI_PRODUCT_SKU, "0C98"),
-+			},
-+		},
-+		{}
-+	};
-+
-+	if (tp->mac_version == RTL_GIGA_MAC_VER_46 && dmi_check_system(sysids))
-+		return true;
-+
-+	return false;
-+}
-+
- /* register is set if system vendor successfully tested ASPM 1.2 */
- static bool rtl_aspm_is_safe(struct rtl8169_private *tp)
- {
--	if (tp->mac_version >= RTL_GIGA_MAC_VER_61 &&
--	    r8168_mac_ocp_read(tp, 0xc0b2) & 0xf)
-+	 /* definition of 0xc0b2,
-+	  * 0: L1
-+	  * 1: ASPM L1.0
-+	  * 2: ASPM L0s
-+	  * 3: CLKEREQ
-+	  * 4-7: Reserved
-+	  */
-+	if ((tp->mac_version >= RTL_GIGA_MAC_VER_61 &&
-+		 (r8168_mac_ocp_read(tp, 0xc0b2) & 0x0F)) ||
-+		rtl_aspm_dell_workaround(tp)) {
- 		return true;
--
-+	}
- 	return false;
- }
- 
--- 
-2.45.2
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
+ master=20
 
+--657d74f73129d993ed32d6e4d0f46405fa488573636d9dce1cdd2974fe38--
+
+--d2b98651a55833052975bec3182971688e20ea76c29171ac77536078d22d
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename=0001-TEST.patch
+Content-Type: text/plain; charset=utf-8; name=0001-TEST.patch
+
+RnJvbSBmZDQwNzJmNTQyMDBmYjNhOGE0NDU2YWM0ZmNmOGQxZjg4ZWQ0YjU1IE1vbiBTZXAgMTcg
+MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXppbiBBbEhhZGRhZCA8bWF6aW5AZ2V0c3RhdGUuZGV2PgpE
+YXRlOiBTdW4sIDggRGVjIDIwMjQgMTg6NTI6NTQgKzAzMDAKU3ViamVjdDogW1BBVENIXSBURVNU
+CgotLS0KIG5ldC9ibHVldG9vdGgvaGNpX3N5bmMuYyB8ICA1ICsrKy0tCiBuZXQvYmx1ZXRvb3Ro
+L21nbXQuYyAgICAgfCAxNSArKysrKysrKysrKysrKy0KIDIgZmlsZXMgY2hhbmdlZCwgMTcgaW5z
+ZXJ0aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9uZXQvYmx1ZXRvb3RoL2hj
+aV9zeW5jLmMgYi9uZXQvYmx1ZXRvb3RoL2hjaV9zeW5jLmMKaW5kZXggYzg2ZjRlNDJlLi5hYTVh
+YTNmZWQgMTAwNjQ0Ci0tLSBhL25ldC9ibHVldG9vdGgvaGNpX3N5bmMuYworKysgYi9uZXQvYmx1
+ZXRvb3RoL2hjaV9zeW5jLmMKQEAgLTUxOTcsNiArNTE5Nyw5IEBAIGludCBoY2lfZGV2X2Nsb3Nl
+X3N5bmMoc3RydWN0IGhjaV9kZXYgKmhkZXYpCiAJICovCiAJZHJhaW5fd29ya3F1ZXVlKGhkZXYt
+PndvcmtxdWV1ZSk7CiAKKwkvKiBmbHVzaCBjbWQgIHdvcmsgKi8KKwlmbHVzaF93b3JrKCZoZGV2
+LT5jbWRfd29yayk7CisKIAloY2lfZGV2X2xvY2soaGRldik7CiAKIAloY2lfZGlzY292ZXJ5X3Nl
+dF9zdGF0ZShoZGV2LCBESVNDT1ZFUllfU1RPUFBFRCk7CkBAIC01MjM0LDggKzUyMzcsNiBAQCBp
+bnQgaGNpX2Rldl9jbG9zZV9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQogCQljbGVhcl9iaXQo
+SENJX0lOSVQsICZoZGV2LT5mbGFncyk7CiAJfQogCi0JLyogZmx1c2ggY21kICB3b3JrICovCi0J
+Zmx1c2hfd29yaygmaGRldi0+Y21kX3dvcmspOwogCiAJLyogRHJvcCBxdWV1ZXMgKi8KIAlza2Jf
+cXVldWVfcHVyZ2UoJmhkZXYtPnJ4X3EpOwpkaWZmIC0tZ2l0IGEvbmV0L2JsdWV0b290aC9tZ210
+LmMgYi9uZXQvYmx1ZXRvb3RoL21nbXQuYwppbmRleCBiMzExOTJkNDcuLjk1NmY4MDk2NSAxMDA2
+NDQKLS0tIGEvbmV0L2JsdWV0b290aC9tZ210LmMKKysrIGIvbmV0L2JsdWV0b290aC9tZ210LmMK
+QEAgLTU1MTksOSArNTUxOSwxOCBAQCBzdGF0aWMgdm9pZCBtZ210X3JlbW92ZV9hZHZfbW9uaXRv
+cl9jb21wbGV0ZShzdHJ1Y3QgaGNpX2RldiAqaGRldiwKIHsKIAlzdHJ1Y3QgbWdtdF9ycF9yZW1v
+dmVfYWR2X21vbml0b3IgcnA7CiAJc3RydWN0IG1nbXRfcGVuZGluZ19jbWQgKmNtZCA9IGRhdGE7
+Ci0Jc3RydWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcCA9IGNtZC0+cGFyYW07CisJ
+c3RydWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcDsKKwkKKwlpZiAoc3RhdHVzID09
+IC1FSU5WQUwgfHwgY21kICE9IHBlbmRpbmdfZmluZChNR01UX09QX1JFTU9WRV9BRFZfTU9OSVRP
+UiwgaGRldikpeworCQlyZXR1cm47CisJfQogCiAJaGNpX2Rldl9sb2NrKGhkZXYpOworCS8vIGlm
+IGNhbGxlZCB3aGlsZSBkZXZpY2UgaXMgY2xvc2luZywgc3RhdHVzIHdpbGwgYmUgaW52YWxpZC4K
+KwkvLyBhbmQgY21kIGlzIGNsZWFyZWQgYnkgX19tZ210X3Bvd2VyX29mZgorCQorCisJY3AgPSBj
+bWQtPnBhcmFtOwogCiAJcnAubW9uaXRvcl9oYW5kbGUgPSBjcC0+bW9uaXRvcl9oYW5kbGU7CiAK
+QEAgLTU1NDAsNiArNTU0OSw4IEBAIHN0YXRpYyB2b2lkIG1nbXRfcmVtb3ZlX2Fkdl9tb25pdG9y
+X2NvbXBsZXRlKHN0cnVjdCBoY2lfZGV2ICpoZGV2LAogc3RhdGljIGludCBtZ210X3JlbW92ZV9h
+ZHZfbW9uaXRvcl9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2LCB2b2lkICpkYXRhKQogewogCXN0
+cnVjdCBtZ210X3BlbmRpbmdfY21kICpjbWQgPSBkYXRhOworCWlmIChjbWQgIT0gcGVuZGluZ19m
+aW5kKE1HTVRfT1BfUkVNT1ZFX0FEVl9NT05JVE9SLCBoZGV2KSkKKwkJcmV0dXJuIC1FSU5WQUw7
+CiAJc3RydWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcCA9IGNtZC0+cGFyYW07CiAJ
+dTE2IGhhbmRsZSA9IF9fbGUxNl90b19jcHUoY3AtPm1vbml0b3JfaGFuZGxlKTsKIApAQCAtOTU0
+Niw2ICs5NTU3LDggQEAgdm9pZCBfX21nbXRfcG93ZXJfb2ZmKHN0cnVjdCBoY2lfZGV2ICpoZGV2
+KQogCQltYXRjaC5tZ210X3N0YXR1cyA9IE1HTVRfU1RBVFVTX0lOVkFMSURfSU5ERVg7CiAJZWxz
+ZQogCQltYXRjaC5tZ210X3N0YXR1cyA9IE1HTVRfU1RBVFVTX05PVF9QT1dFUkVEOworCQorCW1n
+bXRfcGVuZGluZ19mb3JlYWNoKE1HTVRfT1BfUkVNT1ZFX0FEVl9NT05JVE9SLCBoZGV2LCBzZXR0
+aW5nc19yc3AsICZtYXRjaCk7CiAKIAltZ210X3BlbmRpbmdfZm9yZWFjaCgwLCBoZGV2LCBjbWRf
+Y29tcGxldGVfcnNwLCAmbWF0Y2gpOwogCi0tIAoyLjQ2LjAKCg==
+--d2b98651a55833052975bec3182971688e20ea76c29171ac77536078d22d--
 
