@@ -1,163 +1,228 @@
-Return-Path: <linux-kernel+bounces-436396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A1519E8562
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 14:19:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59199E856E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 14:22:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 746A52817F0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:19:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A03081649AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 13:21:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81F4014659D;
-	Sun,  8 Dec 2024 13:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BCFF14B077;
+	Sun,  8 Dec 2024 13:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="nsAlKyTz"
-Received: from pv50p00im-zteg10021301.me.com (pv50p00im-zteg10021301.me.com [17.58.6.46])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C8tF+63M"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A122145B25
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 13:19:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F4C1E495;
+	Sun,  8 Dec 2024 13:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733663953; cv=none; b=N65Y9ZBRSIXUXfP7AvKqJnYlCV5FJ4LMKPW/McyFBQ63wy+Aqzn5Fgsfn7V38QzoQm+5slj+VvQChIUStqbCA0eLrU78y4N5PxaLKgWLEf7AcXHtmiLiZPicD119jtLAYAC0BXyW5OJ3RLiiBb8Or+rXsGlJIfBXwRXMMESsk6I=
+	t=1733664113; cv=none; b=QDmlG7hWdfdGvLjlSrzeLTBBcD7JEXROSHXfF6zQ4saKn9xIW2mZXyEEqeJu/tz7OK+w2W00V2q3GeYwDNMJVOFuTE379pODR2DmtkPWDMaBkXXrfouw/AvOgwuKNrMxrzHutJTbtMOq5ULvrbhWZRtHvGLGfiE1G2Aonl0tcgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733663953; c=relaxed/simple;
-	bh=v6DuWZtu4YUnrBhocodbi8f07v2ZhN1ZLmNgHMutPlg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=SQA7mGr9TtWbalor6b6s9/BMlzEfvAfN0f4fHvv3bgJ/FuDsm5UU9VtxI4dgabAew6b5XUPdquZfkEEwfyOlNbpvwE+UV2Rli9nPnLD11bc2qISL6xI6xr7jDIhTcj9GgIP2se5+dgjrZo6lYqlKbST56yd08wbqtoN8jwAdox0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=nsAlKyTz; arc=none smtp.client-ip=17.58.6.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733663951;
-	bh=B9Z7dZW7Hi3Js1z/RCEjU+3M/IjEGHpjDFHWBOHmqc4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
-	 x-icloud-hme;
-	b=nsAlKyTzBjgFKiKK875IKrpeQ6Hv0IpX0ZWERQ6ck5xVT3yTVHF/ma0+sMayke7RA
-	 Mgepn7kdGl4f4KMgfy/ymh+QBWxBeS7/1xqjrAX4SI9iGKKSkpp5xcz5oH/1zd68so
-	 q8B21ej8wfHvQSmqknU2Qp3DQusSq/gzOdhHF5FFhfSN5Qste9Sq1vNahO5iwGakAp
-	 tKQIdEZWB3krUn4WgU7lFUNJY/OoKRT0xs0HLsHhvA1M3HxUyLGgZ/BUmsWP7OKH1i
-	 bCryHNz+PA1BYV/NsVSs5yT/qG6oSWCs9oJcX6JOBLUE0hNVJ8Fz0YBe04unhhDqh2
-	 KUvRd6BwJWVxw==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-zteg10021301.me.com (Postfix) with ESMTPSA id B0625500490;
-	Sun,  8 Dec 2024 13:18:59 +0000 (UTC)
-Message-ID: <7780942a-93cd-4508-be97-fc5e5267c389@icloud.com>
-Date: Sun, 8 Dec 2024 21:18:54 +0800
+	s=arc-20240116; t=1733664113; c=relaxed/simple;
+	bh=PsE4WIqRkNJRyiLiyQXSNO9sz4PMLfBgYnDgwiGph7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bMYusvtrkpdDKpjeBtafXw9Kg7JD5ZfJMkSZbg7OhSZU+reNB6OvbMjt6JoNJOKhGJ+ib0uotf+2zKTHtAbnHY7gubc+ViAlN/75R3UMrQOfa+Yl9pmhE19GEkVeDVcosOXznzmBggqQoZ88rRsOAEMcOc3VOcW3qMmNjEmfhCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C8tF+63M; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9963EC4CED2;
+	Sun,  8 Dec 2024 13:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733664112;
+	bh=PsE4WIqRkNJRyiLiyQXSNO9sz4PMLfBgYnDgwiGph7o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=C8tF+63MmMG4sSMXW62ppWHF/56pKOGKxQa2xYg217GR3WZlegqaaFJst7ElgMISU
+	 WB4aTZiFJnBIwHdai+C6HO4Wfh4PzCoBpLRM0f6V5S0EXFZwtCz0N47Ejn0mLCjEx3
+	 +5uFr2b5MwbrZ7cq5bkm4E5CoLmAv691Ly1ml4iYqA0ELiO1+4TMyUEefup2Tybi/l
+	 xxEDOf2qchSdCYkU/X/aL85A1HKoGTx1dAiyDPaEKNRrogvDGeZZ7dNqnMQRFdrF3F
+	 HA+L9whe6qQUqlSKu0EulOWu0/OrInb5ssAtZkdCOTCrKcyjv0addl+xdmtUpjQpsX
+	 NS8Ih3KhN3osQ==
+Date: Sun, 8 Dec 2024 13:21:47 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: Conor Dooley <conor@kernel.org>, lars@metafoo.de,
+ Michael.Hennerich@analog.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, eraretuya@gmail.com
+Subject: Re: [PATCH v5 06/10] dt-bindings: iio: accel: add interrupt-names
+Message-ID: <20241208132147.67efbfa1@jic23-huawei>
+In-Reply-To: <CAFXKEHYULs+GO4S4nUzkPC0Sx0KrDur7K3zdFvZn4A3_OEstXw@mail.gmail.com>
+References: <20241205171343.308963-1-l.rubusch@gmail.com>
+	<20241205171343.308963-7-l.rubusch@gmail.com>
+	<20241205-fraying-overfull-4fe3eb6c5376@spud>
+	<CAFXKEHbGcTGBNH8Hrg3i90_-xR1KYyw_97X1pPMFB6E4ztL5Aw@mail.gmail.com>
+	<20241206-settle-impulsive-280ce8dc312f@spud>
+	<CAFXKEHb1NbV-Us3kaNyG+P90SMXsV7233dXd64_gbtCKst6gmQ@mail.gmail.com>
+	<CAFXKEHYULs+GO4S4nUzkPC0Sx0KrDur7K3zdFvZn4A3_OEstXw@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 04/11] driver core: Constify API device_find_child()
- then adapt for various usages
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- James Bottomley <James.Bottomley@hansenpartnership.com>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@t-8ch.de>,
- linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
- linux-sound@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-block@vger.kernel.org, linux-cxl@vger.kernel.org,
- linux1394-devel@lists.sourceforge.net, arm-scmi@vger.kernel.org,
- linux-efi@vger.kernel.org, linux-gpio@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- linux-hwmon@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-remoteproc@vger.kernel.org,
- linux-scsi@vger.kernel.org, open-iscsi@googlegroups.com,
- linux-usb@vger.kernel.org, linux-serial@vger.kernel.org,
- netdev@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>
-References: <20241205-const_dfc_done-v3-0-1611f1486b5a@quicinc.com>
- <20241205-const_dfc_done-v3-4-1611f1486b5a@quicinc.com>
- <20241206135209.GA133715@workstation.local>
-Content-Language: en-US
-From: Zijun Hu <zijun_hu@icloud.com>
-In-Reply-To: <20241206135209.GA133715@workstation.local>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: zq6ALpvY8lzOJgSSQvNtYt-PHDnk_XXq
-X-Proofpoint-GUID: zq6ALpvY8lzOJgSSQvNtYt-PHDnk_XXq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-08_04,2024-12-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 bulkscore=0 mlxscore=0
- clxscore=1011 adultscore=0 phishscore=0 malwarescore=0 spamscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412080111
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/12/6 21:52, Takashi Sakamoto wrote:
-> Hi,
-> 
-> On Thu, Dec 05, 2024 at 08:10:13AM +0800, Zijun Hu wrote:
->> From: Zijun Hu <quic_zijuhu@quicinc.com>
->>
->> Constify the following API:
->> struct device *device_find_child(struct device *dev, void *data,
->> 		int (*match)(struct device *dev, void *data));
->> To :
->> struct device *device_find_child(struct device *dev, const void *data,
->>                                  device_match_t match);
->> typedef int (*device_match_t)(struct device *dev, const void *data);
->> with the following reasons:
->>
->> - Protect caller's match data @*data which is for comparison and lookup
->>   and the API does not actually need to modify @*data.
->>
->> - Make the API's parameters (@match)() and @data have the same type as
->>   all of other device finding APIs (bus|class|driver)_find_device().
->>
->> - All kinds of existing device match functions can be directly taken
->>   as the API's argument, they were exported by driver core.
->>
->> Constify the API and adapt for various existing usages by simply making
->> various match functions take 'const void *' as type of match data @data.
->>
->> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
->> ---
->>  arch/sparc/kernel/vio.c                |  6 +++---
->>  drivers/base/core.c                    |  6 +++---
->>  drivers/block/sunvdc.c                 |  6 +++---
->>  drivers/bus/fsl-mc/dprc-driver.c       |  4 ++--
->>  drivers/cxl/core/pci.c                 |  4 ++--
->>  drivers/cxl/core/pmem.c                |  2 +-
->>  drivers/cxl/core/region.c              | 21 ++++++++++++---------
->>  drivers/firewire/core-device.c         |  4 ++--
->>  drivers/firmware/arm_scmi/bus.c        |  4 ++--
->>  drivers/firmware/efi/dev-path-parser.c |  4 ++--
->>  drivers/gpio/gpio-sim.c                |  2 +-
->>  drivers/gpu/drm/mediatek/mtk_drm_drv.c |  2 +-
->>  drivers/hwmon/hwmon.c                  |  2 +-
->>  drivers/media/pci/mgb4/mgb4_core.c     |  4 ++--
->>  drivers/nvdimm/bus.c                   |  2 +-
->>  drivers/pwm/core.c                     |  2 +-
->>  drivers/rpmsg/rpmsg_core.c             |  4 ++--
->>  drivers/scsi/qla4xxx/ql4_os.c          |  3 ++-
->>  drivers/scsi/scsi_transport_iscsi.c    | 10 +++++-----
->>  drivers/slimbus/core.c                 |  8 ++++----
->>  drivers/thunderbolt/retimer.c          |  2 +-
->>  drivers/thunderbolt/xdomain.c          |  2 +-
->>  drivers/tty/serial/serial_core.c       |  4 ++--
->>  drivers/usb/typec/class.c              |  8 ++++----
->>  include/linux/device.h                 |  4 ++--
->>  include/scsi/scsi_transport_iscsi.h    |  4 ++--
->>  net/dsa/dsa.c                          |  2 +-
->>  tools/testing/cxl/test/cxl.c           |  2 +-
->>  28 files changed, 66 insertions(+), 62 deletions(-)
-> 
-> For the changes in FireWire subsystem:
-> 
-> Reviewed-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-> 
+On Sat, 7 Dec 2024 13:10:22 +0100
+Lothar Rubusch <l.rubusch@gmail.com> wrote:
 
-thank you for code review and previous cooperation to achieve
-this goal (^^).
+> On Fri, Dec 6, 2024 at 6:29=E2=80=AFPM Lothar Rubusch <l.rubusch@gmail.co=
+m> wrote:
+> >
+> > On Fri, Dec 6, 2024 at 6:08=E2=80=AFPM Conor Dooley <conor@kernel.org> =
+wrote: =20
+> > >
+> > > On Thu, Dec 05, 2024 at 08:41:52PM +0100, Lothar Rubusch wrote: =20
+> > > > On Thu, Dec 5, 2024 at 6:54=E2=80=AFPM Conor Dooley <conor@kernel.o=
+rg> wrote: =20
+> > > > >
+> > > > > On Thu, Dec 05, 2024 at 05:13:39PM +0000, Lothar Rubusch wrote: =
+=20
+> > > > > > Add interrupt-names INT1 and INT2 for the two interrupt lines o=
+f the
+> > > > > > sensor. Only one line will be connected for incoming events. Th=
+e driver
+> > > > > > needs to be configured accordingly. If no interrupt line is set=
+ up, the
+> > > > > > sensor will still measure, but no events are possible.
+> > > > > >
+> > > > > > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+> > > > > > ---
+> > > > > >  .../devicetree/bindings/iio/accel/adi,adxl345.yaml         | 7=
+ +++++++
+> > > > > >  1 file changed, 7 insertions(+)
+> > > > > >
+> > > > > > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,ad=
+xl345.yaml b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.yaml
+> > > > > > index 280ed479ef5..67e2c029a6c 100644
+> > > > > > --- a/Documentation/devicetree/bindings/iio/accel/adi,adxl345.y=
+aml
+> > > > > > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adxl345.y=
+aml
+> > > > > > @@ -37,6 +37,11 @@ properties:
+> > > > > >    interrupts:
+> > > > > >      maxItems: 1
+> > > > > >
+> > > > > > +  interrupt-names:
+> > > > > > +    description: Use either INT1 or INT2 for events, or ignore=
+ events.
+> > > > > > +    items:
+> > > > > > +      - enum: [INT1, INT2] =20
+> > > > >
+> > > > > The description for this ", or ignore events" does not make sense=
+. Just
+> > > > > drop it, it's clear what happens if you don't provide interrupts.
+> > > > >
+> > > > > However, interrupts is a required property but interrupt-names is=
+ not.
+> > > > > Seems rather pointless not making interrupt-names a required prop=
+erty
+> > > > > (in the binding!) since if you only add interrupts and not
+> > > > > interrupt-names you can't even use the interrupt as you do not kn=
+ow
+> > > > > whether or not it is INT1 or INT2? =20
+> > > >
+> > > > What I meant is, yes, the sensor needs an interrupt line.
+> > > > Interrupt-names is optional. The sensor always can measure. When
+> > > > interrupt-names is specified, though, the sensor will setup a FIFO =
+and
+> > > > can use events, such as data ready, watermark, single tap, freefall,
+> > > > etc. Without the interrupt-names, the sensor goes into a "FIFO bypa=
+ss
+> > > > mode" without its specific events. =20
+> > >
+> > > What I'm talking about here is how it is ultimately pointless for
+> > > interrupts to be a required property if it can never be used without
+> > > interrupt-names as you cannot know which interrupt is in use. I think
+> > > both should be made mandatory or neither.
+> > > =20
+> >
+> > Ah, now I can see your point. I agree that it should be equally
+> > mandatory as the interrupt. Legacy implementations used simply always
+> > just INT1. I'd like to make it configurable in the IIO driver but
+> > tried to avoid the DT topic for now (which was not a smart decision
+> > either). Hence, I added the interrupt-names.
+> > I'm unsure should I make "interrupt-names" a required property now?
+> > What about the existing DTS files using this sensor? There are no
+> > interrupt-names specified, so if made required, the missing
+> > interrupt-names there would break binding check, or not?
+> > =20
+>=20
+> Sorry, I have to clarify myself, yesterday I was not focussed..
+>=20
+> 1. I agree this is kind of half way. Either, both are required or none of=
+ them.
+> If both were required, also the older DTS files using the ADXL345 would
+> need to be "fixed".
 
-> 
-> Thanks
-> 
-> Takashi Sakamoto
+Easy. If they aren't both provided, no interrupts are used.
+Driver carries on working bug less functionality.  That's fine.
+
+> If I add interrupt-names, it works with my patches for the
+> "newer" IIO driver, because since I implement it it's using interrupt-nam=
+es.
+> The older input driver for that using interrupt, does not use interrupt-n=
+ames.
+> Hence, it requires the interrupt in the DT. But it does not require
+> interrupt-names
+> (historical stuff).
+
+We don't care.  The required list should be about requirements for the
+hardware to function in a useful fashion, not if the driver currently suppo=
+rts
+that mode.  So it should never have been required even if the driver at the
+time required it because no one had done the work to make it work without.
+
+In theory you could provide a default for interrupt-names I guess if
+do want to be nice to the legacy driver.
+
+>=20
+> 2. AFAIK the sensor can operate w/o interrupts.
+> A) w/o INT line: measuring is possible; FIFO bypassed; no events
+> B) w/ INT line: measuring is possible; can use FIFO; events are possible
+> When setting the interrupt in DT, the interrupt line name can/could be
+> configured also via SW (setting up the registers of the sensor). So, it's=
+ not
+> impossible. This is AFAIR the approach in the legacy input driver. Now, t=
+here
+> is devicetree, and both should probably be better configured somewhere in
+> the DT
+
+Agreed no interrupts are required for device to do something useful.
+(not sure I follow the rest of this entry).
+>=20
+> 3. IMHO neither one, not the interrupt, nor the interrupt-names need to be
+> a required DT-binding.
+> If interrupt is required and interrupt-names not, it's a half-way approac=
+h,
+> which leaves specifying the IRQ line open to be solved partly in DT
+> (declaration of the interrupt) and partly in SW (configuration of the
+> interrupt line to use), e.g. hardcoded or configurable somewhere in the
+> driver via sysfs or the like. Not nice.
+
+Only way I can see to be nice about this is to specify a default.
+However, if someone is using the input driver and we have interrupt names
+that don't match the default, all bets are off.  That setup doesn't work
+today anyway, so do we care? I don't think so.
+
+So in conclusion. Drop the required entry for interrupts, but consider
+if a default can work for interrupt-names, or whether we should add
+the logic to require interrupt-names if interrupts are provided.
+
+Jonathan
+
+>=20
+> Pls, let me know what you think, and in case, if I need to take some
+> action, here.
+> Best,
+> L
+>=20
+>=20
+> > > > Hence, I better drop the description entirely, since it rather seems
+> > > > to be confusing. =20
 
 
