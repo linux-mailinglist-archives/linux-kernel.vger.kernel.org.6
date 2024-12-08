@@ -1,175 +1,150 @@
-Return-Path: <linux-kernel+bounces-436439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FCAC9E85E3
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:24:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FF999E85D8
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:24:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F8CA1885045
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:24:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A6C4164E10
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:23:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B672157493;
-	Sun,  8 Dec 2024 15:23:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F881547D2;
+	Sun,  8 Dec 2024 15:23:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Uz4+OS9B"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y+Oj7OV/"
+Received: from mail-io1-f50.google.com (mail-io1-f50.google.com [209.85.166.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80D8C14AD2E
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6136F305;
+	Sun,  8 Dec 2024 15:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733671426; cv=none; b=YPSZ7bfQ9yh+mc+7oiCySZ+AXUHozHwKSwW8cbCiNwgIWeI0RIgOOEeciAV+1bq7GZ2qF2pm7ydSW+JRlN3N9TGvK2rB7Zs43Qh3Ys/YSSnpTizMib4M+s11PB+rJ1VrFJN6n8BLKNlStqywQ03Ef9m4zPWn44lViNUDClC3mV0=
+	t=1733671424; cv=none; b=Slgwby7NX+ymvCf4jtwq/7Eo5yiYI2nCgpex2hvrqdXJmHzeNxJbfdiF0UgQNTiDOZmbHP9Ku88wUCweEFNcXYIS7FHGlrW2U1/iorn4mIJMCIeRLHMAxytivpe5HFQVuNHMoTajhGVzfVA3VNypXTMx66Y21zJPWj+OXG80QjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733671426; c=relaxed/simple;
-	bh=KA0vAU8DTDx3H/wl4aFnQ1yYDnMCnHQfCNIMY1kw10I=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=fJtgAnVY2zfDzPCDkD2+9oH4re8lsUiyerE8BtjuN2MN7lHW9IK3XlPP5igtz3jGRfah82kRJK9hxIyuq4RxgN+ooUWaCkTYaqcXOA0iAVMKI8zRVM1WtAc+euYMU30TvT/Zgu8DMfCMUma1km4K+mV6SkGrYuyYtF9JL5FCzkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Uz4+OS9B; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241208152341epoutp04d6c76ab0e0112bdec1a650427a903caf~PPPj1cpZp1260512605epoutp04T
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:23:41 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241208152341epoutp04d6c76ab0e0112bdec1a650427a903caf~PPPj1cpZp1260512605epoutp04T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733671421;
-	bh=U9qdsKOaCjfcMTnbwTLkPFo4E5Z9Ybaq/tHD+FUaP+g=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=Uz4+OS9B7EuvzmL0IZR+PFH13RQo0xR+aaIDOGyPrdVm2P/hf7vcspfqmw3njkDzc
-	 Ijia3CC+B6vO7qgbPHHCNOuds4mZqEfUkp/O6nWfOV8qeUKajsX596URCqgDwkYrqa
-	 ONRPgMwb3VQPP0yK7i0W0wYcZk63JnQpBnbISDFo=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20241208152340epcas5p175fbbf749b8d418f8df3d5ebfa14e730~PPPiri99J1686816868epcas5p1N;
-	Sun,  8 Dec 2024 15:23:40 +0000 (GMT)
-Received: from epsmges5p3new.samsung.com (unknown [182.195.38.183]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y5pfz1Q64z4x9Pt; Sun,  8 Dec
-	2024 15:23:39 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	86.65.19956.AF9B5576; Mon,  9 Dec 2024 00:23:39 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
-	20241208152338epcas5p4fde427bb4467414417083221067ac7ab~PPPhMDJJ50061500615epcas5p40;
-	Sun,  8 Dec 2024 15:23:38 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241208152338epsmtrp11d9743579f6d837188082af81474b114~PPPhKgA3_1210012100epsmtrp1S;
-	Sun,  8 Dec 2024 15:23:38 +0000 (GMT)
-X-AuditID: b6c32a4b-fd1f170000004df4-c9-6755b9faef4c
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	FC.BC.18949.AF9B5576; Mon,  9 Dec 2024 00:23:38 +0900 (KST)
-Received: from INBRO002811.samsungds.net (unknown [107.122.5.126]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20241208152335epsmtip143d565445f23f40887fd6abf32357895~PPPelHNbz2790327903epsmtip1U;
-	Sun,  8 Dec 2024 15:23:35 +0000 (GMT)
-From: Selvarasu Ganesan <selvarasu.g@samsung.com>
-To: gregkh@linuxfoundation.org, quic_jjohnson@quicinc.com, kees@kernel.org,
-	abdul.rahim@myyahoo.com, m.grzeschik@pengutronix.de,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
-	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
-	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
-	alim.akhtar@samsung.com, Selvarasu Ganesan <selvarasu.g@samsung.com>,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded issue
- during MIDI bind retries
-Date: Sun,  8 Dec 2024 20:53:20 +0530
-Message-ID: <20241208152322.1653-1-selvarasu.g@samsung.com>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1733671424; c=relaxed/simple;
+	bh=qj0AQF8sdxK8eDd/wJ+QJyDy1IylslyTN4Yf/nFBbHQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Es7FO5l0OouBXsNNsasZ4YcMWCcbsds70quIOM0oire+kL/mH+nz1O3V4YeIm6mcfYWkOwiAUe5sDBZUdHnSS7B9bTwVBV1l7+uZfffKzh2usO+72dpejFoDpwnNHCpJTQoXQNtQz8Q6QR/XWHt7rS6UsJYFuVv67D9ljWCeMts=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y+Oj7OV/; arc=none smtp.client-ip=209.85.166.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-84197c469cfso110806139f.3;
+        Sun, 08 Dec 2024 07:23:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733671421; x=1734276221; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wuaRJd/s2p0BBgmJcCTKuS2Shw0j2gcJR2sZ9AKudDA=;
+        b=Y+Oj7OV/gDSU5YY4zvA1PlMNrqgJHCBiCcp4ChA1BS3VTWk5KbK0ytzOwCuUGnvb7y
+         80F7Rp9SMO7Cmj6uPNHdaxH+9nii5ZgB3ehY9RJATN+5k+mv1kIPC36BQWQl93vMLJoC
+         AGhesGmlGjlyX09qdAbbpshFGHinVpv607VVLajPMhTbru1f0enkf5vxK4ii7Wk4zpyH
+         aCF05vctMFChnikS4BHRjKb4Q6gbNRETDn9xTESVfIdxT9zjFAf1pvK4VpnDkDPeAVFh
+         pqle/OgEO6TLFlExnX1x3iDe3aUG1h7KgspPVXs/NyJt21Skl02gFrTgMHzuHo66hYpX
+         N5+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733671421; x=1734276221;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wuaRJd/s2p0BBgmJcCTKuS2Shw0j2gcJR2sZ9AKudDA=;
+        b=LzoKitvPyhMFumnwNRE1042k8cLEZUjV834TBugqjUl+J+y3vnhmtXg0muDUQxoXPE
+         fCP1hb8ZryegS1pf0DBBKqqgTgC2DLjpzmWHC54Shrw81wopYJiIKr5nuQU1nbdkdzuk
+         v8i7cerrS0DGHy1wTcJtsCaJS2R2EiKShjlU7VPiH6rOwrs4n4ChxEPY3zP4DsEn5kLc
+         d4Q9oA20O7a4wMtaboXV8bgHITjzowdSLLmRpwx5mW5h0JPKML7s9O8ZNBLjMgfHYP3M
+         drnvKCvkyC1yLY9PHl+uilhHsDo+FJo1V9lzDw+Z4X6nfdMH2bDkWdZDii6FHYdORsTO
+         d9PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUV1/RG2pY/SH8n/k9JNYSNy7r7L4zNBr2+KFKEbfX72XV/6N++8kYz3moaLVEDOcAdF2XYtbGoQCgB@vger.kernel.org, AJvYcCW1z/TwlR9nXb5Faz4wiGhGSXCvRAw14ZUoMCfnYLYOdPO5fR33VYteTTkS9amgTydLNgxcw06AmUzmlb/p@vger.kernel.org, AJvYcCWPLQi3vftFmGJ8YIXLfXA5frq88TwWsygN3oSiz5eZjGduhhh+rVSrq/dc1+yC8t+UnqNdtl6WWkiFI2k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGhV8QB3bUZ7OUZXC/SXcrCcTy2xzAIWvKHqqcAtaoQdd1HmyE
+	AyhDRdqYWMcm7BRvzWYjgepQ8cbj5VcsKVXHCHTQS/ETOdg2kb8w
+X-Gm-Gg: ASbGncvxvBNlzi7ph4UkIYKdBs8k8hNeLFYAAfW7jQOEkjlUOe4sA9O6qqGjhHE1/Bl
+	4rvhgU9X31/WEsdXlkwmnEhQwbMv9u/A3QgjyJnyHmsmOuheRUAqGLNzC1Tr5TNd58CkZa4MiBo
+	6lBWW+Di6F9x+57z1bKe7azJQwx6s+yd7NqD+SK35/i5y3vQrHFo5qfkh/smrkaR9w5BY2GmBK8
+	buXq8RYCLjbRnnNIttz2upEBuc2yPGTkCguBzfH
+X-Google-Smtp-Source: AGHT+IF7EHSPVHzRrQeAE3D5a/Jgfz9fqUlcby4eg7FtaA39XYsC2c1NCztqiUGV6TsLAh/uZaadLA==
+X-Received: by 2002:a05:6e02:1a66:b0:3a8:1195:f216 with SMTP id e9e14a558f8ab-3a811dd0cfbmr91528765ab.10.1733671420748;
+        Sun, 08 Dec 2024 07:23:40 -0800 (PST)
+Received: from [192.168.1.109] ([2a02:6ea0:c603:3558::35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3a814fa40d6sm16846805ab.57.2024.12.08.07.23.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 07:23:40 -0800 (PST)
+From: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+X-Google-Original-From: Joel Selvaraj <foss@joelselvaraj.com>
+Subject: [PATCH v2 0/4] Add Xiaomi Poco F1 touchscreen support
+Date: Sun, 08 Dec 2024 09:23:26 -0600
+Message-Id: <20241208-pocof1-touchscreen-support-v2-0-5a6e7739ef45@joelselvaraj.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0xTZxjed05Pe3ArORbMPtniSCMhYIAWS/m6wdxFTSP+IFEyZXa1aY8t
-	obf1FDZc4uigKGyusyagDAyKk1hnHaWAhRZcB8K4aKRzM1MBCcjmZeuYEwIS19K6+e95L8/7
-	vM93IXFeNzuBLNKbaZNeoeWzV7E6fkhJTlvyFKgFzeMYqqttJdCD6w4CTZ7oYKNbTbUYGmo5
-	iaGK5gtsZPe2s9DtOwss5Hx4lUCBrgY2OnXGiiN31U8Ymut/SiCL+zaBHNUNLNTX8heGAvMe
-	HDW1TgFk/37NW3FSl6OaLe1t/JYjvfzbAEdqWxZIj3gPSL90O4D0b9e6fE5hcY6GVqhoUyKt
-	VxpURXp1Lj9vh/xdeZZYIEwTSlA2P1Gv0NG5/M3b89O2FmlDTviJpQptSSiVr2AYfsabOSZD
-	iZlO1BgYcy6fNqq0RpExnVHomBK9Ol1Pm18XCgSZWaHGvcUa5x0bZlzmfnzp4hOiHEy9WANi
-	SEiJ4NGOu0QNWEXyqG4Ab/k/wyPBHIBz3WPRymMA+078ynpGmWj6M1rwATg5YgeRYB7A4Nnl
-	UIUk2ZQQ3h3MCefjKS+Ao+NuTjjAqW4MOiYnOOFRcRQN26/7QBizqCR4tXkGD2Mu9Qb03SjH
-	I3Ip8LzPi0Xyq+GPx6dX1sCp12BF+9cry0LKS8Ll0YYoYTMMdN7DIjgO3htwcyI4Af5uq4pi
-	JfTaH0WxBvod/ih3EzzXNLLiAA8JX+jKiGjFwsNL01g4DSkuPFTFi3QnwSFLgB3Br8Dx0z8T
-	ESyFQ1XzK9N5lAzO9DwmvgLr6p9zUP+cg/r/xZoA7gBraSOjU9NMlnGjnv7ov9tUGnQusPKK
-	U/MugqnJYLofYCTwA0ji/HgumVeg5nFVirL9tMkgN5VoacYPskLHegRPWKM0hL6B3iwXiiQC
-	kVgsFkk2ioX8l7n3rY0qHqVWmOlimjbSpmc8jIxJKMcCDdTuzF6JXOaraBfQ9VtY0wtt2OmY
-	1W+fj8FM70wc2yUJxJTGpx+X7YjdPnttsWC/PbukARdtTTlZGV/eSEmZHufsOZfuilfKcrnx
-	/rW9S55ttR+u55Wpijck92htbeBoadcp2YbdNsv9Pdf+CRYSeUTfq/0Lw+bh95P+sByybxpR
-	njk8EHu2UHXwg/nk2UFx1fpHftkvbkuvNeU7K0lty5if+MaTnfHFzZda/c4gq1M0pkkdf/h5
-	88TorieLiy847QNB66d1aMsnbZf3XFHu9Owd4lZ6BmjZPmtN58H3bgpn8nNMN2xPxWPiuqxh
-	7uCByp0PfKYydvW+Sy2STMRnMRqFMBU3MYp/AfbqqXROBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSnO6vnaHpBpM65SymT9vIavHm6ipW
-	iwfztrFZ3Fkwjcni1PKFTBbNi9ezWUzas5XF4u7DHywW696eZ7W4vGsOm8WiZa3MFlvarjBZ
-	fDr6n9WicctdVotVnXNYLI4s/8hkcfn7TmaLBRsfMVpMOijqIOyxaVUnm8f+uWvYPY69OM7u
-	0f/XwGPinjqPvi2rGD0+b5ILYI/isklJzcksSy3St0vgylj3sJ+p4C9vxYEdf1gbGB9xdzFy
-	ckgImEjcX/CetYuRi0NIYDejRMuqOawQCWmJ17O6GCFsYYmV/56zQxR9ZZQ4tHsbSxcjBweb
-	gKHEsxM2IHERgSOMEqv/3wSbxCxwkkmi+esjFpBuYYFkialtN9lAbBYBVYnzi58yg9i8AtYS
-	e280MENs0JRYu3cPE0RcUOLkzCdgvcwC8hLNW2czT2Dkm4UkNQtJagEj0ypGydSC4tz03GLD
-	AqO81HK94sTc4tK8dL3k/NxNjOB40dLawbhn1Qe9Q4xMHIyHGCU4mJVEeDm8Q9OFeFMSK6tS
-	i/Lji0pzUosPMUpzsCiJ83573ZsiJJCeWJKanZpakFoEk2Xi4JRqYNLm3pe4ekZgr4nK1aMi
-	sQsKmz+83tbcNadVb/mJE6ldF9Xa517M/1Z7UXhRc8XKBGm+61zfvrvyOb+fcODTtni9+70v
-	r2r99Uh9YcTIY/Pzc5RB5IqUz4bmkceCXs2+IPSxuFQyNWtpn4wS6zSmo6bMS4otlgRxFZ9/
-	sdL/+d63uye/Ovu3sMRf9dqdS1OV17M4C206cZbdyerqm5iF/eJCRyyslq4Rndspcl/+YWXv
-	su7IEEUHsRPRT+YY6x+LvFrm+zPxbtDhY5cfm1/+19ux4Ez+qrnrIjrX7NnAZuZe/ILv0Fnm
-	rAbmn0suXjnpXmTU+tLo7787msu/7mLhmp4kV1bme/2+uJBHpdLRv+VKLMUZiYZazEXFiQB0
-	rI0SBgMAAA==
-X-CMS-MailID: 20241208152338epcas5p4fde427bb4467414417083221067ac7ab
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241208152338epcas5p4fde427bb4467414417083221067ac7ab
-References: <CGME20241208152338epcas5p4fde427bb4467414417083221067ac7ab@epcas5p4.samsung.com>
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAO65VWcC/43NQQ6CMBCF4auYrq3pjCLElfcwLMowSAkyTQuNh
+ nB3Kydw+b3F/1YVOTiO6nZYVeDkopMpA48HRb2dnqxdm63Q4AWMKbUXkg70LAv1kQLzpOPivYR
+ ZU1mghStSS6hywAfu3HuPP+rs3sVZwmf/SvBb/8om0Ea3zRkahAoqKu6D8Bh5TDbY4UTyUvW2b
+ V+4G3UwywAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+ Joel Selvaraj <foss@joelselvaraj.com>, 
+ Joel Selvaraj <joelselvaraj.oss@gmail.com>, Joel Selvaraj <jo@jsfamily.in>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733671419; l=2143;
+ i=foss@joelselvaraj.com; s=20241007; h=from:subject:message-id;
+ bh=qj0AQF8sdxK8eDd/wJ+QJyDy1IylslyTN4Yf/nFBbHQ=;
+ b=o8LqmlHF64x2wYkurNh5TIrk2ZeDR82bJuiZ6o9TYQCeO8OnlcNQqg/qGHgkMMIF1ZKpQ5ADr
+ XA23NmyUmQbAJAbIF0wknwdjg4MZ8EJsBK8Djt4nUTvdQowv0oUqPem
+X-Developer-Key: i=foss@joelselvaraj.com; a=ed25519;
+ pk=pqYvzJftxCPloaoUbVsfQE7Gwv8bynZPy8mjYohwMCc=
 
-The current implementation sets the wMaxPacketSize of bulk in/out
-endpoints to 1024 bytes at the end of the f_midi_bind function. However,
-in cases where there is a failure in the first midi bind attempt,
-consider rebinding. This scenario may encounter an f_midi_bind issue due
-to the previous bind setting the bulk endpoint's wMaxPacketSize to 1024
-bytes, which exceeds the ep->maxpacket_limit where configured TX/RX
-FIFO's maxpacket size of 512 bytes for IN/OUT endpoints in support HS
-speed only.
-This commit addresses this issue by resetting the wMaxPacketSize before
-endpoint claim.
+In the first patch, I have added the "panel" property to edt-ft5x06 touchscreen
+binding documentation. In Xiaomi Poco F1 (qcom/sdm845-xiaomi-beryllium-ebbg.dts),
+the FocalTech FT8719 touchscreen is integrally connected to the display panel
+(EBBG FT8719) and thus should be power sequenced together with display panel for
+proper functioning. Add the panel property which optionally allows to link panel
+to the touchscreen.
 
-Fixes: 46decc82ffd5 ("usb: gadget: unconditionally allocate hs/ss descriptor in bind operation")
-Cc: stable@vger.kernel.org
-Signed-off-by: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In the second patch, I have enabled the  qupv3_id_1 and gpi_dma1 as they
+are required for configuring touchscreen. Also added the pinctrl configurations.
+These are common for both the Poco F1 Tianma and EBBG panel variant.
+
+In the subsequent patches, I have enabled support for the Novatek NT36672a
+touchscreen and FocalTech FT8719 touchscreen that are used in the Poco F1
+Tianma and EBBG panel variant respectively.
+
+Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
 ---
- drivers/usb/gadget/function/f_midi.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Changes in v2:
+- Fixed the missing "panel" property dt-binding error reported by Rob Herring's bot.
+- Change the "input-enable" property to "output-disable" in qcom/sdm845-xiaomi-beryllium-common.dtsi
+  (Based on a patch suggested by Konrad Dybcio).
+- Link to v1: https://lore.kernel.org/r/20241007-pocof1-touchscreen-support-v1-0-db31b21818c5@joelselvaraj.com
 
-diff --git a/drivers/usb/gadget/function/f_midi.c b/drivers/usb/gadget/function/f_midi.c
-index 837fcdfa3840..5caa0e4eb07e 100644
---- a/drivers/usb/gadget/function/f_midi.c
-+++ b/drivers/usb/gadget/function/f_midi.c
-@@ -907,6 +907,15 @@ static int f_midi_bind(struct usb_configuration *c, struct usb_function *f)
- 
- 	status = -ENODEV;
- 
-+	/*
-+	 * Reset wMaxPacketSize with maximum packet size of FS bulk transfer before
-+	 * endpoint claim. This ensures that the wMaxPacketSize does not exceed the
-+	 * limit during bind retries where configured TX/RX FIFO's maxpacket size
-+	 * of 512 bytes for IN/OUT endpoints in support HS speed only.
-+	 */
-+	bulk_in_desc.wMaxPacketSize = cpu_to_le16(64);
-+	bulk_out_desc.wMaxPacketSize = cpu_to_le16(64);
-+
- 	/* allocate instance-specific endpoints */
- 	midi->in_ep = usb_ep_autoconfig(cdev->gadget, &bulk_in_desc);
- 	if (!midi->in_ep)
+---
+Joel Selvaraj (4):
+      dt-bindings: input: touchscreen: edt-ft5x06: add panel property
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-common: add touchscreen related nodes
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-tianma: introduce touchscreen support
+      arm64: dts: qcom: sdm845-xiaomi-beryllium-ebbg: introduce touchscreen support
+
+ .../bindings/input/touchscreen/edt-ft5x06.yaml     |  1 +
+ .../dts/qcom/sdm845-xiaomi-beryllium-common.dtsi   | 39 ++++++++++++++++++++++
+ .../boot/dts/qcom/sdm845-xiaomi-beryllium-ebbg.dts | 23 +++++++++++++
+ .../dts/qcom/sdm845-xiaomi-beryllium-tianma.dts    | 23 +++++++++++++
+ 4 files changed, 86 insertions(+)
+---
+base-commit: f7d003800fcaa3f3619468992bd39963861ea793
+change-id: 20241007-pocof1-touchscreen-support-c752a162cdc2
+
+Best regards,
 -- 
-2.17.1
+Joel Selvaraj <foss@joelselvaraj.com>
 
 
