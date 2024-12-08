@@ -1,90 +1,99 @@
-Return-Path: <linux-kernel+bounces-436235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130809E82FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 02:23:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FD649E8300
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 02:40:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E7A18838E9
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 01:23:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB4D7281C39
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 01:40:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1079BEEBD;
-	Sun,  8 Dec 2024 01:23:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72859171A7;
+	Sun,  8 Dec 2024 01:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IBxHcAvM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FsUEyrDI"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8FBBA4B;
-	Sun,  8 Dec 2024 01:23:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C814D28F5;
+	Sun,  8 Dec 2024 01:40:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733621008; cv=none; b=KYt6FgXmT9QYFsi0jGXRsBnMLcKKHed3It58M/1mAXOqE0rvyHvT3Rzf5uMTSgegQR5fbVUTXYuqDIq7OupOrO+Puam9yoFkd7gTz86ZfxNXYthazB233zvUQ/N8akRPHG5Y7cD9kxVOuOxTWSly20FV4yzxx0BVrBH14ffvDl0=
+	t=1733622012; cv=none; b=nF+01A3zGnc2KlL0srp1FdOIaGIZ2Z5lExXsJmqORtY980ChhgnZ/xihO8trjBZjgJOvIBEBVqFipbu9Ter1e9v12q2l/d+6d9dCVJXHk0ApNEqYdheYJkDEXO9xnzXd+28TZhXSRwkupW8dyoxxC/RbiuP78oaqLhHeV5DBWZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733621008; c=relaxed/simple;
-	bh=PzVhgMkLC9c89yGUCYGUzOqQa2wTdfZYLKCsIPcVrDo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o6UMrvpLPuK9iE3tdxD0qjgZUzV8QaxE7DH5xnszfhKlKqDz5w0OWU6jY5LqZrejMH5jwDHk4Ds9+MogOUnhbP8uHMltNWVoHS8E5pPl4EtUSSAgFYgkuOtDYHqdicE9Icf6OWHqEMlP4JfaNEYaYzEWOLzcEpuLeyWlYow35oQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IBxHcAvM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2266C4CECD;
-	Sun,  8 Dec 2024 01:23:25 +0000 (UTC)
+	s=arc-20240116; t=1733622012; c=relaxed/simple;
+	bh=VyiblBiYlxn7Uc7Og93Odk9bRuYvCt+pFQYcjLF4aak=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=E5UEwtYeNgb9HQK7v2nPr5quHap9RV6jKMQZzoCHNBRjPxvZ+T19AS/Rao3iUVYObY5tFMDGOwCyDngDlyXMvoqkcmmQff+95GZ9m3N7oQKoMg8WivrRk5kBZIzxx31PCW3+Wlsi86KZbdmB34hF3fm3fdaWHM3BB12oCk8mVo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FsUEyrDI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 455B2C4CECD;
+	Sun,  8 Dec 2024 01:40:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733621006;
-	bh=PzVhgMkLC9c89yGUCYGUzOqQa2wTdfZYLKCsIPcVrDo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=IBxHcAvMTouCVQfaXaf6jz6KyOj3nAiODV/fty1jhdZIybhFv8x3XEM0OUGpUPEsM
-	 Jxlwb0J/MqmfG6WbYZYjb9XukvFS/kGf9z9H+vUYVEPQTTGHuvEFB5FX5Vf+KFleGU
-	 tIoJ4PWjo0jbKPmn7EEaNeBSNO62VaAAi4B3eYfKaumoDH4MdruMtbyXDSPZlbcy5j
-	 79lUJOVdLg4LTJqgBjVFZ/HDHuyiKsJs/SnoWDTRdmIrGtRpKzkx6IcL2Lm7xqmIhA
-	 Sfd/a6cQnSK7lkgfw4MZ+2p/pFrduZ66D5WI6VHz8j1bJWagQjiaMOCrozuUOyXCDa
-	 dcRN3+mxNqOtQ==
-Date: Sat, 7 Dec 2024 17:23:24 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Cc: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, Andrew Lunn
- <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Geert Uytterhoeven
- <geert+renesas@glider.be>, netdev@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Michael
- Dege <michael.dege@renesas.com>, Christian Mardmoeller
- <christian.mardmoeller@renesas.com>, Dennis Ostermann
- <dennis.ostermann@renesas.com>
-Subject: Re: [PATCH net v2 2/4] net: renesas: rswitch: fix race window
- between tx start and complete
-Message-ID: <20241207172324.6039dae4@kernel.org>
-In-Reply-To: <b39e495d-dd23-4965-bc1c-b30db81be0f8@cogentembedded.com>
-References: <20241206190015.4194153-1-nikita.yoush@cogentembedded.com>
-	<20241206190015.4194153-3-nikita.yoush@cogentembedded.com>
-	<b39e495d-dd23-4965-bc1c-b30db81be0f8@cogentembedded.com>
+	s=k20201202; t=1733622012;
+	bh=VyiblBiYlxn7Uc7Og93Odk9bRuYvCt+pFQYcjLF4aak=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=FsUEyrDIc2ScY6FxH2CjAQDZ4naGABhNjTw5cFRzwDX6PCnQREtJYZKyrNLnHQS8k
+	 wbFY7pli1+pGibZtL2W6TgPNrZbNCEtdfj3Pjt9rhKB9TDteEZ7vxK4wsPXFCpOjX/
+	 0C2v/QAmDU90Sk850SOcKn63o1MZyzuK1w/snlL3GTKH7R5Vx5ARDHVgi9P6+Qns5a
+	 f70ZQhrXO4PrDl2VEM858n6PF3TjNcMzKZror2MJyq4L0+M4KehUnsMIP4g3POK2FQ
+	 STQbj27fCQxX9IasnwAoWofeBs5pgSa4UyoJ+vmskbwIWWMo+1hfFrzCpeDnWFlTtH
+	 mVnjehQ56KCaA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE941380A95D;
+	Sun,  8 Dec 2024 01:40:28 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net] net: stmmac: fix TSO DMA API usage causing oops
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <173362202750.3128634.12775021527593555165.git-patchwork-notify@kernel.org>
+Date: Sun, 08 Dec 2024 01:40:27 +0000
+References: <E1tJXcx-006N4Z-PC@rmk-PC.armlinux.org.uk>
+In-Reply-To: <E1tJXcx-006N4Z-PC@rmk-PC.armlinux.org.uk>
+To: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ andrew+netdev@lunn.ch, alexandre.torgue@foss.st.com, joabreu@synopsys.com,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, xfr@outlook.com, 0x1207@gmail.com,
+ jonathanh@nvidia.com, thierry.reding@gmail.com, horms@kernel.org,
+ hkelam@marvell.com
 
-On Sat, 7 Dec 2024 00:18:11 +0500 Nikita Yushchenko wrote:
-> > 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")  
+Hello:
+
+This patch was applied to netdev/net.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Fri, 06 Dec 2024 12:40:11 +0000 you wrote:
+> Commit 66600fac7a98 ("net: stmmac: TSO: Fix unbalanced DMA map/unmap
+> for non-paged SKB data") moved the assignment of tx_skbuff_dma[]'s
+> members to be later in stmmac_tso_xmit().
 > 
-> Sorry this patch sent out broken, I've reposted it fixed.
+> The buf (dma cookie) and len stored in this structure are passed to
+> dma_unmap_single() by stmmac_tx_clean(). The DMA API requires that
+> the dma cookie passed to dma_unmap_single() is the same as the value
+> returned from dma_map_single(). However, by moving the assignment
+> later, this is not the case when priv->dma_cap.addr64 > 32 as "des"
+> is offset by proto_hdr_len.
+> 
+> [...]
 
-You need to repost the whole thing, sorry. Patchwork is not clever
-enough to understand patch replacement.
+Here is the summary with links:
+  - [net] net: stmmac: fix TSO DMA API usage causing oops
+    https://git.kernel.org/netdev/net/c/4c49f38e20a5
 
-Quoting documentation:
-
-  Partial resends
-  ~~~~~~~~~~~~~~~
-  
-  Please always resend the entire patch series and make sure you do number your
-  patches such that it is clear this is the latest and greatest set of patches
-  that can be applied. Do not try to resend just the patches which changed.
-  
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#partial-resends
+You are awesome, thank you!
 -- 
-pw-bot: cr
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
