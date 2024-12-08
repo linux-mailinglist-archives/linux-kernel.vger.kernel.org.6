@@ -1,157 +1,277 @@
-Return-Path: <linux-kernel+bounces-436490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ECA29E86A8
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:44:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D7D49E86AE
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:47:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDFE62812A0
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:44:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4975E28138F
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9462C1714CA;
-	Sun,  8 Dec 2024 16:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B06714A4EB;
+	Sun,  8 Dec 2024 16:47:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Da+iT3uX"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GQkTOWTX"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27BAD170A15
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:44:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8580C1537A8
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:47:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733676251; cv=none; b=eDrq/G3XEovxXCTrU1VqwM7BCngEsDjfQhBLNPFGlrl66GsaoDFXu3BhicQ/t5EtTkNokBsMTNsBuqPza2RrueoHVNm/mjPmOknGJlg8ptBIxleViFyExedWlNRUlHfI5yYmJkDc12Xp/SNAnn8fnVYWKzVQ5S2QKjpbkRnZ9IA=
+	t=1733676460; cv=none; b=Yw+tv63+NBt3aCeR9rYQR4AMfDGfF2Jrv4BsnjM06zXTjQ5xzsREqBw9N015uftbSQFjMe9EfHNY9cMOw9mwrmyx9Ec8YF5hRD8MYeY6CZflg6X++eONQmKOhF3NhX5BzDN/NM15P9bplYyie3nhMLrtOD8KsQmGrgTJ6GfAKe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733676251; c=relaxed/simple;
-	bh=u18GVkcun9bmHffXCJyLVQo9hlXnvo82onfpHRp1QD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V9vQ4wUFymqK6vyK4wch+Nzjqfn2Nf05bnZdYJtr8bU2TpmxBNOAJVEbuL6PrWuuSTKKazIRBKvRA+yDzaDVLnJkvmOswBZo1EcaZKTLpNo6upgInYNJuF6lQFRKSlMX1ZxQAgynbpAIi4LK+JsPIkvyejtb+0IDUz9/n+V4ZwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Da+iT3uX; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3862b364538so1225277f8f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 08:44:08 -0800 (PST)
+	s=arc-20240116; t=1733676460; c=relaxed/simple;
+	bh=KXohNUn1sgfZ0nJn3W3B9ixngyCUFopa/KgR6a70T7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OpQN/wmMKqfBHsokdzZI0J3dYQl0BIhqWC6dRpnzF5WVWH63grAFnnxsiBGlkMVYJcAz6pBEcVWLQNRZh6DBzm7MbRz232mJFZFJymAm//tQAvqP4/6EFy826V+dHJdtBUD3b5+qPYfKhwUJUQ2GXypREBlZWCpSF4M6F8IEmf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=GQkTOWTX; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e3a1cfeb711so1157687276.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 08:47:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733676247; x=1734281047; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOi2LT6/bSAyzBeK+6Fj/VJjHRIZTnvrX9jpLhKvAB0=;
-        b=Da+iT3uXRdif3Rn3fy6JoeSY2AoUFpAHj2n+9GqSki9JyOreWq/gXD+7UFqwvZh0SP
-         z7zsa84CfPFU+N+f8L1zTs7eoaekO+2ourf9G7+xum/jG/5dlBolrZRlKoMmzgsMIEDo
-         /CDYSZULm25HsPUMPj/BtNVMvx2KBoMGqvPA7H/yocbDdgOoaeAeEJqbQXYVe3aTnc92
-         r3v33+ARPRb4DQS3CCKmQ5DPPpvVBE1gJsiee+Sx/E0SD+ho3g2nec5x3SSVOzGoG4fN
-         7aY7rbmnfD7PKuNS42/r803WCg2ucUYd+qah/dOLzWcpNjF+SlW8Ra/9kspuBRIPzKkb
-         1M7A==
+        d=amarulasolutions.com; s=google; t=1733676457; x=1734281257; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QVkFTMeEWzKzl3eTyT6uuEMADLGUM2vIlykoDjxe32M=;
+        b=GQkTOWTXBXhdUVJ4c6An0AW+FO8ZuxvYd/mfGNEEoHDdIGg0S/2qiWdt/QmYQ4cfrf
+         bL8qNn3fVAUeQOMxyTR6BdT2iwhBQDQz/dy/HShrQs1sabpCM9xT9r26UvaTGT5jV2kd
+         WAmjnjlR2/P8QWVrOegN/ms+FCpADyWegoSeU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733676247; x=1734281047;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZOi2LT6/bSAyzBeK+6Fj/VJjHRIZTnvrX9jpLhKvAB0=;
-        b=UcdO4JL1tLuIwseMNYdE6k5cWBAs2MrvJ8zv0c0uZNywxZzqkgkHpCMVUT3b6zIB7L
-         Yfpee06BEaoLBx3LFCbWSXUiPlbPLPq4W8nFzUiqxO61AtS/IGpmv9/UjDj9KbMjLvq6
-         7mWuRDvMGjDAi3FdyWL5KvWzBJAC97LLulBg3tlzigtgyt4MLtdXu+IapTogo7cKAnTc
-         iPm56xQpKlerT5zCbgsg2NSbcWlcKkRmlc4YIe0vVNrpvvuCWuB68Vh9CdRclBt1+i6a
-         iEAY3dNgWmP/wZozz26j14wQ6B6mHB36mf4VywJ3P7SOQSd/WJskVS6mP3ADF34pk22Q
-         SiYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwua55/XhWWm6S+kMPrUgbavTJT2FHwC+BrNruC40JV/jg7ZpZIZ3J6/XnfbCa+ziRwo9/BPGSOs3Gk2o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIdviDUWj0k4hYr0gzQIRJThqmtrcq7ZFTBCxvrthWl/kELu9K
-	CRIjybFKptAbb37PhvqbmJyd3rNMBVsRWJJG1MaQL2eHHhTAbdo7KrClkf/c8ug=
-X-Gm-Gg: ASbGncvDy6OXgY8X5r5uYXFrixMZF44HGBp2eit6kvi3wi8riATKGy6WxL2gwrLFcFJ
-	zZqYhdK6rvsfFMR984d4XGsJku2CeuRGBfi57mVZHVc7rjzo3h/F+Unx4wU0u12X8UuUJbqr6b5
-	2OYCTmRuCZ5KFy6THdH1p00bicnCt+5GE0Ip1Zg1UXdpas7WvC+UOTzg8nk81VYuK8v1GqdUm74
-	DSLK+ntAbwNdvX7WOTbMyoDQPRamzJxRZeOpijyoDGdziyIZZATqA01+X4=
-X-Google-Smtp-Source: AGHT+IGGy6Ldhaa4YTjG8IieQa8Oj6Mw4sjYxJ+7EDklp4oAAKnvXJZlWaCkP9Zsx1bWxvnFCp2yYw==
-X-Received: by 2002:a5d:64e7:0:b0:385:ee85:f1bf with SMTP id ffacd0b85a97d-3862a8b530bmr7258225f8f.18.1733676247575;
-        Sun, 08 Dec 2024 08:44:07 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a85f2sm10302736f8f.29.2024.12.08.08.44.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Dec 2024 08:44:07 -0800 (PST)
-Message-ID: <d5d102c0-e4d8-4041-8899-6a732a514046@tuxon.dev>
-Date: Sun, 8 Dec 2024 18:44:04 +0200
+        d=1e100.net; s=20230601; t=1733676457; x=1734281257;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QVkFTMeEWzKzl3eTyT6uuEMADLGUM2vIlykoDjxe32M=;
+        b=Jdo0K9sDH7CmKe56BqtAebqlOOvP5fVxkqZ9eoGFNSgSVR3YMBkf5qSMSNIwPCONg3
+         hlejK2OngLD+2LTKCeBT6POUBTT8tiFqqcK/1W7ybgmJ03vkxO3C49AQG6V7BtHOWbH1
+         2M6+Oqnco8OF5hl/8JF8oNAZbpwfsv4S4lkaoWhaX1hdfTX62GQJgvtAqx4fBnFIeeHa
+         GTit74dal5wnjYjUGAqAo5V+aoXZ3xNwvVRLg9AUQ8DnT7nSrWLrhsSgS2fBxFGzkBJ4
+         0BxZu+gYCRx0YSeay5yVT7FwVoHU4B1PmCgZDef3JRtW5S5Di4D7Jtjy1JxmPATtWvcZ
+         qtsA==
+X-Gm-Message-State: AOJu0YyOFc0GnR7veYQT6giFvdXI0RUgo1uGp1KdTbaeGV6yK3B6vPAz
+	Efq5f0cnxJuz65EDy0XCID/PJ7zjal01iv17h2xTwLdiJPjbwsSzYF8KP0al6gNFVHnhCSEEmti
+	UUud+Nth9AYLGpfmCyGGDBTnxB+jyOBSGK7Ju+DnI3NhD7/u6LbU=
+X-Gm-Gg: ASbGncsexUel97+tCW2HtD0Q6cTd14qNv+ZqC1/UQXEagXQMtK88NtRSMyXo8V2ywNX
+	s0Oj8keSY8PyNEisjgrY+ctgGMr0O
+X-Google-Smtp-Source: AGHT+IHKC4Dc3IJ0AlV+3nSKSyKc3lmzh1gUjiXPcN3vPccSLKXkcjoWpKPkQOx2bu7H1wu2vu7YerTOebNWs3uV2XQ=
+X-Received: by 2002:a05:6902:218b:b0:e38:9b5f:58a6 with SMTP id
+ 3f1490d57ef6-e3a0b4c89b2mr7285740276.46.1733676457470; Sun, 08 Dec 2024
+ 08:47:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 08/13] clk: at91: sama7d65: add sama7d65 pmc driver
-Content-Language: en-US
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, mturquette@baylibre.com, sboyd@kernel.org,
- arnd@arndb.de
-Cc: dharma.b@microchip.com, mihai.sain@microchip.com,
- romain.sioen@microchip.com, varshini.rajendran@microchip.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <cover.1733505542.git.Ryan.Wanner@microchip.com>
- <6cf9921c6d312193c34f6f5cbd9eda7d0f9f317c.1733505542.git.Ryan.Wanner@microchip.com>
- <c0206c74-33d3-4715-9a01-256394919fc8@wanadoo.fr>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <c0206c74-33d3-4715-9a01-256394919fc8@wanadoo.fr>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241205111939.1796244-1-dario.binacchi@amarulasolutions.com>
+ <20241205111939.1796244-16-dario.binacchi@amarulasolutions.com> <gbymcmoya7dfmedq4nkopqpswh63d2ujxl2elc2x7x325b75bu@anp36sdya43v>
+In-Reply-To: <gbymcmoya7dfmedq4nkopqpswh63d2ujxl2elc2x7x325b75bu@anp36sdya43v>
+From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Date: Sun, 8 Dec 2024 17:47:26 +0100
+Message-ID: <CABGWkvoQzAhpVJ+QRfVZeps-Jn8REGF+21SPN=f24Tdf1d5DDQ@mail.gmail.com>
+Subject: Re: [PATCH v5 15/20] dt-bindings: clock: imx8m-clock: support spread
+ spectrum clocking
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com, 
+	Abel Vesa <abelvesa@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Rob Herring <robh@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, Dec 6, 2024 at 2:04=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.org=
+> wrote:
+>
+> On Thu, Dec 05, 2024 at 12:17:50PM +0100, Dario Binacchi wrote:
+> > The patch adds the DT bindings for enabling and tuning spread spectrum
+> > clocking generation.
+> >
+> > Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+> >
+> > ---
+> >
+> > (no changes since v4)
+> >
+> > Changes in v4:
+> > - Drop "fsl,ssc-clocks" property. The other added properties now refer
+> >   to the clock list.
+> > - Updated minItems and maxItems of
+> >   - clocks
+> >   - clock-names
+> >   - fsl,ssc-modfreq-hz
+> >   - fsl,ssc-modrate-percent
+> >   - fsl,ssc-modmethod
+> > - Updated the dts examples
+> >
+> > Changes in v3:
+> > - Added in v3
+> > - The dt-bindings have been moved from fsl,imx8m-anatop.yaml to
+> >   imx8m-clock.yaml. The anatop device (fsl,imx8m-anatop.yaml) is
+> >   indeed more or less a syscon, so it represents a memory area
+> >   accessible by ccm (imx8m-clock.yaml) to setup the PLLs.
+> >
+> > Changes in v2:
+> > - Add "allOf:" and place it after "required:" block, like in the
+> >   example schema.
+> > - Move the properties definition to the top-level.
+> > - Drop unit types as requested by the "make dt_binding_check" command.
+> >
+> >  .../bindings/clock/imx8m-clock.yaml           | 77 +++++++++++++++++--
+> >  1 file changed, 71 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b=
+/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> > index c643d4a81478..83036f6d2274 100644
+> > --- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> > +++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+> > @@ -29,12 +29,12 @@ properties:
+> >      maxItems: 2
+> >
+> >    clocks:
+> > -    minItems: 6
+> > -    maxItems: 7
+> > +    minItems: 7
+> > +    maxItems: 10
+>
+> ABI break without mentioning, without any explanation in the commit msg.
+>
+> >
+> >    clock-names:
+> > -    minItems: 6
+> > -    maxItems: 7
+> > +    minItems: 7
+> > +    maxItems: 10
+> >
+> >    '#clock-cells':
+> >      const: 1
+> > @@ -43,6 +43,34 @@ properties:
+> >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/i=
+mx8m-clock.h
+> >        for the full list of i.MX8M clock IDs.
+> >
+> > +  fsl,ssc-modfreq-hz:
+> > +    description:
+> > +      The values of modulation frequency (Hz unit) for each clock
+> > +      supporting spread spectrum.
+> > +    minItems: 7
+> > +    maxItems: 10
+>
+> Why all cloks receive now spread spectrum? I had impression - and all
+> your previous versions were doing this - that you have only three or
+> four clocks with SSC.
+
+Exactly. Indeed, the first six values are not valid as SSC properties but a=
+re
+only used to reach the point where the first PLL with SSC (i.e., audio_pll1=
+)
+can be indexed, which is in position 7 in the clocks list.
+This was the rationale I followed.
+And it is explicitly outlined in the example section.
+The "" for the fsl,ssc-method property is precisely aimed at specifying a
+"no SSC" method, which also fixes the warning:
+
+fsl,ssc-method:0: '' is not one of ['down-spread', 'up-spread', 'center-spr=
+ead']
+
+raised by
+make dt_binding_check DT_SCHEMA_FILES=3Dimx8m-clock.yaml
+
+Or would it be acceptable to specify a list of SSC values that applies only=
+ to
+the last 4 PLLs in the clocks list?
+
+I feel like I might be missing something.
+
+Could you kindly suggest what to do or provide a DTS example to show me
+what you expect?
+
+Thanks and regards,
+Dario
+
+>
+> Do existing clocks 1-6 support SSC?
+>
+> > +
+> > +  fsl,ssc-modrate-percent:
+> > +    description:
+> > +      The percentage values of modulation rate for each clock
+> > +      supporting spread spectrum.
+> > +    minItems: 7
+> > +    maxItems: 10
+> > +
+> > +  fsl,ssc-modmethod:
+> > +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
+> > +    description:
+> > +      The modulation techniques for each clock supporting spread
+> > +      spectrum.
+> > +    minItems: 7
+> > +    maxItems: 10
+> > +    items:
+> > +      enum:
+> > +        - ""
+>
+> Drop "", not sure why do you need it.
+>
+> > +        - down-spread
+> > +        - up-spread
+> > +        - center-spread
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> > @@ -76,6 +104,10 @@ allOf:
+> >              - const: clk_ext2
+> >              - const: clk_ext3
+> >              - const: clk_ext4
+> > +        fsl,ssc-modfreq-hz: false
+> > +        fsl,ssc-modrate-percent: false
+> > +        fsl,ssc-modmethod: false
+> > +
+> >      else:
+> >        properties:
+> >          clocks:
+> > @@ -86,6 +118,10 @@ allOf:
+> >              - description: ext2 clock input
+> >              - description: ext3 clock input
+> >              - description: ext4 clock input
+> > +            - description: audio1 PLL input
+> > +            - description: audio2 PLL input
+> > +            - description: dram PLL input
+> > +            - description: video PLL input
+>
+> Also ABI break....
+>
+> Best regards,
+> Krzysztof
+>
 
 
+--=20
 
-On 08.12.2024 18:35, Christophe JAILLET wrote:
-> Le 06/12/2024 à 20:59, Ryan.Wanner@microchip.com a écrit :
->> From: Ryan Wanner <Ryan.Wanner@microchip.com>
->>
->> Add clock support for SAMA7D65 SoC.
->>
->> Increase maximum number of valid master clocks. The PMC for the SAMA7D65
->> requires 9 master clocks.
->>
->> Increase maximum amount of PLLs to 9 to support SAMA7D65 SoC PLL
->> requirements.
->>
->> Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
-> 
-> ...
-> 
->> +    for (i = 0; i < ARRAY_SIZE(sama7d65_gck); i++) {
->> +        u8 num_parents = 4 + sama7d65_gck[i].pp_count;
->> +        struct clk_hw *tmp_parent_hws[8];
->> +        u32 *mux_table;
->> +
->> +        mux_table = kmalloc_array(num_parents, sizeof(*mux_table),
->> +                      GFP_KERNEL);
->> +        if (!mux_table)
->> +            goto err_free;
->> +
->> +        PMC_INIT_TABLE(mux_table, 4);
->> +        PMC_FILL_TABLE(&mux_table[4], sama7d65_gck[i].pp_mux_table,
->> +                   sama7d65_gck[i].pp_count);
->> +        for (j = 0; j < sama7d65_gck[i].pp_count; j++) {
->> +            u8 pll_id = sama7d65_gck[i].pp[j].pll_id;
->> +            u8 pll_compid = sama7d65_gck[i].pp[j].pll_compid;
->> +
->> +            tmp_parent_hws[j] = sama7d65_plls[pll_id][pll_compid].hw;
->> +        }
->> +        PMC_FILL_TABLE(&parent_hws[4], tmp_parent_hws,
->> +                   sama7d65_gck[i].pp_count);
->> +
->> +        hw = at91_clk_register_generated(regmap, &pmc_pcr_lock,
->> +                         &sama7d65_pcr_layout,
->> +                         sama7d65_gck[i].n, NULL,
->> +                         parent_hws, mux_table,
->> +                         num_parents,
->> +                         sama7d65_gck[i].id,
->> +                         &sama7d65_gck[i].r,
->> +                         sama7d65_gck[i].pp_chg_id);
->> +        if (IS_ERR(hw))
-> 
-> If we fail here, mux_table is not freed, because it is not stored yet in
-> alloc_mem.
+Dario Binacchi
 
-You're right! I missed that.
+Senior Embedded Linux Developer
+
+dario.binacchi@amarulasolutions.com
+
+__________________________________
+
+
+Amarula Solutions SRL
+
+Via Le Canevare 30, 31100 Treviso, Veneto, IT
+
+T. +39 042 243 5310
+info@amarulasolutions.com
+
+www.amarulasolutions.com
 
