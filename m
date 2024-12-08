@@ -1,163 +1,161 @@
-Return-Path: <linux-kernel+bounces-436460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09D619E861A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:56:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4EB4164863
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:56:45 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CEB415667B;
-	Sun,  8 Dec 2024 15:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b="GKXn5sbd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NrL5GIxJ"
-Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 249BA9E861E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:01:10 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDCE114F9FF
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:56:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8112E2817C1
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:01:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F23F5159209;
+	Sun,  8 Dec 2024 16:01:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Blj8lxaz"
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6CE980BFF
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:00:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733673402; cv=none; b=WmGdUaeA+Z+zdXVnj1plbMGHyhNvHW/ZuU0vz/xTz9iwOxfxsDBMMp+pXGtnCP15J2QlS1VDa10bysEgY22zGjZwgJlYJWJgehl0trjJn9mVa18S2noeAzZbV7RT1jP4u9G3+eZjHaOzja/MoIj6bNjpwiMH8ZgXUYg8UHVZOqY=
+	t=1733673660; cv=none; b=eQ70tvB3+QkvzoEIkdi0GXQoPaEXPQ7Ty4/Dq75YqYityQEjr2Hgqgaz431cZlizWPEYpy8HBORdjyS/0w0C0UfKqlynjiOkogYQgdoeYmf4uiDYE6yfKwtQcQOkhv/KL1GBjHMb85KyybhoMa4isDnRiDIijyZFfI1AJ08Y00A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733673402; c=relaxed/simple;
-	bh=xcg7Y1+vUzUfTNCWE0j+csz4cLkiFIcmYnQRbFWRKSY=;
-	h=Content-Type:Mime-Version:Date:Message-Id:Subject:From:To:
-	 References:In-Reply-To; b=hfCi4UCYJ6ha4L5+8xIkuWBfJzcds39OfEXt9k6i2KB+ky4w93MQEJcSMB/MgqBrMh9INYdE/ij1V+f9hBZc4IgHNhiVIY0OuhOoMR4RHV9AC9hmSx3LYP7E5onZ4XEB/DWjd7ueXWo2S2SoWS7QzQqeqsfE56nqXUqDHczh6qQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev; spf=pass smtp.mailfrom=getstate.dev; dkim=pass (2048-bit key) header.d=getstate.dev header.i=@getstate.dev header.b=GKXn5sbd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NrL5GIxJ; arc=none smtp.client-ip=103.168.172.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=getstate.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=getstate.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CB918114011B;
-	Sun,  8 Dec 2024 10:56:38 -0500 (EST)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-08.internal (MEProxy); Sun, 08 Dec 2024 10:56:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=getstate.dev; h=
-	cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm3; t=1733673398; x=1733759798; bh=xcg7Y1+vUz
-	UfTNCWE0j+csz4cLkiFIcmYnQRbFWRKSY=; b=GKXn5sbdW5kkjA6drKeYVPafDH
-	XgWw5he8QmYbY3fD7/QbSakMK041sw/6TwJKkbUiTk8GcAs2dNGzvPrzJt7w1QPc
-	EJG5yw+hhoxt6QRZkGjYg06towAzQ6vVCsH8Z7jIko2RY/IM1/3tmX04MolmjXao
-	UuiJoQZjCCcUICz/R29hXl6LDyg1rmVTq3O54QSASRvV8rJ5MmG0934szAlarlxn
-	fSIAA236cUae2HhQi/grnTECPngs4cG043qbxt0YqGPEOI7taL3o0GtrcteF55Jd
-	URuTKsTJQzkEBD3pZpk/mfz0/JtkeEt6yhGb7EWfZEafaNGq+2HBDOuMS/iw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1733673398; x=1733759798; bh=xcg7Y1+vUzUfTNCWE0j+csz4cLkiFIcmYnQ
-	RbFWRKSY=; b=NrL5GIxJ1l4IIHGIedx8eys/u8FkFB7HXy6rDbh2j2S8MVV013x
-	HOYN5ZEiC9N48UKHUG11oxE3cGF9DwGLS1kAMSE4AVPir8knJ3ljNfq2emMj3buh
-	Q6nZm/hrYuzRt1mHpHyGZS1bjDrA3HhBxptm+2lPAvkB7SiAubSlkcWWXzIpdAwd
-	GQ71FvV6WTmj/TdXZcxF+vPAfJFCE8nOnCeSt/9z62nXDxITRahiZNvb72e7HgEu
-	jQPkQ0FJAnURyvBpNNZGFeKw8ACHdm+mE9eGA3a/kOTv/lWnuwNali3XcFJe4vUi
-	+fCW/qkd/A2cvJ/o4ITJHv1Gri97IbxlJBA==
-X-ME-Sender: <xms:tsFVZ725Ui1rSUHJpbyjgaR9S6ByQN3oaCQ3RDS12Cv92Bgk2j26FQ>
-    <xme:tsFVZ6H_Sgdu_rNcosTq5inSYLhh-5wZkSq_a7COKDcPVd7wHO0dCC3y2_QqT5ABu
-    qkdTe0mMBGuFuBRrC0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeefgdekvdcutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecunecujfgurhepofgtggffkf
-    fuhffvofhfjgesmhdtreerredtjeenucfhrhhomhepfdforgiiihhnucetlhhhrgguuggr
-    ugdfuceomhgriihinhesghgvthhsthgrthgvrdguvghvqeenucggtffrrghtthgvrhhnpe
-    ekgffgtefgjeehffeiveelveegfedtheekueffffelleeffeeitdettedugfffvdenucff
-    ohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepmhgriihinhesghgvthhsthgrthgvrdguvghvpdhnsggp
-    rhgtphhtthhopeefpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehshiiikhgrlh
-    hlvghrqdgsuhhgshesghhoohhglhgvghhrohhuphhsrdgtohhmpdhrtghpthhtohepshih
-    iigsohhtodegjeelrghffhehudgssgefieduvghfhegrrgdukeesshihiihkrghllhgvrh
-    drrghpphhsphhothhmrghilhdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgv
-    lhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:tsFVZ77VZboqQEarT5H2GoWMA9e1xdFZ_FTaFsDBjmQ1ULJ2-G_Gfg>
-    <xmx:tsFVZw0icO88QL9e7S-guuPryywUBvW0Rbmh4cvZbMoz-eH2CUFdzw>
-    <xmx:tsFVZ-HxlZclAq2XPwAjqUPiHGYqi082G4zuehwe-h5cBn-O_r2V3Q>
-    <xmx:tsFVZx-_etzuMnu77s0WmAdXPrcIEIuKbqKG8zZvT9cEAs60sLHyOw>
-    <xmx:tsFVZzT63hzLIzKp15oG3UsH68J-JDdVOuKQAWrkVjWy8q4lBM1oOvRX>
-Feedback-ID: i0ed1493d:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 756701C20066; Sun,  8 Dec 2024 10:56:38 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
-Content-Type: multipart/mixed;
- boundary=1c30941c5254062c93d3b128b50a520d6bce1a927ab6948729f7a3da0461
+	s=arc-20240116; t=1733673660; c=relaxed/simple;
+	bh=tc1mgW5PK5ygm6MHNIYT+f+xz3FXBUJynWj95Qcz6B8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=dNdRkMavFdayLrll+TYVtvTvfLSX49+d2Wfb7aYOCT+7RLeknoAdJWejZtW7dIkX0C3A3Jr/rpbeoxqWAJaj0ueD2HRkEwW/FPO13hqz+dPxZbirQcEeXXnnMtSnxvJIRK3Lygf8hm2I5ZwfJKf5mqAHde58kMLpstebH44Bu8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Blj8lxaz; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241208160055epoutp04f92344fe88797afef155038d6e83faff~PPwEfxbSc0886608866epoutp041
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 16:00:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241208160055epoutp04f92344fe88797afef155038d6e83faff~PPwEfxbSc0886608866epoutp041
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733673655;
+	bh=tc1mgW5PK5ygm6MHNIYT+f+xz3FXBUJynWj95Qcz6B8=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Blj8lxazXZ+SzLivOM6g97/+ygtB4MVLGAJPghnrZ4OasDUhX/BTIa+FWNHv65FNO
+	 eyyY5cMZmqQdcgSAUMy18zHquyI8jfAVWgiEL276Yw3CE80rxDJjSygz/LdvIhxm/M
+	 5UlWg+gkFbXTilRWJ+E7ZxiFuDFddCgieN9YBmS0=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20241208160054epcas5p309433a674397ddd7349591b8527ffd45~PPwD6V0b71913419134epcas5p3E;
+	Sun,  8 Dec 2024 16:00:54 +0000 (GMT)
+Received: from epsmges5p3new.samsung.com (unknown [182.195.38.180]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y5qTx5v2nz4x9Pt; Sun,  8 Dec
+	2024 16:00:53 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p3new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E0.66.19956.5B2C5576; Mon,  9 Dec 2024 01:00:53 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTPA id
+	20241208160052epcas5p3eeba799ad78f0269ba04fabb28fa6a4c~PPwB3slq41913419134epcas5p3C;
+	Sun,  8 Dec 2024 16:00:52 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20241208160052epsmtrp29e8ed21f8f687b3989c0cd6a5a2e4b52~PPwB2iZBc2725827258epsmtrp2i;
+	Sun,  8 Dec 2024 16:00:52 +0000 (GMT)
+X-AuditID: b6c32a4b-fe9f470000004df4-be-6755c2b50d88
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	16.2D.18949.4B2C5576; Mon,  9 Dec 2024 01:00:52 +0900 (KST)
+Received: from [107.122.5.126] (unknown [107.122.5.126]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20241208160050epsmtip20eb6acf7e18c6f35546a61be5e06621b~PPv-S7fZx0093200932epsmtip2Y;
+	Sun,  8 Dec 2024 16:00:49 +0000 (GMT)
+Message-ID: <78fd3960-6c7f-48a1-a12a-04190640c001@samsung.com>
+Date: Sun, 8 Dec 2024 21:30:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Sun, 08 Dec 2024 18:56:37 +0300
-Message-Id: <D66FXFUEV6V3.3SKKXVBD0Q1OY@getstate.dev>
-Subject: Re: [syzbot] [bluetooth?] KASAN: slab-use-after-free Read in
- mgmt_remove_adv_monitor_sync
-From: "Mazin Alhaddad" <mazin@getstate.dev>
-To: "syzbot" <syzbot+479aff51bb361ef5aa18@syzkaller.appspotmail.com>,
- <linux-kernel@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>
-X-Mailer: aerc 0.18.2
-References: <D63VY8C6B77L.2EEUFPWVWLWFB@getstate.dev>
- <6751d7db.050a0220.b4160.01db.GAE@google.com>
-In-Reply-To: <6751d7db.050a0220.b4160.01db.GAE@google.com>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usb: gadget: f_midi: Fixing wMaxPacketSize exceeded
+ issue during MIDI bind retries
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Faraz Ata <faraz.ata@samsung.com>, quic_jjohnson@quicinc.com,
+	kees@kernel.org, abdul.rahim@myyahoo.com, m.grzeschik@pengutronix.de,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	jh0801.jung@samsung.com, dh10.jung@samsung.com, naushad@samsung.com,
+	akash.m5@samsung.com, rc93.raju@samsung.com, taehyun.cho@samsung.com,
+	hongpooh.kim@samsung.com, eomji.oh@samsung.com, shijie.cai@samsung.com,
+	alim.akhtar@samsung.com, stable@vger.kernel.org
+Content-Language: en-US
+From: Selvarasu Ganesan <selvarasu.g@samsung.com>
+In-Reply-To: <2024120809-frostlike-dingy-1113@gregkh>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrHJsWRmVeSWpSXmKPExsWy7bCmuu7WQ6HpBp1N2hbTp21ktXhzdRWr
+	xYN529gs7iyYxmRxavlCJotrNxayWzQvXs9mMWnPVhaLuw9/sFise3ue1eLyrjlsFouWtTJb
+	bGm7wmTx6eh/VovGLXdZLVZ1zmGxuPx9J7PFgo2PGC0mHRR1EPbYtKqTzWP/3DXsHsdeHGf3
+	6P9r4DFxT51H35ZVjB6fN8kFsEdl22SkJqakFimk5iXnp2TmpdsqeQfHO8ebmhkY6hpaWpgr
+	KeQl5qbaKrn4BOi6ZeYAfaKkUJaYUwoUCkgsLlbSt7Mpyi8tSVXIyC8usVVKLUjJKTAp0CtO
+	zC0uzUvXy0stsTI0MDAyBSpMyM5YPL2VseAjc8Wy3vesDYxzmLsYOTkkBEwkps3YzdbFyMUh
+	JLCbUWL1h3PMEM4nRonGte3sEM43Roll81eww7Sc/boTqmUvo0Tf349QLW8ZJXb/28wEUsUr
+	YCdx5tRKsCUsAioS1y/tZ4aIC0qcnPmEBcQWFZCXuH9rBthUYYFMia/TuxhBbBEBDYmXR2+x
+	gAxlFjjPLPHh/XNWkASzgLjErSfzgRZwcLAJGEo8O2EDEuYUMJU4//oME0SJvMT2tzDPfeGQ
+	eDy/CMJ2kWg69Q3qA2GJV8e3QNlSEp/f7WWDsJMl9kz6AhXPkDi06hDUHHuJ1QvOsIKsZRbQ
+	lFi/Sx9iFZ9E7+8nYNdICPBKdLQJQVSrSpxqvAw1UVri3pJrrBC2h8SbD4dZ4EE1b+cPlgmM
+	CrOQQmUWkidnIflmFsLmBYwsqxglUwuKc9NTi00LjPNSy+ERnpyfu4kRnNC1vHcwPnrwQe8Q
+	IxMH4yFGCQ5mJRFeDu/QdCHelMTKqtSi/Pii0pzU4kOMpsDomcgsJZqcD8wpeSXxhiaWBiZm
+	ZmYmlsZmhkrivK9b56YICaQnlqRmp6YWpBbB9DFxcEo1MPk9+vFmNVfRlM6dL+J+S/C+ZXfZ
+	51lwf8l5f4+ueZOvvpj7TnrStFu+D6badE9I4/GeKvA9vVBl4UITbq+dZ87uuWVTZ5M2OVmo
+	N+3PnEVT9nhPlrbnnrdGa4WW6+wcjZCfX/fHud97eUsuSeX0dc7jAaKfnPRZk/uD+8OOnXP0
+	OeN87Vb+mzSf3aXqhV3c9hXcruaVaqbWEovO3eyV2RyxPjTmz0blTpfV/nuN1t45m/jlsuw9
+	Rt/TDQe7dDZc2cl8/OUSk7A7cum9bc6z768/lKB1dvJVtudaypd++c9+JGcntHbjIXvOJXpO
+	+0tUz3fKs4QuK5h6/4K6V9+cnSd1OWL/cbmU2FWvmrfq9mUlluKMREMt5qLiRACfewzdcQQA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNIsWRmVeSWpSXmKPExsWy7bCSvO6WQ6HpBj0TNSymT9vIavHm6ipW
+	iwfztrFZ3Fkwjcni1PKFTBbXbixkt2hevJ7NYtKerSwWdx/+YLFY9/Y8q8XlXXPYLBYta2W2
+	2NJ2hcni09H/rBaNW+6yWqzqnMNicfn7TmaLBRsfMVpMOijqIOyxaVUnm8f+uWvYPY69OM7u
+	0f/XwGPinjqPvi2rGD0+b5ILYI/isklJzcksSy3St0vgylg8vZWx4CNzxbLe96wNjHOYuxg5
+	OSQETCTOft3J1sXIxSEksJtRYv7MKewQCWmJ17O6GCFsYYmV/56zQxS9ZpSYsP0LK0iCV8BO
+	4syplWCTWARUJK5f2s8MEReUODnzCQuILSogL3H/1gywocICmRL3Ts1kA7FFBDQkXh69xQIy
+	lFngPLPE7cuPWSA2vGWU+HL8FVg3s4C4xK0n85m6GDk42AQMJZ6dsAEJcwqYSpx/fYYJosRM
+	omsrxKXMQMu2v53DPIFRaBaSO2YhmTQLScssJC0LGFlWMUqmFhTnpucWGxYY5aWW6xUn5haX
+	5qXrJefnbmIEx6+W1g7GPas+6B1iZOJgPMQowcGsJMLL4R2aLsSbklhZlVqUH19UmpNafIhR
+	moNFSZz32+veFCGB9MSS1OzU1ILUIpgsEwenVANT8GdO1QeVy41lXi84pvRR0aCOO3Tilofr
+	vHX4XSIr7X4lGP1SMCrnXnCJ9QmD3a78gGSpreblUvVTc4Nle+dLCKzaGN7Y+zTw8rKMmR+q
+	0mS2hQQYOjP1XfasNfY6NUfeYtb1mLlLNs+QvRelJ8XLZdnAWaqSqR2SkXjR4NWU51t9Lju4
+	+zbVPfl/PvrRJqHetzOzXb5s0s/LtlisLPRi1uvvm6eaNMc8u3rnyc05lWzGpQWvOu6UFb7J
+	UZFpqk9c21Owdp+aYOCD0kWswTrH94ltPn0tZ9Pah8EPotnu/ujd+Grv0WUPhetfCoVe87V8
+	NydY+7l3e4P3JZG1M3dXnXKrmXTEk686Ou3omVtKLMUZiYZazEXFiQBbSs/vTgMAAA==
+X-CMS-MailID: 20241208160052epcas5p3eeba799ad78f0269ba04fabb28fa6a4c
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241208151349epcas5p1a94ca45020318f54885072d4987160b3
+References: <CGME20241208151349epcas5p1a94ca45020318f54885072d4987160b3@epcas5p1.samsung.com>
+	<20241208151314.1625-1-faraz.ata@samsung.com>
+	<5d4e59f0-76a7-43bf-8a96-9aa4f9e2a9ac@samsung.com>
+	<2024120809-frostlike-dingy-1113@gregkh>
 
---1c30941c5254062c93d3b128b50a520d6bce1a927ab6948729f7a3da0461
-Content-Type: multipart/alternative;
- boundary=32cea76254544f5e6465864e986ea3540cbb46b7f5d02db6afc08b55aa93
 
---32cea76254544f5e6465864e986ea3540cbb46b7f5d02db6afc08b55aa93
-Content-Transfer-Encoding: quoted-printable
-Content-Disposition: inline
-Content-Type: text/plain; charset=UTF-8
+On 12/8/2024 9:18 PM, Greg KH wrote:
+> On Sun, Dec 08, 2024 at 08:58:32PM +0530, Selvarasu Ganesan wrote:
+>> Hello Maintainers,
+>>
+>> Please ignore this commit as this duplicate copy of
+>> https://lore.kernel.org/linux-usb/20241208152322.1653-1-selvarasu.g@samsung.com/
+> So which is correct?
+>
+> confused,
+Sorry for the confusion. The below is the correct one.
 
-#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git=
- master
+https://lore.kernel.org/linux-usb/20241208152322.1653-1-selvarasu.g@samsung.com/
 
---32cea76254544f5e6465864e986ea3540cbb46b7f5d02db6afc08b55aa93--
 
---1c30941c5254062c93d3b128b50a520d6bce1a927ab6948729f7a3da0461
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename=0001-TEST.patch
-Content-Type: text/plain; charset=utf-8; name=0001-TEST.patch
-
-RnJvbSA0ZjU0MDdjODQ3NGVkNjc0N2Q2MTQxMmI5MTVjOTQ5ZDlkOWM2ODA1IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBNYXppbiBBbEhhZGRhZCA8bWF6aW5AZ2V0c3RhdGUuZGV2PgpE
-YXRlOiBTdW4sIDggRGVjIDIwMjQgMTg6NTI6NTQgKzAzMDAKU3ViamVjdDogW1BBVENIXSBURVNU
-CgotLS0KIG5ldC9ibHVldG9vdGgvaGNpX3N5bmMuYyB8ICA1ICsrKy0tCiBuZXQvYmx1ZXRvb3Ro
-L21nbXQuYyAgICAgfCAxMiArKysrKysrKysrKy0KIDIgZmlsZXMgY2hhbmdlZCwgMTQgaW5zZXJ0
-aW9ucygrKSwgMyBkZWxldGlvbnMoLSkKCmRpZmYgLS1naXQgYS9uZXQvYmx1ZXRvb3RoL2hjaV9z
-eW5jLmMgYi9uZXQvYmx1ZXRvb3RoL2hjaV9zeW5jLmMKaW5kZXggYzg2ZjRlNDJlLi5hYTVhYTNm
-ZWQgMTAwNjQ0Ci0tLSBhL25ldC9ibHVldG9vdGgvaGNpX3N5bmMuYworKysgYi9uZXQvYmx1ZXRv
-b3RoL2hjaV9zeW5jLmMKQEAgLTUxOTcsNiArNTE5Nyw5IEBAIGludCBoY2lfZGV2X2Nsb3NlX3N5
-bmMoc3RydWN0IGhjaV9kZXYgKmhkZXYpCiAJICovCiAJZHJhaW5fd29ya3F1ZXVlKGhkZXYtPndv
-cmtxdWV1ZSk7CiAKKwkvKiBmbHVzaCBjbWQgIHdvcmsgKi8KKwlmbHVzaF93b3JrKCZoZGV2LT5j
-bWRfd29yayk7CisKIAloY2lfZGV2X2xvY2soaGRldik7CiAKIAloY2lfZGlzY292ZXJ5X3NldF9z
-dGF0ZShoZGV2LCBESVNDT1ZFUllfU1RPUFBFRCk7CkBAIC01MjM0LDggKzUyMzcsNiBAQCBpbnQg
-aGNpX2Rldl9jbG9zZV9zeW5jKHN0cnVjdCBoY2lfZGV2ICpoZGV2KQogCQljbGVhcl9iaXQoSENJ
-X0lOSVQsICZoZGV2LT5mbGFncyk7CiAJfQogCi0JLyogZmx1c2ggY21kICB3b3JrICovCi0JZmx1
-c2hfd29yaygmaGRldi0+Y21kX3dvcmspOwogCiAJLyogRHJvcCBxdWV1ZXMgKi8KIAlza2JfcXVl
-dWVfcHVyZ2UoJmhkZXYtPnJ4X3EpOwpkaWZmIC0tZ2l0IGEvbmV0L2JsdWV0b290aC9tZ210LmMg
-Yi9uZXQvYmx1ZXRvb3RoL21nbXQuYwppbmRleCBiMzExOTJkNDcuLmI0MTc3NTZhYyAxMDA2NDQK
-LS0tIGEvbmV0L2JsdWV0b290aC9tZ210LmMKKysrIGIvbmV0L2JsdWV0b290aC9tZ210LmMKQEAg
-LTU1MTksOSArNTUxOSwxNyBAQCBzdGF0aWMgdm9pZCBtZ210X3JlbW92ZV9hZHZfbW9uaXRvcl9j
-b21wbGV0ZShzdHJ1Y3QgaGNpX2RldiAqaGRldiwKIHsKIAlzdHJ1Y3QgbWdtdF9ycF9yZW1vdmVf
-YWR2X21vbml0b3IgcnA7CiAJc3RydWN0IG1nbXRfcGVuZGluZ19jbWQgKmNtZCA9IGRhdGE7Ci0J
-c3RydWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcCA9IGNtZC0+cGFyYW07CisJc3Ry
-dWN0IG1nbXRfY3BfcmVtb3ZlX2Fkdl9tb25pdG9yICpjcDsKIAogCWhjaV9kZXZfbG9jayhoZGV2
-KTsKKwkvLyBpZiBjYWxsZWQgd2hpbGUgZGV2aWNlIGlzIGNsb3NpbmcsIHN0YXR1cyB3aWxsIGJl
-IGludmFsaWQuCisJLy8gYW5kIGNtZCBpcyBjbGVhcmVkIGJ5IF9fbWdtdF9wb3dlcl9vZmYKKwlp
-ZiAoc3RhdHVzID09IC1FSU5WQUwgfHwgY21kICE9IHBlbmRpbmdfZmluZChNR01UX09QX1JFTU9W
-RV9BRFZfTU9OSVRPUiwgaGRldikpeworCQloY2lfZGV2X3VubG9jayhoZGV2KTsKKwkJcmV0dXJu
-OworCX0KKworCWNwID0gY21kLT5wYXJhbTsKIAogCXJwLm1vbml0b3JfaGFuZGxlID0gY3AtPm1v
-bml0b3JfaGFuZGxlOwogCkBAIC01NTQwLDYgKzU1NDgsOCBAQCBzdGF0aWMgdm9pZCBtZ210X3Jl
-bW92ZV9hZHZfbW9uaXRvcl9jb21wbGV0ZShzdHJ1Y3QgaGNpX2RldiAqaGRldiwKIHN0YXRpYyBp
-bnQgbWdtdF9yZW1vdmVfYWR2X21vbml0b3Jfc3luYyhzdHJ1Y3QgaGNpX2RldiAqaGRldiwgdm9p
-ZCAqZGF0YSkKIHsKIAlzdHJ1Y3QgbWdtdF9wZW5kaW5nX2NtZCAqY21kID0gZGF0YTsKKwlpZiAo
-Y21kICE9IHBlbmRpbmdfZmluZChNR01UX09QX1JFTU9WRV9BRFZfTU9OSVRPUiwgaGRldikpCisJ
-CXJldHVybiAtRUlOVkFMOwogCXN0cnVjdCBtZ210X2NwX3JlbW92ZV9hZHZfbW9uaXRvciAqY3Ag
-PSBjbWQtPnBhcmFtOwogCXUxNiBoYW5kbGUgPSBfX2xlMTZfdG9fY3B1KGNwLT5tb25pdG9yX2hh
-bmRsZSk7CiAKLS0gCjIuNDYuMAoK
---1c30941c5254062c93d3b128b50a520d6bce1a927ab6948729f7a3da0461--
+Thanks,
+Selva
+>
+> greg k-h
+>
+>
 
