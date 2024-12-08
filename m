@@ -1,90 +1,88 @@
-Return-Path: <linux-kernel+bounces-436268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436269-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13649E83A5
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:30:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1E269E83AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 06:32:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A77AF18848F6
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:30:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DFBB165A98
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 05:32:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E35C4174A;
-	Sun,  8 Dec 2024 05:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6462E4437C;
+	Sun,  8 Dec 2024 05:32:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mx0o2C2U"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IAPHcyw0"
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85EAF46B8
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 05:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA844690
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 05:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733635831; cv=none; b=bRGIWYfjCqcR/Ukc+d9wfLiCXnhwcaTOhYjZQZlHQKDahrDBIRXIw80s7MaZPL2bbfw0Dj3kEo7SuB158xxOIVAVqRhQQaGMdfzsf3FclQ4lTMEhOfJ6XLHjzNtDeT+Sn4L4v61/i0o6Rl0FgAV1Fv7NFdmmkzS532YUPccvYnU=
+	t=1733635933; cv=none; b=PLPstOu62qD4fZFy4Ey/WAMoAPKHFkXCNhjBn7kOitG2BnLNYsil/FAznpaohkOst/ALg/i4zBXOHrPiOVubSlunK/xLgS9OTQpukeoJQC2JMLavHdwL9F1HTExh3lUgvFulE2v/4CKsZTYsGvat+rxjaSSHJog51zD58Aiu6u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733635831; c=relaxed/simple;
-	bh=KvnIfFf8P+FLDr+t06zo2ANjcZmqdeZgnkbH9neKfp8=;
+	s=arc-20240116; t=1733635933; c=relaxed/simple;
+	bh=ZH9c+nbPI18/8YvQMcmvQRtgXojPyyQ3bR6i6JGEYIM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXhCWt3oU+ORjTFTddqA4tO7ZEXVIxtGPXLOfVNQRsFok5j5J2y9wAqML3lk0Yr16C90Hflm1bQRaHilVpHxZ4nV1oW+8FQbjQSCw0p/A12ahF0FuIv7cSfzdGaEyEGBIzvrsvtussz96oWzEBYlWZCtVYgJNMUK1hJNI+ZPj2Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mx0o2C2U; arc=none smtp.client-ip=209.85.208.180
+	 Content-Type:Content-Disposition:In-Reply-To; b=kgDCgOl3Law2uRgjCBVzOM5hWBZdDb+OjYuAkpB49G4NTZaIB0+Gk+kLDk74hlHKo+As8hniSpfFivlSBiozM90TgMW0sgD+XEqTXFO3HGMZKuIgsu7lgk5MscAAb0uT+V1VtygRUV4MtM8WrDDn4Y9H3cHqDMHImZ5Kw4OZE5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IAPHcyw0; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3001e7d41c5so28326741fa.2
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 21:30:29 -0800 (PST)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso40738711fa.0
+        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 21:32:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733635828; x=1734240628; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733635930; x=1734240730; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wvacb83oMug8ZaJH3xcieEjmfoUkx49WyZ97VXV3ZeM=;
-        b=mx0o2C2UYAfyxuPhYQ4zF+/r38aKN9+/2jiaOtQfv5vlKbXYKwBNfy2bB52g9jOtR2
-         dcSW/16Y9mVFUOOrzwMBBp+2dUyUoMBlpn9fHbfS2r9HMH2sbBJRYA4w7mQW15ri8kZm
-         T8rkTuccUp6OUALmooc7B/lVKEBntNpFN+R/Uk+xxMljs6p2qnOh9gUFzepWB7qoyHKo
-         l8mmUFdphT1cs/GfaESue2UC3N5bs9K4sFopCUOUbeF7V2v9pA/JRUNndAMhli9zV4G6
-         DP+s5snisJKACnsl9hkIDHbcQ+870UdzBEbc/YZ3VbCg628GnWwJEDQn8+QE7QG//Fa0
-         OzUw==
+        bh=P6nFzI3wt1FIwd3t3T0zMAhozPOD3DEG6nWM7JBmOLo=;
+        b=IAPHcyw0z9ku0Xz/QfKZl+CCa0mRbsUE3aVaqffK+2EO+0MPpHzovRiijLZSbhBWZ4
+         0x4RasIigYgHrM8mrk/DCS66T6vWqCX5OEzyCvT3UmccZJxCZk5IU48jZ9g3qZ2t01T6
+         kxbX7tbajKcHD1g3VaDD7HZgDdLr++sVm5NLpnn08N/ulhDArDXRlVle3ODwGj7Rkqau
+         F3ReMIQkGIQGQvg9Jb71CLh+BgM4SJ+overyI0w93AqI07EHUPBrPhnOnr67OXhpGqky
+         sr+YN2Hav7hzryy0lyqzQLZAy2P6p0vUOeICJ1dtfTh/P1FYNkNeDiSWVBYEuoe+Lyvj
+         q7yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733635828; x=1734240628;
+        d=1e100.net; s=20230601; t=1733635930; x=1734240730;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Wvacb83oMug8ZaJH3xcieEjmfoUkx49WyZ97VXV3ZeM=;
-        b=s9n0u/6v7EfJhtPDp7KmjnvPJbvIZMWCuQBxmsyvCHqw16CvlefyiFtk8z81QudMVp
-         j7PF4mfumGG9sEAFIxx4p52JvHAXcPZqIvSQGCgPDVcyvKs8ckKqcq4Ja1zALbyje5mt
-         2sfR0iwuBE0y75de+kgolKIwVKiMEZ9EZW4yXKgzZYpBL2tqoAQD8JcWkuz38zfPfINR
-         2iJKVoF9syx5nP5H8ofEFnlgiAMZeMyqkCavrJvqKgfQI6v4MRYmAU9P2Rpcjov1oHxt
-         isHPYvMaq1BuV5q8pwYBM8FdhsuCCtq4sJmkIDZjmceO4MxU23R6QgrfWbMz+JAJ6hfX
-         jgaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLazExb+6fS5Myf5Qaj5OBC5lRkWJtbK43JFB3dBIVVQu9AD2QpR5KfmL1qojURUqYGt/9H26+yob2o/A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEQA5hdlg9qfgYSaSYe3x2LRGjL0nOr2K2tVu+BTPHEawyUBhN
-	wGah3kGErjzr4IgiTPVZF+Ft17+/aAkIp2VUZ0nb7+Y/rKjDuDcNW3Rv+WWkRP0ileC6bWTnIgL
-	K
-X-Gm-Gg: ASbGncu6nm5G2Vv9IEKnJTLvtghmyZLGFTsq37MAr8sk9yJlBZ4a8Y1hZuSGkPCjFlO
-	UYW5PBwjYoM8G5wJrkFvlueCe7+0LsPnil5ieproIJcDRurk9kfQApQ6WwWPvo/LPbUcuYSKnvD
-	KJK9lWruwzWX5Mlr41/Oc8kDqFlySF8R2E5ltlnrI5lemJnvP19Bo2v/yxo/0bajJkYs9/YRu4y
-	7A8CAdXDvYsVjLE6rEbEME3XgpMjwEZtVuPlldjO5zKJEXrhcxelW+k3ddenSASEsoSFTGGp7xH
-	w8ftk2mxG9ZfDkpgET70D76sgH5KKg==
-X-Google-Smtp-Source: AGHT+IEGWyfmfMdOOWg2y1WPhvOD4Je6bh0ZK678xD9W3i2q/SCD+U4JO0yDb00ekQtqi9O1yIIVaw==
-X-Received: by 2002:a05:6512:3d07:b0:53e:3ac2:9c03 with SMTP id 2adb3069b0e04-53e3ac29ca4mr1184966e87.31.1733635827566;
-        Sat, 07 Dec 2024 21:30:27 -0800 (PST)
+        bh=P6nFzI3wt1FIwd3t3T0zMAhozPOD3DEG6nWM7JBmOLo=;
+        b=xTK/VpYOL84uC9l0XXrJwYFNhANY9/n8vU6DsnYK9IKBZOlbcv+nb5njIS/WVzaJk3
+         YBTP9SZ2SgPYvSgkRWZe3ZYsKm3WdXmaTfgALkvQwz9/gcmMtDzNNFnA3vpBY4PUTGeV
+         VQKsaeYr82vBmVeRC7zn2y5rrTw2m8s6ps+U6f6MyJ+5CmFpW4VonPcrJUogtHcZUIDB
+         FrE23tIODWKVp4agbIaSRdIwtCKuLTS6ceDmbgL4nowySAPkH/2uoT9iqrjWTriZxzr7
+         jASvrr02tKWcteJDjjDWiHhXPjD6YEZJQqDzNfaDPS0trSIz9XHqO8x/nCeuIfQVxv5X
+         6lsw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8/C67wQtTuUE1W/YBGnQNtF7gtxMB6FoEdR8m2whU4dFVPzMeZGsdFliZ3KoWEnBJztqbU6lzLSALeR8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu7Ct8neI5eLmLE3Wzo9sJivCs17IQLNFBoIjS8/+X8udnlyzX
+	5sZMrBTz6vCQaqBP/f5jmLVBf8b6zs2WUUxxjJG6GTvbPHX0juSW8MJd75QZYA4=
+X-Gm-Gg: ASbGncsnxYF20dfrmiNuWe1FNB1ulRm9Ul5cmabMgIB/mMDEF1wi7cVjlGwZ1/hC2xN
+	1XyAS5H/Rvfs6CuWIOn6OHvaY5l169aQR4FU4DLd3ZsOO+ipEAIrkf2mHae7OBT+1NfJ6lcZ9sr
+	FU2W7W+Vi0QF7DgspeAGuFrcrfkS9KM8+4F9k3tdvDipf08hOe0+O6VMm1N+mQI6XSNtOOF/taq
+	G3XqX6y0OQHTvRuVvXE3gCBV1TxWooeC0aI/3R1rg2KP24cSROm60d9/V8xT06oDyeR/5OJ1v6+
+	xWR4kRGp75jh1TQEXSWO0HwuPl6AYQ==
+X-Google-Smtp-Source: AGHT+IHM6HUUTb8wNdmSb6sHgl/L0lzJE9vsiapY5lOubCX/APlM2HXRklZ2wiKCWtgwS0Gfxw7uWw==
+X-Received: by 2002:a2e:bc84:0:b0:300:3a15:8f19 with SMTP id 38308e7fff4ca-3003a15931fmr37023771fa.32.1733635930310;
+        Sat, 07 Dec 2024 21:32:10 -0800 (PST)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e378c4264sm574040e87.239.2024.12.07.21.30.25
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3021e43be73sm621751fa.42.2024.12.07.21.32.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 07 Dec 2024 21:30:26 -0800 (PST)
-Date: Sun, 8 Dec 2024 07:30:23 +0200
+        Sat, 07 Dec 2024 21:32:09 -0800 (PST)
+Date: Sun, 8 Dec 2024 07:32:06 +0200
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
 	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: qcom: branch: Extend invert logic for branch2
- mem clocks
-Message-ID: <oylnao5wjtqyczivesfg46eexfb5oj6o2azprtwf4bl7yhko2c@saqzbycbixqk>
-References: <20241206-sm8750_videocc-v1-0-5da6e7eea2bd@quicinc.com>
- <20241206-sm8750_videocc-v1-1-5da6e7eea2bd@quicinc.com>
+	cros-qcom-dts-watchers@chromium.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 6/6] arm64: dts: qcom: sm8150-microsoft-surface-duo:
+ fix typos in da7280 properties
+Message-ID: <sgcfb6mz6hdnpbbq3lz2jyoehpgukqqv2p4kpiisrbfe44y6t5@gzpot5gpfen7>
+References: <20241206-topic-misc-dt-fixes-v2-0-fb6b9cadc47f@linaro.org>
+ <20241206-topic-misc-dt-fixes-v2-6-fb6b9cadc47f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,80 +91,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241206-sm8750_videocc-v1-1-5da6e7eea2bd@quicinc.com>
+In-Reply-To: <20241206-topic-misc-dt-fixes-v2-6-fb6b9cadc47f@linaro.org>
 
-On Fri, Dec 06, 2024 at 11:07:11PM +0530, Taniya Das wrote:
-> Extend the support for mem ops implementation to handle the
-> sequence of enable/disable of the memories for the invert
-> logic.
-
-This mostly duplicates the patch contents. Instead commit message should
-explain what is the "invert logic" and why it is relevant.
-
+On Fri, Dec 06, 2024 at 11:12:58AM +0100, Neil Armstrong wrote:
+> The dlg,const-op-mode & dlg,periodic-op-mode were mis-names with twice
+> the "dlg," prefix, drop one to match the bindings.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> This fixes:
+> sm8150-microsoft-surface-duo.dtb: da7280@4a: 'dlg,const-op-mode' is a required property
+> 	from schema $id: http://devicetree.org/schemas/input/dlg,da7280.yaml#
+> m8150-microsoft-surface-duo.dtb: da7280@4a: 'dlg,periodic-op-mode' is a required property
+> 	from schema $id: http://devicetree.org/schemas/input/dlg,da7280.yaml#
+> sm8150-microsoft-surface-duo.dtb: da7280@4a: 'dlg,dlg,const-op-mode', 'dlg,dlg,periodic-op-mode' do not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/input/dlg,da7280.yaml#
+> 
+> With the dlg,da7280.yaml converted from dlg,da7280.txt at [1].
+> 
+> [1] https://lore.kernel.org/all/20241206-topic-misc-da7280-convert-v2-1-1c3539f75604@linaro.org/
+> 
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  drivers/clk/qcom/clk-branch.c | 14 +++++++++++---
->  drivers/clk/qcom/clk-branch.h |  4 ++++
->  2 files changed, 15 insertions(+), 3 deletions(-)
+>  arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Fixes: d1f781db47a8 ("arm64: dts: qcom: add initial device-tree for Microsoft Surface Duo")
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 > 
-> diff --git a/drivers/clk/qcom/clk-branch.c b/drivers/clk/qcom/clk-branch.c
-> index 229480c5b075a0e70dc05b1cb15b88d29fd475ce..6caded8688c081e51ad0649f9c2f82919e461668 100644
-> --- a/drivers/clk/qcom/clk-branch.c
-> +++ b/drivers/clk/qcom/clk-branch.c
-> @@ -142,8 +142,12 @@ static int clk_branch2_mem_enable(struct clk_hw *hw)
->  	u32 val;
->  	int ret;
+> diff --git a/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts b/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts
+> index b039773c44653ae8cd5c2b9fdeccbd304ad2c9e5..a1323a8b8e6bfb556a2d6d865f8b560bd6c4d429 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts
+> +++ b/arch/arm64/boot/dts/qcom/sm8150-microsoft-surface-duo.dts
+> @@ -376,8 +376,8 @@ da7280@4a {
+>  		pinctrl-0 = <&da7280_intr_default>;
 >  
-> -	regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
-> -			   mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
-> +	if (mem_br->mem_enable_invert)
-> +		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
-> +				mem_br->mem_enable_mask, 0);
-> +	else
-> +		regmap_update_bits(branch.clkr.regmap, mem_br->mem_enable_reg,
-> +			mem_br->mem_enable_ack_mask, mem_br->mem_enable_ack_mask);
->  
->  	ret = regmap_read_poll_timeout(branch.clkr.regmap, mem_br->mem_ack_reg,
->  				       val, val & mem_br->mem_enable_ack_mask, 0, 200);
-> @@ -159,7 +163,11 @@ static void clk_branch2_mem_disable(struct clk_hw *hw)
->  {
->  	struct clk_mem_branch *mem_br = to_clk_mem_branch(hw);
->  
-> -	regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
-> +	if (mem_br->mem_enable_invert)
-> +		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
-> +			   mem_br->mem_enable_mask, mem_br->mem_enable_mask);
-> +	else
-> +		regmap_update_bits(mem_br->branch.clkr.regmap, mem_br->mem_enable_reg,
->  			   mem_br->mem_enable_ack_mask, 0);
->  
->  	return clk_branch2_disable(hw);
-> diff --git a/drivers/clk/qcom/clk-branch.h b/drivers/clk/qcom/clk-branch.h
-> index 292756435f53648640717734af198442a315272e..6bc2ba2b5350554005b7f0c84f933580b7582fc7 100644
-> --- a/drivers/clk/qcom/clk-branch.h
-> +++ b/drivers/clk/qcom/clk-branch.h
-> @@ -44,6 +44,8 @@ struct clk_branch {
->   * @mem_enable_reg: branch clock memory gating register
->   * @mem_ack_reg: branch clock memory ack register
->   * @mem_enable_ack_mask: branch clock memory enable and ack field in @mem_ack_reg
-> + * @mem_enable_mask: branch clock memory enable mask
-> + * @mem_enable_invert: branch clock memory enable and disable has invert logic
->   * @branch: branch clock gating handle
->   *
->   * Clock which can gate its memories.
-> @@ -52,6 +54,8 @@ struct clk_mem_branch {
->  	u32	mem_enable_reg;
->  	u32	mem_ack_reg;
->  	u32	mem_enable_ack_mask;
-> +	u32	mem_enable_mask;
-> +	bool	mem_enable_invert;
->  	struct clk_branch branch;
->  };
->  
+>  		dlg,actuator-type = "LRA";
+> -		dlg,dlg,const-op-mode = <1>;
+> -		dlg,dlg,periodic-op-mode = <1>;
+> +		dlg,const-op-mode = <1>;
+> +		dlg,periodic-op-mode = <1>;
+>  		dlg,nom-microvolt = <2000000>;
+>  		dlg,abs-max-microvolt = <2000000>;
+>  		dlg,imax-microamp = <129000>;
 > 
 > -- 
-> 2.45.2
+> 2.34.1
 > 
 
 -- 
