@@ -1,82 +1,95 @@
-Return-Path: <linux-kernel+bounces-436613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D21029E8899
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:53:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68D269E889A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:54:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2045B2810C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 23:53:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D62F1884E73
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 23:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4BA193079;
-	Sun,  8 Dec 2024 23:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96A29192D77;
+	Sun,  8 Dec 2024 23:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IlNZt8NX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d1lNv1G1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3D6FB66E;
-	Sun,  8 Dec 2024 23:52:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F265DB66E
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 23:53:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733701976; cv=none; b=iyR5qMkOwT6PCW0uR1KEQR7wHj6uxJzR7q0fk3Ym+hx/xZJOihzg1/3iqEHOyZ36h+l3+8QpToPurnKoIjj/oDJ4/njxgQzAZmQ1l4v0rQHqwS5RuQr/tRA6/xO8F/+2J4ggnylrUKkLttSeDEHGjctrpXx77e6SfnugEBjNdb8=
+	t=1733702037; cv=none; b=Ir74EyvNVIYumUE/a0+R5OuHDtuT0YXc7gvz1fWUmmFMxbB5Ja3pvsQEjWHyvqdZ7rRl7QxjErToGoXoNpJgWJO3HjF+hNgZh+yr5vMNxdx4fCrSVhipw3dga+OBq1980HJKJDuYHoOkVGqH7WH6IVVtKXIb/HOrkpbPdszMCt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733701976; c=relaxed/simple;
-	bh=r5Xqq6FNBE7zB2TzBM9mS93DhtkIznVQorgiWvDRuG8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=US+MvbEH/w2nTllyRxJKfGZ+B8TdpBrhT6FZ+j1d05jGN/Fy1pkpb6jOlXWjNdCukUQUWKPnirgQSOj0TzDuBQQQugaP+UXrtBMXW9nuJeg+Ve+sWvOdeGGC989SBcimg0QuJpMxodkfTUbhnjnY5rv3YimMNFUhtsrjYtKvnpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IlNZt8NX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B5CDC4CED2;
-	Sun,  8 Dec 2024 23:52:55 +0000 (UTC)
+	s=arc-20240116; t=1733702037; c=relaxed/simple;
+	bh=sVH9ZqpCvQDz7d361utUpjIEsZi2/pdFCUGB60yV1Sk=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Gmp0I+dSfeNigAz5XyM9WHDOfmysGf+Wszzxjp68wz67p4xBBNH9xhjl9VSpH1rQDA5aghmeKvs8Ij7oJmEkO5BsO+Vwn59EKE8+mtqQSZ6osluQm5gVODC8nfj8f+mXTvLPTdDMmZCun0UVdm8Y7qUBnVz7dT0sj/vt3Ma07T4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d1lNv1G1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B9D4C4CED2;
+	Sun,  8 Dec 2024 23:53:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733701975;
-	bh=r5Xqq6FNBE7zB2TzBM9mS93DhtkIznVQorgiWvDRuG8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IlNZt8NXHN/tFQSm7P0rFkbM00LCfafLHqm5ibR4gJDjkxstiJ5o3bla1U7MdfJ0d
-	 PPwb7soCAbLjfiYuWJWI9SvzYN7Oao615lnlyAxaBXyEJlR6KUnUstU+h3tKlaKA0R
-	 xqbF9BdjIfDg5Gxfuedjomp0FXssSfxDqRm8jx0m+Gs/n7iisM1AP0i9A4UcYnHlSe
-	 vM+lPKKEn4oPoJnodfYVg91ScHEj/W1qI+LtqUpdW4Dgy88wft8EChW3j7QO7Hu4g7
-	 kQf3UZ/VLzrNooDTKM3KqRzsxWttx5EJKj/avrOtWomtwOr4yQZUjxBC0qYXn9e68N
-	 I6gtS5o0D/vHA==
-Date: Sun, 8 Dec 2024 23:52:54 +0000
-From: Wei Liu <wei.liu@kernel.org>
-To: Olaf Hering <olaf@aepfle.de>
-Cc: linux-hyperv@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH v1] tools/hv: reduce resouce usage in hv_kvp_daemon
-Message-ID: <Z1YxVhO1x2YTLX_F@liuwe-devbox-debian-v2>
-References: <20241202123520.27812-1-olaf@aepfle.de>
- <Z1P2ucUPPEYN2cg5@liuwe-devbox-debian-v2>
+	s=k20201202; t=1733702036;
+	bh=sVH9ZqpCvQDz7d361utUpjIEsZi2/pdFCUGB60yV1Sk=;
+	h=From:To:Subject:Date:From;
+	b=d1lNv1G1TMat4RrUYqlgR6515kanRf3QTtu1IdX2PkUaBHltP9W5SG0HMP0peFQtU
+	 gamUhMf6wYy4eMAACBiynmWe0EfVWyYM9+c5C9+/V7zjnF0Tci848zClEfejmMVIxk
+	 9fo6VYMXg59T+SskgRHOQl7VbU7vj1B4rnDRv9uTMbxk/YO//OJAPXd9CbGqy9nyu6
+	 H51aQcyAKXeGKmJe0Sk8wCjR2kv0ALjtQ0+h3tb4tfCD4gDHWJNczLl/USPab5csLF
+	 dS98mYkbwQp5kpiac5M1olJQ0PvohpeRtBLqt5q2YN7zC9arevvMUq5+0Xd7XgA5ql
+	 88bSJTWchKYJw==
+From: Damien Le Moal <dlemoal@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>,
+	David Woodhouse <dwmw@amazon.co.uk>,
+	Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] x86: Fix build regression with CONFIG_KEXEC_JUMP enabled
+Date: Mon,  9 Dec 2024 08:53:32 +0900
+Message-ID: <20241208235332.479460-1-dlemoal@kernel.org>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1P2ucUPPEYN2cg5@liuwe-devbox-debian-v2>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Dec 07, 2024 at 07:18:17AM +0000, Wei Liu wrote:
-> On Mon, Dec 02, 2024 at 01:35:16PM +0100, Olaf Hering wrote:
-> > hv_kvp_daemon uses popen(3) and system(3) as convinience helper to
-> > launch external helpers. These helpers are invoked via a
-> > temporary shell process. There is no need to keep this temporary
-> > process around while the helper runs. Replace this temporary shell
-> > with the actual helper process via 'exec'.
-> > 
-> > Signed-off-by: Olaf Hering <olaf@aepfle.de>
-> 
-> Acked-by: Wei Liu <wei.liu@kernel.org>
+Build 6.13-rc12 for x86_64 with gcc 14.2.1 fails with the error:
 
-There's one conflict caused by an earlier patch by Vitaly. I've resolved
-the conflict and applied the patch to hyperv-fixes. Please check the
-final result.
+ld: vmlinux.o: in function `virtual_mapped':
+linux/arch/x86/kernel/relocate_kernel_64.S:249:(.text+0x5915b): undefined reference to `saved_context_gdt_desc'
 
-Thanks,
-Wei.
+when CONFIG_KEXEC_JUMP is enabled. This regression was introduced by
+commit 07fa619f2a40 ("x86/kexec: Restore GDT on return from
+::preserve_context kexec") which introduced a use of
+saved_context_gdt_desc without a declaration for it. Fix that by
+including asm/asm-offsets.h where saved_context_gdt_desc is defined
+(indirectly in include/generated/asm-offsets.h which asm/asm-offsets.h
+includes).
+
+Fixes: 07fa619f2a40 ("x86/kexec: Restore GDT on return from ::preserve_context kexec")
+Signed-off-by: Damien Le Moal <dlemoal@kernel.org>
+---
+ arch/x86/kernel/relocate_kernel_64.S | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/arch/x86/kernel/relocate_kernel_64.S b/arch/x86/kernel/relocate_kernel_64.S
+index 1236f25fc8d1..540443d699e3 100644
+--- a/arch/x86/kernel/relocate_kernel_64.S
++++ b/arch/x86/kernel/relocate_kernel_64.S
+@@ -13,6 +13,7 @@
+ #include <asm/pgtable_types.h>
+ #include <asm/nospec-branch.h>
+ #include <asm/unwind_hints.h>
++#include <asm/asm-offsets.h>
+ 
+ /*
+  * Must be relocatable PIC code callable as a C function, in particular
+-- 
+2.47.1
+
 
