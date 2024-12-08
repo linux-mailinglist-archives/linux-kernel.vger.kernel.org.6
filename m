@@ -1,56 +1,60 @@
-Return-Path: <linux-kernel+bounces-436506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9DBF9E86DF
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:03:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DFCA9E86E2
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:03:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A24171642B7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:03:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E86CC281449
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E287191F74;
-	Sun,  8 Dec 2024 17:03:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E46192D77;
+	Sun,  8 Dec 2024 17:03:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdHZaAoS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QFho3fZg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114E1885BF
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 17:03:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AE61885BF;
+	Sun,  8 Dec 2024 17:03:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733677392; cv=none; b=E2Vx2RKGpDnfzMU6Z0NtOTDAB1f7uN8KfYVoBfnEq829O3WnlhCgtRycEwUokALWQSFXjDJEE4wRgTh4OdF/fwHMSyw3ZiIIGBf0WAFfYTsD+ve9VBnMPLaYPrwQkawuLDP/y/hrgoX8el2dUcW4efVh1O4+A3TJckKwnMXwVe8=
+	t=1733677400; cv=none; b=M74EEMCQ5eND+jIMfk+HTGHne1nwWeQFz/tllsPpSg2gYKwqO/yjmosSCsMcBg4VKStPwoHd7P1K4M6SVRDS/reRtlV7MdigA5DLsVoX80UhbmioNv+ie96SlG5TjLBZCoKDwG6tr3Q/8Yv/x8WX46v1IlZyoTRIlXHdIp4SvV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733677392; c=relaxed/simple;
-	bh=Lnz2aWDHGkRniarfLIMsg+D6EF3yAhHrAHetguznFNg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=QwasyuGGFH9FFwUk30CZyDN8rXYe5lPv7MCRAMa7P7FsnNIsUTA8ImdXGADQAI1d2USpg/UqvnASclmpQH9MVy/EW1nQccQwbD+5JvrGTVg3VbOczSDT6opZTlB/wDkgutnXEyO4BQybubk5/t4ydg2YaUmRFGVcp0zGbQSeeLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdHZaAoS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C46DC4CED2;
-	Sun,  8 Dec 2024 17:03:08 +0000 (UTC)
+	s=arc-20240116; t=1733677400; c=relaxed/simple;
+	bh=INxFuGsShly/nK8ADXRSaHS4A5KYdvp1EMhC6Mi7d68=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=XS+t+0gExh4ufDLtUUAT5fv45TRYvnD5NJzFaqsmBE6oL7cBy3Fh+dWlqcZbFcdyuGoStSZN/jQZ09lRwMiJZyxYZhJRMGvsNOpCPgRVlrflekSqIKfTrvYBJtNM6kqjOjLGpahWw4MV8lPijHmtBIC3ZRIsXR+9EIwSgIa4SGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QFho3fZg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B7CAC4CED2;
+	Sun,  8 Dec 2024 17:03:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733677391;
-	bh=Lnz2aWDHGkRniarfLIMsg+D6EF3yAhHrAHetguznFNg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gdHZaAoS57Tbn9u04xu8VltLKWm9ujB5ZbP0HWPb7UEOvCwrgJYOKf+tNTwh3KZvA
-	 kRipx8xQlojkgr8gnCikhbd1twGNRAT3GZLsBio3v4BIGQfKrjWaYdwkGEiq0kiBRg
-	 PfABS2n0d4W65eFpq6dUYjaN4OxOd1IG2DC9Nvu/0rb5H0ynkp8nR/goi/+yakqywT
-	 cx79oGPHkKiNm5597j7ic7OIdBoBKaMd+m7iwuF4gsRFbfrmNjEwcSxwfSEK//BwZs
-	 nEbZkjYOS0uAAgKVZOQEpABTQBK+/f2acdeDyDqKNIBn8t/1D0UpTSsfTkNOljIQDd
-	 /bKsEnTvQc3Sg==
+	s=k20201202; t=1733677398;
+	bh=INxFuGsShly/nK8ADXRSaHS4A5KYdvp1EMhC6Mi7d68=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=QFho3fZg4LqMYujPwnsgMlUaay6S9fuhH3MFDxdFeS6lQjK4pZd+3dBcwlyqfYz70
+	 nKLSssLsKDYelwBdOpPy+upR+l6Za6sGn6JcrXZAW4OVyRlo83LSFs6SHt5Ke+u3vr
+	 Z9lzGHA+qqFioyidXRsZxL7s909RNqcbjf+mkW6BKQzi8eZmF4dWEIAjvdvGKVgIlE
+	 ZH+mOGDPFbNRyXVsswSWXuQz6i42rAm7l5ZpggGnZfiI71trkkXTK3wx7jR5vTLpXy
+	 aKvPUljc8sUeuYb/5CSAhltz3XMnT8sDHhkV6kZm0eCQVQ9QyBmRMKJIEDucRxcq00
+	 gmKdToZWZxDQQ==
 From: Vinod Koul <vkoul@kernel.org>
-To: konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org, 
- keith zhao <keith.zhao@starfivetech.com>
-Cc: helpdesk@kernel.org, linux-phy@lists.infradead.org, 
- jack.zhu@starfivetech.com, chensy123@21cn.com
-In-Reply-To: <20241120085609.199586-1-keith.zhao@starfivetech.com>
-References: <20241120085609.199586-1-keith.zhao@starfivetech.com>
-Subject: Re: (subset) [PATCH] MAINTAINERS: Remove Shengyang as JH7110 DPHY
- maintainer
-Message-Id: <173367738866.1042266.114125862388608986.b4-ty@kernel.org>
-Date: Sun, 08 Dec 2024 22:33:08 +0530
+To: kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, gregkh@linuxfoundation.org, andersson@kernel.org, 
+ konradybcio@kernel.org, dmitry.baryshkov@linaro.org, mantas@8devices.com, 
+ manivannan.sadhasivam@linaro.org, abel.vesa@linaro.org, 
+ quic_kriskura@quicinc.com, quic_rohiagar@quicinc.com, 
+ quic_kbajaj@quicinc.com, quic_wcheng@quicinc.com, 
+ linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-usb@vger.kernel.org, Varadarajan Narayanan <quic_varada@quicinc.com>
+In-Reply-To: <20241118052839.382431-1-quic_varada@quicinc.com>
+References: <20241118052839.382431-1-quic_varada@quicinc.com>
+Subject: Re: (subset) [PATCH v4 0/6] Enable IPQ5424 USB support
+Message-Id: <173367739170.1042266.14968940115846326756.b4-ty@kernel.org>
+Date: Sun, 08 Dec 2024 22:33:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,17 +66,28 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Wed, 20 Nov 2024 16:56:09 +0800, keith zhao wrote:
-> Shengyang has stepped away from his duty,
-> and this email is no longer valid, so removing
-> the email from MAINTAINERS.
+On Mon, 18 Nov 2024 10:58:33 +0530, Varadarajan Narayanan wrote:
+> The IPQ5424 SoC has both USB2.0 and USB3.0 controllers. The USB3.0
+> can connect to either of USB2.0 or USB3.0 phy and operate in the
+> respective mode.
 > 
+> v4: Fix regulator names to match with other Qualcomm DT files
 > 
+> v3: Added reviewed-by to one of the patches
+>     dts: regulator node names changed
+> 
+> [...]
 
 Applied, thanks!
 
-[1/1] MAINTAINERS: Remove Shengyang as JH7110 DPHY maintainer
-      commit: ea68f5c1b85462704b1939e547f9858cca5fcc0d
+[1/6] dt-bindings: phy: qcom,qusb2: Document IPQ5424 compatible
+      commit: db4427afa66062b37269f3398fed790d138506c7
+[2/6] phy: qcom-qusb2: add QUSB2 support for IPQ5424
+      commit: 9c56a1de296e70d16f1daac203d420378743a363
+[3/6] dt-bindings: phy: qcom,qmp-usb: Add IPQ5424 USB3 PHY
+      commit: d70656aee767090f700edd0de535ff3ffb0b351f
+[4/6] phy: qcom: qmp: Enable IPQ5424 support
+      commit: b8ef065c13872f5a4155e71c338597fde683cfd6
 
 Best regards,
 -- 
