@@ -1,87 +1,169 @@
-Return-Path: <linux-kernel+bounces-436255-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436256-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671309E834C
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:19:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B61799E8350
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 04:30:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934C01884168
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:30:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F2B71EF1D;
+	Sun,  8 Dec 2024 03:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="rvinjgZM"
+Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8E98281C63
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 03:19:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A38722318;
-	Sun,  8 Dec 2024 03:19:06 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 446BD46B8
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 03:19:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C449BA4B;
+	Sun,  8 Dec 2024 03:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733627945; cv=none; b=InE8nfNFEiy4+7moLu+CfJImwsSLrbj+0zIPVa+TokQnMbOYoRoPrPjlBLJVRXbbsvD2BCHxbZjRCINmGJ7qLDAyC2vclOlu/R8sks0/FdFcpv9Kd4FL/0zcHFH6BGzQd0qpkT4QpzfZTP/Ko4gSTeNohBkNeB+OGcCoD2KmTYA=
+	t=1733628631; cv=none; b=IPzOPUpNUN1HausvqiFAOtadQ9KCTbpSUt6V3mbzSHe2Z8io6yfdaJTNj5mTyeC8cT5iJs1QRms+OogTwcUnMnHCO1PWzzARLiU77XBKuBqrSAITYXTgyrZvd0RHGOYOCkZ6Jhu4oUQQ9jzOKQvi2cQ0rs181nq8m35QKSKJ1eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733627945; c=relaxed/simple;
-	bh=QBlyTjlRl0mgiQ2S2jM5DrX1WhWzZKh871LnvU+JPCg=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=O8XZt6GFOdJ0YkpoSJSp+xHdQb24aMiGVvKefNYk0MVXYrmqCmE+tbIj3BcfGY9XWlQSof/JfAXDu/NFCbQcyasReC6mQ3croTODcNo5hpoBphysK7SyFdGLi5OsDzLx9BQIsr66bBli23uukR6dQw+fJoOrOwh5TSj3u1b2gH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a7e39b48a2so71138985ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 07 Dec 2024 19:19:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733627943; x=1734232743;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3XEc2nWgwCf3sADFVA94a4r6VC/WuyFpkW5JbqDumjI=;
-        b=q73SfgksVBYc8c2NLxWG/CUJHSz7qeHeJViVQoUjs7MI9XmY2Cu8sjx3tWkb9SJM+z
-         vb52gK64Fk+1PG7CsdeOceZ3OhZm4yUuIATpHViYK5lYRwCgE4GjI2sXL6KyyoNMMv+n
-         mbea8nmTR0eDK7dJkWJEp+SBQlH0AKq5Gzq/Z4I5Oa3mEykb/y8Gn/1UngPG8xKUVZkJ
-         TQOIAqF3MR6AJypcxkX6GjNBPE9wWk/efHTDeGNn5EkyzlUEwbv9e9UQgmV7f9fQmJj8
-         AkTD1tzIgOBh2Dfqc/mNnXBs5dFFINoeFJ4gu30mRBCFgSAEvQmj6lt//m+uZZdypoEE
-         QWnw==
-X-Forwarded-Encrypted: i=1; AJvYcCV9aR+17yeJQZ0Y5G8bbR8/Oyt5wK6wNgDDSBXIg3LIdhoUd9ujwyQkXYwF8VDwUITFi8MY8qiNWh+2ysY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqVwN14fe278g07HsGF3c5BYMvc+Dm1iq2FC1J3/er/J3TkotY
-	7bQXSPq4Ebd7qkCqYKRjMEcvEeaPckgoSl/HgciWWCCWA9haVJKPyGfVuvQlk0BCLBZyT8cxl/W
-	CezivoxC1CdRXS9for9ofTDGCeAJaaaOJUVwariCoea+WmC7vEVDG6Xg=
-X-Google-Smtp-Source: AGHT+IEd7KsYSULGkG3xaqWHvF2Zp27BxqVin+gh42nr/VoMPgqaQDT9vs2l22h+62gex7eJxJ1bjFM7HaJCMmNsHbvxRrWWYJoL
+	s=arc-20240116; t=1733628631; c=relaxed/simple;
+	bh=BG57EQmQThxd+ozN5Q3bUFeu+y3rNtF+xMAEuOgrpDU=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=SjGJKd35eBfJekUVtkZ+xcaDVbCqMcQhyttuQV9mgtv+a06NbQIoRf+fsbBgTZydtT5QhLZ1C7v7YNAP74YdtX+y0HSWzDYtwYkhlmFSNEZ90QIqw1r3u+XNAKnqoFjX+5TE11LcSONhm3mOeo55cN5L20NHI2s+5Qv3UvDsSPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=rvinjgZM; arc=none smtp.client-ip=203.205.221.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1733628623; bh=ucp257+OUZPko0+d8LLFYd48yVVz9Ih0yzGEGWfpmcs=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=rvinjgZMHuf0hZL4uz9eu/1ttHXYRDSjhDwjSQcaWa0o7JouOmZEC/TuBde97t7Hb
+	 u+nt6lv8huQxNGWy3BrhTQlrhG79JEty6LbWzXqVx/CyirKl0SwSEmef6+OCguj088
+	 i5loZIqLi5zhMKKEikdx5Xs2+Z03l3akPpfWRhsE=
+Received: from pek-lxu-l1.wrs.com ([114.244.57.34])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 60E12254; Sun, 08 Dec 2024 11:24:14 +0800
+X-QQ-mid: xmsmtpt1733628254tbvwesve5
+Message-ID: <tencent_B7D4EAEAED76CDAC79026EF02F4D6D5C950A@qq.com>
+X-QQ-XMAILINFO: MANJig+gdatzOacpMEVq+EeZdgfeZOASGsbV3JnXN7FZbBkOhNlC/5+2Akyb1S
+	 WAjhmDt0ll4fExjqdqFWli3/WUtmDhcbyfQ0x2DJL3vpt57CjKk8SKsugbtdo0xp/XSpTJ4pRDjd
+	 ESx5MzHYCPiJSyQ3FTeNBSF95JZ82ndFiL7rhE7pnmm/epjPAEQRi/Sn7unruck4PwX4f1+ukNsY
+	 9KFxiabQr8U3HM1UjdXx+yZUa6oNpLjamBTfzCKt5pVzSd+6yOO7Pr5egNOIPBXfHpruNlo9VwXJ
+	 cJ9XbciqXw29o/qkFApwpaM9qJPW4yQlIe2pATO+kh7h2Ueq/2K/99HwhYXB/2V5bCT8qp/K8OgT
+	 rbOs5ryLAKs7OrRrzOggDWq56j7sk2tx6wm9jIrAbvfc0UppAI13afHj11MnxraqgNUfWgeGPYft
+	 3aWGDQSgdCdPOidxqBi+WwgVBftXnbvbJy/GoWM3nsjhGoHGs1gj9yKvoXoYJRZjSoWdbTdK+GyC
+	 zhfCgZTfNOevLF951v2m1pZ/WQ9/AC0faEKw2E0lMvVRHZKIbuL4RyP9zZHq3AvJCXi67cs2R11j
+	 LAgipeZrKIB0zVvVr6qc7UfaTiLPgQeBGgVoCR491t0acO7KTC0qqe4XRNgsLWw9vki29mM/01Dg
+	 TdksqTqLdGtG4qmgcd5tuhtAXkLCTDu3xbFf/LHXMxtOMJwrYAfP8wqWj0kYQc6LYTJmd6vWt41A
+	 ZEjkauDcCLVCRWBeKIIAp2lpNR+dM13OpmCUGhzvMBKN32025yGpjoXVWLDTGJzSJU4KN90yB1iK
+	 kM9ujJMyR6jeSKO0qla6p1PXyWu61nlw1xktPt6DmazWQrakpIZS9/l8A4FiD5IH9Mo027beSMNc
+	 mZNrEiNNoCbV8G72rov55I6O28m4hkryvG1NGFQXfRYAEWPWt3gOg=
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: Edward Adam Davis <eadavis@qq.com>
+To: konishi.ryusuke@gmail.com
+Cc: eadavis@qq.com,
+	linux-kernel@vger.kernel.org,
+	linux-nilfs@vger.kernel.org,
+	syzbot+9260555647a5132edd48@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] nilfs2: prevent use of deleted inode
+Date: Sun,  8 Dec 2024 11:24:14 +0800
+X-OQ-MSGID: <20241208032413.2213943-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <CAKFNMono7BGpLOOjF1TcUpj7GM=x-aATHUv+fCXTs6=WVhYMUw@mail.gmail.com>
+References: <CAKFNMono7BGpLOOjF1TcUpj7GM=x-aATHUv+fCXTs6=WVhYMUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:330b:b0:3a7:dd45:bca1 with SMTP id
- e9e14a558f8ab-3a811deee81mr79910575ab.17.1733627943524; Sat, 07 Dec 2024
- 19:19:03 -0800 (PST)
-Date: Sat, 07 Dec 2024 19:19:03 -0800
-In-Reply-To: <tencent_33BB8D919274DD80DDA299114FC60DD02507@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67551027.050a0220.a30f1.016e.GAE@google.com>
-Subject: Re: [syzbot] [nilfs?] WARNING in nilfs_rmdir
-From: syzbot <syzbot+9260555647a5132edd48@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+syzbot reported a WARNING in nilfs_rmdir. [1]
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Because the inode bitmap is corrupted, an inode with an inode number
+that should exist as a ".nilfs" file was reassigned by nilfs_mkdir for
+"file0", causing an inode duplication during execution.
+And this causes an underflow of i_nlink in rmdir operations.
 
-Reported-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-Tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
+Avoid to this issue, check i_nlink in nilfs_iget(), if it is 0, it means
+that this inode has been deleted, and iput is executed to reclaim it.
 
-Tested on:
+[1]
+WARNING: CPU: 1 PID: 5824 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
+Modules linked in:
+CPU: 1 UID: 0 PID: 5824 Comm: syz-executor223 Not tainted 6.12.0-syzkaller-12113-gbcc8eda6d349 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
+Code: bb 70 07 00 00 be 08 00 00 00 e8 57 0b e6 ff f0 48 ff 83 70 07 00 00 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 4c 7e ff 90 <0f> 0b 90 eb 83 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
+RSP: 0018:ffffc900037f7c70 EFLAGS: 00010293
+RAX: ffffffff822124a3 RBX: 1ffff1100e7ae034 RCX: ffff88807cf53c00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: ffffffff82212423 R09: 1ffff1100f8ba8ee
+R10: dffffc0000000000 R11: ffffed100f8ba8ef R12: ffff888073d701a0
+R13: 1ffff1100e79f5c4 R14: ffff888073d70158 R15: dffffc0000000000
+FS:  0000555558d1e480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 0000555558d37878 CR3: 000000007d920000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ nilfs_rmdir+0x1b0/0x250 fs/nilfs2/namei.c:342
+ vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
+ do_rmdir+0x3b5/0x580 fs/namei.c:4453
+ __do_sys_rmdir fs/namei.c:4472 [inline]
+ __se_sys_rmdir fs/namei.c:4470 [inline]
+ __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-commit:         9731d37c nilfs2: prevent use of deleted inode
-git tree:       https://github.com/ea1davis/linux nilfs/syz_0163_v4
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b0f330580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=35f1fa828fe386c2
-dashboard link: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+Reported-and-tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+V1 -> V2: Adjust the patch as suggested by Ryusuke Konishi
 
-Note: no patches were applied.
-Note: testing is done by a robot and is best-effort only.
+ fs/nilfs2/inode.c | 8 +++++++-
+ fs/nilfs2/namei.c | 6 ++++++
+ 2 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
+index cf9ba481ae37..b7d4105f37bf 100644
+--- a/fs/nilfs2/inode.c
++++ b/fs/nilfs2/inode.c
+@@ -544,8 +544,14 @@ struct inode *nilfs_iget(struct super_block *sb, struct nilfs_root *root,
+ 	inode = nilfs_iget_locked(sb, root, ino);
+ 	if (unlikely(!inode))
+ 		return ERR_PTR(-ENOMEM);
+-	if (!(inode->i_state & I_NEW))
++
++	if (!(inode->i_state & I_NEW)) {
++		if (!inode->i_nlink) {
++			iput(inode);
++			return ERR_PTR(-ESTALE);
++		}
+ 		return inode;
++	}
+ 
+ 	err = __nilfs_read_inode(sb, root, ino, inode);
+ 	if (unlikely(err)) {
+diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
+index 9b108052d9f7..7037f47c454f 100644
+--- a/fs/nilfs2/namei.c
++++ b/fs/nilfs2/namei.c
+@@ -67,6 +67,12 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
+ 		inode = NULL;
+ 	} else {
+ 		inode = nilfs_iget(dir->i_sb, NILFS_I(dir)->i_root, ino);
++		if (inode == ERR_PTR(-ESTALE)) {
++			nilfs_error(dir->i_sb, __func__,
++					"deleted inode referenced: %lu",
++					(unsigned long) ino);
++			return ERR_PTR(-EIO);
++		}
+ 	}
+ 
+ 	return d_splice_alias(inode, dentry);
+-- 
+2.47.0
+
 
