@@ -1,177 +1,162 @@
-Return-Path: <linux-kernel+bounces-436322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 601929E8469
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 10:42:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 259019E846B
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 10:46:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F7C7164B2D
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 09:46:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE29F13665A;
+	Sun,  8 Dec 2024 09:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Hvygz083"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890C72816C1
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 09:42:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8307013B7A1;
-	Sun,  8 Dec 2024 09:42:30 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA6E22C6C5
-	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 09:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67EB31B960
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 09:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733650950; cv=none; b=J5cknDs66dw9KfCOOqz11uednn3fANgoWwT9Ku/Ig/akyluBmaWHIV3zfnfzaDftemj7Z+Z4s2tTNMokSTA5Z8v4DOtKQnRhXmNPRJ/f/reTkPTfs2nVazvATnvlb7ZfnuhqcYIDxJ3IVclcoWe/zQex3qXWMP6mdK1UbRA9d+g=
+	t=1733651191; cv=none; b=MQ/NaQc64yase8fUr8e6JUt+iBEKC/MP1FptRQ+7RnZeYge0MUQVZTx/bckoeZ1twvwK6b0/SH8sy7p0w/1VC0PTBw9+JVIoU7gh6aOgmPORIsPzc69gJNRaBIf+mR6JoNpAGmq6QXiPXxnM5/ujZIhTsTUYxNaCwaLZNZXJkcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733650950; c=relaxed/simple;
-	bh=owuu9pSYKD9nFiNeDdrMMQj4NQhuC65DeXgjvdkJD8Q=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Frhn5wg3FI+hs18VGBVB4H6wVRRo0afJ113voYl34+5k28qmI2/EI6dOxJo/vX4rBIP+/Tpt87rIUusRxFNEYpGkG9LgMYa+GIMFSvwDSnW0Lc0+AIpfjG1PkGJUBaf2CdWwHMb/3Tys0sRe6mQId+Pdn5/qr4JfPcJav+eCwTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a81754abb7so26746625ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 01:42:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733650947; x=1734255747;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kVMa8d+KqJo9ksmjCXSRtpg8goy7IGrZlqcYwLbyk9s=;
-        b=cGsDVyKKEtOsYoMyM7gEm+wFGi75MdbHfLo3iwXCYdLMmm/AB1QL70bmlND3jKfxGM
-         n0OLutPQxAphK5S9vO20cVig5AExgNZRlzDMx4C6tV53MOUZWBBUNDIiNTYCeFuUaSi+
-         vMnRiI7sSu7CHvqJqiXCB4OfYxbzoi3I5nLn5ZDPFe077VHrV6ApVQBEPZzPQDnefxzg
-         QY8UiU+DxR2Al73JN9euMR4IHhFU/CdaR4FGI+OcdPFX43YR3ktr4eTmVUVaVQ0B3V1Y
-         NGaNgSvvxDpSvAyFDFjBJ8NpcpYwtysNAtZL893hiF29XGPwJkazovpOSKx53OcX8vSM
-         UxNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVBJIX1/sRmm/JZD63XlDLZ3HGwnXZeJCa+xQDZGnyED3SKT69XScC47ePkDUc6dB0xBNIINY0TG7DWcV0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFSY2UjFbUh5+5gr8ywkY1VASLhMK1/xmmYBYpWZLwVLFiQGrU
-	MqotPR0AR/uyrRbrNlvZzs9agwaAXyuGmU8Khu+30QyK+JBxRdZ+kIQIMJ72sed2R5d+cwhhDSA
-	eGr9jxjmVm+w+lRzPocYpp4Vu2k899aZ6xuQP3OsIPdELud3Wswu5wrU=
-X-Google-Smtp-Source: AGHT+IFgGVVQVSRF122PVRAuYcwxBNydL/3bFaNpXdd2hDBG3h4HY6J1WklG5CmJVkCOFVOhuCNx0HB+E1ctL+koa1VgI3Vd9N37
+	s=arc-20240116; t=1733651191; c=relaxed/simple;
+	bh=dUYve6hl3rq9Of1rXDQiekJ3alH6cfwg6ArvrugVJFc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=DYDgxycM38v/Sx9jBUCjNFpcfFmK5yGGUXJiwX6ldKVUkk0RIQB0O1xOlZwJ9XBGXGdQZjFDnxDoouiAgSqn6za1ZyjpEA6O0IdK4JOxnL+Ie+1YaUY98Bw5aoo1KXKxR0Oys+flnF0NHhObRmbqEEIlP5LI+Yc4WVvHOCpiOpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Hvygz083; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 6DFA840E0269;
+	Sun,  8 Dec 2024 09:46:23 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id dy7LhcOyzDSS; Sun,  8 Dec 2024 09:46:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733651179; bh=XKcGqxGq6SjQhbibaJBji1LMhup8Yj3bKWtma4RJQ/U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Hvygz083I1pOxeZLl/cCHbA7mkgqSjjut73mzcd5MLF2vk5H7N8Q17PVTm19MqDJs
+	 PJsOvU+SXnyhCu0pPYZyi3KD2OjXILfsLxxdBlWvhmlM8XxgvBBUZl5mCdfrhgK01y
+	 S2Bq55NT8NgTXYzTg9PiSV8aPVLHFcttnWY5ZAkMbuNxF2XkgfCWaObOoDOhkPoDYq
+	 9ivUbo93vkXsUtJH5afdWErlL6hq2ppAg5CXRk+fEAGvJUWVeAQJ0Evk8CO/V6/XNi
+	 5GWo14Ws0iRnl7yOdcmuygng6ovBlJTMJTVP3C2axypSF4gXQeiZjUF3Xc44gBJZHm
+	 QKkVu4V+SP3rpemZou7N8sPzVtLOlgT1G9lJs9Juy8ehv7AVcjPPrfSvHDXyz1uL7z
+	 iK/3wymdUFqlOg8b1quOG+DU+yrOVgmEc0BkTfAJhZZ9rbsQnCA03LEvXGBlb5O05n
+	 pYLLyFbmqjUZROlUco7C+L2lR62OzfiS8e0P1ugEFu+NOAYWrJprtjDqj3oz9J+Hon
+	 v2PSRZIa3sT+d7Pf5cT76PgGRV5bIeNgSS//6r7GK44t6kho+1RUKhQOwUxd/Hs+cQ
+	 rkjObtWcwuCz6At7XeyN2nQmZXYVzVszlHokLZeO5c2VelanH+CwTOO+iaLYA/4ID9
+	 7KRMoAuMJMb3IxnbXTZRonJU=
+Received: from zn.tnic (p200300eA971F9358329C23fFfea6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9358:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7933140E0266;
+	Sun,  8 Dec 2024 09:46:16 +0000 (UTC)
+Date: Sun, 8 Dec 2024 10:46:08 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] x86/urgent for v6.13-rc2
+Message-ID: <20241208094608.GAZ1Vq4FKYipqWZ5Th@fat_crate.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8f:b0:3a7:c378:3bab with SMTP id
- e9e14a558f8ab-3a811b6e422mr90097805ab.0.1733650947558; Sun, 08 Dec 2024
- 01:42:27 -0800 (PST)
-Date: Sun, 08 Dec 2024 01:42:27 -0800
-In-Reply-To: <6731d0cf.050a0220.138bd5.0063.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67556a03.050a0220.2477f.0027.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] general protection fault in six_lock_ip_waiter
-From: syzbot <syzbot+13b85e45ca365499aad5@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-syzbot has found a reproducer for the following issue on:
+Hi Linus,
 
-HEAD commit:    7503345ac5f5 Merge tag 'block-6.13-20241207' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15b00c0f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=13b85e45ca365499aad5
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a8c820580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=114008f8580000
+please pull the x86/urgent lineup for v6.13-rc2.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7503345a.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/e95a2b302e11/vmlinux-7503345a.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e78c0c786fb3/bzImage-7503345a.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/38589268f3dc/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+13b85e45ca365499aad5@syzkaller.appspotmail.com
-
-bcachefs (loop0): bch2_get_scanned_nodes(): recovering subvolumes l=0 POS_MIN - SPOS_MAX
-bcachefs (loop0): bch2_get_scanned_nodes(): recovering u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq c0bef60d07000640 written 8 min_key POS_MIN durability: 1 ptr: 0:35:0 gen 0
-Oops: general protection fault, probably for non-canonical address 0xdffffc000000000e: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000070-0x0000000000000077]
-CPU: 0 UID: 0 PID: 5305 Comm: syz-executor212 Not tainted 6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__lock_acquire+0x6a/0x2100 kernel/locking/lockdep.c:5089
-Code: b6 04 30 84 c0 0f 85 f8 16 00 00 45 31 f6 83 3d 7b cd 9e 0e 00 0f 84 c8 13 00 00 89 54 24 60 89 5c 24 38 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 a8 ac 8f 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc9000d0cef50 EFLAGS: 00010002
-RAX: 000000000000000e RBX: 0000000000000001 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000070
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff20329a7 R12: ffff888000b8c880
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000070
-FS:  000055557a2a8380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd8e5afde0 CR3: 0000000041100000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
- six_lock_ip_waiter+0x9e/0x160 fs/bcachefs/six.c:553
- __btree_node_lock_nopath fs/bcachefs/btree_locking.h:225 [inline]
- btree_node_lock_nopath_nofail fs/bcachefs/btree_locking.h:248 [inline]
- bch2_check_topology+0x619/0xb20 fs/bcachefs/btree_gc.c:549
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:191
- bch2_run_recovery_passes+0x3a7/0x880 fs/bcachefs/recovery_passes.c:244
- bch2_fs_recovery+0x25cc/0x39d0 fs/bcachefs/recovery.c:861
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2170
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff165df18fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffeea454f58 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffeea454f70 RCX: 00007ff165df18fa
-RDX: 00000000200000c0 RSI: 0000000020000180 RDI: 00007ffeea454f70
-RBP: 0000000000000010 R08: 00007ffeea454fb0 R09: 0000000000005953
-R10: 0000000000000010 R11: 0000000000000282 R12: 0000000000000004
-R13: 00007ffeea454fb0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__lock_acquire+0x6a/0x2100 kernel/locking/lockdep.c:5089
-Code: b6 04 30 84 c0 0f 85 f8 16 00 00 45 31 f6 83 3d 7b cd 9e 0e 00 0f 84 c8 13 00 00 89 54 24 60 89 5c 24 38 4c 89 f8 48 c1 e8 03 <80> 3c 30 00 74 12 4c 89 ff e8 a8 ac 8f 00 48 be 00 00 00 00 00 fc
-RSP: 0018:ffffc9000d0cef50 EFLAGS: 00010002
-RAX: 000000000000000e RBX: 0000000000000001 RCX: 0000000000000001
-RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000070
-RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff20329a7 R12: ffff888000b8c880
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000070
-FS:  000055557a2a8380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffd8e5afde0 CR3: 0000000041100000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	b6 04                	mov    $0x4,%dh
-   2:	30 84 c0 0f 85 f8 16 	xor    %al,0x16f8850f(%rax,%rax,8)
-   9:	00 00                	add    %al,(%rax)
-   b:	45 31 f6             	xor    %r14d,%r14d
-   e:	83 3d 7b cd 9e 0e 00 	cmpl   $0x0,0xe9ecd7b(%rip)        # 0xe9ecd90
-  15:	0f 84 c8 13 00 00    	je     0x13e3
-  1b:	89 54 24 60          	mov    %edx,0x60(%rsp)
-  1f:	89 5c 24 38          	mov    %ebx,0x38(%rsp)
-  23:	4c 89 f8             	mov    %r15,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	80 3c 30 00          	cmpb   $0x0,(%rax,%rsi,1) <-- trapping instruction
-  2e:	74 12                	je     0x42
-  30:	4c 89 ff             	mov    %r15,%rdi
-  33:	e8 a8 ac 8f 00       	call   0x8face0
-  38:	48                   	rex.W
-  39:	be 00 00 00 00       	mov    $0x0,%esi
-  3e:	00 fc                	add    %bh,%ah
-
+Thx.
 
 ---
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+The following changes since commit 40384c840ea1944d7c5a392e8975ed088ecf0b37:
+
+  Linux 6.13-rc1 (2024-12-01 14:28:56 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/x86_urgent_for_v6.13_rc2
+
+for you to fetch changes up to 492077668fb453b8b16c842fcf3fafc2ebc190e9:
+
+  x86/CPU/AMD: WARN when setting EFER.AUTOIBRS if and only if the WRMSR fails (2024-12-06 19:57:05 +0100)
+
+----------------------------------------------------------------
+- Have the Automatic IBRS setting check on AMD does not falsely fire in
+  the guest when it has been set already on the host
+
+- Make sure cacheinfo structures memory is allocated to address a boot NULL
+  ptr dereference on Intel Meteor Lake which has different numbers of subleafs
+  in its CPUID(4) leaf
+
+- Take care of the GDT restoring on the kexec path too, as expected by
+  the kernel
+
+- Make sure SMP is not disabled when IO-APIC is disabled on the kernel
+  cmdline
+
+- Add a PGD flag _PAGE_NOPTISHADOW to instruct machinery not to propagate
+  changes to the kernelmode page tables, to the user portion, in PTI
+
+- Mark Intel Lunar Lake as affected by an issue where MONITOR wakeups can get
+  lost and thus user-visible delays happen
+
+- Make sure PKRU is properly restored with XRSTOR on AMD after a PRKU write of
+  0 (WRPKRU) which will mark PKRU in its init state and thus lose the
+  actual buffer
+
+----------------------------------------------------------------
+Aruna Ramakrishna (2):
+      x86/pkeys: Change caller of update_pkru_in_sigframe()
+      x86/pkeys: Ensure updated PKRU value is XRSTOR'd
+
+David Woodhouse (2):
+      x86/mm: Add _PAGE_NOPTISHADOW bit to avoid updating userspace page tables
+      x86/kexec: Restore GDT on return from ::preserve_context kexec
+
+Fernando Fernandez Mancera (1):
+      x86/cpu/topology: Remove limit of CPUs due to disabled IO/APIC
+
+Len Brown (1):
+      x86/cpu: Add Lunar Lake to list of CPUs with a broken MONITOR implementation
+
+Ricardo Neri (2):
+      cacheinfo: Allocate memory during CPU hotplug if not done from the primary CPU
+      x86/cacheinfo: Delete global num_cache_leaves
+
+Sean Christopherson (1):
+      x86/CPU/AMD: WARN when setting EFER.AUTOIBRS if and only if the WRMSR fails
+
+ arch/x86/include/asm/pgtable_types.h |  8 +++++--
+ arch/x86/kernel/cpu/amd.c            |  2 +-
+ arch/x86/kernel/cpu/cacheinfo.c      | 43 ++++++++++++++++++------------------
+ arch/x86/kernel/cpu/intel.c          |  4 +++-
+ arch/x86/kernel/cpu/topology.c       |  6 ++---
+ arch/x86/kernel/fpu/signal.c         | 20 ++---------------
+ arch/x86/kernel/fpu/xstate.h         | 27 +++++++++++++++++++++-
+ arch/x86/kernel/relocate_kernel_64.S |  7 ++++++
+ arch/x86/mm/ident_map.c              |  6 ++---
+ arch/x86/mm/pti.c                    |  2 +-
+ drivers/base/cacheinfo.c             | 14 +++++++-----
+ 11 files changed, 81 insertions(+), 58 deletions(-)
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
