@@ -1,139 +1,113 @@
-Return-Path: <linux-kernel+bounces-436463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D2089E862A
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 17:10:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EE4E9E8607
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:52:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8547618835BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 16:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72D9016482E
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 15:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66AFE15B111;
-	Sun,  8 Dec 2024 16:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D0F156230;
+	Sun,  8 Dec 2024 15:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="MqQAE0bG"
-Received: from m16.mail.126.com (m16.mail.126.com [117.135.210.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6335F13B2B6;
-	Sun,  8 Dec 2024 16:10:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.7
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="nYhKgJ7v"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 858F913B2BB
+	for <linux-kernel@vger.kernel.org>; Sun,  8 Dec 2024 15:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733674216; cv=none; b=UNuLQq3kdjyMtApOcGy2TnALMk+vNWT9PCxIvyeDeQLCH22x3nTM4oSwuXp+PxZ/DN0bKz1iT6Mj/ko999YhsP3RXJdXvcLiPahXwv2goE/Fzew1OULk/C//SNT8N7J81mkcXI8oxHb8Oze3XYCW+Hbcrlzf1emzv51zTQF2jxw=
+	t=1733673145; cv=none; b=hTqjyQjbQeAAXI0iI71OzaELNzVWmNVUK36QIdzqXOaYFiCZV2df9VSyWiis+Cnl6rA2nEBfsmnYNkf2RdF/soU3S2Q5w6qJBiqWvGzyH9LdU96+i8yWnVGHvFiEiGWrMviCg5LnZILNtRGEczRmxK6qD8bKIDesQaGt3xbgOv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733674216; c=relaxed/simple;
-	bh=OONF1R+W5xUWSoNKpJYhV+NJhM7xqTM0MK5ZqndlSN0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=QmhxN9ku2HyMUakZHcMCdCluLck6vT5v4HIqWINOIwe1KeqFp0LoafycScYE8HbJwp+dTWZ4aqpdCtTI9H1rpEzhnclj+els7OyYwc/HTZGvSubNDykwoblu6/hxENQFPsruUXk/IPzioo/t7cRH6Up+9g3HsGSO8n4l7H07WPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=MqQAE0bG; arc=none smtp.client-ip=117.135.210.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=nxI5r
-	KZ08BnCDhR50j1kRXJkXSlItgYZ6GxJQvaVuSo=; b=MqQAE0bG/H98s7Yv5oOgo
-	25eCQfw9GOKpsKnu3ludkuEpHDqeZP7a1cQks00ezTpL5Qszmrd3ICU++I78LraT
-	onrw7q6O3uIOlT6ac+/FchZgdWRPSeqiBj9zHFJweGzcl/rEn3K8ynjStm5fUVLL
-	x8dfSH8ufmV9ep4bpD8YDg=
-Received: from nilq-virtual-machine.. (unknown [])
-	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDn9z+NwFVnfXBxAA--.54791S2;
-	Sun, 08 Dec 2024 23:51:44 +0800 (CST)
-From: niliqiang <ni_liqiang@126.com>
-To: debug@rivosinc.com
-Cc: Liam.Howlett@oracle.com,
-	ajones@ventanamicro.com,
-	akpm@linux-foundation.org,
-	alexghiti@rivosinc.com,
-	alistair.francis@wdc.com,
-	andy.chiu@sifive.com,
-	andybnac@gmail.com,
-	aou@eecs.berkeley.edu,
-	arnd@arndb.de,
-	atishp@rivosinc.com,
-	bp@alien8.de,
-	brauner@kernel.org,
-	broonie@kernel.org,
-	carlos.bilbao.osdev@gmail.com,
-	charlie@rivosinc.com,
-	cleger@rivosinc.com,
-	conor.dooley@microchip.com,
-	conor@kernel.org,
-	corbet@lwn.net,
-	dave.hansen@linux.intel.com,
-	david@redhat.com,
-	devicetree@vger.kernel.org,
-	ebiederm@xmission.com,
-	evan@rivosinc.com,
-	hpa@zytor.com,
-	jim.shu@sifive.com,
-	kees@kernel.org,
-	kito.cheng@sifive.com,
-	krzk+dt@kernel.org,
-	linux-arch@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	lorenzo.stoakes@oracle.com,
-	mingo@redhat.com,
-	ni.liqiang@zte.com.cn
-Subject: Re: [PATCH v7 00/32] riscv control-flow integrity for usermode
-Date: Sun,  8 Dec 2024 23:51:41 +0800
-Message-Id: <20241208155141.21611-1-ni_liqiang@126.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241029-v5_user_cfi_series-v7-0-2727ce9936cb@rivosinc.com>
-References: <20241029-v5_user_cfi_series-v7-0-2727ce9936cb@rivosinc.com>
+	s=arc-20240116; t=1733673145; c=relaxed/simple;
+	bh=aqq4qS6Tr08Q7jMD0p8Zt1pKPFUhYxdI01HHpOTiCUk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tQuy410EjmxMsQzkdOCIUWkE70CxJ+pEv4mKcRB/wjUqTbYMyF3DLLJD5bw94tBmTyruQC3xdrFdW7qyk3Ag1rHMprWobTUimiUGZOrl/AyS0QtuHHN2U2KGMvzHAH82QfTaTHJlD3U012biMMmNMm+Dc5mLyc0WV1e62mBhXQA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=nYhKgJ7v; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434e84b65e7so13084145e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 07:52:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1733673142; x=1734277942; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kx3jh0GE1/Dropfvo1pElPZ7xo029DSJLEgY7NpRbHo=;
+        b=nYhKgJ7v9GBVIFTbmkzLwoZdngtGIBD9cBbv1iU8+o8B36wgZG7vALbaPUa8X5mUGT
+         tRncAZoytzzSThyBxtPVv45euwfo2zDoSL+TIjq9uMfEOGT5U5wO1ogujio08ddGk76K
+         NMmSZH4KGOPOiPDtWLDO4+YHVFsUF4lHE03JPOneuOYNLnIpPVtZZKmNcxy8A27cNqAY
+         MDT+VmQcbnwcajEPn7FZbJm644VVT881/KWYBZJk4dDt+1p8eTsfA+i0Y+lgcUo5CYng
+         JlzomyY4ZBiAxd5GgCgZC+BWRR1qwkyqMkddd1n9Zm0b+feMozSkTjyyY4+5bGilM73L
+         7Crw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733673142; x=1734277942;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kx3jh0GE1/Dropfvo1pElPZ7xo029DSJLEgY7NpRbHo=;
+        b=h0v71+a0dNwBhQI+e0ZAR8SSUZQLOkqfsCclepgW/q6sF+FlN0znobh9FUSimtQH1Q
+         LVeCEuVtl++aOQKfPd/L8KxErpBRKOzEy8rYsngxTl6pZO+irjsFNKqVKPtwyaExZpXb
+         Cn9GDXb5VwEZfEGIUCJ0EMEDRdDVLDckyjIdXpAebrTRTtof0AEVSAi+8AWJBpE6BzGp
+         KOME2sEiT45oeRRTnCauIb6OHp9tpNWI+EHNkStFgxfLMk+w7sVOaeGGsYdDaPZ+yoij
+         6hVZvFjMu/pqUUW47JcXmVzjLl8YTwTff8puiIu5sZuVcZyHjzcmj2AopERvSZHhyu+M
+         311Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTsqbaJKwV9PpQqJ3NGI6CKnvq0qrL8PsC4E5OHPLe/OlcDUz+9s9bXIrQU3ZCJFpgK8K0Yc8dXauWWJs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxg/FytVFosoEYuLg5iOZgIOqmXaQs96xMVU8j3a0F0F+sXgXND
+	WyZRDryL/XxMqSpsvexKonNL3p31k2pca+u5FsEZPGpbDJfv+HCmgAdZXcgQHpHzL7HUXCk31as
+	6
+X-Gm-Gg: ASbGncsVJrNONXxDw18Ysq2VOTsJo/BcOsC+i3LUbrsLY8y8kXofxW0pGo1Xac/QdZo
+	j+wbTCDuZyfxjUTxjQuVzf581ndL1N32rkIx4FyOU9tEf1MNm1rc9Xk+kk453G4LqTS9AhDaBYX
+	ZplJ/nve53G6JApI4MfhadKuxXKBOWujuV9H/+TvqzBm7r/SG+Zj78a/pIAiEDIgWLOubIQFEJp
+	4n5jSW3vP95iJxmknldlhbTxPB6m7KSxavdYVvz5yIEfKK+wLzAv+WK0TI=
+X-Google-Smtp-Source: AGHT+IEHWXmOO6Qhxy2IR+e2zwqSa3oqeBDMkFmhJ9xKhEy7pcBF/DqwbtBN0uvcQlGuz1FIpzs6uQ==
+X-Received: by 2002:a05:600c:35ce:b0:434:ba13:e52b with SMTP id 5b1f17b1804b1-434dded2bedmr89096995e9.31.1733673141783;
+        Sun, 08 Dec 2024 07:52:21 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d527eeedsm157997545e9.19.2024.12.08.07.52.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2024 07:52:21 -0800 (PST)
+Message-ID: <afac0fe8-2854-43eb-a4fb-bcf5b6d194d0@tuxon.dev>
+Date: Sun, 8 Dec 2024 17:52:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn9z+NwFVnfXBxAA--.54791S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7KrWruw4kGr1fJrWUuw48Zwb_yoW8WFWfpF
-	ZI9as3Jws5AF98Cr97ta18AFWSvws5trsxGr95Jr1S93y5Wry0vF4UtFWrGFy5CryYvF10
-	vw4j9348ua4DA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UkgAwUUUUU=
-X-CM-SenderInfo: xqlbzxxtld0wa6rslhhfrp/1tbiJB2v5WdVlodlmwACss
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] soc: atmel: fix device_node release in
+ atmel_soc_device_init()
+Content-Language: en-US
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241031-soc-atmel-soc-cleanup-v2-1-73f2d235fd98@gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20241031-soc-atmel-soc-cleanup-v2-1-73f2d235fd98@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> How to test this series
-> =======================
 
-I recently built a test environment for RISCV control-flow integrity for
-usermode using QEMU, referring to the test instructions in the patch.
-I found several problems during the test, and I hope you can answer them.
-Thank you.
 
-Q1:
-The CFI-related macro definition values in
-QEMU(branch: qemu-zicfilp_zicfiss_ratified_master_july11) and
-Linux(branch: linux-riscv-cfi-vdso_user_cfi_v6.12-rc1) are inconsistent.
-For example, the definition value of PR_GET_SHADOW_STACK_STATUS in QEMU
-is 71, but the definition value in Linux is 74.
+On 31.10.2024 14:33, Javier Carrasco wrote:
+> A device_node acquired via of_find_node_by_path() requires explicit
+> calls to of_node_put() when it is no longer needed to avoid leaking the
+> resource.
+> 
+> Instead of adding the missing calls to of_node_put() in all execution
+> paths, use the cleanup attribute for 'np' by means of the __free()
+> macro, which automatically calls of_node_put() when the variable goes
+> out of scope.
+> 
+> Fixes: 960ddf70cc11 ("drivers: soc: atmel: Avoid calling at91_soc_init on non AT91 SoCs")
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-In order to continue the test, I modified the relevant definitions
-in the QEMU and GUN source codes with reference to the Linux source code,
-so that the cfi-related macro definitions in the QEMU and GUN source codes
-are consistent with Linux.
-
-Q2:
-When zicfilp=true is added to the QEMU command to enable landing pad,
-after cfitests command is executed, a segmentation fault is prompted,
-software check exception is raised, and the value of xtval is 2.
-
-According to the comments in the code, when xtval is 2, there are the
-following exceptions. 
- * An indirect branch doesn't land on 4 byte aligned PC or `lpad`
- * instruction or `label` value programmed in `lpad` instr doesn't
- * match with value setup in `x7`.
-
-Why do these software check exceptions exist? What should I do to further
-troubleshoot or resolve these issues?
-The software versions I am using are all the versions mentioned in the
-test instructions, and the zicfiss test is in line with expectations. 
-Can you help me with the above two questions, especially the second one?
-thank you very much.
-
+Applied to at91-soc, thanks!
 
