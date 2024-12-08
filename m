@@ -1,315 +1,132 @@
-Return-Path: <linux-kernel+bounces-436539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8FA69E8746
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:25:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B459E8748
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 19:26:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F630164360
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:26:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F104218DF6B;
+	Sun,  8 Dec 2024 18:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LxtE1kKa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 859A92810E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 18:25:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E1218B46E;
-	Sun,  8 Dec 2024 18:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e11jCdiQ"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE63A1EA65;
-	Sun,  8 Dec 2024 18:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B4B1EA65;
+	Sun,  8 Dec 2024 18:26:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733682326; cv=none; b=EQXFmdwQ0pl8sYL3rLb99ySacAtx2q2YxxWsfIdnOvA9aJc+FE0D0PiuGJThO8gaHBQaf/imKUZSl8yEg2p0KKd/i/9prX5nqmfl3y20VioOYQsKt5T53niUqInhCWYAIl0amYty0H327puo8270AsP+CiE70TN/PxUeYeaHplE=
+	t=1733682361; cv=none; b=YS9TY4cHl+uJLc0rjGtPCUj+cXe2V5tsfpjJF0gjm1OHsxqP0VTaGZbqmQg7uvscDnGc7uPOo5Hk1N30zUJUGqwmOvV9z50w/nYGT7aqN9F/8bikPVBrzuQqB3+zntJ4qjaiSjM/cJPKXUA/013mbmq4gmvt7jgQMtUOBqKpZ/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733682326; c=relaxed/simple;
-	bh=yyMfYDwMEer0TobvoSrhVLqHT7sIQ0UKYhE1itj8hJU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0Ov2Na//rXsBtm6i2ES1MM3MFWJz2DYdSxboMzEpcF1MPWOgyruPYwP0ihzZXUwcKCzW3ht1Y4OZ1eIIeXwcwUjOT6Hi6ulRyxswp6HEeUjIuBzI9fYZmQQekRzN0PMx6wTzoLKN1xcdNeUb/q3AJePTMivNWBkk0X5zXGSzXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e11jCdiQ; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6ef6ffcc2dcso31099477b3.1;
-        Sun, 08 Dec 2024 10:25:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733682324; x=1734287124; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8Wr6ZX0JtjZ4MHsD5mtIaFcyeOeKxP3DFEk4cEbgpvk=;
-        b=e11jCdiQLFoGUaKlHsXPKNnyKl3Bvno0NS89PIUiNac0HQxyPn+wRwstvD3u68i2KP
-         f4ABW7Yi6yr3uwyjFMeC867M9lMzTJJNd3SFsww5bZFxOUTZjaV8uUEpVnymlvLhoP32
-         fWp08yO1/BBh3AduJYf9tJAOJhfkXmbKQkF/rRp5oY0PvBdmahLalt9x5o9MSTSLZIA1
-         tM62mnHCIX6cX9qaXekVHbWvgUY5tu1+fUeIIk3oE+VUY1fbnHvlxuPSRXAe8iwT3Bha
-         WTLVZjr68vvWUNwnlkzzdxzZ7+n7mWYZpu9JVqqgGq04YTjk+NtsAIlq2y8yGXlAd3LY
-         sW8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733682324; x=1734287124;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Wr6ZX0JtjZ4MHsD5mtIaFcyeOeKxP3DFEk4cEbgpvk=;
-        b=IQ6qi8VLmpH0VH8gMOU+NGHQnpzZvi2P5KWfA6hwnnjdf9Vlp/UB5vN6/5dqDkjgBU
-         /OcVJN566PAEjPLOPJ8cgS/6z42rs/+LxvDZBPTQEevhJvnfPn1xmFW8eOKETohpDd95
-         ZtaQTaZPerYQPHT4tgeim3iWl1cfgskfpOkzneCFw0VpYvdXm1i3OBLYs9DDHBN1FjRT
-         HUdWBnvd+YsZOiv01wn5rThLHjYteYYE2nslltThTvu2Ik24FJnXhqWzzVs6JyZRsC91
-         nD/xOgDVoXpRXT6TLDrfbN/lh6ln/zLBUHnZVmlf87zrY8ucFqEhIaWFLGR5djaiDcIU
-         ptEw==
-X-Forwarded-Encrypted: i=1; AJvYcCXi3P7vL7r91VI75ZQEULPoQU23BnM2nGC3iAZSuYmahsI2KniMUKyTA5rNAnQQLJDiRU+uTo3S+TVShBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3oD5mF+4kYQYej+e43/FGcoMfZFkoPrnSmDHBhnr4dITktXc7
-	nGl5vnRn9C4me3lm/VAJIMSx/LkTY4hRGAoKBh7/i5wNYcZahiq8
-X-Gm-Gg: ASbGncs9qIMlgYbFJT4ooDPX4SCuCR+QfUcFwZcB+e+yOlZwgQAgeXaWmBTeMhEWuvb
-	AWaWVuabTnwamzxN/vM6iAIUstuAQRiwIbJETQhkHDOzYAfOxop3fOZuxx9b7ZMDr2xZufWzxNt
-	RNBThmejS8b7dJcqB+FGBtl0WbVy6NPDzvzUVJDCyjd9p0UieGSP59l+akmMVXXZw7FPQ9tQOJw
-	ReXGVZzMxzYtdjqHY5O5+91xW1ra9D77N9xZeav761v4bmqczI4HtnfIO1NPU64IYYdwLGGQr1M
-	yx+YfB2Jiw==
-X-Google-Smtp-Source: AGHT+IHXvGQnU6CGNmh99UAP9QpYFFy3ThCC519auJ81/3fE4GwhNVowrQ3hLS/eiy/AxlJ8sW9DjQ==
-X-Received: by 2002:a05:690c:6307:b0:6ee:8515:6730 with SMTP id 00721157ae682-6efe3961aa4mr83421307b3.17.1733682323655;
-        Sun, 08 Dec 2024 10:25:23 -0800 (PST)
-Received: from localhost (c-24-129-28-254.hsd1.fl.comcast.net. [24.129.28.254])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6f010962e5csm1785667b3.92.2024.12.08.10.25.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 10:25:22 -0800 (PST)
-Date: Sun, 8 Dec 2024 10:25:21 -0800
-From: Yury Norov <yury.norov@gmail.com>
-To: Nilay Shroff <nilay@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	briannorris@chromium.org, kees@kernel.org, gustavoars@kernel.org,
-	nathan@kernel.org, steffen.klassert@secunet.com,
-	daniel.m.jordan@oracle.com, gjoyce@ibm.com,
-	linux-crypto@vger.kernel.org, linux@weissschuh.net
-Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
- gcc-13+ and FORTIFY_SOURCE
-Message-ID: <Z1XkhhBqFYtbvQYp@yury-ThinkPad>
-References: <20241208161315.730138-1-nilay@linux.ibm.com>
+	s=arc-20240116; t=1733682361; c=relaxed/simple;
+	bh=ZlAEwvanh8CCMftkCtbAApvzcPFguurRr96kF4Mfg1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IXP/jxJlFQhd+7fXGQ2Q2kJRsF+szXm0vliFpRLGEUcdSr2DV0O7Ak1BrwzoUkUydqCp6gCHJgHKbdVLdxTNY+FaIoXIBI21ybieB/aoOyCM7hpRX4RASZz1tcuZZ5o4MsqkoqtDabZc6VKElk0+4cfjmnh9mTkaXAolV80LVbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LxtE1kKa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46D54C4CED2;
+	Sun,  8 Dec 2024 18:25:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733682360;
+	bh=ZlAEwvanh8CCMftkCtbAApvzcPFguurRr96kF4Mfg1M=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=LxtE1kKanDbA20NOpzVCGlbICIPWYm2KU7ZdXMJ6acqnHGhZEXFJUqUIGYVZqKrBy
+	 HVPG7HlDWV0vxxK47KwkCT49GcR3pP20arlnv34quAbH3DEnxokAUm0J5zY8u4Pw0h
+	 c4IwqELxcMN0P0lCN5/NHnDxNhEO8ptsu2XDFLE9oL3OW/aDyN3KCreWyMQO+vQSbj
+	 OlsFuPmrFMsem6t4s7Y7iMuYPsfd0s7IpQUL8oowDJK9KpfbU1cPZU9xrPqCHQ6Ymk
+	 bSJtUQfXu0McCbYAg2qsSBczheFR701yu2XaBkhvyZYTv6LhoxRmrgmZrRarref7C2
+	 eMBiLTt1LGM/A==
+Date: Sun, 8 Dec 2024 18:25:53 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Mehdi Djait <mehdi.djait@linux.intel.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>, Matti Vaittinen
+ <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] iio: kx022a: document new chip_info structure
+ members
+Message-ID: <20241208182553.42f13c05@jic23-huawei>
+In-Reply-To: <xfjchvcsoeuqz4j2rnqait2jqok7p3jzrs57n4hgzykkqhqkoj@so7z326jfrzv>
+References: <Z1LDUj-naUdGSM6n@mva-rohm>
+	<20241207180201.51deb7ce@jic23-huawei>
+	<xfjchvcsoeuqz4j2rnqait2jqok7p3jzrs57n4hgzykkqhqkoj@so7z326jfrzv>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241208161315.730138-1-nilay@linux.ibm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sun, Dec 08, 2024 at 09:42:28PM +0530, Nilay Shroff wrote:
-> While building the powerpc code using gcc 13.x, I came across following
-> errors generated for kernel/padata.c file:
-> 
->   CC      kernel/padata.o
-> In file included from ./include/linux/string.h:390,
->                  from ./arch/powerpc/include/asm/paca.h:16,
->                  from ./arch/powerpc/include/asm/current.h:13,
->                  from ./include/linux/thread_info.h:23,
->                  from ./include/asm-generic/preempt.h:5,
->                  from ./arch/powerpc/include/generated/asm/preempt.h:1,
->                  from ./include/linux/preempt.h:79,
->                  from ./include/linux/spinlock.h:56,
->                  from ./include/linux/swait.h:7,
->                  from ./include/linux/completion.h:12,
->                  from kernel/padata.c:14:
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> In function ‘bitmap_copy’,
->     inlined from ‘cpumask_copy’ at ./include/linux/cpumask.h:839:2,
->     inlined from ‘__padata_set_cpumasks’ at kernel/padata.c:730:2:
-> ./include/linux/fortify-string.h:114:33: error: ‘__builtin_memcpy’ reading between 257 and 536870904 bytes from a region of size 256 [-Werror=stringop-overread]
->   114 | #define __underlying_memcpy     __builtin_memcpy
->       |                                 ^
-> ./include/linux/fortify-string.h:633:9: note: in expansion of macro ‘__underlying_memcpy’
->   633 |         __underlying_##op(p, q, __fortify_size);                        \
->       |         ^~~~~~~~~~~~~
-> ./include/linux/fortify-string.h:678:26: note: in expansion of macro ‘__fortify_memcpy_chk’
->   678 | #define memcpy(p, q, s)  __fortify_memcpy_chk(p, q, s,                  \
->       |                          ^~~~~~~~~~~~~~~~~~~~
-> ./include/linux/bitmap.h:259:17: note: in expansion of macro ‘memcpy’
->   259 |                 memcpy(dst, src, len);
->       |                 ^~~~~~
-> kernel/padata.c: In function ‘__padata_set_cpumasks’:
-> kernel/padata.c:713:48: note: source object ‘pcpumask’ of size [0, 256]
->   713 |                                  cpumask_var_t pcpumask,
->       |                                  ~~~~~~~~~~~~~~^~~~~~~~
-> 
-> The above error appears to be false-positive:
-> >From the distro relevant config,
->     CONFIG_PPC64=y
->     CONFIG_CC_IS_GCC=y
->     CONFIG_GCC_VERSION=130301
->     CONFIG_NR_CPUS=2048
->     CONFIG_FORTIFY_SOURCE=y
-> 
-> >From the source code,
-> unsigned long name[BITS_TO_LONGS(bits)]
-> ...
-> typedef struct cpumask { DECLARE_BITMAP(bits, NR_CPUS); } cpumask_t;
-> typedef struct cpumask cpumask_var_t[1];
-> ...
-> 
-> extern unsigned int nr_cpu_ids;
-> ...
-> static __always_inline
-> void bitmap_copy(unsigned long *dst, const unsigned long *src, unsigned
-> int nbits)
-> {
->         unsigned int len = bitmap_size(nbits);
-> 
->         if (small_const_nbits(nbits))
->                 *dst = *src;
->         else
->                 memcpy(dst, src, len);
-> }
-> 
-> static __always_inline
-> void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
-> {
->         bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
-> }
-> ...
-> static int __padata_set_cpumasks(struct padata_instance *pinst,
->                                  cpumask_var_t pcpumask,
->                                  cpumask_var_t cbcpumask)
-> {
-> ...
->         cpumask_copy(pinst->cpumask.pcpu, pcpumask);
->         cpumask_copy(pinst->cpumask.cbcpu, cbcpumask);
-> ...
-> }
-> 
-> So the above statements expands to:
-> memcpy(pinst->cpumask.pcpu->bits, pcpumask->bits, nr_cpu_ids)
-> memcpy(pinst->cpumask.cbcpu->bits, cbcpumask->bits, nr_cpu_ids)
-> 
-> Now the compiler complains about "error: ‘__builtin_memcpy’ reading
-> between 257 and 536870904 bytes from a region of size 256". So the
-> value of nr_cpu_ids which gcc calculated is between 257 and 536870904.
-> This looks strange and incorrect.
+On Sun, 8 Dec 2024 18:42:56 +0100
+Mehdi Djait <mehdi.djait@linux.intel.com> wrote:
 
-Thanks for the detour into internals. I did the same by myself, and
-spent quite a lot of my time trying to understand why GCC believes
-that here we're trying to access memory beyond idx == 256 and up to
-a pretty random 536870904.
-
-256 is most likely NR_CPUS/8, and that makes sense. But I have no ideas
-what does this 536870904 mean. OK, it's ((u32)-64)>>3, but to me it's a
-random number. I'm quite sure cpumasks machinery can't be involved in
-generating it.
-
-Well, we maybe have to spend more time on this, at least try to
-understand how exactly CONFIG_FORTIFY_SOURCE is involved. But to me
-it's OK to silence the warning this way. Moreover, you're pointing to
-undergoing discussions.
-
-> Later similar errors[1] were also observed on x86-64 platform using 
-> gcc-14. Apparently, above errors menifests using gcc-13+ and config 
-> option CONFIG_FORTIFY_SOURCE=y. Moreover, I don't encounter above 
-> error when,
-> - using gcc 11.x or gcc 12.x or LLVM/Clang compiler
-> or
-> - disabling CONFIG_FORTIFY_SOURCE option
+> Hi Jonathan,
 > 
-> So for now, silence above errors globally while using gcc-13+ and
-> CONFIG_FORTIFY_SOURCE=y. We may later revert this change when we
-> find root cause of the error. Per this  discussion[2], GCC developers
-> are working to add extra diagnostics and context when this error
-> menifests and that might help to find the root cause.
+> On Sat, Dec 07, 2024 at 06:02:01PM +0000, Jonathan Cameron wrote:
+> > On Fri, 6 Dec 2024 11:26:42 +0200
+> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+> >   
+> > > The kx022a driver supports a few different HW variants. A chip-info
+> > > structure is used to describe sensor specific details. Support for
+> > > sensors with different measurement g-ranges was added recently,
+> > > introducing sensor specific scale arrays.
+> > > 
+> > > The members of the chip-info structure have been documented using
+> > > kerneldoc. The newly added members omitted the documentation. It is nice
+> > > to have all the entries documented for the sake of the consistency.
+> > > Furthermore, the scale table format may not be self explatonary, nor how
+> > > the amount of scales is informed.
+> > > 
+> > > Add documentation to scale table entries to maintain consistency and to
+> > > make it more obvious how the scales should be represented.
+> > > 
+> > > Suggested-by: Mehdi Djait <mehdi.djait@linux.intel.com>
+> > > Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>  
+> > Applied to the togreg branch of iio.git. Initially pushed out as testing.
+> > 
+> > Mehdi, if you want to give a tag (or more feedback) I am happy to rebase
+> > for a few days.
+> > 
+> > Jonathan
+> >   
+> > > ---
+> > > Revision history:
+> > > v1 => v2:
+> > > - Improved wording based on discussion with Mehdi.
+> > > 
+> > >  drivers/iio/accel/kionix-kx022a.h | 8 ++++++++
+> > >  1 file changed, 8 insertions(+)
+> > > 
+> > > diff --git a/drivers/iio/accel/kionix-kx022a.h b/drivers/iio/accel/kionix-kx022a.h
+> > > index 142652ff4b22..d18d56cef098 100644
+> > > --- a/drivers/iio/accel/kionix-kx022a.h
+> > > +++ b/drivers/iio/accel/kionix-kx022a.h
+> > > @@ -137,6 +137,14 @@ struct kx022a_data;
+> > >   *
+> > >   * @name:			name of the device
+> > >   * @regmap_config:		pointer to register map configuration
+> > > + * scale_table:			An array of tables of scaling factors for
+> > > + *				a supported acceleration measurement range.
+> > > + *				Each table containing a single scaling
+> > > + *				factor consisting of two integers. The first
+> > > + *				value in a table is the integer part, and
+> > > + *				the second value is the	fractional part as
+> > > + *				parts per billion.
+> > > + * scale_table_size:		Amount of values in tables.  
 > 
-> [1] https://lore.kernel.org/all/2024120757-lustrous-equinox-77f0@gregkh/
-> [2] https://gcc.gnu.org/pipermail/gcc-patches/2024-October/666870.html
+> I just noticed that the '@' preceding the added members scale_table and
+> scale_table_size are missing, but I guess you can add those when
+> rebasing ?
+Good spot ;(  I'll fix.
 > 
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> --
+> Kind Regards
+> Mehdi Djait
 
-Greg acked v2, which differs from v3 quite a lot. I would check with
-him if he's still OK.
-
-> Cc: briannorris@chromium.org
-> Cc: yury.norov@gmail.com
-> Cc: kees@kernel.org
-> Cc: gustavoars@kernel.org
-> Cc: nathan@kernel.org
-> Cc: steffen.klassert@secunet.com
-> Cc: daniel.m.jordan@oracle.com
-> Cc: gjoyce@ibm.com
-> Cc: linux-crypto@vger.kernel.org
-> Cc: linux@weissschuh.net
-> Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
-> ---
-> Changes from v2:
->     - Globally disable -Werror-stringop-overread while using gcc-13+ and
->       FORTIFY_SOURCE (Yury Norov)
->     - Updated the patch subject line to make it clear that this is
-> 	  possiblt gcc error and not related to cpumask.
-> Changes from v1:
->     - Fix spell error in the commit message (Brian Norris)
->     - Add commentary around change to note that changes are needed to
->       avoid false positive on gcc 13+ (Brian Norris)
->     - Add the kerenl/padata.c file maintainers (Brian Norris)
-> ---
->  init/Kconfig               | 8 ++++++++
->  scripts/Makefile.extrawarn | 1 +
->  2 files changed, 9 insertions(+)
-> 
-> diff --git a/init/Kconfig b/init/Kconfig
-> index a20e6efd3f0f..ff2f54520551 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -920,6 +920,14 @@ config CC_STRINGOP_OVERFLOW
->  	bool
->  	default y if CC_IS_GCC && !CC_NO_STRINGOP_OVERFLOW
->  
-> +# Currently, disable -Wstringop-overread for gcc-13+ and FORTIFY_SOURCE globally.
-> +config GCC13_NO_STRINGOP_OVERREAD
-> +	def_bool y
-
-This is an issue for GCC14 as well, as Greg mentioned, and you say the
-same in the commit message. I'd name this config GCC_NO_STRINGOP_OVERREAD.
-
-But I don't think we need this extra knob at all. Those who want to
-disable CC_NO_STRINGOP_OVERREAD can disable it explicitly.
-
-Anyways, it's minor. For cpumasks:
-
-Acked-by: Yury Norov <yury.norov@gmail.com>
-
-> +
-> +config CC_NO_STRINGOP_OVERREAD
-> +	bool
-> +	default y if CC_IS_GCC && GCC_VERSION >= 130000 && GCC13_NO_STRINGOP_OVERREAD && FORTIFY_SOURCE
-> +
->  #
->  # For architectures that know their GCC __int128 support is sound
->  #
-> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-> index 1d13cecc7cc7..1abd41269fd0 100644
-> --- a/scripts/Makefile.extrawarn
-> +++ b/scripts/Makefile.extrawarn
-> @@ -27,6 +27,7 @@ endif
->  KBUILD_CPPFLAGS-$(CONFIG_WERROR) += -Werror
->  KBUILD_CPPFLAGS += $(KBUILD_CPPFLAGS-y)
->  KBUILD_CFLAGS-$(CONFIG_CC_NO_ARRAY_BOUNDS) += -Wno-array-bounds
-> +KBUILD_CFLAGS-$(CONFIG_CC_NO_STRINGOP_OVERREAD) += -Wno-stringop-overread
->  
->  ifdef CONFIG_CC_IS_CLANG
->  # The kernel builds with '-std=gnu11' so use of GNU extensions is acceptable.
-> -- 
-> 2.45.2
 
