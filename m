@@ -1,204 +1,209 @@
-Return-Path: <linux-kernel+bounces-436305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436306-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695739E8427
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 08:35:37 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 770C59E8429
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 08:42:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BE5F165812
-	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 07:35:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E7B5165974
+	for <lists+linux-kernel@lfdr.de>; Sun,  8 Dec 2024 07:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C647081D;
-	Sun,  8 Dec 2024 07:35:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF1C136351;
+	Sun,  8 Dec 2024 07:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cxSal/Zd"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XXMPBkAG"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2056.outbound.protection.outlook.com [40.107.223.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9560717E0;
-	Sun,  8 Dec 2024 07:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733643331; cv=none; b=N2YX5FXNwYGFAFkdMAL/J0WXmu3vNcOx9Vv6ZOjvBzduORDXkZn/1ppc3Y/hknF2O3ZaMVEHVmsXP66Ab38VH76fwn+qCyLWvFnJB8HPt5QVBrUvTHhc9EzyAAJVZEfS1cRN7UICFv7KvkZTVsAyxp3eSdrafU6xCC5GbxQtGzc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733643331; c=relaxed/simple;
-	bh=Hucn9bxfDGRTPJNGS47AluoMNQBuEYqLzddrXPpZ0xE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kC919GHS8zB3gKwPZkSaeH6ImEXOqCJhtsYPMSpX34ztvdZElGa08vwjdSihH9A2AYLgh3uC2eeIBAGWC+lYJtm2wdr2JgkmUoALFrAMDxb3QlGI1TB2hXedRQFt8uicI+XEw6YFRQOb68NfJ640RAuekHZuErGJFZQ40pJn/QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cxSal/Zd; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-53f22fd6887so644525e87.2;
-        Sat, 07 Dec 2024 23:35:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733643328; x=1734248128; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fY7qGesbibkcNu2KJVRQuqZ1WodotY0lFTcIg7AvUJA=;
-        b=cxSal/ZdL+5Tyu82ANXCjldDfRO/ui211GMsnuG41Sob0k/jt1s3VGSYqc1TlbqhE7
-         4hGHUUnpPclgxd2z2E9jg7F0+ztUEJdDPb1IbyeEGEFlSP3uBbKbm3USaEJzi405OsJ0
-         cUvTEK22MioIJjyA1nCc/J/05GVyR5cOtp2wey8+OcUgqVd7PGpTj41wSGgJNCL8ORI9
-         m9ZKLUxWebnzLkeV0sF22QcySkV16ljbxeTXxOmKZdxsjTNAO4G5avw8LyjM1ALnvvLe
-         arDx9U79G0bNxZ3f+CdDYhyEmExMmQFpXUwwGz6Bx01qPCpd7ErW+FYB3YX7dmqJWd8w
-         t/qA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733643328; x=1734248128;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fY7qGesbibkcNu2KJVRQuqZ1WodotY0lFTcIg7AvUJA=;
-        b=TxZ/yISCFTKtk5LpOxqJY4F+quwIHWxtnANCBv+br+upyCIPuebI38Zz9rIBNFE/kd
-         m3byiqyAr6crrHJVR2WxzPEa8EM0+lNJQ6ciRBUVHG2qPssg4fUfJfiQfjPmWjhEgnAb
-         HwBCz7LmuM+HBMTrZDq4TQvsouOmSy9nBdefFYvqI5Ah3/qEm987D3Y+/jLyQt+Wd14W
-         hhGNc9XgtMJyQsgbBWa965MrgZTXq0EX2iBRCtif87o122gtAIbwQLE37mCWqFzu/b8F
-         0AviwCcZXChCxrTJeeIKBN8vQUatCsH01yNJ4JkihumAdrO0hiSH5qGkwnZH0ydKq6lv
-         OYOg==
-X-Forwarded-Encrypted: i=1; AJvYcCXr6d8cwxEF/JruL9zTWBFiEvf9kjFXD232n74fBJ9PK96zz+YsmqlC34X1ACO8/kApgp8/Mw+Ihl+VZQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKWiQi2Hqc67PmTd+9ypKhAbxJKpH6l5MMdWhXhx8nVLf/ZFPR
-	Dw9yK5OV+ieDiRncU+hzIQ9h//9bdq9+fTvtyPlC3II+lWkT/GxhHo+4KF9rCNHGkyQJmRUjqv0
-	GUOOos/iqUog9OctjQZSoahYxJ+jAr5O+
-X-Gm-Gg: ASbGncslWTcNnXO6y+eQSGSZbA87RNwbSD7xWKjSNH1B1q17PFFRNvSfsfANt2nEXuv
-	8lFdHyDKhaMChDrJvsaLnxhxlvunmcknmpqMeeAPGjq6wold18GBT44oUrJd1dDIl3A==
-X-Google-Smtp-Source: AGHT+IF2QVRqqUOkkuM2pTorcVxWbBN0+TdDVa7I6sCf413vCKcGkrAMlZKR8kLbcuE6kjicxm0eYu99eQCMs/tA1KU=
-X-Received: by 2002:a05:6512:3e15:b0:53e:38df:673d with SMTP id
- 2adb3069b0e04-53e38df6949mr2905512e87.43.1733643327326; Sat, 07 Dec 2024
- 23:35:27 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAF4817E0;
+	Sun,  8 Dec 2024 07:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733643731; cv=fail; b=m27qMCu3iNXA8hM6NKiXEiI2YBD7JwxALUyjvayR20cxRHcoVFDbLCh57RUHkv2qxGMTTFtkJYnCnYu+q21mszionyNXIbEA4DSjMQ8QqGWpWQnTt7dXYF7OSuaMdIf463pqSr5x264S5AANxHsF6hBknWO87K2gkeqF7+wObZA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733643731; c=relaxed/simple;
+	bh=3+iYTbqwD8tqYtJzPSgYjZmTAaf/TSIXKYkJhH56Ylg=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=IpSZXUdTlUxml/F078XDoU3LZUysOoX6wj1ybNB4ep8MXwIhmqFLXXokeFvznNPMcI/HJieGccl/p40Fzm1+EUNs4r5Kn42DFwflWenswjVrj5cmmEXkGaPvUxc0nxnJFeSQ9SInIRxtHy20ktYrnCwQYi0UQCbtMSKS56GTsKM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XXMPBkAG; arc=fail smtp.client-ip=40.107.223.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UZ4HWNVuzfAh21ZPtdK8vfsGltrnkC9OngPvqRync7Cn2A3QCYedS4ASIVm8KsjBbkTLKf8TiLWHX0wMhDblWdX965IuO1x2xCMWXJhQy1QwujMUgF6NpLfMWizQ7mrwPY/Kz88ZUL2B31LEOUnuWSDit/goI0PEX73oYtS7+DICPbEBCA8+X1AFGHFNILSmejKOfhbCjQ1kScvIz6e+zUajdlnAn9vpU91QVmfuxAX4g/cc6O+KGvmLZsDaY6dQAmv9z/liygqpnBiTxIvpbbYBmaoCwG3ms0SMRvUXSdEibM7F7CzH5ZZha61GhT9aWjBdrtBPVVb5S+0/Xa8LZA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qEX/SqnenP3O6naZw9dXQ0jSASz3u1+YzJfi9FBKeSc=;
+ b=tjHG/2aAmH3tDdQruAAo3FhzVHWsBKsdIYMLy1v2wOUQHMUSOC1xEBHS7i4K87B6yHRjamAaakTghjj/2U9vUvRiXtWqqpHeIQj3SEWp1EcmdY/UEpk61DXCEehzydYQeTIGefrgINf04dd1SVGhWWEbA+8RjrQ7d+9kfsnc35ELIzQeF1mdPSStACla/YwefKxGWrQw140fN6AFekAqvO8ZPuupBTYLpK9RsTIn+OxTMf6eriEwrCx7zxQURLGPOIFlGqz4G+obOXYa8jqb0xICrF/ciLXK8dHQktBHglM8XKqaOz0r8GEDJTu3dY+0jUxkmIOBN7m7WXqhyNTwjg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qEX/SqnenP3O6naZw9dXQ0jSASz3u1+YzJfi9FBKeSc=;
+ b=XXMPBkAGADQr7NaGfKXywL21yGX/IABD3LdCnFJJgxZyPC3y88N52oHkq8z9qp1m2tfzsaLzBOQeVoBz4yQ4btFpeXoMVe3l6qKYW1rwG9+a2/1Py5pGhN5sb/HaRLTiwCtn0DARwYUG8ncb67GfbZom/YCkKb1x+thnRL7nvJfjTNduZ2kzJGmDyndtUvpmX263cLjM3+9uZQzHqGZflp1JvPWgYVz6IP6NfmM9Q/W/rOUj/v4nRuw+2wHT4gGnwFHObiwC/iccKXG74uC2Ub9YK2wJ2hNOxq494Ft1jk8ws/m4dTkQl81yTd7/+ps8EQZixTasJj5uUxEGKyXKVA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from PH7PR12MB7914.namprd12.prod.outlook.com (2603:10b6:510:27d::13)
+ by DM4PR12MB8570.namprd12.prod.outlook.com (2603:10b6:8:18b::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Sun, 8 Dec
+ 2024 07:42:06 +0000
+Received: from PH7PR12MB7914.namprd12.prod.outlook.com
+ ([fe80::8998:fe5c:833c:f378]) by PH7PR12MB7914.namprd12.prod.outlook.com
+ ([fe80::8998:fe5c:833c:f378%6]) with mapi id 15.20.8230.016; Sun, 8 Dec 2024
+ 07:42:05 +0000
+From: Kai-Heng Feng <kaihengf@nvidia.com>
+To: bhelgaas@google.com,
+	mika.westerberg@linux.intel.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kai-Heng Feng <kaihengf@nvidia.com>,
+	AceLan Kao <acelan.kao@canonical.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v2] PCI/PM: Put devices to low power state on shutdown
+Date: Sun,  8 Dec 2024 15:41:47 +0800
+Message-Id: <20241208074147.22945-1-kaihengf@nvidia.com>
+X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCPR01CA0186.jpnprd01.prod.outlook.com
+ (2603:1096:400:2b0::9) To PH7PR12MB7914.namprd12.prod.outlook.com
+ (2603:10b6:510:27d::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKFNMo=ck+c2NJHVOFszzT02ksF1a0KG9vA5zU+Woa7noLeFrA@mail.gmail.com>
- <tencent_95592538BA04BB7933F79E351B014BE51B08@qq.com>
-In-Reply-To: <tencent_95592538BA04BB7933F79E351B014BE51B08@qq.com>
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Date: Sun, 8 Dec 2024 16:35:11 +0900
-Message-ID: <CAKFNMo=KEwmuU1NUWY2u9ficfW+b1NwjkHJEST8sf6qvS-u=AQ@mail.gmail.com>
-Subject: Re: [PATCH V3] nilfs2: prevent use of deleted inode
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: linux-kernel@vger.kernel.org, linux-nilfs@vger.kernel.org, 
-	syzbot+9260555647a5132edd48@syzkaller.appspotmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH7PR12MB7914:EE_|DM4PR12MB8570:EE_
+X-MS-Office365-Filtering-Correlation-Id: 007699a9-a7e2-4d08-051e-08dd175bcfd2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kT11pc76tTDOhXDsHf/M5u1uyo8cLG6B5Ui4Liq+d/JePKp/iLoguHuZsPaV?=
+ =?us-ascii?Q?f4Jj+EeFV5fc5vHZxldfzj+R+wUwXmXFeBy1zs5SO+49/cSm7K5TDP5bdv3G?=
+ =?us-ascii?Q?EkT4oA/F11Qt0SAFn7rjA8JRsgABlXqXl6j1eogMaV86QOwb6QnPi39o0c7d?=
+ =?us-ascii?Q?cey9v9L9Iyf9VDDa3Rt8XilrW9bjpljnNryPlz5J+8q/+x6CW2Mgjjm59/k0?=
+ =?us-ascii?Q?LiZ1Y7SRAXSB4nwqsDWeGAXqh4zCp0jsa6hm8/cRTwMw0/Fix3diUc5o5Lab?=
+ =?us-ascii?Q?iMoWCLlOMOddHbdFGjOy/+ORfEyTM0wXKnOdAgcr/p1069EAhhtngfSGaJ9C?=
+ =?us-ascii?Q?FnxpaB77W3dMTHCxEFrSVzoaO8DED7FGrNKmv3ZTPoUZaLSO5dclE3suZHJh?=
+ =?us-ascii?Q?LuhcdVuR8AS6XGxQeOxmroS0GR7RLS4FfxURGYCgyCIe4pt+OsMNVTw9DYEe?=
+ =?us-ascii?Q?LzFTB0fom1ARFPKeTN7wneEG49Zvl+Vo4xWdqQ/BEj5RuseFk2H23/ibncNs?=
+ =?us-ascii?Q?JIp6fFQWbAcx+CcobX9VH+dwRRJM4NSOvAFm6VsbRDQDmkIuI1nwsytfi5Qi?=
+ =?us-ascii?Q?VhHsDrI8+q/+lhNxVxMGddU5D50b9Kkmik2GR8Dj8Od/R+KjlEiUJM6q7fnk?=
+ =?us-ascii?Q?XwDZE4OOU9+PhOw3h/A+QrvXgXgtcGgAjEmsMMG2amOR7Ri5xw2IFeiarkTr?=
+ =?us-ascii?Q?Nn4abJ8Z/v+bXriHPvuelfjXkGKuO6X1xrPoXzO+X74uqot7O9wuIqLPD33y?=
+ =?us-ascii?Q?/m/WpE7sHJTnmZH+xbFHJMkDhLuEseFLTgaPClY6G19go54juppLQWEt3iiY?=
+ =?us-ascii?Q?IvzMbbQpyRi/5QwrusOzQGmJnsiJ/DrUaLkkVfF8YtxUy3tESY54H/PdZKu8?=
+ =?us-ascii?Q?kae5t51iNCQ4IgTrjysfotgyGVk2GDF3Tf0iCmjB4LQhQhF4vohaFhev9bpw?=
+ =?us-ascii?Q?xdS7/xLZv1Kveb5vGrqo/o5xLbgCYiQZgRdQ+jjE79myZi5djlvguSe7cRsD?=
+ =?us-ascii?Q?tN1ScHP1y5QN0u3Vr3ur0L1NiBL47yiPmMzzwdDhnr3dn0HU8U+7JNnKKOgE?=
+ =?us-ascii?Q?v+4HqaWqk4a+KZ86aJ0EsSxLLg3TkCmOqguG84KvYhIVPLq2Ky2/aXQMQlZ4?=
+ =?us-ascii?Q?OjkybgjLZCpiKRRVgYOnlK5tt0wQpywZ9o0vqZbYHb8L55XreiuA755RoySC?=
+ =?us-ascii?Q?dElbQXj4Lcdx6onYCHP7zd2LvWZIr25h3VBizAo+bX9wndfPICXXGlt0W7cm?=
+ =?us-ascii?Q?Fv/8GvF0ZBzgFQIDENdifeQTI/S1KHXE801qFcohxFua9ka7N88rZughgNCM?=
+ =?us-ascii?Q?1gB6K6QkB35ABCYMXVQF5ZRZKczMfand9KNRcNOztGCLxilVBO7oXGsidKnW?=
+ =?us-ascii?Q?Zzrgzog=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7914.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?XB+mi0kd50RpTPw+ChUHgaor/ssuYpZXR6dZaFCLXGRZZV979H+KzYcNlyFM?=
+ =?us-ascii?Q?C7+uDh3dG79K70+AbGdU+zgqEUp+omjWdz4LvcbXqLHrB6jN352UMieiKxcD?=
+ =?us-ascii?Q?tJITBuTljQZ76LI/VDMyWz4ohP9tbogs9sINjWObmMYqrk2qtSUmitJBeheb?=
+ =?us-ascii?Q?hsEdfn6G4KsD1rszgOFplPkgXAPTAjCBcM1dPuxTu1kzPXfHzRecJT09V75N?=
+ =?us-ascii?Q?1dBmbBRkHnF0rwq5rV0vjyo+FhDLXV1Hp7YqSR8DVnw0T7gOZa0DiwvN3TqM?=
+ =?us-ascii?Q?5mNuUr34DjbC5/YLWJlNFeMk0JzNy35w/KCy2MLmKccoe5ooI++1I7EaFIJe?=
+ =?us-ascii?Q?hL6F3IW3zdjhmYAU+2njC5kXfhec2n1QAGBF3gNnatlpgNr8K2U6aqQuoq+s?=
+ =?us-ascii?Q?wI6750wiOYo5qVp3HLf8OGv2CtRECRBZOnLZ6QYzvzyF443SyCU5j0V0YIZ1?=
+ =?us-ascii?Q?fT3ZYaIxibyVeH5kekTfKxs8/W+dJZFywvMJcKrg9ISeZrNSsmVfn/6Gjldh?=
+ =?us-ascii?Q?hbaqB8Y1L+fhcWOBmeJ/6FaiVL6X1VId3uoWtXy/YFXi24lJExHIZFUgM6aa?=
+ =?us-ascii?Q?R7vgVCO/Ik3x1odtcWJS4gf05lra1NAzITVhoZfv0oeAnhNrYRLuTk7nan1D?=
+ =?us-ascii?Q?eqaPznfJM2ik3RA1Y2Y4CzTEyZbyKyQ3oB6W+xrC5LX5dRVLtHU6YSySBEmB?=
+ =?us-ascii?Q?1cOfVShbB6Z3Sn29yr147Wn4b3GSnyw6mOjms3R4RuZClil1Nf71pisGPEWz?=
+ =?us-ascii?Q?bk+BUyXRnMOgFAx58pyO8vBQoR14JL0LSfXRy3/bfQrtPelJKa/2XiqxuEhN?=
+ =?us-ascii?Q?5XJqS9K0yhplzoAIXc8tn84gzOVC93md3i+y/gXHD3Qhi5u36Ad1M09r4DII?=
+ =?us-ascii?Q?/YgByTxGOPQf19b6QvBjjrlNulZYns72bxvKFB9rN1vZ+C0+QgL5Po2mvIbd?=
+ =?us-ascii?Q?tDsQvh4wyNQcwS08mFHKfJTqDPMbh+OrdG10uQ+iBb+xOhoFoi4LXkkKE37D?=
+ =?us-ascii?Q?VxMc2RzPF9nWzIZgakhGavSOUCnD47HrYoANMh7vblalpIpkoqT0KbrCH6de?=
+ =?us-ascii?Q?ZJy7jm19+xdg5Fwbxk/fG4nDytTvXpClNu7lizhLTdjcnAe09sMr6wn5J8dE?=
+ =?us-ascii?Q?HYxE4CJZ7bzkJW9w3fsy2W1pyEXjdGwNWtOu4xokT3MEcTRJlOFMVzQvWJW1?=
+ =?us-ascii?Q?JpUpqTOdP9oxUh+0eCWmUn1oU6UfB8BTB7rAL1JpZsxsxv3Vc0Plt1/4igvZ?=
+ =?us-ascii?Q?wrJzLCG3TY3c4//t/+4UntO3ApbZ9CAwsmxRNYyz1rL6aGXlalVMlITGKBLy?=
+ =?us-ascii?Q?XboNzxgMG+a0D6wi+RJSr+36q0c3Qo2lqYP07xbb3Tszty6+pPpYSVq9NkUS?=
+ =?us-ascii?Q?gmUwJAbnMAdO2ASmNQk7rfd4fkNHALohDueqRSOWHeGOY4/RQSTue8ypYL4F?=
+ =?us-ascii?Q?DzDQehYShoqvCGvG/w+2TuDv3id0cGPJb+FIahPmn0T6zC6eudbUI2HzBqsV?=
+ =?us-ascii?Q?TpHiFafRUSpEYnAYDhsmF+LTPp9Oz2M1HJtD6Gcvc9TiK3uhmQq/7g2RsePu?=
+ =?us-ascii?Q?aejNc8OOK6o3pQBmnLTrZNOyj7LJJ1lRyhXcB/c0?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 007699a9-a7e2-4d08-051e-08dd175bcfd2
+X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7914.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Dec 2024 07:42:05.8425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5SivJ8IXmGshunSPB1Y0G5LXSjeg/cPxZAxEnB6liG6M8hHNVCugNpVOTdV8fFAO9B16SBhlTTcKg4KbzEIEMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB8570
 
-On Sun, Dec 8, 2024 at 3:00=E2=80=AFPM Edward Adam Davis wrote:
->
-> syzbot reported a WARNING in nilfs_rmdir. [1]
->
-> Because the inode bitmap is corrupted, an inode with an inode number
-> that should exist as a ".nilfs" file was reassigned by nilfs_mkdir for
-> "file0", causing an inode duplication during execution.
-> And this causes an underflow of i_nlink in rmdir operations.
->
-> The inode is used twice by the same task to unmount and remove directorie=
-s
-> ".nilfs" and "file0", it trigger warning in nilfs_rmdir.
->
-> Avoid to this issue, check i_nlink in nilfs_iget(), if it is 0, it means
-> that this inode has been deleted, and iput is executed to reclaim it.
->
-> [1]
-> WARNING: CPU: 1 PID: 5824 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inod=
-e.c:407
-> Modules linked in:
-> CPU: 1 UID: 0 PID: 5824 Comm: syz-executor223 Not tainted 6.12.0-syzkalle=
-r-12113-gbcc8eda6d349 #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
-oogle 09/13/2024
-> RIP: 0010:drop_nlink+0xc4/0x110 fs/inode.c:407
-> Code: bb 70 07 00 00 be 08 00 00 00 e8 57 0b e6 ff f0 48 ff 83 70 07 00 0=
-0 5b 41 5c 41 5e 41 5f 5d c3 cc cc cc cc e8 9d 4c 7e ff 90 <0f> 0b 90 eb 83=
- 44 89 e1 80 e1 07 80 c1 03 38 c1 0f 8c 5c ff ff ff
-> RSP: 0018:ffffc900037f7c70 EFLAGS: 00010293
-> RAX: ffffffff822124a3 RBX: 1ffff1100e7ae034 RCX: ffff88807cf53c00
-> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: ffffffff82212423 R09: 1ffff1100f8ba8ee
-> R10: dffffc0000000000 R11: ffffed100f8ba8ef R12: ffff888073d701a0
-> R13: 1ffff1100e79f5c4 R14: ffff888073d70158 R15: dffffc0000000000
-> FS:  0000555558d1e480(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000=
-000
-> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> CR2: 0000555558d37878 CR3: 000000007d920000 CR4: 00000000003526f0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <TASK>
->  nilfs_rmdir+0x1b0/0x250 fs/nilfs2/namei.c:342
->  vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
->  do_rmdir+0x3b5/0x580 fs/namei.c:4453
->  __do_sys_rmdir fs/namei.c:4472 [inline]
->  __se_sys_rmdir fs/namei.c:4470 [inline]
->  __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->
-> Reported-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D9260555647a5132edd48
-> Tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
-> V1 -> V2: Adjust the patch as suggested by Ryusuke Konishi
-> V2 -> V3: Modify the input parameters of nilfs_error and split Reported-a=
-nd-tested_by
->
->  fs/nilfs2/inode.c | 8 +++++++-
->  fs/nilfs2/namei.c | 5 +++++
->  2 files changed, 12 insertions(+), 1 deletion(-)
+Some laptops wake up after poweroff when HP Thunderbolt Dock G4 is
+connected.
 
-Thank you for your help.  I'll adopt this and send it upstream after
-running tests that include more than just the reproducer.
+The following error message can be found during shutdown:
+pcieport 0000:00:1d.0: AER: Correctable error message received from 0000:09:04.0
+pcieport 0000:09:04.0: PCIe Bus Error: severity=Correctable, type=Data Link Layer, (Receiver ID)
+pcieport 0000:09:04.0:   device [8086:0b26] error status/mask=00000080/00002000
+pcieport 0000:09:04.0:    [ 7] BadDLLP
 
-Thanks,
-Ryusuke Konishi
+Calling aer_remove() during shutdown can quiesce the error message,
+however the spurious wakeup still happens.
 
->
-> diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-> index cf9ba481ae37..b7d4105f37bf 100644
-> --- a/fs/nilfs2/inode.c
-> +++ b/fs/nilfs2/inode.c
-> @@ -544,8 +544,14 @@ struct inode *nilfs_iget(struct super_block *sb, str=
-uct nilfs_root *root,
->         inode =3D nilfs_iget_locked(sb, root, ino);
->         if (unlikely(!inode))
->                 return ERR_PTR(-ENOMEM);
-> -       if (!(inode->i_state & I_NEW))
-> +
-> +       if (!(inode->i_state & I_NEW)) {
-> +               if (!inode->i_nlink) {
-> +                       iput(inode);
-> +                       return ERR_PTR(-ESTALE);
-> +               }
->                 return inode;
-> +       }
->
->         err =3D __nilfs_read_inode(sb, root, ino, inode);
->         if (unlikely(err)) {
-> diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-> index 9b108052d9f7..1d836a5540f3 100644
-> --- a/fs/nilfs2/namei.c
-> +++ b/fs/nilfs2/namei.c
-> @@ -67,6 +67,11 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry,=
- unsigned int flags)
->                 inode =3D NULL;
->         } else {
->                 inode =3D nilfs_iget(dir->i_sb, NILFS_I(dir)->i_root, ino=
-);
-> +               if (inode =3D=3D ERR_PTR(-ESTALE)) {
-> +                       nilfs_error(dir->i_sb,
-> +                                       "deleted inode referenced: %lu", =
-ino);
-> +                       return ERR_PTR(-EIO);
-> +               }
->         }
->
->         return d_splice_alias(inode, dentry);
-> --
-> 2.47.0
->
+The issue won't happen if the device is in D3 before system shutdown, so
+putting device to low power state before shutdown to solve the issue.
+
+ACPI Spec 6.5, "7.4.2.5 System \_S4 State" says "Devices states are
+compatible with the current Power Resource states. In other words, all
+devices are in the D3 state when the system state is S4."
+
+The following "7.4.2.6 System \_S5 State (Soft Off)" states "The S5
+state is similar to the S4 state except that OSPM does not save any
+context." so it's safe to assume devices should be at D3 for S5.
+
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=219036
+Cc: AceLan Kao <acelan.kao@canonical.com>
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
+Tested-by: Mario Limonciello <mario.limonciello@amd.com>
+Signed-off-by: Kai-Heng Feng <kaihengf@nvidia.com>
+---
+ drivers/pci/pci-driver.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
+index 35270172c833..248e0c9fd161 100644
+--- a/drivers/pci/pci-driver.c
++++ b/drivers/pci/pci-driver.c
+@@ -510,6 +510,14 @@ static void pci_device_shutdown(struct device *dev)
+ 	if (drv && drv->shutdown)
+ 		drv->shutdown(pci_dev);
+ 
++	/*
++	 * If driver already changed device's power state, it can mean the
++	 * wakeup setting is in place, or a workaround is used. Hence keep it
++	 * as is.
++	 */
++	if (!kexec_in_progress && pci_dev->current_state == PCI_D0)
++		pci_prepare_to_sleep(pci_dev);
++
+ 	/*
+ 	 * If this is a kexec reboot, turn off Bus Master bit on the
+ 	 * device to tell it to not continue to do DMA. Don't touch
+-- 
+2.47.0
+
 
