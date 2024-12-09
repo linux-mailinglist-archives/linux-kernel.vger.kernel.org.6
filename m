@@ -1,239 +1,390 @@
-Return-Path: <linux-kernel+bounces-436852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436853-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D41DD9E8BAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:48:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C91FA9E8BB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A84791885EEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA171162327
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14B92144D1;
-	Mon,  9 Dec 2024 06:48:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F70A214810;
+	Mon,  9 Dec 2024 06:48:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=analogixsemi.com header.i=@analogixsemi.com header.b="dcC7io/i"
-Received: from BN8PR05CU002.outbound.protection.outlook.com (mail-eastus2azon11021101.outbound.protection.outlook.com [52.101.57.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="QS1X8uHg"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4DF31D555
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:48:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.57.101
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733726884; cv=fail; b=e60tg49sWAzKwh0xOWc0sHHl/amr81XN+4trjmNzX3OxOGxNlZQx0WYBb2HgdvAyx1oIaxR+PorGgJWBBQcF3EPZOMFWw0RHZ0B7DgNC19Y04mJbu4eSMcaxL3/BAty0Jr+yneda5vq7KXIJk0ekmaC4zMV0zqFziL1erMtvtes=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733726884; c=relaxed/simple;
-	bh=Ou7AK1JVCkv2ZxXCI1JMkuHjQko/jU4YLUZu59Xm3fA=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=X4AXcSLpVUt/GCcNJJsMAKQg7GzeI0hpo9T1lPBcjvX7Vki97asaGpCLtzku+QK+4mJ6s6Wquc49h2ECK6g+7GUvTOcjUHH1vUlyARomyTy1bk/IkKUJLo+JHlAoZAT0WSo0rpAPGhRlEDRaYthPa6lV9aoRlA++MAaDPSIlHk8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analogixsemi.com; spf=pass smtp.mailfrom=analogixsemi.com; dkim=pass (1024-bit key) header.d=analogixsemi.com header.i=@analogixsemi.com header.b=dcC7io/i; arc=fail smtp.client-ip=52.101.57.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analogixsemi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analogixsemi.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=S10cU7FqvhQZsAxfmEAXMbuy2i7GkXU5IL8ams2YDPSZFotEAOhYd4zYLeyJsjBQCGDchuyxpzetiFyiT1rQ1tVucVUzlkSMLB2CjDv5sA3nJIXhHUlRX57zjfPsiEaCtDJPhzE6lUOKZ5Kpafkgp8CKJbThjUzJ163ytZKyL+mOImYDWdeCTTk20du+bMG1j4iDNFf+EMLyoRZ2Pflnt7I2l9uWrV9QAA/IrVH2jUOlrMIERh1jwablK3pv5rmCmRmZJQ40TzCP3CSwi94SVQ8Uy5JIzs22chf/ixgFHy5XCN+1TAV9EUpanF1/QrJ91ClePUWmGlfR8od9ezr6Kg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=aUKRdaLsp50JnzyFXWoQ2tnJmbqXBfLi7MzdsrKQFHk=;
- b=BO0nPGGhkHmWIvNx/E4LYpe12oKTCP0JBK85KGlfpdQrSy0KAX/OHm2miYk5LXStUr7Hmm0dO/Cjba8svS7geS64dUq5VF32KsZp762GCS/CP+qd+EBr2IJEFIN29cfcCLod9lzeTP3rmv07SWkmznrREf5LYJ1q3jey/bcq/Xi90/oBpjKoYXOUtvFU9PcmRJLR4hkfyTKgGIGj7SnnP5NK49NCiZ0HVJI1O4gPLQdYZvAAjOI65/tXbKr2K9GPXL0bKdGp7L1+UBsC34SCqWm9IWY8z53IdHWrZsaMdONreAP5+k1nVXrM34/nSFR6UEYiewpdb1IJR0HejQZrew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=analogixsemi.com; dmarc=pass action=none
- header.from=analogixsemi.com; dkim=pass header.d=analogixsemi.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analogixsemi.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=aUKRdaLsp50JnzyFXWoQ2tnJmbqXBfLi7MzdsrKQFHk=;
- b=dcC7io/i1Lkdqk3u9O5ed9rE/tCdk6OVuFlv1AUWcOu0e7ghwMks/gbeD+uPMX3HUSEnjCs2YCZB66pasekpqaz6AqTLKPktcmTrsh2FE25bdys8zWPsZ7tBLuduSz3jMS0KDV6BQwsztUW0oi0KFotLLjxLZCqkvWHSciv6Xe4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=analogixsemi.com;
-Received: from BY5PR04MB6739.namprd04.prod.outlook.com (2603:10b6:a03:229::8)
- by SJ0PR04MB7360.namprd04.prod.outlook.com (2603:10b6:a03:293::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Mon, 9 Dec
- 2024 06:47:59 +0000
-Received: from BY5PR04MB6739.namprd04.prod.outlook.com
- ([fe80::5a7e:9e8c:138f:1815]) by BY5PR04MB6739.namprd04.prod.outlook.com
- ([fe80::5a7e:9e8c:138f:1815%7]) with mapi id 15.20.8230.010; Mon, 9 Dec 2024
- 06:47:58 +0000
-From: Xin Ji <xji@analogixsemi.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>
-Cc: bliang@analogixsemi.com,
-	qwen@analogixsemi.com,
-	treapking@google.com,
-	Xin Ji <xji@analogixsemi.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/bridge:anx7625: Update HDCP status at atomic_disable()
-Date: Mon,  9 Dec 2024 14:46:32 +0800
-Message-Id: <20241209064632.1705578-1-xji@analogixsemi.com>
-X-Mailer: git-send-email 2.25.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TP0P295CA0048.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:910:3::19) To BY5PR04MB6739.namprd04.prod.outlook.com
- (2603:10b6:a03:229::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8201D555
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:48:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733726899; cv=none; b=binLbnEUKKmweSZMyktDWkPAoiv+ETlsoXpqEmgZLqft+Gi617xexN7j4iEIltbj/GVK3vWxQCGRmImhgL2wtkzUENtZze1xv4iMXoV8ShmIeZ0G2YlzSbTBXDEtTlJgLmTu3ktJX/ARCiXey42+61O3bBJnYdY0IFk7I7bpmZ8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733726899; c=relaxed/simple;
+	bh=2EhnNSX1qJhZcS69ssOO+7bmUNh37KxgLX5JqkTf6Hw=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=q4dKfxuOpWlEqvuGgXRrJdhCOkgn3aCVP9MrcEjtuujS7xBLYXvO23v0UUIOslWJyD4Ms8r23u4OqayNT8TwubWW4wnCfIL6Q2AwZsOEkusGRgLBo5e4mGu5ZBYP4f9wn+ZuMA07izHkuh3ZLgRgsHLNAXJOA1VKARFwHd9Ac2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=QS1X8uHg; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-7253bc4d25eso3000158b3a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:48:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1733726896; x=1734331696; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/tqYByDlTpvDY3g9bkOjyeueUGPdFCNhSOYdZLxj4js=;
+        b=QS1X8uHgZSzUAnHiPTJYUpBqkw9WybvHLu70SGAYHPFcSZXAXEw2yaUlnIQo9XS1ai
+         jfWOleSo77pnGhRESPZ50yySr3x8E/Rxu/vZ8SW/4JY+Ub8qoIEfIdV9FMSaJW+UmWaW
+         8kN+F/8tz46IuOX/RZSR0w075Tqzl109Ur+rPRZ37+0Vz6ua8lkyjpna1oobjNRdxoUq
+         uJIjnCtO9+VOy8rtoZHf6TDtvl8p8XfjuVpNPq61m4SiVw4qIp+ngQ7FckCMBdH5BziR
+         FFYhGu/fqNpnL6bYTa+/NLnDe/DQfIQaYGu6pdV0oD+rl0/ZiFKGC+luk1wjiv+lKTSm
+         +QdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733726896; x=1734331696;
+        h=content-transfer-encoding:in-reply-to:references:cc:to:from
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/tqYByDlTpvDY3g9bkOjyeueUGPdFCNhSOYdZLxj4js=;
+        b=SIBUKiIVAoRpHueJlY3m7xFwcTTgyxZ+jJPn+02R2pubgkAjfduN9AA+Kufi9tQvqM
+         w1RsZlAkSXHsD3l9zrShnk/rUJ6tYDV2OC8gT+KJQlX1Mb7EjrUA3/UtDYqqXgfkV+7b
+         CHTZoQpRb8yHO/ywQ1tag0bKs1MCcgwy1T1e7IlZ2ZyuKeuyFij0iyojsuXaXnbaxFLR
+         c4bJ4fMZwt9Bii5GBSssI+u2sE1dMCHRFo6VpMhxMeOzv1jAPQXgL66LNrKN7N8RuGUU
+         AKi0patYdLVwJL2mD72weyRi3lT/Splovph51by79Ity6vzB8hmutDSyPuM2Z4A+prDw
+         jsuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2XRzskWcpXjTEOGNy7/nJLYCSwBeXxoNG8xgYqN7Rxy7cfz6BYFs4V1QcB0a2CAkE6Ww3ERsCiyypZ9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFU/PHe8NcfdfQjqFt2EkRtcL2xHdSscxOSCYaaBWeM2dypCmp
+	GBlmyammNUSlSNQ61pMrXtuUI8OJNxi4hzhIRo2XWcV2ND0Oz7NMD4HIPwLb53U=
+X-Gm-Gg: ASbGncsG4gmtaJuLvaiFEzUYHt1M7fftMCN/6+n7Swd86OfRLr0lFHlb8A5KNaPctEI
+	oMg2OjHJlbNownHgYAlv4XJVRBtHH5oT2cakxI6/Airv+XRUim4ZeYh04rCHrcVPk5fxJh9ST3J
+	5AelRJM2ZzJySEEYduKG1svFCEjSa/atrylaWCi9xwDZ2B7wyUQ9t3I/n8KCanQnBNMx7MM4hF/
+	DCGlB0sMpHoaHgcO7uRVxrWosZBH6a9mky6UVqMYrSKrLoCT4YpffkX+JF83LgyKjEIMMmZZ8M=
+X-Google-Smtp-Source: AGHT+IGsKk54bOu/Rxl9z1j61kfQOb0K9BXdkAsOfqqphA8fj0i9foycXXnzqkfUsQ0qxs2SHBQqsw==
+X-Received: by 2002:a05:6a00:124d:b0:725:ce39:4516 with SMTP id d2e1a72fcca58-725ce39462bmr12813090b3a.7.1733726895563;
+        Sun, 08 Dec 2024 22:48:15 -0800 (PST)
+Received: from [10.84.148.23] ([203.208.167.149])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e59ec54esm1984650b3a.85.2024.12.08.22.48.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2024 22:48:15 -0800 (PST)
+Message-ID: <c4122d03-2a5d-49cd-8ca8-c39cc1ddd2c0@bytedance.com>
+Date: Mon, 9 Dec 2024 14:48:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BY5PR04MB6739:EE_|SJ0PR04MB7360:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4929b163-2e90-4420-3d5f-08dd181d6b15
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?bbRxZeJRCZLn6Fvwf9PXGh92+3ZXGEDLu12mAD2/vyAa+p9G77qWMTl9oyRs?=
- =?us-ascii?Q?bpnIAQfT+Nnm35CvLQTtSBfqQM9AuaHCsDxyWda6rfw+BTyr9RvHfVSIJ3fs?=
- =?us-ascii?Q?iRK94KIUjjkUsef2/cTgnH+OuV6pexwebwHSlLAAloU7yFgcZfXakLP11RJG?=
- =?us-ascii?Q?Lf71laRn3OzvQ9J609N06d0HUcguwG2CZ6RnlukHbNP0giWfj827d4WQCv+c?=
- =?us-ascii?Q?XrMDNKIqTr6MK7wsCA4ffrMrb24Io5wTRptOVodbdTtuTfA32h2qJVNQGkrA?=
- =?us-ascii?Q?//TGCgXypORN8dDWOyg6z9/UzM6L4a+2p5j2UxHGXDlquOJoanrt3h0Jdm1P?=
- =?us-ascii?Q?Agv9Ec/qa01ATiN4H/lODRh2V7ojkaSqijfMVQFEmSMS4X41rLgQCZvfjO0m?=
- =?us-ascii?Q?1zddf9UXCqiT/ZlqQNTMQNCVhBGs2GE2SzvBbjPbTuDipAE1UQR3EFTrw4OW?=
- =?us-ascii?Q?YZew0D+8W4/BxmUQAQjmlu80JxZUlWopBvs6+bw/MluQ3I+AB3Ohxv/EEOUp?=
- =?us-ascii?Q?LPVWFTspHkGbwpYkkZ3qeTVT62Uhaxdy2nUONf3giUgze2zpukdADZI0t4K3?=
- =?us-ascii?Q?fh/b9tRyQRydmw4PCSjIXvJ4Efch+3Mv8pDImoqDVDKGpReS1xlNbsfssEyt?=
- =?us-ascii?Q?tWANRKtpWC3KC5YjlRrvTWZ/fzbbxMQby1em4kbeys54kN5hAFI2MQ+feKVB?=
- =?us-ascii?Q?Ar/4/oDXhkUVWYpt0ZAGSCBZgtVYt0jW4xa6iGl5d9ANTJ4OQlkJFGfXDLcQ?=
- =?us-ascii?Q?/x97tv+7Pa+AmGiF3dfcG5aeWkJ4GJj17I5wd/u6t/WxcInVypBcrMHGxz8P?=
- =?us-ascii?Q?rbF50gvfZTA9L1dqwwdwpblcEip+51XcWAjpMTjKyyZ+ozGngyngz/lJLNvp?=
- =?us-ascii?Q?o3rogafTuTIIjzPHqxe8WdtQcMjm1UZrO8gjzTO9SCkRiA0ncv4FUGBv6aFV?=
- =?us-ascii?Q?YH5TIxT+HnpAVxH9603WZawxH/FBS0vMlGODYUZIfXxQOkU6cVW34YlcQ53b?=
- =?us-ascii?Q?qKTZvYxFluDoSUUoRlJa/6lOySEaxFPdlpidjjIgozvG+8Y8ZAfH4T3iNxVn?=
- =?us-ascii?Q?wlWCN40HuVGhPWEocuFKKYdkHWyREJdpPc5ucp5RIKvxbGSKebHx3e9Zsjz3?=
- =?us-ascii?Q?Jre3XVGz4mtD3W/EOVyTrze4BPHexFPPmgOwm1Usz42FOI74PwZk9uqbitrF?=
- =?us-ascii?Q?JyhOPPaGM8RfMkCJhRlNmyqCFeI4wzkJB+GcYYScPRq4xug08VSMkCAD1EFb?=
- =?us-ascii?Q?vsW+Bk61WcFb1lb/YomFXy1cPsso3uBj3sxAXIgdIr53ISMJ9HLl2cz+pwKK?=
- =?us-ascii?Q?MTTgvtM1Fh3eAWuD6iNuFL59OpKy5RkXEX42NgYrtzJDPkN215lMjJrPyzA9?=
- =?us-ascii?Q?Pep+6ZvTsaHll12jAte0XjK29jfe00CNwsUlteqD3DSlrTVxb61KZTh+jOZ0?=
- =?us-ascii?Q?R/0RWqwVsvA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BY5PR04MB6739.namprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(921020)(38350700014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?H2qehK2rKLZwQpP9I/13+p6nei8lp7YO7zYitTNFZNXwGU9VZhTt4BspyUOX?=
- =?us-ascii?Q?ObURLF4XuKRXiALNW5ti13JIU/pUYqBir3RwJK4GJiWOfV4FhYVPcRaPjceT?=
- =?us-ascii?Q?q0TPqU74E2+y/GGKE7dRjduIMoQQd+P9jefBOOgloeBKLLqpF/SbyBTV+5i0?=
- =?us-ascii?Q?1H5w7KHfBfW/Q5YqJkqnTDqFU/dCHEs0Q+cI7GT6Hdpj6kmYIT9WT+uMW6lJ?=
- =?us-ascii?Q?0nyiJ0pmoX4lIOwpF+rCPQveJQQmG0aoLIN7mP5iL24Zmr+3jY4XGT92R4Fy?=
- =?us-ascii?Q?evat8ApVhmhxYbllwTnI6nTMTQgFSaaND9ChHgZCtVonzz+Mh8ladp1uBSKJ?=
- =?us-ascii?Q?zNTqJlWilQl8gYBPhb4OIfcQ3KVX/cRYN/6/5T3mFsHbva8W7yDqHPuDna6t?=
- =?us-ascii?Q?LUk+Nx4nby4rdFcV9HItDgFadIknhe2cveGkiex3BVCnlRSe0L56jKQy9buo?=
- =?us-ascii?Q?Ufn9WlzW4jHIyDdsKEbpZt19GEj9IbtKTVfvXoNRfmRFIiGsTbEZQ+0+Ez3n?=
- =?us-ascii?Q?4DzCORFiu8SfeurZxbDXxYgFmdDkkBrCnlpgRQGVucLn7Eevk2E1TD8sKPVa?=
- =?us-ascii?Q?+1XQhFqFEWOsU0n+Wj+Sc8lVsJxCHi5x3y66GQFDoSzv9HcnYOZAWyqSkpo6?=
- =?us-ascii?Q?lDPzf0wg4spbMKjS+NOvU7vvzHZ2/bDbMyqD+v/ntJ6l6YS8LdJwO0Lhw3rv?=
- =?us-ascii?Q?1lyyTOuP55buqpXnLttQlLdo1wWQZZBYCtDJ+mjl1tg6zBzVKjP5Z1MpnYuJ?=
- =?us-ascii?Q?7/5boEL8+W9LstVz02clWrfjBOM7+MMEvhLGn30wcb48sUWsdissVD/514eU?=
- =?us-ascii?Q?DAjVQGtxpIIeXgNCXJE8h43jA0G/rzHTEDzZxoecZ5KXxW8UQsNFZyjVipp7?=
- =?us-ascii?Q?qIfMhnDQbFjNhPLb7adxvd0C9KGxrXwlx3f+q+wpUWfKAKuHWjiZB7MPc3hD?=
- =?us-ascii?Q?NPr0yIei2ZzwKG91mbPQj+91Xu0ySIeYzUMbNqgsGN78ywl3udM9RY3N4OCf?=
- =?us-ascii?Q?wp8kP1LWsTpNMyvcsZ3xeKRvJ6Pces8KX+Ggl/3deHXkMmeVJMbtz/VdaU9x?=
- =?us-ascii?Q?vBo2uvQa1TNe6U0HheBkxJ163FQth/GeO1jGs9dS1LIO+Yb2j9b+6hc7ktEW?=
- =?us-ascii?Q?YBLjJoPAe7NJeMCicUulFNPE9HlrVTOuzmcvLCSzYDNzDESfPsAS+GrN6+Ke?=
- =?us-ascii?Q?ax6gysxvuqK+R3X8ZOoJvwPRGimRti8BVNpe/43Hv45d1uyIM53WNE5qNcre?=
- =?us-ascii?Q?Hxthzv+9knGIXDQ578fxehiCkhHBgi2RAjzmrMyNOHuvkZ36YGJvgh+kV38Q?=
- =?us-ascii?Q?deJwc+7H6dKHUHHTxXFBpVWl1ZlWuE20y5r/gQNC3q4bykGI187hXg7N0EFg?=
- =?us-ascii?Q?YdBWFRqmKHCzozeBMknpwJthNjATEqE3bcDUPnxupLlCFeO6MBmtaQr23fEz?=
- =?us-ascii?Q?nE/dfm28DMWTyAXSeH4WAmY1Nfg0t4NBF1Jta1mliyQ7cET65JQpfr7S7Oor?=
- =?us-ascii?Q?ATmQ5Pet3qTB8UPdST2f3bI7LYFW27rA8APbCgJVz8TZ9c/93NOjISduXSym?=
- =?us-ascii?Q?OiP3pznKfd2JLff3I+DlL1qmRpeWWbD6JTvgjd20?=
-X-OriginatorOrg: analogixsemi.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4929b163-2e90-4420-3d5f-08dd181d6b15
-X-MS-Exchange-CrossTenant-AuthSource: BY5PR04MB6739.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 06:47:58.7319
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: b099b0b4-f26c-4cf5-9a0f-d5be9acab205
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: eQUFq+TCsunUYX3agCDFvpPjMMhBxaDNwIgDBdxkyuhl2gj1FbYPNbGyWBAMDTD659KAtPelE6Hj6vtbTXuc4w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR04MB7360
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in move_pages_pte
+Content-Language: en-US
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+To: syzbot <syzbot+1c58afed1cfd2f57efee@syzkaller.appspotmail.com>
+Cc: David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>,
+ Hugh Dickins <hughd@google.com>, Muchun Song <muchun.song@linux.dev>,
+ akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ mingo@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+ x86@kernel.org
+References: <67548279.050a0220.a30f1.015b.GAE@google.com>
+ <51849c40-1bd5-49bb-ba2f-15cd06f45f48@bytedance.com>
+In-Reply-To: <51849c40-1bd5-49bb-ba2f-15cd06f45f48@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-When user enabled HDCP feature, upper layer will set HDCP content
-to DRM_MODE_CONTENT_PROTECTION_DESIRED. Next, anx7625 will update
-HDCP content to DRM_MODE_CONTENT_PROTECTION_ENABLED if down stream
-support HDCP feature.
 
-However once HDCP content turn to  DRM_MODE_CONTENT_PROTECTION_ENABLED
-upper layer will not update the HDCP content to
-DRM_MODE_CONTENT_PROTECTION_UNDESIRED until monitor disconnect.
 
-So when user dynamic change the display resolution, anx7625 driver must
-call drm_hdcp_update_content_protection() to update HDCP content to
-DRM_MODE_CONTENT_PROTECTION_UNDESIRED in bridge interface
-.atomic_disable().
+On 2024/12/9 14:25, Qi Zheng wrote:
+> 
+> 
+> On 2024/12/8 01:14, syzbot wrote:
+>> Hello,
+>>
+>> syzbot found the following issue on:
+>>
+>> HEAD commit:    af2ea8ab7a54 Add linux-next specific files for 20241205
+>> git tree:       linux-next
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=13c4e8df980000
+>> kernel config:  
+>> https://syzkaller.appspot.com/x/.config?x=76f158395f6f15fd
+>> dashboard link: 
+>> https://syzkaller.appspot.com/bug?extid=1c58afed1cfd2f57efee
+>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for 
+>> Debian) 2.40
+>> syz repro:      
+>> https://syzkaller.appspot.com/x/repro.syz?x=133850f8580000
+>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17be9330580000
+>>
+>> Downloadable assets:
+>> disk image: 
+>> https://storage.googleapis.com/syzbot-assets/8af0861258fa/disk-af2ea8ab.raw.xz
+>> vmlinux: 
+>> https://storage.googleapis.com/syzbot-assets/ffb38cf7a344/vmlinux-af2ea8ab.xz
+>> kernel image: 
+>> https://storage.googleapis.com/syzbot-assets/6fbd2e50358a/bzImage-af2ea8ab.xz
+>>
+>> The issue was bisected to:
+>>
+>> commit 5b29c4156f5801fced2ec504b44ab98f60c480bf
+>> Author: Qi Zheng <zhengqi.arch@bytedance.com>
+>> Date:   Wed Dec 4 11:09:51 2024 +0000
+>>
+>>      x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
+>>
+>> bisection log:  
+>> https://syzkaller.appspot.com/x/bisect.txt?x=16d344df980000
+>> final oops:     
+>> https://syzkaller.appspot.com/x/report.txt?x=15d344df980000
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=11d344df980000
+>>
+>> IMPORTANT: if you fix the issue, please add the following tag to the 
+>> commit:
+>> Reported-by: syzbot+1c58afed1cfd2f57efee@syzkaller.appspotmail.com
+>> Fixes: 5b29c4156f58 ("x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64")
+>>
+>> ==================================================================
+>> BUG: KASAN: slab-use-after-free in __lock_acquire+0x78/0x2100 
+>> kernel/locking/lockdep.c:5089
+>> Read of size 8 at addr ffff888034718978 by task syz-executor352/6070
+>>
+>> CPU: 0 UID: 0 PID: 6070 Comm: syz-executor352 Not tainted 
+>> 6.13.0-rc1-next-20241205-syzkaller #0
+>> Hardware name: Google Google Compute Engine/Google Compute Engine, 
+>> BIOS Google 09/13/2024
+>> Call Trace:
+>>   <TASK>
+>>   __dump_stack lib/dump_stack.c:94 [inline]
+>>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>>   print_address_description mm/kasan/report.c:378 [inline]
+>>   print_report+0x169/0x550 mm/kasan/report.c:489
+>>   kasan_report+0x143/0x180 mm/kasan/report.c:602
+>>   __lock_acquire+0x78/0x2100 kernel/locking/lockdep.c:5089
+>>   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>>   __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+>>   _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+>>   spin_lock include/linux/spinlock.h:351 [inline]
+>>   move_pages_pte+0x8aa/0x3400 mm/userfaultfd.c:1248
+>>   move_pages+0xe75/0x16a0 mm/userfaultfd.c:1754
+>>   userfaultfd_move fs/userfaultfd.c:1899 [inline]
+>>   userfaultfd_ioctl+0x5221/0x6840 fs/userfaultfd.c:2022
+>>   vfs_ioctl fs/ioctl.c:51 [inline]
+>>   __do_sys_ioctl fs/ioctl.c:906 [inline]
+>>   __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+>>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>> RIP: 0033:0x7fed8de85af9
+>> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 18 00 00 90 48 89 f8 48 
+>> 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 
+>> 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+>> RSP: 002b:00007fed8de40238 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+>> RAX: ffffffffffffffda RBX: 00007fed8df10328 RCX: 00007fed8de85af9
+>> RDX: 0000000020000080 RSI: 00000000c028aa05 RDI: 0000000000000003
+>> RBP: 00007fed8df10320 R08: 00007fed8de406c0 R09: 00007fed8de406c0
+>> R10: 00007fed8de406c0 R11: 0000000000000246 R12: 00007fed8dedd334
+>> R13: 0000000000000010 R14: 00007ffc241241e0 R15: 00007ffc241242c8
+>>   </TASK>
+>>
+>> Allocated by task 6070:
+>>   kasan_save_stack mm/kasan/common.c:47 [inline]
+>>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>>   unpoison_slab_object mm/kasan/common.c:319 [inline]
+>>   __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+>>   kasan_slab_alloc include/linux/kasan.h:250 [inline]
+>>   slab_post_alloc_hook mm/slub.c:4104 [inline]
+>>   slab_alloc_node mm/slub.c:4153 [inline]
+>>   kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
+>>   ptlock_alloc+0x20/0x70 mm/memory.c:7026
+>>   ptlock_init include/linux/mm.h:2971 [inline]
+>>   pagetable_pte_ctor include/linux/mm.h:2998 [inline]
+>>   __pte_alloc_one_noprof include/asm-generic/pgalloc.h:73 [inline]
+>>   pte_alloc_one+0xd3/0x510 arch/x86/mm/pgtable.c:41
+>>   __do_huge_pmd_anonymous_page mm/huge_memory.c:1229 [inline]
+>>   do_huge_pmd_anonymous_page+0x2fb/0xb30 mm/huge_memory.c:1374
+>>   create_huge_pmd mm/memory.c:5737 [inline]
+>>   __handle_mm_fault mm/memory.c:5986 [inline]
+>>   handle_mm_fault+0x15a7/0x1bb0 mm/memory.c:6183
+>>   do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+>>   handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+>>   exc_page_fault+0x459/0x8b0 arch/x86/mm/fault.c:1539
+>>   asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+>>
+>> Freed by task 6071:
+>>   kasan_save_stack mm/kasan/common.c:47 [inline]
+>>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>>   kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+>>   poison_slab_object mm/kasan/common.c:247 [inline]
+>>   __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+>>   kasan_slab_free include/linux/kasan.h:233 [inline]
+>>   slab_free_hook mm/slub.c:2338 [inline]
+>>   slab_free mm/slub.c:4598 [inline]
+>>   kmem_cache_free+0x195/0x410 mm/slub.c:4700
+>>   pagetable_pte_dtor include/linux/mm.h:3009 [inline]
+> 
+> OK, so the problem is that ptdesc->ptl is not freed via RCU:
+> 
+> ___pte_free_tlb
+> --> pagetable_pte_dtor
+>      --> ptlock_free
+>          --> kmem_cache_free (free immediately!)
+>      paravirt_tlb_remove_table
+>      --> free PTE page via RCU
+> 
+> In retract_page_tables(), it calls pte_free_defer() to free
+> ptdesc->ptl and PTE page via RCU, so there is no problem.
+> 
+> To fix it, will also free ptdesc->ptl in ptlock_free() via RCU.
+> 
+>>   ___pte_free_tlb+0x2b/0x140 arch/x86/mm/pgtable.c:63
+>>   __pte_free_tlb arch/x86/include/asm/pgalloc.h:61 [inline]
+>>   free_pte+0x142/0x190 mm/pt_reclaim.c:31
+>>   zap_pte_range mm/memory.c:1780 [inline]
+>>   zap_pmd_range mm/memory.c:1822 [inline]
+>>   zap_pud_range mm/memory.c:1851 [inline]
+>>   zap_p4d_range mm/memory.c:1872 [inline]
+>>   unmap_page_range+0x4062/0x48d0 mm/memory.c:1893
+>>   zap_page_range_single+0x45c/0x630 mm/memory.c:2018
+>>   madvise_dontneed_single_vma mm/madvise.c:859 [inline]
+>>   madvise_dontneed_free mm/madvise.c:940 [inline]
+>>   madvise_vma_behavior mm/madvise.c:1270 [inline]
+>>   madvise_walk_vmas mm/madvise.c:1502 [inline]
+>>   do_madvise+0x2774/0x4d90 mm/madvise.c:1689
+>>   __do_sys_madvise mm/madvise.c:1705 [inline]
+>>   __se_sys_madvise mm/madvise.c:1703 [inline]
+>>   __x64_sys_madvise+0xa6/0xc0 mm/madvise.c:1703
+>>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+>>
+>> The buggy address belongs to the object at ffff888034718960
+>>   which belongs to the cache page->ptl of size 64
+>> The buggy address is located 24 bytes inside of
+>>   freed 64-byte region [ffff888034718960, ffff8880347189a0)
+>>
+>> The buggy address belongs to the physical page:
+>> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 
+>> pfn:0x34718
+>> flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+>> page_type: f5(slab)
+>> raw: 00fff00000000000 ffff88801ac4f780 dead000000000122 0000000000000000
+>> raw: 0000000000000000 00000000802a002a 00000000f5000000 0000000000000000
+>> page dumped because: kasan: bad access detected
+>> page_owner tracks the page as allocated
+>> page last allocated via order 0, migratetype Unmovable, gfp_mask 
+>> 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5823, 
+>> tgid 5823 (syz-executor352), ts 65548803787, free_ts 65433386693
+>>   set_page_owner include/linux/page_owner.h:32 [inline]
+>>   post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1549
+>>   prep_new_page mm/page_alloc.c:1557 [inline]
+>>   get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3475
+>>   __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4752
+>>   alloc_pages_mpol+0x30e/0x550 mm/mempolicy.c:2270
+>>   alloc_slab_page mm/slub.c:2408 [inline]
+>>   allocate_slab+0x8f/0x3a0 mm/slub.c:2574
+>>   new_slab mm/slub.c:2627 [inline]
+>>   ___slab_alloc+0xc27/0x14a0 mm/slub.c:3815
+>>   __slab_alloc+0x58/0xa0 mm/slub.c:3905
+>>   __slab_alloc_node mm/slub.c:3980 [inline]
+>>   slab_alloc_node mm/slub.c:4141 [inline]
+>>   kmem_cache_alloc_noprof+0x268/0x380 mm/slub.c:4160
+>>   ptlock_alloc mm/memory.c:7026 [inline]
+>>   ptlock_init include/linux/mm.h:2971 [inline]
+>>   pmd_ptlock_init include/linux/mm.h:3078 [inline]
+>>   pagetable_pmd_ctor include/linux/mm.h:3116 [inline]
+>>   pmd_alloc_one_noprof include/asm-generic/pgalloc.h:141 [inline]
+>>   __pmd_alloc+0x10b/0x670 mm/memory.c:6436
+>>   pmd_alloc include/linux/mm.h:2862 [inline]
+>>   copy_pmd_range+0x7352/0x77a0 mm/memory.c:1241
+>>   copy_pud_range mm/memory.c:1298 [inline]
+>>   copy_p4d_range mm/memory.c:1322 [inline]
+>>   copy_page_range+0x99f/0xe90 mm/memory.c:1420
+>>   dup_mmap kernel/fork.c:751 [inline]
+>>   dup_mm kernel/fork.c:1693 [inline]
+>>   copy_mm+0x12d2/0x2060 kernel/fork.c:1742
+>>   copy_process+0x1845/0x3d80 kernel/fork.c:2393
+>>   kernel_clone+0x226/0x8e0 kernel/fork.c:2805
+>>   __do_sys_clone kernel/fork.c:2948 [inline]
+>>   __se_sys_clone kernel/fork.c:2932 [inline]
+>>   __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2932
+>>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>> page last free pid 6052 tgid 6051 stack trace:
+>>   reset_page_owner include/linux/page_owner.h:25 [inline]
+>>   free_pages_prepare mm/page_alloc.c:1127 [inline]
+>>   free_frozen_pages+0xe0d/0x10e0 mm/page_alloc.c:2658
+>>   __folio_put+0x2b3/0x360 mm/swap.c:112
+>>   __tlb_remove_table arch/x86/include/asm/tlb.h:34 [inline]
+>>   __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
+>>   tlb_remove_table_rcu+0x76/0xf0 mm/mmu_gather.c:282
+>>   rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+>>   rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+>>   handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+>>   __do_softirq kernel/softirq.c:595 [inline]
+>>   invoke_softirq kernel/softirq.c:435 [inline]
+>>   __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+>>   irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+>>   instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 
+>> [inline]
+>>   sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+>>   asm_sysvec_apic_timer_interrupt+0x1a/0x20 
+>> arch/x86/include/asm/idtentry.h:702
+>>
+>> Memory state around the buggy address:
+>>   ffff888034718800: 00 00 00 00 fc fc fc fc 00 00 00 00 00 00 00 00
+>>   ffff888034718880: fc fc fc fc 00 00 00 00 00 00 00 00 fc fc fc fc
+>>> ffff888034718900: 00 00 00 00 00 00 00 00 fc fc fc fc fa fb fb fb
+>>                                                                  ^
+>>   ffff888034718980: fb fb fb fb fc fc fc fc fa fb fb fb fb fb fb fb
+>>   ffff888034718a00: fc fc fc fc 00 00 00 00 00 00 00 00 fc fc fc fc
+>> ==================================================================
+>>
+>>
+>> ---
+>> This report is generated by a bot. It may contain errors.
+>> See https://goo.gl/tpsmEJ for more information about syzbot.
+>> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>>
+>> syzbot will keep track of this issue. See:
+>> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+>> For information about bisection process see: 
+>> https://goo.gl/tpsmEJ#bisection
+>>
+>> If the report is already addressed, let syzbot know by replying with:
+>> #syz fix: exact-commit-title
+>>
+>> If you want syzbot to run the reproducer, reply with:
+>> #syz test: git://repo/address.git branch-or-commit-hash
+>> If you attach or paste a git patch, syzbot will apply it before testing.
 
-Signed-off-by: Xin Ji <xji@analogixsemi.com>
----
- drivers/gpu/drm/bridge/analogix/anx7625.c | 25 ++++++++++++++++++-----
- 1 file changed, 20 insertions(+), 5 deletions(-)
+#syz test: git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git 
+mm-unstable
 
-diff --git a/drivers/gpu/drm/bridge/analogix/anx7625.c b/drivers/gpu/drm/bridge/analogix/anx7625.c
-index a2675b121fe4..a75f519ddcb8 100644
---- a/drivers/gpu/drm/bridge/analogix/anx7625.c
-+++ b/drivers/gpu/drm/bridge/analogix/anx7625.c
-@@ -861,6 +861,22 @@ static int anx7625_hdcp_disable(struct anx7625_data *ctx)
- 				 TX_HDCP_CTRL0, ~HARD_AUTH_EN & 0xFF);
- }
- 
-+static void anx7625_hdcp_disable_and_update_cp(struct anx7625_data *ctx)
-+{
-+	struct device *dev = ctx->dev;
-+
-+	if (!ctx->connector)
-+		return;
-+
-+	anx7625_hdcp_disable(ctx);
-+
-+	ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
-+	drm_hdcp_update_content_protection(ctx->connector,
-+					   ctx->hdcp_cp);
-+
-+	dev_dbg(dev, "update CP to UNDESIRE\n");
-+}
-+
- static int anx7625_hdcp_enable(struct anx7625_data *ctx)
- {
- 	u8 bcap;
-@@ -2165,11 +2181,8 @@ static int anx7625_connector_atomic_check(struct anx7625_data *ctx,
- 			dev_err(dev, "current CP is not ENABLED\n");
- 			return -EINVAL;
- 		}
--		anx7625_hdcp_disable(ctx);
--		ctx->hdcp_cp = DRM_MODE_CONTENT_PROTECTION_UNDESIRED;
--		drm_hdcp_update_content_protection(ctx->connector,
--						   ctx->hdcp_cp);
--		dev_dbg(dev, "update CP to UNDESIRE\n");
-+
-+		anx7625_hdcp_disable_and_update_cp(ctx);
- 	}
- 
- 	if (cp == DRM_MODE_CONTENT_PROTECTION_ENABLED) {
-@@ -2449,6 +2462,8 @@ static void anx7625_bridge_atomic_disable(struct drm_bridge *bridge,
- 
- 	dev_dbg(dev, "drm atomic disable\n");
- 
-+	anx7625_hdcp_disable_and_update_cp(ctx);
-+
- 	ctx->connector = NULL;
- 	anx7625_dp_stop(ctx);
- 
--- 
-2.25.1
+diff --git a/mm/memory.c b/mm/memory.c
+index 1fc1f14839916..15f058f5091b6 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -7014,7 +7014,7 @@ static struct kmem_cache *page_ptl_cachep;
+  void __init ptlock_cache_init(void)
+  {
+         page_ptl_cachep = kmem_cache_create("page->ptl", 
+sizeof(spinlock_t), 0,
+-                       SLAB_PANIC, NULL);
++                       SLAB_PANIC|SLAB_TYPESAFE_BY_RCU, NULL);
+  }
 
+  bool ptlock_alloc(struct ptdesc *ptdesc)
+
+>>
+>> If you want to overwrite report's subsystems, reply with:
+>> #syz set subsystems: new-subsystem
+>> (See the list of subsystem names on the web dashboard)
+>>
+>> If the report is a duplicate of another one, reply with:
+>> #syz dup: exact-subject-of-another-report
+>>
+>> If you want to undo deduplication, reply with:
+>> #syz undup
 
