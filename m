@@ -1,522 +1,120 @@
-Return-Path: <linux-kernel+bounces-437034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 752259E8E4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:02:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB3579E8CDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:01:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE46165366
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF67280FD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843A621660F;
-	Mon,  9 Dec 2024 08:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e+3dAamM"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD52218D656;
+	Mon,  9 Dec 2024 08:00:56 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7281C215F59
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:56:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE14F189B85;
+	Mon,  9 Dec 2024 08:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734592; cv=none; b=bLZQsTYKdLCXqWAHbn+ZQBaCjaRKlG23s0hUaI+SHZLmRLXS+EkIEcfM/Gveh5FnP4whg2BlEhUBjS+Iu6Jk7cq6663EQHr8RGuj5u0YX7Mo1ipIWKMJUKcdNDQ5mOpi18Q1uFi/IV00bDbm7VE5RQ8aP2O0pUlFgHTGB9JI0vE=
+	t=1733731256; cv=none; b=BSYMlFA9psuOC7U1qk547giZdp8GChjrgenb2/v5TJFMc7jinLQ0oti3LT+avpL+2v3OzORYvaL+IlqYh4RbLLCSisvX3kXTtEEKaU2pvUdyasAEqki4pm/ESzNiD76n9DLBUGZ13lRfc+aWUtLv1jMAqEzU22+zuoIjpxyy5I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734592; c=relaxed/simple;
-	bh=rwGCj6H6zmbVBwIQZldV2ZrhpgSz4a7JnapYyDmrEgE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fXeEZZ5BXYCOIVJ7R7LoSuhjwhUuoFL33XhfqQIW7Op8uoKKSaqkhDURzlP8vnoiVFojE4XCJqsssUog3iXEzsT48hgV4cC+JTtAOBIirHLLAStEXUti3Qj0lCqq1i5jyM48ZT3/tfdE4tBkxjWBYBm1JK6ctP8huoGp5d8E19c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e+3dAamM; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6eeca49d8baso31175487b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 00:56:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733734589; x=1734339389; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=EhK1NpvQPDm7PNhwk+RkV2qz6pZANllkUePKrhOwToE=;
-        b=e+3dAamMKLnBVLgXsJty6yLKe6TY9Wf3MKsfcLUPYOgq5bgTm1ePwFFvcHmH3uIh4n
-         H9AKQMgbwf1PpgE4IWPfL7wQWTcxce/afZuiDeVC356XvPeMIjPNduE88XalQvXCmVKn
-         UItxiLsZqq/kenLL7MMZAd3z668g01eF3mJsw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733734589; x=1734339389;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=EhK1NpvQPDm7PNhwk+RkV2qz6pZANllkUePKrhOwToE=;
-        b=SEkvVRa7p+zXm4to+bxPS5gpcT4ijyclGPBcYPsjPQdiiWg8L8CDu/pa6Vxgeuskq9
-         R//ugfp1+VsiN0uhCaMcuFkz5QKBKNZd+WzpDHZzkkul5Cuom0q2ZS7o480QvocfsJsi
-         N+Dsuf2V41PDwpCbnA30RqyMgLh/97pTXkdKeGfc1g0xUqyRLoO4cl75Onzd25z1vbcq
-         D0jhLKofF3rVu1NhJBa44oYqlXtdsZgnmrYJm0Hb6ezMus0PCpGOL0G+ZzdS7yLqcXRs
-         aXdbC68R5ou0h42zrJAOKYPx+njB0xpHHvWKPvlzb+pDYy/I7yby7KnR3Qpavz0Nzy3I
-         4Lsw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/vjNcvj8wYpL3S8/GBVAM7JqzODy92b69Li/Pc2b6NZZbicHAerLBWEHiVUwPwOrf9ro67VZmu9Dsz1g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc1iBhQQ7yab6JTcvLrnpQ1qCJDsZaYcGFC48y0mUjDvL7/398
-	wczrBXhbBv6ry9zlE3paASbM2Sh7AyFjitoAl6oFL+mi5rXFEb4I6OeNU136h/6kpadTL2dNnkG
-	L43UwdJhgXNunplXQJpQhHO55KII90tP8In0BFXqpKVlSFYDczw==
-X-Gm-Gg: ASbGncvYU2AToJteBcV6BH+hn6qwRarXjLtiFHSVYgk/WGTPOsbUbRGa+Foxwg+1UVP
-	l5qi/RNRIj6abLfXOt94mNE2wOe8BVIw=
-X-Google-Smtp-Source: AGHT+IG2g6DRS6v3eO4hr+YxWggXdBc83Kts7p5uaoFCAa8dOKzDXT8Nnkt8bCwLpG1zK0sZdVyp+GQXHWafbWDmWiQ=
-X-Received: by 2002:a05:690c:7082:b0:6ee:40f0:ddc9 with SMTP id
- 00721157ae682-6efe38e7561mr90376827b3.12.1733734589409; Mon, 09 Dec 2024
- 00:56:29 -0800 (PST)
+	s=arc-20240116; t=1733731256; c=relaxed/simple;
+	bh=kVo6a6DxVmOCyCoM54sp8e3Cs5dhcsi76qwqIuAEqeg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BKIMcN++7AQHvcuwQz/3Mx7XIT/czjL7F4SruAegOFoV1mq6adN3Tph1OW5iOOcbvZWjexca3d0Ostj/cA4W1Lj+jxtzcY7XK1O3Ko7+P8CxtDzK+/8Lie0LtUKOx/Z1Hc5oxjYWA7PbtVjDA4tAynVPZqCmq5XtsHWGfca5RLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B96NnQX026036;
+	Mon, 9 Dec 2024 08:00:25 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4x93q0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Mon, 09 Dec 2024 08:00:25 +0000 (GMT)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Mon, 9 Dec 2024 00:00:23 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Mon, 9 Dec 2024 00:00:20 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <pc@manguebit.com>, <gregkh@linuxfoundation.org>
+CC: <stable@vger.kernel.org>, <sfrench@samba.org>, <pc@cjr.nz>,
+        <lsahlber@redhat.com>, <sprasad@microsoft.com>, <tom@talpey.com>,
+        <linux-cifs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <samba-technical@lists.samba.org>
+Subject: [PATCH 6.1.y] smb: client: fix potential UAF in cifs_dump_full_key()
+Date: Mon, 9 Dec 2024 16:58:13 +0800
+Message-ID: <20241209085813.823573-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org> <20241114-uvc-roi-v15-9-64cfeb56b6f8@chromium.org>
-In-Reply-To: <20241114-uvc-roi-v15-9-64cfeb56b6f8@chromium.org>
-From: Yunke Cao <yunkec@chromium.org>
-Date: Mon, 9 Dec 2024 17:56:18 +0900
-Message-ID: <CAEDqmY7EN0B6mpbCEQ-f9mMb5He3=bGit_pLxFogpdbtC_BjrA@mail.gmail.com>
-Subject: Re: [PATCH v15 09/19] media: uvcvideo: Support any size for mapping get/set
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
-	Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: aBtpkx96t63i4Swm6i4ajnAlZCZkIIhD
+X-Proofpoint-ORIG-GUID: aBtpkx96t63i4Swm6i4ajnAlZCZkIIhD
+X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=6756a399 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=Li1AiuEPAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8 a=1_rInJw21EjIxf1COpsA:9
+ a=qGKPP_lnpMOaqR3bcYHU:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-09_05,2024-12-09_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 mlxscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
+ phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 spamscore=0
+ impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2411120000 definitions=main-2412090061
 
-Hi Ricardo,
+From: Paulo Alcantara <pc@manguebit.com>
 
-This patch looks good to me.
+[ Upstream commit 58acd1f497162e7d282077f816faa519487be045 ]
 
-Reviewed-by: Yunke Cao <yunkec@google.com>
+Skip sessions that are being teared down (status == SES_EXITING) to
+avoid UAF.
 
-Thanks,
-Yunke
-
-
-On Fri, Nov 15, 2024 at 4:10=E2=80=AFAM Ricardo Ribalda <ribalda@chromium.o=
-rg> wrote:
->
-> Right now, we only support mappings for v4l2 controls with a max size of
-> s32. This patch modifies the prototype of get/set so it can support any
-> size.
->
-> This is done to prepare for compound controls.
->
-> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 183 +++++++++++++++++++++++++++------=
-------
->  drivers/media/usb/uvc/uvcvideo.h |   8 +-
->  2 files changed, 130 insertions(+), 61 deletions(-)
->
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc=
-_ctrl.c
-> index d6afa131a5e1..6d5167eb368d 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -367,6 +367,22 @@ static const u32 uvc_control_classes[] =3D {
->
->  static const int exposure_auto_mapping[] =3D { 2, 1, 4, 8 };
->
-> +static s32 uvc_mapping_get_s32(struct uvc_control_mapping *mapping,
-> +                              u8 query, const void *data_in)
-> +{
-> +       s32 data_out;
-> +
-> +       mapping->get(mapping, query, data_in, sizeof(data_out), &data_out=
-);
-> +
-> +       return data_out;
-> +}
-> +
-> +static void uvc_mapping_set_s32(struct uvc_control_mapping *mapping,
-> +                               s32 data_in, void *data_out)
-> +{
-> +       mapping->set(mapping, sizeof(data_in), &data_in, data_out);
-> +}
-> +
->  /*
->   * This function translates the V4L2 menu index @idx, as exposed to user=
-space as
->   * the V4L2 control value, to the corresponding UVC control value used b=
-y the
-> @@ -405,58 +421,93 @@ uvc_mapping_get_menu_name(const struct uvc_control_=
-mapping *mapping, u32 idx)
->         return v4l2_ctrl_get_menu(mapping->id)[idx];
->  }
->
-> -static s32 uvc_ctrl_get_zoom(struct uvc_control_mapping *mapping,
-> -       u8 query, const u8 *data)
-> +static int uvc_ctrl_get_zoom(struct uvc_control_mapping *mapping, u8 que=
-ry,
-> +                            const void *uvc_in, size_t v4l2_size,
-> +                            void *v4l2_out)
->  {
-> -       s8 zoom =3D (s8)data[0];
-> +       u8 value =3D ((u8 *)uvc_in)[2];
-> +       s8 sign =3D ((s8 *)uvc_in)[0];
-> +       s32 *out =3D v4l2_out;
-> +
-> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
-> +               return -EINVAL;
->
->         switch (query) {
->         case UVC_GET_CUR:
-> -               return (zoom =3D=3D 0) ? 0 : (zoom > 0 ? data[2] : -data[=
-2]);
-> +               *out =3D (sign =3D=3D 0) ? 0 : (sign > 0 ? value : -value=
-);
-> +               return 0;
->
->         case UVC_GET_MIN:
->         case UVC_GET_MAX:
->         case UVC_GET_RES:
->         case UVC_GET_DEF:
->         default:
-> -               return data[2];
-> +               *out =3D value;
-> +               return 0;
->         }
->  }
->
-> -static void uvc_ctrl_set_zoom(struct uvc_control_mapping *mapping,
-> -       s32 value, u8 *data)
-> +static int uvc_ctrl_set_zoom(struct uvc_control_mapping *mapping,
-> +                            size_t v4l2_size, const void *v4l2_in,
-> +                            void *uvc_out)
->  {
-> -       data[0] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
-> -       data[2] =3D min((int)abs(value), 0xff);
-> +       u8 *out =3D uvc_out;
-> +       s32 value;
-> +
-> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
-> +               return -EINVAL;
-> +
-> +       value =3D *(u32 *)v4l2_in;
-> +       out[0] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
-> +       out[2] =3D min_t(int, abs(value), 0xff);
-> +
-> +       return 0;
->  }
->
-> -static s32 uvc_ctrl_get_rel_speed(struct uvc_control_mapping *mapping,
-> -       u8 query, const u8 *data)
-> +static int uvc_ctrl_get_rel_speed(struct uvc_control_mapping *mapping,
-> +                                 u8 query, const void *uvc_in,
-> +                                 size_t v4l2_size, void *v4l2_out)
->  {
->         unsigned int first =3D mapping->offset / 8;
-> -       s8 rel =3D (s8)data[first];
-> +       u8 value =3D ((u8 *)uvc_in)[first + 1];
-> +       s8 sign =3D ((s8 *)uvc_in)[first];
-> +       s32 *out =3D v4l2_out;
-> +
-> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
-> +               return -EINVAL;
->
->         switch (query) {
->         case UVC_GET_CUR:
-> -               return (rel =3D=3D 0) ? 0 : (rel > 0 ? data[first+1]
-> -                                                : -data[first+1]);
-> +               *out =3D (sign =3D=3D 0) ? 0 : (sign > 0 ? value : -value=
-);
-> +               return 0;
->         case UVC_GET_MIN:
-> -               return -data[first+1];
-> +               *out =3D -value;
-> +               return 0;
->         case UVC_GET_MAX:
->         case UVC_GET_RES:
->         case UVC_GET_DEF:
->         default:
-> -               return data[first+1];
-> +               *out =3D value;
-> +               return 0;
->         }
->  }
->
-> -static void uvc_ctrl_set_rel_speed(struct uvc_control_mapping *mapping,
-> -       s32 value, u8 *data)
-> +static int uvc_ctrl_set_rel_speed(struct uvc_control_mapping *mapping,
-> +                                 size_t v4l2_size, const void *v4l2_in,
-> +                                 void *uvc_out)
->  {
->         unsigned int first =3D mapping->offset / 8;
-> +       u8 *out =3D uvc_out;
-> +       s32 value;
-> +
-> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
-> +               return -EINVAL;
->
-> -       data[first] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
-> -       data[first+1] =3D min_t(int, abs(value), 0xff);
-> +       value =3D *(u32 *)v4l2_in;
-> +       out[first] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
-> +       out[first + 1] =3D min_t(int, abs(value), 0xff);
-> +
-> +       return 0;
->  }
->
->  static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_limi=
-ted =3D {
-> @@ -887,14 +938,20 @@ static s32 uvc_menu_to_v4l2_menu(struct uvc_control=
-_mapping *mapping, s32 val)
->   * a signed 32bit integer. Sign extension will be performed if the mappi=
-ng
->   * references a signed data type.
->   */
-> -static s32 uvc_get_le_value(struct uvc_control_mapping *mapping,
-> -       u8 query, const u8 *data)
-> +static int uvc_get_le_value(struct uvc_control_mapping *mapping,
-> +                           u8 query, const void *uvc_in, size_t v4l2_siz=
-e,
-> +                           void *v4l2_out)
->  {
-> -       int bits =3D mapping->size;
->         int offset =3D mapping->offset;
-> +       int bits =3D mapping->size;
-> +       const u8 *data =3D uvc_in;
-> +       s32 *out =3D v4l2_out;
->         s32 value =3D 0;
->         u8 mask;
->
-> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
-> +               return -EINVAL;
-> +
->         data +=3D offset / 8;
->         offset &=3D 7;
->         mask =3D ((1LL << bits) - 1) << offset;
-> @@ -916,29 +973,40 @@ static s32 uvc_get_le_value(struct uvc_control_mapp=
-ing *mapping,
->                 value |=3D -(value & (1 << (mapping->size - 1)));
->
->         /* If it is a menu, convert from uvc to v4l2. */
-> -       if (mapping->v4l2_type !=3D V4L2_CTRL_TYPE_MENU)
-> -               return value;
-> +       if (mapping->v4l2_type !=3D V4L2_CTRL_TYPE_MENU) {
-> +               *out =3D value;
-> +               return 0;
-> +       }
->
->         switch (query) {
->         case UVC_GET_CUR:
->         case UVC_GET_DEF:
-> -               return uvc_menu_to_v4l2_menu(mapping, value);
-> +               *out =3D uvc_menu_to_v4l2_menu(mapping, value);
-> +               return 0;
->         }
->
-> -       return value;
-> +       *out =3D value;
-> +       return 0;
->  }
->
->  /*
->   * Set the bit string specified by mapping->offset and mapping->size
->   * in the little-endian data stored at 'data' to the value 'value'.
->   */
-> -static void uvc_set_le_value(struct uvc_control_mapping *mapping,
-> -       s32 value, u8 *data)
-> +static int uvc_set_le_value(struct uvc_control_mapping *mapping,
-> +                           size_t v4l2_size, const void *v4l2_in,
-> +                           void *uvc_out)
->  {
-> -       int bits =3D mapping->size;
->         int offset =3D mapping->offset;
-> +       int bits =3D mapping->size;
-> +       u8 *data =3D uvc_out;
-> +       s32 value;
->         u8 mask;
->
-> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
-> +               return -EINVAL;
-> +
-> +       value =3D *(s32 *)v4l2_in;
->         if (mapping->v4l2_type =3D=3D V4L2_CTRL_TYPE_MENU)
->                 value =3D uvc_mapping_get_menu_value(mapping, value);
->         /*
-> @@ -960,6 +1028,8 @@ static void uvc_set_le_value(struct uvc_control_mapp=
-ing *mapping,
->                 bits -=3D 8 - offset;
->                 offset =3D 0;
->         }
-> +
-> +       return 0;
->  }
->
->  /* ---------------------------------------------------------------------=
+Cc: stable@vger.kernel.org
+Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
 ---
-> @@ -1141,8 +1211,8 @@ static int __uvc_ctrl_get(struct uvc_video_chain *c=
-hain,
->         if (ret < 0)
->                 return ret;
->
-> -       *value =3D mapping->get(mapping, UVC_GET_CUR,
-> -                             uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT))=
-;
-> +       *value =3D uvc_mapping_get_s32(mapping, UVC_GET_CUR,
-> +                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CU=
-RRENT));
->
->         return 0;
->  }
-> @@ -1275,12 +1345,12 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control=
- *ctrl,
->          * as supported.
->          */
->         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
-> -               return mapping->get(mapping, UVC_GET_RES,
-> -                                   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES=
-));
-> +               return uvc_mapping_get_s32(mapping, UVC_GET_RES,
-> +                                          uvc_ctrl_data(ctrl, UVC_CTRL_D=
-ATA_RES));
->
->         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
-> -               return mapping->get(mapping, UVC_GET_MAX,
-> -                                   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX=
-));
-> +               return uvc_mapping_get_s32(mapping, UVC_GET_MAX,
-> +                                          uvc_ctrl_data(ctrl, UVC_CTRL_D=
-ATA_MAX));
->
->         return ~0;
->  }
-> @@ -1324,10 +1394,9 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_=
-chain *chain,
->                         return ret;
->         }
->
-> -       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
-> -               v4l2_ctrl->default_value =3D mapping->get(mapping, UVC_GE=
-T_DEF,
-> -                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF));
-> -       }
-> +       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF)
-> +               v4l2_ctrl->default_value =3D uvc_mapping_get_s32(mapping,
-> +                               UVC_GET_DEF, uvc_ctrl_data(ctrl, UVC_CTRL=
-_DATA_DEF));
->
->         switch (mapping->v4l2_type) {
->         case V4L2_CTRL_TYPE_MENU:
-> @@ -1359,16 +1428,16 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video=
-_chain *chain,
->         }
->
->         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)
-> -               v4l2_ctrl->minimum =3D mapping->get(mapping, UVC_GET_MIN,
-> -                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MI=
-N));
-> +               v4l2_ctrl->minimum =3D uvc_mapping_get_s32(mapping, UVC_G=
-ET_MIN,
-> +                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
->
->         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
-> -               v4l2_ctrl->maximum =3D mapping->get(mapping, UVC_GET_MAX,
-> -                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MA=
-X));
-> +               v4l2_ctrl->maximum =3D uvc_mapping_get_s32(mapping, UVC_G=
-ET_MAX,
-> +                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
->
->         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
-> -               v4l2_ctrl->step =3D mapping->get(mapping, UVC_GET_RES,
-> -                                 uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES))=
-;
-> +               v4l2_ctrl->step =3D uvc_mapping_get_s32(mapping, UVC_GET_=
-RES,
-> +                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
->
->         return 0;
->  }
-> @@ -1581,7 +1650,7 @@ void uvc_ctrl_status_event(struct uvc_video_chain *=
-chain,
->         ctrl->handle =3D NULL;
->
->         list_for_each_entry(mapping, &ctrl->info.mappings, list) {
-> -               s32 value =3D mapping->get(mapping, UVC_GET_CUR, data);
-> +               s32 value =3D uvc_mapping_get_s32(mapping, UVC_GET_CUR, d=
-ata);
->
->                 /*
->                  * handle may be NULL here if the device sends auto-updat=
-e
-> @@ -1925,8 +1994,8 @@ int uvc_ctrl_get(struct uvc_video_chain *chain, u32=
- which,
->                         if (ret < 0)
->                                 return ret;
->                 }
-> -               xctrl->value =3D mapping->get(mapping, UVC_GET_DEF,
-> -                                           uvc_ctrl_data(ctrl, UVC_CTRL_=
-DATA_DEF));
-> +               xctrl->value =3D uvc_mapping_get_s32(mapping, UVC_GET_DEF=
-,
-> +                                                  uvc_ctrl_data(ctrl, UV=
-C_CTRL_DATA_DEF));
->                 return 0;
->         }
->
-> @@ -1963,12 +2032,12 @@ int uvc_ctrl_set(struct uvc_fh *handle,
->                                 return ret;
->                 }
->
-> -               min =3D mapping->get(mapping, UVC_GET_MIN,
-> -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN)=
-);
-> -               max =3D mapping->get(mapping, UVC_GET_MAX,
-> -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX)=
-);
-> -               step =3D mapping->get(mapping, UVC_GET_RES,
-> -                                   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES=
-));
-> +               min =3D uvc_mapping_get_s32(mapping, UVC_GET_MIN,
-> +                                         uvc_ctrl_data(ctrl, UVC_CTRL_DA=
-TA_MIN));
-> +               max =3D uvc_mapping_get_s32(mapping, UVC_GET_MAX,
-> +                                         uvc_ctrl_data(ctrl, UVC_CTRL_DA=
-TA_MAX));
-> +               step =3D uvc_mapping_get_s32(mapping, UVC_GET_RES,
-> +                                          uvc_ctrl_data(ctrl, UVC_CTRL_D=
-ATA_RES));
->                 if (step =3D=3D 0)
->                         step =3D 1;
->
-> @@ -2047,8 +2116,8 @@ int uvc_ctrl_set(struct uvc_fh *handle,
->                        ctrl->info.size);
->         }
->
-> -       mapping->set(mapping, value,
-> -               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
-> +       uvc_mapping_set_s32(mapping, value,
-> +                           uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
->
->         if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
->                 ctrl->handle =3D handle;
-> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvc=
-video.h
-> index 6ebaabd11443..3d32a56c5ff8 100644
-> --- a/drivers/media/usb/uvc/uvcvideo.h
-> +++ b/drivers/media/usb/uvc/uvcvideo.h
-> @@ -131,10 +131,10 @@ struct uvc_control_mapping {
->         const struct uvc_control_mapping *(*filter_mapping)
->                                 (struct uvc_video_chain *chain,
->                                 struct uvc_control *ctrl);
-> -       s32 (*get)(struct uvc_control_mapping *mapping, u8 query,
-> -                  const u8 *data);
-> -       void (*set)(struct uvc_control_mapping *mapping, s32 value,
-> -                   u8 *data);
-> +       int (*get)(struct uvc_control_mapping *mapping, u8 query,
-> +                  const void *uvc_in, size_t v4l2_size, void *v4l2_out);
-> +       int (*set)(struct uvc_control_mapping *mapping, size_t v4l2_size,
-> +                  const void *v4l2_in, void *uvc_out);
->  };
->
->  struct uvc_control {
->
-> --
-> 2.47.0.338.g60cca15819-goog
->
+ fs/smb/client/ioctl.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
+index ae9905e2b9d4..7402070b7a06 100644
+--- a/fs/smb/client/ioctl.c
++++ b/fs/smb/client/ioctl.c
+@@ -246,7 +246,9 @@ static int cifs_dump_full_key(struct cifs_tcon *tcon, struct smb3_full_key_debug
+ 		spin_lock(&cifs_tcp_ses_lock);
+ 		list_for_each_entry(server_it, &cifs_tcp_ses_list, tcp_ses_list) {
+ 			list_for_each_entry(ses_it, &server_it->smb_ses_list, smb_ses_list) {
+-				if (ses_it->Suid == out.session_id) {
++				spin_lock(&ses_it->ses_lock);
++				if (ses_it->ses_status != SES_EXITING &&
++				    ses_it->Suid == out.session_id) {
+ 					ses = ses_it;
+ 					/*
+ 					 * since we are using the session outside the crit
+@@ -254,9 +256,11 @@ static int cifs_dump_full_key(struct cifs_tcon *tcon, struct smb3_full_key_debug
+ 					 * so increment its refcount
+ 					 */
+ 					ses->ses_count++;
++					spin_unlock(&ses_it->ses_lock);
+ 					found = true;
+ 					goto search_end;
+ 				}
++				spin_unlock(&ses_it->ses_lock);
+ 			}
+ 		}
+ search_end:
+-- 
+2.25.1
+
 
