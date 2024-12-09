@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-437641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3285A9E9679
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:22:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54CF19E966A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2EC1163BAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:19:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6AC16375C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:17:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4360522FE29;
-	Mon,  9 Dec 2024 13:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF3B21B8F5;
+	Mon,  9 Dec 2024 13:08:04 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E006D1C5CB2
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050411C5CAA
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749685; cv=none; b=Pl8EdFZ9cQNKFjVSLocgaroJDYUJH4acCIzUe+4MpCmkwbnIFYEyisuSt0c5CuOF9yx4CZo2jZgLfCvVUmDPbV1LouaD8WXAoY32oRQ1lteCcoc2iXOAGveDFQKn9anCRTMlz+6K4Z9mTWz4PueK7Rhm4VulQ2ZbT1unAzFGvMc=
+	t=1733749683; cv=none; b=eN9OF62c6Mx/QFSyDl2OkvHo3aD6TJojTD5NcOe9VgMOR+j1AsVQ7my4vPxjQL7MzRerFT2+bjR/itae2+YNw4c2rKBFrD4KEJDHeEzs9VKnsmjlscCbCQhEMPOUO6zCrqr06dF5qUpHLeVQ/aogs4t3j8qilUPJ8L1xKEpPb1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749685; c=relaxed/simple;
-	bh=R4/0zDSvXQ7j2t6w8Tqa4xvfeIvEbrVq6ZRm2VJWwpg=;
+	s=arc-20240116; t=1733749683; c=relaxed/simple;
+	bh=kCCfcs5qWKbWNrkYGX7ewBGKk+ZoMqqsF7UlhigcN4o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M8HksBdbfPIXC0RKB9uVCYBsSl6YYZDAe0BdIYY9+vIpC3Lh6vGr7mhkTbs/tL6vncjTg1TNMQt6I/eed3uNyxSzF93QXN+X/ho6OsofT6ujvKvPubsyAnYHGoyspVTg1RHr5ivd6MKTDc9g/GLod5VDfDJlrvPh1e5Dz834g5o=
+	 MIME-Version; b=afXsowliHGqJL8q9MiamwVPhOo/vUavTSJ7eL1Vlb956SeUvaqBbSHGg8p068HLJO5vXogBI9wCAF76FAMN6DGGvjY8rb75cOIfNIoen4q9Xm18FIAE6eLv/htDLBHR/VSY4U6ahiV5HkItoHWpuhtTWymnq4YujmBcDBa28kgI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUP-0004RH-PL; Mon, 09 Dec 2024 14:07:53 +0100
+	id 1tKdUP-0004RE-PK; Mon, 09 Dec 2024 14:07:53 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUN-002W7T-24;
+	id 1tKdUN-002W7V-1x;
 	Mon, 09 Dec 2024 14:07:52 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUO-002wy5-0u;
+	id 1tKdUO-002wyG-0x;
 	Mon, 09 Dec 2024 14:07:52 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -56,9 +56,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	netdev@vger.kernel.org,
 	UNGLinuxDriver@microchip.com,
 	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v1 08/11] net: usb: lan78xx: Use function-specific label in lan78xx_mac_reset
-Date: Mon,  9 Dec 2024 14:07:48 +0100
-Message-Id: <20241209130751.703182-9-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v1 09/11] net: usb: lan78xx: Improve error handling in lan78xx_phy_wait_not_busy
+Date: Mon,  9 Dec 2024 14:07:49 +0100
+Message-Id: <20241209130751.703182-10-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241209130751.703182-1-o.rempel@pengutronix.de>
 References: <20241209130751.703182-1-o.rempel@pengutronix.de>
@@ -74,59 +74,38 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Rename the generic `done` label to the function-specific
-`mac_reset_done` label in `lan78xx_mac_reset`. This improves clarity and
-aligns with best practices for error handling and cleanup labels.
+Update `lan78xx_phy_wait_not_busy` to forward errors from
+`lan78xx_read_reg` instead of overwriting them with `-EIO`. Replace
+`-EIO` with `-ETIMEDOUT` for timeout cases, providing more specific and
+appropriate error codes.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/net/usb/lan78xx.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/net/usb/lan78xx.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index c66e404f51ac..fdeb95db529b 100644
+index fdeb95db529b..9852526be002 100644
 --- a/drivers/net/usb/lan78xx.c
 +++ b/drivers/net/usb/lan78xx.c
-@@ -1604,16 +1604,16 @@ static int lan78xx_mac_reset(struct lan78xx_net *dev)
- 	 */
- 	ret = lan78xx_phy_wait_not_busy(dev);
- 	if (ret < 0)
--		goto done;
-+		goto mac_reset_done;
+@@ -961,14 +961,14 @@ static int lan78xx_phy_wait_not_busy(struct lan78xx_net *dev)
  
- 	ret = lan78xx_read_reg(dev, MAC_CR, &val);
- 	if (ret < 0)
--		goto done;
-+		goto mac_reset_done;
- 
- 	val |= MAC_CR_RST_;
- 	ret = lan78xx_write_reg(dev, MAC_CR, val);
- 	if (ret < 0)
--		goto done;
-+		goto mac_reset_done;
- 
- 	/* Wait for the reset to complete before allowing any further
- 	 * MAC register accesses otherwise the MAC may lock up.
-@@ -1621,16 +1621,16 @@ static int lan78xx_mac_reset(struct lan78xx_net *dev)
  	do {
- 		ret = lan78xx_read_reg(dev, MAC_CR, &val);
- 		if (ret < 0)
--			goto done;
-+			goto mac_reset_done;
+ 		ret = lan78xx_read_reg(dev, MII_ACC, &val);
+-		if (unlikely(ret < 0))
+-			return -EIO;
++		if (ret < 0)
++			return ret;
  
- 		if (!(val & MAC_CR_RST_)) {
- 			ret = 0;
--			goto done;
-+			goto mac_reset_done;
- 		}
+ 		if (!(val & MII_ACC_MII_BUSY_))
+ 			return 0;
  	} while (!time_after(jiffies, start_time + HZ));
  
- 	ret = -ETIMEDOUT;
--done:
-+mac_reset_done:
- 	mutex_unlock(&dev->phy_mutex);
+-	return -EIO;
++	return -ETIMEDOUT;
+ }
  
- 	return ret;
+ static inline u32 mii_access(int id, int index, int read)
 -- 
 2.39.5
 
