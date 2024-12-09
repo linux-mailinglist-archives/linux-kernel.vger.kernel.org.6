@@ -1,118 +1,148 @@
-Return-Path: <linux-kernel+bounces-436628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E036E9E88CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:00:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3B269E88D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:02:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E29AA1884CD5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:00:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CED57163870
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1667B1D6AA;
-	Mon,  9 Dec 2024 01:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZUYvDpaM"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C81121EB3D;
+	Mon,  9 Dec 2024 01:02:24 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA25FBA3D;
-	Mon,  9 Dec 2024 01:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 324C6BA3D;
+	Mon,  9 Dec 2024 01:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733706047; cv=none; b=tVzZf77RtHoDR3R5pbvYxkqobJC9nR/2u6Rk54BeqtSAkXsAA1clkY01qcBwqdNbirlZAvt7wbOjiJDCrxrUkyIt+i6ZzXMhkGymCbjh/VwcU84bJgw895aSGQIIe/Bpyg/fJTh4Bxz1j7qf/qja7uhzYLwyHzpBfCCtvHkFCiE=
+	t=1733706144; cv=none; b=tZCczhp9RzMoU03vkmt8gsj8qm/LmwktCicJPkk2YtvprTZOkXHDyT3daFhxceB8wKbXhakkBAFs5kcy0/44btajq4zG4v7z9fBZsl2twdSQ8zEPE6UDXpr4Bs6qhZ4tLhascHeEyllg62moVkD5lCd2ri4iu0Lihs6kSo1fh14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733706047; c=relaxed/simple;
-	bh=i70/ysfY/A2S3VR7v4jumMC5u/oBkDepJwnpr0n5f7I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=TjTsDx9Bc5h3hKtFmqMp/UJNeDS0wxowAOi1/77X2HwmAfQ6i/nU1yjXAPORLiRsygPGm6q/LeaX5tLfUoz2uyPIYWKXfge8+H2cIECAQnsPkuwK0EqrzKo6Ibl1g7d0+xNceiyESwr63eOI5TyYVq91Z1Zuygwqtx7am3WYgzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZUYvDpaM; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9e44654ae3so615314966b.1;
-        Sun, 08 Dec 2024 17:00:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733706044; x=1734310844; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i70/ysfY/A2S3VR7v4jumMC5u/oBkDepJwnpr0n5f7I=;
-        b=ZUYvDpaMEl8aSqjecBZ2W7Rpie59A/1qcRBCNSidutPQOGSoYt0FrnDgr6AVNFEAov
-         jQUqWjpoY5zqoM7GeZjuebHw71u52/4wpbEe7TPtuAbO8KmCafu3KQHLtr3DCrOxCk1l
-         R5e3h/1Vv8p9cK5gEtWR875yBYkGx+9C4WtuTmDpZEXRL3/P0TZjVpyrDJkts9bjHhD9
-         CMXOgjOUEx6XIWApGUmoiw2+/l3q0HfYFki09z3YAZ6rDMQPs0xWfPWFfY1jKU6jA7GV
-         W+YnDt+pm3BZauAJiBCg2pQ55Ds3lLHky3/ESd/+QLcKfNXUYKzJslHjy0iWzKbgSkYc
-         PohA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733706044; x=1734310844;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=i70/ysfY/A2S3VR7v4jumMC5u/oBkDepJwnpr0n5f7I=;
-        b=GfV6uH0dhFV1HF0UBlkEpicJ35uC8oCXxagXDSdJ9Mt52z0PFjQIUkzbibnjhUlL1P
-         TC83TolGGtVtSxfECteruCgMO4shzvszUGA2q/X1596UAIhtRe4JvDhhDb0aHx1SJoME
-         sjUdSv+fPEvZYlKe3EtGDQEEzZ7JFw1iDI4fyGp7hpQMoEGW3EIGIGIJYEXTn5gPWN2z
-         p6InGjf60ukqklttNaPyPrmeveJcz20tNbIzYhXVqg+4QRPap0WhjG3Wk0Lpe/Lyqcbk
-         SL/AfWR74US6Pkj/kcETisMp8d5sCoEu8Ivml49r3WGOHnGGcMsiq/a2TRNNfz78KYlw
-         f+Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVQcQmE4nmmsonrPMZXSuQh31FPVltkGr8vLN+wurOGD9u1j5enYZT8ZE2nf7WCJKtG1b6XrTUiU8GkXPA=@vger.kernel.org, AJvYcCXPSAe0OFMgn1fXW0L/OGoMIXQRbl2lWRA80YU3HcU7y/ULxcdS9kaaa+ojbuZWf5Df9wUdvMc1c4Ni1zhK@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxdMTy34vx0Zdem9mVZHELITVmU7bycbA10hctkZ+pLNP0uOte
-	ZQw2GRbi5TbwR1rls13xgizMbZwCvoWo2h/+a7kV1eVhPn4Fiifo
-X-Gm-Gg: ASbGncvEdXV7ktwm4ffA5bXx4tFs2AJ1Kxds77sEF7JTKCHeIsdA8awBGTLlqHUuzsD
-	u20VeasNvoy+mcI6NGjAZp0rdxqHQmjjrGNoOXJw6ZxfZvYufTZC7xHxotYoCYmSdnEk+9s1tui
-	lWx+mx6H3vkRCtfDO82U8og08/S0nJnwkptxtWjSpphSn263ufIorCrEyimztLR1PU+cp00xsL1
-	hNSLOo5242yAOoQ1jjsqirIoJzRe+HOFWcmE61n4njmYbOKskkhpq0bfXm1H5tPj4g=
-X-Google-Smtp-Source: AGHT+IEp3zuRCqVGzrNP2Q1VU4DjC48s5kKrCsRaNkw5J3ld1biyCwbFSXinVJ0z23YdT1mtmxwF+g==
-X-Received: by 2002:a17:907:770c:b0:aa6:945c:452c with SMTP id a640c23a62f3a-aa6945c45e3mr712566b.45.1733706043997;
-        Sun, 08 Dec 2024 17:00:43 -0800 (PST)
-Received: from localhost.localdomain ([2a02:908:e842:bf20:64ca:fb51:d773:c8f9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa692846b85sm9618766b.127.2024.12.08.17.00.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 17:00:43 -0800 (PST)
-From: Ole Schuerks <ole0811sch@gmail.com>
-To: mcgrof@kernel.org
-Cc: deltaone@debian.org,
-	jan.sollmann@rub.de,
-	jude.gyimah@rub.de,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	masahiroy@kernel.org,
-	nathan@kernel.org,
-	nicolas@fjasle.eu,
-	ole0811sch@gmail.com,
-	thorsten.berger@rub.de
-Subject: Re: [PATCH v6 02/11] kbuild: Add list_size, list_at_index, list_for_each_from
-Date: Mon,  9 Dec 2024 02:00:19 +0100
-Message-Id: <20241209010019.52601-1-ole0811sch@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <Z1DjikoDzwIAID5T@bombadil.infradead.org>
-References: <Z1DjikoDzwIAID5T@bombadil.infradead.org>
+	s=arc-20240116; t=1733706144; c=relaxed/simple;
+	bh=D52OFMgBg4Z256sb/vOI6mkS0LaM7oD+kmYAWmgDhP0=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=IbOn6+kfuoW9sQpDWjioZzCjpGmCDMwXAgS6EMPyq+hTqxvAwySpf4/2R2driZK7ZQZDFgsuVbpj6XtmXwjiclP+AdJf1U6u6lVAIQNG48Q2bZJAeBNKpeSanXPRQ5/sXGMQ+sYOWBBTvTZSkVCGsHvqTGO/Zs2tDBxUyi0M8JY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Y63SZ1Gxtz21lmR;
+	Mon,  9 Dec 2024 09:00:30 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6DA0C18001B;
+	Mon,  9 Dec 2024 09:02:12 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Dec 2024 09:02:11 +0800
+Message-ID: <6274cc5a-375f-4009-bc3e-1b1063f298bb@huawei.com>
+Date: Mon, 9 Dec 2024 09:02:10 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <hkelam@marvell.com>
+Subject: Re: [PATCH V5 net-next 1/8] debugfs: Add debugfs_create_devm_dir()
+ helper
+To: Greg KH <gregkh@linuxfoundation.org>
+References: <20241206111629.3521865-1-shaojijie@huawei.com>
+ <20241206111629.3521865-2-shaojijie@huawei.com>
+ <2024120627-smudge-obsolete-efb6@gregkh>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <2024120627-smudge-obsolete-efb6@gregkh>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-> What's wrong with list_count_nodes()?=0D
-=0D
-> list_for_each_entry_from() exists on my tree on linux-next added=0D
-> through commit e229c2fb3370a ("[LIST]: Introduce=0D
-> list_for_each_entry_from") since v2.6.17, so since 2006.=0D
-=0D
-These macros only exist in include/linux/list.h, not in=0D
-scripts/include/list.h. My assumption was that the build system should only=
-=0D
-use scripts/include/list.h.=0D
-=0D
-> I'd just keep thsi internal to your code for now, and later if we really=
-=0D
-> want we can add this as a generic helper.=0D
-=0D
-Alright, the additions will be internals in v7.=0D
-=0D
-Best regards,=0D
-Ole Schuerks=0D
+
+on 2024/12/6 19:40, Greg KH wrote:
+> On Fri, Dec 06, 2024 at 07:16:22PM +0800, Jijie Shao wrote:
+>> Add debugfs_create_devm_dir() helper
+>>
+>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+>> ---
+>>   fs/debugfs/inode.c      | 36 ++++++++++++++++++++++++++++++++++++
+>>   include/linux/debugfs.h | 10 ++++++++++
+>>   2 files changed, 46 insertions(+)
+>>
+>> diff --git a/fs/debugfs/inode.c b/fs/debugfs/inode.c
+>> index 38a9c7eb97e6..f682c4952a27 100644
+>> --- a/fs/debugfs/inode.c
+>> +++ b/fs/debugfs/inode.c
+>> @@ -610,6 +610,42 @@ struct dentry *debugfs_create_dir(const char *name, struct dentry *parent)
+>>   }
+>>   EXPORT_SYMBOL_GPL(debugfs_create_dir);
+>>   
+>> +static void debugfs_remove_devm(void *dentry_rwa)
+>> +{
+>> +	struct dentry *dentry = dentry_rwa;
+>> +
+>> +	debugfs_remove(dentry);
+>> +}
+>> +
+>> +/**
+>> + * debugfs_create_devm_dir - Managed debugfs_create_dir()
+>> + * @dev: Device that owns the action
+>> + * @name: a pointer to a string containing the name of the directory to
+>> + *        create.
+>> + * @parent: a pointer to the parent dentry for this file.  This should be a
+>> + *          directory dentry if set.  If this parameter is NULL, then the
+>> + *          directory will be created in the root of the debugfs filesystem.
+>> + * Managed debugfs_create_dir(). dentry will automatically be remove on
+>> + * driver detach.
+>> + */
+>> +struct dentry *debugfs_create_devm_dir(struct device *dev, const char *name,
+>> +				       struct dentry *parent)
+>> +{
+>> +	struct dentry *dentry;
+>> +	int ret;
+>> +
+>> +	dentry = debugfs_create_dir(name, parent);
+>> +	if (IS_ERR(dentry))
+>> +		return dentry;
+>> +
+>> +	ret = devm_add_action_or_reset(dev, debugfs_remove_devm, dentry);
+>> +	if (ret)
+>> +		ERR_PTR(ret);
+> You don't clean up the directory you created if this failed?  Why not?
+
+Don't need to clean up.
+in devm_add_action_or_reset(), if failed, will call action: debugfs_remove_devm(),
+So, not clean up again.
+
+#define devm_add_action_or_reset(dev, action, data) \
+	__devm_add_action_or_reset(dev, action, data, #action)
+
+static inline int __devm_add_action_or_reset(struct device *dev, void (*action)(void *),
+					     void *data, const char *name)
+{
+	int ret;
+
+	ret = __devm_add_action(dev, action, data, name);
+	if (ret)
+		action(data);
+
+	return ret;
+}
+
+But there's a problem with this, I missed return.
+I will add return in v6.
+
+Thanks,
+Jijie Shao
+
 
