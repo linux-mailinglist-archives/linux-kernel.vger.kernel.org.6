@@ -1,156 +1,107 @@
-Return-Path: <linux-kernel+bounces-437186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DE1B9E9020
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:28:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F26C9E9022
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1174F1630D0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:28:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8771E163127
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:29:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E48216E2B;
-	Mon,  9 Dec 2024 10:28:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE38E216E2C;
+	Mon,  9 Dec 2024 10:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RSvnD6ig"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PweqRT0q"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DAF216380;
-	Mon,  9 Dec 2024 10:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E6D216E14;
+	Mon,  9 Dec 2024 10:29:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733740117; cv=none; b=sctZ/QijBIeNztFTSz7euodqQxgmxBZLXteCzTlflwpdC8vHyS2Sf7wGaDt5wSRjSUaj3aJYeQonkZ1AdqGyZvfYp3SA/gU67r7s9+Zm4BxTzYZh/A4zBe+uxJT3V0TYLF6fOJ3XlBLWSU7uCsLWyVAlFsdNYMax7KNOjxJuNqQ=
+	t=1733740161; cv=none; b=JPBgm9WXXwSLY3HiHECday1Wjq8EDr4wSaq5yIoeR9SLZ7+sIKC7bC7SvfUv0Xpn5jbXxJVRHMmy1MyHPsGPoPPytvOsmmd8X8MR2kPIG6Q+TXa/st3KDdEVQ1j+aEPfnzCL+2kdHNzXRdbalkuFDzrn7oTzXvSsp4dbBxZBxZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733740117; c=relaxed/simple;
-	bh=2rwkr8VeDzByDBZGpYZoDTrR1oxX145BEsFkGtK1PH8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LlUu4WME6wePOyz1574sBp8aLtDwOOFCIHPkKkV5alYNcL11J3sTtvOpTgKV0OuhapMlQNLCC27oNtyhHa1riCltKHl9kArwAUxgI2+b1WVizYyWT1Csv0X7Q+zn+XoEk9xIv0vvWDyxVzz59Ud+NLzNHBo8NnKwSjsaWF0SEpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RSvnD6ig; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AHY1i002320;
-	Mon, 9 Dec 2024 10:28:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pp1; bh=vhuftYfkSdQcWlAg8B4/iwLLXDaM
-	P6B4MuhilJfNZgE=; b=RSvnD6iggUfdQS/1yQ/AIrU+/VlDK2IGD8s0JzukDiTj
-	/QVAWnzrnbSW9BLKqPm2sU8UbUaY0+Q8aYOiHiwrRi864jAFbZpIJpWta9G4cew0
-	gZJGVlZJyphVqAy8f2q+yK8Yfxk/4M9Ng2/70XYACXrvDvNu7M3NYXJA336PSCxz
-	zpQxUHO2sT8yzzrD+hU4GH5JM2pTmsGhvxqwVKvP28U9vFWSNOOiTD5jgValM6eY
-	dbJZwSLBkkxhKZIG9tCLhWwPWucwfx1rogf7RYvo1e/HPYPmZrJ6AG8LWEeBrg4p
-	qXyQ4sN96b9HFEUTm9rjCZWnm8oV8FYR7HBVV3ewjg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vgpxh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 10:28:21 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B9ACS3R029316;
-	Mon, 9 Dec 2024 10:28:20 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vgpxe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 10:28:20 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B97mZCr017364;
-	Mon, 9 Dec 2024 10:28:19 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1dsey-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 10:28:19 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9ASJpe29688438
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 10:28:19 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E7EF758053;
-	Mon,  9 Dec 2024 10:28:18 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4AA8458043;
-	Mon,  9 Dec 2024 10:28:17 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Dec 2024 10:28:17 +0000 (GMT)
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-Date: Mon, 09 Dec 2024 11:28:03 +0100
-Subject: [PATCH] net: ethernet: 8390: Add HAS_IOPORT dependency for mcf8390
+	s=arc-20240116; t=1733740161; c=relaxed/simple;
+	bh=+bTYXK0jrTom1pGZmyvIVQuYsLJTy8SR4A4zIcAxvdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9rBrSwfGOgZhlvmlnyvyUFGc8l27AMfAx6+8cdiebZ0zbK3hHpNcVWYsn9JS+bmVMI29H+gpNsHNQ07RunWf08cqwNFc69FwghGzV2eSUosyXMxxrg9D2Rb78ejoT/KssBk+DQhtjUuZUO8ugQ287Ma3WAgsBtrokQpEFx/Owg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PweqRT0q; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OwyB39CTHJItaPJMEkgmfbCR+5h4SkV01S+BaiaQNUE=; b=PweqRT0qTad9szFeFrP/3wFWgV
+	G+rE52BJVCWGEtJdcEJBF7uBGFl5C/3zBQqli1dXtNLe2xD/4Z/Z8ZBczPwm4W3lOM8RCjpCNNhNW
+	qU2qVTjAN4HhH05MMd3wu0PYTjIcZ+zor4GvWB5ZNXgLZGY7bV6/g7lnB0aeLjwBkstz40RxP6yBx
+	rM2jGPOQwECfIV0R7Dbq9aLER8Yf5o3vD7sao85/Z1l4M7howYVQajrqTSKreE5bxK7zWJnqWbKw0
+	iXGNpz+IWIJtQWmItGqr+ekrk9KBG2Ts94afNQXCL46iEgXlyn3N8E33vc6tZeQb1yEWpetdcTCYD
+	JJw8aUTw==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKb0s-00000001HHL-2aAc;
+	Mon, 09 Dec 2024 10:29:14 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id DFC9A3003FF; Mon,  9 Dec 2024 11:29:13 +0100 (CET)
+Date: Mon, 9 Dec 2024 11:29:13 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aruna.ramakrishna@oracle.com, broonie@kernel.org,
+	catalin.marinas@arm.com, dave.hansen@linux.intel.com,
+	jannh@google.com, jeffxu@chromium.org, joey.gouly@arm.com,
+	kees@kernel.org, maz@kernel.org, pierre.langlois@arm.com,
+	qperret@google.com, ryan.roberts@arm.com, will@kernel.org,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org
+Subject: Re: [RFC PATCH 13/16] arm64: mm: Reset pkey in __tlb_remove_table()
+Message-ID: <20241209102913.GJ21636@noisy.programming.kicks-ass.net>
+References: <20241206101110.1646108-1-kevin.brodsky@arm.com>
+ <20241206101110.1646108-14-kevin.brodsky@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-mcf8390_has_ioport-v1-1-f263d573e243@linux.ibm.com>
-X-B4-Tracking: v=1; b=H4sIADLGVmcC/x3MQQqAIBBA0avErBPUCq2rRIjZmLMoQyOC6O5Jy
- 7f4/4GMiTDDUD2Q8KJMcS8QdQUu2H1FRksxSC5bIXnPNud103MTbDYUj5hOphY36852QnEHJTw
- Serr/6Ti97wf4qtOTZAAAAA==
-X-Change-ID: 20241209-mcf8390_has_ioport-7dcb85a5170c
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
-        Niklas Schnelle <schnelle@linux.ibm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1332;
- i=schnelle@linux.ibm.com; h=from:subject:message-id;
- bh=2rwkr8VeDzByDBZGpYZoDTrR1oxX145BEsFkGtK1PH8=;
- b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNLDjpk/fVr1tsKSNSVdzmnn/2V33B7M5lH9H+Gh5X5r/
- c3OQs1THaUsDGJcDLJiiiyLupz91hVMMd0T1N8BM4eVCWQIAxenAEzEdCnD/5DHoRVrWnZ5dcV4
- 3tfbJsctvCFKyv5QSO7bl+oTGr08Shn+l2RO2uefZXF/Yp+F7NdFiwS77Oa1lgpvmXZlt7sEl9U
- EHgA=
-X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
- fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: _fSFbHkQVgRDwUpOIitBanAy28Vw7hbx
-X-Proofpoint-ORIG-GUID: -yl5drc7EgQmgyyfmqNxE78OqFiyS1dL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 clxscore=1011 phishscore=0 bulkscore=0 mlxlogscore=574
- impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090078
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206101110.1646108-14-kevin.brodsky@arm.com>
 
-Since commit 6f043e757445 ("asm-generic/io.h: Remove I/O port accessors
-for HAS_IOPORT=n") the I/O port accessors are compile-time optional. As
-m68k may or may not select HAS_IOPORT the COLDFIRE dependency is not
-enough to guarantee I/O port access. Add an explicit HAS_IOPORT
-dependency for mcf8390 to prevent a build failure as seen by the kernel
-test robot.
+On Fri, Dec 06, 2024 at 10:11:07AM +0000, Kevin Brodsky wrote:
+> Page table pages are typically freed via tlb_remove_table() and
+> friends. Ensure that the linear mapping for those pages is reset to
+> the default pkey when CONFIG_KPKEYS_HARDENED_PGTABLES is enabled.
+> 
+> This patch is a no-op if CONFIG_KPKEYS_HARDENED_PGTABLES is disabled
+> (default).
+> 
+> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
+> ---
+>  arch/arm64/include/asm/tlb.h | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
+> index a947c6e784ed..d1611ffa6d91 100644
+> --- a/arch/arm64/include/asm/tlb.h
+> +++ b/arch/arm64/include/asm/tlb.h
+> @@ -10,10 +10,14 @@
+>  
+>  #include <linux/pagemap.h>
+>  #include <linux/swap.h>
+> +#include <linux/kpkeys.h>
+>  
+>  static inline void __tlb_remove_table(void *_table)
+>  {
+> -	free_page_and_swap_cache((struct page *)_table);
+> +	struct page *page = (struct page *)_table;
+> +
+> +	kpkeys_unprotect_pgtable_memory((unsigned long)page_address(page), 1);
+> +	free_page_and_swap_cache(page);
+>  }
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202412080511.ORVinTDs-lkp@intel.com/
-Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
----
- drivers/net/ethernet/8390/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/8390/Kconfig b/drivers/net/ethernet/8390/Kconfig
-index 345f250781c6d9c3c6cbe5445250dc5987803b1a..f2ee99532187d133fdb02bc4b82c7fc4861f90af 100644
---- a/drivers/net/ethernet/8390/Kconfig
-+++ b/drivers/net/ethernet/8390/Kconfig
-@@ -87,7 +87,7 @@ config MAC8390
- 
- config MCF8390
- 	tristate "ColdFire NS8390 based Ethernet support"
--	depends on COLDFIRE
-+	depends on COLDFIRE && HAS_IOPORT
- 	select CRC32
- 	help
- 	  This driver is for Ethernet devices using an NS8390-compatible
-
----
-base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
-change-id: 20241209-mcf8390_has_ioport-7dcb85a5170c
-
-Best regards,
--- 
-Niklas Schnelle
-
+Same as for the others, perhaps stick this in generic code instead of in
+the arch code?
 
