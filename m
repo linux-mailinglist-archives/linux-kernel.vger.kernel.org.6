@@ -1,164 +1,97 @@
-Return-Path: <linux-kernel+bounces-436891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54E049E8C26
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:28:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BFB69E8C6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FD94283038
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:28:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D00D281537
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A0C215045;
-	Mon,  9 Dec 2024 07:27:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBADB215065;
+	Mon,  9 Dec 2024 07:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eewrZq4X"
-Received: from mail-wr1-f73.google.com (mail-wr1-f73.google.com [209.85.221.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC78C215074
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 07:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.73
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="m0B7CQyj"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D0A214800;
+	Mon,  9 Dec 2024 07:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733729278; cv=none; b=CrddiAGfpECdvY1bQZfm2kQKYw4A1E/3HY3fc1P9W8yEStz5OvStefI/yI9fHzkQkY0N8T8lGu5jgCqfkVpcB5bnaz1dn6zm6Kn/VEGLJtE0KTg0D2F1gMZxldcdynFyFb6AuooWf6/UgZMaP+PgywhuH7+VBZisvbAVbuuCHKA=
+	t=1733730107; cv=none; b=aAOvva7ccSG/mSBwWTW4HAJe4zeS+rzk0TtWwGrQXledcqIluGfXXmuYw03erym/693EBeBalsE6UdiTjLE63f0usdHCnfmsJxfBJ82SXNQ6OoE+WxKRA6xieDF+cNw12rP4JHLzVqqp5RBNB0IyMLF4XyqzYxLAtLlYL4B+ejg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733729278; c=relaxed/simple;
-	bh=FWr1r4ozOgDQM//rzpJtuNZonQdDYCyJwDGoBu/nO3g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CdtZv0GyVMaZVeGaN4UQGO+oQuQ7tDIOxpwre3xDjKCxu+7L9IBR+V7lNW1sa08gVaxsMIxKQ4NI8E3W34iA/x9ifHm5PowpfgexO5Sgg09V/eoG/VJf8cWcgT7lkh6SS4g46Oni/87s3G1h4LZJkXFbISYNwQj55vKHgLxF93Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eewrZq4X; arc=none smtp.client-ip=209.85.221.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f73.google.com with SMTP id ffacd0b85a97d-3862be3bfc9so1447313f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 23:27:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733729274; x=1734334074; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4XPOCESBsP0vZv1p3EyO3nbPR+4ED4LDct2uLEPo3zM=;
-        b=eewrZq4XXgwyfTZV+aY7SaMRFMUDnPAUaUU/GkxMRavWzRpEsOcOc86SlCb+HFGxkn
-         1whA5wmUAwhGxzgxtn6gyau/sl8eteN26gCme7DpWv29YXhU2GBajLy2sf0n8AZTw5et
-         iQipwDgkI7urJUYFtVKatdjv5pS1s448KIksXdcUFDer2FTygMrRj+dPZFJV/+HEL2TM
-         2fsdy6xXs/lJ8H2o+h1iiM3aIrT/iUQwvcD0vah7YMZCv8dzk3BeWUgufRmClk5g7fdx
-         neRQabyqwnXDLv3R+le56mDmHZWSBfexD6nQV4HNhzjjCgRXRZSElYooqjil8VKntq7b
-         VAUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733729274; x=1734334074;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4XPOCESBsP0vZv1p3EyO3nbPR+4ED4LDct2uLEPo3zM=;
-        b=s5z7jCQam3+r8Me39vvo6t7uJcwfjC4d0YYGJeNm/X86T/rRoG5BVjHn0QBzL9vaSi
-         jGQsFUvh0YMSJog57AUT3+VyaVRZEzFcf5bi9nhAcQ2ohIfgCrYIMoWufyjcofmJENtc
-         IXlTCHzBqM639hpcaqsENNdmt3gPqM+k8PlPkaINdPKsb6Hb83zS2VYOTvrWGMlmAqkZ
-         FbwaTcqxyKPzxw2KX0jn52hzTFsZC8VksaWvdjakxV7nun1Y+EnFPJiWZ8GjzahSpDYB
-         AKx6G+bWTpNnI/z/welCy5WDlzzKkH10pwuupKgy63BsNRpaWNOfTlcgh1VewDwx5szt
-         M4zA==
-X-Forwarded-Encrypted: i=1; AJvYcCWvzAXsIStbGl6dEs0wqjOvQcS2cAOQVUi7wBWtLrfHU3IXREzw/poO/mbBGnzfts+9kx04BtL3Tgsc14M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxHn/+WpDfmqhG37xZyIb/zcsY1Ioas1zRYZJejwAiHr/1LvZX
-	9JKjH3WOn8Uo42KntpO2G4nvHM1kWrUJNeQIIZ/J7sCynRMguA7dfqbQZ19z0ALMnDlslHIQrhM
-	HVGp9voD5skGubg==
-X-Google-Smtp-Source: AGHT+IE+8n+YNaesbwQgkF7DuZhPvB/qUurkVyjBccXautnlKjRjbmYOfixA2dZ4HsDJ8MCVrCjM+1C8pCdaZw0=
-X-Received: from wmbjx11.prod.google.com ([2002:a05:600c:578b:b0:434:a0d3:2d57])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:1886:b0:386:32ea:e70d with SMTP id ffacd0b85a97d-38632eae7d6mr5955297f8f.50.1733729274252;
- Sun, 08 Dec 2024 23:27:54 -0800 (PST)
-Date: Mon, 09 Dec 2024 07:27:47 +0000
-In-Reply-To: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
+	s=arc-20240116; t=1733730107; c=relaxed/simple;
+	bh=uC1pem2t1qTf2SJaJq5zueNwLm5ploeyLdhhQKMf7KE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NIwrtHBK6xGKHzCh07aoUaOcg5+axg1eID2YxZ0lOq6Dk2jYUvP52Cpy0jGIwjQWP92JwqGzzt8bItRtG93aMYfeDmGXXk7MfXGLXWi0e82xOGNfT59TgOBS6Ryad9/KeD3ktZsEaUgM/AKJ+vT4XAdlIR+8sRaFOPV60UgL71s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=m0B7CQyj; arc=none smtp.client-ip=1.95.21.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=F+/1F5usZGU4xwFJCSgL70wM6kK3SGbjvRaZHVo0Zx0=;
+	b=m0B7CQyjdSflcO4FEyoQ1bz1xXtz2aaBneveM0wWc38aRp5vbeDz7ctDwIsbGo
+	UpqW1iwusxzg7XkDGBClLBth7ICBRKhCwevETCuxrhblIgjkao37+jwTiBu7SfBf
+	aC9mJ7KN6axnCTQ6cuhvoNhlZUkd9iCPaxh/9g5n3Ctew=
+Received: from dragon (unknown [])
+	by gzsmtp1 (Coremail) with SMTP id Mc8vCgA3fxoBnFZnkeV5BA--.46779S3;
+	Mon, 09 Dec 2024 15:28:03 +0800 (CST)
+Date: Mon, 9 Dec 2024 15:28:00 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Paul Cercueil <paul@crapouillou.net>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Xiubo Li <Xiubo.Lee@gmail.com>,
+	Nicolin Chen <nicoleotsuka@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Adrien Grassein <adrien.grassein@gmail.com>,
+	Adam Ford <aford173@gmail.com>, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-rockchip@lists.infradead.org, linux-mips@vger.kernel.org,
+	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH treewide 10/11] ARM: dts: nxp: imx: Switch to
+ {hp,mic}-det-gpios
+Message-ID: <Z1acAA7gbxH7QfhT@dragon>
+References: <cover.1727438777.git.geert+renesas@glider.be>
+ <7ff1bfb73a6d6fc71f3d751dbb7133b045853f64.1727438777.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2748; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=FWr1r4ozOgDQM//rzpJtuNZonQdDYCyJwDGoBu/nO3g=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnVpvzczpItN+OHuxwE7AplYvqF8F4ygxK71kpY
- +1momvuEi+JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1ab8wAKCRAEWL7uWMY5
- Rq80D/0fW3WTcWRksYkWcUvY/qViSnYfrUeKeXWmxAEGqeMdv7TEkHhe/uF8uSrsQOZoXhJvNpk
- 2mHN0Ei5SXxfGjXp66h332dEJ6/H5BXQIKJRH5rQkVXH7LoqyiZzykJ2RxTmWz1mDrWQ99D1+9u
- BGvPNAOYM2kRp1FYHlKJXcTJCz1Ay6GCwyq+vC5qSbDyIFemehOFdIW5NfToeZcvop67DbMa/Mv
- 70/vrALK/EqMXa4Or0xhYPS8wQKV82vRgwLjLWCt3GQzhN9OGnfw74ymRNlsgXpdJBK2anhExW0
- xeq9RDGLw/g+KI7WGzk07iK2zFQB3zto2KmVZblwZJquHekcD/X6F+k1npnt0AQFP6xmmerQfXh
- R3U7qIDzdyW0KhOz6SCSINL39hzMkihYtY0y3S2Q9iKIKFPOsDYZccN4/SU/s/7Db6hRb9xb+79
- KaHUjM8WWND6V4biwumgn+Wn8d9lnB2uOAVyIrgBf34fUCFSM1o1aDQafg+e2CyNOlEo6jybPq7
- Uvm+oDmSLf/mjnC1x46YAbMGGzPYYmz2pXLxiFrWlO2RfUM8rEZ/DhWTW0NxXnCvJMyKVDYCLJe
- IKWpfxj5s9l79z9S5xpVQT88ol0DADaNNYPQsQ1h7i3bvl9gk5icUYQ4oM5j8aJS7A68Y9uKFEV QLmXlkBJJFxY93w==
-X-Mailer: b4 0.13.0
-Message-ID: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
-Subject: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice` from fops->open()
-From: Alice Ryhl <aliceryhl@google.com>
-To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7ff1bfb73a6d6fc71f3d751dbb7133b045853f64.1727438777.git.geert+renesas@glider.be>
+X-CM-TRANSID:Mc8vCgA3fxoBnFZnkeV5BA--.46779S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUoGQ6UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCQ6wZWdWeNqUcwAAsm
 
-Providing access to the underlying `struct miscdevice` is useful for
-various reasons. For example, this allows you access the miscdevice's
-internal `struct device` for use with the `dev_*` printing macros.
+On Fri, Sep 27, 2024 at 02:42:25PM +0200, Geert Uytterhoeven wrote:
+> Replace the deprecated "hp-det-gpio" and "mic-det-gpio" properties by
+> "hp-det-gpios" resp. "mic-det-gpios" in Freescale Generic ASoC Sound
+> Card device nodes.
+> 
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Note that since the underlying `struct miscdevice` could get freed at
-any point after the fops->open() call, only the open call is given
-access to it. To print from other calls, they should take a refcount on
-the device to keep it alive.
-
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
- rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-index 0cb79676c139..c5af1d5ec4be 100644
---- a/rust/kernel/miscdevice.rs
-+++ b/rust/kernel/miscdevice.rs
-@@ -104,7 +104,7 @@ pub trait MiscDevice {
-     /// Called when the misc device is opened.
-     ///
-     /// The returned pointer will be stored as the private data for the file.
--    fn open(_file: &File) -> Result<Self::Ptr>;
-+    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
- 
-     /// Called when the misc device is released.
-     fn release(device: Self::Ptr, _file: &File) {
-@@ -190,14 +190,27 @@ impl<T: MiscDevice> VtableHelper<T> {
-         return ret;
-     }
- 
-+    // SAFETY: The opwn call of a file can access the private data.
-+    let misc_ptr = unsafe { (*file).private_data };
-+    // SAFETY: This is a miscdevice, so `misc_open()` set the private data to a pointer to the
-+    // associated `struct miscdevice` before calling into this method. Furthermore, `misc_open()`
-+    // ensures that the miscdevice can't be unregistered and freed during this call to `fops_open`.
-+    let misc = unsafe { &*misc_ptr.cast::<MiscDeviceRegistration<T>>() };
-+
-     // SAFETY:
--    // * The file is valid for the duration of this call.
-+    // * The file is valid for the duration of the `T::open` call.
-     // * There is no active fdget_pos region on the file on this thread.
--    let ptr = match T::open(unsafe { File::from_raw_file(file) }) {
-+    let file = unsafe { File::from_raw_file(file) };
-+
-+    let ptr = match T::open(file, misc) {
-         Ok(ptr) => ptr,
-         Err(err) => return err.to_errno(),
-     };
- 
-+    // This overwrites the private data from above. It makes sense to not hold on to the misc
-+    // pointer since the `struct miscdevice` can get unregistered as soon as we return from this
-+    // call, so the misc pointer might be dangling on future file operations.
-+    //
-     // SAFETY: The open call of a file owns the private data.
-     unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
- 
-
--- 
-2.47.1.545.g3c1d2e2a6a-goog
+Applied, thanks!
 
 
