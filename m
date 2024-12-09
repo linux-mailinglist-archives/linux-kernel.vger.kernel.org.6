@@ -1,92 +1,166 @@
-Return-Path: <linux-kernel+bounces-437170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 169B99E8FE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:16:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 993199E8FB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:07:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B52E728265D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:16:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55DCF280C8D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:07:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0720216E00;
-	Mon,  9 Dec 2024 10:16:03 +0000 (UTC)
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AD0E18E02D;
-	Mon,  9 Dec 2024 10:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743AB2165F1;
+	Mon,  9 Dec 2024 10:07:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0044314658C;
+	Mon,  9 Dec 2024 10:07:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733739363; cv=none; b=HqlrHAQftgmz/Sg9z0D/uWrugjs9wtb0Rjy5p6+Z8gVb/A1z68lgwCdxt0DWiqZeah6qq2Vq0ULtM4sOhfCjIesG7vP7ZPhs1jEiKLUtT+QQytlc0ZezwmDhmRkC+Q79O9ww2r63/89IeSszmUrVmTzW6/nhoQaV0cnPsj6yH1g=
+	t=1733738860; cv=none; b=oN+SOr/MmxBirUnHBGNbAWSfr2Vmlezb6VM8X/QHtVQaU9flm54+41YgrM4tqU/2CK04UnKTDZ9EKsl8GTtmZObpelvd9PbWXRC0lBlb6xIWq+0J4K5argK7Gv/QBmn4/zuIrBWdapOyF0sqOISNcCj07UXav1PYZNcNFBPXMaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733739363; c=relaxed/simple;
-	bh=Ci/uyiK+X5PVM3nismQleymTg3dIZL8LmEEN0ogKsY8=;
+	s=arc-20240116; t=1733738860; c=relaxed/simple;
+	bh=NS4SkXQXvhw/MTtqbZVk8vVyXJmPcL4Vj6W+p5byDwA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XvNVt1PNDXC3HjUXt5GwhkO2TyTwee01l3UIlbJkHKSzV4rR/MZgI1J/rj5mUNW/Oky1OTk/ba/FHfQFu1aG9Jp4GpcQXex496NygA0e3jo/ZeDZENpWKD/6q8Hg1zVvombCOWJ+HvatO/+K6MfDj7pqzISlZMKXCfqne+2n5R4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 4BA9324CCB;
-	Mon,  9 Dec 2024 13:07:52 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail05.astralinux.ru [10.177.185.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Mon,  9 Dec 2024 13:07:51 +0300 (MSK)
-Received: from [10.177.20.58] (unknown [10.177.20.58])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Y6Hc62m21z1c0sJ;
-	Mon,  9 Dec 2024 13:07:44 +0300 (MSK)
-Message-ID: <a322a1d3-344e-4054-b7d1-2522f2b82511@astralinux.ru>
-Date: Mon, 9 Dec 2024 13:07:04 +0300
+	 In-Reply-To:Content-Type; b=bEVttL5BHNiz0NunUS7UFA/h546Zwq8hYUk3hE5zsLImHx7JfzDlGq5VRkZvfFfAXCvzrFIxNlnStWVf7l+nyB1CpiRncSGiuh7wj6V7uVmT+4a9jLr5UEmMsTaVfvo/ZMjt+j/wsDYW3IAutLcVyvaXuZwRyrf9BzgTVw4mXfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 14A96113E;
+	Mon,  9 Dec 2024 02:08:03 -0800 (PST)
+Received: from [10.57.91.200] (unknown [10.57.91.200])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E36493F720;
+	Mon,  9 Dec 2024 02:07:32 -0800 (PST)
+Message-ID: <822306e2-43bf-48cb-9556-e9834c883bad@arm.com>
+Date: Mon, 9 Dec 2024 10:07:31 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [PATCH 6.1.y] cpufreq: amd-pstate: add check for
- cpufreq_cpu_get's return value
-To: jianqi.ren.cn@windriver.com, gregkh@linuxfoundation.org
-Cc: stable@vger.kernel.org, ray.huang@amd.com, rafael@kernel.org,
- viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241209041951.3426114-1-jianqi.ren.cn@windriver.com>
-Content-Language: ru
-From: Anastasia Belova <abelova@astralinux.ru>
-In-Reply-To: <20241209041951.3426114-1-jianqi.ren.cn@windriver.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] smaps: count large pages smaller than PMD size to
+ anonymous_thp
+Content-Language: en-GB
+To: Barry Song <21cnbao@gmail.com>, Lance Yang <ioworker0@gmail.com>
+Cc: David Hildenbrand <david@redhat.com>, Wenchao Hao
+ <haowenchao22@gmail.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Matthew Wilcox <willy@infradead.org>, Oscar Salvador <osalvador@suse.de>,
+ Muhammad Usama Anjum <usama.anjum@collabora.com>,
+ Andrii Nakryiko <andrii@kernel.org>, Peter Xu <peterx@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20241203134949.2588947-1-haowenchao22@gmail.com>
+ <926c6f86-82c6-41bb-a24d-5418163d5c5e@redhat.com>
+ <CABzRoyZOJJKWyx4Aj0CQ17Om3wZPixJYMgZ24VSVQ5BRh2EdJw@mail.gmail.com>
+ <CAGsJ_4z_nQXrnjWFODhhNPW4Q0KjeF+p+bXL5D0=CxskWo1_Jg@mail.gmail.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <CAGsJ_4z_nQXrnjWFODhhNPW4Q0KjeF+p+bXL5D0=CxskWo1_Jg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2024/12/09 08:28:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: abelova@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 44 0.3.44 5149b91aab9eaefa5f6630aab0c7a7210c633ab6, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, astralinux.ru:7.1.1;new-mail.astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 189711 [Dec 09 2024]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.7
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2024/12/09 07:23:00 #26951691
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2024/12/09 07:18:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
 
-Hi!
+On 08/12/2024 06:06, Barry Song wrote:
+> On Fri, Dec 6, 2024 at 7:16 PM Lance Yang <ioworker0@gmail.com> wrote:
+>>
+>> On Tue, Dec 3, 2024 at 10:17 PM David Hildenbrand <david@redhat.com> wrote:
+>>>
+>>> On 03.12.24 14:49, Wenchao Hao wrote:
+>>>> Currently, /proc/xxx/smaps reports the size of anonymous huge pages for
+>>>> each VMA, but it does not include large pages smaller than PMD size.
+>>>>
+>>>> This patch adds the statistics of anonymous huge pages allocated by
+>>>> mTHP which is smaller than PMD size to AnonHugePages field in smaps.
+>>>>
+>>>> Signed-off-by: Wenchao Hao <haowenchao22@gmail.com>
+>>>> ---
+>>>>   fs/proc/task_mmu.c | 6 ++++++
+>>>>   1 file changed, 6 insertions(+)
+>>>>
+>>>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>>>> index 38a5a3e9cba2..b655011627d8 100644
+>>>> --- a/fs/proc/task_mmu.c
+>>>> +++ b/fs/proc/task_mmu.c
+>>>> @@ -717,6 +717,12 @@ static void smaps_account(struct mem_size_stats *mss, struct page *page,
+>>>>               if (!folio_test_swapbacked(folio) && !dirty &&
+>>>>                   !folio_test_dirty(folio))
+>>>>                       mss->lazyfree += size;
+>>>> +
+>>>> +             /*
+>>>> +              * Count large pages smaller than PMD size to anonymous_thp
+>>>> +              */
+>>>> +             if (!compound && PageHead(page) && folio_order(folio))
+>>>> +                     mss->anonymous_thp += folio_size(folio);
+>>>>       }
+>>>>
+>>>>       if (folio_test_ksm(folio))
+>>>
+>>>
+>>> I think we decided to leave this (and /proc/meminfo) be one of the last
+>>> interfaces where this is only concerned with PMD-sized ones:
+>>>
+>>> Documentation/admin-guide/mm/transhuge.rst:
+>>>
+>>> The number of PMD-sized anonymous transparent huge pages currently used by the
+>>> system is available by reading the AnonHugePages field in ``/proc/meminfo``.
+>>> To identify what applications are using PMD-sized anonymous transparent huge
+>>> pages, it is necessary to read ``/proc/PID/smaps`` and count the AnonHugePages
+>>> fields for each mapping. (Note that AnonHugePages only applies to traditional
+>>> PMD-sized THP for historical reasons and should have been called
+>>> AnonHugePmdMapped).
+>>
+>> Yeah, I think we need to keep AnonHugePages unchanged within these interfaces
+>> due to historical reasons ;)
+>>
+>> Perhaps, there might be another way to count all THP allocated for each process.
+> 
+> My point is that counting the THP allocations per process doesn't seem
+> as important
+> when compared to the overall system's status. We already have
+> interfaces to track
+> the following:
+> 
+> * The number of mTHPs allocated or fallback events;
+> * The total number of anonymous mTHP folios in the system.
+> * The total number of partially unmapped mTHP folios in the system.
 
-If I'm not mistaken, backport should be accepted to a newer stable 
-version 6.6 first.
+I think an important missing piece here is "what percentage of memory that could
+be mTHP is allocated as mTHP?" The script gives you that, which I think is useful.
 
-Also I’ve already sent it [1]. However, I haven't received an answer yet.
+> 
+> To me, knowing the details for each process doesn’t seem particularly
+> critical for
+> profiling.  To be honest, I don't see a need for this at all, except perhaps for
+> debugging to verify if mTHP is present.
+> 
+> If feasible, we could explore converting Ryan's Python script into a native
+> C program. I believe this would be more than sufficient for embedded systems
+> and Android.
 
-[1] 
-https://lore.kernel.org/lkml/20241106182000.40167-2-abelova@astralinux.ru/
+Agreed. The kernel already fundamentally provides all the required info via
+pagemap, kpageflags and smaps. So don't think we need to add anything new to the
+kernel.
 
-Anastasia Belova
+Thanks,
+Ryan
+
+
+> 
+>>
+>> Thanks,
+>> Lance
+>>
+>>
+>>>
+>>>
+>>>
+>>> --
+>>> Cheers,
+>>>
+>>> David / dhildenb
+> 
+> Thanks
+> Barry
 
 
