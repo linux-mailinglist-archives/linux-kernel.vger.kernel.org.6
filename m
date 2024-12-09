@@ -1,151 +1,182 @@
-Return-Path: <linux-kernel+bounces-437915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF8779E9A73
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:26:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D556A9E9A75
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:27:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD8781885F04
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:26:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 593C01885F3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:26:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 855E21C5CAC;
-	Mon,  9 Dec 2024 15:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88ACE1C5CAA;
+	Mon,  9 Dec 2024 15:26:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="OWHt5Gna"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mug28Atf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C01D23312A;
-	Mon,  9 Dec 2024 15:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3CE923312A;
+	Mon,  9 Dec 2024 15:26:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733757989; cv=none; b=WgeIPii3AkpD85wx+woaHHmxtV8/BBqPViKEnGO6LxV4rnoHc8pY1rCTTKYttBymiH4VuPtb7trXYRAv6LBIVay6pUy4uorNFFWBLBTHrK+el8oVxQR8hK7Fa+zLdhm1RGTyWDsOgVdbPLdAcJWtIEfqOtZX9l98/oQT3sPSn5M=
+	t=1733758014; cv=none; b=UlB3ltA66SihnFFJG7jdEQL5QNxS/nnoaddCw3I9nJFm5Kq+f3qfXgZmVSIvpY2FXcJKfNp/oTqm/Q41KWO59D44N/ivuCtU0oxx3l/oaAcFpdiWF2g9PlvKuqx96f4+9CZJJTfwIl/6lbTmFrMDD41pxZRL6SPRso+pdpefynE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733757989; c=relaxed/simple;
-	bh=xebOi1XlHeh4LAmYKKcle4p15EamH5o0sECxF93R5y4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ttPFBdQasoHXVl/PWrHsEo5tiwvW+q8BMZb2l8RH30bnH8/W6umV39CF+wkCE+3LYW74ojfmLrAFs/NOcVwlFvy1Cijf8R2ootuuvUigXv0EbfdR5nq4Zma3mqRkcDd/0P3M2AQSubi86aQzuxDeafd/fRmmAgHhzqNh9BH+yfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=OWHt5Gna; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from ldvnode.intra.ispras.ru (unknown [10.10.2.153])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 89370407675D;
-	Mon,  9 Dec 2024 15:26:15 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 89370407675D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1733757975;
-	bh=ZZYGiPSFc8Es0PelroCNMFsOw5U0eQOvjKrfEJuBauM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=OWHt5GnaW1vHa61gNxVhvVJOoQBd3vEptzFh13zCp1aQiBphfXKmx1+dGQFtQwsIZ
-	 m6KXnyRoUK/3hiszqMeO02PttexHOkLz1tcRL3fGIFbbcgcfwWoeBv5qnUOKCh03vr
-	 +XylmSKI62mCCYLSbw8pGAbfpjzEXc5BmjRgT0CE=
-From: Vitalii Mordan <mordan@ispras.ru>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Vitalii Mordan <mordan@ispras.ru>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Aaro Koskinen <aaro.koskinen@iki.fi>,
-	Felipe Balbi <felipe.balbi@linux.intel.com>,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Fedor Pchelkin <pchelkin@ispras.ru>,
-	Alexey Khoroshilov <khoroshilov@ispras.ru>,
-	Vadim Mutilin <mutilin@ispras.ru>,
-	stable@vger.kernel.org
-Subject: [PATCH] usb: phy-tahvo: fix call balance for tu->ick handling routines
-Date: Mon,  9 Dec 2024 18:26:04 +0300
-Message-Id: <20241209152604.1918882-1-mordan@ispras.ru>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733758014; c=relaxed/simple;
+	bh=jX2fG3yy1vClj8I8QX5XNbxjsW2ue2euNd6qooAXzig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cIK6V0mhRt6xFIS//TngFEL8KWgR4knWUTeTw4v+/8gE77bUGeVD783Qa8cNTh/k/nzyRJrw9Tg9fIqwD+Y9ePE3BG7IWiKP4zFMfx+JUnOd8IYtki81cQRfuOX6FRrkbYyhlXKXYNiqvcDqaW78YCteODRhEWy0Q5u+SXt4Ios=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mug28Atf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DED98C4CED1;
+	Mon,  9 Dec 2024 15:26:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733758014;
+	bh=jX2fG3yy1vClj8I8QX5XNbxjsW2ue2euNd6qooAXzig=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mug28Atfp1fKyAIC1Jocey/QGugRYe/PCDC88Lc3dwW6/WNXMIHl4X6SSizQBIPg5
+	 EQrMMc3W8hrxo332Syv++PG4SXEka0yYe80jlt1xOpyPqGlaLAO4LpdTBceHTxhD69
+	 fGrXwyRGs0moRzwI/EI0OQxBPpVkyMWjIRAacPGyvrTzMLgXinfyAOE7+rYNjp40bu
+	 s7X9AY0meLtYVhUwKmbTwbKi02NAgaqTdZoHN+1aT5FZsgZK0qWW3aWtaE90GHt6tL
+	 7mvhqEW3u/ylcOSh9IaJrgN7UYYmwqHDJSBXDh5xeJSGbhW5OwtaCfzYN+viG5jlS1
+	 c0nEzasbfEZwA==
+Date: Mon, 9 Dec 2024 12:26:46 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Graham Woodward <graham.woodward@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] perf arm-spe: Add support for SPE Data Source
+ packet on AmpereOne
+Message-ID: <Z1cMNiWELdUJy2QH@x1>
+References: <20241108010911.58412-1-ilkka@os.amperecomputing.com>
+ <20241108010911.58412-3-ilkka@os.amperecomputing.com>
+ <20241108145138.GF47850@e132581.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241108145138.GF47850@e132581.arm.com>
 
-If the clock tu->ick was not enabled in tahvo_usb_probe,
-it may still hold a non-error pointer, potentially causing
-the clock to be incorrectly disabled later in the function.
+On Fri, Nov 08, 2024 at 02:51:38PM +0000, Leo Yan wrote:
+> On Fri, Nov 08, 2024 at 01:09:11AM +0000, Ilkka Koskinen wrote:
+> > 
+> > Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
+> > 
+> > Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> 
+> Reviewed-by: Leo Yan <leo.yan@arm.com>
 
-Use the devm_clk_get_enabled helper function to ensure proper call balance
-for tu->ick.
+Thanks, applied to perf-tools-next,
 
-Found by Linux Verification Center (linuxtesting.org) with Klever.
-
-Fixes: 9ba96ae5074c ("usb: omap1: Tahvo USB transceiver driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Vitalii Mordan <mordan@ispras.ru>
----
- drivers/usb/phy/phy-tahvo.c | 20 ++++++++------------
- 1 file changed, 8 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/usb/phy/phy-tahvo.c b/drivers/usb/phy/phy-tahvo.c
-index ae7bf3ff89ee..d393308d23d4 100644
---- a/drivers/usb/phy/phy-tahvo.c
-+++ b/drivers/usb/phy/phy-tahvo.c
-@@ -341,9 +341,11 @@ static int tahvo_usb_probe(struct platform_device *pdev)
+- Arnaldo
  
- 	mutex_init(&tu->serialize);
- 
--	tu->ick = devm_clk_get(&pdev->dev, "usb_l4_ick");
--	if (!IS_ERR(tu->ick))
--		clk_enable(tu->ick);
-+	tu->ick = devm_clk_get_enabled(&pdev->dev, "usb_l4_ick");
-+	if (!IS_ERR(tu->ick)) {
-+		dev_err(&pdev->dev, "failed to get and enable clock\n");
-+		return PTR_ERR(tu->ick);
-+	}
- 
- 	/*
- 	 * Set initial state, so that we generate kevents only on state changes.
-@@ -353,15 +355,14 @@ static int tahvo_usb_probe(struct platform_device *pdev)
- 	tu->extcon = devm_extcon_dev_allocate(&pdev->dev, tahvo_cable);
- 	if (IS_ERR(tu->extcon)) {
- 		dev_err(&pdev->dev, "failed to allocate memory for extcon\n");
--		ret = PTR_ERR(tu->extcon);
--		goto err_disable_clk;
-+		return PTR_ERR(tu->extcon);
- 	}
- 
- 	ret = devm_extcon_dev_register(&pdev->dev, tu->extcon);
- 	if (ret) {
- 		dev_err(&pdev->dev, "could not register extcon device: %d\n",
- 			ret);
--		goto err_disable_clk;
-+		return ret;
- 	}
- 
- 	/* Set the initial cable state. */
-@@ -384,7 +385,7 @@ static int tahvo_usb_probe(struct platform_device *pdev)
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "cannot register USB transceiver: %d\n",
- 			ret);
--		goto err_disable_clk;
-+		return ret;
- 	}
- 
- 	dev_set_drvdata(&pdev->dev, tu);
-@@ -405,9 +406,6 @@ static int tahvo_usb_probe(struct platform_device *pdev)
- 
- err_remove_phy:
- 	usb_remove_phy(&tu->phy);
--err_disable_clk:
--	if (!IS_ERR(tu->ick))
--		clk_disable(tu->ick);
- 
- 	return ret;
- }
-@@ -418,8 +416,6 @@ static void tahvo_usb_remove(struct platform_device *pdev)
- 
- 	free_irq(tu->irq, tu);
- 	usb_remove_phy(&tu->phy);
--	if (!IS_ERR(tu->ick))
--		clk_disable(tu->ick);
- }
- 
- static struct platform_driver tahvo_usb_driver = {
--- 
-2.25.1
-
+> > ---
+> >  .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 ++++
+> >  tools/perf/util/arm-spe.c                     | 44 +++++++++++++++++++
+> >  2 files changed, 53 insertions(+)
+> > 
+> > diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> > index 358c611eeddb..4bcd627e859f 100644
+> > --- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> > +++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+> > @@ -67,6 +67,15 @@ enum arm_spe_common_data_source {
+> >         ARM_SPE_COMMON_DS_DRAM          = 0xe,
+> >  };
+> > 
+> > +enum arm_spe_ampereone_data_source {
+> > +       ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE    = 0x0,
+> > +       ARM_SPE_AMPEREONE_SLC                           = 0x3,
+> > +       ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE             = 0x5,
+> > +       ARM_SPE_AMPEREONE_DDR                           = 0x7,
+> > +       ARM_SPE_AMPEREONE_L1D                           = 0x8,
+> > +       ARM_SPE_AMPEREONE_L2D                           = 0x9,
+> > +};
+> > +
+> >  struct arm_spe_record {
+> >         enum arm_spe_sample_type type;
+> >         int err;
+> > diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+> > index dfb0c07cb7fe..df84933b673d 100644
+> > --- a/tools/perf/util/arm-spe.c
+> > +++ b/tools/perf/util/arm-spe.c
+> > @@ -455,8 +455,14 @@ static const struct midr_range common_ds_encoding_cpus[] = {
+> >         {},
+> >  };
+> > 
+> > +static const struct midr_range ampereone_ds_encoding_cpus[] = {
+> > +       MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
+> > +       {},
+> > +};
+> > +
+> >  static const struct data_source_handle data_source_handles[] = {
+> >         DS(common_ds_encoding_cpus, data_source_common),
+> > +       DS(ampereone_ds_encoding_cpus, data_source_ampereone),
+> >  };
+> > 
+> >  static void arm_spe__sample_flags(struct arm_spe_queue *speq)
+> > @@ -548,6 +554,44 @@ static void arm_spe__synth_data_source_common(const struct arm_spe_record *recor
+> >         }
+> >  }
+> > 
+> > +/*
+> > + * Source is IMPDEF. Here we convert the source code used on AmpereOne cores
+> > + * to the common (Neoverse, Cortex) to avoid duplicating the decoding code.
+> > + */
+> > +static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
+> > +                                                union perf_mem_data_src *data_src)
+> > +{
+> > +       struct arm_spe_record common_record;
+> > +
+> > +       switch (record->source) {
+> > +       case ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE:
+> > +               common_record.source = ARM_SPE_COMMON_DS_PEER_CORE;
+> > +               break;
+> > +       case ARM_SPE_AMPEREONE_SLC:
+> > +               common_record.source = ARM_SPE_COMMON_DS_SYS_CACHE;
+> > +               break;
+> > +       case ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE:
+> > +               common_record.source = ARM_SPE_COMMON_DS_REMOTE;
+> > +               break;
+> > +       case ARM_SPE_AMPEREONE_DDR:
+> > +               common_record.source = ARM_SPE_COMMON_DS_DRAM;
+> > +               break;
+> > +       case ARM_SPE_AMPEREONE_L1D:
+> > +               common_record.source = ARM_SPE_COMMON_DS_L1D;
+> > +               break;
+> > +       case ARM_SPE_AMPEREONE_L2D:
+> > +               common_record.source = ARM_SPE_COMMON_DS_L2;
+> > +               break;
+> > +       default:
+> > +               pr_warning_once("AmpereOne: Unknown data source (0x%x)\n",
+> > +                               record->source);
+> > +               return;
+> > +       }
+> > +
+> > +       common_record.op = record->op;
+> > +       arm_spe__synth_data_source_common(&common_record, data_src);
+> > +}
+> > +
+> >  static void arm_spe__synth_memory_level(const struct arm_spe_record *record,
+> >                                         union perf_mem_data_src *data_src)
+> >  {
+> > --
+> > 2.47.0
+> > 
+> > 
 
