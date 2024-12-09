@@ -1,134 +1,188 @@
-Return-Path: <linux-kernel+bounces-437973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 868F39E9B2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:02:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E1659E9B2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:04:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D008166AA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:01:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 218ED280EAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:04:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4099813A87C;
-	Mon,  9 Dec 2024 16:01:35 +0000 (UTC)
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EA813A3F2;
+	Mon,  9 Dec 2024 16:04:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KQM42HIS"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E9C1369AA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:01:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 312C2224D4;
+	Mon,  9 Dec 2024 16:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733760094; cv=none; b=sVP1RsQbhCKyVxLThXIZCPkret/9Eg6RvqyZJkocBOJK8R1C4VmFFLmH+r/CjWBshNX+26obs9kO++M+6rj409o1bCJsbKpn0UsPysVOw/subVa3kLXHvoKbM+H5Gf3oVv8zmV94javr/lQbihXrYxyUbq4OKKorb1tbKyNNNrM=
+	t=1733760271; cv=none; b=eYrh5Si8RWFwxHDghFe17MmtLoPPcrwzh948CApIkNV+G81jEUO+PODdDJmJ/Ls33D/jNZ5e0F0LjZu/0TkPm2Cjx1DnqMquDu1rVofgWvoh38qm1p4DwTXxWu6JzyTgMRLUAYW7ULu61QTCpnw/46SWNAOANUsoS0UITmHZBY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733760094; c=relaxed/simple;
-	bh=YsmaQZZ7aHri0xZQmOreW0h9HuMwh4f8ohWOs2dBIjU=;
+	s=arc-20240116; t=1733760271; c=relaxed/simple;
+	bh=HXMJxNxK1a6X0z285aZIc9o9KAuzSJKJ4Q4dpisi/Ao=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=l1LVxeFd15K+C1n7aCtlLFNc8wGS7b2y9RYyzBgOXCA5Mx0YfEyGLTMwTRHTxwQ024EaXpE9h/CnEIZLd17XHN18euFqh7jFJrhCBn4ek6PUssmmTLw40QOdRc9437z6igs6UNIJ2cG3NRKcF9MVJsc8n5j3jqTf9QCOE+M7T2k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=bWWyjpRkwR+q0Lfs8g7kvXqd6IArqcenx0lFBlw+jmYpi8yYpt9gz0NBWPlHMQuwVLIqZodhk5EnaS9UIW/36lgRxwy51OE192s5XSDuzdIgPyGe22LSJSMG3Ygk7NcayW7vBLMCa/MK3S9OHFo0GeMUzw+oEZLtEn2Qj20/qvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KQM42HIS; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3eb3daba248so846269b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:01:32 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-385f06d0c8eso2127596f8f.0;
+        Mon, 09 Dec 2024 08:04:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733760268; x=1734365068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iLxaRfd7eSIeEGyg5kxtHxj9382euiBv+DNQTz5cePY=;
+        b=KQM42HISgFg2bicYxVpCGmdBn9iyv72/zyWpbuk8XoTt4SCB+DvY9+6TsPtU/u/UrM
+         R0dE6DgTviwo7MzXP+KghAUYGId5vVDBQbLXEpUfwjBH4MqeFadiOM1jQZMAyfEvSRMm
+         zZUv01ZSA1tJ+SiydrodBxvgnQJZuruOWQi3JBCNFXBXSgsn096eMCRywsxKYEzYDuXG
+         P2jAmQdQCbJLAaUtMr0tenBf2JDiHGFtrqXLaZeUmuWfeIpw5vWfLvQsAkw01BBgdWnt
+         NSscpSK8sl31gVUXySwtZK0GaMIilOq1q3TRI4vGSQWK8jMlovSAEq0zBhSNP4BMIe7d
+         7Sfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733760092; x=1734364892;
+        d=1e100.net; s=20230601; t=1733760268; x=1734365068;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k77S1jSFGUUPDxhYWlw8l8v/eJWaaEdCFshjetT2cAo=;
-        b=U4XrOxJftA9SMAh6RajsFn+IIpLxKFoUXGb9YFv7J7yA4RU85hwfRsm0d4MbwhR1ZQ
-         GYDWtAYjtmSr8U+lP5EBindn2pcgh6yqrPnHymxjyQhJZRV2gFwdCC6CDYySzc+GR/7u
-         9rAWYa5XhmeDMB8irtepsjlh6INbIZ19llY3lMnT+dxWJLfLHV7D7PazRn6buGVuRAzy
-         hWsJWAmplA0v2yIDqQkdF5eEuEMsYjzVdkS+xUcDKsXRimHScbhgjWMn8gWa4s4xKqYk
-         YFDk9eTQhH+Nm7RDB+yi3sTHnY4BwgtTGOGqYYJjlrBOMeV5+s67wCZzM5woD9ROullt
-         Naew==
-X-Forwarded-Encrypted: i=1; AJvYcCUMz5R8qiRqKj8wWGTAdOjLLSj9QWFqNGm6qoYnVZSC+P20lnedkR/yh5mPuUAkyzsMLIG9xyRhaF1hW1w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpnUckHL2laH7NR0hhS4oQ2r4VnT6zZCY3V+82cgX86q7t/bs8
-	OVJirDNDHmbg/NQVuZ5QckMFuDUeSFINnTJDwE1SWZN3MZEwNtf1X+o3TUM4JZA=
-X-Gm-Gg: ASbGncuMwYhTrkohjsLCGI3AN8ctItsefb1/emNnwY1hpyupToyH7yaIUZGEKYcNrkp
-	yUsbJ4JKyQ0WevFtdOEc9ZCt0Sjt8BzEqTQpULairPQjw0gBxvmo5AWldRbYiEKFhWK2LqWoR3e
-	J8X/fJzh8z/xvNeJS4Z4y26SBZ6oZGOZOegX98/u+cACucLAbNn3VQSUSnsG4HFwKI1bSv9pwq5
-	Gqtihy3vy6l1ogl0l8UkjOo94s9gaBbxWvrSetv3dJwOP6BXkmqtL0x+ByNbD9UZXQl+dSJOir4
-	1tO8/SZXNsl6
-X-Google-Smtp-Source: AGHT+IF9GkeTDniw1wo5AcGIz/gslDH8FiZwogWRd9ROVXdA91eKIgd5ya2CBeQhokeAPQLOp72qXQ==
-X-Received: by 2002:a05:6808:191e:b0:3eb:66a1:9d8d with SMTP id 5614622812f47-3eb66a1a7c3mr722934b6e.11.1733760091732;
-        Mon, 09 Dec 2024 08:01:31 -0800 (PST)
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com. [209.85.210.46])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5f2be1f40dfsm395083eaf.8.2024.12.09.08.01.31
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 08:01:31 -0800 (PST)
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-71de7b11692so817363a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:01:31 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXT9qCX+rG3jbMhPr22lWOAVrtTpYo8af1Pp+aLKD02p1YlLrS6Gx3Fx8LJd7DFTS/nnORijMHiYJam2gw=@vger.kernel.org
-X-Received: by 2002:a05:6358:2812:b0:1cb:3864:9739 with SMTP id
- e5c5f4694b2df-1cb386499ecmr132991755d.25.1733760090977; Mon, 09 Dec 2024
- 08:01:30 -0800 (PST)
+        bh=iLxaRfd7eSIeEGyg5kxtHxj9382euiBv+DNQTz5cePY=;
+        b=oj7woviYxoXuaGXsldVD4/bDItYFdFRw0sASoSGDsU/phiA7ceftbg3ZU0bTGkZ0Xl
+         /z5jeGnUYSiM5fkmeAZdaTn8wi9d5/31boYG/szJh+7Hw3BDKYNdnkz3wQdWXFOASRkW
+         LVpclaOrV+Hn5uysTJx82id/PyF9ETxb5tkBSmkBNQfGFjL+Usu+4EIk/DDJSC5y7FOk
+         2g8yVCpJhvXzBFr6lWyZEtsxVJc6qX2ABpUuC7FJme4etg4O4grTyYbNJhjxtEibN8M4
+         ZmEMU9d5xewfTDCw3TDTlqXg63yggMLG2GxIoFWLgTs7F5zvk7JQHtmCyTfRnl7KbUvV
+         +ulA==
+X-Forwarded-Encrypted: i=1; AJvYcCVskHgHi5/m2BwPaFZF89X+eUiJev2IpPUwgkZ5lvZTAYT4Et9y3y5jQe0pqQS7IF6xCeG+K3tlRuezvak=@vger.kernel.org, AJvYcCWIQS86Lutx70lKwxSsnNHVBiATQ5SM2X9s7REmHg2b61dSO5q6HaQ0efeF8N6a4uTK7sHQsE72@vger.kernel.org
+X-Gm-Message-State: AOJu0YzM47sG6mviyRG77SNy1vf4wMoqtprxBZpE7HHosEyFVdNAcrMh
+	spkmM80wEV6+FBVuf2lRqImqwunuTd77XddCcVMHM02Y5K2rdVReGGMGOp8SSsRz+WB+CV6Cie+
+	KAwqOmX0HDaW+nrGnwc0HDejl1TU=
+X-Gm-Gg: ASbGncteKOKUB2Ns+JEj5UyTJ11xSsjCb9TK56iszXqiOVOzXEwdEzuQysU0rxs5X0j
+	5VJ042sifVTctf5O5Gm/dMmbX38OM5RawzNRnv1DwvgGtKtICX7ZAwTiTBddPl3d3
+X-Google-Smtp-Source: AGHT+IE/foTR9XbHPA/D4dvTG6jAXDW+4BspSWdackj4H16YrQChx4tRmqYqiXd2i+id0opxw63az3rqj+njLLJ8+1E=
+X-Received: by 2002:a05:6000:2aa:b0:386:1cd3:8a09 with SMTP id
+ ffacd0b85a97d-386453c5f5dmr881732f8f.1.1733760268007; Mon, 09 Dec 2024
+ 08:04:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204162128.25617-1-dpenkler@gmail.com>
-In-Reply-To: <20241204162128.25617-1-dpenkler@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 17:01:19 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVUnr4iAZmuy8Z3S+sCYN4P26RdpPwXevwiJrh+KN025Q@mail.gmail.com>
-Message-ID: <CAMuHMdVUnr4iAZmuy8Z3S+sCYN4P26RdpPwXevwiJrh+KN025Q@mail.gmail.com>
-Subject: Re: [PATCH v5] staging: gpib: Fix i386 build issue
-To: Dave Penkler <dpenkler@gmail.com>
-Cc: gregkh@linuxfoundation.org, linux-staging@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, Guenter Roeck <linux@roeck-us.net>
+References: <20241206122533.3589947-1-linyunsheng@huawei.com>
+ <CAKgT0UeXcsB-HOyeA7kYKHmEUM+d_mbTQJRhXfaiFBg_HcWV0w@mail.gmail.com> <3de1b8a3-ae4f-492f-969d-bc6f2c145d09@huawei.com>
+In-Reply-To: <3de1b8a3-ae4f-492f-969d-bc6f2c145d09@huawei.com>
+From: Alexander Duyck <alexander.duyck@gmail.com>
+Date: Mon, 9 Dec 2024 08:03:51 -0800
+Message-ID: <CAKgT0Uc5A_mtN_qxR6w5zqDbx87SUdCTFOBxVWCarnryRvhqHA@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 00/10] Replace page_frag with page_frag_cache (Part-2)
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Linux-MM <linux-mm@kvack.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Dave,
-
-On Wed, Dec 4, 2024 at 5:21=E2=80=AFPM Dave Penkler <dpenkler@gmail.com> wr=
-ote:
-> These drivers cast resource_type_t to void * causing the build to fail.
+On Mon, Dec 9, 2024 at 3:42=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.com=
+> wrote:
 >
-> With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsigned
-> int which cannot be cast to a 32 bit pointer.
+> On 2024/12/9 5:34, Alexander Duyck wrote:
 >
-> Disable these drivers if X68_PAE is enabled
+> ...
 >
-> Reported-by: Guenter Roeck <linux@roeck-us.net>
-> Closes: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142da@=
-roeck-us.net/
-> Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
-> Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporation G=
-PIB driver")
-> Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
-> Fixes: 0cd5b05551e0 ("staging: gpib: Add TNT4882 chip based GPIB driver")
-> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+> >>
+> >> Performance validation for part2:
+> >> 1. Using micro-benchmark ko added in patch 1 to test aligned and
+> >>    non-aligned API performance impact for the existing users, there
+> >>    seems to be about 20% performance degradation for refactoring
+> >>    page_frag to support the new API, which seems to nullify most of
+> >>    the performance gain in [3] of part1.
+> >
+> > So if I am understanding correctly then this is showing a 20%
+> > performance degradation with this patchset. I would argue that it is
+> > significant enough that it would be a blocking factor for this patch
+> > set. I would suggest bisecting the patch set to identify where the
+> > performance degradation has been added and see what we can do to
+> > resolve it, and if nothing else document it in that patch so we can
+> > identify the root cause for the slowdown.
+>
+> The only patch in this patchset affecting the performance of existing API
+> seems to be patch 1, only including patch 1 does show ~20% performance
+> degradation as including the whole patchset does:
+> mm: page_frag: some minor refactoring before adding new API
+>
+> And the cause seems to be about the binary increasing as below, as the
+> performance degradation didn't seems to change much when I tried inlining
+> the __page_frag_cache_commit_noref() by moving it to the header file:
+>
+> ./scripts/bloat-o-meter vmlinux_orig vmlinux
+> add/remove: 3/2 grow/shrink: 5/0 up/down: 920/-500 (420)
+> Function                                     old     new   delta
+> __page_frag_cache_prepare                      -     500    +500
+> __napi_alloc_frag_align                       68     180    +112
+> __netdev_alloc_skb                           488     596    +108
+> napi_alloc_skb                               556     624     +68
+> __netdev_alloc_frag_align                    196     252     +56
+> svc_tcp_sendmsg                              340     376     +36
+> __page_frag_cache_commit_noref                 -      32     +32
+> e843419@09a6_0000bd47_30                       -       8      +8
+> e843419@0369_000044ee_684                      8       -      -8
+> __page_frag_alloc_align                      492       -    -492
+> Total: Before=3D34719207, After=3D34719627, chg +0.00%
+>
+> ./scripts/bloat-o-meter page_frag_test_orig.ko page_frag_test.ko
+> add/remove: 0/0 grow/shrink: 2/0 up/down: 78/0 (78)
+> Function                                     old     new   delta
+> page_frag_push_thread                        508     580     +72
+> __UNIQUE_ID_vermagic367                       67      73      +6
+> Total: Before=3D4582, After=3D4660, chg +1.70%
 
-Thanks for your patch!
+Other than code size have you tried using perf to profile the
+benchmark before and after. I suspect that would be telling about
+which code changes are the most likely to be causing the issues.
+Overall I don't think the size has increased all that much. I suspect
+most of this is the fact that you are inlining more of the
+functionality.
 
-> --- a/drivers/staging/gpib/Kconfig
-> +++ b/drivers/staging/gpib/Kconfig
-> @@ -50,6 +50,7 @@ config GPIB_CEC_PCI
->         tristate "CEC PCI board"
->         depends on PCI
->         depends on HAS_IOPORT
-> +       depends on !X86_PAE
+> Patch 1 is about refactoring common codes from __page_frag_alloc_va_align=
+()
+> to __page_frag_cache_prepare() and __page_frag_cache_commit(), so that th=
+e
+> new API can make use of them as much as possible.
+>
+> Any better idea to reuse common codes as much as possible while avoiding
+> the performance degradation as much as possible?
+>
+> >
+> >> 2. Use the below netcat test case, there seems to be some minor
+> >>    performance gain for replacing 'page_frag' with 'page_frag_cache'
+> >>    using the new page_frag API after this patchset.
+> >>    server: taskset -c 32 nc -l -k 1234 > /dev/null
+> >>    client: perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | ta=
+skset -c 1 nc 127.0.0.1 1234
+> >
+> > This test would barely touch the page pool. The fact is most of the
+>
+> I am guessing you meant page_frag here?
+>
+> > overhead for this would likely be things like TCP latency and data
+> > copy much more than the page allocation. As such fluctuations here are
+> > likely not related to your changes.
+>
+> But it does tell us something that the replacing does not seems to
+> cause obvious regression, right?
 
-!CONFIG_PHYS_ADDR_T_64BIT, to match the definition of phys_addr_t?
+Not really. The fragment allocator is such a small portion of this
+test that we could probably double the cost for it and it would still
+be negligible.
 
-Or is this only showing up on x86?
+> I tried using a smaller MTU to amplify the impact of page allocation,
+> it seemed to have a similar result.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Not surprising. However the network is likely only a small part of
+this. I suspect if you ran a profile it would likely show the same.
 
