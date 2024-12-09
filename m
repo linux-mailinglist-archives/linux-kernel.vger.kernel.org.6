@@ -1,133 +1,135 @@
-Return-Path: <linux-kernel+bounces-436697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BE329E8987
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:29:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47509E8A47
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:29:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28C6E1885F97
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:29:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95ED1884B2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C56B5149C55;
-	Mon,  9 Dec 2024 03:29:13 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ED3B1607AA;
+	Mon,  9 Dec 2024 04:29:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="M8ytS9XU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60E213C9B3;
-	Mon,  9 Dec 2024 03:29:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18407158534;
+	Mon,  9 Dec 2024 04:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733714953; cv=none; b=N5Nk7q0NDUstlH4SokBKeDeT8lOnxdYHaxdnaNOPq5QN5NX+26pZg9nx7oL29FDM7P2+d/34sQFCJ5P3oFTfw6h2WuSdo0EB5KH9PZ4Yrt/f5T23dURUerMpjKs43Spuk5N+bZUQ/BoV75ZwErhs2hGCSbqOoBlKiM12PKJnzng=
+	t=1733718560; cv=none; b=AICZR/BviNNQMOQ2irrTjB0ACpOXoYuZXU/b//FUM8JqU7aRZ7cDUrgPDy4BrH7Gf7tm55xm4P9nHwhMqOQFX8CDj3YG3PHWpH7uopMYgg2+tEcpDWg2u4WY2QMriatTgpiSJiwWlGmPXhXyl7Epj2jGe33MDqjLi+bgfwdCgag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733714953; c=relaxed/simple;
-	bh=UoJ6uBPaZ1DKSdoDtMa9yhagX8+MqXBgqPofD+3nzTs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=d1p/eff53UAALvN3M80pPb2UZ569Eoae5lTMXzJEaj3JhnFbVt37KeQyDZ7uJBiBlEHYS+hriRpwskelYDk+RtLLZ817EAC1E6dLKPlsM7DBH+2oQQKE1UVSyBgfm+6gjnmY9qXC5l6qsATQ4ILGWeeH7/ZaNaquhe4+cXj8tWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B93K3K2021272;
-	Mon, 9 Dec 2024 03:28:58 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4x8x2e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 09 Dec 2024 03:28:57 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Sun, 8 Dec 2024 19:28:56 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Sun, 8 Dec 2024 19:28:54 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <kory.maincent@bootlin.com>, <gregkh@linuxfoundation.org>
-CC: <stable@vger.kernel.org>, <gustavo.pimentel@synopsys.com>,
-        <vkoul@kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH 6.1.y] dmaengine: dw-edma: eDMA: Add sync read before starting the DMA transfer in remote setup
-Date: Mon, 9 Dec 2024 12:26:47 +0800
-Message-ID: <20241209042647.3426260-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733718560; c=relaxed/simple;
+	bh=h4HEKX5WEfX5MF5rDNMl63OuBmbaPdc6Xc34HEpI9d4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IeYOM6d/LPINs7UTAd8PUprceqNeGIBF+4bhIp5xo9NZLgxMT0+hUYbUUpPH3Om+RYyAsiZfB6Qtaor7N8hzoiseElR2EeZa6K3617nzyR/f5N+zEU/lOtoB/PMOMjHwjdduw3xlgfS8inIdwYwHXeSRlJsXCApqQutYdkhWuCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=M8ytS9XU; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733718559; x=1765254559;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=h4HEKX5WEfX5MF5rDNMl63OuBmbaPdc6Xc34HEpI9d4=;
+  b=M8ytS9XUQp/7kdu/+/v3kWlHLICcMS9aS9zbMl6l+V/ZLVINI7BRnPHr
+   zfH2EhKWBIs584ZQFATC8jmeH0dkaQRlkDq6Jpry+Wm3zoDO+BafLPnub
+   perd4hC3Eptw5RyYJYQzA6x/0nTsx9UjyIO96NjDIMdrgKSEACNCV3+Ub
+   kZEurJiCxxs3t6y/38d/yKsBl8g/+sZffUsYQo1U+FOo/lPCcgxKz06Qk
+   lLcXzSh1UfCYF2Upn6rDrJHa92LAfEqxw42Nl2xb2C0dls9kr7/VtsHgN
+   ANEaNrsVXj+VxVGFiOyQRApOSj9q6UNHcdVyPD1r/S22QxnDzS8qKUmlq
+   A==;
+X-CSE-ConnectionGUID: L/1AoaUiQ6ijiFVIgU0v8g==
+X-CSE-MsgGUID: UxvOtF1zRCGrmzqmU3/j+g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34122913"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="34122913"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:29:18 -0800
+X-CSE-ConnectionGUID: BeSSpaOaRwGjAPOQUvdpKA==
+X-CSE-MsgGUID: f+5nCGJ8T42Mi1IFY5kmuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="99404806"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 08 Dec 2024 20:29:15 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKVOS-0003r9-2x;
+	Mon, 09 Dec 2024 04:29:12 +0000
+Date: Mon, 9 Dec 2024 12:28:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	heikki.krogerus@linux.intel.com, tzungbi@kernel.org,
+	linux-usb@vger.kernel.org, chrome-platform@lists.linux.dev
+Cc: oe-kbuild-all@lists.linux.dev, akuchynski@google.com,
+	pmalani@chromium.org, jthies@google.com,
+	dmitry.baryshkov@linaro.org, badhri@google.com,
+	rdbabiera@google.com,
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/7] usb: typec: Add driver for Thunderbolt 3
+ Alternate Mode
+Message-ID: <202412080010.bWqlreGq-lkp@intel.com>
+References: <20241206153813.v4.2.I3080b036e8de0b9957c57c1c3059db7149c5e549@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: HUaOVYIDlH7dh5-YkeIkTt3JRD3DVOte
-X-Proofpoint-ORIG-GUID: HUaOVYIDlH7dh5-YkeIkTt3JRD3DVOte
-X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=675663f9 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=VwQbUJbxAAAA:8 a=P-IC7800AAAA:8 a=pGLkceISAAAA:8 a=KKAkSRfTAAAA:8 a=t7CeM3EgAAAA:8
- a=UiR0G8JrladZec7fDzYA:9 a=d3PnA9EDa4IxuAV0gXij:22 a=cvBusfyB2V15izCimMoJ:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-08_11,2024-12-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 clxscore=1011 malwarescore=0 priorityscore=1501
- phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2411120000 definitions=main-2412090027
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206153813.v4.2.I3080b036e8de0b9957c57c1c3059db7149c5e549@changeid>
 
-From: Kory Maincent <kory.maincent@bootlin.com>
+Hi Abhishek,
 
-[ Upstream commit bbcc1c83f343e580c3aa1f2a8593343bf7b55bba ]
+kernel test robot noticed the following build warnings:
 
-The Linked list element and pointer are not stored in the same memory as
-the eDMA controller register. If the doorbell register is toggled before
-the full write of the linked list a race condition error will occur.
-In remote setup we can only use a readl to the memory to assure the full
-write has occurred.
+[auto build test WARNING on v6.12]
+[cannot apply to chrome-platform/for-next chrome-platform/for-firmware-next usb/usb-testing usb/usb-next usb/usb-linus masahiroy-kbuild/for-next masahiroy-kbuild/fixes linus/master v6.13-rc1 next-20241206]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Fixes: 7e4b8a4fbe2c ("dmaengine: Add Synopsys eDMA IP version 0 support")
-Reviewed-by: Serge Semin <fancer.lancer@gmail.com>
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-Link: https://lore.kernel.org/r/20240129-b4-feature_hdma_mainline-v7-6-8e8c1acb7a46@bootlin.com
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- drivers/dma/dw-edma/dw-edma-v0-core.c | 17 +++++++++++++++++
- 1 file changed, 17 insertions(+)
+url:    https://github.com/intel-lab-lkp/linux/commits/Abhishek-Pandit-Subedi/usb-typec-Only-use-SVID-for-matching-altmodes/20241207-074104
+base:   v6.12
+patch link:    https://lore.kernel.org/r/20241206153813.v4.2.I3080b036e8de0b9957c57c1c3059db7149c5e549%40changeid
+patch subject: [PATCH v4 2/7] usb: typec: Add driver for Thunderbolt 3 Alternate Mode
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241208/202412080010.bWqlreGq-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241208/202412080010.bWqlreGq-lkp@intel.com/reproduce)
 
-diff --git a/drivers/dma/dw-edma/dw-edma-v0-core.c b/drivers/dma/dw-edma/dw-edma-v0-core.c
-index a3816ba63285..aeaae28fab85 100644
---- a/drivers/dma/dw-edma/dw-edma-v0-core.c
-+++ b/drivers/dma/dw-edma/dw-edma-v0-core.c
-@@ -357,6 +357,20 @@ static void dw_edma_v0_core_write_chunk(struct dw_edma_chunk *chunk)
- 	#endif /* CONFIG_64BIT */
- }
- 
-+static void dw_edma_v0_sync_ll_data(struct dw_edma_chunk *chunk)
-+{
-+	/*
-+	 * In case of remote eDMA engine setup, the DW PCIe RP/EP internal
-+	 * configuration registers and application memory are normally accessed
-+	 * over different buses. Ensure LL-data reaches the memory before the
-+	 * doorbell register is toggled by issuing the dummy-read from the remote
-+	 * LL memory in a hope that the MRd TLP will return only after the
-+	 * last MWr TLP is completed
-+	 */
-+	if (!(chunk->chan->dw->chip->flags & DW_EDMA_CHIP_LOCAL))
-+		readl(chunk->ll_region.vaddr);
-+}
-+
- void dw_edma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
- {
- 	struct dw_edma_chan *chan = chunk->chan;
-@@ -423,6 +437,9 @@ void dw_edma_v0_core_start(struct dw_edma_chunk *chunk, bool first)
- 		SET_CH_32(dw, chan->dir, chan->id, llp.msb,
- 			  upper_32_bits(chunk->ll_region.paddr));
- 	}
-+
-+	dw_edma_v0_sync_ll_data(chunk);
-+
- 	/* Doorbell */
- 	SET_RW_32(dw, chan->dir, doorbell,
- 		  FIELD_PREP(EDMA_V0_DOORBELL_CH_MASK, chan->id));
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412080010.bWqlreGq-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/usb/typec/altmodes/thunderbolt.c:16: warning: cannot understand function prototype: 'enum tbt_state '
+
+
+vim +16 drivers/usb/typec/altmodes/thunderbolt.c
+
+    15	
+  > 16	enum tbt_state {
+    17		TBT_STATE_IDLE,
+    18		TBT_STATE_SOP_P_ENTER,
+    19		TBT_STATE_SOP_PP_ENTER,
+    20		TBT_STATE_ENTER,
+    21		TBT_STATE_EXIT,
+    22		TBT_STATE_SOP_PP_EXIT,
+    23		TBT_STATE_SOP_P_EXIT
+    24	};
+    25	
+
 -- 
-2.39.4
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
