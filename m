@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-436762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4C4F9E8A62
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:35:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DA379E8A5F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:35:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66AAE1884343
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:35:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12B581883292
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:35:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FA3F192B95;
-	Mon,  9 Dec 2024 04:35:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8B81925B3;
+	Mon,  9 Dec 2024 04:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fkhoqYdM"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Xq8VipPi"
 Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 429A7189F5C;
-	Mon,  9 Dec 2024 04:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3865F16F8E9;
+	Mon,  9 Dec 2024 04:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733718929; cv=none; b=F3R1b0gRaVjZ0uwjoAWobdxdMFsgrsoCvYLgplRuOeM+ZCQMPYpsm3GDnSKDCeu6r+/ypkfhcB4I5rOKqVXfE1QlDWK6QJS9A8VDdTGgJBmCFmxUhK6ATMD9yWKODhmoDnsDO/Tew9RwXbbdHd6W9b2ym0+Ptl1T8BOnoFSrrNU=
+	t=1733718927; cv=none; b=kaDGZsCOmsEEQKfwycYr7tWd/M8Nb6fZowiYyD8Hw3FygJJGuVjzf2YoyJMXN/WLH4cIWtdwnrw0jdrUYs/rRGObcakonNy7Hezup0SmoPOmPL+mkMfBiTzS0OI/jbJlfcgQCD5YogivSwS54j0gTXRhsHCIREYToOEp8CnR+l8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733718929; c=relaxed/simple;
-	bh=/byX0QN7l6evzZM3VWd51MOOZPsopsId3NhdI4oXh+w=;
+	s=arc-20240116; t=1733718927; c=relaxed/simple;
+	bh=e0msx8DoGYxBgxhnq1KW8NrILsSQHRKlDWN0V1Q+IL0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESVVcYNliWEnVXUHR6gBrDgAYzN+PI2O9N7btVzUjc8Pu/q7xM10JMfqzV2ciFw41SU7nqcrQKtcqzykWgkexzQNd7xFlsvmYW9XGa27Ap8LChbBYVL1H7Ozw+j8l3qAwrkVgu5LMr9ssAr/62pa58ebbzF/Z4XR4qWRGNU8Y+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fkhoqYdM; arc=none smtp.client-ip=192.198.163.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=is6Bo7YZ5NoaeD9p4keKrJBCMG7bzWsQzqe/vFQUCwm550vrclr0Uyn260iBeE0NHkMqBOou4t1ap1Nzs6Oj0TlQAdGjTzkqKq4rslLqqY+CG82gxadV42mP7PlOSIshAPFfe4IPVOhQUF+/DbCWzMTSA96SJ2PLn9sSctnZg6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Xq8VipPi; arc=none smtp.client-ip=192.198.163.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733718927; x=1765254927;
+  t=1733718926; x=1765254926;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=/byX0QN7l6evzZM3VWd51MOOZPsopsId3NhdI4oXh+w=;
-  b=fkhoqYdMyJdLs1+n3kSJUn1pGUmPgysJjutToC7cPJRatsYDKfZwvcE2
-   DKD+oK66C3JUM9VnmIbXcL6KJHF2/dOZdpUxAE4wtq2/2Lk4ytxzAu2KB
-   q3NcnN22dQOVHiDJNruXQAWE3BF8HHkGU1GLtt2XyiaCpXz9K8ApS7tzq
-   xxLxBu5uRK15GdxyMKlFZBQvRhGvK+g58HdJnFdhf/YuS09kzGaXwoUIr
-   x7CBJ92E5UuhQeZ/tonEbm5J4MR6cMTOdFFAHwvTebVJXdI80cPC3OIwi
-   lb4KuFBKgYZSncuS2vJsljqyeI5207oqxBWubpNnbWWWz1eYn+66xVg9t
-   w==;
-X-CSE-ConnectionGUID: yBUoyfc9ScSVT0ed+0WBQw==
-X-CSE-MsgGUID: +hbTP6rxQ1alJ1qcf21Sqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34237103"
+  bh=e0msx8DoGYxBgxhnq1KW8NrILsSQHRKlDWN0V1Q+IL0=;
+  b=Xq8VipPi8rofUllQdd9H1WrFRR6y1LJTt2D+YHF/wocWapR76vKX4JuX
+   05MREg5Orv5UkJkS1wJHGvz3t+Snlc6ER9fMY9MMHR5av5KchE1aF8Woy
+   +AjlnzTtF9KqNf5r+9ngNUSACXf6I1KUjgktr8yxMpLoM2XzYYFKRWSiQ
+   Rl8RbEFFbt7FUaJy2M32otWAMcQJUuMB4GNgb5P+b8b0HlI/uEWRhe0W0
+   wtvuC+1I9pnMiSDdJjJIWKRabQoKszzI5XXDLHCf1A0UvG2tkmZwzZ+8X
+   4ZvpIS+Np52r1VO+rL78eU3SUlU4Vi4EGAVMbLzahgZ5o+Pva14/JTZlR
+   Q==;
+X-CSE-ConnectionGUID: eYKNvnIcTUORcAxdmu/vEQ==
+X-CSE-MsgGUID: 3ILZzx+qQkq3UT3uvo3KLw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34237099"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="34237103"
+   d="scan'208";a="34237099"
 Received: from fmviesa001.fm.intel.com ([10.60.135.141])
   by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:35:26 -0800
-X-CSE-ConnectionGUID: +CUXQ3szQaSyFv/p6es35w==
-X-CSE-MsgGUID: /NYIfnVgRFyE8+IfO0CAqA==
+X-CSE-ConnectionGUID: Do6IxgJjTGeygUubTLHx2w==
+X-CSE-MsgGUID: XH1UaaCxSTC9G2nF+WsJEA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="125844583"
+   d="scan'208";a="125844611"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
   by fmviesa001.fm.intel.com with ESMTP; 08 Dec 2024 20:35:22 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tKVUO-0003sb-08;
+	id 1tKVUO-0003se-0a;
 	Mon, 09 Dec 2024 04:35:20 +0000
-Date: Mon, 9 Dec 2024 12:34:44 +0800
+Date: Mon, 9 Dec 2024 12:35:08 +0800
 From: kernel test robot <lkp@intel.com>
-To: Christian Bruel <christian.bruel@foss.st.com>, lpieralisi@kernel.org,
-	kw@linux.com, manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mcoquelin.stm32@gmail.com, alexandre.torgue@foss.st.com,
-	p.zabel@pengutronix.de, cassel@kernel.org,
-	quic_schintav@quicinc.com, fabrice.gasnier@foss.st.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Christian Bruel <christian.bruel@foss.st.com>
-Subject: Re: [PATCH v2 2/5] PCI: stm32: Add PCIe host support for STM32MP25
-Message-ID: <202412080849.1SXhxzpi-lkp@intel.com>
-References: <20241126155119.1574564-3-christian.bruel@foss.st.com>
+To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
+Cc: oe-kbuild-all@lists.linux.dev, arulponn@cisco.com, djhawar@cisco.com,
+	gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
+	aeasi@cisco.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
+	linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Karan Tilak Kumar <kartilak@cisco.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v6 03/15] scsi: fnic: Add support for fabric based
+ solicited requests and responses
+Message-ID: <202412080837.2JU0r2Ny-lkp@intel.com>
+References: <20241206210852.3251-4-kartilak@cisco.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,136 +82,68 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241126155119.1574564-3-christian.bruel@foss.st.com>
+In-Reply-To: <20241206210852.3251-4-kartilak@cisco.com>
 
-Hi Christian,
+Hi Karan,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on pci/next]
-[also build test ERROR on pci/for-linus linus/master v6.13-rc1 next-20241206]
+[auto build test WARNING on jejb-scsi/for-next]
+[also build test WARNING on linus/master v6.13-rc1 next-20241206]
+[cannot apply to mkp-scsi/for-next]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Bruel/dt-bindings-PCI-Add-STM32MP25-PCIe-root-complex-bindings/20241128-101958
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git next
-patch link:    https://lore.kernel.org/r/20241126155119.1574564-3-christian.bruel%40foss.st.com
-patch subject: [PATCH v2 2/5] PCI: stm32: Add PCIe host support for STM32MP25
-config: openrisc-randconfig-r072-20241208 (https://download.01.org/0day-ci/archive/20241208/202412080849.1SXhxzpi-lkp@intel.com/config)
-compiler: or1k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241208/202412080849.1SXhxzpi-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/Karan-Tilak-Kumar/scsi-fnic-Replace-shost_printk-with-dev_info-dev_err/20241207-054453
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git for-next
+patch link:    https://lore.kernel.org/r/20241206210852.3251-4-kartilak%40cisco.com
+patch subject: [PATCH v6 03/15] scsi: fnic: Add support for fabric based solicited requests and responses
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241208/202412080837.2JU0r2Ny-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241208/202412080837.2JU0r2Ny-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412080849.1SXhxzpi-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412080837.2JU0r2Ny-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
-   drivers/pci/controller/dwc/pcie-stm32.c: In function 'stm32_pcie_suspend_noirq':
->> drivers/pci/controller/dwc/pcie-stm32.c:101:16: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Wimplicit-function-declaration]
-     101 |         return pinctrl_pm_select_sleep_state(dev);
-         |                ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/dwc/pcie-stm32.c: In function 'stm32_pcie_resume_noirq':
->> drivers/pci/controller/dwc/pcie-stm32.c:114:24: error: 'struct device' has no member named 'pins'
-     114 |         if (!IS_ERR(dev->pins->init_state))
-         |                        ^~
->> drivers/pci/controller/dwc/pcie-stm32.c:115:23: error: implicit declaration of function 'pinctrl_select_state' [-Wimplicit-function-declaration]
-     115 |                 ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-         |                       ^~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/dwc/pcie-stm32.c:115:47: error: 'struct device' has no member named 'pins'
-     115 |                 ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-         |                                               ^~
-   drivers/pci/controller/dwc/pcie-stm32.c:115:61: error: 'struct device' has no member named 'pins'
-     115 |                 ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-         |                                                             ^~
->> drivers/pci/controller/dwc/pcie-stm32.c:117:23: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Wimplicit-function-declaration]
-     117 |                 ret = pinctrl_pm_select_default_state(dev);
-         |                       ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   drivers/pci/controller/dwc/pcie-stm32.c: In function 'stm32_pcie_probe':
-   drivers/pci/controller/dwc/pcie-stm32.c:243:29: warning: unused variable 'np' [-Wunused-variable]
-     243 |         struct device_node *np = pdev->dev.of_node;
-         |                             ^~
+   In file included from drivers/scsi/fnic/fnic_fcs.c:22:
+   drivers/scsi/fnic/fnic_fcs.c: In function 'fdls_send_fcoe_frame':
+>> drivers/scsi/fnic/fnic.h:164:33: warning: format '%lu' expects argument of type 'long unsigned int', but argument 7 has type 'unsigned int' [-Wformat=]
+     164 |                                 "fnic<%d>: %s: %d: " fmt, fnic_num,\
+         |                                 ^~~~~~~~~~~~~~~~~~~~
+   drivers/scsi/fnic/fnic.h:151:25: note: in definition of macro 'FNIC_CHECK_LOGGING'
+     151 |                         CMD;                                    \
+         |                         ^~~
+   include/scsi/scsi_host.h:737:9: note: in expansion of macro 'dev_printk'
+     737 |         dev_printk(prefix, &(shost)->shost_gendev, fmt, ##a)
+         |         ^~~~~~~~~~
+   drivers/scsi/fnic/fnic.h:163:26: note: in expansion of macro 'shost_printk'
+     163 |                          shost_printk(kern_level, host,                 \
+         |                          ^~~~~~~~~~~~
+   drivers/scsi/fnic/fnic_fcs.c:1231:25: note: in expansion of macro 'FNIC_FCS_DBG'
+    1231 |                         FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
+         |                         ^~~~~~~~~~~~
 
 
-vim +/pinctrl_pm_select_sleep_state +101 drivers/pci/controller/dwc/pcie-stm32.c
+vim +164 drivers/scsi/fnic/fnic.h
 
-    88	
-    89	static int stm32_pcie_suspend_noirq(struct device *dev)
-    90	{
-    91		struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
-    92	
-    93		stm32_pcie->link_is_up = dw_pcie_link_up(stm32_pcie->pci);
-    94	
-    95		stm32_pcie_stop_link(stm32_pcie->pci);
-    96		clk_disable_unprepare(stm32_pcie->clk);
-    97	
-    98		if (!device_may_wakeup(dev) && !device_wakeup_path(dev))
-    99			phy_exit(stm32_pcie->phy);
-   100	
- > 101		return pinctrl_pm_select_sleep_state(dev);
-   102	}
-   103	
-   104	static int stm32_pcie_resume_noirq(struct device *dev)
-   105	{
-   106		struct stm32_pcie *stm32_pcie = dev_get_drvdata(dev);
-   107		struct dw_pcie *pci = stm32_pcie->pci;
-   108		struct dw_pcie_rp *pp = &pci->pp;
-   109		int ret;
-   110	
-   111		/* init_state must be called first to force clk_req# gpio when no
-   112		 * device is plugged.
-   113		 */
- > 114		if (!IS_ERR(dev->pins->init_state))
- > 115			ret = pinctrl_select_state(dev->pins->p, dev->pins->init_state);
-   116		else
- > 117			ret = pinctrl_pm_select_default_state(dev);
-   118	
-   119		if (ret) {
-   120			dev_err(dev, "Failed to activate pinctrl pm state: %d\n", ret);
-   121			return ret;
-   122		}
-   123	
-   124		if (!device_may_wakeup(dev) && !device_wakeup_path(dev)) {
-   125			ret = phy_init(stm32_pcie->phy);
-   126			if (ret) {
-   127				pinctrl_pm_select_default_state(dev);
-   128				return ret;
-   129			}
-   130		}
-   131	
-   132		ret = clk_prepare_enable(stm32_pcie->clk);
-   133		if (ret)
-   134			goto clk_err;
-   135	
-   136		ret = dw_pcie_setup_rc(pp);
-   137		if (ret)
-   138			goto pcie_err;
-   139	
-   140		if (stm32_pcie->link_is_up) {
-   141			ret = stm32_pcie_start_link(stm32_pcie->pci);
-   142			if (ret)
-   143				goto pcie_err;
-   144	
-   145			/* Ignore errors, the link may come up later */
-   146			dw_pcie_wait_for_link(stm32_pcie->pci);
-   147		}
-   148	
-   149		pinctrl_pm_select_default_state(dev);
-   150	
-   151		return 0;
-   152	
-   153	pcie_err:
-   154		dw_pcie_host_deinit(pp);
-   155		clk_disable_unprepare(stm32_pcie->clk);
-   156	clk_err:
-   157		phy_exit(stm32_pcie->phy);
-   158		pinctrl_pm_select_default_state(dev);
-   159	
-   160		return ret;
-   161	}
-   162	
+5df6d737dd4b0f Abhijeet Joglekar 2009-04-17  154  
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11  155  #define FNIC_MAIN_DBG(kern_level, host, fnic_num, fmt, args...)		\
+5df6d737dd4b0f Abhijeet Joglekar 2009-04-17  156  	FNIC_CHECK_LOGGING(FNIC_MAIN_LOGGING,			\
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11  157  			 shost_printk(kern_level, host,			\
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11  158  				"fnic<%d>: %s: %d: " fmt, fnic_num,\
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11  159  				__func__, __LINE__, ##args);)
+5df6d737dd4b0f Abhijeet Joglekar 2009-04-17  160  
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11  161  #define FNIC_FCS_DBG(kern_level, host, fnic_num, fmt, args...)		\
+5df6d737dd4b0f Abhijeet Joglekar 2009-04-17  162  	FNIC_CHECK_LOGGING(FNIC_FCS_LOGGING,			\
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11  163  			 shost_printk(kern_level, host,			\
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11 @164  				"fnic<%d>: %s: %d: " fmt, fnic_num,\
+3df9dd0d51c2e4 Karan Tilak Kumar 2023-12-11  165  				__func__, __LINE__, ##args);)
+5df6d737dd4b0f Abhijeet Joglekar 2009-04-17  166  
 
 -- 
 0-DAY CI Kernel Test Service
