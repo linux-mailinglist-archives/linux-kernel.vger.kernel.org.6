@@ -1,113 +1,153 @@
-Return-Path: <linux-kernel+bounces-438171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36329E9DC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:03:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A39E9E9DCA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:03:54 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70988282B22
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:03:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360121885D6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06FCB15665C;
-	Mon,  9 Dec 2024 18:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="JxNxtaei"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180AF15665C;
+	Mon,  9 Dec 2024 18:03:30 +0000 (UTC)
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2F213BAEE;
-	Mon,  9 Dec 2024 18:03:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696A61F5F6;
+	Mon,  9 Dec 2024 18:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733767396; cv=none; b=M9Dj5a1Rv7PL2uQ4a7y08bcD2xgjNtN7pViCzQCP7jgwNjReLkWMZFBFrdFpE/j6xRjuIf229ijR5aWcofh77k3byNE7XrlF4R4aBZCWHYmTxiiah8+sYMyMlB4P8lRqB4SU/W+l49zQYj+ikv/C2BD0FXrymj8AK6BxYpY6wQQ=
+	t=1733767409; cv=none; b=AXN7U45zIpZ2WU4FaERY9owCCGwhivD+YLJ4NUsiuA007s58FRXIpPDEJ5scoeADgRXw9Nhe2+XtQ7jEQ1pdZ/7EPJMfHJWJQLs3qspgDPbBTtmEEGoVxpx/FOniJxV8dU7GqTnzagRCKsCrGay2n6ZJd20NeJONBEwIQJiS01c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733767396; c=relaxed/simple;
-	bh=Xkf3rZcdNKIgI2QpssiA9RRjQfb0jQHBav21vRF0HlU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IEYT+6eGbFOEBaHzyZuX6u2Rw3gT1pzAvHpurkJEgIZ9Qxawz0lbawphE6zwZjOYGdOKqF0/BwcYmbsjnPdthFYhRArn7AqQhyMcJsXza/LQIh85LzcoTvEv5khLPBYYOROs0UPKRp7q1XOUelt7t5ArYEm/bMdGVNpKBWbrzrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=JxNxtaei; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Y6V8X3vv5z6CmM6N;
-	Mon,  9 Dec 2024 18:03:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1733767382; x=1736359383; bh=QyfTuLMhyhlY0D4S6FtpsgDx
-	2SCepf9ur753iNIB9Sk=; b=JxNxtaeieeSZDDtTLa0WCuED+PR6h93dfAINCUcu
-	s0InJ1y5TttweQ5Z8kaLRsAS/U3ufKW3D/ZCA9R5bWVGfJ2L3jGQMVj1VC+isIjo
-	4mllyQABB2gKKUO01L4dc8DssnVSdnbl7V2ZtYGu3gg0jo7iBfL43Gwgz29DrLUK
-	AzpGEd3Vwp8HgaympCrVzcouQkQF1svaC3z7QKABtmplr/ZkkNb/vzclDskM+UZM
-	y4jOAO5MdaJASBTHMvtoUY+5BeKpiow2vEnrts58kyJqHP+ZX6xU3U+Q+kFxJwWl
-	5Cqlux3y2IUJmmf4Y8KftM/jzJuoK2d9fTFUBROaj7dkIw==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id DHC-zwyMc0Gc; Mon,  9 Dec 2024 18:03:02 +0000 (UTC)
-Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6V8J6Shfz6CmQtQ;
-	Mon,  9 Dec 2024 18:02:56 +0000 (UTC)
-Message-ID: <bef7b96c-a6cc-4b83-99b2-848cecb3d3b1@acm.org>
-Date: Mon, 9 Dec 2024 10:02:54 -0800
+	s=arc-20240116; t=1733767409; c=relaxed/simple;
+	bh=EttPOx8CTHWiEQjm6kODu7k6KrmesqYnGdfpbFKYER8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UdhRG0wHgK2eZsQD4I06rAkAHbhuEuoKeYpU3N/F6thaZnoyhRYhdj1iaxzdVjkpc7+h9IqEaBvyUMQuq39oX8uV+ViPqPBm8NaAdObi9i8t1eqTIw+qfiV3x3ToW6/Zu7e91doqN9iHhs21aQn+iJ8JcoXgRbAn50oSvO+xHL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-540215984f0so987377e87.1;
+        Mon, 09 Dec 2024 10:03:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733767403; x=1734372203;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Vt1eQkp9pAQVTjzNi7SG9xZxFIH63Nwe6vPPAcwIYGQ=;
+        b=TWbCzdTaNExx8NfETUl4vqUPju/f2YZFxk8FeQBWiClzTt2YHzVzTBmBpZUpmnkk+H
+         TvtBA+PsRMtQ36IMol951QkWjE52Nogj/pULJqjJQ5x5Qww82lo1863WvcpCW4uVNImX
+         hw3zP2qT1wqMto/e8PFwbm6BJ/jUyCR/7JHZGZbE22YDFQAGA79EfyM6aCilMl23kOer
+         VNfhGXlEmd3ZVWiKNw93qrghlSNdWpjUoLXHNw8tuQX7/gn+Zv6uvtyAV9u7/5dGqdJR
+         2Zu2D4T5xZZHoHhRbm054Vw2e2iYNa/kFUNBBRFbt71erOlj/reQjWHl1RohLH86B7yD
+         7Jww==
+X-Forwarded-Encrypted: i=1; AJvYcCUoAmAG0Q4QUf2gVlzdZogPDXb74CHVD/xL+4loDwBLApxAE4OfEliWp0qWXodLIuXQ/HkaGisEE2LatqbW@vger.kernel.org, AJvYcCXLWYQ/VxAnySpO8nFI2Qzbrs+tTpMwABh9/EypA3qtz3DfXnt9PBc7Dvph7fk4g/3+oqQM4OefQxsT@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJjNaY0T/2dsKZajS+kQRkiHfl6jqqdhN2RQCq35af20jJs+qj
+	Xe2ERWgovTPWzpR36Xhd98kwOxqfvIZMgZ0mj5qCfiVVFi5rKvLvBUzAxQ==
+X-Gm-Gg: ASbGnctbCFadfgdDswYvP+tnRxDZKkrwfSID68E2kMzGRh7LAkbJijwCz/5wUPi9RUD
+	pRtwUmt+nqwuzbikQ1AARd5xqpXdIlUiIavjHPW/M3cyy42wPdab2JxBP365T84Zwi5CvkJ83gr
+	Mv+ILCWTfy0dhb6MKfNSuSaPT97J8M9e8jn4cfz53xF2LmHaKCgl4uxArqx4B+DCh04eLSwVriN
+	nS8qvUA3oWiMp4Gm90XPJNdW4mOZyri9HhI6ciQ9GKJBIMCBl5NKUtELPXS+WquWEoGA6/9U4gk
+	79rYeRc=
+X-Google-Smtp-Source: AGHT+IFREMvkmaQuoq8UAyjZmgeM2srNOKZNVSewT0B21kmxesr1SjsA0Xa+l3V92ddAUb6sEXvdrQ==
+X-Received: by 2002:a05:6512:230b:b0:540:1b7e:7b3d with SMTP id 2adb3069b0e04-54024104993mr700018e87.36.1733767402851;
+        Mon, 09 Dec 2024 10:03:22 -0800 (PST)
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53f23320d1csm751678e87.235.2024.12.09.10.03.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 10:03:22 -0800 (PST)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ffc76368c6so43866941fa.0;
+        Mon, 09 Dec 2024 10:03:22 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV5cpQa3C3gu28/trXUxNDrc/zFqaptS+AfOYsJfor8VyZHXNJ4oVddh6k2RREVgQfwvXDZ4S/Tp36E@vger.kernel.org, AJvYcCVcNeHdRXeO7siNkmXfE6XI4h9E1idp4GNP4w/u3MeDJO2/lzrlYT42/pEx/tTEoOJLYSJGx18j+SP2NUZo@vger.kernel.org
+X-Received: by 2002:a05:651c:509:b0:302:2cb3:bb25 with SMTP id
+ 38308e7fff4ca-3022fd7da65mr6276521fa.29.1733767402058; Mon, 09 Dec 2024
+ 10:03:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] block/mq-deadline: Revert "block/mq-deadline: Fix
- the tag reservation code"
-To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
- akpm@linux-foundation.org, yang.yang@vivo.com, ming.lei@redhat.com,
- yukuai3@huawei.com, osandov@fb.com, paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com
-References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
- <20241209115522.3741093-2-yukuai1@huaweicloud.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241209115522.3741093-2-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241205000137.187450-1-csokas.bence@prolan.hu>
+ <20241205000137.187450-2-csokas.bence@prolan.hu> <20241209175637.283312fa@donnerap.manchester.arm.com>
+In-Reply-To: <20241209175637.283312fa@donnerap.manchester.arm.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Tue, 10 Dec 2024 02:03:08 +0800
+X-Gmail-Original-Message-ID: <CAGb2v644AgZvuOmvQCUXGWyJWYCgVnCkVohNdD-Z0FhgOrp1cQ@mail.gmail.com>
+Message-ID: <CAGb2v644AgZvuOmvQCUXGWyJWYCgVnCkVohNdD-Z0FhgOrp1cQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] ARM: dts: suniv: f1c100s: Add support for DMA
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: =?UTF-8?B?Q3PDs2vDoXMsIEJlbmNl?= <csokas.bence@prolan.hu>, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+	Mesih Kilinc <mesihkilinc@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Dec 10, 2024 at 1:56=E2=80=AFAM Andre Przywara <andre.przywara@arm.=
+com> wrote:
+>
+> On Thu, 5 Dec 2024 01:01:36 +0100
+> "Cs=C3=B3k=C3=A1s, Bence" <csokas.bence@prolan.hu> wrote:
+>
+> > From: Mesih Kilinc <mesihkilinc@gmail.com>
+> >
+> > Allwinner suniv F1C100s now has DMA support. Enable it under device
+> > tree.
+> >
+> > Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
+> > [ csokas.bence: Rebased on current master ]
+> > Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
+>
+> Compared against the manual:
+>
+> Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
-On 12/9/24 7:55 PM, Yu Kuai wrote:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> This reverts commit 39823b47bbd40502632ffba90ebb34fff7c8b5e8.
-> 
-> Because tag reservation is not fixed and will introduce performance
-> problem.
+These have already been merged. I picked them from their original
+series.
 
-As explained in detail in the patch description and in the comments
-added by that patch, commit 39823b47bbd4 ("block/mq-deadline: Fix the
-tag reservation code") fixes broken code. So reverting that commit is
-wrong. I think that patches 1/3 and 3/3 of this series should be
-combined into a single patch.
+ChenYu
 
-> 1) Set min_shallow_depth to 1 will end up setting wake_batch to 1,
->     deadline has no reason to do this. And this will cause performance
->     degradation in some high concurrency test, for both IO bandwidth
->     and cpu usage.
-
-As explained in the commit message, this is done because
-min_shallow_depth must be less than or equal to shallow_depth.
-Additionally, mq-deadline is not the only I/O scheduler that sets
-min_shallow_depth to 1. BFQ does this too.
-
-> 2) async_depth is nr_requests, hence shallow_depth will always set to
->     1 << bt->sb.shift. For consequence, no tag can be reserved.
-
-This is not correct. dd->async_depth can be modified via sysfs.
-
-Bart.
+> Cheers,
+> Andre
+>
+> > ---
+> >  arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi | 10 ++++++++++
+> >  1 file changed, 10 insertions(+)
+> >
+> > diff --git a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi b/arch/arm/=
+boot/dts/allwinner/suniv-f1c100s.dtsi
+> > index 3c61d59ab5f8..290efe026ceb 100644
+> > --- a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
+> > +++ b/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
+> > @@ -6,6 +6,7 @@
+> >
+> >  #include <dt-bindings/clock/suniv-ccu-f1c100s.h>
+> >  #include <dt-bindings/reset/suniv-ccu-f1c100s.h>
+> > +#include <dt-bindings/dma/sun4i-a10.h>
+> >
+> >  / {
+> >       #address-cells =3D <1>;
+> > @@ -159,6 +160,15 @@ usbphy: phy@1c13400 {
+> >                       status =3D "disabled";
+> >               };
+> >
+> > +             dma: dma-controller@1c02000 {
+> > +                     compatible =3D "allwinner,suniv-f1c100s-dma";
+> > +                     reg =3D <0x01c02000 0x1000>;
+> > +                     interrupts =3D <18>;
+> > +                     clocks =3D <&ccu CLK_BUS_DMA>;
+> > +                     resets =3D <&ccu RST_BUS_DMA>;
+> > +                     #dma-cells =3D <2>;
+> > +             };
+> > +
+> >               ccu: clock@1c20000 {
+> >                       compatible =3D "allwinner,suniv-f1c100s-ccu";
+> >                       reg =3D <0x01c20000 0x400>;
+>
+>
 
