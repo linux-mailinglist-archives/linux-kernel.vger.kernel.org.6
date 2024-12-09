@@ -1,200 +1,191 @@
-Return-Path: <linux-kernel+bounces-437481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A26509E93DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:26:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17ABB9E93E3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9551164153
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:26:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB37F188744B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF0242236FD;
-	Mon,  9 Dec 2024 12:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0748E224B1C;
+	Mon,  9 Dec 2024 12:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="AZuE/FHY"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hDV+qciK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC+e+KmZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hDV+qciK";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC+e+KmZ"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A65A2236E5
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AE021D008;
+	Mon,  9 Dec 2024 12:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747186; cv=none; b=WgRkj+6v+QsullX12na5H5jeUzc5aPf1nHnp88chXJBA53OvNogbwjj1YUyAnhXLLCHLJ9Rks9xPYluYgcUyiI986RmKDMmnvL9uEBoENnSPUkwdS1vEcrQ6Cz1K2P+A+K8PX6P6rzNYfxbjnjflNnKI0+mwDVWMpPXWv6kDFgc=
+	t=1733747217; cv=none; b=htKJ7UacVR+6lCv2vHv6+cOk8DMGWEG1ViWUdTDkk3ruBzHQxn9OE8uTzWgT/4vgqdcYiaCwVw7GZx+wVAmrynF1XOm5c2qsOAt3J3nXfH2Wqm414Sox0dafXihJY3KT2q0GqvFLMnM2psDO4qWIQS/3Dq49G9RneDNnqrB5XDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747186; c=relaxed/simple;
-	bh=ALBimcnbqk697UM83yKCxcwHYxQDDpnxBvP5j3NscJQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lo/7Pvsua/0+eZ3IBBKEU1JR7Jxj1H/93iGhWbthnHtTTWlsW/sO+74l+6qLflHqErzvxTaB9NmQIJptmk3SFyuvTybEN7R7UVrZkvZH4miIGrPj7bBhBboG8SA7+i5cXTHZCu3Qu/tjVuGxE0XZ9Nfaj2j1s6FybiXNfZmuBU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=AZuE/FHY; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-216585cbe1eso6366615ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:26:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733747184; x=1734351984; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=adtW4yhwyBOkoWat2M6vNhXJayXsjhP2L4IIfgg3CNM=;
-        b=AZuE/FHYNFJNxgu/MLoL6bnVTfqQcKT8mZtt5G/tcYiWK1a7jMWlt/Cx+yKf2U6s5L
-         2VhK8I8ieNm2s/aR6O6bRl0w0xDyWhdqIvlUvKXlzu88gA8mohmJAeSMu71Vc7NEZNUP
-         QR+3a4jeYnwX9dyyiGTs2+cJF2D63HgZ48U1BVsy3vYCRhQxom8DCoo/Bm1UiYM8AdNb
-         Kh7xrbRVPZBFZYsZ7fakTA3xp4hqepkgkuawKoQ6vBSuZFEPTGoDGLUFzlPBvLJ+sXeE
-         J1UhjOnvDhaBGHc6FpZxwQOMvngPRc3CUOddar8grTlLSKAzZT7gN4HYfxs9sfscJA6z
-         qBtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733747184; x=1734351984;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=adtW4yhwyBOkoWat2M6vNhXJayXsjhP2L4IIfgg3CNM=;
-        b=AND0qdU5iO/BHXN7akU++GB8C2hNe6AhzFNewKdSlbIuyxE8+ASZ7VjBFsUH4PxuX7
-         ebR4r31GWTj5LBlAgOy2ea+qaV2F/qxbKtFVHBMPfcERvyi4LWgT3OkweHWcQCyTwrGY
-         8hbc9wZAx5bTbeQANOQf+P9Pqje13iNHkHdbYO9R8If+fRm+EZyHIzLxkREyWDN0M2wP
-         bObVuXYNYlPKkZjeAQkaskDSx2bGPq860QcPHPQ33lGBdJ3eJwN8IHJWocJQR9oiKGSE
-         gOvT9EkGh1DvZj0QSmdDZtPZNDRWq2OQrz/BLsYluVchrtbPaCg2WRNyj49koS5GTnYt
-         m55g==
-X-Forwarded-Encrypted: i=1; AJvYcCVns3pdo5u3bUlzsNxSOQ43xpw7rNL8lJsoIZtM/fMo2Cna9SbnqpG4Rnj6kSSzWEp1ly9pfJNvD5EF+Wk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCEBIgRlpYJYe7rLQw+aaCEAyo/f6mYRXw5n31Iw4212oU94YE
-	WUo6XfzxW9DCUDw8BEYAywktVNd5IPTPQneLcZY0va6IoK5RXVTZCj5WZVr171g=
-X-Gm-Gg: ASbGncutSujDuuXf6ivkRDQSRnjdK7tXaU5HRPpk/F9wASv0AVm9PdpfTOcj2ATjWE0
-	jDC+/3hMJrfwc6TFP/7FYQLbfTE5kY2nrXa5alo2B4Tl3HNgN9GBgBlKrJwMG6jZrpyEKM5cjBS
-	egaOzWapfRaSyU/P3R0hLtglxzqlXIrgni3ZxYytpdEKHIIf4so/EjF/t7I395trOWoGVaX+lp1
-	LTW3+YJYphpEBwaLAft5xkGqyFQNYtsNENvEzRgd9BbIui7UhXAPr7LUUEE3ijj5YFY1ZFqmON1
-	8Bo317n6qKyphGv7bE7EHi3Pn96H7isW
-X-Google-Smtp-Source: AGHT+IEkfqOSMeyV1p1/Cuhjrl7T8ZPCluyO93B+ezN3zdW8K/wnCYdgb3FXmHnAi6yiGokVDtfhww==
-X-Received: by 2002:a17:902:ccc1:b0:216:4e8d:4803 with SMTP id d9443c01a7336-2166a03c862mr3381875ad.42.1733747183831;
-        Mon, 09 Dec 2024 04:26:23 -0800 (PST)
-Received: from J9GPGXL7NT.bytedance.net ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21638d87ca1sm28386325ad.171.2024.12.09.04.26.20
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 09 Dec 2024 04:26:23 -0800 (PST)
-From: Xu Lu <luxu.kernel@bytedance.com>
-To: paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	alexghiti@rivosinc.com,
-	bjorn@rivosinc.com
-Cc: lihangjing@bytedance.com,
-	xieyongji@bytedance.com,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Xu Lu <luxu.kernel@bytedance.com>
-Subject: [PATCH v4] riscv: mm: Fix the out of bound issue of vmemmap address
-Date: Mon,  9 Dec 2024 20:26:17 +0800
-Message-Id: <20241209122617.53341-1-luxu.kernel@bytedance.com>
-X-Mailer: git-send-email 2.39.5 (Apple Git-154)
+	s=arc-20240116; t=1733747217; c=relaxed/simple;
+	bh=EXuffNypYZQBoi7xXVEosmidvBHnO0T9iy/3eDyUUck=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bu6rP2iCXG4j/4w7UITNeAwUeGbEBD4GARwKVCqamBck7aREcwlYERzXBhBKLtoaNGmoDVB4ApSEwGbb0VZdd8EO632VfOELjioeXh6zzG1VlJWurM4qru5slNjHdxaOyHoZAuW4A0YY+vmNOt6nfBFXky717Q8GV0DbMKWk5wQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hDV+qciK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC+e+KmZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hDV+qciK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC+e+KmZ; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 5561821170;
+	Mon,  9 Dec 2024 12:26:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733747213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
+	b=hDV+qciKDx6oL68xDXqrcCyLSYXGtcrbJz1IvjJt1bTUtS1M9m6tle3UhEWz7CXfNDOfEF
+	jqTyg25TrY0zcuBP68b3+6amX27gggg4Pvub3o65w0d+JflnpGHUTRDNHmBTp5nZ//D/Ae
+	AIJXtnr5nQwq3RcG7FyQ9f5aE9W1mQ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733747213;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
+	b=DC+e+KmZ/WnfcmV7DU9t2KQKF2XIGc+Y/e98jEpDPB+lg7Vz+gmerLwJqeKP6a9Qi+Jf0Q
+	wOpN7xYQKwnNmIAQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733747213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
+	b=hDV+qciKDx6oL68xDXqrcCyLSYXGtcrbJz1IvjJt1bTUtS1M9m6tle3UhEWz7CXfNDOfEF
+	jqTyg25TrY0zcuBP68b3+6amX27gggg4Pvub3o65w0d+JflnpGHUTRDNHmBTp5nZ//D/Ae
+	AIJXtnr5nQwq3RcG7FyQ9f5aE9W1mQ4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733747213;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
+	b=DC+e+KmZ/WnfcmV7DU9t2KQKF2XIGc+Y/e98jEpDPB+lg7Vz+gmerLwJqeKP6a9Qi+Jf0Q
+	wOpN7xYQKwnNmIAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4466B138D2;
+	Mon,  9 Dec 2024 12:26:53 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id VVxtEA3iVmdxWAAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 09 Dec 2024 12:26:53 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id E84FAA0B0C; Mon,  9 Dec 2024 13:26:48 +0100 (CET)
+Date: Mon, 9 Dec 2024 13:26:48 +0100
+From: Jan Kara <jack@suse.cz>
+To: Bert Karwatzki <spasswolf@web.de>
+Cc: Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
+	Jan Kara <jack@suse.cz>, kernel-team@fb.com,
+	linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
+	brauner@kernel.org, torvalds@linux-foundation.org,
+	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
+	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
+	linux-ext4@vger.kernel.org
+Subject: Re: commit 0790303ec869 leads to cpu stall without
+ CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+Message-ID: <20241209122648.dpptugrol4p6ikmm@quack3>
+References: <20241208152520.3559-1-spasswolf@web.de>
+ <20241209121104.j6zttbqod3sh3qhr@quack3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209121104.j6zttbqod3sh3qhr@quack3>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[web.de];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	RCVD_COUNT_THREE(0.00)[3];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[toxicpanda.com,vger.kernel.org,suse.cz,fb.com,gmail.com,kernel.org,linux-foundation.org,zeniv.linux.org.uk,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-In sparse vmemmap model, the virtual address of vmemmap is calculated as:
-((struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT)).
-And the struct page's va can be calculated with an offset:
-(vmemmap + (pfn)).
+On Mon 09-12-24 13:11:04, Jan Kara wrote:
+> > Then I took a closer look at the function called in the problematic code
+> > and noticed that fsnotify_file_area_perm(), is a NOOP when
+> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is not set (which was the case in my
+> > .config). This also explains why this was not found before, as
+> > distributional .config file have this option enabled.  Setting the option
+> > to y solves the issue, too
+> 
+> Well, I agree with you on all the points but the real question is, how come
+> the test FMODE_FSNOTIFY_HSM(file->f_mode) was true on our kernel when you
+> clearly don't run HSM software, even more so with
+> CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled. That's the real cause of this
+> problem. Something fishy is going on here... checking...
+> 
+> Ah, because I've botched out file_set_fsnotify_mode() in case
+> CONFIG_FANOTIFY_ACCESS_PERMISSIONS is disabled. This should fix the
+> problem:
+> 
+> index 1a9ef8f6784d..778a88fcfddc 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -215,6 +215,7 @@ static inline int fsnotify_open_perm(struct file *file)
+>  #else
+>  static inline void file_set_fsnotify_mode(struct file *file)
+>  {
+> +       file->f_mode |= FMODE_NONOTIFY_PERM;
+>  }
+> 
+> I'm going to test this with CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled and
+> push out a fixed version. Thanks again for the report and analysis!
 
-However, when initializing struct pages, kernel actually starts from the
-first page from the same section that phys_ram_base belongs to. If the
-first page's physical address is not (phys_ram_base >> PAGE_SHIFT), then
-we get an va below VMEMMAP_START when calculating va for it's struct page.
+So this was not enough, What we need is:
+index 1a9ef8f6784d..778a88fcfddc 100644
+--- a/include/linux/fsnotify.h
++++ b/include/linux/fsnotify.h
+@@ -215,6 +215,10 @@ static inline int fsnotify_open_perm(struct file *file)
+ #else
+ static inline void file_set_fsnotify_mode(struct file *file)
+ {
++	/* Is it a file opened by fanotify? */
++	if (FMODE_FSNOTIFY_NONE(file->f_mode))
++		return;
++	file->f_mode |= FMODE_NONOTIFY_PERM;
+ }
 
-For example, if phys_ram_base starts from 0x82000000 with pfn 0x82000, the
-first page in the same section is actually pfn 0x80000. During
-init_unavailable_range(), we will initialize struct page for pfn 0x80000
-with virtual address ((struct page *)VMEMMAP_START - 0x2000), which is
-below VMEMMAP_START as well as PCI_IO_END.
+This passes testing for me so I've pushed it out and the next linux-next
+build should have this fix.
 
-This commit fixes this bug by introducing a new variable
-'vmemmap_start_pfn' which is aligned with memory section size and using
-it to calculate vmemmap address instead of phys_ram_base.
-
-Fixes: a11dd49dcb93 ("riscv: Sparse-Memory/vmemmap out-of-bounds fix")
-Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
----
- arch/riscv/include/asm/page.h    |  1 +
- arch/riscv/include/asm/pgtable.h |  2 +-
- arch/riscv/mm/init.c             | 17 ++++++++++++++++-
- 3 files changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 71aabc5c6713..125f5ecd9565 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -122,6 +122,7 @@ struct kernel_mapping {
- 
- extern struct kernel_mapping kernel_map;
- extern phys_addr_t phys_ram_base;
-+extern unsigned long vmemmap_start_pfn;
- 
- #define is_kernel_mapping(x)	\
- 	((x) >= kernel_map.virt_addr && (x) < (kernel_map.virt_addr + kernel_map.size))
-diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pgtable.h
-index d4e99eef90ac..050fdc49b5ad 100644
---- a/arch/riscv/include/asm/pgtable.h
-+++ b/arch/riscv/include/asm/pgtable.h
-@@ -87,7 +87,7 @@
-  * Define vmemmap for pfn_to_page & page_to_pfn calls. Needed if kernel
-  * is configured with CONFIG_SPARSEMEM_VMEMMAP enabled.
-  */
--#define vmemmap		((struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT))
-+#define vmemmap		((struct page *)VMEMMAP_START - vmemmap_start_pfn)
- 
- #define PCI_IO_SIZE      SZ_16M
- #define PCI_IO_END       VMEMMAP_START
-diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
-index 0e8c20adcd98..d93271cb97b1 100644
---- a/arch/riscv/mm/init.c
-+++ b/arch/riscv/mm/init.c
-@@ -33,6 +33,7 @@
- #include <asm/pgtable.h>
- #include <asm/sections.h>
- #include <asm/soc.h>
-+#include <asm/sparsemem.h>
- #include <asm/tlbflush.h>
- 
- #include "../kernel/head.h"
-@@ -62,6 +63,13 @@ EXPORT_SYMBOL(pgtable_l5_enabled);
- phys_addr_t phys_ram_base __ro_after_init;
- EXPORT_SYMBOL(phys_ram_base);
- 
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
-+#define VMEMMAP_ADDR_ALIGN	(1ULL << SECTION_SIZE_BITS)
-+
-+unsigned long vmemmap_start_pfn __ro_after_init;
-+EXPORT_SYMBOL(vmemmap_start_pfn);
-+#endif
-+
- unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)]
- 							__page_aligned_bss;
- EXPORT_SYMBOL(empty_zero_page);
-@@ -240,8 +248,12 @@ static void __init setup_bootmem(void)
- 	 * Make sure we align the start of the memory on a PMD boundary so that
- 	 * at worst, we map the linear mapping with PMD mappings.
- 	 */
--	if (!IS_ENABLED(CONFIG_XIP_KERNEL))
-+	if (!IS_ENABLED(CONFIG_XIP_KERNEL)) {
- 		phys_ram_base = memblock_start_of_DRAM() & PMD_MASK;
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
-+		vmemmap_start_pfn = round_down(phys_ram_base, VMEMMAP_ADDR_ALIGN) >> PAGE_SHIFT;
-+#endif
-+	}
- 
- 	/*
- 	 * In 64-bit, any use of __va/__pa before this point is wrong as we
-@@ -1101,6 +1113,9 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
- 	kernel_map.xiprom_sz = (uintptr_t)(&_exiprom) - (uintptr_t)(&_xiprom);
- 
- 	phys_ram_base = CONFIG_PHYS_RAM_BASE;
-+#ifdef CONFIG_SPARSEMEM_VMEMMAP
-+	vmemmap_start_pfn = round_down(phys_ram_base, VMEMMAP_ADDR_ALIGN) >> PAGE_SHIFT;
-+#endif
- 	kernel_map.phys_addr = (uintptr_t)CONFIG_PHYS_RAM_BASE;
- 	kernel_map.size = (uintptr_t)(&_end) - (uintptr_t)(&_start);
- 
+								Honza
 -- 
-2.20.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
