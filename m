@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-438392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01F09EA0A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:54:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92F399EA0A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:55:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3CBF18862BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:54:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D216C1886FDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A545319B5BE;
-	Mon,  9 Dec 2024 20:54:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0440319C553;
+	Mon,  9 Dec 2024 20:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EAM3e9CG"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMcuXnsK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873BC19ABAB;
-	Mon,  9 Dec 2024 20:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DC719AA72;
+	Mon,  9 Dec 2024 20:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733777687; cv=none; b=OfolS7tt6+DCUXCtYMzlzbhNqpbVAoHGwjo35RCL3ESg7+G0Mq+HUkLjr6pJDL4/5cqgI3ulX9CLU1gK78XIjG58186I1MG1QFBQbk9sqizS8k3aJ0guuqx8UZAHwRqqCTaqwZioTSI4ODoYI0vc8TVnS//+nPFn+LnYTyU2jPg=
+	t=1733777702; cv=none; b=CBRUVAcWxCNHOQhkHe5TItD0ewy/7GPEL6BUXTb9/dN1i5FZBxBGNCM1ANifJDqhb130z+X+FJeeJTuP7EH+iEisbHWJXuZ76jKzXglABFJ8LiQC2C8sJcv7cUtO+8J6FnSUYUKiCmMq1T9lNqryfdv+1M92GW63ePzpRkjivRA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733777687; c=relaxed/simple;
-	bh=cKS+EJTZmqJKlN5Q4aNDbjHGizyuTbwZn51Cakeupmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P1uo+1f2eu7Z85xPdtgPj0cUfvOj8m0OtkN5AOgkpsU2GJHgZQ4mCJbS//DQnB6AapZ6ikE8HVahePSXOl2XDj3ICdcrxiMps65Nxq6COWMmXHzlx+98tktbfJkYbfGTkSbtAit+KW9LxhtIDihNF7FSnlV7GGoKhFpDw0XGLV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EAM3e9CG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9IdACu025163;
-	Mon, 9 Dec 2024 20:54:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	On+/zsCoz/Q3ZJ3ZLOQOcM65UnYlf7UMHxrOCNbEXXg=; b=EAM3e9CGmyYNkDnj
-	hfVNs+xVXrWl9zR5Yz976b7S+uD4cFFOIIVoEk+6W2bhLA/eYbC0WcIEK/MBMW+O
-	oht3gP7iuvcrnYxjxgAXWk6IC4ix6eb8ZiT7qvPaO5kHVsm1oNaT6JxMAPrlBCRu
-	L7TxUEGCZ85zrMYjY4qv2ukr4MRMozzGYRf2ejNVvvedTmJ/O/o9r8GdY7f7qv7r
-	mrS+TWv4kuI19DBGX95l5diTkXSExR8lmsU2KGGhUvMHMH3I4NBJH5H3IrHKEalB
-	c4AfHBsHXkJHjdT2vshcL6cxkuYVmRxQCdXhapm+7fvNTnwDufGeLvtugugpXEFi
-	L2ObkQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cek1x3vh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 20:54:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9KsZHL028159
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 20:54:35 GMT
-Received: from [10.216.3.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 12:54:30 -0800
-Message-ID: <a3f39ee2-cdb6-4d54-a5db-6208e435972c@quicinc.com>
-Date: Tue, 10 Dec 2024 02:24:27 +0530
+	s=arc-20240116; t=1733777702; c=relaxed/simple;
+	bh=sT3cu6wLiArOXLV8PeYah6jrUg+dwfQAjmoR0c2zxJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iQDf01zHZ2Sk1GsytD56ODKGulI3TQsVEkWM7zIXg12m28yKYL7OFyyI5lHM3E4voNCcntt681OiumMzKxBkojkRQJ0/hkRJeDKMgUmHmWxYrRpbimOX3rpTiAydVbFUHibUzROmDeRLPmmukrg9YKccpLjlHFU7MdPMkDmY8Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMcuXnsK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB10AC4CED1;
+	Mon,  9 Dec 2024 20:55:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733777701;
+	bh=sT3cu6wLiArOXLV8PeYah6jrUg+dwfQAjmoR0c2zxJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TMcuXnsKxYzVzJL9bw4nOpQXtdLJiEv2ophPJKNluWv5bqysU9IzvJt0qzg9PUfKH
+	 iJeh3Hkz7OPoFf4fkAmruFF5oycjzsoefR7hRBavPOB/YgWKo398WEQHYL3AFlCHuI
+	 /EikBJVxkqO24HMdQMdiaDBVrnFQseBbVpumnx6lL+6jpb67CMTDF6Omf+OXo6daWU
+	 hzHT7g5gaAP9T6TZ3jUhmRcrkE1JodPMvvANG99Q60ZQRjmyOJXrWq+ie0TNLqJ3Pi
+	 A4l6N9dmWkUQNW9Ajh3IUL7pvUbrNoikorpQi1X66YRZlFOGrLcmUkI342I3Ep9RkF
+	 7doXFI0EjZqIQ==
+Date: Mon, 9 Dec 2024 12:54:58 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
+	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Florian Weimer <fweimer@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>
+Subject: Re: [PATCH v3 07/19] unwind: Add user space unwinding API
+Message-ID: <20241209205458.vzwkh3ubch5sx5c7@jpoimboe>
+References: <cover.1730150953.git.jpoimboe@kernel.org>
+ <f89a9137e983902f22611e5379606062a64b2382.1730150953.git.jpoimboe@kernel.org>
+ <978a9ecd-47e9-442b-8daa-aee8f3d93dbb@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        "Pavan
- Kondeti" <quic_pkondeti@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
- <08440076-3c04-4bb1-b339-071b82d638d2@oss.qualcomm.com>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <08440076-3c04-4bb1-b339-071b82d638d2@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: aLzk8rpoL2kyujEGSdTdyy901kFjb8CY
-X-Proofpoint-ORIG-GUID: aLzk8rpoL2kyujEGSdTdyy901kFjb8CY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- mlxscore=0 adultscore=0 clxscore=1015 malwarescore=0 phishscore=0
- spamscore=0 mlxlogscore=930 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090162
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <978a9ecd-47e9-442b-8daa-aee8f3d93dbb@linux.ibm.com>
 
-On 12/9/2024 8:33 PM, Konrad Dybcio wrote:
-> On 9.12.2024 9:19 AM, Akhil P Oommen wrote:
->> When kernel is booted in EL2, SECVID registers are accessible to the
->> KMD. So we can use that to switch GPU's secure mode to avoid dependency
->> on Zap firmware. Also, we can't load a secure firmware without a
->> hypervisor that supports it.
->>
->> Tested following configurations on sa8775p chipset (Adreno 663 gpu):
->>
->> 1. Gunyah (No KVM) - Loads zap shader based on DT
->> 2. KVM in VHE - Skips zap shader load and programs SECVID register
->> 3. KVM in nVHE - Loads zap shader based on DT
->> 4. Kernel in EL2 with CONFIG_KVM=n - Skips zap shader load and
->> 	programs SECVID register
->>
->> For (1) and (3) configuration, this patch doesn't have any impact.
->> Driver loads secure firmware based on other existing hints.
->>
->> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
->> ---
+On Fri, Dec 06, 2024 at 11:29:21AM +0100, Jens Remus wrote:
+> On 28.10.2024 22:47, Josh Poimboeuf wrote:
+> > +	if (ra == prev_ip)
+> > +		goto the_end;
 > 
-> [...]
+> This seems too restrictive to me, as it effectively prevents
+> unwinding from recursive functions, e.g. Glibc internal merge sort
+> msort_with_tmp():
 > 
->> +
->> +#ifdef CONFIG_ARM64
->> +	/*
->> +	 * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
->> +	 * to switch the secure mode to avoid the dependency on zap shader.
->> +	 */
->> +	if (is_kernel_in_hyp_mode())
->> +		goto direct_switch;
+> $ perf record -F 9999 --call-graph fp /usr/bin/objdump -wdWF /usr/bin/objdump
+> $ perf script
+> ...
+> objdump    8314 236064.515562:     100010 task-clock:ppp:
+>                  100630a compare_symbols+0x2a (/usr/bin/objdump)
+>              3ffb9e58e7c msort_with_tmp.part.0+0x15c (/usr/lib64/libc.so.6)
+>              3ffb9e58d76 msort_with_tmp.part.0+0x56 (/usr/lib64/libc.so.6)
+> [unwinding unexpectedly stops]
 > 
-> So I suppose this would ideally be like hv_is_hyperv_initialized()
-> but for QHEE/Gunyah, which is not going to happen, as we have
-> millions of devices with old unupstreamable-ABI-Gunyah running..
+> Would it be an option to only stop unwinding if both the IP and SP do
+> not change?
 > 
-> This looks like the next best things then, so no objections, but..
-> 
-> [...]
-> 
->> +	ret = a6xx_switch_secure_mode(gpu);
->> +	if (!ret)
-> 
-> this should definitely be a if (ret)
+> if (sp == prev_sp && ra == prev_ra)
+> 	gote the_end;
 
-My bad! Thanks.
+Good point, I've already fixed that for the next version (not yet
+posted).  I believe the only thing we really need to check here is that
+the unwind is heading in the right direction:
 
--Akhil.
-> 
-> Konrad
+if (cfa <= state->sp)
+	goto the_end;
 
+-- 
+Josh
 
