@@ -1,281 +1,175 @@
-Return-Path: <linux-kernel+bounces-438351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C14E99EA006
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:03:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CCAA9EA00C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:06:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B250165804
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B987282940
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:06:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 885AE1991AA;
-	Mon,  9 Dec 2024 20:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D80C1993B2;
+	Mon,  9 Dec 2024 20:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PiNbo2XI"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="WIN19bdz";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="y4TCFzUC"
+Received: from fhigh-b2-smtp.messagingengine.com (fhigh-b2-smtp.messagingengine.com [202.12.124.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD602199EA1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 20:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646FC1991DB
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 20:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733774603; cv=none; b=Vq11BsN7KGqXNkUsddWeG0BXiDpRPuzJzHcFzFa/qL5ZZWBF0Mrp95ZYiR16oU653zR4HKBfo7c9EFvv7DnBKIMxBmUHcuXYu8LvYU0vohyQQ7C7+RnwY02PTnUd9y9++FICWc8znqDlXG7kFHnhzvkCF8IBW/MQX2RCNOowmHw=
+	t=1733774783; cv=none; b=k71EL9yktWALal3rmwfs6kACl92AGwk4EsAKgqB8KPZbpeDIEEveFiQ2J5t4E/kyxn7GmytsNdY3B5LVuQ0bIaUSqhlUd51njCsVO15+1xW7K1ooTMR6gFmkp7i3svK8AGGylFqt9WIW9CK5jtd8m+ezSZxokBOQWH4pxMW0o5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733774603; c=relaxed/simple;
-	bh=Cz5XsO+IzSqyXTwAmxCh6roFQ/+kI7mQYh/BmtGvC0s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hnmD/X4fx6HJFovfBK0cOJ+4JaoU8AjD4MxTgkp81S71HCSosiMNsm6uA3Csk9y5vBFFkB4uF0fCHNFUfmx6CTdDst4mt/LUMT+fcgpIH5CWKhSMZCvgwWuBWq/DQ6fvL3mk2BF54KTKHR8q0IR5x4Kg66sixth81hd/qzM81m4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PiNbo2XI; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-385e27c75f4so3611866f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 12:03:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733774600; x=1734379400; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPYCrzZCCjzRvqgU1jegwSrHbG/9FN5wcwtsSBQ6V7k=;
-        b=PiNbo2XIdpYiQZEWQm0Ruo09sYrLVZzv3HjwaYU77eqNls90O1wnTPQOy75lrjyWq9
-         jCE3T/R3wPxohA80QUpCNkcMgzZ1Jv8iqm3PQ2clW9zFhM/FH8YuNjYyRXjxWsYZANHO
-         ouStoUzLlFSmH6JxQANL0wfA1P071jV55Eq/yDYRTH/cpUjXVIhPReoReKBU8wBR1GB3
-         r1mBWqRYB000v/LnXbcapBOdq45brts39hLU/ZRbETi6p8EkF0Um6AlJFVwqmTK0Anjs
-         VOmwR06bffGAfVCLTnrYuax/bJDDKjF+HbWLKs9IqWYYJWZ9TvUZeJ0KGBItSI0o0Hio
-         A4xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733774600; x=1734379400;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPYCrzZCCjzRvqgU1jegwSrHbG/9FN5wcwtsSBQ6V7k=;
-        b=QboSVLWvriJQExp3OHEGTZFmVR3r94E8wpmzLeDwrlukWrJ3DIJWWxOZve1aD3qEQS
-         rtoXjYWh0zK3xAw8zdzXCcYcsposi+BuJ1ds/yMTcf/5dlXZBfFruRjovn4bH8NTYBME
-         2Ouev4ZuKKF23B9+kINVlW5zbD4VpoCKwV1c8IWsIW6ynzgakwJTJTlu0YRf+gfyyjFI
-         NSgkALzdJfgjM4S5sUQr4AJuFECxyOURGpTlcmTh7H7Se2belLxjfrS9mEnp+gvYUXs9
-         X1tg9jbsYy77K/g+8dp90xvnvSgOWeElw9ko+Tzlt0sEZL65stKYyKK22Goop1CZ3uD3
-         gv9g==
-X-Gm-Message-State: AOJu0YyUylV6JXa4zhkdJNQDgXbXJHfcO8fW+Q5/UECuYMiDqm4OVWLv
-	rLP5Trz4wukNTcRXxEl8XhaquI6AkvbIt0cP+UqWhdhDkoQD97DNTvbaRu/0darFBM/RWYpQETj
-	/+HuW3qHVzVq0X2nFp5mOsPuGs7/sb5Vzob4q
-X-Gm-Gg: ASbGncuL91OhODCFrei7SXj0vLTRPm+Z14nGqcOsi3kQ842VZMfBoCp/mUJYZT53ZP7
-	mzK3H728pNhA6PqO7CmxGUvOBAQ8/2fYaiW5GBmug+gOYrzmj+fHmyIvJt03Bs7g=
-X-Google-Smtp-Source: AGHT+IH/8wBZKbvAM3Kd6V9LDka0jhS1It9n6dZAYVNyDviCv3i8BEzSASKP4rp2lhRJmvibQoaIOefKkNTbClB5B+M=
-X-Received: by 2002:a05:6000:18a5:b0:385:f6b9:e762 with SMTP id
- ffacd0b85a97d-386453fbc6emr1506784f8f.36.1733774600048; Mon, 09 Dec 2024
- 12:03:20 -0800 (PST)
+	s=arc-20240116; t=1733774783; c=relaxed/simple;
+	bh=Qg9tY6WkMi5DV2IAtjlPI3PL08fh17JH91gKaGlk/24=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=WMmTME738i/24Bns+BHVFzAlvEhVeUCnO2jdhmbnvkpMGqo8knclgpqbr8a15VR4V5Ti4SgQKVjL0rinRrTs0Gnx1t4kiNqkczqI8Enm8nNL4jMJjjkMWrHbMWF23TS3sp75bLRbpbAARnpef7EBIDgBWONk7yuzHXAXTvL/JoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=WIN19bdz; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=y4TCFzUC; arc=none smtp.client-ip=202.12.124.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 691CB25400F5;
+	Mon,  9 Dec 2024 15:06:19 -0500 (EST)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Mon, 09 Dec 2024 15:06:19 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm3; t=1733774779;
+	 x=1733861179; bh=nQl2j0rIZS5pSXIFVtnJBA0VqmUKUraYlxqzAKGAlDQ=; b=
+	WIN19bdzD56xXyRWMsO2UUJ+FlhyeSOyQLPFKa71SUIvNXv+OeNkYrS3BXmGMlgc
+	pbN+HsenpscHsTLaTx81YWIs3SUGFKQeAEbk/jdQKp6kLQ1x8G+/POnjIPs2dH9b
+	SP42MNg4fkuCGs1ZlAk7ltWLJMXa2/hxfVpK3bIRVfTBj1L2ymP9s/v2GSGEw3X2
+	6IL0OfViPHFwn8rmmSgmCz+sExdmJv0uMXqakA9pZ2CJzk247PWwsDxoiETGxdQ8
+	Hkx/Y6E94kmzkFzcWU79tRwR4URBLmjfcAMLDpZ7tn0bbjSXH5SEp5Mi/9+41CsC
+	ZOFaqbymwW8GgRiW9afWpg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1733774779; x=
+	1733861179; bh=nQl2j0rIZS5pSXIFVtnJBA0VqmUKUraYlxqzAKGAlDQ=; b=y
+	4TCFzUCMe6tn+zDQgfsCokrK66uaNBH/Hqh/JQtHqG/slaaKMHBA5L4D7RYUNaqh
+	gmlcOmWq17vBCKNwtgQsKdncdZ/dkRg6AUVkK1AdK9KEC/r5jLSwb7XwkwCfu+UQ
+	I3rMziZ9BnVwOXx1VWqGzq3dyQRgAhhHvwXJqbzrcJlORP+EkC0hL96sGVPB9dQB
+	yU/gmWblB/uOYyRxp8gokl7aJ3gqURBF3HPyDnl5HJu45UKhUT0/4tcFO57uf8lY
+	fcI9SqMmpEO+89vrKelHJyyLDCRWNbcDNsPKfWHYwYo6AxSyC8zzhIqmduZFa5uI
+	YGA1tOYHM8ugGszEcFnag==
+X-ME-Sender: <xms:uk1XZ6vcs2UtQfs9wbfRvgp6kSq4mResAaIstypzD5GSvuBh_oBCGg>
+    <xme:uk1XZ_eycOXP0vXdGvybN45k1P_b8i3I7j5KAud7zezmxu5twsHB8x8I4xxCVxO8b
+    bR-wKEZDOPANBqTeFk>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeeigddutdeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
+    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
+    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
+    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
+    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohephedp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepnhgusegrrhhmrdgtohhmpdhrtghpth
+    htohepshhuuggvvghprdhhohhllhgrsegrrhhmrdgtohhmpdhrtghpthhtohephigvohhr
+    vghumhdrhihunhesrghrmhdrtghomhdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhkvg
+    hrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:uk1XZ1x12ha3nJFi19MH9wyCTZ_JDqlcGgSnizAu-fDVgk5iBtU9tA>
+    <xmx:uk1XZ1MMKD7X9Kp9z5tedZg1ShwWkOjfftCG5GWGNZnBZ7na6NEwHA>
+    <xmx:uk1XZ6-V5wTBRJVB3-WM2kXqhNoTsCUwN4DtZdoyZmu81k3KpRNIyQ>
+    <xmx:uk1XZ9WRUGdVW6aInTrxHycIDKmEIyko-Ps5-9740U-RN9kbY_qhFw>
+    <xmx:u01XZ-alTYOHvXfofMaf8IczHeuEhiTb7tYu4FprWje7BvXiR96yzWph>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C5B3C2220072; Mon,  9 Dec 2024 15:06:18 -0500 (EST)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241126212255.3793822-1-ctshao@google.com> <20241126212255.3793822-2-ctshao@google.com>
- <Z04dWxBBEfcXK8z5@google.com>
-In-Reply-To: <Z04dWxBBEfcXK8z5@google.com>
-From: Chun-Tse Shao <ctshao@google.com>
-Date: Mon, 9 Dec 2024 12:03:08 -0800
-Message-ID: <CAJpZYjWSGePB6GOJb=MeLzA4bMc9BwjbkbND0p1xfkmvPZfj=Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] perf lock: Fix parse_lock_type which only retrieve
- one lock flag
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com, 
-	acme@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Date: Mon, 09 Dec 2024 21:04:30 +0100
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Sudeep Holla" <sudeep.holla@arm.com>
+Cc: "Yeoreum Yun" <yeoreum.yun@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, nd@arm.com
+Message-Id: <0cb655ee-9401-41bb-b9cd-580e0aeef2be@app.fastmail.com>
+In-Reply-To: <Z1ch52AthTYVhtH4@bogus>
+References: <20241203143109.1030514-1-yeoreum.yun@arm.com>
+ <20241203143109.1030514-3-yeoreum.yun@arm.com>
+ <9e60e996-070e-43a7-80e9-efdfda9f6223@app.fastmail.com>
+ <Z1ch52AthTYVhtH4@bogus>
+Subject: Re: [PATCH v2 2/2] firmware/arm_ffa: remove __le64_to_cpu() when set uuid for
+ direct msg v2
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-Thank you Namhyung, please check my v4 patches here:
-https://lore.kernel.org/linux-perf-users/20241209200104.870531-1-ctshao@goo=
-gle.com/T/#t
+On Mon, Dec 9, 2024, at 17:59, Sudeep Holla wrote:
+> On Mon, Dec 09, 2024 at 04:27:14PM +0100, Arnd Bergmann wrote:
+>
+>> > That means, we don't need to swap the uuid when it send via direct
+>> > message request version 2, just send it as saved in memory.
+>>
+>> "As saved in memory" does not sound like a useful description
+>> when passing arguments through registers, as the register
+>> contents are not defined in terms of byte offsets.
+>>
+>
+> Well I didn't know how to term it. The structure UUID is a raw buffer
+> and it provide helpers to import/export the data in/out of it. So in LE
+> kernel IIUC, it is stored in LE format itself which was my initial
+> confusion and hence though what you fixed was correct previously.
 
-On Mon, Dec 2, 2024 at 12:49=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
+The way I would phrase it, the UUID is never "stored" in
+big-endian or little-endian format, it's just remains a string
+of bytes. The endianess becomes a choice only when loading it
+into registers for passing the argument to firmware, and it's
+the firmware that mandates little-endian in the specification.
+
+>> Can you describe what bug you found? If the byteorder on
+>> big-endian kernels is wrong in the current version and your
+>> patch fixes it, it sounds like the specification needs to
+>> be updated describe both big-endian and little-endian
+>> byte-order, and how the firmware detects which one is used.
+>>
 >
-> Hello,
+> The firmware interface understands only LE format. And by default UUID
+> is stored in LE format itself in the structure which I got confused
+> initially. We may need endian conversion at places(found few when trying
+> to get it working with BE kernel).
 >
-> On Tue, Nov 26, 2024 at 01:22:54PM -0800, Chun-Tse Shao wrote:
-> > `parse_lock_type` can only add the first lock flag in `lock_type_table`
-> > given input `str`. For example, for `Y rwlock`, it only adds `rwlock:R`
-> > into this perf session. Another example is for `-Y mutex`, it only adds
-> > the mutex without `LCB_F_SPIN` flag. The patch fixes this issue, makes
-> > sure both `rwlock:R` and `rwlock:W` will be added with `-Y rwlock`, and
-> > so on.
-> >
-> > Testing:
-> >   $ ./perf lock con -ab -Y mutex,rwlock -- perf bench sched pipe
-> >   # Running 'sched/pipe' benchmark:
-> >   # Executed 1000000 pipe operations between two processes
-> >
-> >        Total time: 8.425 [sec]
-> >
-> >          8.425402 usecs/op
-> >            118688 ops/sec
-> >    contended   total wait     max wait     avg wait         type   call=
-er
-> >
-> >          194      1.68 ms     44.16 us      8.66 us        mutex   pipe=
-_read+0x57
-> >           10    423.03 us     44.27 us     42.30 us     rwlock:W   do_e=
-xit+0x365
-> >           54    254.67 us     58.87 us      4.72 us        mutex   pipe=
-_write+0x50
-> >           21    146.64 us     11.54 us      6.98 us        mutex   pipe=
-_read+0x282
-> >           10    141.27 us     20.62 us     14.13 us     rwlock:W   rele=
-ase_task+0x6f
-> >            5     58.92 us     16.37 us     11.78 us        mutex   do_e=
-poll_wait+0x24d
-> >            3     29.81 us     17.66 us      9.94 us        mutex   do_e=
-poll_ctl+0x6c1
-> >            4     26.82 us     11.02 us      6.70 us        mutex   do_e=
-poll_wait+0x24d
-> >            2     18.32 us     12.49 us      9.16 us     rwlock:W   do_e=
-poll_wait+0x255
-> >            1     11.34 us     11.34 us     11.34 us     rwlock:W   ep_d=
-one_scan+0x2d
-> >            1     11.02 us     11.02 us     11.02 us     rwlock:R   mm_u=
-pdate_next_owner+0x4e
-> >            1     10.60 us     10.60 us     10.60 us     rwlock:W   do_e=
-poll_ctl+0xb65
-> >            1      9.90 us      9.90 us      9.90 us     rwlock:W   do_e=
-xit+0x365
-> >
-> > Fixes: d783ea8f62c4 ("perf lock contention: Simplify parse_lock_type()"=
-)
->
-> I think it won't apply to earlier kernels because you changed the field
-> names in the previous commit.  I think you can switch the order of the
-> commits so that we can have the fix first.
->
->
-> > Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> > ---
-> >  tools/perf/builtin-lock.c | 68 ++++++++++++++++++++++++++-------------
-> >  1 file changed, 45 insertions(+), 23 deletions(-)
-> >
-> > diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> > index c528aff1c9d5..c1870c287580 100644
-> > --- a/tools/perf/builtin-lock.c
-> > +++ b/tools/perf/builtin-lock.c
-> > @@ -1622,19 +1622,6 @@ static const char *get_type_lock_name(unsigned i=
-nt flags)
-> >       return "unknown";
-> >  }
-> >
-> > -static unsigned int get_type_flag(const char *str)
-> > -{
-> > -     for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table); i++) =
-{
-> > -             if (!strcmp(lock_type_table[i].flags_name, str))
-> > -                     return lock_type_table[i].flags;
-> > -     }
-> > -     for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table); i++) =
-{
-> > -             if (!strcmp(lock_type_table[i].lock_name, str))
-> > -                     return lock_type_table[i].flags;
-> > -     }
-> > -     return UINT_MAX;
-> > -}
-> > -
-> >  static void lock_filter_finish(void)
-> >  {
-> >       zfree(&filters.types);
-> > @@ -2356,29 +2343,64 @@ static int parse_lock_type(const struct option =
-*opt __maybe_unused, const char *
-> >                          int unset __maybe_unused)
-> >  {
-> >       char *s, *tmp, *tok;
-> > -     int ret =3D 0;
-> >
-> >       s =3D strdup(str);
-> >       if (s =3D=3D NULL)
-> >               return -1;
-> >
-> >       for (tok =3D strtok_r(s, ", ", &tmp); tok; tok =3D strtok_r(NULL,=
- ", ", &tmp)) {
-> > -             unsigned int flags =3D get_type_flag(tok);
-> > +             bool found =3D false;
-> >
-> > -             if (flags =3D=3D -1U) {
-> > -                     pr_err("Unknown lock flags: %s\n", tok);
-> > -                     ret =3D -1;
-> > -                     break;
-> > +             /* `tok` is a flags name if it contains ':'. */
-> > +             if (strchr(tok, ':')) {
-> > +                     for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_ty=
-pe_table); i++) {
-> > +                             if (!strcmp(lock_type_table[i].flags_name=
-, tok) &&
-> > +                                 add_lock_type(lock_type_table[i].flag=
-s)) {
-> > +                                     found =3D true;
-> > +                                     break;
-> > +                             }
-> > +                     }
-> > +
-> > +                     if (!found) {
-> > +                             pr_err("Unknown lock flags name: %s\n", t=
-ok);
-> > +                             free(s);
-> > +                             return -1;
-> > +                     }
-> > +
-> > +                     continue;
-> >               }
-> >
-> > -             if (!add_lock_type(flags)) {
-> > -                     ret =3D -1;
-> > -                     break;
-> > +             /*
-> > +              * Otherwise `tok` is a lock name.
-> > +              * Single lock name could contain multiple flags.
-> > +              */
-> > +             /*
-> > +              * By documentation, `percpu-rwmem` should be `pcpu-sem`.
-> > +              * For backward compatibility, we replace `pcpu-sem` with=
- `percpu-rwmem`.
-> > +              */
-> > +             if (!strcmp(tok, "pcpu-sem"))
-> > +                     tok =3D (char *)"percpu-rwsem";
->
-> I think it's better to split the pcpu-sem part into a separate commit as
-> it fixes a different issue.  Also you'd better merge the block commits.
->
-> Thanks,
-> Namhyung
->
->
-> > +
-> > +             for (unsigned int i =3D 0; i < ARRAY_SIZE(lock_type_table=
-); i++) {
-> > +                     if (!strcmp(lock_type_table[i].lock_name, tok)) {
-> > +                             if (add_lock_type(lock_type_table[i].flag=
-s)) {
-> > +                                     found =3D true;
-> > +                             } else {
-> > +                                     free(s);
-> > +                                     return -1;
-> > +                             }
-> > +                     }
-> > +             }
-> > +
-> > +             if (!found) {
-> > +                     pr_err("Unknown lock name: %s\n", tok);
-> > +                     free(s);
-> > +                     return -1;
-> >               }
-> >       }
-> >
-> >       free(s);
-> > -     return ret;
-> > +     return 0;
-> >  }
-> >
-> >  static bool add_lock_addr(unsigned long addr)
-> > --
-> > 2.47.0.338.g60cca15819-goog
-> >
+> I wanted to check with you about this. The current driver doesn't
+> work with BE. I tried to cook up patches but then the upstream user
+> of this driver OPTEE doesn't work in BE, so I hit a roadblock to fully
+> validate my changes. I don't see any driver adding endianness dependency
+> in the Kconfig if they can't work with BE, not sure if that
+> is intentional or just don't care. I was thinking if we can disable
+> it to build in BE kernel until the actual support was added.
+
+I think as long big-endian kernels remain an option on arm64, we
+should try to to write portable code and implement the specification
+The reality of course is that very few people care these days, and
+it's getting harder to test over time.
+
+> So the current FF-A driver just supports LE and the bug was found just
+> in LE kernel itself.
+
+What is the bug and how was it found? The only thing I see in
+the patch here is to change the code from portable to nonportable,
+but not actually change behavior on little-endian 64-bit.
+
+Looking through the other functions in drivers/firmware/arm_ffa/driver.c,
+I see that most of them just match the specification. One exception
+is ffa_notification_info_get(), which incorrectly casts the
+argument response arguments to an array of 'u16' values. Using
+the correct bit shifts according to the specification would
+make that work on big-endian and also more readable and
+robust. Another one is __ffa_partition_info_get_regs(), which
+does an incorrect memcpy() instead of decoding the values.
+
+
+     Arnd
 
