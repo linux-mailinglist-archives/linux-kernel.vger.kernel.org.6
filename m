@@ -1,89 +1,65 @@
-Return-Path: <linux-kernel+bounces-438548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A54839EA286
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:13:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFFD39EA28A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:13:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05E5C163AB1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:13:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB027163ADE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:13:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6912619F117;
-	Mon,  9 Dec 2024 23:13:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A93219F41B;
+	Mon,  9 Dec 2024 23:13:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GtZQYVKl"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeL2OJzv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E187A19EEA1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4AD19EEA1;
+	Mon,  9 Dec 2024 23:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733786006; cv=none; b=DhhM13oxFTr/Yp09WfcYq9qY80531C8QnBe6n8/438uYw/IRkFGP+EYh90R74ptzAnySU5iJPKCl/WQsCI3jMgj6P8QSNpxk1oWOkVN7csJmvXRpK/9G6tcIAgxuX1QnSYdT3wUohxzfGsru2wDpXLjcKhv9HKeou5KklEc6HBo=
+	t=1733786030; cv=none; b=D8J+Q3kIVyhUDUxumUyb8JhnLtRnU8oqiwCBZ7xp8tQwHzvn90wqTY13Ke0fTwUIrVkhjqEkW+fL7GxXdm7eFpwvXWrk5rLCN921p5E6OK3yxE24aVaLaKCI/cO6tOvKpo5aMNljxrhp1FTTa2/lerYTGK9br4ED2GMUYSsieOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733786006; c=relaxed/simple;
-	bh=lua3lAZ4l4B8bZAw8jb6+8ZEKV6Rbhla4NJjWekPLME=;
+	s=arc-20240116; t=1733786030; c=relaxed/simple;
+	bh=dEY7hIs36hxWzg2C7CPYKMQwExPrIo6akyjlklsq+LM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n6iVifrII718BJL87JrilMQ9iLy5f2OHanJuNlDVcxrUSK+lMjsPYpj1YM4oxGCMNnn79sXeQhqhG4+Pqjdy0ehflc+JMxvN5e26zt17FAoFnSMYmeDwpbCQcA/6LkHUd8Bq7CszqJ9oBISp5ygM/QeLk+ZMRSCtxUqN73gp0/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GtZQYVKl; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53e3a37ae07so2673012e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:13:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733786003; x=1734390803; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kO2asNsqNAL7eluvpkUku2CKoDCb8/glpml9Aw35CM0=;
-        b=GtZQYVKl5eVaqdeYHcJMmZaVlt/YqCfFMg19YU8ADpEWDo9ykEKfyV/2k9KMAmaOIi
-         VIJUBKYc7tcKS1CdP6UZ8sU53QSDJ883lhc6ymcODXmT40OyZ0ih99A9/Lhgz1Hv3g6g
-         W7uRg0zPFnGrmrf2cWshfKLu2c7kt3DYjWdMP83oyQGWo2t4u/ZIrSQG+qvd/k718fok
-         YIt1Z1nhu1MLdFOmn8a8SjoNacS+KnEzJcVqXcrM4sJjPFssIn+14ArzVzbtfFnrFccS
-         Bq5lmMXhvaz4gryTKxYOdbe7oxJr+637EpHqQElonAYRbrN66p4RDXutyfSkAAIv7LUR
-         3C4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733786003; x=1734390803;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kO2asNsqNAL7eluvpkUku2CKoDCb8/glpml9Aw35CM0=;
-        b=W6AinmjEz2Y3GcW8dHVFaat19Ns9CYVDiv5VRy6eQAYFZQpESz9pNC4uJeIsZ5jPF7
-         eI37cYjaMht93VB7HciIeHfT6pX5KQrJWv09wRnTyEy8KQPrnlOCr4j9u/f/615EikHJ
-         S3zf2tYDLlpxVvg2XOlgThvMlPzpdI+kBFLcObNwNID4xUSeeKeu2mGe+eUhuaEQZCP6
-         Rmz7D75F+xjm6+xM9teMxJhrd35/b8Df065aHU6Gb3Siyk2aaPIsJjU9tRU+5so+E8ZC
-         b5GUyOGmD1ilCoIBBwncON5r1hGQzStDV9ECQeIukb9eSwnK/3cKZADVZiIVNsZtDEZF
-         7szA==
-X-Forwarded-Encrypted: i=1; AJvYcCXVNOkFRAeSyJvj3S5+w9itRFYSSfX+/RTKQz8WYAcQJ742MgCp0Pv/8lnODekLMRShSgX2j7zlqWOoDEY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJX8eLvOI6a9f2FIBDMLP3RHNnYq7L/12O+4/1cXMXxCO4SEq9
-	+hsmBOxdQAOFAiBIxofQ1sPsNaZl5EJb/DPc7yBuz6DlMEQaf3S2RQlDAu2h7jk=
-X-Gm-Gg: ASbGncucRRNzpymG1Bti9AtpOuuHMbZx0Mu4+5G9IaaNNR3ifyehjiVK5/QGzrjzhbX
-	DLPc92uBetOv6HRkK4fdAs4+jTy56jlfMdxZmWV4nTgVQCjcl94fZMKYVQ4Jm+0hYwf2PCS8kM6
-	WAbM4wYxtd5Rb9LRu/QHQDLqck7A6jUeSCzOG1qdrPXC2Gu3RL2+gQE0GrVK2GJ3YnKGcCYUE8R
-	qFE3PRP2UZyWAiOIdT2klcL/svvFfa9UwkxLQZsBgqwWnjYbLBSLQFcE5TS3uruFyMfgSdcyJlI
-	/W5nmm5SNdn2R3XCO4nGVafKkBq9809SiA==
-X-Google-Smtp-Source: AGHT+IFAS1Z5WHgZqwBvaxSaopm+k8xTxDSEi+kuRvqKIcQUqZkIivnLzU/azdEntpK3zuNH1hE4yw==
-X-Received: by 2002:a05:6512:ba9:b0:53f:afae:7367 with SMTP id 2adb3069b0e04-53fafae74c8mr2641232e87.38.1733786002822;
-        Mon, 09 Dec 2024 15:13:22 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401b25b349sm687436e87.271.2024.12.09.15.13.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 15:13:21 -0800 (PST)
-Date: Tue, 10 Dec 2024 01:13:19 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Douglas Anderson <dianders@chromium.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Julius Werner <jwerner@chromium.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
-	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
-	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/6] arm64: errata: Add QCOM_KRYO_2XX_GOLD to the
- spectre_bhb_firmware_mitigated_list
-Message-ID: <wx6qbdbcrvbq34snzkxawlbpxm6vogt5ccjmdqqyazukfbjy7t@qkvax7tr27bs>
-References: <20241209174430.2904353-1-dianders@chromium.org>
- <20241209094310.2.Ia3dfc0afadbfbee81bb2efb0672262470973dd08@changeid>
+	 Content-Type:Content-Disposition:In-Reply-To; b=AxY94VpqTyqpMIIaFwxItfbGUO1GdddUY0lcNoKqgPmMCKt38b5f2exhu8xhzIU8S4eOMUFE2xJCoKQuFCCByQVZh9c0cGtRtcs5QVaOq0RnSInzMWVvw811p4Dw4QaOvMnSJ3nkCheKvz4aF1EkPaoaexhwNrcnrYoH/eqDvW8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeL2OJzv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27ECFC4CED1;
+	Mon,  9 Dec 2024 23:13:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733786029;
+	bh=dEY7hIs36hxWzg2C7CPYKMQwExPrIo6akyjlklsq+LM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BeL2OJzvx8ZDh7YEsZ2wL2p8MlZfMUrdDZYoLBzGSVTNQdFAMkVmSrLk64xDgl1ag
+	 3TUopizy2129cvgTzbornrx9Y072IPQtIjHDN/q//YYvfRCs04EL3Tqj9FABJOFvu0
+	 d7I0Bvlr01Kb6raYseTYXze0cCOsQoNXTr2VprjfrI6wwRtjiGc1KI8Q3mfpsD9SbF
+	 00IxzKyS09B5dtNntIMAAD2oY+6rMGmsYXARvtfl7mZ+Qf46peoOsgTD4VxwxXgvZI
+	 d6qSnN2DMs4BAYEvNLBjTxNte+Ezw8+jBvBweJytV+++dKdO85HWokEs5uE0IPyaGJ
+	 qLpQ11tp3fPxg==
+Date: Tue, 10 Dec 2024 00:13:41 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Rob Herring <robh@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
+	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 12/13] rust: platform: add basic platform device /
+ driver abstractions
+Message-ID: <Z1d5pQN9Y3FX2sLQ@pollux.localdomain>
+References: <20241205141533.111830-1-dakr@kernel.org>
+ <20241205141533.111830-13-dakr@kernel.org>
+ <20241209223706.GF938291-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,49 +68,214 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209094310.2.Ia3dfc0afadbfbee81bb2efb0672262470973dd08@changeid>
+In-Reply-To: <20241209223706.GF938291-robh@kernel.org>
 
-On Mon, Dec 09, 2024 at 09:43:12AM -0800, Douglas Anderson wrote:
-> Qualcomm Kryo 200-series Gold cores appear to have a derivative of an
-> ARM Cortex A73 in them. Since A73 needs Spectre mitigation then the
-> Kyro 200-series Gold cores also should need Spectre mitigation.
+On Mon, Dec 09, 2024 at 04:37:06PM -0600, Rob Herring wrote:
+> On Thu, Dec 05, 2024 at 03:14:43PM +0100, Danilo Krummrich wrote:
+> > Implement the basic platform bus abstractions required to write a basic
+> > platform driver. This includes the following data structures:
+> > 
+> > The `platform::Driver` trait represents the interface to the driver and
+> > provides `pci::Driver::probe` for the driver to implement.
+> > 
+> > The `platform::Device` abstraction represents a `struct platform_device`.
+> > 
+> > In order to provide the platform bus specific parts to a generic
+> > `driver::Registration` the `driver::RegistrationOps` trait is implemented
+> > by `platform::Adapter`.
+> > 
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  MAINTAINERS                     |   1 +
+> >  rust/bindings/bindings_helper.h |   2 +
+> >  rust/helpers/helpers.c          |   1 +
+> >  rust/helpers/platform.c         |  13 ++
+> >  rust/kernel/lib.rs              |   1 +
+> >  rust/kernel/platform.rs         | 222 ++++++++++++++++++++++++++++++++
+> >  6 files changed, 240 insertions(+)
+> >  create mode 100644 rust/helpers/platform.c
+> >  create mode 100644 rust/kernel/platform.rs
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 7d6bb4b15d2c..365fc48b7041 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -7034,6 +7034,7 @@ F:	rust/kernel/device.rs
+> >  F:	rust/kernel/device_id.rs
+> >  F:	rust/kernel/devres.rs
+> >  F:	rust/kernel/driver.rs
+> > +F:	rust/kernel/platform.rs
+> >  
+> >  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
+> >  M:	Nishanth Menon <nm@ti.com>
+> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> > index 6d7a68e2ecb7..e9fdceb568b8 100644
+> > --- a/rust/bindings/bindings_helper.h
+> > +++ b/rust/bindings/bindings_helper.h
+> > @@ -20,9 +20,11 @@
+> >  #include <linux/jump_label.h>
+> >  #include <linux/mdio.h>
+> >  #include <linux/miscdevice.h>
+> > +#include <linux/of_device.h>
+> >  #include <linux/pci.h>
+> >  #include <linux/phy.h>
+> >  #include <linux/pid_namespace.h>
+> > +#include <linux/platform_device.h>
+> >  #include <linux/poll.h>
+> >  #include <linux/refcount.h>
+> >  #include <linux/sched.h>
+> > diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> > index 3fda33cd42d4..0640b7e115be 100644
+> > --- a/rust/helpers/helpers.c
+> > +++ b/rust/helpers/helpers.c
+> > @@ -20,6 +20,7 @@
+> >  #include "kunit.c"
+> >  #include "mutex.c"
+> >  #include "page.c"
+> > +#include "platform.c"
+> >  #include "pci.c"
+> >  #include "pid_namespace.c"
+> >  #include "rbtree.c"
+> > diff --git a/rust/helpers/platform.c b/rust/helpers/platform.c
+> > new file mode 100644
+> > index 000000000000..ab9b9f317301
+> > --- /dev/null
+> > +++ b/rust/helpers/platform.c
+> > @@ -0,0 +1,13 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +#include <linux/platform_device.h>
+> > +
+> > +void *rust_helper_platform_get_drvdata(const struct platform_device *pdev)
+> > +{
+> > +	return platform_get_drvdata(pdev);
+> > +}
+> > +
+> > +void rust_helper_platform_set_drvdata(struct platform_device *pdev, void *data)
+> > +{
+> > +	platform_set_drvdata(pdev, data);
+> > +}
+> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> > index 7a0e4c82ad0c..cc8f48aa162b 100644
+> > --- a/rust/kernel/lib.rs
+> > +++ b/rust/kernel/lib.rs
+> > @@ -59,6 +59,7 @@
+> >  pub mod of;
+> >  pub mod page;
+> >  pub mod pid_namespace;
+> > +pub mod platform;
+> >  pub mod prelude;
+> >  pub mod print;
+> >  pub mod rbtree;
+> > diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> > new file mode 100644
+> > index 000000000000..868cfddb75a2
+> > --- /dev/null
+> > +++ b/rust/kernel/platform.rs
+> > @@ -0,0 +1,222 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +//! Abstractions for the platform bus.
+> > +//!
+> > +//! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+> > +
+> > +use crate::{
+> > +    bindings, container_of, device, driver,
+> > +    error::{to_result, Result},
+> > +    of,
+> > +    prelude::*,
+> > +    str::CStr,
+> > +    types::{ARef, ForeignOwnable},
+> > +    ThisModule,
+> > +};
+> > +
+> > +/// An adapter for the registration of platform drivers.
+> > +pub struct Adapter<T: Driver>(T);
+> > +
+> > +impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
+> > +    type RegType = bindings::platform_driver;
+> > +
+> > +    fn register(
+> > +        pdrv: &mut Self::RegType,
+> > +        name: &'static CStr,
+> > +        module: &'static ThisModule,
+> > +    ) -> Result {
+> > +        pdrv.driver.name = name.as_char_ptr();
+> > +        pdrv.probe = Some(Self::probe_callback);
+> > +
+> > +        // Both members of this union are identical in data layout and semantics.
+> > +        pdrv.__bindgen_anon_1.remove = Some(Self::remove_callback);
+> > +        pdrv.driver.of_match_table = T::OF_ID_TABLE.as_ptr();
+> > +
+> > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> > +        to_result(unsafe { bindings::__platform_driver_register(pdrv, module.0) })
+> > +    }
+> > +
+> > +    fn unregister(pdrv: &mut Self::RegType) {
+> > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> > +        unsafe { bindings::platform_driver_unregister(pdrv) };
+> > +    }
+> > +}
+> > +
+> > +impl<T: Driver + 'static> Adapter<T> {
+> > +    #[cfg(CONFIG_OF)]
+> > +    fn of_id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
+> > +        let table = T::OF_ID_TABLE;
+> > +
+> > +        // SAFETY:
+> > +        // - `table` has static lifetime, hence it's valid for read,
+> > +        // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
+> > +        let raw_id = unsafe { bindings::of_match_device(table.as_ptr(), pdev.as_ref().as_raw()) };
+> > +
+> > +        if raw_id.is_null() {
+> > +            None
+> > +        } else {
+> > +            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
+> > +            // does not add additional invariants, so it's safe to transmute.
+> > +            let id = unsafe { &*raw_id.cast::<of::DeviceId>() };
+> > +
+> > +            Some(table.info(<of::DeviceId as crate::device_id::RawDeviceId>::index(id)))
+> > +        }
+> > +    }
+> > +
+> > +    #[cfg(not(CONFIG_OF))]
+> > +    fn of_id_info(_pdev: &Device) -> Option<&'static T::IdInfo> {
+> > +        None
+> > +    }
+> > +
+> > +    // Try to retrieve an `IdInfo` from any of the ID tables; if we can't find one for a particular
+> > +    // table, it means we don't have a match in there. If we don't match any of the ID tables, it
+> > +    // means we were matched by name.
+> > +    fn id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
+> > +        let id = Self::of_id_info(pdev);
+> > +        if id.is_some() {
+> > +            return id;
+> > +        }
+> > +
+> > +        None
+> > +    }
 > 
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> I don't really have any good way to test this patch but it seems
-> likely it's needed. If nothing else the claim is that that Qualcomm
-> Kyro 280 CPU is vulnerable [1] but I don't see any mitigations in the
-> kernel for it.
-> 
-> NOTE: presumably this patch won't actually do much on its own because
-> (I believe) it requires a firmware update to go with it.
+> These methods are going to have to be duplicated by every bus type which 
+> can do DT matching (and later ACPI). Can't this be moved to be part of 
+> the common Driver trait.
 
-Why? is_spectre_bhb_fw_affected() returns true if (cpu in list OR fw
-mitigated)
+As mentioned in v3, I agree, but I'd prefer to do this in a follow up series.
 
 > 
-> [1] https://spectreattack.com/spectre.pdf
 > 
->  arch/arm64/kernel/proton-pack.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
-> index e149efadff20..0437be7c83bc 100644
-> --- a/arch/arm64/kernel/proton-pack.c
-> +++ b/arch/arm64/kernel/proton-pack.c
-> @@ -925,6 +925,7 @@ static bool is_spectre_bhb_fw_affected(int scope)
->  	static const struct midr_range spectre_bhb_firmware_mitigated_list[] = {
->  		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
->  		MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
-> +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_2XX_GOLD),
->  		{},
->  	};
->  	bool cpu_in_list = is_midr_in_range_list(read_cpuid_id(),
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
+> I'll say it again for Greg to comment (doubtful he will look at v3 
+> again). Really, I think we should also align the probe method interface 
+> across bus types. That means getting rid of the 'id' in the PCI probe 
+> (or add it for everyone). Most drivers never need it. The typical case 
+> is needing nothing or the matched data. In a quick scan[1], there's 
+> only a handful of cases. So I think probe should match the common 
+> scenario and make retrieving the id match explicit if needed.
 
--- 
-With best wishes
-Dmitry
+I agree, but I will keep it until Greg commented on it, since I explicitly
+promised to add it on request.
+
+> 
+> Rob
+> 
+> [1] git grep -W 'const struct pci_device_id \*' drivers/ | grep -P 'id->(?!driver_data)'
 
