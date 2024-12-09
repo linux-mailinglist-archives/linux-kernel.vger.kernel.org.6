@@ -1,58 +1,68 @@
-Return-Path: <linux-kernel+bounces-437819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E7989E992A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:42:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69C959E9932
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:43:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F33242824B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:42:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5566167526
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:43:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CB691B4226;
-	Mon,  9 Dec 2024 14:42:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194031BEF8D;
+	Mon,  9 Dec 2024 14:43:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hXl9Pfo6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="I645VjK9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B9F9288CC;
-	Mon,  9 Dec 2024 14:42:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C493C1BEF6E;
+	Mon,  9 Dec 2024 14:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755363; cv=none; b=Lnvv9bBP65tfiSSjiv2enuQM24ueLTWJihqAzTgRSVWc++59KXL8prbqk+J2FKWsAB8HNTw/8wzHAaXLOZlHezQ1w3tlWc2x16NHwPcZ0WlBTxHiiPQokbmndOI8KhgwUJjOAT7RW+eVWb6RBUYV6igyDO7AqKxuZ0fDcnZgD1U=
+	t=1733755386; cv=none; b=bpWUIA8iX4f6JbMyBX/6W0oY6epVtxB0hLMm8IHuXw+ZAbkPhh9sKpilh7K4QkXGDw6/14yp6oftSbC3F08GpdEhp8f1CZubgZgpvXyYAEiuMXX9xdAF0fZfRaH85jVyg1YHrJaSVcSzt1VY2/F0ilfWoP8SM1LjEKwY2/f6EWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755363; c=relaxed/simple;
-	bh=6wtPqihXnbYLT5a15KUi3rytbMlJCKWOXYF76I2wQQw=;
+	s=arc-20240116; t=1733755386; c=relaxed/simple;
+	bh=oAaN1GSj78zca2LyH1vVjyVyuzC5DSmrRJkeitGwMj4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BRYYnfl6lBRzw/z0jVysW0aONnW2ngefgnEgoHuhVLdeRUPMwFW0Cbvp98+ohYpA48LWmsMIuS1MmY7wd4VbicJyD6LEGFlY2aZV0IakChvSKHQrE38rHO5PQ7IifT62Cz/oB0Ixlt+ZzeQoImCcq+Xzy7S42qYKfPXiqpkcrV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hXl9Pfo6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65D74C4CED1;
-	Mon,  9 Dec 2024 14:42:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733755363;
-	bh=6wtPqihXnbYLT5a15KUi3rytbMlJCKWOXYF76I2wQQw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hXl9Pfo6hVi7oGyZv4FERCWgaRNJNhHO5/nNRPnXhPYcRcVc4doFBaLuYnjrYREz9
-	 LqYHGgxdaKSOhxg8iWYaJQGUNcBQMzHQ5d//lxkf6HF3bA9613H2pZBCz/YIrbH7l/
-	 AdyZDXvkc4kmA4+FcGFmCPBk2bT9a3LWx7USw2nCAGRxsMx/y2kcYhkmJBRda6OP2l
-	 K3J8R17iUP5csqCIq/l1I/JA6Q1dpx9dPFwPf9y9WUo6Or1yuVKs1bPePWpldPQyI/
-	 3TR3th9agBzNoGHhsdeI6uVjqH0FpHVBvpnUOw8lYgrytGazxjMt57resw58qUourR
-	 Pq5VdtKyDEdpQ==
-Date: Mon, 9 Dec 2024 11:42:35 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Chunxin Zang <spring.cxz@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	yangchen11@lixiang.com, zhouchunhua@lixiang.com,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	zangchunxin@lixiang.com
-Subject: Re: [PATCH] perf evlist: Fix the warning logic about
- warn_user_request_cpu
-Message-ID: <Z1cB28q8r54L59zU@x1>
-References: <20240318121150.1552888-1-spring.cxz@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lj2Gf945eK227h7tCyX1G3lPYOFEVvcqGSBATVYxnLj38/oWqDwZGGvBjFlzB5qQ9XX9FujOig8YrpXbM+MUTOYe0T9g2yy2vcYeI/8T4qoanKnXYze+fpruZboH+hsq7NQe/pIID3qWqqoX5KXwh0LoHcj7Nsp8FLrj1GbkCb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=I645VjK9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=m16HeTv0L0CtuYH/B+yfB6+rKUcSgAg6Vxdkd5F26V4=; b=I645VjK9kvC67P7dLGOB/uZw3b
+	Z59qZlJPd6n9JOP3MaUmCm1uVX9YCDOmrEvMN7HxwtbMmcu78/hwOo6KzU/vqSYgyPKfZwZ1nR1if
+	dKPYNh9NyZoTYNr8pNjKZi+kA+T5QVf9o3bDGM593vNPHuO+p7tmg4+g5vrgJbo1oBYY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKeyK-00FgPR-5B; Mon, 09 Dec 2024 15:42:52 +0100
+Date: Mon, 9 Dec 2024 15:42:52 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
+ MBa62xx carrier board Device Trees
+Message-ID: <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
+References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
+ <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
+ <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
+ <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,71 +71,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240318121150.1552888-1-spring.cxz@gmail.com>
+In-Reply-To: <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
 
-On Mon, Mar 18, 2024 at 08:11:50PM +0800, Chunxin Zang wrote:
-> The old logic in evlist__warn_user_requested_cpus incorrectly output
-> the warning message when I run 'perf record -C xxx' command on my
-> context(the cpu has 8 performance-cores and 8 efficient-cores.).
+On Mon, Dec 09, 2024 at 02:55:31PM +0100, Matthias Schiffer wrote:
+> On Mon, 2024-12-09 at 14:24 +0100, Andrew Lunn wrote:
+> > 
+> > > +&cpsw_port1 {
+> > > +	phy-mode = "rgmii-rxid";
+> > > +	phy-handle = <&cpsw3g_phy0>;
+> > > +};
+> > > +
+> > > +&cpsw_port2 {
+> > > +	phy-mode = "rgmii-rxid";
+> > > +	phy-handle = <&cpsw3g_phy3>;
+> > > +};
+> > 
+> > rgmii-rxid is very odd.
+> > 
+> > > +
+> > > +&cpsw3g_mdio {
+> > > +	status = "okay";
+> > > +	pinctrl-names = "default";
+> > > +	pinctrl-0 = <&main_mdio1_pins>;
+> > > +
+> > > +	cpsw3g_phy0: ethernet-phy@0 {
+> > > +		compatible = "ethernet-phy-ieee802.3-c22";
+> > > +		reg = <0x0>;
+> > > +		reset-gpios = <&main_gpio1 11 GPIO_ACTIVE_LOW>;
+> > > +		reset-assert-us = <1000>;
+> > > +		reset-deassert-us = <1000>;
+> > > +		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+> > 
+> > I guess this is the explanation.
+> > 
+> > What happens when you use rgmii-id, and don't have this delay here?
+> > That would be normal.
+> > 
+> > 	Andrew
 > 
-> The old warning like this:
->   # perf record -C 17
->   WARNING: A requested CPU in '17' is not supported by PMU 'cpu_core' (CPUs 0-15) for event 'cycles:P'
->   # perf record -C 14
->   WARNING: A requested CPU in '14' is not supported by PMU 'cpu_atom' (CPUs 16-23) for event 'cycles:P'
->   # perf record -C 14-17
->   WARNING: A requested CPU in '15-16' is not supported by PMU 'cpu_atom' (CPUs 16-23) for event 'cycles:P'
->   WARNING: A requested CPU in '15-16' is not supported by PMU 'cpu_core' (CPUs 0-15) for event 'cycles:P'
 > 
-> After patching, the warning is as follows
->   # perf record -C 17
->   WARNING: A requested CPU '17' in '17' is not supported by PMU 'cpu_atom' (CPUs 16-23) for event 'cycles:P'
-
-Looks wrong, i.e. I ask for CPU 17 and it says it is not in the range
-16-23?
-
-Ditto for the rest, no?
-
-- Arnaldo
-
->   # perf record -C 14
->   WARNING: A requested CPU '14' in '14' is not supported by PMU 'cpu_core' (CPUs 0-15) for event 'cycles:P'
->   # perf record -C 15-18
->   WARNING: A requested CPU '16-18' in '15-18' is not supported by PMU 'cpu_atom' (CPUs 16-23) for event 'cycles:P'
->   WARNING: A requested CPU '15' in '15-18' is not supported by PMU 'cpu_core' (CPUs 0-15) for event 'cycles:P'
+> This is normal for AM62-based boards, see the DTSI of the TI reference
+> starterkit for example:
 > 
-> Signed-off-by: Chunxin Zang <spring.cxz@gmail.com>
-> Reviewed-by: Chen Yang <yangchen11@lixiang.com>
-> ---
->  tools/perf/util/evlist.c | 14 +++++++++-----
->  1 file changed, 9 insertions(+), 5 deletions(-)
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi#n451
 > 
-> diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-> index 55a300a0977b..82fee2e29966 100644
-> --- a/tools/perf/util/evlist.c
-> +++ b/tools/perf/util/evlist.c
-> @@ -2514,12 +2514,16 @@ void evlist__warn_user_requested_cpus(struct evlist *evlist, const char *cpu_lis
->  
->  		to_test = pmu && pmu->is_core ? pmu->cpus : cpu_map__online();
->  		intersect = perf_cpu_map__intersect(to_test, user_requested_cpus);
-> -		if (!perf_cpu_map__equal(intersect, user_requested_cpus)) {
-> -			char buf[128];
->  
-> -			cpu_map__snprint(to_test, buf, sizeof(buf));
-> -			pr_warning("WARNING: A requested CPU in '%s' is not supported by PMU '%s' (CPUs %s) for event '%s'\n",
-> -				cpu_list, pmu ? pmu->name : "cpu", buf, evsel__name(pos));
-> +		if (intersect && perf_cpu_map__is_subset(user_requested_cpus, intersect)) {
-> +			char buf_test[128];
-> +			char buf_intersect[128];
-> +
-> +			cpu_map__snprint(to_test, buf_test, sizeof(buf_test));
-> +			cpu_map__snprint(intersect, buf_intersect, sizeof(buf_intersect));
-> +			pr_warning("WARNING: A requested CPU '%s' in '%s' is not supported by "
-> +				   "PMU '%s' (CPUs %s) for event '%s'\n", buf_intersect, cpu_list,
-> +				   pmu ? pmu->name : "cpu", buf_test, evsel__name(pos));
->  		}
->  		perf_cpu_map__put(intersect);
->  	}
-> -- 
-> 2.34.1
+> With rgmii-id, both ti,rx-internal-delay and ti,tx-internal-delay should be set.
+> As ti,*-internal-delay sets the delay on the PHY side, phy-mode "rgmii" is the
+> one that would not use either:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/net/ti,dp83867.yaml#n78
+> 
+> At the end of the day, does it really matter as long as MAC and PHY agree on the
+> used mode? We copied this part of the hardware design from the TI reference
+> board, and did our hardware qualification with these settings, so I think it
+> makes sense to use the same phy-mode configuration.
+
+What i try to achieve is every board uses the same configuration. The
+PHY adds the delays, not the MAC. There are a few exceptions, because
+a few cheap PHYs don't support delays, and so the MAC needs to add
+them. But in general, any board i review, i always ask that the PHY
+does the delay.
+
+Also, don't put too much value in vendor code. Vendors don't care
+about Linux has a whole, being uniform across all systems. Many
+vendors do the minimum to get their stuff working, sometimes Monkeys
+typing Shakespeare, and not a lot more.
+
+I also find a lot of developers don't really understand what phy-mode
+and PHY_INTERFACE_MODE_RGMII_* actually mean. phy-mode = 'rgmii' means
+the board has extra long clock lines, so the MAC/PHY does not need to
+add delays. rgmii-rxid means the board has an extra long rx clock
+line, but a normal length tx clock line. Now, i doubt your board is
+actually like this?
+
+You want to correctly describe your hardware in DT, which i guess is
+"rgmii-id". That means something, either the MAC or the PHY needs to
+add delays. PHY_INTERFACE_MODE_RGMII_* is what is passed to the
+PHY. To get it to add the 2ns delays, you pass
+PHY_INTERFACE_MODE_RGMII_ID, and you should not need any additional
+properties in DT, it should default to 2ns. If you need to tune the
+delay, 2ns does not work, but you actually need 1.8ns etc, then you
+can add additional parameters. But given you have
+DP83867_RGMIIDCTL_2_00_NS, i doubt you need this.
+
+	Andrew
 
