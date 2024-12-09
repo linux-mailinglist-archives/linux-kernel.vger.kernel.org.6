@@ -1,388 +1,298 @@
-Return-Path: <linux-kernel+bounces-437590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B07D49E9584
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:04:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EFB89E9593
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:05:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8336282183
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:04:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C4331886600
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AC5231C94;
-	Mon,  9 Dec 2024 12:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEC5231CAD;
+	Mon,  9 Dec 2024 12:57:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="JTGqIvA4"
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ULVJjLeQ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B08F231C8C;
-	Mon,  9 Dec 2024 12:57:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE5D231CA5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:57:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749049; cv=none; b=sxk/jZdmycLefKCtafBybOdLQXWu8QcLd9f4JNGzNN/sv7BFS1zV1bxbyEG142/5LWkMgVvMLdf4ZD/lKVMp8MimIJACBfPSd1Lu7I1zrjDU7SejhVY638DbuIHawc8wvQJ1JNckLBTC2ydPyDOcmWCuEC2Z4l2qERxPpE9CWsQ=
+	t=1733749055; cv=none; b=svV/GN3GLPsDj0uWR3Yz6bDGMIhYAZa6JLzziNb7bmKICm+Oc8owBTgCrzSuPkbRMADzqjB/zZ+KdGJOWIje7Kk0YqPt6BtZtNxLafkZd4NtIm+xQcs7RPpjkgtTTA0Y/oNrdHpYBGeunTJsFk9biO4RW9pGgm5OLuDQaq4a2C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749049; c=relaxed/simple;
-	bh=tTO2sW9qNOARNV4Y+NbI6RwpCWPBtUu29KvF+rY4X50=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QYtGwl0AXkhCk88M+aJJJ/8Y2quR0ZreNJVehRHx0Wbpbw9WTv3DxBy5ItkmK4MDdKY8uQZzyeAYwJkgUR5Swb3SrT9AiBGtfcRwg+v77bCFG9W3cUDRQzufDFYvFUMJug41lErq8iH4LnN/HEujVVriteo5AIWWeHtChIGDg3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=JTGqIvA4; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 22D18C0002;
-	Mon,  9 Dec 2024 12:57:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1733749038;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PlfEYm3BvK5Vt2vrAAGSu4WHYIxJ7BwmwCzRThXMfc4=;
-	b=JTGqIvA4Jk7vBOH6yBBdoAq2PxqJo8a7J0d+8ketVLXI0DC0s9SrCb+1XrT6Efv4dVsbVh
-	WTegRNVwB5vC/ZZOFQRN69n6CD4LE8JIHjz/FyiTp3SuNDTHDY1JS589Jrv3VhtcQs+VOF
-	p5Y9ElfshxelArsQIvZTq+D1XL7Teuak6pPPwxUUqenjWLIwpASfdmAoF4GPBucOCETSa+
-	2AHdXxTfP+L42Huh1CJHNE7atKvrfbEPGWASbmak7ayTn8wPMrAyo9k0W51E5Arca9ADrz
-	lOtMQyP/cNYOZ/1OkrydafsYgNcFzHgs2Rjz9/ER8u04MaLozAQJiZuRib2X4A==
-Message-ID: <c51e770c-2c97-4050-ae79-7bbc9b64c4e3@yoseli.org>
-Date: Mon, 9 Dec 2024 13:57:15 +0100
+	s=arc-20240116; t=1733749055; c=relaxed/simple;
+	bh=4F3mDUZwH6vfD4gxXFEQFVe9uUFOU0E19QdNWCaLaV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Jl1/mf3CvvTau/7EvxobfIPNciB93Nz7X87MQPpI0jr6X11kV7a2apEo7uDCY9JqqrgdRy4Duyu6ZALvaBc+PmC6LtqZ5hApOpAoMwnb1uJvuQs3O4NY+l1AdJnorWP5fm/DWK6SMsLMpx+fIQI2j+UkZCL11UbRAaluwqu1+q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ULVJjLeQ; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733749054; x=1765285054;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=4F3mDUZwH6vfD4gxXFEQFVe9uUFOU0E19QdNWCaLaV0=;
+  b=ULVJjLeQqAtRoQyFdhehTiO4MZqIug6MB9+/R4j49oEHk7AzLL1pQNel
+   t3wPhik11KOXiHQTtUXT/tQCxc0euSsHDZrscFeXl4O5xiQhOhpUVR/Yp
+   PkGBmwjJFfe/MexvCmToCi7ijSbhePPhdOWFv15EyA1fyzDkgDfh2tY41
+   Pq9DvtkhgoXQmwJY0A6OhUDS2n6kLeh+qaIyiLzhnJrz9lpXjaMSML+UT
+   /vqmsUndrAXRiR3Ob1YiWacYVsYx2/Y/lJ5DX1IQHFMoWizJn4F7w+brB
+   vj1LMECQYwjgvEe3oMh8nJjTeZbT64rmaPMlVdE6PRYJgxPMrLRHScguv
+   w==;
+X-CSE-ConnectionGUID: jN0mz8ujRkmJRNaDLkiFjg==
+X-CSE-MsgGUID: qZDiTgZqQhG2SNdPwMLqHA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34274795"
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="34274795"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 04:57:33 -0800
+X-CSE-ConnectionGUID: jYuArqaLSWWc+CifHg005A==
+X-CSE-MsgGUID: dHvlY0WcQEybUIDfn5LzGw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="95520935"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 09 Dec 2024 04:57:31 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKdKL-0004LL-0q;
+	Mon, 09 Dec 2024 12:57:29 +0000
+Date: Mon, 9 Dec 2024 20:57:20 +0800
+From: kernel test robot <lkp@intel.com>
+To: Marc Dietrich <marvin24@gmx.de>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>
+Subject: drivers/staging/nvec/nvec.c:583:29: sparse: sparse: incorrect type
+ in argument 2 (different address spaces)
+Message-ID: <202412092049.OjIxptXr-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] m68k: coldfire: Support resources for UART
-To: Greg Ungerer <gerg@linux-m68k.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jiri Slaby <jirislaby@kernel.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-serial@vger.kernel.org
-References: <20241202-m5441x_uart_resource-v1-1-6b28cb295fb5@yoseli.org>
- <52517849-48ed-4fe8-8638-ec2a4dc2bcbd@linux-m68k.org>
- <a06e4806-8b5a-4073-96d5-2a37103e572f@yoseli.org>
- <cf9cd17a-30d6-43e7-ae59-2f34d6f2dc00@linux-m68k.org>
- <014e09e3-f311-46f8-b159-6913bd6bba2f@yoseli.org>
- <d9e9c6a8-8619-4461-a385-5952f50c50ff@linux-m68k.org>
- <8c5ca84d-9a22-4cfa-8267-3d898dac13f4@yoseli.org>
- <a006bf1b-0d61-4954-af6a-1a546bb30984@linux-m68k.org>
-Content-Language: en-US, fr
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <a006bf1b-0d61-4954-af6a-1a546bb30984@linux-m68k.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Hi Greg,
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+commit: c8c96293a599c6291fa2622830fcbfc1ce0f5a7d staging: nvec: make i2c controller register writes robust
+date:   6 months ago
+config: arm64-randconfig-r122-20241209 (https://download.01.org/0day-ci/archive/20241209/202412092049.OjIxptXr-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce: (https://download.01.org/0day-ci/archive/20241209/202412092049.OjIxptXr-lkp@intel.com/reproduce)
 
-On 12/9/24 13:30, Greg Ungerer wrote:
-> Hi JM,
-> 
-> On 5/12/24 23:06, Jean-Michel Hautbois wrote:
->> On 05/12/2024 14:01, Greg Ungerer wrote:
->>> On 4/12/24 21:32, Jean-Michel Hautbois wrote:
->>>> On 04/12/2024 12:15, Greg Ungerer wrote:
->>>>> On 4/12/24 20:58, Jean-Michel Hautbois wrote:
->>>>>> On 04/12/2024 11:54, Greg Ungerer wrote:
->>>>>>> On 2/12/24 20:34, Jean-Michel Hautbois wrote:
->>>>>>>> In order to use the eDMA channels for UART, the 
->>>>>>>> mcf_platform_uart needs
->>>>>>>> to be changed. Instead of adding another custom member for the
->>>>>>>> structure, use a resource tree in a platform_device per UART. It 
->>>>>>>> then
->>>>>>>> makes it possible to have a device named like "mcfuart.N" with N 
->>>>>>>> the
->>>>>>>> UART number.
->>>>>>>>
->>>>>>>> Later, adding the dma channel in the mcf tty driver will also be 
->>>>>>>> more
->>>>>>>> straightfoward.
->>>>>>>>
->>>>>>>> Signed-off-by: Jean-Michel Hautbois 
->>>>>>>> <jeanmichel.hautbois@yoseli.org>
->>>>>>>> ---
->>>>>>>>   arch/m68k/coldfire/device.c | 96 +++++++++++++ 
->>>>>>>> +-------------------------------
->>>>>>>>   drivers/tty/serial/mcf.c    | 69 +++++++++++++++++++-------------
->>>>>>>>   2 files changed, 70 insertions(+), 95 deletions(-)
->>>>>>>>
->>>>>>>> diff --git a/arch/m68k/coldfire/device.c b/arch/m68k/coldfire/ 
->>>>>>>> device.c
->>>>>>>> index 
->>>>>>>> b6958ec2a220cf91a78a14fc7fa18749451412f7..fd7d0b0ce7eb2970cb8ffe33589fe8d7e88c268d 100644
->>>>>>>> --- a/arch/m68k/coldfire/device.c
->>>>>>>> +++ b/arch/m68k/coldfire/device.c
->>>>>>>> @@ -24,73 +24,35 @@
->>>>>>>>   #include <linux/platform_data/dma-mcf-edma.h>
->>>>>>>>   #include <linux/platform_data/mmc-esdhc-mcf.h>
->>>>>>>> -/*
->>>>>>>> - *    All current ColdFire parts contain from 2, 3, 4 or 10 UARTS.
->>>>>>>> - */
->>>>>>>> -static struct mcf_platform_uart mcf_uart_platform_data[] = {
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE0,
->>>>>>>> -        .irq        = MCF_IRQ_UART0,
->>>>>>>> -    },
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE1,
->>>>>>>> -        .irq        = MCF_IRQ_UART1,
->>>>>>>> -    },
->>>>>>>> -#ifdef MCFUART_BASE2
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE2,
->>>>>>>> -        .irq        = MCF_IRQ_UART2,
->>>>>>>> -    },
->>>>>>>> -#endif
->>>>>>>> -#ifdef MCFUART_BASE3
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE3,
->>>>>>>> -        .irq        = MCF_IRQ_UART3,
->>>>>>>> -    },
->>>>>>>> -#endif
->>>>>>>> -#ifdef MCFUART_BASE4
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE4,
->>>>>>>> -        .irq        = MCF_IRQ_UART4,
->>>>>>>> -    },
->>>>>>>> -#endif
->>>>>>>> -#ifdef MCFUART_BASE5
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE5,
->>>>>>>> -        .irq        = MCF_IRQ_UART5,
->>>>>>>> -    },
->>>>>>>> -#endif
->>>>>>>> -#ifdef MCFUART_BASE6
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE6,
->>>>>>>> -        .irq        = MCF_IRQ_UART6,
->>>>>>>> -    },
->>>>>>>> -#endif
->>>>>>>> -#ifdef MCFUART_BASE7
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE7,
->>>>>>>> -        .irq        = MCF_IRQ_UART7,
->>>>>>>> +static u64 mcf_uart_mask = DMA_BIT_MASK(32);
->>>>>>>> +
->>>>>>>> +static struct resource mcf_uart0_resource[] = {
->>>>>>>> +    [0] = {
->>>>>>>> +        .start = MCFUART_BASE0,
->>>>>>>> +        .end   = MCFUART_BASE0 + 0x3fff,
->>>>>>>> +        .flags = IORESOURCE_MEM,
->>>>>>>>       },
->>>>>>>> -#endif
->>>>>>>> -#ifdef MCFUART_BASE8
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE8,
->>>>>>>> -        .irq        = MCF_IRQ_UART8,
->>>>>>>> +    [1] = {
->>>>>>>> +        .start = 2,
->>>>>>>> +        .end   = 3,
->>>>>>>> +        .flags = IORESOURCE_DMA,
->>>>>>>>       },
->>>>>>>> -#endif
->>>>>>>> -#ifdef MCFUART_BASE9
->>>>>>>> -    {
->>>>>>>> -        .mapbase    = MCFUART_BASE9,
->>>>>>>> -        .irq        = MCF_IRQ_UART9,
->>>>>>>> +    [2] = {
->>>>>>>> +        .start = MCF_IRQ_UART0,
->>>>>>>> +        .end   = MCF_IRQ_UART0,
->>>>>>>> +        .flags = IORESOURCE_IRQ,
->>>>>>>>       },
->>>>>>>> -#endif
->>>>>>>> -    { },
->>>>>>>>   };
->>>>>>>> -static struct platform_device mcf_uart = {
->>>>>>>> +static struct platform_device mcf_uart0 = {
->>>>>>>>       .name            = "mcfuart",
->>>>>>>>       .id            = 0,
->>>>>>>> -    .dev.platform_data    = mcf_uart_platform_data,
->>>>>>>> +    .num_resources = ARRAY_SIZE(mcf_uart0_resource),
->>>>>>>> +    .resource = mcf_uart0_resource,
->>>>>>>> +    .dev = {
->>>>>>>> +        .dma_mask = &mcf_uart_mask,
->>>>>>>> +        .coherent_dma_mask = DMA_BIT_MASK(32),
->>>>>>>> +    },
->>>>>>>>   };
->>>>>>>>   #ifdef MCFFEC_BASE0
->>>>>>>> @@ -485,12 +447,12 @@ static struct platform_device mcf_i2c5 = {
->>>>>>>>   static const struct dma_slave_map mcf_edma_map[] = {
->>>>>>>>       { "dreq0", "rx-tx", MCF_EDMA_FILTER_PARAM(0) },
->>>>>>>>       { "dreq1", "rx-tx", MCF_EDMA_FILTER_PARAM(1) },
->>>>>>>> -    { "uart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
->>>>>>>> -    { "uart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
->>>>>>>> -    { "uart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
->>>>>>>> -    { "uart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
->>>>>>>> -    { "uart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
->>>>>>>> -    { "uart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
->>>>>>>> +    { "mcfuart.0", "rx", MCF_EDMA_FILTER_PARAM(2) },
->>>>>>>> +    { "mcfuart.0", "tx", MCF_EDMA_FILTER_PARAM(3) },
->>>>>>>> +    { "mcfuart.1", "rx", MCF_EDMA_FILTER_PARAM(4) },
->>>>>>>> +    { "mcfuart.1", "tx", MCF_EDMA_FILTER_PARAM(5) },
->>>>>>>> +    { "mcfuart.2", "rx", MCF_EDMA_FILTER_PARAM(6) },
->>>>>>>> +    { "mcfuart.2", "tx", MCF_EDMA_FILTER_PARAM(7) },
->>>>>>>>       { "timer0", "rx-tx", MCF_EDMA_FILTER_PARAM(8) },
->>>>>>>>       { "timer1", "rx-tx", MCF_EDMA_FILTER_PARAM(9) },
->>>>>>>>       { "timer2", "rx-tx", MCF_EDMA_FILTER_PARAM(10) },
->>>>>>>> @@ -623,7 +585,7 @@ static struct platform_device mcf_flexcan0 = {
->>>>>>>>   #endif /* MCFFLEXCAN_SIZE */
->>>>>>>>   static struct platform_device *mcf_devices[] __initdata = {
->>>>>>>> -    &mcf_uart,
->>>>>>>> +    &mcf_uart0,
->>>>>>>>   #ifdef MCFFEC_BASE0
->>>>>>>>       &mcf_fec0,
->>>>>>>>   #endif
->>>>>>>> diff --git a/drivers/tty/serial/mcf.c b/drivers/tty/serial/mcf.c
->>>>>>>> index 
->>>>>>>> 93e7dda4d39acd23daf8c0d4c29ac8d666f263c5..07b8decfdb6005f0265dd130765e45c3fd1715eb 100644
->>>>>>>> --- a/drivers/tty/serial/mcf.c
->>>>>>>> +++ b/drivers/tty/serial/mcf.c
->>>>>>>> @@ -570,31 +570,46 @@ static struct uart_driver mcf_driver = {
->>>>>>>>   static int mcf_probe(struct platform_device *pdev)
->>>>>>>>   {
->>>>>>>> -    struct mcf_platform_uart *platp = dev_get_platdata(&pdev- 
->>>>>>>> >dev);
->>>>>>>>       struct uart_port *port;
->>>>>>>> -    int i;
->>>>>>>> -
->>>>>>>> -    for (i = 0; ((i < MCF_MAXPORTS) && (platp[i].mapbase)); i++) {
->>>>>>>> -        port = &mcf_ports[i].port;
->>>>>>>> -
->>>>>>>> -        port->line = i;
->>>>>>>> -        port->type = PORT_MCF;
->>>>>>>> -        port->mapbase = platp[i].mapbase;
->>>>>>>> -        port->membase = (platp[i].membase) ? platp[i].membase :
->>>>>>>> -            (unsigned char __iomem *) platp[i].mapbase;
->>>>>>>> -        port->dev = &pdev->dev;
->>>>>>>> -        port->iotype = SERIAL_IO_MEM;
->>>>>>>> -        port->irq = platp[i].irq;
->>>>>>>> -        port->uartclk = MCF_BUSCLK;
->>>>>>>> -        port->ops = &mcf_uart_ops;
->>>>>>>> -        port->flags = UPF_BOOT_AUTOCONF;
->>>>>>>> -        port->rs485_config = mcf_config_rs485;
->>>>>>>> -        port->rs485_supported = mcf_rs485_supported;
->>>>>>>> -        port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
->>>>>>>> -
->>>>>>>> -        uart_add_one_port(&mcf_driver, port);
->>>>>>>> +    struct mcf_uart *pp;
->>>>>>>> +    struct resource *res;
->>>>>>>> +    void __iomem *base;
->>>>>>>> +    int id = pdev->id;
->>>>>>>> +
->>>>>>>> +    if (id == -1 || id >= MCF_MAXPORTS) {
->>>>>>>> +        dev_err(&pdev->dev, "uart%d out of range\n",
->>>>>>>> +            id);
->>>>>>>> +        return -EINVAL;
->>>>>>>>       }
->>>>>>>> +    port = &mcf_ports[id].port;
->>>>>>>> +    port->line = id;
->>>>>>>> +
->>>>>>>> +    base = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
->>>>>>>> +    if (IS_ERR(base))
->>>>>>>> +        return PTR_ERR(base);
->>>>>>>> +
->>>>>>>> +    port->mapbase = res->start;
->>>>>>>> +    port->membase = base;
->>>>>>>> +
->>>>>>>> +    port->irq = platform_get_irq(pdev, 0);
->>>>>>>> +    if (port->irq < 0)
->>>>>>>> +        return port->irq;
->>>>>>>> +
->>>>>>>> +    port->type = PORT_MCF;
->>>>>>>> +    port->dev = &pdev->dev;
->>>>>>>> +    port->iotype = SERIAL_IO_MEM;
->>>>>>>> +    port->uartclk = MCF_BUSCLK;
->>>>>>>> +    port->ops = &mcf_uart_ops;
->>>>>>>> +    port->flags = UPF_BOOT_AUTOCONF;
->>>>>>>> +    port->rs485_config = mcf_config_rs485;
->>>>>>>> +    port->rs485_supported = mcf_rs485_supported;
->>>>>>>> +    port->has_sysrq = IS_ENABLED(CONFIG_SERIAL_MCF_CONSOLE);
->>>>>>>> +
->>>>>>>> +    pp = container_of(port, struct mcf_uart, port);
->>>>>>>> +
->>>>>>>> +    uart_add_one_port(&mcf_driver, port);
->>>>>>>> +
->>>>>>>
->>>>>>> This breaks platforms with more than one UART - which is quite a 
->>>>>>> few of
->>>>>>> the ColdFire platforms. Numerous boards bring and use more than 
->>>>>>> one UART.
->>>>>>
->>>>>> I don't get why, as I have two uarts here, and each is detected 
->>>>>> properly when declaring those in my platform ? I get that it 
->>>>>> breaks existing detection (we are parsing all uarts even when only 
->>>>>> one or two is used) but it does not prevent it to work ?
->>>>>
->>>>> Building and testing on an M5208EVB platform.
->>>>> With original un-modified code boot console shows:
->>>>>
->>>>> ...
->>>>> [    0.110000] romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
->>>>> [    0.110000] ColdFire internal UART serial driver
->>>>> [    0.110000] mcfuart.0: ttyS0 at MMIO 0xfc060000 (irq = 90, 
->>>>> base_baud = 5208333) is a ColdFire UART
->>>>> [    0.120000] printk: legacy console [ttyS0] enabled
->>>>> [    0.120000] mcfuart.0: ttyS1 at MMIO 0xfc064000 (irq = 91, 
->>>>> base_baud = 5208333) is a ColdFire UART
->>>>> [    0.120000] mcfuart.0: ttyS2 at MMIO 0xfc068000 (irq = 92, 
->>>>> base_baud = 5208333) is a ColdFire UART
->>>>> [    0.130000] brd: module loaded
->>>>> ...
->>>>>
->>>>>
->>>>> But with this change applied only the first port is probed:
->>>>>
->>>>> ...
->>>>> [    0.120000] romfs: ROMFS MTD (C) 2007 Red Hat, Inc.
->>>>> [    0.120000] ColdFire internal UART serial driver
->>>>> [    0.130000] mcfuart.0: ttyS0 at MMIO 0xfc060000 (irq = 90, 
->>>>> base_baud = 5208333) is a ColdFire UART
->>>>> [    0.130000] printk: legacy console [ttyS0] enabled
->>>>> [    0.130000] brd: module loaded
->>>>> ...
->>>>
->>>> OK, I see what you mean. Let me try to explain why I did it :-).
->>>>
->>>> The idea is to avoid probing a UART device which may exist as such 
->>>> on the core, but not be used as UART at all (on my board, for 
->>>> instance, I have uart2 and uart6, I don't need any other UART to be 
->>>> probed).
->>>>
->>>> So, based on what I think is the dts philosophy, you declare the 
->>>> devices you really need to probe ?
->>>
->>> You can do this too, with the old style platform setups.
->>>
->>> What you want is to have a separate board file just for your board.
->>> There is a few examples already in arch/m68k/coldfire/ like amcore.c,
->>> firebee.c, nettel.c and stmark2.c. None currently specifically extract
->>> out UARTS - no one really seemed to have a need for that in the past.
->>> Most ColdFire parts have 2 or 3 UARTS, the 5441x family is an out-lier
->>> here with 10.
->>>
->>> Anyway, the device.c entries are really just a catch-all for the most
->>> common devices and their most commonly used configurations.
->>
->> Thanks for answering !
->>
->> I know I can have a dedicated file for my board (which i have tbh) but 
->> device.c is always built when you select CONFIG_COLDFIRE so, I would 
->> end up with 10 UARTs probed anyways ?
->>
->> Is there no way for this patch to find a path ? I mean, I can keep the 
->> existing behavior, and have everything probed in device.c if the BASE 
->> address is declared. But I don't want my board to have all 10 UARTs 
->> and I don't want to locally patch the Makefile to remove the device.c 
->> from the built-in ?
-> 
-> Here is one example way to do it.
-> Compile tested only - but I am sure you get the idea.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412092049.OjIxptXr-lkp@intel.com/
 
-Thank you, it is clear. Yes, I get the idea :-).
-I will submit a v2 once I have something (very) inspired ;-).
-I just have to find a name for this new configuration, and test it.
+sparse warnings: (new ones prefixed by >>)
+>> drivers/staging/nvec/nvec.c:583:29: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *addr @@     got void *reg @@
+   drivers/staging/nvec/nvec.c:583:29: sparse:     expected void volatile [noderef] __iomem *addr
+   drivers/staging/nvec/nvec.c:583:29: sparse:     got void *reg
+>> drivers/staging/nvec/nvec.c:586:23: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __iomem *addr @@     got void *reg @@
+   drivers/staging/nvec/nvec.c:586:23: sparse:     expected void const volatile [noderef] __iomem *addr
+   drivers/staging/nvec/nvec.c:586:23: sparse:     got void *reg
+>> drivers/staging/nvec/nvec.c:623:56: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:623:56: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:623:56: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c:715:54: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:715:54: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:715:54: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c:747:42: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:747:42: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:747:42: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c:751:51: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:751:51: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:751:51: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c:752:43: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:752:43: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:752:43: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c:754:58: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:754:58: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:754:58: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c:755:40: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:755:40: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:755:40: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c:764:65: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void *reg @@     got void [noderef] __iomem * @@
+   drivers/staging/nvec/nvec.c:764:65: sparse:     expected void *reg
+   drivers/staging/nvec/nvec.c:764:65: sparse:     got void [noderef] __iomem *
+   drivers/staging/nvec/nvec.c: note: in included file (through include/linux/module.h):
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
+   include/linux/list.h:83:21: sparse: sparse: self-comparison always evaluates to true
 
-JM
+vim +583 drivers/staging/nvec/nvec.c
+
+   572	
+   573	/**
+   574	 * tegra_i2c_writel - safely write to an I2C client controller register
+   575	 * @val: value to be written
+   576	 * @reg: register to write to
+   577	 *
+   578	 * A write to an I2C controller register needs to be read back to make sure
+   579	 * that the value has arrived.
+   580	 */
+   581	static void tegra_i2c_writel(u32 val, void *reg)
+   582	{
+ > 583		writel_relaxed(val, reg);
+   584	
+   585		/* read back register to make sure that register writes completed */
+ > 586		readl_relaxed(reg);
+   587	}
+   588	
+   589	/**
+   590	 * nvec_interrupt - Interrupt handler
+   591	 * @irq: The IRQ
+   592	 * @dev: The nvec device
+   593	 *
+   594	 * Interrupt handler that fills our RX buffers and empties our TX
+   595	 * buffers. This uses a finite state machine with ridiculous amounts
+   596	 * of error checking, in order to be fairly reliable.
+   597	 */
+   598	static irqreturn_t nvec_interrupt(int irq, void *dev)
+   599	{
+   600		unsigned long status;
+   601		unsigned int received = 0;
+   602		unsigned char to_send = 0xff;
+   603		const unsigned long irq_mask = I2C_SL_IRQ | END_TRANS | RCVD | RNW;
+   604		struct nvec_chip *nvec = dev;
+   605		unsigned int state = nvec->state;
+   606	
+   607		status = readl(nvec->base + I2C_SL_STATUS);
+   608	
+   609		/* Filter out some errors */
+   610		if ((status & irq_mask) == 0 && (status & ~irq_mask) != 0) {
+   611			dev_err(nvec->dev, "unexpected irq mask %lx\n", status);
+   612			return IRQ_HANDLED;
+   613		}
+   614		if ((status & I2C_SL_IRQ) == 0) {
+   615			dev_err(nvec->dev, "Spurious IRQ\n");
+   616			return IRQ_HANDLED;
+   617		}
+   618	
+   619		/* The EC did not request a read, so it send us something, read it */
+   620		if ((status & RNW) == 0) {
+   621			received = readl(nvec->base + I2C_SL_RCVD);
+   622			if (status & RCVD)
+ > 623				tegra_i2c_writel(0, nvec->base + I2C_SL_RCVD);
+   624		}
+   625	
+   626		if (status == (I2C_SL_IRQ | RCVD))
+   627			nvec->state = 0;
+   628	
+   629		switch (nvec->state) {
+   630		case 0:		/* Verify that its a transfer start, the rest later */
+   631			if (status != (I2C_SL_IRQ | RCVD))
+   632				nvec_invalid_flags(nvec, status, false);
+   633			break;
+   634		case 1:		/* command byte */
+   635			if (status != I2C_SL_IRQ) {
+   636				nvec_invalid_flags(nvec, status, true);
+   637			} else {
+   638				nvec->rx = nvec_msg_alloc(nvec, NVEC_MSG_RX);
+   639				/* Should not happen in a normal world */
+   640				if (unlikely(!nvec->rx)) {
+   641					nvec->state = 0;
+   642					break;
+   643				}
+   644				nvec->rx->data[0] = received;
+   645				nvec->rx->pos = 1;
+   646				nvec->state = 2;
+   647			}
+   648			break;
+   649		case 2:		/* first byte after command */
+   650			if (status == (I2C_SL_IRQ | RNW | RCVD)) {
+   651				udelay(33);
+   652				if (nvec->rx->data[0] != 0x01) {
+   653					dev_err(nvec->dev,
+   654						"Read without prior read command\n");
+   655					nvec->state = 0;
+   656					break;
+   657				}
+   658				nvec_msg_free(nvec, nvec->rx);
+   659				nvec->state = 3;
+   660				nvec_tx_set(nvec);
+   661				to_send = nvec->tx->data[0];
+   662				nvec->tx->pos = 1;
+   663			} else if (status == (I2C_SL_IRQ)) {
+   664				nvec->rx->data[1] = received;
+   665				nvec->rx->pos = 2;
+   666				nvec->state = 4;
+   667			} else {
+   668				nvec_invalid_flags(nvec, status, true);
+   669			}
+   670			break;
+   671		case 3:		/* EC does a block read, we transmit data */
+   672			if (status & END_TRANS) {
+   673				nvec_tx_completed(nvec);
+   674			} else if ((status & RNW) == 0 || (status & RCVD)) {
+   675				nvec_invalid_flags(nvec, status, true);
+   676			} else if (nvec->tx && nvec->tx->pos < nvec->tx->size) {
+   677				to_send = nvec->tx->data[nvec->tx->pos++];
+   678			} else {
+   679				dev_err(nvec->dev,
+   680					"tx buffer underflow on %p (%u > %u)\n",
+   681					nvec->tx,
+   682					(uint)(nvec->tx ? nvec->tx->pos : 0),
+   683					(uint)(nvec->tx ? nvec->tx->size : 0));
+   684				nvec->state = 0;
+   685			}
+   686			break;
+   687		case 4:		/* EC does some write, we read the data */
+   688			if ((status & (END_TRANS | RNW)) == END_TRANS)
+   689				nvec_rx_completed(nvec);
+   690			else if (status & (RNW | RCVD))
+   691				nvec_invalid_flags(nvec, status, true);
+   692			else if (nvec->rx && nvec->rx->pos < NVEC_MSG_SIZE)
+   693				nvec->rx->data[nvec->rx->pos++] = received;
+   694			else
+   695				dev_err(nvec->dev,
+   696					"RX buffer overflow on %p: Trying to write byte %u of %u\n",
+   697					nvec->rx, nvec->rx ? nvec->rx->pos : 0,
+   698					NVEC_MSG_SIZE);
+   699			break;
+   700		default:
+   701			nvec->state = 0;
+   702		}
+   703	
+   704		/* If we are told that a new transfer starts, verify it */
+   705		if ((status & (RCVD | RNW)) == RCVD) {
+   706			if (received != nvec->i2c_addr)
+   707				dev_err(nvec->dev,
+   708					"received address 0x%02x, expected 0x%02x\n",
+   709					received, nvec->i2c_addr);
+   710			nvec->state = 1;
+   711		}
+   712	
+   713		/* Send data if requested, but not on end of transmission */
+   714		if ((status & (RNW | END_TRANS)) == RNW)
+   715			tegra_i2c_writel(to_send, nvec->base + I2C_SL_RCVD);
+   716	
+   717		/* If we have send the first byte */
+   718		if (status == (I2C_SL_IRQ | RNW | RCVD))
+   719			nvec_gpio_set_value(nvec, 1);
+   720	
+   721		dev_dbg(nvec->dev,
+   722			"Handled: %s 0x%02x, %s 0x%02x in state %u [%s%s%s]\n",
+   723			(status & RNW) == 0 ? "received" : "R=",
+   724			received,
+   725			(status & (RNW | END_TRANS)) ? "sent" : "S=",
+   726			to_send,
+   727			state,
+   728			status & END_TRANS ? " END_TRANS" : "",
+   729			status & RCVD ? " RCVD" : "",
+   730			status & RNW ? " RNW" : "");
+   731	
+   732		return IRQ_HANDLED;
+   733	}
+   734	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
