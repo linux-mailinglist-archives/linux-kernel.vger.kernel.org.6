@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-437495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FF5B9E940E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:31:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 657BB9E941A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:32:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E6B1887A6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:31:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1140B1664A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:32:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BC15227BA3;
-	Mon,  9 Dec 2024 12:30:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3CFC22A1FA;
+	Mon,  9 Dec 2024 12:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fBynfFHv"
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JHvJWkD3"
 Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C573B221DA3;
-	Mon,  9 Dec 2024 12:30:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CABD227B98;
+	Mon,  9 Dec 2024 12:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747433; cv=none; b=XyWZFm/vH5lwnwxHPalhQ8G8PLCgEIH9ES2ExlFXcsgFiwIi/cSp/fbFWkQ5R938o5Gbs5WV/vzdXRmMGZwDyCjMVAfg4NGC0YHNnz1T/GA6258pz5kkoTPcPyH1sK7815XmtFxc5AB8e319K5zpZTM2tA3hgzzh/nSfKjl1K68=
+	t=1733747437; cv=none; b=qFyVGWFJDY8r+N/Yt4lKiCdKicV5QOvwUmBBchAohkAKu0BgCjPnT5eDsumhGRru7HxRA+ZJXUBNa+CpPQmvbaTcHCIC2ANtTxveVIznPMJzDe8xH3w+3smLvjaS0fweokvcpnJPHIslwq9m0mOyzNb5TED/axVNDoBxih1d+d4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747433; c=relaxed/simple;
-	bh=CGC5GQ4ONq6+RLsKFHSnNHj8N58SlnSh1DgTYXuKKQE=;
+	s=arc-20240116; t=1733747437; c=relaxed/simple;
+	bh=EcteiLvZXkQpXTKFXN1pk2VNfnyjuxNax4jH8HDnX+w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=h1q9/79aKsGMDugmWAncCJxPtCde22vbR4fscNck3ZJaZzDv2EHnjHobO/NRiso+ImsN+rDNzCrVgWhce4rvUT9vzceTl/45vQccEoLPAqTkA9ezu1JpUgBge6Oyd7p+0d32yW/WrKW2v7cd+wO+mrEjUHndflsjyKVx9Tu5Y9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fBynfFHv; arc=none smtp.client-ip=117.135.210.2
+	 MIME-Version; b=JwEnKUiz89jyra1TE/fmcSp8XAIdmcdkZzTsxw8Z3Uj7PlAfRlYUE6ZyiEgMxc4eXs+p+DI74B6sqxRVvtrQTGYFXFUNIkSDHR9ry1lKQ0Wif5S6rt5FCihSyTJq0czgQi0ICXmo43zLLcuTvHwGz87DvUZBBUSsEnmQz1BtLx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JHvJWkD3; arc=none smtp.client-ip=117.135.210.2
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=UwbtS
-	HWOXa48utF78GzXwYwePSY8oTGL1QzJc84Ijuo=; b=fBynfFHvS55tzvkcko1hQ
-	ofdlcriuIW1U3V+6bxpO4FUav1rsg9T0n691JDPR/2cPXVptkTla5H8lWxqHft2s
-	jPQhrOAUbsN1icD1bh86Y0p134azBhA85cWO8W7ayD7kF4mJzq7dRs/osJsfaHbr
-	T50ct+cGImkLXIUKFlspz4=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=3FYwu
+	3JoLexUk2zE01A1KXdKUzgFzdxQ+q2JuyReUm8=; b=JHvJWkD3LUV1A8dAYCX5V
+	FSr4lzXv7kpva+gort6Cpmy/YSh2ZAfXxS4J7cgZZQnAon317cABjRuQ3ZVPve77
+	E9EDXEgAgHN7XpsuJWxUnEfjjBLY4gV8NxxAe059IZpS8WGQ+fhggteY56euAilv
+	x/Y/gy+x/BZIOFA3R0pcO4=
 Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgD3Woe44lZnubZICA--.5849S7;
-	Mon, 09 Dec 2024 20:29:54 +0800 (CST)
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgD3Woe44lZnubZICA--.5849S8;
+	Mon, 09 Dec 2024 20:29:55 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: hjc@rock-chips.com,
@@ -50,9 +50,9 @@ Cc: hjc@rock-chips.com,
 	derek.foreman@collabora.com,
 	detlev.casanova@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v5 02/18] drm/rockchip: vop2: Fix cluster windows alpha ctrl regsiters offset
-Date: Mon,  9 Dec 2024 20:29:15 +0800
-Message-ID: <20241209122943.2781431-6-andyshrk@163.com>
+Subject: [PATCH v5 03/18] drm/rockchip: vop2: Fix the mixer alpha setup for layer 0
+Date: Mon,  9 Dec 2024 20:29:16 +0800
+Message-ID: <20241209122943.2781431-7-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241209122943.2781431-1-andyshrk@163.com>
 References: <20241209122943.2781431-1-andyshrk@163.com>
@@ -63,16 +63,20 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgD3Woe44lZnubZICA--.5849S7
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tw4xJr1xCF17KF47JF4UCFg_yoW8urWkpF
-	17Ar98Xr47KFsIgr1xJFWDuryfKws2kFWxJF9xKw1agry3Kr9rC3Zrua4DCry5JFy7Cr42
-	k39xG347uF4jkF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jsF4iUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQqwXmdW3c3WHAAAsm
+X-CM-TRANSID:PCgvCgD3Woe44lZnubZICA--.5849S8
+X-Coremail-Antispam: 1Uf129KBjvdXoW7XF4rXr13WF4kZr45Gw1xZrb_yoWkKFg_C3
+	4fWr1fGr1kGFn8Jw1jka1fGFZIyan2kF18Ga1DtFyjyFykZw1xta4rXryxX345CF1rAr9r
+	G3W8XryrCFnxujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0aYLDUUUUU==
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqQqwXmdW3c3WHAABsn
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-The phy_id of cluster windws are not increase one for each window.
+The alpha setup should start from the second layer, the current calculation
+starts incorrectly from the first layer, a negative offset will be obtained
+in the following formula:
+
+offset = (mixer_id + zpos - 1) * 0x10
 
 Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
 Tested-by: Derek Foreman <derek.foreman@collabora.com>
@@ -81,52 +85,26 @@ Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
 (no changes since v1)
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 18 +++++++++++++++++-
- 1 file changed, 17 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
 diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index d1169aa8ff5e..d0b2b881ff07 100644
+index d0b2b881ff07..1f0fa153c62e 100644
 --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
 +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -2370,7 +2370,6 @@ static int vop2_find_start_mixer_id_for_vp(struct vop2 *vop2, u8 port_id)
+@@ -2459,6 +2459,12 @@ static void vop2_setup_alpha(struct vop2_video_port *vp)
+ 		struct vop2_win *win = to_vop2_win(plane);
+ 		int zpos = plane->state->normalized_zpos;
  
- static void vop2_setup_cluster_alpha(struct vop2 *vop2, struct vop2_win *main_win)
- {
--	u32 offset = (main_win->data->phys_id * 0x10);
- 	struct vop2_alpha_config alpha_config;
- 	struct vop2_alpha alpha;
- 	struct drm_plane_state *bottom_win_pstate;
-@@ -2378,6 +2377,7 @@ static void vop2_setup_cluster_alpha(struct vop2 *vop2, struct vop2_win *main_wi
- 	u16 src_glb_alpha_val, dst_glb_alpha_val;
- 	bool premulti_en = false;
- 	bool swap = false;
-+	u32 offset = 0;
- 
- 	/* At one win mode, win0 is dst/bottom win, and win1 is a all zero src/top win */
- 	bottom_win_pstate = main_win->base.state;
-@@ -2396,6 +2396,22 @@ static void vop2_setup_cluster_alpha(struct vop2 *vop2, struct vop2_win *main_wi
- 	vop2_parse_alpha(&alpha_config, &alpha);
- 
- 	alpha.src_color_ctrl.bits.src_dst_swap = swap;
++		/*
++		 * Need to configure alpha from second layer.
++		 */
++		if (zpos == 0)
++			continue;
 +
-+	switch (main_win->data->phys_id) {
-+	case ROCKCHIP_VOP2_CLUSTER0:
-+		offset = 0x0;
-+		break;
-+	case ROCKCHIP_VOP2_CLUSTER1:
-+		offset = 0x10;
-+		break;
-+	case ROCKCHIP_VOP2_CLUSTER2:
-+		offset = 0x20;
-+		break;
-+	case ROCKCHIP_VOP2_CLUSTER3:
-+		offset = 0x30;
-+		break;
-+	}
-+
- 	vop2_writel(vop2, RK3568_CLUSTER0_MIX_SRC_COLOR_CTRL + offset,
- 		    alpha.src_color_ctrl.val);
- 	vop2_writel(vop2, RK3568_CLUSTER0_MIX_DST_COLOR_CTRL + offset,
+ 		if (plane->state->pixel_blend_mode == DRM_MODE_BLEND_PREMULTI)
+ 			premulti_en = 1;
+ 		else
 -- 
 2.34.1
 
