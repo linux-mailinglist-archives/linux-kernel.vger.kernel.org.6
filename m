@@ -1,155 +1,314 @@
-Return-Path: <linux-kernel+bounces-436995-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EDFD9E8DC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:48:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C6D89E8DCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:49:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A04C28146C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:48:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36C58163308
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F2A215711;
-	Mon,  9 Dec 2024 08:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6813215719;
+	Mon,  9 Dec 2024 08:49:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x8UdDn/o"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="dVwGlvj9"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773671EB3D;
-	Mon,  9 Dec 2024 08:48:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2EA81EB3D;
+	Mon,  9 Dec 2024 08:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734127; cv=none; b=KrJ6O3PIfJ2KJDg6uka05Wfw/BOnGLAxvEuNwhUEzpbMlhiPBTYwxY0Gsz5mRUa1V1Vn+KW89//E/HJnZ4GD7lNDt8Y1T3V0IQJXqgWqSlQpYCibpNzTrVVrYRsIYkx6XvnaBkXPUD0OrWGS/+NW+fcPt5aTvydeau/4c3/Yy4U=
+	t=1733734178; cv=none; b=V31aKk22XjY5JzWKr456DeasaiCdHr4xf+uPu1DFDqoDBnYz3ioPKqvU4Miioc3h5daW/5twefoaWVEav2Jg9VfVRRyacMkVKfWgKF81Kt8T/tVV+wqXgl5rPSqwbFpm1GM852OpmnfG3bBb+i+Aayzn6xnx43gwW2ZlRlUJ4eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734127; c=relaxed/simple;
-	bh=0puQfJttu0wk+szabfo5NeG637ftnthHgnUH89CbeCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mZgAWH184DhUq5jPguCfibhigAIgsYxdsxAKnX/6X9+4JW/OphQc4tbtLLefoj28vX7JE4kklTfLA6uYCeuWYfSW3DTqTQhFeev/zWFo9cbIdpKOcXznUFuKW/j9mRwBL0dvIx3CLDXyHHgXo/Me8vG7F+Va3mv5nJAGwfk6p50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x8UdDn/o; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E76EC4CED1;
-	Mon,  9 Dec 2024 08:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733734127;
-	bh=0puQfJttu0wk+szabfo5NeG637ftnthHgnUH89CbeCw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=x8UdDn/ovjmgS2gKKVJsZBCTALXQ4zWxEN7WKWLcHloMd/wCcBO6UOE3wpwlc1Wkj
-	 FOkATrkz0a/nCHk8g0hz7gvrpaACNJzG07BM8qllN6I43+dyOmgGRuiW8jLzJoNsMn
-	 OURWlgxB4S+etfyHldxRjD9aC6OG0icr0vxH+hD0=
-Date: Mon, 9 Dec 2024 09:48:43 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <2024120925-express-unmasked-76b4@gregkh>
-References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
- <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
+	s=arc-20240116; t=1733734178; c=relaxed/simple;
+	bh=KqmmiHRzzCW9f9F1wBcSg9bSN//lK87HVwO6fgaV+VM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UriJ74Chx35LeTLc8S2gSoYSdGdmj2nHojorY/0YKKC/jnmMIj6UAgK3/ovDtCf0MYDaLtG3KE+betiLx0VMcVrXRvtdHX46+oXBHeSegdvIKk0ghysbMsyehtDpJHRIYQLmM4NxEII2mqa/KyKQkbUf6IAN6VHhL8do0JWyoRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=dVwGlvj9; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B91IcBA008130;
+	Mon, 9 Dec 2024 08:49:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=nsxT7k
+	FG1dNb4AuOe8IKQe26ff3ooqWifZqh4heUycU=; b=dVwGlvj91CgWkK4T7sgQXU
+	373S3u3R15Y5s5FzbCdd4biXUsk4O3NmkugjrthQ0b2WZg065qA5XUboA6AH5VPy
+	5LIgJiw65t+GiCOMsgrYiJGy9GEdp+0t+zuOv6nITQsxWOn73/J2lwvV3fq/ladz
+	MLnJKze85yAKGt8wwjdBsXbkP0hSLmyb5GxUdYOOaBl6NeRGQ1hhdzAgHY1+xM4p
+	vtIwo9MAIGfB0Ftig8v7Ds0xTjoapMJ9oyK9cQUUjasY+vOjkCGjvCrs+K7meMDh
+	f/xhLJuR6XSt570+o87OilUvodE67inSjne4LPdM9d6Rc+MXtV97nOLMlEQQlulA
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbspyq2x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 08:49:30 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B98i6jH017009;
+	Mon, 9 Dec 2024 08:49:30 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbspyq2u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 08:49:30 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B96UqAq018636;
+	Mon, 9 Dec 2024 08:49:29 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26k5ph9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 08:49:29 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B98nSAK15008426
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 08:49:28 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3597D58045;
+	Mon,  9 Dec 2024 08:49:28 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 94FAF58054;
+	Mon,  9 Dec 2024 08:49:24 +0000 (GMT)
+Received: from [9.171.32.56] (unknown [9.171.32.56])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Dec 2024 08:49:24 +0000 (GMT)
+Message-ID: <868f5d66-ac74-4b0a-a0d0-e44fdea3bb73@linux.ibm.com>
+Date: Mon, 9 Dec 2024 09:49:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 2/2] net/smc: support ipv4 mapped ipv6 addr
+ client for smc-r v2
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>,
+        Halil Pasic <pasic@linux.ibm.com>
+Cc: jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+        guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
+        kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
+        linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dust Li <dust.li@linux.alibaba.com>
+References: <20241202125203.48821-1-guangguan.wang@linux.alibaba.com>
+ <20241202125203.48821-3-guangguan.wang@linux.alibaba.com>
+ <894d640f-d9f6-4851-adb8-779ff3678440@linux.ibm.com>
+ <20241205135833.0beafd61.pasic@linux.ibm.com>
+ <5ac2c5a7-3f12-48e5-83a9-ecd3867e6125@linux.alibaba.com>
+ <7de81edd-86f2-4cfd-95db-e273c3436eb6@linux.ibm.com>
+ <3710a042-cabe-4b6d-9caa-fd4d864b2fdc@linux.ibm.com>
+ <d2af79e2-adb2-46f0-a7e3-67a9265f3adf@linux.alibaba.com>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <d2af79e2-adb2-46f0-a7e3-67a9265f3adf@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: H3iMzudqsBb7qFxZZNFQQe2rE7UpxLdw
+X-Proofpoint-GUID: kdfBxpjzT5ghn-1h32iaS1kp_nW-Sz8Z
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090065
 
-On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> Providing access to the underlying `struct miscdevice` is useful for
-> various reasons. For example, this allows you access the miscdevice's
-> internal `struct device` for use with the `dev_*` printing macros.
+
+
+On 09.12.24 07:04, Guangguan Wang wrote:
 > 
-> Note that since the underlying `struct miscdevice` could get freed at
-> any point after the fops->open() call, only the open call is given
-> access to it. To print from other calls, they should take a refcount on
-> the device to keep it alive.
-
-The lifespan of the miscdevice is at least from open until close, so
-it's safe for at least then (i.e. read/write/ioctl/etc.)
-
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
 > 
-> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> index 0cb79676c139..c5af1d5ec4be 100644
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@ -104,7 +104,7 @@ pub trait MiscDevice {
->      /// Called when the misc device is opened.
->      ///
->      /// The returned pointer will be stored as the private data for the file.
-> -    fn open(_file: &File) -> Result<Self::Ptr>;
-> +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
->  
->      /// Called when the misc device is released.
->      fn release(device: Self::Ptr, _file: &File) {
-> @@ -190,14 +190,27 @@ impl<T: MiscDevice> VtableHelper<T> {
->          return ret;
->      }
->  
-> +    // SAFETY: The opwn call of a file can access the private data.
+> On 2024/12/7 03:49, Wenjia Zhang wrote:
+>>
+>>
+>> On 06.12.24 11:51, Wenjia Zhang wrote:
+>>>
+>>>
+>>> On 06.12.24 07:06, Guangguan Wang wrote:
+>>>>
+>>>>
+>>>> On 2024/12/5 20:58, Halil Pasic wrote:
+>>>>> On Thu, 5 Dec 2024 11:16:27 +0100
+>>>>> Wenjia Zhang <wenjia@linux.ibm.com> wrote:
+>>>>>
+>>>>>>> --- a/net/smc/af_smc.c
+>>>>>>> +++ b/net/smc/af_smc.c
+>>>>>>> @@ -1116,7 +1116,12 @@ static int smc_find_proposal_devices(struct
+>>>>>>> smc_sock *smc, ini->check_smcrv2 = true;
+>>>>>>>         ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
+>>>>>>>         if (!(ini->smcr_version & SMC_V2) ||
+>>>>>>> +#if IS_ENABLED(CONFIG_IPV6)
+>>>>>>> +        (smc->clcsock->sk->sk_family != AF_INET &&
+>>>>>>> +
+>>>>>>> !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
+>>>>>> I think here you want to say !(smc->clcsock->sk->sk_family == AF_INET
+>>>>>> && ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)), right? If
+>>>>>> it is, the negativ form of the logical operation (a&&b) is (!a)||(!b),
+>>>>>> i.e. here should be:
+>>>>>> （smc->clcsock->sk->sk_family != AF_INET）||
+>>>>>> （!ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)）
+>>>>>
+>>>>> Wenjia, I think you happen to confuse something here. The condition
+>>>>> of this if statement is supposed to evaluate as true iff we don't want
+>>>>> to propose SMCRv2 because the situation is such that SMCRv2 is not
+>>>>> supported.
+>>>>>
+>>>>> We have a bunch of conditions we need to meet for SMCRv2 so
+>>>>> logically we have (A && B && C && D). Now since the if is
+>>>>> about when SMCRv2 is not supported we have a super structure
+>>>>> that looks like !A || !B || !C || !D. With this patch, if
+>>>>> CONFIG_IPV6 is not enabled, the sub-condition remains the same:
+>>>>> if smc->clcsock->sk->sk_family is something else that AF_INET
+>>>>> the we do not do SMCRv2!
+>>>>>
+>>>>> But when we do have CONFIG_IPV6 then we want to do SMCRv2 for
+>>>>> AF_INET6 sockets too if the addresses used are actually
+>>>>> v4 mapped addresses.
+>>>>>
+>>>>> Now this is where the cognitive dissonance starts on my end. I
+>>>>> think the author assumes sk_family == AF_INET || sk_family == AF_INET6
+>>>>> is a tautology in this context. That may be a reasonable thing to
+>>>>> assume. Under that assumption
+>>>>> sk_family != AF_INET &&    !ipv6_addr_v4mapped(addr) (shortened for
+>>>>> convenience)
+>>>>> becomes equivalent to
+>>>>> sk_family == AF_INET6 && !ipv6_addr_v4mapped(addr)
+>>>>> which means in words if the socket is an IPv6 sockeet and the addr is not
+>>>>> a v4 mapped v6 address then we *can not* do SMCRv2. And the condition
+>>>>> when we can is sk_family != AF_INET6 || ipv6_addr_v4mapped(addr) which
+>>>>> is equivalen to sk_family == AF_INET || ipv6_addr_v4mapped(addr) under
+>>>>> the aforementioned assumption.
+>>>>
+>>>> Hi, Halil
+>>>>
+>>>> Thank you for such a detailed derivation.
+>>>>
+>>>> Yes, here assume that sk_family == AF_INET || sk_family == AF_INET6. Indeed,
+>>>> many codes in SMC have already made this assumption, for example,
+>>>> static int __smc_create(struct net *net, struct socket *sock, int protocol,
+>>>>              int kern, struct socket *clcsock)
+>>>> {
+>>>>      int family = (protocol == SMCPROTO_SMC6) ? PF_INET6 : PF_INET;
+>>>>      ...
+>>>> }
+>>>> And I also believe it is reasonable.
+>>>>
+>>>> Before this patch, for SMCR client, only an IPV4 socket can do SMCRv2. This patch
+>>>> introduce an IPV6 socket with v4 mapped v6 address for SMCRv2. It is equivalen
+>>>> to sk_family == AF_INET || ipv6_addr_v4mapped(addr) as you described.
+>>>>
+>>>>>
+>>>>> But if we assume sk_family == AF_INET || sk_family == AF_INET6 then
+>>>>> the #else does not make any sense, because I guess with IPv6 not
+>>>>> available AF_INET6 is not available ant thus the else is always
+>>>>> guaranteed to evaluate to false under the assumption made.
+>>>>>
+>>>> You are right. The #else here does not make any sense. It's my mistake.
+>>>>
+>>>> The condition is easier to understand and read should be like this:
+>>>>        if (!(ini->smcr_version & SMC_V2) ||
+>>>> +#if IS_ENABLED(CONFIG_IPV6)
+>>>> +        (smc->clcsock->sk->sk_family == AF_INET6 &&
+>>>> +         !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
+>>>> +#endif
+>>>>            !smc_clc_ueid_count() ||
+>>>>            smc_find_rdma_device(smc, ini))
+>>>>            ini->smcr_version &= ~SMC_V2;
+>>>>
+>>>
+>>> sorry, I still don't agree on this version. You removed the condition
+>>> "
+>>> smc->clcsock->sk->sk_family != AF_INET ||
+>>> "
+>>> completely. What about the socket with neither AF_INET nor AF_INET6 family?
+>>>
+>>> Thanks,
+>>> Wenjia
+>>>
+>> I think the main problem in the original version was that
+>> (sk_family != AF_INET) is not equivalent to (sk_family == AF_INET6).
+>> Since you already in the new version above used sk_family == AF_INET6,
+>> the else condition could stay as it is. My suggestion:
+>>
+>> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+>> index 8e3093938cd2..5f205a41fc48 100644
+>> --- a/net/smc/af_smc.c
+>> +++ b/net/smc/af_smc.c
+>> @@ -1116,7 +1116,12 @@ static int smc_find_proposal_devices(struct smc_sock *smc,
+>>          ini->check_smcrv2 = true;
+>>          ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
+>>          if (!(ini->smcr_version & SMC_V2) ||
+>> +#if IS_ENABLED(CONFIG_IPV6)
+>> +           (smc->clcsock->sk->sk_family == AF_INET6 &&
+>> +            !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
+>> +#else
+>>              smc->clcsock->sk->sk_family != AF_INET ||
+>> +#endif
+>>              !smc_clc_ueid_count() ||
+>>              smc_find_rdma_device(smc, ini))
+>>                  ini->smcr_version &= ~SMC_V2;
+>>
+>> Thanks,
+>> Wenjia
+> 
+> The RFC7609 have confined SMC to socket applications using stream (i.e., TCP) sockets over IPv4 or IPv6.
+> https://datatracker.ietf.org/doc/html/rfc7609#page-26:~:text=It%20is%20confined%20to%20socket%20applications%20using%20stream%0A%20%20%20(i.e.%2C%20TCP)%20sockets%20over%20IPv4%20or%20IPv6
+> 
+> Both in the smc-tools and in smc kernel module, we can see codes that the sk_family is either AF_INET or AF_INET6.
+> The codes here:
+> https://raw.githubusercontent.com/ibm-s390-linux/smc-tools/refs/heads/main/smc-preload.c#:~:text=if%20((domain%20%3D%3D%20AF_INET%20%7C%7C%20domain%20%3D%3D%20AF_INET6)%20%26%26
+> and
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=(sk%2D%3Esk_family%20!%3D%20AF_INET%20%26%26%20sk%2D%3Esk_family%20!%3D%20AF_INET6))
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=int%20family%20%3D%20(protocol%20%3D%3D%20SMCPROTO_SMC6)%20%3F%20PF_INET6%20%3A%20PF_INET%3B
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=%2D%3Esin_family%20!%3D-,AF_INET,-%26%26%0A%09%20%20%20%20addr%2D%3E
+> https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=%2D%3Esa_family%20!%3D-,AF_INET6,-)%0A%09%09goto%20out_err
+> ...
+> 
+> I wonder if SMC-R can support other address famliy rather than AF_INET AF_INET6 in design？
+> And IBM has any plan to support other address family in future?  Wenjia, can you help explain
+> this?
+> 
+The answer is no, at least in the near future. As you might be already 
+aware, it depends on the implementation on z/OS.
 
-s/opwn/open/ :)
+> If the answer is positive, the code should be like this:
+>          if (!(ini->smcr_version & SMC_V2) ||
+> +#if IS_ENABLED(CONFIG_IPV6)
+> +           !(smc->clcsock->sk->sk_family == AF_INET || (smc->clcsock->sk->sk_family == AF_INET6 &&
+> +            ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr))) ||
+> +#else
+>               smc->clcsock->sk->sk_family != AF_INET ||
+> +#endif
+>               !smc_clc_ueid_count() ||
+>               smc_find_rdma_device(smc, ini))
+>                   ini->smcr_version &= ~SMC_V2;
+> 
+> Otherwise, the code below is reasonable.
+>        if (!(ini->smcr_version & SMC_V2) ||
+> +#if IS_ENABLED(CONFIG_IPV6)
+> +        (smc->clcsock->sk->sk_family == AF_INET6 &&
+> +         !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
+> +#endif
+>            !smc_clc_ueid_count() ||
+>            smc_find_rdma_device(smc, ini))
+>            ini->smcr_version &= ~SMC_V2;
+> 
+Ok, I got your point, a socket with an address family other than AF_INET 
+and AF_INET6 is already pre-filtered, so that such extra condition 
+checking for the smc->clcsock->sk->sk_family != AF_INET is not 
+necessary, right?
 
-> +    let misc_ptr = unsafe { (*file).private_data };
+Would you like to send a new version? And feel free to use this in the 
+new version:
 
-Blank line here?
+Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
 
-> +    // SAFETY: This is a miscdevice, so `misc_open()` set the private data to a pointer to the
-> +    // associated `struct miscdevice` before calling into this method. Furthermore, `misc_open()`
-> +    // ensures that the miscdevice can't be unregistered and freed during this call to `fops_open`.
+Thanks,
+Wenjia
 
-Aren't we wrapping comment lines at 80 columns still?  I can't remember
-anymore...
-
-> +    let misc = unsafe { &*misc_ptr.cast::<MiscDeviceRegistration<T>>() };
-> +
->      // SAFETY:
-> -    // * The file is valid for the duration of this call.
-> +    // * The file is valid for the duration of the `T::open` call.
-
-It's valid for the lifespan between open/release.
-
->      // * There is no active fdget_pos region on the file on this thread.
-> -    let ptr = match T::open(unsafe { File::from_raw_file(file) }) {
-> +    let file = unsafe { File::from_raw_file(file) };
-> +
-> +    let ptr = match T::open(file, misc) {
->          Ok(ptr) => ptr,
->          Err(err) => return err.to_errno(),
->      };
->  
-> +    // This overwrites the private data from above. It makes sense to not hold on to the misc
-> +    // pointer since the `struct miscdevice` can get unregistered as soon as we return from this
-> +    // call, so the misc pointer might be dangling on future file operations.
-> +    //
-
-Wait, what are we overwriting this here with?  Now private data points
-to the misc device when before it was the file structure.  No other code
-needed to be changed because of that?  Can't we enforce this pointer
-type somewhere so that any casts in any read/write/ioctl also "knows" it
-has the right type?  This feels "dangerous" to me.
-
->      // SAFETY: The open call of a file owns the private data.
->      unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
-
-Is this SAFETY comment still correct?
-
-thanks,
-
-greg k-h
 
