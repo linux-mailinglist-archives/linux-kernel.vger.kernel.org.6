@@ -1,113 +1,104 @@
-Return-Path: <linux-kernel+bounces-438160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D6E69E9DA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:57:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F45B9E9DA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:56:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4BF41882394
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:56:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A813E1632AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:56:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AEF1B4222;
-	Mon,  9 Dec 2024 17:56:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E691ACECC;
-	Mon,  9 Dec 2024 17:56:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55DD1ACED0;
+	Mon,  9 Dec 2024 17:56:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BhtJN7R2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2016113F43B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:56:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733767013; cv=none; b=U93A1pOJbURPHOfDn9xBEpYNX4cOae+NqqfGIU7MiSA9O1MnBiJcNbbN6gx9KwCzPH00zloQB84ofNEMI+JKrU4K1Yx3zJCWH7BqXKF7NXnx+W1q8mU1/nXKJZaGudaq2UMuC2NHkkeaPXgH/VH4Ng6QXJ9mFlzTXz6ReyK7/sQ=
+	t=1733766999; cv=none; b=O3ZEYe0c/+4ie9Uau0on8t3b+cFNdVim1vZPSL9XO/pTLhTEEyly+bB6izmEJ3fzwy802VpoRNmxp3DfmzC7/4r1tSDNGtup9MSlNDA4bVuhQphjBy/byWFGhyziVN7D3zMULSgkFuSlvnIsGhxcVEc17pQP5NPBrCe6MvFIWBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733767013; c=relaxed/simple;
-	bh=W9FPQOutx8gVYOk7R1nb+m7MpLo7h3sgEOsxlikF1NA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qbdrjcy8Ty9dkQexlf5CyN/6Sgr7NrG6DjAeNnKT3ZFJSao30M5QOvNuAhJxKyfbKHUcjKABy/afJGpSldujy8jowN8uEeQ5bTdqi0S9XLrnu12TyVkjhC83DIDSUbwZO8m0KSiq/H+9oXh+FpZ2Gs8ACZ8Q6HhJljY4kqBG51M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF9531650;
-	Mon,  9 Dec 2024 09:57:17 -0800 (PST)
-Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 899D53F720;
-	Mon,  9 Dec 2024 09:56:47 -0800 (PST)
-Date: Mon, 9 Dec 2024 17:56:37 +0000
-From: Andre Przywara <andre.przywara@arm.com>
-To: "=?UTF-8?B?Q3PDs2vDoXMs?= Bence" <csokas.bence@prolan.hu>
-Cc: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
- <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>, Mesih Kilinc
- <mesihkilinc@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai
- <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>
-Subject: Re: [PATCH 1/3] ARM: dts: suniv: f1c100s: Add support for DMA
-Message-ID: <20241209175637.283312fa@donnerap.manchester.arm.com>
-In-Reply-To: <20241205000137.187450-2-csokas.bence@prolan.hu>
-References: <20241205000137.187450-1-csokas.bence@prolan.hu>
-	<20241205000137.187450-2-csokas.bence@prolan.hu>
-Organization: ARM
-X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+	s=arc-20240116; t=1733766999; c=relaxed/simple;
+	bh=X9gMNmE0IOIkjEHG7kKIQF3PqGtvIv+QeqCxkaR2ID8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E1GB2Gpey+cnyAe5O2yL0lt0YQQE1n0UR/ABdMOCCu/ntwtVMXGg39KBDlFYITeehbPSnY+De4jVmZ15lFTfSaINTO23FR2DfjZs2oGtYzVct7y9P+DuDBcUQqEZo62voElLWhgXg5v9Hl/zhCxPJnZzL+4vbdEOl1dhkvOwmXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BhtJN7R2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A93E0C4CED1;
+	Mon,  9 Dec 2024 17:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733766998;
+	bh=X9gMNmE0IOIkjEHG7kKIQF3PqGtvIv+QeqCxkaR2ID8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=BhtJN7R22W9dmel1V1N440dElIbBLX+vDfcdd/xrbxr5dX3mpcbHB1vc8yjsrGzNd
+	 esPgw8PmyqhQ8Ey0S4bHXqoOV7nvEDuFFSp/tpu1TIBrLgBrjjYEC8L5HVu71rvwEc
+	 6rCBLO3E2C3H6YvOEbrGqMhVCXM0lRYr+FErtWjHFrKit582HTVuUIxZhC/YNM50g8
+	 HOyYUU876N5Eb1LXAVcul2+IzhRrG6Q1Jzjr32qHB/zQPaakdsD2RPNYjAVQ326Gbb
+	 5U3fIDzOPDxo10uvB/Xo4abk+Ii6pCEBajaDrpNmVsgZGzCcHj4ElIkjJSUg/bM2CY
+	 YO2jop84Zztbg==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 4110FCE0BC5; Mon,  9 Dec 2024 09:56:38 -0800 (PST)
+Date: Mon, 9 Dec 2024 09:56:38 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Rik van Riel <riel@surriel.com>
+Cc: Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] locking/csd-lock: make CSD lock debug tunables writable
+  in /sys
+Message-ID: <5b53408d-80a1-4f33-9a15-12c80f736b76@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20241209124411.5b588faa@fangorn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209124411.5b588faa@fangorn>
 
-On Thu, 5 Dec 2024 01:01:36 +0100
-"Cs=C3=B3k=C3=A1s, Bence" <csokas.bence@prolan.hu> wrote:
+On Mon, Dec 09, 2024 at 12:44:11PM -0500, Rik van Riel wrote:
+> Currently the CSD lock tunables can only be set at boot time in the
+> kernel commandline, but the way these variables are used means there
+> is really no reason not to tune them at runtime through /sys.
+> 
+> Make the CSD lock debug tunables tunable through /sys.
+> 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
 
-> From: Mesih Kilinc <mesihkilinc@gmail.com>
->=20
-> Allwinner suniv F1C100s now has DMA support. Enable it under device
-> tree.
->=20
-> Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-> [ csokas.bence: Rebased on current master ]
-> Signed-off-by: Cs=C3=B3k=C3=A1s, Bence <csokas.bence@prolan.hu>
+Good point, and queued for v6.14 merge window.
 
-Compared against the manual:
+Unless someone else would prefer to carry it, in which case:
 
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre
+Reviewed-by: Paul E. McKenney <paulmck@kernel.org>
 
 > ---
->  arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi | 10 ++++++++++
->  1 file changed, 10 insertions(+)
->=20
-> diff --git a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi b/arch/arm/bo=
-ot/dts/allwinner/suniv-f1c100s.dtsi
-> index 3c61d59ab5f8..290efe026ceb 100644
-> --- a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
-> +++ b/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
-> @@ -6,6 +6,7 @@
-> =20
->  #include <dt-bindings/clock/suniv-ccu-f1c100s.h>
->  #include <dt-bindings/reset/suniv-ccu-f1c100s.h>
-> +#include <dt-bindings/dma/sun4i-a10.h>
-> =20
->  / {
->  	#address-cells =3D <1>;
-> @@ -159,6 +160,15 @@ usbphy: phy@1c13400 {
->  			status =3D "disabled";
->  		};
-> =20
-> +		dma: dma-controller@1c02000 {
-> +			compatible =3D "allwinner,suniv-f1c100s-dma";
-> +			reg =3D <0x01c02000 0x1000>;
-> +			interrupts =3D <18>;
-> +			clocks =3D <&ccu CLK_BUS_DMA>;
-> +			resets =3D <&ccu RST_BUS_DMA>;
-> +			#dma-cells =3D <2>;
-> +		};
-> +
->  		ccu: clock@1c20000 {
->  			compatible =3D "allwinner,suniv-f1c100s-ccu";
->  			reg =3D <0x01c20000 0x400>;
-
+>  kernel/smp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/smp.c b/kernel/smp.c
+> index 27dc31a146a3..a33e575f97ab 100644
+> --- a/kernel/smp.c
+> +++ b/kernel/smp.c
+> @@ -170,9 +170,9 @@ static DEFINE_PER_CPU(smp_call_func_t, cur_csd_func);
+>  static DEFINE_PER_CPU(void *, cur_csd_info);
+>  
+>  static ulong csd_lock_timeout = 5000;  /* CSD lock timeout in milliseconds. */
+> -module_param(csd_lock_timeout, ulong, 0444);
+> +module_param(csd_lock_timeout, ulong, 0644);
+>  static int panic_on_ipistall;  /* CSD panic timeout in milliseconds, 300000 for five minutes. */
+> -module_param(panic_on_ipistall, int, 0444);
+> +module_param(panic_on_ipistall, int, 0644);
+>  
+>  static atomic_t csd_bug_count = ATOMIC_INIT(0);
+>  
+> -- 
+> 2.47.0
+> 
 
