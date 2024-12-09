@@ -1,152 +1,177 @@
-Return-Path: <linux-kernel+bounces-437817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D309E9923
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:38:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A78B9E9927
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:39:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52D66281893
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5AC61888552
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:39:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CD8B1A23BC;
-	Mon,  9 Dec 2024 14:38:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813CA1B0430;
+	Mon,  9 Dec 2024 14:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cFwZaRSz"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E4235raN"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12F951A239E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129111A239E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755109; cv=none; b=HMLaD0vOHCG9EGQbNRDDYpF+ICQp0gBo1m7Hqjx8bvwrvzpLlr6q1WnA13BKylzxTC54udO7+vNYOyev0W3OjjJhyaV//zayiXutiJzQ5phWYDGkFTqu1JuInmXtA3WECSqDwg+J1jKnCPGG8US84ftTxUNkVJBcbDv5S8TGams=
+	t=1733755148; cv=none; b=un1bNgbmiw6d/ntB7uYPkMsvNuGOQj61icz1xEmDPhcK3iYNxPRcWbIDI9AFjHC8v5liaWdK7BFvOaDItZk2OjLNFAWuF6oZ1FRQjNJ6PfIykHYdmuFkIsmZDCHrpxiKuUwh8U+Dh4eWFyLsktZTve3pqd/kcP6kym9AbMLiw4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755109; c=relaxed/simple;
-	bh=sUSQ6w/uPMnUEc5UhN6lr+X2YALppLKGpxU+TDNIH18=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I8J/eJFPPPLUIMZNCsn4a3tYa5+5Q60kkGESn5NFiW3MRk3xIedM+LT+Tb32ZDQzZgkuJcED96nkHmmw0Zts8ppXa+IkZOcuWXYMDuMtp+i949NZLLkctY7hP6YGNsusibHgbC2VyvX610QeWgZHgztcrlWocHiGjiyKyfynfJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cFwZaRSz; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7fc99fc2b16so3244334a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:38:27 -0800 (PST)
+	s=arc-20240116; t=1733755148; c=relaxed/simple;
+	bh=Y0JL+EnneY+wshsRsH3bqsi5Eooc7q24GY855v97les=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qmHOl8eKuOVrK0b7FzLDRtgtu3cXWBMB9Ncs1yhpKOXAKaTWaM5JoqYFJP/nGL0INnhuXTSfy6jvvcw0GhWk7LjH1awrc5ZFj0IuzqCM6wjZThOaV5W4pIdFSEbsv/9dUy8cs1xMkmC0g/KMq3wYq8ww29Z/c5gCulpddkgOUAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E4235raN; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d3e638e1b4so9257a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:39:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733755107; x=1734359907; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=e5siyX/oBYeJOtEu9jJIH1QIRnp2BFKwx7Ms6hrWYqE=;
-        b=cFwZaRSzzvmePwobJIIF7PTecRio0H2xJ9gH5KaKSWVqdEuCCkZI7S9UppbDpH1rMC
-         jIAvTyEvT8bi2zB9gorwFO6IC3kZt4KcPHz0uVYfY12NsBR9fNPQ1q0t7dPz7IpozXhy
-         yrCOTg3PaPo+V16RLWkTgtRxbt9khg/2e671eMMrIE5ESf8EQIoNWS/1EVjU80/IwJFy
-         8sJe3AfB2xH70t+lhXYTL5wagmwjGMLx5wF2IG49maY4ySW5k13iEtcnQ7/sjNod+3xS
-         GzhJVxKkLGjPo2x8AFcSEFz6vcCo0Q4EsW7J+rT7cfY7zlt30lDlz9xmWJ6d2XuQOyA6
-         u2gQ==
+        d=google.com; s=20230601; t=1733755145; x=1734359945; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K0HUgDioPZP8r9lR0mhX1U3yWLjjLAk+xygWg9c9gYE=;
+        b=E4235raN6mbBPdEPjD2eynwRz563A3wKQPPXR3aCTFudp4zEks7UwvqpAkdJGS8vjJ
+         h56urULEzwv1nyAYuUrKa8TWy/pvW0jrxIcE3i2o1B8IzYPHcsS9juUK6kfMZx382L9q
+         zqbRc/zeKB/PRE+lSWBW7Qh9yPP758GPnIJsTKx71R1/vvNgkbRVQ9YeRcI3PB9u2h1H
+         0QlaHdY7y3j2vezgvdox2Sch/8uswLbNaO4f/OoRQocZPtbeIywyP4z2YNwxC3T1NA8m
+         CJfzx5OreGIRUhFTdxUlv0ICf9qF4uQBD2vmqoya8E0bRVDMgZThyOCmYy1klUpEfTjB
+         Fi8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733755107; x=1734359907;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=e5siyX/oBYeJOtEu9jJIH1QIRnp2BFKwx7Ms6hrWYqE=;
-        b=bOhO9xchCfb+gp1qy5GfApLIWPb4e9EQuWWI8cjtSF8f4mfGredJRDaF41Ve+aJilK
-         yQb9DmOIA9CQV9UHK5SfVguc4bgVJG/ISFdcuE+Orwi6T1IphDeKWpWwNr7TqNGAMuwD
-         eD8X+ycLDzQ/R0m6T6X0f2pwqZbIUX40pKKKSmip0tffX7KGptQeycWav344KBfjP7S2
-         IGpXTY9b8dBEl6qXTNuPQiOD55HMPB1LorVHfPsU95ludRW9pkps4loH5DJaMGmnv1sH
-         uspNyj+zqVRm46DyMp1ehhDq5MUkMwnFY61LMlHMfS1LcQLdBip2Os5DkjP39MAyJO07
-         JqDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWRSyZfUINTokw1zDgVD/Qj7mbWuCz3UHhxX8+AclP0on8iC0Ki2V0Zv9HFJU8CkCmEtrh4nArvZ40YLfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3BtPB85hM0VAsKVnt9WUcqil6qmkspqETCKIB9RqIaFjv3NtC
-	Br66FW91WbMpbXjpEAR2ElHhbZm3+hlHTcd6NZ2lUrI9CIzGF88WmWWDV/THxQ==
-X-Gm-Gg: ASbGncsTABHytm6kjCQC4R6S/vVHfo2JTQ73wwe9H6c6rql4Y1OMSyeUOM4hZlL06zV
-	ekDDbWTUPatQGhCC0RUMzr3mKMPfETNHpagWW3BulGe25E8XDH43GscY7XUjMMNad/v8/FttD1L
-	ZtZZJcc1xGn/siMCfsoxIxBEl8n3GFg119gdbRuXKkaDJTMBhOzzXBkxeL2Bs6DjxLmjmcGr/fE
-	IX95vLnzvtY3YG+71s0yPfv8ZzvLsTKMfo2jLw+fkO5qMKC56bMtWJURayc
-X-Google-Smtp-Source: AGHT+IEjPNjheOz3H9P3KXCwrAQ0y1vhFh9v5UWKuqQE+ayZeQAQXxalmpEVYcnYnJ4nAlOJIgjr+w==
-X-Received: by 2002:a05:6a20:d526:b0:1e1:f5a:db33 with SMTP id adf61e73a8af0-1e18712d2a0mr18475477637.36.1733755107284;
-        Mon, 09 Dec 2024 06:38:27 -0800 (PST)
-Received: from thinkpad ([120.60.142.39])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4681b0d5sm2644867a12.24.2024.12.09.06.38.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:38:26 -0800 (PST)
-Date: Mon, 9 Dec 2024 20:08:21 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, kbusch@kernel.org, axboe@kernel.dk,
-	sagi@grimberg.me, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
- the user
-Message-ID: <20241209143821.m4dahsaqeydluyf3@thinkpad>
-References: <20241205232900.GA3072557@bhelgaas>
- <20241206014934.GA3081609@bhelgaas>
- <20241209133606.GA18172@lst.de>
+        d=1e100.net; s=20230601; t=1733755145; x=1734359945;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K0HUgDioPZP8r9lR0mhX1U3yWLjjLAk+xygWg9c9gYE=;
+        b=Ea/OmGR3385pPCm5yko+42qSfDVuJ6Lq8qTE+5BwEk3KNGAWrlr/WS9YHuZX4mCQyX
+         tYdwJrbUJe8MWKgfUopIlwhcf4iupAB0sLFKOfI3/l5lFNP2/Jsr6Dh37EILpUGX9C0q
+         GY4EMRYCRByyJm/uoeRrrmqcvPtePv+TP6hX0N7BvZ/02/8Ry8IPL7KydggTivtFpooa
+         vHXxuDuukZz0A8AE751GIuYB7PygE7Avv9U8TcRDFstruhMqqca9J8a32htOwBSKZb+d
+         Q8D/TseNQfzWmwq5raiGl3w7jLBk5tyHUOEYWAUQbdS3SDb70EOe/5LNAoGDivp59BGv
+         33Xw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhcwnMB7GdSaBZGFZWgTv7yzNlDfw33HTdtAYZuJFqy6x0gCd5OjFwEvT7i961i5ZIQ8Yvf7yB5ImwLJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBuWUJ2dplwz3yvWiVjk47fDVO3C8MkPTDUdwZ+Dq9f9U5vyHU
+	lYR5dE+G4yDs7yOoQeaM+fOJBJr0jSK9vjf+VjnX4luQdbrhfmpBiwADPQPjJDJrquIBDspW/T4
+	VmrHuT7BGpm6TV7dkzcQ2nKF1ckIhzJmA3BAu
+X-Gm-Gg: ASbGnctNi/XWBXbcmupxA+wxjqphU5oywvhwyg4fnAy6/jTrNfSI0OZ/SmpuEOt/9d2
+	xoOBcb1EJRdCs/Q8BcMisV3yxr/dAZXIxgErrmDu/KruO93wen2AkYGLwCNc=
+X-Google-Smtp-Source: AGHT+IGttMIbSXRcwbOzyv+s/N1tg8+a5C9j4EQR50flx6las7dboUBXcq3fmF5gfAB4rcz9OaVcYN7/1a+LIhwykhA=
+X-Received: by 2002:a50:cd19:0:b0:5d0:b029:e2b4 with SMTP id
+ 4fb4d7f45d1cf-5d3dd9c511dmr127165a12.3.1733755145049; Mon, 09 Dec 2024
+ 06:39:05 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241209133606.GA18172@lst.de>
+References: <20241206191600.45119-1-lorenzo.stoakes@oracle.com>
+ <23d3d7f6-d6d1-430e-8ea0-ccae76b253fd@redhat.com> <41a14051-75ee-4de3-863c-d0532aa7e3aa@suse.cz>
+ <1e4c3e31-ea9a-4af4-83f9-15a882732e69@redhat.com> <71beb3d1-21ac-4037-8363-6484c0c333b8@lucifer.local>
+In-Reply-To: <71beb3d1-21ac-4037-8363-6484c0c333b8@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 9 Dec 2024 15:38:28 +0100
+Message-ID: <CAG48ez2s2mY83uce9mGUgc61_50nOp9VPJKLHMtyRYTTeKpo=A@mail.gmail.com>
+Subject: Re: [PATCH] MAINTAINERS: group all VMA-related files into the VMA section
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 02:36:06PM +0100, Christoph Hellwig wrote:
-> On Thu, Dec 05, 2024 at 07:49:34PM -0600, Bjorn Helgaas wrote:
-> > Oops, I think I got this part backwards.  The patch uses PCI PM if
-> > d3cold_allowed is set, and it's set by default, so it does what you
-> > need for the Qualcomm platform *without* user intervention.
-> > 
-> > But I guess using the flag allows users in other situations to force
-> > use of NVMe power management by clearing d3cold_allowed via sysfs.
-> > Does that mean some unspecified other platforms might only work
-> > correctly with that user intervention?
-> 
-> Still seems awkward to overload fields like this.
-> 
-> The istory here is the the NVMe internal power states are significantly
-> better for the SSDs.  It avoid shutting down the SSD frequently, which
-> creates a lot of extra erase cycles and reduces life time.  It also
-> prevents the SSD from performing maintainance operations while the host
-> system is idle, which is the perfect time for them.  But the idea of
-> putting all periphals into D3 is gaining a lot of ground because it
-> makes the platform vendors life a lot simpler at the cost of others.
+On Mon, Dec 9, 2024 at 3:11=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Mon, Dec 09, 2024 at 03:00:08PM +0100, David Hildenbrand wrote:
+> > On 09.12.24 14:25, Vlastimil Babka wrote:
+> > > On 12/9/24 10:16, David Hildenbrand wrote:
+> > > > On 06.12.24 20:16, Lorenzo Stoakes wrote:
+> > > > > There are a number of means of interacting with VMA operations wi=
+thin mm,
+> > > > > and we have on occasion not been made aware of impactful changes =
+due to
+> > > > > these sitting in different files, most recently in [0].
+> > > > >
+> > > > > Correct this by bringing all VMA operations under the same sectio=
+n in
+> > > > > MAINTAINERS. Additionally take the opportunity to combine MEMORY =
+MAPPING
+> > > > > with VMA as there needn't be two entries as they amount to the sa=
+me thing.
+> > > > >
+> > > > > [0]:https://lore.kernel.org/linux-mm/CAG48ez0siYGB8GP5+Szgj2ovBZA=
+kL6Zi4n6GUAjzzjFV9LTkRQ@mail.gmail.com/
+> > > > >
+> > > > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > > > ---
+> > > > >    MAINTAINERS | 19 +++++++------------
+> > > > >    1 file changed, 7 insertions(+), 12 deletions(-)
+> > > > >
+> > > > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > > > index 1e930c7a58b1..95db20c26f5f 100644
+> > > > > --- a/MAINTAINERS
+> > > > > +++ b/MAINTAINERS
+> > > > > @@ -15060,18 +15060,6 @@ F:     tools/mm/
+> > > > >    F:   tools/testing/selftests/mm/
+> > > > >    N:   include/linux/page[-_]*
+> > > > >
+> > > > > -MEMORY MAPPING
+> > > > > -M:     Andrew Morton <akpm@linux-foundation.org>
+> > > > > -M:     Liam R. Howlett <Liam.Howlett@oracle.com>
+> > > > > -M:     Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> > > > > -R:     Vlastimil Babka <vbabka@suse.cz>
+> > > > > -R:     Jann Horn <jannh@google.com>
+> > > > > -L:     linux-mm@kvack.org
+> > > > > -S:     Maintained
+> > > > > -W:     http://www.linux-mm.org
+> > > > > -T:     git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> > > > > -F:     mm/mmap.c
+> > > > > -
+> > > > >    MEMORY TECHNOLOGY DEVICES (MTD)
+> > > > >    M:   Miquel Raynal <miquel.raynal@bootlin.com>
+> > > > >    M:   Richard Weinberger <richard@nod.at>
+> > > > > @@ -25028,6 +25016,13 @@ L:     linux-mm@kvack.org
+> > > > >    S:   Maintained
+> > > > >    W:   https://www.linux-mm.org
+> > > > >    T:   git git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm
+> > > > > +F:     mm/madvise.c
+> > > > > +F:     mm/mlock.c
+> > > > > +F:     mm/mmap.c
+> > > > > +F:     mm/mprotect.c
+> > > > > +F:     mm/mremap.c
+> > > > > +F:     mm/mseal.c
+> > > > > +F:     mm/msync.c
+> > > >
+> > > > Not sure about mprotect.c, mlock.c and madvise.c, though. I'd claim=
+ that
+> > > > the real "magic" they perform is in page table handling and not
+> > > > primarily VMA handling (yes, both do VMA changes, but they are the
+> > > > "easy" part ;) ).
+> > >
+> > > I'd think that moving vma files into MEMORY MAPPING (and not the othe=
+r way)
+> > > would result in a better overal name, that would be a better fit for =
+the
+> > > newly added files too?
+> >
+> > Maybe. I think vma.c should likely have a different set of maintainers =
+than
+> > madvise.c and mprotect.c. (again, the magic is in page table modificati=
+ons)
+>
+> The bulk of the logic in mremap.c is related to page tables so by this
+> logic then, that is out too, right?
 
-No, I disagree with the last comment. When the system goes to low power mode
-(like S2R/hibernate), it *does* makes a lot of sense to put the devices into
-D3Cold to save power. Using NVMe or other endpoint devices internal power states
-only matters when the system is idle (which is not S2R/hibernate). This is what
-ACPI is doing currently.
-
-Then one might suggest to check the suspend state using
-'pm_suspend_target_state' in device drivers and decide to keep the devices in
-D3Cold. Unfortunately, it won't work for Qcom platforms as most of them (except
-chromebooks) don't have S2R (a.k.a PSCI_SYSTEM_SUSPEND), but only S2Idle.
-
-When it comes to non-Qcom platforms based on devicetree, they also cannot power
-down the NVMe device during suspend (as they cannot satisfy existing checks in
-nvme_suspend()).
-
-The current reality is that most of the devicetree platforms *do* want to power
-down the NVMe during suspend. Only when NVMe is used in an OS like Android, we
-might not want to do so (that's something for future, but still a possibility). 
-
-So this is how I ended up using the existing 'd3cold_allowed' attribute as it
-allows the devices to be powered down by default and if the OS doesn't want to
-do so, it can tweak the attribute from userspace (similar to UFS in Android).
-
-The flexibility of this attribute is that it just acts as a hint for the device
-drivers. If the device driver doesn't want to do D3Cold (when used as a wakeup
-source etc...) it can still opt out (assuming that the platform would also honor
-the wakeup capability of the device).
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+FWIW, I think technically you can have multiple entries in MAINTAINERS
+that cover the same file, maybe that would make sense for files that
+belong to multiple parts of the kernel? Or maybe I'm making things too
+complicated and it'd be simpler to have some kind of more generic
+"core MM for userspace mappings" entry or such.
 
