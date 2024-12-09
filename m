@@ -1,277 +1,522 @@
-Return-Path: <linux-kernel+bounces-437033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0409E8E3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:00:44 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 752259E8E4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:02:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781A9281F51
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DE46165366
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAD921764D;
-	Mon,  9 Dec 2024 08:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 843A621660F;
+	Mon,  9 Dec 2024 08:56:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U5HlBCGt"
-Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2076.outbound.protection.outlook.com [40.107.96.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e+3dAamM"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4672215F68;
-	Mon,  9 Dec 2024 08:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734590; cv=fail; b=QsAHQyzo0vwMLROHw0uNa7wqxFqVdc+0YWOLFnZYdZJ2XF2FFJ3xJn4wfiv7qgut4s7hl3w5WbVk2BAuAKx8u+mITyXM0Kxw4+kZVVQDzv9uekaXo10iw90nrYxD4qNJyyUZ3xlQa5+OONoR4w9xl/v1HgqCpJ3Hu84lkIJX87M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734590; c=relaxed/simple;
-	bh=V2nRaopr3/64o16poiroi4gYGzDaOjbd2ify5t2ORVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=GdiXM5nu6fAt+4lxTxbXvxfUBsYg8RkYJn2UltDnPX9cbf30EDGjfi6JiDbp6bG0vHGkQ3ODjmdQtGOTyuNdFOS5sDxrhHsj/xkp1AzYY2QFbqu0l5Y8/JrzXbEknQ+QlQXz4/v+4gRcvzWSf9ffCiMiYbaGgYwqqjEdBHhGNHE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U5HlBCGt; arc=fail smtp.client-ip=40.107.96.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=p1W1hfxuz6vft3D1Wia4yR/pWWPKxgFFPh3a8qqPkDaGLw7N8CtPSZ1bfLPyy1GCN0rlxAs3iJ9JNzLeXet8HWFW83dJxnkEPmxSO4CMbs17IRRPHC+vKqZL3MPxWHRkGIagzchLNXTBsR4saw2ogJSMNqZ4nQirnJb4uHEYumP2/GugjzyZrLaYlQHAPa8aIWC8DfDZGfk57Y3fPqKVX8TZRtC5DeyMbDeWBwU7nkWMEMDHQ/0W0WkNFfUwbBpcq3NY9rs7+2q8TZCSvxlICcQQNNwXaCJkHm6TbmP9OY7M2fEsfnb/mgumOnr618KV7IqfSBEfyp+1S9mzN7hqaQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c3GwJqpOTItgqpoiFZNbgHcp2ceRA1Urj2Qc0EJn9dI=;
- b=sBWufFHC4nZBlOPr6//Jo4okLmisl6+lnGR4M5PJUj8JzN6nDwJiZXA/UkfKQtuhCo4NjA33S3n78t+jWfEQyheGoISHDPvGOqX1+uPwOGgpnYvh+l8okZpVN6rA+ZAr1/jP/IiUZps3L8dSFus3/+aYti4Y5DthlA6FRCE/tLVURsiyX1dWQ4k44z9UJNHPn9cr7qL4H4ZoQ+weQZHL5ERI0V4mxhvWuFYDgZ6aABMKXIfTjw2MaWeCrRBydZpdylQA0dgAbvYQSpD7gNlX2ktiOQLMma4FgYeVf6SAEXhUgvKx7DsiIVq4e17rpy0YffkMI0mhAr1kao52J8hv0w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=c3GwJqpOTItgqpoiFZNbgHcp2ceRA1Urj2Qc0EJn9dI=;
- b=U5HlBCGtEeBH5opSMXELQG4//9yh17NRzOeRBLNCsn6mwU0Ygl/MayvVk5Nb0DKAYJgEaUg1xhlWrTxCaLc2QCXJtJnWzslM6WkanMaX4Dxuq6/gNiUOPo25Pzlvy6DNEXM8Q20kWjxvqjfxPVFKVkL3AlUUa7q/bAw5oEChfrY=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
- MW3PR12MB4346.namprd12.prod.outlook.com (2603:10b6:303:58::20) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8207.19; Mon, 9 Dec 2024 08:56:25 +0000
-Received: from DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
- ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8207.017; Mon, 9 Dec 2024
- 08:56:25 +0000
-Date: Mon, 9 Dec 2024 14:26:14 +0530
-From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-Subject: Re: [PATCH v2 13/16] cpufreq/amd-pstate: Check if CPPC request has
- changed before writing to the MSR or shared memory
-Message-ID: <Z1awrnPHwTVMht4E@BLRRASHENOY1.amd.com>
-References: <20241208063031.3113-1-mario.limonciello@amd.com>
- <20241208063031.3113-14-mario.limonciello@amd.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208063031.3113-14-mario.limonciello@amd.com>
-X-ClientProxiedBy: PN0PR01CA0022.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:4e::19) To DS7PR12MB8252.namprd12.prod.outlook.com
- (2603:10b6:8:ee::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7281C215F59
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:56:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733734592; cv=none; b=bLZQsTYKdLCXqWAHbn+ZQBaCjaRKlG23s0hUaI+SHZLmRLXS+EkIEcfM/Gveh5FnP4whg2BlEhUBjS+Iu6Jk7cq6663EQHr8RGuj5u0YX7Mo1ipIWKMJUKcdNDQ5mOpi18Q1uFi/IV00bDbm7VE5RQ8aP2O0pUlFgHTGB9JI0vE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733734592; c=relaxed/simple;
+	bh=rwGCj6H6zmbVBwIQZldV2ZrhpgSz4a7JnapYyDmrEgE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fXeEZZ5BXYCOIVJ7R7LoSuhjwhUuoFL33XhfqQIW7Op8uoKKSaqkhDURzlP8vnoiVFojE4XCJqsssUog3iXEzsT48hgV4cC+JTtAOBIirHLLAStEXUti3Qj0lCqq1i5jyM48ZT3/tfdE4tBkxjWBYBm1JK6ctP8huoGp5d8E19c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e+3dAamM; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6eeca49d8baso31175487b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 00:56:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733734589; x=1734339389; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EhK1NpvQPDm7PNhwk+RkV2qz6pZANllkUePKrhOwToE=;
+        b=e+3dAamMKLnBVLgXsJty6yLKe6TY9Wf3MKsfcLUPYOgq5bgTm1ePwFFvcHmH3uIh4n
+         H9AKQMgbwf1PpgE4IWPfL7wQWTcxce/afZuiDeVC356XvPeMIjPNduE88XalQvXCmVKn
+         UItxiLsZqq/kenLL7MMZAd3z668g01eF3mJsw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733734589; x=1734339389;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EhK1NpvQPDm7PNhwk+RkV2qz6pZANllkUePKrhOwToE=;
+        b=SEkvVRa7p+zXm4to+bxPS5gpcT4ijyclGPBcYPsjPQdiiWg8L8CDu/pa6Vxgeuskq9
+         R//ugfp1+VsiN0uhCaMcuFkz5QKBKNZd+WzpDHZzkkul5Cuom0q2ZS7o480QvocfsJsi
+         N+Dsuf2V41PDwpCbnA30RqyMgLh/97pTXkdKeGfc1g0xUqyRLoO4cl75Onzd25z1vbcq
+         D0jhLKofF3rVu1NhJBa44oYqlXtdsZgnmrYJm0Hb6ezMus0PCpGOL0G+ZzdS7yLqcXRs
+         aXdbC68R5ou0h42zrJAOKYPx+njB0xpHHvWKPvlzb+pDYy/I7yby7KnR3Qpavz0Nzy3I
+         4Lsw==
+X-Forwarded-Encrypted: i=1; AJvYcCV/vjNcvj8wYpL3S8/GBVAM7JqzODy92b69Li/Pc2b6NZZbicHAerLBWEHiVUwPwOrf9ro67VZmu9Dsz1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc1iBhQQ7yab6JTcvLrnpQ1qCJDsZaYcGFC48y0mUjDvL7/398
+	wczrBXhbBv6ry9zlE3paASbM2Sh7AyFjitoAl6oFL+mi5rXFEb4I6OeNU136h/6kpadTL2dNnkG
+	L43UwdJhgXNunplXQJpQhHO55KII90tP8In0BFXqpKVlSFYDczw==
+X-Gm-Gg: ASbGncvYU2AToJteBcV6BH+hn6qwRarXjLtiFHSVYgk/WGTPOsbUbRGa+Foxwg+1UVP
+	l5qi/RNRIj6abLfXOt94mNE2wOe8BVIw=
+X-Google-Smtp-Source: AGHT+IG2g6DRS6v3eO4hr+YxWggXdBc83Kts7p5uaoFCAa8dOKzDXT8Nnkt8bCwLpG1zK0sZdVyp+GQXHWafbWDmWiQ=
+X-Received: by 2002:a05:690c:7082:b0:6ee:40f0:ddc9 with SMTP id
+ 00721157ae682-6efe38e7561mr90376827b3.12.1733734589409; Mon, 09 Dec 2024
+ 00:56:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|MW3PR12MB4346:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2b4e4164-c6c7-4287-fdff-08dd182f5c53
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?KnQbhcRQPUfqGJLJBrzIEPhjAwOli+6AbNWK2b9FpOxL7u2HOck/aS0HZr8k?=
- =?us-ascii?Q?ay2WT4lJXp3YcY8lY01On8lesaqsL+QO/LbEavimeTSY8P8AwmeBkCAKNq1L?=
- =?us-ascii?Q?SBB4vZGcLtFLWy4/s5ajkTHgMxL9vLqeLr/frJis569kRAWu8mD/AisNI/e1?=
- =?us-ascii?Q?FlYAGNZ9Ki+eYopxP6rAI6UFoA1mXY8UCsPkOjHFZqUJ2lBsalHj9FXJu1b9?=
- =?us-ascii?Q?hxg/62QuLak2s2ooZhtBf3IAIJP9ZmniBICvVtQEtUgWgh6UGjxJNAN+FIXO?=
- =?us-ascii?Q?Shf/2RZcOtbrp6dLn6QOTUUp/cYhrXbnhsB+KCINUkijwKxWpizr7H3ZBgWt?=
- =?us-ascii?Q?Ndf1PMXo5x62EI/FmJ/IM59XsIdF5M3lsx3wqBTFnoNR9wavsgm7YdqObgLh?=
- =?us-ascii?Q?PbN0xx7tUCE36qMF4sGCJ9wyjnozq00ht48wL4UJrSaqfup2MddO0XPNNm90?=
- =?us-ascii?Q?lBKlA1+yCk2VjPqHMySmYU1VkJ2IPfV4RSLOIadq0zolpfxazWm2+rQQUBEO?=
- =?us-ascii?Q?FwApue7bzSnTHudLns9TU0GD0vHdWsBaZ1HCfZqXdUEwesCD0xqP4kCiwbdb?=
- =?us-ascii?Q?3WYR/FqSWMWLpXUzD2cfS/kfUQGM407obHVLgN5FC7Ot1nhoVlpRRnIQtMrW?=
- =?us-ascii?Q?h7zykWAUWDe5a+AUSFQW6SGTF2iC/bX7u57escdnI09eect6bWFXj4cWaP/b?=
- =?us-ascii?Q?pMUkBDky31hY/5uka5qPv57WC6Hx22Wami2w9CxFynFQ47x8S3DY31dhmP6I?=
- =?us-ascii?Q?Pvjl+H0sYfTJErrG7YbeqGEH2KwiE2ZjtGpbbHJDBZ/1H+TTLFQ3KQnv0j1m?=
- =?us-ascii?Q?DDYRXqRJuRwoARlLp6kqUD/VAQJ1VK4hlkekapyEMjuizsi6+Ew1Ht/80ncl?=
- =?us-ascii?Q?hgw1cxOBbBekEFtS7jGLeeepgPQ7kXNuElmH0adATzZuJRcipjEN7MFR1Xde?=
- =?us-ascii?Q?E6NlUfzvOJ4lg42moca5bVXEwUtmuaCz6jgMKYL8ZuDCWCsai0StsoGUzaxP?=
- =?us-ascii?Q?VlbPmsJ4EMO8HJDQCeT90m7dCp4/N/aosKBnXYJcQgmuejZ+L4R7SpC5spwa?=
- =?us-ascii?Q?Z0ZVhus1QkIA2VFxj5a1Of14H99N2qffH4DXJVXWj4zfQ7/pgKzW9EgQ4yYv?=
- =?us-ascii?Q?9tagQxwgKfRrUahs7LxtYVUg8cw822Swx7wic2Gv6YMIxFkqh9atF5ilJ10x?=
- =?us-ascii?Q?L29FtNPWJgf1YA4W9ryvGzhY1y1j90XEoW0yqmmfY5amNFB9VG6TUJQ/p7+F?=
- =?us-ascii?Q?FcKfP2gwu5SdhNOER4V+vrLA8wDTpZTgzz040bTlb8PzMnRvuxM/b1cQFxQy?=
- =?us-ascii?Q?o6BIWjrueIE/0gt3Rfz2+i53cHiM6OgQ2Oe0iZzw/jL08AX67BsU476w+fSx?=
- =?us-ascii?Q?TupoxLQ=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?HKWBGv5KoIzSxZHH9Kd9cF4VFR1fsA30BlI1TnX8M2kU/N0BD0GD/zbL5Jtt?=
- =?us-ascii?Q?M+5lfKZ8pS8kGB7N+O/h4KfUnoX2XxJEf9C+W65V+3yNoRX48B5TFYrSce3l?=
- =?us-ascii?Q?qDp1Ay/qCschI8BXkghg1tETFzFELPGpe4tF02jusgbYPPBAqeKDp2cKvVox?=
- =?us-ascii?Q?TvbFhBEu/cMuJzZWp4gQfl4m0+k4U2i6h/WfmMX0GvkMGtEIR9fELMrhimkp?=
- =?us-ascii?Q?FsW96Cz+g+K5cWYQo0+5O5LumoDroe3+1vGwhpMIuG/qylEMzECbwYXKeMD6?=
- =?us-ascii?Q?o2JWt4bP0azTnOrRgCNG4QxCfNA5hKz4FPF1JeL1RlkRI017g4M/eAbwQi4S?=
- =?us-ascii?Q?0JywIYOT7kFCbsg0Bk6DDqJhLcXxevMlmzs/4FT1C+QBSf879LD1yoHdtEVU?=
- =?us-ascii?Q?lsj44jUzhtLKhqNtltjGicbXBQ0gPPvhPaaTeas0pElCVayFvHaVOT8zZlQd?=
- =?us-ascii?Q?duvuKdYAUt6hdBjwiTfzij115zGXEC1b0zF0tUdXrU+y9fPQz1QJ4Nhb1aEO?=
- =?us-ascii?Q?2nMCAUr/WsbAkTusIQI8Mv30nXvt4Nvg0Gde8lKsVmtW/JEO73dEGhBfH8qy?=
- =?us-ascii?Q?GSNDDBkaPMubxYriWQSLyoLB3N9Ear4/AWGqGaxawzf+kyTE4WczCg7HY4OD?=
- =?us-ascii?Q?NpvUQ2a0tQF/HCfSmIxTudxCTjbLYMLf3NPV8P+Mdxtfbi2KO6YLU7jvR689?=
- =?us-ascii?Q?Drt/hYJEvEkLjmsQKKrTDecCi6w/N/hgsqJ/vcq+HmrJDkBsY3vHvUqpcBOW?=
- =?us-ascii?Q?GlMuT2qEfMjr8EYr0o7TVRmoKi1Z6sodgesK6SZnZvTv8WU3A9TOS6lf08Ji?=
- =?us-ascii?Q?mgJtUauHTm4Gj4f5wAv+TQWBYIdMUMeHG2B9jR/BONmKl4u1SzdqgnJJauyC?=
- =?us-ascii?Q?vZ9WWn4oSRW2sipGsiKuKh9MHsiWeuAH/6p8TCWQQdjyz+1Gen1oHFzG1LqV?=
- =?us-ascii?Q?dsggTw3M8GdcnQIUwx+EAJLUSCbItOR3j+Uyc/+cpin8R7FwJFDoKHudJCfh?=
- =?us-ascii?Q?2qfLpjFX/W8sOHfyr4oOsD74QWEd6TZz7jTzgmfEsegYi0do63y39iGFdrl7?=
- =?us-ascii?Q?ZHiF1wKwA10sEIZEuOU5v0pWkF9Shiwytm+XCUPRZUwuMsnYK8mHxnNQIM2N?=
- =?us-ascii?Q?0tQ5if3N9hCFpj8jIrju6mmJmmJ0okaIjd+zmTFKiPSG4MAK3+oeXqua5wtM?=
- =?us-ascii?Q?zJ9Y02Os0XvN6RmRhSHoszbbVwn5ILrCAYI6tT1ZujVeYF0Vkvot+F4VoiSz?=
- =?us-ascii?Q?qn0/x3dmFHK6zhw2fSISiJ0BE4Q4us3ytWRHkxpTQbq9kwa1vppOP10WyVj0?=
- =?us-ascii?Q?12BmjH2MbIojPGZL1kUlCaarCjuXScfvCjK3U837CvwGTh3qaan3xDGNi0jg?=
- =?us-ascii?Q?fVhNt0nSEdb+BrXKP9UOynP4bWDW321NGHsVal3xTZpmqI5FjVclKi6R/8vi?=
- =?us-ascii?Q?2AF3kWh050HP+7MqOAPg8PjhFjF4EYJdYfaHzDUb92Yg+fTqIcyXz+AxJME2?=
- =?us-ascii?Q?P91fOiq/tZtMkfN0sKp/IWi2rVvRQw7SlUK2lU0u3rGToaxpvm2HARbMOGzK?=
- =?us-ascii?Q?juuowvgZp+c6mF9UkBzEyu4I/wxLV4mG3O8f7n9q?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2b4e4164-c6c7-4287-fdff-08dd182f5c53
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 08:56:25.1888
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: NsqlVg6dvr2FftqJkhvyjhOA2Wz9NtKJ6REDl5O+RgZultOM6NPlE6JlXRvwLaPRU95k9Ot2sYJu8QHHbMlOdQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4346
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org> <20241114-uvc-roi-v15-9-64cfeb56b6f8@chromium.org>
+In-Reply-To: <20241114-uvc-roi-v15-9-64cfeb56b6f8@chromium.org>
+From: Yunke Cao <yunkec@chromium.org>
+Date: Mon, 9 Dec 2024 17:56:18 +0900
+Message-ID: <CAEDqmY7EN0B6mpbCEQ-f9mMb5He3=bGit_pLxFogpdbtC_BjrA@mail.gmail.com>
+Subject: Re: [PATCH v15 09/19] media: uvcvideo: Support any size for mapping get/set
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Mario,
+Hi Ricardo,
+
+This patch looks good to me.
+
+Reviewed-by: Yunke Cao <yunkec@google.com>
+
+Thanks,
+Yunke
 
 
-On Sun, Dec 08, 2024 at 12:30:28AM -0600, Mario Limonciello wrote:
-> Move the common MSR field formatting code to msr_update_perf() from
-> its callers.
-> 
-> Ensure that the MSR write is necessary before flushing a write out.
-> Also drop the comparison from the passive flow tracing.
-> 
-> Reviewed-and-tested-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+On Fri, Nov 15, 2024 at 4:10=E2=80=AFAM Ricardo Ribalda <ribalda@chromium.o=
+rg> wrote:
+>
+> Right now, we only support mappings for v4l2 controls with a max size of
+> s32. This patch modifies the prototype of get/set so it can support any
+> size.
+>
+> This is done to prepare for compound controls.
+>
+> Suggested-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 > ---
-
-[..snip..]
-
-> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
-> index dd11ba6c00cc3..2178931fbf87b 100644
-> --- a/drivers/cpufreq/amd-pstate.c
-> +++ b/drivers/cpufreq/amd-pstate.c
-> @@ -224,15 +224,26 @@ static s16 shmem_get_epp(struct amd_cpudata *cpudata)
->  static int msr_update_perf(struct amd_cpudata *cpudata, u32 min_perf,
->  			   u32 des_perf, u32 max_perf, u32 epp, bool fast_switch)
->  {
-> -	u64 value;
-> +	u64 value, prev;
+>  drivers/media/usb/uvc/uvc_ctrl.c | 183 +++++++++++++++++++++++++++------=
+------
+>  drivers/media/usb/uvc/uvcvideo.h |   8 +-
+>  2 files changed, 130 insertions(+), 61 deletions(-)
+>
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc=
+_ctrl.c
+> index d6afa131a5e1..6d5167eb368d 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -367,6 +367,22 @@ static const u32 uvc_control_classes[] =3D {
+>
+>  static const int exposure_auto_mapping[] =3D { 2, 1, 4, 8 };
+>
+> +static s32 uvc_mapping_get_s32(struct uvc_control_mapping *mapping,
+> +                              u8 query, const void *data_in)
+> +{
+> +       s32 data_out;
 > +
-> +	value = prev = READ_ONCE(cpudata->cppc_req_cached);
+> +       mapping->get(mapping, query, data_in, sizeof(data_out), &data_out=
+);
 > +
-> +	value &= ~(AMD_CPPC_MAX_PERF_MASK | AMD_CPPC_MIN_PERF_MASK |
-> +		   AMD_CPPC_DES_PERF_MASK | AMD_CPPC_EPP_PERF_MASK);
-> +	value |= FIELD_PREP(AMD_CPPC_MAX_PERF_MASK, max_perf);
-> +	value |= FIELD_PREP(AMD_CPPC_DES_PERF_MASK, des_perf);
-> +	value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, min_perf);
-> +	value |= FIELD_PREP(AMD_CPPC_EPP_PERF_MASK, epp);
+> +       return data_out;
+> +}
 > +
-> +	if (value == prev)
-> +		return 0;
->  
-> -	value = READ_ONCE(cpudata->cppc_req_cached);
->  	if (fast_switch) {
-> -		wrmsrl(MSR_AMD_CPPC_REQ, READ_ONCE(cpudata->cppc_req_cached));
-> +		wrmsrl(MSR_AMD_CPPC_REQ, value);
->  		return 0;
->  	} else {
-> -		int ret = wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ,
-> -					READ_ONCE(cpudata->cppc_req_cached));
-> +		int ret = wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
+> +static void uvc_mapping_set_s32(struct uvc_control_mapping *mapping,
+> +                               s32 data_in, void *data_out)
+> +{
+> +       mapping->set(mapping, sizeof(data_in), &data_in, data_out);
+> +}
 > +
->  		if (ret)
->  			return ret;
-
-Ok, so you are recomputing the value in this patch. Does it also make
-sense to move trace_amd_pstate_perf() call to this place?
-
-
---
-Thanks and Regards
-gautham.
-
->  	}
-> @@ -528,9 +539,7 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
->  {
->  	unsigned long max_freq;
->  	struct cpufreq_policy *policy = cpufreq_cpu_get(cpudata->cpu);
-> -	u64 prev = READ_ONCE(cpudata->cppc_req_cached);
->  	u32 nominal_perf = READ_ONCE(cpudata->nominal_perf);
-> -	u64 value = prev;
->  
->  	des_perf = clamp_t(unsigned long, des_perf, min_perf, max_perf);
->  
-> @@ -546,27 +555,14 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
->  	if (!cpudata->boost_supported)
->  		max_perf = min_t(unsigned long, nominal_perf, max_perf);
->  
-> -	value &= ~(AMD_CPPC_MAX_PERF_MASK | AMD_CPPC_MIN_PERF_MASK |
-> -		   AMD_CPPC_DES_PERF_MASK);
-> -	value |= FIELD_PREP(AMD_CPPC_MAX_PERF_MASK, max_perf);
-> -	value |= FIELD_PREP(AMD_CPPC_DES_PERF_MASK, des_perf);
-> -	value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, min_perf);
-> -
->  	if (trace_amd_pstate_perf_enabled() && amd_pstate_sample(cpudata)) {
->  		trace_amd_pstate_perf(min_perf, des_perf, max_perf, cpudata->freq,
->  			cpudata->cur.mperf, cpudata->cur.aperf, cpudata->cur.tsc,
-> -				cpudata->cpu, (value != prev), fast_switch);
-> +				cpudata->cpu, fast_switch);
->  	}
->  
-> -	if (value == prev)
-> -		goto cpufreq_policy_put;
-> -
-> -	WRITE_ONCE(cpudata->cppc_req_cached, value);
-> -
->  	amd_pstate_update_perf(cpudata, min_perf, des_perf, max_perf, 0, fast_switch);
->  
-> -cpufreq_policy_put:
-> -
->  	cpufreq_cpu_put(policy);
+>  /*
+>   * This function translates the V4L2 menu index @idx, as exposed to user=
+space as
+>   * the V4L2 control value, to the corresponding UVC control value used b=
+y the
+> @@ -405,58 +421,93 @@ uvc_mapping_get_menu_name(const struct uvc_control_=
+mapping *mapping, u32 idx)
+>         return v4l2_ctrl_get_menu(mapping->id)[idx];
 >  }
->  
-> @@ -1562,19 +1558,10 @@ static void amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
->  static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
+>
+> -static s32 uvc_ctrl_get_zoom(struct uvc_control_mapping *mapping,
+> -       u8 query, const u8 *data)
+> +static int uvc_ctrl_get_zoom(struct uvc_control_mapping *mapping, u8 que=
+ry,
+> +                            const void *uvc_in, size_t v4l2_size,
+> +                            void *v4l2_out)
 >  {
->  	struct amd_cpudata *cpudata = policy->driver_data;
-> -	u64 value;
->  	u32 epp;
->  
->  	amd_pstate_update_min_max_limit(policy);
->  
-> -	value = READ_ONCE(cpudata->cppc_req_cached);
-> -
-> -	value &= ~(AMD_CPPC_MAX_PERF_MASK | AMD_CPPC_MIN_PERF_MASK |
-> -		   AMD_CPPC_DES_PERF_MASK | AMD_CPPC_EPP_PERF_MASK);
-> -	value |= FIELD_PREP(AMD_CPPC_MAX_PERF_MASK, cpudata->max_limit_perf);
-> -	value |= FIELD_PREP(AMD_CPPC_DES_PERF_MASK, 0);
-> -	value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, cpudata->min_limit_perf);
-> -
->  	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
->  		epp = 0;
->  	else
-> -- 
-> 2.43.0
-> 
+> -       s8 zoom =3D (s8)data[0];
+> +       u8 value =3D ((u8 *)uvc_in)[2];
+> +       s8 sign =3D ((s8 *)uvc_in)[0];
+> +       s32 *out =3D v4l2_out;
+> +
+> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
+> +               return -EINVAL;
+>
+>         switch (query) {
+>         case UVC_GET_CUR:
+> -               return (zoom =3D=3D 0) ? 0 : (zoom > 0 ? data[2] : -data[=
+2]);
+> +               *out =3D (sign =3D=3D 0) ? 0 : (sign > 0 ? value : -value=
+);
+> +               return 0;
+>
+>         case UVC_GET_MIN:
+>         case UVC_GET_MAX:
+>         case UVC_GET_RES:
+>         case UVC_GET_DEF:
+>         default:
+> -               return data[2];
+> +               *out =3D value;
+> +               return 0;
+>         }
+>  }
+>
+> -static void uvc_ctrl_set_zoom(struct uvc_control_mapping *mapping,
+> -       s32 value, u8 *data)
+> +static int uvc_ctrl_set_zoom(struct uvc_control_mapping *mapping,
+> +                            size_t v4l2_size, const void *v4l2_in,
+> +                            void *uvc_out)
+>  {
+> -       data[0] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
+> -       data[2] =3D min((int)abs(value), 0xff);
+> +       u8 *out =3D uvc_out;
+> +       s32 value;
+> +
+> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
+> +               return -EINVAL;
+> +
+> +       value =3D *(u32 *)v4l2_in;
+> +       out[0] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
+> +       out[2] =3D min_t(int, abs(value), 0xff);
+> +
+> +       return 0;
+>  }
+>
+> -static s32 uvc_ctrl_get_rel_speed(struct uvc_control_mapping *mapping,
+> -       u8 query, const u8 *data)
+> +static int uvc_ctrl_get_rel_speed(struct uvc_control_mapping *mapping,
+> +                                 u8 query, const void *uvc_in,
+> +                                 size_t v4l2_size, void *v4l2_out)
+>  {
+>         unsigned int first =3D mapping->offset / 8;
+> -       s8 rel =3D (s8)data[first];
+> +       u8 value =3D ((u8 *)uvc_in)[first + 1];
+> +       s8 sign =3D ((s8 *)uvc_in)[first];
+> +       s32 *out =3D v4l2_out;
+> +
+> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
+> +               return -EINVAL;
+>
+>         switch (query) {
+>         case UVC_GET_CUR:
+> -               return (rel =3D=3D 0) ? 0 : (rel > 0 ? data[first+1]
+> -                                                : -data[first+1]);
+> +               *out =3D (sign =3D=3D 0) ? 0 : (sign > 0 ? value : -value=
+);
+> +               return 0;
+>         case UVC_GET_MIN:
+> -               return -data[first+1];
+> +               *out =3D -value;
+> +               return 0;
+>         case UVC_GET_MAX:
+>         case UVC_GET_RES:
+>         case UVC_GET_DEF:
+>         default:
+> -               return data[first+1];
+> +               *out =3D value;
+> +               return 0;
+>         }
+>  }
+>
+> -static void uvc_ctrl_set_rel_speed(struct uvc_control_mapping *mapping,
+> -       s32 value, u8 *data)
+> +static int uvc_ctrl_set_rel_speed(struct uvc_control_mapping *mapping,
+> +                                 size_t v4l2_size, const void *v4l2_in,
+> +                                 void *uvc_out)
+>  {
+>         unsigned int first =3D mapping->offset / 8;
+> +       u8 *out =3D uvc_out;
+> +       s32 value;
+> +
+> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
+> +               return -EINVAL;
+>
+> -       data[first] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
+> -       data[first+1] =3D min_t(int, abs(value), 0xff);
+> +       value =3D *(u32 *)v4l2_in;
+> +       out[first] =3D value =3D=3D 0 ? 0 : (value > 0) ? 1 : 0xff;
+> +       out[first + 1] =3D min_t(int, abs(value), 0xff);
+> +
+> +       return 0;
+>  }
+>
+>  static const struct uvc_control_mapping uvc_ctrl_power_line_mapping_limi=
+ted =3D {
+> @@ -887,14 +938,20 @@ static s32 uvc_menu_to_v4l2_menu(struct uvc_control=
+_mapping *mapping, s32 val)
+>   * a signed 32bit integer. Sign extension will be performed if the mappi=
+ng
+>   * references a signed data type.
+>   */
+> -static s32 uvc_get_le_value(struct uvc_control_mapping *mapping,
+> -       u8 query, const u8 *data)
+> +static int uvc_get_le_value(struct uvc_control_mapping *mapping,
+> +                           u8 query, const void *uvc_in, size_t v4l2_siz=
+e,
+> +                           void *v4l2_out)
+>  {
+> -       int bits =3D mapping->size;
+>         int offset =3D mapping->offset;
+> +       int bits =3D mapping->size;
+> +       const u8 *data =3D uvc_in;
+> +       s32 *out =3D v4l2_out;
+>         s32 value =3D 0;
+>         u8 mask;
+>
+> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
+> +               return -EINVAL;
+> +
+>         data +=3D offset / 8;
+>         offset &=3D 7;
+>         mask =3D ((1LL << bits) - 1) << offset;
+> @@ -916,29 +973,40 @@ static s32 uvc_get_le_value(struct uvc_control_mapp=
+ing *mapping,
+>                 value |=3D -(value & (1 << (mapping->size - 1)));
+>
+>         /* If it is a menu, convert from uvc to v4l2. */
+> -       if (mapping->v4l2_type !=3D V4L2_CTRL_TYPE_MENU)
+> -               return value;
+> +       if (mapping->v4l2_type !=3D V4L2_CTRL_TYPE_MENU) {
+> +               *out =3D value;
+> +               return 0;
+> +       }
+>
+>         switch (query) {
+>         case UVC_GET_CUR:
+>         case UVC_GET_DEF:
+> -               return uvc_menu_to_v4l2_menu(mapping, value);
+> +               *out =3D uvc_menu_to_v4l2_menu(mapping, value);
+> +               return 0;
+>         }
+>
+> -       return value;
+> +       *out =3D value;
+> +       return 0;
+>  }
+>
+>  /*
+>   * Set the bit string specified by mapping->offset and mapping->size
+>   * in the little-endian data stored at 'data' to the value 'value'.
+>   */
+> -static void uvc_set_le_value(struct uvc_control_mapping *mapping,
+> -       s32 value, u8 *data)
+> +static int uvc_set_le_value(struct uvc_control_mapping *mapping,
+> +                           size_t v4l2_size, const void *v4l2_in,
+> +                           void *uvc_out)
+>  {
+> -       int bits =3D mapping->size;
+>         int offset =3D mapping->offset;
+> +       int bits =3D mapping->size;
+> +       u8 *data =3D uvc_out;
+> +       s32 value;
+>         u8 mask;
+>
+> +       if (WARN_ON(v4l2_size !=3D sizeof(s32)))
+> +               return -EINVAL;
+> +
+> +       value =3D *(s32 *)v4l2_in;
+>         if (mapping->v4l2_type =3D=3D V4L2_CTRL_TYPE_MENU)
+>                 value =3D uvc_mapping_get_menu_value(mapping, value);
+>         /*
+> @@ -960,6 +1028,8 @@ static void uvc_set_le_value(struct uvc_control_mapp=
+ing *mapping,
+>                 bits -=3D 8 - offset;
+>                 offset =3D 0;
+>         }
+> +
+> +       return 0;
+>  }
+>
+>  /* ---------------------------------------------------------------------=
+---
+> @@ -1141,8 +1211,8 @@ static int __uvc_ctrl_get(struct uvc_video_chain *c=
+hain,
+>         if (ret < 0)
+>                 return ret;
+>
+> -       *value =3D mapping->get(mapping, UVC_GET_CUR,
+> -                             uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT))=
+;
+> +       *value =3D uvc_mapping_get_s32(mapping, UVC_GET_CUR,
+> +                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CU=
+RRENT));
+>
+>         return 0;
+>  }
+> @@ -1275,12 +1345,12 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control=
+ *ctrl,
+>          * as supported.
+>          */
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
+> -               return mapping->get(mapping, UVC_GET_RES,
+> -                                   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES=
+));
+> +               return uvc_mapping_get_s32(mapping, UVC_GET_RES,
+> +                                          uvc_ctrl_data(ctrl, UVC_CTRL_D=
+ATA_RES));
+>
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
+> -               return mapping->get(mapping, UVC_GET_MAX,
+> -                                   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX=
+));
+> +               return uvc_mapping_get_s32(mapping, UVC_GET_MAX,
+> +                                          uvc_ctrl_data(ctrl, UVC_CTRL_D=
+ATA_MAX));
+>
+>         return ~0;
+>  }
+> @@ -1324,10 +1394,9 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_=
+chain *chain,
+>                         return ret;
+>         }
+>
+> -       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF) {
+> -               v4l2_ctrl->default_value =3D mapping->get(mapping, UVC_GE=
+T_DEF,
+> -                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_DEF));
+> -       }
+> +       if (ctrl->info.flags & UVC_CTRL_FLAG_GET_DEF)
+> +               v4l2_ctrl->default_value =3D uvc_mapping_get_s32(mapping,
+> +                               UVC_GET_DEF, uvc_ctrl_data(ctrl, UVC_CTRL=
+_DATA_DEF));
+>
+>         switch (mapping->v4l2_type) {
+>         case V4L2_CTRL_TYPE_MENU:
+> @@ -1359,16 +1428,16 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video=
+_chain *chain,
+>         }
+>
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MIN)
+> -               v4l2_ctrl->minimum =3D mapping->get(mapping, UVC_GET_MIN,
+> -                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MI=
+N));
+> +               v4l2_ctrl->minimum =3D uvc_mapping_get_s32(mapping, UVC_G=
+ET_MIN,
+> +                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN));
+>
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_MAX)
+> -               v4l2_ctrl->maximum =3D mapping->get(mapping, UVC_GET_MAX,
+> -                                    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MA=
+X));
+> +               v4l2_ctrl->maximum =3D uvc_mapping_get_s32(mapping, UVC_G=
+ET_MAX,
+> +                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX));
+>
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_GET_RES)
+> -               v4l2_ctrl->step =3D mapping->get(mapping, UVC_GET_RES,
+> -                                 uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES))=
+;
+> +               v4l2_ctrl->step =3D uvc_mapping_get_s32(mapping, UVC_GET_=
+RES,
+> +                               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES));
+>
+>         return 0;
+>  }
+> @@ -1581,7 +1650,7 @@ void uvc_ctrl_status_event(struct uvc_video_chain *=
+chain,
+>         ctrl->handle =3D NULL;
+>
+>         list_for_each_entry(mapping, &ctrl->info.mappings, list) {
+> -               s32 value =3D mapping->get(mapping, UVC_GET_CUR, data);
+> +               s32 value =3D uvc_mapping_get_s32(mapping, UVC_GET_CUR, d=
+ata);
+>
+>                 /*
+>                  * handle may be NULL here if the device sends auto-updat=
+e
+> @@ -1925,8 +1994,8 @@ int uvc_ctrl_get(struct uvc_video_chain *chain, u32=
+ which,
+>                         if (ret < 0)
+>                                 return ret;
+>                 }
+> -               xctrl->value =3D mapping->get(mapping, UVC_GET_DEF,
+> -                                           uvc_ctrl_data(ctrl, UVC_CTRL_=
+DATA_DEF));
+> +               xctrl->value =3D uvc_mapping_get_s32(mapping, UVC_GET_DEF=
+,
+> +                                                  uvc_ctrl_data(ctrl, UV=
+C_CTRL_DATA_DEF));
+>                 return 0;
+>         }
+>
+> @@ -1963,12 +2032,12 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>                                 return ret;
+>                 }
+>
+> -               min =3D mapping->get(mapping, UVC_GET_MIN,
+> -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MIN)=
+);
+> -               max =3D mapping->get(mapping, UVC_GET_MAX,
+> -                                  uvc_ctrl_data(ctrl, UVC_CTRL_DATA_MAX)=
+);
+> -               step =3D mapping->get(mapping, UVC_GET_RES,
+> -                                   uvc_ctrl_data(ctrl, UVC_CTRL_DATA_RES=
+));
+> +               min =3D uvc_mapping_get_s32(mapping, UVC_GET_MIN,
+> +                                         uvc_ctrl_data(ctrl, UVC_CTRL_DA=
+TA_MIN));
+> +               max =3D uvc_mapping_get_s32(mapping, UVC_GET_MAX,
+> +                                         uvc_ctrl_data(ctrl, UVC_CTRL_DA=
+TA_MAX));
+> +               step =3D uvc_mapping_get_s32(mapping, UVC_GET_RES,
+> +                                          uvc_ctrl_data(ctrl, UVC_CTRL_D=
+ATA_RES));
+>                 if (step =3D=3D 0)
+>                         step =3D 1;
+>
+> @@ -2047,8 +2116,8 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>                        ctrl->info.size);
+>         }
+>
+> -       mapping->set(mapping, value,
+> -               uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+> +       uvc_mapping_set_s32(mapping, value,
+> +                           uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+>
+>         if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+>                 ctrl->handle =3D handle;
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvc=
+video.h
+> index 6ebaabd11443..3d32a56c5ff8 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -131,10 +131,10 @@ struct uvc_control_mapping {
+>         const struct uvc_control_mapping *(*filter_mapping)
+>                                 (struct uvc_video_chain *chain,
+>                                 struct uvc_control *ctrl);
+> -       s32 (*get)(struct uvc_control_mapping *mapping, u8 query,
+> -                  const u8 *data);
+> -       void (*set)(struct uvc_control_mapping *mapping, s32 value,
+> -                   u8 *data);
+> +       int (*get)(struct uvc_control_mapping *mapping, u8 query,
+> +                  const void *uvc_in, size_t v4l2_size, void *v4l2_out);
+> +       int (*set)(struct uvc_control_mapping *mapping, size_t v4l2_size,
+> +                  const void *v4l2_in, void *uvc_out);
+>  };
+>
+>  struct uvc_control {
+>
+> --
+> 2.47.0.338.g60cca15819-goog
+>
 
