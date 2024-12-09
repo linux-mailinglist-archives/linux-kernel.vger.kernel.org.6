@@ -1,206 +1,207 @@
-Return-Path: <linux-kernel+bounces-438182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80BAA9E9DE2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:14:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A4D59E9DE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:16:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E186A16742B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:14:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75386188878C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 458AE155A21;
-	Mon,  9 Dec 2024 18:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2CE15820C;
+	Mon,  9 Dec 2024 18:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GUvc9aCy"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2071.outbound.protection.outlook.com [40.107.220.71])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YWjUbAK6"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C051E1F5F6
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 18:14:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.71
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733768067; cv=fail; b=uoNrlVBdYCoKYcKBn6VtebGDLe3AWTDmxSDlFOtSA4Mt1oiIY4lM24BH6Ozpc/CKQiKnBBNTBUwvoDSqyzZzF6OVB9qQoSiIBuUUcTu8fhrDijHJ67YP1VHjDBfHvA9y7lyvfAPBYjuXYNKyUMyOuoO9rvhz8xOZCob0VXfGK4c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733768067; c=relaxed/simple;
-	bh=rZ/VwLnCIMTZky41PC2gmz3PB7Xwma8SCjMooi3E9qU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uq2zR6Bq0pFLOKYrtNiV4ZYUa+xuCYRuun03DbMJj2uvxLYphjGDjGnOYd8ZnuoREQwZBErUaB4C1uAGyth8K9BsukMqqlgdBRSXUHdMfkgpkkBRvNeBQmkBMTKVOCx7pc97OpxnUdl+MnoEMOZNb1aNsv5dm3iTvtp3zLYYvSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GUvc9aCy; arc=fail smtp.client-ip=40.107.220.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DXbyWGai1Tdx5OVgoYEAokZPzSNEZbqIx3RtoDaLkUP0pbLJLwprEcg9Hx6nOLzAmth7I6HXH0j/roAhw9SJWvBoU3PTqaeulCix4M/QeqkfH0UPdUhuMIhLuKzSw/quNj3P5wQlH7t4t0qKkEnmD3R9OuqdI/dcf1SY1m8hMfR9a8wzklcc4hbHmMKLh3DuS7mp1faDPaCjPXTtMhwLY5JRNgQ6oJdWvhvU9BDS961Qhw5ez1qBTIQwGyVdGpCvodyONko4lgXYPwvKNh0tMGGcaVhpEIJBy4omQbY81ptUajKW4qi9F0hERzhgub9QIVhGkm/XMAVKn+7l+luH2Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rZ/VwLnCIMTZky41PC2gmz3PB7Xwma8SCjMooi3E9qU=;
- b=iVrWhCbVBdseOYxIBmXv9rG4c7kkrfDXaW/faK+Rl2VWCq1+QwVpQkIRRRlENA7FI8eSSWk4xa5RHYeJ9yZoIZgyTdHW0ab/LHxmZM+DNhoK0KQrRvSuEbUZkrEVQw552YfmVemIrh5NjD7MuHnOEa/yRsMVjMabhYrb7LdJDR+eGPcULt5q+6v4FZHT+kjEseAV4MKbOzqRB0G4I3w0K3g5OPzvUO0TpiTNIm0qsLCAvQjvi+9zGCulUv/zRQ0i2R+FtNrMWIZf1qgx3GDD52aXe+wgAZ2kp+Od+iNMKPonPyYH4zexgrQBBqdOWamtnN16LXJKS+sCCen2jVazIg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rZ/VwLnCIMTZky41PC2gmz3PB7Xwma8SCjMooi3E9qU=;
- b=GUvc9aCy4cJMEFt9etzsCY9WFO8wxbU0cpmrhXrUKzAGYO2tbB6glPHQMq2BbUAch7xaaxFGew5mxLJZVtBETinK8mRAmqnj76NM83DIaK1IjrNEjae23bOGbWT8EjPin19Tjf+NM7tJRmZNz1c/tMn/yqswuJ5Ct5fjQyMmwRkVzKBVN9EEh+VrmG5PU/jRXXSEbSCPr+mPxBjO0M1iL/Np39Ri+CMyMTnmCpJ1gMtzfaKpAb2e9vnsTB9tzjfca2we8LchhPRn1QToamk5DMGY0brb+BttTrAPC+OFAHoQ5qdbRNS/RjA2eZiMUZ5JX0VOyJe/yy4a92Ehd8QmXg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- DS0PR12MB9345.namprd12.prod.outlook.com (2603:10b6:8:1a9::10) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8230.12; Mon, 9 Dec 2024 18:14:22 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%3]) with mapi id 15.20.8230.016; Mon, 9 Dec 2024
- 18:14:22 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- David Hildenbrand <david@redhat.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Miaohe Lin <linmiaohe@huawei.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- John Hubbard <jhubbard@nvidia.com>,
- "Huang, Ying" <ying.huang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Alexander Potapenko <glider@google.com>,
- Kees Cook <keescook@chromium.org>, Vineet Gupta <vgupta@kernel.org>,
- linux-kernel@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: Re: [PATCH v4 2/2] mm: use clear_user_(high)page() for arch with
- special user folio handling
-Date: Mon, 09 Dec 2024 13:14:19 -0500
-X-Mailer: MailMate (1.14r6065)
-Message-ID: <AA1E2DF9-ED7C-4304-8BC5-5555167B1330@nvidia.com>
-In-Reply-To: <673d05d5-276d-4b65-941c-6c9295e276b1@suse.cz>
-References: <20241207171631.2853336-1-ziy@nvidia.com>
- <20241207171631.2853336-2-ziy@nvidia.com>
- <673d05d5-276d-4b65-941c-6c9295e276b1@suse.cz>
-Content-Type: text/plain
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE50414B97E;
+	Mon,  9 Dec 2024 18:16:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733768180; cv=none; b=S6YEc3JzMVw31xxUDGvT7zxGHW9m3mcs+hHnY6NLWegCrdxdgVCCr2MmNL6b0r9YUBa3pGRGF+7p64faVA2yDTvFg93XrxJmUaSCMoU+jV7ReUYNrgi2apPbmJ/74JgVs9Yj8yQD3aEq/NL+hVgowg5tfyuD7Uv0vDtzHJm8nd0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733768180; c=relaxed/simple;
+	bh=K0O/96WPO4T4KGe+mVQoUR1NGQZjCLcIyS2i3Lo9KC0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=EOyxCKlHGHgBBNh4kB1v/VBubCdGGFJNGnBwGc4hjtMJS5+RLbxvpJOX6A6dc/JFPXZmLvNIkRD/GVFz3qcmCV0Ve9p7nnpYiMjd6ItSyyVApUMBv713sYU7OLak193twl+d2vXk4j2Uqo7VV0eoR+/u/IrBeesSJT4ezsb320k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YWjUbAK6; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733768179; x=1765304179;
+  h=message-id:subject:from:to:date:in-reply-to:references:
+   content-transfer-encoding:mime-version;
+  bh=K0O/96WPO4T4KGe+mVQoUR1NGQZjCLcIyS2i3Lo9KC0=;
+  b=YWjUbAK68MI7zLGQwaalLVpAYJqv+dXI3l7MlhsVTTFtdkflqvkMjK00
+   ghA0LjLf4jPgOvlzb4ynZiCVPGVe7ZS+8v0kSwrTyWvo7dweHTOtACJOo
+   br/sCcipymh99Ym1qm7DmlNrd9TVIa5MRjXFaSRiFPY2EYOa1zGRBETjm
+   AGCIda8ABpGuzATasZWas/X0D5eyT1CdfZgYCMy+f75bdw7kcigWXZDRq
+   7/c+y1qyjnJnpMGLTCK6YphmJTNUQgh8rzH8X0ngPlBOHgGCRzwyvbiL+
+   Hbw0DTNoB+HQm5Q3VfJhfva0VrEr1BKKabHTAB1z394HgvVaxKpV1u+qZ
+   A==;
+X-CSE-ConnectionGUID: Hh3kbievQCS1QYiKoI+vEw==
+X-CSE-MsgGUID: y8LPUKc7S+CFHp13mVKR/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="33421345"
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="33421345"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 10:16:17 -0800
+X-CSE-ConnectionGUID: VGP1537gSteC0+fGqmRVhg==
+X-CSE-MsgGUID: tHtSLZ99RGCbwpI1c7u/WA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="118405489"
+Received: from lstrano-mobl6.amr.corp.intel.com (HELO [10.125.109.112]) ([10.125.109.112])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 10:16:16 -0800
+Message-ID: <86ed629f736bcad8ffcb636182442b541b2f8daa.camel@linux.intel.com>
+Subject: Re: [PATCH v1] perf cpumap: Reduce cpu size from int to int16_t
+From: Tim Chen <tim.c.chen@linux.intel.com>
+To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, Kan Liang
+ <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, Yicong
+ Yang <yangyicong@hisilicon.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ linux-perf-users@vger.kernel.org,  linux-kernel@vger.kernel.org, Leo Yan
+ <leo.yan@arm.com>, Kyle Meyer <kyle.meyer@hpe.com>
+Date: Mon, 09 Dec 2024 10:16:15 -0800
+In-Reply-To: <20241207052133.102829-1-irogers@google.com>
+References: <20241207052133.102829-1-irogers@google.com>
+Autocrypt: addr=tim.c.chen@linux.intel.com; prefer-encrypt=mutual;
+ keydata=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
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-ClientProxiedBy: MN0P221CA0013.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:208:52a::18) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+User-Agent: Evolution 3.50.4 (3.50.4-1.fc39) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|DS0PR12MB9345:EE_
-X-MS-Office365-Filtering-Correlation-Id: a1d8ff4d-b483-4f24-2f54-08dd187d4e5e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|366016|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?24cXdrYHlAPHF//OyvZIq68oWetAlagEafSC8QuJywZZoCKkuX2uHLO8BgNO?=
- =?us-ascii?Q?vFpStYPF0Xioj64owDKNUL2Jvor4POaA843NXKst9wHyvF65UE9rnVuRqLLR?=
- =?us-ascii?Q?m6UHDWBwIAYIupAIZrQkltRqJ283msXIWZZ4DU3lxVF5EsS6xz1v+L30u3b0?=
- =?us-ascii?Q?bsYV0NTKhP8DtFrWyD8xjukXk7SMsfGu7xPGA3fmRP7J43QUTMBEWWVv/e09?=
- =?us-ascii?Q?zD0eir4MOBBBfhbVs+nD4KVOTO0+IPRkmJLW10uziTUZax8UCRKpSt6g/5Wl?=
- =?us-ascii?Q?DPdLHGOW2L0XqpefZPGyEVJ3VrZ7NwLLdMccL40EsZWXHF/MXcMo04Iq9fcI?=
- =?us-ascii?Q?lFPsWCp/XtbNAWSzTTephhY6GfcBrzhmuH9Y1Z6Yw0y+AE2o51/9MbybMaKt?=
- =?us-ascii?Q?Km3zu81EnPzse2Xn5IUmJQsKs/9cXLVEV5LQFGix1qbcFGdzQIWrAenZWfA0?=
- =?us-ascii?Q?7x6mlVUybHJr3N5cx0YyfSOJtM44ebi5hZ3lgvDkzsMWJzQBw8f2df53I7/f?=
- =?us-ascii?Q?pnTOxgFuvK8n7CvlRfQbhmC33/lwdl6FAQgxrmSovtMwL2p70kLK1V3r9WIf?=
- =?us-ascii?Q?LiUXSZW4t2X94UjH3EDBk/SassdecLMnwswAUGnBGJBR3i/KaCGDQv0HjdMO?=
- =?us-ascii?Q?Duc9dDoLlR0wuFDAMJ8EmiFIOA3f3nSzMmeFgdtUXTx5ztMLQKATb+L0KnN6?=
- =?us-ascii?Q?BGV0WQMxoTl1S58AMAE2OcyPLAJT4uuLombyCAPdAYOdfnWVqEqKXLh14Hzw?=
- =?us-ascii?Q?pGDsGdUz4A/79FbH32vG13st8Hpy9sqIF9CQ2Y+o99H7GSW5oWuPe3PAoybM?=
- =?us-ascii?Q?pz80beYjwhNLQ+/cvE/zJTvP1+hJjR+fl+AGaIcq33XQs1j2KePuMJzP4d1w?=
- =?us-ascii?Q?mXo+oKm2wUnyT1/QRVfC5JSIhH7cOGrlPSgQjtr5qMqAMMQDDewS8qpc6JUj?=
- =?us-ascii?Q?H6TRQsWV3wjbaPjL4LKc3GTwNNKEj2xZEHmZzKMst0g7zgJOXfQahnfr3Ujp?=
- =?us-ascii?Q?xVVfmHB1sFVlaRU2UygQ9w4Bv1TNpStqNf1cSlkZoTVwcTKstainmMSWbV1v?=
- =?us-ascii?Q?d3j2QaczJIKMTNThzphGawyS3oxbg4Rx5cTgFQLukbgc9HNC0roHh+WPRFBz?=
- =?us-ascii?Q?fyaNowMXFM83s9iKxS2Xi87CskJdsTsLDObiq07yf+T2eIcXUfnP40k/pQjO?=
- =?us-ascii?Q?jlbEmPe+WG/eDA1lQtoQjRFf4sisyyCFdmR6JGe81bsqtQcDiNKsqKiNb5ue?=
- =?us-ascii?Q?XTM1sQAPP6WT+XI7ANFrq2O5lae6ZU6OViZYQAHsIARf+HsofZcf4f5vBb0d?=
- =?us-ascii?Q?CHoDSe4G4AqIePEgxDxMv3PZZxGYz6j9Iz9pIuRIeqzjJIq/zU5+3eO4fZGx?=
- =?us-ascii?Q?GdM43Es=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Lpt323Y6toS2o4RKjKqqeQ7bgHMZFmcrBWEV/dYrSOjWYt5jADukPZBH3PZk?=
- =?us-ascii?Q?n2Dbi4T/5llEi2DsksUzorRHG3XYkYgkvWYGKWCO/oS14xspEv5fneT3rWo2?=
- =?us-ascii?Q?NKZ3Zqo1/20ta4chvOzAB4jyK3tlUjjTOjAwAf7Edf8ZQYj2sY/RCaDQ5LEo?=
- =?us-ascii?Q?gBklMnYI8JknbhGLsajJENXlbsa2vKv18lZMQK+NO9KSPxI3Y9sBHYOwHrDv?=
- =?us-ascii?Q?z2xavc50kyZxjkEbOa6azuu2aPLkV7ZDg9PzFIg0SzP+KPoIJSQqnGJvFrsr?=
- =?us-ascii?Q?015cCoztga0fDFazhJQ9Ulpx6q29gCWQa0g2PQ8ffTTKynAX6qvZqdbZjfhf?=
- =?us-ascii?Q?eFRu725ldGDpjh7wSEiPlxiQ9AOluGTo3/aqXxIRbrI1oYvvb6kI3e6eiLDL?=
- =?us-ascii?Q?ACpxURm8sKnASUkYtqzNSBbu5Bx6vGzWI8PqPbCSCx9G0oJBeAxG9Wm1vg/Q?=
- =?us-ascii?Q?Cw0n5uYqFk6tij5Ad0BL1AW6kOWEByEUsEnI4j5F6Ng2LlHt/i+bIELkc1bn?=
- =?us-ascii?Q?+mOFg6B8Kg7hpCcBJrf5LlMhIj9zsBYJavD9T6mpxq0MsIAVa24y4TnfoNFi?=
- =?us-ascii?Q?5KISs8l0lxUMOG1Dq01asn5F9czxVSNnQgg0ZdNmXzH7FBLJFDVufucjaPDP?=
- =?us-ascii?Q?h9ymUo1eWsPD/WFXjgRTOYjvGpGQGet3Zh2S44UATcwA6zOrKm7SRZ+CO9kM?=
- =?us-ascii?Q?8SOOrj0NiWLYXZNZ5o/Kk3KdLFymj0bboqcsaFGfHPpYuVTgsKYyvkeT2EXo?=
- =?us-ascii?Q?4kJCIsWk1zBOXUa+H4DZxuQEtK1hBm4p2vRfEUvQJmjKwxpbfVXKMRBRpjE/?=
- =?us-ascii?Q?cUDWZMy2bs1bAT2tgbb4pbW3nLrinegu6kpaXMN+ymGfhkUY/U6ndnevegja?=
- =?us-ascii?Q?whK0S2T6OWL8EZEVv5m4WIehYcyJiWK/C7ufqlMwVJ76xc8dvVNUWah+CFYK?=
- =?us-ascii?Q?oD7nRa2q22sVqFfo60r6YWX5zDk2EMdWomjMD8pkJeTTkFjtl6SrQIbMCoon?=
- =?us-ascii?Q?fxT5TZ9fd3y1QMjbe8U5UoeNdzO64ubSa5T03JbK3uonUS5FCZ4FzBUWsChJ?=
- =?us-ascii?Q?iMOZIvrr7EPzzl9UEERXxs+C4EVt2PKkYsGYomCK6e1VnniUvQxMI1VI3qes?=
- =?us-ascii?Q?L2GRuQtRiqi295BbjkZThVghmCEFt5shIgdad9+ctxqXwFOZwOc9Y8ie/KkC?=
- =?us-ascii?Q?qCvjMovpAPEboWdQQoeeHBTaCeIgdPnrtuAiDVX82Tz9aII8qMBn9yAtiF/8?=
- =?us-ascii?Q?R6EAg5jLFa84sLFDs/Zt3ZwyXduw9iaeD597CCobk2iUhJkuMRzOPyOkGcuS?=
- =?us-ascii?Q?dik3Vn5aCvV7V21Q2tdHEkIxa7Fl64u9Pf8yNUj5m2mHFB12lBHid1dOW10S?=
- =?us-ascii?Q?haegaRlgy5q0iDf557VsK95lg4GEgvX6lbysKTMwpb8GmZ/AM7QOo9oCh2NQ?=
- =?us-ascii?Q?y2NrMvXBc2IJDyCWQ8iflK55Ybhyy1d3YA0SejQT+k+gcidjOCbyes1707x7?=
- =?us-ascii?Q?BqGkaR1vS0Ch7TKOV8Rm+JlledCD/QYUXqE1rxNfJsBtmQxFI1umA2Hqx9Xu?=
- =?us-ascii?Q?BLfr0wkCe643pR/LaOHUAnUunuKr5wj3ohzkcJeV?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a1d8ff4d-b483-4f24-2f54-08dd187d4e5e
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 18:14:22.2242
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HW59t/713L3paOGAStarqViw/IJEW81yFvKj6I9l4nUtLbn9FwDqU+gbO46AtA5J
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9345
 
-On 9 Dec 2024, at 13:12, Vlastimil Babka wrote:
+On Fri, 2024-12-06 at 21:21 -0800, Ian Rogers wrote:
+> Fewer than 32k CPUs are currently supported by perf.=C2=A0
+>=20
+Minor suggestions for the commit log. Perhaps it is clearer to say
 
-> On 12/7/24 18:16, Zi Yan wrote:
->> Some architectures have special handling after clearing user folios:
->> architectures, which set cpu_dcache_is_aliasing() to true, require
->> flushing dcache; arc, which sets cpu_icache_is_aliasing() to true, cha=
-nges
->> folio->flags to make icache coherent to dcache. So __GFP_ZERO using on=
-ly
->> clear_page() is not enough to zero user folios and clear_user_(high)pa=
-ge()
->> must be used. Otherwise, user data will be corrupted.
->>
->> Fix it by always clearing user folios with clear_user_(high)page() whe=
-n
->> cpu_dcache_is_aliasing() is true or cpu_icache_is_aliasing() is true.
->> Rename alloc_zeroed() to alloc_need_zeroing() and invert the logic to
->> clarify its intend.
->
-> user_alloc_needs_zeroing() would be perhaps more descriptive?
+Perf does not support more than 32k CPUs.
 
-Sounds good. Let me send v5.
+> A cpumap stores
+> an int per CPU, so its size is 4 times the number of CPUs in the
+> cpumap.=C2=A0
+>=20
+Perf cpumap currently uses a 4 byte int to index CPU, where
+a 2 byte int is sufficient to cover the CPU range needed.
 
->
->> Fixes: 5708d96da20b ("mm: avoid zeroing user movable page twice with i=
-nit_on_alloc=3D1")
->> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Closes: https://lore.kernel.org/linux-mm/CAMuHMdV1hRp_NtR5YnJo=3DHsfgK=
-QeH91J537Gh4gKk3PFZhSkbA@mail.gmail.com/
->> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
->> Signed-off-by: Zi Yan <ziy@nvidia.com>
->
-> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Otherwise
 
-Thanks.
+Reviewed-by: Tim Chen <tim.c.chen@linux.intel.com>
 
+Tim
+> We can reduce the size of the int to an int16_t, saving 2
+> bytes per CPU in the map.
+>=20
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+> This change is on top of:
+> https://lore.kernel.org/lkml/20241206044035.1062032-1-irogers@google.com/
+> ---
+>  tools/lib/perf/include/perf/cpumap.h |  3 ++-
+>  tools/perf/util/cpumap.c             | 13 ++++++++-----
+>  tools/perf/util/env.c                |  2 +-
+>  3 files changed, 11 insertions(+), 7 deletions(-)
+>=20
+> diff --git a/tools/lib/perf/include/perf/cpumap.h b/tools/lib/perf/includ=
+e/perf/cpumap.h
+> index cbb65e55fc67..760a9aae9884 100644
+> --- a/tools/lib/perf/include/perf/cpumap.h
+> +++ b/tools/lib/perf/include/perf/cpumap.h
+> @@ -4,10 +4,11 @@
+> =20
+>  #include <perf/core.h>
+>  #include <stdbool.h>
+> +#include <stdint.h>
+> =20
+>  /** A wrapper around a CPU to avoid confusion with the perf_cpu_map's ma=
+p's indices. */
+>  struct perf_cpu {
+> -	int cpu;
+> +	int16_t cpu;
+>  };
+> =20
+>  struct perf_cache {
+> diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
+> index 27094211edd8..85e224d8631b 100644
+> --- a/tools/perf/util/cpumap.c
+> +++ b/tools/perf/util/cpumap.c
+> @@ -427,7 +427,7 @@ static void set_max_cpu_num(void)
+>  {
+>  	const char *mnt;
+>  	char path[PATH_MAX];
+> -	int ret =3D -1;
+> +	int max, ret =3D -1;
+> =20
+>  	/* set up default */
+>  	max_cpu_num.cpu =3D 4096;
+> @@ -444,10 +444,12 @@ static void set_max_cpu_num(void)
+>  		goto out;
+>  	}
+> =20
+> -	ret =3D get_max_num(path, &max_cpu_num.cpu);
+> +	ret =3D get_max_num(path, &max);
+>  	if (ret)
+>  		goto out;
+> =20
+> +	max_cpu_num.cpu =3D max;
+> +
+>  	/* get the highest present cpu number for a sparse allocation */
+>  	ret =3D snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
+>  	if (ret >=3D PATH_MAX) {
+> @@ -455,8 +457,9 @@ static void set_max_cpu_num(void)
+>  		goto out;
+>  	}
+> =20
+> -	ret =3D get_max_num(path, &max_present_cpu_num.cpu);
+> -
+> +	ret =3D get_max_num(path, &max);
+> +	if (!ret)
+> +		max_present_cpu_num.cpu =3D max;
+>  out:
+>  	if (ret)
+>  		pr_err("Failed to read max cpus, using default of %d\n", max_cpu_num.c=
+pu);
+> @@ -606,7 +609,7 @@ size_t cpu_map__snprint(struct perf_cpu_map *map, cha=
+r *buf, size_t size)
+>  #define COMMA first ? "" : ","
+> =20
+>  	for (i =3D 0; i < perf_cpu_map__nr(map) + 1; i++) {
+> -		struct perf_cpu cpu =3D { .cpu =3D INT_MAX };
+> +		struct perf_cpu cpu =3D { .cpu =3D INT16_MAX };
+>  		bool last =3D i =3D=3D perf_cpu_map__nr(map);
+> =20
+>  		if (!last)
+> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
+> index e2843ca2edd9..f1d7d22e7e98 100644
+> --- a/tools/perf/util/env.c
+> +++ b/tools/perf/util/env.c
+> @@ -531,7 +531,7 @@ int perf_env__numa_node(struct perf_env *env, struct =
+perf_cpu cpu)
+> =20
+>  		for (i =3D 0; i < env->nr_numa_nodes; i++) {
+>  			nn =3D &env->numa_nodes[i];
+> -			nr =3D max(nr, perf_cpu_map__max(nn->map).cpu);
+> +			nr =3D max(nr, (int)perf_cpu_map__max(nn->map).cpu);
+>  		}
+> =20
+>  		nr++;
 
-Best Regards,
-Yan, Zi
 
