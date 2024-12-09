@@ -1,234 +1,173 @@
-Return-Path: <linux-kernel+bounces-436745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BF79E8A36
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:18:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77A29E8A37
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:19:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95277280D9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:18:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 666A3188400D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:19:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA1A6156F41;
-	Mon,  9 Dec 2024 04:18:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59873156F41;
+	Mon,  9 Dec 2024 04:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bVOcZ5rB"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EIwi1rHz"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9651487DC
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20C27155A4E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733717914; cv=none; b=sh1/9LMkABDllX7qHeNgXhAdDTCJa5J090u4BrpVHF3HHJ7pd6fi7y83zvJRnEMJviLp1xqcW4O0fEqoRqT98Mz7ete88P44y0p2zi+ZuP3xGc1p94uLyHQmuUx5wx4pr10QwUHRyj7HVxf/K9+RkJ2D9ZdeUSAJxAbUVsunUYc=
+	t=1733717956; cv=none; b=TwiwIW3gZe+cM7RGvaz1eT2EV/uJ7/MLNqVIAiI9KEfDVTkiCu/1IC0GRW8LrTXUVpQ3rRB0WO4J4cYu9nzMx5kZv4JuOF4VuSZG519IikjmABTpCQzuAyv/4bDFuVMSDAY4rezTa4/1n4/R2hAVXBIg1GR8VYBDCbY0pLhSPy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733717914; c=relaxed/simple;
-	bh=fdDzit6VdNWYlkbAt5bnOYr1HpZkx+B3FwG1ZnPAWyM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=B+MX5mxqGCGPu8b1eq3cLk/pKQkUo5HIkO+FEwkQgkPiVIw3WiT/uHA33QyWWlll22m+yEzZ5ErLOjsv802FFMit0JPTiqU4eCk0QYecaBD2iyPajGgEIAz9ZHx+UWvGXy7qE9m8Y1BHD561stzQ8oxl+Hp7lwmE2xluxasvX7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bVOcZ5rB; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <56d4fc51-d30a-4467-9df0-6aba5818989f@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733717909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1CLRMrE1NI/5klhfE3kmyF+H27MvukwsIlJRIa5ZNCI=;
-	b=bVOcZ5rB33oZFYQgAIpbKYj5IoVwq5uLMua5cpRUQ5WzYef132s/+FYnz92Ts/3FpLqeQE
-	LbMhl1TcGggDOfevWDkSUjcBAVg2IfRbbkWJfIY8eK0qLU1mlw5RJZDHYuANb+R7Z3FO2r
-	wWx0XE0rxVt3XbFkXlFCZWZQPPAofAw=
-Date: Mon, 9 Dec 2024 09:47:36 +0530
+	s=arc-20240116; t=1733717956; c=relaxed/simple;
+	bh=zp8zwg1v/0rRuvtcn1LIzYdetcNxAtZ4+5efiS+tdxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=abKVy4YSWnpbJh6iwUGUwPnzxOp338qe5ZEUVUms2/dt7hUpWvYZAvlSdU6Q6q6WDnSh9OCkZGzJTFH2o1swCASPTFRgRMNlIkAHg/GmZ9gh2ZvEY511z+pGBGAAKNLLDMVxE1ftAgh2EL0k9oW2Hp814l2Ct7quxBxYVthQZuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EIwi1rHz; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733717955; x=1765253955;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zp8zwg1v/0rRuvtcn1LIzYdetcNxAtZ4+5efiS+tdxA=;
+  b=EIwi1rHzu61Ho6Kj+1jQWui9MBPpQm3NqCuf95pokE0CsFCLx1UikqB4
+   fiiMGHA3crxUOyTUlrXOs6IABo95goCwJNafXcp1xv6AimsupS4BTCa2G
+   TYaE4oQBeFHJIiwOd2lOgIRJ7uIQVz3hupzJ9tWP8P6sUa/nNavBLnZCm
+   Ju4TCEiAmGojrTu7oLCLlBmenYcLCHWYcKcWMu/bXXZ/AnMavUlRhhluZ
+   55howb1mYg2jz+EXjHEuSVJy3i5wG792rCznvLz8DrY/1FL5QLoo6L/V6
+   c0mifvpKlGU3JXvyRTwAqJVlRMF6IIFkoZ4ajh6WZy211k+6DnXV3n4mT
+   g==;
+X-CSE-ConnectionGUID: LcJYd8o+TPmngV7vGdlBNw==
+X-CSE-MsgGUID: lzxGZw6STcW8r0bOO9BGUg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34236164"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="34236164"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:19:15 -0800
+X-CSE-ConnectionGUID: 7XnRLWcQTAOCyxGyb0LRFw==
+X-CSE-MsgGUID: gekYYh6HQUiFahOzGbcbcQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95750385"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 08 Dec 2024 20:19:09 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKVEg-0003pR-25;
+	Mon, 09 Dec 2024 04:19:06 +0000
+Date: Mon, 9 Dec 2024 12:18:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Sohil Mehta <sohil.mehta@intel.com>, x86@kernel.org,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: oe-kbuild-all@lists.linux.dev, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+	Uros Bizjak <ubizjak@gmail.com>,
+	Sohil Mehta <sohil.mehta@intel.com>,
+	Sandipan Das <sandipan.das@amd.com>,
+	Sean Christopherson <seanjc@google.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Vegard Nossum <vegard.nossum@oracle.com>,
+	Tony Luck <tony.luck@intel.com>,
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
+	Nikolay Borisov <nik.borisov@suse.com>,
+	Eric Biggers <ebiggers@google.com>, Xin Li <xin3.li@intel.com>,
+	Alexander Shishkin <alexander.shishkin@intel.com>,
+	Kirill Shutemov <kirill.shutemov@linux.intel.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] x86/cpufeature: Add a debug print for unmet
+ dependencies
+Message-ID: <202412071926.MHYBbSb1-lkp@intel.com>
+References: <20241207004126.2054658-2-sohil.mehta@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 0/3] drm/tidss: Add OLDI bridge support
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Nishanth Menon
- <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
- Devarsh Thakkar <devarsht@ti.com>, Praneeth Bajjuri <praneeth@ti.com>,
- Udit Kumar <u-kumar1@ti.com>, Jayesh Choudhary <j-choudhary@ti.com>,
- Francesco Dolcini <francesco@dolcini.it>,
- Alexander Sverdlin <alexander.sverdlin@siemens.com>,
- Max Krummenacher <max.oss.09@gmail.com>,
- DRI Development List <dri-devel@lists.freedesktop.org>,
- Devicetree List <devicetree@vger.kernel.org>,
- Linux Kernel List <linux-kernel@vger.kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
- David Airlie <airlied@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Simona Vetter <simona@ffwll.ch>
-References: <20241124143649.686995-1-aradhya.bhatia@linux.dev>
- <8b57d6a4-6bc1-4542-abf4-8bc4a3120c25@ideasonboard.com>
- <b8bde033-13a8-4726-a9ff-2fa4eff898e1@linux.dev>
- <9ade7a5d-dd87-4a08-9fdd-c24eb20e733c@ideasonboard.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Aradhya Bhatia <aradhya.bhatia@linux.dev>
-In-Reply-To: <9ade7a5d-dd87-4a08-9fdd-c24eb20e733c@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241207004126.2054658-2-sohil.mehta@intel.com>
 
-Hi,
+Hi Sohil,
 
-On 04/12/24 00:06, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 03/12/2024 20:14, Aradhya Bhatia wrote:
->> Hi,
->>
->> On 03/12/24 17:42, Tomi Valkeinen wrote:
->>> Hi,
->>>
->>> On 24/11/2024 16:36, Aradhya Bhatia wrote:
->>>> Hello all,
->>>>
->>>> This patch series add support for the dual OLDI TXes supported in Texas
->>>> Instruments' AM62x and AM62Px family of SoCs. The OLDI TXes support
->>>> single-lvds
->>>> lvds-clone, and dual-lvds modes. These have now been represented
->>>> through DRM
->>>> bridges within TI-DSS.
->>>>
->>>>    - Some history and hardware description for this patch series.
->>>>
->>>> This patch series is a complete re-vamp from the previously posted
->>>> series[1] and
->>>> hence, the version index has been reset to v1. The OLDI support from
->>>> that series
->>>> was dropped and only the base support for AM62x DSS was kept (and
->>>> eventually
->>>> merged)[2].
->>>>
->>>> The OLDI display that the tidss driver today supports, could not be
->>>> extended for
->>>> the newer SoCs. The OLDI display in tidss is modelled after the DSS
->>>> and OLDI
->>>> hardware in the AM65x SoC. The DSS in AM65x SoC, has two video-ports.
->>>> Both these
->>>> video-ports (VP) output DPI video signals. One of the DPI output (from
->>>> VP1) from
->>>> the DSS connects to a singular OLDI TX present inside the SoC. There
->>>> is no other
->>>> way for the DPI from VP1 to be taken out of the SoC. The other DPI
->>>> output
->>>> however - the one from VP2 - is taken out of the SoC as is. Hence we
->>>> have an
->>>> OLDI bus output and a DPI bus output from the SoC. Since the VP1 and
->>>> OLDI are
->>>> tightly coupled, the tidss driver considers them as a single entity.
->>>> That is
->>>> why, any OLDI sink connects directly to the DSS ports in the OF graphs.
->>>>
->>>> The newer SoCs have varying DSS and OLDI integrations.
->>>>
->>>> The AM62x DSS also has 2 VPs. The 2nd VP, VP2, outputs DPI signals
->>>> which are
->>>> taken out of the SoC - similar to the AM65x above. For the VP1, there
->>>> are 2 OLDI
->>>> TXes. These OLDI TXes can only receive DPI signals from VP1, and don't
->>>> connect
->>>> to VP2 at all.
->>>>
->>>> The AM62Px SoC has 2 OLDI TXes like AM62x SoC. However, the AM62Px SoC
->>>> also has
->>>> 2 separate DSSes. The 2 OLDI TXes can now be shared between the 2 VPs
->>>> of the 2
->>>> DSSes.
->>>>
->>>> The addition of the 2nd OLDI TX (and a 2nd DSS in AM62Px) creates a
->>>> need for
->>>> some major changes for a full feature experience.
->>>>
->>>> 1. The OF graph needs to be updated to accurately show the data flow.
->>>> 2. The tidss and OLDI drivers now need to support the dual-link and
->>>> the cloned
->>>>      single-link OLDI video signals.
->>>> 3. The drivers also need to support the case where 2 OLDI TXes are
->>>> connected to
->>>>      2 different VPs - thereby creating 2 independent streams of
->>>> single-link OLDI
->>>>      outputs.
->>>>
->>>> Note that the OLDI does not have registers of its own. It is still
->>>> dependent on
->>>> the parent VP. The VP that provides the DPI video signals to the OLDI
->>>> TXes, also
->>>> gives the OLDI TXes all the config data. That is to say, the hardware
->>>> doesn't
->>>> sit on the bus directly - but does so through the DSS.
->>>>
->>>> In light of all of these hardware variations, it was decided to have a
->>>> separate
->>>> OLDI driver (unlike AM65x) but not entirely separate so as to be a
->>>> platform
->>>> device. The OLDI TXes are now being represented as DRM bridges under
->>>> the tidss.
->>>>
->>>> Also, since the DRM framework only really supports a linear encoder-
->>>> bridge
->>>> chain, the OLDI driver creates a DRM bridge ONLY for the primary OLDI
->>>> TX in
->>>> cases of dual-link or cloned single-link OLDI modes. That bridge then
->>>> attaches
->>>
->>> How does the clone case work, then? There are two panels, what does the
->>> second one connect to?
->>
->> For the clone case, the devicetree will show the true connections - as
->> they are in the hardware.
->>
->> 2 endpoints from a single DSS VP devicetree port will be connected to 2
->> OLDIs, OLDI0 and OLDI1. The outputs of these OLDIs will be connected to
->> 2 distinct single-link panels.
->>
->> The driver and DRM side of things do not show the same picture, however.
->> The tidss_oldi code creates and registers a drm_bridge only for the
->> primary OLDI. The driver is capable of detecting the expected OLDI mode,
->> and if a companion OLDI is present, then the primary OLDI drm_bridge
->> keeps a note of that.
->>
->> The clock and config resources are shared between the primary and
->> companion OLDI hardware. So configuring the primary OLDI takes care of
->> the companion too.
->> The only case where it is not shared is the OLDI IO bit in the Control
->> MMR (ctrl_mmr) region. But, since the primary OLDI drm_bridge remains
->> aware about the presence of companion OLDI, it makes sure to enable /
->> disable the comapnion OLDI IO when required.
-> 
-> But if there's just one bridge (for the first oldi), how is the second
-> panel connected to the DRM pipeline? Who e.g. calls the
-> drm_panel_funcs.enable() in the panel driver for the second panel?
-> 
-> Or, say, if we have two LVDS->HDMI bridges, with the cloning setup, how
-> does all the plumbing work if "DRM framework only really supports a
-> linear encoder-bridge chain"?
-> 
+kernel test robot noticed the following build warnings:
 
-Right... The driver does not account for such a case at present. The
-simple panels don't require any additional programming, which is why a
-clone mode with them just happens to work out.
+[auto build test WARNING on tip/master]
+[also build test WARNING on tip/x86/core tip/auto-latest bp/for-next linus/master v6.13-rc1 next-20241206]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Since there is still only 1 VP behind this, there could only be a single
-crtc. Perhaps, we can have an additional tidss encoder (connected to the
-same crtc) to start this another encoder-bridge chain. I am still murky
-with the details here, but I will try to see what needs to be done.
+url:    https://github.com/intel-lab-lkp/linux/commits/Sohil-Mehta/x86-cpufeature-Add-a-debug-print-for-unmet-dependencies/20241207-084543
+base:   tip/master
+patch link:    https://lore.kernel.org/r/20241207004126.2054658-2-sohil.mehta%40intel.com
+patch subject: [PATCH v3 2/2] x86/cpufeature: Add a debug print for unmet dependencies
+config: x86_64-randconfig-103-20241207 (https://download.01.org/0day-ci/archive/20241207/202412071926.MHYBbSb1-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412071926.MHYBbSb1-lkp@intel.com/reproduce)
 
-Thank you! =)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412071926.MHYBbSb1-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
+
+   arch/x86/kernel/cpu/cpuid-deps.c: In function 'filter_feature_dependencies':
+>> arch/x86/kernel/cpu/cpuid-deps.c:160:30: warning: '*32+' directive output may be truncated writing 4 bytes into a region of size between 3 and 11 [-Wformat-truncation=]
+     160 |         snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
+         |                              ^~~~
+   In function 'x86_feature_name',
+       inlined from 'x86_feature_name' at arch/x86/kernel/cpu/cpuid-deps.c:155:20,
+       inlined from 'filter_feature_dependencies' at arch/x86/kernel/cpu/cpuid-deps.c:172:4:
+   arch/x86/kernel/cpu/cpuid-deps.c:160:27: note: directive argument in the range [0, 31]
+     160 |         snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
+         |                           ^~~~~~~~~~~
+   arch/x86/kernel/cpu/cpuid-deps.c:160:9: note: 'snprintf' output between 8 and 16 bytes into a destination of size 12
+     160 |         snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   arch/x86/kernel/cpu/cpuid-deps.c: In function 'filter_feature_dependencies':
+>> arch/x86/kernel/cpu/cpuid-deps.c:160:30: warning: '*32+' directive output may be truncated writing 4 bytes into a region of size between 3 and 11 [-Wformat-truncation=]
+     160 |         snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
+         |                              ^~~~
+   In function 'x86_feature_name',
+       inlined from 'x86_feature_name' at arch/x86/kernel/cpu/cpuid-deps.c:155:20,
+       inlined from 'filter_feature_dependencies' at arch/x86/kernel/cpu/cpuid-deps.c:172:4:
+   arch/x86/kernel/cpu/cpuid-deps.c:160:27: note: directive argument in the range [0, 31]
+     160 |         snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
+         |                           ^~~~~~~~~~~
+   arch/x86/kernel/cpu/cpuid-deps.c:160:9: note: 'snprintf' output between 8 and 16 bytes into a destination of size 12
+     160 |         snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
+         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+vim +160 arch/x86/kernel/cpu/cpuid-deps.c
+
+   149	
+   150	/*
+   151	 * Return the feature "name" if available otherwise return
+   152	 * the X86_FEATURE_* numerals to make it easier to identify
+   153	 * the feature.
+   154	 */
+   155	static const char *x86_feature_name(unsigned int feature, char *buf)
+   156	{
+   157		if (x86_cap_flags[feature])
+   158			return x86_cap_flags[feature];
+   159	
+ > 160		snprintf(buf, 12, "%d*32+%2d", feature / 32, feature % 32);
+   161	
+   162		return buf;
+   163	}
+   164	
 
 -- 
-Regards
-Aradhya
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
