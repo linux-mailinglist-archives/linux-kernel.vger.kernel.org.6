@@ -1,147 +1,163 @@
-Return-Path: <linux-kernel+bounces-438322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E24279E9FBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:36:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D4116415B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:36:07 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59208198E65;
-	Mon,  9 Dec 2024 19:36:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVp4UZ9G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0904D9E9FC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:37:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3BC914E2CC;
-	Mon,  9 Dec 2024 19:36:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE4E7281D2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:37:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27FB617DFE3;
+	Mon,  9 Dec 2024 19:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mluxOS7G"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C2513B584
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 19:37:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733772963; cv=none; b=nRNIoFp2L/P0rSYUD5RD2/w/gIy34oMQX6RPQUDu74P9E7dZknWre+ku80GNEIGU8oEoDUEEmn5O3F9WJA2uyRO7Ea+Y9+3EwQ1pC7ld0HuAG6WBBAvR4bQ6JOfbqSrka0v9zBwybOxWY3h7nTSiJAMf9U00QVrDoWefO0fUItM=
+	t=1733773027; cv=none; b=BFO1jQahjc5MEE99lokZfagEEVbY7sJtfYVWisF5S09NHaXtAXEs8q+lC0fDZ/qfDKyWf2E5qCdGI2l+J8Yd5I9MZfA6b46jkoVt2ouVyItgvTNOGDovw8Iz3R7SWPlVWwDalpE8+zoICU0Yi7yM6xzEWMXtXvBQXzHS8H8nkOg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733772963; c=relaxed/simple;
-	bh=Q5rZxy0kJibOV6Sj3CPasPQPWuPDGx1ot+UAxBTJ2cA=;
+	s=arc-20240116; t=1733773027; c=relaxed/simple;
+	bh=MReSg/ADihE6zgaGj+frthB/C+MsbysHrihWVPpu0pI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JKLDqwp0FfEoSS4x2jm7tXlFa/VYx/NMSXnBzdG4uJFwjILW2IEBJvF2DGOmVVifJWG2AGteFVDfDWRG78g7zWcg1F4UUDO5UPlDxvoqe5HHBu22MKsP8vueIN0EvzNLCHy3w9EopDEjQbm2ZHY+DR95izZhf25Gg1YzRFJzW14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVp4UZ9G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A52CEC4CED1;
-	Mon,  9 Dec 2024 19:36:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733772963;
-	bh=Q5rZxy0kJibOV6Sj3CPasPQPWuPDGx1ot+UAxBTJ2cA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZVp4UZ9GtGupfceM2V8krYGkLZAydHOXQ2ixoOngZxD0qm9p2TBcINe5h43dUlDj4
-	 zwwGVhl6CIsMG8klnNtAhgKgonm/Hkhoa59yZtnAVs0k8WiCu/kyQkSqmyLD2oKtbB
-	 jGfWZF1V6x8tb9j2QS41xi8cZZDb3BZL/9THlbDQf6n1uoDALOLdeddHOFb6xOQO4I
-	 48SVDH7CXRkIEbaB6w34xUVfGMfH8hJe3tV/1M6l/yExYF/I9PLhjnkHDmSB/1U2A5
-	 XAbAMd1v+fBUWhgnzAhj1SEFPknHLmHx+Yc67HZ3nGgvg0E8jApEvfehIEKVnAhCbA
-	 +0cR9A69HHThw==
-Date: Mon, 9 Dec 2024 12:35:58 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Nilay Shroff <nilay@linux.ibm.com>, linux-kernel@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	briannorris@chromium.org, kees@kernel.org, gustavoars@kernel.org,
-	steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
-	gjoyce@ibm.com, linux-crypto@vger.kernel.org, linux@weissschuh.net
-Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
- gcc-13+ and FORTIFY_SOURCE
-Message-ID: <20241209193558.GA1597021@ax162>
-References: <20241208161315.730138-1-nilay@linux.ibm.com>
- <Z1XkhhBqFYtbvQYp@yury-ThinkPad>
+	 Content-Type:Content-Disposition:In-Reply-To; b=d9O36nJ0uutAVB+Jw77WfQvxgkAm8shNyoeABlyylHLOhbi4dlu+WvWUNOyVRCOUA6ubYkbbmmetwcAnl3JVDUE54bw5SN7pS26Yxw2hgRVpNbefvQGwpcBMnPMZTLQWcRkskviB3hW/w6wZ4lrCDWBJKAVcWiVtszO8HFcIPLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mluxOS7G; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733773026; x=1765309026;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MReSg/ADihE6zgaGj+frthB/C+MsbysHrihWVPpu0pI=;
+  b=mluxOS7GgtJbWRZ6N4zprTgJRNwOTsjNqBbo1GwJZWfWth990NgNxutb
+   hFskKazNuEWOrwzS/dAZs9CwMY2ujoDJLRLFaQsa2ZVqV1YOzIloRbZEV
+   IslcDo5RTt2/Un2BzpNL459/vUNQsDmLLfw9eSN4Zc27cob3gsHjZ8NT6
+   QududXF/PmZ9RCMtFA7YxY7RPdlO3MvqhDR9qN07rUza2RXjg3Mvgrh+2
+   oD7g20O3GKB03DbmJECwN8LmVQn3Rf349HbOrB8ewaLs6Yqnxkv/4k2jW
+   E64eHEoxMKStgrUmTg3bKJKtJvCwwy/EgYif68wdmbmSO2Vbg2MC/c206
+   w==;
+X-CSE-ConnectionGUID: YDxKC0PwSeq4Hce7YCyUhg==
+X-CSE-MsgGUID: c/ClJoDDT0+e/M+uEV/Jsg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="44770052"
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="44770052"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 11:37:02 -0800
+X-CSE-ConnectionGUID: ewzXBMAaRu+nvLnpHzj5Lw==
+X-CSE-MsgGUID: XfCJLZL/SWKU4aZ9z8kW3A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="126004877"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 09 Dec 2024 11:36:58 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKjYt-0004lJ-1X;
+	Mon, 09 Dec 2024 19:36:55 +0000
+Date: Tue, 10 Dec 2024 03:36:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, maz@kernel.org,
+	oliver.upton@linux.dev, christoffer.dall@arm.com,
+	suzuki.poulose@arm.com, will@kernel.org, catalin.marinas@arm.com,
+	coltonlewis@google.com, joey.gouly@arm.com, yuzenghui@huawei.com,
+	darren@os.amperecomputing.com, gankulkarni@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com
+Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If
+ timer expired
+Message-ID: <202412100311.HEYAT0bx-lkp@intel.com>
+References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z1XkhhBqFYtbvQYp@yury-ThinkPad>
+In-Reply-To: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
 
-On Sun, Dec 08, 2024 at 10:25:21AM -0800, Yury Norov wrote:
-> On Sun, Dec 08, 2024 at 09:42:28PM +0530, Nilay Shroff wrote:
-> > So the above statements expands to:
-> > memcpy(pinst->cpumask.pcpu->bits, pcpumask->bits, nr_cpu_ids)
-> > memcpy(pinst->cpumask.cbcpu->bits, cbcpumask->bits, nr_cpu_ids)
-> > 
-> > Now the compiler complains about "error: ‘__builtin_memcpy’ reading
-> > between 257 and 536870904 bytes from a region of size 256". So the
-> > value of nr_cpu_ids which gcc calculated is between 257 and 536870904.
-> > This looks strange and incorrect.
-> 
-> Thanks for the detour into internals. I did the same by myself, and
-> spent quite a lot of my time trying to understand why GCC believes
-> that here we're trying to access memory beyond idx == 256 and up to
-> a pretty random 536870904.
-> 
-> 256 is most likely NR_CPUS/8, and that makes sense. But I have no ideas
-> what does this 536870904 mean. OK, it's ((u32)-64)>>3, but to me it's a
-> random number. I'm quite sure cpumasks machinery can't be involved in
-> generating it.
+Hi Ganapatrao,
 
-That can also be written as (UINT_MAX - 63) / 8, which I believe matches
-the ultimate math of bitmap_size() if nbits is UINT_MAX (but I did not
-fully verify) in bitmap_copy(). I tried building this code with the
-in-review -fdiagnostics-details option from GCC [1] but it does not
-really provide any other insight here. UINT_MAX probably comes from the
-fact that for this configuration, large_cpumask_bits is an indeterminate
-value for the compiler without link time optimization because it is an
-extern in kernel/padata.c:
+kernel test robot noticed the following build warnings:
 
-| #if (NR_CPUS == 1) || defined(CONFIG_FORCE_NR_CPUS)
-| #define nr_cpu_ids ((unsigned int)NR_CPUS)
-| #else
-| extern unsigned int nr_cpu_ids;
-| #endif
-| ...
-| #if NR_CPUS <= BITS_PER_LONG
-|   #define small_cpumask_bits ((unsigned int)NR_CPUS)
-|   #define large_cpumask_bits ((unsigned int)NR_CPUS)
-| #elif NR_CPUS <= 4*BITS_PER_LONG
-|   #define small_cpumask_bits nr_cpu_ids
-|   #define large_cpumask_bits ((unsigned int)NR_CPUS)
-| #else
-|   #define small_cpumask_bits nr_cpu_ids
-|   #define large_cpumask_bits nr_cpu_ids
-| #endif
+[auto build test WARNING on kvmarm/next]
+[also build test WARNING on arm64/for-next/core soc/for-next linus/master arm/for-next arm/fixes v6.13-rc2 next-20241209]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-From what I can tell, nothing in this callchain asserts to the compiler
-that nr_cpu_ids cannot be larger than the compile time value of NR_CPUS
-(I assume there is a check for this somewhere?), so it assumes that this
-memcpy() can overflow if nr_cpu_ids is larger than NR_CPUS, which is
-where that range appears to come from. I am able to kill this warning
-with
+url:    https://github.com/intel-lab-lkp/linux/commits/Ganapatrao-Kulkarni/KVM-arm64-nv-Set-ISTATUS-for-emulated-timers-If-timer-expired/20241209-133651
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/kvmarm/kvmarm.git next
+patch link:    https://lore.kernel.org/r/20241209053201.339939-1-gankulkarni%40os.amperecomputing.com
+patch subject: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer expired
+config: arm64-allmodconfig (https://download.01.org/0day-ci/archive/20241210/202412100311.HEYAT0bx-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241210/202412100311.HEYAT0bx-lkp@intel.com/reproduce)
 
-diff --git a/include/linux/cpumask.h b/include/linux/cpumask.h
-index 9278a50d514f..a1b0e213c638 100644
---- a/include/linux/cpumask.h
-+++ b/include/linux/cpumask.h
-@@ -836,6 +836,7 @@ void cpumask_shift_left(struct cpumask *dstp, const struct cpumask *srcp, int n)
- static __always_inline
- void cpumask_copy(struct cpumask *dstp, const struct cpumask *srcp)
- {
-+	BUG_ON(large_cpumask_bits > NR_CPUS);
- 	bitmap_copy(cpumask_bits(dstp), cpumask_bits(srcp), large_cpumask_bits);
- }
- 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412100311.HEYAT0bx-lkp@intel.com/
 
-although I am sure that is not going to be acceptable but it might give
-a hint about what could be done to deal with this.
+All warnings (new ones prefixed by >>):
 
-Another option would be taking advantage of the __diag infrastructure to
-silence this warning around the bitmap_copy() in cpumask_copy(), stating
-that we know this can never overflow because of <reason>. I think that
-would be much more palpable than disabling the warning globally for the
-kernel, much like Greg said.
+>> arch/arm64/kvm/arch_timer.c:1202:3: warning: label followed by a declaration is a C23 extension [-Wc23-extensions]
+    1202 |                 struct timer_map map;
+         |                 ^
+   1 warning generated.
 
-[1]: https://inbox.sourceware.org/gcc-patches/20241105163132.1922052-1-qing.zhao@oracle.com/
 
-Cheers,
-Nathan
+vim +1202 arch/arm64/kvm/arch_timer.c
+
+  1190	
+  1191	static void kvm_arm_timer_write(struct kvm_vcpu *vcpu,
+  1192					struct arch_timer_context *timer,
+  1193					enum kvm_arch_timer_regs treg,
+  1194					u64 val)
+  1195	{
+  1196		switch (treg) {
+  1197		case TIMER_REG_TVAL:
+  1198			timer_set_cval(timer, kvm_phys_timer_read() - timer_get_offset(timer) + (s32)val);
+  1199			break;
+  1200	
+  1201		case TIMER_REG_CTL:
+> 1202			struct timer_map map;
+  1203	
+  1204			val &= ~ARCH_TIMER_CTRL_IT_STAT;
+  1205			get_timer_map(vcpu, &map);
+  1206			/* Set ISTATUS bit for emulated timers, if timer expired. */
+  1207			if (timer == map.emul_vtimer || timer == map.emul_ptimer) {
+  1208				if (!kvm_timer_compute_delta(timer))
+  1209					val |= ARCH_TIMER_CTRL_IT_STAT;
+  1210			}
+  1211			timer_set_ctl(timer, val);
+  1212			break;
+  1213	
+  1214		case TIMER_REG_CVAL:
+  1215			timer_set_cval(timer, val);
+  1216			break;
+  1217	
+  1218		case TIMER_REG_VOFF:
+  1219			*timer->offset.vcpu_offset = val;
+  1220			break;
+  1221	
+  1222		default:
+  1223			BUG();
+  1224		}
+  1225	}
+  1226	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
