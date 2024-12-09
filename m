@@ -1,67 +1,67 @@
-Return-Path: <linux-kernel+bounces-436657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F34E69E891D
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC1669E891C
 	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:08:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A783918850F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:08:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97221283E0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF74B3F9D5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E395F43146;
 	Mon,  9 Dec 2024 02:08:21 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1812F3B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39543219ED
 	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 02:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733710100; cv=none; b=RY5PARcjuxroyZrkM+lfDXAXyy8KfwffGcZiIONrKUmnO2B3Ld7NkkpaaLU5kfU/6FpMXsAikhuyU4xaxnbEOUg+1yB0Q+Ked2umNflaA1Jrnam2T1Dbxa4sxRMozth4rJY6lKyizasD+nFaGYL2iYtpXUUIskyBEWDT93B64Aw=
+	t=1733710101; cv=none; b=pAndCyMEInEDs2ECqFLwcQkIwcxm/06Y54AcijnlH6aB7/wH1meMnVIljQkKkCFmpQt44hO77C+J0OeDCdC35gQhknT0SQIPh57EOUIJBXxg0eKo3OleQ73UEGsAqFys0IKui4ir45A0+qlKkaKoNd+GReX8zJ6+RH64oS0C4Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733710100; c=relaxed/simple;
-	bh=qWLXZEkPQF7gmXwMqALF2or+PUUskyVnccLb5FbIdnY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lP/DQfy7tC20PAYR8btU8tcJYNV/kXSRcxvnZ0eFBY7hIazAFFvIq0V3t0+hHh/5NtQPgArE6u3RWb3Q9LIjyolxgMdm/ABwyYB4iQyNDBHe2eVp5QsgmlA+bHGGXpF+oTJ/uBZEL9rMnarcVghoMZVvLCb2n3Gyk6Dis9j0TB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1733710101; c=relaxed/simple;
+	bh=EE6gIBFIDcxg3RK+Dqes9lyzwCfPSJeMP7eFCNIBzFg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GkA5JmKnxXRWxznAeS3rw9aQ8DlPcmaLPyu82McDXDQ/3r/WHYZC8bsfUsHaYIat18aZG7RNUShrrXb4yq+Km8fS9E2Yz1JQey8G9y+zFZf64xGSAIETjz0ILzdeb20odnX6qu6ujQRVf6UvtJCoAX3a4IMRY6c1MFCngcelAzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a7d85ab308so39480965ab.3
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a9d075bdc3so18385975ab.3
         for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 18:08:18 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1733710098; x=1734314898;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Xn2ZHNbRYeF2dv5QXiMG3lz/0jPo9gm24tCSwSfrP7Q=;
-        b=Kw+PJ3lZ2/i+b7kj65t6swA+ID0O6kfUdHvn0COqwXKKfoHzr9A8nrmZybzz/Yyi/T
-         B1aiekNNZpnjREz7cWi8Bn+MiRd81rU+6PSHtkTYGAb1ZTBMpr7TlnmSvGpU3ywqlMc1
-         2A152vPWGPG0OS+MyHS0LO/lG3QxAcy9XMngwN8fx8dSgF0+X21RnOtiSk1V3IL17R1Z
-         4/8uNiruDDvHXZp690H14hyuMiZI151i0IL7Kd5r3Qg147VV599FyVJU0+iINNjuDXkb
-         RFt5jYN1LfUNd55jogRyFrhlrUwARPtGXVFs8fkpbjBiQXGTYU2iIlwBuJaE67yYkCGD
-         YkKw==
-X-Forwarded-Encrypted: i=1; AJvYcCX+bpMN0m6lV7uKYEC1yf0acToXjwBX/EYzpOD7kChG24byfmV8qaHUOs5xRP8b94OyCmHBYKN+6GPCyzA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVy0ZHBA4LQRhGaz+ACey8JPU0FtAuxVD/NQiT0MYdZX+IpQg0
-	wSq98kX9FR5iS/BEtUe50EvIgfzRJ6Ju1x/o3++QNs5Oqhr1j2MPDOcAekEHDLDg8E7RHSVyc85
-	v8TG32rS8JR0BdniLSZ2ibo4dH7BfjSdS7xw4okYWnXqW+nfcGAwqGi0=
-X-Google-Smtp-Source: AGHT+IEq2VPVi18isp/4kwL0GOkvqM6KnU9OhT/izEIHSQpp0QDXLR4BlOlfj1N8I5JAaInTGs+3BdpN62NMMDJIXYSFtcP9u9I6
+        bh=3lfXNRAqHGJS20AQG8iVGH/wROLaZ5+/Nok7R88sm14=;
+        b=XFM8AbeqcX+9l0QBnVnN/AOCo/Gabv9Asi2HyHKupbpxs7u+nqIeTJzC+rAnLz+S6O
+         iGKApvLuKnuLzE8RfkiMwWiO3oasYc6hp3cyTjZyLd0b3Jvi7KeY9eDX3MkdlWLakZeb
+         bpruPuU/0luUfOnSpTkM64S50CtVrPc8Qi7uYLl6HDmlxOCzRrKYIHs++RrRxb0m66kS
+         U8R9sXA/9MDQ0mgQq200akj0jCBroBDbfC4xieZjTa1pybp0nv3Rf6ZbnsUfuvqPfTtz
+         OwnVYdodeusk6+kfBjXo3JhUNspnSbdG5jhb/W4GKkUAplKa4FCJ8QJM6NXUwVjClQ59
+         XYfg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAUZYLXWBz4JNl2dNqpNn9NFwErayAeh/+jT1PhNem0czLfWpDlOblGk25a1KZM8UcDN500LfXVvP0+lE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpFdyuHXmthHFmV6yEDivqafUsfaPjXLrhyOAcgJYTb4vZsNkZ
+	tR8cKGTRmRqIP5lQixsW6zRxLsoFv8Xvly7DNbjBus1ZNBoBVIhC0Wnj2CdhOmyfjIP05YEj8jN
+	XoNGXzJRBXBGN4jmGBgf8JMBzMxLO0RofrRwLDqfCRn1KxTe2pMzAxNQ=
+X-Google-Smtp-Source: AGHT+IFr2OksC5GTD2SW+Y6PpbxZm6aQ0cFpIBbR5fma0+RwO0UCD1F+saGux94/BQKXEjlJnfpd8aGw2ucyE4GiQudev/942tYS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:19c8:b0:3a7:e592:55cd with SMTP id
- e9e14a558f8ab-3a811dcca00mr114712505ab.14.1733710098047; Sun, 08 Dec 2024
+X-Received: by 2002:a05:6e02:1c24:b0:3a7:e103:3c46 with SMTP id
+ e9e14a558f8ab-3a811e06848mr124178305ab.16.1733710098350; Sun, 08 Dec 2024
  18:08:18 -0800 (PST)
 Date: Sun, 08 Dec 2024 18:08:18 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67565112.050a0220.2477f.0034.GAE@google.com>
-Subject: [syzbot] [ocfs2?] possible deadlock in ocfs2_start_trans
-From: syzbot <syzbot+f1635714e1cb9816b1ac@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+Message-ID: <67565112.050a0220.2477f.0035.GAE@google.com>
+Subject: [syzbot] [btrfs?] possible deadlock in join_transaction (2)
+From: syzbot <syzbot+77cf6638a2a1806ef852@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
@@ -71,9 +71,9 @@ syzbot found the following issue on:
 
 HEAD commit:    feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12b428df980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=11b428df980000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=ad7dafcfaa48849c
-dashboard link: https://syzkaller.appspot.com/bug?extid=f1635714e1cb9816b1ac
+dashboard link: https://syzkaller.appspot.com/bug?extid=77cf6638a2a1806ef852
 compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
 Unfortunately, I don't have any reproducer for this issue yet.
@@ -84,32 +84,35 @@ vmlinux: https://storage.googleapis.com/syzbot-assets/282335ac1978/vmlinux-feffd
 kernel image: https://storage.googleapis.com/syzbot-assets/d341f69bc687/bzImage-feffde68.xz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f1635714e1cb9816b1ac@syzkaller.appspotmail.com
+Reported-by: syzbot+77cf6638a2a1806ef852@syzkaller.appspotmail.com
 
-ocfs2: Mounting device (7,8) on (node local, slot 0) with ordered data mode.
 ======================================================
 WARNING: possible circular locking dependency detected
 6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0 Not tainted
 ------------------------------------------------------
-syz.8.6075/25085 is trying to acquire lock:
-ffff888021f6e0e8 (&journal->j_trans_barrier){.+.+}-{4:4}, at: ocfs2_start_trans+0x3ae/0x970 fs/ocfs2/journal.c:350
+kworker/u8:11/15834 is trying to acquire lock:
+ffff888067216470 (btrfs_trans_num_writers){++++}-{0:0}, at: join_transaction+0x430/0x1010 fs/btrfs/transaction.c:288
 
 but task is already holding lock:
-ffff888029b76610 (sb_internal#5){.+.+}-{0:0}, at: ocfs2_local_alloc_slide_window+0x454/0x18e0 fs/ocfs2/localalloc.c:1271
+ffff88801271a610 (sb_internal#4){.+.+}-{0:0}, at: btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
 
 which lock already depends on the new lock.
 
 
 the existing dependency chain (in reverse order) is:
 
--> #8 (sb_internal#5){.+.+}-{0:0}:
+-> #8 (sb_internal#4){.+.+}-{0:0}:
        percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
        __sb_start_write include/linux/fs.h:1725 [inline]
        sb_start_intwrite include/linux/fs.h:1908 [inline]
-       ocfs2_start_trans+0x29d/0x970 fs/ocfs2/journal.c:348
-       ocfs2_update_inode_atime+0xee/0x5e0 fs/ocfs2/file.c:261
-       ocfs2_inode_lock_atime+0x39a/0x3c0 fs/ocfs2/dlmglue.c:2608
-       ocfs2_mmap+0xd1/0x280 fs/ocfs2/mmap.c:166
+       start_transaction+0xbd3/0x1aa0 fs/btrfs/transaction.c:691
+       btrfs_dirty_inode+0xc8/0x200 fs/btrfs/inode.c:6055
+       btrfs_update_time fs/btrfs/inode.c:6089 [inline]
+       btrfs_update_time+0xb2/0xf0 fs/btrfs/inode.c:6080
+       inode_update_time fs/inode.c:2124 [inline]
+       touch_atime+0x352/0x5d0 fs/inode.c:2197
+       file_accessed include/linux/fs.h:2539 [inline]
+       btrfs_file_mmap+0x118/0x150 fs/btrfs/file.c:1953
        call_mmap include/linux/fs.h:2183 [inline]
        mmap_file mm/internal.h:124 [inline]
        __mmap_new_file_vma mm/vma.c:2291 [inline]
@@ -213,17 +216,26 @@ the existing dependency chain (in reverse order) is:
        __submit_bio_noacct_mq block/blk-core.c:710 [inline]
        submit_bio_noacct_nocheck+0x698/0xd70 block/blk-core.c:739
        submit_bio_noacct+0x93a/0x1e20 block/blk-core.c:868
-       ext4_commit_super+0x222/0x4c0 fs/ext4/super.c:6236
-       ext4_handle_error+0x611/0x730 fs/ext4/super.c:727
-       __ext4_error_inode+0x34d/0x650 fs/ext4/super.c:869
-       ext4_free_branches+0x58d/0x680 fs/ext4/indirect.c:1020
-       ext4_ind_truncate+0x760/0x980 fs/ext4/indirect.c:1164
-       ext4_truncate+0xeaa/0x1270 fs/ext4/inode.c:4219
-       ext4_process_orphan+0x154/0x410 fs/ext4/orphan.c:339
-       ext4_orphan_cleanup+0x742/0x1210 fs/ext4/orphan.c:474
-       __ext4_fill_super fs/ext4/super.c:5610 [inline]
-       ext4_fill_super+0x9631/0xaab0 fs/ext4/super.c:5733
-       get_tree_bdev_flags+0x38e/0x620 fs/super.c:1636
+       btrfs_submit_dev_bio+0x54d/0xb20 fs/btrfs/bio.c:456
+       btrfs_submit_bio+0x50b/0x6d0 fs/btrfs/bio.c:493
+       btrfs_submit_chunk fs/btrfs/bio.c:745 [inline]
+       btrfs_submit_bbio+0x5c0/0x19c0 fs/btrfs/bio.c:773
+       read_extent_buffer_pages+0x5d0/0x8f0 fs/btrfs/extent_io.c:3558
+       btrfs_read_extent_buffer+0xd8/0x740 fs/btrfs/disk-io.c:229
+       read_block_for_search+0x5fc/0xb60 fs/btrfs/ctree.c:1619
+       btrfs_search_slot+0x95f/0x32a0 fs/btrfs/ctree.c:2240
+       btrfs_init_root_free_objectid+0xf4/0x2a0 fs/btrfs/disk-io.c:4837
+       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
+       btrfs_get_root_ref+0x646/0xcc0 fs/btrfs/disk-io.c:1364
+       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
+       open_ctree+0x394d/0x5320 fs/btrfs/disk-io.c:3532
+       btrfs_fill_super fs/btrfs/super.c:972 [inline]
+       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
+       btrfs_get_tree+0x11e7/0x1b20 fs/btrfs/super.c:2105
+       vfs_get_tree+0x92/0x380 fs/super.c:1814
+       fc_mount+0x16/0xc0 fs/namespace.c:1231
+       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
+       btrfs_get_tree+0xa53/0x1b20 fs/btrfs/super.c:2106
        vfs_get_tree+0x92/0x380 fs/super.c:1814
        do_new_mount fs/namespace.c:3507 [inline]
        path_mount+0x14e6/0x1f20 fs/namespace.c:3834
@@ -235,104 +247,103 @@ the existing dependency chain (in reverse order) is:
        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
--> #2 (&ei->i_data_sem){++++}-{4:4}:
-       down_write+0x93/0x200 kernel/locking/rwsem.c:1577
-       ext4_truncate+0xdd5/0x1270 fs/ext4/inode.c:4212
-       ext4_setattr+0x1c64/0x2a70 fs/ext4/inode.c:5541
-       notify_change+0x6a9/0x1230 fs/attr.c:552
-       do_truncate+0x15c/0x220 fs/open.c:65
-       do_ftruncate+0x5d9/0x720 fs/open.c:181
-       do_sys_ftruncate+0x61/0xb0 fs/open.c:196
+-> #2 (btrfs-tree-00){++++}-{4:4}:
+       down_read_nested+0x9e/0x330 kernel/locking/rwsem.c:1649
+       btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
+       btrfs_tree_read_lock fs/btrfs/locking.h:188 [inline]
+       btrfs_read_lock_root_node+0x6d/0xa0 fs/btrfs/locking.c:267
+       btrfs_search_slot_get_root fs/btrfs/ctree.c:1790 [inline]
+       btrfs_search_slot+0x3ba/0x32a0 fs/btrfs/ctree.c:2116
+       btrfs_del_orphan_item+0xbb/0x180 fs/btrfs/orphan.c:41
+       btrfs_orphan_del fs/btrfs/inode.c:3472 [inline]
+       btrfs_evict_inode+0xcd4/0xe90 fs/btrfs/inode.c:5372
+       evict+0x40c/0x960 fs/inode.c:796
+       iput_final fs/inode.c:1946 [inline]
+       iput fs/inode.c:1972 [inline]
+       iput+0x52a/0x890 fs/inode.c:1958
+       do_unlinkat+0x5c3/0x760 fs/namei.c:4594
+       __do_sys_unlink fs/namei.c:4635 [inline]
+       __se_sys_unlink fs/namei.c:4633 [inline]
+       __x64_sys_unlink+0xc5/0x110 fs/namei.c:4633
        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
--> #1 (jbd2_handle){++++}-{0:0}:
-       start_this_handle+0xf92/0x1430 fs/jbd2/transaction.c:448
-       jbd2__journal_start+0x394/0x6a0 fs/jbd2/transaction.c:505
-       jbd2_journal_start+0x29/0x40 fs/jbd2/transaction.c:544
-       ocfs2_start_trans+0x3b9/0x970 fs/ocfs2/journal.c:352
-       ocfs2_modify_bh+0xbe/0x490 fs/ocfs2/quota_local.c:101
-       ocfs2_local_read_info+0xd68/0x1610 fs/ocfs2/quota_local.c:771
-       dquot_load_quota_sb+0x83d/0x1050 fs/quota/dquot.c:2459
-       dquot_load_quota_inode fs/quota/dquot.c:2496 [inline]
-       dquot_load_quota_inode+0x2a3/0x470 fs/quota/dquot.c:2488
-       ocfs2_enable_quotas+0x28b/0x5a0 fs/ocfs2/super.c:926
-       ocfs2_fill_super+0x2299/0x41d0 fs/ocfs2/super.c:1141
-       mount_bdev+0x1e6/0x2d0 fs/super.c:1693
-       legacy_get_tree+0x10c/0x220 fs/fs_context.c:662
-       vfs_get_tree+0x92/0x380 fs/super.c:1814
-       do_new_mount fs/namespace.c:3507 [inline]
-       path_mount+0x14e6/0x1f20 fs/namespace.c:3834
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount fs/namespace.c:4034 [inline]
-       __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
+-> #1 (btrfs_trans_num_extwriters){++++}-{0:0}:
+       join_transaction+0x164/0x1010 fs/btrfs/transaction.c:313
+       start_transaction+0x42c/0x1aa0 fs/btrfs/transaction.c:697
+       btrfs_dirty_inode+0xc8/0x200 fs/btrfs/inode.c:6055
+       btrfs_update_time fs/btrfs/inode.c:6089 [inline]
+       btrfs_update_time+0xb2/0xf0 fs/btrfs/inode.c:6080
+       inode_update_time fs/inode.c:2124 [inline]
+       touch_atime+0x352/0x5d0 fs/inode.c:2197
+       file_accessed include/linux/fs.h:2539 [inline]
+       filemap_read+0xb91/0xd70 mm/filemap.c:2714
+       btrfs_file_read_iter+0x17b/0x1c0 fs/btrfs/file.c:3676
+       __kernel_read+0x3f4/0xb50 fs/read_write.c:523
+       integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
+       ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
+       ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+       ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
+       ima_collect_measurement+0x89f/0xa40 security/integrity/ima/ima_api.c:293
+       process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
+       ima_file_check+0xc6/0x110 security/integrity/ima/ima_main.c:572
+       security_file_post_open+0x8e/0x210 security/security.c:3121
+       do_open fs/namei.c:3830 [inline]
+       path_openat+0x1419/0x2d60 fs/namei.c:3987
+       do_filp_open+0x20c/0x470 fs/namei.c:4014
+       do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
+       do_sys_open fs/open.c:1417 [inline]
+       __do_sys_openat fs/open.c:1433 [inline]
+       __se_sys_openat fs/open.c:1428 [inline]
+       __x64_sys_openat+0x175/0x210 fs/open.c:1428
        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
        entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
--> #0 (&journal->j_trans_barrier){.+.+}-{4:4}:
+-> #0 (btrfs_trans_num_writers){++++}-{0:0}:
        check_prev_add kernel/locking/lockdep.c:3161 [inline]
        check_prevs_add kernel/locking/lockdep.c:3280 [inline]
        validate_chain kernel/locking/lockdep.c:3904 [inline]
        __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
        lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
-       down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
-       ocfs2_start_trans+0x3ae/0x970 fs/ocfs2/journal.c:350
-       ocfs2_local_alloc_slide_window+0x454/0x18e0 fs/ocfs2/localalloc.c:1271
-       ocfs2_reserve_local_alloc_bits+0x4f0/0xc50 fs/ocfs2/localalloc.c:669
-       ocfs2_reserve_clusters_with_limit+0x697/0xe80 fs/ocfs2/suballoc.c:1166
-       ocfs2_expand_inline_dir.constprop.0+0x491/0x41a0 fs/ocfs2/dir.c:2837
-       ocfs2_extend_dir+0x1e0/0x1c90 fs/ocfs2/dir.c:3182
-       ocfs2_prepare_dir_for_insert+0x12a7/0x1700 fs/ocfs2/dir.c:4287
-       ocfs2_mknod+0x8f1/0x2440 fs/ocfs2/namei.c:292
-       ocfs2_create+0x185/0x450 fs/ocfs2/namei.c:672
-       lookup_open.isra.0+0x1177/0x14c0 fs/namei.c:3649
-       open_last_lookups fs/namei.c:3748 [inline]
-       path_openat+0x904/0x2d60 fs/namei.c:3984
-       do_filp_open+0x20c/0x470 fs/namei.c:4014
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
-       do_sys_open fs/open.c:1417 [inline]
-       __do_sys_creat fs/open.c:1495 [inline]
-       __se_sys_creat fs/open.c:1489 [inline]
-       __x64_sys_creat+0xcd/0x120 fs/open.c:1489
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+       join_transaction+0x436/0x1010 fs/btrfs/transaction.c:288
+       start_transaction+0x42c/0x1aa0 fs/btrfs/transaction.c:697
+       btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
+       btrfs_work_helper+0x225/0xc80 fs/btrfs/async-thread.c:314
+       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+       process_scheduled_works kernel/workqueue.c:3310 [inline]
+       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+       kthread+0x2c4/0x3a0 kernel/kthread.c:389
+       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
 other info that might help us debug this:
 
 Chain exists of:
-  &journal->j_trans_barrier --> &mm->mmap_lock --> sb_internal#5
+  btrfs_trans_num_writers --> &mm->mmap_lock --> sb_internal#4
 
  Possible unsafe locking scenario:
 
        CPU0                    CPU1
        ----                    ----
-  rlock(sb_internal#5);
+  rlock(sb_internal#4);
                                lock(&mm->mmap_lock);
-                               lock(sb_internal#5);
-  rlock(&journal->j_trans_barrier);
+                               lock(sb_internal#4);
+  rlock(btrfs_trans_num_writers);
 
  *** DEADLOCK ***
 
-6 locks held by syz.8.6075/25085:
- #0: ffff888029b76420 (sb_writers#33){.+.+}-{0:0}, at: open_last_lookups fs/namei.c:3737 [inline]
- #0: ffff888029b76420 (sb_writers#33){.+.+}-{0:0}, at: path_openat+0x1f8d/0x2d60 fs/namei.c:3984
- #1: ffff888055791800 (&type->i_mutex_dir_key#26){++++}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
- #1: ffff888055791800 (&type->i_mutex_dir_key#26){++++}-{4:4}, at: open_last_lookups fs/namei.c:3745 [inline]
- #1: ffff888055791800 (&type->i_mutex_dir_key#26){++++}-{4:4}, at: path_openat+0x153e/0x2d60 fs/namei.c:3984
- #2: ffff8880557914a0 (&ocfs2_file_ip_alloc_sem_key){++++}-{4:4}, at: ocfs2_expand_inline_dir.constprop.0+0x3e7/0x41a0 fs/ocfs2/dir.c:2801
- #3: ffff888052c342c0 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#8){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
- #3: ffff888052c342c0 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#8){+.+.}-{4:4}, at: ocfs2_reserve_local_alloc_bits+0xf1/0xc50 fs/ocfs2/localalloc.c:636
- #4: ffff888057831800 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3){+.+.}-{4:4}, at: inode_lock include/linux/fs.h:818 [inline]
- #4: ffff888057831800 (&ocfs2_sysfile_lock_key[args->fi_sysfile_type]#3){+.+.}-{4:4}, at: ocfs2_reserve_suballoc_bits+0x11d/0x48e0 fs/ocfs2/suballoc.c:786
- #5: ffff888029b76610 (sb_internal#5){.+.+}-{0:0}, at: ocfs2_local_alloc_slide_window+0x454/0x18e0 fs/ocfs2/localalloc.c:1271
+4 locks held by kworker/u8:11/15834:
+ #0: ffff88802768c148 ((wq_completion)btrfs-endio-write){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
+ #1: ffffc90002f97d80 ((work_completion)(&work->normal_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
+ #2: ffff888067216588 (btrfs_ordered_extent){++++}-{0:0}, at: btrfs_finish_one_ordered+0x8a0/0x2200 fs/btrfs/inode.c:3047
+ #3: ffff88801271a610 (sb_internal#4){.+.+}-{0:0}, at: btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
 
 stack backtrace:
-CPU: 1 UID: 0 PID: 25085 Comm: syz.8.6075 Not tainted 6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0
+CPU: 0 UID: 0 PID: 15834 Comm: kworker/u8:11 Not tainted 6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: btrfs-endio-write btrfs_work_helper
 Call Trace:
  <TASK>
  __dump_stack lib/dump_stack.c:94 [inline]
@@ -344,36 +355,16 @@ Call Trace:
  validate_chain kernel/locking/lockdep.c:3904 [inline]
  __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
  lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
- down_read+0x9a/0x330 kernel/locking/rwsem.c:1524
- ocfs2_start_trans+0x3ae/0x970 fs/ocfs2/journal.c:350
- ocfs2_local_alloc_slide_window+0x454/0x18e0 fs/ocfs2/localalloc.c:1271
- ocfs2_reserve_local_alloc_bits+0x4f0/0xc50 fs/ocfs2/localalloc.c:669
- ocfs2_reserve_clusters_with_limit+0x697/0xe80 fs/ocfs2/suballoc.c:1166
- ocfs2_expand_inline_dir.constprop.0+0x491/0x41a0 fs/ocfs2/dir.c:2837
- ocfs2_extend_dir+0x1e0/0x1c90 fs/ocfs2/dir.c:3182
- ocfs2_prepare_dir_for_insert+0x12a7/0x1700 fs/ocfs2/dir.c:4287
- ocfs2_mknod+0x8f1/0x2440 fs/ocfs2/namei.c:292
- ocfs2_create+0x185/0x450 fs/ocfs2/namei.c:672
- lookup_open.isra.0+0x1177/0x14c0 fs/namei.c:3649
- open_last_lookups fs/namei.c:3748 [inline]
- path_openat+0x904/0x2d60 fs/namei.c:3984
- do_filp_open+0x20c/0x470 fs/namei.c:4014
- do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_creat fs/open.c:1495 [inline]
- __se_sys_creat fs/open.c:1489 [inline]
- __x64_sys_creat+0xcd/0x120 fs/open.c:1489
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faff157ff19
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faff23c8058 EFLAGS: 00000246 ORIG_RAX: 0000000000000055
-RAX: ffffffffffffffda RBX: 00007faff1745fa0 RCX: 00007faff157ff19
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000020000e00
-RBP: 00007faff15f3986 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007faff1745fa0 R15: 00007ffe8fb9c9f8
+ join_transaction+0x436/0x1010 fs/btrfs/transaction.c:288
+ start_transaction+0x42c/0x1aa0 fs/btrfs/transaction.c:697
+ btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
+ btrfs_work_helper+0x225/0xc80 fs/btrfs/async-thread.c:314
+ process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
+ process_scheduled_works kernel/workqueue.c:3310 [inline]
+ worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
+ kthread+0x2c4/0x3a0 kernel/kthread.c:389
+ ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
  </TASK>
 
 
