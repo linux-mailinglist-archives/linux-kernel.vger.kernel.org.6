@@ -1,168 +1,293 @@
-Return-Path: <linux-kernel+bounces-437602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FAC89E95A7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:07:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94E8D9E95AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:07:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9247C281F7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:07:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 836181887D48
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:05:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37411ACEBF;
-	Mon,  9 Dec 2024 12:59:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3C33DABE5;
+	Mon,  9 Dec 2024 12:58:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K3Q6sXoL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="O6Uvkgqv"
+Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3FA3595B;
-	Mon,  9 Dec 2024 12:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A31238752;
+	Mon,  9 Dec 2024 12:58:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749194; cv=none; b=ifGXOF6NYvLyTnaKozoKgr35ni7O44HokiVHoj+ucbzZ8t6EdSl+Czvnvs5Gk7DLZdYNm3Z9t0SFYAJfV5oaHl6HHDG/YnCpQF/q5GWLHlghbJypBnEinoU1sFBeR0G0qyP41nANWbelMaEQvUfywLGuwyoXzPF5RXjYodpgmSE=
+	t=1733749093; cv=none; b=GRNWq/88OcfARN/bX2dScJUrrnJsYfrUayoA/d+MMouDayRNmZQujdWqspRNzGcc70gzIyuTTbKtukQc5PTUfhVaC8tbVpQMrZ9qTCMTsKjhTXj/Twjw+3+Q2rO3217LyS5i1L9cCRmIkCLbaBp1nd0jGT8Eea1QMBUA1CAWwPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749194; c=relaxed/simple;
-	bh=4QW5Bw+ZPeDBkia0tJJgILsd2cHE+S732zb/R+UqnzE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KqESxw7VjAl5B81eNPfRfNf9FZeFuUbwKbe2e5vrIe5ksiGPQ8qCipxwyxECfErVkYF0L2ecStfrbyLaMvE4Fa7xQvbJMWhZyF8HbaWlh7lu9g3b/zAVR3VRYzCaJGgs3Aqn5V5hFrlD+eQBq7hpunhL9F0Y651Krkruw17eNro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K3Q6sXoL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B98Lbam014059;
-	Mon, 9 Dec 2024 12:59:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	OxUmyy6yV13PBzRPg/BfEY5/02n3djkRn3ZTbxgOHW0=; b=K3Q6sXoLG6VOJO2y
-	sYvzhsZpm0js41vDNd7CnnEDPqav0MDrITVU5FyhWKfJrqb3ve2fCPjZVDz752sd
-	QQ3FRbQq/qWAvDOP0VMIQTr8R6h7Ybb/Td3hULAEaqP5JIT+b2p9z8jqOQElS1AT
-	FA/xgwZJ248IchUt6u276+PU45kxlWzXMTaJfcjdCKF6w0cKKNW5iNsqvM1KfISb
-	SE8+SSjA+CAIWfq615r4908LSbZo0SIzdI+kjFnx2q/XKy5tWMA8u2ZNEWXRFNLI
-	VMIyP+c8CW+ViC2d/vaV7ZCaQ3xMgyUzU6/LMZJF9qoyYEkFHBwesUm3ct8mcP30
-	BtRJ0Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dvyah149-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 12:59:43 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9CxgSH005482
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 12:59:42 GMT
-Received: from [10.216.3.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 04:59:37 -0800
-Message-ID: <65d4378a-43f0-49ac-a47d-c700ae5e7de1@quicinc.com>
-Date: Mon, 9 Dec 2024 18:29:34 +0530
+	s=arc-20240116; t=1733749093; c=relaxed/simple;
+	bh=6UZ3b55lrsEhBahVpolZJYYTK41fvsvdDwnrobrW5DE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hEplCw2GHsi4a65XtlOTKU6irCooQp5KIVwIp2aGN4KIxtEbwKkiskzK/GmevcO+Oe1rOHVo9yVliWK3PqV4tWk9etsr+hcNtmzWUYGU6ZZmdYYqgXoDlNjsvhbK6qyTgHHGWLFRZ3nZeJsw4AQeUhcgjbNCVmnud3vYOu9HFVY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=O6Uvkgqv; arc=none smtp.client-ip=134.0.28.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
+Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
+	by mxout1.routing.net (Postfix) with ESMTP id 67ACE40723;
+	Mon,  9 Dec 2024 12:57:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1733749079;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=h9hJbrCkID9njK8gmR7wgNylWfvZwjtKiOfcT9fad1M=;
+	b=O6Uvkgqv1oJwuBmp6sexddoNuLPM93k5VMZ2x15satRQe9lMa7TFbCb6UgHi1EonJcJA0b
+	WMZtWVSqKmcv1BqIyEmCslFxD0xFEuDhnLYObCSg0Ih2tNNLa+PQa6AsU3ADvqCpN+qP6w
+	RraGpOcEmTfM+7NVwQzyzHHHBEbAA5E=
+Received: from frank-u24.. (fttx-pool-80.245.75.28.bambit.de [80.245.75.28])
+	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id A755980494;
+	Mon,  9 Dec 2024 12:57:58 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v6 5/5] arm64: dts: mediatek: mt7988a-bpi-r4: Add pinctrl subnodes for bpi-r4
+Date: Mon,  9 Dec 2024 13:57:39 +0100
+Message-ID: <20241209125742.9307-6-linux@fw-web.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241209125742.9307-1-linux@fw-web.de>
+References: <20241209125742.9307-1-linux@fw-web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 5/7] drm/msm: adreno: enable GMU bandwidth for A740 and
- A750
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20241205-topic-sm8x50-gpu-bw-vote-v4-0-9650d15dd435@linaro.org>
- <20241205-topic-sm8x50-gpu-bw-vote-v4-5-9650d15dd435@linaro.org>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <20241205-topic-sm8x50-gpu-bw-vote-v4-5-9650d15dd435@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: pVrhNiBgx-6N8iGdb0DuKBuyyuHFR68Q
-X-Proofpoint-ORIG-GUID: pVrhNiBgx-6N8iGdb0DuKBuyyuHFR68Q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- mlxlogscore=999 mlxscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
- malwarescore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412090102
+Content-Transfer-Encoding: 8bit
+X-Mail-ID: 6844d47c-33ba-424d-875d-d13ee78b957c
 
-On 12/5/2024 8:31 PM, Neil Armstrong wrote:
-> Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
-> is in place, declare the Bus Control Modules (BCMs) and the
-> corresponding parameters in the GPU info struct.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Add board specific pinctrl configurations on Bananapi R4.
 
--Akhil
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 22 ++++++++++++++++++++++
->  1 file changed, 22 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..edffb7737a97b268bb2986d557969e651988a344 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
-> @@ -1388,6 +1388,17 @@ static const struct adreno_info a7xx_gpus[] = {
->  			.pwrup_reglist = &a7xx_pwrup_reglist,
->  			.gmu_chipid = 0x7020100,
->  			.gmu_cgc_mode = 0x00020202,
-> +			.bcms = (const struct a6xx_bcm[]) {
-> +				{ .name = "SH0", .buswidth = 16 },
-> +				{ .name = "MC0", .buswidth = 4 },
-> +				{
-> +					.name = "ACV",
-> +					.fixed = true,
-> +					.perfmode = BIT(3),
-> +					.perfmode_bw = 16500000,
-> +				},
-> +				{ /* sentinel */ },
-> +			},
->  		},
->  		.address_space_size = SZ_16G,
->  		.preempt_record_size = 4192 * SZ_1K,
-> @@ -1432,6 +1443,17 @@ static const struct adreno_info a7xx_gpus[] = {
->  			.pwrup_reglist = &a7xx_pwrup_reglist,
->  			.gmu_chipid = 0x7090100,
->  			.gmu_cgc_mode = 0x00020202,
-> +			.bcms = (const struct a6xx_bcm[]) {
-> +				{ .name = "SH0", .buswidth = 16 },
-> +				{ .name = "MC0", .buswidth = 4 },
-> +				{
-> +					.name = "ACV",
-> +					.fixed = true,
-> +					.perfmode = BIT(2),
-> +					.perfmode_bw = 10687500,
-> +				},
-> +				{ /* sentinel */ },
-> +			},
->  		},
->  		.address_space_size = SZ_16G,
->  		.preempt_record_size = 3572 * SZ_1K,
-> 
+Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+---
+changes in v6:
+- fix typo
+- start title uppercase
+- use bpi-r4 prefix
+---
+ .../dts/mediatek/mt7988a-bananapi-bpi-r4.dts  | 189 ++++++++++++++++++
+ 1 file changed, 189 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
+index efc4ad0b08b8..aa2dabc041fd 100644
+--- a/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
++++ b/arch/arm64/boot/dts/mediatek/mt7988a-bananapi-bpi-r4.dts
+@@ -9,3 +9,192 @@ / {
+ 	model = "Banana Pi BPI-R4";
+ 	chassis-type = "embedded";
+ };
++
++&pio {
++	mdio0_pins: mdio0-pins {
++		mux {
++			function = "eth";
++			groups = "mdc_mdio0";
++		};
++
++		conf {
++			pins = "SMI_0_MDC", "SMI_0_MDIO";
++			drive-strength = <8>;
++		};
++	};
++
++	i2c0_pins: i2c0-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c0_1";
++		};
++	};
++
++	i2c1_pins: i2c1-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c1_0";
++		};
++	};
++
++	i2c1_sfp_pins: i2c1-sfp-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c1_sfp";
++		};
++	};
++
++	i2c2_0_pins: i2c2-g0-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c2_0";
++		};
++	};
++
++	i2c2_1_pins: i2c2-g1-pins {
++		mux {
++			function = "i2c";
++			groups = "i2c2_1";
++		};
++	};
++
++	gbe0_led0_pins: gbe0-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe0_led0";
++		};
++	};
++
++	gbe1_led0_pins: gbe1-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe1_led0";
++		};
++	};
++
++	gbe2_led0_pins: gbe2-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe2_led0";
++		};
++	};
++
++	gbe3_led0_pins: gbe3-led0-pins {
++		mux {
++			function = "led";
++			groups = "gbe3_led0";
++		};
++	};
++
++	gbe0_led1_pins: gbe0-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe0_led1";
++		};
++	};
++
++	gbe1_led1_pins: gbe1-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe1_led1";
++		};
++	};
++
++	gbe2_led1_pins: gbe2-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe2_led1";
++		};
++	};
++
++	gbe3_led1_pins: gbe3-led1-pins {
++		mux {
++			function = "led";
++			groups = "gbe3_led1";
++		};
++	};
++
++	i2p5gbe_led0_pins: 2p5gbe-led0-pins {
++		mux {
++			function = "led";
++			groups = "2p5gbe_led0";
++		};
++	};
++
++	i2p5gbe_led1_pins: 2p5gbe-led1-pins {
++		mux {
++			function = "led";
++			groups = "2p5gbe_led1";
++		};
++	};
++
++	mmc0_pins_emmc_45: mmc0-emmc-45-pins {
++		mux {
++			function = "flash";
++			groups = "emmc_45";
++		};
++	};
++
++	mmc0_pins_emmc_51: mmc0-emmc-51-pins {
++		mux {
++			function = "flash";
++			groups = "emmc_51";
++		};
++	};
++
++	mmc0_pins_sdcard: mmc0-sdcard-pins {
++		mux {
++			function = "flash";
++			groups = "sdcard";
++		};
++	};
++
++	uart0_pins: uart0-pins {
++		mux {
++			function = "uart";
++			groups =  "uart0";
++		};
++	};
++
++	snfi_pins: snfi-pins {
++		mux {
++			function = "flash";
++			groups = "snfi";
++		};
++	};
++
++	spi0_pins: spi0-pins {
++		mux {
++			function = "spi";
++			groups = "spi0";
++		};
++	};
++
++	spi0_flash_pins: spi0-flash-pins {
++		mux {
++			function = "spi";
++			groups = "spi0", "spi0_wp_hold";
++		};
++	};
++
++	spi1_pins: spi1-pins {
++		mux {
++			function = "spi";
++			groups = "spi1";
++		};
++	};
++
++	spi2_pins: spi2-pins {
++		mux {
++			function = "spi";
++			groups = "spi2";
++		};
++	};
++
++	spi2_flash_pins: spi2-flash-pins {
++		mux {
++			function = "spi";
++			groups = "spi2", "spi2_wp_hold";
++		};
++	};
++};
+-- 
+2.43.0
 
 
