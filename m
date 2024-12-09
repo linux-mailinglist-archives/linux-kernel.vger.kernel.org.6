@@ -1,186 +1,154 @@
-Return-Path: <linux-kernel+bounces-437384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9143E9E928D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:35:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D77DF9E928F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:36:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC02287549
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:35:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 178131881D21
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:36:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E0D521E08B;
-	Mon,  9 Dec 2024 11:35:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D71B221E0AC;
+	Mon,  9 Dec 2024 11:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mEZZV6+1"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rvA2xkqE"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD24021B915;
-	Mon,  9 Dec 2024 11:35:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CF921E08B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733744135; cv=none; b=JIyK9nqvCpCkdg8uRs9N2ECct9QrMsoVsdIxPhEZN4ABayTa8+yaVwqTWllGbG8bveb8TbAWNR5zrUoZEHXaHED08Dlmlf2gEvYlK2dS0YJZ6hkfHdlkuN18dBWPGiKn8COfbEmH4yV5bpwqC+WNK1oqwZDLCxVUkKZMMtf0Tl0=
+	t=1733744178; cv=none; b=s2YmFiuxCSxF3+aCNchyBXuMTgp4tSCTJe2i5R/6eOXiy3WUzmN+Niu4Q4Us5q2oYLrnQ40Q3vqMdBRsI7NaaQHQaskLWhW9Ec3HPOXqgoCBgCVESt9FPqzc9P1k9/HqPqzfzzW9KRISv9IdfFeRwpnKR60x6xHcKzXpZ6ek75E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733744135; c=relaxed/simple;
-	bh=e22vLaMLov6DH7nqa5cuHa7cqpYR1vrCoYAtLC8Ml3I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lZi2J0q9U9D5aXj11Qz+lYuCSOzzzhROuFUF0KdpF+Kp7Rq19ease5JEdXHP0a65R9qELl3i55Agv9zo0PQnMis8tLpTe9QYVE5R1+PVnUrzjLT2AwTBJau/JE3Gn3IjDGDJDjzJTsvW4I9b7xQ/sVWb8AEvheNbEyCyx43gQR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mEZZV6+1; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B99rnha018318;
-	Mon, 9 Dec 2024 11:35:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Xrt0SiwLePva/gzbejYMiBPWVCtlmDQ2qlq0ibPbPQg=; b=mEZZV6+18hd3SMcO
-	T804LhVkEUVGcFGeMiCxLy9f08UCDFPCMq85e6HPCh9WiTnIiOv0ox8/6eul5pau
-	8PM0ou24LI4PMb8mDg05N9+6qAHS1ROgItnMU6Aou2qnCACVa50ZK/H2vBo/Stp4
-	q0FaXYpFT7xryvbnBmEcExj6/5eBKX7VhHT5kod8D8Xdhb7shTZ0sSw5dMTZYLLe
-	VRpEjJ4m3/cBqEyYj/2wLoXaPb3aN8jM7Izq2hw9GfTtJxPC8zi7cL7gIBiGS7gq
-	JUuTV4+cYwdV9vPfndf8sZzsCOZrtnYUtmYZCBNCBf5MzbxzyYA0eUVkK23g+C8i
-	QATxAg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetmma6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 11:35:17 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9BZGxn013724
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 11:35:16 GMT
-Received: from [10.216.1.80] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 03:35:08 -0800
-Message-ID: <222b6e5b-d673-b57c-43b9-a80b37d28d2d@quicinc.com>
-Date: Mon, 9 Dec 2024 17:05:05 +0530
+	s=arc-20240116; t=1733744178; c=relaxed/simple;
+	bh=SksebqPHbFrnpTRu15e2F8a43erNfWstAn/0eo/cgNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JdqcwN86Pa0lgVTGQilT11cRMQYqZq0tM24nH63rmc+p+lEiOTWwXXoOwgOhegBdtMZIaXD4/sESH833mt2cevqJzZzXRfQ+/Y2G/pxrOCCOzlUD+TjH6u3GnTWfQaew7EttPLQK3p/nKmkmGaimPWcYOIeKr6fizzycQHuOCdE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rvA2xkqE; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-382610c7116so2167463f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:36:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733744175; x=1734348975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GyaNKCdC5ol0B97FxkqNYLrH8cbNI4oEIWwfBDcavIE=;
+        b=rvA2xkqE7ijVT2Vm9EAQiYVVokEpuW5RW5a2VFrgZ6t0kC0/8g1eZlq+pFiLy1Dfh2
+         LAJEynEjRio+8BJcAsKqxVAFouO6lITolg5euva4l3XirwtxlALU2yqAOLew6rhncprG
+         clq1rW3Fngb/S9h78M/Du36GDXYQyeJHIy7IYrNqY4PvFoGz0nH9eEk/R27oy3Tq+0+3
+         x3U7iSbWvOMzCrcCjaoUd9nivE7p4HRp6/VfJBQV8tpOIdky77X8w/t4+32YxLhUKqFw
+         FHZ0IGU9NtH5hh/vRJ36BRz7k+kiiBAr/nfZ1lYdsbpBmUpC/V9KnXFsWwfWyQy+CCX0
+         LBLg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733744175; x=1734348975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GyaNKCdC5ol0B97FxkqNYLrH8cbNI4oEIWwfBDcavIE=;
+        b=g/tXbBHsky1vACdhodVetiu4OJ6jCJ7GxsaO0j+DTZYDcJKp96e/72PsI2EXBJ/Mer
+         HfhUbxY348A7lY2cqWrgugyeKbS60/m66LhihtDdifNYialJBvFk1/oyasrgb/4lE3nQ
+         IjFRTx2Sd+mcbvOlajt9MU3dwZsuv9vjN50ppn+vUm/+YvEDsj81Mu1n9D/5mYnKp41+
+         GmPv1rDMNUuq8I9MpxiPYwHieRnswwDlA/3cYdU0HVObvzEFvmcwdXSqdhaxQkIo6kTF
+         YL9+bj34sm5Eo/qsiI6yCQBqQXFknKZ7yMBAIOUIs71jB5Z4syZek2RSY6Kt/KT6GfB5
+         RTsg==
+X-Forwarded-Encrypted: i=1; AJvYcCU6+kJR9jaeEzSYYDJUD97a4Mt0rL6FCUn6tdUJUpzRR3TZC55kCMsT3IN7mTVnPXb0Z8brQheJgirSK3E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWAmTqUm4gaaBW0r8Er6+GyDGEFS2WCJ8C8qaHhvtVO45AN7ar
+	LusoTf0WSGfTdx5U26L4N8KBMF8EnAotzk0S/0P0y0VhO1ZfWK55DPv80t34b6scdbDujMhB/5+
+	tfLr/hGRIXz67y4UoF9uFW9FqdD1SUl3TDN+R
+X-Gm-Gg: ASbGnctq0MC3iLfvHiInOLSZHWY6hLar5ARUL+8cMhnkk9s/9N03HTwNv8mYNOUz9bW
+	NUP/NYoKbpx7JzctLHU8lI4D0ARyWJC/cBXEVg6R02SlCGMpVBrxZZ8fj2vHt
+X-Google-Smtp-Source: AGHT+IFt14hQvbQibGO8JqBL9INOqCOe4nHDDcUGogdrqehlLvZ5tZgZseDFFJiRhCnpS3xMoTF0HsvEgAbu/Jk7u+Y=
+X-Received: by 2002:a5d:6da8:0:b0:385:e5d8:3ef1 with SMTP id
+ ffacd0b85a97d-3862b3d5c1emr9642939f8f.44.1733744174841; Mon, 09 Dec 2024
+ 03:36:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v4 1/4] ASoC: dt-bindings: wcd937x-sdw: Add static channel
- mapping support
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Bard Liao
-	<yung-chuan.liao@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, "Takashi
- Iwai" <tiwai@suse.com>,
-        Pierre-Louis Bossart
-	<pierre-louis.bossart@linux.dev>,
-        Sanyog Kale <sanyog.r.kale@intel.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_pkumpatl@quicinc.com>,
-        <kernel@quicinc.com>
-References: <20241209045551.1404782-1-quic_mohs@quicinc.com>
- <20241209045551.1404782-2-quic_mohs@quicinc.com>
- <fq5p4ubdpv3dc5jzqgakvnqzpcrhkfqar2dbcvclqlvbmbegfc@llq3kzkzegl3>
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-In-Reply-To: <fq5p4ubdpv3dc5jzqgakvnqzpcrhkfqar2dbcvclqlvbmbegfc@llq3kzkzegl3>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4OZ7VcKdA7AtwmVkfClTP1B-1j6rF_u4
-X-Proofpoint-ORIG-GUID: 4OZ7VcKdA7AtwmVkfClTP1B-1j6rF_u4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999
- bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090091
+References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
+ <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com> <Z1bPYb0nDcUN7SKK@pollux.localdomain>
+In-Reply-To: <Z1bPYb0nDcUN7SKK@pollux.localdomain>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 9 Dec 2024 12:36:03 +0100
+Message-ID: <CAH5fLgjAp8Bz=ke93qaha1pFacgAyppOinVn8pdMkT5R05CAAA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
+ from fops->open()
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/9/2024 1:19 PM, Krzysztof Kozlowski wrote:
-> On Mon, Dec 09, 2024 at 10:25:48AM +0530, Mohammad Rafi Shaik wrote:
->> Add static channel mapping between master and slave rx/tx ports for
->> Qualcomm wcd937x soundwire codec.
->>
->> Currently, the channel map index value for each soundwire port is
->> hardcoded in the wcd937x-sdw driver, and the same channel map index
->> value is configured in the soundwire master.
->>
->> The Qualcomm board like the QCM6490-IDP require static channel map
->> settings for the soundwire master and slave ports.
->>
->> If another boards which are using enable wcd937x, the channel mapping
->> index values between master and slave may be different depending on the
->> board hw design and requirements. If the above properties are not used
->> in a SoC specific device tree, the channel mapping index values are set
->> to default.
->>
->> With the introduction of the following channel mapping properties, it is
->> now possible to configure the master channel mapping directly from the
->> device tree.
->>
->> The qcom,tx-channel-mapping property specifies the static channel mapping
->> between the slave and master tx ports in the order of slave port channels
->> which is adc1, adc2, adc3, adc4, dmic0, dmic1, mbhc, dmic2, dmic3, dmci4,
->> dmic5, dmic6, dmic7.
->>
->> The qcom,rx-channel-mapping property specifies the static channel mapping
->> between the slave and master rx ports in the order of slave port channels
->> which is hph_l, hph_r, clsh, comp_l, comp_r, lo, dsd_r, dsd_l.
->>
->> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
->> ---
->>   .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++++++++
->>   1 file changed, 36 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->> index d3cf8f59cb23..9209667044ba 100644
->> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->> @@ -58,6 +58,40 @@ properties:
->>       items:
->>         enum: [1, 2, 3, 4, 5]
->>   
->> +  qcom,tx-channel-mapping:
->> +    description: |
->> +      Specifies static channel mapping between slave and master tx port
->> +      channels.
->> +      In the order of slave port channels which is adc1, adc2, adc3,
->> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
->> +    $ref: /schemas/types.yaml#/definitions/uint8-array
->> +    minItems: 12
->> +    maxItems: 12
->> +    additionalItems: false
->> +    items:
->> +      enum:
->> +        - 0  # WCD9370_SWRM_CH1
-> 
-> Drop the comments. This does not implement my feedback and you sent it
-> four days after I replied to you.
-> 
-ACK
+On Mon, Dec 9, 2024 at 12:07=E2=80=AFPM Danilo Krummrich <dakr@kernel.org> =
+wrote:
+>
+> On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
+> > Providing access to the underlying `struct miscdevice` is useful for
+> > various reasons. For example, this allows you access the miscdevice's
+> > internal `struct device` for use with the `dev_*` printing macros.
+> >
+> > Note that since the underlying `struct miscdevice` could get freed at
+> > any point after the fops->open() call, only the open call is given
+> > access to it. To print from other calls, they should take a refcount on
+> > the device to keep it alive.
+> >
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
+> >  1 file changed, 16 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > index 0cb79676c139..c5af1d5ec4be 100644
+> > --- a/rust/kernel/miscdevice.rs
+> > +++ b/rust/kernel/miscdevice.rs
+> > @@ -104,7 +104,7 @@ pub trait MiscDevice {
+> >      /// Called when the misc device is opened.
+> >      ///
+> >      /// The returned pointer will be stored as the private data for th=
+e file.
+> > -    fn open(_file: &File) -> Result<Self::Ptr>;
+> > +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Res=
+ult<Self::Ptr>;
+>
+> How is the user of this abstraction supposed to access the underlying str=
+uct
+> miscdevice e.g. from other fops? AFAICS, there is no way for the user to =
+store a
+> device pointer / reference in their driver private data.
 
-Somehow, I missed the comments in the last email.
+I had assumed that the miscdevice does not necessarily live long
+enough for that to be okay ... but if it does we can change it. See
+other thread with Greg.
 
-I will address them and will update in next version.
+> I also think it's a bit weird to pass the registration structure in open(=
+) to
+> access the device.
+>
+> I think we need an actual representation of a struct miscdevice, i.e.
+> `misc::Device`.
 
-Thanks & Regards,
-Rafi.
+It sounds like we can just rename `MiscDeviceRegistration` to `Device`.
 
-> Best regards,
-> Krzysztof
-> 
+> We can discuss whether we want to implement it like I implemented `pci::D=
+evice`
+> and `platform::Device`, i.e. as an `ARef<device::Device>` or if we do it =
+like
+> you proposed, but I think things should be aligned.
 
+Let's figure out the lifetime of `struct miscdevice` first ...
+
+Alice
 
