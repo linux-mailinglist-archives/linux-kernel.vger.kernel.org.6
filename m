@@ -1,202 +1,146 @@
-Return-Path: <linux-kernel+bounces-437269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8902C9E9113
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:57:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 491369E9120
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:00:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8051886D40
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:57:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66889163530
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F2D21765E;
-	Mon,  9 Dec 2024 10:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C8821772E;
+	Mon,  9 Dec 2024 11:00:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Bg8Wy2Sf"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pM4EETTJ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ii8cU47x"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352DA21639E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0916921765E;
+	Mon,  9 Dec 2024 11:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733741845; cv=none; b=f9erBnrQ5iir968FV1Fo80tq13z7Sj+a2VLfWtuPGxGWqVQWBE0kfBVlOvP5ksuJilXKRz2civnqSuvBXwsh76WzhOaS8miLsSDXvRt0IW1o2SB8VO+nNbqpu3u+mCepocmbqQ58H1M7hOpFWPBR3uZnwQ50BkI9MsjCzX7G5UQ=
+	t=1733742005; cv=none; b=gtE5yR2yQL+ZBbFdxUEpCNvOTRhgKXNVG3sawGnI6LuQ+dt6n4/Go5HJpzzCbdQXsQfLaWncG5OZJqBZqw8bwMtWdx3MR/iTD13UMo3isJELJrgebhMpzTueV8CLNLgBhjuS8qfERHGZZlOguDrX/pMPBCEkxuTl0eP3/8cnHdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733741845; c=relaxed/simple;
-	bh=GLUQzBQyHE9zYIGp67XRL2Ca4WqhjjyKRByvp0MaxkY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CMmZkmcldMzlq9tcIoiRKkQQB0cmzeOiPxO5+E41R77RDaXWYE94HMZLGN2gLCYoumLyi6dASLrogVJt/Pnkz7WGa8IKg0HPR04RZL1UVg9FkXFJvA9KJw5RHo0cG1ASisfz0ptazLcQtVuj5wRR5va3SoT0Dn9SXqwEdzac8/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Bg8Wy2Sf; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-434e84b65e7so20127255e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:57:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1733741841; x=1734346641; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=wy3yHy2OmANN+f1kYyzAKGJywK0OhvOUrDvEeFEjjZ4=;
-        b=Bg8Wy2SfSeE2bNEBp7YIXQcqy1YG2StMk93zuB9F0QH1Sr/E/vcGEo9OIvmmQUUby3
-         5JFn2UNN6Scj9pZ+uvrEZRsjJ32fRj2Lg+mbHzvZ8TxB581r7py1MV1BqLtC5wFjRWC7
-         5ZTgOqMYOzMjP7u76vK+3lcToMFSuSBvYGXLOpgq42UApHcjVIrtPBChKYoGjVLdbwUO
-         rny3dZ3CNA78KIhRbb4OV+QCVrk5VzAogzpykUSM0DPI+aZFFNgPmgrp4+x02mvwHVtQ
-         5k9581L7vCqobXWQY35ZtNIcND/qMs25XUlO3iogoUkOkrisRx0VqzLY8oAzDGxnHPt2
-         8fkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733741841; x=1734346641;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wy3yHy2OmANN+f1kYyzAKGJywK0OhvOUrDvEeFEjjZ4=;
-        b=jzWL6mUwtAgCFhDy0GGG36FxhzjuK9GfscJ/CgeoiMxA7w+++Yp0Gq+lkbOmbl6Srw
-         1Od5qcLTp9Kpl4vIYoUX2Ty4L6S81IFW4SACtbhbtAy0Vusov4h/GzKfF6GzRydr6eTh
-         ABfgF4+1qAOUr1jxEsWc9FOUFZ+kIJ5/g49t8ez3pbqqj++GQN3KZFjZDW8ezr6mfTYs
-         GI8ZMYKzgFfBIZgtYXXKNV4uDmQpOLAJV/0J2cNISnvObZIVrbU0l7HED0jjYKfOtmrH
-         lacwsOZcrLKrgCFGwQWKU2orULxEYryAzzlnMA8huL54ip+xj/I/iXvmmVhoU+MQQN8T
-         uhlw==
-X-Forwarded-Encrypted: i=1; AJvYcCUC4hVMLx5lc5mj5HqrNRIyzwSBsNpzetVQCT5HqigsV4Jbl91oAhYXv+gZp+YHFcOtr8xO+g4iVBMIsEw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqfOoQ28FgYgUNaiAPiml2MKPjLR6pn5kKYTX3mAU2ea2pm+Tc
-	yZfXknMjj5ROfz9c/Ky2mwNPxChCDhdSk0DEVwFFhOSYIItHiguGgXJlME0mTtY=
-X-Gm-Gg: ASbGncsrPoUDs2U31DheyGgROGYaCUEe46aK3nQEkwdAQ2jGrSmbS7XC2fWcZjLBSMv
-	ZmBuiLltblDKOvD3+g91QYel61lu3e4CY+UsFyAcMivvmz5scF3O/3T0wsxfsh8ykUlIXiPMQUQ
-	DrFOvnyfyWl4R2fwcx2N05Kab08rklHsG60h6C85vOR+/3DXxxHXd+DXjLO1NXyXwt8d+IvFQGn
-	2BrFOj5VwV2xdWe9F5T47JUTcS+iiEeexpJ0XQz8rSe14FXTwyojNWY6kWV9Dfb45SsYidbjbrm
-	8nxTJK/5fw==
-X-Google-Smtp-Source: AGHT+IHb5wXMQHMkPFR/0dh5QXv4YyHugf0iX+enbQGkb9bA4Lm9ZFbWdI4KVrB8xdXTunWDoV9bmg==
-X-Received: by 2002:a05:600c:4712:b0:434:a746:9c82 with SMTP id 5b1f17b1804b1-434e29f0392mr79575785e9.5.1733741841394;
-        Mon, 09 Dec 2024 02:57:21 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:c60f:6f50:7258:1f7? ([2001:67c:2fbc:1:c60f:6f50:7258:1f7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862a9705dfsm10525474f8f.4.2024.12.09.02.57.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 02:57:20 -0800 (PST)
-Message-ID: <e447ef89-e7f1-4c5b-871e-d1cfaa045c6c@openvpn.net>
-Date: Mon, 9 Dec 2024 11:58:03 +0100
+	s=arc-20240116; t=1733742005; c=relaxed/simple;
+	bh=7/Q19izVXo99Lf2A/wawEUvTqvVQ2b9XwUIaX4ejk5E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=KGi7DIeOemaYNDvCoB+KEUOeZDmXH+OlO2HnwHo1Ga19644lQ7W9ftNZeUr5Nfx99hCuM7JFgGiVzaAsmd4D1O7fDiRp3dNo0H83rvmRVW4erJRFU0lCkwuXIEMgJp5XeFmLOCwnZ9qGnKloG6Cdr/fYFDSRnxQ8YuDvWKzvp+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pM4EETTJ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ii8cU47x; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 09 Dec 2024 11:00:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1733742002;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hUbJi9ZUBIKYnEBftXRaoY/Tcv2rvVWF9h9v/4qO5+M=;
+	b=pM4EETTJyenr05lNKd15NdoybDSgCaGM3EqOLrzxZ2fM3p2CRIJje2vAjnin7r03QAhf6u
+	KvZdnLV+9/L32MeoFRLBBQ6Yy914U6HuHjMTjiBdTCbH/kPfl+mHcTTSSewDw8UlJEvNTo
+	XBkHUwstgR7kkudhRUezkJHS7hL2FbbqjWKn1nNX0kPV812XqSgV7KutdqBhLmdoh4m/Xn
+	yvIv9e4IGNoyXQVE+sNgeFHh3a4iC7Wb7aMt41GEYJHuSgiprBvWEz8Cn6MWpwz5yrB3gD
+	jNXDJyBS6ahwboDbQC6O4pGKvJd8obGdk+6mB0I1DouaXkkJBMuxJ8rNsONyGA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1733742002;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hUbJi9ZUBIKYnEBftXRaoY/Tcv2rvVWF9h9v/4qO5+M=;
+	b=ii8cU47x1EwNNWMmRhgNmlgieROcmwNpDhd9qM0rDnif8Y1oGxMfh3mHQFtfQfFppY+ZIG
+	v+dfM1ffK4+LauAQ==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: sched/core] sched/fair: Untangle NEXT_BUDDY and pick_next_task()
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241129101541.GA33464@noisy.programming.kicks-ass.net>
+References: <20241129101541.GA33464@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 11/22] ovpn: implement TCP transport
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
- <20241202-b4-ovpn-v12-11-239ff733bf97@openvpn.net>
- <784fddc4-336c-4674-8277-c7cebea6b94f@redhat.com>
- <2a1b614c-c52d-44c7-8cb8-c68a8864508d@openvpn.net>
- <8714deae-c1f7-42ff-9e76-fabd9ca5188b@openvpn.net>
- <17e7d4c6-4912-4d5e-8723-45a06a1ad529@openvpn.net>
- <813d75bf-1d7f-472b-967f-27ab8f9d4759@kernel.org>
-Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <813d75bf-1d7f-472b-967f-27ab8f9d4759@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <173374200122.412.16142475104461907417.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On 09/12/2024 11:46, Matthieu Baerts wrote:
-> Hi Antonio,
-> 
-> Thank you for working on this, and sharing your work here!
-> 
-> On 05/12/2024 00:09, Antonio Quartulli wrote:
->> On 04/12/2024 23:52, Antonio Quartulli wrote:
->>> Paolo,
->>>
->>> On 04/12/2024 12:15, Antonio Quartulli wrote:
->>> [...]
->>>>>> +        mutex_lock(&tcp6_prot_mutex);
->>>>>> +        if (!ovpn_tcp6_prot.recvmsg)
->>>>>> +            ovpn_tcp_build_protos(&ovpn_tcp6_prot, &ovpn_tcp6_ops,
->>>>>> +                          sock->sk->sk_prot,
->>>>>> +                          sock->sk->sk_socket->ops);
->>>>>> +        mutex_unlock(&tcp6_prot_mutex);
->>>>>
->>>>> This looks like an hack to avoid a build dependency on IPV6, I think
->>>>> the
->>>>> explicit
->>>>
->>>> I happily copied this approach from espintcp.c:espintcp_init_sk() :-D
->>>>
->>>>>
->>>>> #if IS_ENABLED(CONFIG_IPV6)
->>>>>
->>>>> at init time should be preferable
->>>
->>> To get this done at init time I need inet6_stream_ops to be
->>> accessible, but it seems there is no EXPORT_SYMBOL() for this object.
->>>
->>> However, I see that mptcp/protocol.c is happily accessing it.
->>> Any clue how this is possible?
->>
->> I answer myself: mptcp is not tristate and it can only be compiled as
->> built-in.
-> 
-> Indeed, that's why.
-> 
-> Talking about MPTCP, by chance, do you plan to support it later on? :)
+The following commit has been merged into the sched/core branch of tip:
 
-Hi Matthieu,
+Commit-ID:     2a77e4be12cb58bbf774e7c717c8bb80e128b7a4
+Gitweb:        https://git.kernel.org/tip/2a77e4be12cb58bbf774e7c717c8bb80e128b7a4
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Fri, 29 Nov 2024 11:15:41 +01:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Mon, 09 Dec 2024 11:48:13 +01:00
 
-It is not on our current roadmap (TCP doesn't get much love in the VPN 
-world), but I agree it could be an interesting option to explore!
+sched/fair: Untangle NEXT_BUDDY and pick_next_task()
 
-I have to admit that I haven't played much with MPTCP myself yet, but I 
-am more than happy to talk about potential advantages for the ovpn use case.
+There are 3 sites using set_next_buddy() and only one is conditional
+on NEXT_BUDDY, the other two sites are unconditional; to note:
 
-Cheers,
+  - yield_to_task()
+  - cgroup dequeue / pick optimization
 
+However, having NEXT_BUDDY control both the wakeup-preemption and the
+picking side of things means its near useless.
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
+Fixes: 147f3efaa241 ("sched/fair: Implement an EEVDF-like scheduling policy")
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Link: https://lkml.kernel.org/r/20241129101541.GA33464@noisy.programming.kicks-ass.net
+---
+ kernel/sched/fair.c     |  4 ++--
+ kernel/sched/features.h |  9 +++++++++
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index b505d3d..2c4ebfc 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5630,9 +5630,9 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+ 	struct sched_entity *se;
+ 
+ 	/*
+-	 * Enabling NEXT_BUDDY will affect latency but not fairness.
++	 * Picking the ->next buddy will affect latency but not fairness.
+ 	 */
+-	if (sched_feat(NEXT_BUDDY) &&
++	if (sched_feat(PICK_BUDDY) &&
+ 	    cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
+ 		/* ->next will never be delayed */
+ 		SCHED_WARN_ON(cfs_rq->next->sched_delayed);
+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
+index a3d331d..3c12d9f 100644
+--- a/kernel/sched/features.h
++++ b/kernel/sched/features.h
+@@ -32,6 +32,15 @@ SCHED_FEAT(PREEMPT_SHORT, true)
+ SCHED_FEAT(NEXT_BUDDY, false)
+ 
+ /*
++ * Allow completely ignoring cfs_rq->next; which can be set from various
++ * places:
++ *   - NEXT_BUDDY (wakeup preemption)
++ *   - yield_to_task()
++ *   - cgroup dequeue / pick
++ */
++SCHED_FEAT(PICK_BUDDY, true)
++
++/*
+  * Consider buddies to be cache hot, decreases the likeliness of a
+  * cache buddy being migrated away, increases cache locality.
+  */
 
