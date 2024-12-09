@@ -1,78 +1,75 @@
-Return-Path: <linux-kernel+bounces-436786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CEB69E8AEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:09:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DBE59E8AF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:09:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC421883B6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1223E164418
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DBA2165F1F;
-	Mon,  9 Dec 2024 05:09:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E34F716DECB;
+	Mon,  9 Dec 2024 05:09:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AVJZ4SE8"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O2CqPfRb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C157BB1D;
-	Mon,  9 Dec 2024 05:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FDF15AD9C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 05:09:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733720948; cv=none; b=HwHWwskqSU7jFXlpmykBUOBVx8W9Y5OJst6fxdNUB4IV8ErpspgB/ImxqtJxike3WKqya8/Q4Xz7wSetZ74ExZegNNC/gV69L6PbyywaVGMJvVvjt0uo8xecaamNEfD5+ikYg9pMetXcbwk3vS8tmGS4Tr+fDTQ80JCSH6Cvj4g=
+	t=1733720991; cv=none; b=FtJ5LjicCD0TzaQuJ8jy4Qe+oK2S60BAzSxrPauFq9phoMRK3P687oBebKkn2wRn+NqU3QjTUTOCSeblFHr/NUNSq11keTupt8uEpMI/OtWbCLtpAbrCUg0a0kfjjhluwBrHyLLMLwKV//HOJK6M6SKImfm/ysGulEeOwpnmyLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733720948; c=relaxed/simple;
-	bh=jYILTV6MefuoCzDE2iYdlbJRzhBEhk1oamLG9PPaW0E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaPGDKi9zHMAFNE0l8MYXuji0FuVoyTX7mKFYiyCYc9LMea3WD/EMSuKpWqYh7Q8wxUb6wtBIN30icanI23hb7SXtPAcnoItbXa2hUuRgz2FO9YSFPy4fmjshBSYWBKa0aOYLL6HQaWOULZcYffFW/an3sWCQu8t9VufOTjIeK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AVJZ4SE8; arc=none smtp.client-ip=198.175.65.16
+	s=arc-20240116; t=1733720991; c=relaxed/simple;
+	bh=ew/8DOla6GGK2y5JGIrQUW23Ny327qc6PfkECHJxMq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=eI4A9zc1j54Kb7KQmmT2+Qr7xQvysIoxTBWxabtvPrUd9peysQmnpO1WJC8Kaptk3KzpHOq08/tYxfVVQfgqalbH4gxodx07jsc8U9sYAk/ZEHn+O7Npj3sTDLuRRoe1T0/RnGVZvMYfgBoRFCczZKvUBqEd7M8l65QIIZoxrLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O2CqPfRb; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733720948; x=1765256948;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jYILTV6MefuoCzDE2iYdlbJRzhBEhk1oamLG9PPaW0E=;
-  b=AVJZ4SE8jWEt+gyIKVZgGA/Dius7IqrVjoaRrZVQ3dns06hw2Bp/UU1k
-   X16eFLQFTyjK96pHI9gwQwH4IHbU2ZIuuOhyplUF8bHTrTgCT/F4ATpB2
-   3RGmjIGJlli2Uj3G6AuF93imbX6MJ8cccdEZkpc1eoVBSnPj7ma9U3x0i
-   y1r0m6uGR9DiLmRyvopHFz2Wd22PV8A9U+y+09+TQml7OOD6fJQmzbjvQ
-   /eP5HiR9NcNlyPM5M4QbDPLlia5hOVkKnNcj1ScFGJJa0C681bRYUnsVi
-   aBM8cJqzBndHLDjfLF4jRhRE2ChZFjtSHI/2rh1sKQ+FRvzeEaCtBGC2Y
-   w==;
-X-CSE-ConnectionGUID: 2dq5YxH3SruY2hTFoQNEUw==
-X-CSE-MsgGUID: KyAP39W7Tniz1gQ2NICu9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34140462"
+  t=1733720988; x=1765256988;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ew/8DOla6GGK2y5JGIrQUW23Ny327qc6PfkECHJxMq0=;
+  b=O2CqPfRbWj3JQCzE3Hq6fycj/U7q0AsO8mEeqNUuDP0RTebGpOiVDWZb
+   eg4pGd99UWBp0d9UySzCGyC64E90Lv1hTcw3uxYWDPgxFzWziJ6LvMuZR
+   zJcwl+0I8Q6OHwvbtv6E0lLvsNl1h/wLLfCGBWX5ojzlNp7TlUWZFRMQ2
+   cSrmGhNDp/xmRYTqRF6TsuAjtrf/bRuViGQUHhUGUcOE7kqhEcPw0YkHS
+   BKuHstle03CfzpOF1DV5H6WfZlFMOpG790Sq/+2p0XEsgM2aQZeEtjQGO
+   qdVJf3GHDccPh5eYq8wZbDHrQ/N7VgknUkSCoNGZwmplUOOYOGYcQ7vha
+   A==;
+X-CSE-ConnectionGUID: c9hrURGcS+CkPC548bV6KQ==
+X-CSE-MsgGUID: NrijQaGjR36rgIZH7dN4Pw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37683995"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="34140462"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 21:08:47 -0800
-X-CSE-ConnectionGUID: lUrmVs9+S32ILcjk2EmyFg==
-X-CSE-MsgGUID: pVjykfr5TqWACXgcvzUnQw==
+   d="scan'208";a="37683995"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 21:09:47 -0800
+X-CSE-ConnectionGUID: hsrn04cxTg2W/Jv5KgTNAA==
+X-CSE-MsgGUID: 4fJfqzIHQCacDo7k2gySUA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="99413803"
+   d="scan'208";a="125806864"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa005.fm.intel.com with ESMTP; 08 Dec 2024 21:08:44 -0800
+  by orviesa002.jf.intel.com with ESMTP; 08 Dec 2024 21:09:46 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tKW0f-0003xt-2P;
-	Mon, 09 Dec 2024 05:08:41 +0000
-Date: Mon, 9 Dec 2024 13:08:34 +0800
+	id 1tKW1e-0003yX-2H;
+	Mon, 09 Dec 2024 05:09:42 +0000
+Date: Mon, 9 Dec 2024 13:08:47 +0800
 From: kernel test robot <lkp@intel.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Jiri Kosina <jikos@kernel.org>,
-	Benjamin Tissoires <bentiss@kernel.org>,
-	=?iso-8859-1?Q?Jos=E9_Exp=F3sito?= <jose.exposito89@gmail.com>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 1/2] HID: input: fix test for CONFIG_HID_KUNIT_TEST=m
-Message-ID: <202412091018.qz83ukPy-lkp@intel.com>
-References: <20241208-hid-ifdef-kunit-v1-1-cbea6077a233@weissschuh.net>
+To: Adam Ford <aford173@gmail.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Vinod Koul <vkoul@kernel.org>,
+	Dominique Martinet <dominique.martinet@atmark-techno.com>,
+	Frieder Schrempf <frieder.schrempf@kontron.de>
+Subject: drivers/phy/freescale/phy-fsl-samsung-hdmi.c:472:3-9: WARNING:
+ do_div() does a 64-by-32 division, please consider using div64_ul instead.
+Message-ID: <202412091243.fSObwwPi-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,70 +78,102 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241208-hid-ifdef-kunit-v1-1-cbea6077a233@weissschuh.net>
 
-Hi Thomas,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 7503345ac5f5e82fd9a36d6e6b447c016376403a]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Wei-schuh/HID-input-fix-test-for-CONFIG_HID_KUNIT_TEST-m/20241208-200350
-base:   7503345ac5f5e82fd9a36d6e6b447c016376403a
-patch link:    https://lore.kernel.org/r/20241208-hid-ifdef-kunit-v1-1-cbea6077a233%40weissschuh.net
-patch subject: [PATCH 1/2] HID: input: fix test for CONFIG_HID_KUNIT_TEST=m
-config: i386-randconfig-012-20241209 (https://download.01.org/0day-ci/archive/20241209/202412091018.qz83ukPy-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241209/202412091018.qz83ukPy-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+commit: 1951dbb41d1dff7c135eed4fa1a6330df6971549 phy: freescale: fsl-samsung-hdmi: Support dynamic integer
+date:   8 weeks ago
+config: alpha-randconfig-r064-20241209 (https://download.01.org/0day-ci/archive/20241209/202412091243.fSObwwPi-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 14.2.0
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412091018.qz83ukPy-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412091243.fSObwwPi-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+cocci warnings: (new ones prefixed by >>)
+>> drivers/phy/freescale/phy-fsl-samsung-hdmi.c:472:3-9: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
 
->> ld.lld: error: undefined symbol: kunit_kmalloc_array
-   >>> referenced by test.h:447 (include/kunit/test.h:447)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced by test.h:447 (include/kunit/test.h:447)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_get_battery_property) in archive vmlinux.a
-   >>> referenced by test.h:447 (include/kunit/test.h:447)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_get_battery_property) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: kunit_binary_assert_format
-   >>> referenced by hid-input-test.c:20 (drivers/hid/hid-input-test.c:20)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:24 (drivers/hid/hid-input-test.c:24)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:28 (drivers/hid/hid-input-test.c:28)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced 6 more times
---
->> ld.lld: error: undefined symbol: __kunit_do_failed_assertion
-   >>> referenced by hid-input-test.c:20 (drivers/hid/hid-input-test.c:20)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:24 (drivers/hid/hid-input-test.c:24)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:28 (drivers/hid/hid-input-test.c:28)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced 9 more times
---
->> ld.lld: error: undefined symbol: kunit_ptr_not_err_assert_format
-   >>> referenced by hid-input-test.c:16 (drivers/hid/hid-input-test.c:16)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:39 (drivers/hid/hid-input-test.c:39)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_get_battery_property) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:43 (drivers/hid/hid-input-test.c:43)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_get_battery_property) in archive vmlinux.a
---
->> ld.lld: error: undefined symbol: __kunit_abort
-   >>> referenced by hid-input-test.c:16 (drivers/hid/hid-input-test.c:16)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_set_battery_charge_status) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:39 (drivers/hid/hid-input-test.c:39)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_get_battery_property) in archive vmlinux.a
-   >>> referenced by hid-input-test.c:43 (drivers/hid/hid-input-test.c:43)
-   >>>               drivers/hid/hid-input.o:(hid_test_input_get_battery_property) in archive vmlinux.a
+vim +472 drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+
+   435	
+   436	static unsigned long fsl_samsung_hdmi_phy_find_pms(unsigned long fout, u8 *p, u16 *m, u8 *s)
+   437	{
+   438		unsigned long best_freq = 0;
+   439		u32 min_delta = 0xffffffff;
+   440		u8 _p, best_p;
+   441		u16 _m, best_m;
+   442		u8 _s, best_s;
+   443	
+   444		/*
+   445		 * Figure 13-78 of the reference manual states the PLL should be TMDS x 5
+   446		 * while the TMDS_CLKO should be the PLL / 5.  So to calculate the PLL,
+   447		 * take the pix clock x 5, then return the value of the PLL / 5.
+   448		 */
+   449		fout *= 5;
+   450	
+   451		/* The ref manual states the values of 'P' range from 1 to 11 */
+   452		for (_p = 1; _p <= 11; ++_p) {
+   453			for (_s = 1; _s <= 16; ++_s) {
+   454				u64 tmp;
+   455				u32 delta;
+   456	
+   457				/* s must be one or even */
+   458				if (_s > 1 && (_s & 0x01) == 1)
+   459					_s++;
+   460	
+   461				/* _s cannot be 14 per the TRM */
+   462				if (_s == 14)
+   463					continue;
+   464	
+   465				/*
+   466				 * TODO: Ref Manual doesn't state the range of _m
+   467				 * so this should be further refined if possible.
+   468				 * This range was set based on the original values
+   469				 * in the lookup table
+   470				 */
+   471				tmp = (u64)fout * (_p * _s);
+ > 472				do_div(tmp, 24 * MHZ);
+   473				_m = tmp;
+   474				if (_m < 0x30 || _m > 0x7b)
+   475					continue;
+   476	
+   477				/*
+   478				 * Rev 2 of the Ref Manual states the
+   479				 * VCO can range between 750MHz and
+   480				 * 3GHz. The VCO is assumed to be
+   481				 * Fvco = (M * f_ref) / P,
+   482				 * where f_ref is 24MHz.
+   483				 */
+   484				tmp = (u64)_m * 24 * MHZ;
+   485				do_div(tmp, _p);
+   486				if (tmp < 750 * MHZ ||
+   487				    tmp > 3000 * MHZ)
+   488					continue;
+   489	
+   490				/* Final frequency after post-divider */
+   491				do_div(tmp, _s);
+   492	
+   493				delta = abs(fout - tmp);
+   494				if (delta < min_delta) {
+   495					best_p = _p;
+   496					best_s = _s;
+   497					best_m = _m;
+   498					min_delta = delta;
+   499					best_freq = tmp;
+   500				}
+   501			}
+   502		}
+   503	
+   504		if (best_freq) {
+   505			*p = best_p;
+   506			*m = best_m;
+   507			*s = best_s;
+   508		}
+   509	
+   510		return best_freq / 5;
+   511	}
+   512	
 
 -- 
 0-DAY CI Kernel Test Service
