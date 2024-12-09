@@ -1,116 +1,107 @@
-Return-Path: <linux-kernel+bounces-437202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 221A39E9041
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:34:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8289E9047
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:34:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27CE162B88
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:34:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C71081886821
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B441521764F;
-	Mon,  9 Dec 2024 10:32:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1188C217727;
+	Mon,  9 Dec 2024 10:33:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="rxCK8EHz"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="IxP4kqr+"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76D9216E17;
-	Mon,  9 Dec 2024 10:32:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25E1C217721
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733740367; cv=none; b=OnWMnFzIF8GjbY4e/SargdVVpJZ0SAIJ9rOQ0T7LgOJzRTh7GDUlfLDWBEqZSsLaF6f1OZqq5ji3snGJ9+p8tYEGWem4L9wS6wmgiprrX02hYKgvUyKplBWnJqYzLXyg99stuwIZ0eLHn8a/cguC1SPcdDR0nAFf83ilmLBbTEY=
+	t=1733740429; cv=none; b=t8R6cIQmw9tMhqlxf78Ew5lK97c7pO/Kl+HRiMr0OMiY1LDNhaMt6Bg9GAaeiPKx2t0SmEba+NTez8BCSTUAOQ3Gs74GAPNhxGE34bP6lYuZ4iZ6XifZXzloMNi3rrgrBVISIQ4JHlEiMbrw0ynGAVKVFlbbINrjYda2swY2RCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733740367; c=relaxed/simple;
-	bh=IaZmXAaUI3FCLQAuB1Npp/LTLYPPybZ+aVugr6WcA+Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HQs9/q30qfsWlW/jEEwEVDpWvFzrpXwzBCCmBJy/26otHvCbtoQe0+hABX0hfUhzy9LNOh0PSCrpGPVkMVewK43u8/EFzJY/wSerQ1bZEn54wwSEuIZ6omCw+W2MyhomP36OrUUG85wgib0p3NdrskGS/+LlTdLkabAQOoH/FEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=rxCK8EHz; arc=none smtp.client-ip=212.227.15.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1733740350; x=1734345150; i=wahrenst@gmx.net;
-	bh=IaZmXAaUI3FCLQAuB1Npp/LTLYPPybZ+aVugr6WcA+Y=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=rxCK8EHzNTk1KR9+KaG2iNQX5+w3OZsr+HRhu+v07NTOmsbRZaufx2q+xrJb4Ete
-	 Wtd9AHyncgqykzcc7yGID+nSS47mrD+0AL0b7+B9atWp7F17+jaa4vzONb+TwK7Ur
-	 e6U40xbgXcS/tG/LwMyTP/w+g5eht45P08sv4t2r8bm+foCbhY6kMIy/LvhnuHVnr
-	 CNKWODzi0+ZOeVqGPiI+TDowtuKNK/cATp8EOKXmYIqJA47ojIYqwBY5CcBb7TKkD
-	 TsiBODkLcvkUJQUhWDczl7yFX5kZAGDAKGMQG8sx6U50B143t8p5QJoZSvg/XoEhC
-	 1xkMsZnUGCMza2XI0Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.106] ([37.4.251.153]) by mail.gmx.net (mrgmx005
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MIMfW-1tNwZF4AwW-001qoh; Mon, 09
- Dec 2024 11:32:30 +0100
-Message-ID: <c8fd371f-fd36-48c4-ad49-1e8f8db01383@gmx.net>
-Date: Mon, 9 Dec 2024 11:32:29 +0100
+	s=arc-20240116; t=1733740429; c=relaxed/simple;
+	bh=hGUNkPAiGXqDSa7dT0mfVI5e/Of5hnaQwknDb+vS7nU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l/1XN1ySREaef4zY5zCDPY9PKYX21uy0UT7RiGfcyWFhVUw5239vbIMvHJ28lTRpXNtKvqLgDnBeWYG27/6q8urywTcPCHKG9aUsd9H7VrMqQlmGRK2jZ9ltb7OY3CD0o9wVBRcE6wqAlZYDfSp5rMzyxk0M6czB+K7QTfxUUJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=IxP4kqr+; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385d7f19f20so1836289f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:33:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733740425; x=1734345225; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aO4nLx0kfH9s6VR/jADGyHU7Uf5zkyJtN7uAkPweYn0=;
+        b=IxP4kqr+knA05dewRXP352kR4vz/uQ92QRo0hjAZcwY6Y0gVSMdurW97o38J7nKz7x
+         sVmGTnbJgJCL5EZhQHePfzk0FmfRzA8pEcGwnyxWzLxqoIEN0MGTK4EFJ+lu3M6EgKDn
+         +YHRvl5Xq2btDL4J1H6QiFIV77EVTcWqM94lqaZ6OQav49EZ3i8Y3ni3KQfsMQGG0p9v
+         PL5GtCTrAW3ayTmJzpOF7EVnGGJyYt959kzDkMyRmWiymAi1ErFh2Wcqd6p/ezwvgxFh
+         MYwFy0JqAaldsCThAOlCoAsRzWCZNpbR43nsMSl+IuszkN9jZ/pCrV2Cb+Seyu5HSTBG
+         A3Ew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733740425; x=1734345225;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aO4nLx0kfH9s6VR/jADGyHU7Uf5zkyJtN7uAkPweYn0=;
+        b=Kl+L7W2lH0tR6t26+lxcyetRgIbJ6QlM5JCW374IYqtQ4/om5H5oQ0ulC8ttyw/BQR
+         rzBONuWas1sMjEB3gIilU2lcmBNlp7JiuHptrxo+EhhAG+/SyqIR3baBZfDrfbC8lDgz
+         oUdH6m35y5N05opWirWCkyqfAtMWOawX+3ypo5VkJXzQAKZj2OI0gBNZiBsXxnTDSkRc
+         SkSbaKRrSUE3Pj63hhZ7ESigvhEUSILmq7Wp98ovrrnBIqcJe0R4OIYiXP4ON5BIYFYf
+         RVluZxre1qoDZ5hkFruMjQZ8bS5jZTEAf2xHb5OVMnGn23gVkGapIY+4hwKi+K1xphuJ
+         rxiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXysZaSmtGeXYV46BJrkGcZ5YzKh8ScNy0n3l83cEjNLGVKCj7bT4fwcizRcUAxZUihuFnFvo2xz9RhUDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsZ1l3K3Kw/mQ8LsEZ5DbudpDy2j18D3fNO2SsMOyhXuKzdwsz
+	IElgFzC88keqbqoYJC1fyN8xwunL26F4oCPsajTrvYTQmdIekcz72fxdJXAzlYA=
+X-Gm-Gg: ASbGnctveSnG2O3tmmCllcQQUdp/rCPdECaG5bzz4RWWVmVZrnwqOwg6BFXfSt+0Y3q
+	rRROQbKn2j3zKi43ySmB246J0u1Ao0OAYo3AuNm6sVL926YGL/wDL0Ii+DLnI9e2q+RU4/qaDgT
+	ertFLBRrz4y2aVYshVIeyVOPEh4Mv4Kc7lk1LVuP5CVyrxLg4J5/rZG6licXuqLaYRvuJZRb4+N
+	McHYlEPfRKn6f9QbGbCR369LamjLwx3eaR8YgxveikgIORJdpc=
+X-Google-Smtp-Source: AGHT+IE1Mq2p1wEAoDyK2ADS8QG2njkoPsV/DcaIyc6/bJSThV8qrxTzCj1DyCksy6aEjoZIpmshjw==
+X-Received: by 2002:a5d:64ab:0:b0:385:f17b:de54 with SMTP id ffacd0b85a97d-3862b33f3d0mr9798912f8f.5.1733740425377;
+        Mon, 09 Dec 2024 02:33:45 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725f3e936ffsm919093b3a.132.2024.12.09.02.33.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 02:33:44 -0800 (PST)
+Date: Mon, 9 Dec 2024 11:33:36 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: George Guo <dongtai.guo@linux.dev>
+Cc: jpoimboe@kernel.org, jikos@kernel.org, mbenes@suse.cz,
+	joe.lawrence@redhat.com, shuah@kernel.org,
+	live-patching@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org, George Guo <guodongtai@kylinos.cn>
+Subject: Re: [PATCH livepatch/master v1 2/2] selftests/livepatch: Replace
+ hardcoded module name with variable in test-callbacks.sh
+Message-ID: <Z1bHgHlMuc_H3L5R@pathway.suse.cz>
+References: <20241125112812.281018-1-dongtai.guo@linux.dev>
+ <20241125112812.281018-2-dongtai.guo@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 3/3] ARM: dts: mxs: Add descriptions for imx287 based
- btt3-[012] devices
-To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>
-Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241107085705.490940-1-lukma@denx.de>
- <20241107085705.490940-3-lukma@denx.de> <20241119165236.69438f75@wsk>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241119165236.69438f75@wsk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:WT35FUcxkk24pmHWc8SbN7TbdU9tsAN2+EJ+r1nufEZCyVU0DTD
- LpUn0KYHF8odE8iif7UZ3qkEsIVIWYREq/3CSbPxoRWpo9/4XFBIzmtA2hJsYnCl9ST8Xv+
- SsGJ5ho7Flmf4F1fdrAi4ZDUiSPZ09qZiEYM8FNGiQofxrmure0utbfJ7gMdSiJ4mXCuBh3
- xWFlidfqTUrLfwNrK8Bvg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:87TXXS13MfA=;3QWf8OLTUwXBXpKsWpJm8JR9S7T
- Igl6SlHxcaPbGBuGg7n0haj237PaPA+qn97bMKkt4QahRyMcvSG8H2f67sm2IslbW4oW4yLaM
- qHTUBaSG1vuAGjkyYgt2GEaDM+NUsB8Y4OM/cKvYyINniEZEqjCg7h+2M87LYIrZry6VPsOb9
- lN1tdkmbkyVgVK71OEShOTwKlHchKRuXLE4g281fUXAfFKMPMK8Bkjl8MLZXrMagaJm1YUpSP
- gjKgmKGLOeDnpa0bUYQDshvNi+RH3gTPqJHqZbCctL8k3XXZnRlJMVfETnumbbG8TZJyOSsvM
- oHIlBbvFvM8etPp7o/BD8vaGmbU86PtxTVNOeblRYUiugZSUt4Kjh6uJm8gPI73nzYooW+ifK
- Mwrw+T63qWfrq50h6x/xv1FQpodgvjWbYWf8pcmGx3kI4H8FXOHNH+Ijakn2DHEbECgj1YQWp
- EBjF8tijx3Vom338awhnkLjYXihDM/4qn7/CoZS0epATHVLW9CnkHcaG89Pqu9oDXjjuhS9+l
- JYIlXT8xERpKbiExA1szYxts1HgEpV9u2nom+kVE43ZQEcoPWTMV4uko2No5vW6d9AJTu7LBD
- 4v/SAYXSQrucJEc/jHC7NYLjjWyl/elbJkzo+2toK1Vf4i1WJZFApx5OI29HOKGtUoH99FXgd
- jZpar3SphehSPPJuuLV4K+pm8I+Tq6E3tyP0+BG2tglRGhNZ/UMChHSyp37c+eG5kXomC8mQt
- 2q4znHrE6kqmctoMFDNZ/xdARwZSkljgoUoZ2VV5Taf/nnXSk+W5O7hPMYfXRRFQkTDl65y1g
- tF6DS6O/fscb1syiv/jjtIONU6b80XFn04ILFyrItirq/sht2j16P6g/wMoHDyufDYGQdmeK7
- 1/vk0Yuov0docj3rtbD3E3qthFPEFq9uDWYTuu4DlCbvQADOnR7G8mgQiimjJyxsVggCSxilU
- 704nfotP/NUB+kV5pbhLcMrkU4Lo3gN6stoZ2EHJ4bUEYn3NyQtgrpDxdnlsqZW/rC8rCaMVa
- HSPEzJ6t8mkwGZEc3JbUgLcJo8ZWQ4XFRaXegdfIdCKr/qeO5YVb80mNKoiaJ4RHHS41rG1l3
- 8vd7m/mVzIQQeIkNeliYs1MWtsl0eu
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241125112812.281018-2-dongtai.guo@linux.dev>
 
-Am 19.11.24 um 16:52 schrieb Lukasz Majewski:
-> Dear Community,
->
->> The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
->> some extend similar to already upstreamed XEA devices, hence are
->> using common imx28-lwe.dtsi file.
->>
->> New, imx28-btt3.dtsi has been added to embrace common DTS
->> properties for different HW revisions for this device.
->>
->> As a result - changes introduced in imx28-btt3-[012].dts are
->> minimal.
->>
-> Are there any more comments / suggestions for this patch set?
-I've send my RB for this patch on October 31th for V10, but it didn't
-made it into V11.
+On Mon 2024-11-25 19:28:12, George Guo wrote:
+> From: George Guo <guodongtai@kylinos.cn>
+> 
+> Replaced the hardcoded module name test_klp_callbacks_demo in the
+> pre_patch_callback log message with the variable $MOD_LIVEPATCH.
+> 
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+
+JFYI, this patch has been committed into livepatching.git,
+branch for-6.14/selftests-trivial.
+
+Best Regards,
+Petr
 
