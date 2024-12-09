@@ -1,97 +1,84 @@
-Return-Path: <linux-kernel+bounces-436846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 701459E8B95
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:37:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFAA49E8B98
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:40:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 108B5161787
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:37:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035A21885DF7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AC9A21480F;
-	Mon,  9 Dec 2024 06:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="k2V9NdZt"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2596C2144D7;
-	Mon,  9 Dec 2024 06:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFF021480F;
+	Mon,  9 Dec 2024 06:40:30 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1241E4A4;
+	Mon,  9 Dec 2024 06:40:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733726243; cv=none; b=Aiw+O+riiMDO5jIHI+v9kuTixW+E/iEceMeWUkNjq+PJh1fRGqU5BYh9G+kjpjMezungrY5O31PwiUvcUXQ9r4XXR8rPdkai8yfVaY0RvGymBnOLndE6hNL9/m6zsVpPQQvA12IMYA9F2Uq/TcnwIKtXNbY2Vh2RpO7DwYd9Gas=
+	t=1733726429; cv=none; b=gJwebT5Te2P8djkuAtgBCV1HyM7zaiWw++4gI3ACusFf3Gro5pUOhRb823Qry1uwPusL0YkkjLKzCspOEvE6homob/Hn6GinIL1+O6ck0Mc2PsaFxKwN5pgmNSwp6PGnVAOFEqeN1CgyvETAh4mwIj6kyeFsW1/F+DncSwWjQEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733726243; c=relaxed/simple;
-	bh=eEJrBLMMmXq9YpHxaQ+oZ1t2lVaKcmbGm1kX+g5RNi4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=eYeVYjUSmaVdvld0/Fq8CrJEq2LGt6SWGlBRFh8zoMnHjJcmTEIhiHNACFO8PYsQTCMdPPXDoAQX+hGrr+fE/N9sSvw5CRChNwEZ5U4gH8ZQvUg4eKzCTcNQ/WhE3/8CpiuKljk6qVTwtRFgTVreBz1AiZEF+gb/pOOfFBGzkzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=k2V9NdZt; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4B96b88b9145487, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
-	t=1733726228; bh=eEJrBLMMmXq9YpHxaQ+oZ1t2lVaKcmbGm1kX+g5RNi4=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=k2V9NdZtZNjCoC9PrGoxzepwYYH4Z8golHdXVOYwXwaAt5cvM3x+b9CDMnATpb96F
-	 yy7LOWRJyWrr+Iv/Rj3zs4O7jgpsLaI6f5D3gC+96LXYW234EcI7gARae2Mp7jGhwQ
-	 geCI/yQS8i5A35cKYIlOd8L7Imf2sIdCHpnG/GBVCq4fz27FdKFIZ9Wh+YRwkXWiBO
-	 Q7Z1IW9l9qF1iw9kN4+7Jiw0ZqwArOcg62HI8A1t0MxwsXM0Dnm2dDqFeWz5YuWJiL
-	 VHvFs4IkwOa4nUmhwa6IBibBixYeS7ii9Xsjw+BFZ8VqH5Spw4Ofv020NOo7HSIPZv
-	 Be8Q6eP3J9MMQ==
-Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
-	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4B96b88b9145487
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 14:37:08 +0800
-Received: from RTEXDAG01.realtek.com.tw (172.21.6.100) by
- RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Dec 2024 14:37:09 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXDAG01.realtek.com.tw (172.21.6.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Mon, 9 Dec 2024 14:37:08 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
- RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
- 15.01.2507.035; Mon, 9 Dec 2024 14:37:08 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: liujing <liujing@cmss.chinamobile.com>, kvalo <kvalo@kernel.org>,
-        suhui
-	<suhui@nfschina.com>
-CC: linux-wireless <linux-wireless@vger.kernel.org>,
-        linux-kernel
-	<linux-kernel@vger.kernel.org>
-Subject: RE: RE: [PATCH] rtlwifi: rtl8188ee: fix spelling error in _rtl88e_phy_set_rfpath_switch()
-Thread-Topic: RE: [PATCH] rtlwifi: rtl8188ee: fix spelling error in
- _rtl88e_phy_set_rfpath_switch()
-Thread-Index: AQHbSf4Bnwk1YuLp4kSNEDFg7w8YhbLddJvg
-Date: Mon, 9 Dec 2024 06:37:08 +0000
-Message-ID: <d6b9d0b67dd14032b458c6e568437a39@realtek.com>
-References: <2024120913484116132252@cmss.chinamobile.com>
-In-Reply-To: <2024120913484116132252@cmss.chinamobile.com>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1733726429; c=relaxed/simple;
+	bh=MDU8qJbap1SIhGGyge/vVxPPo+c9g1a/1ysXlb0Y2rI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QcpVx6bk8v7LCndlvcgHEvfFFHnXfLXWI8Bq45UDKXbk9AgCVlNGdz+ZrR9sGNA29y0EIgklj3Zp+qny/w0nzvJBcdLZb0965zUkocgOpXza6Ih+OistuZl+/yglAoRxhNlBq6mFCjAQiLGuIezsjVG+LKmr2/3aQCObcyeQ1Gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1675690d711a-c1a37;
+	Mon, 09 Dec 2024 14:40:24 +0800 (CST)
+X-RM-TRANSID:2ee1675690d711a-c1a37
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee8675690d764f-a6ff4;
+	Mon, 09 Dec 2024 14:40:24 +0800 (CST)
+X-RM-TRANSID:2ee8675690d764f-a6ff4
+From: Liu Jing <liujing@cmss.chinamobile.com>
+To: andy@kernel.org,
+	hdegoede@redhat.com,
+	mchehab@kernel.org,
+	sakari.ailus@linux.intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-staging@lists.linux.dev,
+	Liu Jing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] media: atomisp: fix spelling error in ia_css_sdis2_types.h
+Date: Mon,  9 Dec 2024 14:40:22 +0800
+Message-Id: <20241209064022.4342-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-DQpsaXVqaW5nIDxsaXVqaW5nQGNtc3MuY2hpbmFtb2JpbGUuY29tPiAgd3JvdGU6DQoNCj4gbm8g
-ZHVwbGljYXRlIGlzIHNlbnQsIGJ1dCB0aGUgcGF0Y2ggb2YgdHdvIGZpbGVzIGlzIHN1Ym1pdHRl
-ZC4NCj4gDQo+IE9uZTogZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0bDgx
-ODhlZS9waHkuYw0KPiBUd286wqBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkv
-cnRsODE5MmVlL3BoeS5jDQoNCkFzIEkgc2VlLCBib3RoIGFyZSBydGw4MTg4ZWU6DQoNCmh0dHBz
-Oi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC13aXJlbGVzcy9wYXRjaC8yMDI0
-MTIwOTAzMjEzMy4yOTc0LTEtbGl1amluZ0BjbXNzLmNoaW5hbW9iaWxlLmNvbS8NCmh0dHBzOi8v
-cGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC13aXJlbGVzcy9wYXRjaC8yMDI0MTIw
-OTAzMjU0OC4zMTAwLTEtbGl1amluZ0BjbXNzLmNoaW5hbW9iaWxlLmNvbS8NCg0KDQpBbHNvLCBw
-bGVhc2Ugbm8gdG9wIHBvc3RpbmcgYW5kIGluIHBsYWluIHRleHQgbW9kZSBmb3IgbGludXgtd2ly
-ZWxlc3MuDQpPdGhlcndpc2UsIG1lc3NhZ2VzIHdpbGwgYmUgaWdub3JlZCBieSBwYXRjaHdvcmsu
-IA0KDQoNCg==
+fix the coefficients spelling error in ia_css_sdis2_types.h
+
+Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+
+diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h
+index f37802878528..2bed08435755 100644
+--- a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h
++++ b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h
+@@ -19,7 +19,7 @@
+ #endif
+ 
+ /* DVS 2.0 Coefficient types. This structure contains 4 pointers to
+- *  arrays that contain the coeffients for each type.
++ *  arrays that contain the coefficients for each type.
+  */
+ struct ia_css_dvs2_coef_types {
+ 	s16 *odd_real; /** real part of the odd coefficients*/
+-- 
+2.27.0
+
+
+
 
