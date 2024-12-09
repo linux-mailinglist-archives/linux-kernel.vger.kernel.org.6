@@ -1,406 +1,1269 @@
-Return-Path: <linux-kernel+bounces-438101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438100-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B5039E9CC6
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A5EF29E9CC7
 	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:16:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB1FB2814F5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:16:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E27061667EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:16:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99FC1547DC;
-	Mon,  9 Dec 2024 17:15:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4C015665C;
+	Mon,  9 Dec 2024 17:15:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kYE/O4Yb"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2075.outbound.protection.outlook.com [40.107.92.75])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AQ+gKVRm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE1F1553BB;
-	Mon,  9 Dec 2024 17:15:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.75
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764557; cv=fail; b=ViQxpeCLDXk2HDBKJ/1P+SsXDRNWWEKl/bWIs87c+6zi4nqUuYS05hpxe8AuVJXmcAB0Lu6Yz448arRezjAY8VjrKtjeDiKUKf/Ip4Ry+Y/YSDYK76XnIt5NqJvTEj6oAL8pgNFI14WrXMK6OUuRvitIPGOIMESsoDYbqaqQuBY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764557; c=relaxed/simple;
-	bh=Y8QxjAMTb/DJfh6+BNxzsHpJ8PSWBdN3/+5BttH8Kwc=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=QJAvFNpkE5T4zoKLBajxWSuJ75mE1Xnp/qzAp6NWjCmwEYEsoDtkBoB9ECgfQ4eF0eCWdfn1kIZNqwC7TQvNCsvApms6KkaAgZF/MM7RttZsZRYSR/KwbrAXCnZ9Mq54mkZWEx6ZyctK8vdgf8UlridtK/2gg+63AnTetj/jfWc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kYE/O4Yb; arc=fail smtp.client-ip=40.107.92.75
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jxIfMqI8eTxrtdkE772Jcf3AtKbLhRtIoj17hoQC8zZZ3+UWqPxL7loXcQ53PkxxOctjpo9APdehDl5y/P35DWv/ilzyJDAVyeqIrGlcAjPizFYEV4Sbd2mqz7+rECdPVGUoxa7UKBzsqg+twP73rQkv7IfGlXI7uGnEfC65bptn3jvU9XT01fG/OOWrXM7pjFhlfKj9dq+goJdq74GAocfU6Lcdbku0eGbTZgwKeq1yukXhYA/hnxPgo8IGadGn8xfp/bzodLUT97/0rnP33/FmIFZ50QuTFNh5ivUPX3zd0aCsI6ErufmlydxCQgIgg6uaKJ4pRRM0EmgTcmSA+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/b06uwZGbOQ/9uN+eB4NUwW2ctwBRfcmQ1+Y+J9bteg=;
- b=j3+SVdhTbVHc2fRSxWu9vuEeR/C33J9CY5zdQz1Ui7buJ4EAohYxCp8RppXm4YkM6Ci2zbK/dJNIJL/sPNOK5fUCAcY7HsWratD7nhR7rGk0HNpfxout232G+Ro8IZMammRG/KSVEa9AZurGjbV/LP2qgaGOqasBPz+g+cSqDvu1+wssIguIL6MFrfze5Tk6jell5W65dy63MadW2iuLDd4/iMRN0MFslQQ31OfyEIqGBm+Uu8Wk5zPiMWZtWMP4fIvxvNovL/uyGL7gQQQMn2xhPmSTn9zDLHLlH9qf345blNGDDqy5wakpQ7NeFiECFZBMSj00KERyqPsV5XFurQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=/b06uwZGbOQ/9uN+eB4NUwW2ctwBRfcmQ1+Y+J9bteg=;
- b=kYE/O4YbRJ74iuLCFs0EHhivpFChQuMjOSCXF1fTRPwPrzwp45VYG/NDH9JNSn+hVWDhVbwxMdc0OK0UJ3ejOzN1EHzMvD8BdX/Kwa3+C8WCR0z31T+qw3/kbivIgaPtFnS2lteBReLgiGIGLCHLy3xs6hFB2euQyRGIm1BvCbU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by SJ2PR12MB8806.namprd12.prod.outlook.com (2603:10b6:a03:4d0::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Mon, 9 Dec
- 2024 17:15:52 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%4]) with mapi id 15.20.8230.016; Mon, 9 Dec 2024
- 17:15:51 +0000
-Message-ID: <ca241dad-d11d-4145-8753-d5f18291bd65@amd.com>
-Date: Mon, 9 Dec 2024 11:15:49 -0600
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 12/16] cpufreq/amd-pstate: Always write EPP value when
- updating perf
-From: Mario Limonciello <mario.limonciello@amd.com>
-To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
-Cc: Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
-References: <20241208063031.3113-1-mario.limonciello@amd.com>
- <20241208063031.3113-13-mario.limonciello@amd.com>
- <Z1atZRyH3dbWQYjv@BLRRASHENOY1.amd.com>
- <c9fc8ee2-db38-48e3-86ee-69a33eab1473@amd.com>
-Content-Language: en-US
-In-Reply-To: <c9fc8ee2-db38-48e3-86ee-69a33eab1473@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SA0PR11CA0025.namprd11.prod.outlook.com
- (2603:10b6:806:d3::30) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD394409;
+	Mon,  9 Dec 2024 17:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733764554; cv=none; b=Bd0+fo5jZLf7c9SaftwBhaxznLab2LxE7oj7tahqZW6sE9QOw5BpCQahde4/MOGYjnjBqwckT2wOYBrO9Rc8KZcdf7NjMJUl3gTPOKKfKeWsR+qAsCyRkD7lA0ythNxDfviDXMvBl8JoH/kVMHpdQA0uf2pssuS50JZpJRj2Ev8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733764554; c=relaxed/simple;
+	bh=6mmK774oaI1xwIiw2gQoyks602oHU/lNQARnhNloHjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YZBKqRODwgJeqLqhMTQ3Jy/7uxtfzVzMt9SA1RMw4L1TzZ0XyM2TpHEZ9C5wspLolYMHLfZ7eEl5Vt0S18C7bya7WJrj3kae/oaJH99S3DTJdCoVBsNNEYV64h9enKUl4fQRTY8eyo6wc3F40/1X6bPCXPqEA7kF+g9sGbQD+ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AQ+gKVRm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C759C4CED1;
+	Mon,  9 Dec 2024 17:15:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733764553;
+	bh=6mmK774oaI1xwIiw2gQoyks602oHU/lNQARnhNloHjU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AQ+gKVRmPkwSnAQ2nCoADv3vKcCNEjob6VWzUqjygd/m3+G9FZv2T/NgHlttZp9DC
+	 X/xJBRSkoUZaaVNJFxhIWDOjybkNCVmJt/Lan95gXdw9imKSEx8oPCnA2dsZXmXMaW
+	 8Xrt0dft5Jip9C43nO0vt+xMhI3vk4F0aJiDuSrMTEme1aVjevI3+Z/NEq6itGOG/S
+	 zXVqkqsWocI4/Sq7zkLcGQsEYopb6PXSlirBU0VH9+8Hw7HCKsf3x/+i5gPfwY979r
+	 juxsZJUhgLSkxZxXfqL3iTUdi7M64wVg/STXuIYnptQsp52ZSVa+qYFRx19y3Qzn7M
+	 ZGij6Ldl0IqKA==
+Date: Mon, 9 Dec 2024 18:15:50 +0100
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: syzbot <syzbot+ff145014d6b0ce64a173@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, hawk@kernel.org,
+	horms@kernel.org, ilias.apalodimas@linaro.org, kuba@kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	pabeni@redhat.com, syzkaller-bugs@googlegroups.com, toke@redhat.com
+Subject: Re: [syzbot] [net?] BUG: Bad page state in skb_pp_cow_data
+Message-ID: <Z1clxqJ2-q4xVRCH@lore-desk>
+References: <6756c37b.050a0220.a30f1.019a.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|SJ2PR12MB8806:EE_
-X-MS-Office365-Filtering-Correlation-Id: c8f93921-9a34-4518-fa4a-08dd187521ef
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Wi9yNVdNS0NmTmFxdm1xWmpqdW03clhPcGhzWkM2Y0d6SEZvckw4U1R6UHhN?=
- =?utf-8?B?NEtXTWRWQzNRVnRsSzByL2ZnSlZJNGhEZHg2bzhNQnZGajhnN0xDTysxeVF2?=
- =?utf-8?B?Y2VVakpaT3VOSlFWaW04NXJrSTAzQ1BMeHBpclZ3RmN5MFMvSXZITzl1STFj?=
- =?utf-8?B?NHZrSS80Z3NaUS9CUmJucUsyYnNGOG92QUtuSUwvbHZMV1ZranZSM2NLdGdQ?=
- =?utf-8?B?WFh2SExmS1BCSU9NWlFTY3NyclJkeWhiMWV5SGdVdTlpeWJjYmNxWVRFeTQ0?=
- =?utf-8?B?RkVVYmFYakFMNjFGZDZHWklwL29vbDVMMUkvVndhRzJBM3VVdWtFTmJQSnRK?=
- =?utf-8?B?V3lDYm5qTmhwbmFlVnkwRk9QTFJYRmpwb2dBQjJTR1plMGVQNTRlamwrb2xG?=
- =?utf-8?B?MDZHNkFxQTRsQ0hLb3NOckhOK2V4SFJ3VnhVYi90YVlGdWhCUXNNdGM0WWFG?=
- =?utf-8?B?bVM4WmlsQlp3SysyNXprYXppSjFtNTNubk5Da1grRUQ1L05zRndUbThiaVQz?=
- =?utf-8?B?Szg1VlQ3bkhNSnRpMkRiVk8xRjlvc2N3c2I1RzRud0hEbEpoNDROZFdMMnht?=
- =?utf-8?B?czBmTEIzbjJmOFJWaDdpanRRUUJrWW45TzJrd3FQa2FNVWJZb3Zlc1ErZzhE?=
- =?utf-8?B?bEQrNWord21keit3NXo2V1NUcGMyS1FSOXEzcnJXdHk3RDM4U3ZZemd5SXgw?=
- =?utf-8?B?L2JvVDczcEk1QWFVMjRGdTdEZzNqV2RXNmdjSHQ0SlJEUFdpbzNkMktHTkNa?=
- =?utf-8?B?bVBXQ3kvYkdJVyttZEQ2aGZIeVhlUUxhSUI0c2hRMzAraGlmZGdLM3I3K1pu?=
- =?utf-8?B?NWwxVXBuMURSdUZYNTIvRnBaYS8rMnBHWmpqRDJmeTdaUkgzS0ZES1JoWlRT?=
- =?utf-8?B?NzRkSlRVejV4cHhKd3dkWk5EWk9udVlhajdhUDhISXU3eVZNSE9yVW9Bd1Yy?=
- =?utf-8?B?L3JaSEEyV3NtWHNZN3kxT0o0RVAraG1iUUI4K1hBb21FTnJyaU4xbzk1NzhN?=
- =?utf-8?B?dGVHRlJWdDVwdC92YzBOZVBjRTdqajlKeGdWZjVZOVRvNjRYazZzZlNTaGRW?=
- =?utf-8?B?MGs4OVM0cHRSYWN2cE44b2NpdXdLNkFxeENkNlpJc0FLb3ZQKytrMHd1eEYr?=
- =?utf-8?B?bWdPbTEwblNpWThreEVYTnRFYXJNNStiMFpVeVNSUElVSmhYNm1zTlZoSStG?=
- =?utf-8?B?Q0VRUWhBSWg4K0d3S1dOcnZEdkVyQUVJaVZzemR6MHVmT21tY3ZaWkZWUjVM?=
- =?utf-8?B?eStMQ3ZUQjRwWXJ5M29FSEgxYjZIalNoWEQvZ1FhT3pYVzVZem4rRUNRNkxr?=
- =?utf-8?B?QUU0MW9qUGRmY2YvSmV1NkliY2ExUEl5b2w0VzRHcWRJcDUzMmRtdDFOOWUx?=
- =?utf-8?B?ZWZxMVp3MUFCM3RuVHVka2Fjc3NSUHpYNmVPT05hRHpqOXhHZXVHNXFqLzNv?=
- =?utf-8?B?S0YyNnlhYkdyOW84OEU5TmJhWUF3dkRTRzNFeWZzY1VwY1h3aFgwODRYWGdO?=
- =?utf-8?B?WERPMUkzY3NGcER0dzZhYUJzTE5Ga3lhWlpLZERETGQzblBoYzl2K1d3OUds?=
- =?utf-8?B?NUdKN29wTkJGYTMxc0l4ZmRWaHBzeHZsVzVCRG1vZVhKYitkcUVCL2daOHd2?=
- =?utf-8?B?UDBHKyswU3h5b2Z0MGFDY240dk9HK2tjeThSVTJlRmpDTFFqSmVnNVBxaUxJ?=
- =?utf-8?B?SlV2VlA0eEMyaS9OSURYY3VkMEpGK2FyK0dPU3BZdUJ3K1Bpa0F2c3BjZ1FP?=
- =?utf-8?B?OVZlRElETVNBalprSVIyQk5aVmlKdDRib3EyZ0lDNzFJYlpIUmgrY1ZUNWx5?=
- =?utf-8?Q?XeXBeMtKppWpcQAjKyr9LQU4hnwoatLI6MiUM=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?enBSQjhsWGMrNzZBODQ1bFd1eHRtV0NiaUd1ZDY1cHpiUmx4UEhUVFRNcW5I?=
- =?utf-8?B?TGRuZUg0WHViL0JSd0ZjaVVpRUcxU0xKUi93R3N5VllJY2xEWDNla1AzTjZ4?=
- =?utf-8?B?TkhWbWJoZmM5c2FhS21GWjlROFFQUGRQa0RPeDRUMWt3QU1mdXFvM29DV0NT?=
- =?utf-8?B?UFdBZ3ZRdDIvbEQ5OHJ5cTZJT1BWSWFLZGtOYUVBd2xGRGJHSUxBYVlEWmp2?=
- =?utf-8?B?bFYxdStHa2hIREtnNUs2aElHWEdpYU5QcktQRmV6TW9lVjk2K0FVV3BvSExn?=
- =?utf-8?B?ZCt3bWdJNzlvVVFlbDlGbUpibmFrd1BTMzljdnYvcWdmUE1ST2dSbnlFMEp6?=
- =?utf-8?B?VkhWWkRCUjErcUpKYTVOSmVkaERWem1YVmlyeTBLbWVZcHU5R0JEZ25DaVp2?=
- =?utf-8?B?VnZzZWo0ZFZwZjBVVkZ1MU1TWjRoa2I0Szl0eXR0bS9HMTVMWnQyNlVManZp?=
- =?utf-8?B?RkZFYUY0dXZaL1JDbHpSMDVmT0JaMHhpVWc2S1ZqZktDK2lhMGNwamFLNWhn?=
- =?utf-8?B?UXpqUEhmdWVlb3pjT01hREJvNkNKcWRwWWVrbGpWZi8xRTYxK1FubmlGQ0JV?=
- =?utf-8?B?ZnkyK3pFMDR1RWRLWnoxZTdPRmlaOUdwd0NsMUJ6alExaWNkQWVzN0R0c1pv?=
- =?utf-8?B?aE1NVHpQNDRJY1pRVStlVGRMMWI2UC9pWmNGbkxXWU44dU9YRWE4cEp6dDJa?=
- =?utf-8?B?WHlmellDZWNUdFRuLzN4RzVZalF2U0tMNnUxNDN6N0thVFFzVlJtd3BtbDkw?=
- =?utf-8?B?U0t5eXZhR0h3ZDVtOFJyVzZaMlA5YTZmRkJ2cVUybnEvbzRVTmZ5SVZFZW1I?=
- =?utf-8?B?Z082eE5yTnFmdVlEeU02YlZ3OW9aYUltSHRnWHljS1cyeE5MSUhvaDVhbHVC?=
- =?utf-8?B?RVVVWXYzYTdjTmEzTWtadXE3L2JDeCtQRjZ0aXovaWhuYW90dUZhWG95eTI3?=
- =?utf-8?B?UFVLbVpqZWh2bGIyUEhEQTd3ZkRMaHdtdVNjdHl1ZlAvL2ZTbEFEcUhJOHFw?=
- =?utf-8?B?ZHA3b0M1WkZCbmM0bjJBaHVMWTFWMDdoWm5FSktIKzk0QjUzbVptcWZrVTVG?=
- =?utf-8?B?OXZVL2MybVFlZ2VCbFBsTzV3MkZZMXpXWUJyVzlYOUFqTFh5dXAxVlc2SUFQ?=
- =?utf-8?B?Q1FxRUZnellENHdkbU9qMHZ1bWhJTW9oUDhlVnROR0RaSFh5NlU3UURnZmFu?=
- =?utf-8?B?U2NEelV0c0MxZHZTeVBBUjFPckoxRkhMWTIvbWQxeW5NTWQrdVdOMVgvZEFl?=
- =?utf-8?B?RGVzMjBwL0N3RDN5eEFZanVjUE9mRTB1WW5FWlU0N0gydXZlRytPV1Q5eWti?=
- =?utf-8?B?Q3l1UVc1em53czIvbDhPUWdxQXFsQmhNSjc1aWt5WkhRQzVCaEFobXB6MTZk?=
- =?utf-8?B?M0J2c29IdWEyR2l1aHVPSG1vY0dPeXowd2xBWlpoKzQ0aWpxblY3K0VIdkhv?=
- =?utf-8?B?NVllNU1uZWNhUDdxZks0R2Q1N2JidlBGbGVRaW1FUG1TZDlSMTZuSzhtNDUv?=
- =?utf-8?B?L3VwOERzMkFhVkhYSTlIVkYvanJGK3MxQnY5NDcrQkNJdjF3eE1HZ3B4UnB4?=
- =?utf-8?B?Qnc3ME5XQkVKaE5GUWpBbFRBUVA3RTMzdDJaTWVpVUZKTWg0RFZ3am1KYlRX?=
- =?utf-8?B?SEZIdHdkZ2NsU3JsTWtrc3Bia1hST3MxZFJaTTNJWUpTMzZZZXZ0bmVBYlhy?=
- =?utf-8?B?RVhuKytwMU9RRzh3Y1N4OUk3T2E0N0lqSXl1Mkp0VzQ2Ui9vQ0N0M0dZRHgy?=
- =?utf-8?B?N0RIM3lmSU5qWDFXaFJVZ1grVGI4TnBsSURObDB0aW4xa1lDYjNiS2dlNkkw?=
- =?utf-8?B?cWpIQlc0clVYdjd6MVJxREc2alpsMFRoSEMyR09wa21vN3U0andDc0hlMWNz?=
- =?utf-8?B?THpCYWgwZmxva0pOd1NibFFLclEyU0pESG5wN25HZEVJUUlUaU9Nc2RTcm54?=
- =?utf-8?B?TS9Ea0F3cWo4R1prZmVTRElCYWV5cC9jWHdjNEcyWFcwcENFZE80WVVITTdV?=
- =?utf-8?B?Nyt2bW9NTld0RTdBY3EvT3NzY0pBR3pOYXh4clh6bi82R09yVktkMkFKVWN1?=
- =?utf-8?B?Q2gwVmtTbUxETUtCbGIzSzJRYmFJZ1pFcWFwNXpKUHpCTWh4eE5XOWxiSjJn?=
- =?utf-8?Q?GZuuLh463wVHh18XP5lCiPuP8?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c8f93921-9a34-4518-fa4a-08dd187521ef
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 17:15:51.7761
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: y8uDT+LawRAYTPM3oEhlat67RBVBHENi27UO8OekhymDt7Xmb/FCOMUaCeuPjtXMgIO75upt0vYPayy4DR6RRA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ2PR12MB8806
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="F4b1hG6eb+XkXxv1"
+Content-Disposition: inline
+In-Reply-To: <6756c37b.050a0220.a30f1.019a.GAE@google.com>
 
-On 12/9/2024 10:49, Mario Limonciello wrote:
-> On 12/9/2024 02:42, Gautham R. Shenoy wrote:
->> Hello Mario,
->>
->> On Sun, Dec 08, 2024 at 12:30:27AM -0600, Mario Limonciello wrote:
->>> For MSR systems the EPP value is in the same register as perf targets
->>> and so divding them into two separate MSR writes is wasteful.
->>>
->>> In msr_update_perf(), update both EPP and perf values in one write to
->>> MSR_AMD_CPPC_REQ, and cache them if successful.
->>>
->>> To accomplish this plumb the EPP value into the update_perf call and 
->>> modify
->>> all its callers to check the return value.
->>>
->>> Reviewed-and-tested-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
->>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>> ---
->>>   drivers/cpufreq/amd-pstate.c | 71 ++++++++++++++++++++++--------------
->>>   1 file changed, 43 insertions(+), 28 deletions(-)
->>>
->>> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
->>> index d21acd961edcd..dd11ba6c00cc3 100644
->>> --- a/drivers/cpufreq/amd-pstate.c
->>> +++ b/drivers/cpufreq/amd-pstate.c
->>> @@ -222,25 +222,36 @@ static s16 shmem_get_epp(struct amd_cpudata 
->>> *cpudata)
->>>   }
->>>   static int msr_update_perf(struct amd_cpudata *cpudata, u32 min_perf,
->>> -                   u32 des_perf, u32 max_perf, bool fast_switch)
->>> +               u32 des_perf, u32 max_perf, u32 epp, bool fast_switch)
->>>   {
->>> +    u64 value;
->>> +
->>> +    value = READ_ONCE(cpudata->cppc_req_cached);
->>
->>
->> There seems to be a mismatch here between what the API is passing and
->> parameters and how this function is *not* using them, and instead
->> using cpudata->cppc_req_cached.
->>
->> The expectation seems to be that the max_perf, min_perf, des_perf and
->> epp fields in cpudata->cppc_req_cached would be the same as @des_perf,
->> @max_perf, @min_perf and @ep, no ?
->>
->> Or is it that for the MSR update, the value in
->> cpudata->cppc_req_cached take precedence over the arguments passed ?
->>
->> Ideally, the "value" should be recomputed here using (@min_perf |
->> @max_perf | @des_perf | @epp) and that value should be cached as you
->> are doing below.
->>
-> 
-> Yeah - that's what the next patch does (which I think you probably saw 
-> after you reviewed it).
-> 
-> Do you think maybe I should just squash the two?  Or would you be 
-> happier if I re-ordered the two?
 
-FYI - I looked into re-ordering and it's not feasible because you need 
-EPP plumbed in order to validate the result.
+--F4b1hG6eb+XkXxv1
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-So I'm going to squash the two patches, and I'll do another one that 
-adjusts tracing locations for your other feedback.
+> Hello,
+>=20
+> syzbot found the following issue on:
+>=20
+> HEAD commit:    7503345ac5f5 Merge tag 'block-6.13-20241207' of git://git=
+=2E..
+> git tree:       upstream
+> console+strace: https://syzkaller.appspot.com/x/log.txt?x=3D1784c820580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D335e39020523e=
+2ed
+> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dff145014d6b0ce6=
+4a173
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Deb=
+ian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D177a8b30580=
+000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D17d80c0f980000
+>=20
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/21582041bcc6/dis=
+k-7503345a.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/3752facf1019/vmlinu=
+x-7503345a.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/3b1c3c4d3bd9/b=
+zImage-7503345a.xz
+>=20
+> The issue was bisected to:
+>=20
+> commit e6d5dbdd20aa6a86974af51deb9414cd2e7794cb
+> Author: Lorenzo Bianconi <lorenzo@kernel.org>
+> Date:   Mon Feb 12 09:50:56 2024 +0000
+>=20
+>     xdp: add multi-buff support for xdp running in generic mode
+>=20
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D129acb3058=
+0000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D119acb3058=
+0000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=3D169acb30580000
+>=20
+> IMPORTANT: if you fix the issue, please add the following tag to the comm=
+it:
+> Reported-by: syzbot+ff145014d6b0ce64a173@syzkaller.appspotmail.com
+> Fixes: e6d5dbdd20aa ("xdp: add multi-buff support for xdp running in gene=
+ric mode")
+>=20
+> BUG: Bad page state in process syz-executor285  pfn:2d302
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2d302
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999485=
+029, free_ts 54592867285
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
 
-> 
->>
->>>       if (fast_switch) {
->>>           wrmsrl(MSR_AMD_CPPC_REQ, READ_ONCE(cpudata->cppc_req_cached));
->>>           return 0;
->>> +    } else {
->>> +        int ret = wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ,
->>> +                    READ_ONCE(cpudata->cppc_req_cached));
->>> +        if (ret)
->>> +            return ret;
->>>       }
->>> -    return wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ,
->>> -                 READ_ONCE(cpudata->cppc_req_cached));
->>> +    WRITE_ONCE(cpudata->cppc_req_cached, value);
->>
->> Since cppc_req_cached is not changed, why write it again ?
-> 
-> Because of the next patch.  It will look at cpudata->cppc_req_cached and 
-> determine if anything changed in it - including EPP.
-> 
-> 
->>
->>> +    WRITE_ONCE(cpudata->epp_cached, epp);
->>> +
->>> +    return 0;
->>>   }
->>>   DEFINE_STATIC_CALL(amd_pstate_update_perf, msr_update_perf);
->>>   static inline int amd_pstate_update_perf(struct amd_cpudata *cpudata,
->>>                         u32 min_perf, u32 des_perf,
->>> -                      u32 max_perf, bool fast_switch)
->>> +                      u32 max_perf, u32 epp,
->>> +                      bool fast_switch)
->>>   {
->>>       return static_call(amd_pstate_update_perf)(cpudata, min_perf, 
->>> des_perf,
->>> -                           max_perf, fast_switch);
->>> +                           max_perf, epp, fast_switch);
->>>   }
->>>   static int msr_set_epp(struct amd_cpudata *cpudata, u32 epp)
->>> @@ -459,12 +470,19 @@ static inline int amd_pstate_init_perf(struct 
->>> amd_cpudata *cpudata)
->>>       return static_call(amd_pstate_init_perf)(cpudata);
->>>   }
->>> -static int shmem_update_perf(struct amd_cpudata *cpudata,
->>> -                 u32 min_perf, u32 des_perf,
->>> -                 u32 max_perf, bool fast_switch)
->>> +static int shmem_update_perf(struct amd_cpudata *cpudata, u32 min_perf,
->>> +                 u32 des_perf, u32 max_perf, u32 epp, bool fast_switch)
->>>   {
->>>       struct cppc_perf_ctrls perf_ctrls;
->>> +    if (cppc_state == AMD_PSTATE_ACTIVE) {
->>> +        int ret = shmem_set_epp(cpudata, epp);
->>> +
->>> +        if (ret)
->>> +            return ret;
->>> +        WRITE_ONCE(cpudata->epp_cached, epp);
->>> +    }
->>> +
->>>       perf_ctrls.max_perf = max_perf;
->>>       perf_ctrls.min_perf = min_perf;
->>>       perf_ctrls.desired_perf = des_perf;
->>> @@ -545,10 +563,10 @@ static void amd_pstate_update(struct 
->>> amd_cpudata *cpudata, u32 min_perf,
->>>       WRITE_ONCE(cpudata->cppc_req_cached, value);
->>> -    amd_pstate_update_perf(cpudata, min_perf, des_perf,
->>> -                   max_perf, fast_switch);
->>> +    amd_pstate_update_perf(cpudata, min_perf, des_perf, max_perf, 0, 
->>> fast_switch);
->>>   cpufreq_policy_put:
->>> +
->>>       cpufreq_cpu_put(policy);
->>>   }
->>> @@ -1545,6 +1563,7 @@ static int amd_pstate_epp_update_limit(struct 
->>> cpufreq_policy *policy)
->>>   {
->>>       struct amd_cpudata *cpudata = policy->driver_data;
->>>       u64 value;
->>> +    u32 epp;
->>>       amd_pstate_update_min_max_limit(policy);
->>> @@ -1557,23 +1576,19 @@ static int amd_pstate_epp_update_limit(struct 
->>> cpufreq_policy *policy)
->>>       value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, cpudata- 
->>> >min_limit_perf);
->>>       if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
->>> -        WRITE_ONCE(cpudata->epp_cached, 0);
->>> -    value |= FIELD_PREP(AMD_CPPC_EPP_PERF_MASK, cpudata->epp_cached);
->>> -
->>> -    WRITE_ONCE(cpudata->cppc_req_cached, value);
->>> +        epp = 0;
->>> +    else
->>> +        epp = READ_ONCE(cpudata->epp_cached);
->>>       if (trace_amd_pstate_epp_perf_enabled()) {
->>> -        trace_amd_pstate_epp_perf(cpudata->cpu, cpudata->highest_perf,
->>> -                      cpudata->epp_cached,
->>> +        trace_amd_pstate_epp_perf(cpudata->cpu, cpudata- 
->>> >highest_perf, epp,
->>>                         cpudata->min_limit_perf,
->>>                         cpudata->max_limit_perf,
->>>                         policy->boost_enabled);
->>>       }
->>> -    amd_pstate_update_perf(cpudata, cpudata->min_limit_perf, 0U,
->>> -                   cpudata->max_limit_perf, false);
->>> -
->>> -    return amd_pstate_set_epp(cpudata, READ_ONCE(cpudata->epp_cached));
->>> +    return amd_pstate_update_perf(cpudata, cpudata->min_limit_perf, 0U,
->>> +                      cpudata->max_limit_perf, epp, false);
->>>   }
->>>   static int amd_pstate_epp_set_policy(struct cpufreq_policy *policy)
->>> @@ -1602,7 +1617,7 @@ static int amd_pstate_epp_set_policy(struct 
->>> cpufreq_policy *policy)
->>>       return 0;
->>>   }
->>> -static void amd_pstate_epp_reenable(struct amd_cpudata *cpudata)
->>> +static int amd_pstate_epp_reenable(struct amd_cpudata *cpudata)
->>>   {
->>>       u64 max_perf;
->>>       int ret;
->>> @@ -1620,17 +1635,19 @@ static void amd_pstate_epp_reenable(struct 
->>> amd_cpudata *cpudata)
->>>                         max_perf, cpudata->boost_state);
->>>       }
->>> -    amd_pstate_update_perf(cpudata, 0, 0, max_perf, false);
->>> -    amd_pstate_set_epp(cpudata, cpudata->epp_cached);
->>> +    return amd_pstate_update_perf(cpudata, 0, 0, max_perf, cpudata- 
->>> >epp_cached, false);
->>                                                 
->> ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->>
->> On an MSR based system, none of the values passed here will be used,
->> and instead the value in cpudata->cppc_req_cached will be used, no?
-> 
-> Currently; yes.  After the next patch that changes.
-> 
->>
->>>   }
->>>   static int amd_pstate_epp_cpu_online(struct cpufreq_policy *policy)
->>>   {
->>>       struct amd_cpudata *cpudata = policy->driver_data;
->>> +    int ret;
->>>       pr_debug("AMD CPU Core %d going online\n", cpudata->cpu);
->>> -    amd_pstate_epp_reenable(cpudata);
->>> +    ret = amd_pstate_epp_reenable(cpudata);
->>> +    if (ret)
->>> +        return ret;
->>>       cpudata->suspended = false;
->>>       return 0;
->>> @@ -1654,10 +1671,8 @@ static int amd_pstate_epp_cpu_offline(struct 
->>> cpufreq_policy *policy)
->>>                         min_perf, min_perf, policy->boost_enabled);
->>>       }
->>> -    amd_pstate_update_perf(cpudata, min_perf, 0, min_perf, false);
->>> -    amd_pstate_set_epp(cpudata, AMD_CPPC_EPP_BALANCE_POWERSAVE);
->>> -
->>> -    return 0;
->>> +    return amd_pstate_update_perf(cpudata, min_perf, 0, min_perf,
->>> +                      AMD_CPPC_EPP_BALANCE_POWERSAVE, false);
->>>   }
->>>   static int amd_pstate_epp_suspend(struct cpufreq_policy *policy)
->>> -- 
->>> 2.43.0
->>>
->>
->> -- 
->> Thanks and Regards
->> gautham.
-> 
+According to the stack trace above this seems an issue in the page_pool
+codebase since we are trying to get a new page from the page allocator
+(__page_pool_alloc_pages_slow()) but the new page we receive is already
+marked with PP_SIGNATURE in pp_magic field (bad reason is set to "page_pool
+leak" in page_bad_reason()) so it already belongs to the pool.
 
+@Jesper, Ilias: any input on it?
+
+Regards,
+Lorenzo
+
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Not tainted 6.13.0-rc1-syzk=
+aller-00337-g7503345ac5f5 #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:2d301
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x8 pfn:0x2d301
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000008 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999478=
+821, free_ts 55944947211
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5810 tgid 5810 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:2d300
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0xffff88802d30=
+4000 pfn:0x2d300
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: ffff88802d304000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999472=
+559, free_ts 55944400344
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5810 tgid 5810 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:72d3b
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x72d3b
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999466=
+297, free_ts 54575113729
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:72d3a
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x72d3a
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999460=
+106, free_ts 54575122306
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:72d39
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x72d39
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999453=
+972, free_ts 54575963863
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:72d38
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x72d38
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999447=
+572, free_ts 54575218247
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:76907
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x76907
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999441=
+200, free_ts 54582364655
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:76906
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x76906
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999421=
+067, free_ts 54582851254
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:76905
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x76905
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999414=
+838, free_ts 54582871367
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+> BUG: Bad page state in process syz-executor285  pfn:76904
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x76904
+> flags: 0xfff00000000000(node=3D0|zone=3D1|lastcpupid=3D0x7ff)
+> raw: 00fff00000000000 dead000000000040 ffff888022ab2000 0000000000000000
+> raw: 0000000000000000 0000000000000001 00000000ffffffff 0000000000000000
+> page dumped because: page_pool leak
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x2820(G=
+FP_ATOMIC|__GFP_NOWARN), pid 5820, tgid 5820 (syz-executor285), ts 62999408=
+239, free_ts 54582895841
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
+>  prep_new_page mm/page_alloc.c:1564 [inline]
+>  get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
+>  __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
+>  alloc_pages_bulk_noprof+0x70b/0xcc0 mm/page_alloc.c:4699
+>  alloc_pages_bulk_array_node_noprof include/linux/gfp.h:239 [inline]
+>  __page_pool_alloc_pages_slow+0x122/0x690 net/core/page_pool.c:538
+>  page_pool_alloc_netmem net/core/page_pool.c:590 [inline]
+>  page_pool_alloc_pages+0xd0/0x1c0 net/core/page_pool.c:597
+>  page_pool_alloc include/net/page_pool/helpers.h:129 [inline]
+>  page_pool_dev_alloc include/net/page_pool/helpers.h:167 [inline]
+>  skb_pp_cow_data+0xc43/0x1640 net/core/skbuff.c:983
+>  netif_skb_check_for_xdp net/core/dev.c:5041 [inline]
+>  netif_receive_generic_xdp net/core/dev.c:5080 [inline]
+>  do_xdp_generic+0x505/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+> page last free pid 5807 tgid 5807 stack trace:
+>  reset_page_owner include/linux/page_owner.h:25 [inline]
+>  free_pages_prepare mm/page_alloc.c:1127 [inline]
+>  free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
+>  __folio_put+0x2c7/0x440 mm/swap.c:112
+>  pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+>  pipe_update_tail fs/pipe.c:224 [inline]
+>  pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+>  new_sync_read fs/read_write.c:484 [inline]
+>  vfs_read+0x991/0xb70 fs/read_write.c:565
+>  ksys_read+0x18f/0x2b0 fs/read_write.c:708
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5820 Comm: syz-executor285 Tainted: G    B            =
+  6.13.0-rc1-syzkaller-00337-g7503345ac5f5 #0
+> Tainted: [B]=3DBAD_PAGE
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS G=
+oogle 09/13/2024
+> Call Trace:
+>  <TASK>
+>  __dump_stack lib/dump_stack.c:94 [inline]
+>  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>  bad_page+0x176/0x1d0 mm/page_alloc.c:501
+>  free_page_is_bad mm/page_alloc.c:923 [inline]
+>  free_pages_prepare mm/page_alloc.c:1119 [inline]
+>  free_unref_page+0x1048/0x1130 mm/page_alloc.c:2657
+>  bpf_xdp_shrink_data net/core/filter.c:4148 [inline]
+>  bpf_xdp_frags_shrink_tail+0x3ee/0x7e0 net/core/filter.c:4169
+>  ____bpf_xdp_adjust_tail net/core/filter.c:4194 [inline]
+>  bpf_xdp_adjust_tail+0x1c3/0x200 net/core/filter.c:4187
+>  bpf_prog_f476d5219b92964a+0x1e/0x20
+>  __bpf_prog_run include/linux/filter.h:701 [inline]
+>  bpf_prog_run_xdp include/net/xdp.h:514 [inline]
+>  bpf_prog_run_generic_xdp+0x686/0x1510 net/core/dev.c:4973
+>  netif_receive_generic_xdp net/core/dev.c:5086 [inline]
+>  do_xdp_generic+0x757/0xd30 net/core/dev.c:5148
+>  __netif_receive_skb_core+0x1ce9/0x4690 net/core/dev.c:5492
+>  __netif_receive_skb_one_core net/core/dev.c:5670 [inline]
+>  __netif_receive_skb+0x12f/0x650 net/core/dev.c:5785
+>  netif_receive_skb_internal net/core/dev.c:5871 [inline]
+>  netif_receive_skb+0x1e8/0x890 net/core/dev.c:5930
+>  tun_rx_batched+0x1b7/0x8f0 drivers/net/tun.c:1550
+>  tun_get_user+0x30d6/0x4890 drivers/net/tun.c:2007
+>  tun_chr_write_iter+0x10d/0x1f0 drivers/net/tun.c:2053
+>  new_sync_write fs/read_write.c:586 [inline]
+>  vfs_write+0xaeb/0xd30 fs/read_write.c:679
+>  ksys_write+0x18f/0x2b0 fs/read_write.c:731
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7f941abf7db0
+> Code: 40 00 48 c7 c2 b8 ff ff ff f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b=
+7 0f 1f 00 80 3d f1 e2 07 00 00 74 17 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff=
+ ff 77 58 c3 0f 1f 80 00 00 00 00 48 83 ec 28 48 89
+> RSP: 002b:00007ffc09852f28 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f941abf7db0
+> RDX: 0000000000011dc0 RSI: 00000000200004c0 RDI: 00000000000000c8
+> RBP: 0000000000000000 R08: 00007ffc09853058 R09: 00007ffc09853058
+> R10: 00007ffc09853058 R11: 0000000000000202 R12: 00007f941ac460de
+> R13: 0000000000000000 R14: 00007ffc09852f60 R15: 00007ffc09852f50
+>  </TASK>
+>=20
+>=20
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
+ion
+>=20
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+>=20
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+>=20
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>=20
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>=20
+> If you want to undo deduplication, reply with:
+> #syz undup
+
+--F4b1hG6eb+XkXxv1
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZ1clxgAKCRA6cBh0uS2t
+rMKMAQCUHS25JA8YHh0O4WmYpVubTHREayATjFhdhepPyCwCEAEAuWY6ARTOuRAC
+sT8/ZMRrHohDx5DUxCL2FoYgiuLewg8=
+=8a6n
+-----END PGP SIGNATURE-----
+
+--F4b1hG6eb+XkXxv1--
 
