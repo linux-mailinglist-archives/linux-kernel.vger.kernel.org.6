@@ -1,142 +1,347 @@
-Return-Path: <linux-kernel+bounces-436837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E78849E8B7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:25:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C8889E8B7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:26:12 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E68281AC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:25:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DA6D1638D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE082147FA;
-	Mon,  9 Dec 2024 06:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6142144D0;
+	Mon,  9 Dec 2024 06:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PDHeFJU0"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="lsewUpVf"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECA917C219
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026E817C219
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733725497; cv=none; b=bF2pvugUI1AtlC1zIMQ+XNUUWq9ADOuyU4y8qyhoUSFZ883dqS46dE8f/K/ZF5CT9zIkhmXB8dzg30w32HDRPj2Wb5xab2r4BV4wv0E2WsXHNSidfmx5tpeV51eSKQ5DtvaTR2hP4vGjAyVKIU1eyqesDzOKZqca5wHapkI3Clw=
+	t=1733725566; cv=none; b=OsmqM3RXFw/uMbF8h8SbiXAEQsqCEDGxZD3rWIxuYhLAXg8ZaOgpxRj1EFC7d5YgvIBhmv6o1j9ZoUP5ZUHXU2p8NvQmma3TB/oidR/8sd8fj8ZXrTsgcpYyOqHU3zuR9G65nVpTSm8ynd6KWgGea9qWmph9F/La9/VuDgAmGhs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733725497; c=relaxed/simple;
-	bh=mGTYY/S1tcZ7mB4hZaQXD2gGwB9lm/gy74p2V9lOMBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gmHPVIHhbhGoKb86fVIi81GtXzRcwx3H7dBQPfB9x2uJYRt3CfvV7WuTYQbWXKmZ6cgObMMNPqN0V+pX2AtFONCLSOEMCR682U2+MoEOmFHpCFRqX2p8qB/t7+rEKKR5Ju2FaTxtr+J6UwW+pg1EUYuk3X0ayDA14fR+AkT+M0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PDHeFJU0; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-434e406a547so11385305e9.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:24:55 -0800 (PST)
+	s=arc-20240116; t=1733725566; c=relaxed/simple;
+	bh=0Ux5G+3m8I/0vhFz1cMsc2FjNZ0UqR28+wU3B+cdKaM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=dKFLAIaa25g8DsTO/ba9TsJ4jUHsHo+ECI92OAepxUJLik0NyieGnVCMxbtvPoRMDq3NpaCkh2U/G7P3wOQmIhZyExpdDv/+cO2E41OkybLM7tGCPpk5i9Xid5EG1NyMiwNJq94HD+1tbIiPVgUF/ERCC5WfGUOkeTqdWMYivBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=lsewUpVf; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21644aca3a0so7795395ad.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:26:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733725494; x=1734330294; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TSWdbzUv/klyRC+VpwtXiylS3X8oQQ/HWEE9CGjI/X4=;
-        b=PDHeFJU0vQBTAPFsllbvcWPzfktZyXYLdV+E+TIkw1ZtAGkSOb0efnCDaxIWD2cqbt
-         5tLEIARzGusAzIWogh6NXdY5smQQuTog+rrI+9d5cJtvzX150ek4EWTWuZ/uaQEiLEXO
-         DKs6ASzQcLX7h9C4DUzaCNXVFUeSrzz7nG+sOroUxkLz7W4mv7tRRHTnGjWsqAeKK5w+
-         DuaurR9m0Y0Uym6eJ9OgyEp6wovueB7njQ2pcB6t6OWHtUaOAk6xS3YvwQKDeJ3Vyjg8
-         G3KJbuQDRF+lCKhvJGDHIwihv7oNEJbRpbowMOmeG6QN7L+xUXbWDMQYyLFQM5gZ1k5C
-         trLg==
+        d=bytedance.com; s=google; t=1733725563; x=1734330363; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:cc:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=T3Po0CZsnx4uWhOLPesJAdexUbWW2ZgIRhYIx1WcbbQ=;
+        b=lsewUpVfbuZvu25l8ZID78OQ2AlYNkuMLMDW0y2wbBEQOWNlneT0x41hPonQ2T70j5
+         fynZYyzHyQOPJNRLHUgic3XUFxS/Ebl+g6pm0q7500q6xWbvYHWBaEpGmgVjB9hxlEjh
+         BmPO7gvyVgcxRV4flD/tIEAAKmJGsNzBq0X5hpQ2Tt66KWrhW6WNVeeQPABcGeY70+8M
+         U+qFYOYm0GIbMDchWlN2DPtokdLAo/3iq/FL+18Crar0flYLO0xsHjfATLgSQ0YNXtoE
+         OxNWOicQJDb+c49nGGeWJTzAo1uRqV+yrKJIPEfGLOXrOj2y4aWWfFfF/L+OwplbaLuF
+         AJrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733725494; x=1734330294;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1733725563; x=1734330363;
+        h=content-transfer-encoding:in-reply-to:cc:content-language:from
+         :references:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TSWdbzUv/klyRC+VpwtXiylS3X8oQQ/HWEE9CGjI/X4=;
-        b=wvFB64Z/NhCI+1okTTWfLe83TWD3u3rQ5isEYfxCgwa64V7xB82QgpA7/8EU3jE4wM
-         PQ9YSNrrdXs11Rt9oXDckiQ+mVoEJPLdjlV46gtCvkqHtejLPyBWgiP8H7Rm9yngeSh3
-         Ie9FqCM/IAabPQksK0zNl+jQ5o5xISlrgXp42M7ZRz+tKfnhbCtrzkAe9SUZZyKl5Wqt
-         RqTWWRB9qp83bThmcvkuhv4zoZNxx+fhkgOQMfQidQ+ckMkIBjUw3rMXmBQOTfOsxNAv
-         zx+CfpRZM4NTRaMyDPuVJTd4QpFqh3gcBDLt8b6AgWFy6UN6hwpbWnaT4i8J5yEtyZyt
-         AmIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVFH29/K0euPlPgAW9z4XUFQfxKzVB8qp/4Qnfe15cgD7fxVaSz2mqOo4zHuF6c9epLRy3fEzM46qUm4o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4sTlSRdiFy7d8RS5Mtk0nlpk8p+bR0e92OY6Y3n5t0yM6AIoB
-	aA+vcc7HEK1uknmkNJYB5HTu3xFa24fe1MSHYmhL/R6qxH9mSrSy5rwGgDi/EfInzXgFbQ16ea0
-	Z
-X-Gm-Gg: ASbGncvFNM/rJE+S4he1teYSQiZVw6Euau/oX+dKdAqDn//AwB9785r3bqRSzJFT/OL
-	ChX5oiznT0VbIEH5MljlnQGYKC7V20xiSwIZtZI/J58DWCGl6J3JoYfRKSB3xIa2hNP4psBd/Ne
-	DA58ATRyWuBtVFqauJRI+K7uYc8y4idK0BPsO620FP4xywZcLox0t0008kfTdDgbJydG1PR7Taz
-	W2vGSGmhtyLY+oCkKqRaF9BoCvZUnQyHkz+gc9Wprtj3lGg4XbAaVA=
-X-Google-Smtp-Source: AGHT+IFBto4Yfrx+pv3ASlNQe/3a3g3g5C2AxRS3XdYTeSZtg6kA2LXtYVN1NzUSxdF0yl5jdyXPsg==
-X-Received: by 2002:a05:6000:178a:b0:385:f417:ee46 with SMTP id ffacd0b85a97d-3862b33b786mr8183957f8f.2.1733725493969;
-        Sun, 08 Dec 2024 22:24:53 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386394dd379sm4517942f8f.24.2024.12.08.22.24.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:24:53 -0800 (PST)
-Date: Mon, 9 Dec 2024 09:24:49 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Akhil R <akhilrajeev@nvidia.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Subject: drivers/crypto/tegra/tegra-se-aes.c:1596 tegra_cmac_do_one_req()
- error: uninitialized symbol 'ret'.
-Message-ID: <134e89a8-49a0-4675-8e07-4f257828f51d@stanley.mountain>
+        bh=T3Po0CZsnx4uWhOLPesJAdexUbWW2ZgIRhYIx1WcbbQ=;
+        b=dSgwaKTDd3bVHsyu7C5qK+Eb5buwKk5oqt2OHuM3dgEaxh4VSJOmY8JHDyy99RrlHB
+         7z/XofVfa3le3P6pVxZS/eHEXCuSsekdN8lGT5P8adWlsdO9+WveO3lNU2/kJV5tISGn
+         j73HDehv5ALvniO9hmjGg0pcvwG+b05+0eRz5pcG6PEzrvggdfTrd+SJAWlmkjeuxmC+
+         UV4wQr1Lkrd+gcTPD5iERWBe+tkXhH4WyBRRi3F/y/ITt23kVhBbbaEi41+6JU3Dzeff
+         oXzAev28nBsrDiGvdFXCl2w+exbqMjV1mGw+e9L8sHSLZ9ALiImZ2z11vjc9t7XuxdMf
+         qAJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUL9cWjdt8ORteu9Xl5SBBddfcjujHm498L+KkYPqCKIhFZGVi1913Q++8Dd9XxYah3326lXrPGe8STk6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+zLcLvgMVZwub7d3gJGQCV5rsYgzF6vXYhoX8azxZ9IcCwvxF
+	zNTzG4c8CWSty5TwOYrpW2wxVAjCRx5XsItU3rWuBTZFhPHluzUZtp/7tIgHEHr8SbEuhdNFioc
+	0
+X-Gm-Gg: ASbGnctThgllaUFyORnx0FmnhibugHdu0i2xvIRLp/cKdMPbV+le4+c2rP9dV1rh2W4
+	ENy70aJi4wm2ZgqlCVL/9SjxKen5J9bYSQMRfEB2jOEIFyzecS4oZTQt2bcIyboOS7k5Q2SAl99
+	7AsvgqyhcvY7B1WJ3y/Qwu5HH0KXmwyTRaTqgUtX1PgoJuDviaxboFGfpJBtAYfB39G2g7eAjZo
+	aEhnwAqFwVKJTWwedkI03pPSk3IKY4c6Mvql1sgKxIK8j5tZ4e+vEx5aVCTJziG7R2iNmZ1dNw=
+X-Google-Smtp-Source: AGHT+IHhwDDHxV5Z5aL87GYIG5NXfoAw7ximhDnS6Z659ODtsKP8VLD0oZjdjiiJIp/pbAu9fleh3g==
+X-Received: by 2002:a17:902:d4ca:b0:215:4f3b:cb20 with SMTP id d9443c01a7336-21614d47f63mr191128785ad.23.1733725563055;
+        Sun, 08 Dec 2024 22:26:03 -0800 (PST)
+Received: from [10.84.148.23] ([203.208.167.149])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21661c08c06sm2939625ad.215.2024.12.08.22.25.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 08 Dec 2024 22:26:02 -0800 (PST)
+Message-ID: <51849c40-1bd5-49bb-ba2f-15cd06f45f48@bytedance.com>
+Date: Mon, 9 Dec 2024 14:25:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in move_pages_pte
+To: syzbot <syzbot+1c58afed1cfd2f57efee@syzkaller.appspotmail.com>,
+ David Hildenbrand <david@redhat.com>, Jann Horn <jannh@google.com>,
+ Hugh Dickins <hughd@google.com>, Muchun Song <muchun.song@linux.dev>
+References: <67548279.050a0220.a30f1.015b.GAE@google.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+Content-Language: en-US
+Cc: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com,
+ hpa@zytor.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ mingo@redhat.com, syzkaller-bugs@googlegroups.com, tglx@linutronix.de,
+ x86@kernel.org
+In-Reply-To: <67548279.050a0220.a30f1.015b.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b5f217084ab3ddd4bdd03cd437f8e3b7e2d1f5b6
-commit: 0880bb3b00c855fc244b7177ffdaafef4d0aa1e0 crypto: tegra - Add Tegra Security Engine driver
-date:   8 months ago
-config: nios2-randconfig-r073-20241206 (https://download.01.org/0day-ci/archive/20241207/202412071747.flPux4oB-lkp@intel.com/config)
-compiler: nios2-linux-gcc (GCC) 14.2.0
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202412071747.flPux4oB-lkp@intel.com/
 
-smatch warnings:
-drivers/crypto/tegra/tegra-se-aes.c:1596 tegra_cmac_do_one_req() error: uninitialized symbol 'ret'.
+On 2024/12/8 01:14, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    af2ea8ab7a54 Add linux-next specific files for 20241205
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13c4e8df980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=76f158395f6f15fd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=1c58afed1cfd2f57efee
+> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=133850f8580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17be9330580000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/8af0861258fa/disk-af2ea8ab.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ffb38cf7a344/vmlinux-af2ea8ab.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/6fbd2e50358a/bzImage-af2ea8ab.xz
+> 
+> The issue was bisected to:
+> 
+> commit 5b29c4156f5801fced2ec504b44ab98f60c480bf
+> Author: Qi Zheng <zhengqi.arch@bytedance.com>
+> Date:   Wed Dec 4 11:09:51 2024 +0000
+> 
+>      x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64
+> 
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=16d344df980000
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=15d344df980000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=11d344df980000
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+1c58afed1cfd2f57efee@syzkaller.appspotmail.com
+> Fixes: 5b29c4156f58 ("x86: select ARCH_SUPPORTS_PT_RECLAIM if X86_64")
+> 
+> ==================================================================
+> BUG: KASAN: slab-use-after-free in __lock_acquire+0x78/0x2100 kernel/locking/lockdep.c:5089
+> Read of size 8 at addr ffff888034718978 by task syz-executor352/6070
+> 
+> CPU: 0 UID: 0 PID: 6070 Comm: syz-executor352 Not tainted 6.13.0-rc1-next-20241205-syzkaller #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Call Trace:
+>   <TASK>
+>   __dump_stack lib/dump_stack.c:94 [inline]
+>   dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+>   print_address_description mm/kasan/report.c:378 [inline]
+>   print_report+0x169/0x550 mm/kasan/report.c:489
+>   kasan_report+0x143/0x180 mm/kasan/report.c:602
+>   __lock_acquire+0x78/0x2100 kernel/locking/lockdep.c:5089
+>   lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5849
+>   __raw_spin_lock include/linux/spinlock_api_smp.h:133 [inline]
+>   _raw_spin_lock+0x2e/0x40 kernel/locking/spinlock.c:154
+>   spin_lock include/linux/spinlock.h:351 [inline]
+>   move_pages_pte+0x8aa/0x3400 mm/userfaultfd.c:1248
+>   move_pages+0xe75/0x16a0 mm/userfaultfd.c:1754
+>   userfaultfd_move fs/userfaultfd.c:1899 [inline]
+>   userfaultfd_ioctl+0x5221/0x6840 fs/userfaultfd.c:2022
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:906 [inline]
+>   __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fed8de85af9
+> Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 e1 18 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fed8de40238 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007fed8df10328 RCX: 00007fed8de85af9
+> RDX: 0000000020000080 RSI: 00000000c028aa05 RDI: 0000000000000003
+> RBP: 00007fed8df10320 R08: 00007fed8de406c0 R09: 00007fed8de406c0
+> R10: 00007fed8de406c0 R11: 0000000000000246 R12: 00007fed8dedd334
+> R13: 0000000000000010 R14: 00007ffc241241e0 R15: 00007ffc241242c8
+>   </TASK>
+> 
+> Allocated by task 6070:
+>   kasan_save_stack mm/kasan/common.c:47 [inline]
+>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>   unpoison_slab_object mm/kasan/common.c:319 [inline]
+>   __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
+>   kasan_slab_alloc include/linux/kasan.h:250 [inline]
+>   slab_post_alloc_hook mm/slub.c:4104 [inline]
+>   slab_alloc_node mm/slub.c:4153 [inline]
+>   kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
+>   ptlock_alloc+0x20/0x70 mm/memory.c:7026
+>   ptlock_init include/linux/mm.h:2971 [inline]
+>   pagetable_pte_ctor include/linux/mm.h:2998 [inline]
+>   __pte_alloc_one_noprof include/asm-generic/pgalloc.h:73 [inline]
+>   pte_alloc_one+0xd3/0x510 arch/x86/mm/pgtable.c:41
+>   __do_huge_pmd_anonymous_page mm/huge_memory.c:1229 [inline]
+>   do_huge_pmd_anonymous_page+0x2fb/0xb30 mm/huge_memory.c:1374
+>   create_huge_pmd mm/memory.c:5737 [inline]
+>   __handle_mm_fault mm/memory.c:5986 [inline]
+>   handle_mm_fault+0x15a7/0x1bb0 mm/memory.c:6183
+>   do_user_addr_fault arch/x86/mm/fault.c:1338 [inline]
+>   handle_page_fault arch/x86/mm/fault.c:1481 [inline]
+>   exc_page_fault+0x459/0x8b0 arch/x86/mm/fault.c:1539
+>   asm_exc_page_fault+0x26/0x30 arch/x86/include/asm/idtentry.h:623
+> 
+> Freed by task 6071:
+>   kasan_save_stack mm/kasan/common.c:47 [inline]
+>   kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+>   kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:576
+>   poison_slab_object mm/kasan/common.c:247 [inline]
+>   __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+>   kasan_slab_free include/linux/kasan.h:233 [inline]
+>   slab_free_hook mm/slub.c:2338 [inline]
+>   slab_free mm/slub.c:4598 [inline]
+>   kmem_cache_free+0x195/0x410 mm/slub.c:4700
+>   pagetable_pte_dtor include/linux/mm.h:3009 [inline]
 
-vim +/ret +1596 drivers/crypto/tegra/tegra-se-aes.c
+OK, so the problem is that ptdesc->ptl is not freed via RCU:
 
-0880bb3b00c855f Akhil R 2024-04-03  1577  static int tegra_cmac_do_one_req(struct crypto_engine *engine, void *areq)
-0880bb3b00c855f Akhil R 2024-04-03  1578  {
-0880bb3b00c855f Akhil R 2024-04-03  1579  	struct ahash_request *req = ahash_request_cast(areq);
-0880bb3b00c855f Akhil R 2024-04-03  1580  	struct tegra_cmac_reqctx *rctx = ahash_request_ctx(req);
-0880bb3b00c855f Akhil R 2024-04-03  1581  	struct crypto_ahash *tfm = crypto_ahash_reqtfm(req);
-0880bb3b00c855f Akhil R 2024-04-03  1582  	struct tegra_cmac_ctx *ctx = crypto_ahash_ctx(tfm);
-0880bb3b00c855f Akhil R 2024-04-03  1583  	struct tegra_se *se = ctx->se;
-0880bb3b00c855f Akhil R 2024-04-03  1584  	int ret;
-0880bb3b00c855f Akhil R 2024-04-03  1585  
-0880bb3b00c855f Akhil R 2024-04-03  1586  	if (rctx->task & SHA_UPDATE) {
-0880bb3b00c855f Akhil R 2024-04-03  1587  		ret = tegra_cmac_do_update(req);
-0880bb3b00c855f Akhil R 2024-04-03  1588  		rctx->task &= ~SHA_UPDATE;
-0880bb3b00c855f Akhil R 2024-04-03  1589  	}
-0880bb3b00c855f Akhil R 2024-04-03  1590  
-0880bb3b00c855f Akhil R 2024-04-03  1591  	if (rctx->task & SHA_FINAL) {
-0880bb3b00c855f Akhil R 2024-04-03  1592  		ret = tegra_cmac_do_final(req);
-0880bb3b00c855f Akhil R 2024-04-03  1593  		rctx->task &= ~SHA_FINAL;
-0880bb3b00c855f Akhil R 2024-04-03  1594  	}
+___pte_free_tlb
+--> pagetable_pte_dtor
+     --> ptlock_free
+         --> kmem_cache_free (free immediately!)
+     paravirt_tlb_remove_table
+     --> free PTE page via RCU
 
-Is it possible for both SHA_UPDATE and SHA_FINAL to be clear?
+In retract_page_tables(), it calls pte_free_defer() to free
+ptdesc->ptl and PTE page via RCU, so there is no problem.
 
-0880bb3b00c855f Akhil R 2024-04-03  1595  
-0880bb3b00c855f Akhil R 2024-04-03 @1596  	crypto_finalize_hash_request(se->engine, req, ret);
-                                                                                              ^^^
-If so then this is uninitialized.
+To fix it, will also free ptdesc->ptl in ptlock_free() via RCU.
 
-0880bb3b00c855f Akhil R 2024-04-03  1597  
-0880bb3b00c855f Akhil R 2024-04-03  1598  	return 0;
-0880bb3b00c855f Akhil R 2024-04-03  1599  }
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
-
+>   ___pte_free_tlb+0x2b/0x140 arch/x86/mm/pgtable.c:63
+>   __pte_free_tlb arch/x86/include/asm/pgalloc.h:61 [inline]
+>   free_pte+0x142/0x190 mm/pt_reclaim.c:31
+>   zap_pte_range mm/memory.c:1780 [inline]
+>   zap_pmd_range mm/memory.c:1822 [inline]
+>   zap_pud_range mm/memory.c:1851 [inline]
+>   zap_p4d_range mm/memory.c:1872 [inline]
+>   unmap_page_range+0x4062/0x48d0 mm/memory.c:1893
+>   zap_page_range_single+0x45c/0x630 mm/memory.c:2018
+>   madvise_dontneed_single_vma mm/madvise.c:859 [inline]
+>   madvise_dontneed_free mm/madvise.c:940 [inline]
+>   madvise_vma_behavior mm/madvise.c:1270 [inline]
+>   madvise_walk_vmas mm/madvise.c:1502 [inline]
+>   do_madvise+0x2774/0x4d90 mm/madvise.c:1689
+>   __do_sys_madvise mm/madvise.c:1705 [inline]
+>   __se_sys_madvise mm/madvise.c:1703 [inline]
+>   __x64_sys_madvise+0xa6/0xc0 mm/madvise.c:1703
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> 
+> The buggy address belongs to the object at ffff888034718960
+>   which belongs to the cache page->ptl of size 64
+> The buggy address is located 24 bytes inside of
+>   freed 64-byte region [ffff888034718960, ffff8880347189a0)
+> 
+> The buggy address belongs to the physical page:
+> page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x34718
+> flags: 0xfff00000000000(node=0|zone=1|lastcpupid=0x7ff)
+> page_type: f5(slab)
+> raw: 00fff00000000000 ffff88801ac4f780 dead000000000122 0000000000000000
+> raw: 0000000000000000 00000000802a002a 00000000f5000000 0000000000000000
+> page dumped because: kasan: bad access detected
+> page_owner tracks the page as allocated
+> page last allocated via order 0, migratetype Unmovable, gfp_mask 0x52cc0(GFP_KERNEL|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP), pid 5823, tgid 5823 (syz-executor352), ts 65548803787, free_ts 65433386693
+>   set_page_owner include/linux/page_owner.h:32 [inline]
+>   post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1549
+>   prep_new_page mm/page_alloc.c:1557 [inline]
+>   get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3475
+>   __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4752
+>   alloc_pages_mpol+0x30e/0x550 mm/mempolicy.c:2270
+>   alloc_slab_page mm/slub.c:2408 [inline]
+>   allocate_slab+0x8f/0x3a0 mm/slub.c:2574
+>   new_slab mm/slub.c:2627 [inline]
+>   ___slab_alloc+0xc27/0x14a0 mm/slub.c:3815
+>   __slab_alloc+0x58/0xa0 mm/slub.c:3905
+>   __slab_alloc_node mm/slub.c:3980 [inline]
+>   slab_alloc_node mm/slub.c:4141 [inline]
+>   kmem_cache_alloc_noprof+0x268/0x380 mm/slub.c:4160
+>   ptlock_alloc mm/memory.c:7026 [inline]
+>   ptlock_init include/linux/mm.h:2971 [inline]
+>   pmd_ptlock_init include/linux/mm.h:3078 [inline]
+>   pagetable_pmd_ctor include/linux/mm.h:3116 [inline]
+>   pmd_alloc_one_noprof include/asm-generic/pgalloc.h:141 [inline]
+>   __pmd_alloc+0x10b/0x670 mm/memory.c:6436
+>   pmd_alloc include/linux/mm.h:2862 [inline]
+>   copy_pmd_range+0x7352/0x77a0 mm/memory.c:1241
+>   copy_pud_range mm/memory.c:1298 [inline]
+>   copy_p4d_range mm/memory.c:1322 [inline]
+>   copy_page_range+0x99f/0xe90 mm/memory.c:1420
+>   dup_mmap kernel/fork.c:751 [inline]
+>   dup_mm kernel/fork.c:1693 [inline]
+>   copy_mm+0x12d2/0x2060 kernel/fork.c:1742
+>   copy_process+0x1845/0x3d80 kernel/fork.c:2393
+>   kernel_clone+0x226/0x8e0 kernel/fork.c:2805
+>   __do_sys_clone kernel/fork.c:2948 [inline]
+>   __se_sys_clone kernel/fork.c:2932 [inline]
+>   __x64_sys_clone+0x258/0x2a0 kernel/fork.c:2932
+>   do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>   do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+> page last free pid 6052 tgid 6051 stack trace:
+>   reset_page_owner include/linux/page_owner.h:25 [inline]
+>   free_pages_prepare mm/page_alloc.c:1127 [inline]
+>   free_frozen_pages+0xe0d/0x10e0 mm/page_alloc.c:2658
+>   __folio_put+0x2b3/0x360 mm/swap.c:112
+>   __tlb_remove_table arch/x86/include/asm/tlb.h:34 [inline]
+>   __tlb_remove_table_free mm/mmu_gather.c:227 [inline]
+>   tlb_remove_table_rcu+0x76/0xf0 mm/mmu_gather.c:282
+>   rcu_do_batch kernel/rcu/tree.c:2567 [inline]
+>   rcu_core+0xaaa/0x17a0 kernel/rcu/tree.c:2823
+>   handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
+>   __do_softirq kernel/softirq.c:595 [inline]
+>   invoke_softirq kernel/softirq.c:435 [inline]
+>   __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
+>   irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
+>   instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
+>   sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
+>   asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+> 
+> Memory state around the buggy address:
+>   ffff888034718800: 00 00 00 00 fc fc fc fc 00 00 00 00 00 00 00 00
+>   ffff888034718880: fc fc fc fc 00 00 00 00 00 00 00 00 fc fc fc fc
+>> ffff888034718900: 00 00 00 00 00 00 00 00 fc fc fc fc fa fb fb fb
+>                                                                  ^
+>   ffff888034718980: fb fb fb fb fc fc fc fc fa fb fb fb fb fb fb fb
+>   ffff888034718a00: fc fc fc fc 00 00 00 00 00 00 00 00 fc fc fc fc
+> ==================================================================
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want syzbot to run the reproducer, reply with:
+> #syz test: git://repo/address.git branch-or-commit-hash
+> If you attach or paste a git patch, syzbot will apply it before testing.
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
 
