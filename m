@@ -1,245 +1,277 @@
-Return-Path: <linux-kernel+bounces-437032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D11289E8E3A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:00:31 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0409E8E3B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:00:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CCE2281F4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 781A9281F51
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E52216E2C;
-	Mon,  9 Dec 2024 08:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBAD921764D;
+	Mon,  9 Dec 2024 08:56:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WfdtTpv5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U5HlBCGt"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2076.outbound.protection.outlook.com [40.107.96.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44458216E26
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734573; cv=none; b=aMpP/u9IPaklD2mn3mmN4rn1eplLKJyo4CRKlm9ijCQsb2nb+FAENH6Mt08JF0wxoCJzsEOxuE1+hCU5rAD+5pmIEul5tAecjyFvLz7JWfwQ0C9FpDj4G+KMzbFIzf+DvN6465Q4AhauicTe4zFCvCyMPMIba2y/+G7nvfHR+9w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734573; c=relaxed/simple;
-	bh=qCsUqWXFymqOS7E/W1U4rjTN/6buOB48o2+WSD1FLXw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uuxe+mNq7UOGt/jLGYZ2zXj2OELPeQ/FSqEtSL3LYcfFw3HTGrRb7+Tgdur1XdAyj1fHncGO73C25rKkn3zzDk7FrEHygytVaQUX/PHjYD4NWTAmub4lc4AYZAPYD1HMa5mRdlDWFZhu2LNrv6ov2YeoDdhQA2+a7xN575Rkz5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WfdtTpv5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733734563;
-	bh=qCsUqWXFymqOS7E/W1U4rjTN/6buOB48o2+WSD1FLXw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WfdtTpv5OR5e5iy0MBaxG60xCh5uxvDBEOz/AMpvBrSvjJhcrv31olEh2e30JAEu4
-	 tLkwYFNGUD+tCXPrbOIQzFErRMRm+bSOSQy4t9wAsKQ1TMtYCSt95DIk15mbvPechA
-	 9xi8FcDsoxJHlMefI/kbH0I5Cn3tabRSOaoeukJi6B929tMj/EygltCDDIWQE6D/Lo
-	 HsJhqrGfm9+T9yxasgL0oGoyZEXV6Pw55uO2SUM3CYUZPPok9MqYNOV1iDbBMRySSM
-	 BwTtb1YoPFoazDQryOl3212Job3Pl7VdCk2JkEkcA+8aRaUAUBBNRmLs7YfNWvzOvi
-	 dllexF+65/9gA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1131C17E35F2;
-	Mon,  9 Dec 2024 09:56:03 +0100 (CET)
-Message-ID: <c0cbd447-42c7-4529-8455-cdde9d693423@collabora.com>
-Date: Mon, 9 Dec 2024 09:56:02 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4672215F68;
+	Mon,  9 Dec 2024 08:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733734590; cv=fail; b=QsAHQyzo0vwMLROHw0uNa7wqxFqVdc+0YWOLFnZYdZJ2XF2FFJ3xJn4wfiv7qgut4s7hl3w5WbVk2BAuAKx8u+mITyXM0Kxw4+kZVVQDzv9uekaXo10iw90nrYxD4qNJyyUZ3xlQa5+OONoR4w9xl/v1HgqCpJ3Hu84lkIJX87M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733734590; c=relaxed/simple;
+	bh=V2nRaopr3/64o16poiroi4gYGzDaOjbd2ify5t2ORVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=GdiXM5nu6fAt+4lxTxbXvxfUBsYg8RkYJn2UltDnPX9cbf30EDGjfi6JiDbp6bG0vHGkQ3ODjmdQtGOTyuNdFOS5sDxrhHsj/xkp1AzYY2QFbqu0l5Y8/JrzXbEknQ+QlQXz4/v+4gRcvzWSf9ffCiMiYbaGgYwqqjEdBHhGNHE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U5HlBCGt; arc=fail smtp.client-ip=40.107.96.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=p1W1hfxuz6vft3D1Wia4yR/pWWPKxgFFPh3a8qqPkDaGLw7N8CtPSZ1bfLPyy1GCN0rlxAs3iJ9JNzLeXet8HWFW83dJxnkEPmxSO4CMbs17IRRPHC+vKqZL3MPxWHRkGIagzchLNXTBsR4saw2ogJSMNqZ4nQirnJb4uHEYumP2/GugjzyZrLaYlQHAPa8aIWC8DfDZGfk57Y3fPqKVX8TZRtC5DeyMbDeWBwU7nkWMEMDHQ/0W0WkNFfUwbBpcq3NY9rs7+2q8TZCSvxlICcQQNNwXaCJkHm6TbmP9OY7M2fEsfnb/mgumOnr618KV7IqfSBEfyp+1S9mzN7hqaQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=c3GwJqpOTItgqpoiFZNbgHcp2ceRA1Urj2Qc0EJn9dI=;
+ b=sBWufFHC4nZBlOPr6//Jo4okLmisl6+lnGR4M5PJUj8JzN6nDwJiZXA/UkfKQtuhCo4NjA33S3n78t+jWfEQyheGoISHDPvGOqX1+uPwOGgpnYvh+l8okZpVN6rA+ZAr1/jP/IiUZps3L8dSFus3/+aYti4Y5DthlA6FRCE/tLVURsiyX1dWQ4k44z9UJNHPn9cr7qL4H4ZoQ+weQZHL5ERI0V4mxhvWuFYDgZ6aABMKXIfTjw2MaWeCrRBydZpdylQA0dgAbvYQSpD7gNlX2ktiOQLMma4FgYeVf6SAEXhUgvKx7DsiIVq4e17rpy0YffkMI0mhAr1kao52J8hv0w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=c3GwJqpOTItgqpoiFZNbgHcp2ceRA1Urj2Qc0EJn9dI=;
+ b=U5HlBCGtEeBH5opSMXELQG4//9yh17NRzOeRBLNCsn6mwU0Ygl/MayvVk5Nb0DKAYJgEaUg1xhlWrTxCaLc2QCXJtJnWzslM6WkanMaX4Dxuq6/gNiUOPo25Pzlvy6DNEXM8Q20kWjxvqjfxPVFKVkL3AlUUa7q/bAw5oEChfrY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com (2603:10b6:8:ee::7) by
+ MW3PR12MB4346.namprd12.prod.outlook.com (2603:10b6:303:58::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8207.19; Mon, 9 Dec 2024 08:56:25 +0000
+Received: from DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7]) by DS7PR12MB8252.namprd12.prod.outlook.com
+ ([fe80::2d0c:4206:cb3c:96b7%6]) with mapi id 15.20.8207.017; Mon, 9 Dec 2024
+ 08:56:25 +0000
+Date: Mon, 9 Dec 2024 14:26:14 +0530
+From: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+To: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Subject: Re: [PATCH v2 13/16] cpufreq/amd-pstate: Check if CPPC request has
+ changed before writing to the MSR or shared memory
+Message-ID: <Z1awrnPHwTVMht4E@BLRRASHENOY1.amd.com>
+References: <20241208063031.3113-1-mario.limonciello@amd.com>
+ <20241208063031.3113-14-mario.limonciello@amd.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208063031.3113-14-mario.limonciello@amd.com>
+X-ClientProxiedBy: PN0PR01CA0022.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:4e::19) To DS7PR12MB8252.namprd12.prod.outlook.com
+ (2603:10b6:8:ee::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [git pull] drm for 6.13-rc1
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "sashal@kernel.org" <sashal@kernel.org>,
- "javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "wenst@chromium.org" <wenst@chromium.org>
-Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
- "sima@ffwll.ch" <sima@ffwll.ch>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
- <Z0NXQ6iRK43x6WbG@sashalap>
- <CAPM=9tw5eTBCDn93GyrMjF3r_kDbr2-v1GgKdZECFNupqakDFw@mail.gmail.com>
- <95f01caa-0f32-4c5c-b262-435f839c81aa@gmail.com>
- <17d4fac0db55a8f9835b53d55463ed9c4331950d.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <17d4fac0db55a8f9835b53d55463ed9c4331950d.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB8252:EE_|MW3PR12MB4346:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2b4e4164-c6c7-4287-fdff-08dd182f5c53
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KnQbhcRQPUfqGJLJBrzIEPhjAwOli+6AbNWK2b9FpOxL7u2HOck/aS0HZr8k?=
+ =?us-ascii?Q?ay2WT4lJXp3YcY8lY01On8lesaqsL+QO/LbEavimeTSY8P8AwmeBkCAKNq1L?=
+ =?us-ascii?Q?SBB4vZGcLtFLWy4/s5ajkTHgMxL9vLqeLr/frJis569kRAWu8mD/AisNI/e1?=
+ =?us-ascii?Q?FlYAGNZ9Ki+eYopxP6rAI6UFoA1mXY8UCsPkOjHFZqUJ2lBsalHj9FXJu1b9?=
+ =?us-ascii?Q?hxg/62QuLak2s2ooZhtBf3IAIJP9ZmniBICvVtQEtUgWgh6UGjxJNAN+FIXO?=
+ =?us-ascii?Q?Shf/2RZcOtbrp6dLn6QOTUUp/cYhrXbnhsB+KCINUkijwKxWpizr7H3ZBgWt?=
+ =?us-ascii?Q?Ndf1PMXo5x62EI/FmJ/IM59XsIdF5M3lsx3wqBTFnoNR9wavsgm7YdqObgLh?=
+ =?us-ascii?Q?PbN0xx7tUCE36qMF4sGCJ9wyjnozq00ht48wL4UJrSaqfup2MddO0XPNNm90?=
+ =?us-ascii?Q?lBKlA1+yCk2VjPqHMySmYU1VkJ2IPfV4RSLOIadq0zolpfxazWm2+rQQUBEO?=
+ =?us-ascii?Q?FwApue7bzSnTHudLns9TU0GD0vHdWsBaZ1HCfZqXdUEwesCD0xqP4kCiwbdb?=
+ =?us-ascii?Q?3WYR/FqSWMWLpXUzD2cfS/kfUQGM407obHVLgN5FC7Ot1nhoVlpRRnIQtMrW?=
+ =?us-ascii?Q?h7zykWAUWDe5a+AUSFQW6SGTF2iC/bX7u57escdnI09eect6bWFXj4cWaP/b?=
+ =?us-ascii?Q?pMUkBDky31hY/5uka5qPv57WC6Hx22Wami2w9CxFynFQ47x8S3DY31dhmP6I?=
+ =?us-ascii?Q?Pvjl+H0sYfTJErrG7YbeqGEH2KwiE2ZjtGpbbHJDBZ/1H+TTLFQ3KQnv0j1m?=
+ =?us-ascii?Q?DDYRXqRJuRwoARlLp6kqUD/VAQJ1VK4hlkekapyEMjuizsi6+Ew1Ht/80ncl?=
+ =?us-ascii?Q?hgw1cxOBbBekEFtS7jGLeeepgPQ7kXNuElmH0adATzZuJRcipjEN7MFR1Xde?=
+ =?us-ascii?Q?E6NlUfzvOJ4lg42moca5bVXEwUtmuaCz6jgMKYL8ZuDCWCsai0StsoGUzaxP?=
+ =?us-ascii?Q?VlbPmsJ4EMO8HJDQCeT90m7dCp4/N/aosKBnXYJcQgmuejZ+L4R7SpC5spwa?=
+ =?us-ascii?Q?Z0ZVhus1QkIA2VFxj5a1Of14H99N2qffH4DXJVXWj4zfQ7/pgKzW9EgQ4yYv?=
+ =?us-ascii?Q?9tagQxwgKfRrUahs7LxtYVUg8cw822Swx7wic2Gv6YMIxFkqh9atF5ilJ10x?=
+ =?us-ascii?Q?L29FtNPWJgf1YA4W9ryvGzhY1y1j90XEoW0yqmmfY5amNFB9VG6TUJQ/p7+F?=
+ =?us-ascii?Q?FcKfP2gwu5SdhNOER4V+vrLA8wDTpZTgzz040bTlb8PzMnRvuxM/b1cQFxQy?=
+ =?us-ascii?Q?o6BIWjrueIE/0gt3Rfz2+i53cHiM6OgQ2Oe0iZzw/jL08AX67BsU476w+fSx?=
+ =?us-ascii?Q?TupoxLQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB8252.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?HKWBGv5KoIzSxZHH9Kd9cF4VFR1fsA30BlI1TnX8M2kU/N0BD0GD/zbL5Jtt?=
+ =?us-ascii?Q?M+5lfKZ8pS8kGB7N+O/h4KfUnoX2XxJEf9C+W65V+3yNoRX48B5TFYrSce3l?=
+ =?us-ascii?Q?qDp1Ay/qCschI8BXkghg1tETFzFELPGpe4tF02jusgbYPPBAqeKDp2cKvVox?=
+ =?us-ascii?Q?TvbFhBEu/cMuJzZWp4gQfl4m0+k4U2i6h/WfmMX0GvkMGtEIR9fELMrhimkp?=
+ =?us-ascii?Q?FsW96Cz+g+K5cWYQo0+5O5LumoDroe3+1vGwhpMIuG/qylEMzECbwYXKeMD6?=
+ =?us-ascii?Q?o2JWt4bP0azTnOrRgCNG4QxCfNA5hKz4FPF1JeL1RlkRI017g4M/eAbwQi4S?=
+ =?us-ascii?Q?0JywIYOT7kFCbsg0Bk6DDqJhLcXxevMlmzs/4FT1C+QBSf879LD1yoHdtEVU?=
+ =?us-ascii?Q?lsj44jUzhtLKhqNtltjGicbXBQ0gPPvhPaaTeas0pElCVayFvHaVOT8zZlQd?=
+ =?us-ascii?Q?duvuKdYAUt6hdBjwiTfzij115zGXEC1b0zF0tUdXrU+y9fPQz1QJ4Nhb1aEO?=
+ =?us-ascii?Q?2nMCAUr/WsbAkTusIQI8Mv30nXvt4Nvg0Gde8lKsVmtW/JEO73dEGhBfH8qy?=
+ =?us-ascii?Q?GSNDDBkaPMubxYriWQSLyoLB3N9Ear4/AWGqGaxawzf+kyTE4WczCg7HY4OD?=
+ =?us-ascii?Q?NpvUQ2a0tQF/HCfSmIxTudxCTjbLYMLf3NPV8P+Mdxtfbi2KO6YLU7jvR689?=
+ =?us-ascii?Q?Drt/hYJEvEkLjmsQKKrTDecCi6w/N/hgsqJ/vcq+HmrJDkBsY3vHvUqpcBOW?=
+ =?us-ascii?Q?GlMuT2qEfMjr8EYr0o7TVRmoKi1Z6sodgesK6SZnZvTv8WU3A9TOS6lf08Ji?=
+ =?us-ascii?Q?mgJtUauHTm4Gj4f5wAv+TQWBYIdMUMeHG2B9jR/BONmKl4u1SzdqgnJJauyC?=
+ =?us-ascii?Q?vZ9WWn4oSRW2sipGsiKuKh9MHsiWeuAH/6p8TCWQQdjyz+1Gen1oHFzG1LqV?=
+ =?us-ascii?Q?dsggTw3M8GdcnQIUwx+EAJLUSCbItOR3j+Uyc/+cpin8R7FwJFDoKHudJCfh?=
+ =?us-ascii?Q?2qfLpjFX/W8sOHfyr4oOsD74QWEd6TZz7jTzgmfEsegYi0do63y39iGFdrl7?=
+ =?us-ascii?Q?ZHiF1wKwA10sEIZEuOU5v0pWkF9Shiwytm+XCUPRZUwuMsnYK8mHxnNQIM2N?=
+ =?us-ascii?Q?0tQ5if3N9hCFpj8jIrju6mmJmmJ0okaIjd+zmTFKiPSG4MAK3+oeXqua5wtM?=
+ =?us-ascii?Q?zJ9Y02Os0XvN6RmRhSHoszbbVwn5ILrCAYI6tT1ZujVeYF0Vkvot+F4VoiSz?=
+ =?us-ascii?Q?qn0/x3dmFHK6zhw2fSISiJ0BE4Q4us3ytWRHkxpTQbq9kwa1vppOP10WyVj0?=
+ =?us-ascii?Q?12BmjH2MbIojPGZL1kUlCaarCjuXScfvCjK3U837CvwGTh3qaan3xDGNi0jg?=
+ =?us-ascii?Q?fVhNt0nSEdb+BrXKP9UOynP4bWDW321NGHsVal3xTZpmqI5FjVclKi6R/8vi?=
+ =?us-ascii?Q?2AF3kWh050HP+7MqOAPg8PjhFjF4EYJdYfaHzDUb92Yg+fTqIcyXz+AxJME2?=
+ =?us-ascii?Q?P91fOiq/tZtMkfN0sKp/IWi2rVvRQw7SlUK2lU0u3rGToaxpvm2HARbMOGzK?=
+ =?us-ascii?Q?juuowvgZp+c6mF9UkBzEyu4I/wxLV4mG3O8f7n9q?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2b4e4164-c6c7-4287-fdff-08dd182f5c53
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB8252.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 08:56:25.1888
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NsqlVg6dvr2FftqJkhvyjhOA2Wz9NtKJ6REDl5O+RgZultOM6NPlE6JlXRvwLaPRU95k9Ot2sYJu8QHHbMlOdQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4346
 
-Il 06/12/24 09:54, CK Hu (胡俊光) ha scritto:
-> Hi, Sasha:
+Hello Mario,
+
+
+On Sun, Dec 08, 2024 at 12:30:28AM -0600, Mario Limonciello wrote:
+> Move the common MSR field formatting code to msr_update_perf() from
+> its callers.
 > 
-> On Mon, 2024-11-25 at 01:35 +0100, Javier Carrasco wrote:
->> External email : Please do not click links or open attachments until you have verified the sender or the content.
->>
->>
->> On 24/11/2024 23:58, Dave Airlie wrote:
->>> On Mon, 25 Nov 2024 at 02:41, Sasha Levin <sashal@kernel.org> wrote:
->>>>
->>>> On Thu, Nov 21, 2024 at 10:25:45AM +1000, Dave Airlie wrote:
->>>>> Hi Linus,
->>>>>
->>>>> This is the main drm pull request for 6.13.
->>>>>
->>>>> I've done a test merge into your tree, there were two conflicts both
->>>>> of which seem easy enough to resolve for you.
->>>>>
->>>>> There's a lot of rework, the panic helper support is being added to
->>>>> more drivers, v3d gets support for HW superpages, scheduler
->>>>> documentation, drm client and video aperture reworks, some new
->>>>> MAINTAINERS added, amdgpu has the usual lots of IP refactors, Intel
->>>>> has some Pantherlake enablement and xe is getting some SRIOV bits, but
->>>>> just lots of stuff everywhere.
->>>>>
->>>>> Let me know if there are any issues,
->>>>
->>>> Hey Dave,
->>>>
->>>> After the PR was merged, I've started seeing boot failures reported by
->>>> KernelCI:
->>>
->>> I'll add the mediatek names I see who touched anything in the area recently.
->>>
->>> Dave.
->>>>
->>>> [    4.395400] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
->>>> [    4.396155] mediatek-drm mediatek-drm.5.auto: bound 1c000000.ovl (ops 0xffffd35fd12977b8)
->>>> [    4.411951] mediatek-drm mediatek-drm.5.auto: bound 1c002000.rdma (ops 0xffffd35fd12989c0)
->>>> [    4.536837] mediatek-drm mediatek-drm.5.auto: bound 1c004000.ccorr (ops 0xffffd35fd1296cf0)
->>>> [    4.545181] mediatek-drm mediatek-drm.5.auto: bound 1c005000.aal (ops 0xffffd35fd1296a80)
->>>> [    4.553344] mediatek-drm mediatek-drm.5.auto: bound 1c006000.gamma (ops 0xffffd35fd12972b0)
->>>> [    4.561680] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
->>>> [    4.570025] ------------[ cut here ]------------
->>>> [    4.574630] refcount_t: underflow; use-after-free.
->>>> [    4.579416] WARNING: CPU: 6 PID: 81 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0x148
->>>> [    4.587670] Modules linked in:
->>>> [    4.590714] CPU: 6 UID: 0 PID: 81 Comm: kworker/u32:3 Tainted: G        W          6.12.0 #1 cab58e2e59020ebd4be8ada89a65f465a316c742
->>>> [    4.602695] Tainted: [W]=WARN
->>>> [    4.605649] Hardware name: Acer Tomato (rev2) board (DT)
->>>> [    4.610947] Workqueue: events_unbound deferred_probe_work_func
->>>> [    4.616768] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>> [    4.623715] pc : refcount_warn_saturate+0xf4/0x148
->>>> [    4.628493] lr : refcount_warn_saturate+0xf4/0x148
->>>> [    4.633270] sp : ffff8000807639c0
->>>> [    4.636571] x29: ffff8000807639c0 x28: ffff34ff4116c640 x27: ffff34ff4368e080
->>>> [    4.643693] x26: ffffd35fd1299ac8 x25: ffff34ff46c8c410 x24: 0000000000000000
->>>> [    4.650814] x23: ffff34ff4368e080 x22: 00000000fffffdfb x21: 0000000000000002
->>>> [    4.657934] x20: ffff34ff470c6000 x19: ffff34ff410c7c10 x18: 0000000000000006
->>>> [    4.665055] x17: 666678302073706f x16: 2820656772656d2e x15: ffff800080763440
->>>> [    4.672176] x14: 0000000000000000 x13: 2e656572662d7265 x12: ffffd35fd2ed14f0
->>>> [    4.679297] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd35fd0342150
->>>> [    4.686418] x8 : c0000000ffffdfff x7 : ffffd35fd2e21450 x6 : 00000000000affa8
->>>> [    4.693539] x5 : ffffd35fd2ed1498 x4 : 0000000000000000 x3 : 0000000000000000
->>>> [    4.700660] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff34ff40932580
->>>> [    4.707781] Call trace:
->>>> [    4.710216]  refcount_warn_saturate+0xf4/0x148 (P)
->>>> [    4.714993]  refcount_warn_saturate+0xf4/0x148 (L)
->>>> [    4.719772]  kobject_put+0x110/0x118
->>>> [    4.723335]  put_device+0x1c/0x38
->>>> [    4.726638]  mtk_drm_bind+0x294/0x5c0
->>>> [    4.730289]  try_to_bring_up_aggregate_device+0x16c/0x1e0
->>>> [    4.735673]  __component_add+0xbc/0x1c0
->>>> [    4.739495]  component_add+0x1c/0x30
->>>> [    4.743058]  mtk_disp_rdma_probe+0x140/0x210
->>>> [    4.747314]  platform_probe+0x70/0xd0
->>>> [    4.750964]  really_probe+0xc4/0x2a8
->>>> [    4.754527]  __driver_probe_device+0x80/0x140
->>>> [    4.758870]  driver_probe_device+0x44/0x120
->>>> [    4.763040]  __device_attach_driver+0xc0/0x108
->>>> [    4.767470]  bus_for_each_drv+0x8c/0xf0
->>>> [    4.771294]  __device_attach+0xa4/0x198
->>>> [    4.775117]  device_initial_probe+0x1c/0x30
->>>> [    4.779286]  bus_probe_device+0xb4/0xc0
->>>> [    4.783109]  deferred_probe_work_func+0xb0/0x100
->>>> [    4.787714]  process_one_work+0x18c/0x420
->>>> [    4.791712]  worker_thread+0x30c/0x418
->>>> [    4.795449]  kthread+0x128/0x138
->>>> [    4.798665]  ret_from_fork+0x10/0x20
->>>> [    4.802229] ---[ end trace 0000000000000000 ]---
->>>>
->>>> I don't think that I'll be able to bisect further as I don't have the
->>>> relevant hardware available.
->>>>
->>>> --
->>>> Thanks,
->>>> Sasha
->>
->>
->> Hello, I am one of those who touched something in the area.
->>
->> To check if my changes are the cause of the boot failures, please apply
->> this patch:
->>
->> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->> b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->> index 9a8ef8558da9..85be035a209a 100644
->> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
->> @@ -373,11 +373,12 @@ static bool mtk_drm_get_all_drm_priv(struct device
->> *dev)
->>          struct mtk_drm_private *temp_drm_priv;
->>          struct device_node *phandle = dev->parent->of_node;
->>          const struct of_device_id *of_id;
->> +       struct device_node *node;
->>          struct device *drm_dev;
->>          unsigned int cnt = 0;
->>          int i, j;
->>
->> -       for_each_child_of_node_scoped(phandle->parent, node) {
->> +       for_each_child_of_node(phandle->parent, node) {
->>                  struct platform_device *pdev;
->>
->>                  of_id = of_match_node(mtk_drm_of_ids, node);
->>
+> Ensure that the MSR write is necessary before flushing a write out.
+> Also drop the comparison from the passive flow tracing.
 > 
-> Does Javier's patch fix the problem?
+> Reviewed-and-tested-by: Dhananjay Ugwekar <dhananjay.ugwekar@amd.com>
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+
+[..snip..]
+
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+> index dd11ba6c00cc3..2178931fbf87b 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -224,15 +224,26 @@ static s16 shmem_get_epp(struct amd_cpudata *cpudata)
+>  static int msr_update_perf(struct amd_cpudata *cpudata, u32 min_perf,
+>  			   u32 des_perf, u32 max_perf, u32 epp, bool fast_switch)
+>  {
+> -	u64 value;
+> +	u64 value, prev;
+> +
+> +	value = prev = READ_ONCE(cpudata->cppc_req_cached);
+> +
+> +	value &= ~(AMD_CPPC_MAX_PERF_MASK | AMD_CPPC_MIN_PERF_MASK |
+> +		   AMD_CPPC_DES_PERF_MASK | AMD_CPPC_EPP_PERF_MASK);
+> +	value |= FIELD_PREP(AMD_CPPC_MAX_PERF_MASK, max_perf);
+> +	value |= FIELD_PREP(AMD_CPPC_DES_PERF_MASK, des_perf);
+> +	value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, min_perf);
+> +	value |= FIELD_PREP(AMD_CPPC_EPP_PERF_MASK, epp);
+> +
+> +	if (value == prev)
+> +		return 0;
+>  
+> -	value = READ_ONCE(cpudata->cppc_req_cached);
+>  	if (fast_switch) {
+> -		wrmsrl(MSR_AMD_CPPC_REQ, READ_ONCE(cpudata->cppc_req_cached));
+> +		wrmsrl(MSR_AMD_CPPC_REQ, value);
+>  		return 0;
+>  	} else {
+> -		int ret = wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ,
+> -					READ_ONCE(cpudata->cppc_req_cached));
+> +		int ret = wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
+> +
+>  		if (ret)
+>  			return ret;
+
+Ok, so you are recomputing the value in this patch. Does it also make
+sense to move trace_amd_pstate_perf() call to this place?
+
+
+--
+Thanks and Regards
+gautham.
+
+>  	}
+> @@ -528,9 +539,7 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
+>  {
+>  	unsigned long max_freq;
+>  	struct cpufreq_policy *policy = cpufreq_cpu_get(cpudata->cpu);
+> -	u64 prev = READ_ONCE(cpudata->cppc_req_cached);
+>  	u32 nominal_perf = READ_ONCE(cpudata->nominal_perf);
+> -	u64 value = prev;
+>  
+>  	des_perf = clamp_t(unsigned long, des_perf, min_perf, max_perf);
+>  
+> @@ -546,27 +555,14 @@ static void amd_pstate_update(struct amd_cpudata *cpudata, u32 min_perf,
+>  	if (!cpudata->boost_supported)
+>  		max_perf = min_t(unsigned long, nominal_perf, max_perf);
+>  
+> -	value &= ~(AMD_CPPC_MAX_PERF_MASK | AMD_CPPC_MIN_PERF_MASK |
+> -		   AMD_CPPC_DES_PERF_MASK);
+> -	value |= FIELD_PREP(AMD_CPPC_MAX_PERF_MASK, max_perf);
+> -	value |= FIELD_PREP(AMD_CPPC_DES_PERF_MASK, des_perf);
+> -	value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, min_perf);
+> -
+>  	if (trace_amd_pstate_perf_enabled() && amd_pstate_sample(cpudata)) {
+>  		trace_amd_pstate_perf(min_perf, des_perf, max_perf, cpudata->freq,
+>  			cpudata->cur.mperf, cpudata->cur.aperf, cpudata->cur.tsc,
+> -				cpudata->cpu, (value != prev), fast_switch);
+> +				cpudata->cpu, fast_switch);
+>  	}
+>  
+> -	if (value == prev)
+> -		goto cpufreq_policy_put;
+> -
+> -	WRITE_ONCE(cpudata->cppc_req_cached, value);
+> -
+>  	amd_pstate_update_perf(cpudata, min_perf, des_perf, max_perf, 0, fast_switch);
+>  
+> -cpufreq_policy_put:
+> -
+>  	cpufreq_cpu_put(policy);
+>  }
+>  
+> @@ -1562,19 +1558,10 @@ static void amd_pstate_epp_cpu_exit(struct cpufreq_policy *policy)
+>  static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
+>  {
+>  	struct amd_cpudata *cpudata = policy->driver_data;
+> -	u64 value;
+>  	u32 epp;
+>  
+>  	amd_pstate_update_min_max_limit(policy);
+>  
+> -	value = READ_ONCE(cpudata->cppc_req_cached);
+> -
+> -	value &= ~(AMD_CPPC_MAX_PERF_MASK | AMD_CPPC_MIN_PERF_MASK |
+> -		   AMD_CPPC_DES_PERF_MASK | AMD_CPPC_EPP_PERF_MASK);
+> -	value |= FIELD_PREP(AMD_CPPC_MAX_PERF_MASK, cpudata->max_limit_perf);
+> -	value |= FIELD_PREP(AMD_CPPC_DES_PERF_MASK, 0);
+> -	value |= FIELD_PREP(AMD_CPPC_MIN_PERF_MASK, cpudata->min_limit_perf);
+> -
+>  	if (cpudata->policy == CPUFREQ_POLICY_PERFORMANCE)
+>  		epp = 0;
+>  	else
+> -- 
+> 2.43.0
 > 
-
-CK, to resolve the issue, please revert commit
-
-fd620fc25d88 ("drm/mediatek: Switch to for_each_child_of_node_scoped()")
-
-Thanks,
-Angelo
-
-> Regards,
-> CK
-> 
->>
->> ---
->>
->>
->> This chunk can be found in mtk_drm_get_all_drm_priv(), which is not
->> listed in the trace, but it is called from mtk_drm_bind().
->>
->> The loop did not release the child_node if cnt == MAX_CRTC (by means of
->> a break), which goes against how for_each_child_of_node() should be
->> handled. If the child_node is indeed required afterwards (it is not
->> referenced anywhere after the loop), it should be acquired via
->> of_node_get() and stored somewhere to be able to put it later.
->>
->> Then another issue would lie underneath as the reference to the
->> child_node is not stored in any way. But if this patch fixes the issue,
->> then I suppose it should be applied immediately, and the rest should be
->> discussed later on.
->>
->> By the way, are there any logs with debug/error messages to analyze
->> further is the issue is something different?
->>
->> Thanks and best regards,
->> Javier Carrasco
-> 
-
-
 
