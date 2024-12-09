@@ -1,291 +1,144 @@
-Return-Path: <linux-kernel+bounces-438525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 617E39EA254
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:01:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C37189EA257
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:02:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B74165051
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:01:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1339162AEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A4319FA93;
-	Mon,  9 Dec 2024 23:00:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD5119E975;
+	Mon,  9 Dec 2024 23:02:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m/Nsf/qf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H4C7/opO"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E3019F13B;
-	Mon,  9 Dec 2024 23:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5050019E82A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:02:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733785258; cv=none; b=UXGluuFru6DkaUQCMtXlSU9RizlkqclAZYvQGtK826JfqZUYH99mY+2JGE+CaFQnf2hiNmXcqiPhZ42QfC1RyX8xD+Yi7rCr2X0H9SkVHLikpVjCuAlCyxQjMl8TYK8bUxDLp+4oUWlGgjvId6Pl5zXLy7agurA6JZDD7O7kxI4=
+	t=1733785329; cv=none; b=pJg1vh84Nba01FrB7JQ/ma6RJ6VKl+qUgrpsdVcz6qoP3RP65ORPsnS9Kj+Ry3MGyVDrX5IrNAkNtSy6+uaAATODY1p52JcO32dSpD0ytYQrVuRWnpt6itqT9wmFGDvZExtRUBFTb8BrBmqBiWaAYa6Jm7FsWTqoEzk/A9ZzXNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733785258; c=relaxed/simple;
-	bh=cWBSulf0fQno5+t6thUiJdaghxDbSCl+9ViNwrb0+wY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=l1FEbqTyEV+Try6mFoBaqptTgNCleizkZECPK9iauug2HFpaCJvzbKOULAde4ityRFG2SevagFiOiGt1vPd7ts6Xe2WrSw8ZDOV7AsOtMGF7DA0PlpeGdljgb57kga9i1aqKXZrhQUGdoRkssdjj78FuUuCrLdEXvHn1aCfPbJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m/Nsf/qf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9GnRlw023398;
-	Mon, 9 Dec 2024 23:00:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	NAuKrMbDopwaoZZJtuSjTggUNBIyj4rtYk3o27a46J0=; b=m/Nsf/qf7wlXJ2Dh
-	RABuW1l3qsKfOgA+4p5/nO7tqzU9a0T5lVZ0luBzSGpZdE515oCibA7fFyQcJkgt
-	sFw67o5LByXsJOsxJWjYiiV5rVVBj/J/GQPjsdaEO81Kj6JDI3N/1my/ryEI/RGx
-	3nuunmsVZWNItJenzKwP+UanvhprDdtflTEKQgygRF78iHiLhUyaeOZrZQcRPNZS
-	kpMcXZ3VoeDxzPN6D2ZkbChyzA/6Ud3xeE7aBW8OVcfibQ4CAE129X2U9v9dKSRv
-	CBvOOI5TwirH+Gar5eTFWos7Z9fP8xKhnzqh+msC/8wEwJy935xttid04ETUa5T5
-	ry1E1A==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetpj5x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 23:00:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9N0maq026552
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 23:00:48 GMT
-Received: from [10.4.85.9] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 15:00:45 -0800
-Message-ID: <72e113e7-c1be-48c0-9018-2580f654667a@quicinc.com>
-Date: Tue, 10 Dec 2024 10:00:42 +1100
+	s=arc-20240116; t=1733785329; c=relaxed/simple;
+	bh=liVgg1Un+JU5vW6EYLPj8di7vygEt5iqSY9bAiVog34=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oqntdbjvLew9E96pFwc7rTunz8wmpARx8w4OKeqrqxSwcvty/+JyxGjWld6jvr1wpYqKUHkwCYOKgM59CZvKL5zkKWZr9pJ8Gzl8Hmr/uyeTPVI+zEta8UnnfOzQiYHEWCsccK5y5jF6zj+Fm4z7wzsHJbBcGhi4bm43A4q5qMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H4C7/opO; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-30033e07ef3so35688221fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:02:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733785325; x=1734390125; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZK4h9MVOu/9hHVaZl4zKkp7NLqwJGJJgqac6hR7MTzI=;
+        b=H4C7/opO6VRlO1FOruHjjKT+5sRaz+Z1bOwuetx89+wRwiCDJeYC25VGFEq9oXb7oM
+         l6s91X4z4wb0A0C/w2AU1NIMRnim1aUHESYQtlLOCWoC4j25EDBbB/Lxmzoz3TBMc5od
+         pMkCnqKdpfxSM3u952XJjB5elM2Zh7Cqgb41cnuJWMd3WAKp4SbsAHQliEm/VNTKzfAU
+         t4QVQEgkftv3WZV0+tbCtg6VuMF5gl9IC5x/sGFZk8JR5dz4QdjXx+YuuPdGqXFlPWmP
+         Ytlo81VWlbr5crnDKkwMce4e/5uc649cNMdP9uMfNLqVe+XWFkCcTGBEhoFJ7Ihakbox
+         PbQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733785325; x=1734390125;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZK4h9MVOu/9hHVaZl4zKkp7NLqwJGJJgqac6hR7MTzI=;
+        b=Wycoa+Eg5diaz8SCr5FgELWyXmRDe5sS2asKhDbOppY7eHM/FM4YlSFzf+DBsC3qoB
+         pRbI8kAKbNjpkto6+Cz58F/gI9eBnrGpR29BmHqtJnn/YeteY2n8Nwqw4zw1EjoEkhO8
+         xRiH8xcEQNT4CEgYdc4CUhlfmHsxoC0j0tVnMjEb7PLaQFwwjJAtUUdWUGvZH4sxxUbv
+         kjouzHY4UXJWKFqXzFNdwiYbxfNO18gRMemPrVEz8S4/neoRL8zy2+r1QGyZuBVd/jzS
+         l7ECyNxpCtx/qzD3rWDBB3Z+dltuRVhjC64cvaS8Zvz0ROkd/Y7FmyBMxGC3wz0M1DYJ
+         tjNA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+8sePir66iIgycq2TNR6QT6DH4dfTmPfI1xTPdwL940/eEVL10IJsy3r2wbSdQnHGU8QduldzhnkIOuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPXzdfhrtIpbFZGZ4mI9MA3fY2j7Ff9SsWQ+FXTuyT6BDhuv1O
+	AF0l+VqJEiWoqM9UmMH2SsKnB8gkMJx6M2ctci+jYqOQty6oalMyQ+XBwTTTeFE=
+X-Gm-Gg: ASbGncsFyRPO0Z/JwvXveg/jbu+s1XnGGHuAMWJQQ6Jy0MkTFawIO+Gq1gxZ+ufQ28U
+	WBZxYyZ4crx1IwSXgOEstYkjYQmCmghPK0FuZeAQIv6qQJHB2MkVerFd3X0/uIVAndEhSi6dv6f
+	EqE/zhu9mXR9uGbNrjp9lg5jy9sUKrRiy2iCsI8bivG+QnRK6W7FUDwX2z/etcttH/B1JLyWCM3
+	J778Ix7rOERtihECsq8jNe9+8LunwYL4XBT9tHC91Ji9WTdzuu/Gs6Ki/YgBaVzKM1BK5oKGBX1
+	LTodjfQvZx3mjkebwtcu+Db+//aUxrUSjA==
+X-Google-Smtp-Source: AGHT+IGnzZ2PJOWGOC6WltKgaOFUzxo3aZDddEYLzVRS44dM7WNYY9fUmV4e2qc5kDuxOcyc0FX6/Q==
+X-Received: by 2002:a2e:be0b:0:b0:2ff:b8f5:5a17 with SMTP id 38308e7fff4ca-3023282c1femr3802651fa.5.1733785325460;
+        Mon, 09 Dec 2024 15:02:05 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30038ce97b4sm10022871fa.118.2024.12.09.15.02.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 15:02:04 -0800 (PST)
+Date: Tue, 10 Dec 2024 01:02:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Julius Werner <jwerner@chromium.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, Anshuman Khandual <anshuman.khandual@arm.com>, 
+	Besar Wicaksono <bwicaksono@nvidia.com>, D Scott Phillips <scott@os.amperecomputing.com>, 
+	Easwar Hariharan <eahariha@linux.microsoft.com>, Oliver Upton <oliver.upton@linux.dev>, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/6] arm64: cputype: Add QCOM_CPU_PART_KRYO_3XX_GOLD
+Message-ID: <k64saaxnipegp4ot636apzewrs7dz2j7xdpqxg6iotbaderuia@hxqf63bwwztf>
+References: <20241209174430.2904353-1-dianders@chromium.org>
+ <20241209094310.3.I18e0288742871393228249a768e5d56ea65d93dc@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/10] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF
-To: Jens Wiklander <jens.wiklander@linaro.org>
-CC: Sumit Garg <sumit.garg@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>
-References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
- <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-2-f502ef01e016@quicinc.com>
- <CAHUa44GxY=nZP9O6XpO-nRKJ_wUnK66h-QEnFPJ9myFGydBZYw@mail.gmail.com>
-Content-Language: en-US
-From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-In-Reply-To: <CAHUa44GxY=nZP9O6XpO-nRKJ_wUnK66h-QEnFPJ9myFGydBZYw@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HsVkGMPasLElsgq_B9TdnnWbRhpkzkEk
-X-Proofpoint-ORIG-GUID: HsVkGMPasLElsgq_B9TdnnWbRhpkzkEk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999
- bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090178
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209094310.3.I18e0288742871393228249a768e5d56ea65d93dc@changeid>
 
-Hi Jens.
+On Mon, Dec 09, 2024 at 09:43:13AM -0800, Douglas Anderson wrote:
+> Add a definition for the Qualcomm Kryo 300-series Gold cores.
+> 
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> I have no idea if this is actually right and no way to test it, but it
+> fits the pattern of the other definitions. Someone from Qualcomm ought
+> to confirm this.
 
-On 12/10/2024 2:46 AM, Jens Wiklander wrote:
-> Hi Amirreza,
+This matches what I see on SDM845.
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
 > 
-> On Tue, Dec 3, 2024 at 5:20 AM Amirreza Zarrabi
-> <quic_azarrabi@quicinc.com> wrote:
->>
->> For drivers that can transfer data to the TEE without needing shared
->> memory from client, it is necessary to receive the user address
->> directly, bypassing any processing by the TEE subsystem. Introduce
->> TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT/OUTPUT/INOUT to represent
->> userspace buffers.
+>  arch/arm64/include/asm/cputype.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Internally you allocate a bounce buffer from the pool of shared memory
-> and copy the content of the user space buffer into that.
-> Wouldn't it be fair to replace "without needing shared memory" with
-> "without using shared memory"?
+> diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
+> index 488f8e751349..c8058f91a5bd 100644
+> --- a/arch/arm64/include/asm/cputype.h
+> +++ b/arch/arm64/include/asm/cputype.h
+> @@ -119,6 +119,7 @@
+>  #define QCOM_CPU_PART_KRYO		0x200
+>  #define QCOM_CPU_PART_KRYO_2XX_GOLD	0x800
+>  #define QCOM_CPU_PART_KRYO_2XX_SILVER	0x801
+> +#define QCOM_CPU_PART_KRYO_3XX_GOLD	0x802
+>  #define QCOM_CPU_PART_KRYO_3XX_SILVER	0x803
+>  #define QCOM_CPU_PART_KRYO_4XX_GOLD	0x804
+>  #define QCOM_CPU_PART_KRYO_4XX_SILVER	0x805
+> @@ -195,6 +196,7 @@
+>  #define MIDR_QCOM_KRYO MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO)
+>  #define MIDR_QCOM_KRYO_2XX_GOLD MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_2XX_GOLD)
+>  #define MIDR_QCOM_KRYO_2XX_SILVER MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_2XX_SILVER)
+> +#define MIDR_QCOM_KRYO_3XX_GOLD MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_3XX_GOLD)
+>  #define MIDR_QCOM_KRYO_3XX_SILVER MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_3XX_SILVER)
+>  #define MIDR_QCOM_KRYO_4XX_GOLD MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_4XX_GOLD)
+>  #define MIDR_QCOM_KRYO_4XX_SILVER MIDR_CPU_MODEL(ARM_CPU_IMP_QCOM, QCOM_CPU_PART_KRYO_4XX_SILVER)
+> -- 
+> 2.47.0.338.g60cca15819-goog
 > 
 
-You are right. I'll update it.
-
->>
->> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
->> ---
->>  drivers/tee/tee_core.c   | 26 ++++++++++++++++++++++++++
->>  include/linux/tee_drv.h  |  6 ++++++
->>  include/uapi/linux/tee.h | 22 ++++++++++++++++------
->>  3 files changed, 48 insertions(+), 6 deletions(-)
->>
->> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
->> index 24edce4cdbaa..942ff5b359b2 100644
->> --- a/drivers/tee/tee_core.c
->> +++ b/drivers/tee/tee_core.c
->> @@ -381,6 +381,16 @@ static int params_from_user(struct tee_context *ctx, struct tee_param *params,
->>                         params[n].u.value.b = ip.b;
->>                         params[n].u.value.c = ip.c;
->>                         break;
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT:
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT:
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
->> +                       params[n].u.membuf.uaddr = u64_to_user_ptr(ip.a);
->> +                       params[n].u.membuf.size = ip.b;
->> +
->> +                       if (!access_ok(params[n].u.membuf.uaddr, params[n].u.membuf.size))
->> +                               return -EFAULT;
->> +
->> +                       break;
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
->> @@ -449,6 +459,11 @@ static int params_to_user(struct tee_ioctl_param __user *uparams,
->>                             put_user(p->u.value.c, &up->c))
->>                                 return -EFAULT;
->>                         break;
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT:
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
->> +                       if (put_user((u64)p->u.membuf.size, &up->b))
->> +                               return -EFAULT;
->> +                       break;
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
->>                         if (put_user((u64)p->u.memref.size, &up->b))
->> @@ -649,6 +664,12 @@ static int params_to_supp(struct tee_context *ctx,
->>                         ip.b = p->u.value.b;
->>                         ip.c = p->u.value.c;
->>                         break;
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT:
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
->> +                       ip.a = (u64)p->u.membuf.uaddr;
->> +                       ip.b = p->u.membuf.size;
->> +                       ip.c = 0;
->> +                       break;
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
->> @@ -751,6 +772,11 @@ static int params_from_supp(struct tee_param *params, size_t num_params,
->>                         p->u.value.b = ip.b;
->>                         p->u.value.c = ip.c;
->>                         break;
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT:
->> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
->> +                       p->u.membuf.uaddr = u64_to_user_ptr(ip.a);
->> +                       p->u.membuf.size = ip.b;
->> +                       break;
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
->>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
->>                         /*
->> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
->> index a54c203000ed..b66e611fece4 100644
->> --- a/include/linux/tee_drv.h
->> +++ b/include/linux/tee_drv.h
->> @@ -82,6 +82,11 @@ struct tee_param_memref {
->>         struct tee_shm *shm;
->>  };
->>
->> +struct tee_param_membuf {
-> 
-> I would prefer tee_param_ubuf to better describe what it is.
-> 
-
-Ack.
-
->> +       void * __user uaddr;
->> +       size_t size;
->> +};
->> +
->>  struct tee_param_value {
->>         u64 a;
->>         u64 b;
->> @@ -92,6 +97,7 @@ struct tee_param {
->>         u64 attr;
->>         union {
->>                 struct tee_param_memref memref;
->> +               struct tee_param_membuf membuf;
->>                 struct tee_param_value value;
->>         } u;
->>  };
->> diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
->> index d0430bee8292..fae68386968a 100644
->> --- a/include/uapi/linux/tee.h
->> +++ b/include/uapi/linux/tee.h
->> @@ -151,6 +151,13 @@ struct tee_ioctl_buf_data {
->>  #define TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT        6
->>  #define TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT 7       /* input and output */
->>
->> +/*
->> + * These defines memory buffer parameters.
-> 
-> user space buffer
-> 
->> + */
->> +#define TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT 8
->> +#define TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT        9
->> +#define TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT 10      /* input and output */
-> 
-> TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_*
-> 
-
-Ack.
-
->> +
->>  /*
->>   * Mask for the type part of the attribute, leaves room for more types
->>   */
->> @@ -186,14 +193,17 @@ struct tee_ioctl_buf_data {
->>  /**
->>   * struct tee_ioctl_param - parameter
->>   * @attr: attributes
->> - * @a: if a memref, offset into the shared memory object, else a value parameter
->> - * @b: if a memref, size of the buffer, else a value parameter
->> + * @a: if a memref, offset into the shared memory object,
->> + *     else if a membuf, address into the user buffer,
->> + *     else a value parameter
->> + * @b: if a memref or membuf, size of the buffer, else a value parameter
->>   * @c: if a memref, shared memory identifier, else a value parameter
->>   *
->> - * @attr & TEE_PARAM_ATTR_TYPE_MASK indicates if memref or value is used in
->> - * the union. TEE_PARAM_ATTR_TYPE_VALUE_* indicates value and
->> - * TEE_PARAM_ATTR_TYPE_MEMREF_* indicates memref. TEE_PARAM_ATTR_TYPE_NONE
->> - * indicates that none of the members are used.
->> + * @attr & TEE_PARAM_ATTR_TYPE_MASK indicates if memref, membuf, or value is
->> + * used in the union. TEE_PARAM_ATTR_TYPE_VALUE_* indicates value,
->> + * TEE_PARAM_ATTR_TYPE_MEMREF_* indicates memref, and TEE_PARAM_ATTR_TYPE_MEMBUF_*
->> + * indicates membuf. TEE_PARAM_ATTR_TYPE_NONE indicates that none of the members
->> + * are used.
->>   *
->>   * Shared memory is allocated with TEE_IOC_SHM_ALLOC which returns an
->>   * identifier representing the shared memory object. A memref can reference
-> 
-> Please update the comment above with UBUF and ubuf as needed.
-> 
-
-Ack.
-
-> Cheers,
-> Jens
-> 
-
-Best Regadrs,
-Amir
-
->>
->> --
->> 2.34.1
->>
+-- 
+With best wishes
+Dmitry
 
