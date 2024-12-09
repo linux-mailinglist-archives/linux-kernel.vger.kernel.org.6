@@ -1,173 +1,174 @@
-Return-Path: <linux-kernel+bounces-436811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8189E8B34
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:52:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EA49E8BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:52:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00292281556
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:52:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FB1516321B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:52:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C1321018B;
-	Mon,  9 Dec 2024 05:52:51 +0000 (UTC)
-Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E6ED21481C;
+	Mon,  9 Dec 2024 06:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yk5NPPTp"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8880020FA99;
-	Mon,  9 Dec 2024 05:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F2A1C5489
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733723571; cv=none; b=N8OTTDCtv0A0lR/o47J1sx+o8pZSazcmEq4nvnrYFUOw2Gjt2N9z6OoTcZYGrqx2BerXOBFAzuawnpgJJEtukrMNhNwZG0LPRSZ1GhKMya9cAjjAkLEusBO3XqKA1dkyX4FNqjcHDHNvOYpDdnVHgiPPyMr5aNLf4yGcU7MfL70=
+	t=1733727117; cv=none; b=EIqySFju2d/ivy/CoyZlQVXJjFEEGsQ7AviHlXg80e3g8cST/ckisBTeQdI+FfF0H4jrTgqwr3JJqrmcrlqZOltQ+JdXpc5l4xNZTjhUy4Rk7QgusfqXJG5WeQG0KM5YIlX9LtZeIeo9J3Xz1YBhJ5uYh4LUQ5xA7Rujc5lD/u8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733723571; c=relaxed/simple;
-	bh=GDGTPi4d5yIoDO2bhGqiLBL86hh2U9JhaHeZ9Z+T7wc=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZyzdKpGSu+i2ZuKIFgZjspEd8Kd2kauiqd9fQ7ANaMwZ82V1C/lUcpYblJKY8l2dOa7T2+Ry8v+bXAsv/xm9yBEX6BrkLgzhS35XpWI63GVpZdaoo2buEJ2qsMfbxmhyW9IjUdLkMvo5cMLcYfftoZ+ZCwKocm8rXmhI/ef1x9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B94A6p9012518;
-	Sun, 8 Dec 2024 21:52:42 -0800
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy1s12r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sun, 08 Dec 2024 21:52:42 -0800 (PST)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Sun, 8 Dec 2024 21:52:40 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Sun, 8 Dec 2024 21:52:35 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <sohaib.nadeem@amd.com>, <gregkh@linuxfoundation.org>
-CC: <stable@vger.kernel.org>, <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
-        <Rodrigo.Siqueira@amd.com>, <alexander.deucher@amd.com>,
-        <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>, <airlied@gmail.com>,
-        <daniel@ffwll.ch>, <wayne.lin@amd.com>, <sashal@kernel.org>,
-        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <aurabindo.pillai@amd.com>, <charlene.liu@amd.com>,
-        <gabe.teeger@amd.com>, <amd-gfx@lists.freedesktop.org>,
-        <Nicholas.Kazlauskas@amd.com>
-Subject: [PATCH 6.1.y] drm/amd/display: fixed integer types and null check locations
-Date: Mon, 9 Dec 2024 14:50:28 +0800
-Message-ID: <20241209065028.3427316-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733727117; c=relaxed/simple;
+	bh=gjWi9UfQlY8GyExiw+avsaQCZ/mlkQOOqNPCHaN/8Mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=mEkJmC7qAFD7SnT/8+2sk1BNZhFYEAKhmb2ER29jGRTZj1e5A9DNC4ptOXxcC/YYMqQJUJjVFQPVCsazse6pSE9UVT2EikBUSASbwyZBmlWfSbZg6xXqs5ex69emkzu4/05D61IHoJtmiN9jSwmTHZqgaJJz3IzIecu0JVjXM0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yk5NPPTp; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-434acf1f9abso38940055e9.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:51:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733727113; x=1734331913; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UU+rFrYBqU+HyZU9fxW7fsHHwD25k+Ib4ntmd1sD3tw=;
+        b=Yk5NPPTpvRMEs+Am6QeodtOC7RlbENcKZ4NxQslc1HWf+Ih2xMUpTE9FWJgQsIbV7V
+         OfSsIsmy+1RS27icwWERU1Y/ilHhGCy8n5ra0495gJ4UjsD8YzuBE0AXje8XSO+PMJEk
+         lJv9H6Gkskdgqx+6ejLyqRoqrxDh10g0dqBe7FoXyOpwPUujo17fJxOurYB2J+tuVSGJ
+         Y2MT73xFspruI/x+Z//arKKzlPUAA1vPmJrIteC9Qm6eXyBucefikrdMHvNBEBc6wxri
+         SugJaYEQhB/ag6YncZo4dcthGC4+ARBR0B25N6ZvJahuA5ulyaDxpyi1LbFhpfubggd7
+         KbAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733727113; x=1734331913;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UU+rFrYBqU+HyZU9fxW7fsHHwD25k+Ib4ntmd1sD3tw=;
+        b=ahjktArY4tAsCokQDUNFTgNIgkCNmzTeLlvaaoyn/aNSK+hCQm5SVURUkICd03zA7j
+         kzKGszlKhcD1vopstAphjm0+2cagXCbaexUgMHMkIL3LO1+zw3AT0OwQKp/cBnq7F/Qq
+         HPOcZ2Htz2l792gt8t9z3bL9jHIRexvs4pfTlMrIGvW2AibIwbvbwaV06TtDlIdKOW45
+         +pJpF2N/+8JWgyhc1ePeT9X/vdAQSSATzuklK2YmukBkWsnYt3dc2aYrzzbueKrnaX/H
+         qIlAAz4jY81oSuonEmHFtOZ4j+96aWcUrWb+QOtdbYn3LrQP9E3TmL7NH0RChyT8vLxN
+         0rkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWknmhNO1hO/oLJ5Rb8AegOvbjlaGWX4ltqrc+PwyfKpbr8KuYug3bIycd/F+mFm+GPKyt6umpoWsHD6GQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8HKGgAxkHJoiw6weWTnh5CnTjRKxR/tgo0Svv2K416yF0Z1OI
+	hm+l4Nv+H21e783ZH2fHYl49TseZvjEjmQzs7DLWkslrf3cgTlsQ+S96EA/7Gk0=
+X-Gm-Gg: ASbGncuyhWz6YKO7+YQdcQxJYK+x2sEG6czCx3RZlZ8RR/xapY82RJyPLTBdNmR+2R+
+	5uDPm9uZbp68cSZK7DNBmFA69RZ4sACIDMBzWb90tCPrIGQKvj0W15teiFuLgBqbmML8/hEkCk3
+	/vRlqbCYdDojszvd4BhpHYgmDvOfqzISGhbmqFw85Tn3hkPJxTVt012eNa0a28VZD872hU6eABK
+	nYM7yDTlppwoeBSIN9O0x9UJ5of893KQ3k9b6HuhvKw2x1A0UaNRV8=
+X-Google-Smtp-Source: AGHT+IGEzc4vwHmaIfvTMIfIV37e15tsohqeHODjPaefoObT5Iz92AFnPqv8LysQYDOG0yI6+qlhwA==
+X-Received: by 2002:a05:600c:3155:b0:431:52b7:a499 with SMTP id 5b1f17b1804b1-434dded67b1mr79239335e9.20.1733727112718;
+        Sun, 08 Dec 2024 22:51:52 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434eb8f18fcsm72397395e9.24.2024.12.08.22.51.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 22:51:52 -0800 (PST)
+Date: Mon, 9 Dec 2024 09:51:48 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Haylen Chu <heylenay@4d2.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Haylen Chu <heylenay@outlook.com>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Chen Wang <unicornxdotw@foxmail.com>,
+	Jisheng Zhang <jszhang@kernel.org>
+Subject: Re: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1
+ SoC
+Message-ID: <9a3f6975-d99d-430b-9a09-697638667e97@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-ORIG-GUID: L55cWv0bnikP6lBJk_6S08T_A_Y1IQhR
-X-Authority-Analysis: v=2.4 cv=eePHf6EH c=1 sm=1 tr=0 ts=675685aa cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=fmNT8XcYnNex_eyvA98A:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-GUID: L55cWv0bnikP6lBJk_6S08T_A_Y1IQhR
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-09_02,2024-12-09_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
- lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
- spamscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
- bulkscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2411120000 definitions=main-2412090047
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241126143125.9980-7-heylenay@4d2.org>
 
-From: Sohaib Nadeem <sohaib.nadeem@amd.com>
+Hi Haylen,
 
-[ Upstream commit 0484e05d048b66d01d1f3c1d2306010bb57d8738 ]
+kernel test robot noticed the following build warnings:
 
-[why]:
-issues fixed:
-- comparison with wider integer type in loop condition which can cause
-infinite loops
-- pointer dereference before null check
+url:    https://github.com/intel-lab-lkp/linux/commits/Haylen-Chu/dt-bindings-clock-spacemit-Add-clock-controllers-of-Spacemit-K1-SoC/20241128-101248
+base:   2d5404caa8c7bb5c4e0435f94b28834ae5456623
+patch link:    https://lore.kernel.org/r/20241126143125.9980-7-heylenay%404d2.org
+patch subject: [PATCH v3 3/3] clk: spacemit: Add clock support for Spacemit K1 SoC
+config: arm64-randconfig-r073-20241207 (https://download.01.org/0day-ci/archive/20241207/202412072123.ne7GnRyJ-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
 
-Cc: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Alex Deucher <alexander.deucher@amd.com>
-Cc: stable@vger.kernel.org
-Reviewed-by: Josip Pavic <josip.pavic@amd.com>
-Acked-by: Aurabindo Pillai <aurabindo.pillai@amd.com>
-Signed-off-by: Sohaib Nadeem <sohaib.nadeem@amd.com>
-Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- .../gpu/drm/amd/display/dc/bios/bios_parser2.c   | 16 ++++++++++------
- 1 file changed, 10 insertions(+), 6 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202412072123.ne7GnRyJ-lkp@intel.com/
 
-diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-index 4d2590964a20..75e44d8a7b40 100644
---- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-+++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
-@@ -1862,19 +1862,21 @@ static enum bp_result get_firmware_info_v3_2(
- 		/* Vega12 */
- 		smu_info_v3_2 = GET_IMAGE(struct atom_smu_info_v3_2,
- 							DATA_TABLES(smu_info));
--		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
- 		if (!smu_info_v3_2)
- 			return BP_RESULT_BADBIOSTABLE;
- 
-+		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
-+
- 		info->default_engine_clk = smu_info_v3_2->bootup_dcefclk_10khz * 10;
- 	} else if (revision.minor == 3) {
- 		/* Vega20 */
- 		smu_info_v3_3 = GET_IMAGE(struct atom_smu_info_v3_3,
- 							DATA_TABLES(smu_info));
--		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
- 		if (!smu_info_v3_3)
- 			return BP_RESULT_BADBIOSTABLE;
- 
-+		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
-+
- 		info->default_engine_clk = smu_info_v3_3->bootup_dcefclk_10khz * 10;
- 	}
- 
-@@ -2439,10 +2441,11 @@ static enum bp_result get_integrated_info_v11(
- 	info_v11 = GET_IMAGE(struct atom_integrated_system_info_v1_11,
- 					DATA_TABLES(integratedsysteminfo));
- 
--	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
- 	if (info_v11 == NULL)
- 		return BP_RESULT_BADBIOSTABLE;
- 
-+	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
-+
- 	info->gpu_cap_info =
- 	le32_to_cpu(info_v11->gpucapinfo);
- 	/*
-@@ -2654,11 +2657,12 @@ static enum bp_result get_integrated_info_v2_1(
- 
- 	info_v2_1 = GET_IMAGE(struct atom_integrated_system_info_v2_1,
- 					DATA_TABLES(integratedsysteminfo));
--	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
- 
- 	if (info_v2_1 == NULL)
- 		return BP_RESULT_BADBIOSTABLE;
- 
-+	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
-+
- 	info->gpu_cap_info =
- 	le32_to_cpu(info_v2_1->gpucapinfo);
- 	/*
-@@ -2816,11 +2820,11 @@ static enum bp_result get_integrated_info_v2_2(
- 	info_v2_2 = GET_IMAGE(struct atom_integrated_system_info_v2_2,
- 					DATA_TABLES(integratedsysteminfo));
- 
--	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
--
- 	if (info_v2_2 == NULL)
- 		return BP_RESULT_BADBIOSTABLE;
- 
-+	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
-+
- 	info->gpu_cap_info =
- 	le32_to_cpu(info_v2_2->gpucapinfo);
- 	/*
+smatch warnings:
+drivers/clk/spacemit/ccu-k1.c:1686 k1_ccu_probe() error: uninitialized symbol 'lock_map'.
+
+vim +/lock_map +1686 drivers/clk/spacemit/ccu-k1.c
+
+e71e4621b06cd42 Haylen Chu 2024-11-26  1651  static int k1_ccu_probe(struct platform_device *pdev)
+e71e4621b06cd42 Haylen Chu 2024-11-26  1652  {
+e71e4621b06cd42 Haylen Chu 2024-11-26  1653  	const struct spacemit_ccu_data *data;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1654  	struct regmap *base_map, *lock_map;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1655  	struct device *dev = &pdev->dev;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1656  	struct spacemit_ccu_priv *priv;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1657  	struct device_node *parent;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1658  	int ret;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1659  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1660  	data = of_device_get_match_data(dev);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1661  	if (WARN_ON(!data))
+e71e4621b06cd42 Haylen Chu 2024-11-26  1662  		return -EINVAL;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1663  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1664  	parent   = of_get_parent(dev->of_node);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1665  	base_map = syscon_node_to_regmap(parent);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1666  	of_node_put(parent);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1667  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1668  	if (IS_ERR(base_map))
+e71e4621b06cd42 Haylen Chu 2024-11-26  1669  		return dev_err_probe(dev, PTR_ERR(base_map),
+e71e4621b06cd42 Haylen Chu 2024-11-26  1670  				     "failed to get regmap\n");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1671  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1672  	if (data->need_pll_lock) {
+e71e4621b06cd42 Haylen Chu 2024-11-26  1673  		lock_map = syscon_regmap_lookup_by_phandle(dev->of_node,
+e71e4621b06cd42 Haylen Chu 2024-11-26  1674  							   "spacemit,mpmu");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1675  		if (IS_ERR(lock_map))
+e71e4621b06cd42 Haylen Chu 2024-11-26  1676  			return dev_err_probe(dev, PTR_ERR(lock_map),
+e71e4621b06cd42 Haylen Chu 2024-11-26  1677  					     "failed to get lock regmap\n");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1678  	}
+
+lock_map not initialized on else path.
+
+e71e4621b06cd42 Haylen Chu 2024-11-26  1679  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1680  	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1681  	if (!priv)
+e71e4621b06cd42 Haylen Chu 2024-11-26  1682  		return -ENOMEM;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1683  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1684  	priv->data	= data;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1685  	priv->base	= base_map;
+e71e4621b06cd42 Haylen Chu 2024-11-26 @1686  	priv->lock_base	= lock_map;
+                                                                  ^^^^^^^^^
+
+e71e4621b06cd42 Haylen Chu 2024-11-26  1687  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1688  	ret = spacemit_ccu_register(dev, priv);
+e71e4621b06cd42 Haylen Chu 2024-11-26  1689  	if (ret)
+e71e4621b06cd42 Haylen Chu 2024-11-26  1690  		return dev_err_probe(dev, ret, "failed to register clocks\n");
+e71e4621b06cd42 Haylen Chu 2024-11-26  1691  
+e71e4621b06cd42 Haylen Chu 2024-11-26  1692  	return 0;
+e71e4621b06cd42 Haylen Chu 2024-11-26  1693  }
+
 -- 
-2.25.1
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
 
