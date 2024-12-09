@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-437968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAB439E9B22
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:00:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 084869E9B24
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:01:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04E1C1888CE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:00:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BC65166945
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:01:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021181537B9;
-	Mon,  9 Dec 2024 15:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22DE4137930;
+	Mon,  9 Dec 2024 15:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ErIC4RNU"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NwQ8DmwB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187FA13D897;
-	Mon,  9 Dec 2024 15:59:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728C51B424E;
+	Mon,  9 Dec 2024 15:59:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759984; cv=none; b=Ily2CV7DjYrvjO0kQ7CUH+nrmU6jLqhB05GmUYlf5QUa7HSOvZFrpaDQwpkjIK9DIXwwwzNA1xAkZs9VI7S28ktMm8De83x4U5gB1O9oyQtujta0+CBEExhKq5xhX0QSWzkniRcgIucdXOVah6S5tP+jQ0TmRO8xWPUNlcyLPaM=
+	t=1733759995; cv=none; b=VK2brN4+OICBAnxM9QACEHSSG9CrlgzCMkTg0eUJeIXvi/tUSO7zsuJalZJAeiWFHq8uZqpeIz6jGzHXsDI8HvRdZlgpn6g4TdApbfSLSQi1yy3v0i5Af1TEYpuRdeta2e3Ya3qa4uq5U+8cmg4lWr1OVzkiHOf3yU+q4Il65fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759984; c=relaxed/simple;
-	bh=pVnB3J68SJ5ZbxJrKUNajMzxZzFavA5FR2dTH5pwM0I=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=j5sQ9uMg62kue1UI8DN4/WxfqmCjFC72sUem1LDkA2Bv6Oe78XSr6kJqM2lGFpd3Dvo5SEP+zFjtvBhvQHfcjjq47vny2L3v/DHaR4b/gYCMGkYqTJaZGT46YVg3he0eMrg/b1HDN4nYiw6QmE55WAR9UGAte8lfNnEeCYuwhnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ErIC4RNU; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E89DC2000D;
-	Mon,  9 Dec 2024 15:59:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733759980;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=o69Mz00pbhAuPCU0BiftNOE1d7MIT8r8LNe86G5wyqg=;
-	b=ErIC4RNUSyyVT6gZ+EQwmUpuNvrFvDhI/tUxqaO29yHADBhhuR6jX61xiK+jJa6rPKUiPU
-	OTVg51JP84jw1eecIUmyXosGZhnhCA7KYVaio/9rhLxyqx6XSduYqnRZOpeyeJyPmmh7wo
-	HL4m2SQlr48RWsDei+6hh4gL592F5b7ilS+iFn8R6HI9s7RfSl4zYGH/Hq2xbSjc5RL8Qu
-	Bny6aSCS3+wLnwHhXRpFO7ajeJbMNOAG+wFyiDjZh+3W1CUP+vDM0nX80gIfASDPBh1wTv
-	jCBMAcdpgW7tW0JUfKHEf91n5G71aHfjAe9G6W+/qSrcMgOfIEfBSeC4eXKjVw==
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Date: Mon, 09 Dec 2024 16:59:40 +0100
-Subject: [PATCH v2 6/6] MIPS: mobileye: eyeq5: add bootloader config
- reserved memory
+	s=arc-20240116; t=1733759995; c=relaxed/simple;
+	bh=LoZo1phuINHNiQheLhQrouah0Yc+DWfVMV7KgGTEWWY=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=g5lu07Uu+FCnyfTr5IiQAomDwZ1CNnWlvDiduck7vZvbSlHxpCgTAC1NKfaCMjJYTuDMiQLKW6SP1va+2fRTtyrpeOnl62eW8H9fiAVeneFDu0Llt0SUp4Kn8KDz4rZXhurhPxslcgBBiuwjV7Yx+XaYG1KgDzBLdcmk6kFFhkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NwQ8DmwB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7CE19C4CED1;
+	Mon,  9 Dec 2024 15:59:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733759995;
+	bh=LoZo1phuINHNiQheLhQrouah0Yc+DWfVMV7KgGTEWWY=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=NwQ8DmwB/kmWKVfSDKodaWSN7HPeGfP/c79tBzPPG3l2F55LGe4dj76LaRg4WA2ec
+	 QTuADTBO8sJMqm5fKaeJ6zugorPhQ5RwkO6fzfSWnscN6mVS2Y3hmXvRUdxslpCULL
+	 UZ6nedB1YW/DY6N5e89UjshZwTkLvqBL9MUYQWL+b+EmyMdUwOpjrh/CikF7aDAnw6
+	 vbVhEuBurYqkC2pE9TWx3/lC9Dm70FlsCsu47DZpe1LfJHebVqM0qa5mPS7SCOi2eM
+	 BsBosT88YyZg15fpEuPE6gmO23pi1d7MsWoMS1W6LbXjZI2q7eW7Wqp8+b8lQ+Grsa
+	 RsUeqqtp35xWw==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241209-rmem-v2-6-cbc0e8c08a21@bootlin.com>
-References: <20241209-rmem-v2-0-cbc0e8c08a21@bootlin.com>
-In-Reply-To: <20241209-rmem-v2-0-cbc0e8c08a21@bootlin.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nicolas Saenz Julienne <nsaenz@kernel.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-mips@vger.kernel.org, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-Sasl: theo.lebrun@bootlin.com
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: mwifiex: decrease timeout waiting for host sleep
+ from
+ 10s to 5s
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20241127105709.4014302-1-treapking@chromium.org>
+References: <20241127105709.4014302-1-treapking@chromium.org>
+To: Pin-yen Lin <treapking@chromium.org>
+Cc: Francesco Dolcini <francesco@dolcini.it>, David Lin <yu-hao.lin@nxp.com>,
+ Pin-yen Lin <treapking@chromium.org>, Doug Anderson <dianders@chromium.org>,
+ linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <173375999181.157598.15598577464504869106.kvalo@kernel.org>
+Date: Mon,  9 Dec 2024 15:59:53 +0000 (UTC)
 
-Add a new reserved-memory node, containing bootloader config with MAC
-addresses for both ethernet instances of the SoC.
+Pin-yen Lin <treapking@chromium.org> wrote:
 
-Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
----
- arch/mips/boot/dts/mobileye/eyeq5.dtsi | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> In commit 52250cbee7f6 ("mwifiex: use timeout variant for
+> wait_event_interruptible") it was noted that sometimes we seemed
+> to miss the signal that our host sleep settings took effect. A
+> 10 second timeout was added to the code to make sure we didn't
+> hang forever waiting. It appears that this problem still exists
+> and we hit the timeout sometimes for Chromebooks in the field.
+> 
+> Recently on ChromeOS we've started setting the DPM watchdog
+> to trip if full system suspend takes over 10 seconds. Given
+> the timeout in the original patch, obviously we're hitting
+> the DPM watchdog before mwifiex gets a chance to timeout.
+> 
+> While we could increase the DPM watchdog in ChromeOS to avoid
+> this problem, it's probably better to simply decrease the
+> timeout. Any time we're waiting several seconds for the
+> firmware to respond it's likely that the firmware won't ever
+> respond. With that in mind, decrease the timeout in mwifiex
+> from 10 seconds to 5 seconds.
+> 
+> Suggested-by: Doug Anderson <dianders@chromium.org>
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> Acked-by: Brian Norris <briannorris@chromium.org>
 
-diff --git a/arch/mips/boot/dts/mobileye/eyeq5.dtsi b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-index 5d73e8320b8efc1b4f68923482bf188c4345f1cb..a84e6e720619ef99e1405ae6296d8bad1aa3fa23 100644
---- a/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-+++ b/arch/mips/boot/dts/mobileye/eyeq5.dtsi
-@@ -49,6 +49,28 @@ mini_coredump0_reserved: mini-coredump0@806200000 {
- 		mhm_reserved_0: the-mhm-reserved-0@0 {
- 			reg = <0x8 0x00000000 0x0 0x0000800>;
- 		};
-+
-+		nvram@461fe00 {
-+			compatible = "mobileye,eyeq5-bootloader-config", "nvmem-rmem";
-+			reg = <0x0 0x0461fe00 0x0 0x200>;
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+			no-map;
-+
-+			nvmem-layout {
-+				compatible = "fixed-layout";
-+				#address-cells = <1>;
-+				#size-cells = <1>;
-+
-+				eth0_mac: mac@7c {
-+					reg = <0x7c 0x6>;
-+				};
-+
-+				eth1_mac: mac@82 {
-+					reg = <0x82 0x6>;
-+				};
-+			};
-+		};
- 	};
- 
- 	aliases {
+Patch applied to wireless-next.git, thanks.
+
+f143cece43dd wifi: mwifiex: decrease timeout waiting for host sleep from 10s to 5s
 
 -- 
-2.47.1
+https://patchwork.kernel.org/project/linux-wireless/patch/20241127105709.4014302-1-treapking@chromium.org/
+
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
 
