@@ -1,186 +1,216 @@
-Return-Path: <linux-kernel+bounces-438520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5CB69EA228
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:54:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C1C9EA22D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:56:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A0B6282CC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1C04282AD3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:56:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282D719D075;
-	Mon,  9 Dec 2024 22:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C93D019D08A;
+	Mon,  9 Dec 2024 22:56:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QGjCgRHH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rgeXeJw0"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 497D32C9A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 22:54:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3692B1991C8
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 22:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733784878; cv=none; b=WpxEazf4Cup9rfbtgn8JojYr43KRHLiMVnI8rSBQioS7FJ3pPRfTwj8Jw74IvE6X95cXlU1siTc+eKXoKMfrifWe4X9CyK6ZYMhZWDaEsxCbrQ/rd0Z+2QO1fDPHY1EpwPGAEzWzDZ6dArMkFWQFqjW9fCmkxFgS0Hl/4T8dCx0=
+	t=1733784964; cv=none; b=bdXE54vcRbzLIxyjLrScXGtjjIu81+FyZnDDLf+SlbYh8l3vxFj9lEkxsWd7NqmFnyei7a7+Sk+JjHYbtEBhQ3I04dMYCoVN5XVPpBF79Zss8sFpHeoSsv2aOd+Q6pCmvftM7KRCIvYTJx1ZZgoCuqB8uQZ1eCdTp97Y6YpCAck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733784878; c=relaxed/simple;
-	bh=zMM76qU1Xm2ZpMH3PV9zRviHqG13LkKbvLJjy4Ecofo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aq2Cr6QUVdzG6oNMeyZahUcBg0g9ItTqKj8aV4iDyyRgmLJ+ctEvnPxIek++ZMUQ4sOtA0Av63hbEE8qssdndVYtc69T1k48cV9elwREZo9b7bbv8ejfpCX82Hl8jkIf7r2QuwC0aUsLGomBtKi77/2pays4Jrqj8eJtbyoZ3Bg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QGjCgRHH; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733784876; x=1765320876;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=zMM76qU1Xm2ZpMH3PV9zRviHqG13LkKbvLJjy4Ecofo=;
-  b=QGjCgRHHh8+71hsbNg/QREFoKzbqn8hqxQe6QnKRdopVRzlus88HeKvu
-   mQm5FYPoNjJ1+QQSyivBlmdPAJ7kPQSPEj7GMxJZgwfmwoadaSCxf60zt
-   DqYeM3sxiSTQBsYPq/PVoHcIBv27qhzj0db2oz7mDBKDIte3bLP4+kRxY
-   hCBIRlI9AUy/75xYvfJLr9zz5s+ifogca6ZmAYQwA41WGQsbK6wgmqi7I
-   qYFm+XPyaziJrmg3p9kBuE0za+bn0fFf5iqf03lEUS0szlaOnM2WK3rU4
-   kbzzUy/7CgmumeNel/MAteayan7saBSFANhoHNuLQK2IZHVNdodmTCMFH
-   w==;
-X-CSE-ConnectionGUID: uO2Cm+9OSbqupADI/MKaMA==
-X-CSE-MsgGUID: nyhcaoFVTRq6Ok1ouLOSqg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="51519592"
-X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
-   d="scan'208";a="51519592"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 14:54:35 -0800
-X-CSE-ConnectionGUID: iuVYF4pXSEGIsSLvplIK6Q==
-X-CSE-MsgGUID: 2EoXfcIBQHGjAZLWLy532g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
-   d="scan'208";a="118455839"
-Received: from philliph-desk.amr.corp.intel.com (HELO [10.124.221.227]) ([10.124.221.227])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 14:54:35 -0800
-Message-ID: <78a359f8-5a0c-463c-b886-ff4165b395d2@intel.com>
-Date: Mon, 9 Dec 2024 14:54:34 -0800
+	s=arc-20240116; t=1733784964; c=relaxed/simple;
+	bh=12hQphzsjjUkW1d9H8mxTIKNWUmFq/0NOxwXiPmnEYU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ku5f6IW7FWH8kgkJspY/86Q54W2bGoaD/P2gy+mhgGMGHOqJxXr+bBM031ElKd8EB9hLyf9nXZHC8d1aNZh/4a4hcBo8Ds5rbgAwrjIa/7b33rWZZej4x/9et7k0agzCsAt5d/W6WebXJ1KtJOHwBC549OaC0b17Dwio7ZMNoKg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rgeXeJw0; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e3983426f80so3933079276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 14:56:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733784961; x=1734389761; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=zg360WQmWUIYP8x3ZHAPjL5tUINcGUKvmQ6oZ/CIGO4=;
+        b=rgeXeJw0eEcq29aZERXFxoa/dt8qQ6JFh4c7p9zjHZ4+AhNt1b+lyHTDFj8r+1f4F8
+         IhAl3vGiXLZVBfrAtnnqdhpWu0CSnfm7FGtkPU9OYmJjBeC56UssKf/B3APvE06pq6BV
+         o3/cMLjzxe9NoGzac/VgUSPfKx7huZbzg2U0RQuKGTtEvGCPMo588Myrwb1wEHIcpv7U
+         lOiiqqBcPYMoSy58XmqAdmVLW+JHnGcMrONhrE1Z8xkuO4vhVGa8sa1Pktbwdmo/vAI9
+         dBnFOsy1jRqVP3vzfgdHsbwjO3tzw1WhT1BSpxeh2i3IUYMX7DT4l/TULZCVfW+Nue5p
+         Jujw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733784961; x=1734389761;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zg360WQmWUIYP8x3ZHAPjL5tUINcGUKvmQ6oZ/CIGO4=;
+        b=EMjVptYGnjUGR6BLM1+5/kJ/ZqKo5ou7VAEQQHUrw4BCVHLfeb2nzh7oFxNRvycCVv
+         pviyZ2ODkD3b846hssynGYiiN3KI/QXU7vjQMFUN1UMCN68PhBItSHbc1jkkJIH9Iy8r
+         cn63Ok2lyY1He5WTBjNt4W42cttQvg1IFTPpcKA7u/JHz+8LoSM+t8vb5WcmZQBYdJOO
+         oElQB+UN7jx8cN+rzIzaDqDGHSDe9XRmVkIAmCa7KkyVUGrH7Y9emVEcD25PYb+eFfLT
+         wG6f4o6SlB2wOo7bOAxMEQLJ7VsI4zppc/FaRUOcX1uw/U9Ri3aQP+zKXt2+w/EwjXKj
+         H8nA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3amHIUQEbnmWdNgof8XCEO9O0wfWR4+RwjuO4Ee+AjYsuMD6L8dg9hOB30TRH8pwV+srFNPF1DeZ+06s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbHJv238J4gHuiqzu4729zWpuNTGxyxMxg5x+Hz4i1oib3UqJV
+	y872K9MGPIuYfb4kdN4UsvOs1QCdXWkZ2RvA4bQUBhOP+tRi1nyTd52UckKHcG9c5S73OR5YT6d
+	hx8V+/A3Xk+YcLVCzR0dACkC31zdICKpNR8PMmw==
+X-Gm-Gg: ASbGncune67va1NxzZlDpyeijMo36ELCVmxox1pRa6Exp48UtdXyHMLsnG/YE/+OU5Y
+	7G3Kc93lbQpOXa5lGBJ6TnH+Hwq7gpO+beQk=
+X-Google-Smtp-Source: AGHT+IGBS529CP3nkBRL/hSBck7KZQ3bTAxMxZelGrotzUE4fm9stmMtccbFjnXYDNdhGC2bqHRBAtW7fsN53rpNuQ8=
+X-Received: by 2002:a05:6902:288f:b0:e39:7b55:ff7d with SMTP id
+ 3f1490d57ef6-e3a59bde21fmr2097243276.49.1733784961163; Mon, 09 Dec 2024
+ 14:56:01 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 8.2/9] x86/virt/tdx: Reduce TDMR's reserved areas by
- using CMRs to find memory holes
-To: Kai Huang <kai.huang@intel.com>, kirill.shutemov@linux.intel.com,
- tglx@linutronix.de, bp@alien8.de, peterz@infradead.org, mingo@redhat.com,
- hpa@zytor.com, dan.j.williams@intel.com, seanjc@google.com,
- pbonzini@redhat.com
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, rick.p.edgecombe@intel.com,
- isaku.yamahata@intel.com, adrian.hunter@intel.com, nik.borisov@suse.com
-References: <23bb421e9bf5443a823e163fb2d899760d9f14a3.1731498635.git.kai.huang@intel.com>
- <20241209065016.242359-1-kai.huang@intel.com>
-Content-Language: en-US
-From: Dave Hansen <dave.hansen@intel.com>
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20241209065016.242359-1-kai.huang@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241206-no_3dmux-v1-1-72ad2677a323@quicinc.com>
+ <zae7rlojv5iiq2dx7bxhdsmmzj73o65cwk7kmryxsst36gy2of@k3vcm6omcias>
+ <b784049f-a72c-47ff-a618-e7c85c132d28@quicinc.com> <CAA8EJpojwG+_Q_9GYBFzQ_ReDbnO=+GbTPZscWgS1f=fkU0Anw@mail.gmail.com>
+ <ab8a9d0e-e786-47ea-833d-59d2f2988898@quicinc.com>
+In-Reply-To: <ab8a9d0e-e786-47ea-833d-59d2f2988898@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 10 Dec 2024 00:55:50 +0200
+Message-ID: <CAA8EJpoNSJ64+JWsmrdFVce-ADtjDhZzEjC2ZcJbqvfQ47F-_A@mail.gmail.com>
+Subject: Re: [PATCH] drm/msm/dpu: filter out too wide modes if no 3dmux is present
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 12/8/24 22:50, Kai Huang wrote:
-> A TDX module initialization failure was reported on an Emerald Rapids
-> platform [*]:
-> 
->   virt/tdx: initialization failed: TDMR [0x0, 0x80000000): reserved areas exhausted.
->   virt/tdx: module initialization failed (-28)
-> 
-> The kernel informs the TDX module of "TDX-usable memory regions" via the
-> structure "TD Memory Region" (TDMR).  Each TDMR contains a limited
-> number of "reserved areas" to inform the TDX module of the regions that
-> cannot be used by TDX.
-> 
-> The kernel builds the list of "TDX-usable memory regions" from memblock
-> (which reflects e820) and marks all memory holes as "reserved areas" in
-> TDMRs.  It turns out on some large systems the holes in memblock can be
-> too fine-grained [1] and exceed the number of reserved areas that the
-> module can track per TDMR, resulting in the failure mentioned above.
-> 
-> The TDX module also reports TDX-capable memory as "Convertible Memory
-> Regions" (CMRs).  CMRs tend to be coarser-grained [2] than the e820.
-> Use CMRs to find memory holes when populating reserved areas to reduce
-> their consumption.
-> 
-> Note the kernel does not prevent non-CMR memory from being added to
-> "TDX-usable memory regions" but depends on the TDX module to catch in
-> the TDH.SYS.CONFIG.  After switching to using CMRs to populate reserved
-> areas this will no longer work.  To ensure no non-CMR memory is included
-> in the TDMRs, verify that the memory region is truly TDX convertible
-> before adding it as a TDX-usable memory region at early stage.
+Hi Abhinav,
 
-Thanks for trimming the changelog down.  But this changelog never
-actually says what the fix is. It's also quite heavy on the "what" and
-very light on the "why".
+On Tue, 10 Dec 2024 at 00:30, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>
+> Hi Dmitry
+>
+> On 12/9/2024 2:16 PM, Dmitry Baryshkov wrote:
+> > Hi Abhinav,
+> >
+> > On Mon, 9 Dec 2024 at 22:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+> >>
+> >>
+> >>
+> >> On 12/7/2024 9:29 PM, Dmitry Baryshkov wrote:
+> >>> On Fri, Dec 06, 2024 at 12:00:53PM -0800, Abhinav Kumar wrote:
+> >>>> On chipsets such as QCS615, there is no 3dmux present. In such
+> >>>> a case, a layer exceeding the max_mixer_width cannot be split,
+> >>>> hence cannot be supported.
+> >>>>
+> >>>> Filter out the modes which exceed the max_mixer_width when there
+> >>>> is no 3dmux present. Also, add a check in the dpu_crtc_atomic_check()
+> >>>> to return failure for such modes.
+> >>>>
+> >>>> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> >>>> ---
+> >>>> Note: this was only compile tested, so its pending validation on QCS615
+> >>>> ---
+> >>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 13 +++++++++++++
+> >>>>    1 file changed, 13 insertions(+)
+> >>>>
+> >>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >>>> index 9f6ffd344693ecfb633095772a31ada5613345dc..e6e5540aae83be7c20d8ae29115b8fdd42056e55 100644
+> >>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >>>> @@ -732,6 +732,13 @@ static int _dpu_crtc_check_and_setup_lm_bounds(struct drm_crtc *crtc,
+> >>>>       struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+> >>>>       int i;
+> >>>>
+> >>>> +    /* if we cannot merge 2 LMs (no 3d mux) better to fail earlier
+> >>>> +     * before even checking the width after the split
+> >>>> +     */
+> >>>> +    if (!dpu_kms->catalog->caps->has_3d_merge
+> >>>> +        && adj_mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
+> >>>> +            return -E2BIG;
+> >>>
+> >>> Is it the same as checking that there are LMs which support
+> >>> DPU_MIXER_SOURCESPLIT ?
+> >>>
+> >>
+> >> DPU_MIXER_SOURCESPLIT tells whether we can have more than one SSPP in
+> >> the same blend stage.
+> >
+> > Do we have a feature bit that corresponds to the ability to use 2 LMs?
+> > I mean, there are other *split topologies, not necessarily the 3DMux
+> > ones. E.g. PPSPLIT.
+> >
+>
+> A layer can always be split across LMs. There is not really any feature
+> bit for this as it can always be done in pretty much all DPU chipsets.
+>
+> Here the issue is we are not able to merge because there are no 3d mux
+> blocks and hence we cannot split.
+>
+> We need to merge because, the same display is requiring multiple LMs.
+>
+> PP split will be a single LM going to two PPs and that going to two INTFs.
+>
+> Hence the way to look at this patch would be we are avoiding split
+> because we cannot merge and not that we cannot split.
 
-I think the "why" boils down to the fact that the kernel is treating RAM
--- as defined by the platform and TDX module -- as non-RAM.
+Ack, thanks a lot for the explanation!
 
-> -	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, tmb_list,
-> +	/*
-> +	 * On some large systems, the TDX memory blocks (which reflects
-> +	 * e820) in the first 1GB can be too fine-grained.  Using them
-> +	 * to populate reserved areas may result in reserved areas being
-> +	 * exhausted.  CMRs are coarser-grained than e820.  Use CMRs to
-> +	 * populate reserved areas to reduce their consumption.
-> +	 */
+>
+> >>
+> >> 494     if (test_bit(DPU_MIXER_SOURCESPLIT,
+> >> 495             &ctx->mixer_hw_caps->features))
+> >> 496             pipes_per_stage = PIPES_PER_STAGE;
+> >> 497     else
+> >> 498             pipes_per_stage = 1;
+> >>
+> >> That is different from this one. Here we are checking if we can actually
+> >> blend two LM outputs using the 3dmux (so its post blend).
+> >>
+> >>>> +
+> >>>>       for (i = 0; i < cstate->num_mixers; i++) {
+> >>>>               struct drm_rect *r = &cstate->lm_bounds[i];
+> >>>>               r->x1 = crtc_split_width * i;
+> >>>> @@ -1251,6 +1258,12 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
+> >>>>    {
+> >>>>       struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
+> >>>>
+> >>>> +    /* if there is no 3d_mux block we cannot merge LMs so we cannot
+> >>>> +     * split the large layer into 2 LMs, filter out such modes
+> >>>> +     */
+> >>>> +    if (!dpu_kms->catalog->caps->has_3d_merge
+> >>>> +        && mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
+> >>>> +            return MODE_BAD;
+> >>>
+> >>> This can be more specific, like MODE_BAD_HVALUE.
+> >>>
+> >>
+> >> Yes for sure, will fix this up.
+> >>
+> >>>>       /*
+> >>>>        * max crtc width is equal to the max mixer width * 2 and max height is 4K
+> >>>>        */
+> >>>>
+> >>>> ---
+> >>>> base-commit: af2ea8ab7a546b430726183458da0a173d331272
+> >>>> change-id: 20241206-no_3dmux-521a55ea0669
+> >>>>
+> >>>> Best regards,
+> >>>> --
+> >>>> Abhinav Kumar <quic_abhinavk@quicinc.com>
+> >>>>
+> >>>
+> >
+> >
+> >
 
-I think there are still too many details here for a comment. This
-comment is describing *highly* implementation and platform-specific
-details particular to this bug you are fixing today. They will be
-irrelevant to anyone reading this code tomorrow.
 
-So in the end, I buy that the CMR's have something to offer here. But I
-think that "why" I mentioned above casts doubt on whether
-for_each_mem_pfn_range() is the right primitive on which to build the
-TDX memblocks in the first place.
 
-I suspect there's a much simpler solution that will emerge when
-considering a deeper fix as opposed to adding CMRs as a band-aid.
+-- 
+With best wishes
+Dmitry
 
