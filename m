@@ -1,96 +1,105 @@
-Return-Path: <linux-kernel+bounces-438116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438118-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 559AF9E9D0F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:27:47 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A8E9E9D16
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:29:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8939280FAE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BD5165AC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:29:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3B01547FE;
-	Mon,  9 Dec 2024 17:27:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B70154C17;
+	Mon,  9 Dec 2024 17:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LZBWrAqk"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RXTTfvFw"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE84C153BFC;
-	Mon,  9 Dec 2024 17:27:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D3114B97E;
+	Mon,  9 Dec 2024 17:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733765261; cv=none; b=ajjA0panccDeFQm1BILVV2xv+bnMIwA7BiLUPM8o2oTMDg74/vFQ0kXBezxfQBYPpXOr4R0SjMo9NwaKm16jamYWUMvofKFEOB9rN1+RUMwms5cM0PaaC9QIoWWkkWGkzLvI+LOsGVtJMaN2QecOWgToRbxoUjLIo4z09Ur9Jbw=
+	t=1733765368; cv=none; b=MsWxRrFjnw20aZY/wWkn3Ov9jcdhlgT1R89vCzsLVQYufrG9EerNUmPkr0RZvbd9jaKOIgxlv+pQj1utscfDuu76B+tgKVz+fv5p9vKfvwXnlUhg4KQo+NAPisVugLadG1TPAVhHyN8MnGvcH50JICzGIa62wzG6/eLSpm8gGdE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733765261; c=relaxed/simple;
-	bh=hLHbv37/Xjdjt+zvQM/NG/XnnuAdOIx2c+MdjpFa5WU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MW2/gQSOw3tgni9YVLkUA9L7EDc/AayLlzYS1n8gDMpMrcE1JFkzTu20zJSAKxV3AfA87R2AvxYn3ZPsBJEgW4Bh6v5k0cl0F+YcAb67UyKR34Hwv6rAvAsprCoWsFGIYfIOHhoyvU7JL80vw30GP0p0qVULdYb8k4soqe9zpUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LZBWrAqk; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A1AD140004;
-	Mon,  9 Dec 2024 17:27:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733765250;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eUSkSmcJnrpmczKhbramKYpveVX33QbC2aQansZdETc=;
-	b=LZBWrAqkbC5ShMQqtmGQTmNrErgmmZKVVYNaUgVqWm7UEzkEwvAB11gJ1sVj5sAoETRvcv
-	EwEABcw40CWJOYMEVKrWHteZQ/rjjNMsBHGxZ3iQRnMJP6xW22wLhEt+uMLoEunwmYVUaK
-	2HH1bP2k8bI6J8fRypwcSTHZ8eWLvvXyPOcfFbtEgH15ynunFzuI9ZiQpZtocRX9hokB8b
-	0NRDItQdtA9Q//7ML6zAwIG3knnEd7X3qVRug3zdOaS6OY3U1stegV+MeGFSoDLe+25Ubh
-	W52RRGbAePOlgNbYLVDzXeaACP8p9qXDn9rDWAweNwkxpuHDC4FrWz1qD7QpdA==
-Date: Mon, 9 Dec 2024 18:27:28 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Herve Codina <herve.codina@bootlin.com>
-Cc: Andrew Davis <afd@ti.com>, Ayush Singh <ayush@beagleboard.org>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Saravana Kannan <saravanak@google.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 5/7] of: overlay: Add export_symbols_name in
- of_overlay_fdt_apply() parameters
-Message-ID: <20241209182728.1ab9247a@booty>
-In-Reply-To: <20241209151830.95723-6-herve.codina@bootlin.com>
-References: <20241209151830.95723-1-herve.codina@bootlin.com>
-	<20241209151830.95723-6-herve.codina@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733765368; c=relaxed/simple;
+	bh=E6kQHEbP/PmMJ4s9H+cnQT7mpoICPz6qHRoFj0eCDFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YnP2iCuh9GkpqbKnNZoa9S+cwFAbbtoUPgWwt3HaHluv3F/2myCSmPTzeX4sHeZc71moY2/yroO6YYT/lKorXIoE6YyRzcY4rOGLjrsZPy7IH/45SJym/4pivZn4Qjpwc1eX7htHpzrL70x0klsqN8FAGmN5d1VQs1IIL9fGO88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RXTTfvFw; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9F7C140E019C;
+	Mon,  9 Dec 2024 17:29:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id MZgXk7yP4KSd; Mon,  9 Dec 2024 17:29:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733765361; bh=bgzrTT8oxCyDVwNbM6fB2WpAUPtugHtZ7j6VSpKq45U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RXTTfvFwhMiw2/AyMGy7lBf2h8H4JodH2yNtEohd75UWFcnU7yyuRiy8sIauX4wcf
+	 r7U0XSp94zcwtwX5G5JwH+Z13E7fiQHHC7obgYI6zDWHxI4TnIAikh4+Os6JZp0uXq
+	 y+Eo1NgHD1TDn2AZ4lF5CprIzHPMYDKbKjSMdEPtcWEd2jRiH2XSAwJv4KO+hAWU3N
+	 ZqmKALZYBeRzfW41gZCuRU29AIwBAc81FOgp5yGQWwExrkqfso/E4kFHAOdMy8qDPP
+	 f+FOngwCxt0l2C6TwxpUn6U529ZeiCRL2HcxYu8eXHJhiODgi5w7zIBS2pYGnLptnW
+	 2yb9B+eiW4bT7dXSjNV8ozwYIyM2m9n6bWYlnp8OSbWs5tnydemNEj5Recu/oev8iA
+	 DDUOPUs0KgEwRsWxW8I/N7flJ3Y3IUC2SJ89msD42fgdWMz6vS956wx7wnrFag0q2Z
+	 AsShVUycqpqjRxp7G7f1aZPrMO/G32vjj12fI+Ior9/lgdjfIkHDPkwhCiNzM9ZpVP
+	 q4kXdU/ciFAOSd+Y4KIFFsPCHSg8ukMykHHg0bkFWQP2XFUSs619grblB0bpPnuRTo
+	 N4j/iRnZJC8qMq+WirfMuKPTauoK7hZl87OH8T+keoZWvO+CRMU9sNBmLhC/SdUF6R
+	 E1L1Lecp4rJARecaO8Ies4dE=
+Received: from zn.tnic (p200300EA971f9307329c23FfFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0BE3D40E0288;
+	Mon,  9 Dec 2024 17:29:06 +0000 (UTC)
+Date: Mon, 9 Dec 2024 18:28:59 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Reinette Chatre <reinette.chatre@intel.com>
+Cc: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
+	James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	patches@lists.linux.dev
+Subject: Re: [PATCH v11 0/8] x86/resctrl: mba_MBps enhancement
+Message-ID: <20241209172859.GHZ1co28T-rRiQtIMp@fat_crate.local>
+References: <20241206163148.83828-1-tony.luck@intel.com>
+ <7e7c01c5-f64f-42c3-9364-ddcfd01b25c1@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <7e7c01c5-f64f-42c3-9364-ddcfd01b25c1@intel.com>
 
-On Mon,  9 Dec 2024 16:18:23 +0100
-Herve Codina <herve.codina@bootlin.com> wrote:
+On Mon, Dec 09, 2024 at 09:10:20AM -0800, Reinette Chatre wrote:
+> Could you please consider this series for inclusion?
 
-> In order to prepare the introduction of the export symbols node
-> handling, add a export_symbols_name parameter in of_overlay_fdt_apply().
-> 
-> The export_symbols_name is the name of the export symbols subnode
-> available in the base node that will be used by the resolver to handle
-> export symbols resolution.
-> 
-> Having the name of the subnode in parameters instead of the subnode
-> itself avoid the use of an export symbol node that is not directly
+Lemme take a look...
 
-s/avoid/avoids/
+> This fix has been merged into v6.13-rc2.
 
-Luca
+You mean, I should queue the set ontop of -rc2?
+
+Thx.
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
