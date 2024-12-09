@@ -1,175 +1,76 @@
-Return-Path: <linux-kernel+bounces-438046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C7509E9C26
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:53:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79CE09E9C2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:54:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858381885F15
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:53:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59CF416202B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:54:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC28F14D439;
-	Mon,  9 Dec 2024 16:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393C514D6EF;
+	Mon,  9 Dec 2024 16:54:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X+msIlcc"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="vz68fwh9"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D9835956;
-	Mon,  9 Dec 2024 16:52:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9C3D1465BA;
+	Mon,  9 Dec 2024 16:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733763176; cv=none; b=b3F9WLl3WBlUnuenq58YEaI1EnrclmhcR9WP4bAbb4wTn8uQ5QLJQow6E7EfhEi/wn1tt7a2B15aSZtb9b0aLCBNXzZfUt8mE3lgvvWBasqf6z1DRZX7QKsuhWpYv6cI/ByjPxbyKZVEWTKkii5PE0pTU2dLQYQHEZiq2AyH6Pw=
+	t=1733763263; cv=none; b=sv0m8w5N8+Ie8++U2CBoF3akfM+uPuadtD80cl8/debifIK4n/o5JMRqj+57cst2tPAd5BS7D3E3OfIbwJGgGqO50zUxldvGZXDW/rXCJYond391A6/sroEjKmXrBc7Umf/zTrJLOBsTz/ESP12pGXXTc2dxi88O+EMv/8A0g0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733763176; c=relaxed/simple;
-	bh=BEJSrdcQEMAqO6NZAi7z6/czjWS6uwS86uL3dliZBx4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LxFTBnOmHSAGh9at9r0nOw+eSoHD8JcxJs3JflVsfDeXpR2xEURHMp2MapnOifblrbyp+U9kNdsGT+fozWArv/SZ2sVkK8GZVenQtgahS4HpCJ9kPhI6rMx2xS/slFhuBVxRXkh23kFLmjWoqlya7yokxVBm4BJaz52HnJxVwIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X+msIlcc; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffa8df8850so48130921fa.3;
-        Mon, 09 Dec 2024 08:52:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733763173; x=1734367973; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OkiWcOXrAlAxqqLCJ/KAQ1yQEFRTTCQcJdAddZbbZ1s=;
-        b=X+msIlccZuZE+jDAJg2uxUNYJWvpi7UtO22ReEKtQl17l7OGjKLY9WVBsTgMGNloWD
-         z/1e7pUaw/5Ate0u3/fxFG7xTpF7mmVwZzuPiOOuR2kun4uOvcIKHZvtZNxWaASL7BbV
-         vLsKDdpfkQdVPURtps+xyw3fiH+awZGc/PDTNm2JvuX0fA+dU7zHamfUC4En3c2bFdG/
-         ePliJmRdpE0TzZ6L/JP2oYkRzV0TAiYbi7poCGs06N1gdNo/CXJKL9DuGCoIDubGEA9f
-         oZvJQuN4wbG6kR2qGlrjkuygbDo0FdePYxZKa2Y64DF8mLkXHOmObFrcK8QTDIP5Oh9e
-         VGvw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733763173; x=1734367973;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OkiWcOXrAlAxqqLCJ/KAQ1yQEFRTTCQcJdAddZbbZ1s=;
-        b=AoDgkOHmNqZXmXGjTMFr6+z7Pwd9P0e2YrJflcu9THJr2PT8AknNtNfK8ZaYStoZRY
-         doVAy1TV1Gi0o9aBl+7XJyny1TUDF/8n/OKbU9dB+1Y9cYiUex1rG9FqKQhJnoopNKHN
-         wU+6d4ytd1hWrGT5pa6zHQs1t9cGhh9ydjl31Qn7FYchHe+38m4lvF48EDvuTEuhl9R1
-         mo83/Jsf4a2SD1E2QcwnAwrMp8TnMbZ2U1uy10dC0p4x2uMlK2IeAQ1zw7vjQJ/hQ3CZ
-         uQ6agAkv4NjpRkOKnISSKbXhCiVBAae98aDpBy8P/i7lfYhHSKEa6IFYf7/78Z37heIy
-         0UVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwueHjoHlb2yeyrgHY/IQsQUhW8w7vnK4z9tp9z1/ARkv8cxXGlUljAtAHKRUbpFTXghb4AjgCfxyvKA==@vger.kernel.org, AJvYcCW24XNGQiTQD58fHO8Wy6Pi46Ujpqj0wP3PoDP2dpag4yqMbNv1MgRHyuxGmlj2qybyel180kV3@vger.kernel.org, AJvYcCXqRTDTVwcz/p576tEhi1Wdk26R4F28BtjuWOoKtFVmvtqeYsuGE5LMEGtgsPVlZ2nnzd6YvOMcLEU8xtHG@vger.kernel.org
-X-Gm-Message-State: AOJu0YzFYmhN11otGaoRQTdTuL6XbbNFA2lJHnix0ROeYeCQsa2V2Mre
-	wcZK4AxExcsO8951JJYuWeao9ufc1r4qdBF2jesB2nr21KLYzGI95cmLfhw5alW0f9Ar4cd7u2P
-	a6ULhU0fhLQ/0lKfnKQLyjGyJEughWFFT
-X-Gm-Gg: ASbGnctAUH55DXMAUHvP127J3Q2ATOV3cVjpl68wKImfaBH0mZhr2hUdgHoY61F1tJL
-	cdZ9rY557jg4cHSKwGfXlimeuXzTAjgQ=
-X-Google-Smtp-Source: AGHT+IENQl4Nc5lF30ol6UXzbTLguVyc/JsFURLtyoI2Px1WGiLmX0RVNAXTyxminD80fO/yjJS2UhJ4fkEeaNVOwtY=
-X-Received: by 2002:a05:651c:1602:b0:302:29a5:6dea with SMTP id
- 38308e7fff4ca-30229a5719amr14979111fa.27.1733763172455; Mon, 09 Dec 2024
- 08:52:52 -0800 (PST)
+	s=arc-20240116; t=1733763263; c=relaxed/simple;
+	bh=+Um87OK029W18CKSO9ksat2vlJj9Pir9wPRI/6IrrMU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Zj3tDoG3Pa44BbzgivpJ6kftpzLjCluDBtogEm689qPhT7aNbrug08qpx60UyNhGWYmvW7XXVvkFdkQuqqfTVvPoVvStxIu/vWFuUUeBxw13yNZVpn/4k1oaAmUZsaWIKiJkHq0n1J6qWELoCse6Til4PzCSEqpfrDKC8Q5Galo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=vz68fwh9; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=XJ36jjyRlVWT7uD37wfdml35aQJkssXzySfHMBuIM78=; b=vz68fwh9wBi/hPRDdCemsucEPN
+	GhJNjmNewPdTgeoCQ3ktEM9b62pxKhzSkg3CHiuyIkYTWBcBM9JPqyHBz1jsGkBPTO36OyDMU1j6g
+	IGSJBKpvQsJqsPa+8K6yetOzduy/Cqj2E9OQsuK+v6U7O07QNJlzVJydtUhUaihbZebk=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKh1Q-00FhAt-UP; Mon, 09 Dec 2024 17:54:12 +0100
+Date: Mon, 9 Dec 2024 17:54:12 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tarun Alle <Tarun.Alle@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net: phy: phy-c45: Auto-negotiaion changes
+ for T1 phy in phy library
+Message-ID: <ad3f19b8-20fc-41c9-bfd0-e5f9996da578@lunn.ch>
+References: <20241209161427.3580256-1-Tarun.Alle@microchip.com>
+ <20241209161427.3580256-2-Tarun.Alle@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241204180224.31069-1-ryncsn@gmail.com> <20241204180224.31069-3-ryncsn@gmail.com>
- <20241205070939.GF16709@google.com>
-In-Reply-To: <20241205070939.GF16709@google.com>
-From: Kairui Song <ryncsn@gmail.com>
-Date: Tue, 10 Dec 2024 00:52:35 +0800
-Message-ID: <CAMgjq7Bf=m-KUkZiy_7pFcE=8U0yvy0bqrUNkGj--asMbMC8vQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] zram: fix uninitialized ZRAM not releasing backing device
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: linux-mm@kvack.org, Minchan Kim <minchan@kernel.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-block@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Desheng Wu <deshengwu@tencent.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209161427.3580256-2-Tarun.Alle@microchip.com>
 
-On Thu, Dec 5, 2024 at 3:09=E2=80=AFPM Sergey Senozhatsky
-<senozhatsky@chromium.org> wrote:
->
-> On (24/12/05 02:02), Kairui Song wrote:
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > Setting backing device is done before ZRAM initialization.
-> > If we set the backing device, then remove the ZRAM module without
-> > initializing the device, the backing device reference will be leaked
-> > and the device will be hold forever.
-> >
-> > Fix this by always check and release the backing device when resetting
-> > or removing ZRAM.
-> >
-> > Fixes: 013bf95a83ec ("zram: add interface to specif backing device")
-> > Reported-by: Desheng Wu <deshengwu@tencent.com>
-> > Signed-off-by: Kairui Song <kasong@tencent.com>
-> > Cc: stable@vger.kernel.org
-> > ---
-> >  drivers/block/zram/zram_drv.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_dr=
-v.c
-> > index dd48df5b97c8..dfe9a994e437 100644
-> > --- a/drivers/block/zram/zram_drv.c
-> > +++ b/drivers/block/zram/zram_drv.c
-> > @@ -2335,6 +2335,9 @@ static void zram_reset_device(struct zram *zram)
-> >       zram->limit_pages =3D 0;
-> >
-> >       if (!init_done(zram)) {
-> > +             /* Backing device could be set before ZRAM initialization=
-. */
-> > +             reset_bdev(zram);
-> > +
-> >               up_write(&zram->init_lock);
-> >               return;
-> >       }
-> > --
->
-> So here I think we better remove that if entirely and always reset
-> the device.  Something like this (untested):
->
-> ---
->
-> diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.=
-c
-> index 0ca6d55c9917..8773b12afc9d 100644
-> --- a/drivers/block/zram/zram_drv.c
-> +++ b/drivers/block/zram/zram_drv.c
-> @@ -1438,12 +1438,16 @@ static void zram_meta_free(struct zram *zram, u64=
- disksize)
->         size_t num_pages =3D disksize >> PAGE_SHIFT;
->         size_t index;
->
-> +       if (!zram->table)
-> +               return;
-> +
->         /* Free all pages that are still in this zram device */
->         for (index =3D 0; index < num_pages; index++)
->                 zram_free_page(zram, index);
->
->         zs_destroy_pool(zram->mem_pool);
->         vfree(zram->table);
-> +       zram->table =3D NULL;
->  }
->
->  static bool zram_meta_alloc(struct zram *zram, u64 disksize)
-> @@ -2327,12 +2331,6 @@ static void zram_reset_device(struct zram *zram)
->         down_write(&zram->init_lock);
->
->         zram->limit_pages =3D 0;
-> -
-> -       if (!init_done(zram)) {
-> -               up_write(&zram->init_lock);
-> -               return;
-> -       }
-> -
->         set_capacity_and_notify(zram->disk, 0);
->         part_stat_set_all(zram->disk->part0, 0);
->
->
+On Mon, Dec 09, 2024 at 09:44:26PM +0530, Tarun Alle wrote:
+> Below auto-negotiation library changes required for T1 phys:
+> - Lower byte advertisement register need to read after higher byte as
+>   per 802.3-2022 : Section 45.2.7.22.
 
-Thanks for the suggestion, I've tested it and it works well. Will send
-a V2 shortly.
+Is this a fix? Does Linux have any T1 PHYs which already support
+auto-neg? Either add a comment this is not a fix because...., or
+please pull this out into a patch for net, with a Fixes: tag.
+
+	Andrew
 
