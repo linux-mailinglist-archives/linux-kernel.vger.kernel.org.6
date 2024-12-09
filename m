@@ -1,94 +1,94 @@
-Return-Path: <linux-kernel+bounces-436889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47BA59E8C22
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:28:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08AD49E8C23
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:28:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14BD71885FAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:28:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF8E11642CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7991B215055;
-	Mon,  9 Dec 2024 07:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1747E21507E;
+	Mon,  9 Dec 2024 07:27:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="SvSD9kOP"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0wAD4YSC"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5457E214A84
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 07:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995BA1EB3D
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 07:27:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733729272; cv=none; b=iyzfQXo4b4IAhydKpdegVKkdrQCm4mvCYc3N3ZiB0hnfgIGieXy/l4g/g3jk76UZrbLFUWVjBjHKY5HuFPc5zrVCqVUXwBl7ooPlv51EwRC2NQMcViRgmCUOF99+HZ5yD/35DwSAuWBdavry2PhXz9UTIRrp54ZA+aPE+S9n4yU=
+	t=1733729275; cv=none; b=WgNDnWBGh3V9iiQRacpku1PZpI3YqQX0k+73lrdnyxCmFLW4/jzy8K6MifQrOSqM9Dp3/iQ4mP6v8Ww/c6BQz+tsalcdZe/Iwbw3kkvav1lOSJYzA5g8NK5jIfuRM6qDKddQ828zMgBwsaZGOFzT265UYmGvl8QqyUD1fscl/mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733729272; c=relaxed/simple;
-	bh=CzG4LCYCgy1J7KvD3L4+YV8+zVCLxj5TTFerWUZmz3Y=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=sjdkJuMCDSKyVYASD/IffnkgpuC+Z5Ll2CQHGBq7OeNsSJoBz7VVaouurPdRVCV3fd3Fr6a3q6ztJxVMbkR0K3XOtXp9B978STuq7Qrxrpe65HkK+EiPArypUQkfvbz6IwKbZktxUu8cFQqKBGP51CplYMzHXD6pU3GQ9+3XMSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=SvSD9kOP; arc=none smtp.client-ip=209.85.128.74
+	s=arc-20240116; t=1733729275; c=relaxed/simple;
+	bh=4Wv8XaavpPEkhYsV9Ea5hOf7zaXq9QQ7WtxjCJrCTT4=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=f7EYnjPXoBohwuEqkscY5pjl12CX5Xt2qzsnBkkd/fuD4p8KFecCMMJBQhYqVbLRV71Gn+hoKMZOR7bfmlvHDJ/SPBU69aWJy6DnEh4v926GUtiLVhut8lXAgvj0DAZ+9NUGzTKgwnBkHjWePjQffSyyKm/DNmLFNxCwCyRKQrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0wAD4YSC; arc=none smtp.client-ip=209.85.128.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-434fb9646efso2781855e9.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 23:27:51 -0800 (PST)
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-434e8beee61so7580025e9.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 23:27:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733729270; x=1734334070; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lYqKVBlUL80Zd9rsetNolMG8mIV6iaS5axJEolGX4hc=;
-        b=SvSD9kOPcmlTS90LXEujnRZXRlcUNsLj3w8/mw9sblwx508qbrNs3djECXM4HtlE4T
-         rkPb9NEVkuoTlXUj9TdLCwotRt1akONaJMdeJHJc7Bnt0u3Dy5zhH41Eb3QQjSodEERN
-         fDwhz+/4FQPDhm++qHu/GbKm8z1qiB69SjcyF6OkwoHt9BXaUu8I7kkQ2ekIzhdKkw6j
-         RFuh8sgKMUMlQNkBiKtonPnEzKqMqbDQrD6EtVr8uvEND7dxFtRQO6r79gpYAmo0kmpI
-         UgxsF2l2iriOOKupUWr4dKqUD7m1jyQg6LhsQz+Wq+xQNjfbG+Q87IFRzR7/fs8wMPFV
-         WrFA==
+        d=google.com; s=20230601; t=1733729272; x=1734334072; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/S+CUGTEWVFRiC7zZipkdW5Fs9z3rjt6UxWYN0Sev4w=;
+        b=0wAD4YSC8D3r+QHTF5Aey6xdT9so0ScTEyxJ4Rf5tWTF2zkrQHQBnP7csvJ3vSkq7A
+         fJX7E65J/eTSEhoBSKq/U8STh8AygvaM3ANfcDANf6e8saPOMHjdWVgtqB6HH7X1FRcn
+         DnQT2bTw4AQ12g+9PUxQAhhlvDhyMP4Q13feo76gYFq11vgkhxpptoPmy8ITJfOmoedU
+         I/GOBz3QuEnFSumG6kFRuX1mlOt061dNaJUuU8tsjF4baCIr9V9cPz9lNt6EQOT77eHv
+         ryMXBkFXMabDz+sskq/iomBKRWB+W57W3OiRvglcXECxaqxl9JkKrpiVSAYVsCFrmUiR
+         Dk/g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733729270; x=1734334070;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lYqKVBlUL80Zd9rsetNolMG8mIV6iaS5axJEolGX4hc=;
-        b=ZxGhilgq9SjhI6kK/wIyuIJTpt3zOxtmsQYu5ndP+L/59YEuotpTeTuFB4vtdngVMK
-         Nq4buiSoQE7Gd9Oj2W6K6jx/AtTgvWzinU5KPiVzRtKOuTtFOoDSBdupw9cimHIjURFV
-         l8A2aiZXGxMrbq1leAORe9A7lnpnniFuVT5VgWNKj+ZPn/h9Jl7z1vWArIVRn/px1Xzx
-         P5ft0PcUCDafhc6kGXp1Qb5akAZZPS4ay26D/YEs6npU+zMdWs2ZWOTe+apfys9omn5w
-         Ss1GcD14xOyu4JENQwsQxutoh7ANMX/1niMU6xzkYhD9Eooy2injrA5YwPQYNtVbWNp4
-         m6EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXyIoJF/nQ/TQueRS8WUFWzUzN0Uhaq9CCb3qu7+78Sbns71sAasFBGJjwAquPbYyDGLsQ2WJEboGTwZU0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNUvtSmHyhHHM0fH8kvRHMBg1Muv5J6+PyLJwFdyE/ffxOr6yX
-	41PSDO1GdR4EMANEhf6EtiNaS8DzdRqlmP8F0dWUi93kLNTJYf4hFBB9yHF8dt/IeeVdxS4pvDT
-	lixWjD+YRLi9LcQ==
-X-Google-Smtp-Source: AGHT+IHLip+cWClqTDmOvhFKsS3OnDFtSGJSQAvn2hFaHftIrUei/OnvvkIwlZEReQn9AZ3pcDHXxEmZC+fEB7E=
-X-Received: from wmbg8.prod.google.com ([2002:a05:600c:a408:b0:434:e665:11a3])
+        d=1e100.net; s=20230601; t=1733729272; x=1734334072;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/S+CUGTEWVFRiC7zZipkdW5Fs9z3rjt6UxWYN0Sev4w=;
+        b=axrivZ1qsyiAlPcp24M40qZhD0isPtJS7rq4QAeaFXY+wOJbFSvsGWrb5/SscGDLdN
+         uYyXS+xGQ7bgS8jJpiYh5jYwGb16+oOT5CW9XapTGL7VaEN64+gaXe41K+2FB0MkhPCf
+         dCs4z+7M8JFVGC1aKbaVkOVYPTMPXlJiG2iPHGys9pCWzv7YrQ+Prj6WwzDkpkctI+Yl
+         JPy1n9q0ShOwxiAJBbwr8mZo+1AEmtMsZ1kqvTtRy1D+phzXOTFedqOfSXv/zYOVE+mX
+         ZzoY02sZRD4Pmt4tPf3yjUZ5rIccpDvDXLHDD1MojPxB0aM0kc3acxhnOhh3bOczgZiD
+         +0qw==
+X-Forwarded-Encrypted: i=1; AJvYcCV3QDGpmLxEZNLhbncZI/cqqUyBgI21DRZ8qqBh/K5YB/kivN3131v0C4DySwWUiNyE1kNAkfAJxtUgFDw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+wAY/qZ9nnFonqB1VdAYPzAk4l9ONHbSUav6cuvOT2hzASAWz
+	XTgzQYjRjk7Noi1WgkTC3dggMAj99gM/1+9xQUnmrBAIwu9pOMOYSgxb4cvyR1HCL6Ay9o94SBA
+	D4GVS38nIYiTfkQ==
+X-Google-Smtp-Source: AGHT+IF4fXcegEacu/CEqu7D13ezG4G2Jp3/NH06VIcf5I8sePb0lG3RnpXzlOzTCeTlh2Jn2mA5dk9zEBliIBE=
+X-Received: from wmbjz10.prod.google.com ([2002:a05:600c:580a:b0:434:a10e:91b5])
  (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:3544:b0:434:a386:6cf with SMTP id 5b1f17b1804b1-434ddeaceebmr95173205e9.2.1733729269824;
- Sun, 08 Dec 2024 23:27:49 -0800 (PST)
-Date: Mon, 09 Dec 2024 07:27:45 +0000
+ 2002:a05:600c:4f4d:b0:434:fe3c:c662 with SMTP id 5b1f17b1804b1-434fe3cc9d8mr1637385e9.12.1733729272035;
+ Sun, 08 Dec 2024 23:27:52 -0800 (PST)
+Date: Mon, 09 Dec 2024 07:27:46 +0000
+In-Reply-To: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAPGbVmcC/4WNSwrDIBRFtxLeuBa1+diMuo+SgejTPEhi0CItw
- b3XZgPljs7lfg5IGAkTjM0BETMlClsFeWnAzHrzyMhWBsllKyS/sZWSsTVokDlakO066pV11g1
- u6FQvrIba3SM6ep+7z6nyTOkV4ue8yeLn/lvMglXZvpfyPqhW8YcPwS94NWGFqZTyBaXYGhy7A AAA
+References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
 X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=765; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=CzG4LCYCgy1J7KvD3L4+YV8+zVCLxj5TTFerWUZmz3Y=;
- b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnVpvyxYWPC/5hiHYX4LjZWZlV9uJlUfDGKM9Ix
- hFy8ZcDj8uJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1ab8gAKCRAEWL7uWMY5
- RqfCD/96mpl99n+3ADLxOsLLjsqfGfh+No8JbR1DG3S0Au+2tmR3fKhTObeJduXi8+oGhA07xAX
- bSLgLSOpXdCev0kOHCI2pFeE1oqQdOKZdUuFyc2o9+7DmoroSpSmbg9qMeSTQ3xelGjY9Orqc29
- +fVWgY3b1QhZ/4yVUxqbgxQw1QLGZPAVq2Zoosu/FSxAU4lc7zfDlj/NLw+HJFcG6nJUqdDfOzj
- ZvLKO/LVwWRd4rA7GfnCFjrwN9wJbafe/iTHfb8lyKphyLmh+fv6RMy4XbHAfUYZixDf4mYF64P
- ohXlRu56/+EHQUT6sSyic1hvfUZlTedt+sp0YWb/Icu6qNXxepBcy2nygv4Ki5gf6Xa9s9zpdxP
- ZieyDyoBmxCbu7byUM1+hhxaO3rtAByvRxHMQL0gVOHtHRlPfVY9vOMhV2wOmZUaTscVszoY6nd
- 0YXoTaa54+QF6AgDBgpPQIEXxtFqMFeyw9vdYwH5UnXihtFVo3GcO5me3BDOGGtEmIEEn1l8SBN
- s21NKcDSThZBDDcaPja31Brb/mM/dKzenZUrb7wgXzfZMag/0yA7/NiD6IHbRblqCCl6slPjV1U
- /syVR69xSlZEENd4G1gLDkKwcnLxaLbGbyfgXkSbF+MeEdu53pOA/4zaLqoDP7vJbrFvWxc0NZa C6Ow/qMx4zn4q3Q==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3884; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=4Wv8XaavpPEkhYsV9Ea5hOf7zaXq9QQ7WtxjCJrCTT4=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnVpvyrUjxyVkMoE8OuerED5jSUGVlD3r+ZHL01
+ HkkyF49nx2JAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ1ab8gAKCRAEWL7uWMY5
+ RpcfD/sHaTU4u+iSb8IEIAjxXOQLmHD2uiKdzbATrwH/DrWuC6jpN5wp0szwgcTGjP1fBSkWv9c
+ c0x2fDlE2/8QCHdfeaNNVZUi2H9VY489h16ZEJB8TaTiWIh4ot6fO9SMH8nGWbSVQpKTWXIFRcF
+ jJNk4YOeeIsenfKem2FvZ0lWoqw0QcuuRDxTOb6ZfahUPb8jSdr1HvBVhQffCNehosVGoNm05/y
+ Jkps7qk/1NiQWxMveJmny1NQtf40VqvnoCy2iyflATfT7r3+3SUdEQ1qyW8RVItd8Hn39qkR+SP
+ CmnBY53Ei5W0IQ/T0fpprPqDupoWQQw0w7aChO9I4to6Wu6h2pxbTBPI2mNr8Zn3H3KYsQhw/0g
+ Wyw3qj0dZc5o4vsz4KUMAVnNUWLjsuy6fMuphGAvG+TPwYBfh4SC+zwytQYUJOwiQpb87R7UoY9
+ IXuol4uu1M6gF8sMM8QIoMBc3ws3M9oHimxO2KNOqZM+LqPQDPEe09qPGKHiugVyc//u3dbcxQw
+ RnZMZK2u8+FgWDpV0UQYXKl5/Rl4ItTKt+NVWlxV3XuHASmWVjbdfVt9xhVnQBGTCz+2L1FVsBZ
+ 7kr4GjVbHNVxQmAjErRMfaZl/PlicIM3OguWXEEJg/+owL8A8ubv/hUHJw2GfyN6A0M5yBUF1To 1GBJkGjguSDwFSA==
 X-Mailer: b4 0.13.0
-Message-ID: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
-Subject: [PATCH v2 0/2] Additional miscdevice fops parameters
+Message-ID: <20241209-miscdevice-file-param-v2-1-83ece27e9ff6@google.com>
+Subject: [PATCH v2 1/2] rust: miscdevice: access file in fops
 From: Alice Ryhl <aliceryhl@google.com>
 To: Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
@@ -100,28 +100,110 @@ Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.
 	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
 Content-Type: text/plain; charset="utf-8"
 
-This could not land with the base miscdevice abstractions due to the
-dependency on File.
+This allows fops to access information about the underlying struct file
+for the miscdevice. For example, the Binder driver needs to inspect the
+O_NONBLOCK flag inside the fops->ioctl() hook.
 
 Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 ---
-Changes in v2:
-- Access the `struct miscdevice` from fops->open().
-- Link to v1: https://lore.kernel.org/r/20241203-miscdevice-file-param-v1-1-1d6622978480@google.com
+ rust/kernel/miscdevice.rs | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
 
----
-Alice Ryhl (2):
-      rust: miscdevice: access file in fops
-      rust: miscdevice: access the `struct miscdevice` from fops->open()
+diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+index 7e2a79b3ae26..0cb79676c139 100644
+--- a/rust/kernel/miscdevice.rs
++++ b/rust/kernel/miscdevice.rs
+@@ -11,6 +11,7 @@
+ use crate::{
+     bindings,
+     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
++    fs::File,
+     prelude::*,
+     str::CStr,
+     types::{ForeignOwnable, Opaque},
+@@ -103,10 +104,10 @@ pub trait MiscDevice {
+     /// Called when the misc device is opened.
+     ///
+     /// The returned pointer will be stored as the private data for the file.
+-    fn open() -> Result<Self::Ptr>;
++    fn open(_file: &File) -> Result<Self::Ptr>;
+ 
+     /// Called when the misc device is released.
+-    fn release(device: Self::Ptr) {
++    fn release(device: Self::Ptr, _file: &File) {
+         drop(device);
+     }
+ 
+@@ -117,6 +118,7 @@ fn release(device: Self::Ptr) {
+     /// [`kernel::ioctl`]: mod@crate::ioctl
+     fn ioctl(
+         _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
++        _file: &File,
+         _cmd: u32,
+         _arg: usize,
+     ) -> Result<isize> {
+@@ -133,6 +135,7 @@ fn ioctl(
+     #[cfg(CONFIG_COMPAT)]
+     fn compat_ioctl(
+         _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
++        _file: &File,
+         _cmd: u32,
+         _arg: usize,
+     ) -> Result<isize> {
+@@ -187,7 +190,10 @@ impl<T: MiscDevice> VtableHelper<T> {
+         return ret;
+     }
+ 
+-    let ptr = match T::open() {
++    // SAFETY:
++    // * The file is valid for the duration of this call.
++    // * There is no active fdget_pos region on the file on this thread.
++    let ptr = match T::open(unsafe { File::from_raw_file(file) }) {
+         Ok(ptr) => ptr,
+         Err(err) => return err.to_errno(),
+     };
+@@ -211,7 +217,10 @@ impl<T: MiscDevice> VtableHelper<T> {
+     // SAFETY: The release call of a file owns the private data.
+     let ptr = unsafe { <T::Ptr as ForeignOwnable>::from_foreign(private) };
+ 
+-    T::release(ptr);
++    // SAFETY:
++    // * The file is valid for the duration of this call.
++    // * There is no active fdget_pos region on the file on this thread.
++    T::release(ptr, unsafe { File::from_raw_file(file) });
+ 
+     0
+ }
+@@ -229,7 +238,12 @@ impl<T: MiscDevice> VtableHelper<T> {
+     // SAFETY: Ioctl calls can borrow the private data of the file.
+     let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+ 
+-    match T::ioctl(device, cmd, arg as usize) {
++    // SAFETY:
++    // * The file is valid for the duration of this call.
++    // * There is no active fdget_pos region on the file on this thread.
++    let file = unsafe { File::from_raw_file(file) };
++
++    match T::ioctl(device, file, cmd, arg as usize) {
+         Ok(ret) => ret as c_long,
+         Err(err) => err.to_errno() as c_long,
+     }
+@@ -249,7 +263,12 @@ impl<T: MiscDevice> VtableHelper<T> {
+     // SAFETY: Ioctl calls can borrow the private data of the file.
+     let device = unsafe { <T::Ptr as ForeignOwnable>::borrow(private) };
+ 
+-    match T::compat_ioctl(device, cmd, arg as usize) {
++    // SAFETY:
++    // * The file is valid for the duration of this call.
++    // * There is no active fdget_pos region on the file on this thread.
++    let file = unsafe { File::from_raw_file(file) };
++
++    match T::compat_ioctl(device, file, cmd, arg as usize) {
+         Ok(ret) => ret as c_long,
+         Err(err) => err.to_errno() as c_long,
+     }
 
- rust/kernel/miscdevice.rs | 44 ++++++++++++++++++++++++++++++++++++++------
- 1 file changed, 38 insertions(+), 6 deletions(-)
----
-base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-change-id: 20241203-miscdevice-file-param-5df7f75861da
-
-Best regards,
 -- 
-Alice Ryhl <aliceryhl@google.com>
+2.47.1.545.g3c1d2e2a6a-goog
 
 
