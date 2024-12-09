@@ -1,60 +1,55 @@
-Return-Path: <linux-kernel+bounces-438186-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438187-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36489E9DED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:18:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF0D9E9DF1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:19:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7326B2834D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:18:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98BFB1887652
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:19:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C033B15820C;
-	Mon,  9 Dec 2024 18:18:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78B1158536;
+	Mon,  9 Dec 2024 18:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X0jlHCNJ"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hd17BUb3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A230A146A63;
-	Mon,  9 Dec 2024 18:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA7B14D283;
+	Mon,  9 Dec 2024 18:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733768308; cv=none; b=q0OfJAb7CMGCp/rqhQnvGnxVum1CoMm1JbFhjy5btvIb3YWN+eh0doY4PVZ7bC3KpNqg0mFT35HIhclm1P2lBDk0OwT/gj7XJ/8nB6EzEBEv8HlMlystF4jRcN1r0L0fHXMr73wdwpUYCXM3aW4Sk1n1lomcHHmdHMLP6Ef4xu0=
+	t=1733768388; cv=none; b=nsGmLOm1NbnxsWZIgzgvQe2BAAK/k8agO7hkv2O1nrF7J//ndo4JjrAaSVq/Nur+rxuMKd7cZMOwBT8VggSC4W4Qxo1hvkLdWzaK+h4pKgilpcY+DFzoD7XM3ExeRvxLDjMrlo1mlZyQyeo8coTqKrhEidpEbumX6nAjPf189aw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733768308; c=relaxed/simple;
-	bh=hQWwJZvCHZ1fjq+iunv+2IF24HIubF4NUtlb9W3UYqo=;
+	s=arc-20240116; t=1733768388; c=relaxed/simple;
+	bh=Hd1rQymEODPjoNCaX7qvSHK/dSAqSz+Wx1sGbb+/QXQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=guzYcUMvOWgzCW4Un2oTM/bFva6xcgRaCdrqbagH6F+3N9xRQ3+URIuoB701YeSzxsvf4+fMOq/d29KhpDVS1paH+jNkpG9m4qQhNIUVAvZIlgqzp0r0ez+Lok0+yhaSEabRYnSC/wVTa0MOZzG2yHlq+gg2+Fx8zxx1rv6frvM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X0jlHCNJ; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=U1f1R4UQUo/1xKrAQLvIckcOBM37rVenaV8lQc3Npeo=; b=X0jlHCNJyTEMgRD7CZcEGzt5zx
-	hMvSZXB5Q3TMc/n9neYvA7a50UFIkKf9SmQugpxcaCqtPmBORNoU3u0R/KymJDL9Hs3YnWyJlQqCT
-	WQDZx3nJ8bLnbi1Yf7ss2W/tninWrieCA1QUY0Bt0n2F1P7cSUx7mMAPgHQ/DeO1bkB8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKiKi-00Fhr1-S3; Mon, 09 Dec 2024 19:18:12 +0100
-Date: Mon, 9 Dec 2024 19:18:12 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: dimitri.fedrau@liebherr.com
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dimitri Fedrau <dima.fedrau@gmail.com>
-Subject: Re: [PATCH net-next] net: phy: dp83822: Replace DP83822_DEVADDR with
- MDIO_MMD_VEND2
-Message-ID: <5d9d8b8b-9e24-4516-ae4b-a42c37128b1b@lunn.ch>
-References: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=F3kxmDawT8s6ORNtA+bdxXJ/aT8WXCSSU2uLn79PIvXOtw9dWsATrjGiiC23MRejuTNDIhDdfdFvH+aLVjPUp830WtSCGshyd8ZUNvl3ZaqlAR2rdsqenLQOl5DFXgzsBqZgcOef4KmwqrUjyYK76V1s1eKsc63V1Sp6sICaSbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hd17BUb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C439C4CED1;
+	Mon,  9 Dec 2024 18:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733768387;
+	bh=Hd1rQymEODPjoNCaX7qvSHK/dSAqSz+Wx1sGbb+/QXQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hd17BUb3QP6Jqz+JNiWgfDlyBYBM607B2/k2WBFsvw0q9f50irIR4m936S+EWB3+i
+	 EJUuW5NMfmRxoo45xlU/DcIh6GaK+n444FU1aP6Y1/uMhNt6SQ5MBju1MadLlgAtMb
+	 xbXd5x6A8NVzpfkq7LVdRfi6iW49ox9NpBycSlQfxabMndBbfcrmj32Ue3OKzv6+1X
+	 Nwo0j0fIgyO3OdbTayY0CBVdX0RhTiL1XjkVJQUbmbsc5itlGcYb6r8UgE/ZABcrNM
+	 NDorQS7e3ELK5ErHMDBE4kyuqi/n9bvwIii3zdBGuuslQ9NbnKBlNOpqJXNHwIqYxr
+	 70S3atnnLkWvg==
+Date: Mon, 9 Dec 2024 20:19:41 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nicolas Schier <nicolas@fjasle.eu>
+Subject: Re: [PATCH] kbuild: suppress stdout from merge_config for silent
+ builds
+Message-ID: <20241209181941.GB1245331@unreal>
+References: <20241208144622.605523-1-masahiroy@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,17 +58,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
+In-Reply-To: <20241208144622.605523-1-masahiroy@kernel.org>
 
-On Mon, Dec 09, 2024 at 06:50:42PM +0100, Dimitri Fedrau via B4 Relay wrote:
-> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Sun, Dec 08, 2024 at 11:46:14PM +0900, Masahiro Yamada wrote:
+> merge_config does not respect the Make's -s (--silent) option.
 > 
-> Instead of using DP83822_DEVADDR which is locally defined use
-> MDIO_MMD_VEND2.
+> Let's sink the stdout from merge_config for silent builds.
 > 
-> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+> This commit does not cater to the direct invocation of merge_config.sh
+> (e.g. arch/mips/Makefile).
+> 
+> Reported-by: Leon Romanovsky <leon@kernel.org>
+> Closes: https://lore.kernel.org/all/e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com/
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+> 
+>  scripts/Makefile.defconf | 13 +++++++------
+>  scripts/kconfig/Makefile |  4 +++-
+>  2 files changed, 10 insertions(+), 7 deletions(-)
+> 
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-
-    Andrew
+Thanks,
+Tested-by: Leon Romanovsky <leon@kernel.org>
 
