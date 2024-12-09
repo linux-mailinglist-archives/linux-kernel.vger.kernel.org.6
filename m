@@ -1,185 +1,179 @@
-Return-Path: <linux-kernel+bounces-437883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0B7E9E9A12
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:09:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 048D59E9A14
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:11:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7785118875D4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:08:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8102A1885EC7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:11:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C668D1BEF8C;
-	Mon,  9 Dec 2024 15:07:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A07C1BEF72;
+	Mon,  9 Dec 2024 15:11:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CGP7wulN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="QqJEAl3r";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="pB47Z69O"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F741B422E;
-	Mon,  9 Dec 2024 15:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733756872; cv=none; b=ezd0v1tdGzOyVJm5kATB8aITaFJSanMysmlR0HpW7gvbujiXwDvh+K/1+l9Zom2yzz3wqD98YWsRxxL+S5uJj3fza+wNqc3Jl0GCq+NzXgTHFoi+jc/2IuqwoZnDENAKkrS4G+9jRg0hGOXXf4iEeyHBOHRa21X6hnYJEe7bcZA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733756872; c=relaxed/simple;
-	bh=uk/0UdEMXtESb27s2FPly12gPgWEWDNT9EA+JVxL4ng=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IzsdBwDVJIkNLeQ78OoOdXSnkzr51SF38DMudm1HY611CYw/mPv5tsdYlBpN3nxnscCe2yC/97WoVFBaH6uohYGuRGLcLQAkUWuKKlDIGNLR97RJ33OMRotygqwOfjMLRboPiZvquVMzI0HE5o3vFkj1AlKfqp7eJan+tTQWr5g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CGP7wulN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AEdLR031613;
-	Mon, 9 Dec 2024 15:07:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zcXxgrlJj9QA/6b1Wp+0cE8SmamP7uL7/ApWHq7oe+o=; b=CGP7wulNN5n/6q6H
-	r8xgH0M+U9KK+h3pC1izXwe9njH9VUjNx13EI2v5TcySk22qzbCrs+zkyIXcdPLc
-	UL6G6q95KCPpq25NJL3zeK1XZ6LNT6AMox5+IecULWJDy4lNF01kK4bxzyYtrvlt
-	z06xGE7h4Wy1no9KZOlryLwUyYJqbnwXpa++TUJ7i8OVEEvfq78VhL4Kgi7vFTFd
-	BQVrpgBLK8pPzcyEgMfdhMvm0d8kNXwBgnNfxR24opREPlHt4yyQXbF6cZlOD0jb
-	OFYgnlCT5m7XpRgw6hfuKm4R/jUy4j/k+c4x+6fjwWTK6sEwMbHzCN024HFYNAGb
-	qavmkQ==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdxxd6ps-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 15:07:42 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9F7f9H008342
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 15:07:41 GMT
-Received: from [10.50.34.16] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 07:07:32 -0800
-Message-ID: <c275cf76-0335-4b01-8d07-86d38e6d27e0@quicinc.com>
-Date: Mon, 9 Dec 2024 20:37:27 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9F4233133;
+	Mon,  9 Dec 2024 15:11:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733757081; cv=fail; b=OFvfC86Evbya9EwckQot0Q70y8SMAw9lS1Eu7IZ3v8emuJpLEYcCiSGJQMI0fdfkr7RV24ylY6UahF65oEMLMXYpC7Xsw7P1qyupIBWIcgLAbXPA0xcxl+vA/aaI0ue8Yuq+Cuu7unRoj2KUJ/+u5i93i6gKIKgn9ctbFlKKZOA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733757081; c=relaxed/simple;
+	bh=9lUDseaQa+GMv75Q4XDP5lPqk5URrX9hhOlR18Rtbt0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=DOFVXJDO6xK4/YBiPMskPrApkagWlwWyJ6qnu01KCM9XVdk8N0FZcWfeuWkapnYFvSvPm4ly2gG/3c0eecrFhQchSmm8N04R8fVfwfvZRmZls9IuwhIRppl7ItDqvwasKeNF8qZ7q8Ih6hfN3QZ3TCNqbvzf4Y9jpzBPprgY8P0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=QqJEAl3r; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=pB47Z69O; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id AD9F0480A33;
+	Mon, 09 Dec 2024 10:11:18 -0500 (EST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733757078;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=y+I0lrcFIAT6oDjUumIjTqveIGr+o6WjjTw4iAdh/Ws=;
+ b=QqJEAl3rNwMZMBiJ14djxrmwDdrg5VmKHPgKWTUjR7fnHZEyNQO29XQgp9zXbbYQX2WfZ
+ 6MWbj8v491ugJz2CA==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733757078;
+	cv=none; b=uTX56S8oo1nytYxBfzl5OoyNxXsym/eGIepPvNe01w63zat7wRqoGHDYoeqDMI4zS3oGnJihMSWMMKn5mh9xklh7ujNGLpXvnbzW88R2sFNbBVNXwaAGwJCYTo1EgpR4m8u3pcpeajAde9ibc1Xkbq7Astavbq4irNsQksd/zytw+Hzx7aaPx1A9HCFjOwDMpX5CvI2hZeCAckAburWAW/DohOaaELlmtmlRC1rrsmJdE3ND3tHnXKZb/8pzfChGGgz+nUNdaNSiQoZOA7S8oAaFSRGGaTWyg54xwuDm1dGzWctSk537aNymIvH6k8ADzBaMeATweATmWJ3Farz2ug==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1733757078; c=relaxed/simple;
+	bh=9lUDseaQa+GMv75Q4XDP5lPqk5URrX9hhOlR18Rtbt0=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=NP3zF/HqJbP3UWYzqd7DHsMNT64ZUaqIwi78MAJGNPg+4+HwwAlaKZvZhHFTkuvw8kvVM60RPRMQxE2eO3KSalsVirIpwdBwXokieRH71opcgL3HQHnbGkiBrZtT0QesXsZ5pYNo7735OqeONFM9m6o8dmTXpOEXfVt60XNa6sblh9RM6hbeTxpqZ+BFOW1sxls/C7HBM3KGVXypzpDslGwD5d8CCTemamWMxyXSatAdnEBBt5M1AM/LJWOaiB6NCAchON4csNLmMUqfb4tn5+SyLwne0WQbFXufD/3wk/riIm7NpJHFZtFbhHrBWH2VikNbmJ2GSVDB4ELCUpgmpw==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733757078;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=y+I0lrcFIAT6oDjUumIjTqveIGr+o6WjjTw4iAdh/Ws=;
+ b=pB47Z69OwJinSJb/v+R3limJ1iTBvT1in1aD+MVgInpwxOy7MVdJVZ0y8+zFUBOWIxbSZ
+ UmEK4bXf7iT5wtMILiHtuRxo3CFkF1dNSQEllkb0byAXLjpXPodF6q911M9wtJ325/mQrnk
+ e3T72Lco6vHxexKb1GWnDqxS/AQo7ns/4CKQiSVFwElOqJGJiElmOPnn5qz4P3s3bEPt6DP
+ vPNQNQPkefOPJpkOgWTB1hCp/xJ6v+4j9tnOBC0YfT43bIkbFsP6egdyUmer7XD9Qz1y6gs
+ j524xcIgtC5ejIJcZiedVLgm4g4e6nvevnp55wRj53E2OjkU81VC9Yy99Dmw==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 7754B280081;
+	Mon, 09 Dec 2024 10:11:18 -0500 (EST)
+Message-ID: <5321021d929cebf7268fc163ddb92cb740c09c82.camel@sapience.com>
+Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
+From: Genes Lists <lists@sapience.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	torvalds@linux-foundation.org, stable@vger.kernel.org
+Cc: linux-media@vger.kernel.org, sakari.ailus@linux.intel.com, 
+	bingbu.cao@intel.com
+Date: Mon, 09 Dec 2024 10:11:17 -0500
+In-Reply-To: <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
+References: <2024120917-vision-outcast-85f2@gregkh>
+	 <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-6wRbfTIBrZlGr7AxFyD4"
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
- flag
-To: Krzysztof Kozlowski <krzk@kernel.org>, <konrad.dybcio@linaro.org>,
-        <andersson@kernel.org>, <andi.shyti@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <conor+dt@kernel.org>, <agross@kernel.org>,
-        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
-        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
-        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
-        <krzk+dt@kernel.org>, <robh@kernel.org>
-CC: <quic_vdadhani@quicinc.com>
-References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
- <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
- <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
- <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
- <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
- <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
- <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
- <fa3ee895-5353-44f5-b816-9d17b6a7d199@kernel.org>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <fa3ee895-5353-44f5-b816-9d17b6a7d199@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4p6cn0PN7oKNSSsHKWihQNEvHKrwDQg7
-X-Proofpoint-GUID: 4p6cn0PN7oKNSSsHKWihQNEvHKrwDQg7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- phishscore=0 mlxlogscore=622 priorityscore=1501 clxscore=1015
- malwarescore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090118
-
-Hi Krzysztof ,
-
-On 12/2/2024 4:43 PM, Krzysztof Kozlowski wrote:
-> On 02/12/2024 12:04, Krzysztof Kozlowski wrote:
->> On 02/12/2024 11:38, Mukesh Kumar Savaliya wrote:
->>>>
->>>> Come with one flag or enum, if needed, covering all your cases like this.
-Please review below comment which was about other cores. I think we can 
-go with single flag naming qcom,shared-corename, for similar features 
-for any core.
->>>>
->>> Let me explain, this feature is one of the additional software case
->>> adding on base protocol support. if we dont have more than one usecase
->>> or repurposing this feature, why do we need to add enums ? I see one
->>> flag gpi_mode but it's internal to driver not exposed to user or expose
->>> any usecase/feature.
->>>
->>> Below was our earlier context, just wanted to add for clarity.
->>> --
->>>   > Is sharing of IP blocks going to be also for other devices? If yes, then
->>>   > this should be one property for all Qualcomm devices. If not, then be
->>>   > sure that this is the case because I will bring it up if you come with
->>>   > one more solution for something else.
->>
->>
->> You keep repeating the same. You won't receive any other answer.
->>
->>>   >
->>> IP blocks like SE can be shared. Here we are talking about I2C sharing.
->>> In future it can be SPI sharing. But design wise it fits better to add
->>> flag per SE node. Same we shall be adding for SPI too in future.
->>
->>
->> How flag per SE node is relevant? I did not ask to move the property.
->>
->>>
->>> Please let me know your further suggestions.
->> We do not talk about I2C or SPI here only. We talk about entire SoC.
->> Since beginning. Find other patch proposals and align with rest of
->> Qualcomm developers so that you come with only one definition for this
->> feature/characteristic. Or do you want to say that I am free to NAK all
->> further properties duplicating this one?
->>
->> Please confirm that you Qualcomm engineers understand the last statement
->> and that every block will use se-shared, even if we speak about UFS for
->> example.
->>
-> 
-> I think I was pretty clear also 2 months ago what do I expect from this:
-> 
-> https://lore.kernel.org/all/52f83419-cc5e-49f3-90a7-26a5b4ddd5a0@kernel.org/
-> 
-> 
-> I do not see this addressing qcom-wide way at all. Four new versions of
-> patch and you still did not address first fedback you got.
-> 
-
-To answer the comment @ 
-https://lore.kernel.org/all/52f83419-cc5e-49f3-90a7-26a5b4ddd5a0@kernel.org/ 
 
 
-Sorry for not replying straight to this query. Let me, sort out here 
-being in agreement with you. I queried internally, no USB OR UFS OR PCIe 
-having this case. BAM (sps driver) has such usecase, and if it's comes 
-up in future, we should give similar name like shared-xxx if it's 
-similar in nature.
+--=-6wRbfTIBrZlGr7AxFyD4
+Content-Type: multipart/alternative; boundary="=-a/TPufZFI2QvsdAEVNhh"
 
-"qcom,shared-xxx" is what i think a better option. Can it be renamed per 
-core and let individual HW core use it when required ? Just my thought, 
-you may please suggest better and simplified way.
+--=-a/TPufZFI2QvsdAEVNhh
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-clock controllers, TLMMs, MMUs  etc should also should add similar name 
-if it's best suiting to the needs and similar feature.
+On Mon, 2024-12-09 at 09:52 -0500, Genes Lists wrote:
+> ortly after booting in dma_alloc_attrs - maybe
+> triggered in ipu6_probe.=C2=A0
 
-> 
-> Best regards,
-> Krzysztof
+>=20
+Mainline v6.13-rc2 =C2=A0works fine on same hardware (i did need to add the
+drm patches [1] without which there are no graphics).
 
+gene
+
+=C2=A0[1] drm fixes required with mainline:
+=C2=A0=C2=A0https://patchwork.freedesktop.org/series/141911/
+
+
+--=20
+Gene
+
+
+--=-a/TPufZFI2QvsdAEVNhh
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
+
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Mon, 2024-12-09 at 09:52 -0500, Genes Lists wr=
+ote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-left=
+:2px #729fcf solid;padding-left:1ex"><div>ortly after booting in dma_alloc_=
+attrs - maybe</div><div>triggered in ipu6_probe.&nbsp;</div></blockquote><d=
+iv><br></div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-l=
+eft:2px #729fcf solid;padding-left:1ex"><div><br></div></blockquote><div>Ma=
+inline v6.13-rc2 &nbsp;works fine on same hardware (i did need to add the d=
+rm patches [1] without which there are no graphics).</div><div><br></div><d=
+iv>gene</div><div><br></div><div>&nbsp;[1] drm fixes required with mainline=
+: &nbsp;&nbsp;<a href=3D"https://patchwork.freedesktop.org/series/141911/" =
+title=3D"Click to open https://patchwork.freedesktop.org/series/141911/">ht=
+tps://patchwork.freedesktop.org/series/141911/</a></div><div><br></div><div=
+><br></div><div><span><pre>-- <br></pre><div><span style=3D"background-colo=
+r: inherit;">Gene</span></div><div><br></div></span></div></body></html>
+
+--=-a/TPufZFI2QvsdAEVNhh--
+
+--=-6wRbfTIBrZlGr7AxFyD4
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1cIlQAKCRA5BdB0L6Ze
+29EKAP44VRkdLt28sNJil/UDLnnYh51xITettzWke4J4JkPwlQEA7Gx98mx3WpmI
+nJ3Bm4SkZUMN13cYzPqkeiC39RFM3Qs=
+=Bb2c
+-----END PGP SIGNATURE-----
+
+--=-6wRbfTIBrZlGr7AxFyD4--
 
