@@ -1,123 +1,222 @@
-Return-Path: <linux-kernel+bounces-437618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C322F9E95F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:12:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D0D59E95ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:12:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E73168DC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:10:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D81E16594A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:10:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9753922ACF6;
-	Mon,  9 Dec 2024 13:06:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6305022ACC6;
+	Mon,  9 Dec 2024 13:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZBnOK6H"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="FBmr3FQu"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DF0A35946;
-	Mon,  9 Dec 2024 13:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD8922ACC0
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749608; cv=none; b=POjKsmJNOIRu0TCgjUat2AqLKw7i3Ucq0q5ECqVZGXAODF59WUoK3SGk+xh/hbUVUkW/yNVyKU6mMyw4xPt0QHzVXxxraZJdiwX4kCusfrSnq9BLGHB0hvpAJfMa2W6vAMYYTYp3xz1MRnmz7H9iJvtCrcaVPvPh9k2yRkB1oHQ=
+	t=1733749584; cv=none; b=iCbfTXe3tvpdMm1jx5jbw3FsmtPMii+976+L87lRkNGTPlDQd578FxE2+UtOd1iWXS8g/GD3jZ930/7jrr5ZPMzmdzpj6my1+lR+s4SOkLmyK3ivCguIhKLm1sZMBCdSwS8bjcol8IFSwiXfV2Q99Nz+OYv3M7nOkcbnNITHrI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749608; c=relaxed/simple;
-	bh=vliuzW6oAKlYkynRr0BoR/o6IsO0AWCo8TwCyNGPfSg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rbOdjlef3ooSmOlM86T8rxuMS0et7uB1D4djsfDuoz85UnUyezKU6nyBXxwS0GSts4ar0PJBIDyM/0upC6PD5bMiuAIOdwTz9FpG9NpCjaqEEUmK2XkjaEBrGRdV5U4QJiTahpwd83CPXlRMUMOhNoJ8rgOe5q83lhF73R8pmWs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZBnOK6H; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5d3f65844deso1692443a12.0;
-        Mon, 09 Dec 2024 05:06:46 -0800 (PST)
+	s=arc-20240116; t=1733749584; c=relaxed/simple;
+	bh=l5hI4R1ggeFR4CRmCgAwp4myfnY4jEgf5gsCYiEiozQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cccJQnta4FHtlsA55jpmkuJ+xJETPa6idkJLt3lvNKG456p9bKgO/5Bz8s6238rgsOIiYaAR7lYjmegCb+eqrxySyIZTrjJo9LcKperhtxSoBZPpEcEoeUejQAmF3aa0Fhbt47rl9wMX+v+xOzi9R3javl2OK/N0YzFlVNja1Io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=FBmr3FQu; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3e6274015so2788265a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 05:06:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733749605; x=1734354405; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=TtU6lwN56MGWuHArATgDm595svxW7Y23jzS1Sw8OpFs=;
-        b=SZBnOK6HtIZWRZQmk8M5nPmeUDR7bc0/R27tXLNqhmMsaAn1j8xRbFqnxqQdkX2hix
-         LSnaCGxHPGbFDVAMoJ+BBqmcOk9l3gk/+iZjM77QfSt2WXW0cmJLDhkFP8rKDtWkY9OO
-         vbXWY2Rzw6A3n0BJz1AOw7qea9qKH7BFX4ea3J/DbT8Ata2PC7p5s1ICwRQd5JHoqRx6
-         nv0F6HBC8OaII0fy2tkIWb84aJCe2W1CZeVlv0dKGzBi5EsS3IkIbuoUUEioAgiAsyJ0
-         JDA4iPsm5RGvXB7Jurw5Y7RauJYOdFJscLtXi8ufemCu0RqLzt61gxKLCzISk02AOHVz
-         Gieg==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733749580; x=1734354380; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3vnKbMt8GVQHipfZqCna4Dds/lgTg/09hSxoCFAuMCs=;
+        b=FBmr3FQuY6soIW5E5P0BTaZCxUfLIjBdILOtPsZYYGWvhibfT3Qh04hnKp79PyUSUq
+         GK403f/w6rgAr6gL+CTZ2rFFSapTkyj4roMMan/pNffxnrScr2wcp7+smqZIbi72yR85
+         p2XbSutfN7rksy3hJb5PaEU+WBfQq8cdttW1yXX8cFO7l9duGRd2G1N2dNUhMBpC2Iin
+         rQ6F2tmg+NgdSdbeeundkRba4+9KA11psdYwdGDtQ3AakeZbQ8jBm26Op9wHSaxaRj5U
+         2DOyj47F9AVhPgbxEvpE+FECoTzvXrHejQhUD6SjQI4ja7kDR7qwHrmIiSdPBv0csqXz
+         DYSg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733749605; x=1734354405;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TtU6lwN56MGWuHArATgDm595svxW7Y23jzS1Sw8OpFs=;
-        b=uAvDGw3tXUTWZAVMYwK7pfmE4DE2MYj9CCSmw8pKR3qR3pMHgp0RExtnoCXUNUeOZS
-         AEjMMa72L81db5ZMFr38oFOcbVsPBYuvQp3i9MPPDh+ZH977ImXvsFmxrDxI/h0TQYu2
-         zJiDEzM5CIlwYmA7FzyGAPV5RLVaELQXU0t3Pk0QBUegng6+WD2L9l/E91ewtgHNQ7O8
-         Kz3Uza6wKAtNYEZxvJw+Fz+P+np4uYqUD61LGlitWoL2DLT1CUtB/w/FcYytbiYDKlVe
-         R5nNGCsPB53fem1cHCVZqB5orz+yPgweK1V1/uPnEG74Mwmb0KZLPlcISH5bWvnkENs5
-         wOdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBKtM778/JIhXWBlg4NKW5VOYO2FApwIHRMnu+/0rM1IGZrxxxBPVV/LChvt28vxhNOO353siGnQLv@vger.kernel.org, AJvYcCUrQ1yILx6fdSpPaX+6UIw3X6B5iRrYJeyAXPRWNyk0Wl3Wz0BPxozFoqxV4uSs8JTI4ZWAKI3llN78isCJ@vger.kernel.org, AJvYcCVYl+cqVnzjxzIlR3mYYi96zW0lcRuahGZLajNZ7s7uWR3lXyOqR1nhlOCRwkJDsuomvSc+kZ2feCA0M++gY2Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyIhKVjxFYK7bxWWWcWHvYp0xj64kdkB/nV8kqulWDwwwcX1uke
-	ecGTbLnr5G2riu21ce2JoV/WAB67gDrjaDy494q/dseuiBi83bUt
-X-Gm-Gg: ASbGncuDggwXTTCC4TSfl2P9AoJ1O+ggfN+DaUIF2TYhFG7sEEoay1jQ1GbrVtaxeFR
-	QPBynUvNvnvjiP4QJFS3XdsJKvdrhANMbUK5K18wjxwWRK2sKijSq8NMQDQNTIZci7W1Md98a0g
-	PxwVbNTm1aAtElVfl1tUbT1z1kb7UsjibyyS3bf0+goK1kXcjTfvLm5f580kkZv9SUrf2Ki9Xtj
-	TMET/ytIhIrDODTLOWw9AGOIEBhiWapnhHIFfLwBfI+
-X-Google-Smtp-Source: AGHT+IFolnwhrTjnrkMfdsTj+uiywvUme/yN43zr+TfUpb2BoksT+kHM3ZURwBzqJH3RdHTrbAaCkA==
-X-Received: by 2002:a17:906:18a9:b0:aa6:8a1b:8b7c with SMTP id a640c23a62f3a-aa68a1b8e98mr257608166b.2.1733749605171;
-        Mon, 09 Dec 2024 05:06:45 -0800 (PST)
-Received: from void.void ([141.226.13.92])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6651c01c5sm352412966b.23.2024.12.09.05.06.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 05:06:44 -0800 (PST)
-From: Andrew Kreimer <algonell@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-trace-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Andrew Kreimer <algonell@gmail.com>
-Subject: [PATCH] Documentation/rv: Fix typos
-Date: Mon,  9 Dec 2024 15:06:00 +0200
-Message-ID: <20241209130640.10954-1-algonell@gmail.com>
-X-Mailer: git-send-email 2.47.1.404.ge66fd72e97
+        d=1e100.net; s=20230601; t=1733749580; x=1734354380;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3vnKbMt8GVQHipfZqCna4Dds/lgTg/09hSxoCFAuMCs=;
+        b=KAKVlfYGj9jInwwpSpKeGtWIKz1/87X+50m+AhGF2b/pVcVxAfWGlYTeRPqC5tntWn
+         JnL1jv3VPS1HZO9InV4R1JWWkctjYiM2dYidna5S0kaajvQ/VCEOAHzXAeJMPAiMMvib
+         d/Q7aGhxKtvMdMUFB95bRbSQex8Ul4+HBqh/xm0VH+yHmEm29XJyZZ5ReAf8CTjeHYs9
+         Uy8IMToSSRH32g9sVPifjaB28C6hLhm47Ne6pTRdDqNBYy4ShowVMqSaJdXDQB79Rmgy
+         8ZYCyEitf8HvrfOq8a+iIQcluSpSnsG5p1DcPfMOd4pLLcY0z5NxUjFEi49jjFKKqeFB
+         oTxA==
+X-Forwarded-Encrypted: i=1; AJvYcCVD06YjRx2frk5BW5HbndzgIYsrqIxCsPuGq3+kAiDpUh9K9Oa6pg9I/gkkTvjO3JWrhVj0efM26FERpP4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQvs7HlsMzNWQWQt8AL1UU86eFpQoyQhTYrqqEOd6Sd1xIMd6T
+	SEGSEapNFx902D7gorCZ4DtUBiEy4KHRns4BqYd/fYra3aljZWuESU5ptaUlcuXwSCAGPfVqy5+
+	1pX9Tf/F6E9JMrURgz6xGm2JO65DH8MSsswlmQg==
+X-Gm-Gg: ASbGncu3Rk1D3Tia/MQ2YIR6bScFZKWlQjtBwf+KyXQfFMCzGZbAZxJy+cp0kTLgueY
+	pWTieoqbdW1U2hbjpSXZY9ol3tGXbxg==
+X-Google-Smtp-Source: AGHT+IFaQYRw8RYdW1sPvgkRBwggky95xvwYOV9WMfIU8hiYFwkc29e7eBFXhjqLyYEhJh/Ugq9XGO58YSCJQfv/mrw=
+X-Received: by 2002:a05:6402:3906:b0:5cf:924f:9968 with SMTP id
+ 4fb4d7f45d1cf-5d3be661c03mr12885632a12.2.1733749579721; Mon, 09 Dec 2024
+ 05:06:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241209122617.53341-1-luxu.kernel@bytedance.com>
+In-Reply-To: <20241209122617.53341-1-luxu.kernel@bytedance.com>
+From: Alexandre Ghiti <alexghiti@rivosinc.com>
+Date: Mon, 9 Dec 2024 14:06:09 +0100
+Message-ID: <CAHVXubghpQsCjf-H7C7ZQHQX7+RLJPCaZYE-KoJbw_mkKZKc2g@mail.gmail.com>
+Subject: Re: [PATCH v4] riscv: mm: Fix the out of bound issue of vmemmap address
+To: Xu Lu <luxu.kernel@bytedance.com>
+Cc: paul.walmsley@sifive.com, palmer@dabbelt.com, bjorn@rivosinc.com, 
+	lihangjing@bytedance.com, xieyongji@bytedance.com, 
+	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There are some typos in the documentation: 'a' -> 'at', missing 'to'.
-Fix them.
+Hi Xu,
 
-Signed-off-by: Andrew Kreimer <algonell@gmail.com>
----
- Documentation/trace/rv/runtime-verification.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Mon, Dec 9, 2024 at 1:26=E2=80=AFPM Xu Lu <luxu.kernel@bytedance.com> wr=
+ote:
+>
+> In sparse vmemmap model, the virtual address of vmemmap is calculated as:
+> ((struct page *)VMEMMAP_START - (phys_ram_base >> PAGE_SHIFT)).
+> And the struct page's va can be calculated with an offset:
+> (vmemmap + (pfn)).
+>
+> However, when initializing struct pages, kernel actually starts from the
+> first page from the same section that phys_ram_base belongs to. If the
+> first page's physical address is not (phys_ram_base >> PAGE_SHIFT), then
+> we get an va below VMEMMAP_START when calculating va for it's struct page=
+.
+>
+> For example, if phys_ram_base starts from 0x82000000 with pfn 0x82000, th=
+e
+> first page in the same section is actually pfn 0x80000. During
+> init_unavailable_range(), we will initialize struct page for pfn 0x80000
+> with virtual address ((struct page *)VMEMMAP_START - 0x2000), which is
+> below VMEMMAP_START as well as PCI_IO_END.
+>
+> This commit fixes this bug by introducing a new variable
+> 'vmemmap_start_pfn' which is aligned with memory section size and using
+> it to calculate vmemmap address instead of phys_ram_base.
+>
+> Fixes: a11dd49dcb93 ("riscv: Sparse-Memory/vmemmap out-of-bounds fix")
+> Signed-off-by: Xu Lu <luxu.kernel@bytedance.com>
+> ---
+>  arch/riscv/include/asm/page.h    |  1 +
+>  arch/riscv/include/asm/pgtable.h |  2 +-
+>  arch/riscv/mm/init.c             | 17 ++++++++++++++++-
+>  3 files changed, 18 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.=
+h
+> index 71aabc5c6713..125f5ecd9565 100644
+> --- a/arch/riscv/include/asm/page.h
+> +++ b/arch/riscv/include/asm/page.h
+> @@ -122,6 +122,7 @@ struct kernel_mapping {
+>
+>  extern struct kernel_mapping kernel_map;
+>  extern phys_addr_t phys_ram_base;
+> +extern unsigned long vmemmap_start_pfn;
+>
+>  #define is_kernel_mapping(x)   \
+>         ((x) >=3D kernel_map.virt_addr && (x) < (kernel_map.virt_addr + k=
+ernel_map.size))
+> diff --git a/arch/riscv/include/asm/pgtable.h b/arch/riscv/include/asm/pg=
+table.h
+> index d4e99eef90ac..050fdc49b5ad 100644
+> --- a/arch/riscv/include/asm/pgtable.h
+> +++ b/arch/riscv/include/asm/pgtable.h
+> @@ -87,7 +87,7 @@
+>   * Define vmemmap for pfn_to_page & page_to_pfn calls. Needed if kernel
+>   * is configured with CONFIG_SPARSEMEM_VMEMMAP enabled.
+>   */
+> -#define vmemmap                ((struct page *)VMEMMAP_START - (phys_ram=
+_base >> PAGE_SHIFT))
+> +#define vmemmap                ((struct page *)VMEMMAP_START - vmemmap_s=
+tart_pfn)
+>
+>  #define PCI_IO_SIZE      SZ_16M
+>  #define PCI_IO_END       VMEMMAP_START
+> diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+> index 0e8c20adcd98..d93271cb97b1 100644
+> --- a/arch/riscv/mm/init.c
+> +++ b/arch/riscv/mm/init.c
+> @@ -33,6 +33,7 @@
+>  #include <asm/pgtable.h>
+>  #include <asm/sections.h>
+>  #include <asm/soc.h>
+> +#include <asm/sparsemem.h>
+>  #include <asm/tlbflush.h>
+>
+>  #include "../kernel/head.h"
+> @@ -62,6 +63,13 @@ EXPORT_SYMBOL(pgtable_l5_enabled);
+>  phys_addr_t phys_ram_base __ro_after_init;
+>  EXPORT_SYMBOL(phys_ram_base);
+>
+> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
+> +#define VMEMMAP_ADDR_ALIGN     (1ULL << SECTION_SIZE_BITS)
+> +
+> +unsigned long vmemmap_start_pfn __ro_after_init;
+> +EXPORT_SYMBOL(vmemmap_start_pfn);
+> +#endif
+> +
+>  unsigned long empty_zero_page[PAGE_SIZE / sizeof(unsigned long)]
+>                                                         __page_aligned_bs=
+s;
+>  EXPORT_SYMBOL(empty_zero_page);
+> @@ -240,8 +248,12 @@ static void __init setup_bootmem(void)
+>          * Make sure we align the start of the memory on a PMD boundary s=
+o that
+>          * at worst, we map the linear mapping with PMD mappings.
+>          */
+> -       if (!IS_ENABLED(CONFIG_XIP_KERNEL))
+> +       if (!IS_ENABLED(CONFIG_XIP_KERNEL)) {
+>                 phys_ram_base =3D memblock_start_of_DRAM() & PMD_MASK;
+> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
+> +               vmemmap_start_pfn =3D round_down(phys_ram_base, VMEMMAP_A=
+DDR_ALIGN) >> PAGE_SHIFT;
+> +#endif
+> +       }
+>
+>         /*
+>          * In 64-bit, any use of __va/__pa before this point is wrong as =
+we
+> @@ -1101,6 +1113,9 @@ asmlinkage void __init setup_vm(uintptr_t dtb_pa)
+>         kernel_map.xiprom_sz =3D (uintptr_t)(&_exiprom) - (uintptr_t)(&_x=
+iprom);
+>
+>         phys_ram_base =3D CONFIG_PHYS_RAM_BASE;
+> +#ifdef CONFIG_SPARSEMEM_VMEMMAP
+> +       vmemmap_start_pfn =3D round_down(phys_ram_base, VMEMMAP_ADDR_ALIG=
+N) >> PAGE_SHIFT;
+> +#endif
+>         kernel_map.phys_addr =3D (uintptr_t)CONFIG_PHYS_RAM_BASE;
+>         kernel_map.size =3D (uintptr_t)(&_end) - (uintptr_t)(&_start);
+>
+> --
+> 2.20.1
+>
 
-diff --git a/Documentation/trace/rv/runtime-verification.rst b/Documentation/trace/rv/runtime-verification.rst
-index dae78dfa7cdc..c700dde9259c 100644
---- a/Documentation/trace/rv/runtime-verification.rst
-+++ b/Documentation/trace/rv/runtime-verification.rst
-@@ -8,14 +8,14 @@ checking* and *theorem proving*) with a more practical approach for complex
- systems.
- 
- Instead of relying on a fine-grained model of a system (e.g., a
--re-implementation a instruction level), RV works by analyzing the trace of the
-+re-implementation at instruction level), RV works by analyzing the trace of the
- system's actual execution, comparing it against a formal specification of
- the system behavior.
- 
- The main advantage is that RV can give precise information on the runtime
- behavior of the monitored system, without the pitfalls of developing models
- that require a re-implementation of the entire system in a modeling language.
--Moreover, given an efficient monitoring method, it is possible execute an
-+Moreover, given an efficient monitoring method, it is possible to execute an
- *online* verification of a system, enabling the *reaction* for unexpected
- events, avoiding, for example, the propagation of a failure on safety-critical
- systems.
--- 
-2.47.1.404.ge66fd72e97
+Thanks for the multiple revisions!
 
+It looks good to me, so:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+Thanks again,
+
+Alex
 
