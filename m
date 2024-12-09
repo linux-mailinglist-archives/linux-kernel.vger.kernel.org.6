@@ -1,131 +1,203 @@
-Return-Path: <linux-kernel+bounces-438360-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438361-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1107F9EA02A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:20:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A2B29EA02D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:20:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F9AC282AB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:20:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B36BE1888513
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F338199E84;
-	Mon,  9 Dec 2024 20:20:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81B861993A3;
+	Mon,  9 Dec 2024 20:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZMKRbR6N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E4D41547E2;
-	Mon,  9 Dec 2024 20:20:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="NsRSyzOI"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6BC1547E2;
+	Mon,  9 Dec 2024 20:20:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733775608; cv=none; b=SCJ05cHV1z8i9vbU0QnCMpfLlALSZUSE1n0FvkqEq90rsdTWz6BrBk48WOnv6i1+wKrSC2J/MSLgAf8bTZ7Fsn3Cf3gTjt+iV1aOkw04RHff+APi8/hEQeD+dLLSAv9WHk8NM0w6t2n36/YEuTLT0GDOF2dR2Akd0vseO8U7hmQ=
+	t=1733775617; cv=none; b=We+BSuAP+cTzRWmJS7b47EBjwaDOSL5a/kIhEQoSDi+thYVt9ecMIfyGhDml9X1bgnrfWdxUNnpHCGq1MSr0YNAf39DHjT2CRL14TDH1IS7uEwwMM/mygRdfnBmlD7NTekoLwFYKK5XcuCbsOdmpOMws4k6j8u11j20DSU8CZaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733775608; c=relaxed/simple;
-	bh=GJDYzecw9+kg0f2BbCimIJg24vXPiI1qTudUw3MYAX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxiRV5/lzuS7mV+26BNQ69ENrJz6v7DoQHSpNBwhZUhgrN+AdvWXSBD87JkxRv740W2HqvSRdh3UZyULowQx6iP2gK65dQgZmrDP0aHsakxJp4fRISjVOqb2LPP19LKLMU6T1tY+8ZLK+ihbwhUAZnSvTxJHuPRdNQgQXvpPuM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZMKRbR6N; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733775606; x=1765311606;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=GJDYzecw9+kg0f2BbCimIJg24vXPiI1qTudUw3MYAX0=;
-  b=ZMKRbR6Nn7/1DAub9UKldSltYN5+U6xU2kJJPyja2G9Gc+nGoux7KHXh
-   lTjrfw5Uqag6Sw6E7wuljvLmncWBU5fPEbIuL3Z1/EZbvev3CmFWEF5hd
-   FHlVjtj+rO/M8PNKn75N0UK4Rlb0c93n1Ckr8O1pBkK9tYgPJXtsFAVKE
-   io6p1sqOF++EGubdctr3i1ppXS0bvCMPrXWqWlf3clXnguRRCkLFIVjgg
-   TEG7ygIkK/t6UL2GDABDw6S92z8dOoDLGW2/zDNiTKxgqWlYYiC8r/En1
-   HAPGK7CvO6xQlvXjzjKfbGhJqUmUHo2EEwBLNcAFNz8G9EYr4nLIEX6de
-   A==;
-X-CSE-ConnectionGUID: LH3BZVvpR9eOPtg83qO5kg==
-X-CSE-MsgGUID: WFBnkUXUTzmwpMzEfYZaCg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34219135"
-X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
-   d="scan'208";a="34219135"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 12:20:05 -0800
-X-CSE-ConnectionGUID: JctBITyFRKix385v2WUzBQ==
-X-CSE-MsgGUID: ueSQwyrZS6mbHdLASr1aBA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
-   d="scan'208";a="95665180"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 09 Dec 2024 12:20:03 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKkEb-0004mn-0K;
-	Mon, 09 Dec 2024 20:20:01 +0000
-Date: Tue, 10 Dec 2024 04:18:58 +0800
-From: kernel test robot <lkp@intel.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, dmitry.torokhov@gmail.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev, Frank.Li@nxp.com,
-	ping.bai@nxp.com, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Subject: Re: [PATCH V3] Input: bbnsm_pwrkey - add remove hook
-Message-ID: <202412100332.9Mo5ZFrm-lkp@intel.com>
-References: <20241209075733.2504229-1-peng.fan@oss.nxp.com>
+	s=arc-20240116; t=1733775617; c=relaxed/simple;
+	bh=jm161Sfr6vj9CpAF+l9YXeEuadaQnEK3Bmxbtti5Crs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=G2j/egyAnoQnDwD5aGcW4M9udbI6xTkJ1BeWjTlaQPPCqdJpVPIgc/ZqG2DyPwEGZCNUkZprLlf+WOdEZgQp/5hCLsBkTmqxCZu78Q6Xsml0cmO0qWxVrW7cZrDqiIp0+SRT5O7zgwV9AvRz1SAfz4afXHJwTTONAeRdQA4//e8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=NsRSyzOI; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [10.0.0.115] (c-67-182-156-199.hsd1.wa.comcast.net [67.182.156.199])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 453EB20CECB3;
+	Mon,  9 Dec 2024 12:20:15 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 453EB20CECB3
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1733775615;
+	bh=R4826thRCnzo9UT2dSVOhBPmXdFNnd0wF4KQbWcTe4g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NsRSyzOIBWUwgsiQFGVRbC3/A2MikFgjENASO0p/8m5UcXCTUulPAsxip75CP4qsf
+	 ctzkCttrkZJZRspRzV/NEZllxMRMKtIgn9G1PLU5Yvlf9XL3FuOo7TSWu7X/hCgnoq
+	 ZKGVcXjSI6PhZ6rMAdjd9f15APVQTFTBH0Y/7p8k=
+Message-ID: <6cf69fbd-b6a0-4e88-85a6-749a4e2dbdaa@linux.microsoft.com>
+Date: Mon, 9 Dec 2024 12:20:14 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209075733.2504229-1-peng.fan@oss.nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] hyperv: Move some features to common code
+To: Michael Kelley <mhklinux@outlook.com>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+ "haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+ "wei.liu@kernel.org" <wei.liu@kernel.org>,
+ "decui@microsoft.com" <decui@microsoft.com>,
+ "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+ "will@kernel.org" <will@kernel.org>, "tglx@linutronix.de"
+ <tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>,
+ "bp@alien8.de" <bp@alien8.de>,
+ "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+ "x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+ "arnd@arndb.de" <arnd@arndb.de>,
+ "jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+ "muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+ "skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+ "mukeshrathor@microsoft.com" <mukeshrathor@microsoft.com>
+References: <1733523707-15954-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB41573F55DBAAF124CFD92840D4332@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Language: en-US
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB41573F55DBAAF124CFD92840D4332@SN6PR02MB4157.namprd02.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Peng,
+On 12/7/2024 6:59 PM, Michael Kelley wrote:
+> From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Friday, December 6, 2024 2:22 PM
+>>
+>> There are several bits of Hyper-V-related code that today live in
+>> arch/x86 but are not really specific to x86_64 and will work on arm64
+>> too.
+>>
+>> Some of these will be needed in the upcoming mshv driver code (for
+>> Linux as root partition on Hyper-V).
+> 
+> Previously, Linux as the root partition on Hyper-V was x86 only, which is
+> why the code is currently under arch/x86. So evidently the mshv driver
+> is being expanded to support both x86 and arm64, correct? Assuming
+> that's the case, I have some thoughts about how the source code should
+> be organized and built. It's probably best to get this right to start with so
+> it doesn't need to be changed again.
 
-kernel test robot noticed the following build warnings:
+Yes, we plan on supporting both architectures (eventually). I completely agree
+that it's better to sort out these issues now rather than later.
 
-[auto build test WARNING on dtor-input/next]
-[also build test WARNING on linus/master v6.13-rc2 next-20241209]
-[cannot apply to dtor-input/for-linus]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> * Patch 2 of this series moves hv_call_deposit_pages() and
+>    hv_call_create_vp() to common code, but does not move
+>    hv_call_add_logical_proc(). All three are used together, so
+>    I'm wondering why hv_call_add_logical_proc() isn't moved.
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Peng-Fan-OSS/Input-bbnsm_pwrkey-add-remove-hook/20241209-160051
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git next
-patch link:    https://lore.kernel.org/r/20241209075733.2504229-1-peng.fan%40oss.nxp.com
-patch subject: [PATCH V3] Input: bbnsm_pwrkey - add remove hook
-config: i386-buildonly-randconfig-001-20241209 (https://download.01.org/0day-ci/archive/20241210/202412100332.9Mo5ZFrm-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241210/202412100332.9Mo5ZFrm-lkp@intel.com/reproduce)
+The only reason is that in our internal tree there's no common or arm64 code
+yet that uses it - there is no reason it can't also become common code!
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412100332.9Mo5ZFrm-lkp@intel.com/
+> * These three functions were originally put in a separate source
+>    code file because of being specific to running in the root partition,
+>    and not needed for generic Linux guest support. I think there's
+>    value in keeping them in a separate file, rather than merging them
+>    into hv_common.c. Maybe just move the entire hv_proc.c file?
 
-All warnings (new ones prefixed by >>):
+Agreed. I think it should be renamed too - this file will eventually
+contain some additional hypercall helper functions, some of which may also be
+shared by the driver code. Something like "hv_call_common.c"?
 
->> drivers/input/misc/nxp-bbnsm-pwrkey.c:192:23: warning: unused variable 'bbnsm' [-Wunused-variable]
-     192 |         struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
-         |                              ^~~~~
-   1 warning generated.
+>    And then later, perhaps move the entire irqdomain.c file as well?
+Yes, may as well move it too.
 
+>    There's also an interesting question of whether to move them into
+>    drivers/hv, or create a new directory virt/hyperv. Hyper-V support
+>    started out 15 years ago structured as a driver, hence "drivers/hv".
+>    But over the time, the support has become significantly more than
+>    just a driver, so "virt/hyperv" might be a better location for
+>    non-driver code that had previously been under arch/x86 but is
+>    now common to all architectures.
+> 
+I'd be fine with using "virt/hyperv", but I thought "virt" was only for
+KVM.
 
-vim +/bbnsm +192 drivers/input/misc/nxp-bbnsm-pwrkey.c
+Another option would be to create subdirectories in "drivers/hv" to
+organize the different modules more cleanly (i.e. when the /dev/mshv
+driver code is introduced).
 
-   189	
-   190	static void bbnsm_pwrkey_remove(struct platform_device *pdev)
-   191	{
- > 192		struct bbnsm_pwrkey *bbnsm = platform_get_drvdata(pdev);
-   193	
-   194		dev_pm_clear_wake_irq(&pdev->dev);
-   195		device_init_wakeup(&pdev->dev, false);
-   196	}
-   197	
+> * Today, the code for running in the root partition is built along
+>    with the rest of the Hyper-V support, and so is present in kernels
+>    built for normal Linux guests on Hyper-V. I haven't thought about
+>    all the implications, but perhaps there's value in having a CONFIG
+>    option to build for the root partition, so that code can be dropped
+>    from normal kernels. There's a significant amount of new code still
+>    to come for mshv that could be excluded from normal guests in this
+>    way. Also, the tests of the hv_root_partition variable could be
+>    changed to a function the compiler detects is always "false" in a
+>    kernel built without the CONFIG option, in which case it can drop
+>    the code for where hv_root_partition is "true".
+> 
+Using hv_root_partition is a good way to do it, since it won't require
+many #ifdefs or moving the existing code around too much.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I can certainly give it a try, and create a separate patch series
+introducing the option. I suppose "CONFIG_HYPERV_ROOT" makes sense as a
+name?
+
+> * The code currently in hv_proc.c is built for x86 only, and validly
+>    assumes the page size is 4K. But when the code moves to be
+>    common across architectures, that assumption is no longer
+>    valid in the general case. Perhaps the intent is that kernels for
+>    the root partition should always be built with page size 4K on
+>    arm64, but nothing enforces that intent. Personally, I think the code
+>    should be made to work with page sizes other than 4K so as to not
+>    leave technical debt. But I realize you may have other priorities. If
+>    there were a CONFIG option for building for the root partition,
+>    that option could be setup to enforce the 4K page size on arm64.
+> 
+That makes sense. I suppose this can be done by selecting PAGE_SIZE_4KB
+under HYPERV in drivers/hv/Kconfig?
+
+I'm not how easy it will be to make the code work with different page
+sizes, since we use alloc_page() and similar in a few places, assuming 4k.
+
+Thanks
+Nuno
+
+> Anyway, thinking through these decisions up front could avoid
+> the need for additional moves later on.
+> 
+> Michael
+> 
+>> So this is a good time to move
+>> them to hv_common.c.
+>>
+>> Signed-off-by: Nuno Das Neves <nudasnev@microsoft.com>
+>>
+>> Nuno Das Neves (2):
+>>   hyperv: Move hv_current_partition_id to arch-generic code
+>>   hyperv: Move create_vp and deposit_pages hvcalls to hv_common.c
+>>
+>>  arch/arm64/hyperv/mshyperv.c    |   3 +
+>>  arch/x86/hyperv/hv_init.c       |  25 +----
+>>  arch/x86/hyperv/hv_proc.c       | 144 ---------------------------
+>>  arch/x86/include/asm/mshyperv.h |   4 -
+>>  drivers/hv/hv_common.c          | 168 ++++++++++++++++++++++++++++++++
+>>  include/asm-generic/mshyperv.h  |   4 +
+>>  6 files changed, 176 insertions(+), 172 deletions(-)
+>>
+>> --
+>> 2.34.1
+
 
