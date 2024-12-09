@@ -1,2278 +1,2923 @@
-Return-Path: <linux-kernel+bounces-438210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966F79E9E43
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:43:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AC2E9E9E4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:49:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B6981661F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:43:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 932BC16634E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C9F19049B;
-	Mon,  9 Dec 2024 18:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3F01179972;
+	Mon,  9 Dec 2024 18:49:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qTlYQoGH"
-Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c6TAHYW+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C430D198A06
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 18:43:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAF1113B59A;
+	Mon,  9 Dec 2024 18:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733769809; cv=none; b=Rf7GpCZxGTTD2Eoc1jHywd7YNXoCQvQBllKEruBzWBBIyj23OeA4VNmTWEuSi2gRYB21FjR2E0VAzS/QCjQL7TzMakmsuPMqBJskFn6uMAwsepTkEMwMkdpOKkfP77G2/Y4/asLCLuVJWKWyn4/iNI+GpcEG9LF04gihIcNS14E=
+	t=1733770146; cv=none; b=NPdmySY+zCzqkr3xwn0ObVJwnVXL7NyqpbndvqYNltlXrKbciNxVOBAXeX7+CJzZ2NtKJrc0eCGagSaqnNIKcRVtJzCDscoVFoAuw7k0eBW+eA16DqPJrJBTL1HXW6Ys2WPUfJh3i2h5hEStagPfwAp1wttfbL03OGQVD94tkKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733769809; c=relaxed/simple;
-	bh=RfY+p3TfOybjJI0prlsJkXEsYZPtZpjB3MBHfhAs3Mk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mLDgAAzzj9NO+BGo0i2RbOwr6vcODTWDj4HUqEm+FBi0iWZJ/Kwh9xhpBi4Eg89V7DilcXLR64fB9DzUzOuoXidFdulJy33ALQi66YSt7X71ilCjYAXJypE88YaZzEFpGvEF8jvL/5oP0/Fmo2wmViYW01EZnP884kmOQ/c1aWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qTlYQoGH; arc=none smtp.client-ip=209.85.167.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3eb34c20667so994700b6e.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 10:43:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733769805; x=1734374605; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=faMA4Y/T8ZYfBpq3Gg/h3je3G+4bZL5OHc3NDnHGvn0=;
-        b=qTlYQoGHJ9dlsmI7imZhwR71KTUYgXgDrv+Og6hJGLh7zV0oCyo8QBFCYU5zNECrQO
-         HIAT7Ep73X+/atateMwQn4wd7dLRLo5GnAqeLrk/zyG/JFriS+5n80dFXutS864JX+fH
-         nICQwQwBeR6/3HEXxjvYygUaQvLJiOJIctmb7AYCjoMbDy4hfkjoco+iNdoZ8FTQ/yRN
-         /jw6yLIDR0Dh2kVvE2A0NHMzewyqekLGCFKGoHpiRZCPJaTUEICir/hhJ/uFWm1PsOJu
-         fffy58abpPc7+M20dCsoY0t134v0ei86+KdnmMg88PwXc7EYW8OtAwYANi1B4Ehss0i0
-         OKuw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733769805; x=1734374605;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=faMA4Y/T8ZYfBpq3Gg/h3je3G+4bZL5OHc3NDnHGvn0=;
-        b=Fp5EzQzDeUC5s2sfk5JW1OI0yrNwzHtAczf7Q1vEAyC0Ul12m6/2s1jAZYuTMkdAIm
-         7Uup31/Ov9Gf9Dz3fRLo4btADEphBhvnSbAHOLKw2aF4MPBhqWFl3NERtmCaDf4a/dcp
-         ocG4Rw2cd4+gv8Jd0PmTBBp2qE0Qyd28CZRQHcQ8646z7pYq1izBqLvRj241l6+xjOEA
-         dmKgMTQfV5hhrW9Drpv0cTDLBmmrX5xgKO+OqKJV8j5V686j1QBp9M1NxRIKAMxxvOJO
-         fbstHia2HfrBVFmdoCgY2e+eIAktzny3IJBwz+iD3hUqxHXorUYt35gRYUH4yPGfZiEK
-         R9eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUal/MIdABzuNlRQd0hI910MHIbjmN/MsC64r2NShO5hadmR4AAZxZCpo+UOsJkiVdd/+Ef56dp8I53HRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnV4ZM81h+z3jNxdgYMcjR15pBK1BZR0GXYWtdvc49An2wXe+V
-	mbmBeCHkL2ZOKaAU9DMZYz6VVHTxG7FGOS936DCaMi3TLoVQntv66/ryzPNhXrRoE4L76gwl9WU
-	vd71aDRX/sCaIssancpICOeDinRpagqYvVfLJhw==
-X-Gm-Gg: ASbGncuI6eIgwNt3OXFTemajxySa6ob6Bvq+9DJGouAEIiJTkX5488gwxkXZ9GnPrR+
-	BEQuhHOZxNCKLAw5PyTi4Gh3OucO1jMMz
-X-Google-Smtp-Source: AGHT+IGvzES73dhNzNSGASLbpGKBinNqF3zmJbCgeChr4kdhUX22QuILm9F7tjVt7nfEphRN+8AfR4yHx2JC/290qM0=
-X-Received: by 2002:a05:6808:1525:b0:3eb:44a7:d3f8 with SMTP id
- 5614622812f47-3eb44a7d928mr4186355b6e.39.1733769803606; Mon, 09 Dec 2024
- 10:43:23 -0800 (PST)
+	s=arc-20240116; t=1733770146; c=relaxed/simple;
+	bh=P5zoxWoFN1BE01HLZo2ef4M8VcGARvL2mMMveJm1Xvg=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=SD2ly9XCZeEolCmdiRh6N+7+UDymUO8EJQZobbXVAbn6KzgHbICKadCl/BPOUOS1TVodCly4Wdn1I0Xxry2Tws53P8qFJsIJT8yJ3R7ocrKmJ2tN2YbuQR4ZcJP7tHCQkrc+w5fY8UwtMb/BMTBi9boqbzU0WYTRapmVtSlH41s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c6TAHYW+; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733770142; x=1765306142;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version:content-id;
+  bh=P5zoxWoFN1BE01HLZo2ef4M8VcGARvL2mMMveJm1Xvg=;
+  b=c6TAHYW+qFSX69wp4NSrfIfk7Jp61MHZfOrphv9wZ+Og8tQFBepxx5+h
+   wuPFYabLcnH1pLRkV4NrgP0NMHoUU/i4aO07Wb3lE64rI6hO7GBZWRYV5
+   VTcYzippjU9FBfdOa1028JURTb6qCLGGAj9qrznbdw2+wXKa68i1Rqt70
+   MAh2f4RSfGkwFmRsjuhpHGxoOqjIQNYW9oo6avcrNDMbykFML9cKJDzUY
+   w+tuiMCooOio1Xdv8HkHBbfVZf8u3V/S+giM330nsiK0m24iG0IcfrkIQ
+   zdeFx/EUaiG92HO361ZniiJ6cXkCZrmGqAQG4aMi8Nk5DO/HtCKmIIc6m
+   g==;
+X-CSE-ConnectionGUID: dACNj2VgSzWF03060n5BYA==
+X-CSE-MsgGUID: OAgJ2rKcRyKveDUnKCmwww==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34007775"
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="34007775"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 10:49:01 -0800
+X-CSE-ConnectionGUID: Bw2aTy7EQtiFetJCfNn4vw==
+X-CSE-MsgGUID: WaEQ3Y05Tc2UcBCKn5+9Qg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="132540473"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.121])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 10:48:56 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 9 Dec 2024 20:48:52 +0200 (EET)
+To: Joshua Grisham <josh@joshuagrisham.com>
+cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    corbet@lwn.net, linux-doc@vger.kernel.org, jdelvare@suse.com, 
+    linux@roeck-us.net, linux-hwmon@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] platform/x86: samsung-galaxybook: Add samsung-galaxybook
+ driver
+In-Reply-To: <20241209163720.17597-1-josh@joshuagrisham.com>
+Message-ID: <9b1630fe-70af-634b-b8ba-7b065d9ce5ae@linux.intel.com>
+References: <20241209163720.17597-1-josh@joshuagrisham.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
- <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-5-f502ef01e016@quicinc.com>
-In-Reply-To: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-5-f502ef01e016@quicinc.com>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 9 Dec 2024 19:43:11 +0100
-Message-ID: <CAHUa44H=xC3LkcefYmnfO4nLpFLqQ4gg=4NMgXTeuspOgs6UtQ@mail.gmail.com>
-Subject: Re: [PATCH 05/10] qcomtee: implement object invoke support
-To: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-Cc: Sumit Garg <sumit.garg@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/mixed; BOUNDARY="8323328-845421102-1733765605=:938"
+Content-ID: <d904d133-9fe7-649e-5713-01a2cbbc1ed2@linux.intel.com>
 
-Hi Amirreza,
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-On Tue, Dec 3, 2024 at 5:20=E2=80=AFAM Amirreza Zarrabi
-<quic_azarrabi@quicinc.com> wrote:
->
-> Introduce qcom_tee_object, which represents an object in both QTEE and
-> the kernel. QTEE clients can invoke an instance of qcom_tee_object to
-> access QTEE services. If this invocation produces a new object in QTEE,
-> an instance of qcom_tee_object will be returned.
->
-> Similarly, QTEE can request services from the kernel by issuing a callbac=
-k
-> request, which invokes an instance of qcom_tee_object in the kernel.
-> Any subsystem that exposes a service to QTEE should allocate and initiali=
-ze
-> an instance of qcom_tee_object with a dispatcher callback that is called
-> when the object is invoked.
->
-> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
-> ---
->  drivers/tee/Kconfig                    |   1 +
->  drivers/tee/Makefile                   |   1 +
->  drivers/tee/qcomtee/Kconfig            |  10 +
->  drivers/tee/qcomtee/Makefile           |   6 +
->  drivers/tee/qcomtee/async.c            | 153 ++++++
->  drivers/tee/qcomtee/core.c             | 928 +++++++++++++++++++++++++++=
-++++++
->  drivers/tee/qcomtee/qcom_scm.c         |  36 ++
->  drivers/tee/qcomtee/qcomtee_msg.h      | 217 ++++++++
->  drivers/tee/qcomtee/qcomtee_private.h  |  47 ++
->  drivers/tee/qcomtee/release.c          |  66 +++
->  include/linux/firmware/qcom/qcom_tee.h | 284 ++++++++++
->  11 files changed, 1749 insertions(+)
->
-> diff --git a/drivers/tee/Kconfig b/drivers/tee/Kconfig
-> index 61b507c18780..3a995d7f0d74 100644
-> --- a/drivers/tee/Kconfig
-> +++ b/drivers/tee/Kconfig
-> @@ -16,5 +16,6 @@ if TEE
->  source "drivers/tee/optee/Kconfig"
->  source "drivers/tee/amdtee/Kconfig"
->  source "drivers/tee/tstee/Kconfig"
-> +source "drivers/tee/qcomtee/Kconfig"
->
->  endif
-> diff --git a/drivers/tee/Makefile b/drivers/tee/Makefile
-> index 5488cba30bd2..74e987f8f7ea 100644
-> --- a/drivers/tee/Makefile
-> +++ b/drivers/tee/Makefile
-> @@ -6,3 +6,4 @@ tee-objs +=3D tee_shm_pool.o
->  obj-$(CONFIG_OPTEE) +=3D optee/
->  obj-$(CONFIG_AMDTEE) +=3D amdtee/
->  obj-$(CONFIG_ARM_TSTEE) +=3D tstee/
-> +obj-$(CONFIG_QCOMTEE) +=3D qcomtee/
-> diff --git a/drivers/tee/qcomtee/Kconfig b/drivers/tee/qcomtee/Kconfig
-> new file mode 100644
-> index 000000000000..d180a6d07d33
-> --- /dev/null
-> +++ b/drivers/tee/qcomtee/Kconfig
-> @@ -0,0 +1,10 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +# Qualcomm Trusted Execution Environment Configuration
-> +config QCOMTEE
-> +       tristate "Qualcomm TEE Support"
-> +       select QCOM_SCM
-> +       help
-> +         This option enables the Qualcomm Trusted Execution Environment =
-(QTEE)
-> +         driver. It provides an API to access services offered by QTEE a=
-nd any
-> +         loaded Trusted Applications (TAs), as well as exporting kernel
-> +         services to QTEE.
-> diff --git a/drivers/tee/qcomtee/Makefile b/drivers/tee/qcomtee/Makefile
-> new file mode 100644
-> index 000000000000..7dc5e6373042
-> --- /dev/null
-> +++ b/drivers/tee/qcomtee/Makefile
-> @@ -0,0 +1,6 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +obj-$(CONFIG_QCOMTEE) +=3D qcomtee.o
-> +qcomtee-objs +=3D async.o
-> +qcomtee-objs +=3D core.o
-> +qcomtee-objs +=3D qcom_scm.o
-> +qcomtee-objs +=3D release.o
-> diff --git a/drivers/tee/qcomtee/async.c b/drivers/tee/qcomtee/async.c
-> new file mode 100644
-> index 000000000000..218ec0209722
-> --- /dev/null
-> +++ b/drivers/tee/qcomtee/async.c
-> @@ -0,0 +1,153 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + */
-> +
-> +#include <linux/mutex.h>
-> +#include <linux/slab.h>
-> +
-> +#include "qcomtee_private.h"
-> +#include "qcomtee_msg.h"
-> +
-> +#define QCOM_TEE_ASYNC_VERSION_1_0 0x00010000U /* Major: 0x0001, Minor: =
-0x0000. */
+--8323328-845421102-1733765605=:938
+Content-Type: text/plain; CHARSET=ISO-8859-2
+Content-Transfer-Encoding: QUOTED-PRINTABLE
+Content-ID: <19bab7c7-af57-f53e-c6d0-3deca170d47a@linux.intel.com>
 
-Please keep the limit of 80 columns as described in the coding guidelines a=
+On Mon, 9 Dec 2024, Joshua Grisham wrote:
+
+> This patch will add a new driver for Samsung Galaxy Book series notebook
+> devices. This should hopefully include all suggestions from my original
+> mailing list feedback thread [1], as well as a first version for
+> associated updates to the documentation, Kconfig, Makefile, and the
+> MAINTAINERS file related to this new driver.
+>=20
+> I have tested the driver both using m and y in the config, as well as
+> with various other options mentioned in the patch checklist of the
+> documentation.
+>=20
+> Other users with other device IDs have also tested successfully using
+> a version of these same driver updates which I have maintained in a
+> separate branch of my GitHub repository [2].
+>=20
+> I have made an attempt with the coding style to find a balance between wh=
+at
+> is written in the kernel documentation and what actually exists in curren=
 t
-https://docs.kernel.org/process/coding-style.html#breaking-long-lines-and-s=
-trings
-This comment applies to the entire patch set.
-
-I think it's easier to interpret the  QCOM_TEE prefix as QCOMTEE. I
-wouldn't mind QTEE as a prefix and the name of the driver if that's
-more convenient.
-
-> +#define QCOM_TEE_ASYNC_VERSION_1_1 0x00010001U /* Major: 0x0001, Minor: =
-0x0001. */
-> +#define QCOM_TEE_ASYNC_VERSION_1_2 0x00010002U /* Major: 0x0001, Minor: =
-0x0002. */
-> +#define QCOM_TEE_ASYNC_VERSION QCOM_TEE_ASYNC_VERSION_1_2 /* Current Ver=
-sion. */
-> +
-> +#define QCOM_TEE_ASYNC_VERSION_MAJOR(n) upper_16_bits(n)
-> +#define QCOM_TEE_ASYNC_VERSION_MINOR(n) lower_16_bits(n)
-> +
-> +/**
-> + * struct qcom_tee_async_msg_hdr - Asynchronous message header format.
-> + * @version: current async protocol version of remote endpoint
-> + * @op: async operation
-> + *
-> + * @version specifies the endpoints (QTEE or driver) supported async pro=
-tocol, e.g.
-> + * if QTEE set @version to %QCOM_TEE_ASYNC_VERSION_1_1, QTEE handles ope=
-rations
-> + * supported in %QCOM_TEE_ASYNC_VERSION_1_1 or %QCOM_TEE_ASYNC_VERSION_1=
-_0.
-> + * @op determins the message format.
-> + */
-> +struct qcom_tee_async_msg_hdr {
-> +       u32 version;
-> +       u32 op;
-> +};
-> +
-> +/**
-> + * struct qcom_tee_async_release_msg - Release asynchronous message.
-> + * @hdr: message header as &struct qcom_tee_async_msg_hdr
-> + * @counts: number of objects in @object_ids
-> + * @object_ids: array of object ids should be released
-> + *
-> + * Available in Major =3D 0x0001, Minor >=3D 0x0000.
-> + */
-> +struct qcom_tee_async_release_msg {
-> +       struct qcom_tee_async_msg_hdr hdr;
-> +       u32 counts;
-> +       u32 object_ids[] __counted_by(counts);
-> +};
-> +
-> +/**
-> + * qcom_tee_get_async_buffer() - Get start of the asynchronous message i=
-n outbound buffer.
-> + * @oic: context used for current invocation
-> + * @async_buffer: return buffer to extract from or fill in async message=
-s
-> + *
-> + * If @oic is used for direct object invocation, whole outbound buffer i=
-s available for
-> + * async message. If @oic is used for callback request, the tail of outb=
-ound buffer (after
-> + * the callback request message) is available for async message.
-> + */
-> +static void qcom_tee_get_async_buffer(struct qcom_tee_object_invoke_ctx =
-*oic,
-> +                                     struct qcom_tee_buffer *async_buffe=
-r)
-> +{
-> +       struct qcom_tee_msg_callback *msg;
-> +       unsigned int offset;
-> +       int i;
-> +
-> +       if (!(oic->flags & QCOM_TEE_OIC_FLAG_BUSY)) {
-> +               /* The outbound buffer is empty. Using the whole buffer. =
-*/
-> +               offset =3D 0;
-> +       } else {
-> +               msg =3D (struct qcom_tee_msg_callback *)oic->out_msg.addr=
-;
-> +
-> +               /* Start offset in a message for buffer arguments. */
-> +               offset =3D qcom_tee_msg_buffer_args(struct qcom_tee_msg_c=
-allback,
-> +                                                 qcom_tee_msg_args(msg))=
-;
-> +
-> +               /* Add size of IB arguments. */
-> +               qcom_tee_msg_for_each_input_buffer(i, msg)
-> +                       offset +=3D qcom_tee_msg_offset_align(msg->args[i=
-].b.size);
-> +
-> +               /* Add size of OB arguments. */
-> +               qcom_tee_msg_for_each_output_buffer(i, msg)
-> +                       offset +=3D qcom_tee_msg_offset_align(msg->args[i=
-].b.size);
-> +       }
-> +
-> +       async_buffer->addr =3D oic->out_msg.addr + offset;
-> +       async_buffer->size =3D oic->out_msg.size - offset;
-> +}
-> +
-> +/**
-> + * qcom_tee_async_release_handler() - Process QTEE async requests for re=
-leasing objects.
-> + * @oic: context used for current invocation
-> + * @msg: async message for object release
-> + * @size: size of the async buffer available
-> + *
-> + * Return: Size of outbound buffer used when processing @msg.
-> + */
-> +static size_t qcom_tee_async_release_handler(struct qcom_tee_object_invo=
-ke_ctx *oic,
-> +                                            struct qcom_tee_async_msg_hd=
-r *async_msg, size_t size)
-> +{
-> +       struct qcom_tee_async_release_msg *msg =3D (struct qcom_tee_async=
-_release_msg *)async_msg;
-> +       struct qcom_tee_object *object;
-> +       int i;
-> +
-> +       for (i =3D 0; i < msg->counts; i++) {
-> +               object =3D qcom_tee_idx_erase(msg->object_ids[i]);
-> +               qcom_tee_object_put(object);
-> +       }
-> +
-> +       return struct_size_t(struct qcom_tee_async_release_msg, object_id=
-s, i);
-> +}
-> +
-> +/**
-> + * qcom_tee_fetch_async_reqs() - Fetch and process asynchronous messages=
-.
-> + * @oic: context used for current invocation
-> + *
-> + * It looks for handler to process the requested operations in the async=
- message.
-> + * Currently, only support async release requests.
-> + */
-> +void qcom_tee_fetch_async_reqs(struct qcom_tee_object_invoke_ctx *oic)
-> +{
-> +       struct qcom_tee_async_msg_hdr *async_msg;
-> +       struct qcom_tee_buffer async_buffer;
-> +       size_t consumed, used =3D 0;
-> +
-> +       qcom_tee_get_async_buffer(oic, &async_buffer);
-> +
-> +       while (async_buffer.size - used > sizeof(struct qcom_tee_async_ms=
-g_hdr)) {
-> +               async_msg =3D (struct qcom_tee_async_msg_hdr *)(async_buf=
-fer.addr + used);
-> +
-> +               if (QCOM_TEE_ASYNC_VERSION_MAJOR(async_msg->version) !=3D
-> +                   QCOM_TEE_ASYNC_VERSION_MAJOR(QCOM_TEE_ASYNC_VERSION))
-> +                       goto out;
-> +
-> +               switch (async_msg->op) {
-> +               case QCOM_TEE_MSG_OBJECT_OP_RELEASE:
-> +                       consumed =3D qcom_tee_async_release_handler(oic, =
-async_msg,
-> +                                                                 async_b=
-uffer.size - used);
-> +                       break;
-> +               default:
-> +                       /* Unsupported operations. */
-> +                       goto out;
-> +               }
-> +
-> +               /* Supported operation but unable to parse the message. *=
-/
-> +               if (!consumed)
-> +                       goto out;
-> +
-> +               used +=3D qcom_tee_msg_offset_align(consumed);
-> +       }
-> +
-> + out:
-> +       /* Reset the async messages buffer so async requests do not loopb=
-ack to QTEE. */
-> +       memzero_explicit(async_buffer.addr, async_buffer.size);
-> +}
-> diff --git a/drivers/tee/qcomtee/core.c b/drivers/tee/qcomtee/core.c
+> x86 platform drivers, but any feedback on this (or anything else) is
+> certainly welcome!
+>=20
+> [1]: https://lore.kernel.org/platform-driver-x86/CAMF+KeYus9dW00WNJMLVxLL=
+HdG9JgCfrGJ491fu7NM8GAEqqCg@mail.gmail.com/
+> [2]: https://github.com/joshuagrisham/samsung-galaxybook-extras/pull/44
+>=20
+> Signed-off-by: Joshua Grisham <josh@joshuagrisham.com>
+> ---
+>  Documentation/admin-guide/laptops/index.rst   |    1 +
+>  .../laptops/samsung-galaxybook.rst            |  301 +++
+>  MAINTAINERS                                   |    6 +
+>  drivers/platform/x86/Kconfig                  |   19 +
+>  drivers/platform/x86/Makefile                 |    5 +-
+>  drivers/platform/x86/samsung-galaxybook.c     | 1972 +++++++++++++++++
+>  6 files changed, 2302 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/admin-guide/laptops/samsung-galaxybook.=
+rst
+>  create mode 100644 drivers/platform/x86/samsung-galaxybook.c
+>=20
+> diff --git a/Documentation/admin-guide/laptops/index.rst b/Documentation/=
+admin-guide/laptops/index.rst
+> index cd9a1c269..e71c8984c 100644
+> --- a/Documentation/admin-guide/laptops/index.rst
+> +++ b/Documentation/admin-guide/laptops/index.rst
+> @@ -11,6 +11,7 @@ Laptop Drivers
+>     disk-shock-protection
+>     laptop-mode
+>     lg-laptop
+> +   samsung-galaxybook
+>     sony-laptop
+>     sonypi
+>     thinkpad-acpi
+> diff --git a/Documentation/admin-guide/laptops/samsung-galaxybook.rst b/D=
+ocumentation/admin-guide/laptops/samsung-galaxybook.rst
 > new file mode 100644
-> index 000000000000..a949ef4cceee
+> index 000000000..ab12f0001
 > --- /dev/null
-> +++ b/drivers/tee/qcomtee/core.c
-> @@ -0,0 +1,928 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
+> +++ b/Documentation/admin-guide/laptops/samsung-galaxybook.rst
+> @@ -0,0 +1,301 @@
+> +.. SPDX-License-Identifier: GPL-2.0-or-later
+> +
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> +Samsung Galaxy Book Extras
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> +
+> +December 9, 2024
+> +
+> +Joshua Grisham <josh@joshuagrisham.com>
+> +
+> +This is a Linux x86 platform driver for Samsung Galaxy Book series noteb=
+ook
+> +devices which utilizes Samsung's ``SCAI`` ACPI device in order to contro=
+l
+> +extra features and receive various notifications.
+> +
+> +
+> +Supported devices
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +"SAMSUNG ELECTRONICS CO., LTD." devices of type "Notebook" which have on=
+e of the
+> +supported ACPI device IDs should be supported. This covers most of the "=
+Samsung
+> +Galaxy Book" series notebooks that are currently available as of this wr=
+iting,
+> +and could include other Samsung notebook devices as well.
+> +
+> +
+> +Status
+> +=3D=3D=3D=3D=3D=3D
+> +
+> +The following features are currently supported:
+> +
+> +- :ref:`Keyboard backlight <keyboard-backlight>` control
+> +- :ref:`Performance mode <performance-mode>` control implemented using t=
+he
+> +  platform profile interface
+> +- :ref:`Battery charge control end threshold
+> +  <battery-charge-control-end-threshold>` (stop charging battery at give=
+n
+> +  percentage value) implemented as a battery device extension
+> +- :ref:`Fan speed <fan-speed>` monitoring via ``fan_speed_rpm`` sysfs at=
+tribute
+> +  plus a new hwmon device
+> +- :ref:`Settings Attributes <settings-attributes>` to allow control of v=
+arious
+> +  device settings
+> +- :ref:`Handling of Fn hotkeys <keyboard-hotkey-actions>` for various ac=
+tions
+> +
+> +Because different models of these devices can vary in their features, th=
+ere is
+> +logic built within the driver which attempts to test each implemented fe=
+ature
+> +for a valid response before enabling its support (registering additional=
+ devices
+> +or extensions, adding sysfs attributes, etc). Therefore, it can be impor=
+tant to
+> +note that not all features may be supported for your particular device.
+> +
+> +The following features might be possible to implement but will require
+> +additional investigation and are therefore not supported at this time:
+> +
+> +- "Dolby Atmos" mode for the speakers
+> +- "Outdoor Mode" for increasing screen brightness on models with ``SAM04=
+27``
+> +- "Silent Mode" on models with ``SAM0427``
+> +
+> +
+> +Parameters
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +The driver includes a list of boolean parameters that allow for manually
+> +enabling or disabling various features:
+> +
+> +- ``kbd_backlight``: Enable Keyboard Backlight control (default on)
+> +- ``performance_mode``: Enable Performance Mode control (default on)
+> +- ``battery_threshold``: Enable battery charge threshold control (defaul=
+t on)
+> +- ``fan_speed``: Enable fan speed (default on)
+> +- ``allow_recording``: Enable control to allow or block access to camera=
+ and
+> +  microphone (default on)
+> +- ``i8042_filter``: Enable capture and execution of keyboard-based hotke=
+y events
+> +  (default on)
+> +
+> +.. note::
+> +  Even if you explicitly try to enable a feature using its parameter, su=
+pport
+> +  for it will still be evaluated by the driver, and the feature will be
+> +  disabled if it does not appear to be supported on your device.
+> +
+> +The availability of various sysfs file-based "settings" attributes
+> +(``usb_charge``, ``start_on_lid_open``, etc) will be determined automati=
+cally
+> +and cannot be manually disabled at this time.
+> +
+> +
+> +.. _keyboard-backlight:
+> +
+> +Keyboard backlight
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Controlled by parameter: ``kbd_backlight``
+> +
+> +A new LED class named ``samsung-galaxybook::kbd_backlight`` is created w=
+hich
+> +will then expose the device using the standard sysfs-based LED interface=
+ at
+> +``/sys/class/leds/samsung-galaxybook::kbd_backlight``. Brightness can be
+> +controlled by writing values 0 to 3 to the ``brightness`` sysfs attribut=
+e or
+> +with any other desired userspace utility.
+> +
+> +.. note::
+> +  Most of these devices have an ambient light sensor which also turns
+> +  off the keyboard backlight under well-lit conditions. This behavior do=
+es not
+> +  seem possible to control at this time, but can be good to be aware of.
+> +
+> +
+> +.. _performance-mode:
+> +
+> +Performance mode
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Controlled by parameter: ``performance_mode``
+> +
+> +This driver implements the
+> +Documentation/userspace-api/sysfs-platform_profile.rst interface for wor=
+king
+> +with the "performance mode" function of the Samsung ACPI device.
+> +
+> +Mapping of each Samsung "performance mode" to its respective platform pr=
+ofile is
+> +done dynamically based on a list of the supported modes reported by the =
+device
+> +itself. Preference is given to always try and map ``low-power``, ``balan=
+ced``,
+> +and ``performance`` profiles, as these seem to be the most common profil=
+es
+> +utilized (and sometimes even required) by various userspace tools.
+> +
+> +The result of the mapping will be printed in the kernel log when the mod=
+ule is
+> +loaded. Supported profiles can also be retrieved from
+> +``/sys/firmware/acpi/platform_profile_choices``, while
+> +``/sys/firmware/acpi/platform_profile`` can be used to read or write the
+> +currently selected profile.
+> +
+> +The ``balanced`` platform profile will be set during module load if no p=
+rofile
+> +has been previously set.
+> +
+> +
+> +.. _battery-charge-control-end-threshold:
+> +
+> +Battery charge control end threshold
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Controlled by parameter: ``battery_threshold``
+> +
+> +This platform driver will add the ability to set the battery's charge co=
+ntrol
+> +end threshold, but does not have the ability to set a start threshold.
+> +
+> +This feature is typically called "Battery Saver" by the various Samsung
+> +applications in Windows, but in Linux we have implemented the standardiz=
+ed
+> +"charge control threshold" sysfs interface on the battery device to allo=
+w for
+> +controlling this functionality from the userspace.
+> +
+> +The sysfs attribute
+> +``/sys/class/power_supply/BAT1/charge_control_end_threshold`` can be use=
+d to
+> +read or set the desired charge end threshold.
+> +
+> +If you wish to maintain interoperability with Windows, then you should s=
+et the
+> +value to 80 to represent "on", or 0 to represent "off", as these are the=
+ values
+> +currently recognized by the various Windows-based Samsung applications a=
+nd
+> +services as "on" or "off". Otherwise, the device will accept any value b=
+etween 0
+> +(off) and 99 as the percentage that you wish the battery to stop chargin=
+g at.
+> +
+> +.. note::
+> +  If you try to set a value of 100, the driver will also accept this inp=
+ut, but
+> +  will set the attribute value to 0 (i.e. 100% will "remove" the end thr=
+eshold).
+> +
+> +
+> +.. _fan-speed:
+> +
+> +Fan speed
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Controlled by parameter: ``fan_speed``
+> +
+> +The number and type of fans on these devices can vary, and different met=
+hods
+> +must be used in order to be able to successfully read their status.
+> +
+> +In cases where Samsung has implemented the standard ACPI method ``_FST``=
+ for a
+> +fan device, the other methods in the ACPI specification which would caus=
+e
+> +the kernel to automatically add the ``fan_speed_rpm`` attribute are not =
+always
+> +present. On top of this, it seems that there are some bugs in the firmwa=
+re that
+> +throw an exception when the ``_FST`` method is executed.
+> +
+> +This platform driver attempts to resolve all PNP fans that are present i=
+n the
+> +ACPI of supported devices, and add support for reading their speed using=
+ the
+> +following decision tree:
+> +
+> +1. Do all 4 required methods exist so that the fan speed should be repor=
+ted
+> +   out-of-the-box by ACPI? If yes, then assume this fan is already set u=
+p and
+> +   available.
+> +
+> +2. Does the method ``_FST`` exist and appears to be working (returns a s=
+peed
+> +   value greater than 0)? If yes, add an attribute ``fan_speed_rpm`` to =
+this fan
+> +   device and add a fan input channel for it to the hwmon device. The re=
+turned
+> +   value will be directly read from the ``_FST`` method.
+> +
+> +3. Does the field ``FANS`` (fan speed level) exist on the embedded contr=
+oller,
+> +   and the table ``FANT`` (fan speed level table) exist on the fan devic=
+e? If
+> +   yes, add the ``fan_speed_rpm`` attribute to this fan device and add a=
+ fan
+> +   input channel for it to the hwmon device. The returned value will be =
+based
+> +   on a match of the current value of ``FANS`` compared to a list of lev=
+el
+> +   speeds from the ``FANT`` table.
+> +
+> +The fan speed for all supported fans can be monitored using hwmon sensor=
+s or by
+> +reading the ``fan_speed_rpm`` sysfs attribute of each fan device.
+> +
+> +
+> +.. _settings-attributes:
+> +
+> +Settings Attributes
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Various hardware settings can be controlled by the following sysfs attri=
+butes:
+> +
+> +- ``allow_recording`` (allows or blocks usage of built-in camera and mic=
+rophone)
+> +- ``start_on_lid_open`` (power on automatically when opening the lid)
+> +- ``usb_charge`` (allows USB ports to provide power even when device is =
+off)
+> +
+> +These attributes will be available under the path for your supported ACP=
+I Device
+> +ID's platform device (``SAM0428``, ``SAM0429``, etc), and can most relia=
+bly
+> +be found by seeing which device has been bound to the ``samsung-galaxybo=
+ok``
+> +driver. Here are some examples: ::
+> +
+> +  # find which device ID has been bound to the driver
+> +  ls /sys/bus/platform/drivers/samsung-galaxybook/ | grep SAM
+> +
+> +  # see SAM0429 attributes
+> +  ls /sys/bus/platform/drivers/samsung-galaxybook/SAM0429\:00
+> +
+> +  # see attributes no matter the device ID (using wildcard expansion)
+> +  ls /sys/bus/platform/drivers/samsung-galaxybook/SAM*
+> +
+> +Most shells should support using wildcard expansion to directly read and=
+ write
+> +these attributes using the above pattern. Example: ::
+> +
+> +  # read value of start_on_lid_open
+> +  cat /sys/bus/platform/drivers/samsung-galaxybook/SAM*/start_on_lid_ope=
+n
+> +
+> +  # turn on start_on_lid_open
+> +  echo true | sudo tee /sys/bus/platform/drivers/samsung-galaxybook/SAM*=
+/start_on_lid_open
+> +
+> +It is also possible to use a udev rule to create a fixed-path symlink to=
+ your
+> +device under ``/dev`` (e.g. ``/dev/samsung-galaxybook``), no matter the =
+device
+> +ID, to further simplify reading and writing these attributes in the user=
+space.
+> +
+> +Allow recording (allow_recording)
+> +---------------------------------
+> +
+> +``/sys/bus/platform/drivers/samsung-galaxybook/SAM*/allow_recording``
+> +
+> +Controlled by parameter: ``allow_recording``
+> +
+> +Controls the "Allow recording" setting, which allows or blocks usage of =
+the
+> +built-in camera and microphone (boolean).
+> +
+> +Start on lid open (start_on_lid_open)
+> +-------------------------------------
+> +
+> +``/sys/bus/platform/drivers/samsung-galaxybook/SAM*/start_on_lid_open``
+> +
+> +Controls the "Start on lid open" setting, which sets the device to power=
+ on
+> +automatically when the lid is opened (boolean).
+> +
+> +USB charge (usb_charge)
+> +-----------------------
+> +
+> +``/sys/bus/platform/drivers/samsung-galaxybook/SAM*/usb_charge``
+> +
+> +Controls the "USB charge" setting, which allows USB ports to provide pow=
+er even
+> +when the device is turned off (boolean).
+> +
+> +.. note::
+> +  For most devices, this setting seems to only apply to the USB-C ports.
+> +
+> +
+> +.. _keyboard-hotkey-actions:
+> +
+> +Keyboard hotkey actions (i8042 filter)
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +Controlled by parameter: ``i8042_filter``
+> +
+> +The i8042 filter will swallow the keyboard events for the Fn+F9 hotkey (=
+Multi-
+> +level keyboard backlight toggle) and Fn+F10 hotkey (Allow/block recordin=
+g
+> +toggle) and instead execute their actions within the driver itself.
+> +
+> +Fn+F9 will cycle through the brightness levels of the keyboard backlight=
+=2E A
+> +notification will be sent using ``led_classdev_notify_brightness_hw_chan=
+ged``
+> +so that the userspace can be aware of the change. This mimics the behavi=
+or of
+> +other existing devices where the brightness level is cycled internally b=
+y the
+> +embedded controller and then reported via a notification.
+> +
+> +Fn+F10 will toggle the value of the "Allow recording" setting.
+> +
+> +
+> +ACPI notifications and ACPI hotkey actions
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +
+> +There is a new "Samsung Galaxy Book extra buttons" input device created =
+which
+> +will send input events for the following notifications from the ACPI dev=
+ice:
+> +
+> +- Notification when the battery charge control end threshold has been re=
+ached
+> +  and the "battery saver" feature has stopped the battery from charging
+> +- Notification when the device has been placed on a table (not available=
+ on all
+> +  models)
+> +- Notification when the device has been lifted from a table (not availab=
+le on
+> +  all models)
+> +
+> +The Fn+F11 Performance mode hotkey is received as an ACPI notification. =
+It will
+> +be handled in a similar way as the Fn+F9 and Fn+F10 hotkeys; namely, tha=
+t the
+> +keypress will be swallowed by the driver and each press will cycle to th=
+e next
+> +available platform profile.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 3809931b9..21b4fc504 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -20733,6 +20733,12 @@ L:=09linux-fbdev@vger.kernel.org
+>  S:=09Maintained
+>  F:=09drivers/video/fbdev/s3c-fb.c
+> =20
+> +SAMSUNG GALAXY BOOK EXTRAS DRIVER
+> +M:=09Joshua Grisham <josh@joshuagrisham.com>
+> +L:=09platform-driver-x86@vger.kernel.org
+> +S:=09Maintained
+> +F:=09drivers/platform/x86/samsung-galaxybook.c
+> +
+>  SAMSUNG INTERCONNECT DRIVERS
+>  M:=09Sylwester Nawrocki <s.nawrocki@samsung.com>
+>  M:=09Artur =A6wigo=F1 <a.swigon@samsung.com>
+> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+> index 0258dd879..b6d28b6a4 100644
+> --- a/drivers/platform/x86/Kconfig
+> +++ b/drivers/platform/x86/Kconfig
+> @@ -778,6 +778,25 @@ config BARCO_P50_GPIO
+>  =09  To compile this driver as a module, choose M here: the module
+>  =09  will be called barco-p50-gpio.
+> =20
+> +config SAMSUNG_GALAXYBOOK
+> +=09tristate "Samsung Galaxy Book extras driver"
+> +=09depends on ACPI
+> +=09depends on ACPI_BATTERY
+> +=09depends on INPUT
+> +=09depends on SERIO_I8042
+> +=09depends on HWMON || HWMON =3D n
+> +=09select ACPI_PLATFORM_PROFILE
+> +=09select INPUT_SPARSEKMAP
+> +=09select NEW_LEDS
+> +=09select LEDS_CLASS
+> +=09help
+> +=09  This is a driver for Samsung Galaxy Book series notebooks. It adds
+> +=09  support for the keyboard backlight control, performance mode contro=
+l, fan
+> +=09  speed reporting, function keys, and various other device controls.
+> +
+> +=09  For more information about this driver, see
+> +=09  <file:Documentation/admin-guide/laptops/samsung-galaxybook.rst>.
+> +
+>  config SAMSUNG_LAPTOP
+>  =09tristate "Samsung Laptop driver"
+>  =09depends on RFKILL || RFKILL =3D n
+> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefil=
+e
+> index e1b142947..32ec4cb9d 100644
+> --- a/drivers/platform/x86/Makefile
+> +++ b/drivers/platform/x86/Makefile
+> @@ -95,8 +95,9 @@ obj-$(CONFIG_PCENGINES_APU2)=09+=3D pcengines-apuv2.o
+>  obj-$(CONFIG_BARCO_P50_GPIO)=09+=3D barco-p50-gpio.o
+> =20
+>  # Samsung
+> -obj-$(CONFIG_SAMSUNG_LAPTOP)=09+=3D samsung-laptop.o
+> -obj-$(CONFIG_SAMSUNG_Q10)=09+=3D samsung-q10.o
+> +obj-$(CONFIG_SAMSUNG_GALAXYBOOK)=09+=3D samsung-galaxybook.o
+> +obj-$(CONFIG_SAMSUNG_LAPTOP)=09=09+=3D samsung-laptop.o
+> +obj-$(CONFIG_SAMSUNG_Q10)=09=09+=3D samsung-q10.o
+> =20
+>  # Toshiba
+>  obj-$(CONFIG_TOSHIBA_BT_RFKILL)=09+=3D toshiba_bluetooth.o
+> diff --git a/drivers/platform/x86/samsung-galaxybook.c b/drivers/platform=
+/x86/samsung-galaxybook.c
+> new file mode 100644
+> index 000000000..ce8b76d91
+> --- /dev/null
+> +++ b/drivers/platform/x86/samsung-galaxybook.c
+> @@ -0,0 +1,1972 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
 > +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
+> + * Samsung Galaxy Book series extras driver
+> + *
+> + * Copyright (c) 2024 Joshua Grisham <josh@joshuagrisham.com>
+> + *
+> + * With contributions to the SCAI ACPI device interface:
+> + * Copyright (c) 2024 Giulio Girardi <giulio.girardi@protechgroup.it>
+> + *
+> + * Implementation inspired by existing x86 platform drivers.
+> + * Thank you to the authors!
 > + */
 > +
 > +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
 > +
-> +#include <linux/firmware/qcom/qcom_tzmem.h>
+> +#include <linux/acpi.h>
+> +#include <linux/dmi.h>
+> +#include <linux/hwmon.h>
+> +#include <linux/i8042.h>
 > +#include <linux/init.h>
-> +#include <linux/kobject.h>
-> +#include <linux/mm.h>
+> +#include <linux/input.h>
+> +#include <linux/input/sparse-keymap.h>
+> +#include <linux/kernel.h>
+> +#include <linux/leds.h>
 > +#include <linux/module.h>
-> +#include <linux/sysfs.h>
-> +#include <linux/slab.h>
-> +#include <linux/xarray.h>
-> +
-> +#include "qcomtee_msg.h"
-> +#include "qcomtee_private.h"
-> +
-> +/* Static instance of object represents QTEE root object. */
-> +struct qcom_tee_object qcom_tee_object_root =3D {
-> +       .name =3D "root",
-> +       .object_type =3D QCOM_TEE_OBJECT_TYPE_ROOT,
-> +       .info.qtee_id =3D QCOM_TEE_MSG_OBJECT_ROOT,
-> +};
-> +EXPORT_SYMBOL_GPL(qcom_tee_object_root);
-> +
-> +/* Next argument of type @type after index @i. */
-> +int qcom_tee_next_arg_type(struct qcom_tee_arg *u, int i, enum qcom_tee_=
-arg_type type)
-> +{
-> +       while (u[i].type !=3D QCOM_TEE_ARG_TYPE_INV && u[i].type !=3D typ=
-e)
-> +               i++;
-> +       return i;
-> +}
-> +
-> +/* QTEE expects IDs with QCOM_TEE_MSG_OBJECT_NS_BIT set for object of
-> + * QCOM_TEE_OBJECT_TYPE_CB_OBJECT type.
-> + */
-> +#define QCOM_TEE_OBJECT_ID_START       (QCOM_TEE_MSG_OBJECT_NS_BIT + 1)
-> +#define QCOM_TEE_OBJECT_ID_END         (UINT_MAX)
-> +
-> +#define QCOM_TEE_OBJECT_SET(p, type, ...) __QCOM_TEE_OBJECT_SET(p, type,=
- ##__VA_ARGS__, 0UL)
-> +#define __QCOM_TEE_OBJECT_SET(p, type, optr, ...) do { \
-> +               (p)->object_type =3D (type); \
-> +               (p)->info.qtee_id =3D (unsigned long)(optr); \
-> +       } while (0)
-> +
-> +static struct qcom_tee_object *qcom_tee_object_alloc(void)
-> +{
-> +       struct qcom_tee_object *object;
-> +
-> +       object =3D kzalloc(sizeof(*object), GFP_KERNEL);
-> +       if (object) {
-> +               QCOM_TEE_OBJECT_SET(object, QCOM_TEE_OBJECT_TYPE_NULL);
-> +               kref_init(&object->refcount);
-> +       }
-> +
-> +       return object;
-> +}
-> +
-> +void qcom_tee_object_free(struct qcom_tee_object *object)
-> +{
-> +       kfree(object->name);
-> +       kfree(object);
-> +}
-> +
-> +static void qcom_tee_object_release(struct kref *refcount)
-> +{
-> +       struct qcom_tee_object *object;
-> +       struct module *owner;
-> +       const char *name;
-> +
-> +       object =3D container_of(refcount, struct qcom_tee_object, refcoun=
-t);
-> +
-> +       synchronize_rcu();
-> +
-> +       switch (typeof_qcom_tee_object(object)) {
-> +       case QCOM_TEE_OBJECT_TYPE_TEE:
-> +               qcom_tee_release_tee_object(object);
-> +
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_CB_OBJECT:
-> +               /* Copy, as after release we should not access object. */
-> +               name =3D object->name;
-> +               owner =3D object->owner;
-> +
-> +               if (object->ops->release)
-> +                       object->ops->release(object);
-> +
-> +               module_put(owner);
-> +               kfree_const(name);
-> +
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_ROOT:
-> +       case QCOM_TEE_OBJECT_TYPE_NULL:
-> +       default:
-> +               break;
-> +       }
-> +}
-> +
-> +/**
-> + * qcom_tee_object_get() - Increase object's refcount.
-> + * @object: object to increase the refcount
-> + */
-> +int qcom_tee_object_get(struct qcom_tee_object *object)
-> +{
-> +       if (object !=3D NULL_QCOM_TEE_OBJECT &&
-> +           object !=3D ROOT_QCOM_TEE_OBJECT)
-> +               return kref_get_unless_zero(&object->refcount);
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_tee_object_get);
-> +
-> +/**
-> + * qcom_tee_object_put() - Decrease object's refcount
-> + * @object: object to decrease the refcount
-> + */
-> +void qcom_tee_object_put(struct qcom_tee_object *object)
-> +{
-> +       if (object !=3D NULL_QCOM_TEE_OBJECT &&
-> +           object !=3D ROOT_QCOM_TEE_OBJECT)
-> +               kref_put(&object->refcount, qcom_tee_object_release);
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_tee_object_put);
-> +
-> +/* ''Local Object Table''. */
-> +/* Object from kernel that are exported to QTEE are assigned an id and s=
-tored in
-> + * xa_qcom_local_objects (kernel object table). QTEE uses this id to ref=
-erence the
-> + * object using qcom_tee_local_object_get.
-> + */
-> +static DEFINE_XARRAY_ALLOC(xa_qcom_local_objects);
-
-We would store this in struct optee in the OP-TEE backend driver. It's
-not clear to me how this variable is freed when the driver is
-unloaded. Would it make sense to introduce a struct qcomtee to hold
-the driver state?
-
-> +
-> +static int qcom_tee_idx_alloc(u32 *idx, struct qcom_tee_object *object)
-> +{
-> +       static u32 xa_last_id =3D QCOM_TEE_OBJECT_ID_START;
-> +
-> +       /* Every id allocated here, has QCOM_TEE_MSG_OBJECT_NS_BIT set. *=
-/
-> +       return xa_alloc_cyclic(&xa_qcom_local_objects, idx, object,
-> +               XA_LIMIT(QCOM_TEE_OBJECT_ID_START, QCOM_TEE_OBJECT_ID_END=
-),
-> +                       &xa_last_id, GFP_KERNEL);
-> +}
-> +
-> +struct qcom_tee_object *qcom_tee_idx_erase(u32 idx)
-> +{
-> +       if (idx < QCOM_TEE_OBJECT_ID_START || idx > QCOM_TEE_OBJECT_ID_EN=
-D)
-> +               return NULL_QCOM_TEE_OBJECT;
-> +
-> +       return xa_erase(&xa_qcom_local_objects, idx);
-> +}
-> +
-> +/**
-> + * qcom_tee_object_id_get() - Get an id for an object to sent to QTEE.
-> + * @object: object to get its id.
-> + * @object_id: object id.
-> + *
-> + * For object hosted in REE, they are added to object table, and the idx=
- in the
-> + * object table is used as id. For object hosted in QTEE, use the QTEE i=
-d stored in
-> + * @object. This is called on a path to QTEE to construct a message, see
-> + * qcom_tee_prepare_msg() and qcom_tee_update_msg().
-> + *
-> + * Return: On success return 0 or <0 on failure.
-> + */
-> +static int qcom_tee_object_id_get(struct qcom_tee_object *object, unsign=
-ed int *object_id)
-> +{
-> +       u32 idx;
-> +
-> +       switch (typeof_qcom_tee_object(object)) {
-> +       case QCOM_TEE_OBJECT_TYPE_CB_OBJECT:
-> +               if (qcom_tee_idx_alloc(&idx, object) < 0)
-> +                       return -ENOSPC;
-> +
-> +               *object_id =3D idx;
-> +
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_ROOT:
-> +       case QCOM_TEE_OBJECT_TYPE_TEE:
-> +               *object_id =3D object->info.qtee_id;
-> +
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_NULL:
-> +               *object_id =3D QCOM_TEE_MSG_OBJECT_NULL;
-> +
-> +               break;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/* Release object id assigned in qcom_tee_object_id_get. */
-> +static void qcom_tee_object_id_put(unsigned int object_id)
-> +{
-> +       qcom_tee_idx_erase(object_id);
-> +}
-> +
-> +/**
-> + * qcom_tee_local_object_get() - Get an object in REE referenced by the =
-id.
-> + * @object_id: object id.
-> + *
-> + * It is called on behalf of QTEE to obtain instance of object for an id=
-. It is
-> + * called on a path from QTEE to construct an argument of &struct qcom_t=
-ee_arg,
-> + * see qcom_tee_update_args() and qcom_tee_prepare_args().
-> + *
-> + * It increases the object's refcount on success.
-> + *
-> + * Return: On error returns %NULL_QCOM_TEE_OBJECT. On success, the objec=
-t.
-> + */
-> +static struct qcom_tee_object *qcom_tee_local_object_get(unsigned int ob=
-ject_id)
-> +{
-> +       struct qcom_tee_object *object;
-> +
-> +       /* We trust QTEE does not mess the refcounts.
-> +        * It does not issue RELEASE request and qcom_tee_object_get(), s=
-imultaneously.
-> +        */
-
-What does this comment mean? That QTEE shouldn't get and release an
-object in one request or that QTEE is trusted to keep the get and
-release in balance?
-
-Please use the preferred style for multi-line comments
-https://docs.kernel.org/process/coding-style.html#commenting
-This comment applies to the entire patch set.
-
-> +
-> +       object =3D xa_load(&xa_qcom_local_objects, object_id);
-> +
-> +       qcom_tee_object_get(object);
-> +
-> +       return object;
-> +}
-> +
-> +/**
-> + * __qcom_tee_object_user_init() - Initialize an object for user.
-> + * @object: object to initialize.
-> + * @ot: type of object as &enum qcom_tee_object_type.
-> + * @ops: instance of callbacks.
-> + * @fmt: name assigned to the object.
-> + *
-> + * Return: On success return 0 or <0 on failure.
-> + */
-> +int __qcom_tee_object_user_init(struct qcom_tee_object *object, enum qco=
-m_tee_object_type ot,
-> +                               struct qcom_tee_object_operations *ops, s=
-truct module *owner,
-> +                               const char *fmt, ...)
-> +{
-> +       va_list ap;
-> +       int ret;
-> +
-> +       kref_init(&object->refcount);
-> +       QCOM_TEE_OBJECT_SET(object, QCOM_TEE_OBJECT_TYPE_NULL);
-> +
-> +       va_start(ap, fmt);
-> +       switch (ot) {
-> +       case QCOM_TEE_OBJECT_TYPE_NULL:
-> +               ret =3D 0;
-> +
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_CB_OBJECT:
-> +               object->ops =3D ops;
-> +               if (!object->ops->dispatch)
-> +                       return -EINVAL;
-> +
-> +               object->owner =3D owner;
-> +               if (!try_module_get(object->owner))
-> +                       return -EINVAL;
-> +
-> +               /* If failed, "no-name"; it is not really a reason to fai=
-l here. */
-> +               object->name =3D kvasprintf_const(GFP_KERNEL, fmt, ap);
-> +               QCOM_TEE_OBJECT_SET(object, QCOM_TEE_OBJECT_TYPE_CB_OBJEC=
-T);
-> +
-> +               ret =3D 0;
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_ROOT:
-> +       case QCOM_TEE_OBJECT_TYPE_TEE:
-> +       default:
-> +               ret =3D -EINVAL;
-> +       }
-> +       va_end(ap);
-> +
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(__qcom_tee_object_user_init);
-> +
-> +/**
-> + * qcom_tee_object_type() - Returns type of object represented by an obj=
-ect id.
-> + * @object_id: object id for the object.
-> + *
-> + * This is similar to typeof_qcom_tee_object() but instead of receiving =
-object
-> + * as argument it receives object id. It is used internally on return pa=
-th
-> + * from QTEE.
-> + *
-> + * Return: Returns type of object referenced by @object_id.
-> + */
-> +static enum qcom_tee_object_type qcom_tee_object_type(unsigned int objec=
-t_id)
-> +{
-> +       if (object_id =3D=3D QCOM_TEE_MSG_OBJECT_NULL)
-> +               return QCOM_TEE_OBJECT_TYPE_NULL;
-> +
-> +       if (object_id & QCOM_TEE_MSG_OBJECT_NS_BIT)
-> +               return QCOM_TEE_OBJECT_TYPE_CB_OBJECT;
-> +
-> +       return QCOM_TEE_OBJECT_TYPE_TEE;
-> +}
-> +
-> +/**
-> + * qcom_tee_object_init() - Initialize an object for QTEE.
-> + * @object: return object
-> + * @object_id: object id received form QTEE
-> + *
-> + * Return: On success return 0 or <0 on failure.
-> + */
-> +static int qcom_tee_object_init(struct qcom_tee_object **object, unsigne=
-d int object_id)
-> +{
-> +       struct qcom_tee_object *qto;
-> +       int ret =3D 0;
-> +
-> +       switch (qcom_tee_object_type(object_id)) {
-> +       case QCOM_TEE_OBJECT_TYPE_NULL:
-> +               *object =3D NULL_QCOM_TEE_OBJECT;
-> +
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_CB_OBJECT:
-> +               qto =3D qcom_tee_local_object_get(object_id);
-> +               if (qto !=3D NULL_QCOM_TEE_OBJECT)
-> +                       *object =3D qto;
-> +               else
-> +                       ret =3D -EINVAL;
-> +
-> +               break;
-> +       case QCOM_TEE_OBJECT_TYPE_TEE:
-> +               qto =3D qcom_tee_object_alloc();
-> +               if (qto) {
-> +                       /* If failed, "no-name"; it is not really a reaso=
-n to fail here. */
-> +                       qto->name =3D kasprintf(GFP_KERNEL, "qcom_tee-%u"=
-, object_id);
-> +                       QCOM_TEE_OBJECT_SET(qto, QCOM_TEE_OBJECT_TYPE_TEE=
-, object_id);
-> +
-> +                       *object =3D qto;
-> +               } else {
-> +                       ret =3D -ENOMEM;
-> +               }
-> +
-> +               break;
-> +       default:
-> +
-> +               break;
-> +       }
-> +
-> +       if (ret)
-> +               *object =3D NULL_QCOM_TEE_OBJECT;
-> +
-> +       return ret;
-> +}
-> +
-> +/* Marshaling API. */
-> +/* qcom_tee_prepare_msg  - Prepares inbound buffer for sending to QTEE
-> + * qcom_tee_update_args  - Parses QTEE response in inbound buffer
-> + * qcom_tee_prepare_args - Parses QTEE request from outbound buffer
-> + * qcom_tee_update_msg   - Updates outbound buffer with response for QTE=
-E request
-> + */
-
-Please combine the two comments into one.
-
-> +
-> +static int qcom_tee_prepare_msg(struct qcom_tee_object_invoke_ctx *oic,
-> +                               struct qcom_tee_object *object, u32 op, s=
-truct qcom_tee_arg *u)
-> +{
-> +       struct qcom_tee_msg_object_invoke *msg;
-> +       unsigned int object_id;
-> +       int ib, ob, io, oo;
-> +       size_t off;
-> +       int i;
-> +
-> +       /* Use input message buffer in 'oic'. */
-> +       msg =3D (struct qcom_tee_msg_object_invoke *)oic->in_msg.addr;
-> +
-> +       /* Start offset in a message for buffer arguments. */
-> +       off =3D qcom_tee_msg_buffer_args(struct qcom_tee_msg_object_invok=
-e, qcom_tee_args_len(u));
-> +
-> +       /* Get id of object being invoked. */
-> +       if (qcom_tee_object_id_get(object, &object_id))
-> +               return -ENOSPC;
-> +
-> +       ib =3D 0;
-> +       qcom_tee_arg_for_each_input_buffer(i, u) {
-> +               void *ptr;
-> +
-> +               /* qcom_tee_msg_buffers_alloc() already checked overflow =
-in message! */
-> +               msg->args[ib].b.offset =3D off;
-> +               msg->args[ib].b.size =3D u[i].b.size;
-> +
-> +               ptr =3D qcom_tee_msg_offset_to_ptr(msg, off);
-> +               if (!(u[i].flags & QCOM_TEE_ARG_FLAGS_UADDR))
-> +                       memcpy(ptr, u[i].b.addr, u[i].b.size);
-> +               else if (copy_from_user(ptr, u[i].b.uaddr, u[i].b.size))
-> +                       return -EINVAL;
-> +
-> +               off +=3D qcom_tee_msg_offset_align(u[i].b.size);
-> +               ib++;
-> +       }
-> +
-> +       ob =3D ib;
-> +       qcom_tee_arg_for_each_output_buffer(i, u) {
-> +               /* qcom_tee_msg_buffers_alloc() already checked overflow =
-in message! */
-> +               msg->args[ob].b.offset =3D off;
-> +               msg->args[ob].b.size =3D u[i].b.size;
-> +
-> +               off +=3D qcom_tee_msg_offset_align(u[i].b.size);
-> +               ob++;
-> +       }
-> +
-> +       io =3D ob;
-> +       qcom_tee_arg_for_each_input_object(i, u) {
-> +               if (qcom_tee_object_id_get(u[i].o, &msg->args[io].o)) {
-> +                       /* Unable to qcom_tee_object_id_get; put whatever=
- we got. */
-> +                       qcom_tee_object_id_put(object_id);
-> +                       for (--io; io >=3D ob; io--)
-
-Please avoid the prefix increment or decrement operator and use the
-postfix increment or decrement unless there's no other option (use
-io-- instead of --io). This comment applies to the entire patch set.
-
-> +                               qcom_tee_object_id_put(msg->args[io].o);
-> +
-> +                       return -ENOSPC;
-> +               }
-> +
-> +               io++;
-> +       }
-> +
-> +       oo =3D io;
-> +       qcom_tee_arg_for_each_output_object(i, u)
-> +               oo++;
-> +
-> +       /* Set object, operation, and argument counts. */
-count
-
-> +       qcom_tee_msg_init(msg, object_id, op, ib, ob, io, oo);
-> +
-> +       return 0;
-> +}
-> +
-> +static int qcom_tee_update_args(struct qcom_tee_arg *u, struct qcom_tee_=
-object_invoke_ctx *oic)
-> +{
-> +       struct qcom_tee_msg_object_invoke *msg;
-> +       int ib, ob, io, oo;
-> +       int i, ret =3D 0;
-> +
-> +       /* Use input message buffer in 'oic'. */
-> +       msg =3D (struct qcom_tee_msg_object_invoke *)oic->in_msg.addr;
-> +
-> +       ib =3D 0;
-> +       qcom_tee_arg_for_each_input_buffer(i, u)
-> +               ib++;
-> +
-> +       ob =3D ib;
-> +       qcom_tee_arg_for_each_output_buffer(i, u) {
-> +               void *ptr =3D qcom_tee_msg_offset_to_ptr(msg, msg->args[o=
-b].b.offset);
-> +
-> +               if (!(u[i].flags & QCOM_TEE_ARG_FLAGS_UADDR)) {
-> +                       memcpy(u[i].b.addr, ptr, msg->args[ob].b.size);
-> +               } else if (copy_to_user(u[i].b.uaddr, ptr, msg->args[ob].=
-b.size)) {
-> +                       /* On ERROR, continue to process arguments to get=
- to output object. */
-> +                       ret =3D -EINVAL;
-> +               }
-> +
-> +               u[i].b.size =3D msg->args[ob].b.size;
-> +               ob++;
-> +       }
-> +
-> +       io =3D ob;
-> +       qcom_tee_arg_for_each_input_object(i, u)
-> +               io++;
-> +
-> +       oo =3D io;
-> +       qcom_tee_arg_for_each_output_object(i, u) {
-> +               int err;
-> +
-> +               /* On ERROR, continue to process arguments so that we can=
- issue the RELEASE. */
-> +               err =3D qcom_tee_object_init(&u[i].o, msg->args[oo].o);
-> +               if (err)
-> +                       ret =3D err;
-> +
-> +               oo++;
-> +       }
-> +
-> +       return ret;
-> +}
-> +
-> +static int qcom_tee_prepare_args(struct qcom_tee_object_invoke_ctx *oic)
-> +{
-> +       int i, ret =3D 0;
-> +
-> +       /* Use output message buffer in 'oic'. */
-> +       struct qcom_tee_msg_callback *msg =3D (struct qcom_tee_msg_callba=
-ck *)oic->out_msg.addr;
-> +
-> +       qcom_tee_msg_for_each_input_buffer(i, msg) {
-> +               oic->u[i].b.addr =3D qcom_tee_msg_offset_to_ptr(msg, msg-=
->args[i].b.offset);
-> +               oic->u[i].b.size =3D msg->args[i].b.size;
-> +               oic->u[i].type =3D QCOM_TEE_ARG_TYPE_IB;
-> +       }
-> +
-> +       qcom_tee_msg_for_each_output_buffer(i, msg) {
-> +               oic->u[i].b.addr =3D qcom_tee_msg_offset_to_ptr(msg, msg-=
->args[i].b.offset);
-> +               oic->u[i].b.size =3D msg->args[i].b.size;
-> +               oic->u[i].type =3D QCOM_TEE_ARG_TYPE_OB;
-> +       }
-> +
-> +       qcom_tee_msg_for_each_input_object(i, msg) {
-> +               int err;
-> +
-> +               /* On ERROR, continue to process arguments so that we can=
- issue the RELEASE. */
-> +               err =3D qcom_tee_object_init(&oic->u[i].o, msg->args[i].o=
-);
-> +               if (err)
-> +                       ret =3D err;
-> +
-> +               oic->u[i].type =3D QCOM_TEE_ARG_TYPE_IO;
-> +       }
-> +
-> +       qcom_tee_msg_for_each_output_object(i, msg)
-> +               oic->u[i].type =3D QCOM_TEE_ARG_TYPE_OO;
-> +
-> +       /* End of Arguments. */
-> +       oic->u[i].type =3D QCOM_TEE_ARG_TYPE_INV;
-> +
-> +       return ret;
-> +}
-> +
-> +static int qcom_tee_update_msg(struct qcom_tee_object_invoke_ctx *oic)
-> +{
-> +       int ib, ob, io, oo;
-> +       int i;
-> +
-> +       /* Use output message buffer in 'oic'. */
-> +       struct qcom_tee_msg_callback *msg =3D (struct qcom_tee_msg_callba=
-ck *)oic->out_msg.addr;
-> +
-> +       ib =3D 0;
-> +       qcom_tee_arg_for_each_input_buffer(i, oic->u)
-> +               ib++;
-> +
-> +       ob =3D ib;
-> +       qcom_tee_arg_for_each_output_buffer(i, oic->u) {
-> +               /* Only reduce size; never increase it. */
-> +               if (msg->args[ob].b.size < oic->u[i].b.size)
-> +                       return -EINVAL;
-> +
-> +               msg->args[ob].b.size =3D oic->u[i].b.size;
-> +               ob++;
-> +       }
-> +
-> +       io =3D ob;
-> +       qcom_tee_arg_for_each_input_object(i, oic->u)
-> +               io++;
-> +
-> +       oo =3D io;
-> +       qcom_tee_arg_for_each_output_object(i, oic->u) {
-> +               if (qcom_tee_object_id_get(oic->u[i].o, &msg->args[oo].o)=
-) {
-> +                       /* Unable to qcom_tee_object_id_get; put whatever=
- we got. */
-> +                       for (--oo; oo >=3D io; --oo)
-> +                               qcom_tee_object_id_put(msg->args[oo].o);
-> +
-> +                       return -ENOSPC;
-> +               }
-> +
-> +               oo++;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +/**
-> + * define MAX_BUFFER_SIZE - Maximum size of inbound and outbound buffers=
-.
-> + *
-> + * QTEE transport does not impose any restriction on these buffers. Howe=
-ver, if size of
-> + * buffers are larger then %MAX_BUFFER_SIZE, user should probably use so=
-me other
-> + * form of shared memory with QTEE.
-> + */
-> +#define MAX_BUFFER_SIZE SZ_8K
-> +
-> +/* Pool to allocate inbound and outbound buffers. */
-> +static struct qcom_tzmem_pool */;
-> +
-> +static int qcom_tee_msg_buffers_alloc(struct qcom_tee_object_invoke_ctx =
-*oic,
-> +                                     struct qcom_tee_arg *u)
-> +{
-> +       size_t size;
-> +       int i;
-> +
-> +       /* Start offset in a message for buffer arguments. */
-> +       size =3D qcom_tee_msg_buffer_args(struct qcom_tee_msg_object_invo=
-ke, qcom_tee_args_len(u));
-> +       if (size > MAX_BUFFER_SIZE)
-> +               return -EINVAL;
-> +
-> +       /* Add size of IB arguments. */
-> +       qcom_tee_arg_for_each_input_buffer(i, u) {
-> +               size =3D size_add(size, qcom_tee_msg_offset_align(u[i].b.=
-size));
-> +               if (size > MAX_BUFFER_SIZE)
-> +                       return -EINVAL;
-> +       }
-> +
-> +       /* Add size of OB arguments. */
-> +       qcom_tee_arg_for_each_output_buffer(i, u) {
-> +               size =3D size_add(size, qcom_tee_msg_offset_align(u[i].b.=
-size));
-> +               if (size > MAX_BUFFER_SIZE)
-> +                       return -EINVAL;
-> +       }
-> +
-> +       /* QTEE requires inbound buffer size to be page aligned. */
-> +       size =3D PAGE_ALIGN(size);
-> +
-> +       /* Do allocations. */
-> +       oic->in_msg.size =3D size;
-> +       oic->in_msg.addr =3D qcom_tzmem_alloc(tzmem_msg_pool, size, GFP_K=
-ERNEL);
-> +       if (!oic->in_msg.addr)
-> +               return -EINVAL;
-> +
-> +       oic->out_msg.size =3D MAX_BUFFER_SIZE;
-> +       oic->out_msg.addr =3D qcom_tzmem_alloc(tzmem_msg_pool, MAX_BUFFER=
-_SIZE, GFP_KERNEL);
-> +       if (!oic->out_msg.addr) {
-> +               qcom_tzmem_free(oic->in_msg.addr);
-> +
-> +               return -EINVAL;
-> +       }
-> +
-> +       oic->in_msg_paddr =3D qcom_tzmem_to_phys(oic->in_msg.addr);
-> +       oic->out_msg_paddr =3D qcom_tzmem_to_phys(oic->out_msg.addr);
-> +
-> +       /* QTEE assume unused buffers are zeroed; Do it now! */
-> +       memzero_explicit(oic->in_msg.addr, oic->in_msg.size);
-> +       memzero_explicit(oic->out_msg.addr, oic->out_msg.size);
-> +
-> +       return 0;
-> +}
-> +
-> +static void qcom_tee_msg_buffers_free(struct qcom_tee_object_invoke_ctx =
-*oic)
-> +{
-> +       qcom_tzmem_free(oic->in_msg.addr);
-> +       qcom_tzmem_free(oic->out_msg.addr);
-> +}
-> +
-> +static int qcom_tee_msg_buffers_init(void)
-> +{
-> +       struct qcom_tzmem_pool_config config =3D {
-> +               .policy =3D QCOM_TZMEM_POLICY_ON_DEMAND,
-> +               /* 4M seems enough, it is used for QTEE meg header and qc=
-om_tee_msg_arg array. */
-> +               .max_size =3D SZ_4M
-> +       };
-> +
-> +       tzmem_msg_pool =3D qcom_tzmem_pool_new(&config);
-> +       if (IS_ERR(tzmem_msg_pool))
-> +               return PTR_ERR(tzmem_msg_pool);
-> +
-> +       return 0;
-> +}
-> +
-> +static void qcom_tee_msg_buffers_destroy(void)
-> +{
-> +       qcom_tzmem_pool_free(tzmem_msg_pool);
-
-Can tzmem_msg_pool become a dangling pointer if the driver is unbound?
-
-> +}
-> +
-> +/* Invoke a REE object. */
-> +static void qcom_tee_object_invoke(struct qcom_tee_object_invoke_ctx *oi=
-c,
-> +                                  struct qcom_tee_msg_callback *msg)
-> +{
-> +       int i, errno;
-> +       u32 op;
-> +
-> +       /* Get object being invoked. */
-> +       unsigned int object_id =3D msg->cxt;
-> +       struct qcom_tee_object *object;
-> +
-> +       /* QTEE can not invoke NULL object or objects it hosts. */
-> +       if (qcom_tee_object_type(object_id) =3D=3D QCOM_TEE_OBJECT_TYPE_N=
-ULL ||
-> +           qcom_tee_object_type(object_id) =3D=3D QCOM_TEE_OBJECT_TYPE_T=
-EE) {
-> +               errno =3D -EINVAL;
-> +               goto out;
-> +       }
-> +
-> +       object =3D qcom_tee_local_object_get(object_id);
-> +       if (object =3D=3D NULL_QCOM_TEE_OBJECT) {
-> +               errno =3D -EINVAL;
-> +               goto out;
-> +       }
-> +
-> +       oic->object =3D object;
-> +
-> +       /* Filter bits used by transport. */
-> +       op =3D msg->op & QCOM_TEE_MSG_OBJECT_OP_MASK;
-> +
-> +       switch (op) {
-> +       case QCOM_TEE_MSG_OBJECT_OP_RELEASE:
-> +               qcom_tee_object_id_put(object_id);
-> +               qcom_tee_object_put(object);
-> +               errno =3D 0;
-> +
-> +               break;
-> +       case QCOM_TEE_MSG_OBJECT_OP_RETAIN:
-> +               qcom_tee_object_get(object);
-> +               errno =3D 0;
-> +
-> +               break;
-> +       default:
-> +               errno =3D qcom_tee_prepare_args(oic);
-> +               if (errno) {
-> +                       /* Unable to parse the message. Release any objec=
-t arrived as input. */
-that arrived
-
-> +                       qcom_tee_arg_for_each_input_buffer(i, oic->u)
-> +                               qcom_tee_object_put(oic->u[i].o);
-> +
-> +                       break;
-> +               }
-> +
-> +               errno =3D object->ops->dispatch(oic, object, op, oic->u);
-> +               if (!errno) {
-> +                       /* On SUCCESS, notify object at appropriate time.=
- */
-> +                       oic->flags |=3D QCOM_TEE_OIC_FLAG_NOTIFY;
-> +               }
-> +       }
-> +
-> +out:
-> +
-> +       oic->errno =3D errno;
-> +}
-> +
-> +/**
-> + * __qcom_tee_object_do_invoke() - Submit an invocation for an object.
-> + * @oic: context to use for current invocation.
-> + * @object: object being invoked.
-> + * @op: requested operation on object.
-> + * @u: array of argument for the current invocation.
-arguments
-
-> + * @result: result returned from QTEE.
-> + *
-> + * The caller is responsible to keep track of the refcount for each obje=
-ct,
-> + * including @object. On return, the caller loses the ownership of all i=
-nput
-> + * object of type %QCOM_TEE_OBJECT_TYPE_CB_OBJECT.
-> + *
-> + * Return: On success return 0. On error returns -EINVAL and -ENOSPC if =
-unable to initiate
-> + * the invocation, -EAGAIN if invocation failed and user may retry the i=
-nvocation.
-> + * Otherwise, -ENODEV on fatal failure.
-> + */
-> +int __qcom_tee_object_do_invoke(struct qcom_tee_object_invoke_ctx *oic,
-> +                               struct qcom_tee_object *object, u32 op, s=
-truct qcom_tee_arg *u,
-> +                               int *result)
-> +{
-> +       struct qcom_tee_msg_callback *cb_msg;
-> +       u64 response_type;
-> +       int i, ret, errno;
-> +
-> +       ret =3D qcom_tee_msg_buffers_alloc(oic, u);
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D qcom_tee_prepare_msg(oic, object, op, u);
-> +       if (ret)
-> +               goto out;
-> +
-> +       cb_msg =3D (struct qcom_tee_msg_callback *)oic->out_msg.addr;
-> +
-> +       while (1) {
-> +               if (oic->flags & QCOM_TEE_OIC_FLAG_BUSY) {
-> +                       errno =3D oic->errno;
-> +                       /* Update output buffer only if result is SUCCESS=
-. */
-> +                       if (!errno)
-> +                               errno =3D qcom_tee_update_msg(oic);
-> +
-> +                       qcom_tee_msg_translate_err(cb_msg, errno);
-> +               }
-> +
-> +               /* Invoke remote object. */
-> +               ret =3D qcom_tee_object_invoke_ctx_invoke(oic, result, &r=
-esponse_type);
-> +
-> +               if (oic->flags & QCOM_TEE_OIC_FLAG_BUSY) {
-> +                       struct qcom_tee_object *qto =3D oic->object;
-> +
-> +                       if (qto) {
-> +                               if (oic->flags & QCOM_TEE_OIC_FLAG_NOTIFY=
-) {
-> +                                       if (qto->ops->notify)
-> +                                               qto->ops->notify(oic, qto=
-, errno || ret);
-> +                               }
-> +
-> +                               /* Matching get is in qcom_tee_object_inv=
-oke. */
-> +                               qcom_tee_object_put(qto);
-> +                       }
-> +
-> +                       oic->object =3D NULL_QCOM_TEE_OBJECT;
-> +                       oic->flags &=3D ~(QCOM_TEE_OIC_FLAG_BUSY | QCOM_T=
-EE_OIC_FLAG_NOTIFY);
-> +               }
-> +
-> +               if (ret) {
-> +                       if (!(oic->flags & QCOM_TEE_OIC_FLAG_SHARED)) {
-> +                               /* Release QCOM_TEE_OBJECT_TYPE_CB_OBJECT=
- input objects. */
-> +                               qcom_tee_arg_for_each_input_object(i, u)
-> +                                       if (typeof_qcom_tee_object(u[i].o=
-) =3D=3D
-> +                                               QCOM_TEE_OBJECT_TYPE_CB_O=
-BJECT)
-> +                                               qcom_tee_object_put(u[i].=
-o);
-> +
-> +                               ret =3D -EAGAIN;
-> +                       } else {
-> +                               /* On error, there is no clean way to exi=
-t. */
-> +                               /* For some reason we can not communicate=
- with QTEE, so we can not
-> +                                * notify QTEE about the failure and do f=
-urther cleanup.
-> +                                */
-> +                               ret =3D -ENODEV;
-> +                       }
-> +
-> +                       goto out;
-> +
-> +               } else {
-> +                       /* QTEE obtained the ownership of QCOM_TEE_OBJECT=
-_TYPE_CB_OBJECT
-> +                        * input objects in 'u'. On further failure, QTEE=
- is responsible
-> +                        * to release them.
-> +                        */
-> +                       oic->flags |=3D QCOM_TEE_OIC_FLAG_SHARED;
-> +               }
-> +
-> +               /* Is it a callback request? */
-> +#define QCOM_TEE_RESULT_INBOUND_REQ_NEEDED 3
-This must be part of the ABI to the secure world. How about keeping
-all those defines in a central place?
-
-> +               if (response_type !=3D QCOM_TEE_RESULT_INBOUND_REQ_NEEDED=
-) {
-> +                       if (!*result) {
-> +                               ret =3D qcom_tee_update_args(u, oic);
-> +                               if (ret) {
-> +                                       qcom_tee_arg_for_each_output_obje=
-ct(i, u)
-> +                                               qcom_tee_object_put(u[i].=
-o);
-> +
-> +                                       ret =3D -EAGAIN;
-> +                               }
-> +                       }
-> +
-> +                       break;
-> +
-> +               } else {
-> +                       oic->flags |=3D QCOM_TEE_OIC_FLAG_BUSY;
-> +                       /* Before dispatching the request, handle any pen=
-ding async requests. */
-> +                       qcom_tee_fetch_async_reqs(oic);
-> +                       qcom_tee_object_invoke(oic, cb_msg);
-This looks like a recursion. Is there a limit on how deep it can become?
-
-> +               }
-> +       }
-> +
-> +       qcom_tee_fetch_async_reqs(oic);
-> +
-> +out:
-> +       qcom_tee_msg_buffers_free(oic);
-> +
-> +       return ret;
-> +}
-> +
-> +int qcom_tee_object_do_invoke(struct qcom_tee_object_invoke_ctx *oic,
-> +                             struct qcom_tee_object *object, u32 op, str=
-uct qcom_tee_arg *u,
-> +                             int *result)
-> +{
-> +       /* User can not set bits used by transport. */
-> +       if (op & ~QCOM_TEE_MSG_OBJECT_OP_MASK)
-> +               return -EINVAL;
-> +
-> +       /* User can only invoke QTEE hosted objects. */
-> +       if (typeof_qcom_tee_object(object) !=3D QCOM_TEE_OBJECT_TYPE_TEE =
-&&
-> +           typeof_qcom_tee_object(object) !=3D QCOM_TEE_OBJECT_TYPE_ROOT=
-)
-> +               return -EINVAL;
-> +
-> +       /* User can not issue reserved operations to QTEE. */
-> +       if (op =3D=3D QCOM_TEE_MSG_OBJECT_OP_RELEASE || op =3D=3D QCOM_TE=
-E_MSG_OBJECT_OP_RETAIN)
-> +               return -EINVAL;
-> +
-> +       return  __qcom_tee_object_do_invoke(oic, object, op, u, result);
-> +}
-> +EXPORT_SYMBOL_GPL(qcom_tee_object_do_invoke);
-> +
-> +/* Dump object table. */
-> +static ssize_t qcom_tee_object_table_show(struct kobject *kobj,
-> +                                         struct kobj_attribute *attr, ch=
-ar *buf)
-> +{
-> +       struct qcom_tee_object *object;
-> +       unsigned long idx;
-> +       size_t len =3D 0;
-> +
-> +       xa_for_each_start(&xa_qcom_local_objects, idx, object, QCOM_TEE_O=
-BJECT_ID_START) {
-> +               len +=3D sysfs_emit_at(buf, len, "%4lx %4d %s\n", idx,
-> +                                    kref_read(&object->refcount),
-> +                                    qcom_tee_object_name(object));
-> +       }
-> +
-> +       return len;
-> +}
-> +
-> +static struct kobj_attribute object_table =3D __ATTR_RO(qcom_tee_object_=
-table);
-> +static struct kobj_attribute release =3D __ATTR_RO(qcom_tee_release_wq);
-> +static struct attribute *attrs[] =3D {
-> +       &object_table.attr,
-> +       &release.attr,
-> +       NULL
-> +};
-> +
-> +static struct attribute_group attr_group =3D {
-> +       .attrs =3D attrs,
-> +};
-> +
-> +static struct kobject *qcom_tee_object_invoke_kobj;
-> +static int __init qcom_tee_object_invoke_init(void)
-> +{
-> +       int ret;
-> +
-> +       ret =3D qcom_tee_release_init();
-> +       if (ret)
-> +               return ret;
-> +
-> +       ret =3D qcom_tee_msg_buffers_init();
-> +       if (ret)
-> +               goto err_release_destroy;
-> +
-> +       /* Create '/sys/firmware/qcom_tee'. */
-> +       qcom_tee_object_invoke_kobj =3D kobject_create_and_add("qcom_tee"=
-, firmware_kobj);
-I'd expect TEE drivers to keep their stuff under /sys/class/tee/tee*/
-
-> +       if (!qcom_tee_object_invoke_kobj) {
-> +               ret =3D -ENOMEM;
-> +
-> +               goto err_msg_buffers_destroy;
-> +       }
-> +
-> +       /* Create 'qcom_tee_object_table' and 'qcom_tee_release_wq'. */
-> +       ret =3D sysfs_create_group(qcom_tee_object_invoke_kobj, &attr_gro=
-up);
-> +       if (ret)
-> +               goto err_kobject_put;
-> +
-> +       return 0;
-> +
-> +err_kobject_put:
-> +       /* Remove '/sys/firmware/qcom_tee'. */
-> +       kobject_put(qcom_tee_object_invoke_kobj);
-> +err_msg_buffers_destroy:
-> +       qcom_tee_msg_buffers_destroy();
-> +err_release_destroy:
-> +       qcom_tee_release_destroy();
-> +
-> +       return ret;
-> +}
-> +module_init(qcom_tee_object_invoke_init);
-
-The other TEE drivers do most of the initialization work in the probe
-function and only the bare minimum for the probe function to be called
-before. Wouldn't it make sense to try to use the same pattern in this
-driver? It helps when trying to understand the driver, and perhaps a
-few bugs can be avoided too when following an established pattern.
-
-> +
-> +static void __exit qcom_tee_object_invoke_deinit(void)
-> +{
-> +       /* Wait for RELEASE operations for QTEE objects. */
-> +       qcom_tee_release_destroy();
-> +       qcom_tee_msg_buffers_destroy();
-> +       sysfs_remove_group(qcom_tee_object_invoke_kobj, &attr_group);
-> +       kobject_put(qcom_tee_object_invoke_kobj);
-> +}
-> +module_exit(qcom_tee_object_invoke_deinit);
-> +
-> +MODULE_AUTHOR("Qualcomm");
-> +MODULE_DESCRIPTION("QTEE driver");
-> +MODULE_VERSION("1.0");
-> +MODULE_LICENSE("GPL");
-> diff --git a/drivers/tee/qcomtee/qcom_scm.c b/drivers/tee/qcomtee/qcom_sc=
-m.c
-> new file mode 100644
-> index 000000000000..230faf249095
-> --- /dev/null
-> +++ b/drivers/tee/qcomtee/qcom_scm.c
-> @@ -0,0 +1,36 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + */
-> +
-> +#include <linux/firmware/qcom/qcom_scm.h>
-> +
-> +#include "qcomtee_private.h"
-> +
-> +int qcom_tee_object_invoke_ctx_invoke(struct qcom_tee_object_invoke_ctx =
-*oic,
-> +                                     int *result, u64 *response_type)
-> +{
-> +       int ret;
-> +       u64 res;
-> +
-> +       if (!(oic->flags & QCOM_TEE_OIC_FLAG_BUSY)) {
-> +               /* Direct QTEE object invocation. */
-> +               ret =3D qcom_scm_qtee_invoke_smc(oic->in_msg_paddr,
-> +                                              oic->in_msg.size,
-> +                                              oic->out_msg_paddr,
-> +                                              oic->out_msg.size,
-> +                                              &res, response_type, NULL)=
-;
-> +       } else {
-> +               /* Submit callback response. */
-> +               ret =3D qcom_scm_qtee_callback_response(oic->out_msg_padd=
-r,
-> +                                                     oic->out_msg.size,
-> +                                                     &res, response_type=
-, NULL);
-> +       }
-> +
-> +       if (ret)
-> +               pr_err("QTEE returned with %d.\n", ret);
-> +       else
-> +               *result =3D (int)res;
-> +
-> +       return ret;
-> +}
-> diff --git a/drivers/tee/qcomtee/qcomtee_msg.h b/drivers/tee/qcomtee/qcom=
-tee_msg.h
-> new file mode 100644
-> index 000000000000..7c968834ec9d
-> --- /dev/null
-> +++ b/drivers/tee/qcomtee/qcomtee_msg.h
-> @@ -0,0 +1,217 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + */
-> +
-> +#ifndef QCOMTEE_MSG_H
-> +#define QCOMTEE_MSG_H
-> +
-> +#include <linux/firmware/qcom/qcom_tee.h>
-> +
-> +/**
-> + * DOC: ''Qualcomm TEE'' (QTEE) Transport Message
-> + *
-> + * There are two buffers shared with QTEE, inbound and outbound buffers.
-> + * The inbound buffer is used for direct object invocation and the outbo=
-und buffer is
-> + * used to make a request from QTEE to kernel, i.e. callback request.
-> + *
-> + * The unused tail of the outbound buffer is also used for sending and r=
-eceiving
-> + * asynchronous messages. An asynchronous message is independent from th=
-e current
-> + * object invocation (i.e. contents of the inbound buffer) or callback r=
-equest
-> + * (i.e. the head of the outbound buffer), see qcom_tee_get_async_buffer=
-(). It is
-> + * used by endpoints (QTEE or kernel) as an optimization to reduce numbe=
-r of context
-> + * switches between secure and non-secure world.
-> + *
-> + * For instance, QTEE never sends an explicit callback request to releas=
-e an object in
-> + * kernel. Instead, it sends asynchronous release messages in outbound b=
-uffer when QTEE
-> + * returns from previous direct object invocation, or append asynchronou=
-s release
-> + * messages after the current callback request.
-> + *
-> + * QTEE supports two types of arguments in a message: buffer and object =
-arguments.
-> + * Depending on the direction of data flow, they could be input buffer (=
-IO) to QTEE,
-> + * output buffer (OB) from QTEE, input object (IO) to QTEE, or output ob=
-ject (OO) from
-> + * QTEE. Object arguments hold object ids. Buffer arguments hold (offset=
-, size) pairs
-> + * into the inbound or outbound buffers.
-> + *
-> + * QTEE holds an object table for objects, it hosts and exposes to kerne=
-l. An object id
-> + * is an index to the object table in QTEE.
-> + *
-> + * For direct object invocation message format in inbound buffer see
-> + * &struct qcom_tee_msg_object_invoke. For callback request message form=
-at in outbound
-> + * buffer see &struct qcom_tee_msg_callback. For the message format for =
-asynchronous message
-> + * in outbound buffer see &struct qcom_tee_async_msg_hdr.
-> + */
-> +
-> +/**
-> + * define QCOM_TEE_MSG_OBJECT_NS_BIT - Non-secure bit
-> + *
-> + * Object id is a globally unique 32-bit number. Ids referencing objects=
- in kernel should
-> + * have %QCOM_TEE_MSG_OBJECT_NS_BIT set.
-> + */
-> +#define QCOM_TEE_MSG_OBJECT_NS_BIT BIT(31)
-> +
-> +/* Static object ids recognized by QTEE. */
-> +#define QCOM_TEE_MSG_OBJECT_NULL (0U)
-> +#define QCOM_TEE_MSG_OBJECT_ROOT (1U)
-> +
-> +/* Definitions from QTEE as part of the transport protocol. */
-> +
-> +/* qcom_tee_msg_arg is argument as recognized by QTEE. */
-> +union qcom_tee_msg_arg {
-> +       struct {
-> +               u32 offset;
-> +               u32 size;
-> +       } b;
-> +       u32 o;
-> +};
-> +
-> +/* BI and BO payloads in a QTEE messages should be at 64-bit boundaries.=
- */
-> +#define qcom_tee_msg_offset_align(o) ALIGN((o), sizeof(u64))
-> +
-> +/* Operation for objects is 32-bit. Transport uses upper 16-bits interna=
-lly. */
-> +#define QCOM_TEE_MSG_OBJECT_OP_MASK 0x0000FFFFU
-GENMASK()?
-
-Cheers,
-Jens
-
-> +
-> +/* Reserved Operation IDs sent to QTEE: */
-> +/* QCOM_TEE_MSG_OBJECT_OP_RELEASE - Reduces the refcount and releases th=
-e object.
-> + * QCOM_TEE_MSG_OBJECT_OP_RETAIN  - Increases the refcount.
-> + *
-> + * These operation id are valid for all objects. They are not available =
-outside of this
-> + * driver. Developers should use qcom_tee_object_get() and qcom_tee_obje=
-ct_put(), to
-> + * achieve the same.
-> + */
-> +
-> +#define QCOM_TEE_MSG_OBJECT_OP_RELEASE (QCOM_TEE_MSG_OBJECT_OP_MASK - 0)
-> +#define QCOM_TEE_MSG_OBJECT_OP_RETAIN  (QCOM_TEE_MSG_OBJECT_OP_MASK - 1)
-> +
-> +/**
-> + * struct qcom_tee_msg_object_invoke - Direct object invocation message
-> + * @ctx: object id hosted in QTEE
-> + * @op: operation for the object
-> + * @counts: number of different type of arguments in @args
-> + * @args: array of arguments
-> + *
-> + * @counts consists of 4 * 4-bits felids. Bits 0 - 3, is number of input=
- buffers,
-> + * bits 4 - 7, is number of output buffers, bits 8 - 11, is number of in=
-put objects,
-> + * and bits 12 - 15, is number of output objects. Remaining bits should =
-be zero.
-> + *
-> + * Maximum number of arguments of each type is defined by %QCOM_TEE_ARGS=
-_PER_TYPE.
-> + */
-> +struct qcom_tee_msg_object_invoke {
-> +       u32 cxt;
-> +       u32 op;
-> +       u32 counts;
-> +       union qcom_tee_msg_arg args[];
-> +};
-> +
-> +/**
-> + * struct qcom_tee_msg_callback - Callback request message
-> + * @result: result of operation @op on object referenced by @cxt
-> + * @cxt: object id hosted in kernel
-> + * @op: operation for the object
-> + * @counts: number of different type of arguments in @args
-> + * @args: array of arguments
-> + *
-> + * For details of @counts, see &qcom_tee_msg_object_invoke.counts.
-> + */
-> +struct qcom_tee_msg_callback {
-> +       u32 result;
-> +       u32 cxt;
-> +       u32 op;
-> +       u32 counts;
-> +       union qcom_tee_msg_arg args[];
-> +};
-> +
-> +/* Offset in the message for the beginning of buffer argument's contents=
-. */
-> +#define qcom_tee_msg_buffer_args(t, n) \
-> +       qcom_tee_msg_offset_align(struct_size_t(t, args, n))
-> +/* Pointer to the beginning of a buffer argument's content at an offset =
-in a message. */
-> +#define qcom_tee_msg_offset_to_ptr(m, off) ((void *)&((char *)(m))[(off)=
-])
-> +
-> +/* Some helpers to manage msg.counts. */
-> +
-> +#define QCOM_TEE_MSG_NUM_IB(x) ((x) & 0xfU)
-> +#define QCOM_TEE_MSG_NUM_OB(x) (((x) >> 4) & 0xfU)
-> +#define QCOM_TEE_MSG_NUM_IO(x) (((x) >> 8) & 0xfU)
-> +#define QCOM_TEE_MSG_NUM_OO(x) (((x) >> 12) & 0xfU)
-> +
-> +#define QCOM_TEE_MSG_IDX_IB(x) (0U)
-> +#define QCOM_TEE_MSG_IDX_OB(x) (QCOM_TEE_MSG_IDX_IB(x) + QCOM_TEE_MSG_NU=
-M_IB(x))
-> +#define QCOM_TEE_MSG_IDX_IO(x) (QCOM_TEE_MSG_IDX_OB(x) + QCOM_TEE_MSG_NU=
-M_OB(x))
-> +#define QCOM_TEE_MSG_IDX_OO(x) (QCOM_TEE_MSG_IDX_IO(x) + QCOM_TEE_MSG_NU=
-M_IO(x))
-> +
-> +#define qcom_tee_msg_for_each(i, c, type)      \
-> +       for (i =3D QCOM_TEE_MSG_IDX_##type(c);    \
-> +            i < (QCOM_TEE_MSG_IDX_##type(c) + QCOM_TEE_MSG_NUM_##type(c)=
-); \
-> +            i++)
-> +
-> +#define qcom_tee_msg_for_each_input_buffer(i, m)  qcom_tee_msg_for_each(=
-i, (m)->counts, IB)
-> +#define qcom_tee_msg_for_each_output_buffer(i, m) qcom_tee_msg_for_each(=
-i, (m)->counts, OB)
-> +#define qcom_tee_msg_for_each_input_object(i, m)  qcom_tee_msg_for_each(=
-i, (m)->counts, IO)
-> +#define qcom_tee_msg_for_each_output_object(i, m) qcom_tee_msg_for_each(=
-i, (m)->counts, OO)
-> +
-> +/* Sum of arguments in a message. */
-> +#define qcom_tee_msg_args(m) (QCOM_TEE_MSG_IDX_OO((m)->counts) + QCOM_TE=
-E_MSG_NUM_OO((m)->counts))
-> +
-> +static inline void qcom_tee_msg_init(struct qcom_tee_msg_object_invoke *=
-msg, u32 cxt, u32 op,
-> +                                    int in_buffer, int out_buffer, int i=
-n_object, int out_object)
-> +{
-> +       msg->counts |=3D (in_buffer & 0xfU);
-> +       msg->counts |=3D ((out_buffer - in_buffer) & 0xfU) << 4;
-> +       msg->counts |=3D ((in_object - out_buffer) & 0xfU) << 8;
-> +       msg->counts |=3D ((out_object - in_object) & 0xfU) << 12;
-> +       msg->cxt =3D cxt;
-> +       msg->op =3D op;
-> +}
-> +
-> +/* Generic error codes. */
-> +#define QCOM_TEE_MSG_OK                        0       /* non-specific s=
-uccess code. */
-> +#define QCOM_TEE_MSG_ERROR             1       /* non-specific error. */
-> +#define QCOM_TEE_MSG_ERROR_INVALID     2       /* unsupported/unrecogniz=
-ed request. */
-> +#define QCOM_TEE_MSG_ERROR_SIZE_IN     3       /* supplied buffer/string=
- too large. */
-> +#define QCOM_TEE_MSG_ERROR_SIZE_OUT    4       /* supplied output buffer=
- too small. */
-> +#define QCOM_TEE_MSG_ERROR_USERBASE    10      /* start of user-defined =
-error range. */
-> +
-> +/* Transport layer error codes. */
-> +#define QCOM_TEE_MSG_ERROR_DEFUNCT     -90     /* object no longer exist=
-s. */
-> +#define QCOM_TEE_MSG_ERROR_ABORT       -91     /* calling thread must ex=
-it. */
-> +#define QCOM_TEE_MSG_ERROR_BADOBJ      -92     /* invalid object context=
-. */
-> +#define QCOM_TEE_MSG_ERROR_NOSLOTS     -93     /* caller's object table =
-full. */
-> +#define QCOM_TEE_MSG_ERROR_MAXARGS     -94     /* too many args. */
-> +#define QCOM_TEE_MSG_ERROR_MAXDATA     -95     /* buffers too large. */
-> +#define QCOM_TEE_MSG_ERROR_UNAVAIL     -96     /* the request could not =
-be processed. */
-> +#define QCOM_TEE_MSG_ERROR_KMEM                -97     /* kernel out of =
-memory. */
-> +#define QCOM_TEE_MSG_ERROR_REMOTE      -98     /* local method sent to r=
-emote object. */
-> +#define QCOM_TEE_MSG_ERROR_BUSY                -99     /* Object is busy=
-. */
-> +#define QCOM_TEE_MSG_ERROR_TIMEOUT     -103    /* Call Back Object invoc=
-ation timed out. */
-> +
-> +static inline void qcom_tee_msg_translate_err(struct qcom_tee_msg_callba=
-ck *cb_msg, int err)
-> +{
-> +       if (!err) {
-> +               cb_msg->result =3D QCOM_TEE_MSG_OK;
-> +       } else if (err < 0) {
-> +               /* If err < 0, then it is a transport error. */
-> +               switch (err) {
-> +               case -ENOMEM:
-> +                       cb_msg->result =3D QCOM_TEE_MSG_ERROR_KMEM;
-> +                       break;
-> +               case -ENODEV:
-> +                       cb_msg->result =3D QCOM_TEE_MSG_ERROR_DEFUNCT;
-> +                       break;
-> +               case -ENOSPC:
-> +               case -EBUSY:
-> +                       cb_msg->result =3D QCOM_TEE_MSG_ERROR_BUSY;
-> +                       break;
-> +               case -EBADF:
-> +               case -EINVAL:
-> +                       cb_msg->result =3D QCOM_TEE_MSG_ERROR_UNAVAIL;
-> +                       break;
-> +               default:
-> +                       cb_msg->result =3D  QCOM_TEE_MSG_ERROR;
-> +               }
-> +       } else {
-> +               /* If err > 0, then it is user defined error, pass it as =
-is. */
-> +               cb_msg->result =3D err;
-> +       }
-> +}
-> +
-> +#endif /* QCOMTEE_MSG_H */
-> diff --git a/drivers/tee/qcomtee/qcomtee_private.h b/drivers/tee/qcomtee/=
-qcomtee_private.h
-> new file mode 100644
-> index 000000000000..e3e4ef51c0b2
-> --- /dev/null
-> +++ b/drivers/tee/qcomtee/qcomtee_private.h
-> @@ -0,0 +1,47 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + */
-> +
-> +#ifndef QCOM_TEE_PRIVATE_H
-> +#define QCOM_TEE_PRIVATE_H
-> +
-> +#include <linux/firmware/qcom/qcom_tee.h>
-> +#include <linux/kobject.h>
-> +#include <linux/tee_core.h>
-> +
-> +struct qcom_tee_object *qcom_tee_idx_erase(u32 idx);
-> +void qcom_tee_object_free(struct qcom_tee_object *object);
-> +
-> +/* Process async messages form QTEE. */
-> +void qcom_tee_fetch_async_reqs(struct qcom_tee_object_invoke_ctx *oic);
-> +
-> +int qcom_tee_release_init(void);
-> +void qcom_tee_release_destroy(void);
-> +void qcom_tee_release_tee_object(struct qcom_tee_object *object);
-> +ssize_t qcom_tee_release_wq_show(struct kobject *kobj, struct kobj_attri=
-bute *attr, char *buf);
-> +
-> +/* SCM call. */
-> +int qcom_tee_object_invoke_ctx_invoke(struct qcom_tee_object_invoke_ctx =
-*oic,
-> +                                     int *result, u64 *response_type);
-> +
-> +/**
-> + * __qcom_tee_object_do_invoke() - Submit an invocation for an object.
-> + * @oic: context to use for current invocation.
-> + * @object: object being invoked.
-> + * @op: requested operation on object.
-> + * @u: array of argument for the current invocation.
-> + * @result: result returned from QTEE.
-> + *
-> + * Same as qcom_tee_object_do_invoke() without @object and @op is 32-bit=
-,
-> + * upper 16-bits are for internal use.
-> + *
-> + * Return: On success return 0. On error returns -EINVAL and -ENOSPC if =
-unable to initiate
-> + * the invocation, -EAGAIN if invocation failed and user can retry the i=
-nvocation.
-> + * Otherwise, -ENODEV on fatal failure.
-> + */
-> +int __qcom_tee_object_do_invoke(struct qcom_tee_object_invoke_ctx *oic,
-> +                               struct qcom_tee_object *object, u32 op, s=
-truct qcom_tee_arg *u,
-> +                               int *result);
-> +
-> +#endif /* QCOM_TEE_PRIVATE_H */
-> diff --git a/drivers/tee/qcomtee/release.c b/drivers/tee/qcomtee/release.=
-c
-> new file mode 100644
-> index 000000000000..f2e048418e23
-> --- /dev/null
-> +++ b/drivers/tee/qcomtee/release.c
-> @@ -0,0 +1,66 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + */
-> +
-> +#include "qcomtee_private.h"
-> +#include "qcomtee_msg.h"
-> +
-> +static struct workqueue_struct *qcom_tee_release_wq;
-> +
-> +/* Number of all release requests pending for processing. */
-> +static atomic_t qcom_tee_pending_releases =3D ATOMIC_INIT(0);
-> +
-> +/* qcom_tee_object_do_release makes direct object invocation to release =
-an object. */
-> +static void qcom_tee_destroy_user_object(struct work_struct *work)
-> +{
-> +       static struct qcom_tee_object_invoke_ctx oic;
-> +       static struct qcom_tee_arg args[1] =3D { 0 };
-> +       struct qcom_tee_object *object;
-> +       int ret, result;
-> +
-> +       object =3D container_of(work, struct qcom_tee_object, work);
-> +
-> +       ret =3D __qcom_tee_object_do_invoke(&oic, object, QCOM_TEE_MSG_OB=
-JECT_OP_RELEASE, args,
-> +                                         &result);
-> +
-> +       /* Is it safe to retry the release? */
-> +       if (ret =3D=3D -EAGAIN) {
-> +               queue_work(qcom_tee_release_wq, &object->work);
-> +       } else {
-> +               if (ret || result)
-> +                       pr_err("%s: %s release failed, ret =3D %d (%x).\n=
-",
-> +                              __func__, qcom_tee_object_name(object), re=
-t, result);
-> +
-> +               atomic_dec(&qcom_tee_pending_releases);
-> +               qcom_tee_object_free(object);
-> +       }
-> +}
-> +
-> +/* qcom_tee_release_tee_object puts object in release work queue. */
-> +void qcom_tee_release_tee_object(struct qcom_tee_object *object)
-> +{
-> +       INIT_WORK(&object->work, qcom_tee_destroy_user_object);
-> +       atomic_inc(&qcom_tee_pending_releases);
-> +       queue_work(qcom_tee_release_wq, &object->work);
-> +}
-> +
-> +ssize_t qcom_tee_release_wq_show(struct kobject *kobj, struct kobj_attri=
-bute *attr, char *buf)
-> +{
-> +       return sysfs_emit(buf, "%d\n", atomic_read(&qcom_tee_pending_rele=
-ases));
-> +}
-> +
-> +int qcom_tee_release_init(void)
-> +{
-> +       qcom_tee_release_wq =3D alloc_ordered_workqueue("qcom_tee_release=
-_wq", 0);
-> +       if (!qcom_tee_release_wq)
-> +               return -ENOMEM;
-> +
-> +       return 0;
-> +}
-> +
-> +void qcom_tee_release_destroy(void)
-> +{
-> +       /* It drains the wq. */
-> +       destroy_workqueue(qcom_tee_release_wq);
-> +}
-> diff --git a/include/linux/firmware/qcom/qcom_tee.h b/include/linux/firmw=
-are/qcom/qcom_tee.h
-> new file mode 100644
-> index 000000000000..90e5e10a0e62
-> --- /dev/null
-> +++ b/include/linux/firmware/qcom/qcom_tee.h
-> @@ -0,0 +1,284 @@
-> +/* SPDX-License-Identifier: GPL-2.0-only */
-> +/* Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserv=
-ed.
-> + */
-> +
-> +#ifndef __QCOM_TEE_H
-> +#define __QCOM_TEE_H
-> +
-> +#include <linux/kref.h>
-> +#include <linux/completion.h>
+> +#include <linux/moduleparam.h>
+> +#include <linux/nls.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/platform_profile.h>
+> +#include <linux/serio.h>
 > +#include <linux/workqueue.h>
+> +#include <acpi/battery.h>
 > +
-> +struct qcom_tee_object;
+> +#define SAMSUNG_GALAXYBOOK_CLASS  "samsung-galaxybook"
+> +#define SAMSUNG_GALAXYBOOK_NAME   "Samsung Galaxy Book Extras"
 > +
-> +/**
-> + * DOC: Overview
-> + *
-> + * qcom_tee_object provides object ref-counting, id allocation for objec=
-ts hosted in
-> + * REE, and necessary message marshaling for Qualcomm TEE (QTEE).
-> + *
-> + * To invoke an object in QTEE, user calls qcom_tee_object_do_invoke() w=
-hile passing
-> + * an instance of &struct qcom_tee_object and the requested operation + =
-arguments.
-> + *
-> + * After the boot, QTEE provides a static object %ROOT_QCOM_TEE_OBJECT (=
-type of
-> + * %QCOM_TEE_OBJECT_TYPE_ROOT). The root object is invoked to pass user'=
-s credentials and
-> + * obtain other instances of &struct qcom_tee_object (type of %QCOM_TEE_=
-OBJECT_TYPE_TEE)
-> + * that represents services and TAs in QTEE, see &enum qcom_tee_object_t=
-ype.
-> + *
-> + * The object received from QTEE are refcounted. So the owner of these o=
-bjects can
-> + * issue qcom_tee_object_get(), to increase the refcount, and pass objec=
-ts to other
-> + * clients, or issue qcom_tee_object_put() to decrease the refcount, and=
- releasing
-> + * the resources in QTEE.
-> + *
-> + * REE can host services accessible to QTEE. A driver should embed an in=
-stance of
-> + * &struct qcom_tee_object in the struct it wants to export to QTEE (it =
-is called
-> + * callback object). It issues qcom_tee_object_user_init() to set the di=
-spatch()
-> + * operation for the callback object and set its type to %QCOM_TEE_OBJEC=
-T_TYPE_CB_OBJECT.
-> + *
-> + * core.c holds an object table for callback objects. An object id is as=
-signed
-> + * to each callback object which is an index to the object table. QTEE u=
-ses these ids
-> + * to reference or invoke callback objects.
-> + *
-> + * If QTEE invoke a callback object in REE, the dispatch() operation is =
-called in the
-> + * context of thread that called qcom_tee_object_do_invoke(), originally=
-.
+> +/*
+> + * Module parameters
 > + */
 > +
-> +/**
-> + * enum qcom_tee_object_typ - Object types.
-> + * @QCOM_TEE_OBJECT_TYPE_TEE: object hosted on QTEE.
-> + * @QCOM_TEE_OBJECT_TYPE_CB_OBJECT: object hosted on REE.
-> + * @QCOM_TEE_OBJECT_TYPE_ROOT: 'primordial' object.
-> + * @QCOM_TEE_OBJECT_TYPE_NULL: NULL object.
-> + *
-> + * Primordial object is used for bootstrapping the IPC connection betwee=
-n a REE
-> + * and QTEE. It is invoked by REE when it wants to get a 'client env'.
+> +static bool kbd_backlight =3D true;
+> +static bool battery_threshold =3D true;
+> +static bool performance_mode =3D true;
+> +static bool allow_recording =3D true;
+> +static bool fan_speed =3D true;
+> +static bool i8042_filter =3D true;
+> +
+> +module_param(kbd_backlight, bool, 0644);
+> +MODULE_PARM_DESC(kbd_backlight, "Enable Keyboard Backlight control (defa=
+ult on)");
+> +module_param(battery_threshold, bool, 0644);
+> +MODULE_PARM_DESC(battery_threshold, "Enable battery charge threshold con=
+trol (default on)");
+> +module_param(performance_mode, bool, 0644);
+> +MODULE_PARM_DESC(performance_mode, "Enable Performance Mode control (def=
+ault on)");
+> +module_param(allow_recording, bool, 0644);
+> +MODULE_PARM_DESC(allow_recording,
+> +=09=09 "Enable control to allow or block access to camera and microphone=
+ (default on)");
+> +module_param(fan_speed, bool, 0644);
+> +MODULE_PARM_DESC(fan_speed, "Enable fan speed (default on)");
+> +module_param(i8042_filter, bool, 0644);
+> +MODULE_PARM_DESC(i8042_filter, "Enable capturing keyboard hotkey events =
+(default on)");
+> +
+> +/*
+> + * Device definitions and matching
 > + */
-> +enum qcom_tee_object_type {
-> +       QCOM_TEE_OBJECT_TYPE_TEE,
-> +       QCOM_TEE_OBJECT_TYPE_CB_OBJECT,
-> +       QCOM_TEE_OBJECT_TYPE_ROOT,
-> +       QCOM_TEE_OBJECT_TYPE_NULL,
+> +
+> +static const struct acpi_device_id galaxybook_device_ids[] =3D {
+> +=09{ "SAM0427" },
+> +=09{ "SAM0428" },
+> +=09{ "SAM0429" },
+> +=09{ "SAM0430" },
+> +=09{},
+> +};
+> +MODULE_DEVICE_TABLE(acpi, galaxybook_device_ids);
+> +
+> +static const struct dmi_system_id galaxybook_dmi_ids[] =3D {
+> +=09{
+> +=09=09.matches =3D {
+> +=09=09=09DMI_MATCH(DMI_SYS_VENDOR, "SAMSUNG ELECTRONICS CO., LTD."),
+> +=09=09=09DMI_MATCH(DMI_CHASSIS_TYPE, "10"), /* Notebook */
+> +=09=09},
+> +=09},
+> +=09{}
 > +};
 > +
-> +/**
-> + * enum qcom_tee_arg_type - Type of QTEE argument.
-> + * @QCOM_TEE_ARG_TYPE_INV: invalid type.
-> + * @QCOM_TEE_ARG_TYPE_IB: input buffer (IO).
-> + * @QCOM_TEE_ARG_TYPE_OO: output object (OO).
-> + * @QCOM_TEE_ARG_TYPE_OB: output buffer (OB).
-> + * @QCOM_TEE_ARG_TYPE_IO: input object (IO).
-> + *
-> + * Use invalid type to specify end of argument array.
-> + */
-> +enum qcom_tee_arg_type {
-> +       QCOM_TEE_ARG_TYPE_INV =3D 0,
-> +       QCOM_TEE_ARG_TYPE_OB,
-> +       QCOM_TEE_ARG_TYPE_OO,
-> +       QCOM_TEE_ARG_TYPE_IB,
-> +       QCOM_TEE_ARG_TYPE_IO,
-> +       QCOM_TEE_ARG_TYPE_NR,
+> +struct galaxybook_fan {
+> +=09struct acpi_device fan;
+> +=09char *description;
+> +=09bool supports_fst;
+> +=09unsigned int *fan_speeds;
+> +=09int fan_speeds_count;
+> +=09struct dev_ext_attribute fan_speed_rpm_ext_attr;
 > +};
 > +
-> +/**
-> + * define QCOM_TEE_ARGS_PER_TYPE - Maximum arguments of specific type.
-> + *
-> + * QTEE transport protocol limits maximum number of argument of specific=
- type
-> + * (i.e. IB, OB, IO, and OO).
-> + */
-> +#define QCOM_TEE_ARGS_PER_TYPE 16
+> +#define MAX_FAN_COUNT 5
 > +
-> +/* Maximum arguments that can fit in a QTEE message, ignoring the type. =
+> +struct samsung_galaxybook {
+> +=09struct platform_device *platform;
+> +=09struct acpi_device *acpi;
+> +
+> +=09struct led_classdev kbd_backlight;
+> +=09struct work_struct kbd_backlight_hotkey_work;
+> +
+> +=09struct input_dev *input;
+> +=09struct key_entry *keymap;
+> +
+> +=09u8 *profile_performance_modes;
+> +=09struct platform_profile_handler profile_handler;
+> +=09struct work_struct performance_mode_hotkey_work;
+> +
+> +=09struct work_struct allow_recording_hotkey_work;
+> +
+> +=09struct galaxybook_fan fans[MAX_FAN_COUNT];
+> +=09int fans_count;
+> +
+> +#if IS_ENABLED(CONFIG_HWMON)
+> +=09struct device *hwmon;
+> +#endif
+> +};
+> +static struct samsung_galaxybook *galaxybook_ptr;
+> +
+> +struct sawb {
+> +=09u16 safn;
+> +=09u16 sasb;
+> +=09u8 rflg;
+> +=09union {
+> +=09=09struct {
+> +=09=09=09u8 gunm;
+> +=09=09=09u8 guds[250];
+> +=09=09};
+> +=09=09struct {
+> +=09=09=09u8 caid[16];
+> +=09=09=09u8 fncn;
+> +=09=09=09u8 subn;
+> +=09=09=09u8 iob0;
+> +=09=09=09u8 iob1;
+> +=09=09=09u8 iob2;
+> +=09=09=09u8 iob3;
+> +=09=09=09u8 iob4;
+> +=09=09=09u8 iob5;
+> +=09=09=09u8 iob6;
+> +=09=09=09u8 iob7;
+> +=09=09=09u8 iob8;
+> +=09=09=09u8 iob9;
+> +=09=09};
+> +=09=09struct {
+> +=09=09=09u8 iob_prefix[18];
+> +=09=09=09u8 iob_values[10];
+> +=09=09};
+> +=09};
+> +};
+> +
+> +#define SAWB_LEN_SETTINGS         0x15
+> +#define SAWB_LEN_PERFORMANCE_MODE 0x100
+> +
+> +#define SAFN  0x5843
+> +
+> +#define SASB_KBD_BACKLIGHT     0x78
+> +#define SASB_POWER_MANAGEMENT  0x7a
+> +#define SASB_USB_CHARGE_GET    0x67
+> +#define SASB_USB_CHARGE_SET    0x68
+> +#define SASB_NOTIFICATIONS     0x86
+> +#define SASB_ALLOW_RECORDING   0x8a
+> +#define SASB_PERFORMANCE_MODE  0x91
+> +
+> +#define SAWB_RFLG_POS  4
+> +#define SAWB_GUNM_POS  5
+> +
+> +#define RFLG_SUCCESS  0xaa
+> +#define GUNM_FAIL     0xff
+> +
+> +#define GUNM_FEATURE_ENABLE          0xbb
+> +#define GUNM_FEATURE_ENABLE_SUCCESS  0xdd
+> +#define GUDS_FEATURE_ENABLE          0xaa
+> +#define GUDS_FEATURE_ENABLE_SUCCESS  0xcc
+> +
+> +#define GUNM_GET  0x81
+> +#define GUNM_SET  0x82
+> +
+> +#define GUNM_POWER_MANAGEMENT  0x82
+> +
+> +#define GUNM_USB_CHARGE_GET              0x80
+> +#define GUNM_USB_CHARGE_ON               0x81
+> +#define GUNM_USB_CHARGE_OFF              0x80
+> +#define GUDS_START_ON_LID_OPEN           0xa3
+> +#define GUDS_START_ON_LID_OPEN_GET       0x81
+> +#define GUDS_START_ON_LID_OPEN_SET       0x80
+> +#define GUDS_BATTERY_CHARGE_CONTROL      0xe9
+> +#define GUDS_BATTERY_CHARGE_CONTROL_GET  0x91
+> +#define GUDS_BATTERY_CHARGE_CONTROL_SET  0x90
+> +#define GUNM_ACPI_NOTIFY_ENABLE          0x80
+> +#define GUDS_ACPI_NOTIFY_ENABLE          0x02
+> +
+> +#define FNCN_PERFORMANCE_MODE       0x51
+> +#define SUBN_PERFORMANCE_MODE_LIST  0x01
+> +#define SUBN_PERFORMANCE_MODE_GET   0x02
+> +#define SUBN_PERFORMANCE_MODE_SET   0x03
+> +
+> +/* guid 8246028d-8bca-4a55-ba0f-6f1e6b921b8f */
+> +static const guid_t performance_mode_guid_value =3D
+> +=09GUID_INIT(0x8246028d, 0x8bca, 0x4a55, 0xba, 0x0f, 0x6f, 0x1e, 0x6b, 0=
+x92, 0x1b, 0x8f);
+> +#define PERFORMANCE_MODE_GUID performance_mode_guid_value
+> +
+> +#define PERFORMANCE_MODE_ULTRA               0x16
+> +#define PERFORMANCE_MODE_PERFORMANCE         0x15
+> +#define PERFORMANCE_MODE_SILENT              0xb
+> +#define PERFORMANCE_MODE_QUIET               0xa
+> +#define PERFORMANCE_MODE_OPTIMIZED           0x2
+> +#define PERFORMANCE_MODE_PERFORMANCE_LEGACY  0x1
+> +#define PERFORMANCE_MODE_OPTIMIZED_LEGACY    0x0
+> +#define PERFORMANCE_MODE_UNKNOWN             0xff
+> +
+> +#define DEFAULT_PLATFORM_PROFILE PLATFORM_PROFILE_BALANCED
+> +
+> +#define ACPI_METHOD_ENABLE           "SDLS"
+> +#define ACPI_METHOD_ENABLE_ON        1
+> +#define ACPI_METHOD_ENABLE_OFF       0
+> +#define ACPI_METHOD_SETTINGS         "CSFI"
+> +#define ACPI_METHOD_PERFORMANCE_MODE "CSXI"
+> +
+> +#define ACPI_FAN_DEVICE_ID    "PNP0C0B"
+> +#define ACPI_FAN_SPEED_LIST   "FANT"
+> +#define ACPI_FAN_SPEED_VALUE  "\\_SB.PC00.LPCB.H_EC.FANS"
+> +
+> +#define KBD_BACKLIGHT_MAX_BRIGHTNESS  3
+> +
+> +#define ACPI_NOTIFY_BATTERY_STATE_CHANGED    0x61
+> +#define ACPI_NOTIFY_DEVICE_ON_TABLE          0x6c
+> +#define ACPI_NOTIFY_DEVICE_OFF_TABLE         0x6d
+> +#define ACPI_NOTIFY_HOTKEY_PERFORMANCE_MODE  0x70
+> +
+> +#define GB_KEY_KBD_BACKLIGHT_KEYDOWN    0x2c
+> +#define GB_KEY_KBD_BACKLIGHT_KEYUP      0xac
+> +#define GB_KEY_ALLOW_RECORDING_KEYDOWN  0x1f
+> +#define GB_KEY_ALLOW_RECORDING_KEYUP    0x9f
+> +
+> +static const struct key_entry galaxybook_acpi_keymap[] =3D {
+> +=09{ KE_KEY, ACPI_NOTIFY_BATTERY_STATE_CHANGED,   { KEY_BATTERY } },
+> +=09{ KE_KEY, ACPI_NOTIFY_DEVICE_ON_TABLE,         { KEY_F14 } },
+> +=09{ KE_KEY, ACPI_NOTIFY_DEVICE_OFF_TABLE,        { KEY_F15 } },
+> +=09{ KE_KEY, ACPI_NOTIFY_HOTKEY_PERFORMANCE_MODE, { KEY_UNKNOWN } },
+> +=09{ KE_END, 0 },
+> +};
+> +
+> +/*
+> + * ACPI method handling
+> + */
+> +
+> +#define pr_debug_prefixed(...) pr_debug("[DEBUG] " __VA_ARGS__)
+> +
+> +#define print_acpi_object_buffer_debug(header_str, buf_ptr, buf_len)=09\
+> +=09do {=09=09=09=09=09=09=09=09\
+> +=09=09pr_debug_prefixed("%s\n", header_str);=09=09=09\
+> +=09=09print_hex_dump_debug("samsung_galaxybook: [DEBUG]   ",=09\
+
+You can use pr_fmt() wrapping here so you don't need to hardcode the=20
+prefix.
+
+> +=09=09=09=09     DUMP_PREFIX_NONE, 16, 1, buf_ptr,=09\
+> +=09=09=09=09     buf_len, false);=09=09=09\
+> +=09} while (0)
+> +
+> +static char *get_acpi_device_description(struct acpi_device *acpi_dev)
+> +{
+> +=09struct acpi_buffer str_buf =3D { ACPI_ALLOCATE_BUFFER, NULL };
+> +=09union acpi_object *str_obj;
+> +=09struct acpi_buffer name_buf =3D { ACPI_ALLOCATE_BUFFER, NULL };
+
+Reverse xmas tree order is preferred (unless there's a good reason to=20
+break it due to dependency).
+
+> +=09acpi_status status;
+> +=09int result;
+> +
+> +=09/* first try to get value of _STR (and also convert it to utf8)  */
+> +=09if (!acpi_has_method(acpi_dev->handle, "_STR"))
+> +=09=09goto use_name;
+> +=09status =3D acpi_evaluate_object_typed(acpi_dev->handle, "_STR", NULL,
+> +=09=09=09=09=09   &str_buf, ACPI_TYPE_BUFFER);
+> +=09if (ACPI_SUCCESS(status) && str_buf.length > 0) {
+> +=09=09str_obj =3D str_buf.pointer;
+> +=09=09char *buf =3D kzalloc(sizeof(*buf) * str_obj->buffer.length, GFP_K=
+ERNEL);
+
+Don't mix variable declarations with, always put them first in the=20
+block/function and leave blank line in between. There's only one exception=
+=20
+and that is using cleanup.h when ordering of the declarations matter but=20
+that's the only exception (it's the reason why it's allowed at all).
+
+> +=09=09result =3D utf16s_to_utf8s((wchar_t *)str_obj->buffer.pointer,
+> +=09=09=09=09=09 str_obj->buffer.length,
+> +=09=09=09=09=09 UTF16_LITTLE_ENDIAN, buf,
+> +=09=09=09=09=09 PAGE_SIZE - 1);
+> +=09=09kfree(str_obj);
+> +=09=09if (result > 0)
+> +=09=09=09return buf;
+> +=09=09/* if no result then free buf */
+> +=09=09kfree(buf);
+> +=09}
+> +
+> +=09kfree(str_buf.pointer);
+> +
+> +use_name:
+> +=09/* if _STR is missing then just use the device name */
+> +=09status =3D acpi_get_name(acpi_dev->handle, ACPI_SINGLE_NAME, &name_bu=
+f);
+> +=09if (ACPI_SUCCESS(status) && name_buf.length > 0)
+> +=09=09return name_buf.pointer;
+> +
+> +=09kfree(name_buf.pointer);
+> +
+> +=09return NULL;
+> +}
+> +
+> +static int galaxybook_acpi_method(struct samsung_galaxybook *galaxybook,=
+ acpi_string method,
+> +=09=09=09=09  struct sawb *buf, u32 len, const char *purpose_str,
+> +=09=09=09=09  struct sawb *ret)
+> +{
+> +=09union acpi_object in_obj, *out_obj;
+> +=09struct acpi_object_list input;
+> +=09struct acpi_buffer output =3D {ACPI_ALLOCATE_BUFFER, NULL};
+> +=09acpi_status status;
+> +
+> +=09in_obj.type =3D ACPI_TYPE_BUFFER;
+> +=09in_obj.buffer.length =3D len;
+> +=09in_obj.buffer.pointer =3D (u8 *)buf;
+> +
+> +=09input.count =3D 1;
+> +=09input.pointer =3D &in_obj;
+> +
+> +=09print_acpi_object_buffer_debug(purpose_str, in_obj.buffer.pointer, in=
+_obj.buffer.length);
+> +
+> +=09status =3D acpi_evaluate_object(galaxybook->acpi->handle, method, &in=
+put, &output);
+> +
+> +=09if (ACPI_FAILURE(status)) {
+> +=09=09pr_err("failed %s with ACPI method %s; got %s\n", purpose_str, met=
+hod,
+> +=09=09       acpi_format_exception(status));
+
+Use dev_err()
+
+> +=09=09return status;
+> +=09}
+> +
+> +=09out_obj =3D output.pointer;
+> +
+> +=09if (out_obj->type !=3D ACPI_TYPE_BUFFER) {
+> +=09=09pr_err("failed %s with ACPI method %s; response was not a buffer\n=
+",
+> +=09=09=09purpose_str, method);
+> +=09=09status =3D -EIO;
+> +=09=09goto out_free;
+> +=09}
+> +
+> +=09print_acpi_object_buffer_debug("response was: ", out_obj->buffer.poin=
+ter,
+> +=09=09=09=09       out_obj->buffer.length);
+> +
+> +=09if (out_obj->buffer.length !=3D len) {
+> +=09=09pr_err("failed %s with ACPI method %s; response length mismatch\n"=
+,
+> +=09=09       purpose_str, method);
+> +=09=09status =3D -EIO;
+> +=09=09goto out_free;
+> +=09}
+> +=09if (out_obj->buffer.length < SAWB_GUNM_POS + 1) {
+> +=09=09pr_err("failed %s with ACPI method %s; response from device was to=
+o short\n",
+> +=09=09       purpose_str, method);
+> +=09=09status =3D -EIO;
+> +=09=09goto out_free;
+> +=09}
+> +=09if (out_obj->buffer.pointer[SAWB_RFLG_POS] !=3D RFLG_SUCCESS) {
+> +=09=09pr_err("failed %s with ACPI method %s; "
+> +=09=09       "device did not respond with success code 0x%x\n",
+> +=09=09       purpose_str, method, RFLG_SUCCESS);
+> +=09=09status =3D -EIO;
+> +=09=09goto out_free;
+> +=09}
+> +=09if (out_obj->buffer.pointer[SAWB_GUNM_POS] =3D=3D GUNM_FAIL) {
+> +=09=09pr_err("failed %s with ACPI method %s; device responded with failu=
+re code 0x%x\n",
+> +=09=09       purpose_str, method, GUNM_FAIL);
+> +=09=09status =3D -EIO;
+> +=09=09goto out_free;
+> +=09}
+> +
+> +=09memcpy(ret, out_obj->buffer.pointer, len);
+
+In kernel, ret is typically int so I suggest you pick some other name for=
+=20
+the variable (Yes, I went back to find out what the type is in this case).
+
+> +
+> +out_free:
+> +=09kfree(output.pointer);
+> +=09return status;
+> +}
+> +
+> +static int galaxybook_enable_acpi_feature(struct samsung_galaxybook *gal=
+axybook, const u16 sasb)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D sasb;
+> +=09buf.gunm =3D GUNM_FEATURE_ENABLE;
+> +=09buf.guds[0] =3D GUDS_FEATURE_ENABLE;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "enabling ACPI feature", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09if (buf.gunm !=3D GUNM_FEATURE_ENABLE_SUCCESS && buf.guds[0] !=3D GUD=
+S_FEATURE_ENABLE_SUCCESS)
+> +=09=09return -ENODEV;
+> +
+> +=09return 0;
+> +}
+> +
+> +/*
+> + * Keyboard Backlight
+> + */
+> +
+> +static int kbd_backlight_acpi_set(struct samsung_galaxybook *galaxybook,
+> +=09=09=09=09  const enum led_brightness brightness)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_KBD_BACKLIGHT;
+> +=09buf.gunm =3D GUNM_SET;
+> +
+> +=09buf.guds[0] =3D brightness;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "setting kbd_backlight brightness", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09galaxybook->kbd_backlight.brightness =3D brightness;
+> +
+> +=09pr_debug_prefixed("set kbd_backlight brightness to %d\n", brightness)=
+;
+
+Use dev_dbg() directly.
+
+> +
+> +=09return 0;
+> +}
+> +
+> +static int kbd_backlight_acpi_get(struct samsung_galaxybook *galaxybook,
+> +=09=09=09=09  enum led_brightness *brightness)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_KBD_BACKLIGHT;
+> +=09buf.gunm =3D GUNM_GET;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "getting kbd_backlight brightness", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09*brightness =3D buf.gunm;
+> +=09galaxybook->kbd_backlight.brightness =3D buf.gunm;
+> +
+> +=09pr_debug_prefixed("current kbd_backlight brightness is %d\n", buf.gun=
+m);
+> +
+> +=09return 0;
+> +}
+> +
+> +static int kbd_backlight_store(struct led_classdev *led,
+> +=09=09=09       const enum led_brightness brightness)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D
+> +=09=09container_of(led, struct samsung_galaxybook, kbd_backlight);
+> +=09int err;
+> +
+> +=09err =3D kbd_backlight_acpi_set(galaxybook, brightness);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return 0;
+> +}
+> +
+> +static enum led_brightness kbd_backlight_show(struct led_classdev *led)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D
+> +=09=09container_of(led, struct samsung_galaxybook, kbd_backlight);
+> +=09enum led_brightness brightness;
+> +=09int err;
+> +
+> +=09err =3D kbd_backlight_acpi_get(galaxybook, &brightness);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return brightness;
+> +}
+> +
+> +static int galaxybook_kbd_backlight_init(struct samsung_galaxybook *gala=
+xybook)
+> +{
+> +=09enum led_brightness brightness;
+> +=09struct led_init_data init_data =3D {};
+> +=09int err;
+> +
+> +=09err =3D galaxybook_enable_acpi_feature(galaxybook, SASB_KBD_BACKLIGHT=
+);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09/* verify we can read the value, otherwise init should stop and fail =
 */
-> +#define QCOM_TEE_ARGS_MAX (QCOM_TEE_ARGS_PER_TYPE * (QCOM_TEE_ARG_TYPE_N=
-R - 1))
+> +=09err =3D kbd_backlight_acpi_get(galaxybook, &brightness);
+> +=09if (err)
+> +=09=09return err;
 > +
-> +struct qcom_tee_buffer {
-> +       union {
-> +               void *addr;
-> +               void __user *uaddr;
-> +       };
-> +       size_t size;
-> +};
+> +=09init_data.devicename =3D SAMSUNG_GALAXYBOOK_CLASS;
+> +=09init_data.default_label =3D ":kbd_backlight";
+> +=09init_data.devname_mandatory =3D true;
 > +
-> +/**
-> + * struct qcom_tee_arg - Argument for QTEE object invocation.
-> + * @type: type of argument as &enum qcom_tee_arg_type.
-> + * @flags: extra flags.
-> + * @b: address and size if type of argument is buffer.
-> + * @o: object instance if type of argument is object.
-> + *
-> + * &qcom_tee_arg.flags only accept %QCOM_TEE_ARG_FLAGS_UADDR for now whi=
-ch states
-> + * that &qcom_tee_arg.b contains userspace address in uaddr.
-> + */
-> +struct qcom_tee_arg {
-> +       enum qcom_tee_arg_type type;
-> +/* 'b.uaddr' holds a __user address. */
-> +#define QCOM_TEE_ARG_FLAGS_UADDR 1
-> +       unsigned int flags;
-> +       union {
-> +               struct qcom_tee_buffer b;
-> +               struct qcom_tee_object *o;
-> +       };
-> +};
+> +=09galaxybook->kbd_backlight =3D (struct led_classdev){
+> +=09=09.brightness_get =3D kbd_backlight_show,
+> +=09=09.brightness_set_blocking =3D kbd_backlight_store,
+> +=09=09.flags =3D LED_BRIGHT_HW_CHANGED,
+> +=09=09.max_brightness =3D KBD_BACKLIGHT_MAX_BRIGHTNESS,
+> +=09};
 > +
-> +static inline int qcom_tee_args_len(struct qcom_tee_arg *args)
-> +{
-> +       int i =3D 0;
+> +=09pr_info("registering LED class using default name of %s:%s\n",
+> +=09=09init_data.devicename, init_data.default_label);
 > +
-> +       while (args[i].type !=3D QCOM_TEE_ARG_TYPE_INV)
-> +               i++;
-> +       return i;
+> +=09return led_classdev_register_ext(&galaxybook->platform->dev, &galaxyb=
+ook->kbd_backlight,
+> +=09=09=09=09=09 &init_data);
 > +}
 > +
-> +#define QCOM_TEE_OIC_FLAG_BUSY         BIT(1)  /* Context is busy (callb=
-ack is in progress). */
-> +#define QCOM_TEE_OIC_FLAG_NOTIFY       BIT(2)  /* Context needs to notif=
-y the current object. */
-> +#define QCOM_TEE_OIC_FLAG_SHARED       BIT(3)  /* Context has shared sta=
-te with QTEE. */
-> +
-> +struct qcom_tee_object_invoke_ctx {
-> +       unsigned long flags;
-> +       int errno;
-> +
-> +       /* Current object invoked in this callback context. */
-> +       struct qcom_tee_object *object;
-> +
-> +       /* Arguments passed to dispatch callback (+1 for ending QCOM_TEE_=
-ARG_TYPE_INV). */
-> +       struct qcom_tee_arg u[QCOM_TEE_ARGS_MAX + 1];
-> +
-> +       /* Inbound and Outbound buffers shared with QTEE. */
-> +       struct qcom_tee_buffer in_msg;          /* Inbound Buffer.  */
-> +       phys_addr_t in_msg_paddr;               /* Physical address of in=
-bound buffer. */
-> +       struct qcom_tee_buffer out_msg;         /* Outbound Buffer. */
-> +       phys_addr_t out_msg_paddr;              /* Physical address of ou=
-tbound buffer. */
-> +
-> +       /* Extra data attached to this context. */
-> +       void *data;
-> +};
-> +
-> +/**
-> + * qcom_tee_object_do_invoke() - Submit an invocation for an object.
-> + * @oic: context to use for current invocation.
-> + * @object: object being invoked.
-> + * @op: requested operation on object.
-> + * @u: array of argument for the current invocation.
-> + * @result: result returned from QTEE.
-> + *
-> + * The caller is responsible to keep track of the refcount for each obje=
-ct,
-> + * including @object. On return, the caller loses the ownership of all i=
-nput object of
-> + * type %QCOM_TEE_OBJECT_TYPE_CB_OBJECT.
-> + *
-> + * @object can be of %QCOM_TEE_OBJECT_TYPE_ROOT or %QCOM_TEE_OBJECT_TYPE=
-_TEE types.
-> + *
-> + * Return: On success return 0. On error returns -EINVAL and -ENOSPC if =
-unable to initiate
-> + * the invocation, -EAGAIN if invocation failed and user may retry the i=
-nvocation.
-> + * Otherwise, -ENODEV on fatal failure.
-> + */
-> +int qcom_tee_object_do_invoke(struct qcom_tee_object_invoke_ctx *oic,
-> +                             struct qcom_tee_object *object, u32 op, str=
-uct qcom_tee_arg *u,
-> +                             int *result);
-> +
-> +/**
-> + * struct qcom_tee_object_operations - Callback object operations.
-> + * @release: release object if QTEE is not using it.
-> + * @dispatch: dispatch the operation requested by QTEE.
-> + * @notify: report status of any pending response submitted by @dispatch=
-.
-> + *
-> + * Transport may fail (e.g. object table is full) even after @dispatch s=
-uccessfully submitted
-> + * the response. @notify is called to do the necessary cleanup.
-> + */
-> +struct qcom_tee_object_operations {
-> +       void (*release)(struct qcom_tee_object *object);
-> +       int  (*dispatch)(struct qcom_tee_object_invoke_ctx *oic,
-> +                        struct qcom_tee_object *object, u32 op, struct q=
-com_tee_arg *args);
-> +       void (*notify)(struct qcom_tee_object_invoke_ctx *oic,
-> +                      struct qcom_tee_object *object, int err);
-> +};
-> +
-> +/**
-> + * struct qcom_tee_object - QTEE or REE object.
-> + * @name: object name.
-> + * @refcount: reference counter.
-> + * @object_type: object type as &enum qcom_tee_object_type.
-> + * @info: extra information for object.
-> + * @owner: owning module/driver.
-> + * @ops: callback operations for object of type %QCOM_TEE_OBJECT_TYPE_CB=
-_OBJECT.
-> + * @work: work for async operation on object.
-> + *
-> + * @work is currently only used for release object of %QCOM_TEE_OBJECT_T=
-YPE_TEE type.
-> + */
-> +struct qcom_tee_object {
-> +       const char *name;
-> +       struct kref refcount;
-> +
-> +       enum qcom_tee_object_type object_type;
-> +       union object_info {
-> +               /* QTEE object id if object_type is %QCOM_TEE_OBJECT_TYPE=
-_TEE. */
-> +               unsigned long qtee_id;
-> +       } info;
-> +
-> +       struct module *owner;
-> +       struct qcom_tee_object_operations *ops;
-> +       struct work_struct work;
-> +};
-> +
-> +/* Static instances of qcom_tee_object objects. */
-> +#define NULL_QCOM_TEE_OBJECT ((struct qcom_tee_object *)(0))
-> +extern struct qcom_tee_object qcom_tee_object_root;
-> +#define ROOT_QCOM_TEE_OBJECT (&qcom_tee_object_root)
-> +
-> +static inline enum qcom_tee_object_type typeof_qcom_tee_object(struct qc=
-om_tee_object *object)
+> +static void galaxybook_kbd_backlight_exit(struct samsung_galaxybook *gal=
+axybook)
 > +{
-> +       if (object =3D=3D NULL_QCOM_TEE_OBJECT)
-> +               return QCOM_TEE_OBJECT_TYPE_NULL;
-> +       return object->object_type;
+> +=09led_classdev_unregister(&galaxybook->kbd_backlight);
 > +}
 > +
-> +static inline const char *qcom_tee_object_name(struct qcom_tee_object *o=
-bject)
-> +{
-> +       if (object =3D=3D NULL_QCOM_TEE_OBJECT)
-> +               return "null";
+> +/*
+> + * Platform device attributes (configuration properties which can be con=
+trolled via userspace)
+> + */
 > +
-> +       if (!object->name)
-> +               return "no-name";
-> +       return object->name;
+> +/* Start on lid open (device should power on when lid is opened) */
+> +
+> +static int start_on_lid_open_acpi_set(struct samsung_galaxybook *galaxyb=
+ook, const bool value)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_POWER_MANAGEMENT;
+> +=09buf.gunm =3D GUNM_POWER_MANAGEMENT;
+> +=09buf.guds[0] =3D GUDS_START_ON_LID_OPEN;
+> +=09buf.guds[1] =3D GUDS_START_ON_LID_OPEN_SET;
+> +=09buf.guds[2] =3D value;
+
+This relies on bool -> u8 implicit conversion. While it probably works as=
+=20
+is, I'd prefer to make the conversion explicit with e.g. ?: operator (and=
+=20
+let the compiler optimize it if it wants to).
+
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "setting start_on_lid_open", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09pr_debug_prefixed("turned start_on_lid_open %s\n", value ? "on (1)" :=
+ "off (0)");
+
+Use a helper from linux/string_choices.h.
+
+I'd change it to:
+=09dev_dbg(..., "start_on_lid_open %s\n", str_enabled_disabled(value));
+
+> +
+> +=09return 0;
 > +}
 > +
-> +/**
-> + * __qcom_tee_object_user_init() - Initialize an object for user.
-> + * @object: object to initialize.
-> + * @object_type: type of object as &enum qcom_tee_object_type.
-> + * @ops: instance of callbacks.
-> + * @owner: owning module/driver.
-> + * @fmt: name assigned to the object.
-> + *
-> + * Return: On success return 0 or <0 on failure.
+> +static int start_on_lid_open_acpi_get(struct samsung_galaxybook *galaxyb=
+ook, bool *value)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_POWER_MANAGEMENT;
+> +=09buf.gunm =3D GUNM_POWER_MANAGEMENT;
+> +=09buf.guds[0] =3D GUDS_START_ON_LID_OPEN;
+> +=09buf.guds[1] =3D GUDS_START_ON_LID_OPEN_GET;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "getting start_on_lid_open", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09*value =3D buf.guds[1];
+> +
+> +=09pr_debug_prefixed("start_on_lid_open is currently %s\n",
+> +=09=09=09  (buf.guds[1] ? "on (1)" : "off (0)"));
+
+I suspect a debug print like this is not going to be very useful. You get=
+=20
+the result right out of the sysfs anyway so why bother printing at all and
+it's anyway not the raw value but synthetized on/off string.
+
+> +
+> +=09return 0;
+> +}
+> +
+> +static ssize_t start_on_lid_open_store(struct device *dev, struct device=
+_attribute *attr,
+> +=09=09=09=09       const char *buffer, size_t count)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D dev_get_drvdata(dev);
+> +=09bool value;
+> +=09int err;
+> +
+> +=09if (!count || kstrtobool(buffer, &value))
+> +=09=09return -EINVAL;
+> +
+> +=09err =3D start_on_lid_open_acpi_set(galaxybook, value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return count;
+> +}
+> +
+> +static ssize_t start_on_lid_open_show(struct device *dev, struct device_=
+attribute *attr,
+> +=09=09=09=09      char *buffer)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D dev_get_drvdata(dev);
+> +=09bool value;
+> +=09int err;
+> +
+> +=09err =3D start_on_lid_open_acpi_get(galaxybook, &value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return sysfs_emit(buffer, "%u\n", value);
+> +}
+> +
+> +static DEVICE_ATTR_RW(start_on_lid_open);
+> +
+> +/* USB Charge (USB ports can charge other devices even when device is po=
+wered off) */
+> +
+> +static int usb_charge_acpi_set(struct samsung_galaxybook *galaxybook, co=
+nst bool value)
+
+Don't leave empty line in between.
+
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_USB_CHARGE_SET;
+> +=09buf.gunm =3D value ? GUNM_USB_CHARGE_ON : GUNM_USB_CHARGE_OFF;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "setting usb_charge", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09pr_debug_prefixed("turned usb_charge %s\n", value ? "on (1)" : "off (=
+0)");
+> +
+> +=09return 0;
+> +}
+> +
+> +static int usb_charge_acpi_get(struct samsung_galaxybook *galaxybook, bo=
+ol *value)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_USB_CHARGE_GET;
+> +=09buf.gunm =3D GUNM_USB_CHARGE_GET;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "getting usb_charge", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09*value =3D buf.gunm;
+> +
+> +=09pr_debug_prefixed("usb_charge is currently %s\n", (buf.gunm ? "on (1)=
+" : "off (0)"));
+> +
+> +=09return 0;
+> +}
+> +
+> +static ssize_t usb_charge_store(struct device *dev, struct device_attrib=
+ute *attr,
+> +=09=09=09=09const char *buffer, size_t count)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D dev_get_drvdata(dev);
+> +=09bool value;
+> +=09int err;
+> +
+> +=09if (!count || kstrtobool(buffer, &value))
+> +=09=09return -EINVAL;
+> +
+> +=09err =3D usb_charge_acpi_set(galaxybook, value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return count;
+> +}
+> +
+> +static ssize_t usb_charge_show(struct device *dev, struct device_attribu=
+te *attr, char *buffer)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D dev_get_drvdata(dev);
+> +=09bool value;
+> +=09int err;
+> +
+> +=09err =3D usb_charge_acpi_get(galaxybook, &value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return sysfs_emit(buffer, "%u\n", value);
+> +}
+> +
+> +static DEVICE_ATTR_RW(usb_charge);
+> +
+> +/* Allow recording (allows or blocks access to camera and microphone) */
+> +
+> +static int allow_recording_acpi_set(struct samsung_galaxybook *galaxyboo=
+k, const bool value)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_ALLOW_RECORDING;
+> +=09buf.gunm =3D GUNM_SET;
+> +=09buf.guds[0] =3D value;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "setting allow_recording", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09pr_debug_prefixed("turned allow_recording %s\n", value ? "on (1)" : "=
+off (0)");
+> +
+> +=09return 0;
+> +}
+> +
+> +static int allow_recording_acpi_get(struct samsung_galaxybook *galaxyboo=
+k, bool *value)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_ALLOW_RECORDING;
+> +=09buf.gunm =3D GUNM_GET;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "getting allow_recording", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09*value =3D buf.gunm;
+> +
+> +=09pr_debug_prefixed("allow_recording is currently %s\n", (buf.gunm ? "o=
+n (1)" : "off (0)"));
+
+For some reason parenthesis are used in this while the others have been=20
+w/o them (but use string_choices.h helpers anyway so that probably makes=20
+the comment moot).
+
+> +
+> +=09return 0;
+> +}
+> +
+> +static ssize_t allow_recording_store(struct device *dev, struct device_a=
+ttribute *attr,
+> +=09=09=09=09     const char *buffer, size_t count)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D dev_get_drvdata(dev);
+> +=09bool value;
+> +=09int err;
+> +
+> +=09if (!count || kstrtobool(buffer, &value))
+> +=09=09return -EINVAL;
+> +
+> +=09err =3D allow_recording_acpi_set(galaxybook, value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return count;
+> +}
+> +
+> +static ssize_t allow_recording_show(struct device *dev, struct device_at=
+tribute *attr, char *buffer)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D dev_get_drvdata(dev);
+> +=09bool value;
+> +=09int err;
+> +
+> +=09err =3D allow_recording_acpi_get(galaxybook, &value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return sysfs_emit(buffer, "%u\n", value);
+> +}
+> +
+> +static DEVICE_ATTR_RW(allow_recording);
+> +
+> +/*
+> + * Battery Extension (adds charge_control_end_threshold to the battery d=
+evice)
 > + */
-> +int __qcom_tee_object_user_init(struct qcom_tee_object *object, enum qco=
-m_tee_object_type ot,
-> +                               struct qcom_tee_object_operations *ops, s=
-truct module *owner,
-> +                               const char *fmt, ...);
-> +#define qcom_tee_object_user_init(obj, ot, ops, fmt, ...) \
-> +       __qcom_tee_object_user_init((obj), (ot), (ops), THIS_MODULE, (fmt=
-), __VA_ARGS__)
 > +
-> +/* Object release is RCU protected. */
-> +int qcom_tee_object_get(struct qcom_tee_object *object);
-> +void qcom_tee_object_put(struct qcom_tee_object *object);
+> +static int charge_control_end_threshold_acpi_set(struct samsung_galaxybo=
+ok *galaxybook,
+> +=09=09=09=09=09=09 const u8 value)
+
+While certainly not forbidden, using const on plain integer types is not=20
+extremely useful. In fact, if it wouldn't be const, you could do the 100=20
+-> 0 mapping for it separately and not do it twice below.
+
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
 > +
-> +#define qcom_tee_arg_for_each(i, args) \
-> +       for (i =3D 0; args[i].type !=3D QCOM_TEE_ARG_TYPE_INV; i++)
+> +=09if (value > 100)
+> +=09=09return -EINVAL;
 > +
-> +/* Next argument of type @type after index @i. */
-> +int qcom_tee_next_arg_type(struct qcom_tee_arg *u, int i, enum qcom_tee_=
-arg_type type);
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_POWER_MANAGEMENT;
+> +=09buf.gunm =3D GUNM_POWER_MANAGEMENT;
+> +=09buf.guds[0] =3D GUDS_BATTERY_CHARGE_CONTROL;
+> +=09buf.guds[1] =3D GUDS_BATTERY_CHARGE_CONTROL_SET;
 > +
-> +/* Iterate over argument of given type. */
-> +#define qcom_tee_arg_for_each_type(i, args, at)                        \
-> +       for (i =3D 0, i =3D qcom_tee_next_arg_type(args, i, at);    \
-> +               args[i].type !=3D QCOM_TEE_ARG_TYPE_INV;          \
-> +               i++, i =3D qcom_tee_next_arg_type(args, i, at))
+> +=09buf.guds[2] =3D (value =3D=3D 100 ? 0 : value); /* if setting to 100,=
+ should be set to 0 (off) */
+
+Put comment on line before it so it's easier to read.
+
+"off" -> "no threshold" ?
+
 > +
-> +#define qcom_tee_arg_for_each_input_buffer(i, args)  \
-> +       qcom_tee_arg_for_each_type(i, args, QCOM_TEE_ARG_TYPE_IB)
-> +#define qcom_tee_arg_for_each_output_buffer(i, args) \
-> +       qcom_tee_arg_for_each_type(i, args, QCOM_TEE_ARG_TYPE_OB)
-> +#define qcom_tee_arg_for_each_input_object(i, args)  \
-> +       qcom_tee_arg_for_each_type(i, args, QCOM_TEE_ARG_TYPE_IO)
-> +#define qcom_tee_arg_for_each_output_object(i, args) \
-> +       qcom_tee_arg_for_each_type(i, args, QCOM_TEE_ARG_TYPE_OO)
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "setting battery charge_control_end_threshold", &buf);
+> +=09if (err)
+> +=09=09return err;
 > +
-> +#endif /* __QCOM_TEE_H */
->
-> --
-> 2.34.1
->
+> +=09pr_debug_prefixed("set battery charge_control_end_threshold to %d\n",
+> +=09=09=09  (value =3D=3D 100 ? 0 : value));
+
+Do you want to differentiate 0 from 0? Should this function actually=20
+return -EINVAL if somebody attempts to set 0 threshold?
+
+> +=09return 0;
+> +}
+> +
+> +static int charge_control_end_threshold_acpi_get(struct samsung_galaxybo=
+ok *galaxybook, u8 *value)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_POWER_MANAGEMENT;
+> +=09buf.gunm =3D GUNM_POWER_MANAGEMENT;
+> +=09buf.guds[0] =3D GUDS_BATTERY_CHARGE_CONTROL;
+> +=09buf.guds[1] =3D GUDS_BATTERY_CHARGE_CONTROL_GET;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf=
+, SAWB_LEN_SETTINGS,
+> +=09=09=09=09     "getting battery charge_control_end_threshold", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09*value =3D buf.guds[1];
+> +
+> +=09pr_debug_prefixed("battery charge control is currently %s; "
+> +=09=09=09  "battery charge_control_end_threshold is %d\n",
+> +=09=09=09  (buf.guds[1] > 0 ? "on" : "off"), buf.guds[1]);
+> +
+> +=09return 0;
+> +}
+> +
+> +static ssize_t charge_control_end_threshold_store(struct device *dev, st=
+ruct device_attribute *attr,
+> +=09=09=09=09=09=09  const char *buffer, size_t count)
+> +{
+> +=09u8 value;
+> +=09int err;
+> +
+> +=09if (!count || kstrtou8(buffer, 0, &value))
+> +=09=09return -EINVAL;
+> +
+> +=09err =3D charge_control_end_threshold_acpi_set(galaxybook_ptr, value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return count;
+> +}
+> +
+> +static ssize_t charge_control_end_threshold_show(struct device *dev, str=
+uct device_attribute *attr,
+> +=09=09=09=09=09=09 char *buffer)
+> +{
+> +=09u8 value;
+> +=09int err;
+> +
+> +=09err =3D charge_control_end_threshold_acpi_get(galaxybook_ptr, &value)=
+;
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return sysfs_emit(buffer, "%d\n", value);
+> +}
+> +
+> +static DEVICE_ATTR_RW(charge_control_end_threshold);
+> +
+> +static int galaxybook_battery_add(struct power_supply *battery, struct a=
+cpi_battery_hook *hook)
+> +{
+> +=09if (device_create_file(&battery->dev, &dev_attr_charge_control_end_th=
+reshold))
+> +=09=09return -ENODEV;
+> +=09return 0;
+> +}
+> +
+> +static int galaxybook_battery_remove(struct power_supply *battery, struc=
+t acpi_battery_hook *hook)
+> +{
+> +=09device_remove_file(&battery->dev, &dev_attr_charge_control_end_thresh=
+old);
+> +=09return 0;
+> +}
+> +
+> +static struct acpi_battery_hook galaxybook_battery_hook =3D {
+> +=09.add_battery =3D galaxybook_battery_add,
+> +=09.remove_battery =3D galaxybook_battery_remove,
+> +=09.name =3D "Samsung Galaxy Book Battery Extension",
+> +};
+> +
+> +static int galaxybook_battery_threshold_init(struct samsung_galaxybook *=
+galaxybook)
+> +{
+> +=09u8 value;
+> +=09int err;
+> +
+> +=09err =3D charge_control_end_threshold_acpi_get(galaxybook, &value);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09battery_hook_register(&galaxybook_battery_hook);
+> +=09return 0;
+> +}
+> +
+> +static void galaxybook_battery_threshold_exit(struct samsung_galaxybook =
+*galaxybook)
+> +{
+> +=09battery_hook_unregister(&galaxybook_battery_hook);
+> +}
+> +
+> +/*
+> + * Fan speed
+> + */
+> +
+> +static int fan_speed_get_fst(struct galaxybook_fan *fan, unsigned int *s=
+peed)
+> +{
+> +=09struct acpi_buffer response =3D { ACPI_ALLOCATE_BUFFER, NULL };
+> +=09union acpi_object *response_obj =3D NULL;
+> +=09acpi_status status;
+> +=09int ret =3D 0;
+> +
+> +=09status =3D acpi_evaluate_object(fan->fan.handle, "_FST", NULL, &respo=
+nse);
+> +=09if (ACPI_FAILURE(status)) {
+> +=09=09pr_err("Get fan state failed\n");
+> +=09=09return -ENODEV;
+> +=09}
+> +
+> +=09response_obj =3D response.pointer;
+> +=09if (!response_obj || response_obj->type !=3D ACPI_TYPE_PACKAGE ||
+> +=09    response_obj->package.count !=3D 3 ||
+> +=09    response_obj->package.elements[2].type !=3D ACPI_TYPE_INTEGER) {
+> +=09=09pr_err("Invalid _FST data\n");
+> +=09=09ret =3D -EINVAL;
+> +=09=09goto out_free;
+> +=09}
+> +
+> +=09*speed =3D response_obj->package.elements[2].integer.value;
+> +
+> +=09pr_debug_prefixed("fan device %s (%s) reporting fan speed of %d\n",
+> +=09=09=09  dev_name(&fan->fan.dev), fan->description, *speed);
+> +
+> +out_free:
+> +=09ACPI_FREE(response.pointer);
+> +=09return ret;
+
+You're mixing err and ret within a file as the error/return code variable.=
+=20
+It would be nice to be consistent within a file.
+
+> +}
+> +
+> +static int fan_speed_get_fans(struct galaxybook_fan *fan, unsigned int *=
+speed)
+> +{
+> +=09struct acpi_buffer response =3D { ACPI_ALLOCATE_BUFFER, NULL };
+> +=09union acpi_object *response_obj =3D NULL;
+> +=09acpi_status status;
+> +=09int ret =3D 0;
+> +=09int speed_level =3D -1;
+> +
+> +=09status =3D acpi_evaluate_object(NULL, ACPI_FAN_SPEED_VALUE, NULL, &re=
+sponse);
+> +=09if (ACPI_FAILURE(status)) {
+> +=09=09pr_err("Get fan state failed\n");
+> +=09=09return -ENODEV;
+> +=09}
+> +
+> +=09response_obj =3D response.pointer;
+> +=09if (!response_obj || response_obj->type !=3D ACPI_TYPE_INTEGER ||
+> +=09    response_obj->integer.value > INT_MAX ||
+
+I don't know what's the logic behind doing bound check here but not in the=
+=20
+previous function.
+
+> +=09    (int)response_obj->integer.value > fan->fan_speeds_count) {
+> +=09=09pr_err("invalid fan speed data\n");
+> +=09=09ret =3D -EINVAL;
+> +=09=09goto out_free;
+> +=09}
+> +
+> +=09speed_level =3D (int)response_obj->integer.value;
+> +=09*speed =3D fan->fan_speeds[speed_level];
+> +
+> +=09pr_debug_prefixed("fan device %s (%s) reporting fan speed of %d (leve=
+l %d)\n",
+> +=09=09=09  dev_name(&fan->fan.dev), fan->description, *speed, speed_leve=
+l);
+> +
+> +out_free:
+> +=09ACPI_FREE(response.pointer);
+> +=09return ret;
+> +}
+> +
+> +static int fan_speed_get(struct galaxybook_fan *fan, unsigned int *speed=
+)
+> +{
+> +=09if (!fan)
+> +=09=09return -ENODEV;
+> +=09if (fan->supports_fst)
+> +=09=09return fan_speed_get_fst(fan, speed);
+> +=09else
+> +=09=09return fan_speed_get_fans(fan, speed);
+> +}
+> +
+> +static ssize_t fan_speed_rpm_show(struct device *dev, struct device_attr=
+ibute *attr, char *buffer)
+> +{
+> +=09struct dev_ext_attribute *ea =3D container_of(attr, struct dev_ext_at=
+tribute, attr);
+> +=09struct galaxybook_fan *fan =3D ea->var;
+> +=09unsigned int speed;
+> +=09int ret =3D 0;
+
+Unnecessary init.
+
+> +
+> +=09if (!fan)
+> +=09=09return -ENODEV;
+> +
+> +=09ret =3D fan_speed_get(fan, &speed);
+> +=09if (ret)
+> +=09=09return ret;
+> +
+> +=09return sysfs_emit(buffer, "%u\n", speed);
+> +}
+> +
+> +static int __init fan_speed_list_init(acpi_handle handle, struct galaxyb=
+ook_fan *fan)
+> +{
+> +=09struct acpi_buffer response =3D { ACPI_ALLOCATE_BUFFER, NULL };
+> +=09union acpi_object *response_obj =3D NULL;
+> +=09acpi_status status;
+> +=09unsigned int speed;
+> +=09int i;
+> +
+> +=09status =3D acpi_evaluate_object(handle, ACPI_FAN_SPEED_LIST, NULL, &r=
+esponse);
+> +=09if (ACPI_FAILURE(status)) {
+> +=09=09pr_err("failed to read fan speed list\n");
+> +=09=09return -ENODEV;
+> +=09}
+> +
+> +=09response_obj =3D response.pointer;
+> +=09if (!response_obj || response_obj->type !=3D ACPI_TYPE_PACKAGE ||
+> +=09    response_obj->package.count =3D=3D 0) {
+> +=09=09pr_err("invalid fan speed list data\n");
+> +=09=09status =3D -EINVAL;
+> +=09=09goto out_free;
+> +=09}
+> +
+> +=09/*
+> +=09 * fan_speeds[] starts with a hard-coded 0 (fan is off), then has som=
+e "funny" logic:
+> +=09 *  - fetch the speed level values read in from FANT and add 0x0a to =
+each value
+> +=09 *  - _FST method in the DSDT seems to indicate that level 3 and 4 sh=
+ould have same value,
+> +=09 *    however real-life observation suggests that the speed actually =
+does change
+> +=09 *  - _FST says that level 5 should give the 4th value from FANT but =
+it seems significantly
+> +=09 *    louder -- we will just "guess" it is 1000 RPM faster than the h=
+ighest value from FANT?
+> +=09 */
+> +
+> +=09fan->fan_speeds =3D kzalloc(sizeof(unsigned int) * (response_obj->pac=
+kage.count + 2),
+
+kcalloc()
+
+> +=09=09=09=09  GFP_KERNEL);
+> +=09if (!fan->fan_speeds)
+> +=09=09return -ENOMEM;
+> +
+> +=09/* hard-coded "off" value (0) */
+> +=09fan->fan_speeds[0] =3D 0;
+
+Name with a define and drop the comment?
+
+> +=09fan->fan_speeds_count =3D 1;
+> +
+> +=09/* fetch and assign the next values from FANT response */
+> +=09i =3D 0;
+
+Does nothing.
+
+> +=09for (i =3D 1; i <=3D response_obj->package.count; i++) {
+> +=09=09if (response_obj->package.elements[i - 1].type !=3D ACPI_TYPE_INTE=
+GER) {
+> +=09=09=09pr_err("invalid fan speed list value at position %d; "
+> +=09=09=09       "expected type %d, got type %d\n",
+> +=09=09=09       i - 1, ACPI_TYPE_INTEGER,
+> +=09=09=09       response_obj->package.elements[i - 1].type);
+> +=09=09=09status =3D -EINVAL;
+> +=09=09=09goto err_fan_speeds_free;
+> +=09=09}
+> +=09=09fan->fan_speeds[i] =3D response_obj->package.elements[i - 1].integ=
+er.value + 0x0a;
+
+Add a local variable to avoid repeating response_obj->package.elements[i - =
+1] ?
+
+> +=09=09fan->fan_speeds_count++;
+> +=09}
+> +
+> +=09/* add the missing final level where we "guess" 1000 RPM faster than =
+highest from FANT */
+
+Fold comments at 80 chars.
+
+> +=09if (fan->fan_speeds_count > 1) {
+> +=09=09fan->fan_speeds[i] =3D fan->fan_speeds[i - 1] + 1000;
+> +=09=09fan->fan_speeds_count++;
+> +=09}
+> +
+> +=09/* test that it actually works to read the speed, otherwise the init =
+should fail */
+> +=09status =3D fan_speed_get_fans(fan, &speed);
+> +=09if (ACPI_FAILURE(status)) {
+> +=09=09pr_err("failed to read fan speed level from FANS\n");
+> +=09=09goto err_fan_speeds_free;
+> +=09}
+> +
+> +=09pr_info("initialized fan speed reporting for device %s (%s) with the =
+following levels:\n",
+> +=09=09dev_name(&fan->fan.dev), fan->description);
+> +=09for (i =3D 0; i < fan->fan_speeds_count; i++)
+> +=09=09pr_info("  %s (%s) fan speed level %d =3D %d\n",
+> +=09=09=09dev_name(&fan->fan.dev), fan->description, i, fan->fan_speeds[i=
+]);
+
+On successful probe, the driver should not print anything.
+
+> +
+> +out_free:
+> +=09ACPI_FREE(response.pointer);
+> +=09return status;
+> +
+> +err_fan_speeds_free:
+> +=09kfree(fan->fan_speeds);
+> +=09goto out_free;
+> +}
+> +
+> +static acpi_status galaxybook_add_fan(acpi_handle handle, u32 level, voi=
+d *context,
+> +=09=09=09=09      void **return_value)
+> +{
+> +=09struct acpi_device *adev =3D acpi_fetch_acpi_dev(handle);
+> +=09struct samsung_galaxybook *galaxybook =3D context;
+> +=09struct galaxybook_fan *fan;
+> +=09int speed =3D -1;
+> +
+> +=09pr_info("found fan device %s\n", dev_name(&adev->dev));
+> +
+> +=09/* if fan meets acpi4 fan device requirements, assume it is added alr=
+eady under ACPI */
+> +=09if (acpi_has_method(handle, "_FIF") &&
+> +=09    acpi_has_method(handle, "_FPS") &&
+> +=09    acpi_has_method(handle, "_FSL") &&
+> +=09    acpi_has_method(handle, "_FST")) {
+> +=09=09pr_info("fan device %s should already be available as an ACPI fan;=
+ skipping\n",
+> +=09=09=09dev_name(&adev->dev));
+> +=09=09return 0;
+> +=09}
+> +
+> +=09if (galaxybook->fans_count >=3D MAX_FAN_COUNT) {
+> +=09=09pr_err("maximum number of %d fans has already been reached\n", MAX=
+_FAN_COUNT);
+> +=09=09return 0;
+> +=09}
+> +
+> +=09fan =3D &galaxybook->fans[galaxybook->fans_count];
+> +=09fan->fan =3D *adev;
+> +=09fan->description =3D get_acpi_device_description(&fan->fan);
+> +
+> +=09/* try to get speed from _FST */
+> +=09if (ACPI_FAILURE(fan_speed_get_fst(fan, &speed))) {
+> +=09=09pr_debug_prefixed("_FST is present but failed on fan device %s (%s=
+); "
+> +=09=09=09=09  "will attempt to add fan speed support using FANT and FANS=
+\n",
+> +=09=09=09=09  dev_name(&fan->fan.dev), fan->description);
+> +=09=09fan->supports_fst =3D false;
+> +=09}
+> +=09/* if speed was 0 and FANT and FANS exist, they should be used anyway=
+ due to bugs in ACPI */
+> +=09else if (speed <=3D 0 &&
+> +=09=09 acpi_has_method(handle, ACPI_FAN_SPEED_LIST) &&
+> +=09=09 acpi_has_method(NULL, ACPI_FAN_SPEED_VALUE)) {
+> +=09=09pr_debug_prefixed("_FST is present on fan device %s (%s) but retur=
+ned value of 0; "
+> +=09=09=09=09  "will attempt to add fan speed support using FANT and FANS=
+\n",
+> +=09=09=09=09  dev_name(&fan->fan.dev), fan->description);
+> +=09=09fan->supports_fst =3D false;
+> +=09} else {
+> +=09=09fan->supports_fst =3D true;
+> +=09}
+> +
+> +=09if (!fan->supports_fst) {
+> +=09=09/* since FANS is a field on the EC, it does not make sense to use =
+more than once */
+> +=09=09for (int i =3D 0; i < galaxybook->fans_count; i++) {
+> +=09=09=09if (!galaxybook->fans[i].supports_fst) {
+> +=09=09=09=09pr_err("more than one fan using FANS is not supported\n");
+> +=09=09=09=09return 0;
+> +=09=09=09}
+> +=09=09}
+> +=09=09if (ACPI_FAILURE(fan_speed_list_init(handle, fan))) {
+> +=09=09=09pr_err("unable to initialize fan speeds for fan device %s (%s)\=
+n",
+> +=09=09=09       dev_name(&fan->fan.dev), fan->description);
+> +=09=09=09return 0;
+> +=09=09}
+> +=09} else {
+> +=09=09pr_info("initialized fan speed reporting for device %s (%s) using =
+method _FST\n",
+> +=09=09=09dev_name(&fan->fan.dev), fan->description);
+> +=09}
+> +
+> +=09/* set up RO dev_ext_attribute */
+> +=09fan->fan_speed_rpm_ext_attr.attr.attr.name =3D "fan_speed_rpm";
+> +=09fan->fan_speed_rpm_ext_attr.attr.attr.mode =3D 0444;
+> +=09fan->fan_speed_rpm_ext_attr.attr.show =3D fan_speed_rpm_show;
+> +=09/* extended attribute var points to this galaxybook_fan so it can use=
+d in the show method */
+> +=09fan->fan_speed_rpm_ext_attr.var =3D fan;
+> +
+> +=09if (sysfs_create_file(&adev->dev.kobj, &fan->fan_speed_rpm_ext_attr.a=
+ttr.attr))
+> +=09=09pr_err("unable to create fan_speed_rpm attribute for fan device %s=
+ (%s)\n",
+> +=09=09       dev_name(&fan->fan.dev), fan->description);
+
+You can use is_visible function to decide which sysfs files are shown so=20
+you don't need to do the manual sysfs handling like this per fan.
+
+But why you need this whole dev_ext_attribute thing in the first place?
+
+> +=09galaxybook->fans_count++;
+> +
+> +=09return 0;
+> +}
+> +
+> +static int __init galaxybook_fan_speed_init(struct samsung_galaxybook *g=
+alaxybook)
+> +{
+> +=09acpi_status status;
+> +
+> +=09/* get and set up all fans matching ACPI_FAN_DEVICE_ID */
+> +=09status =3D acpi_get_devices(ACPI_FAN_DEVICE_ID, galaxybook_add_fan, g=
+alaxybook, NULL);
+> +
+> +=09if (galaxybook->fans_count =3D=3D 0)
+> +=09=09return -ENODEV;
+> +
+> +=09return status;
+> +}
+> +
+> +static void galaxybook_fan_speed_exit(struct samsung_galaxybook *galaxyb=
+ook)
+> +{
+> +=09for (int i =3D 0; i < galaxybook->fans_count; i++)
+> +=09=09sysfs_remove_file(&galaxybook->fans[i].fan.dev.kobj,
+> +=09=09=09=09  &galaxybook->fans[i].fan_speed_rpm_ext_attr.attr.attr);
+> +}
+> +
+> +/*
+> + * Hwmon device
+> + */
+> +
+> +#if IS_ENABLED(CONFIG_HWMON)
+> +static umode_t galaxybook_hwmon_is_visible(const void *drvdata, enum hwm=
+on_sensor_types type,
+> +=09=09=09=09=09   u32 attr, int channel)
+> +{
+> +=09switch (type) {
+> +=09case hwmon_fan:
+> +=09=09if (channel < galaxybook_ptr->fans_count &&
+> +=09=09    (attr =3D=3D hwmon_fan_input || attr =3D=3D hwmon_fan_label))
+> +=09=09=09return 0444;
+> +=09=09return 0;
+> +=09default:
+> +=09=09return 0;
+> +=09}
+> +}
+> +
+> +static int galaxybook_hwmon_read(struct device *dev, enum hwmon_sensor_t=
+ypes type,
+> +=09=09=09=09 u32 attr, int channel, long *val)
+> +{
+> +=09unsigned int speed;
+> +
+> +=09switch (type) {
+> +=09case hwmon_fan:
+> +=09=09if (channel < galaxybook_ptr->fans_count && attr =3D=3D hwmon_fan_=
+input) {
+> +=09=09=09if (fan_speed_get(&galaxybook_ptr->fans[channel], &speed))
+> +=09=09=09=09return -EIO;
+> +=09=09=09*val =3D speed;
+> +=09=09=09return 0;
+> +=09=09}
+> +=09=09return -EOPNOTSUPP;
+> +=09default:
+> +=09=09return -EOPNOTSUPP;
+> +=09}
+> +}
+> +
+> +static int galaxybook_hwmon_read_string(struct device *dev, enum hwmon_s=
+ensor_types type,
+> +=09=09=09=09=09u32 attr, int channel, const char **str)
+> +{
+> +=09switch (type) {
+> +=09case hwmon_fan:
+> +=09=09if (channel < galaxybook_ptr->fans_count && attr =3D=3D hwmon_fan_=
+label) {
+> +=09=09=09*str =3D galaxybook_ptr->fans[channel].description;
+> +=09=09=09return 0;
+> +=09=09}
+> +=09=09return -EOPNOTSUPP;
+> +=09default:
+> +=09=09return -EOPNOTSUPP;
+> +=09}
+> +}
+> +
+> +static const struct hwmon_ops galaxybook_hwmon_ops =3D {
+> +=09.is_visible =3D galaxybook_hwmon_is_visible,
+> +=09.read =3D galaxybook_hwmon_read,
+> +=09.read_string =3D galaxybook_hwmon_read_string,
+> +};
+> +
+> +static const struct hwmon_channel_info *const galaxybook_hwmon_info[] =
+=3D {
+> +=09/* note: number of max possible fan channel entries here should match=
+ MAX_FAN_COUNT */
+> +=09HWMON_CHANNEL_INFO(fan,
+> +=09=09=09   HWMON_F_INPUT | HWMON_F_LABEL,
+> +=09=09=09   HWMON_F_INPUT | HWMON_F_LABEL,
+> +=09=09=09   HWMON_F_INPUT | HWMON_F_LABEL,
+> +=09=09=09   HWMON_F_INPUT | HWMON_F_LABEL,
+> +=09=09=09   HWMON_F_INPUT | HWMON_F_LABEL),
+> +=09NULL
+> +};
+> +
+> +static const struct hwmon_chip_info galaxybook_hwmon_chip_info =3D {
+> +=09.ops =3D &galaxybook_hwmon_ops,
+> +=09.info =3D galaxybook_hwmon_info,
+> +};
+> +
+> +static int galaxybook_hwmon_init(struct samsung_galaxybook *galaxybook)
+> +{
+> +=09int ret =3D 0;
+> +
+
+No empty lines in between variable declarations.
+
+> +=09char *hwmon_device_name =3D devm_hwmon_sanitize_name(&galaxybook->pla=
+tform->dev,
+> +=09=09=09=09=09=09=09   SAMSUNG_GALAXYBOOK_CLASS);
+
+Declare variable separately since you have to split the line.
+
+> +=09galaxybook->hwmon =3D devm_hwmon_device_register_with_info(
+> +=09=09&galaxybook->platform->dev, hwmon_device_name, NULL,
+> +=09=09&galaxybook_hwmon_chip_info, NULL);
+> +=09if (PTR_ERR_OR_ZERO(galaxybook->hwmon)) {
+> +=09=09ret =3D PTR_ERR(galaxybook->hwmon);
+> +=09=09galaxybook->hwmon =3D NULL;
+> +=09}
+> +
+> +=09return ret;
+> +}
+> +
+> +static void galaxybook_hwmon_exit(struct samsung_galaxybook *galaxybook)
+> +{
+> +=09if (galaxybook->hwmon)
+> +=09=09hwmon_device_unregister(galaxybook->hwmon);
+> +}
+> +#endif
+> +
+> +/*
+> + * Platform Profile / Performance mode
+> + */
+> +
+> +static int performance_mode_acpi_set(struct samsung_galaxybook *galaxybo=
+ok,
+> +=09=09=09=09     const u8 performance_mode)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_PERFORMANCE_MODE;
+> +=09export_guid(buf.caid, &PERFORMANCE_MODE_GUID);
+> +=09buf.fncn =3D FNCN_PERFORMANCE_MODE;
+> +=09buf.subn =3D SUBN_PERFORMANCE_MODE_SET;
+> +=09buf.iob0 =3D performance_mode;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_PERFORMANCE_MO=
+DE, &buf,
+> +=09=09=09=09     SAWB_LEN_PERFORMANCE_MODE, "setting performance_mode", =
+&buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09return 0;
+> +}
+> +
+> +static int performance_mode_acpi_get(struct samsung_galaxybook *galaxybo=
+ok, u8 *performance_mode)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_PERFORMANCE_MODE;
+> +=09export_guid(buf.caid, &PERFORMANCE_MODE_GUID);
+
+Add linux/uuid.h
+
+> +=09buf.fncn =3D FNCN_PERFORMANCE_MODE;
+> +=09buf.subn =3D SUBN_PERFORMANCE_MODE_GET;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_PERFORMANCE_MO=
+DE, &buf,
+> +=09=09=09=09     SAWB_LEN_PERFORMANCE_MODE, "getting performance_mode", =
+&buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09*performance_mode =3D buf.iob0;
+> +
+> +=09return 0;
+> +}
+> +
+> +static enum platform_profile_option
+> +profile_performance_mode(struct samsung_galaxybook *galaxybook, const u8=
+ performance_mode)
+> +{
+> +=09for (int i =3D 0; i < PLATFORM_PROFILE_LAST; i++)
+> +=09=09if (galaxybook->profile_performance_modes[i] =3D=3D performance_mo=
+de)
+> +=09=09=09return i;
+> +=09return -1;
+
+Returning value that is not part of enum looks a bit hacky.
+
+> +}
+> +
+> +/* copied from platform_profile.c; better if this could be fetched from =
+a public function, maybe? */
+
+You are allowed to propose patches in the patch series for things you=20
+need. :-)
+
+> +static const char *const profile_names[] =3D {
+> +=09[PLATFORM_PROFILE_LOW_POWER] =3D "low-power",
+> +=09[PLATFORM_PROFILE_COOL] =3D "cool",
+> +=09[PLATFORM_PROFILE_QUIET] =3D "quiet",
+> +=09[PLATFORM_PROFILE_BALANCED] =3D "balanced",
+> +=09[PLATFORM_PROFILE_BALANCED_PERFORMANCE] =3D "balanced-performance",
+> +=09[PLATFORM_PROFILE_PERFORMANCE] =3D "performance",
+> +};
+> +static_assert(ARRAY_SIZE(profile_names) =3D=3D PLATFORM_PROFILE_LAST);
+
+Is this assert compatible with the custom platform profile series that is=
+=20
+practically ready to be merged?
+
+> +static int galaxybook_platform_profile_set(struct platform_profile_handl=
+er *pprof,
+> +=09=09=09=09=09   enum platform_profile_option profile)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D
+> +=09=09container_of(pprof, struct samsung_galaxybook, profile_handler);
+> +=09int err;
+> +
+> +=09err =3D performance_mode_acpi_set(galaxybook, galaxybook->profile_per=
+formance_modes[profile]);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09pr_debug_prefixed("set platform profile to '%s' (performance mode 0x%=
+x)\n",
+> +=09=09=09  profile_names[profile], galaxybook->profile_performance_modes=
+[profile]);
+> +=09return 0;
+> +}
+> +
+> +static int galaxybook_platform_profile_get(struct platform_profile_handl=
+er *pprof,
+> +=09=09=09=09=09   enum platform_profile_option *profile)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D
+> +=09=09container_of(pprof, struct samsung_galaxybook, profile_handler);
+> +=09u8 performance_mode;
+> +=09int err;
+> +
+> +=09err =3D performance_mode_acpi_get(galaxybook, &performance_mode);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09*profile =3D profile_performance_mode(galaxybook, performance_mode);
+> +=09if (*profile =3D=3D -1)
+> +=09=09return -EINVAL;
+> +
+> +=09pr_debug_prefixed("platform profile is currently '%s' (performance mo=
+de 0x%x)\n",
+> +=09=09=09  profile_names[*profile], performance_mode);
+> +
+> +=09return 0;
+> +}
+> +
+> +#define IGNORE_PERFORMANCE_MODE_MAPPING  -1
+> +
+> +static int galaxybook_profile_init(struct samsung_galaxybook *galaxybook=
+)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int mode_profile, err;
+> +=09u8 current_performance_mode;
+> +
+> +=09galaxybook->profile_handler.profile_get =3D galaxybook_platform_profi=
+le_get;
+> +=09galaxybook->profile_handler.profile_set =3D galaxybook_platform_profi=
+le_set;
+> +
+> +=09/* fetch supported performance mode values from ACPI method */
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_PERFORMANCE_MODE;
+> +=09export_guid(buf.caid, &PERFORMANCE_MODE_GUID);
+> +=09buf.fncn =3D FNCN_PERFORMANCE_MODE;
+> +=09buf.subn =3D SUBN_PERFORMANCE_MODE_LIST;
+> +
+> +=09err =3D galaxybook_acpi_method(galaxybook, ACPI_METHOD_PERFORMANCE_MO=
+DE,
+> +=09=09=09=09     &buf, SAWB_LEN_PERFORMANCE_MODE,
+> +=09=09=09=09     "get supported performance modes", &buf);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09/* set up profile_performance_modes with "unknown" as init value */
+> +=09galaxybook->profile_performance_modes =3D
+> +=09=09kzalloc(sizeof(u8) * PLATFORM_PROFILE_LAST, GFP_KERNEL);
+
+kcalloc() ?
+
+> +=09if (!galaxybook->profile_performance_modes)
+> +=09=09return -ENOMEM;
+> +=09for (int i =3D 0; i < PLATFORM_PROFILE_LAST; i++)
+> +=09=09galaxybook->profile_performance_modes[i] =3D PERFORMANCE_MODE_UNKN=
+OWN;
+> +
+> +=09/*
+> +=09 * Value returned in iob0 will have the number of supported performan=
+ce modes.
+> +=09 * The performance mode values will then be given as a list after thi=
+s (iob1-iobX).
+> +=09 * Loop backwards from last value to first value (to handle fallback =
+cases which come with
+> +=09 * smaller values) and map each supported value to its correct platfo=
+rm_profile_option.
+> +=09 */
+> +=09err =3D -ENODEV; /* set err to "no device" to signal that we have not=
+ yet mapped profiles */
+> +=09for (int i =3D buf.iob0; i > 0; i--) {
+> +=09=09/*
+> +=09=09 * Prefer mapping to at least performance, balanced, and low-power=
+ profiles, as they
+> +=09=09 * are the profiles which are typically supported by userspace too=
+ls
+> +=09=09 * (power-profiles-daemon, etc).
+> +=09=09 * - performance =3D "ultra", otherwise "performance"
+> +=09=09 * - balanced    =3D "optimized", otherwise "performance" when "ul=
+tra" is supported
+> +=09=09 * - low-power   =3D "silent", otherwise "quiet"
+> +=09=09 * Different models support different modes. Additional supported =
+modes will be
+> +=09=09 * mapped to profiles that fall in between these 3.
+> +=09=09 */
+> +=09=09switch (buf.iob_values[i]) {
+> +
+> +=09=09case PERFORMANCE_MODE_ULTRA:
+> +=09=09=09/* ultra always maps to performance */
+> +=09=09=09mode_profile =3D PLATFORM_PROFILE_PERFORMANCE;
+> +=09=09=09break;
+> +
+> +=09=09case PERFORMANCE_MODE_PERFORMANCE:
+> +=09=09=09/* if ultra exists, map performance to balanced-performance */
+> +=09=09=09if (galaxybook->profile_performance_modes[PLATFORM_PROFILE_PERF=
+ORMANCE] !=3D
+> +=09=09=09    PERFORMANCE_MODE_UNKNOWN)
+> +=09=09=09=09mode_profile =3D PLATFORM_PROFILE_BALANCED_PERFORMANCE;
+> +=09=09=09else /* otherwise map it to performance instead */
+> +=09=09=09=09mode_profile =3D PLATFORM_PROFILE_PERFORMANCE;
+> +=09=09=09break;
+> +
+> +=09=09case PERFORMANCE_MODE_SILENT:
+> +=09=09=09/* silent always maps to low-power */
+> +=09=09=09mode_profile =3D PLATFORM_PROFILE_LOW_POWER;
+> +=09=09=09break;
+> +
+> +=09=09case PERFORMANCE_MODE_QUIET:
+> +=09=09=09/* if silent exists, map quiet to quiet */
+> +=09=09=09if (galaxybook->profile_performance_modes[PLATFORM_PROFILE_LOW_=
+POWER] !=3D
+> +=09=09=09    PERFORMANCE_MODE_UNKNOWN)
+> +=09=09=09=09mode_profile =3D PLATFORM_PROFILE_QUIET;
+> +=09=09=09else /* otherwise map it to low-power for better userspace tool=
+ support */
+> +=09=09=09=09mode_profile =3D PLATFORM_PROFILE_LOW_POWER;
+> +=09=09=09break;
+> +
+> +=09=09case PERFORMANCE_MODE_OPTIMIZED:
+> +=09=09=09/* optimized always maps to balanced */
+> +=09=09=09mode_profile =3D PLATFORM_PROFILE_BALANCED;
+> +=09=09=09break;
+> +
+> +=09=09case PERFORMANCE_MODE_PERFORMANCE_LEGACY:
+> +=09=09=09/* map to performance if performance is not already supported *=
+/
+> +=09=09=09if (galaxybook->profile_performance_modes[PLATFORM_PROFILE_PERF=
+ORMANCE] =3D=3D
+> +=09=09=09    PERFORMANCE_MODE_UNKNOWN)
+> +=09=09=09=09mode_profile =3D PLATFORM_PROFILE_PERFORMANCE;
+> +=09=09=09else /* otherwise, ignore */
+> +=09=09=09=09mode_profile =3D IGNORE_PERFORMANCE_MODE_MAPPING;
+> +=09=09=09break;
+> +
+> +=09=09case PERFORMANCE_MODE_OPTIMIZED_LEGACY:
+> +=09=09=09/* map to balanced if balanced is not already supported */
+> +=09=09=09if (galaxybook->profile_performance_modes[PLATFORM_PROFILE_BALA=
+NCED] =3D=3D
+> +=09=09=09    PERFORMANCE_MODE_UNKNOWN)
+> +=09=09=09=09mode_profile =3D PLATFORM_PROFILE_BALANCED;
+> +=09=09=09else /* otherwise, ignore */
+> +=09=09=09=09mode_profile =3D IGNORE_PERFORMANCE_MODE_MAPPING;
+> +=09=09=09break;
+> +
+> +=09=09default: /* any other value is not supported */
+> +=09=09=09mode_profile =3D IGNORE_PERFORMANCE_MODE_MAPPING;
+> +=09=09=09break;
+> +=09=09}
+> +
+> +=09=09/* if current mode value mapped to a supported platform_profile_op=
+tion, set it up */
+> +=09=09if (mode_profile > IGNORE_PERFORMANCE_MODE_MAPPING) {
+> +=09=09=09err =3D 0; /* clear err to signal that at least one profile is =
+now mapped */
+> +=09=09=09galaxybook->profile_performance_modes[mode_profile] =3D buf.iob=
+_values[i];
+> +=09=09=09set_bit(mode_profile, galaxybook->profile_handler.choices);
+> +=09=09=09pr_info("will support platform profile '%s' (performance mode 0=
+x%x)\n",
+> +=09=09=09=09profile_names[mode_profile], buf.iob_values[i]);
+> +=09=09} else {
+> +=09=09=09pr_debug_prefixed("unmapped performance mode 0x%x will be ignor=
+ed\n",
+> +=09=09=09=09=09  buf.iob_values[i]);
+> +=09=09}
+> +=09}
+> +
+> +=09/* if no performance modes were mapped (err is still -ENODEV) then st=
+op and fail here */
+> +=09if (err)
+> +=09=09return err;
+
+It would be much more obvious to count number of mapped modes with a=20
+variable and not play with err variable like this. You needed lots of=20
+comment to explain which all could be dropped and this could just return=20
+-ENODEV directly.
+
+I'll stop here as I'm out of time.
+
+--=20
+ i.
+
+> +=09err =3D platform_profile_register(&galaxybook->profile_handler);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09/* now check currently set performance mode; if not supported then se=
+t default profile */
+> +=09err =3D performance_mode_acpi_get(galaxybook, &current_performance_mo=
+de);
+> +=09if (err)
+> +=09=09pr_warn("failed with code %d when fetching initial performance mod=
+e\n", err);
+> +=09if (profile_performance_mode(galaxybook, current_performance_mode) =
+=3D=3D -1) {
+> +=09=09pr_debug_prefixed("initial performance mode value is not supported=
+ by device; "
+> +=09=09=09=09  "setting to default\n");
+> +=09=09err =3D galaxybook_platform_profile_set(&galaxybook->profile_handl=
+er,
+> +=09=09=09=09=09=09      DEFAULT_PLATFORM_PROFILE);
+> +=09=09if (err)
+> +=09=09=09return err;
+> +=09}
+> +
+> +=09return 0;
+> +}
+> +
+> +static void galaxybook_profile_exit(struct samsung_galaxybook *galaxyboo=
+k)
+> +{
+> +=09platform_profile_remove();
+> +}
+> +
+> +/*
+> + * Hotkey work and filters
+> + */
+> +
+> +static void galaxybook_performance_mode_hotkey_work(struct work_struct *=
+work)
+> +{
+> +=09platform_profile_cycle();
+> +}
+> +
+> +static void galaxybook_kbd_backlight_hotkey_work(struct work_struct *wor=
+k)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D
+> +=09=09container_of(work, struct samsung_galaxybook, kbd_backlight_hotkey=
+_work);
+> +
+> +=09if (galaxybook->kbd_backlight.brightness < galaxybook->kbd_backlight.=
+max_brightness)
+> +=09=09kbd_backlight_acpi_set(galaxybook, galaxybook->kbd_backlight.brigh=
+tness + 1);
+> +=09else
+> +=09=09kbd_backlight_acpi_set(galaxybook, 0);
+> +
+> +=09led_classdev_notify_brightness_hw_changed(
+> +=09=09&galaxybook->kbd_backlight,
+> +=09=09galaxybook->kbd_backlight.brightness);
+> +}
+> +
+> +static void galaxybook_allow_recording_hotkey_work(struct work_struct *w=
+ork)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D
+> +=09=09container_of(work, struct samsung_galaxybook, allow_recording_hotk=
+ey_work);
+> +=09bool value;
+> +
+> +=09allow_recording_acpi_get(galaxybook, &value);
+> +=09allow_recording_acpi_set(galaxybook, !value);
+> +}
+> +
+> +static bool galaxybook_i8042_filter(unsigned char data, unsigned char st=
+r, struct serio *port)
+> +{
+> +=09static bool extended;
+> +
+> +=09if (str & I8042_STR_AUXDATA)
+> +=09=09return false;
+> +
+> +=09if (unlikely(data =3D=3D 0xe0)) {
+> +=09=09extended =3D true;
+> +=09=09return true;
+> +=09} else if (unlikely(extended)) {
+> +=09=09extended =3D false;
+> +=09=09switch (data) {
+> +
+> +=09=09case GB_KEY_KBD_BACKLIGHT_KEYDOWN:
+> +=09=09=09return true;
+> +=09=09case GB_KEY_KBD_BACKLIGHT_KEYUP:
+> +=09=09=09if (kbd_backlight)
+> +=09=09=09=09schedule_work(&galaxybook_ptr->kbd_backlight_hotkey_work);
+> +=09=09=09return true;
+> +
+> +=09=09case GB_KEY_ALLOW_RECORDING_KEYDOWN:
+> +=09=09=09return true;
+> +=09=09case GB_KEY_ALLOW_RECORDING_KEYUP:
+> +=09=09=09if (allow_recording)
+> +=09=09=09=09schedule_work(&galaxybook_ptr->allow_recording_hotkey_work);
+> +=09=09=09return true;
+> +
+> +=09=09default:
+> +=09=09=09/*
+> +=09=09=09 * Report the previously filtered e0 before continuing
+> +=09=09=09 * with the next non-filtered byte.
+> +=09=09=09 */
+> +=09=09=09serio_interrupt(port, 0xe0, 0);
+> +=09=09=09return false;
+> +=09=09}
+> +=09}
+> +
+> +=09return false;
+> +}
+> +
+> +/*
+> + * Input device (hotkeys and notifications)
+> + */
+> +
+> +static void galaxybook_input_notify(struct samsung_galaxybook *galaxyboo=
+k, int event)
+> +{
+> +=09if (!galaxybook->input)
+> +=09=09return;
+> +=09pr_debug_prefixed("input notification event: 0x%x\n", event);
+> +=09if (!sparse_keymap_report_event(galaxybook->input, event, 1, true))
+> +=09=09pr_warn("unknown input notification event: 0x%x\n", event);
+> +}
+> +
+> +static int galaxybook_input_init(struct samsung_galaxybook *galaxybook)
+> +{
+> +=09struct input_dev *input;
+> +=09int error;
+> +
+> +=09input =3D input_allocate_device();
+> +=09if (!input)
+> +=09=09return -ENOMEM;
+> +
+> +=09input->name =3D "Samsung Galaxy Book Extra Buttons";
+> +=09input->phys =3D SAMSUNG_GALAXYBOOK_CLASS "/input0";
+> +=09input->id.bustype =3D BUS_HOST;
+> +=09input->dev.parent =3D &galaxybook->platform->dev;
+> +
+> +=09error =3D sparse_keymap_setup(input, galaxybook_acpi_keymap, NULL);
+> +=09if (error) {
+> +=09=09pr_err("Unable to setup input device keymap\n");
+> +=09=09goto err_free_dev;
+> +=09}
+> +=09error =3D input_register_device(input);
+> +=09if (error) {
+> +=09=09pr_err("Unable to register input device\n");
+> +=09=09goto err_free_dev;
+> +=09}
+> +
+> +=09galaxybook->input =3D input;
+> +=09return 0;
+> +
+> +err_free_dev:
+> +=09input_free_device(input);
+> +=09return error;
+> +}
+> +
+> +static void galaxybook_input_exit(struct samsung_galaxybook *galaxybook)
+> +{
+> +=09if (galaxybook->input)
+> +=09=09input_unregister_device(galaxybook->input);
+> +=09galaxybook->input =3D NULL;
+> +}
+> +
+> +/*
+> + * Platform device attributes
+> + */
+> +
+> +/* galaxybook_attrs can include start_on_lid_open, usb_charge, and/or al=
+low_recording */
+> +#define MAX_NUM_DEVICE_ATTRIBUTES 3
+> +
+> +static struct attribute *galaxybook_attrs[MAX_NUM_DEVICE_ATTRIBUTES + 1]=
+ =3D { NULL };
+> +static const struct attribute_group galaxybook_attrs_group =3D {
+> +=09.attrs =3D galaxybook_attrs,
+> +};
+> +
+> +static int galaxybook_device_attrs_init(struct samsung_galaxybook *galax=
+ybook)
+> +{
+> +=09bool value;
+> +=09int err;
+> +=09int i =3D 0;
+> +
+> +=09/* attempt to get each attribute's value and add them if the get does=
+ not fail */
+> +
+> +=09err =3D start_on_lid_open_acpi_get(galaxybook, &value);
+> +=09if (err)
+> +=09=09pr_debug_prefixed("failed to get start_on_lid_open value; "
+> +=09=09=09=09  "this feature will not be enabled\n");
+> +=09else
+> +=09=09galaxybook_attrs[i++] =3D &dev_attr_start_on_lid_open.attr;
+> +
+> +=09err =3D usb_charge_acpi_get(galaxybook, &value);
+> +=09if (err)
+> +=09=09pr_debug_prefixed("failed to get usb_charge value; "
+> +=09=09=09=09  "this feature will not be enabled\n");
+> +=09else
+> +=09=09galaxybook_attrs[i++] =3D &dev_attr_usb_charge.attr;
+> +
+> +=09if (allow_recording) {
+> +=09=09pr_debug_prefixed("initializing ACPI allow_recording feature\n");
+> +=09=09err =3D galaxybook_enable_acpi_feature(galaxybook, SASB_ALLOW_RECO=
+RDING);
+> +=09=09if (err) {
+> +=09=09=09pr_debug_prefixed("failed to initialize ACPI allow_recording fe=
+ature\n");
+> +=09=09=09allow_recording =3D false;
+> +=09=09=09return 0;
+> +=09=09}
+> +
+> +=09=09err =3D allow_recording_acpi_get(galaxybook, &value);
+> +=09=09if (err) {
+> +=09=09=09pr_debug_prefixed("failed to get allow_recording value; "
+> +=09=09=09=09=09  "this feature will not be enabled\n");
+> +=09=09=09allow_recording =3D false;
+> +=09=09} else {
+> +=09=09=09galaxybook_attrs[i++] =3D &dev_attr_allow_recording.attr;
+> +=09=09}
+> +=09}
+> +
+> +=09return device_add_group(&galaxybook->platform->dev, &galaxybook_attrs=
+_group);
+> +};
+> +
+> +static void galaxybook_device_attrs_exit(struct samsung_galaxybook *gala=
+xybook)
+> +{
+> +=09device_remove_group(&galaxybook->platform->dev, &galaxybook_attrs_gro=
+up);
+> +}
+> +
+> +/*
+> + * ACPI device setup
+> + */
+> +
+> +static void galaxybook_acpi_notify(acpi_handle handle, u32 event, void *=
+data)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D data;
+> +
+> +=09if (event =3D=3D ACPI_NOTIFY_HOTKEY_PERFORMANCE_MODE) {
+> +=09=09pr_debug_prefixed("hotkey: performance_mode keydown\n");
+> +=09=09if (performance_mode) {
+> +=09=09=09schedule_work(&galaxybook->performance_mode_hotkey_work);
+> +=09=09=09return;
+> +=09=09}
+> +=09}
+> +
+> +=09galaxybook_input_notify(galaxybook, event);
+> +}
+> +
+> +static int galaxybook_enable_acpi_notify(struct samsung_galaxybook *gala=
+xybook)
+> +{
+> +=09struct sawb buf =3D { 0 };
+> +=09int err;
+> +
+> +=09err =3D galaxybook_enable_acpi_feature(galaxybook, SASB_NOTIFICATIONS=
+);
+> +=09if (err)
+> +=09=09return err;
+> +
+> +=09buf.safn =3D SAFN;
+> +=09buf.sasb =3D SASB_NOTIFICATIONS;
+> +=09buf.gunm =3D GUNM_ACPI_NOTIFY_ENABLE;
+> +=09buf.guds[0] =3D GUDS_ACPI_NOTIFY_ENABLE;
+> +
+> +=09return galaxybook_acpi_method(galaxybook, ACPI_METHOD_SETTINGS, &buf,=
+ SAWB_LEN_SETTINGS,
+> +=09=09=09=09      "activate ACPI notifications", &buf);
+> +}
+> +
+> +static int galaxybook_acpi_init(struct samsung_galaxybook *galaxybook)
+> +{
+> +=09return acpi_execute_simple_method(galaxybook->acpi->handle,
+> +=09=09=09=09=09  ACPI_METHOD_ENABLE, ACPI_METHOD_ENABLE_ON);
+> +}
+> +
+> +static void galaxybook_acpi_exit(struct samsung_galaxybook *galaxybook)
+> +{
+> +=09acpi_execute_simple_method(galaxybook->acpi->handle,
+> +=09=09=09=09   ACPI_METHOD_ENABLE, ACPI_METHOD_ENABLE_OFF);
+> +}
+> +
+> +/*
+> + * Platform driver
+> + */
+> +
+> +static int galaxybook_probe(struct platform_device *pdev)
+> +{
+> +=09struct acpi_device *adev =3D ACPI_COMPANION(&pdev->dev);
+> +=09struct samsung_galaxybook *galaxybook;
+> +=09acpi_status status;
+> +=09int err;
+> +
+> +=09dmi_check_system(galaxybook_dmi_ids);
+> +
+> +=09pr_info("found matched device %s; loading driver\n", dev_name(&adev->=
+dev));
+> +
+> +=09galaxybook =3D kzalloc(sizeof(struct samsung_galaxybook), GFP_KERNEL)=
+;
+> +=09if (!galaxybook)
+> +=09=09return -ENOMEM;
+> +=09/* set static pointer here so it can be used in various methods for h=
+otkeys, hwmon, etc */
+> +=09galaxybook_ptr =3D galaxybook;
+> +
+> +=09galaxybook->platform =3D pdev;
+> +=09galaxybook->acpi =3D adev;
+> +
+> +=09dev_set_drvdata(&galaxybook->platform->dev, galaxybook);
+> +
+> +=09pr_debug_prefixed("initializing ACPI device\n");
+> +=09err =3D galaxybook_acpi_init(galaxybook);
+> +=09if (err) {
+> +=09=09pr_err("failed to initialize the ACPI device\n");
+> +=09=09goto err_free;
+> +=09}
+> +
+> +=09pr_debug_prefixed("initializing ACPI power management features\n");
+> +=09err =3D galaxybook_enable_acpi_feature(galaxybook, SASB_POWER_MANAGEM=
+ENT);
+> +=09if (err) {
+> +=09=09pr_warn("failed to initialize ACPI power management features; "
+> +=09=09=09"many features of this driver will not be available\n");
+> +=09=09performance_mode =3D false;
+> +=09=09battery_threshold =3D false;
+> +=09}
+> +
+> +=09if (performance_mode) {
+> +=09=09pr_debug_prefixed("initializing performance mode and platform prof=
+ile\n");
+> +=09=09err =3D galaxybook_profile_init(galaxybook);
+> +=09=09if (err) {
+> +=09=09=09pr_debug_prefixed(
+> +=09=09=09=09"failed to initialize performance mode and platform profile\=
+n");
+> +=09=09=09performance_mode =3D false;
+> +=09=09}
+> +=09} else {
+> +=09=09pr_debug_prefixed("performance_mode is disabled\n");
+> +=09}
+> +
+> +=09if (battery_threshold) {
+> +=09=09pr_debug_prefixed("initializing battery charge threshold control\n=
+");
+> +=09=09err =3D galaxybook_battery_threshold_init(galaxybook);
+> +=09=09if (err) {
+> +=09=09=09pr_debug_prefixed(
+> +=09=09=09=09"failed to initialize battery charge threshold control\n");
+> +=09=09=09battery_threshold =3D false;
+> +=09=09}
+> +=09} else {
+> +=09=09pr_debug_prefixed("battery_threshold is disabled\n");
+> +=09}
+> +
+> +=09pr_debug_prefixed("adding platform device attributes\n");
+> +=09err =3D galaxybook_device_attrs_init(galaxybook);
+> +=09if (err)
+> +=09=09pr_err("failed to add platform device attributes\n");
+> +
+> +=09if (kbd_backlight) {
+> +=09=09pr_debug_prefixed("initializing kbd_backlight\n");
+> +=09=09err =3D galaxybook_kbd_backlight_init(galaxybook);
+> +=09=09if (err) {
+> +=09=09=09pr_debug_prefixed("failed to initialize kbd_backlight\n");
+> +=09=09=09kbd_backlight =3D false;
+> +=09=09}
+> +=09} else {
+> +=09=09pr_debug_prefixed("kbd_backlight is disabled\n");
+> +=09}
+> +
+> +=09if (fan_speed) {
+> +=09=09pr_debug_prefixed("initializing fan speed\n");
+> +=09=09err =3D galaxybook_fan_speed_init(galaxybook);
+> +=09=09if (err) {
+> +=09=09=09pr_debug_prefixed("failed to initialize fan speed\n");
+> +=09=09=09fan_speed =3D false;
+> +=09=09} else {
+> +#if IS_ENABLED(CONFIG_HWMON)
+> +=09=09=09pr_debug_prefixed("initializing hwmon device\n");
+> +=09=09=09err =3D galaxybook_hwmon_init(galaxybook);
+> +=09=09=09if (err)
+> +=09=09=09=09pr_warn("failed to initialize hwmon device\n");
+> +#endif
+> +=09=09}
+> +=09} else {
+> +=09=09pr_debug_prefixed("fan_speed is disabled\n");
+> +=09}
+> +
+> +=09/* i8042_filter should be disabled if kbd_backlight and allow_recordi=
+ng are disabled */
+> +=09if (!kbd_backlight && !allow_recording)
+> +=09=09i8042_filter =3D false;
+> +
+> +=09if (i8042_filter) {
+> +=09=09pr_debug_prefixed("installing i8402 key filter to capture hotkey i=
+nput\n");
+> +
+> +=09=09/* initialize hotkey work queues */
+> +=09=09if (kbd_backlight)
+> +=09=09=09INIT_WORK(&galaxybook->kbd_backlight_hotkey_work,
+> +=09=09=09=09  galaxybook_kbd_backlight_hotkey_work);
+> +=09=09if (allow_recording)
+> +=09=09=09INIT_WORK(&galaxybook->allow_recording_hotkey_work,
+> +=09=09=09=09  galaxybook_allow_recording_hotkey_work);
+> +
+> +=09=09err =3D i8042_install_filter(galaxybook_i8042_filter);
+> +=09=09if (err) {
+> +=09=09=09pr_err("failed to install i8402 key filter\n");
+> +=09=09=09cancel_work_sync(&galaxybook->kbd_backlight_hotkey_work);
+> +=09=09=09cancel_work_sync(&galaxybook->allow_recording_hotkey_work);
+> +=09=09=09i8042_filter =3D false;
+> +=09=09}
+> +=09} else {
+> +=09=09pr_debug_prefixed("i8042_filter is disabled\n");
+> +=09}
+> +
+> +=09pr_debug_prefixed("installing ACPI notify handler\n");
+> +=09status =3D acpi_install_notify_handler(galaxybook->acpi->handle, ACPI=
+_ALL_NOTIFY,
+> +=09=09=09=09=09     galaxybook_acpi_notify, galaxybook);
+> +=09if (ACPI_SUCCESS(status)) {
+> +=09=09pr_debug_prefixed("enabling ACPI notifications\n");
+> +=09=09err =3D galaxybook_enable_acpi_notify(galaxybook);
+> +=09=09if (err) {
+> +=09=09=09pr_warn("failed to enable ACPI notifications; "
+> +=09=09=09=09"some hotkeys will not be supported\n");
+> +=09=09} else {
+> +=09=09=09/* initialize ACPI hotkey work queues */
+> +=09=09=09INIT_WORK(&galaxybook->performance_mode_hotkey_work,
+> +=09=09=09=09  galaxybook_performance_mode_hotkey_work);
+> +
+> +=09=09=09pr_debug_prefixed("initializing input device\n");
+> +=09=09=09err =3D galaxybook_input_init(galaxybook);
+> +=09=09=09if (err) {
+> +=09=09=09=09pr_err("failed to initialize input device\n");
+> +=09=09=09=09cancel_work_sync(&galaxybook->performance_mode_hotkey_work);
+> +=09=09=09=09galaxybook_input_exit(galaxybook);
+> +=09=09=09}
+> +=09=09}
+> +=09} else {
+> +=09=09pr_debug_prefixed("failed to install ACPI notify handler\n");
+> +=09}
+> +
+> +=09pr_info("driver successfully loaded\n");
+> +
+> +=09return 0;
+> +
+> +err_free:
+> +=09kfree(galaxybook);
+> +=09return err;
+> +}
+> +
+> +static void galaxybook_remove(struct platform_device *pdev)
+> +{
+> +=09struct samsung_galaxybook *galaxybook =3D dev_get_drvdata(&pdev->dev)=
+;
+> +
+> +=09pr_info("removing driver\n");
+> +
+> +=09galaxybook_device_attrs_exit(galaxybook);
+> +
+> +=09galaxybook_input_exit(galaxybook);
+> +=09cancel_work_sync(&galaxybook->performance_mode_hotkey_work);
+> +
+> +=09if (i8042_filter) {
+> +=09=09i8042_remove_filter(galaxybook_i8042_filter);
+> +=09=09cancel_work_sync(&galaxybook->kbd_backlight_hotkey_work);
+> +=09=09cancel_work_sync(&galaxybook->allow_recording_hotkey_work);
+> +=09}
+> +
+> +=09acpi_remove_notify_handler(galaxybook->acpi->handle, ACPI_ALL_NOTIFY,
+> +=09=09=09=09   galaxybook_acpi_notify);
+> +
+> +=09if (fan_speed) {
+> +=09=09galaxybook_fan_speed_exit(galaxybook);
+> +#if IS_ENABLED(CONFIG_HWMON)
+> +=09=09galaxybook_hwmon_exit(galaxybook);
+> +#endif
+> +=09}
+> +
+> +=09if (kbd_backlight)
+> +=09=09galaxybook_kbd_backlight_exit(galaxybook);
+> +
+> +=09if (battery_threshold)
+> +=09=09galaxybook_battery_threshold_exit(galaxybook);
+> +
+> +=09if (performance_mode)
+> +=09=09galaxybook_profile_exit(galaxybook);
+> +
+> +=09galaxybook_acpi_exit(galaxybook);
+> +
+> +=09if (galaxybook_ptr)
+> +=09=09galaxybook_ptr =3D NULL;
+> +
+> +=09kfree(galaxybook);
+> +
+> +=09pr_info("driver successfully removed\n");
+> +}
+> +
+> +static struct platform_driver galaxybook_platform_driver =3D {
+> +=09.driver =3D {
+> +=09=09.name =3D SAMSUNG_GALAXYBOOK_CLASS,
+> +=09=09.acpi_match_table =3D galaxybook_device_ids,
+> +=09},
+> +=09.probe =3D galaxybook_probe,
+> +=09.remove =3D galaxybook_remove,
+> +};
+> +
+> +static int __init samsung_galaxybook_init(void)
+> +{
+> +=09return platform_driver_register(&galaxybook_platform_driver);
+> +}
+> +
+> +static void __exit samsung_galaxybook_exit(void)
+> +{
+> +=09platform_driver_unregister(&galaxybook_platform_driver);
+> +}
+> +
+> +module_init(samsung_galaxybook_init);
+> +module_exit(samsung_galaxybook_exit);
+> +
+> +MODULE_AUTHOR("Joshua Grisham <josh@joshuagrisham.com>");
+> +MODULE_DESCRIPTION(SAMSUNG_GALAXYBOOK_NAME);
+> +MODULE_LICENSE("GPL");
+>=20
+--8323328-845421102-1733765605=:938--
 
