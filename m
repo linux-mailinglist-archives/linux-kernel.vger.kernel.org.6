@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-438134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B66B29E9D4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:45:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED7089E9D54
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:46:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9BF9166F7F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:45:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B5A2834DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22E8B1B4220;
-	Mon,  9 Dec 2024 17:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98DBE13F43B;
+	Mon,  9 Dec 2024 17:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="SDMc/zLa"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WKeOy/6q"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F365414A0AA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247B61B4222
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766329; cv=none; b=MWZtV3HHjWmuuG2JbChdy/mJKKMxyzIDgbjPAVh/ZzITVCcm1yi4ApUhJELfAT5wwGlGTFFqw8K9rMOoHakFu0HYP7/A8J21Yf1rIS+jZd5NwNA3255C8bzj/bjjV/WIXa7sqRcjR8Tc1jQYKWWRSoJwG/T6vMx8tj6nOClqt+s=
+	t=1733766333; cv=none; b=OsEUM5fzLc1+i2O+4gagBCSy14vK8Z4+fgF5OmOcIlO+E/CVFP9RNAuZkNDN1GCK5ZeAzkloDr3JPVMHuxGHYnQPEIw4hjknGenJXoQH/UDrO1O60bBiyGOgdxbQcGdW+eALO0Qh5nvTLghfNEnf0M1+6+ojPLOEkS3SWuI5PqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766329; c=relaxed/simple;
-	bh=bAYs8FkdlQE5eqssU46SL6Z8HP476md0o5S9+WxIxJQ=;
+	s=arc-20240116; t=1733766333; c=relaxed/simple;
+	bh=GmNqesxkgBcJIscVO6PMD2XTQoHeWt84/rl2brvJAtU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QX0575aEK4791T9HMpQK6tS0bgn7RvKv84nbqpKGMtGHbiZ2D/71fmc2eY9CrAZYDQQ8pLhbnZkxUp77hhHrbpDvOjKWg35Xz/gAfX1PkYZQbeycSddbdmRqHBmBBzU+QRfgOpM4ge4pWgRaHoRCbYqptFgrBeifMPZw7mj2Rc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=SDMc/zLa; arc=none smtp.client-ip=209.85.210.173
+	 MIME-Version; b=h+bNpRYqcXL81D9v3YQblX0bfgdcuwtR+6RoPTEYu4GmmVcUW4YsbfWyzjhsTJe3nPSz38QQiHj+kKnLSGQQbkcnCjDPFb/pI3hM6n9hLTvYh6Lca/t16Xz7VAq7wGA470xz3OK3OjKJRAdG1kN2RqMgvtReVapPopUL9EAcwkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WKeOy/6q; arc=none smtp.client-ip=209.85.210.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-725ea1e19f0so1128462b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:45:27 -0800 (PST)
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-725db141410so1499108b3a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:45:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733766327; x=1734371127; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1733766329; x=1734371129; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rEHuQ+kXoeUymHTN8eFGc9cWNeb9aYeLC76//Gda7iY=;
-        b=SDMc/zLavq1qQZ8iEHyXR2eWNO9DNVQUoVF8QGsrCdxYS+Ir00ElAQySwQHtfj3DIv
-         Grzt9anBLDgEa+C3uf2svO9pl4gHDPK18NDoqljklWvtRovTLr4ACAUkvc+PfwOQUB+A
-         dq6H07+vLRsORVLxy+cqDSlAah5c6WyT1T6vk=
+        bh=qETIrWIvBOaJo01797E2hvCoFBrPeIJqundEykxnLWc=;
+        b=WKeOy/6q2armRGhaVvnP6PmnrZBWCqITFsA2UWUDL/uvb2iZF+DGIofk6y/UYN2s4v
+         +wc410KNOqdcohqVYkF9zUHrkkE5KGTY1oWRTs3VAdQho5dqhRvsmtZBxwklYCxrcrFU
+         gW6GwXzZTuOlNEWUP4k40ydF2d+MOS1pWk/0Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733766327; x=1734371127;
+        d=1e100.net; s=20230601; t=1733766329; x=1734371129;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rEHuQ+kXoeUymHTN8eFGc9cWNeb9aYeLC76//Gda7iY=;
-        b=V5OIBGPnWKfe1SZX1XnRoEaqtQ0tT8Aj/NlBlYjVhCVceeW5X0YQSp2847eN1NWSzE
-         Z7EO4cfESoLn9XrIQ7z0wCMkqOG0tMNP24Ri9EC5e1iy0D/u3RM2rjLb0w54BYQ0tOPL
-         kVtCzauJGzpqSwgKtHH/F5YWysnvodxeRCb2SOJLCfdfNffRF7RmhQBLlYXR3jg2RFy+
-         Ozt04ew6Gyr3xsyigxItbiu6rLVq0D9/49STc7UDJGXGMhjWeH2DdXrfPZ0bgBgkd+uM
-         rgTgNVNWRmYIFy0Zh0Cni2CxiziNBN15nLW2KGUEPoXweSt/cs6oL8QWeouw0yJYOjYN
-         qa1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVK+4Acx8nT3cJEAzVbV+EKAyAc3zUOv6UTmfyjlNPnRYIBY89Z80Q9m8wKoANoZ7wWhKoafiiT46Sh5TU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGbtWBcPp82rljfDfjkUtF7oIksDJ9YvhbGRnUjQ90QL1YzgH6
-	ro5Rhgm47FdT/X4XrCwAvQxg2IqPSNgxPWfpwnVVDz8BYvxP1vT5H4OL8/9RQQ==
-X-Gm-Gg: ASbGncu7JaUGm3BJjmEwtxdEoHY9ppeNC8xQdgziVd5z5bCqDMFD5zGtcs+AuukWA6C
-	E6x0nC0LEEFqmuX5cYw4uzy75w0qkUyOIe++BuxWxxm0LV1V0IM9Vdxgja4Tvlv221uTX9GcS0J
-	KPMxW6dvqf91gHDQO8oHvWu085UGyaDQCsSOnZ2olQUPiGls0zlptyyL7AQDQEj6J19nqYE4887
-	tThsda0BqMB+HmgZWGtpYAar4fmJjCoFzzOPjd79SU38RAhLzVPcaczhGDCTwQXxLpX46ul8w==
-X-Google-Smtp-Source: AGHT+IFjr+LTfoeQGGEOWgSsIBHfiAjG9a3g370Vtf8TA8xvJXw9gKEbo9AZcL4ypGc2Hiq/SZ2LKg==
-X-Received: by 2002:a05:6a21:9999:b0:1e1:a48f:1215 with SMTP id adf61e73a8af0-1e1b1b519b3mr2234419637.35.1733766327345;
-        Mon, 09 Dec 2024 09:45:27 -0800 (PST)
+        bh=qETIrWIvBOaJo01797E2hvCoFBrPeIJqundEykxnLWc=;
+        b=QcUvpgfnMeo0L7xnJhFX5Sr+JWAaWRyc1NLDS+BHiLw/JCR8vajOm2rKfDhd8Ac6SU
+         ce1MYzfpJe37vi50vPIf+xlhLE0IJNSlVIbYFSg20wMcJcSxdoVyVEpEB9LoTgf+7jS8
+         SlhjDuli+klFgofsguh0248q2YE5FVS98VGeBW8kc01q9lXu/yeT0m1HYuMwIc9MeV17
+         oUeq+Pc7pgeuZ9zWjyA34vq5bENcS+YBTlRBkmZhg8q66vlxN5tPok/vnQDxpjbdc7XO
+         mTPN6+ndYUbpMBUMLd6hloIxW67iWxNt/ZqlSFn+ftBt3KKWj1EhCygqHPg/mcTG/X3R
+         qsmA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeFRYsin9KGnekScRnNQ4Sn7Pu24eJLcJBQ2lE8kRcB+CFUdLI+1VWs7j+UXRwGlTjM6HcqTh+vHcUYkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzg6Q9kz2KbgtRGl/xPbU2LUnbD47zu/JhFqfzndUm5L8YVuwK3
+	YXcItKPqoPsv+izG2mk+OhjQRJPIWCaS9NaSFiNgaGIS90dUTMVThSfyOUlCYQ==
+X-Gm-Gg: ASbGncts8gpxkatEGCMOyhKWNnqw8N3kUJILSk3A060E9mLQoS/n2Spm+xMkltTtovH
+	ksqt5efpx86xPfACrWKdjN9wQLKRquLV6NRSOVSNusgB+BJ7bgb9dlXautBT4FNJudIP2G3lMgr
+	/2v8ED9/ozGGICL7SDav5MO/nyVZmIfUvXNtrC+53F5MtfHFf1aZHW2Kr+Pb9nJb4VkdRLgQ7jK
+	WhgjxiF4hdYZUZ/WLJwTt3cUxwsTGSLzOMhczmvo/9I55aUnGNkvIOZ4A7fobbF6wr9gWmWOA==
+X-Google-Smtp-Source: AGHT+IEXGhJtpWKLCDTsUasg4AZJ83eo6fiziwMvcakNMUhC1SAx4Xv/ur4wHscvWzwdgagPxhNRYw==
+X-Received: by 2002:a05:6a20:3d89:b0:1e1:a3cf:c199 with SMTP id adf61e73a8af0-1e1b1b8a4fbmr2336458637.28.1733766329338;
+        Mon, 09 Dec 2024 09:45:29 -0800 (PST)
 Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:5dfc:4b08:57c5:2948])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd53ff4900sm1397667a12.50.2024.12.09.09.45.26
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd53ff4900sm1397667a12.50.2024.12.09.09.45.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 09:45:26 -0800 (PST)
+        Mon, 09 Dec 2024 09:45:28 -0800 (PST)
 From: Douglas Anderson <dianders@chromium.org>
 To: Catalin Marinas <catalin.marinas@arm.com>,
 	Will Deacon <will@kernel.org>,
@@ -80,9 +80,9 @@ Cc: Julius Werner <jwerner@chromium.org>,
 	linux-arm-msm@vger.kernel.org,
 	Douglas Anderson <dianders@chromium.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/6] arm64: errata: Add QCOM_KRYO_4XX_GOLD to the spectre_bhb_k24_list
-Date: Mon,  9 Dec 2024 09:43:11 -0800
-Message-ID: <20241209094310.1.Ie4ef54abe02e7eb0eee50f830575719bf23bda48@changeid>
+Subject: [PATCH 2/6] arm64: errata: Add QCOM_KRYO_2XX_GOLD to the spectre_bhb_firmware_mitigated_list
+Date: Mon,  9 Dec 2024 09:43:12 -0800
+Message-ID: <20241209094310.2.Ia3dfc0afadbfbee81bb2efb0672262470973dd08@changeid>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
 In-Reply-To: <20241209174430.2904353-1-dianders@chromium.org>
 References: <20241209174430.2904353-1-dianders@chromium.org>
@@ -94,33 +94,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Qualcomm Kryo 400-series Gold cores appear to have a derivative of an
-ARM Cortex A76 in them. Since A76 needs Spectre mitigation then the
-Kyro 400-series Gold cores also should need Spectre mitigation.
+Qualcomm Kryo 200-series Gold cores appear to have a derivative of an
+ARM Cortex A73 in them. Since A73 needs Spectre mitigation then the
+Kyro 200-series Gold cores also should need Spectre mitigation.
 
 Signed-off-by: Douglas Anderson <dianders@chromium.org>
 ---
-The "k" value here really should come from analysis by Qualcomm, but
-until we can get that analysis let's choose the same value as A76: 24.
+I don't really have any good way to test this patch but it seems
+likely it's needed. If nothing else the claim is that that Qualcomm
+Kyro 280 CPU is vulnerable [1] but I don't see any mitigations in the
+kernel for it.
 
-Ideally someone from Qualcomm can confirm that this mitigation is
-needed and confirm / provide the proper "k" value.
+NOTE: presumably this patch won't actually do much on its own because
+(I believe) it requires a firmware update to go with it.
+
+[1] https://spectreattack.com/spectre.pdf
 
  arch/arm64/kernel/proton-pack.c | 1 +
  1 file changed, 1 insertion(+)
 
 diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
-index da53722f95d4..e149efadff20 100644
+index e149efadff20..0437be7c83bc 100644
 --- a/arch/arm64/kernel/proton-pack.c
 +++ b/arch/arm64/kernel/proton-pack.c
-@@ -866,6 +866,7 @@ u8 spectre_bhb_loop_affected(int scope)
- 			MIDR_ALL_VERSIONS(MIDR_CORTEX_A76),
- 			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
- 			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
-+			MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_GOLD),
- 			{},
- 		};
- 		static const struct midr_range spectre_bhb_k11_list[] = {
+@@ -925,6 +925,7 @@ static bool is_spectre_bhb_fw_affected(int scope)
+ 	static const struct midr_range spectre_bhb_firmware_mitigated_list[] = {
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+ 		MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
++		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_2XX_GOLD),
+ 		{},
+ 	};
+ 	bool cpu_in_list = is_midr_in_range_list(read_cpuid_id(),
 -- 
 2.47.0.338.g60cca15819-goog
 
