@@ -1,138 +1,118 @@
-Return-Path: <linux-kernel+bounces-437667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437668-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953DE9E9695
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:25:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B629E96C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:29:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6B82834C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFE9A162437
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01C31B0406;
-	Mon,  9 Dec 2024 13:23:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="adE3Ub5B"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C17E1A2399;
+	Mon,  9 Dec 2024 13:24:03 +0000 (UTC)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C3F33597D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999572744B;
+	Mon,  9 Dec 2024 13:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750593; cv=none; b=Lmcwp3xder/kNv4DD/k6KYTIyzx/x0eFtqAjTZP85e2UnhyfwNgh/Fh3wvdbh2YvaaqH74Pp2dejWbbDtXjrxhPWY+r5uOr6+BEEGAezqIsk3hlad68rZ9qHhyxzJWIYjWaDppUIo1b7WEgQmzpXRxO9JF1WVsfOQvGB3OLUntU=
+	t=1733750643; cv=none; b=ATqLWe6v+/HHYv6SkuVy0noFzu+UCEMVpLdeeh9H6NE7I5XBpwPQUnifRYuFuk8Zg9RkscZUSO6ZOQkmJzo7r2NuaorGFNlefRFk8DieU0ipVa26o1o9nXFaItIG+6ubuh58tbgqKUZBymV1rbB0sWtx+dFQj0NMnL1kqqUV9ds=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750593; c=relaxed/simple;
-	bh=04S6B0nJf9Hn+gzERCF/uMkmUx0R4j34PMLxCp3iOME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lNMxh3TNtItLe1JLYNFX2pHT3AmmGAYiB1WpkoShsqz5WxD289X1TNdSIVjPJTCcVwQoQS4mIGqIF8HGMD8KQ3qvFXTjpG9o/WbdmqSUoYsk0XVjKbGe6Y6NWCFiP2GoziEj0/znEILo7rz2SXVifnVqZTRTmvy2HUk3tsmuMZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=adE3Ub5B; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-3003c0c43c0so22965181fa.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 05:23:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733750589; x=1734355389; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=P1Q3KowuVs0mZ0rb0Ic9ZcrPzwsNDNKvHLsAlNmDHFg=;
-        b=adE3Ub5BZfR6CrZ2XJUHI82jOpLKlD7RblzqWlFNs5L4C9VqHSuE0bVU8LmlzIj46Y
-         wpwJZuPcKuvs/NBG5HwfgfDWgfgwBH4PXs3eHkSmXTkmyq/Wpl2cd5Pm9PZjb1jOfaqc
-         3Gup/6gjbPgBAMha3i8Xo2tKgTk3HaGHocuPdWcNXOTIZ7smxJK9P130BXiytoJSP8GW
-         /6G5JSFyO0UBmhgP69y8xI4GrKEn5kuPG/6q94ysm/ZgoXcpHKMgC8FftVzY6EygFODw
-         50OZVTsGC3lpwybc2O0ZikoacQjZnSO91pVH9q8i5tsbXusnqSK8EK70t7D718AMD9Q3
-         3CNA==
+	s=arc-20240116; t=1733750643; c=relaxed/simple;
+	bh=1tLSL87TZA7eVAP+vAyLhAovYg5kCNthTxPTDpOFT+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CBqgPHKe72miY5tyVctra3W2UHj2EPTIh2DYozcKOeXCUjbUDqUJUhcsy29aEJq3vXPeo/q8qXUpN6d6KMveBiqjrrSGMyg5DRRG5VdJNE+nauHv/GcAErcVVBs+ZbgwSjXymJ+ZpJo7sU7r9jYLbu27id9wY0162hZV2HFVS1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4afdd15db60so660979137.1;
+        Mon, 09 Dec 2024 05:24:01 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733750589; x=1734355389;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P1Q3KowuVs0mZ0rb0Ic9ZcrPzwsNDNKvHLsAlNmDHFg=;
-        b=hhyqU5/grvKHvdxr6IrfwHrHdT7zYxJNDuswJqs7x80NQuNDmoOk70xvLFSxTETpxm
-         gYw7aU4aTdvzRVGAG/xi3ieebHCtVnC2PGgp8XY9mSnRJImJoNSxhqDtmGJxKERRShSg
-         uq72M/wmoMmyNyqvBo01653GX9fH3IBTRZtoehZggsYfHpIaCGYOPrO/hLdcu66m6bC5
-         tRDoHW/Sni22AHrc9/u/Gv0OidRBKlkUFboHjjCBeKsSod/Wd8OIKSElSAIldLXtUv7g
-         PJMbv/seJYxfYgJX+EErAnoq7ZnLFfAchD2EYQ5jKG/AwwCQV6JSM8djx9j2um+kaF+N
-         L6aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9LX9Wrglrp4FasVQ7jtI350yhbwBQ9uKWv5f6R4+68YBoNmBVDPCgrwfJjBciYE34O7JhwFOCUqflPmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0fNsDY43FmmUr0cahq2XPel5knrsG1p6WatDf+gk5u3foQ5h5
-	hlPDCUUEdGxmYIrqUoD4I6isugDbZw2TnnfvOLC52qUO7DGqacxxaZkTv1ZLLf8=
-X-Gm-Gg: ASbGncu+1TliSRYFwv9FfH6neXQzOQeNO/WIbQykYNmmzzIeiVqn4eEhL/FMf6t9e5Y
-	dKqGG5bMggVUA60NXwW4mEnwisvltxSK4cNDDeBEB8MsStfWUPBz/Fz60pgcrZyU5WizcyPLYxn
-	jurpmKf1sSD4QedceH4DZFioZhEeTIpR+A0Ts92qKe/AX1gjNm1tYH1G0eu/m04hVJo/kwn6lcp
-	7JbrVL1OhHNwtGq6ZWlqVn3iRfPnFuV6rjPTPo8Tjf/ResSvAMUw8emuLvcSuvMnAXehApMvMUl
-	2x71vEdOAMx3B+pX2SlFPPXeHqh6qw==
-X-Google-Smtp-Source: AGHT+IHzRS3kKeuBIaVbiSldvKszXqHDXCVoEU74JuhkpXf+Z7S09whtCDZ/ssVTFfacSGsQVfKscw==
-X-Received: by 2002:a2e:a817:0:b0:302:17e7:e18a with SMTP id 38308e7fff4ca-30217e7e59cmr24900501fa.26.1733750589475;
-        Mon, 09 Dec 2024 05:23:09 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3003b760a56sm8652811fa.18.2024.12.09.05.23.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 05:23:08 -0800 (PST)
-Date: Mon, 9 Dec 2024 15:23:05 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Marek <jonathan@marek.ca>, Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev
-Subject: Re: [PATCH v2 0/2] arm64: dts: qcom: x1e80100: fix USB OTG
- regressions
-Message-ID: <iw2c4fceyppf2w2gueevsqsz2z7hatbqo33vufx3veatprczu5@u4k3j2igy6ee>
-References: <20241209111905.31017-1-johan+linaro@kernel.org>
+        d=1e100.net; s=20230601; t=1733750640; x=1734355440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vqD9y+TZlpx8awPgJD6i8retfqKC4vxl3zB5fzptVp0=;
+        b=p3fuWPGbEB1VEZYuzDYLafRaC7ju57csYnZJy/wf+ymp0uXnliC98/L7p1Y/yvKnc8
+         dsh8XS4a3g0O4HOB4zn1agCx/CaeKQPuifvh5GDVzUkqUOFtJRWUJe6cGe1Iiqd+XQc/
+         b2Ib1aDjj/TfW8GgnJSlHmCg3E6PmgDSSpOe+yyn4lzDVY8xSgOBtx5omEpuoyZ3NeDo
+         uHkFa4FlfAWwARp11ivLqGhWrb38qmOlofGJ5PmKyy/VRB09NDx5ZRB4o0NcT+q4/vf8
+         qQUnToO/2EgXxmPHY6avlc1INJs+IsPCNGwngX94ozHY0N/VmsSbLLYSJD6y9vNS8H5w
+         JhtA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8NF1H0hJ+nRQ/NWy3ztOR6bFYyHnWSEqpMwq46jBYxU7RAmh4St6oBA+TGr3UBb8cFyaU3avrLXj8@vger.kernel.org, AJvYcCV65zXCHQYwm8WqTYYT4Q/7a5GrZb0L+mPpNVzZWHS+7wVTIMdZu1Uv1HFjtpuprkLCRp+6fUD3L8X3@vger.kernel.org, AJvYcCVInknOWF2YJWl2I3l8h9IzgasYvjSQURlIBuWpT7+sLqX2b2AKwADkkO3vDLf+TFcmbIibo64Omc/ECrySlsbugo4=@vger.kernel.org, AJvYcCVyP+bIpaEOftHiP7vdthMttenW0TcqMMqwkI1y8I0bIT9yVIgUI56xgBgmPOcvpE4X5MLpUv7t3RBQVg==@vger.kernel.org, AJvYcCW4qLDg84mhZKjAzujToewL0LDANnTm+yy94qfoGWFebpwtZOYKfegiuc5GLNByv+/nsya9pAs3CPKIBIw=@vger.kernel.org, AJvYcCWJPyl+YxjBO8Vd8HUgPRYQASOAc5ZBeSCdwhSOGLitRqEiD59bkLTehT5uhsUXPvDh7Kid9aYNL4CjS4lw@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHJlF69yfPzppdjMNcIj33xBvMbB2Kl/IQna0LGYn97Ne8ksGM
+	ZWi0CBkEOMj+Q5V93STlwJTbFGz1fftKD+Wq1F79XY+IOntXOyrusHz1wmjrdEM=
+X-Gm-Gg: ASbGncsDnPhv5Li1tHafXUGFusugsT04GVaKXHHERP2IlSpX6PCflt1SG0xPqw6Dixg
+	JSY4oE3KOsgx/qg0SHMXDo1gKHVtvEpkCSEsh/1WiQit6OXM+w/CDkyp2U9Hlho7OcCGMzSPemi
+	PEGJeM6xplAuGDTHc0McW6yMU0lzuIREjhAAvUfGUUh/IoTTZ37Xf4x1yL35MqOe6T0sRrr+/vY
+	SKl570N7ivdCRKCVVQhpNEmVdjiRFaoFK+wX59CRokq2k14v7H7ba7QUbXhHr+ftJnFifSLZBpO
+	09GE4so6Mf4ZVhjv
+X-Google-Smtp-Source: AGHT+IH625btiLBqvGqpn3DMiqK1dI+7zObNttFtPEmoj5A2GsXC6dly550EJA2KOi5CRl7my2sD6w==
+X-Received: by 2002:a05:6102:3914:b0:4af:f809:5172 with SMTP id ada2fe7eead31-4aff809641amr2169592137.1.1733750640230;
+        Mon, 09 Dec 2024 05:24:00 -0800 (PST)
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afdae80f4fsm745253137.31.2024.12.09.05.23.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 05:23:56 -0800 (PST)
+Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5174f298e18so336866e0c.2;
+        Mon, 09 Dec 2024 05:23:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUAkpTZsU3eRcD8C1NFGc4E6VOvkyXuLZWO18Q3ARbfoLvjQ76uvkVPtA3faCpgi4MqkxGKrie/dJM+DmUe@vger.kernel.org, AJvYcCVM0p8DG2MyD8qr2aRgREB/4aYovHvtBtUZ+vxSslT4ACKuS6YCnAssZyD5RFcy4oZ0EwVkHHdFYBAo@vger.kernel.org, AJvYcCVxK+X3IBEZsY46pdQR5k5FJaeQMmNTvBiFBfQ689CNx/KVaQ0/1Lyi2uiRwKYkgrk+HkXJei/prG/rmVw=@vger.kernel.org, AJvYcCWB0h49ONuBKwY3G2AfIMLBNPLLuO524dVgNV0jejKe1abkON4AlIrVnytZEeY8op1R3ICs6wqS5po7WxLT7VxSeHU=@vger.kernel.org, AJvYcCWb5+V/6stUGi4qm/hsOxwhPB8DekgwEkzLBq+WjUMNmC4+bTglWNpNc5sMCa+U6+yDyY9VMf4vAMIRXQ==@vger.kernel.org, AJvYcCXv+vP3MljtZRtZUA3B9bLTCrrOOixTufEN4zdBtkjhyjjxdbzjqnpVDI9eFcgvg1J6dl5y0W8jHxd2@vger.kernel.org
+X-Received: by 2002:a05:6122:134a:b0:50d:c2e6:2730 with SMTP id
+ 71dfb90a1353d-515fc9ca46cmr10821615e0c.2.1733750636501; Mon, 09 Dec 2024
+ 05:23:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209111905.31017-1-johan+linaro@kernel.org>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-9-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-9-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 14:23:44 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW2SF2Cv-GLBQk5=CNX-LDbs3sq+S+92hT3rgrrCo18rA@mail.gmail.com>
+Message-ID: <CAMuHMdW2SF2Cv-GLBQk5=CNX-LDbs3sq+S+92hT3rgrrCo18rA@mail.gmail.com>
+Subject: Re: [PATCH v3 08/25] ASoC: renesas: rz-ssi: Fix typo on SSI_RATES
+ macro comment
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 12:19:03PM +0100, Johan Hovold wrote:
-> A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
-> ports can break SuperSpeed device hotplugging.
-> 
-> Abel noticed that the corresponding commit for the CRD also triggers a
-> hard reset during resume from suspend.
-> 
-> With retimer (and orientation detection) support not even merged yet,
-> let's revert at least until we have stable host mode in mainline.
-> 
-> Note that Stephan and Dmitry have already identified other problems with
-> the offending commits here:
-> 
-> 	https://lore.kernel.org/all/ZxZO6Prrm2ITUZMQ@linaro.org/
-> 	https://lore.kernel.org/all/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef
-> 
-> Johan
-> 
-> 
-> Changes in v2
->  - revert also the corresponding patch for the CRD which breaks suspend
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+>
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The SSI_RATES macro covers 8KHz-48KHz audio frequencies. Update macro
+> comment to reflect it.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-As you are reverting two commits, please revert the third one too, it
-breaks pmic-glink.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
-> 
-> Johan Hovold (2):
->   Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
->   Revert "arm64: dts: qcom: x1e80100-crd: enable otg on usb ports"
-> 
->  .../boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts  |  8 ++++++++
->  arch/arm64/boot/dts/qcom/x1e80100-crd.dts            | 12 ++++++++++++
->  2 files changed, 20 insertions(+)
-> 
-> -- 
-> 2.45.2
-> 
+Gr{oetje,eeting}s,
 
--- 
-With best wishes
-Dmitry
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
