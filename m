@@ -1,110 +1,122 @@
-Return-Path: <linux-kernel+bounces-437239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E309E90C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:46:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B9EF9E90CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:46:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E3F4B2823AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:46:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF65D18822CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:46:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8D05217F25;
-	Mon,  9 Dec 2024 10:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC560216E1A;
+	Mon,  9 Dec 2024 10:46:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tR8zGabs"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZoItZtL1"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 216261DA23;
-	Mon,  9 Dec 2024 10:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42B42130AC8;
+	Mon,  9 Dec 2024 10:46:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733741149; cv=none; b=NfNUqxqRb60iZ6bSsQr/QDrRwgwYPPnG3QAJNcooMt44nm3TMAjvMrBZ/QCSyYjmrOqF/UYbiQ8HO1Oi0wabe6BrN+SHfKOd/iqmR/+S/nOmauRQyjHbuwTlGt7wdffO+EDi22ZAABA/XRhuTbO1mnA6o0s7923DigVAJx7yWZk=
+	t=1733741202; cv=none; b=qsGg9SaQRn0OWaK2cUXE0lvxnaQAg33yhIoWkNCT07/DRfMJu+2ccxp4frJtTz8t1OIcHArKZx6dCvT/XHCmr9cXjvkYsV1u+epApmOAxqJdf6aQoHb8DIDu019FVGyD/1g5By/JAoyU2+1MZkNuNG5gBfsyZif1DYbJ80pPyc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733741149; c=relaxed/simple;
-	bh=KqxofnkRfuHYODB9+MVSOswW7N8mb6NXv1+2dwKMJww=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NBMV2jm8RXCyDioPHWiIcihal3AaOyf9ykQNZYGZ/75aBOMOcDLo3shwrJs9vV/7CMkTw+KmFPyBbZEWdUev33uPFweGgOTdfSNM7Py8P1EG9IfcaeqEHv8eH0aANSUcniCmJML6gB+EzC7oYtkW3xpLTLRhdz8Ex+VGWws/PN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tR8zGabs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF585C4CED1;
-	Mon,  9 Dec 2024 10:45:42 +0000 (UTC)
+	s=arc-20240116; t=1733741202; c=relaxed/simple;
+	bh=ficvqIcjUVmyYtMbNfutVkfgvZVWzK9sxXwvtshVcDg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=dmPfPoil1yFWLqotdqu/P+/yv2KbNCFVmAinUHtqd5uNNgMdENYcvfz7eU/UQ2Nt1W/Jen9qz3qCFXoBE90pXsV0eI9oE3yAFE86RUFOdEvTBa5qd+cI7i2R1V7QUXRHQWRLLy2zqjwDzPjKAmjDY1gTbGvzMwrZHglE3rnlnOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZoItZtL1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id B7113C4CED1;
+	Mon,  9 Dec 2024 10:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733741148;
-	bh=KqxofnkRfuHYODB9+MVSOswW7N8mb6NXv1+2dwKMJww=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tR8zGabsV1VttmSo/SHMJJxse3+stSwzmjaVdQodytl2L9wp1IvCnKlNLoqOUznQd
-	 LKa2/fWvAkiZi/2MN56Q2q22mvhgQn3fgZ/dbYpn9cDOkrQXCE7RYic0Ffyo+BtrLa
-	 O1H93RzC58UT1ka9rSZ3+A7GkY8cAku+9qas7lE/6vZMvtdPOGS65dKrHTWritPIZy
-	 XK6dr7YrwJjgYm2pNuyh9oMSyBSp2nng4/eh7EBFmq0VYkj2m3M073uHNSbsjpd3Ii
-	 sLM0J7hhmilIt4XSyALlXjgcZiX3rX4MWyGnlrWIrv7rxSGXtx5X4aKEyhEda7d+yB
-	 FKoCht94jyKJA==
-Date: Mon, 9 Dec 2024 11:45:39 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Fabien Parent <fabien.parent@linaro.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	robh@kernel.org, daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, chrisi.schrefl@gmail.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	Wedson Almeida Filho <wedsonaf@gmail.com>
-Subject: Re: [PATCH v4 03/13] rust: implement `IdArray`, `IdTable` and
- `RawDeviceId`
-Message-ID: <Z1bKU2vNp19Yx8bO@pollux.localdomain>
-References: <20241205141533.111830-1-dakr@kernel.org>
- <20241205141533.111830-4-dakr@kernel.org>
- <CAPFo5VJ9=VAghiUGbzPjDDdG8tg6xNQaRtBduHk8R70jktPQNg@mail.gmail.com>
+	s=k20201202; t=1733741200;
+	bh=ficvqIcjUVmyYtMbNfutVkfgvZVWzK9sxXwvtshVcDg=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=ZoItZtL1ryOcxTz9cH/n2GgrlJXRTgRd8X3JmrOl9dK9+BTUUyBCaNZUPJBk5oEcP
+	 m77Js3Otu6rOdzSVXPAXSDz1VQyrDW8pPDqlUx84cC0QbKkj7KMF2qSbJwVa1t1EXF
+	 KvQ6RIonAGaJEI2XvL9O7OedPV5BFWphSuGQTURBnyH0zSYoH8dmek/Siz9U5CkK0N
+	 vg7QSx6KbY70otFsGzJtDjXy1FJYHhGnCfDh26KXfY6UE/VK47J4VWwP+2q/X+RRX3
+	 3iPJgm/RJYo5ktYSKjdvOxZ8aBgRzpc4Uwq/w6PZoqn+z2JNL4tk6m370bh1uTAhsm
+	 rc5Lb//mlqbOQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA342E7717D;
+	Mon,  9 Dec 2024 10:46:40 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Date: Mon, 09 Dec 2024 11:46:15 +0100
+Subject: [PATCH] power: supply: gpio-charger: Fix set charge current limits
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPFo5VJ9=VAghiUGbzPjDDdG8tg6xNQaRtBduHk8R70jktPQNg@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241209-fix-charge-current-limit-v1-1-760d9b8f2af3@liebherr.com>
+X-B4-Tracking: v=1; b=H4sIAHbKVmcC/x2MQQqAMAwEvyI5G7BFD/oV8VBrqgGtkqoI0r8bP
+ A6zsy8kEqYEXfGC0M2J96hgygL84uJMyJMy2MrWxlYtBn5QjajxlwjFE1fe+ETXUDOOLkzBGND
+ 8ENLtf90POX+owkMkagAAAA==
+X-Change-ID: 20241209-fix-charge-current-limit-a5e5bbafdf11
+To: Sebastian Reichel <sre@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: Sebastian Reichel <sebastian.reichel@collabora.com>, 
+ linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733741199; l=1471;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=JMP/YPv48CKxY8k+OHWu1fWQP76Gr1cU/J9kXPrJcps=;
+ b=BYybNBmEiGJm6J9m12P59VausTgYIExWvufe6VUrPuap1Hx5eJ7OG9YSOmiA/l0w0NPXVI/EY
+ ZT1wKRPwS8uAgh5NI+K3CIJdEfSKOsTWHGLMq+HhoSwguHe5ryQ6IC7
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
-On Fri, Dec 06, 2024 at 05:14:00PM -0800, Fabien Parent wrote:
-> Hi Danilo,
-> 
-> > +/// Create device table alias for modpost.
-> > +#[macro_export]
-> > +macro_rules! module_device_table {
-> > +    ($table_type: literal, $module_table_name:ident, $table_name:ident) => {
-> > +        #[rustfmt::skip]
-> > +        #[export_name =
-> > +            concat!("__mod_", $table_type,
-> > +                    "__", module_path!(),
-> > +                    "_", line!(),
-> > +                    "_", stringify!($table_name),
-> > +                    "_device_table")
-> 
-> This doesn't work on top of v6.13-rc1. The alias symbol name has been
-> renamed by commit 054a9cd395a7 (modpost: rename alias
-> symbol for MODULE_DEVICE_TABLE())
-> 
-> I applied the following change to make it work again:
-> -            concat!("__mod_", $table_type,
-> +            concat!("__mod_device_table__", $table_type,
->                      "__", module_path!(),
->                      "_", line!(),
-> -                    "_", stringify!($table_name),
-> -                    "_device_table")
-> +                    "_", stringify!($table_name))
+From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 
-Good catch, thanks!
+Fix set charge current limits for devices which allow to set the lowest
+charge current limit to be greater zero. If requested charge current limit
+is below lowest limit, the index equals current_limit_map_size which leads
+to accessing memory beyond allocated memory.
 
-> 
-> 
-> > +        ]
-> > +        static $module_table_name: [core::mem::MaybeUninit<u8>; $table_name.raw_ids().size()] =
-> > +            unsafe { core::mem::transmute_copy($table_name.raw_ids()) };
-> > +    };
-> > +}
+Fixes: be2919d8355e ("power: supply: gpio-charger: add charge-current-limit feature")
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+---
+ drivers/power/supply/gpio-charger.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/power/supply/gpio-charger.c b/drivers/power/supply/gpio-charger.c
+index 68212b39785beabfe5536a18fa15bc249f7b1eea..6139f736ecbe4ffc74848797a72095f4cadf3b62 100644
+--- a/drivers/power/supply/gpio-charger.c
++++ b/drivers/power/supply/gpio-charger.c
+@@ -67,6 +67,14 @@ static int set_charge_current_limit(struct gpio_charger *gpio_charger, int val)
+ 		if (gpio_charger->current_limit_map[i].limit_ua <= val)
+ 			break;
+ 	}
++
++	/*
++	 * If a valid charge current limit isn't found, default to smallest
++	 * current limitation for safety reasons.
++	 */
++	if (i >= gpio_charger->current_limit_map_size)
++		i = gpio_charger->current_limit_map_size - 1;
++
+ 	mapping = gpio_charger->current_limit_map[i];
+ 
+ 	for (i = 0; i < ndescs; i++) {
+
+---
+base-commit: 88e4a7dc04b7828315292eb3acaa466c9c123d8b
+change-id: 20241209-fix-charge-current-limit-a5e5bbafdf11
+
+Best regards,
+-- 
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
+
 
