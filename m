@@ -1,99 +1,232 @@
-Return-Path: <linux-kernel+bounces-437332-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437333-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23AC9E91ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:15:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B1719E91EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:15:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CCC21887615
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B9F61881F40
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:15:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151202185B3;
-	Mon,  9 Dec 2024 11:14:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84BD221764C;
+	Mon,  9 Dec 2024 11:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DlsGc7xp"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rAKcUGQa"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B39218581;
-	Mon,  9 Dec 2024 11:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C132185AF
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733742890; cv=none; b=R3y2ALvjma5WJZXbndpBtzlnb2T4X//06fEaUOAVCIlAG8xGR46txXLcWaLp3RxHoTQBMaLTIcvxa+EMhtOPk4U7XYpaWhJYOMSwmukQosiG4HvVwJnN5ND50zfSgte7Q4PW51EYGbF1ufcingWaVulo9B3U2T6Y0w+B0t/2VUg=
+	t=1733742936; cv=none; b=rHQpbPG8LD3x9tk0NBn+OFKMS/J+0MXFvlP67e/n0unMU7OX4r2nB8ysz8gq840EL0opYccLVOw5y1Rtdp3bfXgBS+xgcwTgQwL4gIvX3zwi+hsC8GKUlQBiOZ9KKErafMYb70FjDZmmuzEkR3bgVbkvnjYUJXDHJv7ZtxuTk0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733742890; c=relaxed/simple;
-	bh=PGOh4xzLiyvh6vHDCj+jzXPBkC0tCU+wNRTaPJafHzI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VhpNyafPF3xl6Exvm7rBZnJJGJK62kynVp0KYVQeFwRXpDRHNDoTMW+u3IjXu17eA0YLjYXo8u8VCuqOTEzHsGXnitjMJ4AICOW/TCzTtqpiFyxfV5AomliZktOIKhotRLnwjCY41ybBt+XWVAGyVTC5GfwJByJB6QPllmOmHIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DlsGc7xp; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-3003943288bso25295081fa.0;
-        Mon, 09 Dec 2024 03:14:48 -0800 (PST)
+	s=arc-20240116; t=1733742936; c=relaxed/simple;
+	bh=RO7kNikL9g+3lFMrapfkVYDcM0ZuWgb3OmFL6ptgUT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MS/+tQ64LmdJf9EaAVS59sVnxsYnEjnsQKUDCPKJhGFSrPlbx9FrxPN9hXKA4zarTUNRo3HWidRg5vs9ZxMVa9w7q5tG8cKIfUiyiicaUFmoIV+7RGZn771Tj8M0ynSEMPcR1LdEe7yP37hKdFtrqosdpukyGM+us5DUnj4A0kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rAKcUGQa; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-725ea1e19f0so666149b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:15:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733742887; x=1734347687; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PGOh4xzLiyvh6vHDCj+jzXPBkC0tCU+wNRTaPJafHzI=;
-        b=DlsGc7xpcgnwN6DxLtpz2zMhb20tnnXKzG+J92rJcc7lYWfCCTVyUGvt3CoDzleBAP
-         tgVO7n4P1nAoMbFXouM8IuxdL8ttSnFoVj4h/SR9ViAHhsT6y+jC2uZlOa58+20xs4HD
-         ejaj+2iVuoeLoaicfXJP29ZqnBO2wn3BQ/H2ma4cgER8ym6PDdOrXgaYOSMawGdGrwQW
-         FCu72RI/7UWWLUthyjPeML9J9G//uxiuuF6pC002HPNS/M64qJXhZniYifCD1PdB1/ma
-         03fqF9LmGHuEihquLd9Xe5P2PTdElxr2r8hz5rl9tta4uHYdTh46D64cUdAoOD24k43W
-         tJSg==
+        d=google.com; s=20230601; t=1733742933; x=1734347733; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OVkyJahyGma3QcDBGZSqqD++2HSB1Bswo9qJGoc6gSc=;
+        b=rAKcUGQaCkpdmNcl1RMh59a/C28TIizCXQ5S4MvBhjTbQu15+fPFMoxqrbrz73FK1t
+         yPOVNb9DLqT2czSOaN7kN8P+n39daeBQlEJ4mEiR62TVlADyisUicrPS2yRKi/e+6gkO
+         9ku/RxUuymNvC9kWyhyQb1ei83+dXdNiyiC6xv6FykPSehiO+xBWzu7aGJtGDDDG/3Tg
+         qBoAJQYux/uedy2RW7dmBhkuhqRYNheO165gKPA2G7dSG3aN2KpS5HV6Ka4p6YO725dg
+         1PHvKDkc6raKQljEDohC6PMDnL464Zujd8m9wpeAKrck4PFyMq+Ale/GuJBjEb/+fzPm
+         iinA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733742887; x=1734347687;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=PGOh4xzLiyvh6vHDCj+jzXPBkC0tCU+wNRTaPJafHzI=;
-        b=ThpXfqcYkAUm/mV4lnaoKxUPYyyCz3I+2qZhMtSNn+qntEM4RHb1B3GW4e+1Ed3eNX
-         EEWw5pFpB/Hc9nEsF2E5bWSlQsWp2L15nPAP0P3ECwaUwFmWztC2XZtzQB4s6zUuafkO
-         rf069UA1R9tpDClaWZfOqLC6LjvC5uFVF9v1TRyTtKOpqfwxuTeutaE7JO+Q/UVJKFzK
-         rUzUqVa46Tf+of2IKMO92mbY1s2GXich17vXO4WdpzZQ5h1iK1/CeMAPaOW9OxaPW78C
-         Om1QLFoEGCaJYC7YLUQvhLMzJZBWYlkbUBtKv86SKqHFU1kxuhjZ/mTtiHI5qODFf2je
-         Gx0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZdlGuDFWEW31awejuFeOOTt2BtQnALgln3VDSdJrKjAtosE2WSkzFtmzYKMFlsu436YRHfrMA7GJkLZI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj2P/hGUr+w9/kZYjN3NwE+TyfGbN3+YJO8atr/5hvq8FfBxzq
-	iG5kzM8zrFxN55tYzBsXPRf4nMaVCZ/4VtFiCiyBS+PN0300EldvcquARQ==
-X-Gm-Gg: ASbGncs+sTepmbtLGSeuE/jh/HSvl4zGnXya6MK+j1y2XVoV73QUf7enX1cnUYZXs6H
-	0hjEPunpiJSVJd2pDAYWL8eDy7Od18hjnyUAF/mMJJJaksZx4DMhHxUujJbNkxT2d4IT4FmlVXr
-	iraYADtWXpYcJykKdY3l8IBc6q/TEdQ23ACGUD9/KNhpntcBVmzfsLTXUdddcivmOCJtLXhJCOn
-	/DBzytOraLNXx02O2j9YSDV70mM7xUvsgEbnkdels0ezWgoXNtgo3jlxRXG7wZV
-X-Google-Smtp-Source: AGHT+IE8FdvLWR8yOPGxthF7hUOJOzsaYqOm4faQrVUBS1PbIsgYRicXu70HS/CEF5ApJxkpvHL6hQ==
-X-Received: by 2002:a2e:bea5:0:b0:300:1f2d:97a with SMTP id 38308e7fff4ca-3002f913f79mr42114051fa.16.1733742886588;
-        Mon, 09 Dec 2024 03:14:46 -0800 (PST)
-Received: from foxbook (adtp43.neoplus.adsl.tpnet.pl. [79.185.227.43])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30221998b4esm3307801fa.110.2024.12.09.03.14.44
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 09 Dec 2024 03:14:45 -0800 (PST)
-Date: Mon, 9 Dec 2024 12:14:41 +0100
-From: =?UTF-8?B?TWljaGHFgg==?= Pecio <michal.pecio@gmail.com>
-To: Ping-Ke Shih <pkshih@realtek.com>
-Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: rtw88: missing device IDs in v6.13
-Message-ID: <20241209121441.304a9e8b@foxbook>
+        d=1e100.net; s=20230601; t=1733742933; x=1734347733;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OVkyJahyGma3QcDBGZSqqD++2HSB1Bswo9qJGoc6gSc=;
+        b=X6CuKnGzCcocmOpfnIKwzEsFytWTqoN9fbQ/tUmOyQzbTZcEtIj06wbguA2Wo03bO6
+         hX7Dw8Tz4aGfXtADEReho7LJJEq5qefLodcIlOf7Yn9ypBRTHT2bGJoT+BJfbG/d4VxB
+         MO8CG25j1tD4t3UFfxQ4zISgnEq9AP5SHvMtL2nXEjgbItxJAnysF0E8avgvUPCl6q+F
+         R/5DNcAB1R0yaMkm5nzhXRDcH1NzXcXl8byFaEaS0t1Y4qFHvy+PzRVqBlcvMseXAG59
+         q4+6wyhe4trb++KmWZ5FwAU0nzBLoaRhwPUjagxKnVA6BLBd6mUaW9+JXgFdqE/+5z5l
+         CBhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsA5OJ+ayW3CH/cuDTN18qQiwCKlefEJ0D4RrMxBCBv2nSPI+dS/2kveCGDJOGbtCtqtUQzCB5N5enX/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxdwgVQASaJLPRxS5M8Pra/5SXdI9e44t0ml+9kcsTzjXWiZkGU
+	dtnZ3xU7Mwxe1FJO6oW3pu9TwvTLsNQKb3/sxaQrBAyWv9PWG2c7bRPQjK8FIw==
+X-Gm-Gg: ASbGnct9MODyEEA2T3xf6Gi+6Y5f0OEqiYmV4tlzISYnQb9YGnNNPY/cD12uYR2/1El
+	kPRntQca1ANXz/gKhg723yXM7lxPD2Lkw+Z/scvbGkX5jKMgT3JsRan4vpavV0eHyHHUegjXmqo
+	H5a5mKB3rSqd/+kQSxxYq8Q+zJPbv5MVDU4gFUzX+6QxRWg7dVSHMHHEsHgdKTOUIoInsIp+mVR
+	vAWCDQ/HimdpXUmU9hWu0m/Ov/FZ6uPSty6R2gH2Q2E99uJ4PwPkcxsDi4UZroS359xAqMxGoVm
+	KmU07xOkBMu57uJ50ZU=
+X-Google-Smtp-Source: AGHT+IER07FJ4K7xln/mDShfSyG+TL40w7xcVCvzkmcK1CZR2jPrwXlngVXWXvDkX5l0uSrx8QyKvg==
+X-Received: by 2002:a05:6a21:7895:b0:1e0:cbcf:8917 with SMTP id adf61e73a8af0-1e1b1ac445amr3546637.21.1733742933318;
+        Mon, 09 Dec 2024 03:15:33 -0800 (PST)
+Received: from google.com (104.132.143.34.bc.googleusercontent.com. [34.143.132.104])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a29c5ad8sm7289250b3a.8.2024.12.09.03.15.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 03:15:32 -0800 (PST)
+Date: Mon, 9 Dec 2024 16:45:24 +0530
+From: Ajay Agarwal <ajayagarwal@google.com>
+To: Jian-Hong Pan <jhp@endlessos.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Nirmal Patel <nirmal.patel@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux@endlessos.org,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	"David E. Box" <david.e.box@linux.intel.com>,
+	Sajid Dalvi <sdalvi@google.com>,
+	Brian Norris <briannorris@google.com>
+Subject: Re: [PATCH v13] PCI/ASPM: Make pci_save_aspm_l1ss_state save both
+ child and parent's L1SS configuration
+Message-ID: <Z1bRTCHls22fMoBT@google.com>
+References: <20241115072200.37509-3-jhp@endlessos.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241115072200.37509-3-jhp@endlessos.org>
 
-Hi,
+On Fri, Nov 15, 2024 at 03:22:02PM +0800, Jian-Hong Pan wrote:
+> PCI devices' parameters on the VMD bus have been programmed properly
+> originally. But, cleared after pci_reset_bus() and have not been restored
+> correctly. This leads the link's L1.2 between PCIe Root Port and child
+> device gets wrong configs.
+> 
+> Here is a failed example on ASUS B1400CEAE with enabled VMD. Both PCIe
+> bridge and NVMe device should have the same LTR1.2_Threshold value.
+> However, they are configured as different values in this case:
+> 
+> 10000:e0:06.0 PCI bridge [0604]: Intel Corporation 11th Gen Core Processor PCIe Controller [8086:9a09] (rev 01) (prog-if 00 [Normal decode])
+>   ...
+>   Capabilities: [200 v1] L1 PM Substates
+>     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+ L1_PM_Substates+
+>       PortCommonModeRestoreTime=45us PortTPowerOnTime=50us
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=0us LTR1.2_Threshold=0ns
+>     L1SubCtl2: T_PwrOn=0us
+> 
+> 10000:e1:00.0 Non-Volatile memory controller [0108]: Sandisk Corp WD Blue SN550 NVMe SSD [15b7:5009] (rev 01) (prog-if 02 [NVM Express])
+>   ...
+>   Capabilities: [900 v1] L1 PM Substates
+>     L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1- L1_PM_Substates+
+>       PortCommonModeRestoreTime=32us PortTPowerOnTime=10us
+>     L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2+ ASPM_L1.1-
+>       T_CommonMode=0us LTR1.2_Threshold=101376ns
+>     L1SubCtl2: T_PwrOn=50us
+> 
+> Here is VMD mapped PCI device tree:
+> 
+> -+-[0000:00]-+-00.0  Intel Corporation Device 9a04
+>  | ...
+>  \-[10000:e0]-+-06.0-[e1]----00.0  Sandisk Corp WD Blue SN550 NVMe SSD
+>               \-17.0  Intel Corporation Tiger Lake-LP SATA Controller
+> 
+> When pci_reset_bus() resets the bus [e1] of the NVMe, it only saves and
+> restores NVMe's state before and after reset. Then, when it restores the
+> NVMe's state, ASPM code restores L1SS for both the parent bridge and the
+> NVMe in pci_restore_aspm_l1ss_state(). The NVMe's L1SS is restored
+> correctly. But, the parent bridge's L1SS is restored with a wrong value 0x0
+> because the parent bridge's L1SS wasn't saved by pci_save_aspm_l1ss_state()
+> before reset.
+> 
+> To avoid pci_restore_aspm_l1ss_state() restore wrong value to the parent's
+> L1SS config like this example, make pci_save_aspm_l1ss_state() save the
+> parent's L1SS config, if the PCI device has a parent.
+> 
+> Link: https://lore.kernel.org/linux-pci/CAPpJ_eexU0gCHMbXw_z924WxXw0+B6SdS4eG9oGpEX1wmnMLkQ@mail.gmail.com/
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=218394
+> Fixes: 17423360a27a ("PCI/ASPM: Save L1 PM Substates Capability for suspend/resume")
+> Suggested-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Signed-off-by: Jian-Hong Pan <jhp@endlessos.org>
+> Reviewed-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+> Reviewed-by: David E. Box <david.e.box@linux.intel.com>
+> ---
+> v9:
+> - Drop the v8 fix about drivers/pci/pcie/aspm.c. Use this in VMD instead.
+> 
+> v10:
+> - Drop the v9 fix about drivers/pci/controller/vmd.c
+> - Fix in PCIe ASPM to make it symmetric between pci_save_aspm_l1ss_state()
+>   and pci_restore_aspm_l1ss_state()
+> 
+> v11:
+> - Introduce __pci_save_aspm_l1ss_state as a resusable helper function
+>   which is same as the original pci_configure_aspm_l1ss
+> - Make pci_save_aspm_l1ss_state invoke __pci_save_aspm_l1ss_state for
+>   both child and parent devices
+> - Smooth the commit message
+> 
+> v12:
+> - Update the commit message
+> 
+> v13:
+> - Tweak the commit message to make it more like a general fix
+> - When pci_alloc_dev() prepares the pci_dev, it sets the pci_dev's bus.
+>   So, let pci_save_aspm_l1ss_state() access pdev's bus directly.
+> - Add comment in pci_save_aspm_l1ss_state() to describe why it does not
+>   save both the PCIe device and the parent's L1SS config like
+>   pci_restore_aspm_l1ss_state() directly.
+> 
+>  drivers/pci/pcie/aspm.c | 18 +++++++++++++++++-
+>  1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pci/pcie/aspm.c b/drivers/pci/pcie/aspm.c
+> index 28567d457613..0bcd060aab32 100644
+> --- a/drivers/pci/pcie/aspm.c
+> +++ b/drivers/pci/pcie/aspm.c
+> @@ -79,7 +79,7 @@ void pci_configure_aspm_l1ss(struct pci_dev *pdev)
+>  			ERR_PTR(rc));
+>  }
+>  
+> -void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> +static void __pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+>  {
+>  	struct pci_cap_saved_state *save_state;
+>  	u16 l1ss = pdev->l1ss;
+> @@ -101,6 +101,22 @@ void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+>  	pci_read_config_dword(pdev, l1ss + PCI_L1SS_CTL1, cap++);
+>  }
+>  
+> +void pci_save_aspm_l1ss_state(struct pci_dev *pdev)
+> +{
+> +	struct pci_dev *parent = pdev->bus->self;
+> +
+> +	__pci_save_aspm_l1ss_state(pdev);
+> +
+> +	/*
+> +	 * Save parent's L1 substate configuration, if the parent has not saved
+> +	 * state. It avoids pci_restore_aspm_l1ss_state() restore wrong value to
+> +	 * parent's L1 substate configuration. However, the parent might be
+> +	 * nothing, if pdev is a PCI bridge.
+> +	 */
+> +	if (parent && !parent->state_saved)
+> +		__pci_save_aspm_l1ss_state(parent);
+> +}
+> +
+>  void pci_restore_aspm_l1ss_state(struct pci_dev *pdev)
+>  {
+>  	struct pci_cap_saved_state *pl_save_state, *cl_save_state;
+> -- 
+> 2.47.0
+> 
+> 
+Thanks for sending this patch! I tested on a Pixel device with 6.6
+kernel. I verified that the root port and the endpoint device were
+being restored with the L1ss configuration which was determined on
+endpoint enumeration. Feel free to include
 
-v6.13 gained support for several new RTL88xx variants, but most patches
-with device IDs haven't made it to -rc1, so the drivers are unusable.
-
-Would it be possible to forward these rtw-next commits for the next RC?
-
-7b5ce65d9018 ("wifi: rtw88: 8821au: Add additional devices to the USB_DEVICE list")
-1ee6ff9ae3c1 ("wifi: rtw88: 8812au: Add more device IDs")
-d4c4903508f9 ("wifi: rtw88: Add additional USB IDs for RTL8812BU")
-
-Thanks,
-Michal
+Tested-by: Ajay Agarwal <ajayagarwal@google.com>
 
