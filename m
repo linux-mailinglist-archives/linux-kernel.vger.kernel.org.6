@@ -1,65 +1,55 @@
-Return-Path: <linux-kernel+bounces-438549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFFD39EA28A
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:13:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED2999EA280
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:12:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB027163ADE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:13:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A01D1628E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A93219F41B;
-	Mon,  9 Dec 2024 23:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CB5519F10A;
+	Mon,  9 Dec 2024 23:12:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BeL2OJzv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A58Dq2Kw"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C4AD19EEA1;
-	Mon,  9 Dec 2024 23:13:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8425B19E99E;
+	Mon,  9 Dec 2024 23:12:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733786030; cv=none; b=D8J+Q3kIVyhUDUxumUyb8JhnLtRnU8oqiwCBZ7xp8tQwHzvn90wqTY13Ke0fTwUIrVkhjqEkW+fL7GxXdm7eFpwvXWrk5rLCN921p5E6OK3yxE24aVaLaKCI/cO6tOvKpo5aMNljxrhp1FTTa2/lerYTGK9br4ED2GMUYSsieOo=
+	t=1733785944; cv=none; b=FqmREFxS3CJ3rujNl+p/XCOINTFAzdYqgIIehXppJxzUMSOY6AJxOR1npxh8MMRDYo4PYkyHyByLvnQ2fUk4Ozr4c07n3fi8YZKydcfptsocqJX38gGqyPnwP1SWC+BqXIdE3RA94iyhQi47J+yFxzLIPTwWdDbSKXgfJxEc4H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733786030; c=relaxed/simple;
-	bh=dEY7hIs36hxWzg2C7CPYKMQwExPrIo6akyjlklsq+LM=;
+	s=arc-20240116; t=1733785944; c=relaxed/simple;
+	bh=sKFxx5KPwfV56VwByJ9VReFedKc1rFhB6hOhL53weWg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AxY94VpqTyqpMIIaFwxItfbGUO1GdddUY0lcNoKqgPmMCKt38b5f2exhu8xhzIU8S4eOMUFE2xJCoKQuFCCByQVZh9c0cGtRtcs5QVaOq0RnSInzMWVvw811p4Dw4QaOvMnSJ3nkCheKvz4aF1EkPaoaexhwNrcnrYoH/eqDvW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BeL2OJzv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27ECFC4CED1;
-	Mon,  9 Dec 2024 23:13:43 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXILNi9J1tjibmUY8dx86EkWcE9u18qIvNW0f2+ffIYHfazy8/+VLEJ1SbtK993/+KDVz4r5u3j7IzcUeRZU25p3HXX6fvyEfB1n3gi6yXCJ+ESHmZtJttXyXdbazPw3kuM1weMdhDfxzfi0Y6JfIRpl2KjZa5YCd766LTTAXu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A58Dq2Kw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2F61C4CED1;
+	Mon,  9 Dec 2024 23:12:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733786029;
-	bh=dEY7hIs36hxWzg2C7CPYKMQwExPrIo6akyjlklsq+LM=;
+	s=k20201202; t=1733785944;
+	bh=sKFxx5KPwfV56VwByJ9VReFedKc1rFhB6hOhL53weWg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BeL2OJzvx8ZDh7YEsZ2wL2p8MlZfMUrdDZYoLBzGSVTNQdFAMkVmSrLk64xDgl1ag
-	 3TUopizy2129cvgTzbornrx9Y072IPQtIjHDN/q//YYvfRCs04EL3Tqj9FABJOFvu0
-	 d7I0Bvlr01Kb6raYseTYXze0cCOsQoNXTr2VprjfrI6wwRtjiGc1KI8Q3mfpsD9SbF
-	 00IxzKyS09B5dtNntIMAAD2oY+6rMGmsYXARvtfl7mZ+Qf46peoOsgTD4VxwxXgvZI
-	 d6qSnN2DMs4BAYEvNLBjTxNte+Ezw8+jBvBweJytV+++dKdO85HWokEs5uE0IPyaGJ
-	 qLpQ11tp3fPxg==
-Date: Tue, 10 Dec 2024 00:13:41 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 12/13] rust: platform: add basic platform device /
- driver abstractions
-Message-ID: <Z1d5pQN9Y3FX2sLQ@pollux.localdomain>
-References: <20241205141533.111830-1-dakr@kernel.org>
- <20241205141533.111830-13-dakr@kernel.org>
- <20241209223706.GF938291-robh@kernel.org>
+	b=A58Dq2KwGXVkBchRo8iVHZ65GgxOIbYV2WUa6vH0S/94yAho3uvW9w246rcFVAgdz
+	 jjsAun3fL6Dvl1vtg0yNLcDv5AMf17iS0yC3L041/Cf76VJtiXTlokIWbDrFXm8Cbn
+	 C/Lg5LM3f0zpqv+SRM3Ni0z41v3CzzmbMq2c6HcHecdyqvQf5NVo8CrS6TjbgdJicF
+	 XILMv0AGN06MADQkWoFgUyOqAA4vvBLPda7tzmMg8XZrUIrpIvYNikedKN7WGRrgiN
+	 kaj5vk5KAt7Sj9IGGQGpFtf+1SH6/2/OZMBVTUkz6OVpNuXRu9tHqbzRnH4MDhjZIh
+	 9sWYXiCuhmyHQ==
+Date: Mon, 9 Dec 2024 15:14:00 -0800
+From: Bjorn Andersson <andersson@kernel.org>
+To: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v15 3/8] remoteproc: Introduce load_fw and release_fw
+ optional operation
+Message-ID: <adqulwb54wvn36mnjq7u23qdiyapadr3ruhqluxab7mg3kowz5@4rexefd5mlwp>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,214 +58,200 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241209223706.GF938291-robh@kernel.org>
+In-Reply-To: <20241128084219.2159197-4-arnaud.pouliquen@foss.st.com>
 
-On Mon, Dec 09, 2024 at 04:37:06PM -0600, Rob Herring wrote:
-> On Thu, Dec 05, 2024 at 03:14:43PM +0100, Danilo Krummrich wrote:
-> > Implement the basic platform bus abstractions required to write a basic
-> > platform driver. This includes the following data structures:
-> > 
-> > The `platform::Driver` trait represents the interface to the driver and
-> > provides `pci::Driver::probe` for the driver to implement.
-> > 
-> > The `platform::Device` abstraction represents a `struct platform_device`.
-> > 
-> > In order to provide the platform bus specific parts to a generic
-> > `driver::Registration` the `driver::RegistrationOps` trait is implemented
-> > by `platform::Adapter`.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  MAINTAINERS                     |   1 +
-> >  rust/bindings/bindings_helper.h |   2 +
-> >  rust/helpers/helpers.c          |   1 +
-> >  rust/helpers/platform.c         |  13 ++
-> >  rust/kernel/lib.rs              |   1 +
-> >  rust/kernel/platform.rs         | 222 ++++++++++++++++++++++++++++++++
-> >  6 files changed, 240 insertions(+)
-> >  create mode 100644 rust/helpers/platform.c
-> >  create mode 100644 rust/kernel/platform.rs
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 7d6bb4b15d2c..365fc48b7041 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -7034,6 +7034,7 @@ F:	rust/kernel/device.rs
-> >  F:	rust/kernel/device_id.rs
-> >  F:	rust/kernel/devres.rs
-> >  F:	rust/kernel/driver.rs
-> > +F:	rust/kernel/platform.rs
-> >  
-> >  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
-> >  M:	Nishanth Menon <nm@ti.com>
-> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> > index 6d7a68e2ecb7..e9fdceb568b8 100644
-> > --- a/rust/bindings/bindings_helper.h
-> > +++ b/rust/bindings/bindings_helper.h
-> > @@ -20,9 +20,11 @@
-> >  #include <linux/jump_label.h>
-> >  #include <linux/mdio.h>
-> >  #include <linux/miscdevice.h>
-> > +#include <linux/of_device.h>
-> >  #include <linux/pci.h>
-> >  #include <linux/phy.h>
-> >  #include <linux/pid_namespace.h>
-> > +#include <linux/platform_device.h>
-> >  #include <linux/poll.h>
-> >  #include <linux/refcount.h>
-> >  #include <linux/sched.h>
-> > diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> > index 3fda33cd42d4..0640b7e115be 100644
-> > --- a/rust/helpers/helpers.c
-> > +++ b/rust/helpers/helpers.c
-> > @@ -20,6 +20,7 @@
-> >  #include "kunit.c"
-> >  #include "mutex.c"
-> >  #include "page.c"
-> > +#include "platform.c"
-> >  #include "pci.c"
-> >  #include "pid_namespace.c"
-> >  #include "rbtree.c"
-> > diff --git a/rust/helpers/platform.c b/rust/helpers/platform.c
-> > new file mode 100644
-> > index 000000000000..ab9b9f317301
-> > --- /dev/null
-> > +++ b/rust/helpers/platform.c
-> > @@ -0,0 +1,13 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +#include <linux/platform_device.h>
-> > +
-> > +void *rust_helper_platform_get_drvdata(const struct platform_device *pdev)
-> > +{
-> > +	return platform_get_drvdata(pdev);
-> > +}
-> > +
-> > +void rust_helper_platform_set_drvdata(struct platform_device *pdev, void *data)
-> > +{
-> > +	platform_set_drvdata(pdev, data);
-> > +}
-> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > index 7a0e4c82ad0c..cc8f48aa162b 100644
-> > --- a/rust/kernel/lib.rs
-> > +++ b/rust/kernel/lib.rs
-> > @@ -59,6 +59,7 @@
-> >  pub mod of;
-> >  pub mod page;
-> >  pub mod pid_namespace;
-> > +pub mod platform;
-> >  pub mod prelude;
-> >  pub mod print;
-> >  pub mod rbtree;
-> > diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-> > new file mode 100644
-> > index 000000000000..868cfddb75a2
-> > --- /dev/null
-> > +++ b/rust/kernel/platform.rs
-> > @@ -0,0 +1,222 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Abstractions for the platform bus.
-> > +//!
-> > +//! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
-> > +
-> > +use crate::{
-> > +    bindings, container_of, device, driver,
-> > +    error::{to_result, Result},
-> > +    of,
-> > +    prelude::*,
-> > +    str::CStr,
-> > +    types::{ARef, ForeignOwnable},
-> > +    ThisModule,
-> > +};
-> > +
-> > +/// An adapter for the registration of platform drivers.
-> > +pub struct Adapter<T: Driver>(T);
-> > +
-> > +impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
-> > +    type RegType = bindings::platform_driver;
-> > +
-> > +    fn register(
-> > +        pdrv: &mut Self::RegType,
-> > +        name: &'static CStr,
-> > +        module: &'static ThisModule,
-> > +    ) -> Result {
-> > +        pdrv.driver.name = name.as_char_ptr();
-> > +        pdrv.probe = Some(Self::probe_callback);
-> > +
-> > +        // Both members of this union are identical in data layout and semantics.
-> > +        pdrv.__bindgen_anon_1.remove = Some(Self::remove_callback);
-> > +        pdrv.driver.of_match_table = T::OF_ID_TABLE.as_ptr();
-> > +
-> > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
-> > +        to_result(unsafe { bindings::__platform_driver_register(pdrv, module.0) })
-> > +    }
-> > +
-> > +    fn unregister(pdrv: &mut Self::RegType) {
-> > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
-> > +        unsafe { bindings::platform_driver_unregister(pdrv) };
-> > +    }
-> > +}
-> > +
-> > +impl<T: Driver + 'static> Adapter<T> {
-> > +    #[cfg(CONFIG_OF)]
-> > +    fn of_id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
-> > +        let table = T::OF_ID_TABLE;
-> > +
-> > +        // SAFETY:
-> > +        // - `table` has static lifetime, hence it's valid for read,
-> > +        // - `dev` is guaranteed to be valid while it's alive, and so is `pdev.as_ref().as_raw()`.
-> > +        let raw_id = unsafe { bindings::of_match_device(table.as_ptr(), pdev.as_ref().as_raw()) };
-> > +
-> > +        if raw_id.is_null() {
-> > +            None
-> > +        } else {
-> > +            // SAFETY: `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and
-> > +            // does not add additional invariants, so it's safe to transmute.
-> > +            let id = unsafe { &*raw_id.cast::<of::DeviceId>() };
-> > +
-> > +            Some(table.info(<of::DeviceId as crate::device_id::RawDeviceId>::index(id)))
-> > +        }
-> > +    }
-> > +
-> > +    #[cfg(not(CONFIG_OF))]
-> > +    fn of_id_info(_pdev: &Device) -> Option<&'static T::IdInfo> {
-> > +        None
-> > +    }
-> > +
-> > +    // Try to retrieve an `IdInfo` from any of the ID tables; if we can't find one for a particular
-> > +    // table, it means we don't have a match in there. If we don't match any of the ID tables, it
-> > +    // means we were matched by name.
-> > +    fn id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
-> > +        let id = Self::of_id_info(pdev);
-> > +        if id.is_some() {
-> > +            return id;
-> > +        }
-> > +
-> > +        None
-> > +    }
+On Thu, Nov 28, 2024 at 09:42:10AM GMT, Arnaud Pouliquen wrote:
+> This patch updates the rproc_ops structures to include two new optional
+> operations.
 > 
-> These methods are going to have to be duplicated by every bus type which 
-> can do DT matching (and later ACPI). Can't this be moved to be part of 
-> the common Driver trait.
+> - The load_fw() op is responsible for loading the remote processor
+> non-ELF firmware image before starting the boot sequence. This ops will
+> be used, for instance, to call OP-TEE to  authenticate an load the firmware
+> image before accessing to its resources (a.e the resource table)
+> 
+> - The release_fw op is responsible for releasing the remote processor
+> firmware image. For instance to clean memories.
+> The ops is called in the following cases:
+>  - An error occurs between the loading of the firmware image and the
+>    start of the remote processor.
+>  - after stopping the remote processor.
+> 
 
-As mentioned in v3, I agree, but I'd prefer to do this in a follow up series.
+Why does this difference need to be encoded in rproc_ops? I think we
+should strive for having a single, simple high level flow of operations
+through the remoteproc core for which the specifics of each remoteproc
+instance can be encoded in that driver.
 
-> 
-> 
-> I'll say it again for Greg to comment (doubtful he will look at v3 
-> again). Really, I think we should also align the probe method interface 
-> across bus types. That means getting rid of the 'id' in the PCI probe 
-> (or add it for everyone). Most drivers never need it. The typical case 
-> is needing nothing or the matched data. In a quick scan[1], there's 
-> only a handful of cases. So I think probe should match the common 
-> scenario and make retrieving the id match explicit if needed.
 
-I agree, but I will keep it until Greg commented on it, since I explicitly
-promised to add it on request.
+Perhaps there's a good reason for this, but if so please read and follow
+https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+to make that reasoning clear in the commit message.
 
+> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> ---
+> Update vs version V13:
+> - Rework the commit to introduce load_fw() op.
+> - remove rproc_release_fw() call from  rproc_start() as called in
+>   rproc_boot() and rproc_boot_recovery() in case of error.
+> - create rproc_load_fw() and rproc_release_fw() internal functions.
+> ---
+>  drivers/remoteproc/remoteproc_core.c     | 16 +++++++++++++++-
+>  drivers/remoteproc/remoteproc_internal.h | 14 ++++++++++++++
+>  include/linux/remoteproc.h               |  6 ++++++
+>  3 files changed, 35 insertions(+), 1 deletion(-)
 > 
-> Rob
+> diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+> index ace11ea17097..8df4b2c59bb6 100644
+> --- a/drivers/remoteproc/remoteproc_core.c
+> +++ b/drivers/remoteproc/remoteproc_core.c
+> @@ -1488,6 +1488,7 @@ static int rproc_fw_boot(struct rproc *rproc, const struct firmware *fw)
+>  	kfree(rproc->cached_table);
+>  	rproc->cached_table = NULL;
+>  	rproc->table_ptr = NULL;
+> +	rproc_release_fw(rproc);
+>  unprepare_rproc:
+>  	/* release HW resources if needed */
+>  	rproc_unprepare_device(rproc);
+> @@ -1855,8 +1856,14 @@ static int rproc_boot_recovery(struct rproc *rproc)
+>  		return ret;
+>  	}
+>  
+> +	ret = rproc_load_fw(rproc, firmware_p);
+
+It is not clear to me why in the case of OP-TEE we need to invoke the
+"load operation" here, and in the case of "legacy" ELF loading we do it
+first thing in rproc_start() (i.e. on the very next line of code being
+executed).
+
+
+Should we start by renaming rproc_load_segments() rproc_load() and move
+it out of rproc_start()? (I.e. here?)
+
+Perhaps define that rproc_load() is responsible for "loading firmware"
+(whatever that means) and establishing rproc->cached_table, and
+rproc->table_ptr?
+
+(Note that this seems like a good cleanup of the spaghetti regardless)
+
+> +	if (ret)
+> +		return ret;
+> +
+>  	/* boot the remote processor up again */
+>  	ret = rproc_start(rproc, firmware_p);
+> +	if (ret)
+> +		rproc_release_fw(rproc);
+
+The fact that you rproc_release_fw() in the error path here, right
+before we unconditionally release_firmware() the actual firmware means
+that you have 2 different life cycles with very very similar names.
+
+This will contain bugs, sooner or later.
+
+>  
+>  	release_firmware(firmware_p);
+>  
+> @@ -1997,7 +2004,13 @@ int rproc_boot(struct rproc *rproc)
+>  			goto downref_rproc;
+>  		}
+>  
+> +		ret = rproc_load_fw(rproc, firmware_p);
+> +		if (ret)
+> +			goto downref_rproc;
+> +
+>  		ret = rproc_fw_boot(rproc, firmware_p);
+> +		if (ret)
+> +			rproc_release_fw(rproc);
+>  
+>  		release_firmware(firmware_p);
+>  	}
+> @@ -2071,6 +2084,7 @@ int rproc_shutdown(struct rproc *rproc)
+>  	kfree(rproc->cached_table);
+>  	rproc->cached_table = NULL;
+>  	rproc->table_ptr = NULL;
+> +	rproc_release_fw(rproc);
+>  out:
+>  	mutex_unlock(&rproc->lock);
+>  	return ret;
+> @@ -2471,7 +2485,7 @@ static int rproc_alloc_ops(struct rproc *rproc, const struct rproc_ops *ops)
+>  	if (!rproc->ops->coredump)
+>  		rproc->ops->coredump = rproc_coredump;
+>  
+> -	if (rproc->ops->load)
+> +	if (rproc->ops->load || rproc->ops->load_fw)
+>  		return 0;
+>  
+>  	/* Default to ELF loader if no load function is specified */
+> diff --git a/drivers/remoteproc/remoteproc_internal.h b/drivers/remoteproc/remoteproc_internal.h
+> index 0cd09e67ac14..2104ca449178 100644
+> --- a/drivers/remoteproc/remoteproc_internal.h
+> +++ b/drivers/remoteproc/remoteproc_internal.h
+> @@ -221,4 +221,18 @@ bool rproc_u64_fit_in_size_t(u64 val)
+>  	return (val <= (size_t) -1);
+>  }
+>  
+> +static inline void rproc_release_fw(struct rproc *rproc)
+> +{
+> +	if (rproc->ops->release_fw)
+> +		rproc->ops->release_fw(rproc);
+> +}
+> +
+> +static inline int rproc_load_fw(struct rproc *rproc, const struct firmware *fw)
+> +{
+> +	if (rproc->ops->load_fw)
+> +		return rproc->ops->load_fw(rproc, fw);
+> +
+> +	return 0;
+> +}
+> +
+>  #endif /* REMOTEPROC_INTERNAL_H */
+> diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+> index 2e0ddcb2d792..ba6fd560f7ba 100644
+> --- a/include/linux/remoteproc.h
+> +++ b/include/linux/remoteproc.h
+> @@ -381,6 +381,10 @@ enum rsc_handling_status {
+>   * @panic:	optional callback to react to system panic, core will delay
+>   *		panic at least the returned number of milliseconds
+>   * @coredump:	  collect firmware dump after the subsystem is shutdown
+> + * @load_fw:	optional function to load non-ELF firmware image to memory, where the remote
+> + *		processor expects to find it.
+
+Why does it matter if it's an ELF or not?
+
+In the Qualcomm case, firmware comes in ELF format, Linux loads the
+LOAD segments and the trusted world then authenticates the content and
+start the remote processor.
+
+
+I think the difference in your case is that you have memory reserved
+elsewhere, and you want the "load" operation to pass the firmware to the
+TEE - which means that you need rproc_release_fw() to eventually clean
+up the state if rproc_start() fails - and upon shutdown.
+
+If we improve the definition of rproc_load_segments() to mean
+"remoteproc (or remoteproc driver) is loading segments", then in your
+case there's no "loading" operation in Linux. Instead you make that a
+nop and invoke LOAD_FW and START_FW within your start callback, then you
+can clean up the remnant state within your driver's start and stop
+callbacks - without complicating the core framework.
+
+Regards,
+Bjorn
+
+> + * @release_fw:	optional function to release the firmware image from memories.
+> + *		This function is called after stopping the remote processor or in case of error
+>   */
+>  struct rproc_ops {
+>  	int (*prepare)(struct rproc *rproc);
+> @@ -403,6 +407,8 @@ struct rproc_ops {
+>  	u64 (*get_boot_addr)(struct rproc *rproc, const struct firmware *fw);
+>  	unsigned long (*panic)(struct rproc *rproc);
+>  	void (*coredump)(struct rproc *rproc);
+> +	int (*load_fw)(struct rproc *rproc, const struct firmware *fw);
+> +	void (*release_fw)(struct rproc *rproc);
+>  };
+>  
+>  /**
+> -- 
+> 2.25.1
 > 
-> [1] git grep -W 'const struct pci_device_id \*' drivers/ | grep -P 'id->(?!driver_data)'
 
