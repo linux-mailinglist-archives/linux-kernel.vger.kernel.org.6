@@ -1,52 +1,53 @@
-Return-Path: <linux-kernel+bounces-437673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FA699E96DD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:30:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA1049E96E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:31:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 020E6165170
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:26:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBCEA1882768
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD743596F;
-	Mon,  9 Dec 2024 13:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45188233143;
+	Mon,  9 Dec 2024 13:25:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="uzLQtbmp"
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="SKnXtTZM"
 Received: from ci74p00im-qukt09082501.me.com (ci74p00im-qukt09082501.me.com [17.57.156.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9489135961
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A899233134
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:25:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.57.156.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750735; cv=none; b=IkWgKEZhmeMy2d9hPsXlcMbAHwDkdZMD2dPJIvKtxsQd9+ukaCc3GP7vKl2qNuT5PFCej8iIBrpodHu7ng2lODW96CMFeMlOm53QHjuUSUknD7GvLhpJsz9buXPTNFnDy3a2pIEGn3qBWj7tfAuINDgMeQ2Ccn8bmGFzsHhcVkg=
+	t=1733750757; cv=none; b=mssaIpq0B77uQWaTHGafEzIi+5DQ+CO6JNKnlvRMykGKCLgO6Sj5ByDbcmi4cyE+wfJvs0Hm8NdLvAi1XgL4eYmC0IEHhzcupW3g6eNsmYYNNabS3tvJq2aKsA7au2FZAzsJdpAI6lIvdpXZr2ruLeI2EvUHsAdXCK3shewRmxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750735; c=relaxed/simple;
-	bh=cIsLpDzxg/O78TjiwVY6xfVOn/s9Hl2qzAqGoFPgsyw=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K1bahCfY7EgGddirEX8yApd8w9KJKDbMLFQ+zEfheId0YtNUowu7aZZ9QJGexoJ0rXi9lvc9YGMsusmCcfMzP9uTm7vKKHrMs5bXuA4H6Nbr1THZ1Cy4lXVmjVpQXNhmIpfEvDc8xFBFBqkFMbCAaZjxRg9WAIENTHjn0d0uvKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=uzLQtbmp; arc=none smtp.client-ip=17.57.156.14
+	s=arc-20240116; t=1733750757; c=relaxed/simple;
+	bh=H/i8KSikZ2sUIrUiS2Ekgr/swUIcXlVMiuTTZ8cXyDk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=BxKvHDGhUbjH6WfG7SDwoVpB1YGVN80QbpuN7ZInyCjWKkhdyWrKPDgVQhNuIFrfbexH0oFvcYh3jTq5CfhQKBbKggRAATKXCDPTEqz/au4PwNODnyXnMBCOctzPr1Zum3WFtZljGTfG11uP6WwTrO1KsNbT+Bb9nMptCo1jVPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=SKnXtTZM; arc=none smtp.client-ip=17.57.156.14
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1733750732;
-	bh=Jg01KlCWEyryfswH+6Mz0EliiB82cdWBn2LiyicOsKY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:
+	s=1a1hai; t=1733750755;
+	bh=i3Jdan8uZVn7UNPErfqRxyIjXKkKSwc1fhtcBHUOdM8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:
 	 x-icloud-hme;
-	b=uzLQtbmpbDmWzr5xhkTlrN/KgHdG7eaABaF3jgjjwvd/ySd5+MAn9ypH1OrQYdxJH
-	 UBQ3/zr+rxjtmqKFPHg5+wiwAtgnvHPSA+dAB9rNUoDqHumcHwsCx3NCy5AWZYz1BN
-	 2F49Dpb37BN42V8nRBbnzKtMsXrkjup4T/OvPg0ddSgANfe5+F9NmCzXupZ5sQpLgi
-	 7YcooaqTrLpv08uno0Hz4xJYvBZgqx2ddtyqxRzyji6ozMLYCHdVfZcoBg/cWJDT3U
-	 hGoQcg9xhlOvcQL2h+idu82pXzMwqIqk7YDyZ4AX/fQIKtw2fjbZzBa06bbfiGrVS6
-	 t9foKg6tQY4kQ==
+	b=SKnXtTZMhGx41kZA1vddt+ARNRi4myt8jn/Ncn07jvUYQVVIa73VN1MRpsn/TLlSk
+	 /8A9WQnZ5WjUAzd6VGiZkV9pJY0HUZrvnkmyRF76IFOdNjuWuo49vwLOM5AtZL7Kp8
+	 tEW2UDvo/ezp8EUgLv+K1eoiyLv+3D0lcPibqIU7A1iPDbNSnfpBm9Ux3ha/2ksRhd
+	 mUYXxqQfAp0QLKg/oT/ZDldqCNh2sXsaneiI0CqcYf5XuP3o9HJtVTu9rL5nJdXnro
+	 NOCp9ba3HQEYwUSU8UPcODtWVxCR8FwhdbPFAmJ/4UuKpAlP7ARf5bUZobojIeJs9p
+	 ohyMVIb3l2f8Q==
 Received: from [192.168.1.26] (ci77p00im-dlb-asmtp-mailmevip.me.com [17.57.156.26])
-	by ci74p00im-qukt09082501.me.com (Postfix) with ESMTPSA id 22B9F4AA033B;
-	Mon,  9 Dec 2024 13:25:24 +0000 (UTC)
+	by ci74p00im-qukt09082501.me.com (Postfix) with ESMTPSA id 75A7F4AA03B1;
+	Mon,  9 Dec 2024 13:25:33 +0000 (UTC)
 From: Zijun Hu <zijun_hu@icloud.com>
-Subject: [PATCH 0/8] of/irq: fix bugs
-Date: Mon, 09 Dec 2024 21:24:58 +0800
-Message-Id: <20241209-of_irq_fix-v1-0-782f1419c8a1@quicinc.com>
+Date: Mon, 09 Dec 2024 21:24:59 +0800
+Subject: [PATCH 1/8] of/irq: Fix wrong value of variable @len in
+ of_irq_parse_imap_parent()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,10 +56,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAKrvVmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDIwML3fy0+Myiwvi0zApdM1NLU0OTpGTLxERjJaCGgqJUoDDYsOjY2lo
- AiiIh11wAAAA=
-X-Change-ID: 20241208-of_irq_fix-659514bc9aa3
+Message-Id: <20241209-of_irq_fix-v1-1-782f1419c8a1@quicinc.com>
+References: <20241209-of_irq_fix-v1-0-782f1419c8a1@quicinc.com>
+In-Reply-To: <20241209-of_irq_fix-v1-0-782f1419c8a1@quicinc.com>
 To: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
  Lorenzo Pieralisi <lpieralisi@kernel.org>, 
  Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>, 
@@ -73,39 +73,34 @@ Cc: Zijun Hu <zijun_hu@icloud.com>, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org, Rob Herring <rob.herring@calxeda.com>, 
  Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Proofpoint-GUID: GBwb3WpfS47vy3H8oyXbgCgNhUN0ZgWL
-X-Proofpoint-ORIG-GUID: GBwb3WpfS47vy3H8oyXbgCgNhUN0ZgWL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-09_10,2024-12-09_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 spamscore=0 mlxscore=0
- clxscore=1011 mlxlogscore=610 suspectscore=0 adultscore=0 bulkscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2412090105
 X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
 
-This patch series is to fix bugs in drivers/of/irq.c
+From: Zijun Hu <quic_zijuhu@quicinc.com>
 
+Fix wrong @len value by 'len--' after 'imap++'
+in of_irq_parse_imap_parent().
+
+Fixes: 935df1bd40d4 ("of/irq: Factor out parsing of interrupt-map parent phandle+args from of_irq_parse_raw()")
+Cc: stable@vger.kernel.org
 Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 ---
-Zijun Hu (8):
-      of/irq: Fix wrong value of variable @len in of_irq_parse_imap_parent()
-      of/irq: Correct element count for array @dummy_imask in API of_irq_parse_raw()
-      of/irq: Fix device node refcount leakage in API of_irq_parse_raw()
-      of/irq: Fix using uninitialized variable @addr_len in API of_irq_parse_one()
-      of/irq: Fix device node refcount leakage in API of_irq_parse_one()
-      of/irq: Fix device node refcount leakages in of_irq_count()
-      of/irq: Fix device node refcount leakages in of_irq_init()
-      of/irq: Fix device node refcount leakage in API irq_of_parse_and_map()
+ drivers/of/irq.c | 1 +
+ 1 file changed, 1 insertion(+)
 
- drivers/of/irq.c | 30 +++++++++++++++++++++++++-----
- 1 file changed, 25 insertions(+), 5 deletions(-)
----
-base-commit: 16ef9c9de0c48b836c5996c6e9792cb4f658c8f1
-change-id: 20241208-of_irq_fix-659514bc9aa3
+diff --git a/drivers/of/irq.c b/drivers/of/irq.c
+index 67fc0ceaa5f51c18c14f96f2bb9f82bcb66f890e..43cf60479b9e18eb0eec35f39c147deccd8fe8dd 100644
+--- a/drivers/of/irq.c
++++ b/drivers/of/irq.c
+@@ -111,6 +111,7 @@ const __be32 *of_irq_parse_imap_parent(const __be32 *imap, int len, struct of_ph
+ 	else
+ 		np = of_find_node_by_phandle(be32_to_cpup(imap));
+ 	imap++;
++	len--;
+ 
+ 	/* Check if not found */
+ 	if (!np) {
 
-Best regards,
 -- 
-Zijun Hu <quic_zijuhu@quicinc.com>
+2.34.1
 
 
