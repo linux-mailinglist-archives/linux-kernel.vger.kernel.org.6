@@ -1,156 +1,220 @@
-Return-Path: <linux-kernel+bounces-438141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1EE9E9D61
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:47:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2816D9E9D58
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:46:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F6FD282FED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:47:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6170283097
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:46:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFFA1F2C49;
-	Mon,  9 Dec 2024 17:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42D261E9B26;
+	Mon,  9 Dec 2024 17:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwzuwR0X"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qsTx9I99";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/NfjeUoj";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qsTx9I99";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="/NfjeUoj"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AB61F0E56;
-	Mon,  9 Dec 2024 17:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05971BEF8D
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766341; cv=none; b=hkYBmH6sFxLh4Ht1w/n4tUbYfkTklfEe8TJ+ZQIUxZDWb5DiOb5RSsJ8HbGGUy9Zx45IxnQ08UG3LFQ5k7pzyRsGXcikfgnVZFuiJnOF185FO+hxZWeaXVjtG3ngeE1TXAHHwaK4aMMf8VBFeP5hvzjrkEO32c6grM++jAacAC0=
+	t=1733766334; cv=none; b=WU0IrTOaEBe/hWCh+PiEQkiqUT8wloHSmix32W+dRY/rV7bL0Mm04lyrFNCgMS7ZuUe3PqmhG4JDK2UTCIlpHL8qdmAxjhvNsL/yf8/bDcVX0RrXPsMuMCUVaMwZT02GkgeiC8sttcN0n11afXhoPGoJrsan3aKwqhr/JX4yiM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766341; c=relaxed/simple;
-	bh=CcuwSq1SxtQMhtHuhAR5Boa6Ar8NA6RwQBru1LJ34o8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KDPVVCovw8lxm074x0N+KJOVL4GDzC1NuWQbLbsGTfG/ZPaDwStAXmpOKM6wTWogsUpx2baPcdMawHwevxN7B8hUX4qIfl54l9i2zlg3/8BCn85Oto4ke4N4BEEAft7VdfXeUxMlH9TceT8iDo1k91zBACTHbYzn2by6U8YL5Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dwzuwR0X; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-725ee6f56b4so1097455b3a.3;
-        Mon, 09 Dec 2024 09:45:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733766338; x=1734371138; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hLL+hTR2erfFMDNeV90V786XCRfTp97LfoiOqBvZZGc=;
-        b=dwzuwR0XUZanDwpP+mKZfcSxP2FkoLZHfHU5yRxQahIESEsNNsA3jLjXta+RghyAzB
-         LDaXRg6BFwdKKIOCKd58YG8rgFwhf3iBiOmUwM5r14FuGJh96SamYlXOm5nciMhoWYa/
-         k2NEAPBNTv6rhkoueuekyh6n/KnUyzNVf1nd9mfy91gMWqYqHpByhhjb/27/4liFwkW6
-         ybbLU3bvTF0jL2HeytZ2oqud/QupKgGuJgTL5LmAvYJf2lrTLA47wpNxQrLW7vH6f+5c
-         TtAnPTLcjvwx10Q2QxsoIn7dl4ubi7hkHZdQOwKikM3vIllvhCLDmj2s+K6MWRW7/Wqi
-         C6zQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733766338; x=1734371138;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=hLL+hTR2erfFMDNeV90V786XCRfTp97LfoiOqBvZZGc=;
-        b=pW9cUAlp+3epNZ1KcYggTnhwpzxhaeiEQ/AwnSP99Y/bFmo+ly8f6zrnE+Tey646Jc
-         5OU2NRkvlL7kxl+KnoOtqnKVw8btnB7bH4L9QfW0p2VS6VPSX7edWJmi93eyxaL0QMNI
-         TAalMhmYDbZsITnef+5/jfnLYFQ+1S/0EvbCn6t6Qjs162onhjaG7+C2KlM0Tkqmi8wh
-         lzYV/WSSvS/Fi0UtIe/RJXpndClzs73XZlUhfZqvx+fHeSqzeNr3fXSjl5EAfU5s2uwh
-         vZiKvdHZvtkcWxAscOF/7mk7V/dwyVsMLEIV1uudMQz+nFzV8zKGNTHLdYxSaoGBk2oh
-         TMXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWBhqEpRJkmTFiNB74zldZx2C+nlLO2y3LJ28Abt4W0C911vC3xO4gFLodLswCgsYTWXI7mykJJKphoZdOfZnpg9wMibw==@vger.kernel.org, AJvYcCWkD/+wlh7Ccv/Y8a4EGp6iX2bFr00Wp5EP6p8fpm9bWaYERPwArKWQT7kjEGVeK19VFiwjjL3T1D+YAz4R@vger.kernel.org, AJvYcCWpgjI9vnEE0VjBAfF8CuCLNkyar/2lx6Gb2Z+1TITMJn13G2FqORG7JlEze+gK/7o6mYs06ucmAN1AeEoPbA==@vger.kernel.org, AJvYcCWt7lsVFYbU5ZqECDcut0TlVTrKU3WyjWetnwzsfkjOJSC+kRyordpZjT+ScU7WnMHytMw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkGoBMYHNQ9zI3EpcmJLDtOlSJ6LKwYFJEHjH4jd62pdLlbtp5
-	+Uky6pByhLfadKX7eD+ICYcRDPiEyXtG6cOQphqBMijmMUEdez+uxt8wuZSYqns8YW3xEq3QZZT
-	cxlZks8EZvHjMNv9KyoQjYXs/y0Y=
-X-Gm-Gg: ASbGncviDw3zN5fPGPl3wvwi3CC6P84TZM7C3VXpXovlSQ/lSP680qqMrts56zZd+Gd
-	9JKhWh1xMFCdw/Zhz5L2iTDNoCdu0SWY7hrzxoeW2Xvd5mKWqINk=
-X-Google-Smtp-Source: AGHT+IF6C1kyOIzspL8FJ6lY6T2B7S0Ong/QRjtBPIeAUZMab/0JVUfow4OcO3JdX8i8lSSqgjFzDc6Dn626X5R/OrY=
-X-Received: by 2002:a05:6a20:9f9b:b0:1e0:d1db:4d8a with SMTP id
- adf61e73a8af0-1e1870bd5e1mr20198567637.10.1733766338437; Mon, 09 Dec 2024
- 09:45:38 -0800 (PST)
+	s=arc-20240116; t=1733766334; c=relaxed/simple;
+	bh=8Ve5RWRzrNt1O5uADGl7nYHNvPp9QD7ow4gN4r7+ZA0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m4/ueoX6Umt5hpcStEb5URvUiE8svVqEIjSr8gEaDbxtbZr3PONs8qQc0LRopZn5mGY785tun8qZm0EEo8uuUUj0RpvULh2EMrbuM/Jcy1Ql+oOvZK0ww0PDJ6x3q6b6RpOYsTC4TkUpmkSVJqhhHkQfgHULhPKBUZjZ/7hp1io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qsTx9I99; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/NfjeUoj; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qsTx9I99; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=/NfjeUoj; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 91FC8210F8;
+	Mon,  9 Dec 2024 17:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733766329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ffQyTylVsABougM0qBCW2Zl0eo5LTrT3Qj+mN59l+aY=;
+	b=qsTx9I991hPtbT7ARjVRmjhnuhy6Eciu3k5d6cOunOULE3vmYOaqC9LMp2o7B51lVvoTfN
+	X/m+JINEnSUBN9337z8Cp1UOR9f4XlKMjtGT4e1lCUDoFxaPcizM46O3w4DJ2Ly71Lk3I8
+	lEhbdNG8BGFFKIez+KLovDmDjcgFXwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733766329;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ffQyTylVsABougM0qBCW2Zl0eo5LTrT3Qj+mN59l+aY=;
+	b=/NfjeUojDiS0rqTjBtgA+i4gpJLF0GCP50r5f2GyyzJaJKFZl/CcOJ6UYvHvBkT6chCOS7
+	wTLDi6pI0UC+VaAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=qsTx9I99;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="/NfjeUoj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1733766329; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ffQyTylVsABougM0qBCW2Zl0eo5LTrT3Qj+mN59l+aY=;
+	b=qsTx9I991hPtbT7ARjVRmjhnuhy6Eciu3k5d6cOunOULE3vmYOaqC9LMp2o7B51lVvoTfN
+	X/m+JINEnSUBN9337z8Cp1UOR9f4XlKMjtGT4e1lCUDoFxaPcizM46O3w4DJ2Ly71Lk3I8
+	lEhbdNG8BGFFKIez+KLovDmDjcgFXwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1733766329;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=ffQyTylVsABougM0qBCW2Zl0eo5LTrT3Qj+mN59l+aY=;
+	b=/NfjeUojDiS0rqTjBtgA+i4gpJLF0GCP50r5f2GyyzJaJKFZl/CcOJ6UYvHvBkT6chCOS7
+	wTLDi6pI0UC+VaAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6F860138D2;
+	Mon,  9 Dec 2024 17:45:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mEE4GbksV2dSPwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 09 Dec 2024 17:45:29 +0000
+Message-ID: <e6d8af9c-f4e9-46b3-9e0b-f780a0ef52ac@suse.cz>
+Date: Mon, 9 Dec 2024 18:45:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
- <20241205-sysfs-const-bin_attr-simple-v1-4-4a4e4ced71e3@weissschuh.net>
-In-Reply-To: <20241205-sysfs-const-bin_attr-simple-v1-4-4a4e4ced71e3@weissschuh.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Dec 2024 09:45:26 -0800
-Message-ID: <CAEf4BzasK+pV69CMcy-pMk1cMf+LhKnXKPm8q6s7gioXnebRNQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] btf: Switch module BTF attribute to sysfs_bin_attr_simple_read()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v1 1/2] mm/page_alloc: don't use __GFP_HARDWALL
+ when migrating pages via alloc_contig*()
+Content-Language: en-US
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+ Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>
+References: <20241205090508.2095225-1-david@redhat.com>
+ <20241205090508.2095225-2-david@redhat.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <20241205090508.2095225-2-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 91FC8210F8
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_FIVE(0.00)[6];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:dkim,suse.cz:mid,suse.cz:email];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Dec 5, 2024 at 9:35=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> The generic function from the sysfs core can replace the custom one.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+On 12/5/24 10:05, David Hildenbrand wrote:
+> We'll migrate pages allocated by other contexts; respecting the cpuset of
+> the alloc_contig*() caller when allocating a migration target does not
+> make sense.
+> 
+> Drop the __GFP_HARDWALL.
+> 
+> Note that in an ideal world, migration code could figure out the cpuset
+> of the original context and take that into consideration.
+> 
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+
 > ---
->  kernel/bpf/btf.c | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
->
+>  mm/page_alloc.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 48a291c485df..acadfcf654fd 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -6410,11 +6410,11 @@ static int __alloc_contig_verify_gfp_mask(gfp_t gfp_mask, gfp_t *gfp_cc_mask)
+>  	 * page range. Migratable pages are movable, __GFP_MOVABLE is implied
+>  	 * for them.
+>  	 *
+> -	 * Traditionally we always had __GFP_HARDWALL|__GFP_RETRY_MAYFAIL set,
+> -	 * keep doing that to not degrade callers.
+> +	 * Traditionally we always had __GFP_RETRY_MAYFAIL set, keep doing that
+> +	 * to not degrade callers.
+>  	 */
+>  	*gfp_cc_mask = (gfp_mask & (reclaim_mask | cc_action_mask)) |
+> -			__GFP_HARDWALL | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL;
+> +			__GFP_MOVABLE | __GFP_RETRY_MAYFAIL;
+>  	return 0;
+>  }
+>  
 
-LGTM
-
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
-
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index e7a59e6462a9331d0acb17a88a4ebf641509c050..69caa86ae6085dce17e95107c=
-4497d2d8cf81544 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -7870,17 +7870,6 @@ struct btf_module {
->  static LIST_HEAD(btf_modules);
->  static DEFINE_MUTEX(btf_module_mutex);
->
-> -static ssize_t
-> -btf_module_read(struct file *file, struct kobject *kobj,
-> -               struct bin_attribute *bin_attr,
-> -               char *buf, loff_t off, size_t len)
-> -{
-> -       const struct btf *btf =3D bin_attr->private;
-> -
-> -       memcpy(buf, btf->data + off, len);
-> -       return len;
-> -}
-> -
->  static void purge_cand_cache(struct btf *btf);
->
->  static int btf_module_notify(struct notifier_block *nb, unsigned long op=
-,
-> @@ -7941,8 +7930,8 @@ static int btf_module_notify(struct notifier_block =
-*nb, unsigned long op,
->                         attr->attr.name =3D btf->name;
->                         attr->attr.mode =3D 0444;
->                         attr->size =3D btf->data_size;
-> -                       attr->private =3D btf;
-> -                       attr->read =3D btf_module_read;
-> +                       attr->private =3D btf->data;
-> +                       attr->read_new =3D sysfs_bin_attr_simple_read;
->
->                         err =3D sysfs_create_bin_file(btf_kobj, attr);
->                         if (err) {
->
-> --
-> 2.47.1
->
 
