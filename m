@@ -1,135 +1,184 @@
-Return-Path: <linux-kernel+bounces-437942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C636E9E9AC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:43:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9612E9E9ACB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:44:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84979165710
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5130B281577
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:44:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4E91E9B2E;
-	Mon,  9 Dec 2024 15:42:50 +0000 (UTC)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C161C5CD7;
+	Mon,  9 Dec 2024 15:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FiWFzD6j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044F31E9B12;
-	Mon,  9 Dec 2024 15:42:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 149E31B4236;
+	Mon,  9 Dec 2024 15:44:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733758969; cv=none; b=svrp8Lsspl1l8FXWqUHMf/kEacIxbXxoq3Lx5WflrePu1uWx6wpSdh7QrNFOf8hsctcPIC6CRXp2WWPRAKN/WOAlSmSM6hyIsM1urpGM4xL6t2RrsCDsCy22+7PNiERcAhJln97gPWRrbtFQUxWqp55CMfL8rfphRVeySiAduJY=
+	t=1733759085; cv=none; b=JXUp26iRd1AI7R/4j5eelDG0NokqlS+SnVUckseCEOJyG3EETvCBfXYL1nexhD5wr8xQRZYDQ2ytDDS6CcvViIS0Y+H9unq3NlD3t3eE8o/F2iXA4wPqN3R1uRuh50yDzbhPQwM9hnpCrQ+WaVw29ZG11BgJnbdxkkOLRhdLPWg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733758969; c=relaxed/simple;
-	bh=MDtf3KrjN/ZuyRxqOUDdPapgk7TPgg4Z+6jlNqAS+CM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ibxhNbHyr8LUDdlQnpQvvknsNzs8KGqHQCilJfB67jb16/7B/L74t9RHjRxvNnRzQkgaEzFAqaJ8SQib9hGeU8afIbrZpeGkrM+WBIodukIamx/4ezsLhJXk86jnz7o/2Hupbv8Q2j9quhrkGJhWmpatHssIfMxUhiyMXpCk6wM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4afeccfeda2so548417137.1;
-        Mon, 09 Dec 2024 07:42:47 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733758966; x=1734363766;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xxv+gi2b4vb+2PfhKBfiYPC5UhPPhL9JTvs/aZ/ti3E=;
-        b=v4PzPoYrxeu6v9cdFtbnoVkFxsNMDL4CE7bVLXS+9+pC0SuCMLjNWgYjkgtYjfUWzi
-         hjDQoYgp3z+qqrFGICua0f7AwFow/LlcEwhGUYj3JAF6Q13Fx2g/ysIUcTP7G16E+p1A
-         zlymn3y7Xenr0MK39xIGnKb/M3jrShbAJDyjfzUIvLg2tuehQTxzb4qip6NSewheFnBB
-         oRIG+x+h3vPwd2bbbPqW8ZGFdkCeMgCHJDaMUAnJ9mDhr5gG6ys6t49IkL80+TQB442n
-         xM6MOViHc9iovE/8SbRK/gxypNPtcXkG72+FBHEfNNJcfIFuh5sZuo+XzHXWWaGIx6WE
-         CB1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU60khhr/uzHmDy0qgixEZdpKFA0QxPat3kFTPXLKZKYdKEWw2gGUZ19PNyNBPkj+CZLwu1o5PYfanADA==@vger.kernel.org, AJvYcCVmQGmlafiLjD4XYX8dwg3oDBnZh6TAZkeZyLjrbHyZKVoQKx+ZrQnkLA2Lzfl7Z0H0VdN/B/iupcUqyAwc@vger.kernel.org, AJvYcCW/p+pasNrnJjbBKX4k1v8u08/nnlaJhg+UE+vvBof3E0RRFF1s9eP3gHgGm1eKWi/Teeo3qAgnQB8XMXs=@vger.kernel.org, AJvYcCWEUBSdttpvxJhpLW1bQA5pt7NrOsd0eSHAG/Z41W5RQwagv6AMMfYvjrufazDM8ZL1xDH/54AJgGm/@vger.kernel.org, AJvYcCX7qFfL1CBm6Zx3SbrKsLATQbTZzfClbGqp5mfbFkrf8YxkpMgnLH/DkSY6gSI7pI8n5F61vlvpWcj847KOfSXVSQ8=@vger.kernel.org, AJvYcCXLaLV9QP5lclC5/alW2khfgkRVew2QTgopwxrYqWFoZzLCJxIcgA+FUELf29HfCBWpT+Sgv/K8Oe7k@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAR/ziodfLHGiSM4/vo8rXsM6LyX1E/2rnhG3ASqeHRE2pE2pW
-	nu95BDFZrvymqWylog3cdInqDuUTcO1RQF6iOmJuW5ic9h7IjNWjTeksMvxWAVo=
-X-Gm-Gg: ASbGnctiCgJZEerlfJFuRPdOD/K9o8Nvr3rwnGo5IMvFAbTaaAStg3K4pLWp+YXXh+q
-	r/pBWlE16522YZY527/Q4oEPlT7Nv4eP0vc+o6CG0dA+/zRwSXNCY8M7Mb027Fh5lBwgQxRVPwh
-	GdwlHnjtxITaeBHGSvy2+IBv1AxpTzZphEr+8EQWLfjZ5w9zjlh4Kd/3cIu+D5RdqttlolEeAmZ
-	9ZuK4y5pe4NVip8K5D1oXqbZukLe4EPFoSOebdq9dNYrOHgHewxrY79L0qY6cREm81VE9UqGn2P
-	XLn737n2BZ21
-X-Google-Smtp-Source: AGHT+IGqF6wUFSgOO4+KJou6ZjI/bxTh6odQa2c2jWG85N61Nyk3HDWl7WBBNDGhHtfyQAHZukAdWw==
-X-Received: by 2002:a05:6102:5494:b0:4af:df60:8649 with SMTP id ada2fe7eead31-4b116c6eee3mr1567661137.9.1733758966115;
-        Mon, 09 Dec 2024 07:42:46 -0800 (PST)
-Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2b964991sm1199889241.2.2024.12.09.07.42.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 07:42:45 -0800 (PST)
-Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85ba92b3acfso924763241.1;
-        Mon, 09 Dec 2024 07:42:45 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV/aI3YEp1zjteOsrSM666F+kAiAW7ePL8UjvWEGj0uNtkBlDd8h7zMpNrisO2HRXQoKy8DeUrIVNvfhi8=@vger.kernel.org, AJvYcCV4+bQNAdA1ndJN3bUDnAmcE4wPQ5MA2npyYYflXp0hKNuaJkkO/8tieDFuHLVmzqwkLF4rlDDjEZl/B2hm7WvbR0w=@vger.kernel.org, AJvYcCWPcnOVQGFQaUct/+nV5EnBovIaKjuU6+Qapv2bPPQZ5KKv2NUedAVMCV6wBM3ANX9wMfHkXnkXMB1r@vger.kernel.org, AJvYcCWibF23FmRlaNA/Dnc+222jw0IzrOSZ/u2UBix1U1Xtq18AwYcMSj6C1cEuOBluq1D8X/JjrpMRIilfB8tf@vger.kernel.org, AJvYcCX0cvuLRLs9baUGeI1by/5pS6DxoY7yFQWKCXBvDIIbiyoZ8XZEftRaa4mmmGmcWcZ6VReb6nwJa8eA@vger.kernel.org, AJvYcCXQIDPyzizG4OLFM39tWfJRghba4meu0Jssz0054oEAa0xFUfvAbE5NNY1tn4CtYcKB4veOiE5AkNZfJw==@vger.kernel.org
-X-Received: by 2002:a05:6102:2ef:b0:4af:f5bd:6376 with SMTP id
- ada2fe7eead31-4aff5bd672dmr3479930137.7.1733758964965; Mon, 09 Dec 2024
- 07:42:44 -0800 (PST)
+	s=arc-20240116; t=1733759085; c=relaxed/simple;
+	bh=9GOLiYQVIhXG83mUb2q1xQx/CP+id9qyn1icV0HpwF0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nBcQiI//Oc3832XmynVodewgn46zRylLomf7TcpbYeLf8zePNqDcgFW7xnaNrU7EewP2VNVatIrs6Y7woPKUWoAj6aBi1InNtkfbdjN5Nsfj92XyWEWNEcPJBvzbz+zvjHlO7HgBw2fSHZpSiB++oWdafm7hjOSyB5ya299I7KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FiWFzD6j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 480F9C4CED1;
+	Mon,  9 Dec 2024 15:44:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733759084;
+	bh=9GOLiYQVIhXG83mUb2q1xQx/CP+id9qyn1icV0HpwF0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FiWFzD6jHLtDA0q5Qt34FoHZ8bKAmwvsTwOPaEjJVRevpGQqFrBJSQSdwxg4Qt5nV
+	 or5w+XQWGhfesAoZducHdP6gYBBtR9wb8wflVvQGO5RYk211K+wFHC9zI/MPccW56X
+	 R2+O5tOCK0sZ6U5xTXVES0vm+i+vuailS0lOQR5vutzwG0tZq49doQXOATxtohoGKS
+	 XY8cDLHD6ZNXvXqPG3ULJ0JpQO+uI5E5QGzRWafMwDCc30cRfRDxT+VlhpN2ZKoRFr
+	 oaMcEqoTrZo8yB2s7cqOk2xaoCsEDPBRtB6cIrydqYcHP5yIyLVfL+s0Ug3j6+8wjZ
+	 v3FfVUe1yjYeA==
+Message-ID: <4314e730-0852-47e9-8431-f9ec648f4bff@kernel.org>
+Date: Mon, 9 Dec 2024 09:44:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-23-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-23-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 16:42:32 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdWa+kmHJRTo_HOiY=LKsoOoG1011O4M5JmKWNCmRuh34w@mail.gmail.com>
-Message-ID: <CAMuHMdWa+kmHJRTo_HOiY=LKsoOoG1011O4M5JmKWNCmRuh34w@mail.gmail.com>
-Subject: Re: [PATCH v3 22/25] arm64: dts: renesas: rzg3s-smarc-som: Add versa3
- clock generator node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thunderbolt: Don't display retimers unless nvm was
+ initialized
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "open list:THUNDERBOLT DRIVER" <linux-usb@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Richard Hughes <hughsient@gmail.com>
+References: <20241206183318.1701180-1-superm1@kernel.org>
+ <20241209062415.GG4955@black.fi.intel.com>
+ <c40bed54-63e9-4535-b17b-fba980f19382@kernel.org>
+ <20241209154013.GK4955@black.fi.intel.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20241209154013.GK4955@black.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add versa3 clock generator node. It provides the clocks for the Ethernet
-> PHY, PCIe, audio devices.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 12/9/2024 09:40, Mika Westerberg wrote:
+> On Mon, Dec 09, 2024 at 08:15:16AM -0600, Mario Limonciello wrote:
+>> On 12/9/2024 00:24, Mika Westerberg wrote:
+>>> Hi Mario,
+>>>
+>>> On Fri, Dec 06, 2024 at 12:33:18PM -0600, Mario Limonciello wrote:
+>>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>>
+>>>> The read will never succeed if nvm wasn't initialized.
+>>>
+>>> Okay but we would need to understand why it was not initialized in the
+>>> first place?
+>>
+>> Oh sorry I should have included that/
+>>
+>> https://gist.github.com/superm1/c3763840fefa54298258a6fbec399007
+>>
+>> As you can see it's an unknown retimer NVM format.  So this ends up down the
+>> path of "NVM upgrade disabled".  So that's why I'm thinking the visibility
+>> is the right move to adjust here (IE this patch).
+> 
+> This is actually on-board retimer of the AMD platform:
 
-> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> @@ -152,6 +158,30 @@ &extal_clk {
->
->  &i2c1 {
->         status =3D "okay";
-> +
-> +       versa3: clock-generator@68 {
+Oh, good point.
 
-> +               renesas,settings =3D [
-> +                 80 00 11 19 4c 42 dc 2f 06 7d 20 1a 5f 1e f2 27
-> +                 00 40 00 00 00 00 00 00 06 0c 19 02 3f f0 90 86
-> +                 a0 80 30 30 9c
-> +               ];
-> +       };
->  };
+> 
+> Dec 09 07:29:11 fedora kernel: thunderbolt 0-0:2.1: retimer NVM format of vendor 0x7fea unknown
+> Dec 09 07:29:11 fedora kernel: thunderbolt 0-0:2.1: NVM upgrade disabled
+> Dec 09 07:29:11 fedora kernel: thunderbolt 0-0:2.1: new retimer found, vendor=0x7fea device=0x1032
+> 
+> I would think you guys want to make it upgradeable as well, no?
 
-I did not verify renesas,settings. The rest LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+For AMD platforms retimers are nominally upgraded by the platform's BIOS 
+upgrade, there haven't been asks from anyone to upgrade in AFAIK OS 
+(Windows or Linux).
 
-Gr{oetje,eeting}s,
+> 
+>>> I see this is ThinkPad Thunderbolt 4 Dock so probably Intel hardware? You
+>>> say you can reproduce this too so can you send me full dmesg with
+>>> thunderbolt dynamic debugging enabled? I would like to understand this bit
+>>> more deeper before we add any workarounds.
+>>>
+>>>> Reported-by: Richard Hughes <hughsient@gmail.com>
+>>>> Closes: https://github.com/fwupd/fwupd/issues/8200
+>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>>> ---
+>>>>    drivers/thunderbolt/retimer.c | 17 ++++++++++++++---
+>>>>    1 file changed, 14 insertions(+), 3 deletions(-)
+>>>>
+>>>> diff --git a/drivers/thunderbolt/retimer.c b/drivers/thunderbolt/retimer.c
+>>>> index 89d2919d0193e..7be435aee7217 100644
+>>>> --- a/drivers/thunderbolt/retimer.c
+>>>> +++ b/drivers/thunderbolt/retimer.c
+>>>> @@ -321,9 +321,7 @@ static ssize_t nvm_version_show(struct device *dev,
+>>>>    	if (!mutex_trylock(&rt->tb->lock))
+>>>>    		return restart_syscall();
+>>>> -	if (!rt->nvm)
+>>>> -		ret = -EAGAIN;
+> 
+> This is actually here because it might take some time for the NVM to be
+> available after the upgrade so changing this may cause issues on its own.
+> 
+> Instead we should check first the
+> 
+> 	rt->no_nvm_upgrade
+> 
+> and return -EOPNOTSUPP which I believe fwupd handles?
+> 
 
-                        Geert
+Well I don't think it's right to export the sysfs file in the first 
+place if we "know" it's not going to work.  That's disingenuous to software.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+How about looking for rt->no_nvm_upgrade in the new retimer_is_visible?
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+I think it should get the same intent and not break this retry logic.
+
+>>>> -	else if (rt->no_nvm_upgrade)
+>>>> +	if (rt->no_nvm_upgrade)
+>>>>    		ret = -EOPNOTSUPP;
+>>>>    	else
+>>>>    		ret = sysfs_emit(buf, "%x.%x\n", rt->nvm->major, rt->nvm->minor);
+>>>> @@ -342,6 +340,18 @@ static ssize_t vendor_show(struct device *dev, struct device_attribute *attr,
+>>>>    }
+>>>>    static DEVICE_ATTR_RO(vendor);
+>>>> +static umode_t retimer_is_visible(struct kobject *kobj,
+>>>> +				      struct attribute *attr, int n)
+>>>> +{
+>>>> +	struct device *dev = kobj_to_dev(kobj);
+>>>> +	struct tb_retimer *rt = tb_to_retimer(dev);
+>>>> +
+>>>> +	if (!rt->nvm)
+>>>> +		return 0;
+>>>> +	return attr->mode;
+>>>> +
+>>>> +}
+>>
+>> I just noticed I had a spurious newline here.  If we end up taking this
+>> patch would you mind just fixing it up?  If there is other feedback I'll fix
+>> it on a v2.
+>>
+>>>> +
+>>>>    static struct attribute *retimer_attrs[] = {
+>>>>    	&dev_attr_device.attr,
+>>>>    	&dev_attr_nvm_authenticate.attr,
+>>>> @@ -351,6 +361,7 @@ static struct attribute *retimer_attrs[] = {
+>>>>    };
+>>>>    static const struct attribute_group retimer_group = {
+>>>> +	.is_visible = retimer_is_visible,
+>>>>    	.attrs = retimer_attrs,
+>>>>    };
+>>>> -- 
+>>>> 2.43.0
+
 
