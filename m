@@ -1,162 +1,138 @@
-Return-Path: <linux-kernel+bounces-437575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE3619E954B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:59:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 361779E952D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:58:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2953328211D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10B7A18837C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D13D622A1D7;
-	Mon,  9 Dec 2024 12:54:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6696E3DABE5;
+	Mon,  9 Dec 2024 12:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="Kfoh5wVP"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CEl8K0CG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C72922F3A5;
-	Mon,  9 Dec 2024 12:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9831F238759;
+	Mon,  9 Dec 2024 12:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733748889; cv=none; b=qpsHrz2jIdGMH3eR6iPVaWN7nOU5Q/v0KyB3XLtNk2x7bIQuUTSDI257Wo6wZ/AFg9uZZcEXmlh0+EHAQ6w7adbMrjFmelCTgEs3PLJVmbwKi4YSfmlfOrSL7Z4fyXyV2mLWduKgr5dK7cHKTXF3Ei8CJJC/GJzzm7rX9PtSQeQ=
+	t=1733748856; cv=none; b=QnVKcAS0nWwYREDg2KIlLod/0HbD4v/ph49vyzNdRVoNDPykBDhtNqJe3KOgIA2YzUDGSrsg1rFD4uaI6Um0a7xu+yqr1e107BC944+MueTUH3wJNt/Wtd6AjPTvRKOyQoA9Sg/auxr7XFM7TiyMBRY7r0UuLU1svGFX0B85wR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733748889; c=relaxed/simple;
-	bh=mmp+z6vZClvYN4IUfa9MoRA7iDd0lamwTH4vyhOCrWo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hV5LYMl3ojPUuCX3U703vaSs/bSDpWTD7yAQ7ZDw+McZQYR8FIunLrLTGBy/En258EOWMsJA4Ak12QW/BFQfWBJF5+xiXQZ86gjfV/JZZnn7ISXKJDs6rZGwnRkdWsu2ZeM7rc2Zh6QJmrzWCRYCY5bk2DfM1+H65jOsSnTWd3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=Kfoh5wVP; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1733748839; x=1734353639; i=spasswolf@web.de;
-	bh=EAY4q6z526O4TaeuoHU1dkNEk9o9mZuPKG7V1nAVNJ4=;
-	h=X-UI-Sender-Class:Message-ID:Subject:From:To:Cc:Date:In-Reply-To:
-	 References:Content-Type:MIME-Version:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Kfoh5wVPf2HaxSlR0zhNthgA+cnzi1FjvP6BIcRsvPWwGJj7bc+Ph941RUlpzWpz
-	 6VEdjAfZfGz/DW8K5nKy5prdnr0lXl67RUKmRvJ8Iq42zaaU/dfhvD8995JJ4tI0I
-	 GK6SEmpqL3U4R11XTanzSZZinupMTyE5jOERiUkUL4er/hQDFUWN2L6+lm29NZ9K/
-	 rfmLxRgqRztr1cvDVH6xFKN/TL6JsQGtMPezT62AqT/l/40nEbnYTN+BZYsLCLSdb
-	 uex60sWhoO1XbqLOCetgQFab4fKAVEALNpEWwkCuQ8nz4QGFXPuZt/dMbN3AdczdN
-	 XfoC+DGotGRiL+6itQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.0.101] ([84.119.92.193]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N4N9I-1tj9A91Y5m-011Z1G; Mon, 09
- Dec 2024 13:53:59 +0100
-Message-ID: <63df45984a1a7fe5998861abd3210b781662d7f9.camel@web.de>
-Subject: Re: commit 0790303ec869 leads to cpu stall without
- CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
-From: Bert Karwatzki <spasswolf@web.de>
-To: Jan Kara <jack@suse.cz>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, amir73il@gmail.com, 
-	brauner@kernel.org, torvalds@linux-foundation.org, viro@zeniv.linux.org.uk,
- 	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-mm@kvack.org, 	linux-ext4@vger.kernel.org, spasswolf@web.de
-Date: Mon, 09 Dec 2024 13:53:57 +0100
-In-Reply-To: <20241209122648.dpptugrol4p6ikmm@quack3>
-References: <20241208152520.3559-1-spasswolf@web.de>
-	 <20241209121104.j6zttbqod3sh3qhr@quack3>
-	 <20241209122648.dpptugrol4p6ikmm@quack3>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.54.2-1 
+	s=arc-20240116; t=1733748856; c=relaxed/simple;
+	bh=0lz30qD1y1+rEtIXsDpq+djUbafzcUlUtCck/+flSX4=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=o2Dsqvo+d7gYBBTYoVvJ4NmwtaH6V/gL/p+noRS54LiXggiWEEm/YFkcvl73US1QO8HxSjRp6WlvZMlmwQ/i+BCjWVOwE+Ok4qx9cVpB3jb4wHzg+Hz5l2bXN3M4JMyvDxp5o4Rd01aZnktQKO7eRwCoPafMv5zWzi0siP4wouM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CEl8K0CG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AE8FC4CED1;
+	Mon,  9 Dec 2024 12:54:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733748856;
+	bh=0lz30qD1y1+rEtIXsDpq+djUbafzcUlUtCck/+flSX4=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=CEl8K0CGM7DRb6e0F3zTTS/oT4vy05t4fuXb/nFjaS5YXLRA38BmZsbrXMxJlO9p1
+	 CXvlm3Gbw/Qf/vozdVBGzDyflP61gO4gN4lM4zD3PD1VwkOHWg7+14rHHxwovWy3FM
+	 RyPBNMRAJFXYBhGIl4LRC6GCuUxjg9usWXBFMKNBbl5yNZNJv0eteXj2p6djqrMJo0
+	 8ogTewJpSNTkGiRxtBG/H4QsrNL/zkB6BN02tCGi0WL7dANfWYN4tTs0SQzmop3CMp
+	 KzHJo4/0XNyEKayZaPQX1U+8Q5PUd0fRAOqM2exjr9brbHen6MN7sjqvwywqkgvLrn
+	 SuRXXcAV4u/6Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0PZnYBU0gg6jmMJSy7XFdM1bYFCaWir11pnGSd+0qH1foI/b0t1
- GDeIAizz3oLKWi9wKNQxaEKI2kayoXbER7RErF9XDIK5irM8+Ya2jrAIr+FSHNTBXyjHO85
- 0XI5NzerNjKfxkeDZbFkS3Gq4ooOZmbxFvqOyCoNgX8SykBXo3bDINc7zMw5R19vKSw8cI+
- tWItanavbpwWrfHDmz6yA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:h6vS82zGca0=;9iPQBgOpwE7+yvBx1nowykpFDhs
- sL3hd/ksImdUynxocZWcMTayMV+gWBm/4Di2lz+QErGwinZtBSN8NZ7RDi4LWmDy/GfJmTtVJ
- 539P1Oo2A3Tp+WNTjsZN/a5eE7lVnLOpSpYO6kfPR4V0wNKw3hE7UpDnOe8tVhcNFNw+mTO1g
- 2TKSg8eikeuGTeu6Ll4JehOdb0ugnJ8QN0jEE9HUjungrHfR7AaNDdmlLJR7vkmvmycSQZI4G
- nz1hHEJYRhlASziFYxV+g2XaNVlpE7VvvTS6y2XG4IzRyFxVOeKGJCfvQ664eP4bdr+Ppt/7E
- jguPYfsGn1rewvID6F/X2+bJ0lAQAySpa2F+yL/E3f0+LwrSxNPCDy7PKIZjTTvXN9EnQie6p
- OEND5v0C9gYpHGlua25BSK3zATJv+9uHAY/w6JBhS7osoYf6uAyDjKsyevhVJiO3iV9Aehk/c
- wK5uI4dXzhesyQIQyIdX1aaLQupY9NwpJP4K6xNHnNlPzchW1NDaeZDVo0RtRhU1XTg4as8lx
- 20MseOhPoDHGKDsxuCWALftJtpBgRLzY2iHS+/QfM0t7CoDhgOW5GT0ImgguQ/MwDgFHCQtEX
- /Z5zYbtDvC3y00wbcrI5uySwwFceiD0yn76grj9/jVSV5v99BtXizARSPaGtdeWXsgdkks40G
- +r9plqbq4ojzNteeOexaI4M1BGPkux3wJObW5nigGk3Q1hnDIumQyL6rSFI1LruB4Ay8/9Yny
- 1A7rVbNuVvmg4eM6FqHKC2aPzCel7sdE2duo4GEYlOuI4xZpQgcYPz9qzv6OQ1y7+TDRcdRsB
- QIu5MzKP9xJG/I04DGrIOrjYWlMXUCcY42JvL5eZGOsBpqOVTISJvX+GQH6TgNvs0fCs84DUi
- SzXQR0ArNPU0Jbe8PAh4NvIqXM6JDOMnEUYJjcb9+eMhi6sBfdD3itJGokQWi3LaZY6/eaHNT
- tiK42jl5RgIpajRSdaZoEdwyQeF7AsBfBQPSByzT02Jk2/Ja45qiMe1i11FiNNioJ3wHjlz4m
- +sNXoOK200618nsA8KvvgE0iCJH6/AAf6U6v6an9hzuVZwWA6IV9yOt60TXS6P9HGbxPKjXEE
- 5u4TFy2YU=
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 09 Dec 2024 14:54:10 +0200
+Message-Id: <D676OAD5YQU7.26INY71381WIO@kernel.org>
+To: "Jarkko Sakkinen" <jarkko@kernel.org>, "Jiri Slaby"
+ <jirislaby@kernel.org>, "Linus Torvalds" <torvalds@linux-foundation.org>,
+ "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>
+Cc: =?utf-8?q?Peter_H=C3=BCwe?= <PeterHuewe@gmx.de>, "Jason Gunthorpe"
+ <jgg@ziepe.ca>, <linux-integrity@vger.kernel.org>, "Ard Biesheuvel"
+ <ardb@kernel.org>, "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>
+Subject: Re: TPM/EFI issue [Was: Linux 6.12]
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <CAHk-=wgtGkHshfvaAe_O2ntnFBH3EprNk1juieLmjcF2HBwBgQ@mail.gmail.com> <9c893c52-e960-4f30-98ce-ba7d873145bb@kernel.org> <D5Z66HQJNNNL.1CPU2KF13269F@kernel.org> <39f16df2-9f4b-49e9-b004-b0e702d08dad@kernel.org> <D65GMNDAP2VG.1OM0JQG5Q934M@kernel.org>
+In-Reply-To: <D65GMNDAP2VG.1OM0JQG5Q934M@kernel.org>
 
-Am Montag, dem 09.12.2024 um 13:26 +0100 schrieb Jan Kara:
-> On Mon 09-12-24 13:11:04, Jan Kara wrote:
-> > > Then I took a closer look at the function called in the problematic =
-code
-> > > and noticed that fsnotify_file_area_perm(), is a NOOP when
-> > > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is not set (which was the case in=
- my
-> > > .config). This also explains why this was not found before, as
-> > > distributional .config file have this option enabled.  Setting the o=
-ption
-> > > to y solves the issue, too
+On Sat Dec 7, 2024 at 2:16 PM EET, Jarkko Sakkinen wrote:
+> On Mon Dec 2, 2024 at 9:52 AM EET, Jiri Slaby wrote:
+> > On 30. 11. 24, 3:49, Jarkko Sakkinen wrote:
+> > > On Wed Nov 27, 2024 at 8:46 AM EET, Jiri Slaby wrote:
+> > >> Cc TPM + EFI guys.
+> > >>
+> > >> On 17. 11. 24, 23:26, Linus Torvalds wrote:
+> > >>> But before the merge window opens, please give this a quick test to
+> > >>> make sure we didn't mess anything up. The shortlog below gives you =
+the
+> > >>> summary for the last week, and nothing really jumps out at me. A
+> > >>> number of last-minute reverts, and some random fairly small fixes
+> > >>> fairly spread out in the tree.
+> > >>
+> > >> Hi,
+> > >>
+> > >> there is a subtle bug in 6.12 wrt TPM (in TPM, EFI, or perhaps in
+> > >> something else):
+> > >> https://bugzilla.suse.com/show_bug.cgi?id=3D1233752
+> > >>
+> > >> Our testing (openQA) fails with 6.12:
+> > >> https://openqa.opensuse.org/tests/4657304#step/trup_smoke/26
+> > >>
+> > >> The last good is with 6.11.7:
+> > >> https://openqa.opensuse.org/tests/4648526
+> > >>
+> > >> In sum:
+> > >> TPM is supposed to provide a key for decrypting the root partitition=
+,
+> > >> but fails for some reason.
+> > >>
+> > >> It's extremely hard (so far) to reproduce outside of openQA (esp. wh=
+en
+> > >> trying custom kernels).
 > >
-> > Well, I agree with you on all the points but the real question is, how=
- come
-> > the test FMODE_FSNOTIFY_HSM(file->f_mode) was true on our kernel when =
-you
-> > clearly don't run HSM software, even more so with
-> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled. That's the real cause of =
-this
-> > problem. Something fishy is going on here... checking...
+> > Mark "X".
 > >
-> > Ah, because I've botched out file_set_fsnotify_mode() in case
-> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is disabled. This should fix the
-> > problem:
+> > >> Most of the 6.12 TPM stuff already ended in (good) 6.11.7. I tried t=
+o
+> > >> revert:
+> > >>     423893fcbe7e tpm: Disable TPM on tpm2_create_primary() failure
+> > >> from 6.12 but that still fails.
+> > >>
+> > >> We are debugging this further, this is just so you know.
+> > >>
+> > >> Or maybe you have some immediate ideas?
+> > >=20
+> > > Nothing immediate but I've had to tweak quite a lot of TPM bus
+> > > integrity protection feature so it is a possibility that I've
+> > > made a mistake in a point or another.
+> > >=20
+> > > Can you bisect the issue possibly?
 > >
-> > index 1a9ef8f6784d..778a88fcfddc 100644
-> > --- a/include/linux/fsnotify.h
-> > +++ b/include/linux/fsnotify.h
-> > @@ -215,6 +215,7 @@ static inline int fsnotify_open_perm(struct file *=
-file)
-> >  #else
-> >  static inline void file_set_fsnotify_mode(struct file *file)
-> >  {
-> > +       file->f_mode |=3D FMODE_NONOTIFY_PERM;
-> >  }
+> > No, see mark "X" :).
 > >
-> > I'm going to test this with CONFIG_FANOTIFY_ACCESS_PERMISSIONS disable=
-d and
-> > push out a fixed version. Thanks again for the report and analysis!
+> > But follow the downstream bug for progress:
+> > https://bugzilla.suse.com/show_bug.cgi?id=3D1233752
 >
-> So this was not enough, What we need is:
-> index 1a9ef8f6784d..778a88fcfddc 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -215,6 +215,10 @@ static inline int fsnotify_open_perm(struct file *f=
-ile)
->  #else
->  static inline void file_set_fsnotify_mode(struct file *file)
->  {
-> +	/* Is it a file opened by fanotify? */
-> +	if (FMODE_FSNOTIFY_NONE(file->f_mode))
-> +		return;
-> +	file->f_mode |=3D FMODE_NONOTIFY_PERM;
->  }
+> Just came back from company retrite from BCN.
 >
-> This passes testing for me so I've pushed it out and the next linux-next
-> build should have this fix.
+> I can follow this but cannot comment because I've never been
+> able to get a bugzilla account working for any of SUSE infra
+> :-)
 >
-> 								Honza
+> I was actually surprised that I'm able to view the bug at
+> all... Bookmarked it and this thread from lore and revisit
+> like in the middle of the week (my calendar is filled with
+> meetings Mon/Tue).
 
-I had "mixed success" with your first fix, out of 4 boots I got 2 hangs, b=
-ut the
-new version seems to work fine (4 boots, zero hangs).
+Hmm... OK, so no action from my side I guess (sorry if I ignored
+something did not read every single comment)?
 
-Bert Karwatzki
+BR, Jarkko
 
