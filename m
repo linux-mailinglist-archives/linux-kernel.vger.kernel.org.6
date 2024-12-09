@@ -1,198 +1,220 @@
-Return-Path: <linux-kernel+bounces-437459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89DAF9E9384
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:12:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BA69E9389
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:13:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417F328420F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:12:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC62282C7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:13:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3977E22F397;
-	Mon,  9 Dec 2024 12:10:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C7121D008;
+	Mon,  9 Dec 2024 12:10:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XIG7MBwS"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="k5s08lx+"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A658D22B8D4;
-	Mon,  9 Dec 2024 12:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1920E22069F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733746199; cv=none; b=Q++PO4eFt0SvZqbRL3xci+iJjYJYNtxWQYLuV+p9+n2tN5VqAPOYKg27DaFyGbPs7/JTOdtUp7Wv/M1OSXo5mMAkis7qgIUr83fPo7SGJK+6vPWAWAsm78QvVKJ/dAhGkUipdScrvhXktPYZCy/V59qfPCTf90cwJ85kGSzUo6g=
+	t=1733746238; cv=none; b=KIvzkHcUkoYCxi8wlsaPgYFYwENlbCus98oI2FelmwwJgAAqeQGNlZjjPLTYz1b8ArK1GbYV38Q4Olqv2rELAeBuJ5+eXG+1yzcpUt47m+DC3LH2I1HDiQCny9mTZP+Kmb4K8AquwnNX3eKlk/Ze98+8jhDB54V0FRazwiB5xhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733746199; c=relaxed/simple;
-	bh=ZjJj7jdZ9xsYB3boPqxYaoqch47tPC3g35dATAfAPZw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=HtGIWEz+9Oyey992XtQvewojYHA90qYZMJUJjG9cgwW7xsukTr0PIwguz5lR9nHEkDpDtOPPfI19peDUF1pXEmDUA8bgtl/ivw9r1hoq266ticTmLqVW4hh5t5UdX2Yd01fqXSZWvvbKOA1gJg+KQQ7pEu51kXUoAPDB9Nt5WgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XIG7MBwS; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434aa222d96so46551855e9.0;
-        Mon, 09 Dec 2024 04:09:57 -0800 (PST)
+	s=arc-20240116; t=1733746238; c=relaxed/simple;
+	bh=E8tkYJODIHheFUnS5WXIUldliI7SSiXfmfMfRYvHoDw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lyPCm3Z6Y8yU1C2v7NGDhuM4zyjmGjp0TnzHSu4ZPtJTWbpXr+BY5alanMvFGQl8tnzPlsYY6WYlZIwKKAa4OMaS/I7/e0DgwNqgoaMUKT9VhPa5awUgcQPeZPns3AIOelLRifaEoNaaspTcLShk6iIpcU6qLNKvZxa6++OeicM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=k5s08lx+; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434a044dce2so46301495e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:10:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733746196; x=1734350996; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DxtIc8zpHQVSLKJgH3nmYP7x2JqOOyKitx+8aCZ1kjA=;
-        b=XIG7MBwSqMfh/kRzs8gj89Di7L1xt6hViJARrJKds000m55F5mcSaYTj+sQeTkJE74
-         kMnHGtxuKVB7Cyen3A3BhC4nsDRJrit7kbTd8CxgZqfV7rVUdyCW59ak7sIKUJkKgAOW
-         aZPgbRwJ/j6BORTxwAnVy9Q+xz+fGVN7AXLJ8Kt6MNXASxuh2JswMwL0dk8MHWTmvt32
-         WB1WPD+LH1rhgdl13QaIbxGMd2HMv5V7vGn0WcnFr4+s77GeVbHFTPVgv0PbTtkg5rYW
-         S9nacG8ihAXpCc016O8+X5GP8cbqMxHAvMFY5XYXgGB33nE8KiQJbj8MAzP/aJiIkT6O
-         fwFg==
+        d=tuxon.dev; s=google; t=1733746234; x=1734351034; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FHX/J4FydKfXDM4LudMI3jraYFA+WTkpN2SeJgrLN0k=;
+        b=k5s08lx+uAqx7VYlqsWlNAubDoTdUuywEmNmcE4GOBjtTtsA7WVOfLOnLOzRQSg06Q
+         Al6x4B6WMpZWpkEO4wWMqFjs5h5OoYUboU+UQL93zV2MUZPR/xO6jrFYMX/DRUKTP+tz
+         hF5v3jZTJWzFwxHR/H7AueSKd9EJpRWuFG6VWOsPwijHWZ0lmfvT7MVLMmieCJ3/E7ak
+         NSm8SRms6lcjquMsHK4vjapWbxVkJbFQwadyFKqcg4gif/BFuVPSkVlh0S3NShBTWtA8
+         pfQ2swySFBvBKSKkFCBjpizpPgJb9WKwpMBP0uRQj4DmjS0p+WoaIygbWirJeLHIloqF
+         1niw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733746196; x=1734350996;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DxtIc8zpHQVSLKJgH3nmYP7x2JqOOyKitx+8aCZ1kjA=;
-        b=kyF9LkgAi1nLqve/6gThmYB5XG46U0JbUlYzSqh1v6YeL9Rf2PX+YGmdziqrqumHJq
-         iw/nYbQ6edMNjczYlR++zPdf66beczizuKMfX9lHcW9uxias0IuboDA4HP994Z1wOlq2
-         o3Stn9KJKvkxVlIAB40EZ+LqN9mbXkx1Nh1oDDWY+/HitIRjlfDb6G0C/rqcxOgpyJVn
-         vCjk8RNsejj+R3sVsw9WoQaeQDOVBywzX9RvBMPbA0APpOb7/n8TxZzsWeIlMU1QBh7h
-         VQij3m8j3gLckxAdNuRi59bQeWT9pK6R4MmfFW3vznIef83P5AYDArf7jj7oGx4dPDYF
-         /ezw==
-X-Forwarded-Encrypted: i=1; AJvYcCVYGhg6fv8PajdbPwAGtHF9jgQyhjQK8qNW/3oQEgkjJEOiapg0TBIaKt6OJDADwZ5QCfHLgZ1r/XJMxNAM@vger.kernel.org, AJvYcCWDY2LXvpqlv1HZ/W4TJOh5XwMS9nFLYeLc7ExO4wbGOwuzoWOl/GxZkjSW+5pzKnQjjX2XgWuGi/5zX8g=@vger.kernel.org, AJvYcCX+QdIC4Cim5Ope61ysZUFdkVoXHf+IeJBWYGDMe/AlgcEKnHxno04N9SsaXPRWiWED0ZNvri/2xTkd@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFqNvHlmDDWXQYpEQj91bgChY3l/qAaiwTXCDnbhPO/7j+nVcM
-	TM3KyLs2B99i5yhKCVyt70p1jnK7wpu8SQ4B8K202Hf86Ih2p3HC
-X-Gm-Gg: ASbGncviZGCdVMTFPIg8El/kQVeVtK49bDe+y602UnSbrz2JH5YbusHiUD3+/UOs+FS
-	7xdY/sQO27KpWBL9S/Kmr5PszNqMxvBC8eGAqmYgQE1e65b5gMw9jmW/7Dv+DQr0SjImlWeq2H0
-	scgsEbck25ywblGREv/RYyyl/hl4MN92WXfNLFfFPXZp3CIhr6+JXLZtKs/wyTGU1QXLxWsr2vL
-	7+iQcIhanj6RrJTFxcE4RlHlb4lqSGwcEeOMORIqDBPsU9u
-X-Google-Smtp-Source: AGHT+IEsIeX/C7P14AsCS9a4ebjG0rhnbGmPWRK+QJ1UfF3XV/goprpR9W9TfpYIysldiMwDJA/KxQ==
-X-Received: by 2002:a05:600c:1909:b0:434:f871:1b9e with SMTP id 5b1f17b1804b1-434fff54c84mr2387835e9.19.1733746195847;
-        Mon, 09 Dec 2024 04:09:55 -0800 (PST)
-Received: from [127.0.1.1] ([46.53.242.72])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-aa69964876csm37308766b.49.2024.12.09.04.09.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 04:09:55 -0800 (PST)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 09 Dec 2024 15:09:18 +0300
-Subject: [PATCH v8 14/14] arm64: dts: qcom: sdm845-starqltechn: add modem
- support
+        d=1e100.net; s=20230601; t=1733746234; x=1734351034;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FHX/J4FydKfXDM4LudMI3jraYFA+WTkpN2SeJgrLN0k=;
+        b=LKpqcgk0hiCXRs4Jnz+xhyAtteqsyN9UMggFowkGxqef+oNwQXCXX2UwPKIJ3HO2Zi
+         YOWhtOOh/03bnb3rkCq2rafjKJstx5KZpuI0IacjLHO15oLdysy+Fta6rNzlqyt/P0VB
+         tluS1gQJwStP4sv0n9iPaWngCdcpSgjK2ERRomTQw85fRCWc0pvXVe+tw9w7Tqtf5Fl/
+         HmUXZslxnlySkmoJ+j9ZujL1EHnfqvcEvPQV6cKhuUBdxREHD3cN4Jzm5pP5NaYmpD89
+         oWVmle4HfBeb1CvVvMwf9+5on7ocCRarhUq0nubUPfzOBnj9tx/EW7eS2uCqbLdDKXMN
+         47wA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKdTYilNrYo01sWGeT6kKfcdrbVRJxowqdh8aAEiHg5UudT3aiFQoFgpDhLVfsULEtNGuT1zR2S39SRL0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxeGGfooLgshQvjYcFltTUrQSRW2tnK7WoJoO+p53Q47OGqEw7Z
+	vmcxaFfDMSe2B2ECK3NwYjAGYITfF7qxz2J4f9NdEIq59Y4NZHxOjW/bbXZtocc=
+X-Gm-Gg: ASbGnctYS7cKcVJrzorsDiplGB+RI60Q/Ib2XzK0RwbOpMlQhHVUNpFvvDyyEOPHQF+
+	9p4EaR8mrYQwHgSA5JPzsCxL10P4omVIrK7NFO4GC1BLi8i3229VTUcNpD3ct1Sl8yGWvDEQLcF
+	1MaxolWn+/EzO9Xayb+bI0cSYQtEHz+hPN0NHUT4kzBXTjQeeEovUkxSfNJGDwwfVht1PBIM5wl
+	kTuth2kIWxp3K0+ML01daX35ERgLL3roVgn42hvgppbEZhadfXOAQ60Kyw=
+X-Google-Smtp-Source: AGHT+IGUfN/EA4JH6RTVsbnUKthIOhG2zwFRZUFAX7rqRG2CHXvmm33MqQPTkWqeEZrSe9CBG7Ax8g==
+X-Received: by 2002:a05:600c:4e88:b0:434:fddf:5c0c with SMTP id 5b1f17b1804b1-434fff30e74mr2642745e9.4.1733746234205;
+        Mon, 09 Dec 2024 04:10:34 -0800 (PST)
+Received: from [192.168.50.4] ([82.78.167.161])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434e8bb0390sm86199035e9.27.2024.12.09.04.10.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 04:10:33 -0800 (PST)
+Message-ID: <240a461f-9c46-4f02-81f9-b2c7453fa1f4@tuxon.dev>
+Date: Mon, 9 Dec 2024 14:10:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-starqltechn_integration_upstream-v8-14-ec604481d691@gmail.com>
-References: <20241209-starqltechn_integration_upstream-v8-0-ec604481d691@gmail.com>
-In-Reply-To: <20241209-starqltechn_integration_upstream-v8-0-ec604481d691@gmail.com>
-To: cros-qcom-dts-watchers@chromium.org, 
- Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, 
- Dzmitry Sankouski <dsankouski@gmail.com>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733746173; l=2190;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=ZjJj7jdZ9xsYB3boPqxYaoqch47tPC3g35dATAfAPZw=;
- b=hLEXZL4A5Qguvh9tEnGlnKRyGQ8oKlJX4fhqIDSRJ7I/R2pHVyq6lROD3RWkbBAMF3Oluvbd3
- adc6Uu77HpeAvr5sMUiydxYPqO+pPEEeUllco1vSaOIbLOKNr8Nduab
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 6/8] arm64: dts: renesas: rzg3s-smarc-switches: Add a
+ header to describe different switches
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
+ lethal@linux-sh.org, g.liakhovetski@gmx.de,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-serial@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
+ <20241115134401.3893008-7-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdVgxKHw4PDbgOGAJf7xsRR1Uyzxu-br+=RK_1ouHoj41g@mail.gmail.com>
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdVgxKHw4PDbgOGAJf7xsRR1Uyzxu-br+=RK_1ouHoj41g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Add support for modem and ipa(IP Accelerator).
-Add spss reserved memory node.
+Hi, Geert,
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
-Changes in v6:
-- refactor: s/starqltechn/sdm845-starqltechn in subject.
----
- arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts | 39 +++++++++++++++++++++++++++++++++++++++
- 1 file changed, 39 insertions(+)
+On 09.12.2024 12:09, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Fri, Nov 15, 2024 at 2:50 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> There are different switches available on both the RZ/G3S SMARC Module and
+>> RZ SMARC Carrier II boards. These switches are used to route different SoC
+>> signals to different parts available on board.
+>>
+>> These switches are described in device trees through macros. These macros
+>> are set accordingly such that the resulted compiled dtb to describe the
+>> on-board switches states.
+>>
+>> Based on the SW_CONFIG3 switch state (populated on the module board), the
+>> SCIF3 SoC interface is routed or not to an U(S)ART pin header available on
+>> the carrier board. As the SCIF3 is accessible through the carrier board,
+>> the device tree enables it in the carrier DTS. To be able to cope with
+>> these type of configurations, add a header file where all the on-board
+>> switches can be described and shared accordingly between module and carrier
+>> board.
+>>
+>> Commit prepares the code to enable SCIF3 on the RZ/G3S carrier device
+>> tree.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+>> @@ -9,25 +9,7 @@
+>>  #include <dt-bindings/gpio/gpio.h>
+>>  #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
+>>
+>> -/*
+>> - * On-board switches' states:
+>> - * @SW_OFF: switch's state is OFF
+>> - * @SW_ON:  switch's state is ON
+>> - */
+>> -#define SW_OFF         0
+>> -#define SW_ON          1
+>> -
+>> -/*
+>> - * SW_CONFIG[x] switches' states:
+>> - * @SW_CONFIG2:
+>> - *     SW_OFF - SD0 is connected to eMMC
+>> - *     SW_ON  - SD0 is connected to uSD0 card
+>> - * @SW_CONFIG3:
+>> - *     SW_OFF - SD2 is connected to SoC
+>> - *     SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
+>> - */
+>> -#define SW_CONFIG2     SW_OFF
+>> -#define SW_CONFIG3     SW_ON
+>> +#include "rzg3s-smarc-switches.h"
+>>
+>>  / {
+>>         compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
+>> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+>> new file mode 100644
+>> index 000000000000..e2d9b953f627
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
+>> @@ -0,0 +1,32 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+> 
+> I agree with Rob about the license.
+> 
+>> +/*
+>> + * On-board switches for the Renesas RZ/G3S SMARC Module and RZ SMARC Carrier II
+>> + * boards.
+>> + *
+>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#ifndef __RZG3S_SMARC_SWITCHES__
+>> +#define __RZG3S_SMARC_SWITCHES__
+>> +
+>> +/*
+>> + * On-board switches' states:
+>> + * @SW_OFF: switch's state is OFF
+>> + * @SW_ON:  switch's state is ON
+>> + */
+>> +#define SW_OFF         0
+>> +#define SW_ON          1
+>> +
+>> +/*
+>> + * SW_CONFIG[x] switches' states:
+>> + * @SW_CONFIG2:
+>> + *     SW_OFF - SD0 is connected to eMMC
+>> + *     SW_ON  - SD0 is connected to uSD0 card
+>> + * @SW_CONFIG3:
+>> + *     SW_OFF - SD2 is connected to SoC
+>> + *     SW_ON  - SCIF3, SSI3, IRQ0, IRQ1 connected to SoC
+> 
+> Note that the original comment above says "SCIF1, SSI0", and looking
+> at the schematics (IC7 and IC8 controlled by SW_SD2_EN#), that is
+> actually correct?
 
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-index e709b2062152..0d80599e893d 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-samsung-starqltechn.dts
-@@ -19,6 +19,8 @@
- #include "pm8998.dtsi"
- #include "sdm845-wcd9340.dtsi"
- 
-+/delete-node/ &rmtfs_mem;
-+/delete-node/ &spss_mem;
- /delete-node/ &adsp_mem;
- /delete-node/ &slpi_mem;
- 
-@@ -106,15 +108,39 @@ memory@a1300000 {
- 			pmsg-size = <0x40000>;
- 		};
- 
-+		/*
-+		 * It seems like reserving the old rmtfs_mem region is also needed to prevent
-+		 * random crashes which are most likely modem related, more testing needed.
-+		 */
-+		removed_region: removed-region@88f00000 {
-+			reg = <0 0x88f00000 0 0x1c00000>;
-+			no-map;
-+		};
-+
- 		slpi_mem: slpi@96700000 {
- 			reg = <0 0x96700000 0 0xf00000>;
- 			no-map;
- 		};
- 
-+		spss_mem: spss@97700000 {
-+			reg = <0 0x97700000 0 0x100000>;
-+			no-map;
-+		};
-+
- 		adsp_mem: memory@97800000 {
- 			reg = <0 0x97800000 0 0x2000000>;
- 			no-map;
- 		};
-+
-+		rmtfs_mem: rmtfs-mem@fde00000 {
-+			compatible = "qcom,rmtfs-mem";
-+			reg = <0 0xfde00000 0 0x202000>;
-+			qcom,use-guard-pages;
-+			no-map;
-+
-+			qcom,client-id = <1>;
-+			qcom,vmid = <QCOM_SCM_VMID_MSS_MSA>;
-+		};
- 	};
- 
- 	i2c21 {
-@@ -859,6 +885,19 @@ dai@5 {
- 	};
- };
- 
-+&mss_pil {
-+	firmware-name = "qcom/sdm845/starqltechn/mba.mbn",
-+			"qcom/sdm845/starqltechn/modem.mbn";
-+	status = "okay";
-+};
-+
-+&ipa {
-+	qcom,gsi-loader = "self";
-+	memory-region = <&ipa_fw_mem>;
-+	firmware-name = "qcom/sdm845/starqltechn/ipa_fws.mbn";
-+	status = "okay";
-+};
-+
- &usb_1 {
- 	status = "okay";
- };
+You're right, I'm not sure why I've changed it. I'll fix it in the next
+version.
 
--- 
-2.39.5
+Thank  you for your review,
+Claudiu
 
+> 
+>> + */
+>> +#define SW_CONFIG2     SW_OFF
+>> +#define SW_CONFIG3     SW_ON
+>> +
+>> +#endif /* __RZG3S_SMARC_SWITCHES__ */
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
 
