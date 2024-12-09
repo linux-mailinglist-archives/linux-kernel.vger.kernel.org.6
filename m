@@ -1,180 +1,186 @@
-Return-Path: <linux-kernel+bounces-438095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671F39E9CB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:12:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F239E9CB6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:12:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75F1C1887878
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:12:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E9282A9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F130114F9F8;
-	Mon,  9 Dec 2024 17:12:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5E313AA2F;
-	Mon,  9 Dec 2024 17:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911BC14A60F;
+	Mon,  9 Dec 2024 17:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="g2G2BVnp"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6F914D283
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764333; cv=none; b=M6+ou6rfmSxFScQBh58IUxJEmVJLOzq/pc/AMnTD5rT8JwhH2ZRKIHzfswQ/M3Hm/ZAwgL/7m+OLyNJG8taMz5DzgOu9pf6WhAhdctPyrnxXa5gCxOFug8qzGUl84Pvs1YB/prm1R49y+MoRCpIRW9glC0ox9kpBrrUtOhRwuu4=
+	t=1733764350; cv=none; b=LKkFgfXuX1UjIpChujWIGOFxnUPUCmW9BL1GoD7GNl66m7u4G/meRqdcW/rIrvEfh2XG/8RcoMrjCSwc3CjSGm4sdjY684maJsROgoT4RY4ucSMuWfHMRCTINwE2MbDh6BXkyPYXp3YY/MB8XjIcF0Z+gGZ/E2rsBiUC6zUYr5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764333; c=relaxed/simple;
-	bh=hzUyGNVfCQBZvBO5ORr/vOicfzOFSqA0ThYtXXos5fA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MRJiCnCMIx7NcMbwltKh9nA4ciDVcOmz7BFmS2v1hQQw8VY14d7pDxW8MlZa4w+eyrUBAXp47FCP7R/g+V+IP0/0C7iabYa1xB2KgbplCJ7LjB9LEB9n+cXaoB1vthH+HgCbPYQdsdS3/DdOiTkz3X2jdSXa8xWWBNArsKgsddU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E0EE6113E;
-	Mon,  9 Dec 2024 09:12:38 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 469FA3F720;
-	Mon,  9 Dec 2024 09:12:09 -0800 (PST)
-Date: Mon, 9 Dec 2024 17:12:06 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Sudeep Holla <sudeep.holla@arm.com>,
-	"Cristian Marussi" <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 2/2] firmware: arm_scmi: round rate bisecting in
- discrete rates
-Message-ID: <Z1ck5tFkb41wReZP@bogus>
-References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
- <20241203173908.3148794-3-etienne.carriere@foss.st.com>
- <Z1bKlOeHJFHpe9ZU@bogus>
- <ed164b6704ab4086b2fb22ae51658f31@foss.st.com>
+	s=arc-20240116; t=1733764350; c=relaxed/simple;
+	bh=cOzd8+7H/GN0o1zps3NAZOOuJnioPUq6sgRKP597Lz0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MQnuCC+vyFgGX3z6mybNjk/I2r2kj1rwJ7hwmhGh1v8X7mpwSGhbrcFm15Audhxcoko1cuXXLXvtCCzpkT7jTVTOQ7PsJywb8DPtRXEYIeKhZOzI1vKkp3zP1QInarNhr4sgrJtTF1fjfD2yEuYN07pVoLWTcU/3GKyIjMglykA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=g2G2BVnp; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ec267b879so891312966b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:12:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ionos.com; s=google; t=1733764347; x=1734369147; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vaWyuI+1zfgRvLafZXYRvDDVpYcT2uiI1jU4yIWvFaI=;
+        b=g2G2BVnp/ZCX9zQOKJVBL4UQ7g1WMuWzYTZ3VIC8OvHT/E8XJpCT2fzbglAUes1nAj
+         3MuC2xtpwLl1IE1SzKEs+P+jK5vbpsfeVQSL+xso9TJ5mUAAUh8A6GKEp82jshbFLwVZ
+         WC6vr3X/wcrBQU85U2ah/SE6z6UrXhh6Mas7LaEnpGJWvflQ6N9I8dK0pSSsXN2r7pBd
+         0KvrPzgX0mAtbSmaNtL2YN4yUeeFfUFs6fRlFnPQhOeQ0JIS02nz2XbZuxvT3zq1J3RN
+         aOUioIf+DuYgpW8J5WkSgg0foDmx4ZvClvILOLG3encu5W97MVTXHgRv/iLWif3J5yjB
+         oYMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733764347; x=1734369147;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vaWyuI+1zfgRvLafZXYRvDDVpYcT2uiI1jU4yIWvFaI=;
+        b=cuTIoHf+ipswQhhFYKqKmxs9UeVSqSRGvTmhXvVNHCmPnTyd8z9DH6YGUWtEZA7UWW
+         tMDicCZm77k6h9CaXMPsVyL8C4lNx5XCE5wpyf3uvwQuX1Fg4JJodC3dB3unCppPjhOz
+         KXLpE254dzlsk9Hjth0t6SKbGbwERoVMDullf0d2rzFb8WH87IHSPqcNBfrAWAmtBHFq
+         4M36JZOMN+j/WYXeDh2eREBQ/D6UiYA7F4XLxvzpHw/gRvNmpMsUzuymzVuKFAyrijVg
+         tn9WexrlqeCKDiVbcsc92/3HWxvOrUXOOczr4r/6Ao37f1RSMugdj7iD3yOoopcewa3K
+         7+cA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhNHllrq48J+2iGV48GpRJ2AocL5OkzEBfZmhsUNideo87OaS7OhecPBK/Sl2gyMGp7h3qRklErw24yvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypdCQodoCvT1IFws8Gn0AXAo8YZd8l5LmbdtaHu1uOFRaPIlZq
+	i/6Yo5aFP1UVfXI9F1pfA3vAQNd0/3/Gfs1Ed8Cq7fdOJKUDW6MsRitS47fIMXqIrgG4ogoaY5N
+	2VWGqFhW31+IYaahYJ6sHhA8P9Vdc2WSN8EsI7g==
+X-Gm-Gg: ASbGncsJmGVBucuyIc7sW7DwhWiKAT1lhQfdbwbtaH9CecMpwcC9PiTz6VxgnzcCSFZ
+	BKjpds+ozmd161cMH0uny7J2WKrvFjRKjDjTdMddDEYfhs1q0DxtSTQnQGxEk
+X-Google-Smtp-Source: AGHT+IGjhgia80GwIq5GYW/J/My9MoNCTxyL/+qNp0qo2eVT8TVjbjcgPbng+OjrTZMWEUN4ktGPt5mr5dUK2s5wNHQ=
+X-Received: by 2002:a17:906:c38b:b0:aa6:7b34:c1a8 with SMTP id
+ a640c23a62f3a-aa69ce8deddmr107306866b.55.1733764346946; Mon, 09 Dec 2024
+ 09:12:26 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ed164b6704ab4086b2fb22ae51658f31@foss.st.com>
+References: <CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-99EL_s0rhz_A@mail.gmail.com>
+ <2128544.1733755560@warthog.procyon.org.uk>
+In-Reply-To: <2128544.1733755560@warthog.procyon.org.uk>
+From: Max Kellermann <max.kellermann@ionos.com>
+Date: Mon, 9 Dec 2024 18:12:15 +0100
+Message-ID: <CAKPOu+8LSKtGmtjwRpY9tMnt=1Y7RvrhDxVsfSRQW02_g5-6XA@mail.gmail.com>
+Subject: Re: [PATCH] nfs: Fix oops in nfs_netfs_init_request() when copying to cache
+To: David Howells <dhowells@redhat.com>
+Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Dave Wysochanski <dwysocha@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
+	Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev, linux-nfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 12:59:58PM +0000, Etienne CARRIERE - foss wrote:
-> Hello Sudeep,
-> 
->  On Monday, December 9, 2024 11:46 AM, Sudeep Holla wrote: 
-> > On Tue, Dec 03, 2024 at 06:39:08PM +0100, Etienne Carriere wrote:
-> > > Implement clock round_rate operation for SCMI clocks that describe a
-> > > discrete rates list. Bisect into the supported rates when using SCMI
-> > > message CLOCK_DESCRIBE_RATES to optimize SCMI communication transfers.
-> > 
-> > Let me stop here and try to understand the requirement here. So you do
-> > communicate with the firmware to arrive at this round_rate ? Does the
-> > list of discreet clock rates changes at the run-time that enables the
-> > need for it. Or will the initial list just include max and min ?
-> 
-> I don't expect the list to change at run-time. The initial list is
-> expected to describe all supported rates. But because this list may
-> be big, I don't think arm_scmi/clock.c driver should store the full list
-> of all supported rates for each of the SCMI clocks. It would cost to
-> much memory. Therefore I propose to query it at runtime, when
-> needed, and bisect to lower the number of required transactions
-> between the agent and the firmware.
+On Mon, Dec 9, 2024 at 3:46=E2=80=AFPM David Howells <dhowells@redhat.com> =
+wrote:
+> Does this fix the issue?
+
+The issue is with 6.11, but this patch fails to build with 6.11 and
+I'm not sure how to backport that part:
+
+ fs/nfs/fscache.c: In function =E2=80=98nfs_netfs_init_request=E2=80=99:
+ fs/nfs/fscache.c:267:50: error: =E2=80=98NETFS_PGPRIV2_COPY_TO_CACHE=E2=80=
+=99
+undeclared (first use in this function); did you mean
+=E2=80=98NETFS_RREQ_COPY_TO_CACHE=E2=80=99?
+   267 |                 if (WARN_ON_ONCE(rreq->origin !=3D
+NETFS_PGPRIV2_COPY_TO_CACHE))
+       |
+^~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Our production machines are all 6.11, because 6.12 has that other
+netfs regression that freezes all transfers immediately
+(https://lore.kernel.org/netfs/CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=3Dgcmkz=
+wYSY4syqw@mail.gmail.com/).
+I guess this other bug only affects Ceph and not NFS, but after
+experiencing so many kernel regressions recently, I had to become more
+cautious with kernel updates (the past 2 months had more
+netfs/NFS/Ceph regression than the last 20 years combined).
+
+
 >
-
-Ah so, this is nothing to do with set_parent, but just an optimisation.
-This change optimises for space but some other platform may have all the
-space but the communication with SCMI platform is not good enough to make
-runtime calls like this change. How do we cater that then ?
-
-We need some spec-ed way or a unique way to identify what is best for
-the platform IMO. We can change the way you have done in this change set
-as someone else may complain in the future that it is costly to send
-such command every time a clock needs to be set. I am just guessing here
-may not be true.
-
-> > 
-> > > Parse the rate list array when the target rate fit in the bounds
-> > > of the command response for simplicity.
-> > >
-> > 
-> > I don't understand what you mean by this.
-> 
-> I meant here that we bisect into supported rates when communicating
-> with the firmware but once the firmware response provides list portion
-> when target rate fits into, we just scan into that array instead of bisecting
-> into. We could also bisect into that array but it is likely quite small
-> (<128 byte in existing SCMI transport drivers) and that would add a bit
-> more code for no much gain IMHO.
-> 
-> 
-> > 
-> > > If so some reason the sequence fails or if the SCMI driver has no
-> > > round_rate SCMI clock handler, then fallback to the legacy strategy that
-> > > returned the target rate value.
-> > >
-> > 
-> > Hmm, so we perform some extra dance but we are okay to fallback to default.
-> > I am more confused.
-> 
-> Here, I propose to preserve the exiting sequence in clk/clk-scmi.c in case
-> arm_scmi/clock.c does not implement this new round_rate SCMI clock 
-> operation (it can be the case if these 2 drivers are .ko modules, not
-> well known built-in drivers).
+> David
+> ---
+> nfs: Fix oops in nfs_netfs_init_request() when copying to cache
 >
-
-I don't think it would work if it is not built on the same kernel anyways.
-I don't work much about this use-case.
-
-> > 
-> > > Operation handle scmi_clk_determine_rate() is change to get the effective
-> > > supported rounded rate when there is no clock re-parenting operation
-> > > supported. Otherwise, preserve the implementation that assumed any
-> > > clock rate could be obtained.
-> > >
-> > 
-> > OK, no I think I am getting some idea. Is this case where the parent has
-> > changed and the describe rates can give a different result at run-time.
-> 
-> This does not deal with whether parent has changed or not. I would expect
-> the same request sent multiple times to provide the very same result. But
-> as I said above, I don't think arm_scmi/clock.c should consume a possibly
-> large array of memory to store all supported rate each of the SCMI clocks
-> (that describe discrete rates).
+> When netfslib wants to copy some data that has just been read on behalf o=
+f
+> nfs, it creates a new write request and calls nfs_netfs_init_request() to
+> initialise it, but with a NULL file pointer.  This causes
+> nfs_file_open_context() to oops - however, we don't actually need the nfs
+> context as we're only going to write to the cache.
 >
-
-Right, my assumption was totally wrong. Thanks for confirming.
-
-> An alternate way could be to add an SCMI Clock protocol command in the
-> spec allowing agent to query a closest supported rate, in 1 shot. Maybe
-> this new command could return both rounded rate and the SCMI parent
-> clock needed to reach that rounded rate, better fitting clk_determine_rate()
-> expectations.
+> Fix this by just returning if we aren't given a file pointer and emit a
+> warning if the request was for something other than copy-to-cache.
 >
-
-May be that would be ideal but you need to make a case for such a spec change.
-
-> > 
-> > I need to re-read the part of the spec, but we may need some clarity so
-> > that this implementation is not vendor specific. I am yet to understand this
-> > fully. I just need to make sure spec covers this aspect and anything we
-> > add here is generic solution.
-> > 
-> > I would like to avoid this extra query if not required which you seem to
-> > have made an attempt but I just want to be thorough and make sure that's
-> > what we need w.r.t the specification.
-> 
-> Sure, I indeed prefer clear and robust implementation in the long term,
-> being the one I propose here or another one.
-> 
-
-Good then, we can work towards achieving that. If you can specify how slow
-or memory hungry is it without these changes and how much this change helps
-your platform, we can take it up with spec authors and see if they are happy
-to provide some alternative to deal with this in a generic way.
-
---
-Regards,
-Sudeep
+> Further, fix nfs_netfs_free_request() so that it doesn't try to free the
+> context if the pointer is NULL.
+>
+> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
+> Reported-by: Max Kellermann <max.kellermann@ionos.com>
+> Closes: https://lore.kernel.org/r/CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-=
+99EL_s0rhz_A@mail.gmail.com/
+> Signed-off-by: David Howells <dhowells@redhat.com>
+> cc: Trond Myklebust <trondmy@kernel.org>
+> cc: Anna Schumaker <anna@kernel.org>
+> cc: Dave Wysochanski <dwysocha@redhat.com>
+> cc: Jeff Layton <jlayton@kernel.org>
+> cc: linux-nfs@vger.kernel.org
+> cc: netfs@lists.linux.dev
+> cc: linux-fsdevel@vger.kernel.org
+> ---
+>  fs/nfs/fscache.c |    9 ++++++++-
+>  1 file changed, 8 insertions(+), 1 deletion(-)
+>
+> diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
+> index 810269ee0a50..d49e4ce27999 100644
+> --- a/fs/nfs/fscache.c
+> +++ b/fs/nfs/fscache.c
+> @@ -263,6 +263,12 @@ int nfs_netfs_readahead(struct readahead_control *ra=
+ctl)
+>  static atomic_t nfs_netfs_debug_id;
+>  static int nfs_netfs_init_request(struct netfs_io_request *rreq, struct =
+file *file)
+>  {
+> +       if (!file) {
+> +               if (WARN_ON_ONCE(rreq->origin !=3D NETFS_PGPRIV2_COPY_TO_=
+CACHE))
+> +                       return -EIO;
+> +               return 0;
+> +       }
+> +
+>         rreq->netfs_priv =3D get_nfs_open_context(nfs_file_open_context(f=
+ile));
+>         rreq->debug_id =3D atomic_inc_return(&nfs_netfs_debug_id);
+>         /* [DEPRECATED] Use PG_private_2 to mark folio being written to t=
+he cache. */
+> @@ -274,7 +280,8 @@ static int nfs_netfs_init_request(struct netfs_io_req=
+uest *rreq, struct file *fi
+>
+>  static void nfs_netfs_free_request(struct netfs_io_request *rreq)
+>  {
+> -       put_nfs_open_context(rreq->netfs_priv);
+> +       if (rreq->netfs_priv)
+> +               put_nfs_open_context(rreq->netfs_priv);
+>  }
+>
+>  static struct nfs_netfs_io_data *nfs_netfs_alloc(struct netfs_io_subrequ=
+est *sreq)
+>
 
