@@ -1,119 +1,76 @@
-Return-Path: <linux-kernel+bounces-437643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCECA9E9678
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:22:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 802FD163A05
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:19:10 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431C922FE26;
-	Mon,  9 Dec 2024 13:08:08 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3312F9E9663
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:19:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978F11C5CC4
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D007D2819CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:19:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C961C5CBF;
+	Mon,  9 Dec 2024 13:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="m1cjrZ2w"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112ED1A23A8
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749686; cv=none; b=QsOp7z0zRQkjOqnkZNJt2ZqDkQnQH+xiqXhbByvH1/fhLGCY8h5afNoQX3Z/fwfE1VV6fMV+/DyMmoVpiMdwmaM+IkiWxPTlawhexBd/txT+xfLsVfKUbt1lTRHolJAiCctzl1PKbgKtAbQyc3//f72TuPhduiZiT+jwdfoSEG0=
+	t=1733749686; cv=none; b=VCBPimTqhVivdLrT24Os+e8UYu6W9WKU4/H6vSIr4lU0WqYdgbxp+m2WUoWN23zgYFH8XkNWWOZAlePYL2kerM70rtpgptE5NmHDRQeBYHckJ7K3W0p4OuVELDOJ8JMmmrQ56EvE1muPwUpAVMCKlZ+M2MlJLK/AX03ZarXaPqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733749686; c=relaxed/simple;
-	bh=30LU4+4zbasvRm9xbPR0QPujuyYcs3Dswq1ogtdq/vw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OmtrWyjUCs6rFpx/tx5L+I0m2AWHXvBu4j10ebdGRUvQvra2xS/H19YYAHYByg9MsgTYo+U5qrir7vTaBtq4euAyGr4V3Tp9glSkSKRWI3wVogCm9jkk1fRoWYFy8II7R2JQ5pvgFrQsENkKLGIY0imR+sjkTOQbr6Tf9wQiF+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUT-0004RJ-P7; Mon, 09 Dec 2024 14:07:57 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUN-002W7a-2D;
-	Mon, 09 Dec 2024 14:07:52 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUO-002wye-13;
-	Mon, 09 Dec 2024 14:07:52 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Woojung Huh <woojung.huh@microchip.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v1 11/11] net: usb: lan78xx: Improve error handling in WoL operations
-Date: Mon,  9 Dec 2024 14:07:51 +0100
-Message-Id: <20241209130751.703182-12-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241209130751.703182-1-o.rempel@pengutronix.de>
-References: <20241209130751.703182-1-o.rempel@pengutronix.de>
+	bh=FpcSYZ+IZJZii9+Z6c1cLJmRyCEpz88hwc0NxaOYFQU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jbBFdVv/b/fTEaqbyDrZi7RYIE9Dw3gcN1muvSSmcTLV6XD0KjYWvP4929HKhAMRszrIrRR3cE11CzICv7q2D6T1ZmIzLFe0ply4e6p5F7zeN8hIANnpNK4mm0ufvNSILtlh+I3+YrCmQNKEirNKnyy2zMQaepJpW+WadT7hAuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=m1cjrZ2w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D4ECC4CEE8;
+	Mon,  9 Dec 2024 13:08:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733749685;
+	bh=FpcSYZ+IZJZii9+Z6c1cLJmRyCEpz88hwc0NxaOYFQU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m1cjrZ2wWAX4wVatZfRX5UeZAEfaD3E0d/xGoXaFsb8jiMr9azqcFd5LHF7/or44S
+	 6eRsQ6z6vxGK3Od4NrwBMolkZ23tMSfdy85h17NoBXh79oZRnIAhfR5Jcg9Fm+tvdG
+	 S9NsRhoh93nSAOuTu5FTa3HcIIa9CT34S6XFEpBs=
+Date: Mon, 9 Dec 2024 14:08:02 +0100
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Siddh Raman Pant <siddh.raman.pant@oracle.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: CVE-2024-49967: ext4: no need to continue when the number of
+ entries is 1
+Message-ID: <2024120952-decorator-lyricist-1e9a@gregkh>
+References: <2024102133-CVE-2024-49967-a58a@gregkh>
+ <be6117aa16c1a42d9c192e95334a440ac790de11.camel@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <be6117aa16c1a42d9c192e95334a440ac790de11.camel@oracle.com>
 
-Enhance error handling in Wake-on-LAN (WoL) operations:
-- Log a warning in `lan78xx_get_wol` if `lan78xx_read_reg` fails.
-- Check and handle errors from `device_set_wakeup_enable` and
-  `phy_ethtool_set_wol` in `lan78xx_set_wol`.
-- Ensure proper cleanup with a unified error handling path.
+On Mon, Dec 09, 2024 at 12:30:08PM +0000, Siddh Raman Pant wrote:
+> On Mon, 21 Oct 2024 20:02:55 +0200, Greg Kroah-Hartman wrote:
+> > In the Linux kernel, the following vulnerability has been resolved:
+> > 
+> > ext4: no need to continue when the number of entries is 1
+> > 
+> > The Linux kernel CVE team has assigned CVE-2024-49967 to this issue.
+> 
+> This seems to fix nothing:
+> 
+> https://lore.kernel.org/all/6ba9afc8-fa95-478c-8ed2-a4ad10b3c520@huawei.com/
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/net/usb/lan78xx.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+Ok, so should it be revoked?
 
-diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index 0403aea1a9fa..99c19ec1cb88 100644
---- a/drivers/net/usb/lan78xx.c
-+++ b/drivers/net/usb/lan78xx.c
-@@ -1857,6 +1857,7 @@ static void lan78xx_get_wol(struct net_device *netdev,
- 
- 	ret = lan78xx_read_reg(dev, USB_CFG0, &buf);
- 	if (unlikely(ret < 0)) {
-+		netdev_warn(dev->net, "failed to get WoL %pe", ERR_PTR(ret));
- 		wol->supported = 0;
- 		wol->wolopts = 0;
- 	} else {
-@@ -1888,10 +1889,13 @@ static int lan78xx_set_wol(struct net_device *netdev,
- 
- 	pdata->wol = wol->wolopts;
- 
--	device_set_wakeup_enable(&dev->udev->dev, (bool)wol->wolopts);
-+	ret = device_set_wakeup_enable(&dev->udev->dev, (bool)wol->wolopts);
-+	if (ret < 0)
-+		goto set_wol_done;
- 
--	phy_ethtool_set_wol(netdev->phydev, wol);
-+	ret = phy_ethtool_set_wol(netdev->phydev, wol);
- 
-+set_wol_done:
- 	usb_autopm_put_interface(dev->intf);
- 
- 	return ret;
--- 
-2.39.5
+thanks,
 
+greg k-h
 
