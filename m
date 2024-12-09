@@ -1,132 +1,78 @@
-Return-Path: <linux-kernel+bounces-438200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438201-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C859E9E2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:37:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F3A59E9E2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:38:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 228E218884AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:37:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30B1C163D4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86144181B8D;
-	Mon,  9 Dec 2024 18:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89CC2175D2D;
+	Mon,  9 Dec 2024 18:38:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PNSRFMnv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XWdWoOFx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF787080B;
-	Mon,  9 Dec 2024 18:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C5F7080B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 18:38:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733769452; cv=none; b=JxAhovBROzDu5zmFOl415GzRdA54C/8hfH4RIn2jia6z/Fqgw2ik5Vhfm7yP0ROyKA3sBgTy5n2yY53D4q4QF6u4R8GQHbxe7wLFJQvzS3hYbUNjy14iONE9LzD8YmhyIR/9MXr/HWbB5Oy24NvI2nl4XzqS+OQK7XF/R1HbQGE=
+	t=1733769500; cv=none; b=nYWUqHFIkt+MKUMDMHmkj9vPtfOaDgoYYrlv3V9J2P/E0J60r6v6BzQeCgS/EZc0uV6EhfHBFrt5BUUe+dwhwn5MnYz3a2Yyb6+Ykyb95Xqz4j0Pxw2z5EO0y2OkIM7cIqcCbgU8fRCtfvy9CIM8xTlSrFHL38Lo7/VGeEc2i0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733769452; c=relaxed/simple;
-	bh=sdh/pKCPulvsYk7s6zcfy6YYPGtMjxgbQkbbF/rlioE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G8jgvwJfE2W6zDN2nQ0FFiGNmX2s3IWJXDfc0iLW23OmpMb3V2opFa24MLhyZb2N6LSBNTdqKFRAq5QO80KqrKzwN9GO6V/j+9r2Q2NEd7r4eA+eyikV7RWVk+HC+2jBJXn5YwDjSNnK+XwhuxIFM/OZHE/IUXm9em6r7w2JtoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PNSRFMnv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Aeavm025562;
-	Mon, 9 Dec 2024 18:37:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=eSt64EjpXHkGT6hboROcLtUd
-	nqbF3vn/huz5rZLzQ7U=; b=PNSRFMnvgehX1EMFuSKOj8kweLo+TuIXELGtFYIW
-	4b8Kl1LxwWylY4hVeX2XyveVQc3L8FM7P3J5ao7hkM47lFcK/PfZmFJU2PNqxgQh
-	TFj9SBqMx63hLgLC7GAOpsZChwoYkiQ/aRMzblA1YiOqWBgPTzaUwxTx0HrB18EC
-	HlYa7DesfTWHUvd/ttonnDct5wMGrXSEzPl7kAs01l8ZqhD+U3CpfweCYIbZGSta
-	HV9Isgnf5LqwBw4Urr6cWmnSKszqAXRvla/KeJm5hYlSugBTN6wIahbQE+JJBGQk
-	DbcObqMGQY9B4TNd9rOMloQJmpFxStolEBphNdRoXbDWTA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cfhkdpd2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 18:37:27 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9IbRtZ001925
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 18:37:27 GMT
-Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Dec 2024 10:37:20 -0800
-Date: Tue, 10 Dec 2024 00:07:10 +0530
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: Re: [PATCH v3 0/5] arm64: qcom: Add support for QCS9075 boards
-Message-ID: <Z1c4sIX0QNufi6xe@hu-wasimn-hyd.qualcomm.com>
-References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
- <7f52e0d2-0934-49ca-9c7d-4ba88460096a@kernel.org>
- <Z1LVYelWl3sPPHcD@hu-wasimn-hyd.qualcomm.com>
- <cpxuqo5luqqk6wtk2d3wqsbchq4awrmna4xoye3klatrzu4j54@axbgklv6kdqs>
+	s=arc-20240116; t=1733769500; c=relaxed/simple;
+	bh=9RWfczj3XL0AgQTYSOVsbgWWUCqAtAOVi6U3a9CT+pg=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=dEPEUtRCHSjSPnuEPUmtiNUiM3YQ3eQ8jAzEuY1djBg3hxgMrVPJg1FUFQDacce1FvEW+WXHWaiEQif4RkFAuU9+3Eh83xtca4LlkAe7Lzw5fUYDXGVXFfbBdeWMo5H4vOcFDNYT1IL7+Mt3NbjXOHvK5CTi5rPKr7UPxzjtGjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XWdWoOFx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D0E2C4CED1;
+	Mon,  9 Dec 2024 18:38:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733769499;
+	bh=9RWfczj3XL0AgQTYSOVsbgWWUCqAtAOVi6U3a9CT+pg=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=XWdWoOFxdqxcE4zjtq+VD3ephW1sweWo4w4umDx2gc1JlpeZaTxo6nMSUn0eUa/57
+	 YRy+BxFqmoVpj37ifp76GNkHC5BpF2FdhWjctn+OcQBTcb7rQMZswzU/r9/IWFnLcs
+	 BAG6RyGzsbqjEXg9F/FJ9qCmhokkdd03VsYVmDzolSuU1qFGYR+bb5wgq+mYGc2yjQ
+	 HhhzBRRI8wEVCoBk0fqCUAgjCxSqAgP8Q/MniEFQbJQWyvpT6zLSvymDD0CFrLFW4+
+	 6Flq1ucRLaoUtm31tBCIDpmH2GlKaJRScS6/ppdrjhXpmsGaNx86m5QW6NodPwinuR
+	 pz9vjv7NqdiYQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 3403E380A95E;
+	Mon,  9 Dec 2024 18:38:36 +0000 (UTC)
+Subject: Re: [GIT PULL] sched/urgent for v6.13-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
+References: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241209094822.GAZ1a85tp2J_T7_Ctd@fat_crate.local>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/sched_urgent_for_v6.13_rc3
+X-PR-Tracked-Commit-Id: 82f9cc094975240885c93effbca7f4603f5de1bf
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: df9e2102de839c587eb50b2a5d1d19b07a6caaf5
+Message-Id: <173376951487.149590.4646236202029322876.pr-tracker-bot@kernel.org>
+Date: Mon, 09 Dec 2024 18:38:34 +0000
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, x86-ml <x86@kernel.org>, lkml <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cpxuqo5luqqk6wtk2d3wqsbchq4awrmna4xoye3klatrzu4j54@axbgklv6kdqs>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ujV6k_xjMjqYmY_kd6ZM18jUeyYhy5J1
-X-Proofpoint-GUID: ujV6k_xjMjqYmY_kd6ZM18jUeyYhy5J1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=775 mlxscore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090144
 
-On Sun, Dec 08, 2024 at 07:46:55PM +0200, Dmitry Baryshkov wrote:
-> On Fri, Dec 06, 2024 at 04:13:45PM +0530, Wasim Nazir wrote:
-> > On Wed, Nov 20, 2024 at 05:41:39PM +0100, Krzysztof Kozlowski wrote:
-> > > On 19/11/2024 18:49, Wasim Nazir wrote:
-> > > > This series:
-> > > > 
-> > > > Add support for Qualcomm's rb8, ride/ride-r3 boards using QCS9075 SoC.
-> > > > 
-> > > > QCS9075 is compatible IoT-industrial grade variant of SA8775p SoC
-> > > How does it relate to qcs9100? Why this is not compatible with the
-> > > other? It looks like you duplicate here a lot without trying to make
-> > > these built on top of each other.
-> > > 
-> > 
-> > QCS9075 is non-safe while QCS9100 is safe.
-> > Reference: https://docs.qualcomm.com/bundle/publicresource/87-83840-1_REV_A_Qualcomm_IQ9_Series_Product_Brief.pdf
-> > 
-> > Separate board files are needed as thermal mitigation changes are
-> > required for non-safe variant only.
-> 
-> To reduce possible questions, please include those in the initial
-> submission.
-> 
+The pull request you sent on Mon, 9 Dec 2024 10:48:22 +0100:
 
-Sure, will add the differences in next patch version.
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip tags/sched_urgent_for_v6.13_rc3
 
-> -- 
-> With best wishes
-> Dmitry
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/df9e2102de839c587eb50b2a5d1d19b07a6caaf5
 
-Thanks & Regards,
-Wasim
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
