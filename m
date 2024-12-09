@@ -1,137 +1,464 @@
-Return-Path: <linux-kernel+bounces-436934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A7AB9E8CD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88ACF9E8CBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:58:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 519D62819D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:00:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79C8D164C33
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:58:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED9C21570F;
-	Mon,  9 Dec 2024 07:59:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0F4215067;
+	Mon,  9 Dec 2024 07:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mxcsPB6k"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RITjiLXJ"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7708321516C;
-	Mon,  9 Dec 2024 07:59:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A52E21506D;
+	Mon,  9 Dec 2024 07:58:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731184; cv=none; b=cy5Qrq4yzK4Dn4wDfJlXASowJ3625OvyU12TniQw/4ReKODI919NQP3UvN8+wFubC3CVCYUs/V/3ZKah5fjgmAfrUxbW2xjXcldi+M/0Wiw+hlAWiINiowvxd0fPLKIqwSC7Ynjgy1sALzHqvx06pZlggUp2/LcKJ5zq0pHQNYA=
+	t=1733731133; cv=none; b=Y0m5vDOsfkJ8qwKuk4cWOXrnDMCtcNI00Ggy1oXub+/4UW+eAE95RlrCNFvkX5mQAyuIaE6Bh+V7SEZyDTnr3dQyqbvDK81yWyyHM5BeEGTJW1zImW69UXkPihtsF+ejFa/eilq4DyxgIg0PbuLjRjVDeOXke6Eexhdc++XJwiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731184; c=relaxed/simple;
-	bh=pK3f5fCpUmizu3Cy6++UnM5omz/TBo2leaTtg+du6wI=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BKKdFbvmZv5WuLQ0RV8faF2ZS/jn1aAQKjuCuiqo99mXj+A4pFepOD5HSBHmubmTzUBd1ckPWnY/z4aZlpDy0DnBAw1S6ijJ99JYvkqGraXUfnAKoDd/pMsyw0yb7dvm0rCrZw9ERPHghaLFqf3Hu9ugbhjCgEPVH7fxcrsPtIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mxcsPB6k; arc=none smtp.client-ip=209.85.214.182
+	s=arc-20240116; t=1733731133; c=relaxed/simple;
+	bh=Os5dAcd3Zrt+fqku1kSGs/tQuhvf2EFVfB1PWyATEa4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=e1+WxmrjNDy9ncpct0I7ad2dlLaXZDoS60v+ko54107eQnrkhLYOepS0495aanIm+IljZLwb2HMD4LP+akZhsXbhhilo8kCoMFkAQjcxM45oSZaCvtIGtafAjNzDLj/FZO6teqD1wQhiqGCrM9wXy4TPdHBH50TmeYxkPWSJ8PQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RITjiLXJ; arc=none smtp.client-ip=209.85.167.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-21145812538so34152745ad.0;
-        Sun, 08 Dec 2024 23:59:42 -0800 (PST)
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53e21990bcbso4083965e87.0;
+        Sun, 08 Dec 2024 23:58:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733731182; x=1734335982; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ll6kImbemzHgzysNRe/B4ZjSKDdlmM1jCI9QSTOFJgQ=;
-        b=mxcsPB6kpDPlgRyIXExgoHYN0kLpwziGR9sNbN+S2P8ElgkGawla4nGu8VKquWO086
-         RFC47+QiWZYtlh9VoL07IMnwS9ZFTI+NpNZN/eAcaSWavrPKQziD443dwGQqtIlEqq4M
-         jqZ6wET8L0EG//hH3aN9G+L10vv7MDGnID6/zv04KNcSGS88sf5lYYVR0iq/qT6ZPijW
-         TjxQyvqHXd3Z6kaBt3kCsO0OMTG9iqdQ7bSgiUgoVTuDWODquitJDNfZSX6AkYDclwYk
-         KbYrBY++IWgzGnzUMH2If8KYWfzXNEqBpPLk/mgQDXWWwnxtdJbBDDj8/EopB5P7n3NM
-         hfTg==
+        d=gmail.com; s=20230601; t=1733731130; x=1734335930; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YTTN9XB+lkC9OcQRKqP0MOZQL7W2W4sTEAkLUkmeWDo=;
+        b=RITjiLXJO7hUbtHV1xRLIlNuS6tkWSPBWooOm4pFGjLd3QrCPNJXNM3atF7pgXCuQb
+         jmESjAyySjumIjmW7cLd0JT07yWspNX/BAVRiV4I2U21HWGjtn6zXtFrXIZcDEPV9cuo
+         e9SCQQnwlTiNL5cGwf84w06RRZiosiV3MofQqIuPcTLSj85mOvukCLHhkK834Nv+J98q
+         X10Eg4C+P4DrGfuHr8SEvTa9zSG4YRSgYojtW/H/S+xt5t7RZJTgVlc2mnwW5J5jcsC8
+         nrLBCEh8W2Uuov3kNq9vFMdu6etG06UiLjbMqthmy75WKNbsK1jYbyQa3c9uwHBPz5n9
+         MYOA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733731182; x=1734335982;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ll6kImbemzHgzysNRe/B4ZjSKDdlmM1jCI9QSTOFJgQ=;
-        b=sKKHCsPCn86TpQDErz6EcYF4P7PP3zgAUoBYQMWOUr7oP71ztOpkos1RpYdOPgjY3i
-         bJEDxH5IX0ZHnuI2+YmPH5upw7Xq883QY2hmGCqBm580fqDpyHEVT5MucS+MvIdpP0DM
-         HLhHUbbLoZwV19B9umTbo1eFzHFpU6dTR4YrsxTuvU0ZZAF4QqR2r2rwglYaPH2vTVeI
-         xltvdccXhRLEen6YP5K3GpmbLmSKevmVsIcnEklxKwJL3ve/9TpyJEh9/8LU6iXiVh10
-         9wWhnILH2GAekMvg6QCoGraoUzYlsbksn25p8WHifLeBsG8azll42y4m5V3LMSuNxw+j
-         pTUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUIDXzMV5fCee573hAqwuke3QnFmNSUkKNhc4+4ke4rotpMO34Fa9crpTD+TA/mgch35veg3PgQ+QpYnmQ=@vger.kernel.org, AJvYcCX7uy/IMr8DYHTHe3TKqFBfLOrdtp8dNroNXcayNdlcWfhObSV/gv5oIk4L+D3HjC37q+kQzf+XT4WDdQ==@vger.kernel.org, AJvYcCXIn5WWID78NNmHzp0kYWVq8UeCmGF8bzEaYVp+NgZxkhM10bNkvQMJuzmM9EemifAL0xE68xvHc+t1Ndyj@vger.kernel.org, AJvYcCXtaThWYCGwRRcFEUBQlLpmex3L/oNS5TioyDZQobhOtORqSlkmjWSw5xV92F/AufwVbHEe24Zt+ABX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+NhgVA+jksOCvLjCb4f6bf0pnQtMJCgso2EpcUR2C8xdfxweQ
-	y+bhwKtQmsSj/3ThoH5dkTHaHJJ4aVVFGTqrZmknHOqXGX3xvMkG
-X-Gm-Gg: ASbGncuhWD+zyUdhZC1B7QtbhFRhlo891k4fDB1oo2RPAuwFKpVo+8Hww5g0nhZ8/fP
-	XYjCfQOomScYgf1oYZNVtqdezW84P8NMTR5vCQWwPUs6SD+G6snDXo0kqvSPL/NvBXtlmqnKBlK
-	Td4H8h7TacwnOtKAwCNJDuOlZ9KELBh8bPEnV/KPWxmrzXp4i/09au9ApsAxmpfwREKnGENeMFK
-	KVxc1VE1RSjPPaV6BlnTTEz2LFR0ERkFjdppLJsM9pDYLaYnaxJRbOt2CFUSBFtdA==
-X-Google-Smtp-Source: AGHT+IFLVJdXcJEMtQbEGzS9QEogjBccTI97+be9Pi/cjDczopusFs1mLg5QF1GGPSTJZ9o91Yk57Q==
-X-Received: by 2002:a17:902:d4ca:b0:215:3fb9:5201 with SMTP id d9443c01a7336-21614dd1b11mr167697985ad.44.1733731181698;
-        Sun, 08 Dec 2024 23:59:41 -0800 (PST)
-Received: from localhost.localdomain ([59.188.211.160])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-21628b6588csm36508025ad.235.2024.12.08.23.59.38
+        d=1e100.net; s=20230601; t=1733731130; x=1734335930;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YTTN9XB+lkC9OcQRKqP0MOZQL7W2W4sTEAkLUkmeWDo=;
+        b=oo2u/a0ZEfKHFX9xiInKOX9aP1J8XQhB50Tugaaz49gjmn4/tO4ptjveVqA/gT/Z4J
+         HXsvKlAfIr3E7ZeDFXaK1or6JfVeHdiCA8pjq5RSgbM4iWKKcdhfAJiGmirOyxy066Ex
+         UHnw+UW2duIduXAyPSHFhPut1FCJNlta+DrQSeGfyDy3B6IX/I4TBXEF3z5+3CTxKrjo
+         b4tsDPh591F37tmii6qyiQ5viwVZKV29JuWPBH2aXQeEIGw0d180Vla+ftaL4+YGbpnQ
+         oI/ZLc5SfS4RFdLr6P47TmArkEljvEE/u4ZBQNYn0NU3tzAjyi/qvIHkJ/wO6t6I9eJH
+         rvjg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7U9XdwgbZrIvL0l+oKJJyIUwx615ziwa+6r+cOhWK9f1y7HY/Gcu/862CcYVXYDmqsX+BUf7NPUqs0j7j@vger.kernel.org, AJvYcCVXr4ZwwTqjQVJFfJ1D5SdTpLVh6UEvbnKfJwe3TufqKrPW7ZwJIGYXPInpM9zLAIQQcO3IbO/WB80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUz7q+b4i1o1ZO5MWUJb3xL/glAVUt9uXJW4smgxGD68ZSJQ3g
+	YyQLuaesbhSluCY8ELF84eSts5o6Rp8Gx3LcuhLaZPpT4/dEK26Kt7rvcg==
+X-Gm-Gg: ASbGncvTJNSgxVA8b6scn6eMctycxh0dPAAggsZUG5YyzVjSOrt9Aeu6sHl9Aun+NvV
+	SAtlvA5/h3SuK3LsuLRY933+HTVG3E/6LS0btJXIRJQ8yFwl/MM0kLAUh7xlEFIiFzmpNxLfGdd
+	KKf7SJNPa+W71KF/bRszymFJqLFDDVJ+YUewLN2Ek1aj687L/P6lRHeA+SUYWig9LlQ+U8cLEWg
+	9ZB5saZPWzpKEC/1aDF04aJYSs8iQtH/tiEbFZftL92RTwCOTL1C5QP
+X-Google-Smtp-Source: AGHT+IEg4jECNjWlFnf/oy5L/AoowQGFGFZ2JNnhKAf37333VKmG+ohdMKy0nFjASYCqEaCE2RcWjQ==
+X-Received: by 2002:a05:6512:131d:b0:53e:23ec:b2e7 with SMTP id 2adb3069b0e04-53e2c2c4b9dmr3807616e87.34.1733731129420;
+        Sun, 08 Dec 2024 23:58:49 -0800 (PST)
+Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e39bd3f20sm790524e87.229.2024.12.08.23.58.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 23:59:41 -0800 (PST)
-From: Nick Chan <towinchenmi@gmail.com>
-To: Lee Jones <lee@kernel.org>,
-	Daniel Thompson <danielt@kernel.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Helge Deller <deller@gmx.de>,
-	Hector Martin <marcan@marcan.st>,
-	Sven Peter <sven@svenpeter.dev>,
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Nick Chan <towinchenmi@gmail.com>,
-	dri-devel@lists.freedesktop.org,
-	linux-leds@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fbdev@vger.kernel.org,
-	asahi@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 3/3] MAINTAINERS: Add entries for Apple DWI backlight controller
-Date: Mon,  9 Dec 2024 15:58:35 +0800
-Message-ID: <20241209075908.140014-4-towinchenmi@gmail.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <20241209075908.140014-1-towinchenmi@gmail.com>
-References: <20241209075908.140014-1-towinchenmi@gmail.com>
+        Sun, 08 Dec 2024 23:58:47 -0800 (PST)
+Date: Mon, 9 Dec 2024 09:58:41 +0200
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
+	Mudit Sharma <muditsharma.info@gmail.com>,
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] iio: gts: Simplify available scale table build
+Message-ID: <Z1ajMXzvlgU0Smdf@mva-rohm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="G1RNIunrlcThCopX"
+Content-Disposition: inline
 
-Add MAINTAINERS entries for the driver.
 
-Signed-off-by: Nick Chan <towinchenmi@gmail.com>
+--G1RNIunrlcThCopX
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+Make available scale building more clear. This hurts the performance
+quite a bit by looping throgh the scales many times instead of doing
+everything in one loop. It however simplifies logic by:
+ - decoupling the gain and scale allocations & computations
+ - keeping the temporary 'per_time_gains' table inside the
+   per_time_scales computation function.
+ - separating building the 'all scales' table in own function and doing
+   it based on the already computed per-time scales.
+
+Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+
 ---
- MAINTAINERS | 2 ++
- 1 file changed, 2 insertions(+)
+In my (not always) humble (enough) opinion:
+ - Building the available scales tables was confusing.
+ - The result of this patch looks much clearer and is simpler to follow.
+ - Handles memory allocations and freeing in somehow easyish to follow
+   manner while still:
+     - Avoids introducing mid-function variables
+     - Avoids mixing and matching 'scoped' allocs with regular ones
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 17daa9ee9384..3a7dec3f9a5a 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2196,6 +2196,7 @@ F:	Documentation/devicetree/bindings/i2c/apple,i2c.yaml
- F:	Documentation/devicetree/bindings/interrupt-controller/apple,*
- F:	Documentation/devicetree/bindings/iommu/apple,dart.yaml
- F:	Documentation/devicetree/bindings/iommu/apple,sart.yaml
-+F:	Documentation/devicetree/bindings/leds/backlight/apple,dwi-bl.yaml
- F:	Documentation/devicetree/bindings/mailbox/apple,mailbox.yaml
- F:	Documentation/devicetree/bindings/net/bluetooth/brcm,bcm4377-bluetooth.yaml
- F:	Documentation/devicetree/bindings/nvme/apple,nvme-ans.yaml
-@@ -2221,6 +2222,7 @@ F:	drivers/nvmem/apple-efuses.c
- F:	drivers/pinctrl/pinctrl-apple-gpio.c
- F:	drivers/pwm/pwm-apple.c
- F:	drivers/soc/apple/*
-+F:	drivers/video/backlight/dwi_bl.c
- F:	drivers/watchdog/apple_wdt.c
- F:	include/dt-bindings/interrupt-controller/apple-aic.h
- F:	include/dt-bindings/pinctrl/apple.h
--- 
-2.47.1
+I however send this as an RFC because it hurts the performance quite a
+bit. (No measurements done, I doubt exact numbers matter. I'd just say
+it more than doubles the time, prbably triples or quadruples). Well, it
+is not really on a hot path though, tables are computed once at
+start-up, and with a sane amount of gains/times this is likely not a
+real problem.
 
+This has been tested only by running the kunit tests for the gts-helpers
+in a beaglebone black. Further testing and eyeing is appreciated :)
+---
+ drivers/iio/industrialio-gts-helper.c | 250 +++++++++++++++-----------
+ 1 file changed, 149 insertions(+), 101 deletions(-)
+
+diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrial=
+io-gts-helper.c
+index 291c0fc332c9..01206bc3e48e 100644
+--- a/drivers/iio/industrialio-gts-helper.c
++++ b/drivers/iio/industrialio-gts-helper.c
+@@ -160,16 +160,108 @@ static void iio_gts_purge_avail_scale_table(struct i=
+io_gts *gts)
+ 	gts->num_avail_all_scales =3D 0;
+ }
+=20
++static int scale_eq(int *sc1, int *sc2)
++{
++	return sc1[0] =3D=3D sc2[0] && sc1[1] =3D=3D sc2[1];
++}
++
++static int scale_smaller(int *sc1, int *sc2)
++{
++	if (sc1[0] !=3D sc2[0])
++		return sc1[0] < sc2[0];
++
++	/* If integer parts are equal, fixp parts */
++	return sc1[1] < sc2[1];
++}
++
++static int do_combined_scaletable(struct iio_gts *gts, size_t scale_bytes)
++{
++	int t_idx, i, new_idx;
++	int **scales =3D gts->per_time_avail_scale_tables;
++	int *all_scales =3D kcalloc(gts->num_itime, scale_bytes, GFP_KERNEL);
++
++	if (!all_scales)
++		return -ENOMEM;
++
++	t_idx =3D gts->num_itime - 1;
++	memcpy(all_scales, scales[t_idx], scale_bytes);
++	new_idx =3D gts->num_hwgain * 2;
++
++	while (t_idx-- > 0) {
++		for (i =3D 0; i < gts->num_hwgain ; i++) {
++			int *candidate =3D &scales[t_idx][i * 2];
++			int chk;
++
++			if (scale_smaller(candidate, &all_scales[new_idx - 2])) {
++				all_scales[new_idx] =3D candidate[0];
++				all_scales[new_idx + 1] =3D candidate[1];
++				new_idx +=3D 2;
++
++				continue;
++			}
++			for (chk =3D 0; chk < new_idx; chk +=3D 2)
++				if (!scale_smaller(candidate, &all_scales[chk]))
++					break;
++
++
++			if (scale_eq(candidate, &all_scales[chk]))
++				continue;
++
++			memmove(&all_scales[chk + 2], &all_scales[chk],
++				(new_idx - chk) * sizeof(int));
++			all_scales[chk] =3D candidate[0];
++			all_scales[chk + 1] =3D candidate[1];
++			new_idx +=3D 2;
++		}
++	}
++
++	gts->num_avail_all_scales =3D new_idx / 2;
++	gts->avail_all_scales_table =3D all_scales;
++
++	return 0;
++}
++
++static void iio_gts_free_int_table_array(int **arr, int num_tables)
++{
++	int i;
++
++	for (i =3D 0; i < num_tables; i++)
++		kfree(arr[i]);
++
++	kfree(arr);
++}
++
++static int iio_gts_alloc_int_table_array(int ***arr, int num_tables, int n=
+um_table_items)
++{
++	int i, **tmp;
++
++	tmp =3D kcalloc(num_tables, sizeof(**arr), GFP_KERNEL);
++	if (!tmp)
++		return -ENOMEM;
++
++	for (i =3D 0; i < num_tables; i++) {
++		tmp[i] =3D kcalloc(num_table_items, sizeof(int), GFP_KERNEL);
++		if (!tmp[i])
++			goto err_free;
++	}
++
++	*arr =3D tmp;
++
++	return 0;
++err_free:
++	iio_gts_free_int_table_array(tmp, i);
++
++	return -ENOMEM;
++}
++
+ static int iio_gts_gain_cmp(const void *a, const void *b)
+ {
+ 	return *(int *)a - *(int *)b;
+ }
+=20
+-static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **sca=
+les)
++static int fill_and_sort_scaletables(struct iio_gts *gts, int **gains, int=
+ **scales)
+ {
+-	int i, j, new_idx, time_idx, ret =3D 0;
+-	int *all_gains;
+-	size_t gain_bytes;
++	int i, j, ret;
+=20
+ 	for (i =3D 0; i < gts->num_itime; i++) {
+ 		/*
+@@ -189,73 +281,59 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
+nt **gains, int **scales)
+ 		}
+ 	}
+=20
+-	gain_bytes =3D array_size(gts->num_hwgain, sizeof(int));
+-	all_gains =3D kcalloc(gts->num_itime, gain_bytes, GFP_KERNEL);
+-	if (!all_gains)
+-		return -ENOMEM;
++	return 0;
++}
+=20
+-	/*
+-	 * We assume all the gains for same integration time were unique.
+-	 * It is likely the first time table had greatest time multiplier as
+-	 * the times are in the order of preference and greater times are
+-	 * usually preferred. Hence we start from the last table which is likely
+-	 * to have the smallest total gains.
+-	 */
+-	time_idx =3D gts->num_itime - 1;
+-	memcpy(all_gains, gains[time_idx], gain_bytes);
+-	new_idx =3D gts->num_hwgain;
++static void compute_per_time_gains(struct iio_gts *gts, int **gains)
++{
++	int i, j;
+=20
+-	while (time_idx-- > 0) {
+-		for (j =3D 0; j < gts->num_hwgain; j++) {
+-			int candidate =3D gains[time_idx][j];
+-			int chk;
++	for (i =3D 0; i < gts->num_itime; i++) {
++		for (j =3D 0; j < gts->num_hwgain; j++)
++			gains[i][j] =3D gts->hwgain_table[j].gain *
++				      gts->itime_table[i].mul;
++	}
++}
+=20
+-			if (candidate > all_gains[new_idx - 1]) {
+-				all_gains[new_idx] =3D candidate;
+-				new_idx++;
++static int compute_per_time_tables(struct iio_gts *gts, int **scales)
++{
++	int **per_time_gains;
++	int ret;
+=20
+-				continue;
+-			}
+-			for (chk =3D 0; chk < new_idx; chk++)
+-				if (candidate <=3D all_gains[chk])
+-					break;
++	ret =3D iio_gts_alloc_int_table_array(&per_time_gains, gts->num_itime,
++					    gts->num_hwgain);
++	if (ret)
++		return ret;
+=20
+-			if (candidate =3D=3D all_gains[chk])
+-				continue;
++	compute_per_time_gains(gts, per_time_gains);
+=20
+-			memmove(&all_gains[chk + 1], &all_gains[chk],
+-				(new_idx - chk) * sizeof(int));
+-			all_gains[chk] =3D candidate;
+-			new_idx++;
+-		}
+-	}
++	ret =3D fill_and_sort_scaletables(gts, per_time_gains, scales);
+=20
+-	gts->avail_all_scales_table =3D kcalloc(new_idx, 2 * sizeof(int),
+-					      GFP_KERNEL);
+-	if (!gts->avail_all_scales_table) {
+-		ret =3D -ENOMEM;
+-		goto free_out;
+-	}
+-	gts->num_avail_all_scales =3D new_idx;
++	iio_gts_free_int_table_array(per_time_gains, gts->num_itime);
+=20
+-	for (i =3D 0; i < gts->num_avail_all_scales; i++) {
+-		ret =3D iio_gts_total_gain_to_scale(gts, all_gains[i],
+-					&gts->avail_all_scales_table[i * 2],
+-					&gts->avail_all_scales_table[i * 2 + 1]);
++	return ret;
++}
+=20
+-		if (ret) {
+-			kfree(gts->avail_all_scales_table);
+-			gts->num_avail_all_scales =3D 0;
+-			goto free_out;
+-		}
+-	}
++static int **create_per_time_scales(struct iio_gts *gts)
++{
++	int **per_time_scales, ret;
+=20
+-free_out:
+-	kfree(all_gains);
++	ret =3D iio_gts_alloc_int_table_array(&per_time_scales, gts->num_itime,
++					    gts->num_hwgain * 2);
++	if (ret)
++		return ERR_PTR(ret);
+=20
+-	return ret;
+-}
++	ret =3D compute_per_time_tables(gts, per_time_scales);
++	if (ret)
++		goto err_out;
++
++	return per_time_scales;
+=20
++err_out:
++	iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
++
++	return ERR_PTR(ret);
++}
+ /**
+  * iio_gts_build_avail_scale_table - create tables of available scales
+  * @gts:	Gain time scale descriptor
+@@ -275,55 +353,25 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
+nt **gains, int **scales)
+  */
+ static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
+ {
+-	int **per_time_gains, **per_time_scales, i, j, ret =3D -ENOMEM;
+-
+-	per_time_gains =3D kcalloc(gts->num_itime, sizeof(*per_time_gains), GFP_K=
+ERNEL);
+-	if (!per_time_gains)
+-		return ret;
+-
+-	per_time_scales =3D kcalloc(gts->num_itime, sizeof(*per_time_scales), GFP=
+_KERNEL);
+-	if (!per_time_scales)
+-		goto free_gains;
+-
+-	for (i =3D 0; i < gts->num_itime; i++) {
+-		per_time_scales[i] =3D kcalloc(gts->num_hwgain, 2 * sizeof(int),
+-					     GFP_KERNEL);
+-		if (!per_time_scales[i])
+-			goto err_free_out;
+-
+-		per_time_gains[i] =3D kcalloc(gts->num_hwgain, sizeof(int),
+-					    GFP_KERNEL);
+-		if (!per_time_gains[i]) {
+-			kfree(per_time_scales[i]);
+-			goto err_free_out;
+-		}
++	int ret, scale_bytes;
++	int **per_time_scales;
+=20
+-		for (j =3D 0; j < gts->num_hwgain; j++)
+-			per_time_gains[i][j] =3D gts->hwgain_table[j].gain *
+-					       gts->itime_table[i].mul;
+-	}
++	if (unlikely(check_mul_overflow(gts->num_hwgain, 2 * sizeof(int), &scale_=
+bytes)))
++		return -EOVERFLOW;
+=20
+-	ret =3D gain_to_scaletables(gts, per_time_gains, per_time_scales);
+-	if (ret)
+-		goto err_free_out;
++	per_time_scales =3D create_per_time_scales(gts);
++	if (IS_ERR(per_time_scales))
++		return PTR_ERR(per_time_scales);
+=20
+-	for (i =3D 0; i < gts->num_itime; i++)
+-		kfree(per_time_gains[i]);
+-	kfree(per_time_gains);
+ 	gts->per_time_avail_scale_tables =3D per_time_scales;
+=20
+-	return 0;
+-
+-err_free_out:
+-	for (i--; i >=3D 0; i--) {
+-		kfree(per_time_scales[i]);
+-		kfree(per_time_gains[i]);
++	ret =3D do_combined_scaletable(gts, scale_bytes);
++	if (ret) {
++		iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
++		return ret;
+ 	}
+-	kfree(per_time_scales);
+-free_gains:
+-	kfree(per_time_gains);
+=20
+-	return ret;
++	return 0;
+ }
+=20
+ static void iio_gts_us_to_int_micro(int *time_us, int *int_micro_times,
+
+base-commit: 05ff9c9c53c643551fe08fe52bd714310b9afc2e
+--=20
+2.47.0
+
+
+--G1RNIunrlcThCopX
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdWoywACgkQeFA3/03a
+ocUVwQgAtayF6kMcStmaHXOjFYx7a8ZSx4eAt28EXCBfoNnYu+oeW2mXPZ90h9Bq
+7ItF4vhrgtu82Z9Pwypni+6iIWn8TgFfon+Sl2SHyr1LgIpFwxGwjcXwvdkinJsv
+8AQ0nW1UKVQzlx607RZceF3eD87AaHHCxnIXwhZk8lBFHHHO9d+y5eq2K6h5HZIl
+6QAnF4xhnkJA1Ea9p4UNLzlJnlKkhO0mfy3jV+LEWTTRIcSLPXzvKDiWK65I3ub3
+hWK0SUBjGL8GmFfxH3sCBAeBjf5UYJzgE12tsxnKFNqHdgOc34Rp8IEBpUaJmcia
+R0DLH0ye0yXybsEvKXNttZGjZh9fnA==
+=htE5
+-----END PGP SIGNATURE-----
+
+--G1RNIunrlcThCopX--
 
