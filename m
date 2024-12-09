@@ -1,151 +1,299 @@
-Return-Path: <linux-kernel+bounces-438016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4926B9E9BA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:29:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16CF9166198
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:29:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE44A144D1A;
-	Mon,  9 Dec 2024 16:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jyXFHdpX"
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E93B9E9B8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:25:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5742143C72;
-	Mon,  9 Dec 2024 16:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1574628174F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:25:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2411465B3;
+	Mon,  9 Dec 2024 16:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="T5vZn/01"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2222F13C695;
+	Mon,  9 Dec 2024 16:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761785; cv=none; b=kyR75Fs6sUk1tlZ+N/EmrY4lIgub6SBzWHU/Hov9F+j4aM8s5z09fn25U8rFB0JfTVAVOXXzunKi6QdSztFHCedEtOtpT9nxyN97XVoodnGMPRH/zhj6HoaECQwUq6CJ05YLf/dUDcJVXUxUsXUD+BRyyp1AJUVuooQC5jAzkYU=
+	t=1733761527; cv=none; b=nWeaBtKya0JXkeAbIkjoVPFpeTFeFSsbxt0llr6P9cVlp7VTPvJ8DPfmSwc5xa2Hczwf3nBUsGx47DYcvR57c4dNLfhoCO/7dY1umlmq6gERqX798sccwTKnGAvbg0/ESe5+e/mNBfgdpi1QkvxRt+WNHeL9ud37O70YUYNpJq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761785; c=relaxed/simple;
-	bh=hKEaeoK3n0J0N+4rTttPEgAYCOirq6k51p+EhD8tcFM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cQe6NGCuMwcN8tK8nmyc60mLqK2UMCXCRQnkWoBroJ1vJKmelhDiX/4iR0BEo6j8O6TjMTjGb4EnysBwNyFJ61jEHVUhvIu7RpYM9lnkLJj4xny14aRMlk2jyxX49pTu1BS+WrbY3ZwE4j0RmjN+jfx58m1qeUzaUkJI6B13LRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jyXFHdpX; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Dk78Y030060;
-	Mon, 9 Dec 2024 17:29:25 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	2xxd9CctnglpS/bsG969EigGTjV63sf0SfJfYKNJ5iA=; b=jyXFHdpXnRIz9ela
-	xCGd6zoUUHUlh9IGm+qSgM1lGwOD4FTBP3Fu4kjMyUYDvwuULVGA7k24qEgqzbFg
-	YwTmpb3ed/xBoBWjRzggG4KLs/6ohRnto954BAlELElqS97MIGG1czrLS5atULp5
-	l0B2+JABQg0tDF+WmiFJi/2Q7sRV2zTE/rpk3it43sLAzMW7wwtKS+K5oS7P2q6C
-	Ly3p3DwCpn0Gy+D0xgPNSz+uLthLYsgczK1AgduUUojr2Tcn4OU4Xjgj6ZiOEggr
-	k1h+LH3vSHyHaDszebc5H3Bp36e9a4qGdkC/41H5fx3urTD0wp3aX1Fc5s8V4LGb
-	WVQa+A==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43d26n69ug-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 17:29:25 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3BB7640044;
-	Mon,  9 Dec 2024 17:28:16 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D87CE2945B3;
-	Mon,  9 Dec 2024 17:24:06 +0100 (CET)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
- 2024 17:24:06 +0100
-Message-ID: <6bbb3044-4c1f-4ff1-a503-ef8392e023ae@foss.st.com>
-Date: Mon, 9 Dec 2024 17:24:05 +0100
+	s=arc-20240116; t=1733761527; c=relaxed/simple;
+	bh=QSK/vSymPGTeHpx3RHeoxGLbar7l+kJmZS8bFEMDBNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=l/RRBeawwizyS8spUG90RpOdzCWlEALY+EnJ44m46uuHb+xEY3BKzRswWUN7q6UlDV5I/h1KYkXvo9qfXIFMkipVORxAnen4bLOQOBgDye0cZ4kqdKPOTUrZDhYmS1aEEPJ0fc/xDRVPAWVveU4FY4olZ+di9cgzyzB7qEzU+pw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=T5vZn/01; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from hm-sls2.corp.microsoft.com (bras-base-toroon4332w-grc-63-70-49-166-4.dsl.bell.ca [70.49.166.4])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 55A2F20ACD6A;
+	Mon,  9 Dec 2024 08:25:24 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 55A2F20ACD6A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1733761525;
+	bh=uHfphiDuA8WevVGeduwntUadDdTNUNYToRUGXAajlY4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=T5vZn/01VKhQnfBxy6cObEdNN7+O9B3v7bH5M0fej1JCzJa+6iX9ekM52cnNeq+0U
+	 4+sEb4qxGTClGnrsEpBo3+TFimLVC3ClGXBNbpbqz794QiGpHB/7wiKa6ik/CLXsXi
+	 07gG4TidHwqkdms/QcHHFaqQe4g/2e8s4bzSmpZ8=
+From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+To: linux-efi@vger.kernel.org
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	stable@vger.kernel.org,
+	Tyler Hicks <code@tyhicks.com>,
+	Brian Nguyen <nguyenbrian@microsoft.com>,
+	Jacob Pan <panj@microsoft.com>,
+	Allen Pais <apais@microsoft.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Jeremy Linton <jeremy.linton@arm.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	=?UTF-8?q?KONDO=20KAZUMA=28=E8=BF=91=E8=97=A4=E3=80=80=E5=92=8C=E7=9C=9F=29?= <kazuma-kondo@nec.com>,
+	Kees Cook <kees@kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Yuntao Wang <ytcoode@gmail.com>,
+	Aditya Garg <gargaditya08@live.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] efi: make the min and max mmap slack slots configurable
+Date: Mon,  9 Dec 2024 11:24:34 -0500
+Message-ID: <20241209162449.48390-1-hamzamahfooz@linux.microsoft.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 0/5] Add STM32MP25 USB3/PCIE COMBOPHY driver
-To: Christian Bruel <christian.bruel@foss.st.com>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
-        <p.zabel@pengutronix.de>
-CC: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <fabrice.gasnier@foss.st.com>
-References: <20240930170847.948779-1-christian.bruel@foss.st.com>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20240930170847.948779-1-christian.bruel@foss.st.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: 8bit
 
-Hi Christian
+Recent platforms require more slack slots than the current value of
+EFI_MMAP_NR_SLACK_SLOTS, otherwise they fail to boot. So, introduce
+EFI_MIN_NR_MMAP_SLACK_SLOTS and EFI_MAX_NR_MMAP_SLACK_SLOTS
+and use them to determine a number of slots that the platform
+is willing to accept.
 
-On 9/30/24 19:08, Christian Bruel wrote:
-> Changes in v9:
->     - Fix bot clang warnings: uninitialized variables and
->       include bitfield.h for FIELD_GET
-> 
-> Changes in v7/v8:
->     - MAINTAINERS: Reorder STM32MP25 DRIVER entry
-> 
-> Changes in v6:
->     - stm32_combophy_pll_init: merge combophy_cr1 accesses and error path.
->     - Use devm_reset_control_get_exclusive
-> 
-> Changes in v5:
->     - Drop syscfg phandle and change driver to use lookup_by_compatible
->     - Use clk_bulk API and drop stm32_combophy_enable/disable_clocks
->     - Reorder required: list.
->     - Fix access-controllers maxItems
-> 
-> Changes in v4:
->     - "#phy-cells": Drop type item description since it is specified
->       by user node phandle.
->     - Rename stm32-combophy.yaml to match compatible
->     - Drop wakeup-source from bindings (should be generic)
->     - Alphabetically reorder required: list.
->     - Drop "Reviewed-by" since those previous changes
-> 
-> Changes in v3:
->     - Reorder MAINTAINERS patch
-> 
-> Changes in v2:
->     - Reorder entries
->     - Rename clock_names and reset_names bindings
->     - Rename and clarify rx-equalizer binding
-> 
-> Christian Bruel (5):
->    dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
->    phy: stm32: Add support for STM32MP25 COMBOPHY.
->    MAINTAINERS: add entry for ST STM32MP25 COMBOPHY driver
->    arm64: dts: st: Add combophy node on stm32mp251
->    arm64: dts: st: Enable COMBOPHY on the stm32mp257f-ev1 board
-> 
->   .../bindings/phy/st,stm32mp25-combophy.yaml   | 119 ++++
->   MAINTAINERS                                   |   6 +
->   arch/arm64/boot/dts/st/stm32mp251.dtsi        |  16 +
->   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  14 +
->   drivers/phy/st/Kconfig                        |  11 +
->   drivers/phy/st/Makefile                       |   1 +
->   drivers/phy/st/phy-stm32-combophy.c           | 598 ++++++++++++++++++
->   7 files changed, 765 insertions(+)
->   create mode 100644 Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
->   create mode 100644 drivers/phy/st/phy-stm32-combophy.c
-> 
-> 
-> base-commit: 9bd8e1ba97b1f2d0410db9ff182d677992084770
+Cc: stable@vger.kernel.org
+Cc: Tyler Hicks <code@tyhicks.com>
+Tested-by: Brian Nguyen <nguyenbrian@microsoft.com>
+Tested-by: Jacob Pan <panj@microsoft.com>
+Reviewed-by: Allen Pais <apais@microsoft.com>
+Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+---
+ drivers/firmware/efi/Kconfig                  | 23 +++++++++++++++++
+ .../firmware/efi/libstub/efi-stub-helper.c    |  2 +-
+ drivers/firmware/efi/libstub/efistub.h        | 15 +----------
+ drivers/firmware/efi/libstub/kaslr.c          |  2 +-
+ drivers/firmware/efi/libstub/mem.c            | 25 +++++++++++++++----
+ drivers/firmware/efi/libstub/randomalloc.c    |  2 +-
+ drivers/firmware/efi/libstub/relocate.c       |  2 +-
+ drivers/firmware/efi/libstub/x86-stub.c       |  8 +++---
+ 8 files changed, 52 insertions(+), 27 deletions(-)
 
-DT patches ([4] & [5]) applied on stm32-next.
+diff --git a/drivers/firmware/efi/Kconfig b/drivers/firmware/efi/Kconfig
+index e312d731f4a3..7fedc271d543 100644
+--- a/drivers/firmware/efi/Kconfig
++++ b/drivers/firmware/efi/Kconfig
+@@ -155,6 +155,29 @@ config EFI_TEST
+ 	  Say Y here to enable the runtime services support via /dev/efi_test.
+ 	  If unsure, say N.
+ 
++#
++# An efi_boot_memmap is used by efi_get_memory_map() to return the
++# EFI memory map in a dynamically allocated buffer.
++#
++# The buffer allocated for the EFI memory map includes extra room for
++# a range of [EFI_MIN_NR_MMAP_SLACK_SLOTS, EFI_MAX_NR_MMAP_SLACK_SLOTS]
++# additional EFI memory descriptors. This facilitates the reuse of the
++# EFI memory map buffer when a second call to ExitBootServices() is
++# needed because of intervening changes to the EFI memory map. Other
++# related structures, e.g. x86 e820ext, need to factor in this headroom
++# requirement as well.
++#
++
++config EFI_MIN_NR_MMAP_SLACK_SLOTS
++	int
++	depends on EFI
++	default 8
++
++config EFI_MAX_NR_MMAP_SLACK_SLOTS
++	int
++	depends on EFI
++	default 64
++
+ config EFI_DEV_PATH_PARSER
+ 	bool
+ 
+diff --git a/drivers/firmware/efi/libstub/efi-stub-helper.c b/drivers/firmware/efi/libstub/efi-stub-helper.c
+index c0c81ca4237e..adf2b0c0dd34 100644
+--- a/drivers/firmware/efi/libstub/efi-stub-helper.c
++++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
+@@ -432,7 +432,7 @@ efi_status_t efi_exit_boot_services(void *handle, void *priv,
+ 	if (efi_disable_pci_dma)
+ 		efi_pci_disable_bridge_busmaster();
+ 
+-	status = efi_get_memory_map(&map, true);
++	status = efi_get_memory_map(&map, true, NULL);
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+ 
+diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
+index 76e44c185f29..d86c6e13de5f 100644
+--- a/drivers/firmware/efi/libstub/efistub.h
++++ b/drivers/firmware/efi/libstub/efistub.h
+@@ -160,19 +160,6 @@ void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
+  */
+ #define EFI_100NSEC_PER_USEC	((u64)10)
+ 
+-/*
+- * An efi_boot_memmap is used by efi_get_memory_map() to return the
+- * EFI memory map in a dynamically allocated buffer.
+- *
+- * The buffer allocated for the EFI memory map includes extra room for
+- * a minimum of EFI_MMAP_NR_SLACK_SLOTS additional EFI memory descriptors.
+- * This facilitates the reuse of the EFI memory map buffer when a second
+- * call to ExitBootServices() is needed because of intervening changes to
+- * the EFI memory map. Other related structures, e.g. x86 e820ext, need
+- * to factor in this headroom requirement as well.
+- */
+-#define EFI_MMAP_NR_SLACK_SLOTS	8
+-
+ typedef struct efi_generic_dev_path efi_device_path_protocol_t;
+ 
+ union efi_device_path_to_text_protocol {
+@@ -1059,7 +1046,7 @@ void efi_apply_loadoptions_quirk(const void **load_options, u32 *load_options_si
+ char *efi_convert_cmdline(efi_loaded_image_t *image);
+ 
+ efi_status_t efi_get_memory_map(struct efi_boot_memmap **map,
+-				bool install_cfg_tbl);
++				bool install_cfg_tbl, unsigned int *n);
+ 
+ efi_status_t efi_allocate_pages(unsigned long size, unsigned long *addr,
+ 				unsigned long max);
+diff --git a/drivers/firmware/efi/libstub/kaslr.c b/drivers/firmware/efi/libstub/kaslr.c
+index 6318c40bda38..06e7a1ef34ab 100644
+--- a/drivers/firmware/efi/libstub/kaslr.c
++++ b/drivers/firmware/efi/libstub/kaslr.c
+@@ -62,7 +62,7 @@ static bool check_image_region(u64 base, u64 size)
+ 	bool ret = false;
+ 	int map_offset;
+ 
+-	status = efi_get_memory_map(&map, false);
++	status = efi_get_memory_map(&map, false, NULL);
+ 	if (status != EFI_SUCCESS)
+ 		return false;
+ 
+diff --git a/drivers/firmware/efi/libstub/mem.c b/drivers/firmware/efi/libstub/mem.c
+index 4f1fa302234d..cab25183b790 100644
+--- a/drivers/firmware/efi/libstub/mem.c
++++ b/drivers/firmware/efi/libstub/mem.c
+@@ -13,32 +13,47 @@
+  *			configuration table
+  *
+  * Retrieve the UEFI memory map. The allocated memory leaves room for
+- * up to EFI_MMAP_NR_SLACK_SLOTS additional memory map entries.
++ * up to CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS additional memory map entries.
+  *
+  * Return:	status code
+  */
+ efi_status_t efi_get_memory_map(struct efi_boot_memmap **map,
+-				bool install_cfg_tbl)
++				bool install_cfg_tbl,
++				unsigned int *n)
+ {
+ 	int memtype = install_cfg_tbl ? EFI_ACPI_RECLAIM_MEMORY
+ 				      : EFI_LOADER_DATA;
+ 	efi_guid_t tbl_guid = LINUX_EFI_BOOT_MEMMAP_GUID;
++	unsigned int nr = CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS;
+ 	struct efi_boot_memmap *m, tmp;
+ 	efi_status_t status;
+ 	unsigned long size;
+ 
++	BUILD_BUG_ON(!is_power_of_2(CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS) ||
++		     !is_power_of_2(CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS) ||
++		     CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS >=
++		     CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
++
+ 	tmp.map_size = 0;
+ 	status = efi_bs_call(get_memory_map, &tmp.map_size, NULL, &tmp.map_key,
+ 			     &tmp.desc_size, &tmp.desc_ver);
+ 	if (status != EFI_BUFFER_TOO_SMALL)
+ 		return EFI_LOAD_ERROR;
+ 
+-	size = tmp.map_size + tmp.desc_size * EFI_MMAP_NR_SLACK_SLOTS;
+-	status = efi_bs_call(allocate_pool, memtype, sizeof(*m) + size,
+-			     (void **)&m);
++	do {
++		size = tmp.map_size + tmp.desc_size * nr;
++		status = efi_bs_call(allocate_pool, memtype, sizeof(*m) + size,
++				     (void **)&m);
++		nr <<= 1;
++	} while (status == EFI_BUFFER_TOO_SMALL &&
++		 nr <= CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
++
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+ 
++	if (n)
++		*n = nr;
++
+ 	if (install_cfg_tbl) {
+ 		/*
+ 		 * Installing a configuration table might allocate memory, and
+diff --git a/drivers/firmware/efi/libstub/randomalloc.c b/drivers/firmware/efi/libstub/randomalloc.c
+index c41e7b2091cd..e80a65e7b87a 100644
+--- a/drivers/firmware/efi/libstub/randomalloc.c
++++ b/drivers/firmware/efi/libstub/randomalloc.c
+@@ -65,7 +65,7 @@ efi_status_t efi_random_alloc(unsigned long size,
+ 	efi_status_t status;
+ 	int map_offset;
+ 
+-	status = efi_get_memory_map(&map, false);
++	status = efi_get_memory_map(&map, false, NULL);
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+ 
+diff --git a/drivers/firmware/efi/libstub/relocate.c b/drivers/firmware/efi/libstub/relocate.c
+index d694bcfa1074..b7b0aad95ba4 100644
+--- a/drivers/firmware/efi/libstub/relocate.c
++++ b/drivers/firmware/efi/libstub/relocate.c
+@@ -28,7 +28,7 @@ efi_status_t efi_low_alloc_above(unsigned long size, unsigned long align,
+ 	unsigned long nr_pages;
+ 	int i;
+ 
+-	status = efi_get_memory_map(&map, false);
++	status = efi_get_memory_map(&map, false, NULL);
+ 	if (status != EFI_SUCCESS)
+ 		goto fail;
+ 
+diff --git a/drivers/firmware/efi/libstub/x86-stub.c b/drivers/firmware/efi/libstub/x86-stub.c
+index 188c8000d245..cb14f0d2a3d9 100644
+--- a/drivers/firmware/efi/libstub/x86-stub.c
++++ b/drivers/firmware/efi/libstub/x86-stub.c
+@@ -740,15 +740,15 @@ static efi_status_t allocate_e820(struct boot_params *params,
+ 	struct efi_boot_memmap *map;
+ 	efi_status_t status;
+ 	__u32 nr_desc;
++	__u32 nr;
+ 
+-	status = efi_get_memory_map(&map, false);
++	status = efi_get_memory_map(&map, false, &nr);
+ 	if (status != EFI_SUCCESS)
+ 		return status;
+ 
+ 	nr_desc = map->map_size / map->desc_size;
+-	if (nr_desc > ARRAY_SIZE(params->e820_table) - EFI_MMAP_NR_SLACK_SLOTS) {
+-		u32 nr_e820ext = nr_desc - ARRAY_SIZE(params->e820_table) +
+-				 EFI_MMAP_NR_SLACK_SLOTS;
++	if (nr_desc > ARRAY_SIZE(params->e820_table) - nr) {
++		u32 nr_e820ext = nr_desc - ARRAY_SIZE(params->e820_table) + nr;
+ 
+ 		status = alloc_e820ext(nr_e820ext, e820ext, e820ext_size);
+ 	}
+-- 
+2.47.1
 
-Thanks
-Alex
 
