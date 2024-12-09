@@ -1,387 +1,123 @@
-Return-Path: <linux-kernel+bounces-438478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0639EA1CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:24:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 32BE39EA1CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:24:30 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E62F016517F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:24:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7DA6282D89
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:24:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05B319E83C;
-	Mon,  9 Dec 2024 22:24:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD9819E7F9;
+	Mon,  9 Dec 2024 22:24:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KlO6SuTR"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JMSttuLJ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1606419D083
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 22:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A691E19D082;
+	Mon,  9 Dec 2024 22:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733783043; cv=none; b=sH/PfhpDrmPywtMCn1eD0IFtAen0R+HkTqr5xcYDgLe7SY0P9bRkmOwpr1hKii7SfcD96mgD/TJlpR9sKJOd0ipNiimXMbuAwMQrdpXSTtgx5RX5z45lroh62fmVAGk7N7XRVK0LEtRzLT+oufN52P8dGwOoHGh90X/GlOfMFbo=
+	t=1733783065; cv=none; b=kbGjII/jw0LZn8LuU9/D+ucRec+ZCzQawxRfOvjdt/rvO/LTizE29jG8wVKu4E+YFlg5tPX3q+PBYypbNOoG2hZcX0+GHpTMerPdBmyAuAZVeHQ8v/rmMmEW1D6uV6u1gesJ1tJaOpAvtM9eaqEVeeWeWWwQbwzXENbUTf1rnAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733783043; c=relaxed/simple;
-	bh=HuOdCZXfJVs/ZI8/bZXk5pcIuewTFQdfJssN+QjP6hw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ofiwiSRYQiOU8wPkfBU59GlLNmawECqAGdjkXA99lYIxHbTKSZghFfjBTungqfqSg74JuMuXmcFzMUenTuomB9bQZyMOW4eYyN0q8lwempt2lS5omVObugu3bdEYdytwztF0tTCdEDEfLwb7ZQ9XEPNRQNzWuDL59Hjz44ALDVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KlO6SuTR; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3a815a5fb60so745ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 14:24:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733783041; x=1734387841; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4B+i5dL3xdxmRFat3jkYLVDftVP8cOdtQMKOkI13Mu8=;
-        b=KlO6SuTRSxmBWwXA8kP/r/fnt4p67riAYCN0/ijzx8yhGUbiWAlvH+/CeRh15H4Ael
-         H+AE+gW76kfeHqbuH0PusqK/5nrdRYycSxFxf5DCSl+iRBAnzk6HKb16hbtHXXVzjYp6
-         VaJFM7UA8oBx64t4z/ctbvQPgz45H39UZvqpfPM9hGu7etUZ2eJPtBVH7JFllUlJ0gB5
-         o/648SDLRXg0AFn33dzWrHM/JaVtdJUYCi3/ZCWGtbte2pgwouPx69tZKuzZ67oXNWse
-         elWpopHvG4Ut7lbNskS4AnIhoBzOQu94LgYmzw5Zku3Anv1ELrv4mR08uRBKUL5w97sC
-         rRiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733783041; x=1734387841;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4B+i5dL3xdxmRFat3jkYLVDftVP8cOdtQMKOkI13Mu8=;
-        b=Og3iYKA8cd3wqWODNYJZ/CFIjY6SCBb8tdi9jUlU2Lp4vEji+NNMsqnZT2c++QygGH
-         ZOL4HAh4+NAyEOKlV/r8G9htwEL0HLNqjl6Vh9JegYZg3fucRoJ5JEEXRajK29iV3OOv
-         9gvblqqjQ70qCJWpYFlui/LYo6enLEEouCEsyTi1/A3uNe2mXq2epNdkYLsVmtXvYOam
-         FP8JtwzIP4Y+6+EH8YEKK+QN8SSPb5kTwogGnDcv/6igdSN4ELlYRnNGYHnOwygzHas1
-         rRErrurG/9N2QP7vLQxr2eKKnfQpiau5HcN9HSCFUmyrBedQLCDOG3D/+mVk/PrRWqJJ
-         yQMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTHDv3VDrircP3+D/43laQuW+zuIDfdo++ANsJUE6FxFajb0TBpJAG3O1ecJ04PuabgumHlPPwQwK86J4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc96XS+o4LpIiaTvEk5UQsmFFSm0HfEB0DBEVPgWTTqcB+QBG0
-	XwjlsuQJ+qnFKckXu20q7GqfIJpTkdFlrqYNpJWz43SarpjInZPLTgHT2qpQkc9dfxNdV4o8O8b
-	RRnXFZjDMb8bNsprLPUroZKUBpduaRZ/VA/RS
-X-Gm-Gg: ASbGncurLgHsaAsg92Rg3OZ5xYycdrqfe+Ga+jJyNDpTDqlJimVewgfWONYdzhE2uWJ
-	isTWr4Qz5DhuZVk+60fiKCWgK8rDTljBob7pf
-X-Google-Smtp-Source: AGHT+IGZbL/lCpky6rvDjMtuy2WDIu07ywFy2CNg4s10xa+f8MjMBP3d2X5Jni86xXxZn1D0ckiC3C+ICedb4sP6mKs=
-X-Received: by 2002:a05:6e02:32c6:b0:3a7:e0d0:7cf6 with SMTP id
- e9e14a558f8ab-3a9df5337bdmr168305ab.21.1733783040936; Mon, 09 Dec 2024
- 14:24:00 -0800 (PST)
+	s=arc-20240116; t=1733783065; c=relaxed/simple;
+	bh=Bk/2N0FY+XurB3JIopKaZZSojcJTJwXmDVC2W5AtV+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ai3EJXHcM2EPAvXNHQB53GQTlZujOs2o3OoykP90w61fEXijRQ05zmFbCWPI77bX5kBasiVSvBIhK7GjfwS+Ta+UMsKU82pq3txCjij52zPgWJZtqiJtPzLhBjJb1JMzmG8re6p5vsBesY2yj5XdiR3Z1TSq4pYeWrvP9pqvUds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JMSttuLJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8031FC4CED1;
+	Mon,  9 Dec 2024 22:24:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733783065;
+	bh=Bk/2N0FY+XurB3JIopKaZZSojcJTJwXmDVC2W5AtV+0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JMSttuLJIy6FMyIATxVEk3z1I5vI0pS35ZErRLIPJPvL1EoKFm146deghe+jywG1M
+	 KCqT8qVzQ/HtmflDxFS3wmpZg9V8Wk11LmYqEw1ByPUjCXfArt4C+Xu1TT0dpj1C8D
+	 cHCgwgDxucFS0e6JfqPLEmRtvi4/jLoosNKp95F/GUiLT0uJ+dQblKz5TT9IgVGlX1
+	 pi+wQusJTEdg+iMboNVXSOZyjQ+WZR+9SUuxOJwfNx9aivuNbCtMK6sgNbw2hKr5Dd
+	 SJLHDkeqX2intKBob8aOlFO9txRhGDZg0s9PIFoSEzCEHSsr46Vfci7kUw2LOER08h
+	 fgkHviPSNof0A==
+Date: Mon, 9 Dec 2024 15:24:20 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nilay Shroff <nilay@linux.ibm.com>, linux-kernel@vger.kernel.org,
+	briannorris@chromium.org, kees@kernel.org, gustavoars@kernel.org,
+	steffen.klassert@secunet.com, daniel.m.jordan@oracle.com,
+	gjoyce@ibm.com, linux-crypto@vger.kernel.org, linux@weissschuh.net
+Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
+ gcc-13+ and FORTIFY_SOURCE
+Message-ID: <20241209222420.GA3596039@ax162>
+References: <20241208161315.730138-1-nilay@linux.ibm.com>
+ <2024120938-kilogram-granite-9a53@gregkh>
+ <20241209200300.GB1597021@ax162>
+ <Z1dWinzDPuC8iEXk@yury-ThinkPad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108061500.2698340-1-namhyung@kernel.org> <20241108061500.2698340-3-namhyung@kernel.org>
- <Z1ccoNOl4Z8c5DCz@x1> <Z1cdDzXe4QNJe8jL@x1> <Z1dsRk-3RrZra39w@google.com>
-In-Reply-To: <Z1dsRk-3RrZra39w@google.com>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 9 Dec 2024 14:23:49 -0800
-Message-ID: <CAP-5=fU7pVjaabBq4xuPsDw9oYk9Cf2kWF+x58uRYCY2XX13Nw@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] perf lock contention: Run BPF slab cache iterator
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
-	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z1dWinzDPuC8iEXk@yury-ThinkPad>
 
-On Mon, Dec 9, 2024 at 2:16=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->
-> On Mon, Dec 09, 2024 at 01:38:39PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Mon, Dec 09, 2024 at 01:36:52PM -0300, Arnaldo Carvalho de Melo wrot=
-e:
-> > > On Thu, Nov 07, 2024 at 10:14:57PM -0800, Namhyung Kim wrote:
-> > > > Recently the kernel got the kmem_cache iterator to traverse metadat=
-a of
-> > > > slab objects.  This can be used to symbolize dynamic locks in a sla=
-b.
-> > > >
-> > > > The new slab_caches hash map will have the pointer of the kmem_cach=
-e as
-> > > > a key and save the name and a id.  The id will be saved in the flag=
-s
-> > > > part of the lock.
-> > >
-> > > Trying to fix this
-> >
-> > So you have that struct in tools/perf/util/bpf_skel/vmlinux/vmlinux.h,
-> > but then, this kernel is old and doesn't have the kmem_cache iterator,
-> > so using the generated vmlinux.h will fail the build.
->
-> Thanks for checking this.  I think we handle compatibility issues by
-> checking BTF at runtime but this is a build-time issue. :(
->
-> I wonder if it's really needed to generate vmlinux.h for perf.  Can we
-> simply use the minimal vmlinux.h always?
+On Mon, Dec 09, 2024 at 12:43:54PM -0800, Yury Norov wrote:
+> On Mon, Dec 09, 2024 at 01:03:00PM -0700, Nathan Chancellor wrote:
+> > Maybe people are not using CONFIG_WERROR=y and W=e when hitting this so
+> > they do not notice? It also only became visible in 6.12 because of the
+> > 'inline' -> '__always_inline' changes in bitmap.h and cpumask.h, since
+> > prior to that, the size of the objects being passed to memcpy() were not
+> > known, so FORTIFY could not catch them (another +1 for that change).
+> 
+> Thanks, but I'm actually not happy with that series (ab6b1010dab68f6d4).
+> The original motivation was that one part of compiler decided to outline
+> the pure wrappers or lightweight inline implementation for small bitmaps,
+> like those fitting inside a machine word. 
+> 
+> After that, another part of compiler started complaining that outlined
+> helpers mismatch the sections - .text and .init.data.
 
-Agreed, it shouldn't be necessary. There are certain compilation
-errors that will happen with a generated one that can't happen with
-the minimal. They could be indicative of bugs, like a renamed struct.
+Not another part of the compiler but modpost, a kernel tool, started
+complaining. If modpost could perform control flow analysis, it could
+avoid false positives such as the one from ab6b1010dab68 by seeing more
+of the callchain rather than just the outlined function being called
+with a potentially discarded variable.
 
-Thanks,
-Ian
+> (Not mentioning that the helpers were not designed to be real outlined
+> functions, and doing that adds ~3k to kernel image.)
 
-> >
-> > > cd . && make GEN_VMLINUX_H=3D1 FEATURES_DUMP=3D/home/acme/git/perf-to=
-ols-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=3D/tmp/tmp.DWo9tIFvWU DE=
-STDIR=3D/tmp/tmp.ex3iljqLBT
-> > >   BUILD:   Doing 'make -j28' parallel build
-> [...]
-> > >   GEN     /tmp/tmp.DWo9tIFvWU/util/bpf_skel/vmlinux.h
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bpf_prog_profiler.bp=
-f.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bperf_leader.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bperf_follower.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bperf_cgroup.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/func_latency.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/off_cpu.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/lock_contention.bpf.=
-o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/kwork_trace.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/sample_filter.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/kwork_top.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bench_uprobe.bpf.o
-> > >   CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/augmented_raw_syscal=
-ls.bpf.o
-> > >   GENSKEL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/bench_uprobe.skel.h
-> > >   GENSKEL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/func_latency.skel.h
-> > > util/bpf_skel/lock_contention.bpf.c:612:28: error: declaration of 'st=
-ruct bpf_iter__kmem_cache' will not be visible outside of this function [-W=
-error,-Wvisibility]
-> > >   612 | int slab_cache_iter(struct bpf_iter__kmem_cache *ctx)
-> > >       |                            ^
-> > > util/bpf_skel/lock_contention.bpf.c:614:28: error: incomplete definit=
-ion of type 'struct bpf_iter__kmem_cache'
-> > >   614 |         struct kmem_cache *s =3D ctx->s;
-> > >       |                                ~~~^
-> > > util/bpf_skel/lock_contention.bpf.c:612:28: note: forward declaration=
- of 'struct bpf_iter__kmem_cache'
-> > >   612 | int slab_cache_iter(struct bpf_iter__kmem_cache *ctx)
-> > >       |                            ^
-> > > 2 errors generated.
-> > > make[4]: *** [Makefile.perf:1248: /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.=
-tmp/lock_contention.bpf.o] Error 1
-> > > make[4]: *** Waiting for unfinished jobs....
-> > > make[3]: *** [Makefile.perf:292: sub-make] Error 2
-> > > make[2]: *** [Makefile:76: all] Error 2
-> > > make[1]: *** [tests/make:344: make_gen_vmlinux_h_O] Error 1
-> > > make: *** [Makefile:109: build-test] Error 2
-> > > make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
-> > >
-> > > real        3m43.896s
-> > > user        29m30.716s
-> > > sys 6m36.609s
-> > > =E2=AC=A2 [acme@toolbox perf-tools-next]$
-> > >
-> > >
-> > >
-> > > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > > ---
-> > > >  tools/perf/util/bpf_lock_contention.c         | 50 +++++++++++++++=
-++++
-> > > >  .../perf/util/bpf_skel/lock_contention.bpf.c  | 28 +++++++++++
-> > > >  tools/perf/util/bpf_skel/lock_data.h          | 12 +++++
-> > > >  tools/perf/util/bpf_skel/vmlinux/vmlinux.h    |  8 +++
-> > > >  4 files changed, 98 insertions(+)
-> > > >
-> > > > diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/uti=
-l/bpf_lock_contention.c
-> > > > index 41a1ad08789511c3..558590c3111390fc 100644
-> > > > --- a/tools/perf/util/bpf_lock_contention.c
-> > > > +++ b/tools/perf/util/bpf_lock_contention.c
-> > > > @@ -12,12 +12,59 @@
-> > > >  #include <linux/zalloc.h>
-> > > >  #include <linux/string.h>
-> > > >  #include <bpf/bpf.h>
-> > > > +#include <bpf/btf.h>
-> > > >  #include <inttypes.h>
-> > > >
-> > > >  #include "bpf_skel/lock_contention.skel.h"
-> > > >  #include "bpf_skel/lock_data.h"
-> > > >
-> > > >  static struct lock_contention_bpf *skel;
-> > > > +static bool has_slab_iter;
-> > > > +
-> > > > +static void check_slab_cache_iter(struct lock_contention *con)
-> > > > +{
-> > > > + struct btf *btf =3D btf__load_vmlinux_btf();
-> > > > + s32 ret;
-> > > > +
-> > > > + if (btf =3D=3D NULL) {
-> > > > +         pr_debug("BTF loading failed: %s\n", strerror(errno));
-> > > > +         return;
-> > > > + }
-> > > > +
-> > > > + ret =3D btf__find_by_name_kind(btf, "bpf_iter__kmem_cache", BTF_K=
-IND_STRUCT);
-> > > > + if (ret < 0) {
-> > > > +         bpf_program__set_autoload(skel->progs.slab_cache_iter, fa=
-lse);
-> > > > +         pr_debug("slab cache iterator is not available: %d\n", re=
-t);
-> > > > +         goto out;
-> > > > + }
-> > > > +
-> > > > + has_slab_iter =3D true;
-> > > > +
-> > > > + bpf_map__set_max_entries(skel->maps.slab_caches, con->map_nr_entr=
-ies);
-> > > > +out:
-> > > > + btf__free(btf);
-> > > > +}
-> > > > +
-> > > > +static void run_slab_cache_iter(void)
-> > > > +{
-> > > > + int fd;
-> > > > + char buf[256];
-> > > > +
-> > > > + if (!has_slab_iter)
-> > > > +         return;
-> > > > +
-> > > > + fd =3D bpf_iter_create(bpf_link__fd(skel->links.slab_cache_iter))=
-;
-> > > > + if (fd < 0) {
-> > > > +         pr_debug("cannot create slab cache iter: %d\n", fd);
-> > > > +         return;
-> > > > + }
-> > > > +
-> > > > + /* This will run the bpf program */
-> > > > + while (read(fd, buf, sizeof(buf)) > 0)
-> > > > +         continue;
-> > > > +
-> > > > + close(fd);
-> > > > +}
-> > > >
-> > > >  int lock_contention_prepare(struct lock_contention *con)
-> > > >  {
-> > > > @@ -109,6 +156,8 @@ int lock_contention_prepare(struct lock_content=
-ion *con)
-> > > >                   skel->rodata->use_cgroup_v2 =3D 1;
-> > > >   }
-> > > >
-> > > > + check_slab_cache_iter(con);
-> > > > +
-> > > >   if (lock_contention_bpf__load(skel) < 0) {
-> > > >           pr_err("Failed to load lock-contention BPF skeleton\n");
-> > > >           return -1;
-> > > > @@ -304,6 +353,7 @@ static void account_end_timestamp(struct lock_c=
-ontention *con)
-> > > >
-> > > >  int lock_contention_start(void)
-> > > >  {
-> > > > + run_slab_cache_iter();
-> > > >   skel->bss->enabled =3D 1;
-> > > >   return 0;
-> > > >  }
-> > > > diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools=
-/perf/util/bpf_skel/lock_contention.bpf.c
-> > > > index 1069bda5d733887f..fd24ccb00faec0ba 100644
-> > > > --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> > > > +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
-> > > > @@ -100,6 +100,13 @@ struct {
-> > > >   __uint(max_entries, 1);
-> > > >  } cgroup_filter SEC(".maps");
-> > > >
-> > > > +struct {
-> > > > + __uint(type, BPF_MAP_TYPE_HASH);
-> > > > + __uint(key_size, sizeof(long));
-> > > > + __uint(value_size, sizeof(struct slab_cache_data));
-> > > > + __uint(max_entries, 1);
-> > > > +} slab_caches SEC(".maps");
-> > > > +
-> > > >  struct rw_semaphore___old {
-> > > >   struct task_struct *owner;
-> > > >  } __attribute__((preserve_access_index));
-> > > > @@ -136,6 +143,8 @@ int perf_subsys_id =3D -1;
-> > > >
-> > > >  __u64 end_ts;
-> > > >
-> > > > +__u32 slab_cache_id;
-> > > > +
-> > > >  /* error stat */
-> > > >  int task_fail;
-> > > >  int stack_fail;
-> > > > @@ -563,4 +572,23 @@ int BPF_PROG(end_timestamp)
-> > > >   return 0;
-> > > >  }
-> > > >
-> > > > +SEC("iter/kmem_cache")
-> > > > +int slab_cache_iter(struct bpf_iter__kmem_cache *ctx)
-> > > > +{
-> > > > + struct kmem_cache *s =3D ctx->s;
-> > > > + struct slab_cache_data d;
-> > > > +
-> > > > + if (s =3D=3D NULL)
-> > > > +         return 0;
-> > > > +
-> > > > + d.id =3D ++slab_cache_id << LCB_F_SLAB_ID_SHIFT;
-> > > > + bpf_probe_read_kernel_str(d.name, sizeof(d.name), s->name);
-> > > > +
-> > > > + if (d.id >=3D LCB_F_SLAB_ID_END)
-> > > > +         return 0;
-> > > > +
-> > > > + bpf_map_update_elem(&slab_caches, &s, &d, BPF_NOEXIST);
-> > > > + return 0;
-> > > > +}
-> > > > +
-> > > >  char LICENSE[] SEC("license") =3D "Dual BSD/GPL";
-> > > > diff --git a/tools/perf/util/bpf_skel/lock_data.h b/tools/perf/util=
-/bpf_skel/lock_data.h
-> > > > index 4f0aae5483745dfa..c15f734d7fc4aecb 100644
-> > > > --- a/tools/perf/util/bpf_skel/lock_data.h
-> > > > +++ b/tools/perf/util/bpf_skel/lock_data.h
-> > > > @@ -32,9 +32,16 @@ struct contention_task_data {
-> > > >  #define LCD_F_MMAP_LOCK          (1U << 31)
-> > > >  #define LCD_F_SIGHAND_LOCK       (1U << 30)
-> > > >
-> > > > +#define LCB_F_SLAB_ID_SHIFT      16
-> > > > +#define LCB_F_SLAB_ID_START      (1U << 16)
-> > > > +#define LCB_F_SLAB_ID_END        (1U << 26)
-> > > > +#define LCB_F_SLAB_ID_MASK       0x03FF0000U
-> > > > +
-> > > >  #define LCB_F_TYPE_MAX           (1U << 7)
-> > > >  #define LCB_F_TYPE_MASK          0x0000007FU
-> > > >
-> > > > +#define SLAB_NAME_MAX  28
-> > > > +
-> > > >  struct contention_data {
-> > > >   u64 total_time;
-> > > >   u64 min_time;
-> > > > @@ -55,4 +62,9 @@ enum lock_class_sym {
-> > > >   LOCK_CLASS_RQLOCK,
-> > > >  };
-> > > >
-> > > > +struct slab_cache_data {
-> > > > + u32 id;
-> > > > + char name[SLAB_NAME_MAX];
-> > > > +};
-> > > > +
-> > > >  #endif /* UTIL_BPF_SKEL_LOCK_DATA_H */
-> > > > diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/per=
-f/util/bpf_skel/vmlinux/vmlinux.h
-> > > > index 4dcad7b682bdee9c..7b81d3173917fdb5 100644
-> > > > --- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-> > > > +++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
-> > > > @@ -195,4 +195,12 @@ struct bpf_perf_event_data_kern {
-> > > >   */
-> > > >  struct rq {};
-> > > >
-> > > > +struct kmem_cache {
-> > > > + const char *name;
-> > > > +} __attribute__((preserve_access_index));
-> > > > +
-> > > > +struct bpf_iter__kmem_cache {
-> > > > + struct kmem_cache *s;
-> > > > +} __attribute__((preserve_access_index));
-> > > > +
-> > > >  #endif // __VMLINUX_H
-> > > > --
-> > > > 2.47.0.277.g8800431eea-goog
+Isn't the point of '__always_inline' to convey this to the compiler? As
+far as I understand it, the C standard permits the compiler is
+completely free to ignore 'inline', which could happen for any number of
+reasons, especially with code generation options such as the sanitizers
+or other instrumentation. If you know that these functions need to be
+inlined to generate better code but the compiler doesn't, why not tell
+it?
+
+> I don't like forcing compiler to do this or that, but in this case I
+> just don't know how to teach it to outline the function twice, if it
+> wants to do that. This should be done automatically, I guess...
+
+I do not think that I understand what you are getting at or asking for
+here, sorry. Are you saying you would expect the compiler to split
+bitmap_and() into basically bitmap_and_small_const_nbits() and
+__bitmap_and() then decide which to call in cpumask_and() based on the
+condition of small_const_nbits(nbits) at a particular site? Isn't that
+basically what we are allowing the compiler to figure out by always
+inlining these functions into their call sites?
+
+> Similarly, I don't know how to teach it to keep the functions inlined,
+> other than forcing it to do so.
+
+That's pretty much what '__always_inline' is, right? It's you as the
+programmer saying "I know that this needs to be inlined for xyz reason
+so I really need you to do it". Otherwise, you are just asking to tweak
+a heuristic.
+
+Cheers,
+Nathan
 
