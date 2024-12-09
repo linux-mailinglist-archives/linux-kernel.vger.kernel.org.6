@@ -1,158 +1,195 @@
-Return-Path: <linux-kernel+bounces-437003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC14D9E8DDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:52:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A47EB9E8E26
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:58:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE03E1617AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:52:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70AD318872F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:56:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26EB0215711;
-	Mon,  9 Dec 2024 08:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09D5D21A936;
+	Mon,  9 Dec 2024 08:53:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="G8za5VaO"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="m1Riq1Ob"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A92320FABD;
-	Mon,  9 Dec 2024 08:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0CD1218E98
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734344; cv=none; b=jcwgl3fVN+SXijPslKHcVHAeijOxlsJlQtxkwGYCmGuybN9g6hnzN3FFzJtv8jqDgzWDd8MBJMKcx0puVVMSGBICO+xJuT0yiQiZw4MvmcU2HZC6VMZ1q4Jvwe1pJBc6fhQxsGG+nrIQcDSq0QoetXIZEdCghCtU4P4rXRzhqqs=
+	t=1733734403; cv=none; b=LaMwFeiHI5lA8z1zv4BtOBS+zbSSubFj3UC9vELQyMzCOMfJ7ejRhictJ5Ne2psBAHx8NHSlE++uwqjL7jtk2fOsbiWPamkZvN8t3wLISlu5Rmx83XCCgu+vegAP0a2EkHWf4UBDlGXxDn/y0T54sis6saAWnG4kfofTrqbQ5y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734344; c=relaxed/simple;
-	bh=BNcLxl+DcJJbVF5E/p1CQUzZ5UK5Ws+R+EN50rheir8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XKL2uiAB0o6J9VRcV3wTUX8nRw/491DFrCLV8+yfWZ1K3jhJCMcG6OGl+Dzm5GKftc9p+OCn+ARq9e13WFO38PZn3FQp8pIXm0DkEQjKoSM0zJCjUoC8vntDbAQmn9nJASIrnjdQ7lZclsSamaZ0ITDM7W9jMkqpBsyCjoM5oWo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=G8za5VaO; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B98q2SE2485023
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 02:52:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733734322;
-	bh=X3Af4Y2rLTa8xaPSh9/yanPOZLxr1gQCD0meK+BsxM0=;
-	h=From:To:CC:Subject:Date;
-	b=G8za5VaOkmxrj238Gh9/OUgqCIWot902/BIEsrjms2CvhowaUenL3VCekouk0/kJH
-	 Ab+XKwxyAx0QfEj/hZSKQw/OnGZwPy9YK4vPZOQXafq5us/evMzWTD+mlSkQ+wYEcM
-	 /5GQaahrKnW2EDIHClEn9K1DG3NHNgaPK9LHIhmc=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B98q2i5010368
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 9 Dec 2024 02:52:02 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 9
- Dec 2024 02:52:01 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 9 Dec 2024 02:52:02 -0600
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B98pwbS085675;
-	Mon, 9 Dec 2024 02:51:58 -0600
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH v2] arm64: dts: ti: k3-j784s4-j742s2-main-common: Enable ACSPCIE output for PCIe1
-Date: Mon, 9 Dec 2024 14:21:56 +0530
-Message-ID: <20241209085157.1203168-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733734403; c=relaxed/simple;
+	bh=XrkuNBaA2KFMauWBm/RYoNs/Hm4MI1nuYtz383nCUnU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Zw1CpxsLccUJUqzjc+1fVX8kmH3kw934jnGVyXSwZp93JIRxS2ifR0kqf/9Oa5WtlbscC/ZiDIIov+tBkGkMSPKeXpm0dh5HmI0sAEMuKG/lNZxjxZUHGqOy91O1LvPL1HP3owkQIl7PyNN5KqiGmCPcn7j/LMISrj2XCTw4jeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=m1Riq1Ob; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6eff5ad69a1so13886347b3.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 00:53:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733734400; x=1734339200; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iPUVctTsNe0r6IsZecNZEOZeVyvwjX2Ivrhtlu3S+Ng=;
+        b=m1Riq1Obkeyq66a0uWBWl87D3iF+0UYJyBeGdcUE4i6L7dc3rueA8h/IRa5tVYuOx0
+         3cWb4ba5zP3y2ohKTQb2MNpSk+b+SFfp+Dyi8B9/rTFwq0cSkbtZKxyj//lsZeMW0w2I
+         SX3DKczqVp/duExuM686q9uXAx4Tfed+JL0Pk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733734400; x=1734339200;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=iPUVctTsNe0r6IsZecNZEOZeVyvwjX2Ivrhtlu3S+Ng=;
+        b=Kl/mbE4pb4z/emB8rKEhpXY4GGr+oh9GyKbCu/JM+MDKyvAdB+jqVOUL0h+HIjm139
+         FwwLsi5/JFc91b6HUVLkud21DsLQEHuy7l7ZBTu8KPfnCgn8r1SC1KLFf6TyX0hHmAmc
+         yCl6EUu0CGyoPw0ZaBLyMYWLFMcyJmRz0RkNYQl6xO6RLAwTzj8vmXXrg831CU43cM7h
+         0qnQVZCAO9cT+05J1/tVqLGY0dl7aWOiYcHfFSifI5rgH9QQthbehAprarxGzI3/GI1k
+         mYGDB7rqIYonHBCU05CEBDu8s81fgB1f07bpOyVSL2Jyb1bes/xCeLPVHLWAU4Dn8idL
+         NtJA==
+X-Forwarded-Encrypted: i=1; AJvYcCXEk4HBLULZV3sCnjwQBPEp7FTHe9BYK0uATrURtjgTn6v2puxD36UPWFc0VOsmTHYAC+rpxEgakh5MeiE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuUff/XUlwVLKNmpA12FEF73UIpTzvxdi2lLjmUrQozukbn+uA
+	Q/YzO05RZWOH+HiTFzHID8wPOa0BrmxcYMAzajztat6ySSKCZc+9wGDBQEtF5i4CGshbKg7lB6b
+	Wngc7luf825HKY3n0Diec5xnmtVVpXnDaZP4B
+X-Gm-Gg: ASbGncuNO0oPnQvcRHiB53GM6074hZhnWj1epGPgDFu62sRNPzWQK2ljOdwuv02wiXI
+	N1fB+HiqKmUphOqE9NqPKPCpgTo9onUw=
+X-Google-Smtp-Source: AGHT+IGwuFimavtR5bh3h9P+zvQY5iOG73cLkemO+XKYDlhb2TDqMuz/IxiB1BILzRlt/SAPe4mvu0sMF8C4J4ccZ9k=
+X-Received: by 2002:a05:690c:7088:b0:6e5:9cb7:853c with SMTP id
+ 00721157ae682-6efe3c836b8mr98477407b3.31.1733734399790; Mon, 09 Dec 2024
+ 00:53:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+In-Reply-To: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+From: Yunke Cao <yunkec@chromium.org>
+Date: Mon, 9 Dec 2024 17:53:08 +0900
+Message-ID: <CAEDqmY5nuJQkv-J6WgyqXG7J1GR+8Sa3wzXQ7RpDMUrdDgTOKg@mail.gmail.com>
+Subject: Re: [PATCH v15 00/19] media: uvcvideo: Implement UVC v1.5 ROI
+To: Ricardo Ribalda <ribalda@chromium.org>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans de Goede <hdegoede@redhat.com>, 
+	Ricardo Ribalda <ribalda@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org, 
+	Yunke Cao <yunkec@google.com>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Daniel Scally <dan.scally@ideasonboard.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The PCIe reference clock required by the PCIe Endpoints connected to the
-PCIe connector corresponding to the PCIe1 instance of PCIe on J784S4-EVM
-and J742S2-EVM is driven by the ACSPCIE module. Add the device-tree support
-for enabling the same.
+Hi Ricardo,
 
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
+I've tested the patchset with the fix I commented on in patch 18/19 on
+Chrome OS and verified that the region of interest works as expected.
 
-Patch is based on linux-next tagged next-20241209.
+Tested-by: Yunke Cao <yunkec@google.com>
 
-v1:
-https://lore.kernel.org/r/20240715123301.1184833-1-s-vadapalli@ti.com/
-Changes since v1:
-- Rebased patch on linux-next tagged next-20241209.
-- Moved changes from "k3-j784s4-main.dtsi" to its equivalent now which
-  is "k3-j784s4-j742s2-main-common.dtsi" since PCIe1 is common to both
-  J742S2 and J784S4.
-- Renamed "acspcie0-proxy-ctrl" to "clock-controller" to follow generic
-  node naming convention.
-- Added "ti,syscon-acspcie-proxy-ctrl" property at the end of the node
-  since vendor specific properties should be placed at the end.
+Best,
+Yunke
 
-Since all dependencies mentioned on the v1 patch have been merged, this
-patch has no further dependencies. Patch has been tested on J784S4-EVM
-with an NVMe SSD connected to the PCIe connector corresponding to PCIe1.
-Logs:
-https://gist.github.com/Siddharth-Vadapalli-at-TI/c36e30d8e9eb7bec96f7f400af1ea470
-
-Regards,
-Siddharth.
-
- .../boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi     | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-index 7721852c1f68..cddadd12f444 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-j742s2-main-common.dtsi
-@@ -7,6 +7,7 @@
- 
- #include <dt-bindings/mux/mux.h>
- #include <dt-bindings/phy/phy.h>
-+#include <dt-bindings/phy/phy-cadence.h>
- #include <dt-bindings/phy/phy-ti.h>
- 
- #include "k3-serdes.h"
-@@ -124,6 +125,11 @@ audio_refclk1: clock@82e4 {
- 			assigned-clock-parents = <&k3_clks 157 63>;
- 			#clock-cells = <0>;
- 		};
-+
-+		acspcie0_proxy_ctrl: clock-controller@1a090 {
-+			compatible = "ti,j784s4-acspcie-proxy-ctrl", "syscon";
-+			reg = <0x1a090 0x4>;
-+		};
- 	};
- 
- 	main_ehrpwm0: pwm@3000000 {
-@@ -1091,8 +1097,8 @@ pcie1_rc: pcie@2910000 {
- 		max-link-speed = <3>;
- 		num-lanes = <4>;
- 		power-domains = <&k3_pds 333 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 333 0>;
--		clock-names = "fck";
-+		clocks = <&k3_clks 333 0>, <&serdes0 CDNS_TORRENT_REFCLK_DRIVER>;
-+		clock-names = "fck", "pcie_refclk";
- 		#address-cells = <3>;
- 		#size-cells = <2>;
- 		bus-range = <0x0 0xff>;
-@@ -1103,6 +1109,7 @@ pcie1_rc: pcie@2910000 {
- 		ranges = <0x01000000 0x0 0x18001000  0x00 0x18001000  0x0 0x0010000>,
- 			 <0x02000000 0x0 0x18011000  0x00 0x18011000  0x0 0x7fef000>;
- 		dma-ranges = <0x02000000 0x0 0x0 0x0 0x0 0x10000 0x0>;
-+		ti,syscon-acspcie-proxy-ctrl = <&acspcie0_proxy_ctrl 0x1>;
- 		status = "disabled";
- 	};
- 
--- 
-2.43.0
-
+On Fri, Nov 15, 2024 at 4:10=E2=80=AFAM Ricardo Ribalda <ribalda@chromium.o=
+rg> wrote:
+>
+> This patchset implements UVC v1.5 region of interest using V4L2
+> control API.
+>
+> ROI control is consisted two uvc specific controls.
+> 1. A rectangle control with a newly added type V4L2_CTRL_TYPE_RECT.
+> 2. An auto control with type bitmask.
+>
+> V4L2_CTRL_WHICH_MIN/MAX_VAL is added to support the rectangle control.
+>
+> The corresponding v4l-utils series can be found at
+> https://patchwork.linuxtv.org/project/linux-media/list/?series=3D11069 .
+>
+> Tested with v4l2-compliance, v4l2-ctl, calling ioctls on usb cameras and
+> VIVID with a newly added V4L2_CTRL_TYPE_RECT control.
+>
+> This set includes also the patch:
+> media: uvcvideo: Fix event flags in uvc_ctrl_send_events
+> It is not technically part of this change, but we conflict with it.
+>
+> I am continuing the work that Yunke did.
+>
+> Changes in v15:
+> - Modify mapping set/get to support any size
+> - Remove v4l2_size field. It is not needed, we can use the v4l2_type to
+>   infer it.
+> - Improve documentation.
+> - Lots of refactoring, now adding compound and roi are very small
+>   patches.
+> - Remove rectangle clamping, not supported by some firmware.
+> - Remove init, we can add it later.
+> - Move uvc_cid to USER_BASE
+>
+> - Link to v14: https://lore.kernel.org/linux-media/20231201071907.3080126=
+-1-yunkec@google.com/
+>
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> ---
+> Hans Verkuil (1):
+>       media: v4l2-ctrls: add support for V4L2_CTRL_WHICH_MIN/MAX_VAL
+>
+> Ricardo Ribalda (12):
+>       media: uvcvideo: Fix event flags in uvc_ctrl_send_events
+>       media: uvcvideo: Handle uvc menu translation inside uvc_get_le_valu=
+e
+>       media: uvcvideo: Handle uvc menu translation inside uvc_set_le_valu=
+e
+>       media: uvcvideo: refactor uvc_ioctl_g_ext_ctrls
+>       media: uvcvideo: uvc_ioctl_(g|s)_ext_ctrls: handle NoP case
+>       media: uvcvideo: Support any size for mapping get/set
+>       media: uvcvideo: Factor out clamping from uvc_ctrl_set
+>       media: uvcvideo: Factor out query_boundaries from query_ctrl
+>       media: uvcvideo: Use the camera to clamp compound controls
+>       media: uvcvideo: let v4l2_query_v4l2_ctrl() work with v4l2_query_ex=
+t_ctrl
+>       media: uvcvideo: Introduce uvc_mapping_v4l2_size
+>       media: uvcvideo: Add sanity check to uvc_ioctl_xu_ctrl_map
+>
+> Yunke Cao (6):
+>       media: v4l2_ctrl: Add V4L2_CTRL_TYPE_RECT
+>       media: vivid: Add a rectangle control
+>       media: uvcvideo: add support for compound controls
+>       media: uvcvideo: support V4L2_CTRL_WHICH_MIN/MAX_VAL
+>       media: uvcvideo: implement UVC v1.5 ROI
+>       media: uvcvideo: document UVC v1.5 ROI
+>
+>  .../userspace-api/media/drivers/uvcvideo.rst       |  64 ++
+>  .../userspace-api/media/v4l/vidioc-g-ext-ctrls.rst |  26 +-
+>  .../userspace-api/media/v4l/vidioc-queryctrl.rst   |  14 +
+>  .../userspace-api/media/videodev2.h.rst.exceptions |   4 +
+>  drivers/media/i2c/imx214.c                         |   4 +-
+>  drivers/media/platform/qcom/venus/venc_ctrls.c     |   9 +-
+>  drivers/media/test-drivers/vivid/vivid-ctrls.c     |  34 +
+>  drivers/media/usb/uvc/uvc_ctrl.c                   | 805 +++++++++++++++=
++-----
+>  drivers/media/usb/uvc/uvc_v4l2.c                   |  77 +-
+>  drivers/media/usb/uvc/uvcvideo.h                   |  25 +-
+>  drivers/media/v4l2-core/v4l2-ctrls-api.c           |  54 +-
+>  drivers/media/v4l2-core/v4l2-ctrls-core.c          | 167 ++++-
+>  drivers/media/v4l2-core/v4l2-ioctl.c               |   4 +-
+>  include/media/v4l2-ctrls.h                         |  38 +-
+>  include/uapi/linux/usb/video.h                     |   1 +
+>  include/uapi/linux/uvcvideo.h                      |  13 +
+>  include/uapi/linux/v4l2-controls.h                 |   9 +
+>  include/uapi/linux/videodev2.h                     |   5 +
+>  18 files changed, 1062 insertions(+), 291 deletions(-)
+> ---
+> base-commit: 5516200c466f92954551406ea641376963c43a92
+> change-id: 20241113-uvc-roi-66bd6cfa1e64
+>
+> Best regards,
+> --
+> Ricardo Ribalda <ribalda@chromium.org>
+>
 
