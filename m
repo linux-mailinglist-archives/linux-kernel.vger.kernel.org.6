@@ -1,73 +1,82 @@
-Return-Path: <linux-kernel+bounces-436776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47CD89E8A87
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:54:49 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 091EA9E8A90
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:56:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01871281E60
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:54:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9690164167
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EBEA192598;
-	Mon,  9 Dec 2024 04:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54F71194ACF;
+	Mon,  9 Dec 2024 04:56:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="THlDcfV5"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HIjBKCFm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36E281714DF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2345218A6B2;
+	Mon,  9 Dec 2024 04:56:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733720083; cv=none; b=N36X9XebECiHuRVLRLUAQpRuafVztPGeTTXrQYAO8K16m5NW6EAPuHG48Sgoxp00j3BNBUYpv37MjE3hCWc5owsJCIwBeN+pGfgz/Zjb64yWXlcgPtCdyF9i8eypWmmAqA9OIHErP4+2mTeEQSFUYBG6UY2mOLBNjJztV2vdLLs=
+	t=1733720207; cv=none; b=TBS3KJ7qClsXMjH65wS/OWiOF5bw1jTlhnALLe+NiGFhV5H21J+LNnaFvaXsB10pN8vub5jgSRBSL2V1z58cazL/YaDw0QUzZGy5JXg4CgkL5YqG+76PhrHJlXzvzrAKOw7VaI/pHMdWYF6gizfZ7V89lvVMPtUWJXqSJwnRN9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733720083; c=relaxed/simple;
-	bh=25AC0ZW8bDmUdUGshgsdLaQkBtoAoEyjU9c5Pp/iVX0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ahgdtohkMf9YozDOukn5eaCtNois/15kVd8/XR+EwqkkJ4meGzbDjoRbsHKohIIe08xhWKxelgvklvh3U24tLPWn5gj48gVdjJbd5880KHs5iXIzD+fgJxpCwuL8/rNhvgjxqoHNjdt6DS7jf1JLdJJ7U7SnbGiuBwINnA0v4/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=THlDcfV5; arc=none smtp.client-ip=192.198.163.12
+	s=arc-20240116; t=1733720207; c=relaxed/simple;
+	bh=smdcXM4XVtdVmpcZSTAjc1CdeXynkh1TZG7WKdPEg8s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UGdJmsAwfxDWpPUPaf6IKS3Z/yXGDeBrFWApwygalThxv4qKQQPIJLt01caxt3oaoCuGVYXuQkDHgtgXB7mckbNSrQULYHWGjaygezx0D5JpPsb+RPd++YzlPDozA/+fnxx+5DciINzETVCo4C2cIGTZizSlj2FWOww+E+OZr8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HIjBKCFm; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733720082; x=1765256082;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=25AC0ZW8bDmUdUGshgsdLaQkBtoAoEyjU9c5Pp/iVX0=;
-  b=THlDcfV5TWLx4XX9yvk84hILB01T8kwR2lr1jRTUoNVmSoQzfAL0US/L
-   EDptPM6cbOVwhLo4xIxbXONB1LPAo+CJYIjQ0A3MLx+ZSJ8kW3ViYyrRm
-   mlpgJYDYM6QFozz77klsIi1J+6/V45TCJi9z2MR7m/y294CL9JQip4405
-   8RTQ+q1MnZ2CskbEB/G/c945/exMU+fLlFB2NOHMfxtfmnv15unapH0Ha
-   v8GcO7+CofrxIXog/V+YHrnKiL/jL/cNXdXQBgiYHa0OxElcJ3uViorbP
-   SIeJNFbHIl7hdxeAkpyn8W8jX0U4QKQV4qTLuyyMdP2MLpnYGbw0VqfsJ
-   g==;
-X-CSE-ConnectionGUID: 60zs/RyAQZOqgUNSRSgZwg==
-X-CSE-MsgGUID: fE+ydfvBSuaCK66hZnxJJQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37932339"
+  t=1733720206; x=1765256206;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=smdcXM4XVtdVmpcZSTAjc1CdeXynkh1TZG7WKdPEg8s=;
+  b=HIjBKCFmx9lym2ZFWJR+RpWSKsEfSVrJwfWtZiSFVdkFsASyqcLwuFS0
+   Moo0PgkMnczaElODSeF+CSM68bepf7Oxan8dJRxIimp98OPSjspb2vlvx
+   RXSHk0mfcsIg7RZGOGk7Gs8ill+xdfxJX77VQKEDVzVq8uB4ujdiNjL4R
+   M9B3TozSD4fTIfuahHUxGj1kpNa4nGPRSC7hU/nTmkF7AxIoI1YL7C//v
+   k29YqJZofo+iImup9NrU7WJJIRPStwLPlizhjQeexqpsCBGqBBaSeob5W
+   XCBpSW8ycwoBlvyFcoB7ijY6UqGRKVv4kLsYDxrIc1N62C/blANjAKP1w
+   A==;
+X-CSE-ConnectionGUID: E5aDLAJEQ7eLFsJcBUGgaw==
+X-CSE-MsgGUID: q9UHex9bRsyyNEliKMqjsQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="56484906"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="37932339"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:54:42 -0800
-X-CSE-ConnectionGUID: 5uhkmB6oQBuCdWikGDMc2g==
-X-CSE-MsgGUID: 9KHn7Ma2TiuN5KkxsJeTvw==
+   d="scan'208";a="56484906"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:56:46 -0800
+X-CSE-ConnectionGUID: xqrC+jWTR8WGbuYoi0Oumw==
+X-CSE-MsgGUID: Qobg1aSASgK3QKz6Ym49nA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="94829900"
+   d="scan'208";a="100015159"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 08 Dec 2024 20:54:40 -0800
+  by orviesa004.jf.intel.com with ESMTP; 08 Dec 2024 20:56:41 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tKVn3-0003wI-38;
-	Mon, 09 Dec 2024 04:54:37 +0000
-Date: Mon, 9 Dec 2024 12:53:42 +0800
+	id 1tKVp0-0003wb-0u;
+	Mon, 09 Dec 2024 04:56:38 +0000
+Date: Mon, 9 Dec 2024 12:55:43 +0800
 From: kernel test robot <lkp@intel.com>
-To: Tao Zhang <quic_taozha@quicinc.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: drivers/hwtracing/coresight/coresight-tpdm.c:288 dsb_mode_store()
- warn: unsigned 'val' is never less than zero.
-Message-ID: <202412090231.UXsQuWrr-lkp@intel.com>
+To: Ryan.Wanner@microchip.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev,
+	mturquette@baylibre.com, sboyd@kernel.org, arnd@arndb.de
+Cc: oe-kbuild-all@lists.linux.dev, dharma.b@microchip.com,
+	mihai.sain@microchip.com, romain.sioen@microchip.com,
+	varshini.rajendran@microchip.com, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v3 11/13] ARM: dts: microchip: add support for
+ sama7d65_curiosity board
+Message-ID: <202412090708.BNX0mUZi-lkp@intel.com>
+References: <e47d8c8cdaec834ce080ef8c34b9976228223c8f.1733505542.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,44 +85,36 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <e47d8c8cdaec834ce080ef8c34b9976228223c8f.1733505542.git.Ryan.Wanner@microchip.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   7503345ac5f5e82fd9a36d6e6b447c016376403a
-commit: 018e43ad1eeefbb8797e4c933953c50c09e3f4f6 coresight-tpdm: Add node to set dsb programming mode
-date:   1 year, 1 month ago
-config: arm64-randconfig-r073-20241207 (https://download.01.org/0day-ci/archive/20241209/202412090231.UXsQuWrr-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.2.0
+Hi,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on robh/for-next soc/for-next linus/master v6.13-rc1 next-20241206]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Wanner-microchip-com/dt-bindings-ARM-at91-Document-Microchip-SAMA7D65-Curiosity/20241207-040527
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/e47d8c8cdaec834ce080ef8c34b9976228223c8f.1733505542.git.Ryan.Wanner%40microchip.com
+patch subject: [PATCH v3 11/13] ARM: dts: microchip: add support for sama7d65_curiosity board
+config: arm-randconfig-051-20241207 (https://download.01.org/0day-ci/archive/20241209/202412090708.BNX0mUZi-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
+dtschema version: 2024.12.dev3+g93ee800
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241209/202412090708.BNX0mUZi-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412090231.UXsQuWrr-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412090708.BNX0mUZi-lkp@intel.com/
 
-smatch warnings:
-drivers/hwtracing/coresight/coresight-tpdm.c:288 dsb_mode_store() warn: unsigned 'val' is never less than zero.
+All errors (new ones prefixed by >>):
 
-vim +/val +288 drivers/hwtracing/coresight/coresight-tpdm.c
-
-   279	
-   280	static ssize_t dsb_mode_store(struct device *dev,
-   281				      struct device_attribute *attr,
-   282				      const char *buf,
-   283				      size_t size)
-   284	{
-   285		struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
-   286		unsigned long val;
-   287	
- > 288		if ((kstrtoul(buf, 0, &val)) || (val < 0) ||
-   289				(val & ~TPDM_DSB_MODE_MASK))
-   290			return -EINVAL;
-   291	
-   292		spin_lock(&drvdata->spinlock);
-   293		drvdata->dsb->mode = val & TPDM_DSB_MODE_MASK;
-   294		spin_unlock(&drvdata->spinlock);
-   295		return size;
-   296	}
-   297	static DEVICE_ATTR_RW(dsb_mode);
-   298	
+>> Error: arch/arm/boot/dts/microchip/at91-sama7d65_curiosity.dts:50.1-6 Label or path pioA not found
+   FATAL ERROR: Syntax error parsing input tree
 
 -- 
 0-DAY CI Kernel Test Service
