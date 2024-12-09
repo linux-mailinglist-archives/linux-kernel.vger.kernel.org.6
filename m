@@ -1,246 +1,165 @@
-Return-Path: <linux-kernel+bounces-438089-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C60229E9CA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:09:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE9B9E9CAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:10:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DC5C165DD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:09:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D7C165D50
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:10:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAAD814BF92;
-	Mon,  9 Dec 2024 17:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320E014D283;
+	Mon,  9 Dec 2024 17:09:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="PUvfvsb0"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="c8tcSSnb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 077EA14AD22
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54F7153824;
+	Mon,  9 Dec 2024 17:09:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764171; cv=none; b=Qg324pYXTWWg5+ijMfmfIMwwZ8gOiFgREiFlvzeq+iSOCsPMflLdkWiIvFq5cFq240QiJVEmumYjDcmh+G2CBtYDiNNV9ZBAQo+nVCoWWaQABrqVH0OJikOvD2jcOb/oRk41eMqIi2bllEAbY1Kx1car2vCPT/NqemZu3be+LTI=
+	t=1733764189; cv=none; b=HAoJcLqgpeibif2T6LvuVC3BLKfx6DLMiLOleN/SUhP3p4U/mGGoi7fBoOcVc8vXMca67XZw0BGfvBj8LGQbu5DjiT8fgqJOipVqGyhOm2oSETrZ1Gow75AZGfvnLus1fXmrt/kd8uoc4jmJuP/nWtg+rKDO9Tp2S0U/DsrH318=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764171; c=relaxed/simple;
-	bh=5dO0bHCkiOuMyRRsOtUMU9n5Sh4eTa7inauhZAnT2uI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Jbbj4JpTcnLvrv3EyGGP5sgUr0os0ocZgX+OmAZNNC93qGX+44Xl74DmLMNW/eTSwGgKhl9EJEvcLHkGm6wExDMrnR5HZUhhySb3v5e3qQioCLFcJxwNOATro9lrDeAKRlUBrDdnE8uKYey85eWD9ODWAxOutbsr1yt4ZlYCw34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=PUvfvsb0; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53e389d8dc7so2965895e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:09:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ventanamicro.com; s=google; t=1733764167; x=1734368967; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2dQoNlSLU0HPpFMCspBWlxi64Lg9FL6brLFfxEcaxG8=;
-        b=PUvfvsb0Io0/FchTsZqTfmPadC3BGEZYv4xrxMc6cVOG4KPDeJcXDnfAicXRwFfzkz
-         v6DkFQhUrSoyzxRQQ9BRAEwZ+uzDXW6je7CWyOuXmgKNSbA/LUIyJ0EvAw2fofgTeYTd
-         Yz0IHNLlhaXvg0Lppn2V3y6ZsbhXvZr+FDgKLzAZX+9UpGvpWbIUBnCB5xRlP16gFbgP
-         67L8knH44tNvQk98c4dV7IIH5A9KagEuF84o1qeFNc4UCuzGn2HCgRrfD52ae+lOBQsO
-         9HaQPlWmpp4T/BC66D/Xk/Lh4efaQyp3q2LS7Q0YYRS5+irPcQO7uwcxQu/Z94xoXJJG
-         uyug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733764167; x=1734368967;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2dQoNlSLU0HPpFMCspBWlxi64Lg9FL6brLFfxEcaxG8=;
-        b=Equ9ri/Pc7ajADD2QgXK0GQmgNJ27sUUUHZAAhSXly0AluBJzasYrRfucBv5IA2pYq
-         aMnmfyl3x2slzyDB849EwBPmNnuaq3CvoeKniwva9gu3ly/9avikkPMPP51mkvOkFNrm
-         t1JpQ51ukzr6MK4iUuVhsZUBJUtuJ2EP7kQR2mpa49YJfDFBLqGchK6TkogemN1OzQHD
-         OYGJgEZ6fl072OgpzUF8g+kACUFC+3eoAeGKHF91RMsqcWb6dePS458wEiVKdm50UCdk
-         QRPvhip3Ik4F6n+Ev9sx5DItSgNb+qHr28OfclQjpvjd4xjWDuzuIXFhge1PHAwuKZS0
-         P3jw==
-X-Forwarded-Encrypted: i=1; AJvYcCVNtQsdsKliGmtMFDFHEDb67S9wkRk5KuBnNTMaYoxAUKJgcv7lTX7s/YElhwh//lD8cgZcBH1AD71GQLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw06nY8LfgRQdydnO1kpL6aO8jw1E3QRnDIWeEt54rqCbL5PE2B
-	VXEiDYq6XcI0uHts4YNnuh77AOcHUR/CfI/bumCWnAt1/qmqj3+hsETXr+NwOErRh8UWhQ/J/bP
-	ijTCpaEw/TTU8Uo2kA1mBOS23MOQ6G3uR1cb5aw==
-X-Gm-Gg: ASbGncv7Q6gvqOtycUclZNepxnoLgmKaQcgB+vw7pQAxwOT7+bAR/HFSIrdLN5kh5Mk
-	H707G3e/xwtpZ2eATURUP6AaanK+HdXBeMw==
-X-Google-Smtp-Source: AGHT+IG6uSRDfPHJzHiWWjwtpQy8M4+4XudoroPlj5CXYPC49kBjcmD0V2caDVBsCTaJa23u6C6/4BVZxa5RJ8VB4hc=
-X-Received: by 2002:a05:6512:acc:b0:53e:3740:4a8d with SMTP id
- 2adb3069b0e04-53e37404c0emr3635765e87.3.1733764167141; Mon, 09 Dec 2024
- 09:09:27 -0800 (PST)
+	s=arc-20240116; t=1733764189; c=relaxed/simple;
+	bh=8iquvnUkd9mP4mKjGeYUDFGaekxyJt58LmMb3jCLRVQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PshNiuXH19F7ey7dRsEoyPD4gyMZL5STlxKrDVJLXTkkVKjIreOR7zuEIDQ+TP8BA1YgMB9q9EO7ndFezyAWAjyrcObw+60IPlwxEQeikRW8TQoQEKrg7vQMXlsp7kXI8jCCalohqvmAt3dke2qUf08G5NUcfc8JWrTVQ4zYRZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=c8tcSSnb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B979qZ4010147;
+	Mon, 9 Dec 2024 17:09:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=rMahfs
+	J3Td/fA/su6e+zy+RqUg85gmTe63WrocDNYQA=; b=c8tcSSnbC4oixmLo3beeTC
+	5WdeCy+2nFSesl7zrq1+HnYexo7xVD7/PLN9RMGsGf+r+jxHZtQFiEczDqYeQkEC
+	VKX9izErbxQteIAIjSVYheb00T1Ph7w+cfcjnmqgg3LEFDZMipcRH+H0rkBAOqeV
+	rMpI28w0W+kpRbyfvDBWh6yp6NixSB/Qy8K0xtPu10R1P7f6ZyW7ZDl2bk1f5bhn
+	FlXQ6O5qhLfHSWmiZGrj5/BQpWtJmnWlviNbJ/NA4dTUsAw3hTwA8VaQWJqdPTQR
+	EkB3nzDOVaDp8h3rjrURaTPQtYzOvJ+clV79vOSSby3LG2pAoRBW/cgmaJK8D8yg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq201p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 17:09:38 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B9H9c6H020243;
+	Mon, 9 Dec 2024 17:09:38 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq201k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 17:09:38 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9DMeGV017052;
+	Mon, 9 Dec 2024 17:09:37 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d12xysbd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 17:09:37 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9H9aaJ15729334
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 17:09:36 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 60C4C58050;
+	Mon,  9 Dec 2024 17:09:36 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0397658045;
+	Mon,  9 Dec 2024 17:09:32 +0000 (GMT)
+Received: from [9.171.71.154] (unknown [9.171.71.154])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Dec 2024 17:09:31 +0000 (GMT)
+Message-ID: <9ff492c6-3824-475b-a9f6-415205920e56@linux.ibm.com>
+Date: Mon, 9 Dec 2024 22:39:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241208150711.297624-1-apatel@ventanamicro.com>
- <20241208150711.297624-2-apatel@ventanamicro.com> <875xnuq6dc.ffs@tglx>
- <CAK9=C2VqU2mdLL-R20bdgvDHi0WcuNyUSqRo7Pztsu-8X1wVvw@mail.gmail.com> <87r06gq2di.ffs@tglx>
-In-Reply-To: <87r06gq2di.ffs@tglx>
-From: Anup Patel <apatel@ventanamicro.com>
-Date: Mon, 9 Dec 2024 22:39:16 +0530
-Message-ID: <CAK9=C2UZKgkA_xZPs2=RBo7bUDKpeY2gBA2j3+S4i4xSLqC5BQ@mail.gmail.com>
-Subject: Re: [PATCH 1/4] irqchip/riscv-imsic: Handle non-atomic MSI updates
- for device
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Andrew Lunn <andrew@lunn.ch>, Gregory Clement <gregory.clement@bootlin.com>, 
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Atish Patra <atishp@atishpatra.org>, 
-	Andrew Jones <ajones@ventanamicro.com>, Sunil V L <sunilvl@ventanamicro.com>, 
-	Anup Patel <anup@brainfault.org>, linux-riscv@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	imx@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv3] gcc: disable '-Wstrignop-overread' universally for
+ gcc-13+ and FORTIFY_SOURCE
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, briannorris@chromium.org,
+        yury.norov@gmail.com, kees@kernel.org, gustavoars@kernel.org,
+        nathan@kernel.org, steffen.klassert@secunet.com,
+        daniel.m.jordan@oracle.com, gjoyce@ibm.com,
+        linux-crypto@vger.kernel.org, linux@weissschuh.net
+References: <20241208161315.730138-1-nilay@linux.ibm.com>
+ <2024120938-kilogram-granite-9a53@gregkh>
+Content-Language: en-US
+From: Nilay Shroff <nilay@linux.ibm.com>
+In-Reply-To: <2024120938-kilogram-granite-9a53@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: TYWUT8BCbKkWFLaib6iQnNNPXRiI7WoG
+X-Proofpoint-GUID: OKI2mjy4yZ_rEQP27m87msTHWMF76Mkr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090132
 
-On Mon, Dec 9, 2024 at 9:23=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> Anup!
->
-> On Mon, Dec 09 2024 at 17:38, Anup Patel wrote:
-> > On Mon, Dec 9, 2024 at 1:44=E2=80=AFAM Thomas Gleixner <tglx@linutronix=
-.de> wrote:
-> >> There is no guarantee that set_affinity() runs on the original target
-> >> CPU (CPU 1). Your scheme only works, when CPU1 vector 0x20 is not used
-> >> by some other device. If it's used, you lost as CPU1 will consume the
-> >> vector and your pending check is not seeing anything.
-> >>
-> >> x86 ensures CPU locality by deferring the affinity move to the next
-> >> device interrupt on the original target CPU (CPU1 in the above
-> >> example). See CONFIG_GENERIC_IRQ_PENDING.
-> >
-> > I agree with you.
-> >
-> > The IMSIC driver must do the affinity move upon the next device
-> > interrupt on the old CPU. I will update this patch in the next revision=
-.
-> >
-> > BTW, I did not find CONFIG_GENERIC_IRQ_PENDING. Is the
-> > name correct ?
->
-> CONFIG_GENERIC_PENDING_IRQ is close enough :)
->
-> >> The interrupt domains which are not affected (remap) set the
-> >> IRQ_MOVE_PCNTXT flag to avoid that dance and don't use that affinity
-> >> setter code path at all.
-> >
-> > Yes, setting the IRQ_MOVE_PCNTXT flag in the remap domain
-> > makes perfect sense.
-> >
-> > I suggest adding IRQ_MOVE_PCNTXT usage as part of Drew's
-> > irqbypass series which adds a remap domain in the IOMMU
-> > driver. Unless you insist on having it as part of this series ?
->
-> You need to look at the other RISC-V controllers. Those which do not
-> need this should set it. That's historically backwards.
 
-I will update the RISC-V APLIC MSI-mode driver in the next revision.
-This driver is a good candidate to use IRQ_MOVE_PCNTXT and
-IRQCHIP_MOVE_DEFERRED.
 
->
-> I think we can reverse the logic here. As this needs backporting, I
-> can't make a full cleanup of this, but for your problem the patch below
-> should just work.
->
-> Select GENERIC_PENDING_IRQ and GENERIC_PENDING_IRQ_CHIPFLAGS and set the
-> IRQCHIP_MOVE_DEFERRED flag on your interrrupt chip and the core logic
-> takes care of the PCNTXT bits.
+On 12/9/24 12:15, Greg Kroah-Hartman wrote:
+> On Sun, Dec 08, 2024 at 09:42:28PM +0530, Nilay Shroff wrote:
+>> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> As this is different, my Ack does not still stand, sorry :(
+> 
+>> +# Currently, disable -Wstringop-overread for gcc-13+ and FORTIFY_SOURCE globally.
+>> +config GCC13_NO_STRINGOP_OVERREAD
+>> +	def_bool y
+> 
+> I hit this with gcc 14, it's not just a gcc 13 issue.
+> 
+>> +config CC_NO_STRINGOP_OVERREAD
+>> +	bool
+>> +	default y if CC_IS_GCC && GCC_VERSION >= 130000 && GCC13_NO_STRINGOP_OVERREAD && FORTIFY_SOURCE
+> 
+> Ok, I see you enabled this for more than 13, but why call it "13"?
+Yeah I'd change it to GCC_NO_STRINGOP_OVERREAD.
+> 
+>> +
+>>  #
+>>  # For architectures that know their GCC __int128 support is sound
+>>  #
+>> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+>> index 1d13cecc7cc7..1abd41269fd0 100644
+>> --- a/scripts/Makefile.extrawarn
+>> +++ b/scripts/Makefile.extrawarn
+>> @@ -27,6 +27,7 @@ endif
+>>  KBUILD_CPPFLAGS-$(CONFIG_WERROR) += -Werror
+>>  KBUILD_CPPFLAGS += $(KBUILD_CPPFLAGS-y)
+>>  KBUILD_CFLAGS-$(CONFIG_CC_NO_ARRAY_BOUNDS) += -Wno-array-bounds
+>> +KBUILD_CFLAGS-$(CONFIG_CC_NO_STRINGOP_OVERREAD) += -Wno-stringop-overread
+> 
+> I don't want this disabled for all files in the kernel, we only have one
+> that this is a problem for.  I think you disable this, the whole fortify
+> logic is disabled which is not the goal, why not just force the fortify
+> feature OFF if we have a "bad compiler" that can not support it?
+> 
+okay so that means you recommend to disable FORTIFY_SOURCE for gcc-13+ instead 
+of disabling -Wstringop-overread globally?
 
-Sure, I will update.
+> So no, I don't think this is the correct solution here, sorry.
+> 
+> And it's odd that we are the only 2 people hitting it, has everyone else
+> just given up on gcc and moved on to using clang?
+I guess that developers are either using Clang or they haven't enabled CONFIG_FORTIFY_SOURCE 
+if they're using gcc-13+.
 
 Thanks,
-Anup
-
-
->
-> I'll convert x86 in a seperate step and remove the PCNTXT leftovers and
-> the new config knob once the dust has settled.
->
-> Thanks,
->
->         tglx
-> ---
-> --- a/include/linux/irq.h
-> +++ b/include/linux/irq.h
-> @@ -567,6 +567,7 @@ struct irq_chip {
->   *                                    in the suspend path if they are in=
- disabled state
->   * IRQCHIP_AFFINITY_PRE_STARTUP:      Default affinity update before sta=
-rtup
->   * IRQCHIP_IMMUTABLE:                Don't ever change anything in this =
-chip
-> + * IRQCHIP_MOVE_DEFERRED:            Move the interrupt in actual interr=
-upt context
->   */
->  enum {
->         IRQCHIP_SET_TYPE_MASKED                 =3D (1 <<  0),
-> @@ -581,6 +582,7 @@ enum {
->         IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND        =3D (1 <<  9),
->         IRQCHIP_AFFINITY_PRE_STARTUP            =3D (1 << 10),
->         IRQCHIP_IMMUTABLE                       =3D (1 << 11),
-> +       IRQCHIP_MOVE_DEFERRED                   =3D (1 << 12),
->  };
->
->  #include <linux/irqdesc.h>
-> --- a/kernel/irq/Kconfig
-> +++ b/kernel/irq/Kconfig
-> @@ -31,6 +31,10 @@ config GENERIC_IRQ_EFFECTIVE_AFF_MASK
->  config GENERIC_PENDING_IRQ
->         bool
->
-> +# Deduce delayed migration from top-level interrupt chip flags
-> +config GENERIC_PENDING_IRQ_CHIPFLAGS
-> +       bool
-> +
->  # Support for generic irq migrating off cpu before the cpu is offline.
->  config GENERIC_IRQ_MIGRATION
->         bool
-> --- a/kernel/irq/chip.c
-> +++ b/kernel/irq/chip.c
-> @@ -47,6 +47,13 @@ int irq_set_chip(unsigned int irq, const
->                 return -EINVAL;
->
->         desc->irq_data.chip =3D (struct irq_chip *)(chip ?: &no_irq_chip)=
-;
-> +
-> +       if (IS_ENABLED(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS) && chip) {
-> +               if (chip->flags & IRQCHIP_MOVE_DEFERRED)
-> +                       irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
-> +               else
-> +                       irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
-> +       }
->         irq_put_desc_unlock(desc, flags);
->         /*
->          * For !CONFIG_SPARSE_IRQ make the irq show up in
-> @@ -1114,16 +1121,21 @@ void irq_modify_status(unsigned int irq,
->         trigger =3D irqd_get_trigger_type(&desc->irq_data);
->
->         irqd_clear(&desc->irq_data, IRQD_NO_BALANCING | IRQD_PER_CPU |
-> -                  IRQD_TRIGGER_MASK | IRQD_LEVEL | IRQD_MOVE_PCNTXT);
-> +                  IRQD_TRIGGER_MASK | IRQD_LEVEL);
->         if (irq_settings_has_no_balance_set(desc))
->                 irqd_set(&desc->irq_data, IRQD_NO_BALANCING);
->         if (irq_settings_is_per_cpu(desc))
->                 irqd_set(&desc->irq_data, IRQD_PER_CPU);
-> -       if (irq_settings_can_move_pcntxt(desc))
-> -               irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
->         if (irq_settings_is_level(desc))
->                 irqd_set(&desc->irq_data, IRQD_LEVEL);
->
-> +       /* Keep this around until x86 is converted over */
-> +       if (!IS_ENABLED(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS)) {
-> +               irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
-> +               if (irq_settings_can_move_pcntxt(desc))
-> +                       irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
-> +       }
-> +
->         tmp =3D irq_settings_get_trigger_mask(desc);
->         if (tmp !=3D IRQ_TYPE_NONE)
->                 trigger =3D tmp;
->
->
->
+--Nilay
 
