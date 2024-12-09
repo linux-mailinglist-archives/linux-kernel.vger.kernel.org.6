@@ -1,113 +1,107 @@
-Return-Path: <linux-kernel+bounces-436665-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3B69E8930
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:29:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3E159E8933
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:29:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0331718857D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:29:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D19B816244E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:29:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C8142070;
-	Mon,  9 Dec 2024 02:29:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3383C433BE;
+	Mon,  9 Dec 2024 02:29:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aLoI5MLL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Tjt4rE+y"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C969D9474;
-	Mon,  9 Dec 2024 02:29:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B2FD43179;
+	Mon,  9 Dec 2024 02:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733711359; cv=none; b=pPZR0LVNdN24yWRyID4K62lD0/Qxq2e1NUQPg3yQxhGz5Pp057Ajfsh6bn4ZFF0VU8om3J5BsLIXONqS6rnMHb0VgZfTcySCXHUgeVdexQeX45myh7sPXBgEIFfzAvtrf5757qtgdh9zY4B+hj1dno3VKrr8kQAk0UZli/QRgjI=
+	t=1733711386; cv=none; b=erzzMak+hq2+iy+K5j40qoZorqBxZjfOiHYq5Nfrf6qsw+E6CgdNVGCE1NLya3KdVFDnC6yAwiSSItn3mdzj0voisotnldwv+gQ94tQt0Q4oRnDVU9ns9iW3Q/6lOcUfLmG83900Y/2NMp4YVRVCRJmuj5wqHsXuOT/SDVVYjk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733711359; c=relaxed/simple;
-	bh=vAeVK8k9eLgDWD7NrbBu2SEg2upIUWl8Mn5mO8s5hoQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=pUSMtqwuuCzjsosAf9vFy2o7Zd2/Un7e/7EsFPce5YGqL9SQN5LZXhXcdN/7WhZ+Y3oJ24r/nr14L/OmZCa2x5vkkAkdWIMxksbWnGwJHWLYZXlrKjrUxboBdtZvmztaITA5BmnQkyxzY9PWhufZtmVx+59dh6+96yqkSH4PElo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aLoI5MLL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8NOr9P022763;
-	Mon, 9 Dec 2024 02:29:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hkDMC4n+nmNheTZrmeWXtlAoFZY5epZRSAMxvpIPWdU=; b=aLoI5MLLrcCarm1h
-	xPOX0f64GN6qIBUxn/Jx2XBZBQFtzgmjHGzFLnEyQa/+OoxkRyelJWDvf1wMUlGy
-	L/T2F0jv3ehEyURgQmj6Bwdw2rKFaqni9z9ZEOtT/esIXIbr3kw48hMTi6MdCYRy
-	QRp92pRnbEWVnn/rsIW+FFaqKpRS0VwaucMPUC10BfeeXrYV5sQri7QnGbx53jRo
-	lqwRwI9/9UCwUySjEFpLTusSC+TT/4sCUEaD1H7eUS7kkyTTOCRuvUR3QmyvqrrL
-	B+CH/gEtK5s1vOAkz8eWJ7g20OTfNvT5hQAWeU/K+QskydwD9DcGD7HhX1VNRE9n
-	jvRVHQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cer6k2cq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 02:29:09 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B92T8dq032403
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 02:29:08 GMT
-Received: from [10.231.194.79] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 18:29:06 -0800
-Message-ID: <1123551c-1a6d-4d0d-b3c7-f65c15509280@quicinc.com>
-Date: Mon, 9 Dec 2024 10:29:03 +0800
+	s=arc-20240116; t=1733711386; c=relaxed/simple;
+	bh=k38WUPNxbbD6cKa3HGr/66zLInk7U6SJunfld1qmoJk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qdBNKHJSRavphciikeu2Zull3XYjBmD/r9K+HNs/qk/e7W+rpPSWDI+hcupEJeTbllVQlpGuqCFGxRU88OH9qJpd6b3pheNdPxdbgzWdCnLQLrAqJTsNMRtFSUfOQ+U6qLCs5WVKvkMQ4tk9T1rdguqZdjcFtJkfOAYIeh3hWpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Tjt4rE+y; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733711378;
+	bh=oRx/jcL0DiMBKu6MliJznyCPIpW6qeSQAHAbGggrr2c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=Tjt4rE+y7zLa8g8+giv+BCIO1kT3AbMziSV05uVahxPW56XrAeIoOBOJxZxNIRVyh
+	 XgzDGE1cDdIbhrLYu3m3QEjCkGECloiT3C7tPXyLsQVbd+P18BH/XsBFQYX3m0GelI
+	 fcnp0AXS4OHYF6XMVYPDHvs2mLYOEHqY5e2erBQ6s3AMqtjcaOc8bdnoM23pxg+w6y
+	 H/mbgpryr8+/+sXHnq5YHIMN0ODumXw0RpGN/5qQrzTe0jiavTBnYnitzvgGnWy2B/
+	 auTl6viEAMQPq2Tz1vMNnoS9Icrt92bHY+5DHZj1cKttSx2/9pTsotgXZTaaZQNlDw
+	 7f3ai1Ttg0X0w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y65RQ1mB4z4wcs;
+	Mon,  9 Dec 2024 13:29:38 +1100 (AEDT)
+Date: Mon, 9 Dec 2024 13:29:41 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the tip tree
+Message-ID: <20241209132941.58021bb7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
- are supported
-To: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-CC: <ath11k@lists.infradead.org>, <jjohnson@kernel.org>, <kvalo@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-wireless@vger.kernel.org>,
-        <quic_cjhuang@quicinc.com>, <vbenes@redhat.com>
-References: <0f24e115-e76d-4c8a-8a1b-591a157ee78e@quicinc.com>
- <20241208121321.9760-1-jtornosm@redhat.com>
-Content-Language: en-US
-From: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
-In-Reply-To: <20241208121321.9760-1-jtornosm@redhat.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hAWil-3zcNZNZj6diss3URCGw0hEV4V1
-X-Proofpoint-ORIG-GUID: hAWil-3zcNZNZj6diss3URCGw0hEV4V1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 impostorscore=0 adultscore=0 priorityscore=1501 spamscore=0
- mlxlogscore=565 clxscore=1011 phishscore=0 bulkscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412090019
+Content-Type: multipart/signed; boundary="Sig_/LsgEo4.MV3YldZwULFhKqA9";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/LsgEo4.MV3YldZwULFhKqA9
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 12/8/2024 8:13 PM, Jose Ignacio Tornos Martinez wrote:
->> My point is that you can try setup with ap type interface,
-> This is what I am doing!
-So you can't up with ap type or can't up with managed interface?
->> now combination limits not allow up 3 inferfaces with managed interface.
-> Why? The limits were bigger previously.
-> Why cannot allow the old configuration (previous to the commit f019f4dff2e4
-> ("wifi: ath11k: support 2 station interfaces"a))?
-> In another way, your proposed configuration is limited for me.
-> 
-> Thanks
-> 
-> Best regards
-> Jose Ignacio
-> 
+The following commits are also in the mm tree as different commits
+(but the same patches):
 
+  96450ead1652 ("seqlock: add raw_seqcount_try_begin")
+  eb449bd96954 ("mm: convert mm_lock_seq to a proper seqcount")
+
+These are commits
+
+  46dbe8ab1205 ("seqlock: add raw_seqcount_try_begin")
+  5f0d64389e1f ("mm: convert mm_lock_seq to a proper seqcount")
+
+from the mm-unstable branch of the mm tree.  The latter ones are already
+causing conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/LsgEo4.MV3YldZwULFhKqA9
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWVhUACgkQAVBC80lX
+0GxJMQf/YMsH6zwcafzij0g85fgVvlOGUwRhvUAcKOkrkZKE7/wAHW/N1SR59JTz
+HvALmv716zW0BcElq1SAutTJ5/ebXW6MP09zVF6bOfUOhvheDMJaCck6ylgmCvbl
+CT7hTIpI/f4IFVIv0KQ+h6Rq9R/DJ2OC65NR+P5lZP0QjjPU75d8OT5v1RLOuYGX
+Sk3BegSyltiDAYy5XLc1j+x5xJmm5niX8X8dS2EDCoqJAG/dhm/XfiqdUs7YUiBp
+ITaV5KBUydISzY5tnRlp3UyuzDwl5zLXDYx7glpCLSImOXuwIOrTMJqHjjb48lGE
+sDIxXW9Tuh2t60/0YwEeJzEs9Abc9w==
+=EPYv
+-----END PGP SIGNATURE-----
+
+--Sig_/LsgEo4.MV3YldZwULFhKqA9--
 
