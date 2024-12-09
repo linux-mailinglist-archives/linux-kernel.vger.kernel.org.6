@@ -1,110 +1,104 @@
-Return-Path: <linux-kernel+bounces-437469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 218A19E93B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:20:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA64D9E93B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6135C280CD7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:20:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41766282A3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:21:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82360221DB6;
-	Mon,  9 Dec 2024 12:20:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0E712236E5;
+	Mon,  9 Dec 2024 12:21:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hbGEhID+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7P2MoDN"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D152D21B1A7;
-	Mon,  9 Dec 2024 12:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BADCE22C6F7;
+	Mon,  9 Dec 2024 12:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733746821; cv=none; b=qIzZzeIlWHugap5jQZc5SwRR25/egGYUNPu+955WomBee9uZ0a8Jx9iDUT4pCruoHL3epN0UV3r7Jo2PGAY5j6C0LERCfNirTsxBpgW7o0hJoHoGAWbbO+Wnc2mTtc13sF1Ne+54aktNZRD081gaNC/2PUysqQmpLefRE8imbHg=
+	t=1733746877; cv=none; b=Q7by5trftnBr+dAyezqEiR1PPgmdrCcSxiy+2jsFSrFY7zA6QpQrg/x3tN4RfExkv3JJbJNazcOzGr5KDVuOehxF7qUwO/dR5KBg0EGM0P95rI7mm24cmvI4PBakk9Ny1l8XOd678Ba4bBq+ejq9/W80sJpvndKtmvkbEJ0AHhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733746821; c=relaxed/simple;
-	bh=ORVba51fgn5Y2cMstsQg19evQaiepuNOEBjuFVdtd6Q=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=eGnfwlSiunzQqQv2TIh5p8ibIRM4N6Ts5YtxYAo2FE8MrISBpqmooXm4sqn+0VwEorM7qfSOT47aBbNHAG3+zHL5TQuNMpqXxRd1BeKRY8APdwsEJ39dkE+ncB+Xu9qVSRhwYjuRR2DQDDnT0yncSbbwXaaYEAPj7xfixUhH3Eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hbGEhID+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37B86C4CED1;
-	Mon,  9 Dec 2024 12:20:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733746818;
-	bh=ORVba51fgn5Y2cMstsQg19evQaiepuNOEBjuFVdtd6Q=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hbGEhID+hZzHkSzqqaBGwT9QK5sAixadT4nGjt8xPEzDk0OOU5LHoe8QWbKUAE93W
-	 a8k5sTLaG9HUkAULxKiiN306zbpA5bOFXnYKrisTmeC6W0qLb5lgMbFlHkxWMK2ptI
-	 KBnGTcFy06l1ygdzOW0JCtXcnvopjEsKMxwIQT0fik56feWGOKDZEO6svBNpQyuDHI
-	 mHLqSg4yn9WlcHLSPqp8CaZKpFuO3CYflTsS+o+aETB6LhZU8EBQCIgoiok5T0xh8n
-	 qaIRzUExwTOXpgPh8EsvUEe8wS0+24QuAVvyUa7FSXrMQJGTTxdd3P+f8yLtv96sTw
-	 O/w1C5ED0nInA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EB20C380A95E;
-	Mon,  9 Dec 2024 12:20:34 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733746877; c=relaxed/simple;
+	bh=xSyjOeIYqup+s4Crz5OYI9mbgUiFEDUKLQ+6R6idLX0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CniKFY8EpJXRZrm2iiqSszyjllBH7tMudMqIvQx9F9AXOlt1hfScC3XqfOU7hVjU9p3hi+sAHoJr41ZiDhvaExpCjzylXQONsl10Em7Ekjk8H0cLqVFrvHAPc49jvvqWcZW/tQJtAprMDCxpHWkNUm+0W1RcCIoBexk8cjQrHKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D7P2MoDN; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso575125766b.1;
+        Mon, 09 Dec 2024 04:21:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733746874; x=1734351674; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xSyjOeIYqup+s4Crz5OYI9mbgUiFEDUKLQ+6R6idLX0=;
+        b=D7P2MoDNIH8a2RWLuW5YzaZUvFv7KW76zJR4Qu1yNjKig+CU/QPQQJZk9P3arq+uAQ
+         4nKGhTTxoi5AQ/YZlpWb8Bb2O7+M/eRB+QkmP5jrSeExc1AvyPEKbyp1d46j/BQbuv0r
+         eNTLaaC5rIRzxsK3RE8aNPRhkenedDgL5yuvlBXztbLeTDPAOqmLTz1M8vQIEEKdS3NL
+         buNjU7hYeKid9I/+QDUnVDRJKqTNsUuBC2lnoRfS+dAsUa+Q8BFPlzxxw8ENI5AWRZkx
+         K0+bxHIJ9OWT0P8D6aJNpODUinK8XQhiWHBfr93WTDIrtmvnEDeQvGEm+smGJolb5baN
+         zHNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733746874; x=1734351674;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xSyjOeIYqup+s4Crz5OYI9mbgUiFEDUKLQ+6R6idLX0=;
+        b=cwELaV17ZDEJHp4o18HAlDfzioDeV8WiMtRUwvm0oRmMMNDEpd6T7X8998ERTYnUFi
+         32mUqearFvc2R8easZHFgC5NRAyE65HVZk7B1HOLu5jvThyYjYRQryO+ieBO6Zkd4ZQr
+         aJxNJYom0+ReLLVgkUryYkZ2P/yVZdjMCzMBKhZTu4+yaXUwUlqvgec8o+WuWxO0trVd
+         ub6aAlXgrMvMhV7Ya+sECHNpEjDOwPmyUqLednMTBrWdNE4IPquwfAWyi2Mp6dOKdEMa
+         lcJbFNqL7buvUlwMkavZ8M6XwnrPOWFZkYj5scMBkD086fIQqO8Z1fEXy56st7asBgPh
+         YONg==
+X-Forwarded-Encrypted: i=1; AJvYcCU1v/dBzwSAlgrPtOYttVgw8bUfpqxshzb2pr3phTkLP9oI1uM4b+8ffycVub2euSapbCUb5T1a5Hn7tx4=@vger.kernel.org, AJvYcCXq58Nea7yrL0n2v4l7Nh9wMVeY9hD9jDmwOCIM7yJvBbv2FqSYtPQCJUPUFvZ0d+YWHOE6ITvtAjYwGFY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwluMZNu9cSo30vuwAxak8hhVVaOriPsPsZL+InO8t7zsnSaMGx
+	Hl8xTEneKbNeCGsFYAtr2pIHoQr7kC0OHtRzbH+A0UQcP+dB56+W40ZfQGrsnJw5cZ9EC2wFpLM
+	lzPzemMMERxYFly8IrgccDJWv/D4=
+X-Gm-Gg: ASbGnctLD32/iH0qPdIro1RR2/a63pJsd7gens8JU3/nx+I/f61lB4uNEHGJ+QDZ4R0
+	b2fKa3U3bi8CbmG95w1vvWFsk/B3qYsk=
+X-Google-Smtp-Source: AGHT+IHYCxEda9+UCxyKQIeT/65hVqrEw9pQ9RSDAaJGDvo3D/cND6EhOVUluL9LungCpiCO9DAJqvKiHFf+9+2Jjd8=
+X-Received: by 2002:a17:907:9554:b0:aa6:7d82:5414 with SMTP id
+ a640c23a62f3a-aa67d825937mr417935566b.30.1733746873826; Mon, 09 Dec 2024
+ 04:21:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [net-next PATCH v10 0/8] cn10k-ipsec: Add outbound inline ipsec
- support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <173374683375.15657.6178697475771459592.git-patchwork-notify@kernel.org>
-Date: Mon, 09 Dec 2024 12:20:33 +0000
-References: <20241204055659.1700459-1-bbhushan2@marvell.com>
-In-Reply-To: <20241204055659.1700459-1-bbhushan2@marvell.com>
-To: Bharat Bhushan <bbhushan2@marvell.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- sgoutham@marvell.com, gakula@marvell.com, sbhatta@marvell.com,
- hkelam@marvell.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, jerinj@marvell.com, lcherian@marvell.com,
- ndabilpuram@marvell.com, andrew+netdev@lunn.ch, richardcochran@gmail.com
+References: <20241209064022.4342-1-liujing@cmss.chinamobile.com>
+In-Reply-To: <20241209064022.4342-1-liujing@cmss.chinamobile.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 9 Dec 2024 14:20:37 +0200
+Message-ID: <CAHp75VdP5dJcjFZ5E4o+V8tmRxOh8zPqw73ucr9OhinPLGnGpw@mail.gmail.com>
+Subject: Re: [PATCH] media: atomisp: fix spelling error in ia_css_sdis2_types.h
+To: Liu Jing <liujing@cmss.chinamobile.com>
+Cc: andy@kernel.org, hdegoede@redhat.com, mchehab@kernel.org, 
+	sakari.ailus@linux.intel.com, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-staging@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello:
+On Mon, Dec 9, 2024 at 8:40=E2=80=AFAM Liu Jing <liujing@cmss.chinamobile.c=
+om> wrote:
+>
+> fix the coefficients spelling error in ia_css_sdis2_types.h
 
-This series was applied to netdev/net-next.git (main)
-by David S. Miller <davem@davemloft.net>:
+Please, respect English grammar and punctuation (here you missed a
+capital letter at the beginning and period at the end of the
+sentence).
 
-On Wed, 4 Dec 2024 11:26:51 +0530 you wrote:
-> This patch series adds outbound inline ipsec support on Marvell
-> cn10k series of platform. One crypto hardware logical function
-> (cpt-lf) per netdev is required for inline ipsec outbound
-> functionality. Software prepare and submit crypto hardware
-> (CPT) instruction for outbound inline ipsec crypto mode offload.
-> The CPT instruction have details for encryption and authentication
-> Crypto hardware encrypt, authenticate and provide the ESP packet
-> to network hardware logic to transmit ipsec packet.
-> 
-> [...]
+Besides that, can you run the `codespell` tool against the entire
+driver and fix others, if any, typos and mistakes?
 
-Here is the summary with links:
-  - [net-next,v10,1/8] octeontx2-pf: map skb data as device writeable
-    https://git.kernel.org/netdev/net-next/c/195c3d463181
-  - [net-next,v10,2/8] octeontx2-pf: Move skb fragment map/unmap to common code
-    https://git.kernel.org/netdev/net-next/c/c460b7442a6b
-  - [net-next,v10,3/8] octeontx2-af: Disable backpressure between CPT and NIX
-    https://git.kernel.org/netdev/net-next/c/a7ef63dbd588
-  - [net-next,v10,4/8] cn10k-ipsec: Init hardware for outbound ipsec crypto offload
-    https://git.kernel.org/netdev/net-next/c/fe079ab05d49
-  - [net-next,v10,5/8] cn10k-ipsec: Add SA add/del support for outb ipsec crypto offload
-    https://git.kernel.org/netdev/net-next/c/c45211c23697
-  - [net-next,v10,6/8] cn10k-ipsec: Process outbound ipsec crypto offload
-    https://git.kernel.org/netdev/net-next/c/6a77a158848a
-  - [net-next,v10,7/8] cn10k-ipsec: Allow ipsec crypto offload for skb with SA
-    https://git.kernel.org/netdev/net-next/c/32188be805d0
-  - [net-next,v10,8/8] cn10k-ipsec: Enable outbound ipsec crypto offload
-    https://git.kernel.org/netdev/net-next/c/b3ae3dc3a30f
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+--=20
+With Best Regards,
+Andy Shevchenko
 
