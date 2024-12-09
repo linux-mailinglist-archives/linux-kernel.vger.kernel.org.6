@@ -1,172 +1,126 @@
-Return-Path: <linux-kernel+bounces-437395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EED29E92B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:47:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36DB9E92B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193E4160F7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:47:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2EB016085A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B0B22145C;
-	Mon,  9 Dec 2024 11:47:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035952206A0;
+	Mon,  9 Dec 2024 11:48:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EKQoQe/M"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ha7hgykx"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891321F931;
-	Mon,  9 Dec 2024 11:47:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74421F931;
+	Mon,  9 Dec 2024 11:47:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733744832; cv=none; b=r9PAOVLy3kQDOT7l6Beq7F+wIBXkzYEVhQ+nPgFjtRZaK67zU9ANrlTqU/9gMe7rHhth263ID7vW0x2Kui8ea59TlmUq3uHyCeEMTrm1CitfUAdmbjjsnzuIUP+1FN5gHNa5OJohy1UynLLEfrNedo1G2f2ZUzkUtYNyeGPbu08=
+	t=1733744881; cv=none; b=RXwz3MyhVWf/915xqKniDY44XFs9HoGZsIzqYJcHU1IwR0csVeQ3CfqKoXYWzcpZK4E9SpsFeegZLro+ndnRxhh6woHJyHxhufxkxQp4Ao3Q/OMFBwMui+Qp3lQroSJR6Sw8gVJllveFtY13eivtg+Z7UgH2iQK4FOSYqOzTE0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733744832; c=relaxed/simple;
-	bh=UIjErGmqfqU1Sd/W91SEMmcgWCt4YKrvAVeLp7upHjY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dvmOo5+QWDiXrYcAGGfseHaBRlc8MCzdzxOnA+Yk3JslplNrhWmgbdEf0aLpi8EHojWPO3KSPWlYPSxfGnW7cCssD4KCiVtSUai2MKBAVh/BMltSTAt+aU65XIdyljcFdiz60cVir/KerKBBPKwKMP4npDi9salVXD9k8v6QH5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EKQoQe/M; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9ADOe5007595;
-	Mon, 9 Dec 2024 11:46:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qdPw/W6LeGcWVMLio8NyLtLxoHG6Pis1h/7WcJzxaDY=; b=EKQoQe/MEmgVmKbS
-	+wUtB/96D8F476YM3nv39zqIPRlcDSO+MgNaWMVOdC8LY7garhyaGhBhXQzJmoqb
-	QdEjlgRqmT/axpuOritaDCipl/j6JLAC9sF6/lVzTpPiL0xW42XHPxLswt9R5Iv1
-	3ZB7tuB2hUwh7vAyl5AVCGlXttvgaSpUgFVI3FLA9C5bKQTU7NZW9rqOFoAdCEKN
-	Hd18LbPScFuUpaoST7EjGq/rv1M7YG1DojPsNr/hxBCRPKRpQYp4NXQtTBeSyb+l
-	fqdON4lp2QCrAeIjPEo0JmnGyTbYHHAsVX0EQTtF4IsY2M9AeBhZqGE13AazZMcU
-	DCi9CA==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdc6cpue-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 11:46:56 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9Bkt9E027017
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 11:46:55 GMT
-Received: from [10.216.1.80] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 03:46:48 -0800
-Message-ID: <44496510-0dfc-aa14-7793-93abd614fc37@quicinc.com>
-Date: Mon, 9 Dec 2024 17:16:45 +0530
+	s=arc-20240116; t=1733744881; c=relaxed/simple;
+	bh=sGAse8iE4lO8igztrgki0CsNHhYhXN7gLNtCUgD7z+4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BpI6y2citfU61jaSUeBdBOZW4UDWYbU3D8bHg0wD6JAbGiKSCzxAKFhF5vD+xrageufnWVDBtvJgyZQgZvx5nLD4HcO3YDu7v0Az2JzVfRik2KvXdFtb/H6n/oOqdYnvkrZ8CK+8k5lbU+AJENP6oNAW5gQzbvi3r39+v+R59VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ha7hgykx; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ee4b72d4d8so652440a91.3;
+        Mon, 09 Dec 2024 03:47:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733744879; x=1734349679; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=EHnRfRL33JY+SgOza+omObtcVl8TYmseJZ6d8dTduFc=;
+        b=Ha7hgykxe5+K/5ac22P14/6Dmsci4xTbop5sjKpZfjMTX7NcOLwcrEl0mHwa1W6vC8
+         IQnXLYGxfjysbGXjW4d1MzQfjZUK5S9gMMLvWNVkavHUHTSWBi6xjSX8+2cpQYF8lAJM
+         4kvjkw3GrQ3mSwjQfG76Vqb8GyZyInvEd9/Bwq+0Rodl4trOZD/iHoIc0ZISon9jj04t
+         jMYZlT18UoztBEJjfK+qCbJ9QrZOa4rjeFOdFVn0pvfirQi3Ue0nn+t7iTWYLih3GFBj
+         qsVnbvQhJZXDN6/feb6AVxrIYRpVVatHRnKt56k7hKnMZK+sidYYbjUWkQua+rUaMn2h
+         Stvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733744879; x=1734349679;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EHnRfRL33JY+SgOza+omObtcVl8TYmseJZ6d8dTduFc=;
+        b=dHQmGkLtfT/bEIHs+kGKjNUOLLIkhaXpX6M86K/mI+TbYtLqCNAepjk/712vX5XW6S
+         wOH8eedwpwQOp0AuZ5OR/8wzQJwmakxA3b1tpdcEVX1QvtQUAMokYqVQsK9YzSK7VqQL
+         FOjibzGKgF/f25qT2ZFdPf0NX2EncXYjc269NjimBfSvGCHhWcbiO978dktMpNbQlS+N
+         ECCtmnFXFU6t0qxcv8ESMqxiwk+QdoCWzkui32EQ/GGT5+tAYHZxIzsPFGd+x/82SVRn
+         xNjJ+irAm7wnBP1Qlyt4J/INrae8/ZAv2zc4BBaAY6A/fkAKdlYhEiyhLC5JKO0YCasR
+         92kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUCQox7bHPsoe/wBehY7FX+9TrPNJAVS8jSvmFdzAYB3F1K5O9FkREq5STS8wMjn7PHhV+LT6H0zL7NYvo=@vger.kernel.org, AJvYcCVvVEsvnNcqt6FTY1wnV2Z0mj5H1GLA6phvXndliLqxQkPhpG0W6bnNGzcyiwooXkMkCxzDmfJUKLSI4jxmpfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBqBklUSu9WgGorlx5lwtrSUv0iloK+NnSuBQZ10eqF52B1vNi
+	72Wc0pb5QwGHC2jelC6/1WNAfw3LrzWdFmWRpJiK9FDFiGkT5O7Ef73DBCGwboSPHaFU++h90DW
+	WpPO+RajtdQSEGN5sJsIwpPRVqPo=
+X-Gm-Gg: ASbGncvOr40s8ZwX3X6OoFS1KpnVRY8d0iV1GwCjmesXDOt773b20JvKdzGEmyhLJ3H
+	uY6DVcqKgcEyUwMFUEQMi9GC+4yRUY/A=
+X-Google-Smtp-Source: AGHT+IH5C5Rb0zbqHMVD4gazrlgtxXrtT8gxWz3ZbGytElL6YCPuhtwuZYmAVcaff3/PeqBswyUvShra1yLUzDEv0J0=
+X-Received: by 2002:a17:90b:4f8c:b0:2ee:d9f2:2acd with SMTP id
+ 98e67ed59e1d1-2ef6ab273a8mr7147109a91.6.1733744879050; Mon, 09 Dec 2024
+ 03:47:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH v3 2/5] ASoC: dt-bindings: wcd937x-sdw: Add static channel
- mapping support
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Bard Liao
-	<yung-chuan.liao@linux.intel.com>,
-        Jaroslav Kysela <perex@perex.cz>, "Takashi
- Iwai" <tiwai@suse.com>,
-        Pierre-Louis Bossart
-	<pierre-louis.bossart@linux.dev>,
-        Sanyog Kale <sanyog.r.kale@intel.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
-        <kernel@quicinc.com>
-References: <20241126164300.3305903-1-quic_mohs@quicinc.com>
- <20241126164300.3305903-3-quic_mohs@quicinc.com>
- <jnetmj5ibmmoiputq52vsvfqjz2auwjeqwt36g7sg4kjrrxyso@nrugsa6px4h7>
- <6bb8fe59-a1fc-9813-4623-d27e74a1b882@quicinc.com>
- <2517ef0e-4d13-4c51-b479-863229783223@kernel.org>
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-In-Reply-To: <2517ef0e-4d13-4c51-b479-863229783223@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2vVXxcrrBXQAvSz_CVtLjVu91yy0-gYM
-X-Proofpoint-GUID: 2vVXxcrrBXQAvSz_CVtLjVu91yy0-gYM
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090093
+References: <20241206192244.443486-1-trintaeoitogc@gmail.com>
+ <CANiq72neo_RtANWJu_GW5LxsR5KWxriS1L8nsXkNn7ioiaEQKQ@mail.gmail.com> <30ddfc7f-4b13-4caf-8859-2cd2e72ef878@sedlak.dev>
+In-Reply-To: <30ddfc7f-4b13-4caf-8859-2cd2e72ef878@sedlak.dev>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 9 Dec 2024 12:47:46 +0100
+Message-ID: <CANiq72mh2_QhHcE65-t+6UEEqe+9XwGQ3gJ1CCQpZ6r3HOcokQ@mail.gmail.com>
+Subject: Re: [PATCH] [PATCH] rust: macros: add authors
+To: Daniel Sedlak <daniel@sedlak.dev>
+Cc: guilherme giacomo simoes <trintaeoitogc@gmail.com>, Wayne Campbell <wcampbell1995@gmail.com>, ojeda@kernel.org, 
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net, 
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org, 
+	aliceryhl@google.com, tmgross@umich.edu, walmeida@microsoft.com, 
+	fujita.tomonori@gmail.com, tahbertschinger@gmail.com, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/5/2024 12:52 PM, Krzysztof Kozlowski wrote:
-> On 05/12/2024 04:56, Mohammad Rafi Shaik wrote:
->> On 11/27/2024 1:38 PM, Krzysztof Kozlowski wrote:
->>> On Tue, Nov 26, 2024 at 10:12:57PM +0530, Mohammad Rafi Shaik wrote:
->>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->>>> index d3cf8f59cb23..7893b1c1f80b 100644
->>>> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->>>> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
->>>> @@ -58,6 +58,44 @@ properties:
->>>>        items:
->>>>          enum: [1, 2, 3, 4, 5]
->>>>    
->>>> +  qcom,tx-channel-mapping:
->>>> +    description: |
->>>> +      Specifies static channel mapping between slave and master tx port
->>>> +      channels.
->>>> +      In the order of slave port channels which is adc1, adc2, adc3,
->>>> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
->>>> +      The channel map index values are fixed values.
->>>> +      SWRM_CH1 ==> 1
->>>> +      SWRM_CH2 ==> 2
->>>> +      SWRM_CH3 ==> 4
->>>> +      SWRM_CH4 ==> 8
->>>
->>> I am surprised to see here again 1/2/4/8. My comments were not
->>> addressed. I think we agreed during our off-list talk that you will use
->>> 1, 2, 3 and 4.
->>>
->> Ack,
->>
->> Yes right,
->>
->> Will add the change in next patch set.
->>
->> will add the channel map values starting from 0 based on order of slave
->> port channels which are starting from 0.
->>
->> SWRM_CH1 ==> 0
->> SWRM_CH2 ==> 1
->> SWRM_CH3 ==> 2
->> SWRM_CH4 ==> 3
-> These are supposed to be channels, so 1=1, 2=2 not 1=0.
-> 
+On Sat, Dec 7, 2024 at 11:15=E2=80=AFAM Daniel Sedlak <daniel@sedlak.dev> w=
+rote:
+>
+> I think we could fight with the code formatting, because when it comes
+> to the rust macros, rustfmt is often very confused and we could end up
+> with variations like:
+>
+>         authors: ["author1", "author2",
+>                         "author3"]
+>
+> or
+>
+>         authors: [
+>                    "author1",
+>                    "author2",
+>                   ]
+>
+> and rustfmt would be totally ok with both of them.
 
-Thanks for comment.
+Yeah, that is a good point. There are hundreds of drivers with 2+
+authors, so this could indeed be an issue eventually.
 
-Ack,
+Having said that, we already have e.g. the `alias` and `firmware` keys
+that take a list, so I think we already have the potential issue, thus
+being consistent in our use of lists sounds simpler (unless we are
+discussing migrating those away too).
 
-i somehow missed this V3 patch mail comment and posted V4 patch set.
+We could also try to mitigate the formatting issue via e.g.
+`checkpatch.pl` if needed.
 
-will address the comment and update change in v5 patch set
+Thanks!
 
-Thanks & Regards,
-Rafi.
-
-> Best regards,
-> Krzysztof
-
+Cheers,
+Miguel
 
