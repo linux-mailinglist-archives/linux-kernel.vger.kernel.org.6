@@ -1,154 +1,104 @@
-Return-Path: <linux-kernel+bounces-438175-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8889E9DD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:05:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B9749E9DD5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:05:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1B71885834
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:05:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0427118851E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:05:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AC817836B;
-	Mon,  9 Dec 2024 18:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8637F155757;
+	Mon,  9 Dec 2024 18:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="ERaGxLe5";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="GNy91ASE"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="Ocaz0G9P"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BFFF1422D8;
-	Mon,  9 Dec 2024 18:04:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733767496; cv=fail; b=FEYsHptPbYZYDFUfSK5unNbKOU7BDsdiVLp+5nVJpOLXXhuAg/dQV6oimSeSpqY+7lfhjkTjdS8bNo0g+h0svQAyMp2r/sfCSPuxBAIL4Ty/IFrbkFB+XuQ5/5li09lbsMYBq2EMgwPVWd6opGsFqsVl8ftS2+PFdw4zvUMlTNw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733767496; c=relaxed/simple;
-	bh=zhzTCDMaso/G1fbT4QKmx4/rci5cD1jbrl9CYozjCYc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pYlZBm54ch1XzH2fG5Vbri0Akz15BnQG/0xzmwtKWlMgrrY+6RrcjqZxNnicT5kluiqFZPyI7CklyfR43X59v0NhQTe1mFegTHddwEpUSCIllcRuE0H8vWj1VxQL7S81rVrPETCjbI6MdfJWdN2OFNu1yf8hvjfsr9rcpR1+eLw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=ERaGxLe5; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=GNy91ASE; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D731F5F6;
+	Mon,  9 Dec 2024 18:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733767549; cv=none; b=PNM9JlydLKDVv6CibI+80MIypeZelVsgopnPX3VQRtU+N6Yix2XZC6pNZlk873EOyRcBXMP137L6S1mgb+SBVjS0QImHOL0WPItpflWyTO5fC4+ZCJAYl3+Xf2sRjJqt+Q8kWcBJDJCvMH34vbQDupt2FZsdJ95siY6RvLCj/jE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733767549; c=relaxed/simple;
+	bh=Pp7lI+ou7urfQHOD0BarCGanmUgLWiyXQK9Br+QYCmQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=feeT7yVxmKACIgzfjBr8NSOg5mS2J+eeZmbfPGhSjG8VJ5xaLRl+sV1Gitq3XbpX12aSbG/FFicHhs4rEiAk+j2+VlYrN8Oyhkaa3QuPXUV+ONJ/OA2tXxwTOQvvZ4VesiQ+zA9cxq77vPnJrtiVJ7ww6SlkGyIjvDJ73h1uE+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=Ocaz0G9P; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4Y6VCZ61Slz6CmM6N;
+	Mon,  9 Dec 2024 18:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1733767540; x=1736359541; bh=Pp7lI+ou7urfQHOD0BarCGan
+	mUgLWiyXQK9Br+QYCmQ=; b=Ocaz0G9PWgVoOgOGOS9WO/rk97F53OoT9jxcxnQC
+	EizS+6kYhImjjNKpN9EfRpFJuei/7RMg7WSdZbR+1qwyFmEZYuIbhAzMAe0crBAI
+	OMlqN1/LO4VvTITqe0dlc9plDkQ8eIlKw3Gguj/xXbBWm0aCziL0Fc79FLU/LKBD
+	scBVSt7bKWDiJEUcfr3GgW7uwscXiXKZS5iS+hFw8eqx//nBnpm3K07xe+NbWLce
+	K8JvaLadXyPftPpKmN3SS2giSIVF1GMvM2xlA3MFuZQ76YZinM9ViOs2s1X00OOb
+	YOSdwadoELo6CuUnoiSehrHWvNHCZbbZPRzcA90pYHG0og==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id xrtsgesCzJ9p; Mon,  9 Dec 2024 18:05:40 +0000 (UTC)
+Received: from [192.168.50.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id 6A843480525;
-	Mon, 09 Dec 2024 13:04:53 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733767493;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=zhzTCDMaso/G1fbT4QKmx4/rci5cD1jbrl9CYozjCYc=;
- b=ERaGxLe5qmpPRCirZ1WtXSDSs1P368Cm8ilvTM21L97tUuNtEMjE5CIGSKdHSrzzIDeTI
- YD021WKTtSJ0y+0BA==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733767493;
-	cv=none; b=twdxjHKsJe/gMPCmAY1oQneTz0XqjWzm/Ml3f6Y7zXxp5YCD9xFXQn83B5i7fMAi7LGYIhTIkdvJG6gpAp5kWnfgYhcSjE6iopoIjvdRITHwY+3vr7VGsuoVvcveU3LkGGl+vEwez9q8kGG6NInqzB4Hp5KBx7Qbe2NfxTgtVAkGKhw34W+gnvQSWyRv/7NStda73AIFO+CmqNJUEd0cHdeVaymlZQFAk7yEKHuTZYeGarU6L+yCDuC7oCm9Tu0OAj7p6UAd1vQqZch/ymggLmyicxty9l2CsHF0lPOPVda6Q7vxdUJEwnpsy9UzeDzt1WWRaT0gFhonROIcwcUlFg==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1733767493; c=relaxed/simple;
-	bh=zhzTCDMaso/G1fbT4QKmx4/rci5cD1jbrl9CYozjCYc=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=hijyb9iGM5sfvRXQ8F7jf5CSNBJoBIQ01QWnx9QtJr3tiiC6Ca9Oblpqvz3ys2Aws+NBxY/h1ryeAdTDVOBI0p8G4nUkClcSbHxknsqyrudE0TMbHBfQTK59CUvZGfdF4Z1jaYstYBY8IPdiGTz9Y32PxqvTWWsnu0qzWIO1aCeEa3PDy3u9zmhBMcuqvOhNwMVtuQmwCqfH7oUFKeCBSfsjgVehchBlSHrbV0kvixU0tdez+9IdMifpTB+tooOWnjRYNzWDVlXnwM+mIAOHkkYnPTQBIrfNUTrC8On+OIp34IaylNTCRzOWeMkw+9MPjdG/xSnC8HXGh8W2EEEJnw==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733767493;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=zhzTCDMaso/G1fbT4QKmx4/rci5cD1jbrl9CYozjCYc=;
- b=GNy91ASEqVC4gu76XgMpz3PrgpIhZQtW1wljAfjP6pEj+C862pfk95muFSTAQS4yjoSj5
- PTZX3wYmMrWIPzJcsvLbjXRJ201oRUYE2K/1B/uXEOYYtmn55CWykUKOEfbJRM8Z07asXbF
- Wdphgfenjmy+pC12qkfcEuzI3S1nDtYTqk6EdTyrifs7wJzqFKhYnqNDZ81PguWUiz/el7d
- D1Dsz33OlSdnlJcryWQhMi1I1HKSHh8IVeQUisQUqUT9o8hV6+dYabFFLZMi9C5QHaRq1dR
- uT+ddSVx9BR6UHR1t07+CcvZj5YbdkEwIfGH3qWofaMTNZ3qaqEedLl5rQMw==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id 2F648280081;
-	Mon, 09 Dec 2024 13:04:53 -0500 (EST)
-Message-ID: <39bedc74af0b310713c930a66dfc0ca367513c1d.camel@sapience.com>
-Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
-From: Genes Lists <lists@sapience.com>
-To: Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
-	torvalds@linux-foundation.org, stable@vger.kernel.org, 
-	linux-media@vger.kernel.org, sakari.ailus@linux.intel.com,
- bingbu.cao@intel.com
-Date: Mon, 09 Dec 2024 13:04:52 -0500
-In-Reply-To: <Z1creSb6XVWtpyUl@linux.intel.com>
-References: <2024120917-vision-outcast-85f2@gregkh>
-	 <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
-	 <5321021d929cebf7268fc163ddb92cb740c09c82.camel@sapience.com>
-	 <Z1creSb6XVWtpyUl@linux.intel.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-F0Y2Ox7LjwGuS076kOhC"
-User-Agent: Evolution 3.54.2 
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6VCM0HNSz6CmQtQ;
+	Mon,  9 Dec 2024 18:05:34 +0000 (UTC)
+Message-ID: <87f569d6-fb17-4d3b-8075-1a74d11148a9@acm.org>
+Date: Mon, 9 Dec 2024 10:05:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 2/3] lib/sbitmap: don't export sbitmap_get_shallow()
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk,
+ akpm@linux-foundation.org, yang.yang@vivo.com, ming.lei@redhat.com,
+ yukuai3@huawei.com, osandov@fb.com, paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com
+References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+ <20241209115522.3741093-3-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20241209115522.3741093-3-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 12/9/24 7:55 PM, Yu Kuai wrote:
+> -/**
+> - * sbitmap_get_shallow() - Try to allocate a free bit from a &struct sbitmap,
+> - * limiting the depth used from each word.
+> - * @sb: Bitmap to allocate from.
+> - * @shallow_depth: The maximum number of bits to allocate from a single word.
+> - *
+> - * This rather specific operation allows for having multiple users with
+> - * different allocation limits. E.g., there can be a high-priority class that
+> - * uses sbitmap_get() and a low-priority class that uses sbitmap_get_shallow()
+> - * with a @shallow_depth of (1 << (@sb->shift - 1)). Then, the low-priority
+> - * class can only allocate half of the total bits in the bitmap, preventing it
+> - * from starving out the high-priority class.
+> - *
+> - * Return: Non-negative allocated bit number if successful, -1 otherwise.
+> - */
+> -int sbitmap_get_shallow(struct sbitmap *sb, unsigned long shallow_depth);
 
---=-F0Y2Ox7LjwGuS076kOhC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Please retain the above comment block by moving it into lib/sbitmap.c.
 
-On Mon, 2024-12-09 at 18:40 +0100, Stanislaw Gruszka wrote:
->=20
-> This upstream commit is missing.
->=20
-> commit 1d4a000289979cc7f2887c8407b1bfe2a0918354
-> Author: Bingbu Cao <bingbu.cao@intel.com>
-> Date:=C2=A0=C2=A0 Wed Oct 16 15:53:02 2024 +0800
->=20
-> =C2=A0=C2=A0=C2=A0 media: ipu6: use the IPU6 DMA mapping APIs to do mappi=
-ng
->=20
-> It does not apply cleanly on 6.12.4, I'll post backport shortly.
->=20
-> Regards
-> Stanislaw
+Thanks,
 
-Wonderful, =C2=A0thank you. I'll stop bisecting and test the patch once its
-available.
-
-thank you.
-
-gene
-
->=20
-
---=20
-Gene
-
-
---=-F0Y2Ox7LjwGuS076kOhC
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1cxRAAKCRA5BdB0L6Ze
-23zNAQDQzqbkMztnIPurUsq81ecD0Kc7YPhxyR5noefXaqlGAwD9FCThiwv4kT3i
-FukEPkckgFi5U4Ag6mgFX/BOkBw07Qc=
-=GDZA
------END PGP SIGNATURE-----
-
---=-F0Y2Ox7LjwGuS076kOhC--
+Bart.
 
