@@ -1,248 +1,154 @@
-Return-Path: <linux-kernel+bounces-436820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E16199E8B56
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:05:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A40B9E8B58
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:08:48 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D0FF28173F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:05:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C24F0163E7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:08:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BBEF214802;
-	Mon,  9 Dec 2024 06:04:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070172144A5;
+	Mon,  9 Dec 2024 06:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ZlJdK2X5"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="lZLm+p9g"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0932144A9;
-	Mon,  9 Dec 2024 06:04:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDAD316DEB5;
+	Mon,  9 Dec 2024 06:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733724296; cv=none; b=gcfB7JxXJUrkR2rVZvNPFosKqUlEpZwhMLDXgCh0TEME56e/y4Xt4IBtL054Yb0N1YtcWyw89Qj902/hG5qXp2osmqRG0DTnsm7R1J2M3BXNWdr4bWrahz+5fRVZSqxGK8iWe0VWAOBskqNYyW2rYDx3Fshd+tfNipxagdBNNlQ=
+	t=1733724521; cv=none; b=TJ2ttYpuS62dx3MZknbQtkpz0xKcGdhvIRBqAd+xtaZuLudPdEOP546O9RDXLwwp3T0JuliPdLUSvlP1LO0qc+NIV08PHXnOmjSalKaEx1YxvOlQzwHl6WVBVjU/8D1GGAmMc4u0FwdeII58OS0Ww5aPF9mx5xujLdSuIUZ0HPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733724296; c=relaxed/simple;
-	bh=bhTklaj/2PsO5Nv8UhiyX2qItpwg7Uti9kyTx3adxzI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4mMF9mYqbOA0T0jgXmiGUYMeKIepIrlnA6accTlvGibWhIgVKDc2g+7aTZIO80gL0xaxdPcvXNDCXxN80FrHejNwpvEDjW9gklFAhLD6pijBnAVmVvqJB3TrrzbCROkhbMyCb7lFLm8QKO3UOFap5pqtN5tY+L8ktv9rm4zqpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ZlJdK2X5; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733724284; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=s/c5AztEBJjv/BTvhC/ba+rQgienYOYyHkd/8hjQ3RM=;
-	b=ZlJdK2X5o9qXUKtk97iWhcq2H2PtlgZ1XNW/llV/mg4PROSba0ELJAup/Xemwzt2xPmZBhKdWk9wuYXIkQkbobDaAiN1hCGdl2dZhSRNQRbM0OaIvJfFe+bBog4Wj34YPS1zTNkA45Bvp7JvjIDJOuYTKpreDzVax/Ys26fDyt8=
-Received: from 30.221.100.140(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WL36AV9_1733724281 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 09 Dec 2024 14:04:43 +0800
-Message-ID: <d2af79e2-adb2-46f0-a7e3-67a9265f3adf@linux.alibaba.com>
-Date: Mon, 9 Dec 2024 14:04:40 +0800
+	s=arc-20240116; t=1733724521; c=relaxed/simple;
+	bh=BerKf0+Bz4UEdSIMFwHT/raPfvGi8QrEc/om39G88SM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=fb6icuZylrJh4+aR4SGbzsqs17SAOgrxksIUHnMgJnhbgoTtUbkjCvD1mmvac1OlihtCUcAryA7+Z/BPte8ty5tmMbuxbk+JV18m3XdJjWzjk608ZslWeMFJHr3fFHAF8C+m4UqghmPiJfPBcVuXIYT4nqnY0aaSPH7fW6/ASx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=lZLm+p9g; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733724506;
+	bh=iP7+A8OJEvravqrcKXz46bES4mj2u4XsJxSti6jRLRU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lZLm+p9glWos/2MptCfTCaLO1CYEa7vGBsdbILlTEZn9h00wEmbSnxq6O15hxUi6D
+	 ODjZ18WXtzrOiIomPnu3FurWBrAf86hXTKQyBctIhMM8t3mkwNdDETSOZRXG7SgoUv
+	 1JU/2StHJs09yOvkpHLVW/TU+C175hh8vHTqpytDXZqg/Iu3AUr1NJMEDED6K46VQm
+	 H0ME6ANpmuEjujjpE2AE9VUzw63DcBYzh4PMt0dhZysgOcWGsZBsVrRK2x5qwd6HAW
+	 Wc3BjhCi3RJ2nG+PdZdk2yXTt6G+H5bSPUjC0IwiScqfidwDCUTTNl9PJ+vPEzTF9b
+	 qh6W8ZLTm+vnQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y6BHt4Nkhz4wb0;
+	Mon,  9 Dec 2024 17:08:26 +1100 (AEDT)
+Date: Mon, 9 Dec 2024 17:08:29 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Suren Baghdasaryan <surenb@google.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the mm tree
+Message-ID: <20241209170829.11311e70@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/2] net/smc: support ipv4 mapped ipv6 addr
- client for smc-r v2
-To: Wenjia Zhang <wenjia@linux.ibm.com>, Halil Pasic <pasic@linux.ibm.com>
-Cc: jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dust Li <dust.li@linux.alibaba.com>
-References: <20241202125203.48821-1-guangguan.wang@linux.alibaba.com>
- <20241202125203.48821-3-guangguan.wang@linux.alibaba.com>
- <894d640f-d9f6-4851-adb8-779ff3678440@linux.ibm.com>
- <20241205135833.0beafd61.pasic@linux.ibm.com>
- <5ac2c5a7-3f12-48e5-83a9-ecd3867e6125@linux.alibaba.com>
- <7de81edd-86f2-4cfd-95db-e273c3436eb6@linux.ibm.com>
- <3710a042-cabe-4b6d-9caa-fd4d864b2fdc@linux.ibm.com>
-Content-Language: en-US
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-In-Reply-To: <3710a042-cabe-4b6d-9caa-fd4d864b2fdc@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/b1Ofq.+ld.mJCYnc7CS.f2q";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/b1Ofq.+ld.mJCYnc7CS.f2q
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi all,
 
-On 2024/12/7 03:49, Wenjia Zhang wrote:
-> 
-> 
-> On 06.12.24 11:51, Wenjia Zhang wrote:
->>
->>
->> On 06.12.24 07:06, Guangguan Wang wrote:
->>>
->>>
->>> On 2024/12/5 20:58, Halil Pasic wrote:
->>>> On Thu, 5 Dec 2024 11:16:27 +0100
->>>> Wenjia Zhang <wenjia@linux.ibm.com> wrote:
->>>>
->>>>>> --- a/net/smc/af_smc.c
->>>>>> +++ b/net/smc/af_smc.c
->>>>>> @@ -1116,7 +1116,12 @@ static int smc_find_proposal_devices(struct
->>>>>> smc_sock *smc, ini->check_smcrv2 = true;
->>>>>>        ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
->>>>>>        if (!(ini->smcr_version & SMC_V2) ||
->>>>>> +#if IS_ENABLED(CONFIG_IPV6)
->>>>>> +        (smc->clcsock->sk->sk_family != AF_INET &&
->>>>>> +
->>>>>> !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
->>>>> I think here you want to say !(smc->clcsock->sk->sk_family == AF_INET
->>>>> && ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)), right? If
->>>>> it is, the negativ form of the logical operation (a&&b) is (!a)||(!b),
->>>>> i.e. here should be:
->>>>> （smc->clcsock->sk->sk_family != AF_INET）||
->>>>> （!ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)）
->>>>
->>>> Wenjia, I think you happen to confuse something here. The condition
->>>> of this if statement is supposed to evaluate as true iff we don't want
->>>> to propose SMCRv2 because the situation is such that SMCRv2 is not
->>>> supported.
->>>>
->>>> We have a bunch of conditions we need to meet for SMCRv2 so
->>>> logically we have (A && B && C && D). Now since the if is
->>>> about when SMCRv2 is not supported we have a super structure
->>>> that looks like !A || !B || !C || !D. With this patch, if
->>>> CONFIG_IPV6 is not enabled, the sub-condition remains the same:
->>>> if smc->clcsock->sk->sk_family is something else that AF_INET
->>>> the we do not do SMCRv2!
->>>>
->>>> But when we do have CONFIG_IPV6 then we want to do SMCRv2 for
->>>> AF_INET6 sockets too if the addresses used are actually
->>>> v4 mapped addresses.
->>>>
->>>> Now this is where the cognitive dissonance starts on my end. I
->>>> think the author assumes sk_family == AF_INET || sk_family == AF_INET6
->>>> is a tautology in this context. That may be a reasonable thing to
->>>> assume. Under that assumption
->>>> sk_family != AF_INET &&    !ipv6_addr_v4mapped(addr) (shortened for
->>>> convenience)
->>>> becomes equivalent to
->>>> sk_family == AF_INET6 && !ipv6_addr_v4mapped(addr)
->>>> which means in words if the socket is an IPv6 sockeet and the addr is not
->>>> a v4 mapped v6 address then we *can not* do SMCRv2. And the condition
->>>> when we can is sk_family != AF_INET6 || ipv6_addr_v4mapped(addr) which
->>>> is equivalen to sk_family == AF_INET || ipv6_addr_v4mapped(addr) under
->>>> the aforementioned assumption.
->>>
->>> Hi, Halil
->>>
->>> Thank you for such a detailed derivation.
->>>
->>> Yes, here assume that sk_family == AF_INET || sk_family == AF_INET6. Indeed,
->>> many codes in SMC have already made this assumption, for example,
->>> static int __smc_create(struct net *net, struct socket *sock, int protocol,
->>>             int kern, struct socket *clcsock)
->>> {
->>>     int family = (protocol == SMCPROTO_SMC6) ? PF_INET6 : PF_INET;
->>>     ...
->>> }
->>> And I also believe it is reasonable.
->>>
->>> Before this patch, for SMCR client, only an IPV4 socket can do SMCRv2. This patch
->>> introduce an IPV6 socket with v4 mapped v6 address for SMCRv2. It is equivalen
->>> to sk_family == AF_INET || ipv6_addr_v4mapped(addr) as you described.
->>>
->>>>
->>>> But if we assume sk_family == AF_INET || sk_family == AF_INET6 then
->>>> the #else does not make any sense, because I guess with IPv6 not
->>>> available AF_INET6 is not available ant thus the else is always
->>>> guaranteed to evaluate to false under the assumption made.
->>>>
->>> You are right. The #else here does not make any sense. It's my mistake.
->>>
->>> The condition is easier to understand and read should be like this:
->>>       if (!(ini->smcr_version & SMC_V2) ||
->>> +#if IS_ENABLED(CONFIG_IPV6)
->>> +        (smc->clcsock->sk->sk_family == AF_INET6 &&
->>> +         !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
->>> +#endif
->>>           !smc_clc_ueid_count() ||
->>>           smc_find_rdma_device(smc, ini))
->>>           ini->smcr_version &= ~SMC_V2;
->>>
->>
->> sorry, I still don't agree on this version. You removed the condition
->> "
->> smc->clcsock->sk->sk_family != AF_INET ||
->> "
->> completely. What about the socket with neither AF_INET nor AF_INET6 family?
->>
->> Thanks,
->> Wenjia
->>
-> I think the main problem in the original version was that
-> (sk_family != AF_INET) is not equivalent to (sk_family == AF_INET6).
-> Since you already in the new version above used sk_family == AF_INET6,
-> the else condition could stay as it is. My suggestion:
-> 
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> index 8e3093938cd2..5f205a41fc48 100644
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -1116,7 +1116,12 @@ static int smc_find_proposal_devices(struct smc_sock *smc,
->         ini->check_smcrv2 = true;
->         ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
->         if (!(ini->smcr_version & SMC_V2) ||
-> +#if IS_ENABLED(CONFIG_IPV6)
-> +           (smc->clcsock->sk->sk_family == AF_INET6 &&
-> +            !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
-> +#else
->             smc->clcsock->sk->sk_family != AF_INET ||
-> +#endif
->             !smc_clc_ueid_count() ||
->             smc_find_rdma_device(smc, ini))
->                 ini->smcr_version &= ~SMC_V2;
-> 
-> Thanks,
-> Wenjia
+After merging the mm tree, today's linux-next build (powerpc allyesconfig)
+failed like this:
 
-The RFC7609 have confined SMC to socket applications using stream (i.e., TCP) sockets over IPv4 or IPv6.
-https://datatracker.ietf.org/doc/html/rfc7609#page-26:~:text=It%20is%20confined%20to%20socket%20applications%20using%20stream%0A%20%20%20(i.e.%2C%20TCP)%20sockets%20over%20IPv4%20or%20IPv6
+In file included from mm/damon/vaddr.c:736:
+mm/damon/tests/vaddr-kunit.h: In function 'damon_test_three_regions_in_vmas=
+':
+mm/damon/tests/vaddr-kunit.h:92:1: error: the frame size of 3280 bytes is l=
+arger than 2048 bytes [-Werror=3Dframe-larger-than=3D]
+   92 | }
+      | ^
 
-Both in the smc-tools and in smc kernel module, we can see codes that the sk_family is either AF_INET or AF_INET6.
-The codes here:
-https://raw.githubusercontent.com/ibm-s390-linux/smc-tools/refs/heads/main/smc-preload.c#:~:text=if%20((domain%20%3D%3D%20AF_INET%20%7C%7C%20domain%20%3D%3D%20AF_INET6)%20%26%26
-and
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=(sk%2D%3Esk_family%20!%3D%20AF_INET%20%26%26%20sk%2D%3Esk_family%20!%3D%20AF_INET6))
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=int%20family%20%3D%20(protocol%20%3D%3D%20SMCPROTO_SMC6)%20%3F%20PF_INET6%20%3A%20PF_INET%3B 
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=%2D%3Esin_family%20!%3D-,AF_INET,-%26%26%0A%09%20%20%20%20addr%2D%3E
-https://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git/tree/net/smc/af_smc.c#:~:text=%2D%3Esa_family%20!%3D-,AF_INET6,-)%0A%09%09goto%20out_err
-...
+Presumably caused by commit
 
-I wonder if SMC-R can support other address famliy rather than AF_INET AF_INET6 in design？
-And IBM has any plan to support other address family in future?  Wenjia, can you help explain
-this?
+  062111898568 ("mm: move per-vma lock into vm_area_struct")
 
-If the answer is positive, the code should be like this:
-        if (!(ini->smcr_version & SMC_V2) ||
-+#if IS_ENABLED(CONFIG_IPV6)
-+           !(smc->clcsock->sk->sk_family == AF_INET || (smc->clcsock->sk->sk_family == AF_INET6 &&
-+            ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr))) ||
-+#else
-             smc->clcsock->sk->sk_family != AF_INET ||
+I have applied the following hack for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Dec 2024 16:33:16 +1100
+Subject: [PATCH] fix up for "mm: move per-vma lock into vm_area_struct"
+
+on PowerPC that change causes a frame size error
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ mm/damon/tests/vaddr-kunit.h | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/mm/damon/tests/vaddr-kunit.h b/mm/damon/tests/vaddr-kunit.h
+index b9fe3bc8472b..564373fadf38 100644
+--- a/mm/damon/tests/vaddr-kunit.h
++++ b/mm/damon/tests/vaddr-kunit.h
+@@ -14,6 +14,7 @@
+=20
+ #include <kunit/test.h>
+=20
++#ifdef notdef
+ static int __link_vmas(struct maple_tree *mt, struct vm_area_struct *vmas,
+ 			ssize_t nr_vmas)
+ {
+@@ -90,6 +91,7 @@ static void damon_test_three_regions_in_vmas(struct kunit=
+ *test)
+ 	KUNIT_EXPECT_EQ(test, 300ul, regions[2].start);
+ 	KUNIT_EXPECT_EQ(test, 330ul, regions[2].end);
+ }
 +#endif
-             !smc_clc_ueid_count() ||
-             smc_find_rdma_device(smc, ini))
-                 ini->smcr_version &= ~SMC_V2;
+=20
+ static struct damon_region *__nth_region_of(struct damon_target *t, int id=
+x)
+ {
+@@ -306,7 +308,7 @@ static void damon_test_split_evenly(struct kunit *test)
+ }
+=20
+ static struct kunit_case damon_test_cases[] =3D {
+-	KUNIT_CASE(damon_test_three_regions_in_vmas),
++	// KUNIT_CASE(damon_test_three_regions_in_vmas),
+ 	KUNIT_CASE(damon_test_apply_three_regions1),
+ 	KUNIT_CASE(damon_test_apply_three_regions2),
+ 	KUNIT_CASE(damon_test_apply_three_regions3),
+--=20
+2.45.2
 
-Otherwise, the code below is reasonable.
-      if (!(ini->smcr_version & SMC_V2) ||
-+#if IS_ENABLED(CONFIG_IPV6)
-+        (smc->clcsock->sk->sk_family == AF_INET6 &&
-+         !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
-+#endif
-          !smc_clc_ueid_count() ||
-          smc_find_rdma_device(smc, ini))
-          ini->smcr_version &= ~SMC_V2;
+--=20
+Cheers,
+Stephen Rothwell
 
-Thanks,
-Guangguan Wang
+--Sig_/b1Ofq.+ld.mJCYnc7CS.f2q
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWiV0ACgkQAVBC80lX
+0Gw7GAf+PMW9beV5ewZXDK6cYbATS+Ri+r5AzdKAYy1uLtChM71SyV+YHIzyyY3P
+xP1eOuZ7/5Y7wfbJ8ob4MbJ963CtZntXpj6VMrvd4QoUjYhRtLUWTJAC224kxcnL
+kn38HPLvt87dd32SJRW0KngH1MZWXmqOj4b01tXZK6lDyHr6XQsIOVQl3YYe5qsq
+daLVdDArH6sYrO8sMJKETxs7uTUyl9BdWp0qchxsVqLeWVp6fdzb/uqNvsM+I2vl
+mQ1CH6UqZ8U8cvsf01FloY8eAQHOiMh7tk2hxVn7PfISMU2c9A8AH+Hs+NUl73eJ
+T/pYLxMJ0194MMoF2+kWXpj6pyu0BA==
+=Ghid
+-----END PGP SIGNATURE-----
+
+--Sig_/b1Ofq.+ld.mJCYnc7CS.f2q--
 
