@@ -1,391 +1,333 @@
-Return-Path: <linux-kernel+bounces-436658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC1669E891C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:08:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F285D9E891F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:09:25 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97221283E0A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:08:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8AE41614E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E395F43146;
-	Mon,  9 Dec 2024 02:08:21 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF18381AF;
+	Mon,  9 Dec 2024 02:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ctt4VKgD"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39543219ED
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 02:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21A3E44C6F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 02:09:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733710101; cv=none; b=pAndCyMEInEDs2ECqFLwcQkIwcxm/06Y54AcijnlH6aB7/wH1meMnVIljQkKkCFmpQt44hO77C+J0OeDCdC35gQhknT0SQIPh57EOUIJBXxg0eKo3OleQ73UEGsAqFys0IKui4ir45A0+qlKkaKoNd+GReX8zJ6+RH64oS0C4Uc=
+	t=1733710159; cv=none; b=LAM0CpE1M3ARlP3q2+Ydkk5s/AGMJ+6EdxdqO3qysllJPNQhJ35JRix5ToAATMtfgoIGsRVFfEYICZnhU3uszS3GOqhE+Ch5cKTTe7cSAg/z0RUGoZpnnMwYC0SGvGco4J+Ok2Yf2Jaa4W9qK/aS80UhG4HW4Wg5+jEy7SpZlE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733710101; c=relaxed/simple;
-	bh=EE6gIBFIDcxg3RK+Dqes9lyzwCfPSJeMP7eFCNIBzFg=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=GkA5JmKnxXRWxznAeS3rw9aQ8DlPcmaLPyu82McDXDQ/3r/WHYZC8bsfUsHaYIat18aZG7RNUShrrXb4yq+Km8fS9E2Yz1JQey8G9y+zFZf64xGSAIETjz0ILzdeb20odnX6qu6ujQRVf6UvtJCoAX3a4IMRY6c1MFCngcelAzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a9d075bdc3so18385975ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 18:08:18 -0800 (PST)
+	s=arc-20240116; t=1733710159; c=relaxed/simple;
+	bh=9O9pWs4kUKmvU4fetS1LqPCPby0E+QddQr35BAvOjkE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gF3OGbrVsx/ctpDYhIG83I7yZlcaPgm74l01m491U7DvTO1QSFWrWbiSut+NSw853N1ecNgSdlz0styhZOyofEIF/x+yzAVelxXC6Bqt63hCDA/3ORWoyj1MVVUZ27edrROZSsV3o0Bk9T25RdXa6G1bae/P2XFY/nAz65/80hI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ctt4VKgD; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-467431402deso255791cf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 18:09:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733710157; x=1734314957; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0Bo4HBWAqousHOYJdPF3EMPMGka7vrl2TiE+JGDByw8=;
+        b=Ctt4VKgD351GicCTEygoU4EKk2HyKgWDIJKYz//juwDhQni9CLHn7yjghGwgCrRJaQ
+         s/UFd6Jg7VvDcTaT+y4aXBY0jqQmtkFFTDT84ltZM0yWY5A61uuYJr6ZPzK/Cm4oken0
+         6d4fcrr2SsQ4UIy+pZGHUJer1fs+haopu2qOTQ8IWm29uvOGqC1q5SGxxDWpLVUXIZCX
+         ngTxgT3cHCSR6vqesjz8I5g29T1ng3SosWQGBH3jwURKZgBMe39qVVqOlffEyx9uTJTC
+         L71IQ3o65lPXNSxf24D9KWujgxOMyrzcsWzVaqaAlYvcV5oYjVbQTPM5hevbTqcgMIMg
+         GL/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733710098; x=1734314898;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3lfXNRAqHGJS20AQG8iVGH/wROLaZ5+/Nok7R88sm14=;
-        b=XFM8AbeqcX+9l0QBnVnN/AOCo/Gabv9Asi2HyHKupbpxs7u+nqIeTJzC+rAnLz+S6O
-         iGKApvLuKnuLzE8RfkiMwWiO3oasYc6hp3cyTjZyLd0b3Jvi7KeY9eDX3MkdlWLakZeb
-         bpruPuU/0luUfOnSpTkM64S50CtVrPc8Qi7uYLl6HDmlxOCzRrKYIHs++RrRxb0m66kS
-         U8R9sXA/9MDQ0mgQq200akj0jCBroBDbfC4xieZjTa1pybp0nv3Rf6ZbnsUfuvqPfTtz
-         OwnVYdodeusk6+kfBjXo3JhUNspnSbdG5jhb/W4GKkUAplKa4FCJ8QJM6NXUwVjClQ59
-         XYfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUAUZYLXWBz4JNl2dNqpNn9NFwErayAeh/+jT1PhNem0czLfWpDlOblGk25a1KZM8UcDN500LfXVvP0+lE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpFdyuHXmthHFmV6yEDivqafUsfaPjXLrhyOAcgJYTb4vZsNkZ
-	tR8cKGTRmRqIP5lQixsW6zRxLsoFv8Xvly7DNbjBus1ZNBoBVIhC0Wnj2CdhOmyfjIP05YEj8jN
-	XoNGXzJRBXBGN4jmGBgf8JMBzMxLO0RofrRwLDqfCRn1KxTe2pMzAxNQ=
-X-Google-Smtp-Source: AGHT+IFr2OksC5GTD2SW+Y6PpbxZm6aQ0cFpIBbR5fma0+RwO0UCD1F+saGux94/BQKXEjlJnfpd8aGw2ucyE4GiQudev/942tYS
+        d=1e100.net; s=20230601; t=1733710157; x=1734314957;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0Bo4HBWAqousHOYJdPF3EMPMGka7vrl2TiE+JGDByw8=;
+        b=KRl/yc2rPyo9rjP3SJVYUTLbPhwUlCXR7Q5dbaIFSMf4UcufoRYP/PK+9sju+9sH9N
+         MusqqIJN1IRSvhC/IXRWWERdYYVXvemo1fAV5dQC21weYZrw2hqv2OADicMVYbUwQbug
+         iSbJpRxxj9JJFN15c24OAMLatu8OCUqpSPUtFA4SQt/0jhXKH91xj1/J5B3oQFucQqx/
+         wnK8lw9Pkjq24iPSFjeqUotntlFd+3hjTc1uE0yw+yFwS5vcjoETA8wdKGYABdOfhDI1
+         9xJW41rDYKdX9iPSoo8oYYkhg0msC8MTWi8UqmwbxGr+FrlwOQ+5FlaLaKxudr3IQlkE
+         HjAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXCRrdbXHQ/9pfJ1U+UZG+lJsizP5bB9x+F7F4PA3TfH1ew0rKHTs8XHDHSA0akgJS+IY5yE8PWH2ikeY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypPDNILri1IS4W5Bfr9pm/NwSIBEP2y+0i80ePQV4fhA9zpDeJ
+	mjNt5wSnAtR1spkjqwJ7pgjJohP2OSsolCmIkXzTGCTIWpMyZ3iftiICNYIPSJYzZHhJtBO9U5R
+	Nmxp4exYdcUC1l8DJz/omjL8B+h8q8hJb7/2D
+X-Gm-Gg: ASbGncuqQbi5Vto5uhCt19C7TiegU/hhvzMgD3SY9+ohKDp+miuaU2IxYBs737ZJNbt
+	TCc2oc8GZ6gCemp9hvRuYiRAYFkeu4mQ=
+X-Google-Smtp-Source: AGHT+IGyVdOaH3CJDTjUh7NqZc3tkr+a64QziAJ9EgHIPVClMGxk/UwhPqp5tjdHMLGCvGZgQ0jnVHdShP2JR9uzjpI=
+X-Received: by 2002:a05:622a:5e13:b0:466:a3bf:41ab with SMTP id
+ d75a77b69052e-4674c9ac794mr5372731cf.21.1733710156700; Sun, 08 Dec 2024
+ 18:09:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c24:b0:3a7:e103:3c46 with SMTP id
- e9e14a558f8ab-3a811e06848mr124178305ab.16.1733710098350; Sun, 08 Dec 2024
- 18:08:18 -0800 (PST)
-Date: Sun, 08 Dec 2024 18:08:18 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67565112.050a0220.2477f.0035.GAE@google.com>
-Subject: [syzbot] [btrfs?] possible deadlock in join_transaction (2)
-From: syzbot <syzbot+77cf6638a2a1806ef852@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <202412082208.db1fb2c9-lkp@intel.com>
+In-Reply-To: <202412082208.db1fb2c9-lkp@intel.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Sun, 8 Dec 2024 18:09:05 -0800
+Message-ID: <CAJuCfpGeKgOgqq69OD-TMoQLhyy+HuTKK=cQPHMY2DgNcJf5Xg@mail.gmail.com>
+Subject: Re: [akpm-mm:mm-unstable] [mm] 85ad413389: BUG:kernel_NULL_pointer_dereference,address
+To: kernel test robot <oliver.sang@intel.com>
+Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
+	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, David Howells <dhowells@redhat.com>, 
+	Davidlohr Bueso <dave@stgolabs.net>, Hillf Danton <hdanton@sina.com>, Hugh Dickins <hughd@google.com>, 
+	Jann Horn <jannh@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, 
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Mateusz Guzik <mjguzik@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
+	Mel Gorman <mgorman@techsingularity.net>, Michal Hocko <mhocko@suse.com>, 
+	Minchan Kim <minchan@google.com>, Oleg Nesterov <oleg@redhat.com>, 
+	Pasha Tatashin <pasha.tatashin@soleen.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Xu <peterx@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Shakeel Butt <shakeel.butt@linux.dev>, Sourav Panda <souravpanda@google.com>, 
+	Vlastimil Babka <vbabka@suse.cz>, Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Sun, Dec 8, 2024 at 7:26=E2=80=AFAM kernel test robot <oliver.sang@intel=
+.com> wrote:
+>
+>
+>
+> Hello,
+>
+> kernel test robot noticed "BUG:kernel_NULL_pointer_dereference,address" o=
+n:
+>
+> commit: 85ad413389aec04cfaaba043caa8128b76c6e491 ("mm: make vma cache SLA=
+B_TYPESAFE_BY_RCU")
+> https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-unstable
+>
+> in testcase: boot
+>
+> config: i386-randconfig-141-20241208
+> compiler: gcc-11
+> test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 1=
+6G
+>
+> (please refer to attached dmesg/kmsg for entire log/backtrace)
+>
+>
+> +------------------------------------------------+------------+----------=
+--+
+> |                                                | 98d5eefb97 | 85ad41338=
+9 |
+> +------------------------------------------------+------------+----------=
+--+
+> | BUG:kernel_NULL_pointer_dereference,address    | 0          | 12       =
+  |
+> | Oops                                           | 0          | 12       =
+  |
+> | EIP:lock_anon_vma_root                         | 0          | 12       =
+  |
+> | Kernel_panic-not_syncing:Fatal_exception       | 0          | 12       =
+  |
+> +------------------------------------------------+------------+----------=
+--+
+>
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new vers=
+ion of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <oliver.sang@intel.com>
+> | Closes: https://lore.kernel.org/oe-lkp/202412082208.db1fb2c9-lkp@intel.=
+com
 
-syzbot found the following issue on:
+Thanks for the report!
+It looks like anon_vma passed to lock_anon_vma_root() is NULL but it's
+not obvious to me why my patch would cause that.
 
-HEAD commit:    feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11b428df980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=ad7dafcfaa48849c
-dashboard link: https://syzkaller.appspot.com/bug?extid=77cf6638a2a1806ef852
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+Oliver, how can I reproduce this locally?
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/c51d22ca6229/disk-feffde68.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/282335ac1978/vmlinux-feffde68.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d341f69bc687/bzImage-feffde68.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+77cf6638a2a1806ef852@syzkaller.appspotmail.com
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0 Not tainted
-------------------------------------------------------
-kworker/u8:11/15834 is trying to acquire lock:
-ffff888067216470 (btrfs_trans_num_writers){++++}-{0:0}, at: join_transaction+0x430/0x1010 fs/btrfs/transaction.c:288
-
-but task is already holding lock:
-ffff88801271a610 (sb_internal#4){.+.+}-{0:0}, at: btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #8 (sb_internal#4){.+.+}-{0:0}:
-       percpu_down_read include/linux/percpu-rwsem.h:51 [inline]
-       __sb_start_write include/linux/fs.h:1725 [inline]
-       sb_start_intwrite include/linux/fs.h:1908 [inline]
-       start_transaction+0xbd3/0x1aa0 fs/btrfs/transaction.c:691
-       btrfs_dirty_inode+0xc8/0x200 fs/btrfs/inode.c:6055
-       btrfs_update_time fs/btrfs/inode.c:6089 [inline]
-       btrfs_update_time+0xb2/0xf0 fs/btrfs/inode.c:6080
-       inode_update_time fs/inode.c:2124 [inline]
-       touch_atime+0x352/0x5d0 fs/inode.c:2197
-       file_accessed include/linux/fs.h:2539 [inline]
-       btrfs_file_mmap+0x118/0x150 fs/btrfs/file.c:1953
-       call_mmap include/linux/fs.h:2183 [inline]
-       mmap_file mm/internal.h:124 [inline]
-       __mmap_new_file_vma mm/vma.c:2291 [inline]
-       __mmap_new_vma mm/vma.c:2355 [inline]
-       __mmap_region+0x1789/0x2670 mm/vma.c:2456
-       mmap_region+0x270/0x320 mm/mmap.c:1347
-       do_mmap+0xc00/0xfc0 mm/mmap.c:496
-       vm_mmap_pgoff+0x1ba/0x360 mm/util.c:580
-       ksys_mmap_pgoff+0x32c/0x5c0 mm/mmap.c:542
-       __do_sys_mmap arch/x86/kernel/sys_x86_64.c:89 [inline]
-       __se_sys_mmap arch/x86/kernel/sys_x86_64.c:82 [inline]
-       __x64_sys_mmap+0x125/0x190 arch/x86/kernel/sys_x86_64.c:82
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #7 (&mm->mmap_lock){++++}-{4:4}:
-       __might_fault mm/memory.c:6751 [inline]
-       __might_fault+0x11b/0x190 mm/memory.c:6744
-       _inline_copy_from_user include/linux/uaccess.h:162 [inline]
-       _copy_from_user+0x29/0xd0 lib/usercopy.c:18
-       copy_from_user include/linux/uaccess.h:212 [inline]
-       __blk_trace_setup+0xa8/0x180 kernel/trace/blktrace.c:626
-       blk_trace_ioctl+0x163/0x290 kernel/trace/blktrace.c:740
-       blkdev_ioctl+0x109/0x6d0 block/ioctl.c:682
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #6 (&q->debugfs_mutex){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
-       blk_mq_init_sched+0x42b/0x640 block/blk-mq-sched.c:473
-       elevator_init_mq+0x2cd/0x420 block/elevator.c:610
-       add_disk_fwnode+0x113/0x1300 block/genhd.c:413
-       sd_probe+0xa86/0x1000 drivers/scsi/sd.c:4024
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x241/0xa90 drivers/base/dd.c:658
-       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
-       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
-       __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
-       bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
-       async_run_entry_fn+0x9f/0x530 kernel/async.c:129
-       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
-       process_scheduled_works kernel/workqueue.c:3310 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-       kthread+0x2c4/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #5 (&q->q_usage_counter(queue)#50){++++}-{0:0}:
-       blk_queue_enter+0x50f/0x640 block/blk-core.c:328
-       blk_mq_alloc_request+0x59b/0x950 block/blk-mq.c:651
-       scsi_alloc_request drivers/scsi/scsi_lib.c:1222 [inline]
-       scsi_execute_cmd+0x1eb/0xf40 drivers/scsi/scsi_lib.c:304
-       read_capacity_16+0x213/0xe10 drivers/scsi/sd.c:2655
-       sd_read_capacity drivers/scsi/sd.c:2824 [inline]
-       sd_revalidate_disk.isra.0+0x1a06/0xa8d0 drivers/scsi/sd.c:3734
-       sd_probe+0x904/0x1000 drivers/scsi/sd.c:4010
-       call_driver_probe drivers/base/dd.c:579 [inline]
-       really_probe+0x241/0xa90 drivers/base/dd.c:658
-       __driver_probe_device+0x1de/0x440 drivers/base/dd.c:800
-       driver_probe_device+0x4c/0x1b0 drivers/base/dd.c:830
-       __device_attach_driver+0x1df/0x310 drivers/base/dd.c:958
-       bus_for_each_drv+0x15a/0x1e0 drivers/base/bus.c:459
-       __device_attach_async_helper+0x1d3/0x290 drivers/base/dd.c:987
-       async_run_entry_fn+0x9f/0x530 kernel/async.c:129
-       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
-       process_scheduled_works kernel/workqueue.c:3310 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-       kthread+0x2c4/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #4 (&q->limits_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:585 [inline]
-       __mutex_lock+0x19b/0xa60 kernel/locking/mutex.c:735
-       queue_limits_start_update include/linux/blkdev.h:949 [inline]
-       loop_reconfigure_limits+0x407/0x8c0 drivers/block/loop.c:998
-       loop_set_block_size drivers/block/loop.c:1473 [inline]
-       lo_simple_ioctl drivers/block/loop.c:1496 [inline]
-       lo_ioctl+0x901/0x18b0 drivers/block/loop.c:1559
-       blkdev_ioctl+0x279/0x6d0 block/ioctl.c:693
-       vfs_ioctl fs/ioctl.c:51 [inline]
-       __do_sys_ioctl fs/ioctl.c:906 [inline]
-       __se_sys_ioctl fs/ioctl.c:892 [inline]
-       __x64_sys_ioctl+0x193/0x200 fs/ioctl.c:892
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #3 (&q->q_usage_counter(io)#23){++++}-{0:0}:
-       bio_queue_enter block/blk.h:75 [inline]
-       blk_mq_submit_bio+0x1fb6/0x24c0 block/blk-mq.c:3091
-       __submit_bio+0x384/0x540 block/blk-core.c:629
-       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
-       submit_bio_noacct_nocheck+0x698/0xd70 block/blk-core.c:739
-       submit_bio_noacct+0x93a/0x1e20 block/blk-core.c:868
-       btrfs_submit_dev_bio+0x54d/0xb20 fs/btrfs/bio.c:456
-       btrfs_submit_bio+0x50b/0x6d0 fs/btrfs/bio.c:493
-       btrfs_submit_chunk fs/btrfs/bio.c:745 [inline]
-       btrfs_submit_bbio+0x5c0/0x19c0 fs/btrfs/bio.c:773
-       read_extent_buffer_pages+0x5d0/0x8f0 fs/btrfs/extent_io.c:3558
-       btrfs_read_extent_buffer+0xd8/0x740 fs/btrfs/disk-io.c:229
-       read_block_for_search+0x5fc/0xb60 fs/btrfs/ctree.c:1619
-       btrfs_search_slot+0x95f/0x32a0 fs/btrfs/ctree.c:2240
-       btrfs_init_root_free_objectid+0xf4/0x2a0 fs/btrfs/disk-io.c:4837
-       btrfs_init_fs_root fs/btrfs/disk-io.c:1137 [inline]
-       btrfs_get_root_ref+0x646/0xcc0 fs/btrfs/disk-io.c:1364
-       btrfs_get_fs_root fs/btrfs/disk-io.c:1416 [inline]
-       open_ctree+0x394d/0x5320 fs/btrfs/disk-io.c:3532
-       btrfs_fill_super fs/btrfs/super.c:972 [inline]
-       btrfs_get_tree_super fs/btrfs/super.c:1894 [inline]
-       btrfs_get_tree+0x11e7/0x1b20 fs/btrfs/super.c:2105
-       vfs_get_tree+0x92/0x380 fs/super.c:1814
-       fc_mount+0x16/0xc0 fs/namespace.c:1231
-       btrfs_get_tree_subvol fs/btrfs/super.c:2068 [inline]
-       btrfs_get_tree+0xa53/0x1b20 fs/btrfs/super.c:2106
-       vfs_get_tree+0x92/0x380 fs/super.c:1814
-       do_new_mount fs/namespace.c:3507 [inline]
-       path_mount+0x14e6/0x1f20 fs/namespace.c:3834
-       do_mount fs/namespace.c:3847 [inline]
-       __do_sys_mount fs/namespace.c:4057 [inline]
-       __se_sys_mount fs/namespace.c:4034 [inline]
-       __x64_sys_mount+0x294/0x320 fs/namespace.c:4034
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #2 (btrfs-tree-00){++++}-{4:4}:
-       down_read_nested+0x9e/0x330 kernel/locking/rwsem.c:1649
-       btrfs_tree_read_lock_nested+0x2f/0x250 fs/btrfs/locking.c:146
-       btrfs_tree_read_lock fs/btrfs/locking.h:188 [inline]
-       btrfs_read_lock_root_node+0x6d/0xa0 fs/btrfs/locking.c:267
-       btrfs_search_slot_get_root fs/btrfs/ctree.c:1790 [inline]
-       btrfs_search_slot+0x3ba/0x32a0 fs/btrfs/ctree.c:2116
-       btrfs_del_orphan_item+0xbb/0x180 fs/btrfs/orphan.c:41
-       btrfs_orphan_del fs/btrfs/inode.c:3472 [inline]
-       btrfs_evict_inode+0xcd4/0xe90 fs/btrfs/inode.c:5372
-       evict+0x40c/0x960 fs/inode.c:796
-       iput_final fs/inode.c:1946 [inline]
-       iput fs/inode.c:1972 [inline]
-       iput+0x52a/0x890 fs/inode.c:1958
-       do_unlinkat+0x5c3/0x760 fs/namei.c:4594
-       __do_sys_unlink fs/namei.c:4635 [inline]
-       __se_sys_unlink fs/namei.c:4633 [inline]
-       __x64_sys_unlink+0xc5/0x110 fs/namei.c:4633
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #1 (btrfs_trans_num_extwriters){++++}-{0:0}:
-       join_transaction+0x164/0x1010 fs/btrfs/transaction.c:313
-       start_transaction+0x42c/0x1aa0 fs/btrfs/transaction.c:697
-       btrfs_dirty_inode+0xc8/0x200 fs/btrfs/inode.c:6055
-       btrfs_update_time fs/btrfs/inode.c:6089 [inline]
-       btrfs_update_time+0xb2/0xf0 fs/btrfs/inode.c:6080
-       inode_update_time fs/inode.c:2124 [inline]
-       touch_atime+0x352/0x5d0 fs/inode.c:2197
-       file_accessed include/linux/fs.h:2539 [inline]
-       filemap_read+0xb91/0xd70 mm/filemap.c:2714
-       btrfs_file_read_iter+0x17b/0x1c0 fs/btrfs/file.c:3676
-       __kernel_read+0x3f4/0xb50 fs/read_write.c:523
-       integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
-       ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
-       ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
-       ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
-       ima_collect_measurement+0x89f/0xa40 security/integrity/ima/ima_api.c:293
-       process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
-       ima_file_check+0xc6/0x110 security/integrity/ima/ima_main.c:572
-       security_file_post_open+0x8e/0x210 security/security.c:3121
-       do_open fs/namei.c:3830 [inline]
-       path_openat+0x1419/0x2d60 fs/namei.c:3987
-       do_filp_open+0x20c/0x470 fs/namei.c:4014
-       do_sys_openat2+0x17a/0x1e0 fs/open.c:1402
-       do_sys_open fs/open.c:1417 [inline]
-       __do_sys_openat fs/open.c:1433 [inline]
-       __se_sys_openat fs/open.c:1428 [inline]
-       __x64_sys_openat+0x175/0x210 fs/open.c:1428
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (btrfs_trans_num_writers){++++}-{0:0}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain kernel/locking/lockdep.c:3904 [inline]
-       __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
-       lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
-       join_transaction+0x436/0x1010 fs/btrfs/transaction.c:288
-       start_transaction+0x42c/0x1aa0 fs/btrfs/transaction.c:697
-       btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
-       btrfs_work_helper+0x225/0xc80 fs/btrfs/async-thread.c:314
-       process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
-       process_scheduled_works kernel/workqueue.c:3310 [inline]
-       worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
-       kthread+0x2c4/0x3a0 kernel/kthread.c:389
-       ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-other info that might help us debug this:
-
-Chain exists of:
-  btrfs_trans_num_writers --> &mm->mmap_lock --> sb_internal#4
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(sb_internal#4);
-                               lock(&mm->mmap_lock);
-                               lock(sb_internal#4);
-  rlock(btrfs_trans_num_writers);
-
- *** DEADLOCK ***
-
-4 locks held by kworker/u8:11/15834:
- #0: ffff88802768c148 ((wq_completion)btrfs-endio-write){+.+.}-{0:0}, at: process_one_work+0x1293/0x1ba0 kernel/workqueue.c:3204
- #1: ffffc90002f97d80 ((work_completion)(&work->normal_work)){+.+.}-{0:0}, at: process_one_work+0x921/0x1ba0 kernel/workqueue.c:3205
- #2: ffff888067216588 (btrfs_ordered_extent){++++}-{0:0}, at: btrfs_finish_one_ordered+0x8a0/0x2200 fs/btrfs/inode.c:3047
- #3: ffff88801271a610 (sb_internal#4){.+.+}-{0:0}, at: btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 15834 Comm: kworker/u8:11 Not tainted 6.13.0-rc1-syzkaller-00025-gfeffde684ac2 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Workqueue: btrfs-endio-write btrfs_work_helper
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x419/0x5d0 kernel/locking/lockdep.c:2074
- check_noncircular+0x31a/0x400 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain kernel/locking/lockdep.c:3904 [inline]
- __lock_acquire+0x249e/0x3c40 kernel/locking/lockdep.c:5226
- lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5849
- join_transaction+0x436/0x1010 fs/btrfs/transaction.c:288
- start_transaction+0x42c/0x1aa0 fs/btrfs/transaction.c:697
- btrfs_finish_one_ordered+0x3c9/0x2200 fs/btrfs/inode.c:3082
- btrfs_work_helper+0x225/0xc80 fs/btrfs/async-thread.c:314
- process_one_work+0x9c8/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c4/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>
+> [    6.680723][    T1] BUG: kernel NULL pointer dereference, address: 000=
+00000
+> [    6.681291][    T1] #PF: supervisor read access in kernel mode
+> [    6.681706][    T1] #PF: error_code(0x0000) - not-present page
+> [    6.682122][    T1] *pde =3D 00000000
+> [    6.682389][    T1] Oops: Oops: 0000 [#1] PREEMPT
+> [    6.682741][    T1] CPU: 0 UID: 0 PID: 1 Comm: init Tainted: G        =
+        T  6.13.0-rc1-00162-g85ad413389ae #1 b25e7d42bdbf00dd0b477b43b1be4c=
+6af368b663
+> [    6.683729][    T1] Tainted: [T]=3DRANDSTRUCT
+> [ 6.684044][ T1] EIP: lock_anon_vma_root (mm/rmap.c:245)
+> [ 6.684422][ T1] Code: 31 d2 31 c9 c3 55 89 e5 e8 55 68 15 00 5d 31 c0 31=
+ d2 31 c9 c3 55 8b 00 83 c0 04 89 e5 e8 64 5f f2 ff 5d 31 c0 c3 55 89 e5 53=
+ <8b> 1a 39 c3 74 18 85 c0 74 0a 0f 0b 83 c0 04 e8 48 5f f2 ff 8d 43
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   31 d2                   xor    %edx,%edx
+>    2:   31 c9                   xor    %ecx,%ecx
+>    4:   c3                      ret
+>    5:   55                      push   %rbp
+>    6:   89 e5                   mov    %esp,%ebp
+>    8:   e8 55 68 15 00          call   0x156862
+>    d:   5d                      pop    %rbp
+>    e:   31 c0                   xor    %eax,%eax
+>   10:   31 d2                   xor    %edx,%edx
+>   12:   31 c9                   xor    %ecx,%ecx
+>   14:   c3                      ret
+>   15:   55                      push   %rbp
+>   16:   8b 00                   mov    (%rax),%eax
+>   18:   83 c0 04                add    $0x4,%eax
+>   1b:   89 e5                   mov    %esp,%ebp
+>   1d:   e8 64 5f f2 ff          call   0xfffffffffff25f86
+>   22:   5d                      pop    %rbp
+>   23:   31 c0                   xor    %eax,%eax
+>   25:   c3                      ret
+>   26:   55                      push   %rbp
+>   27:   89 e5                   mov    %esp,%ebp
+>   29:   53                      push   %rbx
+>   2a:*  8b 1a                   mov    (%rdx),%ebx              <-- trapp=
+ing instruction
+>   2c:   39 c3                   cmp    %eax,%ebx
+>   2e:   74 18                   je     0x48
+>   30:   85 c0                   test   %eax,%eax
+>   32:   74 0a                   je     0x3e
+>   34:   0f 0b                   ud2
+>   36:   83 c0 04                add    $0x4,%eax
+>   39:   e8 48 5f f2 ff          call   0xfffffffffff25f86
+>   3e:   8d                      .byte 0x8d
+>   3f:   43                      rex.XB
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   8b 1a                   mov    (%rdx),%ebx
+>    2:   39 c3                   cmp    %eax,%ebx
+>    4:   74 18                   je     0x1e
+>    6:   85 c0                   test   %eax,%eax
+>    8:   74 0a                   je     0x14
+>    a:   0f 0b                   ud2
+>    c:   83 c0 04                add    $0x4,%eax
+>    f:   e8 48 5f f2 ff          call   0xfffffffffff25f5c
+>   14:   8d                      .byte 0x8d
+>   15:   43                      rex.XB
+> [    6.685810][    T1] EAX: 00000000 EBX: 4ccbd680 ECX: 00000000 EDX: 000=
+00000
+> [    6.686314][    T1] ESI: 4ccbd678 EDI: 4ccbd800 EBP: 416e1c60 ESP: 416=
+e1c5c
+> [    6.686817][    T1] DS: 007b ES: 007b FS: 0000 GS: 0000 SS: 0068 EFLAG=
+S: 00010202
+> [    6.687338][    T1] CR0: 80050033 CR2: 00000000 CR3: 0ccbc000 CR4: 000=
+406d0
+> [    6.687821][    T1] DR0: 00000000 DR1: 00000000 DR2: 00000000 DR3: 000=
+00000
+> [    6.688313][    T1] DR6: fffe0ff0 DR7: 00000400
+> [    6.688632][    T1] Call Trace:
+> [ 6.688880][ T1] ? show_regs (arch/x86/kernel/dumpstack.c:479 arch/x86/ke=
+rnel/dumpstack.c:465)
+> [ 6.689181][ T1] ? __die_body (arch/x86/kernel/dumpstack.c:421)
+> [ 6.689478][ T1] ? __die (arch/x86/kernel/dumpstack.c:435)
+> [ 6.689745][ T1] ? page_fault_oops (arch/x86/mm/fault.c:712)
+> [ 6.690080][ T1] ? lock_anon_vma_root (mm/rmap.c:245)
+> [ 6.690427][ T1] ? kernelmode_fixup_or_oops+0x50/0x5e
+> [ 6.690891][ T1] ? __bad_area_nosemaphore+0x2c/0x17c
+> [ 6.691343][ T1] ? bad_area_nosemaphore (arch/x86/mm/fault.c:835)
+> [ 6.691700][ T1] ? do_user_addr_fault (arch/x86/mm/fault.c:1280 (discrimi=
+nator 1))
+> [ 6.692055][ T1] ? exc_page_fault (arch/x86/include/asm/irqflags.h:26 arc=
+h/x86/include/asm/irqflags.h:87 arch/x86/include/asm/irqflags.h:147 arch/x8=
+6/mm/fault.c:1489 arch/x86/mm/fault.c:1539)
+> [ 6.692391][ T1] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:149=
+4)
+> [ 6.692815][ T1] ? handle_exception (arch/x86/entry/entry_32.S:1048)
+> [ 6.693136][ T1] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:149=
+4)
+> [ 6.693560][ T1] ? lock_anon_vma_root (mm/rmap.c:245)
+> [ 6.693913][ T1] ? pvclock_clocksource_read_nowd (arch/x86/mm/fault.c:149=
+4)
+> [ 6.694352][ T1] ? lock_anon_vma_root (mm/rmap.c:245)
+> [ 6.694717][ T1] ? anon_vma_clone (mm/rmap.c:298)
+> [ 6.695053][ T1] ? __split_vma (mm/vma.c:486)
+> [ 6.695375][ T1] ? vms_gather_munmap_vmas (mm/vma.c:1289)
+> [ 6.695763][ T1] ? __mmap_prepare (mm/vma.c:2242)
+> [ 6.696108][ T1] ? __mmap_region (mm/vma.c:2443)
+> [ 6.696454][ T1] ? mmap_region (mm/mmap.c:1037)
+> [ 6.696782][ T1] ? do_mmap (mm/mmap.c:499)
+> [ 6.697091][ T1] ? vm_mmap_pgoff (mm/util.c:580)
+> [ 6.697433][ T1] ? ksys_mmap_pgoff (mm/mmap.c:545)
+> [ 6.697782][ T1] ? __ia32_sys_mmap_pgoff (mm/mmap.c:552)
+> [ 6.698159][ T1] ? ia32_sys_call (kbuild/obj/consumer/i386-randconfig-141=
+-20241208/./arch/x86/include/generated/asm/syscalls_32.h:193)
+> [ 6.698507][ T1] ? do_int80_syscall_32 (arch/x86/entry/common.c:165 arch/=
+x86/entry/common.c:339)
+> [ 6.698869][ T1] ? entry_INT80_32 (arch/x86/entry/entry_32.S:945)
+> [    6.699231][    T1] Modules linked in:
+> [    6.699518][    T1] CR2: 0000000000000000
+> [    6.699858][    T1] ---[ end trace 0000000000000000 ]---
+> [ 6.700258][ T1] EIP: lock_anon_vma_root (mm/rmap.c:245)
+> [ 6.700625][ T1] Code: 31 d2 31 c9 c3 55 89 e5 e8 55 68 15 00 5d 31 c0 31=
+ d2 31 c9 c3 55 8b 00 83 c0 04 89 e5 e8 64 5f f2 ff 5d 31 c0 c3 55 89 e5 53=
+ <8b> 1a 39 c3 74 18 85 c0 74 0a 0f 0b 83 c0 04 e8 48 5f f2 ff 8d 43
+> All code
+> =3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   31 d2                   xor    %edx,%edx
+>    2:   31 c9                   xor    %ecx,%ecx
+>    4:   c3                      ret
+>    5:   55                      push   %rbp
+>    6:   89 e5                   mov    %esp,%ebp
+>    8:   e8 55 68 15 00          call   0x156862
+>    d:   5d                      pop    %rbp
+>    e:   31 c0                   xor    %eax,%eax
+>   10:   31 d2                   xor    %edx,%edx
+>   12:   31 c9                   xor    %ecx,%ecx
+>   14:   c3                      ret
+>   15:   55                      push   %rbp
+>   16:   8b 00                   mov    (%rax),%eax
+>   18:   83 c0 04                add    $0x4,%eax
+>   1b:   89 e5                   mov    %esp,%ebp
+>   1d:   e8 64 5f f2 ff          call   0xfffffffffff25f86
+>   22:   5d                      pop    %rbp
+>   23:   31 c0                   xor    %eax,%eax
+>   25:   c3                      ret
+>   26:   55                      push   %rbp
+>   27:   89 e5                   mov    %esp,%ebp
+>   29:   53                      push   %rbx
+>   2a:*  8b 1a                   mov    (%rdx),%ebx              <-- trapp=
+ing instruction
+>   2c:   39 c3                   cmp    %eax,%ebx
+>   2e:   74 18                   je     0x48
+>   30:   85 c0                   test   %eax,%eax
+>   32:   74 0a                   je     0x3e
+>   34:   0f 0b                   ud2
+>   36:   83 c0 04                add    $0x4,%eax
+>   39:   e8 48 5f f2 ff          call   0xfffffffffff25f86
+>   3e:   8d                      .byte 0x8d
+>   3f:   43                      rex.XB
+>
+> Code starting with the faulting instruction
+> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+>    0:   8b 1a                   mov    (%rdx),%ebx
+>    2:   39 c3                   cmp    %eax,%ebx
+>    4:   74 18                   je     0x1e
+>    6:   85 c0                   test   %eax,%eax
+>    8:   74 0a                   je     0x14
+>    a:   0f 0b                   ud2
+>    c:   83 c0 04                add    $0x4,%eax
+>    f:   e8 48 5f f2 ff          call   0xfffffffffff25f5c
+>   14:   8d                      .byte 0x8d
+>   15:   43                      rex.XB
+>
+>
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
+>
+>
 
