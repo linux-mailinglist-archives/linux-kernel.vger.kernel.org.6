@@ -1,185 +1,159 @@
-Return-Path: <linux-kernel+bounces-437146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 287DF9E8F9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:04:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 863AB9E8FA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:05:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C826A282508
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:04:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 465AE1885B69
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:05:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D472156FD;
-	Mon,  9 Dec 2024 10:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E336C215F57;
+	Mon,  9 Dec 2024 10:05:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NeDTtaW9"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="bIad6Yex"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C65B2174EDB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CCCC174EDB
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733738670; cv=none; b=gbJozRVa4bgxYUKU/oJtg+mj9uRkHRDhy1cyJtjxIwAue5UNcuCV4k96RZ9vn+okpN68NjME1b0XxzBlIeKJNbfAtvDPfBkxORVLvlik/Tewo+gYbzim8Xm0vrtGSgzl6rHJIymTPrXGcdJQbGxKsmB4YDu15sB/lmtgSydoNS0=
+	t=1733738705; cv=none; b=qZo/k6KqTCqLeWlrtr/8mNAJ7SaSEMt9pNMaUZcqZXrDzu7pa7/rfutYDaYfaCi+mDnlQq3b2+xUu3G2A2wHzKqlaPYToh9iuUib14F51BFWBcSBWsZCKDmihHIeLomgUaQhJPIsgld0p5cUViw8mW5T04ExGLpB5nD4TrUINK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733738670; c=relaxed/simple;
-	bh=HvzRy8I7qIhgbnNkEXgHJ7c/6fH0498enq7qcWDIymM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=d3dr1SLWz0AfEIbaCJ7YX/sEUB/fqGnR0Q62UfeoPJ2eo6Ih9qmwXbc8gqhD7xNGWrGgjP/SSDbRwYFY9DMDXmujLMe6aE3pUOyCCTO8iFv+i98rKV7kGwLscAxNnNZy5flHUS1Eu5FMN/juqBUS/ME8/rIE57XjmtuB5HiINEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NeDTtaW9; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so36709501fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:04:28 -0800 (PST)
+	s=arc-20240116; t=1733738705; c=relaxed/simple;
+	bh=AGXtCb0LfqHtRusnKYsEVEPUOpJEsJVM9qi5Yl+09Pk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HhGqP+OkeqBs41kDYUDNk1jCFD09E1KuHoQ6CbPnA9y4FpMVXbaFU1Gl1UbqNpERur8u3ihtVTBLSKNzai7Ca8Veq9jQzAwiGl+1FQWTA8lu8AyeMYVmgVFu5/3Q0gQtcvkwopbtdNtLZUGsUzLcco/IH4SNaWWLvPqkLwPumac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=bIad6Yex; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434e9716feaso9444605e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:05:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733738667; x=1734343467; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rmWxFsC0cXeaHocQ2mD5SsVuM9dd3gaFPe/qAhBEfRw=;
-        b=NeDTtaW9iIBCm5oiYfpw5yUhl7Brd1hvtnqswhlyrho4y1S3C7nsCd1lzTm2vZq9j2
-         40ePDyo21AjyYjsOBqA2z6GR4KZX6+fTwUxZ/cpYPbsOkQiaeGx+xPaFpg/Ean3CLYNx
-         aGiLmb6Psmf8aBt5kql1/ZOFEQb9ggfE1Q9SY5wh2dD7f4fm2FdCtYwZzEVCMGoj/mlp
-         9vDpvHHueurNOhotOd/VaUEz7qKlnzZRYiW/9P53P+b6xxM5sdE4Y6plII+9l7VQ6aFE
-         9xlkLiwgzWMW+ma7WI9hdz2xKt5ozcQbTnqost7o9jMZf4lo+Tt04CRwL0/BvdhIlc5a
-         RwVQ==
+        d=suse.com; s=google; t=1733738701; x=1734343501; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=m7IgHTFnElHj8LHSL2zttzGa0TlfPS3g9WeiUH2crnw=;
+        b=bIad6YexuX3socf7tZL2+/qnksdyE7lmRU6r2lzezkERlxbaJN5XYY06On7F2tA07o
+         KD/v2KvTWK9hvUTKKnaL1gu2vIwgvT7MiHcl07scFyFz6ixllXdh+LaLyJHvmIyjvrLt
+         4FN4BT7T862EWodQQUhikvMww7qQQHaUh/7Bw9rFna0AQTM1Py25w7fDzZuLkjn4wH+n
+         gHx5FWf2lgL9/A57pjJySqaaysFGIbr+SQS7xzrcjmVX1rXtL6YbXnp5XYpEM6RrTQj1
+         3XJa0gVDpWdtGpptN1qgLO7+2x1pHQzzFTnmgzSmNQeGA3EsOIS0njbpA1SUN6me8xcj
+         jr0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733738667; x=1734343467;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rmWxFsC0cXeaHocQ2mD5SsVuM9dd3gaFPe/qAhBEfRw=;
-        b=FDiJ4X4iNrAw4ytTw89jfBi2FJ9rnZ2czjaAKw6rxuDRtAgvJEw6TDwWywTfQHUNLp
-         VV1CshKk6OiuT8B/plqKFQcXgt5tVAliPUffX/a5izvI3Uj0uj/Pku/tQjb4107zzLr8
-         tuZHebZGUYY0y2lSJ3yuBbtxQAivr9+R2qlbLuCoZ2SJIbQ+0pzgacws70ltjezv/Qz5
-         Y4NXuzwOAScpq4kIaBSIwD/ay/yB5tOna8yKeCdJLG0DCeaqILWpFBWQlsprokcgNo9R
-         i+IAh1piUIohwtaEscp2opO3IQyzLzFBbps6mprcL6v+OCIM4pZ5p/Kyqqg8P7egztps
-         S8tw==
-X-Forwarded-Encrypted: i=1; AJvYcCXv57l3zly0N9RkzRnae/pSazxosGCTesTiI/xClHyrQc1pBVGimDUBwsNliwTmF6O9e6Kj8HEg4rS842s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH6bx1M3FzdCguge28aKhayqRxJiKkeOc2ukxnr0nXWCcEDzk3
-	MgYV2UjmVeAVRLtr0OBSTkrKmhjmwKJGXvJn7+/HxlSqh0nMjlw4kYgbunQQ0Fs=
-X-Gm-Gg: ASbGnctLW1TNJBwDzCGwUHLaOquPR0NtPsqft49g9vjhvAG7dKc88Vm3jty9vHa9BQD
-	uJ+Ag4BWv5cZhfu5cxdWQdIqvZ1lkHk+MO0zLy1/BthlYSsa7HFJQ2zLpq+Az2Jxs4iboAzpjL8
-	yRQ70SI0rjWR03EmYprPQ/S917rknuOAgcHBfmotgAWyw9mG6mrEockRBmlCCl8WWFVP16pQTq8
-	ksDTmeVggvEAiv4OMsdhi1CC4aIHpy8aTDUTQ2BdDpn3zOmFJIKAh36wg==
-X-Google-Smtp-Source: AGHT+IEA2GYxmDBoJ502nhZ16cRFkhfaqap2OWSHilCKRJ2N75D188EFfdgljBH1J1ODmQJpCG9YTA==
-X-Received: by 2002:a2e:a9ab:0:b0:300:2d54:c2ae with SMTP id 38308e7fff4ca-3002fc97f7bmr61678071fa.27.1733738666847;
-        Mon, 09 Dec 2024 02:04:26 -0800 (PST)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30226a67ea2sm1876041fa.67.2024.12.09.02.04.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 02:04:25 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 09 Dec 2024 12:04:24 +0200
-Subject: [PATCH v4] drm/msm/dpu1: don't choke on disabling the writeback
- connector
+        d=1e100.net; s=20230601; t=1733738701; x=1734343501;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m7IgHTFnElHj8LHSL2zttzGa0TlfPS3g9WeiUH2crnw=;
+        b=Aj9B5wEQAdlwceuirS40WO6sUOCGpV8I6Kuxin+4vJ30GjsZ18PpFW/WdjAJwcEEAJ
+         2NG/7pmJz2Sh8s0pKSFKy2Y5mScsuOXojtsDdYVtC3oeiNdZMbX/kfId9Gpub/iVgndL
+         Dz7mPUQe12cKJgbvmea2ZOykFuPRd+HHPeQS7SPTqJU/lhaj1YqOYvMg9TqGuY5d2qFV
+         sGir73WmE8GGvMzHjmSm8luxRRrtnFQywiCxbPm9kq7WRR0B6zX2dHnHUnvuI8H/jzlm
+         RQFK1I9QsMReV5id9bZ2Nb7Fj84H9+jx9o3x9/zJZ1XXZzXTSplqm685jp8ub2QW6bc3
+         Tj2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXpAncJoLYxEnInb3dPqSjU66h7uajCvyY3N5k9lo/e7gG0mSY2lUCqgyXGFVh/2555DV+C3Dr6By+pA/s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl/JdkSelcVr01buzo/tmSd9srdH+EFwCn/rZZJdQFtv9CLYuS
+	+8MI475AZzTPLzIxJvIxBihsSTLiq4JMO6/liNlQFngpurYYIK5FqMYQRWgfmA==
+X-Gm-Gg: ASbGncuFd8xvlY40SZca6r3KfUwpPNSLfEHF1xJLFgck4+7tQEHqEIXeXTEjBbhPcm7
+	0mTvX8+jh4M1qj2O5cMvO/IvbwKIS4FykB7jfnu0i0p7gv3jt9CfElbVMaB+q0D5LK3xkOKOjCy
+	bhpqcVfDW/RF2p70VVediPeGJfyvMpVSefvYBZqjv3aUKPc8+ljjIOLQzdZCNgfw8Fqt3f/amW6
+	aAHYf1xzG/ZuKqHubPPGQ3Rj1H8UhvvzCrnEqUlTCovPtSFj89e5bDDhp47L6LmlhywKs8RCfW5
+	qnuxV1l/ou0BTEqMJX/MZWpAzHbXURZleKE=
+X-Google-Smtp-Source: AGHT+IEnfvCRcF0/n98UeB42/2lit+SYcQYhp9aQu4bytpgLstYwUybJ0NOfoPhXqV0YtAJFO/FmRA==
+X-Received: by 2002:a05:6000:1ac8:b0:385:fc32:1ec3 with SMTP id ffacd0b85a97d-3862b36b015mr8399209f8f.20.1733738701401;
+        Mon, 09 Dec 2024 02:05:01 -0800 (PST)
+Received: from [10.156.60.236] (ip-037-024-206-209.um08.pools.vodafone-ip.de. [37.24.206.209])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef2708b93dsm9497925a91.51.2024.12.09.02.04.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 02:05:00 -0800 (PST)
+Message-ID: <ccb28ccc-531c-4ead-9a27-76cc430f8c35@suse.com>
+Date: Mon, 9 Dec 2024 11:04:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20241209-dpu-fix-wb-v4-1-7fe93059f9e0@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKfAVmcC/23NTQ7CIBCG4asY1o4BSltw5T2MC36mLYkpDWjVN
- L27tAtNo8tvyPMykYTRYyLH3UQijj750Och9jtiO923CN7lTTjlgtZUgRvu0PgnPAxU1pU1Fmi
- Y5CSDIWJ+WWPnS96dT7cQX2t7ZMv1b2ZkQEEIWQhpGiesOV19r2M4hNiSpTPyr5WUbyzPtkZtF
- RqJUpU/tvhYxqnc2AIYaOawUhaFZtt/53l+A/DSKt0dAQAA
-X-Change-ID: 20240709-dpu-fix-wb-6cd57e3eb182
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Simona Vetter <simona.vetter@ffwll.ch>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Leonard Lausen <leonard@lausen.nl>, 
- =?utf-8?q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>, 
- Johan Hovold <johan+linaro@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3165;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=HvzRy8I7qIhgbnNkEXgHJ7c/6fH0498enq7qcWDIymM=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnVsCo1otrThiFKBxfGVywT0U/P8lNlp0sgAoFs
- yvoXA7m952JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZ1bAqAAKCRCLPIo+Aiko
- 1fcZCAChAoJdoT7F0d/6QTsPBk8IT5e4HF/Ss5EzzMJGjqh/+L6zSIQnULAogk2+TkwvekhIV5W
- pR2UR0IPmorIPSzHVDKpbxh5Duc9Yc20M6fP9LwFpxgn6x8YVCYx5iStNgeRFrUnpIwtduXMdb7
- yUwJpQVZ4K2Tu6uKP2gr06E8ORewHdnRUR5Q6Tkkr7MiGO58/fTed41/aVxqYyvwoVELNlkpXk9
- gnf02UyCqCnBu6TMiOZSk014nuA6kheL01F1HsBZCtQyaHcys3eksBFtsWZjUFEw9DMYC3vdHsH
- N1B+Z6memFX0PiCkiSXGNUnhMfY2iQENm329sbPT3o0JXlDW
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/xen/mmu: Increase MAX_CONTIG_ORDER
+To: Thierry Escande <thierry.escande@vates.tech>
+Cc: sstabellini@kernel.org, oleksandr_tyshchenko@epam.com,
+ xen-devel@lists.xenproject.org, Juergen Gross <jgross@suse.com>,
+ linux-kernel@vger.kernel.org
+References: <20241204171346.458105-1-thierry.escande@vates.tech>
+Content-Language: en-US
+From: Jan Beulich <jbeulich@suse.com>
+Autocrypt: addr=jbeulich@suse.com; keydata=
+ xsDiBFk3nEQRBADAEaSw6zC/EJkiwGPXbWtPxl2xCdSoeepS07jW8UgcHNurfHvUzogEq5xk
+ hu507c3BarVjyWCJOylMNR98Yd8VqD9UfmX0Hb8/BrA+Hl6/DB/eqGptrf4BSRwcZQM32aZK
+ 7Pj2XbGWIUrZrd70x1eAP9QE3P79Y2oLrsCgbZJfEwCgvz9JjGmQqQkRiTVzlZVCJYcyGGsD
+ /0tbFCzD2h20ahe8rC1gbb3K3qk+LpBtvjBu1RY9drYk0NymiGbJWZgab6t1jM7sk2vuf0Py
+ O9Hf9XBmK0uE9IgMaiCpc32XV9oASz6UJebwkX+zF2jG5I1BfnO9g7KlotcA/v5ClMjgo6Gl
+ MDY4HxoSRu3i1cqqSDtVlt+AOVBJBACrZcnHAUSuCXBPy0jOlBhxPqRWv6ND4c9PH1xjQ3NP
+ nxJuMBS8rnNg22uyfAgmBKNLpLgAGVRMZGaGoJObGf72s6TeIqKJo/LtggAS9qAUiuKVnygo
+ 3wjfkS9A3DRO+SpU7JqWdsveeIQyeyEJ/8PTowmSQLakF+3fote9ybzd880fSmFuIEJldWxp
+ Y2ggPGpiZXVsaWNoQHN1c2UuY29tPsJgBBMRAgAgBQJZN5xEAhsDBgsJCAcDAgQVAggDBBYC
+ AwECHgECF4AACgkQoDSui/t3IH4J+wCfQ5jHdEjCRHj23O/5ttg9r9OIruwAn3103WUITZee
+ e7Sbg12UgcQ5lv7SzsFNBFk3nEQQCACCuTjCjFOUdi5Nm244F+78kLghRcin/awv+IrTcIWF
+ hUpSs1Y91iQQ7KItirz5uwCPlwejSJDQJLIS+QtJHaXDXeV6NI0Uef1hP20+y8qydDiVkv6l
+ IreXjTb7DvksRgJNvCkWtYnlS3mYvQ9NzS9PhyALWbXnH6sIJd2O9lKS1Mrfq+y0IXCP10eS
+ FFGg+Av3IQeFatkJAyju0PPthyTqxSI4lZYuJVPknzgaeuJv/2NccrPvmeDg6Coe7ZIeQ8Yj
+ t0ARxu2xytAkkLCel1Lz1WLmwLstV30g80nkgZf/wr+/BXJW/oIvRlonUkxv+IbBM3dX2OV8
+ AmRv1ySWPTP7AAMFB/9PQK/VtlNUJvg8GXj9ootzrteGfVZVVT4XBJkfwBcpC/XcPzldjv+3
+ HYudvpdNK3lLujXeA5fLOH+Z/G9WBc5pFVSMocI71I8bT8lIAzreg0WvkWg5V2WZsUMlnDL9
+ mpwIGFhlbM3gfDMs7MPMu8YQRFVdUvtSpaAs8OFfGQ0ia3LGZcjA6Ik2+xcqscEJzNH+qh8V
+ m5jjp28yZgaqTaRbg3M/+MTbMpicpZuqF4rnB0AQD12/3BNWDR6bmh+EkYSMcEIpQmBM51qM
+ EKYTQGybRCjpnKHGOxG0rfFY1085mBDZCH5Kx0cl0HVJuQKC+dV2ZY5AqjcKwAxpE75MLFkr
+ wkkEGBECAAkFAlk3nEQCGwwACgkQoDSui/t3IH7nnwCfcJWUDUFKdCsBH/E5d+0ZnMQi+G0A
+ nAuWpQkjM1ASeQwSHEeAWPgskBQL
+In-Reply-To: <20241204171346.458105-1-thierry.escande@vates.tech>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-During suspend/resume process all connectors are explicitly disabled and
-then reenabled. However resume fails because of the connector_status check:
+On 04.12.2024 18:14, Thierry Escande wrote:
+> With change 9f40ec84a797 (xen/swiotlb: add alignment check for dma
+> buffers), the driver mpt3sas fails to load because it cannot allocate
+> its DMA pool for an allocation size of ~2,3 MBytes. This is because the
+> alignement check added by 9f40ec84a797 fails and
+> xen_swiotlb_alloc_coherent() ends up calling
+> xen_create_contiguous_region() with a size order of 10 which is too high
+> for the current max value.
+> 
+> This patch increases the MAX_CONTIG_ORDER from 9 to 10 (4MB) to allow
+> such allocations.
+> 
+> Signed-off-by: Thierry Escande <thierry.escande@vates.tech>
+> ---
+>  arch/x86/xen/mmu_pv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/xen/mmu_pv.c b/arch/x86/xen/mmu_pv.c
+> index 55a4996d0c04..7f110740e1a2 100644
+> --- a/arch/x86/xen/mmu_pv.c
+> +++ b/arch/x86/xen/mmu_pv.c
+> @@ -2200,7 +2200,7 @@ void __init xen_init_mmu_ops(void)
+>  }
+>  
+>  /* Protected by xen_reservation_lock. */
+> -#define MAX_CONTIG_ORDER 9 /* 2MB */
+> +#define MAX_CONTIG_ORDER 10 /* 4MB */
+>  static unsigned long discontig_frames[1<<MAX_CONTIG_ORDER];
 
-[dpu error]connector not connected 3
-[drm:drm_mode_config_helper_resume [drm_kms_helper]] *ERROR* Failed to resume (-22)
+While lacking respective commentary, bumping this value imo also needs to
+take into account Xen itself, at least commit-message-wise. The bumping is
+fine for Dom0 in any event. It is also fine for DomU-s with the defaults
+built into the hypervisor (orders 12 and 10 respectively for x86 and Arm),
+yet especially for Arm (and in the future PPC and RISC-V) any further
+bumping would be less straightforward.
 
-It doesn't make sense to check for the Writeback connected status (and
-other drivers don't perform such check), so drop the check.
+However - does the driver really need this big a contiguous chunk? It
+would seem far more desirable to me to break that up some, if possible.
 
-It wasn't a problem before the commit 71174f362d67 ("drm/msm/dpu: move
-writeback's atomic_check to dpu_writeback.c"), since encoder's
-atomic_check() is called under a different conditions that the
-connector's atomic_check() (e.g. it is not called if there is no
-connected CRTC or if the corresponding connector is not a part of the
-new state).
-
-Fixes: 71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to dpu_writeback.c")
-Cc: stable@vger.kernel.org
-Reported-by: Leonard Lausen <leonard@lausen.nl>
-Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/57
-Tested-by: Leonard Lausen <leonard@lausen.nl> # on sc7180 lazor
-Reported-by: György Kurucz <me@kuruczgy.com>
-Link: https://lore.kernel.org/all/b70a4d1d-f98f-4169-942c-cb9006a42b40@kuruczgy.com/
-Reported-by: Johan Hovold <johan+linaro@kernel.org>
-Link: https://lore.kernel.org/all/ZzyYI8KkWK36FfXf@hovoldconsulting.com/
-Tested-by: György Kurucz <me@kuruczgy.com>
-Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-Tested-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
-Leonard Lausen reported an issue with suspend/resume of the sc7180
-devices. Fix the WB atomic check, which caused the issue.
----
-Changes in v4:
-- Epanded commit message (Johan)
-- Link to v3: https://lore.kernel.org/r/20241208-dpu-fix-wb-v3-1-a1de69ce4a1b@linaro.org
-
-Changes in v3:
-- Rebased on top of msm-fixes
-- Link to v2: https://lore.kernel.org/r/20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org
-
-Changes in v2:
-- Reworked the writeback to just drop the connector->status check.
-- Expanded commit message for the debugging patch.
-- Link to v1: https://lore.kernel.org/r/20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c | 3 ---
- 1 file changed, 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-index 16f144cbc0c986ee266412223d9e605b01f9fb8c..8ff496082902b1ee713e806140f39b4730ed256a 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
-@@ -42,9 +42,6 @@ static int dpu_wb_conn_atomic_check(struct drm_connector *connector,
- 	if (!conn_state || !conn_state->connector) {
- 		DPU_ERROR("invalid connector state\n");
- 		return -EINVAL;
--	} else if (conn_state->connector->status != connector_status_connected) {
--		DPU_ERROR("connector not connected %d\n", conn_state->connector->status);
--		return -EINVAL;
- 	}
- 
- 	crtc = conn_state->crtc;
-
----
-base-commit: 86313a9cd152330c634b25d826a281c6a002eb77
-change-id: 20240709-dpu-fix-wb-6cd57e3eb182
-
-Best regards,
--- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+Jan
 
