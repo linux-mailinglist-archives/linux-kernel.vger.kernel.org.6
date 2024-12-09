@@ -1,139 +1,148 @@
-Return-Path: <linux-kernel+bounces-436937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D10F9E8CDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:01:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D573164CDB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:00:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FE8214816;
-	Mon,  9 Dec 2024 08:00:18 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD5B89E8CF0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:03:07 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4780A18D656
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:00:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E320281032
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:03:06 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C33A215186;
+	Mon,  9 Dec 2024 08:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="OXz1EUhf"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25283215074
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:02:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731218; cv=none; b=ffu+3M0HM0RKta0GkUXRNjtcrBnhdFH/iiwZPg3Aq+uZFPAuh3yLeRZp1Zae3ZLdBVUn1ezmT/n5yP9SWGLVdy43t8YLL2tB2Q9ali4ppWQ/1dp5Plm4JNDY1SPTRzvfe3FUF49jDP+1b8eAdcTeER/GuhXugp2Jh9aH/mDuCZQ=
+	t=1733731330; cv=none; b=J7SAbSVnqEzBxtLMjyJKlJlGTfaXP52onW4MtMhRhRWRe624ZCKdcwag8jlRcvMWhA4+/taCAFFze6wKS5O9TgzKOSNeq/q64YwkjBy5LuPNoV423pGerHc6o0uJEtZvWSpYh9R4bWqw+K5lSF3CJK6knOk7I7XvD6Pmj29BBGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731218; c=relaxed/simple;
-	bh=o06oYDDQfFw6zDDYQAQBSk/RmqtS53azB/vMlicYhLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JfM3EzbPD3pmYaoVegLO08SqiSfZCtAspT5PkS1TqUTrtL79XmKVY0xzNPSSQbZbkCJB4SNsXlidfxmk03grdVseF2jpo1tYE0r1v+ICIEVuCnDXw0Vq15HB6B2thqgQbAV5zAsfKzJ81t3LydIx4T5gq9tpxsnO00CJ1n7annI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Y6Dmm0yg1z9tMd;
-	Mon,  9 Dec 2024 09:00:08 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Z9xJj8PxyCvC; Mon,  9 Dec 2024 09:00:08 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Y6Dmm02jxz9tC2;
-	Mon,  9 Dec 2024 09:00:08 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E05668B764;
-	Mon,  9 Dec 2024 09:00:07 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id LepFlSOSUUj8; Mon,  9 Dec 2024 09:00:07 +0100 (CET)
-Received: from [10.25.209.139] (unknown [10.25.209.139])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BA31B8B763;
-	Mon,  9 Dec 2024 09:00:07 +0100 (CET)
-Message-ID: <ca5559b9-16fe-4808-a28b-b87129b0e6b8@csgroup.eu>
-Date: Mon, 9 Dec 2024 09:00:07 +0100
+	s=arc-20240116; t=1733731330; c=relaxed/simple;
+	bh=xv0g/k5RohMn5AP1WL+DpPUxCREfDHDlRdXwBYsOnJg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=GYXORLPNqvxo6ZBKnB9jc8ByVLxRRq5/gjUIgNKyRHJBjyrSyyLXfA7rSgLirEWpJj/5658zYTSzLjdM4pO/HAVO+n2Xhw9rkeiedLR3S9I+7azh809LK9d97CcLCh3vWkn4pQhxl6L6r3QATD5wcvKcV+8BeKPm1BBbtyQ9STk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=OXz1EUhf; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=OXz1EUhfInN9iA8Qq++xZZ2u/3bfsrwlgrF0O1AKDGKfOx6o2IxkbV25Q0o/baYg6X8lbnd43Ajj66GqgLc8LSbE/rBx6mw/B+mnh9GZ3YawQSXuPK3GEk08d9jTnFRxyzR2jsKdqPcgi73I7k2frZ/cj8xD0sH4gzScKnNvwXUIyyaQqHF5wCGGKa18H9rKTrv41Q35QdSKD3dZ9hVLA2WaAiDR+avWsf7tEJICykxjzQCXwcMYKIr15V+KT5j7zPyFt6wQz+11lakrtwhsepEq2yQOUYFbfaTktie5nSWQPwDXOoXW1p7VVAUxwtOn8VEal2A3Xv7JWkhd3IgJ6A==; s=purelymail2; d=purelymail.com; v=1; bh=xv0g/k5RohMn5AP1WL+DpPUxCREfDHDlRdXwBYsOnJg=; h=Feedback-ID:Received:From:To:Subject:Date;
+Feedback-ID: 68229:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1477585645;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 09 Dec 2024 08:01:11 +0000 (UTC)
+From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: [PATCH v7 0/4] Add minimal Samsung Galaxy S20 Series board, SM-G981B and SM-G980F support
+Date: Mon,  9 Dec 2024 08:00:55 +0000
+Message-ID: <20241209080059.11891-1-umer.uddin@mentallysanemainliners.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] futex: improve user space accesses
-To: Linus Torvalds <torvalds@linux-foundation.org>,
- Andreas Schwab <schwab@linux-m68k.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, LKML
- <linux-kernel@vger.kernel.org>, x86@kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <20241122193305.7316-1-torvalds@linux-foundation.org>
- <87bjxl6b0i.fsf@igel.home>
- <CAHk-=wjnvFU3sMjjKyqtgvPe6EMu3M4f1qyZncJR5=QDQsV=ng@mail.gmail.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <CAHk-=wjnvFU3sMjjKyqtgvPe6EMu3M4f1qyZncJR5=QDQsV=ng@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
+Content-Type: text/plain; charset=UTF-8
 
+Hi folks,
 
+This series adds initial support for the Samsung Galaxy S20 Series and also
+initial board support for the Samsung Galaxy S20 5G (SM-G981B)
+codenamed x1s and the Samsung Galaxy S20 (SM-G980F).
 
-Le 09/12/2024 à 01:32, Linus Torvalds a écrit :
-> On Sun, 8 Dec 2024 at 14:54, Andreas Schwab <schwab@linux-m68k.org> wrote:
->>
->> This breaks userspace on ppc32.  As soon as /init in the initrd is
->> started the kernel hangs (without any messages).
-> 
-> Funky, funky. Most of the diff is the code movement (and some small
-> x86-specific stuff), so for ppc, the only part that should be relevant
-> is the futex_get_value_locked().
-> 
-> And since ppc doesn't do the masked user access thing, so it
-> *literally* boils down to just that
-> 
->          if (!user_read_access_begin(from, sizeof(*from)))
->                  return -EFAULT;
->          unsafe_get_user(val, from, Efault);
->          user_access_end();
-> 
-> path.
-> 
-> Ahh... And now that I write that out, the bug is obvious: it should be using
-> 
->          user_read_access_end();
-> 
-> to match up with the user_read_access_begin().
+The S20 Series feature a lot of similarities in their configuration
+and internally Samsung named the common devicetrees in their
+downstream kernel 'hubble', please note hubble excludes the
+S20 FE series and Note20 series. To accommodate this, I've
+now named the device tree common's matching the codenames
+(x1s-common).
+The device trees have been tested with dtbs_check W=3D1
+and results in no warnings.
 
-Yes indeed, especially on book3s/32, which is only able to write-protect 
-user accesses. On that platform user_read_access_...() are no-ops.
+This initial bringup consists of:
+ * pinctrl
+ * gpio-keys
+ * simple-framebuffer
 
-user_access_end() and user_write_access_end() are similar, and rely on a 
-thread var stored by user_access_begin(). When calling that 
-user_access_end() without prior call to user_access_begin(), that var 
-has value ~0 instead of the address of the user segment being accessed, 
-and ~0 is a kernel address so user_access_end() applies some user 
-segment flags to a kernel segment which most likely leads to a complete 
-mess allthough I'm not able to trigger the hang with QEMU.
+This is enough to reach a shell in an initramfs. More platform support
+will be added in the future.
 
-> 
-> And yeah, ppc is the only platform that has that
-> "read-vs-write-vs-both" thing, so this bug is not visible anywhere
-> else.
-> 
-> IOW, does this one-liner fix it for you?
-> 
->    --- a/kernel/futex/futex.h
->    +++ b/kernel/futex/futex.h
->    @@ -265,7 +265,7 @@
->          else if (!user_read_access_begin(from, sizeof(*from)))
->                  return -EFAULT;
->          unsafe_get_user(val, from, Efault);
->    -     user_access_end();
->    +     user_read_access_end();
->          *dest = val;
->          return 0;
->     Efault:
-> 
-> I bet it does, but I'll wait for confirmation before actually
-> committing that fix.
-> 
+Just like SM-N981B, the preferred way to boot the upstream kernel is
+by using a shim bootloader, called uniLoader [1], which works around
+some issues with the stock, non-replacable Samsung S-LK bootloader.
+For example, the stock bootloader leaves the decon trigger control
+unset, which causes the framebuffer not to refresh.
 
-You'll need the same change in the Efault leg.
+Device functionality depends on the patch series from Igor Belwon:
+"Add minimal Exynos990 SoC and SM-N981B support"
 
-Christophe
+[1] https://github.com/ivoszbg/uniLoader
+
+Changes in v7:
+ - Fix old reference to hubble-common
+   in x1slte.
+
+Changes in v6:
+ - Fix indentations in dts makefile
+
+Changes in v5:
+ - Fix dts makefile order
+
+Changes in v4:
+ - Rebase from krzk's kernel tree to accommodate
+   for the merge of r8s
+ - Rename exynos990-hubble-common.dtsi
+   to exynos990-x1s-common.dtsi
+
+Changes in v3:
+ - Fix oversight in yaml
+ - Decommonise memory map
+
+Changes in v2:
+ - Add Samsung Galaxy S20 into device tree bindings
+ - Add support for Samsung Galaxy S20 as well as the 5G variant now
+ - Fix typo in Samsung Galaxy S20 5G commit message
+
+Kind regards,
+Umer
+
+Umer Uddin (4):
+  dt-bindings: arm: samsung: samsung-boards: Add bindings for SM-G981B
+    and SM-G980F board
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series
+    boards (x1s-common)
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G
+    (x1s)
+  arm64: dts: exynos: Add initial support for Samsung Galaxy S20
+    (x1slte)
+
+ .../bindings/arm/samsung/samsung-boards.yaml  |  2 +
+ arch/arm64/boot/dts/exynos/Makefile           |  2 +
+ .../boot/dts/exynos/exynos990-x1s-common.dtsi | 98 +++++++++++++++++++
+ arch/arm64/boot/dts/exynos/exynos990-x1s.dts  | 28 ++++++
+ .../boot/dts/exynos/exynos990-x1slte.dts      | 28 ++++++
+ 5 files changed, 158 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s.dts
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
+
+--=20
+2.43.0
+
 
