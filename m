@@ -1,128 +1,115 @@
-Return-Path: <linux-kernel+bounces-437920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7100D9E9A82
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:29:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7AD49E9A86
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:30:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68A4A1619F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:29:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69AEA18866C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5AB01C5CAD;
-	Mon,  9 Dec 2024 15:29:29 +0000 (UTC)
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8F9C1C5CB3;
+	Mon,  9 Dec 2024 15:30:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hidenPXi"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D56AB23312A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11B8C1A239B;
+	Mon,  9 Dec 2024 15:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733758169; cv=none; b=Vh6UiFIPvq5YUOGLY/Ms9Wxb/ha79YSpaJQRxnZfzzTkchl89u4lk0H0otG4YJDeh/h96ivKiOzWggRI3YHcK8IfnMtzNdbNjPUryGvrXQo9J/7XVL5UWpciovw50hbvfVsKR4s6AP4fTqmh1w+pPF2dazxm/HV3GvmEwmzqUUI=
+	t=1733758235; cv=none; b=GdsIDq0TAw/CUui+wjcGo1Pic9L/dLKjiUZnQjFMpQ8/OwK+oADmafpFDGqK9iAuthPGCDQO+l8L1Gm1p2+XZut3nOYgfaR1o/Bxjt+0IUD/Ywc081NlUvL/CJWP5iRLroMI230zXy1nc53/cALAZtudd5x+XBiT46lJbSVhU2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733758169; c=relaxed/simple;
-	bh=BqB7fexmA89ufdowKgGS+OHz82BOtnI/RrKbRBbcHwA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=msuzVPEJ+AUjX90CcyHvj6u1AgFULR9cKqEYrn+wpiAQNMGRynNRuIhqD2x6QQqH4yuOTOi87G0fVGls8Iv8ryQ2e3ne8jTcDOFtlperGyDR4Y2zMsydPuFb0YzsmDJv45x9ag3/WhOm15SboIjhTLSOe/Uh4IzxlZ0ZcHEuFSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-84197b4e61aso323687639f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 07:29:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733758167; x=1734362967;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LkbIaZTygxve/onGiLCYwKEJP0Y/R8tApF8GF+oaQgY=;
-        b=PYZNfLVVh7uKnL4Jc9If2ImoI+e3uuHFwR4AYESO/90C2wyPKBn6OUDYf2/e/31/Q3
-         NhwykEUNMsH1N3fbvcLcGMDoXsQE80kawseiDmrI+o71rHxjvZaMSp+JggZayT6Qj8nz
-         /3q9kd4lnOu5OeRfF0rlDus9UhMiJ+ZsRrHWMSeIbmK7FM9++r9uhSjzWFIhcFmZnNAR
-         prGQ9TvRZoEaSvSqPNdAI3QZXPcnuMDCfcmK6Pt/Riu0SmXUFNI8xF8MGsKlof6JnYBQ
-         KvHDa90cehW/sWsm2Q4o92XS5ueJaLR9038XSUUqPp2nH9c2CvAHNj4ndAJonumVVmKT
-         v+Qw==
-X-Forwarded-Encrypted: i=1; AJvYcCUGxKe5UkMjnWnirX84jIHpRNhtOFoM/WrdX9wq+xWRpOw45ByEpXk8oTswqReaCWW/a5MAnm2Q9Ol01Tw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YySd4BsY4zGD+7k3LUBb8VSNcfe3QsozNyzp8dxicM4LvXAN+tF
-	vRv8HF/wGWF3HMpBFtcXbToTu5IPgRVi1u5BcVjA/MabJ1hsJW6x
-X-Gm-Gg: ASbGncui0q4lC6t1HpzMV/Rs1pGQFdcH2fOXmmQ3NZJ3D5MXz7odyPXuUPGzCprOZb0
-	JnvgpG9nB7Hqe4BIBI1kJxqSv5kv9y7kVY5hrZLG/RQlxG1/ytnxTzjMc2/OI3g0monTZJVghkX
-	JOJPhqcdyuFEULEkY8GyLEENV2uOi+fjSHykYEIZtFCmMyDMRvs+rzYjyZMmVsbGbiXmkaYFp0R
-	TizF6RHzvj1+GhpX3wb4KAD14ephBTYRINfEFwciDvXvWTmCRBNAwtGUtwesd7EtHN3pht11vKf
-	IICxjH9F74O4rnHAsDemUbuKKq1nylmcWdNx84rH3Blu3IBPLHE=
-X-Google-Smtp-Source: AGHT+IEIRGRpO+vWGhV1CCBRbo++UmRwtlMFWBz96kI+Jnfb44tI67Z/xSBppUPFJ8wiUhVl/CKfFQ==
-X-Received: by 2002:a05:6602:2b01:b0:841:8d66:8aea with SMTP id ca18e2360f4ac-844b510d818mr136788439f.2.1733758166860;
-        Mon, 09 Dec 2024 07:29:26 -0800 (PST)
-Received: from localhost (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4e28611e848sm2365575173.61.2024.12.09.07.29.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 07:29:25 -0800 (PST)
-From: David Vernet <void@manifault.com>
-To: tj@kernel.org
-Cc: sched-ext@meta.com,
-	kernel-team@meta.com,
-	linux-kernel@vger.kernel.org,
-	ihor.solodrai@pm.me
-Subject: [PATCH] scx: Fix maximal BPF selftest prog
-Date: Mon,  9 Dec 2024 09:29:24 -0600
-Message-ID: <20241209152924.4508-1-void@manifault.com>
-X-Mailer: git-send-email 2.46.1
+	s=arc-20240116; t=1733758235; c=relaxed/simple;
+	bh=b7PzERVFQcDyxLyoYQXxu7ISxAaaElvwdHKLZeF8fGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QNAY5XI/c+i+UX8JjcjjNdPT9Sctgw/JF3a4PzkLfI3hmZy7RAKVnVo8DAiSsyDYIUbjDsxhi7m4/IpCJTwMkd5IAc3T7dGD1ZFqcch7/Nu3kRw5ve4EXHXnhl5JQXyf+TEFoCr3jOhhnPBvfSNrdst9/Yp+uAKnpoTaRSA3/Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hidenPXi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD36C4CED1;
+	Mon,  9 Dec 2024 15:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733758234;
+	bh=b7PzERVFQcDyxLyoYQXxu7ISxAaaElvwdHKLZeF8fGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hidenPXixJSdsbpf34DXymjH0vYzwTrcqJkN4XJs0jZcOEyRF6p72OOGNgcUfNKyQ
+	 +wukqv8cTs9tNADaUse/xlk7Re4zxJZHthI5VDAZOBoZt1QkYPS3xSdaQ87CrpVCT2
+	 SMNuKZhx63mUbM/uMIQowCPe+5rQY46hIG2ZPI5AOHH9923Lc+1HsywzqrATmrKmNP
+	 NM0hotE7GKxB2zCj/WNqvQo9Ty7F7eChKimyizJShqISoqwL0vRGN6nNxYk0R5/fpW
+	 OsiJClP5HmY8TDECm6OXBZwhcRAXtaNH/oYXqf69iYIXnIHgkiVLrxi/QorBR4/Wta
+	 GSkCJLN/ajEgA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tKfiW-000000006JE-0rDY;
+	Mon, 09 Dec 2024 16:30:36 +0100
+Date: Mon, 9 Dec 2024 16:30:36 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v2 0/2] arm64: dts: qcom: x1e80100: fix USB OTG
+ regressions
+Message-ID: <Z1cNHOqlRk2Cxwvd@hovoldconsulting.com>
+References: <20241209111905.31017-1-johan+linaro@kernel.org>
+ <iw2c4fceyppf2w2gueevsqsz2z7hatbqo33vufx3veatprczu5@u4k3j2igy6ee>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <iw2c4fceyppf2w2gueevsqsz2z7hatbqo33vufx3veatprczu5@u4k3j2igy6ee>
 
-maximal.bpf.c is still dispatching to and consuming from SCX_DSQ_GLOBAL.
-Let's have it use its own DSQ to avoid any runtime errors.
+On Mon, Dec 09, 2024 at 03:23:05PM +0200, Dmitry Baryshkov wrote:
+> On Mon, Dec 09, 2024 at 12:19:03PM +0100, Johan Hovold wrote:
+> > A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
+> > ports can break SuperSpeed device hotplugging.
+> > 
+> > Abel noticed that the corresponding commit for the CRD also triggers a
+> > hard reset during resume from suspend.
+> > 
+> > With retimer (and orientation detection) support not even merged yet,
+> > let's revert at least until we have stable host mode in mainline.
+> > 
+> > Note that Stephan and Dmitry have already identified other problems with
+> > the offending commits here:
+> > 
+> > 	https://lore.kernel.org/all/ZxZO6Prrm2ITUZMQ@linaro.org/
+> > 	https://lore.kernel.org/all/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef
 
-Signed-off-by: David Vernet <void@manifault.com>
----
- tools/testing/selftests/sched_ext/maximal.bpf.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+> > Changes in v2
+> >  - revert also the corresponding patch for the CRD which breaks suspend
+> 
+> As you are reverting two commits, please revert the third one too, it
+> breaks pmic-glink.
 
-diff --git a/tools/testing/selftests/sched_ext/maximal.bpf.c b/tools/testing/selftests/sched_ext/maximal.bpf.c
-index 4c005fa71810..430f5e13bf55 100644
---- a/tools/testing/selftests/sched_ext/maximal.bpf.c
-+++ b/tools/testing/selftests/sched_ext/maximal.bpf.c
-@@ -12,6 +12,8 @@
- 
- char _license[] SEC("license") = "GPL";
- 
-+#define DSQ_ID 0
-+
- s32 BPF_STRUCT_OPS(maximal_select_cpu, struct task_struct *p, s32 prev_cpu,
- 		   u64 wake_flags)
- {
-@@ -20,7 +22,7 @@ s32 BPF_STRUCT_OPS(maximal_select_cpu, struct task_struct *p, s32 prev_cpu,
- 
- void BPF_STRUCT_OPS(maximal_enqueue, struct task_struct *p, u64 enq_flags)
- {
--	scx_bpf_dsq_insert(p, SCX_DSQ_GLOBAL, SCX_SLICE_DFL, enq_flags);
-+	scx_bpf_dsq_insert(p, DSQ_ID, SCX_SLICE_DFL, enq_flags);
- }
- 
- void BPF_STRUCT_OPS(maximal_dequeue, struct task_struct *p, u64 deq_flags)
-@@ -28,7 +30,7 @@ void BPF_STRUCT_OPS(maximal_dequeue, struct task_struct *p, u64 deq_flags)
- 
- void BPF_STRUCT_OPS(maximal_dispatch, s32 cpu, struct task_struct *prev)
- {
--	scx_bpf_dsq_move_to_local(SCX_DSQ_GLOBAL);
-+	scx_bpf_dsq_move_to_local(DSQ_ID);
- }
- 
- void BPF_STRUCT_OPS(maximal_runnable, struct task_struct *p, u64 enq_flags)
-@@ -123,7 +125,7 @@ void BPF_STRUCT_OPS(maximal_cgroup_set_weight, struct cgroup *cgrp, u32 weight)
- 
- s32 BPF_STRUCT_OPS_SLEEPABLE(maximal_init)
- {
--	return 0;
-+	return scx_bpf_create_dsq(DSQ_ID, -1);
- }
- 
- void BPF_STRUCT_OPS(maximal_exit, struct scx_exit_info *info)
--- 
-2.46.1
+Can you be more specific? 
 
+I was gonna say that pmic_glink works since hotplug and orientation
+detection still works, but I tested now with DP altmode and that is
+indeed broken unless I revert the third commit (f042bc234c2e ("arm64:
+dts: qcom: x1e80100: enable OTG on USB-C controllers")).
+
+Was that what you had in mind? Can you explain why that breaks?
+
+I'll respin with a v3, but please answer the above first.
+
+> > Johan Hovold (2):
+> >   Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
+> >   Revert "arm64: dts: qcom: x1e80100-crd: enable otg on usb ports"
+
+Johan
 
