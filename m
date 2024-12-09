@@ -1,241 +1,175 @@
-Return-Path: <linux-kernel+bounces-438038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17FD9E9C14
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:49:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97EFD18885F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:49:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D5314D28C;
-	Mon,  9 Dec 2024 16:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="DcqQ5rGX"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2060.outbound.protection.outlook.com [40.107.22.60])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E191E9E9C10
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:49:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C9CE144D1A;
-	Mon,  9 Dec 2024 16:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733762961; cv=fail; b=E8U7CArQsCJRpe1QsCn7GrsYEG32p4Zx+kc6+vZGYcW7+ASRLI+YmzUxlT7JgGYFYD9bJoF7LueEu4RIs0Jd6SRj0qDpfhKoMPHRq6TyRSwwh2y6W186/esXmeh7h0oN5Mk+kyjcaD+bm/KQo//XMR948G3NOJKwubT65bGKGrU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733762961; c=relaxed/simple;
-	bh=D4JTDphGZ4L4O9Z5gGHAbxkHNI5pYOCVsTd548796HU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=Xtwm1gVfYg1gGQQo9OeGSR1aFN+u1bkj1INTDK3TxHXTcCo0xMmpmD8iaoeWZ12wRfa1FXg1aYdk3yyR+wMGJdA29jzYX05igQZfvCuXBP6HodriW6X/cV6gKgb585eZhByTeTQSr69l6gha/lBUXmwHd/O6JnWIJ9MVQBjJPcg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=DcqQ5rGX; arc=fail smtp.client-ip=40.107.22.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=IOGU4K0gB7352R9AP10J2MwqQFnwKkvdJHY0EqP/n8WWdR6aubpug9Pa+IFFs64+p7vHQzxx5VvfZ71SwuITt6WBeWlpTLiaC5MlfMs89QDyqImclpVYJ4d7OE7cy0W+lTk+rxqUcaOnZQnBzwV6iIKgW341I9t+foGVlAll/PWcx0fVmDicSGNeFB/wLzPG/kTb5waA/56uNWJAUVwxnGW6BFTxl3afziJgZPvFo0ufCJ2R+5O+DDsKSX5QGiPmq+1eTcBhYv4X127JjjD0r6raetf2302v6XunEjaTkMW0hByeSJ4gOPJxu8bXEE4MqPY2j2bn4v7UDhO1q9OPlg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=7SxbxVIQCHnLKYNw7JPTlbeXM/42LDVc5gzY5r0erRM=;
- b=OK1w5hb76pqpZq5hp9cOOD/AjRnBWW/O5tbzv3l2OumeUAfBdOqS6JC3oesalr75qvT2bEMjuD+O8g1/GVIjcVlykuXJCxfFQ4VeK51NayMdhfOa6EQFdOM8exoaSMzK3bxIYfxiN1rzevacxwJggAnXTDuq3PFXgxF3b3IXKj9N0r61/8J89KrKvDoNo6YY2EdErZnDw+5cSaPFcMfYAiP8jEG/OgttHj8amzUGK53WBTWCNVcCN1HmT4kO2ZODBCuqg3Oaq3CLmZFiJDyFtLAZg+JjpO3uc6UA9yY42is+/C+YXXF2QSSq3c4l2XSudwXnZ5PX8DfQD4nya3oADg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=7SxbxVIQCHnLKYNw7JPTlbeXM/42LDVc5gzY5r0erRM=;
- b=DcqQ5rGXiHkYNVQarn90DjtCAykZRr0OV8UjIs6Na/EHZpPpMg3IFJ2W91W3rN9I7WJ76bvOFnN6DDnGU5L4QqtMSdUXvuNqANfxiCweiNrNBQg+U8id1Yk9XwyzkEmTSDRxXcb1UpJgZY+hdYkFBI3ssc4Ftp4k0MjB9wWS32t5cDVxQzaeaX2/bmDy/+EDQuEnhnMGvGrxjg8nWMXygQHFAe6XZiNij8vRID8p99AexZQwyEhnPGY/gN0oE6VoAcOiKgf51xYF8VX2AG3DJNGqhXAhtbn54KhTRZdCdeKm/IHFD86URuGz2LBEF75ews0kqu1vVSegOwlRAMNXPg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by GVXPR04MB10022.eurprd04.prod.outlook.com (2603:10a6:150:11a::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Mon, 9 Dec
- 2024 16:49:15 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8230.010; Mon, 9 Dec 2024
- 16:49:15 +0000
-From: Frank Li <Frank.Li@nxp.com>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org (open list:THERMAL),
-	linux-kernel@vger.kernel.org (open list)
-Cc: imx@lists.linux.dev
-Subject: [PATCH v2 1/2] thermal/drivers/qoriq: Use dev_err_probe() simplify the code
-Date: Mon,  9 Dec 2024 11:48:58 -0500
-Message-Id: <20241209164859.3758906-1-Frank.Li@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR05CA0100.namprd05.prod.outlook.com
- (2603:10b6:a03:334::15) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EDD128339F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:49:17 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D65014B95A;
+	Mon,  9 Dec 2024 16:49:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="vpXCE7yt"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C9705733A;
+	Mon,  9 Dec 2024 16:49:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733762951; cv=none; b=A6FOqLf2EJ9dl8hQoMDdj8QDWaTwcwI2PkqgF2AMsJYRUlTrhM90sGjuN0DtqEtnff9SdagDtmbvN0TLsEy+X754+2ibaRVDw6iVDoUireiSd0lbXlyo8LEWGnPgcmehgZCyFX1IbTaCmL5GfA9TyR75EaXCUw/YCsHApT3f/7g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733762951; c=relaxed/simple;
+	bh=AEoCc0FGdAAv/ttIoFhtZoNTqMNm4iuYAF9jpsbYTZs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LVLwCZB72MZmmvfqLjgKdKRiW836xhEYldC8tUEKhqsScdyc3bGWoDYYcLq/bM4uga/avlYRIN6lc2biKvnGXd4FH5/kzGvLChbPvzk3m/uYTMKU1QJincSaERdxUYZHMhHq7A0WA4OnLhVIAwZ9kYjaurtyyVJ9LbxFCLSLhwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=vpXCE7yt; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ICjbN6n13jj70mZQsHkAtSrd6RK+WgbUII0X9qS62uc=; b=vpXCE7ytz7SHl6yYm1GizxVhLz
+	uPVtw/1PZ8z0SodKiUPTR08B6ATDcnTv13R9DjU/KJdVyiecHLZmND54jWRF3i29Cvn7mFcyEqxGz
+	W+dmpcVwpnkf7DGKOOazWG8tPr3lnRlRZjVk1wEsK4nsd+C2sRL9Nn4D3ol7E5MUcnfiCfYmKCTTC
+	RXmD/GXMqVXAMKmVRI1/6A8GVA0dT0Wd+YP4CyCk52TOhm/fmEPM2m04+iaU6obFJbQyegyeYnfVl
+	xxtNj5axuRyIxelOKkolwm/s7T6ipQ/imVZuQ4SQa6htCkhfLPEw63LVB/iqNgcetGaSMsv7jaTmS
+	GCEtkXOg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:52748)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tKgwO-00018I-0O;
+	Mon, 09 Dec 2024 16:49:00 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tKgwM-00027t-0k;
+	Mon, 09 Dec 2024 16:48:58 +0000
+Date: Mon, 9 Dec 2024 16:48:58 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Tarun Alle <Tarun.Alle@microchip.com>
+Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
+	andrew@lunn.ch, hkallweit1@gmail.com, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 1/2] net: phy: phy-c45: Auto-negotiaion changes
+ for T1 phy in phy library
+Message-ID: <Z1cfepBZXlGoz0ue@shell.armlinux.org.uk>
+References: <20241209161427.3580256-1-Tarun.Alle@microchip.com>
+ <20241209161427.3580256-2-Tarun.Alle@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|GVXPR04MB10022:EE_
-X-MS-Office365-Filtering-Correlation-Id: c6c558d9-36a8-4b27-ee75-08dd18716a82
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?Zc9trhIxAoCXSwt0PrUoAw3QYzw55aZH1yl7Syf2G6EAilPqrae/STAqDa1T?=
- =?us-ascii?Q?/SzhFTdT6vcZfTJdFWzrNTPbBIs4xn9x7/qC7aijitrUv59MutiXi6CSHbkc?=
- =?us-ascii?Q?I7MfVMS4XsmWyGdQUaQIUOLgZbs7QTgw0hTsToe4QEKvuMn/FBM+cObN2vW5?=
- =?us-ascii?Q?OyWvIuOonn7mwIHl3tgo+br3dX4RR2xbQYYcsZWlb2ANtjyhjC1/FBysktn7?=
- =?us-ascii?Q?AYrcNkt0Yo34JJlICrq3/9o6A+Zp6fIs4FID3bG7v/2PTNPWF3t36JxTWeoG?=
- =?us-ascii?Q?q4aU7AzMa0DLOwuBiKeOBbdfjLnTJh2eBte7psLQWbjuY/IZzfukXamcl2HY?=
- =?us-ascii?Q?AZnQkURWLAYHFFgua2jeWmHsEFs2Is4tqNwG7+2J6gAymVA5di52YPCyM9RR?=
- =?us-ascii?Q?Y22OZFWOGvLDVnaaFmY27OS/m7IvPx/AkQo5Ryutom8wL9lOrrjVQmD2KXb+?=
- =?us-ascii?Q?LF+BwnCqjebW1oTx9wCuIaPWHaQupqjb9EYGCFZKecqbmDM3H4wcHpdmeWGK?=
- =?us-ascii?Q?oeQORvgxepxuEY+3d/+J+Z2Kthog97aSTO1uVugPvh+lfNvQYl+Sw8bOsIm8?=
- =?us-ascii?Q?OZfmpHsgJ4S/uNrt7w7xbWyZVaQ3yGPdTyzqr5Pu7lrB4QCyGt/0Qq53LjjL?=
- =?us-ascii?Q?u0L+L7HWlYnqA4w+yuUe7KToJQhzhhKnILtRTVG2HwIBdURkrjlQl3WxPKoa?=
- =?us-ascii?Q?v3Mj/rhIkPRcV2JcXYTN/7+M1xziUUBiNjn8u7w3SZGg5hG6hMXIF2XJZOUK?=
- =?us-ascii?Q?KWoYxh3//ch7wZZ0FRPj80/+jHZ8ayNMJ+s3ZOk+/if+8Bf7BpCXDIdUXn3y?=
- =?us-ascii?Q?+4fyY2P5bRkVY7YE7nsIhcbHs4u59CVFvjnG0ZnpTxBcvhvTPPm+Oki6mVfe?=
- =?us-ascii?Q?vaK/EfQ9sjyrJ8VYg+Yci1a1bbS+ez6OC5nMptlObblPuBwBWHdQWOKjT/4e?=
- =?us-ascii?Q?7IZ+6mdwDgxh6/3kXnz3XPGIPnmk5hynenrNlm7mku7VchrRajTM0WQSKrre?=
- =?us-ascii?Q?kmdRk+7SS+Zr9o/NXAWJLboxnf3dlowxIs4xFKdF+Vut8Vs1lP4YNi3fjE+o?=
- =?us-ascii?Q?pxybqVe6TDHf7R/OWpIwxUe4UIqlioA0Jg68CzWmVKU0CW4lisJwlRD7v2vd?=
- =?us-ascii?Q?MuBVeajJIIkb/W+HxeBseFBJYjAPNm5+2xUD7JCn6/XkAxjiCB584K6QAun4?=
- =?us-ascii?Q?YneNg7H9mnzf5YDsmmTMllbb6c2tHZJxXVF1fO/2M2ONmEJENpcqrYqSAuI3?=
- =?us-ascii?Q?ejA6p5YSMB3N7bcdDnXApZipxWLWyQD4vWrcSIoNwW6BTbip75ABKhzuyGJB?=
- =?us-ascii?Q?MgVnv6xIRwZMa9KDPs9Pm0dlCs940lrFNCZ2WJTiiPRHuGilV6HqkWx73X06?=
- =?us-ascii?Q?jg6th6dvGZhzU1+sZUzBD/JYQfyNGyI4QvYSbXABtuhYA+n1Kw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?skzLOeHD6ljrxayod4mwEoIL94dELXzBySkUBtAWDJAWzcXlDk4J6S3jAFWF?=
- =?us-ascii?Q?+rbrW4v8plr5H2lJ+c7R/qvorsvWcjdnPZv3P+uEp9EZgvRSFSEr1LjtZEXh?=
- =?us-ascii?Q?LgEP2NyIDaLQibd2I2W9feitcSe2Iiylqqxcegwwbo145+eUdYf96Uvgex7Q?=
- =?us-ascii?Q?j7URrKyMOFjGK17liJ9ZjorzJHZwraz5wKlrzKcZeNUSpyE9afntSE92V6a6?=
- =?us-ascii?Q?2GL1knV5ozt8HNu4gLikhmGLCe8qjlvpbwUPA+nhkAJYZ2SB1WQywjpPVeu2?=
- =?us-ascii?Q?kgCC/LPBjlzBOzrqcm47wCjEFoheKzpnhnl/Mf6ww/1Vxj+Pbz8Rk9uA10pH?=
- =?us-ascii?Q?3afrLhkWjLH7op1gXgIimagYfnnCnXZbfTNyK89+utimnH1kLADQMKNUWQna?=
- =?us-ascii?Q?F1rQrD3wp8HJwjQ4qPhOLkva7QMynS3vAy2kVC9STzZ8U3YO9Lj2Q1pOMaDF?=
- =?us-ascii?Q?igEGIi3htfwQjx2ogWVJ57+QxLR2BpSmpIiCR8fajYo55TKOQCQ2jIbEhFRN?=
- =?us-ascii?Q?oLl+hw9SNl2273BtlygNyZded0UdOrFD2bVCbxw1K8bxwMV3UNlh4gCd4EW+?=
- =?us-ascii?Q?1epCcz7AGsKmuKUKelz/KyrV3HzDX5VLQv0E29kG61etqreZXPBY/FssdzkE?=
- =?us-ascii?Q?GMk+SwrLUh5E+31XDoGyegBAY8us2JbXSyDFJHZGr+5n/WEMT1iGU1zBo02J?=
- =?us-ascii?Q?OWvY5XNBmD/NESzABRLoiT4u/mREep+SZPc6+PyVNQJXfYk6ZxmJBjujLk6h?=
- =?us-ascii?Q?hpoKhX7Pf7rGm3uBvvWRjHpC35QFwlSPCsEugE8z2f2Uw39ZnZnDu08ZBoRV?=
- =?us-ascii?Q?3yY2k0Ew2TXW/sVUGoToHTE02N8akfC3/8xkyuwh7gMRrFow8uDb4BkBAGVu?=
- =?us-ascii?Q?xxL9CukTnBrXlZEkQ3FNUh3k0aWi1iB39FBxn96Dy7JBkS/YrgOB4aa/Cwd8?=
- =?us-ascii?Q?1/h4GeLyJO439H4xEVAe9PNC1tj93c4DlmJapHhvSTT1jP+2r/Rr8ZFhLI3f?=
- =?us-ascii?Q?VSxs6lMkaOSYhP7KpGT4Fj8jC+VppqPXLDQ7GntIBD5PYv9lagR22+RqCmQi?=
- =?us-ascii?Q?FZ+/pW55nwVtJP8bxo338NFybIfmuq3toorT/RKnL+iABtQfIx+6S679t7Mz?=
- =?us-ascii?Q?j07AL5PxEoV7ChMrVcmU1tW+jRAwrL8RvwevX3eRAjLdOzZn9RH7utQN4X8f?=
- =?us-ascii?Q?KwOCgIYx73dd2/mBozyT1DoiiQfcYcRYXx4SnkY+Dqo4G4oXCqfW0Ab/Ag3q?=
- =?us-ascii?Q?auvWuTIiKzhqq3EWCybmjqNIcKPdurJy/RutEB6VABkR6YOryNwJ4H4QeGaq?=
- =?us-ascii?Q?SrAVaNNos8jo+7CPCVb/bEB1I96NdshaYO7r7rDwno3x5gWmmkl+MclBXkom?=
- =?us-ascii?Q?P74WVW9RqU7cpEGTMqtLW3ZgvrUPc+CN6ZOnvdmn/SQzbIu4pUDhkgCSXaKD?=
- =?us-ascii?Q?GAVMJEqTwtFfayL7cWRSx/X4sia4iPicCL67OehC1q5pIpYENdjw8di4RhVh?=
- =?us-ascii?Q?qfT4rsWL6lr9gmDyFwHyzFNPjldeJ8zgPZNPJmMvas4ZZQqEgY+wIxba/UNk?=
- =?us-ascii?Q?z2/NTJpUu9nJhZmaymw=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c6c558d9-36a8-4b27-ee75-08dd18716a82
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 16:49:15.5100
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: fOj7MpJ/H8EDf6vZnc4gqC2DRZzXk6+1u4C0mTy/EGDHZm6oE++6RemcvHESnJDGaTLVjX86V9EBoF8Ef57rmg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10022
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209161427.3580256-2-Tarun.Alle@microchip.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Use dev_err_probe() and devm_clk_get_optional_enabled() to simplify the
-code.
+On Mon, Dec 09, 2024 at 09:44:26PM +0530, Tarun Alle wrote:
+> Below auto-negotiation library changes required for T1 phys:
+> - Lower byte advertisement register need to read after higher byte as
+>   per 802.3-2022 : Section 45.2.7.22.
 
-Signed-off-by: Frank Li <Frank.Li@nxp.com>
----
-change from v1 to v2
-- Remove clk_disable_unprepare() in qoriq_tmu_action()
----
- drivers/thermal/qoriq_thermal.c | 34 ++++++++++-----------------------
- 1 file changed, 10 insertions(+), 24 deletions(-)
+In my copy of 802.3, this refers to the link partner base page
+ability register, which is not the same as the advertisement
+register.
 
-diff --git a/drivers/thermal/qoriq_thermal.c b/drivers/thermal/qoriq_thermal.c
-index 52e26be8c53df..183af15c33769 100644
---- a/drivers/thermal/qoriq_thermal.c
-+++ b/drivers/thermal/qoriq_thermal.c
-@@ -265,7 +265,6 @@ static void qoriq_tmu_action(void *p)
- 	struct qoriq_tmu_data *data = p;
- 
- 	regmap_write(data->regmap, REGS_TMR, TMR_DISABLE);
--	clk_disable_unprepare(data->clk);
- }
- 
- static int qoriq_tmu_probe(struct platform_device *pdev)
-@@ -296,38 +295,27 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 
- 	base = devm_platform_ioremap_resource(pdev, 0);
- 	ret = PTR_ERR_OR_ZERO(base);
--	if (ret) {
--		dev_err(dev, "Failed to get memory region\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to get memory region\n");
- 
- 	data->regmap = devm_regmap_init_mmio(dev, base, &regmap_config);
- 	ret = PTR_ERR_OR_ZERO(data->regmap);
--	if (ret) {
--		dev_err(dev, "Failed to init regmap (%d)\n", ret);
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret, "Failed to init regmap\n");
- 
--	data->clk = devm_clk_get_optional(dev, NULL);
-+	data->clk = devm_clk_get_optional_enabled(dev, NULL);
- 	if (IS_ERR(data->clk))
- 		return PTR_ERR(data->clk);
- 
--	ret = clk_prepare_enable(data->clk);
--	if (ret) {
--		dev_err(dev, "Failed to enable clock\n");
--		return ret;
--	}
--
- 	ret = devm_add_action_or_reset(dev, qoriq_tmu_action, data);
- 	if (ret)
- 		return ret;
- 
- 	/* version register offset at: 0xbf8 on both v1 and v2 */
- 	ret = regmap_read(data->regmap, REGS_IPBRR(0), &ver);
--	if (ret) {
--		dev_err(&pdev->dev, "Failed to read IP block version\n");
--		return ret;
--	}
-+	if (ret)
-+		return dev_err_probe(dev, ret,  "Failed to read IP block version\n");
-+
- 	data->ver = (ver >> 8) & 0xff;
- 
- 	qoriq_tmu_init_device(data);	/* TMU initialization */
-@@ -337,10 +325,8 @@ static int qoriq_tmu_probe(struct platform_device *pdev)
- 		return ret;
- 
- 	ret = qoriq_tmu_register_tmu_zone(dev, data);
--	if (ret < 0) {
--		dev_err(dev, "Failed to register sensors\n");
--		return ret;
--	}
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "Failed to register sensors\n");
- 
- 	platform_set_drvdata(pdev, data);
- 
+The advertisement registers are covered by the preceeding section,
+45.2.7.21. This says:
+
+"The Base Page value is transferred to mr_adv_ability when register
+7.514 is written. Therefore, registers 7.515 and 7.516 should be
+written before 7.514."
+
+which I think is what's pertinent to your commit.
+
+> - Link status need to be get from control T1 registers for T1 phys.
+
+This statement appears to be inaccurate - more below against the
+actual code change.
+
+> 
+> Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
+> ---
+>  drivers/net/phy/phy-c45.c | 36 ++++++++++++++++++++++++++----------
+>  1 file changed, 26 insertions(+), 10 deletions(-)
+> 
+> diff --git a/drivers/net/phy/phy-c45.c b/drivers/net/phy/phy-c45.c
+> index 0dac08e85304..85d8a9b9c3f6 100644
+> --- a/drivers/net/phy/phy-c45.c
+> +++ b/drivers/net/phy/phy-c45.c
+> @@ -234,15 +234,11 @@ static int genphy_c45_baset1_an_config_aneg(struct phy_device *phydev)
+>  		return -EOPNOTSUPP;
+>  	}
+>  
+> -	adv_l |= linkmode_adv_to_mii_t1_adv_l_t(phydev->advertising);
+> -
+> -	ret = phy_modify_mmd_changed(phydev, MDIO_MMD_AN, MDIO_AN_T1_ADV_L,
+> -				     adv_l_mask, adv_l);
+> -	if (ret < 0)
+> -		return ret;
+> -	if (ret > 0)
+> -		changed = 1;
+> -
+> +	/* Ref. 802.3-2022 : Section 45.2.7.22
+> +	 * The Base Page value is transferred to mr_adv_ability when register
+> +	 * 7.514 is written.
+> +	 * Therefore, registers 7.515 and 7.516 should be written before 7.514.
+> +	 */
+>  	adv_m |= linkmode_adv_to_mii_t1_adv_m_t(phydev->advertising);
+>  
+>  	ret = phy_modify_mmd_changed(phydev, MDIO_MMD_AN, MDIO_AN_T1_ADV_M,
+> @@ -252,6 +248,23 @@ static int genphy_c45_baset1_an_config_aneg(struct phy_device *phydev)
+>  	if (ret > 0)
+>  		changed = 1;
+>  
+> +	adv_l |= linkmode_adv_to_mii_t1_adv_l_t(phydev->advertising);
+> +
+> +	if (changed) {
+> +		ret = phy_write_mmd(phydev, MDIO_MMD_AN, MDIO_AN_T1_ADV_L,
+> +				    adv_l);
+> +		if (ret < 0)
+> +			return ret;
+> +	} else {
+> +		ret = phy_modify_mmd_changed(phydev, MDIO_MMD_AN,
+> +					     MDIO_AN_T1_ADV_L,
+> +					     adv_l_mask, adv_l);
+
+Why do you write the complete register if changed is true, but only
+modify bits 12, 11 and 10 if changed is false?
+
+>  int genphy_c45_read_link(struct phy_device *phydev)
+>  {
+>  	u32 mmd_mask = MDIO_DEVS_PMAPMD;
+> +	u16 reg = MDIO_CTRL1;
+>  	int val, devad;
+>  	bool link = true;
+>  
+>  	if (phydev->c45_ids.mmds_present & MDIO_DEVS_AN) {
+> -		val = phy_read_mmd(phydev, MDIO_MMD_AN, MDIO_CTRL1);
+> +		if (genphy_c45_baset1_able(phydev))
+> +			reg = MDIO_AN_T1_CTRL;
+> +		val = phy_read_mmd(phydev, MDIO_MMD_AN, reg);
+>  		if (val < 0)
+>  			return val;
+
+This is not checking link status as you mention in your commit
+message, it is checking whether the PHY is in the process of
+restarting autoneg.
+
+Thanks.
+
 -- 
-2.34.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
