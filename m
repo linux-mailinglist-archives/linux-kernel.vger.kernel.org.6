@@ -1,217 +1,92 @@
-Return-Path: <linux-kernel+bounces-436805-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436808-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9E659E8B1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:40:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACCB69E8B25
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:46:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DC3C281114
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E15E2810EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 722A41C2335;
-	Mon,  9 Dec 2024 05:40:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349EC16190B;
+	Mon,  9 Dec 2024 05:45:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Fl5RF8kn"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OTNFDvzx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7531C0DED;
-	Mon,  9 Dec 2024 05:39:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DD91C4A1B;
+	Mon,  9 Dec 2024 05:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733722801; cv=none; b=W+ngyrNNnZofMuxzD9j06KTRXZzxkF8pJrf3mLYNLcfldiDjrZ69D5mNNK9M5iO+6u6v6iW3sfN8mHvtSYMOenjPZFhsDMvgjkdcar5QqlVLR0/E503TSVmJb8PndyZMiyQjIxKTB4SwTIuZx2QFY83aRU4Dk4V9UzLP3maLczI=
+	t=1733723155; cv=none; b=RtgsL5WmahWpWfBpP/f5DQDUkxy+gfaUVYQk7Z3qq1RQYv6LUSoaITx2Vy9bCn3TLxHQBHOkX6L/FRuzH0m8uTVG6TB/hFrHlKMqVAU/7bZCJ8UI+OU676N6dLNljZrrE/2CIJcz/Nu5CdgrRe1JF8npBI9imwB6ff9kWYK/chs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733722801; c=relaxed/simple;
-	bh=abYGNgUPH//pgrFtrWBWqPY5rUFm5BqZujjigrGyWaQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Kdtmgunjao1WHccAlfT6zEctVcUmWiHJ6COJzqHHgNSKL2nRvDPzc290Ln0b3IDXBoXBsGMzwdTDYtoWlVz4x+kMQCWFvxotn7ah4tA9Ae4QV0M51J4hvvAJS8UbX5Aym6DVN0NRFPDNFY1oxTDZXbmEUuBEqD5qZbau4FhKNdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Fl5RF8kn; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8NSqam014251;
-	Mon, 9 Dec 2024 05:39:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=R1sFPL66bMM1kyx014sWGC
-	anG/MeMk6IQK37L5DQcAU=; b=Fl5RF8knEhmie1TPQXH0VTkHT+MArVsM1bKoe+
-	gTw4h4bzuLvt2UFomW78uoSinFnnggvnWQhI2qoJs596O1sNesE5O5qUZXx2TrkR
-	amEwUq81rgAVtK6CYQ7PilGfHQeYSDDppS5FyYzbrQWKgSnzBfwXyGA95Te+szXA
-	aaMGk5S6OEcWrw1md03giTNMmZag+4xXRVtvqDETG0N/ndHptlTlUDN9X6eK1h2V
-	RsQU9r7tNGXYVwlyIcb7wMOfQcpmZAWigdlIWqkgaAEcui4OgyzmUkOabvdBRLQq
-	5STWMzbqCchL7vpQtRTi9krKQNYtXe2eSTNTipZXhGQxLm+Q==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cfhkbbyj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 05:39:58 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B95dvGd015856
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 05:39:57 GMT
-Received: from [10.213.96.82] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 21:39:55 -0800
-From: Vivek Pernamitta <quic_vpernami@quicinc.com>
-Date: Mon, 9 Dec 2024 11:09:50 +0530
-Subject: [PATCH v4] bus: mhi: host: pci_generic: Add support for QDU100
- device
+	s=arc-20240116; t=1733723155; c=relaxed/simple;
+	bh=3X70tRunR7lYHlKpNIgdPIP119iuLEn/uQ0tKEhyDe0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kk1PVSqheJzwz//VOtHagvxWKDKo1y2Jl+8N+Ojcg2NsM8x4IdLJXf2hbKjl2681wN9O3Pw3Y/8I49z9BZ4Q0DE0zobUBPEOyTx3Z5j8YsdvYl+lhS3TKBkmyTHIefVxlcOMHaSMGCpNOoorWetCdZ9ijLHXz6q0K+MdbMVBNBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OTNFDvzx; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733723154; x=1765259154;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3X70tRunR7lYHlKpNIgdPIP119iuLEn/uQ0tKEhyDe0=;
+  b=OTNFDvzxXKN6lSpN0V6pH2kUaHpC4t9FpQQX4yuxFzC/iK9vTY5LFFrx
+   6qxglRO5wfT1O9PkyNE/yJ/vZg1ntR64fdx63qIPKVnvfRJbCHCY+W2uA
+   mV/zkRLLwunrXLyNdxHEbmlrwIy2DeyRD0LwLU4I7v+QmLtdwjxRshGu7
+   KAS4eAQAQ+06qoLDkul3db8BZhDfmgbIOlQc0Brms33LNHWsS8yHkKmf6
+   4P4sUMHI3E7T5ln4uQp7Yz1POIafzrpHFK5SI8KRm2cPFCu+X9dub43rD
+   +aPm8XrK2nx0+Vz8gTdqNMTG3IpG+nXUDQPkkMCGNS/8AAGzsQr00GGXf
+   Q==;
+X-CSE-ConnectionGUID: M1Z8xtfwSoeKKgoDzpDCWw==
+X-CSE-MsgGUID: xTBJrFfFTJCUjZLx4oQYkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37934839"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="37934839"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 21:45:53 -0800
+X-CSE-ConnectionGUID: Jmfx+m5HTp6cwNLutHY53g==
+X-CSE-MsgGUID: Ojm1sNYFT6mihTvGQ9LVPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="99419996"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 21:45:51 -0800
+Date: Mon, 9 Dec 2024 06:42:49 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Justin Lai <justinlai0215@realtek.com>, davem@davemloft.net,
+	edumazet@google.com, pabeni@redhat.com, andrew+netdev@lunn.ch,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	horms@kernel.org, michal.kubiak@intel.com, pkshih@realtek.com,
+	larry.chiu@realtek.com
+Subject: Re: [PATCH net-next] rtase: Refine the if statement
+Message-ID: <Z1aDWTa2VzXiPpNf@mev-dev.igk.intel.com>
+References: <20241206084851.760475-1-justinlai0215@realtek.com>
+ <Z1LVqssDBEZ7nsWQ@mev-dev.igk.intel.com>
+ <20241206084158.172dd06d@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241209-qdu100_us-v4-1-f9010b2a09a2@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAKWCVmcC/43NTW7DIBCG4atErEvEDEOArnqPKqr4GRoWtRtTW
- 60i3z1OlE2sVMryG/G8nETjoXITr5uTGHiqrfbdMuhlI9IhdJ8sa162QIUEgFYe8whKfYxNhph
- thh3o5KJY3n8PXOrvtfW+X/ahtp9++LumJ7pcH1UmkiApWLTGckYDb8exptqlbeq/Ltmb8WvD2
- UXmAISeHxpUem08ksISsQQw/xham6RD8YayNzE/a6iQdgjgnH/6H5OiKXFH2qC+M/t5ns+v2nn
- NqAEAAA==
-X-Change-ID: 20241127-qdu100_us-abd7d1613c8b
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-CC: <quic_krichai@quicinc.com>, <mhi@lists.linux.dev>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Vivek
- Pernamitta" <quic_vpernami@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733722795; l=4243;
- i=quic_vpernami@quicinc.com; s=20241114; h=from:subject:message-id;
- bh=abYGNgUPH//pgrFtrWBWqPY5rUFm5BqZujjigrGyWaQ=;
- b=U7VqhRsDI5lVB/Ke29bsw6T6a4d08a1hC06y8xGyzkDz4SPxzjP0sFt8wehIYZCVeKA82F02N
- fX0j+pagheaB1ON4mnWJ0IZdJUaYH6502CRoGZZNhiKqux2WU26Qj7T
-X-Developer-Key: i=quic_vpernami@quicinc.com; a=ed25519;
- pk=HDwn8xReb8K52LA6/CJc6S9Zik8gDCZ5LO4Cypff71Y=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: m4xvUxxb3e4F-NNZAzIfrbH4HZwiuVZa
-X-Proofpoint-GUID: m4xvUxxb3e4F-NNZAzIfrbH4HZwiuVZa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 clxscore=1011 priorityscore=1501 spamscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090044
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206084158.172dd06d@kernel.org>
 
-Add MHI controller configuration for QDU100 device.
+On Fri, Dec 06, 2024 at 08:41:58AM -0800, Jakub Kicinski wrote:
+> On Fri, 6 Dec 2024 11:44:58 +0100 Michal Swiatkowski wrote:
+> > I am not sure if it is worth to change.
+> 
+> True, tho, FWIW, if it's the maintainer of the codebase sending the
+> change it's generally fine. Our "no pointless churn" rule is primarily
+> for randoes.
 
-The Qualcomm X100 5G RAN Accelerator card is designed to enhance Open vRAN
-servers by offloading CPUs from intensive 5G baseband functions.
-
-Link: https://docs.qualcomm.com/bundle/publicresource/87-79371-1_REV_A_Qualcomm_X100_5G_RAN_Accelerator_Card_Product_Brief.pdf
-
-Signed-off-by: Vivek Pernamitta <quic_vpernami@quicinc.com>
----
-changes from V3:
-- Removed IP_SW1 and IP_SW2 support currently, will add once
-  SW_IP1/2 channels support are added to mhi-net driver.
-- Removed qdu100 edl images, as EDL images are not needed.
-- Added space inbetween kernel_ulong_t and mhi_qcom_qdu100_info.
-- QDU100 XBL FW images were pushed to linux-firmware git repo
-  https://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git/tree/qcom/qdu100
-
-changes from V2:
-- updated commit text.
-
-changes from V1:
-- Changing naming convention from modem_qcom_qdu100*
-  to mhi_qcom_qdu100*.
-- Updated commit text.
-- Fixed and corrected by passing mhi_pci_dev_info struct
-  instead of mhi_controller_config.
----
-
----
- drivers/bus/mhi/host/pci_generic.c | 55 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
-
-diff --git a/drivers/bus/mhi/host/pci_generic.c b/drivers/bus/mhi/host/pci_generic.c
-index 07645ce2119a71c9277356e962252b840379cd81..dee9fa9e7ae441fbc9a86e53694568c0ba192002 100644
---- a/drivers/bus/mhi/host/pci_generic.c
-+++ b/drivers/bus/mhi/host/pci_generic.c
-@@ -245,6 +245,58 @@ struct mhi_pci_dev_info {
- 		.channel = ch_num,		\
- 	}
- 
-+static const struct mhi_channel_config mhi_qcom_qdu100_channels[] = {
-+	MHI_CHANNEL_CONFIG_UL(0, "LOOPBACK", 32, 2),
-+	MHI_CHANNEL_CONFIG_DL(1, "LOOPBACK", 32, 2),
-+	MHI_CHANNEL_CONFIG_UL_SBL(2, "SAHARA", 128, 1),
-+	MHI_CHANNEL_CONFIG_DL_SBL(3, "SAHARA", 128, 1),
-+	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 64, 3),
-+	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 64, 3),
-+	MHI_CHANNEL_CONFIG_UL(9, "QDSS", 64, 3),
-+	MHI_CHANNEL_CONFIG_UL(14, "NMEA", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(15, "NMEA", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(16, "CSM_CTRL", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(17, "CSM_CTRL", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(40, "MHI_PHC", 32, 4),
-+	MHI_CHANNEL_CONFIG_DL(41, "MHI_PHC", 32, 4),
-+	MHI_CHANNEL_CONFIG_UL(46, "IP_SW0", 256, 5),
-+	MHI_CHANNEL_CONFIG_DL(47, "IP_SW0", 256, 5),
-+};
-+
-+static struct mhi_event_config mhi_qcom_qdu100_events[] = {
-+	/* first ring is control+data ring */
-+	MHI_EVENT_CONFIG_CTRL(0, 64),
-+	/* SAHARA dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(1, 256),
-+	/* Software channels dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(2, 64),
-+	MHI_EVENT_CONFIG_SW_DATA(3, 256),
-+	MHI_EVENT_CONFIG_SW_DATA(4, 256),
-+	/* Software IP channels dedicated event ring */
-+	MHI_EVENT_CONFIG_SW_DATA(5, 512),
-+	MHI_EVENT_CONFIG_SW_DATA(6, 512),
-+	MHI_EVENT_CONFIG_SW_DATA(7, 512),
-+};
-+
-+static const struct mhi_controller_config mhi_qcom_qdu100_config = {
-+	.max_channels = 128,
-+	.timeout_ms = 120000,
-+	.num_channels = ARRAY_SIZE(mhi_qcom_qdu100_channels),
-+	.ch_cfg = mhi_qcom_qdu100_channels,
-+	.num_events = ARRAY_SIZE(mhi_qcom_qdu100_events),
-+	.event_cfg = mhi_qcom_qdu100_events,
-+};
-+
-+static const struct mhi_pci_dev_info mhi_qcom_qdu100_info = {
-+	.name = "qcom-qdu100",
-+	.fw = "qcom/qdu100/xbl_s.melf",
-+	.edl_trigger = true,
-+	.config = &mhi_qcom_qdu100_config,
-+	.bar_num = MHI_PCI_DEFAULT_BAR_NUM,
-+	.dma_data_width = 32,
-+	.sideband_wake = false,
-+};
-+
- static const struct mhi_channel_config modem_qcom_v1_mhi_channels[] = {
- 	MHI_CHANNEL_CONFIG_UL(4, "DIAG", 16, 1),
- 	MHI_CHANNEL_CONFIG_DL(5, "DIAG", 16, 1),
-@@ -822,6 +874,9 @@ static const struct pci_device_id mhi_pci_id_table[] = {
- 	/* NETPRISMA FCUN69 (SDX6X) */
- 	{ PCI_DEVICE(PCI_VENDOR_ID_NETPRISMA, 0x1001),
- 		.driver_data = (kernel_ulong_t) &mhi_netprisma_fcun69_info },
-+	/* QDU100, x100-DU */
-+	{ PCI_DEVICE(PCI_VENDOR_ID_QCOM, 0x0601),
-+		.driver_data = (kernel_ulong_t) &mhi_qcom_qdu100_info },
- 	{  }
- };
- MODULE_DEVICE_TABLE(pci, mhi_pci_id_table);
-
----
-base-commit: 28955f4fa2823e39f1ecfb3a37a364563527afbc
-change-id: 20241127-qdu100_us-abd7d1613c8b
-
-Best regards,
--- 
-Vivek Pernamitta <quic_vpernami@quicinc.com>
-
+Sure, thanks for letting me know.
 
