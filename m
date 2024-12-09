@@ -1,178 +1,244 @@
-Return-Path: <linux-kernel+bounces-438125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23F189E9D2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:36:41 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9E389E9D4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:45:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87F72282DD4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:36:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A36CA1888602
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:45:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4339F1552E7;
-	Mon,  9 Dec 2024 17:36:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B0A2154BFC;
+	Mon,  9 Dec 2024 17:45:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="GTU+clBP"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b="Aa5o4qzN"
+Received: from mxout1.mail.janestreet.com (mxout1.mail.janestreet.com [38.105.200.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F4194233151;
-	Mon,  9 Dec 2024 17:36:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269AF14F9E2
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:45:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=38.105.200.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733765791; cv=none; b=HtIY8+5d62ibIf4hvHviUBItUV9+LXuMHJkX4J4TaOuSe+57zMalkzWju942lDPOQqs85Adq7jbsu4iFqSmugNGdx5bNcrv+R4bIbzmsqUfSUdQPCKBmcaYngpbT/fpg3UfIprvKuJfFpKf1G/3PJ0T+9u6+oKrbvZ89ixBSvGY=
+	t=1733766321; cv=none; b=NjPSGDhIqGXSl1JNwxpYIm7BTWskAQaxXEvw0WDBmmo+f6hwa416lshbdD2g+57dHwcsw1lJCa4uhjbltl7ZF1/rtxqp806ywUNBCJ+FtSl3l1nfV/5J8Xx+DK4bTaoLTzki/0pck54Jybf2UCBJD3UspJX2KIU+8qCXIiiusoU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733765791; c=relaxed/simple;
-	bh=Hq5rnsJB/aKu9z8c1l+psZm54aIsx4j7G7c5ol1WoVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CURFXsixhmAtwt4zu0rjcq6WRNPq7FfaMocERoEzk7y9BrQ117groEhWs3wTGSPtiq7LV+2L20Yu1SmPLed32OS1o2guUt6eyS02CMn6W1DYqEW6uq1AWALI8HQSfIn4QCIJIOh+myQXvcWtZ3a9R1UBFjet4QLCVfnGiTnnExs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=GTU+clBP; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9CNZvm030669;
-	Mon, 9 Dec 2024 17:36:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=TvXjD5
-	sYjVjwVQKUFAm5ajrLGlsD4EPwD6ySYHNV9y0=; b=GTU+clBPgWoKiThNubTyx9
-	6OsyBvbc0LvJtUJ94ybICM8GbhTAvKJlsAS6ST91rcozg9O+PAsHndvx10R5cH97
-	gD9HfBItn/hIsCOpKq7Nqt0mGP4JJb6gNMV2O8ygJwXWvmcBCWSMXT3tB1LksUNd
-	2FzVWgD0Ls0ByT5Ig5Kj526FYsBOIVqt6ZTvcFwhzt13IxoHh/O3PuoTQj3rMnHx
-	bbLFClMX5wVnh5ZpnnVOp1PBvzHPAVEpzfAEv0o2v8yB4Tyxi5U3EfBYnoa1g9hD
-	k5+DwbdsVdKMS8dyL4bj2ESP6GKyr0pBA7in4bHt3l8Tb9v/UvPvnljcIPL0oMMw
-	==
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsj9w16-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 17:36:15 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9FbdWI023018;
-	Mon, 9 Dec 2024 17:36:15 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wjqdrb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 17:36:14 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9HaDfg22872490
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 17:36:13 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 58F6D20043;
-	Mon,  9 Dec 2024 17:36:13 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1E31620040;
-	Mon,  9 Dec 2024 17:36:13 +0000 (GMT)
-Received: from p-imbrenda (unknown [9.152.224.66])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Dec 2024 17:36:13 +0000 (GMT)
-Date: Mon, 9 Dec 2024 18:36:11 +0100
-From: Claudio Imbrenda <imbrenda@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
-        linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-s390@vger.kernel.org
-Subject: Re: Removing page->index
-Message-ID: <20241209183611.1f15595f@p-imbrenda>
-In-Reply-To: <cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
-References: <Z09hOy-UY9KC8WMb@casper.infradead.org>
-	<cebb44b2-e258-43ff-80a5-6bd19c8edab8@redhat.com>
-Organization: IBM
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733766321; c=relaxed/simple;
+	bh=qzmDRzVwBCe/hFVlH/XWVtNJ+YW9/6Mesc6a2S/JkMw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cEnrpKlfOubixe2WwnIyvAh1Q4TnGI0h9SmBZTOyGTtXFN7P7qH0IuTiWOtlaC3VC68UX6NTXsqsHtBF1BzZAtWMV6V1IKqRdVjTE6EHBAvp4wD5A+R+2+p9cfM5dcCzFwBPCGQ1T6vYlBTeXN1w3Vs8v0fcex3VYo8dLIP1yss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com; spf=pass smtp.mailfrom=janestreet.com; dkim=pass (2048-bit key) header.d=janestreet.com header.i=@janestreet.com header.b=Aa5o4qzN; arc=none smtp.client-ip=38.105.200.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=janestreet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=janestreet.com
+Date: Mon, 9 Dec 2024 12:39:55 -0500
+From: Nikhil Jha <njha@janestreet.com>
+To: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] nfs: propagate fileid changed errors back to syscall
+Message-ID: <Z1cra8/5H5HvJ5Sw@igm-qws-u22929a.delacy.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: HBnYQoZuWsDnCU7JE8hIozGZoBz_2fKN
-X-Proofpoint-ORIG-GUID: HBnYQoZuWsDnCU7JE8hIozGZoBz_2fKN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=890
- mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412090136
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=janestreet.com;
+  s=waixah; t=1733765995;
+  bh=6IxyuMfQnp/g35TgnRBn0r/NAk97VUvbhHrdndtkHtA=;
+  h=Date:From:To:Cc:Subject;
+  b=Aa5o4qzNsT5XUYs2t1Qhec+cColPVaIX8bTwqctOknu4vML+1YRZTYnxsvaAq4/ex
+  GZSa+v8H4mRPwXdB342C8pnaAQCQLr0AQnZFyS+Gm0XxrHPNymu+ixy2WpGKrVYgrj
+  WRbHY8x8nrTvCSYYXRZgvuBThCFUWrhUfC+CVC0aKSX8iac0ALT6FpcN4qB/c+AvW7
+  LXatgBDb+KleeKSZPnjvpL6og7FZ8TfUeo4tjPPp0ecI9/6aTyz4g62f+jbQ8eXluw
+  ovCCMGdJIWhwJATfy3lDFofTom8zgeOmXryZUNG/Gp8WPRl/UBFD5/siDi+KxqfiAd
+  WFXgMt6UewXoA==
 
-On Wed, 4 Dec 2024 16:58:52 +0100
-David Hildenbrand <david@redhat.com> wrote:
+Hello! This is the first kernel patch I have tried to upstream. I'm
+following along with the kernel newbies guide but apologies if I got
+anything wrong.
 
-> On 03.12.24 20:51, Matthew Wilcox wrote:
-> > I've pushed out a new tree to
-> > git://git.infradead.org/users/willy/pagecache.git shrunk-page
-> > aka
-> > http://git.infradead.org/?p=users/willy/pagecache.git;a=shortlog;h=refs/heads/shrunk-page
-> > 
-> > The observant will notice that it doesn't actually shrink struct page
-> > yet.  However, we're getting close.  What it does do is rename
-> > page->index to page->__folio_index to prevent new users of page->index
-> > from showing up.  
-> 
-> BTW, I was wondering how often we convert a page to a folio to then 
-> access folio->index / folio->mapping and not actually having a folio (in 
-> the future).
-> 
-> I suspect this will need quite some changes to get it right, and I would 
-> count that as "less obvious".
-> 
-> Calling PageAnon() on anything mapped into user space page tables might 
-> be one such case, for example.
-> 
-> > 
-> > There are (I believe) three build failures in that tree:
-> > 
-> >   - fb_defio
-> >   - fbtft
-> >   - s390's gmap (and vsie?  is that the same thing?)  
-> 
-> Not completely (vsie (nested VMs) uses shadow gmap, ordinary VMs use 
-> ordinary gmap) , but they are very related (-> KVM implementation on s390x).
-> 
-> I know that Claudio is working on some changes, but not sure how that 
-> would affect gmap's usage of page->index.
+Currently, if there is a mismatch in the request and response fileids in
+an NFS request, the kernel logs an error and attempts to return ESTALE.
+However, this error is currently dropped before it makes it all the way
+to userspace. This appears to be a mistake, since as far as I can tell
+that ESTALE value is never consumed from anywhere.
 
-After I'm done, we won't use page->index anymore.
+Callstack for async NFS write, at time of error:
 
-The changes I'm working on are massive, it's very impractical to push
-everything at once, so I'm refactoring and splitting smaller and more
-manageable (and reviewable) series.
+        nfs_update_inode <- returns -ESTALE
+        nfs_refresh_inode_locked
+        nfs_writeback_update_inode <- error is dropped here
+        nfs3_write_done
+        nfs_writeback_done
+        nfs_pgio_result <- other errors are collected here
+        rpc_exit_task
+        __rpc_execute
+        rpc_async_schedule
+        process_one_work
+        worker_thread
+        kthread
+        ret_from_fork
 
-This means that it will take some time before I'm done (I'm *hoping*
-to be done for 6.15)
+We ran into this issue ourselves, and seeing the -ESTALE in the kernel
+source code but not from userspace was surprising.
 
-> 
-> s390x gmap is 64bit only, so we have to store stuff in 8byte. gmap page 
-> tables are
-> 
-> Maybew e could simply switch from page->index to page->private? But I 
-> lost track if that will also be gone in the near future :)
-> 
-> > 
-> > Other than that, allmodconfig builds on x86 and I'm convinced the build
-> > bots will tell me about anything else I missed.
-> > 
-> > Lorenzo is working on fb_defio and fbtft will come along for the ride
-> > (it's a debug printk, so could just be deleted).
-> > 
-> > s390 is complicated.  I'd really appreciate some help.
-> > 
-> > The next step is to feed most of the patches through the appropriate
-> > subsystems.  Some have already gone into various maintainer trees
-> > (thanks!)
-> > 
-> > 
-> > There are still many more steps to go after this; eliminating memcg_data
-> > is closest to complete, and after that will come (in some order)
-> > eliminating ->lru, ->mapping, ->refcount and ->mapcount.   
-> 
-> Will continue working on the latter ;)
-> 
+I tested a rebased version of this patch on an el8 kernel (v6.1.114),
+and it seems to correctly propagate this error.
+
+>8------------------------------------------------------8<
+
+If an NFS server returns a response with a different file id to the
+response, the kernel currently prints out an error and attempts to
+return -ESTALE. However, this -ESTALE value is never surfaced anywhere.
+
+This patch modifies nfs_writeback_update_inode() to propagate these
+errors up the call stack, and modifies nfs_pgio_result() to report
+the resulting error.
+
+Signed-off-by: Nikhil Jha <njha@janestreet.com>
+---
+ fs/nfs/filelayout/filelayout.c         | 2 +-
+ fs/nfs/flexfilelayout/flexfilelayout.c | 2 +-
+ fs/nfs/internal.h                      | 2 +-
+ fs/nfs/nfs3proc.c                      | 2 +-
+ fs/nfs/nfs4proc.c                      | 2 +-
+ fs/nfs/pagelist.c                      | 5 ++++-
+ fs/nfs/proc.c                          | 2 +-
+ fs/nfs/write.c                         | 9 ++++++---
+ 8 files changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/fs/nfs/filelayout/filelayout.c b/fs/nfs/filelayout/filelayout.c
+index d39a1f58e18d..4e80a13e9639 100644
+--- a/fs/nfs/filelayout/filelayout.c
++++ b/fs/nfs/filelayout/filelayout.c
+@@ -335,7 +335,7 @@ static int filelayout_write_done_cb(struct rpc_task *task,
+ 	/* zero out the fattr */
+ 	hdr->fattr.valid = 0;
+ 	if (task->tk_status >= 0)
+-		nfs_writeback_update_inode(hdr);
++		return nfs_writeback_update_inode(hdr);
+ 
+ 	return 0;
+ }
+diff --git a/fs/nfs/flexfilelayout/flexfilelayout.c b/fs/nfs/flexfilelayout/flexfilelayout.c
+index f78115c6c2c1..d15e3799a351 100644
+--- a/fs/nfs/flexfilelayout/flexfilelayout.c
++++ b/fs/nfs/flexfilelayout/flexfilelayout.c
+@@ -1503,7 +1503,7 @@ static int ff_layout_write_done_cb(struct rpc_task *task,
+ 	/* zero out fattr since we don't care DS attr at all */
+ 	hdr->fattr.valid = 0;
+ 	if (task->tk_status >= 0)
+-		nfs_writeback_update_inode(hdr);
++		return nfs_writeback_update_inode(hdr);
+ 
+ 	return 0;
+ }
+diff --git a/fs/nfs/internal.h b/fs/nfs/internal.h
+index e564bd11ba60..5c4e2fa88324 100644
+--- a/fs/nfs/internal.h
++++ b/fs/nfs/internal.h
+@@ -592,7 +592,7 @@ void nfs_mark_request_commit(struct nfs_page *req,
+ 			     struct nfs_commit_info *cinfo,
+ 			     u32 ds_commit_idx);
+ int nfs_write_need_commit(struct nfs_pgio_header *);
+-void nfs_writeback_update_inode(struct nfs_pgio_header *hdr);
++int nfs_writeback_update_inode(struct nfs_pgio_header *hdr);
+ int nfs_generic_commit_list(struct inode *inode, struct list_head *head,
+ 			    int how, struct nfs_commit_info *cinfo);
+ void nfs_retry_commit(struct list_head *page_list,
+diff --git a/fs/nfs/nfs3proc.c b/fs/nfs/nfs3proc.c
+index 1566163c6d85..42ddbc21fb05 100644
+--- a/fs/nfs/nfs3proc.c
++++ b/fs/nfs/nfs3proc.c
+@@ -887,7 +887,7 @@ static int nfs3_write_done(struct rpc_task *task, struct nfs_pgio_header *hdr)
+ 	if (nfs3_async_handle_jukebox(task, inode))
+ 		return -EAGAIN;
+ 	if (task->tk_status >= 0)
+-		nfs_writeback_update_inode(hdr);
++		return nfs_writeback_update_inode(hdr);
+ 	return 0;
+ }
+ 
+diff --git a/fs/nfs/nfs4proc.c b/fs/nfs/nfs4proc.c
+index 405f17e6e0b4..7ec372a1eb98 100644
+--- a/fs/nfs/nfs4proc.c
++++ b/fs/nfs/nfs4proc.c
+@@ -5661,7 +5661,7 @@ static int nfs4_write_done_cb(struct rpc_task *task,
+ 	}
+ 	if (task->tk_status >= 0) {
+ 		renew_lease(NFS_SERVER(inode), hdr->timestamp);
+-		nfs_writeback_update_inode(hdr);
++		return nfs_writeback_update_inode(hdr);
+ 	}
+ 	return 0;
+ }
+diff --git a/fs/nfs/pagelist.c b/fs/nfs/pagelist.c
+index e27c07bd8929..19cb080653e3 100644
+--- a/fs/nfs/pagelist.c
++++ b/fs/nfs/pagelist.c
+@@ -854,9 +854,12 @@ static void nfs_pgio_result(struct rpc_task *task, void *calldata)
+ {
+ 	struct nfs_pgio_header *hdr = calldata;
+ 	struct inode *inode = hdr->inode;
++	int status = hdr->rw_ops->rw_done(task, hdr, inode);
+ 
+-	if (hdr->rw_ops->rw_done(task, hdr, inode) != 0)
++	if (status != 0) {
++		nfs_set_pgio_error(hdr, status, hdr->args.offset);
+ 		return;
++	}
+ 	if (task->tk_status < 0)
+ 		nfs_set_pgio_error(hdr, task->tk_status, hdr->args.offset);
+ 	else
+diff --git a/fs/nfs/proc.c b/fs/nfs/proc.c
+index 6c09cd090c34..72ffbdfc7ae6 100644
+--- a/fs/nfs/proc.c
++++ b/fs/nfs/proc.c
+@@ -629,7 +629,7 @@ static int nfs_write_done(struct rpc_task *task, struct nfs_pgio_header *hdr)
+ {
+ 	if (task->tk_status >= 0) {
+ 		hdr->res.count = hdr->args.count;
+-		nfs_writeback_update_inode(hdr);
++		return nfs_writeback_update_inode(hdr);
+ 	}
+ 	return 0;
+ }
+diff --git a/fs/nfs/write.c b/fs/nfs/write.c
+index 50fa539611f5..151da29175fd 100644
+--- a/fs/nfs/write.c
++++ b/fs/nfs/write.c
+@@ -1507,22 +1507,25 @@ static void nfs_writeback_check_extend(struct nfs_pgio_header *hdr,
+ 	fattr->valid |= NFS_ATTR_FATTR_SIZE;
+ }
+ 
+-void nfs_writeback_update_inode(struct nfs_pgio_header *hdr)
++int nfs_writeback_update_inode(struct nfs_pgio_header *hdr)
+ {
+ 	struct nfs_fattr *fattr = &hdr->fattr;
+ 	struct inode *inode = hdr->inode;
++	int ret = 0;
+ 
+ 	if (nfs_have_delegated_mtime(inode)) {
+ 		spin_lock(&inode->i_lock);
+ 		nfs_set_cache_invalid(inode, NFS_INO_INVALID_BLOCKS);
+ 		spin_unlock(&inode->i_lock);
+-		return;
++		return 0;
+ 	}
+ 
+ 	spin_lock(&inode->i_lock);
+ 	nfs_writeback_check_extend(hdr, fattr);
+-	nfs_post_op_update_inode_force_wcc_locked(inode, fattr);
++	ret = nfs_post_op_update_inode_force_wcc_locked(inode, fattr);
+ 	spin_unlock(&inode->i_lock);
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(nfs_writeback_update_inode);
+ 
+-- 
+2.39.3
 
 
