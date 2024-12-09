@@ -1,47 +1,77 @@
-Return-Path: <linux-kernel+bounces-437534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B5A9E947F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:40:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 275E49E9481
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:40:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4C3018882D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 972511884575
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:40:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABFAA227581;
-	Mon,  9 Dec 2024 12:39:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67CF122371C;
+	Mon,  9 Dec 2024 12:39:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TBK1Cijz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=exostellar.io header.i=@exostellar.io header.b="G/1wIZll"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB092248BF;
-	Mon,  9 Dec 2024 12:39:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5F4622489B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747965; cv=none; b=d3R302tv1/V3O3QGKmHIGhLAIrKODph5ZxN0CG6Y4rX142TucGZM6OkeVq6h6WY3s0pE+VexCc/BGDGO0H3VZKB0TuDWOpalaB3BJd7f6vYBC8joj9Tym6HGUqpuaeosm3vvaJhuE6C9yfjxDDZ6zgecGA2mN8fyb+MhZH9XxnE=
+	t=1733747975; cv=none; b=tcGy+yVl/N11XZ7gClUghXNccdJura8/SnOfZAqUogY2jAh8M/07SXYORAJ6Jyq4ybRz/ieLkOsbQDdT1dbmmyEXl8fPYN17awwYMgtIrr7dM/u1dDelM2U2mPABhdCvKNIoHnwu2cUx6rnpzjnJz+X8ILjVKFrOjeTYqcMEGgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747965; c=relaxed/simple;
-	bh=CMfN1xPy9PKkRLxt0ND0V2nv1Cxh6z61nlM2pGOtKhE=;
+	s=arc-20240116; t=1733747975; c=relaxed/simple;
+	bh=0AMw/7Ktf9nFktuDL3d6RVqnGeuif0ZLwPUPdOsc8F4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y2DQtr2nBA/Q2F9WmVarmOu/6FbBgY+bD16w+zKm+oj36XBAvn+Ro5NXKQTtnSRXSlHE58fjHaG8DLHu3ldufB/ANDlumHaNaK4p8wCcrZUqflJ6LsZPbZ1Yu/fllehz9U8d2gN4QRif3f2mp+hPwCCj+rRHXWFbFpuD7BeUcPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TBK1Cijz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4D82C4CED1;
-	Mon,  9 Dec 2024 12:39:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733747965;
-	bh=CMfN1xPy9PKkRLxt0ND0V2nv1Cxh6z61nlM2pGOtKhE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TBK1Cijz1qPzM7dnm61A/IXRgiMa04GWGCxI1QY7g3iFqw8b2en0awewSnOYBQY/l
-	 Yj1Pr4WxHKOxQbdjy7LKeUHR4wG2sut/f7F73VrgMar+yrWXtFUJOuXbt1vh/NNktL
-	 QqZnbOHiZ1tiOzOf9jmikwTr+6J24xwKQ+4PLGjxxrWxq+oUK7Lii4QKvOAxvJI3AZ
-	 JQvBSVfJ8RqeEnajUpVsvOStXq8sYM23aE036HhDH1VlsFaUAeSNVD/qFMkVDr1Jnl
-	 32y+nrUBHdaidGBlmZq1VWlbSuH44GygVfRh5mt3rXFkkk/fDBgz792fQLuycvx8/1
-	 vJ4HnQn8YNdyg==
-Message-ID: <badf6d7c-85a5-42a4-b834-f5cdbd8ff81f@kernel.org>
-Date: Mon, 9 Dec 2024 14:39:18 +0200
+	 In-Reply-To:Content-Type; b=GLDqVsJdFFO3+6frisXzuEhS0+kaEN5G2LKMr/7UB+0F6pEQV6C5KLCNgLRUHtDdQfdD/j2SNYaqhyms7X0b/1CIYk7iZHcJIFYlbIYZt1X3gJCn3NWg2Ca05JCD87QoWURDIkYpG97URglgBp9uByMO4u3+LydfwvwWsnCuc8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=exostellar.io; spf=pass smtp.mailfrom=exostellar.io; dkim=pass (2048-bit key) header.d=exostellar.io header.i=@exostellar.io header.b=G/1wIZll; arc=none smtp.client-ip=209.85.222.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=exostellar.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=exostellar.io
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b6cb98626eso100944685a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:39:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=exostellar.io; s=google; t=1733747973; x=1734352773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tRUTaSdtSTWDNx2ubmJEe+KjO9kK07Vwb4Eyr3Ojt1w=;
+        b=G/1wIZllz/LhTiKXFiDsBiCLA9utJVct3hJVPAFdqBWPrdZTHcRB3uily/SNxP6Ggj
+         cNUYy04/Ru6AsCL1Nbo7aVRhwAloNrvZlTkhzHq3CflABF96+GLjKfbjSMK1dIF/bXq5
+         iocXn0ZdUw/svUWbc2xwPBkuZKJUxPnvxJAPSWUwdD+1bBpV63ED7rVOrqx+44eze40A
+         C1lgkvuH1ovBSWGtdUsigrvH5BTCLgGZ07mPxL/QaUqldg7t9m2rqcCEkOmvp2uuI6YW
+         aJFMcNW6reG4R11oSqgVwHynZ/QnegyeJHGnOsSmEfTU02/jBCx01x6Ctfme/poxDQVp
+         8hOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733747973; x=1734352773;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRUTaSdtSTWDNx2ubmJEe+KjO9kK07Vwb4Eyr3Ojt1w=;
+        b=mwuKfXZHPtLlRPsk8ft2aAP/caBqfLrMaif/iQlSmHKP8S/KljWXKM+gLFfC94F3w+
+         oyQXsu3FAEVGjLoj6YDY64hJYIKtdNWjTjLWn+Qz4SjGFIupEEKzMYXtIN+hXEaqaiVi
+         0tRTISFQ7iHijMmYPbkp6oMyvrlGScHhoz7FpaMM1dVEGA1Gvvo5KkOhVfbB7aszGdnj
+         FcHJGHMFh7EmtPR5sqajJ5idLvxTZkLKfi+EiI73N6eQQwWLs7n9W+ilFh1lz8q70gct
+         yba04nJEZPQjAs5jE0QhfkwPJC1xU00LjryeCuYDNkZqBV2iP3uzNmPKrXEPQ5MgceMg
+         gVGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUmg2jxQ8e0YuWONXEQ7eTrNJZfPPNgXA1LzL0nQoMzdtfq5kCAIAcDaZk7OAzzauqm64HOG4NdE0vPE5c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIfaMuO90PcfpqR0ZrEHt1XvdzorXREjkFOecbB35scuXiU3qs
+	FsJXY9HP/QfQ2cwLo9qhJYFfY+/1thoZjTy25Fk/phMwllOjpAxhGqStyVfr0JY=
+X-Gm-Gg: ASbGncvWaVz93vwGFZmbTvcMMVIsaSc4LWZpqrcYFqE6KWbdTbur/iJQcwh4Pt2fGuA
+	DpIHNImB+Io7thlEWoT+0r8S/I6j63CZ+31UcnFS0r0kySDoNkE+jPrcjOBj6r2dQzqWKqIg8iq
+	u8zlAQsFYDp39nu9pAXlvPerCvRU4ui8+UzQicccBO1phSRT7c4zK+2vjP7epP53ESFU6/dqJ8b
+	iEXuylTR8MSFRztaczYqwMpSJV/ewQQ/i187MQTVgup8C3MX5r5b1o=
+X-Google-Smtp-Source: AGHT+IGUN0y5tavLjGg8nctS+87f9zbgPbgkotfQ+C/sUG31IJkgL5wL2zKycZaYTebhyfsU6ab9rw==
+X-Received: by 2002:a05:620a:2b8d:b0:7b6:cedf:1b4b with SMTP id af79cd13be357-7b6dcdd0b6bmr28812585a.7.1733747972695;
+        Mon, 09 Dec 2024 04:39:32 -0800 (PST)
+Received: from [192.168.1.76] ([188.91.253.160])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6696acc74sm329635666b.134.2024.12.09.04.39.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 04:39:32 -0800 (PST)
+Message-ID: <813d9908-48e4-46ce-87c9-7414170e6a6e@exostellar.io>
+Date: Mon, 9 Dec 2024 13:39:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,384 +79,38 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3 1/2] net: ti: icssg-prueth: Fix firmware load
- sequence.
-To: Meghana Malladi <m-malladi@ti.com>, vigneshr@ti.com,
- jan.kiszka@siemens.com, javier.carrasco.cruz@gmail.com,
- diogo.ivo@siemens.com, jacob.e.keller@intel.com, horms@kernel.org,
- pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
- davem@davemloft.net, andrew+netdev@lunn.ch
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com, danishanwar@ti.com
-References: <20241205082831.777868-1-m-malladi@ti.com>
- <20241205082831.777868-2-m-malladi@ti.com>
- <a86bc0b1-8bb4-477e-b7e1-13921bf47b53@kernel.org>
- <64621290-2488-474d-b2ed-597a1f4ac85f@ti.com>
+Subject: Re: [PATCH] Grab mm lock before grabbing pt lock
+To: Dave Hansen <dave.hansen@intel.com>, Juergen Gross <jgross@suse.com>,
+ Boris Ostrovsky <boris.ostrovsky@oracle.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org
+References: <20241204103516.3309112-1-maksym@exostellar.io>
+ <24b8d4a0-36c3-4404-98aa-7d8e2c67ac95@intel.com>
+From: Maksym Planeta <maksym@exostellar.io>
 Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <64621290-2488-474d-b2ed-597a1f4ac85f@ti.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <24b8d4a0-36c3-4404-98aa-7d8e2c67ac95@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
 
-On 09/12/2024 12:34, Meghana Malladi wrote:
+On 05/12/2024 19:52, Dave Hansen wrote:
+> I have the _feeling_ it's just a big hack and this code throws caution
+> tot the wind because of:
 > 
+>>   * Expected to be called in stop_machine() ("equivalent to taking
+>>   * every spinlock in the system"), so the locking doesn't really
+>>   * matter all that much.
 > 
-> On 05/12/24 18:38, Roger Quadros wrote:
->> Hi,
->>
->> On 05/12/2024 10:28, Meghana Malladi wrote:
->>> From: MD Danish Anwar <danishanwar@ti.com>
->>>
->>> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
->>> and SLICE1. Currently whenever any ICSSG interface comes up we load the
->>> respective firmwares to PRU cores and whenever interface goes down, we
->>> stop the resective cores. Due to this, when SLICE0 goes down while
->>> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
->>> stopped. This results in clock jump for SLICE1 interface as the timesync
->>> related operations are no longer running.
->>>
->>> As there are interdependencies between SLICE0 and SLICE1 firmwares,
->>> fix this by running both PRU0 and PRU1 firmwares as long as at least 1
->>> ICSSG interface is up. Add new flag in prueth struct to check if all
->>> firmwares are running.
->>>
->>> Use emacs_initialized as reference count to load the firmwares for the
->>> first and last interface up/down. Moving init_emac_mode and fw_offload_mode
->>> API outside of icssg_config to icssg_common_start API as they need
->>> to be called only once per firmware boot.
->>>
->>> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
->>> ---
->>>
->>> Hi all,
->>>
->>> This patch is based on net-next tagged next-20241128.
->>> v2:https://lore.kernel.org/all/20241128122931.2494446-2-m-malladi@ti.com/
->>>
->>> * Changes since v2 (v3-v2):
->>> - error handling in caller function of prueth_emac_common_start()
->>> - Use prus_running flag check before stopping the firmwares
->>> Both suggested by Roger Quadros <rogerq@kernel.org>
->>>
->>>   drivers/net/ethernet/ti/icssg/icssg_config.c |  45 ++++--
->>>   drivers/net/ethernet/ti/icssg/icssg_config.h |   1 +
->>>   drivers/net/ethernet/ti/icssg/icssg_prueth.c | 157 ++++++++++++-------
->>>   drivers/net/ethernet/ti/icssg/icssg_prueth.h |   5 +
->>>   4 files changed, 140 insertions(+), 68 deletions(-)
->>>
->>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
->>> index 5d2491c2943a..342150756cf7 100644
->>> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
->>> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
->>> @@ -397,7 +397,7 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
->>>       return 0;
->>>   }
->>>
-> [ ... ]
+> So the patch here kinda doubles down on the hack and continues the theme
+> because "locking doesn't really matter all that much."
 > 
->>> +static int prueth_emac_common_start(struct prueth *prueth)
->>> +{
->>> +    struct prueth_emac *emac;
->>> +    int ret = 0;
->>> +    int slice;
->>> +
->>> +    if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
->>> +        return -EINVAL;
->>> +
->>> +    /* clear SMEM and MSMC settings for all slices */
->>> +    memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
->>> +    memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
->>> +
->>> +    icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
->>> +    icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
->>> +
->>> +    if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
->>> +        icssg_init_fw_offload_mode(prueth);
->>> +    else
->>> +        icssg_init_emac_mode(prueth);
->>> +
->>> +    for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
->>> +        emac = prueth->emac[slice];
->>> +        if (emac) {
->>> +            ret |= icssg_config(prueth, emac, slice);
->>> +            if (ret)
->>> +                return ret;
->>> +        }
->>> +        ret |= prueth_emac_start(prueth, slice);
->>> +    }
->>
->> need newline?
->>
+> If so, it's not super satisfying, but it is consistent with the existing
+> code.
 > 
-> Yes I will add it.
-> 
->>> +    if (!ret)
->>> +        prueth->prus_running = 1;
->>> +    else
->>> +        return ret;
->>> +
->>> +    emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
->>> +           prueth->emac[ICSS_SLICE1];
->>> +    ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
->>> +                emac, IEP_DEFAULT_CYCLE_TIME_NS);
->>> +    if (ret) {
->>> +        dev_err(prueth->dev, "Failed to initialize IEP module\n");
->>> +        return ret;
->>> +    }
->>> +
->>> +    return 0;
->>> +}
->>> +
->>> +static int prueth_emac_common_stop(struct prueth *prueth)
->>> +{
->>> +    struct prueth_emac *emac;
->>> +    int slice;
->>> +
->>> +    if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
->>> +        return -EINVAL;
->>> +
->>> +    icssg_class_disable(prueth->miig_rt, ICSS_SLICE0);
->>> +    icssg_class_disable(prueth->miig_rt, ICSS_SLICE1);
->>> +
->>> +    for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
->>> +        if (prueth->prus_running) {
->>> +            rproc_shutdown(prueth->txpru[slice]);
->>> +            rproc_shutdown(prueth->rtu[slice]);
->>> +            rproc_shutdown(prueth->pru[slice]);
->>> +        }
->>> +    }
->>> +    prueth->prus_running = 0;
->>> +
->>> +    emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
->>> +           prueth->emac[ICSS_SLICE1];
->>> +    icss_iep_exit(emac->iep);
->>
->> if icss_iep_init() failed at prueth_emac_common_start(), we should not be
->> calling icss_iep_exit(). Maybe you need another flag for iep_init status?
->>
-> 
-> Yes I have thought of it as well. In icss_iep_init() does lot of iep register configuration and in the end it enables iep by setting IEP_CNT_ENABLE bit and ptp_clock_register(). Whereas in icss_iep_exit() it checks for ptp_clock and pps/perout. And calls icss_iep_disable() which again clears IEP_CNT_ENABLE.
-> 
-> So I see no harm in calling icss_iep_exit() even if icss_iep_init() as it overwrites the existing configuration only. But if you think this doesn't look good I can definitely add new flag for iep as well. But IMO I think this flag would be redundant, please correct me if I am wrong. So which one sounds better?
 
-But isn't icss_iep_exit() also calling ptp_clock_unregister()?
-If it is safe to do that even in error condition then it doesn't matter.
-
-> 
->> Is it better to call icss_iep_exit() at the top before icssg_class_disable()?
->>
->>> +
->>> +    return 0;
->>> +}
->>> +
->>>   /* called back by PHY layer if there is change in link state of hw port*/
->>>   static void emac_adjust_link(struct net_device *ndev)
->>>   {
->>> @@ -369,12 +432,13 @@ static void prueth_iep_settime(void *clockops_data, u64 ns)
->>>   {
->>>       struct icssg_setclock_desc __iomem *sc_descp;
->>>       struct prueth_emac *emac = clockops_data;
->>> +    struct prueth *prueth = emac->prueth;
->>>       struct icssg_setclock_desc sc_desc;
->>>       u64 cyclecount;
->>>       u32 cycletime;
->>>       int timeout;
->>>   -    if (!emac->fw_running)
->>> +    if (!prueth->prus_running)
->>>           return;
->>>         sc_descp = emac->prueth->shram.va + TIMESYNC_FW_WC_SETCLOCK_DESC_OFFSET;
->>> @@ -543,23 +607,17 @@ static int emac_ndo_open(struct net_device *ndev)
->>>   {
->>>       struct prueth_emac *emac = netdev_priv(ndev);
->>>       int ret, i, num_data_chn = emac->tx_ch_num;
->>> +    struct icssg_flow_cfg __iomem *flow_cfg;
->>>       struct prueth *prueth = emac->prueth;
->>>       int slice = prueth_emac_slice(emac);
->>>       struct device *dev = prueth->dev;
->>>       int max_rx_flows;
->>>       int rx_flow;
->>>   -    /* clear SMEM and MSMC settings for all slices */
->>> -    if (!prueth->emacs_initialized) {
->>> -        memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
->>> -        memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
->>> -    }
->>> -
->>>       /* set h/w MAC as user might have re-configured */
->>>       ether_addr_copy(emac->mac_addr, ndev->dev_addr);
->>>         icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
->>> -    icssg_class_default(prueth->miig_rt, slice, 0, false);
->>>       icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
->>>         /* Notify the stack of the actual queue counts. */
->>> @@ -597,18 +655,23 @@ static int emac_ndo_open(struct net_device *ndev)
->>>           goto cleanup_napi;
->>>       }
->>>   -    /* reset and start PRU firmware */
->>> -    ret = prueth_emac_start(prueth, emac);
->>> -    if (ret)
->>> -        goto free_rx_irq;
->>> +    if (!prueth->emacs_initialized) {
->>> +        ret = prueth_emac_common_start(prueth);
->>> +        if (ret)
->>> +            goto stop;
->>> +    }
->>>   -    icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
->>> +    flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
->>> +    writew(emac->rx_flow_id_base, &flow_cfg->rx_base_flow);
->>> +    ret = emac_fdb_flow_id_updated(emac);
->>>   -    if (!prueth->emacs_initialized) {
->>> -        ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
->>> -                    emac, IEP_DEFAULT_CYCLE_TIME_NS);
->>> +    if (ret) {
->>> +        netdev_err(ndev, "Failed to update Rx Flow ID %d", ret);
->>> +        goto stop;
->>>       }
->>>   +    icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
->>> +
->>>       ret = request_threaded_irq(emac->tx_ts_irq, NULL, prueth_tx_ts_irq,
->>>                      IRQF_ONESHOT, dev_name(dev), emac);
->>>       if (ret)
->>> @@ -653,8 +716,7 @@ static int emac_ndo_open(struct net_device *ndev)
->>>   free_tx_ts_irq:
->>>       free_irq(emac->tx_ts_irq, emac);
->>>   stop:
->>> -    prueth_emac_stop(emac);
->>> -free_rx_irq:
->>> +    prueth_emac_common_stop(prueth);
->>>       free_irq(emac->rx_chns.irq[rx_flow], emac);
->>>   cleanup_napi:
->>>       prueth_ndev_del_tx_napi(emac, emac->tx_ch_num);
->>> @@ -689,8 +751,6 @@ static int emac_ndo_stop(struct net_device *ndev)
->>>       if (ndev->phydev)
->>>           phy_stop(ndev->phydev);
->>>   -    icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
->>> -
->>>       if (emac->prueth->is_hsr_offload_mode)
->>>           __dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
->>>       else
->>> @@ -728,11 +788,9 @@ static int emac_ndo_stop(struct net_device *ndev)
->>>       /* Destroying the queued work in ndo_stop() */
->>>       cancel_delayed_work_sync(&emac->stats_work);
->>>   -    if (prueth->emacs_initialized == 1)
->>> -        icss_iep_exit(emac->iep);
->>> -
->>>       /* stop PRUs */
->>> -    prueth_emac_stop(emac);
->>> +    if (prueth->emacs_initialized == 1)
->>> +        prueth_emac_common_stop(prueth);
->>>         free_irq(emac->tx_ts_irq, emac);
->>>   @@ -1069,16 +1127,10 @@ static void prueth_emac_restart(struct prueth *prueth)
->>>       icssg_set_port_state(emac1, ICSSG_EMAC_PORT_DISABLE);
->>>         /* Stop both pru cores for both PRUeth ports*/
->>> -    prueth_emac_stop(emac0);
->>> -    prueth->emacs_initialized--;
->>> -    prueth_emac_stop(emac1);
->>> -    prueth->emacs_initialized--;
->>> +    prueth_emac_common_stop(prueth);
->>>         /* Start both pru cores for both PRUeth ports */
->>> -    prueth_emac_start(prueth, emac0);
->>> -    prueth->emacs_initialized++;
->>> -    prueth_emac_start(prueth, emac1);
->>> -    prueth->emacs_initialized++;
->>> +    prueth_emac_common_start(prueth);
->>
->> But this can fail? You need to deal with failure condition appropriately.
->>
-> 
-> I haven't added failure conditions for two reasons:
-> - Existing code also didn't have any error checks
-> - This func simply reloads a new firmware, given everything is already working with the old one.
-> 
-> I can still handle error cases by changing this func to return int (currently it is void) and caller of the functions should print error and immediately return. Thoughts on this?
-
-At least an error message somewhere will help to debug later.
-
-> 
->>>         /* Enable forwarding for both PRUeth ports */
->>>       icssg_set_port_state(emac0, ICSSG_EMAC_PORT_FORWARD);
->>> @@ -1413,13 +1465,10 @@ static int prueth_probe(struct platform_device *pdev)
->>>           prueth->pa_stats = NULL;
->>>       }
->>>   -    if (eth0_node) {
->>> +    if (eth0_node || eth1_node) {
->>>           ret = prueth_get_cores(prueth, ICSS_SLICE0, false);
->>>           if (ret)
->>>               goto put_cores;
->>> -    }
->>> -
->>> -    if (eth1_node) {
->>>           ret = prueth_get_cores(prueth, ICSS_SLICE1, false);
->>>           if (ret)
->>>               goto put_cores;
->>> @@ -1618,14 +1667,12 @@ static int prueth_probe(struct platform_device *pdev)
->>>       pruss_put(prueth->pruss);
->>>     put_cores:
->>> -    if (eth1_node) {
->>> -        prueth_put_cores(prueth, ICSS_SLICE1);
->>> -        of_node_put(eth1_node);
->>> -    }
->>> -
->>> -    if (eth0_node) {
->>> +    if (eth0_node || eth1_node) {
->>>           prueth_put_cores(prueth, ICSS_SLICE0);
->>>           of_node_put(eth0_node);
->>> +
->>> +        prueth_put_cores(prueth, ICSS_SLICE1);
->>> +        of_node_put(eth1_node);
->>>       }
->>>         return ret;
->>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>> index f5c1d473e9f9..b30f2e9a73d8 100644
->>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>> @@ -257,6 +257,7 @@ struct icssg_firmwares {
->>>    * @is_switchmode_supported: indicates platform support for switch mode
->>>    * @switch_id: ID for mapping switch ports to bridge
->>>    * @default_vlan: Default VLAN for host
->>> + * @prus_running: flag to indicate if all pru cores are running
->>>    */
->>>   struct prueth {
->>>       struct device *dev;
->>> @@ -298,6 +299,7 @@ struct prueth {
->>>       int default_vlan;
->>>       /** @vtbl_lock: Lock for vtbl in shared memory */
->>>       spinlock_t vtbl_lock;
->>> +    bool prus_running;
->>
->> I think you don't need fw_running flag anymore. Could you please remove it
->> from struct prueth_emac?
->>
-> 
-> This flag is still being used by SR1, for which this patch doesn't apply. So I prefer not touching this flag for the sake of SR1.
-
-ok let's leave it there then.
-
-> 
->>>   };
->>>     struct emac_tx_ts_response {
->>> @@ -361,6 +363,8 @@ int icssg_set_port_state(struct prueth_emac *emac,
->>>                enum icssg_port_state_cmd state);
->>>   void icssg_config_set_speed(struct prueth_emac *emac);
->>>   void icssg_config_half_duplex(struct prueth_emac *emac);
->>> +void icssg_init_emac_mode(struct prueth *prueth);
->>> +void icssg_init_fw_offload_mode(struct prueth *prueth);
->>>     /* Buffer queue helpers */
->>>   int icssg_queue_pop(struct prueth *prueth, u8 queue);
->>> @@ -377,6 +381,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
->>>                  u8 untag_mask, bool add);
->>>   u16 icssg_get_pvid(struct prueth_emac *emac);
->>>   void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port);
->>> +int emac_fdb_flow_id_updated(struct prueth_emac *emac);
->>>   #define prueth_napi_to_tx_chn(pnapi) \
->>>       container_of(pnapi, struct prueth_tx_chn, napi_tx)
->>>   
->>
-
--- 
-cheers,
--roger
-
+I indeed could not find reasons why locking would be strictly necessary for correctness here. On the other hand a 
+clearly benign warning should not be triggered, especially considering that panic_on_warn may be on on some systems.
 
