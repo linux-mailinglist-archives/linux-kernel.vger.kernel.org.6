@@ -1,285 +1,155 @@
-Return-Path: <linux-kernel+bounces-437735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 778C59E97CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:51:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9EB19E97D5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:52:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4D6E1882F84
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:51:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EB1164A7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2E03595B;
-	Mon,  9 Dec 2024 13:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="la+7jh3W";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VENehsvf";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="IV1+Ichj";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="kTGwfDaH"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE601ACEA2;
+	Mon,  9 Dec 2024 13:52:11 +0000 (UTC)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 136FC12CD8B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC9523313C;
+	Mon,  9 Dec 2024 13:52:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752307; cv=none; b=tjQjuKJdIvBYhwXx7dQrrEzytH/w+kK0e4tzwUPfKEhZp8RWBbtnJdpKz9GOWAgIHGjAyseP78xT9FIvIVUq8w5GI4g8thQ75HSQLkMOQ6Qolr3SAjxVSag85PCrhPtOB7B8xdtQQP6Yqfxr7r3B2B+UplwPNKmzD6lcFiA8OEg=
+	t=1733752330; cv=none; b=eUQOZYBjwq0/XxBxDEaL51l9FNEPchrWBW1yxs1t9hsz1SsqtvkENecSzkM5cHDWKBFGdICDwMHRMqchFvj+tZR/yfj0HCy1qKebBXgaSdCfmf4VMbL5lROEQ+ii5cnu3KfyXKzDbA5rJhcug+2kU5UnfI4cOyF3JD8hcHHpsOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752307; c=relaxed/simple;
-	bh=twtzp3CLNwRsdmt4VAUrWVEYAc6D3fK6fHq8SR2QTco=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nT4JI7+OhZMXO+li7itcK5WjuYieVPkJ+c6zMBS9p5YpMnBD3T60oLCegzy2k2DIqudgkfepIETBS3LqZrZrASyqWIpbo/ePk9N2j3WMvN/SE3Fnd4CK/AOwGuFKx9wk+ehcXXQ7IHqEergbWU5qfpfZrbumcK1NPoY94tE2q5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=la+7jh3W; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VENehsvf; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=IV1+Ichj; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=kTGwfDaH; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id CEBF82117A;
-	Mon,  9 Dec 2024 13:51:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733752303; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LjXSG7zV5VH0+OgjO/Ctwl2n5WEvCTsUvSdkOAFq0JU=;
-	b=la+7jh3WyAoqifkGUJ4HZ6N0GRi6mtEKFtIWXnRVUO4W8ich9zoq21yBKPBvBQNdVyEnGL
-	zAlC2JvOn2DpO9jHteCXWuxtwnLU5P8Rzx3lvIv/HYf66ylnlrw4acLMXpyJvb2gFNWDPP
-	tSs47rRygdcxtrc0h4wKBPnuCaSNVws=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733752303;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LjXSG7zV5VH0+OgjO/Ctwl2n5WEvCTsUvSdkOAFq0JU=;
-	b=VENehsvfvGmbVyQZANalCYvh7NyfUwMMq0Bw5RhdxSck0r3ZQPQapT0I9zSIFlpElATTnR
-	QkI/ZBnzmCNgC+DQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733752302; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LjXSG7zV5VH0+OgjO/Ctwl2n5WEvCTsUvSdkOAFq0JU=;
-	b=IV1+Ichjc0ONt9UM9c9G5GBOqhc5XyVXGDNkUWAWsdUqI9LeIQgmlpMbDvyKY77liAx4pu
-	56h4ItY6YV8cQ2Lcr2KvAYQ04q09/ksw5ASQI72eIsUFEeE2AAsd+GdNWAQLYsukHfurX4
-	efyX73Y7pb2fIsdMW1GYbG6qB10WRIk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733752302;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=LjXSG7zV5VH0+OgjO/Ctwl2n5WEvCTsUvSdkOAFq0JU=;
-	b=kTGwfDaHgP/YdP+aWYyVLVdeWRUAW4reSa5/T6PbBFg65/70TEmoA1i627fPaVSDUF5oxh
-	UWw7Ofyk+Fg4thBA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B6430138D2;
-	Mon,  9 Dec 2024 13:51:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id agIoLO71VmfLcgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 09 Dec 2024 13:51:42 +0000
-Message-ID: <c77d35c7-0d27-44de-9bd0-74371b881943@suse.cz>
-Date: Mon, 9 Dec 2024 14:51:42 +0100
+	s=arc-20240116; t=1733752330; c=relaxed/simple;
+	bh=KVSzxO4n3eVIi2k+dY9vAMYddcYqXvIROSatSRHDyAk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gIR15aOktExbdM0ioAGvKD2JnwRJ/V3hKdvaFf0mu03Kmeg49wZrneQr21Nx2zNipiwmENkq0tBg1qbpENFcBgYPuIausY5hvm6V0RpFiqPSqi/xEbrenOKFiEaf1bVzWOF9/l3bFlMTvUowNS2Sp25p+YJWv8c4zO7Okjiu+3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4affbc4dc74so315630137.0;
+        Mon, 09 Dec 2024 05:52:08 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733752325; x=1734357125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lHnG1lQA5ML9HkTzWoGAcGw6cp3gHA+KA94RyrtUoYE=;
+        b=UuMJnNKy6NWas75Ncuvz7szgrW/bNaEjYN4ftaARDd7UGKwBAIETsEiXVQxLHUJdIF
+         MeY1IZKoBy+kjVD2O6Vs9kMx1tbKgeTaZE070F3rr92y8rMrg6wmyroOGg/pfO5a/Ptj
+         kod7zpcHUmjRXA/sZrE8Qv9T96Mw4RtYOR+/eRg7h/vi5qSulGcoQBO+mMZFAWOIdDIb
+         UwOBDbeMUso/Bl9GRXoB1UBIsfTy5VIYalbLGdB65yAfTlJ56D20M0kXarSCQQ3rPcUD
+         Zgf9GMajph5WEH/dK2wNlLe0gwCCZDTO9vs9ZYApWVA9RgOx2cWxyQeu6j+5uZOAMwtM
+         Zfcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcuiwqAfs9rZ9chd72e3KQ3HeD/q/5U8pWFhWP5k18cve0obEXl22d86PmgN3mYdZZBz9QQcpZNign@vger.kernel.org, AJvYcCVMImxEQU7UQWBNNr1+rGEFzCpD7jASeaan2e4q9mXatM4hitWrjEGSB9RyzM+Qd1ioyLSkw+LcFjJ7vcc=@vger.kernel.org, AJvYcCVRhO1IZbolat+5zbgz/o5CCkTN++qxrMwkW41sdPaOpKUxV6XhHjoNJGGIgU+f8Wf3cgGYdW5lZatzZw==@vger.kernel.org, AJvYcCXWqDLlByqJORaCbqLjkxheq8KOJWB49HEaVEuciNUVe517gFkGdX3BHILO85DbXt8sCNhvlDidb3Sp@vger.kernel.org, AJvYcCXilZatpuqvHGsvp82ZT+UP5NfMgRQCKs38mlAlR1t7bRm/0Q30W9+KpkT9N8MmJ6xRh54Yg0AZdKpkEbVe7RqhQBE=@vger.kernel.org, AJvYcCXj3TuYWuh2RGz2kRIntzGodHCW+zh5DqGT3SV4oQAz0HJwLHvtKm8S/ucjiJpeTOl3Km41a6u2Dw4qpocX@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5ouJlgYFaYkQWwUzpFQhX8FT8+5aR5X8pqm0m3EcChcZDt53/
+	4KXJH15arRJCmbWx5G/GF5+nml1ybs8BUGaEp4gyPhqz2uEjFtUgdfSTplE6Cfo=
+X-Gm-Gg: ASbGnctyYDn8tHF/5UVTqGbffGZ1zs8RmHaOiFAk9cmdtSDYFWoiZq75nyllcAIi31Z
+	pYxCUYJ+r3Cs7f19ZIGJ1t0vucspdHLqIZiQ57lFe2ByZU0YiVpHdqLqbpZj4QHbki84knVMCYe
+	D0wcRHC3emMi/pBu30p6ViHScr+QnqFg7i1iIglJVnLN+4OfQYtnychMwwJltGlbYyFsEulcXBt
+	cr8GQ3hSqZuCPUe5z85DbmDuXjPbvkNBuzQ1e6dH1PntU1ptQFJPC8TaRRhsaTzQd/41Bt5g17t
+	lOfITXLem59L
+X-Google-Smtp-Source: AGHT+IF0MnpEMx3NOBgUS4egQaYxpLHdES8JkO7lz42wTnWK1UmTyhNbO1MKQd5yZll95UhZLCP06w==
+X-Received: by 2002:a05:6102:5494:b0:4af:df60:8649 with SMTP id ada2fe7eead31-4b116c6eee3mr673534137.9.1733752325003;
+        Mon, 09 Dec 2024 05:52:05 -0800 (PST)
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afe6969140sm553661137.7.2024.12.09.05.52.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 05:52:04 -0800 (PST)
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85c5a91374cso487340241.3;
+        Mon, 09 Dec 2024 05:52:03 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUQR3KBJtVfp5rwtCJpUVo4IxTLcFpslFfbKzxWQBlP0W9xXzDUQ+EAi5Vs652tySijKfjSEXAMR/ZG25Q=@vger.kernel.org, AJvYcCUfaWKfAU+fzw6ddhTsvGYqgpPCWVVsXsgejo9sQeyMMwsqHyX7e/I7iNihCAqrg37tXpJpdj91z6agUg==@vger.kernel.org, AJvYcCVF0aJxX+IQQMOVJ7e6T+c+0lRT1qvWBssP51wYx4s2dvnJFS1clCyxiGIEkSZmZjvF04JvYQEsgp3U@vger.kernel.org, AJvYcCW1VdHQmiUsHTk3ncCjhjwoHwxYPqxYwfc1bcBqY8sQAZSgVlQscbKsKrRhHX63cE/jKOdmWmdo8y8POsYM59ZYNVg=@vger.kernel.org, AJvYcCX/dLmfr/WGZGj5Ocb9xsbiVrn4kn62LPzUpPDld4RZ33UgkA6rcGJ0QaLV37jaxTgZNO7RrzB4d2OQU7ff@vger.kernel.org, AJvYcCXu/peKCbcYb+av4FvlCsknv51gBCFZjYX/lSd/GvhVjkLgSQ4Eeq8n9BA0Jz8CTpNlmBHYwf1NKzUI@vger.kernel.org
+X-Received: by 2002:a05:6102:290c:b0:4b1:11c6:d3d2 with SMTP id
+ ada2fe7eead31-4b111c6e527mr1362540137.27.1733752323343; Mon, 09 Dec 2024
+ 05:52:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: enforce __must_check on VMA merge and split
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
- <jannh@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20241206225036.273103-1-lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241206225036.273103-1-lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,oracle.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-15-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-15-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 14:51:51 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdU+_NuLp2FuwwcLfJRe2ssMtp=z7fqcsANgYfFehTNJGg@mail.gmail.com>
+Message-ID: <CAMuHMdU+_NuLp2FuwwcLfJRe2ssMtp=z7fqcsANgYfFehTNJGg@mail.gmail.com>
+Subject: Re: [PATCH v3 14/25] ASoC: renesas: rz-ssi: Use goto label names that
+ specify their actions
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/6/24 23:50, Lorenzo Stoakes wrote:
-> It is of critical importance to check the return results on VMA merge (and
-> split), failure to do so can result in use-after-free's. This bug has
-> recurred, so have the compiler enforce this check to prevent any future
-> repetition.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hi Claudiu,
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Use goto label names that specify their action. In this way we can have
+> a better understanding of what is the action associated with the label
+> by just reading the label name.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-> ---
->  mm/vma.c |  8 +++++---
->  mm/vma.h | 26 +++++++++++++++-----------
->  2 files changed, 20 insertions(+), 14 deletions(-)
-> 
-> diff --git a/mm/vma.c b/mm/vma.c
-> index a06747845cac..543c102b4062 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -447,8 +447,9 @@ void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
->   * has already been checked or doesn't make sense to fail.
->   * VMA Iterator will point to the original VMA.
->   */
-> -static int __split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> -		       unsigned long addr, int new_below)
-> +static __must_check int
-> +__split_vma(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> +	    unsigned long addr, int new_below)
->  {
->  	struct vma_prepare vp;
->  	struct vm_area_struct *new;
-> @@ -710,7 +711,8 @@ static bool can_merge_remove_vma(struct vm_area_struct *vma)
->   * - The caller must hold a WRITE lock on the mm_struct->mmap_lock.
->   * - vmi must be positioned within [@vmg->vma->vm_start, @vmg->vma->vm_end).
->   */
-> -static struct vm_area_struct *vma_merge_existing_range(struct vma_merge_struct *vmg)
-> +static __must_check struct vm_area_struct *vma_merge_existing_range(
-> +		struct vma_merge_struct *vmg)
->  {
->  	struct vm_area_struct *vma = vmg->vma;
->  	struct vm_area_struct *prev = vmg->prev;
-> diff --git a/mm/vma.h b/mm/vma.h
-> index 295d44ea54db..61ed044b6145 100644
-> --- a/mm/vma.h
-> +++ b/mm/vma.h
-> @@ -139,9 +139,10 @@ void validate_mm(struct mm_struct *mm);
->  #define validate_mm(mm) do { } while (0)
->  #endif
->  
-> -int vma_expand(struct vma_merge_struct *vmg);
-> -int vma_shrink(struct vma_iterator *vmi, struct vm_area_struct *vma,
-> -	       unsigned long start, unsigned long end, pgoff_t pgoff);
-> +__must_check int vma_expand(struct vma_merge_struct *vmg);
-> +__must_check int vma_shrink(struct vma_iterator *vmi,
-> +		struct vm_area_struct *vma,
-> +		unsigned long start, unsigned long end, pgoff_t pgoff);
->  
->  static inline int vma_iter_store_gfp(struct vma_iterator *vmi,
->  			struct vm_area_struct *vma, gfp_t gfp)
-> @@ -174,13 +175,14 @@ void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
->  		struct vm_area_struct *prev, struct vm_area_struct *next);
->  
->  /* We are about to modify the VMA's flags. */
-> -struct vm_area_struct *vma_modify_flags(struct vma_iterator *vmi,
-> +__must_check struct vm_area_struct
-> +*vma_modify_flags(struct vma_iterator *vmi,
->  		struct vm_area_struct *prev, struct vm_area_struct *vma,
->  		unsigned long start, unsigned long end,
->  		unsigned long new_flags);
->  
->  /* We are about to modify the VMA's flags and/or anon_name. */
-> -struct vm_area_struct
-> +__must_check struct vm_area_struct
->  *vma_modify_flags_name(struct vma_iterator *vmi,
->  		       struct vm_area_struct *prev,
->  		       struct vm_area_struct *vma,
-> @@ -190,7 +192,7 @@ struct vm_area_struct
->  		       struct anon_vma_name *new_name);
->  
->  /* We are about to modify the VMA's memory policy. */
-> -struct vm_area_struct
-> +__must_check struct vm_area_struct
->  *vma_modify_policy(struct vma_iterator *vmi,
->  		   struct vm_area_struct *prev,
->  		   struct vm_area_struct *vma,
-> @@ -198,7 +200,7 @@ struct vm_area_struct
->  		   struct mempolicy *new_pol);
->  
->  /* We are about to modify the VMA's flags and/or uffd context. */
-> -struct vm_area_struct
-> +__must_check struct vm_area_struct
->  *vma_modify_flags_uffd(struct vma_iterator *vmi,
->  		       struct vm_area_struct *prev,
->  		       struct vm_area_struct *vma,
-> @@ -206,11 +208,13 @@ struct vm_area_struct
->  		       unsigned long new_flags,
->  		       struct vm_userfaultfd_ctx new_ctx);
->  
-> -struct vm_area_struct *vma_merge_new_range(struct vma_merge_struct *vmg);
-> +__must_check struct vm_area_struct
-> +*vma_merge_new_range(struct vma_merge_struct *vmg);
->  
-> -struct vm_area_struct *vma_merge_extend(struct vma_iterator *vmi,
-> -					struct vm_area_struct *vma,
-> -					unsigned long delta);
-> +__must_check struct vm_area_struct
-> +*vma_merge_extend(struct vma_iterator *vmi,
-> +		  struct vm_area_struct *vma,
-> +		  unsigned long delta);
->  
->  void unlink_file_vma_batch_init(struct unlink_vma_file_batch *vb);
->  
+Thanks for your patch!
 
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+> --- a/sound/soc/renesas/rz-ssi.c
+> +++ b/sound/soc/renesas/rz-ssi.c
+> @@ -1084,15 +1084,15 @@ static int rz_ssi_probe(struct platform_device *p=
+dev)
+>         /* Error Interrupt */
+>         ssi->irq_int =3D platform_get_irq_byname(pdev, "int_req");
+>         if (ssi->irq_int < 0) {
+> -               rz_ssi_release_dma_channels(ssi);
+> -               return ssi->irq_int;
+> +               ret =3D ssi->irq_int;
+> +               goto err_release_dma_chs;
+>         }
+>
+>         ret =3D devm_request_irq(dev, ssi->irq_int, &rz_ssi_interrupt,
+>                                0, dev_name(dev), ssi);
+>         if (ret < 0) {
+> -               rz_ssi_release_dma_channels(ssi);
+> -               return dev_err_probe(dev, ret, "irq request error (int_re=
+q)\n");
+> +               dev_err_probe(dev, ret, "irq request error (int_req)\n");
+> +               goto err_release_dma_chs;
+>         }
+>
+>         if (!rz_ssi_is_dma_enabled(ssi)) {
+
+Inside this block there are several return statements.
+As we know DMA is not available when we get here, these do not
+need to call rz_ssi_release_dma_channels() hence do not use
+"goto err_release_dma_chs".
+However, this may be missed when making future changes.
+So perhaps it may be prudent to make this safer, by moving this inside
+the failure branch of the rz_ssi_dma_request() check above?
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
