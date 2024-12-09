@@ -1,194 +1,274 @@
-Return-Path: <linux-kernel+bounces-437353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EE19E9220
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:26:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B142B9E9243
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:30:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B888163674
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:26:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CF57188302D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EA121A947;
-	Mon,  9 Dec 2024 11:26:29 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB8E21D59D;
+	Mon,  9 Dec 2024 11:29:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YQaEQ5E/"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9428921A938
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:26:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9957E21CFE3;
+	Mon,  9 Dec 2024 11:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733743589; cv=none; b=qQCVQvN84bw+NmODY3Qkn8V3gb7rPsJkVZ85jzrzdH9Hn5dnicLAv2jIHM0s0LzyS6s9jaMgn2k3zbZJLsCYHhXBzfJ7uFUUGkLg4VrOvW4W/lVqEFG5ShuidkaDqCa9+Ro3/PC9McvzJM1VeRFhWaia/LPCP82M43blqr3hQ9c=
+	t=1733743767; cv=none; b=isSOH6yPbSK0Ppe8aNpxiSXaMZo/nvM7cyZbi/LfAyrz/eCEN2AYud1hLb0xeSrBdtzW/NE7S+BtFp3clR0aTzDiVyQKtDBQV/y2tbguPOYI/2n5KqIEykcJWUfs6If+Da4Y9DOoGhfY7mLSVDhSCxsTih9Wms19eLI+IxybkSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733743589; c=relaxed/simple;
-	bh=/TXYt/JSVpvKcKJZQh9UGQYFi/v8I1iqiR++f4oZ78c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aCQtbhAMV4Ryx1jjnlFg7zAfP8w+2I2kkGMyyq1xqiQ5DNxy6NP7a1hPHSQa+7QdiXFHUVEA5GZ1STIMtZO7G+tNkGNcbaG677qV3YmsbokbWTiiCsuusw67i/0CPwRvf5wGLhDxfIAFNNpzXG18S02T5F7Iyol3OFkjSnawxU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a81828bc7cso11329145ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:26:27 -0800 (PST)
+	s=arc-20240116; t=1733743767; c=relaxed/simple;
+	bh=yJnAUnOBisZ3dhz3HnsbKm2/RZKkA9XAwjdJuK7c2Mc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qwtKRrGJZcwjwC04YsDRUA1oWYWWxllVnkpgTcWYqidPBl4z+AE+rG/aVOPc9ploGptwkBmVr+evK46bQsXnnQQa38Ru0CiaeS4f0N16KHVJ23PlATD51sWlkD7BplKtp8/V5WiyFdRQcUEYG/ne3fSKkHcb8NEsleQHrsuUKCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YQaEQ5E/; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-aa1e6ecd353so684806466b.1;
+        Mon, 09 Dec 2024 03:29:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733743764; x=1734348564; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wXzm1cjWJaSGl7IBhydp6k3erZJuc8jy+xEzIOAkkH4=;
+        b=YQaEQ5E/ujb48MkBDV/u+CEhL8WNZPHPreiTTD6Aei81eCWNR6x2/pm7x8WP8XdLKo
+         mrHjLEeyNrI77DauIk0Ok3klfZ0i9DyYedUZl+UFhy5MAU16qOmiiGaORHKubOEiRE0+
+         tCejGuWMBTArR9yBBYAcpbuh0JkPDId4c3huIHHM7kdX1flmEHnTCjSCGI8QrlOC4PBa
+         DqEczRhftlJECCsnkphhbtVklM6FiWBj4WQuqP4a7ONRwxH0OUjDL9qi5sxbf1Gvzvuf
+         MCN0oMNvwewiQDGzusyXKEM0GfxppOvXP5+RqZq9uHI7erkEyABZbzUmN2+YHAE7O9F5
+         3DjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733743587; x=1734348387;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r8n91O6zTrZE9K8rkaFaaKhWrRhPVCdSytUqfDyk7UA=;
-        b=v5K9ePEYscygVqqy4StZp+i7TQAA41KhD1lwEQvEO3ZQZsNqMSpaZNtM2+FyKEDV9D
-         4zW654gld/7MUgnIbPXmK7Dc0yLlAb+j88s6/7v6LOpKRA7xvZ5y1yMjY32TN6hAlpJW
-         0E9zj83MKE9PGIylZADU9Wg+P38guEZfokNxrgXQSdoLgc/SUY5DgvDwN7xOO4SSdF4m
-         PZz//VyV6oktE78T3THn900sO92GmEdHioxOWYurmH4aFKHKdJiBebv0Fo7fJTFso3RK
-         s/BodSAYbPpEn0G4DFy7qYwZO/ZuukdcNKGYzM2oxlPbAFsGJsf+D4OLfCCViNhEq/Mp
-         YYaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwf1incGwIpY92O8K2Q9Q/BwTuJ4V39IJ3jovTolupYER6hSJs4z9A3QSHus6up6AzLdAuvZbzwV7PUWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkKcVbfwmuQuiM9A4tfQzS9eBf1UHb40T9/OkV8kMeBSsx2IU8
-	hSLDnVDP93Vpx/pSlTkN3jTuBsGwYs+y9WLcaPRbBsvdqPJdZHOZkuon4FPqnx7ogYXAzl9BTBx
-	XOExH+/wymZKwrtpcLBMxkVCpDSDALBFNiMLxDkXVhN+9aM8vvrzBJfY=
-X-Google-Smtp-Source: AGHT+IGsj1R+31SpApdsRX1q5hzIVUTnr7Mow2hTGAEj2UZzKWYRHGYRxrU+y/GPEfaIlgyIrvkKbY2DaGUOLIZ2NkfyODWinTN1
+        d=1e100.net; s=20230601; t=1733743764; x=1734348564;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wXzm1cjWJaSGl7IBhydp6k3erZJuc8jy+xEzIOAkkH4=;
+        b=V0nL7sXr8jtyeQA7Ppys1hU/uhucUILIyC98krxZL9qOmjhQJztxphtKJv29TistxO
+         0LBs2gmNJztC6OHnZs67tPyvdE2OFZk7kTfvSY8ac/g7z4FnfU+cUrQf6PWLh3NGiF7u
+         EScziuSM4ktCfoeffnG+R3PLIJ5t3Yqokk8aO4gdpKL1mkEl4IzQlFQA/xY61tfXJcNs
+         Nzj7FkXcg8sbXlrAc2U68c6gD3jjZeTHWTxhxOJJ98OqDsXfK+FWJVue7Sux/aVXgrhl
+         WrgOlXy0WNEXGgbeZzSwLdizui0nmjbSv1PI5QlcDq32Lsq9alBDTVv4kIpXgnWCXpKI
+         LqRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+ioE68VxYWB4cA0b0mDtckUuMPKcoU82IamWPirf0K9gWe4gvzawUUwcoDpiqVMu7k42pXhQl8JSm4Q==@vger.kernel.org, AJvYcCWcmTHCEagBHay5Tnm1G3YcyNzQR6MdkDUDSAvby9ynu9GtcWUlEbD0LRtFmDkJc/Qf+si7mh5+6kww@vger.kernel.org, AJvYcCWgjwhSXrOeXHPXlEWaYuXaqtAAnmOv0KxHqKMH3hrLmA7c6ffCJaAbjVmCVNV+fW4O27andV5w9s9u2d0=@vger.kernel.org, AJvYcCXNLDf/qm697k8rUzSMN1UJLQWdSBjgupv7PcdkUOJo+KaqKyHMbp9xlaBTV0CfCbwQ9rLJWT90YGLKUhLq@vger.kernel.org
+X-Gm-Message-State: AOJu0YycfNuw0B7cmCY1eKosP7v3033c2LWfku+Fitl0DHzkDAR9fUrt
+	AGVQBIJanJJhhNlt0Zw4EDR1xVXwMAZ+UBvTHIvzPuSnGqKU/8xw
+X-Gm-Gg: ASbGncvojhH6RBiFPGrE0A5bpDOmnjG/jCe9KINGIVi/04eTF/OUD3uHRe+iPRh2fxJ
+	BVX62iXzSr7t/Cnlq0ADCbC5vEe8rdW7P/GFIXhcu833YZoda5hVTJwuAicYW4ceo/FCtGELoGF
+	OlDyS69BZtCBgGuJpfV3a9JgZp9tsQj5SbHe5Kq8zMA8o6eujpyGcJ9bcBwE7P5rcsGLfFuf6Bf
+	bn/rQb3WBhoHYpZ1VAVKDYbHY56121qwjZZZM9EzLntJbp0
+X-Google-Smtp-Source: AGHT+IFIVAHf1m/IHG+sqVnl4++noMovd2qOxnl5VkzWewM/f+8vOhFT49UajQMFDxAaTO4bUgfyIQ==
+X-Received: by 2002:a05:6402:541a:b0:5d0:c7a7:ac13 with SMTP id 4fb4d7f45d1cf-5d418604dbbmr418021a12.34.1733743763722;
+        Mon, 09 Dec 2024 03:29:23 -0800 (PST)
+Received: from [127.0.1.1] ([46.53.242.72])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b608faesm5980350a12.44.2024.12.09.03.29.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 03:29:22 -0800 (PST)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+Date: Mon, 09 Dec 2024 14:26:27 +0300
+Subject: [PATCH v11 3/9] dt-bindings: power: supply: max17042: split on 2
+ files
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:13ac:b0:3a7:a29b:c181 with SMTP id
- e9e14a558f8ab-3a9dbac647amr780545ab.13.1733743586864; Mon, 09 Dec 2024
- 03:26:26 -0800 (PST)
-Date: Mon, 09 Dec 2024 03:26:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6756d3e2.050a0220.a30f1.019d.GAE@google.com>
-Subject: [syzbot] [exfat?] general protection fault in exfat_init_dir_entry
-From: syzbot <syzbot+ff3c3b48f27747505446@syzkaller.appspotmail.com>
-To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
-	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241209-starqltechn_integration_upstream-v11-3-dc0598828e01@gmail.com>
+References: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
+In-Reply-To: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
+To: Sebastian Reichel <sre@kernel.org>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
+ Hans de Goede <hdegoede@redhat.com>, 
+ Marek Szyprowski <m.szyprowski@samsung.com>, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Purism Kernel Team <kernel@puri.sm>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+ linux-leds@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733743755; l=5484;
+ i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
+ bh=yJnAUnOBisZ3dhz3HnsbKm2/RZKkA9XAwjdJuK7c2Mc=;
+ b=r1Onup4zVHBfmvpzuY/NZ5gfdH7I4VJyKGDYKGrdG1RPJBJBb6XvNBhpu6jfih9rk/6WIW/an
+ TnJvBFqAxNhCt55v5So7Ct7zVz3YFNGiSHYdJtMafMLMGmK9XircOdr
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
+ pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
 
-Hello,
+Move max17042 common binding part to separate file, to
+reuse it for MFDs with platform driver version.
 
-syzbot found the following issue on:
-
-HEAD commit:    62b5a46999c7 Merge tag '6.13-rc1-smb3-client-fixes' of git..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17679944580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
-dashboard link: https://syzkaller.appspot.com/bug?extid=ff3c3b48f27747505446
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-62b5a469.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/2545deb88ab1/vmlinux-62b5a469.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/7af07c0abbf0/bzImage-62b5a469.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+ff3c3b48f27747505446@syzkaller.appspotmail.com
-
-syz.0.0: attempt to access beyond end of device
-loop0: rw=0, sector=161, nr_sectors = 1 limit=134
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
-CPU: 0 UID: 0 PID: 5331 Comm: syz.0.0 Not tainted 6.13.0-rc1-syzkaller-00378-g62b5a46999c7 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
-RIP: 0010:exfat_init_dir_entry+0x556/0x9c0 fs/exfat/dir.c:460
-Code: 48 98 49 8d 1c c7 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 d8 66 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 bb 66 89 ff 4c 8b 3b 42 80 7c 2d
-RSP: 0018:ffffc9000d4472f8 EFLAGS: 00010206
-RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
-RBP: 1ffff92001a88edc R08: ffffffff8280f817 R09: 0000000000000000
-R10: ffffc9000d447240 R11: fffff52001a88e4d R12: 0000000000000200
-R13: dffffc0000000000 R14: ffff88801ab22000 R15: ffffc9000d4476f0
-FS:  00007fa72178f6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffcf81a2818 CR3: 0000000034a2e000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- exfat_add_entry+0x516/0xaa0 fs/exfat/namei.c:516
- exfat_create+0x1c7/0x570 fs/exfat/namei.c:565
- lookup_open fs/namei.c:3649 [inline]
- open_last_lookups fs/namei.c:3748 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3984
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_openat fs/open.c:1433 [inline]
- __se_sys_openat fs/open.c:1428 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa72097fed9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fa72178f058 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007fa720b45fa0 RCX: 00007fa72097fed9
-RDX: 0000000000141842 RSI: 0000000020000080 RDI: ffffffffffffff9c
-RBP: 00007fa7209f3cc8 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fa720b45fa0 R15: 00007ffea8996448
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
-RIP: 0010:exfat_init_dir_entry+0x556/0x9c0 fs/exfat/dir.c:460
-Code: 48 98 49 8d 1c c7 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 d8 66 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 bb 66 89 ff 4c 8b 3b 42 80 7c 2d
-RSP: 0018:ffffc9000d4472f8 EFLAGS: 00010206
-RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
-RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
-RBP: 1ffff92001a88edc R08: ffffffff8280f817 R09: 0000000000000000
-R10: ffffc9000d447240 R11: fffff52001a88e4d R12: 0000000000000200
-R13: dffffc0000000000 R14: ffff88801ab22000 R15: ffffc9000d4476f0
-FS:  00007fa72178f6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffea8995c80 CR3: 0000000034a2e000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	48 98                	cltq
-   2:	49 8d 1c c7          	lea    (%r15,%rax,8),%rbx
-   6:	48 89 d8             	mov    %rbx,%rax
-   9:	48 c1 e8 03          	shr    $0x3,%rax
-   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
-  12:	74 08                	je     0x1c
-  14:	48 89 df             	mov    %rbx,%rdi
-  17:	e8 d8 66 89 ff       	call   0xff8966f4
-  1c:	48 8b 1b             	mov    (%rbx),%rbx
-  1f:	48 83 c3 28          	add    $0x28,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 bb 66 89 ff       	call   0xff8966f4
-  39:	4c 8b 3b             	mov    (%rbx),%r15
-  3c:	42                   	rex.X
-  3d:	80                   	.byte 0x80
-  3e:	7c 2d                	jl     0x6d
-
-
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ Documentation/devicetree/bindings/power/supply/maxim,max17042-base.yaml | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml      | 49 +------------------------------------------------
+ MAINTAINERS                                                             |  2 +-
+ 3 files changed, 68 insertions(+), 49 deletions(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max17042-base.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max17042-base.yaml
+new file mode 100644
+index 000000000000..1653f8ae11f7
+--- /dev/null
++++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042-base.yaml
+@@ -0,0 +1,66 @@
++# SPDX-License-Identifier: GPL-2.0
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/power/supply/maxim,max17042-base.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Maxim 17042 fuel gauge series
++
++maintainers:
++  - Sebastian Reichel <sre@kernel.org>
++
++allOf:
++  - $ref: power-supply.yaml#
++
++properties:
++  compatible:
++    enum:
++      - maxim,max17042
++      - maxim,max17047
++      - maxim,max17050
++      - maxim,max17055
++      - maxim,max77705-battery
++      - maxim,max77849-battery
++
++  interrupts:
++    maxItems: 1
++    description: |
++      The ALRT pin, an open-drain interrupt.
++
++  maxim,rsns-microohm:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Resistance of rsns resistor in micro Ohms (datasheet-recommended value is 10000).
++      Defining this property enables current-sense functionality.
++
++  maxim,cold-temp:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Temperature threshold to report battery as cold (in tenths of degree Celsius).
++      Default is not to report cold events.
++
++  maxim,over-heat-temp:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Temperature threshold to report battery as over heated (in tenths of degree Celsius).
++      Default is not to report over heating events.
++
++  maxim,dead-volt:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Voltage threshold to report battery as dead (in mV).
++      Default is not to report dead battery events.
++
++  maxim,over-volt:
++    $ref: /schemas/types.yaml#/definitions/uint32
++    description: |
++      Voltage threshold to report battery as over voltage (in mV).
++      Default is not to report over-voltage events.
++
++  power-supplies: true
++
++required:
++  - compatible
++
++additionalProperties: false
++
+diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
+index 14242de7fc08..b7fd714cc72e 100644
+--- a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
++++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
+@@ -10,60 +10,13 @@ maintainers:
+   - Sebastian Reichel <sre@kernel.org>
+ 
+ allOf:
+-  - $ref: power-supply.yaml#
++  - $ref: maxim,max17042-base.yaml#
+ 
+ properties:
+-  compatible:
+-    enum:
+-      - maxim,max17042
+-      - maxim,max17047
+-      - maxim,max17050
+-      - maxim,max17055
+-      - maxim,max77705-battery
+-      - maxim,max77849-battery
+-
+   reg:
+     maxItems: 1
+ 
+-  interrupts:
+-    maxItems: 1
+-    description: |
+-      The ALRT pin, an open-drain interrupt.
+-
+-  maxim,rsns-microohm:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    description: |
+-      Resistance of rsns resistor in micro Ohms (datasheet-recommended value is 10000).
+-      Defining this property enables current-sense functionality.
+-
+-  maxim,cold-temp:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    description: |
+-      Temperature threshold to report battery as cold (in tenths of degree Celsius).
+-      Default is not to report cold events.
+-
+-  maxim,over-heat-temp:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    description: |
+-      Temperature threshold to report battery as over heated (in tenths of degree Celsius).
+-      Default is not to report over heating events.
+-
+-  maxim,dead-volt:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    description: |
+-      Voltage threshold to report battery as dead (in mV).
+-      Default is not to report dead battery events.
+-
+-  maxim,over-volt:
+-    $ref: /schemas/types.yaml#/definitions/uint32
+-    description: |
+-      Voltage threshold to report battery as over voltage (in mV).
+-      Default is not to report over-voltage events.
+-
+-  power-supplies: true
+-
+ required:
+-  - compatible
+   - reg
+ 
+ additionalProperties: false
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 7700208f6ccf..cd5532afbfe4 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -14157,7 +14157,7 @@ R:	Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>
+ R:	Purism Kernel Team <kernel@puri.sm>
+ L:	linux-pm@vger.kernel.org
+ S:	Maintained
+-F:	Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
++F:	Documentation/devicetree/bindings/power/supply/maxim,max17042*.yaml
+ F:	drivers/power/supply/max17042_battery.c
+ 
+ MAXIM MAX20086 CAMERA POWER PROTECTOR DRIVER
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+-- 
+2.39.5
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
