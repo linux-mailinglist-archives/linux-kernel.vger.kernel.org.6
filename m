@@ -1,74 +1,117 @@
-Return-Path: <linux-kernel+bounces-437699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFB2E9E974A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:37:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B65AF1885253
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:35:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1830A1A23A6;
-	Mon,  9 Dec 2024 13:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="cAcTwbTT"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F489E9741
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:36:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D29F4233135;
-	Mon,  9 Dec 2024 13:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38454283DD8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:36:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C76141ACED6;
+	Mon,  9 Dec 2024 13:35:58 +0000 (UTC)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com [209.85.222.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF7F1A2383;
+	Mon,  9 Dec 2024 13:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733751351; cv=none; b=YX4MXVbWWo6VuH/vmFmEYIwk4qi0W69xHCyutstjpKbAUQTqfM0n5IiPlYD/xAGtANKNEndJZ0XJ8iBP823l4O0so4ianvKt8hD+rtUxaEDpiaK9Xf2rszzuNYOzBIhwrCGLEebXTzGzHnzQ2jWyqEXY3cyjrE+8f5bSs2mmTNU=
+	t=1733751358; cv=none; b=Ehndx6gBqJyf4ZQx8KyzK1OrCV6mvlafHMsDKC3/wgWGaTn9pl8I/ztG8rjkH7Ka6pPxRHv63F+Xe3jlse+PtRKwHEqfrp8x1f3LiKRtWdFG1RyzhxHN86iakRS1lb4ftn1JjFe/gTsFvJapLrINo2vl30fTui5G4Z0hy+eAwTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733751351; c=relaxed/simple;
-	bh=Z6NSCUppTuXTcredm9qphs4vQg7EMiPm+QOizuT3m+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VlIkevitpH+ETI2wUMcyX6X/upGOKH6FOUajCHJjQgZ9zPL6qkEL7cYaVjFBb5ZpUgRHAQP0YLfYmtjfrHX5SNU/iuCbIMpt+/lq5U3BK94WsMsfDOkIAnv3HENaWcWSknxrY2r1+k9niYovcaAxxn3CAWrNLGtHAI+S/XsPu6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=cAcTwbTT; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=gBY5yvbKAw5suqcX3k3+O1C9fceFbg6i89ShHzn6yEo=; b=cAcTwbTTHbdqR6+Nl5YVOyKSPp
-	l//uvmEFdTrOrZM3T8nWMdnIEDXR01A7nM/LfyCBrr+2YeYROVthMYhZg7OX7eDRPjYNyZJcWWP16
-	ojpsJOtkCw6sWFtgmp+PWSUV0RNBfGB8pdaRtfbc6nzz4WDCeSqStG5qLY8/nFiD51H6w7xPeeP+8
-	hoN2oG53wQ+JuJUrjO0jhyAfpQA0uybHaDiNCTkfeC9BQD1bAk5To3fdwUYfA1xlLqL+3QvfMkCbQ
-	5Ba724hAK5XMCAgkerB9OMTG4SExHCpdGDdTwxvcbaitAQhtVhNLdWSzUu+4Cpokt5Z1jk2NF3RQE
-	WVKJHrpg==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKdvI-00000002L8G-0pO4;
-	Mon, 09 Dec 2024 13:35:40 +0000
-Date: Mon, 9 Dec 2024 13:35:39 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-	lokeshgidra@google.com, lorenzo.stoakes@oracle.com, rppt@kernel.org,
-	aarcange@redhat.com, Jason@zx2c4.com, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 2/2] mm, rmap: handle anon_vma_fork() NULL check inline
-Message-ID: <Z1byK9X59RHFJMHZ@casper.infradead.org>
-References: <20241209132549.2878604-1-ruanjinjie@huawei.com>
- <20241209132549.2878604-3-ruanjinjie@huawei.com>
+	s=arc-20240116; t=1733751358; c=relaxed/simple;
+	bh=WNz0gZiXZkvHaFSN5ZkiQ5VdRIyPVUq1YshY4B4Islw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nNEHtI0MBZKIALgW5P8b05jhdv5AL5w+G+3jEE0qDxYGsxxnuT8wyOQWMNQdLgEwqYk2QkzZ6PoOKpqeYtpwzCY3g7Ug8D46U7SY6dHvg1jjy+a7qc5iCNeSzmiU6fQM+g6n0Yhi70QMlNORY4HErjQmXtkyAoGO23z4Riot6VU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f51.google.com with SMTP id a1e0cc1a2514c-85ba8b1c7b9so2312499241.1;
+        Mon, 09 Dec 2024 05:35:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733751354; x=1734356154;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RHQgfBS9vF/bIRLp2OZ4MjR0Xk5ziBT/flFqP5tvpzQ=;
+        b=aUHajQEbO7SLItWlVjSDwJzNpVu4GwzoK5/fOpAeKISWW4Jn7sxE+6oQxLShGESQqg
+         yDva12NXrzvf4t/MyW5xdxl8+xUB7dWJhS+KvpEPmifyOwK8gWYh1oYV3qZFlv/TVq+a
+         UxrsIkMrn8RYecHTlw2eJ8J3vrmZYNBK+VSDodPrl6qwcHRjYIZKz8GVkcKJv89PMxCi
+         tlpbqvXOXNi2K49leoq07S76z9ztvxaH7OcCsPqaeI83n0PSAUQLIp3htYN+vumoDX1i
+         bVNzc61iSiEJeq4xaM09dYBYf7eWxcc7hs0e7L//o3nYY0ZMKiIneGyYmjHG8gG6XibI
+         4cLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCF8uKbpC3KKo3nH8mKypRd19ndiZJZAzruV2WaKsBYnPA4XXLIycyn7KD/LWervIlX+5Om9MGRfwi@vger.kernel.org, AJvYcCWNFkgQ2WqNplwkK52a/zQQwS9k5Qfq8mkWPM0kq8rrE6KcQQfZWqsP7Si/cRzu9LsJc1EjqulDLD/+xNq9@vger.kernel.org, AJvYcCX4fOhH7yxP3QZHnvV7KqjYx4Uk+qK/gAy8yOCBzkDBsn5LlyRgc1P/4nb1uPTGgYzw/afAyGQhIjt/b+uu/+xyffY=@vger.kernel.org, AJvYcCXnDIXO+kyJTLU8IIn2BAeaK4Ebe1chOwAEvmnflZ4tXQbaeIsGTptj8Cq6ISQyWSKdqe2NYxEXKmhjpw==@vger.kernel.org, AJvYcCXrHvbGhUT7B3i/gV6w0fdpgSLoAhzKQKTGrNFWrOPLYDKhwgBSvFrOuPakG786hwF35BIhbS2tvQh5@vger.kernel.org, AJvYcCXriZygt7HewM/0ajB3aO3NbLAr9x4Z2hT85h1lmPN3dRTQDtDerK+jJ3cAhNn/JLOLJ0w02xyGwJSW958=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1i3MO8036taDD+DxsaFwrq5zepo/GLWmO3n8ioEgWK/d47X1C
+	REt1/HyZkv25LgxJPm74VV8Nh7btMcZeEG6IIKXvutdjVC1VJ/+zix/yA2lV2TU=
+X-Gm-Gg: ASbGncuddCEdOMSZfV4/2r9qU61lv5nsjraRmWeJksYvtj/fL9qMYdE+Hdy09Wb17LM
+	91ceh5vtYTsdlNHu19mMxFy4kWsheCvZPBtu6256Fxk0NwttulushY4nqp7MtM7KG/YR133bEX+
+	HdzM6wzHeWinbxi3eyBD1QHBUdGOIMcFlQelHbU07E6TsQsS8yaAGXWBL/1MivWb32Q7ner9KRn
+	6cDsNnlfACNUpsQIEI+l2KdIFgwxXr+uJhAbX7XaiB1xLuwo/39fyidrrg2V6Gekj2WKFuBhpWW
+	ZRbTI/3SliBL1kAq
+X-Google-Smtp-Source: AGHT+IFMT7Z3S2y84DrC2ZlCUDyfh6pMB8W7C0l7byyI0rF5JeFmGJkFPmvrsOGCOIIaOO609B6hqw==
+X-Received: by 2002:a05:6122:178a:b0:518:78c7:9b50 with SMTP id 71dfb90a1353d-51878c7a3aemr1921278e0c.5.1733751354217;
+        Mon, 09 Dec 2024 05:35:54 -0800 (PST)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5174fbc9923sm190600e0c.11.2024.12.09.05.35.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 05:35:53 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-5174db4e34eso610062e0c.0;
+        Mon, 09 Dec 2024 05:35:53 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU/kkT+IOACqM+IJ10uYIHY3O0EcK66in7mH2s4WUQnn4U617tLjZnkBXfXb05YcKeOqIQrkokfzXAhSbvu@vger.kernel.org, AJvYcCW3Nbn2gdDjRIISa9b7A0+64d4SaXIAz9kyUd0S7+zQnzzBT04ePBvEBeX0nF0HUAL46uGWb6Mdp2cepYo=@vger.kernel.org, AJvYcCW8bKcz5jEoEmavodS+jN+OycorqszRHCpYeRV/Nhbj7VbvVyoeYWJAj8VG/poSbUkMkl5aAqOV+F4IouDDSGWJnG4=@vger.kernel.org, AJvYcCWTum68rlmKPtSyOEGeSCNgUepqmVvS6+Usd3mbYLFwGzascxZVAZJMFtSLG091dktzzaVBv26oiqsy@vger.kernel.org, AJvYcCWhHCVvzuimI9a5opme+eoUC5tLpkZ1FYirAlTKw+g93tuKt2SXaG9lBVxvwkwgwSfhyK3P9oeM7bch@vger.kernel.org, AJvYcCXaPz0NIUlLeQsNBKaScotTxeC5qDa3SABl340ohFWuOlFdsFrSUmn75LN5J7TveDkeyUv8WiRl0ckDcw==@vger.kernel.org
+X-Received: by 2002:ac5:cb04:0:b0:517:e7b7:d04b with SMTP id
+ 71dfb90a1353d-517e7b7ddb4mr2204963e0c.5.1733751353018; Mon, 09 Dec 2024
+ 05:35:53 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209132549.2878604-3-ruanjinjie@huawei.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-14-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-14-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 14:35:41 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXHMP9m1EZSnNUFGfw4ZJUOF4c6MXwgu3+Sou66HUr6XQ@mail.gmail.com>
+Message-ID: <CAMuHMdXHMP9m1EZSnNUFGfw4ZJUOF4c6MXwgu3+Sou66HUr6XQ@mail.gmail.com>
+Subject: Re: [PATCH v3 13/25] ASoC: renesas: rz-ssi: Use temporary variable
+ for struct device
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 09, 2024 at 09:25:49PM +0800, Jinjie Ruan wrote:
-> Check the anon_vma of pvma inline so we can avoid the function call
-> overhead if the anon_vma is NULL.
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Use a temporary variable for the struct device pointers to avoid
+> dereferencing.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-This really gets you 1% perf improvement?  On what hardware?
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
