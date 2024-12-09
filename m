@@ -1,167 +1,204 @@
-Return-Path: <linux-kernel+bounces-438204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F9889E9E32
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:39:12 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690C81883A9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:39:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631E117DFE3;
-	Mon,  9 Dec 2024 18:39:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GJwk3YOD"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E3499E9E35
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:39:49 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EC2B7080B;
-	Mon,  9 Dec 2024 18:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8B97280CD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:39:47 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B89178368;
+	Mon,  9 Dec 2024 18:39:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WvSEN2T7"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD6215854F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 18:39:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733769543; cv=none; b=poQ1/jz/MoIoi5o3FaQmlYyd1zPZld+Jhx7OokH5kJ3Gr/4SVSAb7EwqJ7kAn5cmp0aIC4+bEiUEbXdEZp0TZIIGa1wtYIf1r6038rT7ou/K6/XiWgn9iUXgtu+3hmwtW5f4vIMdBxaY6c78ALEcNJJ+GjdwJdXcgaOrFxmoCEw=
+	t=1733769583; cv=none; b=l1cb/025MbGscsDuVv6W6T9lBTnJKoTJGkqkVGn/eUl09n7qovpDuxgFfIkL6x3yUF3k8X/4XziAF2XCots+GXJwrTYu19y+DGyRrqH10E8XGmD9oRFZU1pPbKeqDl/yT1bRhzn8wXFySWgA+Q6MC/VchIiuNhFscjOTtlS3Gd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733769543; c=relaxed/simple;
-	bh=+s8Lf5eQa2ock8WzPcEMFPU3mzjbS5k+y8JlzF6nro4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mzxr+nOcsU23kTNjksEXKnu2T+TlxcW+Y5iLVtvLyrERTsj1G8P7+DM2gifndsBVGhnvV90Qb3iSk4MLm8+BYsWCM+OIalh20fmLTL3TgOFpbnWFxjRevcTbHCo2N2dxN1TPMV61EcnX/JFGiEF8Ppp2Q2Vd0DcB97Dr1nXqe1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GJwk3YOD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9FKuaF019489;
-	Mon, 9 Dec 2024 18:38:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	s=arc-20240116; t=1733769583; c=relaxed/simple;
+	bh=qTpR+DVnZfkn/LbNpEda2wY8oM7p10e4lStF1EAt5Pc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=anPuloQcLLE0xruBBLNZyuU2GCFfRGDSWkrpCRYezpC6Hmg86RwioPS8Ksmkd08XE/A2iFzaXv+LFzJn148omZOR05J/3ndvcwVN8mwVgka8sWphQChkvUVJ/1aD+LreJbMoR5x+FXnnypZhCGb/QNMAA6G1fozGJB7O24cP4as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WvSEN2T7; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9HULm4022735
+	for <linux-kernel@vger.kernel.org>; Mon, 9 Dec 2024 18:39:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V5rIj1q/B44booWRa+2MLQ4SvFGg6OhM5P7y4kUU+n4=; b=GJwk3YOD1T3SasH5
-	r+SfkKujeClJIBairzCZG4ouoH+jIGVqm/2cgtit4by3FGOCwriaYUsrD8FEZZCM
-	z0ia0+pQuwqNEOMmatBwksk6sM5spn7tJqwe7xIAemJVuvDh3YqH0v9sjVrE9XuD
-	MyxebFG5sbfragDK8dbhdxvBlo9fhEtiE9OBuA3Kmd4zWRG1Q9GvwHJmyt1EDL87
-	lpLZqTK5mtFljcdiXO3Ovco/DTbwsqGYmotSEF2W8ZVOdA7Apoc+loe/1RcyrgYH
-	S/WOjHi5054ex7w9vcl9V5q7laWxIQUOCjjhJ0iEMn0C+2YGrcr1VGJfoHBA63SF
-	aDagrA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e3418k58-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 18:38:59 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9IcwM6032262
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 18:38:58 GMT
-Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Dec 2024 10:38:52 -0800
-Date: Tue, 10 Dec 2024 00:08:48 +0530
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-CC: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-Message-ID: <Z1c5OBXyETf9TXp8@hu-wasimn-hyd.qualcomm.com>
-References: <20241119174954.1219002-1-quic_wasimn@quicinc.com>
- <20241119174954.1219002-6-quic_wasimn@quicinc.com>
- <9e351979-be01-4d38-9b94-cc23efac4c3f@kernel.org>
- <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
- <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
+	2LRB74TS7aAZ65rDLYYop9ew9kjmQm4OjhhBw9zbRgk=; b=WvSEN2T7XZ7OPr87
+	CtqIgOW1QFxIS9+mpVeCAABeiUfmN9xQcKAZHSfnbMycTvPo61wFh995xlKpT+Uc
+	pAOo091tgZAuI7Dt/HsgNlGZ7ps0vt8UAtWLsAesmEfyTc0j5nsrXXeXfvMZVY2i
+	dC76RYJ6RyokA69/ghHcrD/mPAeTY80AlrEgr5YIT7/MRLWdJ6/foK5zkcGb6InQ
+	PG4s+vKthcTA1VBpce6ubuK0NVPbAI+so+HLzSM1ug7q8A0UY2oISmDj37QEj2E4
+	J0wDTt5UDd7p8GblslXy0306nLseW0RzQs4CoH/1x/Eg/ulgaTlG1/jVSTiKLHlQ
+	CzfBKQ==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdpgnxxj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 18:39:39 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-2164fad3792so10959715ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 10:39:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733769579; x=1734374379;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2LRB74TS7aAZ65rDLYYop9ew9kjmQm4OjhhBw9zbRgk=;
+        b=eBYuYDRnjQYfFlVUs110UCiziyyNYUSOi6IxFZRQhADutazFKyGNkP6YDqMWNaGaBl
+         gn6sA3VNw8E+zh7MLdVMlFC3cvKRdawbo0Vw7QZxvXJYDbB3q4miFtybptSAJJ25ldrb
+         Iv6BhcRladkFvrQ4Mw900tUy77wSyEN/UMzYutnH07i/Wr2/ChLLAYxBlFXkXjU5r2xW
+         W+8ZmzuVBaSPk1U0JVQ/VCbrOASFy+bqcN6b2yEgJGbK2Dh5idDoE0AiOBhrVJFWaXRF
+         cHI1n+lNMbz1ReqjrelhzFdtEWtlR5k28pzk5AG9pmoFE8pOws4WeEOub/IrFHXaB+JA
+         HEmw==
+X-Forwarded-Encrypted: i=1; AJvYcCX1XnbX6B/uPTOv6vcjZnPzxRi4X6NRIElBJ1hWUvp844hpnUV7/+2lr6L2n8B7c8+Q2SqIxBKpd0VLEqw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZyM9B9uQ1wTwez4sBqdU9BCieLjHbFzeu/OwlAoI3DJQ7XBYc
+	Kwg3RF9kg5hp/CGQkULwqDpXzmTmZX+QE/C+UDHlemoP7D0txf6M2ZNAmqvDX6Vih1G7xRjJ1vX
+	jbJ/hQi1IICKnfdqGobLd+Rv8Y+zF3e4+E9xrIxJtI+XeydzUTj3s9zvKFuWpTTk=
+X-Gm-Gg: ASbGncuaLYOdoTSnOh9ha8A+nFdBzifeRFpyGpVylSzZq83vCRYKvdvKYte5gsildno
+	gBrx5jKIqvWvtQRojrcwHHrn01Wp5g7fVgxsE4mi/9DPIYXS/TsJJaKIyhEeFwSop9VZI4XV01R
+	jcouvpFoOdy2okl+62q1wQ/jakXtltltfNdB1UF56C6X0pTRxdfJdKHDsiXVog5OZgBApQN1SPY
+	yGfA7uEh08NWSMVo6LebW9OBZr5qI2VhXQ5UHo7jUwodZaJwphEmw0i4MFoC+ZyN2PgodNwgj8B
+	NDn8sSIl0oWANlee6PZyNKSWf+2zeCYa9XjL4DlbTJQ=
+X-Received: by 2002:a17:902:d583:b0:216:5b8b:9062 with SMTP id d9443c01a7336-2166a066e8dmr23508335ad.54.1733769578710;
+        Mon, 09 Dec 2024 10:39:38 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGGRrrYY1+/oEmCNwrACPw6WHa5roX7/eq1nAR1S1hEfaf1ofhqsiOCsZVOVp9LKt0gg0jfRA==
+X-Received: by 2002:a17:902:d583:b0:216:5b8b:9062 with SMTP id d9443c01a7336-2166a066e8dmr23508045ad.54.1733769578341;
+        Mon, 09 Dec 2024 10:39:38 -0800 (PST)
+Received: from [192.168.1.111] (c-73-202-227-126.hsd1.ca.comcast.net. [73.202.227.126])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216413a6c92sm28572965ad.249.2024.12.09.10.39.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 10:39:38 -0800 (PST)
+Message-ID: <cd5ef876-d849-4d7b-b8b7-94377e8720f0@oss.qualcomm.com>
+Date: Mon, 9 Dec 2024 10:39:36 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: KJqglNvMhloqaSyaZeMIPKgply727xOf
-X-Proofpoint-ORIG-GUID: KJqglNvMhloqaSyaZeMIPKgply727xOf
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 wireless-next] wifi: ath12k: Fix out-of-bounds read in
+ ath12k_mac_vdev_create
+To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>, kvalo@kernel.org,
+        ath12k@lists.infradead.org
+Cc: jjohnson@kernel.org, linux-wireless@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241207071306.325641-1-dheeraj.linuxdev@gmail.com>
+From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
+Content-Language: en-US
+In-Reply-To: <20241207071306.325641-1-dheeraj.linuxdev@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: zTtcMB30QWFOQMwtYzM303zg3CQoeUwz
+X-Proofpoint-ORIG-GUID: zTtcMB30QWFOQMwtYzM303zg3CQoeUwz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
- priorityscore=1501 suspectscore=0 mlxlogscore=893 clxscore=1015 mlxscore=0
- spamscore=0 phishscore=0 malwarescore=0 adultscore=0 impostorscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2411120000 definitions=main-2412090144
 
-On Fri, Dec 06, 2024 at 01:14:26PM +0100, Konrad Dybcio wrote:
-> On 6.12.2024 12:04 PM, Wasim Nazir wrote:
-> > On Wed, Nov 20, 2024 at 05:44:11PM +0100, Krzysztof Kozlowski wrote:
-> >> On 19/11/2024 18:49, Wasim Nazir wrote:
-> >>> Add device tree support for QCS9075 Ride & Ride-r3 boards.
-> >>> QCS9075 Ride & Ride-r3 are similar to QCS9100 Ride and Ride-r3
-> >>> boards but without safety monitoring feature of SAfety-IsLand
-> >>> subsystem.
-> >>>
-> >>> Difference between ride and ride-r3 is the ethernet phy.
-> >>> Ride uses 1G ethernet phy while ride-r3 uses 2.5G ethernet phy.
-> >>>
-> >>> Signed-off-by: Wasim Nazir <quic_wasimn@quicinc.com>
-> >>> ---
-> >>>  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
-> >>>  arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts | 12 ++++++++++++
-> >>>  arch/arm64/boot/dts/qcom/qcs9075-ride.dts    | 12 ++++++++++++
-> >>>  3 files changed, 26 insertions(+)
-> >>>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> >>>  create mode 100644 arch/arm64/boot/dts/qcom/qcs9075-ride.dts
-> >>>
-> >>> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-> >>> index 5d9847119f2e..91c811aca2ca 100644
-> >>> --- a/arch/arm64/boot/dts/qcom/Makefile
-> >>> +++ b/arch/arm64/boot/dts/qcom/Makefile
-> >>> @@ -116,6 +116,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
-> >>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-> >>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
-> >>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-rb8.dtb
-> >>> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride.dtb
-> >>> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs9075-ride-r3.dtb
-> >>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride.dtb
-> >>>  dtb-$(CONFIG_ARCH_QCOM)	+= qcs9100-ride-r3.dtb
-> >>>  dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
-> >>> diff --git a/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> >>> new file mode 100644
-> >>> index 000000000000..a04c8d1fa258
-> >>> --- /dev/null
-> >>> +++ b/arch/arm64/boot/dts/qcom/qcs9075-ride-r3.dts
-> >>> @@ -0,0 +1,12 @@
-> >>> +// SPDX-License-Identifier: BSD-3-Clause
-> >>> +/*
-> >>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-> >>> + */
-> >>> +/dts-v1/;
-> >>> +
-> >>> +#include "sa8775p-ride-r3.dts"
-> >> No guys, you are making these things up. This is EXACTLY the same as
-> >> qcs9100.
-> > 
-> > 9100 & 9075 are different from “safe” perspective. They differ in
-> > changes related to thermal which will be added later in devicetree.
+On 12/6/2024 11:13 PM, Dheeraj Reddy Jonnalagadda wrote:
+> Add a bounds check to ath12k_mac_vdev_create() to prevent an out-of-bounds
+> read in the vif->link_conf array. The function uses link_id, derived from
+> arvif->link_id, to index the array. When link_id equals 15, the index
+> exceeds the bounds of the array, which contains only 15 elements.
 > 
-> Since this can't be inferred from just looking at the changes, please
-> make sure to add that to the commit message
+> This issue occurs in the following code branch:
 > 
+>     if (arvif->link_id == ATH12K_DEFAULT_SCAN_LINK && vif->valid_links)
+>         link_id = ffs(vif->valid_links) - 1;
+>     else
+>         link_id = arvif->link_id;
+> 
+> When the first condition in the if statement is true and the second
+> condition is false, it implies that arvif->link_id equals 15 and
+> the else branch is taken, where link_id is set to 15, causing an
+> out-of-bounds access when vif->link_conf array is read using link_id
+> as index.
+> 
+> Add a check to ensure that link_id does not exceed the valid range of the
+> vif->link_conf array. Log a warning and return -EINVAL if the check fails
+> to prevent undefined behavior.
+> 
+> Changelog:
+> 
+> v2:
+> 	- Updated the commit message as per the reviewer's suggestions
+> 	- Clarified the description of the bug in the commit message
+> 	- Added Fixes and Closes tags with relevant information
 
-Sure, will add more details in next patch series.
+As Kalle already mentioned, the changelog should come "after the cut"
+Please refer to:
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
 
-> Konrad
+Namely:
+One good use for the additional comments after the --- marker is for a
+diffstat...
+Other comments relevant only to the moment or the maintainer, not suitable for
+the permanent changelog, should also go here. A good example of such comments
+might be patch changelogs which describe what has changed between the v1 and
+v2 version of the patch.
 
-Thanks & Regards,
-Wasim
+> 
+> Fixes: 90570ba4610 ("wifi: ath12k: do not return invalid link id for scan link")
+> Closes: https://scan7.scan.coverity.com/#/project-view/52337/11354?selectedIssue=1602214
+
+there should not be a blank line here
+
+Also I just joined the Coverity "linux" project. I have access to the
+dashboard, but don't see that particular CID. Since you've been a member for a
+few months, is there something special I need to do to see that CID?
+Or is this CID in a project other than "linux"? I ask because I'm looking at
+A CID in the latest snapshot of "linux" and the URL is:
+https://scan5.scan.coverity.com/#/project-view/63541/10063?selectedIssue=1636666
+
+So I'm guessing your CID is from a different project?
+
+> 
+> Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+> ---
+
+to reiterate, the changelog goes here, with the latest version described first.
+
+>  drivers/net/wireless/ath/ath12k/mac.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/net/wireless/ath/ath12k/mac.c b/drivers/net/wireless/ath/ath12k/mac.c
+> index 129607ac6c1a..c19b10e66f4a 100644
+> --- a/drivers/net/wireless/ath/ath12k/mac.c
+> +++ b/drivers/net/wireless/ath/ath12k/mac.c
+> @@ -7725,6 +7725,12 @@ int ath12k_mac_vdev_create(struct ath12k *ar, struct ath12k_link_vif *arvif)
+>  	else
+>  		link_id = arvif->link_id;
+>  
+> +	if (link_id >= ARRAY_SIZE(vif->link_conf)) {
+> +		ath12k_warn(ar->ab, "link_id %u exceeds max valid links for vif %pM\n",
+> +			    link_id, vif->addr);
+> +		return -EINVAL;
+> +	}
+> +
+>  	link_conf = wiphy_dereference(hw->wiphy, vif->link_conf[link_id]);
+>  	if (!link_conf) {
+>  		ath12k_warn(ar->ab, "unable to access bss link conf in vdev create for vif %pM link %u\n",
+
+Note that I don't need you to send a new patch if Kalle ACKs the current one;
+I can fixup the patch in the "pending" branch. But I would like to make
+sure I can see the CID in Coverity, so please let me know if I'm subscribed to
+the correct project.
+
+/jeff
 
