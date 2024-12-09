@@ -1,123 +1,128 @@
-Return-Path: <linux-kernel+bounces-436736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 797969E8A17
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:04:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA6E9E8A1D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:05:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 452E91885540
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:04:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11A61885634
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7566155C83;
-	Mon,  9 Dec 2024 04:04:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D924F15697B;
+	Mon,  9 Dec 2024 04:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aCTotBxC"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nBINYazY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AA6320B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:04:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B20944C6F;
+	Mon,  9 Dec 2024 04:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733717043; cv=none; b=igAM8SZSFEp7GkOid7jZ54lJQRrbgn1qQuTk2if5cn8OtUjvlVVYODLY9lI8HzdFHgXuRXqdexclC6yk4VqnCcMlcULr/FzOwF/81kOyircXGBlwB7v8qqhRWcJTZ5wuziPqEAf4sjnsZEM8z+umQQSlGXiYiWPQL1Waz9y0F9E=
+	t=1733717109; cv=none; b=DiKsfikis/G8ungaRa7rv7vorQYYSPihOPqI17wxWzDILzSS9i1UB9BuJ3mR/hTRFTtXuL2D6nGdIjtVnUSEDbrlPKHF93dSHxaY+Pg0FrW7ilVY6dZDrlst5QcurreE1MlzSQqamD5u2PD+M+QIs+XCaAqYIFU1ST33Vm1QI8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733717043; c=relaxed/simple;
-	bh=cETlEE0WzQEHwy8QEzoaAMqjhzhL0tNxzJ0RsFPbUTM=;
+	s=arc-20240116; t=1733717109; c=relaxed/simple;
+	bh=E3ZvC3O2eZ9A0yzuZHGVlm2/05VOaS+KPtoBU2Cfenc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GRuMgF1LY4jRN1cAo+qPHGoemQd3kOWZu6bdnivdAgt+DSFmlLHjxj6dCgQboG7qvXZQsxK9QylAjvXAQFAcLbCeHQUVSN6PcWcQY1Qvf2EHrD9hGq9iRF7iFlPGSvDw+byXgCa3ADSyk+OgN1lae8m6rzLg1JNsQzwR5XP9bas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aCTotBxC; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-71deb545153so339906a34.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 20:04:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733717040; x=1734321840; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=xSueRKS2Dc0oEFrhPvduUyI5vUBlKuQKvD4Db72M8fs=;
-        b=aCTotBxC6veSmtoiU3NYRwqPWeFvOyubNoM1ckIbpIu7VRZM6TfFMFASN2wlGvefEu
-         HGHMcrQdIKsgoFzsT+7658dhohetRFt8Aq8A/0+gRgFIDwSrgFU9nJyP/ha7zz1YZiPZ
-         UQ6ikk/KjKksIcqrCpD7GUMDDO/fY4q/RwrsUf+TlWaJc2buOEiJqjDocRTeXULFjlJp
-         X/n2llRQ5zb+VNXJ0UWiFxc3NhJYMcGLIrKKyknPq+hTExchj3xvcXD/ntWt/jg+yw5h
-         zY1Ntt0YsL+d8d0B5lhXpZdF3AZaLkN7aql260Jg8OlW2Z0FKuXumvV3czWTsdPJgVsw
-         WH5Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733717040; x=1734321840;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xSueRKS2Dc0oEFrhPvduUyI5vUBlKuQKvD4Db72M8fs=;
-        b=plydCfOZRLdZMGEkG8nwPbHjaSBBoGdRUCUCv+ud3Q4nxWGHvWv+PYRe3OFlbIMfbg
-         I05YYv359hux2eHNf4HDNH7KMNc4k2rx/p59qBy2zqRoTOYEz78Qgcoa/yB22wvo6l+d
-         MXmbyWBbZJd6dl9L76Hhv2IMHY096PZKqTrdUiYdkpx78Ugp/tfo2ukQarFRw+80HQjQ
-         DbON8MVVBwvyKh1JHymkFzHQvjedko4duTZPmrzlFzZ3lwlIAMKnRZYmDp1F4Ugk4U5k
-         MKsYN65miNNYMqs3FKg8Gs4ZhvGEpKnslHXqLE19PfIWQgitISu6KmGSzojSDdNrUR4w
-         +aYA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyD7gIQmoLAJpTKsOaIejKCVDkT7KhENnqIMXeezuMgnFWIpG+YiXcx2Aq/1J9lMN2JpiVHWgDwjZReAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9DhyN/GTJ+pGjtO8yM3yZkTD4P/sXARREeb2Ri+/3URpkYP1U
-	IfGJh0GxCDxlkl+FoReoP3IDe+QG7pfSQv125Wyq0IYlfVRBBSkuJhDn/dgopQ==
-X-Gm-Gg: ASbGncsGEBA9tm1Ct9k/WXx+yG02GbADp0FSRgv6KXz2jz1XYTeMPeFTMDNhxNg/aNn
-	DQfVOomEN5+V2zSOEcYoir6Rvz/xRxWzwKF6kODx3xBKOY1lKOEKhlZPdZnaVdKDsBLywouGV2v
-	Iy/UieTdVVgsxjG4sLmdGYQY3yKtjNX3FFNHzfZsqR30DNSPS2+xD7FDkWygNZzmwB8aEts7TQ6
-	PYrrW+iYjHmSSXiqpcc3NAMEekhGZBjmKO3iwtpK6NfryhRZt6jWlHiblM=
-X-Google-Smtp-Source: AGHT+IHU6Xu+n7ZNg85zbpBlEgO5QS7TgqjBuo8IL4KCXkx6Wsj/Pkxh7R3VW7ABG7uDeLGEC57Xcw==
-X-Received: by 2002:a05:6830:65c2:b0:71d:ee65:7c38 with SMTP id 46e09a7af769-71dee6581cbmr2249231a34.22.1733717040567;
-        Sun, 08 Dec 2024 20:04:00 -0800 (PST)
-Received: from thinkpad ([36.255.19.22])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725da385bfcsm2772546b3a.70.2024.12.08.20.03.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 20:04:00 -0800 (PST)
-Date: Mon, 9 Dec 2024 09:33:55 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Manivannan Sadhasivam <manisadhasivam.linux@gmail.com>,
-	Manish Pandey <quic_mapa@quicinc.com>,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_nitirawa@quicinc.com
-Subject: Re: [PATCH 0/3] scsi: ufs-qcom: Enable Dumping of Hibern8, MCQ, and
- Testbus Registers
-Message-ID: <20241209040355.kc4ab6nfp6syw37q@thinkpad>
-References: <20241025055054.23170-1-quic_mapa@quicinc.com>
- <20241112075000.vausf7ulr2t5svmg@thinkpad>
- <cb3b0c9c-4589-4b58-90a1-998743803c5a@acm.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rOj7iIlGVIwobHbf9qENvbLT1O2N36m674FVvJs8DPWvD3isuvbx1Ny7cW7um5z03j+9U6AFys7tC/QCrona3xsF1Ypg1+Pd907TvJbbKGwt6njqnaDMLC++Rss+KXoNidabVSH/cJ++Qx4wVP4RDe5p74BruoxuOvqXTIOIheM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nBINYazY; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733717108; x=1765253108;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=E3ZvC3O2eZ9A0yzuZHGVlm2/05VOaS+KPtoBU2Cfenc=;
+  b=nBINYazYlyzwggbRO2belcLuKfhevIyR8KrRmXBOpDIM/GNzaB80Ca9J
+   dyAA6EKAEiamMZrjj7b5BL2BjMgXHmas8G/ssnagKb4sk2z3WEX4ApHDV
+   jrcyKWPXP2lDjxqw8lu6dmhg/gl5e/Hznm/woDnmcTd8GjFEDhOcd1eXx
+   YWwGJUFIzFVu9ZtCnmKbVofJqYqQmOmmOACvhniIEnc02nQiIt5yeKHik
+   3XPier+fo6WZU311xeWvsD+Gp2dZzXgJD/vZ8Ki0N4dNyI9iTjEt7H78/
+   DvHruTy2FR+ARrn31XM43jaMxOjSKK6xeQwvoq+QREGBXb4Ylf84KJUh7
+   w==;
+X-CSE-ConnectionGUID: nV1EboCZRfCWZVmNs+jK0w==
+X-CSE-MsgGUID: 5H3h7B9qTSuFe5Rfcy2W8Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="33923810"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="33923810"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:05:08 -0800
+X-CSE-ConnectionGUID: w3nAQ+5PSquIWdMR3H5efw==
+X-CSE-MsgGUID: u3V0gI3gTH+lD4g+PwNdUg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="125793224"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa002.jf.intel.com with ESMTP; 08 Dec 2024 20:05:05 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKV14-0003mk-0d;
+	Mon, 09 Dec 2024 04:05:02 +0000
+Date: Mon, 9 Dec 2024 12:04:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: Re: [PATCH v6 4/4] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy S20 (x1slte)
+Message-ID: <202412071131.v9GOab0D-lkp@intel.com>
+References: <20241206184609.2437-5-umer.uddin@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <cb3b0c9c-4589-4b58-90a1-998743803c5a@acm.org>
+In-Reply-To: <20241206184609.2437-5-umer.uddin@mentallysanemainliners.org>
 
-On Tue, Nov 12, 2024 at 10:10:02AM -0800, Bart Van Assche wrote:
-> On 11/11/24 11:50 PM, Manivannan Sadhasivam wrote:
-> > On Fri, Oct 25, 2024 at 11:20:51AM +0530, Manish Pandey wrote:
-> > > Submitting a series of patches aimed at enhancing the debugging and monitoring capabilities
-> > > of the UFS-QCOM driver. These patches introduce new functionalities that will significantly
-> > > aid in diagnosing and resolving issues related to hardware and software operations.
-> > > 
-> > 
-> > TBH, the current state of dumping UFSHC registers itself is just annoying as it
-> > pollutes the kernel ring buffer. I don't think any peripheral driver in the
-> > kernel does this. Please dump only relevant registers, not everything that you
-> > feel like dumping.
-> 
-> I wouldn't mind if the code for dumping  UFSHC registers would be removed.
-> 
+Hi Umer,
 
-Instead of removing, I'm planning to move the dump to dev_coredump framework.
-But should we move all the error prints also? Like all ufshcd_print_*()
-functions?
+kernel test robot noticed the following build errors:
 
-- Mani
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on next-20241206]
+[cannot apply to krzk-dt/for-next pinctrl-samsung/for-next krzk-mem-ctrl/for-next linus/master v6.13-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Umer-Uddin/dt-bindings-arm-samsung-samsung-boards-Add-bindings-for-SM-G981B-and-SM-G980F-board/20241207-024917
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241206184609.2437-5-umer.uddin%40mentallysanemainliners.org
+patch subject: [PATCH v6 4/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 (x1slte)
+config: arm64-randconfig-002-20241207 (https://download.01.org/0day-ci/archive/20241207/202412071131.v9GOab0D-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412071131.v9GOab0D-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412071131.v9GOab0D-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/arm64/boot/dts/exynos/exynos990-x1slte.dts:9:10: fatal error: exynos990-hubble-common.dtsi: No such file or directory
+       9 | #include "exynos990-hubble-common.dtsi"
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   compilation terminated.
+
+
+vim +9 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
+
+   > 9	#include "exynos990-hubble-common.dtsi"
+    10	
 
 -- 
-மணிவண்ணன் சதாசிவம்
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
