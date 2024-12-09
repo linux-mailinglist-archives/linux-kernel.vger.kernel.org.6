@@ -1,124 +1,88 @@
-Return-Path: <linux-kernel+bounces-438371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 433D59EA049
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:32:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73AD79EA04C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:32:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B79E166625
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:32:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9622E1888737
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:32:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB7051990BD;
-	Mon,  9 Dec 2024 20:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6127219C558;
+	Mon,  9 Dec 2024 20:32:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2bvje5M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hc3HPJWh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EEC923315A;
-	Mon,  9 Dec 2024 20:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B647223315A;
+	Mon,  9 Dec 2024 20:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733776318; cv=none; b=Rl87kIJ/LLPgzHlPlJVOKeECq68LGkaylxe9ubZZmcRqNDsiqWzdWkiWHyH0dSZlif2ZDZ/lyX0W7cMlSHrYPv1Uz84o22NEpmjctGv3SHCoiHy73iCLzGqRb4WqtE0tJ5fiaf2UyMI8QQ1haC5rICWr7nL67uKXijxJ+L1PxTI=
+	t=1733776322; cv=none; b=TRXlL6cMY4rcYmV2677XHtPZQNCjv51o6DJIKThRagJDIoUzIwaJIoRMWXkTJZPaiv3lVmKj0/uj/uMu+uDK1nstRfeGvs926nsdCo4YkeIH5MLlLCOSg2DfePFqAHAmmZto0MKPsD28d8dbDDx/4UWniN8pcYfgOT5+YTr/hy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733776318; c=relaxed/simple;
-	bh=R2nE/0VuIoejSEO81q+2TGaDkTk/hTkKZlQi25gKLuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dOdpC+4amy0HC7rbdJcAy4zE3OqESd2occ6Gy9YSQBD4mKn8dX0ifoc0s4j535Qdrvq5wsgpCyGQlKwbw6RXGKtz73ooYG+pRJUBNBBpNTJFI0jLOXv5V7vr5sgU1Eu/YBsCVZYJH08uKQBVJJqEWV44ag/Zq7mxyB1VVfWyuQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2bvje5M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFA67C4CEE1;
-	Mon,  9 Dec 2024 20:31:57 +0000 (UTC)
+	s=arc-20240116; t=1733776322; c=relaxed/simple;
+	bh=wpgzYV9P/iqfJu/uKuikGtFuJPC6IBtMiMfoMSv56sM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QSUb9r05Pt87H818KIvN/kfzlTU+Cr1wvkIFE/38QCTgcLx8VArWkOsWbEXULpv+R2ELFDdk5mvZXvJ3C6PYjQjwuJ/pKIQli192n0mlPgl6M34nhv+Fos59rqZqmXVPvUwDxy1lD4nkBCL7U8lhPPPt9Oa9EIHWYbY2PuGiEfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hc3HPJWh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFAF4C4CED1;
+	Mon,  9 Dec 2024 20:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733776317;
-	bh=R2nE/0VuIoejSEO81q+2TGaDkTk/hTkKZlQi25gKLuE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y2bvje5MCpoN5yidQbm1Sx2h0a06kqCwAWrUKO+SZMwUBQ/KcJeITm3K+iFB5Y6He
-	 e0+YrgyKzgKsszXsPDPiALmodU7JaQfevNalSyU5h15q0gCv+vkDwpG7B915nZZlQQ
-	 0hEALDiaW+IJo0v3QwUNqaKjtgWwlOE6ho1UJuYv6/VpCt0+xGAVmg85DWLXMrZgue
-	 MPOwLiEv6sfbYxwtHlajvUouYpgetBBzN9rjzZLHJ+QsSCzUDF6kGprXkDLB9Od5Te
-	 3Tr9NFKPXr7PYVJ0HHiqIbkud1CPH+fLkj55qhzDMIDm7J+E6oYwLtQ0uNNf+5WYep
-	 SFkEmQ3/tt4qA==
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-5f2c34ae517so384792eaf.1;
-        Mon, 09 Dec 2024 12:31:57 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV6/Dof7wa8GrwjbZ8TXZfWrAUniWhbtZcDjg0U5bh1J6Xo0NKUAyfsKskOETCJFAzG4N/DZTshNQYE@vger.kernel.org, AJvYcCX6ETHimQD3fP2E87Zpk/aPfbZnG7tr8S2FqzjES0ZqGbQNFz63p1lO27vYSaaCpuqheACnOTzcMJNVzvwO@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIiB9TV8r8jfGhlxWISEDLeLdfcZvuTP7r2SXvQ66PRMSydyUX
-	ETVjMU/+9VZirz+xndayIJFLZXHyOhG5/nRSiwBX7s4dazWM4F+njfEyoerGnvt8CgjpQGvDxdM
-	CyRZftc2dksfA3BzgQcIr7ULSVEY=
-X-Google-Smtp-Source: AGHT+IHanlbApy5WrT0fnl91dOQ1zPYvf0sIljTqii8nCWBb4n5ujDjRnS2CJMqKrQFr2wuS82Qoywl9ACJ469i5Ec0=
-X-Received: by 2002:a05:6820:503:b0:5ee:e029:f797 with SMTP id
- 006d021491bc7-5f2c8e7b112mr1486690eaf.6.1733776317012; Mon, 09 Dec 2024
- 12:31:57 -0800 (PST)
+	s=k20201202; t=1733776322;
+	bh=wpgzYV9P/iqfJu/uKuikGtFuJPC6IBtMiMfoMSv56sM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Hc3HPJWhRXcHBxhmPwUYAYM77Ohadjum2ZaPWO+920b5ZpqNB17fExI0q179iPPwU
+	 Tdp5zJajw4LlTgRYxYdKHjde4CvcKowmgHaOzg7uqbwBU+8Uyj1mPD/wgKjrRBZvha
+	 QltwfxUBz1kAfl3S4s72woG4sJKt+m1aidlCTh5SmVNez/SrbnMpEWcZYxlQEhRJta
+	 Cl1SedwtzZnE45u0eVpxeKTn21ieP29RLbj1vs+i6kJsoTp6eytB7c6FvLEdpYw8kf
+	 e9Sfy1AmzyQD43XeOYRrToZc3dwK4fJHI8evPjj5+deqvrk2nRzbGmLHe0rQcpMrEs
+	 k5JO8Nr42k/DQ==
+Date: Mon, 9 Dec 2024 14:32:00 -0600
+From: Rob Herring <robh@kernel.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Leif Lindholm <leif.lindholm@linaro.org>,
+	Stephen Boyd <stephen.boyd@linaro.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>,
+	Grant Likely <grant.likely@secretlab.ca>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 04/10] of: Fix refcount leakage for OF node returned by
+ __of_get_dma_parent()
+Message-ID: <20241209203200.GA925532-robh@kernel.org>
+References: <20241206-of_core_fix-v1-0-dc28ed56bec3@quicinc.com>
+ <20241206-of_core_fix-v1-4-dc28ed56bec3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241202100614.20731-1-ilpo.jarvinen@linux.intel.com>
-In-Reply-To: <20241202100614.20731-1-ilpo.jarvinen@linux.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Mon, 9 Dec 2024 21:31:46 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0jvOFYcbTvZwuYNpCz446iUhdR_+FJJAXdsBeeUVMYXQA@mail.gmail.com>
-Message-ID: <CAJZ5v0jvOFYcbTvZwuYNpCz446iUhdR_+FJJAXdsBeeUVMYXQA@mail.gmail.com>
-Subject: Re: [PATCH 1/1] ACPI: resource: Fix memory resource type union access
-To: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Jiang Liu <jiang.liu@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206-of_core_fix-v1-4-dc28ed56bec3@quicinc.com>
 
-On Mon, Dec 2, 2024 at 11:06=E2=80=AFAM Ilpo J=C3=A4rvinen
-<ilpo.jarvinen@linux.intel.com> wrote:
->
-> In acpi_decode_space() addr->info.mem.caching is checked on main level
-> for any resource type but addr->info.mem is part of union and thus
-> valid only if the resource type is memory range.
->
-> Move the check inside the preceeding switch/case to only execute it
-> when the union is of correct type.
->
-> Fixes: fcb29bbcd540 ("ACPI: Add prefetch decoding to the address space pa=
-rser")
-> Signed-off-by: Ilpo J=C3=A4rvinen <ilpo.jarvinen@linux.intel.com>
+On Fri, Dec 06, 2024 at 08:52:30AM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> 
+> __of_get_dma_parent() returns OF device node @args.np, but the node's
+> refcount is increased twice, by both of_parse_phandle_with_args() and
+> of_node_get(), so causes refcount leakage for the node.
+> 
+> Fix by directly returning the node got by of_parse_phandle_with_args().
+> 
+> Fixes: f83a6e5dea6c ("of: address: Add support for the parent DMA bus")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
 > ---
->
-> I only came across this while reading code around these parts (not
-> because of investigating some issue).
->
->  drivers/acpi/resource.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/acpi/resource.c b/drivers/acpi/resource.c
-> index 7fe842dae1ec..821867de43be 100644
-> --- a/drivers/acpi/resource.c
-> +++ b/drivers/acpi/resource.c
-> @@ -250,6 +250,9 @@ static bool acpi_decode_space(struct resource_win *wi=
-n,
->         switch (addr->resource_type) {
->         case ACPI_MEMORY_RANGE:
->                 acpi_dev_memresource_flags(res, len, wp);
-> +
-> +               if (addr->info.mem.caching =3D=3D ACPI_PREFETCHABLE_MEMOR=
-Y)
-> +                       res->flags |=3D IORESOURCE_PREFETCH;
->                 break;
->         case ACPI_IO_RANGE:
->                 acpi_dev_ioresource_flags(res, len, iodec,
-> @@ -265,9 +268,6 @@ static bool acpi_decode_space(struct resource_win *wi=
-n,
->         if (addr->producer_consumer =3D=3D ACPI_PRODUCER)
->                 res->flags |=3D IORESOURCE_WINDOW;
->
-> -       if (addr->info.mem.caching =3D=3D ACPI_PREFETCHABLE_MEMORY)
-> -               res->flags |=3D IORESOURCE_PREFETCH;
-> -
->         return !(res->flags & IORESOURCE_DISABLED);
->  }
->
-> --
+>  drivers/of/address.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied as 6.13-rc material, thanks!
+Applied, thanks.
+
+Rob
 
