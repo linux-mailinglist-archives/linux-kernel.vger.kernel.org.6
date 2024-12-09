@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-438164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A88529E9DB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:58:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA13D9E9DB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:59:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BCE0165505
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5F121887959
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5E51E9B2E;
-	Mon,  9 Dec 2024 17:58:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583F81F0E3F;
+	Mon,  9 Dec 2024 17:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JSR6tiXU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZcUoNWsI"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC061D63FD
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:58:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2835A1B4222
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:58:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733767090; cv=none; b=X4vHJsup8/a5JdvVaRuObcnhpvevjCQ2SLz/TQoperPrc4FcsA3NAMfh7hAxntePo0cQOqFRsaS8yD4bYlWvwQudkXqnPNQRgLRnmxewfHp1g2KGVYRSwCuz05JRaXav0ISNI9S1A02CR2tXaDJbUIlpsloR+hEnkAVZxq+nbZ0=
+	t=1733767091; cv=none; b=MWeDXd6RtO70zbnyTiRNwZd6lI6JWIJ/SX7OPOG7O+R5sUout5yrhXC1k1wNfswn7j4Phr8N0QwOrbeJR1VQ3maM1CmX9DmkXvfF0ioVtAa9t4GPZmSxbyUhfsT8SzXl+VVa2M7rhz9JMo9nT2qIgscKmLTi2VyAkCNUQ874hXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733767090; c=relaxed/simple;
-	bh=VaTHl5CWYXaEUg5GJy076IuF06Ppro6TIwGO5pxBuO0=;
+	s=arc-20240116; t=1733767091; c=relaxed/simple;
+	bh=qP2Hlu3N0NgQnWyH9Lx3+uHpafocFuwd0F24K19I0HQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=pBmzLq2yJha9+lK3AjXJvUqTStsOtAl0YUSuLWad3TEwMhniqS3oe62/ZdaggM0UKfQimPc5+yzVwMvDSWkAIDNuVk9LumDvxW1GgeYOHxZ52U6ZngsJgRu5kHWgmr7/2PT3e0XzN7nmo46lDkhF4DN9jm+Z77qPcfPniGnNbPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JSR6tiXU; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=IlcoiLWXGtrFEtjLZUBGxxKWduqziyzwfWcLEhRODbN1ScKYvUmXkH3jSjwrvuLQtGTnzTDaZEmJY27oWqc98sdnuIxdcSyD/STiRUrADBtQMaOVnueA6QPZSeydcO9w97i7079YDuV3R6K0LvrXh9gWGoZBqJ2uXeQNcx3VMaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZcUoNWsI; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733767087;
+	s=mimecast20190719; t=1733767089;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=PGHdr5xe6OO2VfVdzoKzmBYzOtEMeKKpC50tlN0vOu0=;
-	b=JSR6tiXU68WrYqLO4qtoE0TVWw4YwKc6q3DgWMbD90c8suxtJVFn+pIfMPp2XP+wtux6VT
-	nDWMlZFH7WZsMTrLYIZv333tsrmBDdQWKC5ib1ofGqiRluZQ2p+Chj2nXmOuKs3ClWs+Ki
-	k/cTcO4gk5Facw49lbEbZxsCX987TNA=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+	bh=RszX/9FzqgwZYqnsZaT6Kv2E583oRNDgfo2kcZMftbw=;
+	b=ZcUoNWsI8S5l6ASsHPkwFQeQ5eHT3GgbRKmMSW3Kb5+TV0eKxJh+mlollJ9UC87WRLZy6e
+	YmUYtnMtUuzwP3buGfjnfhQTj4AXLLf2gF+Gp+Y/dLl9duF4XLhOn9j0y3Ws1DKQ3qqrfy
+	P+2saU38G0uQPyvrSVgbfOmJWesU0/E=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-446-hIhlvnUsMiWopcay2Ie4Qw-1; Mon,
- 09 Dec 2024 12:58:05 -0500
-X-MC-Unique: hIhlvnUsMiWopcay2Ie4Qw-1
-X-Mimecast-MFC-AGG-ID: hIhlvnUsMiWopcay2Ie4Qw
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-541-O7c4uoO3Omy0eq5aDjnZsg-1; Mon,
+ 09 Dec 2024 12:58:06 -0500
+X-MC-Unique: O7c4uoO3Omy0eq5aDjnZsg-1
+X-Mimecast-MFC-AGG-ID: O7c4uoO3Omy0eq5aDjnZsg
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1FAFE1956088;
-	Mon,  9 Dec 2024 17:58:00 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D8A8D1955F29;
+	Mon,  9 Dec 2024 17:58:03 +0000 (UTC)
 Received: from starship.lan (unknown [10.22.82.46])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 37B70195606C;
-	Mon,  9 Dec 2024 17:57:56 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3816E195605A;
+	Mon,  9 Dec 2024 17:58:00 +0000 (UTC)
 From: Maxim Levitsky <mlevitsk@redhat.com>
 To: kvm@vger.kernel.org
 Cc: Jakub Kicinski <kuba@kernel.org>,
@@ -76,10 +76,11 @@ Cc: Jakub Kicinski <kuba@kernel.org>,
 	Eric Dumazet <edumazet@google.com>,
 	Long Li <longli@microsoft.com>,
 	Yury Norov <yury.norov@gmail.com>,
-	Maxim Levitsky <mlevitsk@redhat.com>
-Subject: [PATCH v2 1/2] net: mana: Fix memory leak in mana_gd_setup_irqs
-Date: Mon,  9 Dec 2024 12:57:50 -0500
-Message-Id: <20241209175751.287738-2-mlevitsk@redhat.com>
+	Maxim Levitsky <mlevitsk@redhat.com>,
+	Michael Kelley <mhklinux@outlook.com>
+Subject: [PATCH v2 2/2] net: mana: Fix irq_contexts memory leak in mana_gd_setup_irqs
+Date: Mon,  9 Dec 2024 12:57:51 -0500
+Message-Id: <20241209175751.287738-3-mlevitsk@redhat.com>
 In-Reply-To: <20241209175751.287738-1-mlevitsk@redhat.com>
 References: <20241209175751.287738-1-mlevitsk@redhat.com>
 Precedence: bulk
@@ -91,30 +92,40 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Commit 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
-added memory allocation in mana_gd_setup_irqs of 'irqs' but the code
-doesn't free this temporary array in the success path.
+gc->irq_contexts is not freeded if one of the later operations
+fail.
 
-This was caught by kmemleak.
-
+Suggested-by: Michael Kelley <mhklinux@outlook.com>
 Fixes: 8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")
 Signed-off-by: Maxim Levitsky <mlevitsk@redhat.com>
 ---
- drivers/net/ethernet/microsoft/mana/gdma_main.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/microsoft/mana/gdma_main.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/microsoft/mana/gdma_main.c b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-index e97af7ac2bb2..aba188f9f10f 100644
+index aba188f9f10f..6297c0869cd6 100644
 --- a/drivers/net/ethernet/microsoft/mana/gdma_main.c
 +++ b/drivers/net/ethernet/microsoft/mana/gdma_main.c
-@@ -1375,6 +1375,7 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
- 	gc->max_num_msix = nvec;
- 	gc->num_msix_usable = nvec;
- 	cpus_read_unlock();
-+	kfree(irqs);
- 	return 0;
+@@ -1318,7 +1318,7 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
+ 				   GFP_KERNEL);
+ 	if (!gc->irq_contexts) {
+ 		err = -ENOMEM;
+-		goto free_irq_vector;
++		goto free_irq_array;
+ 	}
  
- free_irq:
+ 	for (i = 0; i < nvec; i++) {
+@@ -1388,8 +1388,9 @@ static int mana_gd_setup_irqs(struct pci_dev *pdev)
+ 	}
+ 
+ 	kfree(gc->irq_contexts);
+-	kfree(irqs);
+ 	gc->irq_contexts = NULL;
++free_irq_array:
++	kfree(irqs);
+ free_irq_vector:
+ 	cpus_read_unlock();
+ 	pci_free_irq_vectors(pdev);
 -- 
 2.26.3
 
