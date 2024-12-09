@@ -1,158 +1,163 @@
-Return-Path: <linux-kernel+bounces-437821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C959E9932
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:43:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5566167526
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:43:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194031BEF8D;
-	Mon,  9 Dec 2024 14:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="I645VjK9"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6D409E992F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:43:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C493C1BEF6E;
-	Mon,  9 Dec 2024 14:43:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66E32281A06
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:43:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D021B4254;
+	Mon,  9 Dec 2024 14:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="REDpF6dF"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32625288CC
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755386; cv=none; b=bpWUIA8iX4f6JbMyBX/6W0oY6epVtxB0hLMm8IHuXw+ZAbkPhh9sKpilh7K4QkXGDw6/14yp6oftSbC3F08GpdEhp8f1CZubgZgpvXyYAEiuMXX9xdAF0fZfRaH85jVyg1YHrJaSVcSzt1VY2/F0ilfWoP8SM1LjEKwY2/f6EWc=
+	t=1733755382; cv=none; b=jf+pFY5UNgSLIkNTq07S3jfI5nWU/Id6p20Oc64BCe7v1zaLD22ZOmiKjHtfRAarxZG0oW9PL2vfwJ8kYIxRXqDzdQM9aJeS+/xC2Law0K2aNYS+Bzy6vjfbv5ud812hjQohVXjYqsQNxzsNFdFNka2+twrOzBkknqwWVx+4rVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755386; c=relaxed/simple;
-	bh=oAaN1GSj78zca2LyH1vVjyVyuzC5DSmrRJkeitGwMj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lj2Gf945eK227h7tCyX1G3lPYOFEVvcqGSBATVYxnLj38/oWqDwZGGvBjFlzB5qQ9XX9FujOig8YrpXbM+MUTOYe0T9g2yy2vcYeI/8T4qoanKnXYze+fpruZboH+hsq7NQe/pIID3qWqqoX5KXwh0LoHcj7Nsp8FLrj1GbkCb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=I645VjK9; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=m16HeTv0L0CtuYH/B+yfB6+rKUcSgAg6Vxdkd5F26V4=; b=I645VjK9kvC67P7dLGOB/uZw3b
-	Z59qZlJPd6n9JOP3MaUmCm1uVX9YCDOmrEvMN7HxwtbMmcu78/hwOo6KzU/vqSYgyPKfZwZ1nR1if
-	dKPYNh9NyZoTYNr8pNjKZi+kA+T5QVf9o3bDGM593vNPHuO+p7tmg4+g5vrgJbo1oBYY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKeyK-00FgPR-5B; Mon, 09 Dec 2024 15:42:52 +0100
+	s=arc-20240116; t=1733755382; c=relaxed/simple;
+	bh=Iiqbjto+vb0aXpNcZOFiu3NWNHXQsyJ41jNpYdodkL8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bK11eHPRSb/prBXSfqkD749gKZ3kAOm8SRXb5EfxkD1UT2yX7DBnA1eS9B4WBjzyTTzg7m0qyiqRp2r/MMAU5ADumjwlUKiGd1HJp7YKGjt8GJRlzng3hy+VWP6rdeBsTBwhdU9k4oKRIn4YhwdQRQwqr3oWFhYZKtxUQ4IYZ1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=REDpF6dF; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3862c78536bso341563f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:42:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733755377; x=1734360177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nkwsX/4Xva/aw3/I8I2kwIJd9M/PGmCc4Ypj6qQ29AM=;
+        b=REDpF6dFhXNy3Vc5phYvhf0EusEPJbM1EBVwSgBXlV6eBVci5wLzMrfgwFHdHkquZa
+         22+/z3lfJQhNPvCH2+JpzR7RaczfQzOq2L8iDNFDDziwMSoeL37Z/1ma2jPXs95p4quy
+         jJtkjP3/Ck0bVWvFEOOZN19ZLM27x/gxXkV1Q+9nyjbepnX2BYeo+accdUWPnU1RxIN+
+         /ePs1EnonFTVgWTOa0FSxdi3Sc44yNHFtPaZwFNqjDpuYmMiDdtKKnnWtPcBowJ7AAHq
+         HEyHPt3AM2jKmI4M3C1k/8RSJjGUHUVOEggFuoCsjBgdBtp6BnBV3S8MAa7BuyH1CDsx
+         zLfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733755377; x=1734360177;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nkwsX/4Xva/aw3/I8I2kwIJd9M/PGmCc4Ypj6qQ29AM=;
+        b=Gm8F6MsdCjyrX7NuXOwgXoBZzDpBroJ/Er9slkTm81gxqjYWLttkruEtRCUHzxtyyc
+         ZzwdHi46mHgV/Tl9lSKjYEdiLZuShlBxZib6hCwV53Pw6TOIuOKgPX3lEObUQGpMNTXf
+         O2E8SYJslBjX0y0xTkPKYkQOQxCUznNzMtzWw7LutpP59Xdw60kCnor4+ajFqiFhCXYx
+         A1+2c4vv/gKaEB5Z7qJqGRnjsYc0ngnQ7l7zeFQy1DwspLgz1xnjAkF/yt53OccRqITv
+         s2DIwvFsGJwJUf9b3ITSI5LXxEPI9HooeSsmW8NEtm60Fl9jTE2NOL5t1ZkB25paewAi
+         V2GQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXYCkWgNpEWKvnMxrtKZCU7dytjU5R6P5cmDTLEDFQrrYWOlZ6Y0HU3ht3SEem5dR9UlFwRIx7LMSfqHMA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy7uK3fQiLP+7mGvE9GAweymJ6FWo0EHEcuPk+LWs1JyWKXl2g
+	MewJAcqt1PYbpW65KELsro3UtjFU53vY4BTDqtiQxHjlEF064hcVbIXzJuJ+1HE=
+X-Gm-Gg: ASbGnctW049AlE2r7EW5MIodJ5aYcykc/pj/WiQmPDrq4Fvc6MlvBCBgOdIG6yiqE+s
+	nwQx6FiQcr1CUUGtdBUYbSIqRecidcNAtp63vmXMKhgy4Vg4+ZxKsMd+16J0j02cfoS1xObnTLI
+	fGJzvjRX5BqEFbxgNzxE+hJD/i6LqdB7m8AAlBl1lK9o7PldHUBU53nwT7WiowwaPWz/pC9Chqc
+	ZG4bo4h9MwDM9LdvOXgnXAKaSjXSXgPE/G7Uk81HByhmX4iH407r1MTXjPhSZORZS99+MCI2M8w
+	uP6c5BjdS15RfGmHx8rOudEardWPQCArcD9DUo2ttaXneTIo+Ipg0Zc=
+X-Google-Smtp-Source: AGHT+IFS9ZOU0lVFyWUQ84y6baV41ONm7JGT6TkRTJEtzq0JeBL9l/n9rsr90siOB4OTv3dodfZukg==
+X-Received: by 2002:a05:6000:1846:b0:385:fd31:ca24 with SMTP id ffacd0b85a97d-3862b3cea6dmr3365934f8f.12.1733755377482;
+        Mon, 09 Dec 2024 06:42:57 -0800 (PST)
+Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38636e05568sm7300809f8f.39.2024.12.09.06.42.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 06:42:57 -0800 (PST)
 Date: Mon, 9 Dec 2024 15:42:52 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
-	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
- MBa62xx carrier board Device Trees
-Message-ID: <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
- <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
- <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
- <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
+From: Petr Tesarik <ptesarik@suse.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Valentin Schneider <vschneid@redhat.com>, Dave Hansen
+ <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
+ bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
+ Wanpeng Li <wanpengli@tencent.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Andy Lutomirski <luto@kernel.org>, Frederic Weisbecker
+ <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Neeraj
+ Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes
+ <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, Boqun Feng
+ <boqun.feng@gmail.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
+ <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
+ <lstoakes@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
+ <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>, Sami Tolvanen
+ <samitolvanen@google.com>, Ard Biesheuvel <ardb@kernel.org>, Nicholas
+ Piggin <npiggin@gmail.com>, Juerg Haefliger
+ <juerg.haefliger@canonical.com>, Nicolas Saenz Julienne
+ <nsaenz@kernel.org>, "Kirill A. Shutemov"
+ <kirill.shutemov@linux.intel.com>, Nadav Amit <namit@vmware.com>, Dan
+ Carpenter <error27@gmail.com>, Chuang Wang <nashuiliang@gmail.com>, Yang
+ Jihong <yangjihong1@huawei.com>, Petr Mladek <pmladek@suse.com>, "Jason A.
+ Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>, Julian Pidancet
+ <julian.pidancet@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>,
+ Dionna Glaze <dionnaglaze@google.com>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
+ <linux@weissschuh.net>, Juri Lelli <juri.lelli@redhat.com>, Marcelo Tosatti
+ <mtosatti@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Daniel Wagner
+ <dwagner@suse.de>
+Subject: Re: [RFC PATCH v3 13/15] context_tracking,x86: Add infrastructure
+ to defer kernel TLBI
+Message-ID: <20241209154252.4f8fa5a8@mordecai.tesarici.cz>
+In-Reply-To: <20241209121249.GN35539@noisy.programming.kicks-ass.net>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+	<20241119153502.41361-14-vschneid@redhat.com>
+	<20241120152216.GM19989@noisy.programming.kicks-ass.net>
+	<20241120153221.GM38972@noisy.programming.kicks-ass.net>
+	<xhsmhldxdhl7b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	<20241121111221.GE24774@noisy.programming.kicks-ass.net>
+	<4b562cd0-7500-4b3a-8f5c-e6acfea2896e@intel.com>
+	<20241121153016.GL39245@noisy.programming.kicks-ass.net>
+	<20241205183111.12dc16b3@mordecai.tesarici.cz>
+	<xhsmh1pyh6p0k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+	<20241209121249.GN35539@noisy.programming.kicks-ass.net>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 09, 2024 at 02:55:31PM +0100, Matthias Schiffer wrote:
-> On Mon, 2024-12-09 at 14:24 +0100, Andrew Lunn wrote:
-> > 
-> > > +&cpsw_port1 {
-> > > +	phy-mode = "rgmii-rxid";
-> > > +	phy-handle = <&cpsw3g_phy0>;
-> > > +};
-> > > +
-> > > +&cpsw_port2 {
-> > > +	phy-mode = "rgmii-rxid";
-> > > +	phy-handle = <&cpsw3g_phy3>;
-> > > +};
-> > 
-> > rgmii-rxid is very odd.
-> > 
-> > > +
-> > > +&cpsw3g_mdio {
-> > > +	status = "okay";
-> > > +	pinctrl-names = "default";
-> > > +	pinctrl-0 = <&main_mdio1_pins>;
-> > > +
-> > > +	cpsw3g_phy0: ethernet-phy@0 {
-> > > +		compatible = "ethernet-phy-ieee802.3-c22";
-> > > +		reg = <0x0>;
-> > > +		reset-gpios = <&main_gpio1 11 GPIO_ACTIVE_LOW>;
-> > > +		reset-assert-us = <1000>;
-> > > +		reset-deassert-us = <1000>;
-> > > +		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-> > 
-> > I guess this is the explanation.
-> > 
-> > What happens when you use rgmii-id, and don't have this delay here?
-> > That would be normal.
-> > 
-> > 	Andrew
-> 
-> 
-> This is normal for AM62-based boards, see the DTSI of the TI reference
-> starterkit for example:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi#n451
-> 
-> With rgmii-id, both ti,rx-internal-delay and ti,tx-internal-delay should be set.
-> As ti,*-internal-delay sets the delay on the PHY side, phy-mode "rgmii" is the
-> one that would not use either:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/net/ti,dp83867.yaml#n78
-> 
-> At the end of the day, does it really matter as long as MAC and PHY agree on the
-> used mode? We copied this part of the hardware design from the TI reference
-> board, and did our hardware qualification with these settings, so I think it
-> makes sense to use the same phy-mode configuration.
+On Mon, 9 Dec 2024 13:12:49 +0100
+Peter Zijlstra <peterz@infradead.org> wrote:
 
-What i try to achieve is every board uses the same configuration. The
-PHY adds the delays, not the MAC. There are a few exceptions, because
-a few cheap PHYs don't support delays, and so the MAC needs to add
-them. But in general, any board i review, i always ask that the PHY
-does the delay.
+> On Mon, Dec 09, 2024 at 01:04:43PM +0100, Valentin Schneider wrote:
+> 
+> > > But I wonder what exactly was the original scenario encountered by
+> > > Valentin. I mean, if TLB entry invalidations were necessary to sync
+> > > changes to kernel text after flipping a static branch, then it might be
+> > > less overhead to make a list of affected pages and call INVLPG on them.  
+> 
+> No; TLB is not involved with text patching (on x86).
+> 
+> > > Valentin, do you happen to know?  
+> > 
+> > So from my experimentation (hackbench + kernel compilation on housekeeping
+> > CPUs, dummy while(1) userspace loop on isolated CPUs), the TLB flushes only
+> > occurred from vunmap() - mainly from all the hackbench threads coming and
+> > going.  
+> 
+> Right, we have virtually mapped stacks.
 
-Also, don't put too much value in vendor code. Vendors don't care
-about Linux has a whole, being uniform across all systems. Many
-vendors do the minimum to get their stuff working, sometimes Monkeys
-typing Shakespeare, and not a lot more.
+Wait... Are you talking about the kernel stac? But that's only 4 pages
+(or 8 pages with KASAN), so that should be easily handled with INVLPG.
+No CR4 dances are needed for that.
 
-I also find a lot of developers don't really understand what phy-mode
-and PHY_INTERFACE_MODE_RGMII_* actually mean. phy-mode = 'rgmii' means
-the board has extra long clock lines, so the MAC/PHY does not need to
-add delays. rgmii-rxid means the board has an extra long rx clock
-line, but a normal length tx clock line. Now, i doubt your board is
-actually like this?
+What am I missing?
 
-You want to correctly describe your hardware in DT, which i guess is
-"rgmii-id". That means something, either the MAC or the PHY needs to
-add delays. PHY_INTERFACE_MODE_RGMII_* is what is passed to the
-PHY. To get it to add the 2ns delays, you pass
-PHY_INTERFACE_MODE_RGMII_ID, and you should not need any additional
-properties in DT, it should default to 2ns. If you need to tune the
-delay, 2ns does not work, but you actually need 1.8ns etc, then you
-can add additional parameters. But given you have
-DP83867_RGMIIDCTL_2_00_NS, i doubt you need this.
-
-	Andrew
+Petr T
 
