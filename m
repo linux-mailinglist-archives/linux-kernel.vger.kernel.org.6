@@ -1,29 +1,30 @@
-Return-Path: <linux-kernel+bounces-437208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 877AF9E9054
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:35:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D54AB9E9059
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:35:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4165A281E8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03CF1886B16
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:35:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11398217735;
-	Mon,  9 Dec 2024 10:34:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB22218842;
+	Mon,  9 Dec 2024 10:34:57 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02E0B21639E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:34:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351121764E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:34:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733740494; cv=none; b=TjlTIq9J7ESbYbg9PjuYkhjgrEQx2aFT90pctGMxKmNPezkFWJVYRHCr59OoAU+sphbTYDgHAg2i54UNyeAB2xVArMtQdvP3yyz4vkzHo05YAAmQwAcLbbWnMl4jj2WBsIL/Ek1EjqMvwJ0Xm7b0SxeQvmP5Tlt5nrbgDyGg7jQ=
+	t=1733740496; cv=none; b=NoqGFT/drrRuSecKt3UuioeGr9kfSYpT8jdXPN0xqBuEEOwiycbai5+U4ehFgfNrtnqc6QT3QdA5Wz3cAJVcKMIQ6K62k+53sjfDyC2sDVnEqL1pAxj0+pUulMcCodO42YS1ORBbRwTXskvKU3ldaUL+Cj8FDuFhewpnHsTy1TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733740494; c=relaxed/simple;
-	bh=66RywZ0JRagI5ZhzICafvsmxcJtS7MtCvp7n3FefA6A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=br2L2H4CzWqZ76lTlwfV8b5kmVT5u9qLiA+HS2IQzUSFn8wjVLzzvR5RdWAocKNFAguyZ4c8K55UBd0vfHH7b7Xq5EkmqkkWGhZ+zjiUoIdKt+y0o7XNCeL40Jo9OTPxVaRbeR2tj6OMwl5RB7+jxDAhJJUsnT+Arp+A4TTNVBs=
+	s=arc-20240116; t=1733740496; c=relaxed/simple;
+	bh=RIVvaxW4fTKoXkwiiZds9F9Vdi4UtLbbwgdiqzLLnlo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PEodJNYKw/KjNGdpmtw9rr42NUIN6LxgCr75jtiKFALq1WhG1oWhMSp76+Rz56YMSYHpMhW8+bZ0ZRBCMwFYODdaDJRVgGZS26VMCO+fevrx6ggUgBA98TQ6XW0eLidKJTmBeM4iTCixUs4+PqA47K0/pT4uhfJZmwzfwIqNmGk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -31,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKb65-00063s-RH; Mon, 09 Dec 2024 11:34:37 +0100
+	id 1tKb65-00063t-RI; Mon, 09 Dec 2024 11:34:37 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKb63-002UsH-0Q;
+	id 1tKb63-002UsI-0W;
 	Mon, 09 Dec 2024 11:34:35 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKb63-001VXM-2f;
+	id 1tKb63-001VXW-2l;
 	Mon, 09 Dec 2024 11:34:35 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: Rob Herring <robh@kernel.org>,
@@ -55,15 +56,18 @@ To: Rob Herring <robh@kernel.org>,
 	Woojung Huh <woojung.huh@microchip.com>,
 	Andrew Lunn <andrew+netdev@lunn.ch>
 Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	Conor Dooley <conor.dooley@microchip.com>,
 	kernel@pengutronix.de,
 	linux-kernel@vger.kernel.org,
 	netdev@vger.kernel.org,
 	devicetree@vger.kernel.org,
 	linux-stm32@st-md-mailman.stormreply.com
-Subject: [PATCH v2 0/4] Add support for Priva E-Measuringbox board
-Date: Mon,  9 Dec 2024 11:34:30 +0100
-Message-Id: <20241209103434.359522-1-o.rempel@pengutronix.de>
+Subject: [PATCH v2 1/4] dt-bindings: vendor-prefixes: Add prefix for Priva
+Date: Mon,  9 Dec 2024 11:34:31 +0100
+Message-Id: <20241209103434.359522-2-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241209103434.359522-1-o.rempel@pengutronix.de>
+References: <20241209103434.359522-1-o.rempel@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,32 +80,31 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-This patch series introduces support for the Priva E-Measuringbox board
-based on the ST STM32MP133 SoC. The set includes all the necessary
-changes for device tree bindings, vendor prefixes, thermal support, and
-board-specific devicetree to pass devicetree validation and checkpatch
-tests.
+Introduce the 'pri' vendor prefix for Priva, a company specializing in
+sustainable solutions for building automation, energy, and climate
+control.  More information about Priva can be found at
+https://www.priva.com
 
-changes v2:
-- drop: dt-bindings: net: Add TI DP83TD510 10BaseT1L PHY
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Oleksij Rempel (2):
-  dt-bindings: vendor-prefixes: Add prefix for Priva
-  dt-bindings: arm: stm32: Add Priva E-Measuringbox board
-
-Roan van Dijk (2):
-  arm: dts: stm32: Add thermal support for STM32MP131
-  arm: dts: stm32: Add Priva E-Measuringbox devicetree
-
- .../devicetree/bindings/arm/stm32/stm32.yaml  |   6 +
- .../devicetree/bindings/vendor-prefixes.yaml  |   2 +
- arch/arm/boot/dts/st/Makefile                 |   1 +
- arch/arm/boot/dts/st/stm32mp131.dtsi          |  35 ++
- arch/arm/boot/dts/st/stm32mp133c-prihmb.dts   | 496 ++++++++++++++++++
- 5 files changed, 540 insertions(+)
- create mode 100644 arch/arm/boot/dts/st/stm32mp133c-prihmb.dts
-
---
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index da01616802c7..9a9ac3adc5ef 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -1198,6 +1198,8 @@ patternProperties:
+     description: Primux Trading, S.L.
+   "^probox2,.*":
+     description: PROBOX2 (by W2COMP Co., Ltd.)
++  "^pri,.*":
++    description: Priva
+   "^prt,.*":
+     description: Protonic Holland
+   "^pulsedlight,.*":
+-- 
 2.39.5
 
 
