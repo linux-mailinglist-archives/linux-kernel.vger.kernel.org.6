@@ -1,195 +1,138 @@
-Return-Path: <linux-kernel+bounces-438121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 153579E9D1A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:31:15 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 716419E9D19
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:31:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DB06166271
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:31:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B47281CC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 857BF156F57;
-	Mon,  9 Dec 2024 17:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EBE13C807;
+	Mon,  9 Dec 2024 17:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IW84NrgF"
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA6A233137
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:31:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cIRjVzz1"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C52233137;
+	Mon,  9 Dec 2024 17:30:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733765464; cv=none; b=ghFeKUCRu+2xrqCuG9yFAfmlbYPl5NDjmudVpuglbnJgcQNkPXTLG6ZrbydvgCWjNpozRzH9q7vL/kT+tcu+nketMMAws3EtrAxpHhr1MW8n21LK9g56VkexiNfpgaKgo4Cxq5Vtp3FdMO3JsTpIoNlxiDDx39W7BFYRzreCm84=
+	t=1733765458; cv=none; b=TWQCg2q8t/eT0+Q/l+jEJ52A7rzfVQSH9PAcJuMEt3ED6VEN08lnr8ZUAtFp3B9zY1UAs42TcRg04kGluYnPT+8nmRnidiMmyd4Q+VURGw5eMSISCH4pexD7PgoOrc6JUprPKUb0KCtHBH3/UIOMgvIF8ITaAjR7/8MeZL565ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733765464; c=relaxed/simple;
-	bh=1N03fZo15QnE9uhRk0TSeGGXQ8CxQhWF/jiW+CHAgf8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ntk4NNOP54FuvJtmtG5ccU61LJ5UIno1H0hOv8Mh4/0ZxBOrqxu10WqCmwbP4t2j7hSjm4HHC3YgpGRx7OeQ8Gpemy7o1JslU9Rp6oG2OXUdll4MC5ML2SpVLDPK87oqjZk8lb4uez1Y6FtTlbum3NkW1ZdBFmV4AKY5AaKtRBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IW84NrgF; arc=none smtp.client-ip=209.85.160.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4674a47b7e4so652531cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:31:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733765462; x=1734370262; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jdIPjvnlF3Mwo/6XEjqWYb6FpbfvUDeAQpVQ0puOXiE=;
-        b=IW84NrgFlZjLoSJuhPwt6hwcExCTy8+vhPaVDfL5tgqou/1S9cTWT2WWvFb28xB6IJ
-         /8YG+NCU1XsV42IyNJwesgPunjkoLn5lCftvj6+Of4v0kpHo5GxLF+lNVg3GObf4/cqf
-         6eQ6GFtIDy7pv285PoNmrECqDVaCGq/ID2Y/Z6SafJ1awTAMZiDHeGfJhoEj+2JK4tzw
-         VCpQ4/qcLIatiEcQT0uReqRs6F4GQs68kAqZ3BRbYKGU8JRXcbM1g20tgAyEluK/C1a+
-         WYQE8KK44ZpY9DMABNDTlYenZIhaBXXa3CJEdwpAeWbQmzwgNeKeTeRgL5BVHdgfaZ10
-         EbwA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733765462; x=1734370262;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jdIPjvnlF3Mwo/6XEjqWYb6FpbfvUDeAQpVQ0puOXiE=;
-        b=KCzsIj7Jn3U70vngjx7rPnQfDPSc+M1sTXnMl40wF66v3Xy1uqJvRQFxjinNIsDVmW
-         QuRb1qqovUjyNhuisMACqOK+Yh4UqZh4mNN7vXDnoECC+9l5tewc7P4yvH1hgnK1Pacd
-         +nOHavofBS/XRjxlEYlqILCwlkkfGOSfXEVmKEFfTRI7k4wp1StcdlagDKsqnp0LPv3g
-         KReRLlfHu9ba4jrdySZwaEvRBGIeaBvGvyXZ5itp1SLQh4NAy00DZABco8mEaVQhn5RD
-         rlyEH5bDyGhKHlPePQiUMRNKDtu+lZTqo43Os+aoHSQN+WtOCcWtSleybmxYnQbBLBuL
-         6NqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhxAuB6qmbShgqfgFCUo2dRBeE6rY+sCS4zsTkJa8ciuJjMWR7wb84zYoEx5ptoFAScy44zcKiJsiuGbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvsMeufVo3gfGmDKle/A6i9eOJNgKIvqv0qJPwJgZ3oGOwivUt
-	oBxqVIzZJ/UokQryDdmgL6nwh+uJmX3YIsJNgO83pGmtLVVRR5KgoDF0k1MJlVGADnZigXkRZnx
-	W6sNluWCv5hGRxlEtLTDstR+9h4UL99yMS9CE
-X-Gm-Gg: ASbGncuIK1azYYjkrJd4+cNZ6namUcPrPlCnsTaXfdo7aQN2iMBChxR6Mpsie7UhDHl
-	JhFS2Qv7lFITj/vkewuy2DWCKW0BUgPB4/02uFI4ROUqxOSGlo6n+S9Avo79+
-X-Google-Smtp-Source: AGHT+IF5ueLy5f8bNH9OGIJWA3/VyL6MS9Y/vEuMpZ/PyvK3bYq6fAc9vv+YnYvtEhUGWeXouk6ewOJKmK8R1HNS3J0=
-X-Received: by 2002:a05:622a:2594:b0:462:b2f5:b24c with SMTP id
- d75a77b69052e-4674c9dbadamr7726181cf.29.1733765461817; Mon, 09 Dec 2024
- 09:31:01 -0800 (PST)
+	s=arc-20240116; t=1733765458; c=relaxed/simple;
+	bh=MaRBRA8BofakgPUD4dP5c+wZsPmz67UHvD9rdarO1hM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OfhlNlo89blP5S2nF6QkL7KdEfaOJ3ARC9NYo1Wvcxs/QujDicg4U4UfEthZCH+tu3WavhNs2hLHSJDgPmrzl7cRSBBLBKbtKul/ckEpNx9qm8/AY2kC9/yDgrh8itru48wu5orfqOCTp4Q0h0zkj4Umfwc+sRGgh1+ma/gpQmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=cIRjVzz1; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1127)
+	id 93F7120C8BA2; Mon,  9 Dec 2024 09:30:56 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 93F7120C8BA2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1733765456;
+	bh=bqXOdnQKoVPPZ/PjMw7ad7afClJiAGSulQNBgrrXhEA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cIRjVzz1q2gCsD+C8+qkEhV3jDosgVaBDvKxVTzF7PygGX9KXHEEFSBBwCUqZMVHq
+	 Kpu0BHZW674WkTgs63hmnyzw9Zo/Z2qJsLgY3MguLVW35uy7PDjsL8udC8ngwkgszs
+	 rOF2GCGF9hIC1osMAxkKHxns4Rgw7bsuo0b6AWJ0=
+Date: Mon, 9 Dec 2024 09:30:56 -0800
+From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>
+Cc: "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>,
+	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+	"vkuznets@redhat.com" <vkuznets@redhat.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] Drivers: hv: util: Don't force error code to
+ ENODEV in util_probe()
+Message-ID: <20241209173056.GA1194@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+References: <20241106154247.2271-1-mhklinux@outlook.com>
+ <20241106154247.2271-2-mhklinux@outlook.com>
+ <20241208173049.GA14100@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
+ <SN6PR02MB4157ED3DA55558829D6152D5D4332@SN6PR02MB4157.namprd02.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118222540.27495-1-yabinc@google.com> <20241209162028.GD12428@willie-the-truck>
-In-Reply-To: <20241209162028.GD12428@willie-the-truck>
-From: Rong Xu <xur@google.com>
-Date: Mon, 9 Dec 2024 09:30:50 -0800
-Message-ID: <CAF1bQ=SiHi8oCyo5YnXGpQGofM1zAsnBdqSEet1mS-BYNKVU8A@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: Allow CONFIG_AUTOFDO_CLANG to be selected
-To: Will Deacon <will@kernel.org>
-Cc: Yabin Cui <yabinc@google.com>, Han Shen <shenhan@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Masahiro Yamada <masahiroy@kernel.org>, Kees Cook <kees@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SN6PR02MB4157ED3DA55558829D6152D5D4332@SN6PR02MB4157.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 
-Enabling an AutoFDO build requires users to explicitly set CONFIG_AUTOFDO_C=
-LANG.
-The support code is in Commit 315ad8780a129e82 (kbuild: Add AutoFDO
-support for Clang build).
+On Sun, Dec 08, 2024 at 11:12:15PM +0000, Michael Kelley wrote:
+> From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Sunday, December 8, 2024 9:31 AM
+> > 
+> > On Wed, Nov 06, 2024 at 07:42:46AM -0800, mhkelley58@gmail.com wrote:
+> > > From: Michael Kelley <mhklinux@outlook.com>
+> > >
+> > > If the util_init function call in util_probe() returns an error code,
+> > > util_probe() always return ENODEV, and the error code from the util_init
+> > > function is lost. The error message output in the caller, vmbus_probe(),
+> > > doesn't show the real error code.
+> > >
+> > > Fix this by just returning the error code from the util_init function.
+> > > There doesn't seem to be a reason to force ENODEV, as other errors
+> > > such as ENOMEM can already be returned from util_probe(). And the
+> > > code in call_driver_probe() implies that ENODEV should mean that a
+> > > matching driver wasn't found, which is not the case here.
+> > >
+> > > Suggested-by: Dexuan Cui <decui@microsoft.com>
+> > > Signed-off-by: Michael Kelley <mhklinux@outlook.com>
+> > > ---
+> > > Changes in v2: None. This is the first version of Patch 1 of this series.
+> > > The "v2" is due to changes to Patch 2 of the series.
+> > >
+> > >  drivers/hv/hv_util.c | 4 +---
+> > >  1 file changed, 1 insertion(+), 3 deletions(-)
+> > >
+> > > diff --git a/drivers/hv/hv_util.c b/drivers/hv/hv_util.c
+> > > index c4f525325790..370722220134 100644
+> > > --- a/drivers/hv/hv_util.c
+> > > +++ b/drivers/hv/hv_util.c
+> > > @@ -590,10 +590,8 @@ static int util_probe(struct hv_device *dev,
+> > >  	srv->channel = dev->channel;
+> > >  	if (srv->util_init) {
+> > >  		ret = srv->util_init(srv);
+> > > -		if (ret) {
+> > > -			ret = -ENODEV;
+> > > +		if (ret)
+> > >  			goto error1;
+> > > -		}
+> > 
+> > After reviewing V2 of this series, I couldn’t find any scenario where
+> > 'util_init' in any driver returns a value other than 0. 
+> 
+> Yeah, I noticed the same thing when doing this patch set.
+> 
+> > In such cases,
+> > could we consider making all these functions 'void' ?
+> > 
+> > After this ee can remove the check for util_int return type.
+> 
+> I decided against making these changes. It seemed like code churn
+> for not much benefit. And there's the possibility of some future
+> change reintroducing an error code in one of the util_init functions,
+> in which case we would need to put things back like they are now.
+> Certainly this is a judgment call, but my take was to leave things
+> as they are.
+> 
+> The changes you suggest would probably go as a third patch in
+> the series. Wei Liu has already picked up the two patches as they
+> are, so it would be fine to create an independent patch with the
+> changes you suggest, if we want to go that route. My preference
+> isn't that strong either way.
 
-The CONFIG_AUTOFDO_CLANG config, even if selected by the user, will
-not be enabled
-unless ARCH_SUPPORTS_AUTOFDO_CLANG is present.
+I realized later that the patch is already merged. I believe it's fine
+to leave it as is unless someone feels motivated enough to push this change.
 
-We are not enabling this for all architectures because AutoFDO's optimized =
-build
-relies on Last Branch Records (LBR) which aren't available on all architect=
-ures.
-
--Rong
-
-
-On Mon, Dec 9, 2024 at 8:20=E2=80=AFAM Will Deacon <will@kernel.org> wrote:
->
-> On Mon, Nov 18, 2024 at 02:25:40PM -0800, Yabin Cui wrote:
-> > Select ARCH_SUPPORTS_AUTOFDO_CLANG to allow AUTOFDO_CLANG to be
-> > selected.
-> >
-> > On ARM64, ETM traces can be recorded and converted to AutoFDO profiles.
-> > Experiments on Android show 4% improvement in cold app startup time
-> > and 13% improvement in binder benchmarks.
-> >
-> > Signed-off-by: Yabin Cui <yabinc@google.com>
-> > ---
-> >
-> > Change-Logs in V2:
-> >
-> > 1. Use "For ARM platforms with ETM trace" in autofdo.rst.
-> > 2. Create an issue and a change to use extbinary format in instructions=
-:
-> >    https://github.com/Linaro/OpenCSD/issues/65
-> >    https://android-review.googlesource.com/c/platform/system/extras/+/3=
-362107
-> >
-> >  Documentation/dev-tools/autofdo.rst | 18 +++++++++++++++++-
-> >  arch/arm64/Kconfig                  |  1 +
-> >  2 files changed, 18 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/dev-tools/autofdo.rst b/Documentation/dev-to=
-ols/autofdo.rst
-> > index 1f0a451e9ccd..a890e84a2fdd 100644
-> > --- a/Documentation/dev-tools/autofdo.rst
-> > +++ b/Documentation/dev-tools/autofdo.rst
-> > @@ -55,7 +55,7 @@ process consists of the following steps:
-> >     workload to gather execution frequency data. This data is
-> >     collected using hardware sampling, via perf. AutoFDO is most
-> >     effective on platforms supporting advanced PMU features like
-> > -   LBR on Intel machines.
-> > +   LBR on Intel machines, ETM traces on ARM machines.
-> >
-> >  #. AutoFDO profile generation: Perf output file is converted to
-> >     the AutoFDO profile via offline tools.
-> > @@ -141,6 +141,22 @@ Here is an example workflow for AutoFDO kernel:
-> >
-> >        $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -=
-a -N -b -c <count> -o <perf_file> -- <loadtest>
-> >
-> > +   - For ARM platforms with ETM trace:
-> > +
-> > +     Follow the instructions in the `Linaro OpenCSD document
-> > +     https://github.com/Linaro/OpenCSD/blob/master/decoder/tests/auto-=
-fdo/autofdo.md`_
-> > +     to record ETM traces for AutoFDO::
-> > +
-> > +      $ perf record -e cs_etm/@tmc_etr0/k -a -o <etm_perf_file> -- <lo=
-adtest>
-> > +      $ perf inject -i <etm_perf_file> -o <perf_file> --itrace=3Di5000=
-09il
-> > +
-> > +     For ARM platforms running Android, follow the instructions in the
-> > +     `Android simpleperf document
-> > +     <https://android.googlesource.com/platform/system/extras/+/main/s=
-impleperf/doc/collect_etm_data_for_autofdo.md>`_
-> > +     to record ETM traces for AutoFDO::
-> > +
-> > +      $ simpleperf record -e cs-etm:k -a -o <perf_file> -- <loadtest>
-> > +
-> >  4) (Optional) Download the raw perf file to the host machine.
-> >
-> >  5) To generate an AutoFDO profile, two offline tools are available:
-> > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > index fd9df6dcc593..c3814df5e391 100644
-> > --- a/arch/arm64/Kconfig
-> > +++ b/arch/arm64/Kconfig
-> > @@ -103,6 +103,7 @@ config ARM64
-> >       select ARCH_SUPPORTS_PER_VMA_LOCK
-> >       select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
-> >       select ARCH_SUPPORTS_RT
-> > +     select ARCH_SUPPORTS_AUTOFDO_CLANG
-> >       select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
-> >       select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
-> >       select ARCH_WANT_DEFAULT_BPF_JIT
->
-> After this change, both arm64 and x86 select this option unconditionally
-> and with no apparent support code being added. So what is actually
-> required in order to select ARCH_SUPPORTS_AUTOFDO_CLANG and why isn't
-> it just available for all architectures instead?
->
-> Will
+- Saurabh
 
