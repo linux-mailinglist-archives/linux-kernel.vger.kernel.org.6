@@ -1,115 +1,504 @@
-Return-Path: <linux-kernel+bounces-438023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D534E9E9BE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:36:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0A399E9BE3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:37:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DFD81886B61
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:36:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E008A188787A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEF6713D520;
-	Mon,  9 Dec 2024 16:36:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 431FE14A62A;
+	Mon,  9 Dec 2024 16:36:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dma8MD65"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zsh0SZOq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C7B6135A63;
-	Mon,  9 Dec 2024 16:36:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA68313D518;
+	Mon,  9 Dec 2024 16:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733762198; cv=none; b=rHG/1H4rxJn+30HRCD80FuhSX4qZnub45yt6zVSy7QKIssVhLd/9LOLkLEzX/lDn+HuXfC6AoPgEbyYTgnojXAZ+8ocEeZJ/NTAEmxNEdzLRBeS7JQNdjtqSj04u5WNMzVJKVuD2mkFteMjJNOsBYumjqYlKJvl9K9tuoziRKHo=
+	t=1733762213; cv=none; b=hR8IWOCMK4EGxqxMKvJSazw7tAAdGdp9zC1y1CHaO8C8RDKL6c5yCLehGFu1L68YRvBPOn29t4rx+8+n/hOJE9yKjtVLVD51MY0KQfworu+d3nfEUv5maUmgzjMW87NflVeiV0B1S654JMzu+aOjhe44k20u+ZRK3hnzohqzlJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733762198; c=relaxed/simple;
-	bh=xKG2ukKcw8N+OsYYylErisFU2NDm1V5YUx6EUt8IvM4=;
+	s=arc-20240116; t=1733762213; c=relaxed/simple;
+	bh=xa7uGctjLvsFpBlOpMHL99eSdYWGnTss9OQOf0wxaZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U3m3eEK9eZ/8nMCuZVT3Piju+lCNl6HfugFEo3c3ZGUJDRbD98fDs7cG1CwbEbb9+7RW45XtkfnrNMGxFwlwec5qIgt1mZ9LDWvNzeWAJJvvYcK123uXuopqsMtzA6+MHhCqXk/fmcipd2xt3lRZJy0oZzvEveEiKLuosyarDkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dma8MD65; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733762197; x=1765298197;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xKG2ukKcw8N+OsYYylErisFU2NDm1V5YUx6EUt8IvM4=;
-  b=dma8MD65cmquVnetplnk0A7/R3gzi4UE1P4JtkeMWdVNrU4XxqI092or
-   oKz0Iy/K1pt/FMZLJfgguj0KCik2Eh5vWlQLcBKMJWfiAiHHaQ3NOkLSY
-   nSNYgvGEWGVdIbKvXYeOZcX6Vmnextdt+oDj+eij6EFZ7RzBHzaq+GLe4
-   84g63bmIAom1HNaNkiWD+t1yBTtcfkpeGZ2hI1D3l1H+2FuapNkklargX
-   3Sq2zfCvoEVENL1MtW9S64RLVMprL4pOsfG5jo+z9Kf+tu/sQo/4YZjkK
-   fa5AosFiDiE69V8QN4C51zXQU5+U9OJjZNkvceJ9TA6/nmclzOCHgPENt
-   w==;
-X-CSE-ConnectionGUID: PeLIDOeOSG24vxnTMLa6Kw==
-X-CSE-MsgGUID: UKU/zHG4SASfSRBI93E8Og==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="44539229"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="44539229"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 08:36:36 -0800
-X-CSE-ConnectionGUID: EVv6U4K0TXiFX4O3l7lF9Q==
-X-CSE-MsgGUID: itg+lQy+Rlmxo7+u/mn48A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="94988716"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 08:36:35 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tKgkJ-00000005nVc-2eRb;
-	Mon, 09 Dec 2024 18:36:31 +0200
-Date: Mon, 9 Dec 2024 18:36:31 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Victor Shih <victor.shih@genesyslogic.com.tw>,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Linux PM list <linux-pm@vger.kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v2 1/6] mmc: sdhci: Use EXPORT_PM_FN_NS_GPL() for
- exporting PM functions
-Message-ID: <Z1ccjxyxO0NMNbkm@smile.fi.intel.com>
-References: <20241101101441.3518612-1-andriy.shevchenko@linux.intel.com>
- <20241101101441.3518612-2-andriy.shevchenko@linux.intel.com>
- <7b5fcb3e-e3e7-4d87-9a7b-5570e2e85a0e@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H9vBfiJKEYLXOsiI4mg7fruTv7T5jLtnlKmR2SeAWv1aRQOPS0wPRvaJprqPjx5DLi76tYeOKEWy1FtMbRg4b5sPAeUASYjVtOuVdqM6WNQkIM7We48JpLMV0fyQ7C9ymc/y8RmUVrk0sDnk/naktlBqtqzgT2QdUTPxAseY7W8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zsh0SZOq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAC55C4CED1;
+	Mon,  9 Dec 2024 16:36:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733762212;
+	bh=xa7uGctjLvsFpBlOpMHL99eSdYWGnTss9OQOf0wxaZA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Zsh0SZOqiDXfgN1fTzfHs3GWJx7+YWsbZvdfavJmCxZj8/2bJGyY2AaET893Z4tZ0
+	 ZfB3pRZr6ZG/eaKD3oR9dP90rJSJIiN1b6qaSsQYCGP/4AEsg6WOC1dovNfE+W8/J0
+	 X4nGRcmijuGD6CbJMwUVGF2IDoY9VGSaL3KB1jRkVpeNNdZV2RcjgKHPTUY0cKbQM0
+	 wLbfSqNmvJysPWu7n5iIjDSrZXvfejD1Ol0rfXI3jpPiEzEpJCviLaFffr7VAUGrXo
+	 mdw7mR7H2iJZwEfTAOCj+iX5OtdFZk7sSpp6+Uu9O+PVS36iooN85kfyXB2WIRgt6m
+	 z3uIRSUf8LNRw==
+Date: Mon, 9 Dec 2024 13:36:48 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org,
+	Andrii Nakryiko <andrii@kernel.org>, Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org, Stephane Eranian <eranian@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH v2 2/4] perf lock contention: Run BPF slab cache iterator
+Message-ID: <Z1ccoNOl4Z8c5DCz@x1>
+References: <20241108061500.2698340-1-namhyung@kernel.org>
+ <20241108061500.2698340-3-namhyung@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <7b5fcb3e-e3e7-4d87-9a7b-5570e2e85a0e@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241108061500.2698340-3-namhyung@kernel.org>
 
-On Mon, Dec 09, 2024 at 12:38:59PM +0200, Adrian Hunter wrote:
-> On 1/11/24 12:11, Andy Shevchenko wrote:
-> > Switch from ugly ifdeffery to using EXPORT_PM_FN_NS_GPL()
-> > for exporting PM functions. This helps cleaning up the other
-> > SDHCI drivers in the future.
+On Thu, Nov 07, 2024 at 10:14:57PM -0800, Namhyung Kim wrote:
+> Recently the kernel got the kmem_cache iterator to traverse metadata of
+> slab objects.  This can be used to symbolize dynamic locks in a slab.
 > 
-> It seems sdhci is the first code in the kernel to use
-> EXPORT_PM_FN_NS_GPL() but it was not asked for ;-)
+> The new slab_caches hash map will have the pointer of the kmem_cache as
+> a key and save the name and a id.  The id will be saved in the flags
+> part of the lock.
+
+Trying to fix this 
+
+cd . && make GEN_VMLINUX_H=1 FEATURES_DUMP=/home/acme/git/perf-tools-next/tools/perf/BUILD_TEST_FEATURE_DUMP -j28 O=/tmp/tmp.DWo9tIFvWU DESTDIR=/tmp/tmp.ex3iljqLBT
+  BUILD:   Doing 'make -j28' parallel build
+Warning: Kernel ABI header differences:
+  diff -u tools/include/uapi/drm/drm.h include/uapi/drm/drm.h
+  diff -u tools/include/uapi/linux/kvm.h include/uapi/linux/kvm.h
+  diff -u tools/include/uapi/linux/perf_event.h include/uapi/linux/perf_event.h
+  diff -u tools/arch/x86/include/asm/cpufeatures.h arch/x86/include/asm/cpufeatures.h
+  diff -u tools/arch/x86/include/uapi/asm/kvm.h arch/x86/include/uapi/asm/kvm.h
+  diff -u tools/arch/arm64/include/uapi/asm/kvm.h arch/arm64/include/uapi/asm/kvm.h
+  diff -u tools/arch/arm64/include/uapi/asm/unistd.h arch/arm64/include/uapi/asm/unistd.h
+  diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
+  diff -u tools/include/uapi/asm-generic/mman.h include/uapi/asm-generic/mman.h
+  diff -u tools/perf/arch/x86/entry/syscalls/syscall_32.tbl arch/x86/entry/syscalls/syscall_32.tbl
+  diff -u tools/perf/arch/x86/entry/syscalls/syscall_64.tbl arch/x86/entry/syscalls/syscall_64.tbl
+  diff -u tools/perf/arch/powerpc/entry/syscalls/syscall.tbl arch/powerpc/kernel/syscalls/syscall.tbl
+  diff -u tools/perf/arch/s390/entry/syscalls/syscall.tbl arch/s390/kernel/syscalls/syscall.tbl
+  diff -u tools/perf/arch/mips/entry/syscalls/syscall_n64.tbl arch/mips/kernel/syscalls/syscall_n64.tbl
+  diff -u tools/perf/trace/beauty/include/uapi/linux/fcntl.h include/uapi/linux/fcntl.h
+  diff -u tools/perf/trace/beauty/include/uapi/linux/mount.h include/uapi/linux/mount.h
+  diff -u tools/perf/trace/beauty/include/uapi/linux/prctl.h include/uapi/linux/prctl.h
+Makefile.config:989: No libllvm 13+ found, slower source file resolution, please install llvm-devel/llvm-dev
+Makefile.config:1171: No openjdk development package found, please install JDK package, e.g. openjdk-8-jdk, java-1.8.0-openjdk-devel
+
+  GEN     /tmp/tmp.DWo9tIFvWU/common-cmds.h
+  CC      /tmp/tmp.DWo9tIFvWU/dlfilters/dlfilter-test-api-v0.o
+  CC      /tmp/tmp.DWo9tIFvWU/dlfilters/dlfilter-test-api-v2.o
+  CC      /tmp/tmp.DWo9tIFvWU/dlfilters/dlfilter-show-cycles.o
+  GEN     /tmp/tmp.DWo9tIFvWU/arch/arm64/include/generated/asm/sysreg-defs.h
+  LINK    /tmp/tmp.DWo9tIFvWU/dlfilters/dlfilter-test-api-v2.so
+  LINK    /tmp/tmp.DWo9tIFvWU/dlfilters/dlfilter-show-cycles.so
+  LINK    /tmp/tmp.DWo9tIFvWU/dlfilters/dlfilter-test-api-v0.so
+  PERF_VERSION = 6.13.rc1.g61c6ae4ddd41
+  GEN     perf-iostat
+  GEN     perf-archive
+  INSTALL /tmp/tmp.DWo9tIFvWU/libsubcmd/include/subcmd/exec-cmd.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libsubcmd/include/subcmd/help.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libsubcmd/include/subcmd/pager.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libsubcmd/include/subcmd/parse-options.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libsubcmd/include/subcmd/run-command.h
+  INSTALL libsubcmd_headers
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/bpf_perf.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/core.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/cpumap.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/threadmap.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/evlist.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/evsel.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/event.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/perf/mmap.h
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/core.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/cpumap.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/evlist.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libapi/include/api/cpu.h
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/cpumap.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libsymbol/include/symbol/kallsyms.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/evsel.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libapi/include/api/io.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libapi/include/api/debug.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/lib.h
+  CC      /tmp/tmp.DWo9tIFvWU/libsymbol/kallsyms.o
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/threadmap.o
+  GEN     /tmp/tmp.DWo9tIFvWU/libbpf/bpf_helper_defs.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/mmap.h
+  MKDIR   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/evsel.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/rc_check.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libapi/include/api/fd/array.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/threadmap.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/bpf.h
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/evlist.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libapi/include/api/fs/fs.h
+  CC      /tmp/tmp.DWo9tIFvWU/libapi/cpu.o
+  INSTALL libsymbol_headers
+  INSTALL /tmp/tmp.DWo9tIFvWU/libapi/include/api/fs/tracing_path.h
+  MKDIR   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/libbpf.h
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/mmap.o
+  MKDIR   /tmp/tmp.DWo9tIFvWU/libapi/fd/
+  INSTALL /tmp/tmp.DWo9tIFvWU/libperf/include/internal/xyarray.h
+  MKDIR   /tmp/tmp.DWo9tIFvWU/libapi/fs/
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/btf.h
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/zalloc.o
+  CC      /tmp/tmp.DWo9tIFvWU/libapi/debug.o
+  CC      /tmp/tmp.DWo9tIFvWU/libapi/fd/array.o
+  CC      /tmp/tmp.DWo9tIFvWU/libapi/fs/fs.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/libbpf_common.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/libbpf_legacy.h
+  CC      /tmp/tmp.DWo9tIFvWU/libapi/str_error_r.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/bpf_helpers.h
+  MKDIR   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/
+  INSTALL libperf_headers
+  INSTALL libapi_headers
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/bpf_tracing.h
+  CC      /tmp/tmp.DWo9tIFvWU/libapi/fs/tracing_path.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/bpf_endian.h
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/xyarray.o
+  CC      /tmp/tmp.DWo9tIFvWU/libapi/fs/cgroup.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/bpf_core_read.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/skel_internal.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/libbpf_version.h
+  CC      /tmp/tmp.DWo9tIFvWU/libperf/lib.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/usdt.bpf.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/hashmap.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/relo_core.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/libbpf_internal.h
+  CC      /tmp/tmp.DWo9tIFvWU/libsubcmd/help.o
+  CC      /tmp/tmp.DWo9tIFvWU/libsubcmd/exec-cmd.o
+  CC      /tmp/tmp.DWo9tIFvWU/libsubcmd/pager.o
+  CC      /tmp/tmp.DWo9tIFvWU/libsubcmd/parse-options.o
+  CC      /tmp/tmp.DWo9tIFvWU/libsubcmd/run-command.o
+  CC      /tmp/tmp.DWo9tIFvWU/libsubcmd/sigchain.o
+  CC      /tmp/tmp.DWo9tIFvWU/libsubcmd/subcmd-config.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/libbpf/include/bpf/bpf_helper_defs.h
+  INSTALL libbpf_headers
+  GEN     /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/bpf_helper_defs.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/bpf.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/libbpf.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/btf.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/libbpf_common.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/libbpf_legacy.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/bpf_helpers.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/bpf_tracing.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/bpf_endian.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/bpf_core_read.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/skel_internal.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/libbpf_version.h
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/usdt.bpf.h
+  LD      /tmp/tmp.DWo9tIFvWU/libapi/fd/libapi-in.o
+  LD      /tmp/tmp.DWo9tIFvWU/libsymbol/libsymbol-in.o
+  AR      /tmp/tmp.DWo9tIFvWU/libsymbol/libsymbol.a
+  LD      /tmp/tmp.DWo9tIFvWU/libapi/fs/libapi-in.o
+  INSTALL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/include/bpf/bpf_helper_defs.h
+  INSTALL libbpf_headers
+  LD      /tmp/tmp.DWo9tIFvWU/libapi/libapi-in.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/libbpf.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/bpf.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/nlattr.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/btf.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/libbpf_errno.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/str_error.o
+  LD      /tmp/tmp.DWo9tIFvWU/libperf/libperf-in.o
+  AR      /tmp/tmp.DWo9tIFvWU/libapi/libapi.a
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/netlink.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/bpf_prog_linfo.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/libbpf_probes.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/hashmap.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/btf_dump.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/ringbuf.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/strset.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/linker.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/gen_loader.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/relo_core.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/usdt.o
+  AR      /tmp/tmp.DWo9tIFvWU/libperf/libperf.a
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/zip.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/elf.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/features.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/btf_iter.o
+  CC      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/btf_relocate.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/libbpf.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/bpf.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/nlattr.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/btf.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/libbpf_errno.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/str_error.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/netlink.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/bpf_prog_linfo.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/libbpf_probes.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/hashmap.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/btf_dump.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/ringbuf.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/strset.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/linker.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/gen_loader.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/relo_core.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/usdt.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/zip.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/elf.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/features.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/btf_iter.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/btf_relocate.o
+  LD      /tmp/tmp.DWo9tIFvWU/libsubcmd/libsubcmd-in.o
+  AR      /tmp/tmp.DWo9tIFvWU/libsubcmd/libsubcmd.a
+  LD      /tmp/tmp.DWo9tIFvWU/libbpf/staticobjs/libbpf-in.o
+  LINK    /tmp/tmp.DWo9tIFvWU/libbpf/libbpf.a
+  LD      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/staticobjs/libbpf-in.o
+  LINK    /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/libbpf/libbpf.a
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/main.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/common.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/json_writer.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/gen.o
+  CC      /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/btf.o
+  LINK    /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bootstrap/bpftool
+  GEN     /tmp/tmp.DWo9tIFvWU/util/bpf_skel/vmlinux.h
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bpf_prog_profiler.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bperf_leader.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bperf_follower.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bperf_cgroup.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/func_latency.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/off_cpu.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/lock_contention.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/kwork_trace.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/sample_filter.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/kwork_top.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/bench_uprobe.bpf.o
+  CLANG   /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/augmented_raw_syscalls.bpf.o
+  GENSKEL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/bench_uprobe.skel.h
+  GENSKEL /tmp/tmp.DWo9tIFvWU/util/bpf_skel/func_latency.skel.h
+util/bpf_skel/lock_contention.bpf.c:612:28: error: declaration of 'struct bpf_iter__kmem_cache' will not be visible outside of this function [-Werror,-Wvisibility]
+  612 | int slab_cache_iter(struct bpf_iter__kmem_cache *ctx)
+      |                            ^
+util/bpf_skel/lock_contention.bpf.c:614:28: error: incomplete definition of type 'struct bpf_iter__kmem_cache'
+  614 |         struct kmem_cache *s = ctx->s;
+      |                                ~~~^
+util/bpf_skel/lock_contention.bpf.c:612:28: note: forward declaration of 'struct bpf_iter__kmem_cache'
+  612 | int slab_cache_iter(struct bpf_iter__kmem_cache *ctx)
+      |                            ^
+2 errors generated.
+make[4]: *** [Makefile.perf:1248: /tmp/tmp.DWo9tIFvWU/util/bpf_skel/.tmp/lock_contention.bpf.o] Error 1
+make[4]: *** Waiting for unfinished jobs....
+make[3]: *** [Makefile.perf:292: sub-make] Error 2
+make[2]: *** [Makefile:76: all] Error 2
+make[1]: *** [tests/make:344: make_gen_vmlinux_h_O] Error 1
+make: *** [Makefile:109: build-test] Error 2
+make: Leaving directory '/home/acme/git/perf-tools-next/tools/perf'
+
+real	3m43.896s
+user	29m30.716s
+sys	6m36.609s
+⬢ [acme@toolbox perf-tools-next]$ 
+
+
+ 
+> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> ---
+>  tools/perf/util/bpf_lock_contention.c         | 50 +++++++++++++++++++
+>  .../perf/util/bpf_skel/lock_contention.bpf.c  | 28 +++++++++++
+>  tools/perf/util/bpf_skel/lock_data.h          | 12 +++++
+>  tools/perf/util/bpf_skel/vmlinux/vmlinux.h    |  8 +++
+>  4 files changed, 98 insertions(+)
 > 
-> As such, can you fill in a little background.  I am not
-> sure what it achieves.  Why have CONFIG_PM if not to
-> #ifdef dependent code behind it?
-
-It makes sure that the code elimination happens at compile time and
-at the same time gives developer less uglified (by ifdeffery) code.
-It means there is less risk to miss anything of that which make become
-a compile-time warning of unused function, or even issues during linking
-with modules, etc.
-
-Should I update a commit message with that?
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> diff --git a/tools/perf/util/bpf_lock_contention.c b/tools/perf/util/bpf_lock_contention.c
+> index 41a1ad08789511c3..558590c3111390fc 100644
+> --- a/tools/perf/util/bpf_lock_contention.c
+> +++ b/tools/perf/util/bpf_lock_contention.c
+> @@ -12,12 +12,59 @@
+>  #include <linux/zalloc.h>
+>  #include <linux/string.h>
+>  #include <bpf/bpf.h>
+> +#include <bpf/btf.h>
+>  #include <inttypes.h>
+>  
+>  #include "bpf_skel/lock_contention.skel.h"
+>  #include "bpf_skel/lock_data.h"
+>  
+>  static struct lock_contention_bpf *skel;
+> +static bool has_slab_iter;
+> +
+> +static void check_slab_cache_iter(struct lock_contention *con)
+> +{
+> +	struct btf *btf = btf__load_vmlinux_btf();
+> +	s32 ret;
+> +
+> +	if (btf == NULL) {
+> +		pr_debug("BTF loading failed: %s\n", strerror(errno));
+> +		return;
+> +	}
+> +
+> +	ret = btf__find_by_name_kind(btf, "bpf_iter__kmem_cache", BTF_KIND_STRUCT);
+> +	if (ret < 0) {
+> +		bpf_program__set_autoload(skel->progs.slab_cache_iter, false);
+> +		pr_debug("slab cache iterator is not available: %d\n", ret);
+> +		goto out;
+> +	}
+> +
+> +	has_slab_iter = true;
+> +
+> +	bpf_map__set_max_entries(skel->maps.slab_caches, con->map_nr_entries);
+> +out:
+> +	btf__free(btf);
+> +}
+> +
+> +static void run_slab_cache_iter(void)
+> +{
+> +	int fd;
+> +	char buf[256];
+> +
+> +	if (!has_slab_iter)
+> +		return;
+> +
+> +	fd = bpf_iter_create(bpf_link__fd(skel->links.slab_cache_iter));
+> +	if (fd < 0) {
+> +		pr_debug("cannot create slab cache iter: %d\n", fd);
+> +		return;
+> +	}
+> +
+> +	/* This will run the bpf program */
+> +	while (read(fd, buf, sizeof(buf)) > 0)
+> +		continue;
+> +
+> +	close(fd);
+> +}
+>  
+>  int lock_contention_prepare(struct lock_contention *con)
+>  {
+> @@ -109,6 +156,8 @@ int lock_contention_prepare(struct lock_contention *con)
+>  			skel->rodata->use_cgroup_v2 = 1;
+>  	}
+>  
+> +	check_slab_cache_iter(con);
+> +
+>  	if (lock_contention_bpf__load(skel) < 0) {
+>  		pr_err("Failed to load lock-contention BPF skeleton\n");
+>  		return -1;
+> @@ -304,6 +353,7 @@ static void account_end_timestamp(struct lock_contention *con)
+>  
+>  int lock_contention_start(void)
+>  {
+> +	run_slab_cache_iter();
+>  	skel->bss->enabled = 1;
+>  	return 0;
+>  }
+> diff --git a/tools/perf/util/bpf_skel/lock_contention.bpf.c b/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> index 1069bda5d733887f..fd24ccb00faec0ba 100644
+> --- a/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> +++ b/tools/perf/util/bpf_skel/lock_contention.bpf.c
+> @@ -100,6 +100,13 @@ struct {
+>  	__uint(max_entries, 1);
+>  } cgroup_filter SEC(".maps");
+>  
+> +struct {
+> +	__uint(type, BPF_MAP_TYPE_HASH);
+> +	__uint(key_size, sizeof(long));
+> +	__uint(value_size, sizeof(struct slab_cache_data));
+> +	__uint(max_entries, 1);
+> +} slab_caches SEC(".maps");
+> +
+>  struct rw_semaphore___old {
+>  	struct task_struct *owner;
+>  } __attribute__((preserve_access_index));
+> @@ -136,6 +143,8 @@ int perf_subsys_id = -1;
+>  
+>  __u64 end_ts;
+>  
+> +__u32 slab_cache_id;
+> +
+>  /* error stat */
+>  int task_fail;
+>  int stack_fail;
+> @@ -563,4 +572,23 @@ int BPF_PROG(end_timestamp)
+>  	return 0;
+>  }
+>  
+> +SEC("iter/kmem_cache")
+> +int slab_cache_iter(struct bpf_iter__kmem_cache *ctx)
+> +{
+> +	struct kmem_cache *s = ctx->s;
+> +	struct slab_cache_data d;
+> +
+> +	if (s == NULL)
+> +		return 0;
+> +
+> +	d.id = ++slab_cache_id << LCB_F_SLAB_ID_SHIFT;
+> +	bpf_probe_read_kernel_str(d.name, sizeof(d.name), s->name);
+> +
+> +	if (d.id >= LCB_F_SLAB_ID_END)
+> +		return 0;
+> +
+> +	bpf_map_update_elem(&slab_caches, &s, &d, BPF_NOEXIST);
+> +	return 0;
+> +}
+> +
+>  char LICENSE[] SEC("license") = "Dual BSD/GPL";
+> diff --git a/tools/perf/util/bpf_skel/lock_data.h b/tools/perf/util/bpf_skel/lock_data.h
+> index 4f0aae5483745dfa..c15f734d7fc4aecb 100644
+> --- a/tools/perf/util/bpf_skel/lock_data.h
+> +++ b/tools/perf/util/bpf_skel/lock_data.h
+> @@ -32,9 +32,16 @@ struct contention_task_data {
+>  #define LCD_F_MMAP_LOCK		(1U << 31)
+>  #define LCD_F_SIGHAND_LOCK	(1U << 30)
+>  
+> +#define LCB_F_SLAB_ID_SHIFT	16
+> +#define LCB_F_SLAB_ID_START	(1U << 16)
+> +#define LCB_F_SLAB_ID_END	(1U << 26)
+> +#define LCB_F_SLAB_ID_MASK	0x03FF0000U
+> +
+>  #define LCB_F_TYPE_MAX		(1U << 7)
+>  #define LCB_F_TYPE_MASK		0x0000007FU
+>  
+> +#define SLAB_NAME_MAX  28
+> +
+>  struct contention_data {
+>  	u64 total_time;
+>  	u64 min_time;
+> @@ -55,4 +62,9 @@ enum lock_class_sym {
+>  	LOCK_CLASS_RQLOCK,
+>  };
+>  
+> +struct slab_cache_data {
+> +	u32 id;
+> +	char name[SLAB_NAME_MAX];
+> +};
+> +
+>  #endif /* UTIL_BPF_SKEL_LOCK_DATA_H */
+> diff --git a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> index 4dcad7b682bdee9c..7b81d3173917fdb5 100644
+> --- a/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> +++ b/tools/perf/util/bpf_skel/vmlinux/vmlinux.h
+> @@ -195,4 +195,12 @@ struct bpf_perf_event_data_kern {
+>   */
+>  struct rq {};
+>  
+> +struct kmem_cache {
+> +	const char *name;
+> +} __attribute__((preserve_access_index));
+> +
+> +struct bpf_iter__kmem_cache {
+> +	struct kmem_cache *s;
+> +} __attribute__((preserve_access_index));
+> +
+>  #endif // __VMLINUX_H
+> -- 
+> 2.47.0.277.g8800431eea-goog
 
