@@ -1,124 +1,156 @@
-Return-Path: <linux-kernel+bounces-437185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8545D9E9016
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:26:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE1B9E9020
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:28:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFE9188676A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:26:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1174F1630D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EC1216E10;
-	Mon,  9 Dec 2024 10:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67E48216E2B;
+	Mon,  9 Dec 2024 10:28:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEPJ12QY"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RSvnD6ig"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EBF2165E2
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DAF216380;
+	Mon,  9 Dec 2024 10:28:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733739952; cv=none; b=HwAAui6rgnPT9vo4YUYje4h5CNDECofBYvZj15xPGH0mYp2xU1Fawk9UlQL+N1DuJKvjjgdMyHai8GLRR5EpShJGQVx/zUYRvxPg9H7gr4GSwBbD98sUIaDadGS9vrc2keTpPLeLJOu4dGu5X5qHR+4W3bC8soM4HoZiXrDz9os=
+	t=1733740117; cv=none; b=sctZ/QijBIeNztFTSz7euodqQxgmxBZLXteCzTlflwpdC8vHyS2Sf7wGaDt5wSRjSUaj3aJYeQonkZ1AdqGyZvfYp3SA/gU67r7s9+Zm4BxTzYZh/A4zBe+uxJT3V0TYLF6fOJ3XlBLWSU7uCsLWyVAlFsdNYMax7KNOjxJuNqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733739952; c=relaxed/simple;
-	bh=UqSQ6Mifgozyf7icnoKIVICTD4AIxwFh8AJ+TaGCpzg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ugrf2S8ZGnT+GeCPcMOVEBIFqc0rjaBkn7tNgpCcBqau6OwiDVn4p5feuz7biSy1Cr9TGN4UIfW1TnmU0PzIsJVy1NOP+qrnTE/HCldFLaTy35M+1Neb/VZBbwl1WuROwKAAwR8qn+da43JaQrYTtYEWEy7Mw/kPMxhLHms5Bh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEPJ12QY; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d414b8af7bso276399a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:25:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733739950; x=1734344750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dr9Twfm9vrYmy+fDm6h/4IwUd/7v2Bef0z21R8+Bodw=;
-        b=KEPJ12QY3nEcJ6E2Pz8rc3YqYj7MPeLouPtRP3nq3sXm5hzxmiVzl/9SdVtVX810uQ
-         HMVsw0PrY6n+oOkPEBgsVZndnBxLf/hQzxD/VZfxS3eZS0bFWor0xJFjD9YQAuDmwBLr
-         aBPSRR+l11wNkHsdm8JYWVIVW7NWbKlCEsA8lVYM+UenCh6QpuXxW2Q+OPNT16gMaxhj
-         fAyI3EnsqOYQoKoy3XxW3t7gYTuTNTxtddl6JJDDSyuZLmFcYQpx06p4p06Q970ENbqZ
-         vCxZYpAbcE3H5KnkyxwkeIUrZyAHqaOE+kYqWbSY8cZKRCArp/7mkf6ZprklYvck7jv3
-         xTTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733739950; x=1734344750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dr9Twfm9vrYmy+fDm6h/4IwUd/7v2Bef0z21R8+Bodw=;
-        b=nb55GtecQ7gz90Heh0WRDh74w1xJV+9rJrojScgaHNvKyW3GmKAGfCm2U9vSyzddP1
-         IzR6cbz0CqPb1x/x7R3T8iBneaCZyS9dPq1oj00THlQKmxq7LwMi8ERgdKDUkE73VbG9
-         kkdM1wrUjwn9sIQW2eCBu+1QN8dA4ztqOx6S6+r3m+OgQl7dslqBFR4yyPNvVXctERLu
-         +bYdZpmjZszUHjxZVMV5jtOqez4gLa9apfQZyrFETJD2j3LLt8yNGiSgSJkRE2Qq+7XJ
-         AlTlSBo22WttxnrlpyhVBIp1zrYmJBSdVdUjw0iBwpJEceC01GJ6cmTlDSkrjzEwrZUT
-         /1tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhhS4OuRK4zayCRYZ9hGPE9eVMg2/rIo4iy2+v/dfMEjDpMVPbRS77dXU672009CnbvhIP0stMYeSlC7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaZQJLLI97UI/M3gLZS/5tJVqmW96dT1nmAm1TSqy9PuWGj/xo
-	A/V2wtykqV2jD0MoFnkCOg72pR8uojql19NQA7Vd7rDDgtkSAcXwMQ2Ox6omFLt3MwcUzAv7vwb
-	F+zf0OBs1N4XFfkWlO9paVqAln3w=
-X-Gm-Gg: ASbGncu5sdHfcV9MR5GBg3MjIkZd4zSGeFzLkasorsgE+brTn6QpilqTSLG9P4sWjsU
-	wACA1dTSjd/JDG4O+Lvm8IAlt2ZtBrl4=
-X-Google-Smtp-Source: AGHT+IFDOiSXetDpeoxW0itxt4YB80uVJJ+x7MnO90+xEbOfdXoYtnT8WmgNoYOhPj29jLu6H3v8mMd7Ii2sH/eftt8=
-X-Received: by 2002:a05:6402:254e:b0:5d0:d30b:d53e with SMTP id
- 4fb4d7f45d1cf-5d3be697749mr12018064a12.19.1733739949366; Mon, 09 Dec 2024
- 02:25:49 -0800 (PST)
+	s=arc-20240116; t=1733740117; c=relaxed/simple;
+	bh=2rwkr8VeDzByDBZGpYZoDTrR1oxX145BEsFkGtK1PH8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LlUu4WME6wePOyz1574sBp8aLtDwOOFCIHPkKkV5alYNcL11J3sTtvOpTgKV0OuhapMlQNLCC27oNtyhHa1riCltKHl9kArwAUxgI2+b1WVizYyWT1Csv0X7Q+zn+XoEk9xIv0vvWDyxVzz59Ud+NLzNHBo8NnKwSjsaWF0SEpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RSvnD6ig; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AHY1i002320;
+	Mon, 9 Dec 2024 10:28:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=vhuftYfkSdQcWlAg8B4/iwLLXDaM
+	P6B4MuhilJfNZgE=; b=RSvnD6iggUfdQS/1yQ/AIrU+/VlDK2IGD8s0JzukDiTj
+	/QVAWnzrnbSW9BLKqPm2sU8UbUaY0+Q8aYOiHiwrRi864jAFbZpIJpWta9G4cew0
+	gZJGVlZJyphVqAy8f2q+yK8Yfxk/4M9Ng2/70XYACXrvDvNu7M3NYXJA336PSCxz
+	zpQxUHO2sT8yzzrD+hU4GH5JM2pTmsGhvxqwVKvP28U9vFWSNOOiTD5jgValM6eY
+	dbJZwSLBkkxhKZIG9tCLhWwPWucwfx1rogf7RYvo1e/HPYPmZrJ6AG8LWEeBrg4p
+	qXyQ4sN96b9HFEUTm9rjCZWnm8oV8FYR7HBVV3ewjg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vgpxh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 10:28:21 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B9ACS3R029316;
+	Mon, 9 Dec 2024 10:28:20 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce1vgpxe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 10:28:20 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B97mZCr017364;
+	Mon, 9 Dec 2024 10:28:19 GMT
+Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1dsey-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 10:28:19 +0000
+Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
+	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9ASJpe29688438
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 10:28:19 GMT
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E7EF758053;
+	Mon,  9 Dec 2024 10:28:18 +0000 (GMT)
+Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4AA8458043;
+	Mon,  9 Dec 2024 10:28:17 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Dec 2024 10:28:17 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Date: Mon, 09 Dec 2024 11:28:03 +0100
+Subject: [PATCH] net: ethernet: 8390: Add HAS_IOPORT dependency for mcf8390
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241207082931.1707465-1-mjguzik@gmail.com> <94d0dcbe-2001-4a9c-a767-b337b688b616@redhat.com>
-In-Reply-To: <94d0dcbe-2001-4a9c-a767-b337b688b616@redhat.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Mon, 9 Dec 2024 11:25:37 +0100
-Message-ID: <CAGudoHEggB=F9j7r+ndQs1WxpRWB4O5VdBo+PLx+yd1xrj4-Ew@mail.gmail.com>
-Subject: Re: [PATCH] mm: remove an avoidable load of page refcount in page_ref_add_unless
-To: David Hildenbrand <david@redhat.com>
-Cc: yuzhao@google.com, akpm@linux-foundation.org, willy@infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241209-mcf8390_has_ioport-v1-1-f263d573e243@linux.ibm.com>
+X-B4-Tracking: v=1; b=H4sIADLGVmcC/x3MQQqAIBBA0avErBPUCq2rRIjZmLMoQyOC6O5Jy
+ 7f4/4GMiTDDUD2Q8KJMcS8QdQUu2H1FRksxSC5bIXnPNud103MTbDYUj5hOphY36852QnEHJTw
+ Serr/6Ti97wf4qtOTZAAAAA==
+X-Change-ID: 20241209-mcf8390_has_ioport-7dcb85a5170c
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>,
+        Niklas Schnelle <schnelle@linux.ibm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1332;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=2rwkr8VeDzByDBZGpYZoDTrR1oxX145BEsFkGtK1PH8=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNLDjpk/fVr1tsKSNSVdzmnn/2V33B7M5lH9H+Gh5X5r/
+ c3OQs1THaUsDGJcDLJiiiyLupz91hVMMd0T1N8BM4eVCWQIAxenAEzEdCnD/5DHoRVrWnZ5dcV4
+ 3tfbJsctvCFKyv5QSO7bl+oTGr08Shn+l2RO2uefZXF/Yp+F7NdFiwS77Oa1lgpvmXZlt7sEl9U
+ EHgA=
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: _fSFbHkQVgRDwUpOIitBanAy28Vw7hbx
+X-Proofpoint-ORIG-GUID: -yl5drc7EgQmgyyfmqNxE78OqFiyS1dL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ priorityscore=1501 clxscore=1011 phishscore=0 bulkscore=0 mlxlogscore=574
+ impostorscore=0 spamscore=0 malwarescore=0 suspectscore=0 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090078
 
-On Mon, Dec 9, 2024 at 10:28=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 07.12.24 09:29, Mateusz Guzik wrote:
-> > Explicitly pre-checking the count adds nothing as atomic_add_unless
-> > starts with doing the same thing. iow no functional changes.
->
-> I recall that we added that check because with the hugetlb vmemmap
-> optimization, some of the tail pages we don't ever expect to be modified
->   (because they are fake-duplicated) might be mapped R/O.
->
-> If the arch implementation of atomic_add_unless() would trigger an
-> unconditional write fault, we'd be in trouble. That would likely only be
-> the case if the arch provides a dedicate instruction.
->
-> atomic_add_unless()->raw_atomic_add_unless()
->
-> Nobody currently defines arch_atomic_add_unless().
->
-> raw_atomic_fetch_add_unless()->arch_atomic_fetch_add_unless() is defined
-> on some architectures.
->
-> I scanned some of the inline-asm, and I think most of them perform a
-> check first.
->
+Since commit 6f043e757445 ("asm-generic/io.h: Remove I/O port accessors
+for HAS_IOPORT=n") the I/O port accessors are compile-time optional. As
+m68k may or may not select HAS_IOPORT the COLDFIRE dependency is not
+enough to guarantee I/O port access. Add an explicit HAS_IOPORT
+dependency for mcf8390 to prevent a build failure as seen by the kernel
+test robot.
 
-Huh.
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202412080511.ORVinTDs-lkp@intel.com/
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+---
+ drivers/net/ethernet/8390/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Some arch triggering a write fault despite not changing the value is
-not something I thought about. Sounds pretty broken to me if any arch
-was to do it, but then stranger things did happen.
+diff --git a/drivers/net/ethernet/8390/Kconfig b/drivers/net/ethernet/8390/Kconfig
+index 345f250781c6d9c3c6cbe5445250dc5987803b1a..f2ee99532187d133fdb02bc4b82c7fc4861f90af 100644
+--- a/drivers/net/ethernet/8390/Kconfig
++++ b/drivers/net/ethernet/8390/Kconfig
+@@ -87,7 +87,7 @@ config MAC8390
+ 
+ config MCF8390
+ 	tristate "ColdFire NS8390 based Ethernet support"
+-	depends on COLDFIRE
++	depends on COLDFIRE && HAS_IOPORT
+ 	select CRC32
+ 	help
+ 	  This driver is for Ethernet devices using an NS8390-compatible
 
-However, if this is seen as a real concern, then I think the best way
-forward is to drop the patch (and maybe instead add a comment what's
-up with the extra load).
---=20
-Mateusz Guzik <mjguzik gmail.com>
+---
+base-commit: fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+change-id: 20241209-mcf8390_has_ioport-7dcb85a5170c
+
+Best regards,
+-- 
+Niklas Schnelle
+
 
