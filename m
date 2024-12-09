@@ -1,194 +1,171 @@
-Return-Path: <linux-kernel+bounces-437788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565DD9E98A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:20:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45CFE1885116
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:20:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 601621B0424;
-	Mon,  9 Dec 2024 14:20:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AZrPUwtU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D6019E9872
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:09:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFCFA1ACED7;
-	Mon,  9 Dec 2024 14:20:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C441B283FDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:09:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0833E1B040E;
+	Mon,  9 Dec 2024 14:09:20 +0000 (UTC)
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B066235968;
+	Mon,  9 Dec 2024 14:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733754037; cv=none; b=dzBC66EsvxEmo/NswgoE44TBBuNHQjsKXizoMScJu5r3YlqdWrlSRbcqWJkEpM4U/aZI8dLUWRYVlOKxRXsu6BvYjxRfQJ+gDJEJ0d5MC+H93sBjSitESN/nDsi2WXdDIMCQS6iBaSV8t0sNHl7mzC1/RhuqEyNY/tuQeyB/1Fo=
+	t=1733753359; cv=none; b=id5NF7OujjeJCFmDbxWat7YAgM4rVzzndhD1l7CjcgjABMmcW5WMgrE6r+EPiPWr4gw239URfGGNmcBTQ3q1vbIl1DDndkzwc2NjNfyJwdcNh49Ux9vzG5xACq5JSr8/Dp1vL8AsPWjLlF4SMXEC4AnGdA8ETNTKEhWowyufTGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733754037; c=relaxed/simple;
-	bh=PLN8C0vyxeY0HZVJKEgoSC+dtNcyo3RDZ1X6tDGDsnU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L8SbmOa0Mfz1TmBwRgmYox2qBucSd7MlIqbG7yTZV1QXRMJ+np4qUCUY7tHUkLtJKeyXUNUPge0EIse4UtMTLee0xIAHhCHHrfXAUEC62m3807w+PhYoZeY6+PmwzX5+V+VoXruSg+Im6TkA4q2Mq4GXehksExXH6HIYlyolzHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AZrPUwtU; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733754036; x=1765290036;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=PLN8C0vyxeY0HZVJKEgoSC+dtNcyo3RDZ1X6tDGDsnU=;
-  b=AZrPUwtUR06GQi+tEVqbQyZWkTTONvFHTYjK/5mmia/MURmdceEmUZyW
-   wqsdA1rGKZGvOZqM1Jf7cfQwP9ZQIZK3tJdge7ndGC1TRROmfsbhCOMvK
-   os0Muep3e1SY61uLt+KZjmPR1DYEEb20RJR6/+7S5jFUR5+25+EaM2Aax
-   Lc/D21z/NFOQP4sf20pqxgtl8mNAEz0bMsRWg8ut00gjo/LvHrkehRLTT
-   3XzaVz5jDtJuPS98vxeuvDfaeT31nrN8pRRS1/zEq52uDQW2ubeFXZNeC
-   wIJlbZDNt6rHHNLgDPjn23pZI5eFxVMMbkJQ2eGbai7niMOR7Of8z9CwO
-   Q==;
-X-CSE-ConnectionGUID: oBsioNUGRgywWgd75C7qQA==
-X-CSE-MsgGUID: cKfHM/iPRA6mjgx8YAHJQA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34110207"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="34110207"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 06:20:35 -0800
-X-CSE-ConnectionGUID: 7JqJZmemSLmeRFeMvpV0dQ==
-X-CSE-MsgGUID: Es16+6sTSQ+BlBm8KCAiIw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="94923537"
-Received: from irvmail002.ir.intel.com ([10.43.11.120])
-  by fmviesa007.fm.intel.com with ESMTP; 09 Dec 2024 06:20:32 -0800
-Received: from lincoln.igk.intel.com (lincoln.igk.intel.com [10.102.21.235])
-	by irvmail002.ir.intel.com (Postfix) with ESMTP id AEC55312FE;
-	Mon,  9 Dec 2024 14:20:30 +0000 (GMT)
-From: Larysa Zaremba <larysa.zaremba@intel.com>
-To: Tony Nguyen <anthony.l.nguyen@intel.com>,
-	intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Larysa Zaremba <larysa.zaremba@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Michal Swiatkowski <michal.swiatkowski@linux.intel.com>,
-	Grzegorz Nitka <grzegorz.nitka@intel.com>
-Subject: [PATCH iwl-net] ice: do not configure destination override for switchdev
-Date: Mon,  9 Dec 2024 15:08:53 +0100
-Message-ID: <20241209140856.277801-1-larysa.zaremba@intel.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733753359; c=relaxed/simple;
+	bh=s9Ldmug26kxAmuSbYyoIvZf07MyJobSWL4Un9vG+tFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RKgwBAkoLc9xGjqYBQL91qG38McnM5ysSmiT8Z5HXrRF0tNcHoCUVY5UAdH3cKu49EDJOSWfdTd8BuBuMQauH03T3UNHNAff7G9Ld0YHhDJF7CgIpbIL45Lx4yri9jngq/oBRtxaMT4ZE7V7Ww71ZMONHpTqnvdwf/WQbPNSBoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-467631f3ae3so6131411cf.0;
+        Mon, 09 Dec 2024 06:09:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733753355; x=1734358155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V7vHMlMX/1emap3oJbzw6fcX2VkuumLPk5gGBhXT388=;
+        b=ji6cpONsxOnW3JXNWlvK/nmVVnmFyREgPl5hZiNDgQDWcUnFtCY+m8lMgLLOoIKm2z
+         rcP/TwqQKDai2kghPHFDMl8AQzZXJ5gW3B0A6O1+OH/btbT49WTeBoRsvKAZc/EyE3O7
+         jaG4MNKkJ7hfXRUyz4KTTIuH6GTdDtsICHOPUEiWBp2o2PnT6BA8sXF2vdmxmiw790Fw
+         664R+ok0voKj8wfKTHYG5oEmFxRLUqSOcop8owTY8n3yStSAhUWATZLb83ypxCjEtTKF
+         utHX74CtHP6HBKh4Wwl7pNFdkv5PycEM09FF9r92mKWjlS70FG8B1QEoVPqn4or9GBaV
+         VVDw==
+X-Forwarded-Encrypted: i=1; AJvYcCU63VniDVeKJ6sPY7nZZ+GNC3WlKJ1aQISB4Kx7oEhxqB0k9u/m7oHSZl488kNNbzCb/aQovwFJo18O@vger.kernel.org, AJvYcCU6Cz3Hu3gy8H9RA4ZOJUZkSxm6i9aYbJuwY6RPnDtLBNmpIs/VIiqoGelKmwUyQ0af/GPVTrmiA3w6@vger.kernel.org, AJvYcCVuu40KSvjLc/V8eqzgBDcVXi3wcBIWqp/eJvNs0+DFhQcKKxO2a0e1vVcrM1G5JHznrVgFzVVQ71lhkQ==@vger.kernel.org, AJvYcCW9Wklj1FszkjOXeRZdbpfnX49zOqiGufQyliG4RkfqxdVJtKqirCvJZYSNL344QIQYmr0DuO23/r7XGB8lJamP7do=@vger.kernel.org, AJvYcCWHqNSsuPaObw0o9RRCPTD3whFTOsZmHm1FR+T/nGefmmSruutZVltNOeXxHUBIeBfnwCjXxNR1W6c8UDQ=@vger.kernel.org, AJvYcCWeI59JpovYmVXjpZgImLcEX2DgGDAQ4vvRrjp/DeitBDPkPl8IugUtCJ/BrtJ0xv7YrG3RFy5SGVhVDhvK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0LRM2+FKIxkI8j3teLxy/n0vsVt/maYN1GI0cffKWCUQJuTBC
+	0J4lojVbusBzbZkiTBsdN4VTIRNe6cNFs7P4c3ol3UIaXJC8BMZjygkiMUOhwCI=
+X-Gm-Gg: ASbGnctkIXmoQChIFaX31PepjtiLvP+6wkuH9D4Ne3//xUoXJQUc1aNlneEvopgDYF8
+	Kv5U7sD9cwigC8UL+K6SiASYLdXkisl2+DWw5FISigrtoAaFR3+jeViI5yuVgC59BY2XeXyw2eP
+	KNbAdIJ5Edi5SvrrpArOPDo/04jAlSKAq69eUyTxp68DbMrg2552Wisvf2In12roJCvUso5URFq
+	DvmmehMt3AZbzKn1I/zY2A42pWZsuVyfpKVshYeo1XHhTtickO1s6kIQjgS3nfGGZerSNFGJgLv
+	LUtTLWp9mtu3YAub
+X-Google-Smtp-Source: AGHT+IFmYBf6Lgem1LIc/g0v9i2I6fJ81QKT0JVmvMw49IDJlRz6FCpd2JjuQH7p2i3vtR8e8++dZw==
+X-Received: by 2002:a05:6214:1d0b:b0:6d8:a486:e87c with SMTP id 6a1803df08f44-6d8e70d5e49mr188233176d6.4.1733753355181;
+        Mon, 09 Dec 2024 06:09:15 -0800 (PST)
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com. [209.85.222.173])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da695ca3sm49339036d6.32.2024.12.09.06.09.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 06:09:14 -0800 (PST)
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7b6882c33acso272830485a.2;
+        Mon, 09 Dec 2024 06:09:14 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU9XqkDNMEJgCfajsMhk5PpHOZ4HGRMXiTLOUu4V6j39a12y2v3ISUC3oo67ySQ8SRriNdwbG0RDDAHguUg@vger.kernel.org, AJvYcCUPRk4KnqKl2mUHfU/pTOx87+lcqNyyilF8yDSLiYg6KIyOkpQKwIrJTc2t0jAZCgDcnGrl+XS3oKz6@vger.kernel.org, AJvYcCVPcgtn4FeduTNVMfVjHDIWL70A2E1H0vy8FKZFio9DLa1fUbDs0DIbM7jzhdOudcYcIodmG3KCjP7a@vger.kernel.org, AJvYcCW32Agq1UNv45icop672gD9gJchpoR4IAwyOFFPUmQr4etsmjv+2YhWeDxXL9R1MBsfBE9J5wdYA36zdg==@vger.kernel.org, AJvYcCWAezZx/W/+kIsIaBZdQ7uRl/qclD36CHYhjqInRBFC+Wskn7y1eMLc3CefepEwGa/llD/lf9lyDAva62A=@vger.kernel.org, AJvYcCX+B8+4WqAToKdk6bY3MWzAnhESynP/trlvNFyR8GxmRqtGnF73u5Zl2IoOlb3aYF+jF5RCKwCZ3VBUqvB2VaW2tq0=@vger.kernel.org
+X-Received: by 2002:a05:620a:2619:b0:7b6:d754:207f with SMTP id
+ af79cd13be357-7b6d75422bbmr410771985a.50.1733753354661; Mon, 09 Dec 2024
+ 06:09:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-19-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-19-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 15:09:02 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWhWJfuMFoXdbubg3MuJXsFPAoEMCifLOiP-wJanmg1kQ@mail.gmail.com>
+Message-ID: <CAMuHMdWhWJfuMFoXdbubg3MuJXsFPAoEMCifLOiP-wJanmg1kQ@mail.gmail.com>
+Subject: Re: [PATCH v3 18/25] ASoC: renesas: rz-ssi: Issue software reset in
+ hw_params API
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-After switchdev is enabled and disabled later, LLDP packets sending stops,
-despite working perfectly fine before and during switchdev state.
-To reproduce (creating/destroying VF is what triggers the reconfiguration):
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The code initially issued software reset on SNDRV_PCM_TRIGGER_START
+> action only before starting the first stream. This can be easily moved to
+> hw_params() as the action is similar to setting the clocks. Moreover,
+> according to the hardware manual (Table 35.7 Bits Initialized by Software
+> Reset of the SSIFCR.SSIRST Bit) the software reset action acts also on th=
+e
+> clock dividers bits. Due to this issue the software reset in hw_params()
+> before configuring the clock dividers. This also simplifies the code in
+> trigger API.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-devlink dev eswitch set pci/<address> mode switchdev
-echo '2' > /sys/class/net/<ifname>/device/sriov_numvfs
-echo '0' > /sys/class/net/<ifname>/device/sriov_numvfs
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-This happens because LLDP relies on the destination override functionality.
-It needs to 1) set a flag in the descriptor, 2) set the VSI permission to
-make it valid. The permissions are set when the PF VSI is first configured,
-but switchdev then enables it for the uplink VSI (which is always the PF)
-once more when configured and disables when deconfigured, which leads to
-software-generated LLDP packets being blocked.
+> --- a/sound/soc/renesas/rz-ssi.c
+> +++ b/sound/soc/renesas/rz-ssi.c
+> @@ -388,6 +388,15 @@ static int rz_ssi_start(struct rz_ssi_priv *ssi, str=
+uct rz_ssi_stream *strm)
+>         return 0;
+>  }
+>
+> +static int rz_ssi_swreset(struct rz_ssi_priv *ssi)
+> +{
+> +       u32 tmp;
+> +
+> +       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_SSIRST, SSIFCR_SSIRST);
 
-Do not modify the destination override permissions when configuring
-switchdev, as the enabled state is the default configuration that is never
-modified.
+Nit: no need to clear SSIFCR_SSIRST first:
 
-Fixes: 1a1c40df2e80 ("ice: set and release switchdev environment")
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-Signed-off-by: Larysa Zaremba <larysa.zaremba@intel.com>
----
- drivers/net/ethernet/intel/ice/ice_eswitch.c |  6 ------
- drivers/net/ethernet/intel/ice/ice_lib.c     | 18 ------------------
- drivers/net/ethernet/intel/ice/ice_lib.h     |  4 ----
- 3 files changed, 28 deletions(-)
+    rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_SSIRST);
 
-diff --git a/drivers/net/ethernet/intel/ice/ice_eswitch.c b/drivers/net/ethernet/intel/ice/ice_eswitch.c
-index fb527434b58b..b44a375e6365 100644
---- a/drivers/net/ethernet/intel/ice/ice_eswitch.c
-+++ b/drivers/net/ethernet/intel/ice/ice_eswitch.c
-@@ -50,9 +50,6 @@ static int ice_eswitch_setup_env(struct ice_pf *pf)
- 	if (vlan_ops->dis_rx_filtering(uplink_vsi))
- 		goto err_vlan_filtering;
- 
--	if (ice_vsi_update_security(uplink_vsi, ice_vsi_ctx_set_allow_override))
--		goto err_override_uplink;
--
- 	if (ice_vsi_update_local_lb(uplink_vsi, true))
- 		goto err_override_local_lb;
- 
-@@ -64,8 +61,6 @@ static int ice_eswitch_setup_env(struct ice_pf *pf)
- err_up:
- 	ice_vsi_update_local_lb(uplink_vsi, false);
- err_override_local_lb:
--	ice_vsi_update_security(uplink_vsi, ice_vsi_ctx_clear_allow_override);
--err_override_uplink:
- 	vlan_ops->ena_rx_filtering(uplink_vsi);
- err_vlan_filtering:
- 	ice_cfg_dflt_vsi(uplink_vsi->port_info, uplink_vsi->idx, false,
-@@ -276,7 +271,6 @@ static void ice_eswitch_release_env(struct ice_pf *pf)
- 	vlan_ops = ice_get_compat_vsi_vlan_ops(uplink_vsi);
- 
- 	ice_vsi_update_local_lb(uplink_vsi, false);
--	ice_vsi_update_security(uplink_vsi, ice_vsi_ctx_clear_allow_override);
- 	vlan_ops->ena_rx_filtering(uplink_vsi);
- 	ice_cfg_dflt_vsi(uplink_vsi->port_info, uplink_vsi->idx, false,
- 			 ICE_FLTR_TX);
-diff --git a/drivers/net/ethernet/intel/ice/ice_lib.c b/drivers/net/ethernet/intel/ice/ice_lib.c
-index a7d45a8ce7ac..e07fc8851e1d 100644
---- a/drivers/net/ethernet/intel/ice/ice_lib.c
-+++ b/drivers/net/ethernet/intel/ice/ice_lib.c
-@@ -3930,24 +3930,6 @@ void ice_vsi_ctx_clear_antispoof(struct ice_vsi_ctx *ctx)
- 				 ICE_AQ_VSI_SEC_TX_PRUNE_ENA_S);
- }
- 
--/**
-- * ice_vsi_ctx_set_allow_override - allow destination override on VSI
-- * @ctx: pointer to VSI ctx structure
-- */
--void ice_vsi_ctx_set_allow_override(struct ice_vsi_ctx *ctx)
--{
--	ctx->info.sec_flags |= ICE_AQ_VSI_SEC_FLAG_ALLOW_DEST_OVRD;
--}
--
--/**
-- * ice_vsi_ctx_clear_allow_override - turn off destination override on VSI
-- * @ctx: pointer to VSI ctx structure
-- */
--void ice_vsi_ctx_clear_allow_override(struct ice_vsi_ctx *ctx)
--{
--	ctx->info.sec_flags &= ~ICE_AQ_VSI_SEC_FLAG_ALLOW_DEST_OVRD;
--}
--
- /**
-  * ice_vsi_update_local_lb - update sw block in VSI with local loopback bit
-  * @vsi: pointer to VSI structure
-diff --git a/drivers/net/ethernet/intel/ice/ice_lib.h b/drivers/net/ethernet/intel/ice/ice_lib.h
-index 10d6fc479a32..6085039bac95 100644
---- a/drivers/net/ethernet/intel/ice/ice_lib.h
-+++ b/drivers/net/ethernet/intel/ice/ice_lib.h
-@@ -104,10 +104,6 @@ ice_vsi_update_security(struct ice_vsi *vsi, void (*fill)(struct ice_vsi_ctx *))
- void ice_vsi_ctx_set_antispoof(struct ice_vsi_ctx *ctx);
- 
- void ice_vsi_ctx_clear_antispoof(struct ice_vsi_ctx *ctx);
--
--void ice_vsi_ctx_set_allow_override(struct ice_vsi_ctx *ctx);
--
--void ice_vsi_ctx_clear_allow_override(struct ice_vsi_ctx *ctx);
- int ice_vsi_update_local_lb(struct ice_vsi *vsi, bool set);
- int ice_vsi_add_vlan_zero(struct ice_vsi *vsi);
- int ice_vsi_del_vlan_zero(struct ice_vsi *vsi);
--- 
-2.43.0
+cfr. what the original code did below.
 
+> +       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_SSIRST, 0);
+> +       return readl_poll_timeout_atomic(ssi->base + SSIFCR, tmp, !(tmp &=
+ SSIFCR_SSIRST), 1, 5);
+> +}
+> +
+>  static int rz_ssi_stop(struct rz_ssi_priv *ssi, struct rz_ssi_stream *st=
+rm)
+>  {
+>         strm->running =3D 0;
+> @@ -782,14 +791,6 @@ static int rz_ssi_dai_trigger(struct snd_pcm_substre=
+am *substream, int cmd,
+>
+>         switch (cmd) {
+>         case SNDRV_PCM_TRIGGER_START:
+> -               /* Soft Reset */
+> -               if (!rz_ssi_is_stream_running(&ssi->playback) &&
+> -                   !rz_ssi_is_stream_running(&ssi->capture)) {
+> -                       rz_ssi_reg_mask_setl(ssi, SSIFCR, 0, SSIFCR_SSIRS=
+T);
+> -                       rz_ssi_reg_mask_setl(ssi, SSIFCR, SSIFCR_SSIRST, =
+0);
+> -                       udelay(5);
+> -               }
+> -
+>                 rz_ssi_stream_init(strm, substream);
+>
+>                 if (ssi->dma_rt) {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
