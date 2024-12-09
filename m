@@ -1,264 +1,129 @@
-Return-Path: <linux-kernel+bounces-437485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 288419E93EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:29:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D2CC9E93EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DC801886538
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:28:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD7216070E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:28:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FABC2248BD;
-	Mon,  9 Dec 2024 12:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FB122488B;
+	Mon,  9 Dec 2024 12:28:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lyvhbfl3"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaOtwx72"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0632248B0;
-	Mon,  9 Dec 2024 12:28:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C7F215182;
+	Mon,  9 Dec 2024 12:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747314; cv=none; b=nVe7oBW0mF6pUj2+eLTneAiph01gZi1ZoQpXtDHrx5FFXorwzuhfAQ80m1H7JQQsKnz9rdtlCCLsPy3oebxSccToNLxliiasgszr5OKHvMZyjOIXjrX14H2m6/DPjIFyRU3WWgai+7T1bW0WNtQQNnnUoI0bx4k9cy/GPAkjcH8=
+	t=1733747309; cv=none; b=noMoK5Didh0D2mdUqXAFL4csfRAdb/f1/cJeA2Z/9HnD2Q13iJxjPwlITrgOpkq/nP84Caja32Y5PSaIMSdq8XAD/s/Htf6hH51UeqN+UjgoM2nbCUWo7zLZuOEuBzU0OBymGZu0WPb5+tFni2e/tiSk/FMA7a9+w5ns9xv/Uys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747314; c=relaxed/simple;
-	bh=h/T/0JvDJtRVvsbZ0w5s8GBc6ZALsGdMmoGU6A2kCdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=LU41PpkVQRwwJgtJ1G6K5J/lYPJFEYRZ8uWXR/xqpdO0Q+qO/mEuj+aLUe1xRuSInr/66WKsvP/B5bl0IXSC2Z9JY5ja2II3G8vLMPXJbrIIlHKcKv2Dt/rc9Y4jacPs8xEJ+kvf7TyJyeWk3WSWppYOzNBqFyyswoUCXEkCBzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lyvhbfl3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AQD6d030619;
-	Mon, 9 Dec 2024 12:28:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BhrY+muri5Q9rbFLG/dOhPprZfwXJb6tdiA2kofeOo4=; b=Lyvhbfl39j5rGpEK
-	8+8lxopyYL6SnO4YxLsXHtZgCcwXcSddqyon1b77Ea8EP0CHnicke9/XitOawgXX
-	Y4UTvxifpXAPcH/Cjd8OTy6gxHWOST1v+6SxksAyyoJYD0MKg/McfDpq2yIYclQQ
-	RoYEAast60g41KPEdwOi6d/qEjVmGZurkO9qyji8q0tIt7cW6ykzU/3M7C7ygwq4
-	OziOF8q0zVNGzxWScrZ0iRHJ/SXEtb0ZOGsGJjaBEbcsH3LYxx39kSLS0IVUyi5a
-	j4add69IHn8IcaqUga5tROaWNfgQUOQr28FX+XOv93pAsicy8tCbNjkKH2sGnamL
-	obdsvw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdxxcrdm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 12:28:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9CSJ5D012083
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 12:28:19 GMT
-Received: from [10.216.3.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 04:28:13 -0800
-Message-ID: <a9d5e124-c5af-432b-b40d-66450dcd90d5@quicinc.com>
-Date: Mon, 9 Dec 2024 17:58:10 +0530
+	s=arc-20240116; t=1733747309; c=relaxed/simple;
+	bh=96qekPURRT9CPv7EaITNBsfs8R1g6rJjI3dvF1dWY50=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QnDU0Z9y77RafOV6mjXNBWPBhwitrJBSsKXCjdFN7gDO6IMPO6uGidSiFsFir3HX/akCkgrPYMlf2W0bTNo2BnUjZaXP+brgNir03ILOPbduQycbxcrPfy8b8hxNqKmh2eoYdt4j3dUff0nKD5/JVoSWHDDvwhuwIAYPrmfS33o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaOtwx72; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0FB2C4CED1;
+	Mon,  9 Dec 2024 12:28:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733747308;
+	bh=96qekPURRT9CPv7EaITNBsfs8R1g6rJjI3dvF1dWY50=;
+	h=From:Date:Subject:To:Cc:From;
+	b=IaOtwx72TJOM8FmSNwX9UPVH33o/eXVfCbayMh3fN6atkwilJHVARJleAOMnuV+zU
+	 Tfu9/eYaSCYjjMl9m5aB7Yr0tJaYJbQD5OicivPISp4E/33izR6WjF0Ar5ZfM1qCUo
+	 1ZVyvQqc905YetYJk+Rw+EIah2UIwI+ILuObDe8dw5P0r4WZzrA867zmx19ymhgb+c
+	 cD1Wny0HMD62CK5FiXAhMPG27a2efDeiClTTT+dYgbADPwPJPqmO+0yeed5QmtWxTu
+	 LBN5VK+6/8t3PTpQnogsFuZAJj1mRf8JdlKotZqC/vPcaxPne6WCD7FsQ+9kV8Heuw
+	 MfqmehcqC704A==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Mon, 09 Dec 2024 13:28:14 +0100
+Subject: [PATCH net] tcp: check space before adding MPTCP SYN options
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/7] drm/msm: adreno: find bandwidth index of OPP and
- set it along freq index
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Dmitry
- Baryshkov" <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Bjorn Andersson <andersson@kernel.org>, Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20241205-topic-sm8x50-gpu-bw-vote-v4-0-9650d15dd435@linaro.org>
- <20241205-topic-sm8x50-gpu-bw-vote-v4-4-9650d15dd435@linaro.org>
-Content-Language: en-US
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-In-Reply-To: <20241205-topic-sm8x50-gpu-bw-vote-v4-4-9650d15dd435@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ADqLIW4KrKPSheXYj7AW-Ab5JJuP82K4
-X-Proofpoint-GUID: ADqLIW4KrKPSheXYj7AW-Ab5JJuP82K4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
- phishscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
- malwarescore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090098
+Message-Id: <20241209-net-mptcp-check-space-syn-v1-1-2da992bb6f74@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAF3iVmcC/x3MQQqEMAxA0atI1gZsUaFzlcGFxlSDTKc0Ikrx7
+ haXf/F+BuUkrPCpMiQ+ROUfSpi6AlrHsDDKXBpsY1tjG4eBd/zFnSLSyrShxpEY9QrY9a41rvd
+ +6jwUHxN7Od/3FwqD4b4fGSO2xnAAAAA=
+X-Change-ID: 20241209-net-mptcp-check-space-syn-5694196ffb5f
+To: mptcp@lists.linux.dev, Eric Dumazet <edumazet@google.com>, 
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
+ Christoph Paasch <cpaasch@apple.com>, Mat Martineau <martineau@kernel.org>, 
+ Geliang Tang <geliang@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ MoYuanhao <moyuanhao3676@163.com>, stable@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1389; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=nPCn6NBI0G48CtFzPs6PjBztA1k4CjQRRvkUc0fG6I8=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnVuJpMV9nONeuraPornfimYUUzwPN62jJQcYJ7
+ Jpiiz37qnKJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ1biaQAKCRD2t4JPQmmg
+ c0gQD/9ubKh62pWZgyumVBXpB07M57FiRTzFtYqJK7sFEpJU4CQy+zAFuAL1hjOudhbgM3Jr0bo
+ Ppx+sEY0hoRzyyrxWl1da5OrPBfdMXH74ikF0seJ/AQDFgYSo9hYRq/6lAewKi35aTLcXRiwbYy
+ IfUTVDeJSFITAJjw/xFZSkulEolusrg7sH4ZbBJNfiEBTTA6QbpvswNe19nHi9rOlzJT63n9u71
+ HXXZPERhYx+7F0kXA93W2P9sUQTOt6JcZRheYbqZgLFcYR3/zK1ebhRRequygHiPZ9tLZlyC2CA
+ Mw2mceD66DMYtZ5d/+ZeJlkYGztW8lpRnZPq9O8x3JbZzpcdRE7znn2qHgWZ+GblnEY75mAxUsU
+ 6nce6vT083NnOHD7XkGzsxnT6gLFOOaheu6jyWxJlk1Lh7YMZuRYwPpk9sTiuu67mxHnSktSNM9
+ RhbFT1I2rZEeDsF9RdrBspFu1852OavD5hHv/gvNhy+bkfvFc+qPWNo1f9FDI9yWrZtnFRr5U3+
+ uE7OY8KlzsbiB+Wf2xpH0OgrWcppCrCCXYCsFJ1AAk2tB4NjwLeppDUaV2IYZGT8N/NugzW36LL
+ ZIaeQP/CjkNRXH3N1TuP50A7jcgnlduVSY56ZYyANULlUuXdzjcMeThkjMgTAZOzqntvJ+n0biQ
+ dBqbqdTyE2aLdiQ==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-On 12/5/2024 8:31 PM, Neil Armstrong wrote:
-> The Adreno GPU Management Unit (GMU) can also scale the DDR Bandwidth
-> along the Frequency and Power Domain level, until now we left the OPP
-> core scale the OPP bandwidth via the interconnect path.
-> 
-> In order to enable bandwidth voting via the GPU Management
-> Unit (GMU), when an opp is set by devfreq we also look for
-> the corresponding bandwidth index in the previously generated
-> bw_table and pass this value along the frequency index to the GMU.
-> 
-> The GMU also takes another vote called AB which is a 16bit quantized
-> value of the floor bandwidth against the maximum supported bandwidth.
-> 
-> The AB is calculated with a default 25% of the bandwidth like the
-> downstream implementation too inform the GMU firmware the minimal
-> quantity of bandwidth we require for this OPP.
-> 
-> Since we now vote for all resources via the GMU, setting the OPP
-> is no more needed, so we can completely skip calling
-> dev_pm_opp_set_opp() in this situation.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+From: MoYuanhao <moyuanhao3676@163.com>
 
-Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Ensure there is enough space before adding MPTCP options in
+tcp_syn_options().
 
--Akhil
-> ---
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.c | 39 +++++++++++++++++++++++++++++++++--
->  drivers/gpu/drm/msm/adreno/a6xx_gmu.h |  2 +-
->  drivers/gpu/drm/msm/adreno/a6xx_hfi.c |  6 +++---
->  drivers/gpu/drm/msm/adreno/a6xx_hfi.h |  5 +++++
->  4 files changed, 46 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> index 36696d372a42a27b26a018b19e73bc6d8a4a5235..46ae0ec7a16a41d55755ce04fb32404cdba087be 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.c
-> @@ -110,9 +110,11 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
->  		       bool suspended)
->  {
->  	struct adreno_gpu *adreno_gpu = to_adreno_gpu(gpu);
-> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
->  	struct a6xx_gpu *a6xx_gpu = to_a6xx_gpu(adreno_gpu);
->  	struct a6xx_gmu *gmu = &a6xx_gpu->gmu;
->  	u32 perf_index;
-> +	u32 bw_index = 0;
->  	unsigned long gpu_freq;
->  	int ret = 0;
->  
-> @@ -125,6 +127,37 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
->  		if (gpu_freq == gmu->gpu_freqs[perf_index])
->  			break;
->  
-> +	/* If enabled, find the corresponding DDR bandwidth index */
-> +	if (info->bcms && gmu->nr_gpu_bws > 1) {
-> +		unsigned int bw = dev_pm_opp_get_bw(opp, true, 0);
-> +
-> +		for (bw_index = 0; bw_index < gmu->nr_gpu_bws - 1; bw_index++) {
-> +			if (bw == gmu->gpu_bw_table[bw_index])
-> +				break;
-> +		}
-> +
-> +		/* Vote AB as a fraction of the max bandwidth */
-> +		if (bw) {
-> +			u64 tmp;
-> +
-> +			/* For now, vote for 25% of the bandwidth */
-> +			tmp = bw * 25;
-> +			do_div(tmp, 100);
-> +
-> +			/*
-> +			 * The AB vote consists of a 16 bit wide quantized level
-> +			 * against the maximum supported bandwidth.
-> +			 * Quantization can be calculated as below:
-> +			 * vote = (bandwidth * 2^16) / max bandwidth
-> +			 */
-> +			tmp *= MAX_AB_VOTE;
-> +			do_div(tmp, gmu->gpu_bw_table[gmu->nr_gpu_bws - 1]);
-> +
-> +			bw_index |= AB_VOTE(clamp(tmp, 1, MAX_AB_VOTE));
-> +			bw_index |= AB_VOTE_ENABLE;
-> +		}
-> +	}
-> +
->  	gmu->current_perf_index = perf_index;
->  	gmu->freq = gmu->gpu_freqs[perf_index];
->  
-> @@ -140,8 +173,10 @@ void a6xx_gmu_set_freq(struct msm_gpu *gpu, struct dev_pm_opp *opp,
->  		return;
->  
->  	if (!gmu->legacy) {
-> -		a6xx_hfi_set_freq(gmu, perf_index);
-> -		dev_pm_opp_set_opp(&gpu->pdev->dev, opp);
-> +		a6xx_hfi_set_freq(gmu, perf_index, bw_index);
-> +		/* With Bandwidth voting, we now vote for all resources, so skip OPP set */
-> +		if (!bw_index)
-> +			dev_pm_opp_set_opp(&gpu->pdev->dev, opp);
->  		return;
->  	}
->  
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> index 2062a2be224768c1937d7768f7b8439920e9e127..0c888b326cfb485400118f3601fa5f1949b03374 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gmu.h
-> @@ -209,7 +209,7 @@ void a6xx_hfi_init(struct a6xx_gmu *gmu);
->  int a6xx_hfi_start(struct a6xx_gmu *gmu, int boot_state);
->  void a6xx_hfi_stop(struct a6xx_gmu *gmu);
->  int a6xx_hfi_send_prep_slumber(struct a6xx_gmu *gmu);
-> -int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, int index);
-> +int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, u32 perf_index, u32 bw_index);
->  
->  bool a6xx_gmu_gx_is_on(struct a6xx_gmu *gmu);
->  bool a6xx_gmu_sptprac_is_on(struct a6xx_gmu *gmu);
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> index fc4bfad51de9a3b6617fbbd03471a5851d43ce88..5c566ce6612ed25763337d20de90d78697dfb801 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
-> @@ -765,13 +765,13 @@ static int a6xx_hfi_send_core_fw_start(struct a6xx_gmu *gmu)
->  		sizeof(msg), NULL, 0);
->  }
->  
-> -int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, int index)
-> +int a6xx_hfi_set_freq(struct a6xx_gmu *gmu, u32 freq_index, u32 bw_index)
->  {
->  	struct a6xx_hfi_gx_bw_perf_vote_cmd msg = { 0 };
->  
->  	msg.ack_type = 1; /* blocking */
-> -	msg.freq = index;
-> -	msg.bw = 0; /* TODO: bus scaling */
-> +	msg.freq = freq_index;
-> +	msg.bw = bw_index;
->  
->  	return a6xx_hfi_send_msg(gmu, HFI_H2F_MSG_GX_BW_PERF_VOTE, &msg,
->  		sizeof(msg), NULL, 0);
-> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
-> index 528110169398f69f16443a29a1594d19c36fb595..52ba4a07d7b9a709289acd244a751ace9bdaab5d 100644
-> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
-> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.h
-> @@ -173,6 +173,11 @@ struct a6xx_hfi_gx_bw_perf_vote_cmd {
->  	u32 bw;
->  };
->  
-> +#define AB_VOTE_MASK		GENMASK(31, 16)
-> +#define MAX_AB_VOTE		(FIELD_MAX(AB_VOTE_MASK) - 1)
-> +#define AB_VOTE(vote)		FIELD_PREP(AB_VOTE_MASK, (vote))
-> +#define AB_VOTE_ENABLE		BIT(8)
-> +
->  #define HFI_H2F_MSG_PREPARE_SLUMBER 33
->  
->  struct a6xx_hfi_prep_slumber_cmd {
-> 
+Without this check, 'remaining' could underflow, and causes issues. If
+there is not enough space, MPTCP should not be used.
+
+Signed-off-by: MoYuanhao <moyuanhao3676@163.com>
+Fixes: cec37a6e41aa ("mptcp: Handle MP_CAPABLE options for outgoing connections")
+Cc: stable@vger.kernel.org
+Acked-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+[ Matt: Add Fixes, cc Stable, update Description ]
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
+---
+ net/ipv4/tcp_output.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
+index 5485a70b5fe5a6039d19f4321c3c2ec8ecc6ffea..0e5b9a654254b32907ee9739f3443791104bd611 100644
+--- a/net/ipv4/tcp_output.c
++++ b/net/ipv4/tcp_output.c
+@@ -883,8 +883,10 @@ static unsigned int tcp_syn_options(struct sock *sk, struct sk_buff *skb,
+ 		unsigned int size;
+ 
+ 		if (mptcp_syn_options(sk, skb, &size, &opts->mptcp)) {
+-			opts->options |= OPTION_MPTCP;
+-			remaining -= size;
++			if (remaining >= size) {
++				opts->options |= OPTION_MPTCP;
++				remaining -= size;
++			}
+ 		}
+ 	}
+ 
+
+---
+base-commit: 09310cfd4ea5c3ab2c7a610420205e0a1660bf7e
+change-id: 20241209-net-mptcp-check-space-syn-5694196ffb5f
+
+Best regards,
+-- 
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
