@@ -1,114 +1,120 @@
-Return-Path: <linux-kernel+bounces-437319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437320-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 670569E91C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:11:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA0D09E91CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:12:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD20A1660F7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:12:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5752C217F3E;
+	Mon,  9 Dec 2024 11:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SihzJ6yg"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222B7282AB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:11:46 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EF1221DA7;
-	Mon,  9 Dec 2024 11:07:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKm6K7vZ"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAD7221D8E;
-	Mon,  9 Dec 2024 11:07:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E82217727;
+	Mon,  9 Dec 2024 11:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733742463; cv=none; b=isg3oQPOfxR4KF8mkdpPS3pbcnXFzB06RMrOy6GTtplkwY0CfnAEd6jmwzPQm7ELpu9wLHmxZHRBfBZcAYrqIEjRs7MpMeD7yUuYWw3wavLQ0B8iwImofehLTQWX2ateQ718tYvr/HeFcezEkjUs7p+ntSqJQWABHQjlbY7rP9Y=
+	t=1733742528; cv=none; b=o//L5D5qcZVxk5YbDKit8+vmB1oSIQy9f5MqhoM6IoSugqGy9RDEQMhBU2Mjdj8a7WTJPxzTmbF+tgCKVyhu4FepnfykGSlNnZ5isZh6o8BZJSckroLx5cqAoU4I1c2vgdT6mD/PkAlokV9kjXOWW4pksF0AfPgvm9w7022tdK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733742463; c=relaxed/simple;
-	bh=YJ9JUQ5bSEMgGsZqbZA+J2STml+1V04qdkGaF/nnd20=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hBjwBoTsDUaABC9OWQLxHkb9JoBIYMKZ0SUf8vYa1NJLkB6JrF4Nl8+/iX7pHlEHPGmJYDkeS0a+mnJkBCR0hdLUJS9wvcBGNWSNdWM7wAky0U7zE6eBYFEzDWR/vuez+wiDyOS5PWGQy4IlSUjtKA6wTHpvhnaoPUkqeomPuig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKm6K7vZ; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2163b0c09afso10975235ad.0;
-        Mon, 09 Dec 2024 03:07:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733742461; x=1734347261; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YJ9JUQ5bSEMgGsZqbZA+J2STml+1V04qdkGaF/nnd20=;
-        b=TKm6K7vZe6L005HfUAyb/sNtDIDRwORDdEUj6xWxu2PY5JbnoTmfRkwEOZQ8J63w4t
-         EOt1rZwJLyB/rg3oNdKpo8raCFgeVndrB6Ln+qPPaHer0a5NFQ44gUoieL8lVExVrlcy
-         0cm3JXd2wnR24S4lDAjw4Jw/IMmbYTPZLOhQIWo1rz7SNDFmFWjB/FWbX0kFny8m9kqG
-         BCbuttCSpo2wD/OtbllgU31sWdjtSG236Duzk/78WUqfiLBuZAznNWkpfbc6G6yTgKve
-         oZcqK969RtjCl1T2VtfzFfUU3mcV1wbUOvvO9HkfUG9nfwtZBuC+1/fUwQesefIa5bgj
-         KQpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733742461; x=1734347261;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YJ9JUQ5bSEMgGsZqbZA+J2STml+1V04qdkGaF/nnd20=;
-        b=O4JTPUnNvZTDht/hcDnWJCdMo5YR/ERU/NhbbglFhwKJZo/nY/qtv5gzEFAkpmwGYy
-         sHitmbW/d+UXOEsghUsTwC3wqTeWT0T6AAFWIq8hKeiRWU8gcIPRi+j4jidFDAP5MqKW
-         RhzkD7NAeyHyqYUVOfMRzAgXcL8Qyji8u4AaBPLU5USH0ur/rwkO7/4+xZHflE/XITfn
-         PcPaEnwlU/03n/JPQOGbBG5r7X831+xg6EYDPnT/kBfAYuwBix/4pcopso/qXD9AUmJ4
-         64jVJsjvMgEnEtMwEcAwlkAioPSXMHM3FByywVYGdihbdCIrwlmKDestlxMVsC//PJdT
-         d1Yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKLAIcwFoRIyjzE5FI8Q1wFKwMwxqCYjcC4n2If9TjnZ8g34nl/j0fajKXqSbpDPu8mgTrKqPrWFCScg==@vger.kernel.org, AJvYcCW+ZQuDPLl5i3fWZd10+odnTHv7AYl0ZGVQkzxbl2wYwlKLzWPfwoerj4Hz9ScpNwd8tUF+mobgcd++xFXJ@vger.kernel.org, AJvYcCW+pBt9+pQzlqqWkZJgl0HfGL5HCboYnq671s2WF0Uu3X7LW7URn+QolVwnnAMbWunTrBQObZ7IXKzE@vger.kernel.org, AJvYcCWy0dv3wUSnWWmttgs38ceXIjWWiuihDPLYNzgyT+aTfjbU6W8bBmyFoKevkbB4uO1Xwwafv59+XQxSUK8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxyBOpRvca86oDVgQnVbkWYb27vPWdQJjDlq2kZeLsPSD5H+zPd
-	MGExuoYuz0ocNdlPK9euGKikuaEazjRL3XHZzurIoJWNTaqVf6Hr
-X-Gm-Gg: ASbGnct8hPCSYRQh/1zCHi6y3MN/Im1JMR7aSUV2ZR8Y9uU7U3SBfoZVI5QCL1uYzwq
-	7mzfDJ7t/ZD3zYBDqFyzvXu67reGtnsQa3blZIpaziAVE3x31gLE+RplZ9q3ZNlYO5/xKOTtGjY
-	lqsjpr2OJJflv4arMIqUO0dIFsixHjlw9TGTwRGSPLf4pySBc7NwcZaKlAjs376Dn5XynUkyZ27
-	UIisKOtFyteAGdfl4g95dVtI3DtgurKyz5raT3ozfTQAq0akGnJLNLFnA==
-X-Google-Smtp-Source: AGHT+IHE+t2Du1WqC/+jnVLPWSG0jQUPMDd8/py9w7+kgKS309UwwhMmDAhAU/gz6Yfj4oBXSzHyqA==
-X-Received: by 2002:a17:902:f607:b0:216:4883:fb43 with SMTP id d9443c01a7336-216488401a3mr47732355ad.32.1733742460654;
-        Mon, 09 Dec 2024 03:07:40 -0800 (PST)
-Received: from [192.168.0.122] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f3188fsm70017745ad.265.2024.12.09.03.07.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 03:07:40 -0800 (PST)
-Message-ID: <494a944e-4088-463a-abbb-c0a8cf4455ec@gmail.com>
-Date: Mon, 9 Dec 2024 19:07:35 +0800
+	s=arc-20240116; t=1733742528; c=relaxed/simple;
+	bh=I3CIcJyKa6kZw0XPl/T2ouRMk5c9LOiAGIJfJNfuVkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nCcDN/Z0ICcqSkXPTH7ICZ0SvW8Mb1PPUKsVrh2RNE6kHIRagahwM18cuwRuHxyycw5DQAEvM2Q/rXWeeRDtKGY0Ns3FzFbY10jiz9CqEt90c0shjXG/QSyvxuTqOGXOymPDNmlMERfFHjrQvdmV14GN69s6MZzJEFtEIaM00mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SihzJ6yg; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Dit6XQpX5hNbxuykLD6cmHXwsZMWonMwHYvTD2H/wdk=; b=SihzJ6ygM0GMqwoLq5xHPiTZRp
+	lfy5sU5XNdP2S08DWZoPLbL8EAyGM427EBL7vkiUKkN+lzRhshLFLQtV8pbZGcFtb8f6PwK1GCRRI
+	c+EBkkHAIPZ9i5pYmN58HBq/AO4EH+vk5eSj4PWS3gskmFVpIjlkMZGfWKo/iewcsHD/7cw1nQy/N
+	LJdH+jnKVEecIkl0lt8Y3qQpOXqiUC4RZow+IBMqQSkrjfYLnu1dJsqPyuuJWpGnECLMEqtby8nQS
+	Da5HcaK/KTiV6g/VJ79QuSBHvn7Dv5CPmPRkmvg6lnWt/XA/rLb2Dt5HW65PDo78+r03BvHe60ajU
+	Dq7BMRrQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKbd4-00000001VRQ-3cVC;
+	Mon, 09 Dec 2024 11:08:43 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 629CA3003FF; Mon,  9 Dec 2024 12:08:42 +0100 (CET)
+Date: Mon, 9 Dec 2024 12:08:42 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>,
+	surenb@google.com
+Subject: Re: linux-next: duplicate patches in the tip tree
+Message-ID: <20241209110842.GM21636@noisy.programming.kicks-ass.net>
+References: <20241209132941.58021bb7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: leds: backlight: apple,dwi-bl: Add
- bindings for Apple DWI backlight
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20241207130433.30351-1-towinchenmi@gmail.com>
- <20241207130433.30351-2-towinchenmi@gmail.com>
- <iwapssdmronnbtmlmynuarzmkd2oh3ssrmzvlobxx4ixrgwgcl@dnonaahib6jw>
-Content-Language: en-MW
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <iwapssdmronnbtmlmynuarzmkd2oh3ssrmzvlobxx4ixrgwgcl@dnonaahib6jw>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="HlpXWwTCF2liH3gN"
+Content-Disposition: inline
+In-Reply-To: <20241209132941.58021bb7@canb.auug.org.au>
 
 
+--HlpXWwTCF2liH3gN
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 9/12/2024 17:16, Krzysztof Kozlowski wrote:
-> On Sat, Dec 07, 2024 at 09:03:14PM +0800, Nick Chan wrote:
->> Add the device tree bindings for backlight controllers attached via Apple
->> DWI 2-wire interface.
-[...]
+On Mon, Dec 09, 2024 at 01:29:41PM +1100, Stephen Rothwell wrote:
+> Hi all,
+>=20
+> The following commits are also in the mm tree as different commits
+> (but the same patches):
+>=20
+>   96450ead1652 ("seqlock: add raw_seqcount_try_begin")
+>   eb449bd96954 ("mm: convert mm_lock_seq to a proper seqcount")
+>=20
+> These are commits
+>=20
+>   46dbe8ab1205 ("seqlock: add raw_seqcount_try_begin")
+>   5f0d64389e1f ("mm: convert mm_lock_seq to a proper seqcount")
+>=20
+> from the mm-unstable branch of the mm tree.  The latter ones are already
+> causing conflicts.
 
-Ack all the changes, will be in v4.
+Why is this in -mm ? I agreed with Suren I'd take them through
+tip/perf/core to go along with Andrii's uprobe patch that relies on
+them.
 
-Nick Chan
+--HlpXWwTCF2liH3gN
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEv3OU3/byMaA0LqWJdkfhpEvA5LoFAmdWz7QACgkQdkfhpEvA
+5LrTLRAAirA1c2DN/HKgAYoFdTZYqH0AsX+fXdCLD9D1KlLXqHHZoH+L3UwssvJu
+bf2OXYt9sritouta+XCkEAAs6i/A14s6PqJXay4KzS0ZIL3P8Z1SwAdI+U0/n8Ec
+Ur5LjnJLMpienKdcKHoWJdFWZkGuFTy1J65g34HzeOp5wA/5+vlrvSz14vXj9PNV
+vJf+8aqePz2IcykvoAwMqUNfoFQlUECJK/hDmyxsBOLSxAkZeQ40c3JFbv3vc88T
+xH5BL4/Md3sm8uARBlarZL04wUTVgoNdNkXmriCxftQUTaZ1Xxw0WiKqNhJf5Fkn
+nN3lkg/O2L41ZQC5h64XNiQZNn9oNsAZvLQ2PXXtvoTXfb28LyDaAoc8kK90nIxt
+FnfTEANvb3ko/irE76XtssqU/fnh391TwsiwY+bjErEuTJ/MRpY6Gj5Qj74DAOCk
+SeCMmIRvfGXq76cgq4TMdKjAv/5KXdTfRRHnNJ4ArhYL20hDqiwNs1z2s3CvQbFz
+JWAsdF0MmMHemS3eG8q78NxnF3NKojdDAvLsflB+igjF9oZ97GOk6QzQd6IOjMnQ
+BPALjYWOhn0lEz5B6C8TcJ/nDjRm5wVKlLcATdIUP/RQjh4/3UdgLHeWjt8Xq66n
+TaXbq6k4vP6rmzLSCIEPIPITCI9YVpteUFC3d8pUG0psOON2GWA=
+=F9ye
+-----END PGP SIGNATURE-----
+
+--HlpXWwTCF2liH3gN--
 
