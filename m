@@ -1,129 +1,118 @@
-Return-Path: <linux-kernel+bounces-437484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D2CC9E93EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:28:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 303EA9E93F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:29:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAD7216070E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:28:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 690E31885820
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:29:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08FB122488B;
-	Mon,  9 Dec 2024 12:28:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD358223710;
+	Mon,  9 Dec 2024 12:29:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IaOtwx72"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="G1CKTvxd"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C7F215182;
-	Mon,  9 Dec 2024 12:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B2802236F4
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747309; cv=none; b=noMoK5Didh0D2mdUqXAFL4csfRAdb/f1/cJeA2Z/9HnD2Q13iJxjPwlITrgOpkq/nP84Caja32Y5PSaIMSdq8XAD/s/Htf6hH51UeqN+UjgoM2nbCUWo7zLZuOEuBzU0OBymGZu0WPb5+tFni2e/tiSk/FMA7a9+w5ns9xv/Uys=
+	t=1733747346; cv=none; b=hfzWzch/H6Nr5txSq3tDNyOr0tFizQ4dU77CQaVZrxoymzbHjO/s9j1iAxs1OlmU2kGMkiSoXU7R2Qp1dZxbsPjHZdyRFJbn2tbEzgyfJLJG/sbZW3NpfTDJrw17MlJ8XEpYJqX0WJkgDlBZx0G6Ux3Ohy84JTCtbZDOYECxZrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747309; c=relaxed/simple;
-	bh=96qekPURRT9CPv7EaITNBsfs8R1g6rJjI3dvF1dWY50=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=QnDU0Z9y77RafOV6mjXNBWPBhwitrJBSsKXCjdFN7gDO6IMPO6uGidSiFsFir3HX/akCkgrPYMlf2W0bTNo2BnUjZaXP+brgNir03ILOPbduQycbxcrPfy8b8hxNqKmh2eoYdt4j3dUff0nKD5/JVoSWHDDvwhuwIAYPrmfS33o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IaOtwx72; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0FB2C4CED1;
-	Mon,  9 Dec 2024 12:28:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733747308;
-	bh=96qekPURRT9CPv7EaITNBsfs8R1g6rJjI3dvF1dWY50=;
-	h=From:Date:Subject:To:Cc:From;
-	b=IaOtwx72TJOM8FmSNwX9UPVH33o/eXVfCbayMh3fN6atkwilJHVARJleAOMnuV+zU
-	 Tfu9/eYaSCYjjMl9m5aB7Yr0tJaYJbQD5OicivPISp4E/33izR6WjF0Ar5ZfM1qCUo
-	 1ZVyvQqc905YetYJk+Rw+EIah2UIwI+ILuObDe8dw5P0r4WZzrA867zmx19ymhgb+c
-	 cD1Wny0HMD62CK5FiXAhMPG27a2efDeiClTTT+dYgbADPwPJPqmO+0yeed5QmtWxTu
-	 LBN5VK+6/8t3PTpQnogsFuZAJj1mRf8JdlKotZqC/vPcaxPne6WCD7FsQ+9kV8Heuw
-	 MfqmehcqC704A==
-From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-Date: Mon, 09 Dec 2024 13:28:14 +0100
-Subject: [PATCH net] tcp: check space before adding MPTCP SYN options
+	s=arc-20240116; t=1733747346; c=relaxed/simple;
+	bh=Qkk0kDiJ7iVTZVBmpiuPSmH5N0pAA4DlMttgSaOYgro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l7Pl6q4I/YMx3mefWBalyGqFdeI90h7fHIve4mpC3ryfBIhPHvyWQmHpa6WJV8/8vRFzfUcbob449H+Dqs9++l3I66sf4NYzCQOo7j5Y4F4YU1PB3QkXOT4J+PfnFxoFux2TquY72EIxrs1kUQUXGr9xWjUUh3/IkRKHhtTVtEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=G1CKTvxd; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-385f06d0c8eso1994985f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:29:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1733747342; x=1734352142; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=JacI4mB04a8LmhCK/TbvYbOJL2q6pHnlqOBJlZwmZq8=;
+        b=G1CKTvxd76YhVBp31/pAarpeZyFenu5UgkFORJFN6c+T3ftiX08xa444Pfpn2KzXSz
+         OjkbmYLWnpINEfJ2CXpgOP7XmZrDbGifVe0zZxQQwJHQSoIVpg2y95+oDWkqm+vI/co1
+         EnA0dKrbBeC6F2UObCQFLVLAUK4S9Wzz20+b4WlIq254Ig2feRpZmRKLzEE+2+SOXJb2
+         gK3JQaG0FYscZIKywp1Y/BFp1e8eUoGfx1U4oK9E2l6nLBnjSMw8IvYtYg87voUVXZpE
+         FYba1oezOlNMuvMx/iu/7gw+fbKVicZ0Lc0WLth5E0FzoATQryotz0uFVQn3eEJVfsWG
+         AQGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733747342; x=1734352142;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JacI4mB04a8LmhCK/TbvYbOJL2q6pHnlqOBJlZwmZq8=;
+        b=UKH7EeX39lS/01QrpoRVZ5WuhuzJ5E+7ZR0Xvq+llyvcLFx0SdvzDMrYNJzYcP5nJu
+         5O+iHQQTtWYUkSt1M2Prn7FSav+0Aw3zWo6ok6atqRouiS/1iwI2nw/sh2Eg7/xJMhaW
+         fdRfVTTAAgbhyqmhe8UTxY8KBMNBX3ge9sAWeWffq6y3t+TaEJ76cquQTJaS7VMTVgox
+         ynBrWS5F+5MjXix9nCacr8YMff/xYVqFQshJDiAQPc2Rr35Dwp+nETmYtNcTU8R1W87L
+         lvVh3qI0S7gMDbhKZXSUxdTSNv4GJxuz23vA3BL9E4+px+dE7stACU18SVTWUF5wk+8/
+         HkzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUeHmhKIYwqkxRwhuHjXoiMz4cdME7+XIXYAfTExT1KquDQLrwkhDk4GwvfbUHDBltWnKbKj3NSXLjvXB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXRjkXGm5s/U5Tg2uCwEG2z9F3zmZa4r9AXT9Z7pA/ydGLT8vz
+	FtUWXZGU8eYQnkfslZIg/HlVqNwSWZc9Ill25f80+BijHT7l0LRIqtWbRFdPjkE=
+X-Gm-Gg: ASbGncsYLSk4gBqUCSjaCC03mzrCI6aqha6ifQO9Fp5UpL7teG7EHnf+WM2pp3FNZPO
+	BVPf/6EAqhL3s1XapN92O9dA0TymTAcgbuyq4PpnPL8pR6Tl/naqLB21/4irV+5xFKxrlW9m+SS
+	dJdBu8kTTZ2miYcqSj0Ef4lxEBuDGHpdOgQ+yAENMXwDYofklFvFTrcfG1FFQUmRaiMzLYCfapQ
+	kGPZrQqvESZO1+Uvuh9x7pcF14rsMsxDsP7NoodLtDhh2f3p34=
+X-Google-Smtp-Source: AGHT+IE+6SrVhA7lxXXWZ2TRa5Vtd+x05Nx18JSjzrlkUyDRkzVakZMiRRWDAFfWkUvG1F7oja5peA==
+X-Received: by 2002:a05:6000:2aa:b0:385:ee40:2d88 with SMTP id ffacd0b85a97d-386453c6383mr137490f8f.3.1733747341754;
+        Mon, 09 Dec 2024 04:29:01 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.50])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd15698cd7sm7350830a12.7.2024.12.09.04.28.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 04:29:01 -0800 (PST)
+Date: Mon, 9 Dec 2024 13:28:53 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Wardenjohn <zhangwarden@gmail.com>
+Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
+	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V5 1/1] livepatch: Add stack_order sysfs attribute
+Message-ID: <Z1bihaY1sJkioopk@pathway.suse.cz>
+References: <20241008014856.3729-1-zhangwarden@gmail.com>
+ <20241008014856.3729-2-zhangwarden@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-net-mptcp-check-space-syn-v1-1-2da992bb6f74@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAF3iVmcC/x3MQQqEMAxA0atI1gZsUaFzlcGFxlSDTKc0Ikrx7
- haXf/F+BuUkrPCpMiQ+ROUfSpi6AlrHsDDKXBpsY1tjG4eBd/zFnSLSyrShxpEY9QrY9a41rvd
- +6jwUHxN7Od/3FwqD4b4fGSO2xnAAAAA=
-X-Change-ID: 20241209-net-mptcp-check-space-syn-5694196ffb5f
-To: mptcp@lists.linux.dev, Eric Dumazet <edumazet@google.com>, 
- "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Simon Horman <horms@kernel.org>, Florian Westphal <fw@strlen.de>, 
- Christoph Paasch <cpaasch@apple.com>, Mat Martineau <martineau@kernel.org>, 
- Geliang Tang <geliang@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- MoYuanhao <moyuanhao3676@163.com>, stable@vger.kernel.org, 
- "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1389; i=matttbe@kernel.org;
- h=from:subject:message-id; bh=nPCn6NBI0G48CtFzPs6PjBztA1k4CjQRRvkUc0fG6I8=;
- b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnVuJpMV9nONeuraPornfimYUUzwPN62jJQcYJ7
- Jpiiz37qnKJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ1biaQAKCRD2t4JPQmmg
- c0gQD/9ubKh62pWZgyumVBXpB07M57FiRTzFtYqJK7sFEpJU4CQy+zAFuAL1hjOudhbgM3Jr0bo
- Ppx+sEY0hoRzyyrxWl1da5OrPBfdMXH74ikF0seJ/AQDFgYSo9hYRq/6lAewKi35aTLcXRiwbYy
- IfUTVDeJSFITAJjw/xFZSkulEolusrg7sH4ZbBJNfiEBTTA6QbpvswNe19nHi9rOlzJT63n9u71
- HXXZPERhYx+7F0kXA93W2P9sUQTOt6JcZRheYbqZgLFcYR3/zK1ebhRRequygHiPZ9tLZlyC2CA
- Mw2mceD66DMYtZ5d/+ZeJlkYGztW8lpRnZPq9O8x3JbZzpcdRE7znn2qHgWZ+GblnEY75mAxUsU
- 6nce6vT083NnOHD7XkGzsxnT6gLFOOaheu6jyWxJlk1Lh7YMZuRYwPpk9sTiuu67mxHnSktSNM9
- RhbFT1I2rZEeDsF9RdrBspFu1852OavD5hHv/gvNhy+bkfvFc+qPWNo1f9FDI9yWrZtnFRr5U3+
- uE7OY8KlzsbiB+Wf2xpH0OgrWcppCrCCXYCsFJ1AAk2tB4NjwLeppDUaV2IYZGT8N/NugzW36LL
- ZIaeQP/CjkNRXH3N1TuP50A7jcgnlduVSY56ZYyANULlUuXdzjcMeThkjMgTAZOzqntvJ+n0biQ
- dBqbqdTyE2aLdiQ==
-X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
- fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008014856.3729-2-zhangwarden@gmail.com>
 
-From: MoYuanhao <moyuanhao3676@163.com>
+On Tue 2024-10-08 09:48:56, Wardenjohn wrote:
+> Add "stack_order" sysfs attribute which holds the order in which a live
+> patch module was loaded into the system. A user can then determine an
+> active live patched version of a function.
+> 
+> cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
+> 
+> means that livepatch_1 is the first live patch applied
+> 
+> cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
+> 
+> means that livepatch_module is the Nth live patch applied
+> 
+> Suggested-by: Petr Mladek <pmladek@suse.com>
+> Suggested-by: Miroslav Benes <mbenes@suse.cz>
+> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
+> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
 
-Ensure there is enough space before adding MPTCP options in
-tcp_syn_options().
+JFYI, the patch has been comitted into livepatching.git,
+branch for-6.14/stack-order.
 
-Without this check, 'remaining' could underflow, and causes issues. If
-there is not enough space, MPTCP should not be used.
+Note that I have updated the version in the ABI
+documentation to 6.14.
 
-Signed-off-by: MoYuanhao <moyuanhao3676@163.com>
-Fixes: cec37a6e41aa ("mptcp: Handle MP_CAPABLE options for outgoing connections")
-Cc: stable@vger.kernel.org
-Acked-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-[ Matt: Add Fixes, cc Stable, update Description ]
-Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
----
- net/ipv4/tcp_output.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-index 5485a70b5fe5a6039d19f4321c3c2ec8ecc6ffea..0e5b9a654254b32907ee9739f3443791104bd611 100644
---- a/net/ipv4/tcp_output.c
-+++ b/net/ipv4/tcp_output.c
-@@ -883,8 +883,10 @@ static unsigned int tcp_syn_options(struct sock *sk, struct sk_buff *skb,
- 		unsigned int size;
- 
- 		if (mptcp_syn_options(sk, skb, &size, &opts->mptcp)) {
--			opts->options |= OPTION_MPTCP;
--			remaining -= size;
-+			if (remaining >= size) {
-+				opts->options |= OPTION_MPTCP;
-+				remaining -= size;
-+			}
- 		}
- 	}
- 
-
----
-base-commit: 09310cfd4ea5c3ab2c7a610420205e0a1660bf7e
-change-id: 20241209-net-mptcp-check-space-syn-5694196ffb5f
-
-Best regards,
--- 
-Matthieu Baerts (NGI0) <matttbe@kernel.org>
-
+Best Regards,
+Petr
 
