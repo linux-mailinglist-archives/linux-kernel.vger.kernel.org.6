@@ -1,79 +1,84 @@
-Return-Path: <linux-kernel+bounces-437766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86BD99E9866
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:08:20 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 922519E986D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:09:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEAF1163CF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:09:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3C621B040C;
+	Mon,  9 Dec 2024 14:09:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hDRzLiso"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F2E9283EBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:08:19 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85C11ACEC1;
-	Mon,  9 Dec 2024 14:07:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="Kn/OSptF"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19BA01A2392
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0211ACEC1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753270; cv=none; b=d1UxKpvv9vwFDACD6FkRhWhXh1FHTbv3UicFNl4JkN6lghoyRYyRIaQX7z99HcMyQ6vnOy7aEWlC/s9Q4pnCZABLAsA8Nc8TDllEVIQXJC84c5IkywSUzzZ9RjHpRWf6YMTg5YcrL2pEUnza7lvUclzWVYpzTSJ/a5wFaCNMdTs=
+	t=1733753339; cv=none; b=WAjUft+S3AsO3lJX9i035FezX6qLvlH7fatr5eVGpNPfkBQLghSYms3TXGbAktxB88OwjJHWrqRgrtC5ihv+nkVAYxvnmeLKDnu1nqV7uULp8OFCldouUWfsyPeEui5uJiU6IrEIOLdQZa3km7X8kJJPqDRMZwVV2aqrnpXAw1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753270; c=relaxed/simple;
-	bh=Li+9C41OEnoizUBVLjUt4eHwVJbxyfFaCoM/H7D0Upg=;
+	s=arc-20240116; t=1733753339; c=relaxed/simple;
+	bh=rWkhQeV7h+y7ZZdiFL6y+FUruoFzKM0S6Ck1eG63DJE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I/L4x5NbE/iUK8J+B/15YY7wBGWHf5h1F5umXJ7e2879qyRlA20HHFB/lCb45Iexabb7CwL+HU23S32+ibIKXMkS6hsA3rK0EPjxNQNQyFjv8wxh/NyMuMHAP5RSsFq5qq3Ctvf7bBwBWaXq0eUPlO0SsX3vwoTDzj5Ek325faE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=Kn/OSptF; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4349f160d62so29324015e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:07:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=openvpn.net; s=google; t=1733753262; x=1734358062; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YAATdBL+Q71uheSTVHloU/f2/2eBkXUbBsjQijIYqTY=;
-        b=Kn/OSptFPoVQIsNrwkEU1kImEm2vjWd/3+ee+zVoRUUnjmmmRV9QRcwR/scLrvk3J+
-         FhsF/Ab1bGCeZedpdOMzJnOFuv3O7O1EJLLzAnObESKiwjateN5gBfTsk6uh4tkqtz26
-         ysRg2CsqIHvQU0hXcjQtUf/mTQIFGhp4rPLHHEQ8oU5tsv5VbvHUkTf1pIEWM8MEcMfr
-         lEF6DVCV7FiK/zQtqf3UQMf2Hl3JY4109ogLoihGAJRrKYuGZGiR5/s9h5TS0q8Vt39r
-         S2wAYFJQr6t9ckpBXGzyPthIXimJqqfECwWPzGTQq0w69XkSJLrjUR5sko+B7CMSNUy5
-         XSrA==
+	 In-Reply-To:Content-Type; b=uNgWuWZdv0xwRQ1eyD589OsX3Lv1NDFbmypmNXx5vSP19jCLNXHc61ErY3knGcXJgXCOtLu/WW38N7v2Wi8DeeYjLui2Jsu035jxkHwp31uLqtfi4AcvkoS+00EqKdlB6hW5+TPJOXQhEjgdp8dssL6DP/4SO1/hgeSiN9RLKlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hDRzLiso; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733753337;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LR7rYvKSWq2v5nBtgQkssPIXvyGthgIzt9C+awlVsdw=;
+	b=hDRzLiso4DMOPKYWlkpg/8ZWTetUXO7NovM3uL6U8ZzAhyiL25pnc8DgZYQqFrTkCm6UPX
+	PZ42q2+FrsnlRkBf5T6eW1+BG9Cl3dQ7DdFjCyrMoiUBVvxbbiDUboD+1p4I5hBGX6J5Fb
+	Un15pzqUACLmcDe3Y4iwJGDz0TRKjOQ=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-499-cb9l1LoCMtakvOf8HWL-SQ-1; Mon, 09 Dec 2024 09:08:55 -0500
+X-MC-Unique: cb9l1LoCMtakvOf8HWL-SQ-1
+X-Mimecast-MFC-AGG-ID: cb9l1LoCMtakvOf8HWL-SQ
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa630babad3so15363666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:08:55 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753262; x=1734358062;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YAATdBL+Q71uheSTVHloU/f2/2eBkXUbBsjQijIYqTY=;
-        b=pEsHFGyHx3MD6PhKVY90aKr2hJjh+aSzJyk0qr9Vfw3ZReYMJEFzMiPlf2wsNeOUPI
-         nH1KEtfnai3QOQ6pvbNImaRC9X9VUsdiLsazWtc0vFaXxFanSqGPFt1y8NhxuhrJ3acO
-         ZCogvfuB8yL4AiFyb8q+ha9a5ozx36ngvFIT2yDy1ORuj1OflRs/omnrlozF7jwPpRz+
-         UFUK95ufoNkgXe+PH/4t0X6yF+IiygwpIqk82Q+bLjg+3kEXGouUG4GtpAJjs1gWmwkT
-         1U7CfdbOfgJ02xuAtXiBqDPVcV8cNsk3qvRcE9IrgAsLy1p5G9hQgnXSFgullEMP1igZ
-         +A0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUDxqmJ9uG0YM62YVbBQB7pWZ3Cdr0gLJ9RT/70+JfDEQi1Jq8jSDJwTj95+c53djkl2CJRNs9hi9ha+20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8w9D1qb6lsRjQkGnoUm2361h7tIPunyhnffrdV+nqU3lEFNXa
-	1+nLRDuhp1F12Df2O6NLXJOfrvqJf7kRFGM+cBm1lbLz6J/Yjc9wajCkw/uaMEI=
-X-Gm-Gg: ASbGncv1NL2KsHroT0JF0huvsTadDFu16VXIwBZ11xkcwcWovKGQrZ3bpCFV4Pvz7Dr
-	p07ivOEu492T2l4ZONwUpj1PhjxJm4qSE10LhStT6f0BwNmGNA5J7R/gPGJbWTbSo+LjtEtsArN
-	qZphRuFoYkZVrwItlNFbO3bzE5sxEEMDCtYpvMzIGRT8t3NUyUQB4t2DvCNisSqHC8rzyAAw9RD
-	cAn85af6kPdfRU/UJLPNhbCyJ3Oq3JNorP6QfufV6UbMdZA6GmOwm5P6jk/6zwksiKJ4x6scbfd
-	GG5gLl/OKg==
-X-Google-Smtp-Source: AGHT+IHx3KsbV6dFTbqwvBpAQWt4Zvvpiuios/igcBIY6QLOhoXi0AxfFkl8Or4uu4hz8z6QNujtXw==
-X-Received: by 2002:a05:600c:4ec6:b0:434:f270:a4f0 with SMTP id 5b1f17b1804b1-434fffa2a6cmr4817195e9.21.1733753262246;
-        Mon, 09 Dec 2024 06:07:42 -0800 (PST)
-Received: from ?IPV6:2001:67c:2fbc:1:c60f:6f50:7258:1f7? ([2001:67c:2fbc:1:c60f:6f50:7258:1f7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386394dd379sm5544080f8f.24.2024.12.09.06.07.41
+        d=1e100.net; s=20230601; t=1733753335; x=1734358135;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LR7rYvKSWq2v5nBtgQkssPIXvyGthgIzt9C+awlVsdw=;
+        b=iEBGU/j2iS82cU0vTNfYRkzGFhc5yjtrJ8k15St9sovB6OQzP291wAlZryNVlV7jb7
+         RBQ6o6RnncCI30SyUtvhWgf/s/z+UnBi5FbtXIKNUpmwuds+XFLXcjb0tilob6DTAk04
+         bQdggdu/hgUecNCsrD/6OUVVDoB9Xucinphzt7/NSc2UaQeE0Uikwe+8qc8Kns/cCwr9
+         aQbAX1ubfWGpNFQJcu2JZ+k3WkrtzpDYmEz5bSjNI8WWKNPJxXutsHsgahtEOi6oC+xL
+         2xW7sv9oU8ELQbSuUh2KF1C3u0uAW0TFj0GkJjSZnrdgmLr6prN21uHTQv0tCRoshaZ7
+         w8tw==
+X-Forwarded-Encrypted: i=1; AJvYcCXGE4c/dkYZIu5F/pMnSx7NdEnT5/LDo3nd0Beab9o5KEbxkVJH/dGNx1f7mIkoITAaEEm3QdvKWRWpEzE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC48WRjKEntTTNIw1DoMFQY6MfO5gwFliGFjNDMrfZonqC5UZJ
+	bQY3lczhpIghnrtml25ISuV7zyTrxY934CFBdGvFFiWC2pWO503st8vYduH8uvv7L7AlkMPxCho
+	y08xerdXApdMR8auTbuKzCa//vhFABaEi28A31wkgOJgXkhQnozxY0cKfCiS4/g==
+X-Gm-Gg: ASbGncuNB9nJnQS7QGqEm9wVQgPfVfbq22xq50V0gnoxtPj1nsPQ3O2AlQJ94bK1Bet
+	kW42a70VHPxcKQ8/g+ngRaBDAup0U5a1e6Y3gW1MSWuhRBiNCEXTwjb7KUwNs0EdLgtdbli0OHL
+	4c30lVx8m7CgQk73x/2upgxK0GgjnuIPkSyhzZx3yW2lzvOfpWashZD8tnlDmsJTbe2bxlMDZgc
+	NmdJ5O6cQPsum8H9UoZbGwZSW2c7dMF/0xrj5vkARuENkrl9f5C/A==
+X-Received: by 2002:a17:906:3287:b0:aa6:715a:75b5 with SMTP id a640c23a62f3a-aa6715ad73cmr633488266b.46.1733753334639;
+        Mon, 09 Dec 2024 06:08:54 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEPFXfKCBMGRbn5Telp10n7TKPnFYfon6UbhYu74Jb6Tg17SsN6yjB3knVuDX5T/fWbvgqS0w==
+X-Received: by 2002:a17:906:3287:b0:aa6:715a:75b5 with SMTP id a640c23a62f3a-aa6715ad73cmr633484266b.46.1733753334179;
+        Mon, 09 Dec 2024 06:08:54 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa68770c481sm161311066b.110.2024.12.09.06.08.53
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:07:41 -0800 (PST)
-Message-ID: <cb84c0e5-8ee9-4860-a8db-8787c44a703a@openvpn.net>
-Date: Mon, 9 Dec 2024 15:08:24 +0100
+        Mon, 09 Dec 2024 06:08:53 -0800 (PST)
+Message-ID: <d99f507b-1890-4ad3-aabc-494a3b0a0dd8@redhat.com>
+Date: Mon, 9 Dec 2024 15:08:53 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,151 +86,227 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v12 11/22] ovpn: implement TCP transport
-To: Matthieu Baerts <matttbe@kernel.org>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
- <20241202-b4-ovpn-v12-11-239ff733bf97@openvpn.net>
- <784fddc4-336c-4674-8277-c7cebea6b94f@redhat.com>
- <2a1b614c-c52d-44c7-8cb8-c68a8864508d@openvpn.net>
- <8714deae-c1f7-42ff-9e76-fabd9ca5188b@openvpn.net>
- <17e7d4c6-4912-4d5e-8723-45a06a1ad529@openvpn.net>
- <813d75bf-1d7f-472b-967f-27ab8f9d4759@kernel.org>
- <e447ef89-e7f1-4c5b-871e-d1cfaa045c6c@openvpn.net>
- <c34748e0-44ad-4775-abd5-52034c4f5fdc@kernel.org>
+Subject: Re: [PATCH v15 15/19] media: uvcvideo: let v4l2_query_v4l2_ctrl()
+ work with v4l2_query_ext_ctrl
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ricardo Ribalda <ribalda@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+ <20241114-uvc-roi-v15-15-64cfeb56b6f8@chromium.org>
 Content-Language: en-US
-From: Antonio Quartulli <antonio@openvpn.net>
-Autocrypt: addr=antonio@openvpn.net; keydata=
- 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
-Organization: OpenVPN Inc.
-In-Reply-To: <c34748e0-44ad-4775-abd5-52034c4f5fdc@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241114-uvc-roi-v15-15-64cfeb56b6f8@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 09/12/2024 12:31, Matthieu Baerts wrote:
-> On 09/12/2024 11:58, Antonio Quartulli wrote:
->> On 09/12/2024 11:46, Matthieu Baerts wrote:
->>> Hi Antonio,
->>>
->>> Thank you for working on this, and sharing your work here!
->>>
->>> On 05/12/2024 00:09, Antonio Quartulli wrote:
->>>> On 04/12/2024 23:52, Antonio Quartulli wrote:
->>>>> Paolo,
->>>>>
->>>>> On 04/12/2024 12:15, Antonio Quartulli wrote:
->>>>> [...]
->>>>>>>> +        mutex_lock(&tcp6_prot_mutex);
->>>>>>>> +        if (!ovpn_tcp6_prot.recvmsg)
->>>>>>>> +            ovpn_tcp_build_protos(&ovpn_tcp6_prot, &ovpn_tcp6_ops,
->>>>>>>> +                          sock->sk->sk_prot,
->>>>>>>> +                          sock->sk->sk_socket->ops);
->>>>>>>> +        mutex_unlock(&tcp6_prot_mutex);
->>>>>>>
->>>>>>> This looks like an hack to avoid a build dependency on IPV6, I think
->>>>>>> the
->>>>>>> explicit
->>>>>>
->>>>>> I happily copied this approach from espintcp.c:espintcp_init_sk() :-D
->>>>>>
->>>>>>>
->>>>>>> #if IS_ENABLED(CONFIG_IPV6)
->>>>>>>
->>>>>>> at init time should be preferable
->>>>>
->>>>> To get this done at init time I need inet6_stream_ops to be
->>>>> accessible, but it seems there is no EXPORT_SYMBOL() for this object.
->>>>>
->>>>> However, I see that mptcp/protocol.c is happily accessing it.
->>>>> Any clue how this is possible?
->>>>
->>>> I answer myself: mptcp is not tristate and it can only be compiled as
->>>> built-in.
->>>
->>> Indeed, that's why.
->>>
->>> Talking about MPTCP, by chance, do you plan to support it later on? :)
->>
->> Hi Matthieu,
->>
->> It is not on our current roadmap (TCP doesn't get much love in the VPN
->> world), but I agree it could be an interesting option to explore!
-> 
-> I understand, it makes sense not to recommend using TCP for the
-> transport layer for tunnelling solutions.
-> 
->> I have to admit that I haven't played much with MPTCP myself yet, but I
->> am more than happy to talk about potential advantages for the ovpn use
->> case.
-> 
-> Some people told me they were interested in using OpenVPN with MPTCP to
-> use multiple (low-capacity) network links at the same time. I think
-> intercepting and proxying TCP traffic would always be the best in terms
-> of performances, but using OpenVPN with MPTCP seems to be enough for
-> some, especially when they want to "improve" some type of UDP traffic
-> that cannot be intercepted: QUIC, VPN, etc.
-> 
-> I don't have numbers to share, but I can understand this feature can
-> help in some cases.
+Hi,
 
-Yeah, some people may definitely benefit from this feature.
-I'll have a look at MPTCP once ovpn is merged.
-
+On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
+> v4l2_query_ext_ctrl contains information that is missing in
+> v4l2_queryctrl, like elem_size and elems.
 > 
-> (This reminds me this: https://github.com/OpenVPN/ovpn-dco/issues/60)
-> (and this: https://github.com/arinc9/openvpn/pull/1)
+> With this change we can handle all the element_size information inside
+> uvc_ctrl.c.
+> 
+> Now that we are at it, remove the memset of the reserved fields, the
+> v4l2 ioctl handler should do that for us.
+> 
+> There is no functional change expected from this change.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Right, this definitely shows some interest and it means we should easily 
-find people willing to test :-)
+Doesn't the v4l2-core ioctl wrapping offers queryctrl emulation
+using query_ext_ctrl ? If not maybe that should be added there?
+(this can be done later)
 
+Othwerise looks good to me:
+
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
 Regards,
 
+Hans
 
--- 
-Antonio Quartulli
-OpenVPN Inc.
+
+
+
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 24 ++++++++++++++----------
+>  drivers/media/usb/uvc/uvc_v4l2.c | 35 +++++++++++++++--------------------
+>  drivers/media/usb/uvc/uvcvideo.h |  2 +-
+>  3 files changed, 30 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 72ed7dc9cfc1..1bc019138995 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -1252,7 +1252,8 @@ static int __uvc_query_v4l2_class(struct uvc_video_chain *chain, u32 req_id,
+>  }
+>  
+>  static int uvc_query_v4l2_class(struct uvc_video_chain *chain, u32 req_id,
+> -				u32 found_id, struct v4l2_queryctrl *v4l2_ctrl)
+> +				u32 found_id,
+> +				struct v4l2_query_ext_ctrl *v4l2_ctrl)
+>  {
+>  	int idx;
+>  
+> @@ -1400,7 +1401,7 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
+>  static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+>  				      struct uvc_control *ctrl,
+>  				      struct uvc_control_mapping *mapping,
+> -				      struct v4l2_queryctrl *v4l2_ctrl)
+> +				      struct v4l2_query_ext_ctrl *v4l2_ctrl)
+>  {
+>  	if (!ctrl->cached) {
+>  		int ret = uvc_ctrl_populate_cache(chain, ctrl);
+> @@ -1465,7 +1466,7 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+>  static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>  				 struct uvc_control *ctrl,
+>  				 struct uvc_control_mapping *mapping,
+> -				 struct v4l2_queryctrl *v4l2_ctrl)
+> +				 struct v4l2_query_ext_ctrl *v4l2_ctrl)
+>  {
+>  	struct uvc_control_mapping *master_map = NULL;
+>  	struct uvc_control *master_ctrl = NULL;
+> @@ -1503,6 +1504,9 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>  			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
+>  	}
+>  
+> +	v4l2_ctrl->elem_size = sizeof(s32);
+> +	v4l2_ctrl->elems = 1;
+> +
+>  	if (v4l2_ctrl->type >= V4L2_CTRL_COMPOUND_TYPES) {
+>  		v4l2_ctrl->flags |= V4L2_CTRL_FLAG_HAS_PAYLOAD;
+>  		v4l2_ctrl->default_value = 0;
+> @@ -1516,7 +1520,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+>  }
+>  
+>  int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> -	struct v4l2_queryctrl *v4l2_ctrl)
+> +			struct v4l2_query_ext_ctrl *v4l2_ctrl)
+>  {
+>  	struct uvc_control *ctrl;
+>  	struct uvc_control_mapping *mapping;
+> @@ -1642,7 +1646,7 @@ static void uvc_ctrl_fill_event(struct uvc_video_chain *chain,
+>  	struct uvc_control_mapping *mapping,
+>  	s32 value, u32 changes)
+>  {
+> -	struct v4l2_queryctrl v4l2_ctrl;
+> +	struct v4l2_query_ext_ctrl v4l2_ctrl;
+>  
+>  	__uvc_query_v4l2_ctrl(chain, ctrl, mapping, &v4l2_ctrl);
+>  
+> @@ -2119,7 +2123,7 @@ static int uvc_mapping_get_xctrl_std(struct uvc_video_chain *chain,
+>  				     struct uvc_control_mapping *mapping,
+>  				     u32 which, struct v4l2_ext_control *xctrl)
+>  {
+> -	struct v4l2_queryctrl qc;
+> +	struct v4l2_query_ext_ctrl qec;
+>  	int ret;
+>  
+>  	switch (which) {
+> @@ -2133,19 +2137,19 @@ static int uvc_mapping_get_xctrl_std(struct uvc_video_chain *chain,
+>  		return -EINVAL;
+>  	}
+>  
+> -	ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, &qc);
+> +	ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, &qec);
+>  	if (ret < 0)
+>  		return ret;
+>  
+>  	switch (which) {
+>  	case V4L2_CTRL_WHICH_DEF_VAL:
+> -		xctrl->value = qc.default_value;
+> +		xctrl->value = qec.default_value;
+>  		break;
+>  	case V4L2_CTRL_WHICH_MIN_VAL:
+> -		xctrl->value = qc.minimum;
+> +		xctrl->value = qec.minimum;
+>  		break;
+>  	case V4L2_CTRL_WHICH_MAX_VAL:
+> -		xctrl->value = qc.maximum;
+> +		xctrl->value = qec.maximum;
+>  		break;
+>  	}
+>  
+> diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
+> index 7e284770149d..5000c74271e0 100644
+> --- a/drivers/media/usb/uvc/uvc_v4l2.c
+> +++ b/drivers/media/usb/uvc/uvc_v4l2.c
+> @@ -1014,40 +1014,35 @@ static int uvc_ioctl_s_input(struct file *file, void *fh, unsigned int input)
+>  	return ret;
+>  }
+>  
+> -static int uvc_ioctl_queryctrl(struct file *file, void *fh,
+> -			       struct v4l2_queryctrl *qc)
+> +static int uvc_ioctl_query_ext_ctrl(struct file *file, void *fh,
+> +				    struct v4l2_query_ext_ctrl *qec)
+>  {
+>  	struct uvc_fh *handle = fh;
+>  	struct uvc_video_chain *chain = handle->chain;
+>  
+> -	return uvc_query_v4l2_ctrl(chain, qc);
+> +	return uvc_query_v4l2_ctrl(chain, qec);
+>  }
+>  
+> -static int uvc_ioctl_query_ext_ctrl(struct file *file, void *fh,
+> -				    struct v4l2_query_ext_ctrl *qec)
+> +static int uvc_ioctl_queryctrl(struct file *file, void *fh,
+> +			       struct v4l2_queryctrl *qc)
+>  {
+>  	struct uvc_fh *handle = fh;
+>  	struct uvc_video_chain *chain = handle->chain;
+> -	struct v4l2_queryctrl qc = { qec->id };
+> +	struct v4l2_query_ext_ctrl qec = { qc->id };
+>  	int ret;
+>  
+> -	ret = uvc_query_v4l2_ctrl(chain, &qc);
+> +	ret = uvc_query_v4l2_ctrl(chain, &qec);
+>  	if (ret)
+>  		return ret;
+>  
+> -	qec->id = qc.id;
+> -	qec->type = qc.type;
+> -	strscpy(qec->name, qc.name, sizeof(qec->name));
+> -	qec->minimum = qc.minimum;
+> -	qec->maximum = qc.maximum;
+> -	qec->step = qc.step;
+> -	qec->default_value = qc.default_value;
+> -	qec->flags = qc.flags;
+> -	qec->elem_size = 4;
+> -	qec->elems = 1;
+> -	qec->nr_of_dims = 0;
+> -	memset(qec->dims, 0, sizeof(qec->dims));
+> -	memset(qec->reserved, 0, sizeof(qec->reserved));
+> +	qc->id = qec.id;
+> +	qc->type = qec.type;
+> +	strscpy(qc->name, qec.name, sizeof(qc->name));
+> +	qc->minimum = qec.minimum;
+> +	qc->maximum = qec.maximum;
+> +	qc->step = qec.step;
+> +	qc->default_value = qec.default_value;
+> +	qc->flags = qec.flags;
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index f429f325433b..8aca1a2fe587 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -766,7 +766,7 @@ void uvc_status_put(struct uvc_device *dev);
+>  extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
+>  
+>  int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
+> -			struct v4l2_queryctrl *v4l2_ctrl);
+> +			struct v4l2_query_ext_ctrl *v4l2_ctrl);
+>  int uvc_query_v4l2_menu(struct uvc_video_chain *chain,
+>  			struct v4l2_querymenu *query_menu);
+>  
+> 
 
 
