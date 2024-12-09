@@ -1,272 +1,115 @@
-Return-Path: <linux-kernel+bounces-437927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F2D89E9AA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:32:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60A829E9AA4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:33:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63559163F72
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:32:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E58AD161C08
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17AC61E9B02;
-	Mon,  9 Dec 2024 15:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BE31BEF8E;
+	Mon,  9 Dec 2024 15:33:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L1mUnTho"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JYA/LOEZ"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9891C5CB3
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D41C35954
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733758297; cv=none; b=BgynlDeu8QNZb9LSajPstjb0GafnnnxhjnCSFLwamHAZzeNH2hI7v2oSt+5k9/TVlgxplnXXkKdmtQ6tBy4pSE7yMt39WiQf2rpN4QI/sA5e6YejlYFXH99Ju3eJVWrb/5MQKVvoA3/f+j1PiysJ3q4KbcodJZ3DYbTDzLsL1MY=
+	t=1733758395; cv=none; b=ovs0hC6wTQXCk/elTdnylGe9JG3JioUuJ0O/FoiIDP1iLKTGJ6aW3EpL48nH5cbDx4uViaiGMW3Hgfn0NV8jgKj7V6EPr817qxmoKDbj7UYV8oGGzDpncP8ZODdnFn2jrH6yzyRDB0m0YpiNMEJQrxh+ZsX2bJGtlSc7mon0iq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733758297; c=relaxed/simple;
-	bh=rhmAbbFE389OWi7Qqlx7FhnIGzuR/ojMrk9rsBpDcJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IcUg23yDLz4Vt4ahedwj/wu4JXE19VJgJALL8Y2tpzIJagroNI31k9kd4EV7dVtOs0XdHR3HKXNFgCYsRjQQ2rBf9/i66V35xnIcOR1Y32fiNGDZK0AimRipG6hLe6iABPZViUOZHoZz++0DyNVcfyMDLOakhf/T3JDz4XrDQiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L1mUnTho; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733758294;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+pfazl4ro4Z0q3+aAWow2eofy7cY7lz2m7JpJlKTGm8=;
-	b=L1mUnThonCZe1xT+kyYMd8DD5bFREV6ehiTVj0XZcTtmJ9mxgUAzzDgJzV4UhMVsF7it90
-	K0g8RY7sVnzGWzIMHkEsBMyOmfHG4FLaPPuL8vTRTNwQ6mctXVar8JuiVBgfHP3OhinK/C
-	SWq4grzVbznPYUQGAlc49NIvXAZHuoU=
-Received: from mail-ed1-f71.google.com (mail-ed1-f71.google.com
- [209.85.208.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-392-zivmcOyvMFOEnnWrd0M1cw-1; Mon, 09 Dec 2024 10:31:29 -0500
-X-MC-Unique: zivmcOyvMFOEnnWrd0M1cw-1
-X-Mimecast-MFC-AGG-ID: zivmcOyvMFOEnnWrd0M1cw
-Received: by mail-ed1-f71.google.com with SMTP id 4fb4d7f45d1cf-5d40db3d084so616235a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 07:31:28 -0800 (PST)
+	s=arc-20240116; t=1733758395; c=relaxed/simple;
+	bh=6QJYPOXB0LpXbrapQqS2t8EexZLyhSk/IuT5n71H2Qc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cy+TKffBgzQyEdS5FCzBVnfXlhT/sEHPLVyy8Ux2kqiLGOezIGWywZN4u9bCbSFfQYsEMW6LxJf7sMb+i9vlF/XD8qVAxYItR+lWZ+m8j1rxos7+MhB3rYdAaHbNX0gD00GgSeoSezNHqZ3MZFJ0MTWUD3F3+WK9p3AtBdaYdeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JYA/LOEZ; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-8418ecda128so196319239f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 07:33:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733758393; x=1734363193; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6QJYPOXB0LpXbrapQqS2t8EexZLyhSk/IuT5n71H2Qc=;
+        b=JYA/LOEZmv/ltbM+Djbfm+rnfhb3fj2Y54Abl0COsEVG5xPlQcvGQcgGdxsd44Eblc
+         aFAM9qbnh/dNh5bkI2pW8KDwTwVnpcPSUccMPJ/rmAXT15x+ZgIjMgKL655mbngMreLb
+         CearF6TqMZ+aJMwHF9IXddFWlEC8HTvH3EHGB34Ce68q/0r9MXDARfVYAJpTWx1sfW/y
+         grHfT8vnhZN5xMl3FFDoLtLmWhUvwZidgjqgAGjBRC1GTo1/WXfcauQEZ3bQHP6K8zrW
+         4fTicDvkBdty0p+rP5u2oIgyhcEjHzeDmOwQ6xvBWjoMd78vQ+TUL0FPXCdbTWNxjgtv
+         DSvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733758288; x=1734363088;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+pfazl4ro4Z0q3+aAWow2eofy7cY7lz2m7JpJlKTGm8=;
-        b=DGvdstoCdHO+lf8hxX6IjKFSNwfE/fLIFB0gpckyvxXpumw5iKsta4buO5vrwkVabr
-         DxW4afYujRxYPgFKxKp1hDEcnEuG1NEiZ34FTHLUoftqoNOx+Z3qE+/iD+OTyr2R6jGr
-         qyLZmQ9eZwDLLJd+fYXS3OZLTtOTBWCFyurpwY5YulmVtImuT9k9F2XtH58CXGVW3Bwj
-         wKiET+6E4V39c7guqMgTv8ZR1H1edZKq99mwVR/pbALCxtWUSpEIEMqG+veT7A0X3ajP
-         0AYG6SIsF9hK4B8SX0oT7bAplScKFcOIdZ2pUKo6GXIH4NiwhqG3LuAXaL5A1i15LVBi
-         3qSA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjyQKAd64Kv70k/5ssxCCpecq1oE3MSGaejZk6wd35FBS8eLB8/VpTjwlcjw4UYGP/TOM61NmLlPgXmYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnr/JhFa+n+/x699d/ql8uR0lL8jmJ7NW1JgbCyMCg44UJAjWV
-	2ZFAqsmLgOOOEi6RBCdI78cMOrTkAAw0BOqjnLX75zVk7uvcsfr4dcqVDGe6YTBcKfkHtxs81I4
-	St17CmNFl5a3Z8Sc3MjExgAkVHj4dOTZSPzg/4cdaKWtNoSy2S6bUzaUGRDScEw==
-X-Gm-Gg: ASbGnctkfJ/AoyYlqiC9V9jUdpwsh2Jx5QE0LoYMtPzG8SvT61xFSwJT6AiAliiwjI4
-	ZYPq1wD5VFCOctftMQSZKLtn/W1nNCHmibDnT4qgpEjswq1YMy5gY5Qm2I3LIOXiVTRNw07Jcl5
-	ccUbcZzsu8gkUwCYEdZFo8iNJZ8mq6Kv6WLEx5cTYAlqD9BJaogAYYu24Ie52pCcyE8AqmDlEGF
-	hmTx4ndsr5I2MggB/kVm38gXnoA+VC8d82i3zLsK7MUFMqcUzfmHw==
-X-Received: by 2002:a05:6402:1d50:b0:5d0:ced8:d22d with SMTP id 4fb4d7f45d1cf-5d4185d61cbmr2135467a12.22.1733758287704;
-        Mon, 09 Dec 2024 07:31:27 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEIygLNw4RGjyPR9wVkpz580F7qpOA4x36Zoh10CEUjmfOImUBPgUgpvagmFQjmX9b4EMlGyg==
-X-Received: by 2002:a05:6402:1d50:b0:5d0:ced8:d22d with SMTP id 4fb4d7f45d1cf-5d4185d61cbmr2135404a12.22.1733758287177;
-        Mon, 09 Dec 2024 07:31:27 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6770d7698sm274659966b.43.2024.12.09.07.31.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 07:31:26 -0800 (PST)
-Message-ID: <8bb30f4e-1e70-4413-bb50-d5562a7f6a1e@redhat.com>
-Date: Mon, 9 Dec 2024 16:31:26 +0100
+        d=1e100.net; s=20230601; t=1733758393; x=1734363193;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6QJYPOXB0LpXbrapQqS2t8EexZLyhSk/IuT5n71H2Qc=;
+        b=GRnIYK3mObbSnvY2srJEKeXK2AW5dCUUDIsqLzA1nvl/4p37MkOmDl/reifJ2nAMnw
+         gaMZP9w+8Gt42vNHGovE/x2FEJ/b7pICE9IJRlYECi484mLebKJWj1OuphD0cnExXkYB
+         P/HKGe2GpihK/36S7KXV4RU/+Se0CRQlHaVKZJ+hh8ghGjEhipkpPXHVQdjzcKSVqI6a
+         riUM++x/OKeMJx+TY8JM5/zUpqYhXQCY8KWI8lsOhMEj/itY+dyRfotsr4vOxiN/5X5O
+         vFoTexzYLtz0xAklcIMAN+Ycqpq/YAAgHWr9rdWIRkPB4/oJAMbxvgtpERWRfC+Va6UL
+         9LOg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmvLWP/Z7qA3bLUQEj8Kxhbs7vzMwOoS16t0iXvjQwk4xxWVLHin79r7SNyktDOP1Kedpz2GOriQYvEsU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlD/9o0l4WuqhBQR6YGptMlOOg9sAx+6k0GEg8DNxsrurCNQ/C
+	++irVFy+ICDMY4yyZ1uI2BG1DrCumWoClbt5RBEuPF+fiTWBSiFarq1kFWm94jEw+yDhcJJAx4Q
+	0160vWyQhy+ep8bMAh6n4e2Q4/TyrXbUtiHCK2rOby96Xswmis+xf
+X-Gm-Gg: ASbGnctALIa4d6LDxK5/aLt5UJKFK/TEa8/3fvsCOSFYo0opfJDx/tCVyoupB0Jfl/K
+	g+v59LESRBEqup5itSk0d1hpsl7qM/fcR
+X-Google-Smtp-Source: AGHT+IE1vUeXksBGYj/fVfeZqb61vi0AIrQrVPcz604WD1GcglXwYuTO7YT3c1pWPT0x4nTEFbw+Exdcyf5ny4QNm5U=
+X-Received: by 2002:a05:6602:6b88:b0:83b:a47c:dbfd with SMTP id
+ ca18e2360f4ac-8447e21c305mr1740812339f.6.1733758393175; Mon, 09 Dec 2024
+ 07:33:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 19/19] media: uvcvideo: document UVC v1.5 ROI
-To: Ricardo Ribalda <ribalda@chromium.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ricardo Ribalda <ribalda@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Hans Verkuil <hverkuil@xs4all.nl>, Yunke Cao <yunkec@chromium.org>,
- linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Yunke Cao <yunkec@google.com>, Sergey Senozhatsky <senozhatsky@chromium.org>
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
- <20241114-uvc-roi-v15-19-64cfeb56b6f8@chromium.org>
- <13a3c23e-7a8a-4957-bdd7-d8de2844b904@redhat.com>
- <CANiDSCsphbdkHePXManvtR_i4iSUmHkFXQLzZGSc7BJ900c1Hw@mail.gmail.com>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CANiDSCsphbdkHePXManvtR_i4iSUmHkFXQLzZGSc7BJ900c1Hw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241112195053.3939762-1-bob.beckett@collabora.com>
+ <20241114113803.3571128-1-panikiel@google.com> <1932ad8722a.102613bdb3737.769617317074446742@collabora.com>
+ <CAM5zL5rKsEd1EhOx1AGj9Au7-FQnJ5fUX2hLPEDQvmcrJXFFBg@mail.gmail.com>
+ <1932b818328.ad02576784895.6204301822664878956@collabora.com>
+ <Z0DdU9K9QMFxBIL8@kbusch-mbp.dhcp.thefacebook.com> <193ab67e768.1047ccb051074383.2860231262134590879@collabora.com>
+In-Reply-To: <193ab67e768.1047ccb051074383.2860231262134590879@collabora.com>
+From: =?UTF-8?Q?Pawe=C5=82_Anikiel?= <panikiel@google.com>
+Date: Mon, 9 Dec 2024 16:33:01 +0100
+Message-ID: <CAM5zL5pvxrpWEdskp=8xNuUM+1npJkVLCUTZh3hCYTeHrCR5ZA@mail.gmail.com>
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
+To: Robert Beckett <bob.beckett@collabora.com>
+Cc: Keith Busch <kbusch@kernel.org>, axboe <axboe@kernel.dk>, hch <hch@lst.de>, 
+	kernel <kernel@collabora.com>, linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-nvme <linux-nvme@lists.infradead.org>, sagi <sagi@grimberg.me>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Dec 9, 2024 at 1:33=E2=80=AFPM Robert Beckett <bob.beckett@collabor=
+a.com> wrote:
+> [...]
+> I have no further updates on this. I have received no further info from t=
+he vendor.
+> I think we can go ahead and use the alignment patch as is. The only outst=
+anding question was whether it is an
+> implicit last entry per page chain vs simple alisngment requirement. Eith=
+er way, using the dmapool
+> alignment fixes both of these potential causes, so we should just take it=
+ as is.
+> If we ever get any better info and can do a more specific patch in future=
+, we can rework it then.
 
-On 9-Dec-24 4:22 PM, Ricardo Ribalda wrote:
-> Hi Hans
-> 
-> On Mon, 9 Dec 2024 at 15:36, Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi,
->>
->> On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
->>> From: Yunke Cao <yunkec@google.com>
->>>
->>> Added documentation of V4L2_CID_UVC_REGION_OF_INTEREST_RECT and
->>> V4L2_CID_UVC_REGION_OF_INTEREST_AUTO.
->>>
->>> An example of a userspace implementing this feature can be found at:
->>> https://chromium.googlesource.com/chromiumos/platform2/+/refs/heads/release-R121-15699.B/camera/hal/usb/
->>>
->>> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
->>> Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
->>> Signed-off-by: Yunke Cao <yunkec@google.com>
->>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>> --->  .../userspace-api/media/drivers/uvcvideo.rst       | 64 ++++++++++++++++++++++
->>>  1 file changed, 64 insertions(+)
->>>
->>> diff --git a/Documentation/userspace-api/media/drivers/uvcvideo.rst b/Documentation/userspace-api/media/drivers/uvcvideo.rst
->>> index a290f9fadae9..1cdcd45907a3 100644
->>> --- a/Documentation/userspace-api/media/drivers/uvcvideo.rst
->>> +++ b/Documentation/userspace-api/media/drivers/uvcvideo.rst
->>> @@ -181,6 +181,7 @@ Argument: struct uvc_xu_control_mapping
->>>       UVC_CTRL_DATA_TYPE_BOOLEAN      Boolean
->>>       UVC_CTRL_DATA_TYPE_ENUM         Enumeration
->>>       UVC_CTRL_DATA_TYPE_BITMASK      Bitmask
->>> +     UVC_CTRL_DATA_TYPE_RECT         Rectangular area
->>>
->>>
->>>  UVCIOC_CTRL_QUERY - Query a UVC XU control
->>> @@ -255,3 +256,66 @@ Argument: struct uvc_xu_control_query
->>>       __u8    query           Request code to send to the device
->>>       __u16   size            Control data size (in bytes)
->>>       __u8    *data           Control value
->>> +
->>> +
->>> +Driver-specific V4L2 controls
->>> +-----------------------------
->>> +
->>> +The uvcvideo driver implements the following UVC-specific controls:
->>> +
->>> +``V4L2_CID_UVC_REGION_OF_INTEREST_RECT (struct)``
->>> +     This control determines the region of interest (ROI). ROI is a
->>> +     rectangular area represented by a struct :c:type:`v4l2_rect`. The
->>> +     rectangle is in global sensor coordinates and pixel units. It is
->>
->> Maybe: "The rectangle is in global sensor coordinates using pixel units" ?
->>
->> being "in pixel units" sounds a bit weird and had me confused for a moment.
->>
->>> +     independent of the field of view, not impacted by any cropping or
->>> +     scaling.
->>> +
->>> +     Use ``V4L2_CTRL_WHICH_MIN_VAL`` and ``V4L2_CTRL_WHICH_MAX_VAL`` to query
->>> +     the range of rectangle sizes.
->>> +
->>> +     Setting a ROI allows the camera to optimize the capture for the region.
->>> +     The value of ``V4L2_CID_REGION_OF_INTEREST_AUTO`` control determines
->>> +     the detailed behavior.
->>> +
->>> +     An example of use of this control, can be found in the:
->>> +     `Chrome OS USB camera HAL.
->>> +     <https://chromium.googlesource.com/chromiumos/platform2/+/refs/heads/release-R121-15699.B/camera/hal/usb/>`
->>
->> Hmm, not sure we want this in the API documentation. OTOH why not ? Anyone else
->> have an opinion on this ?
-> 
-> Laurent requested this:
-> https://lore.kernel.org/linux-media/20231218034413.GN5290@pendragon.ideasonboard.com/
+I think the 512 byte alignment fix is good. I tried coming up with
+something more specific, but everything I could think of was either
+too complicated or artificial.
 
-Ok, keeping this as is works for me.
-
->>> +
->>> +
->>> +``V4L2_CID_UVC_REGION_OF_INTEREST_AUTO (bitmask)``
->>> +     This determines which, if any, on-board features should track to the
->>> +     Region of Interest specified by the current value of
->>> +     ``V4L2_CID_UVD__REGION_OF_INTEREST_RECT``.
->>> +
->>> +     Max value is a mask indicating all supported Auto Controls.
->>> +
->>> +.. flat-table::
->>> +    :header-rows:  0
->>> +    :stub-columns: 0
->>> +
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_EXPOSURE``
->>> +      - Setting this bit causes automatic exposure to track the region of
->>> +     interest instead of the whole image.
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_IRIS``
->>> +      - Setting this bit causes automatic iris to track the region of interest
->>> +        instead of the whole image.
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_WHITE_BALANCE``
->>> +      - Setting this bit causes automatic white balance to track the region
->>> +     of interest instead of the whole image.
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_FOCUS``
->>> +      - Setting this bit causes automatic focus adjustment to track the region
->>> +        of interest instead of the whole image.
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_FACE_DETECT``
->>> +      - Setting this bit causes automatic face detection to track the region of
->>> +        interest instead of the whole image.
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_DETECT_AND_TRACK``
->>> +      - Setting this bit enables automatic face detection and tracking. The
->>> +     current value of ``V4L2_CID_REGION_OF_INTEREST_RECT`` may be updated by
->>> +     the driver.
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_IMAGE_STABILIZATION``
->>> +      - Setting this bit enables automatic image stabilization. The
->>> +     current value of ``V4L2_CID_REGION_OF_INTEREST_RECT`` may be updated by
->>> +     the driver.
->>
->> This one I do not understand. Since the ROI is not a crop, I don't see how
->> this interacts with image-stabilization. Typically digital image-stabilization
->> uses a moving slightly smaller crop of the full sensor rectangle which it moves
->> around in realtime to compensate for camera movements.
->>
->> So I wonder what this is expected to do. Does this set the ROI to the image
->> stabilization crop ? I guess that combined with reading back the ROI that might be
->> somewhat useful to follow what the image stabilization code is doing.
->>
->> OTOH this does not seem useful for using as region for AEC / AWB ?
-> 
-> Unfortunately, the standard is not very verbose about this:
-> https://ibb.co/VppnQ43
-> 
-> What about:
-> 
-> - ``Image Stabilization`` bit from the UVC's bmAutoControls Region of
-> Interest Control.
-> > ?
-
-I have no strong preference for either the current wording or the new
-wording you just suggested. Either one seems pretty vague / unclear to me,
-but I realize that is just the result of the specification being unclear
-on this point.
-
-So use what you think is best and then we'll just have to live with
-this being a bit vague.
-
->>> +    * - ``V4L2_UVC_REGION_OF_INTEREST_AUTO_HIGHER_QUALITY``
->>> +      - Setting this bit enables automatically capture the specified region
->>> +        with higher quality if possible.
->>>
->>
->> Otherwise this looks good to me. But I would still like to see
->> a discussion about using UVC custom ctrls instead of something standardized
->> for this. Although I guess maybe that already happened before I got involved ?
-> 
-> Seems like both Hans V and Laurent preferred uvc custom controls:
-> 
-> https://lore.kernel.org/linux-media/a0fe2b49-12b7-8eaf-c3ef-7af1a247e595@xs4all.nl
-
-Ack.
-
-Regards,
-
-Hans
-
-
+Regarding the question of whether this is an alignment requirement or
+the last PRP entry issue, I strongly believe it's the latter. I have a
+piece of code that clearly demonstrates the hardware bug when run on a
+device with the nvme bridge. I would really appreciate it if this was
+verified and my explanation was included in the patch.
 
