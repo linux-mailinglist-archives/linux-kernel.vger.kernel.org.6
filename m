@@ -1,107 +1,103 @@
-Return-Path: <linux-kernel+bounces-437187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F26C9E9022
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:29:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EFEF9E9023
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:29:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8771E163127
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:29:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2F01885E29
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:29:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE38E216E2C;
-	Mon,  9 Dec 2024 10:29:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE116216E18;
+	Mon,  9 Dec 2024 10:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PweqRT0q"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Xoiz57BE"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8E6D216E14;
-	Mon,  9 Dec 2024 10:29:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D0842165F5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733740161; cv=none; b=JPBgm9WXXwSLY3HiHECday1Wjq8EDr4wSaq5yIoeR9SLZ7+sIKC7bC7SvfUv0Xpn5jbXxJVRHMmy1MyHPsGPoPPytvOsmmd8X8MR2kPIG6Q+TXa/st3KDdEVQ1j+aEPfnzCL+2kdHNzXRdbalkuFDzrn7oTzXvSsp4dbBxZBxZU=
+	t=1733740191; cv=none; b=J7h1LZthLCypRzZ3Q2/9Ws1c6VCWjGS1Vucowv46MtUL07T3GFXV8wiSxTDVJRexkqw2Nbhx6pzLXjvKBLMGzqTJLHtb5Nda+vecKhSkS4T8syIezrbpsq0HVR56ieMT6k4hpK0YqNw1sKqQu3Geup0pTEitvPHANkF5Ay9Mn30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733740161; c=relaxed/simple;
-	bh=+bTYXK0jrTom1pGZmyvIVQuYsLJTy8SR4A4zIcAxvdg=;
+	s=arc-20240116; t=1733740191; c=relaxed/simple;
+	bh=5LTKHiJcbw4YCBJ9KIJqbEaRIOfOH6Fmu/Rvj76jvkY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N9rBrSwfGOgZhlvmlnyvyUFGc8l27AMfAx6+8cdiebZ0zbK3hHpNcVWYsn9JS+bmVMI29H+gpNsHNQ07RunWf08cqwNFc69FwghGzV2eSUosyXMxxrg9D2Rb78ejoT/KssBk+DQhtjUuZUO8ugQ287Ma3WAgsBtrokQpEFx/Owg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=PweqRT0q; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OwyB39CTHJItaPJMEkgmfbCR+5h4SkV01S+BaiaQNUE=; b=PweqRT0qTad9szFeFrP/3wFWgV
-	G+rE52BJVCWGEtJdcEJBF7uBGFl5C/3zBQqli1dXtNLe2xD/4Z/Z8ZBczPwm4W3lOM8RCjpCNNhNW
-	qU2qVTjAN4HhH05MMd3wu0PYTjIcZ+zor4GvWB5ZNXgLZGY7bV6/g7lnB0aeLjwBkstz40RxP6yBx
-	rM2jGPOQwECfIV0R7Dbq9aLER8Yf5o3vD7sao85/Z1l4M7howYVQajrqTSKreE5bxK7zWJnqWbKw0
-	iXGNpz+IWIJtQWmItGqr+ekrk9KBG2Ts94afNQXCL46iEgXlyn3N8E33vc6tZeQb1yEWpetdcTCYD
-	JJw8aUTw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKb0s-00000001HHL-2aAc;
-	Mon, 09 Dec 2024 10:29:14 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id DFC9A3003FF; Mon,  9 Dec 2024 11:29:13 +0100 (CET)
-Date: Mon, 9 Dec 2024 11:29:13 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kevin Brodsky <kevin.brodsky@arm.com>
-Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aruna.ramakrishna@oracle.com, broonie@kernel.org,
-	catalin.marinas@arm.com, dave.hansen@linux.intel.com,
-	jannh@google.com, jeffxu@chromium.org, joey.gouly@arm.com,
-	kees@kernel.org, maz@kernel.org, pierre.langlois@arm.com,
-	qperret@google.com, ryan.roberts@arm.com, will@kernel.org,
-	linux-arm-kernel@lists.infradead.org, x86@kernel.org
-Subject: Re: [RFC PATCH 13/16] arm64: mm: Reset pkey in __tlb_remove_table()
-Message-ID: <20241209102913.GJ21636@noisy.programming.kicks-ass.net>
-References: <20241206101110.1646108-1-kevin.brodsky@arm.com>
- <20241206101110.1646108-14-kevin.brodsky@arm.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mhwtnJLZjoAtKXDp+Q04IhLgWSpscO55ueOA8NHjoogzkl1aht0eKGpTEIUoGqfjpQC6cmuBwVMNITFCc/X0oCXJ8dcb+6IJCuW3ueGNLgou56Hd3y1zCzUSPqHGaux6+ErrJOP7doMjiD8Hw/yGmsOQ1m9MXMRIrtw6Hn2vxAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Xoiz57BE; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 218EE40E0289;
+	Mon,  9 Dec 2024 10:29:47 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id BHNiTCjfdaca; Mon,  9 Dec 2024 10:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733740184; bh=hQLRlqibdiMr9SiNfFVGO6Bc7oaZfVzNdqvOBbRU7kg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Xoiz57BEuY4jh+7r5Cl+Ar6t2L3895N/P+jwFeE1iKw2aR9z9II+NOd6NzgvjXEh1
+	 o20J9UCWR9zddf4MrbaZeWrEq/SE5FRnaqumwnKzP+h37Jul20/stGUVBD8+jPgteZ
+	 HORzrBKWLnWZ/NgiU2LmmSwEMkqVOwWQc1VWYOehm7TrrlWsRnrvLgwe8WIlkmcyoT
+	 u/cXpDGC083reyhBDoiFIKwvEK0+DfDbNFLAngTsIN5mLnE/IJC7ykrPfAkDXDa9rV
+	 H97+oZdtdALUKwgTCvT+qlWWDc7NGl+4iFkFoeDVnBCTAjFDDMQd5udRUjIV34st+A
+	 AJvQ5/6P+gRqwQTBE5r7cbpG5Gluplxe90Q44dhEtLSgEwmNU5EIAR+KWTlMFNLzhC
+	 ewnAHiX8jQZ9eV2iyglck/e5z+n4O76QmFnbZZpdqq7epvJtq0WN3/iiTDz5rHK9AP
+	 H4LJyQt96fAG4Ais9rTHir/aMX3uGfkb7VO21lIDBRwtGTFv1HbgR2z/kGw9YUasbY
+	 pviDhPnOgVr6QLi2Ih192/ZdzMdrAsS4YQa8S4+BgGxWJ+fXgQ2CVEJpeMTS2rOJfu
+	 FXO6Tq9AbmNCQ+StsPJLJRsP7Vch/cipE+A2FkGY6RXm/lVpd2cq1JNotbojkLt/qI
+	 qz7Jh+7hKjJ9Qtws9LztOwWE=
+Received: from zn.tnic (p200300ea971f9346329c23FfFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9346:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D4A8B40E015E;
+	Mon,  9 Dec 2024 10:29:36 +0000 (UTC)
+Date: Mon, 9 Dec 2024 11:29:29 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Damien Le Moal <dlemoal@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+	David Woodhouse <dwmw@amazon.co.uk>, Ingo Molnar <mingo@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: Fix build regression with CONFIG_KEXEC_JUMP enabled
+Message-ID: <20241209102929.GBZ1bGiT-DGK8uDdo4@fat_crate.local>
+References: <20241208235332.479460-1-dlemoal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241206101110.1646108-14-kevin.brodsky@arm.com>
+In-Reply-To: <20241208235332.479460-1-dlemoal@kernel.org>
 
-On Fri, Dec 06, 2024 at 10:11:07AM +0000, Kevin Brodsky wrote:
-> Page table pages are typically freed via tlb_remove_table() and
-> friends. Ensure that the linear mapping for those pages is reset to
-> the default pkey when CONFIG_KPKEYS_HARDENED_PGTABLES is enabled.
+On Mon, Dec 09, 2024 at 08:53:32AM +0900, Damien Le Moal wrote:
+> Build 6.13-rc12 for x86_64 with gcc 14.2.1 fails with the error:
 > 
-> This patch is a no-op if CONFIG_KPKEYS_HARDENED_PGTABLES is disabled
-> (default).
+> ld: vmlinux.o: in function `virtual_mapped':
+> linux/arch/x86/kernel/relocate_kernel_64.S:249:(.text+0x5915b): undefined reference to `saved_context_gdt_desc'
 > 
-> Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
-> ---
->  arch/arm64/include/asm/tlb.h | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/include/asm/tlb.h b/arch/arm64/include/asm/tlb.h
-> index a947c6e784ed..d1611ffa6d91 100644
-> --- a/arch/arm64/include/asm/tlb.h
-> +++ b/arch/arm64/include/asm/tlb.h
-> @@ -10,10 +10,14 @@
->  
->  #include <linux/pagemap.h>
->  #include <linux/swap.h>
-> +#include <linux/kpkeys.h>
->  
->  static inline void __tlb_remove_table(void *_table)
->  {
-> -	free_page_and_swap_cache((struct page *)_table);
-> +	struct page *page = (struct page *)_table;
-> +
-> +	kpkeys_unprotect_pgtable_memory((unsigned long)page_address(page), 1);
-> +	free_page_and_swap_cache(page);
->  }
+> when CONFIG_KEXEC_JUMP is enabled.
 
-Same as for the others, perhaps stick this in generic code instead of in
-the arch code?
+Hmm, how do you trigger this? Care to share your .config?
+
+Because I can't trigger it with my gcc13 and CONFIG_KEXEC_JUMP=y
+
+It would be good to know how the 0day bot didn't catch it either...
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
