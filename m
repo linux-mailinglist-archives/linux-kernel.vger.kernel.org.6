@@ -1,264 +1,311 @@
-Return-Path: <linux-kernel+bounces-438154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D07279E9D7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:50:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9169E9D80
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F1931886DC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:50:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16791162133
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:51:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D28A61A2398;
-	Mon,  9 Dec 2024 17:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F9A1581F2;
+	Mon,  9 Dec 2024 17:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aTBrH4p8"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSjoyWKg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294291C5CBD
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:49:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1E214B077;
+	Mon,  9 Dec 2024 17:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766560; cv=none; b=rTOpIVcZwzoY2GxZMcy0Mm4vpFqlb6JIZvUQR89jTchV2wMu6lZLHN2n9tY/6aOUQ+4YI5pB1gxrf7FosH9CUuAWzC+bTgs97SSHGXp1bq55/p36NVLpv3EN0YZLt+dM5rTe/EHOE4piCS08ShgVjkVO92cEqowZ5I/lVijidWE=
+	t=1733766657; cv=none; b=jPIsdHSgdY++5ALJfSz6Ka457g0nxaZ8s1me+KY3cLZk0TCzPcMNITCATXCi0TljREkhNuRRgVvWdbx5jEkBAcnJnLVx8i3+W5r95vEmvuIk/Ns/qKXOE8krr+4ybOYvVfd6o5gZuM7yeqcf6KB662ulhfZY2IUqqjUi1UgeUp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766560; c=relaxed/simple;
-	bh=/ngJ31invQX5gKPkdlu21QxuRo0Yy8l2N/s4QwYdOLU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EA3ameHZPObQRxIGZZIiuluxyauO6wuo9d75Pot6ZPLw3RgiwfVHttqOVJ+xFwR5Vo6ZhoETUcT90u2iAt5PaM0Rc/HO3g37E22J9vF9quN/+hRp/Fl3JHyPhRTUAcwpV5lMnat0tUMp/SRvxyti8PGIGmYgGHmQcP7rqhfwYjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aTBrH4p8; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21619108a6bso22151265ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:49:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733766557; x=1734371357; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Zf8gzCK3nfrU3b7Uuxbc0dGE1qzZ9/xYXm+PyMypy4k=;
-        b=aTBrH4p8uwN3mK5wZi7cIQnJaMEtTpmWg2zzu3gWwTrzKQZcehNf69M1+xI3+/zviP
-         7YvIby+h1KzcGHf/gV5vooIIBH+ygB1bpX5t/jEpfv/1VdAoGCeSvC36MMfwFbkrGL37
-         EQ57TwZMDr/MnMd41wbDRqqDfVxrmBIJ4XW2sCMuxWjYW1qMwZTMNlOGxLzKfUifk9UP
-         fnwKdkjb8/2VWAcBYFFWklndtVmLFQKiKEdt05aTPYm9Eovxvm11rsaNQ4cnwUUBn5jz
-         j0C2umfOdkzBXguJxw7Tp/qbcPoQWczg6EHm3KjeI5db8D9SesBn1rO84prc+cHQN3Dj
-         Tzpg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733766557; x=1734371357;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Zf8gzCK3nfrU3b7Uuxbc0dGE1qzZ9/xYXm+PyMypy4k=;
-        b=ghXurx3sHtequuuHITcpOZ6uC2ckQMsKYb/2oxZQoLfl/ShDV58da8GS0D4Nd6esXx
-         yB//lQHavXj7pl92akt2dom47mHB6yfcMiktL7PrTP2gKpEkidMdCUJXT/8Ee53W2yxd
-         jwy5JqUBV3rr0GC/T3jn8Z4ZwaxF4tu8T/aUZY2ia0errD6AQTuBtqYjZuHt6m1GRRm0
-         zki9Ffr2nWVzSXNrBdZ5PjyipfXlVR+BmyFzXYP2qZhhAMiLJcAm3TIxYL7YmkXEkYs7
-         RLAhN99aY6L83km9us3/iP8o0lANivyrqZFdbf3cOqwiYGYVr2OXad/HIi5ZvQDUmCh5
-         Q5SA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzLHLdQ6SSaQEaQILL1LXNdjVmJPfcayAPPUgj8sUPXd7ytNh0Dr8Z85AZ8kWIKreGFGZKz4BOOhyFvJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKQfsqXj1FpfDSwM2UgJSdF5nG36kE6+dA3ZHwC1wnB6SnsWr6
-	PsHiaNr40sBSiJl/2TVI48CGF4L0rDh8FTZdI5p4Ukscz1pl0mYEvBG3oax6HdI=
-X-Gm-Gg: ASbGncsYrW8u5mA9M1A3t1qK42HlsBIScqmCaAcLED/9+Wu9H5xjIsV2C0cH/EyXUD6
-	bPSW+0x1ZeyU+IcDKnzDDNh83ISfdsnAkAYphlPY2+Y7UHIpsaAKDz5Ox8cuKZVHqRAaU51sYKR
-	Z6/ICyfSX8Egr14yFPmMLEKHvrHNDQP2BhPV4xkdYCz/5arQtWzVdb+TOqdMkeOgT66Gml5qj4Q
-	+/+pEFNIg7LAK7mVdYE2Vz4nuLbYwxbySUIImcRJlXkGW+y/w==
-X-Google-Smtp-Source: AGHT+IFY3WJ1ALik4fCfvOaI+IBshnfFj9VVWrccJaSzIqDQLA6VvD98zEwQj/L1R/jPX93PhyCxlw==
-X-Received: by 2002:a17:903:2303:b0:216:2a36:5b2e with SMTP id d9443c01a7336-2166a024b1fmr19667555ad.32.1733766557531;
-        Mon, 09 Dec 2024 09:49:17 -0800 (PST)
-Received: from x-wing.. ([2406:7400:94:42cf:4dea:f154:880:3adc])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2164d103993sm21837865ad.193.2024.12.09.09.49.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 09:49:17 -0800 (PST)
-From: Amit Pundir <amit.pundir@linaro.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-	linux-clk <linux-clk@vger.kernel.org>,
-	lkml <linux-kernel@vger.kernel.org>
-Subject: [RESEND] clk: qcom: gcc-sdm845: Do not use shared clk_ops for QUPs
-Date: Mon,  9 Dec 2024 23:19:12 +0530
-Message-ID: <20241209174912.2526928-1-amit.pundir@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1733766657; c=relaxed/simple;
+	bh=Y4occCNc6/Ici7P42BSSg7VGntQQoGUD7KDgt5ccTn8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=vGBq8+QvZZbACWyq1Zhb5htd1lulkzOqhLrgFi3d7HEqB7nxV7smI2nFofbDCbZcTjngUFuzqVBUUZKWV1cPJXrCqGOY/5f0v4/IHHn+ZLDxXTuBqKReIS06cNviKLq5Q++i4UtWgySqysk1oxgznb2IzI9c7+pylpNeJ2cOqA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSjoyWKg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 7155FC4CEDF;
+	Mon,  9 Dec 2024 17:50:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733766656;
+	bh=Y4occCNc6/Ici7P42BSSg7VGntQQoGUD7KDgt5ccTn8=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=PSjoyWKgILdPElYmU+CVBdk/szbEogFSjIpw1YK6zDdg8hHMfDWNEHA6TtWv6MQOk
+	 /OqUk/DpElRdkTgz7QKzik2wg/8AxnzXqEiU7ZY3OcGCXiWaJ1w8WPx9ADWdYmg51n
+	 oybMpJemh4RMYnQlw5RWNZ0eI5tCr3hSZjPJluyVJxoLywXfIAnDCnAc8+wiD9uMWH
+	 gHsiUafkuy+2HmVSIT/mSx4KVe0L4fG4xEFoEh1CM68Jm62jPRLUnTFmj2zyfJa2D0
+	 Hz87dA3mJOKPRCcDUtS7U6ymqjl+Q7bqaogk9dZH69TvRNVAmcj6cawRvci6D9TkJu
+	 X4kHjq0bpVe0A==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0C8E7717D;
+	Mon,  9 Dec 2024 17:50:56 +0000 (UTC)
+From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
+Date: Mon, 09 Dec 2024 18:50:42 +0100
+Subject: [PATCH net-next] net: phy: dp83822: Replace DP83822_DEVADDR with
+ MDIO_MMD_VEND2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
+X-B4-Tracking: v=1; b=H4sIAPEtV2cC/x3MQQqEMAxA0atI1gZqKrR6FXExM4ljFo3Sigji3
+ afM8i3+v6FIVikwNjdkObXoZhVd28BnfdlXULkayFHfkRuQ9+gjESbWDVNiPMWYMPoQfHRL798
+ BarxnWfT6jycwOdDkOmB+nh8DxbvrcgAAAA==
+X-Change-ID: 20241209-dp83822-mdio-mmd-vend2-8377380f43b7
+To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
+ Russell King <linux@armlinux.org.uk>, 
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Dimitri Fedrau <dima.fedrau@gmail.com>, 
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733766655; l=9020;
+ i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
+ bh=y2zn+L/aWE1Ero8F6H4omU9e4vAI0N/THmMcxqt/cio=;
+ b=aplgF5k7dWDI6IDBJarFpSHt9HI3DAtjsQfg4wF+4kPTUgjWolR3JKiP1bVZVQ54EEJ4VMbbk
+ YJJj+Wru2anCWf5Msqt1aNjm9yhH9B/W7nal6eeK8r95kS0XYBvRNMs
+X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
+ pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
+X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
+ with auth_id=290
+X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Reply-To: dimitri.fedrau@liebherr.com
 
-Similar to the earlier fixes meant for sm8x50 and x1e platforms,
-we have to stop using the shared clk ops for sdm845 QUPs as well.
+From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 
-As Stephen Boyd pointed out in earlier fixes, there wasn't a problem
-to mark QUP clks shared until we started parking shared RCGs at clk
-registration time in commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs
-upon registration"). Parking at init is actually harmful to the UART
-when earlycon is used. If the device is pumping out data while the
-frequency changes and we see garbage on the serial console until the
-driver can probe and actually set a proper frequency.
+Instead of using DP83822_DEVADDR which is locally defined use
+MDIO_MMD_VEND2.
 
-This patch reverts the QUP clk sharing ops part of commit 06391eddb60a
-("clk: qcom: Add Global Clock controller (GCC) driver for SDM845"), so
-that the QUPs on sdm845 don't get parked during clk registration and
-break UART operations.
-
-Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-Signed-off-by: Amit Pundir <amit.pundir@linaro.org>
+Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 ---
- drivers/clk/qcom/gcc-sdm845.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/net/phy/dp83822.c | 58 +++++++++++++++++++++++------------------------
+ 1 file changed, 28 insertions(+), 30 deletions(-)
 
-diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
-index dc3aa7014c3e..c6692808a822 100644
---- a/drivers/clk/qcom/gcc-sdm845.c
-+++ b/drivers/clk/qcom/gcc-sdm845.c
-@@ -454,7 +454,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s0_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
+index cf8b6d0bfaa9812eee98c612c0d4259d87da7572..25ee09c48027c86b7d8f4acb5cbe2e157c56a85a 100644
+--- a/drivers/net/phy/dp83822.c
++++ b/drivers/net/phy/dp83822.c
+@@ -22,8 +22,6 @@
+ #define DP83826C_PHY_ID		0x2000a130
+ #define DP83826NC_PHY_ID	0x2000a110
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
-@@ -470,7 +470,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s1_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s1_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-#define DP83822_DEVADDR		0x1f
+-
+ #define MII_DP83822_CTRL_2	0x0a
+ #define MII_DP83822_PHYSTS	0x10
+ #define MII_DP83822_PHYSCR	0x11
+@@ -159,14 +157,14 @@ static int dp83822_config_wol(struct phy_device *phydev,
+ 		/* MAC addresses start with byte 5, but stored in mac[0].
+ 		 * 822 PHYs store bytes 4|5, 2|3, 0|1
+ 		 */
+-		phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_DA1,
++		phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_DA1,
+ 			      (mac[1] << 8) | mac[0]);
+-		phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_DA2,
++		phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_DA2,
+ 			      (mac[3] << 8) | mac[2]);
+-		phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_DA3,
++		phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_DA3,
+ 			      (mac[5] << 8) | mac[4]);
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
-@@ -486,7 +486,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s2_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s2_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-		value = phy_read_mmd(phydev, DP83822_DEVADDR,
++		value = phy_read_mmd(phydev, MDIO_MMD_VEND2,
+ 				     MII_DP83822_WOL_CFG);
+ 		if (wol->wolopts & WAKE_MAGIC)
+ 			value |= DP83822_WOL_MAGIC_EN;
+@@ -174,13 +172,13 @@ static int dp83822_config_wol(struct phy_device *phydev,
+ 			value &= ~DP83822_WOL_MAGIC_EN;
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
-@@ -502,7 +502,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s3_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s3_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+ 		if (wol->wolopts & WAKE_MAGICSECURE) {
+-			phy_write_mmd(phydev, DP83822_DEVADDR,
++			phy_write_mmd(phydev, MDIO_MMD_VEND2,
+ 				      MII_DP83822_RXSOP1,
+ 				      (wol->sopass[1] << 8) | wol->sopass[0]);
+-			phy_write_mmd(phydev, DP83822_DEVADDR,
++			phy_write_mmd(phydev, MDIO_MMD_VEND2,
+ 				      MII_DP83822_RXSOP2,
+ 				      (wol->sopass[3] << 8) | wol->sopass[2]);
+-			phy_write_mmd(phydev, DP83822_DEVADDR,
++			phy_write_mmd(phydev, MDIO_MMD_VEND2,
+ 				      MII_DP83822_RXSOP3,
+ 				      (wol->sopass[5] << 8) | wol->sopass[4]);
+ 			value |= DP83822_WOL_SECURE_ON;
+@@ -194,10 +192,10 @@ static int dp83822_config_wol(struct phy_device *phydev,
+ 		value |= DP83822_WOL_EN | DP83822_WOL_INDICATION_SEL |
+ 			 DP83822_WOL_CLR_INDICATION;
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
-@@ -518,7 +518,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s4_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s4_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-		return phy_write_mmd(phydev, DP83822_DEVADDR,
++		return phy_write_mmd(phydev, MDIO_MMD_VEND2,
+ 				     MII_DP83822_WOL_CFG, value);
+ 	} else {
+-		return phy_clear_bits_mmd(phydev, DP83822_DEVADDR,
++		return phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2,
+ 					  MII_DP83822_WOL_CFG,
+ 					  DP83822_WOL_EN |
+ 					  DP83822_WOL_MAGIC_EN |
+@@ -226,23 +224,23 @@ static void dp83822_get_wol(struct phy_device *phydev,
+ 	wol->supported = (WAKE_MAGIC | WAKE_MAGICSECURE);
+ 	wol->wolopts = 0;
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
-@@ -534,7 +534,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s5_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s5_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-	value = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG);
++	value = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG);
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
-@@ -550,7 +550,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s6_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s6_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+ 	if (value & DP83822_WOL_MAGIC_EN)
+ 		wol->wolopts |= WAKE_MAGIC;
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
-@@ -566,7 +566,7 @@ static struct clk_init_data gcc_qupv3_wrap0_s7_clk_src_init = {
- 	.name = "gcc_qupv3_wrap0_s7_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+ 	if (value & DP83822_WOL_SECURE_ON) {
+-		sopass_val = phy_read_mmd(phydev, DP83822_DEVADDR,
++		sopass_val = phy_read_mmd(phydev, MDIO_MMD_VEND2,
+ 					  MII_DP83822_RXSOP1);
+ 		wol->sopass[0] = (sopass_val & 0xff);
+ 		wol->sopass[1] = (sopass_val >> 8);
  
- static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
-@@ -582,7 +582,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s0_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-		sopass_val = phy_read_mmd(phydev, DP83822_DEVADDR,
++		sopass_val = phy_read_mmd(phydev, MDIO_MMD_VEND2,
+ 					  MII_DP83822_RXSOP2);
+ 		wol->sopass[2] = (sopass_val & 0xff);
+ 		wol->sopass[3] = (sopass_val >> 8);
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
-@@ -598,7 +598,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s1_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-		sopass_val = phy_read_mmd(phydev, DP83822_DEVADDR,
++		sopass_val = phy_read_mmd(phydev, MDIO_MMD_VEND2,
+ 					  MII_DP83822_RXSOP3);
+ 		wol->sopass[4] = (sopass_val & 0xff);
+ 		wol->sopass[5] = (sopass_val >> 8);
+@@ -430,18 +428,18 @@ static int dp83822_config_init(struct phy_device *phydev)
+ 		if (tx_int_delay <= 0)
+ 			rgmii_delay |= DP83822_TX_CLK_SHIFT;
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
-@@ -614,7 +614,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s2_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-		err = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
++		err = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
+ 				     DP83822_RX_CLK_SHIFT | DP83822_TX_CLK_SHIFT, rgmii_delay);
+ 		if (err)
+ 			return err;
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
-@@ -630,7 +630,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s3_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+-		err = phy_set_bits_mmd(phydev, DP83822_DEVADDR,
++		err = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
+ 				       MII_DP83822_RCSR, DP83822_RGMII_MODE_EN);
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
-@@ -646,7 +646,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s4_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+ 		if (err)
+ 			return err;
+ 	} else {
+-		err = phy_clear_bits_mmd(phydev, DP83822_DEVADDR,
++		err = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2,
+ 					 MII_DP83822_RCSR, DP83822_RGMII_MODE_EN);
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
-@@ -662,7 +662,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s5_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+ 		if (err)
+@@ -496,7 +494,7 @@ static int dp83822_config_init(struct phy_device *phydev)
+ 			return err;
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
-@@ -678,7 +678,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s6_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+ 		if (dp83822->fx_signal_det_low) {
+-			err = phy_set_bits_mmd(phydev, DP83822_DEVADDR,
++			err = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
+ 					       MII_DP83822_GENCFG,
+ 					       DP83822_SIG_DET_LOW);
+ 			if (err)
+@@ -514,10 +512,10 @@ static int dp8382x_config_rmii_mode(struct phy_device *phydev)
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
-@@ -694,7 +694,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
- 	.name = "gcc_qupv3_wrap1_s7_clk_src",
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
+ 	if (!device_property_read_string(dev, "ti,rmii-mode", &of_val)) {
+ 		if (strcmp(of_val, "master") == 0) {
+-			ret = phy_clear_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
++			ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
+ 						 DP83822_RMII_MODE_SEL);
+ 		} else if (strcmp(of_val, "slave") == 0) {
+-			ret = phy_set_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
++			ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
+ 					       DP83822_RMII_MODE_SEL);
+ 		} else {
+ 			phydev_err(phydev, "Invalid value for ti,rmii-mode property (%s)\n",
+@@ -539,7 +537,7 @@ static int dp83826_config_init(struct phy_device *phydev)
+ 	int ret;
  
- static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
+ 	if (phydev->interface == PHY_INTERFACE_MODE_RMII) {
+-		ret = phy_set_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
++		ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
+ 				       DP83822_RMII_MODE_EN);
+ 		if (ret)
+ 			return ret;
+@@ -548,7 +546,7 @@ static int dp83826_config_init(struct phy_device *phydev)
+ 		if (ret)
+ 			return ret;
+ 	} else {
+-		ret = phy_clear_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
++		ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
+ 					 DP83822_RMII_MODE_EN);
+ 		if (ret)
+ 			return ret;
+@@ -560,7 +558,7 @@ static int dp83826_config_init(struct phy_device *phydev)
+ 				 FIELD_GET(DP83826_CFG_DAC_MINUS_MDIX_5_TO_4,
+ 					   dp83822->cfg_dac_minus));
+ 		mask = DP83826_VOD_CFG1_MINUS_MDIX_MASK | DP83826_VOD_CFG1_MINUS_MDI_MASK;
+-		ret = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83826_VOD_CFG1, mask, val);
++		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83826_VOD_CFG1, mask, val);
+ 		if (ret)
+ 			return ret;
+ 
+@@ -568,7 +566,7 @@ static int dp83826_config_init(struct phy_device *phydev)
+ 				 FIELD_GET(DP83826_CFG_DAC_MINUS_MDIX_3_TO_0,
+ 					   dp83822->cfg_dac_minus));
+ 		mask = DP83826_VOD_CFG2_MINUS_MDIX_MASK;
+-		ret = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83826_VOD_CFG2, mask, val);
++		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83826_VOD_CFG2, mask, val);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -577,7 +575,7 @@ static int dp83826_config_init(struct phy_device *phydev)
+ 		val = FIELD_PREP(DP83826_VOD_CFG2_PLUS_MDIX_MASK, dp83822->cfg_dac_plus) |
+ 		      FIELD_PREP(DP83826_VOD_CFG2_PLUS_MDI_MASK, dp83822->cfg_dac_plus);
+ 		mask = DP83826_VOD_CFG2_PLUS_MDIX_MASK | DP83826_VOD_CFG2_PLUS_MDI_MASK;
+-		ret = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83826_VOD_CFG2, mask, val);
++		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83826_VOD_CFG2, mask, val);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -673,7 +671,7 @@ static int dp83822_read_straps(struct phy_device *phydev)
+ 	int fx_enabled, fx_sd_enable;
+ 	int val;
+ 
+-	val = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_SOR1);
++	val = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_SOR1);
+ 	if (val < 0)
+ 		return val;
+ 
+@@ -748,7 +746,7 @@ static int dp83822_suspend(struct phy_device *phydev)
+ {
+ 	int value;
+ 
+-	value = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG);
++	value = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG);
+ 
+ 	if (!(value & DP83822_WOL_EN))
+ 		genphy_suspend(phydev);
+@@ -762,9 +760,9 @@ static int dp83822_resume(struct phy_device *phydev)
+ 
+ 	genphy_resume(phydev);
+ 
+-	value = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG);
++	value = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG);
+ 
+-	phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG, value |
++	phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG, value |
+ 		      DP83822_WOL_CLR_INDICATION);
+ 
+ 	return 0;
+
+---
+base-commit: 6145fefc1e42c1895c0c1c2c8593de2c085d8c56
+change-id: 20241209-dp83822-mdio-mmd-vend2-8377380f43b7
+
+Best regards,
 -- 
-2.43.0
+Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+
 
 
