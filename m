@@ -1,218 +1,104 @@
-Return-Path: <linux-kernel+bounces-436916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D258D9E8C96
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:49:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC3A160EA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:49:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE6221506E;
-	Mon,  9 Dec 2024 07:49:45 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DF69E8C98
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:50:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D539214A64;
-	Mon,  9 Dec 2024 07:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED7E2817BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:50:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8625588B;
+	Mon,  9 Dec 2024 07:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kFdV293R"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E800214A64;
+	Mon,  9 Dec 2024 07:49:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733730584; cv=none; b=ca6rORfab8RrKMkKJoZo9euXHOWiYqu/Z9P5Zl6+XS0mDSPZuk/57ThCHMWi4vyypPQVON/lNn2laQJsl+Qj62tBM/060DgBfB4vuUwnGVPtpXCJh2xqSq9nUziIJdSjjRbtfR9uhBWVXRmUvVP96SRG0mp2cW3Ea+IQ876DV80=
+	t=1733730596; cv=none; b=DAUwyotUOX2b99dFGiIC9M3trF/Gr4qV9qMs/UAQ8ZD1W5Xq+MjuxryS38dCQeNXi9SEAsnXU9EPlIC9zRNz00mM+p2QPzGwi3KNIRGi7V3yC1hR/Cqm36fGE2jGH6BKpTCvMox9tEJWwuNX0+X/RCS6BGi3qaeMbLRsj89Ukhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733730584; c=relaxed/simple;
-	bh=R8kCdwKbk8Fy59TANbitmY9vXQFcRjYWd5ShkaVdGAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YcXCDDhwY4gHg1ZQ3oZ+bkTP0zOx6DbnHjLwHCivLVAUxxAbV4nWfVguDDqM3IVnxu3CMHV8uDQIVDBC8jeIlr9KYmNbBlqM6se5TbSKSjN4ranrAs086Z7yWoK0R8TEKueRuxTHo00BvBzmtXVKTzQyDXYpv0w9HpurIOIsmJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y6DT75Q7Bz11MCC;
-	Mon,  9 Dec 2024 15:46:35 +0800 (CST)
-Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
-	by mail.maildlp.com (Postfix) with ESMTPS id DCAF6180357;
-	Mon,  9 Dec 2024 15:49:38 +0800 (CST)
-Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
- (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Dec
- 2024 15:49:38 +0800
-Message-ID: <57e94a65-d9df-4114-bcee-998addb6e60f@huawei.com>
-Date: Mon, 9 Dec 2024 15:49:37 +0800
+	s=arc-20240116; t=1733730596; c=relaxed/simple;
+	bh=5EFS2InPg2t3NJWSEh6nQPiSR6HZgWxCXmJAgXABqHs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=khurs/AJwDcter3w/t164ocuRJxp15nFof7a/veymZYPg09i714dTrvzIN0gxdR7EAyk5Rt3M2wzxZe+1zBC8FzfwDydXUvJDyuZ+jXiAMI9HHxm/BqRCrAcLCA6QeMeSapmRhvGCpCI1b4rX9gGhK0AmdswWigkOcDfK8Xfw44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kFdV293R; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=OmWUSu3bZ9nMiHmrTjQz9XT/WaHo0p18xXNKxBDgGoo=; b=kFdV293Ri3XsiETHw6qp1L/ven
+	tu0zlgZxqg2itd3JpxhPBppLYWVfJk0TptPfu3jDrslxYrX7ElP1ehMdRlSkXKDyHu3mG2JWIudTo
+	N6s8D81wUhcbMVjHZOq9fIwVGQy5+BiMoD4oGPcV6b5ucHWiq59GqHanTXjkm6+Znbt0/7lW6qcyF
+	zgS/fjXH5vc+yJD3N21jr3/LkbDilbaRlKjG3rrYK+Yl5vJJOe4uKHJDb4fkK7ftlJyqnZbgGX+nu
+	CCGWmEnwd4M5KOryK5MgMLiX3nAQWd7TSum6MI02vEfT+9hfhlx5qChqPb9PDknw9Ox45r5zTH5e6
+	69XYPHxg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKYWV-00000006mEI-2tYU;
+	Mon, 09 Dec 2024 07:49:43 +0000
+Date: Sun, 8 Dec 2024 23:49:43 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Erin Shepherd <erin.shepherd@e43.eu>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	stable <stable@kernel.org>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
+ operations as only supporting file handles
+Message-ID: <Z1ahFxFtksuThilS@infradead.org>
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+ <Z1D2BE2S6FLJ0tTk@infradead.org>
+ <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
+ <20241206160358.GC7820@frogsfrogsfrogs>
+ <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] ACPI: CPPC: Refactor register get and set ABIs
-To: Pierre Gondois <pierre.gondois@arm.com>, <rafael@kernel.org>,
-	<lenb@kernel.org>, <robert.moore@intel.com>, <viresh.kumar@linaro.org>
-CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <fanghao11@huawei.com>,
-	"zhenglifeng (A)" <zhenglifeng1@huawei.com>
-References: <20241114084816.1128647-1-zhenglifeng1@huawei.com>
- <20241114084816.1128647-2-zhenglifeng1@huawei.com>
- <0f113d9d-faac-420a-9c75-9b620bf5c3f6@arm.com>
-From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
-In-Reply-To: <0f113d9d-faac-420a-9c75-9b620bf5c3f6@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemh100008.china.huawei.com (7.202.181.93)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hello Pierre，
+On Sat, Dec 07, 2024 at 09:49:02AM +0100, Amir Goldstein wrote:
+> > /* file handles can be used by a process on another node */
+> > #define EXPORT_OP_ALLOW_REMOTE_NODES    (...)
+> 
+> This has a sound of security which is incorrect IMO.
+> The fact that we block nfsd export of cgroups does not prevent
+> any type of userland file server from exporting cgroup file handles.
 
-On 2024/12/6 22:23, Pierre Gondois wrote:
-> Hello Lifeng,
-> 
-> On 11/14/24 09:48, Lifeng Zheng wrote:
->> Refactor register get and set ABIs using cppc_get_reg() and cppc_set_reg().
->>
->> Rename cppc_get_perf() to cppc_get_reg() as a generic function to read cppc
->> registers, with two changes:
->>
->> 1. Change the error kind to "no such device" when pcc_ss_id < 0, which
->> means that this cpu cannot get a valid pcc_ss_id.
->>
->> 2. Add a check to verify if the register is a cpc supported one before
->> using it.
->>
->> Add cppc_set_reg() as a generic function for setting cppc registers. Unlike
->> other set reg ABIs, this function checks CPC_SUPPORTED right after getting
->> the register, because the rest of the operations are meaningless if this
->> register is not a cpc supported one.
->>
->> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
->> ---
->>   drivers/acpi/cppc_acpi.c | 191 +++++++++++++++------------------------
->>   1 file changed, 72 insertions(+), 119 deletions(-)
->>
->> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
->> index c1f3568d0c50..306ced9c3376 100644
->> --- a/drivers/acpi/cppc_acpi.c
->> +++ b/drivers/acpi/cppc_acpi.c
->> @@ -1179,10 +1179,13 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
->>       return ret_val;
->>   }
->>   -static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *perf)
->> +static int cppc_get_reg(int cpunum, enum cppc_regs reg_idx, u64 *val)
->>   {
->>       struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
->> +    struct cppc_pcc_data *pcc_ss_data = NULL;
->>       struct cpc_register_resource *reg;
->> +    int pcc_ss_id;
->> +    int ret = 0;
-> 
-> NIT: Might not be necessary if we save the value returned by cpc_read(),
-> cf. other comment below.
-> 
->>         if (!cpc_desc) {
->>           pr_debug("No CPC descriptor for CPU:%d\n", cpunum);
->> @@ -1191,20 +1194,23 @@ static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *perf)
->>         reg = &cpc_desc->cpc_regs[reg_idx];
->>   +    if (!CPC_SUPPORTED(reg)) {
->> +        pr_debug("CPC register (reg_idx=%u) is not supported\n", reg_idx);
->> +        return -EOPNOTSUPP;
->> +    }
->> +
->>       if (CPC_IN_PCC(reg)) {
->> -        int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
->> -        struct cppc_pcc_data *pcc_ss_data = NULL;
->> -        int ret = 0;
->> +        pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
->>             if (pcc_ss_id < 0)
->> -            return -EIO;
->> +            return -ENODEV;
-> 
-> NIT: Could add here:
->   pr_debug("Invalid pcc_ss_id\n");
-> just as you did in cppc_set_reg()
+So what is the purpose of the flag?  Asking for a coherent name and
+description was the other bigger ask for me.
 
-Will add it in next version, Thanks.
+> Maybe opt-out of nfsd export is a little less safer than opt-in, but
+> 1. opt-out is and will remain the rare exception for export_operations
+> 2. at least the flag name EXPORT_OP_LOCAL_FILE_HANDLE
+>     is pretty clear IMO
 
-> 
->>             pcc_ss_data = pcc_data[pcc_ss_id];
->>             down_write(&pcc_ss_data->pcc_lock);
->>             if (send_pcc_cmd(pcc_ss_id, CMD_READ) >= 0)
->> -            cpc_read(cpunum, reg, perf);
->> +            cpc_read(cpunum, reg, val);
-> 
-> This was not introduced by your patch, but cpc_read() return a value.
-> Shouldn't we return it instead of 0 ?
+Even after this thread I have absolutely no idea what problem it tries
+to solve.  Maybe that's not just the flag names fault, and not of opt-in
+vs out, but both certainly don't help.
 
-Indeed. Will optimize it, Thanks.
+> Plus, as I wrote in another email, the fact that pidfs is SB_NOUSER,
+> so userspace is not allowed to mount it into the namespace and
+> userland file servers cannot export the filesystem itself.
+> That property itself (SB_NOUSER), is therefore a good enough indication
+> to deny nfsd export of this fs.
 
-> 
->>           else
->>               ret = -EIO;
->>   @@ -1213,21 +1219,65 @@ static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *perf)
->>           return ret;
->>       }
->>   -    cpc_read(cpunum, reg, perf);
->> +    cpc_read(cpunum, reg, val);
-> 
-> Same comment as above
-> 
->>         return 0;
->>   }
->>   +static int cppc_set_reg(int cpu, enum cppc_regs reg_idx, u64 val)
-> 
-> Just to have similar functions, maybe 'cpu' should be renamed to 'cpunum' ?
-> Or the other way around.
-
-I prefer 'cpu', 'cpunum' looks like the number of cpus to me.
-Will rename 'cpunum' to 'cpu' in cppc_get_reg(). Thanks.
-
-> 
->> +{
->> +    struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
->> +    struct cppc_pcc_data *pcc_ss_data = NULL;
->> +    struct cpc_register_resource *reg;
->> +    int pcc_ss_id;
->> +    int ret;
->> +
->> +    if (!cpc_desc) {
->> +        pr_debug("No CPC descriptor for CPU:%d\n", cpu);
->> +        return -ENODEV;
->> +    }
->> +
->> +    reg = &cpc_desc->cpc_regs[reg_idx];
->> +
->> +    if (!CPC_SUPPORTED(reg)) {
->> +        pr_debug("CPC register (reg_idx=%u) is not supported\n", reg_idx);
->> +        return -EOPNOTSUPP;
->> +    }
->> +
->> +    if (CPC_IN_PCC(reg)) {
->> +        pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
->> +
->> +        if (pcc_ss_id < 0) {
->> +            pr_debug("Invalid pcc_ss_id\n");
->> +            return -ENODEV;
->> +        }
->> +
->> +        ret = cpc_write(cpu, reg, val);
->> +        if (ret)
->> +            return ret;
->> +
->> +        pcc_ss_data = pcc_data[pcc_ss_id];
->> +
->> +        down_write(&pcc_ss_data->pcc_lock);
->> +        /* after writing CPC, transfer the ownership of PCC to platform */
->> +        ret = send_pcc_cmd(pcc_ss_id, CMD_WRITE);
->> +        up_write(&pcc_ss_data->pcc_lock);
->> +        return ret;
->> +    }
->> +
->> +    return cpc_write(cpu, reg, val);
->> +}
->> +
-> 
-> [snip]
-> 
+So check SB_NOUSER in nfsd and be done with it?
 
 
