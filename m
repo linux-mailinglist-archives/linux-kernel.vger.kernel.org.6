@@ -1,105 +1,135 @@
-Return-Path: <linux-kernel+bounces-438118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438119-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4A8E9E9D16
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:29:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3BD5165AC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:29:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B70154C17;
-	Mon,  9 Dec 2024 17:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="RXTTfvFw"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53F1B9E9D17
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:30:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2D3114B97E;
-	Mon,  9 Dec 2024 17:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733765368; cv=none; b=MsWxRrFjnw20aZY/wWkn3Ov9jcdhlgT1R89vCzsLVQYufrG9EerNUmPkr0RZvbd9jaKOIgxlv+pQj1utscfDuu76B+tgKVz+fv5p9vKfvwXnlUhg4KQo+NAPisVugLadG1TPAVhHyN8MnGvcH50JICzGIa62wzG6/eLSpm8gGdE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733765368; c=relaxed/simple;
-	bh=E6kQHEbP/PmMJ4s9H+cnQT7mpoICPz6qHRoFj0eCDFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YnP2iCuh9GkpqbKnNZoa9S+cwFAbbtoUPgWwt3HaHluv3F/2myCSmPTzeX4sHeZc71moY2/yroO6YYT/lKorXIoE6YyRzcY4rOGLjrsZPy7IH/45SJym/4pivZn4Qjpwc1eX7htHpzrL70x0klsqN8FAGmN5d1VQs1IIL9fGO88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=RXTTfvFw; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9F7C140E019C;
-	Mon,  9 Dec 2024 17:29:24 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id MZgXk7yP4KSd; Mon,  9 Dec 2024 17:29:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733765361; bh=bgzrTT8oxCyDVwNbM6fB2WpAUPtugHtZ7j6VSpKq45U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RXTTfvFwhMiw2/AyMGy7lBf2h8H4JodH2yNtEohd75UWFcnU7yyuRiy8sIauX4wcf
-	 r7U0XSp94zcwtwX5G5JwH+Z13E7fiQHHC7obgYI6zDWHxI4TnIAikh4+Os6JZp0uXq
-	 y+Eo1NgHD1TDn2AZ4lF5CprIzHPMYDKbKjSMdEPtcWEd2jRiH2XSAwJv4KO+hAWU3N
-	 ZqmKALZYBeRzfW41gZCuRU29AIwBAc81FOgp5yGQWwExrkqfso/E4kFHAOdMy8qDPP
-	 f+FOngwCxt0l2C6TwxpUn6U529ZeiCRL2HcxYu8eXHJhiODgi5w7zIBS2pYGnLptnW
-	 2yb9B+eiW4bT7dXSjNV8ozwYIyM2m9n6bWYlnp8OSbWs5tnydemNEj5Recu/oev8iA
-	 DDUOPUs0KgEwRsWxW8I/N7flJ3Y3IUC2SJ89msD42fgdWMz6vS956wx7wnrFag0q2Z
-	 AsShVUycqpqjRxp7G7f1aZPrMO/G32vjj12fI+Ior9/lgdjfIkHDPkwhCiNzM9ZpVP
-	 q4kXdU/ciFAOSd+Y4KIFFsPCHSg8ukMykHHg0bkFWQP2XFUSs619grblB0bpPnuRTo
-	 N4j/iRnZJC8qMq+WirfMuKPTauoK7hZl87OH8T+keoZWvO+CRMU9sNBmLhC/SdUF6R
-	 E1L1Lecp4rJARecaO8Ies4dE=
-Received: from zn.tnic (p200300EA971f9307329c23FfFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82A08281167
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:30:18 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5079415853C;
+	Mon,  9 Dec 2024 17:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QSuNh6eE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0BE3D40E0288;
-	Mon,  9 Dec 2024 17:29:06 +0000 (UTC)
-Date: Mon, 9 Dec 2024 18:28:59 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Reinette Chatre <reinette.chatre@intel.com>
-Cc: Tony Luck <tony.luck@intel.com>, Fenghua Yu <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v11 0/8] x86/resctrl: mba_MBps enhancement
-Message-ID: <20241209172859.GHZ1co28T-rRiQtIMp@fat_crate.local>
-References: <20241206163148.83828-1-tony.luck@intel.com>
- <7e7c01c5-f64f-42c3-9364-ddcfd01b25c1@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7B78153824;
+	Mon,  9 Dec 2024 17:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733765414; cv=none; b=LoxKDfCijuVE4Ed9XUeL0FZO0ulDeutUvMAgN7s8rG5e1hfvMxgrxmEjpTRJ5XIPF11zSgUHGAyYNubAL7sDkMwcW73zsEUcnDw7PzLEVClDsZ/k/x6sA+mph85Lp/J3xf34DZy7VSXIs/n/tTihIM5f914kffO+yJXb8YKPnT4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733765414; c=relaxed/simple;
+	bh=ltA8ZXUOrcimjpQDn402TJwnKjVCVkj8YyFNS4SlR3k=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C/DOTV+mlKvgHFC+lrr8Cdy1q/JRPCp26YfflEdxLAAQWxG7TzrRZRUfGAUaXhox/k7i+3zl46EP/T8Z4ci+Z1E7062CMpOkgRte1BS7uww0YQr8diQ4MBu22MCMCnZeoePM+nFKoO6JBjzESg3X78fb0pmEjA/nNzHYp5JsTyg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QSuNh6eE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C8F1C4CED1;
+	Mon,  9 Dec 2024 17:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733765414;
+	bh=ltA8ZXUOrcimjpQDn402TJwnKjVCVkj8YyFNS4SlR3k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QSuNh6eEGkzUdkFOvU3+uJ4EftL33iPFxA080EDk401g1Y1vEjhzR+FhGlGYKuB4s
+	 78ieMDoZ50W0yDQ+/TzsJ5juHPTwQyDprSQm63RcRa/tHwcCdqW52mto0dCMp7vHKB
+	 r416tcPLnaCWN+VTk4gmARSQSSbDw44rmjuiXCTYR8SUURBTzIHqIN+dYH4/ndoXgx
+	 JxLd8wkvdlao0h1qK3q7cMq5QefqpgL3GPnoO/ifemwg62U0kI4ApcNzCRiY14OadN
+	 22Pzertz8uMHCObq2b49VF6jAzmER483p9KxaaVbkInoyetaf27HFI+fh4s2P8NJ8a
+	 UcEFC7YF2tImg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tKhaF-001xta-FD;
+	Mon, 09 Dec 2024 17:30:11 +0000
+Date: Mon, 09 Dec 2024 17:30:10 +0000
+Message-ID: <86y10osr19.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Eric Auger <eauger@redhat.com>
+Cc: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	kvmarm <kvmarm@lists.linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	oliver.upton@linux.dev,
+	christoffer.dall@arm.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	coltonlewis@google.com,
+	joey.gouly@arm.com,
+	yuzenghui@huawei.com,
+	darren@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com
+Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer expired
+In-Reply-To: <bcb4289b-507c-4ea1-afc7-6febd34d88db@redhat.com>
+References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
+	<867c89tc4q.wl-maz@kernel.org>
+	<c5b1c3d7-56ca-4afc-a831-045dba4beffa@os.amperecomputing.com>
+	<865xntt2kv.wl-maz@kernel.org>
+	<8be59ff3-6a68-48e1-8181-0ce4b2e7180f@os.amperecomputing.com>
+	<bcb4289b-507c-4ea1-afc7-6febd34d88db@redhat.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7e7c01c5-f64f-42c3-9364-ddcfd01b25c1@intel.com>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: eauger@redhat.com, gankulkarni@os.amperecomputing.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org, catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, vishnu@os.amperecomputing.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Dec 09, 2024 at 09:10:20AM -0800, Reinette Chatre wrote:
-> Could you please consider this series for inclusion?
+On Mon, 09 Dec 2024 16:46:30 +0000,
+Eric Auger <eauger@redhat.com> wrote:
+> 
+> Hi,
+> 
+> On 12/9/24 16:39, Ganapatrao Kulkarni wrote:
+> > 
+> > 
+> > On 09-12-2024 06:50 pm, Marc Zyngier wrote:
+> >> On Mon, 09 Dec 2024 12:25:34 +0000,
+> >> Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+> >>>>>
+> >>>>> During automated testing of Nested Virtualization using avocado-vt,
+> >>>>
+> >>>> Which is not merged upstream. So what branch are you using? Based on
+> >>>> what kernel version? On what HW? With which virtualisation features?
+> >>>>
+> >>>
+> >>> Testing is done on Ampere's AmpereOne platform using 6.10 based kernel
+> >>> with NV patches from your repo.
+> >>
+> >> Grmbl... *Which* patches? At least give me the SHA1 of the branch,
+> >> because I have no idea what you are running. And 6.10 is definitely
+> >> not something I care about. If you're using the NV patches, the
+> >> *minimum* you should run is 6.13-rc1, because that's what the current
+> >> code is based on.
+> >>
+> > 
+> > I tried 6.13-rc1 based nv-next branch today, which failed to boot
+> > UEFI as L1. Yet to debug this.
+> 
+> I confirm am stuck with the same issue with nv-next on AmpereOne.
 
-Lemme take a look...
+All I can say is that it Works For Me (TM) on M2 and Snapdragon, using
+kvmtool, a fresh EDK2 built by Ard, and with the guest running purely
+VHE (FEAT_E2H0 not implemented).
 
-> This fix has been merged into v6.13-rc2.
+I haven't tried QEMU, I don't have an AmpereOne. I have also spent way
+too much time on this recently. So I'm afraid people interested in
+making this particular combination work will have to debug it.
 
-You mean, I should queue the set ontop of -rc2?
-
-Thx.
+	M.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Without deviation from the norm, progress is not possible.
 
