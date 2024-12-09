@@ -1,77 +1,62 @@
-Return-Path: <linux-kernel+bounces-437460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1BA69E9389
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:13:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F40909E9393
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:14:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CC62282C7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:13:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79F9F281D88
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C7121D008;
-	Mon,  9 Dec 2024 12:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0EF32236E5;
+	Mon,  9 Dec 2024 12:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="k5s08lx+"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AGBr6oI7"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1920E22069F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFFE227581;
+	Mon,  9 Dec 2024 12:11:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733746238; cv=none; b=KIvzkHcUkoYCxi8wlsaPgYFYwENlbCus98oI2FelmwwJgAAqeQGNlZjjPLTYz1b8ArK1GbYV38Q4Olqv2rELAeBuJ5+eXG+1yzcpUt47m+DC3LH2I1HDiQCny9mTZP+Kmb4K8AquwnNX3eKlk/Ze98+8jhDB54V0FRazwiB5xhE=
+	t=1733746301; cv=none; b=k+Tkx+OG3rdkWe+KG5RSagNmP3XmzSRvMQpqRGL6bWRQMGnHYHkDRVeHUmqFg7fUhOcMSOgj5insn/EEYXswUCEJyrQp7lIttIlrI7zRrtV0b+ht3i06qFk4WYMeaGzf6kGXUwM61IVBVbt7obCqpnY5PTCjaPOlWduN2iq3+xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733746238; c=relaxed/simple;
-	bh=E8tkYJODIHheFUnS5WXIUldliI7SSiXfmfMfRYvHoDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lyPCm3Z6Y8yU1C2v7NGDhuM4zyjmGjp0TnzHSu4ZPtJTWbpXr+BY5alanMvFGQl8tnzPlsYY6WYlZIwKKAa4OMaS/I7/e0DgwNqgoaMUKT9VhPa5awUgcQPeZPns3AIOelLRifaEoNaaspTcLShk6iIpcU6qLNKvZxa6++OeicM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=k5s08lx+; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-434a044dce2so46301495e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:10:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1733746234; x=1734351034; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FHX/J4FydKfXDM4LudMI3jraYFA+WTkpN2SeJgrLN0k=;
-        b=k5s08lx+uAqx7VYlqsWlNAubDoTdUuywEmNmcE4GOBjtTtsA7WVOfLOnLOzRQSg06Q
-         Al6x4B6WMpZWpkEO4wWMqFjs5h5OoYUboU+UQL93zV2MUZPR/xO6jrFYMX/DRUKTP+tz
-         hF5v3jZTJWzFwxHR/H7AueSKd9EJpRWuFG6VWOsPwijHWZ0lmfvT7MVLMmieCJ3/E7ak
-         NSm8SRms6lcjquMsHK4vjapWbxVkJbFQwadyFKqcg4gif/BFuVPSkVlh0S3NShBTWtA8
-         pfQ2swySFBvBKSKkFCBjpizpPgJb9WKwpMBP0uRQj4DmjS0p+WoaIygbWirJeLHIloqF
-         1niw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733746234; x=1734351034;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FHX/J4FydKfXDM4LudMI3jraYFA+WTkpN2SeJgrLN0k=;
-        b=LKpqcgk0hiCXRs4Jnz+xhyAtteqsyN9UMggFowkGxqef+oNwQXCXX2UwPKIJ3HO2Zi
-         YOWhtOOh/03bnb3rkCq2rafjKJstx5KZpuI0IacjLHO15oLdysy+Fta6rNzlqyt/P0VB
-         tluS1gQJwStP4sv0n9iPaWngCdcpSgjK2ERRomTQw85fRCWc0pvXVe+tw9w7Tqtf5Fl/
-         HmUXZslxnlySkmoJ+j9ZujL1EHnfqvcEvPQV6cKhuUBdxREHD3cN4Jzm5pP5NaYmpD89
-         oWVmle4HfBeb1CvVvMwf9+5on7ocCRarhUq0nubUPfzOBnj9tx/EW7eS2uCqbLdDKXMN
-         47wA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKdTYilNrYo01sWGeT6kKfcdrbVRJxowqdh8aAEiHg5UudT3aiFQoFgpDhLVfsULEtNGuT1zR2S39SRL0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeGGfooLgshQvjYcFltTUrQSRW2tnK7WoJoO+p53Q47OGqEw7Z
-	vmcxaFfDMSe2B2ECK3NwYjAGYITfF7qxz2J4f9NdEIq59Y4NZHxOjW/bbXZtocc=
-X-Gm-Gg: ASbGnctYS7cKcVJrzorsDiplGB+RI60Q/Ib2XzK0RwbOpMlQhHVUNpFvvDyyEOPHQF+
-	9p4EaR8mrYQwHgSA5JPzsCxL10P4omVIrK7NFO4GC1BLi8i3229VTUcNpD3ct1Sl8yGWvDEQLcF
-	1MaxolWn+/EzO9Xayb+bI0cSYQtEHz+hPN0NHUT4kzBXTjQeeEovUkxSfNJGDwwfVht1PBIM5wl
-	kTuth2kIWxp3K0+ML01daX35ERgLL3roVgn42hvgppbEZhadfXOAQ60Kyw=
-X-Google-Smtp-Source: AGHT+IGUfN/EA4JH6RTVsbnUKthIOhG2zwFRZUFAX7rqRG2CHXvmm33MqQPTkWqeEZrSe9CBG7Ax8g==
-X-Received: by 2002:a05:600c:4e88:b0:434:fddf:5c0c with SMTP id 5b1f17b1804b1-434fff30e74mr2642745e9.4.1733746234205;
-        Mon, 09 Dec 2024 04:10:34 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.161])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434e8bb0390sm86199035e9.27.2024.12.09.04.10.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 04:10:33 -0800 (PST)
-Message-ID: <240a461f-9c46-4f02-81f9-b2c7453fa1f4@tuxon.dev>
-Date: Mon, 9 Dec 2024 14:10:31 +0200
+	s=arc-20240116; t=1733746301; c=relaxed/simple;
+	bh=9XibONZU9a9Q8okfbU0WP6mWeKHcWBaE3xTZhD6aJdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AiDYERaMbT40tsZyZ5o3ks1zxb+ExM8p2O9ZQvCbC6oOeDzHJF5antjcKfCEA+lMIaVcEcF6xvAhCGKVeM9cnvLvxNn0BeF+9QnIFB6nT4OY3a5VlhjzuRS7Yu/AUWe7qRL5+xPQsXiD78LZmrVr4KcKqxKk/xVHCH0EqDTu+QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AGBr6oI7; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Aaf9e023581;
+	Mon, 9 Dec 2024 12:11:27 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	2d1epkqFH3jvvmJ4YNIHzTpA7APESqdOMC6Q17ONsSw=; b=AGBr6oI7A6/jsCi0
+	T8mbTgjMd8DGoZXsgdKP09BnXagrXpzPAVQVpewUYjiDAie8ByXqDmwjnH01+mp3
+	qMYMhtVRfztTjFVGJS89LkyE7sfx9iVxPesJMizSdzZuRzQ+qFRJc33jHkkzzDf5
+	kMMSIOu5vi5QnxOE1zbYJHf7A5qCO0llmCr19UiP413Umery9QlssZwbXAzyTMfA
+	T3PFz5uzRrapjYjr/z/MLj66Mk+84duX6kZlK9DoGGIZNYlVs4IhuFody7AxzQGL
+	3Nfhq038mC+E/U9fCsUzp30CXG/ine8sbZjc9KrIE4n4U0FihubHNde0jNJICtKy
+	oS3img==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cfhkchys-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 12:11:07 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9CB6Ma032414
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 12:11:06 GMT
+Received: from [10.253.38.68] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 04:11:00 -0800
+Message-ID: <25619909-90c2-40a8-9e49-83ab26b6cf79@quicinc.com>
+Date: Mon, 9 Dec 2024 20:10:58 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,142 +64,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 6/8] arm64: dts: renesas: rzg3s-smarc-switches: Add a
- header to describe different switches
+Subject: Re: [PATCH v6 0/5] Add CMN PLL clock controller driver for IPQ9574
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+        <dmitry.baryshkov@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+References: <20241106-qcom_ipq_cmnpll-v6-0-9d398db2fe0f@quicinc.com>
 Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: magnus.damm@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, p.zabel@pengutronix.de,
- lethal@linux-sh.org, g.liakhovetski@gmx.de,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-serial@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20241115134401.3893008-1-claudiu.beznea.uj@bp.renesas.com>
- <20241115134401.3893008-7-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVgxKHw4PDbgOGAJf7xsRR1Uyzxu-br+=RK_1ouHoj41g@mail.gmail.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdVgxKHw4PDbgOGAJf7xsRR1Uyzxu-br+=RK_1ouHoj41g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <20241106-qcom_ipq_cmnpll-v6-0-9d398db2fe0f@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nB23Cp8rjEWwJoZ9YLt_mk0m4rYZYATy
+X-Proofpoint-GUID: nB23Cp8rjEWwJoZ9YLt_mk0m4rYZYATy
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0
+ phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090096
 
-Hi, Geert,
 
-On 09.12.2024 12:09, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Nov 15, 2024 at 2:50 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> There are different switches available on both the RZ/G3S SMARC Module and
->> RZ SMARC Carrier II boards. These switches are used to route different SoC
->> signals to different parts available on board.
->>
->> These switches are described in device trees through macros. These macros
->> are set accordingly such that the resulted compiled dtb to describe the
->> on-board switches states.
->>
->> Based on the SW_CONFIG3 switch state (populated on the module board), the
->> SCIF3 SoC interface is routed or not to an U(S)ART pin header available on
->> the carrier board. As the SCIF3 is accessible through the carrier board,
->> the device tree enables it in the carrier DTS. To be able to cope with
->> these type of configurations, add a header file where all the on-board
->> switches can be described and shared accordingly between module and carrier
->> board.
->>
->> Commit prepares the code to enable SCIF3 on the RZ/G3S carrier device
->> tree.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
->> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
->> @@ -9,25 +9,7 @@
->>  #include <dt-bindings/gpio/gpio.h>
->>  #include <dt-bindings/pinctrl/rzg2l-pinctrl.h>
->>
->> -/*
->> - * On-board switches' states:
->> - * @SW_OFF: switch's state is OFF
->> - * @SW_ON:  switch's state is ON
->> - */
->> -#define SW_OFF         0
->> -#define SW_ON          1
->> -
->> -/*
->> - * SW_CONFIG[x] switches' states:
->> - * @SW_CONFIG2:
->> - *     SW_OFF - SD0 is connected to eMMC
->> - *     SW_ON  - SD0 is connected to uSD0 card
->> - * @SW_CONFIG3:
->> - *     SW_OFF - SD2 is connected to SoC
->> - *     SW_ON  - SCIF1, SSI0, IRQ0, IRQ1 connected to SoC
->> - */
->> -#define SW_CONFIG2     SW_OFF
->> -#define SW_CONFIG3     SW_ON
->> +#include "rzg3s-smarc-switches.h"
->>
->>  / {
->>         compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
->> diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
->> new file mode 100644
->> index 000000000000..e2d9b953f627
->> --- /dev/null
->> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-switches.h
->> @@ -0,0 +1,32 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
-> 
-> I agree with Rob about the license.
-> 
->> +/*
->> + * On-board switches for the Renesas RZ/G3S SMARC Module and RZ SMARC Carrier II
->> + * boards.
->> + *
->> + * Copyright (C) 2024 Renesas Electronics Corp.
->> + */
->> +
->> +#ifndef __RZG3S_SMARC_SWITCHES__
->> +#define __RZG3S_SMARC_SWITCHES__
->> +
->> +/*
->> + * On-board switches' states:
->> + * @SW_OFF: switch's state is OFF
->> + * @SW_ON:  switch's state is ON
->> + */
->> +#define SW_OFF         0
->> +#define SW_ON          1
->> +
->> +/*
->> + * SW_CONFIG[x] switches' states:
->> + * @SW_CONFIG2:
->> + *     SW_OFF - SD0 is connected to eMMC
->> + *     SW_ON  - SD0 is connected to uSD0 card
->> + * @SW_CONFIG3:
->> + *     SW_OFF - SD2 is connected to SoC
->> + *     SW_ON  - SCIF3, SSI3, IRQ0, IRQ1 connected to SoC
-> 
-> Note that the original comment above says "SCIF1, SSI0", and looking
-> at the schematics (IC7 and IC8 controlled by SW_SD2_EN#), that is
-> actually correct?
 
-You're right, I'm not sure why I've changed it. I'll fix it in the next
-version.
+On 11/6/2024 6:52 PM, Luo Jie wrote:
+> The CMN PLL clock controller in Qualcomm IPQ chipsets provides
+> the clocks to the networking hardware blocks that are internal
+> or external to the SoC, and to the GCC. This driver configures
+> the CMN PLL clock controller to enable the output clocks. The
+> networking blocks include the internal blocks such as PPE
+> (Packet Process Engine) and PCS blocks, and external hardware
+> such as Ethernet PHY or switch. The CMN PLL block also outputs
+> fixed rate clocks to GCC, such as 24 MHZ as XO clock and 32 KHZ
+> as sleep clock supplied to GCC.
+> 
+> The controller expects the input reference clock from the internal
+> Wi-Fi block acting as the clock source. The output clocks supplied
+> by the controller are fixed rate clocks.
+> 
+> The CMN PLL hardware block does not include any other function
+> other than enabling the clocks to the networking hardware blocks
+> and GCC.
+> 
+> The driver is being enabled to support IPQ9574 SoC initially, and
+> will be extended for other SoCs.
+> 
+> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+> ---
+> Changes in v6:
+> - Rename the reference clock of CMN PLL to ref_48mhz_clk.
+> - Add the patch to update xo_board_clk to use fixed factor clock.
+> - Link to v5: https://lore.kernel.org/r/20241028-qcom_ipq_cmnpll-v5-0-339994b0388d@quicinc.com
+> 
+> Changes in v5:
+> - Move the hardware configurations into set_rate() from determine_rate().
+> - Remove the dependency on IPQ_GCC_9574.
+> - Correct the header files included.
+> - Update reference clock of CMN PLL to use fixed factor clock.
+> - Link to v4: https://lore.kernel.org/r/20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com
+> 
+> Changes in v4:
+> - Rename driver file to ipq-cmn-pll.c
+> - Register CMN PLL as a 12 GHZ clock.
+> - Configure CMN PLL input ref clock using clk_ops::determine_rate().
+>    Add the additional output clocks to GCC and PCS.
+> - Update the same information in dtbindings.
+> - Use PM clock APIs for input clock enablement.
+> - Link to v3: https://lore.kernel.org/r/20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com
+> 
+> Changes in v3:
+> - Update description of dt-binding to explain scope of 'CMN' in CMN PLL.
+> - Collect Reviewed-by tags for dtbindings and defconfig patches.
+> - Enable PLL_LOCKED check for the stability of output clocks.
+> - Link to v2: https://lore.kernel.org/r/20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com
+> 
+> Changes in v2:
+> - Rename the dt-binding file with the compatible.
+> - Remove property 'clock-output-names' from dt-bindings and define
+>    names in the driver. Add qcom,ipq-cmn-pll.h to export the output
+>    clock specifier.
+> - Alphanumeric ordering of 'cmn_pll_ref_clk' node in DTS.
+> - Fix allmodconfig error reported by test robot.
+> - Replace usage of "common" to "CMN" to match the name with the
+>    hardware specification.
+> - Clarify in commit message on scope of CMN PLL function.
+> - Link to v1: https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com
+> 
+> ---
+> Luo Jie (5):
+>        dt-bindings: clock: qcom: Add CMN PLL clock controller for IPQ SoC
+>        clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
+>        arm64: defconfig: Enable Qualcomm IPQ CMN PLL clock controller
+>        arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
+>        arm64: dts: qcom: Update IPQ9574 xo_board_clk to use fixed factor clock
+> 
+>   .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       |  85 ++++
+>   arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi   |  23 +-
+>   arch/arm64/boot/dts/qcom/ipq9574.dtsi              |  27 +-
+>   arch/arm64/configs/defconfig                       |   1 +
+>   drivers/clk/qcom/Kconfig                           |   9 +
+>   drivers/clk/qcom/Makefile                          |   1 +
+>   drivers/clk/qcom/ipq-cmn-pll.c                     | 436 +++++++++++++++++++++
+>   include/dt-bindings/clock/qcom,ipq-cmn-pll.h       |  22 ++
+>   8 files changed, 601 insertions(+), 3 deletions(-)
+> ---
+> base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+> change-id: 20241014-qcom_ipq_cmnpll-bde0638f4116
+> 
+> Best regards,
 
-Thank  you for your review,
-Claudiu
+Hello Bjorn, Stephen, Dmitry,
 
-> 
->> + */
->> +#define SW_CONFIG2     SW_OFF
->> +#define SW_CONFIG3     SW_ON
->> +
->> +#endif /* __RZG3S_SMARC_SWITCHES__ */
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+Gentle reminder, to re-review the updated patch series V6 at your
+convenience to let me know if this patch series is fine to be merged.
+Thanks in advance.
 
