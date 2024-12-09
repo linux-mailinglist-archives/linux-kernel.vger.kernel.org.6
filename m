@@ -1,108 +1,95 @@
-Return-Path: <linux-kernel+bounces-437786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 466FA9E989B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:20:25 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E88E9E989D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:20:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CE1AA284367
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3683C1884E46
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC151B041F;
-	Mon,  9 Dec 2024 14:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BDC1B0430;
+	Mon,  9 Dec 2024 14:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="d3e7UMIx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WjzmEVol"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 552411494BF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847521A2397
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733754017; cv=none; b=VQc5ehE6ba+cvP+jZL0vUXl9hVvimSw3pXE5FPLc6JFNG7RVxx+PYtRythHFpvW8ANb+GRv08nJUhLi6zvDioekQXXIqqcZCU1DeJNOWP6xXSTelXOOpxymeOczMhoMoJRjfRuWTFfC2zWJtByyxSxXIGdYb4wH8oJiAH+01hnQ=
+	t=1733754018; cv=none; b=YC+wQBjaplH2IOSm+z1rHNftlhhBsIlmSgBgh1MZ/GF1ecvKwUtHCVxMv5GQ/TnjsPJ5BmoWRK1CPrI3z457VEYJkDhjBcn+x/Lkkv9viOaFlByFmLEo2QxYLWeWmmUmLTL0nEfl/ohx01XRsObw0QnYWDZGHKezaYewEnkfwcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733754017; c=relaxed/simple;
-	bh=5LxPzkwXbkWs8QADAY0HXIgv9Pxu1uooRAocU3GSwZ4=;
+	s=arc-20240116; t=1733754018; c=relaxed/simple;
+	bh=1IfxwKOe0K+SXDwRfMDias6ZXlgFg4AGO8kVbL4Ta8Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I1fEGofQS0Wr37HLfU6rM8mVsa3ZNrfmXTWlIah17WNdt+K/d4JlyFlJV6aR917wYWsG0QzYYYe2AmHkqr5T1n/80MhdOqV048znG9g+BsKZMOpM3HOw/r2dpSHB3CsMvHsXaL5OQIQKSWFtC1/2p8Pt7JGeCw7csqYN06pm8s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=d3e7UMIx; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733754014;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uUafJPITbFDpJxN3Yx+BE2RB7iQ7hbigXZ4vj14KZBU=;
-	b=d3e7UMIxfABm2rtETcxR5qBAKD/s1ZldQ46Hvo0qthOD73GnlGlbihjWEXRt7DIJn5g781
-	yKNN2AjjNetROuwsXZucjE7xelfKHWHm0YXfNMQPJeyqGWAUOx2rKXBjZGPHtT7a63K53W
-	83svar6ZMdHIaBIOJxOW9DYun2Zsirc=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-541-rv49O600Pa23kY_u9feh8w-1; Mon, 09 Dec 2024 09:20:12 -0500
-X-MC-Unique: rv49O600Pa23kY_u9feh8w-1
-X-Mimecast-MFC-AGG-ID: rv49O600Pa23kY_u9feh8w
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385e4a759e6so2555282f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:20:12 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ou6isDMGqtsnaSUm/buxHOiybk9z5Lg8jYNdM3+EH6RZXJp3JK+cS0BVwgH8AnceBSv3GqerkGzCXWkbg3VD4xSzOtovSHgSZ1wyLv7rN+tIFYJZvWaExwGBKqeB66D0HpK0EeEd8RfQjbL/GoQd+EwWrjTVFwmE/Dx5T0joD/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=WjzmEVol; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6d8878ec049so39339426d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:20:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1733754014; x=1734358814; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nowhEyl5dI6aIIqwammoplLG7dGCizfgN3AwcDBvNB8=;
+        b=WjzmEVol2HtqNOHDzn89GOi3ABrc8rbz+u0pvZXwDkalIxZVG2aHhGtjGZ2QkNl9W3
+         sbcPg6ZbtF6lwdf9MtUkxlCY7zo2riVzwILSLyWFiQAj/zS48u8EAA70tcMIHvr+Yboi
+         KIAKjJuHxV8r5RcCNk8gHU5W8odM481TXKcM7T3CfDUdPZiabn6B+FbVap1K55xq2Ag7
+         ZOeC9iUJpzJwU7QIibAm5paWKntWlXlR6ZUQsFJzAnXKerYW20mrhmI8GSyGM1DWkOqi
+         wuvwX6nBfBoHr1Ja0aQcz4VtBHK0y4mVIfpmiG3w9lQkJUO7Fwcr8OF1+kOyTrDi+Zpw
+         9hbQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733754012; x=1734358812;
+        d=1e100.net; s=20230601; t=1733754014; x=1734358814;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uUafJPITbFDpJxN3Yx+BE2RB7iQ7hbigXZ4vj14KZBU=;
-        b=JgMeS0eHWCsRVv5vfT6/9KGQo9o+gO+G8tU68au34rtypv58p8lk2kO4eSVSuhTG1m
-         T9jkMBtaKsBVCr0sVLnbInycR4ThijpHTGC3GqX4EOsl17VOgN6WIWYiP2PFmFxd+Qfx
-         BI+LbF6JKPCJ+e7MovNVjZL/445sua73NppbMBV15pt1W5xI/G1gS5nQUyJS852+ioLO
-         uIscxewDBX8pL0GauESEd1ra0TnU/iNkwCBbSY5IH15u6j1rQ6caAh7RZHuNMDOILLw4
-         wyYJaZzM73pT7gqJ9jJZ2oH5DUvTsb4cTEzstgy7ijp7fiYpMT4KK9FnCFos2LAQznUK
-         vOhA==
-X-Forwarded-Encrypted: i=1; AJvYcCX9hljMh5X9R2MtB7PtbZgfqJuGsnMZZCuMrnizS3Pg3Py4JCjHZmYHPpt7RcSf06WgEqNxNW2kcySCDJY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVeS1wTkBxWRnEk787IfC4/L4TmTB84jPR10Qw2lb1CMB5hAUF
-	TnXdFVqCNhlQzbwKVl8qBL3QHDFBdP9/VsEhQkUZhZuyW7nsXRvYkq12kxGPW1gh9E4OewzThH3
-	XdchO0gYvsRBtsHsKhthZDMdmjvPK3tJeXak2l05fgAg85YiGJRjkf10Kxykpsg==
-X-Gm-Gg: ASbGncs8orH8k+TYFGn5c7gBfReZR71fav4c5ZZcU5YGYUnS6Ld8LGUVzE98xbv4T6f
-	5oofqbARPQfaSMnrAFTPN7n6xdGU1fCWB08Utth6VLC8SMs2tjV7q2db6fzxlRi3mFpZnADipx2
-	jR4GzLDFsoH/vt0L0kRUMM/joOYmRMPHQanTwqnFCpvDuk4atY3YdinfWkdu+ocztH7gwoEztf+
-	mNol9QzbU687M3RCdZp7AlwIAyRJ9uiVpjc62Rv5bdol2GeFfKok8kgv9N+AbfZA8nUJF02yEAV
-	CsYG1BT8pTUpZtrKvpClMwK0l5cDkg6anQ==
-X-Received: by 2002:a5d:47aa:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-3862b345322mr9501048f8f.1.1733754011606;
-        Mon, 09 Dec 2024 06:20:11 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEimI6Ui0mKxeYiiQzQnI7rasXWcvol+mQTx49rmAZ0iGqXOJRujNGaWhnPX9VCfJ4Dtk3eDQ==
-X-Received: by 2002:a5d:47aa:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-3862b345322mr9501019f8f.1.1733754011212;
-        Mon, 09 Dec 2024 06:20:11 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-2-102-14-117.as13285.net. [2.102.14.117])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f063357csm77489715e9.22.2024.12.09.06.20.10
+        bh=nowhEyl5dI6aIIqwammoplLG7dGCizfgN3AwcDBvNB8=;
+        b=AdmHmTlV/JM4lWbhPsuh5y20Q9LL8+wCAexSeO9k2ui+bov3owU/nXOPsHCXw5ayBm
+         EDgbEaAq1z6GF3iRuj+GAfKkPwprvaC7GZxcLkvLN+0LB3naaa2OoBnyBSQ7maMCGtGM
+         LL7K9zvtDPB/wVFM7Z6rYJm4+qGmCUsX7APYSDh+Yd37SmNZZs6Omk5VnSVHLP3LA40A
+         zdFOhzxbzTQJdQWQe31xEjFSPHA7TIZgz5giOMB1CH8nggKX50qEMec4unDk8+yiPDVc
+         wqjaXarjgepGdTlFbFl/vM38oNZ9CEDRWek34Nqidm36U8PHjWIok4i2/Pa5qLecwE8F
+         x7UA==
+X-Forwarded-Encrypted: i=1; AJvYcCUxtspcyo0Fmjo2J//+gFHdhH2+DJBOeU1ts8k2qwRAky0yjBLkQoWPhJlY8GnS1jlbVgULj4ZW8zTXInY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDOQhrOO/2aI+kk1FFWJ9/2VjlkqPyEaD7bUnWWykeuws73Ktw
+	fvaQsUMVscwxvtdCfxC6q/dZWUImx+HNWMkxgLx8eD5JhCMem6qk3QaCXbvQNRA=
+X-Gm-Gg: ASbGnct66GlrctavbdGEYw44SYb0DJVbCJHMWA38CyMKZn36mQKfEbbZGiSSZnYIujZ
+	HFvJidVHpApRQ7f/JGLr28F8uu3EMK8oad7sXxFt8rq7iBSca7sjE0cTgr1w2p0mVPEwpmr5FIR
+	Hme6xbJchGdub0yvpNrsy2DjpS54xJfo1PRtO3H44v4HZRJgKucbAdKaWIMRJnvq4ogmj/Xr4SM
+	IueqCQMaTEbOLuYXzasVOSI6Ip2+4uA9fnh8mV3sWj2rHHhzMliW5R86KZ17wdf5T3Alu1xc3Ts
+	0dOK2OwR08wp9KUSBz9+HM8=
+X-Google-Smtp-Source: AGHT+IHoY1ZOiHkAJnpdjYQRkeVDy7sffj3Siw+V0OMHlwsl39yE0CXPuxOPKOgDNwcCNM/wgKH60A==
+X-Received: by 2002:a05:6214:1c07:b0:6d8:a76d:b66c with SMTP id 6a1803df08f44-6d8e7170365mr191037006d6.30.1733754014582;
+        Mon, 09 Dec 2024 06:20:14 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da6b2291sm48868886d6.58.2024.12.09.06.20.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:20:10 -0800 (PST)
-Date: Mon, 9 Dec 2024 14:20:08 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Waiman Long <longman@redhat.com>, Tejun Heo <tj@kernel.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Michal Koutny <mkoutny@suse.com>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Phil Auld <pauld@redhat.com>, Qais Yousef <qyousef@layalina.io>,
+        Mon, 09 Dec 2024 06:20:14 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tKecP-00000009sI1-2JGA;
+	Mon, 09 Dec 2024 10:20:13 -0400
+Date: Mon, 9 Dec 2024 10:20:13 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
+	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
 	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	"Joel Fernandes (Google)" <joel@joelfernandes.org>,
-	Suleiman Souhlal <suleiman@google.com>,
-	Aashish Sharma <shraash@google.com>,
-	Shin Kawamura <kawasin@google.com>,
-	Vineeth Remanan Pillai <vineeth@bitbyteword.org>,
-	linux-kernel@vger.kernel.org, cgroups@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] sched/deadline: Correctly account for allocated
- bandwidth during hotplug
-Message-ID: <Z1b8mGctDusOZPA8@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241114142810.794657-1-juri.lelli@redhat.com>
- <20241114142810.794657-3-juri.lelli@redhat.com>
- <cb188000-f0e1-4b0a-9b5a-d725b754c353@stanley.mountain>
+	Steven Rostedt <rostedt@goodmis.org>,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v2] iommu/tegra241-cmdqv: do not use smp_processor_id in
+ preemptible context
+Message-ID: <20241209142013.GC1888283@ziepe.ca>
+References: <Z1L1mja3nXzsJ0Pk@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,80 +98,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cb188000-f0e1-4b0a-9b5a-d725b754c353@stanley.mountain>
+In-Reply-To: <Z1L1mja3nXzsJ0Pk@uudg.org>
 
-Hi,
-
-On 06/12/24 13:43, Dan Carpenter wrote:
-> On Thu, Nov 14, 2024 at 02:28:10PM +0000, Juri Lelli wrote:
-> >  static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
-> >  {
-> > -	unsigned long flags;
-> > +	unsigned long flags, cap;
-> >  	struct dl_bw *dl_b;
-> >  	bool overflow = 0;
-> > +	u64 fair_server_bw = 0;
->         ^^^^^^^^^^^^^^^^^^
-> This is a u64.
+On Fri, Dec 06, 2024 at 10:01:14AM -0300, Luis Claudio R. Goncalves wrote:
+> During boot some of the calls to tegra241_cmdqv_get_cmdq() will happen
+> in preemptible context. As this function calls smp_processor_id(), if
+> CONFIG_DEBUG_PREEMPT is enabled, these calls will trigger a series of
+> "BUG: using smp_processor_id() in preemptible" backtraces.
 > 
-> >  
-> >  	rcu_read_lock_sched();
-> >  	dl_b = dl_bw_of(cpu);
-> >  	raw_spin_lock_irqsave(&dl_b->lock, flags);
-> >  
-> > -	if (req == dl_bw_req_free) {
-> > +	cap = dl_bw_capacity(cpu);
-> > +	switch (req) {
-> > +	case dl_bw_req_free:
-> >  		__dl_sub(dl_b, dl_bw, dl_bw_cpus(cpu));
-> > -	} else {
-> > -		unsigned long cap = dl_bw_capacity(cpu);
-> > -
-> > +		break;
-> > +	case dl_bw_req_alloc:
-> >  		overflow = __dl_overflow(dl_b, cap, 0, dl_bw);
-> >  
-> > -		if (req == dl_bw_req_alloc && !overflow) {
-> > +		if (!overflow) {
-> >  			/*
-> >  			 * We reserve space in the destination
-> >  			 * root_domain, as we can't fail after this point.
-> > @@ -3501,6 +3503,34 @@ static int dl_bw_manage(enum dl_bw_request req, int cpu, u64 dl_bw)
-> >  			 */
-> >  			__dl_add(dl_b, dl_bw, dl_bw_cpus(cpu));
-> >  		}
-> > +		break;
-> > +	case dl_bw_req_deactivate:
-> > +		/*
-> > +		 * cpu is going offline and NORMAL tasks will be moved away
-> > +		 * from it. We can thus discount dl_server bandwidth
-> > +		 * contribution as it won't need to be servicing tasks after
-> > +		 * the cpu is off.
-> > +		 */
-> > +		if (cpu_rq(cpu)->fair_server.dl_server)
-> > +			fair_server_bw = cpu_rq(cpu)->fair_server.dl_bw;
-> > +
-> > +		/*
-> > +		 * Not much to check if no DEADLINE bandwidth is present.
-> > +		 * dl_servers we can discount, as tasks will be moved out the
-> > +		 * offlined CPUs anyway.
-> > +		 */
-> > +		if (dl_b->total_bw - fair_server_bw > 0) {
->                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> Since this subtraction is unsigned the condition is equivalent to:
+> As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
+> CPU number as a factor to balance out traffic on cmdq usage, it is safe
+> to use raw_smp_processor_id() here.
 > 
->         if (dl_b->total_bw != fair_server_bw)
+> v2: Sebastian helped identify that the problem was not exclusive to kernels
+>     with PREEMPT_RT enabled. The delta between v1 and v2 is the description.
 > 
-> but it feels like maybe it was intended to be:
-> 
->         if (dl_b->total_bw > fair_server_bw) {
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> ---
+>  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-I actually believe they are equivalent for this case, as if there is a
-dl_server total_bw is either equal or bigger than fair_server_bw, so
-checking for it to be different than fair_server_bw should still be OK
-(even though confusing maybe).
+Makes sense
 
-Thanks,
-Juri
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
+Jason
 
