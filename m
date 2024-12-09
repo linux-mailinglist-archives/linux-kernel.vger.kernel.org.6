@@ -1,151 +1,177 @@
-Return-Path: <linux-kernel+bounces-438003-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FF7A9E9B7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:23:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2060F1886913
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:23:35 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4257C143C72;
-	Mon,  9 Dec 2024 16:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzqIXjs9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0CB59E9B7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:23:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9908613C3D3
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C09281B1E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:23:51 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFBA147C9B;
+	Mon,  9 Dec 2024 16:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gS5zSVGU"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5214A0AA;
+	Mon,  9 Dec 2024 16:23:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761408; cv=none; b=twkhwn66F2wUCD1sq8rXVtu113nlkxVuEm+10pHbjCu7Od6Nl7VkVcS+REOv/Ve3PWICuv0H/abILdB1VodJrcbYYXuVmW6TUmnukS5H2T5c4BzTC4VXRpW5RIQoasgcwoObrmI+9M3vRud6KbOwCaA7ciGMZCTuyS0pQWkTbt8=
+	t=1733761420; cv=none; b=KrR2jhNCe4zmSKVyf9W7lNSMUmqnu5xjxO45ZHQ4VYwqCAcXa1Um4/jF2cstvCVQQZ0GmQ/24z5Ba74LAA3A9U5mL0yMYaLbJbEaFh1uaYiBXQ8z4Zwv4q1rXAvGWsM2rBX9gEbydnjCV0i9IF9K0Fb5OULRfaSMNZV2tOgredc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761408; c=relaxed/simple;
-	bh=8tao4r44r3LhIuWsj/mIwbFUPoQy4lQTsGWhzX/pgC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vBzuAkrEWFU43T7Btowv16zrjuKA25BmmfNT0J4L0XP/3gPhrkDseVi2r62jh2JjZva/5ywGP4SJb/1pP1k6zSsvjK67cfw6hWwzbJSZSq1Dn4qjER8NIQnYS0tG7bL6tcKL8heL/QeW79uoDGLV6337RBPm1dZGtqEBzBFbW8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzqIXjs9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43FACC4CED1;
-	Mon,  9 Dec 2024 16:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733761408;
-	bh=8tao4r44r3LhIuWsj/mIwbFUPoQy4lQTsGWhzX/pgC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UzqIXjs98SM4XZo0kUwLC3+IsZkl7ajO1LzlzFjNRr2aRS01r8LA138vySLWdl2c1
-	 NS2BAxFcLRPCOkqrYCf3FAbn1WQR7rjHWWgvPfJjI1t1dsx3igcBVa/iOSm/+IuDIS
-	 KzUCxp6AAsqoQc8kwwqwtf1tI89WqIj25D4ORTi4S+lVimWAmfVCruv4vFZSkAsXVR
-	 9Pi0QntaKxGebwFy0B1qM1iYrc5625A4GMiak3fW5jMsk+qc9BdrypLknnDOnUC9h7
-	 RUVXpYJ2iGHSdSdlx34rvFGGtliEr+i8b/t5damkAvgJ+560gErSTqHVT+Xkb6pBeX
-	 yjjNL+YAmivDA==
-Date: Mon, 9 Dec 2024 16:23:22 +0000
-From: Will Deacon <will@kernel.org>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 11/21] arm64: Keep first mismatched 32bits el0 capable
- CPU online through its callbacks
-Message-ID: <20241209162322.GE12428@willie-the-truck>
-References: <20241112142248.20503-1-frederic@kernel.org>
- <20241112142248.20503-12-frederic@kernel.org>
- <20241128162618.GA3653@willie-the-truck>
- <Z0o9FMFZ9Y8HkvzJ@pavilion.home>
+	s=arc-20240116; t=1733761420; c=relaxed/simple;
+	bh=J7WTWNZjTNU6Inc8M05Ida9EHcfcexe793ivbpD1Zls=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aIfIdomPrq5Dn8QrPGfvzrFQf6GHzl8014hK73zHlo5b7fOGuftHW0zFnwJc2WVeYNgeWc+0j8mXbMPEkPLReYAirMCD8PW9viIUy+0QVj2O/SYjrwCaCuqizjK95SdN2BABk+VXOzKy5kmEDvkP0h+otYw3BEd1eA8oh4Cl3iI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gS5zSVGU; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d3d2a30afcso4558614a12.3;
+        Mon, 09 Dec 2024 08:23:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733761416; x=1734366216; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0K8ZP2F40I1V9oEBcZ5JHDlz8ReIw6B0xGg0te9jF0k=;
+        b=gS5zSVGUicqjDYMYUITd6cV9y5tTk34DvbL/jjIcc5EDQIfag5cRlnlpBnF9qUpjiv
+         BXW8SU4RIApxMe2fjbMTYSgZvto6U0RTLnKqAMa+luj3g5RCtBTAihRloblYD1oNigaH
+         QRLYrXNVY13A22b0wZIuAttOj/iws13X4tIz4QZlVP0/RnebuSww0RkF0mP0qf0yqCMZ
+         w0V7TCrE1RnnHIE/U4tSGB1+yKTGWX3IgIRso1pwDn8HZ6i0W35ALzYqJEagPOMBp7fj
+         xuvVOJtuPF/QecOoo1619N01LZemGRu2cYiSmsYf0/FdmNHjnHHSaKWdqXZsna/okVj7
+         /Mzg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733761416; x=1734366216;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0K8ZP2F40I1V9oEBcZ5JHDlz8ReIw6B0xGg0te9jF0k=;
+        b=jHMtFLfN7wpqipMR+6IoWpc8vgkeMGRidpqS5zbghWebwFkYyHoVTAZ+zsRoXwTT9f
+         qQUwIC2B8/8uKwcwx8z2K++kBVEnkim1OhmV+38BrmMmxmBjfak2d5x6MPHO/SHgLdPX
+         RParkq0D2vaitV15+rPnps41D1agEQQrthUeETNHg5u7owQSfaOAtIBqzMOn4vVMtIi+
+         R1++xrnsW1FrK9/mmU/b/xTzPPlCRlMb+z9FWANPgaxYf9VY4C+FPefONIgD0dpn9KGq
+         k8OvZVUeH6B+t3/+T1SHgP6hhNf2shaMaTpYCu2Cx7HjHMgUta3XAfytcwU3sFykl54J
+         4A1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUbC1XPSGSI9j3iluFSw2EEWc65esD2t9Y43JMjVR+KqIA4BTbOKQo4Jtq1unJYkFxwdskb1XJLczwj/Q==@vger.kernel.org, AJvYcCUf+qcuuIvyCikd/BzOqOv1CSd5iR409MAwUK2xvMxatHf33AWdzSVjrU166S9aLyFqelLvn49t1yQDBq15@vger.kernel.org, AJvYcCVA2bQ/OcdkPEIrWGnMyxRZpeSpZeYQ/BJfHKg7pgT2CJIQkurQMoZqe3b1xaRLyzGQ3LsZ95yLq3k+@vger.kernel.org, AJvYcCVEMnqh+u6y2c2ThyWZEEnndagmckBpVUTnB4P2jdXxyEyKPaZ2SYTHVElAEJqxj7DCqnw5dH3B92quXfoUnQ==@vger.kernel.org, AJvYcCWSawgqBdKfdA/v1BAH/i7Vi9qCVeigT+EUcyo9YD0wmb3wm0JdR7/rxS1oHx88dyOHtKWscgchQHuNZw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZEhhDNq9xKBiXEaTqBPiwlAa0KEb+rxGCjL4TRdJxhmrmIiEK
+	JH9OR2T1OW3iY4tFQPoUcOgHi1SvE9WbTgLQDbSE9Vm3CgthxjKivO+QxXrbSmvw7/bXi/4U/gF
+	MQhRcp4tTC3RPB80mnHQPlk+yr2E=
+X-Gm-Gg: ASbGncvgtw+2R3P8bHCzdojMkYlNBx6qMFxCy47jroR9DIF3nLmdX5ihTmFvJ2rbOMg
+	xLgTQdecV/gAnhGK1fUnX0BzUb4IL/dAUUQY=
+X-Google-Smtp-Source: AGHT+IHmex2O3oPEmcdzQYRDxskxCLJEzFe9sxDiHkQR1oioeUncNUJNUrhnRyG2dNZ7LdMyL3H2jyVIZBJBfxS9GRo=
+X-Received: by 2002:a05:6402:3906:b0:5cf:924f:9968 with SMTP id
+ 4fb4d7f45d1cf-5d3be661c03mr13750415a12.2.1733761415276; Mon, 09 Dec 2024
+ 08:23:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z0o9FMFZ9Y8HkvzJ@pavilion.home>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20241208152520.3559-1-spasswolf@web.de> <20241209121104.j6zttbqod3sh3qhr@quack3>
+ <20241209122648.dpptugrol4p6ikmm@quack3>
+In-Reply-To: <20241209122648.dpptugrol4p6ikmm@quack3>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 9 Dec 2024 17:23:24 +0100
+Message-ID: <CAOQ4uxgVNGmLqURdO0wf3vo=K-a2C--ZLKFzXw-22PJdkBjEdA@mail.gmail.com>
+Subject: Re: commit 0790303ec869 leads to cpu stall without CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
+To: Jan Kara <jack@suse.cz>
+Cc: Bert Karwatzki <spasswolf@web.de>, Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org, 
+	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
+	torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, 
+	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
+	linux-ext4@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Nov 29, 2024 at 11:15:48PM +0100, Frederic Weisbecker wrote:
-> Le Thu, Nov 28, 2024 at 04:26:19PM +0000, Will Deacon a écrit :
-> > Hi Frederic,
-> > 
-> > On Tue, Nov 12, 2024 at 03:22:35PM +0100, Frederic Weisbecker wrote:
-> > > +static int mismatched_32bit_el0_offline(unsigned int cpu)
-> > > +{
-> > > +	return cpu == cpu_32bit_unofflineable ? -EBUSY : 0;
-> > > +}
-> > 
-> > I think this is far too late. The reason we prevent hot-unplug of the
-> > last 32-bit CPU is because 32-bit tasks need somewhere to run. By the
-> > time our offline notifier runs, those tasks have already been migrated.
-> > 
-> > On my setup, this explodes because that migration fails (as expected):
-> 
-> Duh!
-> 
-> > 
-> > 
-> > [  125.954586] ------------[ cut here ]------------
-> > [  125.955661] kernel BUG at kernel/sched/core.c:3501!
-> > [  125.957585] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-> > [  125.959371] Modules linked in:
-> > [  125.961850] CPU: 2 UID: 0 PID: 27 Comm: migration/2 Not tainted 6.12.0-00001-ge7689036c862-dirty #10
-> > [  125.963711] Hardware name: QEMU QEMU Virtual Machine, BIOS 0.0.0 02/06/2015
-> > [  125.964859] Stopper: __balance_push_cpu_stop+0x0/0x134 <- balance_push+0x118/0x1ac
-> > [  125.968507] pstate: 614000c9 (nZCv daIF +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-> > [  125.969648] pc : select_fallback_rq+0x2f4/0x2f8
-> > [  125.970477] lr : select_fallback_rq+0x198/0x2f8
-> > [  125.971273] sp : ffff800080153d20
-> > [  125.971897] x29: ffff800080153d30 x28: 0000000000000002 x27: ffffddbd31d79d30
-> > [  125.973416] x26: 0000000000000001 x25: ffffddbd31d79c70 x24: 0000000000000008
-> > [  125.974436] x23: ffffddbd31d79000 x22: ffffddbd31a77190 x21: 0000000000000004
-> > [  125.975452] x20: ffff0000c506a280 x19: 0000000000000000 x18: ffffddbd30fb1df0
-> > [  125.976467] x17: 0000000000000000 x16: 0000000000000001 x15: 000000000018132d
-> > [  125.977490] x14: 00000000ffffffe0 x13: 0000040000000000 x12: 00000c0000000000
-> > [  125.978499] x11: 000000002ae00002 x10: 000000000000000c x9 : 0000000000000040
-> > [  125.979507] x8 : 0000000000000000 x7 : 000000000000000c x6 : 000000000000000c
-> > [  125.980501] x5 : ffff0000c506a578 x4 : ffffddbd2fe53eb0 x3 : 0000000000000010
-> > [  125.981508] x2 : 0000000000000004 x1 : 0000000000000004 x0 : 0000000000000004
-> > [  125.982671] Call trace:
-> > [  125.983065]  select_fallback_rq+0x2f4/0x2f8
-> > [  125.983550]  __balance_push_cpu_stop+0x94/0x134
-> > [  125.983983]  cpu_stopper_thread+0xbc/0x174
-> > [  125.984352]  smpboot_thread_fn+0x1e4/0x24c
-> > [  125.984732]  kthread+0xfc/0x184
-> > [  125.985065]  ret_from_fork+0x10/0x20
-> > [  125.985741] Code: 9000d9c0 91306000 9441667a 17ffffef (d4210000) 
-> > [  125.986445] ---[ end trace 0000000000000000 ]---
-> > 
-> > 
-> > As I mentioned before, I think we need to turn this the other way around
-> > so that the non-unpluggable 32-bit core is forced to be a housekeeping]
-> > CPU. You said it was hard to revert CPUs from being treated as nohz_full,
-> > but I'm wondering whether we can prevent it from being added in the first
-> > place. The arch code has fingers in all the early boot pies.
-> 
-> So the mismatch is detected (and the unpluggableability forced) late on boot,
-> during secondary boot up. OTOH housekeeping is set up much earlier, on kernel
-> parameters parsing. Would it be possible to detect at this stage if a
-> possible yet non-booted CPU doesn't support 32bits el0?
+On Mon, Dec 9, 2024 at 1:26=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
+>
+> On Mon 09-12-24 13:11:04, Jan Kara wrote:
+> > > Then I took a closer look at the function called in the problematic c=
+ode
+> > > and noticed that fsnotify_file_area_perm(), is a NOOP when
+> > > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is not set (which was the case in =
+my
+> > > .config). This also explains why this was not found before, as
+> > > distributional .config file have this option enabled.  Setting the op=
+tion
+> > > to y solves the issue, too
+> >
+> > Well, I agree with you on all the points but the real question is, how =
+come
+> > the test FMODE_FSNOTIFY_HSM(file->f_mode) was true on our kernel when y=
+ou
+> > clearly don't run HSM software, even more so with
+> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled. That's the real cause of t=
+his
+> > problem. Something fishy is going on here... checking...
+> >
+> > Ah, because I've botched out file_set_fsnotify_mode() in case
+> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is disabled. This should fix the
+> > problem:
+> >
+> > index 1a9ef8f6784d..778a88fcfddc 100644
+> > --- a/include/linux/fsnotify.h
+> > +++ b/include/linux/fsnotify.h
+> > @@ -215,6 +215,7 @@ static inline int fsnotify_open_perm(struct file *f=
+ile)
+> >  #else
+> >  static inline void file_set_fsnotify_mode(struct file *file)
+> >  {
+> > +       file->f_mode |=3D FMODE_NONOTIFY_PERM;
+> >  }
+> >
+> > I'm going to test this with CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled=
+ and
+> > push out a fixed version. Thanks again for the report and analysis!
+>
+> So this was not enough, What we need is:
+> index 1a9ef8f6784d..778a88fcfddc 100644
+> --- a/include/linux/fsnotify.h
+> +++ b/include/linux/fsnotify.h
+> @@ -215,6 +215,10 @@ static inline int fsnotify_open_perm(struct file *fi=
+le)
+>  #else
+>  static inline void file_set_fsnotify_mode(struct file *file)
+>  {
+> +       /* Is it a file opened by fanotify? */
+> +       if (FMODE_FSNOTIFY_NONE(file->f_mode))
+> +               return;
+> +       file->f_mode |=3D FMODE_NONOTIFY_PERM;
+>  }
+>
+> This passes testing for me so I've pushed it out and the next linux-next
+> build should have this fix.
 
-Sadly not; we need the CPU to enter the kernel so that we can inspect its
-ID registers. We _do_ do this before the CPU is marked as online, but we
-can't tell before it's actually up and running.
+This fix is not obvious to the code reviewer (especially when that is
+reviewer Linus...)
+Perhaps it would be safer and less hidden to do:
 
-> > Yet another option (which I'm not hugely fond of, but may be ok) would
-> > be to treat 32-bit-capable nohz_full CPUs as being 64-bit-only when
-> > 'allow_mismatched_32bit_el0' is enabled (and documenting this as a
-> > limitation).
-> 
-> There is that too indeed.
+--- a/include/linux/fs.h
++++ b/include/linux/fs.h
+@@ -211,11 +211,16 @@ typedef int (dio_iodone_t)(struct kiocb *iocb,
+loff_t offset,
 
-Maybe that's what we do then (but *please* update 'asymmetric-32bit.rst').
+ #define FMODE_FSNOTIFY_NONE(mode) \
+        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D FMODE_NONOTIFY)
++#ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
+ #define FMODE_FSNOTIFY_PERM(mode) \
+        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0 || \
+         (mode & FMODE_FSNOTIFY_MASK) =3D=3D (FMODE_NONOTIFY | FMODE_NONOTI=
+FY_PERM))
+ #define FMODE_FSNOTIFY_HSM(mode) \
+        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0)
++#else
++#define FMODE_FSNOTIFY_PERM(mode)      0
++#define FMODE_FSNOTIFY_HSM(mode)       0
++#endif
 
-Will
+Similar to IS_POSIXACL()
+
+Thanks,
+Amir.
 
