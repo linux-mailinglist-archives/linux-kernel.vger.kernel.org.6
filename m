@@ -1,410 +1,112 @@
-Return-Path: <linux-kernel+bounces-437651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4677C9E9696
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:25:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E8969E968E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:24:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D71E1889B67
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:21:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FA9816315D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:21:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556CB35956;
-	Mon,  9 Dec 2024 13:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD581ACEA1;
+	Mon,  9 Dec 2024 13:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jeb/S6mu"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJl7WhjD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06CF13594D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CBF35943;
+	Mon,  9 Dec 2024 13:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749900; cv=none; b=FuIFEsFUaNzveQ/D6LJU8HwAEj8Eik1hZBE2emyU2c/Jd2uwpOaz2Bh7N8m4prZesslUi3CH/CoYUoVYImbJ7wlkyp3X5mrpyVf4vh4hGuvc4uqFkgjDtcTfuIDo8jFyWvuSpbVhnl0ZCyfiUDj492+mBM9Tj0xHaTmCyHuNySw=
+	t=1733749978; cv=none; b=ChOL6NCI/pSiGiyEQFFJON4lo87dtEjJ2to2zBYeBxkT3neVG1NohlwQefk/FNw7Lrt6QKt00HZULczDYepalCIr+4xZJ/DRK1mLGoHotpS9NQBSSk9i34EhW3FoqqSqkyABcmdCzSy5I22EUVwnydhwPJ8B6IqTkDcH+y/GCO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749900; c=relaxed/simple;
-	bh=eWrwGPGz/lrqNsyg+rcigmjjVXI/0H9sLvLHdhhHvpA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FibVPM+mPOUf79Z7pkBtbkdW1XHKtIWggO5DLtm0BZma/UulYoTeNsvDgF77X9bXjqUz38EpvTAnX48gThZRukDykV0gelhRj481DdtamZxGxrse9N+Qy84l1CAjQI+FfQs9sJsazKOyeId6zL6kvAkWet+wovrv13p+hs0Rg+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jeb/S6mu; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733749896;
-	bh=eWrwGPGz/lrqNsyg+rcigmjjVXI/0H9sLvLHdhhHvpA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=jeb/S6muAA0qk+Nu9y4zceb3BcEScY1q2fA0hhVs1ycTevfVkkv4Lc0ZL8g8lYBVD
-	 7LojrA7IKNGl4oQbO1ovpX2Gs+w7Wq+SAt62FQxT3v/bZ0l6u9d0Wj8ZZB+kdUUpvY
-	 +LlUkcCnNrHLqjFxORu5MxsMsSkHYz5VWoci9DyAa018tGhMR2t2Jc0udtBJdcNbSG
-	 WvEIvIUjbGVp8mT8XRl+Yhja4XPK1CTKFQ2gEe5A0s2UGBs5S2cvVkMl4OaKNV0yXv
-	 jC4TVTPWF2cZp4bMum9Oe+gOtt8nSkzlnBubU4BnqRN1OsiIgVq/t5NLSDvxvYIpJj
-	 aKO0dj2qBq+GQ==
-Received: from localhost (unknown [IPv6:2a01:e0a:2c:6930:d3ea:1c7:41fd:3038])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bbrezillon)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B2AD217E3766;
-	Mon,  9 Dec 2024 14:11:35 +0100 (CET)
-Date: Mon, 9 Dec 2024 14:11:30 +0100
-From: Boris Brezillon <boris.brezillon@collabora.com>
-To: =?UTF-8?B?QWRyacOhbg==?= Larumbe <adrian.larumbe@collabora.com>
-Cc: Steven Price <steven.price@arm.com>, Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, kernel@collabora.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] drm/panthor: Expose size of driver internal BO's
- over fdinfo
-Message-ID: <20241209141130.6e8bfd3c@collabora.com>
-In-Reply-To: <20241205233915.2180630-1-adrian.larumbe@collabora.com>
-References: <20241205233915.2180630-1-adrian.larumbe@collabora.com>
-Organization: Collabora
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1733749978; c=relaxed/simple;
+	bh=wtt4YzjAc8RnxByK3Ro2ZvCNJOBCvnHq9hYtTBhLeOU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NbmFc0MlG3CWQjLmgGG6ik91OkSmvfeePXA7yLwr7ELYC0vUu5rhtU6qvxhwhngaqU2YjKXIEtTGKZNJEgWWyMc16u7zRxy4WMSX2uXwGtzN+Ad7irnAF6+Br5nEwhyRMsPc31a7XEELULN2tgc67ySk3RPfDp7xezRVTSwocpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CJl7WhjD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCCBC4CEE0;
+	Mon,  9 Dec 2024 13:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733749977;
+	bh=wtt4YzjAc8RnxByK3Ro2ZvCNJOBCvnHq9hYtTBhLeOU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CJl7WhjDi/BWxqxPsHlk4v4npIJnpP1x4xwpteoef21w+K7CnesovMMWnbdTyIEho
+	 AfJTx8b78PjN/6tvL6nu+NrTUONSTznf841w5fTNAisJAZav0u+zlKrUTtv2nwKUIF
+	 ArSJyIFziJT7mJEg7hUprwIp8X9JTX3OiQ9LM08kbJxLF0jObClNE2gyxDEQyoAAAY
+	 gut6DotkQq5Ee57xa/+LUHv6l3onXN1p1BcOSgNT+z7nUI5G1bSOS/W9vQAAFeu50j
+	 FBK2VWjyekwx4VtnyKXWLTLOEFPKQlw1aOMlqKU8hgZMXt0h+o9s4VvqH8xOjZvakU
+	 ZFxSkDGeRN0qQ==
+Date: Mon, 9 Dec 2024 13:12:53 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Weizhao Ouyang <o451686892@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/arm64: abi: fix SVCR detection
+Message-ID: <c05f6ad8-2dc1-4ddb-b9c1-b2cddfe78819@sirena.org.uk>
+References: <20241209105237.10498-1-o451686892@gmail.com>
+ <3279e669-1ee2-4792-9e10-8b40928de6b4@sirena.org.uk>
+ <CAHk0Hov5k37=MtTBLWTj+Dwm4EXE0xGJS1Uc8xgyLtJxusqsww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="vxzs0bX2niMoeW8l"
+Content-Disposition: inline
+In-Reply-To: <CAHk0Hov5k37=MtTBLWTj+Dwm4EXE0xGJS1Uc8xgyLtJxusqsww@mail.gmail.com>
+X-Cookie: Lensmen eat Jedi for breakfast.
+
+
+--vxzs0bX2niMoeW8l
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu,  5 Dec 2024 23:39:07 +0000
-Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com> wrote:
+On Mon, Dec 09, 2024 at 08:51:28PM +0800, Weizhao Ouyang wrote:
+> On Mon, Dec 9, 2024 at 8:36=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
+ote:
 
-> This will display the sizes of kenrel BO's bound to an open file, which a=
-re
-> otherwise not exposed to UM through a handle.
->=20
-> The sizes recorded are as follows:
->  - Per group: suspend buffer, protm-suspend buffer, syncobjcs
->  - Per queue: ringbuffer, profiling slots, firmware interface
->  - For all heaps in all heap pools across all VM's bound to an open file,
->  record size of all heap chuks, and for each pool the gpu_context BO too.
->=20
-> This does not record the size of FW regions, as these aren't bound to a
-> specific open file and remain active through the whole life of the driver.
->=20
-> Signed-off-by: Adri=C3=A1n Larumbe <adrian.larumbe@collabora.com>
-> ---
->  drivers/gpu/drm/panthor/panthor_drv.c   | 14 +++++++++-
->  drivers/gpu/drm/panthor/panthor_heap.c  | 26 ++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_heap.h  |  2 ++
->  drivers/gpu/drm/panthor/panthor_mmu.c   | 35 +++++++++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_mmu.h   |  4 +++
->  drivers/gpu/drm/panthor/panthor_sched.c | 26 ++++++++++++++++++
->  drivers/gpu/drm/panthor/panthor_sched.h |  4 +++
->  7 files changed, 110 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/panthor/panthor_drv.c b/drivers/gpu/drm/pant=
-hor/panthor_drv.c
-> index ac7e53f6e3f0..94f1d5f16e35 100644
-> --- a/drivers/gpu/drm/panthor/panthor_drv.c
-> +++ b/drivers/gpu/drm/panthor/panthor_drv.c
-> @@ -876,7 +876,7 @@ static int panthor_ioctl_vm_create(struct drm_device =
-*ddev, void *data,
->  	if (!drm_dev_enter(ddev, &cookie))
->  		return -ENODEV;
-> =20
-> -	ret =3D panthor_vm_pool_create_vm(ptdev, pfile->vms,  args);
-> +	ret =3D panthor_vm_pool_create_vm(ptdev, pfile->vms, args);
+> > >       // Set SVCR if we're doing SME
+> > > -     cbz     x1, 1f
+> > >       adrp    x2, svcr_in
+> > >       ldr     x2, [x2, :lo12:svcr_in]
+> > > +     cbz     x1, 1f
+> > >       msr     S3_3_C4_C2_2, x2
 
-Looks like an unrelated formatting fix. Can you move it to its own
-commit?
+> > This is against an older verison of the code so wouldn't apply now.
+> > It's not also checking the value of SVCR, this is checking the SME flag
+> > the check is against x1.
 
->  	if (ret >=3D 0) {
->  		args->id =3D ret;
->  		ret =3D 0;
-> @@ -1457,12 +1457,24 @@ static void panthor_gpu_show_fdinfo(struct pantho=
-r_device *ptdev,
->  	drm_printf(p, "drm-curfreq-panthor:\t%lu Hz\n", ptdev->current_frequenc=
-y);
->  }
-> =20
-> +static void panthor_show_internal_memory_stats(struct drm_printer *p, st=
-ruct drm_file *file)
-> +{
-> +	struct panthor_file *pfile =3D file->driver_priv;
-> +	struct drm_memory_stats status =3D {0};
-> +
-> +	panthor_group_internal_sizes(pfile, &status);
-> +	panthor_vm_heaps_size(pfile, &status);
-> +
-> +	drm_print_memory_stats(p, &status, DRM_GEM_OBJECT_RESIDENT, "internal");
-> +}
-> +
->  static void panthor_show_fdinfo(struct drm_printer *p, struct drm_file *=
-file)
->  {
->  	struct drm_device *dev =3D file->minor->dev;
->  	struct panthor_device *ptdev =3D container_of(dev, struct panthor_devic=
-e, base);
-> =20
->  	panthor_gpu_show_fdinfo(ptdev, file->driver_priv, p);
-> +	panthor_show_internal_memory_stats(p, file);
-> =20
->  	drm_show_memory_stats(p, file);
->  }
-> diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/pan=
-thor/panthor_heap.c
-> index 3796a9eb22af..e4464c5e93ef 100644
-> --- a/drivers/gpu/drm/panthor/panthor_heap.c
-> +++ b/drivers/gpu/drm/panthor/panthor_heap.c
-> @@ -603,3 +603,29 @@ void panthor_heap_pool_destroy(struct panthor_heap_p=
-ool *pool)
-> =20
->  	panthor_heap_pool_put(pool);
->  }
-> +
-> +/**
-> + * panthor_heap_pool_size() - Calculate size of all chunks across all he=
-aps in a pool
-> + * @pool: Pool whose total chunk size to calculate.
-> + *
-> + * This function adds the size of all heap chunks across all heaps in the
-> + * argument pool. It also adds the size of the gpu contexts kernel bo.
-> + * It is meant to be used by fdinfo for displaying the size of internal
-> + * driver BO's that aren't exposed to userspace through a GEM handle.
-> + *
-> + */
-> +size_t panthor_heap_pool_size(struct panthor_heap_pool *pool)
-> +{
-> +	struct panthor_heap *heap;
-> +	unsigned long i;
-> +	size_t size =3D 0;
-> +
-> +	down_write(&pool->lock);
-> +	xa_for_each(&pool->xa, i, heap)
-> +		size +=3D heap->chunk_size * heap->chunk_count;
-> +	up_write(&pool->lock);
-> +
-> +	size +=3D pool->gpu_contexts->obj->size;
-> +
-> +	return size;
-> +}
-> diff --git a/drivers/gpu/drm/panthor/panthor_heap.h b/drivers/gpu/drm/pan=
-thor/panthor_heap.h
-> index 25a5f2bba445..e3358d4e8edb 100644
-> --- a/drivers/gpu/drm/panthor/panthor_heap.h
-> +++ b/drivers/gpu/drm/panthor/panthor_heap.h
-> @@ -27,6 +27,8 @@ struct panthor_heap_pool *
->  panthor_heap_pool_get(struct panthor_heap_pool *pool);
->  void panthor_heap_pool_put(struct panthor_heap_pool *pool);
-> =20
-> +size_t panthor_heap_pool_size(struct panthor_heap_pool *pool);
-> +
->  int panthor_heap_grow(struct panthor_heap_pool *pool,
->  		      u64 heap_gpu_va,
->  		      u32 renderpasses_in_flight,
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/pant=
-hor/panthor_mmu.c
-> index 7ba8470a7543..e2f27a1667c3 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -1937,6 +1937,41 @@ struct panthor_heap_pool *panthor_vm_get_heap_pool=
-(struct panthor_vm *vm, bool c
->  	return pool;
->  }
-> =20
-> +/**
-> + * panthor_vm_heaps_size() - Calculate size of all heap chunks across all
-> + * heaps over all the heap pools in a VM
-> + * @pfile: File.
-> + * @status: Memory status to be updated.
-> + *
-> + * Calculate all heap chunk sizes in all heap pools bound to a VM. If th=
-e VM
-> + * is active, record the size as active as well.
-> + */
-> +void panthor_vm_heaps_size(struct panthor_file *pfile, struct drm_memory=
-_stats *status)
-> +{
-> +	struct panthor_vm *vm;
-> +	unsigned long i;
-> +
-> +	if (!pfile->vms)
-> +		return;
-> +
-> +	xa_for_each(&pfile->vms->xa, i, vm) {
-> +		size_t size;
-> +
-> +		mutex_lock(&vm->heaps.lock);
-> +		if (!vm->heaps.pool) {
-> +			mutex_unlock(&vm->heaps.lock);
-> +			continue;
-> +		}
-> +		size =3D panthor_heap_pool_size(vm->heaps.pool);
-> +		mutex_unlock(&vm->heaps.lock);
-> +
-> +		status->resident +=3D size;
-> +		status->private +=3D size;
-> +		if (vm->as.id >=3D 0)
-> +			status->active +=3D size;
-> +	}
-> +}
-> +
->  static u64 mair_to_memattr(u64 mair, bool coherent)
->  {
->  	u64 memattr =3D 0;
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.h b/drivers/gpu/drm/pant=
-hor/panthor_mmu.h
-> index 8d21e83d8aba..25f7aea39ed9 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.h
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.h
-> @@ -5,10 +5,12 @@
->  #ifndef __PANTHOR_MMU_H__
->  #define __PANTHOR_MMU_H__
-> =20
-> +#include <linux/types.h>
->  #include <linux/dma-resv.h>
-> =20
->  struct drm_exec;
->  struct drm_sched_job;
-> +struct drm_memory_stats;
->  struct panthor_gem_object;
->  struct panthor_heap_pool;
->  struct panthor_vm;
-> @@ -37,6 +39,8 @@ int panthor_vm_flush_all(struct panthor_vm *vm);
->  struct panthor_heap_pool *
->  panthor_vm_get_heap_pool(struct panthor_vm *vm, bool create);
-> =20
-> +void panthor_vm_heaps_size(struct panthor_file *pfile, struct drm_memory=
-_stats *status);
-> +
->  struct panthor_vm *panthor_vm_get(struct panthor_vm *vm);
->  void panthor_vm_put(struct panthor_vm *vm);
->  struct panthor_vm *panthor_vm_create(struct panthor_device *ptdev, bool =
-for_mcu,
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/pa=
-nthor/panthor_sched.c
-> index ef4bec7ff9c7..6a4d5f63c86b 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.c
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
-> @@ -582,6 +582,9 @@ struct panthor_group {
->  	/** @queues: Queues owned by this group. */
->  	struct panthor_queue *queues[MAX_CS_PER_CSG];
-> =20
-> +	/** @bo_sizes: Aggregate size of internal kernel BO's held by the group=
-. */
-> +	size_t kbo_sizes;
+> This patch aims to fix the second check (SVCR_ZA_SHIFT) instead of
+> the first one (the x1 SME flag you're referring to):
 
-Given fdinfo_show() is not a hot-path, I'd do the sum of all kbos in a
-helper function taking a group as an argument.
+If we don't have SME we should be skipping over all the SME code and
+never even looking at the value of SVCR.  Looking at the current version
+of the code it does that, it branches to check_sve_in if SME is not
+enabled.
 
-> +
->  	/**
->  	 * @csg_id: ID of the FW group slot.
->  	 *
-> @@ -3305,6 +3308,7 @@ group_create_queue(struct panthor_group *group,
->  		ret =3D PTR_ERR(queue->ringbuf);
->  		goto err_free_queue;
->  	}
-> +	group->kbo_sizes +=3D queue->ringbuf->obj->size;
-> =20
->  	ret =3D panthor_kernel_bo_vmap(queue->ringbuf);
->  	if (ret)
-> @@ -3319,6 +3323,7 @@ group_create_queue(struct panthor_group *group,
->  		ret =3D PTR_ERR(queue->iface.mem);
->  		goto err_free_queue;
->  	}
-> +	group->kbo_sizes +=3D queue->iface.mem->obj->size;
-> =20
->  	queue->profiling.slot_count =3D
->  		calc_profiling_ringbuf_num_slots(group->ptdev, args->ringbuf_size);
-> @@ -3336,6 +3341,7 @@ group_create_queue(struct panthor_group *group,
->  		ret =3D PTR_ERR(queue->profiling.slots);
->  		goto err_free_queue;
->  	}
-> +	group->kbo_sizes +=3D queue->profiling.slots->obj->size;
-> =20
->  	ret =3D panthor_kernel_bo_vmap(queue->profiling.slots);
->  	if (ret)
-> @@ -3433,6 +3439,7 @@ int panthor_group_create(struct panthor_file *pfile,
->  		group->suspend_buf =3D NULL;
->  		goto err_put_group;
->  	}
-> +	group->kbo_sizes +=3D group->suspend_buf->obj->size;
-> =20
->  	suspend_size =3D csg_iface->control->protm_suspend_size;
->  	group->protm_suspend_buf =3D panthor_fw_alloc_suspend_buf_mem(ptdev, su=
-spend_size);
-> @@ -3441,6 +3448,7 @@ int panthor_group_create(struct panthor_file *pfile,
->  		group->protm_suspend_buf =3D NULL;
->  		goto err_put_group;
->  	}
-> +	group->kbo_sizes +=3D group->protm_suspend_buf->obj->size;
-> =20
->  	group->syncobjs =3D panthor_kernel_bo_create(ptdev, group->vm,
->  						   group_args->queues.count *
-> @@ -3453,6 +3461,7 @@ int panthor_group_create(struct panthor_file *pfile,
->  		ret =3D PTR_ERR(group->syncobjs);
->  		goto err_put_group;
->  	}
-> +	group->kbo_sizes +=3D group->syncobjs->obj->size;
-> =20
->  	ret =3D panthor_kernel_bo_vmap(group->syncobjs);
->  	if (ret)
-> @@ -3606,6 +3615,23 @@ void panthor_group_pool_destroy(struct panthor_fil=
-e *pfile)
->  	pfile->groups =3D NULL;
->  }
-> =20
-> +void panthor_group_internal_sizes(struct panthor_file *pfile, struct drm=
-_memory_stats *status)
-> +{
-> +	struct panthor_group_pool *gpool =3D pfile->groups;
-> +	struct panthor_group *group;
-> +	unsigned long i;
-> +
-> +	if (IS_ERR_OR_NULL(gpool))
-> +		return;
-> +
-> +	xa_for_each(&gpool->xa, i, group) {
-> +		status->resident +=3D group->kbo_sizes;
-> +		status->private +=3D group->kbo_sizes;
-> +		if (group->csg_id >=3D 0)
-> +			status->active +=3D group->kbo_sizes;
-> +	}
-> +}
-> +
->  static void job_release(struct kref *ref)
->  {
->  	struct panthor_job *job =3D container_of(ref, struct panthor_job, refco=
-unt);
-> diff --git a/drivers/gpu/drm/panthor/panthor_sched.h b/drivers/gpu/drm/pa=
-nthor/panthor_sched.h
-> index 5ae6b4bde7c5..e17c56a40d9c 100644
-> --- a/drivers/gpu/drm/panthor/panthor_sched.h
-> +++ b/drivers/gpu/drm/panthor/panthor_sched.h
-> @@ -4,11 +4,14 @@
->  #ifndef __PANTHOR_SCHED_H__
->  #define __PANTHOR_SCHED_H__
-> =20
-> +#include <linux/types.h>
-> +
->  struct drm_exec;
->  struct dma_fence;
->  struct drm_file;
->  struct drm_gem_object;
->  struct drm_sched_job;
-> +struct drm_memory_stats;
->  struct drm_panthor_group_create;
->  struct drm_panthor_queue_create;
->  struct drm_panthor_group_get_state;
-> @@ -36,6 +39,7 @@ void panthor_job_update_resvs(struct drm_exec *exec, st=
-ruct drm_sched_job *job);
-> =20
->  int panthor_group_pool_create(struct panthor_file *pfile);
->  void panthor_group_pool_destroy(struct panthor_file *pfile);
-> +void panthor_group_internal_sizes(struct panthor_file *pfile, struct drm=
-_memory_stats *status);
+--vxzs0bX2niMoeW8l
+Content-Type: application/pgp-signature; name="signature.asc"
 
-s/panthor_group_internal_sizes/panthor_group_kbo_sizes/, as I find
-the term internal a bit vague.
+-----BEGIN PGP SIGNATURE-----
 
-This looks good otherwise, and I certainly prefer this version over the
-previous one involving a global lock and per-file kernel-BO
-registration.
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdW7NQACgkQJNaLcl1U
+h9Aq4Qf/Qg9p9l/NYKL8pF+MdwSLjxV0TtHVO294pRrIAlItPtbqpVocz9DV28ye
++vJfxK0cNGHLqaL1gnR/uBSmfhx37MFt8JYwuBl7+bI7THOI5B5jvM4aYQX7Ohpa
+0RcrJak6NhWjaa7+Ro4GNl0Th9f6DrskXSrIkEWvuruiUfKzahUmed4WFVZM9mZK
++UnQxxZ2U7Cp+vx+ZTPGB0WcKT4W3ojoctJ0rBOmZP7/DDyX3Mz/f3R+JYyFpJNw
+KaYtD6qeNsU2sRtOFDOytZ0534PeN2+rZOPJvfp7/wbW9V4C9Pz29YfbP47bUks7
+2nyIY1pfoOUmkB0MwY7sb1PTnWwBnw==
+=odYv
+-----END PGP SIGNATURE-----
+
+--vxzs0bX2niMoeW8l--
 
