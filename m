@@ -1,240 +1,291 @@
-Return-Path: <linux-kernel+bounces-438524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50B779EA246
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:01:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 617E39EA254
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:01:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B74165051
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:01:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A4319FA93;
+	Mon,  9 Dec 2024 23:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m/Nsf/qf"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1FC1282425
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:00:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DDE19E97E;
-	Mon,  9 Dec 2024 23:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZxGuMlfB"
-Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C644919884C;
-	Mon,  9 Dec 2024 23:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E3019F13B;
+	Mon,  9 Dec 2024 23:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733785251; cv=none; b=LImioLvBHoBSwxOyGGSaiw9JkYA2RmetmU14x5ILS1hH2nhe3QNB7tbMxS7FkB9QABcsq+ckPuNLgFxBJQC37Es/EVx1jG6OP/Jh66QxdEU3teEiJE1CZxWw0O/EUnz1vFnJt2lsvvApDH2R878O545b1awcrp5ZSbXyPoEcgWk=
+	t=1733785258; cv=none; b=UXGluuFru6DkaUQCMtXlSU9RizlkqclAZYvQGtK826JfqZUYH99mY+2JGE+CaFQnf2hiNmXcqiPhZ42QfC1RyX8xD+Yi7rCr2X0H9SkVHLikpVjCuAlCyxQjMl8TYK8bUxDLp+4oUWlGgjvId6Pl5zXLy7agurA6JZDD7O7kxI4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733785251; c=relaxed/simple;
-	bh=elYk55NDhAKqhse8FxLZo1SmGQ8M2MoLwtBE/+Rkzpw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KOdQCM8MKFYVV+dEl2o/vO4KjXjIBhULwtsmME0f8E/KD+W+OobrwCIEU0l6inEckNwXUpQNH8KTLi2JW7LTfKYy6vcWCb0LqYJ+kp6Db3CzbBrgzsNr41Ox+pZmE24Cvksg7edh+JZz6Sbi4ZiE7a8ZxOqVkitMyau3+qccw5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZxGuMlfB; arc=none smtp.client-ip=209.85.215.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7e9e38dd5f1so3966167a12.0;
-        Mon, 09 Dec 2024 15:00:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733785249; x=1734390049; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yVwcZR0vEQf+lGLOIYoDvUdbgkf3uRnNWAqEvhym4Zo=;
-        b=ZxGuMlfBg5tXrfDWPPVAfWzJlFsC6DtXQ0/17ui7cwWhBvuvSHuJdGlW4/qiljAv63
-         rm2EjvxjgVwwMkE9W03nsfBpOT+GlEYVwzfnstLVECcDvPpUT4S/sRMguQtT5ayVpUjb
-         PT8pVe/3EBOrsjFcm0WANnTJNAqWxueB14UF63QH/OJp4ir/Y6UC9sCvUUqol1jyumEG
-         3h384duAtNCHhLeAMIGHHToPJQPEcP5JG+ej9NeSD/VTf20skMsgextlirhW7/N5Q1I4
-         FjXTwZe637L1udabDvUlv13l4uJ+2kyFC23+ytRiXV0pQdUL9SUgAUlDikAZovsk1o+2
-         CwcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733785249; x=1734390049;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yVwcZR0vEQf+lGLOIYoDvUdbgkf3uRnNWAqEvhym4Zo=;
-        b=C6fY+468Y4Yo18ww/llsxeeHeeyfySfyJonmggp5vxORGSPvwMd4jfBayFIWe2G9KH
-         gFniCtaA88PE2hwSjzxEU7auxh9NmrrLOHI21wYiO1ozjIxa6YD9H0nfU8z4+AqvoiHx
-         sv2vogT4qO/D6iqkat+b3QtmOOwZ4TMIkzs2fTtvZHHpMnEBOCJBmFKKZrYFf2LhvLjM
-         FjVOkMJiAaVPIfVDemixHbzFFqL3fj8P8PuzxdsX4Wifo4ABH81Aq/EHlCsxgvh4TMhV
-         khF6lrYatxrN6WONxK6L/D6SO2iilWcnAaYWZ/i3pgPvLbhYytfCo7pVzJcWnyLRrr7J
-         yJhw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKBV77UJzUCB4kQsFZpE1BQ6wKOHy47g5cJVKNQCxoRGFO6cBjKqiVXWRcvEWScFYR57uGULGARVwvBBF9iKjr6g==@vger.kernel.org, AJvYcCVNCjaz9kmTdpm9XZdD9LJXFdxqpfL4hiUuVLp9Npb1JCq+NIKOWuAdP1CPEmArYMhrOzESfApBb+NW22f/@vger.kernel.org, AJvYcCXjp2T51euIsf4EstNuGIEaKVbaHVM4Grh6bT/XDh6JXvAmd4mveHggDygdtapqzu5M7EU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpSWxrlf+3GsVpPWAl6JRkbnppDRfC85CAk/mMVvpkcB22C8MK
-	Rq4M8KEfeEeiWSQZacLMLlTAiY5H03iJih2V8JwTSNQ9lECQDvt5slR1eCHT1dFTfkZgV+NyJfI
-	pD13P1VXvJMDbduUOADF/+Pi0yrQ=
-X-Gm-Gg: ASbGnct9/YwtRFrW8JWEGxa7m72i6o78eIohBrcpn6uF+BJZJ5ex+UCDrWFAz3q3x4E
-	aDWKZTYvfSmgiHrlqETClpOK1GbR/PcOpI6NskylChZSPAWUOEnc=
-X-Google-Smtp-Source: AGHT+IFCLud9Tl/llTWYjfJbJI8At2PeiwsxUEH2EXyTvY2DsuqR+rP2NvVtJCxzQroYZBAKgUM4v2nqzLuP/R7sFzk=
-X-Received: by 2002:a05:6a20:7348:b0:1e0:c50c:9842 with SMTP id
- adf61e73a8af0-1e1871291d0mr25062081637.31.1733785248824; Mon, 09 Dec 2024
- 15:00:48 -0800 (PST)
+	s=arc-20240116; t=1733785258; c=relaxed/simple;
+	bh=cWBSulf0fQno5+t6thUiJdaghxDbSCl+9ViNwrb0+wY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=l1FEbqTyEV+Try6mFoBaqptTgNCleizkZECPK9iauug2HFpaCJvzbKOULAde4ityRFG2SevagFiOiGt1vPd7ts6Xe2WrSw8ZDOV7AsOtMGF7DA0PlpeGdljgb57kga9i1aqKXZrhQUGdoRkssdjj78FuUuCrLdEXvHn1aCfPbJU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m/Nsf/qf; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9GnRlw023398;
+	Mon, 9 Dec 2024 23:00:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	NAuKrMbDopwaoZZJtuSjTggUNBIyj4rtYk3o27a46J0=; b=m/Nsf/qf7wlXJ2Dh
+	RABuW1l3qsKfOgA+4p5/nO7tqzU9a0T5lVZ0luBzSGpZdE515oCibA7fFyQcJkgt
+	sFw67o5LByXsJOsxJWjYiiV5rVVBj/J/GQPjsdaEO81Kj6JDI3N/1my/ryEI/RGx
+	3nuunmsVZWNItJenzKwP+UanvhprDdtflTEKQgygRF78iHiLhUyaeOZrZQcRPNZS
+	kpMcXZ3VoeDxzPN6D2ZkbChyzA/6Ud3xeE7aBW8OVcfibQ4CAE129X2U9v9dKSRv
+	CBvOOI5TwirH+Gar5eTFWos7Z9fP8xKhnzqh+msC/8wEwJy935xttid04ETUa5T5
+	ry1E1A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetpj5x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 23:00:49 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9N0maq026552
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 23:00:48 GMT
+Received: from [10.4.85.9] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 15:00:45 -0800
+Message-ID: <72e113e7-c1be-48c0-9018-2580f654667a@quicinc.com>
+Date: Tue, 10 Dec 2024 10:00:42 +1100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241108061500.2698340-1-namhyung@kernel.org> <20241108061500.2698340-3-namhyung@kernel.org>
- <Z1ccoNOl4Z8c5DCz@x1> <Z1cdDzXe4QNJe8jL@x1> <Z1dRyiruUl1Xo45O@x1>
-In-Reply-To: <Z1dRyiruUl1Xo45O@x1>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Dec 2024 15:00:36 -0800
-Message-ID: <CAEf4Bza5B9rSX7cw4K0iC-gW+OeEATLCcQ=6KGfmuxfJ2XOhvA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] perf lock contention: Run BPF slab cache iterator
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, Andrii Nakryiko <andrii@kernel.org>, 
-	Song Liu <song@kernel.org>, bpf@vger.kernel.org, 
-	Stephane Eranian <eranian@google.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Kees Cook <kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 02/10] tee: add TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF
+To: Jens Wiklander <jens.wiklander@linaro.org>
+CC: Sumit Garg <sumit.garg@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <op-tee@lists.trustedfirmware.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+References: <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-0-f502ef01e016@quicinc.com>
+ <20241202-qcom-tee-using-tee-ss-without-mem-obj-v1-2-f502ef01e016@quicinc.com>
+ <CAHUa44GxY=nZP9O6XpO-nRKJ_wUnK66h-QEnFPJ9myFGydBZYw@mail.gmail.com>
+Content-Language: en-US
+From: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+In-Reply-To: <CAHUa44GxY=nZP9O6XpO-nRKJ_wUnK66h-QEnFPJ9myFGydBZYw@mail.gmail.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: HsVkGMPasLElsgq_B9TdnnWbRhpkzkEk
+X-Proofpoint-ORIG-GUID: HsVkGMPasLElsgq_B9TdnnWbRhpkzkEk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090178
 
-On Mon, Dec 9, 2024 at 12:23=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Mon, Dec 09, 2024 at 01:38:39PM -0300, Arnaldo Carvalho de Melo wrote:
-> > On Mon, Dec 09, 2024 at 01:36:52PM -0300, Arnaldo Carvalho de Melo wrot=
-e:
-> > > On Thu, Nov 07, 2024 at 10:14:57PM -0800, Namhyung Kim wrote:
-> > > > Recently the kernel got the kmem_cache iterator to traverse metadat=
-a of
-> > > > slab objects.  This can be used to symbolize dynamic locks in a sla=
-b.
->
-> > > > The new slab_caches hash map will have the pointer of the kmem_cach=
-e as
-> > > > a key and save the name and a id.  The id will be saved in the flag=
-s
-> > > > part of the lock.
->
-> > > Trying to fix this
-> >
-> > So you have that struct in tools/perf/util/bpf_skel/vmlinux/vmlinux.h,
-> > but then, this kernel is old and doesn't have the kmem_cache iterator,
-> > so using the generated vmlinux.h will fail the build.
->
-> I tried passing the right offset to the iterator so as not to try to use
-> a type that isn't in vmlinux.h generated from the old kernel BTF:
->
-> +++ b/tools/perf/util/bpf_lock_contention.c
-> @@ -52,7 +52,7 @@ static void check_slab_cache_iter(struct lock_contentio=
-n *con)
->                 pr_debug("slab cache iterator is not available: %d\n", re=
-t);
->                 goto out;
->         } else {
-> -               const struct btf_member *s =3D __btf_type__find_member_by=
-_name(btf, ret, "s");
-> +               const struct btf_member *s =3D __btf_type__find_unnamed_u=
-nion_with_member_by_name(btf, ret, "s");
->
->                 if (s =3D=3D NULL) {
->                         skel->rodata->slab_cache_iter_member_offset =3D -=
-1;
-> @@ -60,7 +60,9 @@ static void check_slab_cache_iter(struct lock_contentio=
-n *con)
->                         goto out;
->                 }
->
->                 skel->rodata->slab_cache_iter_member_offset =3D s->offset=
- / 8; // bits -> bytes
-> +               pr_debug("slab cache iterator kmem_cache pointer offset: =
-%d\n",
-> +                        skel->rodata->slab_cache_iter_member_offset);
->         }
->
->
-> but the verifier doesn't like that:
->
-> ; struct kmem_cache *s =3D slab_cache_iter_member_offset < 0 ? NULL : @ l=
-ock_contention.bpf.c:615
-> 12: (7b) *(u64 *)(r10 -8) =3D r2        ; R2_w=3Dctx(off=3D8) R10=3Dfp0 f=
-p-8_w=3Dctx(off=3D8)
-> ; if (s =3D=3D NULL) @ lock_contention.bpf.c:619
-> 13: (15) if r1 =3D=3D 0x0 goto pc+22      ; R1=3Dctx()
-> ; d.id =3D ++slab_cache_id << LCB_F_SLAB_ID_SHIFT; @ lock_contention.bpf.=
-c:622
-> 14: (18) r1 =3D 0xffffc14bcde3a014      ; R1_w=3Dmap_value(map=3Dlock_con=
-.bss,ks=3D4,vs=3D40,off=3D20)
-> 16: (61) r3 =3D *(u32 *)(r1 +0)         ; R1_w=3Dmap_value(map=3Dlock_con=
-.bss,ks=3D4,vs=3D40,off=3D20) R3_w=3Dscalar(smin=3D0,smax=3Dumax=3D0xffffff=
-ff,var_off=3D(0x0; 0xffffffff))
-> 17: (07) r3 +=3D 1                      ; R3_w=3Dscalar(smin=3Dumin=3D1,s=
-max=3Dumax=3D0x100000000,var_off=3D(0x0; 0x1ffffffff))
-> 18: (63) *(u32 *)(r1 +0) =3D r3         ; R1_w=3Dmap_value(map=3Dlock_con=
-.bss,ks=3D4,vs=3D40,off=3D20) R3_w=3Dscalar(smin=3Dumin=3D1,smax=3Dumax=3D0=
-x100000000,var_off=3D(0x0; 0x1ffffffff))
-> 19: (67) r3 <<=3D 16                    ; R3_w=3Dscalar(smin=3Dumin=3D0x1=
-0000,smax=3Dumax=3D0x1000000000000,smax32=3D0x7fff0000,umax32=3D0xffff0000,=
-var_off=3D(0x0; 0x1ffffffff0000))
-> 20: (63) *(u32 *)(r10 -40) =3D r3       ; R3_w=3Dscalar(smin=3Dumin=3D0x1=
-0000,smax=3Dumax=3D0x1000000000000,smax32=3D0x7fff0000,umax32=3D0xffff0000,=
-var_off=3D(0x0; 0x1ffffffff0000)) R10=3Dfp0 fp-40=3D????scalar(smin=3Dumin=
-=3D0x10000,smax=3Dumax=3D0x1000000000000,smax32=3D0x7fff0000,umax32=3D0xfff=
-f0000,var_off=3D(0x0; 0x1ffffffff0000))
-> ; bpf_probe_read_kernel_str(d.name, sizeof(d.name), s->name); @ lock_cont=
-ention.bpf.c:623
-> 21: (79) r3 =3D *(u64 *)(r2 +96)
-> dereference of modified ctx ptr R2 off=3D8 disallowed
-> processed 19 insns (limit 1000000) max_states_per_insn 0 total_states 0 p=
-eak_states 0 mark_read 0
-> -- END PROG LOAD LOG --
-> libbpf: prog 'slab_cache_iter': failed to load: -EACCES
-> libbpf: failed to load object 'lock_contention_bpf'
-> libbpf: failed to load BPF skeleton 'lock_contention_bpf': -EACCES
-> Failed to load lock-contention BPF skeleton
-> lock contention BPF setup failed
-> root@number:~#
->
-> and additionally the type is not like the one you added to the barebones
-> vmlinux.h:
->
-> =E2=AC=A2 [acme@toolbox perf-tools-next]$ git show d82e2e170d1c756b | gre=
-p 'struct bpf_iter__kmem_cache {' -A3
-> +struct bpf_iter__kmem_cache {
-> +       struct kmem_cache *s;
-> +} __attribute__((preserve_access_index));
-> +
-> =E2=AC=A2 [acme@toolbox perf-tools-next]$
->
-> But:
->
-> =E2=AC=A2 [acme@toolbox perf-tools-next]$ uname -a
-> Linux toolbox 6.13.0-rc2 #1 SMP PREEMPT_DYNAMIC Mon Dec  9 12:33:35 -03 2=
-024 x86_64 GNU/Linux
-> =E2=AC=A2 [acme@toolbox perf-tools-next]$ pahole bpf_iter__kmem_cache
-> struct bpf_iter__kmem_cache {
->         union {
->                 struct bpf_iter_meta * meta;             /*     0     8 *=
-/
->         };                                               /*     0     8 *=
-/
->         union {
->                 struct kmem_cache * s;                   /*     8     8 *=
-/
->         };                                               /*     8     8 *=
-/
->
->         /* size: 16, cachelines: 1, members: 2 */
->         /* last cacheline: 16 bytes */
-> };
->
-> =E2=AC=A2 [acme@toolbox perf-tools-next]$
->
-> Do CO-RE handle this?
->
+Hi Jens.
 
-I don't know exactly what the problem you are running into is, but
-yes, BPF CO-RE allows handling missing fields, incompatible field type
-changes, field renames, etc. All without having to break a
-compilation. See [0] (and one subsection after that) for
-"documentation" and examples.
+On 12/10/2024 2:46 AM, Jens Wiklander wrote:
+> Hi Amirreza,
+> 
+> On Tue, Dec 3, 2024 at 5:20 AM Amirreza Zarrabi
+> <quic_azarrabi@quicinc.com> wrote:
+>>
+>> For drivers that can transfer data to the TEE without needing shared
+>> memory from client, it is necessary to receive the user address
+>> directly, bypassing any processing by the TEE subsystem. Introduce
+>> TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT/OUTPUT/INOUT to represent
+>> userspace buffers.
+> 
+> Internally you allocate a bounce buffer from the pool of shared memory
+> and copy the content of the user space buffer into that.
+> Wouldn't it be fair to replace "without needing shared memory" with
+> "without using shared memory"?
+> 
 
-  [0] https://nakryiko.com/posts/bpf-core-reference-guide/#defining-own-co-=
-re-relocatable-type-definitions
+You are right. I'll update it.
 
-> - Arnaldo
+>>
+>> Signed-off-by: Amirreza Zarrabi <quic_azarrabi@quicinc.com>
+>> ---
+>>  drivers/tee/tee_core.c   | 26 ++++++++++++++++++++++++++
+>>  include/linux/tee_drv.h  |  6 ++++++
+>>  include/uapi/linux/tee.h | 22 ++++++++++++++++------
+>>  3 files changed, 48 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
+>> index 24edce4cdbaa..942ff5b359b2 100644
+>> --- a/drivers/tee/tee_core.c
+>> +++ b/drivers/tee/tee_core.c
+>> @@ -381,6 +381,16 @@ static int params_from_user(struct tee_context *ctx, struct tee_param *params,
+>>                         params[n].u.value.b = ip.b;
+>>                         params[n].u.value.c = ip.c;
+>>                         break;
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT:
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT:
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
+>> +                       params[n].u.membuf.uaddr = u64_to_user_ptr(ip.a);
+>> +                       params[n].u.membuf.size = ip.b;
+>> +
+>> +                       if (!access_ok(params[n].u.membuf.uaddr, params[n].u.membuf.size))
+>> +                               return -EFAULT;
+>> +
+>> +                       break;
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+>> @@ -449,6 +459,11 @@ static int params_to_user(struct tee_ioctl_param __user *uparams,
+>>                             put_user(p->u.value.c, &up->c))
+>>                                 return -EFAULT;
+>>                         break;
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT:
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
+>> +                       if (put_user((u64)p->u.membuf.size, &up->b))
+>> +                               return -EFAULT;
+>> +                       break;
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+>>                         if (put_user((u64)p->u.memref.size, &up->b))
+>> @@ -649,6 +664,12 @@ static int params_to_supp(struct tee_context *ctx,
+>>                         ip.b = p->u.value.b;
+>>                         ip.c = p->u.value.c;
+>>                         break;
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT:
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
+>> +                       ip.a = (u64)p->u.membuf.uaddr;
+>> +                       ip.b = p->u.membuf.size;
+>> +                       ip.c = 0;
+>> +                       break;
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INPUT:
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+>> @@ -751,6 +772,11 @@ static int params_from_supp(struct tee_param *params, size_t num_params,
+>>                         p->u.value.b = ip.b;
+>>                         p->u.value.c = ip.c;
+>>                         break;
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT:
+>> +               case TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT:
+>> +                       p->u.membuf.uaddr = u64_to_user_ptr(ip.a);
+>> +                       p->u.membuf.size = ip.b;
+>> +                       break;
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT:
+>>                 case TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT:
+>>                         /*
+>> diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
+>> index a54c203000ed..b66e611fece4 100644
+>> --- a/include/linux/tee_drv.h
+>> +++ b/include/linux/tee_drv.h
+>> @@ -82,6 +82,11 @@ struct tee_param_memref {
+>>         struct tee_shm *shm;
+>>  };
+>>
+>> +struct tee_param_membuf {
+> 
+> I would prefer tee_param_ubuf to better describe what it is.
+> 
+
+Ack.
+
+>> +       void * __user uaddr;
+>> +       size_t size;
+>> +};
+>> +
+>>  struct tee_param_value {
+>>         u64 a;
+>>         u64 b;
+>> @@ -92,6 +97,7 @@ struct tee_param {
+>>         u64 attr;
+>>         union {
+>>                 struct tee_param_memref memref;
+>> +               struct tee_param_membuf membuf;
+>>                 struct tee_param_value value;
+>>         } u;
+>>  };
+>> diff --git a/include/uapi/linux/tee.h b/include/uapi/linux/tee.h
+>> index d0430bee8292..fae68386968a 100644
+>> --- a/include/uapi/linux/tee.h
+>> +++ b/include/uapi/linux/tee.h
+>> @@ -151,6 +151,13 @@ struct tee_ioctl_buf_data {
+>>  #define TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_OUTPUT        6
+>>  #define TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT 7       /* input and output */
+>>
+>> +/*
+>> + * These defines memory buffer parameters.
+> 
+> user space buffer
+> 
+>> + */
+>> +#define TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INPUT 8
+>> +#define TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_OUTPUT        9
+>> +#define TEE_IOCTL_PARAM_ATTR_TYPE_MEMBUF_INOUT 10      /* input and output */
+> 
+> TEE_IOCTL_PARAM_ATTR_TYPE_UBUF_*
+> 
+
+Ack.
+
+>> +
+>>  /*
+>>   * Mask for the type part of the attribute, leaves room for more types
+>>   */
+>> @@ -186,14 +193,17 @@ struct tee_ioctl_buf_data {
+>>  /**
+>>   * struct tee_ioctl_param - parameter
+>>   * @attr: attributes
+>> - * @a: if a memref, offset into the shared memory object, else a value parameter
+>> - * @b: if a memref, size of the buffer, else a value parameter
+>> + * @a: if a memref, offset into the shared memory object,
+>> + *     else if a membuf, address into the user buffer,
+>> + *     else a value parameter
+>> + * @b: if a memref or membuf, size of the buffer, else a value parameter
+>>   * @c: if a memref, shared memory identifier, else a value parameter
+>>   *
+>> - * @attr & TEE_PARAM_ATTR_TYPE_MASK indicates if memref or value is used in
+>> - * the union. TEE_PARAM_ATTR_TYPE_VALUE_* indicates value and
+>> - * TEE_PARAM_ATTR_TYPE_MEMREF_* indicates memref. TEE_PARAM_ATTR_TYPE_NONE
+>> - * indicates that none of the members are used.
+>> + * @attr & TEE_PARAM_ATTR_TYPE_MASK indicates if memref, membuf, or value is
+>> + * used in the union. TEE_PARAM_ATTR_TYPE_VALUE_* indicates value,
+>> + * TEE_PARAM_ATTR_TYPE_MEMREF_* indicates memref, and TEE_PARAM_ATTR_TYPE_MEMBUF_*
+>> + * indicates membuf. TEE_PARAM_ATTR_TYPE_NONE indicates that none of the members
+>> + * are used.
+>>   *
+>>   * Shared memory is allocated with TEE_IOC_SHM_ALLOC which returns an
+>>   * identifier representing the shared memory object. A memref can reference
+> 
+> Please update the comment above with UBUF and ubuf as needed.
+> 
+
+Ack.
+
+> Cheers,
+> Jens
+> 
+
+Best Regadrs,
+Amir
+
+>>
+>> --
+>> 2.34.1
+>>
 
