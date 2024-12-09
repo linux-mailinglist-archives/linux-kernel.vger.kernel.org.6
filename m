@@ -1,111 +1,151 @@
-Return-Path: <linux-kernel+bounces-437509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2615B9E943C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:34:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528B49E9443
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:35:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8900416688C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:34:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B69188054C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A37E22A1F6;
-	Mon,  9 Dec 2024 12:32:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6253722D4E8;
+	Mon,  9 Dec 2024 12:33:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mMvkan7X"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC4CF22A1D6;
-	Mon,  9 Dec 2024 12:32:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747573; cv=none; b=KL8JcszPhsDtVyd0Dkig74zkusFIKhZj3BigV0AcQdEr4PkWBOg00YgE834Ko61kgyHgVJHzIdVrkKO8oIwypZaYIMl9mou+HJMyyw8iC4o49ln0ZmAtSHDJqXjRpt9w458/VSIB2INwsWahIHi0HRpR5bOXPPJ+gA5NIjQLkG8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747573; c=relaxed/simple;
-	bh=rJFy2TMRuAhKzSXmJkXeXU+q3gjqOkypGpjammhRXLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qzUSIMIcIN5OWDlRFNuI/9Jlwg4hIwyZ0Ls8ZIWZWR6JOyoWu/CGbxKXB/r+Kh9b8PGljgGVZ8YuyfuQoJDBWmlq6at1KXHaHy+pPCAHmLYgsZuaqc38Xxhbws/MlBvAd+n8LihvHuzxyj8PB5lLmqkXl6V9TF2ncABMJ7iOZqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mMvkan7X; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=74SCF
-	EhyKUBw3QujU7m2Ujgf98W8fbRXMPY5M8M5yjw=; b=mMvkan7X9KHRjf/Ptn6XG
-	jdUYzygfkjFLheJg/EJzkjZGrYiefty2e+xeXzR+z/cMY+M7ZjHbkDmtxJOeU/yA
-	/v0KvJ3j2JAhUbiT13YjIVAsfRaaC5GBUDQ1Akzm131/c7+b/wr7yvLTbDXYxE7w
-	OPX+DFqnuzUCzQSUiyETyA=
-Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wBHDaBQ41Zn269cMQ--.14778S2;
-	Mon, 09 Dec 2024 20:32:19 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	krzk+dt@kernel.org,
-	s.hauer@pengutronix.de,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	derek.foreman@collabora.com,
-	detlev.casanova@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v5 08/18] drm/rockchip: vop2: Add check for 32 bpp format
-Date: Mon,  9 Dec 2024 20:32:12 +0800
-Message-ID: <20241209123215.2781721-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241209122943.2781431-1-andyshrk@163.com>
-References: <20241209122943.2781431-1-andyshrk@163.com>
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="U5qXMH55"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A9D22D4F5
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:33:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733747587; cv=pass; b=Ax/0smj6Ni3YTgtks1PHOrtWQnenqdqThUbk3frKoCIKP0Sx6sj7k0yjyqzT3rVtMeEsBQVAMwCStAhDCn0MORGXkpwh1Wu5HDlGPJNT3dvg+avKSfK0Xn3yNSOtArH6C2fGQobbLxKMMXo2g2UvZDzTtCaZoo9BaGROuCe/fkY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733747587; c=relaxed/simple;
+	bh=/v6bNMHP+zmnp/qKT5JgCERbe0Baqa6t+ejdaqoMjIc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=V1fHDiFu9KvJbuQMHXJAnZ2RJq7kS60p0AXpEICRxt0R95iKTQE0tnEQf+V7kuzroH1U9TiXLSFoTuHLB5Mx2XBILO+7mbQ2vckOcWneMrOIosMEXc6SuP/A4ue+fU7ksdkecI3VauqytV7u8mQaatXS8S4Y0dBy3U2dInMRSSI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=U5qXMH55; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1733747566; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=i/tNjtfbeMtUCbW3lnkJdxihZ5vsLX38tmuu3i5ocVGSb+2GeIYwuoInW2sh49cBeFdS9n/71b+g7V/Dey+MsOlZFafZDQ5ugSLcrQ1e2T0+nkUqys1SCnQ3f002rTLsNTjeejSOjPskuz4rMZu0bbmfZOBdcmxVyB2xRbZB44g=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1733747566; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=6EVh6ekbWiJ0H+/RPaWmq2DyRBJuGByAGojKHdpcIlI=; 
+	b=XGw2gOoN5FZ2ZPlR/Eca1uM4dLa2t0czZLe+0g0iJ6Lp2pOVthGxQKMflus17M3BKLvW/nvqilzzO37xWvI+aOToaP6SEeXjay19naT5RcPpjhCnNSg7PCn/w8mAub55tBefZQh2IZn2+1xy/fwg+m/n14U3xGBXgG/yZRyt+7A=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
+	dmarc=pass header.from=<bob.beckett@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733747566;
+	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=6EVh6ekbWiJ0H+/RPaWmq2DyRBJuGByAGojKHdpcIlI=;
+	b=U5qXMH55yECI6a9fA7hrpOuRZlilSSK2ElWL6qcD/5FkpIteEwAadCQU58kxbP/q
+	njVRhCZ+HMx6AOx7yjbj0bpQqbVLaE2ef/V9sBRz2wBTSvx/bl0+HBqgZSVaXB9JTi2
+	+4qohSQbMkwTfEWN7M6gaSB/BeQ5Ek6Rwpm3HoCw=
+Received: from mail.zoho.com by mx.zohomail.com
+	with SMTP id 173374753370972.00679083416446; Mon, 9 Dec 2024 04:32:13 -0800 (PST)
+Date: Mon, 09 Dec 2024 12:32:13 +0000
+From: Robert Beckett <bob.beckett@collabora.com>
+To: "Keith Busch" <kbusch@kernel.org>
+Cc: "Pawel Anikiel" <panikiel@google.com>, "axboe" <axboe@kernel.dk>,
+	"hch" <hch@lst.de>, "kernel" <kernel@collabora.com>,
+	"linux-kernel" <linux-kernel@vger.kernel.org>,
+	"linux-nvme" <linux-nvme@lists.infradead.org>,
+	"sagi" <sagi@grimberg.me>
+Message-ID: <193ab67e768.1047ccb051074383.2860231262134590879@collabora.com>
+In-Reply-To: <Z0DdU9K9QMFxBIL8@kbusch-mbp.dhcp.thefacebook.com>
+References: <20241112195053.3939762-1-bob.beckett@collabora.com>
+ <20241114113803.3571128-1-panikiel@google.com>
+ <1932ad8722a.102613bdb3737.769617317074446742@collabora.com>
+ <CAM5zL5rKsEd1EhOx1AGj9Au7-FQnJ5fUX2hLPEDQvmcrJXFFBg@mail.gmail.com>
+ <1932b818328.ad02576784895.6204301822664878956@collabora.com> <Z0DdU9K9QMFxBIL8@kbusch-mbp.dhcp.thefacebook.com>
+Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wBHDaBQ41Zn269cMQ--.14778S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrZF45Xw1rZr1ktrWrurWUCFg_yoWDKwbEk3
-	4xZw1fWrs7uFn8AwnFga4fCFZFyan29F4UGayvyas5AF1kZw10qayIk3yUGasxGF4avFn7
-	Aayjqr1fuF13CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU166zUUUUUU==
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqR6wXmdW3c3pJwACs0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Importance: Medium
+User-Agent: Zoho Mail
+X-Mailer: Zoho Mail
 
-From: Andy Yan <andy.yan@rock-chips.com>
 
-RK3588 only support DRM_FORMAT_XRGB2101010/XBGR2101010 in afbc mode.
 
-Fixes: 5a028e8f062f ("drm/rockchip: vop2: Add support for rk3588")
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
 
----
 
-Changes in v5:
--  Added in V5
 
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ ---- On Fri, 22 Nov 2024 19:36:51 +0000  Keith Busch  wrote ---=20
+ > On Thu, Nov 14, 2024 at 04:28:48PM +0000, Robert Beckett wrote:
+ > >  ---- On Thu, 14 Nov 2024 14:13:52 +0000  Pawe=C5=82 Anikiel  wrote --=
+-=20
+ > >  > On Thu, Nov 14, 2024 at 2:24=E2=80=AFPM Robert Beckett
+ > >  > bob.beckett@collabora.com> wrote:
+ > >  > > This is interesting.
+ > >  > > I had the same idea previously. I initially just changed the hard=
+ coded 256 / 8 to use 31 instead, which should have ensured the last entry =
+of each segment never gets used.
+ > >  > > When I tested that, it not longer failed, which was a good sign. =
+So then I modified it to only do that on the last 256 byte segment of a pag=
+e, but then is started failing again.
+ > >  >=20
+ > >  > Could you elaborate the "only do that on the last 256 byte segment =
+of
+ > >  > a page" part? How did you check which chunk of the page would be
+ > >  > allocated before choosing the dma pool?
+ > >  >=20
+ > >  > > I never saw any bus error during my testing, just wrong data
+ > >  > > read, which then fails image verification. I was expecting iommu
+ > >  > > error logs if it was trying to access a chain in to nowhere if it
+ > >  > > always interpreted last entry in page as a link. I never saw any
+ > >  > > iommu errors.
+ > >  >=20
+ > >  > Maybe I misspoke, the "bus error" part was just my speculation, I
+ > >  > didn't look at the IOMMU logs or anything like that.
+ > >  >=20
+ > >  > > I'd be glad to if you could share your testing method.
+ > >  >=20
+ > >  > I dumped all the nvme transfers before the crash happened (using
+ > >  > tracefs), and I saw a read of size 264 =3D 8 + 256, which led me to=
+ the
+ > >  > chaining theory. To test this claim, I wrote a simple pci device
+ > >  > driver which creates one IO queue and submits a read command where =
+the
+ > >  > PRP list is set up in a way that tests if the controller treats it =
+as
+ > >  > a chained list or not. I ran it, and it indeed treated the last PRP
+ > >  > entry as a chained pointer.
+ > > hmm, I guess a simple debugfs trigger file could be used to construct
+ > > specially formulated requests. Would work as a debug tool.
+ > >
+ > > Though at this point, the simple dmapool alignment param usage fixes
+ > > both of these scenarios, so it will be kind of academic to continue
+ > > putting effort in to understand this. I am trying to get answers out
+ > > of the vendor to confirm any of these theories, which I hope will be
+ > > more conclusive than our combined inference from testing.
+ >=20
+ > Any updates on this? I'm satisfied with the quirk patch, so we can move
+ > this forward if you're okay with the current understanding.
+ >=20
+apologies for late reply, I think this got missed during a holiday. Thanks =
+for prompting on the previous thread.
 
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index bd8db45eeba6..1f101a3c3942 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -1224,7 +1224,15 @@ static int vop2_plane_atomic_check(struct drm_plane *plane,
- 				return -EINVAL;
- 			}
- 		}
-+	}
- 
-+	if (fb->format->format == DRM_FORMAT_XRGB2101010 || fb->format->format == DRM_FORMAT_XBGR2101010) {
-+		if (vop2->data->soc_id == 3588) {
-+			if (!rockchip_afbc(plane, fb->modifier)) {
-+				drm_err(vop2->drm, "Unsupported linear 32 bpp for %s\n", win->data->name);
-+				return -EINVAL;
-+			}
-+		}
- 	}
- 
- 	/*
--- 
-2.34.1
-
+I have no further updates on this. I have received no further info from the=
+ vendor.
+I think we can go ahead and use the alignment patch as is. The only outstan=
+ding question was whether it is an
+implicit last entry per page chain vs simple alisngment requirement. Either=
+ way, using the dmapool
+alignment fixes both of these potential causes, so we should just take it a=
+s is.
+If we ever get any better info and can do a more specific patch in future, =
+we can rework it then.
 
