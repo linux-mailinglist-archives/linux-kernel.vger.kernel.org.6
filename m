@@ -1,199 +1,282 @@
-Return-Path: <linux-kernel+bounces-437514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A694D9E9442
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:35:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CFF9E944D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:36:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6D92849C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:35:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F1FA1658C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:35:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EA1D22756B;
-	Mon,  9 Dec 2024 12:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA3B9227B94;
+	Mon,  9 Dec 2024 12:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BPBsh1k4"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90AAD226EF2
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y3bBtckU"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E55552236EF;
+	Mon,  9 Dec 2024 12:33:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747597; cv=none; b=I8rxDJ0nOzhPfm9gqyiALRGoNGQ3Gyj7G3+7n1TC5HQE8VBaXFx0YNZoZaFwQUKCvIC0PAXzfKuBInXDYN+m+pJ0iNeH7YwQqMzjDz9adb2b3fLAvZZdaoSgCV2zvC2P8R+Oj3VKrTd7GJly9Hlk7Wtxf7ZZIAGRsKddkDS1ycI=
+	t=1733747635; cv=none; b=Pa2EQJzCzrmgoLQw3QOrfBQ2WdsVxg+epKW6Wj1bO22ymiYbQ6/N+WV5NlazGmb3GT3hDKjr4jDUdJ4YXan0M9XlLfey137lRGure0XzgDFq5V8ocjmShMlnnVdvtjIDvdq46OcgBvIFshfk9EwsJJU9XxAEP9nc1+/KjrvCvKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747597; c=relaxed/simple;
-	bh=ek6JnJryzS8nkolvdBO+WcL7txRzhCqyp5AS4yQyerY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LqTC+q7UQ6n+PBbJ45OvNCnIrnNT87mtV1dfyx5H/tm66F7cwKZP+wkgqMkzcuq55wsvB7NrLaetVmb8vcCzbSAbtijpVFriE+relws5zrzP2fISjur9VqM0oSOP9yrQHjpWHP7Du0H9T6K7f5lDLxEiHwtVYJwWospECQCLFvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BPBsh1k4; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa6935b4f35so7406766b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:33:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1733747594; x=1734352394; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Nt1cndHZ8pbXtiRxeB+O52iETLBujQEcUgkGHWv3lYM=;
-        b=BPBsh1k44sW9Uvtngsyo0Z/4E0JbXC/ebAX7UVqfON71LrRfKh6Lhw20HWcf/+WQ0g
-         KRFyY8FarxwJfNT9qAg2a51N+oG9jQ937eE/V1hN9T4vzfp9lAxVKm99v99uz+y8SPei
-         dBmo/qRSHSf6ZOOtlyNkhPryyggxkF2m9D7kPaiVJfC2M+mw/eUtGRJA00FyxW7vPwwn
-         kh/puyj7+ad1J9Rusn+HgTvKlhjaVP1rwu7s8YzubkrDhvwGI70oIOTebzCGUWKlftaf
-         Qavzuhg618riQvM8cV8BBJBuyutVbnqPshwOTI5SCUJNXsGPHpyaQDoa3TlbFTJ32QGg
-         RTRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733747594; x=1734352394;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Nt1cndHZ8pbXtiRxeB+O52iETLBujQEcUgkGHWv3lYM=;
-        b=vjcjZebFwj9VetDBTwEFi86Bc+jAOrlyAAYJ9nTvrSKDiOHGRkcGqGU+hkPYvtUUZ5
-         OeLgafwe3qB52snw7kfAFMr7B+KgZLTv1ss2inQqMbI6LMg7eV3cACt0u75Cv2ak0y/F
-         YIooSAlGv4bj3cG6h1NTSy8tI4xLwYsosI6JXmfTBi5RGLAUnQlUPvanLCpz55rzHvkp
-         OI6228c8ST+63piR0PKLzRQTNxPD7C6FhE7CdNp40UJnt5HGnUvRtXFvdtYSW+Es6LrT
-         Ri1dAlzMEotI1bVUwv6hJ7t9prZhEe79POpzcFolQt6JtkSW2usa+/fxepzmrhXJJaq/
-         1BJg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5oqGCcJkR2p/tblzqOa4kzjzReJG/h+pgf3hF8L26hReOqB4UC/p34PStsuCJb9PrYJeaTzwkYFnR9H0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2bMAFby2WBXBV4sbfkXIuFRhtFJOfef5ELJkzEq+dEgjloO+G
-	0ItWDW2BSasmMXiY56dOpE0WpYeB8pKxheyl5iG+kE09MptK3ZwxBEgO/EG/ZmY=
-X-Gm-Gg: ASbGncvLZqiTjiAxa9lYGgz/fLfQe5W0Lf784ihYAdpJgxW9CEciCDRfnRsW5XZYte6
-	TUF9aeCwRztmudMl4aO1kXl5TdXvMx2NE1XiIK+Jv8O0nTCOwskDfDGRf/EJkNtEuohxTm/1M2Z
-	ZOgu54P2pRdY4apHdIDdW93CTuiAdtAZxmyZZdzhk+al9EKaY8pHyAD2KbQAUsS6oCIBq0OHjv2
-	nPLtzxUW7COrbtOEA35t3r8U8Id4mcao+qmq3twt7256wi3fusltk1bvJRCO3XsdC7jS6e0bzMk
-	LXR1xqLTyGBsJ2bnoQjdAehe30enIRheeL90GH7Tizo5CddpxJA0kqI=
-X-Google-Smtp-Source: AGHT+IHhdX0FdatIb0ng+WxBrxtwY6KW2ibAnH43Vj2dTr2Rwd6wvnDl6sDEJjcdHu0Fke7nx/YjOQ==
-X-Received: by 2002:a17:907:3fa8:b0:a9a:8216:2f4d with SMTP id a640c23a62f3a-aa639fa5dfamr461325766b.3.1733747593866;
-        Mon, 09 Dec 2024 04:33:13 -0800 (PST)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa62601b5fesm672536266b.117.2024.12.09.04.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 04:33:13 -0800 (PST)
-Date: Mon, 9 Dec 2024 13:33:09 +0100
-From: Petr Tesarik <ptesarik@suse.com>
-To: Valentin Schneider <vschneid@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Dave Hansen
- <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org, linux-mm@kvack.org,
- bpf@vger.kernel.org, x86@kernel.org, rcu@vger.kernel.org,
- linux-kselftest@vger.kernel.org, Steven Rostedt <rostedt@goodmis.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Paolo Bonzini <pbonzini@redhat.com>,
- Wanpeng Li <wanpengli@tencent.com>, Vitaly Kuznetsov <vkuznets@redhat.com>,
- Andy Lutomirski <luto@kernel.org>, Frederic Weisbecker
- <frederic@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, Neeraj
- Upadhyay <quic_neeraju@quicinc.com>, Joel Fernandes
- <joel@joelfernandes.org>, Josh Triplett <josh@joshtriplett.org>, Boqun Feng
- <boqun.feng@gmail.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Lai Jiangshan <jiangshanlai@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, Uladzislau Rezki
- <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>, Lorenzo Stoakes
- <lstoakes@gmail.com>, Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron
- <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>, Sami Tolvanen
- <samitolvanen@google.com>, Ard Biesheuvel <ardb@kernel.org>, Nicholas
- Piggin <npiggin@gmail.com>, Juerg Haefliger
- <juerg.haefliger@canonical.com>, Nicolas Saenz Julienne
- <nsaenz@kernel.org>, "Kirill A. Shutemov"
- <kirill.shutemov@linux.intel.com>, Nadav Amit <namit@vmware.com>, Dan
- Carpenter <error27@gmail.com>, Chuang Wang <nashuiliang@gmail.com>, Yang
- Jihong <yangjihong1@huawei.com>, Petr Mladek <pmladek@suse.com>, "Jason A.
- Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>, Julian Pidancet
- <julian.pidancet@oracle.com>, Tom Lendacky <thomas.lendacky@amd.com>,
- Dionna Glaze <dionnaglaze@google.com>, Thomas =?UTF-8?B?V2Vpw59zY2h1aA==?=
- <linux@weissschuh.net>, Juri Lelli <juri.lelli@redhat.com>, Marcelo Tosatti
- <mtosatti@redhat.com>, Yair Podemsky <ypodemsk@redhat.com>, Daniel Wagner
- <dwagner@suse.de>
-Subject: Re: [RFC PATCH v3 13/15] context_tracking,x86: Add infrastructure
- to defer kernel TLBI
-Message-ID: <20241209133309.794439ca@mordecai.tesarici.cz>
-In-Reply-To: <xhsmh1pyh6p0k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-References: <20241119153502.41361-1-vschneid@redhat.com>
-	<20241119153502.41361-14-vschneid@redhat.com>
-	<20241120152216.GM19989@noisy.programming.kicks-ass.net>
-	<20241120153221.GM38972@noisy.programming.kicks-ass.net>
-	<xhsmhldxdhl7b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-	<20241121111221.GE24774@noisy.programming.kicks-ass.net>
-	<4b562cd0-7500-4b3a-8f5c-e6acfea2896e@intel.com>
-	<20241121153016.GL39245@noisy.programming.kicks-ass.net>
-	<20241205183111.12dc16b3@mordecai.tesarici.cz>
-	<xhsmh1pyh6p0k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1733747635; c=relaxed/simple;
+	bh=90LZ+Evt7FIlGaQoVaS21uPUYTbbkpGjqA2UbseEa5k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ikng94nseAk6dWjfRl5x3T1u+guwHwQWlAuKBybQGU5nLED5bX7Iu2+y9l4B5G+6Zjh2jNN/PQ+IQbuS+nM08tmN2K8DAGZpRxzpVhh0xwHUOZKnTX/jf3PmRj5lwlgLBrzrI8xQJfoj42xxXFhB9/yROGkDThDUyNEjlFLPioA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y3bBtckU; arc=none smtp.client-ip=117.135.210.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=zTITi
+	GeREwkYl45xFvAAln+/4PJl+8HFXJtjEDpFgiU=; b=Y3bBtckU0AKYCh0Oc5g5k
+	5XLZAkhP4+PzUoxD9x1lp8Eclt+y67RvxcPRB4Jqpx62FZ2z5Es9iHOay/9XOSCq
+	jlOPRtYPGDzhhFoBpw+rcFdENRF+5t/6wnSRyHgT2ggr7B6YSnxMDDm8i4KdMiYC
+	LdugxMo1kMCwtMyPFm/D/8=
+Received: from ProDesk.. (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgDXvw6P41ZnqMLvAg--.38878S2;
+	Mon, 09 Dec 2024 20:33:23 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	detlev.casanova@collabora.com,
+	Andy Yan <andy.yan@rock-chips.com>,
+	Michael Riesch <michael.riesch@wolfvision.net>
+Subject: [PATCH v5 12/18] drm/rockchip: vop2: Support for different layer select configuration between VPs
+Date: Mon,  9 Dec 2024 20:33:16 +0800
+Message-ID: <20241209123318.2781950-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241209122943.2781431-1-andyshrk@163.com>
+References: <20241209122943.2781431-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgDXvw6P41ZnqMLvAg--.38878S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtrW8JF4UZF47Zw18Gry8Xwb_yoWfGr4Dpa
+	yUursIg3W5CF45tryUJay8Zr4rGwnxtay3uan3Kw1xGF1rKrWDJF4ktF93A3Z8KF93ZryU
+	Xw1YgryDZrZrtFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jF-eOUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiMwWwXmdW3sfNVwABsr
 
-On Mon, 09 Dec 2024 13:04:43 +0100
-Valentin Schneider <vschneid@redhat.com> wrote:
+From: Andy Yan <andy.yan@rock-chips.com>
 
-> On 05/12/24 18:31, Petr Tesarik wrote:
-> > On Thu, 21 Nov 2024 16:30:16 +0100
-> > Peter Zijlstra <peterz@infradead.org> wrote:
-> >  
-> >> On Thu, Nov 21, 2024 at 07:07:44AM -0800, Dave Hansen wrote:  
-> >> > On 11/21/24 03:12, Peter Zijlstra wrote:  
-> >> > >> I see e.g. ds_clear_cea() clears PTEs that can have the _PAGE_GLOBAL flag,
-> >> > >> and it correctly uses the non-deferrable flush_tlb_kernel_range().  
-> >> > >
-> >> > > I always forget what we use global pages for, dhansen might know, but
-> >> > > let me try and have a look.
-> >> > >
-> >> > > I *think* we only have GLOBAL on kernel text, and that only sometimes.  
-> >> >
-> >> > I think you're remembering how _PAGE_GLOBAL gets used when KPTI is in play.  
-> >>
-> >> Yah, I suppose I am. That was the last time I had a good look at this
-> >> stuff :-)
-> >>  
-> >> > Ignoring KPTI for a sec... We use _PAGE_GLOBAL for all kernel mappings.
-> >> > Before PCIDs, global mappings let the kernel TLB entries live across CR3
-> >> > writes. When PCIDs are in play, global mappings let two different ASIDs
-> >> > share TLB entries.  
-> >>
-> >> Hurmph.. bah. That means we do need that horrible CR4 dance :/  
-> >
-> > In general, yes.
-> >
-> > But I wonder what exactly was the original scenario encountered by
-> > Valentin. I mean, if TLB entry invalidations were necessary to sync
-> > changes to kernel text after flipping a static branch, then it might be
-> > less overhead to make a list of affected pages and call INVLPG on them.
-> >
-> > AFAIK there is currently no such IPI function for doing that, but if we
-> > could add one. If the list of invalidated global pages is reasonably
-> > short, of course.
-> >
-> > Valentin, do you happen to know?
-> >  
-> 
-> So from my experimentation (hackbench + kernel compilation on housekeeping
-> CPUs, dummy while(1) userspace loop on isolated CPUs), the TLB flushes only
-> occurred from vunmap() - mainly from all the hackbench threads coming and
-> going.
-> 
-> Static branch updates only seem to trigger the sync_core() IPI, at least on
-> x86.
+In the upcoming VOP for rk3576, every VP has it's own LAYER_SEL
+register, and the configuration value of each VP for the same
+window maybe different, so extend the layer_sel_id to array,
+let it can descption the layer select configuration value for
+different VP.
 
-Thank you, this is helpful.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
+Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
 
-So, these allocations span more than tlb_single_page_flush_ceiling
-pages (default 33). Is THP enabled? If yes, we could possibly get below
-that threshold by improving flushing of huge pages (cf. footnote [1] in
-Documentation/arch/x86/tlb.rst).
+---
 
-OTOH even though a series of INVLPG may reduce subsequent TLB misses,
-it will not exactly improve latency, so it would go against the main
-goal of this whole patch series.
+(no changes since v4)
 
-Hmmm... I see, the CR4 dance is the best solution after all. :-|
+Changes in v4:
+- Typo fix: selet->select
 
-Petr T
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h |  4 +--
+ drivers/gpu/drm/rockchip/rockchip_vop2_reg.c | 38 ++++++++++----------
+ 2 files changed, 22 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+index a867e154801a..dcfa791be99d 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+@@ -166,9 +166,9 @@ struct vop2_win_data {
+ 	const unsigned int supported_rotations;
+ 
+ 	/**
+-	 * @layer_sel_id: defined by register OVERLAY_LAYER_SEL of VOP2
++	 * @layer_sel_id: defined by register OVERLAY_LAYER_SEL or PORTn_LAYER_SEL
+ 	 */
+-	unsigned int layer_sel_id;
++	unsigned int layer_sel_id[ROCKCHIP_MAX_CRTC];
+ 	uint64_t feature;
+ 
+ 	uint8_t axi_bus_id;
+diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+index 0cff1327c38e..80f9debd7aa9 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
++++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
+@@ -350,7 +350,8 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.formats = formats_smart,
+ 		.nformats = ARRAY_SIZE(formats_smart),
+ 		.format_modifiers = format_modifiers,
+-		.layer_sel_id = 3,
++		/* 0xf means this layer can't attached to this VP */
++		.layer_sel_id = { 3, 3, 3, 0xf },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_PRIMARY,
+ 		.max_upscale_factor = 8,
+@@ -363,7 +364,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.nformats = ARRAY_SIZE(formats_smart),
+ 		.format_modifiers = format_modifiers,
+ 		.base = 0x1e00,
+-		.layer_sel_id = 7,
++		.layer_sel_id = { 7, 7, 7, 0xf },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_PRIMARY,
+ 		.max_upscale_factor = 8,
+@@ -376,7 +377,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.nformats = ARRAY_SIZE(formats_rk356x_esmart),
+ 		.format_modifiers = format_modifiers,
+ 		.base = 0x1a00,
+-		.layer_sel_id = 6,
++		.layer_sel_id = { 6, 6, 6, 0xf },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_PRIMARY,
+ 		.max_upscale_factor = 8,
+@@ -389,7 +390,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.nformats = ARRAY_SIZE(formats_rk356x_esmart),
+ 		.format_modifiers = format_modifiers,
+ 		.base = 0x1800,
+-		.layer_sel_id = 2,
++		.layer_sel_id = { 2, 2, 2, 0xf },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_PRIMARY,
+ 		.max_upscale_factor = 8,
+@@ -402,7 +403,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+-		.layer_sel_id = 0,
++		.layer_sel_id = { 0, 0, 0, 0xf },
+ 		.supported_rotations = DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_270 |
+ 					DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y,
+ 		.max_upscale_factor = 4,
+@@ -417,7 +418,7 @@ static const struct vop2_win_data rk3568_vop_win_data[] = {
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+-		.layer_sel_id = 1,
++		.layer_sel_id = { 1, 1, 1, 0xf },
+ 		.supported_rotations = DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_270 |
+ 					DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_OVERLAY,
+@@ -582,7 +583,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+-		.layer_sel_id = 0,
++		.layer_sel_id = { 0, 0, 0, 0 },
+ 		.supported_rotations = DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_270 |
+ 				       DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y,
+ 		.axi_bus_id = 0,
+@@ -600,7 +601,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+-		.layer_sel_id = 1,
++		.layer_sel_id = { 1, 1, 1, 1 },
+ 		.supported_rotations = DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_270 |
+ 				       DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_PRIMARY,
+@@ -618,7 +619,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+-		.layer_sel_id = 4,
++		.layer_sel_id = { 4, 4, 4, 4 },
+ 		.supported_rotations = DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_270 |
+ 				       DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_PRIMARY,
+@@ -636,7 +637,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.formats = formats_cluster,
+ 		.nformats = ARRAY_SIZE(formats_cluster),
+ 		.format_modifiers = format_modifiers_afbc,
+-		.layer_sel_id = 5,
++		.layer_sel_id =  { 5, 5, 5, 5 },
+ 		.supported_rotations = DRM_MODE_ROTATE_90 | DRM_MODE_ROTATE_270 |
+ 				       DRM_MODE_REFLECT_X | DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_PRIMARY,
+@@ -654,7 +655,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+ 		.base = 0x1800,
+-		.layer_sel_id = 2,
++		.layer_sel_id = { 2, 2, 2, 2 },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_OVERLAY,
+ 		.axi_bus_id = 0,
+@@ -670,7 +671,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+ 		.base = 0x1a00,
+-		.layer_sel_id = 3,
++		.layer_sel_id = { 3, 3, 3, 3 },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_OVERLAY,
+ 		.axi_bus_id = 0,
+@@ -686,7 +687,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.formats = formats_esmart,
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+-		.layer_sel_id = 6,
++		.layer_sel_id =  { 6, 6, 6, 6 },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_OVERLAY,
+ 		.axi_bus_id = 1,
+@@ -702,7 +703,7 @@ static const struct vop2_win_data rk3588_vop_win_data[] = {
+ 		.nformats = ARRAY_SIZE(formats_esmart),
+ 		.format_modifiers = format_modifiers,
+ 		.base = 0x1e00,
+-		.layer_sel_id = 7,
++		.layer_sel_id =  { 7, 7, 7, 7 },
+ 		.supported_rotations = DRM_MODE_REFLECT_Y,
+ 		.type = DRM_PLANE_TYPE_OVERLAY,
+ 		.axi_bus_id = 1,
+@@ -1452,7 +1453,7 @@ static void rk3568_vop2_setup_layer_mixer(struct vop2_video_port *vp)
+ 		 */
+ 		for (old_layer_id = 0; old_layer_id < vop2->data->win_size; old_layer_id++) {
+ 			layer_sel_id = (layer_sel >> (4 * old_layer_id)) & 0xf;
+-			if (layer_sel_id == win->data->layer_sel_id)
++			if (layer_sel_id == win->data->layer_sel_id[vp->id])
+ 				break;
+ 		}
+ 
+@@ -1462,7 +1463,7 @@ static void rk3568_vop2_setup_layer_mixer(struct vop2_video_port *vp)
+ 		for (i = 0; i < vop2->data->win_size; i++) {
+ 			old_win = &vop2->win[i];
+ 			layer_sel_id = (layer_sel >> (4 * (plane->state->normalized_zpos + ofs))) & 0xf;
+-			if (layer_sel_id == old_win->data->layer_sel_id)
++			if (layer_sel_id == old_win->data->layer_sel_id[vp->id])
+ 				break;
+ 		}
+ 
+@@ -1512,13 +1513,14 @@ static void rk3568_vop2_setup_layer_mixer(struct vop2_video_port *vp)
+ 		layer_sel &= ~RK3568_OVL_LAYER_SEL__LAYER(plane->state->normalized_zpos + ofs,
+ 							  0x7);
+ 		layer_sel |= RK3568_OVL_LAYER_SEL__LAYER(plane->state->normalized_zpos + ofs,
+-							 win->data->layer_sel_id);
++							 win->data->layer_sel_id[vp->id]);
+ 		/*
+ 		 * When we bind a window from layerM to layerN, we also need to move the old
+ 		 * window on layerN to layerM to avoid one window selected by two or more layers.
+ 		 */
+ 		layer_sel &= ~RK3568_OVL_LAYER_SEL__LAYER(old_layer_id, 0x7);
+-		layer_sel |= RK3568_OVL_LAYER_SEL__LAYER(old_layer_id, old_win->data->layer_sel_id);
++		layer_sel |= RK3568_OVL_LAYER_SEL__LAYER(old_layer_id,
++			     old_win->data->layer_sel_id[vp->id]);
+ 	}
+ 
+ 	vop2_writel(vop2, RK3568_OVL_LAYER_SEL, layer_sel);
+-- 
+2.34.1
+
 
