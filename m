@@ -1,30 +1,30 @@
-Return-Path: <linux-kernel+bounces-437638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CF19E966A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:20:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98B539E966E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:20:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D6AC16375C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:17:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DA9D188893B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF3B21B8F5;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316A01C5CD0;
 	Mon,  9 Dec 2024 13:08:04 +0000 (UTC)
 Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050411C5CAA
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D5D1B4259
 	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:08:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749683; cv=none; b=eN9OF62c6Mx/QFSyDl2OkvHo3aD6TJojTD5NcOe9VgMOR+j1AsVQ7my4vPxjQL7MzRerFT2+bjR/itae2+YNw4c2rKBFrD4KEJDHeEzs9VKnsmjlscCbCQhEMPOUO6zCrqr06dF5qUpHLeVQ/aogs4t3j8qilUPJ8L1xKEpPb1o=
+	t=1733749683; cv=none; b=tAmIhjjjFvYFAtdjFeI8BeJmi2kCjQzCbDvKe6BKCAdB00nQb0f85vjSSai8RQztoCDC5dgVLs9DYp3nGF+DgYU47cyNDaE+k6WIuLfL//sxZ9q0usPpxdqMRqHi70e0tgllwFYdxxI3z/Gk+4rA+YipgSZLN5ZeN2Ih/KDgC+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733749683; c=relaxed/simple;
-	bh=kCCfcs5qWKbWNrkYGX7ewBGKk+ZoMqqsF7UlhigcN4o=;
+	bh=Mdid41HpR/uZUM79Qmv1K9Q8mfecEHCml7VhDgPU3vE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=afXsowliHGqJL8q9MiamwVPhOo/vUavTSJ7eL1Vlb956SeUvaqBbSHGg8p068HLJO5vXogBI9wCAF76FAMN6DGGvjY8rb75cOIfNIoen4q9Xm18FIAE6eLv/htDLBHR/VSY4U6ahiV5HkItoHWpuhtTWymnq4YujmBcDBa28kgI=
+	 MIME-Version; b=HkoLn2oH1wgvVl1mbI6JIaciiI3nHh2Uy1rh1l03DcneNX0x1ibfksexhTh5J6zemrxtTB+2LdoLtAedxLdHWb7VIIckkBG3dGXrcKUWJiiClsuf2FC3et2bwthoDHTv8Y/xSrg6wj70QsGB+JHv5SNNiGqAF4tp9yMN3e/Vrg0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
@@ -32,16 +32,16 @@ Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
 	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
 	(Exim 4.92)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUP-0004RE-PK; Mon, 09 Dec 2024 14:07:53 +0100
+	id 1tKdUP-0004RI-PL; Mon, 09 Dec 2024 14:07:53 +0100
 Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
 	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUN-002W7V-1x;
+	id 1tKdUN-002W7X-2B;
 	Mon, 09 Dec 2024 14:07:52 +0100
 Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
 	(envelope-from <ore@pengutronix.de>)
-	id 1tKdUO-002wyG-0x;
+	id 1tKdUO-002wyR-10;
 	Mon, 09 Dec 2024 14:07:52 +0100
 From: Oleksij Rempel <o.rempel@pengutronix.de>
 To: "David S. Miller" <davem@davemloft.net>,
@@ -56,9 +56,9 @@ Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
 	netdev@vger.kernel.org,
 	UNGLinuxDriver@microchip.com,
 	Phil Elwell <phil@raspberrypi.org>
-Subject: [PATCH net-next v1 09/11] net: usb: lan78xx: Improve error handling in lan78xx_phy_wait_not_busy
-Date: Mon,  9 Dec 2024 14:07:49 +0100
-Message-Id: <20241209130751.703182-10-o.rempel@pengutronix.de>
+Subject: [PATCH net-next v1 10/11] net: usb: lan78xx: Rename lan78xx_phy_wait_not_busy to lan78xx_mdiobus_wait_not_busy
+Date: Mon,  9 Dec 2024 14:07:50 +0100
+Message-Id: <20241209130751.703182-11-o.rempel@pengutronix.de>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20241209130751.703182-1-o.rempel@pengutronix.de>
 References: <20241209130751.703182-1-o.rempel@pengutronix.de>
@@ -74,38 +74,73 @@ X-SA-Exim-Mail-From: ore@pengutronix.de
 X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
 X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Update `lan78xx_phy_wait_not_busy` to forward errors from
-`lan78xx_read_reg` instead of overwriting them with `-EIO`. Replace
-`-EIO` with `-ETIMEDOUT` for timeout cases, providing more specific and
-appropriate error codes.
+Rename `lan78xx_phy_wait_not_busy` to `lan78xx_mdiobus_wait_not_busy`
+for clarity and accuracy, as the function operates on the MII bus rather
+than a specific PHY. Update all references to reflect the new name.
 
 Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
 ---
- drivers/net/usb/lan78xx.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/net/usb/lan78xx.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/net/usb/lan78xx.c b/drivers/net/usb/lan78xx.c
-index fdeb95db529b..9852526be002 100644
+index 9852526be002..0403aea1a9fa 100644
 --- a/drivers/net/usb/lan78xx.c
 +++ b/drivers/net/usb/lan78xx.c
-@@ -961,14 +961,14 @@ static int lan78xx_phy_wait_not_busy(struct lan78xx_net *dev)
- 
- 	do {
- 		ret = lan78xx_read_reg(dev, MII_ACC, &val);
--		if (unlikely(ret < 0))
--			return -EIO;
-+		if (ret < 0)
-+			return ret;
- 
- 		if (!(val & MII_ACC_MII_BUSY_))
- 			return 0;
- 	} while (!time_after(jiffies, start_time + HZ));
- 
--	return -EIO;
-+	return -ETIMEDOUT;
+@@ -953,7 +953,7 @@ static int lan78xx_flush_rx_fifo(struct lan78xx_net *dev)
  }
  
- static inline u32 mii_access(int id, int index, int read)
+ /* Loop until the read is completed with timeout called with phy_mutex held */
+-static int lan78xx_phy_wait_not_busy(struct lan78xx_net *dev)
++static int lan78xx_mdiobus_wait_not_busy(struct lan78xx_net *dev)
+ {
+ 	unsigned long start_time = jiffies;
+ 	u32 val;
+@@ -1602,7 +1602,7 @@ static int lan78xx_mac_reset(struct lan78xx_net *dev)
+ 	 * bus can result in the MAC interface locking up and not
+ 	 * completing register access transactions.
+ 	 */
+-	ret = lan78xx_phy_wait_not_busy(dev);
++	ret = lan78xx_mdiobus_wait_not_busy(dev);
+ 	if (ret < 0)
+ 		goto mac_reset_done;
+ 
+@@ -2243,7 +2243,7 @@ static int lan78xx_mdiobus_read(struct mii_bus *bus, int phy_id, int idx)
+ 	mutex_lock(&dev->phy_mutex);
+ 
+ 	/* confirm MII not busy */
+-	ret = lan78xx_phy_wait_not_busy(dev);
++	ret = lan78xx_mdiobus_wait_not_busy(dev);
+ 	if (ret < 0)
+ 		goto done;
+ 
+@@ -2253,7 +2253,7 @@ static int lan78xx_mdiobus_read(struct mii_bus *bus, int phy_id, int idx)
+ 	if (ret < 0)
+ 		goto done;
+ 
+-	ret = lan78xx_phy_wait_not_busy(dev);
++	ret = lan78xx_mdiobus_wait_not_busy(dev);
+ 	if (ret < 0)
+ 		goto done;
+ 
+@@ -2284,7 +2284,7 @@ static int lan78xx_mdiobus_write(struct mii_bus *bus, int phy_id, int idx,
+ 	mutex_lock(&dev->phy_mutex);
+ 
+ 	/* confirm MII not busy */
+-	ret = lan78xx_phy_wait_not_busy(dev);
++	ret = lan78xx_mdiobus_wait_not_busy(dev);
+ 	if (ret < 0)
+ 		goto done;
+ 
+@@ -2299,7 +2299,7 @@ static int lan78xx_mdiobus_write(struct mii_bus *bus, int phy_id, int idx,
+ 	if (ret < 0)
+ 		goto done;
+ 
+-	ret = lan78xx_phy_wait_not_busy(dev);
++	ret = lan78xx_mdiobus_wait_not_busy(dev);
+ 	if (ret < 0)
+ 		goto done;
+ 
 -- 
 2.39.5
 
