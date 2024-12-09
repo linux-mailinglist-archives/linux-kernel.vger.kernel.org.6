@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-436975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EA8F9E8D6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:31:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A9CD09E8D66
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:30:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41D34281D6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:30:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58982282655
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:30:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE665215077;
-	Mon,  9 Dec 2024 08:30:56 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF0621518F;
+	Mon,  9 Dec 2024 08:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4qev80Z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DA41C0DED
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F9B2156F3;
+	Mon,  9 Dec 2024 08:30:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733733056; cv=none; b=RT1v/Qmp/c5HcF0wGddx9UQplfnTrPVIEcw5fsmGFRYHBTUPSc5ZmfV4Xwe/kHSXX8Mtq5bY77Kvm9/7l/W7J5gXc1eMeR4RZTnepYL0M65fM6qFrISTt1LV+EXNn0YQbLSEpxOJidbYbqqAlfI6c4/xoedRvTb9Dwgp/Jvup3U=
+	t=1733733002; cv=none; b=YKpxNn88GyZ0WmUEVXsFF/s3xjY+pguJn9giImv4Ck68M+/D5eD2cLYhEmoeWbYBuvflF1jqjJuwdNvyZSSkZ9Mv91Gi2w3jdzt7JRPWKlUuXsuq8TTe+GEmnhJm6ZKFDhc2IQn5fFR8hppavspUIsse2AVXU3rZ+ASLy4Bp4lg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733733056; c=relaxed/simple;
-	bh=VnugjWMxy9vnbgvxMaqOGzmJqRs3foJyoyjhqB0RijE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=aIwY0Lg54eknDAgViz+LlrxZnh6WV4FLy9t3FhlIq/IiG2wBNhy68/SgaoI+Xs4O4LU9ja6bToxZlyWRDW1SafIVHAZvp6KhiPPZuK6iivlXRAziSpXhwsI5qb9mm2vv8OSV2REopInmq93p44PhM+7NOYTu1rLZvbQjhyts0PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434f80457a4so3528945e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 00:30:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733733053; x=1734337853;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uvI82vcivs+7i1qjX3nrH+6GW+65oOxYP4PhLZywbXY=;
-        b=eqC5u3fC+qxGr9GraRWdp5HCyugtCDR8dv//BShSBl+aYV2qr2onJ9fO4pDzPB7bDW
-         SF64RdQYwQWXtG+gMhoAvVY5JyA6uRVHUGGh16MVMMpGnKiE/rRLhe6VOIT9Qd/+P/Zp
-         87A5FmFyyWxBBK6k+4AYA7BmulyWWbSGE57V38/OjjXYB8yt6JCPNX+oQKmXs3M8APWM
-         aFhU70IiOuV/yVRxrjjaCJaH4wCuYrmFtiTgXPsiGGpGe1ua7aYfkDOeOc72CYaWxHy6
-         t5JXnsyQm+BlrdCzgJ/CTR6mwij3hO2lP9ezTzGz0eWdz4QCzhWMoXd5WRaWGs7aR5Th
-         vf3w==
-X-Forwarded-Encrypted: i=1; AJvYcCXXZaonrDfKczyzl7D8KjYCj3L4Dd+pbxvMs6yrvP5IceulTaYnlz81BrgCykhWEL44M0lrbX78GzjhEPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWfbBiESl2JJ8biXLcEhIUWpdAL0FOhNFM08hT6xyNJGkMw2ur
-	gKmYbGzSo/9HCyB8MFKQGqj2fgAI5tVWLG6YDuhoeASY5S2IfGPP
-X-Gm-Gg: ASbGncsHzCg/gStvF6CB46f5C1aujoEmzei400V4RYIId2HDJrOqa1Cw8rtAmVGLgUL
-	a2boAZRNhKiSphOksKyAdphnvuUIa7DBkmR8e4I6vm3wgxB1Q0CCf9P5g2IwGz04jwVKs/lnsHZ
-	9IGwRk/NahTUyTdPgM9ev6Cw+IQoaKXcbeWv34boOzGA5CrE2UwZp5G4NqK1uSxvfAwHT5atUZq
-	IFff88+RP6y99NcnZN7/swY0KUDRYp6kyvkCQcimEotWYOj3u7jSUc1mGD4In7wf5Q=
-X-Google-Smtp-Source: AGHT+IGNl9d5+7jtlWQkpHc2oXXfeBP2cTm4F+xLFNz0wluBzzm8gDfkX/+cxMv0BPUnYLgEmk67Mw==
-X-Received: by 2002:a05:600c:4f4d:b0:434:fe3c:c662 with SMTP id 5b1f17b1804b1-434fe3cc9d8mr3233445e9.12.1733733052983;
-        Mon, 09 Dec 2024 00:30:52 -0800 (PST)
-Received: from costa-tp.redhat.com ([2a00:a041:e280:5300:9068:704e:a31a:c135])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f9da4cd0sm24295375e9.26.2024.12.09.00.30.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 00:30:51 -0800 (PST)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	=?UTF-8?q?Ren=C3=A9=20Nyffenegger?= <mail@renenyffenegger.ch>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] scripts/tags.sh: Tag timer definitions
-Date: Mon,  9 Dec 2024 10:29:57 +0200
-Message-ID: <20241209083004.911013-2-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733733002; c=relaxed/simple;
+	bh=hefcKfevFSAoEM61KtOENmpzPHMyrIir5nAPgdsgUUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bEe2+Jvd4zkwU5pYj+//KQzvSJSW7YGaq348dMR148oXCVYhKE9RljQNXxwEUAQThg0EEpDWgRc24mGOGuyjwQwql0F6vawxVFJCVHOEBKCMBGKLBxrkPO0AUgSdrNlUDSmzA0PrdBI8Y2BoBc8Gp9v3HRS900FZw90IPysCh+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4qev80Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAC0C4CED1;
+	Mon,  9 Dec 2024 08:30:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733733002;
+	bh=hefcKfevFSAoEM61KtOENmpzPHMyrIir5nAPgdsgUUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=L4qev80ZqVUxrGI/ByF3mlXqjOKaEr1fR9eE4OFZKnGQGbFBxFTdRXD/bo3oEqw3h
+	 3szdQa5l8oF0epWqAgq2vhdoP/gahZ+jeZDGUyPAjs50bqP74JEdGz82qWiGdwa9NA
+	 GL4gE/t9WU+AWxNr4zkHVEejbO8oTPCxl8H63ZlnknrUV4TXUbxnVfsHTRLm6A3Cne
+	 RVHMU3DWI2di8PHY/T7uZLByn/jLyW+d7jkiWimsAoFzKD+67e9olj5WuGDX/opxr6
+	 H5o0XX9z6ZSiB6EgaDaKVuYZfE1Jss+P/Gc92dj5cjgc/0YU1kkeUK2o/WeDpx4KVu
+	 QACsk5uUYtg8w==
+Date: Mon, 9 Dec 2024 09:29:58 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Markuss Broks <markuss.broks@gmail.com>
+Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Tudor Ambarus <tudor.ambarus@linaro.org>, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	alim.akhtar@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org, 
+	kernel-team@android.com, willmcvicker@google.com, peter.griffin@linaro.org, 
+	javierm@redhat.com, tzimmermann@suse.de, vincent.guittot@linaro.org, 
+	ulf.hansson@linaro.org, arnd@arndb.de
+Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
+Message-ID: <faghtvhan6xmhoezeaocmdusxkmy4g3vrldzn7mlukbh33isr6@c27o6p7a6a6f>
+References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
+ <20241205175345.201595-3-tudor.ambarus@linaro.org>
+ <ce757b8e-4e6c-4ba9-9483-b57e6e230fdf@linaro.org>
+ <vxqi23hxw7bmtfs5wk3u7szganpv5aa74b26xrvpmbehkltodw@dpum7zrxdz44>
+ <2eedbbe1-6b4c-427b-a369-5b08dc27deaf@linaro.org>
+ <0ba62a72-8247-447f-b710-234385a29d14@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <0ba62a72-8247-447f-b710-234385a29d14@gmail.com>
 
-For timer definitions like
-DEFINE_TIMER(mytimer, mytimer_handler);
-ctags generates tags `DEFINE_TIMER` and skips `mytimer`
-because it doesn't expand the DEFINE_TIMER macro.
+On Sun, Dec 08, 2024 at 06:38:50PM +0200, Markuss Broks wrote:
+>=20
+> On 12/6/24 9:50 PM, Daniel Lezcano wrote:
+> > On 12/6/24 14:28, Krzysztof Kozlowski wrote:
+> > > On Fri, Dec 06, 2024 at 12:39:56AM +0100, Daniel Lezcano wrote:
+> > > > > +# SPDX-License-Identifier: GPL-2.0-only
+> > > > > +
+> > > > > +config EXYNOS_ACPM_PROTOCOL
+> > > > > +=C2=A0=C2=A0=C2=A0 tristate "Exynos Alive Clock and Power Manage=
+r (ACPM)
+> > > > > Message Protocol"
+> > > >=20
+> > > > Given the importance of this driver where a lot of PM services
+> > > > rely on, does
+> > > > it really make sense to allow it as a module ?
+> > > >=20
+> > > > Some PM services may be needed very early in the boot process
+> > > >=20
+> > >=20
+> > > If it works as module e.g. on Android, it is beneficial. I think the
+> > > platform was booting fine without it, at least to some shell, so I can
+> > > imagine this can be loaded a bit later.
+> >=20
+> > Usually the firmware sets the frequency to the maximum in order to boot
+> > the kernel as fast as possible. That may lead to thermal issues at boot
+> > time where the thermal framework won't be able to kick in as some
+> > components will depends on ACPM while the system stays at its highest
+> > performance state.
 
-Configure ctags to generate tag for `mytimer`
-ans skip the `DEFINE_TIMER` tag in such cases.
+I disagree with the first assumption: usually firmware selects high, but
+safe frequency. Otherwise you would not be able to wait in bootloader
+prompt.
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
----
-v2: elaborate description
+> Also, as far as I understand, ACPM is used here as an interface to the PM=
+IC,
+> so every driver which would need power management from the main SoC PMIC
+> would get deferred until the ACPM module has been loaded. This would make=
+ it
 
- scripts/tags.sh | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+It was an issue 10 years ago, not anymore. Drivers handle deferred
+probe.
 
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index b21236377998..7102f14fc775 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -188,6 +188,7 @@ regex_c=(
- 	'/^PCI_OP_WRITE([[:space:]]*\(\w*\).*[1-4])/pci_bus_write_config_\1/'
- 	'/\<DEFINE_\(RT_MUTEX\|MUTEX\|SEMAPHORE\|SPINLOCK\)([[:space:]]*\([[:alnum:]_]*\)/\2/v/'
- 	'/\<DEFINE_\(RAW_SPINLOCK\|RWLOCK\|SEQLOCK\)([[:space:]]*\([[:alnum:]_]*\)/\2/v/'
-+	'/\<DEFINE_TIMER(\([^,)]*\),/\1/'
- 	'/\<DECLARE_\(RWSEM\|COMPLETION\)([[:space:]]*\([[:alnum:]_]\+\)/\2/v/'
- 	'/\<DECLARE_BITMAP([[:space:]]*\([[:alnum:]_]\+\)/\1/v/'
- 	'/\(^\|\s\)\(\|L\|H\)LIST_HEAD([[:space:]]*\([[:alnum:]_]*\)/\3/v/'
-@@ -260,7 +261,7 @@ exuberant()
- 	# identifiers to ignore by ctags
- 	local ign=(
- 		ACPI_EXPORT_SYMBOL
--		DEFINE_{TRACE,MUTEX}
-+		DEFINE_{TRACE,MUTEX,TIMER}
- 		EXPORT_SYMBOL EXPORT_SYMBOL_GPL
- 		EXPORT_TRACEPOINT_SYMBOL EXPORT_TRACEPOINT_SYMBOL_GPL
- 		____cacheline_aligned ____cacheline_aligned_in_smp
--- 
-2.47.0
+> impossible to e.g. initialize the UFS or the MMC card before initramfs.
+
+Which is not a problem, because you are supposed to have initramfs. This
+is preferred way. Being this a module does not force you to use it as a
+module, e.g. if in your setup you do not have initramfs (although it is
+unlikely for arm64 platforms...).
+
+Best regards,
+Krzysztof
 
 
