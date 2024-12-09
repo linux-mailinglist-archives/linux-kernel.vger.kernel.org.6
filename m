@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-437526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699649E946A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:38:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3972164C2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:38:15 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B34227581;
-	Mon,  9 Dec 2024 12:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="bTTEruUY"
-Received: from out199-18.us.a.mail.aliyun.com (out199-18.us.a.mail.aliyun.com [47.90.199.18])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EBE39E9463
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:38:06 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4E6227562;
-	Mon,  9 Dec 2024 12:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.199.18
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA34F2847BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:38:04 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FA5224894;
+	Mon,  9 Dec 2024 12:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mFQDkCw6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EC82236EF;
+	Mon,  9 Dec 2024 12:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747826; cv=none; b=sbo+edoIww5LxSi8IujDtZoic1wf4St8VI45i2mqCPUQu9eqm9UbZt/pMrbNXZMpby2Y4pfVp4nNjitYkORduPJG/HTGl7UsiF1xd0q2QCa1pCi9PrawBVjlsVcC1fWmBWvyvVv3tQQfD3rdbHSLbc4CrNKyLTMzRMRo7NufxTA=
+	t=1733747816; cv=none; b=hlzeOVH9uQGCGQdz9QVZQZZ18BjS1JV6s5bl18WQVFUEZdepvvf3eStLfuX3tbKgDlqEoHbLlcTM2YIfaS0+o7DCrcY2lH+1kAOQXJf/JKAGSpyhNASPzwu5DCJtCsOVZhjxUuR5k6FADIH5lHZKkm+oT7fb26WSu+seWDteNW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747826; c=relaxed/simple;
-	bh=i/Onhqwmf/fv4z4xdhqlB8vf3AAv71umzV18RWniTmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g2UJwzfZ3xOoCGo6BnpvB5eyNnHimza9lq3hSlZ1KS41fCR/8OMsotZYaRz8ncQ9JpKnwigLQvolxC2QKhZES2EUQyfvrHyW5H4x6QnX9QeQQaUdqoePM3r3AI3Jv+691rBEas9B4QkP4k4zyvVYJEJZkxspKrEwcPwaQBhN8bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=bTTEruUY; arc=none smtp.client-ip=47.90.199.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1733747809; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=jBO5y5aXzjlJWjCNlZv6s3UK+baFjQ/lEjyaBwH35+c=;
-	b=bTTEruUY7ZlKtD8ENpy5JX7DaIdI0rpTTNMMuAN7lXig2cyVFkY7iVU9gh3Sc6fcmcqiaT9D7dal08Sf8e6TjRwzW4B7ho7ieI5yihS8Qz2tWdFjGTDxB3UplqMNqOW0xAJD838xhNYBzmJhFvaFnEWpt/mqc/o+qc5aRjusHLg=
-Received: from 30.221.100.140(mailfrom:guangguan.wang@linux.alibaba.com fp:SMTPD_---0WL8e8RW_1733747806 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 09 Dec 2024 20:36:48 +0800
-Message-ID: <85d1c6e1-0fe3-4c71-af4e-8015270b90dc@linux.alibaba.com>
-Date: Mon, 9 Dec 2024 20:36:45 +0800
+	s=arc-20240116; t=1733747816; c=relaxed/simple;
+	bh=fU7JocH+KX+BzHCdE650z9D0sioBzhAoJR1baPJ9Ngw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZKQ4Wf0m+Qc4/X+T6SUAKOpbstU0vXLyW5lwBs0KloRkVOkaDTJ67uNyVxwbWxzDo/5FJ3Lk0WBG7crXfMJ9A6PWLeuvDGXmJzQsn7FSEdE3Kqy/CXIc5prexKGPXorNG/FldZMIMJDtpONpQCO4ZAhGc3ehS4FL+nL00ZW9hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mFQDkCw6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8883C4CED1;
+	Mon,  9 Dec 2024 12:36:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733747816;
+	bh=fU7JocH+KX+BzHCdE650z9D0sioBzhAoJR1baPJ9Ngw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mFQDkCw6uBL0azgpIY8eUxNjE6YkBk2azrXe9L+McetcdErtE6/yzZQW1KGkzae8L
+	 EIZBNnBm1PTpU8QSOnGTKBEZT0aNQu3tssVIncJExa/mw+gvQS9DnSARFC9D9OaxVS
+	 NtMDcw5wdgC6wOgUANPjmm/caAZHx7TL/11Ko3Va4Fp4lHZUVATq1iR3QYtrobj6Q2
+	 3NdPqCF+i3f/W3gcallgUb4xTK3JozQOL/SeO0R/dFPRxDmJt+m8YgR1VtwVctYEYl
+	 AawGR5NwXDhN+K9nj88MOyISvhxsvxbyKlj8I6fl9aS9S10ttHHz3WMGLpWaoyhNi6
+	 P02TeRc1FHPgQ==
+Date: Mon, 9 Dec 2024 12:36:52 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Weizhao Ouyang <o451686892@gmail.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kselftest/arm64: abi: fix SVCR detection
+Message-ID: <3279e669-1ee2-4792-9e10-8b40928de6b4@sirena.org.uk>
+References: <20241209105237.10498-1-o451686892@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next v2 2/2] net/smc: support ipv4 mapped ipv6 addr
- client for smc-r v2
-To: Halil Pasic <pasic@linux.ibm.com>, Wenjia Zhang <wenjia@linux.ibm.com>
-Cc: jaka@linux.ibm.com, alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
- guwen@linux.alibaba.com, davem@davemloft.net, edumazet@google.com,
- kuba@kernel.org, pabeni@redhat.com, horms@kernel.org,
- linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Dust Li <dust.li@linux.alibaba.com>
-References: <20241202125203.48821-1-guangguan.wang@linux.alibaba.com>
- <20241202125203.48821-3-guangguan.wang@linux.alibaba.com>
- <894d640f-d9f6-4851-adb8-779ff3678440@linux.ibm.com>
- <20241205135833.0beafd61.pasic@linux.ibm.com>
- <5ac2c5a7-3f12-48e5-83a9-ecd3867e6125@linux.alibaba.com>
- <7de81edd-86f2-4cfd-95db-e273c3436eb6@linux.ibm.com>
- <3710a042-cabe-4b6d-9caa-fd4d864b2fdc@linux.ibm.com>
- <d2af79e2-adb2-46f0-a7e3-67a9265f3adf@linux.alibaba.com>
- <868f5d66-ac74-4b0a-a0d0-e44fdea3bb73@linux.ibm.com>
- <20241209104647.5c36c429.pasic@linux.ibm.com>
-Content-Language: en-US
-From: Guangguan Wang <guangguan.wang@linux.alibaba.com>
-In-Reply-To: <20241209104647.5c36c429.pasic@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="niIOaNVqrCdk9TWd"
+Content-Disposition: inline
+In-Reply-To: <20241209105237.10498-1-o451686892@gmail.com>
+X-Cookie: Lensmen eat Jedi for breakfast.
 
 
+--niIOaNVqrCdk9TWd
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 2024/12/9 17:46, Halil Pasic wrote:
-> On Mon, 9 Dec 2024 09:49:23 +0100
-> Wenjia Zhang <wenjia@linux.ibm.com> wrote:
-> 
->>> Otherwise, the code below is reasonable.
->>>        if (!(ini->smcr_version & SMC_V2) ||
->>> +#if IS_ENABLED(CONFIG_IPV6)
->>> +        (smc->clcsock->sk->sk_family == AF_INET6 &&
->>> +         !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
->>> +#endif
->>>            !smc_clc_ueid_count() ||
->>>            smc_find_rdma_device(smc, ini))
->>>            ini->smcr_version &= ~SMC_V2;
->>>   
->> Ok, I got your point, a socket with an address family other than AF_INET 
->> and AF_INET6 is already pre-filtered, so that such extra condition 
->> checking for the smc->clcsock->sk->sk_family != AF_INET is not 
->> necessary, right?
->>
->> Would you like to send a new version? And feel free to use this in the 
->> new version:
->>
->> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
-> 
-> I believe we would like to have a v3 here. Also I'm not sure
-> checking on saddr is sufficient, but I didn't do my research on
-> that question yet.
-> 
-> Regards,
-> Halil
+On Mon, Dec 09, 2024 at 06:52:37PM +0800, Weizhao Ouyang wrote:
 
-Did you mean to research whether the daddr should be checked too?
+> When using svcr_in to check ZA and Streaming Mode, we should make sure
+> that the value in x2 is correct, otherwise it may trigger an Illegal
+> instruction if FEAT_SVE and !FEAT_SME.
 
-Thanks,
-Guangguan Wang
+>  	// Set SVCR if we're doing SME
+> -	cbz	x1, 1f
+>  	adrp	x2, svcr_in
+>  	ldr	x2, [x2, :lo12:svcr_in]
+> +	cbz	x1, 1f
+>  	msr	S3_3_C4_C2_2, x2
+
+This is against an older verison of the code so wouldn't apply now.
+It's not also checking the value of SVCR, this is checking the SME flag
+passed in via x1.  You can see that the SVCR value is loaded into x2 but
+the check is against x1.
+
+--niIOaNVqrCdk9TWd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdW5GMACgkQJNaLcl1U
+h9CFGAf+NOmJS7zfKX8ub3vY7iK8rhpg37EQQlYcPuE5fAkhIyUx6eKqtobU2FzL
+fqnPOWvkobsArRBSeUAIAUnahlqn2XNQKGX3XuJHUTnt24IARB76rpGRhXKl5uT4
+6JZcTLddrNKi+/B8j+ivLp8iGh6O3u6Hxi/U6f/QsYULh3BABeWsreagh41iDhqx
+wLas3NT8PgfnYd3BttsCgrjv5/xjNmmnnj+K17+9/PqIGi3gjeXWFbxRrq01e6dN
+pVXbZHt3UzdpanqVZrR8zdhbqyFBjuiZuOI19FlCB1bMyBlk4uYJpT/GmGfnrbag
+XMsQsRcBRxkBArPtfXnhufY1zxRm1g==
+=gU9c
+-----END PGP SIGNATURE-----
+
+--niIOaNVqrCdk9TWd--
 
