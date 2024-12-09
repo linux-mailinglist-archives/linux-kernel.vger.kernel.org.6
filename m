@@ -1,104 +1,209 @@
-Return-Path: <linux-kernel+bounces-436917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38DF69E8C98
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:50:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 074BE9E8C9C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:51:05 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED7E2817BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:50:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD8AC18868BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B8625588B;
-	Mon,  9 Dec 2024 07:49:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE47215066;
+	Mon,  9 Dec 2024 07:50:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kFdV293R"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IhR5s7uF"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E800214A64;
-	Mon,  9 Dec 2024 07:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6371C5588B;
+	Mon,  9 Dec 2024 07:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733730596; cv=none; b=DAUwyotUOX2b99dFGiIC9M3trF/Gr4qV9qMs/UAQ8ZD1W5Xq+MjuxryS38dCQeNXi9SEAsnXU9EPlIC9zRNz00mM+p2QPzGwi3KNIRGi7V3yC1hR/Cqm36fGE2jGH6BKpTCvMox9tEJWwuNX0+X/RCS6BGi3qaeMbLRsj89Ukhg=
+	t=1733730657; cv=none; b=lWhgiKQ49+I++6I3CROxbgf4uzwC197gpHYtUb3EM57xcagpf6uVRswFdKVmgKyuw/lIOllcK/BeAd9HSgenJW9FeW2+PMuGLTR79bQ3HZfp8kX18F9LhYsz6XSOm/piSP6Kn1vSxjzX1nERskW1FOe7Q5cK7Uv7+g9bviIzACk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733730596; c=relaxed/simple;
-	bh=5EFS2InPg2t3NJWSEh6nQPiSR6HZgWxCXmJAgXABqHs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=khurs/AJwDcter3w/t164ocuRJxp15nFof7a/veymZYPg09i714dTrvzIN0gxdR7EAyk5Rt3M2wzxZe+1zBC8FzfwDydXUvJDyuZ+jXiAMI9HHxm/BqRCrAcLCA6QeMeSapmRhvGCpCI1b4rX9gGhK0AmdswWigkOcDfK8Xfw44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kFdV293R; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OmWUSu3bZ9nMiHmrTjQz9XT/WaHo0p18xXNKxBDgGoo=; b=kFdV293Ri3XsiETHw6qp1L/ven
-	tu0zlgZxqg2itd3JpxhPBppLYWVfJk0TptPfu3jDrslxYrX7ElP1ehMdRlSkXKDyHu3mG2JWIudTo
-	N6s8D81wUhcbMVjHZOq9fIwVGQy5+BiMoD4oGPcV6b5ucHWiq59GqHanTXjkm6+Znbt0/7lW6qcyF
-	zgS/fjXH5vc+yJD3N21jr3/LkbDilbaRlKjG3rrYK+Yl5vJJOe4uKHJDb4fkK7ftlJyqnZbgGX+nu
-	CCGWmEnwd4M5KOryK5MgMLiX3nAQWd7TSum6MI02vEfT+9hfhlx5qChqPb9PDknw9Ox45r5zTH5e6
-	69XYPHxg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKYWV-00000006mEI-2tYU;
-	Mon, 09 Dec 2024 07:49:43 +0000
-Date: Sun, 8 Dec 2024 23:49:43 -0800
-From: Christoph Hellwig <hch@infradead.org>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Christoph Hellwig <hch@infradead.org>,
-	Christian Brauner <brauner@kernel.org>,
-	Jeff Layton <jlayton@kernel.org>,
-	Erin Shepherd <erin.shepherd@e43.eu>,
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
-	stable <stable@kernel.org>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
- operations as only supporting file handles
-Message-ID: <Z1ahFxFtksuThilS@infradead.org>
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <Z1D2BE2S6FLJ0tTk@infradead.org>
- <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
- <20241206160358.GC7820@frogsfrogsfrogs>
- <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+	s=arc-20240116; t=1733730657; c=relaxed/simple;
+	bh=auazOFGND/yAf5G+6jGRmxDE2uDZn3SMEVPVM7giZbU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rQ3DKNZbJV3ZBKW/2DoCRH24li+K5IGS9NTHDky10yJwzRzAOZO7cqGD85kPPdcAvot6NHMApksuNHCihHN6W0vFWQWe033kwB8lA0ewdcnfkPyTU35uE1V2TZPB/ie9DQlGi1P5tJ8KOpHkq/XfwNqhem04HYliRfagv0iX/mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IhR5s7uF; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8KeSQc020616;
+	Mon, 9 Dec 2024 07:50:50 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=0VPlfYGdLQ3wfIEV6ZiIRshkflZhmoztvCNqNToLX6M=; b=Ih
+	R5s7uFIsmgpnxr9nbd36ZwJ+Y1HZzKPzy5yIgDMQb4MvQlzUFULh+joTP5gJUlys
+	ueC3/zRAtm47Fv3GyGi36zJ7qVdHyCFJrSyUyqLBRw5fW3MCB0p/DiPsIq6m+ZkH
+	i7Zi4uE74FF7Ati4YRDT69IqaY9kyTdsjDUxlvz/2Md25KcYKtKyVtqc4BuO3meY
+	hPGA/We/casDZg2mZxzWw20TzDbRuvIIyQd4RCpJQ7lYPpKilMTj9iSDQZs70sTs
+	rzcbb0yfJC48AE8QmJW15zGE/oGJeubz20pNUlNg5UbE/g+VtfO6u/rnvOIbdqp1
+	x5VNbYcgR5QR944FTLUA==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdpgkukp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 07:50:50 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B97on5V027936
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 07:50:49 GMT
+Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 8 Dec 2024 23:50:46 -0800
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+Subject: [PATCH v5] dmaengine: qcom: gpi: Add GPI immediate DMA support for SPI protocol
+Date: Mon, 9 Dec 2024 13:20:33 +0530
+Message-ID: <20241209075033.16860-1-quic_jseerapu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fOyYx7c7ku0RLEjGLN5iXPozNefUS5cd
+X-Proofpoint-ORIG-GUID: fOyYx7c7ku0RLEjGLN5iXPozNefUS5cd
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090059
 
-On Sat, Dec 07, 2024 at 09:49:02AM +0100, Amir Goldstein wrote:
-> > /* file handles can be used by a process on another node */
-> > #define EXPORT_OP_ALLOW_REMOTE_NODES    (...)
-> 
-> This has a sound of security which is incorrect IMO.
-> The fact that we block nfsd export of cgroups does not prevent
-> any type of userland file server from exporting cgroup file handles.
+The DMA TRE(Transfer ring element) buffer contains the DMA
+buffer address. Accessing data from this address can cause
+significant delays in SPI transfers, which can be mitigated to
+some extent by utilizing immediate DMA support.
 
-So what is the purpose of the flag?  Asking for a coherent name and
-description was the other bigger ask for me.
+QCOM GPI DMA hardware supports an immediate DMA feature for data
+up to 8 bytes, storing the data directly in the DMA TRE buffer
+instead of the DMA buffer address. This enhancement enables faster
+SPI data transfers.
 
-> Maybe opt-out of nfsd export is a little less safer than opt-in, but
-> 1. opt-out is and will remain the rare exception for export_operations
-> 2. at least the flag name EXPORT_OP_LOCAL_FILE_HANDLE
->     is pretty clear IMO
+This optimization reduces the average transfer time from 25 us to
+16 us for a single SPI transfer of 8 bytes length, with a clock
+frequency of 50 MHz.
 
-Even after this thread I have absolutely no idea what problem it tries
-to solve.  Maybe that's not just the flag names fault, and not of opt-in
-vs out, but both certainly don't help.
+Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+---
+v4 -> v5:
+   - For Immediate DMA, instead of making dma type as 0x10 and then
+     enable 16th bit of dword3, directly updating the dma type as 0x11.
 
-> Plus, as I wrote in another email, the fact that pidfs is SB_NOUSER,
-> so userspace is not allowed to mount it into the namespace and
-> userland file servers cannot export the filesystem itself.
-> That property itself (SB_NOUSER), is therefore a good enough indication
-> to deny nfsd export of this fs.
+   Link to v4:
+	https://lore.kernel.org/all/20241205170611.18566-1-quic_jseerapu@quicinc.com/  
 
-So check SB_NOUSER in nfsd and be done with it?
+v3 -> v4:
+   - Instead using extra variable(immediate_dma) for Immediate dma
+     condition check, made it to inlined.
+   - Removed the extra brackets around Immediate dma condition check.
+
+   Link to v3:
+        https://lore.kernel.org/lkml/20241204122059.24239-1-quic_jseerapu@quicinc.com/
+
+v2 -> v3:
+   - When to enable Immediate DMA support, control is moved to GPI driver
+     from SPI driver.
+   - Optimizations are done in GPI driver related to immediate dma changes.
+   - Removed the immediate dma supported changes in qcom-gpi-dma.h file
+     and handled in GPI driver.
+
+   Link to v2:
+        https://lore.kernel.org/all/20241128133351.24593-2-quic_jseerapu@quicinc.com/
+        https://lore.kernel.org/all/20241128133351.24593-3-quic_jseerapu@quicinc.com/
+
+v1 -> v2:
+   - Separated the patches to dmaengine and spi subsystems
+   - Removed the changes which are not required for this feature from
+     qcom-gpi-dma.h file.
+   - Removed the type conversions used in gpi_create_spi_tre.
+
+   Link to v1:
+        https://lore.kernel.org/lkml/20241121115201.2191-2-quic_jseerapu@quicinc.com/
+
+ drivers/dma/qcom/gpi.c | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+index 52a7c8f2498f..b1f0001cc99c 100644
+--- a/drivers/dma/qcom/gpi.c
++++ b/drivers/dma/qcom/gpi.c
+@@ -18,6 +18,7 @@
+ #include "../virt-dma.h"
+ 
+ #define TRE_TYPE_DMA		0x10
++#define TRE_TYPE_IMMEDIATE_DMA	0x11
+ #define TRE_TYPE_GO		0x20
+ #define TRE_TYPE_CONFIG0	0x22
+ 
+@@ -64,6 +65,7 @@
+ 
+ /* DMA TRE */
+ #define TRE_DMA_LEN		GENMASK(23, 0)
++#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
+ 
+ /* Register offsets from gpi-top */
+ #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
+@@ -1711,6 +1713,7 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+ 	dma_addr_t address;
+ 	struct gpi_tre *tre;
+ 	unsigned int i;
++	int len;
+ 
+ 	/* first create config tre if applicable */
+ 	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+@@ -1763,14 +1766,30 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+ 	tre_idx++;
+ 
+ 	address = sg_dma_address(sgl);
+-	tre->dword[0] = lower_32_bits(address);
+-	tre->dword[1] = upper_32_bits(address);
++	len = sg_dma_len(sgl);
+ 
+-	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
++	/* Support Immediate dma for write transfers for data length up to 8 bytes */
++	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0])) {
++		/*
++		 * For Immediate dma, data length may not always be length of 8 bytes,
++		 * it can be length less than 8, hence initialize both dword's with 0
++		 */
++		tre->dword[0] = 0;
++		tre->dword[1] = 0;
++		memcpy(&tre->dword[0], sg_virt(sgl), len);
+ 
+-	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+-	if (direction == DMA_MEM_TO_DEV)
+-		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
++		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
++		tre->dword[3] = u32_encode_bits(TRE_TYPE_IMMEDIATE_DMA, TRE_FLAGS_TYPE);
++	} else {
++		tre->dword[0] = lower_32_bits(address);
++		tre->dword[1] = upper_32_bits(address);
++
++		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
++		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
++	}
++
++	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV,
++					 TRE_FLAGS_IEOT);
+ 
+ 	for (i = 0; i < tre_idx; i++)
+ 		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
+-- 
+2.17.1
 
 
