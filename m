@@ -1,254 +1,151 @@
-Return-Path: <linux-kernel+bounces-437461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DA529E938D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:13:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10CD69E938F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:13:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD3C01886D95
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A00DC284E5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152942248B9;
-	Mon,  9 Dec 2024 12:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F872226EFB;
+	Mon,  9 Dec 2024 12:11:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sM4L6vVL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C+9ZeTNI";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sM4L6vVL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="C+9ZeTNI"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b="gfJntC8e"
+Received: from forwardcorp1d.mail.yandex.net (forwardcorp1d.mail.yandex.net [178.154.239.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 451FE21CFF0;
-	Mon,  9 Dec 2024 12:11:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D92226ED1;
+	Mon,  9 Dec 2024 12:11:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733746273; cv=none; b=awtmuAolxz98FBgu9HXAnQP0xnlgS1p8kpcaCGd0rxZwHXPqtSkXXPCOM9/rv707BsLn+8RITCZDACRxuDoNCgVyAop3ZJeuJsCbMKkQBchwD6h1yEEd4RsR5OTjuB/V8wh3cvQxm0sgL1j8p+9AUDtgLR49PJSEzYxHp1gYFJ8=
+	t=1733746295; cv=none; b=VRsltNs3S0FV6zAvqSxoaVt4DMMUzz6ufljc7WbCzGvVQjAC2A0i+V4nN1C598ff0AEXE1ZUVOHiyqBsm4VJdKm3XT8S8iIcdS2v/q7YxRCqf9EB6xetChGesk8PxY8JZgp8UmUrIwDMqid0gt55ixfhIjTxv0E6Ml6ghmGcMv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733746273; c=relaxed/simple;
-	bh=DW37JksRys5w20Dss6QcUZ8G3H0LMQpXXkLpEeU7Kaw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DdyP5b7oconMSghdQSZfW0FgVzm5Z936BHQBGvwz3zJMX5FI388L7VDugKOQCUhwFyHVHVlz3nR0bod0eMN7T3NQMMwwPVVjYqPlYw71n3j4y/PV9psJ811mogS7yamFMPbuo67qYmibH6iw0PdSBDsRkyh6/rN+9C9FeQf7vnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sM4L6vVL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C+9ZeTNI; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sM4L6vVL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=C+9ZeTNI; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 1B8421F45B;
-	Mon,  9 Dec 2024 12:11:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733746269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9eTu4ICqX/MBWv87d6ghYK9vw3zsKiLYe3pMYvqXdg=;
-	b=sM4L6vVL4A73Y1BAcWwMnbB8eeLPSE88ltpR2s3HoRQ7A8BmyvdPjqSvIKjr1Cn1gsRMJu
-	/VZjAG1bQcix+ncpFJpFgPWfBgQXCSCKsbNjjiXkBFVRuw0kp18eQG7XQlryzLHiSiLE7Y
-	X9OUOQyeOcVQ/hmyf23wcfYRddwpCnw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733746269;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9eTu4ICqX/MBWv87d6ghYK9vw3zsKiLYe3pMYvqXdg=;
-	b=C+9ZeTNI7MdhXfH0wO4e2TOSHL404mhYJPPpbDy4LlsCeaHiR3DY7jvZSKcihK/XZMtJpA
-	0xbQVbv3uMlYk7BQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=sM4L6vVL;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=C+9ZeTNI
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733746269; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9eTu4ICqX/MBWv87d6ghYK9vw3zsKiLYe3pMYvqXdg=;
-	b=sM4L6vVL4A73Y1BAcWwMnbB8eeLPSE88ltpR2s3HoRQ7A8BmyvdPjqSvIKjr1Cn1gsRMJu
-	/VZjAG1bQcix+ncpFJpFgPWfBgQXCSCKsbNjjiXkBFVRuw0kp18eQG7XQlryzLHiSiLE7Y
-	X9OUOQyeOcVQ/hmyf23wcfYRddwpCnw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733746269;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z9eTu4ICqX/MBWv87d6ghYK9vw3zsKiLYe3pMYvqXdg=;
-	b=C+9ZeTNI7MdhXfH0wO4e2TOSHL404mhYJPPpbDy4LlsCeaHiR3DY7jvZSKcihK/XZMtJpA
-	0xbQVbv3uMlYk7BQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E3C30138D2;
-	Mon,  9 Dec 2024 12:11:08 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 8fiVN1zeVmfwUwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Dec 2024 12:11:08 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 71156A0B0C; Mon,  9 Dec 2024 13:11:04 +0100 (CET)
-Date: Mon, 9 Dec 2024 13:11:04 +0100
-From: Jan Kara <jack@suse.cz>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
-	Jan Kara <jack@suse.cz>, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
-	brauner@kernel.org, torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: commit 0790303ec869 leads to cpu stall without
- CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
-Message-ID: <20241209121104.j6zttbqod3sh3qhr@quack3>
-References: <20241208152520.3559-1-spasswolf@web.de>
+	s=arc-20240116; t=1733746295; c=relaxed/simple;
+	bh=nLJIyW85n0iG/LGd0OlFrIef41P6XBUUwdj9WHcaJKY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jgW+IxjjIaWxLaaaTbHwTV1NsKtJ9Uc7KrDrI76GLrn7MPSRHgWgleFpznfF+zxr1MTOT0PWPHtphs8juOLI3Vw61U3ig4/nnHc4dE0zT33A1pMbuI19qn3afAeRA6mmZIXTokAv+vSTAbwtCsoCnhDQVq5VEjE3EHDheNfgvzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru; spf=pass smtp.mailfrom=yandex-team.ru; dkim=pass (1024-bit key) header.d=yandex-team.ru header.i=@yandex-team.ru header.b=gfJntC8e; arc=none smtp.client-ip=178.154.239.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex-team.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex-team.ru
+Received: from mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net [IPv6:2a02:6b8:c42:b1cb:0:640:2a1e:0])
+	by forwardcorp1d.mail.yandex.net (Yandex) with ESMTPS id 3300A608FD;
+	Mon,  9 Dec 2024 15:11:13 +0300 (MSK)
+Received: from [IPV6:2a02:6b8:b081:b538::1:36] (unknown [2a02:6b8:b081:b538::1:36])
+	by mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net (smtpcorp/Yandex) with ESMTPSA id 8Bkmmc2Ika60-5Egy2zMB;
+	Mon, 09 Dec 2024 15:11:12 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex-team.ru;
+	s=default; t=1733746272;
+	bh=1Vsfc9wfTmLL+2IpExTUiXquTUYyLpZZYOFXY08eRyw=;
+	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
+	b=gfJntC8eAeQw1nnucT0s9zfyGmY0qCO/pBgXO+4L3YnilPRDVZ8pK0VOKHyx55hGe
+	 /jdz9z4O/72LCcPMOrTnyMWxvlW7NqzGXCeFg1m1hje684j9LQypMraKuHdrq0PWYR
+	 gY/s//Uq3xYpOx4IarIhLZSd90Wn2BQreaH4RGvs=
+Authentication-Results: mail-nwsmtp-smtp-corp-main-56.klg.yp-c.yandex.net; dkim=pass header.i=@yandex-team.ru
+Message-ID: <c05ea1c3-28ae-4c31-b204-05db59b626d6@yandex-team.ru>
+Date: Mon, 9 Dec 2024 15:11:08 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208152520.3559-1-spasswolf@web.de>
-X-Rspamd-Queue-Id: 1B8421F45B
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_TO(0.00)[web.de];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	MISSING_XM_UA(0.00)[];
-	FREEMAIL_CC(0.00)[toxicpanda.com,vger.kernel.org,suse.cz,fb.com,gmail.com,kernel.org,linux-foundation.org,zeniv.linux.org.uk,kvack.org];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:dkim]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] x86: KVM: Advertise FSRS and FSRC on AMD to
+ userspace
+To: "Moger, Babu" <bmoger@amd.com>, Jim Mattson <jmattson@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, x86@kernel.org,
+ babu.moger@amd.com, seanjc@google.com, mingo@redhat.com, bp@alien8.de,
+ tglx@linutronix.de, dave.hansen@linux.intel.com, hpa@zytor.com,
+ pbonzini@redhat.com
+References: <20241204134345.189041-1-davydov-max@yandex-team.ru>
+ <20241204134345.189041-2-davydov-max@yandex-team.ru>
+ <CALMp9eRa3yJ=-azTVtsapHsfCFTo74mTMQXPkguxD3P8upYchg@mail.gmail.com>
+ <69fa0014-a5bd-4e1f-94b6-f22e9688ab71@amd.com>
+Content-Language: en-US
+From: Maksim Davydov <davydov-max@yandex-team.ru>
+In-Reply-To: <69fa0014-a5bd-4e1f-94b6-f22e9688ab71@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hello!
 
-On Sun 08-12-24 16:25:19, Bert Karwatzki wrote:
-> Since linux-next-20241206 booting my debian unstable system hangs before starting gdm.
-> After some time these messages appear in /var/log/kern.log:
 
-Thanks for report!
-
-<snip stacktraces>
-
-> I bisected this between linux-6.13-rc1 and linux-20241206 and found this as
-> offending commit:
-> 0790303ec869 ("fsnotify: generate pre-content permission event on page fault")
+On 12/6/24 21:11, Moger, Babu wrote:
 > 
-> I also noticed that only a part of the commit causes the issue, and reverting
-> that part solves it in linux-next-20241206:
+> On 12/4/2024 10:57 AM, Jim Mattson wrote:
+>> On Wed, Dec 4, 2024 at 5:43 AM Maksim Davydov
+>> <davydov-max@yandex-team.ru>  wrote:
+>>> Fast short REP STOSB and fast short CMPSB support on AMD processors are
+>>> provided in other CPUID function in comparison with Intel processors:
+>>> * FSRS: 10 bit in 0x80000021_EAX
+>>> * FSRC: 11 bit in 0x80000021_EAX
+>> I have to wonder why these bits aren't documented in the APM. I assume
+>> you pulled them out of some PPR? I would be hesitant to include CPUID
+>> bit definitions that may be microarchitecture-specific rather than
+>> architectural.
+>>
+>> Perhaps someone from AMD should at least ACK this change?
 > 
-> commit 6207000b72058b45bb03f0975fbbbcd9dae06238
-> Author: Bert Karwatzki <spasswolf@web.de>
-> Date:   Sun Dec 8 01:51:59 2024 +0100
+> APM updates are in progress right now, but haven’t been able to get an ETA.
 > 
->     mm: filemap: partially revert commit 790303ec869
-> 
->     Reverting this part of commit 790303ec869 is enough
->     to fix the issue.
-> 
->     Signed-off-by: Bert Karwatzki <spasswolf@web.de>
-> 
-> diff --git a/mm/filemap.c b/mm/filemap.c
-> index 23e001f5cd0f..9bf2fc833f3c 100644
-> --- a/mm/filemap.c
-> +++ b/mm/filemap.c
-> @@ -3419,37 +3419,6 @@ vm_fault_t filemap_fault(struct vm_fault *vmf)
->  	 * or because readahead was otherwise unable to retrieve it.
->  	 */
->  	if (unlikely(!folio_test_uptodate(folio))) {
-> -		/*
-> -		 * If this is a precontent file we have can now emit an event to
-> -		 * try and populate the folio.
-> -		 */
-> -		if (!(vmf->flags & FAULT_FLAG_TRIED) &&
-> -		    unlikely(FMODE_FSNOTIFY_HSM(file->f_mode))) {
-> -			loff_t pos = folio_pos(folio);
-> -			size_t count = folio_size(folio);
-> -
-> -			/* We're NOWAIT, we have to retry. */
-> -			if (vmf->flags & FAULT_FLAG_RETRY_NOWAIT) {
-> -				folio_unlock(folio);
-> -				goto out_retry;
-> -			}
-> -
-> -			if (mapping_locked)
-> -				filemap_invalidate_unlock_shared(mapping);
-> -			mapping_locked = false;
-> -
-> -			folio_unlock(folio);
-> -			fpin = maybe_unlock_mmap_for_io(vmf, fpin);
-> -			if (!fpin)
-> -				goto out_retry;
-> -
-> -			error = fsnotify_file_area_perm(fpin, MAY_ACCESS, &pos,
-> -							count);
-> -			if (error)
-> -				ret = VM_FAULT_SIGBUS;
-> -			goto out_retry;
-> -		}
-> -
->  		/*
->  		 * If the invalidate lock is not held, the folio was in cache
->  		 * and uptodate and now it is not. Strange but possible since we
-> 
-> 
-> Then I took a closer look at the function called in the problematic code
-> and noticed that fsnotify_file_area_perm(), is a NOOP when
-> CONFIG_FANOTIFY_ACCESS_PERMISSIONS is not set (which was the case in my
-> .config). This also explains why this was not found before, as
-> distributional .config file have this option enabled.  Setting the option
-> to y solves the issue, too
+> Will confirm once APM is released.
+>
 
-Well, I agree with you on all the points but the real question is, how come
-the test FMODE_FSNOTIFY_HSM(file->f_mode) was true on our kernel when you
-clearly don't run HSM software, even more so with
-CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled. That's the real cause of this
-problem. Something fishy is going on here... checking...
+Thanks a lot!
+It means that this series should be sent as 2 independent parts:
+1. FSRS and FSRC will wait for updated APM
+2. Speculation control bits will be sent as a separate patch
 
-Ah, because I've botched out file_set_fsnotify_mode() in case
-CONFIG_FANOTIFY_ACCESS_PERMISSIONS is disabled. This should fix the
-problem:
+>>> AMD bit numbers differ from existing definition of FSRC and
+>>> FSRS. So, the new appropriate values have to be added with new names.
+>>>
+>>> It's safe to advertise these features to userspace because they are a part
+>>> of CPU model definition and they can't be disabled (as existing Intel
+>>> features).
+>>>
+>>> Fixes: 2a4209d6a9cb ("KVM: x86: Advertise fast REP string features inherent to the CPU")
+>>> Signed-off-by: Maksim Davydov<davydov-max@yandex-team.ru>
+>>> ---
+>>>   arch/x86/include/asm/cpufeatures.h | 2 ++
+>>>   arch/x86/kvm/cpuid.c               | 4 ++--
+>>>   2 files changed, 4 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+>>> index 17b6590748c0..45f87a026bba 100644
+>>> --- a/arch/x86/include/asm/cpufeatures.h
+>>> +++ b/arch/x86/include/asm/cpufeatures.h
+>>> @@ -460,6 +460,8 @@
+>>>   #define X86_FEATURE_NULL_SEL_CLR_BASE  (20*32+ 6) /* Null Selector Clears Base */
+>>>   #define X86_FEATURE_AUTOIBRS           (20*32+ 8) /* Automatic IBRS */
+>>>   #define X86_FEATURE_NO_SMM_CTL_MSR     (20*32+ 9) /* SMM_CTL MSR is not present */
+>>> +#define X86_FEATURE_AMD_FSRS           (20*32+10) /* AMD Fast short REP STOSB supported */
+>>> +#define X86_FEATURE_AMD_FSRC           (20*32+11) /* AMD Fast short REP CMPSB supported */
+>>>
+>>>   #define X86_FEATURE_SBPB               (20*32+27) /* Selective Branch Prediction Barrier */
+>>>   #define X86_FEATURE_IBPB_BRTYPE                (20*32+28) /* MSR_PRED_CMD[IBPB] flushes all branch type predictions */
+>>> diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
+>>> index 097bdc022d0f..7bc095add8ee 100644
+>>> --- a/arch/x86/kvm/cpuid.c
+>>> +++ b/arch/x86/kvm/cpuid.c
+>>> @@ -799,8 +799,8 @@ void kvm_set_cpu_caps(void)
+>>>
+>>>          kvm_cpu_cap_mask(CPUID_8000_0021_EAX,
+>>>                  F(NO_NESTED_DATA_BP) | F(LFENCE_RDTSC) | 0 /* SmmPgCfgLock */ |
+>>> -               F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | 0 /* PrefetchCtlMsr */ |
+>>> -               F(WRMSR_XX_BASE_NS)
+>>> +               F(NULL_SEL_CLR_BASE) | F(AUTOIBRS) | F(AMD_FSRS) |
+>>> +               F(AMD_FSRC) | 0 /* PrefetchCtlMsr */ | F(WRMSR_XX_BASE_NS)
+>>>          );
+>>>
+>>>          kvm_cpu_cap_check_and_set(X86_FEATURE_SBPB);
+>>> --
+>>> 2.34.1
+>>>
 
-index 1a9ef8f6784d..778a88fcfddc 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -215,6 +215,7 @@ static inline int fsnotify_open_perm(struct file *file)
- #else
- static inline void file_set_fsnotify_mode(struct file *file)
- {
-+       file->f_mode |= FMODE_NONOTIFY_PERM;
- }
-
-I'm going to test this with CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled and
-push out a fixed version. Thanks again for the report and analysis!
-
-								Honza
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Best regards,
+Maksim Davydov
 
