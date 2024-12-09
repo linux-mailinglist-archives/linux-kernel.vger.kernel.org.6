@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-437465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83639E939A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:14:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946219E939E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:14:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5F74164B85
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:14:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45C02284723
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:14:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6660D2236EE;
-	Mon,  9 Dec 2024 12:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA982229B30;
+	Mon,  9 Dec 2024 12:12:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AKWQXUL8"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="KDB6uYED"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F30E2236E3
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6F02236FA;
+	Mon,  9 Dec 2024 12:12:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733746331; cv=none; b=B9waZ8ZVpJYAXSR/lWa6E43cFDKIm5Q9eboB/2CyekR8n/hJL5f8J3wO+V+T5NtNGjJ2jWlYEqVA/N8820CCyvPpiUCX5tbW1Rc1u8vjjoalctTsXr4doiYKGcb9AHyqExCzeItxp1qAtGeLlbk/uflL8VJaB2y4FMU5HYgJo1w=
+	t=1733746375; cv=none; b=A9xrwAUxvI95FnlHAmcInFMJvR5Oeg+6drRyaHoVX36r1vR6TGMhXTavmyj9L2oj9JD9l+dIsg9k1dFC1sATZOQFe1h3VS44gSNh5buDxztTvhpvee/gWuaJ2hFnP4MXsj0erhUdCviYT94Q060vE4VONWkTUePwKnF2vVl4z3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733746331; c=relaxed/simple;
-	bh=l1JoMRpTmnW1uj1Nu8w6fh7CzMO3VVmwQcAihiAAe3w=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=gBA4tX44W0Ulc3pZsBHIa8h08LLekQ/Rl7QJ6j9onqFkdEkWgiwvRcPcTLRjjXHN1A0iVYtJ/IJXZM3qQWpfL+qYuN6eZI0ND4l49bksOv2FxwCJqGecCIHbe9s8HcHQzpHJTLlkH3QmE681MRjyPA5fKzdfNAc0wUHIfIcSOko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AKWQXUL8; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3862d6d5765so1523243f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:12:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733746327; x=1734351127; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=l1JoMRpTmnW1uj1Nu8w6fh7CzMO3VVmwQcAihiAAe3w=;
-        b=AKWQXUL8l6IeaQ9aGOWc9W+1AdkwnliyTBhtSLC1txC3rfsai4R2sL0ajvDeS4H3nV
-         N6MZqjEixULSNQyfWYrTncJdX6cy8SYNNIUMe6AAR4/iGqQ5C0scb1FTLpGZR7bkXGEZ
-         mc0rFSsKEphkL4W37CAUO2Cihupv1mqIVyKywHsjbgRLxzhb4EfODYav3Pk+FT15kUOZ
-         lRUT6PzodpwE2XYDtF7rPnlMpT3gJeMQLSOg+tCH5uUgz/kIce4Mmk7v9QqYEAfUzV8H
-         5LmOBB3md1D7HZGjPc0LFCtyylEZCJQYCJWmS1RO+9IU70JHZ1mNWuZa4gKD0vcZSTU3
-         /I4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733746327; x=1734351127;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=l1JoMRpTmnW1uj1Nu8w6fh7CzMO3VVmwQcAihiAAe3w=;
-        b=kxbMaEQRXHJBrKgq/fdXMQan59okJ137j7tumfUNtUkwVz3K9C3W/mO9QBZdbg5F78
-         wtTcc0SmHUibrQV3DuCY+50h1eBzUaHvpBoSVeK79dsBD60gKDRBInXPpBYjCi7AqWuo
-         1Xtj4e7dUTs2D0tQJuCESuKpkNuyxzSjVuJPkXV5K0BjNF3YmFQUPzBKKq85Gkc3/QmL
-         P5DdZspbc/bd6UFgQZCCaNzSko2Um9sQcDR/HgMWjwW+/4Ij7nfwRMxkhY2ImLqKBO1d
-         EXyb5QaJp9QeKUTUTgme/bJea2HYrFWssHeXZjr6JSoBFirL68AhHAiEjAaQXJYG2yjU
-         LQnA==
-X-Forwarded-Encrypted: i=1; AJvYcCXk4BgS6ryLnd482xeh5HnyIalfvEFljnH7HJXomnkUkCX9CnPCxfUFYlsh+SF731gtpdQVkNafXoy5NTM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1/xfs2IHCurnoZkdWnxCAl50fYJkudXObqZ4YsGcvjzWr2LnB
-	EzVOQvpTDQ6ON1V50HRQsbOJHe6P/mUcO/D2pBjDGvgi6DUel2pTFVcGiT3P0Kg=
-X-Gm-Gg: ASbGncstNxQTQuR0XNcUoirroR9/2NQHC5uEeKSEZUEo+jG4k4SlVZiH64VU+OgM2J6
-	v1sUHKxUJpKiAWzkQemapkdzAgzuPHN8Mu2rTJiSVwmm/gIHpNCos71qzcB/CoTpIEy80pcyKxn
-	BCZMR7i+RvF0WYbdfBQkmTU+0hzQ7FUedMWUwXw3oleT0J778yF44iJILvdgGhEhqfTUPZXCgz0
-	8uIM+eBv4j/4iDSEmCUpBXEiV2oSI6aMtX1sH2OKCOqLbS04lZbKw==
-X-Google-Smtp-Source: AGHT+IGcW13qMINPnpk5pj7Fb9NYdE/Mv4yFx8lfFIzKKhBm3ZQrK/rM9r+Xm2FRGAEnMKXLBDYATg==
-X-Received: by 2002:a5d:47cb:0:b0:385:ef97:78c with SMTP id ffacd0b85a97d-386453c660dmr87443f8f.6.1733746326983;
-        Mon, 09 Dec 2024 04:12:06 -0800 (PST)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38637b79795sm6316650f8f.10.2024.12.09.04.12.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 04:12:06 -0800 (PST)
-Message-ID: <127a17f0d7cf74f2fb69e996817dd783e768e0eb.camel@linaro.org>
-Subject: Re: [PATCH for stable 5.4 v2] usb: dwc3: gadget: fix writing NYET
- threshold
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, linux-usb@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Date: Mon, 09 Dec 2024 12:12:05 +0000
-In-Reply-To: <2024120926-uncolored-lip-b571@gregkh>
-References: <20241209-dwc3-nyet-fix-5-4-v2-1-66a67836ae70@linaro.org>
-	 <2024120926-uncolored-lip-b571@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1-4 
+	s=arc-20240116; t=1733746375; c=relaxed/simple;
+	bh=VmJgxY8JyHe4LPcKfR3zGqif4VDPc4khkHgSpIUKuLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h0RnniCFnX+VM2XmA8/PXlFNXrBH+lVe6nYIMeyZX5SufKK/V8gb2OZ3Y05MiL7h/EvIFm+nPkGYpdfF6QOWVzoDA7BiW+6U98B5BAzs5iRAlPB8vsguQMF3temQLYZ+BkcmHC0+2iFXH/4eCQgMNgP7rgURLkRtgOsFLCYB7GA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=KDB6uYED; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=uVT5Gi2KQmMoQpuKPHzUhOIG+qt0YGmH2vT/S1/cY9s=; b=KDB6uYEDfLPVKzKPUOzo8eD3z6
+	oLNbK1X3DwOjgnTiEsJ930xFhE1kUwiAEEcdqt5KaAZ4d7H45sMOZ72GVD2kljqEiOxunf3ZeaHBA
+	oKPYPvUg3/H8lMDYDTwXM6Rjzo3HpJjJ0LrgUUuVQB8k2p0qQeVolxYqooGEDzVuPKTWy3wi+Y+e8
+	zGvxiKlH+29kd/OONbtvefEtZpw66LBUJXc18/7GTsMi18v14Ast8dL4bsGmw+GEOO4agRu7V+tPi
+	zhPLoXmG2VJvw23vIYnpHN0wraWDrv/HsDqCWDieYP8tz+T1YhZLA2DBIJbu9ICkjU56I2dedVPx/
+	TnlD5zcA==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKcd8-00000003X9M-3OPg;
+	Mon, 09 Dec 2024 12:12:51 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 6352330040C; Mon,  9 Dec 2024 13:12:49 +0100 (CET)
+Date: Mon, 9 Dec 2024 13:12:49 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: Petr Tesarik <ptesarik@suse.com>, Dave Hansen <dave.hansen@intel.com>,
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	kvm@vger.kernel.org, linux-mm@kvack.org, bpf@vger.kernel.org,
+	x86@kernel.org, rcu@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Wanpeng Li <wanpengli@tencent.com>,
+	Vitaly Kuznetsov <vkuznets@redhat.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Neeraj Upadhyay <quic_neeraju@quicinc.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Lai Jiangshan <jiangshanlai@gmail.com>,
+	Zqiang <qiang.zhang1211@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Jason Baron <jbaron@akamai.com>, Kees Cook <keescook@chromium.org>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Juerg Haefliger <juerg.haefliger@canonical.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Nadav Amit <namit@vmware.com>, Dan Carpenter <error27@gmail.com>,
+	Chuang Wang <nashuiliang@gmail.com>,
+	Yang Jihong <yangjihong1@huawei.com>,
+	Petr Mladek <pmladek@suse.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>, Song Liu <song@kernel.org>,
+	Julian Pidancet <julian.pidancet@oracle.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Dionna Glaze <dionnaglaze@google.com>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>,
+	Yair Podemsky <ypodemsk@redhat.com>,
+	Daniel Wagner <dwagner@suse.de>
+Subject: Re: [RFC PATCH v3 13/15] context_tracking,x86: Add infrastructure to
+ defer kernel TLBI
+Message-ID: <20241209121249.GN35539@noisy.programming.kicks-ass.net>
+References: <20241119153502.41361-1-vschneid@redhat.com>
+ <20241119153502.41361-14-vschneid@redhat.com>
+ <20241120152216.GM19989@noisy.programming.kicks-ass.net>
+ <20241120153221.GM38972@noisy.programming.kicks-ass.net>
+ <xhsmhldxdhl7b.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
+ <20241121111221.GE24774@noisy.programming.kicks-ass.net>
+ <4b562cd0-7500-4b3a-8f5c-e6acfea2896e@intel.com>
+ <20241121153016.GL39245@noisy.programming.kicks-ass.net>
+ <20241205183111.12dc16b3@mordecai.tesarici.cz>
+ <xhsmh1pyh6p0k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <xhsmh1pyh6p0k.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 
-On Mon, 2024-12-09 at 13:05 +0100, Greg Kroah-Hartman wrote:
-> On Mon, Dec 09, 2024 at 11:50:57AM +0000, Andr=C3=A9 Draszik wrote:
-> > Before writing a new value to the register, the old value needs to be
-> > masked out for the new value to be programmed as intended, because at
-> > least in some cases the reset value of that field is 0xf (max value).
-> >=20
-> > At the moment, the dwc3 core initialises the threshold to the maximum
-> > value (0xf), with the option to override it via a DT. No upstream DTs
-> > seem to override it, therefore this commit doesn't change behaviour for
-> > any upstream platform. Nevertheless, the code should be fixed to have
-> > the desired outcome.
-> >=20
-> > Do so.
-> >=20
-> > Fixes: 80caf7d21adc ("usb: dwc3: add lpm erratum support")
-> > Cc: stable@vger.kernel.org=C2=A0# 5.4 (needs adjustment for 5.10+)
-> > Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
-> > ---
-> > * has been marked as v2, to be in line with the 5.10+ patch
-> > * for stable-5.10+, the if() test is slightly different, so a separate
-> > =C2=A0 patch has been sent for it for the patch to apply.
->=20
-> What is the git id of this in Linus's tree?
+On Mon, Dec 09, 2024 at 01:04:43PM +0100, Valentin Schneider wrote:
 
-I guess I misunderstood the docs... It's not merged into Linus' tree
-yet - the proposed patch is here:
+> > But I wonder what exactly was the original scenario encountered by
+> > Valentin. I mean, if TLB entry invalidations were necessary to sync
+> > changes to kernel text after flipping a static branch, then it might be
+> > less overhead to make a list of affected pages and call INVLPG on them.
 
-https://lore.kernel.org/all/20241209-dwc3-nyet-fix-v2-1-02755683345b@linaro=
-.org/
+No; TLB is not involved with text patching (on x86).
 
+> > Valentin, do you happen to know?
+> 
+> So from my experimentation (hackbench + kernel compilation on housekeeping
+> CPUs, dummy while(1) userspace loop on isolated CPUs), the TLB flushes only
+> occurred from vunmap() - mainly from all the hackbench threads coming and
+> going.
 
-Cheers,
-Andre'
-
+Right, we have virtually mapped stacks.
 
