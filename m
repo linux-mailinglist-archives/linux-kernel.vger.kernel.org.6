@@ -1,169 +1,277 @@
-Return-Path: <linux-kernel+bounces-437595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F4279E95A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:06:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3972D9E959E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3C821888BC9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B39711670AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:05:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB4423498C;
-	Mon,  9 Dec 2024 12:58:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF6DA22E3F1;
+	Mon,  9 Dec 2024 12:58:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="bxlWsBXZ"
-Received: from mxout1.routing.net (mxout1.routing.net [134.0.28.11])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ewp17Gb7"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB74234986;
-	Mon,  9 Dec 2024 12:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2E2223872A
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749088; cv=none; b=LLqBadWf0xkKMwrsb/rVtyxDe66bhIQ9yAb3GcdnYTVZ8Cm0ip9YKPvRx2Bk0ccAzDxuaC/wpqdj+fgMSBaQ9bbQdyA50EEGw/4wiLKwmFHMXOdMcGbpWNYZO/QEV111hXVnw35dShN1xraXGeIMSl/jx2qkAOkDQQvexhJ2jIc=
+	t=1733749091; cv=none; b=dU3RsP2cpk94O3xXhTJXPVnUF++1Zq8cODdntZUs693MV7uDw+cGMQKiZuoKEYjgn9YtSBKoDGLVXJRZM1cspbxuNmV+jxJv+xxPHAb6WBBSqecd9rZcALpHqEpWhf+LliFJN6uFUsVJKtrgac1R1CAC95dEgJjUn6LlEtVh954=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749088; c=relaxed/simple;
-	bh=DaHPd6SOKd8MfSu9ZfFUvr3WN62/OMs14KDuAXEquQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LkCNi1d1SkmImJ/YopFi3fDyOOeUiHiTT67UuOvWDmqWL88Nivqb+62tSkPqwnBzoqn0yH8xJpwKv9x0BbC3fI7l+MB9fbXfzV+BCRAsZnO0vFhS0ePuiRA1C9vE1rLH6kCFCcd20xxHUHa7M9ktb+SVHcHthmoKiCeG7Zxj8+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=bxlWsBXZ; arc=none smtp.client-ip=134.0.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
-Received: from mxbox4.masterlogin.de (unknown [192.168.10.79])
-	by mxout1.routing.net (Postfix) with ESMTP id B0ABF40452;
-	Mon,  9 Dec 2024 12:57:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
-	s=20200217; t=1733749078;
+	s=arc-20240116; t=1733749091; c=relaxed/simple;
+	bh=+2GZ8Q59WH5eXt/MMZrNO01/XAhHKyIDnw7hJgMiy0A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EQkV3I3611kiFFWRec24ltUYbuATught8bnKv3KXbEhhYUAZVHvtMEMBlYg7NH2NPCUWwzazW3AG5jyT11GTC+2n67zqZQwGoXDnMQ5+J9PVgu3EfeVKzhQZ0jkQAusSa6TD5Wn7Ic8e9MwA4OAUHqTCtkNMHE8J/ztnU2NMPrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ewp17Gb7; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733749087;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VIpsPcGOjRyl5qUhr+7znCLWNsK6P7pZhuPfToLGzCI=;
-	b=bxlWsBXZP8f/zUpFSWRBa3yFdPImbW3Huhv4a0u7byeYlMhpxpR2N2unKS8k4/oGr5Kj7i
-	f4uW6Txj/ZeYY3N9Tcj7p1JVYISpZRXQAFNP71hvgl2iuGjjj/VAXDiNCp88eb82ZEJAAy
-	y/WOH0i+7GPW/DDFPN4dZ/xfhfC+R7Y=
-Received: from frank-u24.. (fttx-pool-80.245.75.28.bambit.de [80.245.75.28])
-	by mxbox4.masterlogin.de (Postfix) with ESMTPSA id F125180483;
-	Mon,  9 Dec 2024 12:57:57 +0000 (UTC)
-From: Frank Wunderlich <linux@fw-web.de>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sean Wang <sean.wang@kernel.org>
-Cc: Frank Wunderlich <frank-w@public-files.de>,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: [PATCH v6 4/5] arm64: dts: mediatek: mt7988: Add pinctrl support
-Date: Mon,  9 Dec 2024 13:57:38 +0100
-Message-ID: <20241209125742.9307-5-linux@fw-web.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241209125742.9307-1-linux@fw-web.de>
-References: <20241209125742.9307-1-linux@fw-web.de>
+	bh=jbyC+igT/KTufsKy7S5I6bAyzZ+D5/fjrUElh2MRCIk=;
+	b=Ewp17Gb7klHa+NjJiXhF2JgDp5Q9DnZZzC+DPkAoyYkPiLTUiZHfYj4UCi1gMkyxALmcIE
+	Fu4FRWS38BIFRe8Z4M296GR+F3KK9vzW+sYRgxRB1wsfSzPPBE0QV1odT6iAK3gT3hIgK3
+	6t5VV89Dq1+Zg21RrvEiOL8HY4jb0Nw=
+Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
+ [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-596-2kMCphvGNUC7IUruTNXDRw-1; Mon, 09 Dec 2024 07:58:06 -0500
+X-MC-Unique: 2kMCphvGNUC7IUruTNXDRw-1
+X-Mimecast-MFC-AGG-ID: 2kMCphvGNUC7IUruTNXDRw
+Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-aa64275c4f6so188259566b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:58:06 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733749085; x=1734353885;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jbyC+igT/KTufsKy7S5I6bAyzZ+D5/fjrUElh2MRCIk=;
+        b=GxqaJM+9I7pw8BwM0/KtOaJVFKC9GRrehxrp9t9nzVYp6eznTaMyjh5IYBRvC90sv1
+         DB/gyVa5LSp9GVVbkIovvpNIoLX8nVyMLtKCerODD6n+YuvVcBSino/8LfldmVyhFLA8
+         OdfKzxLonZFyUv4USE9ozQHs/I5eGp+a7fyAxKkdyWgcB/FpZI2GPIVcqg2rWTKE+lAf
+         qzfmR3f8yzp78/MNGcSoygqV3eqK/BrwpTuoXA1UVin/BpOBEtJ3TvC7PmkcC0l2yeOy
+         ddWzebaMyywxRAaT9nCtSLgYsQj+VEM9xxu4eskebxiUo1sXiPYiH+QVRehoMkEJbbZn
+         82Nw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEjM/lKMc4G5tM75jCxWMNjfckAEqJkOUoWlt71exxSv9OE+HzeZKxYWofhYkN/cIm184NxAT5ZVcmdAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSNkZBOSSSsOvqDRzu11WA1Sk40emZeIcbOKuSVemdTjp0vsM+
+	mRZ3xR1wJ82hFtxNzSheOKBmAdYHl9nzmM8GXzn3LP+14Iee4Qnkaz/Uo4eCNQwYZJBDgZoGbtl
+	6x2bPVfvYzSXsIZWYsr3DB6xENkhaBGgE/Ywu8tu7DDEpl3H4+E3rAt2exv0PFg==
+X-Gm-Gg: ASbGncuPh/3tAXZm218SgdZFd1QLQUa6kqqOR6vgmkRyOnoK45JQVp2xQrSLcHp08Ep
+	l4zYdxKmwJFVRoXnqvV7QE+sTc73KVr3Mhay3ORHj8bGRFWqKWgHDxDrnYVbPhTnz+yp+t6Nqwo
+	x8tIh/xQyfArECzPomdZMwi8uoCkiw8yRTTKr7ViERpSmby+yW2k+UvCYyPNzJD3UGOaW3ELPmj
+	4vmxBZ4S8AcmRazFyEuKMC8LWgs29AC1YwYv8OGroGN1+PBxV5hoQ==
+X-Received: by 2002:a17:906:cc9:b0:aa6:6fa5:65b0 with SMTP id a640c23a62f3a-aa66fa5664emr485312366b.44.1733749085309;
+        Mon, 09 Dec 2024 04:58:05 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEvZTaOuUF113q1UE8eYW06UMVUuHznqmeMMI1F122LR/7rNdZV80yo5QnqQxKOBx0lBZD32w==
+X-Received: by 2002:a17:906:cc9:b0:aa6:6fa5:65b0 with SMTP id a640c23a62f3a-aa66fa5664emr485281066b.44.1733749079681;
+        Mon, 09 Dec 2024 04:57:59 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa625e96c19sm674717066b.42.2024.12.09.04.57.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 04:57:59 -0800 (PST)
+Message-ID: <b20805a6-8ea7-472a-9fa6-a4f7cce6e868@redhat.com>
+Date: Mon, 9 Dec 2024 13:57:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mail-ID: 2a1d0a53-6c11-438e-951a-535d710498e4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 10/19] media: uvcvideo: Factor out clamping from
+ uvc_ctrl_set
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ricardo Ribalda <ribalda@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+ <20241114-uvc-roi-v15-10-64cfeb56b6f8@chromium.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241114-uvc-roi-v15-10-64cfeb56b6f8@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Frank Wunderlich <frank-w@public-files.de>
+Hi,
 
-Add mt7988a pinctrl node.
+On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
+> Move the logic to a separated function. Do not expect any change.
+> This is a preparation for supporting compound controls.
+> 
+> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
 
-Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
-v5:
-- drop pins with second function
+Thanks, patch looks good to me:
 
-v2:
-- fix wrong alignment of reg values
----
- arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 54 +++++++++++++++++++++++
- 1 file changed, 54 insertions(+)
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-index c9649b815276..46969577c87a 100644
---- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
-@@ -3,6 +3,7 @@
- #include <dt-bindings/clock/mediatek,mt7988-clk.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- #include <dt-bindings/phy/phy.h>
-+#include <dt-bindings/pinctrl/mt65xx.h>
- 
- / {
- 	compatible = "mediatek,mt7988a";
-@@ -105,6 +106,59 @@ clock-controller@1001e000 {
- 			#clock-cells = <1>;
- 		};
- 
-+		pio: pinctrl@1001f000 {
-+			compatible = "mediatek,mt7988-pinctrl";
-+			reg = <0 0x1001f000 0 0x1000>,
-+			      <0 0x11c10000 0 0x1000>,
-+			      <0 0x11d00000 0 0x1000>,
-+			      <0 0x11d20000 0 0x1000>,
-+			      <0 0x11e00000 0 0x1000>,
-+			      <0 0x11f00000 0 0x1000>,
-+			      <0 0x1000b000 0 0x1000>;
-+			reg-names = "gpio", "iocfg_tr",
-+				    "iocfg_br", "iocfg_rb",
-+				    "iocfg_lb", "iocfg_tl", "eint";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			gpio-ranges = <&pio 0 0 84>;
-+			interrupt-controller;
-+			interrupts = <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-parent = <&gic>;
-+			#interrupt-cells = <2>;
-+
-+			pcie0_pins: pcie0-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_2l_0_pereset", "pcie_clk_req_n0_0",
-+						 "pcie_wake_n0_0";
-+				};
-+			};
-+
-+			pcie1_pins: pcie1-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_2l_1_pereset", "pcie_clk_req_n1",
-+						 "pcie_wake_n1_0";
-+				};
-+			};
-+
-+			pcie2_pins: pcie2-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_1l_0_pereset", "pcie_clk_req_n2_0",
-+						 "pcie_wake_n2_0";
-+				};
-+			};
-+
-+			pcie3_pins: pcie3-pins {
-+				mux {
-+					function = "pcie";
-+					groups = "pcie_1l_1_pereset", "pcie_clk_req_n3",
-+						 "pcie_wake_n3_0";
-+				};
-+			};
-+		};
-+
- 		pwm@10048000 {
- 			compatible = "mediatek,mt7988-pwm";
- 			reg = <0 0x10048000 0 0x1000>;
--- 
-2.43.0
+Regards,
+
+Hans
+
+
+
+> ---
+>  drivers/media/usb/uvc/uvc_ctrl.c | 82 +++++++++++++++++++++-------------------
+>  1 file changed, 44 insertions(+), 38 deletions(-)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index 6d5167eb368d..893d12cd3f90 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -2002,28 +2002,17 @@ int uvc_ctrl_get(struct uvc_video_chain *chain, u32 which,
+>  	return -EINVAL;
+>  }
+>  
+> -int uvc_ctrl_set(struct uvc_fh *handle,
+> -	struct v4l2_ext_control *xctrl)
+> +static int uvc_ctrl_clamp(struct uvc_video_chain *chain,
+> +			  struct uvc_control *ctrl,
+> +			  struct uvc_control_mapping *mapping,
+> +			  s32 *value_in_out)
+>  {
+> -	struct uvc_video_chain *chain = handle->chain;
+> -	struct uvc_control *ctrl;
+> -	struct uvc_control_mapping *mapping;
+> -	s32 value;
+> +	s32 value = *value_in_out;
+>  	u32 step;
+>  	s32 min;
+>  	s32 max;
+>  	int ret;
+>  
+> -	if (__uvc_query_v4l2_class(chain, xctrl->id, 0) >= 0)
+> -		return -EACCES;
+> -
+> -	ctrl = uvc_find_control(chain, xctrl->id, &mapping);
+> -	if (ctrl == NULL)
+> -		return -EINVAL;
+> -	if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
+> -		return -EACCES;
+> -
+> -	/* Clamp out of range values. */
+>  	switch (mapping->v4l2_type) {
+>  	case V4L2_CTRL_TYPE_INTEGER:
+>  		if (!ctrl->cached) {
+> @@ -2041,14 +2030,13 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  		if (step == 0)
+>  			step = 1;
+>  
+> -		xctrl->value = min + DIV_ROUND_CLOSEST((u32)(xctrl->value - min),
+> -							step) * step;
+> +		value = min + DIV_ROUND_CLOSEST((u32)(value - min), step) * step;
+>  		if (mapping->data_type == UVC_CTRL_DATA_TYPE_SIGNED)
+> -			xctrl->value = clamp(xctrl->value, min, max);
+> +			value = clamp(value, min, max);
+>  		else
+> -			xctrl->value = clamp_t(u32, xctrl->value, min, max);
+> -		value = xctrl->value;
+> -		break;
+> +			value = clamp_t(u32, value, min, max);
+> +		*value_in_out = value;
+> +		return 0;
+>  
+>  	case V4L2_CTRL_TYPE_BITMASK:
+>  		if (!ctrl->cached) {
+> @@ -2057,21 +2045,20 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  				return ret;
+>  		}
+>  
+> -		xctrl->value &= uvc_get_ctrl_bitmap(ctrl, mapping);
+> -		value = xctrl->value;
+> -		break;
+> +		value &= uvc_get_ctrl_bitmap(ctrl, mapping);
+> +		*value_in_out = value;
+> +		return 0;
+>  
+>  	case V4L2_CTRL_TYPE_BOOLEAN:
+> -		xctrl->value = clamp(xctrl->value, 0, 1);
+> -		value = xctrl->value;
+> -		break;
+> +		*value_in_out = clamp(value, 0, 1);
+> +		return 0;
+>  
+>  	case V4L2_CTRL_TYPE_MENU:
+> -		if (xctrl->value < (ffs(mapping->menu_mask) - 1) ||
+> -		    xctrl->value > (fls(mapping->menu_mask) - 1))
+> +		if (value < (ffs(mapping->menu_mask) - 1) ||
+> +		    value > (fls(mapping->menu_mask) - 1))
+>  			return -ERANGE;
+>  
+> -		if (!test_bit(xctrl->value, &mapping->menu_mask))
+> +		if (!test_bit(value, &mapping->menu_mask))
+>  			return -EINVAL;
+>  
+>  		/*
+> @@ -2079,8 +2066,7 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  		 * UVC controls that support it.
+>  		 */
+>  		if (mapping->data_type == UVC_CTRL_DATA_TYPE_BITMASK) {
+> -			int val = uvc_mapping_get_menu_value(mapping,
+> -							     xctrl->value);
+> +			int val = uvc_mapping_get_menu_value(mapping, value);
+>  			if (!ctrl->cached) {
+>  				ret = uvc_ctrl_populate_cache(chain, ctrl);
+>  				if (ret < 0)
+> @@ -2090,14 +2076,34 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  			if (!(uvc_get_ctrl_bitmap(ctrl, mapping) & val))
+>  				return -EINVAL;
+>  		}
+> -		value = xctrl->value;
+> -		break;
+> +		return 0;
+>  
+>  	default:
+> -		value = xctrl->value;
+> -		break;
+> +		return 0;
+>  	}
+>  
+> +	return 0;
+> +}
+> +
+> +int uvc_ctrl_set(struct uvc_fh *handle, struct v4l2_ext_control *xctrl)
+> +{
+> +	struct uvc_video_chain *chain = handle->chain;
+> +	struct uvc_control_mapping *mapping;
+> +	struct uvc_control *ctrl;
+> +	int ret;
+> +
+> +	if (__uvc_query_v4l2_class(chain, xctrl->id, 0) >= 0)
+> +		return -EACCES;
+> +
+> +	ctrl = uvc_find_control(chain, xctrl->id, &mapping);
+> +	if (!ctrl)
+> +		return -EINVAL;
+> +	if (!(ctrl->info.flags & UVC_CTRL_FLAG_SET_CUR))
+> +		return -EACCES;
+> +
+> +	ret = uvc_ctrl_clamp(chain, ctrl, mapping, &xctrl->value);
+> +	if (ret)
+> +		return ret;
+>  	/*
+>  	 * If the mapping doesn't span the whole UVC control, the current value
+>  	 * needs to be loaded from the device to perform the read-modify-write
+> @@ -2116,7 +2122,7 @@ int uvc_ctrl_set(struct uvc_fh *handle,
+>  		       ctrl->info.size);
+>  	}
+>  
+> -	uvc_mapping_set_s32(mapping, value,
+> +	uvc_mapping_set_s32(mapping, xctrl->value,
+>  			    uvc_ctrl_data(ctrl, UVC_CTRL_DATA_CURRENT));
+>  
+>  	if (ctrl->info.flags & UVC_CTRL_FLAG_ASYNCHRONOUS)
+> 
 
 
