@@ -1,148 +1,130 @@
-Return-Path: <linux-kernel+bounces-437505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9B839E9432
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:34:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BFC89E943E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:35:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1AC11887E3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:33:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85779166336
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD860228C96;
-	Mon,  9 Dec 2024 12:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B051122B8A4;
+	Mon,  9 Dec 2024 12:32:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emJLQ8hZ"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6423722756C;
-	Mon,  9 Dec 2024 12:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Uwdyts3n"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395E022A1DA;
+	Mon,  9 Dec 2024 12:32:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747550; cv=none; b=ouRPDH/6HblNWCWDCdk33wrIUcJGhI8TkeVY92bGtIlSLH6ILL/fpNXAZwpuQliymuKIC9PscflUFxX57T3yQ1WoOBb5Ub3Foa8qged83A8qWdL/twps5VPaEGlBzbhuDtBMXoqGE53tduqMuLPC0CcBOELJG+9acnMdCDI5SEo=
+	t=1733747574; cv=none; b=acY4dhIZsjYnLSvur6s9gjT5/XHKH3cSJsX5BrzVDXGAKL7UDh11w+ExIdNf4hciJ/VP414yxjlKdTKJeZMPNhNze7afkZLzn7UnwZJq+k3esEXMepv9lT/W5UQXgC3eivWP/9IE/PfangzKQVTLSgTop3lB3phjiMagYXxgovw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747550; c=relaxed/simple;
-	bh=kB3RYhKaW5gjZwwRvCZ6UhMhANIepMJBAcWY0Q8JPmI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TAlR7bzvFjJ5IP1ZVfDKDow+82W88ncpRv1w12XqNyIVAqqBxS+I+ycp+0fY1/8GiI2/O7+GqWMYJCl6wWteqfbdGtzzjZWYOBNgfh5wd46sXUfEcDN80QvC9RuMvTuPHP2ilY/i0EU5coZROjeX1Wpm/I99f9ZB5vS/SwU0jP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emJLQ8hZ; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa66c1345caso45816966b.3;
-        Mon, 09 Dec 2024 04:32:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733747545; x=1734352345; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HB4h5xGYBYj3eCi9b2ZJAMbBJzOGVJksJuXFxsMtAq8=;
-        b=emJLQ8hZf5Kyt3H6k+GTU+pJwMc3TK2wBCVgGf9e0k/sr5DeOZxPZoRh/4kl4x5Dh3
-         weTJw/prEVRmoNAzhWFlZpY78tZWcQvkFdQa2Vagr7yBtMCnpLznoPtQVnRazFHfqX5L
-         fp9wH2q0wLZbVv2GmqBpKO1CVW7o7uVQMVY81J3GrfaKmcQ5jWLdDW470H9Egl/sAVVJ
-         x9V9/OwOnLFIWKlICcqRHFFTpVKGezWO8TehUnHY41xH8u9GZqaIGtwjuI4xClHUA/Qd
-         L22aoZ76Wm1QJ7gBz4F8Wynb3bIxwSl7LQBMbi1DwaN0b03VYDqMjV2az2EeGZybGlkS
-         9Jyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733747545; x=1734352345;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HB4h5xGYBYj3eCi9b2ZJAMbBJzOGVJksJuXFxsMtAq8=;
-        b=xJgrFjuDqQFFDT/gwahkv4Nj1nh/du8oCf4sS6g7lpzmKLjE8SXc9YyOefZvGIMje/
-         s9okoY3l5k5WlQpNI7TMTYsvVl/770Ci3du3Mjr1fuKVMN/Vyrsgdr5PtnC7knlr8thX
-         wvPUfjnHos7oZ/9gk66NimUueyy6jOA+qcQdm2n4m4cnRGLhw1mTohnBMpcZRbKVnL5R
-         4jUow/DZt4txg7bLQyB30HYxovnrNd5QvovEiBekg24JVwSDKVvrvjZrnyKfHi4tsAj/
-         OWstW3N4j4anubRF22zhyAv5CROlukhXwRDmatLE99iFXQL0lX/2YFRyRd3Nlgu3gJ1z
-         1qEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAuYbSPbVDHKpZFevzpV8tn2ksdygtjV4qQujXZXTfZmjR8gXV4sOkBEJNla1FNhUUwptZTRefX08WfcKx@vger.kernel.org, AJvYcCXJMnQ8HFkD8ZDgJYitmFtKxe7d2oEDgGl006kxiX4brhAwwDq9VNEY2czpEOy9dvXJhC3OtbLhmgOYO3lr@vger.kernel.org, AJvYcCXuegDRZy5EQ9HfbL8bKQ/I0AEuAtEBThgwbHIz6TC/iHH+KBWH/ZC1vg1+Co6TvGIXLnos6xvcl1mEKlXvsSs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlS0s7AdcOlnQoGER7D866ZQ0/Db6l2ixHtaMjPRokpjxVUQMY
-	xYptrIMTDULg3V/BxmEHDhqlrhTyi1pqu6Tg/bTE9ELGfcJRw2gaCbhfKtlyM4SiI1h7f4LdttO
-	Thcl4lSg5RWGfHb4DgJf4+36sfjs=
-X-Gm-Gg: ASbGncvEGY/O7vxGN0Kxo1mmuzGIIJuIQ8sbE9easBb44KnxP8M+A2wqTXoaJlZQ6oe
-	U/O5e/60bNGfs/LWFVdnqttjEf/NF0uI=
-X-Google-Smtp-Source: AGHT+IFjelp5b6CRvlamva7li7ksyULJr/ZURZRaVo1idystYOkChGCfpprPWdYOncNMp0luUAJecmb6PSVS5WPpxr0=
-X-Received: by 2002:a17:906:3145:b0:aa6:7cae:db98 with SMTP id
- a640c23a62f3a-aa67caedcf6mr431164766b.10.1733747545303; Mon, 09 Dec 2024
- 04:32:25 -0800 (PST)
+	s=arc-20240116; t=1733747574; c=relaxed/simple;
+	bh=zY8U6jirt35+XUt86c/H4d/wQeTFbPhyAXQ0t/8nITU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AhXFTcUXrtXZxDtZscam5L1Ynx9ARBdOWTUC8MjSqV6reDkSrid16z0TJOYnJ18TldcfvnmSsWfcDZ9bGn9zroG3iz0ixJA+X3xqw8qKH/Il97CRO7lIJ3PXgbMgz7gdkyWzxTxqK3YaKFm3bHRRpuEfNgc+PQNPPbjpAZEpHnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Uwdyts3n; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=9crP3
+	SREKkSxx736sa2oKsa+sVCJo5aVxepzxEFcojE=; b=Uwdyts3niBP+DoyyQUiON
+	IyB9iWhjTwf0STLMebmZmXK4Mfs5safwqN5d0CQNgpJ+L7MRn7HsQyCBweAq/TOe
+	8qxfPNuj7XjjKu7RNv+QACzoeFWyB2b9V7Po5L4OdL/HjgnZQTycCo9MIhDSu997
+	0h7oiFFUgmNjqqPL17g5OU=
+Received: from ProDesk.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wD3fzdb41Znx6ziCA--.45968S2;
+	Mon, 09 Dec 2024 20:32:30 +0800 (CST)
+From: Andy Yan <andyshrk@163.com>
+To: heiko@sntech.de
+Cc: hjc@rock-chips.com,
+	krzk+dt@kernel.org,
+	s.hauer@pengutronix.de,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	derek.foreman@collabora.com,
+	detlev.casanova@collabora.com,
+	Min-Hua Chen <minhuadotchen@gmail.com>,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: [PATCH v5 09/18] drm/rockchip: vop2: include rockchip_drm_drv.h
+Date: Mon,  9 Dec 2024 20:32:24 +0800
+Message-ID: <20241209123226.2781765-1-andyshrk@163.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241209122943.2781431-1-andyshrk@163.com>
+References: <20241209122943.2781431-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
- <20241203-is_constexpr-refactor-v1-5-4e4cbaecc216@wanadoo.fr>
- <8b8262389bd6484586007d749132346f@AcuMS.aculab.com> <CAMZ6RqJPvbSr5i8N4Dm=2N6D8uSzefCM3TyK8HBNNNrybo5f2Q@mail.gmail.com>
-In-Reply-To: <CAMZ6RqJPvbSr5i8N4Dm=2N6D8uSzefCM3TyK8HBNNNrybo5f2Q@mail.gmail.com>
-From: Vincent Mailhol <vincent.mailhol@gmail.com>
-Date: Mon, 9 Dec 2024 21:32:14 +0900
-Message-ID: <CAMZ6RqLMXaAej75eXrLgvt-Co1yyEg0QNJSxPovzLzb7vdxmdQ@mail.gmail.com>
-Subject: Re: [PATCH 05/10] minmax: simplify __clamp_once() by using is_const_false()
-To: David Laight <David.Laight@aculab.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
-	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
-	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
-	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
-	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wD3fzdb41Znx6ziCA--.45968S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uFyxKw45Wr48JrWfuF4fAFb_yoW8CFW5pF
+	s8AFWUZrWxKayjqr1DAF9Iyr4Fy3ZrCayxG3Z3G3ZxZF12gF1DGwnrW3s5JrZrXr42vF42
+	krsxJ34UCF42vr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07Uu89_UUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/1tbiqR6wXmdW3c3pJwADs1
 
-On Fri. 6 Dec. 2024 at 00:52, Vincent Mailhol
-<mailhol.vincent@wanadoo.fr> wrote:
-> On Thu. 5 Dec. 2024 at 03:54, David Laight <David.Laight@aculab.com> wrote:
-> > From: Vincent Mailhol
-> > > Sent: 02 December 2024 17:33
-> > >
-> > > In __clamp_once(),
-> > >
-> > >   __builtin_choose_expr(__is_constexpr((lo) > (hi)), (lo) <= (hi), true)
-> > >
-> > > is equivalent to:
-> > >
-> > >   !is_const_false((lo) <= (hi))
-> > >
-> > > Apply is_const_false() to simplify __clamp_once().
-> >
-> > There is already a patch 'for next' that changes it use BUILD_BUG_ON_MSG()
-> > and statically_true().
->
-> Found it!
->
->   https://lore.kernel.org/all/34d53778977747f19cce2abb287bb3e6@AcuMS.aculab.com/
+From: Min-Hua Chen <minhuadotchen@gmail.com>
 
-I picked up your patch and got two build errors on an allyesconfig.
+Move rockchip_drm_drv.h in rockchip_drm_vop2.h to fix the follow
+sparse warning:
 
-You already sent a patch for the first one:
+ARCH=arm64 LLVM=1 make C=1 CF='-fdiagnostic-prefix -D__CHECK_ENDIAN__'
+mrproper defconfig all  -j12
 
-  https://lore.kernel.org/all/33893212b1cc4a418cec09aeeed0a9fc@AcuMS.aculab.com/
+drivers/gpu/drm/rockchip/rockchip_vop2_reg.c:502:24: sparse:
+warning: symbol 'vop2_platform_driver' was not declared. Should it
+be static?
 
-For the second one, I submitted a patch here:
+It is also beneficial for the upcoming support for rk3576.
 
-  https://lore.kernel.org/all/20241209-nfs4state_fix-v1-1-7a66819c60f0@wanadoo.fr/
+Fixes: 604be85547ce ("drm/rockchip: Add VOP2 driver")
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+Signed-off-by: Min-Hua Chen <minhuadotchen@gmail.com>
 
-I will wait for those two to appear in Andrew's mm tree first, and
-only then, I will send a v2 (that will be rebased on the mm tree to
-get your change).
+---
 
-Meanwhile, I think this series will be on hiatus.
+(no changes since v3)
 
+Changes in v3:
+- Split it from 10/15, as it fix a exiting compile warning.
 
-Yours sincerely,
-Vincent Mailhol
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 1 -
+ drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 1 +
+ 2 files changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+index 1f101a3c3942..106b164343ad 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
+@@ -35,7 +35,6 @@
+ #include <uapi/linux/videodev2.h>
+ #include <dt-bindings/soc/rockchip,vop2.h>
+ 
+-#include "rockchip_drm_drv.h"
+ #include "rockchip_drm_gem.h"
+ #include "rockchip_drm_vop2.h"
+ #include "rockchip_rgb.h"
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+index 0a3b22e8d14e..4cd4d17fe366 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
+@@ -9,6 +9,7 @@
+ 
+ #include <linux/regmap.h>
+ #include <drm/drm_modes.h>
++#include "rockchip_drm_drv.h"
+ #include "rockchip_drm_vop.h"
+ 
+ #define VOP2_VP_FEATURE_OUTPUT_10BIT        BIT(0)
+-- 
+2.34.1
+
 
