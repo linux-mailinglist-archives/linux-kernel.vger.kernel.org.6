@@ -1,136 +1,194 @@
-Return-Path: <linux-kernel+bounces-437363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EF9F9E923D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:29:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 79EE19E9220
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:26:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49663164188
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:29:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B888163674
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0538A21CFF0;
-	Mon,  9 Dec 2024 11:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IiHGBSHX"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3EA121A947;
+	Mon,  9 Dec 2024 11:26:29 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9024721B1A8;
-	Mon,  9 Dec 2024 11:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9428921A938
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:26:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733743765; cv=none; b=Y7Z0Gzw7nKuQCUhxoGcbh7LLFNFLYy3HfrcIy422PtFvSkeihLNpLCff1Uvciln+yW7trot7FZAnyAYMuvEzOz5AVtwPAJlqsVnvr5KLu1Liuo/QCY07Tod13Wo6ZQbH2DrTtl9lmhyV4L9BK+78SHvtlCq/cyaFZEpVsdU7iBc=
+	t=1733743589; cv=none; b=qQCVQvN84bw+NmODY3Qkn8V3gb7rPsJkVZ85jzrzdH9Hn5dnicLAv2jIHM0s0LzyS6s9jaMgn2k3zbZJLsCYHhXBzfJ7uFUUGkLg4VrOvW4W/lVqEFG5ShuidkaDqCa9+Ro3/PC9McvzJM1VeRFhWaia/LPCP82M43blqr3hQ9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733743765; c=relaxed/simple;
-	bh=RPQPYzIUrIV7KUtwuEchVeJdACROjNk9ItK/nS5eUAg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=QM9jfwYDl3akMvcCyVA/URYPLkl+io060AiJNppVtTcDZp0A9pwxkDXYm0hGedLIKTE2tNhDGp6aoFQhAfZhR8HvyiDrGzPmXh2nEtdVLb9SU09DCaGdHZx3iPWcOW3aAa5fDrzru0QaYSJaBRVk0wIEACAcOeq10u7a58r8tfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IiHGBSHX; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-aa5ec8d6f64so498432766b.2;
-        Mon, 09 Dec 2024 03:29:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733743762; x=1734348562; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=TvEYgr/6tTPCr/J7KKhyXeJ8K6wnSFjt2RRmJPjvqmw=;
-        b=IiHGBSHXZeqZG5fGBYC7WnKH+k8GJI7jCJrgitd+RqEDMw+htBnUBdBxNuVLnOB2cH
-         6F2FojbDkIRb+v7PQc6LYlQF3uuPWl4OcfFIkj3pfvW4EDsVvVvSDFTaHZXLXeXDAe10
-         MeWatLbzNgjqpdrMeM9XtHZU1h2F5i6WPWWsmYup+VXaLf36yKcr1RZ35iuZ9cwN/aTn
-         ZfMoBDcn0xdPfLFV+khWl/bvtXXNaRGoo1qDIZCA1feeukeiarMu0lLtPPoyYQLEQvzu
-         0DRleTN2az+GoDQmRLxzWcMOYeZG3IYKO7O0TI8rh9tdnmQN86VU9OWI+hPZG3eRKg5w
-         2wuA==
+	s=arc-20240116; t=1733743589; c=relaxed/simple;
+	bh=/TXYt/JSVpvKcKJZQh9UGQYFi/v8I1iqiR++f4oZ78c=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=aCQtbhAMV4Ryx1jjnlFg7zAfP8w+2I2kkGMyyq1xqiQ5DNxy6NP7a1hPHSQa+7QdiXFHUVEA5GZ1STIMtZO7G+tNkGNcbaG677qV3YmsbokbWTiiCsuusw67i/0CPwRvf5wGLhDxfIAFNNpzXG18S02T5F7Iyol3OFkjSnawxU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3a81828bc7cso11329145ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:26:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733743762; x=1734348562;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TvEYgr/6tTPCr/J7KKhyXeJ8K6wnSFjt2RRmJPjvqmw=;
-        b=Nfs9Sy3AFCcZbIVrkV+6Vv9oE102o4Pb2yZF19Nuf8m7hbxzEpkNvV30qVuYH2mg5r
-         AG292+rZS2/NW1QSTk6FW4GULkx4bIkdJwnrryKxrRcE5ShfR99SPNOm6bo7hT5qrpcn
-         bzaR5Ln8Jq5NLCELQ5UazGUMthAFY6m36BzPowgaCEsv4j6tYAoIehhWAsPFMYEUOkVb
-         9QfE6b1Z41Bwh/5jn4MfMjdcHRDCUujdBbzn0l2ndvg+VT5JOJvZqq9tB6ZfpnMYrd99
-         7dzzfLI8XW1CNsKUygcGuCjfzFYOzx80lIs/R4NH+YXUroLUZSpi3Igg1FcgrUIgXKVH
-         pPsA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8tZ8CFWqGuI3qGPpSxOvulJNa4x7W7oeBxHkTWkrIv0FvyABSHJVLstrNXIIjGeVFCoZGxxB0JVSSwC0=@vger.kernel.org, AJvYcCUUxQELM2hncBfzhH7SKVrSPmf1HxIQPQSnZ8O6NmUtvWhtpEtVpLLCTkxEme4oKFM2FOaoK2vLRNGXD+SE@vger.kernel.org, AJvYcCWBf9sQRT922QyY85upPAlfSo5uoUdU5R9HucRAHEs2ra1Qx5QjOthUmbd7rQ59WOQzGiDe26UWGvPeXQ==@vger.kernel.org, AJvYcCXc7IgatTIwlsSHs8DH//VszY6PrHN/rDksY4SnYkrTQQfrrTURTAh4Acq2hYmze0K1XCIs2X357f2k@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSah42HcR0fXtYmyAVFq83PhOyNYZ2ambk0GUSMr2W4v2qFMcP
-	JbjYvhnnf6qofW4UXiOG1tA+gIsEWNXVSG5052SL1+xSLzZRDP/v9KKKSQ==
-X-Gm-Gg: ASbGnctx9UoiWvgi7WNi+tdbvhXz7ROq5WKx1b5wXOjZjjibw6aKZD1bc88/1xv7ZzQ
-	uxcsuG2uUvykVFsilmA8hx/cMiQTWdySabvqN1oX2CPKGZ7wN+0E2mWsKivL6nh8zK+hvkiKWQA
-	spdG1CAek6SdqkwUHJDw2YU33Z1O0sKLtRTLISf5rzkHL0t/U7IK/SCqM01MFsUPqK5nqnUGURh
-	UY4ftwjiMOo7MTsM3idWYdVbMW/C+H32/5i9atJ1BVChZv5PAOP
-X-Google-Smtp-Source: AGHT+IE4gs5bVGF4Efd0vXCuAIwDvwPQnzP/yWs8XUJERA8YDStoszTKI/POiU6VQYHF6KvSX+AP3g==
-X-Received: by 2002:a05:6402:51c6:b0:5d0:d818:559d with SMTP id 4fb4d7f45d1cf-5d4185073dcmr540205a12.11.1733743761597;
-        Mon, 09 Dec 2024 03:29:21 -0800 (PST)
-Received: from [127.0.1.1] ([46.53.242.72])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5d14b608faesm5980350a12.44.2024.12.09.03.29.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 03:29:20 -0800 (PST)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Mon, 09 Dec 2024 14:26:26 +0300
-Subject: [PATCH v11 2/9] dt-bindings: power: supply: max17042: add max77705
- support
+        d=1e100.net; s=20230601; t=1733743587; x=1734348387;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r8n91O6zTrZE9K8rkaFaaKhWrRhPVCdSytUqfDyk7UA=;
+        b=v5K9ePEYscygVqqy4StZp+i7TQAA41KhD1lwEQvEO3ZQZsNqMSpaZNtM2+FyKEDV9D
+         4zW654gld/7MUgnIbPXmK7Dc0yLlAb+j88s6/7v6LOpKRA7xvZ5y1yMjY32TN6hAlpJW
+         0E9zj83MKE9PGIylZADU9Wg+P38guEZfokNxrgXQSdoLgc/SUY5DgvDwN7xOO4SSdF4m
+         PZz//VyV6oktE78T3THn900sO92GmEdHioxOWYurmH4aFKHKdJiBebv0Fo7fJTFso3RK
+         s/BodSAYbPpEn0G4DFy7qYwZO/ZuukdcNKGYzM2oxlPbAFsGJsf+D4OLfCCViNhEq/Mp
+         YYaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwf1incGwIpY92O8K2Q9Q/BwTuJ4V39IJ3jovTolupYER6hSJs4z9A3QSHus6up6AzLdAuvZbzwV7PUWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkKcVbfwmuQuiM9A4tfQzS9eBf1UHb40T9/OkV8kMeBSsx2IU8
+	hSLDnVDP93Vpx/pSlTkN3jTuBsGwYs+y9WLcaPRbBsvdqPJdZHOZkuon4FPqnx7ogYXAzl9BTBx
+	XOExH+/wymZKwrtpcLBMxkVCpDSDALBFNiMLxDkXVhN+9aM8vvrzBJfY=
+X-Google-Smtp-Source: AGHT+IGsj1R+31SpApdsRX1q5hzIVUTnr7Mow2hTGAEj2UZzKWYRHGYRxrU+y/GPEfaIlgyIrvkKbY2DaGUOLIZ2NkfyODWinTN1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-starqltechn_integration_upstream-v11-2-dc0598828e01@gmail.com>
-References: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
-In-Reply-To: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
-To: Sebastian Reichel <sre@kernel.org>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Marek Szyprowski <m.szyprowski@samsung.com>, 
- Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
- Purism Kernel Team <kernel@puri.sm>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-leds@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733743755; l=797;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=RPQPYzIUrIV7KUtwuEchVeJdACROjNk9ItK/nS5eUAg=;
- b=PcsZPGM5ttfml/v9I7fKER3SlrhCh2gT+ei5fBdYIpBrF4vcT9i4xPdvVO1cEOoCcWjD4Q5/E
- j40ylz4qH2RD9xk3/Rt1PWRB59aAbSmNkA0tdyOyvDH/npspORKHkaw
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+X-Received: by 2002:a05:6e02:13ac:b0:3a7:a29b:c181 with SMTP id
+ e9e14a558f8ab-3a9dbac647amr780545ab.13.1733743586864; Mon, 09 Dec 2024
+ 03:26:26 -0800 (PST)
+Date: Mon, 09 Dec 2024 03:26:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6756d3e2.050a0220.a30f1.019d.GAE@google.com>
+Subject: [syzbot] [exfat?] general protection fault in exfat_init_dir_entry
+From: syzbot <syzbot+ff3c3b48f27747505446@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	syzkaller-bugs@googlegroups.com, yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-Add max77705 fuel gauge support.
+Hello,
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+syzbot found the following issue on:
+
+HEAD commit:    62b5a46999c7 Merge tag '6.13-rc1-smb3-client-fixes' of git..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17679944580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=1362a5aee630ff34
+dashboard link: https://syzkaller.appspot.com/bug?extid=ff3c3b48f27747505446
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-62b5a469.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/2545deb88ab1/vmlinux-62b5a469.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/7af07c0abbf0/bzImage-62b5a469.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+ff3c3b48f27747505446@syzkaller.appspotmail.com
+
+syz.0.0: attempt to access beyond end of device
+loop0: rw=0, sector=161, nr_sectors = 1 limit=134
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000005: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000028-0x000000000000002f]
+CPU: 0 UID: 0 PID: 5331 Comm: syz.0.0 Not tainted 6.13.0-rc1-syzkaller-00378-g62b5a46999c7 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
+RIP: 0010:exfat_init_dir_entry+0x556/0x9c0 fs/exfat/dir.c:460
+Code: 48 98 49 8d 1c c7 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 d8 66 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 bb 66 89 ff 4c 8b 3b 42 80 7c 2d
+RSP: 0018:ffffc9000d4472f8 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
+RBP: 1ffff92001a88edc R08: ffffffff8280f817 R09: 0000000000000000
+R10: ffffc9000d447240 R11: fffff52001a88e4d R12: 0000000000000200
+R13: dffffc0000000000 R14: ffff88801ab22000 R15: ffffc9000d4476f0
+FS:  00007fa72178f6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffcf81a2818 CR3: 0000000034a2e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ exfat_add_entry+0x516/0xaa0 fs/exfat/namei.c:516
+ exfat_create+0x1c7/0x570 fs/exfat/namei.c:565
+ lookup_open fs/namei.c:3649 [inline]
+ open_last_lookups fs/namei.c:3748 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3984
+ do_filp_open+0x27f/0x4e0 fs/namei.c:4014
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
+ do_sys_open fs/open.c:1417 [inline]
+ __do_sys_openat fs/open.c:1433 [inline]
+ __se_sys_openat fs/open.c:1428 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa72097fed9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007fa72178f058 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 00007fa720b45fa0 RCX: 00007fa72097fed9
+RDX: 0000000000141842 RSI: 0000000020000080 RDI: ffffffffffffff9c
+RBP: 00007fa7209f3cc8 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007fa720b45fa0 R15: 00007ffea8996448
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:exfat_get_dentry_cached fs/exfat/dir.c:727 [inline]
+RIP: 0010:exfat_init_dir_entry+0x556/0x9c0 fs/exfat/dir.c:460
+Code: 48 98 49 8d 1c c7 48 89 d8 48 c1 e8 03 42 80 3c 28 00 74 08 48 89 df e8 d8 66 89 ff 48 8b 1b 48 83 c3 28 48 89 d8 48 c1 e8 03 <42> 80 3c 28 00 74 08 48 89 df e8 bb 66 89 ff 4c 8b 3b 42 80 7c 2d
+RSP: 0018:ffffc9000d4472f8 EFLAGS: 00010206
+RAX: 0000000000000005 RBX: 0000000000000028 RCX: 0000000000000009
+RDX: 0000000000000000 RSI: 0000000000000009 RDI: 0000000000000020
+RBP: 1ffff92001a88edc R08: ffffffff8280f817 R09: 0000000000000000
+R10: ffffc9000d447240 R11: fffff52001a88e4d R12: 0000000000000200
+R13: dffffc0000000000 R14: ffff88801ab22000 R15: ffffc9000d4476f0
+FS:  00007fa72178f6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffea8995c80 CR3: 0000000034a2e000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	48 98                	cltq
+   2:	49 8d 1c c7          	lea    (%r15,%rax,8),%rbx
+   6:	48 89 d8             	mov    %rbx,%rax
+   9:	48 c1 e8 03          	shr    $0x3,%rax
+   d:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1)
+  12:	74 08                	je     0x1c
+  14:	48 89 df             	mov    %rbx,%rdi
+  17:	e8 d8 66 89 ff       	call   0xff8966f4
+  1c:	48 8b 1b             	mov    (%rbx),%rbx
+  1f:	48 83 c3 28          	add    $0x28,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 28 00       	cmpb   $0x0,(%rax,%r13,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 bb 66 89 ff       	call   0xff8966f4
+  39:	4c 8b 3b             	mov    (%rbx),%r15
+  3c:	42                   	rex.X
+  3d:	80                   	.byte 0x80
+  3e:	7c 2d                	jl     0x6d
+
 
 ---
-Changes in v10:
-- keep alphabetical order
----
- Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml | 1 +
- 1 file changed, 1 insertion(+)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-index 085e2504d0dc..14242de7fc08 100644
---- a/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-+++ b/Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml
-@@ -19,6 +19,7 @@ properties:
-       - maxim,max17047
-       - maxim,max17050
-       - maxim,max17055
-+      - maxim,max77705-battery
-       - maxim,max77849-battery
- 
-   reg:
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
--- 
-2.39.5
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
