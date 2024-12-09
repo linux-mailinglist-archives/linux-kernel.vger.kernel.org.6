@@ -1,216 +1,188 @@
-Return-Path: <linux-kernel+bounces-438212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 277DB9E9E56
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:52:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B4C19E9E59
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:53:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19A541887307
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB73166773
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:53:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B205A185E50;
-	Mon,  9 Dec 2024 18:52:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181E217C7BD;
+	Mon,  9 Dec 2024 18:53:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="muOq98w1"
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="nmsymqp8"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2041.outbound.protection.outlook.com [40.107.236.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB50D13B59A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 18:52:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733770341; cv=none; b=euWlFE9x0UWk2Tb7zYl8yzauAtvXb/OZg5yqNhoDkiQKdmpRKa9y5RgKRIeNDqo30BJ2F8Hmqz7WUQDle77xmQmqj/fChZMG7VuIhgzO977XS0YJzFS809pQswM+EiNdk7iLSdezqS1FzrEBjLTJYvFktn65x94QeNAtiKPTiVM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733770341; c=relaxed/simple;
-	bh=g2BRvOBD2WkAFs9Htd5iRD3WbS3hDE6awetT/6Oo6z0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WPDGsNRWUqysF3JJUt7S8nOZDVNGOzOF0/8XTSpy0dR8PrDVJu7pj+IMPr/jDbJHGci2aHVV7epZSZze97O0RXy7Zl+76jvr0A8j8fYAIUK/aEDUgUTuB/paAYMtLaNp9nUqY6URpFG9p3hA0qYCU4s6a9j1J3lTt8wsCFwAn0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=muOq98w1; arc=none smtp.client-ip=209.85.215.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fd526d4d9eso731722a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 10:52:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733770337; x=1734375137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vE5tXM4ceddZHK4DLvqd5OPVdW2n99/09qTSZ4lNDtc=;
-        b=muOq98w1VcRH+yv6YXTMN6PkP8okiTRa+9hSupJJLI7RABJxM4rCWy4EqGaHUxHuIq
-         m2BloPiQ7c+l45XLmRGLac4UWF9By0cTYvUKDjb/RHU4j+NWYv6vZPMduVWZL9jUpXvI
-         dRNQ/33BmqLSBAk5D8P3Uj8lfVE7egGzDP/oZxfRziCg8ad9O2lfFCHUjpbGKwHIRYfK
-         sT1IwUZH9TzvFT0rCHz4CCGuIR3j0iw+Oa0WgunTnTaFoRXOEwDiL/m1HaWM1wplFJ0z
-         WHbbemkF0BlJlfz+VEC1A4MnefvnirQifwnTuJE5vY0Sjv46ULb6kpKG/Qmkc0OqXqf1
-         kCNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733770337; x=1734375137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vE5tXM4ceddZHK4DLvqd5OPVdW2n99/09qTSZ4lNDtc=;
-        b=k6Vk3pcFrwRUYpVa7w1S3C1CR93bcZzwVRPj0k6XokjJmhcrS6nzllWljIgo9uoeeE
-         BWmhfQ16VZYUSxvw4IppL40YtLZMgXQBDLcmsQ6kgb4S2VuWBIA8eLNub8XO/zojvuA2
-         nJI16cjgLEqJvaRn9j0MDEexJreLmbLwSirkqvasmhoqD5OY4JfScgWIBsfRT5ReE2RK
-         Yan3HMxRiF+gCnwXyNmUc/6MFs2n+/JaN02v/xp92wyaX2H/tPkus85t4voLaIkuIdlq
-         eLipra3JJXCWTtiPGJea69jMSiZXqFjnSDrO09UgXjA9X4QRBNBQMZclB/5SuPorVKrO
-         z8/w==
-X-Forwarded-Encrypted: i=1; AJvYcCVUt2QsH3ctHpzJaujOdi6TrF7RrbtH5SaW0L5lxHufVWr6hHC0EWdkynbNrB6tkybceDXR5SeW+sXzgsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi39E6oNe/WFw3IXocvBgL5JqNQ5aMSmP1lxuut2P24c6hRSux
-	/WYWq8jliGb9roaxJmFNmiIUS92lHJ4JVNHtsCgbZdRHCOmqZn1htaOgNo2hDxP6wf4uPoUmedm
-	SxrtuCxPIwDIxB5tiej7CNHcW7fyQB5lJlbgB9A==
-X-Gm-Gg: ASbGnctrifrnSmz2ta0bL2QyF2QPLkljsrYwGDEw6muiXObqW6SlEMiFKBZAjOX1q0K
-	86nB7w8ZNJJmLigZKv2++HE/SLmW0jxnOlQ==
-X-Google-Smtp-Source: AGHT+IE3NlpgFvVBKio4rCWUgc2OgxnpAocEZrxQPQ/mMBSJUxJJVDkYqliqfqvlAJcB016TmpcY1ruHhQTOFNKl1H8=
-X-Received: by 2002:a05:6a21:78a6:b0:1e1:adcd:eaf8 with SMTP id
- adf61e73a8af0-1e1adcdf090mr4266443637.28.1733770337025; Mon, 09 Dec 2024
- 10:52:17 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FC6E13B59A;
+	Mon,  9 Dec 2024 18:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733770396; cv=fail; b=cr1ZPEqfJMCz5N+uFkzo/kg3u3oC4oQKq3drEK9X3gFyGsw8KP6HUXh+h+hY0vz4ile5HsZgPPcDTjPlmyzpYNxTAI5JPF5Bymy7jSSgzJwjL7M3NXiju2D6TWi+YBhju6AJMB5HyxgwgbFLu/4+vGWDH7xa40yjuZMxYI6mE7c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733770396; c=relaxed/simple;
+	bh=eKThXE4pTAWAbtAJhZPRdmGMtwp/UB7bddMpJz2A0Dk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=amQQZnfxntiBxz7CQFPmy2T0dTuD0PhAqFRpWioiAVr8C/XwrY4535XWMlL0lDkyp9p4awVOQL2+S1VEk1vvibrjdPILlDcqRXsW5bYe2JXvD809V2Nwy8pHq7Q0694aUGCW0OyKcyC/QLbZN6BhyOvTfH5Pdh0kK/iL6c4F+EI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=nmsymqp8; arc=fail smtp.client-ip=40.107.236.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iwP2oa+HM7afeojPH4zpN09qE8c0S+hyaZpnf16tXQqy4EdedmLlEHIyR9u12xfHVg642cZBEGEikTylhGbJHFa1BSvpLykrC7wTLOCzokZBuOG+/4eL+jaZhL6wTN7VFMBmy4wftjxFhHSkqBi3M1/uKLBzxUw8BRp+Y6TPnrV6dzCG8le4guMd1pE4jpxjDMiSrqTewOzF3epZjwPkTb7lgZsodDarJnII9aJGngyWmO6WWEnXJi31bs8F04J/2bPTTuLpst1DAMUZkweyIoDBNUgTn6y2wdUo2yYKLk0yObaxuYf+qUzhwL/p11HEgz/TkC3tIVEu6q5FyyKEwQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=114cxWIsjb0XMnLWuijIaUx3jDhoz+x8D9BAAoCvciA=;
+ b=Dek7EiepCk+SoN8o8TT+C6LdnKgjJye7TghHvUuRs8J3E+iLQ+OgpvXswHcR2tvuhVqKXxP81wSi5ZA0wh+RF5YpjterV7yAJolnbTJNSXi23r4r3s9gtmAAxofV911rLsPodO7cdgmnapKfvejr3iQUaegjfkcIlf8yL7CdXLNP2Zi63rA49hXHVsqBiM2Std7+s3TFXFCCyoC6yE9/z2LV/eKe+dPh57HF0i4W6wXXKdhPwWhkojFmQTP0XVSTNHF27yAgiS03fyGuSo4QpILfRPni6iUEgIclkcudh67gnO61ztNeTSsrYDileC9LZzAQRmw8CAnip5tjO8fEmQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=114cxWIsjb0XMnLWuijIaUx3jDhoz+x8D9BAAoCvciA=;
+ b=nmsymqp8Ncut42bWzauSsv3lPsS+764IGqSoI6H5EMMR3ATSyAmzXVRS0QQqwTN9+pjOa39UNyyXfpelGLkIJwlFit0r2iMl5a+lq730J3dGLzmJVT+x5n2daJYpVyca0Sa+hNvUxAdnoku8MZHiPB7zskwmruRznF9y4ZTnQbw=
+Received: from CH2PR19CA0005.namprd19.prod.outlook.com (2603:10b6:610:4d::15)
+ by PH8PR12MB7326.namprd12.prod.outlook.com (2603:10b6:510:216::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Mon, 9 Dec
+ 2024 18:53:10 +0000
+Received: from CH1PEPF0000A348.namprd04.prod.outlook.com
+ (2603:10b6:610:4d:cafe::63) by CH2PR19CA0005.outlook.office365.com
+ (2603:10b6:610:4d::15) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.13 via Frontend Transport; Mon,
+ 9 Dec 2024 18:53:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CH1PEPF0000A348.mail.protection.outlook.com (10.167.244.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Mon, 9 Dec 2024 18:53:10 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 9 Dec
+ 2024 12:53:09 -0600
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+CC: Perry Yuan <perry.yuan@amd.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>
+Subject: [PATCH v3 00/15] amd-pstate fixes and improvements for 6.14
+Date: Mon, 9 Dec 2024 12:52:33 -0600
+Message-ID: <20241209185248.16301-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241119-pmu_event_info-v1-0-a4f9691421f8@rivosinc.com>
- <20241119-pmu_event_info-v1-3-a4f9691421f8@rivosinc.com> <e124c532-7a08-4788-843d-345827e35f5f@sifive.com>
- <CAHBxVyEwkPUcut0L7K9eewcmhOOidU16WnGRiPiP3D7-OS7HvQ@mail.gmail.com> <b48c4319-1fbc-4703-88d2-6f495af9c24e@sifive.com>
-In-Reply-To: <b48c4319-1fbc-4703-88d2-6f495af9c24e@sifive.com>
-From: Atish Kumar Patra <atishp@rivosinc.com>
-Date: Mon, 9 Dec 2024 10:52:06 -0800
-Message-ID: <CAHBxVyFrsF0jwwFwKsg_6=c5ewFZG12iz3owzHEv6GxpA+hB1w@mail.gmail.com>
-Subject: Re: [PATCH 3/8] drivers/perf: riscv: Add raw event v2 support
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Anup Patel <anup@brainfault.org>, Will Deacon <will@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Mayuresh Chitale <mchitale@ventanamicro.com>, 
-	linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH1PEPF0000A348:EE_|PH8PR12MB7326:EE_
+X-MS-Office365-Filtering-Correlation-Id: b2476baf-e897-41ab-0354-08dd1882b9fa
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|82310400026|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?kFuh0boeN68lL6GMis+NAdHOgFZzkG9rBsJ9A1YJQZwYFCXVxZSj/keS2Spv?=
+ =?us-ascii?Q?hfYKKTNRXv8estB0B3IVty74XHHhBgM8Vs7vACMwUzWq56rlL/9awLAw35Zb?=
+ =?us-ascii?Q?BDuHavkP5Vyb1MBxlu1h5I8Fm8jzbVf8BSYJmtIAoSLQVmyhcdOtgC/A7V0f?=
+ =?us-ascii?Q?6YsaG5sGw2T6gzZaARl6YfBlNw4QZTXIYxGZ41Uf9/qxyUPxTFr9SzusW/Su?=
+ =?us-ascii?Q?bKRjcyWF/u7hOxeL92DnEPgIMT+ZZ5dVPaaoXeBBlCZTYwalzSUrCSxPb1O6?=
+ =?us-ascii?Q?n7v5aw6i30tghLUGo0stVoGWHdU6FRSpgImgwKIyHNl9hnBPlsYWzwJhgHOd?=
+ =?us-ascii?Q?R9tSUXgCn3YIeEze8dZnkJDsWbIhq/wot00q+bLYREIvdX3j0xGBd1H3HQyu?=
+ =?us-ascii?Q?L5vEBibIB2VfSxh+FhwV4j6NoLcw+yOyH6S/0sKf5ECMh4yp/bIYYCn/+PLY?=
+ =?us-ascii?Q?pky88XtMW1JNbfNaCODhtzcerptlsn9UVbw3/+aDUjowiF1Qit3aSSCLB8GY?=
+ =?us-ascii?Q?8bw1+zeTT7KbIoHOoP4iWwZSoGsVTnMJrGph4wnYfWlx94WcFxumWOvpeAWU?=
+ =?us-ascii?Q?EArNv1z+fo2dAq863xGv09X+CHma3opp5RxoMY4Vg75BIdKR5igX3cwpdGnM?=
+ =?us-ascii?Q?D6vzi3iDtWwwv3SDK9bJmZvoUxIq8hM48M0hEn7hWJQLq2kbCKZRDSEpLizc?=
+ =?us-ascii?Q?FdnhB06/bctLSREtf1jLhbXz7/K5+PKo+QHCYrc9+fslJ8UYdDhDbVHHM7Ow?=
+ =?us-ascii?Q?8wsRF5ovQZBaukGUY6TGEZsWOpU7VfN2DrZrc+5O5XVCCtHHOHlErTZjTbTf?=
+ =?us-ascii?Q?UfF4trbDwGdb5N/AtQ77vdejTmTAq8xrTK2gP9RJJoMEyycGPfOD29da3Bk9?=
+ =?us-ascii?Q?WuWcmDCEJowBG/QnESWs7ceV7kWF8aZluchbtXuP29SbkI6k+8HLcEuUl+qr?=
+ =?us-ascii?Q?aG6aeTpmphnPxJ9kC8gXeK0So2WQhr1Df1ZPgD71ln4LGwKHwPDa2kapiXrU?=
+ =?us-ascii?Q?oMiUV/A5kuzqHm5ArLsR4IiLNpahtQ3o2oEf7X277IyAPWNHBbMBzw6LhUhr?=
+ =?us-ascii?Q?7kWUA06mQJzV7Y0J6DyCS6S/EXRZb1RKZYF3HXHKyr2Jjg5vSvBkq8NbwTOP?=
+ =?us-ascii?Q?k+6SvCTDr5Kioje7iReuiDNS1mYdrut4WJcdnOE5zg2oTmhXdYBNF+Kh8sv6?=
+ =?us-ascii?Q?t9p0F+ZOjw0WRrKvNnruLV3mkdbyPpLIW4NK03/fYc0JCwvJN2OKC90getRz?=
+ =?us-ascii?Q?MPVqYkCYLS8JmqvV4A5Gkqb5h1x21Zn6NR+xRalfLttbEt8LzIhMfNEu2bSo?=
+ =?us-ascii?Q?sg++OfJIfhNMPh33WFIsw10ea0dzNjG36TpaH9jGoPnyZQeTHQaUqb4HyLfl?=
+ =?us-ascii?Q?BnsAgGbum7WoxrH+tIcRsfXQUVRoxgf/9YV65jvKhW8X19o3gW+Gg5vTuDFi?=
+ =?us-ascii?Q?+QNQcjmN6iyK0NEvl1EQnUUrE4jsPpUE?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(376014)(82310400026)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 18:53:10.0525
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2476baf-e897-41ab-0354-08dd1882b9fa
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CH1PEPF0000A348.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR12MB7326
 
-On Mon, Dec 2, 2024 at 6:39=E2=80=AFPM Samuel Holland <samuel.holland@sifiv=
-e.com> wrote:
->
-> Hi Atish,
->
-> On 2024-12-02 6:15 PM, Atish Kumar Patra wrote:
-> > On Mon, Dec 2, 2024 at 2:37=E2=80=AFPM Samuel Holland <samuel.holland@s=
-ifive.com> wrote:
-> >> On 2024-11-19 2:29 PM, Atish Patra wrote:
-> >>> SBI v3.0 introduced a new raw event type that allows wider
-> >>> mhpmeventX width to be programmed via CFG_MATCH.
-> >>>
-> >>> Use the raw event v2 if SBI v3.0 is available.
-> >>>
-> >>> Signed-off-by: Atish Patra <atishp@rivosinc.com>
-> >>> ---
-> >>>  arch/riscv/include/asm/sbi.h |  4 ++++
-> >>>  drivers/perf/riscv_pmu_sbi.c | 18 ++++++++++++------
-> >>>  2 files changed, 16 insertions(+), 6 deletions(-)
-> >>>
-> >>> diff --git a/arch/riscv/include/asm/sbi.h b/arch/riscv/include/asm/sb=
-i.h
-> >>> index 9be38b05f4ad..3ee9bfa5e77c 100644
-> >>> --- a/arch/riscv/include/asm/sbi.h
-> >>> +++ b/arch/riscv/include/asm/sbi.h
-> >>> @@ -159,7 +159,10 @@ struct riscv_pmu_snapshot_data {
-> >>>
-> >>>  #define RISCV_PMU_RAW_EVENT_MASK GENMASK_ULL(47, 0)
-> >>>  #define RISCV_PMU_PLAT_FW_EVENT_MASK GENMASK_ULL(61, 0)
-> >>> +/* SBI v3.0 allows extended hpmeventX width value */
-> >>> +#define RISCV_PMU_RAW_EVENT_V2_MASK GENMASK_ULL(55, 0)
-> >>>  #define RISCV_PMU_RAW_EVENT_IDX 0x20000
-> >>> +#define RISCV_PMU_RAW_EVENT_V2_IDX 0x30000
-> >>>  #define RISCV_PLAT_FW_EVENT  0xFFFF
-> >>>
-> >>>  /** General pmu event codes specified in SBI PMU extension */
-> >>> @@ -217,6 +220,7 @@ enum sbi_pmu_event_type {
-> >>>       SBI_PMU_EVENT_TYPE_HW =3D 0x0,
-> >>>       SBI_PMU_EVENT_TYPE_CACHE =3D 0x1,
-> >>>       SBI_PMU_EVENT_TYPE_RAW =3D 0x2,
-> >>> +     SBI_PMU_EVENT_TYPE_RAW_V2 =3D 0x3,
-> >>>       SBI_PMU_EVENT_TYPE_FW =3D 0xf,
-> >>>  };
-> >>>
-> >>> diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sb=
-i.c
-> >>> index 50cbdbf66bb7..f0e845ff6b79 100644
-> >>> --- a/drivers/perf/riscv_pmu_sbi.c
-> >>> +++ b/drivers/perf/riscv_pmu_sbi.c
-> >>> @@ -59,7 +59,7 @@ asm volatile(ALTERNATIVE(                          =
-                 \
-> >>>  #define PERF_EVENT_FLAG_USER_ACCESS  BIT(SYSCTL_USER_ACCESS)
-> >>>  #define PERF_EVENT_FLAG_LEGACY               BIT(SYSCTL_LEGACY)
-> >>>
-> >>> -PMU_FORMAT_ATTR(event, "config:0-47");
-> >>> +PMU_FORMAT_ATTR(event, "config:0-55");
-> >>>  PMU_FORMAT_ATTR(firmware, "config:62-63");
-> >>>
-> >>>  static bool sbi_v2_available;
-> >>> @@ -527,18 +527,24 @@ static int pmu_sbi_event_map(struct perf_event =
-*event, u64 *econfig)
-> >>>               break;
-> >>>       case PERF_TYPE_RAW:
-> >>>               /*
-> >>> -              * As per SBI specification, the upper 16 bits must be =
-unused
-> >>> -              * for a hardware raw event.
-> >>> +              * As per SBI v0.3 specification,
-> >>> +              *  -- the upper 16 bits must be unused for a hardware =
-raw event.
-> >>> +              * As per SBI v3.0 specification,
-> >>> +              *  -- the upper 8 bits must be unused for a hardware r=
-aw event.
-> >>>                * Bits 63:62 are used to distinguish between raw event=
-s
-> >>>                * 00 - Hardware raw event
-> >>>                * 10 - SBI firmware events
-> >>>                * 11 - Risc-V platform specific firmware event
-> >>>                */
-> >>> -
-> >>>               switch (config >> 62) {
-> >>>               case 0:
-> >>> -                     ret =3D RISCV_PMU_RAW_EVENT_IDX;
-> >>> -                     *econfig =3D config & RISCV_PMU_RAW_EVENT_MASK;
-> >>> +                     if (sbi_v3_available) {
-> >>> +                             *econfig =3D config & RISCV_PMU_RAW_EVE=
-NT_V2_MASK;
-> >>> +                             ret =3D RISCV_PMU_RAW_EVENT_V2_IDX;
-> >>> +                     } else {
-> >>> +                             *econfig =3D config & RISCV_PMU_RAW_EVE=
-NT_MASK;
-> >>> +                             ret =3D RISCV_PMU_RAW_EVENT_IDX;
-> >>
-> >> Shouldn't we check to see if any of bits 48-55 are set and return an e=
-rror,
-> >> instead of silently requesting the wrong event?
-> >>
-> >
-> > We can. I did not add it originally as we can't do much validation for
-> > the raw events for anyways.
-> > If the encoding is not supported the user will get the error anyways
-> > as it can't find a counter.
-> > We will just save 1 SBI call if the kernel doesn't allow requesting an
-> > event if bits 48-55 are set.
->
-> The scenario I'm concerned about is where masking off bits 48-55 results =
-in a
-> valid, supported encoding for a different event. For example, in the HPM =
-event
-> encoding scheme used by Rocket and inherited by SiFive cores, bits 8-55 a=
-re a
-> bitmap. So masking off some of those bits will exclude some events, but w=
-ill not
-> create an invalid encoding. This could be very confusing for users.
->
+This series started as work on the behavior around boost numerator that
+was changed in the last few kernels to make it more expected.
 
-Ahh yes. That is problematic if the vendor implements that type of
-event encoding.
-I will send the fix patch with an error if bits 48-55 are set.
+As part of the process, of these improvements I found various other
+optimizations that made a lot of sense in the context of the code.
 
-> Regards,
-> Samuel
->
+While I was working on the issues I found it was really helpful to have
+ftrace for EPP, so it introduces that as well.
+
+Lastly a bug was reported requesting that amd-pstate default policy be
+changed for client systems that don't use other software after bootup
+so it includes that change too.
+
+v3:
+---
+ * Pick up tags
+ * Squash two patches together
+ * Remove extra write to cached value
+ * Add comment explaining why updating two cached variables
+
+Mario Limonciello (15):
+  cpufreq/amd-pstate: Store the boost numerator as highest perf again
+  cpufreq/amd-pstate: Use boost numerator for upper bound of frequencies
+  cpufreq/amd-pstate: Add trace event for EPP perf updates
+  cpufreq/amd-pstate: convert mutex use to guard()
+  cpufreq/amd-pstate: Drop cached epp_policy variable
+  cpufreq/amd-pstate: Use FIELD_PREP and FIELD_GET macros
+  cpufreq/amd-pstate: Only update the cached value in msr_set_epp() on
+    success
+  cpufreq/amd-pstate: store all values in cpudata struct in khz
+  cpufreq/amd-pstate: Change amd_pstate_update_perf() to return an int
+  cpufreq/amd-pstate: Move limit updating code
+  cpufreq/amd-pstate: Cache EPP value and use that everywhere
+  cpufreq/amd-pstate: Always write EPP value when updating perf
+  cpufreq/amd-pstate: Drop ret variable from
+    amd_pstate_set_energy_pref_index()
+  cpufreq/amd-pstate: Set different default EPP policy for Epyc and
+    Ryzen
+  cpufreq/amd-pstate: Drop boost_state variable
+
+ Documentation/admin-guide/pm/amd-pstate.rst |   4 +-
+ drivers/cpufreq/amd-pstate-trace.h          |  52 ++-
+ drivers/cpufreq/amd-pstate-ut.c             |  12 +-
+ drivers/cpufreq/amd-pstate.c                | 411 ++++++++++----------
+ drivers/cpufreq/amd-pstate.h                |   3 -
+ 5 files changed, 250 insertions(+), 232 deletions(-)
+
+--
+2.43.0
+
 
