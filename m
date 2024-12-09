@@ -1,142 +1,82 @@
-Return-Path: <linux-kernel+bounces-437410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095BA9E92E6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:54:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2EC9E92FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:55:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D93D11881AF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:54:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1AA163CB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:55:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B91F225767;
-	Mon,  9 Dec 2024 11:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACAE2248B0;
+	Mon,  9 Dec 2024 11:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="vPOTAUsD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA462248A1;
-	Mon,  9 Dec 2024 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Pr8+lrlu"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ACC221D9F;
+	Mon,  9 Dec 2024 11:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733745184; cv=none; b=BKDp9StoSZv2Dh0vNZnTnk4JVKn9d3fftbReQFByP2V+kHErNN8bACiMxAO66TYZgY0iars3v0KC2Rm2N2JdmlP36/zbRE6fGrt/1IovvCmBOKYptJVdnYncjXr+kByhhNzh50DrMuexyZ8pdx4Wu0/HKzaC6KmgjXTVMc2atrA=
+	t=1733745287; cv=none; b=G9lmPHAm0aq4M3vniyo4MCBgF5RIr5+qW6XhYxKrzs8+QwuGnTl3BZAz2airGCGHdjkJHfRjWXpLzHWx8OUcPkdk5hU8kRD8Ft+ZVuoRCg7hhyau+PL7Oxglbvy/l6H4WcqAWtOVOsYoNEb58U1pH5Aw0ERVXzMJXthoX9/dH/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733745184; c=relaxed/simple;
-	bh=VEEB2A5ayIjGM7EoTOAUoJSPbnrhtAhuLBCL5VEQ0Q0=;
+	s=arc-20240116; t=1733745287; c=relaxed/simple;
+	bh=vKgDQVSCZiZVuUoe460Wv+0RAgKUSRH1hgoxUMIGfZs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qnvIkTVzv6d+FRxlhy1vySX9MLHCQhpGV9Y6oaq80QbFu9OOxmfVRB3P/7sn0dsQTFIWelmfA061EAMkgbYST+G85u8DxQtdP/+3X6B0Jp5b0ndhMqr7WngWr1NtpyrhitNeLPt0SoDdFtUA8cmcNZAObPQvyJLuNkc+1nKM2I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=vPOTAUsD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E611C4CEEB;
-	Mon,  9 Dec 2024 11:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733745183;
-	bh=VEEB2A5ayIjGM7EoTOAUoJSPbnrhtAhuLBCL5VEQ0Q0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vPOTAUsDObEqavBD3e1A/7cXbFb+pu4w8Y2ZzBPHhYXceWM/KqQK/aQghRMvXWqYc
-	 QaEfqw3hwI+xd5gTWfajy6pFqkn93vj85GqskNfoQTx5pyGUqoZQXWBg2g3TV3XvNw
-	 TXrarP03FmmJ3tf6TU5yj9mg+V1KRZj/fal4ayFY=
-Date: Mon, 9 Dec 2024 12:53:00 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <2024120908-anemic-previous-3db9@gregkh>
-References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
- <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
- <2024120925-express-unmasked-76b4@gregkh>
- <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
- <2024120954-boring-skeptic-ad16@gregkh>
- <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=lCcsq6PE+QdDATufEMnmDPb0AuMncWTWlBVAFdppFvWNc7hwiPCI7cnVqpKfSTNzSGlf3AmLEI2JaowZtju2J3/sYEdEBctpIC8Ae3tdn+aHXq8rv0pxOHDcJ0fykTLC5EeBOoNI9GS6z3lSC2lWPyB45Co9jNiQ26EQZfytQK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Pr8+lrlu; arc=none smtp.client-ip=1.95.21.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=LIpz7GLi/1VprLwmkdntmiNTbEeJvdJjxSq1eWwxCQo=;
+	b=Pr8+lrlueEgW16+Qc/mVD55zRoidCDKiv6WEF7aoZ3vM7mmkRrl91QI0NFb/s4
+	NpeZ765DFVmE+0bBHaMJ9WLDaYh88fq0lcJTZFhiYnReJIHR4ic92Gqxmi2R+5IZ
+	DgtXGxcqKOFRhpHYbUISnC9SnB13IquQE44qCVzJrXIow=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCnTOBH2lZn+byPBA--.47585S3;
+	Mon, 09 Dec 2024 19:53:45 +0800 (CST)
+Date: Mon, 9 Dec 2024 19:53:42 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: Re: [PATCH v4 3/3] arm64: dts: imx93-9x9-qsb: add temp-sensor
+ nxp,p3t1085
+Message-ID: <Z1baRpmr4MvsU0NQ@dragon>
+References: <20241112-p3t1085-v4-0-a1334314b1e6@nxp.com>
+ <20241112-p3t1085-v4-3-a1334314b1e6@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
+In-Reply-To: <20241112-p3t1085-v4-3-a1334314b1e6@nxp.com>
+X-CM-TRANSID:Ms8vCgCnTOBH2lZn+byPBA--.47585S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVdgAUUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQiwZWdWofLmhQAAsN
 
-On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
-> On Mon, Dec 9, 2024 at 12:10 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrote:
-> > > On Mon, Dec 9, 2024 at 9:48 AM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> > > > > Providing access to the underlying `struct miscdevice` is useful for
-> > > > > various reasons. For example, this allows you access the miscdevice's
-> > > > > internal `struct device` for use with the `dev_*` printing macros.
-> > > > >
-> > > > > Note that since the underlying `struct miscdevice` could get freed at
-> > > > > any point after the fops->open() call, only the open call is given
-> > > > > access to it. To print from other calls, they should take a refcount on
-> > > > > the device to keep it alive.
-> > > >
-> > > > The lifespan of the miscdevice is at least from open until close, so
-> > > > it's safe for at least then (i.e. read/write/ioctl/etc.)
-> > >
-> > > How is that enforced? What happens if I call misc_deregister while
-> > > there are open fds?
-> >
-> > You shouldn't be able to do that as the code that would be calling
-> > misc_deregister() (i.e. in a module unload path) would not work because
-> > the module reference count is incremented at this point in time due to
-> > the file operation module reference.
+On Tue, Nov 12, 2024 at 11:52:01AM -0500, Frank Li wrote:
+> Add temp-sensor nxp,p3t1085 for imx93-9x9-qsb boards.
 > 
-> Oh .. so misc_deregister must only be called when the module is being unloaded?
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-Traditionally yes, that's when it is called.  Do you see it happening in
-any other place in the kernel today?
+Applied, thanks!
 
-> > Wait, we are plumbing in the module owner logic here, right?  That
-> > should be in the file operations structure.
-> 
-> Right ... it's missing but I will add it.
-
-Thanks!
-
-> > Yeah, it's a horrid hack, and one day we will put "real" revoke logic in
-> > here to detach the misc device from the file operations if this were to
-> > happen.  It's a very very common anti-pattern that many subsystems have
-> > that is a bug that we all have been talking about for a very very long
-> > time.  Wolfram even has a plan for how to fix it all up (see his Japan
-> > LinuxCon talk from 2 years ago), but I don't think anyone is doing the
-> > work on it :(
-> >
-> > The media and drm layers have internal hacks/work-arounds to try to
-> > handle this issue, but luckily for us, the odds of a misc device being
-> > dynamically removed from the system is pretty low.
-> >
-> > Once / if ever, we get the revoke type logic implemented, then we can
-> > apply that to the misc device code and follow it through to the rust
-> > side if needed.
-> 
-> If dynamically deregistering is not safe, then we need to change the
-> Rust abstractions to prevent it.
-
-Dynamically deregistering is not unsafe, it's just that I don't think
-you will physically ever have the misc_deregister() path called if a
-file handle is open.  Same should be the case for rust code, it should
-"just work" without any extra code to do so.
-
-thanks,
-
-greg k-h
 
