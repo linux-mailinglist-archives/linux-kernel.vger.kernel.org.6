@@ -1,75 +1,74 @@
-Return-Path: <linux-kernel+bounces-436769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDD69E8A7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:44:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 130369E8A7C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:45:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ACDB1883554
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:44:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D76818832E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 660591922EE;
-	Mon,  9 Dec 2024 04:44:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240C8156886;
+	Mon,  9 Dec 2024 04:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PyxRVjlU"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nbLYn/+U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1185B189BBF;
-	Mon,  9 Dec 2024 04:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939B49625
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733719482; cv=none; b=o2WNkQ3PMS5L6ZQqF/JVzvItfI8w6CX2ZWmar8IcSqRU4x/IAD48vzNAq6CL8CsekIvH2mHCW/IpZMIvAGwnJCFFsdQ/qYJLyIdktJxss9H2A9kIhsRAT88IhkH//yWoDTB50HbrPXjeEwCQKSmxTaTebRH+HPGeQloLGzfP18Q=
+	t=1733719542; cv=none; b=LT2xi/LsMA3OmH3tVldGQykFwNY+wwXrsiNUQER3r+5vgCyY5UHUjWUEKk+SHTNHN/pYk3LJooLUjOjc3r+D5gAFkaU7eNqcL/+jM4aKGqiAflQK9VEdF/2k1VhY7Qt+mekxeD53SPJhUfHjjxT2g8z1d/hoIBTliEBufsWc97c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733719482; c=relaxed/simple;
-	bh=LHdowryXzqQdVdkjfptOPo5XBccx32PtE3ujdcb8Xh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jM/KF37BubTm6SH+cBWoA07PYcJvTVozG6psyzRwaXKqBFOPeKgt3I4Dbk++rpmT9xtv7/E6LuxQxM2T9W1lB9rCAWH0yDSEvmKAm/HftQe2nPeHlB22IkqQZTUUEJwrPBIv7DCPF7ob914Z9SMzKec6IbvsTI1kYyLB4X3YS2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PyxRVjlU; arc=none smtp.client-ip=192.198.163.17
+	s=arc-20240116; t=1733719542; c=relaxed/simple;
+	bh=h8jf0p3Hl4A+N35rWP+L5QZQeLTLaN0ARz6Ymme/pp4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OPiMsylYZHqMFvoEU+mJ3Bx+10NsBaIhGq4OewK/1rGRpIMqoJBmlpM+dGXxfPD2s6DcAx+Flh8Yvfp8bfQm8tg4mTsku5OhANfT5vqhlk6aSMQT4zla0IAVMIU1ABbXzU2eSX0YqrdHHHl/TJtQGopeWQsVagTvQl9DLgJhb+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nbLYn/+U; arc=none smtp.client-ip=198.175.65.9
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733719481; x=1765255481;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=LHdowryXzqQdVdkjfptOPo5XBccx32PtE3ujdcb8Xh0=;
-  b=PyxRVjlUqfRVE/ckpJDIf7xGrV32FxbgBe4o4gvpmrYd4fLTUXi/xbxQ
-   XFNispItwQ/z8qT/Hrig0GDUclnLVY0cFvQS9yjJ9JiI93dtAuIw8XfyN
-   98tmQ3WNeHgTSintjcADfSqaMX7ESukf6FeTOu/bHMl2dlRxpJkuj0Hkb
-   t04NGQY3WxZ/tyXqV58efyashf0w8QuapoU1+PH/anIR4yBp58olpRqDQ
-   GV47DMzbxNRoD5lJoyHNB2gRakJakR6q7iiQzsfD62XiVrGDjjYyY6iVr
-   Ea1kWZJfqI0JS9snolCVx474l5GK2L9jc/6YiH7uf6iZ94hrtu8lhe4ii
-   Q==;
-X-CSE-ConnectionGUID: Y1CDNkqhT1ewT16pNvE3tw==
-X-CSE-MsgGUID: UZoaPPpSSSq30EgwosRWPQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="33916998"
+  t=1733719541; x=1765255541;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=h8jf0p3Hl4A+N35rWP+L5QZQeLTLaN0ARz6Ymme/pp4=;
+  b=nbLYn/+UePFv2K/4sSr2Y1c5b4SpN20fssLy3FVl+dQBoKnbEoGAz7o1
+   BFefEkp4rPs38aOUEuaCkQNCS5ZaAzsmo4T/BWPfEWKxNZoMunTcz5P6W
+   /MSF+JyNaa0WsZ70bKCm3JU1HldeE85frmVHoIJ2HarLguYnB1iMFn/xO
+   XqVnDjPRm/J8jhEH3V/XZaP6ULl5/cyUFVDG20Fz8V8kpr52RFZJEOjqa
+   xnMxoT/x5EHfC6s4sI3WPYVi6etu3C9dTNLrTg3m3Xjde3Xm1Rg2EPjo8
+   FhJxupC5LFPBNaYmvz+WuyagsQaOXPLPAMoFFsF5BLmIXovUMyLIg37o8
+   A==;
+X-CSE-ConnectionGUID: 0FwJeVTFQVy+SUG0oXthUQ==
+X-CSE-MsgGUID: PK2+IvIoSxGsrYNiXHDq0w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="56484234"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="33916998"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:44:40 -0800
-X-CSE-ConnectionGUID: tpp8DdWqTCK1r34HNWe2jQ==
-X-CSE-MsgGUID: 7XgwCz8RT7y4mjsjo7S4sg==
+   d="scan'208";a="56484234"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:45:40 -0800
+X-CSE-ConnectionGUID: B+ZCYsECRpyiFFTaclz/AA==
+X-CSE-MsgGUID: 9lrzEcrqT62bGZd8DVtnAw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="118205074"
+   d="scan'208";a="100012722"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 08 Dec 2024 20:44:39 -0800
+  by orviesa004.jf.intel.com with ESMTP; 08 Dec 2024 20:45:39 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tKVdM-0003uH-1J;
-	Mon, 09 Dec 2024 04:44:36 +0000
-Date: Mon, 9 Dec 2024 12:44:25 +0800
+	id 1tKVeK-0003ud-25;
+	Mon, 09 Dec 2024 04:45:36 +0000
+Date: Mon, 9 Dec 2024 12:44:58 +0800
 From: kernel test robot <lkp@intel.com>
-To: Kyle Hendry <kylehendrydev@gmail.com>, linus.walleij@linaro.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kyle Hendry <kylehendrydev@gmail.com>
-Subject: Re: [PATCH] pinctrl: bcm63268: Add gpio function
-Message-ID: <202412081215.VyJuftPL-lkp@intel.com>
-References: <20241207223335.17535-1-kylehendrydev@gmail.com>
+To: Alexander Egorenkov <egorenar@linux.ibm.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Heiko Carstens <hca@linux.ibm.com>
+Subject: arch/s390/kernel/ipl.c:1973 sys_vmcmd_on_reboot_store() warn:
+ unsigned 'len' is never less than zero.
+Message-ID: <202412081614.5uel8F6W-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,116 +77,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241207223335.17535-1-kylehendrydev@gmail.com>
 
-Hi Kyle,
-
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on linusw-pinctrl/devel]
-[also build test WARNING on linusw-pinctrl/for-next linus/master v6.13-rc1 next-20241206]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Kyle-Hendry/pinctrl-bcm63268-Add-gpio-function/20241208-063718
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git devel
-patch link:    https://lore.kernel.org/r/20241207223335.17535-1-kylehendrydev%40gmail.com
-patch subject: [PATCH] pinctrl: bcm63268: Add gpio function
-config: x86_64-buildonly-randconfig-005-20241208 (https://download.01.org/0day-ci/archive/20241208/202412081215.VyJuftPL-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241208/202412081215.VyJuftPL-lkp@intel.com/reproduce)
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7503345ac5f5e82fd9a36d6e6b447c016376403a
+commit: 247576bf624a200b9d4dba6126e760af0d5ebe0e s390/ipl: Do not accept z/VM CP diag X'008' cmds longer than max length
+date:   7 months ago
+config: s390-randconfig-r071-20241208 (https://download.01.org/0day-ci/archive/20241208/202412081614.5uel8F6W-lkp@intel.com/config)
+compiler: s390-linux-gcc (GCC) 14.2.0
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412081215.VyJuftPL-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412081614.5uel8F6W-lkp@intel.com/
 
-All warnings (new ones prefixed by >>):
+smatch warnings:
+arch/s390/kernel/ipl.c:1973 sys_vmcmd_on_reboot_store() warn: unsigned 'len' is never less than zero.
+arch/s390/kernel/ipl.c:1974 sys_vmcmd_on_panic_store() warn: unsigned 'len' is never less than zero.
+arch/s390/kernel/ipl.c:1975 sys_vmcmd_on_halt_store() warn: unsigned 'len' is never less than zero.
+arch/s390/kernel/ipl.c:1976 sys_vmcmd_on_poff_store() warn: unsigned 'len' is never less than zero.
+arch/s390/kernel/ipl.c:1977 sys_vmcmd_on_restart_store() warn: unsigned 'len' is never less than zero.
 
->> drivers/pinctrl/bcm/pinctrl-bcm63268.c:630:7: warning: variable 'reg' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
-     630 |         case BCM63268_NOREG:
-         |              ^~~~~~~~~~~~~~
-   drivers/pinctrl/bcm/pinctrl-bcm63268.c:638:31: note: uninitialized use occurs here
-     638 |         regmap_update_bits(pc->regs, reg, mask, val);
-         |                                      ^~~
-   drivers/pinctrl/bcm/pinctrl-bcm63268.c:603:18: note: initialize the variable 'reg' to silence this warning
-     603 |         unsigned int reg;
-         |                         ^
-         |                          = 0
->> drivers/pinctrl/bcm/pinctrl-bcm63268.c:630:7: warning: variable 'mask' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
-     630 |         case BCM63268_NOREG:
-         |              ^~~~~~~~~~~~~~
-   drivers/pinctrl/bcm/pinctrl-bcm63268.c:638:36: note: uninitialized use occurs here
-     638 |         regmap_update_bits(pc->regs, reg, mask, val);
-         |                                           ^~~~
-   drivers/pinctrl/bcm/pinctrl-bcm63268.c:604:24: note: initialize the variable 'mask' to silence this warning
-     604 |         unsigned int val, mask;
-         |                               ^
-         |                                = 0
->> drivers/pinctrl/bcm/pinctrl-bcm63268.c:630:7: warning: variable 'val' is used uninitialized whenever switch case is taken [-Wsometimes-uninitialized]
-     630 |         case BCM63268_NOREG:
-         |              ^~~~~~~~~~~~~~
-   drivers/pinctrl/bcm/pinctrl-bcm63268.c:638:42: note: uninitialized use occurs here
-     638 |         regmap_update_bits(pc->regs, reg, mask, val);
-         |                                                 ^~~
-   drivers/pinctrl/bcm/pinctrl-bcm63268.c:604:18: note: initialize the variable 'val' to silence this warning
-     604 |         unsigned int val, mask;
-         |                         ^
-         |                          = 0
-   3 warnings generated.
+vim +/len +1973 arch/s390/kernel/ipl.c
 
+99ca4e582d4a408 Michael Holzheu 2008-01-26  1972  
+99ca4e582d4a408 Michael Holzheu 2008-01-26 @1973  DEFINE_IPL_ATTR_STR_RW(vmcmd, on_reboot, "%s\n", "%s\n", vmcmd_on_reboot);
+99ca4e582d4a408 Michael Holzheu 2008-01-26 @1974  DEFINE_IPL_ATTR_STR_RW(vmcmd, on_panic, "%s\n", "%s\n", vmcmd_on_panic);
+99ca4e582d4a408 Michael Holzheu 2008-01-26 @1975  DEFINE_IPL_ATTR_STR_RW(vmcmd, on_halt, "%s\n", "%s\n", vmcmd_on_halt);
+99ca4e582d4a408 Michael Holzheu 2008-01-26 @1976  DEFINE_IPL_ATTR_STR_RW(vmcmd, on_poff, "%s\n", "%s\n", vmcmd_on_poff);
+7dd6b3343fdc190 Michael Holzheu 2011-08-03 @1977  DEFINE_IPL_ATTR_STR_RW(vmcmd, on_restart, "%s\n", "%s\n", vmcmd_on_restart);
+99ca4e582d4a408 Michael Holzheu 2008-01-26  1978  
 
-vim +/reg +630 drivers/pinctrl/bcm/pinctrl-bcm63268.c
+:::::: The code at line 1973 was first introduced by commit
+:::::: 99ca4e582d4a4088969681efff97be44d98421a1 [S390] kernel: Shutdown Actions Interface
 
-   595	
-   596	static int bcm63268_pinctrl_set_mux(struct pinctrl_dev *pctldev,
-   597					    unsigned selector, unsigned group)
-   598	{
-   599		struct bcm63xx_pinctrl *pc = pinctrl_dev_get_drvdata(pctldev);
-   600		const struct pingroup *pg = &bcm63268_groups[group];
-   601		const struct bcm63268_function *f = &bcm63268_funcs[selector];
-   602		unsigned i;
-   603		unsigned int reg;
-   604		unsigned int val, mask;
-   605	
-   606		for (i = 0; i < pg->npins; i++)
-   607			bcm63268_set_gpio(pc, pg->pins[i]);
-   608	
-   609		switch (f->reg) {
-   610		case BCM63268_LEDCTRL:
-   611			reg = BCM63268_LED_REG;
-   612			mask = BIT(pg->pins[0]);
-   613			val = BIT(pg->pins[0]);
-   614			break;
-   615		case BCM63268_MODE:
-   616			reg = BCM63268_MODE_REG;
-   617			mask = BIT(pg->pins[0]);
-   618			val = BIT(pg->pins[0]);
-   619			break;
-   620		case BCM63268_CTRL:
-   621			reg = BCM63268_CTRL_REG;
-   622			mask = BIT(pg->pins[0]);
-   623			val = 0;
-   624			break;
-   625		case BCM63268_BASEMODE:
-   626			reg = BCM63268_BASEMODE_REG;
-   627			mask = f->mask;
-   628			val = f->mask;
-   629			break;
- > 630		case BCM63268_NOREG:
-   631			/*Do nothing, leave registers as default*/
-   632			break;
-   633		default:
-   634			WARN_ON(1);
-   635			return -EINVAL;
-   636		}
-   637	
-   638		regmap_update_bits(pc->regs, reg, mask, val);
-   639	
-   640		return 0;
-   641	}
-   642	
+:::::: TO: Michael Holzheu <holzheu@de.ibm.com>
+:::::: CC: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
 -- 
 0-DAY CI Kernel Test Service
