@@ -1,175 +1,156 @@
-Return-Path: <linux-kernel+bounces-438132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2932F9E9D4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:45:18 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 076181886916
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:45:18 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306CD15252D;
-	Mon,  9 Dec 2024 17:45:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="JViVYlyJ"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2062.outbound.protection.outlook.com [40.107.95.62])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1EE9E9D61
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:47:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64B91B042B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.62
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766314; cv=fail; b=nYHzGCxQoaFmmxSbCzxnAjEYSwn1I7aJPxgSRiDuS1LB8RcH0248F5UJHa0k9+IGSOxZ2Ut+VTvD+Q5stBd/lTD9cIoT2GuhmRixOWfN63fKas/D52HjYu/QpUN8fzQkiFV8lPy20yEXPLSacofJaxJXc6oRt+DUVB2UzqdmsAs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766314; c=relaxed/simple;
-	bh=k4qY1vuqfygWw21kOdBev/XcXj1qVH1byzqsSUY4z+Q=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bWfmwIC3otXmR1yKy2j48nBh4hr85ksvECWmZoXL5rgleDrtcismP0GuuA7RngYWMtXnk2Z451CjPB1nq1i10LMepmEjuuMx43Yhe3JtSme3WOoQpIc5+olUPNeG0nGdIZhNTkQ5OV0XcvbRzuNTxhcFMZcsLxtKVnF9TBYHGIs=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=JViVYlyJ; arc=fail smtp.client-ip=40.107.95.62
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U9dNp5Vml2/LcCeWW3NktZON0xfV20qolg+fCXfv4XESe8L8Zec2MhLmzvvnLqpkcXWf3euAgi6q48Uh8O5P4nwypZrx3RI7HgnZ0I85APVuFDBEcnHaXzhrgFp5mt9q9jumJU59awfjknAzSC6TX4XDBFp8+TwIvZZx4/AHhN0t4YDPoxDVY+U8wn4l6PNhXNeDmPFC1l1629klW2i8ChC+wv+kMeeAvMj9b5WrYoC9xit8eQ52lXADm5BqHQ4pa+IUM2+e/nyb+x3Yl6wM+kkUPxy9K1M68N1fZ/6CXCuLPvdDDo7GVSM43zlQv6CvbA+e8heTTkHbxatYhyGJvA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rYaxV3xBw/Nhj+w/r6BaBPgnGvuucClWrKQXZ2YW9aE=;
- b=iHHzk4Mq11LOn9VMAa7TjfLz16n2ZSzQP/e+giY4OXu8ZnhEiUXgQbRbcLviJzc0csYpobV5FcLJGY+HZmkBG4/sueIX4ZF9kB1mAgb1hL/KWj4iTIphTo8YGQxUkS7VPwY360UNT4m6wUQ8EsOMgytjCHLgw9Xb7OC6kgBMhuxBm53BI/lV8DFne/G7zm64HsL2CkBVtAdMxq+BgNSrs0qgj2Uop5bOj1gJDNUro9uq0A1rMSUh2xm06u02JFlA/yAjZhst084SYIzUwEpq3R/eYwznw4V3Zyho2IR4EYSCp0yauHwixVz6gWFb1yNUos3TrDvm/zsVu0HC3AHyIw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rYaxV3xBw/Nhj+w/r6BaBPgnGvuucClWrKQXZ2YW9aE=;
- b=JViVYlyJOyZOeZnu7LUK/woYNRB/MwSEuxc6Iv5jH591+dJqLvyjfgRl/BCYyOYXMiuoANXgl/6wOl5N8UP2CPv6dfd9x1ltAQ8odOF1u8GlmL8iAXAZuKPJpvT2TRk1LFIn2myvNAKhLAWI8UuVFzGu5+NzKOTBAuqTUf1UO36cGfysgp6Z0ooa3JmcA9J1+v3fuQawNRgSpjQsOz9NZuq/TCt79EP4zukm5WNNAPi3siz0lxq134j8pU8H5B6gV3aKZQCoZ2mji5GcCJB7X3pUZlfRRMsS18oW7IQNl/uSNd3+g3Z3eImCpr3O9wbZ5cMoR3sQdpSl6U+lWTPwQQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DM4PR12MB6424.namprd12.prod.outlook.com (2603:10b6:8:be::16) by
- CH0PR12MB8464.namprd12.prod.outlook.com (2603:10b6:610:184::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.12; Mon, 9 Dec
- 2024 17:45:05 +0000
-Received: from DM4PR12MB6424.namprd12.prod.outlook.com
- ([fe80::8133:5fd9:ff45:d793]) by DM4PR12MB6424.namprd12.prod.outlook.com
- ([fe80::8133:5fd9:ff45:d793%7]) with mapi id 15.20.8230.016; Mon, 9 Dec 2024
- 17:45:05 +0000
-From: Andrea Righi <arighi@nvidia.com>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] MAINTAINERS: add self as reviewer for sched_ext
-Date: Mon,  9 Dec 2024 18:45:01 +0100
-Message-ID: <20241209174501.748908-1-arighi@nvidia.com>
-X-Mailer: git-send-email 2.47.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0128.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:b9::17) To DM4PR12MB6424.namprd12.prod.outlook.com
- (2603:10b6:8:be::16)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F6FD282FED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:47:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFFA1F2C49;
+	Mon,  9 Dec 2024 17:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dwzuwR0X"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AB61F0E56;
+	Mon,  9 Dec 2024 17:45:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733766341; cv=none; b=hkYBmH6sFxLh4Ht1w/n4tUbYfkTklfEe8TJ+ZQIUxZDWb5DiOb5RSsJ8HbGGUy9Zx45IxnQ08UG3LFQ5k7pzyRsGXcikfgnVZFuiJnOF185FO+hxZWeaXVjtG3ngeE1TXAHHwaK4aMMf8VBFeP5hvzjrkEO32c6grM++jAacAC0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733766341; c=relaxed/simple;
+	bh=CcuwSq1SxtQMhtHuhAR5Boa6Ar8NA6RwQBru1LJ34o8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KDPVVCovw8lxm074x0N+KJOVL4GDzC1NuWQbLbsGTfG/ZPaDwStAXmpOKM6wTWogsUpx2baPcdMawHwevxN7B8hUX4qIfl54l9i2zlg3/8BCn85Oto4ke4N4BEEAft7VdfXeUxMlH9TceT8iDo1k91zBACTHbYzn2by6U8YL5Ic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dwzuwR0X; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-725ee6f56b4so1097455b3a.3;
+        Mon, 09 Dec 2024 09:45:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733766338; x=1734371138; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hLL+hTR2erfFMDNeV90V786XCRfTp97LfoiOqBvZZGc=;
+        b=dwzuwR0XUZanDwpP+mKZfcSxP2FkoLZHfHU5yRxQahIESEsNNsA3jLjXta+RghyAzB
+         LDaXRg6BFwdKKIOCKd58YG8rgFwhf3iBiOmUwM5r14FuGJh96SamYlXOm5nciMhoWYa/
+         k2NEAPBNTv6rhkoueuekyh6n/KnUyzNVf1nd9mfy91gMWqYqHpByhhjb/27/4liFwkW6
+         ybbLU3bvTF0jL2HeytZ2oqud/QupKgGuJgTL5LmAvYJf2lrTLA47wpNxQrLW7vH6f+5c
+         TtAnPTLcjvwx10Q2QxsoIn7dl4ubi7hkHZdQOwKikM3vIllvhCLDmj2s+K6MWRW7/Wqi
+         C6zQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733766338; x=1734371138;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hLL+hTR2erfFMDNeV90V786XCRfTp97LfoiOqBvZZGc=;
+        b=pW9cUAlp+3epNZ1KcYggTnhwpzxhaeiEQ/AwnSP99Y/bFmo+ly8f6zrnE+Tey646Jc
+         5OU2NRkvlL7kxl+KnoOtqnKVw8btnB7bH4L9QfW0p2VS6VPSX7edWJmi93eyxaL0QMNI
+         TAalMhmYDbZsITnef+5/jfnLYFQ+1S/0EvbCn6t6Qjs162onhjaG7+C2KlM0Tkqmi8wh
+         lzYV/WSSvS/Fi0UtIe/RJXpndClzs73XZlUhfZqvx+fHeSqzeNr3fXSjl5EAfU5s2uwh
+         vZiKvdHZvtkcWxAscOF/7mk7V/dwyVsMLEIV1uudMQz+nFzV8zKGNTHLdYxSaoGBk2oh
+         TMXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWBhqEpRJkmTFiNB74zldZx2C+nlLO2y3LJ28Abt4W0C911vC3xO4gFLodLswCgsYTWXI7mykJJKphoZdOfZnpg9wMibw==@vger.kernel.org, AJvYcCWkD/+wlh7Ccv/Y8a4EGp6iX2bFr00Wp5EP6p8fpm9bWaYERPwArKWQT7kjEGVeK19VFiwjjL3T1D+YAz4R@vger.kernel.org, AJvYcCWpgjI9vnEE0VjBAfF8CuCLNkyar/2lx6Gb2Z+1TITMJn13G2FqORG7JlEze+gK/7o6mYs06ucmAN1AeEoPbA==@vger.kernel.org, AJvYcCWt7lsVFYbU5ZqECDcut0TlVTrKU3WyjWetnwzsfkjOJSC+kRyordpZjT+ScU7WnMHytMw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwkGoBMYHNQ9zI3EpcmJLDtOlSJ6LKwYFJEHjH4jd62pdLlbtp5
+	+Uky6pByhLfadKX7eD+ICYcRDPiEyXtG6cOQphqBMijmMUEdez+uxt8wuZSYqns8YW3xEq3QZZT
+	cxlZks8EZvHjMNv9KyoQjYXs/y0Y=
+X-Gm-Gg: ASbGncviDw3zN5fPGPl3wvwi3CC6P84TZM7C3VXpXovlSQ/lSP680qqMrts56zZd+Gd
+	9JKhWh1xMFCdw/Zhz5L2iTDNoCdu0SWY7hrzxoeW2Xvd5mKWqINk=
+X-Google-Smtp-Source: AGHT+IF6C1kyOIzspL8FJ6lY6T2B7S0Ong/QRjtBPIeAUZMab/0JVUfow4OcO3JdX8i8lSSqgjFzDc6Dn626X5R/OrY=
+X-Received: by 2002:a05:6a20:9f9b:b0:1e0:d1db:4d8a with SMTP id
+ adf61e73a8af0-1e1870bd5e1mr20198567637.10.1733766338437; Mon, 09 Dec 2024
+ 09:45:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR12MB6424:EE_|CH0PR12MB8464:EE_
-X-MS-Office365-Filtering-Correlation-Id: 5b747d88-327d-4e41-4295-08dd1879371f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gtmuQf6TbQQigG8knhl4w1alZMrpV2gXEktADMoNMJCSHQRNLiDcxrdpGeYb?=
- =?us-ascii?Q?lx7n+au2KQFZbvuLJAP+Z+s+oINfbqNK3WlvaS6BJV59FZnVruHFE1hMIRGq?=
- =?us-ascii?Q?Izwqhmo3Nmzz/Tm1AZW7FfYWzF+51ZbO4r+3+ieZZpCsCEYcbf3izgTYV8AF?=
- =?us-ascii?Q?d78GB2oY9tusSNcpP63Zu4wvOSHfCE+xyR3newOVFiA0uFBPaSTvN27Ehy4B?=
- =?us-ascii?Q?dzOuVsWMT3+OoMoC1GsD6ndYKC8wrc/yhxoIGY3RTJKZAOcxYBsXdQSD0rxJ?=
- =?us-ascii?Q?lyKNCKsntjSCAR7ovmbTQe/kZaVg36SQUTUh0DQZHU6azmHpu7uCvCrEDVaG?=
- =?us-ascii?Q?4TjCf4mhpY2nhgah9VPw9A+wIU4UWCmGSiA8TflwpXqoIsszKNJhkj8/hVb9?=
- =?us-ascii?Q?FO3aeJJduxyalK5TSaYbxPlIBsdVmwEuCLKNxPDXuRKytmDEFiUXT39dZJ/p?=
- =?us-ascii?Q?CXurUwXjEcdoqSmOuXRK4QIUE1VxTGxa+Q6ZyUvOJEQbOFWYth9s45p+vyVr?=
- =?us-ascii?Q?CDyHLxSSjDeVjkM0vI8EpeHevUrhPARnbj/4/qfbHjAOVQA42ErSnzgwQC/j?=
- =?us-ascii?Q?wkq5UJaU9zg7U3lSxEu16ZSNgTeDelIz8THYShMkcm5sqgIUWi4/O3hPXF5l?=
- =?us-ascii?Q?z9tRlMUxYnu5b4AIkowr1Ydrkw/doqBOCbdXqS96qVF7h3FPsavt/pplPbv0?=
- =?us-ascii?Q?LqADg3QxqbWppdPq1zZ6AK559vYQe2uIKCBOsCKGLQfct5VuCbNdZJ7TAXpG?=
- =?us-ascii?Q?EyveivImbgvlmjrRLsGJck1t6wtJ+R/Fz27knU9OxbeoOq2V3o9/LGNGT1Oz?=
- =?us-ascii?Q?VSnjzbjA7QK4YsicsFxitvaoVamCfUx5k23gk8VlXFiCwuNgoLjI5yDABg/Y?=
- =?us-ascii?Q?OJ+ohznnSar6H8KZaEheNVfwpTpeRZiIocc4+X+2cTh95ToGfDphNsvOXkjL?=
- =?us-ascii?Q?RSw2NdNwAv5NzURdM4kXSnFhm30gPisxv4c0KIszjzKnDLTR3YtGjjyvlHNv?=
- =?us-ascii?Q?MILe5Ip3trHMYg/PO6aeyhwtTUMFn+CUVSP4lYMamBuoCBR+gg0Vub+uaw4n?=
- =?us-ascii?Q?y8YNvF5HfR7CCnIJniJWXfFoOm8LrgaJyM9mr+QUj0EEdVKHWFMOPUtDqb8m?=
- =?us-ascii?Q?93VYxi95CVKzhtR26SsoFn1EAZTh3AxcVEnXCn/AJutIwyPaHZ7CK+965r1f?=
- =?us-ascii?Q?uCbYbWImrfRIVZVVQ+OIENaqcbvAgZgvwCmWR9Q4t5RRzcmDhCwU7yjNZ4Yk?=
- =?us-ascii?Q?mMgTBtC7MjUsrrPCyS3OLAgyZTryvRkMOc66MYvu2EmrakGx+1hJBXfj0F6m?=
- =?us-ascii?Q?IBHitqU9BQtV7hqhd3B1oMW+SU4m5BklLYsACjfmW4xAsZMq2xL/dNx8Pu2b?=
- =?us-ascii?Q?jJPGXL0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6424.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?U/QaETTqEBic0dUQIDPgS6AOJH59MiSEWG4vSsynltOaCYmEldCEiGVwqGNt?=
- =?us-ascii?Q?XXcsxX+KFlszWq4CFQGnwYx2H6au56QjUxUvIK+eZn/P5ug+9T9aLqtY3I9K?=
- =?us-ascii?Q?T50Qo/LnnbNehG/TMh+7G8RZ1jDmJxt4/Ba7wgVJ1vyXrxDESTdoTCcWOJHT?=
- =?us-ascii?Q?cC1vBYU75gBWJedokDXQ5RPeELG074/4a/PUDj1add7FJ9CGrPhGJ39EhCpT?=
- =?us-ascii?Q?oPhXvFrqEzfYt4inL7MIO8bfy2Lkr7JeDIGpZhlKYVEAOVJbII5oP9faV+oX?=
- =?us-ascii?Q?jpSI3u9btVJN1yblOnsNhxpS7gbFolAnzLf3gb4sQkoHUidaT8nD59QKbLGw?=
- =?us-ascii?Q?Prw2UvZY9zyFwkTfSKPcKi+8dbGvA//3JXH6OLFtVJzSqgvbaWf936tK8222?=
- =?us-ascii?Q?E9sGF5fK6o+TbUnbN4UUdtnH4KGf3O0q/iK0y5Ab7FdhamOI06HRN+7sHQvO?=
- =?us-ascii?Q?IBTADSr5vQYPff+szIzRwH6/dGL9eCkTo0VPbQ6Dd0FwIyBigdMw27OyS2m4?=
- =?us-ascii?Q?hJzOLSZXhKzd/QME5RYXqzwvXV5PxHLnrtFNXcgSG2f1rD75as+MalxFi8YX?=
- =?us-ascii?Q?BB0ekCzcuX5zVU/rEFqfV5gFW9MyqyhLMpsPgWyCNZL+oJStKHdtTj3Rq2c9?=
- =?us-ascii?Q?h5Rz6KNoRQw151ttOAIad0wDyjK97iRa1+Y9Uo3tqAIbgxrqG8BD7TwKdknU?=
- =?us-ascii?Q?+NtUwSPH+1OwzCLfLCzjAz5OblXq50kKrsjGq9eHN7vgrpt5OVXdEibsWq5y?=
- =?us-ascii?Q?kT5c29+vTikwDbJQVQ9fvORs9+SRgQ6n+DvjPG8v1mwoOt1K8Co/AY5pTZPy?=
- =?us-ascii?Q?Xb75o4ql//3XBE+jnDmvd+bB/y5QH5fuxo0YjdN54/cpC3O37hxM8TowcIde?=
- =?us-ascii?Q?t/l1HDSrH2kpdbRF6Qmz8G4sSBepZtlRie1X6Iv5yXt3SSvdAtaLvcHYbWRV?=
- =?us-ascii?Q?Ygm0m2rWO5EA09/3CRTu9wKgJS2vL+YRI8XDT7a47KLuJkhaYnShZFqwq0OG?=
- =?us-ascii?Q?Zji56rC6MmLwMvpOoEFbir91LwqzSfwO0IPkdO2Kx27neyzP6PfjWA36Rd5m?=
- =?us-ascii?Q?AMhm+Lv20eqOeAzv+tKeASQCKM+SxwPs+zY0RFIVjz1nuZmMaC/0zRSW6vNS?=
- =?us-ascii?Q?eUlN+94aOWg7+T6AxsE8tsqUzH/eXe6dKLrx/647alsK3QV2q+FYI12JBQsx?=
- =?us-ascii?Q?L5/3DZYazkHJLRY9gXY6hXVmiir+H4vPm7xY2xbvTm7peihmiGzIoZ92To0a?=
- =?us-ascii?Q?EHVpZKl7G8vSGSBcbIk+Lx4P8dUbfT7A0tQg1YoxehzjSVtNiURHHwdhbRcL?=
- =?us-ascii?Q?pQYFaFpr2YCWGUcYpgxzAzKwt9taG9fDfI6IoxW+cNDj+TzXz0qBLILCcLpB?=
- =?us-ascii?Q?zFEvvuy1YPP5sJdbBkGzLkial8iUnOaZ80hSOh9wVMnqokLWSdara+5rJ9K/?=
- =?us-ascii?Q?Hbol4u4oLN+SveoDLGOcET4D77k+wEjMX3qn7JHLjxTxNYX58rfXsRS/sFbq?=
- =?us-ascii?Q?kTBNWFVzuwsdrUJR2bc7HPTeg+6A9PwDAvO6/cujceZkvA5uqSfFMaz0DZXx?=
- =?us-ascii?Q?io0dQzFQXc7MgnKhz92zIMAIiW4XkyV/8xO5eRaY?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5b747d88-327d-4e41-4295-08dd1879371f
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6424.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 17:45:05.2808
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rYgaK8TdYua7nw7GNE8wO+/fM3DHEc8xQFNWNn58MZj317iJHcHOhqXo6AIk+kwm76RyaOfcsXILbj9ps9DS2Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8464
+References: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
+ <20241205-sysfs-const-bin_attr-simple-v1-4-4a4e4ced71e3@weissschuh.net>
+In-Reply-To: <20241205-sysfs-const-bin_attr-simple-v1-4-4a4e4ced71e3@weissschuh.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 9 Dec 2024 09:45:26 -0800
+Message-ID: <CAEf4BzasK+pV69CMcy-pMk1cMf+LhKnXKPm8q6s7gioXnebRNQ@mail.gmail.com>
+Subject: Re: [PATCH 4/4] btf: Switch module BTF attribute to sysfs_bin_attr_simple_read()
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add myself as a reviewer for sched_ext, as I am actively working on this
-project and would like to help review relevant patches and address any
-related kernel issues.
+On Thu, Dec 5, 2024 at 9:35=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
+huh.net> wrote:
+>
+> The generic function from the sysfs core can replace the custom one.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+> ---
+>  kernel/bpf/btf.c | 15 ++-------------
+>  1 file changed, 2 insertions(+), 13 deletions(-)
+>
 
-Signed-off-by: Andrea Righi <arighi@nvidia.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+LGTM
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..41bae8792a77 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20902,6 +20902,7 @@ F:	kernel/sched/
- SCHEDULER - SCHED_EXT
- R:	Tejun Heo <tj@kernel.org>
- R:	David Vernet <void@manifault.com>
-+R:	Andrea Righi <arighi@nvidia.com>
- L:	linux-kernel@vger.kernel.org
- S:	Maintained
- W:	https://github.com/sched-ext/scx
--- 
-2.47.1
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
+> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
+> index e7a59e6462a9331d0acb17a88a4ebf641509c050..69caa86ae6085dce17e95107c=
+4497d2d8cf81544 100644
+> --- a/kernel/bpf/btf.c
+> +++ b/kernel/bpf/btf.c
+> @@ -7870,17 +7870,6 @@ struct btf_module {
+>  static LIST_HEAD(btf_modules);
+>  static DEFINE_MUTEX(btf_module_mutex);
+>
+> -static ssize_t
+> -btf_module_read(struct file *file, struct kobject *kobj,
+> -               struct bin_attribute *bin_attr,
+> -               char *buf, loff_t off, size_t len)
+> -{
+> -       const struct btf *btf =3D bin_attr->private;
+> -
+> -       memcpy(buf, btf->data + off, len);
+> -       return len;
+> -}
+> -
+>  static void purge_cand_cache(struct btf *btf);
+>
+>  static int btf_module_notify(struct notifier_block *nb, unsigned long op=
+,
+> @@ -7941,8 +7930,8 @@ static int btf_module_notify(struct notifier_block =
+*nb, unsigned long op,
+>                         attr->attr.name =3D btf->name;
+>                         attr->attr.mode =3D 0444;
+>                         attr->size =3D btf->data_size;
+> -                       attr->private =3D btf;
+> -                       attr->read =3D btf_module_read;
+> +                       attr->private =3D btf->data;
+> +                       attr->read_new =3D sysfs_bin_attr_simple_read;
+>
+>                         err =3D sysfs_create_bin_file(btf_kobj, attr);
+>                         if (err) {
+>
+> --
+> 2.47.1
+>
 
