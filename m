@@ -1,76 +1,53 @@
-Return-Path: <linux-kernel+bounces-436906-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BFB69E8C6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:41:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD349E8C2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:29:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4F41886407
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:28:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9280215041;
+	Mon,  9 Dec 2024 07:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="HXV5Ag4D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0D00D281537
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:41:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBADB215065;
-	Mon,  9 Dec 2024 07:41:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="m0B7CQyj"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.17])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D0A214800;
-	Mon,  9 Dec 2024 07:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE83D21481E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 07:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733730107; cv=none; b=aAOvva7ccSG/mSBwWTW4HAJe4zeS+rzk0TtWwGrQXledcqIluGfXXmuYw03erym/693EBeBalsE6UdiTjLE63f0usdHCnfmsJxfBJ82SXNQ6OoE+WxKRA6xieDF+cNw12rP4JHLzVqqp5RBNB0IyMLF4XyqzYxLAtLlYL4B+ejg=
+	t=1733729329; cv=none; b=D6GUO0YZ50s9K8MPNNinCMzThqxm3rzeoVxKJOGs57FNPfEULD9hy2f715LSfYiMUmETVa/nNz1M4mXz8bfGt8LQbqpFVasEA8P7D4UBU7cp8IPNCjdvA+0ojhF8KD/P7i1L2mAZaLg834iAyOH1dnvbjWJDBKPsFlEDRM3Cs1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733730107; c=relaxed/simple;
-	bh=uC1pem2t1qTf2SJaJq5zueNwLm5ploeyLdhhQKMf7KE=;
+	s=arc-20240116; t=1733729329; c=relaxed/simple;
+	bh=8yQuGZr5g5LOLm7HcB3xbvP8aKqMbRTKwyltS3vGU+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NIwrtHBK6xGKHzCh07aoUaOcg5+axg1eID2YxZ0lOq6Dk2jYUvP52Cpy0jGIwjQWP92JwqGzzt8bItRtG93aMYfeDmGXXk7MfXGLXWi0e82xOGNfT59TgOBS6Ryad9/KeD3ktZsEaUgM/AKJ+vT4XAdlIR+8sRaFOPV60UgL71s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=m0B7CQyj; arc=none smtp.client-ip=1.95.21.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=F+/1F5usZGU4xwFJCSgL70wM6kK3SGbjvRaZHVo0Zx0=;
-	b=m0B7CQyjdSflcO4FEyoQ1bz1xXtz2aaBneveM0wWc38aRp5vbeDz7ctDwIsbGo
-	UpqW1iwusxzg7XkDGBClLBth7ICBRKhCwevETCuxrhblIgjkao37+jwTiBu7SfBf
-	aC9mJ7KN6axnCTQ6cuhvoNhlZUkd9iCPaxh/9g5n3Ctew=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgA3fxoBnFZnkeV5BA--.46779S3;
-	Mon, 09 Dec 2024 15:28:03 +0800 (CST)
-Date: Mon, 9 Dec 2024 15:28:00 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lubomir Rintel <lkundrak@v3.sk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Paul Cercueil <paul@crapouillou.net>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Xiubo Li <Xiubo.Lee@gmail.com>,
-	Nicolin Chen <nicoleotsuka@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-	Adrien Grassein <adrien.grassein@gmail.com>,
-	Adam Ford <aford173@gmail.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-rockchip@lists.infradead.org, linux-mips@vger.kernel.org,
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH treewide 10/11] ARM: dts: nxp: imx: Switch to
- {hp,mic}-det-gpios
-Message-ID: <Z1acAA7gbxH7QfhT@dragon>
-References: <cover.1727438777.git.geert+renesas@glider.be>
- <7ff1bfb73a6d6fc71f3d751dbb7133b045853f64.1727438777.git.geert+renesas@glider.be>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PTGrV+ECQhdSZvihzI1K1USWCR0ux3Cc8PrpZp+2rxiO86ptTHePDNlDHGjRniIBGL52OYenDGIAuJ2urTJyFNbqSCXls4tloi+wbRBcbbtWrxHXdkxWfPNnyfhGVKPML4MtWxRCVwSBOwB6vOqN9joTnw+EcngZaMDMKtBO0Wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=HXV5Ag4D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEAA7C4CED1;
+	Mon,  9 Dec 2024 07:28:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733729328;
+	bh=8yQuGZr5g5LOLm7HcB3xbvP8aKqMbRTKwyltS3vGU+8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HXV5Ag4Dl2aCyqfYKbGZ9I5N+k1ue7og4w+NE8e51iFrlH/mHEIiSw703d0/7mUzc
+	 1t66J/tR70+bGYskCMyDzmAnFh7wqamW6BGcoZC8uX9sUnuC1/186wvKyqZq+0C4NC
+	 gJFrnC7Dz3ouXxAa4Cq4KjX/a8Nh5u+z9A6BNNJA=
+Date: Mon, 9 Dec 2024 08:28:12 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Costa Shulyupin <costa.shul@redhat.com>
+Cc: Wei Yang <richard.weiyang@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	=?iso-8859-1?Q?Ren=E9?= Nyffenegger <mail@renenyffenegger.ch>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [RESEND PATCH] scripts/tags.sh: Tag timer definitions
+Message-ID: <2024120918-campsite-unrated-bb36@gregkh>
+References: <20241114195521.3073881-1-costa.shul@redhat.com>
+ <CADDUTFz8=dm6jRrbd2RLK1+aDZik_W_-HJPEdND9auRr79h6RQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,19 +56,16 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7ff1bfb73a6d6fc71f3d751dbb7133b045853f64.1727438777.git.geert+renesas@glider.be>
-X-CM-TRANSID:Mc8vCgA3fxoBnFZnkeV5BA--.46779S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUoGQ6UUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCQ6wZWdWeNqUcwAAsm
+In-Reply-To: <CADDUTFz8=dm6jRrbd2RLK1+aDZik_W_-HJPEdND9auRr79h6RQ@mail.gmail.com>
 
-On Fri, Sep 27, 2024 at 02:42:25PM +0200, Geert Uytterhoeven wrote:
-> Replace the deprecated "hp-det-gpio" and "mic-det-gpio" properties by
-> "hp-det-gpios" resp. "mic-det-gpios" in Freescale Generic ASoC Sound
-> Card device nodes.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+On Mon, Dec 09, 2024 at 09:18:14AM +0200, Costa Shulyupin wrote:
+> Tag id, defined with DEFINE_TIMER(id, ...)
+> and ignore usages of DEFINE_TIMER itself.
 
-Applied, thanks!
+I'm sorry, but I don't understand this text, please be more descriptive
+as to what you are doing and why.
 
+thanks,
+
+greg k-h
 
