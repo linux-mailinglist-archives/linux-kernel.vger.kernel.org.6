@@ -1,129 +1,157 @@
-Return-Path: <linux-kernel+bounces-437084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1342D9E8EE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:41:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA1579E8EEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:42:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13D1F163ADD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDD5F1884730
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:42:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCF1F215F69;
-	Mon,  9 Dec 2024 09:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7738B2163AD;
+	Mon,  9 Dec 2024 09:42:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oJ1o2Vj+"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ROVWqHs3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K6/il/9y";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ROVWqHs3";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="K6/il/9y"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 993EF374EA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 09:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C6B215F46;
+	Mon,  9 Dec 2024 09:42:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733737282; cv=none; b=el340uFQZ3WFQqRLz3TNEp2w62DvYzNQLwXZUBwfdN9ZnKF21wt6n8OQsOC7+gzicPUxSPrJ/laaRnePYpURjQQe/3YD9QypybPqwHrJ3V/wYdfYEmjcmxeFuGYAobJ8IcyKkG08F18INaDuhderlZU/Ne7u9Sy9jHZzs7BAmIc=
+	t=1733737349; cv=none; b=FtGP0gwo/qm/k65O32EFwNkI93A78BfBTVR90fjOtgyt/pZbChUKO6BC6zSICml6iCmwFrfgXxz1useF6yk4C/iy/4aAGrGgwAp/sl1GlPabsL3UGCa8F1TlhcSWIVItW57Wll6wQPIsS06evuL4qjuOrybooWKiom2GU7EB2MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733737282; c=relaxed/simple;
-	bh=qih9/dhh+VmMQCwBtHvv0Ixmxd9/nUqqBNa/m3XJgTQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=GAQ6Yt6do/DB3xMh4KDaV67geFLn3iMyvVh2StBXhJAnAuU9iev4fVwpI2FOPR5c+y727eW4AHTeLZ7Y8KMaiQ6nuKeYZcKj8pSqZwzltQd8KmsCpQBsXi9y4683CSM7WuBaU6DKn6HqNvOeOfgW8d/NuD5mSKzUWdknv4zHfRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oJ1o2Vj+; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-434f3fcc891so8085815e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 01:41:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733737279; x=1734342079; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=NlOB8Iq7YEdDdHkH3u9oITRP5dsN5I3ZPe3WYkxy37I=;
-        b=oJ1o2Vj+eFfxt3EMmoph4wE8RYmyFxn30Ryl9QGC2X2YzsnEnsE4e57NQsW549QUuJ
-         9UjJXhUqIApqSoqQl4I3mWqAAvBVVBfnjJ2HwDO79MGUscgEdrmKkQ/mAf2eRJAztp4u
-         9TEMR7Kh7tnhls3VSt0jcg+TexdplsAnVkeKojyiHMl2loKEPGmA3uiFZP++4/5HbTfL
-         9GJ2gLW1KQ7HFuUMA9LVYA31tJdfkDN8mi2zVP/vo2CU8kiFYw4rU8K/kSBoSJRYKM5t
-         mlUNB2CP01hJ37OXtdSdINVZ1WAVtHtGzzl1W+udoIk0xeuJD1xpeapuHd+11NVGvc+y
-         3rhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733737279; x=1734342079;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NlOB8Iq7YEdDdHkH3u9oITRP5dsN5I3ZPe3WYkxy37I=;
-        b=eiCAgRGYiw7cvMGMVOEOjueLuOFJ5Zq3I1UTgPW8BaleQfvpdvtBvI8Q8GxKLHt5nN
-         DI7ygGg+bnvWbBjmjA6Z1xH1zYEkvo6akONdYLTCQYeAyEytqHjYwjX0kCgjwwZ0hhea
-         UYB5HeMfuz8XiFtt4gWcflHGG86VAdzveneXSLIyzrgoX94TZL3N4ahmnLyzj3jiJr9K
-         4P3u/voCYzHwaL9j0C4y4kJaatO1OHXbdAABfcyk8DLl1b7q2X2NqcPVzMUUKQzAXNLb
-         LYDbPRBTv5rlFZIW6sxaiJF0nBQaFJkMdzOFbWG+5bqIyUHlySfXBNnGTUSzOuFhvvJJ
-         RURA==
-X-Gm-Message-State: AOJu0YxnNYb0Q4P5A3i9XERo82LDJA+NpAdtZkgpwMagatpGjJ5uSZ0R
-	mt8iUg7kb5enrYmIeVmeY19JGPa9dWX8NNe7gk7BIFMq0IHBpdOwuv/0k97qbXu1WDAkC0vZTV+
-	s3g5yrTawU4kYu9MQSeypWwqTPgzEiLVhLgZjQMTJR+JYr0tFZ25hiJ8LSrTscGbizx0JbxyH7U
-	/nvkcjWZvy7jFSdCcwAUbxOLbLE+iqNA==
-X-Google-Smtp-Source: AGHT+IHbxx9z2e920n3O7WTIV9r1MVCZek13925rkZsUjBoqcCTwZ36ZXGu95HKP2JEpW0UW/yJaPxSJ
-X-Received: from wmbje2.prod.google.com ([2002:a05:600c:1f82:b0:434:a15f:e7ea])
- (user=ardb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:600c:3589:b0:434:ff45:cbbe
- with SMTP id 5b1f17b1804b1-434ff45d12amr1034855e9.18.1733737279158; Mon, 09
- Dec 2024 01:41:19 -0800 (PST)
-Date: Mon,  9 Dec 2024 10:41:06 +0100
+	s=arc-20240116; t=1733737349; c=relaxed/simple;
+	bh=TooB5ni57/2YrNXSMLpKon190oxwv49KB61DTNETEbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hhViAZCgywikRdAk6teDBdrs+OrWEqpJUirNcDo3ukFZPNL2qyZRoX4jMWXGwgC4hsGrWbXUdr/+jBW6ug5rGazJ8+C51ecdj9fnriLm1nmGf7nAQEFL6tCyH3AtcwEu7Q/Z610ebSGMUHY9yik5Nu4GxRCsElF/5BkZDdkPoeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ROVWqHs3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K6/il/9y; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ROVWqHs3; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=K6/il/9y; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 599A521102;
+	Mon,  9 Dec 2024 09:42:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733737346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIQwvsrIpYgv5MvzeEnVZPBMhP+QewiM6EWPCOSuTVg=;
+	b=ROVWqHs3eX2jxddbAJcSeaVF9VPcdDPjibTWlDoJ51YYPKFll2L+vbTCLNEJd033bkDwv4
+	IbhMu5XKOkZ+zqmISMMqx2BSu2MekIgmLn6icB+0+/yp9f29+jMwYPQYr8VkXe7LEw1z7I
+	R37xBp1fgRVBnDjV9+iChjbPZ8RimWE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733737346;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIQwvsrIpYgv5MvzeEnVZPBMhP+QewiM6EWPCOSuTVg=;
+	b=K6/il/9y2rYJNgrfcwHFshevRCOQUhZccARRG5++Eu3DQVGGe+zawpPvgOjUnpSE4T5x28
+	u+SXh3r8qV4vmkDQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1733737346; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIQwvsrIpYgv5MvzeEnVZPBMhP+QewiM6EWPCOSuTVg=;
+	b=ROVWqHs3eX2jxddbAJcSeaVF9VPcdDPjibTWlDoJ51YYPKFll2L+vbTCLNEJd033bkDwv4
+	IbhMu5XKOkZ+zqmISMMqx2BSu2MekIgmLn6icB+0+/yp9f29+jMwYPQYr8VkXe7LEw1z7I
+	R37xBp1fgRVBnDjV9+iChjbPZ8RimWE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1733737346;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=aIQwvsrIpYgv5MvzeEnVZPBMhP+QewiM6EWPCOSuTVg=;
+	b=K6/il/9y2rYJNgrfcwHFshevRCOQUhZccARRG5++Eu3DQVGGe+zawpPvgOjUnpSE4T5x28
+	u+SXh3r8qV4vmkDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 46E32138D2;
+	Mon,  9 Dec 2024 09:42:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id hEOVEIK7VmeOJQAAD6G6ig
+	(envelope-from <dwagner@suse.de>); Mon, 09 Dec 2024 09:42:26 +0000
+Date: Mon, 9 Dec 2024 10:42:17 +0100
+From: Daniel Wagner <dwagner@suse.de>
+To: Jens Axboe <axboe@kernel.dk>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	"Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, Eugenio =?utf-8?B?UMOpcmV6?= <eperezma@redhat.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Keith Busch <kbusch@kernel.org>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, John Garry <john.g.garry@oracle.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Hannes Reinecke <hare@suse.de>, Ming Lei <ming.lei@redhat.com>, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-scsi@vger.kernel.org, megaraidlinux.pdl@broadcom.com, 
+	mpi3mr-linuxdrv.pdl@broadcom.com, MPT-FusionLinux.pdl@broadcom.com, storagedev@microchip.com, 
+	linux-nvme@lists.infradead.org
+Subject: Re: [PATCH v6 0/8] blk: refactor queue affinity helpers
+Message-ID: <c5f7f562-c8b0-422b-bb51-744ecba7ecee@flourine.local>
+References: <20241202-refactor-blk-affinity-helpers-v6-0-27211e9c2cd5@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1573; i=ardb@kernel.org;
- h=from:subject; bh=9e6qySuMrp17XUKjtUf1eDq547E7b9JrA79tU8Ibtog=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIT1st5HpojkHPq4v2XOu2i2n+PGp6e9zr/S+6r3v59nDc
- Ofcio39HaUsDGIcDLJiiiwCs/++23l6olSt8yxZmDmsTCBDGLg4BWAiorIMfzhcXY5ILJr4ydrr
- 0r5D81e5yP3949136s/KHo+1iQ8kNfczMrwTmHh/u2VOfUnBmq1/TI3sWjf3LZ/aMZnDcmqElpn 5ES4A
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241209094105.762857-2-ardb+git@google.com>
-Subject: [PATCH] x86/boot/64: Fix spurious undefined reference when CONFIG_X86_5LEVEL=n
-From: Ard Biesheuvel <ardb+git@google.com>
-To: linux-kernel@vger.kernel.org
-Cc: x86@kernel.org, Ard Biesheuvel <ardb@kernel.org>, Ingo Molnar <mingo@kernel.org>, 
-	Borislav Petkov <bp@alien8.de>, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241202-refactor-blk-affinity-helpers-v6-0-27211e9c2cd5@kernel.org>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[24];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-From: Ard Biesheuvel <ardb@kernel.org>
+Hi Jens,
 
-In __startup_64(), the bool 'la57' can only assume the 'true' value if
-CONFIG_X86_5LEVEL is enabled in the build, and generally, the compiler
-can make this inference at build time, and elide any references to the
-symbol 'level4_kernel_pgt', which may be undefined if 'la57' is false.
+On Mon, Dec 02, 2024 at 03:00:08PM +0100, Daniel Wagner wrote:
+> I've rebased and retested the series on top of for-6.14/block and updated
+> the docummentation as requested by John.
+> 
+> Original cover letter:
+> 
+> These patches were part of 'honor isolcpus configuration' [1] series. To
+> simplify the review process I decided to send this as separate series
+> because I think it's a nice cleanup independent of the isolcpus feature.
+> 
+> Signed-off-by: Daniel Wagner <wagi@kernel.org>
 
-As it turns out, GCC 12 gets this wrong sometimes, and gives up with a
-build error
+I've based this work on top of your tree as I think it should go your
+tree. If this should go via different tree, let me know which one.
 
-   ld: arch/x86/kernel/head64.o: in function `__startup_64':
-   head64.c:(.head.text+0xbd): undefined reference to `level4_kernel_pgt'
+And in case the series didn't hit your inbox, I really don't know what I
+am doing wrong. I've switched over to use b4 and korg for sending the
+patches and on my side all looks good and the mails also appear on lore
+completely normal.
 
-even though the reference is in unreachable code. Fix this by
-duplicating the IS_ENABLED(CONFIG_X86_5LEVEL) in the conditional that
-tests the value of 'la57'.
-
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202412060403.efD8Kgb7-lkp@intel.com/
-Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
----
- arch/x86/kernel/head64.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/kernel/head64.c b/arch/x86/kernel/head64.c
-index 54f9a8faf212..22c9ba305ac1 100644
---- a/arch/x86/kernel/head64.c
-+++ b/arch/x86/kernel/head64.c
-@@ -186,7 +186,7 @@ unsigned long __head __startup_64(unsigned long p2v_offset,
- 	pgd = &RIP_REL_REF(early_top_pgt)->pgd;
- 	pgd[pgd_index(__START_KERNEL_map)] += load_delta;
- 
--	if (la57) {
-+	if (IS_ENABLED(CONFIG_X86_5LEVEL) && la57) {
- 		p4d = (p4dval_t *)&RIP_REL_REF(level4_kernel_pgt);
- 		p4d[MAX_PTRS_PER_P4D - 1] += load_delta;
- 
--- 
-2.47.0.338.g60cca15819-goog
-
+Thanks,
+Daniel
 
