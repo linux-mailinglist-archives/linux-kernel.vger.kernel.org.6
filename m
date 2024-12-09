@@ -1,183 +1,124 @@
-Return-Path: <linux-kernel+bounces-436790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B79F9E8AFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:27:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C341883C94
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:27:09 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE90175D2D;
-	Mon,  9 Dec 2024 05:26:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="MNcFaGRJ"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A8C59E8AFE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:29:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5ECC14A4CC;
-	Mon,  9 Dec 2024 05:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B1628120A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:29:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1F21662FA;
+	Mon,  9 Dec 2024 05:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pqlcVzK8"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1221B54918;
+	Mon,  9 Dec 2024 05:29:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733722017; cv=none; b=orQFSIUsLGY81V0pA/Mz9CCbETaGJyAopWn2JnP/Rd4gldSa//2Jsqr4rTamcyBEdxRG5DlJ+ge8gR3uH68nqjj6rWJvDE8mimihiyEB/1nX4WWbc+8Fu+iy6WDqtq7zr0ATXKbXgNmSxR28fSfkk0w4lmbIyKjPnKMEpbcmXTs=
+	t=1733722183; cv=none; b=e7ftmrMwyL1EbeL3qvX22ZhDyXx1uMAc0qC+u9gbEMVJ2TStebVqdPzFFkHIHt+5wU3sIl8229qZNBZyQ+MZLUd2uXpus8PqtrV8nT8scApx+l/6tGERm4Z1zWrocAa1OcZqdv8Kk3UlJA9HY/ytHroRuI+AoTTGiY2IvYsSQFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733722017; c=relaxed/simple;
-	bh=r3GRkniscda1h2jGia96dSzPLBBeCAFfWtcoKtCndGQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i3Ey/5CcDlDfGyEizT1G2idsi5seVhNVvN4f2eemWSNTCyhYgCwH24FybAjm3ogBTLAOwEDgSVyZYw7/oIXwddF68DhoSeVDD+cYd2il5KaxqUS+Dtv1twoVbuFaov6g+zg16BMa3STX7KXCp2WTBOFjKac8EQdulgsJnlwqTxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=MNcFaGRJ; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [192.168.88.20] (91-157-155-49.elisa-laajakaista.fi [91.157.155.49])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id D15D4502;
-	Mon,  9 Dec 2024 06:26:12 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733721974;
-	bh=r3GRkniscda1h2jGia96dSzPLBBeCAFfWtcoKtCndGQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MNcFaGRJBul5yuH7NaP0tg2XJDSNmygMpCc4b5I+kzpZhFdf/+jqvsUrjcomDAGgW
-	 HMcuw98tx6rcyZZu/0v8bh6E2hdpABQr8j3h+Tq0uBkEBW1Ay7jABVRJQRgvzqYonB
-	 l3zuGGhsdXifB0AVrFn5g9BgwC7qQkiJrDXnZk9M=
-Message-ID: <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
-Date: Mon, 9 Dec 2024 07:26:41 +0200
+	s=arc-20240116; t=1733722183; c=relaxed/simple;
+	bh=XWuXN25o8/tV4/i4QfIb6Dsb5ZZ/K2g2SFzaRTZgaUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=lttUf5HBHtUxP7YLqjK9A3q5ehUNJaPmpAT1Hk01fBUgbsDfKN1ehlesiSwQ1ZmzJ6wjJHpK2Y/t6w7Gu317gygd04DBajwVZbpEYUECYyfWLAu58ac/nAN5ZJaDXAITjyI/Wa5vgYIx9939LRXYf7pYD6e1B92/DxMkoP/AQV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pqlcVzK8; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8NRk06007232;
+	Mon, 9 Dec 2024 05:29:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1oCWU0Vm9zp3f+UCJJ7u3Pibn8vpF8aDZSqYFlUyQyE=; b=pqlcVzK8PRlttv3C
+	MRWr2pHPv5KnBqrdo9VgwpEclXaZBcOwSDGHm0nVXZmJcAg2HG+Y5zlZPUpS9S8V
+	ArLse2zihHkWB5Lj0Vpo/uJ2LmzcHWPTQoe766vt3N/K9pSkXv9woR43ggoO+5Aw
+	rIohA5zL6YB6WvRGECpNU+B8BafvoTNCPKbAPSlhKxwhhAt4Fm/QmXEzKUx5Wki6
+	msT1bLINec/KC57EAKyLBGKTpljeZFpO8rSrp0tEcTWKB1hw4PE+3lxce8x/fgik
+	4Li0n7KWRSJ33R9NBUIhMZ2cGjnqHEvX6J0qsMPKXjYEm0+xhZ6Ss1quB+OAn2JN
+	XOLjCA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cek1udrm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 05:29:35 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B95TY0m018334
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 05:29:34 GMT
+Received: from [10.151.36.43] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
+ 21:29:31 -0800
+Message-ID: <64be3126-5d07-7490-28fc-20afd2635b8c@quicinc.com>
+Date: Mon, 9 Dec 2024 10:59:28 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 05/10] clk: renesas: r8a779h0: Add display clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
- Jagan Teki <jagan@amarulasolutions.com>, Sam Ravnborg <sam@ravnborg.org>,
- Biju Das <biju.das.jz@bp.renesas.com>, dri-devel@lists.freedesktop.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- linux-clk@vger.kernel.org,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-5-d74c2166fa15@ideasonboard.com>
- <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v2] dmaengine: qcom: bam_dma: Avoid writing unavailable
+ register
 Content-Language: en-US
-From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
- 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
-In-Reply-To: <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <vkoul@kernel.org>,
+        <martin.petersen@oracle.com>, <kees@kernel.org>, <av2082000@gmail.com>,
+        <fenghua.yu@intel.com>, <linux-arm-msm@vger.kernel.org>,
+        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
+References: <20241205120016.948960-1-quic_mdalam@quicinc.com>
+ <2afca6ca-10eb-43b3-8730-386d6ca84b60@linaro.org>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <2afca6ca-10eb-43b3-8730-386d6ca84b60@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6WiF1a7MLFvejCZDk3prUcCz8tLospqK
+X-Proofpoint-ORIG-GUID: 6WiF1a7MLFvejCZDk3prUcCz8tLospqK
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ mlxscore=0 adultscore=0 clxscore=1011 malwarescore=0 phishscore=0
+ spamscore=0 mlxlogscore=938 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090042
 
-Hi,
 
-On 06/12/2024 15:43, Geert Uytterhoeven wrote:
-> Hi Tomi,
+
+On 12/5/2024 5:58 PM, Bryan O'Donoghue wrote:
+> On 05/12/2024 12:00, Md Sadre Alam wrote:
 > 
-> On Fri, Dec 6, 2024 at 10:33 AM Tomi Valkeinen
-> <tomi.valkeinen@ideasonboard.com> wrote:
->> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->>
->> Add display related clocks for DU, DSI, FCPVD, and VSPD.
->>
->> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
->> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> The commit log:
 > 
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> i.e. will queue in renesas-clk for v6.14.
+>> Avoid writing unavailable register in BAM-Lite mode.
+>> BAM_DESC_CNT_TRSHLD register is unavailable in BAM-Lite
+>> mode. Its only available in BAM-NDP mode. So avoid writing
 > 
->> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
->> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
->> @@ -179,6 +179,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
->>          DEF_MOD("canfd0",       328,    R8A779H0_CLK_SASYNCPERD2),
->>          DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
->>          DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
->> +       DEF_MOD("dis0",         411,    R8A779H0_CLK_S0D3),
->> +       DEF_MOD("dsitxlink0",   415,    R8A779H0_CLK_DSIREF),
->> +       DEF_MOD("fcpvd0",       508,    R8A779H0_CLK_S0D3),
->>          DEF_MOD("hscif0",       514,    R8A779H0_CLK_SASYNCPERD1),
->>          DEF_MOD("hscif1",       515,    R8A779H0_CLK_SASYNCPERD1),
->>          DEF_MOD("hscif2",       516,    R8A779H0_CLK_SASYNCPERD1),
->> @@ -227,6 +230,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
->>          DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D4_VIO),
->>          DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D4_VIO),
->>          DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D4_VIO),
->> +       DEF_MOD("vspd0",        830,    R8A779H0_CLK_S0D1_VIO),
->>          DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
->>          DEF_MOD("cmt0",         910,    R8A779H0_CLK_R),
->>          DEF_MOD("cmt1",         911,    R8A779H0_CLK_R),
+> and the action taken in the code:
 > 
-> As mentioned by Laurent during his review on v1, all clock parents
-> should probably be some form of R8A779H0_CLK_S0Dx_VIO.
-> So I'm inclined to replace all of them by R8A779H0_CLK_VIOBUSD2 while
-> applying, which would match R-Car V4H.
-
-What do you mean with the above? First you say the clock parents should 
-be some form of S0Dx_VIO, but then you say you'll use VIOBUSD2. Aren't 
-those unrelated clocks, from different PLLs?
-
-> Are you OK with that?
-
-I'm fine with that. I can't really get much out of the docs wrt. 
-clocking, and the clocks I used were from the BSP. Afaics, it looks 
-similar to V4H, so it's probably best have the same clocks, as you suggest.
-
-  Tomi
-
+>> +    if (bdev->bam_revision >= BAM_LITE && bdev->bam_revision < BAM_NDP)
+>> +        writel_relaxed(DEFAULT_CNT_THRSHLD,
+> 
+> Really don't match up. You've said in your commit log 
+> BAM_DESC_CNT_TRSHLD is unavailable to the LITE module but, then you say 
+> if (bam_revision >= BAM_LITE...)
+> 
+> How can checking if the revision == BAM_LITE match up with the stated 
+> objective in your commit log => _not_ writing to DEFAULT_CNT_THRSHLD in 
+> lite mode ... ?
+Thank you for pointing that out. I'll address this in the next revision.
+> 
+> ---
+> bod
 
