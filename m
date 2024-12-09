@@ -1,200 +1,164 @@
-Return-Path: <linux-kernel+bounces-437830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06F189E994E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:47:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2EB19E994D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B05162551
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:46:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 015011888BEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACC5F1BEF95;
-	Mon,  9 Dec 2024 14:46:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DD41B0430;
+	Mon,  9 Dec 2024 14:46:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MKx5m0S4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FQya7AoT"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 589C41B042A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:46:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8761B0420
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755582; cv=none; b=GYyV8CxJftbaEeGilgorDIyHiFDDwoQfq7rwsJuhLIkHKVVoOIuUiEQpFcbflAKwuuqmEOy1jvEJNczUKOlI02KE+WPSp7UyXWhGWfNsiEWAudDnILTKr0WnctiOCkbSMKQJLSt13ld3P6+CxuUPEhmJjMws4YKJgIoHXz+7mcQ=
+	t=1733755615; cv=none; b=aDtiZrLCk9t9Rk4Q3VeP/jtx2AaFcw91nviOx9jBwJBLYjJkNMP8hXYyVw4LeQ6A/f8cSHUj9hSwSEw4J/4dgDk8pz47Lk+30EkJ7JjcIls+/+uw1v/YEBoYID0X7yYA+UQP/7GElPm7Begd5dseXlYIJx5l9+GW6aOYdBDA+fQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755582; c=relaxed/simple;
-	bh=jMxAFVMnGAQPLKMOmGNmLSjbzP+BQHuzViq38Tz1Hkw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X4Axt3NJ4yWvrpc74kB3RuC+vZ4xh8VguR7F142uzYne++X8iYKJRe3udlPlT3GpaYx6XkB1npn1rQgu7LCuaRzbWL51/zR9INyWElnbYmwncemhOog2UuNwkRTgJ6WJBaupn+ypWoWx+/HqH+qoc/+ELApo7tNRdxMUp4l8Z5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MKx5m0S4; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733755579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1oTVwgyT1vrg2qoxh3tmhZlAJlYTIeB9WpByoV0XmeM=;
-	b=MKx5m0S4+QgaIxiFxUfrl2UMXaDGQlqWBNMiNh4Ikn5qrAF4HOv0PzvzmPL19BdNdBFIrY
-	VmwCkzi55NcvIQYkXi2O+W39wqrshkmvt5aXqasGinkHz9K7MrzPMgW0MWvcg5wVXQfKiR
-	DVIwEitIvB8FjtqM37wJjqgVv/sCV80=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-253-Fyt1GYqSMD62pDXEj2feqQ-1; Mon, 09 Dec 2024 09:46:18 -0500
-X-MC-Unique: Fyt1GYqSMD62pDXEj2feqQ-1
-X-Mimecast-MFC-AGG-ID: Fyt1GYqSMD62pDXEj2feqQ
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-434f4e9b73dso11036825e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:46:17 -0800 (PST)
+	s=arc-20240116; t=1733755615; c=relaxed/simple;
+	bh=wfaCW9PKJNfdJARFyfPcnNW1uOaAzyBt79sDMe4ggF8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gkxMmmhYBplzMVgQkUF/EAongMHNnb8q8nmmApfTzCSCymfDyg1p/+RyjGXWu5WfWKhvzAc61XcuNaQRd2lj8sSSPbLjllXGh0tpG2YKHe2+0PbgQfTpLXzDinD7NWva5EtCzGqau7KayypSnN651F1wqQLFn2Ciqt7hYmVigkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=FQya7AoT; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2165cb60719so6547005ad.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:46:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1733755613; x=1734360413; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=/BY5bcYoYikTyU3Vh1QbYSB3lerrS5OmyaNA6i7z+50=;
+        b=FQya7AoTbhIXIcuh6OqbRCrOCe6/7HAMZvCh31AzkAs40ChaZHhVVt5JqR8fXjzVVF
+         5Mj1FwbY9aNTpSkdzzsjdDOy9Nqu2rNfFFuLLFan+hL6z4NTwUD+q7ckhCbQU069R4qB
+         9tQcj2Ya6o+WBvoZsoajSoOTTz6CWwpIfthtI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733755576; x=1734360376;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=1oTVwgyT1vrg2qoxh3tmhZlAJlYTIeB9WpByoV0XmeM=;
-        b=TIo498woGASqg8lxQSI5Tul+QRo03bHZEk6Jq1KzvXU1o5sR6kRDZBSQ6C9jaUnWfS
-         dInod7HoQ2aQwA/7ItZxhKTntVu1t8u2T3M7xC31CTGSibhEpo5SRTqX3QdOpfKaCCgQ
-         9kO+fkQH3QY0k319wuEh5GNDERntttzgKFjVzDse5167hGl3ZzwA+7T/fw8otFCwlEAO
-         dR0unMhMeNkTwv4dMk41MxHcyrLAXfNzksL3tZ4fTHaszgme8orMoiOuTNfyibU0VDqA
-         EJQJ9Nm8oj4YMAMKLaE+OvIRN6Iq39ndiptV5D3HDtda7OFxnXcbrnQPi7ixlyCp33sF
-         MoIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU65Fchd1ZTuVGDiErT9dR1uP2FUQlQ4yBpumwG6dC0ZSpT5bUIXfwYZEiprL4ZxpYDJKDpP3rMAbDHHt0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxxt95PujT3kq4nvvGbeQHpZN6NSIllUy4DMt08Byw5TPs6qgoL
-	VZNxoqA7f6HzlbHjNivaTt+dJ6BuFc4Cg6YUr67KXI0lZQnADobfeiX7J4y6n+n8c1FQZfGazX5
-	wmQsmES9h8D91/PfeXoUM/6BEh+ASTkL38Og6YW+3iC1PdS9rQ8UjQdQpQjrl2g==
-X-Gm-Gg: ASbGncuRa/QigcsBrV7vsdMORRMgJSXkDqRC1+fP3LtYNT5jRc8fFJtFwSEKDWFNdL4
-	/MJyz2LiNBieKTtAVTBZ0gl4uRwV1qxcglP48VQL8KZfquamZEAWIDNSFt75lSs4XP+4nyy2/Wn
-	/uYS1xlt0EWZaJH/5QyQ9XLV8E3+9q8SFQZT2ZEefOWWOultpkVUrbZSKgRj0YuzM7KcEiQZzxP
-	JpPkwGfzuDIaGtdDL9XTfEW85q6cuU0CzdxHSum5tXb8WNW/Iing/mYlaRxi3EJzOM2JZu0dby9
-	py1QtjMP
-X-Received: by 2002:a05:6000:1846:b0:385:e0d6:fb6e with SMTP id ffacd0b85a97d-3862b3d0a4amr10494505f8f.37.1733755576177;
-        Mon, 09 Dec 2024 06:46:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHERhLEGcrQflDYoAfqN4JlTNdUC2cS7xApvTw6znkncMbQBC9wCcixe+iyRMtiqLVqCskS3A==
-X-Received: by 2002:a05:6000:1846:b0:385:e0d6:fb6e with SMTP id ffacd0b85a97d-3862b3d0a4amr10494485f8f.37.1733755575827;
-        Mon, 09 Dec 2024 06:46:15 -0800 (PST)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861ecf4087sm13575665f8f.5.2024.12.09.06.46.15
+        d=1e100.net; s=20230601; t=1733755613; x=1734360413;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/BY5bcYoYikTyU3Vh1QbYSB3lerrS5OmyaNA6i7z+50=;
+        b=o+v8n1yaT7VQggnzXZwX0KuKUiknhlvq5Ta9INxxPvDNPjgcRy+viFFkn2mdGlIHo0
+         2SALG52ab3zzFqYXfp0Ya+oj3T+1YfJtxGe9HoDWgv/ZfLL1FvS510hqHroEKX6kIaEb
+         MJNRBDBrIbDX27hhNCe/JReniFnqy5UBJbbrzoAn/LGxfMDJkvDfPDc191RUTfpp1jXl
+         8Mt6R80clw02/wmcncGJT9reeA1MSpLoGczAQzwzVUcoew3n6jSE6yAk/4EfcCGr5Ac/
+         rPmrVlbtsFxopUKROzp8P89rZzwT6BErHDbyEOhkHPWszoFQpAD4AhTiN0J1gXC4oC3B
+         8GfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWbAE8HpdvU0FJgfI/tgvAzFC9xci3ZBVxhwvjhg3OeLiyL8f3/+edgipMH6In8maQsPvPCVZUaI6tNRd8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzblefNBJzE85iQyH76nxHW3iDD0ZqFYWKCZ7rU71fiMIbYQ+J7
+	mGp9ALu1v1cA1aLzDZrAbUYbBsMGB0mF5yXTt9m+HVISAP6Cm22ODwKSmJNk/f72B7VJgd8h6nA
+	=
+X-Gm-Gg: ASbGncvjtrAxS4Aa1ala4iQLmwyhoM3h4+7vt+cYuvuK1Ie37Ck0Oozd2xoFwMplI/M
+	zehJgXLyCdL3HNsIUGlEtdpLyXmcnmCx4aQCcqgvesZ6Or1HeSrfFdMhq3wQJBfT8qHXM/npjWz
+	fmsuWsFaDFX2ECe+MkTlZeF6hkjrz3FuyNlbHCAO8cUVTQrlVDpafwfthpt6OMU25pbPVRzxWyE
+	cky3C6HIcZn3zrsfUCFaqK4MFAPAaWc3zNY+HbVIerPA1dTmNgs4/zsbGI08iUOmbyCUFyDL/B2
+	UIhQK/CS8cMIBVwD
+X-Google-Smtp-Source: AGHT+IG+ahsw4FOe1H1EnaPSqbHtK4TRUph4DgvQOekbBJ8Kf1wkCUStXBwU8SSk0IwdSJGcxZ0diA==
+X-Received: by 2002:a17:903:40c7:b0:215:a2e2:53ff with SMTP id d9443c01a7336-21669fcff97mr10539375ad.11.1733755612786;
+        Mon, 09 Dec 2024 06:46:52 -0800 (PST)
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com. [209.85.215.176])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8efa2c4sm73634475ad.162.2024.12.09.06.46.50
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:46:15 -0800 (PST)
-Message-ID: <eedb527e-34f6-4982-a258-cc27db933371@redhat.com>
-Date: Mon, 9 Dec 2024 15:46:14 +0100
+        Mon, 09 Dec 2024 06:46:51 -0800 (PST)
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7f43259d220so2971546a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:46:50 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVpSiCeTFUHnr1c4/psW4ouki+VyNKQfb/lODbLNUZwtw0+JGqjlWyPZPz+iiVzgDsPa0ntxwqPDSJXZ08=@vger.kernel.org
+X-Received: by 2002:a17:90b:53d0:b0:2ee:ed1c:e451 with SMTP id
+ 98e67ed59e1d1-2efcf1484b6mr1271828a91.15.1733755610316; Mon, 09 Dec 2024
+ 06:46:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: remove an avoidable load of page refcount in
- page_ref_add_unless
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: yuzhao@google.com, akpm@linux-foundation.org, willy@infradead.org,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-References: <20241207082931.1707465-1-mjguzik@gmail.com>
- <94d0dcbe-2001-4a9c-a767-b337b688b616@redhat.com>
- <CAGudoHEggB=F9j7r+ndQs1WxpRWB4O5VdBo+PLx+yd1xrj4-Ew@mail.gmail.com>
- <606fbf9a-c9ba-4f08-a708-db38fe6065ce@redhat.com>
- <CAGudoHFLTet0ZpOkDMFBh0yBDhJ47st-aRrCLZojdrCgQKznUQ@mail.gmail.com>
- <f5a65bf5-5105-4376-9c1c-164a15a4ab79@redhat.com>
- <CAGudoHGUwS_zY1KWStMtKoy=eogLigy7ucpEQXzTZGANU=35Jw@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CAGudoHGUwS_zY1KWStMtKoy=eogLigy7ucpEQXzTZGANU=35Jw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+ <20241114-uvc-roi-v15-14-64cfeb56b6f8@chromium.org> <1cac4857-c261-461f-9749-8c8c68a0db07@redhat.com>
+In-Reply-To: <1cac4857-c261-461f-9749-8c8c68a0db07@redhat.com>
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Mon, 9 Dec 2024 15:46:38 +0100
+X-Gmail-Original-Message-ID: <CANiDSCsN8UjxnCWmvuKzXnvSFY6YO02N24ha6W4PNTkUVZTzHg@mail.gmail.com>
+X-Gm-Features: AZHOrDkJnrHyC4xzyb2bm7dfdIkKr36449JL3-XBxamAiy7PTjRYXhxOEG79O80
+Message-ID: <CANiDSCsN8UjxnCWmvuKzXnvSFY6YO02N24ha6W4PNTkUVZTzHg@mail.gmail.com>
+Subject: Re: [PATCH v15 14/19] media: uvcvideo: Use the camera to clamp
+ compound controls
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Ricardo Ribalda <ribalda@kernel.org>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 09.12.24 15:30, Mateusz Guzik wrote:
-> On Mon, Dec 9, 2024 at 3:22 PM David Hildenbrand <david@redhat.com> wrote:
->>
->> On 09.12.24 13:33, Mateusz Guzik wrote:
->>> That is to say I think this thread just about exhausted the time
->>> warranted by this patch. No hard feelz if it gets dropped, but then I
->>> do strongly suggest adding a justification to the extra load.
->>
->> Maybe it's sufficient for now to simply do your change with a comment:
->>
->> diff --git a/include/linux/page_ref.h b/include/linux/page_ref.h
->> index 8c236c651d1d6..1efc992ad5687 100644
->> --- a/include/linux/page_ref.h
->> +++ b/include/linux/page_ref.h
->> @@ -234,7 +234,13 @@ static inline bool page_ref_add_unless(struct page *page, int nr, int u)
->>
->>           rcu_read_lock();
->>           /* avoid writing to the vmemmap area being remapped */
->> -       if (!page_is_fake_head(page) && page_ref_count(page) != u)
->> +       if (!page_is_fake_head(page))
->> +               /*
->> +                * atomic_add_unless() will currently never modify the value
->> +                * if it already is u. If that ever changes, we'd have to have
->> +                * a separate check here, such that we won't be writing to
->> +                * write-protected vmemmap areas.
->> +                */
->>                   ret = atomic_add_unless(&page->_refcount, nr, u);
->>           rcu_read_unlock();
->>
->>
->> It would bail out during testing ... hopefully, such that we can detect any such change.
->>
-> 
-> Not my call to make, but looks good. ;)
-> 
-> fwiw I don't need any credit and I would be more than happy if you
-> just submitted the thing as your own without me being mentioned. *No*
-> cc would also be appreciated.
+On Mon, 9 Dec 2024 at 15:05, Hans de Goede <hdegoede@redhat.com> wrote:
+>
+> Hi,
+>
+> On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
+> > Compound controls cannot e reliable clamped. There is plenty of space
+> > for interpretation for the device manufacturer.
+> >
+> > When we write a compound control, let the camera do the clamping and
+> > return back to the user the value used by the device.
+> >
+> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+> > ---
+> >  drivers/media/usb/uvc/uvc_ctrl.c | 12 ++++++++++++
+> >  1 file changed, 12 insertions(+)
+> >
+> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> > index 0dae5e8c3ca0..72ed7dc9cfc1 100644
+> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> > @@ -2339,6 +2339,18 @@ int uvc_ctrl_set(struct uvc_fh *handle, struct v4l2_ext_control *xctrl)
+> >
+> >       ctrl->dirty = 1;
+> >       ctrl->modified = 1;
+> > +
+> > +     /*
+> > +      * Compound controls cannot reliable clamp the value when they are
+> > +      * written to the device. Let the device do the clamping and read back
+> > +      * the value that the device is using. We do not need to return an
+> > +      * error if this fails.
+> > +      */
+> > +     if (uvc_ctrl_mapping_is_compound(mapping) &&
+> > +         uvc_ctrl_is_readable(V4L2_CTRL_WHICH_CUR_VAL, ctrl, mapping))
+> > +             uvc_mapping_get_xctrl_compound(chain, ctrl, mapping,
+> > +                                            V4L2_CTRL_WHICH_CUR_VAL, xctrl);
+> > +
+>
+> I do not believe that this actually works / does what you want it to do.
+>
+> At this point we have only updated in memory structures for the control
+> and not send anything to camera.
+>
+> Querying the control to return the actual achieved values to userspace
+> only makes sense after uvc_ctrl_commit() has succeeded, unless I am
+> missing something ?
 
-Likely Andrew can add the comment as a fixup.
+You are absolutely correct. Sorry about that.
+
+Let's drop it for now.
+
+Thanks!
+
+>
+> Regards,
+>
+> Hans
+>
+>
+
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Ricardo Ribalda
 
