@@ -1,47 +1,48 @@
-Return-Path: <linux-kernel+bounces-437343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 946B49E9209
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:21:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 355AA9E920C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:21:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38EC9280FEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:21:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D053128281B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:21:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA66E219EBA;
-	Mon,  9 Dec 2024 11:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50F3B21A937;
+	Mon,  9 Dec 2024 11:20:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhCRyQMy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D7b0x2Q+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1868D218AA6;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A024421A43F;
 	Mon,  9 Dec 2024 11:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733743237; cv=none; b=WT3NXPzjesEFg+qofdqGSSJcwg57IM+LHEDQlYKQ70VMy2yz0WGEGyzQsX+P3nRtrZXL/2hIsKEpRs4BikCoys7vVvuNPZbT1TkFQbh1sbe3AmVXu6Kv81mUixbW/mOygoWrR5pfMN9ZcWIuDeS9AZeQPytORkfZwruuvMWhlP4=
+	t=1733743237; cv=none; b=ED1M4QtW+xVdW1I1PA+21zYpq971LKAt/KD/7+3YRaiRVu9snlytzHzFWIA2tMUJQfkIXq3p6RdSEMQThMuWwpLQYw2F4NZIpbtL/mxUZlUTUUwLgg2mYNM5jzkFEymBgCtPovSPIWDjUmTq7171ncAI2OyQbdjyKTo1GIkMguE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733743237; c=relaxed/simple;
-	bh=11vQLLmphFwGU+kKNcSh9cY4RnEZ6CybkaKni0OR3eE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tKA3ku08DNJIrNVr8MAz4mznxJsa4QiuZqqmwt0RpurM4/7QUADaRf3UVUkF0NI4ZdX7axoolpjYYNWt0GALVGO11+O9X743ULE7Up3tDeC/F+SVil6wPzcseig7FCRNc3mFqknMA+nU79Muy+93N0DLSSnRp4Ma6AcrglZprCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhCRyQMy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E47D9C4CED1;
-	Mon,  9 Dec 2024 11:20:36 +0000 (UTC)
+	bh=3N4d65t8tlhYSC9lPSzOeAEj9EIZZf5ZHkBDz8Cb1h4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=r9Yl0EMpJ6DvsQTWmEspQErigPKjlGe6gkyyqc/u+V+uWg0/YOgFwZ/D7HDzJ+B5JSSjYZMX75st/aIBm95TRfxgDywgXm9FRB7ZKeLE42+P8RhcyiwrZALeac2DF64g1M+VVLRQ0Rb44M5tqZI+Vh77dY3WM/6cn1lPAJXdRpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D7b0x2Q+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1820DC4CEE6;
+	Mon,  9 Dec 2024 11:20:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1733743237;
-	bh=11vQLLmphFwGU+kKNcSh9cY4RnEZ6CybkaKni0OR3eE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=IhCRyQMy3NIaBeMIgCV7dcFcIhpN4w+cPr9FSmscCMbqg3DG6c6CPGceUHM1gPZMC
-	 xn4lASh/8mwyq2DOKcc4EMEayGfFJuIss8D5zXGsmtJeJqCL7wllDKrYaXwjZHdBTU
-	 zmLHK4ztJ+eR1hzupos2aYPwEXmf2m5TD75xEG3Qvzll9qDoW8qgP/Ko5Dg9ojcGpA
-	 8wKYfUIRE3zlF+/qpgZOoQgijeZuQFtVJodJNccT/3BFQn9q748nGBVuzS8bTnYptX
-	 nMfjtRS5DdveL/zDfHo++7+YPZiV8MoZnnp6aEl/oNfcIdO6gf/HD2kbTmSvYQzcbS
-	 BoIUBD0iDuAug==
+	bh=3N4d65t8tlhYSC9lPSzOeAEj9EIZZf5ZHkBDz8Cb1h4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=D7b0x2Q+Fxpzs2aBXIahli02huv675iF4LEw99zGOmTykQFRCw7NJui1LwCiyH+aS
+	 02717DdIJ/9NjAjXVdYBiMK21cA+yqoB0tqVMTnPQfAg07I5g19CNoztGoroXiV6ad
+	 3adKoMcLdeXmGuTSpjgfko8zOCQvcW0WqYqnFKWxI0hyvSYlWedYvhBF48ZMI2UwoO
+	 3EFqlluLvR6RyE2q/Y4N1iWlF3olc5vx+UvdgahUIwnoBHM+GPipr5NV11Bs5MK+pT
+	 Fv+sEzfba3fkFFNpgUyv+5cDl49hCXOgfM2snxRp1wLH7yujFXk6eOU5KN19ysq9ld
+	 5NRtYnYWIpuPw==
 Received: from johan by xi.lan with local (Exim 4.97.1)
 	(envelope-from <johan+linaro@kernel.org>)
-	id 1tKboc-00000000869-1f8e;
+	id 1tKboc-0000000086B-2EEI;
 	Mon, 09 Dec 2024 12:20:38 +0100
 From: Johan Hovold <johan+linaro@kernel.org>
 To: Bjorn Andersson <andersson@kernel.org>,
@@ -58,10 +59,12 @@ Cc: Rob Herring <robh@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	regressions@lists.linux.dev,
 	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH v2 0/2] arm64: dts: qcom: x1e80100: fix USB OTG regressions
-Date: Mon,  9 Dec 2024 12:19:03 +0100
-Message-ID: <20241209111905.31017-1-johan+linaro@kernel.org>
+Subject: [PATCH v2 1/2] Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
+Date: Mon,  9 Dec 2024 12:19:04 +0100
+Message-ID: <20241209111905.31017-2-johan+linaro@kernel.org>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241209111905.31017-1-johan+linaro@kernel.org>
+References: <20241209111905.31017-1-johan+linaro@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,36 +73,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
-ports can break SuperSpeed device hotplugging.
+This reverts commit 1a48dd7b9ac809d1bd0fd2fef509abba83433846.
 
-Abel noticed that the corresponding commit for the CRD also triggers a
-hard reset during resume from suspend.
+A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
+ports can break SuperSpeed device hotplugging. The host controller is
+enumerated, but the device is not:
+
+	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
+	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 3
+	xhci-hcd xhci-hcd.5.auto: hcc params 0x0110ffc5 hci version 0x110 quirks 0x000080a000000810
+	xhci-hcd xhci-hcd.5.auto: irq 247, io mem 0x0a800000
+	xhci-hcd xhci-hcd.5.auto: xHCI Host Controller
+	xhci-hcd xhci-hcd.5.auto: new USB bus registered, assigned bus number 4
+	xhci-hcd xhci-hcd.5.auto: Host supports USB 3.1 Enhanced SuperSpeed
+	hub 3-0:1.0: USB hub found
+	hub 3-0:1.0: 1 port detected
+	hub 4-0:1.0: USB hub found
+	hub 4-0:1.0: 1 port detected
+
+Once this happens on either of the two ports, no amount of disconnecting
+and reconnecting makes the SuperSpeed device be enumerated, while
+FullSpeed device enumeration still works.
 
 With retimer (and orientation detection) support not even merged yet,
 let's revert at least until we have stable host mode in mainline.
 
-Note that Stephan and Dmitry have already identified other problems with
-the offending commits here:
+Fixes: 1a48dd7b9ac8 ("arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports")
+Cc: Jonathan Marek <jonathan@marek.ca>
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+ .../arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-	https://lore.kernel.org/all/ZxZO6Prrm2ITUZMQ@linaro.org/
-	https://lore.kernel.org/all/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef
-
-Johan
-
-
-Changes in v2
- - revert also the corresponding patch for the CRD which breaks suspend
-
-
-Johan Hovold (2):
-  Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
-  Revert "arm64: dts: qcom: x1e80100-crd: enable otg on usb ports"
-
- .../boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts  |  8 ++++++++
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts            | 12 ++++++++++++
- 2 files changed, 20 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+index 5a4a72a030d4..b4b6260c670c 100644
+--- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
++++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+@@ -1515,6 +1515,10 @@ &usb_1_ss0 {
+ 	status = "okay";
+ };
+ 
++&usb_1_ss0_dwc3 {
++	dr_mode = "host";
++};
++
+ &usb_1_ss0_dwc3_hs {
+ 	remote-endpoint = <&pmic_glink_ss0_hs_in>;
+ };
+@@ -1543,6 +1547,10 @@ &usb_1_ss1 {
+ 	status = "okay";
+ };
+ 
++&usb_1_ss1_dwc3 {
++	dr_mode = "host";
++};
++
+ &usb_1_ss1_dwc3_hs {
+ 	remote-endpoint = <&pmic_glink_ss1_hs_in>;
+ };
 -- 
 2.45.2
 
