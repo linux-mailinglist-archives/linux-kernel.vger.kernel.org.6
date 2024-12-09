@@ -1,206 +1,152 @@
-Return-Path: <linux-kernel+bounces-436835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436834-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71AA29E8B78
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:24:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FCF39E8B76
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:24:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F8A01629D0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:24:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15AB72147FA;
+	Mon,  9 Dec 2024 06:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TIvRbPYm"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2419228182C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:24:41 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC2B214A64;
-	Mon,  9 Dec 2024 06:24:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="pllIjA8e"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA482101B1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:24:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EC320FAAE;
+	Mon,  9 Dec 2024 06:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733725463; cv=none; b=DZQYlf9N4iNrz1lkEdpOa4pqWSCo3aTU4xIOx9LhsR3fZP7wGYd9rrSSfFXHwh1aR466vwibrTdQws7ZAIjTECBQvRNVFeOyor1lS1BXUskHKPHzdeCZC+/hAhFZcVWUbo36e89NXKB8sp2itO/HyWDRGGXTE73ZTuMPMv/zoiA=
+	t=1733725461; cv=none; b=aVeMwKZKv7cz2oBFUsmzXtgSqLZGTZ127UF10qmFGZdsCHUroXfm0P/sPcZ/Sw705mO0ypVd6/Kq9q206xXPHCgkyWhWkMrdtaHM3vezWfRECRXlN2LS81x0ZpEKJihJ3OUxEX20N9ncNW/bb1sdxLnqBdB7yeyrDyCOmm9UBbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733725463; c=relaxed/simple;
-	bh=y8uxG4UVlvQ6MOwHDDjDZWxvSoPwtcTzzcR+2XH5WBs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RwrofJsPYVYLA5KpdTqO9w9NpSjWB8q8Ehala7qhdzcxDwZYhEPfAfv1Bs7/nZbPMRvrfG5OrfyDxILTUkOgxZg6FsS5oaf/TLFq3CtNN1M3DVBZ3moBmgCWR/fSco82LMiDoJBAtWq2y0Kr1ykb9sdQokALc2bJUvhgaTsin8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=pllIjA8e; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53e21990bcbso4017585e87.0
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:24:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733725457; x=1734330257; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cXgxOhIN1P2YzqyXkYETOaU5zGDrTGv4TGdsOv2Axy4=;
-        b=pllIjA8ezMJpwF+i/acw0VwyviIiQhCiL0Np9pDetxckQSyPgw/2Uu6J/TwtDN3ssu
-         9eZAOQ3aGpdknovRyk/zNL8M5Y3TZPweGqBhJQM6iQTmxSh+WA/4/wm4Zp46g52aMj71
-         pT37RaLs/4INqYqz2OV8Sg8yR6e15+UzT2n+FYocv0+zoKz0QQIU2K9+CexnK3byOs1H
-         vtec9RwnbfjMZqUP/Q8YbdePaHIGFvxDCprHoKS+MJuMZ9yQcFTlXulsjtFsi62f07X8
-         UwOWlB4F7Hsc8Psc9Gp2uZz35zHK3dinFpJahsxpGfk670wQJTKAZdqFc6PlZPKkqLFO
-         1CsQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733725457; x=1734330257;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cXgxOhIN1P2YzqyXkYETOaU5zGDrTGv4TGdsOv2Axy4=;
-        b=swGypEBm6y1FvRveyzXoy9Vh3Y4wrdDViHcZah7f6ohbn1WBKhEY2Z2klUtFduyGpr
-         MIuSywAL6l01QxxrHLYQ6+dQWM6lVtCy+lumnreinlx7rYtZ9Ra1yBlMLDoNxFTRX5ru
-         3PmG+0jLD6QUjDHpCUXikpW4o4wkprFlOvcTzXdwbxU571kHQDNFgDMLP7BMVji8W2oH
-         5069gbIEsG6m4zH4Q0W90b9mIU4TtWnPxs+h6wNmUlXQslarN49JMfFN/gwaqox35YKH
-         KjFz6fLn5o5PWYEUdL7Jq97/xZn4fun+YgumF7QnB3YgS5kof7PIZv5aBGXdcAgA0l/s
-         77BQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUn8F/a3si9BuE5IJcsdcW06ATk0GME7grnT+5d5GNqezjGs8Lk8aNM5kYamkjarN6ZGcpZ/1sqbPeJZZM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzc1IR0IKAyOk/GFhx74cdPpZAOLjXn/mH9C4IBRS+qoggQDgn1
-	XifABQviZlO0VHmj43tikPM0eH8V7Ularnf33TsF+BEhXs//M0kY5Tsn37WITNI=
-X-Gm-Gg: ASbGncsTOSKkqhPb6FTP5rXCnE15WV2oz07OoKfmqMMFKksKgTmb5eEECP+MPtMTdG8
-	dhbXj/MchrwBH6+Y6mcG/tMngKyUC6G3C4XhJ4SifhExd9f58dS5xbPqG0pqmpjgAeYdZZQ2rem
-	7q3NC7gH2Gq4BKHs8P0S3PmVBky6A9QVRbGhGN/LC/SlZTzT8/HwpxlFoEZM3udQMJPOIJfJNxV
-	1O0h9+0drN7k+kRfymcgGFhKPBfn1PUyZVwSMCPNHR3J6zui9Fku3HObb/5wxIb
-X-Google-Smtp-Source: AGHT+IEALfVc1u7psoDNK67ZwOYQ6wOWqwlhYDnwT3/A55bQFTpZj8ctYGcl3Bs0PHReD0B3xOXm9w==
-X-Received: by 2002:a05:6512:b94:b0:540:1f67:689a with SMTP id 2adb3069b0e04-5401f676999mr753706e87.55.1733725456993;
-        Sun, 08 Dec 2024 22:24:16 -0800 (PST)
-Received: from cobook.home ([91.198.101.25])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401cacc70fsm340511e87.5.2024.12.08.22.24.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:24:16 -0800 (PST)
-From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: netdev@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
+	s=arc-20240116; t=1733725461; c=relaxed/simple;
+	bh=FQfbj4zVf9aROxsrkzjQ011Ql/GUnDTiTcj2kpiDxq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=reC26uI37jcPt0hdO/pw9noYIjHVi4eRkxAVghkC1UwzH8rGzvja2qBPuVnFajw2YiL8bi3Ns4KmOavkJXJO4PixkMIvI05fSPDCLovgfkpasHaaK2mFi6Pl5rxJF+ZOm3sGqSxI4/96+NLr1xlPvm1z25zR0MC1RnqdAxlsCkw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TIvRbPYm; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733725460; x=1765261460;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FQfbj4zVf9aROxsrkzjQ011Ql/GUnDTiTcj2kpiDxq8=;
+  b=TIvRbPYmkbXqhUYQHVIXSKPhmtM8JKjF1Y3ypyQSVcCKa+HGwBvI0Icp
+   CH6p7X+K5tpWQQd2qFATUat0C5OmWoMbx75CEBnut0MYCy1xz+7KOlE33
+   +NPHNzOlkXQ/gN+rLW1QK1MadcQ7DDUuDDEtfcf+oOdFlLqX8tWKpTInB
+   uPVJp6cDQUTIYgkAotKANTa0k/okU06PhRbVQoWXVEuMf3pQNkqZfni4k
+   lvSaq/EKpvX9Md89RJIaNiB6hnGB16q9vTn1X0mgEy7zWmqaTBVRzn07u
+   U8CqTrJ7qkSE9EKRQCGoIdi4DakSdhxhbqa4i+ZLOOJb/728X9lzUoCoQ
+   Q==;
+X-CSE-ConnectionGUID: ejHA5g9OTeOO6r/JmCgw1Q==
+X-CSE-MsgGUID: dxx+Pfo2QAu5yuuSzolNaQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11278"; a="45387764"
+X-IronPort-AV: E=Sophos;i="6.12,214,1728975600"; 
+   d="scan'208";a="45387764"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 22:24:19 -0800
+X-CSE-ConnectionGUID: Z+XJzFntTGmEbaCk9F6+JQ==
+X-CSE-MsgGUID: lQl9WmidSzuGjvJv0+v90g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="94788192"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa010.jf.intel.com with ESMTP; 08 Dec 2024 22:24:17 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id EE42F1FD; Mon, 09 Dec 2024 08:24:15 +0200 (EET)
+Date: Mon, 9 Dec 2024 08:24:15 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Mario Limonciello <superm1@kernel.org>
+Cc: "open list:THUNDERBOLT DRIVER" <linux-usb@vger.kernel.org>,
 	linux-kernel@vger.kernel.org,
-	Michael Dege <michael.dege@renesas.com>,
-	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
-	Dennis Ostermann <dennis.ostermann@renesas.com>,
-	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
-Subject: [PATCH net-next] net: renesas: rswitch: enable only used MFWD features
-Date: Mon,  9 Dec 2024 11:24:11 +0500
-Message-Id: <20241209062411.152927-1-nikita.yoush@cogentembedded.com>
-X-Mailer: git-send-email 2.39.5
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Richard Hughes <hughsient@gmail.com>
+Subject: Re: [PATCH] thunderbolt: Don't display retimers unless nvm was
+ initialized
+Message-ID: <20241209062415.GG4955@black.fi.intel.com>
+References: <20241206183318.1701180-1-superm1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241206183318.1701180-1-superm1@kernel.org>
 
-Currently, rswitch driver does not utilize most of MFWD forwarding
-and processing features. It only uses port-based forwarding for ETHA
-ports, and direct descriptor forwarding for GWCA port.
+Hi Mario,
 
-Update rswitch_fwd_init() to enable exactly that, and keep everything
-else disabled.
+On Fri, Dec 06, 2024 at 12:33:18PM -0600, Mario Limonciello wrote:
+> From: Mario Limonciello <mario.limonciello@amd.com>
+> 
+> The read will never succeed if nvm wasn't initialized.
 
-Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
----
- drivers/net/ethernet/renesas/rswitch.c | 30 +++++++++++++++++---------
- drivers/net/ethernet/renesas/rswitch.h | 14 ++++++------
- 2 files changed, 28 insertions(+), 16 deletions(-)
+Okay but we would need to understand why it was not initialized in the
+first place?
 
-diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
-index 16b1888270eb..7f17b9656cc3 100644
---- a/drivers/net/ethernet/renesas/rswitch.c
-+++ b/drivers/net/ethernet/renesas/rswitch.c
-@@ -111,25 +111,35 @@ static void rswitch_top_init(struct rswitch_private *priv)
- /* Forwarding engine block (MFWD) */
- static void rswitch_fwd_init(struct rswitch_private *priv)
- {
-+	u32 all_ports_mask = GENMASK(RSWITCH_NUM_AGENTS - 1, 0);
- 	unsigned int i;
- 
--	/* For ETHA */
--	for (i = 0; i < RSWITCH_NUM_PORTS; i++) {
--		iowrite32(FWPC0_DEFAULT, priv->addr + FWPC0(i));
-+	/* Start with empty configuration */
-+	for (i = 0; i < RSWITCH_NUM_AGENTS; i++) {
-+		/* Disable all port features */
-+		iowrite32(0, priv->addr + FWPC0(i));
-+		/* Disallow L3 forwarding and direct descriptor forwarding */
-+		iowrite32(FIELD_PREP(FWCP1_LTHFW, all_ports_mask),
-+			  priv->addr + FWPC1(i));
-+		/* Disallow L2 forwarding */
-+		iowrite32(FIELD_PREP(FWCP2_LTWFW, all_ports_mask),
-+			  priv->addr + FWPC2(i));
-+		/* Disallow port based forwarding */
- 		iowrite32(0, priv->addr + FWPBFC(i));
- 	}
- 
--	for (i = 0; i < RSWITCH_NUM_PORTS; i++) {
-+	/* For enabled ETHA ports, setup port based forwarding */
-+	rswitch_for_each_enabled_port(priv, i) {
-+		/* Port based forwarding from port i to GWCA port */
-+		rswitch_modify(priv->addr, FWPBFC(i), FWPBFC_PBDV,
-+			       FIELD_PREP(FWPBFC_PBDV, BIT(priv->gwca.index)));
-+		/* Within GWCA port, forward to Rx queue for port i */
- 		iowrite32(priv->rdev[i]->rx_queue->index,
- 			  priv->addr + FWPBFCSDC(GWCA_INDEX, i));
--		iowrite32(BIT(priv->gwca.index), priv->addr + FWPBFC(i));
- 	}
- 
--	/* For GWCA */
--	iowrite32(FWPC0_DEFAULT, priv->addr + FWPC0(priv->gwca.index));
--	iowrite32(FWPC1_DDE, priv->addr + FWPC1(priv->gwca.index));
--	iowrite32(0, priv->addr + FWPBFC(priv->gwca.index));
--	iowrite32(GENMASK(RSWITCH_NUM_PORTS - 1, 0), priv->addr + FWPBFC(priv->gwca.index));
-+	/* For GWCA port, allow direct descriptor forwarding */
-+	rswitch_modify(priv->addr, FWPC1(priv->gwca.index), FWPC1_DDE, FWPC1_DDE);
- }
- 
- /* Gateway CPU agent block (GWCA) */
-diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
-index 9ac55b4f5b14..741b089c8523 100644
---- a/drivers/net/ethernet/renesas/rswitch.h
-+++ b/drivers/net/ethernet/renesas/rswitch.h
-@@ -12,6 +12,7 @@
- 
- #define RSWITCH_MAX_NUM_QUEUES	128
- 
-+#define RSWITCH_NUM_AGENTS	5
- #define RSWITCH_NUM_PORTS	3
- #define rswitch_for_each_enabled_port(priv, i)		\
- 	for (i = 0; i < RSWITCH_NUM_PORTS; i++)		\
-@@ -811,6 +812,7 @@ enum rswitch_gwca_mode {
- #define CABPPFLC_INIT_VALUE	0x00800080
- 
- /* MFWD */
-+#define FWPC0(i)		(FWPC00 + (i) * 0x10)
- #define FWPC0_LTHTA		BIT(0)
- #define FWPC0_IP4UE		BIT(3)
- #define FWPC0_IP4TE		BIT(4)
-@@ -824,15 +826,15 @@ enum rswitch_gwca_mode {
- #define FWPC0_MACHMA		BIT(27)
- #define FWPC0_VLANSA		BIT(28)
- 
--#define FWPC0(i)		(FWPC00 + (i) * 0x10)
--#define FWPC0_DEFAULT		(FWPC0_LTHTA | FWPC0_IP4UE | FWPC0_IP4TE | \
--				 FWPC0_IP4OE | FWPC0_L2SE | FWPC0_IP4EA | \
--				 FWPC0_IPDSA | FWPC0_IPHLA | FWPC0_MACSDA | \
--				 FWPC0_MACHLA |	FWPC0_MACHMA | FWPC0_VLANSA)
- #define FWPC1(i)		(FWPC10 + (i) * 0x10)
-+#define FWCP1_LTHFW		GENMASK(16 + (RSWITCH_NUM_AGENTS - 1), 16)
- #define FWPC1_DDE		BIT(0)
- 
--#define	FWPBFC(i)		(FWPBFC0 + (i) * 0x10)
-+#define FWPC2(i)		(FWPC20 + (i) * 0x10)
-+#define FWCP2_LTWFW		GENMASK(16 + (RSWITCH_NUM_AGENTS - 1), 16)
-+
-+#define FWPBFC(i)		(FWPBFC0 + (i) * 0x10)
-+#define FWPBFC_PBDV		GENMASK(RSWITCH_NUM_AGENTS - 1, 0)
- 
- #define FWPBFCSDC(j, i)         (FWPBFCSDC00 + (i) * 0x10 + (j) * 0x04)
- 
--- 
-2.39.5
+I see this is ThinkPad Thunderbolt 4 Dock so probably Intel hardware? You
+say you can reproduce this too so can you send me full dmesg with
+thunderbolt dynamic debugging enabled? I would like to understand this bit
+more deeper before we add any workarounds.
 
+> Reported-by: Richard Hughes <hughsient@gmail.com>
+> Closes: https://github.com/fwupd/fwupd/issues/8200
+> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> ---
+>  drivers/thunderbolt/retimer.c | 17 ++++++++++++++---
+>  1 file changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/thunderbolt/retimer.c b/drivers/thunderbolt/retimer.c
+> index 89d2919d0193e..7be435aee7217 100644
+> --- a/drivers/thunderbolt/retimer.c
+> +++ b/drivers/thunderbolt/retimer.c
+> @@ -321,9 +321,7 @@ static ssize_t nvm_version_show(struct device *dev,
+>  	if (!mutex_trylock(&rt->tb->lock))
+>  		return restart_syscall();
+>  
+> -	if (!rt->nvm)
+> -		ret = -EAGAIN;
+> -	else if (rt->no_nvm_upgrade)
+> +	if (rt->no_nvm_upgrade)
+>  		ret = -EOPNOTSUPP;
+>  	else
+>  		ret = sysfs_emit(buf, "%x.%x\n", rt->nvm->major, rt->nvm->minor);
+> @@ -342,6 +340,18 @@ static ssize_t vendor_show(struct device *dev, struct device_attribute *attr,
+>  }
+>  static DEVICE_ATTR_RO(vendor);
+>  
+> +static umode_t retimer_is_visible(struct kobject *kobj,
+> +				      struct attribute *attr, int n)
+> +{
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	struct tb_retimer *rt = tb_to_retimer(dev);
+> +
+> +	if (!rt->nvm)
+> +		return 0;
+> +	return attr->mode;
+> +
+> +}
+> +
+>  static struct attribute *retimer_attrs[] = {
+>  	&dev_attr_device.attr,
+>  	&dev_attr_nvm_authenticate.attr,
+> @@ -351,6 +361,7 @@ static struct attribute *retimer_attrs[] = {
+>  };
+>  
+>  static const struct attribute_group retimer_group = {
+> +	.is_visible = retimer_is_visible,
+>  	.attrs = retimer_attrs,
+>  };
+>  
+> -- 
+> 2.43.0
 
