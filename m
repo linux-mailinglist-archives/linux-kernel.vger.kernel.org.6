@@ -1,89 +1,116 @@
-Return-Path: <linux-kernel+bounces-437588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DB919E9580
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:03:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833249E9581
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:04:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 709B9280E6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:03:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAE6E281F19
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B11230998;
-	Mon,  9 Dec 2024 12:57:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LosTPuFP"
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB70722A1FD;
-	Mon,  9 Dec 2024 12:57:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6CC62309BB;
+	Mon,  9 Dec 2024 12:57:24 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDDF4229B21;
+	Mon,  9 Dec 2024 12:57:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749026; cv=none; b=iZ8Xe0nU3DyREZMUX+UpziCjUqyfvYlvfvcNWNwKR+kFwycr6iQ2VUV5J+T/RB3gjIOdKLLFKG1IGPshCbT8UfO9aO2HTRNM5p7GgXBsbQ+j7UveX1OlRWHUpci4YvfkUevMmx3D/Lz1J2R0ZNJ/M1fl0+xB5E2CHNOXc+CnAVA=
+	t=1733749044; cv=none; b=X/Juz6fhZTyrBLsnegB2PVd1gwwdsl2y9DExJjo+RutqGSHtLU3tQ1wf+Krr273RK33p/0MPeHdZnsxShGpbb2z/IuLHBlCcIwqHIp0fW4HuESb4RQuaiooDFz/5Kv2jnbXEfW5U2qiVCThPk/TvPjuvFZk7VOO7h9cLNyOFnvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749026; c=relaxed/simple;
-	bh=egc2X+L5ugiYVqY1V6DB6F3T5HH8ETSfkFKie/g4Pfo=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=jteGHlHfbyec13OjolOsvtbeRPjPkR6tsDW57vA9/8/gm0ElkC820j0B/JLfDOFBqTSxzUdIG41N4W9xja4gu+XAl0c++2m3i0YKVxpZpujfnOrYpwYY8fsHrFRmupwP1xaBaw6MwMjb+H9K+Ksy9MdN3Fkh7Xy8x4wcvpnI+zw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LosTPuFP; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-6eff0f3306fso16413307b3.2;
-        Mon, 09 Dec 2024 04:57:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733749023; x=1734353823; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=egc2X+L5ugiYVqY1V6DB6F3T5HH8ETSfkFKie/g4Pfo=;
-        b=LosTPuFPLYDh3ldYFUYTJjj7ehxWv2GBsWH9+zYWNFWYnsdSEK5jLFB9jjOXvJ2I0Z
-         nrj11HaxxnzNM+Ca4WIpPWZdFAPVascZpS0prVCc49ogM0ns0Y3REnKKXGYybL3RkIvK
-         612MJeXMWq6ZalsHIOM/bSgnHffeYTUR7P6RsDB1YnUgfqSfmmvw5c1RJFDR5dv8k6uI
-         v9TbKmR8lDIWUBlLjx24s3/jtGbYTomAP+J2DTCFfe+NiYYUoiLdzzGSzbh51VhRJqwI
-         mDLzLn9c99AN66OzRJQsAUsCSmz1kQGkihqOJsJLJmKXDxLJwzrI6aHOVnk+zCoTbd1n
-         zo0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733749023; x=1734353823;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=egc2X+L5ugiYVqY1V6DB6F3T5HH8ETSfkFKie/g4Pfo=;
-        b=G6jLXdgEGvQJqWV8QQluEfF7GnlfO3vXu6a1gXR85qJxAhgU5ggKEqMbVvFfeYWLS2
-         D4d81olZhfbBjbgwmuW1Yg0mL1fRwf2a7ZJKCAnbzSrU1Q0F+0R8eUNHdEz1RQO2a8ym
-         SHTexBYNVdidDIQTGJZWEviUIMB5uLdIJxMKBe0bDnX/tIcS9J2lIPSAvMbr92eqTa4c
-         a4VL8F/JY/94cZ60EBJSovCZB1+2NUjkVy/zhYy8be1d6sSrDTchU3RpBDWHGg0oiRuY
-         byQU93WRJMp9KPCbxDtg5OT9psyidAX8TohFEU7hn/qtUgH30Zmrn+GzZOo8CU62hiFV
-         8e+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVX2AbnkdyJDyVdbX14ZL84B0XStjyZhl+R2dKRmxVN5wT9/H38JkLLzJ+dJ0AlS5hU3T8K3t4JZWHXpmY=@vger.kernel.org, AJvYcCWM4nlaVbOt6MfZEVQiYl5OMydOhRFGXLydQh8FiK9I41vxrWokE2SZtj+C9Hed+qzUESOs9Bq6@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT0a6IJUccNqPi93MJHiozgiqQ8vBhshspbB3pc3GOv+201Kds
-	+mlBmENztL9fPix7gDsxSmmf+KUQN2YyhLPh8KRUaqcQno4Oh4Nyluq/0hENTfwmCyFYWGzZOXd
-	fZWwzu6ZmO0N/PmeL07OI3qklbQ==
-X-Gm-Gg: ASbGnctzhkObe9u2gJ5f2ITjwth0u3It//mclAX1tC05zOJX2gfMkJD2ARYJJxVvqWk
-	Vc/e1RdfgCWg5RJ8SUw/Q6Vr3p2RdvV3yYUOBhbk5x28=
-X-Google-Smtp-Source: AGHT+IGU+Lv4rziuWGS9vh8kNFbsAMSW3HQZxI+jdzRn7hqAd+jkiu4ue3XSEAsgOd+dmTelvW7dDUpUrDtSFxH1SsE=
-X-Received: by 2002:a81:ad1c:0:b0:6ef:6f24:d080 with SMTP id
- 00721157ae682-6f022e59332mr3204757b3.7.1733749023687; Mon, 09 Dec 2024
- 04:57:03 -0800 (PST)
+	s=arc-20240116; t=1733749044; c=relaxed/simple;
+	bh=VexgucUkKC3dW+9+1fSj/F49YE0/r3u0mmMQ3poEJac=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rsZsEm3fkFuh5TFw9HDMLth04exrDpMrFQj5LLgfFJx/PGdQSi6SxfR8HwGSa3kC7l3OM7UeFtW6iLasbRW/Vg8BzN8Jy9jsjxbr8KpKBiOvoPhXcYWClD6cX6RKb2i0wsrScWAby93jhoV+zlfC4pOB/GHYHWcsU4X+hW7ePC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6A21113E;
+	Mon,  9 Dec 2024 04:57:47 -0800 (PST)
+Received: from [10.57.68.240] (unknown [10.57.68.240])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A3DF3F720;
+	Mon,  9 Dec 2024 04:57:12 -0800 (PST)
+Message-ID: <8fc285a3-92af-47e1-a405-0adf573c57aa@arm.com>
+Date: Mon, 9 Dec 2024 13:57:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rui Salvaterra <rsalvaterra@gmail.com>
-Date: Mon, 9 Dec 2024 12:56:52 +0000
-Message-ID: <CALjTZvYKHWrD5m+RXimjxODvpFPw7Cq_EOEuzRi1PZT9_JxF+g@mail.gmail.com>
-Subject: [REGRESSION] tg3 is broken since 6.13-rc1
-To: pavan.chebbi@broadcom.com, mchan@broadcom.com
-Cc: kuba@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 00/16] pkeys-based page table hardening
+To: Jann Horn <jannh@google.com>
+Cc: linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
+ aruna.ramakrishna@oracle.com, broonie@kernel.org, catalin.marinas@arm.com,
+ dave.hansen@linux.intel.com, jeffxu@chromium.org, joey.gouly@arm.com,
+ kees@kernel.org, maz@kernel.org, pierre.langlois@arm.com,
+ qperret@google.com, ryan.roberts@arm.com, will@kernel.org,
+ linux-arm-kernel@lists.infradead.org, x86@kernel.org
+References: <20241206101110.1646108-1-kevin.brodsky@arm.com>
+ <CAG48ez1b8BBquEB1BJEg+KsPdPyZLPuD7uToUH3ZdN8F0r+U9w@mail.gmail.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <CAG48ez1b8BBquEB1BJEg+KsPdPyZLPuD7uToUH3ZdN8F0r+U9w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Greetings,
+On 06/12/2024 20:14, Jann Horn wrote:
+> On Fri, Dec 6, 2024 at 11:13 AM Kevin Brodsky <kevin.brodsky@arm.com> wrote:
+>> [...]
+>>
+>> Page tables were chosen as they are a popular (and critical) target for
+>> attacks, but there are of course many others - this is only a starting
+>> point (see section "Further use-cases"). It has become more and more
+>> common for accesses to such target data to be mediated by a hypervisor
+>> in vendor kernels; the hope is that kpkeys can provide much of that
+>> protection in a simpler manner. No benchmarking has been performed at
+>> this stage, but the runtime overhead should also be lower (though likely
+>> not negligible).
+> Yeah, it isn't great that vendor kernels contain such invasive changes...
+>
+> I guess one difference between this approach and a hypervisor-based
+> approach is that a hypervisor that uses a second layer of page tables
+> can also prevent access through aliasing mappings, while pkeys only
+> prevent access through a specific mapping? (Like if an attacker
+> managed to add a page that is mapped into userspace to a page
+> allocator freelist, allocate this page as a page table, and use the
+> userspace mapping to write into this page table. But I guess whether
+> that is an issue depends on the threat model.)
 
-Commit 614f4d166eeeb9bd709b0ad29552f691c0f45776 "tg3: Set coherent DMA
-mask bits to 31 for BCM57766 chipsets" broke wired Ethernet on my late
-2012 Mac Mini, as the device fails to allocate 64-bit DMA. Reverting
-the aforementioned commit fixes the issue.
+Yes, that's correct. If an attacker is able to modify page tables then
+kpkeys are easily defeated. (kpkeys_hardened_pgtables does mitigate
+precisely that, though.) On the topic of aliases, it's worth noting that
+this isn't an issue with page table pages (only the linear mapping is
+used), but if we wanted to assigning a pkey to vmalloc areas we'd also
+have to amend the linear mapping.
 
-Kind regards,
-Rui Salvaterra
+>> [...]
+>>
+>> # Threat model
+>>
+>> The proposed scheme aims at mitigating data-only attacks (e.g.
+>> use-after-free/cross-cache attacks). In other words, it is assumed that
+>> control flow is not corrupted, and that the attacker does not achieve
+>> arbitrary code execution. Nothing prevents the pkey register from being
+>> set to its most permissive state - the assumption is that the register
+>> is only modified on legitimate code paths.
+> Is the threat model that the attacker has already achieved full
+> read/write access to unprotected kernel data and should be stopped
+> from gaining write access to protected data? Or is the threat model
+> that the attacker has achieved some limited corruption, and this
+> series is intended to make it harder to either gain write access to
+> protected data or achieve full read/write access to unprotected data?
+
+The assumption is that the attacker has acquired a write primitive that
+could potentially allow corrupting any kernel data. The objective is to
+make it harder to exploit that primitive by making critical data immune
+to it. Nothing stops the attacker to turn to another (unprotected)
+target, but this is no different from hypervisor-based protection - the
+hope is that removing the low-hanging fruits makes it too difficult to
+build a complete exploit chain.
+
+- Kevin
 
