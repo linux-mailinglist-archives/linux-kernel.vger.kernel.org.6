@@ -1,87 +1,129 @@
-Return-Path: <linux-kernel+bounces-437951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115DD9E9AE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:51:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B0099E9AEB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:52:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13DEB165AF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:51:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B68E188844E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:52:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2A4130499;
-	Mon,  9 Dec 2024 15:51:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 122EF12DD88;
+	Mon,  9 Dec 2024 15:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnDoptEG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLhFS8ir"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88A878C9C;
-	Mon,  9 Dec 2024 15:51:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F2278C9C;
+	Mon,  9 Dec 2024 15:52:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759478; cv=none; b=QMqAE2jAKRYQ5/sP56+VWAxWy+awzBNn6VH6ZcMqUU8ypxBrshTD495PthKDRbU0NAbVnIgBd3pNhBNaGJBFeC/o7iNe83J2mcyuvc6AYAZvMZ0AV5b1nQpnWMJOn1z95A8+kaYPMe5IBvhLOLLPzCBwhkrvLsiaZTiMRVf58VU=
+	t=1733759543; cv=none; b=eh3vyiNdC//BRGS403qc+2Yhzz5+KnCEbgGKw7wtqm2ZPp6srZvJz3prE9oIZ8kWy+Mzw38yyZBiO0K+IRZHAFyP0F90hv47LclW5T/o+o/JKez5jyRsuz7CJstiH9UVXXn7nOa91kiIc2tFnb1PA6aepqEBv6ySp4z/NT8LUWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759478; c=relaxed/simple;
-	bh=JVerLY/R5ex77RCp2JkuVu4YnL7bEhF/hr/WI/k6+f0=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=UT+iwIFXMpPBy0oqsmNrjCGIBXPXINVUnWdRcVU+Fuu/3/POVtNqGNiEh6ltl7QqNrx0whb44F8OQyLMYex1LhHCF57H7v0H5A5vR6ckjfhnkbwTlbkY90zXVpi3CMDT08Do2D20ZFP/EPixYZOZ1Ms1M+By39mtxLE8iHhrrhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnDoptEG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB4E3C4CED1;
-	Mon,  9 Dec 2024 15:51:16 +0000 (UTC)
+	s=arc-20240116; t=1733759543; c=relaxed/simple;
+	bh=jWxo2jIBvLBzYak18bM2E9DaATq5/K318coH0N0pg24=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fyIKzj63tY7RSZq3bD9E4oS3E3tz02XYQdy7o+GT/G1SC9Cm7qAYWbN88354sI2qrrO02A1JPRs6g/ILgqXEWimxRG8wMDqFPQPj4vbIh4SlCAOCwBS+NKcbDJrnks3ay0XyKe1bx90fw34xfeDCRlr7iJVvyVGxNQD9dPe8dwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLhFS8ir; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAB5C4CED1;
+	Mon,  9 Dec 2024 15:52:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733759478;
-	bh=JVerLY/R5ex77RCp2JkuVu4YnL7bEhF/hr/WI/k6+f0=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=ZnDoptEGPQd377O3B2C59RujbxgZTrOT23FQZLDv8Rgi8/8l25/+n+wmU318ZstNf
-	 UxD6cQ7JmhlHTou/z4uPJydJFY5cht1M0OGB3io3Jfr/lMhyLZ0uZmaW01FKB+mdx7
-	 ZU+6+EE7rUmnf7lWY7GWAfMEP2jTpuKzRs+4VQfOtTLf3/LQlAfx8fD9h1lauHaUSJ
-	 DS6LVYiwRSTmke6SOd0rtp2h0TgV3YtBnoCXk/3/MU6A/V0urmEpio93cOEuOkFq49
-	 Lts7pV0rcJMJvhnd+if4Rij0xjBfGU1cp6Rnh5KJvMFk3jEaaAch9o+ZuEb9W7yRQX
-	 u6Nqe52NQZNGA==
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1733759542;
+	bh=jWxo2jIBvLBzYak18bM2E9DaATq5/K318coH0N0pg24=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cLhFS8irN0EUwo75llXUqSxyhAAENEyMQHEGjwfKgEd4be6y4ALUCa9voVNK3tWB+
+	 jNShTnrGPjlAqieQa/9JHZMZDkLepOxQhjSEge9Y0YWJSZytDZHsRnYcCpv0szfARy
+	 PjlbQ1MKIWpYOFLSNmE2ap+APsn5MhASWxx5fBAB2B4ipdaG7xouZ+wIAtOwevtcx7
+	 Aka/DYUNMBsHhbHGW+060x4ndT6ic9SqVajoM2jFtSfv21v7zGNtrwfu2QuUrbKrFb
+	 XBGeAvCuc8FX9cqBEc5iEKg0Y8tK3f1gTzN1nuxnXoHTM1yS6Y9Yl72YzDgSMNAxsT
+	 wBbgVPn+9lk4A==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1tKg3Y-001w6K-QD;
+	Mon, 09 Dec 2024 15:52:20 +0000
+Date: Mon, 09 Dec 2024 15:52:19 +0000
+Message-ID: <86zfl4svkc.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+Cc: kvmarm <kvmarm@lists.linux.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	oliver.upton@linux.dev,
+	christoffer.dall@arm.com,
+	suzuki.poulose@arm.com,
+	will@kernel.org,
+	catalin.marinas@arm.com,
+	coltonlewis@google.com,
+	joey.gouly@arm.com,
+	yuzenghui@huawei.com,
+	darren@os.amperecomputing.com,
+	vishnu@os.amperecomputing.com
+Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer expired
+In-Reply-To: <8be59ff3-6a68-48e1-8181-0ce4b2e7180f@os.amperecomputing.com>
+References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
+	<867c89tc4q.wl-maz@kernel.org>
+	<c5b1c3d7-56ca-4afc-a831-045dba4beffa@os.amperecomputing.com>
+	<865xntt2kv.wl-maz@kernel.org>
+	<8be59ff3-6a68-48e1-8181-0ce4b2e7180f@os.amperecomputing.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] wifi: wlcore: fix unbalanced pm_runtime calls
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20241107181531.1774550-1-andreas@kemnade.info>
-References: <20241107181531.1774550-1-andreas@kemnade.info>
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: rmk+kernel@armlinux.org.uk, johannes.berg@intel.com, andreas@kemnade.info,
- leitao@debian.org, emmanuel.grumbach@intel.com,
- linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <173375947536.157598.1252176440647591956.kvalo@kernel.org>
-Date: Mon,  9 Dec 2024 15:51:16 +0000 (UTC)
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org, catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, vishnu@os.amperecomputing.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Andreas Kemnade <andreas@kemnade.info> wrote:
-
-> If firmware boot failes, runtime pm is put too often:
-> [12092.708099] wlcore: ERROR firmware boot failed despite 3 retries
-> [12092.708099] wl18xx_driver wl18xx.1.auto: Runtime PM usage count underflow!
-> Fix that by redirecting all error gotos before runtime_get so that runtime is not put.
+On Mon, 09 Dec 2024 15:39:28 +0000,
+Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
 > 
-> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> 
+> 
+> On 09-12-2024 06:50 pm, Marc Zyngier wrote:
+> > On Mon, 09 Dec 2024 12:25:34 +0000,
+> > Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+> >>>> 
+> >>>> During automated testing of Nested Virtualization using avocado-vt,
+> >>> 
+> >>> Which is not merged upstream. So what branch are you using? Based on
+> >>> what kernel version? On what HW? With which virtualisation features?
+> >>> 
+> >> 
+> >> Testing is done on Ampere's AmpereOne platform using 6.10 based kernel
+> >> with NV patches from your repo.
+> > 
+> > Grmbl... *Which* patches? At least give me the SHA1 of the branch,
+> > because I have no idea what you are running. And 6.10 is definitely
+> > not something I care about. If you're using the NV patches, the
+> > *minimum* you should run is 6.13-rc1, because that's what the current
+> > code is based on.
+> > 
+> 
+> I tried 6.13-rc1 based nv-next branch today, which failed to boot
+> UEFI as L1. Yet to debug this.
 
-Do we know what commit broke this? A Fixes tag would be good to have.
+Works nicely here with kvmtool as the VMM. From what I understand,
+EDK2 needs some surgery to correctly boot at EL2 without FEAT_E2H0.
 
-Why not change this also to use out_unlock:
+> We do have the FEAT_ECV on AmpereOne, I was the one reported/fixed bug
+> with FEAT_ECV(CNTPOFF offset issue) in the past.
 
-	role_type = wl12xx_get_role_type(wl, wlvif);
-	if (role_type == WL12XX_INVALID_ROLE_TYPE) {
-		ret = -EINVAL;
-		goto out;
-	}
+Sorry, I don't keep track of the feature set for machines I don't have
+access to.
+
+	M.
 
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20241107181531.1774550-1-andreas@kemnade.info/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
-
+Without deviation from the norm, progress is not possible.
 
