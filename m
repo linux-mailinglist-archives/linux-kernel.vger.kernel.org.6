@@ -1,191 +1,244 @@
-Return-Path: <linux-kernel+bounces-437483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17ABB9E93E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:27:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86B8B9E93DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:27:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB37F188744B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:27:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57ADC163A43
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:27:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0748E224B1C;
-	Mon,  9 Dec 2024 12:26:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E4C22371E;
+	Mon,  9 Dec 2024 12:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hDV+qciK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC+e+KmZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hDV+qciK";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="DC+e+KmZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qfvzxyNh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67AE021D008;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568732236E5;
 	Mon,  9 Dec 2024 12:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747217; cv=none; b=htKJ7UacVR+6lCv2vHv6+cOk8DMGWEG1ViWUdTDkk3ruBzHQxn9OE8uTzWgT/4vgqdcYiaCwVw7GZx+wVAmrynF1XOm5c2qsOAt3J3nXfH2Wqm414Sox0dafXihJY3KT2q0GqvFLMnM2psDO4qWIQS/3Dq49G9RneDNnqrB5XDw=
+	t=1733747216; cv=none; b=Ahf5qLqzvDuToi9rEbwyD0cDSd9h3ESs0BWfrM18kFoBp7dmnFBmD94j7GxN2igF0AbemTd8tF1Iq3yorplmv8yE3J/BkSEOJPZ1WKjDYM5aNhl7JuTSsCyvl6xuUTVB8mJYy3Q5YI8sReLmSAylEIdPcQ+RAr6/4VQxSIXZO5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747217; c=relaxed/simple;
-	bh=EXuffNypYZQBoi7xXVEosmidvBHnO0T9iy/3eDyUUck=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bu6rP2iCXG4j/4w7UITNeAwUeGbEBD4GARwKVCqamBck7aREcwlYERzXBhBKLtoaNGmoDVB4ApSEwGbb0VZdd8EO632VfOELjioeXh6zzG1VlJWurM4qru5slNjHdxaOyHoZAuW4A0YY+vmNOt6nfBFXky717Q8GV0DbMKWk5wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hDV+qciK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC+e+KmZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hDV+qciK; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=DC+e+KmZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5561821170;
-	Mon,  9 Dec 2024 12:26:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733747213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
-	b=hDV+qciKDx6oL68xDXqrcCyLSYXGtcrbJz1IvjJt1bTUtS1M9m6tle3UhEWz7CXfNDOfEF
-	jqTyg25TrY0zcuBP68b3+6amX27gggg4Pvub3o65w0d+JflnpGHUTRDNHmBTp5nZ//D/Ae
-	AIJXtnr5nQwq3RcG7FyQ9f5aE9W1mQ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733747213;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
-	b=DC+e+KmZ/WnfcmV7DU9t2KQKF2XIGc+Y/e98jEpDPB+lg7Vz+gmerLwJqeKP6a9Qi+Jf0Q
-	wOpN7xYQKwnNmIAQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733747213; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
-	b=hDV+qciKDx6oL68xDXqrcCyLSYXGtcrbJz1IvjJt1bTUtS1M9m6tle3UhEWz7CXfNDOfEF
-	jqTyg25TrY0zcuBP68b3+6amX27gggg4Pvub3o65w0d+JflnpGHUTRDNHmBTp5nZ//D/Ae
-	AIJXtnr5nQwq3RcG7FyQ9f5aE9W1mQ4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733747213;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=39v1UJM0wPzy1yOKPoun+15gHceKb1wHaTEtw27KJCc=;
-	b=DC+e+KmZ/WnfcmV7DU9t2KQKF2XIGc+Y/e98jEpDPB+lg7Vz+gmerLwJqeKP6a9Qi+Jf0Q
-	wOpN7xYQKwnNmIAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4466B138D2;
-	Mon,  9 Dec 2024 12:26:53 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id VVxtEA3iVmdxWAAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 09 Dec 2024 12:26:53 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id E84FAA0B0C; Mon,  9 Dec 2024 13:26:48 +0100 (CET)
-Date: Mon, 9 Dec 2024 13:26:48 +0100
-From: Jan Kara <jack@suse.cz>
-To: Bert Karwatzki <spasswolf@web.de>
-Cc: Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org,
-	Jan Kara <jack@suse.cz>, kernel-team@fb.com,
-	linux-fsdevel@vger.kernel.org, amir73il@gmail.com,
-	brauner@kernel.org, torvalds@linux-foundation.org,
-	viro@zeniv.linux.org.uk, linux-xfs@vger.kernel.org,
-	linux-btrfs@vger.kernel.org, linux-mm@kvack.org,
-	linux-ext4@vger.kernel.org
-Subject: Re: commit 0790303ec869 leads to cpu stall without
- CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
-Message-ID: <20241209122648.dpptugrol4p6ikmm@quack3>
-References: <20241208152520.3559-1-spasswolf@web.de>
- <20241209121104.j6zttbqod3sh3qhr@quack3>
+	s=arc-20240116; t=1733747216; c=relaxed/simple;
+	bh=4JauUlaauwuNUBq73sXeBrsFuFTH+ZeTne9Ec2pQWyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R8exUGFLLtC7QN0EMWKk9950FltM48eyK5y0eiAG2mClaNkXBgoHCklppOu8bqWjd+j5SEGGQX7OyI+YMN4Zv9KZrHyw4FRGbnrhX6ADBL3U/D3xd05xEzPrr8k90aC9ERN51W00KWJDJBX7+TL1Bp3RxBsEgLzIvoRh06f+1Qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qfvzxyNh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44A5FC4CED1;
+	Mon,  9 Dec 2024 12:26:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733747215;
+	bh=4JauUlaauwuNUBq73sXeBrsFuFTH+ZeTne9Ec2pQWyo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=qfvzxyNhhMJx0OVwZWoYDm3WmhapNfBdVuE+T3rGNKsfJcFcrrOycdEneT32x/IWz
+	 8d5ik0ZcJuSV7buBdgpCH6rxM9xtKheobH+2uPbJt0X/GHABXptgAjAPiTVwACL9iQ
+	 d4Zi0G9KKy+QtuM4bOLnNQHRUitRjQDaz/TyBKtgqWCPF18bfmi3k0ZVUro1nYn7ze
+	 yCi6xlefH5ImyiR6EMvLjuds7kpRLGaB75odXniY04SiT87bxJaIbaD8iWJplEWUaB
+	 HcEDj2/70fD9zPno9Edx1ngQcfmW0RSIVBc4nYXwmLucFPBjKUg+Sc6FKbqBZQJRXC
+	 Jz3xmpAkdFOTw==
+Message-ID: <92b28250-acd8-4ca7-8a0e-09e1338113f0@kernel.org>
+Date: Mon, 9 Dec 2024 12:26:50 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209121104.j6zttbqod3sh3qhr@quack3>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[web.de];
-	RCPT_COUNT_TWELVE(0.00)[14];
-	RCVD_COUNT_THREE(0.00)[3];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,web.de];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[toxicpanda.com,vger.kernel.org,suse.cz,fb.com,gmail.com,kernel.org,linux-foundation.org,zeniv.linux.org.uk,kvack.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next v2] bpftool: btf: Support dumping a single type
+ from file
+To: Daniel Xu <dxu@dxuuu.xyz>, hawk@kernel.org, john.fastabend@gmail.com,
+ kuba@kernel.org, ast@kernel.org, davem@davemloft.net, daniel@iogearbox.net,
+ andrii@kernel.org
+Cc: martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org, antony@phenome.org,
+ toke@kernel.org
+References: <c8e6a2dfb64d76e61a20b1e2470fccbddf167499.1733613798.git.dxu@dxuuu.xyz>
+From: Quentin Monnet <qmo@kernel.org>
+Content-Language: en-GB
+In-Reply-To: <c8e6a2dfb64d76e61a20b1e2470fccbddf167499.1733613798.git.dxu@dxuuu.xyz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon 09-12-24 13:11:04, Jan Kara wrote:
-> > Then I took a closer look at the function called in the problematic code
-> > and noticed that fsnotify_file_area_perm(), is a NOOP when
-> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is not set (which was the case in my
-> > .config). This also explains why this was not found before, as
-> > distributional .config file have this option enabled.  Setting the option
-> > to y solves the issue, too
+On 07/12/2024 23:24, Daniel Xu wrote:
+> Some projects, for example xdp-tools [0], prefer to check in a minimized
+> vmlinux.h rather than the complete file which can get rather large.
 > 
-> Well, I agree with you on all the points but the real question is, how come
-> the test FMODE_FSNOTIFY_HSM(file->f_mode) was true on our kernel when you
-> clearly don't run HSM software, even more so with
-> CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled. That's the real cause of this
-> problem. Something fishy is going on here... checking...
+> However, when you try to add a minimized version of a complex struct (eg
+> struct xfrm_state), things can get quite complex if you're trying to
+> manually untangle and deduplicate the dependencies.
 > 
-> Ah, because I've botched out file_set_fsnotify_mode() in case
-> CONFIG_FANOTIFY_ACCESS_PERMISSIONS is disabled. This should fix the
-> problem:
+> This commit teaches bpftool to do a minimized dump of a single type by
+> providing an optional root_id argument.
 > 
-> index 1a9ef8f6784d..778a88fcfddc 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -215,6 +215,7 @@ static inline int fsnotify_open_perm(struct file *file)
->  #else
->  static inline void file_set_fsnotify_mode(struct file *file)
->  {
-> +       file->f_mode |= FMODE_NONOTIFY_PERM;
->  }
+> Example usage:
 > 
-> I'm going to test this with CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled and
-> push out a fixed version. Thanks again for the report and analysis!
+>     $ ./bpftool btf dump file ~/dev/linux/vmlinux | rg "STRUCT 'xfrm_state'"
+>     [12643] STRUCT 'xfrm_state' size=912 vlen=58
+> 
+>     $ ./bpftool btf dump file ~/dev/linux/vmlinux root_id 12643 format c
+>     #ifndef __VMLINUX_H__
+>     #define __VMLINUX_H__
+> 
+>     [..]
+> 
+>     struct xfrm_type_offload;
+> 
+>     struct xfrm_sec_ctx;
+> 
+>     struct xfrm_state {
+>             possible_net_t xs_net;
+>             union {
+>                     struct hlist_node gclist;
+>                     struct hlist_node bydst;
+>             };
+>             union {
+>                     struct hlist_node dev_gclist;
+>                     struct hlist_node bysrc;
+>             };
+>             struct hlist_node byspi;
+>     [..]
+> 
+> [0]: https://github.com/xdp-project/xdp-tools/blob/master/headers/bpf/vmlinux.h
+> 
+> Signed-off-by: Daniel Xu <dxu@dxuuu.xyz>
+> ---
+> Changes in v2:
+> * Add early error check for invalid BTF ID
+> 
+>  .../bpf/bpftool/Documentation/bpftool-btf.rst |  5 +++--
+>  tools/bpf/bpftool/btf.c                       | 19 +++++++++++++++++++
+>  2 files changed, 22 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/bpf/bpftool/Documentation/bpftool-btf.rst b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> index 3f6bca03ad2e..5abd0e99022f 100644
+> --- a/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> +++ b/tools/bpf/bpftool/Documentation/bpftool-btf.rst
+> @@ -27,7 +27,7 @@ BTF COMMANDS
+>  | **bpftool** **btf dump** *BTF_SRC* [**format** *FORMAT*]
+>  | **bpftool** **btf help**
+>  |
+> -| *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* }
+> +| *BTF_SRC* := { **id** *BTF_ID* | **prog** *PROG* | **map** *MAP* [{**key** | **value** | **kv** | **all**}] | **file** *FILE* [**root_id** *ROOT_ID*] }
 
-So this was not enough, What we need is:
-index 1a9ef8f6784d..778a88fcfddc 100644
---- a/include/linux/fsnotify.h
-+++ b/include/linux/fsnotify.h
-@@ -215,6 +215,10 @@ static inline int fsnotify_open_perm(struct file *file)
- #else
- static inline void file_set_fsnotify_mode(struct file *file)
- {
-+	/* Is it a file opened by fanotify? */
-+	if (FMODE_FSNOTIFY_NONE(file->f_mode))
-+		return;
-+	file->f_mode |= FMODE_NONOTIFY_PERM;
- }
 
-This passes testing for me so I've pushed it out and the next linux-next
-build should have this fix.
+Thanks for this!
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+root_id is not part of the BTF_SRC, I think it should be an option on
+the command line itself (3 lines above), after "format". And the change
+should also be repeated below in the description (the "format" option is
+missing, by the way, let's fix it too).
+
+Can you please also update the interactive help message at the end of
+btf.c?
+
+Can you please also update the bash completion file? I think it should
+look like this:
+
+
+------
+diff --git a/tools/bpf/bpftool/bash-completion/bpftool b/tools/bpf/bpftool/bash-completion/bpftool
+index 0c541498c301..097d406ee21f 100644
+--- a/tools/bpf/bpftool/bash-completion/bpftool
++++ b/tools/bpf/bpftool/bash-completion/bpftool
+@@ -930,6 +930,9 @@ _bpftool()
+                         format)
+                             COMPREPLY=( $( compgen -W "c raw" -- "$cur" ) )
+                             ;;
++                        root_id)
++                            return 0;
++                            ;;
+                         c)
+                             COMPREPLY=( $( compgen -W "unsorted" -- "$cur" ) )
+                             ;;
+@@ -937,13 +940,13 @@ _bpftool()
+                             # emit extra options
+                             case ${words[3]} in
+                                 id|file)
+-                                    _bpftool_once_attr 'format'
++                                    _bpftool_once_attr 'format root_id'
+                                     ;;
+                                 map|prog)
+                                     if [[ ${words[3]} == "map" ]] && [[ $cword == 6 ]]; then
+                                         COMPREPLY+=( $( compgen -W "key value kv all" -- "$cur" ) )
+                                     fi
+-                                    _bpftool_once_attr 'format'
++                                    _bpftool_once_attr 'format root_id'
+                                     ;;
+                                 *)
+                                     ;;
+------
+
+
+>  | *FORMAT* := { **raw** | **c** [**unsorted**] }
+>  | *MAP* := { **id** *MAP_ID* | **pinned** *FILE* }
+>  | *PROG* := { **id** *PROG_ID* | **pinned** *FILE* | **tag** *PROG_TAG* | **name** *PROG_NAME* }
+> @@ -60,7 +60,8 @@ bpftool btf dump *BTF_SRC*
+>  
+>      When specifying *FILE*, an ELF file is expected, containing .BTF section
+>      with well-defined BTF binary format data, typically produced by clang or
+> -    pahole.
+> +    pahole. You can choose to dump a single type and all its dependent types
+> +    by providing an optional *ROOT_ID*.
+>  
+>      **format** option can be used to override default (raw) output format. Raw
+>      (**raw**) or C-syntax (**c**) output formats are supported. With C-style
+> diff --git a/tools/bpf/bpftool/btf.c b/tools/bpf/bpftool/btf.c
+> index d005e4fd6128..a75e17efaf5e 100644
+> --- a/tools/bpf/bpftool/btf.c
+> +++ b/tools/bpf/bpftool/btf.c
+> @@ -953,6 +953,8 @@ static int do_dump(int argc, char **argv)
+>  		NEXT_ARG();
+>  	} else if (is_prefix(src, "file")) {
+>  		const char sysfs_prefix[] = "/sys/kernel/btf/";
+> +		__u32 root_id;
+> +		char *end;
+
+
+I think we could move these declarations to a lower scope, under your
+"if (argc && is_prefix(...))".
+
+
+>  
+>  		if (!base_btf &&
+>  		    strncmp(*argv, sysfs_prefix, sizeof(sysfs_prefix) - 1) == 0 &&
+> @@ -967,6 +969,23 @@ static int do_dump(int argc, char **argv)
+>  			goto done;
+>  		}
+>  		NEXT_ARG();
+> +
+> +		if (argc && is_prefix(*argv, "root_id")) {
+> +			NEXT_ARG();
+> +			root_id = strtoul(*argv, &end, 0);
+> +			if (*end) {
+> +				err = -1;
+> +				p_err("can't parse %s as root ID", *argv);
+> +				goto done;
+> +			}
+> +			if (root_id >= btf__type_cnt(btf)) {
+> +				err = -EINVAL;
+> +				p_err("invalid root ID: %u", root_id);
+> +				goto done;
+> +			}
+> +			root_type_ids[root_type_cnt++] = root_id;
+> +			NEXT_ARG();
+> +		}
+>  	} else {
+>  		err = -1;
+>  		p_err("unrecognized BTF source specifier: '%s'", src);
+
+
+Same comment as above, it seems to be that the root_id controls the
+output for the command rather than the source, and I'd rather move this
+to the "while (argc)" loop where we process the "format" option rather
+than when parsing the source.
+
+
+pw-bot: cr
 
