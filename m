@@ -1,130 +1,104 @@
-Return-Path: <linux-kernel+bounces-438041-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438042-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7B4A9E9C1D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:50:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 964151888EC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:50:12 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E331D153BF7;
-	Mon,  9 Dec 2024 16:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VlM0LuNb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 040CF9E9C1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:50:32 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31EE314F9FB;
-	Mon,  9 Dec 2024 16:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7EED22838A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:50:27 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C9DC14B087;
+	Mon,  9 Dec 2024 16:50:25 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B93145B1B;
+	Mon,  9 Dec 2024 16:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733762992; cv=none; b=XQMsrM0kKZR9uVQUD7eoGHRp/nnYRi5A38iiK4AyIhyPmSY9psa7sm97ETJiLYNU1R1yF2WlgxCU+3Wixa9pkA5vgiovBUQ9Jm6cY9oyMPtLlR4zGjq0XbZwCHv+qzfCRKwez/KO9NZ/fUceugaZ8yOAhwvog/uIsPQXJ577XDQ=
+	t=1733763024; cv=none; b=Wa5W4yZqoHeiigWSHi6nQ/QDvBOpbc8OPwTnAm4zE+H9xCxJCC5EeVF0nElM8slkfr/CrtYeCYezhkl3lTLCOKWerQLQzDd9+XQ5hs+swE0wGb0YuQzWiQCHZcAFNwT65ZmA7uGIUBtQHhSBZGvixbmjktXyZ22unM6a2uofoiM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733762992; c=relaxed/simple;
-	bh=qDOIcIRamvaYbznkBIfCb96yBhJPKCgcT8jFIZBkfHc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oBgtKjEkvCmC6iTvzaCZ9CAMyITeNhabI9ZjnEXEj/jQE4BqdJMAAEa+llKvDA+W63MRmmipaP75chNR/dNxa62k7x4ZVOsgOu32egszPCNIm+NH3N6CmLHU9V3ZMkE15mYB+FOSGSYulubpk2QA7ANYStX7glvIngdptGGjWwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VlM0LuNb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D7DDC4CED1;
-	Mon,  9 Dec 2024 16:49:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733762991;
-	bh=qDOIcIRamvaYbznkBIfCb96yBhJPKCgcT8jFIZBkfHc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VlM0LuNbsoL2znvYf3Gc0UUL41BG38Em8xK8cePbVnc+u7XhLKxlAFMAFmDvEpUL8
-	 QN9hYXxmSZjZuuGQGGUMhaaRaRf9kokykbw9WSsaCNA4cBVQBwqCPAG/aTcGwHoqlq
-	 8tiFQxAY0/i2M8lU0LiuS0w58nbQ0CoWl2RcXYLDS8XNvcamPn5ZCBN9XrHvDCu/sj
-	 G5xDYZwdjo4cGWN2VNUM6Npp5r9w7W4UjV4Sp7prTEY+c7ADPwUPyxzTGKWYT2i6D/
-	 ZZeYFLfFEPM60Y0fwZE9XZG+Jq5LlQmwbOKEH+LNN1VQ8j1miu1lZiKS5IOsMM1rbf
-	 JtwoJ3cjsyFFw==
-Date: Mon, 9 Dec 2024 16:49:46 +0000
-From: Simon Horman <horms@kernel.org>
-To: Jacky Chou <jacky_chou@aspeedtech.com>
-Cc: andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v4 3/7] net: ftgmac100: Add reset toggling for
- Aspeed SOCs
-Message-ID: <20241209164946.GA2455@kernel.org>
-References: <20241205072048.1397570-1-jacky_chou@aspeedtech.com>
- <20241205072048.1397570-4-jacky_chou@aspeedtech.com>
+	s=arc-20240116; t=1733763024; c=relaxed/simple;
+	bh=9JCHFqvsDfco+WkYYgPFOsQ1zPwH0yDqAVM+3zIEfw4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=b5n1yNWCGN3t58nzY8NP2Lfri1OyiWdQaVKa6MfApk3mDQEEWAdmOkKj8fV5eY1jUUyDWp+gcQbk+HFrfA5ogzTjmXQEq6Dxq9pMB/i0FZgHChM9PGPLMVjVt+IYaBI+TPnOfSoHLpfRppPUbPIPexMnAF/HNadERHYFpCwhcZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EE39F113E;
+	Mon,  9 Dec 2024 08:50:48 -0800 (PST)
+Received: from pluto.guest.local (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4682D3F720;
+	Mon,  9 Dec 2024 08:50:18 -0800 (PST)
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	arm-scmi@vger.kernel.org
+Cc: sudeep.holla@arm.com,
+	james.quinlan@broadcom.com,
+	f.fainelli@gmail.com,
+	vincent.guittot@linaro.org,
+	etienne.carriere@st.com,
+	peng.fan@oss.nxp.com,
+	michal.simek@amd.com,
+	quic_sibis@quicinc.com,
+	dan.carpenter@linaro.org,
+	johan+linaro@kernel.org,
+	Cristian Marussi <cristian.marussi@arm.com>
+Subject: [PATCH 0/3] Add SCMI Vendor module autoload support
+Date: Mon,  9 Dec 2024 16:49:54 +0000
+Message-ID: <20241209164957.1801886-1-cristian.marussi@arm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205072048.1397570-4-jacky_chou@aspeedtech.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 05, 2024 at 03:20:44PM +0800, Jacky Chou wrote:
-> Toggle the SCU reset before hardware initialization.
-> 
-> Signed-off-by: Jacky Chou <jacky_chou@aspeedtech.com>
-> ---
->  drivers/net/ethernet/faraday/ftgmac100.c | 18 ++++++++++++++++++
->  1 file changed, 18 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/faraday/ftgmac100.c b/drivers/net/ethernet/faraday/ftgmac100.c
-> index 17ec35e75a65..96c1eee547c4 100644
-> --- a/drivers/net/ethernet/faraday/ftgmac100.c
-> +++ b/drivers/net/ethernet/faraday/ftgmac100.c
-> @@ -9,6 +9,7 @@
->  #define pr_fmt(fmt)	KBUILD_MODNAME ": " fmt
->  
->  #include <linux/clk.h>
-> +#include <linux/reset.h>
->  #include <linux/dma-mapping.h>
->  #include <linux/etherdevice.h>
->  #include <linux/ethtool.h>
-> @@ -98,6 +99,7 @@ struct ftgmac100 {
->  	struct work_struct reset_task;
->  	struct mii_bus *mii_bus;
->  	struct clk *clk;
-> +	struct reset_control *rst;
->  
->  	/* AST2500/AST2600 RMII ref clock gate */
->  	struct clk *rclk;
-> @@ -1979,6 +1981,22 @@ static int ftgmac100_probe(struct platform_device *pdev)
->  				  priv->base + FTGMAC100_OFFSET_TM);
->  	}
->  
-> +	priv->rst = devm_reset_control_get_optional_exclusive(priv->dev, NULL);
-> +	if (IS_ERR(priv->rst))
-> +		goto err_register_netdev;
+Hi,
 
-Hi Jacky,
+a tiny series to add the capability to automatically load the proper
+vendor protocol module when an SCMI driver tries to use it; while proper
+vendor protocol selection is already provided by the SCMI core, automatic
+loading of vendor protocols was not.
 
-The goto on the line above will result in this function returning err.
-However, it seems that err is set to 0 here.
-And perhaps it should be set to PTR_ERR(priv->rst).
+Lookup is now based on module aliases following the pattern:
 
-Flagged by Smatch.
+	scmi-protocol-0x<PROTO_ID_NN>-<VENDOR_ID>
 
-> +
-> +	err = reset_control_assert(priv->rst);
-> +	if (err) {
-> +		dev_err(priv->dev, "Failed to reset mac (%d)\n", err);
-> +		goto err_register_netdev;
-> +	}
-> +	usleep_range(10000, 20000);
-> +	err = reset_control_deassert(priv->rst);
-> +	if (err) {
-> +		dev_err(priv->dev, "Failed to deassert mac reset (%d)\n", err);
-> +		goto err_register_netdev;
-> +	}
-> +
->  	/* Default ring sizes */
->  	priv->rx_q_entries = priv->new_rx_q_entries = DEF_RX_QUEUE_ENTRIES;
->  	priv->tx_q_entries = priv->new_tx_q_entries = DEF_TX_QUEUE_ENTRIES;
-> -- 
-> 2.25.1
-> 
-> 
+In [2/2] proper aliases are added to existing i.MX Vendor protocols...
+...could not find a better way to build the alias string automagically...
+...any advice is welcome in these regards...and any feedback too !
+
+In V2, an additional patch is added to simply add the proper/required
+MODULE_DEVICE_TABLE to SCMI transport driver to enable autoloading also
+for those.
+
+Thanks,
+Cristian
+
+V1 --> V2
+- added tags
+- added Transport aliases patch via MODULE_DEVICE_TABLE
+
+Cristian Marussi (3):
+  firmware: arm_scmi: Support vendor protocol modules autoloading
+  firmware: arm_scmi: Add module aliases to i.MX vendor protocols
+  firmware: arm_scmi: Add aliases to transport modules
+
+ drivers/firmware/arm_scmi/driver.c            | 56 +++++++++++++++----
+ .../firmware/arm_scmi/transports/mailbox.c    |  1 +
+ drivers/firmware/arm_scmi/transports/smc.c    |  1 +
+ drivers/firmware/arm_scmi/transports/virtio.c |  1 +
+ .../arm_scmi/vendors/imx/imx-sm-bbm.c         |  5 +-
+ .../arm_scmi/vendors/imx/imx-sm-misc.c        |  5 +-
+ include/linux/scmi_imx_protocol.h             |  9 +--
+ 7 files changed, 60 insertions(+), 18 deletions(-)
+
+-- 
+2.47.0
+
 
