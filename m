@@ -1,146 +1,194 @@
-Return-Path: <linux-kernel+bounces-437101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8DAF9E8F2C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:49:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90EDD1885E36
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:49:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 753392165EB;
-	Mon,  9 Dec 2024 09:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gLAlzeCQ"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B389B9E8F30
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:50:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2092165E9;
-	Mon,  9 Dec 2024 09:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733737774; cv=none; b=WdC3NCt77kfVeFpVG9SDtpRlzJ0goi/u5fifF3aRZ+SSQXrM5T19epbsi8NeYNVlB/0znlcSTs0wjd5+OTnB+4xacJ+YSuxAlFeRUcpwgSnj/wvq4/8xdEDdrTYIPQ6iNzYX+EfWE998QmzMXbB+iXrxmXOw8otdrWY2ZFxN4Nc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733737774; c=relaxed/simple;
-	bh=vDVoR6QJHDbAwKUmHAbTLSwKdLlywl2nMTNdrlzT7ps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y8df98ccjrawouFShcTJtFkaK1UHBeTso5fcBIXHYE8YrKS5Abtf0HApPSpQFZHk+MlHbQSpTzWvqvNMOS0WNiaajWahEU5b0yoOgYR6M8gTXqcLd1tR+i81PJybmz9NYiGGJY5F5mvbrll4ovzUUM5I07IxOMdfYe3Wd/Wa4aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gLAlzeCQ; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733737770;
-	bh=vDVoR6QJHDbAwKUmHAbTLSwKdLlywl2nMTNdrlzT7ps=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gLAlzeCQfkpTQp2EmlKFXooBQiBUryzCmDJjPB+gfcQaqEw9EgdVaJvhwctpQkX/J
-	 Ob4ObKCYSBfEZ3dkPmuc9169HstBj8Ik0XVxy/ySYno8CqPJGYv60WspYpeKEoWNci
-	 MrsJaNcevihSx7KjRvZH0SRmaI9Yt4Nl+pgIep0xDJZYhpyoJ+/Fm4Jlmq77RVkBjI
-	 kmpgr6Ww4ESZP+Yr5sExjFYAKcqexK6sXrZm+aWPfdb4E/fcN5azk1XtffGLoF8cn7
-	 GTpBsrD7cM8xOqhgz6HUMcTXtlXvEIy11dXbFRfJIryJtBZoQw1fZGF5cvK+M0xd/i
-	 sdm6z27mHpq6Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FEDA281AC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:50:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13171216380;
+	Mon,  9 Dec 2024 09:49:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="B7BfH1Cl"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8F2EB17E3615;
-	Mon,  9 Dec 2024 10:49:29 +0100 (CET)
-Message-ID: <b5a77637-64b0-4ed3-9619-e76d094505af@collabora.com>
-Date: Mon, 9 Dec 2024 10:49:28 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ED9215F60
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 09:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733737796; cv=none; b=rv93qs4AAoA91flofK/pnJ/vRfpSXQzjVHAF2pBxsfJo/tsf3AloEBWgVfXMuAo5muGhAMzr9ZFwbu44zqXKIwzsiCRMnfrniiwZBce5QgNzsRLuRraB2xDLspNrCq9/sPCECmfUyJOz2w0dBQ7434Sq4ftw8AMheVAOOgz4f8Y=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733737796; c=relaxed/simple;
+	bh=gjzP1jOWh+tLjI9woDgqu6zeAvUHesesAV1OB860O5k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gbynn/PglMWpqPdguCNtCzZ4W6F3D0fZIXAY2LKjNReNzAe3STpN7pChneT7iOEFAl1xt2uFv7vsq18x054a+WCHkpMenlZvNSD7sfrea5gwlWZnSvL/0y+zomfyV/VA1N8XtZwfoBC775oXO+4G882DIEGiGiXDY0Bi7Px/Vr4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=B7BfH1Cl; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=we92yClgUcvthCKFM4LL8GZJey1rostJrjOGqYYFIIM=; b=B7BfH1ClqS09kvx8JR052Hxr8c
+	9eOKcU8zPKDiEVMIPLBYCplJ4jy1tWsmiDXGlS+1ysLpBkim6hTy6BVn45Ej72aO2CEaDzVD3uBdz
+	0gXpxpOkKQCz9QJcMNjnNA/RhTS4u59/4+BP3EN+j/a7EYId0jqTR0shLwtO5CsJKIW8koM7p5rx4
+	lZarY8tjDnMO/WKO7CPOBYBw2uJDadVRdmcKYQ+LMh2GjfIj+XBgUP2lBvnRbvhYiHFwXqbrYuZB6
+	DczN0XWxu9Q3SYyjZVzZgUEd/kGWGLTOC1YGFss0++W4WRb9qfb1IVObFYkjHgQV7kquokG1oFBz3
+	jbWy5kZg==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKaOc-00000003WMJ-05ku;
+	Mon, 09 Dec 2024 09:49:42 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 27EB13003FF; Mon,  9 Dec 2024 10:49:41 +0100 (CET)
+Date: Mon, 9 Dec 2024 10:49:41 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Marcel Ziswiler <marcel.ziswiler@codethink.co.uk>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, linux-kernel@vger.kernel.org,
+	kprateek.nayak@amd.com, wuyun.abel@bytedance.com,
+	youssefesmat@chromium.org, tglx@linutronix.de, efault@gmx.de
+Subject: Re: [REGRESSION] Re: [PATCH 00/24] Complete EEVDF
+Message-ID: <20241209094941.GF21636@noisy.programming.kicks-ass.net>
+References: <20240727102732.960974693@infradead.org>
+ <16f96a109bec0b5849793c8fb90bd6b63a2eb62f.camel@codethink.co.uk>
+ <20241128105817.GC35539@noisy.programming.kicks-ass.net>
+ <4052c4e7ed0e02d11c2219915b08928677c88ab8.camel@codethink.co.uk>
+ <20241129090843.GB15382@noisy.programming.kicks-ass.net>
+ <98294066b3a0a7a77220e18ab9db5d3c3cb57341.camel@codethink.co.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 13/15] drm/mediatek: mtk_hdmi_common: Assign DDC
- adapter pointer to bridge
-To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
-Cc: "robh@kernel.org" <robh@kernel.org>,
- "jie.qiu@mediatek.com" <jie.qiu@mediatek.com>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
- <mripard@kernel.org>, =?UTF-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?=
- <jitao.shi@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "kernel@collabora.com" <kernel@collabora.com>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "junzhi.zhao@mediatek.com" <junzhi.zhao@mediatek.com>
-References: <20241205114518.53527-1-angelogioacchino.delregno@collabora.com>
- <20241205114518.53527-14-angelogioacchino.delregno@collabora.com>
- <c0e144b3a90881066d0974157e66ac23f09a0fc5.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <c0e144b3a90881066d0974157e66ac23f09a0fc5.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <98294066b3a0a7a77220e18ab9db5d3c3cb57341.camel@codethink.co.uk>
 
-Il 09/12/24 09:17, CK Hu (胡俊光) ha scritto:
-> Hi, Angelo:
+
+Sorry for the delay, I got laid low by snot monsters :/
+
+On Mon, Dec 02, 2024 at 07:46:21PM +0100, Marcel Ziswiler wrote:
+
+> Unfortunately, once I trigger the failure the system is completely dead and won't allow me to dump the trace
+> buffer any longer. So I did the following instead on the serial console terminal:
 > 
-> On Thu, 2024-12-05 at 12:45 +0100, AngeloGioacchino Del Regno wrote:
->> External email : Please do not click links or open attachments until you have verified the sender or the content.
->>
->>
->> In preparation for adding the new HDMI TX v2 IP driver, assign the
->> pointer to the DDC adapter to struct drm_bridge during probe.
->>
->> This commit brings no functional changes.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/gpu/drm/mediatek/mtk_hdmi_common.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
->> index 1b23ab6969ec..4f708b04f5e8 100644
->> --- a/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
->> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_common.c
->> @@ -410,6 +410,7 @@ struct mtk_hdmi *mtk_hdmi_common_probe(struct platform_device *pdev)
->>          hdmi->bridge.ops = DRM_BRIDGE_OP_DETECT | DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_HPD;
->>          hdmi->bridge.type = DRM_MODE_CONNECTOR_HDMIA;
->>          hdmi->bridge.of_node = pdev->dev.of_node;
->> +       hdmi->bridge.ddc = hdmi->ddc_adpt;
+> tail -f /sys/kernel/debug/tracing/trace
 > 
-> I don't know why only v2 driver need to assign this?
-> Could you point out the code where access this value?
-> 
+> Not sure whether there is any better way to go about this. Plus even so we run the serial console at 1.5
+> megabaud I am not fully sure whether it was able to keep up logging what you are looking for.
 
-v2 uses hdmi helpers, which make use of bridge->ddc.
-mtk_hdmi_v2_bridge_edid_read() calls drm_edid_read().
+Ah, that is unfortunate. There is a ftrace_dump_on_oops option that
+might be of help. And yes, dumping trace buffers over 1m5 serial lines
+is tedious -- been there done that, got a t-shirt and all that.
 
-drm_edid.c -> drm_edid_read()
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/drm_edid.c?h=next-20241209#n2704
+Still, let me see if perhaps making that WARN in enqueue_dl_entity()
+return makes the whole thing less fatal.
 
-...while v1 feeds the (internal) ddc pointer to drm_edid_read_ddc() instead.
+I've included the traceoff_on_warning and ftrace_dump in the code, so
+all you really need to still do is enable the stacktrace option.
 
-Cheers,
-Angelo
+ � echo 1 > /sys/kernel/debug/tracing/options/stacktrace
 
-> Regards,
-> CK
-> 
->>
->>          ret = devm_drm_bridge_add(dev, &hdmi->bridge);
->>          if (ret)
->> --
->> 2.47.0
->>
-> 
+> Yes, and do not hesitate to ask for any additional information et. al. we are happy to help. Thanks!
 
+Could I bother you to try again with the below patch?
 
+There are two new hunks vs the previous one, the hunk in
+enqueue_dl_entity() (the very last bit) will stop tracing and dump the
+buffers when that condition is hit in addition to then aborting the
+double enqueue, hopefully leaving the system is a slightly better state.
+
+The other new hunk is the one for dl_server_stop() (second hunk), while
+going over the code last week, I found that this might be a possible
+hole leading to the observed double enqueue, so fingers crossed.
+
+---
+
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 33b4646f8b24..bd1df7612482 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -1223,6 +1223,11 @@ static enum hrtimer_restart dl_server_timer(struct hrtimer *timer, struct sched_
+ 	scoped_guard (rq_lock, rq) {
+ 		struct rq_flags *rf = &scope.rf;
+ 
++		if (dl_se == &rq->fair_server) {
++			trace_printk("timer fair server %d throttled %d\n",
++				     cpu_of(rq), dl_se->dl_throttled);
++		}
++
+ 		if (!dl_se->dl_throttled || !dl_se->dl_runtime)
+ 			return HRTIMER_NORESTART;
+ 
+@@ -1674,6 +1679,12 @@ void dl_server_start(struct sched_dl_entity *dl_se)
+ 
+ void dl_server_stop(struct sched_dl_entity *dl_se)
+ {
++	if (current->dl_server == dl_se) {
++		struct rq *rq = rq_of_dl_se(dl_se);
++		trace_printk("stop fair server %d\n", cpu_of(rq));
++		current->dl_server = NULL;
++	}
++
+ 	if (!dl_se->dl_runtime)
+ 		return;
+ 
+@@ -1792,6 +1803,9 @@ static enum hrtimer_restart inactive_task_timer(struct hrtimer *timer)
+ 		rq_lock(rq, &rf);
+ 	}
+ 
++	if (dl_se == &rq->fair_server)
++		trace_printk("inactive fair server %d\n", cpu_of(rq));
++
+ 	sched_clock_tick();
+ 	update_rq_clock(rq);
+ 
+@@ -1987,6 +2001,12 @@ update_stats_dequeue_dl(struct dl_rq *dl_rq, struct sched_dl_entity *dl_se,
+ static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
+ {
+ 	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
++	struct rq *rq = rq_of_dl_se(dl_se);
++
++	if (dl_se == &rq->fair_server) {
++		trace_printk("enqueue fair server %d h_nr_running %d\n",
++			     cpu_of(rq), rq->cfs.h_nr_running);
++	}
+ 
+ 	WARN_ON_ONCE(!RB_EMPTY_NODE(&dl_se->rb_node));
+ 
+@@ -1998,6 +2018,12 @@ static void __enqueue_dl_entity(struct sched_dl_entity *dl_se)
+ static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
+ {
+ 	struct dl_rq *dl_rq = dl_rq_of_se(dl_se);
++	struct rq *rq = rq_of_dl_se(dl_se);
++
++	if (dl_se == &rq->fair_server) {
++		trace_printk("dequeue fair server %d h_nr_running %d\n",
++			     cpu_of(rq), rq->cfs.h_nr_running);
++	}
+ 
+ 	if (RB_EMPTY_NODE(&dl_se->rb_node))
+ 		return;
+@@ -2012,7 +2038,11 @@ static void __dequeue_dl_entity(struct sched_dl_entity *dl_se)
+ static void
+ enqueue_dl_entity(struct sched_dl_entity *dl_se, int flags)
+ {
+-	WARN_ON_ONCE(on_dl_rq(dl_se));
++	if (WARN_ON_ONCE(on_dl_rq(dl_se))) {
++		tracing_off();
++		ftrace_dump(DUMP_ALL);
++		return;
++	}
+ 
+ 	update_stats_enqueue_dl(dl_rq_of_se(dl_se), dl_se, flags);
+ 
 
