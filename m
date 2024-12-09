@@ -1,89 +1,89 @@
-Return-Path: <linux-kernel+bounces-436861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5C139E8BC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:58:16 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FEB9E8BC0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAC99188405F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:58:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6770718853CF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967A9214A7A;
-	Mon,  9 Dec 2024 06:58:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F922214A7A;
+	Mon,  9 Dec 2024 06:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nA5REt+k"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BK+mrXeb"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560DB214A92;
-	Mon,  9 Dec 2024 06:58:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8651D555;
+	Mon,  9 Dec 2024 06:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733727484; cv=none; b=m0ETuAcYKlg4dpuxISXzZIuP1uwMcpGj2j9ZLFX2VNt1iN6AKoSKg9R/3sHzeALyZobWU6OWCkkPwLvfxVvJ4TvajN6Y8Us7Ply1R4JB1uF8T1Gpthx9bk4qCdz70uLopbRHf0iWnUhnGijfaqC3fr6ZlUTRBLCvJwNSNEwL3vo=
+	t=1733727479; cv=none; b=X5QMKanswM7uSYEBiJL7jooQTbW7e1L9uG6TZ6eZ1P22VMrpKcK9T8SSzwtZsBjLB6yCkZEycnxV5M/ST+HEChyD4ylUCFjrWtYbv8ibcoAVdhMpqSOwT+S15TwoC55aAADnug2hCEIn+dhFZOgyFLw+69bnZCiIR78TkpmI0/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733727484; c=relaxed/simple;
-	bh=8bfXcYRDDt7dtabz3UtPnwxZkXo2DLfdwnfsWVXfIxI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=PTYklG709WdXW6EdHoWGILLjBW14qo5D82Q4urfm5mspYAgb8likg1kRMNU7jKW/7dyaXo8F0px+s8cs561xAJJ4M4wNdy/jeO9eWUFQI3VEeLdYih8G2GsXw1wWd8VBPAsOn0MbST1Y/dtPyISNt/er7IwnkRuleZf5Bt1c15A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nA5REt+k; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-725f4623df7so217309b3a.2;
-        Sun, 08 Dec 2024 22:58:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733727482; x=1734332282; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2ukHcVGD5bZ7NrwgcKlKtj7kYTlysawc41Nl+yMhJCU=;
-        b=nA5REt+kZLrfss7cdjQxuNShItfwtnoCeLEUd6IZ0Uh8l3ctek8EfLC7dx7VAfBl1C
-         Ogih2md4yXCx6KsGTgfAMX+f3MBttWFMV4bJww88t5aHKCVNkC82xS5pNDJLzt4dCp/N
-         AB6KEgarm3hgxqUnmu8qCqmtn5KWoEvGDCO7BNlYpY+Zqx+4FVKM6MVif4DwhA2W/1S8
-         6JsL6rMilj9ILcCkZ4Yk56+ydqFWuCoP8kWudO+gqkq7pTpIcrEpcHTDwKDRS+R0Ve1D
-         5e0FHjJPQxC5n2rhGWzMVw1knI606dej7ELMH0bLjD6tS0QmpDRdWXd2oJ8eIAY4hazX
-         a8pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733727482; x=1734332282;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2ukHcVGD5bZ7NrwgcKlKtj7kYTlysawc41Nl+yMhJCU=;
-        b=ujA2vfrzDkDtWztnnDsWm42nek6Ew6xZTMkCWXgFhAa4vI5Jck60+wRC6ppOZwIjOh
-         9Sh+Zoq+2W/qdfL3vRHQt/D7HSf7rerqtIpUAbUeQnc3iX0Ry2jSHv5YnI911bSM2s3t
-         1ab54iHyYy0SVcc9CWxpxe5KfnThstiXznKZqou5LiHnIyVQIQK84noJXyUFpvJRfqBq
-         +pozaKwCFQEov17LBL4R/h7eLjZvwEUlSGXC6bCR9IGbgeCrc+W/R3imYPtgJ95+4Xpq
-         U3kqHaszn+pXrK1V+WSNBw/lgY/uZ86ZddnvDdjFtGklTrCA0dBd1Uz4lsxOcelHUyzl
-         H8dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDPxpeNXwsVaHI0duszwGPhhx1047Wo8EL/TYbvMpZUDrEZl1oEdOEWhTyDdRlYaCSkrkBxk+KJ28x1rA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1S+wIE6wKETfbux4UiV/SCaMJE5e20tKhVhaIPFHFot0uQQfe
-	2RT5PnzfhlMgh7x+I0vBvQvJ46EkcV7K7BIlDWHHLZK3ZKrQad7hSrwxeQ==
-X-Gm-Gg: ASbGnctpQazpBEfWkmaAjIfnslHFMkYzK1S16RQrsVNRIQiSefs/8mji+CfhHAXxEle
-	VbBVYnlXPE/n4wMZjouau9aK0Ubjw97nqTw6gGjcfgWhYnByXbjhpFy0bPoUjFj6FYSCqdWPCzB
-	7tVYHFsnGyo9VKrZDBqSOBIW5pbFulTZdoMaUGSU9ibYZZ5oAkURNyiUqyI+ltZ9iBHT2e64zj5
-	d3p4hmPVoT915EdfEiNnYsQIhwwGCFXeXEcKeDIe+Gg2e7nfM4R8NEP/SbbsBAI6Iwbd0tlVArr
-	M2UCd0TnEMQPaDb+YfF+2gdX
-X-Google-Smtp-Source: AGHT+IF+oyxte+LR9ny2z9H7vppbStyo2tnOaJFs2EiS/iu61vevYty3+F7lpdz2V87hQoik4FcIew==
-X-Received: by 2002:a05:6a20:6a21:b0:1db:ddba:8795 with SMTP id adf61e73a8af0-1e187123148mr19355255637.36.1733727482403;
-        Sun, 08 Dec 2024 22:58:02 -0800 (PST)
-Received: from carrot.. (i114-186-166-114.s41.a014.ap.plala.or.jp. [114.186.166.114])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd48c5216fsm1719540a12.77.2024.12.08.22.57.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:58:01 -0800 (PST)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-nilfs <linux-nilfs@vger.kernel.org>,
-	syzbot <syzbot+9260555647a5132edd48@syzkaller.appspotmail.com>,
-	syzkaller-bugs@googlegroups.com,
-	LKML <linux-kernel@vger.kernel.org>,
-	Edward Adam Davis <eadavis@qq.com>
-Subject: [PATCH] nilfs2: prevent use of deleted inode
-Date: Mon,  9 Dec 2024 15:56:52 +0900
-Message-ID: <20241209065759.6781-1-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <673e20ae.050a0220.3c9d61.0163.GAE@google.com>
-References: <673e20ae.050a0220.3c9d61.0163.GAE@google.com>
+	s=arc-20240116; t=1733727479; c=relaxed/simple;
+	bh=qe6Udq2O6ylQ7lKCDT+058J/wzrj9nl+5v4NIjILIzw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VM/HelCmyOaLm9umBGkIM8O5IftiEfnfGwgDVUbr+iuQmZ2zcaiTq9lLhjyDKasGMXOVhDfrg7I/NC+urfMnrBJ/SPDAtCa9ehhFBnTYz2KAF24GmLoZrgvzXThkzO8KzI0ZrJFI/RcM6qC38gqfRvlVDsU9txwyuFpp2481/E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BK+mrXeb; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MotJN008466;
+	Mon, 9 Dec 2024 06:57:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=6vMnIg568BJtA4W/JJ6yBSKxv2h8U/loKiehbM+EH
+	Z0=; b=BK+mrXebLKo32XdeUVs2F6OhU0s3/LflbVT0YrqOzjnu2cAnV15xXgd/1
+	4/e0UeW+HBzx8CQvDqKsjKk1IuzGpBq8pBldtdA9D5ZUik2pwJVIuqf9fAHpDK6E
+	HRwfxyd3/iTjNcW3o+6y3bAVmRKDW0HpsEnBfmTT82W/ofYXU4+Vop6pTbu7mhKj
+	u9ha03SxsTMOhxmsYkxVxUOImrEzJG5vgIhVpvh0bGld0kYyOTRVLu8Ga5gbpx1F
+	KikVS/lwdOaQhTj8bko8L469TwunhVlNiDt1x62hFSYsIA/uD6jf0gq9Udv5FwBP
+	bHd+pE28v2Jnd+6LCcxILNHhwIj6Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0x6vxb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 06:57:28 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B96m85K005033;
+	Mon, 9 Dec 2024 06:57:27 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0x6vx7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 06:57:27 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B96HbH5032496;
+	Mon, 9 Dec 2024 06:57:26 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d1pmwcqh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 06:57:26 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B96vOVP50856424
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 06:57:24 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 7A3192004B;
+	Mon,  9 Dec 2024 06:57:24 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 87B0C2004E;
+	Mon,  9 Dec 2024 06:57:21 +0000 (GMT)
+Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.in.ibm.com (unknown [9.109.219.153])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Dec 2024 06:57:21 +0000 (GMT)
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Cc: ast@kernel.org, hbathini@linux.ibm.com, andrii@kernel.org,
+        daniel@iogearbox.net, martin.lau@linux.dev, eddyz87@gmail.com,
+        song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
+        kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
+        jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org
+Subject: [PATCH] selftests/bpf: Fix fill_link_info selftest on powerpc
+Date: Mon,  9 Dec 2024 12:27:20 +0530
+Message-ID: <20241209065720.234344-1-skb99@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,94 +91,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: EndXjGVOXSlKrwYrWNmh4Rw4xjAVbk-f
+X-Proofpoint-ORIG-GUID: oXQiw0sbMxZ9FHQllso9ETUFqqmEUX7S
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=857
+ priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090051
 
-From: Edward Adam Davis <eadavis@qq.com>
+With CONFIG_KPROBES_ON_FTRACE enabled on powerpc, ftrace_location_range
+returns ftrace location for bpf_fentry_test1 at offset of 4 bytes from
+function entry. This is because branch to _mcount function is at offset
+of 4 bytes in function profile sequence.
 
-syzbot reported a WARNING in nilfs_rmdir. [1]
+To fix this, add entry_offset of 4 bytes while verifying the address for
+kprobe entry address of bpf_fentry_test1 in verify_perf_link_info in
+selftest, when CONFIG_KPROBES_ON_FTRACE is enabled.
 
-Because the inode bitmap is corrupted, an inode with an inode number
-that should exist as a ".nilfs" file was reassigned by nilfs_mkdir for
-"file0", causing an inode duplication during execution.
-And this causes an underflow of i_nlink in rmdir operations.
+Disassemble of bpf_fentry_test1:
 
-The inode is used twice by the same task to unmount and remove directories
-".nilfs" and "file0", it trigger warning in nilfs_rmdir.
+c000000000e4b080 <bpf_fentry_test1>:
+c000000000e4b080:       a6 02 08 7c     mflr    r0
+c000000000e4b084:       b9 e2 22 4b     bl      c00000000007933c <_mcount>
+c000000000e4b088:       01 00 63 38     addi    r3,r3,1
+c000000000e4b08c:       b4 07 63 7c     extsw   r3,r3
+c000000000e4b090:       20 00 80 4e     blr
 
-Avoid to this issue, check i_nlink in nilfs_iget(), if it is 0, it means
-that this inode has been deleted, and iput is executed to reclaim it.
+When CONFIG_PPC_FTRACE_OUT_OF_LINE [1] is enabled, these function profile
+sequence is moved out of line with an unconditional branch at offset 0.
+So, the test works without altering the offset for
+'CONFIG_KPROBES_ON_FTRACE && CONFIG_PPC_FTRACE_OUT_OF_LINE' case.
 
-[1]
-WARNING: CPU: 1 PID: 5824 at fs/inode.c:407 drop_nlink+0xc4/0x110 fs/inode.c:407
-...
-Call Trace:
- <TASK>
- nilfs_rmdir+0x1b0/0x250 fs/nilfs2/namei.c:342
- vfs_rmdir+0x3a3/0x510 fs/namei.c:4394
- do_rmdir+0x3b5/0x580 fs/namei.c:4453
- __do_sys_rmdir fs/namei.c:4472 [inline]
- __se_sys_rmdir fs/namei.c:4470 [inline]
- __x64_sys_rmdir+0x47/0x50 fs/namei.c:4470
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+Disassemble of bpf_fentry_test1:
 
-Reported-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=9260555647a5132edd48
-Tested-by: syzbot+9260555647a5132edd48@syzkaller.appspotmail.com
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-Fixes: d25006523d0b ("nilfs2: pathname operations")
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+c000000000f95190 <bpf_fentry_test1>:
+c000000000f95190:       00 00 00 60     nop
+c000000000f95194:       01 00 63 38     addi    r3,r3,1
+c000000000f95198:       b4 07 63 7c     extsw   r3,r3
+c000000000f9519c:       20 00 80 4e     blr
+
+[1] https://lore.kernel.org/all/20241030070850.1361304-13-hbathini@linux.ibm.com/
+
+Fixes: 23cf7aa539dc ("selftests/bpf: Add selftest for fill_link_info")
+Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
 ---
-Hi Andrew, please apply this as a bug fix.
+ .../selftests/bpf/prog_tests/fill_link_info.c       |  4 ++++
+ .../selftests/bpf/progs/test_fill_link_info.c       | 13 ++++++++++---
+ 2 files changed, 14 insertions(+), 3 deletions(-)
 
-This prevents the link count underflow that can occur when deleting
-directories in an inconsistent file system, which was recently
-reported by syzbot.
-
-Thanks,
-Ryusuke Konishi
-
- fs/nilfs2/inode.c | 8 +++++++-
- fs/nilfs2/namei.c | 5 +++++
- 2 files changed, 12 insertions(+), 1 deletion(-)
-
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index cf9ba481ae37..b7d4105f37bf 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -544,8 +544,14 @@ struct inode *nilfs_iget(struct super_block *sb, struct nilfs_root *root,
- 	inode = nilfs_iget_locked(sb, root, ino);
- 	if (unlikely(!inode))
- 		return ERR_PTR(-ENOMEM);
--	if (!(inode->i_state & I_NEW))
-+
-+	if (!(inode->i_state & I_NEW)) {
-+		if (!inode->i_nlink) {
-+			iput(inode);
-+			return ERR_PTR(-ESTALE);
-+		}
- 		return inode;
-+	}
- 
- 	err = __nilfs_read_inode(sb, root, ino, inode);
- 	if (unlikely(err)) {
-diff --git a/fs/nilfs2/namei.c b/fs/nilfs2/namei.c
-index 9b108052d9f7..1d836a5540f3 100644
---- a/fs/nilfs2/namei.c
-+++ b/fs/nilfs2/namei.c
-@@ -67,6 +67,11 @@ nilfs_lookup(struct inode *dir, struct dentry *dentry, unsigned int flags)
- 		inode = NULL;
+diff --git a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
+index d50cbd804..e59af2aa6 100644
+--- a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
++++ b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
+@@ -171,6 +171,10 @@ static void test_kprobe_fill_link_info(struct test_fill_link_info *skel,
+ 		/* See also arch_adjust_kprobe_addr(). */
+ 		if (skel->kconfig->CONFIG_X86_KERNEL_IBT)
+ 			entry_offset = 4;
++		if (skel->kconfig->CONFIG_PPC64 &&
++		    skel->kconfig->CONFIG_KPROBES_ON_FTRACE &&
++		    !skel->kconfig->CONFIG_PPC_FTRACE_OUT_OF_LINE)
++			entry_offset = 4;
+ 		err = verify_perf_link_info(link_fd, type, kprobe_addr, 0, entry_offset);
+ 		ASSERT_OK(err, "verify_perf_link_info");
  	} else {
- 		inode = nilfs_iget(dir->i_sb, NILFS_I(dir)->i_root, ino);
-+		if (inode == ERR_PTR(-ESTALE)) {
-+			nilfs_error(dir->i_sb,
-+					"deleted inode referenced: %lu", ino);
-+			return ERR_PTR(-EIO);
-+		}
- 	}
+diff --git a/tools/testing/selftests/bpf/progs/test_fill_link_info.c b/tools/testing/selftests/bpf/progs/test_fill_link_info.c
+index 6afa83475..fac33a14f 100644
+--- a/tools/testing/selftests/bpf/progs/test_fill_link_info.c
++++ b/tools/testing/selftests/bpf/progs/test_fill_link_info.c
+@@ -6,13 +6,20 @@
+ #include <stdbool.h>
  
- 	return d_splice_alias(inode, dentry);
+ extern bool CONFIG_X86_KERNEL_IBT __kconfig __weak;
++extern bool CONFIG_PPC_FTRACE_OUT_OF_LINE __kconfig __weak;
++extern bool CONFIG_KPROBES_ON_FTRACE __kconfig __weak;
++extern bool CONFIG_PPC64 __kconfig __weak;
+ 
+-/* This function is here to have CONFIG_X86_KERNEL_IBT
+- * used and added to object BTF.
++/* This function is here to have CONFIG_X86_KERNEL_IBT,
++ * CONFIG_PPC_FTRACE_OUT_OF_LINE, CONFIG_KPROBES_ON_FTRACE,
++ * CONFIG_PPC6 used and added to object BTF.
+  */
+ int unused(void)
+ {
+-	return CONFIG_X86_KERNEL_IBT ? 0 : 1;
++	return CONFIG_X86_KERNEL_IBT ||
++			CONFIG_PPC_FTRACE_OUT_OF_LINE ||
++			CONFIG_KPROBES_ON_FTRACE ||
++			CONFIG_PPC64 ? 0 : 1;
+ }
+ 
+ SEC("kprobe")
 -- 
-2.43.0
+2.45.2
 
 
