@@ -1,84 +1,81 @@
-Return-Path: <linux-kernel+bounces-437771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDDE9E9877
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:10:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0529E987C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:11:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23EB51882E89
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:09:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3FD1882201
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A26841ACEDB;
-	Mon,  9 Dec 2024 14:09:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD581B0410;
+	Mon,  9 Dec 2024 14:11:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UNX8iorX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ffAe0zv+"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828AB35971
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:09:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA0D233157;
+	Mon,  9 Dec 2024 14:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753392; cv=none; b=jcdzDo8RxdqXHgKbp87qus64tBInDbUZEdUU9IjQbnUDV21zUY9H/LoWTPumHN5YuUrWU/BBiemiGMVcIxe7y0D+O/OmSrVNXgJS69ViG2+4nhYw8fIysaA/KE8yVtqk2k/phkruVQoBw//y1O0TT+a+woEFIiGiv/QZiW/d3dg=
+	t=1733753479; cv=none; b=hBR3qU7lD/K5LE6tyl71+oHFuoiHLTnDlnhSpX0ZKz91yieymp4Y4RvRBpg9+c/cttkUlmXfa23wL4dqpVDmdI9DMQ+T8y/ZcqqM41BCrIjjbD1HgEOXHi2uyqJ2+P++M4hun9TKQZZNDMjhkugd1u4D4kW5NMmgRWxoi4Pei9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753392; c=relaxed/simple;
-	bh=VFsqTHIjbvNsg1lhxlslmn4uCUDQmZvnFu9rTQQdUT0=;
+	s=arc-20240116; t=1733753479; c=relaxed/simple;
+	bh=0vgU4ssnE1WE7jqMAB3bzg5kwDLIj2VIEbOq/IIGnwc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lu1d+7JKZhPS7NmCGv9q4TgEtTWeUOUkYcG+FszU+1uvdThI0bK03VPrF/JkND3wguAE7XtcXa2HE07rLGQXfPCxCDxRX8o+ypGz7xTYNNREVzzu4GOrvgeFg0Fp5c9c56CaM6h/p7IT9AWQgrDzNkOKAX3RPh+ecvKB+yHF420=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UNX8iorX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733753389;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hHZzrjR5Ve3b7sXUVbsD2DflrETBRAIsfwkq5v711Dk=;
-	b=UNX8iorXkMK8n/Miat0aQk0nGPtKzEvd8CfszAp1GCrh9pxK12P139vnxLEZd0cWrsV6Op
-	UrFM+EfWVE5Ap2Q63kD0YgwR4VrwN0hlNmpIym8tADbv+C2zZBnzdlQx1p6wKBcYO7e1Ad
-	tezSJ82Pt4QTdRzs5/uY0e23PuTSvHo=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-41-qQoeTk_dPjSKDEUWS6Lb4A-1; Mon, 09 Dec 2024 09:09:44 -0500
-X-MC-Unique: qQoeTk_dPjSKDEUWS6Lb4A-1
-X-Mimecast-MFC-AGG-ID: qQoeTk_dPjSKDEUWS6Lb4A
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa683e90dd3so77204566b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:09:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753382; x=1734358182;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hHZzrjR5Ve3b7sXUVbsD2DflrETBRAIsfwkq5v711Dk=;
-        b=n77QbGBx9Zo+2y8WJXW/XzUNva2uKS8vLPIgDRaPyuyoOs9Kb7AX8M3Jb7zmhO1bEH
-         KH+wHp1IYj3Vg1DPrgzczUla5Wrox8tVLIJvoW5us3wFDJJ6tTJ+3ljY7pKQBc9JRdVH
-         B/h7MiCsB2jdtJ9Nq3oBsxKlKJTyHyLl1/L/aU2L4EP+RTk58pYWsu3LbGRvVVGbhpjM
-         cxi/sN5sIVV50dX2GgI29rY/pHu+oGDdmcEyNJbTHiLRA/3ZgAgwIBevTLRsn9mi8hdH
-         iTZbPs+uwl+dFt6QxLASTQ/i1Il5elKxuztuIHJBeUhZcyUsbYD53w83dex8R9baPrYd
-         KAcA==
-X-Forwarded-Encrypted: i=1; AJvYcCXHAIOYVOaM0IjTBK0Sjz0HQy7EqGHkw6WgrIE7doKQhbrkMPpIxNfdC/dpwFVkJCPOxqAXtIlAP1snnMI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd4e3c7tD2PnNI7+WPQhAUUntpiWLa4K3cCIS7v+VvaiW091ps
-	Zh3vUoRYRuiSsVuUIcMBsNt4DxMneMmeeVBCCiJyZmljeZaNKmxsqFmv5VnTq4cJJ6HXEP2RpnG
-	0kx8OxGp0fvlk6xerK9QnqjUFeQIez32zls57m1Zb8BEcpyM2VDJbPFcyaNb9rA==
-X-Gm-Gg: ASbGnctWq3J+YrcQ78kZ2Xll8EGuSoWL2nxrAbJuIYq/zo4IrQW6dZhGYHm/fn6J6ZA
-	Md0KIwurKEiqbCEc/DfYVYu8jR78PEGJSxaJnKQZad4WKqhkkX7t4NHk3d8VQDYayYHWP3zOdVQ
-	LeGNvNNmN2fR0OGbneOnWLGH6d0DwvoW9dRCvi4XVV4KAA7y5kGR9W393YQX/B3+Vql4qN8ZnUe
-	Rh0qDBkWgXHi3zz6cjF9rHOn7Eq1aZFsqJV6z3voOb8T2F7kwcN7A==
-X-Received: by 2002:a17:907:cb1d:b0:aa6:85d0:1486 with SMTP id a640c23a62f3a-aa685d029f6mr368165566b.54.1733753382361;
-        Mon, 09 Dec 2024 06:09:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEGbaRuojSlObqb+ZgGmgiC5B1UUWtEQVDAfZ4MvGLv/a0gZ7FV1AlNBxzVkBL59NKv7aDaAQ==
-X-Received: by 2002:a17:907:cb1d:b0:aa6:85d0:1486 with SMTP id a640c23a62f3a-aa685d029f6mr368162266b.54.1733753381961;
-        Mon, 09 Dec 2024 06:09:41 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6707a5110sm290067466b.36.2024.12.09.06.09.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:09:41 -0800 (PST)
-Message-ID: <5701c6b4-b749-4028-8e42-475790f08190@redhat.com>
-Date: Mon, 9 Dec 2024 15:09:40 +0100
+	 In-Reply-To:Content-Type; b=TiNoCna6dM+GtjLXeGCgUZv72Zhe906U1JfXLBP2mguGYZEg+su+XXIxVeGslfO6FlWkwIU0nht0BM+kFSBuhW8ARuQM+pPsK7fhEnysj7CUXbd4Q2f1L3ACn09TdKxx6FVnDhliWTbjGZM5GvS9B/sjTeJFufaQBawG6RNiJsM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ffAe0zv+; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B96lUiK001478;
+	Mon, 9 Dec 2024 14:11:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=fSsqjK
+	VTcG0iqZUPgmZVVAKSbh2ltlzmXWTnnOKiYVg=; b=ffAe0zv+b/kVWFc6Q7N7XZ
+	dUZb1DzyKI4XzuzVan02YXsrzZH4M9AzI3GaoYPIxUOUqtN5qrrL1O8yPfUkQZV1
+	R7njAckM9mhHtQb2QtydU523pcfOq2KvOhiKwY6i1mCd7jTgHtjxTXeSPMVgKIDh
+	mVyDuycF1/phKmM/Cv2SqkIJhYlnlGGx+3IuwZvK9jioHuAtx9636LKH+a650448
+	7c0KXImFt4stToOjVgDUTiSLjTT6EPQOlXcMQZYRL56kVcE9XJQQK+ntN2QX67b6
+	dIy1ER43qK/aQTKleYDGmBocR6ZLvqnBJoHZJhNgeQQnqS6dIIDMRC62UoLaU2Wg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq12ux-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 14:11:03 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B9E8WjL003124;
+	Mon, 9 Dec 2024 14:11:02 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq12uj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 14:11:02 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9BgLki023062;
+	Mon, 9 Dec 2024 14:11:02 GMT
+Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d2wjppdg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 14:11:02 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9EB0NL13632188
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 14:11:00 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 749BE58054;
+	Mon,  9 Dec 2024 14:11:00 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8C00358045;
+	Mon,  9 Dec 2024 14:10:57 +0000 (GMT)
+Received: from [9.171.32.56] (unknown [9.171.32.56])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Dec 2024 14:10:57 +0000 (GMT)
+Message-ID: <1fc33d2e-83c1-4651-b761-27188d22fba0@linux.ibm.com>
+Date: Mon, 9 Dec 2024 15:10:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,94 +83,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 16/19] media: uvcvideo: Introduce
- uvc_mapping_v4l2_size
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ricardo Ribalda <ribalda@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
- <20241114-uvc-roi-v15-16-64cfeb56b6f8@chromium.org>
+Subject: Re: [PATCH net-next v3 2/2] net/smc: support ipv4 mapped ipv6 addr
+ client for smc-r v2
+To: Guangguan Wang <guangguan.wang@linux.alibaba.com>, pasic@linux.ibm.com,
+        jaka@linux.ibm.com, alibuda@linux.alibaba.com,
+        tonylu@linux.alibaba.com, guwen@linux.alibaba.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+        horms@kernel.org
+Cc: linux-rdma@vger.kernel.org, linux-s390@vger.kernel.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dust Li <dust.li@linux.alibaba.com>
+References: <20241209130649.34591-1-guangguan.wang@linux.alibaba.com>
+ <20241209130649.34591-3-guangguan.wang@linux.alibaba.com>
 Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241114-uvc-roi-v15-16-64cfeb56b6f8@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <20241209130649.34591-3-guangguan.wang@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: txrE6DO25qKPtJ-SsenbNYXCbNI5ApGE
+X-Proofpoint-GUID: gsQt8RRbNuJhmkE1kw8re4K64poiDMF1
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
+ suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090110
 
-Hi,
 
-On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
-> Centralize the calculation for the v4l2_size of a mapping.
+
+On 09.12.24 14:06, Guangguan Wang wrote:
+> AF_INET6 is not supported for smc-r v2 client before, even if the
+> ipv6 addr is ipv4 mapped. Thus, when using AF_INET6, smc-r connection
+> will fallback to tcp, especially for java applications running smc-r.
+> This patch support ipv4 mapped ipv6 addr client for smc-r v2. Clients
+> using real global ipv6 addr is still not supported yet.
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-
-Thanks, patch looks good to me:
-
-Reviewed-by: Hans de Goede <hdegoede@redhat.com>
-
-Regards,
-
-Hans
-
-
-
-
+> Signed-off-by: Guangguan Wang <guangguan.wang@linux.alibaba.com>
+> Reviewed-by: Wen Gu <guwen@linux.alibaba.com>
+> Reviewed-by: Dust Li <dust.li@linux.alibaba.com>
+> Reviewed-by: D. Wythe <alibuda@linux.alibaba.com>
+> Reviewed-by: Wenjia Zhang <wenjia@linux.ibm.com>
 > ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 15 +++++++++++----
->  1 file changed, 11 insertions(+), 4 deletions(-)
+>   net/smc/af_smc.c | 5 ++++-
+>   1 file changed, 4 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 1bc019138995..f262e05ad3a8 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -1463,6 +1463,14 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
->  	return 0;
->  }
->  
-> +static size_t uvc_mapping_v4l2_size(struct uvc_control_mapping *mapping)
-> +{
-> +	if (uvc_ctrl_mapping_is_compound(mapping))
-> +		return DIV_ROUND_UP(mapping->size, 8);
-> +
-> +	return sizeof(s32);
-> +}
-> +
->  static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
->  				 struct uvc_control *ctrl,
->  				 struct uvc_control_mapping *mapping,
-> @@ -1504,7 +1512,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
->  			v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
->  	}
->  
-> -	v4l2_ctrl->elem_size = sizeof(s32);
-> +	v4l2_ctrl->elem_size = uvc_mapping_v4l2_size(mapping);
->  	v4l2_ctrl->elems = 1;
->  
->  	if (v4l2_ctrl->type >= V4L2_CTRL_COMPOUND_TYPES) {
-> @@ -2093,7 +2101,7 @@ static int uvc_mapping_get_xctrl_compound(struct uvc_video_chain *chain,
->  		return -EINVAL;
->  	}
->  
-> -	size = DIV_ROUND_UP(mapping->size, 8);
-> +	size = uvc_mapping_v4l2_size(mapping);
->  	if (xctrl->size < size) {
->  		xctrl->size = size;
->  		return -ENOSPC;
-> @@ -2271,9 +2279,8 @@ static int uvc_mapping_set_xctrl_compound(struct uvc_control *ctrl,
->  					  struct v4l2_ext_control *xctrl)
->  {
->  	u8 *data __free(kfree) = NULL;
-> -	size_t size;
-> +	size_t size = uvc_mapping_v4l2_size(mapping);
->  
-> -	size = DIV_ROUND_UP(mapping->size, 8);
->  	if (xctrl->size != size)
->  		return -EINVAL;
->  
-> 
+> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
+> index 9d76e902fd77..c3f9c0457418 100644
+> --- a/net/smc/af_smc.c
+> +++ b/net/smc/af_smc.c
+> @@ -1116,7 +1116,10 @@ static int smc_find_proposal_devices(struct smc_sock *smc,
+>   	ini->check_smcrv2 = true;
+>   	ini->smcrv2.saddr = smc->clcsock->sk->sk_rcv_saddr;
+>   	if (!(ini->smcr_version & SMC_V2) ||
+> -	    smc->clcsock->sk->sk_family != AF_INET ||
+> +#if IS_ENABLED(CONFIG_IPV6)
+> +	    (smc->clcsock->sk->sk_family == AF_INET6 &&
+> +	     !ipv6_addr_v4mapped(&smc->clcsock->sk->sk_v6_rcv_saddr)) ||
+> +#endif
+>   	    !smc_clc_ueid_count() ||
+>   	    smc_find_rdma_device(smc, ini))
+>   		ini->smcr_version &= ~SMC_V2;
+
+@Guangguan, I think Halil's point is valid, and we need to verify if 
+checking on saddr is sufficient before this patch is applied. i.e. what 
+about one peer with ipv4 mapped ipv6 communicates with another peer with 
+a real ipv6 address? Is it possible? If yes, would SMCRv2 be used? I 
+still haven't thought much on this yet, but it is worth to verify. Maybe 
+you already have the answer?
+
+@Jakub, could you please give us some more time to verify the issue 
+mentioned above?
+
+Thanks,
+Wenjia
 
 
