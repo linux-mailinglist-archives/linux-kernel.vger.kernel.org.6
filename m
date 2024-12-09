@@ -1,124 +1,245 @@
-Return-Path: <linux-kernel+bounces-437031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 604909E8E4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:02:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D11289E8E3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:00:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DF81886582
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CCE2281F4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546BC215F5C;
-	Mon,  9 Dec 2024 08:56:05 +0000 (UTC)
-Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E52216E2C;
+	Mon,  9 Dec 2024 08:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WfdtTpv5"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990C215F5A;
-	Mon,  9 Dec 2024 08:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44458216E26
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734565; cv=none; b=Fh1/ZUd/4W+T+7F2Z7x70aQpMJbIoBlUUECEfe8WbTi1QGMkBa1Rk8C4+vl46h5c2JcXrUxq/RltzUz4Lxk4QkZ8gQ7aSZbnfitZi1Q8aDGavFgQmQkdIJfWkZYpYQ22H6dfDG+Tdhtsb6+JISj2sSUNuAQ3f98WHG2HDfkxcgA=
+	t=1733734573; cv=none; b=aMpP/u9IPaklD2mn3mmN4rn1eplLKJyo4CRKlm9ijCQsb2nb+FAENH6Mt08JF0wxoCJzsEOxuE1+hCU5rAD+5pmIEul5tAecjyFvLz7JWfwQ0C9FpDj4G+KMzbFIzf+DvN6465Q4AhauicTe4zFCvCyMPMIba2y/+G7nvfHR+9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734565; c=relaxed/simple;
-	bh=NFk5AHP1WzcwCnF1yLNTssPwFD+Hxat6kdDIFCsmMUc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e4wfxbcH/b8t66oi5gfDXErQ0O1M7IcNNxFqftq4JYy9MMHFOCdr/aMnrTTwOMaT8Fu9VZQRbtUj7guRm3X6wdCOZgRJ5cPsRApeOGg6ghhrN/P31B7524WJgKN3QDWbAYUEk0zr045DiKQDrjYLVTz/INwIJYPxHorHpqlxfRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-85b0a934a17so2686334241.1;
-        Mon, 09 Dec 2024 00:56:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733734561; x=1734339361;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bzbi+zwrT7LVfp++4Pd6gcn4qoo/SBJnwYE7iRP5rR8=;
-        b=aiFtTj4RIYzmcN7kQUwaxQx0GGoHS6oBg9e/YDT1fnziUmviXEHOCFCEOilqXv4XAp
-         ZdPtRLcu9BsHKHVzu9MuWUy2M6BLLIOpyLhg/66xXNwuBCXoRdpOykYjKWGcYBtp68up
-         nAL6o+Utr1afrhg8hJ7V1uMh/UuyOuuwfI0jij15YknN5ub09FmKjO2Ek+3qJ0P/mNQ8
-         qnjUX807NEEzMyYefU1AXr7riNon3g9bxeE02HbUaD3hHNZd5wxGTukwNkP19JdcGm5N
-         cgdUyCu6zqwV3WqF8QvYp5XkMj8krWGIHOdfWfpjQIVjKOxXmeg3k7i49dHXb7VBUaWH
-         913A==
-X-Forwarded-Encrypted: i=1; AJvYcCUFKAy3RRcX7c5AQQIHgxFrI6i25n49LQBPJRMJnOXTZ5N83mIDXpZEHC5XBQiSiTr/qGJrdNM0DRw8USnh@vger.kernel.org, AJvYcCUmgK7B+JBVs1fydOrd5p/LeHO+ZpiECmGTslJmsFkQIVpj2lbLp3NwnOvkR6aNo14eEahJgP5z9I8a343C5NA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsZ2G9BMaiEzluR5yYMvddazm9ttd5gXZ22mde8rA+d164HG1p
-	pTAh42dR4EyS8yvcdJuAYS8dgjTHVDMpZDCnMkM6j0ar9VVb+vYnwnHxvGQeVbo=
-X-Gm-Gg: ASbGncsS7txEhLEKuFDVBYok0S6X9pEFStdnGaxmJOJLjbPiMmbubnSh2VsyVjAON66
-	eyzX+WSlmzaUcOjZIYtMDbPiwY6TLhQXXer3tRHwr8drGvPQayfUrsfPpVa1WcnrzWkNTsmbO6M
-	3sOUZbm/U/D9+5ZCDtpjuhgh2yLHWjXc3ZqpCm0f1inhJao+2j86+bPjj/UpH7T0FLRGtWD3yAg
-	RSJ2UeWdr0Z0NqZIHnSUtUiemDYF2jcUBUJt8vCqhnT+YxuUcHO53og+O3dYDNx9qifTxTwy2VN
-	/9Te473yH8LU
-X-Google-Smtp-Source: AGHT+IHXxzNiIy7BRb20W61inpirpSwfAcjUeZRNU6HCcVmpqsggHgzPTAiwbVFExv7Bj963KqTlgA==
-X-Received: by 2002:a05:6102:c0a:b0:4af:ef82:ce8d with SMTP id ada2fe7eead31-4afef82de4fmr2559213137.0.1733734561384;
-        Mon, 09 Dec 2024 00:56:01 -0800 (PST)
-Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afde356522sm683913137.16.2024.12.09.00.56.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 00:56:00 -0800 (PST)
-Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4aff04f17c7so607711137.0;
-        Mon, 09 Dec 2024 00:56:00 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVBRN7vpiyE5z0Hu0V1NBK106QlY6gHgiahZ4RpG2tty5ahzZkVNoWcINAkhQ713tbXIkRDU3YFUN47SlgkBL8=@vger.kernel.org, AJvYcCVykIsRgJ87NZzZ2S0SC4u+Jhy4OJzRq27o7lTJScFKoxox8kocWXxwJ0tL346Q/MT5Q+zIOcCyxWtHtqUI@vger.kernel.org
-X-Received: by 2002:a05:6102:3311:b0:4af:dcf3:b384 with SMTP id
- ada2fe7eead31-4afdcf3b504mr7969626137.11.1733734560816; Mon, 09 Dec 2024
- 00:56:00 -0800 (PST)
+	s=arc-20240116; t=1733734573; c=relaxed/simple;
+	bh=qCsUqWXFymqOS7E/W1U4rjTN/6buOB48o2+WSD1FLXw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uuxe+mNq7UOGt/jLGYZ2zXj2OELPeQ/FSqEtSL3LYcfFw3HTGrRb7+Tgdur1XdAyj1fHncGO73C25rKkn3zzDk7FrEHygytVaQUX/PHjYD4NWTAmub4lc4AYZAPYD1HMa5mRdlDWFZhu2LNrv6ov2YeoDdhQA2+a7xN575Rkz5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WfdtTpv5; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733734563;
+	bh=qCsUqWXFymqOS7E/W1U4rjTN/6buOB48o2+WSD1FLXw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WfdtTpv5OR5e5iy0MBaxG60xCh5uxvDBEOz/AMpvBrSvjJhcrv31olEh2e30JAEu4
+	 tLkwYFNGUD+tCXPrbOIQzFErRMRm+bSOSQy4t9wAsKQ1TMtYCSt95DIk15mbvPechA
+	 9xi8FcDsoxJHlMefI/kbH0I5Cn3tabRSOaoeukJi6B929tMj/EygltCDDIWQE6D/Lo
+	 HsJhqrGfm9+T9yxasgL0oGoyZEXV6Pw55uO2SUM3CYUZPPok9MqYNOV1iDbBMRySSM
+	 BwTtb1YoPFoazDQryOl3212Job3Pl7VdCk2JkEkcA+8aRaUAUBBNRmLs7YfNWvzOvi
+	 dllexF+65/9gA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1131C17E35F2;
+	Mon,  9 Dec 2024 09:56:03 +0100 (CET)
+Message-ID: <c0cbd447-42c7-4529-8455-cdde9d693423@collabora.com>
+Date: Mon, 9 Dec 2024 09:56:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <35fab997bcac76cd4135797a4968c2c72511dcb9.1733523925.git.christophe.jaillet@wanadoo.fr>
- <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
-In-Reply-To: <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 09:55:48 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
-Message-ID: <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] auxdisplay: img-ascii-lcd: Constify struct img_ascii_lcd_config
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Paul Burton <paulburton@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [git pull] drm for 6.13-rc1
+To: =?UTF-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>,
+ "sashal@kernel.org" <sashal@kernel.org>,
+ "javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>,
+ "airlied@gmail.com" <airlied@gmail.com>,
+ "wenst@chromium.org" <wenst@chromium.org>
+Cc: "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>,
+ "sima@ffwll.ch" <sima@ffwll.ch>,
+ "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <CAPM=9txbfH8vf-YjwTXEYL729a6r2eeLBxCJc3MSD-t5jXVA-w@mail.gmail.com>
+ <Z0NXQ6iRK43x6WbG@sashalap>
+ <CAPM=9tw5eTBCDn93GyrMjF3r_kDbr2-v1GgKdZECFNupqakDFw@mail.gmail.com>
+ <95f01caa-0f32-4c5c-b262-435f839c81aa@gmail.com>
+ <17d4fac0db55a8f9835b53d55463ed9c4331950d.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <17d4fac0db55a8f9835b53d55463ed9c4331950d.camel@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 6, 2024 at 11:26=E2=80=AFPM Christophe JAILLET
-<christophe.jaillet@wanadoo.fr> wrote:
-> 'struct img_ascii_lcd_config' is not modified in this driver.
->
-> Constifying this structure moves some data to a read-only section, so
-> increase overall security, especially when the structure holds some
-> function pointers.
->
-> On a x86_64, with allmodconfig:
-> Before:
-> =3D=3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->    6110     728       0    6838    1ab6 drivers/auxdisplay/img-ascii-lcd.=
-o
->
-> After:
-> =3D=3D=3D=3D=3D
->    text    data     bss     dec     hex filename
->    6198     632       0    6830    1aae drivers/auxdisplay/img-ascii-lcd.=
-o
->
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Il 06/12/24 09:54, CK Hu (胡俊光) ha scritto:
+> Hi, Sasha:
+> 
+> On Mon, 2024-11-25 at 01:35 +0100, Javier Carrasco wrote:
+>> External email : Please do not click links or open attachments until you have verified the sender or the content.
+>>
+>>
+>> On 24/11/2024 23:58, Dave Airlie wrote:
+>>> On Mon, 25 Nov 2024 at 02:41, Sasha Levin <sashal@kernel.org> wrote:
+>>>>
+>>>> On Thu, Nov 21, 2024 at 10:25:45AM +1000, Dave Airlie wrote:
+>>>>> Hi Linus,
+>>>>>
+>>>>> This is the main drm pull request for 6.13.
+>>>>>
+>>>>> I've done a test merge into your tree, there were two conflicts both
+>>>>> of which seem easy enough to resolve for you.
+>>>>>
+>>>>> There's a lot of rework, the panic helper support is being added to
+>>>>> more drivers, v3d gets support for HW superpages, scheduler
+>>>>> documentation, drm client and video aperture reworks, some new
+>>>>> MAINTAINERS added, amdgpu has the usual lots of IP refactors, Intel
+>>>>> has some Pantherlake enablement and xe is getting some SRIOV bits, but
+>>>>> just lots of stuff everywhere.
+>>>>>
+>>>>> Let me know if there are any issues,
+>>>>
+>>>> Hey Dave,
+>>>>
+>>>> After the PR was merged, I've started seeing boot failures reported by
+>>>> KernelCI:
+>>>
+>>> I'll add the mediatek names I see who touched anything in the area recently.
+>>>
+>>> Dave.
+>>>>
+>>>> [    4.395400] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
+>>>> [    4.396155] mediatek-drm mediatek-drm.5.auto: bound 1c000000.ovl (ops 0xffffd35fd12977b8)
+>>>> [    4.411951] mediatek-drm mediatek-drm.5.auto: bound 1c002000.rdma (ops 0xffffd35fd12989c0)
+>>>> [    4.536837] mediatek-drm mediatek-drm.5.auto: bound 1c004000.ccorr (ops 0xffffd35fd1296cf0)
+>>>> [    4.545181] mediatek-drm mediatek-drm.5.auto: bound 1c005000.aal (ops 0xffffd35fd1296a80)
+>>>> [    4.553344] mediatek-drm mediatek-drm.5.auto: bound 1c006000.gamma (ops 0xffffd35fd12972b0)
+>>>> [    4.561680] mediatek-drm mediatek-drm.5.auto: bound 1c014000.merge (ops 0xffffd35fd12975f8)
+>>>> [    4.570025] ------------[ cut here ]------------
+>>>> [    4.574630] refcount_t: underflow; use-after-free.
+>>>> [    4.579416] WARNING: CPU: 6 PID: 81 at lib/refcount.c:28 refcount_warn_saturate+0xf4/0x148
+>>>> [    4.587670] Modules linked in:
+>>>> [    4.590714] CPU: 6 UID: 0 PID: 81 Comm: kworker/u32:3 Tainted: G        W          6.12.0 #1 cab58e2e59020ebd4be8ada89a65f465a316c742
+>>>> [    4.602695] Tainted: [W]=WARN
+>>>> [    4.605649] Hardware name: Acer Tomato (rev2) board (DT)
+>>>> [    4.610947] Workqueue: events_unbound deferred_probe_work_func
+>>>> [    4.616768] pstate: 60400009 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>>>> [    4.623715] pc : refcount_warn_saturate+0xf4/0x148
+>>>> [    4.628493] lr : refcount_warn_saturate+0xf4/0x148
+>>>> [    4.633270] sp : ffff8000807639c0
+>>>> [    4.636571] x29: ffff8000807639c0 x28: ffff34ff4116c640 x27: ffff34ff4368e080
+>>>> [    4.643693] x26: ffffd35fd1299ac8 x25: ffff34ff46c8c410 x24: 0000000000000000
+>>>> [    4.650814] x23: ffff34ff4368e080 x22: 00000000fffffdfb x21: 0000000000000002
+>>>> [    4.657934] x20: ffff34ff470c6000 x19: ffff34ff410c7c10 x18: 0000000000000006
+>>>> [    4.665055] x17: 666678302073706f x16: 2820656772656d2e x15: ffff800080763440
+>>>> [    4.672176] x14: 0000000000000000 x13: 2e656572662d7265 x12: ffffd35fd2ed14f0
+>>>> [    4.679297] x11: 0000000000000001 x10: 0000000000000001 x9 : ffffd35fd0342150
+>>>> [    4.686418] x8 : c0000000ffffdfff x7 : ffffd35fd2e21450 x6 : 00000000000affa8
+>>>> [    4.693539] x5 : ffffd35fd2ed1498 x4 : 0000000000000000 x3 : 0000000000000000
+>>>> [    4.700660] x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff34ff40932580
+>>>> [    4.707781] Call trace:
+>>>> [    4.710216]  refcount_warn_saturate+0xf4/0x148 (P)
+>>>> [    4.714993]  refcount_warn_saturate+0xf4/0x148 (L)
+>>>> [    4.719772]  kobject_put+0x110/0x118
+>>>> [    4.723335]  put_device+0x1c/0x38
+>>>> [    4.726638]  mtk_drm_bind+0x294/0x5c0
+>>>> [    4.730289]  try_to_bring_up_aggregate_device+0x16c/0x1e0
+>>>> [    4.735673]  __component_add+0xbc/0x1c0
+>>>> [    4.739495]  component_add+0x1c/0x30
+>>>> [    4.743058]  mtk_disp_rdma_probe+0x140/0x210
+>>>> [    4.747314]  platform_probe+0x70/0xd0
+>>>> [    4.750964]  really_probe+0xc4/0x2a8
+>>>> [    4.754527]  __driver_probe_device+0x80/0x140
+>>>> [    4.758870]  driver_probe_device+0x44/0x120
+>>>> [    4.763040]  __device_attach_driver+0xc0/0x108
+>>>> [    4.767470]  bus_for_each_drv+0x8c/0xf0
+>>>> [    4.771294]  __device_attach+0xa4/0x198
+>>>> [    4.775117]  device_initial_probe+0x1c/0x30
+>>>> [    4.779286]  bus_probe_device+0xb4/0xc0
+>>>> [    4.783109]  deferred_probe_work_func+0xb0/0x100
+>>>> [    4.787714]  process_one_work+0x18c/0x420
+>>>> [    4.791712]  worker_thread+0x30c/0x418
+>>>> [    4.795449]  kthread+0x128/0x138
+>>>> [    4.798665]  ret_from_fork+0x10/0x20
+>>>> [    4.802229] ---[ end trace 0000000000000000 ]---
+>>>>
+>>>> I don't think that I'll be able to bisect further as I don't have the
+>>>> relevant hardware available.
+>>>>
+>>>> --
+>>>> Thanks,
+>>>> Sasha
+>>
+>>
+>> Hello, I am one of those who touched something in the area.
+>>
+>> To check if my changes are the cause of the boot failures, please apply
+>> this patch:
+>>
+>> diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> index 9a8ef8558da9..85be035a209a 100644
+>> --- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> +++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
+>> @@ -373,11 +373,12 @@ static bool mtk_drm_get_all_drm_priv(struct device
+>> *dev)
+>>          struct mtk_drm_private *temp_drm_priv;
+>>          struct device_node *phandle = dev->parent->of_node;
+>>          const struct of_device_id *of_id;
+>> +       struct device_node *node;
+>>          struct device *drm_dev;
+>>          unsigned int cnt = 0;
+>>          int i, j;
+>>
+>> -       for_each_child_of_node_scoped(phandle->parent, node) {
+>> +       for_each_child_of_node(phandle->parent, node) {
+>>                  struct platform_device *pdev;
+>>
+>>                  of_id = of_match_node(mtk_drm_of_ids, node);
+>>
+> 
+> Does Javier's patch fix the problem?
+> 
 
-Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
+CK, to resolve the issue, please revert commit
 
-Gr{oetje,eeting}s,
+fd620fc25d88 ("drm/mediatek: Switch to for_each_child_of_node_scoped()")
 
-                        Geert
+Thanks,
+Angelo
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> Regards,
+> CK
+> 
+>>
+>> ---
+>>
+>>
+>> This chunk can be found in mtk_drm_get_all_drm_priv(), which is not
+>> listed in the trace, but it is called from mtk_drm_bind().
+>>
+>> The loop did not release the child_node if cnt == MAX_CRTC (by means of
+>> a break), which goes against how for_each_child_of_node() should be
+>> handled. If the child_node is indeed required afterwards (it is not
+>> referenced anywhere after the loop), it should be acquired via
+>> of_node_get() and stored somewhere to be able to put it later.
+>>
+>> Then another issue would lie underneath as the reference to the
+>> child_node is not stored in any way. But if this patch fixes the issue,
+>> then I suppose it should be applied immediately, and the rest should be
+>> discussed later on.
+>>
+>> By the way, are there any logs with debug/error messages to analyze
+>> further is the issue is something different?
+>>
+>> Thanks and best regards,
+>> Javier Carrasco
+> 
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+
 
