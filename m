@@ -1,173 +1,181 @@
-Return-Path: <linux-kernel+bounces-437791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458249E98B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:24:22 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E2F09E98BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:25:39 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B6EB188675E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:25:38 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340961B423E;
+	Mon,  9 Dec 2024 14:25:23 +0000 (UTC)
+Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0B62859B4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:24:17 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F90D1B4222;
-	Mon,  9 Dec 2024 14:24:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VYqXzMjY"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5F11B041F;
-	Mon,  9 Dec 2024 14:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EBB91B0407
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:25:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733754252; cv=none; b=nHOFZ/OTkOUHnZ+czlaEceqcDjOK6vHq5baIWxTS/PzoGCshS/HXs1mmGB6n+BvGS/4DOnrNJx94IR5cRynSmHhjvdBBvvQcZJoniR2K1pXX0AS/N5VKg4dRqkCWVsgm0tXNHUiMWkxg5PPSWTYkMApQS0J0fBf75ZotX6XPi08=
+	t=1733754322; cv=none; b=llTLquGSc6tDYmpaowyIPPzZ1aAnMDUo0KFcmir+YDVK41YTSrWKHsU7QY2Q6DWXGn9U9dM2zrUC853rFyoU/VXNXGEx2YKyHKMvVpM0Bs9txr3dHFNAAB+tIkDdY5dkvZ0/NcGWPRsl4iL1AR1MBI5U7oXE6XWcDhbrnKVWDto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733754252; c=relaxed/simple;
-	bh=loJGK4qglNnZxmQ/mmjN5eIA+Z/el656TuQvp7Y6ios=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eG98iAYhlih6pFY86Zc7G8d2ldEVMTKNSjRqJnmL25gmdHBFQqqhytT+ajspO1n/baQfPgZWZRYBM57IoyxzpRIj+UXkr36+8f4xTDAdfiHN6TgXgnqPxIVZOthHE6FkmIxHxbs0FzeeLe+4kJooGMLVMPyQhEXmUvsEm48MbL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VYqXzMjY; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3862df95f92so2260527f8f.2;
-        Mon, 09 Dec 2024 06:24:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733754248; x=1734359048; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4bmO8+d8DdGy7XEHiowe6nmsMnr1jfJx+QmO5T6lzw=;
-        b=VYqXzMjY0Lf/NSxxnKHcavZ++QtZJI4jrMjCPs3PUyNf3qoJ2D39miJkkfQjC4CPLO
-         buJncS4zrVIimZUOaFCOvaeMnWi5p7LOspCCrElp2+x95hiTnzdINuKwLsDdfUdqRSpY
-         SGWG/031xrCkXjpjj3o15Sf6jMd/vmtFArONo/H20jS6aXGKe8Yno/0DUF0OJkl7bnc2
-         3axC0tyj1jMgiJTVwDf1nHguxjpfbFDz+oodM/UcSmXhq72l/3o40/3XFldZl2oTTFSL
-         W7zi62gi7ZynCtAdO+U0WygjhQXZcjBrwYiYFs2hW6+7bkBVwlEOuxoZ0tTCUGp/kL0W
-         lTAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733754248; x=1734359048;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J4bmO8+d8DdGy7XEHiowe6nmsMnr1jfJx+QmO5T6lzw=;
-        b=OjDne9+FH14Z1nb9PBN9EkzwZ1GXAt4YjwbrOqOSZj04T9PW7mJghz4rrJLc1ks3ec
-         wFarHbiJAk7lkloVXl3KSyLkQa23BXWJye/OI6HpjfUEezg1QldwVgiv9aOaoqZPIHTB
-         pHL9jHg2TYNe2bkl+UuLPPHf2kfGho4grdRfS8Ps+JYv3bD2fCVsqc08P197J/3JMblH
-         Ww939Uggpq0GjAJo0DKumgAJwgkRRqq1Ws2LRurvb9Kejk7ZCNr0nwPdcp30e7YWvXuq
-         +W/atv4XuKIeBWrQ3hClizWzvVAaGyORlYPtFfKsiUvRgbqCj6N+O/zvqyc3c0ElNa4B
-         wBLA==
-X-Forwarded-Encrypted: i=1; AJvYcCUaSyGoPhjGaV87a0AsswHG9aQrhGtEmb1TmpMOwCzMsvEKcmYXCHNRFNaM+PL32ZnAT64AhCDX1do1@vger.kernel.org, AJvYcCWouD9pa8Cr+/qO77MzQ5SsYCKoxWsh5iWUZ3ctPGd7Ur24rEPHcGDnfA8iITpcElK+FgCUeJOsbI9bZP/P@vger.kernel.org, AJvYcCXoIbXabCxbaHydjRDySa5WjGnITVfj/5cnIwAHPIOHhbBGSTwuVkAzoGwQ5HDY73/ydzpRgx2Ih7r8MAQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWadoHMRUw4TIMLeVA78HXxKvsZ+MLvW4rXqDSlJxX5nQHQ/bi
-	tyQR9/Au3C1ywrSPr9CdS+YBSOT/o6SvZMA8yVN1gsBH/yb4NU3LT57PaQ==
-X-Gm-Gg: ASbGncvDxdAly9hpK79mlOu81rMy6XmcQzm8HCBtCW+y4X/CMJZiDXj7JO7UbiEDy5d
-	bDdH4Uzuaxnh2xoWeV1A5sp1l90K/oW6tTbBbpntQvZvzsoVe2ja9wYEksyfdXxZOkkjXZnUjY5
-	29XzEyfqpQJZLevBGOX2ipF0KUcwh+q01SIhVWxXJMnBn/IHMimjepMXw7g69dAdI50lsLUxTJP
-	+0LfZWeYRdP8KAfSZiZuqeBjlObSssJYMyG28/2LYjFy0oQpWl6erl1YTi9N2ZCbJfaSdB90xX8
-	Gu9B5wQFOxi3f9DgqmODSfYlWNrAXhpJnZzr
-X-Google-Smtp-Source: AGHT+IHkB/NdOZh2fTJYGimoI8wlEFEwKE28euDZnByrZuT3OE1yaSiZeEhbLmlQ3rcOd9X7N1yCUQ==
-X-Received: by 2002:a05:6000:2d12:b0:385:faec:d94d with SMTP id ffacd0b85a97d-3862b3e2f99mr6963305f8f.51.1733754248241;
-        Mon, 09 Dec 2024 06:24:08 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621fbbea8sm13170972f8f.97.2024.12.09.06.24.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:24:07 -0800 (PST)
-Date: Mon, 9 Dec 2024 15:24:06 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: linus.walleij@linaro.org, peng.fan@nxp.com, linux-gpio@vger.kernel.org, 
-	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl-tegra: Add config property GPIO mode
-Message-ID: <mrhi42z4bnswba4vls3shkrvls3wfqn5wwgb5tm5gvzspysz5h@k65xzhumzhuv>
-References: <20241209101314.22834-1-pshete@nvidia.com>
+	s=arc-20240116; t=1733754322; c=relaxed/simple;
+	bh=3fKcBSTIczLZmnM7WvJiOv/wYqFBKiu5eJkpFlJGjVU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 MIME-Version:Content-Type; b=ToZ9l2uU3s02Aq59u3JvYw4RqslS14VMnVfg+gjG3HiQoryHwUsXQfDuyOimpFtrRJRcXdw0+rpxWvNvBW0szpX11+KeDyBH+pVhdejNwa+NxONyQcBJ4VZpeOzszfry8S/u83BYZyj3p0fyHS8SK2yhD0M1d0iQSNvHGmf45a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
+Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
+ relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ uk-mta-128-kVXU_ls3MVWtc2iaAMXRCQ-1; Mon, 09 Dec 2024 14:25:10 +0000
+X-MC-Unique: kVXU_ls3MVWtc2iaAMXRCQ-1
+X-Mimecast-MFC-AGG-ID: kVXU_ls3MVWtc2iaAMXRCQ
+Received: from AcuMS.Aculab.com (10.202.163.4) by AcuMS.aculab.com
+ (10.202.163.4) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 9 Dec
+ 2024 14:24:13 +0000
+Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
+ id 15.00.1497.048; Mon, 9 Dec 2024 14:24:13 +0000
+From: David Laight <David.Laight@ACULAB.COM>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, NeilBrown <neilb@suse.de>,
+	Andrew Morton <akpm@linux-foundation.org>, "J. Bruce Fields"
+	<bfields@fieldses.org>
+CC: Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>,
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, "Tom
+ Talpey" <tom@talpey.com>, "linux-nfs@vger.kernel.org"
+	<linux-nfs@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] nfsd: fix incorrect high limit in clamp() on
+ over-allocation
+Thread-Topic: [PATCH] nfsd: fix incorrect high limit in clamp() on
+ over-allocation
+Thread-Index: AQHbSjVq0PUYaX8pR0uX6YQCOtR2XrLd7zfQ
+Date: Mon, 9 Dec 2024 14:24:13 +0000
+Message-ID: <91cf0982fcf9470d94c3d5c149cfd2bd@AcuMS.aculab.com>
+References: <20241209-nfs4state_fix-v1-1-7a66819c60f0@wanadoo.fr>
+In-Reply-To: <20241209-nfs4state_fix-v1-1-7a66819c60f0@wanadoo.fr>
+Accept-Language: en-GB, en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="inqf4xrtqtxwf6rm"
-Content-Disposition: inline
-In-Reply-To: <20241209101314.22834-1-pshete@nvidia.com>
+X-Mimecast-Spam-Score: 0
+X-Mimecast-MFC-PROC-ID: qAnsTfJnf-dLMa0awOeYE-I2iw5P3AfGAqc9ps7svJI_1733754310
+X-Mimecast-Originator: aculab.com
+Content-Language: en-US
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: base64
 
+RnJvbTogVmluY2VudCBNYWlsaG9sDQo+IFNlbnQ6IDA5IERlY2VtYmVyIDIwMjQgMTI6MjYNCj4g
+DQo+IElmIG92ZXIgYWxsb2NhdGlvbiBvY2N1cnMgaW4gbmZzZDRfZ2V0X2RyY19tZW0oKSwgdG90
+YWxfYXZhaWwgaXMgc2V0DQo+IHRvIHplcm8uIENvbnNlcXVlbnRseSwNCj4gDQo+ICAgY2xhbXBf
+dCh1bnNpZ25lZCBsb25nLCBhdmFpbCwgc2xvdHNpemUsIHRvdGFsX2F2YWlsL3NjYWxlX2ZhY3Rv
+cik7DQo+IA0KPiBnaXZlczoNCj4gDQo+ICAgY2xhbXBfdCh1bnNpZ25lZCBsb25nLCBhdmFpbCwg
+c2xvdHNpemUsIDApOw0KPiANCj4gcmVzdWx0aW5nIGluIGEgY2xhbXAoKSBjYWxsIHdoZXJlIHRo
+ZSBoaWdoIGxpbWl0IGlzIHNtYWxsZXIgdGhhbiB0aGUNCj4gbG93IGxpbWl0LCB3aGljaCBpcyB1
+bmRlZmluZWQ6IHRoZSByZXN1bHQgY291bGQgYmUgZWl0aGVyIHNsb3RzaXplIG9yDQo+IHplcm8g
+ZGVwZW5kaW5nIG9uIHRoZSBvcmRlciBvZiBldmFsdWF0aW9uLg0KPiANCj4gTHVja2lseSwgdGhl
+IHR3byBpbnN0cnVjdGlvbnMganVzdCBiZWxvdyB0aGUgY2xhbXAoKSByZWNvdmVyIHRoZQ0KPiB1
+bmRlZmluZWQgYmVoYXZpb3VyOg0KPiANCj4gICBudW0gPSBtaW5fdChpbnQsIG51bSwgYXZhaWwg
+LyBzbG90c2l6ZSk7DQo+ICAgbnVtID0gbWF4X3QoaW50LCBudW0sIDEpOw0KPiANCj4gSWYgYXZh
+aWwgPSBzbG90c2l6ZSwgdGhlIG1pbl90KCkgc2V0cyBpdCBiYWNrIHRvIDEuIElmIGF2YWlsID0g
+MCwgdGhlDQo+IG1heF90KCkgc2V0cyBpdCBiYWNrIHRvIDEuDQo+IA0KPiBTbyB0aGlzIHVuZGVm
+aW5lZCBiZWhhdmlvdXIgaGFzIG5vIHZpc2libGUgZWZmZWN0Lg0KPiANCj4gQW55d2F5LCByZW1v
+dmUgdGhlIHVuZGVmaW5lZCBiZWhhdmlvdXIgaW4gY2xhbXAoKSBieSBvbmx5IGNhbGxpbmcgaXQN
+Cj4gYW5kIG9ubHkgZG9pbmcgdGhlIGNhbGN1bGF0aW9uIG9mIG51bSBpZiBtZW1vcnkgaXMgc3Rp
+bGwgYXZhaWxhYmxlLg0KPiBPdGhlcndpc2UsIGlmIG92ZXItYWxsb2NhdGlvbiBvY2N1cnJlZCwg
+ZGlyZWN0bHkgc2V0IG51bSB0byAxIGFzDQo+IGludGVuZGVkIGJ5IHRoZSBhdXRob3IuDQoNCk5B
+SzoNClRoZSBjb2RlIGlzIHN0aWxsIHdyb25nDQoNCj4gV2hpbGUgYXQgaXQsIGFwcGx5IGJlbG93
+IGNoZWNrcGF0Y2ggZml4Og0KPiANCj4gICBXQVJOSU5HOiBtaW4oKSBzaG91bGQgcHJvYmFibHkg
+YmUgbWluX3QodW5zaWduZWQgbG9uZywgTkZTRF9NQVhfTUVNX1BFUl9TRVNTSU9OLCB0b3RhbF9h
+dmFpbCkNCj4gICAjMTAwOiBGSUxFOiBmcy9uZnNkL25mczRzdGF0ZS5jOjE5NTQ6DQo+ICAgKwkJ
+YXZhaWwgPSBtaW4oKHVuc2lnbmVkIGxvbmcpTkZTRF9NQVhfTUVNX1BFUl9TRVNTSU9OLCB0b3Rh
+bF9hdmFpbCk7DQoNClRoYXQgd2FzIG5ldmVyIGEgYnVnIGFuZCBjaGVja3BhdGNoIHNob3VsZCBu
+ZXZlciByZXBvcnQgaXQhDQpDYXN0aW5nIG9uZSBhcmd1bWVudCB0byBtaW4oKSBoYXMgYWx3YXlz
+IGJlZW4gc2FmZXIgdGhhbiB1c2luZyBtaW5fdCgpLg0KSW5kZWVkIGl0IHNob3VsZCByZWFsbHkg
+aGF2ZSBiZWVuIHRoZSBwcmVmZXJyZWQgc29saXRpb24uDQpDb25zaWRlciB3aGF0IGhhcHBlbnMg
+d2l0aCBtaW5fdCgpIGlmICd0b3RhbF9hdmFpbCcgaGFwcGVucyB0byBiZSA2NGJpdA0KKHdpdGgg
+bG9uZyBiZWluZyAzMmJpdCkgLSBzdWRkZW5seSBzaWduaWZpY2FudCBiaXQgZ2V0IG1hc2tlZCBv
+ZmYuDQoNCldpdGggdGhlICduZXcgaW1wcm92ZWQnIG1pbigpIGp1c3QgZGVsZXRlIHRoZSBjYXN0
+IC0gaXQgd29uJ3QgY29tcGxhaW4uDQoNCj4gDQo+IEZpeGVzOiA3ZjQ5ZmQ1ZDdhY2QgKCJuZnNk
+OiBoYW5kbGUgZHJjIG92ZXItYWxsb2NhdGlvbiBncmFjZWZ1bGx5LiIpDQo+IFNpZ25lZC1vZmYt
+Ynk6IFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+DQouLi4NCj4g
+QmVjYXVzZSBEYXZpZCdzIHBhdGNoIGlzIHRhcmdldHRpbmcgQW5kcmV3J3MgbW0gdHJlZSwgSSB3
+b3VsZCBzdWdnZXN0DQo+IHRoYXQgbXkgcGF0Y2ggYWxzbyBnb2VzIHRvIHRoYXQgdHJlZS4NCj4g
+LS0tDQo+ICBmcy9uZnNkL25mczRzdGF0ZS5jIHwgNDYgKysrKysrKysrKysrKysrKysrKysrKysr
+Ky0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQsIDI1IGluc2VydGlvbnMo
+KyksIDIxIGRlbGV0aW9ucygtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL2ZzL25mc2QvbmZzNHN0YXRl
+LmMgYi9mcy9uZnNkL25mczRzdGF0ZS5jDQo+IGluZGV4IDc0MWI5NDQ5ZjcyN2RlZmM3OTQzNDdm
+MWIxMTZjOTU1ZDcxNWU2OTEuLmViOTE0NjBjNDM0ZTMwZjZkZjcwZjY2ZDkzN2Y4YzBmMzM0Yjhl
+MWIgMTAwNjQ0DQo+IC0tLSBhL2ZzL25mc2QvbmZzNHN0YXRlLmMNCj4gKysrIGIvZnMvbmZzZC9u
+ZnM0c3RhdGUuYw0KPiBAQCAtMTk0NCwzNSArMTk0NCwzOSBAQCBzdGF0aWMgdTMyIG5mc2Q0X2dl
+dF9kcmNfbWVtKHN0cnVjdCBuZnNkNF9jaGFubmVsX2F0dHJzICpjYSwgc3RydWN0IG5mc2RfbmV0
+DQo+ICpubg0KPiAgew0KPiAgCXUzMiBzbG90c2l6ZSA9IHNsb3RfYnl0ZXMoY2EpOw0KPiAgCXUz
+MiBudW0gPSBjYS0+bWF4cmVxczsNCj4gLQl1bnNpZ25lZCBsb25nIGF2YWlsLCB0b3RhbF9hdmFp
+bDsNCj4gLQl1bnNpZ25lZCBpbnQgc2NhbGVfZmFjdG9yOw0KPiANCj4gIAlzcGluX2xvY2soJm5m
+c2RfZHJjX2xvY2spOw0KPiAtCWlmIChuZnNkX2RyY19tYXhfbWVtID4gbmZzZF9kcmNfbWVtX3Vz
+ZWQpDQo+ICsJaWYgKG5mc2RfZHJjX21heF9tZW0gPiBuZnNkX2RyY19tZW1fdXNlZCkgew0KPiAr
+CQl1bnNpZ25lZCBsb25nIGF2YWlsLCB0b3RhbF9hdmFpbDsNCj4gKwkJdW5zaWduZWQgaW50IHNj
+YWxlX2ZhY3RvcjsNCj4gKw0KPiAgCQl0b3RhbF9hdmFpbCA9IG5mc2RfZHJjX21heF9tZW0gLSBu
+ZnNkX2RyY19tZW1fdXNlZDsNCg0KWW91J3ZlIG9ubHkgY2hlY2tlZCA+IHRoZSByZXN1bHQgY2Fu
+IHN0aWxsIGJlIDEuDQoNCj4gLQllbHNlDQo+ICsJCWF2YWlsID0gbWluX3QodW5zaWduZWQgbG9u
+ZywNCj4gKwkJCSAgICAgIE5GU0RfTUFYX01FTV9QRVJfU0VTU0lPTiwgdG90YWxfYXZhaWwpOw0K
+PiArCQkvKg0KPiArCQkgKiBOZXZlciB1c2UgbW9yZSB0aGFuIGEgZnJhY3Rpb24gb2YgdGhlIHJl
+bWFpbmluZyBtZW1vcnksDQo+ICsJCSAqIHVubGVzcyBpdCdzIHRoZSBvbmx5IHdheSB0byBnaXZl
+IHRoaXMgY2xpZW50IGEgc2xvdC4NCj4gKwkJICogVGhlIGNob3NlbiBmcmFjdGlvbiBpcyBlaXRo
+ZXIgMS84IG9yIDEvbnVtYmVyIG9mIHRocmVhZHMsDQo+ICsJCSAqIHdoaWNoZXZlciBpcyBzbWFs
+bGVyLiAgVGhpcyBlbnN1cmVzIHRoZXJlIGFyZSBhZGVxdWF0ZQ0KPiArCQkgKiBzbG90cyB0byBz
+dXBwb3J0IG11bHRpcGxlIGNsaWVudHMgcGVyIHRocmVhZC4NCj4gKwkJICogR2l2ZSB0aGUgY2xp
+ZW50IG9uZSBzbG90IGV2ZW4gaWYgdGhhdCB3b3VsZCByZXF1aXJlDQo+ICsJCSAqIG92ZXItYWxs
+b2NhdGlvbi0taXQgaXMgYmV0dGVyIHRoYW4gZmFpbHVyZS4NCj4gKwkJICovDQo+ICsJCXNjYWxl
+X2ZhY3RvciA9IG1heF90KHVuc2lnbmVkIGludCwNCj4gKwkJCQkgICAgIDgsIG5uLT5uZnNkX3Nl
+cnYtPnN2X25ydGhyZWFkcyk7DQoNClNob3VsZG4ndCBuZWVkIHRvIGJlIG1heF90KCksIG1heCgp
+IGxvb2tzIHRvIGJlIGZpbmUuDQpCdXQgY2FuIHdlIHBsZWFzZSBoYXZlIHRoZSBjb25zdGFudHMg
+b24gdGhlIHJpZ2h0Pw0KDQo+ICsJCWF2YWlsID0gY2xhbXBfdCh1bnNpZ25lZCBsb25nLCBhdmFp
+bCwgc2xvdHNpemUsDQo+ICsJCQkJdG90YWxfYXZhaWwvc2NhbGVfZmFjdG9yKTsNCj4gKwkJbnVt
+ID0gbWluX3QoaW50LCBudW0sIGF2YWlsIC8gc2xvdHNpemUpOw0KPiArCQludW0gPSBtYXhfdChp
+bnQsIG51bSwgMSk7DQo+ICsJfSBlbHNlIHsNCj4gIAkJLyogV2UgaGF2ZSBoYW5kZWQgb3V0IG1v
+cmUgc3BhY2UgdGhhbiB3ZSBjaG9zZSBpbg0KPiAgCQkgKiBzZXRfbWF4X2RyYygpIHRvIGFsbG93
+LiAgVGhhdCBpc24ndCByZWFsbHkgYQ0KPiAgCQkgKiBwcm9ibGVtIGFzIGxvbmcgYXMgdGhhdCBk
+b2Vzbid0IG1ha2UgdXMgdGhpbmsgd2UNCj4gIAkJICogaGF2ZSBsb3RzIG1vcmUgZHVlIHRvIGlu
+dGVnZXIgb3ZlcmZsb3cuDQo+ICAJCSAqLw0KPiAtCQl0b3RhbF9hdmFpbCA9IDA7DQo+IC0JYXZh
+aWwgPSBtaW4oKHVuc2lnbmVkIGxvbmcpTkZTRF9NQVhfTUVNX1BFUl9TRVNTSU9OLCB0b3RhbF9h
+dmFpbCk7DQo+IC0JLyoNCj4gLQkgKiBOZXZlciB1c2UgbW9yZSB0aGFuIGEgZnJhY3Rpb24gb2Yg
+dGhlIHJlbWFpbmluZyBtZW1vcnksDQo+IC0JICogdW5sZXNzIGl0J3MgdGhlIG9ubHkgd2F5IHRv
+IGdpdmUgdGhpcyBjbGllbnQgYSBzbG90Lg0KPiAtCSAqIFRoZSBjaG9zZW4gZnJhY3Rpb24gaXMg
+ZWl0aGVyIDEvOCBvciAxL251bWJlciBvZiB0aHJlYWRzLA0KPiAtCSAqIHdoaWNoZXZlciBpcyBz
+bWFsbGVyLiAgVGhpcyBlbnN1cmVzIHRoZXJlIGFyZSBhZGVxdWF0ZQ0KPiAtCSAqIHNsb3RzIHRv
+IHN1cHBvcnQgbXVsdGlwbGUgY2xpZW50cyBwZXIgdGhyZWFkLg0KPiAtCSAqIEdpdmUgdGhlIGNs
+aWVudCBvbmUgc2xvdCBldmVuIGlmIHRoYXQgd291bGQgcmVxdWlyZQ0KPiAtCSAqIG92ZXItYWxs
+b2NhdGlvbi0taXQgaXMgYmV0dGVyIHRoYW4gZmFpbHVyZS4NCj4gLQkgKi8NCj4gLQlzY2FsZV9m
+YWN0b3IgPSBtYXhfdCh1bnNpZ25lZCBpbnQsIDgsIG5uLT5uZnNkX3NlcnYtPnN2X25ydGhyZWFk
+cyk7DQo+IC0NCj4gLQlhdmFpbCA9IGNsYW1wX3QodW5zaWduZWQgbG9uZywgYXZhaWwsIHNsb3Rz
+aXplLA0KPiAtCQkJdG90YWxfYXZhaWwvc2NhbGVfZmFjdG9yKTsNCj4gLQludW0gPSBtaW5fdChp
+bnQsIG51bSwgYXZhaWwgLyBzbG90c2l6ZSk7DQo+IC0JbnVtID0gbWF4X3QoaW50LCBudW0sIDEp
+Ow0KPiArCQludW0gPSAxOw0KPiArCX0NCg0KSSdkIGxlYXZlIHRoZSBsb2dpYyBhbG9uZSBhbmQg
+dXNlIGV4cGxpY2l0IG1pbigpIGFuZCBtYXgpIGluc3RlYWQgb2YgY2xhbXAoKS4NCihhbmQgaG9w
+ZWZ1bGx5IGNoZWNrcGF0Y2ggd29uJ3Qgc3VnZ2VzdCBjbGFtcCgpIGFnYWluKS4NCg0KVGhlIGNs
+YW1wKCkgaXMgdHJ5aW5nIHRvIGluY3JlYXNlICdhdmFpbCcgdG8gJ3Nsb3RzaXplJyAtIHRoYXQg
+d291bGQNCmVuc3VyZSB0aGUgbGF0ZXIgbWF4KCkgZG9lcyBub3RoaW5nLg0KU28gcmVwbGFjZSB0
+aGUgY2xhbXAoKSB3aXRoIGEgbWF4KCksIGdpdmluZzoNCglhdmFpbCA9IG1heChhdmFpbCwgdG90
+YWxfYXZhaWwgLyBtYXgobm4tPm5mc2Rfc2Vydi0+c3ZfbnJ0aHJlYWRzLCA4KSk7DQoJbnVtID0g
+bWluKGNhLT5tYXhyZWdzLCBhdmFpbCAvIHNsb3RzaXplKSA/OiAxOw0KDQpVbmxlc3MgSSBtaXNz
+ZWQgYW5vdGhlciBhc3NpZ25tZW50IHRvICdudW0nIHRoYXQgaXMgcHJvYmFibHkgZXF1dmFsZW50
+Lg0KDQoJRGF2aWQNCg0KPiAgCW5mc2RfZHJjX21lbV91c2VkICs9IG51bSAqIHNsb3RzaXplOw0K
+PiAgCXNwaW5fdW5sb2NrKCZuZnNkX2RyY19sb2NrKTsNCj4gDQo+IA0KPiAtLS0NCj4gYmFzZS1j
+b21taXQ6IGZhYzA0ZWZjNWM3OTNkY2NiZDA3ZTJkNTlhZjlmOTBiN2ZjMGRjYTQNCj4gY2hhbmdl
+LWlkOiAyMDI0MTIwOS1uZnM0c3RhdGVfZml4LWJjNmYxYzFmYzFkMQ0KPiANCj4gQmVzdCByZWdh
+cmRzLA0KPiAtLQ0KPiBWaW5jZW50IE1haWxob2wgPG1haWxob2wudmluY2VudEB3YW5hZG9vLmZy
+Pg0KPiANCg0KLQ0KUmVnaXN0ZXJlZCBBZGRyZXNzIExha2VzaWRlLCBCcmFtbGV5IFJvYWQsIE1v
+dW50IEZhcm0sIE1pbHRvbiBLZXluZXMsIE1LMSAxUFQsIFVLDQpSZWdpc3RyYXRpb24gTm86IDEz
+OTczODYgKFdhbGVzKQ0K
 
---inqf4xrtqtxwf6rm
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] pinctrl-tegra: Add config property GPIO mode
-MIME-Version: 1.0
-
-On Mon, Dec 09, 2024 at 03:43:14PM +0530, Prathamesh Shete wrote:
-> The SFIO/GPIO select bit is a crucial part of Tegra's pin multiplexing
-> system:
-> - When set to 1, the pin operates in SFIO mode, controlled by the
->   pin's assigned special function.
-> - When set to 0, the pin operates as a general-purpose GPIO.
->=20
-> This SFIO/GPIO select bit that is set for a given pin is not displayed,
-> adding the support to retrieve this information from the
-> pinmux set for each pin.
->=20
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
->  drivers/pinctrl/tegra/pinctrl-tegra.c | 11 +++++++++++
->  drivers/pinctrl/tegra/pinctrl-tegra.h |  2 ++
->  2 files changed, 13 insertions(+)
->=20
-> diff --git a/drivers/pinctrl/tegra/pinctrl-tegra.c b/drivers/pinctrl/tegr=
-a/pinctrl-tegra.c
-> index 9523b93008d0..b3501c78b5b6 100644
-> --- a/drivers/pinctrl/tegra/pinctrl-tegra.c
-> +++ b/drivers/pinctrl/tegra/pinctrl-tegra.c
-> @@ -96,6 +96,7 @@ static const struct cfg_param {
->  	{"nvidia,slew-rate-falling",	TEGRA_PINCONF_PARAM_SLEW_RATE_FALLING},
->  	{"nvidia,slew-rate-rising",	TEGRA_PINCONF_PARAM_SLEW_RATE_RISING},
->  	{"nvidia,drive-type",		TEGRA_PINCONF_PARAM_DRIVE_TYPE},
-> +	{"nvidia,gpio-mode",		TEGRA_PINCONF_PARAM_GPIO_MODE},
->  };
-> =20
->  static int tegra_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
-> @@ -476,6 +477,16 @@ static int tegra_pinconf_reg(struct tegra_pmx *pmx,
->  		*bit =3D g->drvtype_bit;
->  		*width =3D 2;
->  		break;
-> +	case TEGRA_PINCONF_PARAM_GPIO_MODE:
-> +		if (pmx->soc->sfsel_in_mux) {
-> +			*bank =3D g->mux_bank;
-> +			*reg =3D g->mux_reg;
-> +			*bit =3D g->sfsel_bit;
-> +			*width =3D 1;
-> +		} else {
-> +			*reg =3D -ENODEV;
-
-I think this should be either -EINVAL or -ENOTSUPP. If you look at
-pinconf_generic_dump_one() where this function is ultimately called, it
-will ignore those errors as "legal" but print out an error for all other
-error codes. Since this code will potentially execute on chips that
-don't support SFSEL in the mux register, leaving -ENODEV here might spam
-the output with error messages.
-
-Thierry
-
---inqf4xrtqtxwf6rm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdW/YUACgkQ3SOs138+
-s6ETMA//Q6XxBSaXe92FVUzxunURDD2n+OM5z14ULDVTpv2T73f9IAKhYYDTutLN
-9hiVi0hUeUBuDUjtHQw1sRJlic5kI79iHAPtb6/RCgnWFcmZUey35lX2LknCGTTr
-fMe58ccsHB1Qehly+ibiB70QPj12J9v7iamCpmWcMBPt+pE28o5iUmlFb9Lms4oe
-yWMCrvtXBvmoGPXtXcsNWttOqV1cYdkD37iJqk2G/jMVg0NdRQ8z3boW+8iTUcKI
-d0g4pzMK/fwwgh8nnnxWWAl3fg6SMKCozveAw8dbsvfdgV2MBMr9vatXSYarVt+5
-TiUBmwqk/ewtF57hYeU0Qmo7k2MVQR/eXCoolraqLiZU2JFI4hei94ioMyNmpmt5
-nwa2MnUuwYHwq+HKToIV6GNr+4PLvDPZNo9IIK0kHqVT0XvoiWK65LC9Ck1ZNIgM
-AkN2UnFAVqVGyiumf8c4qT5gxfvm7DMIs6ZCOVOt4lHkJj1TEqTP7TePPvSlIDUb
-UKfIaF5XUbIvK3ilLjpx6AOxdcEZgkrMGI9Mv/NYPl9Ak6wvGhzvhq5IDNXM9D5T
-dKByNSzGUtYUKaHKRxEOgDAcGqSkfo2ep5dsXlPxGu9PgpktNnUjRIdlUW/N4++y
-HiE3z0A+ulbQd5mWngVHj6WY4M0HzpfpwJ5Y77l9/Ofp8knK66Y=
-=dPg4
------END PGP SIGNATURE-----
-
---inqf4xrtqtxwf6rm--
 
