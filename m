@@ -1,219 +1,157 @@
-Return-Path: <linux-kernel+bounces-437877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 864079E99FD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:06:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C05829E9A06
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:07:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F095F281F98
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51D21162E2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:06:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAED11BEF72;
-	Mon,  9 Dec 2024 15:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95C211B425D;
+	Mon,  9 Dec 2024 15:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OX9jiPZQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="YiZMU+M2"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b="k7A4mgnu"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267F1A23B7;
-	Mon,  9 Dec 2024 15:05:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DC031B4245
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733756762; cv=none; b=P8VIGVsTTw2VfuQ55XpPEP6m05iX5Q9tyb/04e6ixxy9lqKwFEPAIfkdNi5tUXBlFzKluRPtgOM+OQHA9Xda2adzDVHgwrCYhjy4Qinj23N2ZGPSsaP31cC2fvaJH5ucxT80pZV7UXM4Bkzhe0iogRqpzyYR41B6z2mIdfvlH4Q=
+	t=1733756784; cv=none; b=YjDk3vsbCZwplNL0dRTrS9N3D9mNOqUvcng8PCcJ/3ecXFeev0QVWLA6TiwXgyrHo3LYWLh0eAXOnmKlVP7d1O9R2/KS12jd/oFAUiPr/aQEHoMjVs/cvySy7mxPDSL9hyRE9TqbWZ35qxGVgy1VtVQDVrbXc6EczsOhzH4K4xQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733756762; c=relaxed/simple;
-	bh=2My4XARRaO1nUpL9bjfa6zYnjXrL8EvGlIsUfc7RlfA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RCyfLH2jmTrYiaiXgMxtG6XlhWcdWz4bneTzTPWqeq1BJC2dVeMY8tfLihPjdBlWJA7CTfDEHWqufX8OOVHSwT984+e2Pwl530CY53cfXZC1MHwgU32BhwuCUNPEtOOVcoUTYICYTFrFKH9smO7WcVsSCEozPh4k2wsHmIMRZpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OX9jiPZQ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=YiZMU+M2 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1733756784; c=relaxed/simple;
+	bh=/BnRrLDy2CQ0qFCGoHbR12w83vjFee5OUi3nbgjO2n8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=H6tAJ3mRIJQmoKvIUlKjhSB3u4UlpCodtAkiqmq3Ft6f8qlE+HltF9D1hjoRS7b0KRTXJRcnFIy9qly5bKjKq4smPTaVK8KjDZoM3iNdrc66OLjQ0Wkf4zX846faiVGuEHzZhzhv1ZHvJcXdIaP09PEDQEx8iAqbSWKWYqLIPmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com; spf=pass smtp.mailfrom=thaumatec.com; dkim=pass (2048-bit key) header.d=thaumatec-com.20230601.gappssmtp.com header.i=@thaumatec-com.20230601.gappssmtp.com header.b=k7A4mgnu; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=thaumatec.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thaumatec.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-434a2033562so42793045e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 07:06:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733756758; x=1765292758;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=vksvUByCwEXIhDlzgAmyb4aBjr3hSBbXTum0gcldopE=;
-  b=OX9jiPZQWp1uiiQvCN9G8NXZRHH2CHHzT81HEp1vBELAi652+AJGRVqs
-   2m9gPdMGGAl6O5ddEhav0mFyRl2IW8W85uT3BvA1EVIWwUg9FgnQTMYri
-   7jincifGbhmAS3K8uqW+d7egui0Q5FlSW7w5VV/PC/eCMPT1WnD3k6nmW
-   4+aNZYwhR8GhtFUrl/n+yvnVeNLys0S/TfS2zqoUqKT3dFB4Zey7eaERx
-   2qhWK8xxrIi0TlhHsSJV3eK5VHGM4FNmg1XkCUk5dOSjMzskhdGyvMe9Q
-   aCwHtv9bEL9in7D91sx16vGXpicwq9RldeOTf+xduOOZdn7ifkDP/x9TQ
-   Q==;
-X-CSE-ConnectionGUID: poYgBc8HRRGLk7FRHWt4dw==
-X-CSE-MsgGUID: J2pcjPvrRn+RzsTK4ZAeuw==
-X-IronPort-AV: E=Sophos;i="6.12,219,1728943200"; 
-   d="scan'208";a="40490430"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 09 Dec 2024 16:05:54 +0100
-X-CheckPoint: {67570752-B-1B231F50-D910A4E3}
-X-MAIL-CPID: 975DDE29B4A2D72A1889DEB0E7CA7530_5
-X-Control-Analysis: str=0001.0A682F19.67570752.0082,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 13AA0165653;
-	Mon,  9 Dec 2024 16:05:47 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733756749;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vksvUByCwEXIhDlzgAmyb4aBjr3hSBbXTum0gcldopE=;
-	b=YiZMU+M2nnsaXHE2rANfrtKVcBhPqrpr0DG3Rno+5Vm0NEuDPNMUEMPXgQD/XP5fWG436O
-	MAN/yy3RkHSS8oQGZ9I1CYF9YNLut5rct3shpwTxz6UsIHMHgFBjnxTLXTlwSCmBlDGH0T
-	QtzQIn/z5fhGBs0HhVYsKrcjsU5mNGjxoPkqtzlrGFGo1RD9RJwJ4pLsSt/jlRto/5BJIj
-	y1UQjQKhA2vq9mYA/a6a2JVNO8mefvSjTfEYSwlMc2WdhsQpPrU8fddjQ7fho4Ecfa/Z+/
-	1hN6ENO+l+preBwwshGaJHyVFRGX5Bgn6/3VXfucEfJJTpsZQYJIunXRj22C0A==
-Message-ID: <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
- MBa62xx carrier board Device Trees
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, Felipe Balbi <balbi@kernel.org>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, Hari
- Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
-Date: Mon, 09 Dec 2024 16:05:46 +0100
-In-Reply-To: <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
-	 <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
-	 <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
-	 <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
-	 <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+        d=thaumatec-com.20230601.gappssmtp.com; s=20230601; t=1733756781; x=1734361581; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fBemlKVePg1M8JMVZCDuH/Kc392eD263a2QapCaGV9U=;
+        b=k7A4mgnu2Y6vlRYS/Owj8pDfwxG7HBC5LS+cUoMZU4LzIj3i80XBUGt5lzMDbd5q5N
+         Xj6WudIEdYwyQpxPIDU1U/TOPbm2otGEj4ceVK0e/ACh05fuNHxW/08khY7W9l7MNHgS
+         UYGwD+kE+/VnRusnWkpKTtDhg04+VGW6S0goHZVtgt8DlWiJ1n5M7ME5DyFw+vVJFFiy
+         BjmBlJwtfhKr7ItUyRkQPh/PpYiqEJpB0GumuJtdbv1Z+1mroaRbTcwrqI8ElO/4jnvK
+         HE3cDkXO6Ft/tSSbYtijACWnYTr8JbO7Tk+3aB0x2wEtRTh9nIVDgWK3SG3rirl+Aa0p
+         LVtA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733756781; x=1734361581;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fBemlKVePg1M8JMVZCDuH/Kc392eD263a2QapCaGV9U=;
+        b=kSGUso7Fe7hCzXtWKE0OnAMIXCfsF3Cri2FTQ5+RFsZpp79WLn4lG27Lc2y6vjGZsc
+         Q9dBKvqiQB7Aj46PLTxwzx7RR+PwZ0Punk4jp+KxFZ7Ibuv1VXnZifP7df9OrbhNcdvH
+         LZ4RDf984Y2gIf5c2GSfde0qWJMOisHSjSCn5Zec6vWiuyNoCjl0J5RDx20+escx6qFT
+         uammLDFER18Dt6SE0kfZL7/cSEgoxkUyQLwgrHYPBWyjJCKl7N6dFZJmlESVa1UWVW26
+         5mJFKQWw+9s/mE36LhJshA61u8SwATagenq1Mi5EDpyUibjJm6xEKJGJPTr+TtcA4aoP
+         G+uA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNkZBOGJ+T/Ava1xnbpcwbDnAE023yu1TL7J2LR2g1tLtjrOhohldqkJTGO40M63MYrOKBCqXtw0fxeOk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt9QgEe7JAvGwHjUq1Kokhq7HW+b6ZFM+BdFhPqRKR0iCPz4Ax
+	gjVaAzrD7gxIuWnOk135VX8+O3ITmfighNiHrIZg1u1O9XlDdEJiJKD36mk9yGE=
+X-Gm-Gg: ASbGncuFqLSr3ehsTbpzQHOCivbDT1/pzb/4Y/kKtuajMLs91BzHLcZzjO2HI+i/WmJ
+	nRPeCRQUUHkUFlD8yToXAWRgYBK6FehjRi6KTYPQVOSBERlePDL5eLwebqktv/xarNhjiABEn/o
+	gswIYJc6zMANIbZJ2b53OOwwSpsJtd1xZrZ/XpyFhCLI6+JuCMIZ7wzVN2NxFKqknCvujyuhD3H
+	k2EJrYSC6EOM2cpcNa0Rk+Fq3Zx6OQIl/x/CDxh
+X-Google-Smtp-Source: AGHT+IEaMojRUAQLLwed4/ER+OeZapLgzpX/2UyzkziLJwq8W59lZWRdfU3Peh7xaUCEk69zEFgm5A==
+X-Received: by 2002:a05:600c:a09:b0:434:fb65:ebbb with SMTP id 5b1f17b1804b1-434fb65ecb9mr25947035e9.17.1733756781170;
+        Mon, 09 Dec 2024 07:06:21 -0800 (PST)
+Received: from fedora.. ([91.90.172.13])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434d43809fdsm103296665e9.1.2024.12.09.07.06.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 07:06:20 -0800 (PST)
+From: Daniel Semkowicz <dse@thaumatec.com>
+To: heiko@sntech.de
+Cc: Laurent.pinchart@ideasonboard.com,
+	andrzej.hajda@intel.com,
+	andy.yan@rock-chips.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	jernej.skrabec@gmail.com,
+	jonas@kwiboo.se,
+	krzk+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	neil.armstrong@linaro.org,
+	quentin.schulz@cherry.de,
+	rfoss@kernel.org,
+	robh@kernel.org,
+	tzimmermann@suse.de
+Subject: Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2 controller
+Date: Mon,  9 Dec 2024 16:06:08 +0100
+Message-ID: <20241209150619.33998-1-dse@thaumatec.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <20241203165450.1501219-1-heiko@sntech.de>
+References: <20241203165450.1501219-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-12-09 at 15:42 +0100, Andrew Lunn wrote:
->=20
-> On Mon, Dec 09, 2024 at 02:55:31PM +0100, Matthias Schiffer wrote:
-> > On Mon, 2024-12-09 at 14:24 +0100, Andrew Lunn wrote:
-> > >=20
-> > > > +&cpsw_port1 {
-> > > > +	phy-mode =3D "rgmii-rxid";
-> > > > +	phy-handle =3D <&cpsw3g_phy0>;
-> > > > +};
-> > > > +
-> > > > +&cpsw_port2 {
-> > > > +	phy-mode =3D "rgmii-rxid";
-> > > > +	phy-handle =3D <&cpsw3g_phy3>;
-> > > > +};
-> > >=20
-> > > rgmii-rxid is very odd.
-> > >=20
-> > > > +
-> > > > +&cpsw3g_mdio {
-> > > > +	status =3D "okay";
-> > > > +	pinctrl-names =3D "default";
-> > > > +	pinctrl-0 =3D <&main_mdio1_pins>;
-> > > > +
-> > > > +	cpsw3g_phy0: ethernet-phy@0 {
-> > > > +		compatible =3D "ethernet-phy-ieee802.3-c22";
-> > > > +		reg =3D <0x0>;
-> > > > +		reset-gpios =3D <&main_gpio1 11 GPIO_ACTIVE_LOW>;
-> > > > +		reset-assert-us =3D <1000>;
-> > > > +		reset-deassert-us =3D <1000>;
-> > > > +		ti,rx-internal-delay =3D <DP83867_RGMIIDCTL_2_00_NS>;
-> > >=20
-> > > I guess this is the explanation.
-> > >=20
-> > > What happens when you use rgmii-id, and don't have this delay here?
-> > > That would be normal.
-> > >=20
-> > > 	Andrew
-> >=20
-> >=20
-> > This is normal for AM62-based boards, see the DTSI of the TI reference
-> > starterkit for example:
-> >=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi#n451
-> >=20
-> > With rgmii-id, both ti,rx-internal-delay and ti,tx-internal-delay shoul=
-d be set.
-> > As ti,*-internal-delay sets the delay on the PHY side, phy-mode "rgmii"=
- is the
-> > one that would not use either:
-> >=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/devicetree/bindings/net/ti,dp83867.yaml#n78
-> >=20
-> > At the end of the day, does it really matter as long as MAC and PHY agr=
-ee on the
-> > used mode? We copied this part of the hardware design from the TI refer=
-ence
-> > board, and did our hardware qualification with these settings, so I thi=
-nk it
-> > makes sense to use the same phy-mode configuration.
->=20
-> What i try to achieve is every board uses the same configuration. The
-> PHY adds the delays, not the MAC. There are a few exceptions, because
-> a few cheap PHYs don't support delays, and so the MAC needs to add
-> them. But in general, any board i review, i always ask that the PHY
-> does the delay.
->=20
-> Also, don't put too much value in vendor code. Vendors don't care
-> about Linux has a whole, being uniform across all systems. Many
-> vendors do the minimum to get their stuff working, sometimes Monkeys
-> typing Shakespeare, and not a lot more.
->=20
-> I also find a lot of developers don't really understand what phy-mode
-> and PHY_INTERFACE_MODE_RGMII_* actually mean. phy-mode =3D 'rgmii' means
-> the board has extra long clock lines, so the MAC/PHY does not need to
-> add delays. rgmii-rxid means the board has an extra long rx clock
-> line, but a normal length tx clock line. Now, i doubt your board is
-> actually like this?
+Hello Heiko,
 
-Not our board, but the AM62 SoC. From the datasheet:
+On 03.12.24 21:54, Heiko Stuebner wrote:
+> This series adds a bridge and glue driver for the DSI2 controller found
+> in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
+> 
+> As the manual states:
+> The Display Serial Interface 2 (DSI-2) is part of a group of communication
+> protocols defined by the MIPI Alliance. The MIPI DSI-2 Host Controller is
+> a digital core that implements all protocol functions defined in the
+> MIPI DSI-2 Specification.
+> 
+> 
+> While the driver structure is very similar to the previous DSI controller,
+> the programming model of the core is quite different, with a completely
+> new register set.
+> 
+> Another notable difference is that the phy interface is variable now too
+> in its width and some other settings.
+> 
 
-"TXC is delayed internally before being driven to the RGMII[x]_TXC pin. Thi=
-s
-internal delay is always enabled." So enabling the TX delay on the PHY side
-would result in a double delay.
+I did more tests with different LVDS displays. I tested following
+configurations with DSI/LVDS bridge:
+- 1024x600@60.01
+- 1024x768@60.02
+- 1280x800@60.07
+- 1366x768@60.06
 
->=20
-> You want to correctly describe your hardware in DT, which i guess is
-> "rgmii-id". That means something, either the MAC or the PHY needs to
-> add delays. PHY_INTERFACE_MODE_RGMII_* is what is passed to the
-> PHY. To get it to add the 2ns delays, you pass
-> PHY_INTERFACE_MODE_RGMII_ID, and you should not need any additional
-> properties in DT, it should default to 2ns. If you need to tune the
-> delay, 2ns does not work, but you actually need 1.8ns etc, then you
-> can add additional parameters. But given you have
-> DP83867_RGMIIDCTL_2_00_NS, i doubt you need this.
+All of them worked without issues, except 1366x768.
+With this resolution, video is blurry, and offset incorrectly
+to the left. There are also repeating errors on the console:
 
-No such defaults exist in the DP83867 driver. If any rgmii-*id mode is used=
-, the
-corresponding delays *must* be specified in the DTB:
+  rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY irq err at vp3
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
-vers/net/phy/dp83867.c#n532
+In correct operation with other resolutions, there is no error.
+I am not sure if this is a problem in your series or rather in VOP2
+driver.
 
-Best regards,
-Matthias
+I tried to track down the problem, and it seems to be a generic issue
+when horizontal line width is not divisible by 4.
+Lowering line width to 1364px fixes the issue, but of course I have two
+vertical lines of black pixels on the right.
+I also made some tests with 720x1280 DSI display. Lowering horizontal
+line to 718px shows the same problem. With 720px and 716px it works
+correctly.
 
+Kind regards
+Daniel
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
