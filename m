@@ -1,170 +1,137 @@
-Return-Path: <linux-kernel+bounces-436754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29019E8A51
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:30:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 463EF9E8A54
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D33BB16374D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:30:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45A7C16381E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4549B1662E9;
-	Mon,  9 Dec 2024 04:30:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73B46158534;
+	Mon,  9 Dec 2024 04:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bDPi664h"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lXG5x+2w"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0072B73446;
-	Mon,  9 Dec 2024 04:30:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730BB15575E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733718630; cv=none; b=iJ3xr8R8+HHyxfCnPvmHaQHBqCD9hlNdL99gY+2g4hXa0RoK/Bel/PannLySCKQocfJgopQlB7/ckV1WB8kWLLqVx+QXRCLNAxKk2YTYSCWNxPBVKoTTIt/6kXsK/23VUi20IR8v2IcJ1uf2N6NkkxP/a9yCU4Kh+3Kc/ND463Y=
+	t=1733718681; cv=none; b=XBEobCCldF7L1mNdC8ZgA3m6xhkc4h5IjbA83lMuI5nK+tIBoNCB44ZKI1prwUVqqtHlem2+VUzY7Avr+mpjUggrnic7JeR+5DrFmxVjE8GRZvFhscE+imx6/HTBzLq9FMn9AskDDHL/0NF+zDfzrwXbBg0RRKXhLypjmVL824w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733718630; c=relaxed/simple;
-	bh=qoBVCsPj9LSkNYkv+fShXevsElwvzFhBnbVMk+TP180=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sh5cekPPJ5+LH/fCqmDDS15g4AIprcIB1dx92MyJJaHiTWwfD9K1Dyr3wPL52TYPHlbpn4D3yNHFd3mQF1+E0EVpdry5ZGk8x33G/T5baPvnSpJSdC+/gtC9NBPQaH1/Iuu6nwHe3he1dj8J73wnlJ0ghujqxE85f48W5+aLXt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bDPi664h; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MTMZX018941;
-	Mon, 9 Dec 2024 04:30:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fzXSH1rhYvfdhTHAq6+nsYTA7iJW008iqtbY+N7KRvk=; b=bDPi664hLXIyVd3P
-	hc2uDNSA60VSJtvbiWhPzlpm4CNWHW/4Zlv5hvmanbE9ZOOULjuFchnmx+CV42ew
-	FbVRZZb/4Ppju+J6AIfEYaXOZPDDFCGiu47UhthZiVuB1lMKTKaEIq0btEPieC4r
-	ExSeo2YhyyX7tUiZu5LonG538FkqJe8PCzHzDPDFga4fdnvJxpU00ouztpO4HJBV
-	dnwCoYDVMu4AHYgG9HkCQpsQT08Sq0qkTF/MORJvV6G5sIYTB68djjZ4cswwthDm
-	B9LbZcGguao89xNJqzMw/7AtgctchDWafuiPFJgGgpDmLNfYD0suuurZXd3WjKeL
-	SYoAJA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cc2ebh87-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 04:30:18 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B94UHt0005868
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 04:30:17 GMT
-Received: from [10.216.4.234] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 20:30:10 -0800
-Message-ID: <17c9839d-c61e-3c2f-4d77-5e8813f3a9c8@quicinc.com>
-Date: Mon, 9 Dec 2024 10:00:06 +0530
+	s=arc-20240116; t=1733718681; c=relaxed/simple;
+	bh=T/ux19x+J27VpzLUXrDCqi6aU/O7+y6Q0KiSPhZeYjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=thFSF+xHRi2AqJ0lg9/uM8YNmBKyi7d+QK0aIm1pEDEc6rxq8WvF2QBOp/ppqUl9nCbWtMUtdK+w/ayjiD40oHHTaA9eyYSZi1Nl4vTRcwiMlZ1H7Dt/lIBVWcnn8nYQmVh41ciBVuoWsnlgIjeNi479j7bdsUFz8ZGsi8WC66c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lXG5x+2w; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733718680; x=1765254680;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=T/ux19x+J27VpzLUXrDCqi6aU/O7+y6Q0KiSPhZeYjQ=;
+  b=lXG5x+2wOeHJDBp8Ey6BdpE0762LMP1qdqdbaLFg+q6Qa6rn82URJAYB
+   MmkcPAEDHJ0vE1kYN4N7TEjA6H0Z2PAlvlsyfhkDGx8OonAK2vjWz3hcs
+   0Z/2lq8TM5YuXgbkr/8DiudmsZmCm0vuiLzPRdlY9RfUtZgmObSOsi9wn
+   rbPDkbky2gb5f+inZO/RmhSS+rZgwrQPmBIZDglXCBwdQVcFTl2IT7XU3
+   qQmTMoIsA1K7LhHqYqugCvig6yiO+MvHVMsi3mGu+cyP5n5lrPSmMHV4t
+   x6tcirSGDM9wuL0eSzelGs+fLOLbwN0q8Ip0u9hQy55G3yOmFmKXXpzTV
+   g==;
+X-CSE-ConnectionGUID: xZFhZsJLQVm9EqMB2J7R6Q==
+X-CSE-MsgGUID: yuZioORXSyK2B4bxYJ24Fw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37931015"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="37931015"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:31:19 -0800
+X-CSE-ConnectionGUID: dVZF6pvlSougKsUgzmBWIQ==
+X-CSE-MsgGUID: 09Q+1ketQNCbE/Sa8n3anw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95751433"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 08 Dec 2024 20:31:19 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKVQS-0003rv-0O;
+	Mon, 09 Dec 2024 04:31:16 +0000
+Date: Mon, 9 Dec 2024 12:30:34 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: drivers/clk/clk-eyeq.c:131 eqc_pll_downshift_factors() warn: always
+ true condition '(*mult <= (~0)) => (0-u32max <= u32max)'
+Message-ID: <202412080533.Inh1JBwa-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 2/3] PCI: dwc: Add ECAM support with iATU configuration
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <cros-qcom-dts-watchers@chromium.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-        "Manivannan
- Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_vpernami@quicinc.com>,
-        <quic_mrana@quicinc.com>, <mmareddy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <20241204221714.GA3023492@bhelgaas>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241204221714.GA3023492@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 8DbU83nimCF42SVCvQNf9-IrGLpTh27j
-X-Proofpoint-GUID: 8DbU83nimCF42SVCvQNf9-IrGLpTh27j
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- mlxlogscore=999 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- adultscore=0 malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090034
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7503345ac5f5e82fd9a36d6e6b447c016376403a
+commit: 25d904946a0baf08b16204d95dc3624096d99c38 clk: eyeq: add driver
+date:   6 weeks ago
+config: nios2-randconfig-r073-20241206 (https://download.01.org/0day-ci/archive/20241208/202412080533.Inh1JBwa-lkp@intel.com/config)
+compiler: nios2-linux-gcc (GCC) 14.2.0
 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412080533.Inh1JBwa-lkp@intel.com/
 
-On 12/5/2024 3:47 AM, Bjorn Helgaas wrote:
-> On Wed, Dec 04, 2024 at 07:45:29AM +0530, Krishna Chaitanya Chundru wrote:
->> On 12/4/2024 12:25 AM, Bjorn Helgaas wrote:
->>> On Sun, Nov 17, 2024 at 03:30:19AM +0530, Krishna chaitanya chundru wrote:
->>>> The current implementation requires iATU for every configuration
->>>> space access which increases latency & cpu utilization.
->>>>
->>>> Configuring iATU in config shift mode enables ECAM feature to access the
->>>> config space, which avoids iATU configuration for every config access.
-> 
->>>> +static int dw_pcie_config_ecam_iatu(struct dw_pcie_rp *pp)
->>>> +{
->>>> +	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
->>>> +	struct dw_pcie_ob_atu_cfg atu = {0};
->>>> +	struct resource_entry *bus;
->>>> +	int ret, bus_range_max;
->>>> +
->>>> +	bus = resource_list_first_type(&pp->bridge->windows, IORESOURCE_BUS);
->>>> +
->>>> +	/*
->>>> +	 * Bus 1 config space needs type 0 atu configuration
->>>> +	 * Remaining buses need type 1 atu configuration
->>>
->>> I'm confused about the bus numbering; you refer to "bus 1" and "bus
->>> 2".  Is bus 1 the root bus, i.e., the primary bus of a Root Port?
->>>
->>> The root bus number would typically be 0, not 1, and is sometimes
->>> programmable.  I don't know how the DesignWare core works, but since
->>> you have "bus" here, referring to "bus 1" and "bus 2" here seems
->>> overly specific.
->>>
->> root bus is bus 0 and we don't need any iATU configuration for it as
->> its config space is accessible from the system memory, for usp port of
->> the switch or the direct the endpoint i.e bus 1 we need to send
->> Configuration Type 0 requests and for other buses we need to send
->> Configuration Type 1 requests this is as per PCIe spec, I will try to
->> include PCIe spec details in next patch.
-> 
-> I understand the Type 0/Type 1 differences.  The question is whether
-> the root bus number is hard-wired to 0.
-> 
-It is not hard-wired to 0, we can configure it though bus-range property
-> I don't think specifying "bus 1" really adds anything.  The point is
-> that we need Type 0 accesses for anything directly below a Root Port
-> (regardless of what the RP's secondary bus number is), and Type 1 for
-> things deeper.
-> 
-I will update the comment without mentioning the buses as suggested.
-> When DWC supports multiple Root Ports in a Root Complex, they will not
-> all have a secondary bus number of 1.
-mostly they should be in bus number 0 with different device numbers, but
-it mostly depends upon the design, currently we don't have any multiple
-root ports.
+smatch warnings:
+drivers/clk/clk-eyeq.c:131 eqc_pll_downshift_factors() warn: always true condition '(*mult <= (~0)) => (0-u32max <= u32max)'
+drivers/clk/clk-eyeq.c:131 eqc_pll_downshift_factors() warn: always true condition '(*div <= (~0)) => (0-u32max <= u32max)'
+drivers/clk/clk-eyeq.c:374 eqc_probe() warn: 'base' from ioremap() not released on lines: 358.
 
-- Krishna Chaitanya.
-> 
-> Bjorn
+vim +131 drivers/clk/clk-eyeq.c
+
+   112	
+   113	/*
+   114	 * Both factors (mult and div) must fit in 32 bits. When an operation overflows,
+   115	 * this function throws away low bits so that factors still fit in 32 bits.
+   116	 *
+   117	 * Precision loss depends on amplitude of mult and div. Worst theorical
+   118	 * loss is: (UINT_MAX+1) / UINT_MAX - 1 = 2.3e-10.
+   119	 * This is 1Hz every 4.3GHz.
+   120	 */
+   121	static void eqc_pll_downshift_factors(unsigned long *mult, unsigned long *div)
+   122	{
+   123		unsigned long biggest;
+   124		unsigned int shift;
+   125	
+   126		/* This function can be removed if mult/div switch to unsigned long. */
+   127		static_assert(sizeof_field(struct clk_fixed_factor, mult) == sizeof(unsigned int));
+   128		static_assert(sizeof_field(struct clk_fixed_factor, div) == sizeof(unsigned int));
+   129	
+   130		/* No overflow, nothing to be done. */
+ > 131		if (*mult <= UINT_MAX && *div <= UINT_MAX)
+   132			return;
+   133	
+   134		/*
+   135		 * Compute the shift required to bring the biggest factor into unsigned
+   136		 * int range. That is, shift its highest set bit to the unsigned int
+   137		 * most significant bit.
+   138		 */
+   139		biggest = max(*mult, *div);
+   140		shift = __fls(biggest) - (BITS_PER_BYTE * sizeof(unsigned int)) + 1;
+   141	
+   142		*mult >>= shift;
+   143		*div >>= shift;
+   144	}
+   145	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
