@@ -1,217 +1,212 @@
-Return-Path: <linux-kernel+bounces-437897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 422389E9A40
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:19:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CB779E9A44
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38E321888A66
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5725118877F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:19:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 871A81F0E3A;
-	Mon,  9 Dec 2024 15:18:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 846811BEF8E;
+	Mon,  9 Dec 2024 15:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="n00KrHCP"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KTGbg1eZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA3D1C5CD6;
-	Mon,  9 Dec 2024 15:18:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9781F0E20;
+	Mon,  9 Dec 2024 15:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733757503; cv=none; b=W0c79hd/oE7D+h3/DhZEeNoZN/yrrQXohpUZoPHBQ52xV4P/QzPD41VcIvXHHniVSbewyyjBqxy1VZ/8kawxu/5lDFH7KmmZPxvnXaBicSAwZlnj0rVstSu8tWC0XdC6yho+lKVNUqmR23yFTfOrEmG0IUw8YdBBbvX7UobsvZ0=
+	t=1733757505; cv=none; b=CyRRJ5v20ohX0FgeCGARCVM4ao6x6D6vQVzYgBAH2jX9TbqnHq0Mxa37OwB2gA9YL7ik2j8v6hv7WVMRexq5D1IuVoIzIdgg7orZQmlnIWMQK1a/2x+ga8xOos2HjY99AJHW7DQ8OWVaDGNY5DWwfNIdQGg4y+uRFTMjHodXFAg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733757503; c=relaxed/simple;
-	bh=PRlmrlfVkKdHL5h3fcsDewPyc+WWxgXH7RFjGKU4QHY=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QumULOPRatY28IPC3EPle8zSYFaX8jZ3DlRtoRM968NAypCcei114cskAbGMAACM/BSinx45oYJxS5SrFOFmUSYp6NpOSZoW5kaiHek7nmHo2BILzhPsa3flKKfwq/QmtIyYUMoaNmYS6dXu5E+VaU/NcdgJBreU2V7bYjvRP0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=n00KrHCP; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1733757505; c=relaxed/simple;
+	bh=gI2qNtFYnW75fraXNbboTDNcdxl/zpGRAljaNN0+FWU=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=WzYA0UUaad1o72G/F06gt3p5RI7u7W00KMM1jLUF/96w7OWCHZjo+ye3YOeBO+3v86VQE7P2MZ80HB3IeVVcmGKBIx81l4zRfnb6lf2CHHeM8+wjg4qsEbJuX9cpuWIEPaPHwc/2g4f2tCGyPNCBPB0IzCH47bDct6eQ1Nsetbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KTGbg1eZ; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733757502; x=1765293502;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version;
-  bh=PRlmrlfVkKdHL5h3fcsDewPyc+WWxgXH7RFjGKU4QHY=;
-  b=n00KrHCPMm5c8VV4IoB2rtHAbOl6A5c1Gz1oVkuPWnNdYJAEB3TrFWjW
-   hXRBLANmxT1EmYa77EJk28suKtLsY/Cfj+k7gNFzsfUNPAmsyHT9yLEK5
-   KQd/U4cr4ZQ/M5ThJhevFZUsdoQbfinY1BLrDYgbSKrW8TjHwjRptrLqg
-   p1Dr2OOF3wtsWm8T1nGOqz0ohxbF5Scr0GXNZXPNp2BCPm4Mqj3zPfpQp
-   T18F1SKkGxgTzUTXLE7BKUHgJIQqUhGDuIwvkbd9GAUVGDXxel3zsvVHh
-   FTEslI8NEfE3eLxps3luarKY83f/VoG0ROv7aB+36rjYdfCAhMp2ZNsA2
-   A==;
-X-CSE-ConnectionGUID: yJIa2BtxQkuJT04wZ40P6A==
-X-CSE-MsgGUID: 7fc63HofQoWQAb2X16tGBg==
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733757504; x=1765293504;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=gI2qNtFYnW75fraXNbboTDNcdxl/zpGRAljaNN0+FWU=;
+  b=KTGbg1eZADrK+9/Djhfm+3xn8MoQyqUelkQAb1B2R/l2riChkm39wZUM
+   xaBY8NAlziVKjJPxUIP6SmxJTaXs+bOUtsxkgpz0E3wSbruOP3ZOSc70I
+   a8UJ8F6oGSNtDQpw5db0QbGnGAPsmIRvk8YwI7IdrkqfE5zouXxkoN3Qc
+   S3xLfPl4wYA+ImhI2Ftz+uyf7ehvtx5SDMFTIJk6PGZsABEkzl18mt8wc
+   DgyWauyMrIAy1STwghNuNluDdAEE8Rii6ZoWb3f1AnkkygkQ5uMkOeaP6
+   5JS8shyC62TxN4QqHONRaZNIJ0Nqv0xUmOuYnOsH0myJ3vSXHyqNH6dAm
+   w==;
+X-CSE-ConnectionGUID: R1ClQcwNQyCCJ5iZvFOf2A==
+X-CSE-MsgGUID: rOeoDVFUToa8XHgVJBTfEw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34118531"
 X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="35775873"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Dec 2024 08:18:15 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Dec 2024 08:17:58 -0700
-Received: from training-HP-280-G1-MT-PC.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 9 Dec 2024 08:17:54 -0700
-From: Divya Koppera <divya.koppera@microchip.com>
-To: <andrew@lunn.ch>, <arun.ramadoss@microchip.com>,
-	<UNGLinuxDriver@microchip.com>, <hkallweit1@gmail.com>,
-	<linux@armlinux.org.uk>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <richardcochran@gmail.com>,
-	<vadim.fedorenko@linux.dev>
-Subject: [PATCH net-next v6 5/5] net: phy: microchip_t1 : Add initialization of ptp for lan887x
-Date: Mon, 9 Dec 2024 20:47:42 +0530
-Message-ID: <20241209151742.9128-6-divya.koppera@microchip.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241209151742.9128-1-divya.koppera@microchip.com>
-References: <20241209151742.9128-1-divya.koppera@microchip.com>
+   d="scan'208";a="34118531"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 07:18:23 -0800
+X-CSE-ConnectionGUID: bAb3zxMgQmGHQXCR9Acs7Q==
+X-CSE-MsgGUID: cT/dnomUSLaLKf0ylOtq0Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="95458641"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.121])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 07:18:21 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Mon, 9 Dec 2024 17:18:17 +0200 (EET)
+To: Xi Pardee <xi.pardee@linux.intel.com>
+cc: rajvi0912@gmail.com, irenic.rajneesh@gmail.com, 
+    david.e.box@linux.intel.com, Hans de Goede <hdegoede@redhat.com>, 
+    platform-driver-x86@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+    linux-pm@vger.kernel.org
+Subject: Re: [PATCH 2/3] platform/x86:intel/pmc: Create info structure for
+ pmc device
+In-Reply-To: <20241207053607.14806-3-xi.pardee@linux.intel.com>
+Message-ID: <a8c0ba82-9ea0-d761-f6c3-193de5fe2bbd@linux.intel.com>
+References: <20241207053607.14806-1-xi.pardee@linux.intel.com> <20241207053607.14806-3-xi.pardee@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 
-Add initialization of ptp for lan887x.
+On Fri, 6 Dec 2024, Xi Pardee wrote:
 
-Signed-off-by: Divya Koppera <divya.koppera@microchip.com>
----
-v5 -> v6
-- Renamed ptp functions and macros.
+> Create an info structure to store platform specific information.
+> For Tiger Lake and Arrow Lake platforms, multiple platform variations
+> could share one generic init function. Using info structure could
+> avoid if () forest. Modify tgl.c to use the info structure.
+> 
+> Signed-off-by: Xi Pardee <xi.pardee@linux.intel.com>
+> ---
+>  drivers/platform/x86/intel/pmc/core.h | 15 ++++++++++++
+>  drivers/platform/x86/intel/pmc/tgl.c  | 33 +++++++++++++++------------
+>  2 files changed, 33 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/intel/pmc/core.h b/drivers/platform/x86/intel/pmc/core.h
+> index a1886d8e1ef3e..3124315d2b925 100644
+> --- a/drivers/platform/x86/intel/pmc/core.h
+> +++ b/drivers/platform/x86/intel/pmc/core.h
+> @@ -428,6 +428,21 @@ struct pmc_dev {
+>  	struct pmc_info *regmap_list;
+>  };
+>  
+> +/**
+> + * struct pmc_dev_info - Structure to keep pmc device info
+> + * @func:		function number of the primary pmc
+> + * @map:		pointer to a pmc_reg_map struct that contains platform
+> + *			specific attributes of the primary pmc
+> + * @suspend:		Function to perform platform specific suspend
+> + * @resume:		Function to perform platform specific resume
+> + */
+> +struct pmc_dev_info {
+> +	u8 func;
+> +	const struct pmc_reg_map *map;
+> +	void (*suspend)(struct pmc_dev *pmcdev);
+> +	int (*resume)(struct pmc_dev *pmcdev);
+> +};
+> +
+>  enum pmc_index {
+>  	PMC_IDX_MAIN,
+>  	PMC_IDX_SOC = PMC_IDX_MAIN,
+> diff --git a/drivers/platform/x86/intel/pmc/tgl.c b/drivers/platform/x86/intel/pmc/tgl.c
+> index 4fec43d212d01..c6fc3a0225a55 100644
+> --- a/drivers/platform/x86/intel/pmc/tgl.c
+> +++ b/drivers/platform/x86/intel/pmc/tgl.c
+> @@ -13,11 +13,6 @@
+>  #define ACPI_S0IX_DSM_UUID		"57a6512e-3979-4e9d-9708-ff13b2508972"
+>  #define ACPI_GET_LOW_MODE_REGISTERS	1
+>  
+> -enum pch_type {
+> -	PCH_H,
+> -	PCH_LP
+> -};
+> -
+>  const struct pmc_bit_map tgl_pfear_map[] = {
+>  	{"PSF9",		BIT(0)},
+>  	{"RES_66",		BIT(1)},
+> @@ -285,18 +280,26 @@ void pmc_core_get_tgl_lpm_reqs(struct platform_device *pdev)
+>  	ACPI_FREE(out_obj);
+>  }
+>  
+> -static int tgl_core_generic_init(struct pmc_dev *pmcdev, int pch_tp)
+> +static struct pmc_dev_info tgl_l_pmc_dev = {
+> +	.map = &tgl_reg_map,
+> +	.suspend = cnl_suspend,
+> +	.resume = cnl_resume,
+> +};
+> +
+> +static struct pmc_dev_info tgl_pmc_dev = {
+> +	.map = &tgl_h_reg_map,
+> +	.suspend = cnl_suspend,
+> +	.resume = cnl_resume,
+> +};
+> +
+> +static int tgl_core_generic_init(struct pmc_dev *pmcdev, struct pmc_dev_info *pmc_dev_info)
+>  {
+>  	struct pmc *pmc = pmcdev->pmcs[PMC_IDX_MAIN];
+>  	int ret;
+>  
+> -	if (pch_tp == PCH_H)
+> -		pmc->map = &tgl_h_reg_map;
+> -	else
+> -		pmc->map = &tgl_reg_map;
+> -
+> -	pmcdev->suspend = cnl_suspend;
+> -	pmcdev->resume = cnl_resume;
+> +	pmc->map = pmc_dev_info->map;
+> +	pmcdev->suspend = pmc_dev_info->suspend;
+> +	pmcdev->resume = pmc_dev_info->resume;
+>  
+>  	ret = get_primary_reg_base(pmc);
+>  	if (ret)
+> @@ -310,10 +313,10 @@ static int tgl_core_generic_init(struct pmc_dev *pmcdev, int pch_tp)
+>  
+>  int tgl_l_core_init(struct pmc_dev *pmcdev)
+>  {
+> -	return tgl_core_generic_init(pmcdev, PCH_LP);
+> +	return tgl_core_generic_init(pmcdev, &tgl_l_pmc_dev);
+>  }
+>  
+>  int tgl_core_init(struct pmc_dev *pmcdev)
+>  {
+> -	return tgl_core_generic_init(pmcdev, PCH_H);
+> +	return tgl_core_generic_init(pmcdev, &tgl_pmc_dev);
+>  }
+> 
 
-v2 -> v5
-- No changes
+While adding the struct seems right direction, I don't feel good about the 
+scoping in this patch. It seems that we'll still end up duplicating lots
+of init code.
 
-v1 -> v2
-Fixed below review comment
-  Added ptp support only if interrupts are supported as interrupts are mandatory
-  for ptp.
----
- drivers/net/phy/microchip_t1.c | 41 +++++++++++++++++++++++++++++++---
- 1 file changed, 38 insertions(+), 3 deletions(-)
+If I do (in drivers/platform/x86/intel/pmc):
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index b17bf6708003..73f28463bc35 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -10,11 +10,15 @@
- #include <linux/ethtool.h>
- #include <linux/ethtool_netlink.h>
- #include <linux/bitfield.h>
-+#include "microchip_rds_ptp.h"
- 
- #define PHY_ID_LAN87XX				0x0007c150
- #define PHY_ID_LAN937X				0x0007c180
- #define PHY_ID_LAN887X				0x0007c1f0
- 
-+#define MCHP_RDS_PTP_LTC_BASE_ADDR		0xe000
-+#define MCHP_RDS_PTP_PORT_BASE_ADDR	    (MCHP_RDS_PTP_LTC_BASE_ADDR + 0x800)
-+
- /* External Register Control Register */
- #define LAN87XX_EXT_REG_CTL                     (0x14)
- #define LAN87XX_EXT_REG_CTL_RD_CTL              (0x1000)
-@@ -229,6 +233,7 @@
- 
- #define LAN887X_INT_STS				0xf000
- #define LAN887X_INT_MSK				0xf001
-+#define LAN887X_INT_MSK_P1588_MOD_INT_MSK	BIT(3)
- #define LAN887X_INT_MSK_T1_PHY_INT_MSK		BIT(2)
- #define LAN887X_INT_MSK_LINK_UP_MSK		BIT(1)
- #define LAN887X_INT_MSK_LINK_DOWN_MSK		BIT(0)
-@@ -319,6 +324,8 @@ struct lan887x_regwr_map {
- 
- struct lan887x_priv {
- 	u64 stats[ARRAY_SIZE(lan887x_hw_stats)];
-+	struct mchp_rds_ptp_clock *clock;
-+	bool init_done;
- };
- 
- static int lan937x_dsp_workaround(struct phy_device *phydev, u16 ereg, u8 bank)
-@@ -1269,8 +1276,19 @@ static int lan887x_get_features(struct phy_device *phydev)
- 
- static int lan887x_phy_init(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
- 	int ret;
- 
-+	if (!priv->init_done && phy_interrupt_is_valid(phydev)) {
-+		priv->clock = mchp_rds_ptp_probe(phydev, MDIO_MMD_VEND1,
-+						 MCHP_RDS_PTP_LTC_BASE_ADDR,
-+						 MCHP_RDS_PTP_PORT_BASE_ADDR);
-+		if (IS_ERR(priv->clock))
-+			return PTR_ERR(priv->clock);
-+
-+		priv->init_done = true;
-+	}
-+
- 	/* Clear loopback */
- 	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
- 				 LAN887X_MIS_CFG_REG2,
-@@ -1470,6 +1488,7 @@ static int lan887x_probe(struct phy_device *phydev)
- 	if (!priv)
- 		return -ENOMEM;
- 
-+	priv->init_done = false;
- 	phydev->priv = priv;
- 
- 	return lan887x_phy_setup(phydev);
-@@ -1518,6 +1537,7 @@ static void lan887x_get_strings(struct phy_device *phydev, u8 *data)
- 
- static int lan887x_config_intr(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
- 	int rc;
- 
- 	if (phydev->interrupts == PHY_INTERRUPT_ENABLED) {
-@@ -1537,12 +1557,24 @@ static int lan887x_config_intr(struct phy_device *phydev)
- 
- 		rc = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
- 	}
-+	if (rc < 0)
-+		return rc;
- 
--	return rc < 0 ? rc : 0;
-+	if (phy_is_default_hwtstamp(phydev)) {
-+		return mchp_rds_ptp_top_config_intr(priv->clock,
-+					LAN887X_INT_MSK,
-+					LAN887X_INT_MSK_P1588_MOD_INT_MSK,
-+					(phydev->interrupts ==
-+					 PHY_INTERRUPT_ENABLED));
-+	}
-+
-+	return 0;
- }
- 
- static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- {
-+	struct lan887x_priv *priv = phydev->priv;
-+	int rc = IRQ_NONE;
- 	int irq_status;
- 
- 	irq_status = phy_read_mmd(phydev, MDIO_MMD_VEND1, LAN887X_INT_STS);
-@@ -1553,10 +1585,13 @@ static irqreturn_t lan887x_handle_interrupt(struct phy_device *phydev)
- 
- 	if (irq_status & LAN887X_MX_CHIP_TOP_LINK_MSK) {
- 		phy_trigger_machine(phydev);
--		return IRQ_HANDLED;
-+		rc = IRQ_HANDLED;
- 	}
- 
--	return IRQ_NONE;
-+	if (irq_status & LAN887X_INT_MSK_P1588_MOD_INT_MSK)
-+		rc = mchp_rds_ptp_handle_interrupt(priv->clock);
-+
-+	return rc;
- }
- 
- static int lan887x_cd_reset(struct phy_device *phydev,
+git grep -A7 -B7 -e 'suspend =' -e 'resume =' -e '->map ='
+
+...I see basically:
+
+- assign those variables (minor variations: PMC_IDX_MAIN/PMC_IDX_SOC 
+  index, NULL resume/suspend that is already handled)
+- if regmap_list is set, call to pmc_core_ssram_init() (the pointer put 
+  into ->regmap_list seems another candidate to be included into the info 
+  struct.)
+- else (or if ssram init failed), call get_primary_reg_base()
+- call pmc_core_get_low_power_modes()
+
+Why cannot we like have a common init function which handles all those and 
+remove all that duplication from per arch files? I don't see anything that 
+looked meaningful variations so the current archs should be all 
+generalizable I think. Why leave all those into per arch init as done in 
+this series?
+
 -- 
-2.17.1
+ i.
 
 
