@@ -1,111 +1,207 @@
-Return-Path: <linux-kernel+bounces-437259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F059E90F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:51:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1815164216
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:51:24 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED7B218E84;
-	Mon,  9 Dec 2024 10:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C0SyphQF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3E309E90F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:51:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791521770F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA5E2813C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:51:55 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227A321770B;
+	Mon,  9 Dec 2024 10:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OF71MjUP"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B75216E3B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:51:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733741423; cv=none; b=u0pmj4/jKlTDsX6GUIh1eduJmpJ74QM0L9BTQQFLWqpvap/jAAyaNrGQerLPBvl1ZMPsOW6MTGT17hgX1X4WWHXTkeoNmBxMTWy0Irt4qpMZRnFwR4jl5FFOsxphyc+HWOW2Iyfdf3uYuXF+2/OFCpyPCN7OwRmeRJOOLbGoxYY=
+	t=1733741473; cv=none; b=ubBb/lUtiEyf6OZwXCSj7uXQf5VKNw3LKW1vQIS9v8p0U2o+eKX6gXff3ywBru6K4QEMo0+rPeueSp36uCndJJgSFWPSkwNuhCL/13+2hQTs8RHgndtR5SNEHvtlDNN0RVsKJH2kbdTBskzfuSnMSe6A0uk0yCEu7baIXiKvNPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733741423; c=relaxed/simple;
-	bh=Al1nYJcI+WH60uOcfQJpnPEsLD/SNuVV0FT8A72aZh8=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=umopLJHAffMEeB1FWz/jI3EW4igrN0ZijBnsMSzPxF4BW35m8cGV0Lu7aAkkQryAbBl0xMJTotFBvgUErvuAcPIQtVhIo25CwhrwI2MUY5brpT0GEKxjeo2RE5uv+JiONuMjNTEXinfZmtfxVSOJsaOhei61ftksjP0lK5TZhjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C0SyphQF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AP99G024521;
-	Mon, 9 Dec 2024 10:50:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=DQHDERoIpTVNFdTrNfwzhA
-	S6rWPsfyTUVsAC0tG+skQ=; b=C0SyphQFvKEUzcErdoVb4MAVnqc4eltzISRguW
-	u4FTbjkcpZYMKcIDa+AkPF6q1U2cNeCLMJWyt/WyGxukHLfs9NDu6TRUTNfLrJwJ
-	oMS7q2jgCIhB5vD49RnSiD1f0dtl1h6wp7AAWnCMTWAA0C6fc9J4u8spFEG6UhJd
-	p0MTkERm3MCf+5Iuu36VKJB9t81L1Dx7vMii3LW2MfuJHR8huSkd+C+Snnb8p1ma
-	vPW2cZfiVFaLMJPdp93M9t8Vb8B6aGxmk8LzD7ybcQFcLYUnT0qgUsa8qmjSmU3X
-	enzkPoXQYOFtBQQLlNLEn1QmzkRZnPQmVpwKLmwATxavKYmw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cc2ecj6d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 10:50:10 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9Ao9Cq030892
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 10:50:09 GMT
-Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 02:50:07 -0800
-Message-ID: <64931fac-085b-4ff3-9314-84bac2fa9bdb@quicinc.com>
-Date: Mon, 9 Dec 2024 18:50:06 +0800
+	s=arc-20240116; t=1733741473; c=relaxed/simple;
+	bh=L4ui1h/vrdTNSwIpVte950FBLDJ/cVXgkHics9qC5xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gbu0c1zgjIlfgexChvSYpQpGe+4TB/R9C2KWQPBSDZc1PwEP2QkqQN9jYD6Fcds+Kb2QpnmXy4n9IkGKOkCl/DUZc8H88ffUwB4vAYfTG+pjetRTkXMLnn1yJSgggUUbJv9BM84wVZn8LOO1XNmbrKnfKU4M0PNHSiTMCAA6tJQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OF71MjUP; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so2910016f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:51:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733741470; x=1734346270; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FryIWHG4glDtAbY0ViJJ5GhXfPjObehPPRF/NzIgnoU=;
+        b=OF71MjUPR4/jGDWDf6cf2UWoU9YY1Qc16GE6uICv3zBjfUK0F60MxOEA6oOYJTHs5K
+         MYhbdhKX38b4IMnK3oAtncB09vrXk8X7q6e8PCBC3BemuLPSol1DnN57MzMzLpvzheO5
+         Psxd9Jyz+MCDrzXxUrX5FB55WS2Enrr3wbLkrJyBDyVZnbBiTMe1sCEdgT0xA32hw0Bm
+         4Zg9imRuO7Rp/nDYKjcwPTzydMdwCrQTPbaUSYZmNcjz9XEoUrJWbCm7xVL+sl8EAbG3
+         BGmS3kQi+UgtFW0dO3bDBr2T5k40lTzmIICUQEuCZT9ivGfUMBNYwxLGeYVFStlg5mHQ
+         VBcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733741470; x=1734346270;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FryIWHG4glDtAbY0ViJJ5GhXfPjObehPPRF/NzIgnoU=;
+        b=Ky6Y5zExBtGvjfkBW+6FZ+/6yhxHkHUaDBpu0Q1dizS8YDrTVawXBpySf/xR87Lkf0
+         mUqbyhq21l86piiV9yTuHYDE3SUnKcSKYcc41dhZ5d+6DmS64GbhYqowCAn1IgNEn13J
+         KgojmgED80ZyVhpqO7ZJYD+0l0vlJiJmhujeWtyLOncA7AU2xm36IzfX2s+CePUCNa2u
+         W9D7C7934q0cLis/+ycN+jNDEPfVp3rz2fuubkt4SHPZ2clOlAP4CApzkz6NFrGZYZLE
+         lxCqarYqGF0VMsTJXDI+EmpqsfQHPmB9rCXmDMrlndCbmO+OkZ7MP9xtTLWTx0cc8nNY
+         T9uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWpZ1VChjvp5MaPZW8y7eqnHadwmYncx0PYbrZSqVKzqo5gh9UTmp1OYEZgoOmlO2lFI1Mzv6XLLS0yFcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJZSevm3pKBUAme8cjEaz7XafB+Wcim+64P7qBsSIN0TVhQxyd
+	lJCyI74UR9CkneQNbmPNmvzaPF6FEeyxD1sk1jx2mqDs8I/ejUVE1pk0G6FfaSmpokWZVFjkUQR
+	YwO0lLirV/H7wAoyA8apqIDr27navqN7TqZbT
+X-Gm-Gg: ASbGncufvlkSaEzS/8z1DFvWdoOBHRR6o+1Rb6IGrpkqJLrVEWGCq0CkSV6e7DK5b4J
+	h0n+ZVnkPJSnKaKdvGmtAjJHa7JcsvfaElt0mnH3z4UaLc6p6KduT+xgAoM4K
+X-Google-Smtp-Source: AGHT+IFCMPz2gJwTLGpVlTtIU/+TRhfTp9o6Sr1cbaBHwP5xMQrVhcDylO0Qa0ADEgHobqtV7VaBYYQ104jfMWkjpKE=
+X-Received: by 2002:a05:6000:1446:b0:386:4034:f9a6 with SMTP id
+ ffacd0b85a97d-3864034fe3dmr2031582f8f.57.1733741469667; Mon, 09 Dec 2024
+ 02:51:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Christoph Hellwig <hch@lst.de>,
-        Marek Szyprowski
-	<m.szyprowski@samsung.com>,
-        Robin Murphy <robin.murphy@arm.com>
-CC: linux-kernel <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
-From: Baochen Qiang <quic_bqiang@quicinc.com>
-Subject: missing clear bdr in check_ram_in_range_map()?
+References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
+ <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com> <2024120925-express-unmasked-76b4@gregkh>
+In-Reply-To: <2024120925-express-unmasked-76b4@gregkh>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 9 Dec 2024 11:50:57 +0100
+Message-ID: <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
+ from fops->open()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: A1FLghzP3KIX_hPr8jPVNA5yMhoGy0YP
-X-Proofpoint-GUID: A1FLghzP3KIX_hPr8jPVNA5yMhoGy0YP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- mlxlogscore=752 priorityscore=1501 impostorscore=0 lowpriorityscore=0
- adultscore=0 malwarescore=0 clxscore=1011 suspectscore=0 spamscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090084
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Mon, Dec 9, 2024 at 9:48=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
+> > Providing access to the underlying `struct miscdevice` is useful for
+> > various reasons. For example, this allows you access the miscdevice's
+> > internal `struct device` for use with the `dev_*` printing macros.
+> >
+> > Note that since the underlying `struct miscdevice` could get freed at
+> > any point after the fops->open() call, only the open call is given
+> > access to it. To print from other calls, they should take a refcount on
+> > the device to keep it alive.
+>
+> The lifespan of the miscdevice is at least from open until close, so
+> it's safe for at least then (i.e. read/write/ioctl/etc.)
 
-while checking check_ram_in_range_map() I am confused by the condition set/check on bdr.
-If I am reading the code correctly, if bdr is set once, it would never get cleared, hence
-that function will always returns 0.
+How is that enforced? What happens if I call misc_deregister while
+there are open fds?
 
-should we clear bdr before each new iteration?
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > ---
+> >  rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
+> >  1 file changed, 16 insertions(+), 3 deletions(-)
+> >
+> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> > index 0cb79676c139..c5af1d5ec4be 100644
+> > --- a/rust/kernel/miscdevice.rs
+> > +++ b/rust/kernel/miscdevice.rs
+> > @@ -104,7 +104,7 @@ pub trait MiscDevice {
+> >      /// Called when the misc device is opened.
+> >      ///
+> >      /// The returned pointer will be stored as the private data for th=
+e file.
+> > -    fn open(_file: &File) -> Result<Self::Ptr>;
+> > +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Res=
+ult<Self::Ptr>;
+> >
+> >      /// Called when the misc device is released.
+> >      fn release(device: Self::Ptr, _file: &File) {
+> > @@ -190,14 +190,27 @@ impl<T: MiscDevice> VtableHelper<T> {
+> >          return ret;
+> >      }
+> >
+> > +    // SAFETY: The opwn call of a file can access the private data.
+>
+> s/opwn/open/ :)
+>
+> > +    let misc_ptr =3D unsafe { (*file).private_data };
+>
+> Blank line here?
+>
+> > +    // SAFETY: This is a miscdevice, so `misc_open()` set the private =
+data to a pointer to the
+> > +    // associated `struct miscdevice` before calling into this method.=
+ Furthermore, `misc_open()`
+> > +    // ensures that the miscdevice can't be unregistered and freed dur=
+ing this call to `fops_open`.
+>
+> Aren't we wrapping comment lines at 80 columns still?  I can't remember
+> anymore...
 
-diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
-index 5b4e6d3bf7bc..1605b956b25e 100644
---- a/kernel/dma/direct.c
-+++ b/kernel/dma/direct.c
-@@ -611,6 +611,7 @@ static int check_ram_in_range_map(unsigned long start_pfn,
-                        return 1;
+Not sure what the rules are, but I don't think Rust comments are being
+wrapped at 80.
 
-                start_pfn = PFN_DOWN(bdr->cpu_start) + PFN_DOWN(bdr->size);
-+               bdr = NULL;
-        }
+> > +    let misc =3D unsafe { &*misc_ptr.cast::<MiscDeviceRegistration<T>>=
+() };
+> > +
+> >      // SAFETY:
+> > -    // * The file is valid for the duration of this call.
+> > +    // * The file is valid for the duration of the `T::open` call.
+>
+> It's valid for the lifespan between open/release.
+>
+> >      // * There is no active fdget_pos region on the file on this threa=
+d.
+> > -    let ptr =3D match T::open(unsafe { File::from_raw_file(file) }) {
+> > +    let file =3D unsafe { File::from_raw_file(file) };
+> > +
+> > +    let ptr =3D match T::open(file, misc) {
+> >          Ok(ptr) =3D> ptr,
+> >          Err(err) =3D> return err.to_errno(),
+> >      };
+> >
+> > +    // This overwrites the private data from above. It makes sense to =
+not hold on to the misc
+> > +    // pointer since the `struct miscdevice` can get unregistered as s=
+oon as we return from this
+> > +    // call, so the misc pointer might be dangling on future file oper=
+ations.
+> > +    //
+>
+> Wait, what are we overwriting this here with?  Now private data points
+> to the misc device when before it was the file structure.  No other code
+> needed to be changed because of that?  Can't we enforce this pointer
+> type somewhere so that any casts in any read/write/ioctl also "knows" it
+> has the right type?  This feels "dangerous" to me.
 
-        return 0;
+Ultimately, when interfacing with C code using void pointers, Rust is
+going to need a pointer cast somewhere to assert what the type is.
+With the current design, that place is the fops_* functions. We need
+to get the pointer casts right there, but anywhere else the types are
+enforced.
 
+> >      // SAFETY: The open call of a file owns the private data.
+> >      unsafe { (*file).private_data =3D ptr.into_foreign().cast_mut() };
+>
+> Is this SAFETY comment still correct?
+
+Well, it could probably be worded better at least. The point is that
+nobody else is going to touch this field and we can do what we want
+with it.
+
+Alice
 
