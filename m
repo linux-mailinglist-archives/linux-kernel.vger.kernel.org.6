@@ -1,138 +1,104 @@
-Return-Path: <linux-kernel+bounces-438019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 341DE9E9BB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:31:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0B29E9BDB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:36:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6931888549
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:30:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EC4B16716F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D0414D28C;
-	Mon,  9 Dec 2024 16:30:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15DA014AD17;
+	Mon,  9 Dec 2024 16:36:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYUJ+Zlu"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="pR1U65lX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670FA148838;
-	Mon,  9 Dec 2024 16:30:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D97A9139579;
+	Mon,  9 Dec 2024 16:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761839; cv=none; b=Ll1MNF6ppSSuVjOFO7Q1Pp9D1aVrVt2NBmCTDV6ydyza3+MdN3+LywiCRJFIpb270z+aYLolDViAYH3nrFf7pOcRMf4yk9lOTmCMW1iBTvv7J9H7a8MNZJ8QGJC3w2CksZC9OIpnSVrh4JmTpH/LzC3EuuQbtnaAMlHGaAALjnM=
+	t=1733762165; cv=none; b=phsAoHFuNdsmk0rZ4LmFNyUceAD+vv99v7M3MOx4Vk0mFq/c7rspI7JfpxFB1w6JOmcx/IsGw8ihHBaswrpKosLYALIl+LmiNREjapMt9Vhf/e+a2sXBQCRNt/RgelgkWzmfTzTIypkM1m8DXcscWlm/xZtJ8HLnoGyBeqx5ghM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761839; c=relaxed/simple;
-	bh=UqFmyUyCnqL3Joi4dxVsrc/QHwDIjKuol/h0eu0pRlo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h3E5UShqSxFEAKc2EPwyeWP9D269/AHHT64GJOCUwc5UPuLJZfDUacroPzAYmQdNOL2iKuVjC9sCIK2gth6txms9KN97tHU77bQSpNxdTj1j/3/wYicnIgDpjQYNueMNa8Xh6Dm3fHaVMbMeLMZ7nLOcejNEr2CfFXud7POVFQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYUJ+Zlu; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d3d74363cbso4178717a12.2;
-        Mon, 09 Dec 2024 08:30:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733761836; x=1734366636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2PXZFahQEQ9+MH6nwCFL4u3GPn69RCf5jv5+RxOCeQE=;
-        b=bYUJ+ZludQOks/rxAghEud8Q2yjTkv9oKUWN7pryXJIsYiXV/+8jRQ5vQDChhiDdmk
-         EzL8nRpfkxrjkYrKOyMfCiaz491xjybt3eDYTcCuU4E4rJHGdbruHAXUHCvf0Z2hQ+en
-         ySoFGSSudfTK/Q46FMQMlAWN3DVk2396QTmcfuXOUYJ4QhFdcUmqWot8TFspr3EF5VPQ
-         /ahrUvWsOe07iY6sWOAY6/fCO17BPT3agEz+TUFb4DJSZIIM433wxmmchONBsCtSIlcb
-         CHidkT79YtXYAVu7n32oW7rfy61smfjYq6yTwbX/ENomBsjjMejlVrZhf2dXzhCzg55v
-         Dzhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733761836; x=1734366636;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2PXZFahQEQ9+MH6nwCFL4u3GPn69RCf5jv5+RxOCeQE=;
-        b=jI/Ipi8lZtHFuxw34VR+4lxM8j7pT89sEgBYpC8dezruvit2JiSZ5CrmkOuQwuQ45t
-         Owca2TBUDi9jGw4IPfDvcSUHmJGW0VlI3l5UBhuZrZfhA4DLhjHj2qxTtw4wtBoMb5LI
-         LoL8RUnfQ9Oc0BCGjzCmpCYsorQHXjImcLcbAQw+YwyLY59Fd6W3nRO2vUqwD93ixae/
-         Ea067IJ48cecBmj2fBl3AYCmYSAfuqJG8Q+DtbC3+N798og/lELW1Nn+4GAfZaDGCuaB
-         Cz2tPkpJRzFCF8lS9NzTZpalcxvgV2DBL8uzwmaBZAR/I4ELzc4cqtAEheiuiw1JfDPW
-         ySDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF+Tn8gYKN3QnYZX7CDkw4AzObRYbL9TLWaGi2oBrmbwn1HXct0RbjZpQccHevI5x3PwZe7hKmjiH/@vger.kernel.org, AJvYcCUgurNssaSBkpQJXRK+q5pVlwHSUtqgrJ3X+hgmsn3K8ibWGPKnV/dBsMPYPdm95SGAAwdj1BJX938/GgcN@vger.kernel.org, AJvYcCV1sQUx0So8e25lat80O26/mTlQgkJ3puznTlLdsibTDtFr8mA3511vsbq0bTe2MInG3y3tpUhuJUB4bEVP@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywc9IIoN3Q8wTaBFgN1MDnrap9BZ0SQSLZFzp/v+yN/MPO2t7Oj
-	i7tk21B1LYnQLYUU3lIDSrEOHN4nMzkVUszktBkdMaWO8GCV0T17vmTA5Pod7eeiCmsH4plrEBs
-	dFeCP4q2AG5PMm4ZCYPAPsYP+/SQ=
-X-Gm-Gg: ASbGncsC4NSV/vTZoAmXkmb3CUCGtspKJOCqJw3e5HoLUaWmgAqnNZeXYBBTgrKN5lf
-	OJgFPM63b0sgc2XRz5KBC9adq58vmWwY=
-X-Google-Smtp-Source: AGHT+IGnw3PHTTO0WJEaz4iIAJkEZuaxE+xsctQhUNCPKjQXrjeXNmUhAvEgSjWGkC8LfBFyANkAmmYobwxezgDOiGA=
-X-Received: by 2002:a50:fa81:0:b0:5d0:cfb9:4132 with SMTP id
- 4fb4d7f45d1cf-5d418567f3emr1520906a12.18.1733761835276; Mon, 09 Dec 2024
- 08:30:35 -0800 (PST)
+	s=arc-20240116; t=1733762165; c=relaxed/simple;
+	bh=NYlPI26e2HRDl4GwsB53oLUmpFK8NP4TWK/1Pfvt9kA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VI/7BRsvBEJd9l+9oleqR2S+pZqBY+0o5EuJ+3xdHgxk0o6M35AvdmPJb7uUKm4XkT8iXhDoauvv6/sdR5AmKFPIvtFg7al02UMOhLuzWRrVpJTRE/7nMKr8qYOxMvCC0GlgiT2SjBHziMT+g1vqx3l6qYla4kuqzRt84msszYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=pR1U65lX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=8U5tytWB8jdTsBEP80ajIb2iAzJeX3cQD0jCPv4mRhY=; b=pR1U65lXh+gULXxoVbxUmjRMTg
+	IaO8ybI+roY8bQmY7Kvi6CfXfzHAR4U8rod0j/KCAhNs2QDSgiGDMrQuyBfNmVKZTktWAPzYThk79
+	nCqeF4Oh768TW3ErNVa4LLSjrePI+TavuFE0bgUS7lCacke6tf7FHBlbeakub7tK8dIEftPKYeVJn
+	8DAQFQc7nMN3ZhkoNb23G/mOKlTcMcJVjWkjlrPVxt+4ur4sju0Scf1ydRZ+gz9Mf/7NyQDnNCOea
+	yyRpPJ7Wj/kEs6SrdHPhc0TFp9Yp0THsH9Ub0pLvc1B7ONfVFmHSz+IivnuBBcxm4EezyCR8U5s8y
+	ENmtf4BA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45626)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tKgjY-00017C-0l;
+	Mon, 09 Dec 2024 16:35:44 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tKgjU-00026q-0x;
+	Mon, 09 Dec 2024 16:35:40 +0000
+Date: Mon, 9 Dec 2024 16:35:40 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
+ MBa62xx carrier board Device Trees
+Message-ID: <Z1ccXClgTg5Guq6R@shell.armlinux.org.uk>
+References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
+ <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
+ <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
+ <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
+ <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
- <Z1D2BE2S6FLJ0tTk@infradead.org> <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
- <20241206160358.GC7820@frogsfrogsfrogs> <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
- <Z1ahFxFtksuThilS@infradead.org> <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
- <Z1b00KG2O6YMuh_r@infradead.org>
-In-Reply-To: <Z1b00KG2O6YMuh_r@infradead.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 9 Dec 2024 17:30:24 +0100
-Message-ID: <CAOQ4uxjcVuq+PCoMos5Vi=t_S1OgJEM5wQ6Za2Ue9_FOq31m9Q@mail.gmail.com>
-Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export operations
- as only supporting file handles
-To: Christoph Hellwig <hch@infradead.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, 
-	Jeff Layton <jlayton@kernel.org>, Erin Shepherd <erin.shepherd@e43.eu>, 
-	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
-	stable <stable@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, 
-	Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, Dec 9, 2024 at 2:46=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
-> wrote:
->
-> On Mon, Dec 09, 2024 at 09:58:58AM +0100, Amir Goldstein wrote:
-> > To be clear, exporting pidfs or internal shmem via an anonymous fd is
-> > probably not possible with existing userspace tools, but with all the n=
-ew
-> > mount_fd and magic link apis, I can never be sure what can be made poss=
-ible
-> > to achieve when the user holds an anonymous fd.
-> >
-> > The thinking behind adding the EXPORT_OP_LOCAL_FILE_HANDLE flag
-> > was that when kernfs/cgroups was added exportfs support with commit
-> > aa8188253474 ("kernfs: add exportfs operations"), there was no intentio=
-n
-> > to export cgroupfs over nfs, only local to uses, but that was never enf=
-orced,
-> > so we thought it would be good to add this restriction and backport it =
-to
-> > stable kernels.
->
-> Can you please explain what the problem with exporting these file
-> systems over NFS is?  Yes, it's not going to be very useful.  But what
-> is actually problematic about it?  Any why is it not problematic with
-> a userland nfs server?  We really need to settle that argumet before
-> deciding a flag name or polarity.
->
+On Mon, Dec 09, 2024 at 03:42:52PM +0100, Andrew Lunn wrote:
+> I also find a lot of developers don't really understand what phy-mode
+> and PHY_INTERFACE_MODE_RGMII_* actually mean.
 
-I agree that it is not the end of the world and users do have to explicitly
-use fsid=3D argument to be able to export cgroupfs via nfsd.
+... which is why we documented it in Documentation/networking/phy.rst,
+but it seems folk who run into RGMII stuff don't read that document.
 
-The idea for this patch started from the claim that Jeff wrote that cgroups
-is not allowed for nfsd export, but I couldn't find where it is not allowed=
-.
+I'm wondering if we can come up with some kernel-doc compatible way to
+document them in linux/phy.h instead, which may stand an improved
+chance of being read?
 
-I have no issue personally with leaving cgroupfs exportable via nfsd
-and changing restricting only SB_NOUSER and SB_KERNMOUNT fs.
-
-Jeff, Chuck, what is your opinion w.r.t exportability of cgroupfs via nfsd?
-
-Thanks,
-Amir.
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
