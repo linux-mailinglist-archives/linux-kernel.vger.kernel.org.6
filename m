@@ -1,39 +1,45 @@
-Return-Path: <linux-kernel+bounces-437778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B306B9E9885
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:14:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F7AF9E9887
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:14:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B57018830E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:13:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C4DC5161E2A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:14:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F74E1B0433;
-	Mon,  9 Dec 2024 14:13:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BBB815575F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E27C51B0408;
+	Mon,  9 Dec 2024 14:14:45 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15923233123;
+	Mon,  9 Dec 2024 14:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753622; cv=none; b=uZyjrqKmiqzRcp/zZoLtzowPf9Dwk2wwWJPAIaZJwQ1mluD94L9D1zCIY0ZeqgX/c4MhH6XywgtgpjFwpLwD9nQLGcbF3OYN6dbILZIshHT5EzqWXPDT6hJhf6/79tOa7pcZ5Fh4rWQmBCOxMWd9lhrhcu1RVjOIegsKDbdFsS4=
+	t=1733753685; cv=none; b=sdMSV3uoVKqddaSgPnyimx9SrDlnPxiEbT5UepghQIVRkalSk2aCOYXFwdQXfzDOSF9CAs0RlM7ZOEQor20rNot+yJubmdt/yIUKpyQL5gM4vtCKnoNlxTtJOYxTyd+Cpfb8MfqjfwPM6GjIgh+J5+Nw9xvbzlUMBXIP5Hd8vuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753622; c=relaxed/simple;
-	bh=hkFFobiPfJFgKqd6pacUZzf5t/NkeN1EYKEHfXVZS4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FMkPOIQiRVbbZMQV0xeXBg5mk089Tl+eISd0PKgGpebTLBZD1rQIRPRDwhpUwP8AGtY6jmFHA60c5r4NJgmBm1vEXqjKOT9PA1tox9OkcRdZXT150ulhzrfyHAXBQaRxuyefmmaPwhvqc6fg6U9vOyG9rjeeumHcFOnc4jXsrB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7C7AC113E;
-	Mon,  9 Dec 2024 06:14:07 -0800 (PST)
-Received: from [10.163.51.127] (unknown [10.163.51.127])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5715B3F720;
-	Mon,  9 Dec 2024 06:13:36 -0800 (PST)
-Message-ID: <f492ac51-9dad-4b18-8cd4-81dc236b3162@arm.com>
-Date: Mon, 9 Dec 2024 19:43:32 +0530
+	s=arc-20240116; t=1733753685; c=relaxed/simple;
+	bh=X5h63I+ZHkVU/1MVgZhi3mgViCWNLCln4xzMKlyc0qw=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SAUkaltXjRScgqWop6p0ICegs+fybOu/pFkgNwfwxLtUJs5B1WoYdC9C76sACpml3iAj/AEPhOkOm+mO+eNJvJYOHqEtg9JdsqTIPqG2jvA7xtNZHwMjn8aCWe69s0X77TOUx7f4SbL30IA2Vn+eH4z2GisxBFp53RFXP3blRM4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Y6P276tx7z1kvfq;
+	Mon,  9 Dec 2024 22:12:15 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 324811402CC;
+	Mon,  9 Dec 2024 22:14:39 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Dec 2024 22:14:38 +0800
+Message-ID: <058dff3c-126a-423a-8608-aa2cebfc13eb@huawei.com>
+Date: Mon, 9 Dec 2024 22:14:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,70 +47,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/execmem: Make ARCH_WANTS_EXECMEM_LATE depend on
- EXECMEM
-To: kernel test robot <lkp@intel.com>, linux-mm@kvack.org
-Cc: Paul Gazzillo <paul@pgazz.com>,
- Necip Fazil Yildiran <fazilyildiran@gmail.com>,
- oe-kbuild-all@lists.linux.dev, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Kees Cook <kees@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241209031251.515903-1-anshuman.khandual@arm.com>
- <202412092048.tTzJ5szH-lkp@intel.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <202412092048.tTzJ5szH-lkp@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>,
+	<shenjian15@huawei.com>, <salil.mehta@huawei.com>, <liuyonglong@huawei.com>,
+	<wangpeiyang1@huawei.com>, <chenhao418@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND net 3/7] net: hns3: Resolved the issue that the
+ debugfs query result is inconsistent.
+To: Jakub Kicinski <kuba@kernel.org>
+References: <20241107133023.3813095-1-shaojijie@huawei.com>
+ <20241107133023.3813095-4-shaojijie@huawei.com>
+ <20241111172511.773c71df@kernel.org>
+ <e4396ecc-7874-4caf-b25d-870a9d897eb1@huawei.com>
+ <20241113163145.04c92662@kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20241113163145.04c92662@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
 
+on 2024/11/14 8:31, Jakub Kicinski wrote:
+> On Wed, 13 Nov 2024 13:59:32 +0800 Jijie Shao wrote:
+>> inconsistent：
+>> Before this modification,
+>> if the previous read operation is stopped before complete, the buffer is not released.
+>> In the next read operation (perhaps after a long time), the driver does not read again.
+>> Instead, the driver returns the bufffer content, which causes outdated data to be obtained.
+>> As a result, the obtained data is inconsistent with the actual data.
+> I think the word "stale" would fit the situation better.
+>
+>> In this patch, ppos is used to determine whether a new read operation is performed.
+>> If yes, the driver updates the data in the buffer to ensure that the queried data is fresh.
+>> But, if two processes read the same file at once, The read operation that ends first releases the buffer.
+>> As a result, the other read operation re-alloc buffer memory. However, because the value of ppos is not 0,
+>> the data is not updated again. As a result, the queried data is truncated.
+>>
+>> This is a bug and I will fix it in the next version.
+> Let's say two reads are necessary to read the data:
+>
+>   reader A                  reader B
+>    read()
+>     - alloc
+>     - hns3_dbg_read_cmd()
+>                             read()
+>                             read()
+>                             read(EOF)
+>                              - free
+>    read()
+>     - alloc
+>     - hns3_dbg_read_cmd()
+>    read(EOF)
+>     - free
+>
+> The data for read A is half from one hns3_dbg_read_cmd() and half from
+> another. Does it not cause any actual inconsistency?
+>
+> Also, just to be sure, it's not possible to lseek on these files, right?
 
-On 12/9/24 18:06, kernel test robot wrote:
-> Hi Anshuman,
-> 
-> kernel test robot noticed the following build warnings:
-> 
-> [auto build test WARNING on akpm-mm/mm-everything]
-> 
-> url:    https://github.com/intel-lab-lkp/linux/commits/Anshuman-Khandual/mm-execmem-Make-ARCH_WANTS_EXECMEM_LATE-depend-on-EXECMEM/20241209-111533
-> base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-> patch link:    https://lore.kernel.org/r/20241209031251.515903-1-anshuman.khandual%40arm.com
-> patch subject: [PATCH] mm/execmem: Make ARCH_WANTS_EXECMEM_LATE depend on EXECMEM
-> config: arm64-kismet-CONFIG_ARCH_WANTS_EXECMEM_LATE-CONFIG_ARM64-0-0 (https://download.01.org/0day-ci/archive/20241209/202412092048.tTzJ5szH-lkp@intel.com/config)
-> reproduce: (https://download.01.org/0day-ci/archive/20241209/202412092048.tTzJ5szH-lkp@intel.com/reproduce)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202412092048.tTzJ5szH-lkp@intel.com/
-> 
-> kismet warnings: (new ones prefixed by >>)
->>> kismet: WARNING: unmet direct dependencies detected for ARCH_WANTS_EXECMEM_LATE when selected by ARM64
->    WARNING: unmet direct dependencies detected for ARCH_WANTS_EXECMEM_LATE
->      Depends on [n]: EXECMEM [=n]
->      Selected by [y]:
->      - ARM64 [=y]
+The patch of this version has the following problems:
+  reader A                       reader B
+   read()
+    - alloc
+    - *ppos == 0
+     - hns3_dbg_read_cmd()
+                                 read()
+                                 read()
+                                 read(EOF)
+                                  - free
+   read()
+    - alloc
+    - *ppos != 0
+   read(EOF)
+    - free
+    
+if reader B free the buffer, reader A will alloc a new buffer again,
+but *ppos != 0, so hns3_dbg_read_cmd() will not be called.
+So reader A cannot get the left data.
 
-Although above mentioned config here has CONFIG_ARCH_WANTS_EXECMEM_LATE=y
-and CONFIG_EXECMEM=n (actually absent), could that really happen though ?
+I plan to introduce the "need_update" variable in the next version,
+with the default value is false. Run the alloc command to change the value to true：
+  reader A                           reader B
+   read()
+    - need_update = false
+    - alloc
+       - need_update = true
+    - *ppos == 0 || need_update
+       - hns3_dbg_read_cmd()
+                                     read()
+                                     read()
+                                     read(EOF)
+                                     - free
+   read()
+    - alloc
+      - need_update = true
+    - *ppos == 0 || need_update
+      - hns3_dbg_read_cmd()
+   read(EOF)
+    - free
+So,  after reader A alloc a new buffer again, need_update will set to true.
+hns3_dbg_read_cmd() will be called again to update data.
 
-Tried making CONFIG_EXECMEM=n (rather deselecting) but that did now allow
-setting CONFIG_EXECMEM=n, it always remained set. Reverting this patch i.e
-the current behaviour is also the same (CONFIG_EXECMEM always remains set).
+But there's still a problem：
+The data for reader A is half from one hns3_dbg_read_cmd() and half from another.
+However, due to the short interval between calls to hns3_dbg_read_cmd(),
+and the fact that users do little to do like so, this problem is relatively acceptable.
 
-select ARCH_WANTS_EXECMEM_LATE if EXECMEM
+We're also trying to fix the problem completely.
+For example, an independent buffer is allocated for each reader:
+  reader A                   reader B
+   read()                    read()
+   - alloc                   - alloc
+     - hns3_dbg_read_cmd()    -hns3_dbg_read_cmd()
+   read()                    read()
+   read()                    read()
+   read(EOF)                 read(EOF)
+   - free                    - free
+  
+But, driver needs to maintain the mapping between the buffer and file.
+And if the reader exits before read EOF, a large amount of memory is not free:
+  reader
+   read()
+   - alloc
+     - hns3_dbg_read_cmd()
+   read()
+   read()
+   == reader exit ==
+Maybe it's not a good way
 
-Above statement seems to be selecting EXECMEM as well but the intent seems
-to be a dependency check instead! OR arch selection for a config brings in
-all its dependencies as well.
+As for lseek, driver needs to call lseek at the right time to reread the data.
+  reader A                           reader B
+    read()
+    alloc
+    hns3_dbg_read_cmd()
+    *ppos == 0
+    read()
+                                     read()
+                                     read()
+                                     read(EOF)
+                                     - free
+    alloc
+    hns3_dbg_read_cmd()
+    - *ppos != 0
+    - lseek()
+    - *ppos == 0
+    reread()
+    read()
+    read(EOF)
+    free
 
-If the selection is always, should this change be like the following ?
+I can't find any examples of similar implementations.
+I'm not sure if there's a suitable lseek interface that the driver can call directly.
 
-config ARCH_WANTS_EXECMEM_LATE
- 	bool
-	selects EXECMEM
 
-Although a similar config ARCH_WANTS_EXECMEM_ROX is dependent on MMU and
-!HIGHMEM at the generic memory level.
+Another way is seq_file, which may be a solution,
+as far as I know, each seq_file has a separate buffer and can be expanded automatically.
+So it might be possible to solve the problem
+But even if the solution is feasible, this will require a major refactoring of hns3 debugfs
+
+Thanks
+Jijie Shao
+
+
 
