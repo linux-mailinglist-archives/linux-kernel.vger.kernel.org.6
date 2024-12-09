@@ -1,86 +1,117 @@
-Return-Path: <linux-kernel+bounces-438422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7A09EA12E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:22:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D51F79EA131
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:23:36 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA6F02811E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 36CD416668D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B214A19CD0B;
-	Mon,  9 Dec 2024 21:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 734C719CC2A;
+	Mon,  9 Dec 2024 21:23:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tyL2iuMA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f7mCcaYL"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B56249652;
-	Mon,  9 Dec 2024 21:22:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ADA249652;
+	Mon,  9 Dec 2024 21:23:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733779361; cv=none; b=f5xWlfWtbF70cBS4tUPba0+/zLdXW3t3jsA8laLOVImLCAD1QmKQxZSiusKSrgIaqA6kywaoJiKUy57fdJ2cjS42Oti+EsCDn2kkb+M3ncCVSjYrEqatQrGWiJADvS0oeplIiouHXNm2iTuB9L5ri4gcYjpZO3veBae2lRjfMV8=
+	t=1733779409; cv=none; b=Bwg2a/4st8rPRmQ2WJmW8R3nkr+pZRAyv6xLxGivUKRuGIyiZNBWqeNEiVWWCWH384JjWKPrP6ghpzcGHHKqsc/hx4P0NgQQ4Lcuuvf7CfA1U78VQmFY5Pp5DWe1jldnixcMbVrp+HiVSs6bOdRl1hMAirIYJdvfHDo2fQSWdFk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733779361; c=relaxed/simple;
-	bh=90Wzf2BnALaciJfqUCZ7IRuSh5rcnWkqt3oeGVrhBSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lmV6K+bwJyMCvT9amse25ameJlZXng/bwLwT/so3sqF53hKJ1IPvGOH3f//ndg9pxH1pH5HJsWNda7dQXovc0oeUAicBNPVZ0+ugRdjR3XYFejm7ek6N4lBCamrXa+TewYQ1yK9nRJ/ECiE7WOVZJJR6rZfyFW4mmHsYgYd9/+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tyL2iuMA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A728CC4CED1;
-	Mon,  9 Dec 2024 21:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733779360;
-	bh=90Wzf2BnALaciJfqUCZ7IRuSh5rcnWkqt3oeGVrhBSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tyL2iuMAtJTI9uVas9+prE56V1/izvjQ1oshD7XQGsVR8UXURxuN1jRSdsES8hAXL
-	 Zj1RqcA+rs3xREWK4Q5YnmF38wakQvxwj8RJQN4PP4SmBviUqPZp+osi6zfkVIx0vE
-	 FTGU37C3MvECg3b2W3i7wb5x3fK97UyrHmQ1Ez1XLdqg6OfRhDDTojvcJsaR8onCq4
-	 d9Ift5CgBnjZZrWrwILMcC/biLZpcFkQtmS6MtIrAOoHFehUY9/KFvACiDbXScJAC8
-	 3/snmbjWPstWoQnpuduC8R2NNvd4lEMtTNOIyDc2xUMU2t1tJdIEpEzvJGZtLGi74Q
-	 ZMmdRykaqyDQw==
-Date: Mon, 9 Dec 2024 15:22:38 -0600
-From: Rob Herring <robh@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	dirk.behme@de.bosch.com, j@jannau.net, fabien.parent@linaro.org,
-	chrisi.schrefl@gmail.com, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 11/13] rust: of: add `of::DeviceId` abstraction
-Message-ID: <20241209212238.GE938291-robh@kernel.org>
-References: <20241205141533.111830-1-dakr@kernel.org>
- <20241205141533.111830-12-dakr@kernel.org>
+	s=arc-20240116; t=1733779409; c=relaxed/simple;
+	bh=9d+tXAJwrm1VcVoEcEyuuE2OXR2lpshS3t61asi/CMk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ulusWcqKdvuA8IeJ1MIHbY4nv8mnAjUje2/rm2IsWiLKm/5zUz62sYUv5Z6q6m51/pva0Gz5wLDXGuzh/nl2FINbOT0NhPp/K7p1V0wK0E1B3g8x97ECL2d+RQoLiCMFNtWOBDD8y4kFKCCvHz9tZP2y1d/s4fSkDrARFxg140c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f7mCcaYL; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5d34030ebb2so6386379a12.1;
+        Mon, 09 Dec 2024 13:23:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733779406; x=1734384206; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1pWQ6LqAWq3YV7o4EcNDWS2na1ucsk/w9jiAbBxSzS4=;
+        b=f7mCcaYLMnKXXBxkFpv4/EtQLQKVXmWSyK1ES4qjdymDdye8d+vQ+lIw6TzGMd2Fzn
+         kqhiYnBW/N07/fzvKqpT4z8GWyrEr5XKSWMpuJS9YtZ4zhLadgiz0Ug1TRMeq97nyKEa
+         pbyvazNXxvgfVqD/bT5OZ+quH2/0fIKzs/ADPFkOg1i+l+BpYD9MoP3jvo9T+jeSiVIC
+         FdAjTz17X21mKZmu4jGc76D0LAhMKMPXUlx1bHtwAzH0Z99ldBnxG0beQ8wKAp6S2CF2
+         wRNcdUawLsMINwGzDhm+9DCpWg1hwIEdtKE/EKIuhlTDhD7pA0LezGvfTg3uJJP8IbE2
+         9f6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733779406; x=1734384206;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1pWQ6LqAWq3YV7o4EcNDWS2na1ucsk/w9jiAbBxSzS4=;
+        b=N11XzCHFFPL4V4jHRuP5CoZc3fkmkA8ypN3kI24G09wxgy6uc/TOker6FjKA3oHG6s
+         CJLV6WOkjESeziH9JnduZB0+eBrFbvSdzVWIIPWuVQwOP/UZdYNgJPxJ+FQO8mV64tnh
+         EaApmdGcQO4NSzW73VVjVGqJSnt+D6nLVKEp4nCJSgOAWS3iQ+1Bf7mK1dLI0LGxLPyU
+         UIysfzYzfXsqLIcpbft6HxKknA1QOxlAEM4BhFAVuRwlnfyWHcf57NvmPuAc9DpNZWP/
+         qW4Fn6zoS8jUXqhF70snHT7XlkanqYnek9MkeA97r2GzsPjqHtZQUI/eYSbFG6pgXLBW
+         DDLg==
+X-Forwarded-Encrypted: i=1; AJvYcCVzUT0CTAo/vtf3wTlir2cQwfCWoiYJd7xBh4/u5jKZ09+TZpHG1pwdc3KNp6CLxlOTz/Sha4hzQxFp0rM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgN8/VSQ01pmxI4W4blc+Sg2mwPlz0LKe/99uDWdPd271Og6ne
+	9luEv8eihERDGwRkfcNfvOK/C/WSaympu9j4t2PaipOpoc2M0hHayCrbdNjD
+X-Gm-Gg: ASbGncugT0CW11zaQp/IJijhg0T2oOu6aH7Q1aSUyN0JBbvJEhSQKbCZ8OX6ZZH0irm
+	74687yZJyL2Hd9RkoD862tNZTBMoKCULB/O/xFmQfiEOsBxgywnhn/WGB909Gh3l4OwFsYKuYQp
+	euTmtvSdPE/1kKxpzPbZhakMr0hIjcOCqqExMXj3cJOWcq5vDMj9COyivZgpb7cltm3GKVix/Nb
+	sJ3DhOaJ78neR/fypKBG9c/mnxXhpvFAWydcbb9fz1PkS8TR5Yyo3tMOFiM7Taa
+X-Google-Smtp-Source: AGHT+IF+T0oM82qRTIyqK1e8qxpc4r5pk57QyDxoxhiHuouPRXUE8dptHMMq4JSTWO62fjFkw3Dp7g==
+X-Received: by 2002:a05:6402:35c6:b0:5cf:c33c:34cf with SMTP id 4fb4d7f45d1cf-5d418566d08mr2749217a12.15.1733779406221;
+        Mon, 09 Dec 2024 13:23:26 -0800 (PST)
+Received: from localhost.localdomain ([83.168.79.145])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ea09245bsm3352923a12.78.2024.12.09.13.23.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 13:23:25 -0800 (PST)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: karprzy7@gmail.com,
+	samuel@sholland.org,
+	sre@kernel.org
+Cc: linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: [PATCH] power: supply: Fix uninitialized variable in ip5xxx_battery_set_property
+Date: Mon,  9 Dec 2024 22:23:23 +0100
+Message-Id: <20241209212323.71228-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241205141533.111830-12-dakr@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Dec 05, 2024 at 03:14:42PM +0100, Danilo Krummrich wrote:
-> `of::DeviceId` is an abstraction around `struct of_device_id`.
-> 
-> This is used by subsequent patches, in particular the platform bus
-> abstractions, to create OF device ID tables.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  MAINTAINERS        |  1 +
->  rust/kernel/lib.rs |  1 +
->  rust/kernel/of.rs  | 57 ++++++++++++++++++++++++++++++++++++++++++++++
->  3 files changed, 59 insertions(+)
->  create mode 100644 rust/kernel/of.rs
+The variable vmax in the ip5xxx_battery_set_property function is used uninitialized when passed to switch/case statements.
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+This patch initializes vmax to 0 at declaration.
+
+Issue discovered in coverity, CID 1602239
+
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+ drivers/power/supply/ip5xxx_power.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/power/supply/ip5xxx_power.c b/drivers/power/supply/ip5xxx_power.c
+index 4bcf0ea0e..65d3266c3 100644
+--- a/drivers/power/supply/ip5xxx_power.c
++++ b/drivers/power/supply/ip5xxx_power.c
+@@ -541,7 +541,7 @@ static int ip5xxx_battery_set_property(struct power_supply *psy,
+ {
+ 	struct ip5xxx *ip5xxx = power_supply_get_drvdata(psy);
+ 	unsigned int rval;
+-	int ret, vmax;
++	int ret, vmax = 0;
+ 
+ 	ret = ip5xxx_initialize(psy);
+ 	if (ret)
+-- 
+2.34.1
+
 
