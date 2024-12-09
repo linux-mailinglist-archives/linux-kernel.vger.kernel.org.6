@@ -1,140 +1,179 @@
-Return-Path: <linux-kernel+bounces-436664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0468B9E892C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:26:50 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A4C459E8926
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:19:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1456188570E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:26:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79FC718865D4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02CA3381AF;
-	Mon,  9 Dec 2024 02:26:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FA8E3D3B3;
+	Mon,  9 Dec 2024 02:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b="s7GWbB/W"
-Received: from sonic310-15.consmr.mail.bf2.yahoo.com (sonic310-15.consmr.mail.bf2.yahoo.com [74.6.135.125])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b="UoB/Bi0J"
+Received: from TY3P286CU002.outbound.protection.outlook.com (mail-japaneastazon11010044.outbound.protection.outlook.com [52.101.229.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B459474
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 02:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.135.125
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733711204; cv=none; b=pBJCMUOA+0fbx+kDpWSdqRb/Lyny2XJBeK+BEOYcFkplBcHQobWNBffdY1QhY5riAXaaBH1cZRn34EnjJgYP8pDnFYI/uqzzlz919P9/dg7jUKfVnUUY9nKDOYbgfpb/ld05/cGgYh8S+AKrGqYb7wnqoAjTcdPLuajDaKiDrxQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733711204; c=relaxed/simple;
-	bh=F106WVOj8KhBfa4FqdItlBxQUIfB1SQhJtoWT1EIros=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sCc2seneX3Oa6WOmyg7NdP5gmEZN33MusAjTdqCOZ2m7efjpaMRB8cAmsqjZhWsm4NrCiCdvLNGqRsPWdgyW7CKN2x2cWzbcnlvF27QlQf41zx1ueb4jGyatRFbXLR4wwXrnw7BOA/8JxNDdgN91unEM0UuVmtSlUQLOmAF5s3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net; spf=pass smtp.mailfrom=verizon.net; dkim=pass (2048-bit key) header.d=verizon.net header.i=@verizon.net header.b=s7GWbB/W; arc=none smtp.client-ip=74.6.135.125
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=verizon.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=verizon.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=verizon.net; s=a2048; t=1733711201; bh=tIfemm8JgeEVJD9AqjrWnX1MZ0lyWc5nwE2CiuqFR04=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=s7GWbB/W+oWM8ImTvP7MEBtk70U9O/3Ti/s/mdxxX1pkI/y2uQhNsR2Pm18ZwVonJznlog539foD1oGMxD3uJ6szI8sMxyNIw4Bng3ru/k6zF8N2zhHic85JR8ldMhnmY0RObxlwqN/1br4C07cQBqG6YRKq13hTKrYcM90GxxvEd1VxtTa3YHwW+diJTolbz8liOvqh1iCOaUqJz3g7PODzQ9wtW9V7uMbb+hRJLjP8TSZgSrrHxBOiBLAzb7Dx9TVg6caJ52CG5wk+WQE28wmgXGtnSX/T9O8BuG6Y/64KVX0SrBXhrfnvQ9T5FBF53k/F4Lzr3kNnG6adjCi9iQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1733711201; bh=diPI0ENJuiDfMatsTpCznCHfcD7xdMWV+Zvsn8Vgizu=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=fUK0HAk0+QeC/Zrh6EYsLHkfA3mQKq5ynSR5VUlv9Z7nR8UCaMaaRN3FLjdyiE1TQwQbqUo9KbktxNZl5DyUW5bz0MrQUWt9XAUbTMdZPW/0WQ/Ukpia5gRYfUKhpayr36cwV+GKiB3TYcsRloK3Y9GpsW4lFB6IjOZ+Sp5TFackG5XlTT64wPtTNYlxOdXEycbkmT1Fq2NiUU97wzXp6VgC2LYyEclVyJ84V7nkif3isEnepMmFNBNKoqdAlMmWvOYuffMy4c5OArDJ5DiyP2Ap/rPBht3f0ctgXr9f1eRqvUlVA+syM3sB4LzQLlwd2jt9523WFzrRrBH7yrh0wA==
-X-YMail-OSG: w9RtY6YVM1kfxDM_fpEQg.QN6oT_dIWw5qS1N3EUhX0qIuUjqaVxkLzFfuHOod2
- Kq0a9e5yedcGX11XOxpetT8BzvFHhTos_b5OZin2hSvu.28a2ifNQAU9NPuyAlfUj3Or1vt56dbB
- GWxPGodoqIdKBlpglWJLO0BfrXDco6NTXepkWHiJXTerw5UQomPO6wHe6MxmLGM0aGWNT8zU54Qq
- TJ8T3n77jtKu0ZmxR6u83ifJKabLdDwNFQd6gX.z1iQ05z8U.oRb2PO.uCq06fFZyIEmeEEbGnWO
- plmUaNzvkRFuH.hngJbbe3ox6c.d6JxezXGi4pc7J.RZIC2.p.wq9D5f.i7ECg9n8czydH3JvGMp
- x456UuFqvy3FwZAzljGP9dnOKY33fV8sKY4mdTf1CS719pxGPrxp26WxSFioi0JqtEwVFxYr5AYz
- JZy6Ly5lKNvCtyBkR78kEJVlHEgRymhCzMtd48UmmR6vXmdAdZwRuPRpLjsHEfTW8dnGgG6Mglpo
- .gjAwqUh7og1fmRxplFaC4S1RGFkIEF01kwVifmxRh16rueAPhuvYFy6rrm5yu50RlsdKiKNOnWs
- 5DGzhMkT2Xu_ey64ZrMR.x8q_rbyLVbMwPC_CREaC.1IBxAhg0d5fAOyG9XzPnM40bkTmBYZTyQ8
- kVyEvfD9C9wBn2XXECyE19w5PeyMLQCtgoANMSPV72aoiWKYTSFggGunFsKcv9fBrWhs1eRAwDbZ
- OGnoRKtMWKdP9AMBnUHjM4uqpVkiuH9i5RvEbIeD8BgNl5z505ilGCy4G1E6qrwC4bySb9zj6rah
- i1OgPxo6vPGmzkGibjWliw1ZAkasewetC.wgeWVmXejvc9mrT5HQNbiYCZsdU4U0922MT8QeTRq6
- kkd4yAtlu81JW8KrkHUJjY6rThF0NN9JoJeTysoi.glOK6cRdSq559pH5RvqMITO4Dpl6jv13dQu
- yic44xCLItaFYzd0O9Am8GrConf8s_ely6wxULc67b7AIaOtyeEsTehHe.y7I4M79EdAbqtYhVHy
- an.kVx.OWyA_EIEDqKRCMVAAWYFkQwBsVEUgHtJxqTQ0wKs9s3oR5BhLtiAVBYbjcUNX7B9UUoHj
- p8uJf7G9kmqlAcue5ZWgU07jmW7_89AdZY5JFeUJPyIc.NLgT5tpr3.GRm__RE9Pzbt2w7SZr4ly
- SsbYQtNBnJ_Py8pM_XuerblVFVDmYhZaBCqBFlE9PqZo81jTZvy2fNRuYvEaRuiGt2aW8tcEOe38
- 563yiXvN_MX3F5_ZJO42nSSF_UP8lKsX2ZE6gzEDvJhE6zljpO.tAwDBKNRy5hnf94iltacBQ6Xo
- PfmLL6EEOMwLlwFgwOO0Tz5J3QZ_O3waFOC1yGDxNpJ2jfcz0AeGTbKj8jZQ6TT9fspzcM4fST0Z
- 3uKYET4xNq9m8PgaAWYAXH7oAA7HpBrCBmH6EAesmCa4A05CeBPGpa49fVl9WZD71pYbo2SrLmhW
- vTAdUgo6JCDL59L9gFR8nE_M.afYzQVPON674K.4bO7uZFIio_W5CfaczELbR88THRPWz99cGW4U
- sEyz55.WYA0bftz3IY_FxvtWHHDXO.RJqv9ARMyM9a9Sl42E7bjKLi_LRwWrSs6UHHilUbfwEKBj
- HfOV2z9MQQu6ej3PhvQ2hSjyOOprQa5_oiSqPaTwzxe2hq4C1y4jbJeTquH0YEkC1szRXa.L0MAz
- mHwFYYnlpFAOZqtIIuV.MyvM220iL9XGoDJABFL3_5N0Y9yfBdvXeg_N1FNyD.BNGiajxl10kd3v
- xpFfPAhWmauj92yFUy8ehalkdP7Z1b5N7Am5oLUcsPodpcEMOh2L_23xiI.j0EGM1M3ZpAA1m5Wa
- JYrhLKMgvwQQMHzZDkTqkEcHXoPALA4_UMMP_QzoqtQqTLvfu3aoWbNEsJqkGcwgJorKp0vNFX4p
- YL.F6Rch9UYI0xzw234lrGszvfW.yGAOuASIAAcMUNH8jCDymXK8KJJRp564ElBPJWZwzTdPJKyw
- bf520FZ4Tregskq7IWWrWhMK12HBQTGH5bXm_RSd0.KhonIZbHGsMmAqvYtfda08HBtHz6uWpkXg
- bBn3iTYSiTniZZ7ZvXHJFtBLSsRETZgDFddBQxK24nLYxVywmJFytFrRAAE9I7qNNtAU0RdA08iY
- NKe3vc5XVO1rVmHKn3A61hGTjZKARkIPIFBq92vDej4vfuhME_1CeKOhDtT4xJlTr1LzNeWsenVq
- iF6EQiVuSDqQ7IxKxgIxSc0aisK_UWjCGmfYPNm4VvWbU6LK7s0.rXLrWIQ--
-X-Sonic-MF: <bluescreen_avenger@verizon.net>
-X-Sonic-ID: ed8ef1c2-220b-4a15-8381-57a869d2b36c
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic310.consmr.mail.bf2.yahoo.com with HTTP; Mon, 9 Dec 2024 02:26:41 +0000
-Received: by hermes--production-bf1-66bb576cbb-d88v5 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 981bcd29f849ea07cc86fa337ec6ae6b;
-          Mon, 09 Dec 2024 02:16:29 +0000 (UTC)
-From: n3rdopolis <bluescreen_avenger@verizon.net>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>
-Subject: Re: [PATCH 1/2] ttynull: Add an option to allow ttynull to be used as a
- console device
-Date: Sun, 08 Dec 2024 21:16:28 -0500
-Message-ID: <2959951.SvYEEZNnvj@nerdopolis2>
-In-Reply-To: <2024120803-pending-handbag-4641@gregkh>
-References: <20241129041549.778959-1-bluescreen_avenger@verizon.net>
- <3271291.vfdyTQepKt@nerdopolis2> <2024120803-pending-handbag-4641@gregkh>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D33DFB66E;
+	Mon,  9 Dec 2024 02:19:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.229.44
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733710765; cv=fail; b=u+X5uHMR59PzOmF9/aXbrPDDzl333d1mYTsuiJkGG2mMK753oRzyjrMlOTv0fEyOzlUfyV7/EfEyPostRYQdQ3nD2gqdJPZAM2LXsjO6BSEyMOlmuAipIx2ol47bd2e4Ea1KivKGw6YKJslQNOR1NcoAZbpn82npRforRNx+SMY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733710765; c=relaxed/simple;
+	bh=2MfQ8sUEiM8lrWCrgJT69cIfF9E1J4+a79tYedi7yqY=;
+	h=Message-ID:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 Date:MIME-Version; b=PKfjxU23cKw+FRT3PXlp/VMBIA4msX/uPJzvxS6unD28kiMQE6bARp/GpwGATO3y1OFdJIMkzuC4ekghSDZ7b/96Os86dLkPS3gQu0fcYOxylKJEMH5DyWwsNe+fb+aMLv13p/RxKMQSXnf5gl+Vud6fXekXVJ/9Gp/7MvbyDTw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; dkim=pass (1024-bit key) header.d=renesas.com header.i=@renesas.com header.b=UoB/Bi0J; arc=fail smtp.client-ip=52.101.229.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UuRk3unk2A3HqgU7QUNlwavPqykwQPua25bHb5a9T4EMfW2YrB/dWGdlX2LiGRg061c4N98kfBo/PU707pGhUugB7lEi77pOR84F+gniDaH3P69ArvXKwY95v/Zj6Rid4YLDRIhAOQVYKggRp1hdLsCCxDHnh4+hBjtpXGwLAxA6dwfsA7zjx2qaTNK++Jw+/CtBNUtSvYSUtglfbKAB3dY5aWfAkgx5VXDPtmFIZVRk7HlRYZ1P/4oYLs9PR4sLJ4V9KTQJtI46dEgVUU0ydHcW33Q78uaENgzpUQ1kKZ5UGpXt7vFNOz2X2N+kQLkMkAdQhegCS4T9heEHwHpq8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Kr7ho4A+12jJgtbKfH6Zd3j3xhQUqGYKO4aranx4X9A=;
+ b=IwfARympibF6jXI8I1QmKQic1MmV6SWUxGGE2dtzJCKGfp5GRlXlLgboU1pOkxwEBwSjDVfS++FKw2stweeeDE8D7ADpCxhzWA2RH2BzD3E+UtLcDKIAyRWdkHLI5bzv1boPNymXIc37uPpJ8Kc29PRqhqjARmeosjPj01RNF0cDukVyxPrRw52jAb/vupCY5Mr8e8JoyTfCBKfHRzUW42IHffI/bHBuRXwROXXW1Dxj0/fvvF+k6xQPAp57lPhG4ZKys6KKh9/VElLHK61M+4IKg6zxGvyI4JAQMWUID5aA6NXMsQFABF1WxYTOSt/Cu/fMGOROhbaKYZYDFmx9og==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=renesas.com; dmarc=pass action=none header.from=renesas.com;
+ dkim=pass header.d=renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Kr7ho4A+12jJgtbKfH6Zd3j3xhQUqGYKO4aranx4X9A=;
+ b=UoB/Bi0J98HxhgY+AtoLqS4enS/1spbukv5qyphFY12C8p7u86y3KQ0fKMRtoRxFrfkLEL3om+5GWqugHz5FobleTPABcQ0G34LccpRktAjaiYAn+supewhAUqueYHFB3tqibwHYxwVNadKvz/iHZp11pS/H5vhuHQe0Iw7xCks=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=renesas.com;
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11) by TYCPR01MB7026.jpnprd01.prod.outlook.com
+ (2603:1096:400:bd::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Mon, 9 Dec
+ 2024 02:19:19 +0000
+Received: from TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11]) by TYCPR01MB10914.jpnprd01.prod.outlook.com
+ ([fe80::c568:1028:2fd1:6e11%4]) with mapi id 15.20.8230.010; Mon, 9 Dec 2024
+ 02:19:19 +0000
+Message-ID: <877c89oaxl.wl-kuninori.morimoto.gx@renesas.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+To: Stephen Gordon <gordoste@iinet.net.au>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] ASoC: audio-graph-card: Call of_node_put() on correct node
+In-Reply-To: <20241207122257.165096-1-gordoste@iinet.net.au>
+References: <20241207122257.165096-1-gordoste@iinet.net.au>
+User-Agent: Wanderlust/2.15.9 Emacs/29.3 Mule/6.0
+Content-Type: text/plain; charset=US-ASCII
+Date: Mon, 9 Dec 2024 02:19:19 +0000
+X-ClientProxiedBy: TY2PR04CA0016.apcprd04.prod.outlook.com
+ (2603:1096:404:f6::28) To TYCPR01MB10914.jpnprd01.prod.outlook.com
+ (2603:1096:400:3a9::11)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
-X-Mailer: WebService/1.1.23040 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.aol
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYCPR01MB10914:EE_|TYCPR01MB7026:EE_
+X-MS-Office365-Filtering-Correlation-Id: 39c4d126-e27c-4700-e21a-08dd17f7e323
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bzoP9REQ12Nl04TY39ZNzu+fwe6vqkv95MTiF9Q3+xfru7VDDuNwPrJmaPAZ?=
+ =?us-ascii?Q?o7/WDXxZZkzpD5DCIQN6+fBLMc3ty45uTtC0Opo9A5Kcb5NhB1IFsdhh1d4r?=
+ =?us-ascii?Q?cz5AKvSgEVAViEwFy95DAIqcI8mpXaWDasPmY5UL2ozGn/md11SBGGsCS2o0?=
+ =?us-ascii?Q?uuKlpLbUHeM54AC0Yw6YFsxVddTsPopZnE/EZhe263m5G2ig00QiZFwWmAz1?=
+ =?us-ascii?Q?N+swdM4WuFhT36WtRSD/ifd06mzm7dYrwP44VEeiTpTkYgiGhZAkUGaKQzP6?=
+ =?us-ascii?Q?byAetoi4Il8fWylwVqREzC6dnVbx+4HGBF0wRjWwjz/9UPCcUxref4Y7IG+e?=
+ =?us-ascii?Q?iftlyBPVk4CKKt+YsRDSGiySablx6UyqRHzxHsvQ6ucZ1DuPRNHw5FvCCPo2?=
+ =?us-ascii?Q?WunR4r8kdH0uWCnAobjkpI8imzUdRi3ZZfjwc0boR7+UaWJciI0sH/uXvMV/?=
+ =?us-ascii?Q?WSTL8uyKu11kJy4ADJkIw0BvccYk0cE5Gz8SLZzXYh6i7aUifMDOBVZjZ1VE?=
+ =?us-ascii?Q?m9PyPNyHTvgQRUvIf8QDuUGHGf8ARLSc3JhOzCgZ3DgVzXSPNeueBxDU5gz9?=
+ =?us-ascii?Q?uS5NZAxcJbE3qxitvhJfPtMnAkiplA9BlABOlyzYqjv2/ILxrnNOeqd7ZMpN?=
+ =?us-ascii?Q?HgW7riKyydU4ZHxq1NppnklykFf0fXd2eu21SW+TiJ/W3K1b/QnsWSf/aMRa?=
+ =?us-ascii?Q?cwUrFtiXvkTugME3z+2chmaEDIAc9f/3j1O4LkomzHkkz7l4vhqmqaQjXhQr?=
+ =?us-ascii?Q?VBzyMywRWDcPRCg/rVqvCPJKjyQnQf1vM6lOTN730/b9osFJ6pWUcWWmGWxR?=
+ =?us-ascii?Q?JWjz6966mYGXRsJCbm18CJTvj9H/jqJa88KeCTKRZrrAucB5lclcNf81RPcj?=
+ =?us-ascii?Q?5UqQJhacJR34PKg860P/4MQ137CAqIv83Q7oBuOzOL8Cqmk3vOZYNH053QwA?=
+ =?us-ascii?Q?bsw9PpewvlqeED6tYX2A9ia6X3LrsdrQB6v/nNVu8yArta14aX7qHxmAm/mT?=
+ =?us-ascii?Q?TWUL52akJB615AuGDTpXcHudm+C1qIhKozBit0nQSAY1xBCQfJQIc34DnKI9?=
+ =?us-ascii?Q?9qMgas85zK+mSEOjiS8Dh7zmcmv93Jz/JSFhQAllGR0rnyvXx+t8KCCGzalI?=
+ =?us-ascii?Q?5iW9EhbE2ycngPYDAH++YbW58nznyajJ6eG5OhiVXwk1bffTpKnme4j2fEck?=
+ =?us-ascii?Q?F5lvWK7bK8W3doFAbl3V+2BHimWhZHNIz+73/ttM2ms+kC25DJ9mwMT0nrVh?=
+ =?us-ascii?Q?e5e/9b91Emjob4MV5y7+YGvvF7evsR1MvYnzZD36B7Zq0QYQs9vQliIjQdwU?=
+ =?us-ascii?Q?t5TUsOBKHLcmEbYc0GS0hwhM/3vtSgFMogtQY4elPPd4u0GgWqDEJ6lL1+KC?=
+ =?us-ascii?Q?F0grphBcPIT9Nr8w6RnR2P7jSmT8i7kaDhGrj55eQ6XP+DgSFg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYCPR01MB10914.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hlLuAPTU53UwSm9OIylTzn4DAe8AEEBPD4aW8xzgew2alF7TxtdFuLl8uwGW?=
+ =?us-ascii?Q?STKy40FvkrbsupvP7OtmRaxxDqkCB2wOJp9zBKudlVz28tlQ4jkbd2sorT3S?=
+ =?us-ascii?Q?ecZ7LfpbbDOQHdX99I6fbkzsDKiWa72OgxJWGMPr4HVy9hulj33tJyoxmtDQ?=
+ =?us-ascii?Q?qy6s6od+SQxVsOXHNNkv+fhJsyul84T0A4BmfeaOtAJugWtO9lh3ORcyWdE4?=
+ =?us-ascii?Q?IEFkilY8veSHjHwcp5E5NjY2sex2biunPjJH760+K9E9mAs6wCOSdIi70jUx?=
+ =?us-ascii?Q?v9W9BUlQZuDnR0OcqPKtN1bVi4OsYfJCLS2SAzTDnVFbKBNQD+OkRYahLb0F?=
+ =?us-ascii?Q?UtK9mVhM4i6cVexfVtRmZNzR8jBxMpdayZ81rv3FK1Xbrcr4DoPR4fz1E/Ea?=
+ =?us-ascii?Q?FfOUWeyz2YMeDYeUWLStw4LKzCz12WAC5NYCmC3dDbtobdSDwmnqJs24r5yX?=
+ =?us-ascii?Q?tF67758tLgZeAHQnMW7DwL+Rjh8EBFb9vE1Qv1esOGEtjxn5Dkscq0BCuWU4?=
+ =?us-ascii?Q?11vfMvmtQOb+iNqBJYbi49XcypekM5OhGc3/O8utcV0pSrIanu8raR8bFEkQ?=
+ =?us-ascii?Q?Uc8isHdtA/2r6Jyx6QkWWkFn5zPqLCertYYS2wCuKM+KHO+P4B/O+o0TSfcU?=
+ =?us-ascii?Q?9JlIOxDUM+BZm/4DXcyyRJAO4memSamFAUibn3KDPsgTiR3Dppl2GXaBvzqW?=
+ =?us-ascii?Q?BFFFj1pXFYwQiRJ76rDRtUJJ813RIrmSWi6InEpMPYDZmM2TDz3lGY9br5MY?=
+ =?us-ascii?Q?br/K2s1aw+D6qdKvD6YUQRK9/W+sotUgkPW4Hk9I1DoPF7m+lVXLNNmt10Kt?=
+ =?us-ascii?Q?6yRD6Y72O5kX6c/ZcJQtfwobWrsuiNekkRVUSWB/vpfnVCqSqfSY6srLbiuB?=
+ =?us-ascii?Q?vjpvA45BJL4rLsXTgJMJVsozHqOpCkJwU55t1xS26QA8Azcqs4fZY1NGSQB/?=
+ =?us-ascii?Q?uhXVQaEtpDDK/uzv4LxheBg82q/P+96ynyVuGYdNKxwXJfpi4Pt4yhhcto+i?=
+ =?us-ascii?Q?g/YIQByqRa+y9UvWW3sbq0sGE/G4FtoJ7sjMmUbW+Nqgso/JoZcYKDJ3qNio?=
+ =?us-ascii?Q?+oFCgk7o0/hVh5jo5n4sY7ckb7mV6TrPWu//46iT0YLbxt01ZxyzUrDzgtYp?=
+ =?us-ascii?Q?aoH0mluPHpGIwYcz4EPyR+vFpOrxxvKBk1DXpl/Imb98Blwi1/w7irgc8Dip?=
+ =?us-ascii?Q?9C7fsfi0dgz8xdRm2YxyngQSjvF9uCm4BVuXAHFQKvVQDc3YuRI5m8OMxLL6?=
+ =?us-ascii?Q?cQ+YjjRi5bGimKeJttjD4PPkDK2oU4sjeF3OaIyqXz6uHdug5E+137enCMi7?=
+ =?us-ascii?Q?0wsreBEBsMlX/Mbqt8l7rVcMJmJjuFjY+oQwGN2P8C0GCA1LqfpU3EGnef7e?=
+ =?us-ascii?Q?LeoZvFABp27ehwF6YnKUwhewgxwQx44f9BuX5Jz0oJfq1LiHmotU26BwfVpc?=
+ =?us-ascii?Q?v884X3+7HQbd8XBwbnLeu+028j5rJzCSR7OEl47LI4lzr0Wg7EEVNtqW41V2?=
+ =?us-ascii?Q?SDBk+q7/6JItc6W1uLERbou6+bnwiNZBuBxAG9OhO0ex2bnV5bhsXgPHp91u?=
+ =?us-ascii?Q?Eigzf5naZRPXUJeo4urLjN6QB+WaOCd8MN0xkIVNjyYwAV5DGBnZX+qHigRY?=
+ =?us-ascii?Q?KzNZ543sU76h2sT4QfX7Y38=3D?=
+X-OriginatorOrg: renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39c4d126-e27c-4700-e21a-08dd17f7e323
+X-MS-Exchange-CrossTenant-AuthSource: TYCPR01MB10914.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 02:19:19.2886
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: OXbNEy6mAUdJHvHh/P8zkgl5hpwByftLoceqK1cWFs4E2heNQOqLI7QHe3oS/UFam1Iavhdrhldji8aPAbQQbjnft0d+2pu3FFnWQEw1eVZ8zzJLhVV8QqeaU2OgeIce
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB7026
 
-On Sunday, December 8, 2024 8:30:08 AM EST Greg Kroah-Hartman wrote:
-> On Sun, Dec 08, 2024 at 12:25:12AM -0500, nerdopolis wrote:
-> > On Saturday, December 7, 2024 1:50:50 AM EST Greg Kroah-Hartman wrote:
-> > > On Fri, Dec 06, 2024 at 12:36:21PM -0500, n3rdopolis wrote:
-> > > > On Wednesday, December 4, 2024 2:37:55 PM EST n3rdopolis wrote:
-> > > > > On Wednesday, December 4, 2024 1:06:50 PM EST Greg Kroah-Hartman wrote:
-> > > > > > On Wed, Dec 04, 2024 at 12:06:56PM -0500, n3rdopolis wrote:
-> > > > > > > On Wednesday, December 4, 2024 10:41:44 AM EST Greg Kroah-Hartman wrote:
-> > > > > > > > On Thu, Nov 28, 2024 at 11:15:48PM -0500, n3rdopolis wrote:
-> > > > > > > > > Add a config option CONFIG_NULL_TTY_CONSOLE that will have ttynull be
-> > > > > > > > > initialized by console_initcall() and selected as a possible console
-> > > > > > > > > device.
-> > > > > > > > > Signed-off-by: n3rdopolis <bluescreen_avenger@verizon.net>
-> > > > > > > > 
-> > > > > > > > Meta-comments, we need a blank line before the s-o-b line, AND we need a
-> > > > > > > > real name here, sorry.  I can't do anything with these (including
-> > > > > > > > reviewing them), until that happens.
-> > > > > > > > 
-> > > > > > > Oh, I thought that I didn't need a real name
-> > > > > > > 
-> > > > > > > I found a recent thread that seems like it suggests that I thought
-> > > > > > > https://lore.kernel.org/all/20241121165806.476008-40-alex.bennee@linaro.org/[1]
-> > > > > > > https://drewdevault.com/2023/10/31/On-real-names.html[2]
-> > > > > > > Or do I need to wait for that change to the guideline be merged?
-> > > > > > 
-> > > > > > That change has been merged a long time ago, but as far as I can tell,
-> > > > > > this signed-off-by you used here does not meet this category.
-> > > > > > 
-> > > > > Oh, what would it take to meet that category? I've been using this nick to
-> > > > > contribute to other projects, and it matches my GitHub name, and FreeDesktop
-> > > > > GitLab name
-> > > > > 
-> > > > What if I made the signed-off-by (and committer name) this email address? would
-> > > > that work?
-> > > 
-> > > Do you sign documents with your bank with an email address in the line
-> > > that says "name"?
-> > > 
-> > No, I guess not, the no pseudonym requirement was dropped, but if my nickname
-> > doesn't work If I really have to, can it just be my first name, instead of my
-> > full name if it comes down to it?
+
+Hi Stephen
+
+> V2: Adjust commit message
 > 
-> No.
-> 
+> Signed-off-by: Stephen Gordon <gordoste@iinet.net.au>
+> ---
 
-Can I do first name, last initial? Or does it have to be a full name?
+Thank you for pointing it.
+
+Acked-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+
+But I think git-log comment is strange (you want to indicate it under --- line)
 
 
+Thank you for your help !!
+
+Best regards
+---
+Kuninori Morimoto
 
