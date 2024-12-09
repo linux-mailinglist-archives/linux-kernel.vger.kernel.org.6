@@ -1,174 +1,255 @@
-Return-Path: <linux-kernel+bounces-438571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55EDA9EA2E1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:35:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F7A9EA2E8
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:37:09 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5104B1886B7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:37:09 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD20224899;
+	Mon,  9 Dec 2024 23:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lAeIIkpd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C054A282918
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:35:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B56226168;
-	Mon,  9 Dec 2024 23:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QBbWn/1N"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11DB621171C;
-	Mon,  9 Dec 2024 23:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8DF19B3EE;
+	Mon,  9 Dec 2024 23:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733787319; cv=none; b=ufJN87dTQrj+60F7jsBwTqZ5y2MKZ5461q1sd+mfvIDRLdiowoXaLWiHkHUwzVCkHqArdL7MNlQ3swPxcBJJCZGiNonnF0l3kTihDyT7miuagQFWC4o11McgZ4Bh08R9SKou+/x509RHjGbA0xapbMYHRCyutXuCsLJuBvU+a6E=
+	t=1733787421; cv=none; b=Txe9U18s/v3TidmHYhzJ3oaydvdmyVKKeIk6HuUg8EAmAusrTi1utoT4+LxCHF2G4+C46srb2Apf5Nne0ofHwy/BDxrZZ2nrVf6Ex/oC2VLwDVmoodeUlFGt3lW9DGFyHXEH9xoNfqkzsDGlFJBNTCBzS3YE0gKArrfrETINOKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733787319; c=relaxed/simple;
-	bh=09eOszdQp8aADM+FBr3jl7oQCtkzq2XVKku21nI+EJk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UcFpF4Ubb5lHqYwK8VLkFBDgcIbur3U/8b//oiZHuLwSLmk8CxwFQErMQz2mGvODMPyIQxE7dv0CByuoU1LMOMAi3t0RXRr/U88UF2X91MxeW7268roGorAZZdxu0cetoeRlaqa3QBzjttR4i3ftdrlD+WRkwPlDzHwSbxMtaAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QBbWn/1N; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so3370583f8f.1;
-        Mon, 09 Dec 2024 15:35:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733787315; x=1734392115; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9seuM7L9vuan498Cf2vQlSWlEELVDh6UuDY7NqRGeK4=;
-        b=QBbWn/1N7F2qebVMrlq/47uM9R2N6jUPbB8DjauuUd/W11Ovfe9rTlkrV2jpqVmeVY
-         EdD4xtw+ZunJZtLQ64b+Qt4SnPbAMD625bQGB3JtJda+XwFrAUjtKNI6KiSiVuBrok8n
-         Qx01QK6EfoOgb1a0TcBqsxsl3tk93YQJkgnsNCPpun5jQJBpq9xo+MsJwz8fbm71Q47+
-         /UnOeDYu794LedNw5FODoddfo7JC2tuAlUUcqjoH3DGmwvsBKvcjDQCWZx34Y+MaFhvU
-         ZpFhTbjvVH9aFN/QplxEwEDlA9vU8GbekLd3ajVQ5Wlh30lVk1O42d+49EH4YQENWJ8r
-         Fsow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733787315; x=1734392115;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9seuM7L9vuan498Cf2vQlSWlEELVDh6UuDY7NqRGeK4=;
-        b=ZaWh3YGAlQPQ5v/ZLWstJqVOruR/szsuOgmxH8ZhNHVpKDVkzdcW9vYpWeR17VLglP
-         cBwcQfCpOGvQwEWbbFCkmO1NsfJGYTQo2CsWDZ61qK7j2JmCY+d7vkVVx0k0kgFn8SUD
-         lrkb/xsXbK7Mq6gmAuNC068CpE/sJ9HlRk3mOOaVrJzP0dyPYVVWOZb3uJ2Dcs/XFQ1Q
-         Fj5UqWpVr6fDQ1/g7lYrkPYP4FL6zyrsjB6pasPXpWv8SrEbRMNKRZ2uckm4zf+gHtdS
-         KbzvSET9YjRY8EbvA+3XyGPyoiPPF3IbeVYkR8Nfguq55Pp2JFsSgSHRJS7qojBYaSJN
-         hePw==
-X-Forwarded-Encrypted: i=1; AJvYcCVIVELnrikxDuYgn5yVfbRb1Jd+Pu0f+T1wTFoGyqWHmsyK2orsSTnF73SdRiCFW3TZBaxU4PpP8EG7@vger.kernel.org, AJvYcCW1sdPlKHmg4v234UBYGXLBA3P45PmjZxgxL87pO2rESCIwqupOp2VExD2nt+PyhTHIudCdr70jhZU4idWL@vger.kernel.org, AJvYcCXT5OJxdzkdO4DhGahsNUjLAKX9rkp1PmsmwPD0EQ/8o6r+aJ+zXoS1uq1qsM0jxTyJencgoyKZdfCW@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx94y7TVKj1LWiQLzxkkVuxmTjb8xI5XcJoVxFzS+j2Cyk7aveu
-	2mh8KvNuo4sAFnxQDsxj5YLbBRFBlk+gznLT2wVgT9Ak/jSJB6G3
-X-Gm-Gg: ASbGncv0OzQQjQOaBwjDP9jOILEoPDFuxu/CuvxSxkBOvErE/v4WUYPl33PX/5yFmjn
-	SqEcqTc4wSTSxwk58YGllWtGop4qKosKjmK8dZgO0cUaN81iFqcJwLFBdcDLZgK8RxK9nbS4G0w
-	0Yrl2tskWzHEOo1hWmkw4Svq2ZmhnbYpdJCRvLmPy2h9Xi+jaCq8IYtf6JNZ16IM5IgiYqkUwm3
-	PO2WbrvYAoZE/C5W5xmAO3O304os32Gw2XHNF4+LVmuetM8ptAG6FLs2JTdOuo=
-X-Google-Smtp-Source: AGHT+IGs9Qpy11HwXA8BlsWLwAy944ebyg9XHnPObRtV0jDuR5b6pXiV2buYKBhksgzU+H/I7ik9Jg==
-X-Received: by 2002:a5d:47aa:0:b0:385:e9ca:4e18 with SMTP id ffacd0b85a97d-3862b345322mr10569851f8f.1.1733787315017;
-        Mon, 09 Dec 2024 15:35:15 -0800 (PST)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:1688:29d6:6b3:2e70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3861f4a8758sm14243877f8f.27.2024.12.09.15.35.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 15:35:13 -0800 (PST)
-Date: Tue, 10 Dec 2024 00:35:11 +0100
-From: Vasileios Amoiridis <vassilisamir@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, lars@metafoo.de,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	u.kleine-koenig@pengutronix.de, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 3/3] iio: chemical: bme680: add power management
-Message-ID: <Z1d-r5DE159oEAdZ@vamoirid-laptop>
-References: <20241202192341.33187-1-vassilisamir@gmail.com>
- <20241202192341.33187-4-vassilisamir@gmail.com>
- <Z04N6GUSL2H0zt6_@smile.fi.intel.com>
- <Z04aJg7eoBR9CYKe@vamoirid-laptop>
- <Z078vIxRoQf_zLsy@smile.fi.intel.com>
- <20241208173336.6a09c9b2@jic23-huawei>
+	s=arc-20240116; t=1733787421; c=relaxed/simple;
+	bh=vq8IYiFu14xQTthJ2nLtz8ZOeOJCA2q9zrxzcz3XchY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DLkzy0H8bOvtCa2Pngq65juCKAXz3D+T+qD8oJeIasrm7DIIORvnJH4hVOdd3JNUpg/OgeUhRQ8B2+4WHXiDiEVBtW04FKtpgcP77SOJ1Jv1JliwkcUL/Z7J9F5k0TL/jyOQS9N01oDCgV2zkhuC3dzlmAveJstlg3gdCD3XPHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lAeIIkpd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9E6kxx006930;
+	Mon, 9 Dec 2024 23:36:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	S4/jRw10YAjFx+3/nCGJzhXy6tTQOY51O8+dTPwLffU=; b=lAeIIkpdK+mh4bmU
+	HV90lf+vVbj6YjGNqPczW7aYlYw9YZLlbnAcLrxjZXF+atvSdR/lfchjfUQT5ThY
+	ghS+6TYrz37yOlTnR8XkBocFrRwJMEyX3cbLxoTE7LJbqVSjTWvHO14qyMZbnO6V
+	JSaUG6kr/mSTExxBzjqrn7U334skH2mgp37ie32PoOnLqYIZ5ffyaMDYpeaUytWU
+	iFTW6pFTiD9h5sPKp0Uiq6PHS8QsYXDcahHaj7SeBBbx8drxsYawgzK57rR+5mHB
+	JJqV8WV2w6s3Kk/61cDdQZCtBLtaUbmduRtci+pv5PCZ1CgEizETvLeqgzICUzW8
+	swZAvw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43e21bhes3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 23:36:32 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9NaVGC003760
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 23:36:31 GMT
+Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 15:36:30 -0800
+Message-ID: <a22262d5-f1e3-498b-a850-d377f29166f1@quicinc.com>
+Date: Mon, 9 Dec 2024 15:36:29 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208173336.6a09c9b2@jic23-huawei>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] drm/msm/dpu1: don't choke on disabling the writeback
+ connector
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn
+ Suijten <marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Simona Vetter <simona.vetter@ffwll.ch>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Leonard Lausen <leonard@lausen.nl>,
+        =?UTF-8?Q?Gy=C3=B6rgy_Kurucz?= <me@kuruczgy.com>,
+        Johan Hovold
+	<johan+linaro@kernel.org>
+References: <20241209-dpu-fix-wb-v4-1-7fe93059f9e0@linaro.org>
+ <9c42bbb1-bf6c-4323-95f9-0ac9e7426d0c@quicinc.com>
+ <CAA8EJppMA-AREJata0MWHCDYC-7ra723zhC4Nu_xD59O0mX_Ag@mail.gmail.com>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <CAA8EJppMA-AREJata0MWHCDYC-7ra723zhC4Nu_xD59O0mX_Ag@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UIQDnhkmJuC0ts5-timquwcr0iBX5h58
+X-Proofpoint-ORIG-GUID: UIQDnhkmJuC0ts5-timquwcr0iBX5h58
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
+ spamscore=0 impostorscore=0 adultscore=0 bulkscore=0 phishscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090184
 
-On Sun, Dec 08, 2024 at 05:33:36PM +0000, Jonathan Cameron wrote:
-> On Tue, 3 Dec 2024 14:42:36 +0200
-> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > On Mon, Dec 02, 2024 at 09:35:50PM +0100, Vasileios Amoiridis wrote:
-> > > On Mon, Dec 02, 2024 at 09:43:36PM +0200, Andy Shevchenko wrote:  
-> > > > On Mon, Dec 02, 2024 at 08:23:41PM +0100, Vasileios Amoiridis wrote:  
-> > > > > Add runtime power management to the device.  
-> > 
-> > ...
-> > 
-> > > > > +	ret = pm_runtime_resume_and_get(dev);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	ret = __bme680_read_raw(indio_dev, chan, val, val2, mask);
-> > > > > +	pm_runtime_mark_last_busy(dev);
-> > > > > +	pm_runtime_put_autosuspend(dev);  
-> > > > 
-> > > > Side note: as long as idle method is not defined (NULL) the above dance is
-> > > > already taken into account in the regular put.  
-> > 
-> > > Thanks again for the review! Indeed by looking at the code a bit, it
-> > > looks like the suspend callback is being called if the idle one is not
-> > > found. But I have seen this dance that you mention much more often in
-> > > the IIO that's why I used it. We can see what Jonathan has to say as
-> > > well, I think what you propose, simplifies things.  
-> > 
-> > Yeah, this is cargo cult by many people (including me :-) who missed that
-> > detail. If any, this can be addressed in a different series.
-> > 
-> > ...
-> > 
-> > > > > +static int bme680_buffer_preenable(struct iio_dev *indio_dev)
-> > > > > +{
-> > > > > +	struct bme680_data *data = iio_priv(indio_dev);
-> > > > > +	struct device *dev = regmap_get_device(data->regmap);
-> > > > > +	int ret;  
-> > > >   
-> > > > > +	ret = pm_runtime_resume_and_get(dev);
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > > +
-> > > > > +	return 0;  
-> > > > 
-> > > > Either this is broken (if the above can return positive codes), or can be
-> > > > replaced with direct return:
-> > > > 
-> > > > 	return pm_...
-> > > > 
-> > > > (but I believe it's the former and you wanted something like if (ret < 0)
-> > > >  there).
-> > > >   
-> > > > > +}  
-> > > 
-> > > Well, pm_runtime_resume_and_get() looks like it returns 0 on success and
-> > > negative value on error so I think the if (ret) is correct, no? But I
-> > > agree with you that it can be simplified as you proposed.  
-> > 
-> > Please, go ahead with the simplification!
-> > 
-> I tweaked it and applied the series to the togreg branch of iio.git and
-> pushed out as testing for all the normal reasons.
-> 
-> There was some mess because of the EXPORT_SYMBOL() macro changes this raced
-> against.  Please sanity check I didn't mess it up.
-> 
-> Jonathan
-> 
->
 
-Hi Jonathan,
 
-Thank you for this! It looks good in the tree. 
+On 12/9/2024 1:55 PM, Dmitry Baryshkov wrote:
+> On Mon, 9 Dec 2024 at 21:54, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 12/9/2024 2:04 AM, Dmitry Baryshkov wrote:
+>>> During suspend/resume process all connectors are explicitly disabled and
+>>> then reenabled. However resume fails because of the connector_status check:
+>>>
+>>> [dpu error]connector not connected 3
+>>> [drm:drm_mode_config_helper_resume [drm_kms_helper]] *ERROR* Failed to resume (-22)
+>>>
+>>> It doesn't make sense to check for the Writeback connected status (and
+>>> other drivers don't perform such check), so drop the check.
+>>>
+>>> It wasn't a problem before the commit 71174f362d67 ("drm/msm/dpu: move
+>>> writeback's atomic_check to dpu_writeback.c"), since encoder's
+>>> atomic_check() is called under a different conditions that the
+>>> connector's atomic_check() (e.g. it is not called if there is no
+>>> connected CRTC or if the corresponding connector is not a part of the
+>>> new state).
+>>>
+>>> Fixes: 71174f362d67 ("drm/msm/dpu: move writeback's atomic_check to dpu_writeback.c")
+>>> Cc: stable@vger.kernel.org
+>>> Reported-by: Leonard Lausen <leonard@lausen.nl>
+>>> Closes: https://gitlab.freedesktop.org/drm/msm/-/issues/57
+>>> Tested-by: Leonard Lausen <leonard@lausen.nl> # on sc7180 lazor
+>>> Reported-by: György Kurucz <me@kuruczgy.com>
+>>> Link: https://lore.kernel.org/all/b70a4d1d-f98f-4169-942c-cb9006a42b40@kuruczgy.com/
+>>> Reported-by: Johan Hovold <johan+linaro@kernel.org>
+>>> Link: https://lore.kernel.org/all/ZzyYI8KkWK36FfXf@hovoldconsulting.com/
+>>> Tested-by: György Kurucz <me@kuruczgy.com>
+>>> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+>>> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+>>> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>> ---
+>>> Leonard Lausen reported an issue with suspend/resume of the sc7180
+>>> devices. Fix the WB atomic check, which caused the issue.
+>>> ---
+>>> Changes in v4:
+>>> - Epanded commit message (Johan)
+>>> - Link to v3: https://lore.kernel.org/r/20241208-dpu-fix-wb-v3-1-a1de69ce4a1b@linaro.org
+>>>
+>>> Changes in v3:
+>>> - Rebased on top of msm-fixes
+>>> - Link to v2: https://lore.kernel.org/r/20240802-dpu-fix-wb-v2-0-7eac9eb8e895@linaro.org
+>>>
+>>> Changes in v2:
+>>> - Reworked the writeback to just drop the connector->status check.
+>>> - Expanded commit message for the debugging patch.
+>>> - Link to v1: https://lore.kernel.org/r/20240709-dpu-fix-wb-v1-0-448348bfd4cb@linaro.org
+>>> ---
+>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c | 3 ---
+>>>    1 file changed, 3 deletions(-)
+>>>
+>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
+>>> index 16f144cbc0c986ee266412223d9e605b01f9fb8c..8ff496082902b1ee713e806140f39b4730ed256a 100644
+>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
+>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_writeback.c
+>>> @@ -42,9 +42,6 @@ static int dpu_wb_conn_atomic_check(struct drm_connector *connector,
+>>>        if (!conn_state || !conn_state->connector) {
+>>>                DPU_ERROR("invalid connector state\n");
+>>>                return -EINVAL;
+>>> -     } else if (conn_state->connector->status != connector_status_connected) {
+>>> -             DPU_ERROR("connector not connected %d\n", conn_state->connector->status);
+>>> -             return -EINVAL;
+>>>        }
+>>
+>> Can you please explain me about why the status was not already connected?
+>>
+>> In all the places I checked (unless I missed something), if the detect()
+>> callback is not registered, the connector is assumed connected like below:
+>>
+>> 404     if (funcs->detect_ctx)
+>> 405             ret = funcs->detect_ctx(connector, ctx, force);
+>> 406     else if (connector->funcs->detect)
+>> 407             ret = connector->funcs->detect(connector, force);
+>> 408     else
+>> 409             ret = connector_status_connected;
+>>
+>> We do not register .detect for WB as WB connector should be always
+>> connected.
+>>
+>> What scenario or use-case is making the connector status to something
+>> other than connected?
+>>
+>> The places which mark the connector as unknown seem to be covered by
+>> warnings in drm_probe_helper.c but the bug report doesnt seem to be
+>> hitting those.
+> 
+> Because nobody asks for the getconnector on that connector. For
+> example,drm_client_for_each_connector_iter() explicitly skips
+> WRITEBACK connectors. So, drm_client_modeset_probe() also doesn't
+> request ->fill_modes() on that connector.
+> 
+> I'm almost sure that if somebody runs a `modetest -ac` on the
+> unpatched kernel after boot, there will be no suspend-related issues.
+> In fact, I've just checked on RB5.
+> /sys/class/drm/card0-Writeback-1/status reports 'unknown' before and
+> 'connected' afterwards. You can easily replicate that on your
+> hardware.
+> 
 
-Cheers,
-Vasilis
+Yes this is correct, I just checked on sc7180.
+
+It stays at unknown till we run IGT. This matches your explanation 
+perfectly.
+
+>>
+>> I am wondering if there is some case in fwk resetting this to unknown
+>> silently (which is incorrect) and perhaps other drivers dont hit this as
+>> there is a .detect registered which always returns connected and MSM
+>> should follow that.
+>>
+>> 111 static enum drm_connector_status
+>> 112 komeda_wb_connector_detect(struct drm_connector *connector, bool force)
+>> 113 {
+>> 114     return connector_status_connected;
+>> 115 }
+>> 116
+> 
+> No, that won't help. You can add a detect() callback and verify that
+> simply isn't getting called. It's not resetting the connector->status,
+> it's nobody setting it for the first time.
+> 
+
+What we found is that drm_atomic_helper_suspend() which calls 
+drm_atomic_helper_duplicate_state(), uses drm_for_each_connector_iter() 
+which does not rely on the last atomic state but actually uses the 
+config->connector_list which in-turn disables all connectors including WB.
+
+Is this expected that even though WB was not really there in the last 
+atomic_state before the suspend, still ended up suspending / resuming 
+and thus exposing this bug?
+
+I am  now more convinced of this change as I understand the flow better. 
+But wanted to highlight above observation.
+
+>>>
+>>>        crtc = conn_state->crtc;
+>>>
+>>> ---
+>>> base-commit: 86313a9cd152330c634b25d826a281c6a002eb77
+>>> change-id: 20240709-dpu-fix-wb-6cd57e3eb182
+>>>
+>>> Best regards,
+> 
+> 
+> 
 
