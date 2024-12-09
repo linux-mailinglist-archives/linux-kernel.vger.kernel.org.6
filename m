@@ -1,171 +1,365 @@
-Return-Path: <linux-kernel+bounces-437478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77ABC9E93CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:24:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 304329E93D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E36B1887020
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:24:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9A6A1887062
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A482248A0;
-	Mon,  9 Dec 2024 12:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AEE721D008;
+	Mon,  9 Dec 2024 12:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwjWWKg/"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="iNlhRJvK"
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2128.outbound.protection.outlook.com [40.107.95.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B82224894
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747059; cv=none; b=fAAZBxfDgFEPKdaAUi9F+wwjFRLMxCvizU0OezK69bCSD83/W/bZLPt0SzDunDSCXz78PL6Fav+dt5gxRkh6nCyB6zSFLMGN5n882JYRp3kzPq6aiR76FQywQpdoOQWAtpq7NpmkrBvibBSA05gPeZ8jeXThHsP4CvCPGt8GUqM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747059; c=relaxed/simple;
-	bh=dXTvMwZ3IWa8w/PCirVYpiMdDockPwSZQVUAZm7Ua1o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gnxec4hgdcfX4hroVH+Tk3nWonJQtqOfFRKf2FW/pbEoWtDpmlzwZFQD5Z03ELAddr8pv0MIGrc4IR0ZeZUHz4Ms+rBto9P6XT2GnLarbVcJIdIfSn7hrV4jb7ekpWYoVUQ18R53uvCQCPLt7wj1vSR7n5VcOsGx4RfkeDEwAw0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZwjWWKg/; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa680fafb3eso11770266b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:24:17 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430DA158534
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.128
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733747149; cv=fail; b=WyTvqR+aPCu/vX6d5+B+ynSOAx4qi/iZ7FcxJQdLYsFidqftRNtwZjN1t6KVvOtI4WArkqth5S9wi+a8kr/+jBSaA97eGLUtg9OO/dnfAUZAt6I1Ff4QiPocf1YIQEVyXYAmo3GRnFkyO7sUPnooQSn7cWzYB4VD7ykUjmNZIVw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733747149; c=relaxed/simple;
+	bh=8o312ZOK8KIVs0jLHUImFeGVMJHDAB2/NEwBXf+S634=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=IQK6e3Xfz2B23sIL9n7a2Cc1WuF8Jl5O59NpPlk2M2rSe+hYwjNIn9fHsjmtOBGfNmhDKNnJ0F02uEMF1kNnxSgQMZ7hfveoWQH6djTiXYk4vUAVrp2/nH87G5jCk5ZGdn+UkR6gbQHYoBjZjGL66bSFNzygadw6r5pK/G3xQYA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=iNlhRJvK; arc=fail smtp.client-ip=40.107.95.128
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=cuzVZTVfzUQsb3TvjA38jDx9mjwu2CFuz7jQOIl53711SXTI/2uoHXt8p5d0oiZ3ZajE+44LiLqMUk4nW0XikrX+U/gyyctfY7tGbejOZdkUsc8qh0g/dnCV2mOYUdfbzOVmAICcYVLfiQ4RZJGpxrhPczL/LzU/mvr3GSrj7T/hXwtqd5bHNRqc4CZGvc4YJqF0UeNzq3s3PIdTELu2b1T/2RP+komFyzAcgtCpcDbKW4WWMizg1hKmEDE/CBBp6/npmDXEdM6esNetk+981v3RUrk6O+AQ9EfUXZ9q+/ed8fyJDpF2xbyhmTLH+cnGLgRId8db/8blcrz0XxBZaA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CAvOX41cUqcgAZKkpNmOArAIjiNnKnrkVnAZzwcYUpY=;
+ b=OKchjuXMIkrw5gIA2fa7LeNrq0fBCet8WMOaxWAa8z2WZJreUn7VWI1zpmSjHwaEWNfCizXk4JhamEkmQrsLyKUcNHDiXxb17B2R8NH/ETGYmXoqshbFcWoQHON9GuR5BtQSSgPeyhOnJz+TMo5xnTyskexuTo8zdyNomC921SiitGhzcQq0xPpmSW/++hZDicpGYwfaZbYejGZNmSPgdJK94EeushWWNqlyq+Tv+TFasMdPcz9FggCXwCfgu9IId0fAJOlbGOcbu34hi4gA+0nVU4queNzhcCs4bIpZWn9dJNX552LwR23di9U9WW1suKd0+NpDzIMVqICtiJREaw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733747056; x=1734351856; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JoCVrD28ayqu5D/DI17RscermoixTp22627F0aNO5EA=;
-        b=ZwjWWKg/iwSlnFS+GTCOaFYbL/Y4ag4IGujXPUwQJ7U5gJfs9Z6M8NxNePkPFWv3y4
-         lMUNLBgNHer3UmMQVJEcXybf/nDsJX81h+juUNafmMuMUtbA6Os0ukHNci4yAnj01pKN
-         tcUr66SbmlX+a+5Ilk4I12bdQKKdIqhMVmubbrVAXwH4cOkBd9ODOwrUuypzD9V0FhWP
-         mLdLzkNrwGwWcJHC8RwRn+sLaFzqqBGYDSQ8rF1O1weHkM/GxDbr6a6oaEla6WbEB+Ta
-         itX9PTo4/Rk2U9dTfYxnc28QEXup+J7jEGlRFvQohb/5aPQc+TjHX+EetdY4fSnk8zrh
-         pshQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733747056; x=1734351856;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JoCVrD28ayqu5D/DI17RscermoixTp22627F0aNO5EA=;
-        b=tvUyV6vi8IMIBDQN6w1yzJgUN4q6maFSgRC6gKxTM9EbeMUmfJNHWFRadNZRQplT6V
-         Ii+XrGgNbKG/1dRP70s9ln2AKjFlpSPUQt81I7lm+lQZQHrwWSuV548bxEXg8f/7BOR4
-         zBtRtyQcbTjF1qkK0sfZJdv7cDQPcbCb/4v2ZD76q98InzsQchKrfsowLkMrvWTGzgMk
-         3iHdqp6luAAMTXyVW+5R1LkA+EDWX/m7Und0L4JVvqaxukdBos1J0Bswn1wxfCbMnFOL
-         /Mh+ySzcGn8wMKaSpLzLeVdJYjZw8tGzWkAL/ONUj4J+5KmEEwWu9BRSVSV3gr1lnqhO
-         fR4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWqBDG2inlAzC3QAagBt+a3xg6em20V51lmP780thR5GK+f6A8OvtvEkWBvTLnSOe8bV8hJBJShI8OjXe4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQO65XhSagqykmq1KOK17eKBG/qPJCVEJ/pTlMXjSuJGAUhUL7
-	bnDDNpzDtcyy83VnWA6PghgAP8wU3HNSbUzMvLyFuWd0cekxM5Q7nnKXEWjL9u8=
-X-Gm-Gg: ASbGnctMBi3bsL/ath597AquSooK6d8L1zSbWz1eSlHni9R4sKtnwS1+6BEl++I7B63
-	1v0mBQTMGjdjAfNLATLvsV/c75A/khV7rdml2wo8PyZYBtHRZt1cctf8KAU3NO8btI6HnhH9to7
-	teC4A2ODvZDgA+TjM1HncHLMMcUShXk8sef7YX47i4m9Ngg4t7PdVh/aQnOt7L6JLC8w+I0EW7R
-	dGRSchh1YIayNTRL8FCCJHleODJxmYi6xVa2HRnGrRqkt3J3rIywNZ/hYNwbRyHUA==
-X-Google-Smtp-Source: AGHT+IEL0p06Hwmo+9E/f1lCO4dyZG2n/TdjzYJd+woyN99M4MYMI2vd+kMHzKES2YH6I7KFGRLVew==
-X-Received: by 2002:a17:907:c008:b0:aa6:79e6:5b03 with SMTP id a640c23a62f3a-aa679e65d87mr176768466b.6.1733747056131;
-        Mon, 09 Dec 2024 04:24:16 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm309925866b.159.2024.12.09.04.24.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 04:24:15 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 09 Dec 2024 13:24:06 +0100
-Subject: [PATCH RESEND 3/3] clk: qcom: spmi-pmic-div: simplify locking with
- guard()
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CAvOX41cUqcgAZKkpNmOArAIjiNnKnrkVnAZzwcYUpY=;
+ b=iNlhRJvKtAf3W0O/Ij4F6PptUPE/m1BwuzsUY9gzGOgWHAa7VegVJjxSlbs1olRrAy95QllWokHgoiE/bTLlJYlW5UapZNfifDqDpr7fxgj48sVDTIwa7xHcxQzL0XwbfKzpDBXmbQpPkRsyEWLofZYfvT+C9sb5DykGtZS34II=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from SJ2PR01MB8101.prod.exchangelabs.com (2603:10b6:a03:4f6::10) by
+ BL3PR01MB7193.prod.exchangelabs.com (2603:10b6:208:344::20) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8251.12; Mon, 9 Dec 2024 12:25:43 +0000
+Received: from SJ2PR01MB8101.prod.exchangelabs.com
+ ([fe80::292:6d9c:eb9a:95c9]) by SJ2PR01MB8101.prod.exchangelabs.com
+ ([fe80::292:6d9c:eb9a:95c9%5]) with mapi id 15.20.8251.008; Mon, 9 Dec 2024
+ 12:25:43 +0000
+Message-ID: <c5b1c3d7-56ca-4afc-a831-045dba4beffa@os.amperecomputing.com>
+Date: Mon, 9 Dec 2024 17:55:34 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer
+ expired
+To: Marc Zyngier <maz@kernel.org>
+Cc: kvmarm <kvmarm@lists.linux.dev>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, oliver.upton@linux.dev,
+ christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org,
+ catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com,
+ yuzenghui@huawei.com, darren@os.amperecomputing.com,
+ vishnu@os.amperecomputing.com
+References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
+ <867c89tc4q.wl-maz@kernel.org>
+Content-Language: en-US
+From: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+In-Reply-To: <867c89tc4q.wl-maz@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: MA1PR01CA0156.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:a00:71::26) To SJ2PR01MB8101.prod.exchangelabs.com
+ (2603:10b6:a03:4f6::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-cleanup-h-guard-clk-qcom-v1-3-b1077540230c@linaro.org>
-References: <20241209-cleanup-h-guard-clk-qcom-v1-0-b1077540230c@linaro.org>
-In-Reply-To: <20241209-cleanup-h-guard-clk-qcom-v1-0-b1077540230c@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1606;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=dXTvMwZ3IWa8w/PCirVYpiMdDockPwSZQVUAZm7Ua1o=;
- b=kA0DAAoBwTdm5oaLg9cByyZiAGdW4WqjVaZZPkcN8v9OPTJHUcgo366JtrL28bgL8+92JHHiT
- okCMwQAAQoAHRYhBN3SYig9ERsjO264qME3ZuaGi4PXBQJnVuFqAAoJEME3ZuaGi4PX+/cQAJk+
- Nt95XiYbAfyAfpF+qC/Os14df5UkJTTbXxd/sOxHbKrDVc8xSx1fyqDWRaTcOD5Pe0wiD4glAzh
- FlXAenPqrW8yS3Vsne+gjpl3Yy9MknYypm+Wieyxvw3Uc0WUYJ9J3uf24bzJk/a0RGQIG/lq/Qw
- oOH6GoFnzTfQCDQeILelFLUkuYrnxQi+k1rs5rdVVL+8JYOBNoOVnjcA3DGFXvHmfWlV+f5xJcF
- JtcXMOUMZVrhra+7Tp7oLXbgaANGpci3rsCG+1cYV0OHsa0nqSivyPVfaIvX2PeBYJuiRUxbnBM
- /07FS0Cgmh4IYDM/zGJUQpXv66VARq3957sN/+kxJa3aOGa7KUjn8GQTZiu/pr5vr3QHA81ou76
- CbqlYK4hEWS59pz/LAp5afj6TZIHqK+4v/oHQfttCrpGI+nojazSGCIlC0oA5Pkvz6rDlllc19n
- YEo90GQZW5Z06eYCyzJ2UocPPDpWsGI3vU9aNgpXoT4RYLSvrWUXLcLR3WyF72Vsa8mCH/oEVab
- oDk2Vl6hs7wb/GtKKh2ljMeeXrL1k+JuSnERSXmF7hPTqNNvlJF7bO7xJVX6MJZOtxhuz5ELHyT
- j8Je7O7bNIj7bs58E1Gfvfdo69Pk9YphLl8kHumVDITdXye1khfPUhziiSbxHT8okOoRoCITbw0
- ymeVV
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR01MB8101:EE_|BL3PR01MB7193:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5514d98b-0d73-4c87-3187-08dd184c99c4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q1RQcGg4ZUhrWTdicDFPT2htYWQ3djRJaWs4VG0vbFR5RXphMjZkUXZPZ0JF?=
+ =?utf-8?B?VTdPVDkzcVpkSlloUXc5WkNud3pBRlZOZENtMWgvN3dPZHFFcVVTN2VQWU1V?=
+ =?utf-8?B?eHdGSVQrZ0lobUhvOUxKR2VtRkE1VmhMVjFxd2pkL2NvS21YSklUR041QlM1?=
+ =?utf-8?B?cENpSnoxRzVvSGE4Y1RBS0JZbzNrZ3Njai9vb2paeExnZFZkSDVWWGFYKzVX?=
+ =?utf-8?B?Q2tsSSt3UGNWRENjcTgzelFhN2hIZzZJM1F1RFIwRWxnNjJwZGIrdVpuWUpJ?=
+ =?utf-8?B?NVZwUUZsRkpnVkU5Q0NSNlZVUDBGY3Z5S2ZBZnphNVZGOUVnRnNZbG8yN0Vu?=
+ =?utf-8?B?MmhDMU1veE92bzV1UjNacjhqRWtWWVZadkRidHFjUUg0RnZKM2IzK0pQcHc0?=
+ =?utf-8?B?YUttcFRBWE0xdjk4aW9KK21wRGRRdmJ0TGNPdGFvMFhEOWlqVWM0WE4ySnc0?=
+ =?utf-8?B?N2RUNUVQc3ZadjJtckM0SlovTS9PYUlpRnNOUDdDajVzRlVUeXdHbFhMWE1S?=
+ =?utf-8?B?SmlzRGU4Sk1teFhXUWNBQlorOUZVclBMbUpVeXZMVDF5cTJyNmRIUWpQdjRu?=
+ =?utf-8?B?aDRZLzVQNzhhazZlUEt2cHhObW1QZ2Vpd21abHlFdkxHZzBhcGdxcWFxdmo4?=
+ =?utf-8?B?WG5ZKzdJWlhyQTlGeEwxRm5URC9lMUJKL3FZeHFTNEluZFVYYXQ3WEdmdnA1?=
+ =?utf-8?B?VGM5S0dGNXBmSVNCVENUTkZodXZaTEhKdmtlQ1RXSGJ6dDlGcU1Vc0ZaT3BO?=
+ =?utf-8?B?a1h6L3dVQjk4TDEzUW4vVWtKU0tlWG1zb3ZtMFoxeXQ2RmF4bW9obFJkVkpK?=
+ =?utf-8?B?TlZyVHJpcDEyTzUrc0JlTnVyaC9SU1VSb0c1Mm1KY0NwdmZ1LzQ4V1F3MXUv?=
+ =?utf-8?B?REk0cmdNMDIyc2NEUGlicTMzcFpreFcxVUdtQ3FkSXczMW5ucjNiT0xaWFNF?=
+ =?utf-8?B?V1M3cU90eDlUT2IzVGwzOW1nZTBxbDdTeG9qOVRMd3FEUU5KR2hFbXhPU1Nn?=
+ =?utf-8?B?My81dVRLa3lCZlZCaXRSOG10SEllSUR6czRtL1F2WThDY29uVGF2UlVRcUEx?=
+ =?utf-8?B?VllUOUx1NGxiWkVua3F6QlIrc0hodm5VUGcyeFhRektReVNOU0x2T3VaVkEr?=
+ =?utf-8?B?b3pjSUtxVU1nOXhHYlZ0MCt2RUZucTVvYzNmWHE0YWorTmQyVWhOTVNCdzBM?=
+ =?utf-8?B?Qkk5WHZ5V3BKd2pTRU5JbFEyeGFIU3FCSlVpSjMyT3lBSzNPbXdjWTVkd2Jo?=
+ =?utf-8?B?M0Q4T09FM2Z4NjZFQ2gyRStsRjRKWFZ2ZzE3UHFRbHdGbS95QlFjVmlLbkI2?=
+ =?utf-8?B?U05KY3drOG45eTN0R29hS1h6LzNLSDJVZmtBNjRZQnJqU2hsL0FPT0hJcXVZ?=
+ =?utf-8?B?b1pSRVZxNE5SVUFjVk1zdHhHNmo5YnBxMFROSU1ESlJzUDZ1bXlZdFNhZFJV?=
+ =?utf-8?B?TGRYN2loVDFwYVhLdGNLekdsanhudlRxRUN1ejZ2WTBldkpxb2syU3hxMVhu?=
+ =?utf-8?B?NFhOcTZScXpQeFZOZEwvb3JTeGdHMGFyK3V6Y3A4L2FIeDVlQXJFZjNVUlBM?=
+ =?utf-8?B?TE1QdUFOQU1jYk85NVloT1gzVGZ3c2I3Wi9ZRXgzdnltdFpIRG1Nem5mVklt?=
+ =?utf-8?B?K28xeGZNQlNLZkVxNjI0UXJUS29TNUgrZDRMYm41TFdWTnEyTVY1NjMxYnVY?=
+ =?utf-8?B?TGtxNXluNCtadGJEa1NBUVZ1akYva04xejBjSmpsV1lMSVpaSyswZlpuM2dx?=
+ =?utf-8?B?S3o4bnZrRVJDWnVwenFhTHg5aEhiVXFaME5MK3JLWFFtb3J4NWlCREJJNGtD?=
+ =?utf-8?B?ejJDQTVrNWdiSzhzZUpyZz09?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR01MB8101.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eXlodUk2SzBHU0lSL0g3ZzdvMStmYmNWSVc1L2xhd05MNmx5NGhqNDgwQ242?=
+ =?utf-8?B?ZGczVGR6eGdNUVhFb1o5bXpYdVNuRzZ5M3prY1dBekZvMDBLRjN0UE9mbExI?=
+ =?utf-8?B?a1JpYzRmOG5ST0d5Q2xNTHhQTSt4VVFuL1YwbkVLdjNLQVVHYWVyanpteDJ6?=
+ =?utf-8?B?bGVlMW8rbUhQZmVtcGRVUi9lY2Z1ZjJRWTcyZWFiUnBJbk1hYjJ1MDJKdm5m?=
+ =?utf-8?B?bE9oc01TQk9FVXNRRzg2dnFGcXJhdjN3VW1BUExyeWR1V25JTk9nQ0l1MWFo?=
+ =?utf-8?B?Zi9kczhvV1FpbU02T2R3cU9yODlScE1LMmpYQlVZSk81bzJWZ3lSbllVckp4?=
+ =?utf-8?B?YW9nZStvUWFsUmtUOXdScUU0ZGxiWU84amRJYUZTL3Z1RTYvbjdCMG1nejc0?=
+ =?utf-8?B?eStGcE83UGdTLzYyWlBwRFkrNmF0RjdLUlBwU1lzM2I5aTNON0VESjhRYnl2?=
+ =?utf-8?B?ODRRanJpOFdRK0VVR0lhQS9LTjBaaDdneTN1Ly8wMEhBNkRGRHlSbFE3b2VE?=
+ =?utf-8?B?bU80Ulk4bldQcHVEcW1XZC9tOUZ0WkhydlN5MGg1cnZZSEVWM2MzRTRUbWx6?=
+ =?utf-8?B?a3V6RFZRS1NvUWQwcU1RN2o0M1ZyT2w4RzhsTWtiSGdiSi9JTmN5KzhCVnhL?=
+ =?utf-8?B?RnBXZlp5VWJGcnAraDZZd3NvYy95Unh0MU9RS3A0M2p2TU1UV3JDa2F0R1Zh?=
+ =?utf-8?B?YnludEpSeDA2ZDVvdE5rcGkwdm8wbFN2UFNXQjJNaHZJYThqYkVoTVcvdHNu?=
+ =?utf-8?B?THg4NGFCWFE2aXpjR1Zlb3EyUi9CUnNSUnNXRlhrd3oxZHdZQWNycnZwL1FN?=
+ =?utf-8?B?cEpPMlZ5VkJtblA3NTFmem5vQjh1UEhETnpuSCs5WUtENXlYNlZYYitNdUlv?=
+ =?utf-8?B?UThkdFJVNjlZWlYwUm1pd2E2eUt0WkQvWFcvbGFFL2xGSU5WRVZNd2VkQ1Fu?=
+ =?utf-8?B?TXhHaGwyelNSaHJFMUs4c1Vtd2FMeDEyWCthR2tJWmd1K1RmRUR2QmZEZXFj?=
+ =?utf-8?B?ak83WGRrRnpEVTdmMnRoODAwY0hOY0VyTWh1TjdoelQwbjBpb3BYMkpRbDRX?=
+ =?utf-8?B?WmFrZnJZemNrY1NRTE5GUGlZY0ZaZHNjdmFIaFU2WEh6T1hkT1NQY1VYQ05p?=
+ =?utf-8?B?eWlHU1JJVi9uK0lyWEU2K3VxeUt3QmJsRHJQbisrbW9Dejdia0ZRdXpCd2Q4?=
+ =?utf-8?B?Ym1Jakx4emJvVEx2WjlJL1RsTTN5eUdzeGhBdUh3SjAramp6aHV3VVJXeWNH?=
+ =?utf-8?B?RlFTdzVSZzdlYW56d1BZSStWU0YwOUxpUEprNExDOURINXEwZ0VHN3ozTE5Z?=
+ =?utf-8?B?Y2lETFc1bFBFc0djUWEzRFBmVGVJTkM2MCsvS0tKTzFTZTd3L3dvZllFOGdr?=
+ =?utf-8?B?QVB5QnpFbERLa2QvdC9sMEk1blFKaW1CNytqWW5BSzN0SERzVUNKQnYrcEpV?=
+ =?utf-8?B?ZlBwQXBiekozSkxvamxjcE1QODg3NUtabmUza21DVHBWOFFRMXJtbWhPR3pL?=
+ =?utf-8?B?dndhRzRqY05zemxHTXY3cFpZM011cFFmelZ4VmJhZEZxWTh2UW9EMzduNVFo?=
+ =?utf-8?B?QzZtMTk2QzRFYklPSUUwTk03VW9sSit2MlJDTk1VdzdORTVzT0kwTDVSMHhP?=
+ =?utf-8?B?dzA0TzhqY2J1dG1IZUYrT3VKc0hVSm9vWG9zWE1zMDRHdHZzd0pBTnU5S2E3?=
+ =?utf-8?B?cFhoWHFyZi9IUzdLZzVRWFdlcDFZMUswQzA0enM2a3BqT2k0WmZCYWFZYnRa?=
+ =?utf-8?B?ZThsS1JDRzhOcitNaWRtejErbDlzSVRVaXcyTUxJc3M3bjJSSzZ0dXhQS2Jj?=
+ =?utf-8?B?QlJMbk9sT2dYUFFXRk81andOTE9tNHJKMVlzTUZLWFFOM2UrL3NuY3hDYmh2?=
+ =?utf-8?B?V3h1YVpsYW5XUEtmb1liWWgxQXNQYy95SS9CUEkvSWxhT3kvMDRZeFQ2ZkY4?=
+ =?utf-8?B?aFV0ekpKV0JrWGdQR2JRaXdjekdsWXVtVHhoQjlvMnVpZUJIMnlhQ0pqNEJ2?=
+ =?utf-8?B?MTNuWFBQMEd5V2pwVHVXQ0FFdmdiVGNVTy9NVklhSFdBUDFFTENRT0Z2RjNJ?=
+ =?utf-8?B?Nmd6RENNQlMvSmJXV2pHZENoUjVnZnFIcENxd1JVQUFuTnVXaWpXcTUzaUVy?=
+ =?utf-8?B?dFQwT05rV04xaFpzRlA4bUwwUTQySGJOaWlQc1AreGlWd0NQZFFoc3VydTJH?=
+ =?utf-8?Q?nDzKLY/wHdTzlxwixfk/p3SM8o1ZB2bNTwsYjLsWa7Ha?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5514d98b-0d73-4c87-3187-08dd184c99c4
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR01MB8101.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 12:25:43.4181
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: k+4zOcgwK19UjP1TCpJd/tCGyJJSzA1+BH6/VyZq4YqhA6eJsn+L5aBERw/U+W10JZ+FbRLwEFXRs6LbaLPs1amK3jHurgguiGGnDnyRhDG0aBMu6CUzaWzFT126GR4Y
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR01MB7193
 
-Simplify error handling (less gotos) over locks with guard().
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/qcom/clk-spmi-pmic-div.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+Hi Marc,
 
-diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
-index f394031eb0e520b1b59e863dfbda4312f4f8215b..41a0a4f3b4fb316827365a522079dcd99630c49f 100644
---- a/drivers/clk/qcom/clk-spmi-pmic-div.c
-+++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
-@@ -3,6 +3,7 @@
-  */
- 
- #include <linux/bitops.h>
-+#include <linux/cleanup.h>
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
- #include <linux/delay.h>
-@@ -140,30 +141,26 @@ static int clk_spmi_pmic_div_set_rate(struct clk_hw *hw, unsigned long rate,
- {
- 	struct clkdiv *clkdiv = to_clkdiv(hw);
- 	unsigned int div_factor = div_to_div_factor(parent_rate / rate);
--	unsigned long flags;
- 	bool enabled;
- 	int ret;
- 
--	spin_lock_irqsave(&clkdiv->lock, flags);
-+	guard(spinlock_irqsave)(&clkdiv->lock);
-+
- 	enabled = is_spmi_pmic_clkdiv_enabled(clkdiv);
- 	if (enabled) {
- 		ret = spmi_pmic_clkdiv_set_enable_state(clkdiv, false);
- 		if (ret)
--			goto unlock;
-+			return ret;
- 	}
- 
- 	ret = regmap_update_bits(clkdiv->regmap, clkdiv->base + REG_DIV_CTL1,
- 				 DIV_CTL1_DIV_FACTOR_MASK, div_factor);
- 	if (ret)
--		goto unlock;
-+		return ret;
- 
- 	if (enabled)
- 		ret = __spmi_pmic_clkdiv_set_enable_state(clkdiv, true,
- 							  div_factor);
--
--unlock:
--	spin_unlock_irqrestore(&clkdiv->lock, flags);
--
- 	return ret;
- }
- 
+On 09-12-2024 03:24 pm, Marc Zyngier wrote:
+> Ganapatrao,
+> 
+> Did you notice that the Columbia list was killed over two years ago,
+> as per ac107abef1976 ("KVM: arm64: Advertise new kvmarm mailing
+> list")? Consider that script/get_maintainer.pl is your friend.
+
+My bad, copy paste issue!.
+> 
+> Cc'ing the correct list instead,
+
+Thanks.
+> 
+> On Mon, 09 Dec 2024 05:32:01 +0000,
+> Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
+>>
+>> During automated testing of Nested Virtualization using avocado-vt,
+> 
+> Which is not merged upstream. So what branch are you using? Based on
+> what kernel version? On what HW? With which virtualisation features?
+> 
+
+Testing is done on Ampere's AmpereOne platform using 6.10 based kernel 
+with NV patches from your repo.
+
+>> it has been observed that during some boot test iterations,
+>> the Guest-Hypervisor boot was getting crashed with a
+>> synchronous exception while it is still booting EDK2.
+>>
+>> The test is launching Multiple instances of Guest-Hypervisor boot
+> 
+> Is the multiple instance aspect really relevant to the reproduction of
+> the problem?
+
+Not really, but it requires multiple attempts/iterations to hit the 
+issue. Even with automated test, it was seen at some iteration out of 10 
+to 15 iterations.
+
+> 
+>> and while booting, QEMU monitor issued the command "info register"
+>> at regular intervals to take a register dump. To execute this
+>> command, QEMU stops the run and does the register read of various
+>> registers. While resuming the run, the function kvm_arm_timer_write()
+>> writes back the saved CNTV_CTL_EL0 register with ISTATUS cleared always
+> 
+> It is userspace that causes this write-back, right? AFAICT, KVM never
+> does that on its own.
+> 
+>> and resulting in the loss of pending interrupt for emulated timers.
+> 
+> How does a missing interrupt result in a synchronous exception in
+> EDK2? In my experience, EDK2 panics if it sees spurious interrupts,
+> not when it is missing interrupts (it just locks up, which is
+> expected).
+
+Not sure, why it is hitting exception, rather than hang at EDK2.
+However, EDK2 timer handler code is ignoring the interrupt since ISTATUS 
+is not set and not moving CVAL forward.
+
+> 
+>> In hardware based timers, ISTATUS is a RO/WI bit and gets set by the
+>> h/w, if the condition is still met. However, in Nested-Virtualization
+>> case, the Guest-Hypervisor's EDK2 is using an emulated virtual timer
+>> and losing ISTATUS state and the interrupt forever.
+> 
+> Why is this specific to NV? Can't the same thing happen to the
+> physical timer in a non-VHE configuration?
+> 
+
+You mean, emulated v-timer in non-VHE boot?
+It might impact non-VHE case as well, not tried though.
+
+>>
+>> Adding fix in kvm_arm_timer_write to set ISTATUS for emulated
+>> timers, if the timer expired already.
+>>
+>> Fixes: 81dc9504a700 ("KVM: arm64: nv: timers: Support hyp timer emulation")
+> 
+> Where is this coming from? This patch doesn't touch the code you are
+> changing, so how can it be the source of your problems? As far as I
+> can tell, this has been the case since 5c5196da4e966 ("KVM: arm/arm64:
+> Support EL1 phys timer register access in set/get reg").
+
+Thanks, 5c5196da4e966 seems more relevant!.
+
+>> Co-developed-by: Vishnu Pajjuri <vishnu@os.amperecomputing.com>
+>> Signed-off-by: Vishnu Pajjuri <vishnu@os.amperecomputing.com>
+>> Signed-off-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
+>> ---
+>>   arch/arm64/kvm/arch_timer.c | 11 ++++++++++-
+>>   1 file changed, 10 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+>> index 1215df590418..aca58113d790 100644
+>> --- a/arch/arm64/kvm/arch_timer.c
+>> +++ b/arch/arm64/kvm/arch_timer.c
+>> @@ -1199,7 +1199,16 @@ static void kvm_arm_timer_write(struct kvm_vcpu *vcpu,
+>>   		break;
+>>   
+>>   	case TIMER_REG_CTL:
+>> -		timer_set_ctl(timer, val & ~ARCH_TIMER_CTRL_IT_STAT);
+>> +		struct timer_map map;
+>> +
+>> +		val &= ~ARCH_TIMER_CTRL_IT_STAT;
+>> +		get_timer_map(vcpu, &map);
+>> +		/* Set ISTATUS bit for emulated timers, if timer expired. */
+>> +		if (timer == map.emul_vtimer || timer == map.emul_ptimer) {
+>> +			if (!kvm_timer_compute_delta(timer))
+>> +				val |= ARCH_TIMER_CTRL_IT_STAT;
+>> +		}
+>> +		timer_set_ctl(timer, val);
+>>   		break;
+> 
+> This really looks awfully complicated, when it is only a matter of
+> recomputing the interrupt state, something that is at the core of the
+> timer emulation. Why can't the following work:
+
+Added check to handle ISTATUS for emulated timers only, since it is RO 
+for hardware timers, thought it might confuse others(non-nv case).
+Otherwise below diff from you should work as well. I will try it out.
+
+> 
+> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
+> index 895f09658ef83..bd6efafbe7109 100644
+> --- a/arch/arm64/kvm/arch_timer.c
+> +++ b/arch/arm64/kvm/arch_timer.c
+> @@ -1298,13 +1298,17 @@ static void kvm_arm_timer_write(struct kvm_vcpu *vcpu,
+>   				enum kvm_arch_timer_regs treg,
+>   				u64 val)
+>   {
+> +	unsigned long tmp = val;
+> +
+>   	switch (treg) {
+>   	case TIMER_REG_TVAL:
+>   		timer_set_cval(timer, kvm_phys_timer_read() - timer_get_offset(timer) + (s32)val);
+>   		break;
+>   
+>   	case TIMER_REG_CTL:
+> -		timer_set_ctl(timer, val & ~ARCH_TIMER_CTRL_IT_STAT);
+> +		__assign_bit(__ffs(ARCH_TIMER_CTRL_IT_STAT), &tmp,
+> +			     kvm_timer_should_fire(timer));
+> +		timer_set_ctl(timer, tmp);
+>   		break;
+>   
+>   	case TIMER_REG_CVAL:
+> 
+> But overall, this very much looks like it is only papering over the
+> real issue, which is that the *emulation* should regenerate the
+> pending bit, and not rely on the userspace interface.
+> 
+> As far as I can tell, we already correctly compute the status bit on
+> read (read_timer_ctl()), so the guest should always observe something
+> consistent when it traps. We also *never* use the status bit as an
+> input to the emulation, and always recompute it from scratch (it is
+> only there for the benefit of the guest or userspace).
+> 
+
+For emulated timers, we are not asserting again by calling 
+kvm_timer_update_irq in timer_emulate() until the level is down and 
+ready for trigger again. This was done to fix high rate of spurious 
+interrupts getting generated to V-Timer. Hence we are not able to 
+recover, if once ISTATUS is lost.
+
+> So I can't see how upstream is broken in at the moment, and you need
+> to explain how this actually triggers. Ideally, with a standalone
+> reproducer or a selftest.
+
+We could reproduce the issue with the simple test/script.
+On one shell, launch L1 using qemu with add-on option
+
+"-monitor unix:gh_monitor,server,nowait
+
+On another shell, while L1 boots and still in UEFI, run repeatedly the 
+command (or put in a while 1 loop script)
+
+"echo "info registers" | socat - unix-connect:gh_monitor > 
+/tmp/info_registers"
+
+With above steps we were able to hit the issue within few attempts.
 
 -- 
-2.43.0
+Thanks,
+Ganapat/GK
 
 
