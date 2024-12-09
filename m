@@ -1,183 +1,147 @@
-Return-Path: <linux-kernel+bounces-437936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 699EA9E9AB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:40:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BDB29E9AB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:40:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76B25286106
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:40:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 368F2164BC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 329ED1C5CCB;
-	Mon,  9 Dec 2024 15:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD8E1E9B2B;
+	Mon,  9 Dec 2024 15:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AVyPCnIW"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fdx6g1oj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E42FA1B423A;
-	Mon,  9 Dec 2024 15:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D83781E9B1D;
+	Mon,  9 Dec 2024 15:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733758819; cv=none; b=WWpVy1PUO5jLg2mMAA2SWRDTy5df4JBjs5rKylA1NYKwA7lyaPrPko7NQZ4yyFceA+pHHR0pO0NxgbJjdHXvGhaFYgTDLAA+B1xTHsBn+1lpicCOYyBUutZ+Zsf0dJp7iXVJI7o7AvSJT+OiSbeDlOKZNyZanNFQRwxnmtdqDhM=
+	t=1733758822; cv=none; b=UIMRwuaPL+bNWoAFub13N3SnC2tJDcNgNtVBlD7IJA0yOUhSkOMfFeg4unSSUO45wHDZ50Gb3SY8U2rXslt2c8ptK3B4pP3bTYkeh34nLtjrNzUUpNMsF8c+HKQMrytYPGInpv5CMarJAnKTIZ2j77J3AzIsgk5A1LR48RaZ4sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733758819; c=relaxed/simple;
-	bh=8jMH4whOeClBjX7QkdPZmkXcWvRAUKZUkmqneFHY5Gk=;
+	s=arc-20240116; t=1733758822; c=relaxed/simple;
+	bh=NXv2kZ+6ea8xYm0jQ8k8JDr041Cwb8mryXemzF+bjlQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZqnzaA5JGlzBJJNGTNuETuZrTJz8yi035AbXOHaNvUKBIfoB6z6hrw/xqMIS+FRLM4DJtm/lB3Vt1mvLr+cu6HUeJH9IlH//r2T9RBWxYCW19imPhWh5NBZ2GwsMv+Iio6rAtqHKNiBTaXOtWw7vYqDqRX23KI+1B4Q1Wqzy6jI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AVyPCnIW; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733758818; x=1765294818;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8jMH4whOeClBjX7QkdPZmkXcWvRAUKZUkmqneFHY5Gk=;
-  b=AVyPCnIW4bZ5YUZhmadh2YIbawruEwAvtc+z5+xdXYs3QvrPz23nv/BF
-   Bnk4JkCz0CpZERtaZggzZ+AdPlwM/EOOO9osX2lRteyWpR6gisEbsfeiu
-   LnHE/rb6MA1tLjLkwor/pbgz6MzhSsHg6LzVmEuzBFiQ7Pc4fJME3jL6L
-   WzRRbtqv49+ZDg4U30FBBFnSPIgs/kIaiVCeHIpr4+3w15OPb5gTyMxZ7
-   ggI59zfv1aqQHwwY15yqAW4V+2gNxqw2350gylWRJBcXrANibzCLYV1Hm
-   viuprFt6iW6b2hVbNdZTwZk1bfqFxhco0mFAImlRjGMYWicehifgj5hG5
-   A==;
-X-CSE-ConnectionGUID: GfTgrF3wR/O2QeFJlTDGyg==
-X-CSE-MsgGUID: km/Lh9nRT0G3OwvM9ITu9Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="45078463"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="45078463"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 07:40:18 -0800
-X-CSE-ConnectionGUID: D7okewWJR7yMjNhkahWHmg==
-X-CSE-MsgGUID: E9A/Vu6eSyCNah0HZ230Sg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="94921785"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa010.jf.intel.com with ESMTP; 09 Dec 2024 07:40:16 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 15C1E44B; Mon, 09 Dec 2024 17:40:13 +0200 (EET)
-Date: Mon, 9 Dec 2024 17:40:13 +0200
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Mario Limonciello <superm1@kernel.org>
-Cc: "open list:THUNDERBOLT DRIVER" <linux-usb@vger.kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Richard Hughes <hughsient@gmail.com>
-Subject: Re: [PATCH] thunderbolt: Don't display retimers unless nvm was
- initialized
-Message-ID: <20241209154013.GK4955@black.fi.intel.com>
-References: <20241206183318.1701180-1-superm1@kernel.org>
- <20241209062415.GG4955@black.fi.intel.com>
- <c40bed54-63e9-4535-b17b-fba980f19382@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jthzta/fNKDgCVnHKYSCslps01qQyCewHgg1hiLBe1h3j0eecYA/l/nDhyxXmi7hLgouijj+fuuxtDXGNVr1uaHk9M/0O9FlNnvg81Cem+oQMxpahf5W4bJdul6qm5XrkU41CPjAA1fJF6BBNPwWvgVRpfZAxSWyBy7CtkV54cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fdx6g1oj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FCA1C4CEDD;
+	Mon,  9 Dec 2024 15:40:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733758822;
+	bh=NXv2kZ+6ea8xYm0jQ8k8JDr041Cwb8mryXemzF+bjlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Fdx6g1ojyc0L2SkxZDCTO002TVnWmRHi2OTGtVQUTYCnm5t7DqW3R973eYt6YB+CE
+	 4+D5iQcF1CPusPEkIL7gMYMQ6OxfKQkB/EaFfBaTEm9yhGCO9EQKCJ3WEw5A4ywqbk
+	 CVDP2H7AUD4lfGXJPs/Ydmoy0RVnQwfH6rBbqNs9Aw1AM2cbMOyW68QL/z9Zmlgvlm
+	 jixnZLjQF+PdlyNJTEuUX2XgNLxdeZ6TBUYV1ri0UyC+XhhnqjOWEoVuPwuK9aWoNv
+	 OuHkWmK8jJT0u0gd2mMAv8LmeYOCoKrbYTIf8WT/mPcFH7GWKwq4Aq/44r7pZp/7gR
+	 2sQ5F3I6SaS2g==
+Date: Mon, 9 Dec 2024 15:40:16 +0000
+From: Will Deacon <will@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>, ilkka@os.amperecomputing.com,
+	kaishen@linux.alibaba.com, yangyicong@huawei.com,
+	Jonathan.Cameron@huawei.com, baolin.wang@linux.alibaba.com,
+	robin.murphy@arm.com, chengyou@linux.alibaba.com,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-pci@vger.kernel.org, rdunlap@infradead.org,
+	mark.rutland@arm.com, zhuo.song@linux.alibaba.com,
+	renyu.zj@linux.alibaba.com
+Subject: Re: [PATCH v12 4/5] drivers/perf: add DesignWare PCIe PMU driver
+Message-ID: <20241209154015.GA12428@willie-the-truck>
+References: <20231208025652.87192-5-xueshuai@linux.alibaba.com>
+ <20241206165457.GA3101599@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c40bed54-63e9-4535-b17b-fba980f19382@kernel.org>
+In-Reply-To: <20241206165457.GA3101599@bhelgaas>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Dec 09, 2024 at 08:15:16AM -0600, Mario Limonciello wrote:
-> On 12/9/2024 00:24, Mika Westerberg wrote:
-> > Hi Mario,
-> > 
-> > On Fri, Dec 06, 2024 at 12:33:18PM -0600, Mario Limonciello wrote:
-> > > From: Mario Limonciello <mario.limonciello@amd.com>
-> > > 
-> > > The read will never succeed if nvm wasn't initialized.
-> > 
-> > Okay but we would need to understand why it was not initialized in the
-> > first place?
+Hi Bjorn,
+
+On Fri, Dec 06, 2024 at 10:54:57AM -0600, Bjorn Helgaas wrote:
+> On Fri, Dec 08, 2023 at 10:56:51AM +0800, Shuai Xue wrote:
+> > This commit adds the PCIe Performance Monitoring Unit (PMU) driver support
+> > for T-Head Yitian SoC chip. Yitian is based on the Synopsys PCI Express
+> > Core controller IP which provides statistics feature. The PMU is a PCIe
+> > configuration space register block provided by each PCIe Root Port in a
+> > Vendor-Specific Extended Capability named RAS D.E.S (Debug, Error
+> > injection, and Statistics).
 > 
-> Oh sorry I should have included that/
+> > +#define DWC_PCIE_VSEC_RAS_DES_ID		0x02
 > 
-> https://gist.github.com/superm1/c3763840fefa54298258a6fbec399007
+> > +static const struct dwc_pcie_vendor_id dwc_pcie_vendor_ids[] = {
+> > +	{.vendor_id = PCI_VENDOR_ID_ALIBABA },
+> > +	{} /* terminator */
+> > +};
 > 
-> As you can see it's an unknown retimer NVM format.  So this ends up down the
-> path of "NVM upgrade disabled".  So that's why I'm thinking the visibility
-> is the right move to adjust here (IE this patch).
-
-This is actually on-board retimer of the AMD platform:
-
-Dec 09 07:29:11 fedora kernel: thunderbolt 0-0:2.1: retimer NVM format of vendor 0x7fea unknown
-Dec 09 07:29:11 fedora kernel: thunderbolt 0-0:2.1: NVM upgrade disabled
-Dec 09 07:29:11 fedora kernel: thunderbolt 0-0:2.1: new retimer found, vendor=0x7fea device=0x1032
-
-I would think you guys want to make it upgradeable as well, no?
-
-> > I see this is ThinkPad Thunderbolt 4 Dock so probably Intel hardware? You
-> > say you can reproduce this too so can you send me full dmesg with
-> > thunderbolt dynamic debugging enabled? I would like to understand this bit
-> > more deeper before we add any workarounds.
-> > 
-> > > Reported-by: Richard Hughes <hughsient@gmail.com>
-> > > Closes: https://github.com/fwupd/fwupd/issues/8200
-> > > Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> > > ---
-> > >   drivers/thunderbolt/retimer.c | 17 ++++++++++++++---
-> > >   1 file changed, 14 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/drivers/thunderbolt/retimer.c b/drivers/thunderbolt/retimer.c
-> > > index 89d2919d0193e..7be435aee7217 100644
-> > > --- a/drivers/thunderbolt/retimer.c
-> > > +++ b/drivers/thunderbolt/retimer.c
-> > > @@ -321,9 +321,7 @@ static ssize_t nvm_version_show(struct device *dev,
-> > >   	if (!mutex_trylock(&rt->tb->lock))
-> > >   		return restart_syscall();
-> > > -	if (!rt->nvm)
-> > > -		ret = -EAGAIN;
-
-This is actually here because it might take some time for the NVM to be
-available after the upgrade so changing this may cause issues on its own.
-
-Instead we should check first the
-
-	rt->no_nvm_upgrade
-
-and return -EOPNOTSUPP which I believe fwupd handles?
-
-> > > -	else if (rt->no_nvm_upgrade)
-> > > +	if (rt->no_nvm_upgrade)
-> > >   		ret = -EOPNOTSUPP;
-> > >   	else
-> > >   		ret = sysfs_emit(buf, "%x.%x\n", rt->nvm->major, rt->nvm->minor);
-> > > @@ -342,6 +340,18 @@ static ssize_t vendor_show(struct device *dev, struct device_attribute *attr,
-> > >   }
-> > >   static DEVICE_ATTR_RO(vendor);
-> > > +static umode_t retimer_is_visible(struct kobject *kobj,
-> > > +				      struct attribute *attr, int n)
-> > > +{
-> > > +	struct device *dev = kobj_to_dev(kobj);
-> > > +	struct tb_retimer *rt = tb_to_retimer(dev);
-> > > +
-> > > +	if (!rt->nvm)
-> > > +		return 0;
-> > > +	return attr->mode;
-> > > +
-> > > +}
+> > +static bool dwc_pcie_match_des_cap(struct pci_dev *pdev)
+> > +{
+> > +	const struct dwc_pcie_vendor_id *vid;
+> > +	u16 vsec;
+> > +	u32 val;
+> > +
+> > +	if (!pci_is_pcie(pdev) || !(pci_pcie_type(pdev) == PCI_EXP_TYPE_ROOT_PORT))
+> > +		return false;
+> > +
+> > +	for (vid = dwc_pcie_vendor_ids; vid->vendor_id; vid++) {
+> > +		vsec = pci_find_vsec_capability(pdev, vid->vendor_id,
+> > +						DWC_PCIE_VSEC_RAS_DES_ID);
 > 
-> I just noticed I had a spurious newline here.  If we end up taking this
-> patch would you mind just fixing it up?  If there is other feedback I'll fix
-> it on a v2.
+> This looks wrong to me, and it promotes a misunderstanding of how VSEC
+> Capabilities work.  The VSEC ID is defined by the vendor, so we have
+> to check both the Vendor ID and the VSEC ID before we know what this
+> VSEC Capability is.
+
+Thanks for pointing this out! The code's been merged for a while now,
+so we'll need to fix what we have rather than revert it, I think.
+
+[...]
+
+> I think the table should be extended to contain the Vendor ID, *and*
+> the VSEC ID, *and* the VSEC Rev used by that vendor, i.e., it should
+> look like this:
 > 
-> > > +
-> > >   static struct attribute *retimer_attrs[] = {
-> > >   	&dev_attr_device.attr,
-> > >   	&dev_attr_nvm_authenticate.attr,
-> > > @@ -351,6 +361,7 @@ static struct attribute *retimer_attrs[] = {
-> > >   };
-> > >   static const struct attribute_group retimer_group = {
-> > > +	.is_visible = retimer_is_visible,
-> > >   	.attrs = retimer_attrs,
-> > >   };
-> > > -- 
-> > > 2.43.0
+>   struct dwc_pcie_pmu_vsec {
+>     u16 vendor_id;
+>     u16 vsec_id;
+>     u8 vsec_rev;
+>   };
+> 
+>   struct dwc_pcie_pmu_vsec dwc_pcie_pmu_vsec_ids[] = {
+>     { .vendor_id = PCI_VENDOR_ID_ALIBABA,
+>       .vsec_id = DWC_PCIE_VSEC_RAS_DES_ID, .vsec_rev = 0x4 },
+>     { .vendor_id = PCI_VENDOR_ID_AMPERE,
+>       .vsec_id = DWC_PCIE_VSEC_RAS_DES_ID, .vsec_rev = 0x4 },
+>     { .vendor_id = PCI_VENDOR_ID_QCOM,
+>       .vsec_id = DWC_PCIE_VSEC_RAS_DES_ID, .vsec_rev = 0x4 },
+>     {}
+>   };
+> 
+> This *looks* the same, but it's not, because it makes it obvious that
+> the VSEC ID and VSEC Rev are defined separately by each vendor.  It's
+> just a lucky coincidence that they happen to be the same for these
+> vendors.
+
+[...]
+
+> I suggest updating dwc_pcie_match_des_cap() to iterate through the
+> dwc_pcie_pmu_vsec_ids[] table and return the capability offset so you
+> can call it from here.
+
+Any chance you could send a patch with those, please? I'm also not able
+to test this stuff, but I'm sure Ilkka would help us out.
+
+Cheers,
+
+Will
 
