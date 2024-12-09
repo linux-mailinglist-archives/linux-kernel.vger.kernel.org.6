@@ -1,166 +1,98 @@
-Return-Path: <linux-kernel+bounces-437728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FCF9E97BF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:49:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570049E97B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:49:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B4E71888466
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A0EB161927
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:49:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F3711B4234;
-	Mon,  9 Dec 2024 13:47:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9D2E1B041A;
+	Mon,  9 Dec 2024 13:46:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Zdjnc5qI"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="wKzci/M0"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C2F1ACEA3
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:47:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1E01A238E;
+	Mon,  9 Dec 2024 13:46:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752035; cv=none; b=AA4Ck3DkA33L0XRQmqbve8ZfHvtwX6TDTOh2u4X7WfKBQ3Yjt76SFx0Mbm2GgSSJ4jgy0DsrbbaWyVixtqrk9eq1Sbz0ywLc1b5AcHmC5iURmCkSWRpkpoq59r193H/FqvMxwPzoTk2ZMrT5JF9zWySuDK7/AwOTAeB15MSAfCc=
+	t=1733752019; cv=none; b=B/0WHGxxcMY3KYCxQOlIdXIU/VlQ6FLVtwq5wDbIPkTkTmQXD9qS1m0ruRpcJb4f19N9exHhAcpZPcGm/4teJ3OGyyN52DwLL+ykIi1gjt5CcxEJTQQDIUIcBqHUV47sj0Mcl9bxrTMXdw/FXr5cqZjXt7X5BSKLseP4gmcKqF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752035; c=relaxed/simple;
-	bh=VZ8BLHpIvIA7CdsGrjygFMn49lnT93T1P/vBxLw3Cd4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=c5V49oq1QTteHUUV76QhPDg71JAxiHLntnWhDoBgUvlnWm7awUNWc94XnyOwkLhOcH8zniYDZvtRkZ44oDnpbrVWkmVaMKMWAD7APRJTMV2MfO6guVNSk7J3x4R5+kbS2u+kIbhWWQca5z6uQDw1QVEfPqrvIzeqbKafDiIJCAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Zdjnc5qI; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733752030;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Xt463gkM88BZ/ztE5UEYpOypmlzLl4hnsjpCnQQUmQM=;
-	b=Zdjnc5qIa0sD2dDMkivntOg4GrlxknbRg+dTnhsukOs1OZ957nQCdtz1egeWGQDF/+eVAl
-	r7yCNuj9WP61QgS1qKOp36MDEmuVd09QZSU9GOqTY6f1Ez/sb5odOEVNIITIWPQhp6Oiu+
-	J637qPQZMFJ5PeSS4oEJiAT4T0ZHVfI=
+	s=arc-20240116; t=1733752019; c=relaxed/simple;
+	bh=7YMcql3307lL7mtzM9GeKeg6x8rr1woEKBhM4L9q1YY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TJOhfmibDoOYeUuuF4eINXd5JtZZ2mkDKSMoN+l1pG1sszoH733hAjTH9oGSUqZVN2ILkcDTvxK9qaP8Tdjy0HLgFnREhycUcB0u+eVgsUhxdxQDnxVii6DBDpmWRex/H9H0XQz+fjVayk08gwDJeJo/26GqGpkftzsiZh/2IJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=wKzci/M0; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=w43T1I6/sKwJscxNGbfJG/M/ns6oG3NjgCwcsgsn5ec=; b=wKzci/M0+tJjPJMVBnZLPgTW6a
+	gQ0H2/IbEZgQ212cFKxiI67Ey3pi4lT7duv3vIwB2y04YsEr92pdfx0aWKdU/4yVmOaqIFcpGH9Is
+	EjIxHi64qjRFHLWwuCN5auy0pEWLWC+owNk1M+sCEg6d9tN3+CBnkshw+Q1lW6L/tHv/5SGJqXS4e
+	zLwswz4JzBakMqKXAutVpypips45STjMrkTaTHpSmMVPuenOe3ZPca/u3u/7sFNvRY0Kf1TzRli1q
+	cYqXnnOJBFkt8sAKVhLMp9H3ygZCfGRLtHe25KSjCx+n4dBlAajd1XZDTR7sBaSTOOq2hFU8Q6GRS
+	nnV26qqA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKe6C-000000083to-3T6r;
+	Mon, 09 Dec 2024 13:46:56 +0000
+Date: Mon, 9 Dec 2024 05:46:56 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	"Darrick J. Wong" <djwong@kernel.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Jeff Layton <jlayton@kernel.org>,
+	Erin Shepherd <erin.shepherd@e43.eu>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org,
+	stable <stable@kernel.org>, Greg KH <gregkh@linuxfoundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export
+ operations as only supporting file handles
+Message-ID: <Z1b00KG2O6YMuh_r@infradead.org>
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+ <Z1D2BE2S6FLJ0tTk@infradead.org>
+ <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
+ <20241206160358.GC7820@frogsfrogsfrogs>
+ <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+ <Z1ahFxFtksuThilS@infradead.org>
+ <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
- module directory with M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <20241110013649.34903-6-masahiroy@kernel.org>
-Date: Mon, 9 Dec 2024 14:46:56 +0100
-Cc: linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- cocci@inria.fr
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <82FA2E02-05A5-4297-B364-9D7D89001D9D@linux.dev>
-References: <20241110013649.34903-1-masahiroy@kernel.org>
- <20241110013649.34903-6-masahiroy@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 10. Nov 2024, at 02:34, Masahiro Yamada wrote:
->=20
-> Currently, Kbuild always operates in the output directory of the =
-kernel,
-> even when building external modules. This increases the risk of =
-external
-> module Makefiles attempting to write to the kernel directory.
->=20
-> This commit switches the working directory to the external module
-> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
-> some build artifacts.
->=20
-> The command for building external modules maintains backward
-> compatibility, but Makefiles that rely on working in the kernel
-> directory may break. In such cases, $(objtree) and $(srctree) should
-> be used to refer to the output and source directories of the kernel.
->=20
-> The appearance of the build log will change as follows:
->=20
-> [Before]
->=20
->  $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
->  make: Entering directory '/path/to/my/linux'
->    CC [M]  /path/to/my/externel/module/helloworld.o
->    MODPOST /path/to/my/externel/module/Module.symvers
->    CC [M]  /path/to/my/externel/module/helloworld.mod.o
->    CC [M]  /path/to/my/externel/module/.module-common.o
->    LD [M]  /path/to/my/externel/module/helloworld.ko
->  make: Leaving directory '/path/to/my/linux'
->=20
-> [After]
->=20
->  $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
->  make: Entering directory '/path/to/my/linux'
->  make[1]: Entering directory '/path/to/my/externel/module'
->    CC [M]  helloworld.o
->    MODPOST Module.symvers
->    CC [M]  helloworld.mod.o
->    CC [M]  .module-common.o
->    LD [M]  helloworld.ko
->  make[1]: Leaving directory '/path/to/my/externel/module'
->  make: Leaving directory '/path/to/my/linux'
->=20
-> Printing "Entering directory" twice is cumbersome. This will be
-> addressed later.
->=20
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
+On Mon, Dec 09, 2024 at 09:58:58AM +0100, Amir Goldstein wrote:
+> To be clear, exporting pidfs or internal shmem via an anonymous fd is
+> probably not possible with existing userspace tools, but with all the new
+> mount_fd and magic link apis, I can never be sure what can be made possible
+> to achieve when the user holds an anonymous fd.
+> 
+> The thinking behind adding the EXPORT_OP_LOCAL_FILE_HANDLE flag
+> was that when kernfs/cgroups was added exportfs support with commit
+> aa8188253474 ("kernfs: add exportfs operations"), there was no intention
+> to export cgroupfs over nfs, only local to uses, but that was never enforced,
+> so we thought it would be good to add this restriction and backport it to
+> stable kernels.
 
-Hi Masahiro,
-
-I get the following error since this patch is in master, but only when
-using COCCI=3D in combination with M=3D<relative or absolute path>.
-
-It works when I either use COCCI=3D or M=3D, but not with both.
-
-$ make coccicheck COCCI=3Dscripts/coccinelle/misc/flexible_array.cocci =
-M=3Darch/
-make[1]: Entering directory '/home/fedora/linux/arch'
-You have not explicitly specified the mode to use. Using default =
-"report" mode.
-Available modes are the following: patch, report, context, org, chain
-You can specify the mode with "make coccicheck MODE=3D<mode>"
-Note however that some modes are not implemented by some semantic =
-patches.
-
-Please check for false positives in the output before submitting a =
-patch.
-When using "patch" mode, carefully review the patch before submitting =
-it.
-
-grep: scripts/coccinelle/misc/flexible_array.cocci: No such file or =
-directory
-grep: scripts/coccinelle/misc/flexible_array.cocci: No such file or =
-directory
-/usr/bin/spatch -D report --no-show-diff --very-quiet --cocci-file =
-scripts/coccinelle/misc/flexible_array.cocci --patch /home/fedora/linux =
---dir . -I /home/fedora/linux/arch/arm64/include -I =
-/home/fedora/linux/arch/arm64/include/generated -I =
-/home/fedora/linux/include -I /home/fedora/linux/include -I =
-/home/fedora/linux/arch/arm64/include/uapi -I =
-/home/fedora/linux/arch/arm64/include/generated/uapi -I =
-/home/fedora/linux/include/uapi -I =
-/home/fedora/linux/include/generated/uapi --include =
-/home/fedora/linux/include/linux/compiler-version.h --include =
-/home/fedora/linux/include/linux/kconfig.h --jobs 4 --chunksize 1
-Fatal error: exception =
-Sys_error("scripts/coccinelle/misc/flexible_array.cocci: No such file or =
-directory")
-coccicheck failed
-make[2]: *** [/home/fedora/linux/Makefile:2089: coccicheck] Error 2
-make[1]: *** [/home/fedora/linux/Makefile:251: __sub-make] Error 2
-make[1]: Leaving directory '/home/fedora/linux/arch'
-make: *** [Makefile:251: __sub-make] Error 2
-
-Thanks,
-Thorsten
+Can you please explain what the problem with exporting these file
+systems over NFS is?  Yes, it's not going to be very useful.  But what
+is actually problematic about it?  Any why is it not problematic with
+a userland nfs server?  We really need to settle that argumet before
+deciding a flag name or polarity.
 
 
