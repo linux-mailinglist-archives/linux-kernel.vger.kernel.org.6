@@ -1,106 +1,116 @@
-Return-Path: <linux-kernel+bounces-437670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54FA29E969C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:25:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A95019E96DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:30:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C343F2817CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156D21885376
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:26:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DDC35945;
-	Mon,  9 Dec 2024 13:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Lea7Y9Yx"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E73D11ACEDC;
+	Mon,  9 Dec 2024 13:24:56 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29840233146;
-	Mon,  9 Dec 2024 13:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A26233146;
+	Mon,  9 Dec 2024 13:24:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750691; cv=none; b=nNJAnqliakiSoybsu8wXlUxj3ZzWGF7AZQjTTSJjRXJjsJHs3fI2NhURhMrnScPzUa5rWmbJYuaTLsMiObnQhMkf1x/MZc6++XfW6RxfETcDVI8NFJH8j/EhDhq6UhY8/SNqAzMNQ4hpG2Z+NrUL0UNkMZN5tT5pZShrx3Ii6UM=
+	t=1733750696; cv=none; b=bBCsVSxutIAoTmXWIPJ3b0Xoc7WfiBWUHojhAIYkuBX106WoKrnRS0puTpO9wVbJD2wvhf0KC5rm9ZhCJNX0qN6a3F2aOIISHDlSRyt4ioPxO/w3sT5yW7d1B2c7fEDNV6vT2sQdWGr6lnXJ+CSG/plZczcQUK8YGsUFVTr68gY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750691; c=relaxed/simple;
-	bh=NkhX649mCYlm7UTdk/xDLU53bUCSolAXgQE7UT4MYkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F6LxJjNcfIu4enZMRr57j2Y1Gjj1vx9dg4onC8bwEtXdkJQZtkffg19/Fck5WgE1fKY3QqOQnb9546mXnpEed5mKwb+SS6ChAaxjHoApiwSXrEM4An5ct7k+7hrlhEppbaP0EzpMHJyFV3jifyZNqMJfH6loJxw0iJ1neUECGbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Lea7Y9Yx; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=72S7Y0m68TBMZpKjMYQCWjvfm2dgENRCYqhWK6vxrak=; b=Lea7Y9YxXbamN6pcuB6gVBs3b1
-	H7qlEJ7sripF744GpmuSDBQaAaaCeESaiMVUhZHbNzFvhejhDuyKpsAk3oIDOWdRIrGslWxXK0kej
-	c+Omu7VKApsh9wOfv7iCEevSiwBvwvHtxql7ZkYoI2PV7HrR9fvaoHmnObZbkVKbWxmg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKdkb-00Ffga-6D; Mon, 09 Dec 2024 14:24:37 +0100
-Date: Mon, 9 Dec 2024 14:24:37 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
-	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
- MBa62xx carrier board Device Trees
-Message-ID: <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
- <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1733750696; c=relaxed/simple;
+	bh=AiykNb0iYkR2dOF88FitvAe1i1r61SccOnLVphqPX6Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HEZIGwx0WBLS4JdW+lQ6gdlwD4lOYhQA1mSaZdfXjBrPjAqO0CF506cy3dt375H1Lv1xR4ZdwWpzJh0qqPRakNLddPVZV2uYlcbHi5ceFIAfD3z9IAKlT9cHuZv5Ph+QtZwpH8wFaEuJBVJBcinoqd07kBYRDNDZusSbeQyfJBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4afdfefc6c1so550352137.0;
+        Mon, 09 Dec 2024 05:24:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733750691; x=1734355491;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X1AtrfJs9qMBlwLy9WabdsW5VY8CJwau05PvncDaX6k=;
+        b=KBSlvyJ1ZuPulpdIk3USccJFOEWZDAfLnRKGGisOCu/0aCRq+wweCUQ/kP9Yja5P9b
+         CU+V4hjKvXL5UXqwewumY2jy5dpO8iU3lQVIdt2R1EzEa8PR2auVZfmkKKTefRG4g9zt
+         XIrQ42mHXkMWD7vYSeOus+iJg4+yzemHyQFQcXJ5Y7610cXy6HjJQY3c7bqe17+f7Af2
+         Cuorg06jFZWR120bRUGjIKTHMiaT1qNMOaR5hZgdFXU9I7oMY4KOp5EZqY+N6DFiF6YX
+         p/fNTxrTO8CvehQd4BwfFQF7/Y0JJM9vlyh1v/sE33TtHyGqR4MYsixqgaxHsHjikr66
+         wdNw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4rsyUov69/bX/7KEOLiLOX7VdHzuPystqOZb5WNRLZTPGp0WpCRh9CLypBwnk+4vGjvaGqb9Sv8Ft8eE=@vger.kernel.org, AJvYcCUjsHDRkD/LRWU8APEKMv5Qd7PXBpEYu2n+m2/ZhbBVpF8PzbnZj/XsPoxmRGNg/HnwWCnbXOgq06nD@vger.kernel.org, AJvYcCVW3Imdu4nScSHYcH1aNQzbOyG3MPrC4uVmOdu6UxfT+4tY2mqovT6bAuv5iSXrw/27HqBavn/gzon7@vger.kernel.org, AJvYcCVzoG3sngoz/3Egj3SEbjv1fJvVt+FtHYubN13QNO215Bu+7qpPHzbLu+jpQ9b4RJxNnErkCpQUvL3p3FRMSKJ77YM=@vger.kernel.org, AJvYcCXbf5JAyUN2FjP0hjzVeNKD4Mv5WtR4HmAT/6UXVkAbWaSoNBVGV2kYsz3pDNVH5tiAdApGRtKd3CGwQQ==@vger.kernel.org, AJvYcCXftQA9/hY2OcjE/MPrOwmyxBzJqakDjq9UJUdw3dWhL+unnVP0boo2w0fahQjtvaEl71UD7oBk/3kWaAFk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtWX/PeCvzgGXu/TpJ5bmUYKmAzf54U6D9vI8tgOmY7WJvyKFY
+	Ch3H84zPwNo7lRfzoUDTvvU48mjbBnUP/IupmglEnXElqmI2GzF+yiNlvI0JL9c=
+X-Gm-Gg: ASbGncsEdIEk0TYWl75gvmCRaDw5iACeDWv6KCeRWpkWfF8gLdgtTW1mUAcbtoAJSco
+	2Ij43q95YSHhiVBj3Y05QNTe9dDatOeKy0kx+zp7gkVbWCut1I7lHyUffiKnDfd87Sut9gdQYRl
+	cWw7RrCtF9PfdY2CvMQQIRFiU8R1G5pgQ6u1mLY+Gcz2Z80g7fgDS6FgeF9Evh3hzn8zuTYxV9N
+	4Y7e7Ny+F0PQofvcR0YWY39p/H743o0K25dC5gANqlTuk4B+cpFXSttdas/BOdJ8/pVJT/MWYrx
+	hh33vdzyc+FNvlhy
+X-Google-Smtp-Source: AGHT+IEZ20Z2g3xbwsf+lqkSlTO1AwULj7YHrGtQJyvcTLFiZk22IcPJF/Gn4H5CVE/hAeCjTOKl9w==
+X-Received: by 2002:a05:6102:3b8e:b0:4af:eed0:9211 with SMTP id ada2fe7eead31-4afeed09e26mr3500269137.13.1733750691155;
+        Mon, 09 Dec 2024 05:24:51 -0800 (PST)
+Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com. [209.85.221.179])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2b9f7980sm1158448241.13.2024.12.09.05.24.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 05:24:50 -0800 (PST)
+Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-5160f80e652so665173e0c.2;
+        Mon, 09 Dec 2024 05:24:49 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCU766TNIKqYsxt/22dznLxzR16B+NayB9pberdPAKIyHih+U6+H+5SIWLCRdg6XmjUG3QjINt/TI69I@vger.kernel.org, AJvYcCUlmKqOZ59Lqa5K+3Q8ts6+i5JSwJz3UbsHsU8Qv3DWLZ+9R7edihTAoZCTm/uma0ex/lusOO/PgRI3D1nM@vger.kernel.org, AJvYcCV/sV4J+bTe6gJ2BLPJ9BUjX26Lht1dO28ZUkwHHgCp+VHcSHbMyqw2kb/GGRoaIl6QK24+aAJ2iNaZSA==@vger.kernel.org, AJvYcCXbZ7dlWdzSoM99pHQSnKmRV8xktbWUBGcOXpVPDtS6yMdTeMtHk+JFmCKBk7iQQmh9C18EV0/xNbrZ@vger.kernel.org, AJvYcCXhmQXhTPM3ZB3NbEFMfD+Ct3g56k0qXilZO2iqr7whDNQ7XLBW6kqpDoERzosM9HLwRJFXo+Se/TazdnM=@vger.kernel.org, AJvYcCXvUBODuDkrlCDz4QvaypY6y3tzmDjAIlOph3wOA8m9QUs3Wp+w3Ha4y88atsy+m7coS1PQN3h/KopA/FDgOtcKmoA=@vger.kernel.org
+X-Received: by 2002:a05:6122:322c:b0:518:7ab7:afbb with SMTP id
+ 71dfb90a1353d-5187ab7b1ebmr2289712e0c.8.1733750689666; Mon, 09 Dec 2024
+ 05:24:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-10-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-10-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 14:24:38 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUFOb=hq960Xaa1iAccXFCh68vyQTiQO3basbNJmm88qw@mail.gmail.com>
+Message-ID: <CAMuHMdUFOb=hq960Xaa1iAccXFCh68vyQTiQO3basbNJmm88qw@mail.gmail.com>
+Subject: Re: [PATCH v3 09/25] ASoC: renesas: rz-ssi: Remove pdev member of
+ struct rz_ssi_priv
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> +&cpsw_port1 {
-> +	phy-mode = "rgmii-rxid";
-> +	phy-handle = <&cpsw3g_phy0>;
-> +};
-> +
-> +&cpsw_port2 {
-> +	phy-mode = "rgmii-rxid";
-> +	phy-handle = <&cpsw3g_phy3>;
-> +};
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Remove the pdev member of struct rz_ssi_priv as it is not used.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-rgmii-rxid is very odd.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> +
-> +&cpsw3g_mdio {
-> +	status = "okay";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&main_mdio1_pins>;
-> +
-> +	cpsw3g_phy0: ethernet-phy@0 {
-> +		compatible = "ethernet-phy-ieee802.3-c22";
-> +		reg = <0x0>;
-> +		reset-gpios = <&main_gpio1 11 GPIO_ACTIVE_LOW>;
-> +		reset-assert-us = <1000>;
-> +		reset-deassert-us = <1000>;
-> +		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+Gr{oetje,eeting}s,
 
-I guess this is the explanation.
+                        Geert
 
-What happens when you use rgmii-id, and don't have this delay here?
-That would be normal.
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-	Andrew
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
