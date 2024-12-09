@@ -1,138 +1,136 @@
-Return-Path: <linux-kernel+bounces-437784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61419E9896
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:18:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34F139E9898
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:19:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4640F282EA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E519D1884DB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A0FF1B0405;
-	Mon,  9 Dec 2024 14:18:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A33461494BF;
+	Mon,  9 Dec 2024 14:19:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czuJDqZa"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a/ojBdj1"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C246B1798F;
-	Mon,  9 Dec 2024 14:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7076C1798F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753926; cv=none; b=WNWA5xaR0HHNx/6oq0ztXfBY+i6iuNB5BIrvBnzsZwHqKLrDharUNCLwrhPxKSteK0eCkY5zTN/f7Shzfdy36FdSI6U/PbMKIUfjztMCpw06gFkBJWZ/La6QlrytwWetgjeDa762KfLoLC92UKvv2q4+kOfIgi0wQH/ZYFNJxS0=
+	t=1733753960; cv=none; b=HCcvd20TdEgD2zjiS/HckIKkM97nPrs6IFz33PlArFGu69clPW1CahTftIn7iVlETjKM3l5H+3ywHAd0E04tYJSgd1bk/bfJ2eIPvzNHeyGRNud2hHrSILefEdv7yX6aNGuZ28fmgwaMWL88ZwaARAKO6WmzJKff+xhjZhiGuU4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753926; c=relaxed/simple;
-	bh=8FsLJNnBvkyb0aie8QpxEfYPGhWI0ZQ/I6okIqIV6dc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqTxSnv/YbJ5hktPWR1PeeWADBHj2oeQQC7VQCxuvVqFRxWBjovrgLh9wEWrNefKxUr2DKrIBTymZMvZh0LRMhl8TLyCdjJy7oQHV8wp6Tk9iss91EKskAcYVdCXmcy9kSk2mGJDCvbW6si+pUnRQOazMHTa7wGqYR+ztxm6m9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czuJDqZa; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3862df95f92so2257241f8f.2;
-        Mon, 09 Dec 2024 06:18:44 -0800 (PST)
+	s=arc-20240116; t=1733753960; c=relaxed/simple;
+	bh=oJeg0IDLiudQCx+r40Nks4t9ti82fc4uLX5xh9nxdw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RLaYoqUPscQo/lxbwrLZ6s+0cQ6BzwDHx/WWAAm1kADk6ret8ZW1xZ76a5t0yG0e1JgkU3ai7PRokijfV5qbp/vKZNvqLIsb30tg9WAMsfTJeJR80lD/oemG3ooRtFOEZ6p+Idqm6Y3P41AZI+OqGBzWkFFNrxhg09FBS2K403o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a/ojBdj1; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5d122cf8e52so7012862a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:19:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733753923; x=1734358723; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=uqQ7Av76sCQ67PddSXj4+y1Hwv1xMZkPsZ7ivaLRViI=;
-        b=czuJDqZa8HdHq8zEHJi/y8mcs2rMV9ytqqtsnlCptdIC9bsKDBBXnCFalh7jzhz35y
-         OmFU+xrBQt9JwCv0ErEZBQmh9KUJZkd1DsosJpq1pJFxDd9Sqqt+2KIdLPjbVo8QW1Lb
-         +iTY4jHiskl1PiFIvWqdcEaF92v5bSAISjFKMdWhGOrbfG8jjUh6IEEGXynS2CU+tB0k
-         EJG/pv9kZYNQ9z4dxqNI3LSR7FofZ3U32bJLuqTq+pt5WJP7REuNCv4Gl5EdCmRHy3ei
-         EQKauPIRgXEpA5K6bgGVXRN4V7xT4EUXG+pMaYOAN/6Fs0Y0Wca7L+B8CvLP85ai0wu2
-         4uVA==
+        d=linaro.org; s=google; t=1733753957; x=1734358757; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FKGxGVFQL+Og6kSlKUo67HxrazoGKfS5bm5biJspKWs=;
+        b=a/ojBdj17hjrP9wFWoyGlap38lL5qiW4MVGskcjs5qhiKA5FHiT/Q7d39MJ6F8DXMT
+         HDMrRKWnEWz03ZgyPcHYRrEAu1jcVVGqTcXREKuY7LVl2KtvEd1+7WBGR2KQgNoSc8JP
+         XQieSWnit1AL/3t/i+1pWLz9VOJtbh/T/NJFGbeZd2Ovx0bRVPVoswN8RWaxI1d8R9h8
+         IZdJFjF7NmvZAYXdnDDbi7tPiNeSmrzKe+npcVAV8ZbB8IRdw96ECWWDJuuAAIqRzzXh
+         LFu8AAVD1H36Pv8aWaPnqzXoDwrlFinY4L3m2n9AqzUybNpe603zb27Hqtex6mznfe3N
+         Z63Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753923; x=1734358723;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uqQ7Av76sCQ67PddSXj4+y1Hwv1xMZkPsZ7ivaLRViI=;
-        b=WlN22Ak7Bfn+ViCJVbC1u7/Ck5l+lMMj+Y81eHUPat55eeLa0rQOJ9MZIoHCtacdIh
-         kEKVsSSeHAta+kObUdFw3k1HwHW8n8BJ4T7OMekwMKHoEjnHN1bM7gOggATWCL6j9DCD
-         1CFaZKXkDfTqzufyLiKejRDq8xfe4rW0nwuS4swKnx3T67ZNHnxe0OW2HgoOrYIrtCFt
-         0HeJ4ONOufJcRsOW1gs8BibNqupIEdS1C6dvUdpnW9531qxjfAQsbkUXXc0LjiaOMJkx
-         AnflRL2u3aMNH5knnrAQn+rB0zzeP4/2n7DCDW7Prg95Uxg0hF5zRw+6Vf/KWlVIcUog
-         DlSw==
-X-Forwarded-Encrypted: i=1; AJvYcCURPSwZFb6OwqlZLjJI5BZKH3ME3zqy0C3g3ToM8E6Mf0h/SSrD3lNGQWufPLF/olW3lNBU1aaZ2ggs@vger.kernel.org, AJvYcCV+o9hIg6UlOniZOOSMT1uGj6jD8fnMl8arBN7v9P6D2mhy1z8ZFsRhQrc8TlzIroHy6KKR6k7y@vger.kernel.org, AJvYcCX4iy7C3wgIOIXDMhxHB4IURsRdKmfYJFvV2HJWefUbjiDGiaebXXWvHl7VzfgJUJqPa1nhgXUIDF+ZrMI=@vger.kernel.org, AJvYcCXABmySfnsrT4zszJDLXGqApeFkRknSZqJj4L4d62pEk9H9pHB5mbxaIQwFpDllB0U5sUQz5lABXOA/kI4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydJaAB6bgHpZRp9sdaoMnyRjUTZhzlIfw7qe5bgqVbzbmd38yu
-	L3QsCmuzg/TbSdre6gIuQhyQ+SPzFZGGLnUA45inUQLNYW/kp0EseUp6Ng==
-X-Gm-Gg: ASbGnctTDB/dPHWHeRvcSlI0B2Lw5eXiNc18fZGffr5iI0CHtYExUDE646Thh930MDW
-	eAr3ynnkLv+267v3en7EMnpDvOEcJSLyd3FxllidkXXDjo+eVZl1fJR6lhOkwVoTUkdu6WdmpjB
-	EJ+Y/1l+/PDVgsczPyH+MY3KMXOty2vvn2g7J3sdg5uFIvxZ8Ki6oE3HSOh+wwmtzq3Y8/jCVzS
-	la+F7egzN+7P/XF3Ju6h0HL710gogwDD260eX8pY36Kd6CENB7OQKLyZu4qSUhRdLanHNfyuQLD
-	0J/zCEdBiaZ02WtLkQDnEXV3cZwKgmiaX1Ad
-X-Google-Smtp-Source: AGHT+IFELAj1vgxKLoKs7dlvlEpcB4HXPiDSG1NhOtqIafP5sTUuMLFi7afz0ZNUuel47+Us0guQWQ==
-X-Received: by 2002:a5d:588f:0:b0:385:f9db:3c4c with SMTP id ffacd0b85a97d-3862b33e5c1mr9840966f8f.9.1733753922778;
-        Mon, 09 Dec 2024 06:18:42 -0800 (PST)
-Received: from orome (p200300e41f281900f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f28:1900:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862a9705dfsm10955582f8f.4.2024.12.09.06.18.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:18:41 -0800 (PST)
-Date: Mon, 9 Dec 2024 15:18:40 +0100
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Prathamesh Shete <pshete@nvidia.com>
-Cc: adrian.hunter@intel.com, ulf.hansson@linaro.org, jonathanh@nvidia.com, 
-	linux-mmc@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	anrao@nvidia.com, stable@vger.kernel.org
-Subject: Re: [PATCH] mmc: sdhci-tegra: Remove
- SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk
-Message-ID: <sxqxmbsdnfieqdrld4xdhwkqngofm6bq64zqwsnpjjweeqkjrn@s7hdf2krdcvq>
-References: <20241209101009.22710-1-pshete@nvidia.com>
+        d=1e100.net; s=20230601; t=1733753957; x=1734358757;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FKGxGVFQL+Og6kSlKUo67HxrazoGKfS5bm5biJspKWs=;
+        b=a2R26B6PY9Wo3aj6f9ImoE22GO84lHNz+UDbXtJe+ZdB16Ck1YKqPNUX9pybYfNHct
+         gu2LfMH/do4I4l4i8ws59YH2kUk92MP8OfH6vsBU4mQzTusQGpsnqOD053HnMuXHqeaZ
+         BnOS8nPWPYbyhSghM/6nZWtH1UY5+4//Q0yFEfGEp46FbHONSHBNxiteXeX+v1rPGAOp
+         tj+mpk01f0U805l4aMqnaGtUO8rKyhRBM78z1pRRBawOlsL2BO6ryk239Z1s8X43o+0s
+         exrh1M/x7zFq92Lqr19nOYM9KBBet08FujhX6qDVLkDv0NQFt6xzcLN4GJ6q4G003Olp
+         CsLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXfZEIvObjGL0Gb+EofciY35yo7fLc2xlj6ThL+mDmgOU8dmDTUH+x9YPLItwd4Zv8XihsbiuO79koIlNw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxjXkwNqvVJqdL6dbknhuP1MCjYgITEHTxRx5ZOKGp1G8urqcvA
+	VdiobgR4V+tCFTVZrRd7iT2pr8w/AqpGzufsAvQp8T/XAQAVr5ybq+Ww9qLp7ag=
+X-Gm-Gg: ASbGnctA3mH4Uz2w7CDZeLyZs3S6Hwou3OoykWZzq1GHucKec5LE6SZ3AlRyrX2Nljr
+	uv7iX9ZbEDY+FzlFrQm7s68+gmJl9uCIEbtRtRzALbyoiel+3POiLmBDvBE+Cp3RFkyJO55/cEB
+	6cjqrnePvx6Y5dKy98sT25lfrnY1amGJtS2zFKAT+QCRnRG37AaJJvOmD+IgT8afN5FSE/NCWzL
+	u9IK9au1SmbU1/////4DZeEwLonhHkjoW251JcfxoNnGSsjjC7dTgPWVQ==
+X-Google-Smtp-Source: AGHT+IGFZ72A7topG3h6HtsrPbQ9uANyoeaAttq9LuCfJvMZl3glvlTz4zo8uXTpVfHH3Pb/FsB6eA==
+X-Received: by 2002:a05:6402:50d4:b0:5d0:cca6:233a with SMTP id 4fb4d7f45d1cf-5d4185305aamr1118156a12.10.1733753955375;
+        Mon, 09 Dec 2024 06:19:15 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.27])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3eb7722acsm2780231a12.3.2024.12.09.06.19.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 06:19:14 -0800 (PST)
+Message-ID: <38e6687e-c2ee-414b-bba5-483150ba7baa@linaro.org>
+Date: Mon, 9 Dec 2024 14:19:13 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wxv6tqvev3dlmdnh"
-Content-Disposition: inline
-In-Reply-To: <20241209101009.22710-1-pshete@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: mailbox: add bindings for
+ samsung,exynos
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, alim.akhtar@samsung.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org,
+ kernel-team@android.com, willmcvicker@google.com, peter.griffin@linaro.org
+References: <20241205174137.190545-1-tudor.ambarus@linaro.org>
+ <20241205174137.190545-2-tudor.ambarus@linaro.org>
+ <2lkowhldq5i4otniijfw7cb3jm6ttatwji3npw5w7c5fyevnn5@ynojupmdyqy4>
+ <9886429b-1bf3-4dc3-b0d4-294a98e44ff2@linaro.org>
+ <58d62506-de89-40e4-a3c2-bd27da515a45@kernel.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <58d62506-de89-40e4-a3c2-bd27da515a45@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
---wxv6tqvev3dlmdnh
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] mmc: sdhci-tegra: Remove
- SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk
-MIME-Version: 1.0
 
-On Mon, Dec 09, 2024 at 03:40:09PM +0530, Prathamesh Shete wrote:
-> Value 0 in ADMA length decsriptor is interpretated as 65536 on new Tegra
-> chips, remove SDHCI_QUIRK_BROKEN_ADMA_ZEROLEN_DESC quirk to make sure
-> max ADMA2 length is 65536
->=20
-> Fixes: 4346b7c7941d ("mmc: tegra: Add Tegra186 support")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
-> ---
->  drivers/mmc/host/sdhci-tegra.c | 1 -
->  1 file changed, 1 deletion(-)
+On 12/9/24 8:33 AM, Krzysztof Kozlowski wrote:
+>> I'm thinking of using the same driver for both cases, and differentiate
+>> between the two by compatible and `of_device_id.data`. Thus I propose to
+>> have a "google,gs101-acpm-mbox" compatible for the ACPM SRAM case and in
+>> the future we may add a "google,gs101-mbox" compatible for the messages
+>> passed via the controller's data register case.
+> Good that you pointed it out, I was indeed wondering why this is
+> "acpm-mbox", not "mbox in compatible.
+> 
+> This needs to be fixed - you cannot have two compatibles for the same
+> device.
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Will fix. I followed arm,mhu, which differentiates the transfer mode,
+data or doorbell, via compatible.
 
---wxv6tqvev3dlmdnh
-Content-Type: application/pgp-signature; name="signature.asc"
+For the fix I'll use "#mbox-cells" as <&phandle type channel>, where
+type specifies doorbel or data type. Clients will use:
+	mboxes = <&ap2apm_mailbox DOORBELL 2>;
+or
+	mboxes = <&ap2apm_mailbox DATA 3>;
 
------BEGIN PGP SIGNATURE-----
+arm,mhu3 and fsl,mu pass the transfer mode in a similar way.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmdW/D8ACgkQ3SOs138+
-s6HZ4g//abkNvj5aHoLv/O5qmK6fqI1BCApgACLXu5J9FnwoYqPCe6OwViy4iiP9
-dmmqkBW+/wNrpJZZ3CgK2ZL+opMrC1ZfJLWTqzv3I9gB/EISOObv9JKRklBLMA1K
-0KHSfsHcjHkFJDoGZY60OpkMD62ERvBbcCIz4GDEUtrLeyI75aFuxz6KvCWMupqn
-8sp/p2kzKYamd7XMLsgbbpUH/Ex0l5HADnZBbeIHtV6ZzzyYETWQHKO87Y0baV52
-wJ1kUEVV/mWajDS2NhZuJJDdqvt/DkEHjxu3pDe28ruO59964zZih95pcDwf7C5T
-EEI9vHWsRXGvSCzbf291E5l/8bA/47hyIlmVNtuwUlMaMl+NEurtskYXR7qI1NNM
-WJd+7FzVA/vjcc/l9pI+b7H/yqY8hA2gTsjMbl6qKAPNejhbTFUCjRBOw815+rht
-8Z8JqpnM/aDLnMn4aULxAY1Ll+yhIF7UY4gmpi3R6IcxxuBArselQlnD/blFTFwu
-ac+//nil2fBi5CeLZCjjRhxNrAA1UfGEGVtrBaKPVBS+wglO78yUuJFIQuQmL5GA
-Fgqk8vRROvKH/YGuGNiR+HfVYVJUXVGkq+Sh1GBS97aJmDkAFxNFw/7zd4AwivMB
-+jrCwGKSWTBHVTuKpfwtENLNYY/b/tydYmbh0dKK4kbq6hg8yTE=
-=Cl3i
------END PGP SIGNATURE-----
 
---wxv6tqvev3dlmdnh--
+>> Given this, I shall use the more generic name for the bindings, thus
+>> maybe "google,gs101-mbox.yaml"? But then exynos850 has the same
+>> controller, shouldn't we just use "samsung,exynos.yaml"?
+> If exynos850 has the same controller, then add it to the binding. Anyway
+> then use samsung,exynos850-mbox, because samsung,exynos is way too generic.
+
+Looks the same, yes, it differs by the number of how many data registers
+each has. But I'll stick to "google,gs101-mbox.yaml", as I can't test
+exynos850 and I assume we can rename the file when we'll need it.
 
