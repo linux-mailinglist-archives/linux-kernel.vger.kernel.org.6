@@ -1,135 +1,114 @@
-Return-Path: <linux-kernel+bounces-437991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6952C9E9B59
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:15:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A22A16517E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:15:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED774142905;
-	Mon,  9 Dec 2024 16:15:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="UwN/nAXd"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90B59E9B60
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:17:21 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD049233131;
-	Mon,  9 Dec 2024 16:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EE78281EDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:17:20 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2CEA13C82E;
+	Mon,  9 Dec 2024 16:17:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="xr4n+JNi"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 889B67F48C;
+	Mon,  9 Dec 2024 16:17:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733760922; cv=none; b=kG4XeouWJsxylklYKyGNcGmcyGqF/j1Gj83v05mVfzvqGmv/mS9nyPkpIFylCRA6F0hjNoYCgyKws32nLuQUdwWcEsKL6vkFqDMJw12TBYANob/dxz20QNxJloUIihwFIwkUekIP2VFm3mBttrcSunQJmQIjY76o0yXVuWXDCr8=
+	t=1733761036; cv=none; b=izIXub503zwfiKk9Doxu6EcOrUOvA0lya5hrcAyUz/lkplenexHcVQGj1GwtXYq5DRLf8YjL5Wtu9lBx625aJtpBNo1hXk0LzBLiN7vJqNetY0UJARH+TdYxv7zDKlIfeoWLnyX/0M8npiYMABpOLCm/iN0o1Q9vODT33GD6gAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733760922; c=relaxed/simple;
-	bh=/Jxmin0WMSDkwTD01xsxrZ8uovoPnaZG01fKLhFI/VM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OWx/G7o66NnaNZ4xQrMc0poTu8kIbQXJsIKOLkx0fYagUX6Snhd/HyfDeG5FOUtjV1DbJ/1YcOvc5Qb6hCdhzmiBiGFzVe5856Vd/byGj7sGZoGBtdeOclPcp+FS7C9TFUks7bUiTPCY/Ox1ksPJ/6siANRbGHm4GyqICA6ZgN8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=UwN/nAXd; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=jhuAePAZ8ZQ2jPG7JG2KWJmbb/vDD1kvHPakjiEM5uk=; b=UwN/nAXdCbg5hTnPExU+Z7mgLx
-	SbL6GdW45VGT2qd8kBufCqrskyGXUAPznVedKM/Nix9MQKqUo8jM1R4t/QacwQNaahHbLwFAMd4Q/
-	oxoHwri9w986EdBfksTcBcYCVs6huLVOG0Ruq3+otfivHXk5tORU1pcn8jTKcVFwHHd0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKgPR-00Fgw5-QG; Mon, 09 Dec 2024 17:14:57 +0100
-Date: Mon, 9 Dec 2024 17:14:57 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
-	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
- MBa62xx carrier board Device Trees
-Message-ID: <a2a2f201-73a4-4a99-baef-0d593a88c872@lunn.ch>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
- <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
- <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
- <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
- <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
- <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
+	s=arc-20240116; t=1733761036; c=relaxed/simple;
+	bh=lFOTcE1CXCv0NBUJob/AgpYVHemXHsRJM7dLM1lwgOw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RX1RZaGj1xbJT5xJEC5lpPr9qcpasd5k3F0e7gHDl3VFgWUv3/eWzziZKrit+TunI8ETz1UoXpr1tfc4S+mdwSWOtBIUSZC2HsfMP6wwOwlr617emW8mnVCpGr6+bfJ8pNnrQsMrvFSqJdP249o9ajYxQBKMmXAtU0bG62sdRoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=xr4n+JNi; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9B54vn012403;
+	Mon, 9 Dec 2024 17:17:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Zaqz0lhJMujS9j5Ch3cOtvcUwmJM6m8N0ZjnzaY3Af0=; b=xr4n+JNikDGiVuk8
+	R5baLlxHgD4CukoiD8zyKybdkZXIAjqWZhx0JpTL7PNQ0DQVtSVCy5Nrr7Vo0Yx3
+	CBi+afzmczrMZmnmdx2chVDKFID8VHRAxAYs/a2wTZGw84pWPex4BalmqURmIOrn
+	nxgvweLMQ9ggqvG/Xfn3jhn/HCeTD2gL4Yd+Ht0luEO3hng8xdTfSCv1xcH+EcTW
+	7Q+e8CEJvWzfYGme0gb8wYeMs30uY0u4J2FbkSJwbl9vmJB6SZp5nufXM6r08hRS
+	lMt2j3l77cFLQw9hXwjlJw2srbZRcPXFWyiXMNLQowqn0rluVF2CGXT1Hp0g6Ljc
+	/b1evg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccc8rrhg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 17:17:05 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 0A31840062;
+	Mon,  9 Dec 2024 17:16:06 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1DC68294C05;
+	Mon,  9 Dec 2024 17:15:22 +0100 (CET)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
+ 2024 17:15:21 +0100
+Message-ID: <543e0df6-5719-41b7-a986-724f6fe6557d@foss.st.com>
+Date: Mon, 9 Dec 2024 17:15:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: st: add sai support on stm32mp251
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241113092047.2359487-1-olivier.moysan@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20241113092047.2359487-1-olivier.moysan@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-> Not our board, but the AM62 SoC. From the datasheet:
+Hi Olivier
+
+On 11/13/24 10:20, Olivier Moysan wrote:
+> Add SAI support to STM32MP25 SoC family.
 > 
-> "TXC is delayed internally before being driven to the RGMII[x]_TXC pin. This
-> internal delay is always enabled." So enabling the TX delay on the PHY side
-> would result in a double delay.
-
-phy-mode describes the board. If the board does not have extra long
-clock lines, phy-mode should be rgmii-id.
-
-The fact the MAC is doing something which no other MAC does should be
-hidden away in the MAC driver, as much as possible.
-
-The MAC driver should return -EINVAL with phy-mode rgmii, or
-rmgii-rxid, because the MAC driver is physically incapable of being
-used on a board which has extra long TX clock lines, which 'rmgii' or
-rgmii-rxid would indicate.
-
-Since the MAC driver is forcing the TX delay, it needs to take the
-value returned from of_get_phy_mode() and mask out the TX bit before
-passing it to the PHY.
-
-Now, it could be that history has got in the way. There are boards out
-there which have broken DT but work. Fixing the MAC driver to do the
-correct thing will break those boards. Vendors with low quality code
-which works, but not really.
-
-~/linux/arch/arm64/boot/dts/ti$ grep rgmii k3-am625-*
-k3-am625-beagleplay.dts:	phy-mode = "rgmii-rxid";
-k3-am625-sk.dts:	phy-mode = "rgmii-rxid";
-
-Yep, these two have broken DT, they don't describe the board
-correctly.
-
-O.K. Can we fix this for you board? Yes, i think we can. If you take
-rmgii-rxid, aka PHY_INTERFACE_MODE_RGMII_RXID, and mask out the TX,
-you still get PHY_INTERFACE_MODE_RGMII_RXID. If you take rgmii-id,
-a.k.a. PHY_INTERFACE_MODE_RGMII_ID and mask out the TX, you get
-PHY_INTERFACE_MODE_RGMII_RXID, which is what you want.
-
-Please produce a patch to the MAC driver, explaining the horrible mess
-the vendor made, and how this fixes it, but should also not break
-other boards.
-
-> No such defaults exist in the DP83867 driver. If any rgmii-*id mode is used, the
-> corresponding delays *must* be specified in the DTB:
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
+>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 136 +++++++++++++++++++++++++
+>   1 file changed, 136 insertions(+)
 > 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/dp83867.c#n532
+> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> index 6fe12e3bd7dd..e9db486b988a 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> @@ -484,6 +484,108 @@ spi5: spi@40280000 {
+>   				status = "disabled";
+>   			};
 
-That is bad, different to pretty every other PHY driver :-(
 
-If you want, you could patch this driver as well, make it default to
-2ns if delays are asked for.
+Applied on stm32-next.
 
-    Andrew
-
----
-pw-bot: cr
+Cheers!
+Alex
 
