@@ -1,107 +1,108 @@
-Return-Path: <linux-kernel+bounces-437536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 914CE9E9483
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:41:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BE949E9480
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:40:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A4E7016142F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:40:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2F5F284B5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807652248A1;
-	Mon,  9 Dec 2024 12:40:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3392A21E0BE;
+	Mon,  9 Dec 2024 12:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvKX0PSS"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fS9IjNmq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B036321E0BE;
-	Mon,  9 Dec 2024 12:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 601BA224AEE;
+	Mon,  9 Dec 2024 12:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733748015; cv=none; b=kn8VyxXLrCevohqjeS5SYC0ihsLJCUuyxA13aPfKTlTEEbYTrQia4FEyR5vQEWO2gMYU/zO2wNL3EEPq3S3Hlu4IIc6hZVHcq/BKVXuzx8XUiU4dVDIc0Gj0+mYuP6GRg836h/EPHRcdPlBr6C2hsNknxKAO/yy42r6uyUDKL2k=
+	t=1733748018; cv=none; b=ZYjH2j+sHLnEuvcADvoReeBqUjwD6Fc2tckCHNySwAsCaLt/RFum6Gudo/B2QhlRk0orN7VHhqzP432hmEP9UXwXuqKFESf1ZscxWx23XL50Aa6E+oy1ZO3aycFSz/2c95RbvhGgfeSWuOsZ2bMUcf3YGiwpT8lVAS4tDWF2JaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733748015; c=relaxed/simple;
-	bh=0mvBxn0PSgu6FsrYzgn8Ezm4CL9y/d3xpE2xs78uGIc=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
-	 MIME-Version:Content-Type; b=Oz5NKlQHNr1KwSgxUbaz2IeMnLpA5L0HFraUIQya7YQOmdGBJsuV13/grjouPy/TUUVxea0P9TKTZ1sFs6F8s1BRp4l/C1HjcgWHOoOjVF0vtqXiHgzu677HVHKbjWegONqWK4tBaUkwqa/gWk8L1b3ryQtnd+pKhYs3Q8Kqp7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvKX0PSS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B271C4CED1;
-	Mon,  9 Dec 2024 12:40:13 +0000 (UTC)
+	s=arc-20240116; t=1733748018; c=relaxed/simple;
+	bh=r1y2bZ+c+3Ff9Cb7WwsV2utut88vNUkPy2wrLMTOb6Q=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=V66rfMuW9RjjD4RBcwaigHBS90lS/kkwVRKLG65UuMgLiov+t5xx/1atMbXaxykpzfU/HBc1X3fvabcnKYQL81yeoxuJeDgg9TWjZxOxmKF+nIRNa/EtjJeI4/9ps8MtJz/33Bh8qhS+mK8ckA1s3VxtEzi+W+pZONhFOR2Pkc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fS9IjNmq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD475C4CEE5;
+	Mon,  9 Dec 2024 12:40:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733748015;
-	bh=0mvBxn0PSgu6FsrYzgn8Ezm4CL9y/d3xpE2xs78uGIc=;
-	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-	b=DvKX0PSSLEL7SzgRIFSjtJnTkDB+faBBGcovuhW2QCWLjthDYv0xCKQ9i/JhKK7NL
-	 RuUXsQvFItOVdv5YTFk5qjZiWrmUfZjbJr7LbZhUTuDuqpaQZlj0laXNSkwM49KiGJ
-	 +xTgITS+ALwCcaIL+hSC7/eYLCx+q2hZlO7YIKRBlnRevXIeVtTwBeoak0a+VieG4Y
-	 YLYQT4+USZ9++lEbMsAowxhEOo60/uJ2qHZgZqRmqYAF4cnQ1yZH9ZvnKRvAiEgX/R
-	 RGlJvl/PS+kQW+3KFLCn6LTqHIY8pSTEPmH9J9s9pwXcdVpj9qE5yj8+NV0CwKSnNK
-	 6Q2hNQcy62axQ==
-From: Kalle Valo <kvalo@kernel.org>
-To: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
-Cc: ath12k@lists.infradead.org,  jjohnson@kernel.org,
-  linux-wireless@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 wireless-next] wifi: ath12k: Fix out-of-bounds read
- in ath12k_mac_vdev_create
-References: <20241207071306.325641-1-dheeraj.linuxdev@gmail.com>
-Date: Mon, 09 Dec 2024 14:40:12 +0200
-In-Reply-To: <20241207071306.325641-1-dheeraj.linuxdev@gmail.com> (Dheeraj
-	Reddy Jonnalagadda's message of "Sat, 7 Dec 2024 12:43:06 +0530")
-Message-ID: <87r06hrpw3.fsf@kernel.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
+	s=k20201202; t=1733748016;
+	bh=r1y2bZ+c+3Ff9Cb7WwsV2utut88vNUkPy2wrLMTOb6Q=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=fS9IjNmqpxSlbgxt6H64fVsHAZinOsTi4S7LnACr+qtwiO71aYA1E57jWLdX8CD/G
+	 rKugCGLVRkqWrJtDirPEypi1uXk4gGUohJS09hyxZYjI53p+8BSjwV/QVBvLEFLyan
+	 R7sbm8VSg2n+aZABBPHNDhm+mrFhKeIG/CW1wTW6ckVoyWTe0FAZ7WAsT7SEsaesAc
+	 +l5cU6tTIBQIlxqh+80bu44M/lOcfVjl6fm41FBPrVGPLI+26xHXfJod6kdmLciKBI
+	 oUV66nHLI3RSEc/KotT5qmAkw3thKkBYar5NGBMNLuG1AbNUiLJOAAgERfZC1Oy/VP
+	 krrHYoJO3uAWw==
+Date: Mon, 09 Dec 2024 06:40:15 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+ Conor Dooley <conor+dt@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-leds@vger.kernel.org, Sebastian Reichel <sre@kernel.org>, 
+ Lee Jones <lee@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, 
+ linux-pm@vger.kernel.org, 
+ Sebastian Krzyszkowiak <sebastian.krzyszkowiak@puri.sm>, 
+ Hans de Goede <hdegoede@redhat.com>, Purism Kernel Team <kernel@puri.sm>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+In-Reply-To: <20241209-starqltechn_integration_upstream-v11-3-dc0598828e01@gmail.com>
+References: <20241209-starqltechn_integration_upstream-v11-0-dc0598828e01@gmail.com>
+ <20241209-starqltechn_integration_upstream-v11-3-dc0598828e01@gmail.com>
+Message-Id: <173374801505.3246398.1590933015937792151.robh@kernel.org>
+Subject: Re: [PATCH v11 3/9] dt-bindings: power: supply: max17042: split on
+ 2 files
 
-Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com> writes:
 
-> Add a bounds check to ath12k_mac_vdev_create() to prevent an out-of-bounds
-> read in the vif->link_conf array. The function uses link_id, derived from
-> arvif->link_id, to index the array. When link_id equals 15, the index
-> exceeds the bounds of the array, which contains only 15 elements.
->
-> This issue occurs in the following code branch:
->
->     if (arvif->link_id == ATH12K_DEFAULT_SCAN_LINK && vif->valid_links)
->         link_id = ffs(vif->valid_links) - 1;
->     else
->         link_id = arvif->link_id;
->
-> When the first condition in the if statement is true and the second
-> condition is false, it implies that arvif->link_id equals 15 and
-> the else branch is taken, where link_id is set to 15, causing an
-> out-of-bounds access when vif->link_conf array is read using link_id
-> as index.
->
-> Add a check to ensure that link_id does not exceed the valid range of the
-> vif->link_conf array. Log a warning and return -EINVAL if the check fails
-> to prevent undefined behavior.
->
-> Changelog:
->
-> v2:
-> 	- Updated the commit message as per the reviewer's suggestions
-> 	- Clarified the description of the bug in the commit message
-> 	- Added Fixes and Closes tags with relevant information
->
-> Fixes: 90570ba4610 ("wifi: ath12k: do not return invalid link id for scan link")
-> Closes: https://scan7.scan.coverity.com/#/project-view/52337/11354?selectedIssue=1602214
->
-> Signed-off-by: Dheeraj Reddy Jonnalagadda <dheeraj.linuxdev@gmail.com>
+On Mon, 09 Dec 2024 14:26:27 +0300, Dzmitry Sankouski wrote:
+> Move max17042 common binding part to separate file, to
+> reuse it for MFDs with platform driver version.
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
+>  Documentation/devicetree/bindings/power/supply/maxim,max17042-base.yaml | 66 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  Documentation/devicetree/bindings/power/supply/maxim,max17042.yaml      | 49 +------------------------------------------------
+>  MAINTAINERS                                                             |  2 +-
+>  3 files changed, 68 insertions(+), 49 deletions(-)
+> 
 
-In wireless we prefer to have changelog after the '---' line so it's not
-included in git. Not sure if Jeff can fix this during commit or not.
+My bot found errors running 'make dt_binding_check' on your patch:
 
--- 
-https://patchwork.kernel.org/project/linux-wireless/list/
+yamllint warnings/errors:
 
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/power/supply/maxim,max17042.example.dtb: battery@36: 'reg' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/power/supply/maxim,max17042-base.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241209-starqltechn_integration_upstream-v11-3-dc0598828e01@gmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
