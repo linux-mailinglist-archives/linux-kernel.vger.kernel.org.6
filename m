@@ -1,93 +1,146 @@
-Return-Path: <linux-kernel+bounces-437962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C6E79E9B0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:59:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AE9009E9B12
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:59:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E4CF282A0B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:59:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 053BC282B63
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:59:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3439137776;
-	Mon,  9 Dec 2024 15:59:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A387113B59A;
+	Mon,  9 Dec 2024 15:59:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="st6izTpO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="afyuIw5g"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C347481D1;
-	Mon,  9 Dec 2024 15:59:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCDE233139;
+	Mon,  9 Dec 2024 15:59:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759966; cv=none; b=A6SXmZZ/AYkBONtHzdWoo08t0kDqdqxvOjtazzR6cttRBq6oaB+4DvE7zuMr+cl2KdfKpaJD/fs1+9nS5+dN6Zotjq+w9S1WCDs/oBVO5e0OJ+O01Dwi3/N1FJu8MFiYw5g+u36wNP1jdIkgNvgm19sIaLp0bP94n6RtykpIF7o=
+	t=1733759981; cv=none; b=l6uWMjnkDOP1dP2x00X6orpGB4FZfvss7T9IjiesxGmqByoViGLpfte/PHj+5t4m//xY7mnOoYndLzfOi+4rz8P5UIZqUlBz9+YYvcfmpoMGAmbU84juU3muzlG9sYVdLqVHu7uABsNHAycAe2qp8+ODa2L83XqePfhhpq/taoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759966; c=relaxed/simple;
-	bh=5ksp81xzpJEXbp0KJQe4n7Kdm061Nbc5HSH9zfWMiQQ=;
-	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
-	 Cc:Message-ID:Date; b=aocHhHr8ndu0bq+rt52wH7oGLuY7RZcGSef7czXLH8L0IED/cwrMXr7iWHAjwzDXU1Ge/oKjWv9Zk0JKatPN+ZjTUx+G8+yv0N0RL9WQyxOAOdV/ilDe9fjYga5O2io3myr8NXMHCVOhxnaGcXOjepxzCu7ucMxMP1Co48KZiPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=st6izTpO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03074C4CED1;
-	Mon,  9 Dec 2024 15:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733759965;
-	bh=5ksp81xzpJEXbp0KJQe4n7Kdm061Nbc5HSH9zfWMiQQ=;
-	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
-	b=st6izTpOBSZGEuo1B0o+vtJBEOVys+5FnmaEUtIKxIEXONIbidvB/YYWsK6zdDg31
-	 JzRNOB86Yr9zx7tQrdEsx/3hqnaVFmrA/mp1OBwx1/5cT5zvXmt85VGTBgemtGH1Bv
-	 jcSA2LEfIhPMwElMrDiSWPg4JyFdQJh8oaEiSE2Ad9O1+ODOq7weyQAyNrMuDLfymj
-	 NQXudSNws/jQc1zmZa7lyn4TnAsSea2nTEqgl/DovA/Ea728D+cf44DgefxYotLF1C
-	 gtOYGHMNpMqB2AMBnA/AsrioUtgc/EZoH8EHSG7Bx6XlE/oi5U/uYU6eu/SFEZ2MOy
-	 uz2CkVWqeCDyQ==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733759981; c=relaxed/simple;
+	bh=7n6UksG2jsbDHkJth7c5TMMS++85KDSagCJy47iVCFs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=V5Ro4oPfBcImiCop8Y4ddbKbqZnOih5lg6xDRq3uKrP9FevzXdeUWOgR8u0jI6gbSu3IZ71LCMd1ZPUmNmP5gIwlAfEV+h8mZZGIwhzSQW2SSC1VVsjD+vGVdFgCoGiqAFdR9lad/CX2MKZuagUVvW3yJRc/4WwPZR1AoOUJSo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=afyuIw5g; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B8B7820003;
+	Mon,  9 Dec 2024 15:59:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733759976;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=KMaa9W6ss2OcXsv4sVNHPaakUP1XwxrFXtUUu7rQv1w=;
+	b=afyuIw5g1UlzCIZHYC8W1WMyzxKIYnLraB0qvEnVpINOyJSa2mVIkGJOlrmS7ZU4A9YSbh
+	m4xx/TcvCME3Qof3QbCbdM6g+3ZoimYXtuZtBTvgVaLyrzE3K3xfhRx4WcLzZXNXaTXFUL
+	VPdRS1eBGgeJHRG5SD/cMeD/4F8vCF71Di3d079UAWNTg2fTKJBU6Hlf4ieI8JKAwR7vza
+	z1yfLFU0eCeqLRqUAKNyZAt9UiHc4Hxm3zG3lDfBpWSFMxqdxFtwaiHnyQ9Y/ose+2ZLFu
+	hz8lB6lAKyA1wDmJctzznBfdcN4lfrNeYZLzYhnc1bjIMuEHQr9i2/1FU9y8tQ==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v2 0/6] nvmem: rmem: cleanup & add checksumming support for
+ Mobileye EyeQ5
+Date: Mon, 09 Dec 2024 16:59:34 +0100
+Message-Id: <20241209-rmem-v2-0-cbc0e8c08a21@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: wifi: brcmfmac: fix brcmf_vif_clear_mgmt_ies when stopping AP
-From: Kalle Valo <kvalo@kernel.org>
-In-Reply-To: <20241121-brcmfmac-v1-1-02fc3fb427c2@gmail.com>
-References: <20241121-brcmfmac-v1-1-02fc3fb427c2@gmail.com>
-To: Renjaya Raga Zenta <ragazenta@gmail.com>
-Cc: Arend van Spriel <aspriel@gmail.com>,
- Franky Lin <franky.lin@broadcom.com>,
- Hante Meuleman <hante.meuleman@broadcom.com>, linux-wireless@vger.kernel.org,
- brcm80211-dev-list.pdl@broadcom.com, SHA-cyfmac-dev-list@infineon.com,
- linux-kernel@vger.kernel.org, Renjaya Raga Zenta <ragazenta@gmail.com>
-User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
-Message-ID: <173375996198.157598.9983954124346124253.kvalo@kernel.org>
-Date: Mon,  9 Dec 2024 15:59:23 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAOYTV2cC/13MQQrCMBCF4auUWRuZSSNSV95DurDpxA6YRJISl
+ JK7G7t0+T8e3waZk3CGS7dB4iJZYmihDx3Y5R4erGRuDRq1IY29Sp69otPshh7JOpygXV+Jnbx
+ 35ja2XiSvMX12tdBv/QMKKVTaODOc0ToyfJ1iXJ8SjjZ6GGutX6J8MkuaAAAA
+X-Change-ID: 20241203-rmem-15df9301cf0b
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Nicolas Saenz Julienne <nsaenz@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-mips@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Renjaya Raga Zenta <ragazenta@gmail.com> wrote:
+Hi,
 
-> This removes the following error log when stopping AP:
-> 
-> ieee80211 phy0: brcmf_vif_set_mgmt_ie: vndr ie set error : -52
-> 
-> It happened if:
-> 
-> 1) previously wlan interface was in station mode (wpa_supplicant) and
->    connected to a hotspot
-> 2) then started AP mode (hostapd)
-> 3) and then stopped AP mode.
-> 
-> The error happened when it tried to clear BRCMF_VNDR_IE_PRBREQ_FLAG.
-> This flag is not set in `brcmf_config_ap_mgmt_ie`, but
-> BRCMF_VNDR_IE_ASSOCRSP_FLAG is set instead.
-> 
-> Signed-off-by: Renjaya Raga Zenta <ragazenta@gmail.com>
+This series is two-fold.
 
-Patch applied to wireless-next.git, thanks.
+ - First some cleanup to nvmem/rmem.
 
-aba23b0a6a0d wifi: brcmfmac: fix brcmf_vif_clear_mgmt_ies when stopping AP
+   [PATCH 2/6] nvmem: specify ->reg_read/reg_write() expected return values
+   [PATCH 3/6] nvmem: rmem: make ->reg_read() straight forward code
+   [PATCH 4/6] nvmem: rmem: remove unused struct rmem::size field
 
+   Those patches were sent on the 2024-07-24 [0] and saw no feedback.
+   There are small improvements to the commit messages but the commit
+   bodies stayed the same. I did not make this a follow-up as the EyeQ5
+   compatible (see below) wasn't part of V1, and I wouldn't want people
+   to think it has been through a first round of lkml review.
+
+ - Second, add a new compatible to rmem for the EyeQ5-specific usecase;
+   it parses a header and does checksumming at probe.
+
+   [PATCH 1/6] dt-bindings: nvmem: rmem: Add mobileye,eyeq5-bootloader-config
+   [PATCH 5/6] nvmem: rmem: add CRC validation for Mobileye EyeQ5 NVMEM
+   [PATCH 6/6] MIPS: mobileye: eyeq5: add bootloader config reserved memory
+
+Code is tested on real hardware, an EyeQ5 evaluation board.
+With the patch series:
+
+   # rmem=/sys/bus/nvmem/devices/rmem0
+   # for i in $rmem/cells/*; do basename $i; hexdump -C $i | head -n1; done
+   mac@7c,0
+   00000000  00 28 f8 6b 87 1b                                 |.(.k..|
+   mac@82,0
+   00000000  00 28 f8 6c 88 1c                                 |.(.l..|
+
+Have a nice day,
+Thanks,
+Théo
+
+[0]: https://lore.kernel.org/lkml/20240724-nvmem-rmem-v1-0-d2e3a97349a0@bootlin.com/
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v2:
+- [PATCH 1/6] dt-bindings: take "Acked-by: Rob Herring".
+- [PATCH 5/6]: add "#include <linux/slab.h>" for kfree(). It caused
+  compile errors on some architectures, thanks kernel test robot.
+- Link to v1: https://lore.kernel.org/r/20241203-rmem-v1-0-24f4970cf14e@bootlin.com
+
+---
+Théo Lebrun (6):
+      dt-bindings: nvmem: rmem: Add mobileye,eyeq5-bootloader-config
+      nvmem: specify ->reg_read/reg_write() expected return values
+      nvmem: rmem: make ->reg_read() straight forward code
+      nvmem: rmem: remove unused struct rmem::size field
+      nvmem: rmem: add CRC validation for Mobileye EyeQ5 NVMEM
+      MIPS: mobileye: eyeq5: add bootloader config reserved memory
+
+ Documentation/devicetree/bindings/nvmem/rmem.yaml |  1 +
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi            | 22 ++++++
+ drivers/nvmem/rmem.c                              | 96 ++++++++++++++++++++---
+ include/linux/nvmem-provider.h                    |  4 +-
+ 4 files changed, 111 insertions(+), 12 deletions(-)
+---
+base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
+change-id: 20241203-rmem-15df9301cf0b
+
+Best regards,
 -- 
-https://patchwork.kernel.org/project/linux-wireless/patch/20241121-brcmfmac-v1-1-02fc3fb427c2@gmail.com/
-
-https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+Théo Lebrun <theo.lebrun@bootlin.com>
 
 
