@@ -1,75 +1,85 @@
-Return-Path: <linux-kernel+bounces-436741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 365409E8A25
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:11:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30C4D9E8A2C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:12:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2079316336C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:11:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F59C161C11
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68130156885;
-	Mon,  9 Dec 2024 04:11:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37E511581F0;
+	Mon,  9 Dec 2024 04:12:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FMA16FKl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bR9bceHj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15E115666B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:11:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB665156885;
+	Mon,  9 Dec 2024 04:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733717472; cv=none; b=W0SbKFMgecX4CfFNGHVUUp8YGIns/PThk3mvdbyNHmVdGoteWTtZWClHU/LOhTSfLsXfGLBAADvFj4uyrAp+CX2n3JtMlhO7ZNwTdAJpNamkvljebNh6FjFr6DVU+vqfabiHsjggsUe6RetrFV7qtjCO/2gqvGOSFtuBNN1MBOA=
+	t=1733717534; cv=none; b=UOhNJ4Hhh3MB2hRrKJ8B9H99fIUBTH7IzE7SJww7rV4nU7lN99niLoAjbLhkz0X3CyN4I23sT1PoEOHraUsTy7UY9zz30bhcq4ie7qhMWxcv94xbDdqCQlCC3GvTdTg7NafSIA8zojDCmtXGJqB2cqRl3sQQ4VCUae0MYOKO3OI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733717472; c=relaxed/simple;
-	bh=e5lSDI07FMVuwWtwFVHQ/BSRsDcUV16G0hl8ZZi7tmI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HmlkEmyge2dZLQQNF6ZLL129gixbSNffnNRdMyfNKRtLMwnXSOA3hPswaCWdWT3Ew02YtqOcEjivz9QflrN0K6QnI+huQpHJ/+V1nhZpd6X9f3be5emng+ClgtlJar25aMlwz9usIZPOO0z+twK4uoMBWkS/YroJAavAOUmWC0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FMA16FKl; arc=none smtp.client-ip=192.198.163.19
+	s=arc-20240116; t=1733717534; c=relaxed/simple;
+	bh=jeaU5cD30qq8KgLp1vwHXVGn1Sa67LzrXjtJZtFG+ds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YF5VVCeKi8ETkSM5vRiRSYt7X9IlXUq1UV05ec3NmNa7aHWaPbbMsNw/sgW9IJoFRlROyWNc0KYc6WJcEVIUJUDyqx+jZyBp/4SYO4T0QHQvUpBafU17wZ871QydW3CgOYMs36eSA39CNegAX1/7djq8btuEZwe8I2Bvs9fyW3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bR9bceHj; arc=none smtp.client-ip=198.175.65.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733717471; x=1765253471;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=e5lSDI07FMVuwWtwFVHQ/BSRsDcUV16G0hl8ZZi7tmI=;
-  b=FMA16FKlaVskCFkfxjRtjmYfhFaDNsE2MWr/YLrba05fKX0rjXKRMJp6
-   jOLPAK5w/4ZFkcYdytEb8pq2/UcUAzx7bbpFIY0gM4PVTN4+UiWiLkgCC
-   +R4AEP/DSBLNEfdSq49uuQYha0Okofig9CZNnh50rD3pC5UWfS0Qt1Qmk
-   lC2zv7PvXC/tSRSavj4b+F9+Irb2zf9dWFCcZK4e9felDSpL4YEpX5vQB
-   Ow1uam8hyyxgPmqOMzGEZwyfQIW53n8v3RkMOZKmKZBEFCniTh9EglQGa
-   sCeoj+gHdPLuwRwtDO01DCXBRJrh1/+hj2YT2jYNpGwrE8ox+SoHJVrzd
+  t=1733717533; x=1765253533;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=jeaU5cD30qq8KgLp1vwHXVGn1Sa67LzrXjtJZtFG+ds=;
+  b=bR9bceHjHJu3vL4dhS2y4h5pLO2aqfoj4XwPGRJK0W/Ntjp1QSHzKMvO
+   hzh5tgJFbNNlPjaRWIICreku4WLemfEGxTsD+RfXCMstaxoYk1+YglVlk
+   4Gjbq2hxDhFhp5Qa7n0dwpYje0y5UsKNdat3EDB+MxNSYJHwcbEcrgAPH
+   PdEQmRq7j7uvKZvw6EA/5lqCaegEpBsR5fGjjLTxiICl31njB6IkBtHYX
+   Xvix0QpLG9uIa3CMe4gCriVs+FHehP6i23CHdnUHXeam90LvI9UtaWde3
+   oQujdnOJ6N/SmL7FX3meuK0Dki4vtq0+yhF67MxYrx+IUaAPGtmpnt+RH
    w==;
-X-CSE-ConnectionGUID: +8LjdGP3SD6DEsiV88Kakw==
-X-CSE-MsgGUID: f7YhNWyyQAafd0U+AVP/2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="33330648"
+X-CSE-ConnectionGUID: eZgVmHWTSeeFHdXzNL7bsg==
+X-CSE-MsgGUID: jSpzenr6T8+qq/XXZJio/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="33891403"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="33330648"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:11:10 -0800
-X-CSE-ConnectionGUID: eyUMPm85Q9uld4cdafJ+cA==
-X-CSE-MsgGUID: x5oF/O1XTGOrLA2AGKSgRg==
+   d="scan'208";a="33891403"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:12:13 -0800
+X-CSE-ConnectionGUID: 15WYhjCEQKy/SNHF2n3+uA==
+X-CSE-MsgGUID: VqFIhV3CSNK1s0SWk9lplw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="100003658"
+   d="scan'208";a="99004598"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 08 Dec 2024 20:11:08 -0800
+  by fmviesa003.fm.intel.com with ESMTP; 08 Dec 2024 20:12:08 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tKV6v-0003o2-1f;
-	Mon, 09 Dec 2024 04:11:05 +0000
-Date: Mon, 9 Dec 2024 12:10:31 +0800
+	id 1tKV7t-0003oD-1u;
+	Mon, 09 Dec 2024 04:12:05 +0000
+Date: Mon, 9 Dec 2024 12:11:39 +0800
 From: kernel test robot <lkp@intel.com>
-To: Zhou Wang <wangzhou1@hisilicon.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Nianyao Tang <tangnianyao@huawei.com>,
-	Marc Zyngier <maz@kernel.org>
-Subject: drivers/irqchip/irq-gic-v3-its.c:3896:30: sparse: sparse: incorrect
- type in argument 1 (different address spaces)
-Message-ID: <202412071436.UuBR3FRD-lkp@intel.com>
+To: Taniya Das <quic_tdas@quicinc.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Taniya Das <quic_tdas@quicinc.com>
+Subject: Re: [PATCH 3/3] clk: qcom: videocc-sm8750: Add video clock
+ controller driver for SM8750
+Message-ID: <202412071654.X0lSg9EN-lkp@intel.com>
+References: <20241206-sm8750_videocc-v1-3-5da6e7eea2bd@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,123 +88,98 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241206-sm8750_videocc-v1-3-5da6e7eea2bd@quicinc.com>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b5f217084ab3ddd4bdd03cd437f8e3b7e2d1f5b6
-commit: f82e62d470cc990ebd9d691f931dd418e4e9cea9 irqchip/gicv3-its: Add workaround for hip09 ITS erratum 162100801
-date:   11 days ago
-config: arm-randconfig-r111-20241207 (https://download.01.org/0day-ci/archive/20241207/202412071436.UuBR3FRD-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241207/202412071436.UuBR3FRD-lkp@intel.com/reproduce)
+Hi Taniya,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on af2ea8ab7a546b430726183458da0a173d331272]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Taniya-Das/clk-qcom-branch-Extend-invert-logic-for-branch2-mem-clocks/20241207-015655
+base:   af2ea8ab7a546b430726183458da0a173d331272
+patch link:    https://lore.kernel.org/r/20241206-sm8750_videocc-v1-3-5da6e7eea2bd%40quicinc.com
+patch subject: [PATCH 3/3] clk: qcom: videocc-sm8750: Add video clock controller driver for SM8750
+config: s390-allmodconfig (https://download.01.org/0day-ci/archive/20241207/202412071654.X0lSg9EN-lkp@intel.com/config)
+compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412071654.X0lSg9EN-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412071436.UuBR3FRD-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412071654.X0lSg9EN-lkp@intel.com/
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/irqchip/irq-gic-v3-its.c:1552:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct raw_spinlock [usertype] *lock @@     got struct raw_spinlock [noderef] __percpu * @@
-   drivers/irqchip/irq-gic-v3-its.c:1552:9: sparse:     expected struct raw_spinlock [usertype] *lock
-   drivers/irqchip/irq-gic-v3-its.c:1552:9: sparse:     got struct raw_spinlock [noderef] __percpu *
-   drivers/irqchip/irq-gic-v3-its.c:1558:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct raw_spinlock [usertype] *lock @@     got struct raw_spinlock [noderef] __percpu * @@
-   drivers/irqchip/irq-gic-v3-its.c:1558:9: sparse:     expected struct raw_spinlock [usertype] *lock
-   drivers/irqchip/irq-gic-v3-its.c:1558:9: sparse:     got struct raw_spinlock [noderef] __percpu *
-   drivers/irqchip/irq-gic-v3-its.c:2926:45: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct cpumask [usertype] **mask @@     got struct cpumask [usertype] *[noderef] __percpu * @@
-   drivers/irqchip/irq-gic-v3-its.c:2926:45: sparse:     expected struct cpumask [usertype] **mask
-   drivers/irqchip/irq-gic-v3-its.c:2926:45: sparse:     got struct cpumask [usertype] *[noderef] __percpu *
->> drivers/irqchip/irq-gic-v3-its.c:3896:30: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct raw_spinlock [usertype] *l @@     got struct raw_spinlock [noderef] __percpu * @@
-   drivers/irqchip/irq-gic-v3-its.c:3896:30: sparse:     expected struct raw_spinlock [usertype] *l
-   drivers/irqchip/irq-gic-v3-its.c:3896:30: sparse:     got struct raw_spinlock [noderef] __percpu *
-   drivers/irqchip/irq-gic-v3-its.c:4424:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct raw_spinlock [usertype] *lock @@     got struct raw_spinlock [noderef] __percpu * @@
-   drivers/irqchip/irq-gic-v3-its.c:4424:9: sparse:     expected struct raw_spinlock [usertype] *lock
-   drivers/irqchip/irq-gic-v3-its.c:4424:9: sparse:     got struct raw_spinlock [noderef] __percpu *
-   drivers/irqchip/irq-gic-v3-its.c:4442:9: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected struct raw_spinlock [usertype] *lock @@     got struct raw_spinlock [noderef] __percpu * @@
-   drivers/irqchip/irq-gic-v3-its.c:4442:9: sparse:     expected struct raw_spinlock [usertype] *lock
-   drivers/irqchip/irq-gic-v3-its.c:4442:9: sparse:     got struct raw_spinlock [noderef] __percpu *
-   drivers/irqchip/irq-gic-v3-its.c:354:12: sparse: sparse: context imbalance in 'vpe_to_cpuid_lock' - wrong count at exit
-   drivers/irqchip/irq-gic-v3-its.c:360:13: sparse: sparse: context imbalance in 'vpe_to_cpuid_unlock' - unexpected unlock
-   drivers/irqchip/irq-gic-v3-its.c:1403:13: sparse: sparse: context imbalance in 'its_send_vmovp' - wrong count at exit
-   drivers/irqchip/irq-gic-v3-its.c:1554:18: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:1875:13: sparse: sparse: context imbalance in 'its_map_vm' - different lock contexts for basic block
-   drivers/irqchip/irq-gic-v3-its.c:1902:13: sparse: sparse: context imbalance in 'its_unmap_vm' - different lock contexts for basic block
-   drivers/irqchip/irq-gic-v3-its.c:2039:12: sparse: sparse: context imbalance in 'its_irq_set_vcpu_affinity' - wrong count at exit
-   drivers/irqchip/irq-gic-v3-its.c:2325:23: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2325:23: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2741:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2741:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2762:17: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2798:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2798:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2802:38: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2820:17: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2820:49: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2821:25: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2831:30: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2874:17: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2901:35: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c: note: in included file (through include/linux/irqchip/arm-gic-v3.h):
-   arch/arm/include/asm/arch_gicv3.h:146:9: sparse: sparse: cast truncates bits from constant value (2000000000000000 becomes 0)
-   drivers/irqchip/irq-gic-v3-its.c:2930:9: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:2931:14: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3001:9: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3015:45: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3015:45: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3017:9: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3068:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3068:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3083:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3083:15: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3108:17: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3156:31: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3161:13: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3180:17: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3185:21: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3245:43: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3279:9: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3280:9: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3311:26: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3314:26: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3314:26: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3870:26: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3897:18: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3888:13: sparse: sparse: context imbalance in 'its_vpe_4_1_invall_locked' - wrong count at exit
-   drivers/irqchip/irq-gic-v3-its.c:3950:22: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:3986:9: sparse: sparse: context imbalance in 'its_vpe_set_affinity' - different lock contexts for basic block
-   drivers/irqchip/irq-gic-v3-its.c:3991:35: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:4005:35: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:4041:35: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:4050:13: sparse: sparse: context imbalance in 'its_vpe_invall' - wrong count at exit
-   drivers/irqchip/irq-gic-v3-its.c:4153:26: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:4233:35: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:4248:35: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:4425:16: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5326:19: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5326:19: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5331:31: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5351:14: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5428:13: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5431:21: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5441:13: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5443:17: sparse: sparse: dereference of noderef expression
-   drivers/irqchip/irq-gic-v3-its.c:5455:9: sparse: sparse: dereference of noderef expression
+All errors (new ones prefixed by >>):
 
-vim +3896 drivers/irqchip/irq-gic-v3-its.c
+   In file included from drivers/clk/qcom/videocc-sm8750.c:8:
+   In file included from include/linux/module.h:19:
+   In file included from include/linux/elf.h:6:
+   In file included from arch/s390/include/asm/elf.h:181:
+   In file included from arch/s390/include/asm/mmu_context.h:11:
+   In file included from arch/s390/include/asm/pgalloc.h:18:
+   In file included from include/linux/mm.h:2223:
+   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     505 |                            item];
+         |                            ~~~~
+   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     512 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+     524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+     525 |                            NR_VM_NUMA_EVENT_ITEMS +
+         |                            ~~~~~~~~~~~~~~~~~~~~~~
+>> drivers/clk/qcom/videocc-sm8750.c:56:29: error: use of undeclared identifier 'CLK_ALPHA_PLL_TYPE_TAYCAN_ELU'; did you mean 'CLK_ALPHA_PLL_TYPE_RIVIAN_EVO'?
+      56 |         .regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TAYCAN_ELU],
+         |                                    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                                    CLK_ALPHA_PLL_TYPE_RIVIAN_EVO
+   drivers/clk/qcom/clk-alpha-pll.h:30:2: note: 'CLK_ALPHA_PLL_TYPE_RIVIAN_EVO' declared here
+      30 |         CLK_ALPHA_PLL_TYPE_RIVIAN_EVO,
+         |         ^
+>> drivers/clk/qcom/videocc-sm8750.c:64:12: error: use of undeclared identifier 'clk_alpha_pll_taycan_elu_ops'; did you mean 'clk_alpha_pll_rivian_evo_ops'?
+      64 |                         .ops = &clk_alpha_pll_taycan_elu_ops,
+         |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
+         |                                 clk_alpha_pll_rivian_evo_ops
+   drivers/clk/qcom/clk-alpha-pll.h:195:29: note: 'clk_alpha_pll_rivian_evo_ops' declared here
+     195 | extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
+         |                             ^
+>> drivers/clk/qcom/videocc-sm8750.c:426:2: error: call to undeclared function 'clk_taycan_elu_pll_configure'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     426 |         clk_taycan_elu_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
+         |         ^
+   drivers/clk/qcom/videocc-sm8750.c:426:2: note: did you mean 'clk_rivian_evo_pll_configure'?
+   drivers/clk/qcom/clk-alpha-pll.h:221:6: note: 'clk_rivian_evo_pll_configure' declared here
+     221 | void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
+         |      ^
+   4 warnings and 3 errors generated.
 
-  3887	
-  3888	static void its_vpe_4_1_invall_locked(int cpu, struct its_vpe *vpe)
-  3889	{
-  3890		void __iomem *rdbase;
-  3891		u64 val;
-  3892	
-  3893		val  = GICR_INVALLR_V;
-  3894		val |= FIELD_PREP(GICR_INVALLR_VPEID, vpe->vpe_id);
-  3895	
-> 3896		guard(raw_spinlock)(&gic_data_rdist_cpu(cpu)->rd_lock);
-  3897		rdbase = per_cpu_ptr(gic_rdists->rdist, cpu)->rd_base;
-  3898		gic_write_lpir(val, rdbase + GICR_INVALLR);
-  3899		wait_for_syncr(rdbase);
-  3900	}
-  3901	
+
+vim +56 drivers/clk/qcom/videocc-sm8750.c
+
+    51	
+    52	static struct clk_alpha_pll video_cc_pll0 = {
+    53		.offset = 0x0,
+    54		.vco_table = taycan_elu_vco,
+    55		.num_vco = ARRAY_SIZE(taycan_elu_vco),
+  > 56		.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_TAYCAN_ELU],
+    57		.clkr = {
+    58			.hw.init = &(const struct clk_init_data) {
+    59				.name = "video_cc_pll0",
+    60				.parent_data = &(const struct clk_parent_data) {
+    61					.index = DT_BI_TCXO,
+    62				},
+    63				.num_parents = 1,
+  > 64				.ops = &clk_alpha_pll_taycan_elu_ops,
+    65			},
+    66		},
+    67	};
+    68	
 
 -- 
 0-DAY CI Kernel Test Service
