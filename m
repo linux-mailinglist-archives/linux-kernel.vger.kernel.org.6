@@ -1,137 +1,86 @@
-Return-Path: <linux-kernel+bounces-437435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE2989E932A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:01:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 765989E932E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:02:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8A035188635D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:02:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91AC222069F;
+	Mon,  9 Dec 2024 12:01:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="my2I9cnO"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89E7428373F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:01:58 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49D2C224B1C;
-	Mon,  9 Dec 2024 12:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="BndbPVXi"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EA18221DBE
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:01:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16071922F6
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733745674; cv=none; b=OHyyJYckBxxHNCKzVy0B7xWNnUGfiWq6n3PKuEQJ38gvHeph6K6czXaZ9uFQxjEmhNLxZWpBRHzfMcvjztrmIA2QVeFh2mzPXJk0Qf6HKxKMypjJIo+q9pa+zl6yQol+plfeCY87YzhDE7rEnwqyNDvDy0+JrqczIB3mrivmQQU=
+	t=1733745696; cv=none; b=bgRcDzPx01dgzcunUi+nP/gpx1PB9ADMiTO0bjGYlZPEQBspwu0zC30B1Kwl/ADNhS9HRpTu9ucunLFtoHgduva+vt6TLuA5RhSX5INvtQFN5M7O+hmpxmiKUtgCHFgSMoD0c1GxW3mB8AAlRGUtUWQnhjctSsrtx/cFLqbr2ZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733745674; c=relaxed/simple;
-	bh=8pFX+27nmjk/7KfdfuKsPNR83Jiahya68QV//JkHJU8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fi49lMOkOKsBZzMhFONlNJHmY0xEPghGVR9aUdjV67TCqscIbCdL6VM+M3QzSrKy9RcDZuRRdhEYIH5KVdfmxDACBUrlGeLw3mt7idL5r9v9dSRR/83yeCgrDFLSpfmbCC7ZSoPhFvqoTOQJ0ly/VNRmwnzvSMITeIKOzdcUZ9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=BndbPVXi; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9f1c590ecdso758538966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:01:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1733745670; x=1734350470; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0tR6QupvutEPi+0B6/genbHIfRkFvdzSANWIhNibRjA=;
-        b=BndbPVXiWkZ2Hymlx4djmvk3gopkES+g2ciCMtH9KuwLm8K+AKenJwUnTmlB/GOHGS
-         wMonUq50IRzSn65wKpPNKm98Aq/INhm9tZQp9EMohv2B/OYFNPS6tpm/m0rGXSMckI3l
-         6QvvheUI4ft+hvwcntSi7r/aOghQMpsNiQdcUwGVNSbM1YM8a5SErFyLN5cNCcntNJmb
-         U8OM2ROcxY1oFdHvdXVxMBNbeoAgV0vi0B3gkYrrqhxxa3PzJOps2TF0xE25omtiNzRY
-         R4XD658MZRpjGFdtaRVlxnfoNX2ApzbIHHKesmRu7Xg//cK7epW8/LhBUnjftgwoMW5C
-         xRFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733745670; x=1734350470;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0tR6QupvutEPi+0B6/genbHIfRkFvdzSANWIhNibRjA=;
-        b=hmiBAfar+3glxIdx+XafRrS9wAI/hiPMYUnoBpJdwrV4sNPP1KXZ/sCIXsuJurEMKx
-         s5DqJwllV47cQ6aaXUPn+UXSPYd4m7LFlcQn5hp1XyYt9cSPcXBLgA51n9mD/ZTKxcaA
-         kBFgBf5gCBMI0FOJiP1ldOeifqa1CaWcTU+1koXWZRzhN0a4/vOCjSohfqrbIDZNoRny
-         cYUNKTuMinpFcAjgub3oTwsdEl/wBgYFHrfHwVx36M37jwBGwKc+PVJQ0WB+WelCT1Op
-         Uti7s9inVXRavHxmxXA8+tG0UNkS2HcBwHWAz9AupY0r5G0Iwthx/vlDZvBv/Mjx+4Rm
-         6EsA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFlgy9tO0OZn0NdwtjT8PWDCzfXMn7LTGxUvbj/b7pnWe1Ljm/QLWvV66BbhPSta+hRjKmaDvfkvsLQtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YziwLMlci1ej0bzZokX4ie76nHeIQNGkajEwy2kuJF9cncjTG/F
-	p3ozTv9JftAtc13uUTkMdBP95xxURsXSztFxIl3AV8CNibMNauM4Z12C0znHr4s=
-X-Gm-Gg: ASbGncvk8HgHiJAo/k+lwtfK44pPlDc+41/09oiGSSVPoscjcfIiNiDR7sXTV+5+9dm
-	p0pS0TJtMspPWGk8a0NIQRpsZuzYbPbJck50X4SR//7oQAOn5RgiPyLjoEVEBevVI1f1v5uBcHs
-	2Amgawuq/nFrqQtEfxv7LcYBgB8Ueq5xYSH51IC0vRZrrmoHC4dOkFV0/zxcS9NZMdOTFFCfDAh
-	9Vx3Me4PSxOwGCOzpkJBpXnhUwxHisZWpCkn/PcgGt72XzXPrjWPt2g1QEMqg2wUxOwKZAemfC3
-	Hza9glgFxR2Jk7wrdK46qE4gh31hv64mtPCffKkyNNjZLZ5CXEKEpfnvjOj2V5IkOA==
-X-Google-Smtp-Source: AGHT+IGCASHop4+PMr/ElwoRqpZmRPYooFBqBNoyvG1DRpnbL890d/4qkOvn0rbSSu4AIgl1YOMZNg==
-X-Received: by 2002:a17:907:aa6:b0:aa6:945c:453d with SMTP id a640c23a62f3a-aa69cda0d94mr5001966b.27.1733745670385;
-        Mon, 09 Dec 2024 04:01:10 -0800 (PST)
-Received: from [100.64.0.4] (2a02-8388-6584-6400-d322-7350-96d2-429d.cable.dynamic.v6.surfer.at. [2a02:8388:6584:6400:d322:7350:96d2:429d])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa69afa395csm22555066b.71.2024.12.09.04.01.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 04:01:10 -0800 (PST)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Mon, 09 Dec 2024 13:01:06 +0100
-Subject: [PATCH 2/2] media: qcom: camss: Restrict endpoint bus-type to
- D-PHY
+	s=arc-20240116; t=1733745696; c=relaxed/simple;
+	bh=NCtoEF3RZzWUtuloLqoK3tLezQIbchFnf+Fj0sjSaKE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K+54lLm4UyiZMC5KTebIYrSSUhBMUihc3Cij42+kV+fhz04vBQddXqgREn4jMO+LzXJQ4RRpScdamXMLdwSDlYPMFIe5AQILnWe9Ei/FHL/nN+ZD3j/ZfZSWDqjZBAmdqxSQkLIRuNZTvKGbcUvLm+Al277Wc18u3SL1LmmmNN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=my2I9cnO; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=XzkPlDDEBZX8syw1WyM3+7p5HW5nOS948jMCy/nHgOY=; b=my2I9cnOKcAopCw3YlT0e9rzd+
+	qiPpZXlFhxldIcRG8McZg1/SSlgwFbCQj3M1xYqbkITklIU4nQJvTiIZJSFcoVMQz15GL+fAPfx+3
+	gpSTydHfI9mxgjLtVWtq5u1CxjuzBnfaqfKlpHZktf5i07VlaLx01rxjPyQ0qx30vJgpCaIw/aDPq
+	ru3NBuzFuXsmPFz3CnLQu03j4QASJmf+mkR7+dwnyJ4x6HOKkbLcf8OqBS2D+Oe33iReds1AWx2QX
+	Yf2ZyUu1Hen47/xN+6xwaBuIpY59U30JAZ5NTmFCaovoipzlRJFf5ni404OOMLZDrPldjvD6I1EVp
+	kXTHpy/A==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKcS5-00000003X5V-3W96;
+	Mon, 09 Dec 2024 12:01:26 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 29BA53003FF; Mon,  9 Dec 2024 13:01:25 +0100 (CET)
+Date: Mon, 9 Dec 2024 13:01:25 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: John Stultz <jstultz@google.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Wanpeng Li <wanpeng.li@linux.intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Todd Kjos <tkjos@google.com>, kernel-team@android.com
+Subject: Re: [PATCH v2] sched: deadline: Cleanup goto label in
+ pick_earliest_pushable_dl_task
+Message-ID: <20241209120125.GL35539@noisy.programming.kicks-ass.net>
+References: <20241205211632.1181715-1-jstultz@google.com>
+ <20241206000009.1226085-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-camss-dphy-v1-2-5f1b6f25ed92@fairphone.com>
-References: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
-In-Reply-To: <20241209-camss-dphy-v1-0-5f1b6f25ed92@fairphone.com>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Barnabas Czeman <barnabas.czeman@mainlining.org>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, 
- Caleb Connolly <caleb.connolly@linaro.org>, 
- David Heidelberg <david@ixit.cz>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206000009.1226085-1-jstultz@google.com>
 
-Currently the Qualcomm CAMSS driver only supports D-PHY while the
-hardware on most SoCs also supports C-PHY. Until this support is added,
-check for D-PHY to make it somewhat explicit that C-PHY won't work.
+On Thu, Dec 05, 2024 at 03:59:35PM -0800, John Stultz wrote:
+> Commit 8b5e770ed7c0 ("sched/deadline: Optimize pull_dl_task()")
+> added a goto label seems would be better written as a while
+> loop.
+> 
+> So replace the goto with a while loop, to make it easier to read.
+> 
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- drivers/media/platform/qcom/camss/camss.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
-
-diff --git a/drivers/media/platform/qcom/camss/camss.c b/drivers/media/platform/qcom/camss/camss.c
-index 9fb31f4c18adee886cd0bcf84438a8f27635e07f..b99af35074cdf6fa794a0d2f0d54ecf12ac354d9 100644
---- a/drivers/media/platform/qcom/camss/camss.c
-+++ b/drivers/media/platform/qcom/camss/camss.c
-@@ -1855,6 +1855,15 @@ static int camss_of_parse_endpoint_node(struct device *dev,
- 	if (ret)
- 		return ret;
- 
-+	/*
-+	 * Most SoCs support both D-PHY and C-PHY standards, but currently only
-+	 * D-PHY is supported in the driver.
-+	 */
-+	if (vep.bus_type != V4L2_MBUS_CSI2_DPHY) {
-+		dev_err(dev, "Unsupported bus type %d\n", vep.bus_type);
-+		return -EINVAL;
-+	}
-+
- 	csd->interface.csiphy_id = vep.base.port;
- 
- 	mipi_csi2 = &vep.bus.mipi_csi2;
-
--- 
-2.47.1
-
+Thanks!
 
