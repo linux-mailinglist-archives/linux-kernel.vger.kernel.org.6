@@ -1,131 +1,106 @@
-Return-Path: <linux-kernel+bounces-437934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A2219E9AB2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:39:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4BF9E9AAF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:38:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEFFE1885F06
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:38:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0381886B62
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:38:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C4EC1C5CD0;
-	Mon,  9 Dec 2024 15:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA9B71C5CC6;
+	Mon,  9 Dec 2024 15:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="G9SZiWJQ"
-Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="CvVXKVbO"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11EE51B423A;
-	Mon,  9 Dec 2024 15:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A601B423A;
+	Mon,  9 Dec 2024 15:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733758734; cv=none; b=FWJgpc5HKnBd7N9WvlstaK22O9BX6Rr417jwaZyoosyDLSduopsUIPy1HRPWadD0KMwC8QcEUYq52XaMbQUsy+ZJtqcsFHca+BKRxYgK+gE/XErMbjpLqCvgwMoAyCZWwgXNac8vJknY0Bs479eNYiyRbtkAn24N9V9Vgeyv4KI=
+	t=1733758713; cv=none; b=kyrhJAwte7l1Oi3tnMLHu2C/eWAxzd4qw2ygueC3bme41FNvNIXOy+srXuwxrscv5V6ZXtknO9eYg8qG4H2geHPRd45WUiAPwK/7KKbhKTQpn+T2Nuu40HoW02w/14nRiSIV0PJn+5ieMB4tz3xhyqMAyXaYPwodsXl2dxz0adA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733758734; c=relaxed/simple;
-	bh=2fBphBX0TIcxS5iblaNI0FgWUtDA5yJMmXfTTZieBRE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kJXG/WtgMyJ7U2UDucjYHQTZdLYl/UKdX3YYuiZkxkmsx47YrNWEOT48PVpNUCWxwY8bZR/wBwtVetxCwXTImJofzdluyeaSG5uFnIo63ZTBzSKlWukixY0clwo+p8ZcHKP4rk/MBCrF00ecj/VM6iFoE/+Kvcaots5B/ujsiz0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=G9SZiWJQ; arc=none smtp.client-ip=54.206.34.216
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1733758722;
-	bh=iAOAkMiO4SRacaa2x+Nj6OP1bJtTb5Hn1Km48pUkT7E=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=G9SZiWJQSn0/jMJZ8NaV9MP/o0uZPM3cXDXROn/4IhD/9CwF3YocS8MakbshIGRzX
-	 eEflr/J6uvNMKBRi60sKRg7MElmAlx9nFtMl+uQelhy5ICIeeq0FLe2dE+j5PLR1eN
-	 aQ7lIQrPCJn4p11gusg0ycL90IOsd3Uin+Qh2NL4=
-X-QQ-mid: bizesmtpip4t1733758689teobikr
-X-QQ-Originating-IP: gyn7voqvIKIcZ1WypjoRdeOxF75stvQWjBdsUS2ifvU=
-Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 09 Dec 2024 23:38:06 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 15283495430922043025
-From: WangYuli <wangyuli@uniontech.com>
-To: rostedt@goodmis.org,
-	mhiramat@kernel.org,
-	mark.rutland@arm.com,
-	tsbogend@alpha.franken.de
-Cc: linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	xzhong86@163.com,
-	wuzhangjin@gmail.com,
-	srostedt@redhat.com,
-	linux-mips@linux-mips.org,
-	ralf@duck.linux-mips.net,
-	jeffbai@aosc.io,
-	zhanjun@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] MIPS: ftrace: Declare ftrace_get_parent_ra_addr() as static
-Date: Mon,  9 Dec 2024 23:37:58 +0800
-Message-ID: <6BF18D3A13FA470E+20241209153758.118977-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733758713; c=relaxed/simple;
+	bh=rwINOh45wrebVn6I9kZss6deQVKEdkBJm9a3dDITvrM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mGy1j+b4LAY83DhnLLmfNWz1bae/ADeX0PaqCjbcnBpu2j4jJjfSOw7hdw4jWrbDOpNmB7oMHf9H6F8b8PqgPn5Uear2BHl0qk3WC+h7baHRbwxoR1oztPJhxuHb/7Mhg21g1b/IBb0ga+IYBse68cbLoWxqkLx5/z2cYu4Ub7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=CvVXKVbO; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7211A40E019C;
+	Mon,  9 Dec 2024 15:38:29 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id YGNFox0KmrF1; Mon,  9 Dec 2024 15:38:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733758706; bh=nqIYzy7qDv83P6KCz+Yk/4aP1izF32dWJhj20IVJS0U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CvVXKVbOCOTF40JQdyIxdOOPgcsCJ7ZgHoBknq1W/8lLF14w10PzqMM0r3fgG8kBT
+	 qWIKeUrlu6/IRIksEs8Hkc21wNreqog3D9nhNjc56XTV063DZ7gvu6eTjhJTkm/R/b
+	 pVwI/G90XR2VQ6zsWOzjamH+L4vVOD+aXu5qNz4ly/gMl03ZM5BztayTB6Xb+aer6T
+	 +FolRzAPbX4ZwccVFc04J5P/xA8JCSBRTlTgvxk5aNIyZlJnF7xLVzrbRWNi8VfAfC
+	 UTAripbOHs7rNgKLwbOJtKH5GJ2PTAj2I79LcegV6Pb5XmEg/FVQ1op4NSzc2gsZpT
+	 DwxK6iT7FSLgXuUSaGmlR6Ykj8dHViktWyerCOJiyRDvSSG+JGj9To83TuWNkda3Hz
+	 8psS4DdQQKufwtPxi4YaH4huDp4FSVEek3Ksj0SK85C+K4u5O3AUfcrH5PakYWFa7i
+	 CruHgjdDpLr19vXu/VQvdC/iTdxMRRpNwK5gbl8YTYdx16dpyvWPz651kbr56faUvy
+	 5Dry6+vp1PZQgkFP+K4H7m6A3FgCmVIuB/7IoNE0rdB+q/2Q0fX+kOlS0HGBXOdCBZ
+	 LSu0UqsZKhoOE6pcmnCU3nxzLb77gtFWA2zAkTGE8T/SVk+90/2jgpmFl/3zBz1lRV
+	 StXVQDMLAV7fVxlD7fHCkDPU=
+Received: from zn.tnic (p200300Ea971f9307329C23fFfea6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5F4F840E015E;
+	Mon,  9 Dec 2024 15:38:15 +0000 (UTC)
+Date: Mon, 9 Dec 2024 16:38:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Nikunj A. Dadhania" <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v15 01/13] x86/sev: Carve out and export SNP guest
+ messaging init routines
+Message-ID: <20241209153814.GEZ1cO5uw_lp0fg8Bg@fat_crate.local>
+References: <20241203090045.942078-1-nikunj@amd.com>
+ <20241203090045.942078-2-nikunj@amd.com>
+ <20241203141950.GCZ08ThrMOHmDFeaa2@fat_crate.local>
+ <fef7abe1-29ce-4818-b8b5-988e5e6a2027@amd.com>
+ <20241204200255.GCZ1C1b3krGc_4QOeg@fat_crate.local>
+ <8965fa19-8a9b-403e-a542-8566f30f3fee@amd.com>
+ <20241206202752.GCZ1NeSMYTZ4ZDcfGJ@fat_crate.local>
+ <f0b27aab-2adb-444c-97d3-07e69c4c48a7@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MDqtQ4jGWXAGrekepqUwqDTXYkoXWUmg5a/e6oB79Rb/HbIhPXab8JE2
-	cQpN9YuUUU4ELSre1kVtsqPKpvDXBm9FAKyV046xZeRONZQbFIqp/sKyMCSY+OEr/aF+Th4
-	f5xDGfPr7dmYyqvi1BLyJ/kh5/xDUBnlJR9G+XoJ694xdmH58c9kxsXNQeoc1V+tePEG/My
-	LZoLe17pm0QXOOuZVV820qoIsm0P0SLjSboo/E63G249OhKxpPnMzTqCKefKeYJZ0Dsu9+m
-	PRgTGDdF3yST8Xfge3IXywtI72Q464DYX8M5QWz/axpLzSLOHYOFE+J5doakeyUKGYye3cB
-	ctQ6neVYiRqPkCh+DFj0wSUYiwDvDwmG3IIcrQEpLM6hMZ5ilZx0DnrS8Hryl9lCYdvqSkk
-	3YGfAzYrNDWxDa73jm7Vjmi6SzMBR9Ooy171/mwfX4lojvpBpWFPQuQc0/HIQbgFHZFXunH
-	q2gA1EsF9UUrJSjz17SZ+yXcJhX51pZS/tSGp4MrK/205f6um+V1kQ+pQnNvGjvBjfH14nu
-	1cpDRe5Wx0vlcDzI5zFMz1CKeToRMd7pMYvIf2JyV/HAQOmz9u2kBK8qIAXiWHnu8BG8sao
-	rnvMZ0v3iAILKF6gkCiTBMGeVTXrItNH7DgYAqyej2aF/vmliewcX5A2B/Ic3DSfRgcN6aF
-	4CUFlWWCyt7oJghPGC9WiYEKINKup9cCgndq3gbBMVkV7kiBX8Rf55vWm13vAssWK9yqR9z
-	FRfq50D2neVyCPqRZ69oJ57u3D6I2EadXnM/IW+Y/Zl59ifLJ9BxP6miSS33OQxK3d+Ukpf
-	zgPVFrjfILEWjjSLIWAA9guxyS6Z2384LffCNhAFrHmeW/tIZIR4AGmrNaM9ySQsclYiJte
-	ZjuRXw8HrUBA+wQrcH1Uv1p4S+TL+ZGil7VSfY1VCczlUqJuJI/HEoIGqk1WA/xuN0hpup+
-	1weaKRkWDTwYf5iBLb3WVRXP4s/S4jNIPHePKWdCI68pt+8HUh/8++duCbNH8mFyHPzg=
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <f0b27aab-2adb-444c-97d3-07e69c4c48a7@amd.com>
 
-Declare ftrace_get_parent_ra_addr() as static to suppress clang
-compiler warning that 'no previous prototype'. This function is
-not intended to be called from other parts.
+On Mon, Dec 09, 2024 at 11:46:44AM +0530, Nikunj A. Dadhania wrote:
+> That leaves us with only one site: snp_init_crypto(), should I fold this
+> change in current patch ?
 
-Fix follow error with clang-19:
+Nah, a pre-patch pls.
 
-arch/mips/kernel/ftrace.c:251:15: error: no previous prototype for function 'ftrace_get_parent_ra_addr' [-Werror,-Wmissing-prototypes]
-  251 | unsigned long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long
-      |               ^
-arch/mips/kernel/ftrace.c:251:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-  251 | unsigned long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long
-      | ^
-      | static
-1 error generated.
+Along with an explanation summing up our discussion in the commit message.
+This patch is already doing enough.
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- arch/mips/kernel/ftrace.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thx.
 
-diff --git a/arch/mips/kernel/ftrace.c b/arch/mips/kernel/ftrace.c
-index 8c401e42301c..f39e85fd58fa 100644
---- a/arch/mips/kernel/ftrace.c
-+++ b/arch/mips/kernel/ftrace.c
-@@ -248,7 +248,7 @@ int ftrace_disable_ftrace_graph_caller(void)
- #define S_R_SP	(0xafb0 << 16)	/* s{d,w} R, offset(sp) */
- #define OFFSET_MASK	0xffff	/* stack offset range: 0 ~ PT_SIZE */
- 
--unsigned long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long
-+static unsigned long ftrace_get_parent_ra_addr(unsigned long self_ra, unsigned long
- 		old_parent_ra, unsigned long parent_ra_addr, unsigned long fp)
- {
- 	unsigned long sp, ip, tmp;
 -- 
-2.45.2
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
