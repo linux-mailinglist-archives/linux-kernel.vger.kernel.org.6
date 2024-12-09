@@ -1,77 +1,81 @@
-Return-Path: <linux-kernel+bounces-438108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEAE99E9CE1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:23:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC18F9E9CEA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:23:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B8D0280CF9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:23:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD03C280CA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:23:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39F391547D2;
-	Mon,  9 Dec 2024 17:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B5E146D57;
+	Mon,  9 Dec 2024 17:23:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VIi/dOMg"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Orq2XtT/"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A2B2146D57
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:23:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D294D153BED
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:23:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764992; cv=none; b=uYtxvDL+vGUNTvU2jzPeOyDOFMrvs6gBFuM13DYGLS3Lp8GvlvxBoKBJ/j5lrwdzC8mla9pDelojrZbreZcCVQp+VZXp2pdix0pAvCrqBtnGMrWoB/rElCTFypIrjWTksmKokuAqMFWtdB1/IEWPlBPwb6NZ5pig9UapEV5wM34=
+	t=1733764995; cv=none; b=SpBypz0sdT5PkL3DPmQviE8l/2+Odu4lkXUl3o9zuQmBQHDNuOf/nd8JnPYpMOr6c3oFhHs1sO+2uu0QEVTkEmtv8ZI857gdYEBa1it/H2JkjqEfInXoy9LX7wsGH0EYgB8BgFiJ7MbjSNGPmBDSSjkuc79+m8SXCWwWN0pMH40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764992; c=relaxed/simple;
-	bh=6WuUUwH3gHhkqL6Geg5HTcFT90fV2BNuVfb02BCAuMU=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=nm/Nb4Q/WpcdlASyXqsLUnguImKqlmbeLFw5cayj6BptZHVf3Zx12ZvJ9/jmqtYIggapstyp5HxCKgAJxKPxBNORMkewPsh9D/2grrO5oxT+gnsbYs6cK/bMSu6jQmcKbNBAEj0SdQb2jptZo1CoZSzhhEaaKkufgdPva1uKAkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VIi/dOMg; arc=none smtp.client-ip=209.85.216.74
+	s=arc-20240116; t=1733764995; c=relaxed/simple;
+	bh=inYtJTadn/ilQufeg2hRjROOpb6WnuRJ/R3Eo2kT9Ak=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=aDum5rytqRjck85lYCkP7H99+ghqKsGSBNBFDqmmZJPj2FnFmc9YfMGsrHfU9AqV5pvt3MHoqPxJOJ+zb3EkfZkrH30gA3Uy31qXl8qzShUi5s/JKimqNq7RcmMDOUaH4vr4zb1PBx4JRvpxq2PqX9VMrji0wDCYVyFfbLvad9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Orq2XtT/; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2ef9dbeb848so1558445a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:23:11 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2ef7fbd99a6so2262748a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:23:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733764990; x=1734369790; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Vcu7R+0hVbbFouwgTRPW+Y/QQCHn4WyI0pgnS95JVB4=;
-        b=VIi/dOMggdouhd7pSoAH5rVjV2sIeBUP2niuZUI6fqERAK6cT2sA153eE3+YHneIdY
-         VIU24VyxVzNq/zipsfMYNIZMm7VOFk5kySBsbZi1eF4Rwz6O2Njm9NL51iZIiPw6RxXR
-         j8V1KPaiJWUOdgeq68/PAgem9g+MZrDIpue0ctdx4jlbFAJzaFCr3SH4WkCFrMGbL1rM
-         Aacpsp2EbnySCueoABjn6Qmn2OpkXTrV4sUItjI1Ap8li5eXrzKPoNwTFHSPloUYuncT
-         yk7/beYLGG/3JFx4zygwTppxlB9H5ocnkq4u88TmgZT+SkAPwL/uu6BMHuIwnLANAkFW
-         Fogg==
+        d=google.com; s=20230601; t=1733764992; x=1734369792; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rD4fHb5o8v+27TSL8zHXq3Z19Qh3ytPkt3LCpxEoKxE=;
+        b=Orq2XtT/ERZSUjmtMsQzAA1Gw68J824uikYBYqoub078MfbsKcLSi3YJUkRFw1jpYx
+         MIUOyAqWij26W5nMpzukQDiqB82hqF7eAmDTdO8q/tgMejRjVR96trbCIsEVFwYJchHa
+         j5B84v/YJiDnZakJ3K2lsutaJNUZZFG1RD/9e2TnuezaIfaoRCuK7JFpr/fxQDREXC13
+         VooRM4uFI7IgNWzkZ5/e/WL0yS5qQaH8AnpPued8EXjwrFWM9a4LkAlo02bSjBkfHW6i
+         jP1+rAHp5h1Wl2PjEm1brlVY5iTCNXRbFuZVtYz02Pn0jddRevgSzoa+NrBRd2lvheEO
+         fLjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733764990; x=1734369790;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Vcu7R+0hVbbFouwgTRPW+Y/QQCHn4WyI0pgnS95JVB4=;
-        b=fbB0X/o+NL4ko/Q7bJRv0dHHFeakVrT1+wm09sHHPE3DDPdvwRUM1l2Wo6y5IhJRQ1
-         HFvCWF/lH0ea6gZhV5Gw/c7v1QXDxKZWPUpXPlCal781X92vXMpjjO3jepAxounKiC69
-         5FDAFsODJO8w2pjR7NSsx+M7+utbv6wPe73tJUUqO81gEJz+AJ00Sg6gX18Wh/JI3Zoj
-         aFWvDIbH2iJdFZlwBttq3pouckjZLfbZbjz1OG5eCxcLggr2QChVowtaJ23jn5iawBz1
-         0McNzX3K1Iuj3Q3Q8nSQSH9suagQloSpCrnssMwER2YL+xjkByBIF/ciF3NwToLTe0Um
-         QBkg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5edNsDHzZdJgvuDdeULQli2GP8Onkruv2+GXqjDEE4WFeOJfGD5l6rGVymJQ4ZncsnSxkNpctoLfnBeQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIXJKAvwaDvYx7pQSNvHDQsfOTjCUGoTeFQjsC3DoaQGfpBxNb
-	1rW083mY6dvvNOB8sU7fquDXCn3MTu4k0F5OEILjReqTgepFzakbV582du1fy5el1S0hYUcaj+b
-	N/olSIQH9wK2zMDynhNOycQ==
-X-Google-Smtp-Source: AGHT+IHwFdgtaA5CQfgLnW5VETq5BsceGrsp8a1IVqplrBkmkNvV7iaPoDLphNxXb40d3+EXo1QIWhIXC3RmqoXH/w==
-X-Received: from pjb16.prod.google.com ([2002:a17:90b:2f10:b0:2e5:8726:a956])
+        d=1e100.net; s=20230601; t=1733764992; x=1734369792;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=rD4fHb5o8v+27TSL8zHXq3Z19Qh3ytPkt3LCpxEoKxE=;
+        b=X0nq+GuHIWkPknBZzLo0FD87TCxHIO0bycreYYvEs6gTMx+0Hp6byD2Zu7SOhY9KDM
+         8oa9+3pqgYCT7l227X/Ybyfi2mrOtQ9ZlgcpQdQP6NNEme+4te1X6GCkHMd4AjooUsyv
+         PoJX0cxDglKbktFqcs9/odcw6mASv+r3o0Gc7mJ3+AR8p+HXx8MTOutRFCPMyBF08tzH
+         PZpIUHb620WloFEQfwmpvael7+rM4yWUVLzTzyp/zqY2S0RwcbQA+LrKsdGoG8NjG3mH
+         WW/e+8riu/DQRltYlaOh+c2jA4mpfHpfMlrb8wnNI89kT6bz6U9VnsevnETt1H3+GvXX
+         CNLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJD4KeCV+DgLnPBgIY/mS1Nv0KCZuMr1moJtVEXOLKtuUerWA6PN79d7cqUvMOxLpBie8RfzoehY1x7RI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGKVujsVCFfnQf7wt1JclrJK+isx7OBXBnARtdXsTFFxrvT/K1
+	cX4+VL7OWN8yLr/0mCADDQPQmjABEBaSzIZHm1ya+USApctrE6nSh4MMWH/b3YYU6GpvU1gufpN
+	1yebNY8eq0SnLue7n0y7o6w==
+X-Google-Smtp-Source: AGHT+IF/gnzzxrq5wZW7Oq+BE9snOE5665TQRiKiXV7o1WW6Cds5d4hj9kPz8o9cXdP519d70WJqMsaDSx1ufbKdtw==
+X-Received: from pjbpv2.prod.google.com ([2002:a17:90b:3c82:b0:2ef:82a8:7171])
  (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:380c:b0:2ee:4b8f:a5ac with SMTP id 98e67ed59e1d1-2ef6aad12b5mr17501893a91.26.1733764990550;
- Mon, 09 Dec 2024 09:23:10 -0800 (PST)
-Date: Mon,  9 Dec 2024 17:23:03 +0000
+ 2002:a17:90b:50:b0:2ee:c797:e27f with SMTP id 98e67ed59e1d1-2ef6ab296e5mr18017086a91.36.1733764992288;
+ Mon, 09 Dec 2024 09:23:12 -0800 (PST)
+Date: Mon,  9 Dec 2024 17:23:04 +0000
+In-Reply-To: <20241209172308.1212819-1-almasrymina@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241209172308.1212819-1-almasrymina@google.com>
 X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-Message-ID: <20241209172308.1212819-1-almasrymina@google.com>
-Subject: [PATCH net-next v3 0/5] devmem TCP fixes
+Message-ID: <20241209172308.1212819-2-almasrymina@google.com>
+Subject: [PATCH net-next v3 1/5] net: page_pool: rename page_pool_alloc_netmem
+ to *_netmems
 From: Mina Almasry <almasrymina@google.com>
 To: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
 	Mina Almasry <almasrymina@google.com>, Pavel Begunkov <asml.silence@gmail.com>, 
@@ -80,46 +84,72 @@ To: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
 	linux-kernel@vger.kernel.org
 Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
 	Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>
+	Jesper Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>
 Content-Type: text/plain; charset="UTF-8"
 
-Couple unrelated devmem TCP fixes bundled in a series for some
-convenience.
+page_pool_alloc_netmem (without an s) was the mirror of
+page_pool_alloc_pages (with an s), which was confusing.
 
-- fix naming and provide page_pool_alloc_netmem for fragged
-netmem.
+Rename to page_pool_alloc_netmems so it's the mirror of
+page_pool_alloc_pages.
 
-- fix issues with dma-buf dma addresses being potentially
-passed to dma_sync_for_* helpers.
-
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+Acked-by: Stanislav Fomichev <sdf@fomichev.me>
 ---
+ include/net/page_pool/types.h | 2 +-
+ net/core/page_pool.c          | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
 
-v3:
-- Add documentation patch for memory providers. (Jakub)
-- Drop netmem_prefetch helper (Jakub)
-
-v2:
-- Fork off the syzbot fixes to net tree, resubmit the rest here.
-
-
-Mina Almasry (4):
-  net: page_pool: rename page_pool_alloc_netmem to *_netmems
-  net: page_pool: create page_pool_alloc_netmem
-  page_pool: disable sync for cpu for dmabuf memory provider
-  net: Document memory provider driver support
-
-Samiullah Khawaja (1):
-  page_pool: Set `dma_sync` to false for devmem memory provider
-
- Documentation/networking/index.rst           |  1 +
- Documentation/networking/memory-provider.rst | 52 ++++++++++++++++++++
- include/net/page_pool/helpers.h              | 50 +++++++++++++------
- include/net/page_pool/types.h                |  2 +-
- net/core/devmem.c                            |  9 ++--
- net/core/page_pool.c                         | 11 +++--
- 6 files changed, 100 insertions(+), 25 deletions(-)
- create mode 100644 Documentation/networking/memory-provider.rst
-
+diff --git a/include/net/page_pool/types.h b/include/net/page_pool/types.h
+index 1ea16b0e9c79..bd1170e16cff 100644
+--- a/include/net/page_pool/types.h
++++ b/include/net/page_pool/types.h
+@@ -242,7 +242,7 @@ struct page_pool {
+ };
+ 
+ struct page *page_pool_alloc_pages(struct page_pool *pool, gfp_t gfp);
+-netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp);
++netmem_ref page_pool_alloc_netmems(struct page_pool *pool, gfp_t gfp);
+ struct page *page_pool_alloc_frag(struct page_pool *pool, unsigned int *offset,
+ 				  unsigned int size, gfp_t gfp);
+ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
+diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+index 4c85b77cfdac..3c0e19e13e64 100644
+--- a/net/core/page_pool.c
++++ b/net/core/page_pool.c
+@@ -574,7 +574,7 @@ static noinline netmem_ref __page_pool_alloc_pages_slow(struct page_pool *pool,
+ /* For using page_pool replace: alloc_pages() API calls, but provide
+  * synchronization guarantee for allocation side.
+  */
+-netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
++netmem_ref page_pool_alloc_netmems(struct page_pool *pool, gfp_t gfp)
+ {
+ 	netmem_ref netmem;
+ 
+@@ -590,11 +590,11 @@ netmem_ref page_pool_alloc_netmem(struct page_pool *pool, gfp_t gfp)
+ 		netmem = __page_pool_alloc_pages_slow(pool, gfp);
+ 	return netmem;
+ }
+-EXPORT_SYMBOL(page_pool_alloc_netmem);
++EXPORT_SYMBOL(page_pool_alloc_netmems);
+ 
+ struct page *page_pool_alloc_pages(struct page_pool *pool, gfp_t gfp)
+ {
+-	return netmem_to_page(page_pool_alloc_netmem(pool, gfp));
++	return netmem_to_page(page_pool_alloc_netmems(pool, gfp));
+ }
+ EXPORT_SYMBOL(page_pool_alloc_pages);
+ ALLOW_ERROR_INJECTION(page_pool_alloc_pages, NULL);
+@@ -957,7 +957,7 @@ netmem_ref page_pool_alloc_frag_netmem(struct page_pool *pool,
+ 	}
+ 
+ 	if (!netmem) {
+-		netmem = page_pool_alloc_netmem(pool, gfp);
++		netmem = page_pool_alloc_netmems(pool, gfp);
+ 		if (unlikely(!netmem)) {
+ 			pool->frag_page = 0;
+ 			return 0;
 -- 
 2.47.0.338.g60cca15819-goog
 
