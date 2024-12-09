@@ -1,112 +1,90 @@
-Return-Path: <linux-kernel+bounces-437544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C233B9E94C1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:48:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6411C9E94C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:48:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B248A164D2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:48:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81E731885EE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0028622757B;
-	Mon,  9 Dec 2024 12:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB252248BB;
+	Mon,  9 Dec 2024 12:48:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="B2ScI27/"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nxlcorys"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B482221D88;
-	Mon,  9 Dec 2024 12:48:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46591221D86;
+	Mon,  9 Dec 2024 12:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733748512; cv=none; b=ak/wZC8MNkCVyCLLEf4zOdTc+Osm9Vrb0e4tf1pVF9tJxpoeZz1KkzTdHlo5NwoqrdlVUgXwyQw5EHCxuYy1aVcSp1kw53OKIfNONyfjPNhbSu4HMbQTsFqi7wCh4/Yy4ssUT9cAjXmtp8wAz9awdUBsLVoFJO5PHK/sccRb/18=
+	t=1733748511; cv=none; b=Rkzsue4KjlGErjS8quP6lA6X3znMfS4lhlLmFhwKN6jAU7So0n+yREwNmw3gDS50r5jIxU7/Sn5Icxk40AY+zQ6ufl3gJ8kJNV8zOkkOsqSEoSZRWaxr4nWkC9EoklWEJbg0mqXVW1ob2GzTRLh52YhZXCMtQ05rZbWZI3Z18Qs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733748512; c=relaxed/simple;
-	bh=doGwGYhbXQvljz7pEyV8cg3NcfTkJse5GZPQ0eBEQ4w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=coshXOhlHz4uF+/pjJ9ZAzE0uGezVrTFdmmSzhYn7LsOAtMoT72DvRbiSXJcs55QSnxlO6XAoe9wMLCm1wQPaVlAC6p/sQ2utTKs+TmeXmbOa/I4Qdut0how6nyZQnyHNlrjmo0rDojnYZBz2rWC/aGJ405HVCo+bV6/Y6Su5ac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=B2ScI27/; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YALQ/5d5xwJu+LceFpjWJMU1LIe6WE2pCNsHkacRTcI=; b=B2ScI27/o23d0xltBjPie1Ue+t
-	5XtAHemGGtwCU4r6Kw0aUPIQD/3gXCT7f1etTJxip3qhzWcqwfw4JXmXyLata74X+iJwHGqLwKa35
-	Nsd1CRZa4iw5OSl1D/JJ2ykK/4Lhc6MWwuc3LANeJWXxROWIri8EAGM0W5W6wQBQ3EvnsHzYSD1mt
-	0joyVgYhvrm/vdVBRbOVXBRMMOhfFEqjbGpFySbSEGgtfYppDM1xZwd4TSHOu8y61wQNkR15i7U5m
-	H7+bIm3oEyj2kB3K5ikDYec5gCiDvo1hNBIHz4HbHxHJ2D2OX0emZVllTYnSxCB05IAnB9+Rf6M4W
-	k43Bx9+g==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tKdBK-00088z-7p; Mon, 09 Dec 2024 13:48:10 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Ming Qian <ming.qian@nxp.com>, Zhou Peng <eagle.zhou@nxp.com>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Tiffany Lin <tiffany.lin@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Philipp Zabel <p.zabel@pengutronix.de>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Viktor Prutyanov <viktor.prutyanov@phystech.edu>,
- Shijie Qin <shijie.qin@nxp.com>, Michael Tretter <m.tretter@pengutronix.de>,
- Emil Velikov <emil.velikov@collabora.com>,
- Del Regno <angelogioacchino.delregno@somainline.org>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
- imx@lists.linux.dev, linux-rockchip@lists.infradead.org,
- linux-arm-msm@vger.kernel.org, linux-mediatek@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject:
- Re: [RESEND PATCH] media: dt-bindings: trivial white-space and example
- cleanup
-Date: Mon, 09 Dec 2024 13:48:08 +0100
-Message-ID: <9635159.2WqB4rESCP@diego>
-In-Reply-To: <20241209113405.74226-1-krzysztof.kozlowski@linaro.org>
-References: <20241209113405.74226-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1733748511; c=relaxed/simple;
+	bh=6Esgob/eXCtbOdjh9toU3Ca+CaUbyN17vrQM4nXKqoE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZTRhiVLKPp0DoCIxImBbFk3ZJ65GGTWWxFVRzEAU4qpsy876hEeH/hg7msipgcMsUCzuxPRcDap6+TLp9tWXAi+MAY84+OO8AF1/VCea3usdGGS1fTlFGM2Fs/Ouz5iI4a2EnpVjKw7JJdkOzchbfPWWJq/L/xy/NTEovXppI8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nxlcorys; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733748505;
+	bh=6Esgob/eXCtbOdjh9toU3Ca+CaUbyN17vrQM4nXKqoE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nxlcorysF3qLOWqSN5xIktWcXP/FYoPk30xXSud8QdoE0/XElsvYF4EtYSC8ACZ08
+	 NV12Wd47dRS9nimVC20wluLMLcwRWJGgwbFJt5a3vXTsqMreP1ff3awsKeuvieqMqk
+	 dcW+f9d+sPWpZzd8GZ8YnBXpjQEYFPqlVp/sAWLlAetQkSDo1dvhcVZmlIym7n4CYO
+	 /GRO/hO8aoUNSVmdVxm9FlQfufzlGpypSg2v32fIIG1bWFXv1S9bwQnw4EfDrjyFVj
+	 eAn2f+Ues8EJfdGIGmG2vLIZp2K2YwiIOQqYvJSIJ38cqKP4AO8NJ30rxq2e1o0eRs
+	 uy67MYV93uapA==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B515617E3750;
+	Mon,  9 Dec 2024 13:48:24 +0100 (CET)
+Message-ID: <94c80573-b18b-4328-8663-db9d6455fafd@collabora.com>
+Date: Mon, 9 Dec 2024 13:48:24 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/5] pinctrl: mediatek: add support for
+ MTK_PULL_PD_TYPE
+To: Frank Wunderlich <linux@fw-web.de>,
+ Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Sean Wang <sean.wang@kernel.org>
+Cc: Frank Wunderlich <frank-w@public-files.de>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Daniel Golle <daniel@makrotopia.org>
+References: <20241202110045.22084-1-linux@fw-web.de>
+ <20241202110045.22084-2-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241202110045.22084-2-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am Montag, 9. Dezember 2024, 12:34:05 CET schrieb Krzysztof Kozlowski:
-> Minor cleanups without funcitonal impact:
->  - There should not be an empty blank line after SPDX tag,
->  - Convention is to indent DTS examples in coding style with 2- or
->    4-space indentation (4 is preferred),
->  - Drop unused labels in DTS examples.
+Il 02/12/24 12:00, Frank Wunderlich ha scritto:
+> From: Daniel Golle <daniel@makrotopia.org>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> The MediaTek MT7988 SoC got some pins which only got configurable
+> pull-down but unlike previous designs there is no pull-up option.
+> Add new type MTK_PULL_PD_TYPE to support configuring such pins.
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
-
-(even looked at the whole patch and not only the Rockchip parts :-) )
-
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
 
