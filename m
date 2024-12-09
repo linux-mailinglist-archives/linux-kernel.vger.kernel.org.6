@@ -1,113 +1,99 @@
-Return-Path: <linux-kernel+bounces-438393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92F399EA0A8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:55:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F9009EA0B9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:56:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D216C1886FDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:55:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB48B2821E9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:56:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0440319C553;
-	Mon,  9 Dec 2024 20:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E68219C54C;
+	Mon,  9 Dec 2024 20:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TMcuXnsK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rkvp+zmT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DC719AA72;
-	Mon,  9 Dec 2024 20:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 871291E515;
+	Mon,  9 Dec 2024 20:56:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733777702; cv=none; b=CBRUVAcWxCNHOQhkHe5TItD0ewy/7GPEL6BUXTb9/dN1i5FZBxBGNCM1ANifJDqhb130z+X+FJeeJTuP7EH+iEisbHWJXuZ76jKzXglABFJ8LiQC2C8sJcv7cUtO+8J6FnSUYUKiCmMq1T9lNqryfdv+1M92GW63ePzpRkjivRA=
+	t=1733777775; cv=none; b=P+5RsBz02VxPgKcgjCZIJdhoXFCHlyIJ5AjHk9Y4xIpVVbYuGmlj3Om6SSgOC10bhZST2cnQCmpDxa6P8ADVBecTSDf5CWe8epeixp6EBT/93/Jl93gtIPAJipYFwMASD5FW86fUGNbj1sDOGt+kF2czLLFFrhat/XsJWLA5qxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733777702; c=relaxed/simple;
-	bh=sT3cu6wLiArOXLV8PeYah6jrUg+dwfQAjmoR0c2zxJg=;
+	s=arc-20240116; t=1733777775; c=relaxed/simple;
+	bh=6dnZ68J8B3M1iQ9BeBytoXdubFp4ONsa9Id6lOSZ8J8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iQDf01zHZ2Sk1GsytD56ODKGulI3TQsVEkWM7zIXg12m28yKYL7OFyyI5lHM3E4voNCcntt681OiumMzKxBkojkRQJ0/hkRJeDKMgUmHmWxYrRpbimOX3rpTiAydVbFUHibUzROmDeRLPmmukrg9YKccpLjlHFU7MdPMkDmY8Tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TMcuXnsK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB10AC4CED1;
-	Mon,  9 Dec 2024 20:55:00 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jOKr7ytx+LKjN7x82opXSRT5uwBJlK6UR7YTQHYkfro8G9+TBVLSS4rDNHbsK39ybWPKQSkBOJcuz7XajurmbKiBWovxIWSBWTo3/+03HyGcFUd+Wbu1yJbf8rCoIj3UBKm9AhQseP+mNU4K7zboTyWBTaMHP6vd3uNx62a/+uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rkvp+zmT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27A96C4CED1;
+	Mon,  9 Dec 2024 20:56:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733777701;
-	bh=sT3cu6wLiArOXLV8PeYah6jrUg+dwfQAjmoR0c2zxJg=;
+	s=k20201202; t=1733777775;
+	bh=6dnZ68J8B3M1iQ9BeBytoXdubFp4ONsa9Id6lOSZ8J8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TMcuXnsKxYzVzJL9bw4nOpQXtdLJiEv2ophPJKNluWv5bqysU9IzvJt0qzg9PUfKH
-	 iJeh3Hkz7OPoFf4fkAmruFF5oycjzsoefR7hRBavPOB/YgWKo398WEQHYL3AFlCHuI
-	 /EikBJVxkqO24HMdQMdiaDBVrnFQseBbVpumnx6lL+6jpb67CMTDF6Omf+OXo6daWU
-	 hzHT7g5gaAP9T6TZ3jUhmRcrkE1JodPMvvANG99Q60ZQRjmyOJXrWq+ie0TNLqJ3Pi
-	 A4l6N9dmWkUQNW9Ajh3IUL7pvUbrNoikorpQi1X66YRZlFOGrLcmUkI342I3Ep9RkF
-	 7doXFI0EjZqIQ==
-Date: Mon, 9 Dec 2024 12:54:58 -0800
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: x86@kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-	linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-	Sam James <sam@gentoo.org>, linux-trace-kernel@vger.kerne.org,
-	Andrii Nakryiko <andrii.nakryiko@gmail.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Florian Weimer <fweimer@redhat.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>
-Subject: Re: [PATCH v3 07/19] unwind: Add user space unwinding API
-Message-ID: <20241209205458.vzwkh3ubch5sx5c7@jpoimboe>
-References: <cover.1730150953.git.jpoimboe@kernel.org>
- <f89a9137e983902f22611e5379606062a64b2382.1730150953.git.jpoimboe@kernel.org>
- <978a9ecd-47e9-442b-8daa-aee8f3d93dbb@linux.ibm.com>
+	b=rkvp+zmTSkdei60gApkIyV8FPWAcnuDnlcmUJ3SGYEjY6tCfs4qHKPnV/KlgA7Pmo
+	 RdSt0KKErJD3gj3xV9hwXGvGm2jOrySdCeBaLsOoKPU1YIqE9Cqa+Ulybjtek8jnim
+	 86z+MJmxVRIWVPVCm8VjPMQ2OUTdRiFc0Ba9k7GznbCjIqBROC4TX3VvgMZVipe4wC
+	 72YpW/g8QuU/9lp+F2a2jnl1jBE5FRA3EV9vZv0ugHK2q3+3ZUwm+MNf9mGKpzwsYI
+	 VV5PoTsRC0Ch1f0RLU5mOlINVEEW+n0bYXL1szqpzAjKvOeIV0BrFDSTmbI40frFJy
+	 SuKx1F9xlXCYQ==
+Date: Mon, 9 Dec 2024 14:56:13 -0600
+From: Rob Herring <robh@kernel.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, Marc Zyngier <maz@kernel.org>,
+	Stefan Wiehler <stefan.wiehler@nokia.com>,
+	Grant Likely <grant.likely@linaro.org>,
+	Tony Lindgren <tony@atomide.com>, Kumar Gala <galak@codeaurora.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Julia Lawall <Julia.Lawall@lip6.fr>,
+	Jamie Iles <jamie@jamieiles.com>,
+	Grant Likely <grant.likely@secretlab.ca>,
+	Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Rob Herring <rob.herring@calxeda.com>,
+	Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
+Subject: Re: [PATCH 1/8] of/irq: Fix wrong value of variable @len in
+ of_irq_parse_imap_parent()
+Message-ID: <20241209205613.GB938291-robh@kernel.org>
+References: <20241209-of_irq_fix-v1-0-782f1419c8a1@quicinc.com>
+ <20241209-of_irq_fix-v1-1-782f1419c8a1@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <978a9ecd-47e9-442b-8daa-aee8f3d93dbb@linux.ibm.com>
+In-Reply-To: <20241209-of_irq_fix-v1-1-782f1419c8a1@quicinc.com>
 
-On Fri, Dec 06, 2024 at 11:29:21AM +0100, Jens Remus wrote:
-> On 28.10.2024 22:47, Josh Poimboeuf wrote:
-> > +	if (ra == prev_ip)
-> > +		goto the_end;
+On Mon, Dec 09, 2024 at 09:24:59PM +0800, Zijun Hu wrote:
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 > 
-> This seems too restrictive to me, as it effectively prevents
-> unwinding from recursive functions, e.g. Glibc internal merge sort
-> msort_with_tmp():
+> Fix wrong @len value by 'len--' after 'imap++'
+> in of_irq_parse_imap_parent().
 > 
-> $ perf record -F 9999 --call-graph fp /usr/bin/objdump -wdWF /usr/bin/objdump
-> $ perf script
-> ...
-> objdump    8314 236064.515562:     100010 task-clock:ppp:
->                  100630a compare_symbols+0x2a (/usr/bin/objdump)
->              3ffb9e58e7c msort_with_tmp.part.0+0x15c (/usr/lib64/libc.so.6)
->              3ffb9e58d76 msort_with_tmp.part.0+0x56 (/usr/lib64/libc.so.6)
-> [unwinding unexpectedly stops]
-> 
-> Would it be an option to only stop unwinding if both the IP and SP do
-> not change?
-> 
-> if (sp == prev_sp && ra == prev_ra)
-> 	gote the_end;
+> Fixes: 935df1bd40d4 ("of/irq: Factor out parsing of interrupt-map parent phandle+args from of_irq_parse_raw()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/of/irq.c | 1 +
+>  1 file changed, 1 insertion(+)
 
-Good point, I've already fixed that for the next version (not yet
-posted).  I believe the only thing we really need to check here is that
-the unwind is heading in the right direction:
+Applied, but rewrote the commit message:
 
-if (cfa <= state->sp)
-	goto the_end;
+of/irq: Fix interrupt-map cell length check in of_irq_parse_imap_parent()
 
--- 
-Josh
+On a malformed interrupt-map property which is shorter than expected by 
+1 cell, we may read bogus data past the end of the property instead of
+returning an error in of_irq_parse_imap_parent().
+
+Decrement the remaining length when skipping over the interrupt parent  
+phandle cell.
+
 
