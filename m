@@ -1,171 +1,168 @@
-Return-Path: <linux-kernel+bounces-437601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D80D9E95A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:06:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FAC89E95A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:07:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7AE62821C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:06:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9247C281F7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:07:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FBF535969;
-	Mon,  9 Dec 2024 12:59:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37411ACEBF;
+	Mon,  9 Dec 2024 12:59:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Emm/6mDl"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="K3Q6sXoL"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8420235959;
-	Mon,  9 Dec 2024 12:59:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB3FA3595B;
+	Mon,  9 Dec 2024 12:59:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749160; cv=none; b=EXwwnuWhd2wr5pAkGcbHb4I4Dn+WcNHoImAA3vfBcP1nOCM1w8XbbgKfTCe+KgNq+e8AemvlcwfKfKXzLQ7b7kUZ61SxqeBeZ80DJkTA6X6aVKPxZSUZDj7GVTWlJIFYC0f9D3zEhnzsm89nZOz9rG15Aak2rgKKhc0Lr6MzOyQ=
+	t=1733749194; cv=none; b=ifGXOF6NYvLyTnaKozoKgr35ni7O44HokiVHoj+ucbzZ8t6EdSl+Czvnvs5Gk7DLZdYNm3Z9t0SFYAJfV5oaHl6HHDG/YnCpQF/q5GWLHlghbJypBnEinoU1sFBeR0G0qyP41nANWbelMaEQvUfywLGuwyoXzPF5RXjYodpgmSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749160; c=relaxed/simple;
-	bh=Cm2fR0YHLhUCian+6aRdruvKehg4LBkMWZFDaZSAWtU=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=sLF8I1TdprnmH2wqEB5n9PYaIzLBqyuB0wfztoKjyOCRAH+oqRmk1urXOwguXVEaruqP6EmMALLH91v4yyUJy5XXoaeExiFwA/NPdQSFtt0futbDSEr18ZAjLeTHaoQuXTRVHei9j34e07VUXUy01ydBwsodpjad2z+bjOsmObw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Emm/6mDl; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733749159; x=1765285159;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version:content-id;
-  bh=Cm2fR0YHLhUCian+6aRdruvKehg4LBkMWZFDaZSAWtU=;
-  b=Emm/6mDlyTdUZtWNgMCv9tIVJH/mEzNzhN4l/8MxO4j5Hdln/ZE21Yw6
-   EySnHNVIHMTpKXHcLIMalI9BIpn2z/JExG/GAm4xWvNCrlmgcN+SkGAa8
-   ajmLEAxiOfo3bhF1Akcn8NdxVMvxK4eaEHZxUeAO8yr/iMKh+ECb4UtOq
-   D4zBjeec9i/U4iz0zJfYG2rwiiqJBL0qX+gtv56acdTr4zFVHF45eHR4+
-   JWa9NsqZjQNEuWKllCoQhlQUTWar0bDBjy7rqG0lpUb44I99p7f0ANOUQ
-   DvWIGxS9pVzh9M78jzM1V4uJECaN+DUo/IJC9IZaWWObatDRRFNCMg+r+
-   w==;
-X-CSE-ConnectionGUID: eut4JBffSEyx0L59gwibDA==
-X-CSE-MsgGUID: SP7Ka5FrRiOlYK8FsgfKUg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="33957162"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="33957162"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 04:59:16 -0800
-X-CSE-ConnectionGUID: woeuFxg2TZK100U663v8zw==
-X-CSE-MsgGUID: 1nbLFhzhSB6nytS710buTg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="94744228"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.121])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 04:59:10 -0800
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Mon, 9 Dec 2024 14:59:07 +0200 (EET)
-To: Niklas Schnelle <niks@kernel.org>
-cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-    Rob Herring <robh@kernel.org>, Krzysztof Wilczy??ski <kw@linux.com>, 
-    "Maciej W . Rozycki" <macro@orcam.me.uk>, 
-    Jonathan Cameron <Jonathan.Cameron@huawei.com>, 
-    Alexandru Gagniuc <mr.nuke.me@gmail.com>, 
-    Krishna chaitanya chundru <quic_krichai@quicinc.com>, 
-    Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-    "Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org, 
-    Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>, 
-    LKML <linux-kernel@vger.kernel.org>, 
-    Daniel Lezcano <daniel.lezcano@linaro.org>, 
-    Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-    Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-    Mika Westerberg <mika.westerberg@linux.intel.com>, 
-    Lorenzo Pieralisi <lpieralisi@kernel.org>
-Subject: Re: [PATCH] PCI/portdrv: Disable bwctrl service if port is fixed at
- 2.5 GT/s
-In-Reply-To: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
-Message-ID: <21fa32ff-73d0-5446-2d9b-ef1f8fccad8a@linux.intel.com>
-References: <20241207-fix_bwctrl_thunderbolt-v1-1-b711f572a705@kernel.org>
+	s=arc-20240116; t=1733749194; c=relaxed/simple;
+	bh=4QW5Bw+ZPeDBkia0tJJgILsd2cHE+S732zb/R+UqnzE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KqESxw7VjAl5B81eNPfRfNf9FZeFuUbwKbe2e5vrIe5ksiGPQ8qCipxwyxECfErVkYF0L2ecStfrbyLaMvE4Fa7xQvbJMWhZyF8HbaWlh7lu9g3b/zAVR3VRYzCaJGgs3Aqn5V5hFrlD+eQBq7hpunhL9F0Y651Krkruw17eNro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=K3Q6sXoL; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B98Lbam014059;
+	Mon, 9 Dec 2024 12:59:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	OxUmyy6yV13PBzRPg/BfEY5/02n3djkRn3ZTbxgOHW0=; b=K3Q6sXoLG6VOJO2y
+	sYvzhsZpm0js41vDNd7CnnEDPqav0MDrITVU5FyhWKfJrqb3ve2fCPjZVDz752sd
+	QQ3FRbQq/qWAvDOP0VMIQTr8R6h7Ybb/Td3hULAEaqP5JIT+b2p9z8jqOQElS1AT
+	FA/xgwZJ248IchUt6u276+PU45kxlWzXMTaJfcjdCKF6w0cKKNW5iNsqvM1KfISb
+	SE8+SSjA+CAIWfq615r4908LSbZo0SIzdI+kjFnx2q/XKy5tWMA8u2ZNEWXRFNLI
+	VMIyP+c8CW+ViC2d/vaV7ZCaQ3xMgyUzU6/LMZJF9qoyYEkFHBwesUm3ct8mcP30
+	BtRJ0Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dvyah149-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 12:59:43 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9CxgSH005482
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 12:59:42 GMT
+Received: from [10.216.3.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 04:59:37 -0800
+Message-ID: <65d4378a-43f0-49ac-a47d-c700ae5e7de1@quicinc.com>
+Date: Mon, 9 Dec 2024 18:29:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; BOUNDARY="8323328-429414955-1733749055=:938"
-Content-ID: <0dccd60f-1241-d533-3b08-32aed886f505@linux.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/7] drm/msm: adreno: enable GMU bandwidth for A740 and
+ A750
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Dmitry
+ Baryshkov" <dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Bjorn Andersson <andersson@kernel.org>, Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20241205-topic-sm8x50-gpu-bw-vote-v4-0-9650d15dd435@linaro.org>
+ <20241205-topic-sm8x50-gpu-bw-vote-v4-5-9650d15dd435@linaro.org>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <20241205-topic-sm8x50-gpu-bw-vote-v4-5-9650d15dd435@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: pVrhNiBgx-6N8iGdb0DuKBuyyuHFR68Q
+X-Proofpoint-ORIG-GUID: pVrhNiBgx-6N8iGdb0DuKBuyyuHFR68Q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
+ mlxlogscore=999 mlxscore=0 priorityscore=1501 suspectscore=0 clxscore=1015
+ malwarescore=0 impostorscore=0 adultscore=0 lowpriorityscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
+ definitions=main-2412090102
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On 12/5/2024 8:31 PM, Neil Armstrong wrote:
+> Now all the DDR bandwidth voting via the GPU Management Unit (GMU)
+> is in place, declare the Bus Control Modules (BCMs) and the
+> corresponding parameters in the GPU info struct.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 
---8323328-429414955-1733749055=:938
-Content-Type: text/plain; CHARSET=ISO-8859-15
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-Content-ID: <22e425b1-b0d2-3b26-9867-728153f62360@linux.intel.com>
+Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
 
-On Sat, 7 Dec 2024, Niklas Schnelle wrote:
-
-> Trying to enable bwctrl on a Thunderbolt port causes a boot hang on some
-> systems though the exact reason is not yet understood. As per the spec
-> Thunderbolt PCIe Downstream Ports have a fake Max Link Speed of 2.5 GT/s
-> (USB4 v2 sec 11.2.1):
->=20
->    "Max Link Speed field in the Link Capabilities Register set to 0001b
->     (data rate of 2.5 GT/s only).
->     Note: These settings do not represent actual throughput.
->     Throughput is implementation specific and based on the USB4 Fabric
->     performance."
->
-> More generally if 2.5 GT/s is the only supported link speed there is no
-> point in throtteling as this is already the lowest possible PCIe speed
-> so don't advertise the capability stopping bwctrl from being probed on
-> these ports.
-
-Hi,
-
-Thanks for finding the reason this far.
-
-Mika mentioned earlier to me this Link Speed stuff is all made up on=20
-Thunderbolt but I didn't make any changes back then because I thought=20
-bwctrl is not going to change the speed anyway in that case.
-
-Seem reasonable way to workaround the Thunderbold problem and agreed,=20
-there's not much point in adding bwctrl for 2.5GT/s only ports.
-
-Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
-
---=20
- i.
-
-
-> Link: https://lore.kernel.org/linux-pci/Z1R4VNwCOlh9Sg9n@wunner.de/
-> Fixes: 665745f27487 ("PCI/bwctrl: Re-add BW notification portdrv as PCIe =
-BW controller")
-> Tested-by: Niklas Schnelle <niks@kernel.org>
-> Signed-off-by: Niklas Schnelle <niks@kernel.org>
+-Akhil
 > ---
-> Note: This issue causes a boot hang on my personal workstation see the
-> Link for details.
-> ---
->  drivers/pci/pcie/portdrv.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/pci/pcie/portdrv.c b/drivers/pci/pcie/portdrv.c
-> index 5e10306b63081b1ddd13e0a545418e2a8610c14c..e5f80e4a11aad4ce60b2ce998=
-b40ec9fda8c653d 100644
-> --- a/drivers/pci/pcie/portdrv.c
-> +++ b/drivers/pci/pcie/portdrv.c
-> @@ -270,7 +270,8 @@ static int get_port_device_capability(struct pci_dev =
-*dev)
->  =09=09u32 linkcap;
-> =20
->  =09=09pcie_capability_read_dword(dev, PCI_EXP_LNKCAP, &linkcap);
-> -=09=09if (linkcap & PCI_EXP_LNKCAP_LBNC)
-> +=09=09if (linkcap & PCI_EXP_LNKCAP_LBNC &&
-> +=09=09    (linkcap & PCI_EXP_LNKCAP_SLS) !=3D PCI_EXP_LNKCAP_SLS_2_5GB)
->  =09=09=09services |=3D PCIE_PORT_SERVICE_BWCTRL;
->  =09}
-> =20
->=20
-> ---
-> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-> change-id: 20241207-fix_bwctrl_thunderbolt-bd1f96b3d98f
->=20
-> Best regards,
->=20
---8323328-429414955-1733749055=:938--
+>  drivers/gpu/drm/msm/adreno/a6xx_catalog.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> index 0c560e84ad5a53bb4e8a49ba4e153ce9cf33f7ae..edffb7737a97b268bb2986d557969e651988a344 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_catalog.c
+> @@ -1388,6 +1388,17 @@ static const struct adreno_info a7xx_gpus[] = {
+>  			.pwrup_reglist = &a7xx_pwrup_reglist,
+>  			.gmu_chipid = 0x7020100,
+>  			.gmu_cgc_mode = 0x00020202,
+> +			.bcms = (const struct a6xx_bcm[]) {
+> +				{ .name = "SH0", .buswidth = 16 },
+> +				{ .name = "MC0", .buswidth = 4 },
+> +				{
+> +					.name = "ACV",
+> +					.fixed = true,
+> +					.perfmode = BIT(3),
+> +					.perfmode_bw = 16500000,
+> +				},
+> +				{ /* sentinel */ },
+> +			},
+>  		},
+>  		.address_space_size = SZ_16G,
+>  		.preempt_record_size = 4192 * SZ_1K,
+> @@ -1432,6 +1443,17 @@ static const struct adreno_info a7xx_gpus[] = {
+>  			.pwrup_reglist = &a7xx_pwrup_reglist,
+>  			.gmu_chipid = 0x7090100,
+>  			.gmu_cgc_mode = 0x00020202,
+> +			.bcms = (const struct a6xx_bcm[]) {
+> +				{ .name = "SH0", .buswidth = 16 },
+> +				{ .name = "MC0", .buswidth = 4 },
+> +				{
+> +					.name = "ACV",
+> +					.fixed = true,
+> +					.perfmode = BIT(2),
+> +					.perfmode_bw = 10687500,
+> +				},
+> +				{ /* sentinel */ },
+> +			},
+>  		},
+>  		.address_space_size = SZ_16G,
+>  		.preempt_record_size = 3572 * SZ_1K,
+> 
+
 
