@@ -1,131 +1,138 @@
-Return-Path: <linux-kernel+bounces-438069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C339C9E9C5E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:02:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2E8A9E9C65
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:02:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DE5161EF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:02:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AD161B424D;
+	Mon,  9 Dec 2024 17:00:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bHOtKjS1"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34B88282D97
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:01:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F3D152E0C;
-	Mon,  9 Dec 2024 16:59:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E79D2C9A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:59:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF0BF13AA2F;
+	Mon,  9 Dec 2024 17:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733763565; cv=none; b=jxrE/j/deEGlUV8q4sSJZXqUsZ1GBhwDZMJL1CjThUt2UgH8Ht3bacdIAAcLe4zBZj+RKTxPoHr2YpWzKcQddVd2y04yY/qShTJsmUdd522leGfkV3aZM+yHu+rm797QU1sIteZp76Rs3l/S7SFU7OHmuAdLBQM3ytSBD69//mY=
+	t=1733763628; cv=none; b=ZPyklstJJk+ccCGdSaKlHmNRGXPCeicS5aDoJcJHtwP+IG0rxjXJt4XLF8Cgbv35hhDGcaAoOPhjrqa1Uai56Dpo4P/5xxkXt/z7Cy+iMfVh1hTBri3fQiEydn9HjSy09cbppu902K5pvqUFV+HzpmHUnKhVZu6WJt3rvlkgFAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733763565; c=relaxed/simple;
-	bh=gVxoTEjZk5UekIl5LiZpoPTQIiZj44IpF+2LRMzW+4w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NiM93oS+IOpikAqpn4h5e+1mAEyhHDqmwmTg2fA4tBhqoRVTdPfJdb8vmPYLn7gB9SO4h8caLjhEHmt9LmIJi5oMnRQf5c07kMKkruINDxIr3pyqQUhXRwdPh/i8Pic/YAtuLt5lycBW57G1nLcKOnLyffa/F7RW2+OCL8UlSNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F32CB113E;
-	Mon,  9 Dec 2024 08:59:50 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E75893F720;
-	Mon,  9 Dec 2024 08:59:21 -0800 (PST)
-Date: Mon, 9 Dec 2024 16:59:19 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Yeoreum Yun" <yeoreum.yun@arm.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	nd@arm.com
-Subject: Re: [PATCH v2 2/2] firmware/arm_ffa: remove __le64_to_cpu() when set
- uuid for direct msg v2
-Message-ID: <Z1ch52AthTYVhtH4@bogus>
-References: <20241203143109.1030514-1-yeoreum.yun@arm.com>
- <20241203143109.1030514-3-yeoreum.yun@arm.com>
- <9e60e996-070e-43a7-80e9-efdfda9f6223@app.fastmail.com>
+	s=arc-20240116; t=1733763628; c=relaxed/simple;
+	bh=ysn17uQxkXzPtLZxnOMKYQsJkVa5vH4rdmQv56kQ19U=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=hEDs7guiyK6/bCcfry618MX5Aus04rHvJGKa227oF3P0pwfJlMzk2PhqMSRJHLbGhTOeXAb9i0/5h5tbme+fDG77w8FDdt8ptlEErj49fZ47Dg4BQCF7r4opA9JAFgOdKYelgi01zjPd+urqduQ0AsWVbyvtjbC4oIxRKKd1TN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bHOtKjS1; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1733763623;
+	bh=ysn17uQxkXzPtLZxnOMKYQsJkVa5vH4rdmQv56kQ19U=;
+	h=From:Subject:Date:To:Cc:From;
+	b=bHOtKjS1103e+9ea300h6Mz17GGWJIWxh41GOfvGOiUUrJ6ghWqieWRAU/xZXPP74
+	 DQ/V9z5EC2TUMDPKe9qLaCKTj04sK4F8gGEPgAAEigp0+aMtMGaQpEUPYW1NRhSpTl
+	 VtfLSj/k/tZqkldi+PH3AUbGwaTEiXxhpPoV8FvuFPTvps/q5MI5J97Ndjiqyx5yUM
+	 r01L6rhobmsLN9olbYcG92sMeXkb+szabyxGDekAkmeBfGrRI5PfifXXfXZXwos3Lo
+	 5e6mJlOk3FW/eAoygr9t/+jlEK0v7EYci1d8dsAKr2BgWK56GwzTJsipO2XQe3vZo3
+	 failmmYZYK5+A==
+Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8A62317E37BF;
+	Mon,  9 Dec 2024 18:00:19 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v2 0/5] thermal/drivers/mediatek/lvts: Fixes for suspend
+ and IRQ storm, and cleanups
+Date: Mon, 09 Dec 2024 14:00:01 -0300
+Message-Id: <20241209-mt8192-lvts-filtered-suspend-fix-v2-0-5b046a99baa9@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9e60e996-070e-43a7-80e9-efdfda9f6223@app.fastmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIABEiV2cC/4WNQQ6CMBAAv0J6dk27gEFP/sNwKMsqTQolbW00p
+ H+3knj2OHOY2URgbziIS7UJz8kE45YCeKgETXp5MJixsECJjVKoYI6dOiPYFAPcjY3seYTwDCs
+ vYxEv0K2skXTHxIMomdVz0fvi1heeTIjOv/djUl/7i7f/40mBhAa5JtliRye6krNWD87rI7lZ9
+ DnnD8dyvrHUAAAA
+X-Change-ID: 20241121-mt8192-lvts-filtered-suspend-fix-a5032ca8eceb
+To: "Rafael J. Wysocki" <rafael@kernel.org>, 
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+ Lukasz Luba <lukasz.luba@arm.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Alexandre Mergnat <amergnat@baylibre.com>, 
+ Balsam CHIHI <bchihi@baylibre.com>
+Cc: kernel@collabora.com, linux-pm@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, Hsin-Te Yuan <yuanhsinte@chromium.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, 
+ =?utf-8?q?Bernhard_Rosenkr=C3=A4nzer?= <bero@baylibre.com>, 
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
 
-On Mon, Dec 09, 2024 at 04:27:14PM +0100, Arnd Bergmann wrote:
-> On Tue, Dec 3, 2024, at 15:31, Yeoreum Yun wrote:
-> > From: Levi Yun <yeoreum.yun@arm.com>
-> 
-> I just saw this commit in the pull request, and I'm very
-> confused because the description does not match the
-> patch contents.
->
+Patches 1 and 2 of this series fix the issue reported by Hsin-Te Yuan
+[1] where MT8192-based Chromebooks are not able to suspend/resume 10
+times in a row. Either one of those patches on its own is enough to fix
+the issue, but I believe both are desirable, so I've included them both
+here.
 
-Sorry for that, I tried to reword to improve it but it is obvious now that I
-didn't do a good job there.
+Patches 3-5 fix unrelated issues that I've noticed while debugging.
+Patch 3 fixes IRQ storms when the temperature sensors drop to 20
+Celsius. Patches 4 and 5 are cleanups to prevent future issues.
 
-> > Accoding to FF-A specification[0] 15.4 FFA_MSG_SEND_DRIECT_REQ2,
-> > then UUID is saved in register:
-> >     UUID Lo  x2  Bytes[0...7] of UUID with byte 0 in the low-order bits.
-> >     UUID Hi  x3  Bytes[8...15] of UUID with byte 8 in the low-order bits.
->
-> The specification you cite here clearly describes little-endian
-> format, i.e. the low-order byte corresponds to the first
-> memory address.
->
+To test this series, I've run 'rtcwake -m mem -d 60' 10 times in a row
+on a MT8192-Asurada-Spherion-rev3 Chromebook and checked that the wakeup
+happened 60 seconds later (+-5 seconds). I've repeated that test on 10
+separate runs. Not once did the chromebook wake up early with the series
+applied.
 
+I've also checked that during those runs, the LVTS interrupt didn't
+trigger even once, while before the series it would trigger a few times
+per run, generally during boot or resume.
 
-> > That means, we don't need to swap the uuid when it send via direct
-> > message request version 2, just send it as saved in memory.
->
-> "As saved in memory" does not sound like a useful description
-> when passing arguments through registers, as the register
-> contents are not defined in terms of byte offsets.
->
+Finally, as a sanity check I've verified that the interrupts still work
+by lowering the thermal trip point to 45 Celsius and running 'stress -c
+8'. Indeed they still do, and the temperature showed by the
+thermal_temperature ftrace event matched the expected value.
 
-Well I didn't know how to term it. The structure UUID is a raw buffer
-and it provide helpers to import/export the data in/out of it. So in LE
-kernel IIUC, it is stored in LE format itself which was my initial
-confusion and hence though what you fixed was correct previously.
+[1] https://lore.kernel.org/all/20241108-lvts-v1-1-eee339c6ca20@chromium.org/
 
-> Can you describe what bug you found? If the byteorder on
-> big-endian kernels is wrong in the current version and your
-> patch fixes it, it sounds like the specification needs to
-> be updated describe both big-endian and little-endian
-> byte-order, and how the firmware detects which one is used.
->
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v2:
+- Renamed bitmasks for interrupt enable (added "INTEN" to the name)
+- Made read-only arrays static const
+- Changed sensor_filt_bitmap array from u32 to u8 to save memory
+- Rebased on next-20241209
+- Link to v1: https://lore.kernel.org/r/20241125-mt8192-lvts-filtered-suspend-fix-v1-0-42e3c0528c6c@collabora.com
 
-The firmware interface understands only LE format. And by default UUID
-is stored in LE format itself in the structure which I got confused
-initially. We may need endian conversion at places(found few when trying
-to get it working with BE kernel).
+---
+Nícolas F. R. A. Prado (5):
+      thermal/drivers/mediatek/lvts: Disable monitor mode during suspend
+      thermal/drivers/mediatek/lvts: Disable Stage 3 thermal threshold
+      thermal/drivers/mediatek/lvts: Disable low offset IRQ for minimum threshold
+      thermal/drivers/mediatek/lvts: Start sensor interrupts disabled
+      thermal/drivers/mediatek/lvts: Only update IRQ enable for valid sensors
 
-I wanted to check with you about this. The current driver doesn't
-work with BE. I tried to cook up patches but then the upstream user
-of this driver OPTEE doesn't work in BE, so I hit a roadblock to fully
-validate my changes. I don't see any driver adding endianness dependency
-in the Kconfig if they can't work with BE, not sure if that is intentional
-or just don't care. I was thinking if we can disable it to build in BE
-kernel until the actual support was added.
+ drivers/thermal/mediatek/lvts_thermal.c | 103 ++++++++++++++++++++++----------
+ 1 file changed, 72 insertions(+), 31 deletions(-)
+---
+base-commit: d1486dca38afd08ca279ae94eb3a397f10737824
+change-id: 20241121-mt8192-lvts-filtered-suspend-fix-a5032ca8eceb
 
-So the current FF-A driver just supports LE and the bug was found just
-in LE kernel itself.
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-> > Remove le64_to_cpu() for uuid in direct message request version 2,
-> > and change uuid_regs' type to unsigned long.
->
-> 'unsigned long' makes the code unnecessarily incompatible
-> with 32-bit builds.
->
-
-Understood we may need some typecasting to avoid compiler warnings.
-
-Just a note not related to your comment though: FFA_MSG_SEND_DIRECT_REQ2
-is 64-bit only as it uses full 64-bit register to pass UUID.
-
---
-Regards,
-Sudeep
 
