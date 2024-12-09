@@ -1,69 +1,63 @@
-Return-Path: <linux-kernel+bounces-438401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 285729EA0D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:10:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B610E9EA0DF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:13:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E89D1886738
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:10:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D5641669BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BC119C54C;
-	Mon,  9 Dec 2024 21:10:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC6C19CCFC;
+	Mon,  9 Dec 2024 21:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uW+EdXEE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvYRDONV"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6767217BA5;
-	Mon,  9 Dec 2024 21:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315EA17836B;
+	Mon,  9 Dec 2024 21:13:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733778635; cv=none; b=ABeODbmjvacUL5nUZbsK5SclzBYDzVJRpQj2fdwKYOUmsC/P1UBn/w6bEoHN1aPw3R1m7gtuoVotcFZ7cozyZa6OalI9tU35OaGwWSJT8mZkObe5JzPjdzkno+WckyWjDl2AZKAJDK7Yaavrzodne7su/yDyb3Ub2RpLVaGCv6E=
+	t=1733778797; cv=none; b=eD8AVpEbUC2f8DmO4116gr6ANP/qrGQ5WhMP6ibQTTDg41QuGkIFHK2i9W7DvU/DrOmkizVU6rTzMGEpnCakcROUCcx/sWsVSS8FbZU+I38w70fBJLsF6uZo7BX+OLzQ+AkVSCQAh2sNz/oBSgEgFAuigktiZSrfd/KLK/hLHDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733778635; c=relaxed/simple;
-	bh=FUhkHZk6FYp5UJ7j0cMnzM45fsDiUM3JrC0068ztZ+c=;
+	s=arc-20240116; t=1733778797; c=relaxed/simple;
+	bh=faJC0l37JVGvOxS+yPSk+/IsTgWitl8RFB9NhyInlMw=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gGrpbUkzGW7NV7ythFPKe/VtftIwktxPMEDzLYm0w1Zqyju91nw8qYSQOU+dGLC+i/itl+/AbJVMAsiZhF8l+9qLdxyS84ckgqR6EJwg6BMz9vty13lPwg2XfKqqer2j7ZP3VASqCKUtmn6reb8FoWUAJJFDtEg2zoUhupRtAl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uW+EdXEE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D132C4CED1;
-	Mon,  9 Dec 2024 21:10:33 +0000 (UTC)
+	 MIME-Version:Content-Type; b=rH/Dr+5CvgxchrpoUAdCZXehmttfczc8ckUVIDj2T6n37uHO+RisuY5OpLCZRcdMSveYAApRNweEPDwy8a46opQa2daEP2/+FjTgmT/npDyp7JKgD8OKK+Da1r6ip6oCOGp+Ja8IRIn3oAjlsVgXzrgktk6CA7fH6WXbmaChyww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvYRDONV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A8F1C4CED1;
+	Mon,  9 Dec 2024 21:13:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733778633;
-	bh=FUhkHZk6FYp5UJ7j0cMnzM45fsDiUM3JrC0068ztZ+c=;
+	s=k20201202; t=1733778796;
+	bh=faJC0l37JVGvOxS+yPSk+/IsTgWitl8RFB9NhyInlMw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=uW+EdXEE4Lh3ufyYxGNy5xUlDNgyyA/fG44h37lO4HY2b8CrSn6AxBzjZLw0Idq1y
-	 Jeeo2M/MGratPZHc4ozQObKhJ6R2E9uawMTmDmmxy8/76BzAPSRYoqbdF6QKTadudz
-	 iXOVPGa1+fsvSzegA8noRlvXuvKjwkerAQhX/zKs+q1b0tfStx0qLG0hZqEKViEIbG
-	 h/psW0ZIQE1cX/CES6on7/qRt7EpwaeQlXXvSHxWNkK0f2hv0jJF2J60mLDBw1Pqw1
-	 mHTTKk5LCsXXfSQQsyGd6YouENjHqPNYQ5TtXfr2bicTgHpYzpDvPnqexALiU6ZUIW
-	 NYf1574GlwMmw==
-Date: Mon, 9 Dec 2024 13:10:32 -0800
+	b=mvYRDONVxmSoH6XyS5RTdlILgCkErhKycyp734imk2J34nTBo2iHru/UxiqZqonpZ
+	 1hOJE5lM+t/uVpwf7ggeB6/HS0sBupKmldszszsHdXA1x9ytIwpJWK7pz320CKbrja
+	 Da4LcXD/BLLeERJL0LMMaFE3D1YgvdALFE83DBVZyo/uFJdkxcD1DFZRq9puxh6jEp
+	 n2nbFtSdCgszs31e3txrMKY8SfQPvRtG/j/6wTR96n+byyuU6zsaDe2gEMyEm64XxC
+	 bqHfPzJ/C85dTAdiJPlTSFt02/aPi4xdTGYTExyDwqcZfERXCbrdDtbIO8bg411jLy
+	 G5LpFjzeGB6VQ==
+Date: Mon, 9 Dec 2024 13:13:15 -0800
 From: Jakub Kicinski <kuba@kernel.org>
-To: Christopher Ferris <cferris@google.com>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavo@embeddedor.com>, "Gustavo A. R. Silva"
- <gustavoars@kernel.org>, Michael Chan <michael.chan@broadcom.com>, Andrew
- Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Potnuri
- Bharat Teja <bharat@chelsio.com>, Christian Benvenuti <benve@cisco.com>,
- Satish Kharat <satishkh@cisco.com>, Manish Chopra <manishc@marvell.com>,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-hardening@vger.kernel.org, android-llvm-dev@google.com
-Subject: Re: [PATCH v2 1/2][next] UAPI: ethtool: Use __struct_group() in
- struct ethtool_link_settings
-Message-ID: <20241209131032.6af473f4@kernel.org>
-In-Reply-To: <CANtHk4mnjE5aATk2r8uOsyLKm+7-tbEv5AaXVWGP_unhLNEvsg@mail.gmail.com>
-References: <cover.1730238285.git.gustavoars@kernel.org>
-	<9e9fb0bd72e5ba1e916acbb4995b1e358b86a689.1730238285.git.gustavoars@kernel.org>
-	<20241109100213.262a2fa0@kernel.org>
-	<d4f0830f-d384-487a-8442-ca0c603d502b@embeddedor.com>
-	<55d62419-3a0c-4f26-a260-06cf2dc44ec1@embeddedor.com>
-	<202411151215.B56D49E36@keescook>
-	<Z1HZpe3WE5As8UAz@google.com>
-	<CANtHk4mnjE5aATk2r8uOsyLKm+7-tbEv5AaXVWGP_unhLNEvsg@mail.gmail.com>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
+ <andrew+netdev@lunn.ch>, <horms@kernel.org>, <shenjian15@huawei.com>,
+ <salil.mehta@huawei.com>, <liuyonglong@huawei.com>,
+ <wangpeiyang1@huawei.com>, <chenhao418@huawei.com>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH RESEND net 3/7] net: hns3: Resolved the issue that the
+ debugfs query result is inconsistent.
+Message-ID: <20241209131315.2b0e15bc@kernel.org>
+In-Reply-To: <058dff3c-126a-423a-8608-aa2cebfc13eb@huawei.com>
+References: <20241107133023.3813095-1-shaojijie@huawei.com>
+	<20241107133023.3813095-4-shaojijie@huawei.com>
+	<20241111172511.773c71df@kernel.org>
+	<e4396ecc-7874-4caf-b25d-870a9d897eb1@huawei.com>
+	<20241113163145.04c92662@kernel.org>
+	<058dff3c-126a-423a-8608-aa2cebfc13eb@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,12 +67,15 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Mon, 9 Dec 2024 12:59:40 -0800 Christopher Ferris wrote:
-> It looks like the way this was fixed in the ethtool.h uapi header was to
-> revert the usage of __struct_group. Should something similar happen for
-> pkt_cls.h? Or would it be easier to simply remove the usage of the TAG in
-> the _struct_group macro?
+On Mon, 9 Dec 2024 22:14:37 +0800 Jijie Shao wrote:
+> Another way is seq_file, which may be a solution,
+> as far as I know, each seq_file has a separate buffer and can be expanded automatically.
+> So it might be possible to solve the problem
+> But even if the solution is feasible, this will require a major refactoring of hns3 debugfs
 
-Just to state it explicitly - are you running into a compilation issue
-with existing user space after updating pkt_cls.h?
+seq_file is generally used for text output
+
+can you not hook in the allocation and execution of the cmd into the
+.open handler and freeing in to the .close handler? You already use
+explicit file_ops for this file.
 
