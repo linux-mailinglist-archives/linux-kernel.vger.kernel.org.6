@@ -1,83 +1,76 @@
-Return-Path: <linux-kernel+bounces-438386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7FA9EA08F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:45:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A28E69EA090
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:46:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37A5E1883FED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:45:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5EF163B1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:46:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6761199EB2;
-	Mon,  9 Dec 2024 20:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112B119AA63;
+	Mon,  9 Dec 2024 20:46:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="NpOt3JcG"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjmsQ877"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCB2C13A87C;
-	Mon,  9 Dec 2024 20:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCDF1E515;
+	Mon,  9 Dec 2024 20:46:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733777151; cv=none; b=M26J3eitL27UAwpGiroosJQW8k1eSUQ5YZP726p1xX7/5B3lWkyoQYvxMr5V5fL6xKfWTLdRoGD2k3SF6KCQhiSxxMVNHJUyCmHHJ7U0v/aT4DOXCdx4e4YIAVZmOVv2WiGDl6kh1oL+UD5wZk0aKQDBBbUYc760/LqGfMmjjAI=
+	t=1733777178; cv=none; b=HFGOhFuK5OXz0Aagxc7cIn4rauYzdBkkhlsyr5vgFzoqRO1QAF2ocKrDCXzeDSz/jp7z9ZKi2R5y4N/vG8UB0FyrE7TglRa6U9qRplk+WumD6RHCtQ9xtOjNbCMRgQUkIk206QXvb7ChK1qP10c6/PBMjhVnaJRsh12beok1NfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733777151; c=relaxed/simple;
-	bh=qUAagJIpDF3OqJgI/JNeO9p1jV5nt1/ZYM9qFh72Rq8=;
+	s=arc-20240116; t=1733777178; c=relaxed/simple;
+	bh=Sy0df8OMuc4UsW/w9DP2NkGuhHpfQjU4nY1+/BUPqwQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pU3wrS9Ku3YeEt9f+KzRd9uFss3ikpJ47wbycJ42GuBqViOmG4ooRpqzuiYMgOnAODcyLwJMUcaGqgwP5h1Ic2PcJ0Raqi86p798tBnuBm761DM05qncKQBExvbcMWEWjZuW1gBBM04iBF9vydrAQltnWutiFHumCf0zclsb3UU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=NpOt3JcG; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 871AF40E015F;
-	Mon,  9 Dec 2024 20:45:46 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 5YwQo64KWpJT; Mon,  9 Dec 2024 20:45:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733777143; bh=kdtyQcVH1bqzeynb/peFrnCJsVTPGjh/mPNrfJwpEjE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=LghYGylL5+NbnhLMVFzeew7HdfYV0WEkdis6afDDMPNbUaISHykLRXHNoMwmvdNVON7LFxvBz8J/tOmD75o4j1VvsNE0orCkPNo7DPcEGMqftENgI+06CCDJytPewGT+AU4iibx46IYptfOmbxHigA714u37hYLea1BQy/R8XlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjmsQ877; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A4FC4CED1;
+	Mon,  9 Dec 2024 20:46:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733777178;
+	bh=Sy0df8OMuc4UsW/w9DP2NkGuhHpfQjU4nY1+/BUPqwQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NpOt3JcGjtGqouCpns/G7Iu2UhQq3lgUnes35i81H5hOnKs/jUybDb1PUfNxCsC5A
-	 JYjerrRuWDdUngPoLP1s4x/uNHyoGaQkzBsSVuhrwnh3WK5hpMH0/WIkd3CzMptjnE
-	 DHmraw+pxNr63fLH/xKg502y39l3RE3JKw40z89+GuYUb04gXwKxAQpaq+LS0c0oRb
-	 a2xhPoXmIzBLFX96wI/ZRm17hrlEDoe6uKTvZMobSg7rLOakcdwP13t8m3ZvVrjyVc
-	 7iISXSTP4WSbNqh4RF14BI1RHz1VB6F36yLchyORusRWkLHpui7KvJ+Fxe9NVQTXns
-	 d4wJc7RH4+0DX2z6E6SRQbls6Hq0Quyw7mOwEprPCs8SdsaoEnT0w7sepSZJNSPDUZ
-	 ynPtDkqheg7IE2P1sDHqRpo08N/iBD6L4GTjQKzZyuMZtDBB7B5h4Xa9OHtleBDEFM
-	 8WVdMwphplpqWJx20c4U09RVxqA6kLksDsvE+30Gb4k5+By5HQxFNVD2eesi8Rci0B
-	 Ze80Lz4DA8Ua3PhNi1+S7Ll6kaE1tgIaS9WkMHaHB5GNPGJyOBEvtEMT//0RGugttv
-	 uz/byte27sFZOonhnLxDEXwJe7JoVSaDLsWSI5NNkY61uwSw5C47DLEd6T5uyLUhnR
-	 LSC4XDagtPKn3U4hF8VbMk9Y=
-Received: from zn.tnic (p200300EA971F9307329c23FFFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E0C3840E019C;
-	Mon,  9 Dec 2024 20:45:28 +0000 (UTC)
-Date: Mon, 9 Dec 2024 21:45:19 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Fenghua Yu <fenghua.yu@intel.com>,
-	Reinette Chatre <reinette.chatre@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, x86@kernel.org,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: Re: [PATCH v11 2/8] x86/resctrl: Prepare for per-CTRL_MON group
- mba_MBps control
-Message-ID: <20241209204519.GAZ1dW3-NjcL4Sewaf@fat_crate.local>
-References: <20241206163148.83828-1-tony.luck@intel.com>
- <20241206163148.83828-3-tony.luck@intel.com>
+	b=pjmsQ877mVXX7WxC7t98yJX9nWWusdu+4wwmCq1oiM3hPLhepBzELnA2qAbmSSwkJ
+	 cXWNI8GqyTfzi1sf7Gz3E2boPBs8MuoTLoFuxt4qIg6fJ2OmHh5EWbQQtBnBuYRlv8
+	 1b1cD09B6a7wmkmtot/vp0UGhYK8hH23NtZmj/Yf13MkfMMlaS3c4+uoNRhx6hoChQ
+	 E1IqKTFjrVfp/JEpMdZHHh5xJN9BH4/FqAqrotr6KDxZOWI/Pvme8jvqa3XrKE5XXv
+	 8I86ton2hJFzeA87tV2ergcgD+HVpynyex1IMDazsUE9Vze5VmB7hPV/lBz9oFGx1C
+	 SqOmuZYUM/5xw==
+Date: Mon, 9 Dec 2024 12:46:14 -0800
+From: "jpoimboe@kernel.org" <jpoimboe@kernel.org>
+To: "Shah, Amit" <Amit.Shah@amd.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>,
+	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
+	"kai.huang@intel.com" <kai.huang@intel.com>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
+	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
+	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"seanjc@google.com" <seanjc@google.com>,
+	"mingo@redhat.com" <mingo@redhat.com>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>,
+	"tglx@linutronix.de" <tglx@linutronix.de>,
+	"Moger, Babu" <Babu.Moger@amd.com>,
+	"Das1, Sandipan" <Sandipan.Das@amd.com>,
+	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
+	"hpa@zytor.com" <hpa@zytor.com>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"bp@alien8.de" <bp@alien8.de>,
+	"Kaplan, David" <David.Kaplan@amd.com>
+Subject: Re: [PATCH v2 2/2] x86/bugs: Don't fill RSB on context switch with
+ eIBRS
+Message-ID: <20241209204614.vzmb4dr3sfelcixk@jpoimboe>
+References: <cover.1732219175.git.jpoimboe@kernel.org>
+ <d6b0c08000aa96221239ace37dd53e3f1919926c.1732219175.git.jpoimboe@kernel.org>
+ <20241205233245.4xaicvusl5tfp2oi@jpoimboe>
+ <f1d0197349388c1785eeba356a26553ced29800c.camel@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,28 +79,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241206163148.83828-3-tony.luck@intel.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1d0197349388c1785eeba356a26553ced29800c.camel@amd.com>
 
-On Fri, Dec 06, 2024 at 08:31:42AM -0800, Tony Luck wrote:
-> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
-> index d94abba1c716..fd05b937e2f4 100644
-> --- a/include/linux/resctrl.h
-> +++ b/include/linux/resctrl.h
-> @@ -49,6 +49,8 @@ enum resctrl_event_id {
->  	QOS_L3_MBM_LOCAL_EVENT_ID	= 0x03,
->  };
->  
-> +extern enum resctrl_event_id mba_mbps_default_event;
+On Fri, Dec 06, 2024 at 10:10:31AM +0000, Shah, Amit wrote:
+> On Thu, 2024-12-05 at 15:32 -0800, Josh Poimboeuf wrote:
+> > On Thu, Nov 21, 2024 at 12:07:19PM -0800, Josh Poimboeuf wrote:
+> > > User->user Spectre v2 attacks (including RSB) across context
+> > > switches
+> > > are already mitigated by IBPB in cond_mitigation(), if enabled
+> > > globally
+> > > or if either the prev or the next task has opted in to protection. 
+> > > RSB
+> > > filling without IBPB serves no purpose for protecting user space,
+> > > as
+> > > indirect branches are still vulnerable.
+> > 
+> > Question for Intel/AMD folks: where is it documented that IBPB clears
+> > the RSB?  I thought I'd seen this somewhere but I can't seem to find
+> > it.
+> 
+> "AMD64 TECHNOLOGY INDIRECT BRANCH CONTROL EXTENSION"
+> https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/white-papers/111006-architecture-guidelines-update-amd64-technology-indirect-branch-control-extension.pdf
+> 
+> has:
+> 
+> Indirect branch prediction barrier (IBPB) exists at MSR 0x49 (PRED_CMD)
+> it 0. This is a write only MSR that both GP faults when software reads
+> it or if software tries to write any of the bits in 63:1. When bit zero
+> is written, the processor guarantees that older indirect branches
+> cannot influence predictions of indirect branches in the future. This
+> applies to jmp indirects, call indirects and returns. As this restricts
+> the processor from using all previous indirect branch information, it
+> is  intended to only be used by software when switching from one user
+> context to another user context that requires protection, or from one
+> guest to another guest.
 
-Any reason this extern isn't in 
-
-arch/x86/kernel/cpu/resctrl/internal.h
-
-?
+Sounds like that needs to be updated to mention the IBPB_RET bit.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Josh
 
