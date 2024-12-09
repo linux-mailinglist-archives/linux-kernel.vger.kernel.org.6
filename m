@@ -1,84 +1,80 @@
-Return-Path: <linux-kernel+bounces-437760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBA9D9E9839
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:05:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FE66162AC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:05:53 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F10081ACED8;
-	Mon,  9 Dec 2024 14:05:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="flCSm7iV"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322B69E985A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:07:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB94535973
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD6C3283C99
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:07:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F7F41ACED5;
+	Mon,  9 Dec 2024 14:06:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="heTHj11I"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F1B71ACED9
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:06:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753149; cv=none; b=oyx7Ci3gXzIGmyH1OSOwMF2b2fVC4eDyZPYnyAxHcovTaMj8+a/GmIjvcfcZFaqFcWRS2Ye6Rzob1wuWiP0ldyF2wIjXjrAodnKx746lAHPXvfO9vc3OHx4xL9dRHkvD2hF0PjIU64b9IzylgudS7dJcsyO9IJL3IEHAsfzLWqA=
+	t=1733753190; cv=none; b=It3JqevLFWBlvY38oTaordHTwS0MKNs5WsGPz77YKS+r0HqFcy4oj6sYqIMu9DPjrft0c3PXCWpUB6nmNgyow+tHyIoUsiSXJfO5TBdibiTG8KOWj9F6fihvvFpWid7xBYoZPfHe23ZEjW3p4AowboHj2jIp4EwbOPWXUw9LhFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753149; c=relaxed/simple;
-	bh=acJHuaxIXGJw6YF8KF1ie6KzrYHn7K0WJ6bKJJAwMx8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sq0btMuS7laOj5/g7vxv65MemSd7OJik/m6aF3PQ+E3UeN1PbPiHnTtWhyVC1CNx9a+DOmHMUshXAbezQYzQwST1/KAaYd8ypATTMIipMLCb8GZL5Ab5vgEoVZKFVAD1icXHeyMGjqSusv9xknl99+nDeUQ+t7igwpo9NKfduK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=flCSm7iV; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733753146;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bR5VzsU/V5aABk2Uvi+9ITDsVWeQb+wiYJ/e4jUMMoo=;
-	b=flCSm7iVCvQGDSnyGoYxexifomaTgk1McaWsJlwHeoQz1khGCppyRMhYf2kSqyH2FqcZs7
-	BDg6rz3kjauVQ3axPD6+KQACQb5iAV8SsmhA3kSSspNAF0Czv8Mm57Fa2GQ2lItyWRuN7L
-	j4tJHXl2UJZitsRVSaahmwQvuYl/zTE=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-495-qQHrRB5WN4WnDG694Zv3zw-1; Mon, 09 Dec 2024 09:05:45 -0500
-X-MC-Unique: qQHrRB5WN4WnDG694Zv3zw-1
-X-Mimecast-MFC-AGG-ID: qQHrRB5WN4WnDG694Zv3zw
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-aa665246a3cso142709466b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:05:45 -0800 (PST)
+	s=arc-20240116; t=1733753190; c=relaxed/simple;
+	bh=pwKaXeN1OlBCPG7iDLxXUSmq0zJ6XRLES9rHugMsHEE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=GgrhOyLgjgK4iRY1lfV67k0dKe+uuX5QrCMhapMX8aAUBINGmmWE5Zd9C9b28t0WqlTCx2zSNVs1sMOKmNkY9bEuH8gaTcvbj+XbK0BS+hTcXlazA6/pAL2KfHVe1NAL87BcyCVzKLwzAb0fJbJQxwynXk4FoT4y185FuSottso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=heTHj11I; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3863c36a731so865723f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:06:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733753185; x=1734357985; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=//R8xUNwl611axD8q7sOD2Oi6OV6JAsc3ZQmBEFC26I=;
+        b=heTHj11IMa0OkPukz/1qNa8mdPwq3GqyYSWUnYri5ToqLw+CegZ5epk/Dv1NQNwEEc
+         lLi/VA3aV5SIw/jlB0tXx4hq2tP9VCvimf0/ydJGBW2OJ0YwLCnfxMYaZkj30LiM4lD6
+         8JvGiz4harjte9NG8UqmIuqBifYPh5kstEprWaTHQroigXMRx76gn12N//cGkUrs7axC
+         V6pfXyTacvgOqeFWBxJBQttjtM/sMauda2dI8mgj+tSaHoxGWJ7omaglFbfFesSOddQU
+         B/0wC036kYglOsQquqR7aoTPE27NpWQYGM4wzr1FOhadz8RKMeEUy2nfaqLVeS/DvVwx
+         UMCA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753145; x=1734357945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bR5VzsU/V5aABk2Uvi+9ITDsVWeQb+wiYJ/e4jUMMoo=;
-        b=w6iThEi/klxzoJ6V364aF//30X19BzEvIEfhUi2AL30qqh/M1bt8lOhQ1PeybX3VX+
-         9dIE4mRxXFIYFejszsKi8fMW6pSnBy1vXuWuhXlbyB7Sd/+tkYLagdw/OaJhLyiR9xCY
-         6scfchDQ47zq7Mk+rMIE5MbnVmMCg0rQ1Cl8ggVfe0lWECtEuWree7A95Vx47D5W1bQ9
-         xUZnQ4+Y+exLKA/Fy0rJZzLm3tH16/ngziJ1pkTFGfDA1Idmfou0LSKEfZjkgo/WDhfN
-         TfCAytdnGXA7B2CMvKjtceP0zOgMTWNfntu1c20HOecjW+9qUmyOF+4bmQHZjcZJ0pXq
-         KH4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWbvd9rN4BicEY49BPrNvyuZz7jHfch6sbRPSlxX2iULkEwx7FZt+py60q4E5ojtbotK/VNi/Qb4tswNe0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvTFGIl0bDAvxWrkLrOoA2A8Q6fnqAPNR0ADcyueAeX50X+Mjh
-	x3lqZF8x8eoZrHu8e+vj7qN+/OhxnnwCRzPETX0SvAkuD4NVjuzNXuOh76s2Jo+axieeuzuu2X9
-	vy9E+fXwQNKC+41JvdIEHN5CegU5v1S2JR80PSj5rZpN/YahIGimfCHIrzvnAOg==
-X-Gm-Gg: ASbGncvY2CtDvbdfHWO9R0pkTtQqU2kQHRfIjr2H8AmWx4YDvr3KAlOjA5gOYEpdPB1
-	P5HUrDD+4jAbziNezJVUdvcUntUvHQWug16nCsl8H5oqPaxRZeKUCrdkQJ/0N7jjCIhyJSnoSgp
-	jC8YDkJKlH3B53mLS1KVDW13laY6YakYKEPIauzg3dtpTRl9Km55PYJAGL5ld1yaDTUYzEVvfVv
-	AHbqwdMQaxPb0S6WWWF3d3g/9UGjmzskWU3XY6ZX0gAdyAwCydyvA==
-X-Received: by 2002:a17:907:2da6:b0:aa6:887a:57c0 with SMTP id a640c23a62f3a-aa69cd53836mr71385266b.28.1733753144502;
-        Mon, 09 Dec 2024 06:05:44 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEzBMNP1UMaoZxfqN84aRncoiJxbBelep0R+5LUGjYdJcC3YZj4AiE8TmDVq47czeCPt54b+A==
-X-Received: by 2002:a17:907:2da6:b0:aa6:887a:57c0 with SMTP id a640c23a62f3a-aa69cd53836mr71371166b.28.1733753143331;
-        Mon, 09 Dec 2024 06:05:43 -0800 (PST)
-Received: from [10.40.98.157] ([78.108.130.194])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa671f14766sm287365066b.169.2024.12.09.06.05.42
+        d=1e100.net; s=20230601; t=1733753185; x=1734357985;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=//R8xUNwl611axD8q7sOD2Oi6OV6JAsc3ZQmBEFC26I=;
+        b=cCPvjTfxuVSdC+/eYcJ/0pYIU1ZArJRcsn/kjs/CcRY+nhSynBJcTar8JW9koNhJoy
+         ruw3qtyXFCHT9hadLWPQ4m+99JPIzJViX4rbEKhsA0bmXbyyX9eJbmZ5i9b6T599suSm
+         qoQA8JrzyJEeuizdVVLUATQ29jiFRwDGUh5KuroOchLrxCaE+UGD8ZVtuQeWzOocN78j
+         DGxV+xBaCXmILt+EuITvo+7V8/85bbV0JWZ2dLlZNZpNK4hZYQSp9bPyzwqXzCGrSEKa
+         q6/ejkSBjD4rVs6K5dWxT1xLwiVur817g/H1lSQ1UxhqqHHH3sFTfN2R1j34f2QPzBgf
+         CXoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIGL0FOn/p5zyMiG/WK8V4BEtLx0kWvalwdr9R8HrB4ikbgs8I0yMEzy2zmb3FHrJYAoqMp44gYUCzTMg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/qISZil2sMen0xFISb2+95lGZBgS76N8wUoDKxw64fSCcTuxO
+	8pckYe6Q2Ml+MqPOkavQJ/YfIpdQinRIYtsBgZBP0rsycIMQ8d8Fne7ZO9ZLNlo=
+X-Gm-Gg: ASbGncvfLwMGK78pCUJzjR0oNmxbZE0Qri+L+SjdP9KP7cHISss6++Bmy/pQGserDCh
+	L4Mo7ZQ1e5HJQo17Y1WgiYbsrO0OaI2Y3GCsyU14Li55lRIH3PqSA7F1PP1ojMPzh7MuOsnVoCT
+	oDiBqVfQaKtcehMMx7i4xXe1SwWnADE97QVtbVDRXBNEzyMvx6XLnT9EQXyND7LoZxkjLwlsN5q
+	a/0skC0evtZJqmVTKdIRTsegCmDt6N0J+6Pox0cOAQVuuCLWLZQS+PnN0CFb+P71m5NER/dSIuD
+	8m/ad2vDhHWLa32B1NUjMeXD52Y=
+X-Google-Smtp-Source: AGHT+IGuc3kl0BPq1T0cBMQtdVQ6O1SOWF+l7YeZdVn0jR38h6Ps6U9v6wBjWn9jE3WgTd6CBA9q0Q==
+X-Received: by 2002:a05:6000:2d81:b0:385:df73:2f18 with SMTP id ffacd0b85a97d-386453fff14mr278848f8f.51.1733753184744;
+        Mon, 09 Dec 2024 06:06:24 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:7546:6147:f006:709b? ([2a01:e0a:982:cbb0:7546:6147:f006:709b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434faba810csm28873865e9.18.2024.12.09.06.06.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:05:42 -0800 (PST)
-Message-ID: <1cac4857-c261-461f-9749-8c8c68a0db07@redhat.com>
-Date: Mon, 9 Dec 2024 15:05:41 +0100
+        Mon, 09 Dec 2024 06:06:24 -0800 (PST)
+Message-ID: <d2ce1009-15ba-44bc-9dbb-4d606fb25739@linaro.org>
+Date: Mon, 9 Dec 2024 15:06:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,71 +82,162 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 14/19] media: uvcvideo: Use the camera to clamp
- compound controls
-To: Ricardo Ribalda <ribalda@chromium.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ricardo Ribalda <ribalda@kernel.org>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
- <20241114-uvc-roi-v15-14-64cfeb56b6f8@chromium.org>
-Content-Language: en-US
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <20241114-uvc-roi-v15-14-64cfeb56b6f8@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v4 6/7] arm64: qcom: dts: sm8550: add interconnect and
+ opp-peak-kBps for GPU
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark
+ <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20241205-topic-sm8x50-gpu-bw-vote-v4-0-9650d15dd435@linaro.org>
+ <20241205-topic-sm8x50-gpu-bw-vote-v4-6-9650d15dd435@linaro.org>
+ <e56cd9bf-8fa7-44b0-b00f-45cedb73e194@quicinc.com>
+ <1af37251-3cdf-47da-8228-2cd5622e1770@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <1af37251-3cdf-47da-8228-2cd5622e1770@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
-> Compound controls cannot e reliable clamped. There is plenty of space
-> for interpretation for the device manufacturer.
+On 09/12/2024 14:10, Akhil P Oommen wrote:
+> On 12/9/2024 6:32 PM, Akhil P Oommen wrote:
+>> On 12/5/2024 8:31 PM, Neil Armstrong wrote:
+>>> Each GPU OPP requires a specific peak DDR bandwidth, let's add
+>>> those to each OPP and also the related interconnect path.
+>>>
+>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>
+>> I haven't checked each bw value, still
+>>
+>> Reviewed-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>
+>> -Akhil
+>>
+>>> ---
+>>>   arch/arm64/boot/dts/qcom/sm8550.dtsi | 13 +++++++++++++
+>>>   1 file changed, 13 insertions(+)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>>> index e7774d32fb6d2288748ecec00bf525b2b3c40fbb..955f58b2cb4e4ca3fd33f1555e36a15cfc82d642 100644
+>>> --- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>>> +++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
+>>> @@ -14,6 +14,7 @@
+>>>   #include <dt-bindings/firmware/qcom,scm.h>
+>>>   #include <dt-bindings/gpio/gpio.h>
+>>>   #include <dt-bindings/interrupt-controller/arm-gic.h>
+>>> +#include <dt-bindings/interconnect/qcom,icc.h>
+>>>   #include <dt-bindings/interconnect/qcom,sm8550-rpmh.h>
+>>>   #include <dt-bindings/mailbox/qcom-ipcc.h>
+>>>   #include <dt-bindings/power/qcom-rpmpd.h>
+>>> @@ -2114,6 +2115,10 @@ gpu: gpu@3d00000 {
+>>>   			qcom,gmu = <&gmu>;
+>>>   			#cooling-cells = <2>;
+>>>   
+>>> +			interconnects = <&gem_noc MASTER_GFX3D QCOM_ICC_TAG_ALWAYS
+>>> +					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
+>>> +			interconnect-names = "gfx-mem";
+>>> +
+>>>   			status = "disabled";
+>>>   
+>>>   			zap-shader {
+>>> @@ -2127,41 +2132,49 @@ gpu_opp_table: opp-table {
+>>>   				opp-680000000 {
+>>>   					opp-hz = /bits/ 64 <680000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
+>>> +					opp-peak-kBps = <16500000>;
+>>>   				};
+>>>   
+>>>   				opp-615000000 {
+>>>   					opp-hz = /bits/ 64 <615000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L0>;
+>>> +					opp-peak-kBps = <16500000>;
 > 
-> When we write a compound control, let the camera do the clamping and
-> return back to the user the value used by the device.
+> Seems like you are using value from "qcom,bus-max" node for each opp in
+> downstream devicetree. Except for the highest OPP, we should use the
+> value from "qcom,bus-freq" node. That is supposed to give the best perf
+> per watt.
+
+Ack, I'll switch to the qcom,bus-freq value,
+
+Thanks,
+Neil
 > 
-> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> ---
->  drivers/media/usb/uvc/uvc_ctrl.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
+> -Akhil.
 > 
-> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> index 0dae5e8c3ca0..72ed7dc9cfc1 100644
-> --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> @@ -2339,6 +2339,18 @@ int uvc_ctrl_set(struct uvc_fh *handle, struct v4l2_ext_control *xctrl)
->  
->  	ctrl->dirty = 1;
->  	ctrl->modified = 1;
-> +
-> +	/*
-> +	 * Compound controls cannot reliable clamp the value when they are
-> +	 * written to the device. Let the device do the clamping and read back
-> +	 * the value that the device is using. We do not need to return an
-> +	 * error if this fails.
-> +	 */
-> +	if (uvc_ctrl_mapping_is_compound(mapping) &&
-> +	    uvc_ctrl_is_readable(V4L2_CTRL_WHICH_CUR_VAL, ctrl, mapping))
-> +		uvc_mapping_get_xctrl_compound(chain, ctrl, mapping,
-> +					       V4L2_CTRL_WHICH_CUR_VAL, xctrl);
-> +
-
-I do not believe that this actually works / does what you want it to do.
-
-At this point we have only updated in memory structures for the control
-and not send anything to camera.
-
-Querying the control to return the actual achieved values to userspace
-only makes sense after uvc_ctrl_commit() has succeeded, unless I am
-missing something ?
-
-Regards,
-
-Hans
-
+>>>   				};
+>>>   
+>>>   				opp-550000000 {
+>>>   					opp-hz = /bits/ 64 <550000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
+>>> +					opp-peak-kBps = <12449218>;
+>>>   				};
+>>>   
+>>>   				opp-475000000 {
+>>>   					opp-hz = /bits/ 64 <475000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_L1>;
+>>> +					opp-peak-kBps = <8171875>;
+>>>   				};
+>>>   
+>>>   				opp-401000000 {
+>>>   					opp-hz = /bits/ 64 <401000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
+>>> +					opp-peak-kBps = <6671875>;
+>>>   				};
+>>>   
+>>>   				opp-348000000 {
+>>>   					opp-hz = /bits/ 64 <348000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D0>;
+>>> +					opp-peak-kBps = <6074218>;
+>>>   				};
+>>>   
+>>>   				opp-295000000 {
+>>>   					opp-hz = /bits/ 64 <295000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D1>;
+>>> +					opp-peak-kBps = <6074218>;
+>>>   				};
+>>>   
+>>>   				opp-220000000 {
+>>>   					opp-hz = /bits/ 64 <220000000>;
+>>>   					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS_D2>;
+>>> +					opp-peak-kBps = <6074218>;
+>>>   				};
+>>>   			};
+>>>   		};
+>>>
+>>
+> 
 
 
