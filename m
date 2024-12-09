@@ -1,1413 +1,242 @@
-Return-Path: <linux-kernel+bounces-437128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF4C9E8F6E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:55:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2AC79E8F56
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:53:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6F8C1883137
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBFEC188733C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C1A218857;
-	Mon,  9 Dec 2024 09:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB3A2165F9;
+	Mon,  9 Dec 2024 09:51:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="QWNr5eYJ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="OKYJZCC7"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pipvqjvM"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2064.outbound.protection.outlook.com [40.107.236.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB1B21A940;
-	Mon,  9 Dec 2024 09:52:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733737969; cv=none; b=CAI+akRYEH2jX2P/tBUOSfY8ozbuFukTucYzRSbEP6klUt5PF8tc8KVP+5z2nHzR3/7MvG/QcIxRKX3FIAa/xs9Kw+iBEfIqfwLsZF+s6r4ugdbwVM31feeL7r8X0TXPcf1APz69unoOi1bvf7VpPNJVQpMgB1E3i74IPT+x1VY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733737969; c=relaxed/simple;
-	bh=z2TgbZbUwS40TibORve8jYceh1Zk++SLHQKInactgL4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YAu136c0upOyZuJNHAChk4XDoyy6nMktBBesMTQGr2V2gFDjLGAV9TqVHU4uzjWljwky8QGlCnjI4AvFGnCLC3DFN3k4vkGCmZcgPF28dlyH/TZRlFWwifoz2Y0BIV/4k5v0KNPEVg45Yvyo0VfYA2fxtb01Hiy0qrzhhcU0Skk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=QWNr5eYJ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=OKYJZCC7 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733737966; x=1765273966;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=p8cjL4LkHmw9xL+cv8hd0nGreZ+h5cjjqHhc6iNjpBg=;
-  b=QWNr5eYJBmCJI6raH6g0ndZlvBQAqgnEVemW8AjYKQOIxnJAJaBAkSQg
-   0Fuehcxt5kDb5WYhUwB7yPBq4Sz1oD20fpmSzQ88NC119wyAzTR73/EOH
-   752HOfljXvUfdoS2QnIrLdWCJPg/ahyFTbIAr8O9wTVUQz57MqCFCq+7s
-   TsXWUMLktZFY1F1VSzWx0INHE5dGOSPt4DyWLW+XyU+3C5lxaUO3mEBUr
-   t7OwGXqSE3h+ZBRlMNlPb79Wpsl8evXfaTNXQkaPQnB8MA364DNK+aqLg
-   i/hUS2NUtFiM2o5EJRT1eK9z+SWirTJDNptZcXBWpoSe1GZvqYmN6b49u
-   g==;
-X-CSE-ConnectionGUID: 3KC2tYcBTwKYD7wHoUIhSw==
-X-CSE-MsgGUID: Mbl/YzZPRwa0wyMh51w99Q==
-X-IronPort-AV: E=Sophos;i="6.12,219,1728943200"; 
-   d="scan'208";a="40481358"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 09 Dec 2024 10:52:44 +0100
-X-CheckPoint: {6756BDEC-6-90CD5875-E0265C0B}
-X-MAIL-CPID: 6169145ABD1078593462CC27D210E03D_3
-X-Control-Analysis: str=0001.0A682F22.6756BDEC.0093,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DC48A1664C0;
-	Mon,  9 Dec 2024 10:52:38 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733737959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p8cjL4LkHmw9xL+cv8hd0nGreZ+h5cjjqHhc6iNjpBg=;
-	b=OKYJZCC7UyVSoNPYnebeSZue2NbMkyHTb3F2OyKw9XQKmscNeiQZYHFPwbmuDEgCVjAV7s
-	FPdzyR6b6g4ttQXM0j2T7+pGRvBXUSrCiju9iVjPFgC4DrqILUclw5KgrNUHudphh5O13M
-	QvyEYCZgoTCtqt2LyWXJwwydThH2uhCqVpvDP4NM9+USYwQrAD9x2DdKZLAv3oop4ua4Gf
-	4ySNri5FqBnZWhqIbI+lYQEFjBmrZ8ItCNLkV23E30cgMf+0AdcLW7B+d4DocwWXGR6muD
-	El+y0UbmRmZxQvoeusHGZVSE6cmI9xadZzqzMJ6ioRa1ImX2S/nb7EanDYSFeQ==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Kees Cook <kees@kernel.org>,
-	Tony Luck <tony.luck@intel.com>,
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
-	Felipe Balbi <balbi@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	Devarsh Thakkar <devarsht@ti.com>,
-	Hari Nagalla <hnagalla@ti.com>,
-	linux@ew.tq-group.com,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and MBa62xx carrier board Device Trees
-Date: Mon,  9 Dec 2024 10:51:36 +0100
-Message-ID: <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93FB22165EE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 09:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733737915; cv=fail; b=Yk7ma19Mz0woVxTXKq66Bp3GBEmHrAvzLnW+lvLHAMsTrgrhHUmk18GDMtDgeuxAju7FbK0g63dH8BjvO6mLmIc/YJCjJ3KHzeywUwRba2PSI4yhcnjHnqNBMKCUPQDT0iEpnb616qux2nElTQttNZoWWc6Nz/h7x8xwazfN2ms=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733737915; c=relaxed/simple;
+	bh=MNEAE8sIQqBTtHVlObIAjFiY7I7l2sF9XQOxtiwIDdc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=d7c64DK9pWahBO1u5eC8PwrNxfPHN2dGNXOrDORK1dLpcCLyAPnibjd+JgGgADEOADTsnRwKz3YQnewe97sQR3ZzmQIIuI4wTzDtG+lsK92OP5KYVG5oMeODHKkR+mOeSo8hxe/g052sX30KdV51LxO2hsSNOpKO648rQA5d7ss=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pipvqjvM; arc=fail smtp.client-ip=40.107.236.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=OkRcl/qXxGsO+2GUt9weLQt3EYyVXQ7bAAmkeGOz2g05aBK5zZqZcTQKrx0gJCiwFENCRbwrKTXIA18U1olDcuuIMjPynArGttt3UDeUAXD05PFc3ZNQTC2/Qf+KFi95VQ/7uAjYFmthsM505KkwqX/4ZQwCoA7c4nwKZlQrOetA8N3nl2Eu0/p53t4trmvEUdTjnGEdBLpF2VT5na16UEBQYzAm+4dR+1Bvq/r2YjOkqCdKPzbv61H/FHdlw8+9dkJrB0GbEa1n0NPaG02yEFGTexLyskr2k+dNsm4Mnj2brxohb3UvBK2Zjw+SFp/lh1HwiilNDAeiV9hXjTGzHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QspNu15pF7n4OQ837hM7zTcDABsAsZohRiywbbNPlmo=;
+ b=BjLPQN1DF13Vak0lmmW+yy7AuALhaih6x5svnYdrGKrY04OHIqWaeejwAZQ/nSO6di0szEqUpIEA+4Th6yjE8NoNq46QCjiqI9AeY/uf+JyvToWRtIvm4/lYN7ofZSTYNgG8FAsKe7yKTV/YXlZPDVBQIh86366NhEqAKKryFAkd36utDJ//34cZ53tv1Q9Xr7YWi3tkkhTj0T/TwYcNcYWjl0iEcV8O4+w2GS7F/v1/unL36VMHTYwGq5CaE8K0ywK8R+jG2P2D9vdZQkg4loM3f0xnTDNUa5lNWyVhnEbwci2SWfjl2eBnb+/tmMokbhNezI0r4VmYdTA3HkE9ew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QspNu15pF7n4OQ837hM7zTcDABsAsZohRiywbbNPlmo=;
+ b=pipvqjvMHRbboM4X8gSguz5QTZHS3RWQexl7DT/ZfyKC3JSt3XuqjKlITXzADvt+Fr0OB/HJ3Tlx4B7KX8htI+1YUrsfPuKfYL1l4gIi+oXVPg3+X9dD2VjvIAJFlJTmXp/XmD0EWO4D0PFpdxa/yy3MK34Pr8Tp+CZHF5Fbh/bylOc4K3eTSPmj37m+HdCb+BljO1AwcUur5hu24J46p8wG0Jn3sUYxybQgvcqjAVRWr4BjEQpU242BbKTLd+3l4XbX/50Gaqw1dA8chsOonhQZ+e1L3jRO8j6L8PhrqRXdDqiKbXFBdQvYQfXjm3rtkESn5CzgEMxrU9XQ5wdcOQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DM4PR12MB6424.namprd12.prod.outlook.com (2603:10b6:8:be::16) by
+ DS7PR12MB6190.namprd12.prod.outlook.com (2603:10b6:8:99::22) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8230.11; Mon, 9 Dec 2024 09:51:48 +0000
+Received: from DM4PR12MB6424.namprd12.prod.outlook.com
+ ([fe80::8133:5fd9:ff45:d793]) by DM4PR12MB6424.namprd12.prod.outlook.com
+ ([fe80::8133:5fd9:ff45:d793%7]) with mapi id 15.20.8230.016; Mon, 9 Dec 2024
+ 09:51:48 +0000
+Date: Mon, 9 Dec 2024 10:51:44 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Changwoo Min <multics69@gmail.com>
+Cc: tj@kernel.org, void@manifault.com, mingo@redhat.com,
+	peterz@infradead.org, changwoo@igalia.com, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 0/6] sched_ext: Support high-performance monotonically
+ non-decreasing clock
+Message-ID: <Z1a9sKyELhH-e4lJ@gpd3>
+References: <20241209061531.257531-1-changwoo@igalia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209061531.257531-1-changwoo@igalia.com>
+X-ClientProxiedBy: FR4P281CA0156.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ba::18) To DM4PR12MB6424.namprd12.prod.outlook.com
+ (2603:10b6:8:be::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR12MB6424:EE_|DS7PR12MB6190:EE_
+X-MS-Office365-Filtering-Correlation-Id: a5c324b0-0f7f-47e5-4f68-08dd183718fc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?DzJBdaztNMPVbLvfJC2MI0oLicZHGCrqJRJkEM9NUJOzd0K5O08bGh5u1Ksq?=
+ =?us-ascii?Q?9IqAvlmIxalelGWSB6tDMgUnb/6Njr4KtCdQnpp1pmmCL19MQvvDUEhUpJEC?=
+ =?us-ascii?Q?FU63I9enxgircmepPDMak7vpPLVCqzsIo06y6yTF6M2L6q0jp1deOAZmEB0Q?=
+ =?us-ascii?Q?YGcawCqYs/+z9svaFJvlWuIX8W/bS43pV7M63L7KU3MBmuCoLTsJNSQizcou?=
+ =?us-ascii?Q?Yz2H1frbdScfziIP7R+xQAF5ThL04F3tDEvG6Rmet3NfNTmTQUnvwNPpGmQs?=
+ =?us-ascii?Q?jPF5p0TZW3QJn4CkWAb4mpHV4M2K1atxuEhRiy9TdIorXd1I8h8YAGnn+2tR?=
+ =?us-ascii?Q?eQiv7X40vs+5ol/c+rYPSTXbPyR8/O4bBlBHaTNRY0GM4/Re8JZtRFLxXANi?=
+ =?us-ascii?Q?B5Uu/BL6vUvcoVxnXE++U9Q1CpuJd8A1nGP22Hi+57h1l3Ey/OUYMazOfEeP?=
+ =?us-ascii?Q?4bFm4XlV2jlT6Wt+1SsgObjoIwKNvMxxMLHGCreKmy0q8sSlcp9O6oCsPyo0?=
+ =?us-ascii?Q?5RiAridtQouxgKmFv5aQW1750UMLYi3JpfMRPbbhm+IDDFGdguxYwtfAx9F5?=
+ =?us-ascii?Q?D+8Me1ouZmDgsOSmM2GgfHqYQ+yARU4BhglHw1yk2I/FFAxzvPWAunom79JR?=
+ =?us-ascii?Q?/N9ORv0XeTqN3xB1/sr58x3Udj8b3s9mZdqXkw7SVs7mJcwtGYP9PiWpgKdx?=
+ =?us-ascii?Q?70yHveqyBdFIS5AAMoL3zHW70FlG7cP29zsu7EMFmN4qUxCMW0kCQ2mir2dN?=
+ =?us-ascii?Q?c4EBdZLUUfTMPg6DT1TyNHsl+1YQ/eaiiX8skTB/53dNtVjd7DHOGcxoVkHE?=
+ =?us-ascii?Q?qXeFki+Ig65OcKSH4gOccEpgE+W6w/Eooi4PRrL9qsZ3F/imN4YmuoOe1o2Z?=
+ =?us-ascii?Q?SrAFdaWAPl/j2XZBTw3eI/bXDB0rHw5WMHbFi8a9+vowCHSPMwwpz3PyHH6H?=
+ =?us-ascii?Q?4fPAwsBZ9npD1tEPKObKmih2fh9Y1aImK8P2MzYJrWEw5YeizA3axT1Y6ibt?=
+ =?us-ascii?Q?I26T6KTq1uMDxMkIcUnGL92IQmae1usVOC7PfbUonVgTjXNaHgeLp66VYB+L?=
+ =?us-ascii?Q?9Z5ew61wr7sP6eKdmoIe2bS9NcV1x4n1UI0npkZNG0XEllArE1D2nkb8unj7?=
+ =?us-ascii?Q?w6GC7Vt8quk4hmTXWlgxDdNn+2EZBdurQmJrQs3i13v2KIjaR+rKbQH9aPmB?=
+ =?us-ascii?Q?y4r6FJOQleZ0UrmeE52CrL7sshv60X45NAXeJLhuAeCrzfj8qQrukV3ir+HT?=
+ =?us-ascii?Q?UjZMP1hKQdVK/6OBj1f4644vIYJf16vVEw89f044eYys8mllOHUBI+0Em+Df?=
+ =?us-ascii?Q?tKbd4zZ9t25Cv8gWSyxDpqJBho43LjrROv0rs+uoIog1HA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR12MB6424.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?G5oMU7Yfe9m3Cs7EF6RNR0s8eRsohP6eeqDdlM33ckAl7xipZQ+OF/i3fGjP?=
+ =?us-ascii?Q?7G+anP9S5HKgkMZgyMm1ZNgdhUzZwi3qJOTRRNOCHI/1tZm+6iVelRsi4OC+?=
+ =?us-ascii?Q?V/C79zIUitJDDZv+c2qZYpdqf0nr+18HWExdatj9pKWdQJbipkfFAUozd5y9?=
+ =?us-ascii?Q?tnkLqtOhpfMC7znKLOdWdANuwbZVOt5LCxMTFuoDe+772N81zOLPrqF+7DbK?=
+ =?us-ascii?Q?jDKUh4+9aNklYWfnT4FChx82M++6HugDO8cXn2yBBv/JdysAfhDdSTbV8gfN?=
+ =?us-ascii?Q?TBErrMpiryszMQ8S3HH5sLX0jWKnkp1EPP1Wg4PrDPjVIDGidz+1ELseoCkO?=
+ =?us-ascii?Q?oqMAKvU9CYoayk3D/Q/7OMKEUWTjBNcOFYlgxUi9pn7hGl+cTdC3NJbCXiy1?=
+ =?us-ascii?Q?LsiPqxMYoAOghnCOd5xJgZoD2MAnS5WC9qivWP9q0d2v5wUDie4kL5dRVwOq?=
+ =?us-ascii?Q?H9Q8S6e3ycAAZfoQxUHQ2TfX4RQmOlbNHlvszNiF1AHVWdlU1UcrhXvNbXLH?=
+ =?us-ascii?Q?++f6cOYK95r8/2ukFo+hlD2NW0LKNxW6s0NhaGvrH2GhliqwtyZrbr7h0sOH?=
+ =?us-ascii?Q?44m0Jj+j9KkatJ0p2EoFPcrdoWF03zQeShEZ2TDSRHcNq+FUDqVzgvqGDffj?=
+ =?us-ascii?Q?WRf70xx0wsJvcKu8meWIKI0A6z8U6RJbAmi2zLWfCGElrzGieyr26b+/WZtr?=
+ =?us-ascii?Q?OiZfD1rPbvK5OqDMnUC8cC4eBZDscxnytmqKOwTjyVenNYZWRZtjFBLYurFD?=
+ =?us-ascii?Q?6c9Yaz178C5j8QT++iVZ2zNlY8/bU4DqZ/XTWqhw2fvloIyFsxNfWz4wXhwk?=
+ =?us-ascii?Q?yJk4gz6NEuuU0IwVde1bZqWviHY+O66XTTFfU/VxarcpZ/4TQV80hW2Y5eb2?=
+ =?us-ascii?Q?+JUvBL6QP6+LiqSXrQkvhtTFx+N3u/QZbAHjAl2auSdvEIiAmlQrSIVJF7Ge?=
+ =?us-ascii?Q?7AFVXF4dOpaHL6zaq6FUYAeqKOYuJ9fgML8iLjWaYQgdiwHfrDrN/bSKqs4t?=
+ =?us-ascii?Q?zvVg2opGrRP4MGfYkCS9XFwBifIoZqZ28CIs8alktDJCWuUJWXEcUAjC/62k?=
+ =?us-ascii?Q?EWk+r6h0BegQp38VtDEuUmVELS5Nwlxzq4bqVGgsoS61/g6FQeMyRI5IudqP?=
+ =?us-ascii?Q?o04/2hu8CM7JxWnUdhkwRL9Y5e6alPh66mOFVdCrLyfPfqrC1nt/TmEAeXKE?=
+ =?us-ascii?Q?eJ2KflTsVAtelfdmwqnazMTuO1DuKSJMreXOUUtRtEXJP3/BifH38tLx3tEf?=
+ =?us-ascii?Q?rgeO7T/+gPixvvO5UlF70RgqDTiQvSQBWNqlkaF08DqxBfYiXDbDr+LuzTSS?=
+ =?us-ascii?Q?Vs23kHQuiXXLP4Oq99/q0y204DDvYnQ+BMJajbU7vF5hJI7mbzjwrbp1T/nt?=
+ =?us-ascii?Q?ULr1RH2c0qNGDPJsvRK5uMEHtHhCkO80LA8cA3InAlEoYe+kAJyd/9J1iVJi?=
+ =?us-ascii?Q?cLnyF2/FfxEh2j0gPWop5+VaDmd1O5Q+MmP3/42HOI6p8/1O1DxcgSleqmpe?=
+ =?us-ascii?Q?TBuNpx8JuP2p0e9JPQ5fYWgZLqK7mzSAMWVN8l9huzEAEq8SeDtv39TIEdeN?=
+ =?us-ascii?Q?8WsvsK9alASTMyYZiTJ2WFW8nFjg0JoZc/f9A6ea?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a5c324b0-0f7f-47e5-4f68-08dd183718fc
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR12MB6424.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 09:51:48.0729
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iAhDHTEAL5zVdRxhQJcyPX+X0//si29bf1kkoEsCpj/rKYasJFoa4P8QZeohxFx7osYMLZQKJJK6I7GsUpXA8w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB6190
 
-The TQMa62xx is a SoM family with a pluggable board connector based on the
-TI AM62x SoCs. Add DTS(I) for the AM625 (2x Cortex-A53) variant and its
-combination with our MBa62xx carrier board.
+On Mon, Dec 09, 2024 at 03:15:25PM +0900, Changwoo Min wrote:
+> Many BPF schedulers (such as scx_central, scx_lavd, scx_rusty, scx_bpfland,
+> and scx_flash) frequently call bpf_ktime_get_ns() for tracking tasks' runtime
+> properties. If supported, bpf_ktime_get_ns() eventually reads a hardware
+> timestamp counter (TSC). However, reading a hardware TSC is not
+> performant in some hardware platforms, degrading IPC.
+> 
+> This patchset addresses the performance problem of reading hardware TSC
+> by leveraging the rq clock in the scheduler core, introducing a
+> scx_bpf_now_ns() function for BPF schedulers. Whenever the rq clock
+> is fresh and valid, scx_bpf_now_ns() provides the rq clock, which is
+> already updated by the scheduler core (update_rq_clock), so it can reduce
+> reading the hardware TSC.
+> 
+> When the rq lock is released (rq_unpin_lock), the rq clock is invalidated,
+> so a subsequent scx_bpf_now_ns() call gets the fresh sched_clock for the caller.
+> 
+> In addition, scx_bpf_now_ns() guarantees the clock is monotonically
+> non-decreasing for the same CPU, so the clock cannot go backward
+> in the same CPU.
+> 
+> Using scx_bpf_now_ns() reduces the number of reading hardware TSC
+> by 40-70% (65% for scx_lavd, 58% for scx_bpfland, and 43% for scx_rusty)
+> for the following benchmark:
+> 
+>     perf bench -f simple sched messaging -t -g 20 -l 6000
+> 
+> The patchset begins by managing the status of rq clock in the scheduler
+> core, then implementing scx_bpf_now_ns(), and finally applying it to the
+> BPF schedulers.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- arch/arm64/boot/dts/ti/Makefile               |   1 +
- .../boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts | 917 ++++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi | 346 +++++++
- 3 files changed, 1264 insertions(+)
- create mode 100644 arch/arm64/boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts
- create mode 100644 arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi
+I left a few comments, but overall it looks good to me. I also ran some
+tests with this applied and a modified scx_bpfland to use the new
+scx_bpf_now_ns(), no issue to report, therefore:
 
-diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Makefile
-index f71360f14f233..4d96c086e2daf 100644
---- a/arch/arm64/boot/dts/ti/Makefile
-+++ b/arch/arm64/boot/dts/ti/Makefile
-@@ -14,6 +14,7 @@ dtb-$(CONFIG_ARCH_K3) += k3-am625-beagleplay-csi2-ov5640.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am625-beagleplay-csi2-tevi-ov5640.dtbo
- dtb-$(CONFIG_ARCH_K3) += k3-am625-phyboard-lyra-rdk.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-sk.dtb
-+dtb-$(CONFIG_ARCH_K3) += k3-am625-tqma62xx-mba62xx.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-dahlia.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-dev.dtb
- dtb-$(CONFIG_ARCH_K3) += k3-am625-verdin-nonwifi-ivy.dtb
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts b/arch/arm64/boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts
-new file mode 100644
-index 0000000000000..64ae1b13be15b
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am625-tqma62xx-mba62xx.dts
-@@ -0,0 +1,917 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Copyright (C) 2021-2022 Texas Instruments Incorporated - https://www.ti.com/
-+ * Copyright (c) 2023-2024 TQ-Systems GmbH <linux@ew.tq-group.com>, D-82229 Seefeld, Germany.
-+ * Author: Matthias Schiffer
-+ */
-+
-+/dts-v1/;
-+
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/leds/common.h>
-+#include <dt-bindings/net/ti-dp83867.h>
-+#include <dt-bindings/pwm/pwm.h>
-+#include "k3-am625-tqma62xx.dtsi"
-+
-+/ {
-+	compatible = "tq,am625-tqma6254-mba62xx", "tq,am625-tqma6254",
-+		     "ti,am625";
-+	model = "TQ-Systems TQMa62xx SoM on MBa62xx carrier board";
-+	chassis-type = "embedded";
-+
-+	aliases {
-+		can0 = &mcu_mcan0;
-+		can1 = &mcu_mcan1;
-+		ethernet0 = &cpsw_port1;
-+		ethernet1 = &cpsw_port2;
-+		i2c1 = &main_i2c1;
-+		mmc1 = &sdhci1;
-+		mmc2 = &sdhci2;
-+		serial0 = &main_uart0;
-+		serial1 = &mcu_uart0;
-+		spi1 = &main_spi0;
-+		usb0 = &usb0;
-+		usb1 = &usb1;
-+	};
-+
-+	chosen {
-+		stdout-path = &main_uart0;
-+	};
-+
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&backlight_pins>;
-+		enable-gpios = <&main_gpio0 38 GPIO_ACTIVE_HIGH>;
-+		status = "disabled";
-+	};
-+
-+	gpio-keys {
-+		compatible = "gpio-keys";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_key_pins>;
-+
-+		user-button {
-+			label = "USER_BUTTON";
-+			linux,code = <BTN_0>;
-+			gpios = <&main_gpio0 40 GPIO_ACTIVE_LOW>;
-+		};
-+	};
-+
-+	gpio-leds {
-+		compatible = "gpio-leds";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&gpio_led_pins>;
-+
-+		led-1 {
-+			gpios = <&main_gpio0 41 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_GREEN>;
-+			function = LED_FUNCTION_INDICATOR;
-+		};
-+
-+		led-2 {
-+			gpios = <&main_gpio0 42 GPIO_ACTIVE_HIGH>;
-+			color = <LED_COLOR_ID_YELLOW>;
-+			function = LED_FUNCTION_INDICATOR;
-+		};
-+	};
-+
-+	panel: panel {
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&lvds_panel_pins>;
-+		enable-gpios = <&main_gpio0 36 GPIO_ACTIVE_HIGH>;
-+		power-supply = <&reg_lvds_pwr>;
-+	};
-+
-+	fan0: pwm-fan {
-+		compatible = "pwm-fan";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pwm_fan_pins>;
-+		fan-supply = <&reg_pwm_fan>;
-+		#cooling-cells = <2>;
-+		/* typical 25 kHz -> 40.000 nsec */
-+		pwms = <&epwm0 1 40000 PWM_POLARITY_INVERTED>;
-+		cooling-levels = <0 32 64 128 196 240>;
-+		pulses-per-revolution = <2>;
-+		interrupt-parent = <&main_gpio1>;
-+		interrupts = <30 IRQ_TYPE_EDGE_FALLING>;
-+		status = "disabled";
-+	};
-+
-+	wifi_pwrseq: pwrseq-wifi {
-+		compatible = "mmc-pwrseq-simple";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&main_mmc2_pwrseq_pins>;
-+		reset-gpios = <&main_gpio0 44 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reg_1v8: regulator-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_1V8_MBA";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reg_3v3_sd: regulator-3v3-sd {
-+		/* TPS22963CYZTP */
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&reg_3v3_sd_pins>;
-+		regulator-name = "V_3V3_SD";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		enable-active-high;
-+		vin-supply = <&reg_3v3>;
-+		gpio = <&main_gpio1 8 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reg_lvds_pwr: regulator-lvds-pwr {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&reg_lvds_pwr_pins>;
-+		regulator-name = "LVDS0_PWR";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		enable-active-high;
-+		vin-supply = <&reg_3v3>;
-+		gpio = <&main_gpio0 61 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	reg_pwm_fan: regulator-pwm-fan {
-+		compatible = "regulator-fixed";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&reg_pwm_fan_pins>;
-+		regulator-name = "FAN_PWR";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		gpio = <&main_gpio0 62 GPIO_ACTIVE_HIGH>;
-+		enable-active-high;
-+	};
-+
-+	sound: sound {
-+		compatible = "simple-audio-card";
-+		simple-audio-card,name = "tq-tlv320aic32x";
-+		simple-audio-card,widgets =
-+			"Line Out",	"Line Out",
-+			"Line In",	"Line In",
-+			"Microphone",	"Microphone Jack";
-+		simple-audio-card,routing =
-+			"Line Out",		"LOL",
-+			"Line Out",		"LOR",
-+			"IN1_L",		"Line In",
-+			"IN1_R",		"Line In",
-+			"IN3_L",		"Microphone Jack",
-+			"Microphone Jack",	"Mic Bias";
-+		simple-audio-card,format = "i2s";
-+		simple-audio-card,bitclock-master = <&sound_master>;
-+		simple-audio-card,frame-master = <&sound_master>;
-+
-+		simple-audio-card,cpu {
-+			sound-dai = <&mcasp1>;
-+		};
-+
-+		sound_master: simple-audio-card,codec {
-+			sound-dai = <&tlv320aic32x4>;
-+			clocks = <&audio_refclk0>;
-+		};
-+	};
-+};
-+
-+&audio_refclk0 {
-+	/* Set parent to POSTDIV1_16FFT_MAIN_1_HSDIVOUT6, for 96MHz clock output */
-+	assigned-clock-parents = <&k3_clks 157 7>;
-+};
-+
-+&cpsw3g {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_rgmii1_pins
-+		     &main_rgmii2_pins>;
-+};
-+
-+&cpsw_port1 {
-+	phy-mode = "rgmii-rxid";
-+	phy-handle = <&cpsw3g_phy0>;
-+};
-+
-+&cpsw_port2 {
-+	phy-mode = "rgmii-rxid";
-+	phy-handle = <&cpsw3g_phy3>;
-+};
-+
-+&cpsw3g_mdio {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mdio1_pins>;
-+
-+	cpsw3g_phy0: ethernet-phy@0 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0x0>;
-+		reset-gpios = <&main_gpio1 11 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <1000>;
-+		reset-deassert-us = <1000>;
-+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
-+	};
-+
-+	cpsw3g_phy3: ethernet-phy@3 {
-+		compatible = "ethernet-phy-ieee802.3-c22";
-+		reg = <0x3>;
-+		reset-gpios = <&main_gpio1 12 GPIO_ACTIVE_LOW>;
-+		reset-assert-us = <1000>;
-+		reset-deassert-us = <1000>;
-+		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
-+		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
-+		ti,clk-output-sel = <DP83867_CLK_O_SEL_OFF>;
-+	};
-+};
-+
-+&epwm0 {
-+	status = "okay";
-+};
-+
-+&epwm1 {
-+	status = "okay";
-+};
-+
-+&main_gpio0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_gpio0_pins &main_gpio0_pr0_pins>;
-+	gpio-line-names =
-+		"", "", "", "", /* 0-3 */
-+		"", "", "", "", /* 4-7 */
-+		"", "", "", "", /* 8-11 */
-+		"ADC_SYNC", "ADC_RST#", "ADC_DATA_RDY", "", /* 12-15 */
-+		"", "", "", "", /* 16-19 */
-+		"", "", "", "", /* 20-23 */
-+		"", "", "", "", /* 24-27 */
-+		"", "", "", "", /* 28-31 */
-+		"", "", "", "", /* 32-35 */
-+		"", "", "", "BG95_PWRKEY", /* 36-39 */
-+		"", "", "", "BG95_RESET", /* 40-43 */
-+		"", "", "", "", /* 44-47 */
-+		"", "", "", "", /* 48-51 */
-+		"", "", "", "", /* 52-55 */
-+		"", "", "", "", /* 56-59 */
-+		"", "", "", "", /* 60-63 */
-+		"", "", "", "", /* 64-67 */
-+		"", "", "", "", /* 68-71 */
-+		"ADC_INT"; /* 72- */
-+};
-+
-+&main_gpio1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_gpio1_pins &main_gpio1_pr0_pins>;
-+
-+	/* No overcurrent handling in USB host driver - pin is hogged for now */
-+	line7-hog {
-+		gpio-hog;
-+		gpios = <7 0>;
-+		line-name = "USB0_VBUS_OC#";
-+		input;
-+	};
-+};
-+
-+&main_i2c1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_i2c1_pins>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	tlv320aic32x4: audio-codec@18 {
-+		compatible = "ti,tlv320aic32x4";
-+		reg = <0x18>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&audio_codec_pins>;
-+		#sound-dai-cells = <0>;
-+		clock-names = "mclk";
-+		clocks = <&audio_refclk0>;
-+		reset-gpios = <&main_gpio0 33 GPIO_ACTIVE_LOW>;
-+		iov-supply = <&reg_1v8>;
-+		ldoin-supply = <&reg_3v3>;
-+	};
-+};
-+
-+&main_spi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_spi0_pins>;
-+	ti,pindir-d0-out-d1-in;
-+	status = "okay";
-+
-+	/* adc@0: NXP NAFE13388 */
-+};
-+
-+&main0_thermal {
-+	trips {
-+		main0_active0: trip-active0 {
-+			temperature = <40000>;
-+			hysteresis = <5000>;
-+			type = "active";
-+		};
-+
-+		main0_active1: trip-active1 {
-+			temperature = <48000>;
-+			hysteresis = <3000>;
-+			type = "active";
-+		};
-+
-+		main0_active2: trip-active2 {
-+			temperature = <60000>;
-+			hysteresis = <10000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map1 {
-+			trip = <&main0_active0>;
-+			cooling-device = <&fan0 1 1>;
-+		};
-+
-+		map2 {
-+			trip = <&main0_active1>;
-+			cooling-device = <&fan0 2 2>;
-+		};
-+
-+		map3 {
-+			trip = <&main0_active2>;
-+			cooling-device = <&fan0 3 3>;
-+		};
-+	};
-+};
-+
-+&main1_thermal {
-+	trips {
-+		main1_active0: trip-active0 {
-+			temperature = <40000>;
-+			hysteresis = <5000>;
-+			type = "active";
-+		};
-+
-+		main1_active1: trip-active1 {
-+			temperature = <48000>;
-+			hysteresis = <3000>;
-+			type = "active";
-+		};
-+
-+		main1_active2: trip-active2 {
-+			temperature = <60000>;
-+			hysteresis = <10000>;
-+			type = "active";
-+		};
-+	};
-+
-+	cooling-maps {
-+		map1 {
-+			trip = <&main1_active0>;
-+			cooling-device = <&fan0 1 1>;
-+		};
-+
-+		map2 {
-+			trip = <&main1_active1>;
-+			cooling-device = <&fan0 2 2>;
-+		};
-+
-+		map3 {
-+			trip = <&main1_active2>;
-+			cooling-device = <&fan0 3 3>;
-+		};
-+	};
-+};
-+
-+/* Main console */
-+&main_uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_uart0_pins>;
-+	status = "okay";
-+};
-+
-+/*
-+ * IOT module - GNSS UART
-+ *
-+ * Board configuration must not enable UART trace output for TIFS firmware
-+ */
-+&main_uart1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_uart1_pins>;
-+	/* IOT module uses USB by default, UART can be enabled as fallback */
-+	status = "disabled";
-+};
-+
-+/* Bluetooth module */
-+&main_uart2 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_uart2_pins>;
-+	/* Bluetooth module uses SDIO by default, UART can be enabled as fallback */
-+	status = "disabled";
-+};
-+
-+/* IOT module - main UART */
-+&main_uart5 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_uart5_pins>;
-+	/* IOT module uses USB by default, UART can be enabled as fallback */
-+	status = "disabled";
-+};
-+
-+&mcasp1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mcasp1_pins>;
-+	#sound-dai-cells = <0>;
-+	op-mode = <0>; /* MCASP_IIS_MODE */
-+	tdm-slots = <2>;
-+	serial-dir = < /* 0: INACTIVE, 1: TX, 2: RX */
-+	       1 0 2 0
-+	       0 0 0 0
-+	       0 0 0 0
-+	       0 0 0 0
-+	>;
-+	tx-num-evt = <0>;
-+	rx-num-evt = <0>;
-+	status = "okay";
-+};
-+
-+&mcu_gpio0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_gpio0_pins>;
-+	gpio-line-names =
-+		"EN_DIG_OUT_1", "EN_DIG_OUT_2", "STATUS_OUT_1", "STATUS_OUT_2", /* 0-3 */
-+		"EN_DIG_OUT_3", "", "", "V_VPP_EN", /* 4-7 */
-+		"", "", "", "EN_DIG_OUT_4", /* 8-11 */
-+		"STATUS_OUT_3", "", "", "", /* 12-15 */
-+		"", "STATUS_OUT_4", "DIG_IN_1", "DIG_IN_2", /* 16-19 */
-+		"DIG_IN_3", "", "", "DIG_IN_4"; /* 20-23 */
-+};
-+
-+&mcu_mcan0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_mcan0_pins>;
-+	status = "okay";
-+};
-+
-+&mcu_mcan1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_mcan1_pins>;
-+	status = "okay";
-+};
-+
-+&mcu_uart0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&mcu_uart0_pins>;
-+	rs485-rts-active-low;
-+	linux,rs485-enabled-at-boot-time;
-+	status = "okay";
-+};
-+
-+&reg_sd {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&reg_sd_pins>;
-+	gpios = <&main_gpio0 31 GPIO_ACTIVE_LOW>;
-+	status = "okay";
-+};
-+
-+&sdhci1 {
-+	/* SD-card */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc1_pins>;
-+	vmmc-supply = <&reg_3v3_sd>;
-+	vqmmc-supply = <&reg_sd>;
-+	bus-width = <4>;
-+	disable-wp;
-+	no-mmc;
-+	no-sdio;
-+	ti,driver-strength-ohm = <50>;
-+	status = "okay";
-+};
-+
-+&sdhci2 {
-+	/* WLAN */
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc2_pins>;
-+	mmc-pwrseq = <&wifi_pwrseq>;
-+	keep-power-in-suspend;
-+	cap-power-off-card;
-+	bus-width = <4>;
-+	non-removable;
-+	no-mmc;
-+	no-sd;
-+	ti,driver-strength-ohm = <50>;
-+	ti,fails-without-test-cd;
-+	status = "okay";
-+};
-+
-+&usbss0 {
-+	ti,vbus-divider;
-+	status = "okay";
-+};
-+
-+&usbss1 {
-+	ti,vbus-divider;
-+	status = "okay";
-+};
-+
-+&usb0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_usb0_pins>;
-+	dr_mode = "otg";
-+	usb-role-switch;
-+	hnp-disable;
-+	srp-disable;
-+	adp-disable;
-+	snps,dis_u2_susphy_quirk;
-+	snps,dis_enblslpm_quirk;
-+
-+	connector {
-+		compatible = "gpio-usb-b-connector", "usb-b-connector";
-+		id-gpios = <&main_gpio0 71 GPIO_ACTIVE_HIGH>;
-+		type = "micro";
-+	};
-+};
-+
-+&usb1 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_usb1_hub_pins>;
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+	dr_mode = "host";
-+
-+	usb1_hub_2_0: hub@1 {
-+		compatible = "usb424,2514";
-+		reg = <1>;
-+		reset-gpios = <&main_gpio1 23 GPIO_ACTIVE_HIGH>;
-+		vdd-supply = <&reg_3v3>;
-+	};
-+};
-+
-+&wkup_uart0 {
-+	/* WKUP UART0 is used by DM firmware */
-+	status = "reserved";
-+};
-+
-+&main_pmx0 {
-+	audio_codec_pins: audio-codec-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x088, PIN_OUTPUT, 7) /* (L24) GPMC0_OEn_REn.GPIO0_33 */
-+			AM62X_IOPAD(0x1d0, PIN_OUTPUT, 5) /* (A15) UART0_CTSn.AUDIO_EXT_REFCLK0 */
-+		>;
-+	};
-+
-+	backlight_pins: backlight-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x009c, PIN_OUTPUT, 7) /* (V25) GPMC0_WAIT1.GPIO0_38 */
-+			AM62X_IOPAD(0x01a0, PIN_OUTPUT, 6) /* (E18) MCASP0_AXR0.EHRPWM1_B */
-+		>;
-+	};
-+
-+	dss_pins: dss-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x0260, PIN_OUTPUT, 0) /* (AA5) OLDI0_A0N */
-+			AM62X_IOPAD(0x025c, PIN_OUTPUT, 0) /* (Y6) OLDI0_A0P */
-+			AM62X_IOPAD(0x0268, PIN_OUTPUT, 0) /* (AD3) OLDI0_A1N */
-+			AM62X_IOPAD(0x0264, PIN_OUTPUT, 0) /* (AB4) OLDI0_A1P */
-+			AM62X_IOPAD(0x0270, PIN_OUTPUT, 0) /* (Y8) OLDI0_A2N */
-+			AM62X_IOPAD(0x026c, PIN_OUTPUT, 0) /* (AA8) OLDI0_A2P */
-+			AM62X_IOPAD(0x0278, PIN_OUTPUT, 0) /* (AB6) OLDI0_A3N */
-+			AM62X_IOPAD(0x0274, PIN_OUTPUT, 0) /* (AA7) OLDI0_A3P */
-+			AM62X_IOPAD(0x0280, PIN_OUTPUT, 0) /* (AC6) OLDI0_A4N */
-+			AM62X_IOPAD(0x027c, PIN_OUTPUT, 0) /* (AC5) OLDI0_A4P */
-+			AM62X_IOPAD(0x0288, PIN_OUTPUT, 0) /* (AE5) OLDI0_A5N */
-+			AM62X_IOPAD(0x0284, PIN_OUTPUT, 0) /* (AD6) OLDI0_A5P */
-+			AM62X_IOPAD(0x0290, PIN_OUTPUT, 0) /* (AE6) OLDI0_A6N */
-+			AM62X_IOPAD(0x028c, PIN_OUTPUT, 0) /* (AD7) OLDI0_A6P */
-+			AM62X_IOPAD(0x0298, PIN_OUTPUT, 0) /* (AD8) OLDI0_A7N */
-+			AM62X_IOPAD(0x0294, PIN_OUTPUT, 0) /* (AE7) OLDI0_A7P */
-+			AM62X_IOPAD(0x02a0, PIN_OUTPUT, 0) /* (AD4) OLDI0_CLK0N */
-+			AM62X_IOPAD(0x029c, PIN_OUTPUT, 0) /* (AE3) OLDI0_CLK0P */
-+			AM62X_IOPAD(0x02a8, PIN_OUTPUT, 0) /* (AE4) OLDI0_CLK1N */
-+			AM62X_IOPAD(0x02a4, PIN_OUTPUT, 0) /* (AD5) OLDI0_CLK1P */
-+		>;
-+	};
-+
-+	csi_clk_pins: csi-clk-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x019c, PIN_OUTPUT, 6) /* (B18) MCASP0_AXR1.EHRPWM1_A */
-+		>;
-+	};
-+
-+	gpio_key_pins: gpio-key-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x0a4, PIN_INPUT, 7) /* (M22) GPMC0_DIR.GPIO0_40 */
-+		>;
-+	};
-+
-+	gpio_led_pins: gpio-led-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x0a8, PIN_OUTPUT, 7) /* (M21) GPMC0_CSn0.GPIO0_41 */
-+			AM62X_IOPAD(0x0ac, PIN_OUTPUT, 7) /* (L21) GPMC0_CSn1.GPIO0_42 */
-+		>;
-+	};
-+
-+	lvds_panel_pins: lvds-panel-pins {
-+		pinctrl-single,pins = <
-+			/* (N20) GPMC0_BE1n.GPIO0_36 - LVDS0_RESET# */
-+			AM62X_IOPAD(0x0094, PIN_OUTPUT, 7)
-+		>;
-+	};
-+
-+	main_gpio0_pins: main-gpio0-pins {
-+		pinctrl-single,pins = <
-+			/* Control GPIOs for IOT Module */
-+			/* (K25) GPMC0_WPn.GPIO0_39 - BG95_PWRKEY */
-+			AM62X_IOPAD(0x0a0, PIN_OUTPUT, 7)
-+			/* (K22) GPMC0_CSn2.GPIO0_43 - BG95_RESET */
-+			AM62X_IOPAD(0x0b0, PIN_OUTPUT, 7)
-+		>;
-+	};
-+
-+	main_gpio0_pr0_pins: main-gpio0-pr0-pins {
-+		pinctrl-single,pins = <
-+			/* (N24) GPMC0_AD2.GPIO0_17  */
-+			AM62X_IOPAD(0x0044, PIN_INPUT, 7)
-+			/* (N25) GPMC0_AD3.GPIO0_18  */
-+			AM62X_IOPAD(0x0048, PIN_INPUT, 7)
-+			/* (P24) GPMC0_AD4.GPIO0_19  */
-+			AM62X_IOPAD(0x004c, PIN_INPUT, 7)
-+			/* (P22) GPMC0_AD5.GPIO0_20  */
-+			AM62X_IOPAD(0x0050, PIN_INPUT, 7)
-+			/* (W25) VOUT0_DATA2.GPIO0_47  */
-+			AM62X_IOPAD(0x00c0, PIN_INPUT, 7)
-+			/* (W24) VOUT0_DATA3.GPIO0_48  */
-+			AM62X_IOPAD(0x00c4, PIN_INPUT, 7)
-+			/* (Y25) VOUT0_DATA4.GPIO0_49  */
-+			AM62X_IOPAD(0x00c8, PIN_INPUT, 7)
-+			/* (Y24) VOUT0_DATA5.GPIO0_50  */
-+			AM62X_IOPAD(0x00cc, PIN_INPUT, 7)
-+		>;
-+	};
-+
-+	main_gpio1_pins: main-gpio1-pins {
-+		pinctrl-single,pins = <
-+			/* (B19) MCASP0_AXR3.GPIO1_7 - USB0_VBUS_OC# */
-+			AM62X_IOPAD(0x0194, PIN_INPUT, 7)
-+		>;
-+	};
-+
-+	main_gpio1_pr0_pins: main-gpio1-pr0-pins {
-+		pinctrl-single,pins = <
-+			/* (C15) MCAN0_TX.GPIO1_24 */
-+			AM62X_IOPAD(0x01d8, PIN_INPUT, 7)
-+			/* (E15) MCAN0_RX.GPIO1_25 */
-+			AM62X_IOPAD(0x01dc, PIN_INPUT, 7)
-+		>;
-+	};
-+
-+	main_i2c1_pins: main-i2c1-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x1e8, PIN_INPUT, 0) /* (B17) I2C1_SCL */
-+			AM62X_IOPAD(0x1ec, PIN_INPUT, 0) /* (A17) I2C1_SDA */
-+		>;
-+	};
-+
-+	main_mcasp1_pins: main-mcasp1-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x090, PIN_INPUT, 2) /* (M24) GPMC0_BE0N_CLE.MCASP1_ACLKX */
-+			AM62X_IOPAD(0x098, PIN_INPUT, 2) /* (U23) GPMC0_WAIT0.MCASP1_AFSX */
-+			AM62X_IOPAD(0x08c, PIN_OUTPUT, 2) /* (L25) GPMC0_WEN.MCASP1_AXR0 */
-+			AM62X_IOPAD(0x084, PIN_INPUT, 2) /* (L23) GPMC0_ADVN_ALE.MCASP1_AXR2 */
-+		>;
-+	};
-+
-+	main_mmc1_pins: main-mmc1-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x23c, PIN_INPUT, 0) /* (A21) MMC1_CMD */
-+			AM62X_IOPAD(0x234, PIN_INPUT, 0) /* (B22) MMC1_CLK */
-+			AM62X_IOPAD(0x230, PIN_INPUT, 0) /* (A22) MMC1_DAT0 */
-+			AM62X_IOPAD(0x22c, PIN_INPUT, 0) /* (B21) MMC1_DAT1 */
-+			AM62X_IOPAD(0x228, PIN_INPUT, 0) /* (C21) MMC1_DAT2 */
-+			AM62X_IOPAD(0x224, PIN_INPUT, 0) /* (D22) MMC1_DAT3 */
-+			AM62X_IOPAD(0x240, PIN_INPUT, 0) /* (D17) MMC1_SDCD */
-+		>;
-+	};
-+
-+	main_mmc2_pins: main-mmc2-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x120, PIN_INPUT, 0) /* (C24) MMC2_CMD */
-+			AM62X_IOPAD(0x118, PIN_INPUT, 0) /* (D25) MMC2_CLK */
-+			AM62X_IOPAD(0x114, PIN_INPUT, 0) /* (B24) MMC2_DAT0 */
-+			AM62X_IOPAD(0x110, PIN_INPUT, 0) /* (C25) MMC2_DAT1 */
-+			AM62X_IOPAD(0x10c, PIN_INPUT, 0) /* (E23) MMC2_DAT2 */
-+			AM62X_IOPAD(0x108, PIN_INPUT, 0) /* (D24) MMC2_DAT3 */
-+			AM62X_IOPAD(0x11c, PIN_INPUT, 0) /* (#N/A) MMC2_CLKB */
-+		>;
-+	};
-+
-+	main_mmc2_pwrseq_pins: main-mmc2-pwrseq-pins {
-+		pinctrl-single,pins = <
-+			/* (K24) GPMC0_CSn3.GPIO0_44 - WIFI-BT_EN */
-+			AM62X_IOPAD(0x00b4, PIN_OUTPUT, 7)
-+		>;
-+	};
-+
-+	main_mdio1_pins: main-mdio1-pins {
-+		pinctrl-single,pins = <
-+			/* (B20) MCASP0_ACLKX.GPIO1_11 - RESET_RGMII1# */
-+			AM62X_IOPAD(0x1a4, PIN_OUTPUT, 7)
-+			/* (D20) MCASP0_AFSX.GPIO1_12 - RESET_RGMII2# */
-+			AM62X_IOPAD(0x1a8, PIN_OUTPUT, 7)
-+
-+			AM62X_IOPAD(0x160, PIN_OUTPUT, 0) /* (AD24) MDIO0_MDC */
-+			AM62X_IOPAD(0x15c, PIN_INPUT, 0) /* (AB22) MDIO0_MDIO */
-+		>;
-+	};
-+
-+	main_rgmii1_pins: main-rgmii1-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x14c, PIN_INPUT, 0) /* (AB17) RGMII1_RD0 */
-+			AM62X_IOPAD(0x150, PIN_INPUT, 0) /* (AC17) RGMII1_RD1 */
-+			AM62X_IOPAD(0x154, PIN_INPUT, 0) /* (AB16) RGMII1_RD2 */
-+			AM62X_IOPAD(0x158, PIN_INPUT, 0) /* (AA15) RGMII1_RD3 */
-+			AM62X_IOPAD(0x148, PIN_INPUT, 0) /* (AD17) RGMII1_RXC */
-+			AM62X_IOPAD(0x144, PIN_INPUT, 0) /* (AE17) RGMII1_RX_CTL */
-+			AM62X_IOPAD(0x134, PIN_OUTPUT, 0) /* (AE20) RGMII1_TD0 */
-+			AM62X_IOPAD(0x138, PIN_OUTPUT, 0) /* (AD20) RGMII1_TD1 */
-+			AM62X_IOPAD(0x13c, PIN_OUTPUT, 0) /* (AE18) RGMII1_TD2 */
-+			AM62X_IOPAD(0x140, PIN_OUTPUT, 0) /* (AD18) RGMII1_TD3 */
-+			AM62X_IOPAD(0x130, PIN_OUTPUT, 0) /* (AE19) RGMII1_TXC */
-+			AM62X_IOPAD(0x12c, PIN_OUTPUT, 0) /* (AD19) RGMII1_TX_CTL */
-+		>;
-+	};
-+
-+	main_rgmii2_pins: main-rgmii2-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x184, PIN_INPUT, 0) /* (AE23) RGMII2_RD0 */
-+			AM62X_IOPAD(0x188, PIN_INPUT, 0) /* (AB20) RGMII2_RD1 */
-+			AM62X_IOPAD(0x18c, PIN_INPUT, 0) /* (AC21) RGMII2_RD2 */
-+			AM62X_IOPAD(0x190, PIN_INPUT, 0) /* (AE22) RGMII2_RD3 */
-+			AM62X_IOPAD(0x180, PIN_INPUT, 0) /* (AD23) RGMII2_RXC */
-+			AM62X_IOPAD(0x17c, PIN_INPUT, 0) /* (AD22) RGMII2_RX_CTL */
-+			AM62X_IOPAD(0x16c, PIN_OUTPUT, 0) /* (Y18) RGMII2_TD0 */
-+			AM62X_IOPAD(0x170, PIN_OUTPUT, 0) /* (AA18) RGMII2_TD1 */
-+			AM62X_IOPAD(0x174, PIN_OUTPUT, 0) /* (AD21) RGMII2_TD2 */
-+			AM62X_IOPAD(0x178, PIN_OUTPUT, 0) /* (AC20) RGMII2_TD3 */
-+			AM62X_IOPAD(0x168, PIN_OUTPUT, 0) /* (AE21) RGMII2_TXC */
-+			AM62X_IOPAD(0x164, PIN_OUTPUT, 0) /* (AA19) RGMII2_TX_CTL */
-+		>;
-+	};
-+
-+	main_spi0_pins: main-spi0-pins {
-+		pinctrl-single,pins = <
-+			/* (A14) SPI0_CLK */
-+			AM62X_IOPAD(0x1bc, PIN_OUTPUT, 0)
-+			/* (A13) SPI0_CS0 */
-+			AM62X_IOPAD(0x1b4, PIN_OUTPUT, 0)
-+			/* (B13) SPI0_D0 */
-+			AM62X_IOPAD(0x1c0, PIN_OUTPUT, 0)
-+			/* (B14) SPI0_D1 */
-+			AM62X_IOPAD(0x1c4, PIN_INPUT, 0)
-+		>;
-+	};
-+
-+	main_spi0_adc_pins: main-spi0-adc-pins {
-+		pinctrl-single,pins = <
-+			/* (G21) OSPI0_CSn1.GPIO0_12 - ADC_SYNC */
-+			AM62X_IOPAD(0x030, PIN_INPUT, 7)
-+			/* (H21) OSPI0_CSn2.GPIO0_13 - ADC_RST# */
-+			AM62X_IOPAD(0x034, PIN_OUTPUT, 7)
-+			/* (E24) OSPI0_CSn3.GPIO0_14 - ADC_DATA_RDY */
-+			AM62X_IOPAD(0x038, PIN_INPUT, 7)
-+			/* (B23) MMC2_SDWP.GPIO0_72 - ADC_INT# */
-+			AM62X_IOPAD(0x128, PIN_INPUT, 7)
-+		>;
-+	};
-+
-+	main_uart0_pins: main-uart0-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x1c8, PIN_INPUT, 0) /* (D14) UART0_RXD */
-+			AM62X_IOPAD(0x1cc, PIN_OUTPUT, 0) /* (E14) UART0_TXD */
-+		>;
-+	};
-+
-+	main_uart1_pins: main-uart1-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x1ac, PIN_INPUT, 2) /* (E19) MCASP0_AFSR.UART1_RXD */
-+			AM62X_IOPAD(0x1b0, PIN_OUTPUT, 2) /* (A20) MCASP0_ACLKR.UART1_TXD */
-+		>;
-+	};
-+
-+	main_uart2_pins: main-uart2-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x0b8, PIN_INPUT, 4) /* (U22) VOUT0_DATA0.UART2_RXD */
-+			AM62X_IOPAD(0x0bc, PIN_OUTPUT, 4) /* (V24) VOUT0_DATA1.UART2_TXD */
-+			AM62X_IOPAD(0x104, PIN_INPUT, 4) /* (AC24) VOUT0_PCLK.UART2_CTS# */
-+			AM62X_IOPAD(0x100, PIN_OUTPUT, 4) /* (AC25) VOUT0_VSYNC.UART2_RTS# */
-+		>;
-+	};
-+
-+	main_uart5_pins: main-uart5-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x0d0, PIN_INPUT, 4) /* (Y23) VOUT0_DATA6.UART5_RXD */
-+			AM62X_IOPAD(0x0d4, PIN_OUTPUT, 4) /* (AA25) VOUT0_DATA7.UART5_TXD */
-+		>;
-+	};
-+
-+	main_usb0_pins: main-usb0-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x254, PIN_OUTPUT, 0) /* (C20) USB0_DRVVBUS */
-+			AM62X_IOPAD(0x124, PIN_INPUT, 7) /* (A23) MMC2_SDCD.GPIO0_71 */
-+		>;
-+	};
-+
-+	main_usb1_hub_pins: main-usb1-hub-pins {
-+		pinctrl-single,pins = <
-+			/* (B15) UART0_RTSn.GPIO1_23 - USB_HUB_RESET */
-+			AM62X_IOPAD(0x01d4, PIN_OUTPUT, 7)
-+		>;
-+	};
-+
-+	pwm_fan_pins: pwm-fan-pins {
-+		pinctrl-single,pins = <
-+			/* (C13) SPI0_CS1.EHRPWM0_B - FAN_PWM */
-+			AM62X_IOPAD(0x01b8, PIN_OUTPUT, 2)
-+			/* (A18) EXT_REFCLK1.GPIO1_30 - FAN_RPM */
-+			AM62X_IOPAD(0x01f0, PIN_INPUT, 7)
-+		>;
-+	};
-+
-+	reg_3v3_sd_pins: reg-3v3-sd-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x198, PIN_OUTPUT, 7) /* (A19) MCASP0_AXR2.GPIO1_8 */
-+		>;
-+	};
-+
-+	reg_lvds_pwr_pins: reg-lvds-pwr-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x00f8, PIN_OUTPUT, 7) /* (AB24) VOUT0_HSYNC.GPIO0_61 */
-+		>;
-+	};
-+
-+	reg_pwm_fan_pins: reg-pwm-fan-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x00fc, PIN_OUTPUT, 7) /* (Y20) VOUT0_DE.GPIO0_62 */
-+		>;
-+	};
-+
-+	reg_sd_pins: reg-sd-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x07c, PIN_OUTPUT, 7) /* (P25) GPMC0_CLK.GPIO0_31 */
-+		>;
-+	};
-+};
-+
-+&mcu_pmx0 {
-+	mcu_gpio0_pins: mcu-gpio0-pins {
-+		pinctrl-single,pins = <
-+			/* (E8) MCU_SPI0_CS0.MCU_GPIO0_0 - EN_DIG_OUT1 */
-+			AM62X_MCU_IOPAD(0x000, PIN_OUTPUT, 7)
-+			/* (B8) MCU_SPI0_CS1.MCU_GPIO0_1 - EN_DIG_OUT2 */
-+			AM62X_MCU_IOPAD(0x004, PIN_OUTPUT, 7)
-+			/* (A7) MCU_SPI0_CLK.MCU_GPIO0_2 - STATUS_OUT1 */
-+			AM62X_MCU_IOPAD(0x008, PIN_INPUT, 7)
-+			/* (D9) MCU_SPI0_D0.MCU_GPIO0_3 - STATUS_OUT2 */
-+			AM62X_MCU_IOPAD(0x00c, PIN_INPUT, 7)
-+			/* (C9) MCU_SPI0_D1.MCU_GPIO0_4 - EN_DIG_OUT3 */
-+			AM62X_MCU_IOPAD(0x010, PIN_OUTPUT, 7)
-+			/* (C6) WKUP_UART0_CTSn.MCU_GPIO0_11 - EN_DIG_OUT4 */
-+			AM62X_MCU_IOPAD(0x02c, PIN_OUTPUT, 7)
-+			/* (A4) WKUP_UART0_RTSn.MCU_GPIO0_12 - STATUS_OUT3 */
-+			AM62X_MCU_IOPAD(0x030, PIN_INPUT, 7)
-+			/* (A8) MCU_I2C0_SCL.MCU_GPIO0_17 - STATUS_OUT4 */
-+			AM62X_MCU_IOPAD(0x044, PIN_INPUT, 7)
-+			/* (D10) MCU_I2C0_SDA.MCU_GPIO0_18 - DIG_IN_1 */
-+			AM62X_MCU_IOPAD(0x048, PIN_INPUT, 7)
-+			/* (B9) WKUP_I2C0_SCL.MCU_GPIO0_19 - DIG_IN_2 */
-+			AM62X_MCU_IOPAD(0x04c, PIN_INPUT, 7)
-+			/* (A9) WKUP_I2C0_SDA.MCU_GPIO0_20 - DIG_IN_3 */
-+			AM62X_MCU_IOPAD(0x050, PIN_INPUT, 7)
-+			/* (A12) WKUP_CLKOUT0.MCU_GPIO0_23 - DIG_IN_4 */
-+			AM62X_MCU_IOPAD(0x084, PIN_INPUT, 7)
-+			/* (A6) MCU_UART0_CTSn.MCU_GPIO0_7 - V_VPP_EN */
-+			AM62X_MCU_IOPAD(0x01c, PIN_OUTPUT, 7)
-+		>;
-+	};
-+	mcu_mcan0_pins: mcu-mcan0-pins {
-+		pinctrl-single,pins = <
-+			AM62X_MCU_IOPAD(0x038, PIN_INPUT, 0) /* (B3) MCU_MCAN0_RX */
-+			AM62X_MCU_IOPAD(0x034, PIN_OUTPUT, 0) /* (D6) MCU_MCAN0_TX */
-+		>;
-+	};
-+
-+	mcu_mcan1_pins: mcu-mcan1-pins {
-+		pinctrl-single,pins = <
-+			AM62X_MCU_IOPAD(0x040, PIN_INPUT, 0) /* (D4) MCU_MCAN1_RX */
-+			AM62X_MCU_IOPAD(0x03c, PIN_OUTPUT, 0) /* (E5) MCU_MCAN1_TX */
-+		>;
-+	};
-+
-+	mcu_uart0_pins: mcu-uart0-pins {
-+		pinctrl-single,pins = <
-+			AM62X_MCU_IOPAD(0x014, PIN_INPUT, 0) /* (B5) MCU_UART0_RXD */
-+			AM62X_MCU_IOPAD(0x018, PIN_OUTPUT, 0) /* (A5) MCU_UART0_TXD */
-+			AM62X_MCU_IOPAD(0x020, PIN_OUTPUT, 0) /* (B6) MCU_UART0_RTS# */
-+		>;
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi b/arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi
-new file mode 100644
-index 0000000000000..d211d14f3cd15
---- /dev/null
-+++ b/arch/arm64/boot/dts/ti/k3-am625-tqma62xx.dtsi
-@@ -0,0 +1,346 @@
-+// SPDX-License-Identifier: GPL-2.0-only OR MIT
-+/*
-+ * Copyright (C) 2021-2022 Texas Instruments Incorporated - https://www.ti.com/
-+ * Copyright (c) 2023-2024 TQ-Systems GmbH <linux@ew.tq-group.com>, D-82229 Seefeld, Germany.
-+ * Author: Matthias Schiffer
-+ */
-+
-+#include "k3-am625.dtsi"
-+
-+/ {
-+	aliases {
-+		i2c0 = &main_i2c0;
-+		mmc0 = &sdhci0;
-+		spi0 = &ospi0;
-+	};
-+
-+	memory@80000000 {
-+		device_type = "memory";
-+		/* 1G RAM */
-+		reg = <0x00000000 0x80000000 0x00000000 0x40000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		ramoops@9c700000 {
-+			compatible = "ramoops";
-+			reg = <0x00 0x9c700000 0x00 0x00100000>;
-+			record-size = <0x8000>;
-+			console-size = <0x8000>;
-+			ftrace-size = <0x00>;
-+			pmsg-size = <0x8000>;
-+		};
-+
-+		/* global cma region */
-+		linux,cma {
-+			compatible = "shared-dma-pool";
-+			reusable;
-+			size = <0x00 0x8000000>;
-+			linux,cma-default;
-+		};
-+
-+		rtos_ipc_memory_region: ipc-memories@9c800000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9c800000 0x00 0x00300000>;
-+			no-map;
-+		};
-+
-+		mcu_m4fss_dma_memory_region: m4f-dma-memory@9cb00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9cb00000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		mcu_m4fss_memory_region: m4f-memory@9cc00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9cc00000 0x00 0xe00000>;
-+			no-map;
-+		};
-+
-+		wkup_r5fss0_core0_dma_memory_region: r5f-dma-memory@9da00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9da00000 0x00 0x100000>;
-+			no-map;
-+		};
-+
-+		wkup_r5fss0_core0_memory_region: r5f-memory@9db00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x00 0x9db00000 0x00 0xc00000>;
-+			no-map;
-+		};
-+
-+		secure_tfa_ddr: tfa@9e780000 {
-+			reg = <0x00 0x9e780000 0x00 0x80000>;
-+			alignment = <0x1000>;
-+			no-map;
-+		};
-+
-+		secure_ddr: optee@9e800000 {
-+			reg = <0x00 0x9e800000 0x00 0x01800000>; /* for OP-TEE */
-+			alignment = <0x1000>;
-+			no-map;
-+		};
-+	};
-+
-+	reg_3v3: regulator-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "V_3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-always-on;
-+		regulator-boot-on;
-+	};
-+
-+	reg_sd: regulator-sd {
-+		/* Output of TPS6521902RSM */
-+		compatible = "regulator-gpio";
-+		regulator-name = "V_VDDSHV5";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		regulator-boot-on;
-+		vin-supply = <&reg_ldo1>;
-+		states = <1800000 0x0>,
-+			 <3300000 0x1>;
-+		/* Controlling GPIO set by base board */
-+		status = "disabled";
-+	};
-+};
-+
-+&mailbox0_cluster0 {
-+	mbox_m4_0: mbox-m4-0 {
-+		ti,mbox-rx = <0 0 0>;
-+		ti,mbox-tx = <1 0 0>;
-+	};
-+
-+	mbox_r5_0: mbox-r5-0 {
-+		ti,mbox-rx = <2 0 0>;
-+		ti,mbox-tx = <3 0 0>;
-+	};
-+};
-+
-+&mcu_m4fss {
-+	mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
-+	memory-region = <&mcu_m4fss_dma_memory_region>,
-+			<&mcu_m4fss_memory_region>;
-+	status = "okay";
-+};
-+
-+&wkup_r5fss0_core0 {
-+	mboxes = <&mailbox0_cluster0 &mbox_r5_0>;
-+	memory-region = <&wkup_r5fss0_core0_dma_memory_region>,
-+			<&wkup_r5fss0_core0_memory_region>;
-+};
-+
-+&main_i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_i2c0_pins>;
-+	clock-frequency = <400000>;
-+	status = "okay";
-+
-+	tps65219: pmic@30 {
-+		compatible = "ti,tps65219";
-+		reg = <0x30>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pmic_irq_pins>;
-+		interrupt-parent = <&gic500>;
-+		interrupts = <GIC_SPI 224 IRQ_TYPE_LEVEL_HIGH>;
-+		interrupt-controller;
-+		#interrupt-cells = <1>;
-+		buck1-supply = <&reg_3v3>;
-+		buck2-supply = <&reg_3v3>;
-+		buck3-supply = <&reg_3v3>;
-+		ldo1-supply = <&reg_3v3>;
-+		ldo2-supply = <&reg_buck2>;
-+		ldo3-supply = <&reg_3v3>;
-+		ldo4-supply = <&reg_3v3>;
-+		system-power-controller;
-+		ti,power-button;
-+
-+		regulators {
-+			reg_buck1: buck1 {
-+				regulator-name = "V_VDD_CORE";
-+				regulator-min-microvolt = <750000>;
-+				regulator-max-microvolt = <750000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_buck2: buck2 {
-+				regulator-name = "V_1V8";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_buck3: buck3 {
-+				regulator-name = "V_1V1";
-+				regulator-min-microvolt = <1100000>;
-+				regulator-max-microvolt = <1100000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_ldo1: ldo1 {
-+				/* Actual voltage of LDO1 is controlled by GPIO, see reg_sd */
-+				regulator-name = "V_VDDSHV5_3V3";
-+				regulator-min-microvolt = <3300000>;
-+				regulator-max-microvolt = <3300000>;
-+				regulator-allow-bypass;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_ldo2: ldo2 {
-+				regulator-name = "V_0V85";
-+				regulator-min-microvolt = <850000>;
-+				regulator-max-microvolt = <850000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_ldo3: ldo3 {
-+				regulator-name = "V_1V8A";
-+				regulator-min-microvolt = <1800000>;
-+				regulator-max-microvolt = <1800000>;
-+				regulator-boot-on;
-+				regulator-always-on;
-+			};
-+
-+			reg_ldo4: ldo4 {
-+				/* Unused */
-+				regulator-name = "V_VLDO4";
-+				regulator-boot-on;
-+			};
-+		};
-+	};
-+
-+	tmp1075: temperature-sensor@4a {
-+		compatible = "ti,tmp1075";
-+		reg = <0x4a>;
-+		vs-supply = <&reg_buck2>;
-+	};
-+
-+	eeprom0: eeprom@50 {
-+		compatible = "st,24c02", "atmel,24c02";
-+		reg = <0x50>;
-+		vcc-supply = <&reg_buck2>;
-+		pagesize = <16>;
-+		read-only;
-+	};
-+
-+	pcf85063: rtc@51 {
-+		compatible = "nxp,pcf85063a";
-+		reg = <0x51>;
-+		quartz-load-femtofarads = <12500>;
-+	};
-+
-+	eeprom1: eeprom@54 {
-+		compatible = "st,24c64", "atmel,24c64";
-+		reg = <0x54>;
-+		vcc-supply = <&reg_buck2>;
-+		pagesize = <32>;
-+	};
-+};
-+
-+&ospi0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&ospi0_pins>;
-+	status = "okay";
-+
-+	flash@0 {
-+		compatible = "jedec,spi-nor";
-+		reg = <0x0>;
-+		spi-tx-bus-width = <8>;
-+		spi-rx-bus-width = <8>;
-+		spi-max-frequency = <84000000>;
-+		cdns,tshsl-ns = <60>;
-+		cdns,tsd2d-ns = <60>;
-+		cdns,tchsh-ns = <60>;
-+		cdns,tslch-ns = <60>;
-+		cdns,read-delay = <2>;
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			/* Filled by bootloader */
-+		};
-+	};
-+};
-+
-+&sdhci0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&main_mmc0_pins>;
-+	non-removable;
-+	disable-wp;
-+	no-sd;
-+	no-sdio;
-+	ti,driver-strength-ohm = <50>;
-+	status = "okay";
-+};
-+
-+&wkup_rtc0 {
-+	/*
-+	 * Erratum i2327: We can't guarantee that the TQMa62xx will boot fast
-+	 * enough for U-Boot to apply the workaround within one second after
-+	 * power-on. Keep the RTC disabled to avoid RTC interrupt issues.
-+	 *
-+	 * The external RTC of the TQMa62xx should be used instead.
-+	 *
-+	 * If needed, the RTC can be enabled in a baseboard DTS, as long as
-+	 * boot is fast enough on all relevant boot media.
-+	 */
-+	status = "disabled";
-+};
-+
-+&main_pmx0 {
-+	main_i2c0_pins: main-i2c0-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x1e0, PIN_INPUT, 0) /* (B16) I2C0_SCL */
-+			AM62X_IOPAD(0x1e4, PIN_INPUT, 0) /* (A16) I2C0_SDA */
-+		>;
-+	};
-+
-+	main_mmc0_pins: main-mmc0-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x220, PIN_INPUT, 0) /* (Y3) MMC0_CMD */
-+			AM62X_IOPAD(0x218, PIN_INPUT, 0) /* (AB1) MMC0_CLK */
-+			AM62X_IOPAD(0x214, PIN_INPUT, 0) /* (AA2) MMC0_DAT0 */
-+			AM62X_IOPAD(0x210, PIN_INPUT, 0) /* (AA1) MMC0_DAT1 */
-+			AM62X_IOPAD(0x20c, PIN_INPUT, 0) /* (AA3) MMC0_DAT2 */
-+			AM62X_IOPAD(0x208, PIN_INPUT, 0) /* (Y4) MMC0_DAT3 */
-+			AM62X_IOPAD(0x204, PIN_INPUT, 0) /* (AB2) MMC0_DAT4 */
-+			AM62X_IOPAD(0x200, PIN_INPUT, 0) /* (AC1) MMC0_DAT5 */
-+			AM62X_IOPAD(0x1fc, PIN_INPUT, 0) /* (AD2) MMC0_DAT6 */
-+			AM62X_IOPAD(0x1f8, PIN_INPUT, 0) /* (AC2) MMC0_DAT7 */
-+		>;
-+	};
-+
-+	ospi0_pins: ospi0-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x000, PIN_OUTPUT, 0) /* (H24) OSPI0_CLK */
-+			AM62X_IOPAD(0x02c, PIN_OUTPUT, 0) /* (F23) OSPI0_CSn0 */
-+			AM62X_IOPAD(0x00c, PIN_INPUT, 0) /* (E25) OSPI0_D0 */
-+			AM62X_IOPAD(0x010, PIN_INPUT, 0) /* (G24) OSPI0_D1 */
-+			AM62X_IOPAD(0x014, PIN_INPUT, 0) /* (F25) OSPI0_D2 */
-+			AM62X_IOPAD(0x018, PIN_INPUT, 0) /* (F24) OSPI0_D3 */
-+			AM62X_IOPAD(0x01c, PIN_INPUT, 0) /* (J23) OSPI0_D4 */
-+			AM62X_IOPAD(0x020, PIN_INPUT, 0) /* (J25) OSPI0_D5 */
-+			AM62X_IOPAD(0x024, PIN_INPUT, 0) /* (H25) OSPI0_D6 */
-+			AM62X_IOPAD(0x028, PIN_INPUT, 0) /* (J22) OSPI0_D7 */
-+			AM62X_IOPAD(0x008, PIN_INPUT, 0) /* (J24) OSPI0_DQS */
-+			AM62X_IOPAD(0x004, PIN_INPUT, 0) /* (G25) OSPI0_LBCLKO */
-+		>;
-+	};
-+
-+	pmic_irq_pins: pmic-irq-pins {
-+		pinctrl-single,pins = <
-+			AM62X_IOPAD(0x01f4, PIN_INPUT_PULLUP, 0) /* (D16) EXTINTn */
-+		>;
-+	};
-+};
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+Acked-by: Andrea Righi <arighi@nvidia.com>
 
+> 
+> ChangwLog v3 -> v4:
+>   - Separate the code relocation related to scx_enabled() into a
+>     separate patch.
+>   - Remove scx_rq_clock_stale() after (or before) ops.running() and
+>     ops.update_idle() calls
+>   - Rename scx_bpf_clock_get_ns() into scx_bpf_now_ns() and revise it to
+>     address the comments
+>   - Move the per-CPU variable holding a prev clock into scx_rq
+>     (rq->scx.prev_clock)
+>   - Add a comment describing when the clock could go backward in
+>     scx_bpf_now_ns()
+>   - Rebase the code to the tip of Tejun's sched_ext repo (for-next
+>     branch)
+> 
+> ChangeLog v2 -> v3:
+>   - To avoid unnecessarily modifying cache lines, scx_rq_clock_update()
+>     and scx_rq_clock_stale() update the clock and flags only when a
+>     sched_ext scheduler is enabled.
+> 
+> ChangeLog v1 -> v2:
+>   - Rename SCX_RQ_CLK_UPDATED to SCX_RQ_CLK_VALID to denote the validity
+>     of an rq clock clearly.
+>   - Rearrange the clock and flags fields in struct scx_rq to make sure
+>     they are in the same cacheline to minimize the cache misses 
+>   - Add an additional explanation to the commit message in the 2/5 patch
+>     describing when the rq clock will be reused with an example.
+>   - Fix typos
+>   - Rebase the code to the tip of Tejun's sched_ext repo
+> 
+> Changwoo Min (6):
+>   sched_ext: Relocate scx_enabled() related code
+>   sched_ext: Implement scx_rq_clock_update/stale()
+>   sched_ext: Manage the validity of scx_rq_clock
+>   sched_ext: Implement scx_bpf_now_ns()
+>   sched_ext: Add scx_bpf_now_ns() for BPF scheduler
+>   sched_ext: Replace bpf_ktime_get_ns() to scx_bpf_now_ns()
+> 
+>  kernel/sched/core.c                      |  6 +-
+>  kernel/sched/ext.c                       | 73 ++++++++++++++++++++++++
+>  kernel/sched/sched.h                     | 52 ++++++++++++-----
+>  tools/sched_ext/include/scx/common.bpf.h |  1 +
+>  tools/sched_ext/include/scx/compat.bpf.h |  5 ++
+>  tools/sched_ext/scx_central.bpf.c        |  4 +-
+>  tools/sched_ext/scx_flatcg.bpf.c         |  2 +-
+>  7 files changed, 124 insertions(+), 19 deletions(-)
+> 
+> -- 
+> 2.47.1
+> 
+
+-Andrea
 
