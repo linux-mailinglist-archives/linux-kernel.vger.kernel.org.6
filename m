@@ -1,97 +1,217 @@
-Return-Path: <linux-kernel+bounces-438079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4CCE9E9C80
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:04:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834C19E9C8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:06:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6F716805B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:04:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF9E1889ECF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:04:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DAD6153835;
-	Mon,  9 Dec 2024 17:03:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE7E155325;
+	Mon,  9 Dec 2024 17:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="rYrzeoRq"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EJBo/UjT"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307461537B9;
-	Mon,  9 Dec 2024 17:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0627149DFF;
+	Mon,  9 Dec 2024 17:03:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733763803; cv=none; b=R4UFYm3PUGQNvzNFYJCejHowhrRgOUUDAdze+xVOB2NKxi5xYPwqQ8pc15sKrHvqAVbRcnOq67Spq9870rpmDiQKrH2VYBlTTFKqI7jRh3/wZUWFIKefyiUMYOzXlehyYrP/imfgqnsOFlcKrX/qZwRvH561geboDv+OOihDRTw=
+	t=1733763806; cv=none; b=W62pi5389dXh92N70BsnnfBWPQ0Tm6Q8v4E2D+KNnCSaLNzOLGg4oenvkOxXDqwMo0X7qcwxS3NqHm2n9Mm6UaAJ3URcksKbocoHyODuUPdU0fHjEgw611fv6mYytJzk3sjDk4J1clcq6Bvg/CYc9sZDxHOwhA4vVxxy8xk6YUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733763803; c=relaxed/simple;
-	bh=NOSr4+5BUZ72Jj/2YRGMgfANkt36kkIYjBGErGVwvoU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oIIcKPDkrQPwNXvbmSTKf6os5mt4tA6+zXgAYfzvWLzgnbyBUFNiQMMJOUGtoUvQxyYn0sKBcR/upg4SVm36UOn8Xmen8ZAA//m8c3gGnDUG5nAiWSI3wnc59c66B8tMVElqDdk2PKW/7vh7K7RFWHcNEO8CfpRs3BTqrFNanG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=rYrzeoRq; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=53s+BWddUyquwr7+OqqxmkOH96OlD2vYtPAViOZMbfs=; b=rYrzeoRqgDFP+EMKfKHuz6CNX/
-	gDt+5ac0XSP0Mdv/3RY8/OvNj5rNWsbZzwx5iUNBpBVJCUSBZ52ca2nfdQzFSibmdBkzX5AJFRG2o
-	8fzS8m9YD5uO35hZWbsK0lajWF0kwaETBpPOZhuOgfLfM6vMEFzJ4q0cODv04HWLGlCE=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKhA5-00FhDv-Mx; Mon, 09 Dec 2024 18:03:09 +0100
-Date: Mon, 9 Dec 2024 18:03:09 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tarun Alle <Tarun.Alle@microchip.com>
-Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: phy: microchip_t1: Autonegotiaion
- support for LAN887x T1 phy
-Message-ID: <20d00e72-f342-4dac-ba4c-1a66c8b25ef6@lunn.ch>
-References: <20241209161427.3580256-1-Tarun.Alle@microchip.com>
- <20241209161427.3580256-3-Tarun.Alle@microchip.com>
+	s=arc-20240116; t=1733763806; c=relaxed/simple;
+	bh=E0p0ikBfC3skqbJxu+XZIRZco62BX86/CaNjGeKHOPk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mxDGH+oxg4CLt06F+NOTIQy5g6PGbPzVgcmzMRKlhd4GD6y0YuLsqG+0ipmIVDOY9vgpfbnf+ysNtOjjWVgzfo6vfnFNBmKwD2zn7MlXhzaH2qd1rG4VpSw1CnboEdPk8y14C5AejbigsEOowx8h42wRAhNZVIP+yzugBoOcwqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EJBo/UjT; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D9B6C1C0002;
+	Mon,  9 Dec 2024 17:03:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1733763801;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kraLaKMNgpS11ew+7seVSsti9dljqUIID3DS17ZcAtA=;
+	b=EJBo/UjTD6q9UzHZCqakfl0Gl1D9SZCwSV/DSPT+sr0riiqBFQj9KD8HlVezEnNqJFuxH2
+	Nk7+UWK1kBxi3p0V9h8YbJjesuYp8IWqF9NfBsOLym55z01TIbxNiQAP939/wg1EHqKH5u
+	xCTnwY+IcL0LOvWIo6xPXqI4jTKtxzW8WudUDlthbg7we9fS20zuj5nNH5MCdVK854w4JF
+	lyWn12gShNNCDzw2Y1LoP+DuMNr+9wamHruHZcYJaycP6rSkblb3XUMorq6UUMmDts+zS/
+	5P4wENpiWUQUP5ktGjFb3aAjRV7EA5IpPpDEgHe2MevFHta8fKMo9wpBtiFQzA==
+Date: Mon, 9 Dec 2024 18:03:20 +0100
+From: Herve Codina <herve.codina@bootlin.com>
+To: Andrew Davis <afd@ti.com>
+Cc: Ayush Singh <ayush@beagleboard.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann
+ <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Saravana
+ Kannan <saravanak@google.com>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 0/7] of: overlay: Add support for export-symbols node
+ feature
+Message-ID: <20241209180320.30fc0da6@bootlin.com>
+In-Reply-To: <5889e0aa-15f9-41fe-9d80-ec59fee2f62b@ti.com>
+References: <20241209151830.95723-1-herve.codina@bootlin.com>
+	<5889e0aa-15f9-41fe-9d80-ec59fee2f62b@ti.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209161427.3580256-3-Tarun.Alle@microchip.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: herve.codina@bootlin.com
 
-> -	if (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
-> -	    phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_PREFERRED){
-> -		static const struct lan887x_regwr_map phy_cfg[] = {
-> -			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
-> -			{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x0038},
-> -			{MDIO_MMD_VEND1,  LAN887X_INIT_COEFF_DFE1_100, 0x000f},
-> -		};
-> -
-> -		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-> +	if (phydev->autoneg == AUTONEG_DISABLE) {
-> +		if (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
-> +		    phydev->master_slave_set ==
-> +		    MASTER_SLAVE_CFG_MASTER_PREFERRED) {
-> +			ret = lan887x_phy_config(phydev, phy_comm_cfg,
-> +						 ARRAY_SIZE(phy_comm_cfg));
-> +		} else {
-> +			static const struct lan887x_regwr_map phy_cfg[] = {
-> +				{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4,
-> +				 0x0038},
-> +				{MDIO_MMD_VEND1, LAN887X_INIT_COEFF_DFE1_100,
-> +				 0x0014},
-> +			};
-> +
-> +			ret = lan887x_phy_config(phydev, phy_cfg,
-> +						 ARRAY_SIZE(phy_cfg));
-> +		}
+On Mon, 9 Dec 2024 10:47:50 -0600
+Andrew Davis <afd@ti.com> wrote:
 
-It might be better to pull this apart into two helper functions? That
-would avoid most of the not so nice wrapping.
+> On 12/9/24 9:18 AM, Herve Codina wrote:
+> > Hi,
+> > 
+> > At Linux Plumbers Conference 2024, we (me and Luca Ceresolli) talked
+> > about issues we have with runtime hotplug on non-discoverable busses
+> > with device tree overlays [1].
+> > 
+> > On our system, a base board has a connector and addon boards can be
+> > connected to this connector. Both boards are described using device
+> > tree. The base board is described by a base device tree and addon boards
+> > are describe by overlays device tree. More details can be found at [2].
+> > 
+> > This kind of use case can be found also on:
+> >    - Grove Sunlight Sensor [3]
+> >    - mikroBUS [4]
+> > 
+> > One of the issue we were facing on was referencing resources available
+> > on the base board device tree from the addon overlay device tree.
+> > 
+> > Using a nexus node [5] helps decoupling resources and avoid the
+> > knowledge of the full base board from the overlay. Indeed, with nexus
+> > node, the overlay need to know only about the nexus node itself.
+> > 
+> > For instance, suppose a connector where a GPIO is connected at PinA. On
+> > the base board this GPIO is connected to the GPIO 12 of the SoC GPIO
+> > controller.
+> > 
+> > The base board can describe this GPIO using a nexus node:
+> >      soc_gpio: gpio-controller {
+> >        #gpio-cells = <2>;
+> >      };
+> > 
+> >      connector1: connector1 {
+> >          /*
+> >           * Nexus node for the GPIO available on the connector.
+> >           * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
+> >           * controller
+> >           */
+> >          #gpio-cells = <2>;
+> >          gpio-map = <0 0 &soc_gpio 12 0>;
+> >          gpio-map-mask = <0xf 0x0>;
+> >          gpio-map-pass-thru = <0x0 0xf>;
+> >      };
+> > 
+> > The connector pin A GPIO can be referenced using:
+> >    <&connector1 0 GPIO_ACTIVE_HIGH>
+> > 
+> > This implies that the overlay needs to know about exact label that
+> > references the connector. This label can be different on a different
+> > board and so applying the overlay could failed even if it is used to
+> > describe the exact same addon board. Further more, a given base board
+> > can have several connectors where the exact same addon board can be
+> > connected. In that case, the same overlay cannot be used on both
+> > connector. Indeed, the connector labels have to be different.
+> > 
+> > The export-symbols node introduced by this current series solves this
+> > issue.
+> > 
+> > The idea of export-symbols is to have something similar to the global
+> > __symbols__ node but local to a specific node. Symbols listed in this
+> > export-symbols are local and visible only when an overlay is applied on
+> > a node having an export-symbols subnode.
+> > 
+> > Using export-symbols, our example becomes:
+> >      soc_gpio: gpio-controller {
+> >        #gpio-cells = <2>;
+> >      };
+> > 
+> >      connector1: connector1 {
+> >          /*
+> >           * Nexus node for the GPIO available on the connector.
+> >           * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
+> >           * controller
+> >           */
+> >          #gpio-cells = <2>;
+> >          gpio-map = <0 0 &soc_gpio 12 0>;
+> >          gpio-map-mask = <0xf 0x0>;
+> >          gpio-map-pass-thru = <0x0 0xf>;
+> > 
+> >          export-symbols {
+> >            connector = <&connector1>;
+> >          };
+> >      };
+> > 
+> > With that export-symbols node, an overlay applied on connector1 node can
+> > have the symbol named 'connector' resolved to connector1. Indeed, the
+> > export-symbols node available at connector1 node is used when the
+> > overlay is applied. If the overlay has an unresolved 'connector' symbol,
+> > it will be resolved to connector1 thanks to export-symbols.
+> > 
+> > Our overlay using the nexus node can contains:
+> >     node {
+> >        foo-gpio = <&connector 0 GPIO_ACTIVE_HIGH>;
+> >     };
+> > It used the GPIO 0 from the connector it is applied on.
+> > 
+> > A board with two connectors can be described with:
+> >      connector1: connector1 {
+> >          ...
+> >          export-symbols {
+> >            connector = <&connector1>;
+> >          };
+> >      };
+> > 
+> >      connector2: connector2 {
+> >          ...
+> >          export-symbols {
+> >            connector = <&connector2>;
+> >          };
+> >      };
+> > 
+> > In that case, the same overlay with unresolved 'connector' symbol can be
+> > applied on both connectors and the correct symbol resolution (connector1
+> > or connector2) will be done.
+> >   
+> 
+> I might be missing something, but how is the correct connector (connector1
+> or connector2) selected? Let's say I connect my addon board to connector2,
+> then I apply the addon board's overlay to the base DTB. What connector
+> just got referenced?
+> 
 
-	Andrew
+A driver for the connector is needed.
+The driver applies the overlay using of_overlay_fdt_apply().
+The node the overlay has to be applied to is passed by the driver to
+of_overlay_fdt_apply().
+
+Even if obsolete because I added one more parameter (export_symbols_name)
+in of_overlay_fdt_apply() in this current series, you can have a look at the
+following patch to see the connector driver:
+  https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-8-bc4dfee61be6@bootlin.com/
+
+Best regards,
+Hervé
+
+-- 
+Hervé Codina, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
