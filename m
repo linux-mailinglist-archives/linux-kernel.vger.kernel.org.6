@@ -1,126 +1,81 @@
-Return-Path: <linux-kernel+bounces-436691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA3869E8975
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:13:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 739CF9E897B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:21:53 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FAB3283334
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:13:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B5751884C7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:21:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A2F70820;
-	Mon,  9 Dec 2024 03:13:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="K+jQJJsH"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4947A42AA4;
-	Mon,  9 Dec 2024 03:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64169524B4;
+	Mon,  9 Dec 2024 03:21:46 +0000 (UTC)
+Received: from cmccmta1.chinamobile.com (cmccmta8.chinamobile.com [111.22.67.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B9DC3D76;
+	Mon,  9 Dec 2024 03:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733713999; cv=none; b=R7Kr6ITey1I+ZOc4z7SYbRMSse27xcymH5IHpgnz/9AsZPEX/BBuv3nH33ZCqaa/zLFtOK1xelIfi+6cXSZMr53doVFlS9asgq6HVY15Y7Esc4RFNOyC1m0QQf3pjX8J9RNN977lDwWuMXQnc3v0XJNl9M1Jd1H9/q/YqlNuy3M=
+	t=1733714506; cv=none; b=B79/g/GN3M5E4sux4DY7i1AylyiqdSSaYT2/CwQiC1awYtEUn/kiqEyhkdVKgNkJCrI/adM6y/In14ZN6nNuWX+vKw7apq+YhqiVIhNKIJCUzj36rwJ9/zMdsb+Wisf1s63fhzJcE8SqRps4/2RVqZck/GXjanHe8GuH3N9Z//4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733713999; c=relaxed/simple;
-	bh=mmGrFDAhdv3eTyd/mSMRyL+QMooMk1YbUbR+Efz7JAc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Oe4HPL7fmQjc4v4Ch+GfO1UVEkoCEKmmx+17Ra9DXArRPu8LbAZlseNL69laHBLOvysEg2MEiBphm9UWsrlCFL/tFK9NU87wLK+h+SsnQ4Y6l0QCBfSsvjItYvM+0S9zTp0hgp0Zwd5U+zSw1bADd8V4wwuBDSB9M0vkftLC6UY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=K+jQJJsH; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=88hQB4j7kUiotkmkgkgByRkhQv0eIn7O2Y7qAPWY/ZU=; b=K+jQJJsHHuF3lBAjvZgqMSa3Bf
-	Zhe9FMBv8V6ad4i7a05BBLuaXo9dgNylVUELZQU5DwjRug4JNe0OG/rAWMlndChKNHvTttLc67DUt
-	9nbrqFbwVCrT8sq5GS/3Lmu2q8mrMqDRNBeyoazSbfqWLA3dyqjedDwLO389D7GFn4oc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKUCr-00Fbvt-4J; Mon, 09 Dec 2024 04:13:09 +0100
-Date: Mon, 9 Dec 2024 04:13:09 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Yijie Yang <quic_yijiyang@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs615-ride: Enable ethernet
- node
-Message-ID: <4287c838-35b2-45bb-b4a2-e128b55ddbaf@lunn.ch>
-References: <20241118-dts_qcs615-v2-0-e62b924a3cbd@quicinc.com>
- <20241118-dts_qcs615-v2-2-e62b924a3cbd@quicinc.com>
- <ececbbe1-07b3-4050-b3a4-3de9451ac7d7@lunn.ch>
- <89a4f120-6cfd-416d-ab55-f0bdf069d9ce@quicinc.com>
- <c2800557-225d-4fbd-83ee-d4b72eb587ce@oss.qualcomm.com>
- <3c69423e-ba80-487f-b585-1e4ffb4137b6@lunn.ch>
- <2556b02c-f884-40c2-a0d4-0c87da6e5332@quicinc.com>
- <75fb42cc-1cc5-4dd3-924c-e6fda4061f03@quicinc.com>
- <4a6a6697-a476-40f4-b700-09ef18e4ba22@lunn.ch>
- <441f37f5-3c33-4c62-b3fe-728b43669e29@quicinc.com>
+	s=arc-20240116; t=1733714506; c=relaxed/simple;
+	bh=Rez3aHuHQMNMX/y70EcxNccKxCNJGUdMNBKelfEJe4k=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=K+d/bcf8OJRE1nH7FjeV3Oq2lPMuMOnzz7jLwZAWB50Ptv2PHojAS4prKyGrn8uJ600kMK5lxdHFu0fcXYOhuqYAJqTZ8R+Vn5O3vzLJrHGfJkooxIta8uD0ra0QA/vd22ktnx4oqBqlolO3jB/2xDS79mNX5QtynAloJK/l9II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
+	by rmmx-syy-dmz-app02-12002 (RichMail) with SMTP id 2ee26756623fcd5-25cfa;
+	Mon, 09 Dec 2024 11:21:35 +0800 (CST)
+X-RM-TRANSID:2ee26756623fcd5-25cfa
+X-RM-TagInfo: emlType=0                                       
+X-RM-SPAM-FLAG:00000000
+Received:from localhost.localdomain (unknown[10.55.1.71])
+	by rmsmtp-syy-appsvr06-12006 (RichMail) with SMTP id 2ee66756623e653-9afc4;
+	Mon, 09 Dec 2024 11:21:35 +0800 (CST)
+X-RM-TRANSID:2ee66756623e653-9afc4
+From: liujing <liujing@cmss.chinamobile.com>
+To: pkshih@realtek.com,
+	kvalo@kernel.org,
+	suhui@nfschina.com
+Cc: linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	liujing <liujing@cmss.chinamobile.com>
+Subject: [PATCH] rtlwifi: rtl8188ee: fix spelling error in _rtl88e_phy_set_rfpath_switch()
+Date: Mon,  9 Dec 2024 11:21:33 +0800
+Message-Id: <20241209032133.2974-1-liujing@cmss.chinamobile.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <441f37f5-3c33-4c62-b3fe-728b43669e29@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 09, 2024 at 10:11:23AM +0800, Yijie Yang wrote:
-> 
-> 
-> On 2024-11-29 23:29, Andrew Lunn wrote:
-> > > I was mistaken earlier; it is actually the EMAC that will introduce a time
-> > > skew by shifting the phase of the clock in 'rgmii' mode.
-> > 
-> > This is fine, but not the normal way we do this. The Linux preference
-> > is that the PHY adds the delays. There are a few exceptions, boards
-> > which have PHYs which cannot add delays. In that case the MAC adds the
-> > delays. But this is pretty unusual.
-> 
-> After testing, it has been observed that modes other than 'rgmii' do not
-> function properly due to the current configuration sequence in the driver
-> code.
+Fix spelling error in _rtl88e_phy_set_rfpath_switch() function.
 
-O.K, so now you need to find out why.
+Signed-off-by: liujing <liujing@cmss.chinamobile.com>
 
-It not working probably suggests you are adding double delays, both in
-the MAC and the PHY. Where the PHY driver add delays is generally easy
-to see in the code. Just search for PHY_INTERFACE_MODE_RGMII_ID. For
-the MAC driver you probably need to read the datasheet and find
-registers which control the delay.
+diff --git a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c
+index 0fab3a0c7d49..754ca8549c76 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c
++++ b/drivers/net/wireless/realtek/rtlwifi/rtl8188ee/phy.c
+@@ -1891,7 +1891,7 @@ static void _rtl88e_phy_set_rfpath_switch(struct ieee80211_hw *hw,
+ 		rtl_set_bbreg(hw, 0x914, MASKLWORD, 0x0201);
+ 
+ 		/* We use the RF definition of MAIN and AUX,
+-		 * left antenna and right antenna repectively.
++		 * left antenna and right antenna respectively.
+ 		 * Default output at AUX.
+ 		 */
+ 		if (bmain) {
+-- 
+2.27.0
 
-> > If you decided you want to be unusual and have the MAC add the delays,
-> > it should not be hard coded. You need to look at phy-mode. Only add
-> 
-> Are you suggesting that 'rgmii' indicates the delay is introduced by the
-> board rather than the EMAC?
 
-Yes.
 
-> But according to the
-> Documentation/devicetree/bindings/net/ethernet-controller.yaml, this mode
-> explicitly states that 'RX and TX delays are added by the MAC when
-> required'. That is indeed my preference.
-
-You need to be careful with context. If the board is not adding
-delays, and you pass PHY_INTERFACE_MODE_RGMII to the PHY, the MAC must
-be adding the delays, otherwise there will not be any delays, and it
-will not work.
-
-> > delays for rgmii-id. And you then need to mask the value passed to the
-> > PHY, pass PHY_INTERFACE_MODE_RGMII, not PHY_INTERFACE_MODE_RGMII_ID,
-> > so the PHY does not add delays as well.
-
-	Andrew
 
