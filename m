@@ -1,206 +1,232 @@
-Return-Path: <linux-kernel+bounces-438085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF0479E9C99
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:07:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE31D9E9C9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:07:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFEEC162F7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:07:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4073318871FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4B7150980;
-	Mon,  9 Dec 2024 17:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C57021547D5;
+	Mon,  9 Dec 2024 17:07:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="LCcbJLLH"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lgmtZFvm"
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0684288CC
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:07:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CF7146D57
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764032; cv=none; b=Zu+473eSCEF1Xhuz6+XCgASXj8C2D3KYbDpoAEl56pCoCI8tdmT57y4PSx/hDSCLdpqBWxp6wScb1XVAiteF5pmPH4Ql9yLQpPzB3C9Vzx5nqK4oyYDlaEl/YhqOHPtKG7y40LobxiCrSYzBgE/Ggp2kIvVByKr33e1WXdIaKVA=
+	t=1733764035; cv=none; b=c1tL1UU5FFaO9SbMwwq3+DERPP8jsa/wTDHYSsvZotLjvpL+EGOpETgZ2fhEi4PcbRyH23MMVNZyb9sHBGT+Qx3pWLJNbgwNZmfZNdtl3TNxcEbPAyKl6dpxVrBRYtQrUIVu8QL+1Xrzoag/qEkrNnlYy1wVo+QarjenkDs33Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764032; c=relaxed/simple;
-	bh=toaR6bkHLo5MUrKujBSoPUGhX82elhFaZup0MLY7pn8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=RCESXto+OHGQc03NCOTew2hQupasbyUPYcg6kH6EeoA2oNEekI/TUtBoYQXPjTeKinfZ+rFDLJK40kfadkHMsCUK8YANgxYfL4ig79gc613rxCzwB/ue3470uKbk13CWVhH6rNSLWuZmGM4cpK81SjFjb5uib8fwkb4hhFW6zpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=LCcbJLLH; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=toaR6bkHLo5MUrKujBSoPUGhX82elhFaZup0MLY7pn8=; b=LCcbJLLHDElLuA74JAE+xvs0TB
-	9lxv9vxQqAchnJ8U2p5gs8MDfltwODeup7JD+i67Eibp/i8qV/634Lk1NtBhl+h8vR6LOh2rpjP9W
-	9irup5QinI1S6uPx10lKC5FiJLKOuFwK9c0fL/X9ppaQLg4E/lm9mrjKeJaLFlwDsjs50awJMzu96
-	sh0OmM0erV7bbl0zFRMvnnG4brvYWpqazJNj+MPBV3oiQ7ZxFtfqCYmOBxGItzQPRVf7Jq6qCbIrU
-	Lddw50cjPvcV4AuhP4naR8lxocFtv5BG6YLF9CtKFx4nMnz/rHkVs3rN9XoKnXzTQYbQWAzBRpTIR
-	z//XDE7Q==;
-Received: from [54.240.197.233] (helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKhDv-00000003RoV-0Q5h;
-	Mon, 09 Dec 2024 17:07:07 +0000
-Message-ID: <9b8f82c0c38093f0092f1015b641c30f2f478e17.camel@infradead.org>
-Subject: Re: [EXTERNAL] [PATCH] x86: Fix build regression with
- CONFIG_KEXEC_JUMP enabled
-From: David Woodhouse <dwmw2@infradead.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Damien Le Moal <dlemoal@kernel.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>, Ingo Molnar <mingo@kernel.org>, Thomas
- Gleixner <tglx@linutronix.de>, x86@kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 09 Dec 2024 17:07:06 +0000
-In-Reply-To: <20241209162247.GFZ1cZVycGCYJwnMxw@fat_crate.local>
-References: <20241208235332.479460-1-dlemoal@kernel.org>
-	 <20241209102929.GBZ1bGiT-DGK8uDdo4@fat_crate.local>
-	 <7ee6d1aff2da6f79e08c9a3134bc8519e991f0f4.camel@infradead.org>
-	 <20241209162247.GFZ1cZVycGCYJwnMxw@fat_crate.local>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-1jTMYfLau5xjPEKSDBL4"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1733764035; c=relaxed/simple;
+	bh=6QHNFoOyCLLCOprlGxwgr4wtXY/9BMMhCylqPIU9iec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=g+AqJQ4O3f8GfPCZIMGsodXKT/qfSkG57y9LR34fXGkw0OBoivv9IeaWs0PIJ2k0BjmKmYfhtKcdDaOz59bW4DwvxzLR/clvcwjeELHNrbyzb8VBNG/Q+FWOaymGW7U9xSaomGMpisJC7XUi3ehdGWCKthrMzH6vM0+WAQVbV3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lgmtZFvm; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-71deb3745easo284669a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:07:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1733764030; x=1734368830; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ts2tIWXtXU2E7gTgnS4zrXEWacYOhqUWs3qs84T0QwA=;
+        b=lgmtZFvm54fQTMIg4rf9hMBLTNpe5tf0wS4PQPiWCsc7rG1I9xPYjIpI2pSwHVHUx/
+         KJKCjRVf5z/YcB7b8ieZyWpxb2+hEVWxrwqkaN5EVsQg5UQ7GtP//z67vL6y/TcO1jrr
+         G3zEIIGaWrpftBb5OPtRQoaRtofFBDUiulCZLWBwrnPIY/D1pRX5hcBTI4W8niOZfD+0
+         MK65xljLXgPFcivcKuaivGJNlpoci65r5s9On9Yp8pLbHqFxhrSV3oLJahZbZsl93wby
+         w3NCPv4wd8Xlz7JM86lmjNsn2IQ4eeK5+JZStx1bKpaZTiDZdVhJ9BMhXWn+4VwIg/Cw
+         Op4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733764030; x=1734368830;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ts2tIWXtXU2E7gTgnS4zrXEWacYOhqUWs3qs84T0QwA=;
+        b=GptHLlnPwZNy96lDpNLGqV13mL0vgk8A+z/NVoEMFLPFnsIO5AfSpNZRJsUwxu/fMo
+         bfqLCVZ1JoszF0j4n3XKnPjBq+x10hpN0Cz9bAbzGsjqtzwfv6WLues4x6XiblULooDF
+         aYsO+8e2fpeW3mIqueus7TRGejlTy7umwitZNpw1mDYNnAIkDpJjblazUGkRzeT8xLEC
+         VSbihK1FPWeAQo+y9pVi938Td/8hsLsl4WYokUD8lXazJEY8N31VQ4WRcfTQixXFzkHy
+         Hk0RyDGJ5r2Q6HdUx2XbCMMqyQUQjw4otPEby7p9aHdRF/AU/T3/Kw9R7BdCEvsISBoK
+         bZpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOvey1kR5QTVAqUr3fekfBZgmUdoTe8I7TncaGdg1EAbgpfCFRKGuFgmGWTRDYeSen3HCKbeD2Y+Kdy9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzby6zBwf9TQdzHWqPUz5Rh2KlBo+2v4wwMOS9w7oLMAGukPdlt
+	drf0OeV6+Rm7ZeBhjXZIfBbJx2O8sYcJ87Md383hEBC/8aGCFM8n6oQwckylSZQ=
+X-Gm-Gg: ASbGncvl515UpNb47/S8mYISH45d/dYXYdcWj/t1+RkzkPoWm6lzYLWzX27nD/who21
+	1HxrIJXphHG3H7jdHVPTBv/ghDO0gMnYBq52IrfF5om9YvXxhSDijQbUHvCo3pfh8jXwJSnjFRE
+	gvSSvDy6kZHBDfZfWWDk9unocCF4/7tC3gxnU5LQR7OYIF/WWzII7SQmsk4TclDpxiO1E9mtJMo
+	N0p/TnxJ42Myhg1Par2KqCzFguBphhizMoqJ1FrNd6TxZr658ExKJORDvzjJovz3bzyCAdVxd8F
+	4bWdkLzmIfM=
+X-Google-Smtp-Source: AGHT+IFr1v3eMTCDoHKwzSdd6E2ceD6LV8bAwZtXDNnskXWEMJJtepd+JZw7mMw4KfxBhmpg8tG+ng==
+X-Received: by 2002:a05:6830:f83:b0:71d:62bc:85ec with SMTP id 46e09a7af769-71e021cf6a1mr981278a34.13.1733764030327;
+        Mon, 09 Dec 2024 09:07:10 -0800 (PST)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-71dfd1dad2asm232242a34.41.2024.12.09.09.07.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 09:07:09 -0800 (PST)
+Message-ID: <09902fa0-5a83-4d9b-aa86-f4ee7c0a46d0@baylibre.com>
+Date: Mon, 9 Dec 2024 11:07:07 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/3] iio: adc: ad7192: Add sync gpio
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Alisa-Dariana Roman <alisa.roman@analog.com>,
+ Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+ Michael Hennerich <michael.hennerich@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+References: <20241128125811.11913-1-alisa.roman@analog.com>
+ <20241128125811.11913-4-alisa.roman@analog.com>
+ <20241130183839.1fd5884f@jic23-huawei>
+ <6435f696-40fe-4ff9-ae76-1f121fe7604f@baylibre.com>
+ <20241208184337.79c701db@jic23-huawei>
+Content-Language: en-US
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <20241208184337.79c701db@jic23-huawei>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 12/8/24 12:43 PM, Jonathan Cameron wrote:
+> On Mon, 2 Dec 2024 16:21:43 -0600
+> David Lechner <dlechner@baylibre.com> wrote:
+> 
+>> On 11/30/24 12:38 PM, Jonathan Cameron wrote:
+>>> On Thu, 28 Nov 2024 14:55:03 +0200
+>>> Alisa-Dariana Roman <alisadariana@gmail.com> wrote:
+>>>   
+>>>> Add support for the SYNC pin of AD719x devices. This pin is controlled
+>>>> through a GPIO. The pin allows synchronization of digital filters and
+>>>> analog modulators when using multiple devices.
+>>>>
+>>>> Signed-off-by: Alisa-Dariana Roman <alisa.roman@analog.com>  
+>>> Hi.
+>>>
+>>> Like all userspace ABI, this needs documentation.
+>>>
+>>> It's an unusual feature, so some usecases would help.
+>>>
+>>> It is also cross multiple devices which makes this odd as only one device
+>>> can presumably acquire the gpio?
+>>>
+>>> An alternative would be to look at how to do this with a 'wrapper' sort of device
+>>> so that we have one instance to which this applies.
+>>>
+>>> I'm not sure that helps that much though as we'd still need some for of
+>>> 'I'm setup for all channels, now you can go' ABI.
+>>>
+>>> Jonathan
+>>>   
+>>
+>> Giving userspace direct control over the /SYNC pin without coordinating
+>> with the rest of the driver does seem like it could be asking for trouble.
+>>
+>> It seems like the only time you would want to actually toggle the /SYNC
+>> pin is when starting a buffered read.
+>>
+>> 1. Deassert /SYNC so that no conversions can be triggered.
+>> 2. Enable buffered reads for all chips connected to the same GPIO.
+>> 3. Assert /SYNC to start all conversions at the same time.
+>>
+>> So it could make sense to integrate this into the buffer pre/post enable
+>> callbacks somehow instead of adding a new sysfs attribute.
+>>
+>> For the "wrapper" device, maybe we could do something with configfs to
+>> enable dynamically connecting multiple device instances? We might not
+>> need to actually create a separate device in sysfs, but just do something
+>> so that enabling a buffered read on the first chip will enable buffered
+>> reads on all of the chips in the group.
+>>
+>> It seems like we have some other chips that are currently being worked on
+>> that also have the possibility of some sort of multi-chip synchronization
+>> like this so it would be nice to come up with a general solution.
+> 
+> Most of the multichip cases we've had before have been chained, rather
+> than separate data interfaces, hence I don't recall us needing something
+> like this before.
+> 
+>>
+>> Another use case for a general synchronized buffered read/write between
+>> multiple chips would be the AD3552R DAC. Recently, while adding support
+>> for an IIO backend for this chip, we saw that the AXI DAC backend has a
+>> synchronization feature like this where you set an "arm" bit on all AXI
+>> DAC instances. Then when you enable streaming to the first chip, it also
+>> triggers all of the other AXI DAC blocks to start streaming at the same
+>> time. We ended up not implementing that feature since the IIO subsystem
+>> doesn't really support this yet, but could be a good one to look at as a
+>> similar feature with a different implementation to help us find a general
+>> solution.
+>>
+> This feels like a case where we need a prototype to poke holes in.
+> It's not totally dissimilar from the hardware trigger stuff that
+> exists in a few devices. Some of the stm parts for instance where the
+> triggering is entirely within the chip.  Maybe we could make something
+> like that work.  So the driver instance that has the sync pin registers
+> a trigger that the other devices use.   It's a bit ugly though and we'd
+> still need a dt-binding to let us know 'which' devices are connected
+> to that sync pin.
+> 
+> Jonathan
+> 
+> 
 
---=-1jTMYfLau5xjPEKSDBL4
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+A shared trigger was one of the ideas that crossed my mind as well.
+Are you suggesting that the "main" chip would have the sync-gpios
+property in it's .dts node and then the other chips would have a
+trigger-sources = <&main_adc>; property instead of the sync-gpios
+property? (FYI, trigger-sources/#trigger-source-cells are becoming
+are becoming general properties with the SPI offload work I have
+been doing, so should be available to use soon-ish).
 
-On Mon, 2024-12-09 at 17:22 +0100, Borislav Petkov wrote:
-> On Mon, Dec 09, 2024 at 03:59:55PM +0000, David Woodhouse wrote:
-> > (In fact, *lots* of the return path from kexec is just unreachable dead
-> > code in the case that CONFIG_KEXEC_JUMP isn't set, but it seems we're
-> > in the habit of #ifdeffing out only the parts that actually wouldn't
-> > compile.)
->=20
-> Yeah, we're allergic to ugly ifdeffery.
+Now, to try to poke a hole in this idea...
 
-I suspect it would be less ugly overall if we #ifdef out the whole of
-the preserve_context code path when CONFIG_KEXEC_JUMP isn't enabled,
-rather than only the various parts of it that actually cause compile
-failures, leaving a very confusing set of nonsense dead code actually
-being compiled in. But that's a potential cleanup for later; I'm
-standing in a massive pile of yak hair already...
+It seems like most (all?) triggers are set up to trigger an individual
+sample. But in this case, the /SYNC pin would just be triggering the
+start of a buffered read, so triggering multiple samples. Does this
+still fit within the definition of a struct iio_trigger?
 
---=-1jTMYfLau5xjPEKSDBL4
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
+One way to possibly make it work without a struct iio_trigger could
+work like this:
+* During probe, "main" chips sets /SYNC so that chips won't sample
+  data.
+* Set up and enable a buffered read for all non-main chips that have
+  the /SYNC pin connected to a common GPIO. Chips don't actually start
+  sampling when buffer is enabled due to /SYNC pin state.
+* Enable the buffer on the "main" chip last. This changes the /SYNC
+  pin state in the buffer pre/post enable and all chips start
+  sampling at the same time.
+* Read from all buffers for as long as you want.
+* Similarly, to stop, the "main" chip should have it's buffer disabled
+  first, which changes the /SYNC pin state causing all chips to stop
+  sampling.
+* Then other buffers can be disabled.
 
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCEkQw
-ggYQMIID+KADAgECAhBNlCwQ1DvglAnFgS06KwZPMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQG
-EwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoT
-FVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0
-aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGWMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYD
-VQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50
-aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-AQEAyjztlApB/975Rrno1jvm2pK/KxBOqhq8gr2+JhwpKirSzZxQgT9tlC7zl6hn1fXjSo5MqXUf
-ItMltrMaXqcESJuK8dtK56NCSrq4iDKaKq9NxOXFmqXX2zN8HHGjQ2b2Xv0v1L5Nk1MQPKA19xeW
-QcpGEGFUUd0kN+oHox+L9aV1rjfNiCj3bJk6kJaOPabPi2503nn/ITX5e8WfPnGw4VuZ79Khj1YB
-rf24k5Ee1sLTHsLtpiK9OjG4iQRBdq6Z/TlVx/hGAez5h36bBJMxqdHLpdwIUkTqT8se3ed0PewD
-ch/8kHPo5fZl5u1B0ecpq/sDN/5sCG52Ds+QU5O5EwIDAQABo4IBZDCCAWAwHwYDVR0jBBgwFoAU
-U3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFAnA8vwL2pTbX/4r36iZQs/J4K0AMA4GA1Ud
-DwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEF
-BQcDBDARBgNVHSAECjAIMAYGBFUdIAAwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2Vy
-dHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUF
-BwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJT
-QUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0G
-CSqGSIb3DQEBDAUAA4ICAQBBRHUAqznCFfXejpVtMnFojADdF9d6HBA4kMjjsb0XMZHztuOCtKF+
-xswhh2GqkW5JQrM8zVlU+A2VP72Ky2nlRA1GwmIPgou74TZ/XTarHG8zdMSgaDrkVYzz1g3nIVO9
-IHk96VwsacIvBF8JfqIs+8aWH2PfSUrNxP6Ys7U0sZYx4rXD6+cqFq/ZW5BUfClN/rhk2ddQXyn7
-kkmka2RQb9d90nmNHdgKrwfQ49mQ2hWQNDkJJIXwKjYA6VUR/fZUFeCUisdDe/0ABLTI+jheXUV1
-eoYV7lNwNBKpeHdNuO6Aacb533JlfeUHxvBz9OfYWUiXu09sMAviM11Q0DuMZ5760CdO2VnpsXP4
-KxaYIhvqPqUMWqRdWyn7crItNkZeroXaecG03i3mM7dkiPaCkgocBg0EBYsbZDZ8bsG3a08LwEsL
-1Ygz3SBsyECa0waq4hOf/Z85F2w2ZpXfP+w8q4ifwO90SGZZV+HR/Jh6rEaVPDRF/CEGVqR1hiuQ
-OZ1YL5ezMTX0ZSLwrymUE0pwi/KDaiYB15uswgeIAcA6JzPFf9pLkAFFWs1QNyN++niFhsM47qod
-x/PL+5jR87myx5uYdBEQkkDc+lKB1Wct6ucXqm2EmsaQ0M95QjTmy+rDWjkDYdw3Ms6mSWE3Bn7i
-5ZgtwCLXgAIe5W8mybM2JzCCBhQwggT8oAMCAQICEQDGvhmWZ0DEAx0oURL6O6l+MA0GCSqGSIb3
-DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYD
-VQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNlY3RpZ28g
-UlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBMB4XDTIyMDEwNzAw
-MDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJARYTZHdtdzJAaW5mcmFkZWFkLm9y
-ZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3GpC2bomUqk+91wLYBzDMcCj5C9m6
-oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZHh7htyAkWYVoFsFPrwHounto8xTsy
-SSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT9YgcBqKCo65pTFmOnR/VVbjJk4K2
-xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNjP+qDrh0db7PAjO1D4d5ftfrsf+kd
-RR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy2U+eITZ5LLE5s45mX2oPFknWqxBo
-bQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3BgBEmfsYWlBXO8rVXfvPgLs32VdV
-NZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/7auNVRmPB3v5SWEsH8xi4Bez2V9U
-KxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmdlFYhAflWKQ03Ufiu8t3iBE3VJbc2
-5oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9aelIl6vtbhMA+l0nfrsORMa4kobqQ5
-C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMBAAGjggHMMIIByDAfBgNVHSMEGDAW
-gBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeDMcimo0oz8o1R1Nver3ZVpSkwDgYD
-VR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMC
-MEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGln
-by5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuc2VjdGlnby5jb20vU2VjdGln
-b1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmwwgYoGCCsGAQUFBwEB
-BH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBQ2xpZW50
-QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29j
-c3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5mcmFkZWFkLm9yZzANBgkqhkiG9w0B
-AQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQvQ/fzPXmtR9t54rpmI2TfyvcKgOXp
-qa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvIlSPrzIB4Z2wyIGQpaPLlYflrrVFK
-v9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9ChWFfgSXvrWDZspnU3Gjw/rMHrGnql
-Htlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0whpBtXdyDjzBtQTaZJ7zTT/vlehc/
-tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9IzCCBhQwggT8oAMCAQICEQDGvhmW
-Z0DEAx0oURL6O6l+MA0GCSqGSIb3DQEBCwUAMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3Jl
-YXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0
-ZWQxPjA8BgNVBAMTNVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJl
-IEVtYWlsIENBMB4XDTIyMDEwNzAwMDAwMFoXDTI1MDEwNjIzNTk1OVowJDEiMCAGCSqGSIb3DQEJ
-ARYTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJKoZIhvcNAQEBBQADggIPADCCAgoCggIBALQ3
-GpC2bomUqk+91wLYBzDMcCj5C9m6oZaHwvmIdXftOgTbCJXADo6G9T7BBAebw2JV38EINgKpy/ZH
-h7htyAkWYVoFsFPrwHounto8xTsySSePMiPlmIdQ10BcVSXMUJ3Juu16GlWOnAMJY2oYfEzmE7uT
-9YgcBqKCo65pTFmOnR/VVbjJk4K2xE34GC2nAdUQkPFuyaFisicc6HRMOYXPuF0DuwITEKnjxgNj
-P+qDrh0db7PAjO1D4d5ftfrsf+kdRR4gKVGSk8Tz2WwvtLAroJM4nXjNPIBJNT4w/FWWc/5qPHJy
-2U+eITZ5LLE5s45mX2oPFknWqxBobQZ8a9dsZ3dSPZBvE9ZrmtFLrVrN4eo1jsXgAp1+p7bkfqd3
-BgBEmfsYWlBXO8rVXfvPgLs32VdVNZxb/CDWPqBsiYv0Hv3HPsz07j5b+/cVoWqyHDKzkaVbxfq/
-7auNVRmPB3v5SWEsH8xi4Bez2V9UKxfYCnqsjp8RaC2/khxKt0A552Eaxnz/4ly/2C7wkwTQnBmd
-lFYhAflWKQ03Ufiu8t3iBE3VJbc25oMrglj7TRZrmKq3CkbFnX0fyulB+kHimrt6PIWn7kgyl9ae
-lIl6vtbhMA+l0nfrsORMa4kobqQ5C5rveVgmcIad67EDa+UqEKy/GltUwlSh6xy+TrK1tzDvAgMB
-AAGjggHMMIIByDAfBgNVHSMEGDAWgBQJwPL8C9qU21/+K9+omULPyeCtADAdBgNVHQ4EFgQUzMeD
-Mcimo0oz8o1R1Nver3ZVpSkwDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYDVR0lBBYw
-FAYIKwYBBQUHAwQGCCsGAQUFBwMCMEAGA1UdIAQ5MDcwNQYMKwYBBAGyMQECAQEBMCUwIwYIKwYB
-BQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9j
-cmwuc2VjdGlnby5jb20vU2VjdGlnb1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1h
-aWxDQS5jcmwwgYoGCCsGAQUFBwEBBH4wfDBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5zZWN0aWdv
-LmNvbS9TZWN0aWdvUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFpbENBLmNydDAj
-BggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wHgYDVR0RBBcwFYETZHdtdzJAaW5m
-cmFkZWFkLm9yZzANBgkqhkiG9w0BAQsFAAOCAQEAyW6MUir5dm495teKqAQjDJwuFCi35h4xgnQv
-Q/fzPXmtR9t54rpmI2TfyvcKgOXpqa7BGXNFfh1JsqexVkIqZP9uWB2J+uVMD+XZEs/KYNNX2PvI
-lSPrzIB4Z2wyIGQpaPLlYflrrVFKv9CjT2zdqvy2maK7HKOQRt3BiJbVG5lRiwbbygldcALEV9Ch
-WFfgSXvrWDZspnU3Gjw/rMHrGnqlHtlyebp3pf3fSS9kzQ1FVtVIDrL6eqhTwJxe+pXSMMqFiN0w
-hpBtXdyDjzBtQTaZJ7zTT/vlehc/tDuqZwGHm/YJy883Ll+GP3NvOkgaRGWEuYWJJ6hFCkXYjyR9
-IzGCBMcwggTDAgEBMIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVz
-dGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMT
-NVNlY3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEA
-xr4ZlmdAxAMdKFES+jupfjANBglghkgBZQMEAgEFAKCCAeswGAYJKoZIhvcNAQkDMQsGCSqGSIb3
-DQEHATAcBgkqhkiG9w0BCQUxDxcNMjQxMjA5MTcwNzA2WjAvBgkqhkiG9w0BCQQxIgQgOxxN44tI
-ZUERUth/JGNyRunmX1/kmT5yeyjDeT+vh/Awgb0GCSsGAQQBgjcQBDGBrzCBrDCBljELMAkGA1UE
-BhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYG
-A1UEChMPU2VjdGlnbyBMaW1pdGVkMT4wPAYDVQQDEzVTZWN0aWdvIFJTQSBDbGllbnQgQXV0aGVu
-dGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQQIRAMa+GZZnQMQDHShREvo7qX4wgb8GCyqGSIb3
-DQEJEAILMYGvoIGsMIGWMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVy
-MRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxPjA8BgNVBAMTNVNl
-Y3RpZ28gUlNBIENsaWVudCBBdXRoZW50aWNhdGlvbiBhbmQgU2VjdXJlIEVtYWlsIENBAhEAxr4Z
-lmdAxAMdKFES+jupfjANBgkqhkiG9w0BAQEFAASCAgCVRRYSt6zGd8Y0WiVcI3RwxRk1Qe3gQ/nr
-sCVXa7uQJoozxzUrpiZ3IBC7buRzQYgstrODOcrj7UgJ0VeZk5lPh5KdCZHZIK/vK0ZCE1w8jhmE
-zrIQlCVPT2yPifgGL7GhFLRLMU6krSTqzAumqkW9Vj2136OewGTa4d1ZVt3KpZ1AJkkaVvbeINlI
-Dh2Eq17Y+P8/SgoiZLYQ+NyrTi2+k7AQTVQvQ3RBlnYPDG6O/vi5Qpife4X2IqV9DkkOP1/dwpPn
-J4uF/0CcI6FpWymxHk+mGZahRcoTQ5angkPmEjN7aS92xBe1E14SGQR2gHo8bNyMmnvsEx5QbvqA
-qiaDmAnqN2AFD1wzd60jxzJTpjVHhYZjJf/Td/LHNAFzhAF8ZlFigFZc8JsqncG271bDgOYPM2Ve
-XckhEjZTtBDDtYrXhxe4K1QKkunh/MjHmNIbMuy78gmrsDdcY5Ky0XVNHm3CZkk9XNetBBOPtkeG
-Bhdwo2DSbw6tYWKAXfux/vNBMl6Sc9BwUZxNEEGwu/NYMPONWbtYVjkiS7kE3rsLZbAnV0OouwGi
-t/WDsLiOrlkQ84xjiSgaSORaI1+c5ynrzXuulVqORB7UeX4Qtu9ANACDEMpxmWiD0cEIu3847a43
-ArXrKBhhubeUJEIFf/4a8JkRfHT9suSMr7PFlB734gAAAAAAAA==
+Alternately, we could have a struct iio_trigger and expose control of
+the /SYNC pin state as a sysfs attribute on the trigger. This would be
+more like what Alisa-Dariana has proposed already.
 
+It could work like this:
+* Set up and enable a buffered read for all chips that have the /SYNC pin
+  connected to a common GPIO. Chips don't actually start sampling when
+  buffer is enabled due to /SYNC pin state.
+* Write to a new trigger sysfs attribute to start sampling on all chips at
+  the same time.
+* Read from all buffers for as long as you want.
+* Write to the trigger sysfs attribute to stop sampling on all chips at
+  the same time.
+* Disable buffers on all chips.
 
---=-1jTMYfLau5xjPEKSDBL4--
 
