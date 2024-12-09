@@ -1,311 +1,162 @@
-Return-Path: <linux-kernel+bounces-438155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9169E9D80
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:51:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3032C9E9D89
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:52:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16791162133
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:51:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 676B51887843
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F9A1581F2;
-	Mon,  9 Dec 2024 17:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85C4E1B424E;
+	Mon,  9 Dec 2024 17:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PSjoyWKg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eE7GpyZw"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1E214B077;
-	Mon,  9 Dec 2024 17:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 701991534EC;
+	Mon,  9 Dec 2024 17:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766657; cv=none; b=jPIsdHSgdY++5ALJfSz6Ka457g0nxaZ8s1me+KY3cLZk0TCzPcMNITCATXCi0TljREkhNuRRgVvWdbx5jEkBAcnJnLVx8i3+W5r95vEmvuIk/Ns/qKXOE8krr+4ybOYvVfd6o5gZuM7yeqcf6KB662ulhfZY2IUqqjUi1UgeUp0=
+	t=1733766736; cv=none; b=VT1bfX1CBGblgMJkMnfY+kJH60R6Zl1O+RGTevubzSNFFUnm56pgkYtSjf27cMavVC5eA1rxK1hUBEym4YpZ6OxSoBgyrfyYfmdj97ioV1HMZvu6yB+uef1p1uLvgP4iABTl+UZ2T6OLWMWIfdi5O/hoN5IavSl354yLmqrDPpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766657; c=relaxed/simple;
-	bh=Y4occCNc6/Ici7P42BSSg7VGntQQoGUD7KDgt5ccTn8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=vGBq8+QvZZbACWyq1Zhb5htd1lulkzOqhLrgFi3d7HEqB7nxV7smI2nFofbDCbZcTjngUFuzqVBUUZKWV1cPJXrCqGOY/5f0v4/IHHn+ZLDxXTuBqKReIS06cNviKLq5Q++i4UtWgySqysk1oxgznb2IzI9c7+pylpNeJ2cOqA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PSjoyWKg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 7155FC4CEDF;
-	Mon,  9 Dec 2024 17:50:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733766656;
-	bh=Y4occCNc6/Ici7P42BSSg7VGntQQoGUD7KDgt5ccTn8=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=PSjoyWKgILdPElYmU+CVBdk/szbEogFSjIpw1YK6zDdg8hHMfDWNEHA6TtWv6MQOk
-	 /OqUk/DpElRdkTgz7QKzik2wg/8AxnzXqEiU7ZY3OcGCXiWaJ1w8WPx9ADWdYmg51n
-	 oybMpJemh4RMYnQlw5RWNZ0eI5tCr3hSZjPJluyVJxoLywXfIAnDCnAc8+wiD9uMWH
-	 gHsiUafkuy+2HmVSIT/mSx4KVe0L4fG4xEFoEh1CM68Jm62jPRLUnTFmj2zyfJa2D0
-	 Hz87dA3mJOKPRCcDUtS7U6ymqjl+Q7bqaogk9dZH69TvRNVAmcj6cawRvci6D9TkJu
-	 X4kHjq0bpVe0A==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A0C8E7717D;
-	Mon,  9 Dec 2024 17:50:56 +0000 (UTC)
-From: Dimitri Fedrau via B4 Relay <devnull+dimitri.fedrau.liebherr.com@kernel.org>
-Date: Mon, 09 Dec 2024 18:50:42 +0100
-Subject: [PATCH net-next] net: phy: dp83822: Replace DP83822_DEVADDR with
- MDIO_MMD_VEND2
+	s=arc-20240116; t=1733766736; c=relaxed/simple;
+	bh=Lc7CMi5T65fd+xzDNMdvkp4IAYlvO1VlGvQ6pgsERuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ksnx/qvluYmWw3PPKMrxJlMqhxIK+EDhHJ1kUWlB4SXB1GsA4aLzewfCXgcDnUwdKscHvh313DMRGOnpJqufIFlSmaqS3WtAklQG+e1wYKfLWXis0oxduH2tjLwZEqUGpvbAtaZvDECiTb/KaKO5X1AR5vPz6UHyX9UfFv/SOKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eE7GpyZw; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cf3e36a76so40366395ad.0;
+        Mon, 09 Dec 2024 09:52:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733766734; x=1734371534; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=y/trAWIOmyeIA9QLmudtLE6fFCuJ9kiR9bEYA8dkGpM=;
+        b=eE7GpyZwi3Z2zuzClFSCgNjUgc+O1qMZRbw37QOpO8BY9b/C7Fpqd3bVtIB3OMPRjz
+         r+9xdJiu7wExiy8QP/J8M7q1qptWqDpJVMQSKzutwMsQ0Krh1BlM3CJaztlKkNjwhSOs
+         hMjCkA0RcwZZn3EOD7AtgxHRJV8M64NGnhTE2bmi8IZBtz52eMUSvC3huQwl2TJrrOy0
+         9sNmNi80nX4bBu15dwAxBeZ4q6Ogb8cL3kjmQq0368bQfFQ8ivKgFw8KnTs1m0tdwHMU
+         F2IO47a+p+hiEZGhalgqgq1qSq1XTDfnSTSUYI+LATyLg77RVbD43U17NEk6tDD1qG+o
+         KjWA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733766734; x=1734371534;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y/trAWIOmyeIA9QLmudtLE6fFCuJ9kiR9bEYA8dkGpM=;
+        b=oRjgEWZukmN+B5W0LK+ZQgpivEG/fxqSLYclCgzm6to10W2rRefisBwv9e3B//YwcE
+         soEoAslMBoe+5xNtWkZGi6xdLA1nIlBXoDN3l++MS4rlGNwgr7KLkS8za1qeBD7skC/E
+         YRUzN6/HMvr3DI0aVcf+6FuqUB6aENiJKfIqLwrjPJRlsmMRuqBUfNAupykIWnsIzV57
+         d4tIcpjfqQLgVg01zdI+lcglxP9n89g0/I+d21zPBIoHVQNQir3Q87ppuBgMHFNpd4Ds
+         Hjvmse9cTMZZf0jvfTawuIlob4o3nZ6jLg02GjQ95C7pj3QwpLbh0fVwWbU20SZZICP3
+         iadA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv31uyY85VYNjMcx5/ClWXAY5gNrWIT1PJ/w+7n1XUKbSe/t678T2dmR3doB7VK2zGNTCaA3RWXxqn8+s=@vger.kernel.org, AJvYcCW11gx2hvCGJPbS6rwnWHybsxEbOPxkXjq1gJ+EOsLgeSxQdvJ7OgPPJFtHUEIIdw2s0x/Oos7NMtZzf6QQ@vger.kernel.org, AJvYcCW9Jd6zOhVK7lpgHiQu9Z4GfPQeTyRvJ9aIiV6DDw+51FoNJwHbhD+kq/p3T1RNdjXbCErZczqNvjFhZw==@vger.kernel.org, AJvYcCXVZIyJeH7HaYLQrCsJ4afL4LRDStA9NmWvr8bAeJHSUsLY4+ttCSjlEmbj52wKOKNi8sRyegkNmbZm@vger.kernel.org
+X-Gm-Message-State: AOJu0YyR/tetmxkMhEWG5lfTm2Djek81NsQYF7Ui3sgP//LMW1JEnxYb
+	NJmWaP2N0HimVKExABaD8uyzlD7S6tPS+eG+eAKULVxTANJeMWo0
+X-Gm-Gg: ASbGncvuhwrRo9fRNPAWMKAcv3FMYVGEFapuG5DmpHIBo9eN7aCmt+YtYmW1CizD8tC
+	qe4al9wNJ8NTR6SrF3h83onysIGdjGyPd78la0NKT0lkIUIvpGnc/cCCeJwh8I34TjwOr34EBdT
+	jSxHhZSFHtBEgWNZepbHXZ2SC4MHuBA5JJxD1QkLYMDN5LUSNGf9roOjQQ+975hoVNnJX5fPlvo
+	AmwBj52KizXLy/VKkjAh1WI//CK+SuOXe3bJARuV4lC/Ajsxig=
+X-Google-Smtp-Source: AGHT+IEEsOy5X7sKBxPB0ErJL0U3xEpqXt12FxzWmgM7Kpv/Qhhll30qQ8stWy7rSmWuum3iWYSYdw==
+X-Received: by 2002:a17:903:41ce:b0:216:1e9f:c5db with SMTP id d9443c01a7336-21669fd3b9cmr19690625ad.28.1733766734346;
+        Mon, 09 Dec 2024 09:52:14 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:ecfb:32dc:2452:3a27])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-216363a3176sm34602515ad.246.2024.12.09.09.52.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 09:52:13 -0800 (PST)
+Date: Mon, 9 Dec 2024 09:52:11 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: akemnade@kernel.org
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Andreas Kemnade <andreas@kemnade.info>,
+	Tony Lindgren <tony@atomide.com>,
+	Conor Dooley <conor+dt@kernel.org>, linux-omap@vger.kernel.org,
+	khilman@baylibre.com, devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH RESEND 1/2] Input: tsc2007 - accept standard properties
+Message-ID: <Z1cuSxrV-ceaO1k9@google.com>
+References: <20241205204413.2466775-1-akemnade@kernel.org>
+ <20241205204413.2466775-2-akemnade@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
-X-B4-Tracking: v=1; b=H4sIAPEtV2cC/x3MQQqEMAxA0atI1gZqKrR6FXExM4ljFo3Sigji3
- afM8i3+v6FIVikwNjdkObXoZhVd28BnfdlXULkayFHfkRuQ9+gjESbWDVNiPMWYMPoQfHRL798
- BarxnWfT6jycwOdDkOmB+nh8DxbvrcgAAAA==
-X-Change-ID: 20241209-dp83822-mdio-mmd-vend2-8377380f43b7
-To: Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dimitri Fedrau <dima.fedrau@gmail.com>, 
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733766655; l=9020;
- i=dimitri.fedrau@liebherr.com; s=20241202; h=from:subject:message-id;
- bh=y2zn+L/aWE1Ero8F6H4omU9e4vAI0N/THmMcxqt/cio=;
- b=aplgF5k7dWDI6IDBJarFpSHt9HI3DAtjsQfg4wF+4kPTUgjWolR3JKiP1bVZVQ54EEJ4VMbbk
- YJJj+Wru2anCWf5Msqt1aNjm9yhH9B/W7nal6eeK8r95kS0XYBvRNMs
-X-Developer-Key: i=dimitri.fedrau@liebherr.com; a=ed25519;
- pk=rT653x09JSQvotxIqQl4/XiI4AOiBZrdOGvxDUbb5m8=
-X-Endpoint-Received: by B4 Relay for dimitri.fedrau@liebherr.com/20241202
- with auth_id=290
-X-Original-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Reply-To: dimitri.fedrau@liebherr.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241205204413.2466775-2-akemnade@kernel.org>
 
-From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+On Thu, Dec 05, 2024 at 09:44:12PM +0100, akemnade@kernel.org wrote:
+> From: Andreas Kemnade <andreas@kemnade.info>
+> 
+> Only some driver-specific properties were accepted, change it
+> to use the now-available standard properties which are
+> found in devicetrees containing this chip.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 
-Instead of using DP83822_DEVADDR which is locally defined use
-MDIO_MMD_VEND2.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
----
- drivers/net/phy/dp83822.c | 58 +++++++++++++++++++++++------------------------
- 1 file changed, 28 insertions(+), 30 deletions(-)
+> ---
+>  drivers/input/touchscreen/tsc2007.h      | 2 ++
+>  drivers/input/touchscreen/tsc2007_core.c | 5 ++---
+>  2 files changed, 4 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/input/touchscreen/tsc2007.h b/drivers/input/touchscreen/tsc2007.h
+> index 69b08dd6c8df1..e346fb4f75521 100644
+> --- a/drivers/input/touchscreen/tsc2007.h
+> +++ b/drivers/input/touchscreen/tsc2007.h
+> @@ -19,6 +19,7 @@
+>  #ifndef _TSC2007_H
+>  #define _TSC2007_H
+>  
+> +#include <linux/input/touchscreen.h>
+>  struct gpio_desc;
+>  
+>  #define TSC2007_MEASURE_TEMP0		(0x0 << 4)
+> @@ -63,6 +64,7 @@ struct tsc2007 {
+>  
+>  	struct i2c_client	*client;
+>  
+> +	struct touchscreen_properties prop;
+>  	u16			model;
+>  	u16			x_plate_ohms;
+>  	u16			max_rt;
+> diff --git a/drivers/input/touchscreen/tsc2007_core.c b/drivers/input/touchscreen/tsc2007_core.c
+> index 8d832a372b897..5252301686ec6 100644
+> --- a/drivers/input/touchscreen/tsc2007_core.c
+> +++ b/drivers/input/touchscreen/tsc2007_core.c
+> @@ -142,8 +142,7 @@ static irqreturn_t tsc2007_soft_irq(int irq, void *handle)
+>  			rt = ts->max_rt - rt;
+>  
+>  			input_report_key(input, BTN_TOUCH, 1);
+> -			input_report_abs(input, ABS_X, tc.x);
+> -			input_report_abs(input, ABS_Y, tc.y);
+> +			touchscreen_report_pos(input, &ts->prop, tc.x, tc.y, false);
+>  			input_report_abs(input, ABS_PRESSURE, rt);
+>  
+>  			input_sync(input);
+> @@ -339,9 +338,9 @@ static int tsc2007_probe(struct i2c_client *client)
+>  	input_set_drvdata(input_dev, ts);
+>  
+>  	input_set_capability(input_dev, EV_KEY, BTN_TOUCH);
+> -
+>  	input_set_abs_params(input_dev, ABS_X, 0, MAX_12BIT, ts->fuzzx, 0);
+>  	input_set_abs_params(input_dev, ABS_Y, 0, MAX_12BIT, ts->fuzzy, 0);
+> +	touchscreen_parse_properties(input_dev, false, &ts->prop);
+>  	input_set_abs_params(input_dev, ABS_PRESSURE, 0, MAX_12BIT,
+>  			     ts->fuzzz, 0);
+>  
+> -- 
+> 2.39.2
+> 
 
-diff --git a/drivers/net/phy/dp83822.c b/drivers/net/phy/dp83822.c
-index cf8b6d0bfaa9812eee98c612c0d4259d87da7572..25ee09c48027c86b7d8f4acb5cbe2e157c56a85a 100644
---- a/drivers/net/phy/dp83822.c
-+++ b/drivers/net/phy/dp83822.c
-@@ -22,8 +22,6 @@
- #define DP83826C_PHY_ID		0x2000a130
- #define DP83826NC_PHY_ID	0x2000a110
- 
--#define DP83822_DEVADDR		0x1f
--
- #define MII_DP83822_CTRL_2	0x0a
- #define MII_DP83822_PHYSTS	0x10
- #define MII_DP83822_PHYSCR	0x11
-@@ -159,14 +157,14 @@ static int dp83822_config_wol(struct phy_device *phydev,
- 		/* MAC addresses start with byte 5, but stored in mac[0].
- 		 * 822 PHYs store bytes 4|5, 2|3, 0|1
- 		 */
--		phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_DA1,
-+		phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_DA1,
- 			      (mac[1] << 8) | mac[0]);
--		phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_DA2,
-+		phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_DA2,
- 			      (mac[3] << 8) | mac[2]);
--		phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_DA3,
-+		phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_DA3,
- 			      (mac[5] << 8) | mac[4]);
- 
--		value = phy_read_mmd(phydev, DP83822_DEVADDR,
-+		value = phy_read_mmd(phydev, MDIO_MMD_VEND2,
- 				     MII_DP83822_WOL_CFG);
- 		if (wol->wolopts & WAKE_MAGIC)
- 			value |= DP83822_WOL_MAGIC_EN;
-@@ -174,13 +172,13 @@ static int dp83822_config_wol(struct phy_device *phydev,
- 			value &= ~DP83822_WOL_MAGIC_EN;
- 
- 		if (wol->wolopts & WAKE_MAGICSECURE) {
--			phy_write_mmd(phydev, DP83822_DEVADDR,
-+			phy_write_mmd(phydev, MDIO_MMD_VEND2,
- 				      MII_DP83822_RXSOP1,
- 				      (wol->sopass[1] << 8) | wol->sopass[0]);
--			phy_write_mmd(phydev, DP83822_DEVADDR,
-+			phy_write_mmd(phydev, MDIO_MMD_VEND2,
- 				      MII_DP83822_RXSOP2,
- 				      (wol->sopass[3] << 8) | wol->sopass[2]);
--			phy_write_mmd(phydev, DP83822_DEVADDR,
-+			phy_write_mmd(phydev, MDIO_MMD_VEND2,
- 				      MII_DP83822_RXSOP3,
- 				      (wol->sopass[5] << 8) | wol->sopass[4]);
- 			value |= DP83822_WOL_SECURE_ON;
-@@ -194,10 +192,10 @@ static int dp83822_config_wol(struct phy_device *phydev,
- 		value |= DP83822_WOL_EN | DP83822_WOL_INDICATION_SEL |
- 			 DP83822_WOL_CLR_INDICATION;
- 
--		return phy_write_mmd(phydev, DP83822_DEVADDR,
-+		return phy_write_mmd(phydev, MDIO_MMD_VEND2,
- 				     MII_DP83822_WOL_CFG, value);
- 	} else {
--		return phy_clear_bits_mmd(phydev, DP83822_DEVADDR,
-+		return phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2,
- 					  MII_DP83822_WOL_CFG,
- 					  DP83822_WOL_EN |
- 					  DP83822_WOL_MAGIC_EN |
-@@ -226,23 +224,23 @@ static void dp83822_get_wol(struct phy_device *phydev,
- 	wol->supported = (WAKE_MAGIC | WAKE_MAGICSECURE);
- 	wol->wolopts = 0;
- 
--	value = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG);
-+	value = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG);
- 
- 	if (value & DP83822_WOL_MAGIC_EN)
- 		wol->wolopts |= WAKE_MAGIC;
- 
- 	if (value & DP83822_WOL_SECURE_ON) {
--		sopass_val = phy_read_mmd(phydev, DP83822_DEVADDR,
-+		sopass_val = phy_read_mmd(phydev, MDIO_MMD_VEND2,
- 					  MII_DP83822_RXSOP1);
- 		wol->sopass[0] = (sopass_val & 0xff);
- 		wol->sopass[1] = (sopass_val >> 8);
- 
--		sopass_val = phy_read_mmd(phydev, DP83822_DEVADDR,
-+		sopass_val = phy_read_mmd(phydev, MDIO_MMD_VEND2,
- 					  MII_DP83822_RXSOP2);
- 		wol->sopass[2] = (sopass_val & 0xff);
- 		wol->sopass[3] = (sopass_val >> 8);
- 
--		sopass_val = phy_read_mmd(phydev, DP83822_DEVADDR,
-+		sopass_val = phy_read_mmd(phydev, MDIO_MMD_VEND2,
- 					  MII_DP83822_RXSOP3);
- 		wol->sopass[4] = (sopass_val & 0xff);
- 		wol->sopass[5] = (sopass_val >> 8);
-@@ -430,18 +428,18 @@ static int dp83822_config_init(struct phy_device *phydev)
- 		if (tx_int_delay <= 0)
- 			rgmii_delay |= DP83822_TX_CLK_SHIFT;
- 
--		err = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
-+		err = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
- 				     DP83822_RX_CLK_SHIFT | DP83822_TX_CLK_SHIFT, rgmii_delay);
- 		if (err)
- 			return err;
- 
--		err = phy_set_bits_mmd(phydev, DP83822_DEVADDR,
-+		err = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
- 				       MII_DP83822_RCSR, DP83822_RGMII_MODE_EN);
- 
- 		if (err)
- 			return err;
- 	} else {
--		err = phy_clear_bits_mmd(phydev, DP83822_DEVADDR,
-+		err = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2,
- 					 MII_DP83822_RCSR, DP83822_RGMII_MODE_EN);
- 
- 		if (err)
-@@ -496,7 +494,7 @@ static int dp83822_config_init(struct phy_device *phydev)
- 			return err;
- 
- 		if (dp83822->fx_signal_det_low) {
--			err = phy_set_bits_mmd(phydev, DP83822_DEVADDR,
-+			err = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2,
- 					       MII_DP83822_GENCFG,
- 					       DP83822_SIG_DET_LOW);
- 			if (err)
-@@ -514,10 +512,10 @@ static int dp8382x_config_rmii_mode(struct phy_device *phydev)
- 
- 	if (!device_property_read_string(dev, "ti,rmii-mode", &of_val)) {
- 		if (strcmp(of_val, "master") == 0) {
--			ret = phy_clear_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
-+			ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
- 						 DP83822_RMII_MODE_SEL);
- 		} else if (strcmp(of_val, "slave") == 0) {
--			ret = phy_set_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
-+			ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
- 					       DP83822_RMII_MODE_SEL);
- 		} else {
- 			phydev_err(phydev, "Invalid value for ti,rmii-mode property (%s)\n",
-@@ -539,7 +537,7 @@ static int dp83826_config_init(struct phy_device *phydev)
- 	int ret;
- 
- 	if (phydev->interface == PHY_INTERFACE_MODE_RMII) {
--		ret = phy_set_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
-+		ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
- 				       DP83822_RMII_MODE_EN);
- 		if (ret)
- 			return ret;
-@@ -548,7 +546,7 @@ static int dp83826_config_init(struct phy_device *phydev)
- 		if (ret)
- 			return ret;
- 	} else {
--		ret = phy_clear_bits_mmd(phydev, DP83822_DEVADDR, MII_DP83822_RCSR,
-+		ret = phy_clear_bits_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_RCSR,
- 					 DP83822_RMII_MODE_EN);
- 		if (ret)
- 			return ret;
-@@ -560,7 +558,7 @@ static int dp83826_config_init(struct phy_device *phydev)
- 				 FIELD_GET(DP83826_CFG_DAC_MINUS_MDIX_5_TO_4,
- 					   dp83822->cfg_dac_minus));
- 		mask = DP83826_VOD_CFG1_MINUS_MDIX_MASK | DP83826_VOD_CFG1_MINUS_MDI_MASK;
--		ret = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83826_VOD_CFG1, mask, val);
-+		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83826_VOD_CFG1, mask, val);
- 		if (ret)
- 			return ret;
- 
-@@ -568,7 +566,7 @@ static int dp83826_config_init(struct phy_device *phydev)
- 				 FIELD_GET(DP83826_CFG_DAC_MINUS_MDIX_3_TO_0,
- 					   dp83822->cfg_dac_minus));
- 		mask = DP83826_VOD_CFG2_MINUS_MDIX_MASK;
--		ret = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83826_VOD_CFG2, mask, val);
-+		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83826_VOD_CFG2, mask, val);
- 		if (ret)
- 			return ret;
- 	}
-@@ -577,7 +575,7 @@ static int dp83826_config_init(struct phy_device *phydev)
- 		val = FIELD_PREP(DP83826_VOD_CFG2_PLUS_MDIX_MASK, dp83822->cfg_dac_plus) |
- 		      FIELD_PREP(DP83826_VOD_CFG2_PLUS_MDI_MASK, dp83822->cfg_dac_plus);
- 		mask = DP83826_VOD_CFG2_PLUS_MDIX_MASK | DP83826_VOD_CFG2_PLUS_MDI_MASK;
--		ret = phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83826_VOD_CFG2, mask, val);
-+		ret = phy_modify_mmd(phydev, MDIO_MMD_VEND2, MII_DP83826_VOD_CFG2, mask, val);
- 		if (ret)
- 			return ret;
- 	}
-@@ -673,7 +671,7 @@ static int dp83822_read_straps(struct phy_device *phydev)
- 	int fx_enabled, fx_sd_enable;
- 	int val;
- 
--	val = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_SOR1);
-+	val = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_SOR1);
- 	if (val < 0)
- 		return val;
- 
-@@ -748,7 +746,7 @@ static int dp83822_suspend(struct phy_device *phydev)
- {
- 	int value;
- 
--	value = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG);
-+	value = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG);
- 
- 	if (!(value & DP83822_WOL_EN))
- 		genphy_suspend(phydev);
-@@ -762,9 +760,9 @@ static int dp83822_resume(struct phy_device *phydev)
- 
- 	genphy_resume(phydev);
- 
--	value = phy_read_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG);
-+	value = phy_read_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG);
- 
--	phy_write_mmd(phydev, DP83822_DEVADDR, MII_DP83822_WOL_CFG, value |
-+	phy_write_mmd(phydev, MDIO_MMD_VEND2, MII_DP83822_WOL_CFG, value |
- 		      DP83822_WOL_CLR_INDICATION);
- 
- 	return 0;
-
----
-base-commit: 6145fefc1e42c1895c0c1c2c8593de2c085d8c56
-change-id: 20241209-dp83822-mdio-mmd-vend2-8377380f43b7
-
-Best regards,
 -- 
-Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-
-
+Dmitry
 
