@@ -1,142 +1,116 @@
-Return-Path: <linux-kernel+bounces-437825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEF2D9E993B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:45:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37D8C9E9961
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:50:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8363C167583
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5031A1887D15
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59EEE1B423F;
-	Mon,  9 Dec 2024 14:45:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7701B4250;
+	Mon,  9 Dec 2024 14:48:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b="MpvFD+rC"
-Received: from mta-65-226.siemens.flowmailer.net (mta-65-226.siemens.flowmailer.net [185.136.65.226])
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="omU85tSB"
+Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91FF1B4239
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:45:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.136.65.226
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B591B0420
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:48:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755505; cv=none; b=V8Ln9pIPMv5b2GG0+54UOblEgnqaGHtBSQW1QLLdkZhzP+YMyHbDd6t76TlULaaenpWXfQW/77seKMLW1LE2BlZUaPW9q/MhT8hibdJvAhjB7HvMvAnLSZkn6Dm6dFUg11eg2gmlDk1ZB/cXgr66Zfcey3Ua7R7e4Va7KMrquw0=
+	t=1733755736; cv=none; b=bqvdJNN0VtglhPL/3CgRQrFWuyWHW5s/En5/bDVNjR1CvBFY+GfOKsQQP598LtXf/HEZva/AtPC9VsjH+hKW7TxtiMuXKXHf+gdrUxQtOyOtFHmDyOUzIPptG28K3KDv9EEKzKspT+hh6lpIS6XcuCcT/546Bkh/qdeeSCW2/9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755505; c=relaxed/simple;
-	bh=u7NA73GY8jgYwiGRtfvoA2jwmRSjtj17Sc8PPBrpK/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=On5RTpFFVJ+ZvSDRXMKapRcazHNQI/AlRyB5urEdYpm9W5HvNGlSQuC6WNGhDNT+QPS4YCMLb0gWuOUlqfo3P0IA/WF1LEmNETUNvw2ZbRTtFo9SQox9ojkz0eRUmBDGaiDL/S78kmit4xwMZpBvdzw2Boh7+1pqzTAEuypMqcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com; dkim=pass (2048-bit key) header.d=siemens.com header.i=diogo.ivo@siemens.com header.b=MpvFD+rC; arc=none smtp.client-ip=185.136.65.226
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=siemens.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rts-flowmailer.siemens.com
-Received: by mta-65-226.siemens.flowmailer.net with ESMTPSA id 2024120914445826f90950867e60c229
-        for <linux-kernel@vger.kernel.org>;
-        Mon, 09 Dec 2024 15:44:59 +0100
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; s=fm2;
- d=siemens.com; i=diogo.ivo@siemens.com;
- h=Date:From:Subject:To:Message-ID:MIME-Version:Content-Type:Content-Transfer-Encoding:Cc:References:In-Reply-To;
- bh=/dEgr6OpgHZjVc2Im78pfKS7HysoQJSF6iVpM5jFCQU=;
- b=MpvFD+rCvxzx8xva5hr3nsUvs2LKTdXkzEfM04rBRDxpPIIPYXnkeC3YZFdVgfvEZdoAgw
- z61x8EOUQjPlhsAanQBmDeesAimgmGKPZAnJAhXPKcrkXJqyCJ357X9C0PQ1fW/hI43vZyB/
- ZF2dIWpjCBEya6UJ2O2qoCKKK4y89XUEpMfE10IShP8ruEVFsaVC3L9/0yz1HE0qc4iZwmI4
- WROiTw8NYdq2c7bLB9mzW9/zOM+CgbO3bK440lUvbKTeriqZbsbdr6lRG4OE/vpWLYQ9yWFq
- vQs3O/tT2BtR0TGsNSQpu6dl+6olTg95I8iGlJrsQnB32nM0UdIEsdFQ==;
-Message-ID: <320d8f96-fcff-48e7-9814-6586f7f642ca@siemens.com>
-Date: Mon, 9 Dec 2024 14:44:56 +0000
+	s=arc-20240116; t=1733755736; c=relaxed/simple;
+	bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=AXL5TIpeLPqvy+VkdxdDIilxSlVGVT58PJODWfVEo/qTDQAp6RFLAf/pynl3ZmEryVpcG9zPBJuRrjT7uxtskJtEk2aCoAYK478CTUUeH1N/PZezhuZ7bpJgiVyA1k3vxS9zud5nyecExIb90bcpi4SgyFoQLOAqrkVMScBXbhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=omU85tSB; arc=none smtp.client-ip=34.202.193.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
+Authentication-Results: purelymail.com; auth=pass
+DKIM-Signature: a=rsa-sha256; b=omU85tSBO7Y1q8Jp3QkXwT+aCv1XLNNRnNDhMEk36Mctts3wts4Q9ocOoPdbLHhSiNcsorar1HeB2MCipsookfHTix9XiiKZahfHmSm6Gf+NclFawZGGxeBPG9WU91blZsjpMmjpkAPS0wrw7koDEJwbcK5okcJ1TBWXuMTU/pmFmVW15kWM0NlmkhLzdaVBe0VaOgSaMB8ZaA6V+RSIF1tU+kG/VELWlboGyWL7mxWxdapttCHEgqjSi60iH//tvQ83EJ3MH0A+S4C9DbyKV7GgtFc4bUM7ucWzOBVlFMelDEPod8poE517KXsVTjVe1lMi+2JAGgxljf9Y1+8m9w==; s=purelymail2; d=purelymail.com; v=1; bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=; h=Feedback-ID:Received:From:Subject:Date:To;
+Feedback-ID: 68247:10037:null:purelymail
+X-Pm-Original-To: linux-kernel@vger.kernel.org
+Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id -291099510;
+          (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+          Mon, 09 Dec 2024 14:48:35 +0000 (UTC)
+From: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+Subject: [PATCH v4 0/3] clk: samsung: Introduce Exynos990 clock support
+Date: Mon, 09 Dec 2024 15:45:20 +0100
+Message-Id: <20241209-exynos990-cmu-v4-0-57f07080f9e4@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net v3 1/2] net: ti: icssg-prueth: Fix firmware load
- sequence.
-To: Meghana Malladi <m-malladi@ti.com>, Roger Quadros <rogerq@kernel.org>,
- vigneshr@ti.com, jan.kiszka@siemens.com, javier.carrasco.cruz@gmail.com,
- jacob.e.keller@intel.com, horms@kernel.org, pabeni@redhat.com,
- kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
- andrew+netdev@lunn.ch
-Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, srk@ti.com, danishanwar@ti.com
-References: <20241205082831.777868-1-m-malladi@ti.com>
- <20241205082831.777868-2-m-malladi@ti.com>
- <a86bc0b1-8bb4-477e-b7e1-13921bf47b53@kernel.org>
- <64621290-2488-474d-b2ed-597a1f4ac85f@ti.com>
-Content-Language: en-US
-From: Diogo Ivo <diogo.ivo@siemens.com>
-In-Reply-To: <64621290-2488-474d-b2ed-597a1f4ac85f@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Flowmailer-Platform: Siemens
-Feedback-ID: 519:519-1328357:519-21489:flowmailer
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIACV2cC/33MQQ6CMBCF4auYrq0ZC63WlfcwLkaYQhNoTYsNh
+ HB3Cytjosv/Je+bWaRgKbLLbmaBko3WuxzlfseqFl1D3Na5mQBRHgUoTuPkfNQaeNW/uDxjjRK
+ kwlqy/HkGMnbcvNs9d2vj4MO08Ums6y8pCQ68VEoZAwhaP649uQG7boroqEfrOusoxIMPDVvpV
+ Hxyp2+uyJyACowiBGHgL7csyxvgLNW6CgEAAA==
+X-Change-ID: 20241206-exynos990-cmu-58ada5056ad5
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Igor Belwon <igor.belwon@mentallysanemainliners.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1733755636; l=1630;
+ i=igor.belwon@mentallysanemainliners.org; s=20241206;
+ h=from:subject:message-id; bh=hh17fuoERmwRARxXBgfxrvHDUdhwDZCDEWgY13T37ps=;
+ b=n3BbgPVNEwn1n+dt2NNprNcTmKWI55eTVgUHFTXMOkPkPjCCxxVMDf93F9LLt3h8pEOv/r1TP
+ 8/ttTbd6CPoB4sFnPG6Hmuh6ttsWaGrBvjCxmDwVmUFrH8KujfvLkTp
+X-Developer-Key: i=igor.belwon@mentallysanemainliners.org; a=ed25519;
+ pk=qKAuSTWKTaGQM0vwBxV0p6hPKMN4vh0CwZ+bozrG5lY=
 
 Hi all,
 
-On 12/9/24 10:34 AM, Meghana Malladi wrote:
-> 
-> 
-> On 05/12/24 18:38, Roger Quadros wrote:
->> Hi,
->>
->> On 05/12/2024 10:28, Meghana Malladi wrote:
->>> From: MD Danish Anwar <danishanwar@ti.com>
->>>
->>> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
->>> and SLICE1. Currently whenever any ICSSG interface comes up we load the
->>> respective firmwares to PRU cores and whenever interface goes down, we
->>> stop the resective cores. Due to this, when SLICE0 goes down while
->>> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
->>> stopped. This results in clock jump for SLICE1 interface as the timesync
->>> related operations are no longer running.
->>>
->>> As there are interdependencies between SLICE0 and SLICE1 firmwares,
->>> fix this by running both PRU0 and PRU1 firmwares as long as at least 1
->>> ICSSG interface is up. Add new flag in prueth struct to check if all
->>> firmwares are running.
->>>
->>> Use emacs_initialized as reference count to load the firmwares for the
->>> first and last interface up/down. Moving init_emac_mode and 
->>> fw_offload_mode
->>> API outside of icssg_config to icssg_common_start API as they need
->>> to be called only once per firmware boot.
->>>
->>> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
->>> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->>> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
->>> ---
->>>
->>> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/ 
->>> net/ethernet/ti/icssg/icssg_prueth.h
->>> index f5c1d473e9f9..b30f2e9a73d8 100644
->>> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->>> @@ -257,6 +257,7 @@ struct icssg_firmwares {
->>>    * @is_switchmode_supported: indicates platform support for switch 
->>> mode
->>>    * @switch_id: ID for mapping switch ports to bridge
->>>    * @default_vlan: Default VLAN for host
->>> + * @prus_running: flag to indicate if all pru cores are running
->>>    */
->>>   struct prueth {
->>>       struct device *dev;
->>> @@ -298,6 +299,7 @@ struct prueth {
->>>       int default_vlan;
->>>       /** @vtbl_lock: Lock for vtbl in shared memory */
->>>       spinlock_t vtbl_lock;
->>> +    bool prus_running;
->>
->> I think you don't need fw_running flag anymore. Could you please 
->> remove it
->> from struct prueth_emac?
->>
-> 
-> This flag is still being used by SR1, for which this patch doesn't 
-> apply. So I prefer not touching this flag for the sake of SR1.
+This patchset adds support for the Clock Management Unit found in the
+Exynos990 SoC. This CMU allows for clocking peripherals such as USB, UFS,
+MCT, et cetera.
 
-Currently for SR1.0 this flag is set but not used anywhere in the code, 
-so it can be removed.
+Currently there are two blocks implemented, CMU_TOP which
+generates clocks for other blocks, and CMU_HSI0, which generates clocks
+for USB. More blocks will be added (hopefully soon), like HSI1 for UFS.
+
+Signed-off-by: Igor Belwon <igor.belwon@mentallysanemainliners.org>
+---
+Changes in v4:
+- bindings: Use one-per-line convention for clock names. (Thanks, Krzysztof!)
+
+- Link to v3: https://lore.kernel.org/r/20241207-exynos990-cmu-v3-0-20c0f6ea02f0@mentallysanemainliners.org
+
+- Link to v2: https://lore.kernel.org/r/20241206-exynos990-cmu-v2-0-4666ff0a099b@mentallysanemainliners.org
+
+---
+Igor Belwon (3):
+      dt-bindings: clock: Add Exynos990 SoC CMU bindings
+      clk: samsung: clk-pll: Add support for pll_{0717x, 0718x, 0732x}
+      clk: samsung: Introduce Exynos990 clock controller driver
+
+ .../bindings/clock/samsung,exynos990-clock.yaml    |  121 ++
+ drivers/clk/samsung/Makefile                       |    1 +
+ drivers/clk/samsung/clk-exynos990.c                | 1343 ++++++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                      |   14 +-
+ drivers/clk/samsung/clk-pll.h                      |    3 +
+ include/dt-bindings/clock/samsung,exynos990.h      |  236 ++++
+ 6 files changed, 1716 insertions(+), 2 deletions(-)
+---
+base-commit: ed74808ae420a2ae611738c2d62800ab157a9ee8
+change-id: 20241206-exynos990-cmu-58ada5056ad5
 
 Best regards,
-Diogo
+-- 
+Igor Belwon <igor.belwon@mentallysanemainliners.org>
+
 
