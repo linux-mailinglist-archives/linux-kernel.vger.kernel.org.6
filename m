@@ -1,194 +1,108 @@
-Return-Path: <linux-kernel+bounces-438473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D6C9EA1C0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:20:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CFE29EA1C6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:21:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BEC3166625
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:20:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423A318885E5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 711B019DF4F;
-	Mon,  9 Dec 2024 22:20:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A792A19E7F9;
+	Mon,  9 Dec 2024 22:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nn3s0kYI"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UwuFx0xS"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 400CD19DF4D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 22:20:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F10019E7ED;
+	Mon,  9 Dec 2024 22:21:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733782821; cv=none; b=OVypkxMFpLMvLachFsrXCMDTSDCdB+mrc4FcKWWO2iY4viM4oHgBn69w4jJXJcVxcAWSl8qGhoM/2UmCLmAkZwt2Q0rxFZwem+LUEBCovxeUDvZLXgMEnN8yqnSKtHouB1cYuZUg7d0iHF165MbeBhXP9x6GmKlfVRzOi2K5m6E=
+	t=1733782878; cv=none; b=lZ1XbEfjnDcnKUErkp4eOA1oV7iNoKGZ15lSFRGTWWXQpcW7Slb8Pi+zfzBACpF16bLpGDlTzJl+ANsjAtJzS0Q49pB3ubauErXvOgN0QTM50wNSzThGZWc+WqSQKVvvgFsjyxGablEF2eSxz5XthET+cl0p3T00uyYFF7vf/VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733782821; c=relaxed/simple;
-	bh=1CyMiD1T7cKwXyRcB9MbtDMbGuOgfuGFBLkRucfdvnI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cEPtgoAxxjXk399ip0ah8GanXxyxRkTwREIMQM809cbXusK6oZG/vp9AXjPJHIfl1odTmMRJNa7JYFIPm/G4tCHiPwA7iTA06T2/S6ruYKxGFPOIu4djnkscXy0LnwBUr2ZZSbQ5k3+zTiL2tBBIGzijcgwtP204PsPYtGrSROY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Nn3s0kYI; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4674c22c4afso50041cf.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 14:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733782819; x=1734387619; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G5ww+FYyUuj9YZJs8l84tdzGI5HsRlAlNX8jCX6t2Ww=;
-        b=Nn3s0kYIkL7OsHwOYb30XSqGGSgLbPn8vS45ip7ZfC1QAErVLL0YGF1USBdaxW5vLE
-         vytIp6446smSIXj4o4Xlcq1qWNIbuDHVvvez+Q4CRZX9/1K5fBYxrCpsjoXtqz8T1wlD
-         VJo/4Y1uZgBb7PrpPWSscboik//OAurjQCq8xtvwRbStugF1yHN8FUg4i0FTASNhUBz+
-         pwilsaNBFindXM+W21x5tzq/Fs1WfG8ZuxCOSpeTYaOKmsHGWkHewYEXwnmsCq7cRi8Y
-         n64dV8jAnuiEGunKDypKiIZG1ay+i/mgXutRSgiDVTsEMuPPFmhSHKUje+ObnrvrgJmg
-         zZ+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733782819; x=1734387619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=G5ww+FYyUuj9YZJs8l84tdzGI5HsRlAlNX8jCX6t2Ww=;
-        b=vBOXEO0Wh6/z8qqNplN0b2w2TCPLyAYpk41d1eU2xOjH3uyyhSa9zj8oVTA1rJcX6E
-         p7FZ9BgspnFYt80eczLOvhluFeq0E4LFDhrAM44yoEy0b4of2uH8BrckyATwgaFzWn3d
-         AhrGBfWcekZ4yRb5t5nPj9kl3ufKZsMeTGr32+Jh5if9LszhQpASQX/mOQejJFJ4Oeq6
-         FTlYxj5/Zfo7s/bRLk8O4Q5EZ49jTgMzBncADVgYBP89ZzxUIh9blvHvwdHcl/HzkqMQ
-         LaOi04OfhuFUikQcFyGEIk+QKJNmEquv6f35xqtU2yA0NI6M+m5kuYc0zSNi4WVWVzOa
-         tYgA==
-X-Forwarded-Encrypted: i=1; AJvYcCVSIUZFr4LA7os2C3EERqcq6NkuO1teSBfXzVycqdxew7TFS8aYQipa+mvWFWwWaZiiTv8qnjn2Sa0n1pM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSO5/fGBO0n/eZ2Baun628dOcColx9ANTlDWJPit8oUe+OKqTM
-	vXHRaXRIM16ko3TKPJyXo1xax55z1Ns7s4FDC5xjvllpkVYkbjBtpQU8Mj6U5aiZm0Q/8twYhBm
-	LevQzujRE2Tik6o+PtU+XFSRpY2Onoh/H9/eK
-X-Gm-Gg: ASbGncubqp+em2sEnx7Ws2pPdHZlJIP1gLbmqXj7N1K01lSw6OLTvtHHe2snK3CqOFg
-	OVsZ1DK3ZLtOBnMo6/A6tbLeqaBXGkW9Onuc=
-X-Google-Smtp-Source: AGHT+IH78nTZ9DcmfapbaIU0Acq1Wlfjtc8axM0AHL8eeXBJQHPQKkL1IIhm/4+T2pbRn6gYSgwQZH6j6Df8/mVUYBA=
-X-Received: by 2002:a05:622a:550a:b0:466:861a:f633 with SMTP id
- d75a77b69052e-4677757cac6mr198391cf.5.1733782817959; Mon, 09 Dec 2024
- 14:20:17 -0800 (PST)
+	s=arc-20240116; t=1733782878; c=relaxed/simple;
+	bh=bwzYOAuoJO2yAuRVUE6d9wqLyu40DkAaVYdXryd1xdw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u+qmvoK4ILHNMsvyb2pqlwMnlx+/yxLhhYsgSTVDgH12s82YMLkyqvOa9JOHHg5Lp3vg4fjf6oFtTgWIEC0VP6fgE1vUzWzKrsNuIFqh0ItsKt5/m5N2tPyymgKOI9ZO3Muthui1arbBTIHWQKQIVTpcjg5vyOLQ8mTLlJgEv18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UwuFx0xS; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D17CB40E0277;
+	Mon,  9 Dec 2024 22:21:13 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id t1OGWIsr1yrN; Mon,  9 Dec 2024 22:21:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733782868; bh=21QrC0wOQ48GOvsESM0ZAE9MczwzGypXpmwP1LEdWa8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UwuFx0xSduVIpjCgwbkQ561hAu/eoEU4rX1B7ku7yYfGY5RSMn5q/rdH6miIoWhzE
+	 Ap5xN+FrXGkYyKur3MR5sAqPVsG+785SuN8mTCPU02R+88WnDNkFPcBRNLFoluhdFV
+	 hNY7qRFSntrmOB+z+XWlN4gr6bp7QJqhhDJaaL9j+xR29OptqqSlQzO3nUJXgKNN1A
+	 s38BQ8b6LaPu1ahoKuPrTLNMjYB3nXv1dLQ1XqjvkSF+I8d5tY9Qs5nbCPQKAq8pLD
+	 C4Zm6pWhcmxDDp+YAcUVIyytzjo+YOKSnyDh/u/5Dzm+X+KchhJy2uFNe9gEeWG4Kp
+	 aiua/RzWbnCezhoUpe16C69tnuMHNQlnFyjBlgqCKwa0w+5djTpzc0Zw2MJP74zEK5
+	 JOVS+qoGgkTWD2AZFgE1NzXIlIPEn1o0FikqckCOrD150Njj8MdbnyXdehoMUiQ5ZI
+	 PWwAZ7gHNV8MRj0rzqcNOZ/2WD1Q3BXzKkJbbN0mUNuNeo4cQ1NJuFzkx+RiGBxzyx
+	 gZ5iHnNvspQ/s42QnIZLhEctHxxElwVVy7DEaIeVSdxCmA/CkhTHSv6fc7RSZXp8Va
+	 2GcCFavLCrW8OyIqRJIoHKUBnZBNVvknalsjAe0KJuGTyR8FVIS8faIbYsPK8KY9Lv
+	 NCs+W8RJDzzuPliYVJzDvVu8=
+Received: from zn.tnic (p200300Ea971F9307329c23fFfEA6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 698A740E019C;
+	Mon,  9 Dec 2024 22:20:54 +0000 (UTC)
+Date: Mon, 9 Dec 2024 23:20:47 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: "Luck, Tony" <tony.luck@intel.com>
+Cc: "Yu, Fenghua" <fenghua.yu@intel.com>,
+	"Chatre, Reinette" <reinette.chatre@intel.com>,
+	Peter Newman <peternewman@google.com>,
+	Jonathan Corbet <corbet@lwn.net>, "x86@kernel.org" <x86@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Jamie Iles <quic_jiles@quicinc.com>,
+	Babu Moger <babu.moger@amd.com>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"patches@lists.linux.dev" <patches@lists.linux.dev>
+Subject: Re: [PATCH v11 2/8] x86/resctrl: Prepare for per-CTRL_MON group
+ mba_MBps control
+Message-ID: <20241209222047.GKZ1dtPxIu5_Hxs1fp@fat_crate.local>
+References: <20241206163148.83828-1-tony.luck@intel.com>
+ <20241206163148.83828-3-tony.luck@intel.com>
+ <20241209204519.GAZ1dW3-NjcL4Sewaf@fat_crate.local>
+ <SJ1PR11MB6083BA367F2CDFC92D87FDA1FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <202412082208.db1fb2c9-lkp@intel.com> <CAJuCfpGeKgOgqq69OD-TMoQLhyy+HuTKK=cQPHMY2DgNcJf5Xg@mail.gmail.com>
- <Z1Z5FbBHojF6ywfA@xsang-OptiPlex-9020>
-In-Reply-To: <Z1Z5FbBHojF6ywfA@xsang-OptiPlex-9020>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 9 Dec 2024 14:20:07 -0800
-Message-ID: <CAJuCfpGqauvtrVVqrf8ge7ba=AB3Jk7daRDdqYzOSxpB462i0w@mail.gmail.com>
-Subject: Re: [akpm-mm:mm-unstable] [mm] 85ad413389: BUG:kernel_NULL_pointer_dereference,address
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: oe-lkp@lists.linux.dev, lkp@intel.com, 
-	Andrew Morton <akpm@linux-foundation.org>, Christian Brauner <brauner@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, David Howells <dhowells@redhat.com>, 
-	Davidlohr Bueso <dave@stgolabs.net>, Hillf Danton <hdanton@sina.com>, Hugh Dickins <hughd@google.com>, 
-	Jann Horn <jannh@google.com>, Johannes Weiner <hannes@cmpxchg.org>, Jonathan Corbet <corbet@lwn.net>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Mateusz Guzik <mjguzik@gmail.com>, Matthew Wilcox <willy@infradead.org>, 
-	Mel Gorman <mgorman@techsingularity.net>, Michal Hocko <mhocko@suse.com>, 
-	Minchan Kim <minchan@google.com>, Oleg Nesterov <oleg@redhat.com>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Peter Xu <peterx@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Shakeel Butt <shakeel.butt@linux.dev>, Sourav Panda <souravpanda@google.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SJ1PR11MB6083BA367F2CDFC92D87FDA1FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
 
-On Sun, Dec 8, 2024 at 8:59=E2=80=AFPM Oliver Sang <oliver.sang@intel.com> =
-wrote:
->
-> hi, Suren Baghdasaryan,
->
-> On Sun, Dec 08, 2024 at 06:09:05PM -0800, Suren Baghdasaryan wrote:
-> > On Sun, Dec 8, 2024 at 7:26=E2=80=AFAM kernel test robot <oliver.sang@i=
-ntel.com> wrote:
-> > >
-> > >
-> > >
-> > > Hello,
-> > >
-> > > kernel test robot noticed "BUG:kernel_NULL_pointer_dereference,addres=
-s" on:
-> > >
-> > > commit: 85ad413389aec04cfaaba043caa8128b76c6e491 ("mm: make vma cache=
- SLAB_TYPESAFE_BY_RCU")
-> > > https://git.kernel.org/cgit/linux/kernel/git/akpm/mm.git mm-unstable
-> > >
-> > > in testcase: boot
-> > >
-> > > config: i386-randconfig-141-20241208
-> > > compiler: gcc-11
-> > > test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 =
--m 16G
-> > >
-> > > (please refer to attached dmesg/kmsg for entire log/backtrace)
-> > >
-> > >
-> > > +------------------------------------------------+------------+------=
-------+
-> > > |                                                | 98d5eefb97 | 85ad4=
-13389 |
-> > > +------------------------------------------------+------------+------=
-------+
-> > > | BUG:kernel_NULL_pointer_dereference,address    | 0          | 12   =
-      |
-> > > | Oops                                           | 0          | 12   =
-      |
-> > > | EIP:lock_anon_vma_root                         | 0          | 12   =
-      |
-> > > | Kernel_panic-not_syncing:Fatal_exception       | 0          | 12   =
-      |
-> > > +------------------------------------------------+------------+------=
-------+
-> > >
-> > >
-> > > If you fix the issue in a separate patch/commit (i.e. not just a new =
-version of
-> > > the same patch/commit), kindly add following tags
-> > > | Reported-by: kernel test robot <oliver.sang@intel.com>
-> > > | Closes: https://lore.kernel.org/oe-lkp/202412082208.db1fb2c9-lkp@in=
-tel.com
-> >
-> > Thanks for the report!
-> > It looks like anon_vma passed to lock_anon_vma_root() is NULL but it's
-> > not obvious to me why my patch would cause that.
-> >
-> > Oliver, how can I reproduce this locally?
-> >
->
-> To reproduce:
->
->         # build kernel
->         cd linux
->         cp config-6.13.0-rc1-00162-g85ad413389ae .config
->         make -j$(nproc) HOSTCC=3Dgcc-11 CC=3Dgcc-11 ARCH=3Di386 olddefcon=
-fig prepare modules_prepare bzImage modules
->         make -j$(nproc) HOSTCC=3Dgcc-11 CC=3Dgcc-11 ARCH=3Di386 INSTALL_M=
-OD_PATH=3D<mod-install-dir> modules_install
->         cd <mod-install-dir>
->         find lib/ | cpio -o -H newc --quiet | gzip > modules.cgz
->
->
->         git clone https://github.com/intel/lkp-tests.git
->         cd lkp-tests
->         bin/lkp qemu -k <bzImage> -m modules.cgz job-script # job-script =
-is attached in this email
->
->         # if come across any failure that blocks the test,
->         # please remove ~/.lkp and /lkp dir to run from a clean state.
->
->
-> config and job-script files are attached in original report.
->
-> one thing we want to mention is this seems only reproducible with i386 co=
-nfig in
-> our tests.
+On Mon, Dec 09, 2024 at 10:05:43PM +0000, Luck, Tony wrote:
+> mba_mbps_default_event isn't architecture specific. The mba_MBps
+> feedback code could be implemented on any architecture that supports
+> both measurement and control of memory bandwidth.
 
-Thanks Oliver!
-I think I found the issue and
-https://lore.kernel.org/all/20241209221028.1644210-1-surenb@google.com/
-should fix it. Could you please try it out?
+Yes, and it should be moved to that header then, right?
+
+But not earlier.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
