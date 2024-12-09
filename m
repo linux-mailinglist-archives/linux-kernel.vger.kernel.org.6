@@ -1,327 +1,365 @@
-Return-Path: <linux-kernel+bounces-436855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B382A9E8BB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:50:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 758469E8BB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:50:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68B73281796
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:50:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314E4281796
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:50:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F90A2101AA;
-	Mon,  9 Dec 2024 06:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A85214811;
+	Mon,  9 Dec 2024 06:50:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="E7qG/srS"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X2tNqYIA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CD42144D1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:50:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D9D1D555
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733727023; cv=none; b=GLSaG6VoDllpsSxl2UC35ux7cuStiX0u5AVDoL5UrmMbWDAkaYg2bFl4swJ6uvJ8Hlfsf2vOnFMFJ6pTAOPJ8Iqb0njZQ5kJDdseKohoxecq9nfBfH2u0vyeu9728TSzdRR/kBkgadaFh9Qem3ZjPqSJq/UL1IfKm1Viz0BDreg=
+	t=1733727033; cv=none; b=hPRyTmdSm81Eb6Pxbn/ZfkWAq/tzuMjt5G6Ib5do0oL1oRMu8+PUK7zID7C7oK18C1Pi54fEzncgtXRFquEm4ScaZNdAB8RrAGHrAYrsGAROWzQ9uCxtZmn1hUl8qAg/r0sVmlT0oVwS15C4AaMUJxfpKmORJ/1h45fJIeD2hGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733727023; c=relaxed/simple;
-	bh=+GhGwCv8ofq/9GZ2ew1JPdfaGFVwujvxmv1+Lf9CGyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=pWLxI6I5DInyXs95KgZRkBQDYV8Ze9fEkDH4DSIYwcn4slDfcSJUMhZNUanldseRKBuIQHPB3FAlzM2cN6owmi7DlyeKIRoUqnwyraCVaOzCDCd20UbeiwWR4m1/zZeRpttO46pdtLIn33YiHhNuiKo+MfX6N9aOoqKQd8k4pmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=E7qG/srS; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-38637614567so669950f8f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:50:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733727019; x=1734331819; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7n3+yHETFS99MANvj/793YHaxjKIibOUlJpNB+JuQZo=;
-        b=E7qG/srSl46ttGrEqwTf9uEvVJLprq0VMUwCuIk4Ap7oSZYsL7Q5u2nB6wv84YusLW
-         Xguz2dIZutcA7xMuXxnL9mQYuMBH6b+MM7LGOoyb04W2XELStEJP93+gDR0Oh5tQJcdC
-         5tRfjJLuh5NbcDhxVvJAiUV2Vn7UV9LnNefElMhxAixgutPc1h1jKjx5hsWUaCFNm8I2
-         Q0WLXRoN2mHB8jgkYY0shd15btzrDQkMHa71JTJKaqY7YPvGQUEQY19GaWbokd/qyDY4
-         MSy/c0pV3IeoNkg71d7H+2Fc1AGb7h4DirSWEinghyccg0sSGwQsZzis+e7VEULq1dMT
-         O6vQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733727019; x=1734331819;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7n3+yHETFS99MANvj/793YHaxjKIibOUlJpNB+JuQZo=;
-        b=jR6/QKQTIi4tVrIRQSYNFKToqYEYdpX7y8YxsY4QD0M68fHhKzBolfr1oeSkk1+Iom
-         QurSEcaiPPsJmy92wFqqYE3vgUw4732vBGGwmPLXAPrfaLR+pIFvRg2cAJaKZ8A6T5BI
-         Ydl5TlpntW6neokrcDv447+lkRmojdB52n4jfcDzE0+J5OWQf9c/b5j3OFM+9VWzKdGM
-         QaUG/JhhqvkyxTkVA/x2jYZqXvfZDqV/v/TJbyKZmD4+8k80UWo8Xyk+VU2LUGhqkC/v
-         Xnod91BkZlsFlI4sk5peaaQWy1ajhcsPV3PjY6LX+nq+5IeN2L7uB5E46HvPDP5YQcHO
-         f4mg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGUs13puQBJlTxKo7kcvKKxoWwnkWz2tolTuQc8rEpML6ASrMB/wtzxD2VGxkUcCtJR+90i/Vabyj+b6o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU0wF4UzaMXlPNJkiq9SbD/dFe1ZyrWjeNMz55uqQ+mos+ywsc
-	F1sqltHULeNhZeQpK5eu9uHecsYShk9EFcgZwMlU1zyEp9lIOxrmNUHhcUyz4vU=
-X-Gm-Gg: ASbGnctnGKj69IRW6+0z3LfBYTJ+/KB4E906Vc6q/tLZtNmd8B9au7Y48ZWOTRafe9G
-	vrmPUBikW/d7regsZSp12l2Ur4dOrDINCEK/l5It/ZK9aCe9lDt0BffGp5u4XYz612dDz+NCvsV
-	Ykzx2ir6TraWHKucRN1gxw7kLYwljqpYKeNH1gu29TodSIEzinjgPBuzSqQrsvYgAwB2zXpXUx5
-	Ix+DG3XyBF1hgjLB7+r2aK43lsMSgDHEsRozjIBcjZgxlDVbX7PlBc=
-X-Google-Smtp-Source: AGHT+IFwxXb0+vWvp52C40XV8eGEYPTakNcNRKHR6QYRRUjzfRuWboo9IHX2DAFNzl4BWYOe/qUukw==
-X-Received: by 2002:a5d:5f8c:0:b0:385:e67d:9e0 with SMTP id ffacd0b85a97d-3862b37d51amr8320678f8f.29.1733727019248;
-        Sun, 08 Dec 2024 22:50:19 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38637ab4ae8sm5683141f8f.110.2024.12.08.22.50.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:50:18 -0800 (PST)
-Date: Mon, 9 Dec 2024 09:50:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, Dave Penkler <dpenkler@gmail.com>
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: drivers/staging/gpib/common/gpib_os.c:871 ibioctl() warn:
- inconsistent returns '&board->big_gpib_mutex'.
-Message-ID: <869e62e1-cdcb-47b3-8092-2d5c203ecf1a@stanley.mountain>
+	s=arc-20240116; t=1733727033; c=relaxed/simple;
+	bh=JcT3M6OwkyDnIyY3X5bFFx3N1gpJEfFcmUCrIOl3qG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=D34fH+cxn1Am8qAk7yrVo8OrETpPgcI7uz121ot9umPUR7ERS7rU1uIhjkor0zk8PBVPi2JKMUMK1HYgAb+JM4pOhxbY71zNvwP0ZJT7uIxta7rHXMN0VUg6w6U1X0lYTFDFXGXJcrTaPbc/KoIkiytaOa7ggtPy9APr2QualB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X2tNqYIA; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733727031; x=1765263031;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=JcT3M6OwkyDnIyY3X5bFFx3N1gpJEfFcmUCrIOl3qG8=;
+  b=X2tNqYIAiFncpswruezFO53tN9XWuy3Af9aAhFw9ajTj4hPiHXQlXM3F
+   VEslqRuqoUNDKeIX47/YtwxFveqiWg/XYbWxkbtx0Nt5X+TV3F863GiIK
+   ROlBmznLTwbpFQeR+FE01O4StG0Z3zPVr06D0liY0saETWDiluXYpQL7A
+   zSPRPnKJ32L5niVAzNrUqNTPRzL8yp7/pTO6Xph0b1VJ7AZIw7cs+ACOa
+   tImLuoAAVg4gb9+63TLqb6smIilkBDo4Zk+jkXToH/yDm6LOCe7v9ZeH7
+   yfvrIi0irTd3E8ooeMdeqfebRblWpu2T+hYsoE3lyhyx5CQ0WOsXNz4DK
+   g==;
+X-CSE-ConnectionGUID: Ptcpbv+hQtG6A1gi6wv6RQ==
+X-CSE-MsgGUID: WMqR88PbRQa3nHFRsniDsw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="56490562"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="56490562"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 22:50:30 -0800
+X-CSE-ConnectionGUID: VQthq7xdQGirC1P1fKDkEg==
+X-CSE-MsgGUID: WLaRjbfBS/yHOs9ME999JQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95181231"
+Received: from hcaldwel-desk1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.132])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 22:50:25 -0800
+From: Kai Huang <kai.huang@intel.com>
+To: dave.hansen@intel.com,
+	kirill.shutemov@linux.intel.com,
+	tglx@linutronix.de,
+	bp@alien8.de,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	hpa@zytor.com,
+	dan.j.williams@intel.com,
+	seanjc@google.com,
+	pbonzini@redhat.com
+Cc: x86@kernel.org,
+	linux-kernel@vger.kernel.org,
+	rick.p.edgecombe@intel.com,
+	isaku.yamahata@intel.com,
+	adrian.hunter@intel.com,
+	nik.borisov@suse.com,
+	kai.huang@intel.com
+Subject: [PATCH v8 8.2/9] x86/virt/tdx: Reduce TDMR's reserved areas by using CMRs to find memory holes
+Date: Mon,  9 Dec 2024 19:50:16 +1300
+Message-ID: <20241209065016.242359-1-kai.huang@intel.com>
+X-Mailer: git-send-email 2.47.1
+In-Reply-To: <23bb421e9bf5443a823e163fb2d899760d9f14a3.1731498635.git.kai.huang@intel.com>
+References: <23bb421e9bf5443a823e163fb2d899760d9f14a3.1731498635.git.kai.huang@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hi Dave,
+A TDX module initialization failure was reported on an Emerald Rapids
+platform [*]:
 
-First bad commit (maybe != root cause):
+  virt/tdx: initialization failed: TDMR [0x0, 0x80000000): reserved areas exhausted.
+  virt/tdx: module initialization failed (-28)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   b5f217084ab3ddd4bdd03cd437f8e3b7e2d1f5b6
-commit: 165e8cc3cfec9ef51f3376b0d49b115294f34f3b staging: gpib: Add KBUILD files for GPIB drivers
-config: riscv-randconfig-r073-20241207 (https://download.01.org/0day-ci/archive/20241207/202412072053.WNj69og0-lkp@intel.com/config)
-compiler: riscv64-linux-gcc (GCC) 14.2.0
+The kernel informs the TDX module of "TDX-usable memory regions" via the
+structure "TD Memory Region" (TDMR).  Each TDMR contains a limited
+number of "reserved areas" to inform the TDX module of the regions that
+cannot be used by TDX.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202412072053.WNj69og0-lkp@intel.com/
+The kernel builds the list of "TDX-usable memory regions" from memblock
+(which reflects e820) and marks all memory holes as "reserved areas" in
+TDMRs.  It turns out on some large systems the holes in memblock can be
+too fine-grained [1] and exceed the number of reserved areas that the
+module can track per TDMR, resulting in the failure mentioned above.
 
-New smatch warnings:
-drivers/staging/gpib/common/gpib_os.c:871 ibioctl() warn: inconsistent returns '&board->big_gpib_mutex'.
+The TDX module also reports TDX-capable memory as "Convertible Memory
+Regions" (CMRs).  CMRs tend to be coarser-grained [2] than the e820.
+Use CMRs to find memory holes when populating reserved areas to reduce
+their consumption.
 
-Old smatch warnings:
-drivers/staging/gpib/common/gpib_os.c:889 board_type_ioctl() warn: maybe return -EFAULT instead of the bytes remaining?
+Note the kernel does not prevent non-CMR memory from being added to
+"TDX-usable memory regions" but depends on the TDX module to catch in
+the TDH.SYS.CONFIG.  After switching to using CMRs to populate reserved
+areas this will no longer work.  To ensure no non-CMR memory is included
+in the TDMRs, verify that the memory region is truly TDX convertible
+before adding it as a TDX-usable memory region at early stage.
 
-vim +871 drivers/staging/gpib/common/gpib_os.c
+[1] BIOS-E820 table of the problematic platform:
 
-9dde4559e93955 Dave Penkler 2024-09-18  666  long ibioctl(struct file *filep, unsigned int cmd, unsigned long arg)
-9dde4559e93955 Dave Penkler 2024-09-18  667  {
-9dde4559e93955 Dave Penkler 2024-09-18  668  	unsigned int minor = iminor(filep->f_path.dentry->d_inode);
-9dde4559e93955 Dave Penkler 2024-09-18  669  	gpib_board_t *board;
-9dde4559e93955 Dave Penkler 2024-09-18  670  	gpib_file_private_t *file_priv = filep->private_data;
-9dde4559e93955 Dave Penkler 2024-09-18  671  	long retval = -ENOTTY;
-9dde4559e93955 Dave Penkler 2024-09-18  672  
-9dde4559e93955 Dave Penkler 2024-09-18  673  	if (minor >= GPIB_MAX_NUM_BOARDS) {
-9dde4559e93955 Dave Penkler 2024-09-18  674  		pr_err("gpib: invalid minor number of device file\n");
-9dde4559e93955 Dave Penkler 2024-09-18  675  		return -ENODEV;
-9dde4559e93955 Dave Penkler 2024-09-18  676  	}
-9dde4559e93955 Dave Penkler 2024-09-18  677  	board = &board_array[minor];
-9dde4559e93955 Dave Penkler 2024-09-18  678  
-9dde4559e93955 Dave Penkler 2024-09-18  679  	if (mutex_lock_interruptible(&board->big_gpib_mutex))
-9dde4559e93955 Dave Penkler 2024-09-18  680  		return -ERESTARTSYS;
-9dde4559e93955 Dave Penkler 2024-09-18  681  
-9dde4559e93955 Dave Penkler 2024-09-18  682  	GPIB_DPRINTK("pid %i, minor %i, ioctl %d, interface=%s, use=%d, onl=%d\n",
-9dde4559e93955 Dave Penkler 2024-09-18  683  		     current->pid, minor, cmd & 0xff,
-9dde4559e93955 Dave Penkler 2024-09-18  684  		     board->interface ? board->interface->name : "",
-9dde4559e93955 Dave Penkler 2024-09-18  685  		     board->use_count,
-9dde4559e93955 Dave Penkler 2024-09-18  686  		     board->online);
-9dde4559e93955 Dave Penkler 2024-09-18  687  
-9dde4559e93955 Dave Penkler 2024-09-18  688  	switch (cmd) {
-9dde4559e93955 Dave Penkler 2024-09-18  689  	case CFCBOARDTYPE:
-9dde4559e93955 Dave Penkler 2024-09-18  690  		retval = board_type_ioctl(file_priv, board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  691  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  692  	case IBONL:
-9dde4559e93955 Dave Penkler 2024-09-18  693  		retval = online_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  694  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  695  	default:
-9dde4559e93955 Dave Penkler 2024-09-18  696  		break;
-9dde4559e93955 Dave Penkler 2024-09-18  697  	}
-9dde4559e93955 Dave Penkler 2024-09-18  698  	if (!board->interface) {
-9dde4559e93955 Dave Penkler 2024-09-18  699  		pr_err("gpib: no gpib board configured on /dev/gpib%i\n", minor);
-9dde4559e93955 Dave Penkler 2024-09-18  700  		retval = -ENODEV;
-9dde4559e93955 Dave Penkler 2024-09-18  701  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  702  	}
-9dde4559e93955 Dave Penkler 2024-09-18  703  	if (file_priv->got_module == 0)	{
-9dde4559e93955 Dave Penkler 2024-09-18  704  		if (!try_module_get(board->provider_module)) {
-9dde4559e93955 Dave Penkler 2024-09-18  705  			pr_err("gpib: try_module_get() failed\n");
-9dde4559e93955 Dave Penkler 2024-09-18  706  			retval = -EIO;
-9dde4559e93955 Dave Penkler 2024-09-18  707  			goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  708  		}
-9dde4559e93955 Dave Penkler 2024-09-18  709  		file_priv->got_module = 1;
-9dde4559e93955 Dave Penkler 2024-09-18  710  		board->use_count++;
-9dde4559e93955 Dave Penkler 2024-09-18  711  	}
-9dde4559e93955 Dave Penkler 2024-09-18  712  	switch (cmd) {
-9dde4559e93955 Dave Penkler 2024-09-18  713  	case CFCBASE:
-9dde4559e93955 Dave Penkler 2024-09-18  714  		retval = iobase_ioctl(&board->config, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  715  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  716  	case CFCIRQ:
-9dde4559e93955 Dave Penkler 2024-09-18  717  		retval = irq_ioctl(&board->config, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  718  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  719  	case CFCDMA:
-9dde4559e93955 Dave Penkler 2024-09-18  720  		retval = dma_ioctl(&board->config, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  721  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  722  	case IBAUTOSPOLL:
-9dde4559e93955 Dave Penkler 2024-09-18  723  		retval = autospoll_ioctl(board, file_priv, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  724  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  725  	case IBBOARD_INFO:
-9dde4559e93955 Dave Penkler 2024-09-18  726  		retval = board_info_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  727  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  728  	case IBMUTEX:
-9dde4559e93955 Dave Penkler 2024-09-18  729  		/* Need to unlock board->big_gpib_mutex before potentially locking board->user_mutex
-9dde4559e93955 Dave Penkler 2024-09-18  730  		 *  to maintain consistent locking order
-9dde4559e93955 Dave Penkler 2024-09-18  731  		 */
-9dde4559e93955 Dave Penkler 2024-09-18  732  		mutex_unlock(&board->big_gpib_mutex);
-9dde4559e93955 Dave Penkler 2024-09-18  733  		return mutex_ioctl(board, file_priv, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  734  	case IBPAD:
-9dde4559e93955 Dave Penkler 2024-09-18  735  		retval = pad_ioctl(board, file_priv, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  736  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  737  	case IBSAD:
-9dde4559e93955 Dave Penkler 2024-09-18  738  		retval = sad_ioctl(board, file_priv, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  739  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  740  	case IBSELECT_PCI:
-9dde4559e93955 Dave Penkler 2024-09-18  741  		retval = select_pci_ioctl(&board->config, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  742  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  743  	case IBSELECT_DEVICE_PATH:
-9dde4559e93955 Dave Penkler 2024-09-18  744  		retval = select_device_path_ioctl(&board->config, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  745  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  746  	default:
-9dde4559e93955 Dave Penkler 2024-09-18  747  		break;
-9dde4559e93955 Dave Penkler 2024-09-18  748  	}
-9dde4559e93955 Dave Penkler 2024-09-18  749  
-9dde4559e93955 Dave Penkler 2024-09-18  750  	if (!board->online) {
-9dde4559e93955 Dave Penkler 2024-09-18  751  		pr_err("gpib: ioctl %i invalid for offline board\n",
-9dde4559e93955 Dave Penkler 2024-09-18  752  		       cmd & 0xff);
-9dde4559e93955 Dave Penkler 2024-09-18  753  		retval = -EINVAL;
-9dde4559e93955 Dave Penkler 2024-09-18  754  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  755  	}
-9dde4559e93955 Dave Penkler 2024-09-18  756  
-9dde4559e93955 Dave Penkler 2024-09-18  757  	switch (cmd) {
-9dde4559e93955 Dave Penkler 2024-09-18  758  	case IBEVENT:
-9dde4559e93955 Dave Penkler 2024-09-18  759  		retval = event_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  760  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  761  	case IBCLOSEDEV:
-9dde4559e93955 Dave Penkler 2024-09-18  762  		retval = close_dev_ioctl(filep, board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  763  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  764  	case IBOPENDEV:
-9dde4559e93955 Dave Penkler 2024-09-18  765  		retval = open_dev_ioctl(filep, board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  766  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  767  	case IBSPOLL_BYTES:
-9dde4559e93955 Dave Penkler 2024-09-18  768  		retval = status_bytes_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  769  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  770  	case IBWAIT:
-9dde4559e93955 Dave Penkler 2024-09-18  771  		retval = wait_ioctl(file_priv, board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  772  		if (retval == -ERESTARTSYS)
-9dde4559e93955 Dave Penkler 2024-09-18  773  			return retval;
+  BIOS-e820: [mem 0x0000000000000000-0x000000000009efff] usable
+  BIOS-e820: [mem 0x000000000009f000-0x00000000000fffff] reserved
+  BIOS-e820: [mem 0x0000000000100000-0x000000005d168fff] usable
+  BIOS-e820: [mem 0x000000005d169000-0x000000005d22afff] ACPI data
+  BIOS-e820: [mem 0x000000005d22b000-0x000000005d3cefff] usable
+  BIOS-e820: [mem 0x000000005d3cf000-0x000000005d469fff] reserved
+  BIOS-e820: [mem 0x000000005d46a000-0x000000005e5b2fff] usable
+  BIOS-e820: [mem 0x000000005e5b3000-0x000000005e5c2fff] reserved
+  BIOS-e820: [mem 0x000000005e5c3000-0x000000005e5d2fff] usable
+  BIOS-e820: [mem 0x000000005e5d3000-0x000000005e5e4fff] reserved
+  BIOS-e820: [mem 0x000000005e5e5000-0x000000005eb57fff] usable
+  BIOS-e820: [mem 0x000000005eb58000-0x0000000061357fff] ACPI NVS
+  BIOS-e820: [mem 0x0000000061358000-0x000000006172afff] usable
+  BIOS-e820: [mem 0x000000006172b000-0x0000000061794fff] ACPI data
+  BIOS-e820: [mem 0x0000000061795000-0x00000000617fefff] usable
+  BIOS-e820: [mem 0x00000000617ff000-0x0000000061912fff] ACPI data
+  BIOS-e820: [mem 0x0000000061913000-0x0000000061998fff] usable
+  BIOS-e820: [mem 0x0000000061999000-0x00000000619dffff] ACPI data
+  BIOS-e820: [mem 0x00000000619e0000-0x00000000619e1fff] usable
+  BIOS-e820: [mem 0x00000000619e2000-0x00000000619e9fff] reserved
+  BIOS-e820: [mem 0x00000000619ea000-0x0000000061a26fff] usable
+  BIOS-e820: [mem 0x0000000061a27000-0x0000000061baefff] ACPI data
+  BIOS-e820: [mem 0x0000000061baf000-0x00000000623c2fff] usable
+  BIOS-e820: [mem 0x00000000623c3000-0x0000000062471fff] reserved
+  BIOS-e820: [mem 0x0000000062472000-0x0000000062823fff] usable
+  BIOS-e820: [mem 0x0000000062824000-0x0000000063a24fff] reserved
+  BIOS-e820: [mem 0x0000000063a25000-0x0000000063d57fff] usable
+  BIOS-e820: [mem 0x0000000063d58000-0x0000000064157fff] reserved
+  BIOS-e820: [mem 0x0000000064158000-0x0000000064158fff] usable
+  BIOS-e820: [mem 0x0000000064159000-0x0000000064194fff] reserved
+  BIOS-e820: [mem 0x0000000064195000-0x000000006e9cefff] usable
+  BIOS-e820: [mem 0x000000006e9cf000-0x000000006eccefff] reserved
+  BIOS-e820: [mem 0x000000006eccf000-0x000000006f6fefff] ACPI NVS
+  BIOS-e820: [mem 0x000000006f6ff000-0x000000006f7fefff] ACPI data
+  BIOS-e820: [mem 0x000000006f7ff000-0x000000006f7fffff] usable
+  BIOS-e820: [mem 0x000000006f800000-0x000000008fffffff] reserved
+  ......
 
-mutex_unlock(&board->big_gpib_mutex) before returning.
+[2] Convertible Memory Regions of the problematic platform:
 
-9dde4559e93955 Dave Penkler 2024-09-18  774  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  775  	case IBLINES:
-9dde4559e93955 Dave Penkler 2024-09-18  776  		retval = line_status_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  777  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  778  	case IBLOC:
-9dde4559e93955 Dave Penkler 2024-09-18  779  		board->interface->return_to_local(board);
-9dde4559e93955 Dave Penkler 2024-09-18  780  		retval = 0;
-9dde4559e93955 Dave Penkler 2024-09-18  781  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  782  	default:
-9dde4559e93955 Dave Penkler 2024-09-18  783  		break;
-9dde4559e93955 Dave Penkler 2024-09-18  784  	}
-9dde4559e93955 Dave Penkler 2024-09-18  785  
-9dde4559e93955 Dave Penkler 2024-09-18  786  	spin_lock(&board->locking_pid_spinlock);
-9dde4559e93955 Dave Penkler 2024-09-18  787  	if (current->pid != board->locking_pid)	{
-9dde4559e93955 Dave Penkler 2024-09-18  788  		spin_unlock(&board->locking_pid_spinlock);
-9dde4559e93955 Dave Penkler 2024-09-18  789  		pr_err("gpib: need to hold board lock to perform ioctl %i\n",
-9dde4559e93955 Dave Penkler 2024-09-18  790  		       cmd & 0xff);
-9dde4559e93955 Dave Penkler 2024-09-18  791  		retval = -EPERM;
-9dde4559e93955 Dave Penkler 2024-09-18  792  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  793  	}
-9dde4559e93955 Dave Penkler 2024-09-18  794  	spin_unlock(&board->locking_pid_spinlock);
-9dde4559e93955 Dave Penkler 2024-09-18  795  
-9dde4559e93955 Dave Penkler 2024-09-18  796  	switch (cmd) {
-9dde4559e93955 Dave Penkler 2024-09-18  797  	case IB_T1_DELAY:
-9dde4559e93955 Dave Penkler 2024-09-18  798  		retval = t1_delay_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  799  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  800  	case IBCAC:
-9dde4559e93955 Dave Penkler 2024-09-18  801  		retval = take_control_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  802  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  803  	case IBCMD:
-9dde4559e93955 Dave Penkler 2024-09-18  804  		/* IO ioctls can take a long time, we need to unlock board->big_gpib_mutex
-9dde4559e93955 Dave Penkler 2024-09-18  805  		 *  before we call them.
-9dde4559e93955 Dave Penkler 2024-09-18  806  		 */
-9dde4559e93955 Dave Penkler 2024-09-18  807  		mutex_unlock(&board->big_gpib_mutex);
-9dde4559e93955 Dave Penkler 2024-09-18  808  		return command_ioctl(file_priv, board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  809  	case IBEOS:
-9dde4559e93955 Dave Penkler 2024-09-18  810  		retval = eos_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  811  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  812  	case IBGTS:
-9dde4559e93955 Dave Penkler 2024-09-18  813  		retval = ibgts(board);
-9dde4559e93955 Dave Penkler 2024-09-18  814  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  815  	case IBPPC:
-9dde4559e93955 Dave Penkler 2024-09-18  816  		retval = ppc_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  817  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  818  	case IBPP2_SET:
-9dde4559e93955 Dave Penkler 2024-09-18  819  		retval = set_local_ppoll_mode_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  820  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  821  	case IBPP2_GET:
-9dde4559e93955 Dave Penkler 2024-09-18  822  		retval = get_local_ppoll_mode_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  823  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  824  	case IBQUERY_BOARD_RSV:
-9dde4559e93955 Dave Penkler 2024-09-18  825  		retval = query_board_rsv_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  826  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  827  	case IBRD:
-9dde4559e93955 Dave Penkler 2024-09-18  828  		/* IO ioctls can take a long time, we need to unlock board->big_gpib_mutex
-9dde4559e93955 Dave Penkler 2024-09-18  829  		 *  before we call them.
-9dde4559e93955 Dave Penkler 2024-09-18  830  		 */
-9dde4559e93955 Dave Penkler 2024-09-18  831  		mutex_unlock(&board->big_gpib_mutex);
-9dde4559e93955 Dave Penkler 2024-09-18  832  		return read_ioctl(file_priv, board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  833  	case IBRPP:
-9dde4559e93955 Dave Penkler 2024-09-18  834  		retval = parallel_poll_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  835  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  836  	case IBRSC:
-9dde4559e93955 Dave Penkler 2024-09-18  837  		retval = request_system_control_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  838  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  839  	case IBRSP:
-9dde4559e93955 Dave Penkler 2024-09-18  840  		retval = serial_poll_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  841  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  842  	case IBRSV:
-9dde4559e93955 Dave Penkler 2024-09-18  843  		retval = request_service_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  844  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  845  	case IBRSV2:
-9dde4559e93955 Dave Penkler 2024-09-18  846  		retval = request_service2_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  847  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  848  	case IBSIC:
-9dde4559e93955 Dave Penkler 2024-09-18  849  		retval = interface_clear_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  850  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  851  	case IBSRE:
-9dde4559e93955 Dave Penkler 2024-09-18  852  		retval = remote_enable_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  853  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  854  	case IBTMO:
-9dde4559e93955 Dave Penkler 2024-09-18  855  		retval = timeout_ioctl(board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  856  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  857  	case IBWRT:
-9dde4559e93955 Dave Penkler 2024-09-18  858  		/* IO ioctls can take a long time, we need to unlock board->big_gpib_mutex
-9dde4559e93955 Dave Penkler 2024-09-18  859  		 *  before we call them.
-9dde4559e93955 Dave Penkler 2024-09-18  860  		 */
-9dde4559e93955 Dave Penkler 2024-09-18  861  		mutex_unlock(&board->big_gpib_mutex);
-9dde4559e93955 Dave Penkler 2024-09-18  862  		return write_ioctl(file_priv, board, arg);
-9dde4559e93955 Dave Penkler 2024-09-18  863  	default:
-9dde4559e93955 Dave Penkler 2024-09-18  864  		retval = -ENOTTY;
-9dde4559e93955 Dave Penkler 2024-09-18  865  		goto done;
-9dde4559e93955 Dave Penkler 2024-09-18  866  	}
-9dde4559e93955 Dave Penkler 2024-09-18  867  
-9dde4559e93955 Dave Penkler 2024-09-18  868  done:
-9dde4559e93955 Dave Penkler 2024-09-18  869  	mutex_unlock(&board->big_gpib_mutex);
-9dde4559e93955 Dave Penkler 2024-09-18  870  	GPIB_DPRINTK("ioctl done status = 0x%lx\n", board->status);
-9dde4559e93955 Dave Penkler 2024-09-18 @871  	return retval;
-9dde4559e93955 Dave Penkler 2024-09-18  872  }
+  virt/tdx: CMR: [0x100000, 0x6f800000)
+  virt/tdx: CMR: [0x100000000, 0x107a000000)
+  virt/tdx: CMR: [0x1080000000, 0x207c000000)
+  virt/tdx: CMR: [0x2080000000, 0x307c000000)
+  virt/tdx: CMR: [0x3080000000, 0x407c000000)
 
+Link: https://github.com/canonical/tdx/issues/135 [*]
+Fixes: dde3b60d572c ("x86/virt/tdx: Designate reserved areas for all TDMRs")
+Signed-off-by: Kai Huang <kai.huang@intel.com>
+Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+---
+
+v8.1 -> v8.2:
+ - Trim down the changelog and comments. (Dave)
+
+---
+ arch/x86/virt/vmx/tdx/tdx.c | 74 ++++++++++++++++++++++++++++---------
+ 1 file changed, 56 insertions(+), 18 deletions(-)
+
+diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
+index 5e6d8021681d..5c6a743de333 100644
+--- a/arch/x86/virt/vmx/tdx/tdx.c
++++ b/arch/x86/virt/vmx/tdx/tdx.c
+@@ -176,6 +176,23 @@ int tdx_cpu_enable(void)
+ }
+ EXPORT_SYMBOL_GPL(tdx_cpu_enable);
+ 
++/* Check whether a given memory region is a sub-region of any CMR. */
++static bool is_cmr_sub_region(unsigned long start_pfn, unsigned long end_pfn,
++			      struct tdx_sys_info_cmr *sysinfo_cmr)
++{
++	int i;
++
++	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
++		u64 cmr_base_pfn = sysinfo_cmr->cmr_base[i] >> PAGE_SHIFT;
++		u64 cmr_npages = sysinfo_cmr->cmr_size[i] >> PAGE_SHIFT;
++
++		if (start_pfn >= cmr_base_pfn &&
++				end_pfn <= (cmr_base_pfn + cmr_npages))
++			return true;
++	}
++
++	return false;
++}
+ /*
+  * Add a memory region as a TDX memory block.  The caller must make sure
+  * all memory regions are added in address ascending order and don't
+@@ -218,7 +235,8 @@ static void free_tdx_memlist(struct list_head *tmb_list)
+  * ranges off in a secondary structure because memblock is modified
+  * in memory hotplug while TDX memory regions are fixed.
+  */
+-static int build_tdx_memlist(struct list_head *tmb_list)
++static int build_tdx_memlist(struct list_head *tmb_list,
++			     struct tdx_sys_info_cmr *sysinfo_cmr)
+ {
+ 	unsigned long start_pfn, end_pfn;
+ 	int i, nid, ret;
+@@ -234,6 +252,18 @@ static int build_tdx_memlist(struct list_head *tmb_list)
+ 		if (start_pfn >= end_pfn)
+ 			continue;
+ 
++		/*
++		 * Make sure the to-be-added memory region is truly TDX
++		 * convertible.  This ensures no non-TDX convertible
++		 * memory can end up to page allocator.
++		 */
++		if (!is_cmr_sub_region(start_pfn, end_pfn, sysinfo_cmr)) {
++			pr_err("memory region [0x%lx, 0x%lx) is not TDX convertible memory.\n",
++					PHYS_PFN(start_pfn), PHYS_PFN(end_pfn));
++			ret = -EINVAL;
++			goto err;
++		}
++
+ 		/*
+ 		 * Add the memory regions as TDX memory.  The regions in
+ 		 * memblock has already guaranteed they are in address
+@@ -733,29 +763,28 @@ static int tdmr_add_rsvd_area(struct tdmr_info *tdmr, int *p_idx, u64 addr,
+ }
+ 
+ /*
+- * Go through @tmb_list to find holes between memory areas.  If any of
++ * Go through all CMRs in @sysinfo_cmr to find memory holes.  If any of
+  * those holes fall within @tdmr, set up a TDMR reserved area to cover
+  * the hole.
+  */
+-static int tdmr_populate_rsvd_holes(struct list_head *tmb_list,
++static int tdmr_populate_rsvd_holes(struct tdx_sys_info_cmr *sysinfo_cmr,
+ 				    struct tdmr_info *tdmr,
+ 				    int *rsvd_idx,
+ 				    u16 max_reserved_per_tdmr)
+ {
+-	struct tdx_memblock *tmb;
+ 	u64 prev_end;
+-	int ret;
++	int i, ret;
+ 
+ 	/*
+ 	 * Start looking for reserved blocks at the
+ 	 * beginning of the TDMR.
+ 	 */
+ 	prev_end = tdmr->base;
+-	list_for_each_entry(tmb, tmb_list, list) {
++	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
+ 		u64 start, end;
+ 
+-		start = PFN_PHYS(tmb->start_pfn);
+-		end   = PFN_PHYS(tmb->end_pfn);
++		start = sysinfo_cmr->cmr_base[i];
++		end   = start + sysinfo_cmr->cmr_size[i];
+ 
+ 		/* Break if this region is after the TDMR */
+ 		if (start >= tdmr_end(tdmr))
+@@ -856,16 +885,16 @@ static int rsvd_area_cmp_func(const void *a, const void *b)
+ 
+ /*
+  * Populate reserved areas for the given @tdmr, including memory holes
+- * (via @tmb_list) and PAMTs (via @tdmr_list).
++ * (via @sysinfo_cmr) and PAMTs (via @tdmr_list).
+  */
+ static int tdmr_populate_rsvd_areas(struct tdmr_info *tdmr,
+-				    struct list_head *tmb_list,
++				    struct tdx_sys_info_cmr *sysinfo_cmr,
+ 				    struct tdmr_info_list *tdmr_list,
+ 				    u16 max_reserved_per_tdmr)
+ {
+ 	int ret, rsvd_idx = 0;
+ 
+-	ret = tdmr_populate_rsvd_holes(tmb_list, tdmr, &rsvd_idx,
++	ret = tdmr_populate_rsvd_holes(sysinfo_cmr, tdmr, &rsvd_idx,
+ 			max_reserved_per_tdmr);
+ 	if (ret)
+ 		return ret;
+@@ -884,10 +913,10 @@ static int tdmr_populate_rsvd_areas(struct tdmr_info *tdmr,
+ 
+ /*
+  * Populate reserved areas for all TDMRs in @tdmr_list, including memory
+- * holes (via @tmb_list) and PAMTs.
++ * holes (via @sysinfo_cmr) and PAMTs.
+  */
+ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
+-					 struct list_head *tmb_list,
++					 struct tdx_sys_info_cmr *sysinfo_cmr,
+ 					 u16 max_reserved_per_tdmr)
+ {
+ 	int i;
+@@ -896,7 +925,7 @@ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
+ 		int ret;
+ 
+ 		ret = tdmr_populate_rsvd_areas(tdmr_entry(tdmr_list, i),
+-				tmb_list, tdmr_list, max_reserved_per_tdmr);
++				sysinfo_cmr, tdmr_list, max_reserved_per_tdmr);
+ 		if (ret)
+ 			return ret;
+ 	}
+@@ -911,7 +940,8 @@ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
+  */
+ static int construct_tdmrs(struct list_head *tmb_list,
+ 			   struct tdmr_info_list *tdmr_list,
+-			   struct tdx_sys_info_tdmr *sysinfo_tdmr)
++			   struct tdx_sys_info_tdmr *sysinfo_tdmr,
++			   struct tdx_sys_info_cmr *sysinfo_cmr)
+ {
+ 	u16 pamt_entry_size[TDX_PS_NR] = {
+ 		sysinfo_tdmr->pamt_4k_entry_size,
+@@ -928,7 +958,14 @@ static int construct_tdmrs(struct list_head *tmb_list,
+ 	if (ret)
+ 		return ret;
+ 
+-	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, tmb_list,
++	/*
++	 * On some large systems, the TDX memory blocks (which reflects
++	 * e820) in the first 1GB can be too fine-grained.  Using them
++	 * to populate reserved areas may result in reserved areas being
++	 * exhausted.  CMRs are coarser-grained than e820.  Use CMRs to
++	 * populate reserved areas to reduce their consumption.
++	 */
++	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, sysinfo_cmr,
+ 			sysinfo_tdmr->max_reserved_per_tdmr);
+ 	if (ret)
+ 		tdmrs_free_pamt_all(tdmr_list);
+@@ -1107,7 +1144,7 @@ static int init_tdx_module(void)
+ 	 */
+ 	get_online_mems();
+ 
+-	ret = build_tdx_memlist(&tdx_memlist);
++	ret = build_tdx_memlist(&tdx_memlist, &sysinfo.cmr);
+ 	if (ret)
+ 		goto out_put_tdxmem;
+ 
+@@ -1117,7 +1154,8 @@ static int init_tdx_module(void)
+ 		goto err_free_tdxmem;
+ 
+ 	/* Cover all TDX-usable memory regions in TDMRs */
+-	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr);
++	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr,
++			&sysinfo.cmr);
+ 	if (ret)
+ 		goto err_free_tdmrs;
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.47.1
 
 
