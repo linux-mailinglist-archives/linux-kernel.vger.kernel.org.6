@@ -1,148 +1,132 @@
-Return-Path: <linux-kernel+bounces-436914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0BA19E8C8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:48:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1A49E8C91
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:49:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F8DD18827C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:49:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD4F2215068;
+	Mon,  9 Dec 2024 07:49:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c7ya8ngT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71FD2280D9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:48:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4918214A96;
-	Mon,  9 Dec 2024 07:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VtHVFlu+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BttWni2S";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VtHVFlu+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BttWni2S"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A7715573D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 07:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35E1015573D;
+	Mon,  9 Dec 2024 07:49:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733730498; cv=none; b=IODyhx2MyOuxO+3vRdeaX+gb3+JPdUabS7VmCjiWJEIr4ZKu/EluX2k4z+aWIswL6w3O1ZsXnd9ddyzJjz0Us1X8kMgFxZ3eFtIQlGqDFbaHpvVXR3TsS85vHDPJ+Z4Cva8vs52EivrCL/OT6r0k6gy9fnpKZvYE7kC/24KO0C4=
+	t=1733730545; cv=none; b=iZt89Wz2O/dTFiziV8zhkwS1SksSCtfNmCC5o0V7Idn1jKgeMdeipfU5648G1TYkairybNgAri5mGaseh7tv/m4x3a34AM0t7K/dwUbE5IjdWVUpEL6AB+VIoZTAoMt+TR/zdqjJKuwbawO+MkpIIrgToluPGBw9jgYvXU9yeog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733730498; c=relaxed/simple;
-	bh=g/XGOcNNAX9SgQhKn3hREJo7TqTn90SPrvz/2qeEY3A=;
+	s=arc-20240116; t=1733730545; c=relaxed/simple;
+	bh=Ke4oSiaavD5rXW7RJFQ7IuRw5WXv3v1QivxyYpX0rdQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HIq28mog8qy4jNf301AkR/G3+YWcOmvSbPwHzrS+GYiTc2HOICiRRVMCYHTqMeWRbVa+yvmeyz/vFsrDYFIngnUmSmACu5VzF9ep9Sh3hz7K8de0R2u4jx2SLa5Xjtn2NP9MWHlGt6NggD4gI7+2yrHWriWWY5FVm8MBC0EgC+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VtHVFlu+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BttWni2S; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VtHVFlu+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BttWni2S; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B48031F456;
-	Mon,  9 Dec 2024 07:48:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733730494; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ULbQDbETi+vHyvngL1vqd7supW/fBFyBw5YnpQYENZg=;
-	b=VtHVFlu+dJztCBpA4fzlKJNRo0wVGjpos6GhCjgCrStGmGQuwUZA2vmhpIsSiNQbabD7UO
-	xaw50JlfXHVvec0zhzKCVx8HhUurq8DKjoCCB80+luJK2VEFSvkrhk4sTTzNjpbQpbXyFX
-	mxBrU0BT1ocuWHGnK+3uTJz7uD86NbM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733730494;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ULbQDbETi+vHyvngL1vqd7supW/fBFyBw5YnpQYENZg=;
-	b=BttWni2ShKnLgiccL4AUxEGCkGB5TBuf4GwKUIK6567se5viQVTim0j45KVt9SChh/f4k1
-	BoaxbzLIjsY1rmCw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1733730494; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ULbQDbETi+vHyvngL1vqd7supW/fBFyBw5YnpQYENZg=;
-	b=VtHVFlu+dJztCBpA4fzlKJNRo0wVGjpos6GhCjgCrStGmGQuwUZA2vmhpIsSiNQbabD7UO
-	xaw50JlfXHVvec0zhzKCVx8HhUurq8DKjoCCB80+luJK2VEFSvkrhk4sTTzNjpbQpbXyFX
-	mxBrU0BT1ocuWHGnK+3uTJz7uD86NbM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1733730494;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ULbQDbETi+vHyvngL1vqd7supW/fBFyBw5YnpQYENZg=;
-	b=BttWni2ShKnLgiccL4AUxEGCkGB5TBuf4GwKUIK6567se5viQVTim0j45KVt9SChh/f4k1
-	BoaxbzLIjsY1rmCw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 541ED138D2;
-	Mon,  9 Dec 2024 07:48:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id OLWeEb6gVmdMfgAAD6G6ig
-	(envelope-from <osalvador@suse.de>); Mon, 09 Dec 2024 07:48:14 +0000
-Date: Mon, 9 Dec 2024 08:48:08 +0100
-From: Oscar Salvador <osalvador@suse.de>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>
-Subject: Re: [PATCH v1 2/2] mm/memory_hotplug: don't use __GFP_HARDWALL when
- migrating pages via memory offlining
-Message-ID: <Z1aguIT-Br920uey@localhost.localdomain>
-References: <20241205085217.2086353-1-david@redhat.com>
- <20241205085217.2086353-3-david@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HwW8njsWKMJGQWRoIY+d8q9LUtPomvckvkCI/6EQt1L/ASsZVnCnV6FD7kU0f57izAosUWSNwbJ2w2lcYMvyxLFZmOXEaQc2nZwzeU4IlFCKkTyZKqDZfxDprfGiZCxQeAuFtx63P6ieoE3SRDbcwI89qewm1C5GmhcPpBrIAdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c7ya8ngT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0830C4CED1;
+	Mon,  9 Dec 2024 07:49:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733730544;
+	bh=Ke4oSiaavD5rXW7RJFQ7IuRw5WXv3v1QivxyYpX0rdQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c7ya8ngT4sTuA0b6osceBibkaIV9znLSOOi+jrBvMeld1/frUi8zu2W8iSt7cUtwy
+	 AFaP6DRxzrWn8n7IwYNKO56oIOdXGjKc1wQYJNCMyvdHtalHHtG1oqBt+G6KxMDX/U
+	 OLm4Ht1XEJuUMrKtx7SrSPuZjXzuhs/NuhVUmrg8BqG3POl4BLHFaTdG/vyWYonkPY
+	 Ct/2+txCu2bwx+3RouA1ZRqDhD6KC6vfgELsLO+S2SolwQQnsGAkNiw403lFnzgRsi
+	 qAYJ7N9bJjPIffEcVOD0utfsD2V8uq680mBNSwrkXo2hbC5s9OD4bjjq56Nr7VJVl7
+	 Gy9eZlbBiD8SA==
+Date: Mon, 9 Dec 2024 08:49:00 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Sanyog Kale <sanyog.r.kale@intel.com>, 
+	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_pkumpatl@quicinc.com, kernel@quicinc.com
+Subject: Re: [PATCH v4 1/4] ASoC: dt-bindings: wcd937x-sdw: Add static
+ channel mapping support
+Message-ID: <fq5p4ubdpv3dc5jzqgakvnqzpcrhkfqar2dbcvclqlvbmbegfc@llq3kzkzegl3>
+References: <20241209045551.1404782-1-quic_mohs@quicinc.com>
+ <20241209045551.1404782-2-quic_mohs@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241205085217.2086353-3-david@redhat.com>
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,imap1.dmz-prg2.suse.org:helo,suse.de:email]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+In-Reply-To: <20241209045551.1404782-2-quic_mohs@quicinc.com>
 
-On Thu, Dec 05, 2024 at 09:52:17AM +0100, David Hildenbrand wrote:
-> We'll migrate pages allocated by other context; respecting the cpuset of
-> the memory offlining context when allocating a migration target does not
-> make sense.
+On Mon, Dec 09, 2024 at 10:25:48AM +0530, Mohammad Rafi Shaik wrote:
+> Add static channel mapping between master and slave rx/tx ports for
+> Qualcomm wcd937x soundwire codec.
 > 
-> Drop the __GFP_HARDWALL by using GFP_KERNEL.
+> Currently, the channel map index value for each soundwire port is
+> hardcoded in the wcd937x-sdw driver, and the same channel map index
+> value is configured in the soundwire master.
 > 
-> Note that in an ideal world, migration code could figure out the cpuset
-> of the original context and take that into consideration.
+> The Qualcomm board like the QCM6490-IDP require static channel map
+> settings for the soundwire master and slave ports.
 > 
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
+> If another boards which are using enable wcd937x, the channel mapping
+> index values between master and slave may be different depending on the
+> board hw design and requirements. If the above properties are not used
+> in a SoC specific device tree, the channel mapping index values are set
+> to default.
+> 
+> With the introduction of the following channel mapping properties, it is
+> now possible to configure the master channel mapping directly from the
+> device tree.
+> 
+> The qcom,tx-channel-mapping property specifies the static channel mapping
+> between the slave and master tx ports in the order of slave port channels
+> which is adc1, adc2, adc3, adc4, dmic0, dmic1, mbhc, dmic2, dmic3, dmci4,
+> dmic5, dmic6, dmic7.
+> 
+> The qcom,rx-channel-mapping property specifies the static channel mapping
+> between the slave and master rx ports in the order of slave port channels
+> which is hph_l, hph_r, clsh, comp_l, comp_r, lo, dsd_r, dsd_l.
+> 
+> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+> ---
+>  .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++++++++
+>  1 file changed, 36 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+> index d3cf8f59cb23..9209667044ba 100644
+> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+> @@ -58,6 +58,40 @@ properties:
+>      items:
+>        enum: [1, 2, 3, 4, 5]
+>  
+> +  qcom,tx-channel-mapping:
+> +    description: |
+> +      Specifies static channel mapping between slave and master tx port
+> +      channels.
+> +      In the order of slave port channels which is adc1, adc2, adc3,
+> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
+> +    $ref: /schemas/types.yaml#/definitions/uint8-array
+> +    minItems: 12
+> +    maxItems: 12
+> +    additionalItems: false
+> +    items:
+> +      enum:
+> +        - 0  # WCD9370_SWRM_CH1
 
-Acked-by: Oscar Salvador <osalvador@suse.de>
+Drop the comments. This does not implement my feedback and you sent it
+four days after I replied to you.
 
+Best regards,
+Krzysztof
 
--- 
-Oscar Salvador
-SUSE Labs
 
