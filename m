@@ -1,198 +1,139 @@
-Return-Path: <linux-kernel+bounces-437474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2359E93C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:24:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21479E93C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:24:19 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 334AD165397
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:24:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 584EA28468F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:24:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FD282236FD;
-	Mon,  9 Dec 2024 12:23:59 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E92722258B;
+	Mon,  9 Dec 2024 12:24:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FufHW/pQ"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBDDA21D008;
-	Mon,  9 Dec 2024 12:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1393221DB6
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:24:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747038; cv=none; b=LeUx1NiFWwvwgarraFXINJbEZiv9WQLMoLVqnf+YfAVGJp17BfStS27vG91I18w15bZCPjOQX+EBIpyfo+2dPMGsGaWvHU6TWD0op0a+WUFZQlJQFkMjRs8znbsbqed/LCCVDHgfkKCyXEJQaaeyzB4wPfbja71uGb46tu6bSsA=
+	t=1733747055; cv=none; b=u9gFALQjC2CpcZ1ciwEiWyNJmCQlkylEpbpTPFu0za9umvZoX53lfWwc7JMZSqcR9FtzXfAe+7Eg/mu/dTOCqbUZj5RF8yKIkSPYlE5XIOaqvl4AUP0XtXywv12bac0ND7QwKHpKt37XloYrZ61wgy7sP6rGaAFgxmH5hWDV0mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747038; c=relaxed/simple;
-	bh=nJWsB2IKS0EcKbW6Pme62FOLn+NLxCo9ZDwpU8lvMuA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U7zeSmea+/rjUGDK5zpnOfDmOYjT2tUnh1W0smqtRE8qwc9g0NXwmrL4NzF2OUu3n6NnipDnGnRowRP47551tpSJFKIdQoFHAGFSj/x7xvWZNG3R/Wu6AhbW2p42QA7SrxEFJUzoCarQclB6m5Hw8z9Fmn2NJIx7ItQADWaMJUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-51882c83065so207528e0c.0;
-        Mon, 09 Dec 2024 04:23:56 -0800 (PST)
+	s=arc-20240116; t=1733747055; c=relaxed/simple;
+	bh=2ItpBQPODjnIYSjwoQvA06FlkQRZbhoJv5RXLp+oLuc=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Kot/cv88oXy2Qq0rom9xv/0UF4iGevPPM2P/7htGsK8+/cknkRrNSDMNCRyyHkSNhSAFT0cawjMiASSzQTXiU+6BOpHns0/7vZ8+DLMRVKFxauV90XlBzqLekQEluuu2fx+WgUNpI0TdSMnXZ4vS8UMaz+cWm7mXcAOMcNxf/RI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FufHW/pQ; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa65f707419so40885366b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:24:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733747052; x=1734351852; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+GhPtI8wgOnDMaTV/aebDQBDsWOSAP4QkIO0/UH54kQ=;
+        b=FufHW/pQUrV6WYzCyKuEDPZmvfI9Q7AAb3H/XHFhb6lSXL41DlcMWxgiBUNlU6mD5P
+         vKLFJV5QSfNxT84CLxkLeChRMS3DDjvKtVMB3QgZSTnyU7cnhPpwwkE41ZovmXZkIhTh
+         4To1QLWqqgv2e1611bFyWqjkHpkZkV47SIgeF1+9sFCx+91xwiN2/Oe4c07rhjn9DdPg
+         i8fqFqx5Z92KmSY0SiqlF0YGlICvZ/JOagWufBUrYiVvVfDvThmCsAk1U6FllYIrNXK8
+         aau/EeBnCKGqHVqTFrMAUbhie7LU/7W35rDakhi5jrbyQQHABYpNE8OprtaD5FNIEhsm
+         IGVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733747033; x=1734351833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8BZxzxSlX/poqaet0n5zcusvxow0QtKoWGJb3xa8Qns=;
-        b=irHdrpjsxZWpCMAwbTpcV+cMnQFAKEs2M3OpPabPVFx0VehovqrMbyK5ewuhI4xbeh
-         UDd8AVw1/w5JVgASje4De2Yug8js5od4+hPrY4BpOdznQAocZzKzRrWfj+02SDrv6qd8
-         qpcZ4LY0qygum4Az2cXNghFHnnhJryrF9GeZJfhZ4mCPE+y4ZAfSkANK3Uwyg2hQSJrz
-         LYUCNGW2Vp/xxjMwF61attBxwk8Mjk4A3ii04Ba1Lr18AlnCdGbT/EwqmMdKEkMYWRJ+
-         nqsCrAn6ttgn3H/uYjtsSifwa4Jb2efXfF2guGteEdUibXvS7kiS1qd6h23M1qRwEU2/
-         Oqfg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGpeFRNqb+a3kpYsLdjnRD3Pz5TWfLW5k5Ezv4aVBPSYaeI9OZ8qkH4FceOu9kq6F8rL87aJ+xRmzWL0M=@vger.kernel.org, AJvYcCUNx0v6zQ9836hVbGY+zhhb6+jvwo2NAMiGvrO33x46x8smR7rRI2ELP/r0fzcYQ/7JDsYOiFaTFO/MWg==@vger.kernel.org, AJvYcCV6I5EX39iOOi5YTK7y/PF8tCa+p/gx5ZMYKB0eropWV4Mj7lhKOh0951KwNhr7Q8rocdpg6Byv2Uby@vger.kernel.org, AJvYcCWCvRXDIuEaYn6i2zAM3VDXwb7tC/3afzGt855uLu4tdAQttzzDbTAnYM6wI2bvVOraBvgudE8rYquW@vger.kernel.org, AJvYcCX/HKYuNkep/cx3iATkHz8hJukCzwwJsNEaEE/9+GeBrf5V4JWILUhvIEHd3IBBR4CybLvWge5ecApx5SZjrvMPUts=@vger.kernel.org, AJvYcCXvGqzpwyNwCwHHT7yfJXaF4c+KOPwYFfNi/gN0I3dQdrmlxx0X+GHhRII1CxAK6h9EvJZY1dMLA0bssrYo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiVfAKUYkj3hUKGADyv/Uw95LwdPIAe1nYS4/Qg4ZD+N7KhBHd
-	8TvgSHeVgu8VbP4XEFibyveLX6ArVFr58+IqAuwgzzVU8xHbftstRCihyddxsxM=
-X-Gm-Gg: ASbGncs0F+kWarH1LJCLe643kkvZ0+eGRHr4MzMCbM32B6j5kadi6YTwc0tIfqG0ceM
-	xD6nO1vnUAM2F+ZCAmaS36LqgzZDPQfU5tR7hoTTERGMnL45ShW+Xda/kB7vdjwBvk4i47Ec4fv
-	C5RbgTDl8t155ap9AF8SWs8UDFNVNL5tRW92TlkaSVrxtxt6+gTPYZavj4t9Ov3tO6ZBsdpjQna
-	+MfR9sGMjkzVmtMy/eTGkeD9SUZN8SWJwdlh4smcnSOgYJZxmOejCmMTg5ANYiNSnbRFwXZZLbU
-	ILOF9IHkAl4V
-X-Google-Smtp-Source: AGHT+IEO20GkTs2CycQBAGmUXZj+6oDD9ikGyapwN8cPxFSZ6eobYvT8YbQbdxsr4LGygu2lo1VIqA==
-X-Received: by 2002:a05:6122:885:b0:517:4fca:86df with SMTP id 71dfb90a1353d-51888360b17mr269778e0c.6.1733747033325;
-        Mon, 09 Dec 2024 04:23:53 -0800 (PST)
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com. [209.85.222.47])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2b9669a5sm1164138241.3.2024.12.09.04.23.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 04:23:52 -0800 (PST)
-Received: by mail-ua1-f47.google.com with SMTP id a1e0cc1a2514c-85bc7d126b2so1859306241.1;
-        Mon, 09 Dec 2024 04:23:52 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUF25LH1oXM0vpCUwLkm5DVIp3ZccCm3kFL4p1/zNQbAbA3sFzXVo0HWr3HYCByUlzpYiSl7ftPeSCliKtY@vger.kernel.org, AJvYcCUl8ats+VgCrlQCfUGZoOjpq4qlwJGRfjM7n2JwH2urWjE/jg65ILQqJBD8iB/+PvjWE77jD0rIgFiN@vger.kernel.org, AJvYcCUpqR6oEzJ1GMTRXr6IiHPIxHFoUa/dfdzTY+TvHJCQS0PEXyknCjxw+tXSI192xUh9jZdO1k6/LZh0mjWi2xa+l7Y=@vger.kernel.org, AJvYcCVSsHRVjXdlmu5b9JNQ/tteLcT219q/QqWTy+st01BIEvaAq5bTva3fnpMtLnWdXmDh/1F1f8YNQ3R7mw==@vger.kernel.org, AJvYcCVZWhrnDGIEJpHzuf6OcGC6V0PZ4NCRxIc5qmyNduKWyebn8DSTM9GSXfZOid9uUS/zMPHn+0uIx7lTFOU=@vger.kernel.org, AJvYcCXpQgmC3YhcsppqyN+k/UVdZ0QaR01PNj0e5KbVpqotMJkpApNPJI2GSKNfQeKcfDXiYcNdmpH7s41N@vger.kernel.org
-X-Received: by 2002:a05:6102:38d2:b0:4af:e4fb:2f26 with SMTP id
- ada2fe7eead31-4b1161e5287mr246769137.24.1733747032476; Mon, 09 Dec 2024
- 04:23:52 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733747052; x=1734351852;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+GhPtI8wgOnDMaTV/aebDQBDsWOSAP4QkIO0/UH54kQ=;
+        b=ngxUXW8F6AT5JTDn1kKPG0KOpjyK5x443ROr0Hdzk5Wa34n5sTFlN4RIVUI4zBePjP
+         GhY10Zchv4zf4EaXADofQlQv96+VxdWcOHYURfjTcPI2/Een8fk1wo9upmMnUlNSQaPE
+         yX8LXfCXlRQWccga4dkvZb1YhA3QIx/eLHeUXQffEXVq1ivLUxRX+CF+NBiBX8On0bjX
+         pT0quXDE5xyGPaZc4WDrNNWluVr328hVcBxlFkOX1QZLwVRYe8nYWTG8UzrRKjxcv/ll
+         L+rlVwtBZcdf6gGs/tVY3kZsd1of/buJskreK89LlMItd4LntlU7V8/6eZl1Hwb3OGqV
+         6wRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVOekHP2FzSq3hOHnNu3jS9ZyvrywYFh044NQh1tufavEheRwFPPDTZMDyF62OhlW3pT+oBp6BM5IcPcPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxy5nGk9suDED3jOG9dI4KFx1DZ3PMWg8kARTvZVVgd3u0xJtEQ
+	YqRxnB3RXAZwHYYg+LxrJqGwh7dtXqv2omUKtRNYrBzHrl/GE91Q6bORokKIAWU=
+X-Gm-Gg: ASbGncs6ivELWNsot7SoTk4IfvFiv03JVzuz2Wa/Hs8Ms64Nb00muY8R2RxLoi8WfVG
+	MsKoRQcvDzhoClFnRHE7kTYT8kB3mq5t95IwaS5JV7n5mIBmTyYFmDOxJypi9GErkvzU5Jh+lW3
+	1u6VxSlbjiMJ15Oioxlnc+/3EFXqAtahkeQdepoxvkyoUshs91fHQqRxj08DxAMPa5g/WgOj6uV
+	1GOCaqa2CB7AvvDxzwd7oJwwCxsKXce8h15JVIPBS9i5LkNYUZVXi864rfXovZz+A==
+X-Google-Smtp-Source: AGHT+IHOTya6h+M4f2qaVjLOGQqZ6THQS3TTb1fVk2LGehqwscKKRp3o8NGiskXXumu0NDWCobOvLQ==
+X-Received: by 2002:a17:907:3f24:b0:aa6:9c29:86d1 with SMTP id a640c23a62f3a-aa69c29dd7emr15261366b.3.1733747051987;
+        Mon, 09 Dec 2024 04:24:11 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm309925866b.159.2024.12.09.04.24.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 04:24:11 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH RESEND 0/3] clk: qcom: simplify locking with guard()
+Date: Mon, 09 Dec 2024 13:24:03 +0100
+Message-Id: <20241209-cleanup-h-guard-clk-qcom-v1-0-b1077540230c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com>
- <20241113133540.2005850-3-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdVv+2tEQ5hf+sbihbJMo3+=8kJaWy0YNU_spxQnmWF-bA@mail.gmail.com>
- <d65354a0-c4b8-4379-b824-f4541718a3c2@tuxon.dev> <CAMuHMdV8M49m3h3NshzK+KRbT1G7U8hc09T9xUH0Gz1GefUcMg@mail.gmail.com>
- <91c80c8e-729d-46ac-bb05-2cdcdb95ba1e@tuxon.dev>
-In-Reply-To: <91c80c8e-729d-46ac-bb05-2cdcdb95ba1e@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 13:23:40 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUyYuWkUjT2-MuALKxkeNfBCx06tHSjEFxG8_aEZAoC8w@mail.gmail.com>
-Message-ID: <CAMuHMdUyYuWkUjT2-MuALKxkeNfBCx06tHSjEFxG8_aEZAoC8w@mail.gmail.com>
-Subject: Re: [PATCH v3 02/25] clk: versaclock3: Prepare for the addition of
- 5L35023 device
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAGPhVmcC/4WNvQ6CMBSFX4Xc2WvaSio4OcjqoKNh6J/QiC220
+ mgI727DCzh+5+R8Z4ZogjURDsUMwSQbrXcZ6KYA1QvXGbQ6MzDCSlKxHarBCDeN2GM3iaAzP/C
+ l/BOZ2HNOCJGy5JDnYzB3+1nVN7g01+Z8gjbnvY1vH77rY6Jr+1+eKBLklZQ1J1TVWh8H60TwW
+ x86aJdl+QGBIKycyQAAAA==
+X-Change-ID: 20240823-cleanup-h-guard-clk-qcom-2a766000bb46
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=873;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=2ItpBQPODjnIYSjwoQvA06FlkQRZbhoJv5RXLp+oLuc=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnVuFnCVQSN2Xt7Diw10/bZEjtDrP5veCHDkbPR
+ eHx1ZloLmSJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ1bhZwAKCRDBN2bmhouD
+ 1zITD/4rAJjeVDGqDdJHuFMtCcZ4nTslkuTsYFzw2NFIjrL0hBVzs+l/xgH8BseAHD3ZdDuknGx
+ k3Ha/RJOGmLYIHHuq8bynkElOex7ggmCHa+YaiDtXcCN9go+BLt8eMFZ5dyhD0yeV2K9+Zlmi3D
+ qOnW9MkCDw5CEZ4qDJyFMBr43nSJEIOGUbJDz+6I2Yarddkc/3F3+jFo+P5tymXAPxxKddmSkFg
+ XPlfwTo+x6AD3lxyvOVlppqCJArK+H68CenofZ2PdPkgCbLKRynGU+BflBRC0W1qC4mTiX4i7iL
+ ahmCd6qwcpfM8Ld7MV4GcU+dkrIwhSYx4Vxq1CeB29d2BPr3WvfzBEca0JZ7vLcFarPLNoyrMZB
+ wxCDZWSzBCzHO6CC4Qi7iv/LbYLm+M+F1v2/uMWrM6rDmsI3qpnQ5EU8EWMGootTdfz0lz38auG
+ BoSi/EpKYtkAFwDeh6W+z5dmAjEH8pRLpLfkmJ59asbPF+tVoW0UEKCTvH4FOGHxpZ/Eft49liY
+ DBMOxnymQFtVYp/rdT9d7VhcUtQFp2cX+t7O2NdxEEej3Qf8LJ1tY1NKFODqtUr3aPowRycDSqX
+ cZNlG4jt538P1GZbtdh9dDItoXxW1cY015Xy1nSMCgo4K2OGGBaEvK4QPYWNydZZw3mIE8XaTCf
+ LX9WGs8JMxnYhpQ==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hi Claudiu,
+No feedback, resending.
+https://lore.kernel.org/r/20240823-cleanup-h-guard-clk-qcom-v1-0-68bb9601c9dd@linaro.org
 
-On Mon, Dec 9, 2024 at 1:22=E2=80=AFPM Claudiu Beznea <claudiu.beznea@tuxon=
-.dev> wrote:
-> On 09.12.2024 14:16, Geert Uytterhoeven wrote:
-> > On Mon, Dec 9, 2024 at 12:14=E2=80=AFPM Claudiu Beznea <claudiu.beznea@=
-tuxon.dev> wrote:
-> >> On 09.12.2024 12:57, Geert Uytterhoeven wrote:
-> >>> On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon=
-.dev> wrote:
-> >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>
-> >>>> The 5P35023 and 5L35035 Versa 3 clock generator variants are differe=
-nt but
-> >>>> the versaclock3 driver could be used with small adjustments. The fea=
-tures
-> >>>> that are implemented in driver and differs b/w variants are the PLL2=
- Fvco
-> >>>> and clock sel bit for SE2 clock. Adjust the driver to prepare for th=
-e
-> >>>> addition of 5L35023 device.
-> >>>>
-> >>>> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
-> >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>
-> >>> Thanks for your patch!
-> >>>
-> >>>> --- a/drivers/clk/clk-versaclock3.c
-> >>>> +++ b/drivers/clk/clk-versaclock3.c
-> >>>> @@ -166,12 +167,17 @@ struct vc3_div_data {
-> >>>>  struct vc3_hw_data {
-> >>>>         struct clk_hw hw;
-> >>>>         struct regmap *regmap;
-> >>>> -       const void *data;
-> >>>> +       void *data;
-> >>>>
-> >>>>         u32 div_int;
-> >>>>         u32 div_frc;
-> >>>>  };
-> >>>
-> >>>> @@ -698,8 +706,6 @@ static struct vc3_hw_data clk_pll[] =3D {
-> >>>>                         .num =3D VC3_PLL2,
-> >>>>                         .int_div_msb_offs =3D VC3_PLL2_FB_INT_DIV_MS=
-B,
-> >>>>                         .int_div_lsb_offs =3D VC3_PLL2_FB_INT_DIV_LS=
-B,
-> >>>> -                       .vco_min =3D VC3_PLL2_VCO_MIN,
-> >>>> -                       .vco_max =3D VC3_PLL2_VCO_MAX
-> >>>>                 },
-> >>>>                 .hw.init =3D &(struct clk_init_data) {
-> >>>>                         .name =3D "pll2",
-> >>>
-> >>>> @@ -1029,9 +1037,16 @@ static int vc3_probe(struct i2c_client *clien=
-t)
-> >>>>                                              clk_pfd[i].hw.init->nam=
-e);
-> >>>>         }
-> >>>>
-> >>>> +       data =3D i2c_get_match_data(client);
-> >>>> +
-> >>>>         /* Register pll's */
-> >>>>         for (i =3D 0; i < ARRAY_SIZE(clk_pll); i++) {
-> >>>>                 clk_pll[i].regmap =3D regmap;
-> >>>> +               if (i =3D=3D VC3_PLL2) {
-> >>>> +                       struct vc3_pll_data *pll_data =3D clk_pll[i]=
-.data;
-> >>>> +
-> >>>> +                       pll_data->vco =3D data->pll2_vco;
-> >>>
-> >>> You cannot modify the global clk_pll[] data, as it is shared when
-> >>> there are multiple instances.
-> >>
-> >> By "multiple instances" do you mean, multiple versa3 devices using thi=
-s
-> >> driver? Do you know if we have such a board integrated, ATM?
-> >
-> > Exactly.
-> > Currently there are no such (upstream) users for 5p35023,
-> > but e.g. the Beacon RZ/G2M kit has two 5p49v6965 instances.
->
-> Are you OK with keeping it as is for the RZ/G3S SSIF support and returnin=
-g
-> back later with a solution for the scenario you pointed out? Although, AT=
-M,
-> I don't have a board to test it.
+Simplify error handling around locks with guard().  Less gotos needed.
 
-Fine for me, as multiple instances were already broken before.
+Best regards,
+Krzysztof
 
-Gr{oetje,eeting}s,
+---
+Krzysztof Kozlowski (3):
+      clk: qcom: rpm: simplify locking with guard()
+      clk: qcom: smd-rpm: simplify locking with guard()
+      clk: qcom: spmi-pmic-div: simplify locking with guard()
 
-                        Geert
+ drivers/clk/qcom/clk-rpm.c           | 27 +++++++++++----------------
+ drivers/clk/qcom/clk-smd-rpm.c       | 25 ++++++++++---------------
+ drivers/clk/qcom/clk-spmi-pmic-div.c | 13 +++++--------
+ 3 files changed, 26 insertions(+), 39 deletions(-)
+---
+base-commit: 294c646feab33931bd459930fa28360f5e97c294
+change-id: 20240823-cleanup-h-guard-clk-qcom-2a766000bb46
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
