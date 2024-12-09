@@ -1,121 +1,230 @@
-Return-Path: <linux-kernel+bounces-437616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55DA79E95D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:10:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCB49E95FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:12:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E80D32821C2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F29911888FBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4400722ACC8;
-	Mon,  9 Dec 2024 13:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7BE322D4EF;
+	Mon,  9 Dec 2024 13:06:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nWvRqKOq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dul4uRSR"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E01621E0BC
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3178622ACFC
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:06:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749566; cv=none; b=Ys+ASwibsG+llGh0p+e0Q1Se0j3P7Fmo7YSezyNnKzOXCv/iwIIgNCnH4Kp9/4ygh1pcbUVuxq37N1mB8DrbNPIOtm61K7mPX3LTdeqMeMgp0j8o55BwtekE25pM/0mT6Gbr3BAT84xOCo8xN9ENvAmhVvvU9eheyfESo9tQSY8=
+	t=1733749612; cv=none; b=mYVpk2IEBBJz7J7G2o+9xdg9GxFzgZ3hpcPUCluUgs6bHH/BO9aCXIIw2RtOyembZQCmtiyADyXcZnrRT/DJc/s2RKjZpTIxckysLXiqCnMVPHnAOa7g414S6XTqwK3IKOiQODw5c+QpzYrXFDl57KWk4UwlRrLo0TMw9YGX/Gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749566; c=relaxed/simple;
-	bh=AJinQxG90c1ARxvcbpUqpFNpEaS9eviKLv/hZF6n6Qg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=WAteJ9iCcBrvecInMy8NxNeTwxT9tIlXM2LbfmKoAC6wRRVJCs1lpJut6BOVzHA3HdO5VLgH3CiOWmgFDJ/CVgFku/CKWV9lA25kqaCh6rtvlU2Pa21gO1qecw/Iysprw/cePoRWci2qsqYqfQr0PHxhSzxlG2o5Rs6qwkViRqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nWvRqKOq; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733749565; x=1765285565;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references;
-  bh=AJinQxG90c1ARxvcbpUqpFNpEaS9eviKLv/hZF6n6Qg=;
-  b=nWvRqKOqYQiid5E6PFqSDH93As9F8k48wgQsBZ2l0USZOdlSFYL8BaJE
-   AqimqMwseJPTqf9pG4+rtvW+XWC+rrAEiOUindGFvO4Xde8QfNO9RZHvP
-   iBS9HkgPprf05pbM+7iRX1yOQFdnEh/vM4DV7AEloyH/sQpNIYFIk1Lcg
-   pUTIXu05x17K+0fY+kbprgsm+kdxkarXESXqpbPfcrfsgJLyFEjfwigT6
-   r5A8v+Y0DJyeniYj8jxzCPKVVUBv/k/hWyR8g1drnKTdtudW02gLJgN9H
-   KjpPBhUpKQ4onZDhcc71C/cJrDWrsuruXb00Mwl79lkpKB95ww9BYFmaa
-   Q==;
-X-CSE-ConnectionGUID: uoSudA4kQCSRdMYMsWWuqw==
-X-CSE-MsgGUID: IfoC0pdWRn+URDb7NaGJXw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="44723024"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="44723024"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 05:06:04 -0800
-X-CSE-ConnectionGUID: sXmbbgvoQiOGM1AOKPIR1w==
-X-CSE-MsgGUID: 4pAbJi0jRAagxLByeosA5g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="95871542"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 05:06:01 -0800
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: dave.hansen@linux.intel.com
-Cc: bp@alien8.de,
-	kan.liang@linux.intel.com,
+	s=arc-20240116; t=1733749612; c=relaxed/simple;
+	bh=Uqm9vlD4EuHqqogtqTHA9FO+0cpdFzd1I9e7PeN+AqE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=g9nH8b5f8rhL6xytgUAReBb1+tOD0VWa7X/JQvpOl0qV8kgUPlqqG3tZ+H1sHwfQXkWzT0uuQELJU2/xKhnJ+SnEgRoVhDjk5FMhyo8N50nT/K+hdJPTQpm4TmnVHvAfDRxeiZEriXF67OvfIKaIv2Z+2R7LicDzz9PLoTI155g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dul4uRSR; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733749609;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ChZary8egFvw+XcfiLo4meSQA+SNlXlrlIPLWf6ynjo=;
+	b=dul4uRSRqZUyXyCECmoAsglbPjeFBjncpDnCDTaCEOrPWS6FW5fODFsnTnxbmJ/9CSNua3
+	RF+ng7NGnz6vRmEszLZXvtYKSZyJYG2EZTDEvHr2PdPrWItVIgwhOnvraWzauqIy9uDr4y
+	IoCb9pVhhWALD2Q6GPuwU/sw+756qpc=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-451-6bYSYFPHM4asftD4apptfw-1; Mon, 09 Dec 2024 08:06:47 -0500
+X-MC-Unique: 6bYSYFPHM4asftD4apptfw-1
+X-Mimecast-MFC-AGG-ID: 6bYSYFPHM4asftD4apptfw
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-385e03f54d0so1754211f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 05:06:46 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733749606; x=1734354406;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ChZary8egFvw+XcfiLo4meSQA+SNlXlrlIPLWf6ynjo=;
+        b=arNphe0gMjtTjHg1EEI4uy+LJEw50LEB6+K6DFO1wtL6Jt3SidM+wQWZMoR7hGxKfP
+         g3taf/uAus6dSw8t5fszAUt1Zl3/QbfvGbs7D9C2Gzg0NWUgIztssWQ6C+fleUyRejdI
+         6fOCjKWTMSVRMHfHHsfvXm0cKBE87iwPJdRx1iB1XoLPyhgP+gwmMV4QS0/e70QfAuZm
+         TdY2ZA5e2nrrkWUQW2qGY/JoNbeCntSs3NOJ5z7bw0OBt2cFZAGMw0LI0f1sktL4FnEn
+         9UV0aLLGraawlh10GUa3sDDoHAbE19YRQPOEIROzTSVnlTdXb8YnkTBpuL9ud2b9/GBv
+         pt+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUxEi2S8isaRDxDeUYklEr8/GtafzeG+oJ6VL4fOt6OIzGFlDRs9rGFH+Zxxn+bB6XKklIGhbzPWzzp3hw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywx6bFt3QG6anJ6KtEfD+cwcZ/+5m84hmc1CmV+ZSLoq/2OISps
+	vG8CE7bYrRE0Uq8R2PP4gRrpy735RsR/H6N7qdiCzOz44ICZ3shMmh0sOU3pLXKuPtXf1h9kbEM
+	+6xN/JVQlW0C6NAaZ9BxYIU1NnwKpC1dnACY1yfR8PDeECG0jSAKKbHZLT3XAIQ==
+X-Gm-Gg: ASbGnct6ABiX/5iCfs+FmrIXjXR2oFatp4esqPec3RIg1czlWE263wg6+dtJqGSRCGi
+	kczGiM7Uxa15OstbEDUZ51g77tY+hi0Vz5W+rX0XExZbCZrtgMYiVV8uCX2M9MNPLZIp8qbe/Tq
+	Zlq0TyVHrbnQzF2ToxDxGzD2Vm2nBhzn/lramCJs2MIWEMdOwir3vZVXkTGCPpwR8zRBucKj/HE
+	uMtbZSWlZ6C7bM4sXFtrTiah0pd//940E/xkUcokQpslbwhlxTl7IygZyosa+zAyhiu7EwrSZnX
+	dLZAwg9x
+X-Received: by 2002:a5d:5886:0:b0:385:f114:15d6 with SMTP id ffacd0b85a97d-3862b355e4bmr9451284f8f.13.1733749605710;
+        Mon, 09 Dec 2024 05:06:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE3aZqcp+qWXyKCP+s6A/eeOG43m5kb4cM7P1FP5MJVsW/bqky4A5d7q1L7C7R7quzo+4CpVg==
+X-Received: by 2002:a5d:5886:0:b0:385:f114:15d6 with SMTP id ffacd0b85a97d-3862b355e4bmr9451253f8f.13.1733749605217;
+        Mon, 09 Dec 2024 05:06:45 -0800 (PST)
+Received: from eisenberg.redhat.com (nat-pool-muc-u.redhat.com. [149.14.88.27])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862190965asm13200127f8f.82.2024.12.09.05.06.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 05:06:44 -0800 (PST)
+From: Philipp Stanner <pstanner@redhat.com>
+To: amien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>,
+	Basavaraj Natikar <basavaraj.natikar@amd.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rasesh Mody <rmody@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>,
+	Sanjay R Mehta <sanju.mehta@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jon Mason <jdmason@kudzu.us>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Chen Ni <nichen@iscas.ac.cn>,
+	Philipp Stanner <pstanner@redhat.com>,
+	Ricky Wu <ricky_wu@realtek.com>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Breno Leitao <leitao@debian.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Mostafa Saleh <smostafa@google.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Yi Liu <yi.l.liu@intel.com>,
+	Kunwu Chan <chentao@kylinos.cn>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Eric Auger <eric.auger@redhat.com>,
+	Ye Bin <yebin10@huawei.com>
+Cc: linux-ide@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	mingo@kernel.org,
-	pawan.kumar.gupta@linux.intel.com,
-	peterz@infradead.org,
-	tglx@linutronix.de,
-	tony.luck@intel.com,
-	x86@kernel.org,
-	qiuxu.zhuo@intel.com
-Subject: Re: [PATCH 0/5] x86/cpu: Remove duplicate microcode version matching infrastructure
-Date: Mon,  9 Dec 2024 21:06:20 +0800
-Message-Id: <20241209130620.71276-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
-References: <20241206193829.89E12D0B@davehans-spike.ostc.intel.com>
+	linux-input@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev,
+	linux-pci@vger.kernel.org,
+	kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org
+Subject: [PATCH v3 00/11] Remove implicit devres from pci_intx()
+Date: Mon,  9 Dec 2024 14:06:22 +0100
+Message-ID: <20241209130632.132074-2-pstanner@redhat.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Dave,
+@Driver-Maintainers: Your driver might be touched by patch "Remove
+devres from pci_intx()". You might want to take a look.
 
-> From: Dave Hansen <dave.hansen@linux.intel.com>
-> [...]
-> Changes from RFC:
->  * Convert stepping match helpers to always take a range and never
->    take a raw stepping bitmap. - Ingo
-> 
-> --
-> 
-> x86 has generic CPU matching infrastructure. This lets you build
-> tables of CPUs with some property.  It's mostly used for enumerating
-> model-specific features, but it is quite a bit more flexible than
-> that. In includes a facility to match steppings and microcode
-> versions. This generic infrastructure is built around 'struct
-> x86_cpu_id'.
-> 
-> There is a less generic, parallel CPU matching facility built around
-> 'struct x86_cpu_desc'. It is used only for matching specific microcode
-> revisions.  All of the 'struct x86_cpu_desc' users can be converted to
-> 'struct x86_cpu_id'.
-> 
-> Do that conversion then remove the 'struct x86_cpu_desc'
-> infrastructure.
-> 
-> Testing or acks would be much appreciated!
+Changes in v3:
+  - Add Thomas' RB.
 
-I tested this series + v6.13-rc2 on both Intel Cascade Lake server and Sapphire Rapids server.
+Changes in v2:
+  - Drop pci_intx() deprecation patch.
+  - ata: Add RB from Sergey and Niklas.
+  - wifi: Add AB by Kalle.
+  - Drop INTx deprecation patch
+  - Drop ALSA / hda_intel patch because pci_intx() was removed from
+    there in the meantime.
 
-- Both systems booted successfully.
-- Both {skx,i10nm}_edac drivers[1][2] worked well.
+Changes since the RFC [1]:
+  - Add a patch deprecating pci{m}_intx(). (Heiner, Andy, Me)
+  - Add Acked-by's already given.
+  - Export pcim_intx() as a GPL function. (Alex)
+  - Drop patch for rts5280, since this driver will be removed quite
+    soon. (Philipp Hortmann, Greg)
+  - Use early-return in pci_intx_unmanaged() and pci_intx(). (Andy)
 
-  [1] Covered patch2's drivers/edac/skx_base.c file.
-  [2] Covered patch2's drivers/edac/i10nm_base.c file.
+Hi all,
 
-Feel free to add:
+this series removes a problematic feature from pci_intx(). That function
+sometimes implicitly uses devres for automatic cleanup. We should get
+rid of this implicit behavior.
 
-  Tested-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To do so, a pci_intx() version that is always-managed, and one that is
+never-managed are provided. Then, all pci_intx() users are ported to the
+version they need. Afterwards, pci_intx() can be cleaned up and the
+users of the never-managed version be ported back to pci_intx().
+
+This way we'd get this PCI API consistent again.
+
+Patch "Remove devres from pci_intx()" obviously reverts the previous
+patches that made drivers use pci_intx_unmanaged(). But this way it's
+easier to review and approve. It also makes sure that each checked out
+commit should provide correct behavior, not just the entire series as a
+whole.
+
+Merge plan for this is to enter through the PCI tree.
+
+[1] https://lore.kernel.org/all/20241009083519.10088-1-pstanner@redhat.com/
+
+
+Regards,
+P.
+
+Philipp Stanner (11):
+  PCI: Prepare removing devres from pci_intx()
+  drivers/xen: Use never-managed version of pci_intx()
+  net/ethernet: Use never-managed version of pci_intx()
+  net/ntb: Use never-managed version of pci_intx()
+  misc: Use never-managed version of pci_intx()
+  vfio/pci: Use never-managed version of pci_intx()
+  PCI: MSI: Use never-managed version of pci_intx()
+  ata: Use always-managed version of pci_intx()
+  wifi: qtnfmac: use always-managed version of pcim_intx()
+  HID: amd_sfh: Use always-managed version of pcim_intx()
+  Remove devres from pci_intx()
+
+ drivers/ata/ahci.c                            |  2 +-
+ drivers/ata/ata_piix.c                        |  2 +-
+ drivers/ata/pata_rdc.c                        |  2 +-
+ drivers/ata/sata_sil24.c                      |  2 +-
+ drivers/ata/sata_sis.c                        |  2 +-
+ drivers/ata/sata_uli.c                        |  2 +-
+ drivers/ata/sata_vsc.c                        |  2 +-
+ drivers/hid/amd-sfh-hid/amd_sfh_pcie.c        |  4 ++--
+ drivers/hid/amd-sfh-hid/sfh1_1/amd_sfh_init.c |  2 +-
+ .../wireless/quantenna/qtnfmac/pcie/pcie.c    |  2 +-
+ drivers/pci/devres.c                          | 24 +++----------------
+ drivers/pci/pci.c                             | 16 +++----------
+ include/linux/pci.h                           |  1 +
+ 13 files changed, 18 insertions(+), 45 deletions(-)
+
+-- 
+2.47.1
+
 
