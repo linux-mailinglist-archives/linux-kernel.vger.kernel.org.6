@@ -1,208 +1,214 @@
-Return-Path: <linux-kernel+bounces-437983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16599E9B43
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:09:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 193289E9B47
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:10:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FF41884740
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:09:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E4CB166704
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D25139579;
-	Mon,  9 Dec 2024 16:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lSduGQB6"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5434213C81B;
+	Mon,  9 Dec 2024 16:10:02 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A415136358
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:09:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B43AE233139;
+	Mon,  9 Dec 2024 16:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733760591; cv=none; b=X2UIlYnLPvPlOYtlGNrxjbzr7QOzI2Ws514ffLoyPExP0CyGxL0XTC92fe5HLUg6LSAIYCQr1v6D2WLG4RzACmG8qlDAaRC89zqtpw+2FtSOFt2a37laIn6HBndUm+rdv0xFV0oYJSEGwZw9sRoRfGQgiN7v422oSmMYWylHghs=
+	t=1733760601; cv=none; b=eJ1DebcP/p3BWDUQKcw5xKjtQ18hYmM3MXzgdcDzmLTnwi3qiy2b4dzPjPP0fgzUe+q/r9dGh68aSef3M4mL+vA8ga6OTgixLc5uweA9Hx96LUId1p5CJKjURJz3r0iDnrO15j+Zf6AmHH5M57BmwD1gsASI3nlTtwxb4SGNuVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733760591; c=relaxed/simple;
-	bh=C36zNPc/jbnuBcAYithGaYsubdt6UiWPUDVuWScR/bg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=N01bX0r8/AglSkN9nKcqfQfb7jsIgmE6PuR1w5vXxReKVJlNf55urBNgQz7F5A6M6hb2jQhnD2S6CEr8NGnIj2tZrkPIuOhXhE20pdl4VIeUQCxNlOko1RAzlMqgzbNeBUD/i6kY8XH0yeiUQ0YP4XPXjkrs4Pgf3I7wvjl5wCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lSduGQB6; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-725abf74334so3806453b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:09:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733760588; x=1734365388; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nNzOfGzLAseJibdxxhcMGoyOqJHa9JTOySWRlkmre7s=;
-        b=lSduGQB61KejtBVDmGUm+Qpa6cQZ7Z4ttrOW2sUTOsSJlJNROjmm88wGa4WnQeM0A4
-         +JNqPwZGfoZNOmtarAzToC0bdYLSoHuIYl8usMG3v1JjtrSfExV2GfLfRQxoqAr/Vn2Q
-         G4OwEGDZVZJoWWWhxQG9i6Q7uCdD3GCuTDXTwRbtk11sRv1f4s1Dw1dz6G5qVDewUiLn
-         bRuLUk0/WTlyp+4heAqK18lVD/2xWPYFArvAtraRcUqne0QABmHVi1apgx28bs9A5jBX
-         E4mQ6qUJXIUy/BCzk/SjI+GA8ntnZmF0sX1/CwaGDuVKb8tajHt/PqfafyDuxd1xnvO0
-         Pz/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733760588; x=1734365388;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nNzOfGzLAseJibdxxhcMGoyOqJHa9JTOySWRlkmre7s=;
-        b=K5b0qZJkel/Ra72AukiG+gdbGHW41dP0HvA2cDtiNamyKYlyaEsSFdO96DQvzKTZT8
-         LlEI+7+S11unCuj0fwSgXMmCjecdHexgHuoSS14UysPtc7NpDQie+aZ2CF9dBpOIv9mn
-         Dvz6GvJ2wXZO9aPATxDnZ/Oy/Gw2rTf93PFnXMFjc/CVTOA15GUwydocsA2JKuU5RXyk
-         1AsAp6EWWDEAedTM6XJmnT7RvaQQZtTDunzgF9EeODDzHfuaqGzvda9oAOC9S6ccDmYV
-         b2bsPtB4WkKc5BkB9xlnqQAzvYmxDcAGX9ot/zKFcChIfflcu12fUCGZIRRNS1G9obby
-         O5fw==
-X-Forwarded-Encrypted: i=1; AJvYcCWnZmXKXkTT/PULnzJe/MVAZbptKf9oVLN0BUKu3SJdWDpD9REfZmqWCkeGFfXZ748hMUxe+8vBBKoNPfw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBYaUTyRCJ8H05mpdnCBXFqFjRyhfrxyk9y7sE5J/7EO70n+D3
-	FiJgC4eOEkTJneHdW9h3QQH6I6v0a4lyC55AsC5aUoco14B0POs1
-X-Gm-Gg: ASbGncuNF1ZVMLOOih1KMjCOq2xYGw2fhrLD1vs+vTxC+ctXEhcocdT/na8sO1eyHWr
-	deYvwmZtt88xQ87paX0gCEursAhlz2/CVtqf0UwVLbftMnMpKacsnmg9Xz3xVCwjMhqrX2tfF+2
-	yHiDg3Bk5kdqCuHLNH0WxLmTU1wiBOtdEB5z1ZF61L0sujLbvFIUxKn8+ddLv2Vre0eTBURarSH
-	ncFIhYtQN59RzmXrkGF4wWWGhk2suLwmg+KGgMb+/5Z3m+Kx7v3jmfhVmOL8Mdya7CaLAZ5wxO2
-	mJieB9z0kkpIKuiOFMmGRdskmGcQMDWB6+SCqtimdbbvSzQ90cWk
-X-Google-Smtp-Source: AGHT+IGDgARAQ3C8rJb1gmNnhbeSqhembKboC+9YMymczxSCAjuRCR37JTa75SJFHELFYuLorlVsjA==
-X-Received: by 2002:a05:6a00:1708:b0:725:f1ca:fd76 with SMTP id d2e1a72fcca58-725f1caffb6mr3781567b3a.0.1733760588406;
-        Mon, 09 Dec 2024 08:09:48 -0800 (PST)
-Received: from DESKTOP-NBGHJ1C.flets-east.jp (p10213112-ipngn20001marunouchi.tokyo.ocn.ne.jp. [153.220.101.112])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725d3fc95fasm4207124b3a.177.2024.12.09.08.09.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 08:09:48 -0800 (PST)
-From: Ryo Takakura <ryotkkr98@gmail.com>
-To: boqun.feng@gmail.com,
-	peterz@infradead.org
-Cc: bigeasy@linutronix.de,
-	clrkwllms@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rt-devel@lists.linux.dev,
-	longman@redhat.com,
-	mingo@redhat.com,
-	rostedt@goodmis.org,
-	ryotkkr98@gmail.com,
-	tglx@linutronix.de,
-	will@kernel.org
-Subject: Re: [PATCH] lockdep: Fix wait context check on softirq for PREEMPT_RT
-Date: Tue, 10 Dec 2024 01:09:43 +0900
-Message-Id: <20241209160943.254299-1-ryotkkr98@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <Z064BAsxrEe5zQV7@boqun-archlinux>
-References: <Z064BAsxrEe5zQV7@boqun-archlinux>
+	s=arc-20240116; t=1733760601; c=relaxed/simple;
+	bh=M9R4e+RGYmKtL73QCrCmTDz4Sw+OhWOyfWO+xrg36Yc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uNTz3Qrr4oPXKND5PXfTXlu5jc0mI0oaGYV3tjMhJqnqm5oV/KwOnsyxGCG6otXxRXd1d3x8HxB/L7rB1U5+sM4u+iX3IJjBQsHRP6c4ViWKgDUe0eiUouGCTWOYENGj+LOUuFyZ5EwVdexZ+QFCSdtQ4bcw03vsY+rX4kB4wq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BF5BC4CED1;
+	Mon,  9 Dec 2024 16:09:57 +0000 (UTC)
+Message-ID: <31b2e7e7-d37e-4adf-bcaf-a5088ddae4e9@xs4all.nl>
+Date: Mon, 9 Dec 2024 17:09:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 13/28] media: iris: implement subscribe_event and
+ unsubscribe_event ioctls
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Sebastian Fricke <sebastian.fricke@collabora.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Nicolas Dufresne <nicolas@ndufresne.ca>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+ Jianhua Lu <lujianhua000@gmail.com>, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241209-qcom-video-iris-v7-0-05c6bdead47b@quicinc.com>
+ <20241209-qcom-video-iris-v7-13-05c6bdead47b@quicinc.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20241209-qcom-video-iris-v7-13-05c6bdead47b@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi!
-
-Sorry for being late on reply. I was trying to understand some 
-of the selftest reports that came across...
-
-On Mon, 2 Dec 2024 23:49:24 -0800, Boqun Feng wrote:
->Maybe the right way to fix this is adding a conceptual local_lock for
->BH disable like below.
->
->Regards,
->Boqun
->
->------------------------->8
->diff --git a/include/linux/bottom_half.h b/include/linux/bottom_half.h
->index fc53e0ad56d9..d5b898588277 100644
->--- a/include/linux/bottom_half.h
->+++ b/include/linux/bottom_half.h
->@@ -4,6 +4,7 @@
+On 09/12/2024 13:51, Dikshita Agarwal wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
 > 
-> #include <linux/instruction_pointer.h>
-> #include <linux/preempt.h>
->+#include <linux/lockdep.h>
+> Implement subscribe_event and unsubscribe_event iocts with necessary
+> hooks.
 > 
-> #if defined(CONFIG_PREEMPT_RT) || defined(CONFIG_TRACE_IRQFLAGS)
-> extern void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
->@@ -15,9 +16,12 @@ static __always_inline void __local_bh_disable_ip(unsigned long ip, unsigned int
-> }
-> #endif
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+
+Reviewed-by: Hans Verkuil <hverkuil@xs4all.nl>
+
+Regards,
+
+	Hans
+
+> ---
+>  drivers/media/platform/qcom/iris/iris_vdec.c | 22 ++++++++++++++++++++++
+>  drivers/media/platform/qcom/iris/iris_vdec.h |  1 +
+>  drivers/media/platform/qcom/iris/iris_vidc.c | 10 ++++++++++
+>  3 files changed, 33 insertions(+)
 > 
->+extern struct lockdep_map bh_lock_map;
->+
-> static inline void local_bh_disable(void)
-> {
-> 	__local_bh_disable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
->+	lock_map_acquire(&bh_lock_map);
-> }
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
+> index 081a9eda5c49..0ba60bcb9fa9 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+> +#include <media/v4l2-event.h>
+>  #include <media/v4l2-mem2mem.h>
+>  
+>  #include "iris_buffer.h"
+> @@ -193,3 +194,24 @@ int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>  
+>  	return 0;
+>  }
+> +
+> +int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub)
+> +{
+> +	int ret = 0;
+> +
+> +	switch (sub->type) {
+> +	case V4L2_EVENT_EOS:
+> +		ret = v4l2_event_subscribe(&inst->fh, sub, 0, NULL);
+> +		break;
+> +	case V4L2_EVENT_SOURCE_CHANGE:
+> +		ret = v4l2_src_change_event_subscribe(&inst->fh, sub);
+> +		break;
+> +	case V4L2_EVENT_CTRL:
+> +		ret = v4l2_ctrl_subscribe_event(&inst->fh, sub);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return ret;
+> +}
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
+> index ae456676e578..f64ce3234e6a 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
+> @@ -13,5 +13,6 @@ void iris_vdec_inst_deinit(struct iris_inst *inst);
+>  int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f);
+>  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>  int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
+> +int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index 82bd0be8e5da..511cd13ac471 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -4,6 +4,7 @@
+>   */
+>  
+>  #include <linux/pm_runtime.h>
+> +#include <media/v4l2-event.h>
+>  #include <media/v4l2-ioctl.h>
+>  #include <media/v4l2-mem2mem.h>
+>  
+> @@ -322,6 +323,13 @@ static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *
+>  	return 0;
+>  }
+>  
+> +static int iris_subscribe_event(struct v4l2_fh *fh, const struct v4l2_event_subscription *sub)
+> +{
+> +	struct iris_inst *inst = container_of(fh, struct iris_inst, fh);
+> +
+> +	return iris_vdec_subscribe_event(inst, sub);
+> +}
+> +
+>  static struct v4l2_file_operations iris_v4l2_file_ops = {
+>  	.owner                          = THIS_MODULE,
+>  	.open                           = iris_open,
+> @@ -347,6 +355,8 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+>  	.vidioc_enum_framesizes         = iris_enum_framesizes,
+>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+>  	.vidioc_g_selection             = iris_g_selection,
+> +	.vidioc_subscribe_event         = iris_subscribe_event,
+> +	.vidioc_unsubscribe_event       = v4l2_event_unsubscribe,
+>  };
+>  
+>  void iris_init_ops(struct iris_core *core)
 > 
-> extern void _local_bh_enable(void);
->@@ -25,6 +29,7 @@ extern void __local_bh_enable_ip(unsigned long ip, unsigned int cnt);
-> 
-> static inline void local_bh_enable_ip(unsigned long ip)
-> {
->+	lock_map_release(&bh_lock_map);
-> 	__local_bh_enable_ip(ip, SOFTIRQ_DISABLE_OFFSET);
-> }
 
-Maybe &bh_lock_map should be acquired at local_bh_enable()?
-
- static inline void local_bh_enable(void)
- {
-+       lock_map_release(&bh_lock_map);
-        __local_bh_enable_ip(_THIS_IP_, SOFTIRQ_DISABLE_OFFSET);
- }
-
-On !CONFIG_PREEMPT_RT, I noticed that softirq related selftests
-(e.g. lock-inversion) fails with recursive locking error
-
-[    0.741422] ============================================
-[    0.741447] WARNING: possible recursive locking detected
-[    0.741471] 6.12.0-rc1-v8+ #25 Not tainted
-[    0.741495] --------------------------------------------
-[    0.741519] swapper/0/0 is trying to acquire lock:
-[    0.741544] ffffffecd02e0160 (local_bh){+.+.}-{1:3}, at: irq_inversion_soft_spin_123+0x0/0x178
-[    0.741621]
-               but task is already holding lock:
-[    0.741648] ffffffecd02e0160 (local_bh){+.+.}-{1:3}, at: irq_inversion_soft_spin_123+0x0/0x178
-[    0.741721]
-               other info that might help us debug this:
-[    0.741750]  Possible unsafe locking scenario:
-
-[    0.741776]        CPU0
-[    0.741793]        ----
-[    0.741810]   lock(local_bh);
-[    0.741840]   lock(local_bh);
-[    0.741868]
-                *** DEADLOCK ***
-
-where it does SOFTIRQ_ENTER()/EXIT() and SOFTIRQ_DISABLE()/ENABLE() 
-as each enables BH with local_bh_enable().
-
-But I was little confused that isn't recursively disabling BH allowed, 
-especially if PREEMPT_RT doesn't disable preemption? (I was also 
-wondering if disabling BH recursively is something that can happen 
-on !PREEMPT_RT if it disables preemption...)
-If so, wouldn't report for such case be false?
-
->diff --git a/kernel/softirq.c b/kernel/softirq.c
->index 8b41bd13cc3d..17d9bf6e0caf 100644
->--- a/kernel/softirq.c
->+++ b/kernel/softirq.c
->@@ -1066,3 +1066,13 @@ unsigned int __weak arch_dynirq_lower_bound(unsigned int from)
-> {
-> 	return from;
-> }
->+
->+static struct lock_class_key bh_lock_key;
->+struct lockdep_map bh_lock_map = {
->+	.name = "local_bh",
->+	.key = &bh_lock_key,
->+	.wait_type_outer = LD_WAIT_FREE,
->+	.wait_type_inner = LD_WAIT_CONFIG, /* PREEMPT_RT makes BH preemptible. */
->+	.lock_type = LD_LOCK_PERCPU,
->+};
->+EXPORT_SYMBOL_GPL(bh_lock_map);
-
-Sincerely,
-Ryo Takakura
 
