@@ -1,323 +1,231 @@
-Return-Path: <linux-kernel+bounces-437776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2E89E9882
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:12:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632289E9884
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:14:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C711A18827FA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:12:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4EE181883C25
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97B6A1B040B;
-	Mon,  9 Dec 2024 14:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I9rcXOlS"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EEDA1B040F;
+	Mon,  9 Dec 2024 14:13:34 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BB635971
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:12:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC3C235971
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753571; cv=none; b=r+cskzJGQfG/88xpjTFT48BVwCANGB8gpUgkoiN7pSckmne/v3z3COARCalW72twMWUhzyDCYH4V9HD8JonhTmV70tn3206g39JWsmmZFbCj9XmL4IMBpAFuEPGacwGe9LvkqDBe8nmUv2/MiFTFNw90FUj52q+w0HB10yEOifQ=
+	t=1733753613; cv=none; b=Fp/xt+aKuoYb6i8Lvp7rLvuTbIx32JCB8+EL83PPLYXHWJfzyEbwr/XqKtvqAi1RDIqkKYRllDxurZqqcFFhFtnHNeYTAV/lmrfGX/dAp5Zod3JxybkyS/rW2V9RxxnIHXMwgbNYmNeT+5zdte+y9ozg1AdLVmPF0epFeZExWGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753571; c=relaxed/simple;
-	bh=zRj0Dyp0dstbh0hfs9DFji7YWK4ZPyd8Lk0iwuGk21Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lZZFJkuXABSpmRUypqK2cZZqzOUHd0o1rcbWGxoVsqXTM/8LMYAeYW73vDdu6stNIsis2hTnYnY2pQz4AGHGzKxsme/LobXmLZiqF+piNB4ZbWiiJ0ewCqTqIiQ3jp8lI7fdZdxhg3/j/+q42TWUvrC+53GDchj8BxHA0P0EY7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I9rcXOlS; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2ef760a1001so2284901a91.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:12:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733753569; x=1734358369; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OKSZNRKTa08K0RGxRnbNV+OP+ZpwHCUefMFSWAEyiJo=;
-        b=I9rcXOlS50CY9OI+kvlsElZihvghF6knPJiFipw95sRKl16SZpAmWbEbVpXE6zoU7y
-         Kwss6h2+M5bC6aa+M4EY/+G6yg58Bq8Ml+esNOuKAnbUmVm+xb+bVc/i3GZlGFEpp734
-         8SI/k6Tsv7Ttk7fLtQHBqhfyh+uqyIewJq5Nw=
+	s=arc-20240116; t=1733753613; c=relaxed/simple;
+	bh=Q8KiKPDWnVRiV1tEn59eCgxEIrKUIIFVeyIXW5SbMRE=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=rdK2NOan3r8cg+l1695LW9yojBGKldCDOyR+4F/CdRad754dJwtf2dc36uvn00Ne7p9zP5ihXy04eYg91cAspu1oXfN+vGgV0YtsRwL7aiuMgFo/mZfXa1Wcf51xhTVexwCQS56ZUkI9LWz34dvh26YJSixjTKw6ipePGIIa4pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a78c40fa96so45421735ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:13:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753569; x=1734358369;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OKSZNRKTa08K0RGxRnbNV+OP+ZpwHCUefMFSWAEyiJo=;
-        b=MUR+R4EGxQvwoTfQQ5iHPlwAEXMH8TyWk2w1sGUvFruoYfiV/K4yc0q58pc+ByCAl4
-         8/RNR2anQLoCb8CH1gQfV/I7Q3KhduIWjADApidFrnvWTyQWRAklXUOH6Mu/Dlz/revO
-         QJJ4zTv7RnjUHsmPmqHDWkKtNJXx38vmkQnDnJzc77UT8MegsvJLz4zZ/ZD8Yn1BT043
-         B3lMuuS4SOXQE7125Yn1VpsdOGeeyssTwtydSjVPz1n0TRRoWtF9ZTNQwWQSoYRnonQS
-         XE4fOnwp0IYbUxZZXgZ6mCyRpiuziWL0NfpixdEI+i4JWbuhYFpg59Q4chMKw84FaxWF
-         /cVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXtBAAmAGd8+hxhbX3QgaFqwmLTR6M/Fle/1sthmNFcA4Y8vr4HMSSeklsXzo5aSH3bR9HD8xTOU/XuyM4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxBb1GR8BnFoyyRxfXMfEGDiZL37y2NX1SDurVe5uSD4DelIcSE
-	fovLDSDeV5NS6p7g+dI/iggkcTBV0aocSuGKwK8Z9UiQGzQYm/JwyGmZQIyNUgbApFKDNhhJzqs
-	=
-X-Gm-Gg: ASbGnct5ohCxf4aoNlYEeKC5YbhKwwKS4AOCzIeE4qL7dBsWcQGo8u/ukru6kMhN2sC
-	6WMelAoM183dtpSDkbmR8qg+P2KnKLibpQjj0qiuQ5qXr2COYbSTTSoRW+4HI6raOgMD6YoJyEi
-	BVqm1Jq5bfQBcqaE8LnvOVXp9srC7RcmNjogJZ1u3u2OiBzlfnM2qwlUaAQX05EUbvWW9lqMGCc
-	1/cInfpdlu3FPSJi7gnd3XifewIVxnIrNbxNVd8nFHmRqrIGccwHOxDAYVmUFvocrBLxDTb61Ve
-	RkSFfyOahoGA
-X-Google-Smtp-Source: AGHT+IHvbZeFEH9LgwqhSxV03Ju+aiJk8x4NatWWuAjBz0Kewoykoo3hLH67+HynE2CjQXb4qLCI0g==
-X-Received: by 2002:a17:90a:e18d:b0:2ee:b26c:10a0 with SMTP id 98e67ed59e1d1-2efcf25c892mr978582a91.24.1733753568618;
-        Mon, 09 Dec 2024 06:12:48 -0800 (PST)
-Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com. [209.85.216.42])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ef4600cf20sm7987502a91.43.2024.12.09.06.12.46
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:12:46 -0800 (PST)
-Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2efb17478adso766816a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:12:46 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCX4BEd8+zg2gY/rwwRX2FJ3u40SPAHnBuM+m3/gcmSN6zx3n0GPYAbDWROtqrC80+Sb9Ma687sOZs8494E=@vger.kernel.org
-X-Received: by 2002:a17:90b:314e:b0:2ee:b2be:f398 with SMTP id
- 98e67ed59e1d1-2efcf1365dbmr974106a91.2.1733753565451; Mon, 09 Dec 2024
- 06:12:45 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733753611; x=1734358411;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FqfQZejnwPPNeLJYql7GxK8sxbbgU5PPpgplPteIweg=;
+        b=F7QzmRIj4FrPkphC8TPd2B/2c9YO8Zw4+Yu+E0l4t5N9ubWBKY5gtYVVgMaFX3mrBZ
+         q3t+xf74MbiAXxBAgkptHTn03qK9zZ2cVI7Yn7sj4Evdx39zsObRs5ngFuy4y8lN4qu3
+         SlfxzLTUxicqnATgnBkD80D/hWoY/+FB/o28pE8Jn5uhSDY1S97DcUojO5DFn22wXoLp
+         w1FLNaeEcaw7gU0S2UcKLTJ+m/CL7sddTr/OJBhunah38BZsORxS/PLfA1HcVLDDjqk5
+         sYFAKyMrlPDKgwaYoYLpmmt/aIhn09Lyr5AgVdgAOAgoE3U8nfUM+vLchPSTOgkGLM00
+         UWsg==
+X-Forwarded-Encrypted: i=1; AJvYcCWukHoLkLXD7jLX8+OE6OH4OzhEmof9Q59NAZU4Mj3LQtQpMKP4i3YNAWvwNvp2vDPKyZhhOeTUNCFoJhA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8vF047kyDd/eXaP4BqjqyHomJdYtOs0SYC98q76KMkT+O7fvA
+	le0tfFIicAK0e7CBNCyfoPsMhw6X/wts0XwQMG+tBGZu62sInzrtEqQ9qMNkqfURF//zMtGqdVq
+	Tw4mehfCoF3uG9+4dLAAQxDPeOp7e43tZPszLPNnYVd5Et9m9l8UQ3fA=
+X-Google-Smtp-Source: AGHT+IFdNbMJQCVFUtyBaPjdwWrxvV0x6N42D/JloyMkNd7GDjfUeDBz8lhCOmHtcJkfOKLmc6Y/JdjZeunT7YfAWd5VDMOCnd1f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
- <20241114-uvc-roi-v15-15-64cfeb56b6f8@chromium.org> <d99f507b-1890-4ad3-aabc-494a3b0a0dd8@redhat.com>
-In-Reply-To: <d99f507b-1890-4ad3-aabc-494a3b0a0dd8@redhat.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 9 Dec 2024 15:12:33 +0100
-X-Gmail-Original-Message-ID: <CANiDSCsM1GK-FEmCtRQzQxoSVUEvfCnZ6bKM-3DkVYtgsJt0Uw@mail.gmail.com>
-X-Gm-Features: AZHOrDm_6WUkRZYd-DbeqxdxhIN5YYXvWTtGNwzKWRsLlXzCZviKWNmMJT6hqdU
-Message-ID: <CANiDSCsM1GK-FEmCtRQzQxoSVUEvfCnZ6bKM-3DkVYtgsJt0Uw@mail.gmail.com>
-Subject: Re: [PATCH v15 15/19] media: uvcvideo: let v4l2_query_v4l2_ctrl()
- work with v4l2_query_ext_ctrl
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Ricardo Ribalda <ribalda@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+X-Received: by 2002:a05:6e02:1a66:b0:3a7:81c6:be7e with SMTP id
+ e9e14a558f8ab-3a811d9d2f1mr106248295ab.13.1733753610952; Mon, 09 Dec 2024
+ 06:13:30 -0800 (PST)
+Date: Mon, 09 Dec 2024 06:13:30 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6756fb0a.050a0220.a30f1.01a1.GAE@google.com>
+Subject: [syzbot] [net?] KMSAN: uninit-value in tcp_do_parse_auth_options
+From: syzbot <syzbot+6f1c2734e2f851b382fc@syzkaller.appspotmail.com>
+To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kuba@kernel.org, linux-kernel@vger.kernel.org, 
+	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 9 Dec 2024 at 15:09, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
-> > v4l2_query_ext_ctrl contains information that is missing in
-> > v4l2_queryctrl, like elem_size and elems.
-> >
-> > With this change we can handle all the element_size information inside
-> > uvc_ctrl.c.
-> >
-> > Now that we are at it, remove the memset of the reserved fields, the
-> > v4l2 ioctl handler should do that for us.
-> >
-> > There is no functional change expected from this change.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->
-> Doesn't the v4l2-core ioctl wrapping offers queryctrl emulation
-> using query_ext_ctrl ? If not maybe that should be added there?
-> (this can be done later)
+Hello,
 
-It does not look like. I also thought about that, but then I realised
-that most of the drivers use the ctrl framework and then this is not
-needed.
+syzbot found the following issue on:
 
-But anyway, as you said, it can be done later. I will add it to my todo :).
+HEAD commit:    9f16d5e6f220 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11846778580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=ce1e2eda2213557
+dashboard link: https://syzkaller.appspot.com/bug?extid=6f1c2734e2f851b382fc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
 
-Regards!
+Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/aa65b8056e0a/disk-9f16d5e6.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/63247b6a0fd4/vmlinux-9f16d5e6.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2682d9fa97c6/bzImage-9f16d5e6.xz
 
->
-> Othwerise looks good to me:
->
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->
-> Regards,
->
-> Hans
->
->
->
->
-> > ---
-> >  drivers/media/usb/uvc/uvc_ctrl.c | 24 ++++++++++++++----------
-> >  drivers/media/usb/uvc/uvc_v4l2.c | 35 +++++++++++++++--------------------
-> >  drivers/media/usb/uvc/uvcvideo.h |  2 +-
-> >  3 files changed, 30 insertions(+), 31 deletions(-)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > index 72ed7dc9cfc1..1bc019138995 100644
-> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > @@ -1252,7 +1252,8 @@ static int __uvc_query_v4l2_class(struct uvc_video_chain *chain, u32 req_id,
-> >  }
-> >
-> >  static int uvc_query_v4l2_class(struct uvc_video_chain *chain, u32 req_id,
-> > -                             u32 found_id, struct v4l2_queryctrl *v4l2_ctrl)
-> > +                             u32 found_id,
-> > +                             struct v4l2_query_ext_ctrl *v4l2_ctrl)
-> >  {
-> >       int idx;
-> >
-> > @@ -1400,7 +1401,7 @@ static u32 uvc_get_ctrl_bitmap(struct uvc_control *ctrl,
-> >  static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
-> >                                     struct uvc_control *ctrl,
-> >                                     struct uvc_control_mapping *mapping,
-> > -                                   struct v4l2_queryctrl *v4l2_ctrl)
-> > +                                   struct v4l2_query_ext_ctrl *v4l2_ctrl)
-> >  {
-> >       if (!ctrl->cached) {
-> >               int ret = uvc_ctrl_populate_cache(chain, ctrl);
-> > @@ -1465,7 +1466,7 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
-> >  static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
-> >                                struct uvc_control *ctrl,
-> >                                struct uvc_control_mapping *mapping,
-> > -                              struct v4l2_queryctrl *v4l2_ctrl)
-> > +                              struct v4l2_query_ext_ctrl *v4l2_ctrl)
-> >  {
-> >       struct uvc_control_mapping *master_map = NULL;
-> >       struct uvc_control *master_ctrl = NULL;
-> > @@ -1503,6 +1504,9 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
-> >                       v4l2_ctrl->flags |= V4L2_CTRL_FLAG_INACTIVE;
-> >       }
-> >
-> > +     v4l2_ctrl->elem_size = sizeof(s32);
-> > +     v4l2_ctrl->elems = 1;
-> > +
-> >       if (v4l2_ctrl->type >= V4L2_CTRL_COMPOUND_TYPES) {
-> >               v4l2_ctrl->flags |= V4L2_CTRL_FLAG_HAS_PAYLOAD;
-> >               v4l2_ctrl->default_value = 0;
-> > @@ -1516,7 +1520,7 @@ static int __uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
-> >  }
-> >
-> >  int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
-> > -     struct v4l2_queryctrl *v4l2_ctrl)
-> > +                     struct v4l2_query_ext_ctrl *v4l2_ctrl)
-> >  {
-> >       struct uvc_control *ctrl;
-> >       struct uvc_control_mapping *mapping;
-> > @@ -1642,7 +1646,7 @@ static void uvc_ctrl_fill_event(struct uvc_video_chain *chain,
-> >       struct uvc_control_mapping *mapping,
-> >       s32 value, u32 changes)
-> >  {
-> > -     struct v4l2_queryctrl v4l2_ctrl;
-> > +     struct v4l2_query_ext_ctrl v4l2_ctrl;
-> >
-> >       __uvc_query_v4l2_ctrl(chain, ctrl, mapping, &v4l2_ctrl);
-> >
-> > @@ -2119,7 +2123,7 @@ static int uvc_mapping_get_xctrl_std(struct uvc_video_chain *chain,
-> >                                    struct uvc_control_mapping *mapping,
-> >                                    u32 which, struct v4l2_ext_control *xctrl)
-> >  {
-> > -     struct v4l2_queryctrl qc;
-> > +     struct v4l2_query_ext_ctrl qec;
-> >       int ret;
-> >
-> >       switch (which) {
-> > @@ -2133,19 +2137,19 @@ static int uvc_mapping_get_xctrl_std(struct uvc_video_chain *chain,
-> >               return -EINVAL;
-> >       }
-> >
-> > -     ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, &qc);
-> > +     ret = __uvc_queryctrl_boundaries(chain, ctrl, mapping, &qec);
-> >       if (ret < 0)
-> >               return ret;
-> >
-> >       switch (which) {
-> >       case V4L2_CTRL_WHICH_DEF_VAL:
-> > -             xctrl->value = qc.default_value;
-> > +             xctrl->value = qec.default_value;
-> >               break;
-> >       case V4L2_CTRL_WHICH_MIN_VAL:
-> > -             xctrl->value = qc.minimum;
-> > +             xctrl->value = qec.minimum;
-> >               break;
-> >       case V4L2_CTRL_WHICH_MAX_VAL:
-> > -             xctrl->value = qc.maximum;
-> > +             xctrl->value = qec.maximum;
-> >               break;
-> >       }
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> > index 7e284770149d..5000c74271e0 100644
-> > --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> > @@ -1014,40 +1014,35 @@ static int uvc_ioctl_s_input(struct file *file, void *fh, unsigned int input)
-> >       return ret;
-> >  }
-> >
-> > -static int uvc_ioctl_queryctrl(struct file *file, void *fh,
-> > -                            struct v4l2_queryctrl *qc)
-> > +static int uvc_ioctl_query_ext_ctrl(struct file *file, void *fh,
-> > +                                 struct v4l2_query_ext_ctrl *qec)
-> >  {
-> >       struct uvc_fh *handle = fh;
-> >       struct uvc_video_chain *chain = handle->chain;
-> >
-> > -     return uvc_query_v4l2_ctrl(chain, qc);
-> > +     return uvc_query_v4l2_ctrl(chain, qec);
-> >  }
-> >
-> > -static int uvc_ioctl_query_ext_ctrl(struct file *file, void *fh,
-> > -                                 struct v4l2_query_ext_ctrl *qec)
-> > +static int uvc_ioctl_queryctrl(struct file *file, void *fh,
-> > +                            struct v4l2_queryctrl *qc)
-> >  {
-> >       struct uvc_fh *handle = fh;
-> >       struct uvc_video_chain *chain = handle->chain;
-> > -     struct v4l2_queryctrl qc = { qec->id };
-> > +     struct v4l2_query_ext_ctrl qec = { qc->id };
-> >       int ret;
-> >
-> > -     ret = uvc_query_v4l2_ctrl(chain, &qc);
-> > +     ret = uvc_query_v4l2_ctrl(chain, &qec);
-> >       if (ret)
-> >               return ret;
-> >
-> > -     qec->id = qc.id;
-> > -     qec->type = qc.type;
-> > -     strscpy(qec->name, qc.name, sizeof(qec->name));
-> > -     qec->minimum = qc.minimum;
-> > -     qec->maximum = qc.maximum;
-> > -     qec->step = qc.step;
-> > -     qec->default_value = qc.default_value;
-> > -     qec->flags = qc.flags;
-> > -     qec->elem_size = 4;
-> > -     qec->elems = 1;
-> > -     qec->nr_of_dims = 0;
-> > -     memset(qec->dims, 0, sizeof(qec->dims));
-> > -     memset(qec->reserved, 0, sizeof(qec->reserved));
-> > +     qc->id = qec.id;
-> > +     qc->type = qec.type;
-> > +     strscpy(qc->name, qec.name, sizeof(qc->name));
-> > +     qc->minimum = qec.minimum;
-> > +     qc->maximum = qec.maximum;
-> > +     qc->step = qec.step;
-> > +     qc->default_value = qec.default_value;
-> > +     qc->flags = qec.flags;
-> >
-> >       return 0;
-> >  }
-> > diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
-> > index f429f325433b..8aca1a2fe587 100644
-> > --- a/drivers/media/usb/uvc/uvcvideo.h
-> > +++ b/drivers/media/usb/uvc/uvcvideo.h
-> > @@ -766,7 +766,7 @@ void uvc_status_put(struct uvc_device *dev);
-> >  extern const struct v4l2_subscribed_event_ops uvc_ctrl_sub_ev_ops;
-> >
-> >  int uvc_query_v4l2_ctrl(struct uvc_video_chain *chain,
-> > -                     struct v4l2_queryctrl *v4l2_ctrl);
-> > +                     struct v4l2_query_ext_ctrl *v4l2_ctrl);
-> >  int uvc_query_v4l2_menu(struct uvc_video_chain *chain,
-> >                       struct v4l2_querymenu *query_menu);
-> >
-> >
->
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+6f1c2734e2f851b382fc@syzkaller.appspotmail.com
+
+=====================================================
+BUG: KMSAN: uninit-value in tcp_do_parse_auth_options+0x4b8/0x640 net/ipv4/tcp_input.c:4381
+ tcp_do_parse_auth_options+0x4b8/0x640 net/ipv4/tcp_input.c:4381
+ tcp_parse_auth_options include/net/tcp.h:2774 [inline]
+ tcp_inbound_hash+0x122/0x9c0 net/ipv4/tcp.c:4793
+ tcp_v4_rcv+0x388b/0x5750 net/ipv4/tcp_ipv4.c:2323
+ ip_protocol_deliver_rcu+0x2a3/0x13d0 net/ipv4/ip_input.c:205
+ ip_local_deliver_finish+0x336/0x500 net/ipv4/ip_input.c:233
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ ip_local_deliver+0x21f/0x490 net/ipv4/ip_input.c:254
+ dst_input include/net/dst.h:460 [inline]
+ ip_rcv_finish+0x4a2/0x520 net/ipv4/ip_input.c:447
+ NF_HOOK include/linux/netfilter.h:314 [inline]
+ ip_rcv+0xcd/0x380 net/ipv4/ip_input.c:567
+ __netif_receive_skb_one_core net/core/dev.c:5672 [inline]
+ __netif_receive_skb+0x319/0xa00 net/core/dev.c:5785
+ process_backlog+0x4ad/0xa50 net/core/dev.c:6117
+ __napi_poll+0xe7/0x980 net/core/dev.c:6877
+ napi_poll net/core/dev.c:6946 [inline]
+ net_rx_action+0xa5a/0x19b0 net/core/dev.c:7068
+ handle_softirqs+0x1a0/0x7c0 kernel/softirq.c:554
+ __do_softirq+0x14/0x1a kernel/softirq.c:588
+ do_softirq+0x9a/0x100 kernel/softirq.c:455
+ __local_bh_enable_ip+0x9f/0xb0 kernel/softirq.c:382
+ local_bh_enable include/linux/bottom_half.h:33 [inline]
+ rcu_read_unlock_bh include/linux/rcupdate.h:919 [inline]
+ __dev_queue_xmit+0x2758/0x57d0 net/core/dev.c:4461
+ dev_queue_xmit include/linux/netdevice.h:3168 [inline]
+ neigh_hh_output include/net/neighbour.h:523 [inline]
+ neigh_output include/net/neighbour.h:537 [inline]
+ ip_finish_output2+0x187c/0x1b70 net/ipv4/ip_output.c:236
+ __ip_finish_output+0x287/0x810
+ ip_finish_output+0x4b/0x600 net/ipv4/ip_output.c:324
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0x15f/0x3f0 net/ipv4/ip_output.c:434
+ dst_output include/net/dst.h:450 [inline]
+ ip_local_out net/ipv4/ip_output.c:130 [inline]
+ __ip_queue_xmit+0x1f2a/0x20d0 net/ipv4/ip_output.c:536
+ ip_queue_xmit+0x60/0x80 net/ipv4/ip_output.c:550
+ __tcp_transmit_skb+0x3cea/0x4900 net/ipv4/tcp_output.c:1466
+ tcp_transmit_skb net/ipv4/tcp_output.c:1484 [inline]
+ tcp_write_xmit+0x3b90/0x9070 net/ipv4/tcp_output.c:2827
+ __tcp_push_pending_frames+0xc4/0x380 net/ipv4/tcp_output.c:3010
+ tcp_send_fin+0x9f6/0xf50 net/ipv4/tcp_output.c:3616
+ __tcp_close+0x140c/0x1550 net/ipv4/tcp.c:3130
+ __mptcp_close_ssk+0x74e/0x16f0 net/mptcp/protocol.c:2495
+ mptcp_close_ssk+0x26b/0x2c0 net/mptcp/protocol.c:2549
+ mptcp_pm_nl_rm_addr_or_subflow+0x635/0xd10 net/mptcp/pm_netlink.c:889
+ mptcp_pm_nl_rm_subflow_received net/mptcp/pm_netlink.c:924 [inline]
+ mptcp_pm_flush_addrs_and_subflows net/mptcp/pm_netlink.c:1688 [inline]
+ mptcp_nl_flush_addrs_list net/mptcp/pm_netlink.c:1709 [inline]
+ mptcp_pm_nl_flush_addrs_doit+0xe10/0x1630 net/mptcp/pm_netlink.c:1750
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x1214/0x12c0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2541
+ genl_rcv+0x40/0x60 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
+ netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1347
+ netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1891
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:726
+ ____sys_sendmsg+0x877/0xb60 net/socket.c:2583
+ ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2637
+ __sys_sendmsg+0x1b6/0x300 net/socket.c:2669
+ __compat_sys_sendmsg net/compat.c:346 [inline]
+ __do_compat_sys_sendmsg net/compat.c:353 [inline]
+ __se_compat_sys_sendmsg net/compat.c:350 [inline]
+ __ia32_compat_sys_sendmsg+0x9d/0xe0 net/compat.c:350
+ ia32_sys_call+0x2685/0x4180 arch/x86/include/generated/asm/syscalls_32.h:371
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+Uninit was created at:
+ slab_post_alloc_hook mm/slub.c:4091 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4186
+ kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
+ __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
+ alloc_skb_fclone include/linux/skbuff.h:1373 [inline]
+ tcp_send_fin+0x3b9/0xf50 net/ipv4/tcp_output.c:3602
+ __tcp_close+0x140c/0x1550 net/ipv4/tcp.c:3130
+ __mptcp_close_ssk+0x74e/0x16f0 net/mptcp/protocol.c:2495
+ mptcp_close_ssk+0x26b/0x2c0 net/mptcp/protocol.c:2549
+ mptcp_pm_nl_rm_addr_or_subflow+0x635/0xd10 net/mptcp/pm_netlink.c:889
+ mptcp_pm_nl_rm_subflow_received net/mptcp/pm_netlink.c:924 [inline]
+ mptcp_pm_flush_addrs_and_subflows net/mptcp/pm_netlink.c:1688 [inline]
+ mptcp_nl_flush_addrs_list net/mptcp/pm_netlink.c:1709 [inline]
+ mptcp_pm_nl_flush_addrs_doit+0xe10/0x1630 net/mptcp/pm_netlink.c:1750
+ genl_family_rcv_msg_doit net/netlink/genetlink.c:1115 [inline]
+ genl_family_rcv_msg net/netlink/genetlink.c:1195 [inline]
+ genl_rcv_msg+0x1214/0x12c0 net/netlink/genetlink.c:1210
+ netlink_rcv_skb+0x375/0x650 net/netlink/af_netlink.c:2541
+ genl_rcv+0x40/0x60 net/netlink/genetlink.c:1219
+ netlink_unicast_kernel net/netlink/af_netlink.c:1321 [inline]
+ netlink_unicast+0xf52/0x1260 net/netlink/af_netlink.c:1347
+ netlink_sendmsg+0x10da/0x11e0 net/netlink/af_netlink.c:1891
+ sock_sendmsg_nosec net/socket.c:711 [inline]
+ __sock_sendmsg+0x30f/0x380 net/socket.c:726
+ ____sys_sendmsg+0x877/0xb60 net/socket.c:2583
+ ___sys_sendmsg+0x28d/0x3c0 net/socket.c:2637
+ __sys_sendmsg+0x1b6/0x300 net/socket.c:2669
+ __compat_sys_sendmsg net/compat.c:346 [inline]
+ __do_compat_sys_sendmsg net/compat.c:353 [inline]
+ __se_compat_sys_sendmsg net/compat.c:350 [inline]
+ __ia32_compat_sys_sendmsg+0x9d/0xe0 net/compat.c:350
+ ia32_sys_call+0x2685/0x4180 arch/x86/include/generated/asm/syscalls_32.h:371
+ do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+ __do_fast_syscall_32+0xb0/0x110 arch/x86/entry/common.c:386
+ do_fast_syscall_32+0x38/0x80 arch/x86/entry/common.c:411
+ do_SYSENTER_32+0x1f/0x30 arch/x86/entry/common.c:449
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+CPU: 0 UID: 0 PID: 6093 Comm: syz.3.23 Not tainted 6.12.0-syzkaller-09073-g9f16d5e6f220 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
 
 
--- 
-Ricardo Ribalda
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
