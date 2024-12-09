@@ -1,127 +1,96 @@
-Return-Path: <linux-kernel+bounces-438196-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A869E9E0D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:31:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6C679E9E3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:41:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD26E164734
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:30:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADB7218837A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:41:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F51416CD1D;
-	Mon,  9 Dec 2024 18:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HLbCCM7j"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A41D178368;
+	Mon,  9 Dec 2024 18:41:01 +0000 (UTC)
+Received: from mail-out.m-online.net (mail-out.m-online.net [212.18.0.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BE6621364;
-	Mon,  9 Dec 2024 18:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEB07080B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 18:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.18.0.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733769052; cv=none; b=tmltfSiee2t4JGlwFAe7Z8MmZ3wVMgRsOMtBpcZbDqBwhyo2jriMWbqpL25fDm21FTR6PE+H3kPM8eHv6UEPaQDnz+YfHc9d/E0sYgGpU1qEjiOv6oGIBEgFGxMw7TtxiuuscX7Glh8zeEFUF3xcjTXVS8bccHzjqqW/AXjvi+E=
+	t=1733769660; cv=none; b=bBSDcvQecMiviBl6s0r24x4zqMPcgew5RbIarUF0TzFFxH1m0UK0wUYZIadtG2cyR4MLFoKBj/O2Mc0CStP7OIezUeCwkFfhmRe5Bl9d3DmwZWaJDmj/BB4oPMY33C3aeQ7oBCIXZjjTefZkvkKgn7Mm3F1sk7AoqCje9/NGXnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733769052; c=relaxed/simple;
-	bh=UtEoHt2xQyF3sPBxmQA/6pu1gDGg2GJJyyZjJgZ3j3A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oFU28LdIDRgKmjTQBETI1TLsSte2/cmhfT3tLgg3nWO5hyQpw7Xvh6pd+45K4FiqxOVEd9e9tebuCaDUqJWK70qqu7pwhFc+nTsc+W1ccRttMuHBG2Sjx0yTF4ue3FHBuNP6Gq+RZ+ua8Fh/UNby4cE4t156hCmHLF8FjNsw18g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HLbCCM7j; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2ef05d0ef18so828832a91.0;
-        Mon, 09 Dec 2024 10:30:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733769050; x=1734373850; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qZhnISB9e+p8LIlAWs7kKYcT0D8jAeuxPpbppONh4HE=;
-        b=HLbCCM7jWMQJZ14/yKcgKl5ODHJ6phu1XtQ8tx71rhgkktpwuuHcJKf3e1mkBCk9RB
-         8u7P9xzZbhQ2Uz9d6uyEhBHnf/GBwg9GG/Nhse2J88ByEGlMuhehHmF2HdnOChpcCfb2
-         Br0Nj8Z7eO6TsWsSLsp9P1+cIijyqXm/BBsQT780bXjL3rNnpWAbPJJsfBMl2lBPhtus
-         8MHfKQs5jgZNbHibvi4Xp4ph7DbAGDbSuF82j5YzArhttH4nGpy3DYfyMNpiIu6IL4zH
-         iexSbDV69SuvreJ74wpfTPxvSoHGZCUeNoDBHrXLvZskbW0ycWjO730TRJp5l3KzU4ut
-         Lcfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733769050; x=1734373850;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qZhnISB9e+p8LIlAWs7kKYcT0D8jAeuxPpbppONh4HE=;
-        b=P/ADQ8QfzhXf5ZpbATJA9pfE7RyU+4f77J8uJwfuS+4EQJ5z+8L9oU7690HTk5eq4e
-         Lhp2SKIsvw787hGmEdt20VMcRoE6mwus5ZUA8H2q/h1NxPXPWR8GK1Ysex+JChCEYFxL
-         OFLY+V+/wSEj8QeU/qyYB9A6Fg+SvHItMlt9nMUwFL8USFlCOmX/3eOASp0pi0wF21BW
-         qNsVqm7MO8wO7NDDL361/JPOuuPD4c4q/EWSn/hb+BWd3K1oDsPpNaFUuYMM0rCnLZ/H
-         Lp9PMvranadrT/7mIHAYHVI2NQVtQukBdtCP0q9kNerTKLjdEaRlFfHx6lk6dAeQffYy
-         syxg==
-X-Forwarded-Encrypted: i=1; AJvYcCUTxq69jW0AbyL8gcLbbndOb4P3+L+Soobvpj5+jxDIa1gu4QEKsFmM2w9QwQ+yK5qbxUSCA6a3avqlXftq@vger.kernel.org, AJvYcCUlEX/+ritI9B2lCkoQNyAZz9UDMnlkmGtiVd3LLAHv1iIVknv0cV5vKw6hMj6DVb1Hy++JIiOgJykBGa7hJmc=@vger.kernel.org, AJvYcCVQRiciiqwWSqefdOWbo8U7qUuwxjqsmH6JXH/QZmQzY/nBlO2zVt4KAHMM5XX7bzKiEu6R+ZWEnQquuXSI@vger.kernel.org, AJvYcCWDTkywKfnTX0GZiJ/3rJCYE6/gXPXIu/Ala16t5hPak1aTh/Me1GVUOwGs+KYOQ8YPiTg7tOYQ6vg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztU1mWj4xqg5n0PlvYGHCAsE0dQYOV2sgyN4MdotueAY2TF834
-	PwYr7lVn9zN2yoNjdllIvIQ1JpWiaFwdlKQmMgKzdSUd5lXoeeA+pzNn9/0nBgqMhE1gy42wgN0
-	gjqiehmUK39ao7glppyfFLWyXpZ7Oj21Ga2M=
-X-Gm-Gg: ASbGncv6rS4W5UcoDqb0ZWW7A5qzL/nZiVhiCMGBwA8J5yViGhocMbsiEt9N2YDBM+t
-	YxqwtNx6mHzQ9y37G61P/DmXtFFCjEKQ=
-X-Google-Smtp-Source: AGHT+IHXd62Kq2IM6B/3wDXQaXYXPWyVI2DbKc6JGiQupW7Zabp+03AxeWDUcTymkWmsVdt4rdTUsTHa35eFJAllHQU=
-X-Received: by 2002:a17:90b:1e08:b0:2ee:cbc9:d50b with SMTP id
- 98e67ed59e1d1-2efd4a1266dmr308170a91.4.1733769050254; Mon, 09 Dec 2024
- 10:30:50 -0800 (PST)
+	s=arc-20240116; t=1733769660; c=relaxed/simple;
+	bh=YyPjvKuJEpM4CNPJs9OhLN+5bRvih8fimdR0plWhrU4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=TO1X5CGFRYJ5FJB5zHMNnbqB+l3FUmEgEXcegIX0jp4BqviVpu+N1YEPB8dmNY4EJYdnPidxfdcXe6k7/D/u5zvSKlC2TJ3x83DLcKXaH/qXVSsRy1nLe74prygQzzRnc4TLxEJJ01AaV6LmiH2zHuoV/7jSlOV31/7ZR+8X++g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=nefkom.net; arc=none smtp.client-ip=212.18.0.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nefkom.net
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+	by mail-out.m-online.net (Postfix) with ESMTP id 4Y6Vpr5wGwz1qsPx;
+	Mon,  9 Dec 2024 19:32:52 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.68])
+	by mail.m-online.net (Postfix) with ESMTP id 4Y6Vpr58zWz1qqlS;
+	Mon,  9 Dec 2024 19:32:52 +0100 (CET)
+X-Virus-Scanned: amavis at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+ by localhost (dynscan1.mail.m-online.net [192.168.6.68]) (amavis, port 10024)
+ with ESMTP id DAGK58Tns2FM; Mon,  9 Dec 2024 19:32:52 +0100 (CET)
+X-Auth-Info: oBX17wFr/StoNeFHnknxTLQepuuwk97VrTe1nqtIBhIrx1Gs+J9KHbF0bmaMNbYG
+Received: from igel.home (aftr-82-135-83-150.dynamic.mnet-online.de [82.135.83.150])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.mnet-online.de (Postfix) with ESMTPSA;
+	Mon,  9 Dec 2024 19:32:51 +0100 (CET)
+Received: by igel.home (Postfix, from userid 1000)
+	id A8E7F2C1B0F; Mon,  9 Dec 2024 19:32:51 +0100 (CET)
+From: Andreas Schwab <schwab@linux-m68k.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,  LKML
+ <linux-kernel@vger.kernel.org>,  x86@kernel.org,
+  linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] futex: improve user space accesses
+In-Reply-To: <CAHk-=wjnvFU3sMjjKyqtgvPe6EMu3M4f1qyZncJR5=QDQsV=ng@mail.gmail.com>
+	(Linus Torvalds's message of "Sun, 8 Dec 2024 16:32:33 -0800")
+References: <20241122193305.7316-1-torvalds@linux-foundation.org>
+	<87bjxl6b0i.fsf@igel.home>
+	<CAHk-=wjnvFU3sMjjKyqtgvPe6EMu3M4f1qyZncJR5=QDQsV=ng@mail.gmail.com>
+X-Yow: Is this an out-take from the ``BRADY BUNCH''?
+Date: Mon, 09 Dec 2024 19:32:51 +0100
+Message-ID: <87bjxkzoz0.fsf@igel.home>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241112184455.855133-1-ojeda@kernel.org>
-In-Reply-To: <20241112184455.855133-1-ojeda@kernel.org>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 9 Dec 2024 19:30:37 +0100
-Message-ID: <CANiq72=BvnriScFay8SpLNe9mNhjvGsBJ9W9UtdzU_6v_i+woA@mail.gmail.com>
-Subject: Re: [PATCH v3] kbuild: rust: add PROCMACROLDFLAGS
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, HONG Yifan <elsk@google.com>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Nov 12, 2024 at 7:45=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wro=
-te:
+On Dez 08 2024, Linus Torvalds wrote:
+
+> IOW, does this one-liner fix it for you?
 >
->   - Removed "additional" from the documentation and commit message,
->     since this actually replaces the other flags, unlike other cases.
+>   --- a/kernel/futex/futex.h
+>   +++ b/kernel/futex/futex.h
+>   @@ -265,7 +265,7 @@
+>         else if (!user_read_access_begin(from, sizeof(*from)))
+>                 return -EFAULT;
+>         unsafe_get_user(val, from, Efault);
+>   -     user_access_end();
+>   +     user_read_access_end();
+>         *dest = val;
+>         return 0;
+>    Efault:
 
-Some news regarding this: we asked upstream Rust about supporting
-overriding all flags (including e.g. `--edition`, `--target` and
-`--sysroot`) and apparently this was already accepted via an MCP
-(thanks Oli Scherer for the pointer!):
+Thanks, I can confirm that this fixed the crash (changing both arms as
+pointed out by Christophe).
 
-    https://github.com/rust-lang/compiler-team/issues/731
-
-So, in the future, `rustc` will likely get support for this. Thus it
-may be best to go with an "additional" approach (rather than
-"replace"), so that this environment variable works the same way as
-the rest.
-
-We can do that by simply waiting until `rustc` implements it and we
-upgrade the minimum, or by implementing a workaround on our side
-meanwhile. For instance, something simple like:
-
-    $(filter-out --target=3D%,$(s)) $(lastword $(filter --target=3D%,$(s)))
-
-would be probably enough to cover Android's use case since we use the
-syntax with `=3D` elsewhere rather than with a space -- the equal sign
-plays well with Make's string functions. We can also add other flags
-if needed.
-
-I will send a v4 unless someone thinks it is a bad idea.
-
-Cheers,
-Miguel
+-- 
+Andreas Schwab, schwab@linux-m68k.org
+GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
+"And now for something completely different."
 
