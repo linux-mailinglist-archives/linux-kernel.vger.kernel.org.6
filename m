@@ -1,115 +1,145 @@
-Return-Path: <linux-kernel+bounces-437488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A03299E93F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:30:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D347E9E93F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:30:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC23B1641EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A779162B18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:29:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418942236FD;
-	Mon,  9 Dec 2024 12:30:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027B9223711;
+	Mon,  9 Dec 2024 12:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="bI/DGTJR"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.16])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D65D224894;
-	Mon,  9 Dec 2024 12:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.16
+	dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b="RVWcxYod"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D515521D008
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:29:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747399; cv=none; b=RO3X/yUwaNH8mSBwJbAn9yalMGkW9CsmI4Qy5tgIYtn21vackYby+4P4jxeiRWBJGDhf6Fr0RrRh92gePTgu/OTEW6vwMMn8bMjMHdaEUBA0h0e8QiqYa7jNdrrV3SuAI6QD4Bau7EYXWu6pnasEogLXeazFFJl1Y5Ccj3GJ6jw=
+	t=1733747393; cv=none; b=PkFBdTVb5AhyGNjYQb01F9xy1mjFqEYlP4TBJwws3TbNRE8HYSeJh5eu10+9VnJeBEnZ9GnouezMb8FL0hxLUEOoU5hYcJ93wc3WsGAtxu8Ng2jc+TJVx8+nW5ZI0WGntRGrz8X4q/NWacywiTC68lmvS2R6zl7JubRrJwVCi0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747399; c=relaxed/simple;
-	bh=N+sbYCFuTDwxCcIdAHgel3ganW/gZZAhgHHI2UMTGbk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RU/JH/NUg7sKwoV2VCkwMTeOuMbe5Uqo7JaTtPkDBW7YA910dIJmUwRnYVK04zvBGFlcp4V8BAFOJ32y9NPXjmsUTQ/8efd6XKVVNAolVc8kR1BkQpuMuZ+kJHKpNGMOol+0OCJ3CQw2eSZKavWGWs9Lsi24syvqmLaf+e0Xip0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=bI/DGTJR; arc=none smtp.client-ip=220.197.32.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=c0w54vZT7PKG1XWtN+/uhpQiw/mRzqEusnhno0TxGLE=;
-	b=bI/DGTJRzhytnyCFnnV41Vgg5thANKUze3OAJoHEzQveY2ntPLmOtvUm0FYmYM
-	nI2pXExwzoqttNzaW7gMJxZd6Ntlt07qxUypqMX4pT+1yaBs4MWctSheD3e6Tgrm
-	Q9rjqNgsNE5l32YTxaJVdvBO7f6vibbzAtBQHXEVp6Frg=
-Received: from dragon (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id Mc8vCgC3vzGp4lZnf959BA--.46916S3;
-	Mon, 09 Dec 2024 20:29:31 +0800 (CST)
-Date: Mon, 9 Dec 2024 20:29:29 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Shawn Guo <shawnguo@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: freescale: Remove unused and undocumented
- "cooling-(min|max)-state" properties
-Message-ID: <Z1biqf24yH6HCl8Y@dragon>
-References: <20241115193504.3619533-1-robh@kernel.org>
+	s=arc-20240116; t=1733747393; c=relaxed/simple;
+	bh=sUfST4In6BFaz4cncct0K9JmI5C47/iyHU7EzK2F71Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GMbjMUn2zEodM9y17l22vILoVCtpcsbUlrFfAkRLlwoHY1/waaQGmmF28+yHgS3q8zn/zhhYnYP7GvtMhukSOhuuNoCwX+AmwTVjK8ev0lteOxc4CINiJxEtO9wJTuKyUA+Hgr2qFi9YRiceFUHqt18SRbNOSr7qHOL2biAbn9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev; spf=none smtp.mailfrom=sedlak.dev; dkim=pass (2048-bit key) header.d=sedlak-dev.20230601.gappssmtp.com header.i=@sedlak-dev.20230601.gappssmtp.com header.b=RVWcxYod; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sedlak.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=sedlak.dev
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3d14336f0so4298556a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:29:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sedlak-dev.20230601.gappssmtp.com; s=20230601; t=1733747390; x=1734352190; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Sk/tDYD6KLC2uTv+ULUwwSmFTXAbs0Ll7BQ/8lxfZoA=;
+        b=RVWcxYodI0YpVJkAhsUQbzs5+/kzV9uTotJZz7CrK44j8RGSupfw1Yvg4yksjEzUyz
+         h5iXHMniNuh4nNVPZVAlNfaifp4ekBuv2ls0UjsOCOXnEXfaOKdJfGVlSMJeu+aXNtvY
+         uoaDG1v075EwWmMsRfalRKsTcMIngSYAE0dDb8skSzhoHSVIi0bBIc3hLg1/+MI/1c9W
+         NyEi60zosZai9gKfRIrYooGc8wHJCVnNBVk6Ja2zo7DyETuDNJ0jXi6Cdl6iDfGBhLPO
+         G6TYwx/vSuc8HL2KRv5bhZVLU/GLuzGurU7dSrpn9zF9L4L2WWmfDZ06LoBQyLTrOEyt
+         45zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733747390; x=1734352190;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Sk/tDYD6KLC2uTv+ULUwwSmFTXAbs0Ll7BQ/8lxfZoA=;
+        b=Q/liJTIYfP2gvRUGpMRrYkiHiJxWzY/JY/AoekRPt9GHA7au8ig2+a5Hb/PqFvdux0
+         B8R/RtVYTl5nPTRBu1BhzkuN0Ih/9n5FTfRJVoJdugYTprlt4mCi4J5cHEqg1xSt+yPM
+         skEh1hGkplTf8+GOh7NDSErSaVf0jkQNIDQroBFAx/fvIvbVYxf95/+f82SscWlLThKH
+         u+h0/1slJ7RmlI91/dvqVTeKLZSAT0C1L+cOfWphYLjtR5L+9vTcP7dlRi1dWV5Dg3zL
+         GT4J9Bm9yEDD8I0KY4bhNgF6ppDh3D1kZD/09jER3o/SNVs87CWQ6tu2NGTPaNgvUK/L
+         ucjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9sDysnm+ZZ2Tf+uGp9zvrW9dFzBos8gx2ClUX56v+B0KgSOccwJWjix4isu3sLkGwER1wESoGe0diuPk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxF7ZOJfie/EHkqC01Itq9qBnXoviAeJibwJ00pVGRUf3vnM1I
+	sW3wr8exPPoKMz6ozMWFJ7/fgxUmTNbZUWpJku5llum809kzegYovVqP37dd+zM=
+X-Gm-Gg: ASbGncsRkKlDyvlVSuQXryjry3TSOHMmPcaVcR9GP0zfT4lPD+CRNlgt/6yX3eJ7o7z
+	b+c9Be6Rk3etVcK45hGtXzCM8kwTg9lvBC+Y99AmDECOE769tcZ613illqc+b9NZgLx5CgsCIqU
+	cWmEh/qCeQys0nCsomC+OP43RBu81tSVclf52br1fO0ifSshWz1qocfm7sEQIp1L8CgQk4iDGGu
+	OuOG1pT4KhjNiIeSgf85csbczZ5wH+dTUyGl8thwmmkb0UA6j9Wn4inhSIac/kf
+X-Google-Smtp-Source: AGHT+IH2aAKoc3rAG/qXUabUikj4892OrzH2t0bgWmHMpBTkxJWD9/FuokOe61AUb1FB7NHXZ/X5nw==
+X-Received: by 2002:a05:6402:350f:b0:5d0:b455:36ad with SMTP id 4fb4d7f45d1cf-5d4185faa5emr504294a12.27.1733747390155;
+        Mon, 09 Dec 2024 04:29:50 -0800 (PST)
+Received: from [10.0.5.28] (remote.cdn77.com. [95.168.203.222])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3bf50397csm4910222a12.79.2024.12.09.04.29.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 04:29:49 -0800 (PST)
+Message-ID: <23097a11-2bf3-4ae0-a1d8-9df5f772e15d@sedlak.dev>
+Date: Mon, 9 Dec 2024 13:29:48 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241115193504.3619533-1-robh@kernel.org>
-X-CM-TRANSID:Mc8vCgC3vzGp4lZnf959BA--.46916S3
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ZryxGF4kurWfCrWkKrykZrb_yoW8AF4kp3
-	WkZa95Wrs7WF1aya4qgr18Kryq9ws8JFn5ur1DWry3tr43Z3WjqryYk3Z3WF47ZF4fCw4F
-	gF1Fqr10vF1YqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jaVbkUUUUU=
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAh2wZWdWz70tEgABs3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [PATCH] rust: macros: add authors
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Cc: guilherme giacomo simoes <trintaeoitogc@gmail.com>,
+ Wayne Campbell <wcampbell1995@gmail.com>, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+ aliceryhl@google.com, tmgross@umich.edu, walmeida@microsoft.com,
+ fujita.tomonori@gmail.com, tahbertschinger@gmail.com,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241206192244.443486-1-trintaeoitogc@gmail.com>
+ <CANiq72neo_RtANWJu_GW5LxsR5KWxriS1L8nsXkNn7ioiaEQKQ@mail.gmail.com>
+ <30ddfc7f-4b13-4caf-8859-2cd2e72ef878@sedlak.dev>
+ <CANiq72mh2_QhHcE65-t+6UEEqe+9XwGQ3gJ1CCQpZ6r3HOcokQ@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Sedlak <daniel@sedlak.dev>
+In-Reply-To: <CANiq72mh2_QhHcE65-t+6UEEqe+9XwGQ3gJ1CCQpZ6r3HOcokQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Nov 15, 2024 at 01:35:03PM -0600, Rob Herring (Arm) wrote:
-> Remove "cooling-(min|max)-state" properties which are both unused in the
-> kernel and undocumented. Most likely they are leftovers from downstream.
+
+
+On 12/9/24 12:47 PM, Miguel Ojeda wrote:
+> On Sat, Dec 7, 2024 at 11:15 AM Daniel Sedlak <daniel@sedlak.dev> wrote:
+>>
+>> I think we could fight with the code formatting, because when it comes
+>> to the rust macros, rustfmt is often very confused and we could end up
+>> with variations like:
+>>
+>>          authors: ["author1", "author2",
+>>                          "author3"]
+>>
+>> or
+>>
+>>          authors: [
+>>                     "author1",
+>>                     "author2",
+>>                    ]
+>>
+>> and rustfmt would be totally ok with both of them.
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-
-A similar change from Frank [1] was applied, thanks!
-
-Shawn
-
-[1] https://lore.kernel.org/lkml/20241007220542.897605-1-Frank.Li@nxp.com/
-
-> ---
->  .../boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts   | 2 --
->  arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi             | 2 --
->  2 files changed, 4 deletions(-)
+> Yeah, that is a good point. There are hundreds of drivers with 2+
+> authors, so this could indeed be an issue eventually.
 > 
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> index d9fac647f432..1d53b529af88 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> +++ b/arch/arm64/boot/dts/freescale/fsl-ls1028a-kontron-sl28-var3-ads2.dts
-> @@ -19,8 +19,6 @@ / {
->  
->  	pwm-fan {
->  		compatible = "pwm-fan";
-> -		cooling-min-state = <0>;
-> -		cooling-max-state = <3>;
->  		#cooling-cells = <2>;
->  		pwms = <&sl28cpld_pwm0 0 4000000>;
->  		cooling-levels = <1 128 192 255>;
-> diff --git a/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi b/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi
-> index d32a52ab00a4..aef63a4f698c 100644
-> --- a/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/fsl-lx2160a-cex7.dtsi
-> @@ -94,8 +94,6 @@ i2c@1 {
->  			fan-temperature-ctrlr@18 {
->  				compatible = "ti,amc6821";
->  				reg = <0x18>;
-> -				cooling-min-state = <0>;
-> -				cooling-max-state = <9>;
->  				#cooling-cells = <2>;
->  			};
->  		};
-> -- 
-> 2.45.2
+> Having said that, we already have e.g. the `alias` and `firmware` keys
+> that take a list, so I think we already have the potential issue, thus
+> being consistent in our use of lists sounds simpler (unless we are
+> discussing migrating those away too).
+
+Ops, it did not occur to me, that we already have lists. I would propose 
+to migrate them too, however it may be controversial.
 > 
+> We could also try to mitigate the formatting issue via e.g.
+> `checkpatch.pl` if needed.
+
+That is true, it could be part of `checkpatch.pl`, however I would argue 
+that if we can overcame the formatting problems by repeating the field, 
+instead of modifying `checkpatch.pl`, then none code is better than some 
+code (regarding modifying `checkpatch.pl`).
+
+Thank you for feedback
+
+Daniel
 
 
