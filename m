@@ -1,92 +1,197 @@
-Return-Path: <linux-kernel+bounces-436864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABA549E8BCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:02:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CB5A9E8BCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:02:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2A31188453A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:02:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A86D218844BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C72AF189BB6;
-	Mon,  9 Dec 2024 07:02:04 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4C6214A65;
+	Mon,  9 Dec 2024 07:02:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T/DDjduD"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B4A51EB3D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 07:02:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE5151EB3D;
+	Mon,  9 Dec 2024 07:02:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733727724; cv=none; b=dNn43AzCePEOx4d+QarPTQSXyYMNBpkt5kIi+SXio/JpgCxwy34nU0VkXs+epOox7Qzjp+XPYR3h6Dd8MiWIsoFpjab72bkRa5z7WrWNrkYfkDksaSYgmq4XKvtoJb7gpglabd4tBZXflxhSNwEwW/BMVkBOTIFRuy5W7BoNX6c=
+	t=1733727733; cv=none; b=dH6NHZnMmfItvwJtTHXX+S5me2nMnF4icqVf3wzyRsyeuXUlZcYs90XZdJhrs+GVy03eE9HOMWiPdjbdNqQrAjXcikWM9x8Hzh771ncoqOmRqoOmEEX5FE7sfdH+sZQv26tO4fA1/lBb4pCcQ/2oSrqpH+v7xCLEKAbgIiDWxIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733727724; c=relaxed/simple;
-	bh=uXqaOZLYTSzqn38uTSnGASTw3xguX34IgAHXQaVldnY=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=XFDzL+XNN9sXTIGDplenH1MxOHi4LF9tb6vDzwT6p22ZJxsvTylAbKhd8yBTP1jZv59Qe41A4f5gBuHd7vT58kd224hoNJznvoRpa3ndC8i5CfFB2VNdtnvWLmVMp+lOdWD9jVkkqBf4isdfu5hQE3t6W0V4OS1la3rK+lycfM4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-841ac3f9391so377755339f.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 23:02:02 -0800 (PST)
+	s=arc-20240116; t=1733727733; c=relaxed/simple;
+	bh=YBl6LFi40rhs5H+dxXbTihS8WOQiiHr2KVRd9BEL5Nc=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=D2ZZ5NZGF2eabw+grZBlcaIfbEU6jI0hvf5GONi3Y9uqVUXecmTok5lQucamRVYobRsoK4IbuFOEDME3gjrGH2d+QAMt0OOjjQrZ2DdNY1vpt50tQo59iVtfVqN4yArXeb2V6D//HPBvzu9UHGlFunbF1E89ybOkYXYlsIZxUsk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T/DDjduD; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-725e71a11f7so525715b3a.1;
+        Sun, 08 Dec 2024 23:02:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733727731; x=1734332531; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AGqOkCrxuELNm/ZW4EA4OB741J1yUUBRLHKG/f585KI=;
+        b=T/DDjduDprrORB4/XkN4z7nNajL/A12Dip5IgAyn0ySIDkAn/ptIleWrWUW5Yx42lo
+         KldJT+Tw9wMOTUEMU9RPhT2PBWZr/FwIUGgwbzGTZ2Ut80kTL6dqT3X7wBxuY8ZWNICQ
+         B8Zu6hQmaeSBXVmNTnIoMVOankTVJfAqNkVwYEeykislNMM0jv7qX/0K7dOcrSXSSU4C
+         S3j4R1efaufA90u9WQ8U8AxSDhH7dMNGtdhGVNlEHXqcHxvlrRvbxgAPryTaTedIeprP
+         JDAbppnSFZ3TLfT0xPTX3EkP5cId3KdQpyy/+3V63Ic1GWciFDYk8/sAf+W83uum1v6A
+         K4Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733727722; x=1734332522;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zr+lwAUB29P2Bz5OdKQKeL1RwgIMuLsOdWcrCXkf3BA=;
-        b=ph3+v07fAFl2pO131am4lWGxYWvIXkEogcHHLqk0iHFPpB/fJq2i/HI7TXsiD0PCal
-         6slaeWr2VAkqFXN1VkMAA+IVHv+SJfGrmLdmpT+0JtN5k/tcgDMEneiP6YyceNTKraXN
-         jQA5Jj0G8lgnrkSX0mn7tvgpmh9iIl5I6kulrXLXxGjShCTCxv9mAZTEpg9SbEABtDBL
-         9ACvkrhG3lNugpMrelIXvzCtFZC7vyh/u9OgdgndScDvJ3Lz8qak1gIBYs+FG1Se1Dgi
-         Qug/MV3phh5pmgUJg/HMDp79mh7kz2h7rgr1YccEU0oeX37F5CLGngCbkieywANpB29+
-         /QBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDwqhF/p+J1wQqfN5i371OH3mPy6gOHKyFu/S0S1yUPuGsRemM0CjbzjiPTKmaojK+GG3CiJrl3SZWxXY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YweS8+YBEHPs2EkBuJPXl/9zXnOBl9O3Jn5NYmsfzylFlBUt8Zq
-	7YFLrlnSyEyjxo489LPvBwgxY2ICU6CwRa6IhWeO5GW8BFDhq7s1hsSRvZcF8oBHVJxyULuYa3R
-	QZGcSZohKy72U6n2h5tTvF49ucbh9YSm9IzEfOM7RUFzJC2CiShRjMDg=
-X-Google-Smtp-Source: AGHT+IEIKycqAdN2iPadF3FhDNP9obHhwOyXaFfA9j14ld9K4tPd3HjioI9kQMSQDjoSByBYu50vb3h2JpeqSwts+/31fn+pKjcV
+        d=1e100.net; s=20230601; t=1733727731; x=1734332531;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AGqOkCrxuELNm/ZW4EA4OB741J1yUUBRLHKG/f585KI=;
+        b=iJQxSd+dlwVFoJimfyHRsISJVUB1Eu8pNuJmaGaaYB8uKa3PuodfXLFwyrZvBe3uM+
+         7y2HrwsfJWLb2mDSjY5w/VzjkTAWM1AiauzGgSRLPZnTd/GcyKMnzVzBO3/fIa0yAdhU
+         yrWDzqf5wOTkYsw2V0hkpwsBGIns3qF1RI98oOhXYf1B7QOXgJppkr5YFvF4I5qZVoLV
+         CaLV3MjeMV8aFWTlf3v4ylsk7psM+HotCO8AnzsZERbsYpnLIVTERrl4AaOIEsRIG621
+         DIVsLmXEI8dxXaMY9LJsvAoRuM1vDAAb7+s3hu6wrIg6fvcgL4I7K8qqiDGXgRxdfywj
+         yupw==
+X-Forwarded-Encrypted: i=1; AJvYcCV8PzDWKLdVhHzixAVT+9C2gznzA2rjn7IoFpAYScg6IgZQLQzL3A8lCJxerqPh+A7sdZM=@vger.kernel.org, AJvYcCWLeeg5cS38bt2X7uKjQruWlMmBL83cGVkhmNtIk+D1t2vw4s282JxiBXMaHYNPBp09Cmsx0I+d1Hn3svKA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyld/jOLPOtnjoaum7ME/Egtd6C1bp9o9Hn2VTAhI6TTMJQG12f
+	2KZubEgzhlJWqKsxMuJsqy9HKSVCxZoSvYnPECV7tjZEF6vQ3E0f
+X-Gm-Gg: ASbGncsIyWjMGK8zE96QxOeqzfpJzV9zKFBrAPEP3IBlamewEKhu0Ugx61F6Wt0F+Ah
+	mfmqDlIIf1GLzZKBWXblVMXBoVoi0G+7S2scvfQjJC9j5TVWTq8YncXsdHVeHowbSbPPsdy8RXJ
+	MA0/o1yViQfn/QwtpzSRG5xfdlKtDGevHwkBr6Q4oQPmfCrbMU+c7dWEYGxW7hqv77Fh+7Efalz
+	xCl17b6ulns4DPWEDCs19wXk26lvfvhB2mg2qle+pNAvgVJ1ic=
+X-Google-Smtp-Source: AGHT+IHD+EKsIwkKz6QQfNxgpyQ4Z7f8tjRjNERJ0yCrWW0urijhOuQGTU1dLhcqi4C/EfQRGK/71w==
+X-Received: by 2002:a05:6a21:3987:b0:1e1:adb8:c011 with SMTP id adf61e73a8af0-1e1adb8c320mr1427934637.18.1733727731131;
+        Sun, 08 Dec 2024 23:02:11 -0800 (PST)
+Received: from localhost ([98.97.37.114])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725eeeaf87csm1024345b3a.35.2024.12.08.23.02.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 23:02:10 -0800 (PST)
+Date: Sun, 08 Dec 2024 23:02:09 -0800
+From: John Fastabend <john.fastabend@gmail.com>
+To: Levi Zim via B4 Relay <devnull+rsworktech.outlook.com@kernel.org>, 
+ John Fastabend <john.fastabend@gmail.com>, 
+ Jakub Sitnicki <jakub@cloudflare.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, 
+ David Ahern <dsahern@kernel.org>
+Cc: netdev@vger.kernel.org, 
+ bpf@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Levi Zim <rsworktech@outlook.com>
+Message-ID: <675695f1265b2_1abf20862@john.notmuch>
+In-Reply-To: <20241130-tcp-bpf-sendmsg-v1-2-bae583d014f3@outlook.com>
+References: <20241130-tcp-bpf-sendmsg-v1-0-bae583d014f3@outlook.com>
+ <20241130-tcp-bpf-sendmsg-v1-2-bae583d014f3@outlook.com>
+Subject: RE: [PATCH net 2/2] tcp_bpf: fix copied value in tcp_bpf_sendmsg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6602:2b84:b0:83d:e5e8:6fcd with SMTP id
- ca18e2360f4ac-8447e2f3afbmr1389918039f.15.1733727722210; Sun, 08 Dec 2024
- 23:02:02 -0800 (PST)
-Date: Sun, 08 Dec 2024 23:02:02 -0800
-In-Reply-To: <c3379af4-cfc3-41e8-89fb-1ad5292d952a@bytedance.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <675695ea.050a0220.a30f1.0191.GAE@google.com>
-Subject: Re: [syzbot] [mm?] KASAN: slab-use-after-free Read in move_pages_pte
-From: syzbot <syzbot+1c58afed1cfd2f57efee@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, bp@alien8.de, dave.hansen@linux.intel.com, 
-	david@redhat.com, hpa@zytor.com, hughd@google.com, jannh@google.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, mingo@redhat.com, 
-	muchun.song@linux.dev, syzkaller-bugs@googlegroups.com, tglx@linutronix.de, 
-	x86@kernel.org, zhengqi.arch@bytedance.com
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-Hello,
+Levi Zim via B4 Relay wrote:
+> From: Levi Zim <rsworktech@outlook.com>
+> 
+> bpf kselftest sockhash::test_txmsg_cork_hangs in test_sockmap.c triggers a
+> kernel NULL pointer dereference:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+Is it just the cork test that causes issue?
 
-failed to apply patch:
-checking file mm/memory.c
-Hunk #1 FAILED at 7023.
-1 out of 1 hunk FAILED
+> 
+> BUG: kernel NULL pointer dereference, address: 0000000000000008
+>  ? __die_body+0x6e/0xb0
+>  ? __die+0x8b/0xa0
+>  ? page_fault_oops+0x358/0x3c0
+>  ? local_clock+0x19/0x30
+>  ? lock_release+0x11b/0x440
+>  ? kernelmode_fixup_or_oops+0x54/0x60
+>  ? __bad_area_nosemaphore+0x4f/0x210
+>  ? mmap_read_unlock+0x13/0x30
+>  ? bad_area_nosemaphore+0x16/0x20
+>  ? do_user_addr_fault+0x6fd/0x740
+>  ? prb_read_valid+0x1d/0x30
+>  ? exc_page_fault+0x55/0xd0
+>  ? asm_exc_page_fault+0x2b/0x30
+>  ? splice_to_socket+0x52e/0x630
+>  ? shmem_file_splice_read+0x2b1/0x310
+>  direct_splice_actor+0x47/0x70
+>  splice_direct_to_actor+0x133/0x300
+>  ? do_splice_direct+0x90/0x90
+>  do_splice_direct+0x64/0x90
+>  ? __ia32_sys_tee+0x30/0x30
+>  do_sendfile+0x214/0x300
+>  __se_sys_sendfile64+0x8e/0xb0
+>  __x64_sys_sendfile64+0x25/0x30
+>  x64_sys_call+0xb82/0x2840
+>  do_syscall_64+0x75/0x110
+>  entry_SYSCALL_64_after_hwframe+0x4b/0x53
+> 
+> This is caused by tcp_bpf_sendmsg() returning a larger value(12289) than
+> size (8192), which causes the while loop in splice_to_socket() to release
+> an uninitialized pipe buf.
+> 
+> The underlying cause is that this code assumes sk_msg_memcopy_from_iter()
+> will copy all bytes upon success but it actually might only copy part of
+> it.
 
+The intent was to ensure we allocate a buffer large enough to fit the
+data. I guess the cork + send here is not allocating enough bytes? 
 
+> 
+> This commit changes it to use the real copied bytes.
+> 
+> Signed-off-by: Levi Zim <rsworktech@outlook.com>
+> ---
+>  net/ipv4/tcp_bpf.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/net/ipv4/tcp_bpf.c b/net/ipv4/tcp_bpf.c
+> index 370993c03d31363c0f82a003d9e5b0ca3bbed721..8e46c4d618cbbff0d120fe4cd917624e5d5cae15 100644
+> --- a/net/ipv4/tcp_bpf.c
+> +++ b/net/ipv4/tcp_bpf.c
+> @@ -496,7 +496,7 @@ static int tcp_bpf_send_verdict(struct sock *sk, struct sk_psock *psock,
+>  static int tcp_bpf_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+>  {
+>  	struct sk_msg tmp, *msg_tx = NULL;
+> -	int copied = 0, err = 0;
+> +	int copied = 0, err = 0, ret = 0;
+>  	struct sk_psock *psock;
+>  	long timeo;
+>  	int flags;
+> @@ -539,14 +539,14 @@ static int tcp_bpf_sendmsg(struct sock *sk, struct msghdr *msg, size_t size)
+>  			copy = msg_tx->sg.size - osize;
+>  		}
+>  
+> -		err = sk_msg_memcopy_from_iter(sk, &msg->msg_iter, msg_tx,
+> +		ret = sk_msg_memcopy_from_iter(sk, &msg->msg_iter, msg_tx,
+>  					       copy);
+> -		if (err < 0) {
+> +		if (ret < 0) {
+>  			sk_msg_trim(sk, msg_tx, osize);
+>  			goto out_err;
+>  		}
+>  
+> -		copied += copy;
+> +		copied += ret;
+>  		if (psock->cork_bytes) {
+>  			if (size > psock->cork_bytes)
+>  				psock->cork_bytes = 0;
+> 
+> -- 
+> 2.47.1
+> 
+> 
 
-Tested on:
-
-commit:         6e165f54 mm/page_isolation: fixup isolate_single_pageb..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-unstable
-kernel config:  https://syzkaller.appspot.com/x/.config?x=76f158395f6f15fd
-dashboard link: https://syzkaller.appspot.com/bug?extid=1c58afed1cfd2f57efee
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=135d94df980000
 
 
