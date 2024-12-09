@@ -1,113 +1,126 @@
-Return-Path: <linux-kernel+bounces-436843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B191C9E8B8F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:36:35 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B556A161B58
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:36:29 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC52214805;
-	Mon,  9 Dec 2024 06:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n7DyDlww"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 682BE9E8B1A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:39:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6FCB14E2CF;
-	Mon,  9 Dec 2024 06:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F4BE280F18
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:39:02 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75B481C2304;
+	Mon,  9 Dec 2024 05:38:57 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 664311C1735;
+	Mon,  9 Dec 2024 05:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733726185; cv=none; b=tme4Z6uxbggMrQgDrpnkpu3Wh736vDSX0ZjZXp3+10Ue4mITkfZEz5hP8Ba3k6yFsOOwQof4VzQL02HdiFk/AwfNpxWmSxpQamNliBFWvRUaVV1xzyr5S2UpsvnwV2aqdT9cNszhJbP26o5Ci6wgq1xTHWKKvN4P6F9fEThYFBc=
+	t=1733722737; cv=none; b=m+JIQrJSsTBSs37X+0cFRcuot6gpIUddxhbmPbSdXY87+wPaIwoisIP8Pq+OdzCm+q+ulZNiKomqneELIy3maUsyf1I3q7aZKMvZJ+JWLdHbcZZnkAWMTeOYrXPl0UqyOGrF5mRrGf5TuBlXfq0zSRZhEHA+PkKg/2kIn40kU7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733726185; c=relaxed/simple;
-	bh=DgtaHPJQKdaLwwTG+7hCBSPnG+BYqh2b1JN3OIxNq34=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=SoBisfQO7c8hkYEAgw/cwLlyja+AfgWfvQwWQpH5mV6LPfoS+h22oOToAZ+m0X9Tgx3hGmrrteMGyraOKqZWsYhdYnYuqXljLoIF7+0Y3J/Gyz8Odp7/4h41FM1DF17mCGJI1QANtdjBLK3wSswX4PXTDhftz9zzbOwwfdzCbWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n7DyDlww; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B01D3C4CED1;
-	Mon,  9 Dec 2024 06:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733726184;
-	bh=DgtaHPJQKdaLwwTG+7hCBSPnG+BYqh2b1JN3OIxNq34=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=n7DyDlwwaHxO6CVJPdsWtlP6a4BUw7JEbzbWQNU0tmjMuMUVkzKtWnMtj7Fx4bTHK
-	 wi67RsBH1Tt9I7jO1Cf1AFgeOjOFLg/SLo2hyljF/xTa8eZoOZM78KYTeoUndzwRhC
-	 gNm9QP/8704G0MnbCUAGpTLwJlMZLEYkAQunLuNM/TVmnq3ie9H78depXhV0X660/w
-	 61sMfbaWU/oueU0hqVXie/zarq5zn4EgHei27D/t3ZUJZA6xcqU+L0MfIYlEeahTbu
-	 rRb+hRweRmNR4BkF1qa2NzC6mlwniVnTJwZvYw+KMm0E7Qwqgf8KfOTP20L8fZo9/I
-	 qXwyLCEbCwVUA==
-Date: Mon, 9 Dec 2024 15:36:18 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Heiko Carstens <hca@linux.ibm.com>, "Masami Hiramatsu (Google)"
- <mhiramat@kernel.org>, Alexei Starovoitov <alexei.starovoitov@gmail.com>,
- Florent Revest <revest@chromium.org>, linux-trace-kernel@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Martin KaFai Lau
- <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei Starovoitov
- <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
- <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
- linux-arch@vger.kernel.org
-Subject: Re: [PATCH v20 00/19] tracing: fprobe: function_graph:
- Multi-function graph and fprobe on fgraph
-Message-Id: <20241209153618.87e9a6084898575ac06d81c0@kernel.org>
-In-Reply-To: <20241206095247.798c6917@gandalf.local.home>
-References: <173344373580.50709.5332611753907139634.stgit@devnote2>
-	<20241206093556.9026-B-hca@linux.ibm.com>
-	<20241206095247.798c6917@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1733722737; c=relaxed/simple;
+	bh=i/IRixI0CtK3mTZJRJIOaTlQm1oXXvYycdJnkuND66Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kdiAyCnyTpxbmBRVt/O0eE1lQQa4X2a9j8wYzM638xkr6/cX1/yRGnsL2yMmQ4JWy9U0zfU3GdjFs5bSUgbnlBDIQatgjPDWwwjdQi4yj0aKY8fTUuREVjsmjJBquc8CEXFBtqK74s8tiYWmDaX6pJY2iHRqU34rrtYcfbQGJu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250810.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B95RCP2008515;
+	Sun, 8 Dec 2024 21:38:49 -0800
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx1u10sq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sun, 08 Dec 2024 21:38:48 -0800 (PST)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Sun, 8 Dec 2024 21:38:48 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Sun, 8 Dec 2024 21:38:44 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <wayne.lin@amd.com>, <gregkh@linuxfoundation.org>
+CC: <stable@vger.kernel.org>, <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+        <Rodrigo.Siqueira@amd.com>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <Jerry.Zuo@amd.com>, <zaeem.mohamed@amd.com>,
+        <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH 6.1.y] drm/amd/display: Don't refer to dc_sink in is_dsc_need_re_compute
+Date: Mon, 9 Dec 2024 14:36:37 +0800
+Message-ID: <20241209063637.3427088-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Authority-Analysis: v=2.4 cv=H/shw/Yi c=1 sm=1 tr=0 ts=67568269 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=zd2uoN0lAAAA:8 a=t7CeM3EgAAAA:8 a=3MRwYbaJRXBt91PjEZAA:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-ORIG-GUID: pX8-n05lRKl5z5eMQvM75zmBWvGFzV4o
+X-Proofpoint-GUID: pX8-n05lRKl5z5eMQvM75zmBWvGFzV4o
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-09_02,2024-12-09_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 mlxlogscore=999 suspectscore=0 spamscore=0 clxscore=1011
+ impostorscore=0 adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
+ mlxscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2411120000 definitions=main-2412090044
 
-On Fri, 6 Dec 2024 09:52:47 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
+From: Wayne Lin <wayne.lin@amd.com>
 
-> On Fri, 6 Dec 2024 10:35:56 +0100
-> Heiko Carstens <hca@linux.ibm.com> wrote:
-> 
-> > On Fri, Dec 06, 2024 at 09:08:56AM +0900, Masami Hiramatsu (Google) wrote:
-> > > Hi,
-> > > 
-> > > Here is the 20th version of the series to re-implement the fprobe on
-> > > function-graph tracer. The previous version is;
-> > > 
-> > > https://lore.kernel.org/all/173125372214.172790.6929368952404083802.stgit@devnote2/
-> > > 
-> > > This version is rebased on v6.13-rc1 and fixes to make CONFIG_FPROBE
-> > > "n" by default, so that it does not enable function graph tracer by
-> > > default.  
-> > 
-> > Is there a reason why you didn't add the ACKs I provided for s390
-> > related patches for v19 of this series?
-> 
-> Probably just missed it.
-> 
-> Masami,
-> 
-> One thing I usually do when I rebase to a new series is to take my older
-> patch series from Patchwork and reapply them. Because patchwork will pick
-> up any acks, reviewed-bys or tested-bys. I then only drop the tags if the
-> patch needs significant changes.
+[ Upstream commit fcf6a49d79923a234844b8efe830a61f3f0584e4 ]
 
-Oops, sorry, I missed those tags on v19. Let me fix that.
+[Why]
+When unplug one of monitors connected after mst hub, encounter null pointer dereference.
 
-Thanks.
+It's due to dc_sink get released immediately in early_unregister() or detect_ctx(). When
+commit new state which directly referring to info stored in dc_sink will cause null pointer
+dereference.
 
-> 
-> You can also use b4 to do the same.
-> 
-> -- Steve
+[how]
+Remove redundant checking condition. Relevant condition should already be covered by checking
+if dsc_aux is null or not. Also reset dsc_aux to NULL when the connector is disconnected.
 
+Reviewed-by: Jerry Zuo <jerry.zuo@amd.com>
+Acked-by: Zaeem Mohamed <zaeem.mohamed@amd.com>
+Signed-off-by: Wayne Lin <wayne.lin@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+index 1acef5f3838f..a1619f4569cf 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
+@@ -183,6 +183,8 @@ amdgpu_dm_mst_connector_early_unregister(struct drm_connector *connector)
+ 		dc_sink_release(dc_sink);
+ 		aconnector->dc_sink = NULL;
+ 		aconnector->edid = NULL;
++		aconnector->dsc_aux = NULL;
++		port->passthrough_aux = NULL;
+ 	}
+ 
+ 	aconnector->mst_status = MST_STATUS_DEFAULT;
+@@ -487,6 +489,8 @@ dm_dp_mst_detect(struct drm_connector *connector,
+ 		dc_sink_release(aconnector->dc_sink);
+ 		aconnector->dc_sink = NULL;
+ 		aconnector->edid = NULL;
++		aconnector->dsc_aux = NULL;
++		port->passthrough_aux = NULL;
+ 
+ 		amdgpu_dm_set_mst_status(&aconnector->mst_status,
+ 			MST_REMOTE_EDID | MST_ALLOCATE_NEW_PAYLOAD | MST_CLEAR_ALLOCATED_PAYLOAD,
 -- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+2.25.1
+
 
