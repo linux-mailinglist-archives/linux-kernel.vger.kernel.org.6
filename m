@@ -1,118 +1,129 @@
-Return-Path: <linux-kernel+bounces-437668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B629E96C7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:29:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A5E89E9699
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:25:45 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AFE9A162437
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C213F283258
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C17E1A2399;
-	Mon,  9 Dec 2024 13:24:03 +0000 (UTC)
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF283594D;
+	Mon,  9 Dec 2024 13:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+U0MZlX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 999572744B;
-	Mon,  9 Dec 2024 13:24:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B4923312B;
+	Mon,  9 Dec 2024 13:24:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750643; cv=none; b=ATqLWe6v+/HHYv6SkuVy0noFzu+UCEMVpLdeeh9H6NE7I5XBpwPQUnifRYuFuk8Zg9RkscZUSO6ZOQkmJzo7r2NuaorGFNlefRFk8DieU0ipVa26o1o9nXFaItIG+6ubuh58tbgqKUZBymV1rbB0sWtx+dFQj0NMnL1kqqUV9ds=
+	t=1733750674; cv=none; b=sxhhz0Yl6VR/VgXZoexFh67cUT2wCxWxp71/z9Tw68WaWyP3xMujEAHPYRh+yAWockEmL7FHPscz0dx6OfglE7c2+gUsgOhXw/NRbyjqmHwPcJMCyLyF2P+LQm5PW3ZO8zSgmjlmPuFiwvDzGKyiZUth7obXKXyvV/Z6MHjcwBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750643; c=relaxed/simple;
-	bh=1tLSL87TZA7eVAP+vAyLhAovYg5kCNthTxPTDpOFT+k=;
+	s=arc-20240116; t=1733750674; c=relaxed/simple;
+	bh=tIjsY5za2Jlf4kKilwQOlSjddec7kKrcZ9gWvcVoaEw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CBqgPHKe72miY5tyVctra3W2UHj2EPTIh2DYozcKOeXCUjbUDqUJUhcsy29aEJq3vXPeo/q8qXUpN6d6KMveBiqjrrSGMyg5DRRG5VdJNE+nauHv/GcAErcVVBs+ZbgwSjXymJ+ZpJo7sU7r9jYLbu27id9wY0162hZV2HFVS1o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4afdd15db60so660979137.1;
-        Mon, 09 Dec 2024 05:24:01 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733750640; x=1734355440;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vqD9y+TZlpx8awPgJD6i8retfqKC4vxl3zB5fzptVp0=;
-        b=p3fuWPGbEB1VEZYuzDYLafRaC7ju57csYnZJy/wf+ymp0uXnliC98/L7p1Y/yvKnc8
-         dsh8XS4a3g0O4HOB4zn1agCx/CaeKQPuifvh5GDVzUkqUOFtJRWUJe6cGe1Iiqd+XQc/
-         b2Ib1aDjj/TfW8GgnJSlHmCg3E6PmgDSSpOe+yyn4lzDVY8xSgOBtx5omEpuoyZ3NeDo
-         uHkFa4FlfAWwARp11ivLqGhWrb38qmOlofGJ5PmKyy/VRB09NDx5ZRB4o0NcT+q4/vf8
-         qQUnToO/2EgXxmPHY6avlc1INJs+IsPCNGwngX94ozHY0N/VmsSbLLYSJD6y9vNS8H5w
-         JhtA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8NF1H0hJ+nRQ/NWy3ztOR6bFYyHnWSEqpMwq46jBYxU7RAmh4St6oBA+TGr3UBb8cFyaU3avrLXj8@vger.kernel.org, AJvYcCV65zXCHQYwm8WqTYYT4Q/7a5GrZb0L+mPpNVzZWHS+7wVTIMdZu1Uv1HFjtpuprkLCRp+6fUD3L8X3@vger.kernel.org, AJvYcCVInknOWF2YJWl2I3l8h9IzgasYvjSQURlIBuWpT7+sLqX2b2AKwADkkO3vDLf+TFcmbIibo64Omc/ECrySlsbugo4=@vger.kernel.org, AJvYcCVyP+bIpaEOftHiP7vdthMttenW0TcqMMqwkI1y8I0bIT9yVIgUI56xgBgmPOcvpE4X5MLpUv7t3RBQVg==@vger.kernel.org, AJvYcCW4qLDg84mhZKjAzujToewL0LDANnTm+yy94qfoGWFebpwtZOYKfegiuc5GLNByv+/nsya9pAs3CPKIBIw=@vger.kernel.org, AJvYcCWJPyl+YxjBO8Vd8HUgPRYQASOAc5ZBeSCdwhSOGLitRqEiD59bkLTehT5uhsUXPvDh7Kid9aYNL4CjS4lw@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHJlF69yfPzppdjMNcIj33xBvMbB2Kl/IQna0LGYn97Ne8ksGM
-	ZWi0CBkEOMj+Q5V93STlwJTbFGz1fftKD+Wq1F79XY+IOntXOyrusHz1wmjrdEM=
-X-Gm-Gg: ASbGncsDnPhv5Li1tHafXUGFusugsT04GVaKXHHERP2IlSpX6PCflt1SG0xPqw6Dixg
-	JSY4oE3KOsgx/qg0SHMXDo1gKHVtvEpkCSEsh/1WiQit6OXM+w/CDkyp2U9Hlho7OcCGMzSPemi
-	PEGJeM6xplAuGDTHc0McW6yMU0lzuIREjhAAvUfGUUh/IoTTZ37Xf4x1yL35MqOe6T0sRrr+/vY
-	SKl570N7ivdCRKCVVQhpNEmVdjiRFaoFK+wX59CRokq2k14v7H7ba7QUbXhHr+ftJnFifSLZBpO
-	09GE4so6Mf4ZVhjv
-X-Google-Smtp-Source: AGHT+IH625btiLBqvGqpn3DMiqK1dI+7zObNttFtPEmoj5A2GsXC6dly550EJA2KOi5CRl7my2sD6w==
-X-Received: by 2002:a05:6102:3914:b0:4af:f809:5172 with SMTP id ada2fe7eead31-4aff809641amr2169592137.1.1733750640230;
-        Mon, 09 Dec 2024 05:24:00 -0800 (PST)
-Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com. [209.85.221.180])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afdae80f4fsm745253137.31.2024.12.09.05.23.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 05:23:56 -0800 (PST)
-Received: by mail-vk1-f180.google.com with SMTP id 71dfb90a1353d-5174f298e18so336866e0c.2;
-        Mon, 09 Dec 2024 05:23:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUAkpTZsU3eRcD8C1NFGc4E6VOvkyXuLZWO18Q3ARbfoLvjQ76uvkVPtA3faCpgi4MqkxGKrie/dJM+DmUe@vger.kernel.org, AJvYcCVM0p8DG2MyD8qr2aRgREB/4aYovHvtBtUZ+vxSslT4ACKuS6YCnAssZyD5RFcy4oZ0EwVkHHdFYBAo@vger.kernel.org, AJvYcCVxK+X3IBEZsY46pdQR5k5FJaeQMmNTvBiFBfQ689CNx/KVaQ0/1Lyi2uiRwKYkgrk+HkXJei/prG/rmVw=@vger.kernel.org, AJvYcCWB0h49ONuBKwY3G2AfIMLBNPLLuO524dVgNV0jejKe1abkON4AlIrVnytZEeY8op1R3ICs6wqS5po7WxLT7VxSeHU=@vger.kernel.org, AJvYcCWb5+V/6stUGi4qm/hsOxwhPB8DekgwEkzLBq+WjUMNmC4+bTglWNpNc5sMCa+U6+yDyY9VMf4vAMIRXQ==@vger.kernel.org, AJvYcCXv+vP3MljtZRtZUA3B9bLTCrrOOixTufEN4zdBtkjhyjjxdbzjqnpVDI9eFcgvg1J6dl5y0W8jHxd2@vger.kernel.org
-X-Received: by 2002:a05:6122:134a:b0:50d:c2e6:2730 with SMTP id
- 71dfb90a1353d-515fc9ca46cmr10821615e0c.2.1733750636501; Mon, 09 Dec 2024
- 05:23:56 -0800 (PST)
+	 To:Cc:Content-Type; b=SzwtOvj415vHlVtYpD2r2swAv5/88A5ELeD4HuMhq0EGzwHXq1xvastJrt1eibppqullsyPKy1ZTixOUwLgXi7GjDyJruHwFCBxvIPpASZa3aZFDRbD4BinexL08aXQOG+cFlu/e13vU57yMdQ5OOVDjQYF8L7RU0PJnIdN6/T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+U0MZlX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97FF8C4CEDD;
+	Mon,  9 Dec 2024 13:24:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733750673;
+	bh=tIjsY5za2Jlf4kKilwQOlSjddec7kKrcZ9gWvcVoaEw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Y+U0MZlXnMPJ/YkjwHlY8vc4pCW+UstnKf1T26MnsVz0SwoLHWss8OHorOpTK9ndh
+	 sFTRXbPrsapqShctjYGFLs0Fk3FB4Yo8mv1wPSyO6G0DDtJow8W/hUWbL+y2i1aqZt
+	 40D1aZ3BWpzQethUQzMhP+NirsYiUWnPQiLGlz/uRT3qh9GG9rco6Z+n3GGmkgvL2S
+	 qBx8FKHBP84umzobVfcWaZ/GLAHnWAzOYDT/bmsRHSQ4TWQ0KPRSc42ZFPCvHB68rm
+	 tEtMTaJofJTtm7A3Ge6a1xdnAhqFmJ8qOwyJwSpHHAnML25PPbByxC526li4QAovmE
+	 DKvLpTMZyMG4A==
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e388503c0d7so3607716276.0;
+        Mon, 09 Dec 2024 05:24:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWqcWLwC2jg01Ab9xjLqGENJkq2853mPH1EOC7BTSaIB0DZomF2t7MV6ZlPgBw6IZLBl8KAFnUp@vger.kernel.org, AJvYcCX2xN3X47vN/S4r/wBBEnKTfK1w8qwO0IYNCETSXQIOJ+w1lH8vmvfgeNASPzPJXqYGFdVlPU3ihVBQezvN@vger.kernel.org, AJvYcCX5xqKYmQk6InUzkiiNmZSO/R0ml8K7Fb1Gr+ddkTpO+Yx/2EPGUkAmaU87mVaC0hd4u34OdjVf8gLE@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrycJI6Iq4Wrqj8M1CuuYAwjZkgx1KsjNOEcCdal7rf/tIXnaz
+	q0tS1JGX3PlzneYaif8SZDyj1IDl87JqtSOxXOJwmU+OAI3UUPP8xli4ZDphGkRTApH93S1FzN9
+	UA/Y7MNmqQVxQisA0QbNa0aqqIQ==
+X-Google-Smtp-Source: AGHT+IHTtAaLacoSDyYlgvTFYfHtgFO7Eq42ii8VWVKdodPb9rW9jMC4W4JhRjkH55B8Szv983O1c0YYGpvO0FkkI9Y=
+X-Received: by 2002:a05:6902:cc4:b0:e39:84da:95f1 with SMTP id
+ 3f1490d57ef6-e3a0b4d114fmr11040045276.48.1733750672812; Mon, 09 Dec 2024
+ 05:24:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-9-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-9-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 14:23:44 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdW2SF2Cv-GLBQk5=CNX-LDbs3sq+S+92hT3rgrrCo18rA@mail.gmail.com>
-Message-ID: <CAMuHMdW2SF2Cv-GLBQk5=CNX-LDbs3sq+S+92hT3rgrrCo18rA@mail.gmail.com>
-Subject: Re: [PATCH v3 08/25] ASoC: renesas: rz-ssi: Fix typo on SSI_RATES
- macro comment
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+References: <20241206-of_core_fix-v1-0-dc28ed56bec3@quicinc.com> <20241206-of_core_fix-v1-1-dc28ed56bec3@quicinc.com>
+In-Reply-To: <20241206-of_core_fix-v1-1-dc28ed56bec3@quicinc.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 9 Dec 2024 07:24:21 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqK1gsVeCG29RzWMFycbASAGAsds34Utuoq+Egw3-Afi7g@mail.gmail.com>
+Message-ID: <CAL_JsqK1gsVeCG29RzWMFycbASAGAsds34Utuoq+Egw3-Afi7g@mail.gmail.com>
+Subject: Re: [PATCH 01/10] of: Fix alias name length calculating error in API of_find_node_opts_by_path()
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: Saravana Kannan <saravanak@google.com>, Leif Lindholm <leif.lindholm@linaro.org>, 
+	Stephen Boyd <stephen.boyd@linaro.org>, Maxime Ripard <mripard@kernel.org>, 
+	Robin Murphy <robin.murphy@arm.com>, Grant Likely <grant.likely@secretlab.ca>, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+	Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
+On Thu, Dec 5, 2024 at 6:53=E2=80=AFPM Zijun Hu <zijun_hu@icloud.com> wrote=
+:
 >
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> From: Zijun Hu <quic_zijuhu@quicinc.com>
 >
-> The SSI_RATES macro covers 8KHz-48KHz audio frequencies. Update macro
-> comment to reflect it.
+> Alias name length calculated by of_find_node_opts_by_path() is wrong as
+> explained below:
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> Take "alias/serial@llc500:115200n8" as its @patch argument for an example
+>       ^    ^             ^
+>       0    5             19
+>
+> The right length of alias 'alias' is 5, but the API results in 19 which i=
+s
+> obvious wrong.
+>
+> The wrong length will cause finding device node failure for such paths.
+> Fix by using index of either '/' or ':' as the length who comes earlier.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Can you add a test case in the unittest for this.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+>
+> Fixes: 106937e8ccdc ("of: fix handling of '/' in options for of_find_node=
+_by_path()")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> ---
+>  drivers/of/base.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 7dc394255a0a14cd1aed02ec79c2f787a222b44c..9a9313183d1f1b61918fe7e6f=
+a80c2726b099a1c 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -893,10 +893,10 @@ struct device_node *of_find_node_opts_by_path(const=
+ char *path, const char **opt
+>         /* The path could begin with an alias */
+>         if (*path !=3D '/') {
+>                 int len;
+> -               const char *p =3D separator;
+> +               const char *p =3D strchrnul(path, '/');
+>
+> -               if (!p)
+> -                       p =3D strchrnul(path, '/');
+> +               if (separator && separator < p)
+> +                       p =3D separator;
+>                 len =3D p - path;
+>
+>                 /* of_aliases must not be NULL */
+>
+> --
+> 2.34.1
+>
 
