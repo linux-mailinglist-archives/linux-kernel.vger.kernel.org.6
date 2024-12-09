@@ -1,144 +1,140 @@
-Return-Path: <linux-kernel+bounces-438547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C189EA285
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:12:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A54839EA286
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:13:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52CAA1888819
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:12:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05E5C163AB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5B1E19F40B;
-	Mon,  9 Dec 2024 23:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6912619F117;
+	Mon,  9 Dec 2024 23:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="f8M1mNgQ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GtZQYVKl"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB12A19EEA1;
-	Mon,  9 Dec 2024 23:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E187A19EEA1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733785965; cv=none; b=JvG2pwE7c0Bq1myMgnOzL+zeVwj29HlYy5SqO271hCL6T//WeeVKxPQZwPAYFP9NsudSqcrThiVvPIbRBtna7Fd82J+GR7vNY6/kIqrnRkHDinlP37p2ynf9/tqB73cXXCJG71PZlqibn0lldkJQ8iyjY540E1YEfpSJpfGRet8=
+	t=1733786006; cv=none; b=DhhM13oxFTr/Yp09WfcYq9qY80531C8QnBe6n8/438uYw/IRkFGP+EYh90R74ptzAnySU5iJPKCl/WQsCI3jMgj6P8QSNpxk1oWOkVN7csJmvXRpK/9G6tcIAgxuX1QnSYdT3wUohxzfGsru2wDpXLjcKhv9HKeou5KklEc6HBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733785965; c=relaxed/simple;
-	bh=dgzsXhW+dht9rD6bBdaFz41KpF8ixsVN/6bc7mx7N8g=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eMoP/et4njwZeFjkFTd/64Mm5SxenVtQKe3KIeZFQzcIG8Zoe8DMUhiCpjppCAGu7gwBwSB9jGnRvtrz2zUqp7xKmxQURo8S7ZjIlnjZaOQhrygGbZwbRuzxl12oK7E3NRpC79tiR/2GWpKkaoA55j+zSN3hWSYI9ka6BkDE59g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=f8M1mNgQ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=gyJVyur4IyAHn8poAWBypTH6jYDB+Nwxko92c/qdMK4=; b=f8M1mNgQdC5wIM/8vQdHwqvNYz
-	UBUAZDSqr1Cx/7P6DJj40JCUWj7hqJcV9If4OpxdSUG+xbTvK67o9NxJk7uPNSpHuZoGU4SDBQNE9
-	w9Q5s7iDS7JKUA8T/LBsnfd5TDd9lkJ59Z66FeB36Yb8clf+39Pu6P2Jb/3dS+wcQj9rTvDDhAN91
-	pLSAIU8oxDl1HA7oAzSF/op5UCW/DGoOXk3HNtydhi3PK1q4DYpmedSiwqW7rE20MGeguXcVr2K08
-	6DO8lty+Naoovses0nzvGjkd/4oW5eHLIUukRjQ7a27FqoJ3OZajanfclUYYBt1iLOlbOc+N919Uv
-	7t7yk0Og==;
-Received: from i53875bc4.versanet.de ([83.135.91.196] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tKmvT-0005Hj-UT; Tue, 10 Dec 2024 00:12:27 +0100
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Daniel Semkowicz <dse@thaumatec.com>,
- Diederik de Haas <didi.debian@cknow.org>, andy.yan@rock-chips.com
-Cc: Laurent.pinchart@ideasonboard.com, andrzej.hajda@intel.com,
- conor+dt@kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, jernej.skrabec@gmail.com, jonas@kwiboo.se,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- neil.armstrong@linaro.org, quentin.schulz@cherry.de, rfoss@kernel.org,
- robh@kernel.org, tzimmermann@suse.de
-Subject:
- Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2 controller
-Date: Tue, 10 Dec 2024 00:12:26 +0100
-Message-ID: <2203458.KiezcSG77Q@diego>
-In-Reply-To: <D67AV178CEBD.3QA9VD4ZPRNQ1@cknow.org>
-References:
- <20241203165450.1501219-1-heiko@sntech.de>
- <20241209150619.33998-1-dse@thaumatec.com>
- <D67AV178CEBD.3QA9VD4ZPRNQ1@cknow.org>
+	s=arc-20240116; t=1733786006; c=relaxed/simple;
+	bh=lua3lAZ4l4B8bZAw8jb6+8ZEKV6Rbhla4NJjWekPLME=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n6iVifrII718BJL87JrilMQ9iLy5f2OHanJuNlDVcxrUSK+lMjsPYpj1YM4oxGCMNnn79sXeQhqhG4+Pqjdy0ehflc+JMxvN5e26zt17FAoFnSMYmeDwpbCQcA/6LkHUd8Bq7CszqJ9oBISp5ygM/QeLk+ZMRSCtxUqN73gp0/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GtZQYVKl; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-53e3a37ae07so2673012e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:13:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733786003; x=1734390803; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kO2asNsqNAL7eluvpkUku2CKoDCb8/glpml9Aw35CM0=;
+        b=GtZQYVKl5eVaqdeYHcJMmZaVlt/YqCfFMg19YU8ADpEWDo9ykEKfyV/2k9KMAmaOIi
+         VIJUBKYc7tcKS1CdP6UZ8sU53QSDJ883lhc6ymcODXmT40OyZ0ih99A9/Lhgz1Hv3g6g
+         W7uRg0zPFnGrmrf2cWshfKLu2c7kt3DYjWdMP83oyQGWo2t4u/ZIrSQG+qvd/k718fok
+         YIt1Z1nhu1MLdFOmn8a8SjoNacS+KnEzJcVqXcrM4sJjPFssIn+14ArzVzbtfFnrFccS
+         Bq5lmMXhvaz4gryTKxYOdbe7oxJr+637EpHqQElonAYRbrN66p4RDXutyfSkAAIv7LUR
+         3C4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733786003; x=1734390803;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kO2asNsqNAL7eluvpkUku2CKoDCb8/glpml9Aw35CM0=;
+        b=W6AinmjEz2Y3GcW8dHVFaat19Ns9CYVDiv5VRy6eQAYFZQpESz9pNC4uJeIsZ5jPF7
+         eI37cYjaMht93VB7HciIeHfT6pX5KQrJWv09wRnTyEy8KQPrnlOCr4j9u/f/615EikHJ
+         S3zf2tYDLlpxVvg2XOlgThvMlPzpdI+kBFLcObNwNID4xUSeeKeu2mGe+eUhuaEQZCP6
+         Rmz7D75F+xjm6+xM9teMxJhrd35/b8Df065aHU6Gb3Siyk2aaPIsJjU9tRU+5so+E8ZC
+         b5GUyOGmD1ilCoIBBwncON5r1hGQzStDV9ECQeIukb9eSwnK/3cKZADVZiIVNsZtDEZF
+         7szA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVNOkFRAeSyJvj3S5+w9itRFYSSfX+/RTKQz8WYAcQJ742MgCp0Pv/8lnODekLMRShSgX2j7zlqWOoDEY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJX8eLvOI6a9f2FIBDMLP3RHNnYq7L/12O+4/1cXMXxCO4SEq9
+	+hsmBOxdQAOFAiBIxofQ1sPsNaZl5EJb/DPc7yBuz6DlMEQaf3S2RQlDAu2h7jk=
+X-Gm-Gg: ASbGncucRRNzpymG1Bti9AtpOuuHMbZx0Mu4+5G9IaaNNR3ifyehjiVK5/QGzrjzhbX
+	DLPc92uBetOv6HRkK4fdAs4+jTy56jlfMdxZmWV4nTgVQCjcl94fZMKYVQ4Jm+0hYwf2PCS8kM6
+	WAbM4wYxtd5Rb9LRu/QHQDLqck7A6jUeSCzOG1qdrPXC2Gu3RL2+gQE0GrVK2GJ3YnKGcCYUE8R
+	qFE3PRP2UZyWAiOIdT2klcL/svvFfa9UwkxLQZsBgqwWnjYbLBSLQFcE5TS3uruFyMfgSdcyJlI
+	/W5nmm5SNdn2R3XCO4nGVafKkBq9809SiA==
+X-Google-Smtp-Source: AGHT+IFAS1Z5WHgZqwBvaxSaopm+k8xTxDSEi+kuRvqKIcQUqZkIivnLzU/azdEntpK3zuNH1hE4yw==
+X-Received: by 2002:a05:6512:ba9:b0:53f:afae:7367 with SMTP id 2adb3069b0e04-53fafae74c8mr2641232e87.38.1733786002822;
+        Mon, 09 Dec 2024 15:13:22 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401b25b349sm687436e87.271.2024.12.09.15.13.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 15:13:21 -0800 (PST)
+Date: Tue, 10 Dec 2024 01:13:19 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Julius Werner <jwerner@chromium.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] arm64: errata: Add QCOM_KRYO_2XX_GOLD to the
+ spectre_bhb_firmware_mitigated_list
+Message-ID: <wx6qbdbcrvbq34snzkxawlbpxm6vogt5ccjmdqqyazukfbjy7t@qkvax7tr27bs>
+References: <20241209174430.2904353-1-dianders@chromium.org>
+ <20241209094310.2.Ia3dfc0afadbfbee81bb2efb0672262470973dd08@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209094310.2.Ia3dfc0afadbfbee81bb2efb0672262470973dd08@changeid>
 
-Am Montag, 9. Dezember 2024, 17:11:03 CET schrieb Diederik de Haas:
-> Hi,
+On Mon, Dec 09, 2024 at 09:43:12AM -0800, Douglas Anderson wrote:
+> Qualcomm Kryo 200-series Gold cores appear to have a derivative of an
+> ARM Cortex A73 in them. Since A73 needs Spectre mitigation then the
+> Kyro 200-series Gold cores also should need Spectre mitigation.
 > 
-> On Mon Dec 9, 2024 at 4:06 PM CET, Daniel Semkowicz wrote:
-> > On 03.12.24 21:54, Heiko Stuebner wrote:
-> > > This series adds a bridge and glue driver for the DSI2 controller found
-> > > in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
-> > > 
-> >
-> > I did more tests with different LVDS displays. I tested following
-> > configurations with DSI/LVDS bridge:
-> > - 1024x600@60.01
-> > - 1024x768@60.02
-> > - 1280x800@60.07
-> > - 1366x768@60.06
-> >
-> > All of them worked without issues, except 1366x768.
-> > With this resolution, video is blurry, and offset incorrectly
-> > to the left. There are also repeating errors on the console:
-> >
-> >   rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY irq err at vp3
-> >
-> > In correct operation with other resolutions, there is no error.
-> > I am not sure if this is a problem in your series or rather in VOP2
-> > driver.
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> I don't really have any good way to test this patch but it seems
+> likely it's needed. If nothing else the claim is that that Qualcomm
+> Kyro 280 CPU is vulnerable [1] but I don't see any mitigations in the
+> kernel for it.
+> 
+> NOTE: presumably this patch won't actually do much on its own because
+> (I believe) it requires a firmware update to go with it.
 
-This really sounds like something is wrong on the vop side.
-The interrupt is part of the vop, the divisable by 4 things likely too.
-
-
-Heiko
-
+Why? is_spectre_bhb_fw_affected() returns true if (cpu in list OR fw
+mitigated)
 
 > 
-> On my PineTab2 I got similar messages about 2 weeks ago:
-> rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY irq err at vp1
+> [1] https://spectreattack.com/spectre.pdf
 > 
-> Preceding those, I got several panfrost related errors:
+>  arch/arm64/kernel/proton-pack.c | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> panfrost fde60000.gpu: get clock failed -517
-> panfrost fde60000.gpu: clk init failed -517
-> platform fde60000.gpu: deferred probe pending: (reason unknown)
-> platform cpufreq-dt: deferred probe pending: (reason unknown)
-> vdd_gpu_npu: disabling
-> 
-> But can also be that the PineTab2 (likely) needs regulator-always-on
-> and regulator-boot-on in its vdd_gpu_npu node.
-> 
-> > I tried to track down the problem, and it seems to be a generic issue
-> > when horizontal line width is not divisible by 4.
-> > Lowering line width to 1364px fixes the issue, but of course I have two
-> > vertical lines of black pixels on the right.
-> > I also made some tests with 720x1280 DSI display. Lowering horizontal
-> > line to 718px shows the same problem. With 720px and 716px it works
-> > correctly.
-> 
-> I haven't look further into it, but the PT2 has a 1280x800 resolution.
-> 
-> HTH,
->   Diederik
+> diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
+> index e149efadff20..0437be7c83bc 100644
+> --- a/arch/arm64/kernel/proton-pack.c
+> +++ b/arch/arm64/kernel/proton-pack.c
+> @@ -925,6 +925,7 @@ static bool is_spectre_bhb_fw_affected(int scope)
+>  	static const struct midr_range spectre_bhb_firmware_mitigated_list[] = {
+>  		MIDR_ALL_VERSIONS(MIDR_CORTEX_A73),
+>  		MIDR_ALL_VERSIONS(MIDR_CORTEX_A75),
+> +		MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_2XX_GOLD),
+>  		{},
+>  	};
+>  	bool cpu_in_list = is_midr_in_range_list(read_cpuid_id(),
+> -- 
+> 2.47.0.338.g60cca15819-goog
 > 
 
-
-
-
+-- 
+With best wishes
+Dmitry
 
