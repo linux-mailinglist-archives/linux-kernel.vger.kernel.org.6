@@ -1,125 +1,110 @@
-Return-Path: <linux-kernel+bounces-438163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6E249E9DAC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:58:24 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EAF89E9DAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:58:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD2321881AA0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:58:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4B5518820EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:58:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BB781C5CBD;
-	Mon,  9 Dec 2024 17:58:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFC1A1C5CA7;
+	Mon,  9 Dec 2024 17:58:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="F458GKBS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OImG4j0k"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1FD1BEF74;
-	Mon,  9 Dec 2024 17:58:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDB7A1B4256
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733767086; cv=none; b=IoX9bHCLCiRYiXE+XiUHSlf9zuB0taNwNm3qAtEyK5vNynXoKdaoYGqtkk4++1PbAxLm3C767VfAhFiZhilt73ZHbtcNl/B6oQGJyHWV7+RYn+nwaTAN7txgE50lCq2QviVZkOo7wwGvEUtw3nWX1hyrOiE3ivO8bFP3Fkw1K/k=
+	t=1733767086; cv=none; b=f8TY8fiPMZ4a+ZCotzbacSvqJAkx/pkGk0OhAybvxLo8gDfXXvGeaGdw236WYAELsZw/zFnII+osOC+j4iR0dgr3QJ3LnoeLxoJ8e1Zv0ATEtVXnpzpvn26b71YtgH7ETjVNdETGln7Cx7N7z8FK+/flgn8lEsjwFe9z0jnpD9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1733767086; c=relaxed/simple;
-	bh=yi0162Z72PaRcnO/geVNgvCA57dTZgtjgcyeH4xDkk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rcoBKukJcaEmiF7G9xxZaGXpZobDBCoBDQUs1EXuTTE+/jzuEFBxe5DuZP47utTDKjaP/r2bmVctfk3FOu/hyRrtnIoGt2Ll7/NP2A/x/Exax4l+N59uBQAnWlCO/pbPqRntsLaN9PvIhLttIQWk3oNntEis2/joMzi7nz/eSDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=F458GKBS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 7A9EF40E019C;
-	Mon,  9 Dec 2024 17:58:02 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Ggtm8W8l_t3T; Mon,  9 Dec 2024 17:57:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733767078; bh=bHWnT3ehCDePxHIVBORz0IXUF1hibjIw6+1/uXNKznI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F458GKBStDmoFvyd1d3L8hbrx5sII79xshlegc5+K/Em7GfYvbhIbxwJq5A5coaRk
-	 Q520gjn7mJrJXO4D0aNxnhhnXzG1lKHZICYUGY4qfwz89pmhIfSbz0FFevRJZSzyaF
-	 4ft0lTlA01w3aQEispahvYl3IQqtpZWiu1lLOPLd9nQHD+L40oN8ZGxT3+WWtFACUj
-	 K6n45ey5HYhcYiZTM0LQre7ebwuSRNSV4IAepHIOxu725GWZcHFN0xQnbvIAYr7qoJ
-	 a0LsTl/+MfmlrrsUJa3JSSTyttZOugT4gG0TRAq5ZHa1xHUuEsBp5gAiqkt9bHec+3
-	 gPAzsXur9X9NGGjtnTA/D8Md5FPuxYhubiCQZoDBbCNESg5cod0StDBD4DCIoFlZG9
-	 RRS0x1WQTgZaSIGBWFc8qRiUgZ8maBlTycja18RR0EvU+KQt//GNkO51+DHHJDbBIe
-	 RKZs/dPUyV0zKpCKEMoqpPUsTENi2jvJc1GV/TP2dwVHh8uN03OitlhOdtQIDJgbCz
-	 SZVbHvAA4KyIzbQXDJL/IxA8qwmuYRPGgtuYmoSict9rMeG24DyBUkJLOxjr4/cgNu
-	 nlVdLdCsIpA/XC/Eg14ctRWq9H7GNE2aVSxj30B13W3+F/1YsaumJ5j3FZS89IEZNR
-	 2Xg4iUF0ZLhPjf88g+26vVW0=
-Received: from zn.tnic (p200300ea971F9307329c23FFfEA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
+	bh=Y0UWrup3k88kt3zxiyLdBAaXUERYXhcmbMd/lY9JbrU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=rr36tRb/tWwDVLqaodpNEj6Ch8icmd8mhX8mxTzcBmECeit3jM6xV1mACQ/wu4SI1M8lZ0emYDDzb3q54I9StsvN5V8TSAGfL4yiemOTctJyNm7VWi0blhf5SSu4yZ2wHqmGxG6RvxIQQDZbdey0ihaBm2zw7UWGSa1gTBEOaIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OImG4j0k; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733767083;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=QhpxtO/mBMO94vZO3552ZqfP00gjpgAVYCMI7XwChuY=;
+	b=OImG4j0kZKglyjfnL18Y0d7I0oEDduuToQLeYKV0PhOKTxtN6qiSn6qqVU3W7K++AwqvaG
+	dSWPIdGNUC5VpX/l+VQ/qTza0r3K4Moe/qnVP3SkVCMBI17P2sW8nGDBb7FBuTE4DWWDol
+	1NmDDWogaRw/VG+hxBEB4gD+VWYZeA0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-125-P1HD2u1LMmiYqFjiGeIlYw-1; Mon,
+ 09 Dec 2024 12:57:58 -0500
+X-MC-Unique: P1HD2u1LMmiYqFjiGeIlYw-1
+X-Mimecast-MFC-AGG-ID: P1HD2u1LMmiYqFjiGeIlYw
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id ACF1440E015E;
-	Mon,  9 Dec 2024 17:57:44 +0000 (UTC)
-Date: Mon, 9 Dec 2024 18:57:39 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Chatre, Reinette" <reinette.chatre@intel.com>,
-	"Yu, Fenghua" <fenghua.yu@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, "x86@kernel.org" <x86@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v11 0/8] x86/resctrl: mba_MBps enhancement
-Message-ID: <20241209175739.GIZ1cvkycetfLpEsgE@fat_crate.local>
-References: <20241206163148.83828-1-tony.luck@intel.com>
- <7e7c01c5-f64f-42c3-9364-ddcfd01b25c1@intel.com>
- <20241209172859.GHZ1co28T-rRiQtIMp@fat_crate.local>
- <SJ1PR11MB60834A5C5D99F3BE9F2CF0DDFC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id E74691955F43;
+	Mon,  9 Dec 2024 17:57:55 +0000 (UTC)
+Received: from starship.lan (unknown [10.22.82.46])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 0E99E195605A;
+	Mon,  9 Dec 2024 17:57:51 +0000 (UTC)
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: kvm@vger.kernel.org
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	Haiyang Zhang <haiyangz@microsoft.com>,
+	Souradeep Chakrabarti <schakrabarti@linux.microsoft.com>,
+	linux-hyperv@vger.kernel.org,
+	Dexuan Cui <decui@microsoft.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	"K. Y. Srinivasan" <kys@microsoft.com>,
+	Wei Liu <wei.liu@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Shradha Gupta <shradhagupta@linux.microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	netdev@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Long Li <longli@microsoft.com>,
+	Yury Norov <yury.norov@gmail.com>,
+	Maxim Levitsky <mlevitsk@redhat.com>
+Subject: [PATCH v2 0/2] MANA: Fix few memory leaks in mana_gd_setup_irqs
+Date: Mon,  9 Dec 2024 12:57:49 -0500
+Message-Id: <20241209175751.287738-1-mlevitsk@redhat.com>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB60834A5C5D99F3BE9F2CF0DDFC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Dec 09, 2024 at 05:53:12PM +0000, Luck, Tony wrote:
-> v6.13-rc1 may give a lockdep splat when mounting /sys/fs/resctrl
-> (known CONFIG options to trigger this are:
-> 
-> 	PROVE_LOCKING && SELINUX && (EXT4 || BTRFS)
-> 
-> but there may be others).
-> 
-> These resctrl patches are not directly dependent on the fixes that
-> went into -rc2:
-> 
->    22465bbac53c blk-mq: move cpuhp callback registering out of q->sysfs_lock
->    4bf485a7db5d blk-mq: register cpuhp callback after hctx is added to xarray table
-> 
-> they work ok on top of -rc1  (as long as you ignore the lockdep splat).
+Fix 2 minor memory leaks in the mana driver,=0D
+introduced by commit=0D
+=0D
+8afefc361209 ("net: mana: Assigning IRQ affinity on HT cores")=0D
+=0D
+Best regards,=0D
+	Maxim Levitsky=0D
+=0D
+Maxim Levitsky (2):=0D
+  net: mana: Fix memory leak in mana_gd_setup_irqs=0D
+  net: mana: Fix irq_contexts memory leak in mana_gd_setup_irqs=0D
+=0D
+ drivers/net/ethernet/microsoft/mana/gdma_main.c | 6 ++++--=0D
+ 1 file changed, 4 insertions(+), 2 deletions(-)=0D
+=0D
+-- =0D
+2.26.3=0D
+=0D
 
-Thanks for the details.
-
-> I see you already have one patch in TIP x86/cache on top of v6.13-rc1
-> 
-> Your choice whether to rebase that to -rc2 and then apply my series. It
-> might make testing smoother.
-
-Yah, I can rebase. Not worth the hassle of dealing with bogus reports.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
