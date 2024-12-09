@@ -1,170 +1,135 @@
-Return-Path: <linux-kernel+bounces-437741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6942C9E97E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:55:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 459119E97F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:56:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3BDB16331A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36EA21887FB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:56:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FF541ACEA6;
-	Mon,  9 Dec 2024 13:55:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8D71A23B2;
+	Mon,  9 Dec 2024 13:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="XSiFwoMr";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="QLvbfbmy"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lidOB0rR"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F4D11A2392;
-	Mon,  9 Dec 2024 13:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3E31A2395
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752546; cv=none; b=Cqa1w3U3wCfpoKQC3Pjhitvd4N8C40ZosuK4fQrnEkSvTzvka05BsDEjKk9szAx07oSLJipQkg99kL0uy22qPPOOuuAMWJ4F2CztcVErZu4Q4FTpCT6xSBiJhoPOZHKQHjP5Rd86rUp5lspUurPmYqnAkRaG3evTUygafeFsTGM=
+	t=1733752572; cv=none; b=gmxz7v8CXlKyLUZ54sEkKK9PZ9ttFay138eeZYZEvA8nsksCxfq8Xvwi4oszQbHzXmVeuBgLCs9qj4VJ3h/oghW73ynAc8EGDvMad3EqpZkq1VkNp0DhyW9CcsRIhJ5nELyJ/nLPiCJMSlI5POeEeS0saQd1r3j6yrcdbwAtHvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752546; c=relaxed/simple;
-	bh=YYFxratArxvKvbLXTcvgqbbnSqNSpdPcrQS/DK4T2sI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jy3hQGSnUDYp2njqCFNPLeXtkfDj27dK1DVvsqlyf4+3A3MOE3f8u6DZZdf0Eyy6WTYmxBCeQOWNzyQChKCPTZbmzFCJH2vl5uBObdpoK5XwkF15wafz2i8MRjTVFcqrVVR0fsJvQRoyWFQKKtC60QbhXiGkfqtKXyZpcJ67QqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=XSiFwoMr; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=QLvbfbmy reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733752542; x=1765288542;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=LteyrmhH69QEmehsyqX62nW+pV4+wAljWT6HLYaaBkI=;
-  b=XSiFwoMrBh/GZPB5sin1Gxf2oVQg8z4traQL752UPJXBq1kuQM1JlIfm
-   KHanbVT26JaMD5am0JgKWeoGy39pOvS9nueBEL1oeg79i9b7s2fXlnbZj
-   /cf0hjqsfW+XV5vCof1+n7DTl6oY4Ru1hg7XVhcUcx6u9Z70NNzsQDu6R
-   vQHehiThDa4g702kekcFj5wihKe6Ym0q6fiuYcKyAj+4ixQgMEb/rw5wl
-   879TZ2l8DUjnF8JwqqmkxZxtQ2oVEKmPgk2lxn0tqRGeTDIubos5tUdIB
-   KhgPNAa4QY7bzPpGlgyVer1gG+y2e3cwGoEJZJoAjNdlAz8c1vYNuIzWE
-   g==;
-X-CSE-ConnectionGUID: oY3/CPafQFaYj6kvAX6lGA==
-X-CSE-MsgGUID: 64VLtlciSiyH8wjSMQSoGQ==
-X-IronPort-AV: E=Sophos;i="6.12,219,1728943200"; 
-   d="scan'208";a="40488462"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 09 Dec 2024 14:55:38 +0100
-X-CheckPoint: {6756F6DA-18-1B231F50-D910A4E3}
-X-MAIL-CPID: 1819D895E6E3B5DBD34CC4AA263FD5E0_5
-X-Control-Analysis: str=0001.0A682F1B.6756F6DA.00E2,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 20C6F166BCD;
-	Mon,  9 Dec 2024 14:55:32 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733752534;
+	s=arc-20240116; t=1733752572; c=relaxed/simple;
+	bh=f6XqPaGHJ0jJAPxY8ehyTH9J2e5L1tx3XwidYZzgqb4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=SpqU0TPAMbKy/BV133nLBBiIo60ibSWw/rXyBQ4xhAKgwYvp/EEmPE67m41fx4yhvAMSgpx89gjt+I+50Sb6sr97/vn69uk/xImCY+xg4I3fCeKRCvPAF6wR78hCYuISVCZDslyYnGfjjm+Lrc66oX8n6GYsmynQHWweFWU5RZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lidOB0rR; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733752558;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=LteyrmhH69QEmehsyqX62nW+pV4+wAljWT6HLYaaBkI=;
-	b=QLvbfbmy0PuIHr5aXue1xK8WW6edelWn8QmOxbYyObNboeFIyUcpHv+H+idnIZNdcwpw4D
-	58LL1g/e5cxk6Bv2Pe9cKqfA/GWGGWvuUzfR5ouajVv136ABRijxQJtJ94o/kMGCHATg6i
-	sqjc50OVIpDk8b7XRN1KWAzrrdsxKKp4RmiCoA/mb5PzVuua+Djfhy05CFd2Lm3QULBDv6
-	fnvQM9Oj2CLqHE2KfpYCzQsIPOrJnJxFddZhITrTZrJ2dTQHTDAjPwJ7TzcYkPM04LTDoZ
-	/zKyntbPnmhtGa8/BSx31byOgyUwtAN0dymRYLArJ6B79dpOx8SnPIlUvntJWw==
-Message-ID: <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
-Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
- MBa62xx carrier board Device Trees
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero
- Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
- Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook <kees@kernel.org>,
- Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, Felipe Balbi <balbi@kernel.org>,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
- linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, Hari
- Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
-Date: Mon, 09 Dec 2024 14:55:31 +0100
-In-Reply-To: <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
-References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
-	 <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
-	 <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	bh=xMD7OR5YZ9oyBrkqZP0zItfH8mnaDJd5RfsgeWQ8jts=;
+	b=lidOB0rRhzPAswU66ZHocV9Yglns74v/VdiF1Z3la7rkMoMWGcma1H3Y3iQ1sOjrxg2x/f
+	lOexU8R0UTdCDDUJYSPVG6UneeSgS0GytGN7jZSxSeijapRANr+T6Nf61J54WsioEoHCBJ
+	ks3owmk0w31XQZnvub6yusy4u9QYmlY=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
+ module directory with M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <82FA2E02-05A5-4297-B364-9D7D89001D9D@linux.dev>
+Date: Mon, 9 Dec 2024 14:55:44 +0100
+Cc: linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ cocci@inria.fr
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <1116D946-05F3-4463-A61F-DE221F258A3F@linux.dev>
+References: <20241110013649.34903-1-masahiroy@kernel.org>
+ <20241110013649.34903-6-masahiroy@kernel.org>
+ <82FA2E02-05A5-4297-B364-9D7D89001D9D@linux.dev>
+To: Masahiro Yamada <masahiroy@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, 2024-12-09 at 14:24 +0100, Andrew Lunn wrote:
+On 9. Dec 2024, at 14:46, Thorsten Blum wrote:
+> On 10. Nov 2024, at 02:34, Masahiro Yamada wrote:
+>>=20
+>> Currently, Kbuild always operates in the output directory of the =
+kernel,
+>> even when building external modules. This increases the risk of =
+external
+>> module Makefiles attempting to write to the kernel directory.
+>>=20
+>> This commit switches the working directory to the external module
+>> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
+>> some build artifacts.
+>>=20
+>> The command for building external modules maintains backward
+>> compatibility, but Makefiles that rely on working in the kernel
+>> directory may break. In such cases, $(objtree) and $(srctree) should
+>> be used to refer to the output and source directories of the kernel.
+>>=20
+>> The appearance of the build log will change as follows:
+>>=20
+>> [Before]
+>>=20
+>> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
+>> make: Entering directory '/path/to/my/linux'
+>>   CC [M]  /path/to/my/externel/module/helloworld.o
+>>   MODPOST /path/to/my/externel/module/Module.symvers
+>>   CC [M]  /path/to/my/externel/module/helloworld.mod.o
+>>   CC [M]  /path/to/my/externel/module/.module-common.o
+>>   LD [M]  /path/to/my/externel/module/helloworld.ko
+>> make: Leaving directory '/path/to/my/linux'
+>>=20
+>> [After]
+>>=20
+>> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
+>> make: Entering directory '/path/to/my/linux'
+>> make[1]: Entering directory '/path/to/my/externel/module'
+>>   CC [M]  helloworld.o
+>>   MODPOST Module.symvers
+>>   CC [M]  helloworld.mod.o
+>>   CC [M]  .module-common.o
+>>   LD [M]  helloworld.ko
+>> make[1]: Leaving directory '/path/to/my/externel/module'
+>> make: Leaving directory '/path/to/my/linux'
+>>=20
+>> Printing "Entering directory" twice is cumbersome. This will be
+>> addressed later.
+>>=20
+>> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>> ---
 >=20
-> > +&cpsw_port1 {
-> > +	phy-mode =3D "rgmii-rxid";
-> > +	phy-handle =3D <&cpsw3g_phy0>;
-> > +};
-> > +
-> > +&cpsw_port2 {
-> > +	phy-mode =3D "rgmii-rxid";
-> > +	phy-handle =3D <&cpsw3g_phy3>;
-> > +};
+> Hi Masahiro,
 >=20
-> rgmii-rxid is very odd.
+> I get the following error since this patch is in master, but only when
+> using COCCI=3D in combination with M=3D<relative or absolute path>.
 >=20
-> > +
-> > +&cpsw3g_mdio {
-> > +	status =3D "okay";
-> > +	pinctrl-names =3D "default";
-> > +	pinctrl-0 =3D <&main_mdio1_pins>;
-> > +
-> > +	cpsw3g_phy0: ethernet-phy@0 {
-> > +		compatible =3D "ethernet-phy-ieee802.3-c22";
-> > +		reg =3D <0x0>;
-> > +		reset-gpios =3D <&main_gpio1 11 GPIO_ACTIVE_LOW>;
-> > +		reset-assert-us =3D <1000>;
-> > +		reset-deassert-us =3D <1000>;
-> > +		ti,rx-internal-delay =3D <DP83867_RGMIIDCTL_2_00_NS>;
->=20
-> I guess this is the explanation.
->=20
-> What happens when you use rgmii-id, and don't have this delay here?
-> That would be normal.
->=20
-> 	Andrew
+> It works when I either use COCCI=3D or M=3D, but not with both.
 
+Using the absolute path of the cocci script fixes my problem, but this
+used to work with relative paths too.
 
-This is normal for AM62-based boards, see the DTSI of the TI reference
-starterkit for example:
+$ make coccicheck =
+COCCI=3D$(pwd)/scripts/coccinelle/misc/flexible_array.cocci M=3Darch/
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arc=
-h/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi#n451
+Thanks,
+Thorsten
 
-With rgmii-id, both ti,rx-internal-delay and ti,tx-internal-delay should be=
- set.
-As ti,*-internal-delay sets the delay on the PHY side, phy-mode "rgmii" is =
-the
-one that would not use either:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Doc=
-umentation/devicetree/bindings/net/ti,dp83867.yaml#n78
-
-At the end of the day, does it really matter as long as MAC and PHY agree o=
-n the
-used mode? We copied this part of the hardware design from the TI reference
-board, and did our hardware qualification with these settings, so I think i=
-t
-makes sense to use the same phy-mode configuration.
-
-Best regards,
-Matthias
-
-
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
 
