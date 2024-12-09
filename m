@@ -1,114 +1,181 @@
-Return-Path: <linux-kernel+bounces-438540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D41D9EA272
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:10:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 248379EA273
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:11:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0513328199A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:10:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CD66282FAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:11:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34A6A19F118;
-	Mon,  9 Dec 2024 23:10:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239FF19F118;
+	Mon,  9 Dec 2024 23:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cyp3x7nt"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n9JLhlVV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45820142903;
-	Mon,  9 Dec 2024 23:10:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744DC19E97C;
+	Mon,  9 Dec 2024 23:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733785845; cv=none; b=WAqbhbH7Inz7WGi10288Jt7dyQwZHZ5N4X30CfopRu/bOZ5vQDlZzOA/OVElWD77njXMEQjCKKivnAEpzKXGqE7X5LQyZvw8EX2W4ubkGTElyG9vysY0pqmQdwYiS37vMQPji/JXifofvrhodsJn+9SOfDKnLLDtaxQZxoAJ98s=
+	t=1733785857; cv=none; b=kQFWknUYdhFiIFPpCz9HC73MVJnJcuwjNs763Qud0ww+J5o1uWZXO9kDl2fMC+5lTTkvicsMt3CTU/WlMULi1y2gm6n14AurXR5G3on0BevckxHGnJWYbor5YJLOrbqkV2GKwBmeriOGwBvAP9zl+p30SXuW+dJ1TRX9oUME/Mo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733785845; c=relaxed/simple;
-	bh=E2nTtrwCG1RWUGoeVV6buBH3LUJxG/yFAhyZjoMYrGo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FqvjxVf64HgxsfId0zBxKJcHfGkqXkBh37MsbBV/+VDRCsI/QtneaZyx6Mt1PuCp1SCi1m1Bcd4ryUBqW9GC7Cs/qC5knwm2eaVK/miP4X+ccmaGHMs+vd1vEm6kRNvZ0AXQB2cep/XdRLzM5WqWhwauYHKxNWnsPW9fO5yYMPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cyp3x7nt; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ef05d0ef18so865333a91.0;
-        Mon, 09 Dec 2024 15:10:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733785843; x=1734390643; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QE+fKlDSe7E+kExUzTzdcRgoLew/xvVD6sIuR+E1rNI=;
-        b=cyp3x7ntpR7FeY+cZJMnZZ9jaBdE4BatWLqdP/2ok8tQSdrT2NZ633eHAqKfRV0otz
-         DH+y95Sy4RZNpTdX5FAb3eniS8B4HnQJN9uMKRXNxNzZ49m1xQTvDv1+mJTV/mKFd7jJ
-         2oHa3XzfZ+rHfO0lxkRHZC8L1Pzi5KyJ4NRlOfmfZEWBuvkYfSjpIp/vBTDz4o00u/8K
-         QDQmlkgI7cN3xaYLYK6z4ZPnfcqaX5IKYBB41h0jDQAXa0L5CDuHjq/fyTnDkV/u9uYM
-         AP9RCf9RhcLyfrrNvaBEJY58aQRjPRMO23toPBvuR9VUJ/Hx+IxGB2z3OJ/REGpL+XlC
-         BkhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733785843; x=1734390643;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QE+fKlDSe7E+kExUzTzdcRgoLew/xvVD6sIuR+E1rNI=;
-        b=qMHhIDd+evL81VenU159eSYNgldGmvCpTwXlKr5kHOIqDtG17C1qLcnDDGhTe8LtZD
-         u7T0aHZ/AFZAWXoWIwAN55QnbXhYkYCuVH1Asq+ITa6k3hs3RG1L7oIly85ENp0ZaYjH
-         QVQ9EF5sQVhptPHCM9o2SHIRu0f7ULCLOj+mkewqGwDyBZt4YYuz4sBUl+/26TWC3M6a
-         4X0maeiPlFdWutTzcIg9lZzBmRNWWslBpYAe8WtiTIgjb+FJWL87fmJ0TExMOduf3bGK
-         KzbkZqNac+eGv8x0kai1B0AqqxRWfUAjuysL8eLb/Vtdbfyl1RgvbUyzo4DPsXYOHUSv
-         R+bg==
-X-Forwarded-Encrypted: i=1; AJvYcCVV/0KCSHuOoxY953qWoMhXgcsihNxHBEPIWg6P4YrErLg67YHWZ64Jwk28xZnfwraxq1FBkjz76LphxXk=@vger.kernel.org, AJvYcCWiK0LYyES3OjsLt0AhGTkmoXh6ZNlro8ZDme05ZmQmqp0eJNaZ9DTRx16UEGy1RaW/Js0Ljf0E@vger.kernel.org, AJvYcCXZW6HriLA+PKj1xS7RiVp1iaX8FoSSpw4ALdzqW+HAQiNdZPA/TkW9kwObdFplARFWmIx0QbrUnLa5Xq3cIBc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Zmx9avxQ9ueCkICjsIHpf61nhb+AMxPKvSwAKhA95Bz4htQR
-	hcEoPeeEFcJwlPjBMeUiTARAQWAvqxzlQQEF5OWfLUhzJT9WUDBdxP14Gr3/RWFs2TQpjCd80NS
-	MuuMyia/l8m2m2QgtO7l2E/D0v/A=
-X-Gm-Gg: ASbGnctaV2Y0SV46U1qtJyzu4yUWlj98NVi9W4Z/ODQmjIn+GNikqJveso4TdPD1Ylz
-	D22BVapZdLvdW8Nx3VHeQ5gn8vCKsb7BPEH0=
-X-Google-Smtp-Source: AGHT+IGI8SxF3kv4Towz1Sn0iVeRrBAzBUBXonLAFx+//gR5/lMdXYf3/WqqCG5i0YIC+b+9KFrc1WCKHw6mrXFmPzA=
-X-Received: by 2002:a17:90b:4a83:b0:2ee:948b:72d3 with SMTP id
- 98e67ed59e1d1-2efd472ea91mr789956a91.1.1733785843572; Mon, 09 Dec 2024
- 15:10:43 -0800 (PST)
+	s=arc-20240116; t=1733785857; c=relaxed/simple;
+	bh=qP7vsdicRQuCVVCrhvVjbo7LX1EgSPHbrz3rcVNJm24=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KpbCB5yGMbxR/kEDSXYf7wAiTVPsX9guE/ZM1E79+0YHJTW1PhcXNTQSzYm5OkXRaMXjFHEe3b/w5K+LGUNYn259vemPfZ3R4HQ0s6qv9wuaJ+TLBR0mOktZz5SjDi1NOHXc1O7PichduheB2QRRvI14/jZmJuRbZLuPCqFpBaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n9JLhlVV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F84C4CED1;
+	Mon,  9 Dec 2024 23:10:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733785857;
+	bh=qP7vsdicRQuCVVCrhvVjbo7LX1EgSPHbrz3rcVNJm24=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n9JLhlVVVoFrH2qPJ5mrGc0mT5uuCYxnONm80oNAL6GsxZ+4iqNXEJa9HqYU1dwMw
+	 t6QyUw5DjN5HoaeXZddqRq1IdBatlhD/ZRBMwjw0KZLHMYDTs3KnAr7T70HIwAEi0j
+	 dBHjEqcXKmbE/5EOBUZDRaFO9FY88j2valdZzN0KOW3m+V/+6R6lIMXULZ6VnBGbpe
+	 4c+Zax4V/HZfs+RipKUhc3/IGlScQNxvMFnA6I2dwwu8qfFn6OIt93PM7lGYbWFWcg
+	 hVJuOK7W7OIt3d+ka2bSKq4RuPmql0zIWqLxNQnCLE3zGDVBM7649UIMJhzuNMpnqC
+	 +VRL0sFt6Zsag==
+Date: Mon, 9 Dec 2024 15:10:54 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: linux-perf-users@vger.kernel.org, acme@kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Leo Yan <leo.yan@arm.com>, Dima Kogan <dima@secretsauce.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf probe: Fix uninitialized variable
+Message-ID: <Z1d4_kq5WoFA1GsJ@google.com>
+References: <20241209171222.1422577-1-james.clark@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125233332.697497-1-ojeda@kernel.org> <fe2a253c-4b2f-4cb3-b58d-66192044555f@redhat.com>
- <CANiq72=PB=r5UV_ekNGV+yewa7tHic8Gs9RTQo=YcB-Lu_nzNQ@mail.gmail.com> <e544c1c7-8b00-46d4-8d13-1303fd88dca3@redhat.com>
-In-Reply-To: <e544c1c7-8b00-46d4-8d13-1303fd88dca3@redhat.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 10 Dec 2024 00:10:31 +0100
-Message-ID: <CANiq72m_b4y6bJJ6sB5gUe+rpa51FXtwpwENQy3zGGMtuFJ3Xg@mail.gmail.com>
-Subject: Re: [PATCH] drm/panic: remove spurious empty line to clean warning
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241209171222.1422577-1-james.clark@linaro.org>
 
-On Tue, Dec 10, 2024 at 12:05=E2=80=AFAM Jocelyn Falempe <jfalempe@redhat.c=
-om> wrote:
->
-> You can merge it through rust-fixes. I have another patch [1] under
-> review that touches this file, but it shouldn't conflict, as the changes
-> are far from this line.
+On Mon, Dec 09, 2024 at 05:12:21PM +0000, James Clark wrote:
+> Since the linked fixes: commit, err is returned uninitialized due to the
+> removal of "return 0". Initialize err to fix it, and rename err to out
+> to avoid confusion because buf is still supposed to be freed in non
+> error cases.
+> 
+> This fixes the following intermittent test failure on release builds:
+> 
+>  $ perf test "testsuite_probe"
+>  ...
+>  -- [ FAIL ] -- perf_probe :: test_invalid_options :: mutually exclusive options :: -L foo -V bar (output regexp parsing)
+>  Regexp not found: \"Error: switch .+ cannot be used with switch .+\"
+>  ...
 
-Sounds good, thanks! (But of course please feel free to merge fixes through=
- DRM)
+Tested-by: Namhyung Kim <namhyung@kernel.org>
 
-> How do you test clippy, so I can check I won't introduce another warning
-> with this series?
+Thanks,
+Namhyung
 
-With `CLIPPY=3D1`, please see:
-
-    https://docs.kernel.org/rust/general-information.html#extra-lints
-
-Cheers,
-Miguel
+> 
+> Fixes: 080e47b2a237 ("perf probe: Introduce quotation marks support")
+> Signed-off-by: James Clark <james.clark@linaro.org>
+> ---
+>  tools/perf/util/probe-event.c | 20 ++++++++++----------
+>  1 file changed, 10 insertions(+), 10 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+> index 6d51a4c98ad7..35af6570cf9b 100644
+> --- a/tools/perf/util/probe-event.c
+> +++ b/tools/perf/util/probe-event.c
+> @@ -1370,7 +1370,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  {
+>  	char *buf = strdup(arg);
+>  	char *p;
+> -	int err;
+> +	int err = 0;
+>  
+>  	if (!buf)
+>  		return -ENOMEM;
+> @@ -1383,20 +1383,20 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  		if (p == buf) {
+>  			semantic_error("No file/function name in '%s'.\n", p);
+>  			err = -EINVAL;
+> -			goto err;
+> +			goto out;
+>  		}
+>  		*(p++) = '\0';
+>  
+>  		err = parse_line_num(&p, &lr->start, "start line");
+>  		if (err)
+> -			goto err;
+> +			goto out;
+>  
+>  		if (*p == '+' || *p == '-') {
+>  			const char c = *(p++);
+>  
+>  			err = parse_line_num(&p, &lr->end, "end line");
+>  			if (err)
+> -				goto err;
+> +				goto out;
+>  
+>  			if (c == '+') {
+>  				lr->end += lr->start;
+> @@ -1416,11 +1416,11 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  		if (lr->start > lr->end) {
+>  			semantic_error("Start line must be smaller"
+>  				       " than end line.\n");
+> -			goto err;
+> +			goto out;
+>  		}
+>  		if (*p != '\0') {
+>  			semantic_error("Tailing with invalid str '%s'.\n", p);
+> -			goto err;
+> +			goto out;
+>  		}
+>  	}
+>  
+> @@ -1431,7 +1431,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  			lr->file = strdup_esq(p);
+>  			if (lr->file == NULL) {
+>  				err = -ENOMEM;
+> -				goto err;
+> +				goto out;
+>  			}
+>  		}
+>  		if (*buf != '\0')
+> @@ -1439,7 +1439,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  		if (!lr->function && !lr->file) {
+>  			semantic_error("Only '@*' is not allowed.\n");
+>  			err = -EINVAL;
+> -			goto err;
+> +			goto out;
+>  		}
+>  	} else if (strpbrk_esq(buf, "/."))
+>  		lr->file = strdup_esq(buf);
+> @@ -1448,10 +1448,10 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+>  	else {	/* Invalid name */
+>  		semantic_error("'%s' is not a valid function name.\n", buf);
+>  		err = -EINVAL;
+> -		goto err;
+> +		goto out;
+>  	}
+>  
+> -err:
+> +out:
+>  	free(buf);
+>  	return err;
+>  }
+> -- 
+> 2.34.1
+> 
 
