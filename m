@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-438513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D44949EA217
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:47:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70D8B9EA21B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:48:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6C88188851C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:47:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B0818885FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BD0A1A7265;
-	Mon,  9 Dec 2024 22:44:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423A719F421;
+	Mon,  9 Dec 2024 22:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OrOO44GO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Vo39HsVG"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D3C199FBF;
-	Mon,  9 Dec 2024 22:44:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EB7219F111
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 22:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733784284; cv=none; b=Uv4QUn9FwDo/ftnrDc+msMbhU69ct5PL4dP+5P6LwQmjDS1AWtx0FvGPDTn4dDV97EonTTRIO5mE2POWqQJk3jF7CwKnc8azkHri+RAsVmwqTlHcoB4cnky2mT/0MEjD/S6t2yst77+vc/zN9HgryFTmJhea+W3nXRelvo/G6+I=
+	t=1733784372; cv=none; b=MtfDBNz6eeC0z1VJaYxHnftToWHQif0ULYxMVscK29ITnYcTNrbqznWPGyTeeJOMbnrqbJHrJ/Y3KXDmTRyvgwK7wNnkTJ9zuK/O4KGjXKs6X1RamOsUsQq204jxBu0ziXaQ2uJnIeifem3p6waOyFmljqPDaNxUjxCJnPF/Aek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733784284; c=relaxed/simple;
-	bh=610LWZ3Sksv/McKaTRY9n+RLeJxHkAjCEGBV/L2fLc0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o8t3gJS5Cg4YfYOw99uI44TgiP/9w9RXtubTzRAQeP6FaGRv9S5VR4xy+ZCd26fn9lzmgA9GbhvhgXysEEmoCSJto7kC5ikZZYJoysk8XgfCII67UdCOobezbh6H7C9H9qOLz5Uq2N17a4DJRle+H9KA+YraigFhQ+ePPlOKC2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OrOO44GO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F06A5C4CED1;
-	Mon,  9 Dec 2024 22:44:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733784283;
-	bh=610LWZ3Sksv/McKaTRY9n+RLeJxHkAjCEGBV/L2fLc0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OrOO44GOt1mbY2OQn3QCOX3GtvBatcVJuBymTLOpgezdwGovEYT1t0PCrnzv7zJux
-	 jAMafpQUSa90wnVyTFpF8dDlDhzB9og6tSB0aFDq61nCPzWPpn+Bct6pXAb/A1gzlI
-	 4w97Q/oCAb1699U068+at1vbz196I6sjLKoe5kpskEEBiJH7ps2hRYzE1/aZ86VrJE
-	 PQbT5VEwwhSUWRgGE8MZEqcHoIdlQIVLbvPUmwbnX+uV42pEoryOvliTeM94hm/PiJ
-	 qGUcWaHsOSphc78osdD7Vk/uDPuK7nS/JhOfLOxJLDA6wx86treDv1gvZHtuXQH3CP
-	 kjfFzP331vMLQ==
-Date: Mon, 9 Dec 2024 14:44:41 -0800
-From: Namhyung Kim <namhyung@kernel.org>
-To: Chun-Tse Shao <ctshao@google.com>
-Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, mingo@redhat.com,
-	acme@kernel.org, mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-	irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v4 2/3] perf lock: Fix the wrong name percpu-rwsem
-Message-ID: <Z1dy2Svj6gddulHf@google.com>
-References: <20241209200104.870531-1-ctshao@google.com>
- <20241209200104.870531-2-ctshao@google.com>
+	s=arc-20240116; t=1733784372; c=relaxed/simple;
+	bh=YvS7IlcHII7Ec1Ap2hjO6zIeRNlxDIEarM6QhxpvSmc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CMYv/VnKO4oGIyp2ksQTSQiOldhqLCrWyJk1DSo1N5YumfwScIJS7sYKs7veDN0yVY2uwhcuw9uC3xmdRRRR8A9wzAEF12bBtgfnuObG+SuxyAeFOFjDJ2I2Rxyhpa8qCqRX3FQQnkU3nMeWp0i6KHrDicV1T/bKE25i9LoW/5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Vo39HsVG; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733784368;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=PgE/DJOCaLAqXOezkuTQtuZKY8OjvgD1FJlU8+ERQyw=;
+	b=Vo39HsVGSBVL3vs6jFvqdT4e4mmeLAwmDrv1llJ1nzrgviYskf2+tHxu+mn9xsPEZ1yveT
+	qsdAAW1Mf2SWPTfiufc8A0bLROtNdwRinlXHqfeTgWsWMXb4EGRTRYiFCPIMt0IMYg+k3w
+	/+jplCvxXa5GoNfLPeppWyjPYgBud8E=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	sound-open-firmware@alsa-project.org,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] ASoC: SOF: Intel: Use str_yes_no() helper in atom_dump()
+Date: Mon,  9 Dec 2024 23:45:18 +0100
+Message-ID: <20241209224521.100450-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241209200104.870531-2-ctshao@google.com>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Dec 09, 2024 at 12:01:01PM -0800, Chun-Tse Shao wrote:
-> In `perf lock --help`, the name of `percpu-rwsem` should be
-> `pcpu-rwsem`. This patch fixes the naming in `lock_type_table`, and also
-> replaces the mismatched name `percpu-rwsem` before parsing it for
-> backward compatibility.
-> 
-> Tested `./perf lock con -ab -Y pcpu-sem` and `./perf lock con -ab -Y
-> percpu-rwsem`
-> 
-> Fixes: 4f701063bfa2 ("perf lock contention: Show lock type with address")
-> Signed-off-by: Chun-Tse Shao <ctshao@google.com>
-> ---
->  tools/perf/builtin-lock.c | 8 ++++++--
->  1 file changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/builtin-lock.c b/tools/perf/builtin-lock.c
-> index 7e36bbe3cb80..264acfa648e4 100644
-> --- a/tools/perf/builtin-lock.c
-> +++ b/tools/perf/builtin-lock.c
-> @@ -1587,8 +1587,8 @@ static const struct {
->  	{ LCB_F_RT,			"rt-mutex",	"rt-mutex" },
->  	{ LCB_F_RT | LCB_F_READ,	"rwlock-rt:R",	"rwlock-rt" },
->  	{ LCB_F_RT | LCB_F_WRITE,	"rwlock-rt:W",	"rwlock-rt" },
-> -	{ LCB_F_PERCPU | LCB_F_READ,	"pcpu-sem:R",	"percpu-rwsem" },
-> -	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"percpu-rwsem" },
-> +	{ LCB_F_PERCPU | LCB_F_READ,	"pcpu-sem:R",	"pcpu-sem" },
-> +	{ LCB_F_PERCPU | LCB_F_WRITE,	"pcpu-sem:W",	"pcpu-sem" },
+Remove hard-coded strings by using the str_yes_no() helper function.
 
-It'll change the output of perf lock con -l.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ sound/soc/sof/intel/atom.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
+diff --git a/sound/soc/sof/intel/atom.c b/sound/soc/sof/intel/atom.c
+index 30e981c558c6..0d364bcdcfa9 100644
+--- a/sound/soc/sof/intel/atom.c
++++ b/sound/soc/sof/intel/atom.c
+@@ -78,20 +78,20 @@ void atom_dump(struct snd_sof_dev *sdev, u32 flags)
+ 	imrd = snd_sof_dsp_read64(sdev, DSP_BAR, SHIM_IMRD);
+ 	dev_err(sdev->dev,
+ 		"error: ipc host -> DSP: pending %s complete %s raw 0x%llx\n",
+-		(panic & SHIM_IPCX_BUSY) ? "yes" : "no",
+-		(panic & SHIM_IPCX_DONE) ? "yes" : "no", panic);
++		str_yes_no(panic & SHIM_IPCX_BUSY),
++		str_yes_no(panic & SHIM_IPCX_DONE), panic);
+ 	dev_err(sdev->dev,
+ 		"error: mask host: pending %s complete %s raw 0x%llx\n",
+-		(imrx & SHIM_IMRX_BUSY) ? "yes" : "no",
+-		(imrx & SHIM_IMRX_DONE) ? "yes" : "no", imrx);
++		str_yes_no(imrx & SHIM_IMRX_BUSY),
++		str_yes_no(imrx & SHIM_IMRX_DONE), imrx);
+ 	dev_err(sdev->dev,
+ 		"error: ipc DSP -> host: pending %s complete %s raw 0x%llx\n",
+-		(status & SHIM_IPCD_BUSY) ? "yes" : "no",
+-		(status & SHIM_IPCD_DONE) ? "yes" : "no", status);
++		str_yes_no(status & SHIM_IPCD_BUSY),
++		str_yes_no(status & SHIM_IPCD_DONE), status);
+ 	dev_err(sdev->dev,
+ 		"error: mask DSP: pending %s complete %s raw 0x%llx\n",
+-		(imrd & SHIM_IMRD_BUSY) ? "yes" : "no",
+-		(imrd & SHIM_IMRD_DONE) ? "yes" : "no", imrd);
++		str_yes_no(imrd & SHIM_IMRD_BUSY),
++		str_yes_no(imrd & SHIM_IMRD_DONE), imrd);
+ 
+ }
+ EXPORT_SYMBOL_NS(atom_dump, "SND_SOC_SOF_INTEL_ATOM_HIFI_EP");
+-- 
+2.47.1
 
->  	{ LCB_F_MUTEX,			"mutex",	"mutex" },
->  	{ LCB_F_MUTEX | LCB_F_SPIN,	"mutex",	"mutex" },
->  };
-> @@ -2365,7 +2365,11 @@ static int parse_lock_type(const struct option *opt __maybe_unused, const char *
->  		/*
->  		 * Otherwise `tok` is `name` in `lock_type_table`.
->  		 * Single lock name could contain multiple flags.
-> +		 * By documentation, `percpu-rwmem` should be `pcpu-sem`.
-> +		 * For backward compatibility, we replace `percpu-rwmem` with `pcpu-sem`.
->  		 */
-> +		if (!strcmp(tok, "percpu-rwsem"))
-> +			tok = (char *)"pcpu-sem";
-
-I think you can do this in the other way around.
-
-Thanks,
-Namhyung
-
-
->  		for (unsigned int i = 0; i < ARRAY_SIZE(lock_type_table); i++) {
->  			if (!strcmp(lock_type_table[i].name, tok)) {
->  				if (add_lock_type(lock_type_table[i].flags)) {
-> -- 
-> 2.47.0.338.g60cca15819-goog
-> 
 
