@@ -1,196 +1,163 @@
-Return-Path: <linux-kernel+bounces-437227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4BCF9E9096
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:40:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04A5A9E9085
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:39:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5090418836BC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:40:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B9D5162C02
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D29C21767A;
-	Mon,  9 Dec 2024 10:36:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="nbC4NSaf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="RbjyXkEz"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D8021D59D;
-	Mon,  9 Dec 2024 10:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B581219E81;
+	Mon,  9 Dec 2024 10:36:35 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78A50217F44;
+	Mon,  9 Dec 2024 10:36:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733740617; cv=none; b=huZWkC8fzuIPOmmrTrEuRMKV72IM1mKlMLlqN8on5xJ3JD5grVjK2atGeS7TAjsRJDudUJ6m2QBbEhiVQN6qd7pZ+u32pRqG2l373T9AgF13Eq6GbuH1VDkb8H7Kr9LgP3ONWV1fwj618ehPA1GMQHR1UUT4eoxtKKtBUXIyfZo=
+	t=1733740594; cv=none; b=Ivv8O4eonPUJZGU95sEbqhqvxAP8dlwPHNxh/HD0EieKtipMUxPGq3D4P/0iz0U6WFT/Qmm22DopwdjBmYuFN/rhpkCRdZOm0OUEgzA66GCPCqRwc2fD23k2SutuJhPBYWuTx7TfYpr6FZpiDdblLq2VWxg2+Vp57NnUd0X3ab8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733740617; c=relaxed/simple;
-	bh=XPXDDWsTYp9a1nso6BhBQSLItX/DWJfeMm5HuQsCBNo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MGfI0Eyn8KEHBdBDltI8NanhaenD55AIdsCBW+DVb45mIa1uf8ApGGQvMdHr3mOCp6cRXNw/axoKzaIgH7KVHPqLd3VPvuQRU2S5yMOdkJbIi/eAdQWGCDkVO/JMNHiq1IxcTW3UnaH1zI5XsKG0tZj/23PVHMrVqiiYzb87sFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=nbC4NSaf; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=RbjyXkEz reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1733740615; x=1765276615;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=E+vB5HAiznNbp3IlGxXsMkg/hKO1xPMsQOOTQfvN+QU=;
-  b=nbC4NSafV4JqoV6FcZb/NFI81ol3PwUPZJ0elFOiFE4KNagLJvJBIBpC
-   ggFp0nujgLiV2iJMtduzckH0YCyvGR01JoEuhSsZeRhIlEpvIupULcuDP
-   Zt9ji1UmzRB6LfElJDCxY/xPcrB1ytOceoEMgYJqUKBrjAJ0L5/cFe5NP
-   RRHw4bbSTWqqkl/d/+Fw5k7FD6m8HbGM9eGDE4wX2v/oYxU0beKECp2sh
-   g47SI1/nM8TFHiUZoA2wAnCoj3s5tPA2pVv7vmMPQtfgQVmINedxcwWUq
-   XY5mthBAM16mvrYXQHeakftvbPpvfytOi5ZhVoPMQjZPd24ygmUK5ZMuj
-   w==;
-X-CSE-ConnectionGUID: bseE2S+JQ3a6VQAurb9X8g==
-X-CSE-MsgGUID: OClMur2tSLWGbCIJF0bkiA==
-X-IronPort-AV: E=Sophos;i="6.12,219,1728943200"; 
-   d="scan'208";a="40483011"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 09 Dec 2024 11:36:54 +0100
-X-CheckPoint: {6756C846-2-5736D786-D50827BE}
-X-MAIL-CPID: 1FB7F56F1D846769F7DD09E81DDE5422_2
-X-Control-Analysis: str=0001.0A682F2A.6756C846.0052,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 70CA5166837;
-	Mon,  9 Dec 2024 11:36:49 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1733740609;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=E+vB5HAiznNbp3IlGxXsMkg/hKO1xPMsQOOTQfvN+QU=;
-	b=RbjyXkEzn3u/KvolU+nGSZHqIWuzYPwXprZo3blF17VEWios6CGXhmCRWs9Q1RrqVfgTdv
-	a1qrs95Hh/etrqjao0WeQkmumvsEIPvRiJFvmRqb+6YRlJPAOIeqN4s6GCfpA9fzBil7jn
-	5vXvvSMCQnqJ3oXxOL1p21FSuQC23cMj9m3EDVm36662jwnWLcnI1GXP+A0EeSDBhjOFKP
-	S8+c9MPsSGME4x09Ws9yVS4rEr+HMFkINk3eEEmF94cjAWdHTfduqJtvVE1ZvsLHvHylPC
-	iFJnI5pGfl7uW5mOpfgkbEC78IZPIJ9BmwUgK7maFE+Y+0WpAn0rzQM5trAxag==
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux@ew.tq-group.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-Subject: [PATCH 4/4] gpio: tqmx86: add support for changing GPIO directions
-Date: Mon,  9 Dec 2024 11:36:11 +0100
-Message-ID: <0fd4b472b1ed6d67d8d1fe2f20d3bedd7eda210f.1733739697.git.matthias.schiffer@ew.tq-group.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <cover.1733739697.git.matthias.schiffer@ew.tq-group.com>
-References: <cover.1733739697.git.matthias.schiffer@ew.tq-group.com>
+	s=arc-20240116; t=1733740594; c=relaxed/simple;
+	bh=T5aO+Tj718wETGZ7W2trjzi2rdQbKIPvyHWipOm+IyY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qacXhUH7HvoJWt6UOehv4sDkJtWsuEDvZaiy2ADzyDm19gpzlHM6oKZ3SF+SUAp+wI2Rr1vYMA5+AgyD428avJWuGX45vTlotbE70meFPb8dSpnBGK7B9k2KaO/FPpl3X0BDN3J+DqB+dQUZVDidPKy8XDBshES6dxD65SvxKP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CAFA9113E;
+	Mon,  9 Dec 2024 02:36:59 -0800 (PST)
+Received: from [10.1.39.16] (e127648.arm.com [10.1.39.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9FA93F720;
+	Mon,  9 Dec 2024 02:36:29 -0800 (PST)
+Message-ID: <09acd46b-ec63-46ec-a239-e792c3061e52@arm.com>
+Date: Mon, 9 Dec 2024 10:36:27 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] cpufreq: userspace: Add fast-switch support for
+ userspace
+To: Xuewen Yan <xuewen.yan@unisoc.com>, rafael@kernel.org,
+ viresh.kumar@linaro.org, linux-pm@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, guohua.yan@unisoc.com, ke.wang@unisoc.com,
+ xuewen.yan94@gmail.com
+References: <20241209081429.1871-1-xuewen.yan@unisoc.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <20241209081429.1871-1-xuewen.yan@unisoc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 7bit
 
-Only GPIOs 4..7 have IRQ support on the TQMx86 variants currently handled
-by the driver, but apart from that, changing directions works fine. The
-default directions are left unchanged (0..3 output, 4..7 input) to match
-the COM Express specification.
+On 12/9/24 08:14, Xuewen Yan wrote:
+> Now, the userspace governor does not support userspace,
+> if the driver only use the fast-switch and not add target_index(),
 
-A tqmx86_gpio_set() variant without locking is introduced as a new
-helper.
+Which driver does that? Is that actually valid?
+No mainline driver from what I can see.
 
-Signed-off-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
----
- drivers/gpio/gpio-tqmx86.c | 46 ++++++++++++++++++++++++++------------
- 1 file changed, 32 insertions(+), 14 deletions(-)
+> it will cause uerspace not work.
 
-diff --git a/drivers/gpio/gpio-tqmx86.c b/drivers/gpio/gpio-tqmx86.c
-index 54e7e193bb209..4c7e7b5950426 100644
---- a/drivers/gpio/gpio-tqmx86.c
-+++ b/drivers/gpio/gpio-tqmx86.c
-@@ -84,6 +84,14 @@ static int tqmx86_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 	return !!(tqmx86_gpio_read(gpio, TQMX86_GPIOD) & BIT(offset));
- }
- 
-+static void _tqmx86_gpio_set(struct tqmx86_gpio_data *gpio, unsigned int offset,
-+			     int value)
-+	__must_hold(&gpio->spinlock)
-+{
-+	__assign_bit(offset, gpio->output, value);
-+	tqmx86_gpio_write(gpio, bitmap_get_value8(gpio->output, 0), TQMX86_GPIOD);
-+}
-+
- static void tqmx86_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 			    int value)
- {
-@@ -91,40 +99,50 @@ static void tqmx86_gpio_set(struct gpio_chip *chip, unsigned int offset,
- 	unsigned long flags;
- 
- 	raw_spin_lock_irqsave(&gpio->spinlock, flags);
--	__assign_bit(offset, gpio->output, value);
--	tqmx86_gpio_write(gpio, bitmap_get_value8(gpio->output, 0), TQMX86_GPIOD);
-+	_tqmx86_gpio_set(gpio, offset, value);
- 	raw_spin_unlock_irqrestore(&gpio->spinlock, flags);
- }
- 
- static int tqmx86_gpio_direction_input(struct gpio_chip *chip,
- 				       unsigned int offset)
- {
--	/* Direction cannot be changed. Validate is an input. */
--	if (BIT(offset) & TQMX86_DIR_INPUT_MASK)
--		return 0;
--	else
--		return -EINVAL;
-+	struct tqmx86_gpio_data *gpio = gpiochip_get_data(chip);
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&gpio->spinlock, flags);
-+	tqmx86_gpio_clrsetbits(gpio, BIT(offset), 0, TQMX86_GPIODD);
-+	raw_spin_unlock_irqrestore(&gpio->spinlock, flags);
-+
-+	return 0;
- }
- 
- static int tqmx86_gpio_direction_output(struct gpio_chip *chip,
- 					unsigned int offset,
- 					int value)
- {
--	/* Direction cannot be changed, validate is an output */
--	if (BIT(offset) & TQMX86_DIR_INPUT_MASK)
--		return -EINVAL;
-+	struct tqmx86_gpio_data *gpio = gpiochip_get_data(chip);
-+	unsigned long flags;
-+
-+	raw_spin_lock_irqsave(&gpio->spinlock, flags);
-+	_tqmx86_gpio_set(gpio, offset, value);
-+	tqmx86_gpio_clrsetbits(gpio, 0, BIT(offset), TQMX86_GPIODD);
-+	raw_spin_unlock_irqrestore(&gpio->spinlock, flags);
- 
--	tqmx86_gpio_set(chip, offset, value);
- 	return 0;
- }
- 
- static int tqmx86_gpio_get_direction(struct gpio_chip *chip,
- 				     unsigned int offset)
- {
--	if (TQMX86_DIR_INPUT_MASK & BIT(offset))
--		return GPIO_LINE_DIRECTION_IN;
-+	struct tqmx86_gpio_data *gpio = gpiochip_get_data(chip);
-+	u8 val;
-+
-+	val = tqmx86_gpio_read(gpio, TQMX86_GPIODD);
-+
-+	if (val & BIT(offset))
-+		return GPIO_LINE_DIRECTION_OUT;
- 
--	return GPIO_LINE_DIRECTION_OUT;
-+	return GPIO_LINE_DIRECTION_IN;
- }
- 
- static void tqmx86_gpio_irq_config(struct tqmx86_gpio_data *gpio, int hwirq)
--- 
-TQ-Systems GmbH | Mühlstraße 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht München, HRB 105018
-Geschäftsführer: Detlef Schneider, Rüdiger Stahl, Stefan Schneider
-https://www.tq-group.com/
+s/uerspace/userspace
+to not work?
+
+> So add fast-switch support for userspace governor.
+> 
+> Co-developed-by: Guohua Yan <guohua.yan@unisoc.com>
+> Signed-off-by: Guohua Yan <guohua.yan@unisoc.com>
+> Signed-off-by: Xuewen Yan <xuewen.yan@unisoc.com>
+> ---
+>  drivers/cpufreq/cpufreq_userspace.c | 35 +++++++++++++++++++++++++----
+>  1 file changed, 31 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/cpufreq_userspace.c b/drivers/cpufreq/cpufreq_userspace.c
+> index 2c42fee76daa..3a99197246ed 100644
+> --- a/drivers/cpufreq/cpufreq_userspace.c
+> +++ b/drivers/cpufreq/cpufreq_userspace.c
+> @@ -21,6 +21,30 @@ struct userspace_policy {
+>  	struct mutex mutex;
+>  };
+>  
+> +static int cpufreq_userspace_target_freq(struct cpufreq_policy *policy,
+> +			unsigned int target_freq, unsigned int relation)
+> +{
+> +	int ret;
+
+not really necessary
+
+> +
+> +	if (policy->fast_switch_enabled) {
+> +		unsigned int idx;
+> +
+> +		target_freq = clamp_val(target_freq, policy->min, policy->max);
+> +
+> +		if (!policy->freq_table)
+> +			return target_freq;
+> +
+> +		idx = cpufreq_frequency_table_target(policy, target_freq, relation);
+> +		policy->cached_resolved_idx = idx;
+> +		policy->cached_target_freq = target_freq;
+> +		ret = !cpufreq_driver_fast_switch(policy, policy->freq_table[idx].frequency);
+> +	} else {
+> +		ret = __cpufreq_driver_target(policy, target_freq, relation);
+
+NIT: could save the indent if you reverse conditions and ret early on !fast_switch
+
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>  /**
+>   * cpufreq_set - set the CPU frequency
+>   * @policy: pointer to policy struct where freq is being set
+> @@ -41,7 +65,7 @@ static int cpufreq_set(struct cpufreq_policy *policy, unsigned int freq)
+>  
+>  	userspace->setspeed = freq;
+>  
+> -	ret = __cpufreq_driver_target(policy, freq, CPUFREQ_RELATION_L);
+> +	ret = cpufreq_userspace_target_freq(policy, freq, CPUFREQ_RELATION_L);
+>   err:
+>  	mutex_unlock(&userspace->mutex);
+>  	return ret;
+> @@ -62,6 +86,8 @@ static int cpufreq_userspace_policy_init(struct cpufreq_policy *policy)
+>  
+>  	mutex_init(&userspace->mutex);
+>  
+> +	cpufreq_enable_fast_switch(policy);
+> +
+>  	policy->governor_data = userspace;
+>  	return 0;
+>  }
+> @@ -72,6 +98,7 @@ static int cpufreq_userspace_policy_init(struct cpufreq_policy *policy)
+>   */
+>  static void cpufreq_userspace_policy_exit(struct cpufreq_policy *policy)
+>  {
+> +	cpufreq_disable_fast_switch(policy);
+>  	kfree(policy->governor_data);
+>  	policy->governor_data = NULL;
+>  }
+> @@ -112,13 +139,13 @@ static void cpufreq_userspace_policy_limits(struct cpufreq_policy *policy)
+>  		 policy->cpu, policy->min, policy->max, policy->cur, userspace->setspeed);
+>  
+>  	if (policy->max < userspace->setspeed)
+> -		__cpufreq_driver_target(policy, policy->max,
+> +		cpufreq_userspace_target_freq(policy, policy->max,
+>  					CPUFREQ_RELATION_H);
+>  	else if (policy->min > userspace->setspeed)
+> -		__cpufreq_driver_target(policy, policy->min,
+> +		cpufreq_userspace_target_freq(policy, policy->min,
+>  					CPUFREQ_RELATION_L);
+>  	else
+> -		__cpufreq_driver_target(policy, userspace->setspeed,
+> +		cpufreq_userspace_target_freq(policy, userspace->setspeed,
+>  					CPUFREQ_RELATION_L);
+>  
+>  	mutex_unlock(&userspace->mutex);
 
 
