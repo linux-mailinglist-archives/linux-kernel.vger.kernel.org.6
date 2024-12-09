@@ -1,122 +1,142 @@
-Return-Path: <linux-kernel+bounces-438387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A28E69EA090
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:46:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94DEC9EA094
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:49:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5EF163B1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:46:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD53188558C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 112B119AA63;
-	Mon,  9 Dec 2024 20:46:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3419B3CB;
+	Mon,  9 Dec 2024 20:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pjmsQ877"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e21RIY1V"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CCDF1E515;
-	Mon,  9 Dec 2024 20:46:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372721E515;
+	Mon,  9 Dec 2024 20:49:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733777178; cv=none; b=HFGOhFuK5OXz0Aagxc7cIn4rauYzdBkkhlsyr5vgFzoqRO1QAF2ocKrDCXzeDSz/jp7z9ZKi2R5y4N/vG8UB0FyrE7TglRa6U9qRplk+WumD6RHCtQ9xtOjNbCMRgQUkIk206QXvb7ChK1qP10c6/PBMjhVnaJRsh12beok1NfM=
+	t=1733777369; cv=none; b=B88TnrI0TUI95l7hk0Wu3ymgiTJD/gy/fPKhRHj35PVbnA2BNEWfIRUEHOn5IqNTPLeGeORegKbWEgeSnFeL0s4edI1Tb47S87vWIZyvtpRYTZ+wFk6eyey7SrRIiaPMVBeUns1npLpu3trJeoo8ardH+mtXHEZGz8LLDO7XriE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733777178; c=relaxed/simple;
-	bh=Sy0df8OMuc4UsW/w9DP2NkGuhHpfQjU4nY1+/BUPqwQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LghYGylL5+NbnhLMVFzeew7HdfYV0WEkdis6afDDMPNbUaISHykLRXHNoMwmvdNVON7LFxvBz8J/tOmD75o4j1VvsNE0orCkPNo7DPcEGMqftENgI+06CCDJytPewGT+AU4iibx46IYptfOmbxHigA714u37hYLea1BQy/R8XlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pjmsQ877; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25A4FC4CED1;
-	Mon,  9 Dec 2024 20:46:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733777178;
-	bh=Sy0df8OMuc4UsW/w9DP2NkGuhHpfQjU4nY1+/BUPqwQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pjmsQ877mVXX7WxC7t98yJX9nWWusdu+4wwmCq1oiM3hPLhepBzELnA2qAbmSSwkJ
-	 cXWNI8GqyTfzi1sf7Gz3E2boPBs8MuoTLoFuxt4qIg6fJ2OmHh5EWbQQtBnBuYRlv8
-	 1b1cD09B6a7wmkmtot/vp0UGhYK8hH23NtZmj/Yf13MkfMMlaS3c4+uoNRhx6hoChQ
-	 E1IqKTFjrVfp/JEpMdZHHh5xJN9BH4/FqAqrotr6KDxZOWI/Pvme8jvqa3XrKE5XXv
-	 8I86ton2hJFzeA87tV2ergcgD+HVpynyex1IMDazsUE9Vze5VmB7hPV/lBz9oFGx1C
-	 SqOmuZYUM/5xw==
-Date: Mon, 9 Dec 2024 12:46:14 -0800
-From: "jpoimboe@kernel.org" <jpoimboe@kernel.org>
-To: "Shah, Amit" <Amit.Shah@amd.com>
-Cc: "x86@kernel.org" <x86@kernel.org>, "corbet@lwn.net" <corbet@lwn.net>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"kai.huang@intel.com" <kai.huang@intel.com>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
-	"boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"Moger, Babu" <Babu.Moger@amd.com>,
-	"Das1, Sandipan" <Sandipan.Das@amd.com>,
-	"dwmw@amazon.co.uk" <dwmw@amazon.co.uk>,
-	"hpa@zytor.com" <hpa@zytor.com>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"Kaplan, David" <David.Kaplan@amd.com>
-Subject: Re: [PATCH v2 2/2] x86/bugs: Don't fill RSB on context switch with
- eIBRS
-Message-ID: <20241209204614.vzmb4dr3sfelcixk@jpoimboe>
-References: <cover.1732219175.git.jpoimboe@kernel.org>
- <d6b0c08000aa96221239ace37dd53e3f1919926c.1732219175.git.jpoimboe@kernel.org>
- <20241205233245.4xaicvusl5tfp2oi@jpoimboe>
- <f1d0197349388c1785eeba356a26553ced29800c.camel@amd.com>
+	s=arc-20240116; t=1733777369; c=relaxed/simple;
+	bh=EVRrlBUan9IJen8L8ZTGEotUSBgDrI7b0HaSIgMYPh8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IXsmyUwFNVJdvygt5tq811O1fFY2XvKwuqR5GSKuT+9BDv0HDW7hvQ3jqP+ynBdj2GvJygPR5w76jucfETn8lCzzMELV87zE+oqRUtGjrIm/caq+UflLRSMv/ZJqERrpRndpHVBPvBAYrPsvh/ErOdAnpiHy4r2+AEmxpy6xvcI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e21RIY1V; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d3d143376dso4274049a12.3;
+        Mon, 09 Dec 2024 12:49:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733777364; x=1734382164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LDsdf4awSMe7aA0DWqf+TXfsRJBfTWDAmXcZTcbb9RI=;
+        b=e21RIY1VFhScTzIjN/vlZh4gM9Lzxg21vVMtmZF6F0hzKaEU5IdjFFaLF14g9i1pVX
+         r7gsOwc8rpK4mw7wT72cimMtxK6pwaOhz9IsJuvDFuS+rA610/2iBln6au6QLKmknUuU
+         /Lr6d9gR8Iif3oekfqa5PONaNpyAjbeh5xsFwkwX05PRH2scU4BDt6ptcz980P/t9gZo
+         yXEJaUhyS44+NA9zgNfCcCDt57yyYEJzYn4i4wuEZWRxW+4jOOUUkbK209GmjVjtTcsG
+         /D7yt4RFaRcngUWH2txSsUcPQSmzAk2AsVjC73iace+ZMc+hiZorkLzLoLlZfn7ugQgD
+         X/VA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733777364; x=1734382164;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LDsdf4awSMe7aA0DWqf+TXfsRJBfTWDAmXcZTcbb9RI=;
+        b=q1u88M8VI6ufO25SopOAKpJT5dVmvZXTwJb7gTOHivZ7mmGYuDrh6HNNSWl2qR1MNf
+         yAJxvtjBXR9z7u8WlFAPsdbFob0W8R60HFgJdExPp9sYrtE+rFVXvqg5rBpuyveIuKq9
+         GC9s356ejzT1w/ltuAmoFwZD9jTpyLeLHVyqB6FImfqmtMFAtC7hURdaV35QaBJHsSdN
+         Ts0eLTC+AGaFetaIZOOQfMqw8qoL+/fajvV6zzjDo4LzK/PNhvWMqaBNqmnwmiRtqw9B
+         X1/8felFn+FY6animm9mczgiQWOFIptNvZlwaz/5WFE3KkAyYyMX8qu0hWOMYLkzBihs
+         dwAA==
+X-Forwarded-Encrypted: i=1; AJvYcCVBHXMh5iIwV3KJwjpIXb5p0CQdJronGVYgjmpCs0v/8s6mOARjOM2p8ICVh/C/iNo6ffivhhL4uJpwS0Q=@vger.kernel.org, AJvYcCW5tfRah6kLlO49W6nh0VTK7Sm3JmZNUVt2YAPB9oSli3OvQqMZEh3hpbPQ0NrU6r+s5oTn6d3k@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT7f9k5D+4IdiWmYPmy9Xe/TJlLBvPj3pbi/KEy8dG4/b5Nslh
+	xOHH8rmgTyaxOYJHIiNloeefHqodrEP06ALi7AdGP9bOl2B5UnA2
+X-Gm-Gg: ASbGncum2OWQNNyVSvd1kXeZQAP70mvwp9kH0SoDxM3aON+YATbh8prlO5w4sU7CUt1
+	yJ+CxSVVMgTGLi9lge5gyfLHkrQoVkSBUL2Hkw54uFegUZiEorjBSkuJOVOW6qUan/t13V0dT4N
+	HA9M+9wJYGG+Ax/8Bi4ejTbhUtdgsG/hl1o9nZx3vljYrgW19MD7/ARbSTj8vijH9od6CQfyKsL
+	oxLpVBrpvsaQoMqz5cruu0hi9F2S5doLR/7zjTrXp9lVCKawV4Rg+feLftg95mY
+X-Google-Smtp-Source: AGHT+IGh5VLwEyyN4rrxLprwiJ8QE3yGZmKhKKNw85NDHq9xP13bymyIefM+JbsyFTHJYS+H/wcotw==
+X-Received: by 2002:a05:6402:4408:b0:5d3:cf08:d64d with SMTP id 4fb4d7f45d1cf-5d41863c2a7mr2255139a12.32.1733777362658;
+        Mon, 09 Dec 2024 12:49:22 -0800 (PST)
+Received: from localhost.localdomain ([83.168.79.145])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ea09245bsm3323202a12.78.2024.12.09.12.49.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 12:49:21 -0800 (PST)
+From: Karol Przybylski <karprzy7@gmail.com>
+To: karprzy7@gmail.com,
+	pablo@netfilter.org,
+	kadlec@netfilter.org,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org
+Cc: netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org
+Subject: [PATCH] netfilter: nfnetlink_queue: Fix redundant comparison of unsigned value
+Date: Mon,  9 Dec 2024 21:49:18 +0100
+Message-Id: <20241209204918.56943-1-karprzy7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <f1d0197349388c1785eeba356a26553ced29800c.camel@amd.com>
 
-On Fri, Dec 06, 2024 at 10:10:31AM +0000, Shah, Amit wrote:
-> On Thu, 2024-12-05 at 15:32 -0800, Josh Poimboeuf wrote:
-> > On Thu, Nov 21, 2024 at 12:07:19PM -0800, Josh Poimboeuf wrote:
-> > > User->user Spectre v2 attacks (including RSB) across context
-> > > switches
-> > > are already mitigated by IBPB in cond_mitigation(), if enabled
-> > > globally
-> > > or if either the prev or the next task has opted in to protection. 
-> > > RSB
-> > > filling without IBPB serves no purpose for protecting user space,
-> > > as
-> > > indirect branches are still vulnerable.
-> > 
-> > Question for Intel/AMD folks: where is it documented that IBPB clears
-> > the RSB?  I thought I'd seen this somewhere but I can't seem to find
-> > it.
-> 
-> "AMD64 TECHNOLOGY INDIRECT BRANCH CONTROL EXTENSION"
-> https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/white-papers/111006-architecture-guidelines-update-amd64-technology-indirect-branch-control-extension.pdf
-> 
-> has:
-> 
-> Indirect branch prediction barrier (IBPB) exists at MSR 0x49 (PRED_CMD)
-> it 0. This is a write only MSR that both GP faults when software reads
-> it or if software tries to write any of the bits in 63:1. When bit zero
-> is written, the processor guarantees that older indirect branches
-> cannot influence predictions of indirect branches in the future. This
-> applies to jmp indirects, call indirects and returns. As this restricts
-> the processor from using all previous indirect branch information, it
-> is  intended to only be used by software when switching from one user
-> context to another user context that requires protection, or from one
-> guest to another guest.
+The comparison seclen >= 0 in net/netfilter/nfnetlink_queue.c is redundant because seclen is an unsigned value, and such comparisons are always true.
 
-Sounds like that needs to be updated to mention the IBPB_RET bit.
+This patch removes the unnecessary comparison replacing it with just 'greater than'
 
+Discovered in coverity, CID 1602243
+
+Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+---
+ net/netfilter/nfnetlink_queue.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+index 5110f29b2..eacb34ffb 100644
+--- a/net/netfilter/nfnetlink_queue.c
++++ b/net/netfilter/nfnetlink_queue.c
+@@ -643,7 +643,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+ 
+ 	if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
+ 		seclen = nfqnl_get_sk_secctx(entskb, &ctx);
+-		if (seclen >= 0)
++		if (seclen > 0)
+ 			size += nla_total_size(seclen);
+ 	}
+ 
+@@ -810,7 +810,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+ 	}
+ 
+ 	nlh->nlmsg_len = skb->len;
+-	if (seclen >= 0)
++	if (seclen > 0)
+ 		security_release_secctx(&ctx);
+ 	return skb;
+ 
+@@ -819,7 +819,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+ 	kfree_skb(skb);
+ 	net_err_ratelimited("nf_queue: error creating packet message\n");
+ nlmsg_failure:
+-	if (seclen >= 0)
++	if (seclen > 0)
+ 		security_release_secctx(&ctx);
+ 	return NULL;
+ }
 -- 
-Josh
+2.34.1
+
 
