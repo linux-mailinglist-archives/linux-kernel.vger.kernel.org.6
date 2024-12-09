@@ -1,97 +1,86 @@
-Return-Path: <linux-kernel+bounces-437119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7309E8F51
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:53:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322F39E8F40
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:52:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668BA1886B5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:51:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1BB8217727;
+	Mon,  9 Dec 2024 09:50:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHgxnPPt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 496A2284080
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:53:26 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ED29219EA1;
-	Mon,  9 Dec 2024 09:51:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C926E219E91;
-	Mon,  9 Dec 2024 09:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6AF217707;
+	Mon,  9 Dec 2024 09:50:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733737873; cv=none; b=AqQzFk9E0MM/8hToJJJRy63HBhOhfH3EPCF5a8m6D9F4y12Kag48yAnJK91+Xl8M+wwljqEMC+0uH7oUbAqJTp8TxzX9g1MC9TKhg31OZoqojEZrpE26c8OKzcfb/9JsHnTVWNq+ycFNizAI81RLCCEMu0uzmzr921/fJ3oIj04=
+	t=1733737856; cv=none; b=W8LxHxdHzoo5afCuV+QmszC1TBd0Eot8y+bVSeT8Rulwaku/J0xTfQ7mzmHQOuYcRAiHNeM4QiqBXDV9q+wVA7JsVw+A31E+lLQq0DI5M3NpDW2J8r4mSoe0GspdkGZUgNT7tpXRopj2PxuPWx45rezPZJjAH/ZrCkBTSOVU/C8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733737873; c=relaxed/simple;
-	bh=MvhezTTxFbJK29hWXRfef53TZk3il/zUElkvvYWqRvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cEej7R51U5pUt5pS2FmCVKcE87PklrgOAOf/IledOm4aq8lC0z3n8rBy2u43hubD1A7AADJD4VT2L3bSslJ/n9vUymislTOy0xPcjIvLzfh3oW2ENXmjA8Wz7ZTdbHSeXMVYLSnzUu/QNKMUlEpno2s8oxqr79rFJSSrQMGi1os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84549113E;
-	Mon,  9 Dec 2024 01:51:39 -0800 (PST)
-Received: from e123572-lin.arm.com (e123572-lin.cambridge.arm.com [10.1.194.54])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7ADDE3F720;
-	Mon,  9 Dec 2024 01:51:09 -0800 (PST)
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-To: linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org,
-	Kevin Brodsky <kevin.brodsky@arm.com>,
-	akpm@linux-foundation.org,
-	aruna.ramakrishna@oracle.com,
-	catalin.marinas@arm.com,
-	dave.hansen@linux.intel.com,
-	joey.gouly@arm.com,
-	keith.lucas@oracle.com,
-	ryan.roberts@arm.com,
-	shuah@kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org,
-	x86@kernel.org
-Subject: [PATCH 14/14] selftests/mm: Remove X permission from sigaltstack mapping
-Date: Mon,  9 Dec 2024 09:50:19 +0000
-Message-ID: <20241209095019.1732120-15-kevin.brodsky@arm.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241209095019.1732120-1-kevin.brodsky@arm.com>
-References: <20241209095019.1732120-1-kevin.brodsky@arm.com>
+	s=arc-20240116; t=1733737856; c=relaxed/simple;
+	bh=zlE6YzHqonNnZTzFpaPhYq8EhMnagDX5FxmFg80dswc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pt0afJ7YLZuuF6NwW0U3aUR2HOaIwxk7r8ZFU3Qp/hnZdlSB/cuV+dHWBMcaB5YD166FYClkmIPXxuKcRB8Z8Fiq4RtzEbvPL4KzyGiSGusQSsi8JFITglX4949ODoZLXYAaXfv60qie/M++cI1VQuDh+ek/DhqEHYI2xDfvIC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHgxnPPt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 065D0C4CEE0;
+	Mon,  9 Dec 2024 09:50:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733737855;
+	bh=zlE6YzHqonNnZTzFpaPhYq8EhMnagDX5FxmFg80dswc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=iHgxnPPtMCg+g/wB3jTZ2IQptQs7eux5/16ywS+TCnDJNg06oPKJ2WOIq8DCypeLB
+	 TAYTmtMHn6VIbxA3/Pv0BFgA9Kuxjy59Yj3sP9W5ARjklVZnyIEF5fYHBdsO15X+z4
+	 AjGc4L0XwTCWB4kYDGsLPhUP9ZrjA8xxt3XJNNRJCuxIorH1wi0w4k2ay1IwPhwDFt
+	 gz/V8EbGoRGYKr6bav96DPbhXfm+eunbHeBkDONHY4P/Gop8HpnTGCrdeGhIBvzBjZ
+	 50IMSxgEf1WngQScqBYXkw6Ep5z1er4CIAPO76NIDJd5ReQcvV67YmsK8eiit4SkBF
+	 +5MLF16AKRYkw==
+Date: Mon, 9 Dec 2024 10:50:53 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Trevor Wu <trevor.wu@mediatek.com>, kernel@collabora.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org
+Subject: Re: [PATCH 3/5] ASoC: dt-bindings: mediatek,mt8188-mt6359: Add DSP
+ properties
+Message-ID: <264jrfp646x4clus6yanbldqkfz6eao3wdveyokxkcbpqufopo@gpr4qacexemp>
+References: <20241205-genio700-audio-output-v1-0-0e955c78c29e@collabora.com>
+ <20241205-genio700-audio-output-v1-3-0e955c78c29e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241205-genio700-audio-output-v1-3-0e955c78c29e@collabora.com>
 
-There is no reason why the alternate signal stack should be mapped
-as RWX. Map it as RW instead.
+On Thu, Dec 05, 2024 at 09:13:56AM -0300, N=C3=ADcolas F. R. A. Prado wrote:
+> Add the mediatek,adsp and mediatek,dai-link properties to allow
+> describing the DSP configuration in the sound card node, as is already
+> the case for other MediaTek SoCs.
+>=20
+> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
+> ---
+>  .../devicetree/bindings/sound/mediatek,mt8188-mt6359.yaml      | 10 ++++=
+++++++
+>  1 file changed, 10 insertions(+)
+>=20
 
-Signed-off-by: Kevin Brodsky <kevin.brodsky@arm.com>
----
- tools/testing/selftests/mm/pkey_sighandler_tests.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+This looks like conflicting (or applied) work.
 
-diff --git a/tools/testing/selftests/mm/pkey_sighandler_tests.c b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-index 449ec5acec75..17bbfcd552c6 100644
---- a/tools/testing/selftests/mm/pkey_sighandler_tests.c
-+++ b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-@@ -315,7 +315,7 @@ static void test_sigsegv_handler_with_different_pkey_for_stack(void)
- 	sys_mprotect_pkey(stack, STACK_SIZE, PROT_READ | PROT_WRITE, pkey);
- 
- 	/* Set up alternate signal stack that will use the default MPK */
--	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-+	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE,
- 			      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
- 	sigstack.ss_flags = 0;
- 	sigstack.ss_size = STACK_SIZE;
-@@ -488,7 +488,7 @@ static void test_pkru_sigreturn(void)
- 	sys_mprotect_pkey(stack, STACK_SIZE, PROT_READ | PROT_WRITE, pkey);
- 
- 	/* Set up alternate signal stack that will use the default MPK */
--	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE | PROT_EXEC,
-+	sigstack.ss_sp = mmap(0, STACK_SIZE, PROT_READ | PROT_WRITE,
- 			      MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
- 	sigstack.ss_flags = 0;
- 	sigstack.ss_size = STACK_SIZE;
--- 
-2.47.0
+Best regards,
+Krzysztof
 
 
