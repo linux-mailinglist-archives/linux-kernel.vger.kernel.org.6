@@ -1,181 +1,121 @@
-Return-Path: <linux-kernel+bounces-436626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1059E88C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:53:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D3149E88C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:57:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1838E1612A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:53:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F0F1885211
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:57:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABD0DDD3;
-	Mon,  9 Dec 2024 00:52:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D05441BDDF;
+	Mon,  9 Dec 2024 00:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="izqrPFqi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DzIJGSeV"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0635234
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 00:52:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4C2CAD2C;
+	Mon,  9 Dec 2024 00:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733705579; cv=none; b=EDrLmor7DArbTBS1Ducu3Tg1khhz3uY2K3w5Ux1k9FBEycPutQjsrx1MKvRHXhJHG4rvjYjN+DHK761p5DcbiHMWUPHFDsuREbn2YIbH+53Drru07T3AW3wilPayoUfRNZjLqLUlY3VvxZgCtsYLw+r9q7wnFOKzSTxWLBwczxY=
+	t=1733705854; cv=none; b=IjB2/H66Ks62g5BQCDscoRJi83wJHVBNYui0RuquZR0NTVNnOJQoDw4dX3Uq2vOtksL9rtTPOgxGsRKKczE4TmH5D81I3ADbc3eDzsbS2OePeSpR1FI9ayVPfTJlh2U+6t4x69USmo1OEyb5o5VHAShJgZgWEHXTxdHPEMn3GOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733705579; c=relaxed/simple;
-	bh=2Mqx28IRscEJIh6OkOgl7K2H+jNVWuIVITrM520LBro=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n4YBG4x3ZwCBmaWGeRcVndCHts39uzd0zlbzjy5dHtCAy1ZyJdmD0mZdTFDzN5StCkA3jYvBfBogjVYXDgJ2i67btD5wAaEL2OYrWTytYNFT8A40qmKp+r4zaYdsYWxDOfRjd8o0RMaT6XZ/u/Ng6zWlO+F3kYRMwqLDf28YGXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=izqrPFqi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733705572;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=NdMrVY3C3B2SlNlH22JxmNudckZuoxhVnkxDsrZIe/A=;
-	b=izqrPFqiaExkvAubhuX2C401iPilLC0CvEdWGdZSONpv3T0Fe0LNHKaXVTJvfvXCIa7Vja
-	iJwwaPRDo4tf2JWXGML6MyrbRO6AgqwSuNq+DOsLF6eYip6Fyk1KwitqkJL/qJbMYlQKBU
-	8BBlmmsc9NY2bdObVa4IJRFnSAaX3BY=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-590-FZ5-geIFOwCizaF9mRCYDA-1; Sun,
- 08 Dec 2024 19:52:47 -0500
-X-MC-Unique: FZ5-geIFOwCizaF9mRCYDA-1
-X-Mimecast-MFC-AGG-ID: FZ5-geIFOwCizaF9mRCYDA
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7E1DC19560A3;
-	Mon,  9 Dec 2024 00:52:46 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.3])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3151E19560A2;
-	Mon,  9 Dec 2024 00:52:44 +0000 (UTC)
-Date: Mon, 9 Dec 2024 08:52:39 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: mingo@kernel.org, thomas.lendacky@amd.com, linux-kernel@vger.kernel.org,
-	x86@kernel.org
-Subject: Re: [PATCH v3 1/3] x86/ioremap: introduce helper to implement
- xxx_is_setup_data()
-Message-ID: <Z1Y/V2lDsB3R4kfg@MiWiFi-R3L-srv>
-References: <20241123114221.149383-1-bhe@redhat.com>
- <20241123114221.149383-2-bhe@redhat.com>
- <20241207160411.GAZ1Rx-9eQHH1IXOwP@fat_crate.local>
+	s=arc-20240116; t=1733705854; c=relaxed/simple;
+	bh=Lhgk8+MWcm2XR10Ngkxy57xRqCXLabyz0bYbEy22xm4=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=lg/B8mwq0DqSp3bRtG4ksLyB0M/W4o6KAAXcYPuLzzXRAmNWhYyT4sqTZRcO9YY+o3sH5O88xAAb0WC+FvPu4k3iwzVpDGVixfDARBlvnWjJPFz5OqNH5Ycv1Ij3Pwq7ncyUeKrBBlSdemnTrhBnhrvhdCyg9J9m0vMXc9gSprk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DzIJGSeV; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-aa67f31a858so103144666b.2;
+        Sun, 08 Dec 2024 16:57:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733705851; x=1734310651; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Lhgk8+MWcm2XR10Ngkxy57xRqCXLabyz0bYbEy22xm4=;
+        b=DzIJGSeVRmCilXlDAlick0lZKuLZ/9RilupOBEuq7kzZQhxAumUvR6TlAdeYrboynu
+         INgxL+GqKxHqnVXt2JJWRLMhXQ598l1PBk1aH1KlsP2OoXlvy55TjI/e9KNLs6JxE01+
+         in73XbTbViRxGLAIU5UZwnATJ86sFMROaZph9jPzLYE0rs4j/3aDWX3oieIU6WrefBZM
+         GCpR9IKdS5S9GEkQ/wrKFMbDYVPbPbSyRuD+sID/UeFKKCAjPaklJUr9yQYqJqABb7+N
+         eMUDaK83HukVnYfspF5NNl2y96UtNG3Y7z0j4ZZNa0bhTeHr/kT+O5hlvLRtFRp3JDP5
+         2wPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733705851; x=1734310651;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Lhgk8+MWcm2XR10Ngkxy57xRqCXLabyz0bYbEy22xm4=;
+        b=FNELR4Du4v6wdFKWJtHzFmUrn7T5x3alfKKrUi2rHlMGjJnrO4f1dIIZEIy4X7ntw3
+         5rcHvMXpBifh8gWRAZwSHfEycdlm9ev0yZMUhUm2NmzKqzfrD6JGpPuO/jt7BiLgJzr6
+         yYxbSFGTfTsahmSKj4iVuSHk0p9FChNM5aDPhWUWxm6zEKRp4SncRgVVYOl+imLx1/WR
+         6hicEiiDfuRsIoAKR8V3zh6ncysSVvPAb8peluXXjVrUNhuZ6Y+xlyPJW9ChXfg2f5s0
+         v9kD7bjK2/yEEiOmQGRx02AX5ex4rBvTJitPddmgilCdWRIx6JS7zfSs3EosQnwXLT2Z
+         ANdg==
+X-Forwarded-Encrypted: i=1; AJvYcCUw1fuLJMx64WsPE9A4QbAs5Y2YIaaNq6wfAXa8NMzfWCY2DTbGDXbhoQ7LtDN97D2i8HiCtAkMuY0kxh4=@vger.kernel.org, AJvYcCVDB6txp6NIgJWM4ILYmdAdbHPHAnVdrQDxokMob22FBSehBInWCKPodQ0/gghK4hhrOjC7ky8GJ/sVqeeo@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbYniYBoPD5EaF2tfqhvrKDUbNUX1hk+UrKKNDy4U6XVlBw7Vc
+	j0CU1FGz0kaopSEEz2RCJiFcqieC03DA2+SFsr2p6SLaFvSWyaZz
+X-Gm-Gg: ASbGncumX/lgszozNGquhmfLdcwz/KcSJwet4f8ZOKJ+nqujzHAKddwL3g/UrQ67Yiv
+	qjFlLWgexJRNB8QU0x0VNqt1mVZjlgiAYAvDphQN7YlAAjlHdY8yNhK4HT0ktRPoJ6G/Y3O7GEc
+	eq2cdWgjY95+q9EZ5q2smdYkVQORO90mUGmO4QHpFEj4u8xzyTgFihbNBILxE6IaIeNhdYk8y8W
+	iwh22ecFFyFD1gnqExpXk1KMPiqDUFuls02DI/i53ija1qf3CUPrqz+igDG49qdW2M=
+X-Google-Smtp-Source: AGHT+IEUc8abCwFPTxC5loAjIqdJRg/b3bbbrnVWEaSSxPCr6uGYfTsO1vp2ZrVjPG3tBWYDpWr1rw==
+X-Received: by 2002:a17:907:9554:b0:aa6:8160:8495 with SMTP id a640c23a62f3a-aa6816089admr275962166b.42.1733705850844;
+        Sun, 08 Dec 2024 16:57:30 -0800 (PST)
+Received: from localhost.localdomain ([2a02:908:e842:bf20:64ca:fb51:d773:c8f9])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6883f65c3sm67779866b.157.2024.12.08.16.57.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 08 Dec 2024 16:57:30 -0800 (PST)
+From: Ole Schuerks <ole0811sch@gmail.com>
+To: mcgrof@kernel.org
+Cc: deltaone@debian.org,
+	jan.sollmann@rub.de,
+	jude.gyimah@rub.de,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	masahiroy@kernel.org,
+	nathan@kernel.org,
+	nicolas@fjasle.eu,
+	ole0811sch@gmail.com,
+	thorsten.berger@rub.de
+Subject: Re: [PATCH v6 01/11] kconfig: Add PicoSAT interface
+Date: Mon,  9 Dec 2024 01:57:13 +0100
+Message-Id: <20241209005713.52352-1-ole0811sch@gmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <Z1DgqAb2wnlDjnLR@bombadil.infradead.org>
+References: <Z1DgqAb2wnlDjnLR@bombadil.infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241207160411.GAZ1Rx-9eQHH1IXOwP@fat_crate.local>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Transfer-Encoding: quoted-printable
 
-On 12/07/24 at 05:04pm, Borislav Petkov wrote:
-> On Sat, Nov 23, 2024 at 07:42:19PM +0800, Baoquan He wrote:
-> > Functions memremap_is_setup_data() and early_memremap_is_setup_data()
-> > share completely the same process and handling, except of the
-> > different memremap/unmap invocations.
-> > 
-> > So add helper __memremap_is_setup_data() to extract the common part,
-> > parameter 'early' is used to decide what kind of memremap/unmap
-> > APIs are called. This simplifies codes a lot by removing the duplicated
-> > codes, and also removes the similar code comment above them.
-> > 
-> > And '__ref' is added to __memremap_is_setup_data() to suppress below
-> > section mismatch warning:
-> > 
-> > ARNING: modpost: vmlinux: section mismatch in reference: __memremap_is_setup_data+0x5f (section: .text) ->
-> > early_memunmap (section: .init.text)
-> > 
-> > Signed-off-by: Baoquan He <bhe@redhat.com>
-> > ---
-> >  arch/x86/mm/ioremap.c | 104 ++++++++++++++----------------------------
-> >  1 file changed, 35 insertions(+), 69 deletions(-)
-> 
-> Some touchups ontop:
-> 
-> diff --git a/arch/x86/mm/ioremap.c b/arch/x86/mm/ioremap.c
-> index aaf40a712b04..fe44e8180bdd 100644
-> --- a/arch/x86/mm/ioremap.c
-> +++ b/arch/x86/mm/ioremap.c
-
-Thanks for optimizing these.
-
-> @@ -632,9 +632,9 @@ static bool memremap_is_efi_data(resource_size_t phys_addr,
->   * Examine the physical address to determine if it is boot data by checking
->   * it against the boot params setup_data chain.
->   */
-> -static bool __ref __memremap_is_setup_data(resource_size_t phys_addr,
-> -						bool early)
-> +static bool __ref __memremap_is_setup_data(resource_size_t phys_addr, bool early)
->  {
-> +	unsigned int setup_data_sz = sizeof(struct setup_data);
->  	struct setup_indirect *indirect;
->  	struct setup_data *data;
->  	u64 paddr, paddr_next;
-> @@ -647,24 +647,23 @@ static bool __ref __memremap_is_setup_data(resource_size_t phys_addr,
->  			return true;
->  
->  		if (early)
-> -			data = early_memremap_decrypted(paddr, sizeof(*data));
-> +			data = early_memremap_decrypted(paddr, setup_data_sz);
->  		else
-> -			data = memremap(paddr, sizeof(*data),
-> -					MEMREMAP_WB | MEMREMAP_DEC);
-> +			data = memremap(paddr, setup_data_sz, MEMREMAP_WB | MEMREMAP_DEC);
->  		if (!data) {
-> -			pr_warn("failed to memremap setup_data entry\n");
-> +			pr_warn("failed to remap setup_data entry\n");
->  			return false;
->  		}
->  
-> -		size = sizeof(*data);
-> +		size = setup_data_sz;
->  
->  		paddr_next = data->next;
->  		len = data->len;
->  
->  		if ((phys_addr > paddr) &&
-> -		    (phys_addr < (paddr + sizeof(*data) + len))) {
-> +		    (phys_addr < (paddr + setup_data_sz + len))) {
->  			if (early)
-> -				early_memunmap(data, sizeof(*data));
-> +				early_memunmap(data, setup_data_sz);
->  			else
->  				memunmap(data);
->  			return true;
-> @@ -673,15 +672,14 @@ static bool __ref __memremap_is_setup_data(resource_size_t phys_addr,
->  		if (data->type == SETUP_INDIRECT) {
->  			size += len;
->  			if (early) {
-> -				early_memunmap(data, sizeof(*data));
-> +				early_memunmap(data, setup_data_sz);
->  				data = early_memremap_decrypted(paddr, size);
->  			} else {
->  				memunmap(data);
-> -				data = memremap(paddr, size,
-> -						MEMREMAP_WB | MEMREMAP_DEC);
-> +				data = memremap(paddr, size, MEMREMAP_WB | MEMREMAP_DEC);
->  			}
->  			if (!data) {
-> -				pr_warn("failed to memremap indirect setup_data\n");
-> +				pr_warn("failed to remap indirect setup_data\n");
->  				return false;
->  			}
->  
-> 
-> -- 
-> Regards/Gruss,
->     Boris.
-> 
-> https://people.kernel.org/tglx/notes-about-netiquette
-> 
-
+Thanks for all the feedback.=0D
+=0D
+> This just deals with the first error and there is no unwinding, is that O=
+K?=0D
+=0D
+This should be OK. dlsym() only retrieves the address of a symbol from an=0D
+already loaded object. The calls to dlsym() thus should not need to be=0D
+unwound, it's sufficient to unload the object via dlclose().=0D
+=0D
+> Other than that, did you run this through checkpatch.pl?=0D
+=0D
+I ran all patches through checkpath.pl. The only reported issues with this=
+=0D
+patch are the ones related to the use of the X-macro and one about the=0D
+typedef for the PicoSAT type. Is the use of X-macros discouraged?=0D
+Refactoring it wouldn't be a problem. (I think it makes most sense to keep=
+=0D
+the typedef, though, in order to keep the declarations compatible with=0D
+those from the original header file.)=0D
+=0D
+Best regards,=0D
+Ole Schuerks=0D
 
