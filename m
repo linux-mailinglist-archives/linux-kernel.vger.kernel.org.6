@@ -1,239 +1,207 @@
-Return-Path: <linux-kernel+bounces-438167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5148B9E9DBC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:00:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A1299E9DBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:01:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ADC3164355
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:00:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3EFD165CF4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBF82165F16;
-	Mon,  9 Dec 2024 18:00:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED32F14D283;
+	Mon,  9 Dec 2024 18:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WochORv4"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geZJqpH2"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 165561537C3;
-	Mon,  9 Dec 2024 18:00:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F3BE1F5F6;
+	Mon,  9 Dec 2024 18:01:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733767216; cv=none; b=P2lE5akdE/2eoiNwc8Tkl76EQsKk42LdcIsFLF9XnxQ7G0wkiQlXpTc2jMo+4iBdfykqcAhRvtMWgMCLEpe3y9jFqlnMDi6JCpbBo+TeUd1lrGhaEAEUwO0i/CNfFkklU0Wnq0rMV1QXB+h1oL04b1Tgx4vSu0G97A30C+roT6o=
+	t=1733767268; cv=none; b=G+v0kDLz3i/T5pr0b87T4HKRBaqTvduh0gWA+0DZ41QWuG1pq1GEQTBsXzqV0xIqTwpVU61SZZ+o6oQvqWn2UO8khUypGymFodOjhqo+VlEYNzZoXA37c9YaYtZ/Cw1l/zv/vT1UQhLSO0CoXGlsP6it+MpzTEpLYJnXs0LyYnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733767216; c=relaxed/simple;
-	bh=bHM3Cp2XFUeSskQHRGNxXjQKVYYNtnn3YxdzVGxd8PQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kp0k87T/mL4KXaeSyuZBK5XKrwqVomdnDQ5wMkiXdqLr37tZAGAb7Geq6VJI2HuLSXxmc5zdKGye/zVDSkNOSadac+SkAD7DRkkrd3UojfLkMk/M8jALKJ0+Frh1e/AcgUpRuZT7CUMZmGJQkh/DfTsy0MlYc+CTT0e6PSMts3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WochORv4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9BAE4C4CEE2;
-	Mon,  9 Dec 2024 18:00:15 +0000 (UTC)
+	s=arc-20240116; t=1733767268; c=relaxed/simple;
+	bh=/oT6/Vn+/Z7XCxZA/yvDsc479uxCr0mcH2ho2Iu89sM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jRHQeLIzqSoEEOxAkXDK9bbF7azPK9o5zFnO5lff662pUiUhaFohM5EI8z7iR48uob/K7+GkqF6Qaqzx/34TMtX75AZZeQTf71Jj9Ox/VO/DC2WcO3aSslrscjVRU2kmUxBDr1PwxHGyygEJlw4L0OGQ61IRXPtRct+u84WfMk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geZJqpH2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82276C4CED1;
+	Mon,  9 Dec 2024 18:01:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733767215;
-	bh=bHM3Cp2XFUeSskQHRGNxXjQKVYYNtnn3YxdzVGxd8PQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=WochORv4Pr/ifmCvgBRYX1Ul1Hr32SZ62yzQSBTy19kQwyIjz8KSGb/p35E/dMrS6
-	 rh1l5bZKVWkdwLlaysNOlxlRecSwmsZ20r7GA3kUJ1/EKhCNNvi7avmuj81Xhh+aBR
-	 jyZg67macFzWpSFNjumqal2cNjzdGGYhyUM5+1vq9AJbmzqx55YQBh7avEKJW9tCzt
-	 2qgCoKRol/if9SNHim9DyUII2hS1TArdquMf0o/ijpPjGWMOkSB3m36XDj6XkS5Xgp
-	 oH0nrjrWWg6jojyA/xDDwEblE8mKoWaAHV6yv6lK1zi/PyjBhrh15XxO2Z0zDSkFzz
-	 RiJ3kddu62Z2Q==
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ffd6b7d77aso55433361fa.0;
-        Mon, 09 Dec 2024 10:00:15 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUWKH1MwVvCy23fDOadsBkm8IJyzgQWCBXRGuVHIqfqtW7OpVuKKBPXEOq1zhIfu/gQppKxk6Rj96iaDFY=@vger.kernel.org, AJvYcCVFyMkksLMsQgAlKVpka0IM1inp7HfVrFC6nBblSeCPxQxWlNWn6JBWcXB9X9f9+uv6zDxS7+XC@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSP1EWYt/inHqaRB+4nBCkiqyLcsO9UzNA4sAPOI6A8IigoiTT
-	bmV5NcPTsXPG3DhMgBHV/aDyMPN92oKophkaHH0XJ2FeyedS0o8pqT7ZrLYa/K5LaekRLYnRQ/Y
-	uYuaxZn0e57cI+rlkfrDJeSJXzzo=
-X-Google-Smtp-Source: AGHT+IEoon9SsUEzcxQ33uPU1JoEeHSO1ZmTwdIBbFz5a/nQQaFY474MxXcF6HJu6+1bHcrgxrLDfKXS6ZG6AS9/QUY=
-X-Received: by 2002:a2e:b891:0:b0:300:3de4:ff7f with SMTP id
- 38308e7fff4ca-3003de5096dmr48316171fa.6.1733767213727; Mon, 09 Dec 2024
- 10:00:13 -0800 (PST)
+	s=k20201202; t=1733767267;
+	bh=/oT6/Vn+/Z7XCxZA/yvDsc479uxCr0mcH2ho2Iu89sM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=geZJqpH2gMI6E95MzdhulA2ZTfmDm504BCs/+wo4mbABnFXJOal2Ovu5Wb5SNVv2Z
+	 Mq4XbxiGrGHt6/yvxdF8b2Rs4CYDGSeGvwr/lB3/16LaABxn+wR86nkSO2nSqPXa2L
+	 0GDyMVwPqhz55m4PV3yajFooJgaNpszAAkEhb4jIc+rBotXYAXrYOEnXCwFeiFbx5y
+	 MtK+Cq+ZBYI9DJH3X4aXjaYNTEOByBXHPlMtnY6EvakxEIpkOcpjhDYRBQ84KhSXkj
+	 NBNopyWBgr5HPUMMHjh9GI7blfuZNxOfjAQIOEgCpYYRAmE4WtpSOSbxCiYKepjwnb
+	 U1AiXzNwpyLpA==
+Received: by pali.im (Postfix)
+	id 505D48A0; Mon,  9 Dec 2024 19:00:58 +0100 (CET)
+Date: Mon, 9 Dec 2024 19:00:58 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 4/7] cifs: Add support for creating NFS-style symlinks
+Message-ID: <20241209180058.7w2ytnmgg34xnsci@pali>
+References: <20241012085252.560-1-pali@kernel.org>
+ <20241012085601.694-1-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209162449.48390-1-hamzamahfooz@linux.microsoft.com>
- <CAMj1kXF=f-QAhXJA=U=jbn++Vyzf+e2k+cCS+Jk4Om4p0puD5Q@mail.gmail.com> <380bbf4b-0828-444e-9b93-fa639cc23a1a@linux.microsoft.com>
-In-Reply-To: <380bbf4b-0828-444e-9b93-fa639cc23a1a@linux.microsoft.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 9 Dec 2024 19:00:02 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXFAbycLk5fLtyDXw2ApPp2ztJ0J7B-De5=eXKtUjvyAfw@mail.gmail.com>
-Message-ID: <CAMj1kXFAbycLk5fLtyDXw2ApPp2ztJ0J7B-De5=eXKtUjvyAfw@mail.gmail.com>
-Subject: Re: [PATCH] efi: make the min and max mmap slack slots configurable
-To: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-Cc: linux-efi@vger.kernel.org, stable@vger.kernel.org, 
-	Tyler Hicks <code@tyhicks.com>, Brian Nguyen <nguyenbrian@microsoft.com>, 
-	Jacob Pan <panj@microsoft.com>, Allen Pais <apais@microsoft.com>, 
-	Jonathan Marek <jonathan@marek.ca>, Ilias Apalodimas <ilias.apalodimas@linaro.org>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	Jeremy Linton <jeremy.linton@arm.com>, 
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	=?UTF-8?B?S09ORE8gS0FaVU1BKOi/keiXpCDlkoznnJ8p?= <kazuma-kondo@nec.com>, 
-	Kees Cook <kees@kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>, Yuntao Wang <ytcoode@gmail.com>, 
-	Aditya Garg <gargaditya08@live.com>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241012085601.694-1-pali@kernel.org>
+User-Agent: NeoMutt/20180716
 
-On Mon, 9 Dec 2024 at 18:02, Hamza Mahfooz
-<hamzamahfooz@linux.microsoft.com> wrote:
->
-> Hi Ard,
->
-> On 12/9/24 11:40, Ard Biesheuvel wrote:
-> > Hello Hamza,
-> >
-> > Thanks for the patch.
-> >
-> > On Mon, 9 Dec 2024 at 17:25, Hamza Mahfooz
-> > <hamzamahfooz@linux.microsoft.com> wrote:
-> >>
-> >> Recent platforms
-> >
-> > Which platforms are you referring to here?
->
-> Grace Blackwell 200 in particular.
->
+On Saturday 12 October 2024 10:56:01 Pali Rohár wrote:
+> CIFS client is currently able to parse NFS-style symlinks, but is not able
+> to create them. This functionality is useful when the mounted SMB share is
+> used also by Windows NFS server (on Windows Server 2012 or new). It allows
+> interop of symlinks between SMB share mounted by Linux CIFS client and same
+> export from Windows NFS server mounted by some NFS client.
+> 
+> New symlinks would be created in NFS-style only in case the mount option
+> -o reparse=nfs is specified, which is not by default. So default CIFS
+> mounts are not affected by this change.
+> 
+> Signed-off-by: Pali Rohár <pali@kernel.org>
+> ---
+>  fs/smb/client/reparse.c | 47 ++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 39 insertions(+), 8 deletions(-)
+> 
+> diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+> index 57320a4c4d79..cd12704cae0c 100644
+> --- a/fs/smb/client/reparse.c
+> +++ b/fs/smb/client/reparse.c
+> @@ -406,6 +406,8 @@ static int create_native_socket(const unsigned int xid, struct inode *inode,
+>  
+>  static int nfs_set_reparse_buf(struct reparse_posix_data *buf,
+>  			       mode_t mode, dev_t dev,
+> +			       __le16 *symname_utf16,
+> +			       int symname_utf16_len,
+>  			       struct kvec *iov)
+>  {
+>  	u64 type;
+> @@ -416,13 +418,18 @@ static int nfs_set_reparse_buf(struct reparse_posix_data *buf,
+>  	switch ((type = reparse_mode_nfs_type(mode))) {
+>  	case NFS_SPECFILE_BLK:
+>  	case NFS_SPECFILE_CHR:
+> -		dlen = sizeof(__le64);
+> +		dlen = 2 * sizeof(__le32);
+> +		((__le32 *)buf->DataBuffer)[0] = MAJOR(dev);
+> +		((__le32 *)buf->DataBuffer)[1] = MINOR(dev);
+> +		break;
+> +	case NFS_SPECFILE_LNK:
+> +		dlen = symname_utf16_len;
+> +		memcpy(buf->DataBuffer, symname_utf16, symname_utf16_len);
+>  		break;
+>  	case NFS_SPECFILE_FIFO:
+>  	case NFS_SPECFILE_SOCK:
+>  		dlen = 0;
+>  		break;
+> -	case NFS_SPECFILE_LNK: /* TODO: add support for NFS symlinks */
+>  	default:
+>  		return -EOPNOTSUPP;
+>  	}
+> @@ -432,8 +439,6 @@ static int nfs_set_reparse_buf(struct reparse_posix_data *buf,
+>  	buf->InodeType = cpu_to_le64(type);
+>  	buf->ReparseDataLength = cpu_to_le16(len + dlen -
+>  					     sizeof(struct reparse_data_buffer));
+> -	*(__le64 *)buf->DataBuffer = cpu_to_le64(((u64)MINOR(dev) << 32) |
+> -						 MAJOR(dev));
+>  	iov->iov_base = buf;
+>  	iov->iov_len = len + dlen;
+>  	return 0;
+> @@ -444,21 +449,42 @@ static int mknod_nfs(unsigned int xid, struct inode *inode,
+>  		     const char *full_path, umode_t mode, dev_t dev,
+>  		     const char *symname)
+>  {
+> +	struct cifs_sb_info *cifs_sb = CIFS_SB(inode->i_sb);
+>  	struct cifs_open_info_data data;
+> -	struct reparse_posix_data *p;
+> +	struct reparse_posix_data *p = NULL;
+> +	__le16 *symname_utf16 = NULL;
+> +	int symname_utf16_len = 0;
+>  	struct inode *new;
+>  	struct kvec iov;
+>  	__u8 buf[sizeof(*p) + sizeof(__le64)];
+>  	int rc;
+>  
+> -	p = (struct reparse_posix_data *)buf;
+> -	rc = nfs_set_reparse_buf(p, mode, dev, &iov);
+> +	if (S_ISLNK(mode)) {
+> +		symname_utf16 = cifs_strndup_to_utf16(symname, strlen(symname),
+> +						      &symname_utf16_len,
+> +						      cifs_sb->local_nls,
+> +						      NO_MAP_UNI_RSVD);
+> +		if (!symname_utf16) {
+> +			rc = -ENOMEM;
+> +			goto out;
+> +		}
+> +		symname_utf16_len -= 2; /* symlink is without trailing wide-nul */
+> +		p = kzalloc(sizeof(*p) + symname_utf16_len, GFP_KERNEL);
+> +		if (!p) {
+> +			rc = -ENOMEM;
+> +			goto out;
+> +		}
+> +	} else {
+> +		p = (struct reparse_posix_data *)buf;
+> +	}
+> +	rc = nfs_set_reparse_buf(p, mode, dev, symname_utf16, symname_utf16_len, &iov);
+>  	if (rc)
+> -		return rc;
+> +		goto out;
+>  
+>  	data = (struct cifs_open_info_data) {
+>  		.reparse_point = true,
+>  		.reparse = { .tag = IO_REPARSE_TAG_NFS, .posix = p, },
+> +		.symlink_target = kstrdup(symname, GFP_KERNEL),
+>  	};
+>  
+>  	new = smb2_get_reparse_inode(&data, inode->i_sb, xid,
+> @@ -468,6 +494,11 @@ static int mknod_nfs(unsigned int xid, struct inode *inode,
+>  	else
+>  		rc = PTR_ERR(new);
+>  	cifs_free_open_info(&data);
+> +out:
+> +	if (S_ISLNK(mode)) {
+> +		kfree(symname_utf16);
+> +		kfree(p);
+> +	}
+>  	return rc;
+>  }
+>  
+> -- 
+> 2.20.1
+> 
 
-Those are arm64 systems, right?
+This change also needs fixup for big endian systems:
 
-> >
-> >> require more slack slots than the current value of
-> >> EFI_MMAP_NR_SLACK_SLOTS, otherwise they fail to boot. So, introduce
-> >> EFI_MIN_NR_MMAP_SLACK_SLOTS and EFI_MAX_NR_MMAP_SLACK_SLOTS
-> >> and use them to determine a number of slots that the platform
-> >> is willing to accept.
-> >>
-> >
-> > What does 'acceptance' mean in this case?
->
-> Not having allocate_pool() return EFI_BUFFER_TOO_SMALL.
->
+    fixup! cifs: Add support for creating NFS-style symlinks
 
-I think you may have gotten confused here - see below
-
-> >
-> >> Cc: stable@vger.kernel.org
-> >> Cc: Tyler Hicks <code@tyhicks.com>
-> >> Tested-by: Brian Nguyen <nguyenbrian@microsoft.com>
-> >> Tested-by: Jacob Pan <panj@microsoft.com>
-> >> Reviewed-by: Allen Pais <apais@microsoft.com>
-> >
-> > I appreciate the effort of your colleagues, but if these
-> > tested/reviewed-bys were not given on an open list, they are
-> > meaningless, and I am going to drop them unless the people in question
-> > reply to this thread.
-> >
-> >> Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
-> >> ---
-...
-> >> diff --git a/drivers/firmware/efi/libstub/mem.c b/drivers/firmware/efi/libstub/mem.c
-> >> index 4f1fa302234d..cab25183b790 100644
-> >> --- a/drivers/firmware/efi/libstub/mem.c
-> >> +++ b/drivers/firmware/efi/libstub/mem.c
-> >> @@ -13,32 +13,47 @@
-> >>   *                     configuration table
-> >>   *
-> >>   * Retrieve the UEFI memory map. The allocated memory leaves room for
-> >> - * up to EFI_MMAP_NR_SLACK_SLOTS additional memory map entries.
-> >> + * up to CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS additional memory map entries.
-> >>   *
-> >>   * Return:     status code
-> >>   */
-> >>  efi_status_t efi_get_memory_map(struct efi_boot_memmap **map,
-> >> -                               bool install_cfg_tbl)
-> >> +                               bool install_cfg_tbl,
-> >> +                               unsigned int *n)
-> >
-> > What is the purpose of 'n'? Having single letter names for function
-> > parameters is not great for legibility.
-> >
-> >>  {
-> >>         int memtype = install_cfg_tbl ? EFI_ACPI_RECLAIM_MEMORY
-> >>                                       : EFI_LOADER_DATA;
-> >>         efi_guid_t tbl_guid = LINUX_EFI_BOOT_MEMMAP_GUID;
-> >> +       unsigned int nr = CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS;
-> >>         struct efi_boot_memmap *m, tmp;
-> >>         efi_status_t status;
-> >>         unsigned long size;
-> >>
-> >> +       BUILD_BUG_ON(!is_power_of_2(CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS) ||
-> >> +                    !is_power_of_2(CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS) ||
-> >> +                    CONFIG_EFI_MIN_NR_MMAP_SLACK_SLOTS >=
-> >> +                    CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
-> >> +
-> >>         tmp.map_size = 0;
-> >>         status = efi_bs_call(get_memory_map, &tmp.map_size, NULL, &tmp.map_key,
-> >>                              &tmp.desc_size, &tmp.desc_ver);
-> >>         if (status != EFI_BUFFER_TOO_SMALL)
-> >>                 return EFI_LOAD_ERROR;
-> >>
-> >> -       size = tmp.map_size + tmp.desc_size * EFI_MMAP_NR_SLACK_SLOTS;
-> >> -       status = efi_bs_call(allocate_pool, memtype, sizeof(*m) + size,
-> >> -                            (void **)&m);
-> >> +       do {
-> >> +               size = tmp.map_size + tmp.desc_size * nr;
-> >> +               status = efi_bs_call(allocate_pool, memtype, sizeof(*m) + size,
-> >> +                                    (void **)&m);
-> >> +               nr <<= 1;
-> >> +       } while (status == EFI_BUFFER_TOO_SMALL &&
-> >> +                nr <= CONFIG_EFI_MAX_NR_MMAP_SLACK_SLOTS);
-> >> +
-> >
-> > Under what circumstances would you expect AllocatePool() to return
-> > EFI_BUFFER_TOO_SMALL? What is the purpose of this loop?
->
-> We have observed that allocate_pool() will return EFI_BUFFER_TOO_SMALL
-> if EFI_MMAP_NR_SLACK_SLOTS is less than 32. The loop is there so only
-> the minimum number of extra slots are allocated.
->
-
-But allocate_pool() *never* returns EFI_BUFFER_TOO_SMALL. It is
-get_memory_map() that may return EFI_BUFFER_TOO_SMALL if the memory
-map is larger than the provided buffer. In this case, allocate_pool()
-needs to be called again to allocate a buffer of the appropriate size.
-
-So the loop needs to call get_memory_map() again, but given that the
-size is returned directly when the first call fails, this iterative
-logic seems misguided.
-
-I also think you might be misunderstanding the purpose of the slack
-slots. They exist to reduce the likelihood that the memory map grows
-more entries than can be accommodated in the buffer in cases where the
-first call to ExitBootServices() fails, and GetMemoryMap() needs to be
-called again; at that point, memory allocations are no longer possible
-(although the UEFI spec was relaxed in this regard between 2.6 and
-2.10).
-
-
-> >
-> > How did you test this code?
->
-> I was able to successfully boot the platform with this patch applied,
-> without it we need to append `efi=disable_early_pci_dma` to the kernel's
-> cmdline be able to boot the system.
->
-
-allocate_pool() never returns EFI_BUFFER_TOO_SMALL, and so your loop
-executes only once. I cannot explain how this happens to fix the boot
-for you, but your patch as presented is deeply flawed.
-
-If bumping the number of slots to 32 also solves the problem, I'd
-happily consider that instead,
-
-
->
-> >
-> >>         if (status != EFI_SUCCESS)
-> >>                 return status;
-> >>
-> >> +       if (n)
-> >> +               *n = nr;
-> >> +
-
-It seems to me that at this point, nr has been doubled after it was
-used to perform the allocation, so you are returning a wrong value
-here.
+diff --git a/fs/smb/client/reparse.c b/fs/smb/client/reparse.c
+index af08e5918adb..c2569347d746 100644
+--- a/fs/smb/client/reparse.c
++++ b/fs/smb/client/reparse.c
+@@ -419,8 +419,8 @@ static int nfs_set_reparse_buf(struct reparse_nfs_data_buffer *buf,
+ 	case NFS_SPECFILE_BLK:
+ 	case NFS_SPECFILE_CHR:
+ 		dlen = 2 * sizeof(__le32);
+-		((__le32 *)buf->DataBuffer)[0] = MAJOR(dev);
+-		((__le32 *)buf->DataBuffer)[1] = MINOR(dev);
++		((__le32 *)buf->DataBuffer)[0] = cpu_to_le32(MAJOR(dev));
++		((__le32 *)buf->DataBuffer)[1] = cpu_to_le32(MINOR(dev));
+ 		break;
+ 	case NFS_SPECFILE_LNK:
+ 		dlen = symname_utf16_len;
 
