@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-436739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 711B89E8A1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:06:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ABDC9E8A23
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:09:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 081D4280F73
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:06:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 090111883F7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56511156257;
-	Mon,  9 Dec 2024 04:06:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5003156872;
+	Mon,  9 Dec 2024 04:09:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fCaDu9CZ"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jeA0WR35"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264FE3DBB6
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51042156237
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733717168; cv=none; b=JZvdOGixbZ6mXZDgxhzUgmJfxZ7VwkCxtC9d/Nk6QuZaxPKA+iUSc2Di3XO4ZdfOH5ND2BNrbRxC6L05rdvQICVmNcFlv7VzarPgKgQK9eXLdP8MVXgu5/4k2P1GcpeTspgur8+P8tiiOMUw4nklapiVNYqRn3w6ow1utBqvQpg=
+	t=1733717350; cv=none; b=YtjIPUcIYTpzp/AYq15CdXGrIWMZAgQ7qv5OSBxKFaBUhV3gk12te+mThiWLGjTJWepXgQJt6ovY2FQt0IoegZC8dhVObQHzQyHfCcsrZ828I2uHSkL85s64v5zY1j+uJ1hPPK8znPJkSfIgBx+HXCgUtS9WeND75jRbxZGloAI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733717168; c=relaxed/simple;
-	bh=Ib6LYbNyHMWi0bvWNTR1siEDoJmbwYPzqVMwKR6VjSg=;
+	s=arc-20240116; t=1733717350; c=relaxed/simple;
+	bh=5Yy5XV8Z4BN10Un6VUDL2aw9Bp4qYNJx+VxgOyjpFfI=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=E4mHzhkctYVYug6lqzDRsnz+OLc41zEyHfPhRsX9e00zjvmb6mw2OnbV6nL44lwbY8caeT7dVnhT2DJJ+nblWJjFwVmE7f6lRqWfF3a6MbgOYn+mXnWIKDBjee0p2Mll6jFvMNtrjdSLwxEX7x8F0bYAfxAJreD/YLRZJec+Oqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fCaDu9CZ; arc=none smtp.client-ip=192.198.163.7
+	 Content-Disposition; b=Zp9FyJleh4L6eWRpyyEHDzsL8wXryIyJxVwQ1mvwhO8FwMrOVDthaaHCrN/Y12Zkf5Nqk7kJ52dPJXzEUYw88pQHnBzXbB04Yofhgn1o6tcs+AQ6cGi44uEDeYGzkTSphnvTDX0aN1eCeIlz1P/83XwQACJAfjDEQuZUGv3advk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jeA0WR35; arc=none smtp.client-ip=192.198.163.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733717167; x=1765253167;
+  t=1733717348; x=1765253348;
   h=date:from:to:cc:subject:message-id:mime-version;
-  bh=Ib6LYbNyHMWi0bvWNTR1siEDoJmbwYPzqVMwKR6VjSg=;
-  b=fCaDu9CZWiiPp9IZFQKnd+3Ra5e8dzD4XUXcI6O/wkTubWildlVEJPkJ
-   PUqgIRzfuaU6HT7CrPg23RMnKqRhTLq8Cjt5Ng00sh4rj50YMxtA1ikaU
-   aztGD9EBe7m7/1nK+OjmnhgTKHTXFDevK08Q5Vm8HEFhuFlo0nOWfnVyP
-   9xAoN0Qgk3XOuDz/MsSqI4EMmd8TnCOOg3r0mv7Ln1XTyCjK5b3Z/J8mk
-   DKQekgfoL9tjl5p/r1AE5QzEAgekrKsHf4Q+N6vD9lFWUnd13J+K2fSHI
-   yGMeRUcnnNsotDebuBlCYDwvwRI+aifyh143YOaALtcl7zEtJm0V9vRg3
-   Q==;
-X-CSE-ConnectionGUID: CGy2uArBS5Oflm5qXDL12Q==
-X-CSE-MsgGUID: mOmGiLsHS/iqyhLRf+rRbg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="59402286"
+  bh=5Yy5XV8Z4BN10Un6VUDL2aw9Bp4qYNJx+VxgOyjpFfI=;
+  b=jeA0WR35ITfEszceq/0m4kpdnBRdAtw7IFNJg0FlYKHWaJ/Y06CWLE4N
+   56Fkvs1n2/YebvYzGDLZx4TRFPIvZlgYBAp0w72a2IEjlPkFXmhV3MoSd
+   QY2HeeUeqYArD7RWtH+OyuTYELNk6vdHK/GxLCNS+igChR9bB5WQaTEJW
+   NcvpPFTzoHDOboY5J8eZk5JlYXKE0p/LwQjamv/kkMRL8yhl/4Ez5jJql
+   z9rA5XWWyoUp8RUv9OgLDu711a3lzmTG+HpENQaDLz4I6b6Lrv8uDviPs
+   Hy/NE+//+1xdsILn1TC7kdGyKYAduc7ecH5Pg1UPUgNCqeSN9C4Hpduo4
+   A==;
+X-CSE-ConnectionGUID: 8Lzi+xu4TXGSM/3SHU22Jw==
+X-CSE-MsgGUID: 137+de6ASP+++lg2XM83yA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="36841940"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="59402286"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:06:06 -0800
-X-CSE-ConnectionGUID: Ox+TqtLwRKCpQTKtYSsC5w==
-X-CSE-MsgGUID: b9+Yw6bFRIy3C0QNGBn2hg==
+   d="scan'208";a="36841940"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:09:08 -0800
+X-CSE-ConnectionGUID: TH8+VBKeQwuEorje2g4lEQ==
+X-CSE-MsgGUID: IfuW1rpcQFKFv7iFqYCURQ==
 X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="99987603"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95044972"
 Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 08 Dec 2024 20:06:05 -0800
+  by orviesa006.jf.intel.com with ESMTP; 08 Dec 2024 20:09:06 -0800
 Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1tKV22-0003mt-0y;
-	Mon, 09 Dec 2024 04:06:02 +0000
-Date: Mon, 9 Dec 2024 12:05:14 +0800
+	id 1tKV4x-0003nP-26;
+	Mon, 09 Dec 2024 04:09:03 +0000
+Date: Mon, 9 Dec 2024 12:08:37 +0800
 From: kernel test robot <lkp@intel.com>
-To: Ashutosh Dixit <ashutosh.dixit@intel.com>
+To: Benjamin Berg <benjamin.berg@intel.com>
 Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>
-Subject: drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in
- argument 2 (different address spaces)
-Message-ID: <202412071146.uzl1t7vz-lkp@intel.com>
+	Johannes Berg <johannes.berg@intel.com>
+Subject: arch/um/os-Linux/skas/process.c:391:5: sparse: sparse: symbol
+ 'unscheduled_userspace_iterations' was not declared. Should it be static?
+Message-ID: <202412071423.c7PgbhHM-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,96 +79,33 @@ Content-Disposition: inline
 
 tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
 head:   b5f217084ab3ddd4bdd03cd437f8e3b7e2d1f5b6
-commit: cdf02fe1a94a768cbcd20f5c4e1a1d805f4a06c0 drm/xe/oa/uapi: Add/remove OA config perf ops
-date:   6 months ago
-config: s390-randconfig-r112-20241207 (https://download.01.org/0day-ci/archive/20241207/202412071146.uzl1t7vz-lkp@intel.com/config)
-compiler: s390-linux-gcc (GCC) 14.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20241207/202412071146.uzl1t7vz-lkp@intel.com/reproduce)
+commit: 0b8b2668f9981c1fefc2ef892bd915288ef01f33 um: insert scheduler ticks when userspace does not yield
+date:   6 weeks ago
+config: um-randconfig-r111-20241207 (https://download.01.org/0day-ci/archive/20241207/202412071423.c7PgbhHM-lkp@intel.com/config)
+compiler: clang version 16.0.6 (https://github.com/llvm/llvm-project 7cbf1a2591520c2491aa35339f227775f4d3adf6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412071423.c7PgbhHM-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412071146.uzl1t7vz-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412071423.c7PgbhHM-lkp@intel.com/
 
 sparse warnings: (new ones prefixed by >>)
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse: sparse: incorrect type in initializer (different address spaces) @@     expected unsigned long long [usertype] *ptr @@     got void [noderef] __user * @@
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse:     expected unsigned long long [usertype] *ptr
-   drivers/gpu/drm/xe/xe_oa.c:388:25: sparse:     got void [noderef] __user *
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in argument 1 (different address spaces) @@     expected void const volatile [noderef] __user *ptr @@     got unsigned long long [usertype] *ptr @@
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     expected void const volatile [noderef] __user *ptr
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     got unsigned long long [usertype] *ptr
->> drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *ptr @@     got unsigned long long [usertype] *ptr @@
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     expected void const [noderef] __user *ptr
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     got unsigned long long [usertype] *ptr
->> drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *ptr @@     got unsigned long long [usertype] *ptr @@
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     expected void const [noderef] __user *ptr
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     got unsigned long long [usertype] *ptr
->> drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *ptr @@     got unsigned long long [usertype] *ptr @@
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     expected void const [noderef] __user *ptr
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     got unsigned long long [usertype] *ptr
->> drivers/gpu/drm/xe/xe_oa.c:401:15: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const [noderef] __user *ptr @@     got unsigned long long [usertype] *ptr @@
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     expected void const [noderef] __user *ptr
-   drivers/gpu/drm/xe/xe_oa.c:401:15: sparse:     got unsigned long long [usertype] *ptr
+   arch/um/os-Linux/skas/process.c: note: in included file (through include/linux/compiler_types.h, arch/um/include/shared/init.h):
+   include/linux/compiler_attributes.h:55:9: sparse: sparse: preprocessor token __always_inline redefined
+   arch/um/os-Linux/skas/process.c: note: in included file (through /usr/include/features.h, /usr/include/sys/types.h, arch/um/include/shared/user.h, builtin):
+   /usr/include/sys/cdefs.h:426:10: sparse: this was the original definition
+   arch/um/os-Linux/skas/process.c: note: in included file (through arch/um/include/shared/init.h):
+   include/linux/compiler_types.h:91:5: sparse: sparse: undefined preprocessor identifier 'CONFIG_FUNCTION_ALIGNMENT'
+   include/linux/compiler_types.h:112:56: sparse: sparse: undefined preprocessor identifier 'CONFIG_FUNCTION_ALIGNMENT'
+>> arch/um/os-Linux/skas/process.c:391:5: sparse: sparse: symbol 'unscheduled_userspace_iterations' was not declared. Should it be static?
 
-vim +401 drivers/gpu/drm/xe/xe_oa.c
+vim +/unscheduled_userspace_iterations +391 arch/um/os-Linux/skas/process.c
 
-   377	
-   378	/**
-   379	 * xe_oa_remove_config_ioctl - Removes one OA config
-   380	 * @dev: @drm_device
-   381	 * @data: pointer to struct @drm_xe_perf_param
-   382	 * @file: @drm_file
-   383	 */
-   384	int xe_oa_remove_config_ioctl(struct drm_device *dev, u64 data, struct drm_file *file)
-   385	{
-   386		struct xe_oa *oa = &to_xe_device(dev)->oa;
-   387		struct xe_oa_config *oa_config;
- > 388		u64 arg, *ptr = u64_to_user_ptr(data);
-   389		int ret;
    390	
-   391		if (!oa->xe) {
-   392			drm_dbg(&oa->xe->drm, "xe oa interface not available for this system\n");
-   393			return -ENODEV;
-   394		}
-   395	
-   396		if (xe_perf_stream_paranoid && !perfmon_capable()) {
-   397			drm_dbg(&oa->xe->drm, "Insufficient privileges to remove xe OA config\n");
-   398			return -EACCES;
-   399		}
-   400	
- > 401		ret = get_user(arg, ptr);
-   402		if (XE_IOCTL_DBG(oa->xe, ret))
-   403			return ret;
-   404	
-   405		ret = mutex_lock_interruptible(&oa->metrics_lock);
-   406		if (ret)
-   407			return ret;
-   408	
-   409		oa_config = idr_find(&oa->metrics_idr, arg);
-   410		if (!oa_config) {
-   411			drm_dbg(&oa->xe->drm, "Failed to remove unknown OA config\n");
-   412			ret = -ENOENT;
-   413			goto err_unlock;
-   414		}
-   415	
-   416		WARN_ON(arg != oa_config->id);
-   417	
-   418		sysfs_remove_group(oa->metrics_kobj, &oa_config->sysfs_metric);
-   419		idr_remove(&oa->metrics_idr, arg);
-   420	
-   421		mutex_unlock(&oa->metrics_lock);
-   422	
-   423		drm_dbg(&oa->xe->drm, "Removed config %s id=%i\n", oa_config->uuid, oa_config->id);
-   424	
-   425		xe_oa_config_put(oa_config);
-   426	
-   427		return 0;
-   428	
-   429	err_unlock:
-   430		mutex_unlock(&oa->metrics_lock);
-   431		return ret;
-   432	}
-   433	
+ > 391	int unscheduled_userspace_iterations;
+   392	extern unsigned long tt_extra_sched_jiffies;
+   393	
 
 -- 
 0-DAY CI Kernel Test Service
