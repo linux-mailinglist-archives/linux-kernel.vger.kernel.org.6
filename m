@@ -1,143 +1,173 @@
-Return-Path: <linux-kernel+bounces-437986-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA8899E9B4D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:11:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37259E9B50
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:12:37 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849792830B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:11:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAE6E188617D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA4813A879;
-	Mon,  9 Dec 2024 16:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31ECB13B58B;
+	Mon,  9 Dec 2024 16:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="RXIxVbmg"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
+	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="PRz/0k1r";
+	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="D8qgOeal"
+Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722DE84D2B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:11:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733760691; cv=none; b=m4Kr9gy0p3hahqrztAcjv8AqbQ5NQrvBqOn1JaxLVWGSuMBbdPDdCXtqBbA+6c1cd9772CuJ8JZJBsDUbByFF3Er8llOzYXMsP3g5siZPEpZdw34OAwI0VvIO+gybIub046ffHX2iV2kBTfPpujimDi5PghtgRuiCrGN0eHNEzM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733760691; c=relaxed/simple;
-	bh=9BV8thkzGqRUrNe+iFX3FyiyAjXdq+3CjTRFva1am/A=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Lg1ojLO70+Ag1iDhjrWo730ZFHLR6csuGqKnd6G5RBFlk+zR5DRuqNZ6BUfXP/6v78QnKf7mm5i/NzPJ5GiPXoOPn3SxPB7/Bt9xA9TXCyNyI4TVNQGEjEN//wNMD8tENXW7TvVWRgOLKt8Flto/aMUwiLVrXS1kASys64e8tfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=RXIxVbmg; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF95A233139;
+	Mon,  9 Dec 2024 16:12:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733760748; cv=fail; b=lYTPp4EriP9pbdRYeDMlNFuPtU5eg0MWLerl1q1ZgmB3ojBwqkgTsNVkKT06kP0SxkwMZwMJR05JwY6WJn30gD/Ipk8PxTz3fr7/gXCd5dJaUY8wNVoE/YXbgSEX4JabErvODET1V+8zTcIIlDm9RCYeBRZB9p9/M7lvSCWw1U8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733760748; c=relaxed/simple;
+	bh=s4KoCz75uO+3e9W7SAZg0svC3ypzFsG03CMxh9+nBI8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YYAkWChWmoJxHpO2m6lIQQOskAgkYw1kGKXXLLnogNQqOptTJpgaJdR/fY+8YFfEUoVJI8u16YHDWdOA3pesreeT7+iVHHS/RJhHXdrRUmcyOH3IpauRNCoLuXl5WmyAcFEr3iuhhlw0c+mLSWcG+TQMpWlTAQKZDhyf3+V9+lE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=PRz/0k1r; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=D8qgOeal; arc=fail smtp.client-ip=72.84.236.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
+Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
+   signature) header.d=sapience.com header.i=@sapience.com 
+   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
+   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
+Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by s1.sapience.com (Postfix) with ESMTPS id 75FC0480525;
+	Mon, 09 Dec 2024 11:12:25 -0500 (EST)
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733760745;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=yCff0reIMkVdZUNSUwuUxWtpDSfpdPI8D8HTB3BQ67s=;
+ b=PRz/0k1r8Ou4MxCbHn1mpP6NjnScRlfnrZDoHq4qDTnUdJZSXrPCKXx8vNkp5DBblARD1
+ jLvOzLdneWQMdNRDw==
+ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733760745;
+	cv=none; b=LB+H4gXl2zckP53HBPx2DytCxw0XWF1ox8ZSLgWbWeJfff1eDIIJCWn1h5p9EI/cfn1Vpz8wIXJh0NG6OjaOB8ue1WNwpilALTD0UIlBBO0k2a9oS1SaEiAV4UKSD4+c2mvKKFr4jrnAUxZF38pwCPg0NraQc4U1943NKGYY6rSFymElwn+fcf909Su+aJ57PPneHYlkNyaPsLCQyCsZ/cDc+ldc+jzb+S1SVepEg2HLMRqAwCq32l+mDMr2UyqOa1vqP0BwsLrknJczv9OHhUGlZIeZYZmTyLh2b74Y1Z+oltud+Wjn3V1UCCY36eE9BzIakvYc02H3YpXfK1MV7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
+	t=1733760745; c=relaxed/simple;
+	bh=s4KoCz75uO+3e9W7SAZg0svC3ypzFsG03CMxh9+nBI8=;
+	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
+	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
+	 MIME-Version; b=nquiQmzc9gPkGJkr2xKxoGF/BsutWBYRsE1C6EIRhjQ/EDB5pz6lr8M/5Xu+ms8Az3v9nr+2icYMSGDuvSu6BgEI/ADirsGPLXya9Hz2eldR5J8Pe2Y1SAdjcOfTdkceuoufSJiEzm9NZxVloF//wIZadFjnj0vbYNjzNmXll3uTc7gwXlrmiYhE66GA3s7rHgsOcE8go2PrlVC1aaqSZWy4FFUd7MWEA2GYy4g0c7bqQ+gw7YesFxHy8tDOkIyZ8D03cWdDI6tfC0EheCA8CkutkERNlh1pMbeWRZ81guAqQRDCvCx0MGzMvM8f3SACyELKBkEu9dLKjeZkdSN5yQ==
+ARC-Authentication-Results: i=1; arc-srv8.sapience.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
+ i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733760745;
+ h=message-id : subject : from : to : cc : date : in-reply-to :
+ references : content-type : mime-version : from;
+ bh=yCff0reIMkVdZUNSUwuUxWtpDSfpdPI8D8HTB3BQ67s=;
+ b=D8qgOealkrIHi51HpuzIqMmYQweAIe2zMIqupR/2dcJeEWCFXYQKrhlUnQyMEc+O80mcV
+ haNEWanUEttPL1af/LMzuTRU2p82jYgJJFkLDHNOL1ISscDNYzsKalWwCfH5mMiyeW/ld5j
+ 3cK1Ff4hUq4b+Fumf9wwXcudU0eqpGz0A3OilgdtfY3hSVfyvUMzHOcNQpdDn45Ywv3hu8F
+ YvKqbxAbwIUbd0YC/MiCjVUZAAIcasqW0PHByZPdbPqpMWBGfly2jCUCcaGN+pZA+bxDXic
+ EFTQfK7Y98Cs4qrArZYhK2oXKVq4Gs1UEbnLdjg9L2xu/kkWjTpHk7HpUSAg==
+Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(No client certificate requested)
+	by srv8.sapience.com (Postfix) with ESMTPS id 3DFB0280081;
+	Mon, 09 Dec 2024 11:12:25 -0500 (EST)
+Message-ID: <d2a5d51bd98f167fac6286607f5a56591432114f.camel@sapience.com>
+Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
+From: Genes Lists <lists@sapience.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
+	torvalds@linux-foundation.org, stable@vger.kernel.org, 
+	linux-media@vger.kernel.org, sakari.ailus@linux.intel.com,
+ bingbu.cao@intel.com
+Date: Mon, 09 Dec 2024 11:12:24 -0500
+In-Reply-To: <2024120934-wreckage-hazily-166f@gregkh>
+References: <2024120917-vision-outcast-85f2@gregkh>
+	 <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
+	 <2024120934-wreckage-hazily-166f@gregkh>
+Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
+ keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
+ 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
+ sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
+ vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
+ BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
+Content-Type: multipart/signed; micalg="pgp-sha384";
+	protocol="application/pgp-signature"; boundary="=-+7eX/8a5SmQeZ2CGtJlV"
+User-Agent: Evolution 3.54.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1733760686;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LIKxDul1PcRU3jEvG5gfDjtOJwNlmOXizKV8HI2OXjs=;
-	b=RXIxVbmgY2RiTb762BtEh3yK1NiF08UMTYml4IZ5B/wiKXgNjViKlUeUFaVX+3E3qSp/1Y
-	cfuWCkJ2A4IsyMt8dKd6GkYYPxsQhSbIlwICGT1cy/tvfuQK9hiBGAuQs+MJXHxb10NWgp
-	9WKyi2/b4G15E1dOMuOPXv9LfSWMHhsA/ftIedCphTNKNGW3LryRQv7WIxS1V7jUpBWk7W
-	czGzOrEdbCttwDJh7O87AMvdBgX2ZefrLtOzcVIWtX0VmbAvUZVf9xrVhLE9eyVnWNIr+V
-	Qydg84tNNUpDhF6SGOyueLlAxPTJ3TmyDxLJy8SSEaWVTmdLPWY8aWHVPLc0dg==
-Content-Type: multipart/signed;
- boundary=eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Mon, 09 Dec 2024 17:11:03 +0100
-Message-Id: <D67AV178CEBD.3QA9VD4ZPRNQ1@cknow.org>
-Cc: <Laurent.pinchart@ideasonboard.com>, <andrzej.hajda@intel.com>,
- <andy.yan@rock-chips.com>, <conor+dt@kernel.org>,
- <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
- <jernej.skrabec@gmail.com>, <jonas@kwiboo.se>, <krzk+dt@kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <linux-rockchip@lists.infradead.org>, <maarten.lankhorst@linux.intel.com>,
- <mripard@kernel.org>, <neil.armstrong@linaro.org>,
- <quentin.schulz@cherry.de>, <rfoss@kernel.org>, <robh@kernel.org>,
- <tzimmermann@suse.de>
-Subject: Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2
- controller
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Daniel Semkowicz" <dse@thaumatec.com>, <heiko@sntech.de>
-References: <20241203165450.1501219-1-heiko@sntech.de>
- <20241209150619.33998-1-dse@thaumatec.com>
-In-Reply-To: <20241209150619.33998-1-dse@thaumatec.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
 
---eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb
+
+--=-+7eX/8a5SmQeZ2CGtJlV
+Content-Type: multipart/alternative; boundary="=-Hb4Hp5H/VaGi78DROUsH"
+
+--=-Hb4Hp5H/VaGi78DROUsH
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi,
+On Mon, 2024-12-09 at 16:18 +0100, Greg Kroah-Hartman wrote:
+>=20
+> Did older kernels work?=C2=A0 Did 6.12.1?=C2=A0 If so, can you do 'git bi=
+sect'
+> to
+> find the offending change?
+>=20
 
-On Mon Dec 9, 2024 at 4:06 PM CET, Daniel Semkowicz wrote:
-> On 03.12.24 21:54, Heiko Stuebner wrote:
-> > This series adds a bridge and glue driver for the DSI2 controller found
-> > in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
-> >=20
->
-> I did more tests with different LVDS displays. I tested following
-> configurations with DSI/LVDS bridge:
-> - 1024x600@60.01
-> - 1024x768@60.02
-> - 1280x800@60.07
-> - 1366x768@60.06
->
-> All of them worked without issues, except 1366x768.
-> With this resolution, video is blurry, and offset incorrectly
-> to the left. There are also repeating errors on the console:
->
->   rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY irq err at=
- vp3
->
-> In correct operation with other resolutions, there is no error.
-> I am not sure if this is a problem in your series or rather in VOP2
-> driver.
+Yep, I am doing bisect now - will report back when it's completed.
 
-On my PineTab2 I got similar messages about 2 weeks ago:
-rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY irq err at vp1
+gene
 
-Preceding those, I got several panfrost related errors:
+--=20
+Gene
 
-panfrost fde60000.gpu: get clock failed -517
-panfrost fde60000.gpu: clk init failed -517
-platform fde60000.gpu: deferred probe pending: (reason unknown)
-platform cpufreq-dt: deferred probe pending: (reason unknown)
-vdd_gpu_npu: disabling
 
-But can also be that the PineTab2 (likely) needs regulator-always-on
-and regulator-boot-on in its vdd_gpu_npu node.
+--=-Hb4Hp5H/VaGi78DROUsH
+Content-Type: text/html; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-> I tried to track down the problem, and it seems to be a generic issue
-> when horizontal line width is not divisible by 4.
-> Lowering line width to 1364px fixes the issue, but of course I have two
-> vertical lines of black pixels on the right.
-> I also made some tests with 720x1280 DSI display. Lowering horizontal
-> line to 718px shows the same problem. With 720px and 716px it works
-> correctly.
+<html><head><style>pre,code,address {
+  margin: 0px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 0.2em;
+  margin-bottom: 0.2em;
+}
+ol,ul {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+blockquote {
+  margin-top: 0em;
+  margin-bottom: 0em;
+}
+</style></head><body><div>On Mon, 2024-12-09 at 16:18 +0100, Greg Kroah-Har=
+tman wrote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; bord=
+er-left:2px #729fcf solid;padding-left:1ex"><div><br></div><div>Did older k=
+ernels work?&nbsp; Did 6.12.1?&nbsp; If so, can you do 'git bisect' to<br><=
+/div><div>find the offending change?<br></div><div><br></div></blockquote><=
+div><br></div><div>Yep, I am doing bisect now - will report back when it's =
+completed.</div><div><br></div><div>gene</div><div><br></div><div><span><pr=
+e>-- <br></pre><div><span style=3D"background-color: inherit;">Gene</span><=
+/div><div><br></div></span></div></body></html>
 
-I haven't look further into it, but the PT2 has a 1280x800 resolution.
+--=-Hb4Hp5H/VaGi78DROUsH--
 
-HTH,
-  Diederik
-
---eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb
+--=-+7eX/8a5SmQeZ2CGtJlV
 Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ1cWnwAKCRDXblvOeH7b
-bt6mAQC6vSnt+4gcL6mV0BWnp8ZL7iXn5fWiXFogAWGKMTLc7QEAoV2+ibpMQSek
-0THMoeuvcpjes+GUp5Tq8DFptaTtHAE=
-=lTYg
+iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1cW6AAKCRA5BdB0L6Ze
+21fKAPwPbFQhccaZAU2fEhqcRSYTrRRE9ztmMIt0zskMMcwzuAEA+OtQRO81hVpH
+NsCFWxldlE0G/rwnPCYERVYkceD7fAo=
+=LyRZ
 -----END PGP SIGNATURE-----
 
---eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb--
+--=-+7eX/8a5SmQeZ2CGtJlV--
 
