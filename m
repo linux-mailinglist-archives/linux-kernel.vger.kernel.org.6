@@ -1,131 +1,226 @@
-Return-Path: <linux-kernel+bounces-438169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 413A79E9DC1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:01:24 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9DB09E9DC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:03:00 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF735166283
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:01:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2478B28205E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A5B31553BC;
-	Mon,  9 Dec 2024 18:01:17 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5991F5F6;
-	Mon,  9 Dec 2024 18:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2A9155325;
+	Mon,  9 Dec 2024 18:02:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tbcHVMaw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EEE13B58A;
+	Mon,  9 Dec 2024 18:02:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733767277; cv=none; b=M2BtDRsS/tG1ZUtdW3u1uDvDSW+LXJqDxdz1l12k6XsvXsGOvtDE0cpeIEWV6N/TAdysOZfqgKOR7DSiKFU6QV21M0tJKScNVkseQILMtg3TC6xbo0i7KBhL+ZTHmVdBwjrAJAzxGVkNPHX7ZRa9aAvHctGpo52FzHLLoIxAK+Q=
+	t=1733767373; cv=none; b=tMPgH7yt70Kn5ENIJbfNnstEq9OQyDp77kTl2r5QX7CVGL1GSgZ+FajGncFTAx+OImVbgz+TG0Str8Y/16++WvaWkCScwTwA7AAuPimm3oEDtOlJd6wnIYJCjGhhAMlIyA6VYdv4U0NOIyEDjZQI1W9W8ViGaaKuLXgsPXFcLRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733767277; c=relaxed/simple;
-	bh=+iaVJMfn0BpWfZQvHC+iHLFzfPxT6r31cjn3niCeErQ=;
+	s=arc-20240116; t=1733767373; c=relaxed/simple;
+	bh=9yg4o2Q8KuxzIuB3VoI8UqVNh3QgrddreIS17KNUelo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pzPdfoz5OBR0he0p/ZJFpoD5/+Z6piBdtqgo26l8Hom8x3NVAlCY49jefM4myWDssLumwLlcXi6DpLrOso8rthpVcgqPkRLlUZ2+0iKMJcjEgBAN4Cj/jI+UV90v4Q8fQ/d7TbcYpUT1yk4AMuQS6LqLaeNi8WcAzFlDg6i2nB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CD8141650;
-	Mon,  9 Dec 2024 10:01:42 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F373F3F720;
-	Mon,  9 Dec 2024 10:01:12 -0800 (PST)
-Date: Mon, 9 Dec 2024 18:01:00 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Etienne CARRIERE - foss <etienne.carriere@foss.st.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"arm-scmi@vger.kernel.org" <arm-scmi@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] firmware: arm_scmi: get only min/max clock rates
-Message-ID: <Z1cwTWQWamv3lywB@pluto>
-References: <20241203173908.3148794-1-etienne.carriere@foss.st.com>
- <20241203173908.3148794-2-etienne.carriere@foss.st.com>
- <Z1bHgf_4qqZgSnDt@bogus>
- <22ff786d1e034169be21ef7dc32c4a3a@foss.st.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aYpqdKKWifTUbyT/9g09uttARwVKZ9TbD1Z67yKivj0UlBGk9ARRwRjojPQsFzD9Fi6kBeZBAF6jz4gIJqG4fm0/lLG0RpmJA7vUW3r5PsB435RECIyCEoQJIdblv+eFaLDWJ4K8HJcTfmUAV8Yw6Elc9OtC39Xahu8e/3gRzNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tbcHVMaw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12066C4CED1;
+	Mon,  9 Dec 2024 18:02:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733767372;
+	bh=9yg4o2Q8KuxzIuB3VoI8UqVNh3QgrddreIS17KNUelo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tbcHVMaw1xNMHpOcN86GOHR500mdemsse/s8Dvr/K8g7PoW3MD4KqcMu70uaoLTt3
+	 dEsH1oPBqd0syxxohGjH1XTkYCGz4MKfr+hr4mhNyC66NZSyOEQM9muQ95bdVZKa4T
+	 kEYPtdWnvSpp8kMfBSelL7MSpvopedJAagwChnlJ/BrErThXMB0HSs9D+bKHM792jn
+	 i3fNw+j1JKMe/3AvJsypS/T05/wxoDuSP2laSLQVelsEczmd7eiMWLzgmHmIkZigJI
+	 y2NKIuZLXaDxi/j8ogDUj7CmG+n5Y+i2PNsJw+4gay4hBIoWXZfDMthDw93jQf4uRr
+	 asq02a8McBzYQ==
+Received: by pali.im (Postfix)
+	id F20B28A0; Mon,  9 Dec 2024 19:02:42 +0100 (CET)
+Date: Mon, 9 Dec 2024 19:02:42 +0100
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>
+Cc: linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] cifs: Fix parsing native symlinks directory/file type
+Message-ID: <20241209180242.udutn667vjjyfi4f@pali>
+References: <20241005140300.19416-5-pali@kernel.org>
+ <20241015143041.23721-1-pali@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <22ff786d1e034169be21ef7dc32c4a3a@foss.st.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241015143041.23721-1-pali@kernel.org>
+User-Agent: NeoMutt/20180716
 
-On Mon, Dec 09, 2024 at 01:48:48PM +0000, Etienne CARRIERE - foss wrote:
-> On Monday, December 9, 2024, Sudeep Holla wrote:
-> > On Tue, Dec 03, 2024 at 06:39:07PM +0100, Etienne Carriere wrote:
-> > > Remove limitation of 16 clock rates max for discrete clock rates
-> > > description when the SCMI firmware supports SCMI Clock protocol v2.0
-> > > or later.
-> > >
-> > > Driver clk-scmi.c is only interested in the min and max clock rates.
-> > > Get these by querying the first and last discrete rates with SCMI
-> > > clock protocol message ID CLOCK_DESCRIBE_RATES since the SCMI
-> > > specification v2.0 and later states that rates enumerated by this
-> > > command are to be enumerated in "numeric ascending order" [1].
-> > >
-> > > Preserve the implementation that queries all discrete rates (16 rates
-> > > max) to support SCMI firmware built on SCMI specification v1.0 [2]
-> > > where SCMI Clock protocol v1.0 does not explicitly require rates
-> > > described with CLOCK_DESCRIBE_RATES to be in ascending order.
-> > >
-> > > Link: https://developer.arm.com/documentation/den0056 [1]
-> > > Link: https://developer.arm.com/documentation/den0056/a [2]
-> > > Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
-> > > ---
-
-Hi,
-
-> > 
-> > [...]
-> > 
-> > > +
-> > > +static int scmi_clock_get_rates_bound(const struct scmi_protocol_handle *ph,
-> > > +                                   u32 clk_id, struct scmi_clock_info *clk)
-> > > +{
-> > 
-> > This new function seem to have unwraped the scmi_iterator_ops(namely
-> > prepare_message, update_state and process_response instead of reusing them.
-> > Can you please explain why it wasn't possible to reuse them ?
+On Tuesday 15 October 2024 16:30:41 Pali Rohár wrote:
+> As SMB protocol distinguish between symlink to directory and symlink to
+> file, add some mechanism to disallow resolving incompatible types.
 > 
-> Since we're interested here only in min and max rates, let's query the
-> first and last rates only. This can save a bit of useless transactions between
-> agent and firmware in case there are many clocks with somewhat large
-> the discrete rate lists.
+> When SMB symlink is of the directory type, ensure that its target path ends
+> with slash. This forces Linux to not allow resolving such symlink to file.
 > 
-> I though using the iterator for this specific case would add a bit more
-> complexity: it's expected to iterate (st->desc_index incremented from the
-> common scmi_iterator_run() function) whereas here I propose to send
-> only 2 messages.
+> And when SMB symlink is of the file type and its target path ends with
+> slash then returns an error as such symlink is unresolvable. Such symlink
+> always points to invalid location as file cannot end with slash.
+> 
+> As POSIX server does not distinguish between symlinks to file and symlink
+> directory, do not apply this change for symlinks from POSIX SMB server. For
+> POSIX SMB servers, this change does nothing.
+> 
+> This mimics Windows behavior of native SMB symlinks.
+> 
+> Signed-off-by: Pali Rohár <pali@kernel.org>
+> ---
+> Changes in v3:
+> * Relax non-directory case condition in smb2_fix_symlink_target_type()
+>   for compatibility with older Linux clients.
+> * Use krealloc() instead of kzalloc()+memcpy()
+> ---
+>  fs/smb/client/inode.c     |  5 ++++
+>  fs/smb/client/smb2file.c  | 48 +++++++++++++++++++++++++++++++++++++++
+>  fs/smb/client/smb2inode.c |  4 ++++
+>  fs/smb/client/smb2proto.h |  1 +
+>  4 files changed, 58 insertions(+)
+> 
+> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
+> index 2ac9cc8d327d..3fd625b356bd 100644
+> --- a/fs/smb/client/inode.c
+> +++ b/fs/smb/client/inode.c
+> @@ -1140,6 +1140,11 @@ static int reparse_info_to_fattr(struct cifs_open_info_data *data,
+>  							      full_path,
+>  							      iov, data);
+>  		}
+> +
+> +		if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
+> +			bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
+> +			rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
+> +		}
+>  		break;
+>  	}
+>  
+> diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
+> index e836bc2193dd..4b07274e824a 100644
+> --- a/fs/smb/client/smb2file.c
+> +++ b/fs/smb/client/smb2file.c
+> @@ -63,6 +63,49 @@ static struct smb2_symlink_err_rsp *symlink_data(const struct kvec *iov)
+>  	return sym;
+>  }
+>  
+> +int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb)
+> +{
+> +	char *buf;
+> +	int len;
+> +
+> +	/*
+> +	 * POSIX server does not distinguish between symlinks to file and
+> +	 * symlink directory. So nothing is needed to fix on the client side.
+> +	 */
+> +	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS)
+> +		return 0;
+> +
+> +	len = strlen(*target);
+> +	if (!len)
+> +		return -EIO;
+> +
+> +	/*
+> +	 * If this is directory symlink and it does not have trailing slash then
+> +	 * append it. Trailing slash simulates Windows/SMB behavior which do not
+> +	 * allow resolving directory symlink to file.
+> +	 */
+> +	if (directory && (*target)[len-1] != '/') {
+> +		buf = krealloc(*target, len+2, GFP_KERNEL);
+> +		if (!buf)
+> +			return -ENOMEM;
+> +		buf[len] = '/';
+> +		buf[len+1] = '\0';
+> +		*target = buf;
+> +		len++;
+> +	}
+> +
+> +	/*
+> +	 * If this is a file (non-directory) symlink and it points to path name
+> +	 * with trailing slash then this is an invalid symlink because file name
+> +	 * cannot contain slash character. File name with slash is invalid on
+> +	 * both Windows and Linux systems. So return an error for such symlink.
+> +	 */
+> +	if (!directory && (*target)[len-1] == '/')
+> +		return -EIO;
+> +
+> +	return 0;
+> +}
+> +
+>  int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb, const struct kvec *iov,
+>  				const char *full_path, char **path)
+>  {
+> @@ -133,6 +176,11 @@ int smb2_open_file(const unsigned int xid, struct cifs_open_parms *oparms, __u32
+>  					       NULL, NULL, NULL);
+>  				oparms->create_options &= ~OPEN_REPARSE_POINT;
+>  			}
+> +			if (!rc) {
+> +				bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
+> +				rc = smb2_fix_symlink_target_type(&data->symlink_target,
+> +								  directory, oparms->cifs_sb);
+> +			}
+>  		}
+>  	}
+>  
+> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
+> index a188908914fe..b8ccc8fd88f2 100644
+> --- a/fs/smb/client/smb2inode.c
+> +++ b/fs/smb/client/smb2inode.c
+> @@ -960,6 +960,10 @@ int smb2_query_path_info(const unsigned int xid,
+>  		rc = smb2_compound_op(xid, tcon, cifs_sb, full_path,
+>  				      &oparms, in_iov, cmds, num_cmds,
+>  				      cfile, NULL, NULL, NULL);
+> +		if (data->reparse.tag == IO_REPARSE_TAG_SYMLINK && !rc) {
+> +			bool directory = le32_to_cpu(data->fi.Attributes) & ATTR_DIRECTORY;
+> +			rc = smb2_fix_symlink_target_type(&data->symlink_target, directory, cifs_sb);
+> +		}
+>  		break;
+>  	case -EREMOTE:
+>  		break;
+> diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
+> index db93447f0f5a..5390d5a61039 100644
+> --- a/fs/smb/client/smb2proto.h
+> +++ b/fs/smb/client/smb2proto.h
+> @@ -113,6 +113,7 @@ extern int smb3_query_mf_symlink(unsigned int xid, struct cifs_tcon *tcon,
+>  			  struct cifs_sb_info *cifs_sb,
+>  			  const unsigned char *path, char *pbuf,
+>  			  unsigned int *pbytes_read);
+> +int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_info *cifs_sb);
+>  int smb2_parse_native_symlink(char **target, const char *buf, unsigned int len,
+>  			      bool unicode, bool relative,
+>  			      const char *full_path,
+> -- 
+> 2.20.1
+> 
 
-Yes, indeed the core iterator helpers are meant to issue a 'full scan'
-retrievieng all the resources that are returned while handling in a
-common way the underlying machinery common to all messages that, like
-DESCRIBE_RATES, could possibly return their results in chunks as a
-multi-part reply...
+I was informed that function smb2_fix_symlink_target_type() may
+dereference NULL pointer by strlen() call. So I'm proposing this fixup:
 
-...having said that I can certainly extend the iterators to be configurable
-enough to fit this new usecase and retrieve only the desired part of the
-'scan' so that can be used for this kind of max/min query or for the
-bisection case.
-
-I would avoid to re-introduce ad-hoc code to handle these new usecases
-that do not fit into the existing iterator logic, since iterators
-were introduced to remove duplication and unify under common
-methods...and this new iterator scenario seems to me that has already 2
-usecases and certainly more protocol could want to perform similar 'lazy
-partial queries' in the future, so I'd prefer to address this in a more
-general way upfront if possible...I will think about it and post something
-next week in the form of some new iterator extensions, if it's fine for you.
-
-Thanks,
-Cristian
+diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
+index b0037058e8d9..47ba0b50f514 100644
+--- a/fs/smb/client/smb2file.c
++++ b/fs/smb/client/smb2file.c
+@@ -75,6 +75,9 @@ int smb2_fix_symlink_target_type(char **target, bool directory, struct cifs_sb_i
+ 	if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS)
+ 		return 0;
+ 
++	if (!*target)
++		return -EIO;
++
+ 	len = strlen(*target);
+ 	if (!len)
+ 		return -EIO;
 
