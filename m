@@ -1,239 +1,113 @@
-Return-Path: <linux-kernel+bounces-438434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA79C9EA14B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:36:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEDE9EA14D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:37:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6598D2829D9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:36:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A15A1639DC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:37:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C527619CC20;
-	Mon,  9 Dec 2024 21:36:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23CFE19DF44;
+	Mon,  9 Dec 2024 21:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNKs8DqA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zMIcV4hv";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lNKs8DqA";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zMIcV4hv"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITsnDwfP"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758EA46B8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 21:36:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EF119D891;
+	Mon,  9 Dec 2024 21:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733780204; cv=none; b=aDT+YS9Bruib/gtvcVGgtLULuwyCV7XE77h7WSid/IJ1tF3s7vlFK+qojlacDzoaad3peWv6miPEOcZKZOCCKCGPmL1ykE3z8gS8GEvkvMGCWDfhy+h2t+qM60ozznAVNScNEq/3QgrWwGZX2EL2YfvnKzVBDaVRZu3oZEAV2yk=
+	t=1733780218; cv=none; b=Xcyo5wVsw9UQXwgcJgL4tVy7uebtQ5FJsw4dGeJxvySlLGkXZUt5btRxNzbOpSg5elODq54YUoIfcnSpQHbSTVbWi8lCc2efMjeMpxVrfxGjhzIoI7NkkH8X/1CtFuN7ixUkqjyMbPcgL2RplIysTtw5bw14PT1dGIZNeAc1eB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733780204; c=relaxed/simple;
-	bh=Bura4pZ7iqca9yhkeBy8AVcNPk3+wMZtKTkFLFqAWC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j0UL9ar1j4LyJCWA558baUAQqNLzzZ2ScUMUIf+0AO9LTQ7+XYDX1PU+gl6gRpx3SRVdpe/plnI15pHOEEvDZW3HJ2rhpwqJhjy8l++makZ/y4aM3dqQDDqvrhK6mQh0V/6N3F7BLgX4CRCS9VTe+s5+kC1V5OI4hNDuIHnkW4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNKs8DqA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zMIcV4hv; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lNKs8DqA; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zMIcV4hv; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 7D0BF1F460;
-	Mon,  9 Dec 2024 21:36:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733780200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5cv34lreLeT5FEIcKAnI0p/AxsaM7UZKsPDt7SJKa/c=;
-	b=lNKs8DqAlu9DUYIx/dqlMC7/vk9RKKbUIsgew8kDDkRvvsG28DbqDQIs4vHSNYYml0YK1A
-	+qKtBq9cch1qKcLVj04geBLkd4eANrJE/TL/KEJbFQiWg/rf23LD4jPOdgoTVK3Zq+/2MA
-	R/6cqOEJRibJhg9WHgmSTgP5L86AsuI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733780200;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5cv34lreLeT5FEIcKAnI0p/AxsaM7UZKsPDt7SJKa/c=;
-	b=zMIcV4hvSgAzVO7NlZD/7tTuJGqRBHzIFTYV5W1J7kVajbdE+x0VLxrTB6v9rV+6diIUu6
-	pLD2p1twzNy9qFBg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lNKs8DqA;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=zMIcV4hv
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733780200; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5cv34lreLeT5FEIcKAnI0p/AxsaM7UZKsPDt7SJKa/c=;
-	b=lNKs8DqAlu9DUYIx/dqlMC7/vk9RKKbUIsgew8kDDkRvvsG28DbqDQIs4vHSNYYml0YK1A
-	+qKtBq9cch1qKcLVj04geBLkd4eANrJE/TL/KEJbFQiWg/rf23LD4jPOdgoTVK3Zq+/2MA
-	R/6cqOEJRibJhg9WHgmSTgP5L86AsuI=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733780200;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=5cv34lreLeT5FEIcKAnI0p/AxsaM7UZKsPDt7SJKa/c=;
-	b=zMIcV4hvSgAzVO7NlZD/7tTuJGqRBHzIFTYV5W1J7kVajbdE+x0VLxrTB6v9rV+6diIUu6
-	pLD2p1twzNy9qFBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6C3DF138A5;
-	Mon,  9 Dec 2024 21:36:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 2zCyGehiV2dufAAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 09 Dec 2024 21:36:40 +0000
-Message-ID: <882cb1b3-8519-46b7-b902-38a4f751b247@suse.cz>
-Date: Mon, 9 Dec 2024 22:36:40 +0100
+	s=arc-20240116; t=1733780218; c=relaxed/simple;
+	bh=8n0fC9ZE6D0p6rJZEmckvduO6PYD8RKMnW4ut7hQX4I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tqXDycSBaoXqa1CnAen6MV25R9EOmRsodEr9m2vCgh/ax1I52C/cNOwRN/2CXFdChLxzbDdB+inHK7IfDTeT4jkbrMRDuwb8KAH8HUBBB76gpsqyT2UNOVT6AV7PbZjdAyp7e6IDguMaC4pF6QA4X2h2wONokPwKiiZPwF/NaKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ITsnDwfP; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2ef718cb473so567855a91.1;
+        Mon, 09 Dec 2024 13:36:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733780216; x=1734385016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8n0fC9ZE6D0p6rJZEmckvduO6PYD8RKMnW4ut7hQX4I=;
+        b=ITsnDwfP0aUf0IjDj9AB5cb4F6AFGvZvoG4t0cbeP+kUNsteUsLm6gvyoIEryppXR8
+         wMWt/juDjJ1vp24QDnMIW1L7uwaYwXyFUhW5deTsIfaTQZ0EOhVn+yo+bSBnlIlX0G7v
+         Zyu/KK0vAot49KD4nE0EsbAXB1n7XOl469n76sc0e1n2JOlP0slv986Jb0otX1GXtlcU
+         Xn0B5xAbTbXa32rWoCELvxBA1CtRJXTjyaid07uzqMw8sSVuZJgVRShxuEaf4MfqUD/F
+         sN2Xt5Ub9YvqLVdRDf8HMWbSsS5AU0wAZ2fygFcDOhrWrC+GKUAzmCE9VviYGJz/PNvX
+         35wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733780216; x=1734385016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8n0fC9ZE6D0p6rJZEmckvduO6PYD8RKMnW4ut7hQX4I=;
+        b=kFypvrKg7kbkc12la7EOqjGcKqohggroT4eNNb+mQ/EOS5wK7OcKBlwMaPUwyk2CuI
+         NlKE6nyc74aZnR5OPPIqcSCuB88NvUP1iYPgV4MnhQlRo7ipkgCqKMKB5PCQCD1cIe4B
+         +cA2GuP+9A/OzOBPvNondR+stFee/GHTUy/J1qXr5/ajkq6bRY6d8cO7CMj6Np9pLs/T
+         f60iqUmmfaA1blz0FnsUypuSDj7XyZlGv8sS2OqprQ6WTgtm4Z9Yn2SdjlFkdH1H8ppY
+         KFDKbG6+Ve/qP1nn5TP+YqGZpbnfEFu1T9V0MI9Yd7hjSMF8QmOS9K3dobR+INvUMIVK
+         T9cQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6QjdZ9/7JbGGdt59pQVZLeYiayJvkLQup4qvMwVhQp1kkj0/46YuUbmaHVXi0yk92B66t6zdO8GLSK9o=@vger.kernel.org, AJvYcCX1e1Xa0MolEtwRTdIVl6P1XL6qQz3YS6EEitkgvkDuIFV6LMBmAknOc5TAA45GB8roklCEAS69cPfJCbdsCjc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXIk8fBGGegSebnYX6/w2DgPEtTgpuQAZr2ZQSnFWDqDqzal4E
+	Vu4J/PO48sx4tdM5WWBjUKWKRSeRFzzUSvzk2djX/JKwCngJrK5T1wBLwut6xRw2twUb0QSvAj/
+	oPsQt+h2h/NDC4pHJM0rriHo/PxQ=
+X-Gm-Gg: ASbGnctzVazly3xqmAxTAHp1jvfboSWHiM5FwlFueQVlVua0MQvGCMqHkv58XsqLJ/l
+	FYHPHs6huwFJU/FwesCmHSLrPrjvpYahv16M=
+X-Google-Smtp-Source: AGHT+IHC19751IBjjmIqdepj0XOBKOO7FVShTTRs03NQ0pwL7CWDoFU/7ogQLa7yG2AqehvsmnjEFsUO+OKGkdnNkIc=
+X-Received: by 2002:a17:90b:17c2:b0:2ee:a558:b6bf with SMTP id
+ 98e67ed59e1d1-2ef6ab3ac63mr8000241a91.8.1733780216416; Mon, 09 Dec 2024
+ 13:36:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] mm/page_alloc: conditionally split >
- pageblock_order pages in free_one_page() and move_freepages_block_isolate()
-Content-Language: en-US
-To: Zi Yan <ziy@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org,
- Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>, Yu Zhao <yuzhao@google.com>
-References: <20241206095951.98007-1-david@redhat.com>
- <20241206095951.98007-2-david@redhat.com>
- <e1a898ba-a717-4d20-9144-29df1a6c8813@suse.cz>
- <37B7A92E-B58F-442D-8501-B07A507F0451@nvidia.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <37B7A92E-B58F-442D-8501-B07A507F0451@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 7D0BF1F460
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	TO_DN_SOME(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	MID_RHS_MATCH_FROM(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:dkim,suse.cz:mid];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+References: <20241017-hrtimer-v3-v6-12-rc2-v3-0-59a75cbb44da@kernel.org>
+ <20241017-hrtimer-v3-v6-12-rc2-v3-4-59a75cbb44da@kernel.org>
+ <25I5c2B_KkmqpaLqb6jsZyMd9WMhQbTaIKyUYY5cKa8bvR7--HvRiXJ_5cDiyde31tnivT5_C_5IJ6XvLqCusA==@protonmail.internalid>
+ <73814ac7e363af44ae6e410f101feb75e94244ef.camel@redhat.com>
+ <874j423p7r.fsf@kernel.org> <xSW32IhgoSjRIqCoAHtm1UkO4trcAg7QE1-2cite-wE1dNgIJLtZwnRjMGlSP63MaqOqUjXdmiMcOWhedRz4Yg==@protonmail.internalid>
+ <CANiq72mkBufEV43HcZZVKB=1UDxOrpweFxeZJBXt6U0=vPMsdg@mail.gmail.com> <87wmgfefak.fsf@kernel.org>
+In-Reply-To: <87wmgfefak.fsf@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Mon, 9 Dec 2024 22:36:44 +0100
+Message-ID: <CANiq72nkArkecv9x3JGdG6YBPqjf3FDm-xYvhMKcxC5hM3okqw@mail.gmail.com>
+Subject: Re: [PATCH v3 04/13] rust: hrtimer: implement `TimerPointer` for `Arc`
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Lyude Paul <lyude@redhat.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/9/24 20:23, Zi Yan wrote:
-> On 9 Dec 2024, at 14:01, Vlastimil Babka wrote:
->>> +	/*
->>> +	 * With CONFIG_MEMORY_ISOLATION, we might be freeing MAX_ORDER_NR_PAGES
->>> +	 * pages that cover pageblocks with different migratetypes; for example
->>> +	 * only some migratetypes might be MIGRATE_ISOLATE. In that (unlikely)
->>> +	 * case, fallback to freeing individual pageblocks so they get put
->>> +	 * onto the right lists.
->>> +	 */
->>> +	if (!IS_ENABLED(CONFIG_MEMORY_ISOLATION) ||
->>> +	    likely(order <= pageblock_order) ||
->>> +	    pfnblock_migratetype_equal(pfn + pageblock_nr_pages, end_pfn, mt)) {
->>> +		__free_one_page(page, pfn, zone, order, mt, fpi_flags);
->>> +		return;
->>> +	}
->>>
->>> -		__free_one_page(page, pfn, zone, order, mt, fpi);
->>> -		pfn += 1 << order;
->>> +	while (pfn != end_pfn) {
->>> +		mt = get_pfnblock_migratetype(page, pfn);
->>> +		__free_one_page(page, pfn, zone, pageblock_order, mt, fpi_flags);
->>> +		pfn += pageblock_nr_pages;
->>>  		page = pfn_to_page(pfn);
->>
->> This predates your patch, but seems potentially dangerous to attempt
->> pfn_to_page(end_pfn) with SPARSEMEM and no vmemmap and the end_pfn perhaps
->> being just outside of the valid range? Should we change that?
->>
->> But seems this code was initially introduced as part of Johannes'
->> migratetype hygiene series.
-> 
-> It starts as split_free_page() from commit b2c9e2fbba32 ("mm: make
-> alloc_contig_range work at pageblock granularity”), but harmless since
-> it is only used to split a buddy page. Then commit fd919a85cd55 ("mm:
-> page_isolation: prepare for hygienic freelists") refactored it, which
-> should be fine, since it is still used for the same purpose in page
-> isolation. Then commit e98337d11bbd ("mm/contig_alloc: support __GFP_COMP")
-> used it for gigantic hugetlb.
-> 
-> For SPARSEMEM && !SPARSEMEM_VMEMMAP, PFNs are contiguous, vmemmap might not
-> be. The code above using pfn in the loop might be fine. And since order
-> is provided, unless the caller is providing a falsely large order, pfn
-> should be valid. Or am I missing anything?
+On Wed, Dec 4, 2024 at 2:41=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel.=
+org> wrote:
+>
+> What is the rationale behind this bias? Perhaps we should do a pros/cons
+> list before settling on a style.
+>
+> It is arguably easier to merge and rebase when using the `Item` policy.
 
-I mean if we are in the last iteration and about to exit the loop because
-pfn == end_pfn, and it's the very last MAX_ORDER block of a zone and
-section, end_pfn is already outside of it, and pfn_to_page() might get NULL
-result from __pfn_to_section() and __section_mem_map_addr() then oops, no?
+Not sure what you mean by bias -- I was referring to what we have done so f=
+ar.
 
-> Best Regards,
-> Yan, Zi
+But, yeah, it would be nice to weigh the options and decide.
 
+Cheers,
+Miguel
 
