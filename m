@@ -1,155 +1,175 @@
-Return-Path: <linux-kernel+bounces-437584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 555529E957C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:03:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B579E951C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:56:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A276A1887DC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:02:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72DE61883AFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:56:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45EA230D30;
-	Mon,  9 Dec 2024 12:55:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0E85233D81;
+	Mon,  9 Dec 2024 12:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CBN2UJ40"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3FZ4li0/"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8BF230D1A;
-	Mon,  9 Dec 2024 12:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5028E233D6C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733748930; cv=none; b=GaGpoBb/MHYTy67E1NmmHhyFLBfor4BGR+jEvTA9MlZiAFsQCqz4F6EwEx1sXOY99EV2XsvMyHUccPaRyMWYA8VtO1eWQoN9UI/qJ6pMN7gV8VY7rWi5mdA3XYSy4jnsq5R8oXvSxRzBmJ8m6mu4L1EanaLvdBmsbo9z4h2ZpJk=
+	t=1733748840; cv=none; b=utg18odfKq8KR+n/76ULCCWYmLPwvNEmsYpDjEfXCarUz9lqyGA9EGMlKDFnHdu2QNcU9AEgHdIZztWadIt+Me6adXm+Rexq6h1+ZHhU6jUNlttlIPF1Yy8wCjrNsfo5rmpHS2iEDTkF7RAd+i3N/ZlfujQ/yNwRAVI/psYQidg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733748930; c=relaxed/simple;
-	bh=ljYka+yEPL7dtoadjp4FCBcNXplDLLPRhCJ9St112Pw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=i8+6f2o7pQ9W92UYPjzJgnCn/RXU5SYGrDz2DwpRw+dsIIMcBuyv4DXIXMXIWjuBuIXu8rjImY02HURUtZVQ59Ue+1c6DGdyIeU+Cz6HrvPPBp/euw7UGJvQFc6bbDdAiaBbQN4A9i5PlaE4ZYnGNXXltqnPnHTPiGTPXlZjcfk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CBN2UJ40; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Aw6B8015561;
-	Mon, 9 Dec 2024 12:55:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Oxkw5D/JPs2UYjgb4jIX/CzNiPXlr+l6xOKDFt/4wo8=; b=CBN2UJ40MryjT2Tn
-	00IWnKasxog7ImiBS3IKYdRVx7lCy5jdxEWH+AHZuXqelJdDSd94qHBcoessMIsx
-	wUHoo1dzYl9jhN+YoBghI1+zW8f+23j1kogd173TzOM9alfxibayUE8HKUvkBqnZ
-	03++C+wAF42D092X6cM2ALHkzRGBkyE1a9peYIyP8+O7bkkVqxyps5gQ8bBBTI2I
-	JJpN/0eetfz53MA9nRdS3+/y8sk6qcL+bV9sUreLET0mMtQw4gnXjZat3d0vcl81
-	wOFhm/v4LUeMeyi5EwaAXTgCTTEvYbImxuswrwUkmMGrCpXPZbi9pZGTNVx/hO2Y
-	NT0fuA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dy8trfg4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 12:55:16 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9CtGE8015325
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 12:55:16 GMT
-Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Dec 2024 04:55:10 -0800
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Date: Mon, 9 Dec 2024 18:22:13 +0530
-Subject: [PATCH v7 28/28] media: MAINTAINERS: add Qualcomm iris video
- accelerator driver
+	s=arc-20240116; t=1733748840; c=relaxed/simple;
+	bh=obrx4jcL33/kWWozeiQoPtk4e9tIpEL93T5ZUqbYrio=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=r79kISx0lEfcnK9vYza/heuP3ybhnIagaS4/RryFoKW/EbAzBrFJ1fF/b0b3+NGRLTe2ue6I8ejnENQryaGD2/KbubBR44dVM2tugS89QDxNmvxgLXsq7K3o+z5PKRoG0YP3fff7BJeGZgozSiz90wmV3V9eBYbK+I+uCwHsnVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3FZ4li0/; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434e8aa84f7so18240275e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:53:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1733748837; x=1734353637; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2i5SAc+98oEk5ukKLfbKKuEDIk6TYm+EWYT8/y8W4Ek=;
+        b=3FZ4li0/55aH3CrZCdfucHt8WkJ6v3B8qR+cN5e5jX4/kiSNs+T9y8huMEF83yuDWw
+         GtLP/lsLZyNilGuVNxJ9Wq9bP2vPzRfvpKaNQMpMKSa4KlRiq6PBNcNsNEAbEtj5v836
+         fWgMaqhw00D2bQrOyN+ZSmeSLq0wY+n9JatwogOlVO3oM8y2tx2SCI7yya0A9GJ10pSR
+         iHxQtpAptd2hM5zX8R7uCDKFfUUH2XRVxOc9/An75ZWzkrAJ0Q3bv3n/VaNGGDHq4QvO
+         8AFac53t04t2m8g5ajPHKHrTZMs/0s4jqESFslh6HEPYDRNRj0lL6fAQ4dBYeDip7M5y
+         za7A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733748837; x=1734353637;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2i5SAc+98oEk5ukKLfbKKuEDIk6TYm+EWYT8/y8W4Ek=;
+        b=A8+48jUzDGEeFZ908w3QHAHjKFZLTqiCCNHkw0AuY/AasQl28CWuskTJYH4xohijYc
+         SK/02PO9Amm8Hx7NP79e38tOw3KrW9NWFwq3dhozipaPO8GYxR7NiqiR4QNDNkS2WiAR
+         Pgd5NG2wXz2bDCg2TPv4BXTqw1DQLD1STL6e49lv2R9VHb8lekUPuTBdr07TrxTx/AYy
+         8Bqch0y+/ssK2H0skKCFKTCE2Rz7nDInGB2wns5Nwv+UocBQ0lfNyel4dOeyO3zr44oS
+         sMnUG6HUMQYnWFvc+62VCIImPSwd/Wke44FcFdsu/TBPaN5urjBtKguUvRqFYyzc1XaF
+         o3uQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjPhCWL6QbBkRcK2yHQCUK1FS95cmb5xs3+Eb7Uy4678lBQ08FEb1qUEuxFrVqlcQYsl/bNwicJ/K4Of4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMrwp19l30CVjaxRkACiW7xlJmrvA1ldOsLTWhjvKa2XigTc7l
+	CHr/YC3FqWoEZsM9ehr46m3j/vu8UKk0tuE9Xg2N9THB7Y4+F7gr/Z4kyNFBB4w6nycjPXdAHkC
+	KlkZfN1dRBXKjKXYPHH+0BgAn0bU0ijQX7iPJ
+X-Gm-Gg: ASbGnct6rl869/N/pdc/6lU17DRJJr3fx6ghCNUIEbtJFWnUHiuWoSaGnMzejzee0A9
+	/48p2r82iRqDrZvJ1gxXxAZ8fcL0gkCfIdXQ8caS9CO45l6HDX2IPNWtxgGZE9w==
+X-Google-Smtp-Source: AGHT+IEuEI+4Zj+0nladgNqpgiOV2r8smTtTysfeQSoMAfpfFTFz6wYeGiz3rgawD6ECY00uZeOog1XRL6/cxhViFl4=
+X-Received: by 2002:a05:600c:4f85:b0:434:a1d3:a306 with SMTP id
+ 5b1f17b1804b1-434fff30c48mr3250905e9.5.1733748836596; Mon, 09 Dec 2024
+ 04:53:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241209-qcom-video-iris-v7-28-05c6bdead47b@quicinc.com>
-References: <20241209-qcom-video-iris-v7-0-05c6bdead47b@quicinc.com>
-In-Reply-To: <20241209-qcom-video-iris-v7-0-05c6bdead47b@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: Hans Verkuil <hverkuil@xs4all.nl>,
-        Sebastian Fricke
-	<sebastian.fricke@collabora.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Nicolas Dufresne
-	<nicolas@ndufresne.ca>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,
-        Jianhua Lu <lujianhua000@gmail.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Dikshita
- Agarwal" <quic_dikshita@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733748748; l=1060;
- i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=ljYka+yEPL7dtoadjp4FCBcNXplDLLPRhCJ9St112Pw=;
- b=xxeYrghB0So5ldljWVJAS0eV738kSStgvQaIDThbBhAtMv9jptnDtOY3q3RbVD5VWrGMvgKry
- M5yCZ0X6epjAwm1LBo2qHlBDV3af0lIUu2dStQ7B2oo97F+Oz2Tg883
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 91iZ3z-fKEImQ5DciA7MH_XRfjxsI6c_
-X-Proofpoint-GUID: 91iZ3z-fKEImQ5DciA7MH_XRfjxsI6c_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=841 clxscore=1015 mlxscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412090101
+References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
+ <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
+ <2024120925-express-unmasked-76b4@gregkh> <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
+ <2024120954-boring-skeptic-ad16@gregkh> <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
+ <2024120908-anemic-previous-3db9@gregkh> <CAH5fLgjO50OsNb7sYd8fY4VNoHOzX40w3oH-24uqkuL3Ga4iVQ@mail.gmail.com>
+ <2024120939-aide-epidermal-076e@gregkh>
+In-Reply-To: <2024120939-aide-epidermal-076e@gregkh>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Mon, 9 Dec 2024 13:53:42 +0100
+Message-ID: <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
+ from fops->open()
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add an entry for iris video decoder accelerator driver.
+On Mon, Dec 9, 2024 at 1:08=E2=80=AFPM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Mon, Dec 09, 2024 at 01:00:05PM +0100, Alice Ryhl wrote:
+> > On Mon, Dec 9, 2024 at 12:53=E2=80=AFPM Greg Kroah-Hartman
+> > <gregkh@linuxfoundation.org> wrote:
+> > >
+> > > On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
+> > > > On Mon, Dec 9, 2024 at 12:10=E2=80=AFPM Greg Kroah-Hartman
+> > > > <gregkh@linuxfoundation.org> wrote:
+> > > > >
+> > > > > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrote:
+> > > > > > On Mon, Dec 9, 2024 at 9:48=E2=80=AFAM Greg Kroah-Hartman
+> > > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > >
+> > > > > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
+> > > > > > > > Providing access to the underlying `struct miscdevice` is u=
+seful for
+> > > > > > > > various reasons. For example, this allows you access the mi=
+scdevice's
+> > > > > > > > internal `struct device` for use with the `dev_*` printing =
+macros.
+> > > > > > > >
+> > > > > > > > Note that since the underlying `struct miscdevice` could ge=
+t freed at
+> > > > > > > > any point after the fops->open() call, only the open call i=
+s given
+> > > > > > > > access to it. To print from other calls, they should take a=
+ refcount on
+> > > > > > > > the device to keep it alive.
+> > > > > > >
+> > > > > > > The lifespan of the miscdevice is at least from open until cl=
+ose, so
+> > > > > > > it's safe for at least then (i.e. read/write/ioctl/etc.)
+> > > > > >
+> > > > > > How is that enforced? What happens if I call misc_deregister wh=
+ile
+> > > > > > there are open fds?
+> > > > >
+> > > > > You shouldn't be able to do that as the code that would be callin=
+g
+> > > > > misc_deregister() (i.e. in a module unload path) would not work b=
+ecause
+> > > > > the module reference count is incremented at this point in time d=
+ue to
+> > > > > the file operation module reference.
+> > > >
+> > > > Oh .. so misc_deregister must only be called when the module is bei=
+ng unloaded?
+> > >
+> > > Traditionally yes, that's when it is called.  Do you see it happening=
+ in
+> > > any other place in the kernel today?
+> >
+> > I had not looked, but I know that Binder allows dynamically creating
+> > and removing its devices at runtime. It happens to be the case that
+> > this is only supported when binderfs is used, which is when it doesn't
+> > use miscdevice, so technically Binder does not call misc_deregister()
+> > outside of module unload, but following its example it's not hard to
+> > imagine that such removals could happen.
+>
+> That's why those are files and not misc devices :)
 
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+I grepped for misc_deregister and the first driver I looked at is
+drivers/misc/bcm-vk which seems to allow dynamic deregistration if the
+pci device is removed.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7a14891a8fa9..d647e59d9912 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19156,6 +19156,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
- 
-+QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
-+M:	Vikash Garodia <quic_vgarodia@quicinc.com>
-+M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
-+R:	Abhinav Kumar <quic_abhinavk@quicinc.com>
-+L:	linux-media@vger.kernel.org
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/qcom,*-iris.yaml
-+F:	drivers/media/platform/qcom/iris/
-+
- QUALCOMM NAND CONTROLLER DRIVER
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-mtd@lists.infradead.org
+Another tricky path is error cleanup in its probe function.
+Technically, if probe fails after registering the misc device, there's
+a brief moment where you could open the miscdevice before it gets
+removed in the cleanup path, which seems to me that it could lead to
+UAF?
 
--- 
-2.34.1
+Or is there something I'm missing?
 
+
+Alice
 
