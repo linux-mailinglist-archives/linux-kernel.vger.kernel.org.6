@@ -1,129 +1,106 @@
-Return-Path: <linux-kernel+bounces-437669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437670-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5E89E9699
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:25:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FA29E969C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:25:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C213F283258
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C343F2817CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:25:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF283594D;
-	Mon,  9 Dec 2024 13:24:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16DDC35945;
+	Mon,  9 Dec 2024 13:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y+U0MZlX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Lea7Y9Yx"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00B4923312B;
-	Mon,  9 Dec 2024 13:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29840233146;
+	Mon,  9 Dec 2024 13:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750674; cv=none; b=sxhhz0Yl6VR/VgXZoexFh67cUT2wCxWxp71/z9Tw68WaWyP3xMujEAHPYRh+yAWockEmL7FHPscz0dx6OfglE7c2+gUsgOhXw/NRbyjqmHwPcJMCyLyF2P+LQm5PW3ZO8zSgmjlmPuFiwvDzGKyiZUth7obXKXyvV/Z6MHjcwBc=
+	t=1733750691; cv=none; b=nNJAnqliakiSoybsu8wXlUxj3ZzWGF7AZQjTTSJjRXJjsJHs3fI2NhURhMrnScPzUa5rWmbJYuaTLsMiObnQhMkf1x/MZc6++XfW6RxfETcDVI8NFJH8j/EhDhq6UhY8/SNqAzMNQ4hpG2Z+NrUL0UNkMZN5tT5pZShrx3Ii6UM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750674; c=relaxed/simple;
-	bh=tIjsY5za2Jlf4kKilwQOlSjddec7kKrcZ9gWvcVoaEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SzwtOvj415vHlVtYpD2r2swAv5/88A5ELeD4HuMhq0EGzwHXq1xvastJrt1eibppqullsyPKy1ZTixOUwLgXi7GjDyJruHwFCBxvIPpASZa3aZFDRbD4BinexL08aXQOG+cFlu/e13vU57yMdQ5OOVDjQYF8L7RU0PJnIdN6/T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y+U0MZlX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 97FF8C4CEDD;
-	Mon,  9 Dec 2024 13:24:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733750673;
-	bh=tIjsY5za2Jlf4kKilwQOlSjddec7kKrcZ9gWvcVoaEw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y+U0MZlXnMPJ/YkjwHlY8vc4pCW+UstnKf1T26MnsVz0SwoLHWss8OHorOpTK9ndh
-	 sFTRXbPrsapqShctjYGFLs0Fk3FB4Yo8mv1wPSyO6G0DDtJow8W/hUWbL+y2i1aqZt
-	 40D1aZ3BWpzQethUQzMhP+NirsYiUWnPQiLGlz/uRT3qh9GG9rco6Z+n3GGmkgvL2S
-	 qBx8FKHBP84umzobVfcWaZ/GLAHnWAzOYDT/bmsRHSQ4TWQ0KPRSc42ZFPCvHB68rm
-	 tEtMTaJofJTtm7A3Ge6a1xdnAhqFmJ8qOwyJwSpHHAnML25PPbByxC526li4QAovmE
-	 DKvLpTMZyMG4A==
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e388503c0d7so3607716276.0;
-        Mon, 09 Dec 2024 05:24:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCWqcWLwC2jg01Ab9xjLqGENJkq2853mPH1EOC7BTSaIB0DZomF2t7MV6ZlPgBw6IZLBl8KAFnUp@vger.kernel.org, AJvYcCX2xN3X47vN/S4r/wBBEnKTfK1w8qwO0IYNCETSXQIOJ+w1lH8vmvfgeNASPzPJXqYGFdVlPU3ihVBQezvN@vger.kernel.org, AJvYcCX5xqKYmQk6InUzkiiNmZSO/R0ml8K7Fb1Gr+ddkTpO+Yx/2EPGUkAmaU87mVaC0hd4u34OdjVf8gLE@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrycJI6Iq4Wrqj8M1CuuYAwjZkgx1KsjNOEcCdal7rf/tIXnaz
-	q0tS1JGX3PlzneYaif8SZDyj1IDl87JqtSOxXOJwmU+OAI3UUPP8xli4ZDphGkRTApH93S1FzN9
-	UA/Y7MNmqQVxQisA0QbNa0aqqIQ==
-X-Google-Smtp-Source: AGHT+IHTtAaLacoSDyYlgvTFYfHtgFO7Eq42ii8VWVKdodPb9rW9jMC4W4JhRjkH55B8Szv983O1c0YYGpvO0FkkI9Y=
-X-Received: by 2002:a05:6902:cc4:b0:e39:84da:95f1 with SMTP id
- 3f1490d57ef6-e3a0b4d114fmr11040045276.48.1733750672812; Mon, 09 Dec 2024
- 05:24:32 -0800 (PST)
+	s=arc-20240116; t=1733750691; c=relaxed/simple;
+	bh=NkhX649mCYlm7UTdk/xDLU53bUCSolAXgQE7UT4MYkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F6LxJjNcfIu4enZMRr57j2Y1Gjj1vx9dg4onC8bwEtXdkJQZtkffg19/Fck5WgE1fKY3QqOQnb9546mXnpEed5mKwb+SS6ChAaxjHoApiwSXrEM4An5ct7k+7hrlhEppbaP0EzpMHJyFV3jifyZNqMJfH6loJxw0iJ1neUECGbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Lea7Y9Yx; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=72S7Y0m68TBMZpKjMYQCWjvfm2dgENRCYqhWK6vxrak=; b=Lea7Y9YxXbamN6pcuB6gVBs3b1
+	H7qlEJ7sripF744GpmuSDBQaAaaCeESaiMVUhZHbNzFvhejhDuyKpsAk3oIDOWdRIrGslWxXK0kej
+	c+Omu7VKApsh9wOfv7iCEevSiwBvwvHtxql7ZkYoI2PV7HrR9fvaoHmnObZbkVKbWxmg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKdkb-00Ffga-6D; Mon, 09 Dec 2024 14:24:37 +0100
+Date: Mon, 9 Dec 2024 14:24:37 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,
+	"Guilherme G. Piccoli" <gpiccoli@igalia.com>,
+	Felipe Balbi <balbi@kernel.org>,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>,
+	Hari Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
+ MBa62xx carrier board Device Trees
+Message-ID: <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
+References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
+ <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-of_core_fix-v1-0-dc28ed56bec3@quicinc.com> <20241206-of_core_fix-v1-1-dc28ed56bec3@quicinc.com>
-In-Reply-To: <20241206-of_core_fix-v1-1-dc28ed56bec3@quicinc.com>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 9 Dec 2024 07:24:21 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqK1gsVeCG29RzWMFycbASAGAsds34Utuoq+Egw3-Afi7g@mail.gmail.com>
-Message-ID: <CAL_JsqK1gsVeCG29RzWMFycbASAGAsds34Utuoq+Egw3-Afi7g@mail.gmail.com>
-Subject: Re: [PATCH 01/10] of: Fix alias name length calculating error in API of_find_node_opts_by_path()
-To: Zijun Hu <zijun_hu@icloud.com>
-Cc: Saravana Kannan <saravanak@google.com>, Leif Lindholm <leif.lindholm@linaro.org>, 
-	Stephen Boyd <stephen.boyd@linaro.org>, Maxime Ripard <mripard@kernel.org>, 
-	Robin Murphy <robin.murphy@arm.com>, Grant Likely <grant.likely@secretlab.ca>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Zijun Hu <quic_zijuhu@quicinc.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
 
-On Thu, Dec 5, 2024 at 6:53=E2=80=AFPM Zijun Hu <zijun_hu@icloud.com> wrote=
-:
->
-> From: Zijun Hu <quic_zijuhu@quicinc.com>
->
-> Alias name length calculated by of_find_node_opts_by_path() is wrong as
-> explained below:
->
-> Take "alias/serial@llc500:115200n8" as its @patch argument for an example
->       ^    ^             ^
->       0    5             19
->
-> The right length of alias 'alias' is 5, but the API results in 19 which i=
-s
-> obvious wrong.
->
-> The wrong length will cause finding device node failure for such paths.
-> Fix by using index of either '/' or ':' as the length who comes earlier.
+> +&cpsw_port1 {
+> +	phy-mode = "rgmii-rxid";
+> +	phy-handle = <&cpsw3g_phy0>;
+> +};
+> +
+> +&cpsw_port2 {
+> +	phy-mode = "rgmii-rxid";
+> +	phy-handle = <&cpsw3g_phy3>;
+> +};
 
-Can you add a test case in the unittest for this.
+rgmii-rxid is very odd.
 
->
-> Fixes: 106937e8ccdc ("of: fix handling of '/' in options for of_find_node=
-_by_path()")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-> ---
->  drivers/of/base.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/of/base.c b/drivers/of/base.c
-> index 7dc394255a0a14cd1aed02ec79c2f787a222b44c..9a9313183d1f1b61918fe7e6f=
-a80c2726b099a1c 100644
-> --- a/drivers/of/base.c
-> +++ b/drivers/of/base.c
-> @@ -893,10 +893,10 @@ struct device_node *of_find_node_opts_by_path(const=
- char *path, const char **opt
->         /* The path could begin with an alias */
->         if (*path !=3D '/') {
->                 int len;
-> -               const char *p =3D separator;
-> +               const char *p =3D strchrnul(path, '/');
->
-> -               if (!p)
-> -                       p =3D strchrnul(path, '/');
-> +               if (separator && separator < p)
-> +                       p =3D separator;
->                 len =3D p - path;
->
->                 /* of_aliases must not be NULL */
->
-> --
-> 2.34.1
->
+> +
+> +&cpsw3g_mdio {
+> +	status = "okay";
+> +	pinctrl-names = "default";
+> +	pinctrl-0 = <&main_mdio1_pins>;
+> +
+> +	cpsw3g_phy0: ethernet-phy@0 {
+> +		compatible = "ethernet-phy-ieee802.3-c22";
+> +		reg = <0x0>;
+> +		reset-gpios = <&main_gpio1 11 GPIO_ACTIVE_LOW>;
+> +		reset-assert-us = <1000>;
+> +		reset-deassert-us = <1000>;
+> +		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
+
+I guess this is the explanation.
+
+What happens when you use rgmii-id, and don't have this delay here?
+That would be normal.
+
+	Andrew
 
