@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-438308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C339E9F94
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:29:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 28BDD9E9F96
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:29:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 393F818815BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:28:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 190BF1884E0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:29:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439BB1A0BCF;
-	Mon,  9 Dec 2024 19:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64E11A2554;
+	Mon,  9 Dec 2024 19:26:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="RiJ55d90"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="OdRt1gT+"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E822A1A08B8;
-	Mon,  9 Dec 2024 19:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE3101A0BC0;
+	Mon,  9 Dec 2024 19:26:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733772370; cv=none; b=maq2j6jFcJkzq077aAUHEquJ2dm4brnRfKVjY0dMUP1AAB3onHixW6viy8T5Y7mxADZzLriVLmGgCJKR3oBxLbGtXaUbsnrK47jeQmbf7Wer5KDJ2KkKwPuJ7lqoegISs5bUDVHGaT2prdXygQkH1HT9eqmBIlHs6PLYgdqUN0A=
+	t=1733772372; cv=none; b=ZnoMwa82GQ+CfdJxLkyI0W3VOsMIq01xmH+NqoWxMd1zhznBcZIRr10VdmcrWLM3GfjT5muwS3HHFIw6QzGUXNqiqj0f38E6zbCjlMnQszLI6itCVODXCcFfJL+BEDVnFb0MBFTm0DThbw1kGi3BBAy9OfNssmavk87teRSztkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733772370; c=relaxed/simple;
-	bh=Xsl7jgulT0Qc/ccSP55Jhb1h2cHHRcXWbVUjesDs0A8=;
+	s=arc-20240116; t=1733772372; c=relaxed/simple;
+	bh=Ctkvp9MYU5c6ZxozXGYpe/mnjejPZAZzg2dizRoLEYU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=J5SyEcmx7kQofTEiysQ/g2j1ManjuhY3nDHRmh6ORjhwmQPdYtccU32KpPWjucqbkQq+aK3v9/MpLTM+aTMzREwv5ei4e14it3yX/L1+vBdxcTI9JdJ3m3viL8KSppDq017j97nAXzQw2qufFrCb8wVgO7Na50DA0BqjQP1drMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=RiJ55d90; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=tiQ2Ii1/eGIeXpZ1epi5KB1UrgcX+vzFvLFoJiaCUt6jdK4Gq+/ICMFhhrCJF96zMTcZQN0VOGITZcN+0V7Uzvjn3qhpvi06mWx6WR05E8M31w85oo/f9DwVP7328JM0Zuk4YkcA94BTdsrOBKkRn2EuRPUswkWJ2jTD9zyOc9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=OdRt1gT+; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Cc4V2028746;
-	Mon, 9 Dec 2024 19:25:59 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AD9qX019481;
+	Mon, 9 Dec 2024 19:26:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=rq7OInXWI/6WeBhhk
-	RkFfWl6kqqoaATPpRAXFBbuZL4=; b=RiJ55d90NJVGkvtD/5gx72MxKQKNDJsv8
-	neYpPzZYhBusejIvzeMONhGqCOEqwUECnVNJXDGE7ECEb/ttZfxJ2ARwqFoU78EB
-	yZmPFS5q4xQzNTMdMkia+qatsgNLoNlcTY4UzCGZn21Ej89p5kH/YieMBnkJlO5d
-	tOl3D5KjLlqVN0fBLJjY2G5ZI6o9Hq/j0lBVFQ2ywthJWyG4nmjKQIeHQTqDP8jU
-	OLW6lMwpQOgdDaKnJ2rwMW2zR5Dk6J8ITr3Ic0Os+auUjuEMc6XSSLR1zSwVBdWh
-	zjVYfnUrCTwIT/LONG+cmXyVkMhcZWWwHMwX5HHDhPPn+gLueb8ew==
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsjab5n-1
+	:mime-version:references:subject:to; s=pp1; bh=lD+okMqmTBth5ZV/u
+	A89GNS+iS4rJ2NggJAIkLOozw0=; b=OdRt1gT+aH6G81lA210FGLd3aV28SLCmH
+	Cu+57u9GraGNQ/AQ17skgZVeL/2lKNfo6IzF+jFKcBlZPuWpDzAXPyvyDYKMHDTc
+	RmzTArnJAbsjaN9/Nyp/8FMSBjPI7M1L71pQMT6OzMEYjWCOlGrUpUoJYYys4r3g
+	+UpNXrjukCFnlm52+KQkfAGajmR96Je8Zp5n4ZG4HPqCTIcOz53U2i4XsYD8x0x6
+	/BfsRvTtZmrHKoDQLIrSf7Dq6R33zvHmiG2g5hc4YqMVedTdDsZ1Df3kamlfxJcY
+	wyXX1MlC9fRphyf6f/RQKU3+zWUPOjoOSz+heRyRFm+CmZRgAKBhA==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8k7ne-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 19:25:58 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9GIuud017397;
+	Mon, 09 Dec 2024 19:25:59 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Ix6jv018636;
 	Mon, 9 Dec 2024 19:25:58 GMT
-Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d3d1fqwj-1
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26k80hk-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Mon, 09 Dec 2024 19:25:58 +0000
 Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9JPufE29557452
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9JPvXS24772966
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 19:25:56 GMT
+	Mon, 9 Dec 2024 19:25:57 GMT
 Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3131658055;
+	by IMSVA (Postfix) with ESMTP id 627A758059;
+	Mon,  9 Dec 2024 19:25:57 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4EE4758043;
 	Mon,  9 Dec 2024 19:25:56 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1D40158043;
-	Mon,  9 Dec 2024 19:25:55 +0000 (GMT)
 Received: from li-2311da4c-2e09-11b2-a85c-c003041e9174.ibm.com.com (unknown [9.61.107.222])
 	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Dec 2024 19:25:55 +0000 (GMT)
+	Mon,  9 Dec 2024 19:25:56 +0000 (GMT)
 From: Matthew Rosato <mjrosato@linux.ibm.com>
 To: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
         gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
@@ -73,9 +73,9 @@ Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
         svens@linux.ibm.com, borntraeger@linux.ibm.com, clegoate@redhat.com,
         iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH 4/7] iommu/s390: support cleanup of additional table regions
-Date: Mon,  9 Dec 2024 14:25:46 -0500
-Message-ID: <20241209192549.107226-5-mjrosato@linux.ibm.com>
+Subject: [PATCH 5/7] iommu/s390: support iova_to_phys for additional table regions
+Date: Mon,  9 Dec 2024 14:25:47 -0500
+Message-ID: <20241209192549.107226-6-mjrosato@linux.ibm.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241209192549.107226-1-mjrosato@linux.ibm.com>
 References: <20241209192549.107226-1-mjrosato@linux.ibm.com>
@@ -87,104 +87,88 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: SgIUkq00ML8tXOVDSKuXO5W8JLKyUqD1
-X-Proofpoint-ORIG-GUID: SgIUkq00ML8tXOVDSKuXO5W8JLKyUqD1
+X-Proofpoint-GUID: xS6pYYbtkqR_yZuNEQe-__wljMJsgX6g
+X-Proofpoint-ORIG-GUID: xS6pYYbtkqR_yZuNEQe-__wljMJsgX6g
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412090147
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=969
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090143
 
-Extend the existing dma_cleanup_tables to also handle region second and
-region first tables.
+The origin_type of the dma_table is used to determine how many table
+levels must be traversed for the translation.
 
 Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
 ---
- drivers/iommu/s390-iommu.c | 55 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 48 insertions(+), 7 deletions(-)
+ drivers/iommu/s390-iommu.c | 42 +++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 41 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-index fcebc7415fb3..5782f329cae9 100644
+index 5782f329cae9..cea528bf61db 100644
 --- a/drivers/iommu/s390-iommu.c
 +++ b/drivers/iommu/s390-iommu.c
-@@ -248,18 +248,59 @@ static void dma_free_seg_table(unsigned long entry)
- 	dma_free_cpu_table(sto);
+@@ -744,6 +744,43 @@ static int s390_iommu_map_pages(struct iommu_domain *domain,
+ 	return rc;
  }
  
--static void dma_cleanup_tables(unsigned long *table)
-+static void dma_free_rt_table(unsigned long entry)
- {
-+	unsigned long *rto = get_rs_rto(entry);
- 	int rtx;
- 
--	if (!table)
-+	for (rtx = 0; rtx < ZPCI_TABLE_ENTRIES; rtx++)
-+		if (reg_entry_isvalid(rto[rtx]))
-+			dma_free_seg_table(rto[rtx]);
-+
-+	dma_free_cpu_table(rto);
-+}
-+
-+static void dma_free_rs_table(unsigned long entry)
++static unsigned long *get_rto_from_iova(struct s390_domain *domain,
++					dma_addr_t iova)
 +{
-+	unsigned long *rso = get_rf_rso(entry);
-+	int rsx;
++	unsigned long *rfo, *rso, *rto;
++	unsigned long rfe, rse;
++	unsigned int rfx, rsx;
 +
-+	for (rsx = 0; rsx < ZPCI_TABLE_ENTRIES; rsx++)
-+		if (reg_entry_isvalid(rso[rsx]))
-+			dma_free_rt_table(rso[rsx]);
-+
-+	dma_free_cpu_table(rso);
-+}
-+
-+static void dma_cleanup_tables(struct s390_domain *domain)
-+{
-+	int rtx, rsx, rfx;
-+
-+	if (!domain->dma_table)
- 		return;
- 
--	for (rtx = 0; rtx < ZPCI_TABLE_ENTRIES; rtx++)
--		if (reg_entry_isvalid(table[rtx]))
--			dma_free_seg_table(table[rtx]);
 +	switch (domain->origin_type) {
 +	case ZPCI_TABLE_TYPE_RFX:
-+		for (rfx = 0; rfx < ZPCI_TABLE_ENTRIES; rfx++)
-+			if (reg_entry_isvalid(domain->dma_table[rfx]))
-+				dma_free_rs_table(domain->dma_table[rfx]);
-+		break;
++		rfo = domain->dma_table;
++		goto itp_rf;
 +	case ZPCI_TABLE_TYPE_RSX:
-+		for (rsx = 0; rsx < ZPCI_TABLE_ENTRIES; rsx++)
-+			if (reg_entry_isvalid(domain->dma_table[rsx]))
-+				dma_free_rt_table(domain->dma_table[rsx]);
-+		break;
++		rso = domain->dma_table;
++		goto itp_rs;
 +	case ZPCI_TABLE_TYPE_RTX:
-+		for (rtx = 0; rtx < ZPCI_TABLE_ENTRIES; rtx++)
-+			if (reg_entry_isvalid(domain->dma_table[rtx]))
-+				dma_free_seg_table(domain->dma_table[rtx]);
-+		break;
++		return domain->dma_table;
 +	default:
-+		WARN_ONCE(1, "Invalid IOMMU table (%x)\n", domain->origin_type);
-+		return;
++		return NULL;
 +	}
- 
--	dma_free_cpu_table(table);
-+	dma_free_cpu_table(domain->dma_table);
- }
- 
- static unsigned long *dma_alloc_page_table(gfp_t gfp)
-@@ -415,7 +456,7 @@ static void s390_iommu_rcu_free_domain(struct rcu_head *head)
++
++itp_rf:
++	rfx = calc_rfx(iova);
++	rfe = READ_ONCE(rfo[rfx]);
++	if (!reg_entry_isvalid(rfe))
++		return NULL;
++	rso = get_rf_rso(rfe);
++
++itp_rs:
++	rsx = calc_rsx(iova);
++	rse = READ_ONCE(rso[rsx]);
++	if (!reg_entry_isvalid(rse))
++		return NULL;
++	rto = get_rs_rto(rse);
++
++	return rto;
++}
++
+ static phys_addr_t s390_iommu_iova_to_phys(struct iommu_domain *domain,
+ 					   dma_addr_t iova)
  {
- 	struct s390_domain *s390_domain = container_of(head, struct s390_domain, rcu);
+@@ -757,10 +794,13 @@ static phys_addr_t s390_iommu_iova_to_phys(struct iommu_domain *domain,
+ 	    iova > domain->geometry.aperture_end)
+ 		return 0;
  
--	dma_cleanup_tables(s390_domain->dma_table);
-+	dma_cleanup_tables(s390_domain);
- 	kfree(s390_domain);
- }
++	rto = get_rto_from_iova(s390_domain, iova);
++	if (!rto)
++		return 0;
++
+ 	rtx = calc_rtx(iova);
+ 	sx = calc_sx(iova);
+ 	px = calc_px(iova);
+-	rto = s390_domain->dma_table;
  
+ 	rte = READ_ONCE(rto[rtx]);
+ 	if (reg_entry_isvalid(rte)) {
 -- 
 2.47.0
 
