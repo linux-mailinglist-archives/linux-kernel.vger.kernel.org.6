@@ -1,485 +1,115 @@
-Return-Path: <linux-kernel+bounces-437924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8639E9A9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:31:48 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED02F9E9A7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:28:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E3F2846F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:31:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B38C8161B68
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:28:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36601E9B17;
-	Mon,  9 Dec 2024 15:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eynXNy0k"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCEF61C5CD3;
-	Mon,  9 Dec 2024 15:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8E41C5CC6;
+	Mon,  9 Dec 2024 15:28:06 +0000 (UTC)
+Received: from mail-vs1-f50.google.com (mail-vs1-f50.google.com [209.85.217.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8CDF1C5CA0;
+	Mon,  9 Dec 2024 15:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733758256; cv=none; b=Ab3WQmif/0nubjPxBJxew6m5ti2LhXqlSmsss9oih9ssdDQKs++sbG98uumWZDZFG9eSPPC8yaNY6YnV6VV47y+2BCxjpHrdyoMGJV4tQ1PDfWzjO1F6GX/gUNzG3WedWuiHfXs7llsHN0WzFmQPPnpM0IxVZXjSqfNVQ9RG0iQ=
+	t=1733758085; cv=none; b=YU+GjqE4B94X+ICSxHYfJ0mnpI6s3SmyMyDUKcaG/uWJYd1DJvJQ6gQbMqDWDGV+ILOu2zUjfDVGwEqlMooXqfzbPeAXoy/MG98cnTsGlsR0q+/r8TMTWaHYfsepiPTBDuH7OU1fi19cZr2ZQ2FTo1DKDza6a1hMeslUZ1In5Ik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733758256; c=relaxed/simple;
-	bh=v3RX0C8Km8hHRBJw5B5yUQEiTRsnyn7xztT+rCsKiSY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Om0xf8cpmw9uphkl5WVSiaURgqhRkST9KKGcBsH5YQoh9FEKzu9tFnIPOTdjrimKhKt7lGp/BD9NocWhnCOSjhn2ki/We/1/xL6LF/GrMFKVSNDzAfIYRnxXFDoWomiTdbTOX+/XRigNf0VORzhbBuuXtf0g1WmOOl0D7tq8Vd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eynXNy0k; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=1Rxol
-	4B0gk12ZHYR5JiW6y4H6G/0t4/hRANWoP0Tr84=; b=eynXNy0kk2d3HzNs7v7Lh
-	G2H2USYE+mlsKQ3rqr7ByRD1GsCLDnwQYugvE2ae3oqJE3k81xvi+FVpCVZ57V3u
-	aq8v0fzQ3TlYAGGGhr3viZQg2/wUXVZsymx7iwG8L4dnUsPIanX6FMPpIxAYlK8s
-	iFW5wHbwfCC2j/NGBUlQ1w=
-Received: from localhost.localdomain (unknown [47.252.33.72])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wAnl61uDFdn8utwDA--.9599S4;
-	Mon, 09 Dec 2024 23:28:05 +0800 (CST)
-From: Jiayuan Chen <mrpre@163.com>
-To: bpf@vger.kernel.org
-Cc: martin.lau@linux.dev,
-	ast@kernel.org,
-	edumazet@google.com,
-	jakub@cloudflare.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	song@kernel.org,
-	john.fastabend@gmail.com,
-	andrii@kernel.org,
-	mhal@rbox.co,
-	yonghong.song@linux.dev,
-	daniel@iogearbox.net,
-	xiyou.wangcong@gmail.com,
-	horms@kernel.org,
-	Jiayuan Chen <mrpre@163.com>
-Subject: [PATCH bpf v2 2/2] selftests/bpf: add strparser test for bpf
-Date: Mon,  9 Dec 2024 23:27:40 +0800
-Message-ID: <20241209152740.281125-3-mrpre@163.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241209152740.281125-1-mrpre@163.com>
-References: <20241209152740.281125-1-mrpre@163.com>
+	s=arc-20240116; t=1733758085; c=relaxed/simple;
+	bh=xdHaTdXFdYTtHxafGhZhv7UCoLyj8YCRBuOdJFcZEkg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=AgnoFUzAFfGWSnZ7Uy/BLMagplG/zrG0hp8HU4HN5x2fOVI388lpCVEJ13mzW0ZycsrpnRitw8wjhIvd0wk8PmrPEi8C2UNd32821bqoKekUox6WKL/fE4/nHgXU5r4PP3LQUD7C/tHdPJTW8j+0ZNg/qeBO7/JQ37QhQzIFkag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f50.google.com with SMTP id ada2fe7eead31-4afdfefc6c1so591602137.0;
+        Mon, 09 Dec 2024 07:28:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733758081; x=1734362881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KZwCXShpyrYZQBQu1Hq1in63vMRmxTciTHr0EHzD/3o=;
+        b=mw8vtjowdQhiAgYtc8KB6dxOF8ilhdTnJ/JWBLlOQaTP1VI7t9Vh+KcxuvCqqFLFJQ
+         /V1CPBdXLbRQj6fc8k/8cm3D9ULC6dyYrJzHLKptG8EZ8RDERtqpDklLalVFVpB0ajME
+         nIr4POGSiwRZ9OyH4JciYtP221hcbMHf0uLw1Gd1lAVViwJpMHGl9Mvg3J9EqLiqBuiQ
+         C4gtinIeCsj3vCP4OAA5CLDN9hz6jL6ENiLyytPlSLc+Y5fLtu/g9nCsLz+z+/3jnO36
+         rae4FCmCxThcyj7Xc03kbm5pXrMTEUK2CoBgIiIpWQ0vh2y5ee9SPV9ZfBD5v2v4lPLU
+         o6Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIwWiiZT44gFnLgHlyLM3i6SkTOBNX4BLd4KwVtIPPT2Arz4EK0YoMKXMrwsgSdX5txMripL7D1UVG@vger.kernel.org, AJvYcCUj3pMhx1hQ4PtRPdbUMOW7klh0Lcxgaajkmr96/Y4mNWgIEdkQu8Y08wNMGG7U7haT/ASVO6JkTfyf@vger.kernel.org, AJvYcCWDH9nQqrrJS0qiq9QqzYrHOpJuvrrdMaX7JuZMiHv1fqtzzM4W/DMGjrTOdQuih1JPuXhaoFRZR+yPFLs=@vger.kernel.org, AJvYcCWeVmYd7wkX+4h/ZZQFMjXfmySt/oaIHjjRPtGXH0TIPS9thVvq892RuNOLArQJvdFPdCgsI7YtUMIXbQ==@vger.kernel.org, AJvYcCXp2dViXYypRHVbvvFu3GRHT807rBReXvBCW4GOTG7YVk4HWN4Z31NqLd6Oe8Lzdcq5sD9TFRQ84mo3KXU7Ky9k9EE=@vger.kernel.org, AJvYcCXuAknrD+Kzbk8CTtzJI5MgWCwjhZwS725iprPdypPSM/lN3nFpXnVepBYYxovli+hn2QuGOlb19KA7kuXZ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDzB2q4tcQdBil640DtWeZhRs/esZxL0swlX3QTyCmzBkBmEpJ
+	mC8kD1Uxmrn28OGrOqrosIDwIMNtNC1IZNKJcYj4MxcSeVjVuRv19K9Ow73Rb+g=
+X-Gm-Gg: ASbGnctmMAtTunyB8szYwI1m3uDJAOrxxODaQx1+cy5fyzy1JKxGIk97ZIVV7PzDkDU
+	AJ4AkLxDejd2jwlftwkU4JihS7j934/RJ5g7snY10QW7eSoThYof9kJir8kpGteGld+UNi11jBs
+	ngquyDfTAElbuBT0zA+jjsdZgWVvdshBnzL38zA5jylMIJNpgE23dWBdc1JVjVfZD3SclidZQYt
+	KehWNvKu5vy9osU6D/TVZeKBc+prvItdsP+I5g+jvWTnde5sdk0vdzXJEg1OXw1lf9dZT2WRRVo
+	k6jwuITtxMTO
+X-Google-Smtp-Source: AGHT+IGNSdaAB8TFx0WADF4ID06n0kDRJ+SdlRNl+FGrDknb+lcx1D+C5PAPOSJf0keltduOrOPHkA==
+X-Received: by 2002:a05:6102:5494:b0:4b1:14f3:5d6d with SMTP id ada2fe7eead31-4b114f36884mr1589692137.6.1733758081129;
+        Mon, 09 Dec 2024 07:28:01 -0800 (PST)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com. [209.85.217.46])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afd24a30a4sm844685137.17.2024.12.09.07.28.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 07:28:00 -0800 (PST)
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4afdfefc6c1so591586137.0;
+        Mon, 09 Dec 2024 07:28:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUYLwWjxWofsBTsikUJSZi5AHTQBxMvvhu9eHj4A4avD6eETItBvR0BZ7vtynW8wzRJBWMUGukJtO+GQkXd@vger.kernel.org, AJvYcCUqskYqOiHkfYEGsEUlIfS4pAWk0owJ8WsWl+ioCYp8clr6lwTvlJojyLfmMJvVksqHa2mfdFHg4ex6QvBTQJ9esOc=@vger.kernel.org, AJvYcCUysLI8pyqjZX2+7DKJNw2yRSmTJ8+GAK+K579UPG999KyqoJCDMl6m1haro9Xnh/i1wblqbIU07gK9h9o=@vger.kernel.org, AJvYcCV/CjC040wz5Io5PwDiO/XZibxnlrHbWZTXnoQNVpl2SJWBMGXKGavlF7Fvkuarkt+wv43QS8NmvW1jCA==@vger.kernel.org, AJvYcCVMgN9fcU4p+PUvdTr/7DbqgGqZSj1bDKdF48gekqgeqkWLGMkctjCUmo66XseAXchKdLk9ZiTAgTmJ@vger.kernel.org, AJvYcCW5jHkVtxaDZFWFKjmUSLhTIkzvcR/2ZmZ6SHtF+v5hv9A4UvK8l2pwjxt3fZZFOMRfzr9leysJfL4M@vger.kernel.org
+X-Received: by 2002:a05:6102:3b8e:b0:4af:eed0:9211 with SMTP id
+ ada2fe7eead31-4afeed09e26mr4318188137.13.1733758079660; Mon, 09 Dec 2024
+ 07:27:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAnl61uDFdn8utwDA--.9599S4
-X-Coremail-Antispam: 1Uf129KBjvAXoWfGF1fXr18Cw1DJw1fJFyrJFb_yoW8Gr1xAo
-	ZxGan8Xa1xCFnxJ34kG3ykCw4fWF4xW395Xw17J3y5ZF1jyrWY9FWUGws3X3WI9r4Fgry5
-	GFWqvayrurs8Jr4fn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73VFW2AGmfu7bjvjm3
-	AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvj4RPWrWUUUUU
-X-CM-SenderInfo: xpus2vi6rwjhhfrp/xtbBDx2wp2dXCYWxXgAEsS
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-25-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-25-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 16:27:48 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWT+KQ_MdfYKP0c6wEX315e8+=2qOYzty25f-yNRkNkNw@mail.gmail.com>
+Message-ID: <CAMuHMdWT+KQ_MdfYKP0c6wEX315e8+=2qOYzty25f-yNRkNkNw@mail.gmail.com>
+Subject: Re: [PATCH v3 24/25] arm64: dts: renesas: rzg3s-smarc: Enable SSI3
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add test cases for bpf + strparser and separated them from
-sockmap_basic. This is because we need to add more test cases for
-strparser in the future.
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Enable SSI3.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Signed-off-by: Jiayuan Chen <mrpre@163.com>
----
- .../selftests/bpf/prog_tests/sockmap_basic.c  |  53 ----
- .../selftests/bpf/prog_tests/sockmap_strp.c   | 255 ++++++++++++++++++
- .../selftests/bpf/progs/test_sockmap_strp.c   |  51 ++++
- 3 files changed, 306 insertions(+), 53 deletions(-)
- create mode 100644 tools/testing/selftests/bpf/prog_tests/sockmap_strp.c
- create mode 100644 tools/testing/selftests/bpf/progs/test_sockmap_strp.c
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-index fdff0652d7ef..4c0eebc433d8 100644
---- a/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_basic.c
-@@ -530,57 +530,6 @@ static void test_sockmap_skb_verdict_shutdown(void)
- 	test_sockmap_pass_prog__destroy(skel);
- }
- 
--static void test_sockmap_stream_pass(void)
--{
--	int zero = 0, sent, recvd;
--	int verdict, parser;
--	int err, map;
--	int c = -1, p = -1;
--	struct test_sockmap_pass_prog *pass = NULL;
--	char snd[256] = "0123456789";
--	char rcv[256] = "0";
--
--	pass = test_sockmap_pass_prog__open_and_load();
--	verdict = bpf_program__fd(pass->progs.prog_skb_verdict);
--	parser = bpf_program__fd(pass->progs.prog_skb_parser);
--	map = bpf_map__fd(pass->maps.sock_map_rx);
--
--	err = bpf_prog_attach(parser, map, BPF_SK_SKB_STREAM_PARSER, 0);
--	if (!ASSERT_OK(err, "bpf_prog_attach stream parser"))
--		goto out;
--
--	err = bpf_prog_attach(verdict, map, BPF_SK_SKB_STREAM_VERDICT, 0);
--	if (!ASSERT_OK(err, "bpf_prog_attach stream verdict"))
--		goto out;
--
--	err = create_pair(AF_INET, SOCK_STREAM, &c, &p);
--	if (err)
--		goto out;
--
--	/* sk_data_ready of 'p' will be replaced by strparser handler */
--	err = bpf_map_update_elem(map, &zero, &p, BPF_NOEXIST);
--	if (!ASSERT_OK(err, "bpf_map_update_elem(p)"))
--		goto out_close;
--
--	/*
--	 * as 'prog_skb_parser' return the original skb len and
--	 * 'prog_skb_verdict' return SK_PASS, the kernel will just
--	 * pass it through to original socket 'p'
--	 */
--	sent = xsend(c, snd, sizeof(snd), 0);
--	ASSERT_EQ(sent, sizeof(snd), "xsend(c)");
--
--	recvd = recv_timeout(p, rcv, sizeof(rcv), SOCK_NONBLOCK,
--			     IO_TIMEOUT_SEC);
--	ASSERT_EQ(recvd, sizeof(rcv), "recv_timeout(p)");
--
--out_close:
--	close(c);
--	close(p);
--
--out:
--	test_sockmap_pass_prog__destroy(pass);
--}
- 
- static void test_sockmap_skb_verdict_fionread(bool pass_prog)
- {
-@@ -1050,8 +999,6 @@ void test_sockmap_basic(void)
- 		test_sockmap_progs_query(BPF_SK_SKB_VERDICT);
- 	if (test__start_subtest("sockmap skb_verdict shutdown"))
- 		test_sockmap_skb_verdict_shutdown();
--	if (test__start_subtest("sockmap stream parser and verdict pass"))
--		test_sockmap_stream_pass();
- 	if (test__start_subtest("sockmap skb_verdict fionread"))
- 		test_sockmap_skb_verdict_fionread(true);
- 	if (test__start_subtest("sockmap skb_verdict fionread on drop"))
-diff --git a/tools/testing/selftests/bpf/prog_tests/sockmap_strp.c b/tools/testing/selftests/bpf/prog_tests/sockmap_strp.c
-new file mode 100644
-index 000000000000..1157a9410f87
---- /dev/null
-+++ b/tools/testing/selftests/bpf/prog_tests/sockmap_strp.c
-@@ -0,0 +1,255 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <error.h>
-+
-+#include <test_progs.h>
-+#include "sockmap_helpers.h"
-+#include "test_skmsg_load_helpers.skel.h"
-+#include "test_sockmap_strp.skel.h"
-+#define STRP_HEAD_LEN 4
-+#define STRP_BODY_LEN 6
-+#define STRP_FULL_LEN (STRP_HEAD_LEN + STRP_BODY_LEN)
-+
-+static void test_sockmap_strp_partial_read(int family, int sotype)
-+{
-+	int zero = 0, recvd, off;
-+	int verdict, parser;
-+	int err, map;
-+	int c = -1, p = -1;
-+	struct test_sockmap_strp *strp = NULL;
-+	char snd[STRP_FULL_LEN] = "head+body\0";
-+	char rcv[256] = "0";
-+
-+	strp = test_sockmap_strp__open_and_load();
-+	verdict = bpf_program__fd(strp->progs.prog_skb_verdict_pass);
-+	parser = bpf_program__fd(strp->progs.prog_skb_parser_partial);
-+	map = bpf_map__fd(strp->maps.sock_map);
-+
-+	err = bpf_prog_attach(parser, map, BPF_SK_SKB_STREAM_PARSER, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach stream parser"))
-+		goto out;
-+
-+	err = bpf_prog_attach(verdict, map, BPF_SK_SKB_STREAM_VERDICT, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach stream verdict"))
-+		goto out;
-+
-+	err = create_pair(family, sotype, &c, &p);
-+	if (err)
-+		goto out;
-+
-+	/* sk_data_ready of 'p' will be replaced by strparser handler */
-+	err = bpf_map_update_elem(map, &zero, &p, BPF_NOEXIST);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem(zero, p)"))
-+		goto out_close;
-+
-+	/* 1.1 send partial head, 1 byte header left*/
-+	off = STRP_HEAD_LEN - 1;
-+	xsend(c, snd, off, 0);
-+	recvd = recv_timeout(p, rcv, sizeof(rcv), MSG_DONTWAIT, 5);
-+	if (!ASSERT_EQ(-1, recvd, "insufficient head, should no data recvd"))
-+		goto out_close;
-+
-+	/* 1.2 send remaining head and body */
-+	xsend(c, snd + off, STRP_FULL_LEN - off, 0);
-+	recvd = recv_timeout(p, rcv, sizeof(rcv), MSG_DONTWAIT, IO_TIMEOUT_SEC);
-+	if (!ASSERT_EQ(recvd, STRP_FULL_LEN, "should full data recvd"))
-+		goto out_close;
-+
-+	/* 2.1 send partial head, 1 byte header left */
-+	off = STRP_HEAD_LEN - 1;
-+	xsend(c, snd, off, 0);
-+
-+	/* 2.2 send remaining head and partial body, 1 byte body left */
-+	xsend(c, snd + off, STRP_FULL_LEN - off - 1, 0);
-+	off = STRP_FULL_LEN - 1;
-+	recvd = recv_timeout(p, rcv, sizeof(rcv), MSG_DONTWAIT, 1);
-+	if (!ASSERT_EQ(-1, recvd, "insufficient body, should no data read"))
-+		goto out_close;
-+
-+	/* 2.3 send remain body */
-+	xsend(c, snd + off, STRP_FULL_LEN - off, 0);
-+	recvd = recv_timeout(p, rcv, sizeof(rcv), MSG_DONTWAIT, IO_TIMEOUT_SEC);
-+	if (!ASSERT_EQ(recvd, STRP_FULL_LEN, "should full data recvd"))
-+		goto out_close;
-+
-+out_close:
-+	close(c);
-+	close(p);
-+
-+out:
-+	test_sockmap_strp__destroy(strp);
-+}
-+
-+static void test_sockmap_strp_pass(int family, int sotype, bool fionread)
-+{
-+	int zero = 0, sent, recvd, avail;
-+	int verdict, parser;
-+	int err, map;
-+	int c = -1, p = -1;
-+	int read_cnt = 10, i;
-+	struct test_sockmap_strp *strp = NULL;
-+	char snd[11] = "0123456789\0";
-+	char rcv[256] = "0";
-+
-+	strp = test_sockmap_strp__open_and_load();
-+	verdict = bpf_program__fd(strp->progs.prog_skb_verdict_pass);
-+	parser = bpf_program__fd(strp->progs.prog_skb_parser);
-+	map = bpf_map__fd(strp->maps.sock_map);
-+
-+	err = bpf_prog_attach(parser, map, BPF_SK_SKB_STREAM_PARSER, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach stream parser"))
-+		goto out;
-+
-+	err = bpf_prog_attach(verdict, map, BPF_SK_SKB_STREAM_VERDICT, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach stream verdict"))
-+		goto out;
-+
-+	err = create_pair(family, sotype, &c, &p);
-+	if (err)
-+		goto out;
-+
-+	/* sk_data_ready of 'p' will be replaced by strparser handler */
-+	err = bpf_map_update_elem(map, &zero, &p, BPF_NOEXIST);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem(p)"))
-+		goto out_close;
-+
-+	/*
-+	 * Previously, we encountered issues such as deadlocks and
-+	 * sequence errors that resulted in the inability to read
-+	 * continuously. Therefore, we perform multiple iterations
-+	 * of testing here.
-+	 */
-+	for (i = 0; i < read_cnt; i++) {
-+		sent = xsend(c, snd, sizeof(snd), 0);
-+		if (!ASSERT_EQ(sent, sizeof(snd), "xsend(c)"))
-+			goto out_close;
-+
-+		recvd = recv_timeout(p, rcv, sizeof(rcv), MSG_DONTWAIT,
-+				     IO_TIMEOUT_SEC);
-+		if (!ASSERT_EQ(recvd, sizeof(snd), "recv_timeout(p)")
-+		    || !ASSERT_OK(memcmp(snd, rcv, sizeof(snd)),
-+				  "recv_timeout(p)"))
-+			goto out_close;
-+	}
-+
-+	if (fionread) {
-+		sent = xsend(c, snd, sizeof(snd), 0);
-+		if (!ASSERT_EQ(sent, sizeof(snd), "second xsend(c)"))
-+			goto out_close;
-+
-+		err = ioctl(p, FIONREAD, &avail);
-+		if (!ASSERT_OK(err, "ioctl(FIONREAD) error")
-+		    || ASSERT_EQ(avail, sizeof(snd), "ioctl(FIONREAD)"))
-+			goto out_close;
-+
-+		recvd = recv_timeout(p, rcv, sizeof(rcv), MSG_DONTWAIT,
-+							 IO_TIMEOUT_SEC);
-+		if (!ASSERT_EQ(recvd, sizeof(snd), "second recv_timeout(p)")
-+		    || ASSERT_OK(memcmp(snd, rcv, sizeof(snd)),
-+				 "second recv_timeout(p)"))
-+			goto out_close;
-+	}
-+
-+out_close:
-+	close(c);
-+	close(p);
-+
-+out:
-+	test_sockmap_strp__destroy(strp);
-+}
-+
-+static void test_sockmap_strp_verdict(int family, int sotype)
-+{
-+	int zero = 0, one = 1, sent, recvd, off, total_sent;
-+	int verdict, parser;
-+	int err, map;
-+	int c0 = -1, p0 = -1, c1 = -1, p1 = -1;
-+	struct test_sockmap_strp *strp = NULL;
-+	char snd[11] = "0123456789\0";
-+	char rcv[256] = "0";
-+
-+	strp = test_sockmap_strp__open_and_load();
-+	verdict = bpf_program__fd(strp->progs.prog_skb_verdict);
-+	parser = bpf_program__fd(strp->progs.prog_skb_parser);
-+	map = bpf_map__fd(strp->maps.sock_map);
-+
-+	err = bpf_prog_attach(parser, map, BPF_SK_SKB_STREAM_PARSER, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach stream parser"))
-+		goto out;
-+
-+	err = bpf_prog_attach(verdict, map, BPF_SK_SKB_STREAM_VERDICT, 0);
-+	if (!ASSERT_OK(err, "bpf_prog_attach stream verdict"))
-+		goto out;
-+
-+	/* We simulate a reverse proxy server.
-+	 * When p0 receives data from c0, we forward it to p1.
-+	 * From p1's perspective, it will consider this data
-+	 * as being sent by c1.
-+	 */
-+	err = create_socket_pairs(family, sotype, &c0, &c1, &p0, &p1);
-+	if (!ASSERT_OK(err, "create_socket_pairs()"))
-+		goto out;
-+
-+	err = bpf_map_update_elem(map, &zero, &p0, BPF_NOEXIST);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem(p0)"))
-+		goto out_close;
-+
-+	err = bpf_map_update_elem(map, &one, &c1, BPF_NOEXIST);
-+	if (!ASSERT_OK(err, "bpf_map_update_elem(c1)"))
-+		goto out_close;
-+
-+	total_sent = sizeof(snd);
-+	sent = xsend(c0, snd, total_sent, 0);
-+	if (!ASSERT_EQ(sent, total_sent, "xsend(c0)"))
-+		goto out_close;
-+
-+	recvd = recv_timeout(p1, rcv, sizeof(rcv), MSG_DONTWAIT,
-+			     IO_TIMEOUT_SEC);
-+	if (!ASSERT_EQ(recvd, total_sent, "recv_timeout(p1)")
-+	    || !ASSERT_OK(memcmp(snd, rcv, total_sent),
-+			  "received data does not match the sent data"))
-+		goto out_close;
-+
-+	/* send again to ensure the stream is functioning correctly. */
-+	total_sent = sizeof(snd);
-+	sent = xsend(c0, snd, total_sent, 0);
-+	if (!ASSERT_EQ(sent, total_sent, "second xsend(c0)"))
-+		goto out_close;
-+
-+	/* partial read */
-+	off = total_sent/2;
-+	recvd = recv_timeout(p1, rcv, off, MSG_DONTWAIT,
-+			     IO_TIMEOUT_SEC);
-+	recvd += recv_timeout(p1, rcv + off, sizeof(rcv) - off, MSG_DONTWAIT,
-+			      IO_TIMEOUT_SEC);
-+
-+	if (!ASSERT_EQ(recvd, total_sent, "partial recv_timeout(p1)")
-+	    || !ASSERT_OK(memcmp(snd, rcv, total_sent),
-+			  "partial received data does not match the sent data"))
-+		goto out_close;
-+
-+out_close:
-+	close(c0);
-+	close(c1);
-+	close(p0);
-+	close(p1);
-+out:
-+	test_sockmap_strp__destroy(strp);
-+}
-+
-+void test_sockmap_strp(void)
-+{
-+	if (test__start_subtest("sockmap strp tcp pass"))
-+		test_sockmap_strp_pass(AF_INET, SOCK_STREAM, false);
-+	if (test__start_subtest("sockmap strp tcp v6 pass"))
-+		test_sockmap_strp_pass(AF_INET6, SOCK_STREAM, false);
-+	if (test__start_subtest("sockmap strp tcp pass fionread"))
-+		test_sockmap_strp_pass(AF_INET, SOCK_STREAM, true);
-+	if (test__start_subtest("sockmap strp tcp v6 pass fionread"))
-+		test_sockmap_strp_pass(AF_INET6, SOCK_STREAM, true);
-+	if (test__start_subtest("sockmap strp tcp verdict"))
-+		test_sockmap_strp_verdict(AF_INET, SOCK_STREAM);
-+	if (test__start_subtest("sockmap strp tcp v6 verdict"))
-+		test_sockmap_strp_verdict(AF_INET6, SOCK_STREAM);
-+	if (test__start_subtest("sockmap strp tcp partial read"))
-+		test_sockmap_strp_partial_read(AF_INET, SOCK_STREAM);
-+}
-diff --git a/tools/testing/selftests/bpf/progs/test_sockmap_strp.c b/tools/testing/selftests/bpf/progs/test_sockmap_strp.c
-new file mode 100644
-index 000000000000..db2f3b6c87ba
---- /dev/null
-+++ b/tools/testing/selftests/bpf/progs/test_sockmap_strp.c
-@@ -0,0 +1,51 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <linux/bpf.h>
-+#include <bpf/bpf_helpers.h>
-+#include <bpf/bpf_endian.h>
-+
-+struct {
-+	__uint(type, BPF_MAP_TYPE_SOCKMAP);
-+	__uint(max_entries, 20);
-+	__type(key, int);
-+	__type(value, int);
-+} sock_map SEC(".maps");
-+
-+
-+SEC("sk_skb/stream_verdict")
-+int prog_skb_verdict_pass(struct __sk_buff *skb)
-+{
-+	return SK_PASS;
-+}
-+
-+
-+SEC("sk_skb/stream_verdict")
-+int prog_skb_verdict(struct __sk_buff *skb)
-+{
-+	__u32 one = 1;
-+
-+	return bpf_sk_redirect_map(skb, &sock_map, one, 0);
-+}
-+
-+SEC("sk_skb/stream_parser")
-+int prog_skb_parser(struct __sk_buff *skb)
-+{
-+	return skb->len;
-+}
-+
-+SEC("sk_skb/stream_parser")
-+int prog_skb_parser_partial(struct __sk_buff *skb)
-+{
-+	/* agreement with the test program on a 4-byte size header
-+	 * and 6-byte body.
-+	 */
-+	if (skb->len < 4) {
-+		/* need more header to determine full length */
-+		return 0;
-+	}
-+	/* return full length decoded from header.
-+	 * the return value may be larger than skb->len which
-+	 * means framework must wait body coming.
-+	 */
-+	return 10;
-+}
-+char _license[] SEC("license") = "GPL";
--- 
-2.43.5
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
