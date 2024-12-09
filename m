@@ -1,207 +1,185 @@
-Return-Path: <linux-kernel+bounces-437260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3E309E90F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:51:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D95E9E90FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:52:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCA5E2813C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:51:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55F0C161869
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:52:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 227A321770B;
-	Mon,  9 Dec 2024 10:51:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69E4D216E39;
+	Mon,  9 Dec 2024 10:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OF71MjUP"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="anKXBPIJ"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B75216E3B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:51:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF0F4216E24
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:51:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733741473; cv=none; b=ubBb/lUtiEyf6OZwXCSj7uXQf5VKNw3LKW1vQIS9v8p0U2o+eKX6gXff3ywBru6K4QEMo0+rPeueSp36uCndJJgSFWPSkwNuhCL/13+2hQTs8RHgndtR5SNEHvtlDNN0RVsKJH2kbdTBskzfuSnMSe6A0uk0yCEu7baIXiKvNPI=
+	t=1733741500; cv=none; b=JQLZJp79Bv9QdnTT3XAkO6vNsJKJuFuS1E0aVlUeOjy6srixoXpRdBpx5r541c98eA63IYKONj051E+ZP8mB5k8jIDjzmwXpsQt64/ppHNNKpH+DJxL0LeYha+e+t8o30bACQHb2D0Yo9ZdX9eC5jZCKpHMdLqBpoVK90aEQQW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733741473; c=relaxed/simple;
-	bh=L4ui1h/vrdTNSwIpVte950FBLDJ/cVXgkHics9qC5xk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gbu0c1zgjIlfgexChvSYpQpGe+4TB/R9C2KWQPBSDZc1PwEP2QkqQN9jYD6Fcds+Kb2QpnmXy4n9IkGKOkCl/DUZc8H88ffUwB4vAYfTG+pjetRTkXMLnn1yJSgggUUbJv9BM84wVZn8LOO1XNmbrKnfKU4M0PNHSiTMCAA6tJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OF71MjUP; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-385f07cd1a4so2910016f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:51:11 -0800 (PST)
+	s=arc-20240116; t=1733741500; c=relaxed/simple;
+	bh=Ej4c/sUXULCJXuEUxEWVOdFY9om52VxFdHBb/B1TUGo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Tbfsw+sYTobYwrr09E+aNPOPyhs1D0J/CoYl1qFT94Mhr7IYAKOeL3kRGYtjy0r1wZ/WIxKBO7foYX2gfIBfReUyNGVxwbZQqCQsKwAj/DaAEL93JA6Jn7lT1aqxkZAg7QaUf+cLcQNJpbcYUTvAN29Nb0Xyusb4fk7sdp57kjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=anKXBPIJ; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-434f239bcd6so629445e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:51:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733741470; x=1734346270; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FryIWHG4glDtAbY0ViJJ5GhXfPjObehPPRF/NzIgnoU=;
-        b=OF71MjUPR4/jGDWDf6cf2UWoU9YY1Qc16GE6uICv3zBjfUK0F60MxOEA6oOYJTHs5K
-         MYhbdhKX38b4IMnK3oAtncB09vrXk8X7q6e8PCBC3BemuLPSol1DnN57MzMzLpvzheO5
-         Psxd9Jyz+MCDrzXxUrX5FB55WS2Enrr3wbLkrJyBDyVZnbBiTMe1sCEdgT0xA32hw0Bm
-         4Zg9imRuO7Rp/nDYKjcwPTzydMdwCrQTPbaUSYZmNcjz9XEoUrJWbCm7xVL+sl8EAbG3
-         BGmS3kQi+UgtFW0dO3bDBr2T5k40lTzmIICUQEuCZT9ivGfUMBNYwxLGeYVFStlg5mHQ
-         VBcQ==
+        d=linaro.org; s=google; t=1733741497; x=1734346297; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=mgL4fhqTxa41pcrfE9LJCcy7mu1/uvJtqmjOItdJAP4=;
+        b=anKXBPIJcQxaefG6Mzp20uSt9UiMzedqWtREh/koyReEZVJqQu3oqY7T/6kn+ZRJls
+         nY+xlwAr7A0lx0PKKrs/tqOCVdY+gHFZ7cRdEgbiiaIqjHcWPYI2KXb+rZ9Kioe3xW8/
+         NgrEFE+dWOLNRoUgl25sBolfM6ka1jqD9euyC/0jfDxK7MXgYKDtgzxJlZNqfe9pIz4A
+         /td0vzkh/6/QXBby+EyGc2W70VDjnvxdlq9xJM2yBn9xp2vUHBWCJY8G2HRMd4JZG5GN
+         8eln2hXf2bJ3me1EPzgRglXwF6dtUwbBvn+OuknsWszX86xGzQqVflDJ4Cpde1UBxg9c
+         0cwg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733741470; x=1734346270;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FryIWHG4glDtAbY0ViJJ5GhXfPjObehPPRF/NzIgnoU=;
-        b=Ky6Y5zExBtGvjfkBW+6FZ+/6yhxHkHUaDBpu0Q1dizS8YDrTVawXBpySf/xR87Lkf0
-         mUqbyhq21l86piiV9yTuHYDE3SUnKcSKYcc41dhZ5d+6DmS64GbhYqowCAn1IgNEn13J
-         KgojmgED80ZyVhpqO7ZJYD+0l0vlJiJmhujeWtyLOncA7AU2xm36IzfX2s+CePUCNa2u
-         W9D7C7934q0cLis/+ycN+jNDEPfVp3rz2fuubkt4SHPZ2clOlAP4CApzkz6NFrGZYZLE
-         lxCqarYqGF0VMsTJXDI+EmpqsfQHPmB9rCXmDMrlndCbmO+OkZ7MP9xtTLWTx0cc8nNY
-         T9uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpZ1VChjvp5MaPZW8y7eqnHadwmYncx0PYbrZSqVKzqo5gh9UTmp1OYEZgoOmlO2lFI1Mzv6XLLS0yFcU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJZSevm3pKBUAme8cjEaz7XafB+Wcim+64P7qBsSIN0TVhQxyd
-	lJCyI74UR9CkneQNbmPNmvzaPF6FEeyxD1sk1jx2mqDs8I/ejUVE1pk0G6FfaSmpokWZVFjkUQR
-	YwO0lLirV/H7wAoyA8apqIDr27navqN7TqZbT
-X-Gm-Gg: ASbGncufvlkSaEzS/8z1DFvWdoOBHRR6o+1Rb6IGrpkqJLrVEWGCq0CkSV6e7DK5b4J
-	h0n+ZVnkPJSnKaKdvGmtAjJHa7JcsvfaElt0mnH3z4UaLc6p6KduT+xgAoM4K
-X-Google-Smtp-Source: AGHT+IFCMPz2gJwTLGpVlTtIU/+TRhfTp9o6Sr1cbaBHwP5xMQrVhcDylO0Qa0ADEgHobqtV7VaBYYQ104jfMWkjpKE=
-X-Received: by 2002:a05:6000:1446:b0:386:4034:f9a6 with SMTP id
- ffacd0b85a97d-3864034fe3dmr2031582f8f.57.1733741469667; Mon, 09 Dec 2024
- 02:51:09 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733741497; x=1734346297;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mgL4fhqTxa41pcrfE9LJCcy7mu1/uvJtqmjOItdJAP4=;
+        b=UOygXaPM6Ws+edKohpsu24eXmye2cxWgfBz9VGFPfgQOQCuIFo8pOk0FFZUoA1s6Zj
+         qo1pTGiE38DgFyJKUuB147k5Xbu+pnb/eELeoO+T0wnVCPoO/pO83zSD2UGjntoj18Pw
+         wfwwVM5rb8hW21TrBuzVw4c9H+vBvBoHWvFFhGlU7t3u6pzigwZDhEjDW2OSHc4KLRbu
+         TcCXLSXdUXnTMAyggYUdk4c5m3OVIsFpsViZJOLuhc0LEhPM91um4QJuaSIpVMZ/DYVd
+         4I1gHwUWIAoEPgG/1QO3rPI/3EP9VHJI5WA+5r7M0b52LMY0l9zp8ThS1WLgOfTzI5m3
+         AGQA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDICUKj0QWoLEb3MeE2hhiilFIWpmHhM62cFa/m9Smu0IMDLYRtlh8hj7mHCmb0SKqJGYI7UZmuikODRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywq8iI7gi2fPd1g0DzID47NKGuuhyxlb5DU8OYaVShR5o6KpRhB
+	iaOcMBSG/CQ/+wWrlUXLVS7KCvh1qIPQVJD+DK0Cc6Aw1Aw66zgEF3X4S/Gib4Q=
+X-Gm-Gg: ASbGncuCbNpenH5HkFMAQ27hosB8t1sJwmtltwWBRzD8xtcOIhl1eIQhTXKf/1yEAiP
+	8J83RjpghD8xx1RrZpmCCMMyy4kLYqDpUF67jfuw1GLmBtFEt50mrTTJ22JqRIPyROezGrL1g4A
+	34zQt6J+aYUNLF5zpPeMSvZoUrRsIkPneXalw2Ln3iOQTuJgSd+nriSJ37K9bd6XINnYQLh1yYj
+	jC8pighvRB28fZ1Mr3S+f3gJXjiK7IlAF32IS3n5T54xOakTZdl+Jo7PVi1RBJ7Ol6dQA==
+X-Google-Smtp-Source: AGHT+IG3kFbmtzjRS5yj7i8UZZCBsXP09+cU9z4XG4DqiGRqrXbwAId60CYAnSczvDc/ado6pTom8A==
+X-Received: by 2002:a05:600c:1c0f:b0:434:fecf:cb2f with SMTP id 5b1f17b1804b1-434fecfced3mr2056845e9.5.1733741497052;
+        Mon, 09 Dec 2024 02:51:37 -0800 (PST)
+Received: from [192.168.1.20] ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f9da4cd0sm28180385e9.26.2024.12.09.02.51.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 02:51:36 -0800 (PST)
+Message-ID: <7e2013c8-e11f-47b1-a28f-960b2aed72e5@linaro.org>
+Date: Mon, 9 Dec 2024 11:51:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
- <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com> <2024120925-express-unmasked-76b4@gregkh>
-In-Reply-To: <2024120925-express-unmasked-76b4@gregkh>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Mon, 9 Dec 2024 11:50:57 +0100
-Message-ID: <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH PATCH RFT 11/19] arm64: dts: qcom: sm8650: Fix CDSP memory
+ length
+To: neil.armstrong@linaro.org, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Abel Vesa <abel.vesa@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>,
+ Luca Weiss <luca.weiss@fairphone.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241206-dts-qcom-cdsp-mpss-base-address-v1-0-2f349e4d5a63@linaro.org>
+ <20241206-dts-qcom-cdsp-mpss-base-address-v1-11-2f349e4d5a63@linaro.org>
+ <82927e0b-d048-4be6-9206-38d4222ea6fd@linaro.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <82927e0b-d048-4be6-9206-38d4222ea6fd@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 9, 2024 at 9:48=E2=80=AFAM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> > Providing access to the underlying `struct miscdevice` is useful for
-> > various reasons. For example, this allows you access the miscdevice's
-> > internal `struct device` for use with the `dev_*` printing macros.
-> >
-> > Note that since the underlying `struct miscdevice` could get freed at
-> > any point after the fops->open() call, only the open call is given
-> > access to it. To print from other calls, they should take a refcount on
-> > the device to keep it alive.
->
-> The lifespan of the miscdevice is at least from open until close, so
-> it's safe for at least then (i.e. read/write/ioctl/etc.)
+On 06/12/2024 16:42, Neil Armstrong wrote:
+> On 06/12/2024 16:32, Krzysztof Kozlowski wrote:
+>> The address space in CDSP PAS (Peripheral Authentication Service)
+>> remoteproc node should point to the QDSP PUB address space
+>> (QDSP6...SS_PUB) which has a length of 0x10000.  Value of 0x1400000 was
+>> copied from older DTS, but it does not look accurate at all.
+>>
+>> This should have no functional impact on Linux users, because PAS loader
+>> does not use this address space at all.
+>>
+>> Fixes: 10e024671295 ("arm64: dts: qcom: sm8650: add interconnect dependent device nodes")
+>> Cc: <stable@vger.kernel.org>
+>> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> index 95ec82bce3162bce4a3da6122a41fee37118740e..1d935bcdcb2eee7b56e0a1f71c303a54d870e672 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> @@ -5481,7 +5481,7 @@ nsp_noc: interconnect@320c0000 {
+>>   
+>>   		remoteproc_cdsp: remoteproc@32300000 {
+>>   			compatible = "qcom,sm8650-cdsp-pas";
+>> -			reg = <0 0x32300000 0 0x1400000>;
+>> +			reg = <0x0 0x32300000 0x0 0x10000>;
+> 
+> I tried to have an unified style in sm8650.dtsi by using 0 instead of 0x0,
+> maybe you should keep the current style, as you prefer.
 
-How is that enforced? What happens if I call misc_deregister while
-there are open fds?
+I got comment for sm8750 that preferred is 0x0, so above while touching
+this. Also file already has inconsistencies - 0x0 mixed with 0.
 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
-> >  1 file changed, 16 insertions(+), 3 deletions(-)
-> >
-> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > index 0cb79676c139..c5af1d5ec4be 100644
-> > --- a/rust/kernel/miscdevice.rs
-> > +++ b/rust/kernel/miscdevice.rs
-> > @@ -104,7 +104,7 @@ pub trait MiscDevice {
-> >      /// Called when the misc device is opened.
-> >      ///
-> >      /// The returned pointer will be stored as the private data for th=
-e file.
-> > -    fn open(_file: &File) -> Result<Self::Ptr>;
-> > +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Res=
-ult<Self::Ptr>;
-> >
-> >      /// Called when the misc device is released.
-> >      fn release(device: Self::Ptr, _file: &File) {
-> > @@ -190,14 +190,27 @@ impl<T: MiscDevice> VtableHelper<T> {
-> >          return ret;
-> >      }
-> >
-> > +    // SAFETY: The opwn call of a file can access the private data.
->
-> s/opwn/open/ :)
->
-> > +    let misc_ptr =3D unsafe { (*file).private_data };
->
-> Blank line here?
->
-> > +    // SAFETY: This is a miscdevice, so `misc_open()` set the private =
-data to a pointer to the
-> > +    // associated `struct miscdevice` before calling into this method.=
- Furthermore, `misc_open()`
-> > +    // ensures that the miscdevice can't be unregistered and freed dur=
-ing this call to `fops_open`.
->
-> Aren't we wrapping comment lines at 80 columns still?  I can't remember
-> anymore...
 
-Not sure what the rules are, but I don't think Rust comments are being
-wrapped at 80.
 
-> > +    let misc =3D unsafe { &*misc_ptr.cast::<MiscDeviceRegistration<T>>=
-() };
-> > +
-> >      // SAFETY:
-> > -    // * The file is valid for the duration of this call.
-> > +    // * The file is valid for the duration of the `T::open` call.
->
-> It's valid for the lifespan between open/release.
->
-> >      // * There is no active fdget_pos region on the file on this threa=
-d.
-> > -    let ptr =3D match T::open(unsafe { File::from_raw_file(file) }) {
-> > +    let file =3D unsafe { File::from_raw_file(file) };
-> > +
-> > +    let ptr =3D match T::open(file, misc) {
-> >          Ok(ptr) =3D> ptr,
-> >          Err(err) =3D> return err.to_errno(),
-> >      };
-> >
-> > +    // This overwrites the private data from above. It makes sense to =
-not hold on to the misc
-> > +    // pointer since the `struct miscdevice` can get unregistered as s=
-oon as we return from this
-> > +    // call, so the misc pointer might be dangling on future file oper=
-ations.
-> > +    //
->
-> Wait, what are we overwriting this here with?  Now private data points
-> to the misc device when before it was the file structure.  No other code
-> needed to be changed because of that?  Can't we enforce this pointer
-> type somewhere so that any casts in any read/write/ioctl also "knows" it
-> has the right type?  This feels "dangerous" to me.
-
-Ultimately, when interfacing with C code using void pointers, Rust is
-going to need a pointer cast somewhere to assert what the type is.
-With the current design, that place is the fops_* functions. We need
-to get the pointer casts right there, but anywhere else the types are
-enforced.
-
-> >      // SAFETY: The open call of a file owns the private data.
-> >      unsafe { (*file).private_data =3D ptr.into_foreign().cast_mut() };
->
-> Is this SAFETY comment still correct?
-
-Well, it could probably be worded better at least. The point is that
-nobody else is going to touch this field and we can do what we want
-with it.
-
-Alice
+Best regards,
+Krzysztof
 
