@@ -1,179 +1,198 @@
-Return-Path: <linux-kernel+bounces-437884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 048D59E9A14
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:11:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FB6E9E9A17
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:11:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8102A1885EC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:11:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9802D161247
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A07C1BEF72;
-	Mon,  9 Dec 2024 15:11:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2EE1C5CA0;
+	Mon,  9 Dec 2024 15:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b="QqJEAl3r";
-	dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b="pB47Z69O"
-Received: from s1.sapience.com (s1.sapience.com [72.84.236.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i97qv8dI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD9F4233133;
-	Mon,  9 Dec 2024 15:11:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=72.84.236.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733757081; cv=fail; b=OFvfC86Evbya9EwckQot0Q70y8SMAw9lS1Eu7IZ3v8emuJpLEYcCiSGJQMI0fdfkr7RV24ylY6UahF65oEMLMXYpC7Xsw7P1qyupIBWIcgLAbXPA0xcxl+vA/aaI0ue8Yuq+Cuu7unRoj2KUJ/+u5i93i6gKIKgn9ctbFlKKZOA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733757081; c=relaxed/simple;
-	bh=9lUDseaQa+GMv75Q4XDP5lPqk5URrX9hhOlR18Rtbt0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=DOFVXJDO6xK4/YBiPMskPrApkagWlwWyJ6qnu01KCM9XVdk8N0FZcWfeuWkapnYFvSvPm4ly2gG/3c0eecrFhQchSmm8N04R8fVfwfvZRmZls9IuwhIRppl7ItDqvwasKeNF8qZ7q8Ih6hfN3QZ3TCNqbvzf4Y9jpzBPprgY8P0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com; spf=pass smtp.mailfrom=sapience.com; dkim=permerror (0-bit key) header.d=sapience.com header.i=@sapience.com header.b=QqJEAl3r; dkim=pass (2048-bit key) header.d=sapience.com header.i=@sapience.com header.b=pB47Z69O; arc=fail smtp.client-ip=72.84.236.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sapience.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sapience.com
-Authentication-Results: dkim-srvy7; dkim=pass (Good ed25519-sha256 
-   signature) header.d=sapience.com header.i=@sapience.com 
-   header.a=ed25519-sha256; dkim=pass (Good 2048 bit rsa-sha256 signature) 
-   header.d=sapience.com header.i=@sapience.com header.a=rsa-sha256
-Received: from srv8.sapience.com (srv8.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (secp384r1) server-digest SHA384)
-	(No client certificate requested)
-	by s1.sapience.com (Postfix) with ESMTPS id AD9F0480A33;
-	Mon, 09 Dec 2024 10:11:18 -0500 (EST)
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-ed25519-220413; t=1733757078;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=y+I0lrcFIAT6oDjUumIjTqveIGr+o6WjjTw4iAdh/Ws=;
- b=QqJEAl3rNwMZMBiJ14djxrmwDdrg5VmKHPgKWTUjR7fnHZEyNQO29XQgp9zXbbYQX2WfZ
- 6MWbj8v491ugJz2CA==
-ARC-Seal: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412; t=1733757078;
-	cv=none; b=uTX56S8oo1nytYxBfzl5OoyNxXsym/eGIepPvNe01w63zat7wRqoGHDYoeqDMI4zS3oGnJihMSWMMKn5mh9xklh7ujNGLpXvnbzW88R2sFNbBVNXwaAGwJCYTo1EgpR4m8u3pcpeajAde9ibc1Xkbq7Astavbq4irNsQksd/zytw+Hzx7aaPx1A9HCFjOwDMpX5CvI2hZeCAckAburWAW/DohOaaELlmtmlRC1rrsmJdE3ND3tHnXKZb/8pzfChGGgz+nUNdaNSiQoZOA7S8oAaFSRGGaTWyg54xwuDm1dGzWctSk537aNymIvH6k8ADzBaMeATweATmWJ3Farz2ug==
-ARC-Message-Signature: i=1; a=rsa-sha256; d=sapience.com; s=arc6-rsa-220412;
-	t=1733757078; c=relaxed/simple;
-	bh=9lUDseaQa+GMv75Q4XDP5lPqk5URrX9hhOlR18Rtbt0=;
-	h=DKIM-Signature:DKIM-Signature:Message-ID:Subject:From:To:Cc:Date:
-	 In-Reply-To:References:Autocrypt:Content-Type:User-Agent:
-	 MIME-Version; b=NP3zF/HqJbP3UWYzqd7DHsMNT64ZUaqIwi78MAJGNPg+4+HwwAlaKZvZhHFTkuvw8kvVM60RPRMQxE2eO3KSalsVirIpwdBwXokieRH71opcgL3HQHnbGkiBrZtT0QesXsZ5pYNo7735OqeONFM9m6o8dmTXpOEXfVt60XNa6sblh9RM6hbeTxpqZ+BFOW1sxls/C7HBM3KGVXypzpDslGwD5d8CCTemamWMxyXSatAdnEBBt5M1AM/LJWOaiB6NCAchON4csNLmMUqfb4tn5+SyLwne0WQbFXufD/3wk/riIm7NpJHFZtFbhHrBWH2VikNbmJ2GSVDB4ELCUpgmpw==
-ARC-Authentication-Results: i=1; arc-srv8.sapience.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sapience.com;
- i=@sapience.com; q=dns/txt; s=dk-rsa-220413; t=1733757078;
- h=message-id : subject : from : to : cc : date : in-reply-to :
- references : content-type : mime-version : from;
- bh=y+I0lrcFIAT6oDjUumIjTqveIGr+o6WjjTw4iAdh/Ws=;
- b=pB47Z69OwJinSJb/v+R3limJ1iTBvT1in1aD+MVgInpwxOy7MVdJVZ0y8+zFUBOWIxbSZ
- UmEK4bXf7iT5wtMILiHtuRxo3CFkF1dNSQEllkb0byAXLjpXPodF6q911M9wtJ325/mQrnk
- e3T72Lco6vHxexKb1GWnDqxS/AQo7ns/4CKQiSVFwElOqJGJiElmOPnn5qz4P3s3bEPt6DP
- vPNQNQPkefOPJpkOgWTB1hCp/xJ6v+4j9tnOBC0YfT43bIkbFsP6egdyUmer7XD9Qz1y6gs
- j524xcIgtC5ejIJcZiedVLgm4g4e6nvevnp55wRj53E2OjkU81VC9Yy99Dmw==
-Received: from lap7.sapience.com (lap7w.sapience.com [x.x.x.x])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	by srv8.sapience.com (Postfix) with ESMTPS id 7754B280081;
-	Mon, 09 Dec 2024 10:11:18 -0500 (EST)
-Message-ID: <5321021d929cebf7268fc163ddb92cb740c09c82.camel@sapience.com>
-Subject: Re: Linux 6.12.4 - crash dma_alloc_attrs+0x12b via ipu6
-From: Genes Lists <lists@sapience.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, akpm@linux-foundation.org, 
-	torvalds@linux-foundation.org, stable@vger.kernel.org
-Cc: linux-media@vger.kernel.org, sakari.ailus@linux.intel.com, 
-	bingbu.cao@intel.com
-Date: Mon, 09 Dec 2024 10:11:17 -0500
-In-Reply-To: <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
-References: <2024120917-vision-outcast-85f2@gregkh>
-	 <c0e94be466b367f1a3cfdc3cb7b1a4f47e5953ae.camel@sapience.com>
-Autocrypt: addr=lists@sapience.com; prefer-encrypt=mutual;
- keydata=mDMEXSY9GRYJKwYBBAHaRw8BAQdAwzFfmp+m0ldl2vgmbtPC/XN7/k5vscpADq3BmRy5R
- 7y0LU1haWwgTGlzdHMgKEwwIDIwMTkwNzEwKSA8bGlzdHNAc2FwaWVuY2UuY29tPoiWBBMWCAA+Ah
- sBBQsJCAcCBhUKCQgLAgQWAgMBAh4BAheAFiEE5YMoUxcbEgQOvOMKc+dlCv6PxQAFAmPJfooFCRl
- vRHEACgkQc+dlCv6PxQAc/wEA/Dbmg91DOGXll0OW1GKaZQGQDl7fHibMOKRGC6X/emoA+wQR5FIz
- BnV/PrXbao8LS/h0tSkeXgPsYxrzvfZInIAC
-Content-Type: multipart/signed; micalg="pgp-sha384";
-	protocol="application/pgp-signature"; boundary="=-6wRbfTIBrZlGr7AxFyD4"
-User-Agent: Evolution 3.54.2 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F12233133;
+	Mon,  9 Dec 2024 15:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733757090; cv=none; b=KbcFbUTZL/ZAczv1d0H1TF1GdqYMNMZ7an2fOvKCD/6/CpUjWTaRazNj7Y+piT7okIBnWTsbgUDSTzNolRi5GIxpEx2Q9LpKoR+oH69D7EOnszo+C/58SpFze2HHDh3FsQL0BwBWPEAwf/ZQ51IKBfI0voZ9BL9ZmjPhEJRijz0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733757090; c=relaxed/simple;
+	bh=FmOlznKOYOfLj+ux44kcsjBWkD966SYEWmnJtDbp7go=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JnFFWrLTKwNniaGPPGFQaV0EDpKwIDhnAZbo4juijvBxn9sGCkv4Gk4/zDlj850goTSk9VzRlPLXcIKnA52/QpAJ2s7AtEjZQr/me5vFt7uF7xrUilC6oofHr4vvL1mkDSPwbA9Fh5GOhUtDeaRKtHJG50q5I/lsZGxGBWn4lqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i97qv8dI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE17C4CED1;
+	Mon,  9 Dec 2024 15:11:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733757089;
+	bh=FmOlznKOYOfLj+ux44kcsjBWkD966SYEWmnJtDbp7go=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i97qv8dI3bsdkF3fMLLqdxDvSJu//7KCjFPBEmwgiCgMc5DCA/cMzqVyVN/VqMqun
+	 9RtQwh818sRkQ4BzUm+tOOvexJGcG4h8nXAg7l9WB2mQ2wG0zuG5KxCocU+ViOQ9lo
+	 3eKAz8zww/Fuo0GIWTDGd+H/0Qh5TXT0iXm5EZPwIslrXfuSKLuEVYLrUqVtMP/x3L
+	 g5PyHie/QR5FFJcb/tek5/gP4JEPLyoZrR+ipjSEKJSumGvrUFJdybhYqCL+qyc48+
+	 q1uXg8gVpGJ1a6Udt+sWg+0sVruG/Jk7h8RiNIbevn2Dx/Kue0KMhAR5fHBEgxaaFQ
+	 62PYQtO6bQdiw==
+Date: Mon, 9 Dec 2024 16:11:22 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
+ from fops->open()
+Message-ID: <Z1cImntcEwsPHQgO@pollux.localdomain>
+References: <2024120954-boring-skeptic-ad16@gregkh>
+ <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
+ <2024120908-anemic-previous-3db9@gregkh>
+ <CAH5fLgjO50OsNb7sYd8fY4VNoHOzX40w3oH-24uqkuL3Ga4iVQ@mail.gmail.com>
+ <2024120939-aide-epidermal-076e@gregkh>
+ <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
+ <2024120951-botanist-exhale-4845@gregkh>
+ <CAH5fLgjxMH71fQ5A8F8JaO2c54wxCTCnuMEqnQqpV3L=2BUWEA@mail.gmail.com>
+ <Z1cGWBFm0uVA07WN@pollux.localdomain>
+ <CAH5fLgisVC15muFB0eThiMveFBoauB4jUVwW9Zez3cKT0Q=_iA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH5fLgisVC15muFB0eThiMveFBoauB4jUVwW9Zez3cKT0Q=_iA@mail.gmail.com>
 
+On Mon, Dec 09, 2024 at 04:04:48PM +0100, Alice Ryhl wrote:
+> On Mon, Dec 9, 2024 at 4:01 PM Danilo Krummrich <dakr@kernel.org> wrote:
+> >
+> > On Mon, Dec 09, 2024 at 02:36:31PM +0100, Alice Ryhl wrote:
+> > > On Mon, Dec 9, 2024 at 2:13 PM Greg Kroah-Hartman
+> > > <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Mon, Dec 09, 2024 at 01:53:42PM +0100, Alice Ryhl wrote:
+> > > > > On Mon, Dec 9, 2024 at 1:08 PM Greg Kroah-Hartman
+> > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > >
+> > > > > > On Mon, Dec 09, 2024 at 01:00:05PM +0100, Alice Ryhl wrote:
+> > > > > > > On Mon, Dec 9, 2024 at 12:53 PM Greg Kroah-Hartman
+> > > > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > > >
+> > > > > > > > On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
+> > > > > > > > > On Mon, Dec 9, 2024 at 12:10 PM Greg Kroah-Hartman
+> > > > > > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > > > > >
+> > > > > > > > > > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrote:
+> > > > > > > > > > > On Mon, Dec 9, 2024 at 9:48 AM Greg Kroah-Hartman
+> > > > > > > > > > > <gregkh@linuxfoundation.org> wrote:
+> > > > > > > > > > > >
+> > > > > > > > > > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
+> > > > > > > > > > > > > Providing access to the underlying `struct miscdevice` is useful for
+> > > > > > > > > > > > > various reasons. For example, this allows you access the miscdevice's
+> > > > > > > > > > > > > internal `struct device` for use with the `dev_*` printing macros.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > Note that since the underlying `struct miscdevice` could get freed at
+> > > > > > > > > > > > > any point after the fops->open() call, only the open call is given
+> > > > > > > > > > > > > access to it. To print from other calls, they should take a refcount on
+> > > > > > > > > > > > > the device to keep it alive.
+> > > > > > > > > > > >
+> > > > > > > > > > > > The lifespan of the miscdevice is at least from open until close, so
+> > > > > > > > > > > > it's safe for at least then (i.e. read/write/ioctl/etc.)
+> > > > > > > > > > >
+> > > > > > > > > > > How is that enforced? What happens if I call misc_deregister while
+> > > > > > > > > > > there are open fds?
+> > > > > > > > > >
+> > > > > > > > > > You shouldn't be able to do that as the code that would be calling
+> > > > > > > > > > misc_deregister() (i.e. in a module unload path) would not work because
+> > > > > > > > > > the module reference count is incremented at this point in time due to
+> > > > > > > > > > the file operation module reference.
+> > > > > > > > >
+> > > > > > > > > Oh .. so misc_deregister must only be called when the module is being unloaded?
+> > > > > > > >
+> > > > > > > > Traditionally yes, that's when it is called.  Do you see it happening in
+> > > > > > > > any other place in the kernel today?
+> > > > > > >
+> > > > > > > I had not looked, but I know that Binder allows dynamically creating
+> > > > > > > and removing its devices at runtime. It happens to be the case that
+> > > > > > > this is only supported when binderfs is used, which is when it doesn't
+> > > > > > > use miscdevice, so technically Binder does not call misc_deregister()
+> > > > > > > outside of module unload, but following its example it's not hard to
+> > > > > > > imagine that such removals could happen.
+> > > > > >
+> > > > > > That's why those are files and not misc devices :)
+> > > > >
+> > > > > I grepped for misc_deregister and the first driver I looked at is
+> > > > > drivers/misc/bcm-vk which seems to allow dynamic deregistration if the
+> > > > > pci device is removed.
+> > > >
+> > > > Ah, yeah, that's going to get messy and will be a problem if someone has
+> > > > the file open then.
+> > > >
+> > > > > Another tricky path is error cleanup in its probe function.
+> > > > > Technically, if probe fails after registering the misc device, there's
+> > > > > a brief moment where you could open the miscdevice before it gets
+> > > > > removed in the cleanup path, which seems to me that it could lead to
+> > > > > UAF?
+> > > > >
+> > > > > Or is there something I'm missing?
+> > > >
+> > > > Nope, that too is a window of a problem, luckily you "should" only
+> > > > register the misc device after you know the device is safe to use as
+> > > > once it is registered, it could be used so it "should" be the last thing
+> > > > you do in probe.
+> > > >
+> > > > So yes, you are right, and we do know about these issues (again see the
+> > > > talk I mentioned and some previous ones for many years at plumbers
+> > > > conferences by different people.)  It's just up to someone to do the
+> > > > work to fix them.
+> > > >
+> > > > If you think we can prevent the race in the rust side, wonderful, I'm
+> > > > all for that being a valid fix.
+> > >
+> > > The current patch prevents the race by only allowing access to the
+> > > `struct miscdevice` in fops->open(). That's safe since
+> > > `file->f_op->open` runs with `misc_mtx` held. Do we really need the
+> > > miscdevice to stay alive for longer? You can already take a refcount
+> > > on `this_device` if you want to keep the device alive for longer for
+> > > dev_* printing purposes, but it seems like that is the only field you
+> > > really need from the `struct miscdevice` past fops->open()?
+> >
+> > Good point, I also can't really see anything within struct miscdevice that a
+> > driver could need other than `this_device`.
+> >
+> > How would you provide the `device::Device` within the `MiscDevice` trait
+> > functions?
+> >
+> > If we don't guarantee that the `struct miscdevice` is still alive past open() we
+> > need to take a reference on `this_device` in open().
+> >
+> > I guess the idea would be to let `MiscDeviceRegistration` provide a function to
+> > obtain an `ARef<device::Device>`?
+> 
+> Yes, you take a refcount on the device and store an
+> ARef<device::Device> in your own struct. You would need Lee's accessor
+> to obtain the device refcount:
+> https://lore.kernel.org/all/20241206090515.752267-3-lee@kernel.org/
 
---=-6wRbfTIBrZlGr7AxFyD4
-Content-Type: multipart/alternative; boundary="=-a/TPufZFI2QvsdAEVNhh"
+Sounds good!
 
---=-a/TPufZFI2QvsdAEVNhh
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, 2024-12-09 at 09:52 -0500, Genes Lists wrote:
-> ortly after booting in dma_alloc_attrs - maybe
-> triggered in ipu6_probe.=C2=A0
-
->=20
-Mainline v6.13-rc2 =C2=A0works fine on same hardware (i did need to add the
-drm patches [1] without which there are no graphics).
-
-gene
-
-=C2=A0[1] drm fixes required with mainline:
-=C2=A0=C2=A0https://patchwork.freedesktop.org/series/141911/
-
-
---=20
-Gene
-
-
---=-a/TPufZFI2QvsdAEVNhh
-Content-Type: text/html; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-<html><head><style>pre,code,address {
-  margin: 0px;
-}
-h1,h2,h3,h4,h5,h6 {
-  margin-top: 0.2em;
-  margin-bottom: 0.2em;
-}
-ol,ul {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-blockquote {
-  margin-top: 0em;
-  margin-bottom: 0em;
-}
-</style></head><body><div>On Mon, 2024-12-09 at 09:52 -0500, Genes Lists wr=
-ote:</div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-left=
-:2px #729fcf solid;padding-left:1ex"><div>ortly after booting in dma_alloc_=
-attrs - maybe</div><div>triggered in ipu6_probe.&nbsp;</div></blockquote><d=
-iv><br></div><blockquote type=3D"cite" style=3D"margin:0 0 0 .8ex; border-l=
-eft:2px #729fcf solid;padding-left:1ex"><div><br></div></blockquote><div>Ma=
-inline v6.13-rc2 &nbsp;works fine on same hardware (i did need to add the d=
-rm patches [1] without which there are no graphics).</div><div><br></div><d=
-iv>gene</div><div><br></div><div>&nbsp;[1] drm fixes required with mainline=
-: &nbsp;&nbsp;<a href=3D"https://patchwork.freedesktop.org/series/141911/" =
-title=3D"Click to open https://patchwork.freedesktop.org/series/141911/">ht=
-tps://patchwork.freedesktop.org/series/141911/</a></div><div><br></div><div=
-><br></div><div><span><pre>-- <br></pre><div><span style=3D"background-colo=
-r: inherit;">Gene</span></div><div><br></div></span></div></body></html>
-
---=-a/TPufZFI2QvsdAEVNhh--
-
---=-6wRbfTIBrZlGr7AxFyD4
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYJAB0WIQRByXNdQO2KDRJ2iXo5BdB0L6Ze2wUCZ1cIlQAKCRA5BdB0L6Ze
-29EKAP44VRkdLt28sNJil/UDLnnYh51xITettzWke4J4JkPwlQEA7Gx98mx3WpmI
-nJ3Bm4SkZUMN13cYzPqkeiC39RFM3Qs=
-=Bb2c
------END PGP SIGNATURE-----
-
---=-6wRbfTIBrZlGr7AxFyD4--
+> 
+> Alice
 
