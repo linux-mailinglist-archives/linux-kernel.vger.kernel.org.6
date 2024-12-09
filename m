@@ -1,124 +1,144 @@
-Return-Path: <linux-kernel+bounces-436974-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9CD09E8D66
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:30:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6564D9E8D7F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:33:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58982282655
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:30:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21CF028141E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF0621518F;
-	Mon,  9 Dec 2024 08:30:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8612D215F48;
+	Mon,  9 Dec 2024 08:32:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L4qev80Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="flBhOtwv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F9B2156F3;
-	Mon,  9 Dec 2024 08:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E58812CDAE;
+	Mon,  9 Dec 2024 08:32:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733733002; cv=none; b=YKpxNn88GyZ0WmUEVXsFF/s3xjY+pguJn9giImv4Ck68M+/D5eD2cLYhEmoeWbYBuvflF1jqjJuwdNvyZSSkZ9Mv91Gi2w3jdzt7JRPWKlUuXsuq8TTe+GEmnhJm6ZKFDhc2IQn5fFR8hppavspUIsse2AVXU3rZ+ASLy4Bp4lg=
+	t=1733733176; cv=none; b=tv9DSpM89DcDsM88/NjmomedVi8sLwoctJyTyaR+UP5aJFv5Uth4OraTW8hOvGAAOxNGhP/zh7muZg3JK4sZGuAeBf8yvO7HlbIsXoidh9q3yCLh8Ig6agNPQdz38rhExtIh0yrDzN6JbO8QwVi2KOsbEehT0fCbMpi8aAFZhO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733733002; c=relaxed/simple;
-	bh=hefcKfevFSAoEM61KtOENmpzPHMyrIir5nAPgdsgUUk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bEe2+Jvd4zkwU5pYj+//KQzvSJSW7YGaq348dMR148oXCVYhKE9RljQNXxwEUAQThg0EEpDWgRc24mGOGuyjwQwql0F6vawxVFJCVHOEBKCMBGKLBxrkPO0AUgSdrNlUDSmzA0PrdBI8Y2BoBc8Gp9v3HRS900FZw90IPysCh+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L4qev80Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DAC0C4CED1;
-	Mon,  9 Dec 2024 08:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733733002;
-	bh=hefcKfevFSAoEM61KtOENmpzPHMyrIir5nAPgdsgUUk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=L4qev80ZqVUxrGI/ByF3mlXqjOKaEr1fR9eE4OFZKnGQGbFBxFTdRXD/bo3oEqw3h
-	 3szdQa5l8oF0epWqAgq2vhdoP/gahZ+jeZDGUyPAjs50bqP74JEdGz82qWiGdwa9NA
-	 GL4gE/t9WU+AWxNr4zkHVEejbO8oTPCxl8H63ZlnknrUV4TXUbxnVfsHTRLm6A3Cne
-	 RVHMU3DWI2di8PHY/T7uZLByn/jLyW+d7jkiWimsAoFzKD+67e9olj5WuGDX/opxr6
-	 H5o0XX9z6ZSiB6EgaDaKVuYZfE1Jss+P/Gc92dj5cjgc/0YU1kkeUK2o/WeDpx4KVu
-	 QACsk5uUYtg8w==
-Date: Mon, 9 Dec 2024 09:29:58 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Markuss Broks <markuss.broks@gmail.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Tudor Ambarus <tudor.ambarus@linaro.org>, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org, 
-	kernel-team@android.com, willmcvicker@google.com, peter.griffin@linaro.org, 
-	javierm@redhat.com, tzimmermann@suse.de, vincent.guittot@linaro.org, 
-	ulf.hansson@linaro.org, arnd@arndb.de
-Subject: Re: [PATCH v3 2/3] firmware: add exynos ACPM protocol driver
-Message-ID: <faghtvhan6xmhoezeaocmdusxkmy4g3vrldzn7mlukbh33isr6@c27o6p7a6a6f>
-References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
- <20241205175345.201595-3-tudor.ambarus@linaro.org>
- <ce757b8e-4e6c-4ba9-9483-b57e6e230fdf@linaro.org>
- <vxqi23hxw7bmtfs5wk3u7szganpv5aa74b26xrvpmbehkltodw@dpum7zrxdz44>
- <2eedbbe1-6b4c-427b-a369-5b08dc27deaf@linaro.org>
- <0ba62a72-8247-447f-b710-234385a29d14@gmail.com>
+	s=arc-20240116; t=1733733176; c=relaxed/simple;
+	bh=kWbSDc4zKYb7mqhta/tab0rzINa76RA67wW2nh2fj3k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=K9jOm2g9fDWzMWWlY/oY/r3Oz6pHOSOA1019Bxb02ZRpxCiBN9wXkBldAQxoxl0BT6mVByRQ7HkoZu8qCdhBZmlFR1cSZO5hggbX7lq70ki6xFHwkVfpgef2oC8BLs4Y1pGRYohyL4LGNxLk+Hr/aGk8GYx9Tcas9zgmEjR1lE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=flBhOtwv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8NkfZg026266;
+	Mon, 9 Dec 2024 08:31:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5JWJQeMuxVdd3PTedl0CqTUR7/F63JFS3DnJm9lmHvc=; b=flBhOtwvTAsTbQgk
+	sBmsFgsMCA6vdmyTBxA/AxZGD5oWuXKoQfL4LMy/wG9ToUyfDMSl4odKNzkgLLhd
+	b9L9Gp9klloOyU3EF/zRcJ5jA7C67RZ765h09eLWrJQPx7aFReglCN85nnG24hbS
+	pzzquQcp50lQxjLw/3Q3yEt21YuKjLO/gUcZl2qk1uyaKZ+N00h7bAqxj9mEx7XV
+	1vBhBVwOZ580RkZiydKLtNvSykXwyMC1FzSXVCLHtnyhpgUw9Wr1ZkKIsHcgQvNz
+	PnrAxwoIrVR0V0FGhuTDnAna+Q7x1Suplj+sCfxY9IOamr428ztpjKsQvd5YJgK7
+	rRriRA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdaqc07g-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 08:31:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B98Vhib031537
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 08:31:43 GMT
+Received: from [10.64.68.72] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 00:31:37 -0800
+Message-ID: <66654b75-cfc2-470c-90e9-76da5e2a1f47@quicinc.com>
+Date: Mon, 9 Dec 2024 16:31:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <0ba62a72-8247-447f-b710-234385a29d14@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/3] arm64: dts: qcom: qcs615-ride: Enable UFS node
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        "Kishon Vijay Abraham I" <kishon@kernel.org>,
+        Alim Akhtar
+	<alim.akhtar@samsung.com>,
+        Avri Altman <avri.altman@wdc.com>,
+        Bart Van Assche
+	<bvanassche@acm.org>,
+        "Andy Gross" <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <quic_jiegan@quicinc.com>, <quic_aiquny@quicinc.com>,
+        <quic_tingweiz@quicinc.com>, <quic_sayalil@quicinc.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20241122064428.278752-1-quic_liuxin@quicinc.com>
+ <20241122064428.278752-4-quic_liuxin@quicinc.com>
+ <20241202144844.erqdn5ltsblyhy27@thinkpad>
+From: Xin Liu <quic_liuxin@quicinc.com>
+In-Reply-To: <20241202144844.erqdn5ltsblyhy27@thinkpad>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: N23WULfSTj1uOtbJc5r9tM0RNtCt1BYi
+X-Proofpoint-ORIG-GUID: N23WULfSTj1uOtbJc5r9tM0RNtCt1BYi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
+ clxscore=1015 suspectscore=0 priorityscore=1501 lowpriorityscore=0
+ adultscore=0 mlxlogscore=999 bulkscore=0 mlxscore=0 spamscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090065
 
-On Sun, Dec 08, 2024 at 06:38:50PM +0200, Markuss Broks wrote:
->=20
-> On 12/6/24 9:50 PM, Daniel Lezcano wrote:
-> > On 12/6/24 14:28, Krzysztof Kozlowski wrote:
-> > > On Fri, Dec 06, 2024 at 12:39:56AM +0100, Daniel Lezcano wrote:
-> > > > > +# SPDX-License-Identifier: GPL-2.0-only
-> > > > > +
-> > > > > +config EXYNOS_ACPM_PROTOCOL
-> > > > > +=C2=A0=C2=A0=C2=A0 tristate "Exynos Alive Clock and Power Manage=
-r (ACPM)
-> > > > > Message Protocol"
-> > > >=20
-> > > > Given the importance of this driver where a lot of PM services
-> > > > rely on, does
-> > > > it really make sense to allow it as a module ?
-> > > >=20
-> > > > Some PM services may be needed very early in the boot process
-> > > >=20
-> > >=20
-> > > If it works as module e.g. on Android, it is beneficial. I think the
-> > > platform was booting fine without it, at least to some shell, so I can
-> > > imagine this can be loaded a bit later.
-> >=20
-> > Usually the firmware sets the frequency to the maximum in order to boot
-> > the kernel as fast as possible. That may lead to thermal issues at boot
-> > time where the thermal framework won't be able to kick in as some
-> > components will depends on ACPM while the system stays at its highest
-> > performance state.
 
-I disagree with the first assumption: usually firmware selects high, but
-safe frequency. Otherwise you would not be able to wait in bootloader
-prompt.
 
-> Also, as far as I understand, ACPM is used here as an interface to the PM=
-IC,
-> so every driver which would need power management from the main SoC PMIC
-> would get deferred until the ACPM module has been loaded. This would make=
- it
-
-It was an issue 10 years ago, not anymore. Drivers handle deferred
-probe.
-
-> impossible to e.g. initialize the UFS or the MMC card before initramfs.
-
-Which is not a problem, because you are supposed to have initramfs. This
-is preferred way. Being this a module does not force you to use it as a
-module, e.g. if in your setup you do not have initramfs (although it is
-unlikely for arm64 platforms...).
-
-Best regards,
-Krzysztof
+在 2024/12/2 22:48, Manivannan Sadhasivam 写道:
+> On Fri, Nov 22, 2024 at 02:44:28PM +0800, Xin Liu wrote:
+>> From: Sayali Lokhande <quic_sayalil@quicinc.com>
+>>
+>> Enable UFS on the Qualcomm QCS615 Ride platform.
+>>
+>> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+>> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+>> Co-developed-by: Xin Liu <quic_liuxin@quicinc.com>
+>> Signed-off-by: Xin Liu <quic_liuxin@quicinc.com>
+> 
+> Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> One question below.
+> 
+>> ---
+>>   arch/arm64/boot/dts/qcom/qcs615-ride.dts | 16 ++++++++++++++++
+>>   1 file changed, 16 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> index ee6cab3924a6..79634646350b 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+>> @@ -214,6 +214,22 @@ &uart0 {
+>>   	status = "okay";
+>>   };
+>>   
+>> +&ufs_mem_hc {
+> 
+> No 'reset-gpios' to reset the UFS device?
+I will check it, and fix it next version.
+> 
+> - Mani
+> 
 
 
