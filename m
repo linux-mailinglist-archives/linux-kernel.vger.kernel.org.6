@@ -1,463 +1,148 @@
-Return-Path: <linux-kernel+bounces-437213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E12469E9063
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:36:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5711C1886FE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:36:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D59C217658;
-	Mon,  9 Dec 2024 10:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZIIrI962"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAF9D9E9068
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:37:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5C2216E3B;
-	Mon,  9 Dec 2024 10:35:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A172835FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:37:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2267B21A925;
+	Mon,  9 Dec 2024 10:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="n7xPbqvo"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8AA9217722;
+	Mon,  9 Dec 2024 10:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733740522; cv=none; b=aQWn5Hh1A+snRDnwKrjeT9SPIXvKF6IIq91FyaNsKFK32/b+8G+4tljRMbdEmfnUN4wE0/bo3cwwmDiv/cLA6LlZh//xS30dmgl0P21Nq1WMRoqXw0fNxMgSXeaE/ywmev86N5JgD/2qb8dq+0vFPzybulWDmDvHQbpVH3BRxok=
+	t=1733740529; cv=none; b=KKc6uJ8Kl4sEDDRdO2x5VDmQV3fqDLb6E49RdF4cW+7z/Bi+NOlMn/Bvl4PqZSDCDK30H8S/pZabHTvBkmTK1lh1904rL1zme7nUqvP+6mWQoZXppfQMs61vhcSFMXYZyZiBX/kupPvf6md4XndCbuGdvcG/XK0g2+1d7So95Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733740522; c=relaxed/simple;
-	bh=V5LBcTHLhKacE07FccmaYdNmNLE5eTgn9lJ+cRDgDdQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Qz/uuk5lvlArK+Ec1JHkQZ7QgIMKt1ZRVfl+4G9frDkxcUBPE4floanzKGod/zZCQlp0uvk2FZWcOBfpipKvFY41oGG9uIYTdGBtSNpsR5XBwZ7MA5aypba9qBcJ/ALGliFG35pf0w7S2548WMNuj0iTds6+Hf2G8pxBweGzZPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZIIrI962; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 4B9AYknv090518;
-	Mon, 9 Dec 2024 04:34:46 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1733740486;
-	bh=IsPw+LQRUnCnanH7t9Kuob0H3qrAiI/xNlXeOV0nBHI=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ZIIrI962/DAEdDYaDYgVnnpsNxmI+8K+RXVCE7G589/gPvGKw17eYGqc/B+lVYs07
-	 Lk4QWL1aqvEfRzIZpS5HfKKEV/NEo5wT0mG8cJmYln/1FTMSIuyE6ijTyisN5Ooc5r
-	 JBBzTU2urshLjGVefvakwLO1tW0QUk6jrxpVXzL8=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B9AYkGF109951
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 9 Dec 2024 04:34:46 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 9
- Dec 2024 04:34:46 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 9 Dec 2024 04:34:46 -0600
-Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B9AYfC2088003;
-	Mon, 9 Dec 2024 04:34:41 -0600
-Message-ID: <64621290-2488-474d-b2ed-597a1f4ac85f@ti.com>
-Date: Mon, 9 Dec 2024 16:04:40 +0530
+	s=arc-20240116; t=1733740529; c=relaxed/simple;
+	bh=Z1sCkDdALyoYtaZ60KqBvmpJQQWFOf8UqjcdOXUzh/g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=D5Ahj+skhI+GU9U+bl/PRcZpyWMuZpKZNDMcfuu/BwP9Vn49HPkGKgH46C4y0Fi3dN5JGNco3bMqU4JHSiNUjs7fk4m26v4VBgB9xz7wksLo1UBhjosxwYTVGSHsNmJCNVp30iyGvfhISyL4mC5jEskvk5LM7rVGnLDExS1r4/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=n7xPbqvo; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AHxFF004758;
+	Mon, 9 Dec 2024 10:35:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=vPmslVTlyG4/imQzJq/OnI
+	aWHOfv6hepG+iVPXr2rIw=; b=n7xPbqvo7AeaU3loXDRrJrMBINbpR67RvooQKf
+	2Iyb1Rb/G3FCLMvimYNmrrfkxu48r8b7EhMmWj2ziLcdsuxOJGc6Z61C1uNEMhtX
+	fI/kQKI0PCEYT3SdrIir6+6+S2QlBCY0iFZ7aWMRPqpkuyk3fgYlOJ0P7Psphcx5
+	UmqmYFYHpnVOuYmY5wIVXVAtBchUqVOF6ePcPyQn33KLmAXby33TOrhK6+YmR+IV
+	dLHpIsUTz5ARIGGZJyZhhgKxIaVPBbRE6kqkl8sLr2aRWznZfhAlVrK8zHiq6CR4
+	ZH/Wh8QTOL3DyR/MEx15VIs8fV7H3uJoxBAQG2FXTyf0OIPA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cek1v8y1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 10:35:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9AZInn009133
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 10:35:18 GMT
+Received: from hu-janathot-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 9 Dec 2024 02:35:12 -0800
+From: Janaki Ramaiah Thota <quic_janathot@quicinc.com>
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad Dybcio" <konradybcio@kernel.org>,
+        Marcel Holtmann
+	<marcel@holtmann.org>,
+        "Luiz Augusto von Dentz" <luiz.dentz@gmail.com>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <quic_mohamull@quicinc.com>, <quic_hbandi@quicinc.com>,
+        <quic_anubhavg@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-bluetooth@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v5 0/4] Enable Bluetooth on qcs6490-rb3gen2 board
+Date: Mon, 9 Dec 2024 16:04:51 +0530
+Message-ID: <20241209103455.9675-1-quic_janathot@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v3 1/2] net: ti: icssg-prueth: Fix firmware load
- sequence.
-To: Roger Quadros <rogerq@kernel.org>, <vigneshr@ti.com>,
-        <jan.kiszka@siemens.com>, <javier.carrasco.cruz@gmail.com>,
-        <diogo.ivo@siemens.com>, <jacob.e.keller@intel.com>,
-        <horms@kernel.org>, <pabeni@redhat.com>, <kuba@kernel.org>,
-        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <danishanwar@ti.com>
-References: <20241205082831.777868-1-m-malladi@ti.com>
- <20241205082831.777868-2-m-malladi@ti.com>
- <a86bc0b1-8bb4-477e-b7e1-13921bf47b53@kernel.org>
-Content-Language: en-US
-From: Meghana Malladi <m-malladi@ti.com>
-In-Reply-To: <a86bc0b1-8bb4-477e-b7e1-13921bf47b53@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4qDlE6bNxjsjQ2P-WidDJ7txcN4DYQHo
+X-Proofpoint-ORIG-GUID: 4qDlE6bNxjsjQ2P-WidDJ7txcN4DYQHo
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
+ mlxscore=0 adultscore=0 clxscore=1011 malwarescore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090082
+
+- Patch 1/4 Add description of the PMU of the WCN6750 module.
+- Patch 2/4 add and enable BT node for qcs6490-rb3gen board.
+- Patch 3/4 use the power sequencer for wcn6750.
+- Patch 4/4 add support for the WCN6750 PMU.
+
+----
+Changes from v4:
+* Added reviewed tag by Krzysztof in p1
+* Updated the p2 commit message with sw_ctrl and wifi-enable are
+  handled in wifi FW.
+* Added blank line between the nodes in p2
+* Placed the structures in proper order in p4
+* Link to v4: https://lore.kernel.org/all/20241204131706.20791-1-quic_janathot@quicinc.com/
+
+Changes from v3:
+* Defined the PMU node and used the its output to power up BT
+* Used power sequencer for wcn wcn6750 module
+* Split the patch to multiple as per subtree
+* Add description of the PMU of the WCN6750 module
+* Include separate UART state node for sleep pin configuarion
+* Link to v3: https://lore.kernel.org/linux-arm-msm/20241022104600.3228-1-quic_janathot@quicinc.com/
+
+Changes from v2:
+* Sorted nodes alphabetically
+* Link to v2: https://lore.kernel.org/linux-arm-msm/20241010105107.30118-1-quic_janathot@quicinc.com/
+
+Changes from v1:
+* Corrected the board name in subject
+* Link to v1: https://lore.kernel.org/linux-arm-msm/20241009111436.23473-1-quic_janathot@quicinc.com/
+
+Janaki Ramaiah Thota (4):
+  regulator:·dt-bindings:·qcom,qca6390-pmu:·document wcn6750-pmu
+  arm64: dts: qcom: qcs6490-rb3gen: add and enable BT node
+  Bluetooth: hci_qca: use the power sequencer for wcn6750
+  power: sequencing: qcom-wcn: add support for the WCN6750 PMU
+
+ .../bindings/regulator/qcom,qca6390-pmu.yaml  |  27 +++
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  | 168 +++++++++++++++++-
+ drivers/bluetooth/hci_qca.c                   |   2 +-
+ drivers/power/sequencing/pwrseq-qcom-wcn.c    |  22 +++
+ 4 files changed, 217 insertions(+), 2 deletions(-)
+
+-- 
 
 
-
-On 05/12/24 18:38, Roger Quadros wrote:
-> Hi,
-> 
-> On 05/12/2024 10:28, Meghana Malladi wrote:
->> From: MD Danish Anwar <danishanwar@ti.com>
->>
->> Timesync related operations are ran in PRU0 cores for both ICSSG SLICE0
->> and SLICE1. Currently whenever any ICSSG interface comes up we load the
->> respective firmwares to PRU cores and whenever interface goes down, we
->> stop the resective cores. Due to this, when SLICE0 goes down while
->> SLICE1 is still active, PRU0 firmwares are unloaded and PRU0 core is
->> stopped. This results in clock jump for SLICE1 interface as the timesync
->> related operations are no longer running.
->>
->> As there are interdependencies between SLICE0 and SLICE1 firmwares,
->> fix this by running both PRU0 and PRU1 firmwares as long as at least 1
->> ICSSG interface is up. Add new flag in prueth struct to check if all
->> firmwares are running.
->>
->> Use emacs_initialized as reference count to load the firmwares for the
->> first and last interface up/down. Moving init_emac_mode and fw_offload_mode
->> API outside of icssg_config to icssg_common_start API as they need
->> to be called only once per firmware boot.
->>
->> Fixes: c1e0230eeaab ("net: ti: icss-iep: Add IEP driver")
->> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
->> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
->> ---
->>
->> Hi all,
->>
->> This patch is based on net-next tagged next-20241128.
->> v2:https://lore.kernel.org/all/20241128122931.2494446-2-m-malladi@ti.com/
->>
->> * Changes since v2 (v3-v2):
->> - error handling in caller function of prueth_emac_common_start()
->> - Use prus_running flag check before stopping the firmwares
->> Both suggested by Roger Quadros <rogerq@kernel.org>
->>
->>   drivers/net/ethernet/ti/icssg/icssg_config.c |  45 ++++--
->>   drivers/net/ethernet/ti/icssg/icssg_config.h |   1 +
->>   drivers/net/ethernet/ti/icssg/icssg_prueth.c | 157 ++++++++++++-------
->>   drivers/net/ethernet/ti/icssg/icssg_prueth.h |   5 +
->>   4 files changed, 140 insertions(+), 68 deletions(-)
->>
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_config.c b/drivers/net/ethernet/ti/icssg/icssg_config.c
->> index 5d2491c2943a..342150756cf7 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_config.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_config.c
->> @@ -397,7 +397,7 @@ static int prueth_emac_buffer_setup(struct prueth_emac *emac)
->>   	return 0;
->>   }
->>
-[ ... ]
-
->> +static int prueth_emac_common_start(struct prueth *prueth)
->> +{
->> +	struct prueth_emac *emac;
->> +	int ret = 0;
->> +	int slice;
->> +
->> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
->> +		return -EINVAL;
->> +
->> +	/* clear SMEM and MSMC settings for all slices */
->> +	memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
->> +	memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
->> +
->> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE0, 0, false);
->> +	icssg_class_default(prueth->miig_rt, ICSS_SLICE1, 0, false);
->> +
->> +	if (prueth->is_switch_mode || prueth->is_hsr_offload_mode)
->> +		icssg_init_fw_offload_mode(prueth);
->> +	else
->> +		icssg_init_emac_mode(prueth);
->> +
->> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
->> +		emac = prueth->emac[slice];
->> +		if (emac) {
->> +			ret |= icssg_config(prueth, emac, slice);
->> +			if (ret)
->> +				return ret;
->> +		}
->> +		ret |= prueth_emac_start(prueth, slice);
->> +	}
-> 
-> need newline?
-> 
-
-Yes I will add it.
-
->> +	if (!ret)
->> +		prueth->prus_running = 1;
->> +	else
->> +		return ret;
->> +
->> +	emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
->> +	       prueth->emac[ICSS_SLICE1];
->> +	ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
->> +			    emac, IEP_DEFAULT_CYCLE_TIME_NS);
->> +	if (ret) {
->> +		dev_err(prueth->dev, "Failed to initialize IEP module\n");
->> +		return ret;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static int prueth_emac_common_stop(struct prueth *prueth)
->> +{
->> +	struct prueth_emac *emac;
->> +	int slice;
->> +
->> +	if (!prueth->emac[ICSS_SLICE0] && !prueth->emac[ICSS_SLICE1])
->> +		return -EINVAL;
->> +
->> +	icssg_class_disable(prueth->miig_rt, ICSS_SLICE0);
->> +	icssg_class_disable(prueth->miig_rt, ICSS_SLICE1);
->> +
->> +	for (slice = 0; slice < PRUETH_NUM_MACS; slice++) {
->> +		if (prueth->prus_running) {
->> +			rproc_shutdown(prueth->txpru[slice]);
->> +			rproc_shutdown(prueth->rtu[slice]);
->> +			rproc_shutdown(prueth->pru[slice]);
->> +		}
->> +	}
->> +	prueth->prus_running = 0;
->> +
->> +	emac = prueth->emac[ICSS_SLICE0] ? prueth->emac[ICSS_SLICE0] :
->> +	       prueth->emac[ICSS_SLICE1];
->> +	icss_iep_exit(emac->iep);
-> 
-> if icss_iep_init() failed at prueth_emac_common_start(), we should not be
-> calling icss_iep_exit(). Maybe you need another flag for iep_init status?
-> 
-
-Yes I have thought of it as well. In icss_iep_init() does lot of iep 
-register configuration and in the end it enables iep by setting 
-IEP_CNT_ENABLE bit and ptp_clock_register(). Whereas in icss_iep_exit() 
-it checks for ptp_clock and pps/perout. And calls icss_iep_disable() 
-which again clears IEP_CNT_ENABLE.
-
-So I see no harm in calling icss_iep_exit() even if icss_iep_init() as 
-it overwrites the existing configuration only. But if you think this 
-doesn't look good I can definitely add new flag for iep as well. But IMO 
-I think this flag would be redundant, please correct me if I am wrong. 
-So which one sounds better?
-
-> Is it better to call icss_iep_exit() at the top before icssg_class_disable()?
-> 
->> +
->> +	return 0;
->> +}
->> +
->>   /* called back by PHY layer if there is change in link state of hw port*/
->>   static void emac_adjust_link(struct net_device *ndev)
->>   {
->> @@ -369,12 +432,13 @@ static void prueth_iep_settime(void *clockops_data, u64 ns)
->>   {
->>   	struct icssg_setclock_desc __iomem *sc_descp;
->>   	struct prueth_emac *emac = clockops_data;
->> +	struct prueth *prueth = emac->prueth;
->>   	struct icssg_setclock_desc sc_desc;
->>   	u64 cyclecount;
->>   	u32 cycletime;
->>   	int timeout;
->>   
->> -	if (!emac->fw_running)
->> +	if (!prueth->prus_running)
->>   		return;
->>   
->>   	sc_descp = emac->prueth->shram.va + TIMESYNC_FW_WC_SETCLOCK_DESC_OFFSET;
->> @@ -543,23 +607,17 @@ static int emac_ndo_open(struct net_device *ndev)
->>   {
->>   	struct prueth_emac *emac = netdev_priv(ndev);
->>   	int ret, i, num_data_chn = emac->tx_ch_num;
->> +	struct icssg_flow_cfg __iomem *flow_cfg;
->>   	struct prueth *prueth = emac->prueth;
->>   	int slice = prueth_emac_slice(emac);
->>   	struct device *dev = prueth->dev;
->>   	int max_rx_flows;
->>   	int rx_flow;
->>   
->> -	/* clear SMEM and MSMC settings for all slices */
->> -	if (!prueth->emacs_initialized) {
->> -		memset_io(prueth->msmcram.va, 0, prueth->msmcram.size);
->> -		memset_io(prueth->shram.va, 0, ICSSG_CONFIG_OFFSET_SLICE1 * PRUETH_NUM_MACS);
->> -	}
->> -
->>   	/* set h/w MAC as user might have re-configured */
->>   	ether_addr_copy(emac->mac_addr, ndev->dev_addr);
->>   
->>   	icssg_class_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
->> -	icssg_class_default(prueth->miig_rt, slice, 0, false);
->>   	icssg_ft1_set_mac_addr(prueth->miig_rt, slice, emac->mac_addr);
->>   
->>   	/* Notify the stack of the actual queue counts. */
->> @@ -597,18 +655,23 @@ static int emac_ndo_open(struct net_device *ndev)
->>   		goto cleanup_napi;
->>   	}
->>   
->> -	/* reset and start PRU firmware */
->> -	ret = prueth_emac_start(prueth, emac);
->> -	if (ret)
->> -		goto free_rx_irq;
->> +	if (!prueth->emacs_initialized) {
->> +		ret = prueth_emac_common_start(prueth);
->> +		if (ret)
->> +			goto stop;
->> +	}
->>   
->> -	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
->> +	flow_cfg = emac->dram.va + ICSSG_CONFIG_OFFSET + PSI_L_REGULAR_FLOW_ID_BASE_OFFSET;
->> +	writew(emac->rx_flow_id_base, &flow_cfg->rx_base_flow);
->> +	ret = emac_fdb_flow_id_updated(emac);
->>   
->> -	if (!prueth->emacs_initialized) {
->> -		ret = icss_iep_init(emac->iep, &prueth_iep_clockops,
->> -				    emac, IEP_DEFAULT_CYCLE_TIME_NS);
->> +	if (ret) {
->> +		netdev_err(ndev, "Failed to update Rx Flow ID %d", ret);
->> +		goto stop;
->>   	}
->>   
->> +	icssg_mii_update_mtu(prueth->mii_rt, slice, ndev->max_mtu);
->> +
->>   	ret = request_threaded_irq(emac->tx_ts_irq, NULL, prueth_tx_ts_irq,
->>   				   IRQF_ONESHOT, dev_name(dev), emac);
->>   	if (ret)
->> @@ -653,8 +716,7 @@ static int emac_ndo_open(struct net_device *ndev)
->>   free_tx_ts_irq:
->>   	free_irq(emac->tx_ts_irq, emac);
->>   stop:
->> -	prueth_emac_stop(emac);
->> -free_rx_irq:
->> +	prueth_emac_common_stop(prueth);
->>   	free_irq(emac->rx_chns.irq[rx_flow], emac);
->>   cleanup_napi:
->>   	prueth_ndev_del_tx_napi(emac, emac->tx_ch_num);
->> @@ -689,8 +751,6 @@ static int emac_ndo_stop(struct net_device *ndev)
->>   	if (ndev->phydev)
->>   		phy_stop(ndev->phydev);
->>   
->> -	icssg_class_disable(prueth->miig_rt, prueth_emac_slice(emac));
->> -
->>   	if (emac->prueth->is_hsr_offload_mode)
->>   		__dev_mc_unsync(ndev, icssg_prueth_hsr_del_mcast);
->>   	else
->> @@ -728,11 +788,9 @@ static int emac_ndo_stop(struct net_device *ndev)
->>   	/* Destroying the queued work in ndo_stop() */
->>   	cancel_delayed_work_sync(&emac->stats_work);
->>   
->> -	if (prueth->emacs_initialized == 1)
->> -		icss_iep_exit(emac->iep);
->> -
->>   	/* stop PRUs */
->> -	prueth_emac_stop(emac);
->> +	if (prueth->emacs_initialized == 1)
->> +		prueth_emac_common_stop(prueth);
->>   
->>   	free_irq(emac->tx_ts_irq, emac);
->>   
->> @@ -1069,16 +1127,10 @@ static void prueth_emac_restart(struct prueth *prueth)
->>   	icssg_set_port_state(emac1, ICSSG_EMAC_PORT_DISABLE);
->>   
->>   	/* Stop both pru cores for both PRUeth ports*/
->> -	prueth_emac_stop(emac0);
->> -	prueth->emacs_initialized--;
->> -	prueth_emac_stop(emac1);
->> -	prueth->emacs_initialized--;
->> +	prueth_emac_common_stop(prueth);
->>   
->>   	/* Start both pru cores for both PRUeth ports */
->> -	prueth_emac_start(prueth, emac0);
->> -	prueth->emacs_initialized++;
->> -	prueth_emac_start(prueth, emac1);
->> -	prueth->emacs_initialized++;
->> +	prueth_emac_common_start(prueth);
-> 
-> But this can fail? You need to deal with failure condition appropriately.
-> 
-
-I haven't added failure conditions for two reasons:
-- Existing code also didn't have any error checks
-- This func simply reloads a new firmware, given everything is already 
-working with the old one.
-
-I can still handle error cases by changing this func to return int 
-(currently it is void) and caller of the functions should print error 
-and immediately return. Thoughts on this?
-
->>   
->>   	/* Enable forwarding for both PRUeth ports */
->>   	icssg_set_port_state(emac0, ICSSG_EMAC_PORT_FORWARD);
->> @@ -1413,13 +1465,10 @@ static int prueth_probe(struct platform_device *pdev)
->>   		prueth->pa_stats = NULL;
->>   	}
->>   
->> -	if (eth0_node) {
->> +	if (eth0_node || eth1_node) {
->>   		ret = prueth_get_cores(prueth, ICSS_SLICE0, false);
->>   		if (ret)
->>   			goto put_cores;
->> -	}
->> -
->> -	if (eth1_node) {
->>   		ret = prueth_get_cores(prueth, ICSS_SLICE1, false);
->>   		if (ret)
->>   			goto put_cores;
->> @@ -1618,14 +1667,12 @@ static int prueth_probe(struct platform_device *pdev)
->>   	pruss_put(prueth->pruss);
->>   
->>   put_cores:
->> -	if (eth1_node) {
->> -		prueth_put_cores(prueth, ICSS_SLICE1);
->> -		of_node_put(eth1_node);
->> -	}
->> -
->> -	if (eth0_node) {
->> +	if (eth0_node || eth1_node) {
->>   		prueth_put_cores(prueth, ICSS_SLICE0);
->>   		of_node_put(eth0_node);
->> +
->> +		prueth_put_cores(prueth, ICSS_SLICE1);
->> +		of_node_put(eth1_node);
->>   	}
->>   
->>   	return ret;
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> index f5c1d473e9f9..b30f2e9a73d8 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> @@ -257,6 +257,7 @@ struct icssg_firmwares {
->>    * @is_switchmode_supported: indicates platform support for switch mode
->>    * @switch_id: ID for mapping switch ports to bridge
->>    * @default_vlan: Default VLAN for host
->> + * @prus_running: flag to indicate if all pru cores are running
->>    */
->>   struct prueth {
->>   	struct device *dev;
->> @@ -298,6 +299,7 @@ struct prueth {
->>   	int default_vlan;
->>   	/** @vtbl_lock: Lock for vtbl in shared memory */
->>   	spinlock_t vtbl_lock;
->> +	bool prus_running;
-> 
-> I think you don't need fw_running flag anymore. Could you please remove it
-> from struct prueth_emac?
-> 
-
-This flag is still being used by SR1, for which this patch doesn't 
-apply. So I prefer not touching this flag for the sake of SR1.
-
->>   };
->>   
->>   struct emac_tx_ts_response {
->> @@ -361,6 +363,8 @@ int icssg_set_port_state(struct prueth_emac *emac,
->>   			 enum icssg_port_state_cmd state);
->>   void icssg_config_set_speed(struct prueth_emac *emac);
->>   void icssg_config_half_duplex(struct prueth_emac *emac);
->> +void icssg_init_emac_mode(struct prueth *prueth);
->> +void icssg_init_fw_offload_mode(struct prueth *prueth);
->>   
->>   /* Buffer queue helpers */
->>   int icssg_queue_pop(struct prueth *prueth, u8 queue);
->> @@ -377,6 +381,7 @@ void icssg_vtbl_modify(struct prueth_emac *emac, u8 vid, u8 port_mask,
->>   		       u8 untag_mask, bool add);
->>   u16 icssg_get_pvid(struct prueth_emac *emac);
->>   void icssg_set_pvid(struct prueth *prueth, u8 vid, u8 port);
->> +int emac_fdb_flow_id_updated(struct prueth_emac *emac);
->>   #define prueth_napi_to_tx_chn(pnapi) \
->>   	container_of(pnapi, struct prueth_tx_chn, napi_tx)
->>   
-> 
 
