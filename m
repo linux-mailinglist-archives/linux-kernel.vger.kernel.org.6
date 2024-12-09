@@ -1,259 +1,195 @@
-Return-Path: <linux-kernel+bounces-436764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27249E8A6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:39:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 839029E8A6F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:40:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1FC018858A1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:39:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74E7E164000
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E840218CC15;
-	Mon,  9 Dec 2024 04:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0158518EFC1;
+	Mon,  9 Dec 2024 04:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="an8LRK/i"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UDE2/tBp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E89F016F288;
-	Mon,  9 Dec 2024 04:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE187156228;
+	Mon,  9 Dec 2024 04:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733719172; cv=none; b=bTJmPCJd+BDQoWhjD8USBqQe3iTk6gZ+p4YTAmw2/Ei7qojm1GHkJ8qlcdtfHk6KFZfpSM3kS/+2Ki06Gw8hi8u3xQs16HgeEKHcAJBuBJabUaYHnX0gbdDPb0+PukmtJ4jQ6pWz6lq6fd6UpCKTfJ2plkwzzHTTpPUt316L7iQ=
+	t=1733719213; cv=none; b=fQm6q84wuoAQkxEdH9tEPbkcRpx/nJ3O8xF2cqsN3xllPR0WVw/aa7C9RbiBDLB9KuNXS/dmBJamtEqQJeKdfLGpew3M4VMEKJKLY8Xf/EjfzbOgkHZAxQfC4YgV9HIR65XuHsr2H234tYQaUTeKBclKwQwqQOXhXxpwqNzCQm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733719172; c=relaxed/simple;
-	bh=WxSdxf8pLdMWv4fY9QRvr5Gkcta72PxtTHjRQUY08Xo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F8q89SRW2X59awZoD+ooZ5FymURMP4q+IZH3B6UqbynEtywjhxCC3phsTz9UGf7PhZH+GWFtAuKAcAdVZzRU26RFKlpwsF87PUO68tK42AQNlc3QzCTVEnvheCuyRKM7bYy2aTxrTgVJ9q66F3UWnYjhqayz3PoZBXa31YCy6+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=an8LRK/i; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733719170; x=1765255170;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WxSdxf8pLdMWv4fY9QRvr5Gkcta72PxtTHjRQUY08Xo=;
-  b=an8LRK/iqXLKY3LEE4fpykmNY7gyqaxwnSaHbLsoiQsUrX/Jl0MtINS/
-   u/qPn43HaqriwOL7ytrjvZPJEiOJlEvv9zWyu4ERbVnyaDRmPQneZn5Um
-   pQW0N2a34t/AwrL1k8SfRcVd/T8XhPNfVhSws9uNGEX6JWyNXLTkyvOJj
-   1cDr+Hx4erp8ks7pQvdjCY0rnweq5i1PtFTlv5vlTrCRJGLL/ELMH22Lc
-   TBOFD9uhn5yXSCDlbNDWtwR+/7MUKHFKFgwJujQ5kAFLodKz3KuChztQX
-   FYA8O0kPEOXV8hE+/EmVRMGlQgKLOc773HWvg07ANuQtetRkqz8FMy8OR
-   g==;
-X-CSE-ConnectionGUID: KukZGVlLTfaXBPq8kGzO4g==
-X-CSE-MsgGUID: iR2XJtAqRrm5s6daWtYL3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37931447"
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="37931447"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:39:29 -0800
-X-CSE-ConnectionGUID: eBVdfRJ/Qwq0407wVB29Vg==
-X-CSE-MsgGUID: wjhdMOM7T+Ctp8wtjgcWgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="95751895"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 08 Dec 2024 20:39:24 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKVYH-0003tF-0M;
-	Mon, 09 Dec 2024 04:39:21 +0000
-Date: Mon, 9 Dec 2024 12:38:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Christian Marangi <ansuelsmth@gmail.com>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, upstream@airoha.com
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [net-next PATCH v10 8/9] net: dsa: Add Airoha AN8855 5-Port
- Gigabit DSA Switch driver
-Message-ID: <202412081038.lJvmpuB2-lkp@intel.com>
-References: <20241208002105.18074-9-ansuelsmth@gmail.com>
+	s=arc-20240116; t=1733719213; c=relaxed/simple;
+	bh=yZuyfSXF4y3S/DYOnOOMCaPoLzmjtOcnJAWNZlStaOU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kH4RSuVptYI3hEykzZ8qAX1PWVKaTmFbP1lsRVZjc8gMMw3bkN+4DQP2zwGsacP6/eWPy2IF/bWpO5jIQoyGelerYmnRHgfzaabX2DfpnnhQDyncCK6F8DlCKetEcH344XW3ZZKu9IT6+Ge/koBvx6ineODMC8ZWK3+Nnw8Jcso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UDE2/tBp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MWKwO017070;
+	Mon, 9 Dec 2024 04:40:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8hP9JT1ZC4yzVeTREhqlUdNj34/+AjB3Aan1CIOV354=; b=UDE2/tBplV1Xt64A
+	ygT0zgHQt1ShDaRird9y34rWuq64mk5IGF3YVm2Pzw3MxIAtwKL1n7WIZaRzGerW
+	Aub/cv6P/0uq6VrUWtWolMDt0wR74QoOUHBwFbHsFrO+QL+P4r9mD6YwLZTyIiiP
+	w9KCU87dEeRX4EdBtX7g2yx4h29ri1vYcnEE22ICneoOUFgmKZGDe+WKZcHRYmz5
+	+csbYgPZV64xegqsAuvbOcAez52IcVHoNnVOuTxYIWczaBNFy5dYqVZXTvhOn8i1
+	V6o8Vj21NWKY9GzHPZRzZX0kgqib7mfOU84lkoFkZOIiELe89TT72oRVWMQF35Z8
+	JxUUmA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cfhkb841-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 04:40:03 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B94e2S4019515
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 04:40:02 GMT
+Received: from [10.216.4.234] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
+ 20:39:55 -0800
+Message-ID: <437ad4b9-64d1-6095-8b9d-fc40760b8248@quicinc.com>
+Date: Mon, 9 Dec 2024 10:09:52 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208002105.18074-9-ansuelsmth@gmail.com>
-
-Hi Christian,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on net-next/main]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvmem-Document-support-for-Airoha-AN8855-Switch-EFUSE/20241208-082533
-base:   net-next/main
-patch link:    https://lore.kernel.org/r/20241208002105.18074-9-ansuelsmth%40gmail.com
-patch subject: [net-next PATCH v10 8/9] net: dsa: Add Airoha AN8855 5-Port Gigabit DSA Switch driver
-config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241208/202412081038.lJvmpuB2-lkp@intel.com/config)
-compiler: sh4-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241208/202412081038.lJvmpuB2-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412081038.lJvmpuB2-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
-   drivers/net/dsa/an8855.c: In function 'an8855_switch_probe':
->> drivers/net/dsa/an8855.c:2227:34: error: invalid use of undefined type 'struct platform_device'
-    2227 |         priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-         |                                  ^~
-   drivers/net/dsa/an8855.c:2231:26: error: invalid use of undefined type 'struct platform_device'
-    2231 |         priv->dev = &pdev->dev;
-         |                          ^~
-   drivers/net/dsa/an8855.c: In function 'an8855_switch_remove':
-   drivers/net/dsa/an8855.c:2282:57: error: invalid use of undefined type 'struct platform_device'
-    2282 |         struct an8855_priv *priv = dev_get_drvdata(&pdev->dev);
-         |                                                         ^~
-   drivers/net/dsa/an8855.c: At top level:
->> drivers/net/dsa/an8855.c:2295:15: error: variable 'an8855_switch_driver' has initializer but incomplete type
-    2295 | static struct platform_driver an8855_switch_driver = {
-         |               ^~~~~~~~~~~~~~~
->> drivers/net/dsa/an8855.c:2296:10: error: 'struct platform_driver' has no member named 'probe'
-    2296 |         .probe = an8855_switch_probe,
-         |          ^~~~~
->> drivers/net/dsa/an8855.c:2296:18: warning: excess elements in struct initializer
-    2296 |         .probe = an8855_switch_probe,
-         |                  ^~~~~~~~~~~~~~~~~~~
-   drivers/net/dsa/an8855.c:2296:18: note: (near initialization for 'an8855_switch_driver')
->> drivers/net/dsa/an8855.c:2297:10: error: 'struct platform_driver' has no member named 'remove'
-    2297 |         .remove = an8855_switch_remove,
-         |          ^~~~~~
-   drivers/net/dsa/an8855.c:2297:19: warning: excess elements in struct initializer
-    2297 |         .remove = an8855_switch_remove,
-         |                   ^~~~~~~~~~~~~~~~~~~~
-   drivers/net/dsa/an8855.c:2297:19: note: (near initialization for 'an8855_switch_driver')
->> drivers/net/dsa/an8855.c:2298:10: error: 'struct platform_driver' has no member named 'driver'
-    2298 |         .driver = {
-         |          ^~~~~~
->> drivers/net/dsa/an8855.c:2298:19: error: extra brace group at end of initializer
-    2298 |         .driver = {
-         |                   ^
-   drivers/net/dsa/an8855.c:2298:19: note: (near initialization for 'an8855_switch_driver')
-   drivers/net/dsa/an8855.c:2298:19: warning: excess elements in struct initializer
-   drivers/net/dsa/an8855.c:2298:19: note: (near initialization for 'an8855_switch_driver')
->> drivers/net/dsa/an8855.c:2303:1: warning: data definition has no type or storage class
-    2303 | module_platform_driver(an8855_switch_driver);
-         | ^~~~~~~~~~~~~~~~~~~~~~
->> drivers/net/dsa/an8855.c:2303:1: error: type defaults to 'int' in declaration of 'module_platform_driver' [-Wimplicit-int]
->> drivers/net/dsa/an8855.c:2303:1: error: parameter names (without types) in function declaration [-Wdeclaration-missing-parameter-type]
->> drivers/net/dsa/an8855.c:2295:31: error: storage size of 'an8855_switch_driver' isn't known
-    2295 | static struct platform_driver an8855_switch_driver = {
-         |                               ^~~~~~~~~~~~~~~~~~~~
->> drivers/net/dsa/an8855.c:2295:31: warning: 'an8855_switch_driver' defined but not used [-Wunused-variable]
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 3/3] PCI: qcom: Enable ECAM feature based on config size
+Content-Language: en-US
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <cros-qcom-dts-watchers@chromium.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
+        "Manivannan
+ Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
+	<kw@linux.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, <quic_vbadigan@quicinc.com>,
+        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
+        <quic_skananth@quicinc.com>, <quic_vpernami@quicinc.com>,
+        <quic_mrana@quicinc.com>, <mmareddy@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
+References: <20241204224049.GA3023706@bhelgaas>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <20241204224049.GA3023706@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: HRwPjrbGHK-bFzN-IRwbgohjsxA2qANp
+X-Proofpoint-GUID: HRwPjrbGHK-bFzN-IRwbgohjsxA2qANp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0
+ phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0 bulkscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090035
 
 
-vim +2227 drivers/net/dsa/an8855.c
 
-  2220	
-  2221	static int an8855_switch_probe(struct platform_device *pdev)
-  2222	{
-  2223		struct an8855_priv *priv;
-  2224		u32 val;
-  2225		int ret;
-  2226	
-> 2227		priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
-  2228		if (!priv)
-  2229			return -ENOMEM;
-  2230	
-> 2231		priv->dev = &pdev->dev;
-  2232		priv->phy_require_calib = of_property_read_bool(priv->dev->of_node,
-  2233								"airoha,ext-surge");
-  2234	
-  2235		priv->reset_gpio = devm_gpiod_get_optional(priv->dev, "reset",
-  2236							   GPIOD_OUT_LOW);
-  2237		if (IS_ERR(priv->reset_gpio))
-  2238			return PTR_ERR(priv->reset_gpio);
-  2239	
-  2240		/* Get regmap from MFD */
-  2241		priv->regmap = dev_get_regmap(priv->dev->parent, NULL);
-  2242	
-  2243		if (priv->reset_gpio) {
-  2244			usleep_range(100000, 150000);
-  2245			gpiod_set_value_cansleep(priv->reset_gpio, 0);
-  2246			usleep_range(100000, 150000);
-  2247			gpiod_set_value_cansleep(priv->reset_gpio, 1);
-  2248	
-  2249			/* Poll HWTRAP reg to wait for Switch to fully Init */
-  2250			ret = regmap_read_poll_timeout(priv->regmap, AN8855_HWTRAP, val,
-  2251						       val, 20, 200000);
-  2252			if (ret)
-  2253				return ret;
-  2254		}
-  2255	
-  2256		ret = an8855_read_switch_id(priv);
-  2257		if (ret)
-  2258			return ret;
-  2259	
-  2260		priv->ds = devm_kzalloc(priv->dev, sizeof(*priv->ds), GFP_KERNEL);
-  2261		if (!priv->ds)
-  2262			return -ENOMEM;
-  2263	
-  2264		priv->ds->dev = priv->dev;
-  2265		priv->ds->num_ports = AN8855_NUM_PORTS;
-  2266		priv->ds->priv = priv;
-  2267		priv->ds->ops = &an8855_switch_ops;
-  2268		devm_mutex_init(priv->dev, &priv->reg_mutex);
-  2269		priv->ds->phylink_mac_ops = &an8855_phylink_mac_ops;
-  2270	
-  2271		priv->pcs.ops = &an8855_pcs_ops;
-  2272		priv->pcs.neg_mode = true;
-  2273		priv->pcs.poll = true;
-  2274	
-  2275		dev_set_drvdata(priv->dev, priv);
-  2276	
-  2277		return dsa_register_switch(priv->ds);
-  2278	}
-  2279	
-  2280	static void an8855_switch_remove(struct platform_device *pdev)
-  2281	{
-> 2282		struct an8855_priv *priv = dev_get_drvdata(&pdev->dev);
-  2283	
-  2284		if (!priv)
-  2285			return;
-  2286	
-  2287		dsa_unregister_switch(priv->ds);
-  2288	}
-  2289	
-  2290	static const struct of_device_id an8855_switch_of_match[] = {
-  2291		{ .compatible = "airoha,an8855-switch" },
-  2292		{ /* sentinel */ }
-  2293	};
-  2294	
-> 2295	static struct platform_driver an8855_switch_driver = {
-> 2296		.probe = an8855_switch_probe,
-> 2297		.remove = an8855_switch_remove,
-> 2298		.driver = {
-  2299			.name = "an8855-switch",
-  2300			.of_match_table = an8855_switch_of_match,
-  2301		},
-  2302	};
-> 2303	module_platform_driver(an8855_switch_driver);
-  2304	
+On 12/5/2024 4:10 AM, Bjorn Helgaas wrote:
+> On Wed, Dec 04, 2024 at 07:56:54AM +0530, Krishna Chaitanya Chundru wrote:
+>> On 12/4/2024 12:29 AM, Bjorn Helgaas wrote:
+>>> On Sun, Nov 17, 2024 at 03:30:20AM +0530, Krishna chaitanya chundru wrote:
+>>>> Enable the ECAM feature if the config space size is equal to size required
+>>>> to represent number of buses in the bus range property.
+>>>>
+>>>> The ELBI registers falls after the DBI space, so use the cfg win returned
+>>>> from the ecam init to map these regions instead of doing the ioremap again.
+>>>> ELBI starts at offset 0xf20 from dbi.
+>>>>
+>>>> On bus 0, we have only the root complex. Any access other than that should
+>>>> not go out of the link and should return all F's. Since the IATU is
+>>>> configured for bus 1 onwards, block the transactions for bus 0:0:1 to
+>>>> 0:31:7 (i.e., from dbi_base + 4KB to dbi_base + 1MB) from going outside the
+>>>> link through ecam blocker through parf registers.
+> 
+>>>> +static bool qcom_pcie_check_ecam_support(struct device *dev)
+>>>> +{
+>>>> +	struct platform_device *pdev = to_platform_device(dev);
+>>>> +	struct resource bus_range, *config_res;
+>>>> +	u64 bus_config_space_count;
+>>>> +	int ret;
+>>>> +
+>>>> +	/* If bus range is not present, keep the bus range as maximum value */
+>>>> +	ret = of_pci_parse_bus_range(dev->of_node, &bus_range);
+>>>> +	if (ret) {
+>>>> +		bus_range.start = 0x0;
+>>>> +		bus_range.end = 0xff;
+>>>> +	}
+>>>
+>>> I would have thought the generic OF parsing would already default to
+>>> [bus 00-ff]?
+>>>
+>> if there is no bus-range of_pci_parse_bus_range is not updating it[1],
+>> the bus ranges is being updated to default value in
+>> devm_of_pci_get_host_bridge_resources()[2]
+> 
+> Understood.  But qcom uses dw_pcie_host_init(), which calls
+> devm_pci_alloc_host_bridge(), which ultimately calls
+> of_pci_parse_bus_range() and defaults to [bus 00-ff] if there's no
+> bus-range in DT:
+> 
+>    qcom_pcie_probe
+>      dw_pcie_host_init
+>        devm_pci_alloc_host_bridge
+>          devm_of_pci_bridge_init
+>            pci_parse_request_of_pci_ranges
+>              devm_of_pci_get_host_bridge_resources(0, 0xff)
+>                of_pci_parse_bus_range
+> 
+> So the question is why you need to do that again here.
+> 
+> I see that qcom_pcie_probe() calls qcom_pcie_check_ecam_support()
+> *before* it calls dw_pcie_host_init(), so I guess that's the immediate
+> answer.
+> 
+> But this is another reason why I think qcom_pcie_check_ecam_support()
+> is kind of a sub-optimal solution here.
+> 
+> I wonder if we should factor the devm_pci_alloc_host_bridge() call out
+> of dw_pcie_host_init() so drivers can take advantage of the DT parsing
+> it does.  It looks like mobiveil does it that way:
+It makes sense to use this way in the next patch in the qcom driver will
+call devm_pci_alloc_host_bridge() before calling dw_pcie_host_init() and
+in dw_pcie_host_init() if the bridge is allocated dwc driver will skip
+allocating the bridge so that other drivers will not be affected.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+- Krishna Chaitanya.
+
+> 
+>    ls_g4_pcie_probe
+>      devm_pci_alloc_host_bridge
+>      mobiveil_pcie_host_probe
+> 
+>    mobiveil_pcie_probe
+>      devm_pci_alloc_host_bridge
+>      mobiveil_pcie_host_probe
+> 
+>> [1]https://elixir.bootlin.com/linux/v6.12.1/source/drivers/pci/of.c#L193
+>> [2]https://elixir.bootlin.com/linux/v6.12.1/source/drivers/pci/of.c#L347
+
 
