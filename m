@@ -1,124 +1,143 @@
-Return-Path: <linux-kernel+bounces-437985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61A819E9B4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:11:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA8899E9B4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:11:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107E3281CA1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 849792830B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:11:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D9E5139597;
-	Mon,  9 Dec 2024 16:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA4813A879;
+	Mon,  9 Dec 2024 16:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Apb4EXAv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="RXIxVbmg"
+Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 982C0233139;
-	Mon,  9 Dec 2024 16:11:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 722DE84D2B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733760665; cv=none; b=rHSolL8cWtAD0L1fh89qgyGw0/xD6t1yTuTPxQ/w7CEhHDka09Z35aTF7yT3j8f6NvVyD9MVGmwyPugfExEnFjEoF++5hnJvxXkFTSyOerFotgrYNuf5Bz69rtRMOhsKn7NQVxHwCgj1NyNhFIQDYN90zws7BVOopDVnneMHV3Y=
+	t=1733760691; cv=none; b=m4Kr9gy0p3hahqrztAcjv8AqbQ5NQrvBqOn1JaxLVWGSuMBbdPDdCXtqBbA+6c1cd9772CuJ8JZJBsDUbByFF3Er8llOzYXMsP3g5siZPEpZdw34OAwI0VvIO+gybIub046ffHX2iV2kBTfPpujimDi5PghtgRuiCrGN0eHNEzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733760665; c=relaxed/simple;
-	bh=OofoqX2bMhLixVwLOiukdGYDyU/vw2PSTyGG8oXvjug=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzinQai82k88cLCftk5MEUhykcqZtd50xGOmDiDpSZVVnBi3NwBmVDLquNyydTNJ5Effthd95Nj1DJUPX9+YpXc1vV9zIgtFohdNG9+dKGDYkuS5/gRVjd78z6yEYMQiMWi7C/V9lchMeDWzsBD4Vxy53BLNRDoqAj1tGCZUahM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Apb4EXAv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E07A6C4CED1;
-	Mon,  9 Dec 2024 16:11:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733760665;
-	bh=OofoqX2bMhLixVwLOiukdGYDyU/vw2PSTyGG8oXvjug=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Apb4EXAvqMmk3pUo0CS1aFYbqPOcO0OJJ1j875M1QVIiEjFehEgBW3A2yT3lg5S48
-	 ZPfuIKDKtTE0iotef5lkOAGiWwWMgpT33IWmPpPniH8T2zYNOeSV8fjLYYV+F7Io7o
-	 GhklNW1lePjkeQC3gZzFaaH9XJzy9a0urd09vJ9N9Lu7lxh0RsRLzIh2gIS3F/aBJW
-	 4iIu8/LlZ4Q1wqdH1I55N8R80JAwIKil5AlkQ/NYTG6+DCaPGWXxzNvj1mVhwMbGGM
-	 S1MIwuI2OL/VcxQRVyULis32gZhBbe5kxPelwqFVCYUdFZ0agzza4vIc+LWmYygzGc
-	 fxh47a9x8H6og==
-Date: Mon, 9 Dec 2024 16:11:00 +0000
-From: Mark Brown <broonie@kernel.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Thiago Jung Bauermann <thiago.bauermann@linaro.org>
-Subject: Re: arch/arm64/kernel/signal.c:1046:36: sparse: sparse: cast removes
- address space '__user' of expression
-Message-ID: <c8379d04-420b-4039-99ce-5a462d820685@sirena.org.uk>
-References: <202412082005.OBJ0BbWs-lkp@intel.com>
- <Z1cOs2sGff1_TtQZ@arm.com>
+	s=arc-20240116; t=1733760691; c=relaxed/simple;
+	bh=9BV8thkzGqRUrNe+iFX3FyiyAjXdq+3CjTRFva1am/A=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Lg1ojLO70+Ag1iDhjrWo730ZFHLR6csuGqKnd6G5RBFlk+zR5DRuqNZ6BUfXP/6v78QnKf7mm5i/NzPJ5GiPXoOPn3SxPB7/Bt9xA9TXCyNyI4TVNQGEjEN//wNMD8tENXW7TvVWRgOLKt8Flto/aMUwiLVrXS1kASys64e8tfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=RXIxVbmg; arc=none smtp.client-ip=91.218.175.185
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="g2CdCmewVkJ+cNjG"
-Content-Disposition: inline
-In-Reply-To: <Z1cOs2sGff1_TtQZ@arm.com>
-X-Cookie: Lensmen eat Jedi for breakfast.
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1733760686;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LIKxDul1PcRU3jEvG5gfDjtOJwNlmOXizKV8HI2OXjs=;
+	b=RXIxVbmgY2RiTb762BtEh3yK1NiF08UMTYml4IZ5B/wiKXgNjViKlUeUFaVX+3E3qSp/1Y
+	cfuWCkJ2A4IsyMt8dKd6GkYYPxsQhSbIlwICGT1cy/tvfuQK9hiBGAuQs+MJXHxb10NWgp
+	9WKyi2/b4G15E1dOMuOPXv9LfSWMHhsA/ftIedCphTNKNGW3LryRQv7WIxS1V7jUpBWk7W
+	czGzOrEdbCttwDJh7O87AMvdBgX2ZefrLtOzcVIWtX0VmbAvUZVf9xrVhLE9eyVnWNIr+V
+	Qydg84tNNUpDhF6SGOyueLlAxPTJ3TmyDxLJy8SSEaWVTmdLPWY8aWHVPLc0dg==
+Content-Type: multipart/signed;
+ boundary=eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Mon, 09 Dec 2024 17:11:03 +0100
+Message-Id: <D67AV178CEBD.3QA9VD4ZPRNQ1@cknow.org>
+Cc: <Laurent.pinchart@ideasonboard.com>, <andrzej.hajda@intel.com>,
+ <andy.yan@rock-chips.com>, <conor+dt@kernel.org>,
+ <devicetree@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <jernej.skrabec@gmail.com>, <jonas@kwiboo.se>, <krzk+dt@kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-rockchip@lists.infradead.org>, <maarten.lankhorst@linux.intel.com>,
+ <mripard@kernel.org>, <neil.armstrong@linaro.org>,
+ <quentin.schulz@cherry.de>, <rfoss@kernel.org>, <robh@kernel.org>,
+ <tzimmermann@suse.de>
+Subject: Re: [PATCH v3 0/3] drm/rockchip: Add driver for the new DSI2
+ controller
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Daniel Semkowicz" <dse@thaumatec.com>, <heiko@sntech.de>
+References: <20241203165450.1501219-1-heiko@sntech.de>
+ <20241209150619.33998-1-dse@thaumatec.com>
+In-Reply-To: <20241209150619.33998-1-dse@thaumatec.com>
+X-Migadu-Flow: FLOW_OUT
 
-
---g2CdCmewVkJ+cNjG
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+--eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On Mon, Dec 09, 2024 at 03:37:23PM +0000, Catalin Marinas wrote:
-> On Mon, Dec 09, 2024 at 12:47:33PM +0800, kernel test robot wrote:
+Hi,
 
-> > eaf62ce1563b85 Mark Brown      2024-10-01  1014       unsigned long __u=
-ser *gcspr_el0;
->=20
-> I think we should keep this as u64 since it's a sysreg.
+On Mon Dec 9, 2024 at 4:06 PM CET, Daniel Semkowicz wrote:
+> On 03.12.24 21:54, Heiko Stuebner wrote:
+> > This series adds a bridge and glue driver for the DSI2 controller found
+> > in the rk3588 soc from Rockchip, that is based on a Synopsis IP block.
+> >=20
+>
+> I did more tests with different LVDS displays. I tested following
+> configurations with DSI/LVDS bridge:
+> - 1024x600@60.01
+> - 1024x768@60.02
+> - 1280x800@60.07
+> - 1366x768@60.06
+>
+> All of them worked without issues, except 1366x768.
+> With this resolution, video is blurry, and offset incorrectly
+> to the left. There are also repeating errors on the console:
+>
+>   rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY irq err at=
+ vp3
+>
+> In correct operation with other resolutions, there is no error.
+> I am not sure if this is a problem in your series or rather in VOP2
+> driver.
 
-Do you mean pointer to u64 or plain u64?  The value we get from the
-sysreg is a pointer so it makes the uses of the value clearer if we keep
-it as a pointer in C code, it seems to be defeating the point of doing
-static analysis to discard the pointerness to make it happier.
+On my PineTab2 I got similar messages about 2 weeks ago:
+rockchip-drm display-subsystem: [drm] *ERROR* POST_BUF_EMPTY irq err at vp1
 
-> > eaf62ce1563b85 Mark Brown      2024-10-01  1050  	put_user_gcs(0, (__us=
-er void*)gcspr_el0, &ret);
+Preceding those, I got several panfrost related errors:
 
-> We need a cast here if we are to go with u64 gcspr_el0 (it wasn't needed
-> before, not sure why it was cast to void *).
+panfrost fde60000.gpu: get clock failed -517
+panfrost fde60000.gpu: clk init failed -517
+platform fde60000.gpu: deferred probe pending: (reason unknown)
+platform cpufreq-dt: deferred probe pending: (reason unknown)
+vdd_gpu_npu: disabling
 
-It'll have been cast to void * to add the __user at some point before
-the __user annotation got added to the variable declaration.
+But can also be that the PineTab2 (likely) needs regulator-always-on
+and regulator-boot-on in its vdd_gpu_npu node.
 
-> > eaf62ce1563b85 Mark Brown      2024-10-01  1051  	if (ret !=3D 0)
-> > eaf62ce1563b85 Mark Brown      2024-10-01  1052  		return -EFAULT;
-> > eaf62ce1563b85 Mark Brown      2024-10-01  1053 =20
-> > eaf62ce1563b85 Mark Brown      2024-10-01  1054  	write_sysreg_s(gcspr_=
-el0 + 1, SYS_GCSPR_EL0);
+> I tried to track down the problem, and it seems to be a generic issue
+> when horizontal line width is not divisible by 4.
+> Lowering line width to 1364px fixes the issue, but of course I have two
+> vertical lines of black pixels on the right.
+> I also made some tests with 720x1280 DSI display. Lowering horizontal
+> line to 718px shows the same problem. With 720px and 716px it works
+> correctly.
 
-> And this would be +8 I guess.
+I haven't look further into it, but the PT2 has a 1280x800 resolution.
 
-The variable is a pointer so we're doing pointer arithmetic here not
-working directly with the value, unless we change the value to be purely
-a u64 with no pointer in which case we would need the case above.  The
-whole shambles with u64 vs unsigned long and pointer vs absolute numbers
-in all the code that deals with userspace is really unhelpful :(
+HTH,
+  Diederik
 
---g2CdCmewVkJ+cNjG
+--eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmdXFpQACgkQJNaLcl1U
-h9A9ggf8CAksCQdCH/QB6vjJvUmLJsPDj8HF/l5Ib8VTrPXnvOTv+txQ3YEdOvRV
-lXk1sIbxaq1hE5OSXdcD+N6peFOzCg+L4LFF3Yf/9thYYkmEhLn/wU//0mUdAORO
-Ju1K/aPt4wgdES7GotOD1WNcE4GdRtIUvBXuK/Map+5w7RibrNhsN9zJVlkUU0g8
-+aHGXmP89CyoBEMiodIHwdJLNIYcRrAYiW1xm5tjS+CY+vSZguvUg2ZFVTEP6LAw
-SxGqUAO9ubtK1HlSTwgEKv9lRAC9gh1fcw6kc11QguICLiaE4Peac/vNdj8L6wh5
-AHPrChrIEKtwfVEsWreV8SBDcfevCw==
-=TRp4
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZ1cWnwAKCRDXblvOeH7b
+bt6mAQC6vSnt+4gcL6mV0BWnp8ZL7iXn5fWiXFogAWGKMTLc7QEAoV2+ibpMQSek
+0THMoeuvcpjes+GUp5Tq8DFptaTtHAE=
+=lTYg
 -----END PGP SIGNATURE-----
 
---g2CdCmewVkJ+cNjG--
+--eefa09e675ebf91d252165db5d46d61f91efbf3c096cae57afe8caeae9bb--
 
