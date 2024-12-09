@@ -1,270 +1,187 @@
-Return-Path: <linux-kernel+bounces-436968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD6399E8D3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:21:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A161E9E8D30
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:19:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 80D09281343
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:21:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5CB0F280635
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:19:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3FE21518F;
-	Mon,  9 Dec 2024 08:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CD42156E6;
+	Mon,  9 Dec 2024 08:19:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IPbgWP+F"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="M5sIhcDm"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2FB8189B85;
-	Mon,  9 Dec 2024 08:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E0921505A;
+	Mon,  9 Dec 2024 08:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733732498; cv=none; b=DBXe7kubRtq44ELs/zBTrtMYPiI9W2kSSCxpB0ubVQ9C+UqX7qbgSm4LFM4VfxwPqSABpfXxU4myRd57F5hN3rtlnj92CCqK3cXjTqbY7nfTXqrVjY+abBTxwVGv3NR8AbS2LjZoSdXuDjCJvSdp9FBJl7MQ14qOJLnXJ6laHGQ=
+	t=1733732381; cv=none; b=GLTvEoEJKBXuwiTRY0jj40SjQ8ekqaTWFTpJ0fULmMN2OMrW1cAHUH+Cot8dEYmkgzoy5F1sDov6WqBaqm31HiuLhJUGkh+gsFwwomeVCumo0xGotlqEwQ1jnPffeoaC/CyiOIZcT+y2C6JkuZQyVNnLUeAqaPA+W5xTGJte8Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733732498; c=relaxed/simple;
-	bh=Um7JMO3CYMOMtg9MkzluQOsT7g1qLmgYaKW8k1A2Eq4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XUUZhXNC1eKYUu+GJ6k31BiWb8w2ibNZs/P85G1xgv5nUzXXUcnkf7pYl3wdyedaHkKTO9418NQn2FCBIU2qRUzPl9UDfmljuGS3R9PFNtxK+Xz7GyM0QbaQBEc/hwfhgwaJ49eky2isMdcb70BdSbmBb5MITWI+qmqOsN+2QGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IPbgWP+F; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733732496; x=1765268496;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=Um7JMO3CYMOMtg9MkzluQOsT7g1qLmgYaKW8k1A2Eq4=;
-  b=IPbgWP+FGfo23JDIv31x1C0crzQkKA9z8FQCxRH9qXbqOzaPQAn3S7T/
-   t4BohNVm5MZmMkuaVVK6GlUxqhsBiGshlr6ptyKfuV8lDzCyvBLNDbL2t
-   3jsEqteNvVH2WEmXzin3tis6havpqomZTIttkFOY2IIP2hURWAIJ5kSHG
-   79OxjTn1LKMRoC3GAEEE0VMKnq99UEk4DPlzYRXfB5B3v1NeULngIEfOT
-   n8IAEotQ3PmXZv1u8gm2MSAEeq24BTclRSCudMpHHtRVM1JUdiF8P89/k
-   kKB3DjgbZsO4PC+AQfdasCcY4maRIY1Y8jD5iVkZdN+Z9bcQCkKqHD9PZ
-   g==;
-X-CSE-ConnectionGUID: m9CzoAGCTQeqrHon+Kx+RQ==
-X-CSE-MsgGUID: 7seovTrrRJevQV4EYqNbyw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34252468"
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="34252468"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 00:21:33 -0800
-X-CSE-ConnectionGUID: B/NeFFu8QAmlGISAw3VL7Q==
-X-CSE-MsgGUID: 5TZQxXd4Rz+mCZ6xhe9UCQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="95339983"
-Received: from pg15swiplab1181.png.altera.com ([10.244.232.167])
-  by fmviesa010.fm.intel.com with ESMTP; 09 Dec 2024 00:21:27 -0800
-From: niravkumar.l.rabara@intel.com
-To: devicetree@vger.kernel.org
-Cc: Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Niravkumar L Rabara <niravkumar.l.rabara@intel.com>,
-	linux-mtd@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>
-Subject: [PATCH RESEND v4] dt-bindings: mtd: cadence: convert cadence-nand-controller.txt to yaml
-Date: Mon,  9 Dec 2024 16:18:26 +0800
-Message-Id: <20241209081826.1242214-1-niravkumar.l.rabara@intel.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733732381; c=relaxed/simple;
+	bh=WbkvEoIaiG470FCd71mVg9lmDgRgpp+ASXlAcAPU40E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=D+XkkQK8SnB9MVChMd7t0JTpi2THneF5fBZf4Xy/S7mS2FXPS0zZQHYE1vGtQA1coYZkj8P+7bbncW7TkGW2Kxq6fzv/D79Z36w0duIG+ZPGMY4ya8ZIAaUC6tq5ETsJ6vqURmz37+UL9mP7Ey+oo0ZyxTlkianpZOq/xb1s4i0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=M5sIhcDm; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8NOkvp000529;
+	Mon, 9 Dec 2024 08:18:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=Y9uud5
+	ruM6O8JA3vLeQfAAwPVqwN8jw+GdGTqPpU5WM=; b=M5sIhcDm/3G/epDf6wT9aq
+	tGk8dGfw4IOXZl02YhiMQtsX+oPNEjDZgf/pLL8lJMWJ2xylzERcKcY7tEK6SZ4+
+	GfrtygejRQB5aTRR2Eh0vdcy/BWp086JYTeJfIQjomAEzNv5Rqo9A0c4au+z/L6a
+	UTdv8PpSBVs2Pfb8OoojMyZG7wD6QjjjL6PnxYMyJy0ab1uDJaOcWuk8YJ1IvQaC
+	QOe15gA8hXTgITfV/GeMWJsOx5rqJ1kw7XuAg6b6/wOGt1JmEwgFB/6LQQ0l5+ko
+	OevbkDt0+1qOcyQtoQoZUtJPN4YK9Fet92OHpRy/K9PfOAWOsYmNpIs6BxA0s1Rg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8g5nd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 08:18:51 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B98IpFs016096;
+	Mon, 9 Dec 2024 08:18:51 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8g5na-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 08:18:51 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B957Cju032734;
+	Mon, 9 Dec 2024 08:18:50 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0ps5wgw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 08:18:50 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B98Imqk65733056
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 08:18:48 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9C9D62004D;
+	Mon,  9 Dec 2024 08:18:48 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ED04720043;
+	Mon,  9 Dec 2024 08:18:47 +0000 (GMT)
+Received: from [9.171.77.252] (unknown [9.171.77.252])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon,  9 Dec 2024 08:18:47 +0000 (GMT)
+Message-ID: <5e3c0502-1a28-483c-a831-6d1f814501da@linux.ibm.com>
+Date: Mon, 9 Dec 2024 09:18:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+From: Tobias Huschle <huschle@linux.ibm.com>
+Subject: Re: [RFC PATCH 2/2] s390/topology: Add initial implementation for
+ selection of parked CPUs
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
+        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+        vschneid@redhat.com, linux-s390@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+References: <20241204112149.25872-1-huschle@linux.ibm.com>
+ <20241204112149.25872-3-huschle@linux.ibm.com>
+ <1f7ad21c-372f-4d7d-b3dc-9a2fb194b704@linux.ibm.com>
+In-Reply-To: <1f7ad21c-372f-4d7d-b3dc-9a2fb194b704@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: G6Dqr1a2rHeB_Qv23cJ9bs_o2oSpnxIl
+X-Proofpoint-ORIG-GUID: aL5EcZ04MHp423ywKXRbgg7LWNalNb6c
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=999
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090061
 
-From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
 
-Convert cadence-nand-controller.txt to yaml format.
-Update cadence-nand-controller.txt to cdns,hp-nfc.yaml in MAINTAINER file.
 
-Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
----
+On 05/12/2024 19:12, Shrikanth Hegde wrote:
+> 
+> 
+> On 12/4/24 16:51, Tobias Huschle wrote:
+>> In this simplified example, vertical low CPUs are parked generally.
+>> This will later be adjusted by making the parked state dependent
+>> on the overall utilization on the underlying hypervisor.
+>>
+>> Vertical lows are always bound to the highest CPU IDs. This implies that
+>> the three types of vertically polarized CPUs are always clustered by ID.
+>> This has the following implications:
+>> - There can be scheduler domains consisting of only vertical highs
+>> - There can be scheduler domains consisting of only vertical lows
+>>
+> 
+> A sched domain can have combination of these two as well. Is that not 
+> possible on s390?
 
-Changes in v4 resend:
-- Include missing Reviewed-by tag.
+A combination is possible. It depends on the algorithm of the hypervisor 
+how many of those mixed groups might be possible.
 
-Changes in v4:
-- Fixed the identation for examples as per review comment in v3.
+> 
+>> Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
+>> ---
+>>   arch/s390/include/asm/topology.h | 3 +++
+>>   arch/s390/kernel/topology.c      | 5 +++++
+>>   2 files changed, 8 insertions(+)
+>>
+>> diff --git a/arch/s390/include/asm/topology.h b/arch/s390/include/asm/ 
+>> topology.h
+>> index cef06bffad80..e86afeccde35 100644
+>> --- a/arch/s390/include/asm/topology.h
+>> +++ b/arch/s390/include/asm/topology.h
+>> @@ -99,6 +99,9 @@ static inline int numa_node_id(void)
+>>   #endif /* CONFIG_NUMA */
+>> +#define arch_cpu_parked cpu_parked
+>> +int cpu_parked(int cpu);
+>> +
+>>   #include <asm-generic/topology.h>
+>>   #endif /* _ASM_S390_TOPOLOGY_H */
+>> diff --git a/arch/s390/kernel/topology.c b/arch/s390/kernel/topology.c
+>> index 4f9c301a705b..1032b65da574 100644
+>> --- a/arch/s390/kernel/topology.c
+>> +++ b/arch/s390/kernel/topology.c
+>> @@ -299,6 +299,11 @@ void store_topology(struct sysinfo_15_1_x *info)
+>>       stsi(info, 15, 1, topology_mnest_limit());
+>>   }
+>> +int cpu_parked(int cpu)
+>> +{
+>> +    return smp_cpu_get_polarization(cpu) == POLARIZATION_VL;
+>> +}
+> 
+> Curious to know how this smp_cpu_get_polarization gets updated at 
+> runtime? is it done by add_cpus_to_mask?
 
-Changes in v3:
-- Changed file name to cdns,hp-nfc.yaml to match with compatible.
-- Update description, fixed alignment, and used defines for interrupt
-  flag as per review comments in v2.
+The polarization itself can get updated by the underlying hypervisor, 
+which passes that information on to the Linux kernel.
 
-Changes in v2:
-- Update name cadence-nand-controller.txt to cadence,nand.yaml in MAINTAINER
-  file to resolve the warning.
+A future implementation will not rely on the polarization as the main 
+criterion but take more data points into account to allow a correct 
+adaption to the load of the system.
 
- .../bindings/mtd/cadence-nand-controller.txt  | 53 -------------
- .../devicetree/bindings/mtd/cdns,hp-nfc.yaml  | 75 +++++++++++++++++++
- MAINTAINERS                                   |  2 +-
- 3 files changed, 76 insertions(+), 54 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
- create mode 100644 Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
+Only using polarization would deny us the opportunity to overconsume on 
+our entitlement if the machine has enough spare capacity. This patch 
+just wants to be a tiny example on how this could be used.
 
-diff --git a/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt b/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
-deleted file mode 100644
-index d2eada5044b2..000000000000
---- a/Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
-+++ /dev/null
-@@ -1,53 +0,0 @@
--* Cadence NAND controller
--
--Required properties:
--  - compatible : "cdns,hp-nfc"
--  - reg : Contains two entries, each of which is a tuple consisting of a
--	  physical address and length. The first entry is the address and
--	  length of the controller register set. The second entry is the
--	  address and length of the Slave DMA data port.
--  - reg-names: should contain "reg" and "sdma"
--  - #address-cells: should be 1. The cell encodes the chip select connection.
--  - #size-cells : should be 0.
--  - interrupts : The interrupt number.
--  - clocks: phandle of the controller core clock (nf_clk).
--
--Optional properties:
--  - dmas: shall reference DMA channel associated to the NAND controller
--  - cdns,board-delay-ps : Estimated Board delay. The value includes the total
--    round trip delay for the signals and is used for deciding on values
--    associated with data read capture. The example formula for SDR mode is
--    the following:
--    board delay = RE#PAD delay + PCB trace to device + PCB trace from device
--    + DQ PAD delay
--
--Child nodes represent the available NAND chips.
--
--Required properties of NAND chips:
--  - reg: shall contain the native Chip Select ids from 0 to max supported by
--    the cadence nand flash controller
--
--See Documentation/devicetree/bindings/mtd/nand-controller.yaml for more details on
--generic bindings.
--
--Example:
--
--nand_controller: nand-controller@60000000 {
--	  compatible = "cdns,hp-nfc";
--	  #address-cells = <1>;
--	  #size-cells = <0>;
--	  reg = <0x60000000 0x10000>, <0x80000000 0x10000>;
--	  reg-names = "reg", "sdma";
--	  clocks = <&nf_clk>;
--	  cdns,board-delay-ps = <4830>;
--	  interrupts = <2 0>;
--	  nand@0 {
--	      reg = <0>;
--	      label = "nand-1";
--	  };
--	  nand@1 {
--	      reg = <1>;
--	      label = "nand-2";
--	  };
--
--};
-diff --git a/Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml b/Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
-new file mode 100644
-index 000000000000..0bed37a994c3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
-@@ -0,0 +1,75 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mtd/cdns,hp-nfc.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cadence NAND controller
-+
-+maintainers:
-+  - Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
-+
-+allOf:
-+  - $ref: nand-controller.yaml
-+
-+properties:
-+  compatible:
-+    items:
-+      - const: cdns,hp-nfc
-+
-+  reg:
-+    items:
-+      - description: Controller register set
-+      - description: Slave DMA data port register set
-+
-+  reg-names:
-+    items:
-+      - const: reg
-+      - const: sdma
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 1
-+
-+  cdns,board-delay-ps:
-+    description: |
-+      Estimated Board delay. The value includes the total round trip
-+      delay for the signals and is used for deciding on values associated
-+      with data read capture. The example formula for SDR mode is the
-+      following.
-+      board delay = RE#PAD delay + PCB trace to device + PCB trace from device
-+      + DQ PAD delay
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/arm-gic.h>
-+
-+    nand-controller@10b80000 {
-+        compatible = "cdns,hp-nfc";
-+        reg = <0x10b80000 0x10000>,
-+              <0x10840000 0x10000>;
-+        reg-names = "reg", "sdma";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-+        clocks = <&nf_clk>;
-+        cdns,board-delay-ps = <4830>;
-+
-+        nand@0 {
-+            reg = <0>;
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 1e930c7a58b1..9fab4b4a75a1 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -5009,7 +5009,7 @@ F:	drivers/media/platform/cadence/cdns-csi2*
- CADENCE NAND DRIVER
- L:	linux-mtd@lists.infradead.org
- S:	Orphan
--F:	Documentation/devicetree/bindings/mtd/cadence-nand-controller.txt
-+F:	Documentation/devicetree/bindings/mtd/cdns,hp-nfc.yaml
- F:	drivers/mtd/nand/raw/cadence-nand-controller.c
- 
- CADENCE USB3 DRD IP DRIVER
--- 
-2.25.1
+> 
+>> +
+>>   static void __arch_update_dedicated_flag(void *arg)
+>>   {
+>>       if (topology_cpu_dedicated(smp_processor_id()))
 
 
