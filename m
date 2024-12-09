@@ -1,177 +1,151 @@
-Return-Path: <linux-kernel+bounces-438004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0CB59E9B7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:23:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4926B9E9BA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:29:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16CF9166198
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:29:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE44A144D1A;
+	Mon,  9 Dec 2024 16:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="jyXFHdpX"
+Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2C09281B1E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:23:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFBA147C9B;
-	Mon,  9 Dec 2024 16:23:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gS5zSVGU"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB5214A0AA;
-	Mon,  9 Dec 2024 16:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5742143C72;
+	Mon,  9 Dec 2024 16:29:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761420; cv=none; b=KrR2jhNCe4zmSKVyf9W7lNSMUmqnu5xjxO45ZHQ4VYwqCAcXa1Um4/jF2cstvCVQQZ0GmQ/24z5Ba74LAA3A9U5mL0yMYaLbJbEaFh1uaYiBXQ8z4Zwv4q1rXAvGWsM2rBX9gEbydnjCV0i9IF9K0Fb5OULRfaSMNZV2tOgredc=
+	t=1733761785; cv=none; b=kyR75Fs6sUk1tlZ+N/EmrY4lIgub6SBzWHU/Hov9F+j4aM8s5z09fn25U8rFB0JfTVAVOXXzunKi6QdSztFHCedEtOtpT9nxyN97XVoodnGMPRH/zhj6HoaECQwUq6CJ05YLf/dUDcJVXUxUsXUD+BRyyp1AJUVuooQC5jAzkYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761420; c=relaxed/simple;
-	bh=J7WTWNZjTNU6Inc8M05Ida9EHcfcexe793ivbpD1Zls=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aIfIdomPrq5Dn8QrPGfvzrFQf6GHzl8014hK73zHlo5b7fOGuftHW0zFnwJc2WVeYNgeWc+0j8mXbMPEkPLReYAirMCD8PW9viIUy+0QVj2O/SYjrwCaCuqizjK95SdN2BABk+VXOzKy5kmEDvkP0h+otYw3BEd1eA8oh4Cl3iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gS5zSVGU; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d3d2a30afcso4558614a12.3;
-        Mon, 09 Dec 2024 08:23:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733761416; x=1734366216; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0K8ZP2F40I1V9oEBcZ5JHDlz8ReIw6B0xGg0te9jF0k=;
-        b=gS5zSVGUicqjDYMYUITd6cV9y5tTk34DvbL/jjIcc5EDQIfag5cRlnlpBnF9qUpjiv
-         BXW8SU4RIApxMe2fjbMTYSgZvto6U0RTLnKqAMa+luj3g5RCtBTAihRloblYD1oNigaH
-         QRLYrXNVY13A22b0wZIuAttOj/iws13X4tIz4QZlVP0/RnebuSww0RkF0mP0qf0yqCMZ
-         w0V7TCrE1RnnHIE/U4tSGB1+yKTGWX3IgIRso1pwDn8HZ6i0W35ALzYqJEagPOMBp7fj
-         xuvVOJtuPF/QecOoo1619N01LZemGRu2cYiSmsYf0/FdmNHjnHHSaKWdqXZsna/okVj7
-         /Mzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733761416; x=1734366216;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0K8ZP2F40I1V9oEBcZ5JHDlz8ReIw6B0xGg0te9jF0k=;
-        b=jHMtFLfN7wpqipMR+6IoWpc8vgkeMGRidpqS5zbghWebwFkYyHoVTAZ+zsRoXwTT9f
-         qQUwIC2B8/8uKwcwx8z2K++kBVEnkim1OhmV+38BrmMmxmBjfak2d5x6MPHO/SHgLdPX
-         RParkq0D2vaitV15+rPnps41D1agEQQrthUeETNHg5u7owQSfaOAtIBqzMOn4vVMtIi+
-         R1++xrnsW1FrK9/mmU/b/xTzPPlCRlMb+z9FWANPgaxYf9VY4C+FPefONIgD0dpn9KGq
-         k8OvZVUeH6B+t3/+T1SHgP6hhNf2shaMaTpYCu2Cx7HjHMgUta3XAfytcwU3sFykl54J
-         4A1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUbC1XPSGSI9j3iluFSw2EEWc65esD2t9Y43JMjVR+KqIA4BTbOKQo4Jtq1unJYkFxwdskb1XJLczwj/Q==@vger.kernel.org, AJvYcCUf+qcuuIvyCikd/BzOqOv1CSd5iR409MAwUK2xvMxatHf33AWdzSVjrU166S9aLyFqelLvn49t1yQDBq15@vger.kernel.org, AJvYcCVA2bQ/OcdkPEIrWGnMyxRZpeSpZeYQ/BJfHKg7pgT2CJIQkurQMoZqe3b1xaRLyzGQ3LsZ95yLq3k+@vger.kernel.org, AJvYcCVEMnqh+u6y2c2ThyWZEEnndagmckBpVUTnB4P2jdXxyEyKPaZ2SYTHVElAEJqxj7DCqnw5dH3B92quXfoUnQ==@vger.kernel.org, AJvYcCWSawgqBdKfdA/v1BAH/i7Vi9qCVeigT+EUcyo9YD0wmb3wm0JdR7/rxS1oHx88dyOHtKWscgchQHuNZw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZEhhDNq9xKBiXEaTqBPiwlAa0KEb+rxGCjL4TRdJxhmrmIiEK
-	JH9OR2T1OW3iY4tFQPoUcOgHi1SvE9WbTgLQDbSE9Vm3CgthxjKivO+QxXrbSmvw7/bXi/4U/gF
-	MQhRcp4tTC3RPB80mnHQPlk+yr2E=
-X-Gm-Gg: ASbGncvgtw+2R3P8bHCzdojMkYlNBx6qMFxCy47jroR9DIF3nLmdX5ihTmFvJ2rbOMg
-	xLgTQdecV/gAnhGK1fUnX0BzUb4IL/dAUUQY=
-X-Google-Smtp-Source: AGHT+IHmex2O3oPEmcdzQYRDxskxCLJEzFe9sxDiHkQR1oioeUncNUJNUrhnRyG2dNZ7LdMyL3H2jyVIZBJBfxS9GRo=
-X-Received: by 2002:a05:6402:3906:b0:5cf:924f:9968 with SMTP id
- 4fb4d7f45d1cf-5d3be661c03mr13750415a12.2.1733761415276; Mon, 09 Dec 2024
- 08:23:35 -0800 (PST)
+	s=arc-20240116; t=1733761785; c=relaxed/simple;
+	bh=hKEaeoK3n0J0N+4rTttPEgAYCOirq6k51p+EhD8tcFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cQe6NGCuMwcN8tK8nmyc60mLqK2UMCXCRQnkWoBroJ1vJKmelhDiX/4iR0BEo6j8O6TjMTjGb4EnysBwNyFJ61jEHVUhvIu7RpYM9lnkLJj4xny14aRMlk2jyxX49pTu1BS+WrbY3ZwE4j0RmjN+jfx58m1qeUzaUkJI6B13LRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=jyXFHdpX; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Dk78Y030060;
+	Mon, 9 Dec 2024 17:29:25 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	2xxd9CctnglpS/bsG969EigGTjV63sf0SfJfYKNJ5iA=; b=jyXFHdpXnRIz9ela
+	xCGd6zoUUHUlh9IGm+qSgM1lGwOD4FTBP3Fu4kjMyUYDvwuULVGA7k24qEgqzbFg
+	YwTmpb3ed/xBoBWjRzggG4KLs/6ohRnto954BAlELElqS97MIGG1czrLS5atULp5
+	l0B2+JABQg0tDF+WmiFJi/2Q7sRV2zTE/rpk3it43sLAzMW7wwtKS+K5oS7P2q6C
+	Ly3p3DwCpn0Gy+D0xgPNSz+uLthLYsgczK1AgduUUojr2Tcn4OU4Xjgj6ZiOEggr
+	k1h+LH3vSHyHaDszebc5H3Bp36e9a4qGdkC/41H5fx3urTD0wp3aX1Fc5s8V4LGb
+	WVQa+A==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43d26n69ug-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 17:29:25 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3BB7640044;
+	Mon,  9 Dec 2024 17:28:16 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D87CE2945B3;
+	Mon,  9 Dec 2024 17:24:06 +0100 (CET)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
+ 2024 17:24:06 +0100
+Message-ID: <6bbb3044-4c1f-4ff1-a503-ef8392e023ae@foss.st.com>
+Date: Mon, 9 Dec 2024 17:24:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241208152520.3559-1-spasswolf@web.de> <20241209121104.j6zttbqod3sh3qhr@quack3>
- <20241209122648.dpptugrol4p6ikmm@quack3>
-In-Reply-To: <20241209122648.dpptugrol4p6ikmm@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Mon, 9 Dec 2024 17:23:24 +0100
-Message-ID: <CAOQ4uxgVNGmLqURdO0wf3vo=K-a2C--ZLKFzXw-22PJdkBjEdA@mail.gmail.com>
-Subject: Re: commit 0790303ec869 leads to cpu stall without CONFIG_FANOTIFY_ACCESS_PERMISSIONS=y
-To: Jan Kara <jack@suse.cz>
-Cc: Bert Karwatzki <spasswolf@web.de>, Josef Bacik <josef@toxicpanda.com>, linux-kernel@vger.kernel.org, 
-	kernel-team@fb.com, linux-fsdevel@vger.kernel.org, brauner@kernel.org, 
-	torvalds@linux-foundation.org, viro@zeniv.linux.org.uk, 
-	linux-xfs@vger.kernel.org, linux-btrfs@vger.kernel.org, linux-mm@kvack.org, 
-	linux-ext4@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 0/5] Add STM32MP25 USB3/PCIE COMBOPHY driver
+To: Christian Bruel <christian.bruel@foss.st.com>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <mcoquelin.stm32@gmail.com>,
+        <p.zabel@pengutronix.de>
+CC: <linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <fabrice.gasnier@foss.st.com>
+References: <20240930170847.948779-1-christian.bruel@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20240930170847.948779-1-christian.bruel@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Mon, Dec 9, 2024 at 1:26=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Mon 09-12-24 13:11:04, Jan Kara wrote:
-> > > Then I took a closer look at the function called in the problematic c=
-ode
-> > > and noticed that fsnotify_file_area_perm(), is a NOOP when
-> > > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is not set (which was the case in =
-my
-> > > .config). This also explains why this was not found before, as
-> > > distributional .config file have this option enabled.  Setting the op=
-tion
-> > > to y solves the issue, too
-> >
-> > Well, I agree with you on all the points but the real question is, how =
-come
-> > the test FMODE_FSNOTIFY_HSM(file->f_mode) was true on our kernel when y=
-ou
-> > clearly don't run HSM software, even more so with
-> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled. That's the real cause of t=
-his
-> > problem. Something fishy is going on here... checking...
-> >
-> > Ah, because I've botched out file_set_fsnotify_mode() in case
-> > CONFIG_FANOTIFY_ACCESS_PERMISSIONS is disabled. This should fix the
-> > problem:
-> >
-> > index 1a9ef8f6784d..778a88fcfddc 100644
-> > --- a/include/linux/fsnotify.h
-> > +++ b/include/linux/fsnotify.h
-> > @@ -215,6 +215,7 @@ static inline int fsnotify_open_perm(struct file *f=
-ile)
-> >  #else
-> >  static inline void file_set_fsnotify_mode(struct file *file)
-> >  {
-> > +       file->f_mode |=3D FMODE_NONOTIFY_PERM;
-> >  }
-> >
-> > I'm going to test this with CONFIG_FANOTIFY_ACCESS_PERMISSIONS disabled=
- and
-> > push out a fixed version. Thanks again for the report and analysis!
->
-> So this was not enough, What we need is:
-> index 1a9ef8f6784d..778a88fcfddc 100644
-> --- a/include/linux/fsnotify.h
-> +++ b/include/linux/fsnotify.h
-> @@ -215,6 +215,10 @@ static inline int fsnotify_open_perm(struct file *fi=
-le)
->  #else
->  static inline void file_set_fsnotify_mode(struct file *file)
->  {
-> +       /* Is it a file opened by fanotify? */
-> +       if (FMODE_FSNOTIFY_NONE(file->f_mode))
-> +               return;
-> +       file->f_mode |=3D FMODE_NONOTIFY_PERM;
->  }
->
-> This passes testing for me so I've pushed it out and the next linux-next
-> build should have this fix.
+Hi Christian
 
-This fix is not obvious to the code reviewer (especially when that is
-reviewer Linus...)
-Perhaps it would be safer and less hidden to do:
+On 9/30/24 19:08, Christian Bruel wrote:
+> Changes in v9:
+>     - Fix bot clang warnings: uninitialized variables and
+>       include bitfield.h for FIELD_GET
+> 
+> Changes in v7/v8:
+>     - MAINTAINERS: Reorder STM32MP25 DRIVER entry
+> 
+> Changes in v6:
+>     - stm32_combophy_pll_init: merge combophy_cr1 accesses and error path.
+>     - Use devm_reset_control_get_exclusive
+> 
+> Changes in v5:
+>     - Drop syscfg phandle and change driver to use lookup_by_compatible
+>     - Use clk_bulk API and drop stm32_combophy_enable/disable_clocks
+>     - Reorder required: list.
+>     - Fix access-controllers maxItems
+> 
+> Changes in v4:
+>     - "#phy-cells": Drop type item description since it is specified
+>       by user node phandle.
+>     - Rename stm32-combophy.yaml to match compatible
+>     - Drop wakeup-source from bindings (should be generic)
+>     - Alphabetically reorder required: list.
+>     - Drop "Reviewed-by" since those previous changes
+> 
+> Changes in v3:
+>     - Reorder MAINTAINERS patch
+> 
+> Changes in v2:
+>     - Reorder entries
+>     - Rename clock_names and reset_names bindings
+>     - Rename and clarify rx-equalizer binding
+> 
+> Christian Bruel (5):
+>    dt-bindings: phy: Add STM32MP25 COMBOPHY bindings
+>    phy: stm32: Add support for STM32MP25 COMBOPHY.
+>    MAINTAINERS: add entry for ST STM32MP25 COMBOPHY driver
+>    arm64: dts: st: Add combophy node on stm32mp251
+>    arm64: dts: st: Enable COMBOPHY on the stm32mp257f-ev1 board
+> 
+>   .../bindings/phy/st,stm32mp25-combophy.yaml   | 119 ++++
+>   MAINTAINERS                                   |   6 +
+>   arch/arm64/boot/dts/st/stm32mp251.dtsi        |  16 +
+>   arch/arm64/boot/dts/st/stm32mp257f-ev1.dts    |  14 +
+>   drivers/phy/st/Kconfig                        |  11 +
+>   drivers/phy/st/Makefile                       |   1 +
+>   drivers/phy/st/phy-stm32-combophy.c           | 598 ++++++++++++++++++
+>   7 files changed, 765 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/phy/st,stm32mp25-combophy.yaml
+>   create mode 100644 drivers/phy/st/phy-stm32-combophy.c
+> 
+> 
+> base-commit: 9bd8e1ba97b1f2d0410db9ff182d677992084770
 
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -211,11 +211,16 @@ typedef int (dio_iodone_t)(struct kiocb *iocb,
-loff_t offset,
+DT patches ([4] & [5]) applied on stm32-next.
 
- #define FMODE_FSNOTIFY_NONE(mode) \
-        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D FMODE_NONOTIFY)
-+#ifdef CONFIG_FANOTIFY_ACCESS_PERMISSIONS
- #define FMODE_FSNOTIFY_PERM(mode) \
-        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0 || \
-         (mode & FMODE_FSNOTIFY_MASK) =3D=3D (FMODE_NONOTIFY | FMODE_NONOTI=
-FY_PERM))
- #define FMODE_FSNOTIFY_HSM(mode) \
-        ((mode & FMODE_FSNOTIFY_MASK) =3D=3D 0)
-+#else
-+#define FMODE_FSNOTIFY_PERM(mode)      0
-+#define FMODE_FSNOTIFY_HSM(mode)       0
-+#endif
-
-Similar to IS_POSIXACL()
-
-Thanks,
-Amir.
+Thanks
+Alex
 
