@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-436826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706819E8B66
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:16:08 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152799E8B67
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:16:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D30DE28160A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D529B1885B5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD073172BDC;
-	Mon,  9 Dec 2024 06:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2149E214817;
+	Mon,  9 Dec 2024 06:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="di1kgpx5"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YlC6cO4a"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1751E2147F8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:15:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D3822147F6
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733724957; cv=none; b=imWv8XWWHlxa5TqiQe6QG7jg59Wi7deKOgYmUhFh1PjEXMENrhAE3HB1/DLRUSBf0D1RdDfacn/EgqoVzqCaSgbX4IYbKX35sSiwra3gDnezfo+2k2yjxAPkSTxIxUHjbqFOPO0qq3jWN9i+TrRYq7HJmIxLjcq1B3ZN5y/WvKk=
+	t=1733724958; cv=none; b=C+zrAQ1xFaBjHeNHsZ7iADOG1o1xwl60YC9P784YDRFsGgjRjBNHGOOkGVWPJPtvt8YXM0jgjDacCDpmI2d+jaP8no3WmZ91Uo14El7caCsISaDVluAPK7FNM8bKhBukPy1HuZayVjb7443VdUbdtzVlbTrC7r7DImj698NGF5M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733724957; c=relaxed/simple;
-	bh=MdDTxfGKx6bu9ZHjfydC1MEn4XRy5nf7GuWie5IjQzA=;
+	s=arc-20240116; t=1733724958; c=relaxed/simple;
+	bh=5Z8mZYF8p+Smo6Mg7rjZn0niYCgmWyYNROi2qqxdffk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L8bnDvqWQe1qH6xI8rvhnC9NIgt+EU+Wcuh5qxaz9SuQmMZ8mFxCRU1nsZjBBdKcFxBQepVQnk9m1fYKRcTb4HxlRH6xVGaRVnDBVxOVSxRYLdGPesNQ8ANVcX5wUaOXRMrttzLs5fWhl7ILaOu8NNVJmxL6YujXwov17UqLSVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=di1kgpx5; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=TTb5hQl/xZJvU5wVd49XFVggAEBXJiRm+Eqx26kVZWIkhDrpHfzjJbkM2bplhZINrds5+Ib/0rEMg/A0Q7z0AHJVMyvnFuV/JFMYZ4BeWDU78QHlLMgHhLsGOQORixtirS+afpMR5Rk3CZYn/KJWxYunaEIUDL9finK86YUpgMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YlC6cO4a; arc=none smtp.client-ip=209.85.214.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21661be2c2dso944425ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:15:53 -0800 (PST)
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-216426b0865so6038115ad.0
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733724953; x=1734329753; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733724956; x=1734329756; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=F7kQonWe5l9Kh79FyLWu6pMklDdWxAHpXcrT/0oQHYM=;
-        b=di1kgpx5COvCAir0jmH+q7hzUlbJaavEEbmpsh/unJmkN2XndGEoN1JssHZ0I2jPR2
-         HpqH1FENwjzRsHGcp0U4rsRVgWhfcTUEI5gbk9cuV4WKntz0xEGhhzhH7SIjwwV32O+O
-         VPFED8Uke1hHGv1AKJ0fcDhlfTckJE4apXHV8t6mROHOcyBk4xPrc33gfPRgIIQQ4y76
-         b1SYca2ic3KfsFWxZN4Z4quy+xWcIrJ3QWu8IjkRg+GET5Z/y4ceII8WwPNjUsY1ybRM
-         qmJpRuRD3hJJlN8ocRE/xy6IzLJmShldX+XB1yxTtJisKJxiwAGhGiswGGxzQzIHsaYh
-         hLoA==
+        bh=TTjz7Q36fm+eHR0LrCJEPj1whyTvpK9Y0P7GSkq40Sk=;
+        b=YlC6cO4aIdlnykct+80WCS8Lg5IDKeNkV5yE76JbUvaB7+dAG3BKCmP7FyOBd9Ba1X
+         v/9QW+QXcL8/QUdnOHCK+nCteL4DvaPeBAyryj5olWUe2G/wtMEtB7X02Zyu7ro0mmLA
+         bGsTWRz/4nX8qRH7HPWl6hplH71F8haY/4bh9tQEo0WRFPOqaCy7xWQUKZVDVkU2o/oP
+         8ImtSi5BdN8S77V6i9g8rvlAfl43YtOwifVH2jjxXfr8uNPok03/SEt0GpZrWVhpxF3K
+         25arbphA5acI8wO8ijhMm3sICm3pLt93CQQYWpAa1iBp93C7XQ2glgDr3coz5x3IZVTw
+         3DNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733724953; x=1734329753;
+        d=1e100.net; s=20230601; t=1733724956; x=1734329756;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=F7kQonWe5l9Kh79FyLWu6pMklDdWxAHpXcrT/0oQHYM=;
-        b=tnQFrVmP9Ws/9bgbupKXrx0zY0nVyJvU7rb96My0UKThgtLIY0+kJHBUH4lZjsgO7z
-         A2MfpdcPuT8astK+KGw6fSMroDMaX6mwVNgMVkyCtzubNJyF3hi4V07/dUtHxSPQulrb
-         sWJwQ8jVGfaStxvITgBLONcXieTdjPz8JUDDP4YQ29zWqoQOuo5jZ6AEPOFPaWxj0uXX
-         ajBZx/05m+PPs/azDnmvBzGfweS79gawig27ACa+nPUIM0OHFs1UMGk38GhlSu4ezBNH
-         sciy7zRjYX6tpKXXZ4IbXZCA/Nh+vtu58Sx8Wqtv7VnDsHXRDnD0ME/6V+zLasR1Y6Pa
-         JfvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVzYtyY9N/qVZDl3AsTaxJZPBpHMoYGkgfw8o+XXyoXAjGNIEjN7ndfWcSPs2tNDXPQS8b5vaHmHUair4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSRlK3BhWKv5WUYXL/ou4lMaPxC4/NHv/sWg+fHrIaoawDvUw6
-	RmgjNPaWuBIlak6YX1+IN4M3CQfBxPLHUuobvckJhf1Abe52KAUN
-X-Gm-Gg: ASbGnct+n5z69uhW8H1b7mMWUTktMcfmoucOXt7mwKaWyQLqSHqIZXKeqqkW7unUUE2
-	Sxwe46u+wxot6Rt/32o2ZOog5i4W9WjnhGfqpcL1Fd5E9ULabADErLs2og5gnJF4/rVwcwiP0y3
-	nzuy6xTHgY+q7AHFaG/kBMmHMgBwiei0XWu2g9yeCAlDZaeKR2EG/B6LaT5tYteE85k0LwXYQV6
-	rtyKfOj8FlHeXPi3RWkYLsxfOzXgSD7kf9M+7gio7wnFLMEcO5FmN5RKp/kfV8ONGwgHEYxdg+d
-	Pufz4w==
-X-Google-Smtp-Source: AGHT+IEXT8C2guc2VNHTufgL0ACYxl6+A7855+73rckfBd3nDSUWho4w2D8ilsy0bUA5bU6T1nndZg==
-X-Received: by 2002:a17:902:ea02:b0:216:2b14:b625 with SMTP id d9443c01a7336-2162b14cdfamr132835015ad.31.1733724953257;
-        Sun, 08 Dec 2024 22:15:53 -0800 (PST)
+        bh=TTjz7Q36fm+eHR0LrCJEPj1whyTvpK9Y0P7GSkq40Sk=;
+        b=Wu6u58+aylHxTQVDhxdhejIKWmi3QaO5oxIQu2tAwIJz10j/pCVQUiq1eXBdl9DgV5
+         VcJEjqv4QCfNyCe9mJzu8WRmi8N9wINPGPA9Fs08LFg6fH3ndHQcVGjKx/CqXLDCYJAh
+         EwmpQQGBn1ENl+WnWGvmz1zw7TLNjxnxEJzJYPZVtHc5euaoBH5DmLMx2WutOyIYL2sb
+         Zu/SBNcEN5kMx6aOu2LIzgTsWP4DHVmZ5gsTWsK5RSxZhNIrqU4yW66iF5PDGxSQ/1et
+         kSGw/KGnc3Uy8ZA1Py4kfUFG1DLQ1YMolf0iQYH56ZZD4W6IDF8kEWVsuTlXxgGfVcg8
+         lFRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUTkfuCesNRp/IDjlYEd6Fm/R8GhGXbpLvYHwIFrBfPtqS/yA1w6iNRNnN4g3y64Q+2jK9Wr8qDG//jhPY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOZf0aSp7VDNHduQ13SEEIHTwFN7JDfbcA3HPtP4iAX3fq0wZQ
+	0OLn3nK28DRGL2+9mgVu0KfivPvbq8U5TPte0ISiyexwmSLTfBUB
+X-Gm-Gg: ASbGncvPmDmDCkw+/DvQ3+ZZrKjrElGp03btRYbwtoPsbVmHbT6K7yuTci4y/QCEkp5
+	Azqd/pnvtL4uPTDVCW7meZa7qs6ZWlCn01rPQ4MmkMMt4ifVWUk1fjKUgFRMTksP2+EEjs+Kd/+
+	uaWFdWYrxafJWmSKSimve27xG61+gsaJcegAi4neMzQgBEpn4vNbmOAJn7tOmnDJ9DGguZNVtBq
+	09K0DS5hVkEteSIXDlZ5m/4sZt2lJrf1kLH2pJzOgbHp2q7X/914qydXoz8rGv8oGmxIYFWzAyd
+	JoKSSg==
+X-Google-Smtp-Source: AGHT+IGFnKTrwnNVlNBi0pRWyTxWgXXUXcq6GWbamGHw2JM+Z0reYdmXkftL6UEPzYa40jTFM969+w==
+X-Received: by 2002:a17:903:2a8b:b0:215:ba2b:cd51 with SMTP id d9443c01a7336-21614d3ace3mr179685945ad.15.1733724956327;
+        Sun, 08 Dec 2024 22:15:56 -0800 (PST)
 Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2165590a8ebsm6925375ad.271.2024.12.08.22.15.52
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f0913bsm65491515ad.185.2024.12.08.22.15.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:15:52 -0800 (PST)
+        Sun, 08 Dec 2024 22:15:56 -0800 (PST)
 From: Changwoo Min <multics69@gmail.com>
 X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
 To: tj@kernel.org,
@@ -80,9 +80,9 @@ To: tj@kernel.org,
 Cc: changwoo@igalia.com,
 	kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/6] sched_ext: Implement scx_rq_clock_update/stale()
-Date: Mon,  9 Dec 2024 15:15:27 +0900
-Message-ID: <20241209061531.257531-3-changwoo@igalia.com>
+Subject: [PATCH v4 3/6] sched_ext: Manage the validity of scx_rq_clock
+Date: Mon,  9 Dec 2024 15:15:28 +0900
+Message-ID: <20241209061531.257531-4-changwoo@igalia.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241209061531.257531-1-changwoo@igalia.com>
 References: <20241209061531.257531-1-changwoo@igalia.com>
@@ -94,70 +94,85 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-scx_rq_clock_update() and scx_rq_clock_stale() manage the status of an
-rq clock when sched_ext is enabled. scx_rq_clock_update() keeps the rq
-clock in memory and its status valid. scx_rq_clock_stale() invalidates
-the current rq clock not to use the cached rq clock.
+An rq clock becomes valid when it is updated using update_rq_clock()
+and invalidated when the rq is unlocked using rq_unpin_lock().
+
+Let's suppose the following timeline in the scheduler core:
+
+   T1. rq_lock(rq)
+   T2. update_rq_clock(rq)
+   T3. a sched_ext BPF operation
+   T4. rq_unlock(rq)
+   T5. a sched_ext BPF operation
+   T6. rq_lock(rq)
+   T7. update_rq_clock(rq)
+
+For [T2, T4), we consider that rq clock is valid (SCX_RQ_CLK_VALID is
+set), so scx_bpf_now_ns() calls during [T2, T4) (including T3) will
+return the rq clock updated at T2. For duration [T4, T7), when a BPF
+scheduler can still call scx_bpf_now_ns() (T5), we consider the rq clock
+is invalid (SCX_RQ_CLK_VALID is unset at T4). So when calling
+scx_bpf_now_ns() at T5, we will return a fresh clock value by calling
+sched_clock() internally.
+
+One example of calling scx_bpf_now_ns(), when the rq clock is invalid
+(like T5), is in scx_central [1]. The scx_central scheduler uses a BPF
+timer for preemptive scheduling. In every msec, the timer callback checks
+if the currently running tasks exceed their timeslice. At the beginning of
+the BPF timer callback (central_timerfn in scx_central.bpf.c), scx_central
+gets the current time. When the BPF timer callback runs, the rq clock could
+be invalid, the same as T5. In this case, scx_bpf_now_ns() returns a fresh
+clock value rather than returning the old one (T2).
+
+[1] https://github.com/sched-ext/scx/blob/main/scheds/c/scx_central.bpf.c
 
 Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- kernel/sched/sched.h | 24 +++++++++++++++++++++++-
- 1 file changed, 23 insertions(+), 1 deletion(-)
+ kernel/sched/core.c  | 6 +++++-
+ kernel/sched/sched.h | 2 +-
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 95e40895a519..ab8015c8cab4 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -789,6 +789,7 @@ static void update_rq_clock_task(struct rq *rq, s64 delta)
+ void update_rq_clock(struct rq *rq)
+ {
+ 	s64 delta;
++	u64 clock;
+ 
+ 	lockdep_assert_rq_held(rq);
+ 
+@@ -800,11 +801,14 @@ void update_rq_clock(struct rq *rq)
+ 		SCHED_WARN_ON(rq->clock_update_flags & RQCF_UPDATED);
+ 	rq->clock_update_flags |= RQCF_UPDATED;
+ #endif
++	clock = sched_clock_cpu(cpu_of(rq));
++	scx_rq_clock_update(rq, clock);
+ 
+-	delta = sched_clock_cpu(cpu_of(rq)) - rq->clock;
++	delta = clock - rq->clock;
+ 	if (delta < 0)
+ 		return;
+ 	rq->clock += delta;
++
+ 	update_rq_clock_task(rq, delta);
+ }
+ 
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 440ecedf871b..7e71d8685fcc 100644
+index 7e71d8685fcc..b9d7c638ec60 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -754,6 +754,7 @@ enum scx_rq_flags {
- 	SCX_RQ_BAL_PENDING	= 1 << 2, /* balance hasn't run yet */
- 	SCX_RQ_BAL_KEEP		= 1 << 3, /* balance decided to keep current */
- 	SCX_RQ_BYPASSING	= 1 << 4,
-+	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
+@@ -1781,7 +1781,7 @@ static inline void rq_unpin_lock(struct rq *rq, struct rq_flags *rf)
+ 	if (rq->clock_update_flags > RQCF_ACT_SKIP)
+ 		rf->clock_update_flags = RQCF_UPDATED;
+ #endif
+-
++	scx_rq_clock_stale(rq);
+ 	lockdep_unpin_lock(__rq_lockp(rq), rf->cookie);
+ }
  
- 	SCX_RQ_IN_WAKEUP	= 1 << 16,
- 	SCX_RQ_IN_BALANCE	= 1 << 17,
-@@ -766,9 +767,11 @@ struct scx_rq {
- 	unsigned long		ops_qseq;
- 	u64			extra_enq_flags;	/* see move_task_to_local_dsq() */
- 	u32			nr_running;
--	u32			flags;
- 	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
- 	bool			cpu_released;
-+	u32			flags;
-+	u64			clock;			/* current per-rq clock -- see scx_bpf_now_ns() */
-+	u64			prev_clock;		/* previous per-rq clock -- see scx_bpf_now_ns() */
- 	cpumask_var_t		cpus_to_kick;
- 	cpumask_var_t		cpus_to_kick_if_idle;
- 	cpumask_var_t		cpus_to_preempt;
-@@ -1725,9 +1728,28 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
- 
- #define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
- #define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
-+
-+static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
-+{
-+	if (scx_enabled()) {
-+		rq->scx.prev_clock = rq->scx.clock;
-+		rq->scx.clock = clock;
-+		rq->scx.flags |= SCX_RQ_CLK_VALID;
-+	}
-+}
-+
-+static inline void scx_rq_clock_stale(struct rq *rq)
-+{
-+	if (scx_enabled())
-+		rq->scx.flags &= ~SCX_RQ_CLK_VALID;
-+}
-+
- #else /* !CONFIG_SCHED_CLASS_EXT */
- #define scx_enabled()		false
- #define scx_switched_all()	false
-+
-+static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
-+static inline void scx_rq_clock_stale(struct rq *rq) {}
- #endif /* !CONFIG_SCHED_CLASS_EXT */
- 
- /*
 -- 
 2.47.1
 
