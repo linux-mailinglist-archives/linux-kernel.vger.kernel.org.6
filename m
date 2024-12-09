@@ -1,94 +1,63 @@
-Return-Path: <linux-kernel+bounces-438144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A2959E9D66
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:47:45 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B74209E9D68
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:48:01 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71B641888858
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:47:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BEA5B2826F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D2B1534EC;
-	Mon,  9 Dec 2024 17:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF7B1C5CB7;
+	Mon,  9 Dec 2024 17:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rlybrBT/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0JwVeeCC";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="rlybrBT/";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0JwVeeCC"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="bUF2rChN"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AED023315E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C14923315E;
+	Mon,  9 Dec 2024 17:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766437; cv=none; b=mpZM5RlljC+GLJ5LWpQ/YogO666EEwticAPnanQlrFVJOzhHrSSSzcuul8n9VgavuMbqlw1phJG3o/crwvrI2yB2c91g5LKBHaXkuPNuP3FC+FWuFK5nzJ85sbbeAaULCV7EtWd/vkSFOXTyhRjtyMG8qKG0iszSvUgkUvo3Wv8=
+	t=1733766449; cv=none; b=DlGL8qinHaDw01bgkq2e3/0UkQwtyffZJJQhxPjydTApqvA2R0JJX83MmgjPWvH8JDbledRI4Em7v6snxGZxaI+EUgEP+dP95yxgVR2fJEhh1brktAJxZbuJq9+Wq2Y4AM23EyHljAM8ACJZDkxfpxO540erkserJm7O9/qyGvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766437; c=relaxed/simple;
-	bh=jiGuyj6EHZZ1E5+SJGzDcvpqgiDIAPM5WQqiFyhQvA0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=IFONkfSDG7Z3jj0f5RB1c6mplRlb25ZmiQFWlBfJZEzIl+GuxoT3ugqfmjdyweNOyJJ+ndNaX5qhUQeGA5/eBswtksWBTypGolP08ZhRCHu0Qap7+HlR6dLmp/DTm/J6oMu4uO49aK2zG9zUm1Ee/YgEPl4+fVqNVzLSStNnt9o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rlybrBT/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0JwVeeCC; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=rlybrBT/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0JwVeeCC; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3B08F1F460;
-	Mon,  9 Dec 2024 17:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733766432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xRlHEwDMGhFdyadGqgWa8NxftBI9cXikC0b4BLqAh0I=;
-	b=rlybrBT/wWSqdYkA70QdLM2UmHDY9HOWu8ggd+nngPZSAmztgcGZKVt6CCvlIgMkjmcTK1
-	r2SfHS5Vaw1pWtYfd98X+GPvmXpRskKczf7bICDaIDgnAGu0jrMzdBsE7dc2RjkIZkcG+l
-	WagaWDKXsCkE8VSMhvhcjt0NgUeSd30=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733766432;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xRlHEwDMGhFdyadGqgWa8NxftBI9cXikC0b4BLqAh0I=;
-	b=0JwVeeCC0seGRfEcDzYyD9sK9IPorwfvkW81lvMGerBa+LZ4v/nD+WBieRAIAl3jzeOArI
-	YAkG95Ygcgt27EBw==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1733766432; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xRlHEwDMGhFdyadGqgWa8NxftBI9cXikC0b4BLqAh0I=;
-	b=rlybrBT/wWSqdYkA70QdLM2UmHDY9HOWu8ggd+nngPZSAmztgcGZKVt6CCvlIgMkjmcTK1
-	r2SfHS5Vaw1pWtYfd98X+GPvmXpRskKczf7bICDaIDgnAGu0jrMzdBsE7dc2RjkIZkcG+l
-	WagaWDKXsCkE8VSMhvhcjt0NgUeSd30=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1733766432;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=xRlHEwDMGhFdyadGqgWa8NxftBI9cXikC0b4BLqAh0I=;
-	b=0JwVeeCC0seGRfEcDzYyD9sK9IPorwfvkW81lvMGerBa+LZ4v/nD+WBieRAIAl3jzeOArI
-	YAkG95Ygcgt27EBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A5FE138D2;
-	Mon,  9 Dec 2024 17:47:12 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 79sOCiAtV2fePwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Mon, 09 Dec 2024 17:47:12 +0000
-Message-ID: <9e426477-ed45-4e32-a61b-917413b2ad76@suse.cz>
-Date: Mon, 9 Dec 2024 18:47:11 +0100
+	s=arc-20240116; t=1733766449; c=relaxed/simple;
+	bh=Y3lRbDCfH3A8PYlYcKSPcUcqsZwGYcTg/9f1bdIxfEg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JAaziSHUK99EQxPFlnbZru2H+ld3ORcojsodx10mZHs4rORMKpKxJkBnpPmVv0yyWT8QygCVHd2gp+THnrT/cbvFPkdbGam9fFuWVkiLTEXAAo6cxDZypOioxUtNaFRT9iCwQw4IrmNWnMXAG+kC2PIn8cDn0UByqxfLTJW+Usk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=bUF2rChN; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B9HlEDI2341854
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 11:47:14 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733766434;
+	bh=eTG/e2l3KpvcafqmdZO1vCcPlH+GvHFgYJFOv8hUdfs=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=bUF2rChNq+1jH5pkJvE33PgFHVGweZHipwwHO1sRFiT/ABjbc/cLZlkz1mx8+B+t2
+	 fp7eKaMmPUHZP/wD36Ler7nEo3OkFJAeCZXO5jT5RUG5QN6gA4KVw/6WXkxp1HYBqb
+	 aRD67SxPwLY7kWH9RFObyz0/dpu1D26SgYLc9uKg=
+Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B9HlE1S058412
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 9 Dec 2024 11:47:14 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 9
+ Dec 2024 11:47:14 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 9 Dec 2024 11:47:14 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B9HlDO7044631;
+	Mon, 9 Dec 2024 11:47:13 -0600
+Message-ID: <2912af91-6012-4e6a-9439-737e319b7724@ti.com>
+Date: Mon, 9 Dec 2024 11:47:13 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,113 +65,182 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RESEND v1 2/2] mm/memory_hotplug: don't use __GFP_HARDWALL
- when migrating pages via memory offlining
+Subject: Re: [PATCH 0/7] of: overlay: Add support for export-symbols node
+ feature
+To: Herve Codina <herve.codina@bootlin.com>
+CC: Ayush Singh <ayush@beagleboard.org>,
+        Geert Uytterhoeven
+	<geert@linux-m68k.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Arnd Bergmann
+	<arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana
+ Kannan <saravanak@google.com>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Luca Ceresoli <luca.ceresoli@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+References: <20241209151830.95723-1-herve.codina@bootlin.com>
+ <5889e0aa-15f9-41fe-9d80-ec59fee2f62b@ti.com>
+ <20241209180320.30fc0da6@bootlin.com>
 Content-Language: en-US
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- Oscar Salvador <osalvador@suse.de>, Zi Yan <ziy@nvidia.com>
-References: <20241205090508.2095225-1-david@redhat.com>
- <20241205090508.2095225-3-david@redhat.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241205090508.2095225-3-david@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.990];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20241209180320.30fc0da6@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 12/5/24 10:05, David Hildenbrand wrote:
-> We'll migrate pages allocated by other context; respecting the cpuset of
-> the memory offlining context when allocating a migration target does not
-> make sense.
+On 12/9/24 11:03 AM, Herve Codina wrote:
+> On Mon, 9 Dec 2024 10:47:50 -0600
+> Andrew Davis <afd@ti.com> wrote:
 > 
-> Drop the __GFP_HARDWALL by using GFP_KERNEL.
+>> On 12/9/24 9:18 AM, Herve Codina wrote:
+>>> Hi,
+>>>
+>>> At Linux Plumbers Conference 2024, we (me and Luca Ceresolli) talked
+>>> about issues we have with runtime hotplug on non-discoverable busses
+>>> with device tree overlays [1].
+>>>
+>>> On our system, a base board has a connector and addon boards can be
+>>> connected to this connector. Both boards are described using device
+>>> tree. The base board is described by a base device tree and addon boards
+>>> are describe by overlays device tree. More details can be found at [2].
+>>>
+>>> This kind of use case can be found also on:
+>>>     - Grove Sunlight Sensor [3]
+>>>     - mikroBUS [4]
+>>>
+>>> One of the issue we were facing on was referencing resources available
+>>> on the base board device tree from the addon overlay device tree.
+>>>
+>>> Using a nexus node [5] helps decoupling resources and avoid the
+>>> knowledge of the full base board from the overlay. Indeed, with nexus
+>>> node, the overlay need to know only about the nexus node itself.
+>>>
+>>> For instance, suppose a connector where a GPIO is connected at PinA. On
+>>> the base board this GPIO is connected to the GPIO 12 of the SoC GPIO
+>>> controller.
+>>>
+>>> The base board can describe this GPIO using a nexus node:
+>>>       soc_gpio: gpio-controller {
+>>>         #gpio-cells = <2>;
+>>>       };
+>>>
+>>>       connector1: connector1 {
+>>>           /*
+>>>            * Nexus node for the GPIO available on the connector.
+>>>            * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
+>>>            * controller
+>>>            */
+>>>           #gpio-cells = <2>;
+>>>           gpio-map = <0 0 &soc_gpio 12 0>;
+>>>           gpio-map-mask = <0xf 0x0>;
+>>>           gpio-map-pass-thru = <0x0 0xf>;
+>>>       };
+>>>
+>>> The connector pin A GPIO can be referenced using:
+>>>     <&connector1 0 GPIO_ACTIVE_HIGH>
+>>>
+>>> This implies that the overlay needs to know about exact label that
+>>> references the connector. This label can be different on a different
+>>> board and so applying the overlay could failed even if it is used to
+>>> describe the exact same addon board. Further more, a given base board
+>>> can have several connectors where the exact same addon board can be
+>>> connected. In that case, the same overlay cannot be used on both
+>>> connector. Indeed, the connector labels have to be different.
+>>>
+>>> The export-symbols node introduced by this current series solves this
+>>> issue.
+>>>
+>>> The idea of export-symbols is to have something similar to the global
+>>> __symbols__ node but local to a specific node. Symbols listed in this
+>>> export-symbols are local and visible only when an overlay is applied on
+>>> a node having an export-symbols subnode.
+>>>
+>>> Using export-symbols, our example becomes:
+>>>       soc_gpio: gpio-controller {
+>>>         #gpio-cells = <2>;
+>>>       };
+>>>
+>>>       connector1: connector1 {
+>>>           /*
+>>>            * Nexus node for the GPIO available on the connector.
+>>>            * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
+>>>            * controller
+>>>            */
+>>>           #gpio-cells = <2>;
+>>>           gpio-map = <0 0 &soc_gpio 12 0>;
+>>>           gpio-map-mask = <0xf 0x0>;
+>>>           gpio-map-pass-thru = <0x0 0xf>;
+>>>
+>>>           export-symbols {
+>>>             connector = <&connector1>;
+>>>           };
+>>>       };
+>>>
+>>> With that export-symbols node, an overlay applied on connector1 node can
+>>> have the symbol named 'connector' resolved to connector1. Indeed, the
+>>> export-symbols node available at connector1 node is used when the
+>>> overlay is applied. If the overlay has an unresolved 'connector' symbol,
+>>> it will be resolved to connector1 thanks to export-symbols.
+>>>
+>>> Our overlay using the nexus node can contains:
+>>>      node {
+>>>         foo-gpio = <&connector 0 GPIO_ACTIVE_HIGH>;
+>>>      };
+>>> It used the GPIO 0 from the connector it is applied on.
+>>>
+>>> A board with two connectors can be described with:
+>>>       connector1: connector1 {
+>>>           ...
+>>>           export-symbols {
+>>>             connector = <&connector1>;
+>>>           };
+>>>       };
+>>>
+>>>       connector2: connector2 {
+>>>           ...
+>>>           export-symbols {
+>>>             connector = <&connector2>;
+>>>           };
+>>>       };
+>>>
+>>> In that case, the same overlay with unresolved 'connector' symbol can be
+>>> applied on both connectors and the correct symbol resolution (connector1
+>>> or connector2) will be done.
+>>>    
+>>
+>> I might be missing something, but how is the correct connector (connector1
+>> or connector2) selected? Let's say I connect my addon board to connector2,
+>> then I apply the addon board's overlay to the base DTB. What connector
+>> just got referenced?
+>>
 > 
-> Note that in an ideal world, migration code could figure out the cpuset
-> of the original context and take that into consideration.
+> A driver for the connector is needed.
+> The driver applies the overlay using of_overlay_fdt_apply().
+> The node the overlay has to be applied to is passed by the driver to
+> of_overlay_fdt_apply().
 > 
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+So every connector needs a driver? Most connectors are dumb connectors,
+just a bunch of wires broken out to a header.
 
-Thanks!
+What if an addon board overlay uses multiple connectors?
 
-> ---
->  mm/memory_hotplug.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+If you need a connector-specific driver, and that driver needs to know
+which node this overlay will be applied to, then why not just do a
+fixup directly to the overlay in the driver?
+
+Andrew
+
+> Even if obsolete because I added one more parameter (export_symbols_name)
+> in of_overlay_fdt_apply() in this current series, you can have a look at the
+> following patch to see the connector driver:
+>    https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-8-bc4dfee61be6@bootlin.com/
 > 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 5f497ccf473d..3b6f93962481 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1838,7 +1838,7 @@ static void do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  		nodemask_t nmask = node_states[N_MEMORY];
->  		struct migration_target_control mtc = {
->  			.nmask = &nmask,
-> -			.gfp_mask = GFP_USER | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL,
-> +			.gfp_mask = GFP_KERNEL | __GFP_MOVABLE | __GFP_RETRY_MAYFAIL,
->  			.reason = MR_MEMORY_HOTPLUG,
->  		};
->  		int ret;
-
+> Best regards,
+> Hervé
+> 
 
