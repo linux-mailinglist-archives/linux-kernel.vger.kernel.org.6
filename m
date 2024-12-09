@@ -1,108 +1,88 @@
-Return-Path: <linux-kernel+bounces-438476-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CFE29EA1C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:21:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 423A318885E5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:21:34 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A792A19E7F9;
-	Mon,  9 Dec 2024 22:21:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UwuFx0xS"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9ED9EA1C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:21:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F10019E7ED;
-	Mon,  9 Dec 2024 22:21:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733782878; cv=none; b=lZ1XbEfjnDcnKUErkp4eOA1oV7iNoKGZ15lSFRGTWWXQpcW7Slb8Pi+zfzBACpF16bLpGDlTzJl+ANsjAtJzS0Q49pB3ubauErXvOgN0QTM50wNSzThGZWc+WqSQKVvvgFsjyxGablEF2eSxz5XthET+cl0p3T00uyYFF7vf/VM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733782878; c=relaxed/simple;
-	bh=bwzYOAuoJO2yAuRVUE6d9wqLyu40DkAaVYdXryd1xdw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u+qmvoK4ILHNMsvyb2pqlwMnlx+/yxLhhYsgSTVDgH12s82YMLkyqvOa9JOHHg5Lp3vg4fjf6oFtTgWIEC0VP6fgE1vUzWzKrsNuIFqh0ItsKt5/m5N2tPyymgKOI9ZO3Muthui1arbBTIHWQKQIVTpcjg5vyOLQ8mTLlJgEv18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UwuFx0xS; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D17CB40E0277;
-	Mon,  9 Dec 2024 22:21:13 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id t1OGWIsr1yrN; Mon,  9 Dec 2024 22:21:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733782868; bh=21QrC0wOQ48GOvsESM0ZAE9MczwzGypXpmwP1LEdWa8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UwuFx0xSduVIpjCgwbkQ561hAu/eoEU4rX1B7ku7yYfGY5RSMn5q/rdH6miIoWhzE
-	 Ap5xN+FrXGkYyKur3MR5sAqPVsG+785SuN8mTCPU02R+88WnDNkFPcBRNLFoluhdFV
-	 hNY7qRFSntrmOB+z+XWlN4gr6bp7QJqhhDJaaL9j+xR29OptqqSlQzO3nUJXgKNN1A
-	 s38BQ8b6LaPu1ahoKuPrTLNMjYB3nXv1dLQ1XqjvkSF+I8d5tY9Qs5nbCPQKAq8pLD
-	 C4Zm6pWhcmxDDp+YAcUVIyytzjo+YOKSnyDh/u/5Dzm+X+KchhJy2uFNe9gEeWG4Kp
-	 aiua/RzWbnCezhoUpe16C69tnuMHNQlnFyjBlgqCKwa0w+5djTpzc0Zw2MJP74zEK5
-	 JOVS+qoGgkTWD2AZFgE1NzXIlIPEn1o0FikqckCOrD150Njj8MdbnyXdehoMUiQ5ZI
-	 PWwAZ7gHNV8MRj0rzqcNOZ/2WD1Q3BXzKkJbbN0mUNuNeo4cQ1NJuFzkx+RiGBxzyx
-	 gZ5iHnNvspQ/s42QnIZLhEctHxxElwVVy7DEaIeVSdxCmA/CkhTHSv6fc7RSZXp8Va
-	 2GcCFavLCrW8OyIqRJIoHKUBnZBNVvknalsjAe0KJuGTyR8FVIS8faIbYsPK8KY9Lv
-	 NCs+W8RJDzzuPliYVJzDvVu8=
-Received: from zn.tnic (p200300Ea971F9307329c23fFfEA6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39219282CC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:21:07 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EECE119E7ED;
+	Mon,  9 Dec 2024 22:20:59 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 698A740E019C;
-	Mon,  9 Dec 2024 22:20:54 +0000 (UTC)
-Date: Mon, 9 Dec 2024 23:20:47 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Yu, Fenghua" <fenghua.yu@intel.com>,
-	"Chatre, Reinette" <reinette.chatre@intel.com>,
-	Peter Newman <peternewman@google.com>,
-	Jonathan Corbet <corbet@lwn.net>, "x86@kernel.org" <x86@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Jamie Iles <quic_jiles@quicinc.com>,
-	Babu Moger <babu.moger@amd.com>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	"Shaopeng Tan (Fujitsu)" <tan.shaopeng@fujitsu.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"patches@lists.linux.dev" <patches@lists.linux.dev>
-Subject: Re: [PATCH v11 2/8] x86/resctrl: Prepare for per-CTRL_MON group
- mba_MBps control
-Message-ID: <20241209222047.GKZ1dtPxIu5_Hxs1fp@fat_crate.local>
-References: <20241206163148.83828-1-tony.luck@intel.com>
- <20241206163148.83828-3-tony.luck@intel.com>
- <20241209204519.GAZ1dW3-NjcL4Sewaf@fat_crate.local>
- <SJ1PR11MB6083BA367F2CDFC92D87FDA1FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9E2419CD0B;
+	Mon,  9 Dec 2024 22:20:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733782859; cv=none; b=K7bBcSlRwGu1sxzKi9/lXlVA41lptiRKOSR9A28OQ0YoOUGb3B3MwOCbmA3qqUVz5DwrlfMCDetYY95Z1BpKXyTC+4p1/yDAtSNznd6iPalrgxMqTKsmOqMW+fil/9e4fCfm5t1jKWPMS6fyCayzcHtGdkJJ69VtKYF9ufUMXs4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733782859; c=relaxed/simple;
+	bh=Cs06nYZjCamsC5t3oilkrWOG7mho1lwC6TBmhVBTV+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D8JoWQXfVQEb7DNbTW+rgM3kP0kPT7ohSVVJI6AK/Qwe8MFEjBgBod9Pyj2alo31WcDKARUuy01wImqt5KTwhTLVLoP2nEHSqIGZPWWTl80aeqLUtEVgC0IEwIxq3W1gz08gUUTDdvWUih8iURWrib0I7RfIGWS5iL/l/6cbCd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1tKm7a-0001NZ-1t; Mon, 09 Dec 2024 23:20:54 +0100
+Date: Mon, 9 Dec 2024 23:20:54 +0100
+From: Florian Westphal <fw@strlen.de>
+To: Karol Przybylski <karprzy7@gmail.com>
+Cc: netfilter-devel@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	casey@schaufler-ca.com
+Subject: Re: [PATCH] netfilter: nfnetlink_queue: Fix redundant comparison of
+ unsigned value
+Message-ID: <20241209222054.GB4709@breakpoint.cc>
+References: <20241209204918.56943-1-karprzy7@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083BA367F2CDFC92D87FDA1FC3C2@SJ1PR11MB6083.namprd11.prod.outlook.com>
+In-Reply-To: <20241209204918.56943-1-karprzy7@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, Dec 09, 2024 at 10:05:43PM +0000, Luck, Tony wrote:
-> mba_mbps_default_event isn't architecture specific. The mba_MBps
-> feedback code could be implemented on any architecture that supports
-> both measurement and control of memory bandwidth.
+Karol Przybylski <karprzy7@gmail.com> wrote:
 
-Yes, and it should be moved to that header then, right?
+[ CC original patch author and mass-trimming CCs ]
 
-But not earlier.
+> The comparison seclen >= 0 in net/netfilter/nfnetlink_queue.c is redundant because seclen is an unsigned value, and such comparisons are always true.
+> 
+> This patch removes the unnecessary comparison replacing it with just 'greater than'
+> 
+> Discovered in coverity, CID 1602243
+> 
+> Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
+> ---
+>  net/netfilter/nfnetlink_queue.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
+> index 5110f29b2..eacb34ffb 100644
+> --- a/net/netfilter/nfnetlink_queue.c
+> +++ b/net/netfilter/nfnetlink_queue.c
+> @@ -643,7 +643,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
+>  
+>  	if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
+>  		seclen = nfqnl_get_sk_secctx(entskb, &ctx);
+> -		if (seclen >= 0)
+> +		if (seclen > 0)
+>  			size += nla_total_size(seclen);
 
--- 
-Regards/Gruss,
-    Boris.
+Casey, can you please have a look?
 
-https://people.kernel.org/tglx/notes-about-netiquette
+AFAICS security_secid_to_secctx() could return -EFOO, so it seems
+nfqnl_get_sk_secctx has a bug and should conceal < 0 retvals
+(the function returns u32), in addition to the always-true >= check
+fixup.
 
