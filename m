@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-437904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437906-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D27E89E9A4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:20:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B120F9E9A55
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:21:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86EAD285682
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:20:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D970C1887959
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:21:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D572216E2B;
-	Mon,  9 Dec 2024 15:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CADB8223C49;
+	Mon,  9 Dec 2024 15:18:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="QHNWSd45"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="L1XcsIzY"
 Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5531F1C5CB3;
-	Mon,  9 Dec 2024 15:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810571C5CC1;
+	Mon,  9 Dec 2024 15:18:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733757524; cv=none; b=ZYCSZ6H/utC0YUg/AmeOUZB7OL8jcvF+8gvwIHziqf37qUHO2VkNvJqWZ28Kgde4/xcyVs1CDRIigoFAPpEf4/lkXdkU+Ibt/vlhUS5yJ/23Y/XQnB72FFma7bJqBuD4+msVH5HkA99s0nw56kTt61eq2wkfY8li/ngM8J27s2k=
+	t=1733757525; cv=none; b=JNG1KkmMpAfyYvNGERD0Crs8erBG6WMO5hiJjXv3I9Wip77b4qAMffWor/h+FkP3OeXWv4eyGZIsodADijF/5DrAk79gGTZcu/V/Dq55xhNI75ID+VMYKD2acDE1yxGqGz30g/m2EZWFVqq9DJYX9AdJhsTjV9tJKTXBq0jiUoA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733757524; c=relaxed/simple;
-	bh=bddoC57aSA5Z++Q1YV92YnSN11dyWZNLBdBNmMRB1cU=;
+	s=arc-20240116; t=1733757525; c=relaxed/simple;
+	bh=7uYFDC/DD6qGCYtp5pFL4NX/XzVCHwPStn3sfh7zDyc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UCUEeqm/Qxbpi0FkUCNDbUCj0aKnrsL6vDUM8eZqfR00YROVlB9BuELaDY+AztA53OVcqmanYLaEBqItfkZx6inBAhwVPpA0ERJ0GKGQduujdg6TiesS/wNWozvwOYVb+7QCZHS/XON+IXy7vbLApPsJFevjxAujjnUbNosRiwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=QHNWSd45; arc=none smtp.client-ip=217.70.183.197
+	 MIME-Version; b=SBjqVpS4gzEV6jbaR6TgA1n+Q7K7nX6V9RxOH9IOPtueC16HKtC/O+LWPAAh2dswnhC98i2Ijz3rGezYfIepIq+pb6y27cZOP+mz4wVYHVLlvn5Yo99D+pLOdgnPMk5qu0Gj4U8TzYBkZoWetQ2UtaA61rkYfbp0jhQkTQXUqUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=L1XcsIzY; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id DAA881C0002;
-	Mon,  9 Dec 2024 15:18:34 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id A06561C0010;
+	Mon,  9 Dec 2024 15:18:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733757515;
+	t=1733757516;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=N1lLHg+b2rS2dS5LxXdZG0vEvHnYFFE2HcdcCPiiZsk=;
-	b=QHNWSd45eqNZBZQrCzHQbh53U0NxOH2eN55RAOghTckOBm2h5TDUuF48MnHbVy74aBYCWU
-	YX4nxxnKIFzkFeJM6UtqumbswGzWjAB03U8LFcI4mvqgUTZRjV5MljiwLkaFTekP8mdD2K
-	etlGUgo77DfBgGtnW9tCqrn7dojYevDdpFl9rzPc559TKtMlEB1T7jyHIonZ4HNvTMOMDy
-	SWiElyYWWlyHN8SYQKTl2xViVOvCxBkETTgxX8U4bLMTt2DAESRW/ZQNsg7NFWn7H2lbYO
-	vi8ijZvi0mEVPGgm5IwJQ5l4HeEBqoSSWEtPJ0Wn+uUEsjhdkH06r1UprZaX5Q==
+	bh=Tr7OhDfkg+fL9ioPWrN+UHmbgRARJumuDlQwW8WsOKg=;
+	b=L1XcsIzYKXLsjG4jxuDphCJPUo7uOWpGNXwzuxpeCWfwayTRjC6SpsO/37uNfpuN/NgmOM
+	cTSQ7sRk3Kut3G1sQmQZCnWjzwH08ZbcPqZgxmLh3sIU8ChojoALzueZrOLw/jtDAtiBP8
+	f708O9aejHqvJ9ckapBKR9VN3UNhRT9MmuoBC+Wyah6+kQnUjU7Oft1Z59w8rlr3lr2Rdc
+	rLu/EDmRni7jCoR5a0BTS0iddaIJ1tn6XL/o3vvm8S/JfyIE6sKgi9O98/9D+KPzAcZHz5
+	AIbH4tv9kCPavxnOiCQ8ZVEhlP/mfEAtvnh6EhEii/BR3fnNbNePBQmlb8TIbw==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Andrew Davis <afd@ti.com>,
 	Ayush Singh <ayush@beagleboard.org>,
@@ -59,9 +59,9 @@ Cc: devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 3/7] of: resolver: Add export_symbols in of_resolve_phandles() parameters
-Date: Mon,  9 Dec 2024 16:18:21 +0100
-Message-ID: <20241209151830.95723-4-herve.codina@bootlin.com>
+Subject: [PATCH 4/7] of: resolver: Add support for the export symbols node
+Date: Mon,  9 Dec 2024 16:18:22 +0100
+Message-ID: <20241209151830.95723-5-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241209151830.95723-1-herve.codina@bootlin.com>
 References: <20241209151830.95723-1-herve.codina@bootlin.com>
@@ -74,101 +74,120 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-In order to prepare the introduction of the export symbols node
-handling, add a export_symbols parameter in of_resolve_phandles().
+Symbols resolution done when an overlay is applied looks only at the
+global __symbol__ node to resolve unknown symbols from the overlay (i.e
+symbols listed in the overlay __fixups__ node).
 
-The export_symbols is the export symbols device tree node the resolver
-will use for the overlay symbols resolution.
+In order to provide flexibilities and allow to define some additional
+symbols visible only when an overlay is applied to a specific node,
+introduce the export symbols node.
+
+The export symbols node adds some additional symbols that can be used
+in the symbols resolution. The resolver tries to match unresolved
+symbols first using the export symbols node and, if a match is not
+found, it tries to match using the global __symbol__ node.
+
+Contrary to symbols available in the global __symbols__ node, symbols
+listed in the export symbols node can be considered as local symbols.
+Indeed, they can be changed depending on the node the overlay is going
+to be applied to and are only visibible from the current recolver call.
+
+Handle those additional symbols given by the export symbols node in the
+symbols resolution.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- drivers/of/of_private.h | 2 +-
- drivers/of/overlay.c    | 2 +-
- drivers/of/resolver.c   | 9 +++++++--
- drivers/of/unittest.c   | 4 ++--
- 4 files changed, 11 insertions(+), 6 deletions(-)
+ drivers/of/resolver.c | 33 +++++++++++++++++++++++++++++----
+ drivers/of/unittest.c |  4 ++--
+ 2 files changed, 31 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-index ea5a0951ec5e..b1bc7b676946 100644
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -94,7 +94,7 @@ static inline void __of_detach_node_sysfs(struct device_node *np) {}
- #endif
- 
- #if defined(CONFIG_OF_RESOLVE)
--int of_resolve_phandles(struct device_node *tree);
-+int of_resolve_phandles(struct device_node *tree, const struct device_node *export_symbols);
- #endif
- 
- void __of_phandle_cache_inv_entry(phandle handle);
-diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
-index 434f6dd6a86c..28aa0a133eea 100644
---- a/drivers/of/overlay.c
-+++ b/drivers/of/overlay.c
-@@ -915,7 +915,7 @@ static int of_overlay_apply(struct overlay_changeset *ovcs,
- {
- 	int ret = 0, ret_revert, ret_tmp;
- 
--	ret = of_resolve_phandles(ovcs->overlay_root);
-+	ret = of_resolve_phandles(ovcs->overlay_root, NULL);
- 	if (ret)
- 		goto out;
- 
 diff --git a/drivers/of/resolver.c b/drivers/of/resolver.c
-index 2560b33fa750..f5f6c46231d1 100644
+index f5f6c46231d1..b685c46b20b8 100644
 --- a/drivers/of/resolver.c
 +++ b/drivers/of/resolver.c
-@@ -239,7 +239,8 @@ static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
+@@ -222,6 +222,9 @@ static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
+ 	const char *refpath;
+ 	int err;
+ 
++	if (!tree_symbols)
++		return -ENOENT;
++
+ 	err = of_property_read_string(tree_symbols, symbol_name, &refpath);
+ 	if (err)
+ 		return err;
+@@ -236,6 +239,25 @@ static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
+ 	return 0;
+ }
+ 
++static int get_phandle_from_export_node(const struct device_node *export_symbols,
++					const char *symbol_name,
++					phandle *phandle)
++{
++	struct device_node *refnode;
++
++	if (!export_symbols)
++		return -ENOENT;
++
++	refnode = of_parse_phandle(export_symbols, symbol_name, 0);
++	if (!refnode)
++		return -ENOENT;
++
++	*phandle = refnode->phandle;
++	of_node_put(refnode);
++
++	return 0;
++}
++
  /**
   * of_resolve_phandles - Relocate and resolve overlay against live tree
   *
-- * @overlay:	Pointer to devicetree overlay to relocate and resolve
-+ * @overlay:		Pointer to devicetree overlay to relocate and resolve
-+ * @export_symbols:	Pointer to devicetree export symbols node.
-  *
-  * Modify (relocate) values of local phandles in @overlay to a range that
-  * does not conflict with the live expanded devicetree.  Update references
-@@ -259,6 +260,10 @@ static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
-  * corresponding to that symbol in the live tree.  Update the references in
-  * the overlay with the phandle values in the live tree.
-  *
-+ * @export_symbols can be use in this references update. The resolver tries
-+ * first to find a match in the @export_symbols. If not found, it uses the
-+ * "__symbol__" node in the live tree.
-+ *
-  * @overlay must be detached.
-  *
-  * Resolving and applying @overlay to the live expanded devicetree must be
-@@ -269,7 +274,7 @@ static int get_phandle_from_symbols_node(const struct device_node *tree_symbols,
-  *
-  * Return: %0 on success or a negative error value on error.
-  */
--int of_resolve_phandles(struct device_node *overlay)
-+int of_resolve_phandles(struct device_node *overlay, const struct device_node *export_symbols)
- {
- 	struct device_node *child, *local_fixups, *overlay_fixups;
- 	struct device_node *tree_symbols;
+@@ -320,7 +342,7 @@ int of_resolve_phandles(struct device_node *overlay, const struct device_node *e
+ 	}
+ 
+ 	tree_symbols = of_find_node_by_path("/__symbols__");
+-	if (!tree_symbols) {
++	if (!tree_symbols && !export_symbols) {
+ 		pr_err("no symbols in root of device tree.\n");
+ 		err = -EINVAL;
+ 		goto out;
+@@ -332,10 +354,13 @@ int of_resolve_phandles(struct device_node *overlay, const struct device_node *e
+ 		if (!of_prop_cmp(prop->name, "name"))
+ 			continue;
+ 
+-		err = get_phandle_from_symbols_node(tree_symbols, prop->name,
+-						    &phandle);
++		err = get_phandle_from_export_node(export_symbols, prop->name,
++						   &phandle);
++		if (err)
++			err = get_phandle_from_symbols_node(tree_symbols, prop->name,
++							    &phandle);
+ 		if (err) {
+-			pr_err("node label '%s' not found or invalid in live devicetree symbols table\n",
++			pr_err("node label '%s' not found or invalid in live devicetree symbols or export tables\n",
+ 			       prop->name);
+ 			goto out;
+ 		}
 diff --git a/drivers/of/unittest.c b/drivers/of/unittest.c
-index daf9a2dddd7e..7b97d4fc0236 100644
+index 7b97d4fc0236..e76ac087ea98 100644
 --- a/drivers/of/unittest.c
 +++ b/drivers/of/unittest.c
-@@ -1899,7 +1899,7 @@ static int __init unittest_data_add(void)
- 	 */
- 	of_overlay_mutex_lock();
+@@ -4025,7 +4025,7 @@ static __init void of_unittest_overlay_high_level(void)
+ 	/* ---  overlay_bad_unresolved  --- */
  
--	rc = of_resolve_phandles(unittest_data_node);
-+	rc = of_resolve_phandles(unittest_data_node, NULL);
- 	if (rc) {
- 		pr_err("%s: Failed to resolve phandles (rc=%i)\n", __func__, rc);
- 		of_overlay_mutex_unlock();
-@@ -3794,7 +3794,7 @@ static __init void of_unittest_overlay_high_level(void)
- 	 * because kmalloc() was not yet available.
- 	 */
- 	of_overlay_mutex_lock();
--	of_resolve_phandles(overlay_base_root);
-+	of_resolve_phandles(overlay_base_root, NULL);
- 	of_overlay_mutex_unlock();
+ 	EXPECT_BEGIN(KERN_ERR,
+-		     "OF: resolver: node label 'this_label_does_not_exist' not found in live devicetree symbols table");
++		     "OF: resolver: node label 'this_label_does_not_exist' not found or invalid in live devicetree symbols or export tables");
+ 	EXPECT_BEGIN(KERN_ERR,
+ 		     "OF: resolver: overlay phandle fixup failed: -22");
  
+@@ -4035,7 +4035,7 @@ static __init void of_unittest_overlay_high_level(void)
+ 	EXPECT_END(KERN_ERR,
+ 		   "OF: resolver: overlay phandle fixup failed: -22");
+ 	EXPECT_END(KERN_ERR,
+-		   "OF: resolver: node label 'this_label_does_not_exist' not found in live devicetree symbols table");
++		   "OF: resolver: node label 'this_label_does_not_exist' not found or invalid in live devicetree symbols or export tables");
+ 
+ 	return;
  
 -- 
 2.47.0
