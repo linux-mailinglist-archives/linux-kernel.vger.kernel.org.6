@@ -1,106 +1,132 @@
-Return-Path: <linux-kernel+bounces-438399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F5C29EA0D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:06:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A55FC9EA0D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:08:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B394B281949
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:06:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A681654DE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:08:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DF1019C54C;
-	Mon,  9 Dec 2024 21:06:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF49B19C54A;
+	Mon,  9 Dec 2024 21:08:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="krrpZWhK"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dSk7xM+0"
+Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A8A5199FAF;
-	Mon,  9 Dec 2024 21:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BE017BA5;
+	Mon,  9 Dec 2024 21:08:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733778364; cv=none; b=ONz5YqbldMCiS8ilnIwRjOyqwS5vjSj8jSpzAGwB9UbEhumjHifRR4aUBBbg8lo55rmhHlVwC5rFKZ3AssbuSluFNfUGzVx8WDe5+TvMatvH5un2nz0EWQK39qnbbf/OF54y0DgAPESPc5cQhRAfKZTX9ny4iIc1MoW3/McvPRE=
+	t=1733778512; cv=none; b=N8h6sE89PUaC1nKEqjgsZFR+kWRAM5IiDcvR08WEIJWfVLo406as08yjDtaA1oDD+Pab1fkRnPA0gQUtN5cUyg3FhetlADfK8jHkEuSo0Z9Ze+iXLIOxdQk4iuD0Sd64ii481IEUn/hm+cXOjApIXYOZI4YmgzZiNOp5S6z2nak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733778364; c=relaxed/simple;
-	bh=IQz7I9YsENov3q06x8KJv/iXVsOJdNRaOPPv+jZyDqA=;
+	s=arc-20240116; t=1733778512; c=relaxed/simple;
+	bh=INrlLq8aQWxUFnTxFCwCdW0I/rDBC/T3SLuLP6j/PLg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=osSWit8YtcEuBQKRYYSbmopt+f2JH0ssMy3udjrRiXcDxaW7U+HYGpck9O4oEyditghdx3NpMTl4qhEyEOvIcfwq1CFL/eV4/N/3IASp94qFQ/FWKUDGMDm0QB41FB4smoE7bxik2x+JTQ7PSIyFbHNoYg8o3rQ/pe27u4ab7+g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=krrpZWhK; arc=none smtp.client-ip=209.85.216.45
+	 To:Cc:Content-Type; b=eFohzJdyesWHShNSZpEDkL9tF87iRrl+y5oG1G7IhKlXK/7y3nLtCBtLGaKvPsVkYOl6TIUbGQ+u1CB7qM7RNNn9O8FiNXcnFB9UbLDGX+qzmxhHUeb8BARRAoNzobyZ9yAhz+URpv/I1YRY00Dh+9bS5RztMR6H3RowNAQu8H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dSk7xM+0; arc=none smtp.client-ip=209.85.210.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2ef7733a1dcso554595a91.3;
-        Mon, 09 Dec 2024 13:06:03 -0800 (PST)
+Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-71de7b9d572so997420a34.2;
+        Mon, 09 Dec 2024 13:08:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733778363; x=1734383163; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733778510; x=1734383310; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IQz7I9YsENov3q06x8KJv/iXVsOJdNRaOPPv+jZyDqA=;
-        b=krrpZWhK4L0pTSWxdNIzHFfjColUWfn5UOUjEW+hGWXe9NErZxedkURooidQ9ozQ9l
-         RTskK/9XlPqED919SVC4oEEkVTXyMLzixPeLgvu7E1CQjGLwl/HyWKt9zj1opLaN+e8C
-         K50FFQvRSgKIyupX159vt540Yi/joJOeC8GbyFTgMtm5TY4xLvauKpCFc4Rw5fPW3k34
-         n27XzEglZinug+QS/F5e1cLJoVA1bzpPYFq9tjRZOQBE/Ut09imbbR1w/ILlZG/T9vmx
-         P3tSj0piWcaOK7dvSKTHhOjCl1J6UbtsSAD8Q/SMKfE5AKgWUW//xxkx53k/VsAAu8Ws
-         aRgA==
+        bh=INrlLq8aQWxUFnTxFCwCdW0I/rDBC/T3SLuLP6j/PLg=;
+        b=dSk7xM+0AHQx5/fvocTtXtsK/oQZpXpgMkP/pNgNIdTQGp3CLyxVWu2r1+bzdfR07M
+         e7LVYSw9n0PHW4ob1gwDimOWJYjBlvsKmHSmjOI6Qn7rLSZYq75ljL06PAvRSk8qDscQ
+         wkcgfa+3Hor9shUo2ahgms6wXKXaA95qeLObnj8wrVj5LAJUEFl0nmR99IGXwDsjTs46
+         G/SKAYVmoA18sK/wBthdZsVoc0t2vbLE/KrgcRNmJb4wJ4SvuOatwWUEdaM84xDbnOkN
+         ZFFMPg95q3xLQhVvM47gtWaztdHmTYaHPePWS7wG+OnLVfi4Zd9LvDzqApEM+pOasUZl
+         6ZCw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733778363; x=1734383163;
+        d=1e100.net; s=20230601; t=1733778510; x=1734383310;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IQz7I9YsENov3q06x8KJv/iXVsOJdNRaOPPv+jZyDqA=;
-        b=WNq8fBZton3KBKZr+IjzUTtLA9tfvDrVlvGubvAXoPQTI2GSqfOle/a7ths1YjvyNe
-         lpuTXb2N+7Sw64JWxcV0lJglgak8pduouvu7Sy46NaENqePokSsw+WixzaIGkAmdLdW2
-         nOMFNZpLlN47ACMQQDhzhUBiCl//s0JoHcTVnr6Wx2kRShu+Gup1zMvrF0WRGn3fe5aW
-         Z3bVttGI1w9oXFFf3B3HjtUE2aonkII2RDBsBIhssyiC0aIJtwoV6wULcOqWSSOLQmY8
-         v7H4YJHdEPm8uhaC2QC5BnkOLkn81JFrdKAoCwSQLo6MuQKZvr4Ly1GkVYTeK+q5BZPy
-         EopQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU73v8QKoFBAI+cErnlnOQOFi4qvULrHYBLXLF8rZKyF39UBGpBF3dhhXC5J7sICOmSoLxVG3HR@vger.kernel.org, AJvYcCV0iFL3LuVcCZJIuqQL0oeS+PHJn3RK5YB4dlRlb/8121LLUQ2ybk017ZA560ClhauoCHnAIFd9pEiR7tK0zc4=@vger.kernel.org, AJvYcCXUpD/4QmqXpnxkShBsco8qi7K2NGZ4pWL5/vM0Zamr/YRciEJTGdSYENjyoKIg6Qt05UfLzYGjRnSnFMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4hYtmJMjLBc2IPVhnlgJ9cSzCsL3HEcMwFUaoRGphna+PSZzp
-	T+azFRo68wEMB1rVbxjYEVeK37LB+sQ9xJIR6RqCG7LZbvx5frRf+dFhcLHCyybK/Fs3slk3G1f
-	bkw2kFXDiJ21Ih0GlnuPvJdsUIcc=
-X-Gm-Gg: ASbGncv34KxgcVR1uEsXB2uq38PewtE5bzWNqsUz9+/Fw3hDhKqOGxFKY/dYAjqW/Yw
-	b5kvfcrIcVMzRVOxihS67b0EcQBcWXUI=
-X-Google-Smtp-Source: AGHT+IEJuFSakMcUFac7J+27s9Uiqv0/HxdJEeZ6mEWsh67Ic0D1Vr0Ysw5dq2xEnh2AhHs3kAjxKYrNJLgxZGF1gY8=
-X-Received: by 2002:a17:90b:38cd:b0:2ee:6a70:c5d1 with SMTP id
- 98e67ed59e1d1-2efd484c303mr569161a91.3.1733778362678; Mon, 09 Dec 2024
- 13:06:02 -0800 (PST)
+        bh=INrlLq8aQWxUFnTxFCwCdW0I/rDBC/T3SLuLP6j/PLg=;
+        b=NURYvCsgc0swzohXtXweKjKlIcPKIcEZvhF5+cQipa0Y4j3WXTXw1D7rmb4uBYQMmA
+         If0z1pcOhpL0mG86xxgQB81zOTyC9BhgCqdItRQ1ZlyKlHvEV9BFpEtbobAmDviYtfzM
+         laIhiMReSS2XO7QmaeOVOsmX9Ye8aw6WB0R/kr+iffUcvuruoJodnVYohT3bfPgvkoN7
+         pmyvuiUNoUs+LpbzWsWjxshPTl4mp3WZUrHo19oytMRF5t2PsglSe0mRyqjAykgbbzEr
+         yutApdud07IsabPkyj7GJnAAKBeDc8LzmPY0xZ5K7orvAV0ju5zLzEb+YGDQiUi38MUZ
+         4+Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVq6gXYKaDHobUE5qPT9d6ImEEK+em9sjecLBAl2gyTNdJk6VhjvGFB9z3ZHJeHeC59zFY1eV1LdeWNMjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzajTtpyjWeIN1pcA+pumNO4azJcIgiPZPbY0o7HvIr/ivWHrbR
+	ZtL3zTenyiSIfqOSlqaQHNdS+araqATLebpyPKRYx29FUPQ4QwKh/0w9sthILMJBqqOnEscJTVO
+	GMaVzOO0GuKafXDgCn8XU9jsP9Ik=
+X-Gm-Gg: ASbGnctrgqLIUyzts1IIHYVX0ulVjLddSz3YaeCelqI02vMx6pw2eT+k2OMxpYnTbCt
+	y8VESgp/2uHfd2X65YKUKnbSqRUtSLj+4oA==
+X-Google-Smtp-Source: AGHT+IEJicYcFoJbXg/NqQFRKqB25/wqRz8C91cCA0J8LdvL5RJJBcGvh2aBRKQwxJC6xjwQPl344SOvQ9bb+4cBRIs=
+X-Received: by 2002:a05:6870:fb93:b0:29e:1325:760a with SMTP id
+ 586e51a60fabf-29fee5519c3mr1218737fac.8.1733778509948; Mon, 09 Dec 2024
+ 13:08:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241125233332.697497-1-ojeda@kernel.org> <fe2a253c-4b2f-4cb3-b58d-66192044555f@redhat.com>
-In-Reply-To: <fe2a253c-4b2f-4cb3-b58d-66192044555f@redhat.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 9 Dec 2024 22:05:50 +0100
-Message-ID: <CANiq72=PB=r5UV_ekNGV+yewa7tHic8Gs9RTQo=YcB-Lu_nzNQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/panic: remove spurious empty line to clean warning
-To: Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	patches@lists.linux.dev, stable@vger.kernel.org
+References: <20241122210346.2848578-1-alexthreed@gmail.com> <980c5cee-2dc3-4d26-b749-6ba00b9c2091@broadcom.com>
+In-Reply-To: <980c5cee-2dc3-4d26-b749-6ba00b9c2091@broadcom.com>
+From: Alex Shumsky <alexthreed@gmail.com>
+Date: Tue, 10 Dec 2024 00:08:19 +0300
+Message-ID: <CAF4oh-Np5HZzdCxjycrvr_-RS0ZdC4Y3AyCi89=Lo1gQnSSowg@mail.gmail.com>
+Subject: Re: [PATCH] brcmfmac: fix RSSI report in AP mode
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: linux-wireless@vger.kernel.org, Alexey Berezhok <a@bayrepo.ru>, 
+	=?UTF-8?Q?Alvin_=C5=A0ipraga?= <ALSI@bang-olufsen.dk>, 
+	Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>, Kalle Valo <kvalo@kernel.org>, 
+	Kees Cook <kees@kernel.org>, Neal Gompa <neal@gompa.dev>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, brcm80211-dev-list.pdl@broadcom.com, 
+	brcm80211@lists.linux.dev, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Nov 26, 2024 at 10:04=E2=80=AFAM Jocelyn Falempe <jfalempe@redhat.c=
-om> wrote:
+On Tue, Nov 26, 2024 at 2:13=E2=80=AFPM Arend van Spriel
+<arend.vanspriel@broadcom.com> wrote:
 >
-> Thanks for this patch, it looks good to me.
+> On 11/22/2024 10:03 PM, Alex Shumsky wrote:
+> > After commit 9a1590934d9a ("brcmfmac: correctly report average RSSI in
+> > station info") it is required from firmware to provide rx_lastpkt_rssi.
+> > If this field is not provided brcmfmac doesn't report any RSSI at all.
+> > Unfortunately some firmwares doesn't provide it. One example is firmwar=
+e
+> > for BCM43455 found in Raspbberry Pi.
+> > See https://github.com/raspberrypi/linux/issues/4574
+> >
+> > Fix it by falling back to rssi field if rx_lastpkt_rssi is not provided
+> > (like it was before 9a1590934d9a).
 >
-> Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+> Sounds like a reasonable approach. However, I would like to learn more
+> about the issue. Maybe it is a per-vendor issue so I am interested what
+> the sta_info version is that we get from firmware. It is printed in
+> brcmf_cfg80211_get_station() with brcmf_dbg(). You can make it a
+> bphy_err() call instead or enable TRACE level debug messages in the drive=
+r.
+>
+> Also would be good to know the firmware version and kernel version of
+> the BCM43455.
+>
+> Regards,
+> Arend
 
-Thanks Jocelyn. I thought DRM would pick this one -- should I pick it
-through rust-fixes?
+I've just checked sta version in trace logs:
+brcmf_cfg80211_get_station version 4
 
-Cheers,
-Miguel
+Firmware I currently use:
+BCM4345/6 wl0: Aug 29 2023 01:47:08 version 7.45.265 (28bca26 CY) FWID
+01-b677b91b
+https://github.com/murata-wireless/cyw-fmac-fw/blob/e024d0c0a3ab241f547cb44=
+303de7e1b49f0ca78/cyfmac43455-sdio.bin
+
+I'm not sure what firmware version is used in the raspberry pi distro.
+From raspberry forums it looks, like:
+Firmware: BCM4345/6 wl0: Nov 1 2021 00:37:25 version 7.45.241 (1a2f2fa
+CY) FWID 01-703fd60
 
