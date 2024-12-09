@@ -1,212 +1,148 @@
-Return-Path: <linux-kernel+bounces-438012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61CFB9E9B9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:27:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 061C69E9B9F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:27:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31BCB2820E1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:27:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88A42165E92
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC5D14A0AA;
-	Mon,  9 Dec 2024 16:27:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uN+xj6jh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C20B4146D57;
+	Mon,  9 Dec 2024 16:27:23 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C86D1474C9;
-	Mon,  9 Dec 2024 16:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58E4113D638
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761619; cv=none; b=F61IX+evcqCQw814Bcj29XioqUld11ThGDiywCIUKYzUuHGAtENAtllTgJihNimWcX3LWS55Xk4IfWLXgc7n5Ji6WAvryPobzkl2kLd6WOwX54dV2CWIZzoMAvmI0RCg508Eq08AhlZv7yEtjjG/qN3W3AfyEoLgqZ+e08YDvOQ=
+	t=1733761643; cv=none; b=NNv16fSdxqI4Sm6q+iormjTxmlVlqMl2NaPQONMeCcejf5yTk/cg48UddhvR6y2wBDMIC2cEu10ykIn1V4gjf3j87o50YdfcM14kr4MeYSOy1IRUpIL1fhDrBN5A62xQhgnMsDBnQBouUXCsg96M/PO65QCsmdH2ltndGbJcQzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761619; c=relaxed/simple;
-	bh=70s4BHZFldWeAL3yPeGci5plIEHzNmGXbTPLv9Fto+0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lTvMwzpmJfTEWEyXwPTuBTvkicUj/MAMkU/K3U3kCcqCsxl4SrvbEdGD4Q+WgdYm0MVyq1ce86jI8e1OKYj3XuY/Vcj5OH6j39aI38z7U3ycVmArB/+N42s0W9aLl4R/QAnSB/4VcKjMSV7XySLr1CQsECKBHCEnukA+k1LvxTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uN+xj6jh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAECDC4CED1;
-	Mon,  9 Dec 2024 16:26:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733761618;
-	bh=70s4BHZFldWeAL3yPeGci5plIEHzNmGXbTPLv9Fto+0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=uN+xj6jhKTV/GSloqEzcg/XJisdudFqqpka/VHNw8JxYmmpXLrBEy6ZOvSAQs6dVO
-	 PPdBz0y02mzU+bYYt/zib236PaSTb6L3otSB3cHiYH2spym5hr76FWa2LhBW/L7MDk
-	 eM8gWnuyua4x61D9yCY9j8ZI6alGLNburTP8tBdoofkrXHR85HLCDQ1BqYh5IrdvWC
-	 RIIxmcVW4LC3JrHzj8Q35EEf6/U01/XV9i5/1yykOA1LgL1FD+dl7clUBuUtgBboFq
-	 m61DJ+M6cDFmtMmXvzbp6YR95ln0QmSiDd5FMyMtNLn/zklu6tkpa78TP6iszs0dVn
-	 V2neqgtaztIYQ==
-Message-ID: <4b9ce06a-8ece-4951-b660-05ac1afd1a5f@kernel.org>
-Date: Mon, 9 Dec 2024 17:26:52 +0100
+	s=arc-20240116; t=1733761643; c=relaxed/simple;
+	bh=nC9hi7DObQA8Xd2weeJ23eDukyxFS1fKJy7v2IrOzi0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XmFLVUUuR6YuVbWrYoEjZy/tjZ1X/fIDNi4Sxfml7DlWcvqAaWOlcbVwkqYTVj08RZ/IAzM8JSfUt6MX70CnYe9koIqhcfv8vMCaH51vqYVN5LtP9vABOM4q15sS03qmrTulCUgnk4bgvvLCspLDa+ZmvKMaraIJn8Xd9ZHyS8w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-51889930cb1so77386e0c.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:27:21 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733761639; x=1734366439;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EbIgp/7PNgwmdJb3CXsYquHn1gIukIbIKtWuEk8ZUe8=;
+        b=oynJM8xNdAdq6WCB4K9hUExkITVsghLd3k8yTsF7XAcmvTEf9peRo9+OU6N9/dSDJx
+         5ZPs5PKqFQpyM47uwrAMtzaBefEyHD6KhdvFrRadLmcx+zfyR3xC8s1tLULGolSS/4gv
+         WR8x/9yCqHRLXzT7QJYMqayPKrs6twYxhlQKWZlAGYTVdOyq3srGzWvKSNCCDBHcWSsQ
+         SZ11A7EbongQNJPiysn0ox1GcM5wrnh4KwCx0jcn0lbIn8U2Y6qu1ddmRDvvRpCBF1EH
+         61dDs4J1WKWwFgKUBYs+r0G3VUQPo5UbFPkWtTq4EsqFCuYaTYw3kj6OlqMXr3ZVIYhC
+         LhXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdGEqNKZwOeNA9ECKaOVXuAeeHAEhyEH7EMADiWmYeGCHBQHmUAt0ToWyi8hvSwap6CA82bSP0lt0XVp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrALBAsfc80q1/MjQZT03Kn7LwMFzJOr267K+tgHsIB0XeX+5w
+	E/hpNXo4zfgENpDTjxXzDFI2CPyVCdNJ4VyAQUXaOCPd2YYZzrv28WM5kQpwXBM=
+X-Gm-Gg: ASbGncuCL4vcXtoBdFUSMfel9G+FQtmlfLcNED1zY2FckIC2DgwE9Nlbg53t3Avuc+a
+	H6zKcaSH0UK1aRshtDEbiId6lbvgLGTq0fmjCLFhcdSZRf/I3jiLJSQtT7lyYT0L20qzxnlBy/W
+	KQ30KZgZgIvrD93x4IgsqcX1amsaJp4Hq0XY2T4VncJVGvr141/d6R7dtzWI6jvgKgA6iJ6SJ7j
+	EffAOU/P3dO1xg0wzQ/9WUPraLCCsjNAoNzrDjAijvfsdZtuxOeSluPLfjC++2dZQ0au5fbfZar
+	Vqck/p7F/n9q
+X-Google-Smtp-Source: AGHT+IGUZWk6u5xB/iKQsuHDCGgBSmKIv5uBn/fEsulbR0r/Merm1Fjx5kepGzQhPu7sIIFUucYE4A==
+X-Received: by 2002:a05:6122:278d:b0:515:ed1b:e6dd with SMTP id 71dfb90a1353d-51887fcebd6mr1835855e0c.0.1733761639040;
+        Mon, 09 Dec 2024 08:27:19 -0800 (PST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51885a635aasm60577e0c.39.2024.12.09.08.27.17
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 08:27:17 -0800 (PST)
+Received: by mail-vs1-f41.google.com with SMTP id ada2fe7eead31-4afe70b41a8so600062137.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:27:17 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUulZeSa1gVxOTMeieFxVFKXWaAHUAzWTU/8/p4O1f/IPVjDZhmUeLstRX+P+p/LDVdYglmEfQMknyaisI=@vger.kernel.org
+X-Received: by 2002:a05:6102:5092:b0:4af:c58f:4550 with SMTP id
+ ada2fe7eead31-4b11608da9emr1985151137.7.1733761637670; Mon, 09 Dec 2024
+ 08:27:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net-next v12 11/22] ovpn: implement TCP transport
-Content-Language: en-GB
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
- Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
- Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
- linux-kselftest@vger.kernel.org
-References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
- <20241202-b4-ovpn-v12-11-239ff733bf97@openvpn.net>
- <784fddc4-336c-4674-8277-c7cebea6b94f@redhat.com>
- <2a1b614c-c52d-44c7-8cb8-c68a8864508d@openvpn.net>
- <8714deae-c1f7-42ff-9e76-fabd9ca5188b@openvpn.net>
- <17e7d4c6-4912-4d5e-8723-45a06a1ad529@openvpn.net>
- <813d75bf-1d7f-472b-967f-27ab8f9d4759@kernel.org>
- <e447ef89-e7f1-4c5b-871e-d1cfaa045c6c@openvpn.net>
- <c34748e0-44ad-4775-abd5-52034c4f5fdc@kernel.org>
- <cb84c0e5-8ee9-4860-a8db-8787c44a703a@openvpn.net>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <cb84c0e5-8ee9-4860-a8db-8787c44a703a@openvpn.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241204162128.25617-1-dpenkler@gmail.com> <CAMuHMdVUnr4iAZmuy8Z3S+sCYN4P26RdpPwXevwiJrh+KN025Q@mail.gmail.com>
+ <ddc720b2-8bb4-4a07-8280-dadeb2de5b26@roeck-us.net>
+In-Reply-To: <ddc720b2-8bb4-4a07-8280-dadeb2de5b26@roeck-us.net>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 17:27:05 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVsmNqZhqxPu1iMkZUqyGUQqyY1ae01JAkE1-AQbiu5mw@mail.gmail.com>
+Message-ID: <CAMuHMdVsmNqZhqxPu1iMkZUqyGUQqyY1ae01JAkE1-AQbiu5mw@mail.gmail.com>
+Subject: Re: [PATCH v5] staging: gpib: Fix i386 build issue
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Dave Penkler <dpenkler@gmail.com>, gregkh@linuxfoundation.org, 
+	linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/12/2024 15:08, Antonio Quartulli wrote:
-> On 09/12/2024 12:31, Matthieu Baerts wrote:
->> On 09/12/2024 11:58, Antonio Quartulli wrote:
->>> On 09/12/2024 11:46, Matthieu Baerts wrote:
->>>> Hi Antonio,
->>>>
->>>> Thank you for working on this, and sharing your work here!
->>>>
->>>> On 05/12/2024 00:09, Antonio Quartulli wrote:
->>>>> On 04/12/2024 23:52, Antonio Quartulli wrote:
->>>>>> Paolo,
->>>>>>
->>>>>> On 04/12/2024 12:15, Antonio Quartulli wrote:
->>>>>> [...]
->>>>>>>>> +        mutex_lock(&tcp6_prot_mutex);
->>>>>>>>> +        if (!ovpn_tcp6_prot.recvmsg)
->>>>>>>>> +            ovpn_tcp_build_protos(&ovpn_tcp6_prot,
->>>>>>>>> &ovpn_tcp6_ops,
->>>>>>>>> +                          sock->sk->sk_prot,
->>>>>>>>> +                          sock->sk->sk_socket->ops);
->>>>>>>>> +        mutex_unlock(&tcp6_prot_mutex);
->>>>>>>>
->>>>>>>> This looks like an hack to avoid a build dependency on IPV6, I
->>>>>>>> think
->>>>>>>> the
->>>>>>>> explicit
->>>>>>>
->>>>>>> I happily copied this approach from
->>>>>>> espintcp.c:espintcp_init_sk() :-D
->>>>>>>
->>>>>>>>
->>>>>>>> #if IS_ENABLED(CONFIG_IPV6)
->>>>>>>>
->>>>>>>> at init time should be preferable
->>>>>>
->>>>>> To get this done at init time I need inet6_stream_ops to be
->>>>>> accessible, but it seems there is no EXPORT_SYMBOL() for this object.
->>>>>>
->>>>>> However, I see that mptcp/protocol.c is happily accessing it.
->>>>>> Any clue how this is possible?
->>>>>
->>>>> I answer myself: mptcp is not tristate and it can only be compiled as
->>>>> built-in.
->>>>
->>>> Indeed, that's why.
->>>>
->>>> Talking about MPTCP, by chance, do you plan to support it later on? :)
->>>
->>> Hi Matthieu,
->>>
->>> It is not on our current roadmap (TCP doesn't get much love in the VPN
->>> world), but I agree it could be an interesting option to explore!
->>
->> I understand, it makes sense not to recommend using TCP for the
->> transport layer for tunnelling solutions.
->>
->>> I have to admit that I haven't played much with MPTCP myself yet, but I
->>> am more than happy to talk about potential advantages for the ovpn use
->>> case.
->>
->> Some people told me they were interested in using OpenVPN with MPTCP to
->> use multiple (low-capacity) network links at the same time. I think
->> intercepting and proxying TCP traffic would always be the best in terms
->> of performances, but using OpenVPN with MPTCP seems to be enough for
->> some, especially when they want to "improve" some type of UDP traffic
->> that cannot be intercepted: QUIC, VPN, etc.
->>
->> I don't have numbers to share, but I can understand this feature can
->> help in some cases.
-> 
-> Yeah, some people may definitely benefit from this feature.
-> I'll have a look at MPTCP once ovpn is merged.
+Hi G=C3=BCnter,
 
-Thank you :)
+On Mon, Dec 9, 2024 at 5:18=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
+rote:
+> On 12/9/24 08:01, Geert Uytterhoeven wrote:
+> > On Wed, Dec 4, 2024 at 5:21=E2=80=AFPM Dave Penkler <dpenkler@gmail.com=
+> wrote:
+> >> These drivers cast resource_type_t to void * causing the build to fail=
+.
+> >>
+> >> With CONFIG_X86_PAE enabled the resource_size_t type is a 64bit unsign=
+ed
+> >> int which cannot be cast to a 32 bit pointer.
+> >>
+> >> Disable these drivers if X68_PAE is enabled
+> >>
+> >> Reported-by: Guenter Roeck <linux@roeck-us.net>
+> >> Closes: https://lore.kernel.org/all/f10e976e-7a04-4454-b38d-39cd18f142=
+da@roeck-us.net/
+> >> Fixes: e9dc69956d4d ("staging: gpib: Add Computer Boards GPIB driver")
+> >> Fixes: e1339245eba3 ("staging: gpib: Add Computer Equipment Corporatio=
+n GPIB driver")
+> >> Fixes: bb1bd92fa0f2 ("staging: gpib: Add ines GPIB driver")
+> >> Fixes: 0cd5b05551e0 ("staging: gpib: Add TNT4882 chip based GPIB drive=
+r")
+> >> Signed-off-by: Dave Penkler <dpenkler@gmail.com>
+> >
+> > Thanks for your patch!
+> >
+> >> --- a/drivers/staging/gpib/Kconfig
+> >> +++ b/drivers/staging/gpib/Kconfig
+> >> @@ -50,6 +50,7 @@ config GPIB_CEC_PCI
+> >>          tristate "CEC PCI board"
+> >>          depends on PCI
+> >>          depends on HAS_IOPORT
+> >> +       depends on !X86_PAE
+> >
+> > !CONFIG_PHYS_ADDR_T_64BIT, to match the definition of phys_addr_t?
+>
+> That would be wrong. It would disable the code for all 64-bit builds.
 
-Don't hesitate to email the ML, or open an issue on the GitHub repo if
-needed!
+Oops...
 
-(More details: https://www.mptcp.dev/#communication)
+    depends on 64BIT || !PHYS_ADDR_T_64BIT
 
->> (This reminds me this: https://github.com/OpenVPN/ovpn-dco/issues/60)
->> (and this: https://github.com/arinc9/openvpn/pull/1)
-> 
-> Right, this definitely shows some interest and it means we should easily
-> find people willing to test :-)
-Indeed!
+Assuming the driver actually works on 64-bit?
+Perhaps people keep an old i386 to control their GPIB gear?
 
-Cheers,
-Matt
--- 
-Sponsored by the NGI0 Core fund.
+Gr{oetje,eeting}s,
 
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
