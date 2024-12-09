@@ -1,172 +1,88 @@
-Return-Path: <linux-kernel+bounces-438448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B4E9EA16C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:52:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 186AC9EA16D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:53:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 254E11638D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:52:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBC31637AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E5619DF49;
-	Mon,  9 Dec 2024 21:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7B5519D093;
+	Mon,  9 Dec 2024 21:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="x/gofjEv"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="EXgZrKVO"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E1B919C561
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 21:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8582317BB38
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 21:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733781129; cv=none; b=am3vpvrL3fg/yRqo8ewmPscACxp7nsyIYQvffgJmxDxi9e47LTDT6HrMfB0HU2P8ZYwOt55ZQDNAzoxViz3OdYp1WMnf8ZpWYpASPFIQ54VS7xPJqs9pvG+ocYdjJOZvW6ct6qwsyPHy3fVJbXtQGqNAC583i4To57ep7oPNzOw=
+	t=1733781184; cv=none; b=d0cYA7UEQNuJQ25SFfxhjF469Cub6yiRRjVHLbLKy8yJjKFysUslp5KmQTLPizhLWWs3Jcs7t9L92cEtC25f7KD1j5o1B4Y0hecLgC4eZX1zkWNondMQ+J2H04hsmFy3DFrnrd5kNYRuUGFkhIlK3KbPrkiqjOIIIvomCsySrd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733781129; c=relaxed/simple;
-	bh=lLdbrAUjV0v995wb0r7Hif8h3jVvYPGFMKt8izlDSvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h4L5RPOG0ySBQhNtr9EvrsbQJNiebCYG5Q2D6AIXSdzopvAbM69wPtZdosX4u4Lrp4uG5Af+h87bU3RfUk/rKv6k6xyTouGx5xyv2dYJzdX6vV1iTgjKeRKsKK3XsSc7DiNW+7x5YPzJ//uWn9axYrQLRTJ1cF12sIy42aeh7wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=x/gofjEv; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 23C6889706;
-	Mon,  9 Dec 2024 22:52:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1733781125;
-	bh=TyfjuRnFLlTGIHP6SLLRCTayfk9gicKD7/zrtJDqkMo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=x/gofjEvc8nqKcxIfWr+4ISVG5WDpZOOjWRXlPrVi+ZjI1szYI/niNGAJMO5t/tFw
-	 OeokxM3Kfi5HF4EZ6/EGKUyxBhkUD6AWBZUesmpH9K1fKHuBwKG6lmU0XB5MMU+rxB
-	 RFRzIHuoRY+mV/8MdmS46S/Nb0D8U6Y6yk0sWuaMAmumNll3gFFJldOURu+S8D57ef
-	 fXh8PgmmQNyycnFSqlbfC2bO2tfrLdwv2JkPQ2HYJoZF8PVjFt7sz4fDznsB6A4rZO
-	 ktWq+RQTxBwejgVWwFc3GrqsoAcIwb2DR3Zhy66EHuZqhNmEzERLUzuqkbrOzeEg/y
-	 lXyIh1f3BZFIA==
-Message-ID: <fba91fbb-e819-4b08-9845-fa1138773113@denx.de>
-Date: Mon, 9 Dec 2024 22:51:12 +0100
+	s=arc-20240116; t=1733781184; c=relaxed/simple;
+	bh=nDRbvwgDis8K9krF8V48nsZeihB3uzY4cT/A+0Ot294=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=IuAbN2fjicg60VuKgQSyxLuDRtB1e6CRdCMmHOCJDe2dNrI+PL7CR2S8WAW3LJWAZOohpMZo2lZ+bpRv4hGSgqZNjcSCPTIWW17WkDslRGNKPDPW5k5ryBMHjXZ2afOVZpqqsSTI/70qhp1xrHtITfDSdO/t/szoBIPaj5CS41I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=EXgZrKVO; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=nDRbvwgDis8K9krF8V48nsZeihB3uzY4cT/A+0Ot294=; b=EXgZrKVOh7oFX8mTp7zgvEEwNL
+	YDDykC78KpqVcBkBR3Kl7W74cV3pjjj0k2zRVjdnO5Yj5FvKr3eOenMpFp1XwFIuO6xxYHG9DRYNG
+	Cg779zB/nZ3pi+9QPTso1CVk608kf2mEyrcVjFRRBXJH3VPnBU0HDf/jbyq49ebjMfrF7ygiXqVCR
+	Bekbe/GwzLrP0ZevQ8d/oAQzSIjuGffbqlK9Fuc1okkp3vhN2WXnoboe2dlxOZ/ioMBYEibWMpLjR
+	MvLCmMrHD2xwC277kCn1LJsB1/ig8ZScLW+SimF+SDHwELL88zczevN7v7eSnv++IbwstOGAKcb3D
+	dpfbYBDA==;
+Received: from [2001:8b0:10b:5:5f6a:61e1:248b:7168] (helo=[IPv6:::1])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKlgX-00000003Zr1-2VRo;
+	Mon, 09 Dec 2024 21:52:57 +0000
+Date: Mon, 09 Dec 2024 21:52:57 +0000
+From: David Woodhouse <dwmw2@infradead.org>
+To: Borislav Petkov <bp@alien8.de>
+CC: Damien Le Moal <dlemoal@kernel.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: =?US-ASCII?Q?Re=3A_=5BEXTERNAL=5D_=5BPATCH=5D_x86=3A_Fix_build_r?=
+ =?US-ASCII?Q?egression_with_CONFIG=5FKEXEC=5FJUMP_enabled?=
+User-Agent: K-9 Mail for Android
+In-Reply-To: <20241209171818.GGZ1cmWjBZJJE-mg-o@fat_crate.local>
+References: <20241208235332.479460-1-dlemoal@kernel.org> <20241209102929.GBZ1bGiT-DGK8uDdo4@fat_crate.local> <7ee6d1aff2da6f79e08c9a3134bc8519e991f0f4.camel@infradead.org> <20241209162247.GFZ1cZVycGCYJwnMxw@fat_crate.local> <9b8f82c0c38093f0092f1015b641c30f2f478e17.camel@infradead.org> <20241209171818.GGZ1cmWjBZJJE-mg-o@fat_crate.local>
+Message-ID: <16E951B7-155C-4E84-BFC3-CAA9EC765960@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-To: Nikolaus Voss <nv@vosn.de>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
- Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Fabio Estevam <festevam@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- miquel.raynal@bootlin.com, nikolaus.voss@haag-streit.com,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20241203191111.47B56F7@mail.steuer-voss.de>
- <2d7f8afc-119a-4080-93be-bf3daf017e5e@denx.de>
- <abcc89936f44fd884b9c5da65ea64c42@vosn.de>
- <5a6ab24d-6c74-497f-828e-b3e7645d664a@denx.de>
- <027aac3abff3f84a0ebf461653ed6c9b@vosn.de>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <027aac3abff3f84a0ebf461653ed6c9b@vosn.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
 
-On 12/9/24 10:27 AM, Nikolaus Voss wrote:
-> On 07.12.2024 12:46, Marek Vasut wrote:
->> On 12/4/24 11:40 AM, Nikolaus Voss wrote:
->>>>> LDB clock has to be a fixed multiple of the pixel clock.
->>>>> As LDB and pixel clock are derived from different clock sources
->>>>
->>>> Can you please share the content of /sys/kernel/debug/clk/clk_summary ?
->>>
->>> Sure. Without my patch:
->>>
->>>      video_pll1_ref_sel               1       1        0 24000000    
->>> 0          0     50000      Y      deviceless no_connection_id
->>>         video_pll1                    1       1        0 1039500000 
->>> 0          0     50000      Y         deviceless no_connection_id
->>>            video_pll1_bypass          1       1        0 1039500000 
->>> 0          0     50000      Y            deviceless no_connection_id
->>>               video_pll1_out          2       2        0 1039500000 
->>> 0          0     50000      Y               deviceless no_connection_id
->>>                  media_ldb            1       1        0 346500000   
->>> 0          0     50000      Y 32ec0000.blk- ctrl:bridge@5c     ldb
->>>                                                   deviceless 
->>> no_connection_id
->>>                     media_ldb_root_clk 0       0        0 346500000 
->>> 0          0     50000      Y                     deviceless 
->>>                      no_connection_id
->>>                  media_disp2_pix      1       1        0 51975000    
->>> 0          0     50000      Y                  deviceless        
->>> no_connection_id
->>>                     media_disp2_pix_root_clk 1       1        0 
->>> 51975000    0          0     50000      Y 32e90000.display- 
->>> controller     pix
->>>
->>> Here 346500000 (media_ldb) != 7 * 51975000 (media_disp2_pix)
->>>    -> distorted panel image (if any).
->>> The requested panel pixel clock from EDID is 51200000.
->>
->> Right, this is what Miquel is trying to solve with their series.
->>
->>> This is the same with my patch:
->>>
->>>      video_pll1_ref_sel               1       1        0 24000000    
->>> 0          0     50000      Y      deviceless no_connection_id
->>>         video_pll1                    1       1        0 1039500000 
->>> 0          0     50000      Y         deviceless no_connection_id
->>>            video_pll1_bypass          1       1        0 1039500000 
->>> 0          0     50000      Y            deviceless no_connection_id
->>>               video_pll1_out          2       2        0 1039500000 
->>> 0          0     50000      Y               deviceless no_connection_id
->>>                  media_ldb            1       1        0 346500000   
->>> 0          0     50000      Y 32ec0000.blk- ctrl:bridge@5c     ldb
->>>                                                   deviceless 
->>> no_connection_id
->>>                     media_ldb_root_clk 0       0        0 346500000 
->>> 0          0     50000      Y                     deviceless 
->>>                      no_connection_id
->>>                  media_disp2_pix      1       1        0 49500000    
->>> 0          0     50000      Y                  deviceless        
->>> no_connection_id
->>>                     media_disp2_pix_root_clk 1       1        0 
->>> 49500000    0          0     50000      Y 32e90000.display- 
->>> controller     pix
->>>
->>> So, here 346500000 (media_ldb) = 7 * 49500000 (media_disp2_pix).
->>>    -> stable panel image, but pixel clock reduced to 49.5 MHz from 
->>> requested 51.2 MHz.
->>
->> Inaccurate pixel clock and non-60Hz frame rate is not a win either.
-> 
-> Some percents of deviation is usually not visible.
+On 9 December 2024 17:18:18 GMT, Borislav Petkov <bp@alien8=2Ede> wrote:
+>On Mon, Dec 09, 2024 at 05:07:06PM +0000, David Woodhouse wrote:
+>> I suspect it would be less ugly overall if we #ifdef out the whole of
+>> the preserve_context code path when CONFIG_KEXEC_JUMP isn't enabled,
+>> rather than only the various parts of it that actually cause compile
+>> failures, leaving a very confusing set of nonsense dead code actually
+>> being compiled in=2E
+>
+>$ git grep CONFIG_KEXEC_JUMP *=2E[chS] | wc -l
+>10
+>
+>That's mostly C code=2E You want to push the ifdeffery into the asm?
 
-The PLL is accurate, so this kind of non-60 Hz frame rate compromise 
-really should not be necessary.
-
->>> My conclusion: The clock source is the same
->>
->> I agree .
->>
->> You wrote "derived from different clock sources" above,
->> keyword:different, which is not correct.
->>
->>> , nevertheless the
->>> ldb/pixel clock constraint cannot be satisfied without either
->>> modifying the pll clock or the pixel clock.
->> In this particular case, you surely do want to modify the PLL settings
->> to achieve accurate pixel clock.
-> 
-> No, in this case there is a 3 percent deviation, resulting in 58 Hz
-> frame rate instead of 60 Hz.
-Consider e.g. 60 FPS video playback, on 58 Hz refresh panel it will 
-suffer from some stutter . It is better to aim for the 60 Hz then .
+Already had to=2E The question is whether I'm content to follow the existi=
+ng precedent and put the ifdef around just the two lines of code which don'=
+t compile otherwise, or whether I want to clean it up and elide the whole o=
+f the unreachable code paths=2E
 
