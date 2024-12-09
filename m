@@ -1,97 +1,138 @@
-Return-Path: <linux-kernel+bounces-437691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D46429E9733
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:35:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57CDF9E96EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:32:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DD521883349
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:31:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE7D283108
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4A91A238E;
-	Mon,  9 Dec 2024 13:31:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38433597C;
+	Mon,  9 Dec 2024 13:31:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="eav4163b"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="waLb87vr"
+Received: from pv50p00im-ztdg10021801.me.com (pv50p00im-ztdg10021801.me.com [17.58.6.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E7D35978
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 243C723314B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733751090; cv=none; b=QJMpQJ1tZV4ZmrlFDmQVLpOXjNKSX8ztPNqOztr/+DB15FyGGoyp0+i29QJMTu0cQ7lL7PB0MzHKNQ8Gc61Xll0+dxGvb5j90u5o26evt+4acHn2W9GmZC2dIEdef+lnyEA+A1Bpo0kLq9Y7YfsxCA2xFlqu6JMUS9U+LTFb4MI=
+	t=1733751114; cv=none; b=Nh9II99cyjlmJgxHWtLotiy/EOCp0zHSsjkR8GYg1AGKfJWvSQTS54AWqhTCRN2pYuvEVCvhsWBTuUXeHVFbf2JSWy7Aa0tXT2KAv8gtnRkxZsngd/HefKCT+/bmBSP1EmYgCORZhES7aGjdNW2plLBIpDIwdfLtR1vVyKMn3Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733751090; c=relaxed/simple;
-	bh=ftTBkUoM2LcsGeAp9168BTi0yYIu6Ei50+DC8gomF3g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fO/PlmDBy0oJNAaXD1IUBF2TTMFV2sVPV95la1z/4tR/A1PUzoYKD6WcZgnND1muaZ4Qo+F9rlojWNbdh466IkrGpf22AGQR2wOanzDH3iDjvDsU65xVdpVYbG3wqhyWWuVJixqcXUE3+8WxcCHbEIxqzEH+IuXWLx+RsA+kcbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=eav4163b; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9f1d76dab1so454299166b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 05:31:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733751085; x=1734355885; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ftTBkUoM2LcsGeAp9168BTi0yYIu6Ei50+DC8gomF3g=;
-        b=eav4163bKLVCrPUzdJn2t6pP0npxxYcNFWQ7XABtjftU9OfbNpiJ7k4k2omG0DajVi
-         v3vXyRwCsvblR8EyhnRHYJtIWVxageQiA3dTIp4R53NAqeNI/9ZU02OqCiw9ax31t5pM
-         KkzOHe/gBvOVcUiAaViftb9Wbj9yuU4LpykbyKrveKQcsmxhZafVPgcg0Scs+ZxCNSeS
-         Ski9zY/rTdN/SCBYG1Upoz9gb8jzL802cQmEGHH7jocRpIC2MR1FKufjXigVdovmb6EB
-         gNScHhiCnQdKP/juqshHE74bwNpunczm2W4sjy6HRSJX/Ebv8OOBdog1NmxyYckRENfz
-         u7NQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733751085; x=1734355885;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ftTBkUoM2LcsGeAp9168BTi0yYIu6Ei50+DC8gomF3g=;
-        b=gQNX5wGs85fiRgg67pDz1ETA9OBZh7qOTuDcia5+vIIPXbvESTZ5s2eh8zE7wZTqUq
-         o4QhnOUDmTC1Tbc9PL4qIIM7o/gvSjXXc128ttPvebY3/ZjwbQcS4bcceyTag86AT61x
-         ilrGxVvQzjSLcNzPze1+lqvYDIlSsc6MZgiDDh85QPJL1NqMQRxnQVvrMoGrf+evA7AF
-         ybhmBXE7PE8oMzUEXAl65zYH6AcPjC1S6LL6CVGcVlr8HKQDilzu3pchUgntYSdx3cv5
-         DXpiOekBGCfMjeFC8aePOiswVzgxvie6oTrIReUKf+UXS6GZf6nK7sTAYJ2z6GAk8uVj
-         0kGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQvlxsLN246cDFw7rpnRC6XUY8TSmZZsoGCH7TlupFagmJqoSpl3mM+PThh52dw7GsUFtRiGFnlVbt7Uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuDkRlkzJ09NupJjVYlnqQwnpmkEnGIsO0Gc/SeBCm4QXXKenX
-	apqi+kZpuREyI0Gg210DiGQJ8DXf674T+BkhhFN74JgD+KxXhmSkVdFEzYcGMFyyVGHXD2NO9i1
-	VtsiZgewfeHzGeKCKkoO7ltJWczCYrAWNEYeAmQ==
-X-Gm-Gg: ASbGnctEhfXcPlXMVC2WZr/11+co+oXkScH7Veh5fbEf0m5q9gcFgXRGUsPrE5fO/Ls
-	v48yO5qjbNiUB7whYb4PkhGvQhR0jtsKPnB4NpLXtsjG+HVA3ZpixY4R27gBu
-X-Google-Smtp-Source: AGHT+IEmztFz48a0t6/WSmXctJ2wrGWImd2oFKYKo2f4N5KU2N5Ux6YRxIOaj/ZsHQRzkCXMX15Wbqnx3MAscmomOG4=
-X-Received: by 2002:a17:907:9518:b0:aa6:7662:c56e with SMTP id
- a640c23a62f3a-aa67662d783mr557411466b.55.1733751085028; Mon, 09 Dec 2024
- 05:31:25 -0800 (PST)
+	s=arc-20240116; t=1733751114; c=relaxed/simple;
+	bh=El/wr9Ta3ApQw+PvEw7H3w6sJeAN0lSE1EQ+VbMkzqc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XEqqPxnj/QJJdRtyE+Ht2o6+/5s2c8l9pxuwTaFtLobIm6RGTcCeYsgY99gCtYxhDM9/LlLGc4WEiSDIaY9JpSp6eHmo3HyHTaoqAMXrmTS1HQbWL39QP7b+GqbP3UA0cKyw3su/23dXxCV9LzQXfkkMfP8WYQ4zCOPN2futU3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=waLb87vr; arc=none smtp.client-ip=17.58.6.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
+	s=1a1hai; t=1733751111;
+	bh=tUv/yFFQ6zZdPdRgc4vW/Me53Bsusj+0dw280df3j9I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:
+	 x-icloud-hme;
+	b=waLb87vrYBWTOA7QhavjaZBhJ6KykKoDkVygv1FZwPztRi8fV0uyItDRUloCgOTJ1
+	 4OUrP3TjaPcgYCgSLDHboTA0TpS9gogTKNNrPlIPxMisWGsyhqC+67Afj/uTCNkHB9
+	 dxpmgEFvQassyZCBCd0CNcqyz506a1B1m7AW5lV7OgomAoSgHNkToymwRphpW4Z/uU
+	 WiYnl2rJKEMvLnpzB/5EHb4fo+VTrNnHP2Un7HO/RzNGQ8+P8H3BB0030lZNzhj96K
+	 NUp+4sjOTx/uhsAihbsLcbPazxKQmSjJjX/0YuhMjbPBwNhyZTo2fQGghEmkwdnzn8
+	 jAJ1rNO2gkN3Q==
+Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
+	by pv50p00im-ztdg10021801.me.com (Postfix) with ESMTPSA id 5BC912010195;
+	Mon,  9 Dec 2024 13:31:44 +0000 (UTC)
+Message-ID: <8e96f2d7-8ad1-47c9-ba12-49761edb8600@icloud.com>
+Date: Mon, 9 Dec 2024 21:31:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=gcmkzwYSY4syqw@mail.gmail.com>
- <3990750.1732884087@warthog.procyon.org.uk> <CAKPOu+96b4nx3iHaH6Mkf2GyJ-dr0i5o=hfFVDs--gWkN7aiDQ@mail.gmail.com>
- <CAKPOu+9xvH4JfGqE=TSOpRry7zCRHx+51GtOHKbHTn9gHAU+VA@mail.gmail.com>
- <CAKPOu+_OamJ-0wsJB3GOYu5v76ZwFr+N2L92dYH6NLBzzhDfOQ@mail.gmail.com>
- <1995560.1733519609@warthog.procyon.org.uk> <CAKPOu+8a6EW_Ao65+aK-0ougWEzy_0yuwf3Dit89LuU8vEsJ2Q@mail.gmail.com>
- <CAKPOu+-h2B0mw0k_XiHJ1u69draDLTLqJhRmr3ksk2-ozzXiTg@mail.gmail.com> <2117977.1733750054@warthog.procyon.org.uk>
-In-Reply-To: <2117977.1733750054@warthog.procyon.org.uk>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 9 Dec 2024 14:31:14 +0100
-Message-ID: <CAKPOu+-Bpds7-Ocb-tBMs1==YzVhhx01+FaiokiGR3A-W9t_gQ@mail.gmail.com>
-Subject: Re: [PATCH] netfs: Fix ceph copy to cache on write-begin
-To: David Howells <dhowells@redhat.com>
-Cc: Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev, 
-	linux-fsdevel <linux-fsdevel@vger.kernel.org>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] of: Fix alias name length calculating error in API
+ of_find_node_opts_by_path()
+To: Rob Herring <robh@kernel.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+ Leif Lindholm <leif.lindholm@linaro.org>,
+ Stephen Boyd <stephen.boyd@linaro.org>, Maxime Ripard <mripard@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Grant Likely
+ <grant.likely@secretlab.ca>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zijun Hu <quic_zijuhu@quicinc.com>,
+ stable@vger.kernel.org
+References: <20241206-of_core_fix-v1-0-dc28ed56bec3@quicinc.com>
+ <20241206-of_core_fix-v1-1-dc28ed56bec3@quicinc.com>
+ <CAL_JsqK1gsVeCG29RzWMFycbASAGAsds34Utuoq+Egw3-Afi7g@mail.gmail.com>
+Content-Language: en-US
+From: Zijun Hu <zijun_hu@icloud.com>
+In-Reply-To: <CAL_JsqK1gsVeCG29RzWMFycbASAGAsds34Utuoq+Egw3-Afi7g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: Ffe_gFMUaHt6leimceiHP24n7MdknpME
+X-Proofpoint-GUID: Ffe_gFMUaHt6leimceiHP24n7MdknpME
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.272,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-09_10,2024-12-09_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 clxscore=1015 bulkscore=0 adultscore=0
+ mlxscore=0 malwarescore=0 mlxlogscore=999 suspectscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2308100000 definitions=main-2412090106
 
-On Mon, Dec 9, 2024 at 2:14=E2=80=AFPM David Howells <dhowells@redhat.com> =
-wrote:
-> Could you try this?
+On 2024/12/9 21:24, Rob Herring wrote:
+> On Thu, Dec 5, 2024 at 6:53 PM Zijun Hu <zijun_hu@icloud.com> wrote:
+>>
+>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+>>
+>> Alias name length calculated by of_find_node_opts_by_path() is wrong as
+>> explained below:
+>>
+>> Take "alias/serial@llc500:115200n8" as its @patch argument for an example
+>>       ^    ^             ^
+>>       0    5             19
+>>
+>> The right length of alias 'alias' is 5, but the API results in 19 which is
+>> obvious wrong.
+>>
+>> The wrong length will cause finding device node failure for such paths.
+>> Fix by using index of either '/' or ':' as the length who comes earlier.
+> 
+> Can you add a test case in the unittest for this.
 
-No change, still hangs immediately on the first try.
+sure. let me try to do it.
+
+> 
+>>
+>> Fixes: 106937e8ccdc ("of: fix handling of '/' in options for of_find_node_by_path()")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+>> ---
+>>  drivers/of/base.c | 6 +++---
+>>  1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/of/base.c b/drivers/of/base.c
+>> index 7dc394255a0a14cd1aed02ec79c2f787a222b44c..9a9313183d1f1b61918fe7e6fa80c2726b099a1c 100644
+>> --- a/drivers/of/base.c
+>> +++ b/drivers/of/base.c
+>> @@ -893,10 +893,10 @@ struct device_node *of_find_node_opts_by_path(const char *path, const char **opt
+>>         /* The path could begin with an alias */
+>>         if (*path != '/') {
+>>                 int len;
+>> -               const char *p = separator;
+>> +               const char *p = strchrnul(path, '/');
+>>
+>> -               if (!p)
+>> -                       p = strchrnul(path, '/');
+>> +               if (separator && separator < p)
+>> +                       p = separator;
+>>                 len = p - path;
+>>
+>>                 /* of_aliases must not be NULL */
+>>
+>> --
+>> 2.34.1
+>>
+
 
