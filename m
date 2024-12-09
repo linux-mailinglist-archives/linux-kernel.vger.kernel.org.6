@@ -1,289 +1,298 @@
-Return-Path: <linux-kernel+bounces-438274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AF579E9F46
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:18:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73829165960
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:18:55 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0154192B94;
-	Mon,  9 Dec 2024 19:18:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cDZbHeF2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 662DC9E9F48
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:19:29 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE165157A6B;
-	Mon,  9 Dec 2024 19:18:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733771931; cv=fail; b=MkNqDt9AMb+1YAQWKFmeXrZCCTYjBDaQq5yxta9HsLNNcPNppad2Wc7QGu3cg3JHJv1NVriyJIrJKDuCspD+Mmo39of/Hje1CkpXgJBh1eA9sZ6FgQ6m1pmeXF7lAKbBZHka10zShtTrqsa1XLUkudJ9LALX72pQk0yx8USYnuo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733771931; c=relaxed/simple;
-	bh=/Yt25BbkwOV+4UQsMiD/2BQ0/FohGThVuWspfzYP5t8=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=q9+1OzqBskCL4KtR85XJx0BuJD3tbEMUnH/TtDR0gQeDAICjr17X0YpGn1fBktGumL9VfOSDpcJBABwGIgxQKJskInx5DQCaPL/V7BsFgJpvtlLHzufcMaaWsLzJS2UQwbWIBG3hp/Is23537K/PiaJ4LCm2vhqKq+GPc/Ix3vI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cDZbHeF2; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733771930; x=1765307930;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=/Yt25BbkwOV+4UQsMiD/2BQ0/FohGThVuWspfzYP5t8=;
-  b=cDZbHeF2+taQHVu46dSGMreIhgcSvcYvZrgiio5thqIbNBAngCFnUDQx
-   qxTur+bhSvOz6cKIVOuU9JR2XoKUgEc6G0e9o4A+mdrwNuUSjlvZuLngs
-   B7vJIFV0TtmwqqSazN9TCfB8P4ZwrDdFoe+oeBJThu1ZtK1xAfBw40qk7
-   de8IiLOz9Pdec/SHFAaAoNDte0YQL/qAlfvsp5YZOkuJIKZPP3i6rKNdC
-   OuUE8wd9JvkmLyU3ChJbRzRTeyYMRqxDY+SrkVdcFvGLl3q7Y6kpX5VWs
-   n0te9ojezvTcvAcqJTIuGFFsl7qpADeLYRyFxe6I07vDywQGtS8UpvRyK
-   A==;
-X-CSE-ConnectionGUID: OdVvCsXNQ0+b7lWmiTJ9yg==
-X-CSE-MsgGUID: YJ6s3lt0RdK4CQPRRX2lkw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="36926738"
-X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
-   d="scan'208";a="36926738"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 11:18:48 -0800
-X-CSE-ConnectionGUID: ZCbg7tJGTh6aLRUsbwiTQg==
-X-CSE-MsgGUID: RbK4guNcQeyEaC+fnOrQcg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
-   d="scan'208";a="95615731"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by orviesa007.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 09 Dec 2024 11:18:48 -0800
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Mon, 9 Dec 2024 11:18:47 -0800
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Mon, 9 Dec 2024 11:18:47 -0800
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.172)
- by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Mon, 9 Dec 2024 11:18:47 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f552XaFl/Zh7NCFtoEIHVBQktUPmcoK7QzIGlSd7vgrdHKaTzEh4+DaXfV3WMx/jn7gdbMOSWG6l30f/9PbhIZdlr4A5lu0Op0EwU5AqDpEul7NpQ5xoRnzmnsrmwlwGV6YNr4ZGpBy9SwFMMBVQU6t3FvO3GD9Awd4DmZ4ZCFEv1FWZDYTLPWuYMATKLqGfSt1Sav75i21jzqYEF8rqp0WtiDmXHdN53eo7eyfvieGl2t40TeauQ5WosDxdeThDibe9DPE8q3KpxYDS4Cix6P8M9DYA7VXJNpToM/yVmR2MIUU/pqdNnjJkXlYzw50yTUDVSLWiL4nDO4bblnARSA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=J/4px/4e9wkmnQMSTY7nzbwXOslDKcBDvb2ZBRZnJ+8=;
- b=AlL1HYTpHragJ++3QIzyf9uqF8M1aG0faU+FaE/+vGPcfifThycxNNz0kOiJhqS1BkMBXVEaaIrhDZ7C5SKStSvv/O7RMci4hasF05/uqhhg9BVFzyB4ThTarJ7BRocpPbnn67PZaZVm7ZU/UcwAcDwjatz06fy/uckixmnQAW0qHopyC0I0hARVdYSHGAJNh2ZNhEuOvZzvClHfVse4kjnHBIqtvjf73XsXMNxbdg6P6YhVBzUpt7JlC5OD5uEg6rW8dLgJDe5RGUfatXM9PvPVHHnIl6OW9m1na8Pt8itkVmYzn7ns64SdkBUpn0svMMxHbq2/jNnY8WF13VOmcQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
- by CY5PR11MB6464.namprd11.prod.outlook.com (2603:10b6:930:30::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Mon, 9 Dec
- 2024 19:18:41 +0000
-Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
- ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8230.016; Mon, 9 Dec 2024
- 19:18:39 +0000
-Message-ID: <4c1ac17c-e50c-4387-8512-e82e99f4ce4c@intel.com>
-Date: Mon, 9 Dec 2024 11:18:37 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] selftests/resctrl: Adjust effective L3 cache size
- with SNC enabled
-To: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>,
-	<shuah@kernel.org>, <fenghua.yu@intel.com>
-CC: <linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<ilpo.jarvinen@linux.intel.com>, <tony.luck@intel.com>
-References: <cover.1733741950.git.maciej.wieczor-retman@intel.com>
- <0adccb86b3bd1b8ae75cf8fdcddac7d1d79f49a4.1733741950.git.maciej.wieczor-retman@intel.com>
-Content-Language: en-US
-From: Reinette Chatre <reinette.chatre@intel.com>
-In-Reply-To: <0adccb86b3bd1b8ae75cf8fdcddac7d1d79f49a4.1733741950.git.maciej.wieczor-retman@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MW4PR02CA0003.namprd02.prod.outlook.com
- (2603:10b6:303:16d::30) To SJ2PR11MB7573.namprd11.prod.outlook.com
- (2603:10b6:a03:4d2::10)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EAE5282D52
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:19:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18C7A175D2D;
+	Mon,  9 Dec 2024 19:19:21 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A12DD157A6B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 19:19:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733771960; cv=none; b=TNl5TIPZbjznrMs+8XcM2o5FnfMtnFV41YAbEtFW94wJ8axMq1srEwqPhlQKRNBKc+ets+/PfC69CSsrlOx1fx3D7DyYH9va9p7GTGRECPPTYaY4jsHc3zaeigY45FCfNHhfwgb8Rr3w8L/y3Ud7XsJriaLFqjXPkH5oD/e2T70=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733771960; c=relaxed/simple;
+	bh=N38Fkbwg9qaJGf0cuU/ek7sBYk2FS1t9Y9jzvpmL3o4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sLdrq9z3hEKXZPqJF61MoiopgA8LgE5t5nD5BO90m6KE6gxNDLtE1+m4Bh1Kch/3T2uNdyP9hOGJJQ+tIx4ot7z0cGlcVuHRMtdp2/669Ui5B907+VB1nf93fAdbdZcHXrDI4lr6+G93Lvm/YRcSk3z7emP67HbOQIvQdORAPUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-843e86e0b3fso861265239f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 11:19:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733771958; x=1734376758;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wft2Tg1XA04274PBVQs7lPyFDzeawcuLc/VvBPMb08U=;
+        b=ECBUKjopBdXQVY3RG0bRqSfSlcp6G9rC5KB9xTN7Ju4WCM8n8TW53UW6WRwJY0sc0F
+         ECafJsKs9BU+ROgfH3bhN514XezZjV8+wbsfRk2cLEEW8vq1NhWQH3sPcEwlPrfTakoA
+         uCV12q8QzG0mAI9iHi5YBhtW00ncI7sf04gE8sOxCfaRlk64izqtIseNJr7Y1HquHI2T
+         AS6nV2hxCwUkgnaJ/8UHynUVxRhiXdoSGoB6dSnDsGDT7yh2DmZYwjwnUdHXMdziWtDT
+         hrikva1BeVHyxW5FK759UdtZQd7fHzN+w3e2V4Aq/P4xgDtFrj3PuagS5+HBP41S4s3v
+         vAYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcVU/zdNNeaX1eKiFHgtYSGOZQqss8+n0o7OZQCsoqu5jaXDlXe2pMi4sS+6+N0xTU76Xa+KS5HKuSJCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ8O59ePp+T2a1RF1PEBwzorBFIGTLlWPqGOemHoIBcA5swlht
+	Q49543ani8YnlkObTk1Ltb8ODvpwmu6DR/9YrBdTLoQfr7XpxIe+yCtQJ8exW5lmB/7YSY8XSQ6
+	zmBVnKd+iwFH8cL2ld0/DLXMj2NrR/crgzrYFI7vMkcTpCw34Hb2QG/c=
+X-Google-Smtp-Source: AGHT+IGzOOxlnjW9n79nWfN3VSTgBHZ+l37/QWJum3TWsAZcJaw2WYfAAx+DwgU55dKOii16g2hRUXnIQYgCf1pVdk3DtufSxa8R
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|CY5PR11MB6464:EE_
-X-MS-Office365-Filtering-Correlation-Id: e3ef3ae4-b0ee-4df0-9056-08dd188649b2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?V3hXbEFTYklTdG1WQU9zSGhaUnlhdVNHeGhoRWhWREdGNEhhU1Jodm9vSDlo?=
- =?utf-8?B?VWVPeDArQXVhN01DZzdBSDJaV0lqSjVlbnBvc1I3TFR1by9aZjl2VjlIaVVl?=
- =?utf-8?B?eWlyUzBlaE9lK045U3dOWGVuSUxEbDBxMWVTY2RPbmJOWmRTRi9SMlZETmJW?=
- =?utf-8?B?TjhjVjdudEhUbVBwQit0MnB4M1ZLSityYWhYaFhkazMzMVgveWVwa1A5Tldp?=
- =?utf-8?B?SWJDTFc5OUgzU3BubnAxR2pKYmprMHk3a0lzcUo2VUtIN3c0V3VqeEtlcm9m?=
- =?utf-8?B?QnJEbTJ5cFRkWWZTWnFqUG5UYnk5ME5EZldQdnIyZnh2MXNDalplVnppQ29K?=
- =?utf-8?B?WkNXRWJ6dnZQWElXOUt2N29GL2FXODVVVEV5M2pOWmJyQjlEcTVzbkJrOUFx?=
- =?utf-8?B?UFl6Y3V1ekx3WGpDZnlXNm5UWDdHRUgxVzZ0YVh6WGpKMEJEQld5TDJ5cUFD?=
- =?utf-8?B?Ujhab2c2b2VSbGNPUzNVQWN2amxSbmF5dzBNOHpYQzJEK3pwM0ptOS8vTnJT?=
- =?utf-8?B?SUtPeHZINEZOakdVbmhnYnUyd2kwOUZFSnpwcy9WY3FERG05WllXRWI5OEpq?=
- =?utf-8?B?eUxucnU2cVEzbE9xclBOaEgzN2tDNUV1U3RzbmdDNEltSW1xRmppQTdLU25Y?=
- =?utf-8?B?ajl0YitmS3djYkExWXZWN0dRZGNLcnVoQ3RLWDZSeENsTlIvMVp4RFJ2czM0?=
- =?utf-8?B?YTNCQVlIaTU1L0lqSC9CT2Z2cFN3YlA0a1AwSDFhRjNibklNMFBJVmhLZnFZ?=
- =?utf-8?B?aWRIejgySVNFL3dLL0laQnY4K0NVWC90TWtJWGl5MkRXdFJER1V3dG5WUVox?=
- =?utf-8?B?aFVLalpNRHJoSzFKSFpMNnltNWgyaUh5Rzd2Z0Y2MENUc3R5cm1jSURCTXpC?=
- =?utf-8?B?Z3JlczlYRnp0VFV1WU1oQm83R1A4d2s5RVJWbUxiOHRKMFpkbXN6Q0pnUXVh?=
- =?utf-8?B?UG45cmhQV2tsZ3Y0MHdpQzJIcVBrbEo3WEd1NXNZOC9NeTFOUWV4YWY4S0Mx?=
- =?utf-8?B?MWhadXhRYUtmNk85WEEwMXhxSThrbHFPeDA3d2RLRERiWXFqV1pDSkRUSVpN?=
- =?utf-8?B?dkFSVElpalVndjdKa0ZjRVBTVXM2L2pLQmxUTXp3VUFCYXh0L2RoYXRSaVhQ?=
- =?utf-8?B?L3k1Lzl1NjB3OTJ3WnZHRUppUDVFTitVdGlMMG96Qk9wR3RMb3BqRjJOWGRx?=
- =?utf-8?B?RnBGQUZLZ0NKNnk2eUJoVFd0cmZjT2VMd0FWK3NWSWRuczk0MmhJTTBzWS96?=
- =?utf-8?B?NXFsR1NsZHNoSm5UY29uWjNOa1ZuSXhkcjBabHkvRE5Cc0N1Ull1MndNbkxT?=
- =?utf-8?B?MzFSWkZtVGlPekJDcGFKc2xpTk0wdGxuc0F6NU9OTVBjcURveFoxblh0bXFv?=
- =?utf-8?B?MFpHR05OZkxJUC94NmY0M2FPb2xIN3ZSU0FZazNpVjVHSDZ4TVJmSXJMalov?=
- =?utf-8?B?T3hLRVdvbm5UVEtXYldDdDZYLzZOZFBOQzFQNE83NllTbmdTZ20yQitWdm0x?=
- =?utf-8?B?Wi9XSEVHR243eEV5bzBkQ0g0azdtQXR6ZkdHN1RINW1yeHdBTmExNnBiS01C?=
- =?utf-8?B?dldMbCt1VmFrU2lqNTg0aEtOYWgrYjFvcFdNVHYzTFFHRjZzYzJXV2FxKzhq?=
- =?utf-8?B?NTlZM0VMcm8zWmtLVGcwRGU2RUV5cFNwbUgraVBpeXFpc3FzQnpkaFVSdy92?=
- =?utf-8?B?T2dCdDNHd3JkQ3lEQ2FkYmFSTVpDUlNSeUJQbk9pQXQreUROZ3lBK1BNU3hZ?=
- =?utf-8?B?NzdTTFo5Z3hxWW5pNmU0TDRVcXpEa3JkUEZ6K0VPOHJCK0RqZmFmTXBxSVpQ?=
- =?utf-8?B?ekpFVVYxSDZjaVFZNTI3QT09?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?RDNWQU1hVXVhY1FxaEE2Q2hSbXY4b3cvcjNucGV5U0kvMVNVR2REeG8wNnBQ?=
- =?utf-8?B?QjBJbHcwK3NZb3JtaDB3cGFTYXBHdzZ5N1ZDUE1PUmNyejFEc3RtaUsyZnh3?=
- =?utf-8?B?TVFzbmFNTGN4dTE2UDRzWlQwem04allZOUxIMVRzSExsS0xaV2ZJWUxaalAx?=
- =?utf-8?B?ZlBhbHVrcW1KcGkxWWZtSHpCcE14MDcva01XVjFETjN5c1BtNkdrNzBubjU1?=
- =?utf-8?B?ZXZBZ00yNUxrN3VnaUdiekdEaURRUnhzTjlOYVpldlpvVkIrdldEMlhZQnhB?=
- =?utf-8?B?bUo3c0lTSTc5a2dBVFAwN0U5Q0FoelpkelZDR3N5M2pySHJFUUN4SlBtUHFC?=
- =?utf-8?B?YW1jVTcvdkxQQktlT1NTU1hMWWxVQnN4Y0tTS2NpcnNnbmo3eU9VbnJTdytW?=
- =?utf-8?B?TlJkMnVSZzhFZ0JiN3dhUm1UVktJbnRONG1DWEl3cUl0a3FaSHpZVGNMY0RD?=
- =?utf-8?B?NzJBRWdtU2FwdFJhRnV4ZlVoSVNjYVdaZzBrajJodGh4L01GNlo3V0lWL0NX?=
- =?utf-8?B?R3ZNVVliWUhsLzRhVHR1eFozNTRDMlZvSTlNY3VWREVNa0MrTnV1bysxKzcr?=
- =?utf-8?B?QTZmNUMxOE5NL3hnUm5BS1NJdEMzMTdHZHJpQXcxZCtWMEhvK0czbmw2ay9R?=
- =?utf-8?B?NUM4d0tGUlg3cFA0eHNuQlQ5NW9uZEhkWStiZUJHQlA3RWttMkZ6WE94VVhO?=
- =?utf-8?B?QkV1RCtraVFXcDgwV3JVczhIQ1gzSHp4UTVSOGRER29hL1lCUDFTaFQ0RUk2?=
- =?utf-8?B?SC9pdEl0S0U4bmxPRk9ZU21NelJsVG5RSVpmUThocnJPRExPQ1MxZTFPT0ZZ?=
- =?utf-8?B?VkgrV2R1Tm1DcHVtK2NVS2J1YW5nMVJ4WFo2d3hkejJJSmdPT1I2Uy9YMGZv?=
- =?utf-8?B?K29VQThYQTlYbWNqTVdKQzRXQ01HQXBXek9nNzEyRnVKTXJRUHdMc3NlUVB0?=
- =?utf-8?B?T3hKNDl0T2tpaGpkYk9UTnhrSFJ1WDZKR09uZFdQYWtLaVgyZG1aUTFkUVZI?=
- =?utf-8?B?VGEwYlBvaDBoMldaaDlsV1hDcG10TXpIU3ZqeVIyTVJWNS9BWHB6am54bzBN?=
- =?utf-8?B?RS9DNTVCSzEvbGNkVWlYL0NjV3BvZ1RDbC9iSE5UUEFOYmVWRXNRaHV6Qjcv?=
- =?utf-8?B?VC9lVVk0cHJxMUFCMGt6d3FENDNteFJ1ZVY1d0I2bEg5WHd5V2gzWGFkUW1m?=
- =?utf-8?B?K2VkMmZuNkdwMnN2TEtLYXdCdjRVaE1idkk2QVNvemE1czFDTUdyaXFGN0dq?=
- =?utf-8?B?QnIvS05ETHhHcWlQaDBZSnBOeGZ2czR2YW5aaVBtNDdWZFJnMzltWkJGSTJ6?=
- =?utf-8?B?Nk5QQnllN0xxeDdyVHliaFp5TmNJclN3cU5EeG1zbmEvMkhRRUtudjc0NVdP?=
- =?utf-8?B?eStCWDFxVmxrUUQ4ZlZ3OGZZbU44Mkd5Wk82Tm9JekkyVkE0TzVEVVVkKzdO?=
- =?utf-8?B?NlBOTlV2YlhETVFhMlJwRTh0cEhraENTUEo0cGNOa1lGUEJCYXNHNWkxTklJ?=
- =?utf-8?B?OUNlNzhxVXFtRjBrVTd5VkszYkcwK1B3RkVyemQ5Zzc2QWk4NnJuSm4rQnNa?=
- =?utf-8?B?NlRoLzlrc0xGTTR4aE5iZmJDZWpuYmp2TnEzbnlHN21jTWFtbFU2UEhQMENp?=
- =?utf-8?B?ODJqVU9PVXg1aGJJTjdaY1ladE56QXlTZVFYdWp1MzlaZnh3ay90M3ZDTE9T?=
- =?utf-8?B?SzZjR0hwWCtZdlo5cjc2M2p4MG5BSlhlcW1tbmVoUFpUSjR2b0lLaEh5cU13?=
- =?utf-8?B?MDJFNXYxT0JSVUtHM2sxZXBsRXVSUE4rVDhKWWQrbFlkUnAwRDdIby9nbDhj?=
- =?utf-8?B?Yml4RmFXUWJEUUxwejlBaVo0RXUvT2hnUm8wdlBUZXpLdHhRNVRCMDJvc0VS?=
- =?utf-8?B?dWZnUWFYL0lZdlNwTGUvNDBkWkFId1ZPOUlDVE1uc042NWhTUHlUcHFLdWlx?=
- =?utf-8?B?NHM4TFlNWXhtZjZLTjdYWjY3NDZiNzFaNmdtazI2R2twNXZubTl2MStvalY0?=
- =?utf-8?B?a3dBeWlyVWVteDFBMWU0dWRBYjhxMXZtYlRTcGo4V2RzL3FtUjJlVzBBUS9n?=
- =?utf-8?B?eU8wbW1CYkdBM1QvS3J1NkcrdDJVSEpydWM3Z2t6ektOZzFJcWpvZlR6M1pH?=
- =?utf-8?B?TVRtYXhrYnU2cklFa3dGWUdWd2VxR3haQ0ZNcXp4R3Q4bG4xaVBuL3pCVzdH?=
- =?utf-8?B?eWc9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: e3ef3ae4-b0ee-4df0-9056-08dd188649b2
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 19:18:39.9345
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: yTRDyWxb3tbX3dxjECOo10GAT8F6sZ4Vd1vX0xcq+FHQvNRe1y+JnjMNxNG2CO8N95ua0Ui+gGW3absS1zOCExeYWsfgVTBemSwlR6F4lKI=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY5PR11MB6464
-X-OriginatorOrg: intel.com
+X-Received: by 2002:a05:6602:3cd:b0:843:ec18:82e2 with SMTP id
+ ca18e2360f4ac-844b519864fmr228805039f.8.1733771957897; Mon, 09 Dec 2024
+ 11:19:17 -0800 (PST)
+Date: Mon, 09 Dec 2024 11:19:17 -0800
+In-Reply-To: <6741f6b2.050a0220.1cc393.0017.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <675742b5.050a0220.2477f.0054.GAE@google.com>
+Subject: Re: [syzbot] [block?] possible deadlock in blk_mq_submit_bio
+From: syzbot <syzbot+5218c85078236fc46227@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, boqun.feng@gmail.com, hdanton@sina.com, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	ming.lei@redhat.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Maciej,
+syzbot has found a reproducer for the following issue on:
 
-On 12/9/24 3:09 AM, Maciej Wieczor-Retman wrote:
-> Sub-NUMA Cluster divides CPUs sharing an L3 cache into separate NUMA
-> nodes. Systems may support splitting into either two, three, four or six
-> nodes. When SNC mode is enabled the effective amount of L3 cache
-> available for allocation is divided by the number of nodes per L3.
-> 
-> It's possible to detect which SNC mode is active by comparing the number
-> of CPUs that share a cache with CPU0, with the number of CPUs on node0.
-> 
-> Detect SNC mode once and let other tests inherit that information.
-> 
-> Change top_srcdir in the Makefile so fallthrough macro can be used in
-> the switch statement.
-> 
-> To check if SNC detection is reliable one can check the
-> /sys/devices/system/cpu/offline file. If it's empty, it means all cores
-> are operational and the ratio should be calculated correctly. If it has
-> any contents, it means the detected SNC mode can't be trusted and should
-> be disabled.
-> 
-> Check if detection was not reliable due to offline cpus. If it was skip
-> running tests since the results couldn't be trusted.
-> 
-> Co-developed-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Tony Luck <tony.luck@intel.com>
-> Signed-off-by: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
-> ---
+HEAD commit:    fac04efc5c79 Linux 6.13-rc2
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=100313e8580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=696fb014d05da3a3
+dashboard link: https://syzkaller.appspot.com/bug?extid=5218c85078236fc46227
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=147528f8580000
 
-...
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/d219b605f6a9/disk-fac04efc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/06776a2c689e/vmlinux-fac04efc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/8ab42bd03182/Image-fac04efc.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/c3180abcd8eb/mount_0.gz
 
-> diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-> index f408bd6bfc3d..6b03bab6fc20 100644
-> --- a/tools/testing/selftests/resctrl/Makefile
-> +++ b/tools/testing/selftests/resctrl/Makefile
-> @@ -1,6 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0
-> +top_srcdir = ../../../..
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5218c85078236fc46227@syzkaller.appspotmail.com
 
-top_srcdir is already defined in lib.mk, it should not be necessary to
-redefine it.
+======================================================
+WARNING: possible circular locking dependency detected
+6.13.0-rc2-syzkaller-gfac04efc5c79 #0 Not tainted
+------------------------------------------------------
+syz.0.15/6643 is trying to acquire lock:
+ffff0000c9f19de8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: bio_queue_enter block/blk.h:79 [inline]
+ffff0000c9f19de8 (&q->q_usage_counter(io)#17){++++}-{0:0}, at: blk_mq_submit_bio+0x11c8/0x2070 block/blk-mq.c:3092
 
->  
-> -CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2
-> +CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2 -I$(top_srcdir)/tools/include
+but task is already holding lock:
+ffff0000e7fcc0b0 (&tree->tree_lock){+.+.}-{4:4}, at: hfsplus_find_init+0x144/0x1bc fs/hfsplus/bfind.c:28
 
-It is not clear to me why my suggestion to set this after including lib.mk
-was ignored. I am thinking about a change like below but looking at the other
-selftest Makefiles I do see very few actually modify CFLAGS after including
-lib.mk. Closest one I could find to this problem was
-tools/testing/selftests/vDSO/Makefile. Do you see an issue with modifying CFLAGS
-after including lib.mk?
+which lock already depends on the new lock.
 
-diff --git a/tools/testing/selftests/resctrl/Makefile b/tools/testing/selftests/resctrl/Makefile
-index 6b03bab6fc20..984534cfbf1b 100644
---- a/tools/testing/selftests/resctrl/Makefile
-+++ b/tools/testing/selftests/resctrl/Makefile
-@@ -1,7 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
--top_srcdir = ../../../..
- 
--CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2 -I$(top_srcdir)/tools/include
-+CFLAGS = -g -Wall -O2 -D_FORTIFY_SOURCE=2
- CFLAGS += $(KHDR_INCLUDES)
- 
- TEST_GEN_PROGS := resctrl_tests
-@@ -9,5 +8,6 @@ TEST_GEN_PROGS := resctrl_tests
- LOCAL_HDRS += $(wildcard *.h)
- 
- include ../lib.mk
-+CFLAGS += -I$(top_srcdir)/tools/include
- 
- $(OUTPUT)/resctrl_tests: $(wildcard *.c)
 
->  CFLAGS += $(KHDR_INCLUDES)
->  
->  TEST_GEN_PROGS := resctrl_tests
+the existing dependency chain (in reverse order) is:
 
-Rest of the patch looks good to me.
+-> #2 (&tree->tree_lock){+.+.}-{4:4}:
+       __mutex_lock_common+0x218/0x28f4 kernel/locking/mutex.c:585
+       __mutex_lock kernel/locking/mutex.c:735 [inline]
+       mutex_lock_nested+0x2c/0x38 kernel/locking/mutex.c:787
+       hfsplus_find_init+0x144/0x1bc fs/hfsplus/bfind.c:28
+       hfsplus_cat_write_inode+0x1a4/0xd48 fs/hfsplus/inode.c:589
+       hfsplus_write_inode+0x15c/0x4dc fs/hfsplus/super.c:161
+       write_inode fs/fs-writeback.c:1525 [inline]
+       __writeback_single_inode+0x5a0/0x15a4 fs/fs-writeback.c:1745
+       writeback_single_inode+0x18c/0x554 fs/fs-writeback.c:1801
+       sync_inode_metadata+0xc4/0x12c fs/fs-writeback.c:2871
+       hfsplus_file_fsync+0xe4/0x4c8 fs/hfsplus/inode.c:316
+       vfs_fsync_range fs/sync.c:187 [inline]
+       vfs_fsync+0x154/0x18c fs/sync.c:201
+       __loop_update_dio+0x248/0x420 drivers/block/loop.c:204
+       loop_set_status+0x538/0x7f4 drivers/block/loop.c:1289
+       lo_ioctl+0xf10/0x1c48
+       blkdev_ioctl+0x3a8/0xa8c block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl fs/ioctl.c:892 [inline]
+       __arm64_sys_ioctl+0x14c/0x1cc fs/ioctl.c:892
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
 
-Reinette
+-> #1 (&sb->s_type->i_mutex_key#20){+.+.}-{4:4}:
+       down_write+0x50/0xc0 kernel/locking/rwsem.c:1577
+       inode_lock include/linux/fs.h:818 [inline]
+       hfsplus_file_fsync+0xd8/0x4c8 fs/hfsplus/inode.c:311
+       vfs_fsync_range fs/sync.c:187 [inline]
+       vfs_fsync+0x154/0x18c fs/sync.c:201
+       __loop_update_dio+0x248/0x420 drivers/block/loop.c:204
+       loop_set_status+0x538/0x7f4 drivers/block/loop.c:1289
+       lo_ioctl+0xf10/0x1c48
+       blkdev_ioctl+0x3a8/0xa8c block/ioctl.c:693
+       vfs_ioctl fs/ioctl.c:51 [inline]
+       __do_sys_ioctl fs/ioctl.c:906 [inline]
+       __se_sys_ioctl fs/ioctl.c:892 [inline]
+       __arm64_sys_ioctl+0x14c/0x1cc fs/ioctl.c:892
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
 
+-> #0 (&q->q_usage_counter(io)#17){++++}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain kernel/locking/lockdep.c:3904 [inline]
+       __lock_acquire+0x34f0/0x7904 kernel/locking/lockdep.c:5226
+       lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5849
+       __bio_queue_enter+0x4dc/0x5b0 block/blk-core.c:361
+       bio_queue_enter block/blk.h:79 [inline]
+       blk_mq_submit_bio+0x11c8/0x2070 block/blk-mq.c:3092
+       __submit_bio+0x1a0/0x4f8 block/blk-core.c:629
+       __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+       submit_bio_noacct_nocheck+0x3bc/0xcbc block/blk-core.c:739
+       submit_bio_noacct+0xc6c/0x166c block/blk-core.c:868
+       submit_bio+0x374/0x564 block/blk-core.c:910
+       submit_bh_wbc+0x3f8/0x4c8 fs/buffer.c:2814
+       submit_bh fs/buffer.c:2819 [inline]
+       block_read_full_folio+0x7ac/0x914 fs/buffer.c:2446
+       hfsplus_read_folio+0x28/0x38 fs/hfsplus/inode.c:28
+       filemap_read_folio+0x108/0x318 mm/filemap.c:2366
+       do_read_cache_folio+0x368/0x5c0 mm/filemap.c:3826
+       do_read_cache_page mm/filemap.c:3892 [inline]
+       read_cache_page+0x6c/0x15c mm/filemap.c:3901
+       read_mapping_page include/linux/pagemap.h:1005 [inline]
+       __hfs_bnode_create+0x3dc/0x6d4 fs/hfsplus/bnode.c:440
+       hfsplus_bnode_find+0x200/0xe60 fs/hfsplus/bnode.c:486
+       hfsplus_brec_find+0x134/0x4a0 fs/hfsplus/bfind.c:172
+       hfsplus_brec_read+0x38/0x128 fs/hfsplus/bfind.c:211
+       hfsplus_find_cat+0x140/0x4a0 fs/hfsplus/catalog.c:202
+       hfsplus_iget+0x34c/0x584 fs/hfsplus/super.c:83
+       hfsplus_fill_super+0xa5c/0x16f8 fs/hfsplus/super.c:504
+       get_tree_bdev_flags+0x38c/0x494 fs/super.c:1636
+       get_tree_bdev+0x2c/0x3c fs/super.c:1659
+       hfsplus_get_tree+0x28/0x38 fs/hfsplus/super.c:640
+       vfs_get_tree+0x90/0x28c fs/super.c:1814
+       do_new_mount+0x278/0x900 fs/namespace.c:3507
+       path_mount+0x590/0xe04 fs/namespace.c:3834
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4057 [inline]
+       __se_sys_mount fs/namespace.c:4034 [inline]
+       __arm64_sys_mount+0x4d4/0x5ac fs/namespace.c:4034
+       __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+       invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+       el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+       do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+       el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+       el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+       el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+
+other info that might help us debug this:
+
+Chain exists of:
+  &q->q_usage_counter(io)#17 --> &sb->s_type->i_mutex_key#20 --> &tree->tree_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(&tree->tree_lock);
+                               lock(&sb->s_type->i_mutex_key#20);
+                               lock(&tree->tree_lock);
+  rlock(&q->q_usage_counter(io)#17);
+
+ *** DEADLOCK ***
+
+2 locks held by syz.0.15/6643:
+ #0: ffff0000e90420e0 (&type->s_umount_key#51/1){+.+.}-{4:4}, at: alloc_super+0x1b0/0x834 fs/super.c:344
+ #1: ffff0000e7fcc0b0 (&tree->tree_lock){+.+.}-{4:4}, at: hfsplus_find_init+0x144/0x1bc fs/hfsplus/bfind.c:28
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 6643 Comm: syz.0.15 Not tainted 6.13.0-rc2-syzkaller-gfac04efc5c79 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:484 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_circular_bug+0x154/0x1c0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x310/0x404 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain kernel/locking/lockdep.c:3904 [inline]
+ __lock_acquire+0x34f0/0x7904 kernel/locking/lockdep.c:5226
+ lock_acquire+0x23c/0x724 kernel/locking/lockdep.c:5849
+ __bio_queue_enter+0x4dc/0x5b0 block/blk-core.c:361
+ bio_queue_enter block/blk.h:79 [inline]
+ blk_mq_submit_bio+0x11c8/0x2070 block/blk-mq.c:3092
+ __submit_bio+0x1a0/0x4f8 block/blk-core.c:629
+ __submit_bio_noacct_mq block/blk-core.c:710 [inline]
+ submit_bio_noacct_nocheck+0x3bc/0xcbc block/blk-core.c:739
+ submit_bio_noacct+0xc6c/0x166c block/blk-core.c:868
+ submit_bio+0x374/0x564 block/blk-core.c:910
+ submit_bh_wbc+0x3f8/0x4c8 fs/buffer.c:2814
+ submit_bh fs/buffer.c:2819 [inline]
+ block_read_full_folio+0x7ac/0x914 fs/buffer.c:2446
+ hfsplus_read_folio+0x28/0x38 fs/hfsplus/inode.c:28
+ filemap_read_folio+0x108/0x318 mm/filemap.c:2366
+ do_read_cache_folio+0x368/0x5c0 mm/filemap.c:3826
+ do_read_cache_page mm/filemap.c:3892 [inline]
+ read_cache_page+0x6c/0x15c mm/filemap.c:3901
+ read_mapping_page include/linux/pagemap.h:1005 [inline]
+ __hfs_bnode_create+0x3dc/0x6d4 fs/hfsplus/bnode.c:440
+ hfsplus_bnode_find+0x200/0xe60 fs/hfsplus/bnode.c:486
+ hfsplus_brec_find+0x134/0x4a0 fs/hfsplus/bfind.c:172
+ hfsplus_brec_read+0x38/0x128 fs/hfsplus/bfind.c:211
+ hfsplus_find_cat+0x140/0x4a0 fs/hfsplus/catalog.c:202
+ hfsplus_iget+0x34c/0x584 fs/hfsplus/super.c:83
+ hfsplus_fill_super+0xa5c/0x16f8 fs/hfsplus/super.c:504
+ get_tree_bdev_flags+0x38c/0x494 fs/super.c:1636
+ get_tree_bdev+0x2c/0x3c fs/super.c:1659
+ hfsplus_get_tree+0x28/0x38 fs/hfsplus/super.c:640
+ vfs_get_tree+0x90/0x28c fs/super.c:1814
+ do_new_mount+0x278/0x900 fs/namespace.c:3507
+ path_mount+0x590/0xe04 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount fs/namespace.c:4034 [inline]
+ __arm64_sys_mount+0x4d4/0x5ac fs/namespace.c:4034
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+syz.0.15: attempt to access beyond end of device
+loop0: rw=0, sector=208, nr_sectors = 2 limit=3
+Buffer I/O error on dev loop0, logical block 104, async page read
+syz.0.15: attempt to access beyond end of device
+loop0: rw=0, sector=210, nr_sectors = 2 limit=3
+Buffer I/O error on dev loop0, logical block 105, async page read
+syz.0.15: attempt to access beyond end of device
+loop0: rw=0, sector=212, nr_sectors = 2 limit=3
+Buffer I/O error on dev loop0, logical block 106, async page read
+hfsplus: failed to load root directory
+
+
+---
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
