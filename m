@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-436829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA20B9E8B6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:16:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B8B9E8B6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:16:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47F6E164653
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:16:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC1731885BBF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8229C214A97;
-	Mon,  9 Dec 2024 06:16:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F017A2101A9;
+	Mon,  9 Dec 2024 06:16:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jynot8yZ"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OtDPLb85"
+Received: from mail-pg1-f180.google.com (mail-pg1-f180.google.com [209.85.215.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9C5214A89
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44F221480E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:16:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733724965; cv=none; b=qbr7Fg9ieXCHYn9yf3j8xv48F2lw7UzGBrQ47ONweDFLuv7zeZlBCREdkCH+0FmR0VVyfvXSqPDAhpGqo8KeAKMmYTYZ6XMlNG80Ks7xEgdeg/szA9Ysyb86ghL1yKxdMfvklybrs/MXVNAesUc0WpQGe2M6jfnyKy4NDpXoU00=
+	t=1733724970; cv=none; b=fse8/OpNN8FDaNYCykwT1Ow5fcCWWcyXip5qPLZqJkERbDvpme47jlbXzTnXHRx9oBIdQ46pQuPwlmj7bMkSgxvTj2QyDGUvzycx/zfa4Q4O02j79Q5lgxy27Q37OgUDUtz+KZTNL+HFhM5K8PQRvepmoa63S+es9aOf6+6KFvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733724965; c=relaxed/simple;
-	bh=3MTZN/eJy+347t6uxFM4RqQzva5iqdXS/ZcOt/1Xa4o=;
+	s=arc-20240116; t=1733724970; c=relaxed/simple;
+	bh=8xKUl/PksIoq2Rbneib2leLcMgymowSckqA99qxx/g4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G9z3IeSOSpcc7OiOeeA2LN1BDbRZKl16VylQKAiU1d/9aFNIO5QiFrvVcheZq5gy+V7niOIQqYH9EROg7LzEHjjva+TuxxnCDk4YKcvbzwD98UbGa6j+7VUCWgCPxaGeJKvBtVQl2a+DIuJEUSspv6+cBp9uwjQtuXQtYFy8LLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jynot8yZ; arc=none smtp.client-ip=209.85.210.176
+	 MIME-Version; b=l1ZXV83Zo1AFG3CP1zEZh9z/azwXTiExnI/9CEa2+gTKJk/6aTM1qcCqjBABugHFi/KYkTdXsSq0GLWjFnzCAfadx3fwYXi/oGUggqlV6nU9D9iENlr550BUpN7unLYOF3HrUPyGcw7uPrCDuXL2ThqQUB10WoCCTOWugR3H6PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OtDPLb85; arc=none smtp.client-ip=209.85.215.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-725ee27e905so580044b3a.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:16:04 -0800 (PST)
+Received: by mail-pg1-f180.google.com with SMTP id 41be03b00d2f7-7fd35b301bdso901378a12.2
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:16:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733724964; x=1734329764; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733724968; x=1734329768; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ogSxJ0qgSRVGfWLd2NgyVRKG8hMtwjWInerWH6gERr0=;
-        b=Jynot8yZqm9O1/pxbaSTXZ9ga4KV3Bc4z1QJTLN/eKxn9dCUd/YRLqrNzq2gBst9XA
-         BCzYRyDn6+N69/CnBM5ugKCViRThQH+W4UKVbv+y+PhX1PElk/WWBnFErwwfT7rHx+sh
-         Tmyo57J4rxtX+fOF9un+wjL6P3ZFApUCIkPTwKXdX4I50+S2eWGKGQsqQpm7qtmO1DH0
-         o8ZQJbMwBKo9iA83yHlbRE7hm5GSNyHPybRz78rMFyf/ECgLjrZyKRBIjWrhlcgEYdGf
-         y8GVLZ6ELoKf0KZhTcDIO4cFumRXm/7Waek68WzcaVjKSjHHwS3N2SvjAyO+Lmh8Vtht
-         NOPg==
+        bh=47y2cVyd1kuIZD8NQ+KQkmd+50HMhaVqGUhTFqkPRtg=;
+        b=OtDPLb85FZ6FH8HT5ZfK0KBpXMYOBrR8i2/p3PIFc+XkRQ841RQIT9ePyzDJaK4plB
+         AtILbI8JdwgcoyYpLog1WWjuM8ZdG1skOG53xhMDOBI1a3rSIgW4P/j5vFfyAvOLX3FN
+         /hNvNGBu4Jq1FNMJNc5ZvE1CyCfGcmP8ypiaA8LMdMZ8jwqfRPcyuXhITpakepPYG3LS
+         JZ7XC8zBvdkOB9Sxoo+XalB1lqwN2oxjruEk3FvwYM+rv2il+QvwgBZq/98uVfu2+obH
+         wGaetgeOy+XkDv9wRhDT5TN4g8Fqzywt4pOPcRl0AUdTqVUykdSBJX1P0khbZfAb3NbR
+         2plg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733724964; x=1734329764;
+        d=1e100.net; s=20230601; t=1733724968; x=1734329768;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ogSxJ0qgSRVGfWLd2NgyVRKG8hMtwjWInerWH6gERr0=;
-        b=uQzZdQgQN9nJXUF5VamW79Z6HuLnZk3kbu9bro0U5r05I31y4IkJamPul87l8QaHNR
-         y4GnEK9dD1GQTOwnrGmhG4HLdLtSnjMczmr/kimOhywbqO0baoZwnnVkjoHvIT5itdgn
-         5mXlaFzCGJeEHNlyC4q0e0ee5WGnE/a1hbBk+/3I3liT7r9HK3FCJGmdPqQxXj1engI8
-         SRVC0ykeDqCiZBEdeiW4fvj+zKf2GEdncJ/te02fW64lujF7yb1wR6EuJn6Mr8lsQF2p
-         l+kTlFipLkEJDiasEwmYmf1JduXYvABpCFnwpEC+7Z8gkcBMBtDn/tke+LmllX/yCkB/
-         1DgA==
-X-Forwarded-Encrypted: i=1; AJvYcCUHQvp+Jh2C0kdBb2ku7+5gRS1UKeKbXuxarsfKkByBvAhF2gzt5TdsZr3MdHTEU89Gj+ffR9e7HSIl6DI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6CWzQkW2lzqbTtdZ7SZoIlmvtMhvrf4jeqdzEyJd7y4aPtEze
-	UdaCEkxSfzvebDRw0F8JaXtv1FBG1FXOHQSmd4u1k5+aE2pjjLfp
-X-Gm-Gg: ASbGncscIic77g4A6mIslEyGME6An4vtquIO1CmYKTURdCnVhslufAHW56gpWD4bY/t
-	pkWXK9bzOAoU/9zhRlDwuKdJogpGoe6vc1cDtVcohRghsatnLe1jrOpeuffFDxczjr3Z3RWR1VI
-	JLCA9YYecIoeCuO3nTZV7ZSPgPWhpZZtUYDSV+nC5/17R+2urck4mOSW29UTljD/iJdnb09v6LT
-	ZHnPUoOQLS80npYyjvyP1THPy2ZQrf7QWhE4WtTKQQAlo2MeNgsmJiIlN5swjNTb50odHsmG5Pa
-	j25lmQ==
-X-Google-Smtp-Source: AGHT+IGkMLw/XguT2MSh4yw8vFbRBFPdO4mqrCvX61feUs351mK8m1b8xd1vSJnSRFsU2WFoYHWmLw==
-X-Received: by 2002:a05:6a00:4b50:b0:725:df1a:282 with SMTP id d2e1a72fcca58-725df1a17c6mr7207637b3a.10.1733724963584;
-        Sun, 08 Dec 2024 22:16:03 -0800 (PST)
+        bh=47y2cVyd1kuIZD8NQ+KQkmd+50HMhaVqGUhTFqkPRtg=;
+        b=bYkp6Uy0q2ZrkvkS65NFAbqQ9z/gDav6hbH7nF+zYIdBM0R0QVaoOBMOD2mW7XS3ng
+         tYeec2AYnpj8fZpqCdUL3hYjGEZlW/bGWEP6wTTe0+q5WAWGAypFhip6HYVEdYnMYlZz
+         DKehC3NBNXtMRkcgjiCXTiavdPlHuF6xr6MFNFmSPYcScNaiM+x2whxb1EEZPGl+4hn6
+         uI11hZRlwAS1lyNUNFlnuWvrLqAm17hXYmwyI8cO/ZB7LkWBUg0E3KXNx/7555x4xsSn
+         qqiGKXinLRIfLxS3aCXBKRJAMyFUqd6pZhayz+TpKH1YyzgP1+6MCXeayr5waDH1z7sZ
+         IBcg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTbcV7qMIXEoEhIBY2C9rBwSratFhVRNN8EbNtlCGSs78q/Xt6TqgLeX2IE84D0Pfj7wmJD8jL0zkzDzc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywt+nqUqfF+PhPy6sQ5nmDs6no2PCGyk+Hb5Yu4yQQvaYfypJh7
+	vAHL9Gz9sOa80ft1U0f0RvLOuJDhpcUeRAyTcDx3rP4ULHGHTJjR
+X-Gm-Gg: ASbGncu+QERz2Jf96wdKKCir836nOJKFmCxzdpVgslWfZpZH8lci4IfTdLRBOW9MaDI
+	QoVvER7nDBP5J2LxFpCevNgBzlSGi9sffW5ztQiVItMLO1AW0SDCQPl/aVSTaoFXa3OoE3c/j+M
+	W5Zx6RCyApe78Sd7oyHa8eLHw3EhKdpGAb+XmCP747Ywt98ILqB6k1Cdn+tOD7IQEjQ7sIQ+pL8
+	PiuUqJ89lHzee9Eqpe5o1uA5CrRm1xQT9AVSyGOk0CcWFUCc+asnZ5DQz0lDPzOr5mkcbm5QucW
+	9EyGmg==
+X-Google-Smtp-Source: AGHT+IGR6SDOInTOzs1ZgZz2jFp+v8LqNuzUwHxPV0vg7nvptPwzbdk6ljguSlV/VuELR3U+zEvc0w==
+X-Received: by 2002:a17:903:2344:b0:20c:6399:d637 with SMTP id d9443c01a7336-21614da3f2amr202143245ad.40.1733724968203;
+        Sun, 08 Dec 2024 22:16:08 -0800 (PST)
 Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e6e024e4sm1824259b3a.153.2024.12.08.22.16.02
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2162381c6basm39572265ad.121.2024.12.08.22.16.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:16:03 -0800 (PST)
+        Sun, 08 Dec 2024 22:16:07 -0800 (PST)
 From: Changwoo Min <multics69@gmail.com>
 X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
 To: tj@kernel.org,
@@ -80,9 +80,9 @@ To: tj@kernel.org,
 Cc: changwoo@igalia.com,
 	kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 5/6] sched_ext: Add scx_bpf_now_ns() for BPF scheduler
-Date: Mon,  9 Dec 2024 15:15:30 +0900
-Message-ID: <20241209061531.257531-6-changwoo@igalia.com>
+Subject: [PATCH v4 6/6] sched_ext: Replace bpf_ktime_get_ns() to scx_bpf_now_ns()
+Date: Mon,  9 Dec 2024 15:15:31 +0900
+Message-ID: <20241209061531.257531-7-changwoo@igalia.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241209061531.257531-1-changwoo@igalia.com>
 References: <20241209061531.257531-1-changwoo@igalia.com>
@@ -94,43 +94,50 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-scx_bpf_now_ns() is added to the header files so the BPF scheduler
-can use it.
+In the BPF schedulers that use bpf_ktime_get_ns() -- scx_central and
+scx_flatcg, replace bpf_ktime_get_ns() calls to scx_bpf_now_ns().
 
 Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- tools/sched_ext/include/scx/common.bpf.h | 1 +
- tools/sched_ext/include/scx/compat.bpf.h | 5 +++++
- 2 files changed, 6 insertions(+)
+ tools/sched_ext/scx_central.bpf.c | 4 ++--
+ tools/sched_ext/scx_flatcg.bpf.c  | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
-index 625f5b046776..d8fd58d8c032 100644
---- a/tools/sched_ext/include/scx/common.bpf.h
-+++ b/tools/sched_ext/include/scx/common.bpf.h
-@@ -72,6 +72,7 @@ bool scx_bpf_task_running(const struct task_struct *p) __ksym;
- s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
- struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
- struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
-+u64 scx_bpf_now_ns(void) __ksym __weak;
+diff --git a/tools/sched_ext/scx_central.bpf.c b/tools/sched_ext/scx_central.bpf.c
+index e6fad6211f6c..e64b7a429126 100644
+--- a/tools/sched_ext/scx_central.bpf.c
++++ b/tools/sched_ext/scx_central.bpf.c
+@@ -245,7 +245,7 @@ void BPF_STRUCT_OPS(central_running, struct task_struct *p)
+ 	s32 cpu = scx_bpf_task_cpu(p);
+ 	u64 *started_at = ARRAY_ELEM_PTR(cpu_started_at, cpu, nr_cpu_ids);
+ 	if (started_at)
+-		*started_at = bpf_ktime_get_ns() ?: 1;	/* 0 indicates idle */
++		*started_at = scx_bpf_now_ns() ?: 1;	/* 0 indicates idle */
+ }
  
- /*
-  * Use the following as @it__iter when calling scx_bpf_dsq_move[_vtime]() from
-diff --git a/tools/sched_ext/include/scx/compat.bpf.h b/tools/sched_ext/include/scx/compat.bpf.h
-index d56520100a26..2f16f30ae741 100644
---- a/tools/sched_ext/include/scx/compat.bpf.h
-+++ b/tools/sched_ext/include/scx/compat.bpf.h
-@@ -125,6 +125,11 @@ bool scx_bpf_dispatch_vtime_from_dsq___compat(struct bpf_iter_scx_dsq *it__iter,
- 	false;									\
- })
+ void BPF_STRUCT_OPS(central_stopping, struct task_struct *p, bool runnable)
+@@ -258,7 +258,7 @@ void BPF_STRUCT_OPS(central_stopping, struct task_struct *p, bool runnable)
  
-+#define scx_bpf_now_ns()							\
-+	(bpf_ksym_exists(scx_bpf_now_ns) ?					\
-+	 scx_bpf_now_ns() :							\
-+	 bpf_ktime_get_ns())
-+
- /*
-  * Define sched_ext_ops. This may be expanded to define multiple variants for
-  * backward compatibility. See compat.h::SCX_OPS_LOAD/ATTACH().
+ static int central_timerfn(void *map, int *key, struct bpf_timer *timer)
+ {
+-	u64 now = bpf_ktime_get_ns();
++	u64 now = scx_bpf_now_ns();
+ 	u64 nr_to_kick = nr_queued;
+ 	s32 i, curr_cpu;
+ 
+diff --git a/tools/sched_ext/scx_flatcg.bpf.c b/tools/sched_ext/scx_flatcg.bpf.c
+index 4e3afcd260bf..568581b15c44 100644
+--- a/tools/sched_ext/scx_flatcg.bpf.c
++++ b/tools/sched_ext/scx_flatcg.bpf.c
+@@ -734,7 +734,7 @@ void BPF_STRUCT_OPS(fcg_dispatch, s32 cpu, struct task_struct *prev)
+ 	struct fcg_cpu_ctx *cpuc;
+ 	struct fcg_cgrp_ctx *cgc;
+ 	struct cgroup *cgrp;
+-	u64 now = bpf_ktime_get_ns();
++	u64 now = scx_bpf_now_ns();
+ 	bool picked_next = false;
+ 
+ 	cpuc = find_cpu_ctx();
 -- 
 2.47.1
 
