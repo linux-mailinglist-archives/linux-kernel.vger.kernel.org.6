@@ -1,220 +1,142 @@
-Return-Path: <linux-kernel+bounces-437823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45599E9936
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:44:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 70DFE9E9933
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:43:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AD6281C6B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:43:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08193282343
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B41F1B424E;
-	Mon,  9 Dec 2024 14:43:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 062851B0430;
+	Mon,  9 Dec 2024 14:43:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OJBADEKf"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VMTluxto"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B751B043D;
-	Mon,  9 Dec 2024 14:43:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1A51B043D
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755429; cv=none; b=Ko3sAs+Nap7chyHp9OAUOckU7wDISYFgNaBXM5korXhw10eQpxVeCeu2n68IV6tbJk4Mwl0zFGDnHw9t5sDlz6tOr3w8Padkf8lDjy6W2M6lMhMdosBRR5kS6clmethcF2pxDtjkvmjG8fVda/D/ndfUNFCm0jkJM/ZDFXJqYo4=
+	t=1733755415; cv=none; b=NxK0NBrrsA4XI4yplbd+wf6bKejar66wzoKgTr910gTNH6/GlqU0dIHL1YJw1OyNs/kr6gdjo1VC+rDW8Vyo+wNwsO9lFScVaT9/kFGUq1qgDyaz1Qly2VD0DQB2vJguBGhq9NK7AaQW55Rhf3kOE3v1FpUKy1YCEJp4lK9E/94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755429; c=relaxed/simple;
-	bh=0HAPuOO8MalcKud6f/kbs/l+xIbPS+Al7Xt8OGAWeP0=;
+	s=arc-20240116; t=1733755415; c=relaxed/simple;
+	bh=3kpzFE999dM/LdU4l6E7NdZxHYnVLgDEogjvJDWyJLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dACAJqZxnRdR3ogPUSGZejjR7CJ+QoYaW2H2OjF/S+BPVkHuakaT7p8toEYC6e+UhUyepmg5+un/I41918GpMQaiOrnV7w/ykMFhwALev2pbpomY2QaD0l4ysDwvGyr0FLNhqAEk3JUs1gTOw9ZjOysoA+9ul4JekNn+JnHJxYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OJBADEKf; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733755427; x=1765291427;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0HAPuOO8MalcKud6f/kbs/l+xIbPS+Al7Xt8OGAWeP0=;
-  b=OJBADEKfeM1q+8SjtmYVUdeTiUY6d9FVS9tNdDRtpcjUR+R4+QLwr5Ow
-   8Ag6+AdaXE9FI9xVY7VtBmzEQs3UkAyzgGepVhEYrGxNH0oGIFjLE58Ox
-   NWu0NAd5txBIqd3HGn7jpbv4kEGh4Ds97zSINM8riyoRzr7+kTGp/yodn
-   WUxwpXVqtb/1nbsn+Y9XoYEoQyLjQvAIlgHPm1lsZBCYDc8BtZr+zjfT+
-   7PwWHQfOBYTRH7panTdNsdfOq0V+ucDSfocwQVMkVeyToin4TdcdfpJD3
-   Trrwt7oAJEt9t3bX0waO/Eh9VcmehTTxoF5bWuqfmG0F6yii07b8X6HBO
-   A==;
-X-CSE-ConnectionGUID: G1Rim8zGTJmlc8NurBIV4A==
-X-CSE-MsgGUID: JKtIlhciRIOpLDUwQpEagw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34182557"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="34182557"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 06:43:46 -0800
-X-CSE-ConnectionGUID: TQZ+7GCGR4WylI8cc3kfoA==
-X-CSE-MsgGUID: vvrb9beIR8eRoB/r0s+zgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="94790455"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Dec 2024 06:43:41 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKez5-0004Sn-0p;
-	Mon, 09 Dec 2024 14:43:39 +0000
-Date: Mon, 9 Dec 2024 22:42:52 +0800
-From: kernel test robot <lkp@intel.com>
-To: Alice Ryhl <aliceryhl@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <202412092214.P4acQ6Rn-lkp@intel.com>
-References: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rAHHUFu+4GlDD/+c/lrsrpTEAG56+qwmqdY6qlPUMXi/afbtCOxheLoCNa6F4PjfW+EJ73zHjgo57cWMlshHFFTd3UHrcAzjmFdqZXtugSuN9ACu2n3/HTCNq03QYrfdqzyYYwh948PGxpRkQvgfEl/X6AIqt4FAvNwU+OIurnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VMTluxto; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7258cf2975fso3810325b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:43:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733755413; x=1734360213; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=cPKil53zJMQTuGu7JP6g+ZjxO5tZnTK+oPeNDzMy0CM=;
+        b=VMTluxtoqWjUeMZ1/12qw9zQDsmu096Nk3jQG4v8h7krPUZaDy2WLfOZyVfCPtFPth
+         owMK91waSZr4l/zwrvDRv7G8k/YRDIyyGUF4Q0s9ElFfYcPlA7eNoVpoAWT/hSMj7CVM
+         EoC+gl+/8VEuX9e5iHxGyhEgjAco0tTtDbN6ja8W8+ir2uNJOtFoQBgK4maUb+P3eUod
+         Awwtx51BZRJGsJfKpQAsnRnlh/e1Ygxv7GF2ZwAmX9/VTh0frNb9Jao/ZyZOJUVbPS1W
+         vJNh6rF/rxCfdOEwoXE+NZt9eFhQTVuDP31g3Vx+IrFEOei9Z2z3N1nvBF2GOJxYatvJ
+         gSvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733755413; x=1734360213;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cPKil53zJMQTuGu7JP6g+ZjxO5tZnTK+oPeNDzMy0CM=;
+        b=UAKER8jiDUWh20FzxQIr1k6wNHoMndvp3EoFyXLujTbCi/u5/ACHVvlFi8jktzHrc8
+         qS5slrf+fHO0Vkk6sWybuagcitQ6lkxrUgAi9Mm3QcRrLuFhLFQwNIPHRCDG4y/X8Gcx
+         ka97lB5hb/mNfZwX1RR08JmJg5WrjZywBukl3sOvLkFbPrYE2B9O5c5tbfEjfOLZC122
+         EKdNCCs9+MsKZHJvtNHJO8TqJHqtpyEMkmTgbHxMmPyJ+JwGg3CcNETAqzDvZDntHNIf
+         90mAZZsvdoRn7ZTc4IWcLsjC/T2fyF/VviEaaukKFuaJ8aIdmgb3jl0CxyAGYv7RoFnn
+         7yJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW04EsRa+CK3ItbPyA+2euzHNXOI7483xlD3LpOBRRPQb9i1/OYIT1Fn0Bys8IKX/ttzadJCrIKW2cgTLs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwaStfI4uxsOwLwJljVC+KazE7UnB54/Yb2WbuFU2WpQBy9d9bt
+	27JDX+ajf4kfGzkU/vSBPNLm32PhJiJayh5Xpht8zApfTDMhqsMuzQPvOuoL0A==
+X-Gm-Gg: ASbGncusTb8qrZdPBV+hsrf92Xw9RcuwIggMSCTFXeYAcTYeR87XtQuEiiYXEx8aC5f
+	aIY+/ampHQyznyy5HWNRiUWS9lRiu8FdgKFcVVi5dA3JGHLsB92WNJIcaDb+1OsoXGBsk1ElXkD
+	mYf0uoWTr/7RW4soBAJTaJIGT+maObQ9hojZQKnCHgeuzea83pmPU5urW0TXHbbz5AMXT4u6XD3
+	vaHlx762orB3DUsg89Jko8TERnz63njebrWEQqYBLQYihznqOTTeYYupq0E
+X-Google-Smtp-Source: AGHT+IFhDJY8qBSudpuC5SW1dvlmPLuMBxgm32mHRvomRt0QePig1p1TQxqzGAM1xjiCsccNrl5yhw==
+X-Received: by 2002:a05:6a00:1990:b0:726:f7c9:7b1e with SMTP id d2e1a72fcca58-7273cb1adb0mr934437b3a.13.1733755413078;
+        Mon, 09 Dec 2024 06:43:33 -0800 (PST)
+Received: from thinkpad ([120.60.142.39])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7260adb61acsm1233305b3a.94.2024.12.09.06.43.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 06:43:32 -0800 (PST)
+Date: Mon, 9 Dec 2024 20:13:14 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, andersson@kernel.org,
+	konradybcio@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+	Ulf Hansson <ulf.hansson@linaro.org>
+Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
+ the user
+Message-ID: <20241209144314.ow2qgrhiwr23qw6g@thinkpad>
+References: <20241205232900.GA3072557@bhelgaas>
+ <20241206014934.GA3081609@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241206014934.GA3081609@bhelgaas>
 
-Hi Alice,
+On Thu, Dec 05, 2024 at 07:49:34PM -0600, Bjorn Helgaas wrote:
+> On Thu, Dec 05, 2024 at 05:29:00PM -0600, Bjorn Helgaas wrote:
+> > On Sat, Nov 23, 2024 at 02:31:13PM +0530, Manivannan Sadhasivam wrote:
+> > > On Fri, Nov 22, 2024 at 04:20:50PM -0600, Bjorn Helgaas wrote:
+> > > > On Mon, Nov 18, 2024 at 01:53:44PM +0530, Manivannan Sadhasivam wrote:
+> > > > > PCI core allows users to configure the D3Cold state for each PCI
+> > > > > device through the sysfs attribute
+> > > > > '/sys/bus/pci/devices/.../d3cold_allowed'. This attribute sets
+> > > > > the 'pci_dev:d3cold_allowed' flag and could be used by users to
+> > > > > allow/disallow the PCI devices to enter D3Cold during system
+> > > > > suspend.
+> > ...
+> 
+> > > We did attempt to solve this problem in multiple ways, but the
+> > > lesson learned was, kernel cannot decide the power mode without help
+> > > from userspace. That's the reason I wanted to make use of this
+> > > 'd3cold_allowed' sysfs attribute to allow userspace to override the
+> > > D3Cold if it wants based on platform requirement.
+> > 
+> > It seems sub-optimal that this only works how you want if the user
+> > intervenes.
+> 
+> Oops, I think I got this part backwards.  The patch uses PCI PM if
+> d3cold_allowed is set, and it's set by default, so it does what you
+> need for the Qualcomm platform *without* user intervention.
+> 
+> But I guess using the flag allows users in other situations to force
+> use of NVMe power management by clearing d3cold_allowed via sysfs.
+> Does that mean some unspecified other platforms might only work
+> correctly with that user intervention?
 
-kernel test robot noticed the following build errors:
+The 'unspecified platforms' would be Android devices making use of NVMe, which
+is not a reality now but a possibility in the future. But even when it happens,
+it won't be a problem for Android as it has userspace knobs to control the power
+state of the storage devices (as like how it controls UFS power states today).
 
-[auto build test ERROR on 40384c840ea1944d7c5a392e8975ed088ecf0b37]
+UFS Reference:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Alice-Ryhl/rust-miscdevice-access-file-in-fops/20241209-153054
-base:   40384c840ea1944d7c5a392e8975ed088ecf0b37
-patch link:    https://lore.kernel.org/r/20241209-miscdevice-file-param-v2-2-83ece27e9ff6%40google.com
-patch subject: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice` from fops->open()
-config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20241209/202412092214.P4acQ6Rn-lkp@intel.com/config)
-compiler: clang version 19.1.3 (https://github.com/llvm/llvm-project ab51eccf88f5321e7c60591c5546b254b6afab99)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241209/202412092214.P4acQ6Rn-lkp@intel.com/reproduce)
+'/sys/bus/platform/devices/*.ufs/spm_lvl' documented in:
+Documentation/ABI/testing/sysfs-driver-ufs
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412092214.P4acQ6Rn-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from arch/x86/kernel/asm-offsets.c:14:
-   In file included from include/linux/suspend.h:5:
-   In file included from include/linux/swap.h:9:
-   In file included from include/linux/memcontrol.h:21:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   505 |                            item];
-   |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   512 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-   |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   525 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   4 warnings generated.
-   ***
-   *** Rust bindings generator 'bindgen' < 0.69.5 together with libclang >= 19.1
-   *** may not work due to a bug (https://github.com/rust-lang/rust-bindgen/pull/2824),
-   *** unless patched (like Debian's).
-   ***   Your bindgen version:  0.65.1
-   ***   Your libclang version: 19.1.3
-   ***
-   ***
-   *** Please see Documentation/rust/quick-start.rst for details
-   *** on how to set up the Rust support.
-   ***
-   In file included from rust/helpers/helpers.c:10:
-   In file included from rust/helpers/blk.c:3:
-   In file included from include/linux/blk-mq.h:5:
-   In file included from include/linux/blkdev.h:9:
-   In file included from include/linux/blk_types.h:10:
-   In file included from include/linux/bvec.h:10:
-   In file included from include/linux/highmem.h:8:
-   In file included from include/linux/cacheflush.h:5:
-   In file included from arch/x86/include/asm/cacheflush.h:5:
-   In file included from include/linux/mm.h:2223:
-   include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   505 |                            item];
-   |                            ~~~~
-   include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   512 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-   |                               ~~~~~~~~~~~ ^ ~~~
-   include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   524 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~ ^
-   525 |                            NR_VM_NUMA_EVENT_ITEMS +
-   |                            ~~~~~~~~~~~~~~~~~~~~~~
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   4 warnings generated.
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-   clang diag: include/linux/vmstat.h:524:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
->> error[E0277]: the size for values of type `Self` cannot be known at compilation time
-   --> rust/kernel/miscdevice.rs:107:35
-   |
-   107 |     fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
-   |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ doesn't have a size known at compile-time
-   |
-   note: required by an implicit `Sized` bound in `MiscDeviceRegistration`
-   --> rust/kernel/miscdevice.rs:52:35
-   |
-   52  | pub struct MiscDeviceRegistration<T> {
-   |                                   ^ required by the implicit `Sized` requirement on this type parameter in `MiscDeviceRegistration`
-   help: consider further restricting `Self`
-   |
-   107 |     fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr> where Self: Sized;
-   |                                                                                      +++++++++++++++++
-   help: consider relaxing the implicit `Sized` restriction
-   |
-   52  | pub struct MiscDeviceRegistration<T: ?Sized> {
-   |                                    ++++++++
---
->> error[E0609]: no field `private_data` on type `File`
-   --> rust/kernel/miscdevice.rs:215:22
-   |
-   215 |     unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
-   |                      ^^^^^^^^^^^^ unknown field
+- Mani
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+மணிவண்ணன் சதாசிவம்
 
