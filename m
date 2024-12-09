@@ -1,146 +1,145 @@
-Return-Path: <linux-kernel+bounces-437959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B5029E9AFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:58:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9018D9E9AFC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:57:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3317E18872E3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:58:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C865166486
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF23513B787;
-	Mon,  9 Dec 2024 15:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B116A136E21;
+	Mon,  9 Dec 2024 15:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="3DxMm+RY"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QRs1yS55"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1B2233139
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AB4132C38;
+	Mon,  9 Dec 2024 15:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759866; cv=none; b=mdV7mScLD7YZkaO5F/Tv1CA3ExGkERIllJZmMwxogScaPBVN0aaFncYtfrgWDDGKWes7s1EqWeawPWVbLF31yMwMUz5Y1Aof+ftIe4jbNUPigDMrMmX0Cf+r7FNFbE6cwf9Dwnj5cG25Nvk88I4/+41e8PpKUYccQHGxoDaNJd8=
+	t=1733759864; cv=none; b=G48ngoKYlWI5SvJDh1ra7xgbg9eeOMsFeYmnAV3Wy1V6P9j+qYTlLi4qcn53y34syZiT9EDxY36USzoUiQCpvKuvgjxxhyeO2ukawJG/RIicD1U7bqQVmdxtvo+yjx010vEXJJSnxIRCI2MTgN2uJeJifHGiCChnv0iYzF02IRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759866; c=relaxed/simple;
-	bh=uXKsVOPQQOjKhT5uGKQlTgHj38iXml1HtM1n7maqc/o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VcXjSVslZ1CrOdv4k5V7KS6weFw59RAlHQbybbBTAphhhTnOroCYgpqX6M/frZMXeyydRKE+ETNIB6Wu/TqlIKiwOVWwVhz0439kArIYqYRC48UpWHr6qNSa16d39zFE3tDS3+CnXl68OONeNPci1ptf/gyz5mGvdQvFjIfBj2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=3DxMm+RY; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-725c24f3a89so2424477b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 07:57:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1733759864; x=1734364664; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=HJgfJRwWboyVVdp2yBixPX3pFCmRzBh4c7ZZuQR90II=;
-        b=3DxMm+RYqwVNRlEzHqwwjLhn6oDKB4VbrcFhc3TbwakkNewzJ+hPB42zPmcaszqYFQ
-         Xv/wVL5VFmkHM1O5yS1VzAcFfOL8fxbdv1q2PokDmXnWQXsvTmKFuFwiaT/dUiCg6ytH
-         3cIK3gVnFs8Dxv3+pkodvRHvia1f4uNPsTrIcbVVxBZlIQoL9nJ7Cw4C94fahxXwSgpK
-         68QXZkpyukdcSgr+HzjpyR6JvBBktJOMMeJgcnIXAVC9PGP5Zj3cwPXKTc6Yh4K5zwsR
-         CXPjeoEaoenjgqpwuHCiJ/mUXgyBjgz6mMWtx2dYqzEuRmIDfUrIZLgjuAiDnN0t/VXz
-         fjnQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733759864; x=1734364664;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HJgfJRwWboyVVdp2yBixPX3pFCmRzBh4c7ZZuQR90II=;
-        b=amLBlo9i7yP8nPz5ROBdmO7uRs6PYcvMwXSHklMzqcQZj67+Xmm/vrlzsIT8e3XwZw
-         eLJDjgflc4sak86cDnEj1g0qn+u2dmgHnlZj6c32e936PPl78jdyLuw4mo/d9wdE9LsE
-         s9JaQyQ+Jf+A9/hO8fyTMDfUKnkMcn1GoI+xm6/IC74DAyT4dWe7LJhAdJBfql87MPqS
-         5mHDzc64nLq5mi0A+OO0sppCA+R1KwvuLIrEOPPGVBLHQKTyfUVTX4kUYXTLT+bdDR5p
-         Fy87qPcBgBVqM6gSNnchHklBcLKNHxJz1ZJRQgzLxN5N3pSyuTcHRfYX4SLU6sNrxUQa
-         IIMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWMAmtMtPjuV9jGyWPVgpr9vPkAiFT7J/2GcsFCUHPphtKyBQzHC41zJOs8GOmmT4zT/dDz6CRZ4r3St0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwM30fy0Lu2J1wyMhE3XxGRFoM1iDM9XHwIjkdd8bwzU3FDCLhg
-	aDkCjw543BP5HPs7vVtqX95fpp3CED5CLHGiy0sS34dKDq7MVeydedJLFr1+sIY=
-X-Gm-Gg: ASbGncveEyXwXtf+EDv6arth5MM8CjVO2FIjJJgD48LXTgCXrnUABTGopAIDeFs3F3D
-	VkKKUVGA52svtpzPKhgl4kwHKimI9Q+47rVqCbGqyv/TIDj+W+xTvr3oRafH+ntCqPQD2KTFbwY
-	sC9e1t7Pp9b9KsTvcPKYWIGMjTa2uaPRjKS+lUdydxd1z1xqfrHmuNYP6KtjtayDqKxCGQkWM0+
-	dh16WjP3UlssDxrC3N9oai+ZoOq/ap6cN0F7VEq+I45JhHbVdY=
-X-Google-Smtp-Source: AGHT+IF3SUxS6Oqh6v3V6CqksS4a3Vo4POx1ea0PFAbtVS5ly1340Tat37ZVq9GoRLgSr76MMFbbzQ==
-X-Received: by 2002:a05:6a00:9289:b0:725:e499:5b8b with SMTP id d2e1a72fcca58-725e4995cc6mr7699800b3a.17.1733759863799;
-        Mon, 09 Dec 2024 07:57:43 -0800 (PST)
-Received: from carbon-x1.. ([2a01:e0a:e17:9700:16d2:7456:6634:9626])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725d16e7132sm4295833b3a.152.2024.12.09.07.57.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 07:57:43 -0800 (PST)
-From: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>
-To: Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	linux-riscv@lists.infradead.org (open list:RISC-V ARCHITECTURE),
-	linux-kernel@vger.kernel.org (open list)
-Cc: =?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <cleger@rivosinc.com>,
-	Anton Blanchard <antonb@tenstorrent.com>
-Subject: [PATCH] riscv: stacktrace: fix backtracing through exceptions
-Date: Mon,  9 Dec 2024 16:57:12 +0100
-Message-ID: <20241209155714.1239665-1-cleger@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1733759864; c=relaxed/simple;
+	bh=o8XP06lcYRfWQzEQkKfdzPtBj+LUgBM2Y1u/K1ZzrDU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rdrKsnQKcAKn+Vzyc9kEKK5hId60nQvHLMrMImxokIZkt7Ro0SPsSrvBUmAaPK6EL3hj0jFsygxnbzmiJ4R87WgCsLG6vLUoqfvA5PNBQYOCGAaE+VEblyr8BndhNvbpDtmFQgL/In+jAmVu48Weoa8cBvSLF5Mv5466BnqlGw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QRs1yS55; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 568D940E0288;
+	Mon,  9 Dec 2024 15:57:40 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id uVLnYd3n6KR8; Mon,  9 Dec 2024 15:57:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733759856; bh=6wjva+XHkq9WUs9GVSDQBIaFuXyCphV3M7jzddUXB7w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QRs1yS55QCziw5MZ2uTCQFmkttF4+NM8N3gvI686lroGLEj2vFTGAWDzdfVEGSbFd
+	 VNAKUQJUT1SmQedrYmsm4yQ2UiY9FuDpnspn3hMMUT/ywYR58gYYXLQjCCsW3CdE/a
+	 vewklC69c67GbpsICI2DfzJLqEwwfbVgf7I6U0Z640vHY6TAcoZgsr3mp8YKgmd9G0
+	 viZaLaDVb6R/y2K4jr4/faaf3B18YQPIIYLdYnE6X8NBWJm/q4ogjjV3sZz0MZ2Lov
+	 F+wL+4T8uxGWRyCIXG5QzqBFWGN5PBpHWEpANykv9wS9KCmcr7AFVgd1habVjWuXae
+	 YPzVzwwk2wYPhdEE76tgKHDCQ3P+Zuk6XR2QX3qYMVIgmNqbIdF4itdVRb1cWegfE2
+	 7GiQNVhVZeFUnPdCEgewDN6H/Ax5g6QR9kXLxPzrihX3h7cWW4KIsyp/YS+AMSoXBL
+	 VsfuMck4pU6Eswq5ZEX9oniEH4+f72lRx9ZFP/xV3O7SRs+sGBtCTtAlkjfj0DRipA
+	 BE0wCUUeZOXoY2b1IPIVL3MgmuNuBKbYy9MMusQXDdNyTTiSSwUFTbAQJzG3V/iozR
+	 X3KmAAxm+M0Y9sAWtscJQGx78ZmCrVTMtd5UtQ5HFyeZsfcUqpKjB+2ruo11I0dyGH
+	 9mVd9re+n0z/psRCLjrslIcU=
+Received: from zn.tnic (p200300EA971F9307329c23FFFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A82740E015F;
+	Mon,  9 Dec 2024 15:57:25 +0000 (UTC)
+Date: Mon, 9 Dec 2024 16:57:18 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Nikunj A Dadhania <nikunj@amd.com>
+Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
+	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
+	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
+	pbonzini@redhat.com
+Subject: Re: [PATCH v15 04/13] x86/sev: Change TSC MSR behavior for Secure
+ TSC enabled guests
+Message-ID: <20241209155718.GBZ1cTXp2XsgtvUzHm@fat_crate.local>
+References: <20241203090045.942078-1-nikunj@amd.com>
+ <20241203090045.942078-5-nikunj@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241203090045.942078-5-nikunj@amd.com>
 
-Prior to commit 5d5fc33ce58e ("riscv: Improve exception and system call
-latency"), backtrace through exception worked since ra was filled with
-ret_from_exception symbol address and the stacktrace code checked 'pc' to
-be equal to that symbol. Now that handle_exception uses regular 'call'
-instructions, this isn't working anymore and backtrace stops at
-handle_exception(). Since there are multiple call site to C code in the
-exception handling path, rather than checking multiple potential return
-addresses, add a new symbol at the end of exception handling and check pc
-to be in that range.
+On Tue, Dec 03, 2024 at 02:30:36PM +0530, Nikunj A Dadhania wrote:
+> Secure TSC enabled guests should not write to MSR_IA32_TSC(10H) register as
+> the subsequent TSC value reads are undefined.
 
-Fixes: 5d5fc33ce58e ("riscv: Improve exception and system call latency")
-Signed-off-by: Clément Léger <cleger@rivosinc.com>
+What does that mean exactly?
+
+I'd prefer if we issued a WARN_ONCE() there on the write to catch any
+offenders.
+
+*NO ONE* should be writing the TSC MSR but that's a different story.
+
+IOW, something like this ontop of yours?
 
 ---
- arch/riscv/kernel/entry.S      | 1 +
- arch/riscv/kernel/stacktrace.c | 4 +++-
- 2 files changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
-index 216581835eb0..33a5a9f2a0d4 100644
---- a/arch/riscv/kernel/entry.S
-+++ b/arch/riscv/kernel/entry.S
-@@ -278,6 +278,7 @@ SYM_CODE_START_NOALIGN(ret_from_exception)
- #else
- 	sret
- #endif
-+SYM_INNER_LABEL(ret_from_exception_end, SYM_L_GLOBAL)
- SYM_CODE_END(ret_from_exception)
- ASM_NOKPROBE(ret_from_exception)
- 
-diff --git a/arch/riscv/kernel/stacktrace.c b/arch/riscv/kernel/stacktrace.c
-index 153a2db4c5fa..d4355c770c36 100644
---- a/arch/riscv/kernel/stacktrace.c
-+++ b/arch/riscv/kernel/stacktrace.c
-@@ -17,6 +17,7 @@
- #ifdef CONFIG_FRAME_POINTER
- 
- extern asmlinkage void handle_exception(void);
-+extern unsigned long ret_from_exception_end;
- 
- static inline int fp_is_valid(unsigned long fp, unsigned long sp)
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index c22cb2ea4b99..050170eb28e6 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -1443,9 +1443,15 @@ static enum es_result __vc_handle_msr_tsc(struct pt_regs *regs, bool write)
  {
-@@ -71,7 +72,8 @@ void notrace walk_stackframe(struct task_struct *task, struct pt_regs *regs,
- 			fp = frame->fp;
- 			pc = ftrace_graph_ret_addr(current, &graph_idx, frame->ra,
- 						   &frame->ra);
--			if (pc == (unsigned long)handle_exception) {
-+			if (pc >= (unsigned long)handle_exception &&
-+			    pc < (unsigned long)&ret_from_exception_end) {
- 				if (unlikely(!__kernel_text_address(pc) || !fn(arg, pc)))
- 					break;
+ 	u64 tsc;
  
--- 
-2.45.2
+-	if (write)
+-		return ES_OK;
++	if (!(sev_status & MSR_AMD64_SNP_SECURE_TSC))
++		goto read_tsc;
++
++	if (write) {
++		WARN_ONCE(1, "TSC MSR writes are verboten!\n");
++		return ES_UNSUPPORTED;
++	}
+ 
++read_tsc:
+ 	tsc = rdtsc_ordered();
+ 	regs->ax = lower_32_bits(tsc);
+ 	regs->dx = upper_32_bits(tsc);
+@@ -1462,11 +1468,14 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
+ 	/* Is it a WRMSR? */
+ 	write = ctxt->insn.opcode.bytes[1] == 0x30;
+ 
+-	if (regs->cx == MSR_SVSM_CAA)
++	switch(regs->cx) {
++	case MSR_SVSM_CAA:
+ 		return __vc_handle_msr_caa(regs, write);
+-
+-	if (regs->cx == MSR_IA32_TSC && (sev_status & MSR_AMD64_SNP_SECURE_TSC))
++	case MSR_IA32_TSC:
+ 		return __vc_handle_msr_tsc(regs, write);
++	default:
++		break;
++	}
+ 
+ 	ghcb_set_rcx(ghcb, regs->cx);
+ 	if (write) {
 
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
