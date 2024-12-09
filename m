@@ -1,464 +1,189 @@
-Return-Path: <linux-kernel+bounces-436930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88ACF9E8CBD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:58:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96AD79E8CD6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:33 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79C8D164C33
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:58:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C917281B2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:00:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0F4215067;
-	Mon,  9 Dec 2024 07:58:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B80B215182;
+	Mon,  9 Dec 2024 08:00:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RITjiLXJ"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="Wg4gUh25"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A52E21506D;
-	Mon,  9 Dec 2024 07:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E103215160
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 07:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731133; cv=none; b=Y0m5vDOsfkJ8qwKuk4cWOXrnDMCtcNI00Ggy1oXub+/4UW+eAE95RlrCNFvkX5mQAyuIaE6Bh+V7SEZyDTnr3dQyqbvDK81yWyyHM5BeEGTJW1zImW69UXkPihtsF+ejFa/eilq4DyxgIg0PbuLjRjVDeOXke6Eexhdc++XJwiU=
+	t=1733731200; cv=none; b=PY+Bof7trEBC97ycs7YecHIAFmM/oSkbJ4XtZ6/10D7WGqREZjdxlWs9r1I6AmWNQFk61nRqm17dz2nvu/vr4yJf5B097gdQwXOKnN/oAxupYZlWFctoNfKOVqqOpqaQ3yEQ3cTZnvflDp5nD4bZGTARD0CINX5sx4LcwpO1kAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731133; c=relaxed/simple;
-	bh=Os5dAcd3Zrt+fqku1kSGs/tQuhvf2EFVfB1PWyATEa4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=e1+WxmrjNDy9ncpct0I7ad2dlLaXZDoS60v+ko54107eQnrkhLYOepS0495aanIm+IljZLwb2HMD4LP+akZhsXbhhilo8kCoMFkAQjcxM45oSZaCvtIGtafAjNzDLj/FZO6teqD1wQhiqGCrM9wXy4TPdHBH50TmeYxkPWSJ8PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RITjiLXJ; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53e21990bcbso4083965e87.0;
-        Sun, 08 Dec 2024 23:58:51 -0800 (PST)
+	s=arc-20240116; t=1733731200; c=relaxed/simple;
+	bh=UsGGTZ2nD/E5yGIXaoCFDWmRL4HG9Qwb6kXnKLoJ/7M=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bbpAeFkwCFFDTWtIOVPsSZgCt9/7h4/RDnjV0uWNUIWRDPVdwfZ5djMo7zAD6+SHr30ce3VPR5IEZ58zQYI5DVSoGvKBDPD7Fm5JL+/sCK6i7PkP9bSbPY1m8BiFv81Me4TqcaAclKcc1bqVbVa9BfYrx6nwiPm1u6QiE8Lfq7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=Wg4gUh25; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30167f4c1deso12283741fa.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 23:59:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733731130; x=1734335930; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YTTN9XB+lkC9OcQRKqP0MOZQL7W2W4sTEAkLUkmeWDo=;
-        b=RITjiLXJO7hUbtHV1xRLIlNuS6tkWSPBWooOm4pFGjLd3QrCPNJXNM3atF7pgXCuQb
-         jmESjAyySjumIjmW7cLd0JT07yWspNX/BAVRiV4I2U21HWGjtn6zXtFrXIZcDEPV9cuo
-         e9SCQQnwlTiNL5cGwf84w06RRZiosiV3MofQqIuPcTLSj85mOvukCLHhkK834Nv+J98q
-         X10Eg4C+P4DrGfuHr8SEvTa9zSG4YRSgYojtW/H/S+xt5t7RZJTgVlc2mnwW5J5jcsC8
-         nrLBCEh8W2Uuov3kNq9vFMdu6etG06UiLjbMqthmy75WKNbsK1jYbyQa3c9uwHBPz5n9
-         MYOA==
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733731197; x=1734335997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=lyaICWOg29JMNgD4hxKKtD1x7CHdhnKiLgfWSMOBd7Q=;
+        b=Wg4gUh25f40I7NOy2JFwLuQTS6bWAAAG899qyUNhT0PzN2U67MGEGoy1+4GveIHhxw
+         qbLtb0yN55Li1YThiPGt2rCx3iSBD/+JkmxmBYrC90uLflhAmaO39EN5nCj+OO71P+Fi
+         EiBZaTVMbarDWKRS3AFNJOyvj8Zsc+2w2niF9Rg7mGrr0QKJWrrw2zUfnRmAVGV4i3mO
+         nHrOOVjArw/LIlLPRkgpUN5DGc476mWjOLUvY/e9Eh/NjOemo0XbQt2mzuVe9+QzIJeD
+         wivnak6//zK4DKNb3GUR/34dp6Kysla3aWBFtbVjerlSPMaFoEKj7YCtWrFrjhXOjUw/
+         hnUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733731130; x=1734335930;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YTTN9XB+lkC9OcQRKqP0MOZQL7W2W4sTEAkLUkmeWDo=;
-        b=oo2u/a0ZEfKHFX9xiInKOX9aP1J8XQhB50Tugaaz49gjmn4/tO4ptjveVqA/gT/Z4J
-         HXsvKlAfIr3E7ZeDFXaK1or6JfVeHdiCA8pjq5RSgbM4iWKKcdhfAJiGmirOyxy066Ex
-         UHnw+UW2duIduXAyPSHFhPut1FCJNlta+DrQSeGfyDy3B6IX/I4TBXEF3z5+3CTxKrjo
-         b4tsDPh591F37tmii6qyiQ5viwVZKV29JuWPBH2aXQeEIGw0d180Vla+ftaL4+YGbpnQ
-         oI/ZLc5SfS4RFdLr6P47TmArkEljvEE/u4ZBQNYn0NU3tzAjyi/qvIHkJ/wO6t6I9eJH
-         rvjg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7U9XdwgbZrIvL0l+oKJJyIUwx615ziwa+6r+cOhWK9f1y7HY/Gcu/862CcYVXYDmqsX+BUf7NPUqs0j7j@vger.kernel.org, AJvYcCVXr4ZwwTqjQVJFfJ1D5SdTpLVh6UEvbnKfJwe3TufqKrPW7ZwJIGYXPInpM9zLAIQQcO3IbO/WB80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUz7q+b4i1o1ZO5MWUJb3xL/glAVUt9uXJW4smgxGD68ZSJQ3g
-	YyQLuaesbhSluCY8ELF84eSts5o6Rp8Gx3LcuhLaZPpT4/dEK26Kt7rvcg==
-X-Gm-Gg: ASbGncvTJNSgxVA8b6scn6eMctycxh0dPAAggsZUG5YyzVjSOrt9Aeu6sHl9Aun+NvV
-	SAtlvA5/h3SuK3LsuLRY933+HTVG3E/6LS0btJXIRJQ8yFwl/MM0kLAUh7xlEFIiFzmpNxLfGdd
-	KKf7SJNPa+W71KF/bRszymFJqLFDDVJ+YUewLN2Ek1aj687L/P6lRHeA+SUYWig9LlQ+U8cLEWg
-	9ZB5saZPWzpKEC/1aDF04aJYSs8iQtH/tiEbFZftL92RTwCOTL1C5QP
-X-Google-Smtp-Source: AGHT+IEg4jECNjWlFnf/oy5L/AoowQGFGFZ2JNnhKAf37333VKmG+ohdMKy0nFjASYCqEaCE2RcWjQ==
-X-Received: by 2002:a05:6512:131d:b0:53e:23ec:b2e7 with SMTP id 2adb3069b0e04-53e2c2c4b9dmr3807616e87.34.1733731129420;
-        Sun, 08 Dec 2024 23:58:49 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e39bd3f20sm790524e87.229.2024.12.08.23.58.46
+        d=1e100.net; s=20230601; t=1733731197; x=1734335997;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lyaICWOg29JMNgD4hxKKtD1x7CHdhnKiLgfWSMOBd7Q=;
+        b=CwHhr+PW2C2SM9Tqybr6Q1tzc2z/bP/aQUt6I5K1tSY+ipav8cDqkggKU8GNUFxKNe
+         qz1ocENNeAMoLAjo9Mkt16WWwIubFPWaLl6h89Sh3I89zzKQu8bKJTOJsbb0a9iXApPE
+         eokBqPuRjls87hB5zx5gYcGaY1jf1rhQjT5gaNpjwobvwlQV3dKzl5GZgraAEpyNa9Bq
+         sOGAJIc5R5trf4DUp9+FGEGdMWvmmrSXeIHmjKNjgvCXCLOv5U7AAic7qUV8cg/JJrFO
+         cxuXusXhZ47eQKVtigXcr31LBu99rn2UmHDx5Onu17jqMgwjJtM7JbuB23y/p8mLTZBr
+         Ec6g==
+X-Forwarded-Encrypted: i=1; AJvYcCW92Ah1gTvfj4KWhlrvwSfjEcKJbji0t1FjriL8qeUZEnteUI4mh8bfk8mjCaaxTX36uXt9qpYbTA1pBow=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkQYNHV1GL+9XLEd68PgcPfwF/kLMwLUbJAOq21N7nApyF6RCW
+	Y09Dd9+pshSknYP7UlDaL8JSqH2wSn0YMpJ+KmvdVVgSQEnFbIOV3t0DXFaM37o=
+X-Gm-Gg: ASbGnctrn7kxEvTD+bwZ0Y+9o9Crjo807HcE3FUUHa3as6LweAmBZ5uWqXpFOZLxERo
+	ilfy/X2z1BqJZ7EeSrSgZ0CEfwZE3U/BL+UxHT6CuEXNwSiJgyDvKNiOqyGZtA4jmcanj4ai3ny
+	cYfA/37wXdJYa0M/lonLmzogkRi1YUEODCY+IxA5OW612Xa+xfsm6NBm/5zq941iLcVFuqQ7F7m
+	O2INC4nOvWVKo/YWTp9DeVfswPgYAzDnhtQv2CbfV/DnH7fCZMmlsXjMZbgT4Oe
+X-Google-Smtp-Source: AGHT+IH4yjPZ1ALGBr4+xtqjqm4342HJGSTD7ZfSUlKbMYjDcvCHYG3uzYKEc1m8Irx/IaUkQJYYFA==
+X-Received: by 2002:a2e:86da:0:b0:302:2620:ec89 with SMTP id 38308e7fff4ca-3022620ef1dmr4409821fa.19.1733731196698;
+        Sun, 08 Dec 2024 23:59:56 -0800 (PST)
+Received: from cobook.home ([91.198.101.25])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-300342fc466sm8388761fa.125.2024.12.08.23.59.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 23:58:47 -0800 (PST)
-Date: Mon, 9 Dec 2024 09:58:41 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Subhajit Ghosh <subhajit.ghosh@tweaklogic.com>,
-	Mudit Sharma <muditsharma.info@gmail.com>,
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [RFC PATCH] iio: gts: Simplify available scale table build
-Message-ID: <Z1ajMXzvlgU0Smdf@mva-rohm>
+        Sun, 08 Dec 2024 23:59:56 -0800 (PST)
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH net] net: renesas: rswitch: fix initial MPIC register setting
+Date: Mon,  9 Dec 2024 12:59:51 +0500
+Message-Id: <20241209075951.163924-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="G1RNIunrlcThCopX"
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
+MPIC.PIS must be set per phy interface type.
+MPIC.LSC must be set per speed.
 
---G1RNIunrlcThCopX
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Do that strictly per datasheet, instead of hardcoding MPIC.PIS to GMII.
 
-Make available scale building more clear. This hurts the performance
-quite a bit by looping throgh the scales many times instead of doing
-everything in one loop. It however simplifies logic by:
- - decoupling the gain and scale allocations & computations
- - keeping the temporary 'per_time_gains' table inside the
-   per_time_scales computation function.
- - separating building the 'all scales' table in own function and doing
-   it based on the already computed per-time scales.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
-
+Fixes: 3590918b5d07 ("net: ethernet: renesas: Add support for "Ethernet Switch"")
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
 ---
-In my (not always) humble (enough) opinion:
- - Building the available scales tables was confusing.
- - The result of this patch looks much clearer and is simpler to follow.
- - Handles memory allocations and freeing in somehow easyish to follow
-   manner while still:
-     - Avoids introducing mid-function variables
-     - Avoids mixing and matching 'scoped' allocs with regular ones
+ drivers/net/ethernet/renesas/rswitch.c | 27 ++++++++++++++++++++------
+ drivers/net/ethernet/renesas/rswitch.h | 14 ++++++-------
+ 2 files changed, 28 insertions(+), 13 deletions(-)
 
-I however send this as an RFC because it hurts the performance quite a
-bit. (No measurements done, I doubt exact numbers matter. I'd just say
-it more than doubles the time, prbably triples or quadruples). Well, it
-is not really on a hot path though, tables are computed once at
-start-up, and with a sane amount of gains/times this is likely not a
-real problem.
-
-This has been tested only by running the kunit tests for the gts-helpers
-in a beaglebone black. Further testing and eyeing is appreciated :)
----
- drivers/iio/industrialio-gts-helper.c | 250 +++++++++++++++-----------
- 1 file changed, 149 insertions(+), 101 deletions(-)
-
-diff --git a/drivers/iio/industrialio-gts-helper.c b/drivers/iio/industrial=
-io-gts-helper.c
-index 291c0fc332c9..01206bc3e48e 100644
---- a/drivers/iio/industrialio-gts-helper.c
-+++ b/drivers/iio/industrialio-gts-helper.c
-@@ -160,16 +160,108 @@ static void iio_gts_purge_avail_scale_table(struct i=
-io_gts *gts)
- 	gts->num_avail_all_scales =3D 0;
- }
-=20
-+static int scale_eq(int *sc1, int *sc2)
-+{
-+	return sc1[0] =3D=3D sc2[0] && sc1[1] =3D=3D sc2[1];
-+}
-+
-+static int scale_smaller(int *sc1, int *sc2)
-+{
-+	if (sc1[0] !=3D sc2[0])
-+		return sc1[0] < sc2[0];
-+
-+	/* If integer parts are equal, fixp parts */
-+	return sc1[1] < sc2[1];
-+}
-+
-+static int do_combined_scaletable(struct iio_gts *gts, size_t scale_bytes)
-+{
-+	int t_idx, i, new_idx;
-+	int **scales =3D gts->per_time_avail_scale_tables;
-+	int *all_scales =3D kcalloc(gts->num_itime, scale_bytes, GFP_KERNEL);
-+
-+	if (!all_scales)
-+		return -ENOMEM;
-+
-+	t_idx =3D gts->num_itime - 1;
-+	memcpy(all_scales, scales[t_idx], scale_bytes);
-+	new_idx =3D gts->num_hwgain * 2;
-+
-+	while (t_idx-- > 0) {
-+		for (i =3D 0; i < gts->num_hwgain ; i++) {
-+			int *candidate =3D &scales[t_idx][i * 2];
-+			int chk;
-+
-+			if (scale_smaller(candidate, &all_scales[new_idx - 2])) {
-+				all_scales[new_idx] =3D candidate[0];
-+				all_scales[new_idx + 1] =3D candidate[1];
-+				new_idx +=3D 2;
-+
-+				continue;
-+			}
-+			for (chk =3D 0; chk < new_idx; chk +=3D 2)
-+				if (!scale_smaller(candidate, &all_scales[chk]))
-+					break;
-+
-+
-+			if (scale_eq(candidate, &all_scales[chk]))
-+				continue;
-+
-+			memmove(&all_scales[chk + 2], &all_scales[chk],
-+				(new_idx - chk) * sizeof(int));
-+			all_scales[chk] =3D candidate[0];
-+			all_scales[chk + 1] =3D candidate[1];
-+			new_idx +=3D 2;
-+		}
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 7f17b9656cc3..6ca5f72193eb 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -1124,25 +1124,40 @@ static int rswitch_etha_wait_link_verification(struct rswitch_etha *etha)
+ 
+ static void rswitch_rmac_setting(struct rswitch_etha *etha, const u8 *mac)
+ {
+-	u32 val;
++	u32 pis, lsc;
+ 
+ 	rswitch_etha_write_mac_address(etha, mac);
+ 
++	switch (etha->phy_interface) {
++	case PHY_INTERFACE_MODE_SGMII:
++		pis = MPIC_PIS_GMII;
++		break;
++	case PHY_INTERFACE_MODE_USXGMII:
++	case PHY_INTERFACE_MODE_5GBASER:
++		pis = MPIC_PIS_XGMII;
++		break;
++	default:
++		pis = FIELD_GET(MPIC_PIS, ioread32(etha->addr + MPIC));
++		break;
 +	}
 +
-+	gts->num_avail_all_scales =3D new_idx / 2;
-+	gts->avail_all_scales_table =3D all_scales;
-+
-+	return 0;
-+}
-+
-+static void iio_gts_free_int_table_array(int **arr, int num_tables)
-+{
-+	int i;
-+
-+	for (i =3D 0; i < num_tables; i++)
-+		kfree(arr[i]);
-+
-+	kfree(arr);
-+}
-+
-+static int iio_gts_alloc_int_table_array(int ***arr, int num_tables, int n=
-um_table_items)
-+{
-+	int i, **tmp;
-+
-+	tmp =3D kcalloc(num_tables, sizeof(**arr), GFP_KERNEL);
-+	if (!tmp)
-+		return -ENOMEM;
-+
-+	for (i =3D 0; i < num_tables; i++) {
-+		tmp[i] =3D kcalloc(num_table_items, sizeof(int), GFP_KERNEL);
-+		if (!tmp[i])
-+			goto err_free;
-+	}
-+
-+	*arr =3D tmp;
-+
-+	return 0;
-+err_free:
-+	iio_gts_free_int_table_array(tmp, i);
-+
-+	return -ENOMEM;
-+}
-+
- static int iio_gts_gain_cmp(const void *a, const void *b)
- {
- 	return *(int *)a - *(int *)b;
- }
-=20
--static int gain_to_scaletables(struct iio_gts *gts, int **gains, int **sca=
-les)
-+static int fill_and_sort_scaletables(struct iio_gts *gts, int **gains, int=
- **scales)
- {
--	int i, j, new_idx, time_idx, ret =3D 0;
--	int *all_gains;
--	size_t gain_bytes;
-+	int i, j, ret;
-=20
- 	for (i =3D 0; i < gts->num_itime; i++) {
- 		/*
-@@ -189,73 +281,59 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
-nt **gains, int **scales)
- 		}
+ 	switch (etha->speed) {
+ 	case 100:
+-		val = MPIC_LSC_100M;
++		lsc = MPIC_LSC_100M;
+ 		break;
+ 	case 1000:
+-		val = MPIC_LSC_1G;
++		lsc = MPIC_LSC_1G;
+ 		break;
+ 	case 2500:
+-		val = MPIC_LSC_2_5G;
++		lsc = MPIC_LSC_2_5G;
+ 		break;
+ 	default:
+-		return;
++		lsc = FIELD_GET(MPIC_LSC, ioread32(etha->addr + MPIC));
++		break;
  	}
-=20
--	gain_bytes =3D array_size(gts->num_hwgain, sizeof(int));
--	all_gains =3D kcalloc(gts->num_itime, gain_bytes, GFP_KERNEL);
--	if (!all_gains)
--		return -ENOMEM;
-+	return 0;
-+}
-=20
--	/*
--	 * We assume all the gains for same integration time were unique.
--	 * It is likely the first time table had greatest time multiplier as
--	 * the times are in the order of preference and greater times are
--	 * usually preferred. Hence we start from the last table which is likely
--	 * to have the smallest total gains.
--	 */
--	time_idx =3D gts->num_itime - 1;
--	memcpy(all_gains, gains[time_idx], gain_bytes);
--	new_idx =3D gts->num_hwgain;
-+static void compute_per_time_gains(struct iio_gts *gts, int **gains)
-+{
-+	int i, j;
-=20
--	while (time_idx-- > 0) {
--		for (j =3D 0; j < gts->num_hwgain; j++) {
--			int candidate =3D gains[time_idx][j];
--			int chk;
-+	for (i =3D 0; i < gts->num_itime; i++) {
-+		for (j =3D 0; j < gts->num_hwgain; j++)
-+			gains[i][j] =3D gts->hwgain_table[j].gain *
-+				      gts->itime_table[i].mul;
-+	}
-+}
-=20
--			if (candidate > all_gains[new_idx - 1]) {
--				all_gains[new_idx] =3D candidate;
--				new_idx++;
-+static int compute_per_time_tables(struct iio_gts *gts, int **scales)
-+{
-+	int **per_time_gains;
-+	int ret;
-=20
--				continue;
--			}
--			for (chk =3D 0; chk < new_idx; chk++)
--				if (candidate <=3D all_gains[chk])
--					break;
-+	ret =3D iio_gts_alloc_int_table_array(&per_time_gains, gts->num_itime,
-+					    gts->num_hwgain);
-+	if (ret)
-+		return ret;
-=20
--			if (candidate =3D=3D all_gains[chk])
--				continue;
-+	compute_per_time_gains(gts, per_time_gains);
-=20
--			memmove(&all_gains[chk + 1], &all_gains[chk],
--				(new_idx - chk) * sizeof(int));
--			all_gains[chk] =3D candidate;
--			new_idx++;
--		}
--	}
-+	ret =3D fill_and_sort_scaletables(gts, per_time_gains, scales);
-=20
--	gts->avail_all_scales_table =3D kcalloc(new_idx, 2 * sizeof(int),
--					      GFP_KERNEL);
--	if (!gts->avail_all_scales_table) {
--		ret =3D -ENOMEM;
--		goto free_out;
--	}
--	gts->num_avail_all_scales =3D new_idx;
-+	iio_gts_free_int_table_array(per_time_gains, gts->num_itime);
-=20
--	for (i =3D 0; i < gts->num_avail_all_scales; i++) {
--		ret =3D iio_gts_total_gain_to_scale(gts, all_gains[i],
--					&gts->avail_all_scales_table[i * 2],
--					&gts->avail_all_scales_table[i * 2 + 1]);
-+	return ret;
-+}
-=20
--		if (ret) {
--			kfree(gts->avail_all_scales_table);
--			gts->num_avail_all_scales =3D 0;
--			goto free_out;
--		}
--	}
-+static int **create_per_time_scales(struct iio_gts *gts)
-+{
-+	int **per_time_scales, ret;
-=20
--free_out:
--	kfree(all_gains);
-+	ret =3D iio_gts_alloc_int_table_array(&per_time_scales, gts->num_itime,
-+					    gts->num_hwgain * 2);
-+	if (ret)
-+		return ERR_PTR(ret);
-=20
--	return ret;
--}
-+	ret =3D compute_per_time_tables(gts, per_time_scales);
-+	if (ret)
-+		goto err_out;
-+
-+	return per_time_scales;
-=20
-+err_out:
-+	iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
-+
-+	return ERR_PTR(ret);
-+}
- /**
-  * iio_gts_build_avail_scale_table - create tables of available scales
-  * @gts:	Gain time scale descriptor
-@@ -275,55 +353,25 @@ static int gain_to_scaletables(struct iio_gts *gts, i=
-nt **gains, int **scales)
-  */
- static int iio_gts_build_avail_scale_table(struct iio_gts *gts)
- {
--	int **per_time_gains, **per_time_scales, i, j, ret =3D -ENOMEM;
--
--	per_time_gains =3D kcalloc(gts->num_itime, sizeof(*per_time_gains), GFP_K=
-ERNEL);
--	if (!per_time_gains)
--		return ret;
--
--	per_time_scales =3D kcalloc(gts->num_itime, sizeof(*per_time_scales), GFP=
-_KERNEL);
--	if (!per_time_scales)
--		goto free_gains;
--
--	for (i =3D 0; i < gts->num_itime; i++) {
--		per_time_scales[i] =3D kcalloc(gts->num_hwgain, 2 * sizeof(int),
--					     GFP_KERNEL);
--		if (!per_time_scales[i])
--			goto err_free_out;
--
--		per_time_gains[i] =3D kcalloc(gts->num_hwgain, sizeof(int),
--					    GFP_KERNEL);
--		if (!per_time_gains[i]) {
--			kfree(per_time_scales[i]);
--			goto err_free_out;
--		}
-+	int ret, scale_bytes;
-+	int **per_time_scales;
-=20
--		for (j =3D 0; j < gts->num_hwgain; j++)
--			per_time_gains[i][j] =3D gts->hwgain_table[j].gain *
--					       gts->itime_table[i].mul;
--	}
-+	if (unlikely(check_mul_overflow(gts->num_hwgain, 2 * sizeof(int), &scale_=
-bytes)))
-+		return -EOVERFLOW;
-=20
--	ret =3D gain_to_scaletables(gts, per_time_gains, per_time_scales);
--	if (ret)
--		goto err_free_out;
-+	per_time_scales =3D create_per_time_scales(gts);
-+	if (IS_ERR(per_time_scales))
-+		return PTR_ERR(per_time_scales);
-=20
--	for (i =3D 0; i < gts->num_itime; i++)
--		kfree(per_time_gains[i]);
--	kfree(per_time_gains);
- 	gts->per_time_avail_scale_tables =3D per_time_scales;
-=20
--	return 0;
--
--err_free_out:
--	for (i--; i >=3D 0; i--) {
--		kfree(per_time_scales[i]);
--		kfree(per_time_gains[i]);
-+	ret =3D do_combined_scaletable(gts, scale_bytes);
-+	if (ret) {
-+		iio_gts_free_int_table_array(per_time_scales, gts->num_itime);
-+		return ret;
- 	}
--	kfree(per_time_scales);
--free_gains:
--	kfree(per_time_gains);
-=20
--	return ret;
-+	return 0;
+ 
+-	iowrite32(MPIC_PIS_GMII | val, etha->addr + MPIC);
++	rswitch_modify(etha->addr, MPIC, MPIC_PIS | MPIC_LSC,
++		       FIELD_PREP(MPIC_PIS, pis) | FIELD_PREP(MPIC_LSC, lsc));
  }
-=20
- static void iio_gts_us_to_int_micro(int *time_us, int *int_micro_times,
+ 
+ static void rswitch_etha_enable_mii(struct rswitch_etha *etha)
+diff --git a/drivers/net/ethernet/renesas/rswitch.h b/drivers/net/ethernet/renesas/rswitch.h
+index 741b089c8523..abcf2aac49cd 100644
+--- a/drivers/net/ethernet/renesas/rswitch.h
++++ b/drivers/net/ethernet/renesas/rswitch.h
+@@ -725,13 +725,13 @@ enum rswitch_etha_mode {
+ 
+ #define EAVCC_VEM_SC_TAG	(0x3 << 16)
+ 
+-#define MPIC_PIS_MII		0x00
+-#define MPIC_PIS_GMII		0x02
+-#define MPIC_PIS_XGMII		0x04
+-#define MPIC_LSC_SHIFT		3
+-#define MPIC_LSC_100M		(1 << MPIC_LSC_SHIFT)
+-#define MPIC_LSC_1G		(2 << MPIC_LSC_SHIFT)
+-#define MPIC_LSC_2_5G		(3 << MPIC_LSC_SHIFT)
++#define MPIC_PIS		GENMASK(2, 0)
++#define MPIC_PIS_GMII		2
++#define MPIC_PIS_XGMII		4
++#define MPIC_LSC		GENMASK(5, 3)
++#define MPIC_LSC_100M		1
++#define MPIC_LSC_1G		2
++#define MPIC_LSC_2_5G		3
+ 
+ #define MPSM_PSME		BIT(0)
+ #define MPSM_MFF		BIT(2)
+-- 
+2.39.5
 
-base-commit: 05ff9c9c53c643551fe08fe52bd714310b9afc2e
---=20
-2.47.0
-
-
---G1RNIunrlcThCopX
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmdWoywACgkQeFA3/03a
-ocUVwQgAtayF6kMcStmaHXOjFYx7a8ZSx4eAt28EXCBfoNnYu+oeW2mXPZ90h9Bq
-7ItF4vhrgtu82Z9Pwypni+6iIWn8TgFfon+Sl2SHyr1LgIpFwxGwjcXwvdkinJsv
-8AQ0nW1UKVQzlx607RZceF3eD87AaHHCxnIXwhZk8lBFHHHO9d+y5eq2K6h5HZIl
-6QAnF4xhnkJA1Ea9p4UNLzlJnlKkhO0mfy3jV+LEWTTRIcSLPXzvKDiWK65I3ub3
-hWK0SUBjGL8GmFfxH3sCBAeBjf5UYJzgE12tsxnKFNqHdgOc34Rp8IEBpUaJmcia
-R0DLH0ye0yXybsEvKXNttZGjZh9fnA==
-=htE5
------END PGP SIGNATURE-----
-
---G1RNIunrlcThCopX--
 
