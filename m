@@ -1,218 +1,138 @@
-Return-Path: <linux-kernel+bounces-437864-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437865-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A2C29E99C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:00:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 104A59E99CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:01:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEFEF284A0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C89418896BB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:00:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 726C0223C48;
-	Mon,  9 Dec 2024 14:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E053223C6F;
+	Mon,  9 Dec 2024 14:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tkzVR89R"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Or00Rwry"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9EB221505D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691B4223C51;
+	Mon,  9 Dec 2024 14:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733756254; cv=none; b=sOMVw381N2mcHcrl/1M2oOHsllkaDdb/Mz7U5LwY83IxacV7Amn2Vb9JpA8ROCixAV1L57PAbAQdgRXHen8aDr9eWKbLxh5sXO8sGSOXOpab2mFHSzB9wlRoqzvTRBwW9h1AcH/Ubtun4w/V2xEiijvX/LjoHus0dRYJzaNcjVE=
+	t=1733756258; cv=none; b=Y0em3JYBCXy3LL/wy4ZzzO5OWtNBI5t5YO4fY6wkd0XDtW7WV+FYCbt8ukUIpGJvifdZ6vycCfomXJzRFOEcvhNP3I3l4hxaDZDTGpkBakmlucOMbxton0NEA+RmZfGsYjHPMwfew+gsRLZikIW4RsPQnEYpqGRRBiipgiPTS8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733756254; c=relaxed/simple;
-	bh=csqSrK7Gyw9lFWobOcIi6vXc8FRxXPhTqgm7eX6sw6M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGFYgzqU4lB1IyczphXSbf7fziSCqjczpxNHDuz6HbsToN4Pmk8dwIaBG99Zs8N4zesOcw+uEJoFZWCu56ncXE0XOF0AhIrQQQe5dIbU5KtDNpNU6IYBUhnKz1rqVVlWkdVJ+QklY1fnWTCi1/+i9sFY6+L7t6HmsJ1U/wvnJgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tkzVR89R; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ef6c56032eso2347332a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:57:32 -0800 (PST)
+	s=arc-20240116; t=1733756258; c=relaxed/simple;
+	bh=tyXlgNbubyZRaCj9ILxBHCYPuAjJPFH1ZFZBP13cEic=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lbbN/2jD8HTbIGuXHWXMoaquPC4ymxqgmiDcl07sJg6zu0bHmcZkUUnrvSDth288EYSE3VppjFTTYDVd1fsaNL9U52I42gNeIqrC7clc+gIMXqXm56H6KW75pdQVwKAHL+le+0g3XXtWctMQBHLCu18GlJBxaxRdkqSlB9EPFNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Or00Rwry; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-725ed193c9eso905438b3a.1;
+        Mon, 09 Dec 2024 06:57:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733756252; x=1734361052; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KljjciUYKRtZe6TTkB3fwVscfzXvlqDm8f0xGw53hKc=;
-        b=tkzVR89RWQ4Ya+9U0WW8pi3vkXCRz7YobJfmJSi/hb5BOKwOKyRxtkgfo7KK0Zx+WG
-         RheyCMwoK/KTzzc167qJMg6IwhlC/lM/uye/fR5RNPKVPIjx1JlmKF66jUV1PwsJq4ae
-         67vrAU4Vs10/roPkFoT5M9QXRWR+kWBqZVksX5crT1E+hhGiKV24uXfD5AGPBGClzTb/
-         DmOS6QEk5Nzb2H25dbNFFLhoiSHgU1dACPEw0nX3aFUqzN8L/gVBoZsZg3oDeZPRgNd5
-         NtSS7tnwrUya4cHbVa1W0jbtDtxGByyJMMzVmI7QLfTtHhsI7Il8nNeS+zd9TDxC0VL+
-         PSJQ==
+        d=gmail.com; s=20230601; t=1733756256; x=1734361056; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=YfOsNmX/F3GyaRLWL8u5H/5XwBzcT0HwpDJYtaGYXhY=;
+        b=Or00RwryOFTaSoXKAyCmiZ7K8Fh9m+c7yBT4ddFj+FGZuo3V0nKv4W+k3Ca8Jh+uHk
+         cLPt1VPgNorGMuIM6/0YmtrfDbbqnbnZ3Wpe8CbyC67tu3bfyvzGIgVxAdumNurmrVlm
+         zxZA8ERUt+YdnHm8DWuDTTHOmQpOpNm33Ei/gD6GtScy0/c+9CtLOyRBsQ9lvwft2Hag
+         2L/u03J2urEQUE9Mc6be1vvllVSWeHISKDBmJaw8l4MO3Fk/kY4Y+98KLwGXaSCI6vUQ
+         sJCfwdOYwe7TNTowWjhoaBtOGTVGZNTiNubMHjdwiFEXkpNZUwlJnns9ZAdvZvaiwwSd
+         DgWw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733756252; x=1734361052;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KljjciUYKRtZe6TTkB3fwVscfzXvlqDm8f0xGw53hKc=;
-        b=oSCmzh5v+YNgVfFH365TukDAmo6QK9CXRMvtDSLaH+qUxX17kxVBO6i6xslCjpSHAC
-         HEqw9myK6aS2I+MINkV82Isqjjh2Z9l4AVbnM2vpoFVdazMszpBHDawn2xTgVAJ9wuH9
-         OVf2ihXGMDMouA7ZDMC/ES4As6Y6L/PVoxA8T9ZdBeMJJlUypJ8AVl9mFls/JNU+qdfS
-         HZUXzwOjWvEsG3D5vnoWTQXt0Tss+m32jzRNOsNq+4qBTyrrMWHh1Hij5/7gjVNy4W7t
-         szqFodVTHcXaYOptg4WUU6YCA3P/wd4N1PoaFKWnRx0s6MrKPUHyNaC8OHK2rN5zwUFc
-         3Nzg==
-X-Forwarded-Encrypted: i=1; AJvYcCV5/5+/KF8Tmfl+W71+7SCd63Cu3d67eiEl71wApLJjfPndeu4g6hP5m98X5siZ007XfKYV5+Bj/4jz4Tg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTMlFiPK+7SbivP8bIaUwbIj/V+Ih4ggEiKZsNllPo1mCjsBdu
-	22zwDhcPxlEldYvfpBmYEypu07pjyH0TFubAnGlISeK5OotgyOZARZB6PbR6iQ==
-X-Gm-Gg: ASbGncuPyjEiQqL7YFfFl5onYXL+xzvpCRiPo8B9x/8Yjwrv2sPgpZI6uS6/hFJoJCn
-	aHXh8M7kjz0mmLrEzv9NsvQ3yBe+G/2ciz+pvyEEHYl6zJxqtjA+ZaZlCngRrywdnvfG8CjeFnw
-	64+61rz/4jkaQsGGeXbNK8bOKgrZQ6CAf5hh0Qr7sTpliaBQbDIdXAMANQmvLV6830vYxnsIMHK
-	wADyE0YjK36RlZSN5l3rKD2HMuDjBYWjoMC3DlRGhPh/ob8bZuttC6mKzmS
-X-Google-Smtp-Source: AGHT+IGGIf0rHxIHQpm9+Q2TsNvz9dCMkcSWu+SbDwmZXMCAJqjPZpdwwKQe51sDJmLUG3RC2vpb1w==
-X-Received: by 2002:a17:90b:4f4c:b0:2ee:5bc9:75b5 with SMTP id 98e67ed59e1d1-2ef696546efmr17506292a91.4.1733756251914;
-        Mon, 09 Dec 2024 06:57:31 -0800 (PST)
-Received: from thinkpad ([120.60.142.39])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd157d79e5sm7545519a12.75.2024.12.09.06.57.27
+        d=1e100.net; s=20230601; t=1733756256; x=1734361056;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YfOsNmX/F3GyaRLWL8u5H/5XwBzcT0HwpDJYtaGYXhY=;
+        b=eInG1HxFQKtVOcy50WzL6NwrXPNBTQM727lMPhEAbXpKKCzRTQ9tZsfJaSgX2deb3+
+         CDdbDIlLd8zdwMk4oJPHUl+w8HjeqnybGoyxoIs+R821iiW3UGTK5roZ30v9CGcYMQXx
+         Fc8/lVLEA6L+01zrRgA2PpCYvXxeOF4gJiMDakuaABPNjqlSfEafsJRyFAwf9wDBtPsJ
+         hD+qoIheQ7IjQlKl7b2FaR/h1fwpNmchq2y0SGyRJGFU+Dfgp8VksCIOtXfNgoO46iBz
+         DOD+ukrZooz58Sn24YB6PrBMk0+oXTMm/mtRBIiS68hqTpj6JwalpVg44unzu349GyQV
+         TSXw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7+oZcDowiFCPUjexM1EOFWuaNGqobkxU2/Imcp5vxWDbE3qoa8m8/UYPt7yljkg4ueT1JZdsM@vger.kernel.org, AJvYcCVntQhhF61+TpIwRuJYVrrOCMfzeeiyKASQbRluPX7upodt7qXOt9Dyr4dLRBHlr9ykbS9zzsm9aO96qxQ8MFwLFA==@vger.kernel.org, AJvYcCXe6iq1sKDUyvsXWJ+4IhxCgnI05eSoRiawc+5dBFyv3X6nhfqzjFmYAO8kf3gCVFN7XgLrTaJYJV/fGiU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzfEKhjQ3C53ucSOp3ZzuvprKkdot+NEHOZ/wezJDQ68u0wqic
+	buj5+wKeIrjq3vIjTLgBY7H1WYUamdAGrK6zrdBB+nbC6YOqDXr3
+X-Gm-Gg: ASbGncsxaQyV6lFrfiPsazjGFhBxrHvWkSk0TSw8/68B/yEIWMuTezcjxzwgMa9Cx5Z
+	t0nC7mxM8c+efVPf0LHpHI4A8aWXmMUfJr0FJMdakLwnq3w7Ve1cSl4TkV6hVrpvFFxSmuxDVpc
+	Ds0CIPBAe0IekePjXbztmKQ80/sYfJ+IbWlaBF/Ux7s0XyfBZiE3cHJAoc5uQB9ksOpuxz5HEnq
+	nsPRgA+FccCl1S6hUmm4Td4Eh6qHU0PSCaSe1dQgK54DForo9efX0IFQuXjRhNxU7u9BMTUtbXC
+	1DQM
+X-Google-Smtp-Source: AGHT+IEAldgpnKUvE4CMroLq36NwavshPMhSgqMQYfaMUKqAKEu2cOTGnMzwBOoU2ITkNR6S/HAOZw==
+X-Received: by 2002:a05:6a00:851:b0:725:d9b6:3958 with SMTP id d2e1a72fcca58-7273cb1be11mr1036676b3a.14.1733756255575;
+        Mon, 09 Dec 2024 06:57:35 -0800 (PST)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725cab713c0sm4565464b3a.33.2024.12.09.06.57.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:57:31 -0800 (PST)
-Date: Mon, 9 Dec 2024 20:27:24 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: kbusch@kernel.org, axboe@kernel.dk, hch@lst.de, sagi@grimberg.me,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, andersson@kernel.org,
-	konradybcio@kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-	Ulf Hansson <ulf.hansson@linaro.org>
-Subject: Re: [PATCH] nvme-pci: Shutdown the device if D3Cold is allowed by
- the user
-Message-ID: <20241209145724.5ibst4frsiap4s4r@thinkpad>
-References: <20241123090113.semecglxaqjvlmzp@thinkpad>
- <20241205232900.GA3072557@bhelgaas>
+        Mon, 09 Dec 2024 06:57:35 -0800 (PST)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org
+Cc: mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	jserv@ccns.ncku.edu.tw,
+	chuang@cs.nycu.edu.tw,
+	dave@stgolabs.net,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] perf bench: Fix undefined behavior in cmpworker()
+Date: Mon,  9 Dec 2024 22:57:28 +0800
+Message-Id: <20241209145728.1975311-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241205232900.GA3072557@bhelgaas>
 
-On Thu, Dec 05, 2024 at 05:29:00PM -0600, Bjorn Helgaas wrote:
-> On Sat, Nov 23, 2024 at 02:31:13PM +0530, Manivannan Sadhasivam wrote:
-> > On Fri, Nov 22, 2024 at 04:20:50PM -0600, Bjorn Helgaas wrote:
-> > > On Mon, Nov 18, 2024 at 01:53:44PM +0530, Manivannan Sadhasivam wrote:
-> > > > PCI core allows users to configure the D3Cold state for each PCI
-> > > > device through the sysfs attribute
-> > > > '/sys/bus/pci/devices/.../d3cold_allowed'. This attribute sets
-> > > > the 'pci_dev:d3cold_allowed' flag and could be used by users to
-> > > > allow/disallow the PCI devices to enter D3Cold during system
-> > > > suspend.
-> > > >
-> > > > So make use of this flag in the NVMe driver to shutdown the NVMe
-> > > > device during system suspend if the user has allowed D3Cold for
-> > > > the device.  Existing checks in the NVMe driver decide whether
-> > > > to shut down the device (based on platform/device limitations),
-> > > > so use this flag as the last resort to keep the existing
-> > > > behavior.
-> > > > 
-> > > > The default behavior of the 'pci_dev:d3cold_allowed' flag is to
-> > > > allow D3Cold and the users can disallow it through sysfs if they
-> > > > want.
-> > > 
-> > > What problem does this solve?  I guess there must be a case where
-> > > suspend leaves NVMe in a higher power state than you want?
-> > 
-> > Yeah, this is the case for all systems that doesn't fit into the
-> > existing checks in the NVMe suspend path:
-> > 
-> > 1. ACPI based platforms
-> > 2. Controller doesn't support NPSS (hardware issue/limitation)
-> > 3. ASPM not enabled
-> > 4. Devices/systems setting NVME_QUIRK_SIMPLE_SUSPEND flag
-> > 
-> > In my case, all the Qualcomm SoCs using Devicetree doesn't fall into
-> > the above checks. Hence, they were not fully powered down during
-> > system suspend and always in low power state. This means, I cannot
-> > achieve 'CX power collapse', a Qualcomm specific SoC powered down
-> > state that consumes just enough power to wake up the SoC. Since the
-> > controller driver keeps the PCI resource vote because of NVMe, the
-> > firmware in the Qualcomm SoCs cannot put the SoC into above
-> > mentioned low power state.
-> 
-> IIUC nvme_suspend() has two paths:
-> 
->   - Do nvme_disable_prepare_reset() without calling pci_save_state(),
->     so the PCI core chooses and sets the low-power state.
-> 
->   - Put the device in an NVMe-specific low-power state and call
->     pci_save_state(), which prevents the PCI core from putting the
->     device in a low-power state.
-> 
->     (The PCI core part is in pci_pm_suspend_noirq(),
->     pci_pm_poweroff_noirq(), pci_pm_runtime_suspend())
-> 
-> And I guess you want the first path for basically all systems?  The
-> only systems that would use the NVMe-specific path are those where:
-> 
->   - !pm_suspend_via_firmware() (not an ACPI system), AND
-> 
->   - ctrl->npss (device supports NVMe power states), AND
-> 
->   - pcie_aspm_enabled(), AND
-> 
->   - !NVME_QUIRK_SIMPLE_SUSPEND (it's not something with a weird
->     quirk), AND
-> 
->   - !pdev->d3cold_allowed (user has cleared it via sysfs)
-> 
-> This frankly seems almost unintelligible to me, so I'm glad I'm not
-> responsible for nvme :)
-> 
+The comparison function cmpworker() does not comply with the C
+standard's requirements for qsort() comparison functions. Specifically,
+it returns 0 when w1->tid < w2->tid, which is incorrect. According to
+the standard, the function must return a negative value in such cases
+to preserve proper ordering.
 
-I agree that using the attribute is not a great idea in the NVMe driver where
-there are already a handful of quirks/checks, but that seems unavoidable.
+This violation causes undefined behavior, potentially leading to issues
+such as memory corruption in certain versions of glibc [1].
 
-> > > I'm not sure the use of pdev->d3cold_allowed here really expresses
-> > > your underlying intent.  It suggests that you're really hoping for
-> > > D3cold, but that's only a possibility if firmware supports it, and
-> > > we have no visibility into that here.
-> > 
-> > I'm not relying on firmware to do anything here. If firmware has to
-> > decide the suspend state, it should already satisfy the
-> > pm_suspend_via_firmware() check in nvme_suspend(). ...
-> 
-> I'm confused about this because we want to use PCI core power
-> management, which chooses the new state with pci_target_state(),
-> which looks like it will choose D3hot unless we're on an ACPI system
-> and acpi_pci_choose_state() returns D3cold.
-> 
-> But your system is not an ACPI system, so we should get D3hot, but yet
-> you decide based on D3*cold* being allowed?
-> 
+Fix the issue by returning -1 when w1->tid < w2->tid, ensuring
+compliance with the C standard and preventing undefined behavior.
 
-This is an existing ungliness of DT platforms. D3Cold is not tied to the PCI
-core, but the controller drivers decide on their own.
+Link: https://www.qualys.com/2024/01/30/qsort.txt [1]
+Fixes: 121dd9ea0116 ("perf bench: Add epoll parallel epoll_wait benchmark")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+---
+ tools/perf/bench/epoll-wait.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> > Here, the controller driver takes care of putting the device into
-> > D3Cold.  Currently, the controller drivers cannot do it (on DT
-> > platforms) because of NVMe driver's behavior.
-> 
-> I'm missing the connection to the controller driver (I assume you mean
-> qcom-pcie?).  Maybe it's that having the NVMe device in a PCI
-> low-power state allows qcom_pcie_suspend_noirq() to reduce the ICC
-> bandwidth vote and do other power-saving things?  And it can't do
-> those things if we're using the NVMe low-power state because that
-> state is not visible to qcom-pcie?
-> 
-
-Yes. In DT platforms, peripheral power state is not controlled by the firmware
-to some extent. For PCIe, the controller driver is responsible for handling the
-endpoint devices power state. As you referred qcom-pcie driver, it currently has
-the 1 Kbps ICC vote in qcom_pcie_suspend_noirq() just because we cannot fully
-remove the ICC vote due to NVMe. Because of this, even if NVMe is in its optimal
-low power state, the SoC cannot enter its own low power state. Plus it doesn't
-make a lot of sense to keep NVMe in low power mode even if you suspend your DT
-based laptop for hours.
-
-- Mani
-
+diff --git a/tools/perf/bench/epoll-wait.c b/tools/perf/bench/epoll-wait.c
+index ef5c4257844d..4868d610e9bf 100644
+--- a/tools/perf/bench/epoll-wait.c
++++ b/tools/perf/bench/epoll-wait.c
+@@ -420,7 +420,7 @@ static int cmpworker(const void *p1, const void *p2)
+ 
+ 	struct worker *w1 = (struct worker *) p1;
+ 	struct worker *w2 = (struct worker *) p2;
+-	return w1->tid > w2->tid;
++	return w1->tid > w2->tid ? 1 : -1;
+ }
+ 
+ int bench_epoll_wait(int argc, const char **argv)
 -- 
-மணிவண்ணன் சதாசிவம்
+2.34.1
+
 
