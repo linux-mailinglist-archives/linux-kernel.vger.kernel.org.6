@@ -1,156 +1,212 @@
-Return-Path: <linux-kernel+bounces-438010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06E19E9B99
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:26:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61CFB9E9B9E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:27:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A262281B49
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:26:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31BCB2820E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:27:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA38F145B1B;
-	Mon,  9 Dec 2024 16:26:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC5D14A0AA;
+	Mon,  9 Dec 2024 16:27:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KR2uAL3v"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uN+xj6jh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F53F13C81B;
-	Mon,  9 Dec 2024 16:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C86D1474C9;
+	Mon,  9 Dec 2024 16:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761589; cv=none; b=FEm5OOtUN3HLT1/rDrPW2p0jz5X9NTGMPt3LVTL2OJk1J22l3d7EN9fu7DySswLTEUwEAt8XVyIfcjaD5HN3LDUGHKltUPFsXjX7RHhh66fmnztyRJtiuQI1JsXCcRy3SnKTdu7VdUiJqtypWo/8OP+feWmbQhEULW2R987Fcpc=
+	t=1733761619; cv=none; b=F61IX+evcqCQw814Bcj29XioqUld11ThGDiywCIUKYzUuHGAtENAtllTgJihNimWcX3LWS55Xk4IfWLXgc7n5Ji6WAvryPobzkl2kLd6WOwX54dV2CWIZzoMAvmI0RCg508Eq08AhlZv7yEtjjG/qN3W3AfyEoLgqZ+e08YDvOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761589; c=relaxed/simple;
-	bh=c998PD6ESRR3/DLixNhYcyamfLJruxkhcT6TYn31o3U=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=YC+xMAHj6NjR7dkZ7RklFQPfzLvWBKSmQG8NhF45uHHT2lw8wbGSfPo4VS/7Fooe6Jif4P3dZFlo9rMKiqU/smPmsYNUA4XQMVcLbB9k1FY4TLzHwQovKy2qrj5UAMHwK9t1WmA9wjH+mkqUR0P4e+7bRum96peLtfif+Ttn9qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KR2uAL3v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51D74C4CEDE;
-	Mon,  9 Dec 2024 16:26:28 +0000 (UTC)
+	s=arc-20240116; t=1733761619; c=relaxed/simple;
+	bh=70s4BHZFldWeAL3yPeGci5plIEHzNmGXbTPLv9Fto+0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lTvMwzpmJfTEWEyXwPTuBTvkicUj/MAMkU/K3U3kCcqCsxl4SrvbEdGD4Q+WgdYm0MVyq1ce86jI8e1OKYj3XuY/Vcj5OH6j39aI38z7U3ycVmArB/+N42s0W9aLl4R/QAnSB/4VcKjMSV7XySLr1CQsECKBHCEnukA+k1LvxTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uN+xj6jh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAECDC4CED1;
+	Mon,  9 Dec 2024 16:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733761588;
-	bh=c998PD6ESRR3/DLixNhYcyamfLJruxkhcT6TYn31o3U=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=KR2uAL3vN4qNK3pLpfR5w3zIdQSJv+ZfIymCIWvKK/N0k3R0WJVO/WrBYVFijtVqo
-	 HXdeyDkbCn3XYXjg92z2UQA6LfhX67QtxLjXuZef9sWobHn4m9H6Ivf0Ds/FvCKibq
-	 KV9KH50DE4AESQ8Zu3g7ZW4OqMGvsfjzd2XdFjlpvf+qL+fy7ZssBfesNZOT7031c8
-	 pcrRbiO0JT2+quqZtYvCJ0RdvORFNXOlnFPwn6RH8dlmD6qtk9ZqRRsz+XfZFDZ8YW
-	 RkR39rExn9Ohqa0VhlHFsJDDtfhJl0eGlvmWDfoKDl9IfMXQbxUgry/0Hjj9RWGF1h
-	 3Ry3xcxbTPMFw==
-Date: Mon, 09 Dec 2024 10:26:26 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1733761618;
+	bh=70s4BHZFldWeAL3yPeGci5plIEHzNmGXbTPLv9Fto+0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=uN+xj6jhKTV/GSloqEzcg/XJisdudFqqpka/VHNw8JxYmmpXLrBEy6ZOvSAQs6dVO
+	 PPdBz0y02mzU+bYYt/zib236PaSTb6L3otSB3cHiYH2spym5hr76FWa2LhBW/L7MDk
+	 eM8gWnuyua4x61D9yCY9j8ZI6alGLNburTP8tBdoofkrXHR85HLCDQ1BqYh5IrdvWC
+	 RIIxmcVW4LC3JrHzj8Q35EEf6/U01/XV9i5/1yykOA1LgL1FD+dl7clUBuUtgBboFq
+	 m61DJ+M6cDFmtMmXvzbp6YR95ln0QmSiDd5FMyMtNLn/zklu6tkpa78TP6iszs0dVn
+	 V2neqgtaztIYQ==
+Message-ID: <4b9ce06a-8ece-4951-b660-05ac1afd1a5f@kernel.org>
+Date: Mon, 9 Dec 2024 17:26:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Conor Dooley <conor+dt@kernel.org>, Ayush Singh <ayush@beagleboard.org>, 
- Geert Uytterhoeven <geert@linux-m68k.org>, Arnd Bergmann <arnd@arndb.de>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Saravana Kannan <saravanak@google.com>, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Andrew Davis <afd@ti.com>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>
-To: Herve Codina <herve.codina@bootlin.com>
-In-Reply-To: <20241209151830.95723-2-herve.codina@bootlin.com>
-References: <20241209151830.95723-1-herve.codina@bootlin.com>
- <20241209151830.95723-2-herve.codina@bootlin.com>
-Message-Id: <173376158687.562854.15324053122820075954.robh@kernel.org>
-Subject: Re: [PATCH 1/7] dt-bindings: Add support for export-symbols node
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net-next v12 11/22] ovpn: implement TCP transport
+Content-Language: en-GB
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: Simon Horman <horms@kernel.org>, netdev@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Donald Hunter <donald.hunter@gmail.com>,
+ Shuah Khan <shuah@kernel.org>, sd@queasysnail.net, ryazanov.s.a@gmail.com,
+ Andrew Lunn <andrew@lunn.ch>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org
+References: <20241202-b4-ovpn-v12-0-239ff733bf97@openvpn.net>
+ <20241202-b4-ovpn-v12-11-239ff733bf97@openvpn.net>
+ <784fddc4-336c-4674-8277-c7cebea6b94f@redhat.com>
+ <2a1b614c-c52d-44c7-8cb8-c68a8864508d@openvpn.net>
+ <8714deae-c1f7-42ff-9e76-fabd9ca5188b@openvpn.net>
+ <17e7d4c6-4912-4d5e-8723-45a06a1ad529@openvpn.net>
+ <813d75bf-1d7f-472b-967f-27ab8f9d4759@kernel.org>
+ <e447ef89-e7f1-4c5b-871e-d1cfaa045c6c@openvpn.net>
+ <c34748e0-44ad-4775-abd5-52034c4f5fdc@kernel.org>
+ <cb84c0e5-8ee9-4860-a8db-8787c44a703a@openvpn.net>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <cb84c0e5-8ee9-4860-a8db-8787c44a703a@openvpn.net>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-On Mon, 09 Dec 2024 16:18:19 +0100, Herve Codina wrote:
-> An export-symbols node allows to export symbols for symbols resolution
-> performed when applying a device tree overlay.
+On 09/12/2024 15:08, Antonio Quartulli wrote:
+> On 09/12/2024 12:31, Matthieu Baerts wrote:
+>> On 09/12/2024 11:58, Antonio Quartulli wrote:
+>>> On 09/12/2024 11:46, Matthieu Baerts wrote:
+>>>> Hi Antonio,
+>>>>
+>>>> Thank you for working on this, and sharing your work here!
+>>>>
+>>>> On 05/12/2024 00:09, Antonio Quartulli wrote:
+>>>>> On 04/12/2024 23:52, Antonio Quartulli wrote:
+>>>>>> Paolo,
+>>>>>>
+>>>>>> On 04/12/2024 12:15, Antonio Quartulli wrote:
+>>>>>> [...]
+>>>>>>>>> +        mutex_lock(&tcp6_prot_mutex);
+>>>>>>>>> +        if (!ovpn_tcp6_prot.recvmsg)
+>>>>>>>>> +            ovpn_tcp_build_protos(&ovpn_tcp6_prot,
+>>>>>>>>> &ovpn_tcp6_ops,
+>>>>>>>>> +                          sock->sk->sk_prot,
+>>>>>>>>> +                          sock->sk->sk_socket->ops);
+>>>>>>>>> +        mutex_unlock(&tcp6_prot_mutex);
+>>>>>>>>
+>>>>>>>> This looks like an hack to avoid a build dependency on IPV6, I
+>>>>>>>> think
+>>>>>>>> the
+>>>>>>>> explicit
+>>>>>>>
+>>>>>>> I happily copied this approach from
+>>>>>>> espintcp.c:espintcp_init_sk() :-D
+>>>>>>>
+>>>>>>>>
+>>>>>>>> #if IS_ENABLED(CONFIG_IPV6)
+>>>>>>>>
+>>>>>>>> at init time should be preferable
+>>>>>>
+>>>>>> To get this done at init time I need inet6_stream_ops to be
+>>>>>> accessible, but it seems there is no EXPORT_SYMBOL() for this object.
+>>>>>>
+>>>>>> However, I see that mptcp/protocol.c is happily accessing it.
+>>>>>> Any clue how this is possible?
+>>>>>
+>>>>> I answer myself: mptcp is not tristate and it can only be compiled as
+>>>>> built-in.
+>>>>
+>>>> Indeed, that's why.
+>>>>
+>>>> Talking about MPTCP, by chance, do you plan to support it later on? :)
+>>>
+>>> Hi Matthieu,
+>>>
+>>> It is not on our current roadmap (TCP doesn't get much love in the VPN
+>>> world), but I agree it could be an interesting option to explore!
+>>
+>> I understand, it makes sense not to recommend using TCP for the
+>> transport layer for tunnelling solutions.
+>>
+>>> I have to admit that I haven't played much with MPTCP myself yet, but I
+>>> am more than happy to talk about potential advantages for the ovpn use
+>>> case.
+>>
+>> Some people told me they were interested in using OpenVPN with MPTCP to
+>> use multiple (low-capacity) network links at the same time. I think
+>> intercepting and proxying TCP traffic would always be the best in terms
+>> of performances, but using OpenVPN with MPTCP seems to be enough for
+>> some, especially when they want to "improve" some type of UDP traffic
+>> that cannot be intercepted: QUIC, VPN, etc.
+>>
+>> I don't have numbers to share, but I can understand this feature can
+>> help in some cases.
 > 
-> When a device tree overlay is applied on a node having an export-symbols
-> node, symbols listed in the export-symbols node are used to resolve
-> undefined symbols referenced from the overlay.
-> 
-> This allows:
->   - Referencing symbols from an device tree overlay without the need to
->     know the full base board. Only the connector definition is needed.
-> 
->   - Using the exact same overlay on several connectors available on a given
->     board.
-> 
-> For instance, the following description is supported with the
-> export-symbols node:
->  - Base device tree board A:
->     ...
->     foo_connector: connector1 {
->         export-symbols {
->            connector = <&foo_connector>;
->         };
->     };
-> 
->     bar_connector: connector2 {
->         export-symbols {
->            connector = <&bar_connector>;
->         };
->     };
->     ...
-> 
->  - Base device tree board B:
->     ...
->     front_connector: addon-connector {
->         export-symbols {
->            connector = <&front_connector>;
->         };
->     };
->     ...
-> 
->  - Overlay describing an addon board the can be connected on connectors:
->     ...
->     node {
->         ...
->         connector = <&connector>;
->         ...
->     };
->     ...
-> 
-> Thanks to the export-symbols node, the overlay can be applied on
-> connector1 or connector2 available on board A but also on
-> addon-connector available on board B.
-> 
-> Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-> ---
->  .../devicetree/bindings/export-symbols.yaml   | 43 +++++++++++++++++++
->  1 file changed, 43 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/export-symbols.yaml
-> 
+> Yeah, some people may definitely benefit from this feature.
+> I'll have a look at MPTCP once ovpn is merged.
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thank you :)
 
-yamllint warnings/errors:
+Don't hesitate to email the ML, or open an issue on the GitHub repo if
+needed!
 
-dtschema/dtc warnings/errors:
-compress: size (5) error for type phandle
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mtd/partitions/fixed-partitions.example.dtb: uimage@100000: compress: b'lzma\x00' is not of type 'object', 'integer', 'array', 'boolean', 'null'
-	from schema $id: http://devicetree.org/schemas/dt-core.yaml#
+(More details: https://www.mptcp.dev/#communication)
 
-doc reference errors (make refcheckdocs):
+>> (This reminds me this: https://github.com/OpenVPN/ovpn-dco/issues/60)
+>> (and this: https://github.com/arinc9/openvpn/pull/1)
+> 
+> Right, this definitely shows some interest and it means we should easily
+> find people willing to test :-)
+Indeed!
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241209151830.95723-2-herve.codina@bootlin.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
 
 
