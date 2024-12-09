@@ -1,152 +1,114 @@
-Return-Path: <linux-kernel+bounces-437317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB13C9E91AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:10:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB39E1887C4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:10:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B2D21B1A3;
-	Mon,  9 Dec 2024 11:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NpwH2Uja"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 670569E91C3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:11:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95D221A945;
-	Mon,  9 Dec 2024 11:07:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222B7282AB0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:11:46 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EF1221DA7;
+	Mon,  9 Dec 2024 11:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TKm6K7vZ"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CAD7221D8E;
+	Mon,  9 Dec 2024 11:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733742439; cv=none; b=UyKjz/P0icmeV++ES5/cjtlknxmy2qvtPG7z7BuiuY2A5Xa/ru6d/tLo+2X6o7Fr5MvJAn4MJYf3t+kjRSBgNlBNQCDb0xQOg+nieR82ZRu8/GfiU77fQS31hjlWxOKX6PNWfxnB2tJJ7KGOU2j80dosjNbley7zA9jQ3e59NDk=
+	t=1733742463; cv=none; b=isg3oQPOfxR4KF8mkdpPS3pbcnXFzB06RMrOy6GTtplkwY0CfnAEd6jmwzPQm7ELpu9wLHmxZHRBfBZcAYrqIEjRs7MpMeD7yUuYWw3wavLQ0B8iwImofehLTQWX2ateQ718tYvr/HeFcezEkjUs7p+ntSqJQWABHQjlbY7rP9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733742439; c=relaxed/simple;
-	bh=BeCQDKFietl7V0MQfR9Sx3qFkwHtJtXFWZXqjmQfg9o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UW+mpMuKwixP3SWiI/YLW+wBan99awGooOEjzW9tsPd8K8mTtg4+lHsHmtmgYwq3T/zQx/NnvlBU5nTzARQJ8CL+DQjB5msUMxOn3WoPGVo507zbDvi8f5YeMtFei43qOZOomIv9vdfntnuE2ZuhYSwJND4VOHkSrZoKxVnFJXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NpwH2Uja; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06896C4CED1;
-	Mon,  9 Dec 2024 11:07:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733742439;
-	bh=BeCQDKFietl7V0MQfR9Sx3qFkwHtJtXFWZXqjmQfg9o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NpwH2Uja5OL2NUkxGt4v2NjQjXng/8HhngQ4AYYVL811buyhy/W4lhSGQgKU8Vq+0
-	 KbCVwtVMmWH52Dz4onyZwhlcCksF1WwZ9CMayeeBe5r5ceEctY974lqx2yku7qpd18
-	 R1AnrNBWupNHDW3okuS0SOwsvdB8gpHB8tM757Z2GUgDzusEc63FWPGdzprGMbTj6I
-	 3iQUb40NBP1GqP17m607+pPE1LOWtl+N4fpsYBwL9GhAcvVXbV287Tta4hLKp2CefX
-	 W7sxNVmxJPgRrrKzjCEoUMXVMTOVOYTJM20+zTmSZlc7kvlVAsLAh15yOQ1t63PP8j
-	 vqoj5aizoH72A==
-Date: Mon, 9 Dec 2024 12:07:13 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <Z1bPYb0nDcUN7SKK@pollux.localdomain>
-References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
- <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
+	s=arc-20240116; t=1733742463; c=relaxed/simple;
+	bh=YJ9JUQ5bSEMgGsZqbZA+J2STml+1V04qdkGaF/nnd20=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hBjwBoTsDUaABC9OWQLxHkb9JoBIYMKZ0SUf8vYa1NJLkB6JrF4Nl8+/iX7pHlEHPGmJYDkeS0a+mnJkBCR0hdLUJS9wvcBGNWSNdWM7wAky0U7zE6eBYFEzDWR/vuez+wiDyOS5PWGQy4IlSUjtKA6wTHpvhnaoPUkqeomPuig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TKm6K7vZ; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-2163b0c09afso10975235ad.0;
+        Mon, 09 Dec 2024 03:07:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733742461; x=1734347261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YJ9JUQ5bSEMgGsZqbZA+J2STml+1V04qdkGaF/nnd20=;
+        b=TKm6K7vZe6L005HfUAyb/sNtDIDRwORDdEUj6xWxu2PY5JbnoTmfRkwEOZQ8J63w4t
+         EOt1rZwJLyB/rg3oNdKpo8raCFgeVndrB6Ln+qPPaHer0a5NFQ44gUoieL8lVExVrlcy
+         0cm3JXd2wnR24S4lDAjw4Jw/IMmbYTPZLOhQIWo1rz7SNDFmFWjB/FWbX0kFny8m9kqG
+         BCbuttCSpo2wD/OtbllgU31sWdjtSG236Duzk/78WUqfiLBuZAznNWkpfbc6G6yTgKve
+         oZcqK969RtjCl1T2VtfzFfUU3mcV1wbUOvvO9HkfUG9nfwtZBuC+1/fUwQesefIa5bgj
+         KQpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733742461; x=1734347261;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YJ9JUQ5bSEMgGsZqbZA+J2STml+1V04qdkGaF/nnd20=;
+        b=O4JTPUnNvZTDht/hcDnWJCdMo5YR/ERU/NhbbglFhwKJZo/nY/qtv5gzEFAkpmwGYy
+         sHitmbW/d+UXOEsghUsTwC3wqTeWT0T6AAFWIq8hKeiRWU8gcIPRi+j4jidFDAP5MqKW
+         RhzkD7NAeyHyqYUVOfMRzAgXcL8Qyji8u4AaBPLU5USH0ur/rwkO7/4+xZHflE/XITfn
+         PcPaEnwlU/03n/JPQOGbBG5r7X831+xg6EYDPnT/kBfAYuwBix/4pcopso/qXD9AUmJ4
+         64jVJsjvMgEnEtMwEcAwlkAioPSXMHM3FByywVYGdihbdCIrwlmKDestlxMVsC//PJdT
+         d1Yg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKLAIcwFoRIyjzE5FI8Q1wFKwMwxqCYjcC4n2If9TjnZ8g34nl/j0fajKXqSbpDPu8mgTrKqPrWFCScg==@vger.kernel.org, AJvYcCW+ZQuDPLl5i3fWZd10+odnTHv7AYl0ZGVQkzxbl2wYwlKLzWPfwoerj4Hz9ScpNwd8tUF+mobgcd++xFXJ@vger.kernel.org, AJvYcCW+pBt9+pQzlqqWkZJgl0HfGL5HCboYnq671s2WF0Uu3X7LW7URn+QolVwnnAMbWunTrBQObZ7IXKzE@vger.kernel.org, AJvYcCWy0dv3wUSnWWmttgs38ceXIjWWiuihDPLYNzgyT+aTfjbU6W8bBmyFoKevkbB4uO1Xwwafv59+XQxSUK8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyBOpRvca86oDVgQnVbkWYb27vPWdQJjDlq2kZeLsPSD5H+zPd
+	MGExuoYuz0ocNdlPK9euGKikuaEazjRL3XHZzurIoJWNTaqVf6Hr
+X-Gm-Gg: ASbGnct8hPCSYRQh/1zCHi6y3MN/Im1JMR7aSUV2ZR8Y9uU7U3SBfoZVI5QCL1uYzwq
+	7mzfDJ7t/ZD3zYBDqFyzvXu67reGtnsQa3blZIpaziAVE3x31gLE+RplZ9q3ZNlYO5/xKOTtGjY
+	lqsjpr2OJJflv4arMIqUO0dIFsixHjlw9TGTwRGSPLf4pySBc7NwcZaKlAjs376Dn5XynUkyZ27
+	UIisKOtFyteAGdfl4g95dVtI3DtgurKyz5raT3ozfTQAq0akGnJLNLFnA==
+X-Google-Smtp-Source: AGHT+IHE+t2Du1WqC/+jnVLPWSG0jQUPMDd8/py9w7+kgKS309UwwhMmDAhAU/gz6Yfj4oBXSzHyqA==
+X-Received: by 2002:a17:902:f607:b0:216:4883:fb43 with SMTP id d9443c01a7336-216488401a3mr47732355ad.32.1733742460654;
+        Mon, 09 Dec 2024 03:07:40 -0800 (PST)
+Received: from [192.168.0.122] ([59.188.211.160])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8f3188fsm70017745ad.265.2024.12.09.03.07.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 03:07:40 -0800 (PST)
+Message-ID: <494a944e-4088-463a-abbb-c0a8cf4455ec@gmail.com>
+Date: Mon, 9 Dec 2024 19:07:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dt-bindings: leds: backlight: apple,dwi-bl: Add
+ bindings for Apple DWI backlight
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
+ Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
+ Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org,
+ linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
+ asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+References: <20241207130433.30351-1-towinchenmi@gmail.com>
+ <20241207130433.30351-2-towinchenmi@gmail.com>
+ <iwapssdmronnbtmlmynuarzmkd2oh3ssrmzvlobxx4ixrgwgcl@dnonaahib6jw>
+Content-Language: en-MW
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <iwapssdmronnbtmlmynuarzmkd2oh3ssrmzvlobxx4ixrgwgcl@dnonaahib6jw>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> Providing access to the underlying `struct miscdevice` is useful for
-> various reasons. For example, this allows you access the miscdevice's
-> internal `struct device` for use with the `dev_*` printing macros.
-> 
-> Note that since the underlying `struct miscdevice` could get freed at
-> any point after the fops->open() call, only the open call is given
-> access to it. To print from other calls, they should take a refcount on
-> the device to keep it alive.
-> 
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> ---
->  rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
->  1 file changed, 16 insertions(+), 3 deletions(-)
-> 
-> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> index 0cb79676c139..c5af1d5ec4be 100644
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@ -104,7 +104,7 @@ pub trait MiscDevice {
->      /// Called when the misc device is opened.
->      ///
->      /// The returned pointer will be stored as the private data for the file.
-> -    fn open(_file: &File) -> Result<Self::Ptr>;
-> +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
 
-How is the user of this abstraction supposed to access the underlying struct
-miscdevice e.g. from other fops? AFAICS, there is no way for the user to store a
-device pointer / reference in their driver private data.
 
-I also think it's a bit weird to pass the registration structure in open() to
-access the device.
+On 9/12/2024 17:16, Krzysztof Kozlowski wrote:
+> On Sat, Dec 07, 2024 at 09:03:14PM +0800, Nick Chan wrote:
+>> Add the device tree bindings for backlight controllers attached via Apple
+>> DWI 2-wire interface.
+[...]
 
-I think we need an actual representation of a struct miscdevice, i.e.
-`misc::Device`.
+Ack all the changes, will be in v4.
 
-We can discuss whether we want to implement it like I implemented `pci::Device`
-and `platform::Device`, i.e. as an `ARef<device::Device>` or if we do it like
-you proposed, but I think things should be aligned.
-
->  
->      /// Called when the misc device is released.
->      fn release(device: Self::Ptr, _file: &File) {
-> @@ -190,14 +190,27 @@ impl<T: MiscDevice> VtableHelper<T> {
->          return ret;
->      }
->  
-> +    // SAFETY: The opwn call of a file can access the private data.
-> +    let misc_ptr = unsafe { (*file).private_data };
-> +    // SAFETY: This is a miscdevice, so `misc_open()` set the private data to a pointer to the
-> +    // associated `struct miscdevice` before calling into this method. Furthermore, `misc_open()`
-> +    // ensures that the miscdevice can't be unregistered and freed during this call to `fops_open`.
-> +    let misc = unsafe { &*misc_ptr.cast::<MiscDeviceRegistration<T>>() };
-> +
->      // SAFETY:
-> -    // * The file is valid for the duration of this call.
-> +    // * The file is valid for the duration of the `T::open` call.
->      // * There is no active fdget_pos region on the file on this thread.
-> -    let ptr = match T::open(unsafe { File::from_raw_file(file) }) {
-> +    let file = unsafe { File::from_raw_file(file) };
-> +
-> +    let ptr = match T::open(file, misc) {
->          Ok(ptr) => ptr,
->          Err(err) => return err.to_errno(),
->      };
->  
-> +    // This overwrites the private data from above. It makes sense to not hold on to the misc
-> +    // pointer since the `struct miscdevice` can get unregistered as soon as we return from this
-> +    // call, so the misc pointer might be dangling on future file operations.
-> +    //
->      // SAFETY: The open call of a file owns the private data.
->      unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
->  
-> 
-> -- 
-> 2.47.1.545.g3c1d2e2a6a-goog
-> 
-> 
+Nick Chan
 
