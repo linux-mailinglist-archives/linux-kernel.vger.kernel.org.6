@@ -1,140 +1,104 @@
-Return-Path: <linux-kernel+bounces-436615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56A2E9E889C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:01:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C299E88A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:06:11 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 071E9281091
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 764AA163FB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:06:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70521FB3;
-	Mon,  9 Dec 2024 00:01:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 821D75234;
+	Mon,  9 Dec 2024 00:05:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="D1dQJqu0"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DXF9NPn9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF43B658;
-	Mon,  9 Dec 2024 00:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAEF819A;
+	Mon,  9 Dec 2024 00:05:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733702512; cv=none; b=DXA3TNNdklfJegIOBBEVpuaraZGwf8+6Lh0qqbDDUIP/lvrtlIh47UhiQwFTEIUaAnF23oOfrWYfBF4uhj4cw7Kdfe7WoJfmFV/JM/V4ielluRlCRjlyfSSb12mjttTXSSbWr+7DwzAapaI8pos1dX6J9V99K432LOBO2eRomMY=
+	t=1733702759; cv=none; b=kJoSIN6jyKo3rqmpk43AN7pXMXgkUz9ENlC8Q+/QVlLWPnqO6bkQU8NU1UrYwmbo8/wH//uu50vbOkxwzdv2hdrBE9WXh1Ju5qdy2G2w/1nOPfenLEnfUBfC/seKq11IKcgfNvKZYTk6hsSGqxnT5iTc0GEpDq3aRFt26Fa2GgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733702512; c=relaxed/simple;
-	bh=3M8m0mkqlobCNWP582JbuQQ8ioh1zuogiUJyzan1gWo=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=dXQU5kw1RmwdP/YsjNAi5AUnsZ5qoqDlc5piPAKBAyh99cvGQY7uVCIo6VairQBgtqIaHEUWkVBvs39geJrvz/NwQi9uTGgsgXqIA3kTPhF9+I19uT4JP1TRSGUoiXHLdI7I22L4Vz3VcPKafbxRVPlDuuRcHEM3jXoO+SxJWNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=D1dQJqu0; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1733702501;
-	bh=ciHHlcaVO2t0MaGqyXFGjX3FCsBltnxR97IJmAxteh0=;
-	h=Date:From:To:Cc:Subject:From;
-	b=D1dQJqu0p4iS3SiN3ij8fFMMq87Bbba8y9wYyWN3MeCVtoo3FuXHREYBW6u/Psfh1
-	 Qr7X6kxIlOs92OA39ltaLl8+0t1d/gcs5wW5er8LwND0OzIqylx9dhoGr56pBrYnD7
-	 2P/ZSrawoF1bVoF0PL9dYlM9h+/wp1JRiBVdfJO4owiAiqjxYm7j3K2hQ74IGfzsVD
-	 qfxbTU5mPFh0MHpGFxD/e50JG5+VQO1JMOtOQW34QFTjMgBhq4bF4VkSceADrL+qet
-	 NrQ2gZIOiWkSP8RuB0ZzCIiYyayUgD3+nCy7BLzbbv9fbzQtvSsOl5AlSK7UR4++0Z
-	 OYuY80KCf6eRA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y628j2w1Pz4wcD;
-	Mon,  9 Dec 2024 11:01:41 +1100 (AEDT)
-Date: Mon, 9 Dec 2024 11:01:44 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Junjie Fu <fujunjie1@qq.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the mm tree
-Message-ID: <20241209110144.7a8968fc@canb.auug.org.au>
+	s=arc-20240116; t=1733702759; c=relaxed/simple;
+	bh=KOSE2+0IJQr/pu3UWE4qE1sa7hIxtXcxZxP8jtFM2qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O44FhUi3NBsGKpbYlXx+pMb/lC4bcqmu2NkHl1E1415n925OZKLKz2PTWEa3q1W4hSb2RRPnfv0+V5w//nM+diDtFXIm4aghEC0NJMP5P66+5sd/OP+SRvSLc0cVtLTc/0IwPYroVlXijaJXbNthQEqpSFPDBWVmRxCoN+pgZLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DXF9NPn9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F2CC4CED2;
+	Mon,  9 Dec 2024 00:05:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733702758;
+	bh=KOSE2+0IJQr/pu3UWE4qE1sa7hIxtXcxZxP8jtFM2qk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DXF9NPn9POFP50emVFrAtfIHqq4k8Ait3jzAckDzNP4bGmUk6T8lv6B0EIk7fxs1U
+	 u7pjIv1BdHmbkxLaCyDrqJ4fAw2qD+sefOnHMs79XCU1/ccDaVEsY8F86kazyBJr6M
+	 PjJunvWrVykhl/mhPfkYR2UxjUex+regGgNhtDqxdKH+urlUjGi4XqeldagYnbQSxW
+	 lSxM+nTE2m+KYy1gibCaV6aXWA2i8NfGqXbAcVKwqmjgyBrs7oKccYOETeAQKZYlwH
+	 3qilQ0Q/zFmyj3DBqfn5svbmu/EaZbdsza73DiOz60mE4GWluNMmHLT061A3r4GXK8
+	 TI1wK055FK+iQ==
+Date: Mon, 9 Dec 2024 00:05:56 +0000
+From: Wei Liu <wei.liu@kernel.org>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>
+Cc: linux-hyperv@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+	iommu@lists.linux.dev, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	virtualization@lists.linux.dev, kys@microsoft.com,
+	haiyangz@microsoft.com, wei.liu@kernel.org, mhklinux@outlook.com,
+	decui@microsoft.com, catalin.marinas@arm.com, will@kernel.org,
+	luto@kernel.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	seanjc@google.com, pbonzini@redhat.com, peterz@infradead.org,
+	daniel.lezcano@linaro.org, joro@8bytes.org, robin.murphy@arm.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, arnd@arndb.de,
+	sgarzare@redhat.com, jinankjain@linux.microsoft.com,
+	muminulrussell@gmail.com, skinsburskii@linux.microsoft.com,
+	mukeshrathor@microsoft.com, vkuznets@redhat.com,
+	ssengar@linux.microsoft.com, apais@linux.microsoft.com,
+	eahariha@linux.microsoft.com, horms@kernel.org
+Subject: Re: [PATCH v3 0/5] Introduce new headers for Hyper-V
+Message-ID: <Z1Y0ZB0J16oeHBbK@liuwe-devbox-debian-v2>
+References: <1732577084-2122-1-git-send-email-nunodasneves@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/w+SyYjpIIHNzTc81dInZP0S";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1732577084-2122-1-git-send-email-nunodasneves@linux.microsoft.com>
 
---Sig_/w+SyYjpIIHNzTc81dInZP0S
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Nov 25, 2024 at 03:24:39PM -0800, Nuno Das Neves wrote:
+> To support Linux as root partition[1] on Hyper-V many new definitions
+> are required.
+> 
+> The plan going forward is to directly import definitions from
+> Hyper-V code without waiting for them to land in the TLFS document.
+> This is a quicker and more maintainable way to import definitions,
+> and is a step toward the eventual goal of exporting the headers
+> directly from Hyper-V for use in Linux.
+> 
+> This patch series introduces new headers (hvhdk.h, hvgdk.h, etc,
+> see patch #3) derived directly from Hyper-V code. hyperv-tlfs.h is
+> replaced with hvhdk.h (which includes the other new headers)
+> everywhere.
+> 
+> No functional change is expected.
+> 
+> Summary:
+> Patch 1-2: Minor cleanup patches
+> Patch 3: Add the new headers (hvhdk.h, etc..) in include/hyperv/
+> Patch 4: Switch to the new headers
+> Patch 5: Delete hyperv-tlfs.h files
+> 
+> Signed-off-by: Nuno Das Neves <nunodasneves@linux.microsoft.com>
 
-Hi all,
-
-After merging the mm tree, today's linux-next build (arm
-multi_v7_defconfig) failed like this:
-
-fs/aio.c:478:27: error: 'noop_dirty_folio' undeclared here (not in a functi=
-on)
-  478 |         .dirty_folio    =3D noop_dirty_folio,
-      |                           ^~~~~~~~~~~~~~~~
-fs/aio.c: In function 'aio_setup_ring':
-fs/aio.c:524:25: error: implicit declaration of function '__filemap_get_fol=
-io'; did you mean 'filemap_dirty_folio'? [-Wimplicit-function-declaration]
-  524 |                 folio =3D __filemap_get_folio(file->f_mapping, i,
-      |                         ^~~~~~~~~~~~~~~~~~~
-      |                         filemap_dirty_folio
-fs/aio.c:525:45: error: 'FGP_LOCK' undeclared (first use in this function);=
- did you mean 'BPF_F_LOCK'?
-  525 |                                             FGP_LOCK | FGP_ACCESSED=
- | FGP_CREAT,
-      |                                             ^~~~~~~~
-      |                                             BPF_F_LOCK
-fs/aio.c:525:45: note: each undeclared identifier is reported only once for=
- each function it appears in
-fs/aio.c:525:56: error: 'FGP_ACCESSED' undeclared (first use in this functi=
-on)
-  525 |                                             FGP_LOCK | FGP_ACCESSED=
- | FGP_CREAT,
-      |                                                        ^~~~~~~~~~~~
-fs/aio.c:525:71: error: 'FGP_CREAT' undeclared (first use in this function)=
-; did you mean 'IPC_CREAT'?
-  525 |                                             FGP_LOCK | FGP_ACCESSED=
- | FGP_CREAT,
-      |                                                                    =
-   ^~~~~~~~~
-      |                                                                    =
-   IPC_CREAT
-fs/aio.c:532:17: error: implicit declaration of function 'folio_end_read'; =
-did you mean 'folio_test_head'? [-Wimplicit-function-declaration]
-  532 |                 folio_end_read(folio, true);
-      |                 ^~~~~~~~~~~~~~
-      |                 folio_test_head
-
-Caused by commit
-
-  98a9217fdcb8 ("mempolicy.h: remove unnecessary header file inclusions")
-
-from the mm-unstable branch of the mm tree.
-
-I have reverted that commit for today.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/w+SyYjpIIHNzTc81dInZP0S
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWM2gACgkQAVBC80lX
-0GxYcwf/RxiMeArl0eXVmp25vzi5NtJVmwIECNscGb2iqKBk9vKNyR6sf6ZZtMPo
-tWZws6mFHN5eFbk5VBxZ9sZNmllZULoWv4zGbUbtfoxrbVQ0+GFMBcewWwQpcLSS
-upxMvn5z6fPemokUpVvMznfXgXZInuIm8P8SlwoKS9oqhbN0AGH7d6FRnG+t5275
-qxi4/SldaiNphZZtfEBu1YFWuwjjIdkjv6Ybr+NV8yrvq8rXTDN0Z6tfJgyiAHqb
-nvXVn89GXO/BaZrXxmQBRbNw0MKe6gGwcu/GSHfyABGavPpR3uAZ6UIIKU20fH8f
-Vwv/kxrx4OcVA4z79r+aqgq+f4B7/Q==
-=954s
------END PGP SIGNATURE-----
-
---Sig_/w+SyYjpIIHNzTc81dInZP0S--
+Applied to hyperv-next. Thanks.
 
