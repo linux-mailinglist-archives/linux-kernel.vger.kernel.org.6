@@ -1,157 +1,169 @@
-Return-Path: <linux-kernel+bounces-438127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 785149E9D3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:43:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DCF9E9D44
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:44:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D9A8C166B56
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:44:08 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 459031B422E;
+	Mon,  9 Dec 2024 17:43:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="CLZFPInh"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27C6282D60
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:43:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2403D155A34;
-	Mon,  9 Dec 2024 17:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8a6vMbo"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A00233151;
-	Mon,  9 Dec 2024 17:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E748D1A2393;
+	Mon,  9 Dec 2024 17:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766230; cv=none; b=rW+uAg2hN5QfJmywqOYYt3deEwBdkqoX5jrleJ+Zgq/jv3au7icmCtjnz+4k1sLWjQP65WJn1SRXSn3cicD39QIvyu70jXIioNp1xCNG2OvzGrTTUeEYVUfH7Oj7MXxoNPVuxdYnsqbc+TAtMcUHIHkJKGrZsbqQ++yhqQ14p/g=
+	t=1733766234; cv=none; b=YLOyy/fC/4be5dSd8FewunJrQcB8bu/tC9LMXwWtaFy1RW4bj0OXFY9uPyc6ciBZ7rbF2kCJ87t5eGb/WB2V2AwnSwUhnwqo5SS0UYlcmq41d2AnX34UaUZbZF6336uJZeCnKlU+ENSInnB82sXMrrE3y4r6toSYGckEhENnsfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766230; c=relaxed/simple;
-	bh=q/rcTOvcDwZyPaQTo31tJDbxBrL528rUIEpQq1SvPmA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cce/PolS2l6k8LoGtACOPb/ueQ7g6+7WHSdqzQjrd6hnbGjektgOay1E7fmuxf2of2/uuKjrhUh6pLRS+/7p8mfF/OA8xmm4hr1SmAQ4BdJExBZhNoN2+cYOBXuy+l4VV52zXYumJ6uRlFwICeg9YtkhnVsjsi+CwE0kF8JAcfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X8a6vMbo; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-216395e151bso10978065ad.0;
-        Mon, 09 Dec 2024 09:43:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733766228; x=1734371028; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d8t4rQo4GlIJNr1Ck0WNYMLnLZ4WaSFJXClmAi03iA4=;
-        b=X8a6vMboh2cUShWYAaWIOBjShJUqoXjqBHvg3+Wa48to13PGN9jN/w90FigY4jd+Sn
-         y1ffQdrm8Tbn24PbsDal4ANtFXOO7BXzHp8/8ExTYtSzUyTYaPlgebk/Dq7aX9xf1qWo
-         +JPiNBhuCfJXoV/tX4Hfpk0+E0wf6n5EXAKMDWeU3r4khiKNZdMTDza56xqw8PyOhWIc
-         R/weVnjTJxx+pQ2LBCcO0mqxtGsTkGxs2DHy52FdbhXfhJJWBCOKAMPgDcRb218W0or5
-         TgNZwVY+oSnRkDHb10G95JPQy2qAu3E3NSPzsbDn60U9sWt20RoLhTEbw303DTqWb3Zv
-         hVoA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733766228; x=1734371028;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d8t4rQo4GlIJNr1Ck0WNYMLnLZ4WaSFJXClmAi03iA4=;
-        b=bwy+srWYnLEFTheT1XaAseTBw67bx/BLg60tmbY3QX86G0OVlHzbOvBrPAy91We764
-         D+SqN+QQroc8kLUkY9bmbYi/X49WiOqdFbcoHHmHY+ORsmjw+9DPnN5aPqrSs0Oyn2/Y
-         1FivyC7XYb4jQgHZrkIedWMXiPOVic5tHLH1VqTANSoMeZLZ6sWAYOvncZIZUHMr4C3l
-         h9tyuoORlJ20J0YjPs63L0sp5OJ3c3Vov8U8wAcPZw00smJ3NPxAG2SqCWz0rdrLMaTB
-         rERAtLAz7HhRLpuDgIGt1n3DQXjrBS4FFPEYglxYYoPhI1n9apBioduzIQ5nNnt7fHXz
-         xknw==
-X-Forwarded-Encrypted: i=1; AJvYcCU0vB5jILUzVyCxEsqCQAdyzwuapEl9z4YulSXFfT3QyU8bKjsngwoyh0H9X+9PMuwzmYna8z7Sod45UDay+Q==@vger.kernel.org, AJvYcCU882Sks7zUUX5ewXg+isnnu0ehwt3K35aXqwSqlPHdSNcsbcaSN3LUxhsf3lbHT7hOSUbEPSsc8XvBh2SybguPMRAdUw==@vger.kernel.org, AJvYcCUSRBSuK27MY8aF5R9UyMlDZ3tcyo2bJCVfKW7IUvgJiyzc2ZPV6bmMEw9mapPM2qYyDQI=@vger.kernel.org, AJvYcCUpBvvCWFlAXG6ucN02R6Cporu0YJarlIqEpmCeZTRMip38iGlwrTXAV6O3e5jV6+6Clrg3hUlp5dSj82Mq@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhcJJsZR3lWOm2BB4CzocMnnYJXXMW5x6BOsfBNVwGOzZjX1EL
-	VcWPn8PzbksqWS4M5MKcsZjyR2QHVd61UNLwu7jTzgq0AvrUMwN+YnNeTp9AFJSM93vCmsDSgxk
-	DCawmfUK+He0FAzE9hqbZ8YPMMc4=
-X-Gm-Gg: ASbGncsReDRqo2qJCXZuLFhSsG2Ff88ngF7s3+ZWajQJwc0KPX1JnYrmvxVRUEGD7Fz
-	VNV90aOsu5BPV3YCyv37L3LRDIyE5mC8BeHSPvAKA2N7PeKs=
-X-Google-Smtp-Source: AGHT+IF0BTr20MkxNzRSFNpph/h8vHNhmBKsOAPeY6Y0QdSHKlV0GxM2a08SVsbCGBad04gFH5w/DXOJoS3+X7u/Wjg=
-X-Received: by 2002:a17:902:f541:b0:216:4676:dfb5 with SMTP id
- d9443c01a7336-21670a3f62cmr3456875ad.21.1733766228322; Mon, 09 Dec 2024
- 09:43:48 -0800 (PST)
+	s=arc-20240116; t=1733766234; c=relaxed/simple;
+	bh=uZeGdcmoZGrzQG/kE6egUJ3MFszdKX/w6FnuEtoq1Bw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HwIm1ZZ+rZ7tcIuycyAdagVgyY0We+jpl52mS9RMSdALfRO16hdfTtFvmlBPxfRO0Sy5eqrQ4RQsE/y9f0W8a3gS/H79rDBRcsgCXZpUEi3DmlJ8GqJSp/iCk/WFuI46DpCvRHpBcdvNjQL+2g0iVfNNrBPPQCIaZAf7g3Ba158=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=CLZFPInh; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=3n4mk41KOvsqhkn6/DLv+bmkARAl5o1h7ZvAJsqYTjI=; b=CLZFPInhD+iyUCfhlfjuEOlEz3
+	oEc/YrZMgjHXx8COZatpTv7tquVca67K15qwRRUEZpHf4VTfKpOD0WO0aiBU/rZ3HaT8scU2Y4TRh
+	73xTtJevAqy2YL7As75PnoXDRYn5hRAIDXNJ87aDVO6GHcE6CQFJz5OJ0UIbAb8rxcs5g2jxLlktD
+	AlfXlQGGV1MbOjbcq9KOGMhT0ngq7arQZOfZ/4O4UeA7UjHg/usgoPwHYpK9R6cwk1AmUPn82Cqdy
+	Q4lYuctb6RznC7M292cmXyTXdh7iCoM21C+RS6hyzvsRn8Ek1P9XVzI4+5zmH9JZzFULpJJI9tEGK
+	+mNvrYPA==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tKhnQ-00000003Ysv-49UH;
+	Mon, 09 Dec 2024 17:43:49 +0000
+Message-ID: <da1583ed-21cb-4606-8aaf-cc55390cc3a8@infradead.org>
+Date: Mon, 9 Dec 2024 09:43:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
- <20241205-sysfs-const-bin_attr-simple-v1-3-4a4e4ced71e3@weissschuh.net>
-In-Reply-To: <20241205-sysfs-const-bin_attr-simple-v1-3-4a4e4ced71e3@weissschuh.net>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Mon, 9 Dec 2024 09:43:36 -0800
-Message-ID: <CAEf4BzYtD-njaaSr8zHK3ay0hzWFHamJ+DEqoXOcjM9LDdY4Zw@mail.gmail.com>
-Subject: Re: [PATCH 3/4] btf: Switch vmlinux BTF attribute to sysfs_bin_attr_simple_read()
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
-	Madhavan Srinivasan <maddy@linux.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
-	platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v3 5/5] net: Document memory provider driver
+ support
+To: Mina Almasry <almasrymina@google.com>, netdev@vger.kernel.org,
+ Jakub Kicinski <kuba@kernel.org>, Pavel Begunkov <asml.silence@gmail.com>,
+ Kaiyuan Zhang <kaiyuanz@google.com>, Willem de Bruijn <willemb@google.com>,
+ Samiullah Khawaja <skhawaja@google.com>, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ Ilias Apalodimas <ilias.apalodimas@linaro.org>
+References: <20241209172308.1212819-1-almasrymina@google.com>
+ <20241209172308.1212819-6-almasrymina@google.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <20241209172308.1212819-6-almasrymina@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Dec 5, 2024 at 9:35=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
-huh.net> wrote:
->
-> The generic function from the sysfs core can replace the custom one.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
->
+Hi--
+
+On 12/9/24 9:23 AM, Mina Almasry wrote:
+> Document expectations from drivers looking to add support for device
+> memory tcp or other memory provider based features.
+> 
+> Signed-off-by: Mina Almasry <almasrymina@google.com>
+> 
 > ---
-> This is a replacement for [0], as Alexei was not happy about BIN_ATTR_SIM=
-PLE_RO()
->
-> [0] https://lore.kernel.org/lkml/20241122-sysfs-const-bin_attr-bpf-v1-1-8=
-23aea399b53@weissschuh.net/
-> ---
->  kernel/bpf/sysfs_btf.c | 12 ++----------
->  1 file changed, 2 insertions(+), 10 deletions(-)
->
+>  Documentation/networking/index.rst           |  1 +
+>  Documentation/networking/memory-provider.rst | 52 ++++++++++++++++++++
+>  2 files changed, 53 insertions(+)
+>  create mode 100644 Documentation/networking/memory-provider.rst
+> 
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> diff --git a/Documentation/networking/memory-provider.rst b/Documentation/networking/memory-provider.rst
+> new file mode 100644
+> index 000000000000..4eee3b01eb18
+> --- /dev/null
+> +++ b/Documentation/networking/memory-provider.rst
+> @@ -0,0 +1,52 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +================
+> +Memory providers
+> +================
+> +
+> +
+> +Intro
 
-> diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
-> index fedb54c94cdb830a4890d33677dcc5a6e236c13f..81d6cf90584a7157929c50f62=
-a5c6862e7a3d081 100644
-> --- a/kernel/bpf/sysfs_btf.c
-> +++ b/kernel/bpf/sysfs_btf.c
-> @@ -12,24 +12,16 @@
->  extern char __start_BTF[];
->  extern char __stop_BTF[];
->
-> -static ssize_t
-> -btf_vmlinux_read(struct file *file, struct kobject *kobj,
-> -                struct bin_attribute *bin_attr,
-> -                char *buf, loff_t off, size_t len)
-> -{
-> -       memcpy(buf, __start_BTF + off, len);
-> -       return len;
-> -}
-> -
->  static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init =3D {
->         .attr =3D { .name =3D "vmlinux", .mode =3D 0444, },
-> -       .read =3D btf_vmlinux_read,
-> +       .read_new =3D sysfs_bin_attr_simple_read,
->  };
->
->  struct kobject *btf_kobj;
->
->  static int __init btf_vmlinux_init(void)
->  {
-> +       bin_attr_btf_vmlinux.private =3D __start_BTF;
->         bin_attr_btf_vmlinux.size =3D __stop_BTF - __start_BTF;
->
->         if (bin_attr_btf_vmlinux.size =3D=3D 0)
->
-> --
-> 2.47.1
->
+Full word, please.
+
+> +=====
+> +
+> +Device memory TCP, and likely more upcoming features, are reliant in memory
+> +provider support in the driver.
+
+I can't quite parse after "features." Maybe "are reliant on"?
+Maybe "in-memory"?
+Should it be "reliable" instead of "reliant"? Internet tells me that
+reliant means dependent on.
+
+> +
+> +
+> +Driver support
+> +==============
+> +
+> +1. The driver must support page_pool. The driver must not do its own recycling
+> +   on top of page_pool.
+> +
+> +2. The driver must support tcp-data-split ethtool option.
+
+                  must support the
+
+> +
+> +3. The driver must use the page_pool netmem APIs. The netmem APIs are
+> +   currently 1-to-1 mapped with page APIs. Conversion to netmem should be
+> +   achievable by switching the page APIs to netmem APIs and tracking memory via
+> +   netmem_refs in the driver rather than struct page * :
+> +
+> +   - page_pool_alloc -> page_pool_alloc_netmem
+> +   - page_pool_get_dma_addr -> page_pool_get_dma_addr_netmem
+> +   - page_pool_put_page -> page_pool_put_netmem
+> +
+> +   Not all page APIs have netmem equivalents at the moment. If your driver
+> +   relies on a missing netmem API, feel free to add and propose to netdev@ or
+> +   reach out to almasrymina@google.com for help adding the netmem API.
+> +
+> +4. The driver must use the following PP_FLAGS:
+> +
+> +   - PP_FLAG_DMA_MAP: netmem is not dma mappable by the driver. The driver
+
+                                       dma-mappable
+
+> +     must delegate the dma mapping to the page_pool.
+> +   - PP_FLAG_DMA_SYNC_DEV: netmem dma addr is not necessarily dma-syncable
+> +     by the driver. The driver must delegate the dma syncing to the page_pool.
+> +   - PP_FLAG_ALLOW_UNREADABLE_NETMEM. The driver must specify this flag iff
+> +     tcp-data-split is enabled. In this case the netmem allocated by the
+> +     page_pool may be unreadable, and netmem_address() will return NULL to
+> +     indicate that. The driver must not assume that the netmem is readable.
+> +
+> +5. The driver must use page_pool_dma_sync_netmem_for_cpu() in lieu of
+> +   dma_sync_single_range_for_cpu(). For some memory providers, dma_syncing for
+> +   CPU will be done by the page_pool, for others (particularly dmabuf memory
+> +   provider), dma syncing for CPU is the responsibility of the userspace using
+> +   dmabuf APIs. The driver must delegate the entire dma-syncing operation to
+> +   the page_pool which will do it correctly.
+
+thanks.
+-- 
+~Randy
+
 
