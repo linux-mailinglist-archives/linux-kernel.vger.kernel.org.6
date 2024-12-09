@@ -1,120 +1,158 @@
-Return-Path: <linux-kernel+bounces-438428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 514169EA141
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:29:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 867619EA143
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:31:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52AF018880ED
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D521162A8C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:31:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FD019CCEA;
-	Mon,  9 Dec 2024 21:29:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9764619D06A;
+	Mon,  9 Dec 2024 21:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WQ3pdxCG"
-Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="YMTcBcvw"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED541137776
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 21:29:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F1AD143C72
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 21:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733779769; cv=none; b=sTV3C/+hmPJ2Mkp4IYnEnuFCOuOYME0kMmwm6aFAjmRfHNIgkwzcdKaGu70nOGT68eq1Ef9IuBLxpWsxxNJMlpV87rP3fCM1zKEXrPaeha9sZ0sSsyEJ9KhWi4UrZ3d9V9l9jWK6LF88WwrYEmxELFznoLqrqWS8e05FsIeiYvQ=
+	t=1733779855; cv=none; b=Ajk7Bk3Ocz2LvYKeBrTaWW2QKZmGDaOkqlK4DXIXMpm8UxqrjZJ3XzR90mP16Db8Y8mJXzNx/knHSZeqNHjV8E+I5DeJzQsrdx3udxHb7v1trmpDI+KKG9FI8hyPQKauyrhGMNg1tclSPZbi+/Fk9g5RHgdoHHjhjf7GmAnxRc8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733779769; c=relaxed/simple;
-	bh=k77DRqrYSaJgR2H3E2WehARx7ieaYWTSYSoKpHkMXcQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XSTUzKmeWbaV1lzCF4EGsTzFLV8OU6g8CCs9M4VK8RTYcxY3leHiCjKD/8VH6eqHDcRvjjWZ2T6V/tJeuxhCzxMDskOj/JO8y5MYNnAgwV8ydgPYvKBYoW4c8bT6Ncx7OSzyv8iM5nh4n1+PXXWTAT4gs95UVFl7u1Oxk0pd8yw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=WQ3pdxCG; arc=none smtp.client-ip=209.85.166.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a9d0c28589so13325ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 13:29:27 -0800 (PST)
+	s=arc-20240116; t=1733779855; c=relaxed/simple;
+	bh=WiJKMTsPf6wLrDfDk0ktMGtROs4LgWJkSuu0oAaTiuM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sqB3AAZTpYjpJ+igJAILub/SqUfjQfjDJajvPbbBmMqH9Hu7M+nxmTS/1EmKs19hm5rYZFvEMrPD8XOaskuXSbyfl03fKPmU6O9Luxo7oq2CZY7znSCFQy14x4w9O3HZaGlLjPA9GdIi7zCgjGShiZx9d9WML6O39XX+EbYGpDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=YMTcBcvw; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-7fc93152edcso3858405a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 13:30:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733779767; x=1734384567; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k77DRqrYSaJgR2H3E2WehARx7ieaYWTSYSoKpHkMXcQ=;
-        b=WQ3pdxCG4M0hEJWCCo7u2HYTbJE1ZUvazkID3rF0h+Fwat4Q4fGhJkIJ34yTIdVFP3
-         bVUCSV1/69BlLGQtHMrHh8f5M4VZLPwEUlTH21l9fgcNJfK2oenk5yWYtLPI2hVHGtvM
-         6nzi5UEakW+UaX1ULzdFq+//AvG3ImNAfxqd/r6csOs6dbEpih3mAB2/0EBwqD5Lu+z7
-         0rBn4e15KE+vzOst8t12vhvDHuxc+zPpgmvLa/TGkn8JnBpQ0XQA6nGUkuJdG6b7bsv5
-         p42+CDK1K3aB4KvOcZtpfteOhhtqiFo3m+ndgLhGp3Yg1oWseW8LpJyUK4iqocfsRzo6
-         8dFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733779767; x=1734384567;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=fastly.com; s=google; t=1733779851; x=1734384651; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=k77DRqrYSaJgR2H3E2WehARx7ieaYWTSYSoKpHkMXcQ=;
-        b=gWzvTRCPyhWeGXYuaUDyVUUmBopj0mvGmnpAJ7drQyBCfYjPC4hBwWlIUG2GrJ+IIv
-         JArH3oDGAlI2PfiTwmrnh6fvOKfxewCCgFHpKThrM73Hy8xxLbJE442h0670gcz5GzrC
-         BN+uKAlpF4toQHokEyqDvomJC5d5t4Wc681tsHj/ZlQbrckWA3n1pVlSRz4mOXPBY8gJ
-         LjDQV8g20/jmXpFqEjNj0P5TRWL0NB6GbXoKLo7+zZqoQvgxCNPrks9OolklLmWRTx/3
-         npZJQHokABTknBa2QsNb1dyCqun8zmcqtsfarwdfHmV+TpEMmOWUJWee8ak1fB7pJfQ6
-         AAQA==
-X-Forwarded-Encrypted: i=1; AJvYcCVemmf6ExP9MNTrAQgsuxbsOXhQ3K5ecYmMxG6fTNF2B4OIphSMfRsTL2PVxfhRzlHJwNlWglF+OEzdp9I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhiOl9UggS1gp4yPAj3SUKcsJ/ySQMcHjA8gaD19TsTl2CUPwo
-	CkSQD2NkmZGXSl8oqeMB8zDEgReB79QTN3HShaEuDQb0bDlEYprWXCuJ2lMKRp7nJyq4oOHeEcL
-	mqBWsUYLt9zPubF4ctOX4QQilM3UXwUL2j1BW
-X-Gm-Gg: ASbGnctsDGhleIbWFokbOgkMPTt4IYdTZEgL/QVtmnZXFwNHItWwRCWeFHsGXcKxEtr
-	sXCKRpcrjdu1NuSSZcRtn+fk+kOgWW4SZ7Frz
-X-Google-Smtp-Source: AGHT+IEHGJbe+AZDiNc+ia7Cyo5iwtcopsBfDtNGQFpU/eanHpvd8zca5EDeaFnnJ3XsqFtZQvOL0ss/1xGdhCkJu3I=
-X-Received: by 2002:a05:6e02:20ed:b0:3a7:d8f7:7c2c with SMTP id
- e9e14a558f8ab-3a9dda2dad7mr717895ab.12.1733779766912; Mon, 09 Dec 2024
- 13:29:26 -0800 (PST)
+        bh=Bq4bE8ynK46fAtG2+WFAUVPbfKrAMZJysC5gDFoJ5yQ=;
+        b=YMTcBcvw7kNuQXnFYN7cvvlc222ZV0BSFO94DlT/SFxiw6vnfdrxbyCmP5AJqlNnGp
+         6V20My2YUfMUlwE5ZP+708lekJ3y8HhNGKShdga+YoXPMKAIJrrdzE0VGuIVW31hK6bF
+         21+gb9wumEx0WmkbkoiqGzNq5SdjNRGzCCIRI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733779851; x=1734384651;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bq4bE8ynK46fAtG2+WFAUVPbfKrAMZJysC5gDFoJ5yQ=;
+        b=FAWqqx+wlSijKPTr3CBEbIrOeWmRzMUQIbxMgchiK2jssHhOgco3ZYwdAZrzkhCEug
+         PFT4BIq57aVm5qMzRuctltz8kHdWwKyw6rrqQQ+hdOy0o1Pck+WkquiGqmBAKPg1v1Qj
+         Le61QlDZkryaqPwi6I4oeC1W3J+LPRFINW0cd36dPJsWbqUNEhyegohznmrfNWr9BnJP
+         +XGVqev+8DrRVc9bZNQe5uTxRMHjLX+2bMdw7NdRYm9ySSn06PuKEfF0WzFPmJzYPz8+
+         pw3VmqbndDnpkCDkYtCP8b4MoYq2XWfwDb3853/TpnXBZw4LQ3KrGuVwUz4z7uKxNSbk
+         6zyA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ0FY9X82uFPGHzI9lG+0H9Bp15Iai0fQX472zyO5xG0l0yzS6Ja861fTrwJoQ7gLN9t5/NgKNG5u+/e4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzFoWKzbcZLHZznqhBN6J+Y/RuASl4+Qe5LBed3rekU1zRm+09+
+	gs9+Hnwn9kXcNg3O6ku6PBK+PMUX33/vrNtXsZgUDZAuqDd3uIhNk2wcv6T3FPw=
+X-Gm-Gg: ASbGnctEvh68ko8O6/TwzRjg3j4gMaJ2eugrmIgXR3r1aXkhp8QNyjuL4Q4Xtn4bntg
+	/MnQJ7uvaFAYpE5qtnlkXT0SxVynoPMxQynu5OvOl95l1jqt0bxzHEICppOB9a2aqaEL1ykuC9v
+	FB7TFn0GqtZ2TUqe9Z+RdqIxin6vGVxf40lOWDelLK/NENJ+lW/zz0jzWAIhsKi+xm1SJXhq+hS
+	7eES8RTva3xCYjt42GX1OWjjq6FTCE4GrabjGQMD1YYE6KjcHo5m+u1WAAzX/JuFkTlnR5e82ud
+	b9SOIG0Q/qh4J9vBpfN0
+X-Google-Smtp-Source: AGHT+IGaQl+Th+1UK4dZouO+Jykv6AjRjKda0D3INprhZjXS4b+yz4fFGUTDReg578joqoVWuKlWFw==
+X-Received: by 2002:a05:6a20:729c:b0:1db:e327:dd82 with SMTP id adf61e73a8af0-1e1b43c4e93mr1633149637.5.1733779851414;
+        Mon, 09 Dec 2024 13:30:51 -0800 (PST)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd4846418csm2909498a12.28.2024.12.09.13.30.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 13:30:50 -0800 (PST)
+Date: Mon, 9 Dec 2024 13:30:48 -0800
+From: Joe Damato <jdamato@fastly.com>
+To: Jan Stancek <jstancek@redhat.com>
+Cc: donald.hunter@gmail.com, kuba@kernel.org, stfomichev@gmail.com,
+	pabeni@redhat.com, davem@davemloft.net, edumazet@google.com,
+	horms@kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 5/5] tools: ynl: add main install target
+Message-ID: <Z1dhiJpyoXTlw5s9@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Jan Stancek <jstancek@redhat.com>, donald.hunter@gmail.com,
+	kuba@kernel.org, stfomichev@gmail.com, pabeni@redhat.com,
+	davem@davemloft.net, edumazet@google.com, horms@kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <cover.1733755068.git.jstancek@redhat.com>
+ <59e64ba52e7fb7d15248419682433ec5a732650b.1733755068.git.jstancek@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113165558.628856-1-irogers@google.com> <CAP-5=fWK-eeDEvE4+LeeScbHFecmc5+H8WB_5fepfrJJLZsF0Q@mail.gmail.com>
- <Z1dS6HrfkVS4OeZz@x1>
-In-Reply-To: <Z1dS6HrfkVS4OeZz@x1>
-From: Ian Rogers <irogers@google.com>
-Date: Mon, 9 Dec 2024 13:29:15 -0800
-Message-ID: <CAP-5=fUze9j8etq-17L0dWVoYfE-bA+61wrEAXN9vJSCj9dCbw@mail.gmail.com>
-Subject: Re: [PATCH v1] perf jevents: Fix build issue in '*/' in event descriptions
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Sandipan Das <sandipan.das@amd.com>, 
-	Xu Yang <xu.yang_2@nxp.com>, Benjamin Gray <bgray@linux.ibm.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <59e64ba52e7fb7d15248419682433ec5a732650b.1733755068.git.jstancek@redhat.com>
 
-On Mon, Dec 9, 2024 at 12:28=E2=80=AFPM Arnaldo Carvalho de Melo
-<acme@kernel.org> wrote:
->
-> On Mon, Dec 09, 2024 at 10:35:34AM -0800, Ian Rogers wrote:
-> > On Wed, Nov 13, 2024 at 8:56=E2=80=AFAM Ian Rogers <irogers@google.com>=
- wrote:
-> > >
-> > > For big string offsets we output comments for what string the offset
-> > > is for. If the string contains a '*/' as seen in Intel Arrowlake even=
-t
-> > > descriptions, then this causes C parsing issues for the generated
-> > > pmu-events.c. Catch such '*/' values and escape to avoid this.
-> > >
-> > > Signed-off-by: Ian Rogers <irogers@google.com>
-> >
-> > Ping.
->
-> A fixes: is missing, probably this should go via perf-tools, i.e. for
-> this merge window?
+On Mon, Dec 09, 2024 at 03:47:17PM +0100, Jan Stancek wrote:
+> This will install C library, specs, rsts and pyynl. The initial
+> structure is:
+> 
+> 	$ mkdir /tmp/myroot
+> 	$ make DESTDIR=/tmp/myroot install
+> 
+> 	/usr
+> 	/usr/lib64
+> 	/usr/lib64/libynl.a
 
-We don't yet have arrowlake events/metrics, should there be a fixes?
-I'm just preparing the patches for the latest vendor json from Intel,
-but they will depend on this. I suspect given the size of the vendor
-json it will miss the current merge window.
+This is super useful thanks for doing this work. I could be missing
+something, but it looks like the install target does not install the
+generated C headers that user code can include at build time.
 
-Thanks,
-Ian
+Am I reading that right? Is that intentional? I was thinking that it
+would be really useful to have the headers installed, too.
+
+> 	/usr/lib/python3.XX/site-packages/pyynl/*
+> 	/usr/lib/python3.XX/site-packages/pyynl-0.0.1.dist-info/*
+> 	/usr/bin
+> 	/usr/bin/ynl
+> 	/usr/bin/ynl-ethtool
+> 	/usr/bin/ynl-gen-c
+> 	/usr/bin/ynl-gen-rst
+> 	/usr/share
+> 	/usr/share/doc
+> 	/usr/share/doc/ynl
+> 	/usr/share/doc/ynl/*.rst
+> 	/usr/share/ynl
+> 	/usr/share/ynl/genetlink-c.yaml
+> 	/usr/share/ynl/genetlink-legacy.yaml
+> 	/usr/share/ynl/genetlink.yaml
+> 	/usr/share/ynl/netlink-raw.yaml
+> 	/usr/share/ynl/specs
+> 	/usr/share/ynl/specs/devlink.yaml
+> 	/usr/share/ynl/specs/dpll.yaml
+> 	/usr/share/ynl/specs/ethtool.yaml
+> 	/usr/share/ynl/specs/fou.yaml
+> 	/usr/share/ynl/specs/handshake.yaml
+> 	/usr/share/ynl/specs/mptcp_pm.yaml
+> 	/usr/share/ynl/specs/netdev.yaml
+> 	/usr/share/ynl/specs/net_shaper.yaml
+> 	/usr/share/ynl/specs/nfsd.yaml
+> 	/usr/share/ynl/specs/nftables.yaml
+> 	/usr/share/ynl/specs/nlctrl.yaml
+> 	/usr/share/ynl/specs/ovs_datapath.yaml
+> 	/usr/share/ynl/specs/ovs_flow.yaml
+> 	/usr/share/ynl/specs/ovs_vport.yaml
+> 	/usr/share/ynl/specs/rt_addr.yaml
+> 	/usr/share/ynl/specs/rt_link.yaml
+> 	/usr/share/ynl/specs/rt_neigh.yaml
+> 	/usr/share/ynl/specs/rt_route.yaml
+> 	/usr/share/ynl/specs/rt_rule.yaml
+> 	/usr/share/ynl/specs/tcp_metrics.yaml
+> 	/usr/share/ynl/specs/tc.yaml
+> 	/usr/share/ynl/specs/team.yaml
+> 
+> Signed-off-by: Jan Stancek <jstancek@redhat.com>
+
+[...]
 
