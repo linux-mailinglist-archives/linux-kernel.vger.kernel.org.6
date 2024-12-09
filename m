@@ -1,110 +1,219 @@
-Return-Path: <linux-kernel+bounces-437876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B57CC9E9A01
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:06:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A10A167C05
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:05:25 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 926651C5CA2;
-	Mon,  9 Dec 2024 15:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="PRMBkc6/"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 864079E99FD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:06:13 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A3521BEF8D;
-	Mon,  9 Dec 2024 15:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F095F281F98
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:06:11 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAED11BEF72;
+	Mon,  9 Dec 2024 15:06:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="OX9jiPZQ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="YiZMU+M2"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C267F1A23B7;
+	Mon,  9 Dec 2024 15:05:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733756711; cv=none; b=tACNgZ6ES75fjqU8yc6CGig/ZRBSEu89l6ythxl33FlxPt1gUuKFdz+VpOMgo+q7TFR77DTqS6OTb/WAuCZC5G3dPo3CBaQGkHh7+Ez4A/jZa9HayRwzl51fkLuT8+GTBiJ0YqcG1/1tEoh3Ro9jz1l6IXv4+cVgrHrkdC5zGnw=
+	t=1733756762; cv=none; b=P8VIGVsTTw2VfuQ55XpPEP6m05iX5Q9tyb/04e6ixxy9lqKwFEPAIfkdNi5tUXBlFzKluRPtgOM+OQHA9Xda2adzDVHgwrCYhjy4Qinj23N2ZGPSsaP31cC2fvaJH5ucxT80pZV7UXM4Bkzhe0iogRqpzyYR41B6z2mIdfvlH4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733756711; c=relaxed/simple;
-	bh=DKQ87bO3su7dJqWjZvJgPKNbxjWk5OSD77eSkEr/FPw=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=D2ESJTFuEwjhUU6/hZXnC54Rao+eX1SVqRgQxkprUJPE25j7etbhI2K+7lGzmiRFPuRI0nommZv7wl44WRUYVvNkdCvxMB9DjEV68UusvjfcnFZIMnpLmdDWxrC4C0cM2+6dsLl+869BDtwaBpBmlYi7P7c0V0LjsVfsK663+1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=PRMBkc6/; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 44C94502;
-	Mon,  9 Dec 2024 16:04:34 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1733756674;
-	bh=DKQ87bO3su7dJqWjZvJgPKNbxjWk5OSD77eSkEr/FPw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=PRMBkc6/8IPIUsz7pHkTBFqnZdM942c17RiI/DrnsJiSBWOAkQsyF25TJCCXTA4ml
-	 ZBkkqSHsJapPejP6lDd9NUP4xUci5dk1cgXfh9LBxbR37m0MRlvGDmdgBfD1gqYwFQ
-	 bCV61inYYRNASSSczmEfEDGHa5izoyixDXrpm3Lk=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1733756762; c=relaxed/simple;
+	bh=2My4XARRaO1nUpL9bjfa6zYnjXrL8EvGlIsUfc7RlfA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RCyfLH2jmTrYiaiXgMxtG6XlhWcdWz4bneTzTPWqeq1BJC2dVeMY8tfLihPjdBlWJA7CTfDEHWqufX8OOVHSwT984+e2Pwl530CY53cfXZC1MHwgU32BhwuCUNPEtOOVcoUTYICYTFrFKH9smO7WcVsSCEozPh4k2wsHmIMRZpQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=OX9jiPZQ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=YiZMU+M2 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1733756758; x=1765292758;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=vksvUByCwEXIhDlzgAmyb4aBjr3hSBbXTum0gcldopE=;
+  b=OX9jiPZQWp1uiiQvCN9G8NXZRHH2CHHzT81HEp1vBELAi652+AJGRVqs
+   2m9gPdMGGAl6O5ddEhav0mFyRl2IW8W85uT3BvA1EVIWwUg9FgnQTMYri
+   7jincifGbhmAS3K8uqW+d7egui0Q5FlSW7w5VV/PC/eCMPT1WnD3k6nmW
+   4+aNZYwhR8GhtFUrl/n+yvnVeNLys0S/TfS2zqoUqKT3dFB4Zey7eaERx
+   2qhWK8xxrIi0TlhHsSJV3eK5VHGM4FNmg1XkCUk5dOSjMzskhdGyvMe9Q
+   aCwHtv9bEL9in7D91sx16vGXpicwq9RldeOTf+xduOOZdn7ifkDP/x9TQ
+   Q==;
+X-CSE-ConnectionGUID: poYgBc8HRRGLk7FRHWt4dw==
+X-CSE-MsgGUID: J2pcjPvrRn+RzsTK4ZAeuw==
+X-IronPort-AV: E=Sophos;i="6.12,219,1728943200"; 
+   d="scan'208";a="40490430"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 09 Dec 2024 16:05:54 +0100
+X-CheckPoint: {67570752-B-1B231F50-D910A4E3}
+X-MAIL-CPID: 975DDE29B4A2D72A1889DEB0E7CA7530_5
+X-Control-Analysis: str=0001.0A682F19.67570752.0082,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 13AA0165653;
+	Mon,  9 Dec 2024 16:05:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1733756749;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vksvUByCwEXIhDlzgAmyb4aBjr3hSBbXTum0gcldopE=;
+	b=YiZMU+M2nnsaXHE2rANfrtKVcBhPqrpr0DG3Rno+5Vm0NEuDPNMUEMPXgQD/XP5fWG436O
+	MAN/yy3RkHSS8oQGZ9I1CYF9YNLut5rct3shpwTxz6UsIHMHgFBjnxTLXTlwSCmBlDGH0T
+	QtzQIn/z5fhGBs0HhVYsKrcjsU5mNGjxoPkqtzlrGFGo1RD9RJwJ4pLsSt/jlRto/5BJIj
+	y1UQjQKhA2vq9mYA/a6a2JVNO8mefvSjTfEYSwlMc2WdhsQpPrU8fddjQ7fho4Ecfa/Z+/
+	1hN6ENO+l+preBwwshGaJHyVFRGX5Bgn6/3VXfucEfJJTpsZQYJIunXRj22C0A==
+Message-ID: <e16076d16349e929af82fa987a658bff1d9804c4.camel@ew.tq-group.com>
+Subject: Re: [PATCH v2 5/5] arm64: dts: ti: Add TQ-Systems TQMa62xx SoM and
+ MBa62xx carrier board Device Trees
+From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Kees Cook <kees@kernel.org>,
+ Tony Luck <tony.luck@intel.com>, "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Felipe Balbi <balbi@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+ linux-hardening@vger.kernel.org, Devarsh Thakkar <devarsht@ti.com>, Hari
+ Nagalla <hnagalla@ti.com>, linux@ew.tq-group.com
+Date: Mon, 09 Dec 2024 16:05:46 +0100
+In-Reply-To: <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
+References: <cover.1733737487.git.matthias.schiffer@ew.tq-group.com>
+	 <95ff66ca2c89f69d893c2ce9eed9a0c677633c7b.1733737487.git.matthias.schiffer@ew.tq-group.com>
+	 <a9c5cfda-e3e3-436a-8d05-b2f096157cfe@lunn.ch>
+	 <c902a56cf34838f60cee67624bb923e91d74e9e0.camel@ew.tq-group.com>
+	 <d25b1447-c28b-4998-b238-92672434dc28@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20241209-media-ov9282-fix-v1-1-d06bb7546f18@raspberrypi.com>
-References: <20241209-media-ov9282-fix-v1-1-d06bb7546f18@raspberrypi.com>
-Subject: Re: [PATCH] media: i2c: ov9282: Correct the exposure offset
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Dave Stevenson <dave.stevenson@raspberrypi.com>
-To: Daniele Alessandrelli <daniele.alessandrelli@intel.com>, Dave Stevenson <dave.stevenson@raspberrypi.com>, Martina Krasteva <martinax.krasteva@intel.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, Paul J. Murphy <paul.j.murphy@intel.com>, Sakari Ailus <sakari.ailus@linux.intel.com>
-Date: Mon, 09 Dec 2024 15:05:02 +0000
-Message-ID: <173375670273.2486563.10697111608659253570@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+X-Last-TLS-Session-Version: TLSv1.3
 
-Quoting Dave Stevenson (2024-12-09 14:55:45)
-> The datasheet lists that "Maximum exposure time is frame
-> length -25 row periods, where frame length is set by
-> registers {0x380E, 0x380F}".
-> However this driver had OV9282_EXPOSURE_OFFSET set to 12
-> which allowed that restriction to be violated, and would
-> result in very under-exposed images.
+On Mon, 2024-12-09 at 15:42 +0100, Andrew Lunn wrote:
 >=20
-> Correct the offset.
+> On Mon, Dec 09, 2024 at 02:55:31PM +0100, Matthias Schiffer wrote:
+> > On Mon, 2024-12-09 at 14:24 +0100, Andrew Lunn wrote:
+> > >=20
+> > > > +&cpsw_port1 {
+> > > > +	phy-mode =3D "rgmii-rxid";
+> > > > +	phy-handle =3D <&cpsw3g_phy0>;
+> > > > +};
+> > > > +
+> > > > +&cpsw_port2 {
+> > > > +	phy-mode =3D "rgmii-rxid";
+> > > > +	phy-handle =3D <&cpsw3g_phy3>;
+> > > > +};
+> > >=20
+> > > rgmii-rxid is very odd.
+> > >=20
+> > > > +
+> > > > +&cpsw3g_mdio {
+> > > > +	status =3D "okay";
+> > > > +	pinctrl-names =3D "default";
+> > > > +	pinctrl-0 =3D <&main_mdio1_pins>;
+> > > > +
+> > > > +	cpsw3g_phy0: ethernet-phy@0 {
+> > > > +		compatible =3D "ethernet-phy-ieee802.3-c22";
+> > > > +		reg =3D <0x0>;
+> > > > +		reset-gpios =3D <&main_gpio1 11 GPIO_ACTIVE_LOW>;
+> > > > +		reset-assert-us =3D <1000>;
+> > > > +		reset-deassert-us =3D <1000>;
+> > > > +		ti,rx-internal-delay =3D <DP83867_RGMIIDCTL_2_00_NS>;
+> > >=20
+> > > I guess this is the explanation.
+> > >=20
+> > > What happens when you use rgmii-id, and don't have this delay here?
+> > > That would be normal.
+> > >=20
+> > > 	Andrew
+> >=20
+> >=20
+> > This is normal for AM62-based boards, see the DTSI of the TI reference
+> > starterkit for example:
+> >=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi#n451
+> >=20
+> > With rgmii-id, both ti,rx-internal-delay and ti,tx-internal-delay shoul=
+d be set.
+> > As ti,*-internal-delay sets the delay on the PHY side, phy-mode "rgmii"=
+ is the
+> > one that would not use either:
+> >=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/Documentation/devicetree/bindings/net/ti,dp83867.yaml#n78
+> >=20
+> > At the end of the day, does it really matter as long as MAC and PHY agr=
+ee on the
+> > used mode? We copied this part of the hardware design from the TI refer=
+ence
+> > board, and did our hardware qualification with these settings, so I thi=
+nk it
+> > makes sense to use the same phy-mode configuration.
 >=20
-> Fixes: 14ea315bbeb7 ("media: i2c: Add ov9282 camera sensor driver")
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
-> This was picked up by one of our users noting that images were
-> going dark for captures through libcamera. libcamera was resetting
-> vblank and hblank to minimums for the capture, and that put us in
-> the situation where it broke the datasheet requirement for
-> exposure being at least 25 lines shorter than the frame length.
-> ---
->  drivers/media/i2c/ov9282.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> What i try to achieve is every board uses the same configuration. The
+> PHY adds the delays, not the MAC. There are a few exceptions, because
+> a few cheap PHYs don't support delays, and so the MAC needs to add
+> them. But in general, any board i review, i always ask that the PHY
+> does the delay.
 >=20
-> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> index 9f52af6f047f..87e5d7ce5a47 100644
-> --- a/drivers/media/i2c/ov9282.c
-> +++ b/drivers/media/i2c/ov9282.c
-> @@ -40,7 +40,7 @@
->  /* Exposure control */
->  #define OV9282_REG_EXPOSURE    0x3500
->  #define OV9282_EXPOSURE_MIN    1
-> -#define OV9282_EXPOSURE_OFFSET 12
-> +#define OV9282_EXPOSURE_OFFSET 25
+> Also, don't put too much value in vendor code. Vendors don't care
+> about Linux has a whole, being uniform across all systems. Many
+> vendors do the minimum to get their stuff working, sometimes Monkeys
+> typing Shakespeare, and not a lot more.
+>=20
+> I also find a lot of developers don't really understand what phy-mode
+> and PHY_INTERFACE_MODE_RGMII_* actually mean. phy-mode =3D 'rgmii' means
+> the board has extra long clock lines, so the MAC/PHY does not need to
+> add delays. rgmii-rxid means the board has an extra long rx clock
+> line, but a normal length tx clock line. Now, i doubt your board is
+> actually like this?
 
-As I've looked this up in the datasheet:
+Not our board, but the AM62 SoC. From the datasheet:
 
-Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
+"TXC is delayed internally before being driven to the RGMII[x]_TXC pin. Thi=
+s
+internal delay is always enabled." So enabling the TX delay on the PHY side
+would result in a double delay.
 
->  #define OV9282_EXPOSURE_STEP   1
->  #define OV9282_EXPOSURE_DEFAULT        0x0282
-> =20
 >=20
-> ---
-> base-commit: 40384c840ea1944d7c5a392e8975ed088ecf0b37
-> change-id: 20241209-media-ov9282-fix-a1ec012f5272
->=20
-> Best regards,
-> --=20
-> Dave Stevenson <dave.stevenson@raspberrypi.com>
->
+> You want to correctly describe your hardware in DT, which i guess is
+> "rgmii-id". That means something, either the MAC or the PHY needs to
+> add delays. PHY_INTERFACE_MODE_RGMII_* is what is passed to the
+> PHY. To get it to add the 2ns delays, you pass
+> PHY_INTERFACE_MODE_RGMII_ID, and you should not need any additional
+> properties in DT, it should default to 2ns. If you need to tune the
+> delay, 2ns does not work, but you actually need 1.8ns etc, then you
+> can add additional parameters. But given you have
+> DP83867_RGMIIDCTL_2_00_NS, i doubt you need this.
+
+No such defaults exist in the DP83867 driver. If any rgmii-*id mode is used=
+, the
+corresponding delays *must* be specified in the DTB:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
+vers/net/phy/dp83867.c#n532
+
+Best regards,
+Matthias
+
+
+--=20
+TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
+any
+Amtsgericht M=C3=BCnchen, HRB 105018
+Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
+neider
+https://www.tq-group.com/
 
