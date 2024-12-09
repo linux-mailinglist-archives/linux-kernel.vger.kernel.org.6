@@ -1,251 +1,123 @@
-Return-Path: <linux-kernel+bounces-436967-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24139E8D37
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:20:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07B139E8D2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:19:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 85050280FEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:20:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00727164D14
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:19:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3BBB21518F;
-	Mon,  9 Dec 2024 08:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 866CA214A9D;
+	Mon,  9 Dec 2024 08:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kFhDhNvc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dpn8o856"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FF221517C;
-	Mon,  9 Dec 2024 08:20:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D799189B85
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:19:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733732423; cv=none; b=dZAERZ8C1q/+GPLX40aOkMTB6XZ3CBrX2evbIIT2NAwizthtslTOrcNcPTr4ZmHXU6dENA9Krkwf19GNcP1K5RkPbtTVVD3T+v11gWEyC4TP3+fyOQ6lw/4qOhFa9YJjPXOkILfgRZeZY29i6/AXw/EnNkYbAI7UUSshWuOMwSo=
+	t=1733732380; cv=none; b=AItSuayDuel1OAAN1nai8c6auLcVOINwm/TuKFNkGSwvX6J6va21j7jl4ErdYQ37e2EbIU/i1HJBPhiJr4K6fD7N+VnjCbH71qRl+1cevWfH9rL6vLoFFuimFfBeBlT6CusBewElBiUJkoyhDfzvKb7YrUBTgIRc0ym6dJeCO/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733732423; c=relaxed/simple;
-	bh=lHuPWHa/efQT1BNZFlGjszR58NyERmLq8SkocIwsOP4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=I/gaq/TrLZ32t/5NlH/XKa/oGMaZF7+q92AIxN3ZU0eyAs7OeyXjFeuvmm2sxBVdPialuEIUP+PEIZJllCfjQRTUaqa3CXU0mDEe+GIytVOf4MJbvJrieLZ+5PqAOKL1+fW+4511sp/Kuyqpy+En9pS/6/5z358Es7HvspZ6gro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kFhDhNvc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8NRkM9007232;
-	Mon, 9 Dec 2024 08:20:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=sdNWNVryJQx5h8jYbXCmZe
-	/MFgrUPGTmXDFDkbVAL6o=; b=kFhDhNvcVH9SXoGgyWUIvutdu7sYWza4wSDSTM
-	qf6cHUgc80RYdyRr9I69MdBEiH7UM0BM8Aj2F4fy0WoBkPev+4Ve/kdKj4qLcD02
-	6OO3HzvfvkbuEIGB2QKOcLiWKrl8ChLK3hNJ1RMsv31TuWvWeQSlWCzj/fcvbNhR
-	vYUH+7ZHmZ/OeBEtz9DT3cHosnh00bB0N6bK7LLpavvbQhngZCpfq7OukVp5SN3R
-	YIN4O23L8gNZIZxgT3gZCpFNZHVfFRjwA0OZztH8L4FmFC03/PHwqPEcQmfoPKNY
-	WR/4BUtyhePtp3Is0dUMPZ4PHbz4+67mSqt/9YuUzmOBqqSg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cek1uuj6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 08:20:07 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B98K6m6010277
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 08:20:06 GMT
-Received: from [10.213.111.143] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 00:20:02 -0800
-From: Akhil P Oommen <quic_akhilpo@quicinc.com>
-Date: Mon, 9 Dec 2024 13:49:15 +0530
-Subject: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
+	s=arc-20240116; t=1733732380; c=relaxed/simple;
+	bh=Ugyo68y+AEY8u7i/30di80rPWhNRRQDEi6tQUQwpdh4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TL9XykypxtzBsitDt3NzYHYxp4z7E7zYECFZJneniufcfQR7ah3BQlUwL1CgfZAQ61x7fvxaq4/CDHraxwYfI9R+O/KSAZ7U1Ia8LsGdtdI5yDkEgV9ZmHpvTU1i4DZgTcy76utJ8T/j3Fo3u6vCov5ZS7QaF5J4f7NjXbRNoIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dpn8o856; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-386329da1d9so1035154f8f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 00:19:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733732377; x=1734337177; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xQiaE+JvK4g7UWmvAk+qy7K9dS4ykwXQnbxiADZaYvI=;
+        b=dpn8o856fSc3sXmA+VG7hVtQTQPGOBbNzj+rObF+P+QQpPk5SXCxvmyuOuJviEg2uk
+         hrtzFVYEva+7L9zyLwFQvwNHH5JSIjy65MWwtTSN5mBQkw6NbYB3/8VEykY6TwhMmLWb
+         PK95Ak430d3OuBqLaPj2RAVjwewEqpmz/lZ94914T4IZq7xzyxQvroa0BtXATy/iV/Ln
+         PS81jJjIy9Ds8WDPe/MmfArM7FiOKOSNFr9vQ7FZ/ORsBxu0/oZSmS9S04VdCBZSA7+1
+         4bvcPVL5rygGPHEoDedGl0tewaKMO/6YGBmBstc7/J5QEikxFq477h1YxxOvxf6THstk
+         na3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733732377; x=1734337177;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xQiaE+JvK4g7UWmvAk+qy7K9dS4ykwXQnbxiADZaYvI=;
+        b=ttXjlMJE6gPaQcswSdK2KHqGd/uNaqn08WuctM2I8Kq5xgmxCLHlWmftAcP2ewFORr
+         FsuIrntlmNftwYwt93mHmXME37+Yh8N3pqtFhN5RBCeNzLDc9vdH8QQO0syCzouXlVaX
+         QtlVf1O5zJ3Ms5gYwsDqaSTkEMzVENSX+M//u99064f7iV7f3U/ngfXvwK6TvE65DUD2
+         zFZB6ZZIbJbIiPiD4FxG3Gt0aoUo4J9Qb7qShG2hP1y7sl80cB23wPskmRvYEI8XPWvY
+         lh45yzkySQrbjgHMjNDxVwKYVfKRonVG3DucdERbXzUeje18LTENAEg9/EWVQ0AYm1tj
+         bpaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgnYK/VrWEvZnBfvTbq2nXnj9iGJLX2sEMS35+Ph68KghnJG8KW48f+u/SFDz3BayVgntqO0o5LMocwa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5lZdOSRpKYAW/Lfl5SlE0vmcF4NUVZN9HFBXUGQWnchz2+1La
+	JdvrnYGZA/zTp//IOli6CynwCRwlD0pVHZ0P0qlQjWonlNXLcoBlodrVjtw+YE4=
+X-Gm-Gg: ASbGncttzcdfASL18GQcaJucLMXNJBHuPdaRyYO02EYLjg2rKdEKc8u95dmUmK2GMt+
+	QOktwy0A/X13ZvWTzzYY718kS0Ug7AQ+JsKIL6iGNn219GuBX4Gb17k7zdvt0qbCOP+VocV6UvU
+	4QEaPjvS3UPwl6RqqWt5ivx/nCHKUvmvbnLyYPlgF+NS+nydLbHyHnq3P87VGJ58DbkpxRSO6wU
+	ccgVbyzlgTz9OGBYne7PNujyeY6bQMt8b0Mw32XkZ7hiTD4mjrNPChw+w==
+X-Google-Smtp-Source: AGHT+IHbzDErJOZQABXZyJP5tU7I2SyjaZPz5Bn/mEn+KluRKuUJnEKdIGQOObo2GOY0FS81Gw2PTQ==
+X-Received: by 2002:a05:6000:1846:b0:385:e8b0:df13 with SMTP id ffacd0b85a97d-3862b3d5c9amr8412126f8f.40.1733732377593;
+        Mon, 09 Dec 2024 00:19:37 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.27])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434ea1ae415sm76326735e9.33.2024.12.09.00.19.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 00:19:37 -0800 (PST)
+Message-ID: <e36da496-04f3-4f00-aab1-f52aa0c1450f@linaro.org>
+Date: Mon, 9 Dec 2024 08:19:34 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/3] dt-bindings: firmware: add samsung,exynos-acpm-ipc
+ bindings
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ alim.akhtar@samsung.com, linux-kernel@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org,
+ kernel-team@android.com, willmcvicker@google.com, peter.griffin@linaro.org,
+ javierm@redhat.com, tzimmermann@suse.de, daniel.lezcano@linaro.org,
+ vincent.guittot@linaro.org, ulf.hansson@linaro.org, arnd@arndb.de
+References: <20241205175345.201595-1-tudor.ambarus@linaro.org>
+ <20241205175345.201595-2-tudor.ambarus@linaro.org>
+ <k2pnpu3ef2rgy6wre2qrearwmetzb4v4meiyqpy7oyg45hohlp@kmnzulhbmdk6>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <k2pnpu3ef2rgy6wre2qrearwmetzb4v4meiyqpy7oyg45hohlp@kmnzulhbmdk6>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-ID: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAAKoVmcC/32OwQ6CMBBEf4Xs2TVsg6Cc/A/DAdtVGtMW20Iwh
- H+3QLx6nEnevJkhsNccoM5m8DzqoJ1NgQ4ZyK61T0atUgaRi4JI5Ki8QRMMvkaDYeh75yNKVXJ
- ZFYVkVUIie88PPW2rt2bPnt9DGo97Cfc2MEpnjI519pu0PEVcRUiEeQEr2ukQnf9s/0ba2L9XR
- kJCQdVZsZDVSV2uySu1lcdkg2ZZli9ALLLJ8wAAAA==
-To: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Elliot Berman <quic_eberman@quicinc.com>,
-        "Pavan
- Kondeti" <quic_pkondeti@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Akhil P Oommen
-	<quic_akhilpo@quicinc.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733732402; l=4603;
- i=quic_akhilpo@quicinc.com; s=20240726; h=from:subject:message-id;
- bh=lHuPWHa/efQT1BNZFlGjszR58NyERmLq8SkocIwsOP4=;
- b=uijuPtexS6QSDML4UKcSB3E9bXi4aONbzEzVfNZqP2oJwoHkvem7wi2HIfpJBkMe0jz5bDsiy
- HTfbLBTrF+pAYdb84cYLUYrxH59U/aLRq9URRB4n2z899kpiIc/C2Zy
-X-Developer-Key: i=quic_akhilpo@quicinc.com; a=ed25519;
- pk=lmVtttSHmAUYFnJsQHX80IIRmYmXA4+CzpGcWOOsfKA=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: t7ty5QztJhS1rH1mryfB75g24t2twoGK
-X-Proofpoint-ORIG-GUID: t7ty5QztJhS1rH1mryfB75g24t2twoGK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- mlxscore=0 adultscore=0 clxscore=1011 malwarescore=0 phishscore=0
- spamscore=0 mlxlogscore=999 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090063
 
-When kernel is booted in EL2, SECVID registers are accessible to the
-KMD. So we can use that to switch GPU's secure mode to avoid dependency
-on Zap firmware. Also, we can't load a secure firmware without a
-hypervisor that supports it.
 
-Tested following configurations on sa8775p chipset (Adreno 663 gpu):
 
-1. Gunyah (No KVM) - Loads zap shader based on DT
-2. KVM in VHE - Skips zap shader load and programs SECVID register
-3. KVM in nVHE - Loads zap shader based on DT
-4. Kernel in EL2 with CONFIG_KVM=n - Skips zap shader load and
-	programs SECVID register
+On 12/9/24 8:03 AM, Krzysztof Kozlowski wrote:
+>> +  initdata-base:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    description:
+>> +      Base address of the configuration data in the shared memory.
+> If you really need this, then it should be rather encoded as part of
+> shemm phandle (phandle-array with describing items, just like syscon
+> phandles are done).
+> 
+> But OTOH, I don't see why this is needed at all so far - compatible
+> defines it.
 
-For (1) and (3) configuration, this patch doesn't have any impact.
-Driver loads secure firmware based on other existing hints.
+Indeed, I shall move it to compatible. If firmware ever changes, and
+uses a different offset to the configuration data, then I can introduce
+a new compatible.
 
-Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
----
----
- drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 82 +++++++++++++++++++++++------------
- 1 file changed, 54 insertions(+), 28 deletions(-)
+I agree with all the other comments as well, will address them in v4.
 
-diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-index 019610341df1..9dcaa8472430 100644
---- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-+++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
-@@ -14,6 +14,10 @@
- #include <linux/pm_domain.h>
- #include <linux/soc/qcom/llcc-qcom.h>
- 
-+#ifdef CONFIG_ARM64
-+#include <asm/virt.h>
-+#endif
-+
- #define GPU_PAS_ID 13
- 
- static inline bool _a6xx_check_idle(struct msm_gpu *gpu)
-@@ -998,6 +1002,54 @@ static int a6xx_zap_shader_init(struct msm_gpu *gpu)
- 	return ret;
- }
- 
-+static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
-+{
-+	int ret;
-+
-+#ifdef CONFIG_ARM64
-+	/*
-+	 * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
-+	 * to switch the secure mode to avoid the dependency on zap shader.
-+	 */
-+	if (is_kernel_in_hyp_mode())
-+		goto direct_switch;
-+#endif
-+
-+	/*
-+	 * Try to load a zap shader into the secure world. If successful
-+	 * we can use the CP to switch out of secure mode. If not then we
-+	 * have no resource but to try to switch ourselves out manually. If we
-+	 * guessed wrong then access to the RBBM_SECVID_TRUST_CNTL register will
-+	 * be blocked and a permissions violation will soon follow.
-+	 */
-+	ret = a6xx_zap_shader_init(gpu);
-+	if (ret == -ENODEV) {
-+		/*
-+		 * This device does not use zap shader (but print a warning
-+		 * just in case someone got their dt wrong.. hopefully they
-+		 * have a debug UART to realize the error of their ways...
-+		 * if you mess this up you are about to crash horribly)
-+		 */
-+		dev_warn_once(gpu->dev->dev,
-+			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
-+		goto direct_switch;
-+	} else if (ret)
-+		return ret;
-+
-+	OUT_PKT7(gpu->rb[0], CP_SET_SECURE_MODE, 1);
-+	OUT_RING(gpu->rb[0], 0x00000000);
-+
-+	a6xx_flush(gpu, gpu->rb[0]);
-+	if (!a6xx_idle(gpu, gpu->rb[0]))
-+		return -EINVAL;
-+
-+	return 0;
-+
-+direct_switch:
-+	gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
-+	return 0;
-+}
-+
- #define A6XX_INT_MASK (A6XX_RBBM_INT_0_MASK_CP_AHB_ERROR | \
- 		       A6XX_RBBM_INT_0_MASK_RBBM_ATB_ASYNCFIFO_OVERFLOW | \
- 		       A6XX_RBBM_INT_0_MASK_CP_HW_ERROR | \
-@@ -1341,35 +1393,9 @@ static int hw_init(struct msm_gpu *gpu)
- 	if (ret)
- 		goto out;
- 
--	/*
--	 * Try to load a zap shader into the secure world. If successful
--	 * we can use the CP to switch out of secure mode. If not then we
--	 * have no resource but to try to switch ourselves out manually. If we
--	 * guessed wrong then access to the RBBM_SECVID_TRUST_CNTL register will
--	 * be blocked and a permissions violation will soon follow.
--	 */
--	ret = a6xx_zap_shader_init(gpu);
--	if (!ret) {
--		OUT_PKT7(gpu->rb[0], CP_SET_SECURE_MODE, 1);
--		OUT_RING(gpu->rb[0], 0x00000000);
--
--		a6xx_flush(gpu, gpu->rb[0]);
--		if (!a6xx_idle(gpu, gpu->rb[0]))
--			return -EINVAL;
--	} else if (ret == -ENODEV) {
--		/*
--		 * This device does not use zap shader (but print a warning
--		 * just in case someone got their dt wrong.. hopefully they
--		 * have a debug UART to realize the error of their ways...
--		 * if you mess this up you are about to crash horribly)
--		 */
--		dev_warn_once(gpu->dev->dev,
--			"Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
--		gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
--		ret = 0;
--	} else {
-+	ret = a6xx_switch_secure_mode(gpu);
-+	if (!ret)
- 		return ret;
--	}
- 
- out:
- 	if (adreno_has_gmu_wrapper(adreno_gpu))
-
----
-base-commit: f4a867a46862c1743501bbe8c813238456ec8699
-change-id: 20241120-drm-msm-kvm-support-cd6e6744ced6
-
-Best regards,
--- 
-Akhil P Oommen <quic_akhilpo@quicinc.com>
-
+Thanks!
+ta
 
