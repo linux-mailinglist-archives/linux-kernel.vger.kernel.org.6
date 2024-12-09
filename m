@@ -1,166 +1,87 @@
-Return-Path: <linux-kernel+bounces-437950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A649E9AE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:49:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 115DD9E9AE9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:51:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7488818882B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:49:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13DEB165AF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:51:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C65F132105;
-	Mon,  9 Dec 2024 15:49:31 +0000 (UTC)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com [209.85.222.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2A4130499;
+	Mon,  9 Dec 2024 15:51:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnDoptEG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C2C25777;
-	Mon,  9 Dec 2024 15:49:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88A878C9C;
+	Mon,  9 Dec 2024 15:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759370; cv=none; b=dAKaYWfAMolhxDLsqkswf3OPwuIwD+Efsx9IWrwI/syav9SKoPcBYqxqwRTH2anvGaFmY3EMrZLaEWgsyOSTl8pah/C3u4YNBkPyQSHeDumMKeSrXZuB8QRCXlPEZ1IGznME6+tgUlycMj+Qsedwbsc/aeM7RIwKhhm+bOYGII0=
+	t=1733759478; cv=none; b=QMqAE2jAKRYQ5/sP56+VWAxWy+awzBNn6VH6ZcMqUU8ypxBrshTD495PthKDRbU0NAbVnIgBd3pNhBNaGJBFeC/o7iNe83J2mcyuvc6AYAZvMZ0AV5b1nQpnWMJOn1z95A8+kaYPMe5IBvhLOLLPzCBwhkrvLsiaZTiMRVf58VU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759370; c=relaxed/simple;
-	bh=LjMNUFQMHLJCY4P1HKwbqDBINnhwCB3WKXmNB65YJmk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=i5FV2Kxp9FaUEsxq6/ZXdbN8cfW4rSeaZQyg7LIxxMCM34Sn9oiUyMoU0CnroEThfnOeocZNtcBxI4/G3HFHU2Ao6704NFRXUZB6fr/Cqttuq8hZ0iiC+lNsFiyePS/uIdqxGps+rntuZTJd1S546y7m9Ij6W9AeyaCThZpDEBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-85b8c94a6b4so887703241.0;
-        Mon, 09 Dec 2024 07:49:28 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733759365; x=1734364165;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4aTRQnkUNKVUbImYBxHqUKoieNHc96HYQ9+Ue9BP2LI=;
-        b=DWaNx+iJdA4nmI6FrUxutX4n8Dv7o83QnU4xrlkTOSUa/9XPxBy2CVbZQl5orZtFGD
-         s/ffNwsZ2/KiDXaAQ6bMFKQAmaRKExFQiDe6Rf8C79mkjkTu4QuqCd4ILWnJIBkZO43O
-         otdY2myI5Vil4QFklemLvq3YThOBpsOtClXMSd5XmpENi1XAh8jUxN7TSgqqx210dTG2
-         T647ohDhZ/fiQFY5d9FQYT9EsJ2tiGNW5XRQh96q8nJP9JVubKJ6PcU+hZp1ZFYBOUPM
-         re+SjImisQiPYz+0ITphA6bDAtTcavd7TogDkKBBOYRAIblM8rqBs4RtfdQbHgMjTAoh
-         Vsnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyDcgT8TzEFCDqE4IkYKoGjXT8ZQMvki+7bGuxdiUrQjrf8DWnjlhSDwLuuWED/dRlbDEJ166UnCQEAg==@vger.kernel.org, AJvYcCV5oyQVree2xG/SSHl/he5aoP7wpF3XYtjQxbpVHj/p5p3ATEbJlDxiEvzxnz1S4AduEh/vtbrPl0s2tJXzGlvIOY8=@vger.kernel.org, AJvYcCWceaDcnrAZOIOj7B6Mpmtt+EuM18wXXy2rbrTgq1IWXUiy9O3tBVFC51mUoqa8ZngCr8K4UI9QBkljuTJw@vger.kernel.org, AJvYcCWpZXk4QvlWU2UBfrfX4atmU7sV6xEfA+k3Bdg5r+Ap4BXkjLG2y9NuGPKCJE7uVcIrDwB6SAyqmshx@vger.kernel.org, AJvYcCWsDXu9HT3Deue0Syx+Dk84UoedUy+bulLaiyDdGdO/ECPb5/f5eKgDWRE2m+LBA92v3xuJr3DvPTIU@vger.kernel.org, AJvYcCXKLnDUWxExLJ06OwFhkRlLS83BbX+xUcGUWZcllupIcwc/7kXpXqEOVtf98+PsCQ4gPwkb77q4EYSTZJg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkOcQKb2MqPWEVhF5FyFXknugdEHp6Q5t8giXhL40RWWGu8r4q
-	0MYhGIQHKk/x9F5haYpgTG4tVpVvsjlbBWOFsjkKzov+qgTynpZTYmjkRBcQGes=
-X-Gm-Gg: ASbGncvabtXm6Q7hJVortvhJHKmbhTGejfNpriKEOzjNE6ZeNPoewHOXpHP0i79gDCa
-	VNRrNZMET9AEPOKDEu7FEyiPoICMjunW7b05P23WSkqczO1Wv7rKcj8s5X5YqRTDsJoWlUO6Oqc
-	GHrixQVb/Udx5XS9yREWEiRyTK1tfVhV1yVIBJnr+96NSbOVpjLKS0T4MOjterWVSF6oS9aJFmi
-	M2UnwpWl61N+EyVO07NWOPDz+igjIVvqJ0hMQj9hVkO7HrvLWiwNfZosvlAVRjIWtdRgPooj3hd
-	igmqXfgedE5e
-X-Google-Smtp-Source: AGHT+IEt70oVAjOZug8nZYNXKcFzpzT7aPP023b4YfeR/u48ImT0UyP5usSDkyZ31PflPQQXg3YJdw==
-X-Received: by 2002:a05:6102:d8a:b0:4af:f6e5:2b46 with SMTP id ada2fe7eead31-4b11608bc29mr1725441137.9.1733759365231;
-        Mon, 09 Dec 2024 07:49:25 -0800 (PST)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afd719eb3fsm816816137.27.2024.12.09.07.49.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 07:49:24 -0800 (PST)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-85b8c94a6b4so887691241.0;
-        Mon, 09 Dec 2024 07:49:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU6GajfDJgQBihPSuhIlTlVusxhFDtKW70/RpcvET2WWXonx9whexZtXQIKbC22S2FDc5TuaxYOaJhw5STL@vger.kernel.org, AJvYcCUJAzWXgqCfONgUqiuRl1KKpg/GQrlbvwcDbBBvjCuyacVkgovjC71oDwoA412gTcFWVStk/b0vpdCWBnQ=@vger.kernel.org, AJvYcCUibGnB990/OX1n6n4xO5BzpwtVgy48oGH+eUOfylJw0zvRgn+fSuPuQn24q3EWY4LAY/ecgs36TENB@vger.kernel.org, AJvYcCV6Zg869nf2a+PIevFxfkUI61kf1OHTovU8bg4Hak+5lB6TE/BJECxTIZ7/NyA05Zax2HapuHMF16Dweg==@vger.kernel.org, AJvYcCWXCBpcR+kg5FNkULYn1OIeF+4PiDA5QxXJl/fVmNWTdQ0bjR9gDoWz69bxcm5it2PaNwKrmurImEIiHzxCGGSgA9M=@vger.kernel.org, AJvYcCXEjT2SW13QavE43+Mx9uDHaSVLUSUNc742NilZ14wcQRT7w9IdRu0/45am0wpDKa5o/VSgMIg4jwwp@vger.kernel.org
-X-Received: by 2002:a05:6122:a0a:b0:518:865e:d177 with SMTP id
- 71dfb90a1353d-51888560690mr1285238e0c.9.1733759364092; Mon, 09 Dec 2024
- 07:49:24 -0800 (PST)
+	s=arc-20240116; t=1733759478; c=relaxed/simple;
+	bh=JVerLY/R5ex77RCp2JkuVu4YnL7bEhF/hr/WI/k6+f0=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=UT+iwIFXMpPBy0oqsmNrjCGIBXPXINVUnWdRcVU+Fuu/3/POVtNqGNiEh6ltl7QqNrx0whb44F8OQyLMYex1LhHCF57H7v0H5A5vR6ckjfhnkbwTlbkY90zXVpi3CMDT08Do2D20ZFP/EPixYZOZ1Ms1M+By39mtxLE8iHhrrhw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnDoptEG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB4E3C4CED1;
+	Mon,  9 Dec 2024 15:51:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733759478;
+	bh=JVerLY/R5ex77RCp2JkuVu4YnL7bEhF/hr/WI/k6+f0=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=ZnDoptEGPQd377O3B2C59RujbxgZTrOT23FQZLDv8Rgi8/8l25/+n+wmU318ZstNf
+	 UxD6cQ7JmhlHTou/z4uPJydJFY5cht1M0OGB3io3Jfr/lMhyLZ0uZmaW01FKB+mdx7
+	 ZU+6+EE7rUmnf7lWY7GWAfMEP2jTpuKzRs+4VQfOtTLf3/LQlAfx8fD9h1lauHaUSJ
+	 DS6LVYiwRSTmke6SOd0rtp2h0TgV3YtBnoCXk/3/MU6A/V0urmEpio93cOEuOkFq49
+	 Lts7pV0rcJMJvhnd+if4Rij0xjBfGU1cp6Rnh5KJvMFk3jEaaAch9o+ZuEb9W7yRQX
+	 u6Nqe52NQZNGA==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-24-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-24-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 16:49:11 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdV0adApx2uGvM=xnY-rBd9UNYQiEouzvwhq6Oupyy0S3w@mail.gmail.com>
-Message-ID: <CAMuHMdV0adApx2uGvM=xnY-rBd9UNYQiEouzvwhq6Oupyy0S3w@mail.gmail.com>
-Subject: Re: [PATCH v3 23/25] arm64: dts: renesas: Add da7212 audio codec node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH] wifi: wlcore: fix unbalanced pm_runtime calls
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: <20241107181531.1774550-1-andreas@kemnade.info>
+References: <20241107181531.1774550-1-andreas@kemnade.info>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: rmk+kernel@armlinux.org.uk, johannes.berg@intel.com, andreas@kemnade.info,
+ leitao@debian.org, emmanuel.grumbach@intel.com,
+ linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <173375947536.157598.1252176440647591956.kvalo@kernel.org>
+Date: Mon,  9 Dec 2024 15:51:16 +0000 (UTC)
 
-Hi Claudiu,
+Andreas Kemnade <andreas@kemnade.info> wrote:
 
-On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add the da7212 audio codec node. Along with it regulators nodes were
-> reworked to be able to re-use them on da7212.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> If firmware boot failes, runtime pm is put too often:
+> [12092.708099] wlcore: ERROR firmware boot failed despite 3 retries
+> [12092.708099] wl18xx_driver wl18xx.1.auto: Runtime PM usage count underflow!
+> Fix that by redirecting all error gotos before runtime_get so that runtime is not put.
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
 
-Thanks for your patch!
+Do we know what commit broke this? A Fixes tag would be good to have.
 
-> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-> @@ -63,7 +63,6 @@ vcc_sdhi0: regulator0 {
->                 enable-active-high;
->         };
->
-> -#if SW_CONFIG2 =3D=3D SW_ON
->         vccq_sdhi0: regulator1 {
->                 compatible =3D "regulator-gpio";
->                 regulator-name =3D "SDHI0 VccQ";
-> @@ -73,8 +72,8 @@ vccq_sdhi0: regulator1 {
->                 gpios-states =3D <1>;
->                 states =3D <3300000 1>, <1800000 0>;
->         };
-> -#else
-> -       reg_1p8v: regulator1 {
-> +
-> +       reg_1p8v: regulator2 {
->                 compatible =3D "regulator-fixed";
->                 regulator-name =3D "fixed-1.8V";
->                 regulator-min-microvolt =3D <1800000>;
-> @@ -82,9 +81,17 @@ reg_1p8v: regulator1 {
->                 regulator-boot-on;
->                 regulator-always-on;
->         };
-> -#endif
->
-> -       vcc_sdhi2: regulator2 {
-> +       reg_3p3v: regulator3 {
-> +               compatible =3D "regulator-fixed";
-> +               regulator-name =3D "fixed-3.3V";
-> +               regulator-min-microvolt =3D <3300000>;
-> +               regulator-max-microvolt =3D <3300000>;
-> +               regulator-boot-on;
-> +               regulator-always-on;
-> +       };
-> +
-> +       vcc_sdhi2: regulator4 {
+Why not change this also to use out_unlock:
 
-So that's why it's better to prefer named over numbered regulators...
+	role_type = wl12xx_get_role_type(wl, wlvif);
+	if (role_type == WL12XX_INVALID_ROLE_TYPE) {
+		ret = -EINVAL;
+		goto out;
+	}
 
->                 compatible =3D "regulator-fixed";
->                 regulator-name =3D "SDHI2 Vcc";
->                 regulator-min-microvolt =3D <3300000>;
+-- 
+https://patchwork.kernel.org/project/linux-wireless/patch/20241107181531.1774550-1-andreas@kemnade.info/
 
-LGTM, so
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
