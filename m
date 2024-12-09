@@ -1,235 +1,153 @@
-Return-Path: <linux-kernel+bounces-437656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42ACE9E96A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:26:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102469E96AB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBF83188AC94
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:22:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EEE46188B102
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F3A31B4221;
-	Mon,  9 Dec 2024 13:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H9++LRX/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DF8222D4F;
+	Mon,  9 Dec 2024 13:15:45 +0000 (UTC)
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42AB31ACEDB
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E1E1B0404;
+	Mon,  9 Dec 2024 13:15:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750126; cv=none; b=kQzcuSYj7r+KMusTv3+CM9+xXjgf8JsBdQWZBNlICitE0nINYIMdF90gILcldEsbIQa8uuWbDLMQA9+9GNe/AUNJMG9u8VealIDcIAVeBoKjHB4nEOWnMnpvhLx8RfTv+Kcj24L6yB/OQJtJ8RXEXaZXsRKuCGNGC61Oco7Vbko=
+	t=1733750145; cv=none; b=Ad+5Y9IhyVOqNi+Oz8tHR6UjubObZto7AWjCCfImbj2SPbQSGZ5apdHJr4qpDepaD05lImhGpS6/jUeXDpasaLt1gr9INOhfuvBUMlYkP+oEG3XwwQxqFlySkhyxfmz0HzevR6GmUmHNUqbiJ+gjh/O9rt1sky8AfRQEQRNCQNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750126; c=relaxed/simple;
-	bh=ftWr6DBR7xHeC3+2czi3lER0J1bIqDP2zyiWq3WBWpU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=K1sWramsslrbW53PgRyhmLThofM6j4EZBhn8encTjY8XreVnG5gd1wXvNhTfH75aOUPC9X2vArFySkhctSnXEABlBvfBd30ngIoz99mudcL9WpwcI6rk+9tZJjZzVS++TGYwoYQ83B/fK1zn8am8xHGb7wJtEI8eAj5AbkF/su0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H9++LRX/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733750123;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1WoHdJlzjlTmm0KIYckzqnb3Qs1nO0xVPTt7EQVV3wE=;
-	b=H9++LRX/5oDcB6OjU3zW9pwDTQeAAI14PWjEH5yH1lU61BIuCJGkqN+EvDeHoz0Mr+r6aD
-	5fx9mcUlB4eC+YeyhQp5vv1MAWGX77aO0hGEbybuit3dJE9aJg39hROdoEXiDLvTGXcnPH
-	5LgWIoivEBv1Q8FDWo274nTudYYRGwo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-rk2H4i5yMCehYrjEf6p3kQ-1; Mon, 09 Dec 2024 08:15:22 -0500
-X-MC-Unique: rk2H4i5yMCehYrjEf6p3kQ-1
-X-Mimecast-MFC-AGG-ID: rk2H4i5yMCehYrjEf6p3kQ
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434f1d39147so9207705e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 05:15:22 -0800 (PST)
+	s=arc-20240116; t=1733750145; c=relaxed/simple;
+	bh=lh/Nf8r8mXVMnZOUdv/stO7zBDdteR2rS6iLVzqqYwQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=C7GSyzrsVFduYyZqerklGNn9rhWORwjp5riQDsil7LTXJgvLOYUjf/NE5ZF4JU282RMSWcAMgbQRZqRwg3w97dniqHEpMoiB23qNoEO/MvFsZASu4HqGcbLxwRYkAURzWdK64u1nyRdELGmLu9JtElYURbQP4B6g2Y3N4rkQAwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6d900c27af7so16703446d6.2;
+        Mon, 09 Dec 2024 05:15:43 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733750121; x=1734354921;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1WoHdJlzjlTmm0KIYckzqnb3Qs1nO0xVPTt7EQVV3wE=;
-        b=v7LWmm81bW3N6YxSP97W/9M7owiHPDP537Lj1Dm0PkpU6sPAY8RXL3swg94/Nzkb4f
-         URDyq8Xk+MVw88Buk4y/vOcv0gTSCVprJ5bchYiRO39Cs9Aczsf/dA//4ybXFtppDvlN
-         mGmaj+qsqvaWdOB1Ujecwnbn4WHA93DKwoFSGgWZx64vpiVkr8Wt2fXhU1Z/Ie1ZKc3K
-         +L+ShsqXlxRA4aZsHOtFffeLjiftxoPO2ERgqvTEI1BFEHMJ8b/0+PDMimLmPcXvnRWk
-         duCKdz3h2xZS1Je9zZJs0Ty9cX/SJiyFAH7F35r29cz1+lKFCncE4rWAY7+bT3+HWCFO
-         EspQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHGQoVOIdus5YzWunNnJuFlHL8z6Oy8IuoksxKSYDghIeEgobLSaAY/ZYeKucV9hBUBhH+nJnC2UBdaUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+SZS2yKv++95Sdt9oqDr5/m3AAZUgdlNQrPdmBjd75rzHwkH1
-	NMSzeyo3ORhXaMlyPX19zIp4UABoEgZNl9qIYYiLRs2tfUQLOvb2Ns+M4bGbcbN1062gG1YvUeB
-	GQV4Mqkkcf0ZCBkqhkU8PN0wK5Ytwy4e2qzI7JYTevWA/TZMw9iFjzU0TQ1lVeA==
-X-Gm-Gg: ASbGnctbD8bQMOwdV1MXqxESEr0o9I7NSdCzHTmzhFKP5x9DJ3HwQO2Y3w6GppM13wi
-	upHRBjjjMgVPkz+A/SoFy1ZKlicBY4d3YOGxd4VDE2L5jhA+XNIjXN1HXy8cgSPHqfj9VzHJyPT
-	/zeNSyEQbiPaUz1me1NNCskNWiCpTJ56NLhA+olYi2si3ckRGJFgAFzgrOlAHHeLCs8wV7nwAVc
-	wsUnggzWxo47MBecV4hBB6ZSCx/sqCmuj/g5S78u7WYRTyfJD5cwHT+Jh2vb8qWR+VnTs5VpKrq
-X-Received: by 2002:a05:600c:c13:b0:434:a4a6:51f8 with SMTP id 5b1f17b1804b1-434ffeab1e9mr5040875e9.0.1733750121115;
-        Mon, 09 Dec 2024 05:15:21 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEo6rhI5Rwhuku2z2Wkz+O2ZILKJ3hsE1idySSFe81rLuc+JjxWkz6Ky9SyAJR0p+DU9jKMgw==
-X-Received: by 2002:a05:600c:c13:b0:434:a4a6:51f8 with SMTP id 5b1f17b1804b1-434ffeab1e9mr5040615e9.0.1733750120752;
-        Mon, 09 Dec 2024 05:15:20 -0800 (PST)
-Received: from [10.200.68.91] (nat-pool-muc-u.redhat.com. [149.14.88.27])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621fbbd70sm12987741f8f.90.2024.12.09.05.15.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 05:15:20 -0800 (PST)
-Message-ID: <5201b58b1b20f6af6104c4f9153545b7859bd22e.camel@redhat.com>
-Subject: Re: [PATCH v2] PCI: Restore the original INTX_DISABLE bit by
- pcim_intx()
-From: Philipp Stanner <pstanner@redhat.com>
-To: Takashi Iwai <tiwai@suse.de>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Mon, 09 Dec 2024 14:15:19 +0100
-In-Reply-To: <61ef07331f843c25b19e5a6f68419e0a607a1b0b.camel@redhat.com>
-References: <20241031134300.10296-1-tiwai@suse.de>
-	 <61ef07331f843c25b19e5a6f68419e0a607a1b0b.camel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+        d=1e100.net; s=20230601; t=1733750140; x=1734354940;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uIGy8FeFMEG5S1lHlLlnwF/0gV8yzkzOW8jZGh+/bqk=;
+        b=P7742JeJ3EuVKWoQ8OFs9G0XjW4JDEnURVT6fEkhweuoesi4GaotWN0eGfKI1Y84bU
+         Dqm4fP/1ahLdH8uqhfP3J64WPnMq7C+VhC4Lgq7u//8i117nY6TpGCvbbkq0UeAEPEPs
+         GiRjuS4+JAYpsAmn0Zxf15vQ3OV+cAX8LhszqoAhtZB++avQ4R+d2v2QcRji0ggx9AyP
+         SDRLvk+YHLNk4GghKIihN9cbCsCpDthh4tkOpFCcFFCFKhz4ETrqqgoDrg0VHh+uNTFX
+         A2M3dx8SgwXEsJbXLWn5VMNzyrmValLenX9VklzdIIXs8R8nIFu/D3VrbZaw13isfYle
+         Y1Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCU3XbUz9oWh3EcGNmhpI6rz127fSQJo0YcyoR4/vfLEg+fG/ZajMqK9a7WYJqWdxYUDyVC+cXbSk8N+iJhrFX/1P1k=@vger.kernel.org, AJvYcCUR4P6Is6cV92a/hWq3tB1FhG+nqYxFAOkl5QjFg/Bw+Dial1O5h8M3s5dQ8R9Ha+oPDMB92rnE@vger.kernel.org, AJvYcCUqmLTnuE0dTHGBINKjAoyyZtNeFc6mBkUw/SGJt6R88JqPLfSvp0qFN8Hg+8m+XpweSvIFIHZ7tSHU+Tg=@vger.kernel.org, AJvYcCUsWjqtp9MLPPEU1zIQZsa1ly/kKt6HjodA/AbJ1TCG8G2zUS9PG12t7TLrlAnVvdQ8ojcbW+37DjuX@vger.kernel.org, AJvYcCV438ofmlFsDfXSdMAHCmb32mYtMqW7JUz9CQRqkscmdA7anEkCxT04zwnMDPpz4+0Ikm9pkUtbsR9wLbqj@vger.kernel.org, AJvYcCVe6C570aLWJwJQv2tjwXGea1OfMgTOEAXHMb+yGOt/8leQrQwnXq+nG/0KMkkrLFHudd2VwDzEeOVY@vger.kernel.org, AJvYcCVy4OD+li3CeYLsb/pn9kDcMlf6kVpnvnEzo3mejxvD2eBY9KwzBFUMmKSYOx7c4tXFnczWdgjLiXdfsw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfGX/Y9HDimJVpwshvMTm5giVy+17qjg1dBXJOJ5Ya4de60glg
+	sFjJCCmMgSYr0HZ2UQ9Ax9MjL9W79gtrEdmfYc/gUl3VlYhpvN7zLjWoNXmaJfY=
+X-Gm-Gg: ASbGnctl4j16MrhKux2IRmN9d35ovyPJZ8nTTQfzyVrOWA6DcRpqED0dUxIiMmk3trv
+	6AfS4KO0D3n1efd6gd2QkYYzAql3y9AFjnPfSfXrg8ppWLKEJemMZzngHAhXW6ZGajF1Urusxsr
+	wcVGdjCd2ADF8N03izWfe0QVFvBk3HwbOYfWUHUjMqKCRE3c6x+Xgi7ssriQdPbe00CwdWDiGig
+	80A6bKVq8x6Av3jTWXIkZohY6eXuM9e+DozVWgqHyGjCjYB3PXHorc4s3jtpsx4OnHuVL230xQa
+	qHM3maUYILFPv8c7
+X-Google-Smtp-Source: AGHT+IHrqWZIuvIEmy43fVOVGVVSkwU8XBB5DoBQnnvQtgovpWb4fbtF1e8jZLXcDYXLGg2YT4k8vQ==
+X-Received: by 2002:a05:6214:d88:b0:6d8:880b:665d with SMTP id 6a1803df08f44-6d8e73e8b96mr191295966d6.41.1733750140461;
+        Mon, 09 Dec 2024 05:15:40 -0800 (PST)
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com. [209.85.222.180])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8f79157f6sm27242336d6.54.2024.12.09.05.15.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 05:15:39 -0800 (PST)
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b6cade6e1fso123588185a.2;
+        Mon, 09 Dec 2024 05:15:38 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV89GsC/RqBPcYvZEKGXnzQWWaYE0e29YWk6MsHpyUAMtqEn2vKw//txHgiduJ+RKEzmMBOyTMYtSoj5w==@vger.kernel.org, AJvYcCVddHqW4hnsjGsHVekLUp4RxyD8xjH85snkyNgABVrQefF+Yv97RVANRFtOPW0Cqb5XAY4/K14h@vger.kernel.org, AJvYcCVg7vdjiGu39T5LQxNEdt4nrPBU6azZRBz4tBa74wB+h/iT+z3CZxDf5RUNhBR9I6T/oUDlORzbDe/7QJed@vger.kernel.org, AJvYcCWAYgxHvD6m3tQd4UB4jJUDKkeu3sxFsuFIbnrUYXVWewkvF6+J1XzdNWM5nX2MEGrIDqRdaK0HMtpRHFY=@vger.kernel.org, AJvYcCWC4xZWpq9oaLKEjHL4964U3hBnOaJJn6cb7HYPGWp0hewO5UglaRqaCErp3mzW4Lnleg9ul/MCX9F9@vger.kernel.org, AJvYcCWFleGVAFG9hZSPXS5GRjF/BBlXCRW4TtL5ooVEAjiFaimWmQzPvbC5g6BeBez4dW1NM8/GQhpEecEPCUHl29l+2Y8=@vger.kernel.org, AJvYcCWp2a6atfaLVfvbIPWTjF24Qe6OgSTJNf/dO+xoJLg5pU7m6XM7wrJI53PJX6NkIm/oKKTBVx3Rr03H@vger.kernel.org
+X-Received: by 2002:a05:620a:2912:b0:7b6:d4df:28a7 with SMTP id
+ af79cd13be357-7b6d4df2b49mr526820785a.38.1733750138520; Mon, 09 Dec 2024
+ 05:15:38 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-7-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-7-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 14:15:26 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdUa9GnzOMOBhpQcX88Yy2qvgKmKMdeEwEVo-OXgr-3SMg@mail.gmail.com>
+Message-ID: <CAMuHMdUa9GnzOMOBhpQcX88Yy2qvgKmKMdeEwEVo-OXgr-3SMg@mail.gmail.com>
+Subject: Re: [PATCH v3 06/25] ASoC: renesas: rz-ssi: Terminate all the DMA transactions
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 2024-11-04 at 10:14 +0100, Philipp Stanner wrote:
-> On Thu, 2024-10-31 at 14:42 +0100, Takashi Iwai wrote:
-> > pcim_intx() tries to restore the INTx bit at removal via devres,
-> > but
-> > there is a chance that it restores a wrong value.
-> > Because the value to be restored is blindly assumed to be the
-> > negative
-> > of the enable argument, when a driver calls pcim_intx()
-> > unnecessarily
-> > for the already enabled state, it'll restore to the disabled state
-> > in
-> > turn.=C2=A0 That is, the function assumes the case like:
-> >=20
-> > =C2=A0 // INTx =3D=3D 1
-> > =C2=A0 pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> correct
-> >=20
-> > but it might be like the following, too:
-> >=20
-> > =C2=A0 // INTx =3D=3D 0
-> > =C2=A0 pcim_intx(pdev, 0); // old INTx value assumed to be 1 -> wrong
-> >=20
-> > Also, when a driver calls pcim_intx() multiple times with different
-> > enable argument values, the last one will win no matter what value
-> > it
-> > is.=C2=A0 This can lead to inconsistency, e.g.
-> >=20
-> > =C2=A0 // INTx =3D=3D 1
-> > =C2=A0 pcim_intx(pdev, 0); // OK
-> > =C2=A0 ...
-> > =C2=A0 pcim_intx(pdev, 1); // now old INTx wrongly assumed to be 0
-> >=20
-> > This patch addresses those inconsistencies by saving the original
-> > INTx state at the first pcim_intx() call.=C2=A0 For that,
-> > get_or_create_intx_devres() is folded into pcim_intx() caller side;
-> > it allows us to simply check the already allocated devres and
-> > record
-> > the original INTx along with the devres_alloc() call.
-> >=20
-> > Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
-> > Cc: stable@vger.kernel.org=C2=A0# 6.11+
-> > Link: https://lore.kernel.org/87v7xk2ps5.wl-tiwai@suse.de
-> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
->=20
-> Reviewed-by: Philipp Stanner <pstanner@redhat.com>
+Hi Claudiu,
 
-Hello,
+On Wed, Nov 13, 2024 at 2:35=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> In case of full duplex the 1st closed stream doesn't benefit from the
+> dmaengine_terminate_async(). Call it after the companion stream is
+> closed.
+>
+> Fixes: 4f8cd05a4305 ("ASoC: sh: rz-ssi: Add full duplex support")
+> Cc: stable@vger.kernel.org
+> Reviewed-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-it seems we forgot about this patch.
+Thanks for your patch!
 
-Regards,
-P.
+> Changes in v3:
+> - collected tags
+> - use proper fixes commit SHA1 and description
 
+I am not sure which one is the correct one: the above, or commit
+26ac471c5354583c ("ASoC: sh: rz-ssi: Add SSI DMAC support")...
 
->=20
-> Nice!
->=20
-> > ---
-> > v1->v2: refactoring, fold get_or_create_intx_devres() into the
-> > caller
-> > instead of retrieving the original INTx there.
-> > Also add comments and improve the patch description.
-> >=20
-> > =C2=A0drivers/pci/devres.c | 34 +++++++++++++++++++---------------
-> > =C2=A01 file changed, 19 insertions(+), 15 deletions(-)
-> >=20
-> > diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
-> > index b133967faef8..c93d4d4499a0 100644
-> > --- a/drivers/pci/devres.c
-> > +++ b/drivers/pci/devres.c
-> > @@ -438,19 +438,12 @@ static void pcim_intx_restore(struct device
-> > *dev, void *data)
-> > =C2=A0	__pcim_intx(pdev, res->orig_intx);
-> > =C2=A0}
-> > =C2=A0
-> > -static struct pcim_intx_devres *get_or_create_intx_devres(struct
-> > device *dev)
-> > +static void save_orig_intx(struct pci_dev *pdev, struct
-> > pcim_intx_devres *res)
-> > =C2=A0{
-> > -	struct pcim_intx_devres *res;
-> > +	u16 pci_command;
-> > =C2=A0
-> > -	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
-> > -	if (res)
-> > -		return res;
-> > -
-> > -	res =3D devres_alloc(pcim_intx_restore, sizeof(*res),
-> > GFP_KERNEL);
-> > -	if (res)
-> > -		devres_add(dev, res);
-> > -
-> > -	return res;
-> > +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
-> > +	res->orig_intx =3D !(pci_command &
-> > PCI_COMMAND_INTX_DISABLE);
-> > =C2=A0}
-> > =C2=A0
-> > =C2=A0/**
-> > @@ -466,12 +459,23 @@ static struct pcim_intx_devres
-> > *get_or_create_intx_devres(struct device *dev)
-> > =C2=A0int pcim_intx(struct pci_dev *pdev, int enable)
-> > =C2=A0{
-> > =C2=A0	struct pcim_intx_devres *res;
-> > +	struct device *dev =3D &pdev->dev;
-> > =C2=A0
-> > -	res =3D get_or_create_intx_devres(&pdev->dev);
-> > -	if (!res)
-> > -		return -ENOMEM;
-> > +	/*
-> > +	 * pcim_intx() must only restore the INTx value that
-> > existed
-> > before the
-> > +	 * driver was loaded, i.e., before it called pcim_intx()
-> > for
-> > the
-> > +	 * first time.
-> > +	 */
-> > +	res =3D devres_find(dev, pcim_intx_restore, NULL, NULL);
-> > +	if (!res) {
-> > +		res =3D devres_alloc(pcim_intx_restore,
-> > sizeof(*res),
-> > GFP_KERNEL);
-> > +		if (!res)
-> > +			return -ENOMEM;
-> > +
-> > +		save_orig_intx(pdev, res);
-> > +		devres_add(dev, res);
-> > +	}
-> > =C2=A0
-> > -	res->orig_intx =3D !enable;
-> > =C2=A0	__pcim_intx(pdev, enable);
-> > =C2=A0
-> > =C2=A0	return 0;
->=20
+> --- a/sound/soc/renesas/rz-ssi.c
+> +++ b/sound/soc/renesas/rz-ssi.c
+> @@ -415,8 +415,12 @@ static int rz_ssi_stop(struct rz_ssi_priv *ssi, stru=
+ct rz_ssi_stream *strm)
+>         rz_ssi_reg_mask_setl(ssi, SSICR, SSICR_TEN | SSICR_REN, 0);
+>
+>         /* Cancel all remaining DMA transactions */
+> -       if (rz_ssi_is_dma_enabled(ssi))
+> -               dmaengine_terminate_async(strm->dma_ch);
+> +       if (rz_ssi_is_dma_enabled(ssi)) {
+> +               if (ssi->playback.dma_ch)
+> +                       dmaengine_terminate_async(ssi->playback.dma_ch);
+> +               if (ssi->capture.dma_ch)
+> +                       dmaengine_terminate_async(ssi->capture.dma_ch);
+> +       }
 
+rz_ssi_stop() is called twice: once for capture, and a second time for
+playback. How come that doesn't stop both?
+Perhaps the checks at the top of rz_ssi_stop() are not correct?
+Disclaimer: I am no sound expert, so I may be missing something...
+
+>
+>         rz_ssi_set_idle(ssi);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
