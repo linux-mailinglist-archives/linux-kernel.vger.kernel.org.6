@@ -1,221 +1,86 @@
-Return-Path: <linux-kernel+bounces-437827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E1279E9944
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:46:09 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA459E9948
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:46:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC189188736F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:46:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 380011B4255;
+	Mon,  9 Dec 2024 14:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="11OGKHN5"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 167EB2829B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:46:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C3171BEF7D;
-	Mon,  9 Dec 2024 14:45:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j55ps9Bf"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96AA31A23B8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E80D31ACEC9;
+	Mon,  9 Dec 2024 14:46:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733755550; cv=none; b=CIrnODgSN7EDushR5YclsEC5VUiJFzVt8HGpY9BbGBYaGuiU1FPNZP7tK/UR3qOrYOGTRNWI+uOjY/bcv3ZqXIREy2OVgJ7TK3Jl1g36dKjjuRGYFCwYaRv3lpocsBv9e3UYjbdUharr4nY39NoWMqQBy7NDdqHy6RcOqHwAotE=
+	t=1733755570; cv=none; b=uLd8kN2QA/vWUbqjtMU34BHj9LfkJZg6yCnbu635rY5pp+doBmyt+t+hy9RXNJ6QNuqkRSVME8YnbVDt7ktWEHZOaOfnjnUggtK3LwNRVDsywk71lAsutte3KnBZ3qydYNNDGoirSQVdUIHHGjmqYLPq+dw9oBymMYfxxnb5d+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733755550; c=relaxed/simple;
-	bh=3DccwU8bsNIKxXVNI/DtlsyxRxxXOVT1W4bhGoVeU9o=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mi7qGlXJfL/MiNLq0PmQMzwaZEXtajss4yjWdjKnlSVGe0B6mjEQnKm87Nl9rDLQ5U5WomYaV2pxOlXmTEXq8m6Sdn4HWrJr02yRf/sFzHH4IIcNHsyGqiVqBzr1dvU/Y/pkAZzs6xNqZ5vRK42J2lnD23iRZmBET9AYvq1WsRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j55ps9Bf; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434e9716feaso11555755e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:45:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733755547; x=1734360347; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KTfHlEBruYE/MHyxL3mgFOiuYOmpe0Q5tZ0GAzbgVOc=;
-        b=j55ps9Bfn0M3Sh5sCEQvQIDhCvG6j8t7sQjL74uhOiXfMae5zdG/TqLitcEoMqaAIE
-         /iFW2tCtSKQ7ueL11YzhLXDNnlFOwmsP7wNbcVm8cdH0gq4x4EXAmdAM+YYZQLza/MBr
-         S/lWTRJeQ4QzPgtWps26uFwBKkKC86z7j7L2ASHWrDvbpzEdV/C3XIf+qfU1O/fCh4ma
-         vaUAzdbxXv+gt5Jvr6BbVfBs51mgQkyZ/P26ElglyZcMQZfm4DLO62eQJ+fvBlJhnys/
-         ooSTYoZib3BPSNf2ge8OjzC4zFqpuLEcAmARy3hG5KFOokF6HPXzBGCYW+l3Zum/hpPn
-         3Dng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733755547; x=1734360347;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=KTfHlEBruYE/MHyxL3mgFOiuYOmpe0Q5tZ0GAzbgVOc=;
-        b=H/WNVF4wO801s8zu/kCSB3VDfC8+qcfgoa9BZdhxek99iUx3gqdfZsFTJyyk1nfl0g
-         TODw87s3OVfGge0meTpRh94ZWLlYCaiHVPeOxgw0AcMRGhM6rjK1I5QHYAjMWGcRj2N9
-         EGu8Vx9gUTzJ6L9NRx9M+1fxCSEB8kkpsmUcvLunfkj4osnDo9NxkH3rCfXoxIqY85hK
-         ChgpMydzYNM3671K+Cu2ENaELCtWPzVUYTRHUL3z2c7DX91wihrZo1DRsWvrfhEbCk1r
-         Ron/52HaJIBkgdmgQeOJQh5uciF66zh+6AfhdEdixYkiSUYBZs/j3MbRKP1mcLrC5iP1
-         izhA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3mJD3K2pN3OjvR0jmptY77oCAaztDfvOu6MO5slkjAhfyERLCJ0C3ZpvUzPKmu5uLN9llzz0UTsuJOG8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsFyZZCAfJMCcr6p71Gl173rzw6ACiQLcDZY4O8TQj6PaqHO7Z
-	4S+Qhxhaoj77uMRQ7wW+HOV0z3EAbDC1IFrmfWgBynF7T4c/dEV0tD4twRvXtrs=
-X-Gm-Gg: ASbGncv9vvXrTEQHEo0+sgzvUHJ1vS135tMHcM4AkDgV1gGk/x6Gfgdf1TSD96CXrEp
-	Qa3gKQGuJ7UwUkVdd7RM/ZRO8xawwdFtoQzLNJga58vqYP9jEKYjz4wK0y5mm++PrXFVMr4nEvh
-	KrgjKXY9CXudOCygUUu1HgEr+6eq0YkvTvo742m8DvCXxpOWjMRHYh3jr9M/PmlHHcGEy4oxJmC
-	kceZ26PA/06qrjO47qPoAWQSl6QJx6Zt9X2wfLEBN6N3lF1eItSZPS0pGuMud25cUkzx2TFwwFb
-	8pjtLvhI76T6oEk+g+woQxpTbw8=
-X-Google-Smtp-Source: AGHT+IGXczvk8/drcPnzB/3x9sBYxzCR+lhz793QJAVXvYPFhUrR93Cq3xgZf/gTd72hwYjCIfErXw==
-X-Received: by 2002:a05:600c:1f8c:b0:434:a1e7:27b0 with SMTP id 5b1f17b1804b1-434ddeb5379mr93055895e9.11.1733755546975;
-        Mon, 09 Dec 2024 06:45:46 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7546:6147:f006:709b? ([2a01:e0a:982:cbb0:7546:6147:f006:709b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434f7676d45sm45750525e9.33.2024.12.09.06.45.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:45:46 -0800 (PST)
-Message-ID: <42b1c187-e924-4690-8338-4c694f3e16d9@linaro.org>
-Date: Mon, 9 Dec 2024 15:45:45 +0100
+	s=arc-20240116; t=1733755570; c=relaxed/simple;
+	bh=2Ontbdl/Ui2RDELfVUpWEnj2cLmzdFyE2WE4OdC/s/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SIoMnfN3XHsUZk52vxnGiQhJBLHd0/kCqtiKMMaWoazPmd+K2TJ5OIqpDvnzEvuPDNbLN1MFSWnUpEVyXsFXMb03IX19NoOrQMItlg8jdm64ID0HMYmgtIGibNbQOsUIRSdJpJ3/FKaJR/Toa4J+qeVqEm74PDetYPawlZUm6AM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=11OGKHN5; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=IWv5S8qTo3ORVYAj9ok2lHaimbOV5HPyhvsgh0TLoGA=; b=11OGKHN5/i14E8mbq+cWtikWTp
+	IA8mdbKXzjYA5dn1ppe6vgoW43RZjt4japA9BxE3oqShRPsHyzbqvs6/YvHGdyTkXxiHYw2vHMaQO
+	nKQw5gyAflUC6DChEjhHvxJueVZWszIjI+6sGg0zp4okvboBr6KpcC2nZQJ2cAfkN1Zc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKf1H-00FgRu-W0; Mon, 09 Dec 2024 15:45:55 +0100
+Date: Mon, 9 Dec 2024 15:45:55 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: dimitri.fedrau@liebherr.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: phy: dp83822: Add support for GPIO2
+ clock output
+Message-ID: <376bdfed-a000-486f-9aa5-4e186753bdd8@lunn.ch>
+References: <20241209-dp83822-gpio2-clk-out-v1-0-fd3c8af59ff5@liebherr.com>
+ <20241209-dp83822-gpio2-clk-out-v1-2-fd3c8af59ff5@liebherr.com>
+ <bcef90db-ca9d-4c52-9dc5-2f59ae858824@lunn.ch>
+ <20241209135205.GA2891@debian>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v1 0/7] Add support to load QUP SE firmware from
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
- Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
- andersson@kernel.org, konradybcio@kernel.org, johan+linaro@kernel.org,
- dianders@chromium.org, agross@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-spi@vger.kernel.org
-Cc: =quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
-References: <20241204150326.1470749-1-quic_vdadhani@quicinc.com>
- <9d5e5b8b-aeaf-4ec8-b34a-8edeaec20037@oss.qualcomm.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <9d5e5b8b-aeaf-4ec8-b34a-8edeaec20037@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209135205.GA2891@debian>
 
-On 05/12/2024 16:59, Konrad Dybcio wrote:
-> On 4.12.2024 4:03 PM, Viken Dadhaniya wrote:
->> In Qualcomm SoCs, firmware loading for Serial Engines (SE) in the QUP
->> hardware has traditionally been managed by TrustZone (TZ). This setup
->> handled Serial Engines(SE) assignments and access control permissions,
->> ensuring a high level of security but limiting flexibility and
->> accessibility.
->>   
->> This limitation poses a significant challenge for developers who need more
->> flexibility to enable any protocol on any of the SEs within the QUP
->> hardware.
->>   
->> To address this, we are introducing a change that opens the firmware
->> loading mechanism to the Linux environment. This enhancement increases
->> flexibility and allows for more streamlined and efficient management. We
->> can now handle SE assignments and access control permissions directly
->> within Linux, eliminating the dependency on TZ.
->>   
->> We propose an alternative method for firmware loading and SE
->> ownership/transfer mode configuration based on device tree configuration.
->> This method does not rely on other execution environments, making it
->> accessible to all developers.
->>   
->> For SEs used prior to the kernel, their firmware will be loaded by the
->> respective image drivers (e.g., Debug UART, Secure or trusted SE).
->> Additionally, the GSI firmware, which is common to all SEs per QUPV3 core,
->> will not be loaded by Linux driver but TZ only. At the kernel level, only
->> the SE protocol driver should load the respective protocol firmware.
-> 
-> I think this is a great opportunity to rethink the SE node in general.
-> 
-> Currently, for each supported protocol, we create a new node that
-> differs in (possibly) interconnects and pinctrl states. These are really
-> defined per-SE however and we can programmatically determine which ones
-> are relevant.
-> 
-> With the growing number of protocols supported, we would have to add
-> 20+ nodes in some cases for each one of them. I think a good one would
-> look like:
-> 
-> geni_se10: serial-engine@abcdef {
-> 	compatible = "qcom,geni-se";
-> 
-> 	reg
-> 	clocks
-> 	power-domains
-> 	interconnects
-> 	...
-> 
-> 	status
-> 
-> 	geni_se10_i2c: i2c {
-> 		// i2c-controller.yaml
-> 	};
-> 
-> 	geni_se10_spi: spi {
-> 		// spi-controller.yaml
-> 	};
-> 
-> 	...
-> }
-> 
-> Or maybe even get rid of the subnodes and restrict that to a single
-> se-protocol = <SE_PROTOCOL_xyz> property, if the bindings folks agree.
-> 
-> We could extend the DMA APIs to dynamically determine the protocol
-> ID and get rid of hardcoding it.
-> 
-> And then we could spawn an instance of the spi, i2c, etc. driver from
-> the GENI SE driver.
+> > I would of preferred MDIO_MMD_VEND2 rather than DP83822_DEVADDR, but
+> > having just this one instance correct would look a bit odd.
+> >
+> Is it worth fixing it in a separate patch, replacing all DP83822_DEVADDR
+> with MDIO_MMD_VEND2 ?
 
-How/where would you add the peripheral subnodes ? A Serial Engine can only be a
-single type on a board, but I agree we could have a "generic" serial engine node
-that would be differenciated in the board DT with the protocol, and use the bindings
-yaml checked to properly check the subnodes/properties depending on the protocol
-property.
+You could do. As a reviewer, i like to be able to quickly see, these
+are vendor registers, i don't need to check if they are part of 802.3,
+and should have standard names, and be pulled out into a library for
+others to share. So if you want to add a patch, i'm happy with that.
 
-But we would still need all the serial nodes in the SoC DT.
-
-This may make the software support harder, meaning we would either need to
-have the same compatible probed in sequence from the i2c/spi/uart driver until
-one matches the protocol, or have the qup driver spawn an auxiliary device.
-
-Honestly, not sure it would be much simpler...
-
-Neil
-
-> 
-> Konrad
-> 
-
+	Andrew
 
