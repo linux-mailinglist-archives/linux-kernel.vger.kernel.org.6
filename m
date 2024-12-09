@@ -1,56 +1,61 @@
-Return-Path: <linux-kernel+bounces-436847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFAA49E8B98
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:40:36 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 935229E8B23
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:44:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035A21885DF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53D60281153
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFF021480F;
-	Mon,  9 Dec 2024 06:40:30 +0000 (UTC)
-Received: from cmccmta1.chinamobile.com (cmccmta6.chinamobile.com [111.22.67.139])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1241E4A4;
-	Mon,  9 Dec 2024 06:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=111.22.67.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CF0C1C232D;
+	Mon,  9 Dec 2024 05:44:20 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750621C0DED;
+	Mon,  9 Dec 2024 05:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733726429; cv=none; b=gJwebT5Te2P8djkuAtgBCV1HyM7zaiWw++4gI3ACusFf3Gro5pUOhRb823Qry1uwPusL0YkkjLKzCspOEvE6homob/Hn6GinIL1+O6ck0Mc2PsaFxKwN5pgmNSwp6PGnVAOFEqeN1CgyvETAh4mwIj6kyeFsW1/F+DncSwWjQEE=
+	t=1733723060; cv=none; b=XGyhdqVVh3b3x6BRKcj+JZcpVkEVfba99t3CRvsprWIj1pvoiWdIQ4tkvoseprHjhKTEEcix37MenGnxZORVgHv9TJhONMhbw+8kap4J6b5TUfqY6wltXVBBCIvrGaW7bqlMudsoWqF/5NOJ09JLkea6SukMtIZjibrVTPOoXVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733726429; c=relaxed/simple;
-	bh=MDU8qJbap1SIhGGyge/vVxPPo+c9g1a/1ysXlb0Y2rI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=QcpVx6bk8v7LCndlvcgHEvfFFHnXfLXWI8Bq45UDKXbk9AgCVlNGdz+ZrR9sGNA29y0EIgklj3Zp+qny/w0nzvJBcdLZb0965zUkocgOpXza6Ih+OistuZl+/yglAoRxhNlBq6mFCjAQiLGuIezsjVG+LKmr2/3aQCObcyeQ1Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com; spf=pass smtp.mailfrom=cmss.chinamobile.com; arc=none smtp.client-ip=111.22.67.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cmss.chinamobile.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmss.chinamobile.com
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from spf.mail.chinamobile.com (unknown[10.188.0.87])
-	by rmmx-syy-dmz-app01-12001 (RichMail) with SMTP id 2ee1675690d711a-c1a37;
-	Mon, 09 Dec 2024 14:40:24 +0800 (CST)
-X-RM-TRANSID:2ee1675690d711a-c1a37
-X-RM-TagInfo: emlType=0                                       
-X-RM-SPAM-FLAG:00000000
-Received:from localhost.localdomain (unknown[10.55.1.71])
-	by rmsmtp-syy-appsvr08-12008 (RichMail) with SMTP id 2ee8675690d764f-a6ff4;
-	Mon, 09 Dec 2024 14:40:24 +0800 (CST)
-X-RM-TRANSID:2ee8675690d764f-a6ff4
-From: Liu Jing <liujing@cmss.chinamobile.com>
-To: andy@kernel.org,
-	hdegoede@redhat.com,
-	mchehab@kernel.org,
-	sakari.ailus@linux.intel.com,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	Liu Jing <liujing@cmss.chinamobile.com>
-Subject: [PATCH] media: atomisp: fix spelling error in ia_css_sdis2_types.h
-Date: Mon,  9 Dec 2024 14:40:22 +0800
-Message-Id: <20241209064022.4342-1-liujing@cmss.chinamobile.com>
-X-Mailer: git-send-email 2.27.0
+	s=arc-20240116; t=1733723060; c=relaxed/simple;
+	bh=Ex9VcrgbblC510nuEbwyf/y+gulTHmjHFvcTt6Umtsc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZW2mYJQKTBEEHHIJ6F6cfs/95SlOJ9oqBwoLP5MMXfRFIeq+h1LReF0VWYoGMFlvZGEuOgR3pzwIlZBq5ahBxDw7RIvQwA4n5EJXB6k/HO60l3jDshw5yOmj4yxj0m5Bqtz3ZcZbUJVyiAyDRbUmA18mgtDpvAJO2DI4tLK6WSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B95WOwX032192;
+	Sun, 8 Dec 2024 21:43:51 -0800
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy1s0vg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sun, 08 Dec 2024 21:43:51 -0800 (PST)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Sun, 8 Dec 2024 21:43:50 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Sun, 8 Dec 2024 21:43:45 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <wayne.lin@amd.com>, <gregkh@linuxfoundation.org>
+CC: <stable@vger.kernel.org>, <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+        <Rodrigo.Siqueira@amd.com>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+        <Jerry.Zuo@amd.com>, <amd-gfx@lists.freedesktop.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <sashal@kernel.org>, <alex.hung@amd.com>, <mario.limonciello@amd.com>,
+        <chiahsuan.chung@amd.com>, <hersenxs.wu@amd.com>,
+        <n.zhandarovich@fintech.ru>, <shenshih@amd.com>,
+        <Nicholas.Kazlauskas@amd.com>, <hanghong.ma@amd.com>
+Subject: [PATCH 6.1.y] drm/amd/display: fix NULL checks for adev->dm.dc in amdgpu_dm_fini()
+Date: Mon, 9 Dec 2024 14:41:37 +0800
+Message-ID: <20241209064137.3427197-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,27 +63,72 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: I0v3URgaKEKwIv5CaXji--rd3ww9F4fW
+X-Authority-Analysis: v=2.4 cv=eePHf6EH c=1 sm=1 tr=0 ts=67568397 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=DFC7gQDcAAAA:8 a=HH5vDtPzAAAA:8 a=zd2uoN0lAAAA:8 a=t7CeM3EgAAAA:8 a=TusaAkCut-tyimdG5pgA:9
+ a=6mkBMmtgJpxIRZlSFNLW:22 a=QM_-zKB-Ew0MsOlNKMB5:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: I0v3URgaKEKwIv5CaXji--rd3ww9F4fW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-09_02,2024-12-09_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ spamscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2411120000 definitions=main-2412090045
 
-fix the coefficients spelling error in ia_css_sdis2_types.h
+From: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
 
-Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
+[ Upstream commit 2a3cfb9a24a28da9cc13d2c525a76548865e182c ]
 
-diff --git a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h
-index f37802878528..2bed08435755 100644
---- a/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h
-+++ b/drivers/staging/media/atomisp/pci/isp/kernels/sdis/sdis_2/ia_css_sdis2_types.h
-@@ -19,7 +19,7 @@
+Since 'adev->dm.dc' in amdgpu_dm_fini() might turn out to be NULL
+before the call to dc_enable_dmub_notifications(), check
+beforehand to ensure there will not be a possible NULL-ptr-deref
+there.
+
+Also, since commit 1e88eb1b2c25 ("drm/amd/display: Drop
+CONFIG_DRM_AMD_DC_HDCP") there are two separate checks for NULL in
+'adev->dm.dc' before dc_deinit_callbacks() and dc_dmub_srv_destroy().
+Clean up by combining them all under one 'if'.
+
+Found by Linux Verification Center (linuxtesting.org) with static
+analysis tool SVACE.
+
+Fixes: 81927e2808be ("drm/amd/display: Support for DMUB AUX")
+Signed-off-by: Nikita Zhandarovich <n.zhandarovich@fintech.ru>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
+---
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 8dc0f70df24f..7b4d44dcb343 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -1882,14 +1882,14 @@ static void amdgpu_dm_fini(struct amdgpu_device *adev)
+ 		dc_deinit_callbacks(adev->dm.dc);
  #endif
  
- /* DVS 2.0 Coefficient types. This structure contains 4 pointers to
-- *  arrays that contain the coeffients for each type.
-+ *  arrays that contain the coefficients for each type.
-  */
- struct ia_css_dvs2_coef_types {
- 	s16 *odd_real; /** real part of the odd coefficients*/
+-	if (adev->dm.dc)
++	if (adev->dm.dc) {
+ 		dc_dmub_srv_destroy(&adev->dm.dc->ctx->dmub_srv);
+-
+-	if (dc_enable_dmub_notifications(adev->dm.dc)) {
+-		kfree(adev->dm.dmub_notify);
+-		adev->dm.dmub_notify = NULL;
+-		destroy_workqueue(adev->dm.delayed_hpd_wq);
+-		adev->dm.delayed_hpd_wq = NULL;
++		if (dc_enable_dmub_notifications(adev->dm.dc)) {
++			kfree(adev->dm.dmub_notify);
++			adev->dm.dmub_notify = NULL;
++			destroy_workqueue(adev->dm.delayed_hpd_wq);
++			adev->dm.delayed_hpd_wq = NULL;
++		}
+ 	}
+ 
+ 	if (adev->dm.dmub_bo)
 -- 
-2.27.0
-
-
+2.25.1
 
 
