@@ -1,60 +1,59 @@
-Return-Path: <linux-kernel+bounces-437059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFBAC9E8E9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:22:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0A8F9E8EA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:24:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A074E1883FE9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:22:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5840318864C7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01D80215F67;
-	Mon,  9 Dec 2024 09:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC7E2163AD;
+	Mon,  9 Dec 2024 09:24:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzrHPMOX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H7vxzXYl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DD51EB3D;
-	Mon,  9 Dec 2024 09:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD2A216391;
+	Mon,  9 Dec 2024 09:24:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733736142; cv=none; b=kmKXbBaOuFhekRdC6G/OAs5BDIsSaDJzcUUSxKl+csuqMXfz84jk1tTSrV7DKq6nuGAluVKfd/QIU/WsJuBgUXmKZWgSGCSaXmw/AW7iQOk2KfWQJS6OMNRA9XEzJWrQnoRMFdlUHvp+jaCWl/sY7qOMUFUOGAPx66jiAA2nvmI=
+	t=1733736240; cv=none; b=ZkRNWA0t3ZxxfYYg4zQUmJtfA2LbXMm7WDQPblLK2covU6M1Oa2oF1L0CtuXsamOKKQw5DoCyLs25Ua4m+3aCuPfJ30WKISnboAtUHDHbCwXAEEkuY6kVaQGyeRz4RFDFmAb0tu16dSYl555iEr6oH4yljrNRT/B5PL+h+i7DjY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733736142; c=relaxed/simple;
-	bh=y4qWf57LvAAFe4m8BlvFFvxUPawjnJVFQg2SuHEoOW4=;
+	s=arc-20240116; t=1733736240; c=relaxed/simple;
+	bh=j6OMdHnj5bwMA4tTNTUu9UZbByzXzbqHoSB2mg8RA1s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jVy65zDk/YxY8TRPYpUOfVSCB3950GO1MDXy0wBulpQSf+HvprYxnZEx6SESBleAnc0J9FZp4LRzbdniDZNtGFVBzS6g+mafNPibKi7Pgj7NTpO0BlbQWF5rajz8EE/upSpTgu/xMfytcWynAZwwMTsJDOVLB09gCD9IyTNbcdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RzrHPMOX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 266EFC4CED1;
-	Mon,  9 Dec 2024 09:22:20 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=cPOu++i3zvxP5qdYNnA0LGRxr9VFU4Anu+RPRe82hrYRCkBa9tTpBzOoX0UZvzEYUQgKqlf9zA/bjVjPjEEEf3hzuU4fkvktB6M6a39rND6snj6xOSv0Phq//oYsqLgK0jbC+nZrxxVkn8Lt80rpWhZkoKEf/UsE0wjJevlH5DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H7vxzXYl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F89FC4CEE0;
+	Mon,  9 Dec 2024 09:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733736141;
-	bh=y4qWf57LvAAFe4m8BlvFFvxUPawjnJVFQg2SuHEoOW4=;
+	s=k20201202; t=1733736240;
+	bh=j6OMdHnj5bwMA4tTNTUu9UZbByzXzbqHoSB2mg8RA1s=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RzrHPMOXfNrjB31QWk35WWoGqza4GiNx+L0Ce7gAja7Eh2TKu4l1uswCzkxeXC7km
-	 s2dw/bIeFqhNiH4U49DA8xVxl7VQFtRz5pk09r70MDqPMq3zQaTdkM8/wWdtOLolFj
-	 DpOuZdigVGk0DSkTRtt84dTdpZgFgQYCMpsM8df/7nClaHzI62T9tL+WbQTrISifn6
-	 WwDDJCJoLPgOJCJfZxzZLduJ3mhUZ8KNdau4vVwXoANGm5pl7o3SgzTPJAjATPBVJv
-	 HYDgzfxzt9qUaP6gfsbC30Zb8x+O6A/AmTOjf8PIHDTTbEvJCPPus6sUV/8GX2Hjx1
-	 cXi1QIf+jVYlA==
-Date: Mon, 9 Dec 2024 10:22:17 +0100
+	b=H7vxzXYlWUXMAmT+pW2/YD6bvfCEId/DeT42lRvcehUj2muJr8OFN22Pc2jdqpXk/
+	 d3pG40J/NTftbyus2XfXJL8ZDhPXsQUpFxTZ3mvHl5JGJJN4nNeR09NlKsrj4xdwVQ
+	 Xs8j4/zCZF1qCe7TylyHmwNIQIYza/5reD5bTGgfiGS8LTo5azjP2ZvFOGXytsQ6CA
+	 S3q8vsU7aHaKQFnnQ+wEfgz8qLse21gKKYIVPfcOJc39y6N4pAvbrIjzDPEo0a2H5I
+	 LAD4xAOjtrSy77BwtzU33Srx/uE5pwUASiDCJTAdBGqKQWs0XJUiQZztMSc5XryIf5
+	 gkduh54aoZfEg==
+Date: Mon, 9 Dec 2024 10:23:55 +0100
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Nick Chan <towinchenmi@gmail.com>,
-	y@krzk-bin.smtp.subspace.kernel.org
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org, linux-leds@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org, 
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/3] backlight: dwi_bl: Add Apple DWI backlight driver
-Message-ID: <bqn4tddl3kgle7zlamgaqlh45pizw6gf5qjwlmcsbkb6fx343l@tf5w63xursi2>
-References: <20241207130433.30351-1-towinchenmi@gmail.com>
- <20241207130433.30351-3-towinchenmi@gmail.com>
+To: Joel Selvaraj <joelselvaraj.oss@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, 
+	Joel Selvaraj <foss@joelselvaraj.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: input: touchscreen: edt-ft5x06: add
+ panel property
+Message-ID: <psgcnoeyutfkebbi2aavqrcsdqslfu74gmchc4csvkzssniqua@i4n5x6rpdhtr>
+References: <20241208-pocof1-touchscreen-support-v2-0-5a6e7739ef45@joelselvaraj.com>
+ <20241208-pocof1-touchscreen-support-v2-1-5a6e7739ef45@joelselvaraj.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,162 +62,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241207130433.30351-3-towinchenmi@gmail.com>
+In-Reply-To: <20241208-pocof1-touchscreen-support-v2-1-5a6e7739ef45@joelselvaraj.com>
 
-On Sat, Dec 07, 2024 at 09:03:15PM +0800, Nick Chan wrote:
-> Add driver for backlight controllers attached via Apple DWI 2-wire
-> interface, which is found on some Apple iPhones, iPads and iPod touches
-> with a LCD display.
+On Sun, Dec 08, 2024 at 09:23:27AM -0600, Joel Selvaraj wrote:
+> In Xiaomi Poco F1 (qcom/sdm845-xiaomi-beryllium-ebbg.dts), the FocalTech
+> FT8719 touchscreen is integrally connected to the display panel
+> (EBBG FT8719) and thus should be power sequenced together with display
+> panel for proper functioning. Add the panel property which optionally
+> allows to link panel to the touchscreen.
 > 
-> Signed-off-by: Nick Chan <towinchenmi@gmail.com>
-> ---
->  drivers/video/backlight/Kconfig  |  12 +++
->  drivers/video/backlight/Makefile |   1 +
->  drivers/video/backlight/dwi_bl.c | 124 +++++++++++++++++++++++++++++++
->  3 files changed, 137 insertions(+)
->  create mode 100644 drivers/video/backlight/dwi_bl.c
+> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+
+SoB mismatch.
+
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
+
+>  Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> diff --git a/drivers/video/backlight/Kconfig b/drivers/video/backlight/Kconfig
-> index 3614a5d29c71..e64cc3d51ac5 100644
-> --- a/drivers/video/backlight/Kconfig
-> +++ b/drivers/video/backlight/Kconfig
-> @@ -166,6 +166,18 @@ config BACKLIGHT_EP93XX
->  	  To compile this driver as a module, choose M here: the module will
->  	  be called ep93xx_bl.
+> diff --git a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml
+> index 70a922e213f2a..35a6ac4ded7c7 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/edt-ft5x06.yaml
+> @@ -103,6 +103,7 @@ properties:
+>      minimum: 0
+>      maximum: 255
 >  
-> +config BACKLIGHT_APPLE_DWI
-> +	tristate "Apple DWI 2-Wire Interface Backlight Driver"
-> +	depends on ARCH_APPLE || COMPILE_TEST
-> +	default y
-> +	help
-> +          Say Y to enable the backlight driver for backlight controllers
-> +          attached via the Apple DWI 2-wire interface which is found in some
-> +          Apple iPhones, iPads and iPod touches.
+> +  panel: true
 
-Mixed/messed indentation. Some spaces?
-
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called dwi_bl.
-> +
->  config BACKLIGHT_IPAQ_MICRO
->  	tristate "iPAQ microcontroller backlight driver"
->  	depends on MFD_IPAQ_MICRO
-> diff --git a/drivers/video/backlight/Makefile b/drivers/video/backlight/Makefile
-> index 8fc98f760a8a..0a569d7f0210 100644
-> --- a/drivers/video/backlight/Makefile
-> +++ b/drivers/video/backlight/Makefile
-> @@ -28,6 +28,7 @@ obj-$(CONFIG_BACKLIGHT_BD6107)		+= bd6107.o
->  obj-$(CONFIG_BACKLIGHT_CLASS_DEVICE)	+= backlight.o
->  obj-$(CONFIG_BACKLIGHT_DA903X)		+= da903x_bl.o
->  obj-$(CONFIG_BACKLIGHT_DA9052)		+= da9052_bl.o
-> +obj-$(CONFIG_BACKLIGHT_APPLE_DWI)	+= dwi_bl.o
-
-Please do not introduce other sorting way - it is sorted by config name.
-Which will also point you to apple_bl.o and need of explaining the
-differences, e.g. why this cannot be one driver.
-
-
->  obj-$(CONFIG_BACKLIGHT_EP93XX)		+= ep93xx_bl.o
->  obj-$(CONFIG_BACKLIGHT_GPIO)		+= gpio_backlight.o
->  obj-$(CONFIG_BACKLIGHT_HP680)		+= hp680_bl.o
-> diff --git a/drivers/video/backlight/dwi_bl.c b/drivers/video/backlight/dwi_bl.c
-> new file mode 100644
-> index 000000000000..d4bfd74b3129
-> --- /dev/null
-> +++ b/drivers/video/backlight/dwi_bl.c
-> @@ -0,0 +1,124 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR MIT
-> +/*
-> + * Driver for backlight controllers attached via Apple DWI 2-wire interface
-> + *
-> + * Copyright (c) 2024 Nick Chan <towinchenmi@gmail.com>
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/io.h>
-> +#include <linux/backlight.h>
-> +
-> +#define DWI_BL_CTL			0x0
-> +#define DWI_BL_CTL_SEND1		BIT(0)
-> +#define DWI_BL_CTL_SEND2		BIT(4)
-> +#define DWI_BL_CTL_SEND3		BIT(5)
-> +#define DWI_BL_CTL_LE_DATA		BIT(6)
-> +/* Only used on Apple A9 and later */
-> +#define DWI_BL_CTL_SEND4		BIT(12)
-> +
-> +#define DWI_BL_CMD			0x4
-> +#define DWI_BL_CMD_TYPE			GENMASK(31, 28)
-> +#define DWI_BL_CMD_TYPE_SET_BRIGHTNESS	0xa
-> +#define DWI_BL_CMD_DATA			GENMASK(10, 0)
-> +
-> +#define DWI_BL_CTL_SEND			(DWI_BL_CTL_SEND1 | \
-> +					 DWI_BL_CTL_SEND2 | \
-> +					 DWI_BL_CTL_SEND3 | \
-> +					 DWI_BL_CTL_LE_DATA | \
-> +					 DWI_BL_CTL_SEND4)
-> +
-> +#define DWI_BL_MAX_BRIGHTNESS		2047
-> +
-> +struct apple_dwi_bl {
-> +	void __iomem *base;
-> +};
-> +
-> +static int dwi_bl_update_status(struct backlight_device *bl)
-> +{
-> +	struct apple_dwi_bl *dwi_bl = bl_get_data(bl);
-> +
-> +	int brightness = backlight_get_brightness(bl);
-> +
-> +	u32 cmd = 0;
-> +
-> +	cmd |= FIELD_PREP(DWI_BL_CMD_DATA, brightness);
-> +	cmd |= FIELD_PREP(DWI_BL_CMD_TYPE, DWI_BL_CMD_TYPE_SET_BRIGHTNESS);
-> +
-> +	writel(cmd, dwi_bl->base + DWI_BL_CMD);
-> +	writel(DWI_BL_CTL_SEND, dwi_bl->base + DWI_BL_CTL);
-> +
-> +	return 0;
-> +}
-> +
-> +static int dwi_bl_get_brightness(struct backlight_device *bl)
-> +{
-> +	struct apple_dwi_bl *dwi_bl = bl_get_data(bl);
-> +
-> +	u32 cmd = readl(dwi_bl->base + DWI_BL_CMD);
-> +
-> +	return FIELD_GET(DWI_BL_CMD_DATA, cmd);
-> +}
-> +
-> +static const struct backlight_ops dwi_bl_ops = {
-> +	.options = BL_CORE_SUSPENDRESUME,
-> +	.get_brightness = dwi_bl_get_brightness,
-> +	.update_status	= dwi_bl_update_status
-> +};
-> +
-> +static int dwi_bl_probe(struct platform_device *dev)
-> +{
-> +	struct apple_dwi_bl *dwi_bl;
-> +	struct backlight_device *bl;
-> +	struct backlight_properties props;
-> +	struct resource *res;
-> +
-> +	dwi_bl = devm_kzalloc(&dev->dev, sizeof(struct apple_dwi_bl), GFP_KERNEL);
-
-sizeof(*)
-
-> +	if (!dwi_bl)
-> +		return -ENOMEM;
-> +
-> +	res = platform_get_resource(dev, IORESOURCE_MEM, 0);
-> +	if (!res)
-> +		return -ENXIO;
-> +
-> +	dwi_bl->base = devm_ioremap_resource(&dev->dev, res);
-
-Use helper for these two, devm_platform_get_and_ioremap_resource() or
-similar.
+So you just list all properties from touchscreen... no, use
+unevaluatedProperties instead of additionalProperties.
 
 Best regards,
 Krzysztof
