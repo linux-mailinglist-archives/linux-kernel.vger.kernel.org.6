@@ -1,171 +1,203 @@
-Return-Path: <linux-kernel+bounces-437378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437379-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 038219E9274
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:33:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D0069E9278
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:34:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170F0188652A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:33:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249AB16611D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:33:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3DDD223717;
-	Mon,  9 Dec 2024 11:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E54224893;
+	Mon,  9 Dec 2024 11:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eoXzMUnb"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b="gMaZzWO2"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F27422370B
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:31:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4713721B917
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733743897; cv=none; b=gjNRhHLjNkS1rsJHs/bxhDVcjJgnO1OMCvhHBJOze9QXE1MiJ+i/cOlhiKJk0XmYTbmuYxfyxWVnEuYr0CFVGU645AmPLU39ilYLMiXYaAtUaV8n1SGfQksVtY0kZoolXqI7UaX3o0n6LFt1uyNPgWEqogdvFdmj7JRge1xYYVc=
+	t=1733743936; cv=none; b=AsH0fzXpwkvRyfQOf//dDvo0dfKskbevJIagc+SFErNu/+Jnzw9OejOvIaESMMK59SslhD/A5AJGbCLDMP67jIK1b9g8dRSe1F/XAypqhMh4ft0Pr7KGWRBLt/tZgSPkKw/yWLGuJ5ch9P65gDutSIjzbgiWsGdXvWL+SBy2Jqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733743897; c=relaxed/simple;
-	bh=hi/gPHGp3GRpPNQ/sIelAR0TJU62VtzESITi0QHtWMA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HRBQ7u0G+rka08RVK3Z3MW7RdbsHAS9venAvu4mCEUCrWKM0b4T+NmDkFZzNKUQ3C/mGXzQQaVmxCmV5YQxI6aocy2T6zklt8AE2Nvze0twVS5CpatsgQBHud6OksgJ7CbbBdAnGMvNRM8ED+prg17t0Gxl/HZqhQNtXTP1yqNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eoXzMUnb; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-2164b662090so7179225ad.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:31:35 -0800 (PST)
+	s=arc-20240116; t=1733743936; c=relaxed/simple;
+	bh=Tu7rGfrztaY/ub/VjfWkpCJVdvvgr4H85wEOTNfmqtw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uLLlQRN/l3RruABYE3TZ6SPfbQYz30PxsOZL7DvtaH9AiSUy/0IvDR2D8ZuKTHpFkMOyY4dtXWshl5fB2oUG0w8F9cxftdWT6MrkoK1uEgZjCIkN/nLB5KQCmHYNQB9Lx8wcrkksaXCYL3g8h7/kcXOREUY2uDkcBcpkIUdeJl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com; spf=pass smtp.mailfrom=cogentembedded.com; dkim=pass (2048-bit key) header.d=cogentembedded-com.20230601.gappssmtp.com header.i=@cogentembedded-com.20230601.gappssmtp.com header.b=gMaZzWO2; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=cogentembedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cogentembedded.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5401c52000fso985903e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:32:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733743894; x=1734348694; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6ym/ckWiJiSsbCHqxkCn87G8/HMB8USxigf1ElOERRM=;
-        b=eoXzMUnbclIz5qHetlO56DtOaUEV8U8OXV9Roo+wNti0ligoMobwl8rmDKNWW4+10B
-         JsfbdurJHIKn804HhB+NPGSTA46Q9RB5e3pqv8Vu6CKSk6CqyYhNvT2uyhm8+VkHLs10
-         TDZ1s1MRwrPNQZQ4U9wWoqZMRSQITr4HrCFic=
+        d=cogentembedded-com.20230601.gappssmtp.com; s=20230601; t=1733743932; x=1734348732; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cjnBnZnhKiLLFfTJHr6XA6kr43m++51Ex2ty4jwE+CI=;
+        b=gMaZzWO2vA5uyQahZszLCnzYk2llTsRKUWaWaoSgKF01Y4x5X/jwFgP3cpmmLG5BSO
+         mDPDRhQcH9VUMnY4pmmM+S42THz2QfWkq3+z+5SIqH/Xcn2qVgpAPGFsGlXmy4Ism8gz
+         QN2jxJ9V65TqDzk9TA6Ik00HhDlMIAOabobDgBfOxCqI10o7RV8lbGs3Q4hrNjtLTVh0
+         xgOqZcXSDYkTcnEL8+oxngmajM9VE48Mr3hrlB9bQETf17mnVMDyRbgCdzxHo4dE/Ffx
+         su4xqZEEjd8U+fQNcbIO+8zEHVZ/hskNZkTFpfRbN1iNhS8Rx99LUdPJ6GHKPy0U7XXe
+         8D5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733743894; x=1734348694;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1733743932; x=1734348732;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6ym/ckWiJiSsbCHqxkCn87G8/HMB8USxigf1ElOERRM=;
-        b=a/u9gTF3w1D8yMAhDJcPcx9/bp+1TJoyl36zn5Uoc4HSgjoVDLv3GrRFWP9K94CvLs
-         czI4yxncpIlIovwil207c7lFJwavz7RdEIqEGC8Zmi4zyBTo8VMpB1A1/BWo8+RT9925
-         UTtI6o2+x4wWfCqR+P3hrdW1d8ZI/qa9+l3XMBpV0duHjdPzyXWJ4EmS2dEVd1a9UV0N
-         w/Ha452/7+xOjtjAULZeYjKO5YaPjx/ffYUwZnB06/vBsGbEUcGU9gbra8gorg8fpw+f
-         rP2/7EYwnNNbnMkeYRGngNxwrJ0PgXNM/SiQCDrdmuaclhgj66SKvoasYVzXEeLtctMq
-         7Zhw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpGxQpIO5PfoRube8j3F4fDbF0ZirrV9qzk54vmxDBDusrcMoQ0apsuqls8UukmAr7XkPV5G9CvmZlwZg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZ+CwZucXJCqUE8frgk9B9k5w8dz2bUvVrMWhHMdwfmKypvczX
-	5C4tiGDhLDSHnmaJ4/1B9+852D/yKj5psYZwJqOq95+K6CDT+l2bUp05cd/qz/8Hz/Pgf/7LuvY
-	=
-X-Gm-Gg: ASbGncszEHHaKLF1RcNWrVsL2HanY4nBjxN/o4sZ920CPqSuwaOBtWetpgmDBSiIm9y
-	Usbqx2Sn8HfT1/NAX8I04/R/4OxeaB/dK2LzdP10VSbo2uVsgVgMHE0XcvxuEBcy70ya+bhK/DF
-	1mYBz7eiv7uHGThFch59vviUHWVp9cE9enMvDEM/+dSiMnqpFvt0bz+6Lox3Usgu9aZH9QhEuZy
-	4utR6KHOEN2WZ5zg6awSJHRQyIPINPuiQILI8q41f7BVVHrj9ousFY6FG8E4Wq6RP+L4tM6PWZ+
-	AbyPEXzwgAaEu7H0
-X-Google-Smtp-Source: AGHT+IGeFwLSwU5dZwfk6G7U3VxYmDuxKrxHiOILOSCOF9uo/BaAIoFGTS/Ag2c1QsmGwIdb871a5g==
-X-Received: by 2002:a17:902:e5cd:b0:215:9ea1:e95e with SMTP id d9443c01a7336-21614d442b6mr203018815ad.13.1733743894664;
-        Mon, 09 Dec 2024 03:31:34 -0800 (PST)
-Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com. [209.85.215.177])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21631bd2c2dsm35179155ad.263.2024.12.09.03.31.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 03:31:32 -0800 (PST)
-Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7fd10cd5b1aso2932728a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:31:32 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVfAv9JgicjqCvIGs45Zw82OQzpC8Y6CBwrg85tBebn5gWsOsSY/xCs87HVRdRnVgeg8ChjSSw1yM8IHhg=@vger.kernel.org
-X-Received: by 2002:a17:90b:3f45:b0:2ee:dd79:e046 with SMTP id
- 98e67ed59e1d1-2ef69f0b093mr18851318a91.13.1733743892060; Mon, 09 Dec 2024
- 03:31:32 -0800 (PST)
+        bh=cjnBnZnhKiLLFfTJHr6XA6kr43m++51Ex2ty4jwE+CI=;
+        b=kMpZZ8/AjIp4jDs1+tJedUEK0A8baplnWKLpSSkK4cedqf/LO74EB9XDsMq5PzTNXM
+         5G+IJfIJ4qo0zP0zMjQVXC/U+RttksL22cDQrHMb2tgTqGzxlkPJgK66NSZaXcoqN8E+
+         PvOIaX48j6z//sje2Xu21s85a+xCa+GH8yIFMY1ToXz63JbtRJDNSOh6E4lETIT8KjCV
+         oZSKRZykLaLaCPyoJhqHx0Nh5ib3uMldw0GJPUkEUaSwAuVETmTCZmYkiY6RQAmJ0rdV
+         RhpqkbnNK/1eRHxDvQOSdo69OEYRKVGLQnYitNtGMDJLJg6tv2uuoaBCNr0q8CsOE5Dz
+         os0g==
+X-Forwarded-Encrypted: i=1; AJvYcCX+0ln/si2TJkpk64eL1r9rIsDC5V+S2gOuARHv41TGNXhemIdxRwziVO5+u8j+O9a3cmlPrB8vaj8X3jo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzN9p+QPWrhQvrvbLNwbzEpe79bvBocLAdflhYwD/DYet/MZL/U
+	YDQe/7ddBApNqIdVyCiGpnbCdgVR2NXiLFwW+Ddzcku5NPXcDxB8BWy4UsAhyZM=
+X-Gm-Gg: ASbGncvnJUllRWXKJnhTOPG+p1pxMCTcT0HLycku5wMEUUDfZbsT6/QnM/+R3rFj4pb
+	lX4JNLsjYIDbIc0PF1tv/lpankccBq6i8CblQmp1kJiSNijYQGbZ19y9zwmme5eDZgtciJbWaTi
+	2U3NWHhNf9C6Vu0pvoAE7CEr23VPK+zOII6McjMDwJFGa4BPNx8Fwp53Uhd9ifbZBEww5phGy+M
+	wh+jrST34WocmzfhiYXWdEe4ThclTWmBWmnjPxU7Culx+8sl8rztfC7yZGCQxHF
+X-Google-Smtp-Source: AGHT+IEfD3Ubb6mME+Sci7bt7F6v/i4zSfonRA4bvFaR9n6ubOA1IjNY2tNGE/VeTd5trSFqDwDIAQ==
+X-Received: by 2002:a05:6512:39ca:b0:540:1e74:5a15 with SMTP id 2adb3069b0e04-5402410d22dmr45349e87.54.1733743932343;
+        Mon, 09 Dec 2024 03:32:12 -0800 (PST)
+Received: from cobook.home ([91.198.101.25])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5401f8365d7sm286196e87.138.2024.12.09.03.32.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 03:32:11 -0800 (PST)
+From: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+To: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: netdev@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Michael Dege <michael.dege@renesas.com>,
+	Christian Mardmoeller <christian.mardmoeller@renesas.com>,
+	Dennis Ostermann <dennis.ostermann@renesas.com>,
+	Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+Subject: [PATCH net] net: renesas: rswitch: handle stop vs interrupt race
+Date: Mon,  9 Dec 2024 16:32:04 +0500
+Message-Id: <20241209113204.175015-1-nikita.yoush@cogentembedded.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241203-uvc-fix-async-v6-0-26c867231118@chromium.org>
- <20241203-uvc-fix-async-v6-5-26c867231118@chromium.org> <02a89566-a6f7-4feb-84c3-079795c98a46@redhat.com>
-In-Reply-To: <02a89566-a6f7-4feb-84c3-079795c98a46@redhat.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 9 Dec 2024 12:31:19 +0100
-X-Gmail-Original-Message-ID: <CANiDSCuPM1qeerMUBFx+RfqBD35CcfhQeO5hYVHh-ZeQ-4t9Sw@mail.gmail.com>
-X-Gm-Features: AZHOrDl6MbSwc6Ip8YcLcxTT-qOq-bKVsjHj9biGhFd-T_bgQFW7J-G_3ijpnYY
-Message-ID: <CANiDSCuPM1qeerMUBFx+RfqBD35CcfhQeO5hYVHh-ZeQ-4t9Sw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/5] media: uvcvideo: Flush the control cache when we
- get an event
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Guennadi Liakhovetski <guennadi.liakhovetski@intel.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Mauro Carvalho Chehab <mchehab+samsung@kernel.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Hans
+Currently the stop routine of rswitch driver does not immediately
+prevent hardware from continuing to update descriptors and requesting
+interrupts.
 
-On Mon, 9 Dec 2024 at 12:03, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi Ricardo,
->
-> On 3-Dec-24 10:20 PM, Ricardo Ribalda wrote:
-> > Asynchronous controls trigger an event when they have completed their
-> > operation.
-> >
-> > This can make that the control cached value does not match the value in
-> > the device.
-> >
-> > Let's flush the cache to be on the safe side.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->
-> Thank you for your patch.
->
-> It seems that you have missed Laurent's reply asking to improve the commit message:
->
-> "Conceptually this change looks fine, but the commit message needs to
-> explain why this is safe to do without protecting ctrl->loaded with a
-> lock."
->
-> https://lore.kernel.org/linux-media/20241203203748.GD5196@pendragon.ideasonboard.com/
->
-> Or maybe the posting of this v6 and that reply have crossed each other.
+It can happen that when rswitch_stop() executes the masking of
+interrupts from the queues of the port being closed, napi poll for
+that port is already scheduled or running on a different CPU. When
+execution of this napi poll completes, it will unmask the interrupts.
+And unmasked interrupt can fire after rswitch_stop() returns from
+napi_disable() call. Then, the handler won't mask it, because
+napi_schedule_prep() will return false, and interrupt storm will
+happen.
 
-In this v6 I moved loaded=0 from uvc_ctrl_status_event_async() to
-uvc_ctrl_status_event()
+This can't be fixed by making rswitch_stop() call napi_disable() before
+masking interrupts. In this case, the interrupt storm will happen if
+interrupt fires between napi_disable() and masking.
 
-Now setting loaded=0 is just after mutex_lock(&chain->ctrl_mutex);
+Fix this by checking for priv->opened_ports bit when unmasking
+interrupts after napi poll. For that to be consistent, move
+priv->opened_ports changes into spinlock-protected areas, and reorder
+other operations in rswitch_open() and rswitch_stop() accordingly.
 
-Do we need a new version?
+Signed-off-by: Nikita Yushchenko <nikita.yoush@cogentembedded.com>
+---
+ drivers/net/ethernet/renesas/rswitch.c | 33 ++++++++++++++------------
+ 1 file changed, 18 insertions(+), 15 deletions(-)
 
->
-> Either way please post a new version addressing this comment.
->
-> Thanks & Regards,
->
-> Hans
->
->
->
-> > ---
-> >  drivers/media/usb/uvc/uvc_ctrl.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
-> > index 3dc9b7a49f64..db29e0e8bfd4 100644
-> > --- a/drivers/media/usb/uvc/uvc_ctrl.c
-> > +++ b/drivers/media/usb/uvc/uvc_ctrl.c
-> > @@ -1622,6 +1622,9 @@ void uvc_ctrl_status_event(struct uvc_video_chain *chain,
-> >
-> >       mutex_lock(&chain->ctrl_mutex);
-> >
-> > +     /* Flush the control cache, the data might have changed. */
-> > +     ctrl->loaded = 0;
-> > +
-> >       handle = ctrl->handle;
-> >       if (handle)
-> >               uvc_ctrl_set_handle(handle, ctrl, NULL);
-> >
->
-
-
+diff --git a/drivers/net/ethernet/renesas/rswitch.c b/drivers/net/ethernet/renesas/rswitch.c
+index 6ca5f72193eb..a33f74e1c447 100644
+--- a/drivers/net/ethernet/renesas/rswitch.c
++++ b/drivers/net/ethernet/renesas/rswitch.c
+@@ -918,8 +918,10 @@ static int rswitch_poll(struct napi_struct *napi, int budget)
+ 
+ 	if (napi_complete_done(napi, budget - quota)) {
+ 		spin_lock_irqsave(&priv->lock, flags);
+-		rswitch_enadis_data_irq(priv, rdev->tx_queue->index, true);
+-		rswitch_enadis_data_irq(priv, rdev->rx_queue->index, true);
++		if (test_bit(rdev->port, priv->opened_ports)) {
++			rswitch_enadis_data_irq(priv, rdev->tx_queue->index, true);
++			rswitch_enadis_data_irq(priv, rdev->rx_queue->index, true);
++		}
+ 		spin_unlock_irqrestore(&priv->lock, flags);
+ 	}
+ 
+@@ -1582,20 +1584,20 @@ static int rswitch_open(struct net_device *ndev)
+ 	struct rswitch_device *rdev = netdev_priv(ndev);
+ 	unsigned long flags;
+ 
+-	phy_start(ndev->phydev);
++	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
++		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDIE);
+ 
+ 	napi_enable(&rdev->napi);
+-	netif_start_queue(ndev);
+ 
+ 	spin_lock_irqsave(&rdev->priv->lock, flags);
++	bitmap_set(rdev->priv->opened_ports, rdev->port, 1);
+ 	rswitch_enadis_data_irq(rdev->priv, rdev->tx_queue->index, true);
+ 	rswitch_enadis_data_irq(rdev->priv, rdev->rx_queue->index, true);
+ 	spin_unlock_irqrestore(&rdev->priv->lock, flags);
+ 
+-	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
+-		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDIE);
++	phy_start(ndev->phydev);
+ 
+-	bitmap_set(rdev->priv->opened_ports, rdev->port, 1);
++	netif_start_queue(ndev);
+ 
+ 	return 0;
+ };
+@@ -1607,7 +1609,16 @@ static int rswitch_stop(struct net_device *ndev)
+ 	unsigned long flags;
+ 
+ 	netif_tx_stop_all_queues(ndev);
++
++	phy_stop(ndev->phydev);
++
++	spin_lock_irqsave(&rdev->priv->lock, flags);
++	rswitch_enadis_data_irq(rdev->priv, rdev->tx_queue->index, false);
++	rswitch_enadis_data_irq(rdev->priv, rdev->rx_queue->index, false);
+ 	bitmap_clear(rdev->priv->opened_ports, rdev->port, 1);
++	spin_unlock_irqrestore(&rdev->priv->lock, flags);
++
++	napi_disable(&rdev->napi);
+ 
+ 	if (bitmap_empty(rdev->priv->opened_ports, RSWITCH_NUM_PORTS))
+ 		iowrite32(GWCA_TS_IRQ_BIT, rdev->priv->addr + GWTSDID);
+@@ -1620,14 +1631,6 @@ static int rswitch_stop(struct net_device *ndev)
+ 		kfree(ts_info);
+ 	}
+ 
+-	spin_lock_irqsave(&rdev->priv->lock, flags);
+-	rswitch_enadis_data_irq(rdev->priv, rdev->tx_queue->index, false);
+-	rswitch_enadis_data_irq(rdev->priv, rdev->rx_queue->index, false);
+-	spin_unlock_irqrestore(&rdev->priv->lock, flags);
+-
+-	phy_stop(ndev->phydev);
+-	napi_disable(&rdev->napi);
+-
+ 	return 0;
+ };
+ 
 -- 
-Ricardo Ribalda
+2.39.5
+
 
