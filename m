@@ -1,41 +1,42 @@
-Return-Path: <linux-kernel+bounces-437493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2B0F9E9409
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:31:04 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0BB09E9417
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:32:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDC0A28288F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:30:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DA031665E7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:32:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCDD12248BE;
-	Mon,  9 Dec 2024 12:30:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 341AB22A1E0;
+	Mon,  9 Dec 2024 12:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="gzjDmYMW"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A554222489A;
-	Mon,  9 Dec 2024 12:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Y2z1C4ic"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43286225783;
+	Mon,  9 Dec 2024 12:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747432; cv=none; b=HxdQTzR1qp9+xTnNmny3viDjXNMA5Y3RplkUlZZsBYx0qlN0NtiZGbT+bkMsKb3H+ETholriTWizv1yeh02sfo2Z6zHuHNUyoMc+qmBy/spBEaFmEsWFCNur78aMOb7JFl/biCs3yN/HOwZ+qlygttOvGqFtxlb1bzA74EchV9c=
+	t=1733747436; cv=none; b=T3aHvsfAdbVeaJM8rCKPb5Fi/sWv+I1UkvC04u3sxxxP1vxwI4OH0fC4S/9xGnW47eM5OaT7L4pJAAF/OGIuGZVbhOf6IXqT5g0fOlZhLfJLn7hd5LUm1BUoCqbGuk1bmq6ATm9/xl/yOo8nS7nAM7aBbdghctlNfUltdBJmiQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747432; c=relaxed/simple;
-	bh=cRnnT/atUuRml4ckhgN16SEWtMljaAO00hmcJ/4aUFo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FTOJBJ95l5A0sHVxAWc1949MmeL4RAwqZggJ/p21Bu1Ey8gcRLF0xMrTz55E/DOMBgod/o7nUMgt9agNroRSNw/AYCGUaKvxfAyFHn8suqp0UCrfO0n4FbKldIpAXc8wvbvVGZLnIiII6y3pMcTYui1V1kgwMn+F+9VJtKFKHss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=gzjDmYMW; arc=none smtp.client-ip=117.135.210.4
+	s=arc-20240116; t=1733747436; c=relaxed/simple;
+	bh=LBWpMXAREluMjNn1J3aP415M5CvgxrIagrx6SQfnA5o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fHeI7iaXuA9f/z5+dslXl5akUNLsfGCJnvjrc/zm7Wq3zf2nEDzQdOpPjbvFr1yQKmmFpiQVtIqoYG+ahNqrzzTI3ofdwsv9zS8otg3qZbBwDg6CuGGnGsKAjz2bEzJnHekhjxVTiE+abPYtJuCLucnW8SY9oz9kJi4mktR/fuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Y2z1C4ic; arc=none smtp.client-ip=220.197.31.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=JETkg
-	mjDSfp+lIo8egQ4AEEqe7IPnscz/xFTqMIIcAk=; b=gzjDmYMWalJCHTYiyGOBL
-	0B6jWEsMx8gBFh+LM7a8fOvKLfYOHlBuCVt6B2rDeAbJamm297YSEnHqwvDoZ5O2
-	lr1GjdUFigOx1wfNpBcCpndnW/0SRNEY8VCpF4ILfaFWn8aae8gZLlZiNqolPlQe
-	Nyl28aabgNp/vEzKTz8eq4=
+	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=hHFtb
+	WxMIZp65Rbn0nrqgPsTaDmioigLj6AKnHkoIQ0=; b=Y2z1C4icsvGdtmS5H9Evi
+	YTDDBuK35uqb3Jd3W+U4CI0Q6g7HZfA6wVB4n5ILsbDV5y1LRyHQrDwZXqlBVgJ7
+	kkSQjAzXsCYm+OSTKYtIobC/aCA1x+k5oIS86slca9oaoGoPJMpxwj9Ts6xQz4zX
+	U9nY80bK9Mt3kVKlYiDLo8=
 Received: from ProDesk.. (unknown [58.22.7.114])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgD3Woe44lZnubZICA--.5849S2;
-	Mon, 09 Dec 2024 20:29:48 +0800 (CST)
+	by gzsmtp1 (Coremail) with SMTP id PCgvCgD3Woe44lZnubZICA--.5849S3;
+	Mon, 09 Dec 2024 20:29:50 +0800 (CST)
 From: Andy Yan <andyshrk@163.com>
 To: heiko@sntech.de
 Cc: hjc@rock-chips.com,
@@ -49,10 +50,12 @@ Cc: hjc@rock-chips.com,
 	derek.foreman@collabora.com,
 	detlev.casanova@collabora.com,
 	Andy Yan <andy.yan@rock-chips.com>
-Subject: [PATCH v5 00/18] VOP Support for rk3576
-Date: Mon,  9 Dec 2024 20:29:10 +0800
-Message-ID: <20241209122943.2781431-1-andyshrk@163.com>
+Subject: [PATCH] arm64: dts: rockchip: Add vop for rk3576
+Date: Mon,  9 Dec 2024 20:29:11 +0800
+Message-ID: <20241209122943.2781431-2-andyshrk@163.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241209122943.2781431-1-andyshrk@163.com>
+References: <20241209122943.2781431-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,92 +63,115 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgD3Woe44lZnubZICA--.5849S2
-X-Coremail-Antispam: 1Uf129KBjvJXoWxuF1xtF48CF43WF1xJFy7KFg_yoW5AFW8p3
-	98CryrXrWxGFyjqr4kJw4UCrWFqwnayay7Ww4fG3ZrJry3tFnrKr9I9Fn8ArZxX3W8Za1U
-	Cr4fJ34UGFsIvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UMCJQUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gCwXmdW3S-iwAABsc
+X-CM-TRANSID:PCgvCgD3Woe44lZnubZICA--.5849S3
+X-Coremail-Antispam: 1Uf129KBjvJXoWxXF1rKF43WF17CrW5Gw1rJFb_yoW5GrWkp3
+	ZrCrW8Jr4kWF129a9xKryvyrZ5Ja95C3Z7KwnxAF1UKr1Ykr9rKrySgr93J3Zrtr48XanF
+	vFs2kry8Krs3Xw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jfqXPUUUUU=
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gCwXmdW3S-iwAACsf
 
 From: Andy Yan <andy.yan@rock-chips.com>
 
-Thanks for the basic work from Collabora, I can bringup a HDMI
-display out on rk3576.
+Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
+---
+ arch/arm64/boot/dts/rockchip/rk3576.dtsi | 70 +++++++++++++++++++++++-
+ 1 file changed, 69 insertions(+), 1 deletion(-)
 
-PATCH 1 is a carryover from the working when add support for
-    rk3588[0], is very usefull when some people want me
-    help debug some issue online, so I really hope it can
-    be merged at this round.
-PATCH 2~8 are bugfix of rk3588 alpha blending which report and
-    test by Derek
-PATCH 9~13 are preparations for rk3576 support
-PATCH 17~18 are real support for rk376
-
-I test it with a 1080P/4K HDMI output with modetest and weston
-output.
-
-If there are some one want to have a try, I have a tree based on Linux
-6.13-rc2 here[1]
-
-[0]https://patchwork.kernel.org/project/linux-rockchip/cover/20231211115547.1784587-1-andyshrk@163.com/
-[1]https://github.com/andyshrk/linux/tree/rk3576-vop2-upstream-v5
-
-Changes in v5:
-- Add axi id configuration for rk3588/rk3576
-- More plane format check
-- Remove the non-existent CBCR scale register.
-
-Changes in v4:
-- Typo fix: selet->select
-
-Changes in v3:
-- Split it from 10/15, as it fix a exiting compile warning.
-- Add comments for why we should treat rk3566 with special care.
-- Add hardware version check
-- Add comments for why we should treat rk3566 with special care.
-- ordered by soc name
-- Add description for newly added interrupt
-- Share the alpha setup function with rk3568
-- recoder the code block by soc
-
-Changes in v2:
-- split it from main patch add support for rk3576
-- Add platform specific callback
-- Introduce vop hardware version
-- Add dt bindings
-- Add platform specific callback
-
-Andy Yan (17):
-  drm/rockchip: vop2: Add debugfs support
-  drm/rockchip: vop2: Fix cluster windows alpha ctrl regsiters offset
-  drm/rockchip: vop2: Fix the mixer alpha setup for layer 0
-  drm/rockchip: vop2: Fix the windows switch between different layers
-  drm/rockchip: vop2: Set AXI id for rk3588
-  drm/rockchip: vop2: Setup delay cycle for Esmart2/3
-  drm/rockchip: vop2: Check linear format for Cluster windows on
-    rk3566/8
-  drm/rockchip: vop2: Add check for 32 bpp format
-  drm/rockchip: vop2: Support 32x8 superblock afbc
-  drm/rockchip: vop2: Add platform specific callback
-  drm/rockchip: vop2: Support for different layer select configuration
-    between VPs
-  drm/rockchip: vop2: Introduce vop hardware version
-  drm/rockchip: vop2: Register the primary plane and overlay plane
-    separately
-  drm/rockchip: vop2: Set plane possible crtcs by possible vp mask
-  drm/rockchip: vop2: Add uv swap for cluster window
-  dt-bindings: display: vop2: Add rk3576 support
-  drm/rockchip: vop2: Add support for rk3576
-
-Min-Hua Chen (1):
-  drm/rockchip: vop2: include rockchip_drm_drv.h
-
- .../display/rockchip/rockchip-vop2.yaml       |   13 +-
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c  | 1617 ++++---------
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.h  |  292 ++-
- drivers/gpu/drm/rockchip/rockchip_vop2_reg.c  | 2014 ++++++++++++++++-
- 4 files changed, 2794 insertions(+), 1142 deletions(-)
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3576.dtsi b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+index 70ddedb0c890..45823a758b6e 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3576.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3576.dtsi
+@@ -393,6 +393,11 @@ opp-950000000 {
+ 		};
+ 	};
+ 
++	display_subsystem: display-subsystem {
++		compatible = "rockchip,display-subsystem";
++		ports = <&vop_out>;
++	};
++
+ 	firmware {
+ 		scmi: scmi {
+ 			compatible = "arm,scmi-smc";
+@@ -832,6 +837,70 @@ gpu: gpu@27800000 {
+ 			status = "disabled";
+ 		};
+ 
++		vop: vop@27d00000 {
++			compatible = "rockchip,rk3576-vop";
++			reg = <0x0 0x27d00000 0x0 0x3000>, <0x0 0x27d05000 0x0 0x1000>;
++			reg-names = "vop", "gamma-lut";
++			interrupts = <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 379 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 380 IRQ_TYPE_LEVEL_HIGH>,
++				     <GIC_SPI 381 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "vop-sys",
++					  "vop-vp0",
++					  "vop-vp1",
++					  "vop-vp2";
++			clocks = <&cru ACLK_VOP>,
++				 <&cru HCLK_VOP>,
++				 <&cru DCLK_VP0>,
++				 <&cru DCLK_VP1>,
++				 <&cru DCLK_VP2>;
++			clock-names = "aclk",
++				      "hclk",
++				      "dclk_vp0",
++				      "dclk_vp1",
++				      "dclk_vp2";
++			iommus = <&vop_mmu>;
++			power-domains = <&power RK3576_PD_VOP>;
++			rockchip,grf = <&sys_grf>;
++			rockchip,pmu = <&pmu>;
++			status = "disabled";
++
++			vop_out: ports {
++				#address-cells = <1>;
++				#size-cells = <0>;
++
++				vp0: port@0 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <0>;
++				};
++
++				vp1: port@1 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <1>;
++				};
++
++				vp2: port@2 {
++					#address-cells = <1>;
++					#size-cells = <0>;
++					reg = <2>;
++				};
++			};
++		};
++
++		vop_mmu: iommu@27d07e00 {
++			compatible = "rockchip,rk3576-iommu", "rockchip,rk3568-iommu";
++			reg = <0x0 0x27d07e00 0x0 0x100>, <0x0 0x27d07f00 0x0 0x100>;
++			interrupts = <GIC_SPI 342 IRQ_TYPE_LEVEL_HIGH>;
++			interrupt-names = "vop_mmu";
++			clocks = <&cru ACLK_VOP>, <&cru HCLK_VOP>;
++			clock-names = "aclk", "iface";
++			#iommu-cells = <0>;
++			power-domains = <&power RK3576_PD_VOP>;
++			status = "disabled";
++		};
++
+ 		hdmi: hdmi@27da0000 {
+ 			compatible = "rockchip,rk3576-dw-hdmi-qp";
+ 			reg = <0x0 0x27da0000 0x0 0x20000>;
+@@ -873,7 +942,6 @@ hdmi_out: port@1 {
+ 			};
+ 		};
+ 
+->>>>>>> 2b62c69b3a4c (arm64: dts: rockchip: Add hdmi for rk3576)
+ 		qos_hdcp1: qos@27f02000 {
+ 			compatible = "rockchip,rk3576-qos", "syscon";
+ 			reg = <0x0 0x27f02000 0x0 0x20>;
 -- 
 2.34.1
 
