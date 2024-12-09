@@ -1,247 +1,191 @@
-Return-Path: <linux-kernel+bounces-436653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31D4E9E8909
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:49:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DEE81650A6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:48:57 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3828200CB;
-	Mon,  9 Dec 2024 01:48:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QqTQFnjJ"
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9A3CB9E8914
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:58:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B80C8DF
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 01:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5698228259C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:58:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159C9433D1;
+	Mon,  9 Dec 2024 01:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aYVL/QDI"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0756FC0E;
+	Mon,  9 Dec 2024 01:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733708934; cv=none; b=Y4rLW7ZuwKLWCQyhcKXiLya1zl4DTVr6z0W9j6c14A0rGiXJDvJM+glgll7L5Q9jacNQ+RM1/2mUVYIPlAn6xGg3GF+/YpJHM7eK1al4jxlZNsIKknyad069LeZh+KS2lgRtCV1EFNwnVFAjCUkxhXTDtEajUKKD+YCuD3f2eHE=
+	t=1733709486; cv=none; b=SnAmk/GB03yQn/0n/Oijyefqpg1lyOR4qQYaGQOzgNanDuyPXglYUo1ssl8X/ascB/1IOdSLeLSYrUrsANlGvkxlmsd2XqByMpH1l0ZrmC1x19FaQD6JBg3dbzwSZLnhXcOugv2YYjW/YwrrLfDOX5qMCAhQQNFS+QahClkjRnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733708934; c=relaxed/simple;
-	bh=7I+7ewPdPrhkBFcv5aWbXYivYYXOZEl+zQyNL4b3VXc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
-	 Content-Type:References; b=YwYYZRkqjQP+k0LCsw5IHb+2hKOLtZ50XPNFZIwGZDc3mB8WWyympp6Jmi/iSi89OCAP1YdVL35Mlmfez1lip0QD9dsGalxuZpZoMq5lvryJ7CqlaSq7pYIRwGr6zSA0sB3BSchduzq1oaIZ0znuT2ixY166l9LXc9Jwt82xxlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=QqTQFnjJ; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20241209014849epoutp04fa48a56f568764c6c1ab8e4affcf1547~PXxXzRzz92239522395epoutp04X
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 01:48:49 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20241209014849epoutp04fa48a56f568764c6c1ab8e4affcf1547~PXxXzRzz92239522395epoutp04X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1733708929;
-	bh=5q2Gy50CjWY8XzahAef4ozcI3q+afsiLyGYUVA8DltM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QqTQFnjJ3H7I68O5YW1arYzF0I7aoeAw5ib66MlFrbrxpY+dnsKYJ9Bhhcrl7MECC
-	 i1H3kt3rEkDmgnApL12T+QseBvIE7yu9FhwYPS3bR3JCG65ZSX7rTVtKGk7Cup52sX
-	 VRP885yux1dUU5dW8+nAFrg43TSct154mlCd6RTE=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-	20241209014848epcas2p160ab82c51f6cd8a6278ce3e41807009d~PXxXU1pfA3068630686epcas2p1d;
-	Mon,  9 Dec 2024 01:48:48 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.90]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Y64XJ25sMz4x9Q7; Mon,  9 Dec
-	2024 01:48:48 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	D6.B8.22938.08C46576; Mon,  9 Dec 2024 10:48:48 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
-	20241209014847epcas2p219955d6e71c91d1f9b2b5dbca5d705d6~PXxWWbxng0909609096epcas2p2c;
-	Mon,  9 Dec 2024 01:48:47 +0000 (GMT)
-Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20241209014847epsmtrp20eb60868368dbdddaa1a0d845ee7f2d0~PXxWUq6xC1489914899epsmtrp2U;
-	Mon,  9 Dec 2024 01:48:47 +0000 (GMT)
-X-AuditID: b6c32a43-0b1e27000000599a-f3-67564c80f037
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	69.B4.18949.F7C46576; Mon,  9 Dec 2024 10:48:47 +0900 (KST)
-Received: from perf (unknown [10.229.95.91]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20241209014847epsmtip2e82778ea439b13f5c32e90b8ff9acd58~PXxWC6tQw0099100991epsmtip23;
-	Mon,  9 Dec 2024 01:48:47 +0000 (GMT)
-Date: Mon, 9 Dec 2024 10:52:12 +0900
-From: Youngmin Nam <youngmin.nam@samsung.com>
-To: Neal Cardwell <ncardwell@google.com>
-Cc: Eric Dumazet <edumazet@google.com>, Youngmin Nam
-	<youngmin.nam@samsung.com>, Jakub Kicinski <kuba@kernel.org>,
-	davem@davemloft.net, dsahern@kernel.org, pabeni@redhat.com,
-	horms@kernel.org, dujeong.lee@samsung.com, guo88.liu@samsung.com,
-	yiwang.cai@samsung.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, joonki.min@samsung.com,
-	hajun.sung@samsung.com, d7271.choe@samsung.com, sw.ju@samsung.com
-Subject: Re: [PATCH] tcp: check socket state before calling WARN_ON
-Message-ID: <Z1ZNTKHmCV9Jg2o8@perf>
+	s=arc-20240116; t=1733709486; c=relaxed/simple;
+	bh=26ws/KgChiIeAZTv7IM2pgQp+NqAg4iGZ7rpERs3Gs8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kq7uzIk28QGG/v/brGMY+pgbvwk/RkDNyElnibe5R0H1bUdU62+26c6AmJIo0Kc2e7EtxvdcexjWnzVHPLucpe6p6GgdnsLYfNo6g2Y/vNc8+RYwyHWIHQSpgVLFSaHeq0lg74rRF3/HZNYMZB/QZ7/SSrEjlXTW1k+hCqKT5/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aYVL/QDI; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B90QGVn020262;
+	Mon, 9 Dec 2024 01:57:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	CG8II9ztrbXAFXn/IH/2hf7r1GGna+rqHK57zUB/bNU=; b=aYVL/QDI5hRBCESG
+	gYYAxB1Jr0qodPz2M2xbt/JMNcoRoBNZs8xC1V3uwoq+Jf5P+cWv2D0SU1UQR0/M
+	T2eLohmOtOyA2bFSvoz123IpkZOeURYCf/nIfYwjVwv7eQAyXZDZ5SCRtJr0SBng
+	IXT3p1usNWdSsO1rXlSYeeyZJkabKG8rxnEgZIoI8gDFj189N7VQ+kb/PZA8iBMJ
+	xdJaUjqCZOymB7MLaSm/ISPhx/oeXiftwxMpDfoDtjq/rH0umXmv1xD7IP9w9UD4
+	KYv5rP+18JY4MYCm+Fy6ZR5eaJ4O8abTulwPAzZohbPvopy/cJQRwjQeFg6bXXYH
+	h0Jcmg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cc2eb7p3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 01:57:43 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B91vgCk012972
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 01:57:42 GMT
+Received: from [10.64.16.135] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
+ 17:57:35 -0800
+Message-ID: <5cdd9f7a-2c28-4ac2-a4da-304d25efbca3@quicinc.com>
+Date: Mon, 9 Dec 2024 09:57:33 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CADVnQykZhXO_k5vKpaQBi+9JnuFt1C5E=20mt=mb-bzXrzfXLw@mail.gmail.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFJsWRmVeSWpSXmKPExsWy7bCmmW6DT1i6wZ8XvBbX9k5kt5hzvoXF
-	Yt2uViaLZwtmsFg8PfaI3WLyFEaLpv2XmC0e9Z9gs7i6+x2zxYVtfawWl3fNYbPouLOXxeLY
-	AjGLb6ffMFq0Pv7MbvHxeBO7xeIDn9gdBD22rLzJ5LFgU6nHplWdbB7v911l8+jbsorR4/Mm
-	uQC2qGybjNTElNQihdS85PyUzLx0WyXv4HjneFMzA0NdQ0sLcyWFvMTcVFslF58AXbfMHKDT
-	lRTKEnNKgUIBicXFSvp2NkX5pSWpChn5xSW2SqkFKTkF5gV6xYm5xaV56Xp5qSVWhgYGRqZA
-	hQnZGf9PNzAWfFKqWPB4PmMD4yupLkYODgkBE4m90yW6GLk4hAR2MEq0n1/ODuF8YpR4dWkh
-	E4TzjVHi6ZG9LF2MnGAdO1/vZ4VI7GWUeHvuHxuE85BR4uL6fUwgc1kEVCRab8mANLAJ6Eps
-	O/GPEcQWEdCQuLvoASNIPbPAEmaJ6yensYLUCws4S/y9YwtSwyugLLHh4Uc2CFtQ4uTMJ2CL
-	OQUCJX7M/QR2kYTAGQ6JXZPXsUJc5CLR/eMHO4QtLPHq+BYoW0ri87u9bBB2sUTD/VvMEM0t
-	jBKnrr9ghkgYS8x61g52HbNAhsTOc93skIBRljhyiwUizCfRcfgvVJhXoqNNCKJTTeLXlA2M
-	ELaMxO7FK6AmekhMXNDEAgmTXywST9e9YZ/AKDcLyT+zkGybBTSWWUBTYv0ufYiwvETz1tnM
-	EGFpieX/OJBULGBkW8UollpQnJuemmxUYAiP6+T83E2M4ESt5byD8cr8f3qHGJk4GA8xSnAw
-	K4nwcniHpgvxpiRWVqUW5ccXleakFh9iNAVG00RmKdHkfGCuyCuJNzSxNDAxMzM0NzI1MFcS
-	573XOjdFSCA9sSQ1OzW1ILUIpo+Jg1OqgWnJ1fSfPu7SAXy/hd9Y5i6PnJu24V1RdfBzvzw1
-	Tr2MusMCpzQlm+RkWfs+lmncCg6xfZit0vFBTIe/NeKKtuLuye8mbQp5Xfjmts+rk1s3WSo6
-	zYxgTK8IWsGSMX3lPIfMk86vFkxV1WdwDb0yyzSvoZtZfJ2Z8XxndiabzonszjIem04dNRT6
-	Y9GUoeNhm8csGrmHnd2h/LXJkzy1/lQX5bPntvctejGne5Oq7r/nM+037vjn+GC+nHX664bs
-	LbPrJovGnn3DlSOqyHj72ItPG1sjtyUvf+UlVnL3X9s1AYfiSXfl3U+cb70ilvvzzN2MlPBD
-	66ptp/QtXHrFOfLVWaegZa3Mko+7WTm6lViKMxINtZiLihMB5vzSd10EAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprLIsWRmVeSWpSXmKPExsWy7bCSvG69T1i6wbFzWhbX9k5kt5hzvoXF
-	Yt2uViaLZwtmsFg8PfaI3WLyFEaLpv2XmC0e9Z9gs7i6+x2zxYVtfawWl3fNYbPouLOXxeLY
-	AjGLb6ffMFq0Pv7MbvHxeBO7xeIDn9gdBD22rLzJ5LFgU6nHplWdbB7v911l8+jbsorR4/Mm
-	uQC2KC6blNSczLLUIn27BK6MfecvshRMUajYdWsPYwPjCokuRk4OCQETiZ2v97N2MXJxCAns
-	ZpToezmBFSIhI3F75WUoW1jifssRqKL7jBLb5h9n7mLk4GARUJFovSUDUsMmoCux7cQ/RhBb
-	REBD4u6iB4wg9cwCy5glFrz4D1YvLOAs8feOLUgNr4CyxIaHH9kgZq5gkZh65TEbREJQ4uTM
-	JywgNrOAusSfeZfAepkFpCWW/+OACMtLNG+dzQxicwoESvyY+4lpAqPgLCTds5B0z0LonoWk
-	ewEjyypGydSC4tz03GLDAqO81HK94sTc4tK8dL3k/NxNjOAY1NLawbhn1Qe9Q4xMHIyHGCU4
-	mJVEeDm8Q9OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ83573ZsiJJCeWJKanZpakFoEk2Xi4JRq
-	YHJ6ousrUuChvY411Uij9c271+rzlbq9Fq5TWbJRfmPGM61JbU+/RP3+pr1v3n4GnaT8S4xm
-	vxkmvDk6b5Ha/+f6tytjN7yUjG764ras0OHqdzXXZxHTdh2Sa42TO1thKKafxfCssmZZRHvb
-	B+Ya06qZ5k0SN0xln2fMvxB02df3obmt6a7P+tNdv8/jPzxd30/W+NKDVPepvhsSJ0mGCKtp
-	J7d+YG94XW7i8GzPbub8rvPtN+QZlteey1CyiagxV5e+kW5+w8c730r+lETSnCUP+qJyD99U
-	TYu2umP9vfaj/Ou8XbwyYTO7/z2JTZ51QkWkwTs6uvXfhmmKF0+cN7xwzy5J9BbnL7vfIpO+
-	KbEUZyQaajEXFScCACHXCUgwAwAA
-X-CMS-MailID: 20241209014847epcas2p219955d6e71c91d1f9b2b5dbca5d705d6
-X-Msg-Generator: CA
-Content-Type: multipart/mixed;
-	boundary="----Cwu3ZXVVeZAiO6hmdsuERc26j9mSSa5rGzwFtoxKk617clws=_fa1aa_"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241209014847epcas2p219955d6e71c91d1f9b2b5dbca5d705d6
-References: <CANn89iK+7CKO31=3EvNo6-raUzyibwRRN8HkNXeqzuP9q8k_tA@mail.gmail.com>
-	<CADVnQynUspJL4e3UnZTKps9WmgnE-0ngQnQmn=8gjSmyg4fQ5A@mail.gmail.com>
-	<20241203181839.7d0ed41c@kernel.org> <Z0/O1ivIwiVVNRf0@perf>
-	<CANn89iKms_9EX+wArf1FK7Cy3-Cr_ryX+MJ2YC8yt1xmvpY=Uw@mail.gmail.com>
-	<Z1KRaD78T3FMffuX@perf>
-	<CANn89iKOC9busc9G_akT=H45FvfVjWm97gmCyj=s7_zYJ43T3w@mail.gmail.com>
-	<Z1K9WVykZbo6u7uG@perf>
-	<CANn89i+BuU+1__zSWgjshFzfxFUttDEpn90V+p8+mVGCHidYAA@mail.gmail.com>
-	<CADVnQykZhXO_k5vKpaQBi+9JnuFt1C5E=20mt=mb-bzXrzfXLw@mail.gmail.com>
-	<CGME20241209014847epcas2p219955d6e71c91d1f9b2b5dbca5d705d6@epcas2p2.samsung.com>
-
-------Cwu3ZXVVeZAiO6hmdsuERc26j9mSSa5rGzwFtoxKk617clws=_fa1aa_
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] drm/msm/dp: Add maximum width limitation for modes
+To: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>
+CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        "Marijn
+ Suijten" <marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Kuogee
+ Hsieh" <quic_khsieh@quicinc.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        "Kishon
+ Vijay Abraham I" <kishon@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>, <quic_lliu6@quicinc.com>,
+        <quic_fangez@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <freedreno@lists.freedesktop.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-gpio@vger.kernel.org>
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-6-09a4338d93ef@quicinc.com>
+ <CAA8EJpprTGRTxO+9BC6GRwxE4A3CuvmySsxS2Nh4Tqj0nDRT_Q@mail.gmail.com>
+ <95a78722-8266-4d5d-8d2f-e8efa1aa2e87@quicinc.com>
+ <CAA8EJpo-1o9i4JhZgdbvRxvoYQE2v18Lz_8dVg=Za7a_pk5EDA@mail.gmail.com>
+ <86b9a8be-8972-4c19-af0c-da6b3667cbf4@quicinc.com>
+ <fb6enh3wzusadc6r7clg7n7ik2jsucimoi7dnecnsstcz4r6e6@dtahvlm522jj>
+ <3e7660b3-934a-4b11-82a3-48137d63ea5d@quicinc.com>
+From: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+In-Reply-To: <3e7660b3-934a-4b11-82a3-48137d63ea5d@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-Content-Disposition: inline
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Uka-izgVnq1gjnLi7O1BlO94c-l0rngb
+X-Proofpoint-GUID: Uka-izgVnq1gjnLi7O1BlO94c-l0rngb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ mlxlogscore=710 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ adultscore=0 malwarescore=0 clxscore=1015 suspectscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090014
 
-On Fri, Dec 06, 2024 at 10:34:16AM -0500, Neal Cardwell wrote:
-> On Fri, Dec 6, 2024 at 4:08 AM Eric Dumazet <edumazet@google.com> wrote:
-> >
-> > On Fri, Dec 6, 2024 at 9:58 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
-> > >
-> > > On Fri, Dec 06, 2024 at 09:35:32AM +0100, Eric Dumazet wrote:
-> > > > On Fri, Dec 6, 2024 at 6:50 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
-> > > > >
-> > > > > On Wed, Dec 04, 2024 at 08:13:33AM +0100, Eric Dumazet wrote:
-> > > > > > On Wed, Dec 4, 2024 at 4:35 AM Youngmin Nam <youngmin.nam@samsung.com> wrote:
-> > > > > > >
-> > > > > > > On Tue, Dec 03, 2024 at 06:18:39PM -0800, Jakub Kicinski wrote:
-> > > > > > > > On Tue, 3 Dec 2024 10:34:46 -0500 Neal Cardwell wrote:
-> > > > > > > > > > I have not seen these warnings firing. Neal, have you seen this in the past ?
-> > > > > > > > >
-> > > > > > > > > I can't recall seeing these warnings over the past 5 years or so, and
-> > > > > > > > > (from checking our monitoring) they don't seem to be firing in our
-> > > > > > > > > fleet recently.
-> > > > > > > >
-> > > > > > > > FWIW I see this at Meta on 5.12 kernels, but nothing since.
-> > > > > > > > Could be that one of our workloads is pinned to 5.12.
-> > > > > > > > Youngmin, what's the newest kernel you can repro this on?
-> > > > > > > >
-> > > > > > > Hi Jakub.
-> > > > > > > Thank you for taking an interest in this issue.
-> > > > > > >
-> > > > > > > We've seen this issue since 5.15 kernel.
-> > > > > > > Now, we can see this on 6.6 kernel which is the newest kernel we are running.
-> > > > > >
-> > > > > > The fact that we are processing ACK packets after the write queue has
-> > > > > > been purged would be a serious bug.
-> > > > > >
-> > > > > > Thus the WARN() makes sense to us.
-> > > > > >
-> > > > > > It would be easy to build a packetdrill test. Please do so, then we
-> > > > > > can fix the root cause.
-> > > > > >
-> > > > > > Thank you !
-> > > > > >
-> > > > >
-> > > > > Hi Eric.
-> > > > >
-> > > > > Unfortunately, we are not familiar with the Packetdrill test.
-> > > > > Refering to the official website on Github, I tried to install it on my device.
-> > > > >
-> > > > > Here is what I did on my local machine.
-> > > > >
-> > > > > $ mkdir packetdrill
-> > > > > $ cd packetdrill
-> > > > > $ git clone https://protect2.fireeye.com/v1/url?k=746d28f3-15e63dd6-746ca3bc-74fe485cbff6-e405b48a4881ecfc&q=1&e=ca164227-d8ec-4d3c-bd27-af2d38964105&u=https%3A%2F%2Fgithub.com%2Fgoogle%2Fpacketdrill.git .
-> > > > > $ cd gtests/net/packetdrill/
-> > > > > $./configure
-> > > > > $ make CC=/home/youngmin/Downloads/arm-gnu-toolchain-13.3.rel1-x86_64-aarch64-none-linux-gnu/bin/aarch64-none-linux-gnu-gcc
-> > > > >
-> > > > > $ adb root
-> > > > > $ adb push packetdrill /data/
-> > > > > $ adb shell
-> > > > >
-> > > > > And here is what I did on my device
-> > > > >
-> > > > > erd9955:/data/packetdrill/gtests/net # ./packetdrill/run_all.py -S -v -L -l tcp/
-> > > > > /system/bin/sh: ./packetdrill/run_all.py: No such file or directory
-> > > > >
-> > > > > I'm not sure if this procedure is correct.
-> > > > > Could you help us run the Packetdrill on an Android device ?
+
+
+On 12/7/2024 4:13 AM, Abhinav Kumar wrote:
 > 
-> BTW, Youngmin, do you have a packet trace (e.g., tcpdump .pcap file)
-> of the workload that causes this warning?
 > 
-> If not, in order to construct a packetdrill test to reproduce this
-> issue, you may need to:
+> On 12/3/2024 5:58 AM, Dmitry Baryshkov wrote:
+>> On Tue, Dec 03, 2024 at 03:41:53PM +0800, Xiangxu Yin wrote:
+>>>
+>>>
+>>> On 12/2/2024 5:32 PM, Dmitry Baryshkov wrote:
+>>>> On Mon, 2 Dec 2024 at 11:05, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+>>>>>
+>>>>>
+>>>>>
+>>>>> On 11/29/2024 9:52 PM, Dmitry Baryshkov wrote:
+>>>>>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+>>>>>>>
+>>>>>>> Introduce a maximum width constraint for modes during validation. This
+>>>>>>> ensures that the modes are filtered based on hardware capabilities,
+>>>>>>> specifically addressing the line buffer limitations of individual pipes.
+>>>>>>
+>>>>>> This doesn't describe, why this is necessary. What does "buffer
+>>>>>> limitations of individual pipes" mean?
+>>>>>> If the platforms have hw capabilities like being unable to support 8k
+>>>>>> or 10k, it should go to platform data
+>>>>>>
+>>>>> It's SSPP line buffer limitation for this platform and only support to 2160 mode width.
+>>>>> Then, shall I add max_width config to struct msm_dp_desc in next patch? for other platform will set defualt value to ‘DP_MAX_WIDTH 7680'
+>>>>
+>>>> SSPP line buffer limitations are to be handled in the DPU driver. The
+>>>> DP driver shouldn't care about those.
+>>>>
+>>> Ok, Will drop this part in next patch.
+>>
+>> If you drop it, what will be left from the patch itself?
+>>
 > 
-> (1) add code to the warning to print the local and remote IP address
-> and port number when the warning fires (see DBGUNDO() for an example)
+> Yes agree with Dmitry, max_width is really not a DP related terminology.
 > 
-> (2) take a tcpdump .pcap trace of the workload
+> This patch should be dropped.
 > 
-> Then you can use the {local_ip:local_port, remote_ip:remote_port} info
-> from (1) to find the packet trace in (2) that can be used to construct
-> a packetdrill test to reproduce this issue.
+> So there were two issues, overall in this series causing this patch:
 > 
-> thanks,
-> neal
+> 1) In https://patchwork.freedesktop.org/patch/625822/, instead of using VIG_SDM845_MASK, we should be using VIG_SDM845_MASK_SDMA. Without that even 2k will not work, will leave a comment there.
 > 
+> 2) 4k will still fail. I dont think we can even support 4k on QCS615 but the modes should be filtered out because there is no 3dmux.
+> 
+> I have submitted https://patchwork.freedesktop.org/patch/627694/ to address this.
+> 
+> Xiangxu, please let me know if that works for you.
+> 
+> Thanks
+> 
+> Abhinav
+Thanks for your patchsets,
+After apply patch 625822 & 627694，mode filter works correctly on QCS615 platform with both 4k and 2k monitor.
+work>>>>>>>
+>>>>>>> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+>>>>>>> ---
+>>>>>>>   drivers/gpu/drm/msm/dp/dp_display.c |  3 +++
+>>>>>>>   drivers/gpu/drm/msm/dp/dp_display.h |  1 +
+>>>>>>>   drivers/gpu/drm/msm/dp/dp_panel.c   | 13 +++++++++++++
+>>>>>>>   drivers/gpu/drm/msm/dp/dp_panel.h   |  1 +
+>>>>>>>   4 files changed, 18 insertions(+)
+>>>>
+>>>>
+>>>
+>>
 
-(Neal, please ignore my previous email as I missed adding the CC list.)
-
-Thank you for your detailed and considerate information.
-
-We are currently trying to reproduce this issue using our stability stress test and
-aiming to capture the tcpdump output.
-
-Thanks.
-
-------Cwu3ZXVVeZAiO6hmdsuERc26j9mSSa5rGzwFtoxKk617clws=_fa1aa_
-Content-Type: text/plain; charset="utf-8"
-
-
-------Cwu3ZXVVeZAiO6hmdsuERc26j9mSSa5rGzwFtoxKk617clws=_fa1aa_--
 
