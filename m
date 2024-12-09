@@ -1,309 +1,146 @@
-Return-Path: <linux-kernel+bounces-437664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409E19E968C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:24:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEF19E96C8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:29:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D420A28272D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:24:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F13B7188C51F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECF2F23314C;
-	Mon,  9 Dec 2024 13:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5AF233144;
+	Mon,  9 Dec 2024 13:21:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X9Jhrp0f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HLCtpUaA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23BF2233144;
-	Mon,  9 Dec 2024 13:20:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D51223315B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:21:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733750452; cv=none; b=czKpTfk8Ez6CVze6/v1UtZ4eqUupVBzs3wo3Sd9DxNM91cEANYfSlMnl/2DC6v8HFEzmPDfDgtQr8IIECukPAh2fUVN92b1OdTxXjW/i1caDRPXV4k1cyeF3eZUilPQ/Vx3MY2FHXCAO46J7Xu4PO/VnPpobhJJvuX44TpDxXyE=
+	t=1733750494; cv=none; b=SwXY7ihrF1n2QHervcUnzwQYDwDkYO6yXppR5fZgvBL+JtSzqvdIrmXtMGAvL0TUlHp0aDQsPKU7gZHtjdxVXGOKQSX6kTWAm4+330NuM18iSnW0QTGoGmnasN5DeuWAWTWhQQdD6P9pMvg40tEBtnWjBQdI9Q5SXn0Yz+xXeqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733750452; c=relaxed/simple;
-	bh=91tdhSY7xM7mkdFNUOpCJP2TVV2YyVS7eJKHp6LgdVY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Fb5boOhM9J0/ZPwbrTJhS8NULYjozfm+McByFXEAWbPA4J5k4qBcqpwne5A0qTTDi0knBc0LChlhwrAKyHLctzb2PDzbRckiugUZ4qeo+uc8byV+UD2WV/O51gV6ox6OfmM/OLsd9GUO2sWkDTkrSc7uA6YVdvtLmqhPmfnJyuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X9Jhrp0f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D6DC4CED1;
-	Mon,  9 Dec 2024 13:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733750451;
-	bh=91tdhSY7xM7mkdFNUOpCJP2TVV2YyVS7eJKHp6LgdVY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=X9Jhrp0f/U9Zt4EqZsbLXtwc1fYdoNN+sQ/pIn2vTEWARLbUNcUlxAuRqGcvUL2XP
-	 C/6mJyNo4qice1d83XIe+ULkiAj9cArmIcD7uqSwvZ0tExWyaFX1a2PkSDrmFlzUq8
-	 X3aSbZKnYMc+1kkWjF6D9A6hYTq9dQhMrzS9DSHEaQ9CTvSuL9Y3Q7uxjGmVBrbcJI
-	 +kVZqZZ6TA3pvomd2pOpRf6g/WZIuHHItU6IidxDH62OxWIwej63OG+r+8qspUyAws
-	 j1bOVRYQs0ds3la5g30oOU6cFl7KASxCNQ1m3LYL9y8wjKGxUqaYiCPxIN4gYnQZS0
-	 Mftf8hD3jeA8g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tKdgu-001svY-RL;
-	Mon, 09 Dec 2024 13:20:49 +0000
-Date: Mon, 09 Dec 2024 13:20:48 +0000
-Message-ID: <865xntt2kv.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: kvmarm <kvmarm@lists.linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	christoffer.dall@arm.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	coltonlewis@google.com,
-	joey.gouly@arm.com,
-	yuzenghui@huawei.com,
-	darren@os.amperecomputing.com,
-	vishnu@os.amperecomputing.com
-Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer expired
-In-Reply-To: <c5b1c3d7-56ca-4afc-a831-045dba4beffa@os.amperecomputing.com>
-References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
-	<867c89tc4q.wl-maz@kernel.org>
-	<c5b1c3d7-56ca-4afc-a831-045dba4beffa@os.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733750494; c=relaxed/simple;
+	bh=kBFYXrgjneGgOPHo6biVrlmMJPHQgqBGqcH6KYCDcpw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kHacWOyQj5upnHs7w+7y9VRlFYBYcya4KV4WPRzii/XaNbGfbWRTSErjnpQO1N/mWfHK1Ntod6UgpmyoN5wGN+mWThgRpTByc822p3/sqB/NydMa5WN6LqxqEmW5wEeod2B1lEsBf3S/MzUSMAXjUnPHkHPkLlb1poT2i2m1Zs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HLCtpUaA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733750491;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jrC64vfuasWzI50Ac1WvO0UeovJ22x37jEt9PiFRSDo=;
+	b=HLCtpUaA7IrHfxkt4UAm9VdXX4dArEgUaR7Cvs5F2kgDgrLoDjyRrp8PaCWbJWiaPMBWOR
+	dbWkKOa433GU7/esrfnxzNE7d2Rm2GvAClk0O2Fq3MPw1i0AHE4Nb/DwA2cfnBp65RfYgJ
+	r8N/iih3hpyGeFPxZoe6l0rRh9SdtzE=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-682-TJwfX3MmP4-qUp920JKe7g-1; Mon, 09 Dec 2024 08:21:30 -0500
+X-MC-Unique: TJwfX3MmP4-qUp920JKe7g-1
+X-Mimecast-MFC-AGG-ID: TJwfX3MmP4-qUp920JKe7g
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-434c214c05aso36708755e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 05:21:30 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733750488; x=1734355288;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jrC64vfuasWzI50Ac1WvO0UeovJ22x37jEt9PiFRSDo=;
+        b=Vg1TLVv8QXGIACNEnupi5CzWdYSygNMWq5Gl+3yQYf1MFKiaQ8gVaGTCZ7Aeb+9PcX
+         kyM3dIht4mAFtQcZ9f5zPM8RX8nvf06LY7zrBpq6V/psychcToXlJYmhbZzraa6Uatjl
+         nL+Fg/e6D2um+JukEca4wHavz8DzDP6u367AiQT8xyweGlTeaBUwLs1+h4MzcE4/qxQh
+         4JIhb86TBXntRrhol9qQTD91dKW4oWODfA6sk3wzd+QhEhlUpn00SGsSCrjLuw7lPglx
+         h/g4opctjGKXY0DiwCSO99FiHwgDmoyD65814z65Z7+u/GsUYkmFshqnsBtvSIvtpIUK
+         22Zw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRQF4tAEvTpk1hnkHr3/kZNOoztxkSJ1vPipsLb33X4NeAs+ikutzeOVT/9SL2N8W+TZi9sPmXypRfu/k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+9ckWHinnc26W3U8Zm8b83s8Yh19VWxpT2mm5GnxRb9R9VlB/
+	A831PoqrTYYkeFEWbUiJMthytASvNUK2ywiMC5oBl/3yuRWqL2+5jnsc6O/iAYsDKp4aCcsHZsS
+	g15rb5A/idBni8muirRwZiGLZFyiq96g//p7cEEtQrBdk5FYGB+KWsv3d6+XfdWY4XsNZpA==
+X-Gm-Gg: ASbGnctgwO8I3OO+pBVJD3Bqx+T5RxUMOZfRhdeJJtdgf1OOfhGIm7S741snO5PyYg7
+	L9G0DTVcyooLBMEt+mn4+E55R6amt6S1XuBxGihPPfOlZCGEikIQYsByXv/IoU97UECzhsMbU8k
+	jNEMdHVKLZGHRA/AH5fdRlkVi/vTiKSCMHQVRdGxWK5u+mmC8jUQBqE74oNkf2lLItomJ+p3m+b
+	Avv3XXx7kfLlh1haZHnSIKpTtiMpSeknc8nJcJjElw2wWnXuFbovL+3/uRRxA+Q0MJdZyFGcbUM
+	oph0Pv7Wz/wzzNDbzNSU7A==
+X-Received: by 2002:a05:6000:78d:b0:386:1cd3:89fa with SMTP id ffacd0b85a97d-3862b37da8emr10855298f8f.33.1733750488195;
+        Mon, 09 Dec 2024 05:21:28 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFpPQnRIZu16wT5CDEHDmRuSGupx1hhP8ovzt9nmMxrBf32a0xvYsQS0Wr8vg8lU37w1zZ4rQ==
+X-Received: by 2002:a05:6000:78d:b0:386:1cd3:89fa with SMTP id ffacd0b85a97d-3862b37da8emr10855275f8f.33.1733750487886;
+        Mon, 09 Dec 2024 05:21:27 -0800 (PST)
+Received: from imammedo.users.ipa.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38621909644sm13377648f8f.76.2024.12.09.05.21.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 05:21:27 -0800 (PST)
+Date: Mon, 9 Dec 2024 14:21:25 +0100
+From: Igor Mammedov <imammedo@redhat.com>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, "Michael S . Tsirkin"
+ <mst@redhat.com>, Shiju Jose <shiju.jose@huawei.com>, Ani Sinha
+ <anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
+ <qemu-devel@nongnu.org>
+Subject: Re: [PATCH v6 08/16] acpi/ghes: don't check if physical_address is
+ not zero
+Message-ID: <20241209142125.74aa8be4@imammedo.users.ipa.redhat.com>
+In-Reply-To: <20241209113640.000055ab@huawei.com>
+References: <cover.1733561462.git.mchehab+huawei@kernel.org>
+	<95c0fa3fc2969daf3b6bc1f007733f11b715a465.1733561462.git.mchehab+huawei@kernel.org>
+	<20241209113640.000055ab@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org, catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, vishnu@os.amperecomputing.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, 09 Dec 2024 12:25:34 +0000,
-Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
-> >>
-> >> During automated testing of Nested Virtualization using avocado-vt,
-> >=20
-> > Which is not merged upstream. So what branch are you using? Based on
-> > what kernel version? On what HW? With which virtualisation features?
-> >=20
->=20
-> Testing is done on Ampere's AmpereOne platform using 6.10 based kernel
-> with NV patches from your repo.
+On Mon, 9 Dec 2024 11:36:40 +0000
+Jonathan Cameron <Jonathan.Cameron@huawei.com> wrote:
 
-Grmbl... *Which* patches? At least give me the SHA1 of the branch,
-because I have no idea what you are running. And 6.10 is definitely
-not something I care about. If you're using the NV patches, the
-*minimum* you should run is 6.13-rc1, because that's what the current
-code is based on.
+> On Sat,  7 Dec 2024 09:54:14 +0100
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
+> 
+> > The 'physical_address' value is a faulty page. As such, 0 is
+> > as valid as any other value.  
+> Still not sure on what faulty pages are :)
 
-Also, does this machine have FEAT_ECV?
+s/page/address/ probably would make it a bit more clear
 
->=20
-> >> it has been observed that during some boot test iterations,
-> >> the Guest-Hypervisor boot was getting crashed with a
-> >> synchronous exception while it is still booting EDK2.
-> >>=20
-> >> The test is launching Multiple instances of Guest-Hypervisor boot
-> >=20
-> > Is the multiple instance aspect really relevant to the reproduction of
-> > the problem?
->=20
-> Not really, but it requires multiple attempts/iterations to hit the
-> issue. Even with automated test, it was seen at some iteration out of
-> 10 to 15 iterations.
->=20
-> >=20
-> >> and while booting, QEMU monitor issued the command "info register"
-> >> at regular intervals to take a register dump. To execute this
-> >> command, QEMU stops the run and does the register read of various
-> >> registers. While resuming the run, the function kvm_arm_timer_write()
-> >> writes back the saved CNTV_CTL_EL0 register with ISTATUS cleared always
-> >=20
-> > It is userspace that causes this write-back, right? AFAICT, KVM never
-> > does that on its own.
-> >=20
-> >> and resulting in the loss of pending interrupt for emulated timers.
-> >=20
-> > How does a missing interrupt result in a synchronous exception in
-> > EDK2? In my experience, EDK2 panics if it sees spurious interrupts,
-> > not when it is missing interrupts (it just locks up, which is
-> > expected).
->=20
-> Not sure, why it is hitting exception, rather than hang at EDK2.
-> However, EDK2 timer handler code is ignoring the interrupt since
-> ISTATUS is not set and not moving CVAL forward.
+> 
+> Given I tagged previous (after you'd sent this)
+> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+> 
+> > 
+> > Suggested-by: Igor Mammedov <imammedo@redhat.com>
+> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+> > ---
+> >  hw/acpi/ghes.c | 4 ----
+> >  1 file changed, 4 deletions(-)
+> > 
+> > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
+> > index edc74c38bf8a..a3dffd78b012 100644
+> > --- a/hw/acpi/ghes.c
+> > +++ b/hw/acpi/ghes.c
+> > @@ -400,10 +400,6 @@ int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
+> >  
+> >      start_addr = le64_to_cpu(ags->ghes_addr_le);
+> >  
+> > -    if (!physical_address) {
+> > -        return -1;
+> > -    }
+> > -
+> >      start_addr += source_id * sizeof(uint64_t);
+> >  
+> >      cpu_physical_memory_read(start_addr, &error_block_addr,  
+> 
 
-How is EDK2 getting this exception? Is this injected by KVM? Or is
-that some EDK2 bug?
-
->=20
-> >=20
-> >> In hardware based timers, ISTATUS is a RO/WI bit and gets set by the
-> >> h/w, if the condition is still met. However, in Nested-Virtualization
-> >> case, the Guest-Hypervisor's=C2=A0EDK2 is using an emulated virtual ti=
-mer
-> >> and losing ISTATUS state and the interrupt forever.
-> >=20
-> > Why is this specific to NV? Can't the same thing happen to the
-> > physical timer in a non-VHE configuration?
-> >=20
->=20
-> You mean, emulated v-timer in non-VHE boot?
-
-Emulated *physical* timer.
-
-> It might impact non-VHE case as well, not tried though.
-
-Can you please try?
-
-[...]
-
-> > But overall, this very much looks like it is only papering over the
-> > real issue, which is that the *emulation* should regenerate the
-> > pending bit, and not rely on the userspace interface.
-> >=20
-> > As far as I can tell, we already correctly compute the status bit on
-> > read (read_timer_ctl()), so the guest should always observe something
-> > consistent when it traps. We also *never* use the status bit as an
-> > input to the emulation, and always recompute it from scratch (it is
-> > only there for the benefit of the guest or userspace).
-> >=20
->=20
-> For emulated timers, we are not asserting again by calling
-> kvm_timer_update_irq in timer_emulate() until the level is down and
-> ready for trigger again. This was done to fix high rate of spurious
-> interrupts getting generated to V-Timer. Hence we are not able to
-> recover, if once ISTATUS is lost.
-
-Again, a trapping read should see the correct value, since we populate
-that bit at read time.
-
-> > So I can't see how upstream is broken in at the moment, and you need
-> > to explain how this actually triggers. Ideally, with a standalone
-> > reproducer or a selftest.
->=20
-> We could reproduce the issue with the simple test/script.
-> On one shell, launch L1 using qemu with add-on option
->=20
-> "-monitor unix:gh_monitor,server,nowait
->=20
-> On another shell, while L1 boots and still in UEFI, run repeatedly the
-> command (or put in a while 1 loop script)
->=20
-> "echo "info registers" | socat - unix-connect:gh_monitor >
-> /tmp/info_registers"
->=20
-> With above steps we were able to hit the issue within few attempts.
-
-That's not a standalone reproducer. QEMU doesn't support NV, and
-kvmtool doesn't have this sort of interface. I was asking for a bit of
-C code that I could run directly, not something that requires me to
-drag even more experimental code.
-
-So here's my current guess, since you don't give me the needed
-information. For what you describe to happen, I can only see two
-possibilities:
-
-- either your HW doesn't have FEAT_ECV, in which case the guest
-  directly reads from memory
-
-- or you are running with something like this patch [1], and we serve
-  the guest by reading from memory very early, without returning to
-  the bulk of the emulation code
-
-In either case, we only publish the updated status if the current IRQ
-state is different from the computed output of the timer while
-performing the emulation.
-
-So if you were writing back a status bit set to 0 while the interrupt
-was already pending, we'd deliver an interrupt, but not recompute the
-status. The guest would consider the interrupt as spurious, not touch
-the timer, and we'd never make forward progress. Rinse, repeat.
-
-Assuming I got the analysis right, it would only be a matter of
-hoisting the publication of the status into timer_emulate(), so that
-it is made up to date on load.
-
-Please give the fixup below a go.
-
-	M.
-
-[1] https://lore.kernel.org/all/20241202172134.384923-6-maz@kernel.org/
-
-=46rom 2bbd6f9b41a20ad573376c20c158ff3c12db5009 Mon Sep 17 00:00:00 2001
-From: Marc Zyngier <maz@kernel.org>
-Date: Mon, 9 Dec 2024 10:58:08 +0000
-Subject: [PATCH] fixup! KVM: arm64: nv: Publish emulated timer interrupt st=
-ate
- in the in-memory state
-
----
- arch/arm64/kvm/arch_timer.c | 32 +++++++++++++-------------------
- 1 file changed, 13 insertions(+), 19 deletions(-)
-
-diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-index 895f09658ef83..91bda986c344b 100644
---- a/arch/arm64/kvm/arch_timer.c
-+++ b/arch/arm64/kvm/arch_timer.c
-@@ -432,25 +432,6 @@ static void kvm_timer_update_irq(struct kvm_vcpu *vcpu=
-, bool new_level,
- {
- 	int ret;
-=20
--	/*
--	 * Paper over NV2 brokenness by publishing the interrupt status
--	 * bit. This still results in a poor quality of emulation (guest
--	 * writes will have no effect until the next exit).
--	 *
--	 * But hey, it's fast, right?
--	 */
--	if (is_hyp_ctxt(vcpu) &&
--	    (timer_ctx =3D=3D vcpu_vtimer(vcpu) || timer_ctx =3D=3D vcpu_ptimer(v=
-cpu))) {
--		u32 ctl =3D timer_get_ctl(timer_ctx);
--
--		if (new_level)
--			ctl |=3D ARCH_TIMER_CTRL_IT_STAT;
--		else
--			ctl &=3D ~ARCH_TIMER_CTRL_IT_STAT;
--
--		timer_set_ctl(timer_ctx, ctl);
--	}
--
- 	timer_ctx->irq.level =3D new_level;
- 	trace_kvm_timer_update_irq(vcpu->vcpu_id, timer_irq(timer_ctx),
- 				   timer_ctx->irq.level);
-@@ -471,6 +452,19 @@ static void timer_emulate(struct arch_timer_context *c=
-tx)
-=20
- 	trace_kvm_timer_emulate(ctx, should_fire);
-=20
-+	/*
-+	 * Paper over NV2 brokenness by publishing the interrupt status
-+	 * bit. This still results in a poor quality of emulation (guest
-+	 * writes will have no effect until the next exit).
-+	 *
-+	 * But hey, it's fast, right?
-+	 */
-+	if (is_hyp_ctxt(ctx->vcpu)) {
-+		unsigned long val =3D timer_get_ctl(ctx);
-+		__assign_bit(__ffs(ARCH_TIMER_CTRL_IT_STAT), &val, should_fire);
-+		timer_set_ctl(ctx, val);
-+	}
-+
- 	if (should_fire !=3D ctx->irq.level) {
- 		kvm_timer_update_irq(ctx->vcpu, should_fire, ctx);
- 		return;
---=20
-2.39.2
-
-
---=20
-Without deviation from the norm, progress is not possible.
 
