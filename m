@@ -1,253 +1,118 @@
-Return-Path: <linux-kernel+bounces-437765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D16EC9E985F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:08:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 256A59E986F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:09:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FB44283DF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:07:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F074E188486B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3983A1B0432;
-	Mon,  9 Dec 2024 14:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zuYQSyf5"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6901B4240;
+	Mon,  9 Dec 2024 14:08:02 +0000 (UTC)
+Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877863596F
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0988C1A2392;
+	Mon,  9 Dec 2024 14:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753224; cv=none; b=EPQdxaO3JY4ClbBacgW1GfU3tTPVJf46Oh+zGCvfWLSP261Wze3tl87siEhL7YZ8aLkxlOMBUY9d+ea7AXq4F+9ftDvdngNz/2XRbdhWho0utk5cmHYLnD+OQ7/1TMjRJt3+SYOwbyFlUebj3LcNbiKIYSm63yyDdzFb0qNIS5w=
+	t=1733753282; cv=none; b=eHgw4WD005xiuBcr0+bBm6FDFXq5pUs0YYCypDK+cQE4U7IFXXhURMhK3knM7sHZOHEZZWQ8lBu+9j+BRvV1yI1New6liBpMGr1cqJ25EftBO/LoJjlCnumHIWJuY27RTKUu+G2tNfUEQzMFXsXeMSZUkHC+kjT9UJDFJ5BBtZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753224; c=relaxed/simple;
-	bh=51L9mnqIr29+7FShCAtxvhKSMRLPZlq2oBjN+kgy8PE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=G32HdQwVBV1qqdzb8GQ8fwf4STjHkBbRJGw6JJUMP62ROF7L8jcUXxQHwPuT/yOgJct0WJ+IuFNal7F/uBgWYLmL90f3E4E0bDtTNmMS7sM8rrsG84BZ6/cp1AhKN334EuSE8ztUuy/It9x5Xe1J2bA8zOC2/fd15+K0hytvZCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zuYQSyf5; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-385deda28b3so3437587f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:07:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733753221; x=1734358021; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8TL2MbMVS0LA1fcrVHWeYCb3ppOpM6kJxBQgdxTKNEc=;
-        b=zuYQSyf5mv6IhLob/w+0qLuOE82F0C2H9ro7QNHd11R4/1aWNhjOAHi6AwMpAtQuy5
-         JxJKHT2LnSSTwzpX4upjdny00bABRln6h+0BL43f7Wkc6S9B5A2hODsZ1/Lx8E10B1tn
-         XOJeFNteZImM3vjp2Lp3L7/UnWArtR+uszdY/KlgdNvkcu5u9DE0N288YQqSpBpqVG4C
-         8/r4eQJCJNM0TepDsBdctQOw9pBqhUXvEhzVoaK81xwUppuTTbLm4Mg6Xd56hEhp6mym
-         3+BHVHRcowITtqCJrOaiKRNcnbfrSRMrLlZJxFHwFb1mw4FcKDPiVZI6twKH2E6xv3RY
-         LH3g==
+	s=arc-20240116; t=1733753282; c=relaxed/simple;
+	bh=fMLnWKRwyXGyQvbk+QJaHut2AAjD6XdKv4stgmyMhrI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WNVmrzuEXzxzesrKgzLpfeVQCi+6ehVojuEAOWxGluUEFdXHzUPw4Wkc/pcG1RKyCpH3REupGcd8Baq6vtbTcm9nygmh1FqFdGSucV8OSO5PNrmK5q7Lz3V7a5MsjbXSQVMcQtYbS2Cw42Ih1x8IgBbMkCpAJP0TClVZuS3y+n4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6d918f066c1so2789736d6.2;
+        Mon, 09 Dec 2024 06:07:59 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753221; x=1734358021;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=8TL2MbMVS0LA1fcrVHWeYCb3ppOpM6kJxBQgdxTKNEc=;
-        b=KGnURiWo2mGumJENujiWXPj5Hhk6sDKcfmR2vaub1kneZikWdLcgZ0Uuq4hud56kxD
-         niLaYCCNK4kfU/8EgpgGh27ykWMANZB2NSjwLp3P1MHCeHMe2LowzW+ALWEx3U8rbbtk
-         KMzQDRfH2qVjBnwp1yQu5d9BI2aYUEtWKtBdb3/2Ok8r87vGXRczV2QaCz97/ceZzNz/
-         hsCBE/4IGpG5omKUXVzNYCYJ5qhRdYe6LbF3OJZE1lX9nwwIT6852clP9tCPl3iNYb6N
-         8mgjtn7uFVs149hFrM6Xa8n5BHdy22QAgj4cc81anvBmtJN57LQWiburoocRPK+bftRJ
-         SetQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVMna3EJuHrom9lCH9iIT/lv9zkwxGMDnDQZRKSZXOPPr/p68g3xdunO3Lz6jvfITOHtwlGOgQ8e4Uxks0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlAVpnB3XgJexZdcgChcnSbfrlIIUPmChQn/+u78aXuaCm3QDV
-	GR3NRHk4F/+aKdTPlneqM6w3N93ZnMJs828FlaCqVGDP90xgUeQ4BcmJKvpjNSQ=
-X-Gm-Gg: ASbGnctG8zTRu64Gae0GYu8Ri+SoQTOI9R5jPyYy2Q5I5O2L6YKLr5mHYwWysRtsqlp
-	wbg0RbUtaKN2Zm/yyxtBeYSrsbLhNvIK6SM+iyWJszwV9lwlfLAGf9E4iG3DdBIolADnjO7yobN
-	wm76ZwZDwsUAwPpY0YOannQGtDrr+TMXg0TtJPTU44QeblbsEeaDrkb0cG+b6bhc9jNCZ4cA5ht
-	Y41je1/2rqRkoHhHk9RC1vfk4leTx7mAnSkXbW04REYQjN5QRzziX2gFtUG7KztaxQf2P288hXf
-	w+5WBlR5KFsZ1d12CgS9WKmmsuk=
-X-Google-Smtp-Source: AGHT+IGucCc+D0VX2jp79Smo7afxqpLhOYHKy/vpIQDIDF/vHEETnS6x9UlrTj3Drk16mX0zQ4F1EQ==
-X-Received: by 2002:a05:6000:400c:b0:386:3560:477f with SMTP id ffacd0b85a97d-386356049e3mr6090376f8f.23.1733753220814;
-        Mon, 09 Dec 2024 06:07:00 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7546:6147:f006:709b? ([2a01:e0a:982:cbb0:7546:6147:f006:709b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434eb775350sm85048115e9.5.2024.12.09.06.06.59
+        d=1e100.net; s=20230601; t=1733753278; x=1734358078;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=NK85peZI82UVhOXh97j60VdocE1lKKGDWZ00ZE8W9eY=;
+        b=k5ma8HVqxiS7Po5d9lWDkpyxDe1lPxovZLArsAjUXDG6KzUUr3ox4/if4DJg8MyKRh
+         pfUcBoN96IXcb8+WESPNmU/g6bWVG26zqliq2OEdM2E303THlkTETO731Cnvds8kN3m4
+         2vZlG8IcBzY6mmnsO8ayllnSDpGR2ebLyiTFFnYpQo7tDJRfz6jF/8i1/bllR1yB98G5
+         FyTteQJ92z25acC6WPyYzgsvmkOsSGPXRKrRbcFMnLSm8Rg74tBn/nuqb8mZFW1VMJAD
+         JuBErXUY5r/c82obbbSzir3wUxkZbgsCZSh7IOqvQFIp8mLinMxMkmPZ0pr4OgstuGpd
+         7whg==
+X-Forwarded-Encrypted: i=1; AJvYcCUYWiAe3mnX0FBwc5NNje127p+0sbok8mhf24dST1k3NBOCdf7Sgvfv9+TaUcPtkiXpjnF0aNhYtVx3byE=@vger.kernel.org, AJvYcCV5BzWFcG5mAyI68ilcAL4Mr5SAHWws1Lh7Plkc94yGgbOH23CtEOaDUR03uAyFc0GsKibFuStVc9BVxVKn@vger.kernel.org, AJvYcCWLuL4Qdghh7sVZkT+oA9kafe5RYA79henlWFrMwhmDepmeMGBT82wl0EaaXDnv6T6srVYvFKoopLdM@vger.kernel.org, AJvYcCWjTpTKOVttCW3+cGzBnZ4jk535YP2KOB47G+LrXMuqp4jJFL5lpPTL+RLlBBo8SphWZyMbFW2pTj2FVg==@vger.kernel.org, AJvYcCXIe1AD74T8eKtTSM0IP2gkgMgMDKWOcwHTfpiEjRcWuxWOPcWHgnlyQKXY57SFxjYAfALNGrVpA7rC@vger.kernel.org, AJvYcCXYlfSG/psS6fMnZ30eS4mp3wbtwkEFIX8Tb14BKmynUn7goqxDge1w271qvnfDl9Zqe2L4qj1K2LFme+n8H6fni+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQm2EkLWCQuXpSxUvP+xWNXF7mLkMazpK/hww0vDMIiO67Ex94
+	q1WqyTeI/J6M1D5m/ueDFlzaAWlKmCKO7ouaSOegu/It6H9aszd6RfK2wlytvlU=
+X-Gm-Gg: ASbGncteKBgnFH2Oa0caC48A6QSrVbssFVW7Bxk7Wc5QnmW7MdtOAFhVGXSZ7D7vhcI
+	9A/L7RA5BjMe4OWb+wTrLthv5MGl2h24iPJk8a82E9EOhbcDZfqwEv+3cVeGk2Bep2/+jUfowqP
+	8sIkvLb7blWRJy+JPqeNdMypPv20VUDdFKWWC2ebliEQcGBsTaWqvYYNAlTpWmTxIQEB0+2r7fN
+	WeeZFHlZeg61DvgnP6g86CHfx7DOfvsRWirRp1SCso9y3cSod+u0biLDJEo0CCrHHGDGhUug/sm
+	1lCeQmH3rQlA5Sw/
+X-Google-Smtp-Source: AGHT+IGtSm/6Govk+zvtcEVPCSCFg8HtsvNFDnWqfndNmGREu2OYgrE8AM7EOlskNLZngdC393FbIg==
+X-Received: by 2002:a05:6214:400b:b0:6d8:7ed4:335b with SMTP id 6a1803df08f44-6d8e714c6afmr183834266d6.26.1733753277752;
+        Mon, 09 Dec 2024 06:07:57 -0800 (PST)
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com. [209.85.160.174])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d90e0c40f1sm13740416d6.89.2024.12.09.06.07.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:07:00 -0800 (PST)
-Message-ID: <c1eacaa5-f51f-4e6b-8848-3fdb065aab19@linaro.org>
-Date: Mon, 9 Dec 2024 15:06:59 +0100
+        Mon, 09 Dec 2024 06:07:57 -0800 (PST)
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-467631f3ae3so6114301cf.0;
+        Mon, 09 Dec 2024 06:07:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUmG6koKSmcaL5RXXm8s0wXQ+wmCOj/JPSjmop29ELgT105FMfrziSBDY8JzoLW3ZNFZzyXm1q/JW2oGp2SXNGGMc0=@vger.kernel.org, AJvYcCVNaqphxvxUI5I8+jcq69EgszBkw54oJiwfyCnY6X52w3CS3JrxkiwKpeazf44tgHDq4AIk6wwj2W6zNQ4=@vger.kernel.org, AJvYcCVQEf/SrsutMX1EZn4QoZwfV80gY5kK9c5oAwXyT7yxDsF5Didj8/kMoPQwV74N1+nTTK0p1yUfzNLs/C4C@vger.kernel.org, AJvYcCWGuXB8R2OIBNnMG/SC+4WMkJg0bnnSmvLewsxEOHsNZQuZey78REDVNRY4ajHgnPvy2VnHY1ChkwlS1g==@vger.kernel.org, AJvYcCWiqg+fUPmHfxaFVrI19kLuHiwtd+r9nEaC96ZgWoiDECPlOxLed6podGbYg+mbECenNStslw/bdGWO@vger.kernel.org, AJvYcCXWpU34LlLb9/0vuIXIustLITlouqhIfP7218f959rXGTkx5BxkfeMea0zGiUMLHiq4e1t37TKKmHni@vger.kernel.org
+X-Received: by 2002:a05:620a:1d09:b0:7b6:d1f6:3df with SMTP id
+ af79cd13be357-7b6d1f605d0mr887904185a.21.1733753276599; Mon, 09 Dec 2024
+ 06:07:56 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v4 3/7] drm/msm: adreno: dynamically generate GMU bw table
-To: Akhil P Oommen <quic_akhilpo@quicinc.com>, Rob Clark
- <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20241205-topic-sm8x50-gpu-bw-vote-v4-0-9650d15dd435@linaro.org>
- <20241205-topic-sm8x50-gpu-bw-vote-v4-3-9650d15dd435@linaro.org>
- <93ed4511-55b5-42a9-a3fe-32f29bd01bab@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <93ed4511-55b5-42a9-a3fe-32f29bd01bab@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-18-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-18-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 15:07:44 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdXHHG11tRnNgfmz8vEUE1vn_Eb6qjroK470w=ERfmP=mw@mail.gmail.com>
+Message-ID: <CAMuHMdXHHG11tRnNgfmz8vEUE1vn_Eb6qjroK470w=ERfmP=mw@mail.gmail.com>
+Subject: Re: [PATCH v3 17/25] ASoC: renesas: rz-ssi: Add runtime PM support
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 09/12/2024 13:11, Akhil P Oommen wrote:
-> On 12/5/2024 8:31 PM, Neil Armstrong wrote:
->> The Adreno GPU Management Unit (GMU) can also scale the ddr
->> bandwidth along the frequency and power domain level, but for
->> now we statically fill the bw_table with values from the
->> downstream driver.
->>
->> Only the first entry is used, which is a disable vote, so we
->> currently rely on scaling via the linux interconnect paths.
->>
->> Let's dynamically generate the bw_table with the vote values
->> previously calculated from the OPPs.
->>
->> Those entries will then be used by the GMU when passing the
->> appropriate bandwidth level while voting for a gpu frequency.
->>
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/gpu/drm/msm/adreno/a6xx_hfi.c | 41 ++++++++++++++++++++++++++++++++++-
->>   1 file changed, 40 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
->> index cb8844ed46b29c4569d05eb7a24f7b27e173190f..fc4bfad51de9a3b6617fbbd03471a5851d43ce88 100644
->> --- a/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
->> +++ b/drivers/gpu/drm/msm/adreno/a6xx_hfi.c
->> @@ -5,7 +5,10 @@
->>   #include <linux/circ_buf.h>
->>   #include <linux/list.h>
->>   
->> +#include <dt-bindings/interconnect/qcom,icc.h>
->> +
->>   #include <soc/qcom/cmd-db.h>
->> +#include <soc/qcom/tcs.h>
->>   
->>   #include "a6xx_gmu.h"
->>   #include "a6xx_gmu.xml.h"
->> @@ -259,6 +262,39 @@ static int a6xx_hfi_send_perf_table(struct a6xx_gmu *gmu)
->>   		NULL, 0);
->>   }
->>   
->> +static void a6xx_generate_bw_table(const struct a6xx_info *info, struct a6xx_gmu *gmu,
->> +				   struct a6xx_hfi_msg_bw_table *msg)
->> +{
->> +	unsigned int i, j;
->> +
->> +	msg->ddr_wait_bitmask = QCOM_ICC_TAG_ALWAYS;
-> 
-> Why this is QCOM_ICC_TAG_ALWAYS?
-> 
-> IIRC, this bitmask informs RPMH whether it should wait for previous BCM
-> vote to complete. Can we implement the same logic from kgsl to create
-> this bitmask?
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add runtime PM support to the ssi driver. This assert/de-assert the
+> reset lines on runtime suspend/resume. Along with it the de-assertion of
+> the reset line from probe function was removed as it is not necessary
+> anymore.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Ack, Let me check
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> 
-> 
->> +
->> +	for (i = 0; i < GMU_MAX_BCMS; i++) {
->> +		if (!info->bcms[i].name)
->> +			break;
->> +		msg->ddr_cmds_addrs[i] = cmd_db_read_addr(info->bcms[i].name);
->> +	}
->> +	msg->ddr_cmds_num = i;
->> +
->> +	for (i = 0; i < gmu->nr_gpu_bws; ++i)
->> +		for (j = 0; j < msg->ddr_cmds_num; j++)
->> +			msg->ddr_cmds_data[i][j] = gmu->gpu_ib_votes[i][j];
->> +	msg->bw_level_num = gmu->nr_gpu_bws;
->> +
->> +	/*
->> +	 * These are the CX (CNOC) votes - these are used by the GMU
->> +	 * The 'CN0' BCM is used on all targets, and votes are basically
->> +	 * 'off' and 'on' states with first bit to enable the path.
->> +	 */
->> +
->> +	msg->cnoc_cmds_num = 1;
->> +	msg->cnoc_wait_bitmask = QCOM_ICC_TAG_AMC;
-> 
-> Same here.
-> 
-> Rest looks fine to me.
+Gr{oetje,eeting}s,
 
-Thanks,
-Neil
+                        Geert
 
-> 
-> -Akhil
-> 
->> +
->> +	msg->cnoc_cmds_addrs[0] = cmd_db_read_addr("CN0");
->> +	msg->cnoc_cmds_data[0][0] = BCM_TCS_CMD(true, false, 0, 0);
->> +	msg->cnoc_cmds_data[1][0] = BCM_TCS_CMD(true, true, 0, BIT(0));
->> +}
->> +
->>   static void a618_build_bw_table(struct a6xx_hfi_msg_bw_table *msg)
->>   {
->>   	/* Send a single "off" entry since the 618 GMU doesn't do bus scaling */
->> @@ -664,6 +700,7 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
->>   	struct a6xx_hfi_msg_bw_table *msg;
->>   	struct a6xx_gpu *a6xx_gpu = container_of(gmu, struct a6xx_gpu, gmu);
->>   	struct adreno_gpu *adreno_gpu = &a6xx_gpu->base;
->> +	const struct a6xx_info *info = adreno_gpu->info->a6xx;
->>   
->>   	if (gmu->bw_table)
->>   		goto send;
->> @@ -672,7 +709,9 @@ static int a6xx_hfi_send_bw_table(struct a6xx_gmu *gmu)
->>   	if (!msg)
->>   		return -ENOMEM;
->>   
->> -	if (adreno_is_a618(adreno_gpu))
->> +	if (info->bcms && gmu->nr_gpu_bws > 1)
->> +		a6xx_generate_bw_table(info, gmu, msg);
->> +	else if (adreno_is_a618(adreno_gpu))
->>   		a618_build_bw_table(msg);
->>   	else if (adreno_is_a619(adreno_gpu))
->>   		a619_build_bw_table(msg);
->>
-> 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
