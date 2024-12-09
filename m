@@ -1,265 +1,151 @@
-Return-Path: <linux-kernel+bounces-437517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8516C9E944E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:36:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC1459E944B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:36:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 692701887540
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:36:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395631887E51
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DC93228C91;
-	Mon,  9 Dec 2024 12:34:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71AC8224893;
+	Mon,  9 Dec 2024 12:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="ZMi6z3U6"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8048C227B91;
-	Mon,  9 Dec 2024 12:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J08g3rdj"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214632236EF
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747639; cv=none; b=bEooKn8g6QBSZuYMkESqZzPv8B8gkVcl8bWtgq0Rlu5s/O+5IC+pH50Bj2y3DqnKPiYJ8lQmtCZAt3J0uHJU/0Rf3NFTLQA6cDBPLaq+wKctZmmOmmSVQWH5GrBq6UzudpRXlPM9jlAVR7jCiuy1IYEIaSb7kBRPHSwSPF0WFjI=
+	t=1733747628; cv=none; b=aK+JkWT7wHGI6w9J1cNR/vrqUacJ9VK05eay73iMm9hgmSj//szM2wpfYODsgLql+3W1z5ejoRyF3SUMZzuFllhtMDrvwDN2jNGsSmUXJ8LTNnyMuz4qmE1VijR6QaHoIUemFNBwNswOjkm4XmU3f2UB1JHHTN5LTuYe0qv79Uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747639; c=relaxed/simple;
-	bh=cwYED0ZS/Y535/CBHV7vzLodZjVwZLwKNq4Mr1aiSGk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VsS/DKmddpL0fCn6M5hCRnxNmP4/FhNitbU4rziqmo3v8kLgWb9GGopP/3OmlZ+YrGNLogWHMqpZGaX1dZ0zZvf3uO2QG2YepYE3hhTr6NtzaV10Z9EoyDRL7xJlC+sHz2D/Uf7jhWpECtzIO6e46CGtsEV2itmn/+/S5ELkEEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=ZMi6z3U6; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-ID:MIME-Version; bh=58Dm3
-	Eqh22L+JQTpTi4STstJ8qz0fGUCNuAiGro+EX0=; b=ZMi6z3U6th6UsW2WsV204
-	e+QeTso7VocRjfDFSrWvjcvLZlSa5tGg02AU7vi0WYztBvH70Xce6XXMINe/777Z
-	Z0JI5WW9x/0IuXKQ1PdKzMoEAMA6kk+o8BwzXWvBdHwURPqrJC4w6WKFu6vwwEra
-	O5yv1+pbNlusR2cE2WvTBs=
-Received: from ProDesk.. (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id PSgvCgC3KOOb41ZnxO+AAA--.35994S2;
-	Mon, 09 Dec 2024 20:33:34 +0800 (CST)
-From: Andy Yan <andyshrk@163.com>
-To: heiko@sntech.de
-Cc: hjc@rock-chips.com,
-	krzk+dt@kernel.org,
-	s.hauer@pengutronix.de,
-	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	derek.foreman@collabora.com,
-	detlev.casanova@collabora.com,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Michael Riesch <michael.riesch@wolfvision.net>
-Subject: [PATCH v5 13/18] drm/rockchip: vop2: Introduce vop hardware version
-Date: Mon,  9 Dec 2024 20:33:29 +0800
-Message-ID: <20241209123330.2781991-1-andyshrk@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241209122943.2781431-1-andyshrk@163.com>
-References: <20241209122943.2781431-1-andyshrk@163.com>
+	s=arc-20240116; t=1733747628; c=relaxed/simple;
+	bh=lg9r4oT0lo3KngBxJqPIseRfkXlNopePHOk27wupgOs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QDh7O6i7q/PMiGrGncnXiYB/KGg9gxGFGUpE9tLXBW9NeyAvfBoAQjTg/12aPh9ecZy7kyW9AJZretpgHpOAQht+H46rb0S479lcT2SBQ5/CtmXWcOd7iM00IrOx2ar/V9gxeFUnyXJch2n48Uuq/TeJuBshoHwHmewp0HobAwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J08g3rdj; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5d3e829ff44so2907257a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:33:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733747625; x=1734352425; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J2pvDmHMFpKjNXtOvcnN8HckneEUA9P81c6+aivOyhU=;
+        b=J08g3rdjQAe0hVD3xFoAPFR6PtzpbR+VU4MdM6/qtaqmQ0ZIRNzTBK+KAGm3vAA+Cb
+         SM8mbNA1u9aTbpDBNbbjlHNzEtfN11DQtiFluZzJZf6NQKtX+dr5XauiLzm86VA/ozif
+         OEK4qULhu184cR6CmGKv1U2xc7jEW5r0+P5AvljnOfekH6Mp055pI4OJDt0fGrsy6rA1
+         hrxglLNaWzAUrf9mvcT9nB/AdxxN6irCtBxn5L0ISgMG7PVCZFQP6bFcKARC+HVvfkPY
+         kGYY0qWtktAnOlH2NmU4DKCD9Szqx7zyiPDw5+JftCS0toOy9Kkh1dlABFfamySlmm5D
+         eAlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733747625; x=1734352425;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=J2pvDmHMFpKjNXtOvcnN8HckneEUA9P81c6+aivOyhU=;
+        b=YIfhPtqthC3Qnl6FPoKagiSw1ZWlvfiee3v/HKKxSfDWPygC9PP0Uf0zvZgs2dOrsW
+         K9EjUewMutmZPwZCJX5pqbwhTd9t+PiQlFYFKJGRv40lJEpXOCaqFyo6jQnK2DShnqJB
+         kd+b4Z30wE28cGBEmFzXcGv6L3Aw4MVj8SWiPVrBQFccdjTbi7dbjlZYanD4VACtM4EE
+         BFPX9pnPt7G41CXTFyMkr12slnPuAN9fmDWURjRQzbvcvmFL1ySlUm9z5to0Ly8MAaBV
+         La0KSRtX6kuP2Hc6KHy6oX/Bnq4t6GdzOi2tjjA8kujP89cy8GxuJueiYpEbVki4DdNl
+         y8NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWihcPL7zGNvlWjgEk4i3PlAH9jWljmgdIBZVCpZgBL6d8X9N7r0ZSlVX1mnrDkVvtqrYFpzqGGu9b6dGc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+H7CIpLySp3l5V8Ew5QS2f7xAAvfZCvhnT5qQCoOkeRXZ4qxF
+	ApIF+FM0Uw0fzTelaqmxwC9BpuqX9a9uVhGXnfgnwduaA5Ok9vDDCxxERZ8xPsOxjKVUxL7rFTV
+	afxEVa7mmPIwYps8WS6yM4wkWxgM=
+X-Gm-Gg: ASbGnctgkylE1q8CJmb6OgXZLx9MfdKbLUtlVYeKoTwQpxotQEG0bZSG/KMynyaqRPW
+	l2CwfyCHGDTp3o+we7bmYfit5KS7vIhU=
+X-Google-Smtp-Source: AGHT+IHxoRAINPLiegG4e8RLcEdgpBzrsZZYp/8i82FH8iLwYGPbSBJnSWpvJJbzOY68RyzzLQK0MMijVUlkBibGDl4=
+X-Received: by 2002:a17:907:2da5:b0:aa6:9346:6a76 with SMTP id
+ a640c23a62f3a-aa69346bf30mr150837966b.22.1733747625063; Mon, 09 Dec 2024
+ 04:33:45 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PSgvCgC3KOOb41ZnxO+AAA--.35994S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3XryDWFW5Kw1xZw1UCw48WFg_yoWxKF4DpF
-	W7Aay5WrWxGa1qgw4kJFW3ZF4aywn2yay7JanrGw13try3KryDGan0qF17AFZ0yr92kr4j
-	yFn5A3yUWr47tr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jF-eOUUUUU=
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0gKwXmdW4xoX5wAAsG
+References: <20241207082931.1707465-1-mjguzik@gmail.com> <94d0dcbe-2001-4a9c-a767-b337b688b616@redhat.com>
+ <CAGudoHEggB=F9j7r+ndQs1WxpRWB4O5VdBo+PLx+yd1xrj4-Ew@mail.gmail.com> <606fbf9a-c9ba-4f08-a708-db38fe6065ce@redhat.com>
+In-Reply-To: <606fbf9a-c9ba-4f08-a708-db38fe6065ce@redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 9 Dec 2024 13:33:33 +0100
+Message-ID: <CAGudoHFLTet0ZpOkDMFBh0yBDhJ47st-aRrCLZojdrCgQKznUQ@mail.gmail.com>
+Subject: Re: [PATCH] mm: remove an avoidable load of page refcount in page_ref_add_unless
+To: David Hildenbrand <david@redhat.com>
+Cc: yuzhao@google.com, akpm@linux-foundation.org, willy@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Andy Yan <andy.yan@rock-chips.com>
+On Mon, Dec 9, 2024 at 11:56=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 09.12.24 11:25, Mateusz Guzik wrote:
+> > On Mon, Dec 9, 2024 at 10:28=E2=80=AFAM David Hildenbrand <david@redhat=
+.com> wrote:
+> >>
+> >> On 07.12.24 09:29, Mateusz Guzik wrote:
+> >>> Explicitly pre-checking the count adds nothing as atomic_add_unless
+> >>> starts with doing the same thing. iow no functional changes.
+> >>
+> >> I recall that we added that check because with the hugetlb vmemmap
+> >> optimization, some of the tail pages we don't ever expect to be modifi=
+ed
+> >>    (because they are fake-duplicated) might be mapped R/O.
+> >>
+> >> If the arch implementation of atomic_add_unless() would trigger an
+> >> unconditional write fault, we'd be in trouble. That would likely only =
+be
+> >> the case if the arch provides a dedicate instruction.
+> >>
+> >> atomic_add_unless()->raw_atomic_add_unless()
+> >>
+> >> Nobody currently defines arch_atomic_add_unless().
+> >>
+> >> raw_atomic_fetch_add_unless()->arch_atomic_fetch_add_unless() is defin=
+ed
+> >> on some architectures.
+> >>
+> >> I scanned some of the inline-asm, and I think most of them perform a
+> >> check first.
+> >>
+> >
+> > Huh.
+> >
+> > Some arch triggering a write fault despite not changing the value is
+> > not something I thought about. Sounds pretty broken to me if any arch
+> > was to do it, but then stranger things did happen.
+>
+> Yeah, it really depends on what the architecture defines. For example,
+> on s390x for "COMPARE AND SWAP" the spec states something like
+>
+[snip]
 
-There is a version number hardcoded in the VOP VERSION_INFO
-register, and the version number increments sequentially based
-on the production order of the SOC.
+Well in this context you need to do the initial load to even know what
+to CAS with, unless you want to blindly do it hoping to get lucky,
+which I'm assuming no arch is doing.
 
-So using this version number to distinguish different VOP features
-will simplify the code.
+Granted, if there was an architecture which had an actual "cas unless
+the value is x" then this would not hold, but I don't know of any.
+[such an extension would be most welcome fwiw]
 
-Signed-off-by: Andy Yan <andy.yan@rock-chips.com>
-Tested-by: Michael Riesch <michael.riesch@wolfvision.net> # on RK3568
-Tested-by: Detlev Casanova <detlev.casanova@collabora.com>
+Assuming you indeed want the patch after all, can you sort out adding
+a comment to atomic_add_unless yourself? ;) I presume you know the
+right people and whatnot, so this would cut down on back and forth.
 
----
+That is to say I think this thread just about exhausted the time
+warranted by this patch. No hard feelz if it gets dropped, but then I
+do strongly suggest adding a justification to the extra load.
 
-(no changes since v3)
-
-Changes in v3:
-- Add comments for why we should treat rk3566 with special care.
-- Add hardware version check
-
-Changes in v2:
-- Introduce vop hardware version
-
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.c | 25 ++++++++++++++------
- drivers/gpu/drm/rockchip/rockchip_drm_vop2.h | 11 +++++++++
- drivers/gpu/drm/rockchip/rockchip_vop2_reg.c |  3 +++
- 3 files changed, 32 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-index 1997a8deada8..4f56a7e91728 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.c
-@@ -354,7 +354,7 @@ static bool vop2_output_uv_swap(u32 bus_format, u32 output_mode)
- 
- static bool vop2_output_rg_swap(struct vop2 *vop2, u32 bus_format)
- {
--	if (vop2->data->soc_id == 3588) {
-+	if (vop2->version == VOP_VERSION_RK3588) {
- 		if (bus_format == MEDIA_BUS_FMT_YUV8_1X24 ||
- 		    bus_format == MEDIA_BUS_FMT_YUV10_1X30)
- 			return true;
-@@ -798,6 +798,7 @@ static void rk3588_vop2_power_domain_enable_all(struct vop2 *vop2)
- static void vop2_enable(struct vop2 *vop2)
- {
- 	int ret;
-+	u32 version;
- 
- 	ret = pm_runtime_resume_and_get(vop2->dev);
- 	if (ret < 0) {
-@@ -817,10 +818,19 @@ static void vop2_enable(struct vop2 *vop2)
- 		return;
- 	}
- 
-+	version = vop2_readl(vop2, RK3568_VERSION_INFO);
-+	if (version != vop2->version) {
-+		drm_err(vop2->drm, "Hardware version(0x%08x) mismatch\n", version);
-+		return;
-+	}
-+	/*
-+	 * rk3566 share the same vop version with rk3568, so
-+	 * wen need to use soc_id for identification here.
-+	 */
- 	if (vop2->data->soc_id == 3566)
- 		vop2_writel(vop2, RK3568_OTP_WIN_EN, 1);
- 
--	if (vop2->data->soc_id == 3588)
-+	if (vop2->version == VOP_VERSION_RK3588)
- 		rk3588_vop2_power_domain_enable_all(vop2);
- 
- 	vop2_writel(vop2, RK3568_REG_CFG_DONE, RK3568_REG_CFG_DONE__GLB_CFG_DONE_EN);
-@@ -901,7 +911,7 @@ static void vop2_vp_dsp_lut_update_enable(struct vop2_video_port *vp)
- 
- static inline bool vop2_supports_seamless_gamma_lut_update(struct vop2 *vop2)
- {
--	return (vop2->data->soc_id != 3566 && vop2->data->soc_id != 3568);
-+	return vop2->version != VOP_VERSION_RK3568;
- }
- 
- static bool vop2_gamma_lut_in_use(struct vop2 *vop2, struct vop2_video_port *vp)
-@@ -1031,7 +1041,7 @@ static int vop2_plane_atomic_check(struct drm_plane *plane,
- 		return -EINVAL;
- 	}
- 
--	if (vop2->data->soc_id == 3568 || vop2->data->soc_id == 3566) {
-+	if (vop2->version == VOP_VERSION_RK3568) {
- 		if (vop2_cluster_window(win)) {
- 			if (!rockchip_afbc(plane, fb->modifier)) {
- 				drm_err(vop2->drm, "Unsupported linear format for %s\n", win->data->name);
-@@ -1041,7 +1051,7 @@ static int vop2_plane_atomic_check(struct drm_plane *plane,
- 	}
- 
- 	if (fb->format->format == DRM_FORMAT_XRGB2101010 || fb->format->format == DRM_FORMAT_XBGR2101010) {
--		if (vop2->data->soc_id == 3588) {
-+		if (vop2->version == VOP_VERSION_RK3588) {
- 			if (!rockchip_afbc(plane, fb->modifier)) {
- 				drm_err(vop2->drm, "Unsupported linear 32 bpp for %s\n", win->data->name);
- 				return -EINVAL;
-@@ -1260,7 +1270,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
- 		&fb->format->format,
- 		afbc_en ? "AFBC" : "", &yrgb_mst);
- 
--	if (vop2->data->soc_id > 3568) {
-+	if (vop2->version > VOP_VERSION_RK3568) {
- 		vop2_win_write(win, VOP2_WIN_AXI_BUS_ID, win->data->axi_bus_id);
- 		vop2_win_write(win, VOP2_WIN_AXI_YRGB_R_ID, win->data->axi_yrgb_r_id);
- 		vop2_win_write(win, VOP2_WIN_AXI_UV_R_ID, win->data->axi_uv_r_id);
-@@ -1320,7 +1330,7 @@ static void vop2_plane_atomic_update(struct drm_plane *plane,
- 		 * this bit is gating disable, we should write 1 to
- 		 * disable gating when enable afbc.
- 		 */
--		if (vop2->data->soc_id == 3566 || vop2->data->soc_id == 3568)
-+		if (vop2->version == VOP_VERSION_RK3568)
- 			vop2_win_write(win, VOP2_WIN_AFBC_AUTO_GATING_EN, 0);
- 		else
- 			vop2_win_write(win, VOP2_WIN_AFBC_AUTO_GATING_EN, 1);
-@@ -2525,6 +2535,7 @@ static int vop2_bind(struct device *dev, struct device *master, void *data)
- 	vop2->dev = dev;
- 	vop2->data = vop2_data;
- 	vop2->ops = vop2_data->ops;
-+	vop2->version = vop2_data->version;
- 	vop2->drm = drm;
- 
- 	dev_set_drvdata(dev, vop2);
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-index dcfa791be99d..5514ece7df4d 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop2.h
-@@ -13,6 +13,15 @@
- #include "rockchip_drm_drv.h"
- #include "rockchip_drm_vop.h"
- 
-+#define VOP2_VERSION(major, minor, build)	((major) << 24 | (minor) << 16 | (build))
-+
-+/* The new SOC VOP version is bigger than the old */
-+#define VOP_VERSION_RK3568	VOP2_VERSION(0x40, 0x15, 0x8023)
-+#define VOP_VERSION_RK3588	VOP2_VERSION(0x40, 0x17, 0x6786)
-+#define VOP_VERSION_RK3528	VOP2_VERSION(0x50, 0x17, 0x1263)
-+#define VOP_VERSION_RK3562	VOP2_VERSION(0x50, 0x17, 0x4350)
-+#define VOP_VERSION_RK3576	VOP2_VERSION(0x50, 0x19, 0x9765)
-+
- #define VOP2_VP_FEATURE_OUTPUT_10BIT        BIT(0)
- 
- #define VOP2_FEATURE_HAS_SYS_GRF	BIT(0)
-@@ -242,6 +251,7 @@ struct vop2_ops {
- struct vop2_data {
- 	u8 nr_vps;
- 	u64 feature;
-+	u32 version;
- 	const struct vop2_ops *ops;
- 	const struct vop2_win_data *win;
- 	const struct vop2_video_port_data *vp;
-@@ -259,6 +269,7 @@ struct vop2_data {
- };
- 
- struct vop2 {
-+	u32 version;
- 	struct device *dev;
- 	struct drm_device *drm;
- 	struct vop2_video_port vps[ROCKCHIP_MAX_CRTC];
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-index 80f9debd7aa9..baf81e97062c 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop2_reg.c
-@@ -1627,6 +1627,7 @@ static const struct vop2_ops rk3588_vop_ops = {
- };
- 
- static const struct vop2_data rk3566_vop = {
-+	.version = VOP_VERSION_RK3568,
- 	.feature = VOP2_FEATURE_HAS_SYS_GRF,
- 	.nr_vps = 3,
- 	.max_input = { 4096, 2304 },
-@@ -1645,6 +1646,7 @@ static const struct vop2_data rk3566_vop = {
- };
- 
- static const struct vop2_data rk3568_vop = {
-+	.version = VOP_VERSION_RK3568,
- 	.feature = VOP2_FEATURE_HAS_SYS_GRF,
- 	.nr_vps = 3,
- 	.max_input = { 4096, 2304 },
-@@ -1663,6 +1665,7 @@ static const struct vop2_data rk3568_vop = {
- };
- 
- static const struct vop2_data rk3588_vop = {
-+	.version = VOP_VERSION_RK3588,
- 	.feature = VOP2_FEATURE_HAS_SYS_GRF | VOP2_FEATURE_HAS_VO1_GRF |
- 		   VOP2_FEATURE_HAS_VOP_GRF | VOP2_FEATURE_HAS_SYS_PMU,
- 	.nr_vps = 4,
--- 
-2.34.1
-
+Cheers,
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
