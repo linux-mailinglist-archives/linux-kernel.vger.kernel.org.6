@@ -1,86 +1,60 @@
-Return-Path: <linux-kernel+bounces-436856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758469E8BB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:50:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F8189E8B34
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:52:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 314E4281796
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:50:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00292281556
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A85214811;
-	Mon,  9 Dec 2024 06:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="X2tNqYIA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C1321018B;
+	Mon,  9 Dec 2024 05:52:51 +0000 (UTC)
+Received: from mx0a-0064b401.pphosted.com (mx0a-0064b401.pphosted.com [205.220.166.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81D9D1D555
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:50:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8880020FA99;
+	Mon,  9 Dec 2024 05:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.166.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733727033; cv=none; b=hPRyTmdSm81Eb6Pxbn/ZfkWAq/tzuMjt5G6Ib5do0oL1oRMu8+PUK7zID7C7oK18C1Pi54fEzncgtXRFquEm4ScaZNdAB8RrAGHrAYrsGAROWzQ9uCxtZmn1hUl8qAg/r0sVmlT0oVwS15C4AaMUJxfpKmORJ/1h45fJIeD2hGs=
+	t=1733723571; cv=none; b=N8OTTDCtv0A0lR/o47J1sx+o8pZSazcmEq4nvnrYFUOw2Gjt2N9z6OoTcZYGrqx2BerXOBFAzuawnpgJJEtukrMNhNwZG0LPRSZ1GhKMya9cAjjAkLEusBO3XqKA1dkyX4FNqjcHDHNvOYpDdnVHgiPPyMr5aNLf4yGcU7MfL70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733727033; c=relaxed/simple;
-	bh=JcT3M6OwkyDnIyY3X5bFFx3N1gpJEfFcmUCrIOl3qG8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=D34fH+cxn1Am8qAk7yrVo8OrETpPgcI7uz121ot9umPUR7ERS7rU1uIhjkor0zk8PBVPi2JKMUMK1HYgAb+JM4pOhxbY71zNvwP0ZJT7uIxta7rHXMN0VUg6w6U1X0lYTFDFXGXJcrTaPbc/KoIkiytaOa7ggtPy9APr2QualB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=X2tNqYIA; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733727031; x=1765263031;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=JcT3M6OwkyDnIyY3X5bFFx3N1gpJEfFcmUCrIOl3qG8=;
-  b=X2tNqYIAiFncpswruezFO53tN9XWuy3Af9aAhFw9ajTj4hPiHXQlXM3F
-   VEslqRuqoUNDKeIX47/YtwxFveqiWg/XYbWxkbtx0Nt5X+TV3F863GiIK
-   ROlBmznLTwbpFQeR+FE01O4StG0Z3zPVr06D0liY0saETWDiluXYpQL7A
-   zSPRPnKJ32L5niVAzNrUqNTPRzL8yp7/pTO6Xph0b1VJ7AZIw7cs+ACOa
-   tImLuoAAVg4gb9+63TLqb6smIilkBDo4Zk+jkXToH/yDm6LOCe7v9ZeH7
-   yfvrIi0irTd3E8ooeMdeqfebRblWpu2T+hYsoE3lyhyx5CQ0WOsXNz4DK
-   g==;
-X-CSE-ConnectionGUID: Ptcpbv+hQtG6A1gi6wv6RQ==
-X-CSE-MsgGUID: WMqR88PbRQa3nHFRsniDsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="56490562"
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="56490562"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 22:50:30 -0800
-X-CSE-ConnectionGUID: VQthq7xdQGirC1P1fKDkEg==
-X-CSE-MsgGUID: WLaRjbfBS/yHOs9ME999JQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="95181231"
-Received: from hcaldwel-desk1.amr.corp.intel.com (HELO khuang2-desk.gar.corp.intel.com) ([10.124.221.132])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 22:50:25 -0800
-From: Kai Huang <kai.huang@intel.com>
-To: dave.hansen@intel.com,
-	kirill.shutemov@linux.intel.com,
-	tglx@linutronix.de,
-	bp@alien8.de,
-	peterz@infradead.org,
-	mingo@redhat.com,
-	hpa@zytor.com,
-	dan.j.williams@intel.com,
-	seanjc@google.com,
-	pbonzini@redhat.com
-Cc: x86@kernel.org,
-	linux-kernel@vger.kernel.org,
-	rick.p.edgecombe@intel.com,
-	isaku.yamahata@intel.com,
-	adrian.hunter@intel.com,
-	nik.borisov@suse.com,
-	kai.huang@intel.com
-Subject: [PATCH v8 8.2/9] x86/virt/tdx: Reduce TDMR's reserved areas by using CMRs to find memory holes
-Date: Mon,  9 Dec 2024 19:50:16 +1300
-Message-ID: <20241209065016.242359-1-kai.huang@intel.com>
-X-Mailer: git-send-email 2.47.1
-In-Reply-To: <23bb421e9bf5443a823e163fb2d899760d9f14a3.1731498635.git.kai.huang@intel.com>
-References: <23bb421e9bf5443a823e163fb2d899760d9f14a3.1731498635.git.kai.huang@intel.com>
+	s=arc-20240116; t=1733723571; c=relaxed/simple;
+	bh=GDGTPi4d5yIoDO2bhGqiLBL86hh2U9JhaHeZ9Z+T7wc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZyzdKpGSu+i2ZuKIFgZjspEd8Kd2kauiqd9fQ7ANaMwZ82V1C/lUcpYblJKY8l2dOa7T2+Ry8v+bXAsv/xm9yBEX6BrkLgzhS35XpWI63GVpZdaoo2buEJ2qsMfbxmhyW9IjUdLkMvo5cMLcYfftoZ+ZCwKocm8rXmhI/ef1x9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.166.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250809.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B94A6p9012518;
+	Sun, 8 Dec 2024 21:52:42 -0800
+Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy1s12r-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sun, 08 Dec 2024 21:52:42 -0800 (PST)
+Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.43; Sun, 8 Dec 2024 21:52:40 -0800
+Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
+ 15.1.2507.43 via Frontend Transport; Sun, 8 Dec 2024 21:52:35 -0800
+From: <jianqi.ren.cn@windriver.com>
+To: <sohaib.nadeem@amd.com>, <gregkh@linuxfoundation.org>
+CC: <stable@vger.kernel.org>, <harry.wentland@amd.com>, <sunpeng.li@amd.com>,
+        <Rodrigo.Siqueira@amd.com>, <alexander.deucher@amd.com>,
+        <christian.koenig@amd.com>, <Xinhui.Pan@amd.com>, <airlied@gmail.com>,
+        <daniel@ffwll.ch>, <wayne.lin@amd.com>, <sashal@kernel.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <aurabindo.pillai@amd.com>, <charlene.liu@amd.com>,
+        <gabe.teeger@amd.com>, <amd-gfx@lists.freedesktop.org>,
+        <Nicholas.Kazlauskas@amd.com>
+Subject: [PATCH 6.1.y] drm/amd/display: fixed integer types and null check locations
+Date: Mon, 9 Dec 2024 14:50:28 +0800
+Message-ID: <20241209065028.3427316-1-jianqi.ren.cn@windriver.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,278 +62,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: L55cWv0bnikP6lBJk_6S08T_A_Y1IQhR
+X-Authority-Analysis: v=2.4 cv=eePHf6EH c=1 sm=1 tr=0 ts=675685aa cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=zd2uoN0lAAAA:8 a=VwQbUJbxAAAA:8 a=t7CeM3EgAAAA:8 a=fmNT8XcYnNex_eyvA98A:9 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-GUID: L55cWv0bnikP6lBJk_6S08T_A_Y1IQhR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-09_02,2024-12-09_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=999 priorityscore=1501
+ spamscore=0 phishscore=0 malwarescore=0 mlxscore=0 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.21.0-2411120000 definitions=main-2412090047
 
-A TDX module initialization failure was reported on an Emerald Rapids
-platform [*]:
+From: Sohaib Nadeem <sohaib.nadeem@amd.com>
 
-  virt/tdx: initialization failed: TDMR [0x0, 0x80000000): reserved areas exhausted.
-  virt/tdx: module initialization failed (-28)
+[ Upstream commit 0484e05d048b66d01d1f3c1d2306010bb57d8738 ]
 
-The kernel informs the TDX module of "TDX-usable memory regions" via the
-structure "TD Memory Region" (TDMR).  Each TDMR contains a limited
-number of "reserved areas" to inform the TDX module of the regions that
-cannot be used by TDX.
+[why]:
+issues fixed:
+- comparison with wider integer type in loop condition which can cause
+infinite loops
+- pointer dereference before null check
 
-The kernel builds the list of "TDX-usable memory regions" from memblock
-(which reflects e820) and marks all memory holes as "reserved areas" in
-TDMRs.  It turns out on some large systems the holes in memblock can be
-too fine-grained [1] and exceed the number of reserved areas that the
-module can track per TDMR, resulting in the failure mentioned above.
-
-The TDX module also reports TDX-capable memory as "Convertible Memory
-Regions" (CMRs).  CMRs tend to be coarser-grained [2] than the e820.
-Use CMRs to find memory holes when populating reserved areas to reduce
-their consumption.
-
-Note the kernel does not prevent non-CMR memory from being added to
-"TDX-usable memory regions" but depends on the TDX module to catch in
-the TDH.SYS.CONFIG.  After switching to using CMRs to populate reserved
-areas this will no longer work.  To ensure no non-CMR memory is included
-in the TDMRs, verify that the memory region is truly TDX convertible
-before adding it as a TDX-usable memory region at early stage.
-
-[1] BIOS-E820 table of the problematic platform:
-
-  BIOS-e820: [mem 0x0000000000000000-0x000000000009efff] usable
-  BIOS-e820: [mem 0x000000000009f000-0x00000000000fffff] reserved
-  BIOS-e820: [mem 0x0000000000100000-0x000000005d168fff] usable
-  BIOS-e820: [mem 0x000000005d169000-0x000000005d22afff] ACPI data
-  BIOS-e820: [mem 0x000000005d22b000-0x000000005d3cefff] usable
-  BIOS-e820: [mem 0x000000005d3cf000-0x000000005d469fff] reserved
-  BIOS-e820: [mem 0x000000005d46a000-0x000000005e5b2fff] usable
-  BIOS-e820: [mem 0x000000005e5b3000-0x000000005e5c2fff] reserved
-  BIOS-e820: [mem 0x000000005e5c3000-0x000000005e5d2fff] usable
-  BIOS-e820: [mem 0x000000005e5d3000-0x000000005e5e4fff] reserved
-  BIOS-e820: [mem 0x000000005e5e5000-0x000000005eb57fff] usable
-  BIOS-e820: [mem 0x000000005eb58000-0x0000000061357fff] ACPI NVS
-  BIOS-e820: [mem 0x0000000061358000-0x000000006172afff] usable
-  BIOS-e820: [mem 0x000000006172b000-0x0000000061794fff] ACPI data
-  BIOS-e820: [mem 0x0000000061795000-0x00000000617fefff] usable
-  BIOS-e820: [mem 0x00000000617ff000-0x0000000061912fff] ACPI data
-  BIOS-e820: [mem 0x0000000061913000-0x0000000061998fff] usable
-  BIOS-e820: [mem 0x0000000061999000-0x00000000619dffff] ACPI data
-  BIOS-e820: [mem 0x00000000619e0000-0x00000000619e1fff] usable
-  BIOS-e820: [mem 0x00000000619e2000-0x00000000619e9fff] reserved
-  BIOS-e820: [mem 0x00000000619ea000-0x0000000061a26fff] usable
-  BIOS-e820: [mem 0x0000000061a27000-0x0000000061baefff] ACPI data
-  BIOS-e820: [mem 0x0000000061baf000-0x00000000623c2fff] usable
-  BIOS-e820: [mem 0x00000000623c3000-0x0000000062471fff] reserved
-  BIOS-e820: [mem 0x0000000062472000-0x0000000062823fff] usable
-  BIOS-e820: [mem 0x0000000062824000-0x0000000063a24fff] reserved
-  BIOS-e820: [mem 0x0000000063a25000-0x0000000063d57fff] usable
-  BIOS-e820: [mem 0x0000000063d58000-0x0000000064157fff] reserved
-  BIOS-e820: [mem 0x0000000064158000-0x0000000064158fff] usable
-  BIOS-e820: [mem 0x0000000064159000-0x0000000064194fff] reserved
-  BIOS-e820: [mem 0x0000000064195000-0x000000006e9cefff] usable
-  BIOS-e820: [mem 0x000000006e9cf000-0x000000006eccefff] reserved
-  BIOS-e820: [mem 0x000000006eccf000-0x000000006f6fefff] ACPI NVS
-  BIOS-e820: [mem 0x000000006f6ff000-0x000000006f7fefff] ACPI data
-  BIOS-e820: [mem 0x000000006f7ff000-0x000000006f7fffff] usable
-  BIOS-e820: [mem 0x000000006f800000-0x000000008fffffff] reserved
-  ......
-
-[2] Convertible Memory Regions of the problematic platform:
-
-  virt/tdx: CMR: [0x100000, 0x6f800000)
-  virt/tdx: CMR: [0x100000000, 0x107a000000)
-  virt/tdx: CMR: [0x1080000000, 0x207c000000)
-  virt/tdx: CMR: [0x2080000000, 0x307c000000)
-  virt/tdx: CMR: [0x3080000000, 0x407c000000)
-
-Link: https://github.com/canonical/tdx/issues/135 [*]
-Fixes: dde3b60d572c ("x86/virt/tdx: Designate reserved areas for all TDMRs")
-Signed-off-by: Kai Huang <kai.huang@intel.com>
-Reviewed-by: Dan Williams <dan.j.williams@intel.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: stable@vger.kernel.org
+Reviewed-by: Josip Pavic <josip.pavic@amd.com>
+Acked-by: Aurabindo Pillai <aurabindo.pillai@amd.com>
+Signed-off-by: Sohaib Nadeem <sohaib.nadeem@amd.com>
+Tested-by: Daniel Wheeler <daniel.wheeler@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
 ---
+ .../gpu/drm/amd/display/dc/bios/bios_parser2.c   | 16 ++++++++++------
+ 1 file changed, 10 insertions(+), 6 deletions(-)
 
-v8.1 -> v8.2:
- - Trim down the changelog and comments. (Dave)
-
----
- arch/x86/virt/vmx/tdx/tdx.c | 74 ++++++++++++++++++++++++++++---------
- 1 file changed, 56 insertions(+), 18 deletions(-)
-
-diff --git a/arch/x86/virt/vmx/tdx/tdx.c b/arch/x86/virt/vmx/tdx/tdx.c
-index 5e6d8021681d..5c6a743de333 100644
---- a/arch/x86/virt/vmx/tdx/tdx.c
-+++ b/arch/x86/virt/vmx/tdx/tdx.c
-@@ -176,6 +176,23 @@ int tdx_cpu_enable(void)
- }
- EXPORT_SYMBOL_GPL(tdx_cpu_enable);
+diff --git a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+index 4d2590964a20..75e44d8a7b40 100644
+--- a/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
++++ b/drivers/gpu/drm/amd/display/dc/bios/bios_parser2.c
+@@ -1862,19 +1862,21 @@ static enum bp_result get_firmware_info_v3_2(
+ 		/* Vega12 */
+ 		smu_info_v3_2 = GET_IMAGE(struct atom_smu_info_v3_2,
+ 							DATA_TABLES(smu_info));
+-		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
+ 		if (!smu_info_v3_2)
+ 			return BP_RESULT_BADBIOSTABLE;
  
-+/* Check whether a given memory region is a sub-region of any CMR. */
-+static bool is_cmr_sub_region(unsigned long start_pfn, unsigned long end_pfn,
-+			      struct tdx_sys_info_cmr *sysinfo_cmr)
-+{
-+	int i;
++		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_2->gpuclk_ss_percentage);
 +
-+	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
-+		u64 cmr_base_pfn = sysinfo_cmr->cmr_base[i] >> PAGE_SHIFT;
-+		u64 cmr_npages = sysinfo_cmr->cmr_size[i] >> PAGE_SHIFT;
+ 		info->default_engine_clk = smu_info_v3_2->bootup_dcefclk_10khz * 10;
+ 	} else if (revision.minor == 3) {
+ 		/* Vega20 */
+ 		smu_info_v3_3 = GET_IMAGE(struct atom_smu_info_v3_3,
+ 							DATA_TABLES(smu_info));
+-		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
+ 		if (!smu_info_v3_3)
+ 			return BP_RESULT_BADBIOSTABLE;
+ 
++		DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", smu_info_v3_3->gpuclk_ss_percentage);
 +
-+		if (start_pfn >= cmr_base_pfn &&
-+				end_pfn <= (cmr_base_pfn + cmr_npages))
-+			return true;
-+	}
-+
-+	return false;
-+}
- /*
-  * Add a memory region as a TDX memory block.  The caller must make sure
-  * all memory regions are added in address ascending order and don't
-@@ -218,7 +235,8 @@ static void free_tdx_memlist(struct list_head *tmb_list)
-  * ranges off in a secondary structure because memblock is modified
-  * in memory hotplug while TDX memory regions are fixed.
-  */
--static int build_tdx_memlist(struct list_head *tmb_list)
-+static int build_tdx_memlist(struct list_head *tmb_list,
-+			     struct tdx_sys_info_cmr *sysinfo_cmr)
- {
- 	unsigned long start_pfn, end_pfn;
- 	int i, nid, ret;
-@@ -234,6 +252,18 @@ static int build_tdx_memlist(struct list_head *tmb_list)
- 		if (start_pfn >= end_pfn)
- 			continue;
- 
-+		/*
-+		 * Make sure the to-be-added memory region is truly TDX
-+		 * convertible.  This ensures no non-TDX convertible
-+		 * memory can end up to page allocator.
-+		 */
-+		if (!is_cmr_sub_region(start_pfn, end_pfn, sysinfo_cmr)) {
-+			pr_err("memory region [0x%lx, 0x%lx) is not TDX convertible memory.\n",
-+					PHYS_PFN(start_pfn), PHYS_PFN(end_pfn));
-+			ret = -EINVAL;
-+			goto err;
-+		}
-+
- 		/*
- 		 * Add the memory regions as TDX memory.  The regions in
- 		 * memblock has already guaranteed they are in address
-@@ -733,29 +763,28 @@ static int tdmr_add_rsvd_area(struct tdmr_info *tdmr, int *p_idx, u64 addr,
- }
- 
- /*
-- * Go through @tmb_list to find holes between memory areas.  If any of
-+ * Go through all CMRs in @sysinfo_cmr to find memory holes.  If any of
-  * those holes fall within @tdmr, set up a TDMR reserved area to cover
-  * the hole.
-  */
--static int tdmr_populate_rsvd_holes(struct list_head *tmb_list,
-+static int tdmr_populate_rsvd_holes(struct tdx_sys_info_cmr *sysinfo_cmr,
- 				    struct tdmr_info *tdmr,
- 				    int *rsvd_idx,
- 				    u16 max_reserved_per_tdmr)
- {
--	struct tdx_memblock *tmb;
- 	u64 prev_end;
--	int ret;
-+	int i, ret;
- 
- 	/*
- 	 * Start looking for reserved blocks at the
- 	 * beginning of the TDMR.
- 	 */
- 	prev_end = tdmr->base;
--	list_for_each_entry(tmb, tmb_list, list) {
-+	for (i = 0; i < sysinfo_cmr->num_cmrs; i++) {
- 		u64 start, end;
- 
--		start = PFN_PHYS(tmb->start_pfn);
--		end   = PFN_PHYS(tmb->end_pfn);
-+		start = sysinfo_cmr->cmr_base[i];
-+		end   = start + sysinfo_cmr->cmr_size[i];
- 
- 		/* Break if this region is after the TDMR */
- 		if (start >= tdmr_end(tdmr))
-@@ -856,16 +885,16 @@ static int rsvd_area_cmp_func(const void *a, const void *b)
- 
- /*
-  * Populate reserved areas for the given @tdmr, including memory holes
-- * (via @tmb_list) and PAMTs (via @tdmr_list).
-+ * (via @sysinfo_cmr) and PAMTs (via @tdmr_list).
-  */
- static int tdmr_populate_rsvd_areas(struct tdmr_info *tdmr,
--				    struct list_head *tmb_list,
-+				    struct tdx_sys_info_cmr *sysinfo_cmr,
- 				    struct tdmr_info_list *tdmr_list,
- 				    u16 max_reserved_per_tdmr)
- {
- 	int ret, rsvd_idx = 0;
- 
--	ret = tdmr_populate_rsvd_holes(tmb_list, tdmr, &rsvd_idx,
-+	ret = tdmr_populate_rsvd_holes(sysinfo_cmr, tdmr, &rsvd_idx,
- 			max_reserved_per_tdmr);
- 	if (ret)
- 		return ret;
-@@ -884,10 +913,10 @@ static int tdmr_populate_rsvd_areas(struct tdmr_info *tdmr,
- 
- /*
-  * Populate reserved areas for all TDMRs in @tdmr_list, including memory
-- * holes (via @tmb_list) and PAMTs.
-+ * holes (via @sysinfo_cmr) and PAMTs.
-  */
- static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
--					 struct list_head *tmb_list,
-+					 struct tdx_sys_info_cmr *sysinfo_cmr,
- 					 u16 max_reserved_per_tdmr)
- {
- 	int i;
-@@ -896,7 +925,7 @@ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
- 		int ret;
- 
- 		ret = tdmr_populate_rsvd_areas(tdmr_entry(tdmr_list, i),
--				tmb_list, tdmr_list, max_reserved_per_tdmr);
-+				sysinfo_cmr, tdmr_list, max_reserved_per_tdmr);
- 		if (ret)
- 			return ret;
+ 		info->default_engine_clk = smu_info_v3_3->bootup_dcefclk_10khz * 10;
  	}
-@@ -911,7 +940,8 @@ static int tdmrs_populate_rsvd_areas_all(struct tdmr_info_list *tdmr_list,
-  */
- static int construct_tdmrs(struct list_head *tmb_list,
- 			   struct tdmr_info_list *tdmr_list,
--			   struct tdx_sys_info_tdmr *sysinfo_tdmr)
-+			   struct tdx_sys_info_tdmr *sysinfo_tdmr,
-+			   struct tdx_sys_info_cmr *sysinfo_cmr)
- {
- 	u16 pamt_entry_size[TDX_PS_NR] = {
- 		sysinfo_tdmr->pamt_4k_entry_size,
-@@ -928,7 +958,14 @@ static int construct_tdmrs(struct list_head *tmb_list,
- 	if (ret)
- 		return ret;
  
--	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, tmb_list,
-+	/*
-+	 * On some large systems, the TDX memory blocks (which reflects
-+	 * e820) in the first 1GB can be too fine-grained.  Using them
-+	 * to populate reserved areas may result in reserved areas being
-+	 * exhausted.  CMRs are coarser-grained than e820.  Use CMRs to
-+	 * populate reserved areas to reduce their consumption.
-+	 */
-+	ret = tdmrs_populate_rsvd_areas_all(tdmr_list, sysinfo_cmr,
- 			sysinfo_tdmr->max_reserved_per_tdmr);
- 	if (ret)
- 		tdmrs_free_pamt_all(tdmr_list);
-@@ -1107,7 +1144,7 @@ static int init_tdx_module(void)
- 	 */
- 	get_online_mems();
+@@ -2439,10 +2441,11 @@ static enum bp_result get_integrated_info_v11(
+ 	info_v11 = GET_IMAGE(struct atom_integrated_system_info_v1_11,
+ 					DATA_TABLES(integratedsysteminfo));
  
--	ret = build_tdx_memlist(&tdx_memlist);
-+	ret = build_tdx_memlist(&tdx_memlist, &sysinfo.cmr);
- 	if (ret)
- 		goto out_put_tdxmem;
+-	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
+ 	if (info_v11 == NULL)
+ 		return BP_RESULT_BADBIOSTABLE;
  
-@@ -1117,7 +1154,8 @@ static int init_tdx_module(void)
- 		goto err_free_tdxmem;
++	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v11->gpuclk_ss_percentage);
++
+ 	info->gpu_cap_info =
+ 	le32_to_cpu(info_v11->gpucapinfo);
+ 	/*
+@@ -2654,11 +2657,12 @@ static enum bp_result get_integrated_info_v2_1(
  
- 	/* Cover all TDX-usable memory regions in TDMRs */
--	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr);
-+	ret = construct_tdmrs(&tdx_memlist, &tdx_tdmr_list, &sysinfo.tdmr,
-+			&sysinfo.cmr);
- 	if (ret)
- 		goto err_free_tdmrs;
+ 	info_v2_1 = GET_IMAGE(struct atom_integrated_system_info_v2_1,
+ 					DATA_TABLES(integratedsysteminfo));
+-	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
  
+ 	if (info_v2_1 == NULL)
+ 		return BP_RESULT_BADBIOSTABLE;
+ 
++	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_1->gpuclk_ss_percentage);
++
+ 	info->gpu_cap_info =
+ 	le32_to_cpu(info_v2_1->gpucapinfo);
+ 	/*
+@@ -2816,11 +2820,11 @@ static enum bp_result get_integrated_info_v2_2(
+ 	info_v2_2 = GET_IMAGE(struct atom_integrated_system_info_v2_2,
+ 					DATA_TABLES(integratedsysteminfo));
+ 
+-	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
+-
+ 	if (info_v2_2 == NULL)
+ 		return BP_RESULT_BADBIOSTABLE;
+ 
++	DC_LOG_BIOS("gpuclk_ss_percentage (unit of 0.001 percent): %d\n", info_v2_2->gpuclk_ss_percentage);
++
+ 	info->gpu_cap_info =
+ 	le32_to_cpu(info_v2_2->gpucapinfo);
+ 	/*
 -- 
-2.47.1
+2.25.1
 
 
