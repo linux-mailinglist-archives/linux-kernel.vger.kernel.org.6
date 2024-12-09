@@ -1,120 +1,174 @@
-Return-Path: <linux-kernel+bounces-436897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7C4E9E8C39
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:36:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34CD49E8C3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:36:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B7D62818E2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:36:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F291F281861
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:36:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40790214A94;
-	Mon,  9 Dec 2024 07:36:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8934215040;
+	Mon,  9 Dec 2024 07:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="iJ2PUVR3"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VfVLn8/z"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C9AB155751;
-	Mon,  9 Dec 2024 07:36:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E31621481D;
+	Mon,  9 Dec 2024 07:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733729765; cv=none; b=j/Df8XiALBGKs1CCsSXuIxxLiCMAHI1zs03N2CZrV0cINLjqOmyVKRbJjujtrnswnKXkShxQqkwE9repgA4E+VPCSz4rxp9T3nmZSL8cXeiCXJ1QGDeF76VLnvo49tTO55Q9lNIrJHOu5UdkBsWBovuyDyUdTBbMV8vF1pnZhfQ=
+	t=1733729774; cv=none; b=MWYaHkHF6vFZX54CUMPC8hq4cKeRd/OwfDvSzEZoA2c7B2q+EbwPcOO3JBqpNoE5qjpodU+75Usoqg5pX8qYfxZBsctQcbfmQSazmDXaTeQmrWRTYrCQHhujaUuZxN89t4oTCYWR9Ao1Ovr8LIYZpJPegfERgE1N6zQkvbNDEQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733729765; c=relaxed/simple;
-	bh=ozEPG5B3x7bDnu8neWhW6s4xV4Fs5uDWi0bVNT4nIeY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=OV0WsAYmHqTe0JCoCAqWsnqvV+cqctIzXCh2F/hpJXtc/QBnyXHx8dgUBWWjfua07uVZ+yAGmJ266YFtizERXL/hU3kiQVmRzOJYRNxzC6fPhcAdjBAARfLbb514Tu/aBFz09mj0thjBk/Z8kVn4pnX6bhhZYagXUEXUTkeQcG8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=iJ2PUVR3; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 882E060023;
-	Mon,  9 Dec 2024 07:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1733729754;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ozEPG5B3x7bDnu8neWhW6s4xV4Fs5uDWi0bVNT4nIeY=;
-	b=iJ2PUVR3rsE1jLme5fJDoqFVTfco0xRCs5MY3C0V6CXK0XcKMDvrVlmkVmwXwxGq8rSOhv
-	OzIT0JkNZQSEMPWOa8KWu+ZEvSXM/bWQoSaiPmRg0tFIv6e+uXOe0Onw/O7NgabWIwMEZg
-	1YzPjjb3XmRc/vlzqLA0O8tshWlwbRkNLuu8Z5yzAaeAYlZvfW7+TUFbOOYdFMeVYu5nz3
-	DbpwSL+omkquGi4VJwvPdRjyFrHAbZl7mF3QK0nBZNwnHg7VnUXZeLT1TQxV2rREAaAfaS
-	ZiYnXWM7qeYqDNxSDDY31/Z3iasXkYRthh1Xh5cOxFN/IHP5bgrN95Ypf33kog==
-From: Miquel Raynal <miquel.raynal@bootlin.com>
-To: "Rabara, Niravkumar L" <niravkumar.l.rabara@intel.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,  "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>,  "Richard Weinberger" <richard@nod.at>,
-  Vignesh Raghavendra <vigneshr@ti.com>,  "Rob Herring" <robh@kernel.org>,
-  Krzysztof Kozlowski <krzk+dt@kernel.org>,  "Conor Dooley"
- <conor+dt@kernel.org>,  "linux-mtd@lists.infradead.org"
- <linux-mtd@lists.infradead.org>,  "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] dt-bindings: mtd: cadence: convert
- cadence-nand-controller.txt to yaml
-In-Reply-To: <BL3PR11MB653282E179DA562E3F4AB707A23C2@BL3PR11MB6532.namprd11.prod.outlook.com>
-	(Niravkumar L. Rabara's message of "Mon, 9 Dec 2024 01:36:57 +0000")
-References: <20241205053350.434370-1-niravkumar.l.rabara@intel.com>
-	<87mshawhta.fsf@bootlin.com>
-	<ugcx6muozaven6lolhzpk5mvrt5fncoaahnsx5lbdsaurid4mc@i4qflh2edqnh>
-	<BL3PR11MB653282E179DA562E3F4AB707A23C2@BL3PR11MB6532.namprd11.prod.outlook.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Mon, 09 Dec 2024 08:35:06 +0100
-Message-ID: <87jzc9mhqt.fsf@bootlin.com>
+	s=arc-20240116; t=1733729774; c=relaxed/simple;
+	bh=bgfSgowanNcQdKmeZtnINFv8JA5gGj3/lDW4sVWMas4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oT5+zZdcRVu4eoA9p1gXmAJib2NZOyKs3UttAJeXNywPhL/jgSL4dM2vuU/pKeurjYxsfjnB/iPzCA+Djbk370RLDG+/DM5XNaEbmZ1zY91Nnx5hMP0/s73oGRQiWIgZPpYFnfxZLLiWOXOArxV2N3D2T5Z1Qh3Hz+OrGmcEhz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VfVLn8/z; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MK34G020690;
+	Mon, 9 Dec 2024 07:36:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=PkApUxXq8oM9V8hqQ3Rxdpz+MJ9Oq76S+7E5HyyHPvo=; b=Vf
+	VLn8/z306YK5g2ehBAI8qc4UiX7AUcSheeAPZZbwAoNJPBt7Hy4OiJSF6BqF/Jfr
+	OrG7FljyDDQflXnXsIktuyn2mQYxzsZBY2Fyjp66YHu2YyGLsxkQ798lPLp23/CG
+	N3Ex5y+6FA6TjKnDrWkL0Hhz1GxxrG4oKo+AnVict1kLls3Sa9pALeq3F7w637U2
+	W/mw7tJ6Y0PCVoHhBndAuaykbT+aMQ5u36yrADGYI7dv5cGdHJhaetla93vzGwhH
+	147gO0sQfRchyVbB4sIjBMuT8+D9UauxvMOzjJY6ixQ1iP4V88/P3W+xZvyMp4Vb
+	iqmUp/lV/QZ2ZPtR3jKw==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cf4e3ntv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 07:36:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B97a96Y009574
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 07:36:09 GMT
+Received: from hu-jseerapu-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 8 Dec 2024 23:36:06 -0800
+From: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+To: Vinod Koul <vkoul@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_msavaliy@quicinc.com>,
+        <quic_vtanuku@quicinc.com>
+Subject: [PATCH v5] dmaengine: qcom: gpi: Add GPI immediate DMA support for SPI protocol
+Date: Mon, 9 Dec 2024 13:05:53 +0530
+Message-ID: <20241209073553.818-1-quic_jseerapu@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-GND-Sasl: miquel.raynal@bootlin.com
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6k0_YiS5j3rLzlviEl59zbtGANSStpW6
+X-Proofpoint-ORIG-GUID: 6k0_YiS5j3rLzlviEl59zbtGANSStpW6
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0
+ spamscore=0 priorityscore=1501 mlxscore=0 adultscore=0 phishscore=0
+ bulkscore=0 suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090058
 
-On 09/12/2024 at 01:36:57 GMT, "Rabara, Niravkumar L" <niravkumar.l.rabara@=
-intel.com> wrote:
+The DMA TRE(Transfer ring element) buffer contains the DMA
+buffer address. Accessing data from this address can cause
+significant delays in SPI transfers, which can be mitigated to
+some extent by utilizing immediate DMA support.
 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Sunday, 8 December, 2024 10:26 PM
->> To: Miquel Raynal <miquel.raynal@bootlin.com>
->> Cc: Rabara, Niravkumar L <niravkumar.l.rabara@intel.com>;
->> devicetree@vger.kernel.org; Richard Weinberger <richard@nod.at>; Vignesh
->> Raghavendra <vigneshr@ti.com>; Rob Herring <robh@kernel.org>; Krzysztof
->> Kozlowski <krzk+dt@kernel.org>; Conor Dooley <conor+dt@kernel.org>; linu=
-x-
->> mtd@lists.infradead.org; linux-kernel@vger.kernel.org
->> Subject: Re: [PATCH v4] dt-bindings: mtd: cadence: convert cadence-nand-
->> controller.txt to yaml
->>=20
->> On Thu, Dec 05, 2024 at 11:22:09AM +0100, Miquel Raynal wrote:
->> > On 05/12/2024 at 13:33:50 +08, niravkumar.l.rabara@intel.com wrote:
->> >
->> > > From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
->> > >
->> > > Convert cadence-nand-controller.txt to yaml format.
->> > > Update cadence-nand-controller.txt to cdns,hp-nfc.yaml in MAINTAINER
->> file.
->> > >
->> > > Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
->> >
->> > Looks good to me, but I'll wait for binding maintainers ack ofc.
->>=20
->> There was one, but author ignored it.
->>=20
->> Best regards,
->> Krzysztof
->
-> My apologies, I forgot to include the 'Reviewed-by: Conor Dooley
-> conor.dooley@microchip.com' tag that I received in the v3 patch. I will
-> ensure this does not happen again.
+QCOM GPI DMA hardware supports an immediate DMA feature for data
+up to 8 bytes, storing the data directly in the DMA TRE buffer
+instead of the DMA buffer address. This enhancement enables faster
+SPI data transfers.
 
-Please re-send with the missing tag(s), otherwise they will not be
-picked-up (automatically).
+This optimization reduces the average transfer time from 25 us to
+16 us for a single SPI transfer of 8 bytes length, with a clock
+frequency of 50 MHz.
 
-Cheers,
-Miqu=C3=A8l
+Signed-off-by: Jyothi Kumar Seerapu <quic_jseerapu@quicinc.com>
+---
+ drivers/dma/qcom/gpi.c | 31 +++++++++++++++++++++++++------
+ 1 file changed, 25 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/dma/qcom/gpi.c b/drivers/dma/qcom/gpi.c
+index 52a7c8f2498f..b1f0001cc99c 100644
+--- a/drivers/dma/qcom/gpi.c
++++ b/drivers/dma/qcom/gpi.c
+@@ -18,6 +18,7 @@
+ #include "../virt-dma.h"
+ 
+ #define TRE_TYPE_DMA		0x10
++#define TRE_TYPE_IMMEDIATE_DMA	0x11
+ #define TRE_TYPE_GO		0x20
+ #define TRE_TYPE_CONFIG0	0x22
+ 
+@@ -64,6 +65,7 @@
+ 
+ /* DMA TRE */
+ #define TRE_DMA_LEN		GENMASK(23, 0)
++#define TRE_DMA_IMMEDIATE_LEN	GENMASK(3, 0)
+ 
+ /* Register offsets from gpi-top */
+ #define GPII_n_CH_k_CNTXT_0_OFFS(n, k)	(0x20000 + (0x4000 * (n)) + (0x80 * (k)))
+@@ -1711,6 +1713,7 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+ 	dma_addr_t address;
+ 	struct gpi_tre *tre;
+ 	unsigned int i;
++	int len;
+ 
+ 	/* first create config tre if applicable */
+ 	if (direction == DMA_MEM_TO_DEV && spi->set_config) {
+@@ -1763,14 +1766,30 @@ static int gpi_create_spi_tre(struct gchan *chan, struct gpi_desc *desc,
+ 	tre_idx++;
+ 
+ 	address = sg_dma_address(sgl);
+-	tre->dword[0] = lower_32_bits(address);
+-	tre->dword[1] = upper_32_bits(address);
++	len = sg_dma_len(sgl);
+ 
+-	tre->dword[2] = u32_encode_bits(sg_dma_len(sgl), TRE_DMA_LEN);
++	/* Support Immediate dma for write transfers for data length up to 8 bytes */
++	if (direction == DMA_MEM_TO_DEV && len <= 2 * sizeof(tre->dword[0])) {
++		/*
++		 * For Immediate dma, data length may not always be length of 8 bytes,
++		 * it can be length less than 8, hence initialize both dword's with 0
++		 */
++		tre->dword[0] = 0;
++		tre->dword[1] = 0;
++		memcpy(&tre->dword[0], sg_virt(sgl), len);
+ 
+-	tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
+-	if (direction == DMA_MEM_TO_DEV)
+-		tre->dword[3] |= u32_encode_bits(1, TRE_FLAGS_IEOT);
++		tre->dword[2] = u32_encode_bits(len, TRE_DMA_IMMEDIATE_LEN);
++		tre->dword[3] = u32_encode_bits(TRE_TYPE_IMMEDIATE_DMA, TRE_FLAGS_TYPE);
++	} else {
++		tre->dword[0] = lower_32_bits(address);
++		tre->dword[1] = upper_32_bits(address);
++
++		tre->dword[2] = u32_encode_bits(len, TRE_DMA_LEN);
++		tre->dword[3] = u32_encode_bits(TRE_TYPE_DMA, TRE_FLAGS_TYPE);
++	}
++
++	tre->dword[3] |= u32_encode_bits(direction == DMA_MEM_TO_DEV,
++					 TRE_FLAGS_IEOT);
+ 
+ 	for (i = 0; i < tre_idx; i++)
+ 		dev_dbg(dev, "TRE:%d %x:%x:%x:%x\n", i, desc->tre[i].dword[0],
+-- 
+2.17.1
+
 
