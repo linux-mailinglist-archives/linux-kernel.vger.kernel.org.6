@@ -1,131 +1,157 @@
-Return-Path: <linux-kernel+bounces-438142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D997A9E9D60
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:47:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785149E9D3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:43:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9B5F283735
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:47:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F27C6282D60
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:43:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2CEF1F2C47;
-	Mon,  9 Dec 2024 17:45:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2403D155A34;
+	Mon,  9 Dec 2024 17:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="UgW0Al7j"
-Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X8a6vMbo"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8784F1F0E48
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:45:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A00233151;
+	Mon,  9 Dec 2024 17:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733766341; cv=none; b=KaAnFAvdLH91ZR7HWRjCCfG2GIY297E18g54NFTN3SbLE4W2KND+CTH5EkpkSEyqi9RFcW+dYhPWnKK7b5ejR90k6Pe2mi5h2sBXUSjguIDV9xyo0rI2lJ6fQ0S40Sa17IXox62xiD8jPJbKMrkp4E4ZlmqDk8C3yriJuTT7q0I=
+	t=1733766230; cv=none; b=rW+uAg2hN5QfJmywqOYYt3deEwBdkqoX5jrleJ+Zgq/jv3au7icmCtjnz+4k1sLWjQP65WJn1SRXSn3cicD39QIvyu70jXIioNp1xCNG2OvzGrTTUeEYVUfH7Oj7MXxoNPVuxdYnsqbc+TAtMcUHIHkJKGrZsbqQ++yhqQ14p/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733766341; c=relaxed/simple;
-	bh=93qaJ3GVaHtB9LawpPgXq1EAwtT4MSNyTdLDOphV9YY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k1p97SsncB9LfAk2gAjvd/pTpN6vcAmNiBVf/t5T/Jrt4VpZZ+Gz6/ztN5+76iy7F+9se0bo8s7ymLwbHX95KvQpnLioyu7qwjARWSNzubsmVh6+V3Fy2gQm0axqKVLsTQ6xaQQQoy7uE1xyYVWnmOa0K4GWWLYvytWd5iOcag8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=UgW0Al7j; arc=none smtp.client-ip=209.85.216.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2eed82ca5b4so4006755a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:45:38 -0800 (PST)
+	s=arc-20240116; t=1733766230; c=relaxed/simple;
+	bh=q/rcTOvcDwZyPaQTo31tJDbxBrL528rUIEpQq1SvPmA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cce/PolS2l6k8LoGtACOPb/ueQ7g6+7WHSdqzQjrd6hnbGjektgOay1E7fmuxf2of2/uuKjrhUh6pLRS+/7p8mfF/OA8xmm4hr1SmAQ4BdJExBZhNoN2+cYOBXuy+l4VV52zXYumJ6uRlFwICeg9YtkhnVsjsi+CwE0kF8JAcfI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X8a6vMbo; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-216395e151bso10978065ad.0;
+        Mon, 09 Dec 2024 09:43:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733766338; x=1734371138; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1733766228; x=1734371028; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TPxl3QSUuHKTV79x7MMAWoOiUWB66qwESu+TwnhAWUM=;
-        b=UgW0Al7jzpJSHMgS4O3g56QcneFqPeLA7SPGCRZ8D0Ik/jAF8qGBQTDRcontVhnrqr
-         gSeJPzOwZhhmHRKL71isKrJMYOQqxSGwpZEMAKl7E65J5JSQgm50mAo4gqoVmDYHG8tk
-         Xdy1aJxvm21JuBegVfDgHxJjh5dI0KyFu6azE=
+        bh=d8t4rQo4GlIJNr1Ck0WNYMLnLZ4WaSFJXClmAi03iA4=;
+        b=X8a6vMboh2cUShWYAaWIOBjShJUqoXjqBHvg3+Wa48to13PGN9jN/w90FigY4jd+Sn
+         y1ffQdrm8Tbn24PbsDal4ANtFXOO7BXzHp8/8ExTYtSzUyTYaPlgebk/Dq7aX9xf1qWo
+         +JPiNBhuCfJXoV/tX4Hfpk0+E0wf6n5EXAKMDWeU3r4khiKNZdMTDza56xqw8PyOhWIc
+         R/weVnjTJxx+pQ2LBCcO0mqxtGsTkGxs2DHy52FdbhXfhJJWBCOKAMPgDcRb218W0or5
+         TgNZwVY+oSnRkDHb10G95JPQy2qAu3E3NSPzsbDn60U9sWt20RoLhTEbw303DTqWb3Zv
+         hVoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733766338; x=1734371138;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1733766228; x=1734371028;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TPxl3QSUuHKTV79x7MMAWoOiUWB66qwESu+TwnhAWUM=;
-        b=T2uXmGoHvb+B0iRr9SFFc+aThtsPdvOsJWYPIy7FRgIWdytoVdXTfh6nERpfoempfW
-         5w9HjRrGV4vRAylAveADJuX1WnZ9JVNHPDwx9Uv59d/0oh+b2f1UZ01lDyTGiIHbVrTb
-         16SkLZTJOBOrV7HCeh/jY8irQw/bKTKYB4sW+0nW7Y81O5Wma3N2FtE2dw7mVfaLTNdd
-         UAoup2stSeGDki5IJADiD29aIw0ZLSTumzxt5qe9EDEibcOg8cLg2oxL88HFpKniz3tD
-         28abcysISHMC8jC5guC/AKjz7jVjpwvNYQlTdRPKSSGIo28oIRVk4890Uw4DAU1XKJ14
-         OtKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXZGjqc4C9xpy11nK5+GtudzHfW6xCGT3UJguHAeDbTZ5OqvKWr/rw9y4lvcYpjYeiesPV4ySCEUnHYM5I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yysimz5wn+t/bWOxQ4DXu0+C8wGx7zHi1nhI/aZa/fVZFaIuh2l
-	fmuiJxJSs30pTsHEgxsBCwt+k5+mqsDMHOseE6bI+3f+tfVcZFz4m1kNvfHHcw==
-X-Gm-Gg: ASbGnctN8MzMnGCALhId8KdXgHv5rC+M3vw+yrQZzAzNwbM5wlsFkO0D8ov3xygagqy
-	cj7Xgh6nYJDHt03z2WlAhD7tKqPenU+gHE07cX8YdEzW5WKdLqeUZO9vRCojWU9i9qSeNBLl6VL
-	FZJTzLF9ZtUNl92y3zkmmJ+W//kOwM2mu5REYJXsOp4X/SP9KQ5eRDv7Ne0AksqAFPoq3smSWGy
-	BeJTCYqBj5R+SE0aKc6v4yW4Dwk4Ora5Qsgw6iHlIl8QG8Z83KwTz88tlOXyFXmzNiYIQ==
-X-Google-Smtp-Source: AGHT+IEQ1TiQkcWM60OYrpKHzb5BVzSSsklo7u5kyWPZtuHxhJvmJhyRRo76EY6ccYMPTPOgDAZo6Q==
-X-Received: by 2002:a17:90b:2783:b0:2ee:8430:b847 with SMTP id 98e67ed59e1d1-2efcf137ac6mr2051960a91.6.1733766337960;
-        Mon, 09 Dec 2024 09:45:37 -0800 (PST)
-Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:5dfc:4b08:57c5:2948])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd53ff4900sm1397667a12.50.2024.12.09.09.45.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 09:45:37 -0800 (PST)
-From: Douglas Anderson <dianders@chromium.org>
-To: Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: Julius Werner <jwerner@chromium.org>,
-	Jeffrey Hugo <quic_jhugo@quicinc.com>,
-	Roxana Bradescu <roxabee@google.com>,
-	bjorn.andersson@oss.qualcomm.com,
-	linux-arm-kernel@lists.infradead.org,
-	Trilok Soni <quic_tsoni@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	Douglas Anderson <dianders@chromium.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: errata: Add QCOM_KRYO_6XX_GOLD/PRIME to the spectre_bhb_k32_list
-Date: Mon,  9 Dec 2024 09:43:16 -0800
-Message-ID: <20241209094310.6.I722621804be859e4ae4b7479ce191c5e3367b37c@changeid>
-X-Mailer: git-send-email 2.47.0.338.g60cca15819-goog
-In-Reply-To: <20241209174430.2904353-1-dianders@chromium.org>
-References: <20241209174430.2904353-1-dianders@chromium.org>
+        bh=d8t4rQo4GlIJNr1Ck0WNYMLnLZ4WaSFJXClmAi03iA4=;
+        b=bwy+srWYnLEFTheT1XaAseTBw67bx/BLg60tmbY3QX86G0OVlHzbOvBrPAy91We764
+         D+SqN+QQroc8kLUkY9bmbYi/X49WiOqdFbcoHHmHY+ORsmjw+9DPnN5aPqrSs0Oyn2/Y
+         1FivyC7XYb4jQgHZrkIedWMXiPOVic5tHLH1VqTANSoMeZLZ6sWAYOvncZIZUHMr4C3l
+         h9tyuoORlJ20J0YjPs63L0sp5OJ3c3Vov8U8wAcPZw00smJ3NPxAG2SqCWz0rdrLMaTB
+         rERAtLAz7HhRLpuDgIGt1n3DQXjrBS4FFPEYglxYYoPhI1n9apBioduzIQ5nNnt7fHXz
+         xknw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0vB5jILUzVyCxEsqCQAdyzwuapEl9z4YulSXFfT3QyU8bKjsngwoyh0H9X+9PMuwzmYna8z7Sod45UDay+Q==@vger.kernel.org, AJvYcCU882Sks7zUUX5ewXg+isnnu0ehwt3K35aXqwSqlPHdSNcsbcaSN3LUxhsf3lbHT7hOSUbEPSsc8XvBh2SybguPMRAdUw==@vger.kernel.org, AJvYcCUSRBSuK27MY8aF5R9UyMlDZ3tcyo2bJCVfKW7IUvgJiyzc2ZPV6bmMEw9mapPM2qYyDQI=@vger.kernel.org, AJvYcCUpBvvCWFlAXG6ucN02R6Cporu0YJarlIqEpmCeZTRMip38iGlwrTXAV6O3e5jV6+6Clrg3hUlp5dSj82Mq@vger.kernel.org
+X-Gm-Message-State: AOJu0YwhcJJsZR3lWOm2BB4CzocMnnYJXXMW5x6BOsfBNVwGOzZjX1EL
+	VcWPn8PzbksqWS4M5MKcsZjyR2QHVd61UNLwu7jTzgq0AvrUMwN+YnNeTp9AFJSM93vCmsDSgxk
+	DCawmfUK+He0FAzE9hqbZ8YPMMc4=
+X-Gm-Gg: ASbGncsReDRqo2qJCXZuLFhSsG2Ff88ngF7s3+ZWajQJwc0KPX1JnYrmvxVRUEGD7Fz
+	VNV90aOsu5BPV3YCyv37L3LRDIyE5mC8BeHSPvAKA2N7PeKs=
+X-Google-Smtp-Source: AGHT+IF0BTr20MkxNzRSFNpph/h8vHNhmBKsOAPeY6Y0QdSHKlV0GxM2a08SVsbCGBad04gFH5w/DXOJoS3+X7u/Wjg=
+X-Received: by 2002:a17:902:f541:b0:216:4676:dfb5 with SMTP id
+ d9443c01a7336-21670a3f62cmr3456875ad.21.1733766228322; Mon, 09 Dec 2024
+ 09:43:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241205-sysfs-const-bin_attr-simple-v1-0-4a4e4ced71e3@weissschuh.net>
+ <20241205-sysfs-const-bin_attr-simple-v1-3-4a4e4ced71e3@weissschuh.net>
+In-Reply-To: <20241205-sysfs-const-bin_attr-simple-v1-3-4a4e4ced71e3@weissschuh.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Mon, 9 Dec 2024 09:43:36 -0800
+Message-ID: <CAEf4BzYtD-njaaSr8zHK3ay0hzWFHamJ+DEqoXOcjM9LDdY4Zw@mail.gmail.com>
+Subject: Re: [PATCH 3/4] btf: Switch vmlinux BTF attribute to sysfs_bin_attr_simple_read()
+To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
+	Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
+	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	platform-driver-x86@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Qualcomm Kryo 600-series Gold cores appear to have a derivative of an
-ARM Cortex A78 / ARM Cortex X1 in them. Since these need Spectre
-mitigation then the Kyro 600-series Gold/Prime cores also should need
-Spectre mitigation.
+On Thu, Dec 5, 2024 at 9:35=E2=80=AFAM Thomas Wei=C3=9Fschuh <linux@weisssc=
+huh.net> wrote:
+>
+> The generic function from the sysfs core can replace the custom one.
+>
+> Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
+>
+> ---
+> This is a replacement for [0], as Alexei was not happy about BIN_ATTR_SIM=
+PLE_RO()
+>
+> [0] https://lore.kernel.org/lkml/20241122-sysfs-const-bin_attr-bpf-v1-1-8=
+23aea399b53@weissschuh.net/
+> ---
+>  kernel/bpf/sysfs_btf.c | 12 ++----------
+>  1 file changed, 2 insertions(+), 10 deletions(-)
+>
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
----
-Yes. I know. This patch DOESN'T COMPILE because
-MIDR_QCOM_KRYO_6XX_GOLD and MIDR_QCOM_KRYO_6XX_PRIME are not
-defined. Those value needs to come from Qualcomm or from testing on
-hardware, which I don't have. Qualcomm needs to chime in to confirm
-that this Spectre mitigation is correct anyway, though. I'm including
-this patch so it's obvious that I think these cores also need the
-mitigation.
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
- arch/arm64/kernel/proton-pack.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
-index 212481726f04..67aa54017dea 100644
---- a/arch/arm64/kernel/proton-pack.c
-+++ b/arch/arm64/kernel/proton-pack.c
-@@ -860,6 +860,8 @@ u8 spectre_bhb_loop_affected(int scope)
- 			MIDR_ALL_VERSIONS(MIDR_CORTEX_X2),
- 			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N2),
- 			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_V1),
-+			MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_6XX_GOLD),
-+			MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_6XX_PRIME),
- 			{},
- 		};
- 		static const struct midr_range spectre_bhb_k24_list[] = {
--- 
-2.47.0.338.g60cca15819-goog
-
+> diff --git a/kernel/bpf/sysfs_btf.c b/kernel/bpf/sysfs_btf.c
+> index fedb54c94cdb830a4890d33677dcc5a6e236c13f..81d6cf90584a7157929c50f62=
+a5c6862e7a3d081 100644
+> --- a/kernel/bpf/sysfs_btf.c
+> +++ b/kernel/bpf/sysfs_btf.c
+> @@ -12,24 +12,16 @@
+>  extern char __start_BTF[];
+>  extern char __stop_BTF[];
+>
+> -static ssize_t
+> -btf_vmlinux_read(struct file *file, struct kobject *kobj,
+> -                struct bin_attribute *bin_attr,
+> -                char *buf, loff_t off, size_t len)
+> -{
+> -       memcpy(buf, __start_BTF + off, len);
+> -       return len;
+> -}
+> -
+>  static struct bin_attribute bin_attr_btf_vmlinux __ro_after_init =3D {
+>         .attr =3D { .name =3D "vmlinux", .mode =3D 0444, },
+> -       .read =3D btf_vmlinux_read,
+> +       .read_new =3D sysfs_bin_attr_simple_read,
+>  };
+>
+>  struct kobject *btf_kobj;
+>
+>  static int __init btf_vmlinux_init(void)
+>  {
+> +       bin_attr_btf_vmlinux.private =3D __start_BTF;
+>         bin_attr_btf_vmlinux.size =3D __stop_BTF - __start_BTF;
+>
+>         if (bin_attr_btf_vmlinux.size =3D=3D 0)
+>
+> --
+> 2.47.1
+>
 
