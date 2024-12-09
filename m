@@ -1,583 +1,364 @@
-Return-Path: <linux-kernel+bounces-437953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75A899E9AEC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:53:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDAF9E9AEE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:53:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7148C188669A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760D116551F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:53:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBFF12EBDB;
-	Mon,  9 Dec 2024 15:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75D5A12F59C;
+	Mon,  9 Dec 2024 15:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XB00rgTq"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="Ef0VcanF";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="j28bkE9V"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 809D578C9C
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759600; cv=none; b=sjDEI7OH4BqVHFvtKA9Q59jW+hyG0IrBBlWKSp1BhLepVMQC/JgtPof0SaTRutp1YzL77VCfV1WqIkqQOxzFIxuU6uIGhIBsCLEg7M0o2ywvgXi62HDk5jXqEMVrwYvTu+RoIHAQDpSodbjS0QvynMo1uhn4hpiUrCTL6Q+1e90=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759600; c=relaxed/simple;
-	bh=tA308oEOI7EVtOKPxGvbcVPNo9xWnbuUOfScd36KIY4=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=KUtVMdXWOHk9Loghh9cgbxFStT1B3F9pOaItIctnN7Qn3Xosv6sTufoZwomtgQlVcePUMJP2W5WmauSgCQ3Ldyc2H6aR2uHQ743G+gU9XfzKhbthj6Rq2+JO+BaallRZ7MtWGElhk1DVX0GI6+HIxFMC0ZuVuN0W2Yfu5FnROIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XB00rgTq; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733759596;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=10ca5gVSxvtweTGh0n0BV59qYrkxMOcVA6g8YR6V7JA=;
-	b=XB00rgTqP6iQ1DwWWEEIXqFjKXb6udDBgN+9FEDkXFk4UpvV95bKtTqKJKNI2bj7P58spL
-	NdGsy5udwJtydTo97L/zCrDd1Sa0VeaTtta7Dlcd09bVH8jbvBe9jVhXZNt/TFaaP3Aa5R
-	UMLf9X3+uVa6e7jBqbw0EFECLpP1w3Q=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-46-fGqkNUWeMHmrHwjcskaWcA-1; Mon,
- 09 Dec 2024 10:53:13 -0500
-X-MC-Unique: fGqkNUWeMHmrHwjcskaWcA-1
-X-Mimecast-MFC-AGG-ID: fGqkNUWeMHmrHwjcskaWcA
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 62ADD1954AF2;
-	Mon,  9 Dec 2024 15:53:10 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.48])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CC99A1956089;
-	Mon,  9 Dec 2024 15:53:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <20241108034020.3695718-1-lizhi.xu@windriver.com>
-References: <20241108034020.3695718-1-lizhi.xu@windriver.com> <672b7858.050a0220.350062.0256.GAE@google.com>
-To: Lizhi Xu <lizhi.xu@windriver.com>
-Cc: dhowells@redhat.com,
-    syzbot+1fc6f64c40a9d143cfb6@syzkaller.appspotmail.com,
-    asmadeus@codewreck.org, ericvh@kernel.org,
-    Christian Brauner <brauner@kernel.org>, linux-kernel@vger.kernel.org,
-    linux-mm@kvack.org, linux_oss@crudebyte.com, lucho@ionkov.net,
-    syzkaller-bugs@googlegroups.com, v9fs@lists.linux.dev
-Subject: Re: [PATCH] netfs: If didn't read new data then abandon retry
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EF6126C05
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:53:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733759613; cv=fail; b=epr1FkIqfNoiN8RJ44V5dmitn47CfbDUrVLjqRQGSaFQHP/3AuUOutpnNKGXr+ObvH8kx+6CNodckfDvZYEulI4rCKrtmO/wx4IGoDkJdptmuQUquwzKKul+bbG0OtdoIf3nh/I4ZmsnlbT4IZN0AG6Az/H4bZ/MUledFn/Uxp8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733759613; c=relaxed/simple;
+	bh=BUgk174E9YRQURtr9zOl4wzK83WExd2ymUtDY6Esxhc=;
+	h=Date:From:To:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=k0R9ogK1TGDfn/Rnuv4InP8NsbGHuoA+WA+tbybqotIVwSkWMmWQR/LUU/wxGpYlx7s6T8Yp2rAbMJjUD3/JKnrQlMsfLuq3YHrh4BDgx7z2NEA5cON1Q/awhuoXDaD7vnvxWWT9lWf3KHlDlknSiH4tihI88UV+fhtX/Bk5loE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=Ef0VcanF; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=j28bkE9V; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B98frsh022557;
+	Mon, 9 Dec 2024 15:53:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=rffvD5TCMP9lEr5MoMsfBAAbAZ4IZdlregXtcJpyeOQ=; b=
+	Ef0VcanFaErlg2irwnKgOPcriv6VlNaQsDQ9WSXYMnfgPCbDGKh+xiPqRPnMaQ0L
+	ApXQHAuxUpeFFkICARY/cuTo7tSK+J62At/G6f/scVUXqd7EJ5I88bmjMCEcO6fd
+	sVylqq64CATgsYlTZcqh2n11LzZTvPsowPjoHeTA9lNHgRSOcP/ashcNECGKlYJU
+	a5hHSelCvJ9rj1bZ9lDbcBRJ9nfWBCz/Ba/FVSVtI+iChROgPVhDII87uVz29hDt
+	i0aDksLJic4zMX+Mb1DvD9leCxjiDbHQ6kATjhmDiaXvTuhPfcrJ6tFn98sz9T8l
+	MH0BE0yKCGVlRisPqkmD5Q==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 43cedc3jq2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Dec 2024 15:53:21 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9FjTOt020567;
+	Mon, 9 Dec 2024 15:53:20 GMT
+Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10lp2041.outbound.protection.outlook.com [104.47.70.41])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 43cct727m5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 09 Dec 2024 15:53:20 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xCQgR8FEfS4CsoCeufJz/uIEsCGXf8MryrUy4DJ6EvLREe0x6fFE6/pD6bFumyaECSTzrd9PUO8N8Cf8Ie7wzdjCbmplFUyzoiEJbBB75obdEucU5ftwEVgLYzGABcymYXDoAeskd81EuiiGrHq2uJcNX0dQcPmmEKm4bjwjI12sQZioM6ghwa0XYEnx+RZWWhm4JYMpIgdbeUvVtA/18qduBtA50vZwrtPw7M6i/xspmk3cIf+3GCg3P9szjjH9hGrdR65TRxn84JaNJphfHQIP8renOGkibaaDROhAKAdNTxQItSbmfYZtqU+AZL7QoEaFkZOOS75lqzC2Ye1v7w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rffvD5TCMP9lEr5MoMsfBAAbAZ4IZdlregXtcJpyeOQ=;
+ b=kWDRuXfkmtQPUy370SvwlHujDLj4KMNsQsgNC0pJML4d347k8/cPjsXjsAP4fashCQrDKyaJKrUB5SJdI/FJ5qJoGrfJ/wTPL2Erv6muGMy/377amSdgGJ6hb03KfTU08PjbI79OS/VA+xdAgj9nix0aouGjpvgUbDVj+ME617gxU6YznaM/7H1h26PTRaya6eS8xqA5sAfCudVUnonfAX1XoBO+Q/aPvzw3ateWrOgUbcQh1v6yn5rGCTh5SDXvTMIDJJizvjwFZvVeWCtF9g0YjGv/2pgzzyK/SGkZXVhmuubNDwiY6Oxoa4Cq6Hm2blNu7egqx0stq3sp4eAqww==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rffvD5TCMP9lEr5MoMsfBAAbAZ4IZdlregXtcJpyeOQ=;
+ b=j28bkE9VFUr8tUVCOm3MCoQAVA4KlaiOFMGE5g6quiUnbxrugPfuLNHwLuvbrVshe8estbRn2yBS1BXg+LJwzNu05UUl2bNbqzs8usHhxxOOwm8Z32eTYcgYkj0tJw6YuHLEWGq3NLSjPUL5+RGJqbZxQEu/DYuMGgfqanDy4EE=
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com (2603:10b6:a03:14f::25)
+ by DM6PR10MB4219.namprd10.prod.outlook.com (2603:10b6:5:216::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8182.21; Mon, 9 Dec
+ 2024 15:53:15 +0000
+Received: from BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9]) by BYAPR10MB3366.namprd10.prod.outlook.com
+ ([fe80::baf2:dff1:d471:1c9%7]) with mapi id 15.20.8230.010; Mon, 9 Dec 2024
+ 15:53:15 +0000
+Date: Mon, 9 Dec 2024 15:53:12 +0000
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Jann Horn <jannh@google.com>,
+        syzbot <syzbot+2d788f4f7cb660dac4b7@syzkaller.appspotmail.com>,
+        akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Subject: Re: [syzbot] [mm?] general protection fault in
+ find_mergeable_anon_vma
+Message-ID: <4d05caee-d900-42e5-84e1-448cc62435b2@lucifer.local>
+References: <6756d273.050a0220.2477f.003d.GAE@google.com>
+ <1b8b5d54-d667-4ca9-b831-bee4b4e74c40@lucifer.local>
+ <CAG48ez1d60kH1W8uVvOh-+Vs8Jz5TX1a8LD+mh_O8_3HFHAx6w@mail.gmail.com>
+ <e9b3987b-8cbf-48db-ae70-ff9e2c0954aa@lucifer.local>
+ <hzzshrolmkewwxa5bejqrcb5xpbe2upfpa7exvxmq6svdszwhl@wsqg4gksstne>
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <hzzshrolmkewwxa5bejqrcb5xpbe2upfpa7exvxmq6svdszwhl@wsqg4gksstne>
+X-ClientProxiedBy: LO4P123CA0134.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:193::13) To BYAPR10MB3366.namprd10.prod.outlook.com
+ (2603:10b6:a03:14f::25)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2133165.1733759584.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Mon, 09 Dec 2024 15:53:04 +0000
-Message-ID: <2133166.1733759584@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR10MB3366:EE_|DM6PR10MB4219:EE_
+X-MS-Office365-Filtering-Correlation-Id: e15132d8-9643-4c1d-f338-08dd1869979f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?b3dIL1FaRS8xcnNyNzJUQXh6TXZIbkx5alNsNng0dTRqOHRaUDdPTXlmWFps?=
+ =?utf-8?B?Sk1vWnZPYkdqZklPMVFESUYwdFI4alN2T2k1UHdOcDRLeXovQiswcUxEUGZv?=
+ =?utf-8?B?UFllTGlXTkZ4cm5NRXg3V1o1R3A4R1pXakhEZjBWYUJ6V1pWYXpiT09ucFE2?=
+ =?utf-8?B?dXFLOGVjRWIrOXJxSnJQTTV1L1ZIQjRGam5JZXJkcCtlRnJnc0VNWWYwd1JI?=
+ =?utf-8?B?cU9hcFpMQnFjU2ZrOCs1bkpmL0pHdk5sc0dNa2V5NzNmL2tNNStuU1drbHpx?=
+ =?utf-8?B?anRYT0RVSU5NbjdQNGc5SWhNWkhSOW51SGRmZFFxNlIwUm5tTkNoaTczMDZN?=
+ =?utf-8?B?dFpGcmloT2dkTGVXN3IwSDg0YVRhUVA4aFgrL3lXWXFyNVpDWWNJTkNsMUMr?=
+ =?utf-8?B?a1ZUQ3Q4NjRkUVdSVEdpSlA5aWcwckFGaHIxaHN1RUwvM2JYRTRoSk9mSjVX?=
+ =?utf-8?B?MFpqNDBtSDRwV1RhSitWdmdTK2N4VWNZSmxxczlnK1VBQlhUZERMeVg5QWlR?=
+ =?utf-8?B?MStPbHhRaGcrUnJ3SUt3dmZxTXh3VFpZUzRMOFRvVW9vSGZJLzV4U1UrUlVX?=
+ =?utf-8?B?MUQ0bzdYTjQ3a2I5VWlNbThOT0R6U0RPUUc5cjk2VE5HQ21FdnZLek56WC9x?=
+ =?utf-8?B?eWJkZk1VS3pQRDBLL1BseFEzRkJLZzMvY1BxQk1kZzVZVTVvMjJjOS9GK1dp?=
+ =?utf-8?B?eElDaytmTkh0dURYbXNDNUI3NjhGeFFsSDN3bjNwM2xUY2wrRklOUnBld0Uv?=
+ =?utf-8?B?azdQZEdBN0NlZTUxcUdBOVlLRExUNkNKWnI5bG9nQW94eTVMMlFBNk53YSty?=
+ =?utf-8?B?TmZrWVA0NEFaclhwYldzK3VacFFsU0Z3NWhqWXB3VksxeHk3ZXZzZUFTQ1Vy?=
+ =?utf-8?B?OFcrcnBlSDVmTDROVmMyTjl6VHg3SWRXQlBnTUc0YUNpdVRMQWhqQkJxQ1BG?=
+ =?utf-8?B?YUFmemc0K2pWaXRTY0lhTk13dVo3OEkwQTVKRllENzZtZzVJbHVHY0tVMVRh?=
+ =?utf-8?B?V1RUK2JYQkY5Zi9ibGd1cmJwWW9GYjhaTVBkU1g0T1dUM2diS3Btck4waW1K?=
+ =?utf-8?B?V3d2Ulo2MjJ5NEJXYldNRlJRbGx6SkVRSnBuaHhoR3ZITllYbE5oRkRXdk5J?=
+ =?utf-8?B?SWgwb09DZTlnYlZUVVVObzh4OGNUa3dZVGpPTnM2TXMyTFE3YkYxa0FyOHZn?=
+ =?utf-8?B?eW45VUtHMWFEenhpa2o1eG5RK216WWJTbU43U1pwdmtnanJhb29PWXFJdjMz?=
+ =?utf-8?B?Q3krZHUwK2Z5ak9iYyt2cCtucnExdWV5bFlmekFxaWpFc3QySTZmQVVGSDZJ?=
+ =?utf-8?B?T0VRMGNPVWhyL09IL3JHZkZmS3pVTjdoY1c0Z3FUNjhSNGtQQlYrOVJKdVc4?=
+ =?utf-8?B?Si83d0cyUlNNV21CVVM5QzFRb1ZrU3hMdGQ2UmlweFVPdldzZ1QwY0hDWEhj?=
+ =?utf-8?B?RWpKY1dBZkFTM3ZmYmU4Njk4eTNwSlVpejBkbzhSWWgvMzVNNzdSbU9GWFVs?=
+ =?utf-8?B?a1BXQTdUNHMzV2ZKYkQ3blp0ZldZQ1V1a3ZHck5OUkNtVGtVYk14UDI4Mm8w?=
+ =?utf-8?B?WnE2aUdXQTJwR2thbjNjZjBCeUpoTDNkbFJwYzIzWmVycVdEVEM4ZHFzWkll?=
+ =?utf-8?B?MEp3OGN6MXI0a3ppR29uMTVyMzFwRk9MRWhXdmhZU3oxbXlBNFRVQWVvQzVs?=
+ =?utf-8?B?dUFhMFA1MmREYTI2YW1jeW9xU1BuVTVwak5LVEVnVjBVdFpHazduY1hMbDht?=
+ =?utf-8?Q?ZLk/y/uQUiTnfJJ/JQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR10MB3366.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?MmFtRnNKOHd2ZXNteGpocmdjRjdseDNHQXpiazI3R3RIdVRaMDlnbi9yRWNa?=
+ =?utf-8?B?TUJqbTNDT3g5TTNaME9ZNjEySUtkYjVwclVIT2p1NDFoUW1jcGlPcXdXaGpE?=
+ =?utf-8?B?S2d5WCtyNVpqU2phN1h5NDV4eDEvSmx4K2tSTWNRZ0VldVRqcDRrcktXMXA2?=
+ =?utf-8?B?dERmVjFFQjc0VTRGcE9keGV5SE1KaktDdWhXb1U4QUl1T0RNNHlDbkdSdTRD?=
+ =?utf-8?B?cTlyVHdicVNTaWt1bEF0akpKNlM2QWlQTGxSYSttT3prYVcwOGd1K0Jkb1NF?=
+ =?utf-8?B?TjR3STVNbUlpYTlBMEVISTJ0WjhOdWN1KzFWaFhkOWN1S3NuWVFtYjdMRkpo?=
+ =?utf-8?B?bTVjTnNIZDNIdkRiUk9HNTR5bkFLRFI2RFJrNkdiNVRBL3ZHNzdwM3pid2R3?=
+ =?utf-8?B?OU9FazJjdjNBVE0vQ3l2eTBCNkJqb0g1dk1IeEVpcVAvRzZkSFJWTXR3cUFn?=
+ =?utf-8?B?Q213dGsxN0xiY2NtaVR6cklVUXB2SDRuTWUybEN1R1g2bGF6VVdhc3ZqdWJN?=
+ =?utf-8?B?RU5FSTBOMmxLN2xFU0FuN25PSnUvMDhLdlVpYjV5aFpvdEE3VGNNMVozWTg3?=
+ =?utf-8?B?aDMxSlNLakUrYmV1bXh6ZGlFSUJXanFyZDNWcE5CUFRJYU5CYzRiNDROYlNX?=
+ =?utf-8?B?M1Z5ZUZBSFZKajNJL1V0QnZSMUExRFJJV0Foc1dtT2dyUXNTeGtlZzVkSktu?=
+ =?utf-8?B?cCtxbHpUM2lsVDVENm92NytQS0g0V1Rib1RNcVNoYldOYU5EWG5waGZsVHNC?=
+ =?utf-8?B?cjU3K0xYa0hTK1l3WnVqRk5yT25pdWlQUzIxdGhkVnpodjFxbmdLSkQ1MWRF?=
+ =?utf-8?B?UWlHV0xNaW5xdXFpZGxSa2VvSktnZ3dKSW0vWi9jUkloZUUxVTVrM2lGVVUr?=
+ =?utf-8?B?SXJseXlDcHlndkRvRlRWUFlOcVc5Yk9EdS9OVDNwZkkwcEFyT3Q5YWR3bGpU?=
+ =?utf-8?B?L0RIcEdjVE5hbWZXcVV2cHordWpmNHBwOUZDb1NoQndNNGFQbjk3M2pURzhP?=
+ =?utf-8?B?VjhvbHZPYWpOMkFOVko5VWVTRTZZUXpXMWQxTDcxVXZUTUxicjVLSHhjSDZr?=
+ =?utf-8?B?bHZ1YW13QUhhNkF0eFpYaXFpcVlFR2pWa2RjdXF5VkZ1a0N0M0g1cHc2L2lM?=
+ =?utf-8?B?S1pZLzJIU0FBRWI3djg2N1hvRW5Hb0lVakF3b2o5SXFwblJmRlNnOVBSNHJT?=
+ =?utf-8?B?eFZBckpjUTlSOWlhRkxORzUwNkdEdVoxTDl1Y1BGK0ZDdzFVZndtUDBFSFds?=
+ =?utf-8?B?ZHJZUEExbXZTeFNkalVXQ2U0RmRsaUIrSDhUSjNDbWREd0JVVkdpZVI4djRx?=
+ =?utf-8?B?ZTJONUVucExuTG9uTWVoSW9oREdwaHY5MGgwVzFIQ1prRnN5UUxFVGdPY20r?=
+ =?utf-8?B?cWlMNllWSmI5QXNrTFZFMUhxYWloTVUwdFhDUFoxT3dTL3dSSjRKMnZlN1Fy?=
+ =?utf-8?B?WkN6aExiSVRjd3JTeWdLUzc5Q1FHMGh2MVJhUlBOdGd4OGhEazNEUFVZNTRP?=
+ =?utf-8?B?NmFDRkdEZTdVZjBsMzM2V3hLU2JaWW02YXpnVldMRmg5Wnkwa0IyRHdGeG9j?=
+ =?utf-8?B?VGhmVFpua29XYnA1UVMzYndBTkI1WDJLOUI2bk1HRWVJKzhlK1RZQjY3Qldh?=
+ =?utf-8?B?cFU4YWxLcjZpQW10ZHc0SGcrTll6NGVSLzlEZDJ3dHZDblFEMmhBYTZjSDFl?=
+ =?utf-8?B?Z2Z3SmlVZm5OK3J4SW5lcjdIRDUyOXRwbktXTk95YkczMjVjOStGSlZEVlI5?=
+ =?utf-8?B?RzNMSXR3VEFXb2lqcWpleE5NSVpqemFIUGdIRlRzYUE4a2FEUFo5Q1BpZjRQ?=
+ =?utf-8?B?ZVJHZ0FJTzgrQ0RQMFNIQ2dMalZtT1lBdkQ0cVNuejRXR3FROFd1aFd6MWZj?=
+ =?utf-8?B?RmxhYU9oTkc0MVNHbEpoa0tLSVRXVkd2L0kvK1BzVk5lMFR2eHN4K0ZyOEI4?=
+ =?utf-8?B?TitxZmcrWG9yYy9zVE1WOXZhL1U0N1lBQnYwNStpa2RzT2Fkam9IbE9PTUR5?=
+ =?utf-8?B?TWJpZDNpR1lvUzFQU1E2UFJSL2RwNExKY3BKbi9qQ0FYUVZGNUdXK2IwbDdN?=
+ =?utf-8?B?ZjE1bmthNzF6K1pMWlNXQ3c0bG54TVJjL2lCRy9sZ2QxK1RTdmtySnZMSlJv?=
+ =?utf-8?B?Znk5akw2RExSMUc3L0FvL054Nzd0UDNHWVNmVEpmb3lWSlZhOGNBRjZjZ2N6?=
+ =?utf-8?B?Vnc9PQ==?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	VPSTz/ReZjRuFYitx29rYHRfPxgYKWkvVS2QpfqMuTNWi9ibZOS1jBicxOLT5QKLyerGuABagn7e9D20Om+bIOClQYNNoQjqKHyxw4OIrFjrBG/8Hy4xPw5stv5SHvlMMs3JZwaLAKoj8kYSauWY47K/I+3fdbj4Zp0rJNIZwmBSKeKb/Jel//LahUaGz2YMVW/DViHpV1YfQPBo/Z2LXyNy+QvMtOGzNpHOW3EUZg5EdYLgPMDb3dqKlo8wmvrr5EliuNWBsIIVTOEIcjqAJAc59LpSEgjer5x/2CRxrue3h8FeqA5eFoSSMjaNupDHssULYT1YLLdafxsbFfu65OzpqN4AtEma2RlMLocBrRbx1ucC/sudimUv6WjDuseZcYvj5rL1AWkvLa0g0/XgFAICQWT+5s7stvW4jg65J4ErH4PH86ESLxSFTuNAqykZUextjwAKFNRU/gws++gGFCP/R/YgcOyCEgt6pBdsxl85FGA1FxjWfF+nKFtJFif05bxwFEJCjw/81gtfxQhYgJ1O8onAS3AnBZOu+TSO8EPdYW0OxdwNVj0zwbjWtVxEsThNSc/xvBFl+e7ktI5+bU7PNdYOodfhapZyXUp2J7A=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e15132d8-9643-4c1d-f338-08dd1869979f
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR10MB3366.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 15:53:15.3606
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: v77PvkmsvNXlBRF/lWXPWYtMM7kg8hd4EC2N22/A65dVV6f8/hwA+HKzC8Dg+1zlP0NUdsgWrN1nRkFRUCYoPHuvjoxr/0Qjt3mpHs5YbKo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR10MB4219
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2024-12-09_12,2024-12-09_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxscore=0 malwarescore=0 adultscore=0
+ phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2411120000
+ definitions=main-2412090124
+X-Proofpoint-ORIG-GUID: Qr5dqt3YM_umCRqmMYEva8CcSeYsbsih
+X-Proofpoint-GUID: Qr5dqt3YM_umCRqmMYEva8CcSeYsbsih
 
-Hi Lizhi,
+On Mon, Dec 09, 2024 at 10:33:56AM -0500, Liam R. Howlett wrote:
+> * Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [241209 08:58]:
+> > On Mon, Dec 09, 2024 at 02:52:17PM +0100, Jann Horn wrote:
+> > > On Mon, Dec 9, 2024 at 1:53 PM Lorenzo Stoakes
+> > > <lorenzo.stoakes@oracle.com> wrote:
+> > > >
+> > > > On Mon, Dec 09, 2024 at 03:20:19AM -0800, syzbot wrote:
+> > > > > Hello,
+> > > > >
+> > > > > syzbot found the following issue on:
+> > > > >
+> > > > > HEAD commit:    feffde684ac2 Merge tag 'for-6.13-rc1-tag' of git://git.ker..
+> > > > > git tree:       upstream
+> > > > > console output: https://syzkaller.appspot.com/x/log.txt?x=17f85fc0580000
+> > > > > kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
+> > > > > dashboard link: https://syzkaller.appspot.com/bug?extid=2d788f4f7cb660dac4b7
+> > > > > compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> > > > >
+> > > > > Unfortunately, I don't have any reproducer for this issue yet.
+> > > >
+> > > > Points to this being racey.
+> > > >
+> > > > >
+> > > > > Downloadable assets:
+> > > > > disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-feffde68.raw.xz
+> > > > > vmlinux: https://storage.googleapis.com/syzbot-assets/6135c7297e8e/vmlinux-feffde68.xz
+> > > > > kernel image: https://storage.googleapis.com/syzbot-assets/6c154fdcc9cb/bzImage-feffde68.xz
+> > > > >
+> > > > > IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> > > > > Reported-by: syzbot+2d788f4f7cb660dac4b7@syzkaller.appspotmail.com
+> > > > >
+> > > > > Oops: general protection fault, probably for non-canonical address 0xdffffc0000000080: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> > > > > KASAN: null-ptr-deref in range [0x0000000000000400-0x0000000000000407]
+> > > >
+> > > > This doesn't make a huge amount of sense to me, the VMA is not 0x400 (1,024)
+> > > > bytes in size... and the actual faulting offset seems to be 0xdffffc0000000080
+> > > > which is 0x80 off from some KASAN-specified value?
+> > > >
+> > > > This would be vma->vm_file. But that also doesn't really make any sense.
+> > > >
+> > > > But I wonder...
+> > > >
+> > > > I see in the report at [0] that there's a failure injection in vm_area_dup() on
+> > > > fork:
+> > > >
+> > > > [   73.842623][ T5318]  ? kmem_cache_alloc_noprof+0x48/0x380
+> > > > [   73.844725][ T5318]  ? __pfx___might_resched+0x10/0x10
+> > > > [   73.846687][ T5318]  should_fail_ex+0x3b0/0x4e0
+> > > > [   73.848496][ T5318]  should_failslab+0xac/0x100
+> > > > [   73.850232][ T5318]  ? vm_area_dup+0x27/0x290
+> > > > [   73.852017][ T5318]  kmem_cache_alloc_noprof+0x70/0x380
+> > > > [   73.854011][ T5318]  vm_area_dup+0x27/0x290
+> > > > [   73.855771][ T5318]  copy_mm+0xc1d/0x1f90
+> > > >
+> > > > I also see in the fork logic we have the following code on error path:
+> > > >
+> > > >         mas_set_range(&vmi.mas, mpnt->vm_start, mpnt->vm_end - 1);
+> > > >         mas_store(&vmi.mas, XA_ZERO_ENTRY);
+> > > >
+> > > > And XA_ZERO_ENTRY is 0x406.
+> > > >
+> > > > Now if _somehow_ the VMA was being looked up without XA_ZERO_ENTRY being
+> > > > properly accounted for, this might explain it, and why all the !vma logic would
+> > > > be bypassed.
+> > >
+> > > You fixed another issue in this area a month ago, right?
+> > > (https://project-zero.issues.chromium.org/373391951,
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f64e67e5d3a45a4a04286c47afade4b518acd47b,
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=985da552a98e27096444508ce5d853244019111f)
+> >
+> > That's for ksm/uffd though, neither pertinent here.
+> >
+> > >
+> > > And we came to the conclusion that MMs whose VMAs have not been
+> > > completely copied and might have XA_ZERO_ENTRY entries left should
+> > > never become visible to anything other than the MM teardown code?
+> >
+> > Well if we came to that conclusion, it was wrong! :)
+> >
+> > Error paths at play again. I mean I think probably the slab allocation is 'too
+> > small to fail' _in reality_. But somebody will point out some horrendous way
+> > involving a fatal signal or what-not where we could hit this. Maybe.
+> >
+> > >
+> > > > > RIP: 0010:reusable_anon_vma mm/vma.c:1837 [inline]
+> > > > > RIP: 0010:find_mergeable_anon_vma+0x1e4/0x8f0 mm/vma.c:1863
+> > > > > Code: 00 00 00 00 fc ff df 41 80 3c 06 00 74 08 4c 89 ff e8 10 39 10 00 4d 8b 37 4d 89 ec 49 c1 ec 03 48 b8 00 00 00 00 00 fc ff df <41> 80 3c 04 00 74 08 4c 89 ef e8 ed 38 10 00 49 8b 5d 00 4c 89 f7
+> > > > > RSP: 0018:ffffc9000d3df500 EFLAGS: 00010203
+> > > > > RAX: dffffc0000000000 RBX: ffffc9000d3df540 RCX: ffff88801cf80000
+> > > > > RDX: 0000000000000000 RSI: ffffffff900062a0 RDI: 0000000000000000
+> > > > > RBP: ffffc9000d3df610 R08: 0000000000000005 R09: ffffffff8bc6b642
+> > > > > R10: 0000000000000003 R11: ffff88801cf80000 R12: 0000000000000080
+> > > > > R13: 0000000000000406 R14: 0000000021000000 R15: ffff8880120d4ca0
+> > > > > FS:  00007f137f7e86c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+> > > > > CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > > > > CR2: 0000000020000140 CR3: 0000000040256000 CR4: 0000000000352ef0
+> > > > > DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> > > > > DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> > > > > Call Trace:
+> > > > >  <TASK>
+> > > > >  __anon_vma_prepare+0xd9/0x4a0 mm/rmap.c:199
+> > > > >  anon_vma_prepare include/linux/rmap.h:164 [inline]
+> > > > >  uprobe_write_opcode+0x1a95/0x2d80 kernel/events/uprobes.c:516
+> > > >
+> > > > Here we find the VMA via:
+> > > >
+> > > >         old_page = get_user_page_vma_remote(mm, vaddr, gup_flags, &vma);
+> > > >
+> > > > Actually one unfortunate thing here is... ugh god.
+> > > >
+> > > > I think there might be a bug in get_user_page_vma_remote()...
+> > > >
+> > > > I will check in more detail but I don't see anything that will prevent the
+> > > > mmap lock from being dropped before we perform the
+> > > > vma_lookup()... FOLL_UNLOCKABLE will be set due to the &local_lock
+> > > > shenanigans in get_user_pages_remote(), and if we get a page after a
+> > > > dropped lock and try to vma_lookup() we could be racing... :/
+> > >
+> > > Hm, aren't we holding an mmap_write_lock() across the whole operation
+> > > in register_for_each_vma()? I don't think FOLL_UNLOCKABLE will be set,
+> > > the call from get_user_pages_remote() to is_valid_gup_args() passes
+> > > the caller's "locked" parameter, not &local_locked.
+> >
+> > Yeah I was just about to reply saying this, that code should be cleaned up
+> > a bit to make clear... But yeah it's the bool *locked of the invoker, and
+> > can't be &local_locked.
+> >
+> > So yes this rules out get_user_page_vma_remote() as a problem, which is
+> > good, because I wrote that :P
+>
+> The mm_struct isn't fully initialized at this point - and won't be once
+> the dup_mmap() fails.  How exactly are we getting to this point in the
+> first place?
+>
+> I have some ideas on fixing this particular issue in the not fully
+> initialised mm structure, but we will still be using a
+> not-fully-initialised mm structure and that sounds wrong on a whole
+> other level.
 
-I looked at your patch, but I think we can do a bit better as the retry
-counter makes one of the subrequest flags redundant.  Also, we should use
-the retry counter on the write side - so see my attached take.
+It seems like uprobe can still connect at least via bpf... it uses
+dup_mmap_sem to prevent races with dup_mmap(), but then in no way checks to
+see if the fork _succeeded_ and assumes that the uprobe is good to go.
 
-Note that this patch (and your patch) does not fix the actual root cause,
-which is this bit:
-    =
+I wonder if we can tell uprobe... not to do this in that case :)
 
-            if (atomic_dec_and_test(&rreq->nr_outstanding))
-                    netfs_rreq_terminated(rreq, ...);
-    =
+Some MMF_xxx maybe could help us? I guess we're full up there... but maybe
+MMF_UNSTABLE somehow?
 
-When we do a retry (or initial transmission, for that matter), we bump the
-rreq->nr_outstanding counter to prevent the final cleanup phase running
-before we've finished issuing the subrequests.  The problem is if we hit 0=
-,
-we have to do the cleanup phase - but at the point we're hitting, we're
-*in* the cleanup phase and end up repeating the retry cycle, hence the
-recursion.
-
-So I think it is still possible to trigger the issue if each retry reads,
-say, a byte of data.
-
-So, should I set a just set a hard limit on retry_count in both read and
-write?  Say it hits 50, we always abandon it.  However, this needs to be
-tuned both for the stack size and the config options (e.g. KASAN) that are
-employed.
-
-I don't think I can just dump the reiteration of the cleanup phase off to =
-a
-work item because multiple reiterations may stack up (at least, I think
-they do), and I have to correctly balance the cleanup phases with
-nr_outstanding counter.
-
-The correct solution is the one I've implemented on my netfs-writeback
-branch which gets rid of nr_outstanding entirely and has a single work ite=
-m
-to do all the collection for a request rather than trying to coordinate
-between multiple concurrent work items (one for each subreq).
-
-David
----
-commit d0906b4a4611709c02de610d3c34d6172aa28aaf
-Author: David Howells <dhowells@redhat.com>
-Date:   Fri Nov 8 11:40:20 2024 +0800
-
-    netfs: Work around recursion by abandoning retry if nothing read
-    =
-
-    syzkaller reported recursion with a loop of three calls (netfs_rreq_as=
-sess,
-    netfs_retry_reads and netfs_rreq_terminated) hitting the limit of the =
-stack
-    during an unbuffered or direct I/O read.
-    =
-
-    There are a number of issues:
-    =
-
-     (1) There is no limit on the number of retries.
-    =
-
-     (2) A subrequest is supposed to be abandoned if it does not transfer
-         anything (NETFS_SREQ_NO_PROGRESS), but that isn't checked under a=
-ll
-         circumstances.
-    =
-
-     (3) The actual root cause, which is this:
-    =
-
-            if (atomic_dec_and_test(&rreq->nr_outstanding))
-                    netfs_rreq_terminated(rreq, ...);
-    =
-
-         When we do a retry, we bump the rreq->nr_outstanding counter to
-         prevent the final cleanup phase running before we've finished
-         dispatching the retries.  The problem is if we hit 0, we have to =
-do
-         the cleanup phase - but we're in the cleanup phase and end up
-         repeating the retry cycle, hence the recursion.
-    =
-
-    Work around the problem by limiting the number of retries.  This is ba=
-sed
-    on Lizhi Xu's patch[1], and makes the following changes:
-    =
-
-     (1) Replace NETFS_SREQ_NO_PROGRESS with NETFS_SREQ_MADE_PROGRESS and =
-make
-         the filesystem set it if it managed to read or write at least one=
- byte
-         of data.  Clear this bit before issuing a subrequest.
-    =
-
-     (2) Add a ->retry_count member to the subrequest and increment it any=
- time
-         we do a retry.
-    =
-
-     (3) Remove the NETFS_SREQ_RETRYING flag as it is superfluous with
-         ->retry_count.  If the latter is non-zero, we're doing a retry.
-    =
-
-     (4) Abandon a subrequest if retry_count is non-zero and we made no
-         progress.
-    =
-
-     (5) Use ->retry_count in both the write-side and the read-size.
-    =
-
-    The oops generated by KASAN looks something like:
-    =
-
-       BUG: TASK stack guard page was hit at ffffc9000482ff48 (stack is ff=
-ffc90004830000..ffffc90004838000)
-       Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
-       ...
-       RIP: 0010:mark_lock+0x25/0xc60 kernel/locking/lockdep.c:4686
-        ...
-        mark_usage kernel/locking/lockdep.c:4646 [inline]
-        __lock_acquire+0x906/0x3ce0 kernel/locking/lockdep.c:5156
-        lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
-        local_lock_acquire include/linux/local_lock_internal.h:29 [inline]
-        ___slab_alloc+0x123/0x1880 mm/slub.c:3695
-        __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
-        __slab_alloc_node mm/slub.c:3961 [inline]
-        slab_alloc_node mm/slub.c:4122 [inline]
-        kmem_cache_alloc_noprof+0x2a7/0x2f0 mm/slub.c:4141
-        radix_tree_node_alloc.constprop.0+0x1e8/0x350 lib/radix-tree.c:253
-        idr_get_free+0x528/0xa40 lib/radix-tree.c:1506
-        idr_alloc_u32+0x191/0x2f0 lib/idr.c:46
-        idr_alloc+0xc1/0x130 lib/idr.c:87
-        p9_tag_alloc+0x394/0x870 net/9p/client.c:321
-        p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
-        p9_client_zc_rpc.constprop.0+0x105/0x880 net/9p/client.c:793
-        p9_client_read_once+0x443/0x820 net/9p/client.c:1570
-        p9_client_read+0x13f/0x1b0 net/9p/client.c:1534
-        v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
-        netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
-        netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
-        netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
-        netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
-        netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
-        netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
-        netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
-        netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
-        netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
-        ...
-        netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
-        netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
-        netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
-        netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
-        netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
-        netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:371
-        netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:407
-        netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline=
-]
-        netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
-        netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_re=
-ad.c:221
-        netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
-        v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
-        do_iter_readv_writev+0x614/0x7f0 fs/read_write.c:832
-        vfs_readv+0x4cf/0x890 fs/read_write.c:1025
-        do_preadv fs/read_write.c:1142 [inline]
-        __do_sys_preadv fs/read_write.c:1192 [inline]
-        __se_sys_preadv fs/read_write.c:1187 [inline]
-        __x64_sys_preadv+0x22d/0x310 fs/read_write.c:1187
-        do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-        do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
-    =
-
-    Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-    Closes: https://syzkaller.appspot.com/bug?extid=3D1fc6f64c40a9d143cfb6
-    Signed-off-by: David Howells <dhowells@redhat.com>
-    Suggested-by: Lizhi Xu <lizhi.xu@windriver.com>
-    cc: Dominique Martinet <asmadeus@codewreck.org>
-    cc: Jeff Layton <jlayton@kernel.org>
-    cc: v9fs@lists.linux.dev
-    cc: netfs@lists.linux.dev
-    cc: linux-fsdevel@vger.kernel.org
-    Link: https://lore.kernel.org/r/20241108034020.3695718-1-lizhi.xu@wind=
-river.com/ [1]
-
-diff --git a/fs/9p/vfs_addr.c b/fs/9p/vfs_addr.c
-index 819c75233235..3bc9ce6c575e 100644
---- a/fs/9p/vfs_addr.c
-+++ b/fs/9p/vfs_addr.c
-@@ -57,6 +57,8 @@ static void v9fs_issue_write(struct netfs_io_subrequest =
-*subreq)
- 	int err, len;
- =
-
- 	len =3D p9_client_write(fid, subreq->start, &subreq->io_iter, &err);
-+	if (len > 0)
-+		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
- 	netfs_write_subrequest_terminated(subreq, len ?: err, false);
- }
- =
-
-@@ -80,8 +82,10 @@ static void v9fs_issue_read(struct netfs_io_subrequest =
-*subreq)
- 	if (pos + total >=3D i_size_read(rreq->inode))
- 		__set_bit(NETFS_SREQ_HIT_EOF, &subreq->flags);
- =
-
--	if (!err)
-+	if (!err) {
- 		subreq->transferred +=3D total;
-+		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
-+	}
- =
-
- 	netfs_read_subreq_terminated(subreq, err, false);
- }
-diff --git a/fs/afs/write.c b/fs/afs/write.c
-index 34107b55f834..ccb6aa8027c5 100644
---- a/fs/afs/write.c
-+++ b/fs/afs/write.c
-@@ -122,7 +122,7 @@ static void afs_issue_write_worker(struct work_struct =
-*work)
- 	if (subreq->debug_index =3D=3D 3)
- 		return netfs_write_subrequest_terminated(subreq, -ENOANO, false);
- =
-
--	if (!test_bit(NETFS_SREQ_RETRYING, &subreq->flags)) {
-+	if (!subreq->retry_count) {
- 		set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 		return netfs_write_subrequest_terminated(subreq, -EAGAIN, false);
- 	}
-@@ -149,6 +149,9 @@ static void afs_issue_write_worker(struct work_struct =
-*work)
- 	afs_wait_for_operation(op);
- 	ret =3D afs_put_operation(op);
- 	switch (ret) {
-+	case 0:
-+		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
-+		break;
- 	case -EACCES:
- 	case -EPERM:
- 	case -ENOKEY:
-diff --git a/fs/netfs/read_collect.c b/fs/netfs/read_collect.c
-index 46ce3b7adf07..47ed3a5044e2 100644
---- a/fs/netfs/read_collect.c
-+++ b/fs/netfs/read_collect.c
-@@ -438,7 +438,7 @@ void netfs_read_subreq_progress(struct netfs_io_subreq=
-uest *subreq,
- 	     rreq->origin =3D=3D NETFS_READPAGE ||
- 	     rreq->origin =3D=3D NETFS_READ_FOR_WRITE)) {
- 		netfs_consume_read_data(subreq, was_async);
--		__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
-+		__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
- 	}
- }
- EXPORT_SYMBOL(netfs_read_subreq_progress);
-@@ -497,7 +497,7 @@ void netfs_read_subreq_terminated(struct netfs_io_subr=
-equest *subreq,
- 		     rreq->origin =3D=3D NETFS_READPAGE ||
- 		     rreq->origin =3D=3D NETFS_READ_FOR_WRITE)) {
- 			netfs_consume_read_data(subreq, was_async);
--			__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
-+			__set_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
- 		}
- 		rreq->transferred +=3D subreq->transferred;
- 	}
-@@ -511,10 +511,13 @@ void netfs_read_subreq_terminated(struct netfs_io_su=
-brequest *subreq,
- 		} else {
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_short);
- 			if (subreq->transferred > subreq->consumed) {
--				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
--				__clear_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags);
--				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
--			} else if (!__test_and_set_bit(NETFS_SREQ_NO_PROGRESS, &subreq->flags)=
-) {
-+				/* If we didn't read new data, abandon retry. */
-+				if (subreq->retry_count &&
-+				    test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags)) {
-+					__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
-+					set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
-+				}
-+			} else if (test_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags)) {
- 				__set_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
- 				set_bit(NETFS_RREQ_NEED_RETRY, &rreq->flags);
- 			} else {
-diff --git a/fs/netfs/read_retry.c b/fs/netfs/read_retry.c
-index 0350592ea804..0e72e9226fc8 100644
---- a/fs/netfs/read_retry.c
-+++ b/fs/netfs/read_retry.c
-@@ -56,6 +56,8 @@ static void netfs_retry_read_subrequests(struct netfs_io=
-_request *rreq)
- 			if (test_bit(NETFS_SREQ_FAILED, &subreq->flags))
- 				break;
- 			if (__test_and_clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags)) {
-+				__clear_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
-+				subreq->retry_count++;
- 				netfs_reset_iter(subreq);
- 				netfs_reissue_read(rreq, subreq);
- 			}
-@@ -137,7 +139,8 @@ static void netfs_retry_read_subrequests(struct netfs_=
-io_request *rreq)
- 			stream0->sreq_max_len =3D subreq->len;
- =
-
- 			__clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
--			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
-+			__clear_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
-+			subreq->retry_count++;
- =
-
- 			spin_lock_bh(&rreq->lock);
- 			list_add_tail(&subreq->rreq_link, &rreq->subrequests);
-@@ -213,7 +216,6 @@ static void netfs_retry_read_subrequests(struct netfs_=
-io_request *rreq)
- 			subreq->error =3D -ENOMEM;
- 		__clear_bit(NETFS_SREQ_FAILED, &subreq->flags);
- 		__clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
--		__clear_bit(NETFS_SREQ_RETRYING, &subreq->flags);
- 	}
- 	spin_lock_bh(&rreq->lock);
- 	list_splice_tail_init(&queue, &rreq->subrequests);
-diff --git a/fs/netfs/write_collect.c b/fs/netfs/write_collect.c
-index 82290c92ba7a..ca3a11ed9b54 100644
---- a/fs/netfs/write_collect.c
-+++ b/fs/netfs/write_collect.c
-@@ -179,7 +179,6 @@ static void netfs_retry_write_stream(struct netfs_io_r=
-equest *wreq,
- 				struct iov_iter source =3D subreq->io_iter;
- =
-
- 				iov_iter_revert(&source, subreq->len - source.count);
--				__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
- 				netfs_get_subrequest(subreq, netfs_sreq_trace_get_resubmit);
- 				netfs_reissue_write(stream, subreq, &source);
- 			}
-@@ -234,7 +233,7 @@ static void netfs_retry_write_stream(struct netfs_io_r=
-equest *wreq,
- 			/* Renegotiate max_len (wsize) */
- 			trace_netfs_sreq(subreq, netfs_sreq_trace_retry);
- 			__clear_bit(NETFS_SREQ_NEED_RETRY, &subreq->flags);
--			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
-+			subreq->retry_count++;
- 			stream->prepare_write(subreq);
- =
-
- 			part =3D min(len, stream->sreq_max_len);
-@@ -279,7 +278,7 @@ static void netfs_retry_write_stream(struct netfs_io_r=
-equest *wreq,
- 			subreq->start		=3D start;
- 			subreq->debug_index	=3D atomic_inc_return(&wreq->subreq_counter);
- 			subreq->stream_nr	=3D to->stream_nr;
--			__set_bit(NETFS_SREQ_RETRYING, &subreq->flags);
-+			subreq->retry_count	=3D 1;
- =
-
- 			trace_netfs_sreq_ref(wreq->debug_id, subreq->debug_index,
- 					     refcount_read(&subreq->ref),
-diff --git a/fs/netfs/write_issue.c b/fs/netfs/write_issue.c
-index bf6d507578e5..ff0e82505a0b 100644
---- a/fs/netfs/write_issue.c
-+++ b/fs/netfs/write_issue.c
-@@ -244,6 +244,8 @@ void netfs_reissue_write(struct netfs_io_stream *strea=
-m,
- 	iov_iter_advance(source, size);
- 	iov_iter_truncate(&subreq->io_iter, size);
- =
-
-+	subreq->retry_count++;
-+	__clear_bit(NETFS_SREQ_MADE_PROGRESS, &subreq->flags);
- 	__set_bit(NETFS_SREQ_IN_PROGRESS, &subreq->flags);
- 	netfs_do_issue_write(stream, subreq);
- }
-diff --git a/fs/smb/client/cifssmb.c b/fs/smb/client/cifssmb.c
-index bd42a419458e..6cb1e81993f8 100644
---- a/fs/smb/client/cifssmb.c
-+++ b/fs/smb/client/cifssmb.c
-@@ -1319,14 +1319,16 @@ cifs_readv_callback(struct mid_q_entry *mid)
- 	}
- =
-
- 	if (rdata->result =3D=3D -ENODATA) {
--		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- 		rdata->result =3D 0;
-+		__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- 	} else {
- 		size_t trans =3D rdata->subreq.transferred + rdata->got_bytes;
- 		if (trans < rdata->subreq.len &&
- 		    rdata->subreq.start + trans =3D=3D ictx->remote_i_size) {
--			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- 			rdata->result =3D 0;
-+			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
-+		} else if (rdata->got_bytes > 0) {
-+			__set_bit(NETFS_SREQ_MADE_PROGRESS, &rdata->subreq.flags);
- 		}
- 	}
- =
-
-@@ -1670,10 +1672,13 @@ cifs_writev_callback(struct mid_q_entry *mid)
- 		if (written > wdata->subreq.len)
- 			written &=3D 0xFFFF;
- =
-
--		if (written < wdata->subreq.len)
-+		if (written < wdata->subreq.len) {
- 			result =3D -ENOSPC;
--		else
-+		} else {
- 			result =3D written;
-+			if (written > 0)
-+				__set_bit(NETFS_SREQ_MADE_PROGRESS, &wdata->subreq.flags);
-+		}
- 		break;
- 	case MID_REQUEST_SUBMITTED:
- 	case MID_RETRY_NEEDED:
-diff --git a/fs/smb/client/smb2pdu.c b/fs/smb/client/smb2pdu.c
-index 010eae9d6c47..458b53d1f9cb 100644
---- a/fs/smb/client/smb2pdu.c
-+++ b/fs/smb/client/smb2pdu.c
-@@ -4615,6 +4615,7 @@ smb2_readv_callback(struct mid_q_entry *mid)
- 			__set_bit(NETFS_SREQ_HIT_EOF, &rdata->subreq.flags);
- 			rdata->result =3D 0;
- 		}
-+		__set_bit(NETFS_SREQ_MADE_PROGRESS, &rdata->subreq.flags);
- 	}
- 	trace_smb3_rw_credits(rreq_debug_id, subreq_debug_index, rdata->credits.=
-value,
- 			      server->credits, server->in_flight,
-@@ -4840,10 +4841,12 @@ smb2_writev_callback(struct mid_q_entry *mid)
- 		if (written > wdata->subreq.len)
- 			written &=3D 0xFFFF;
- =
-
--		if (written < wdata->subreq.len)
-+		if (written < wdata->subreq.len) {
- 			wdata->result =3D -ENOSPC;
--		else
-+		} else if (written > 0) {
- 			wdata->subreq.len =3D written;
-+			__set_bit(NETFS_SREQ_MADE_PROGRESS, &wdata->subreq.flags);
-+		}
- 		break;
- 	case MID_REQUEST_SUBMITTED:
- 	case MID_RETRY_NEEDED:
-@@ -5012,7 +5015,7 @@ smb2_async_writev(struct cifs_io_subrequest *wdata)
- 	}
- #endif
- =
-
--	if (test_bit(NETFS_SREQ_RETRYING, &wdata->subreq.flags))
-+	if (wdata->subreq.retry_count > 0)
- 		smb2_set_replay(server, &rqst);
- =
-
- 	cifs_dbg(FYI, "async write at %llu %u bytes iter=3D%zx\n",
-diff --git a/include/linux/netfs.h b/include/linux/netfs.h
-index 5eaceef41e6c..4083d77e3f39 100644
---- a/include/linux/netfs.h
-+++ b/include/linux/netfs.h
-@@ -185,6 +185,7 @@ struct netfs_io_subrequest {
- 	short			error;		/* 0 or error that occurred */
- 	unsigned short		debug_index;	/* Index in list (for debugging output) */
- 	unsigned int		nr_segs;	/* Number of segs in io_iter */
-+	u8			retry_count;	/* The number of retries (0 on initial pass) */
- 	enum netfs_io_source	source;		/* Where to read from/write to */
- 	unsigned char		stream_nr;	/* I/O stream this belongs to */
- 	unsigned char		curr_folioq_slot; /* Folio currently being read */
-@@ -194,14 +195,13 @@ struct netfs_io_subrequest {
- #define NETFS_SREQ_COPY_TO_CACHE	0	/* Set if should copy the data to the =
-cache */
- #define NETFS_SREQ_CLEAR_TAIL		1	/* Set if the rest of the read should be=
- cleared */
- #define NETFS_SREQ_SEEK_DATA_READ	3	/* Set if ->read() should SEEK_DATA f=
-irst */
--#define NETFS_SREQ_NO_PROGRESS		4	/* Set if we didn't manage to read any =
-data */
-+#define NETFS_SREQ_MADE_PROGRESS	4	/* Set if we transferred at least some=
- data */
- #define NETFS_SREQ_ONDEMAND		5	/* Set if it's from on-demand read mode */
- #define NETFS_SREQ_BOUNDARY		6	/* Set if ends on hard boundary (eg. ceph =
-object) */
- #define NETFS_SREQ_HIT_EOF		7	/* Set if short due to EOF */
- #define NETFS_SREQ_IN_PROGRESS		8	/* Unlocked when the subrequest complet=
-es */
- #define NETFS_SREQ_NEED_RETRY		9	/* Set if the filesystem requests a retr=
-y */
--#define NETFS_SREQ_RETRYING		10	/* Set if we're retrying */
--#define NETFS_SREQ_FAILED		11	/* Set if the subreq failed unretryably */
-+#define NETFS_SREQ_FAILED		10	/* Set if the subreq failed unretryably */
- };
- =
-
- enum netfs_io_origin {
-
+>
+> Thanks,
+> Liam
+>
+>
 
