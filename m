@@ -1,296 +1,289 @@
-Return-Path: <linux-kernel+bounces-437349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47229E9215
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:23:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7046A9E921C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:24:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFAC516193D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:23:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6270D16171F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7153219EA7;
-	Mon,  9 Dec 2024 11:23:29 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826A021A932;
+	Mon,  9 Dec 2024 11:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i9jMzoBL"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B7321884E
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:23:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD0B6219EA1;
+	Mon,  9 Dec 2024 11:23:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733743409; cv=none; b=NDkTUa0+/WPunZaRUBVKsNpaqYPZeK3IbnnOLGQd7qMFTTZY0fWjyh9uynMsaLm8WBh8SD46PzdFQ8DEES3smnyv5bdnbs+JPNH794OQYNxS9fzvmkTe1OEf+sBWibIPuJkHAUlm+v5lIVxUHGIQ8gW0aQa5gA1GhLoVmTvcGOs=
+	t=1733743426; cv=none; b=a1GJC1ih4TCXELkwBswzM/fAS5wmEAjplCegt4rzLCPVuy6YyX676NPmC4WM+aQDIM1uIZGz3BgAKf07gAqh5ZfpX1v1r5/GcScmuNg65uWyt5/dM/oVCDbtBOH6KL4dpEMSmb+Krtxyz2oJkTcyHFcHhmBaPbN9SuBB7sPCDF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733743409; c=relaxed/simple;
-	bh=G1oMQIuUcy1aQyFeSgfVedIvY8oXeEFkNldf6KQee4c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=CWEbzFqXRq+n0qVdvRlV01Lec1s6t24mkrFKxFBC7Nfcv/BhY6m1djgTUIljyQvFved1Prs55xOmtBAwKsX1Eb5SRK9ZU3a3jY2YtHOAr4b5HUTXjlhqW6LFGHoY6pHGCIb9JNj1kSyV9bG+lb/9FFQE+BHob4g8vwIDjuU7pl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3a7de3ab182so96414375ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:23:27 -0800 (PST)
+	s=arc-20240116; t=1733743426; c=relaxed/simple;
+	bh=6jpdGdgWWpxlvOI2MzFO+lVqIN1ePLo95nTR5s9bRws=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YnOESfj7HTVVas1pYzTIIoqiIw+fxdE75kFRY2HQmuWZ7S84mNYemgmGaa+pMQ+ZqeO/zqaR25X+V83p1CDNpeoIBc9KffkkT/rh2lQtYoJ18yS5TlfaSaoEMSCzSAs7O0kPFHqmwgc3xQDBjlXYWF377yu//zY8PwhGtvzQUyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i9jMzoBL; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5d3e8f64d5dso2326559a12.3;
+        Mon, 09 Dec 2024 03:23:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733743423; x=1734348223; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qf+IKqMd4jWP7PDOCpVWhE6CrZFz+9D4Dw7c3vH6cEo=;
+        b=i9jMzoBLZonJeFvSxTvsPWpGiJ9n2a/DqpEBiK+Uotn+HtP1e5O4sbjquRqOo0mbsh
+         4hKu8EmhWQDNRwvO17fs2hXXsoqCHnuG2f2B3if5aR7Rq3L0WfFqxr0woofdzb2nrZaP
+         7xNFhlyWpLGnF2CX6TRzHIa3mKgbJnRQKbTNjb2sYGaEzJnpJWhTy4AMEHnOxT0GZpmv
+         fL/bc115to32pz6mPvDtJMqVuDPI4qvVJK+hxYyA4chW8dsv+wLRBo/OD7S2+GmzOz0S
+         Il7dAD3y10XaB9lR8xI9pvgm7iFMizUX4bttBhQJi3UeVQbsl5EvNlj2xAeLqHgu/FR0
+         MWzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733743406; x=1734348206;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=76j1GvUOire3gGHM4gaEqfWoT6ggd3LcvClgvNUY9Qc=;
-        b=LMthuVwNLcsmL7ICeWe9KT47MgfDZVBUYd/EcaiXwujPjhHnBO1Ddz4ueu+gRMTSlr
-         HujswKV5MYkzSZBH9hn5vMbE+pJO5pkBluPUggcJ/TegWXrWs/GN59d7NeG6dzJWzyn9
-         T+rd5uvf967icw8Fu8KUSkqfMgCRps3nZe+PRsA61ftH01EHBGAc3nB9sIaE+FwtyCJf
-         rXosMyK7TcGzGeNMajOh3tm6qBZUNuFooDcws3SuyqMvKCnl4ZU6TIbOJR1zlCLuwsb+
-         D3VLNFyzCgZ8NIddpso5PeF5RNCtBanGmjMc2UsD1zWsow/psoJN7XOyFkogvDnwboim
-         o4hQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUfermlOJasCSvaFgxjscKCtxD9q278naxeg8VbV0mzxlUdnWL3etgWD1CABPuXHjXY/jy/fhbbUUHvpE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz17HQP3F12Lg9TocWawMtQM5E2KVr8DMjnl3Y2G2LenzQoMCcH
-	HHn5jsXSLi0l/iL04i+Wg4PoLndnB5bMcmiHaLCSZ3TCqIbKHSHjjw6JBR15wSbSUBJlssgjrt2
-	3QGRXKfOy+S5F8Z0vsekuH54ccQsGk+tBw9aRJG7yi9hGilWZM1bG9kM=
-X-Google-Smtp-Source: AGHT+IE3Exvnlmm6bUuGWQ1Rli5LjP+PMqx7WMWLLyC+PIsyepSKY6FHI++ol1VQuUN257ePl4ArnsdH12Nqf/doYweFzIFxGd/C
+        d=1e100.net; s=20230601; t=1733743423; x=1734348223;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qf+IKqMd4jWP7PDOCpVWhE6CrZFz+9D4Dw7c3vH6cEo=;
+        b=U1M7pdIxetecTO7+kZ00eVeQG1K/DQ6emipjHfjq1tS7KMHjAJEMOhyCBZJp129pTA
+         j+ykkifWLSXYR/lbsmfK7c1opwkxFPban0Dsa83JsakAUsTfUTVyWlbf4nwyle/hhjQy
+         byHEqqRY+HPu0h6qIviyzjU4p9VzUbF1VExCH+5OPUevF03KoXc7EdldwBa4BBhKH4ok
+         rr2ut+d0N2gWywa+YE9Nh5AHysdnV0hV9MbsOGqd+s8bpdPyix2lP5qgjwipD+eMlJiM
+         ssOJrbnZF6mXJkaWcZuNuEmBv5SmeseYCjsHpFYWRPF2S6s9BAlRH5Scyd9Twx0msSgP
+         tH7A==
+X-Forwarded-Encrypted: i=1; AJvYcCURLMS6PEOx+mZ5GRY1KMLDS8smmubB4bnAjLMwHse+Ts9ET6OOEQtqaTkdWn9xZpY/u8e+hy1NPWJ4nV0=@vger.kernel.org, AJvYcCX3fPj23BPtX98E27S1bp6RJrSwRHqJk1ufp/X7tHRV31m3OtAmFdoEWS3gElgiy3j2kDHHfen2mPyRKwf4j4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJfLEZkjoBSuERWecnT22BxIVNOKJJp9kq6Iqv+XmIznGrL2E2
+	34r/x0aJVaRAfg+Sv1ZwHUdNr9IIMajT0E696Z/Li6MU/YYz1zkjYIAj4fc64SZO2q14lW/++ME
+	UaTVbPBjpIu7ZsnPIiFjfOQ879H0=
+X-Gm-Gg: ASbGncvY2nFUpRXRzMm0looPWUXFTAFgUDa7p77RHqFJWiKxbRibHkJ9936elgMpyrd
+	H1dxvkmUSIVBpmGmpb9mDo+F/zTJ+yGILbQ==
+X-Google-Smtp-Source: AGHT+IH2cTojVaNjg6f1XOAo3y7FAUwBnB3zsEJ0j7YM43+fRPIRPXFJpkVI999WVguOEAF19y8Qup5SYSTPKeqAtOg=
+X-Received: by 2002:a05:6402:51cb:b0:5d3:baa3:28a with SMTP id
+ 4fb4d7f45d1cf-5d3be65a53fmr10464855a12.1.1733743423083; Mon, 09 Dec 2024
+ 03:23:43 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:18ca:b0:3a7:a3a4:2cb3 with SMTP id
- e9e14a558f8ab-3a9dbb26947mr746125ab.15.1733743406576; Mon, 09 Dec 2024
- 03:23:26 -0800 (PST)
-Date: Mon, 09 Dec 2024 03:23:26 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6756d32e.050a0220.a30f1.019c.GAE@google.com>
-Subject: [syzbot] [xfs?] KASAN: slab-use-after-free Read in xfs_buf_rele (2)
-From: syzbot <syzbot+643ffa707a94e3d66378@syzkaller.appspotmail.com>
-To: cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
-	linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20bf2693-ce53-48e9-8b54-7e3273815033@quicinc.com>
+ <20241203094820.106225-1-jtornosm@redhat.com> <99359cc4-2279-4a8a-80a1-d5475fd5208d@quicinc.com>
+In-Reply-To: <99359cc4-2279-4a8a-80a1-d5475fd5208d@quicinc.com>
+From: Janusz Dziedzic <janusz.dziedzic@gmail.com>
+Date: Mon, 9 Dec 2024 12:23:32 +0100
+Message-ID: <CAFED-jk--dXAoXJ9ijpnUDeD=WiW4ZeoLb45WXiVpzPvkgX12A@mail.gmail.com>
+Subject: Re: [PATCH] wifi: ath11k: allow APs combination when dual stations
+ are supported
+To: "Yu Zhang (Yuriy)" <quic_yuzha@quicinc.com>
+Cc: Jose Ignacio Tornos Martinez <jtornosm@redhat.com>, ath11k@lists.infradead.org, jjohnson@kernel.org, 
+	kvalo@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-wireless@vger.kernel.org, quic_cjhuang@quicinc.com, vbenes@redhat.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+wt., 3 gru 2024 o 11:57 Yu Zhang (Yuriy) <quic_yuzha@quicinc.com> napisa=C5=
+=82(a):
+>
+>
+>
+> On 12/3/2024 5:48 PM, Jose Ignacio Tornos Martinez wrote:
+> >> Which chip do you use?
+> > Since I am not totally sure about the useful information, let me show y=
+ou
+> > the kernel logs:
+> > $ dmesg | grep ath11k
+> > [    3.659388] ath11k_pci 0000:01:00.0: BAR 0 [mem 0x84200000-0x843ffff=
+f 64bit]: assigned
+> > [    3.659405] ath11k_pci 0000:01:00.0: enabling device (0000 -> 0002)
+> > [    3.659649] ath11k_pci 0000:01:00.0: MSI vectors: 32
+> > [    3.659653] ath11k_pci 0000:01:00.0: wcn6855 hw2.1
+> > [    4.871571] ath11k_pci 0000:01:00.0: chip_id 0x2 chip_family 0xb boa=
+rd_id 0xff soc_id 0x400c0210
+> > [    4.871586] ath11k_pci 0000:01:00.0: fw_version 0x11088c35 fw_build_=
+timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_=
+SILICONZ_LITE-3.6510.41
+> > [    5.241485] ath11k_pci 0000:01:00.0 wlp1s0: renamed from wlan0
+> >
+> yes, you also use wcn6855 hw2.1.
+> > If I try to setup 2 APs with your interface combination I get this:
+> > # iw list | grep -A6 "valid interface combinations:"
+> >       valid interface combinations:
+> >                * #{ managed } <=3D 2, #{ AP, P2P-client, P2P-GO } <=3D =
+16, #{ P2P-device } <=3D 1,
+> >                  total <=3D 16, #channels <=3D 1, STA/AP BI must match,=
+ radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz, 80+80 MHz, =
+160 MHz }
+> >
+> >                * #{ managed } <=3D 2, #{ AP, P2P-client, P2P-GO } <=3D =
+16, #{ P2P-device } <=3D 1,
+> >                  total <=3D 3, #channels <=3D 2, STA/AP BI must match
+> >       HT Capability overrides:
+> 2 combinations are to support DBS and DFS.
+> Combinations is correct. channels=3D2, max interfaces=3D3.
+>
+Small question from my side. If phyX will support 3 bands (2.4/5/6)
+what this channes<=3D2 limitation mean here for APs?
+ a) can I setup APs on 2412 and 5180
+ b) or even can setup APs on 2412 and 2462?
+ c) or setup APs on 5180 and 6055?
+How could I know a or b or c is allowed?
 
-syzbot found the following issue on:
+BTW, do you plan to share same firmware (with 2 possible APs) for
+ath12k and WCN7850?
 
-HEAD commit:    7af08b57bcb9 Merge tag 'trace-v6.13-2' of git://git.kernel..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17cecd30580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=129a9798def93175
-dashboard link: https://syzkaller.appspot.com/bug?extid=643ffa707a94e3d66378
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+BR
+Janusz
 
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f6e67f04bc76/disk-7af08b57.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/31932bddea1f/vmlinux-7af08b57.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/62707034e0dd/bzImage-7af08b57.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+643ffa707a94e3d66378@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: slab-use-after-free in rht_key_hashfn include/linux/rhashtable.h:159 [inline]
-BUG: KASAN: slab-use-after-free in rht_head_hashfn include/linux/rhashtable.h:174 [inline]
-BUG: KASAN: slab-use-after-free in __rhashtable_remove_fast_one include/linux/rhashtable.h:1007 [inline]
-BUG: KASAN: slab-use-after-free in __rhashtable_remove_fast include/linux/rhashtable.h:1093 [inline]
-BUG: KASAN: slab-use-after-free in rhashtable_remove_fast include/linux/rhashtable.h:1122 [inline]
-BUG: KASAN: slab-use-after-free in xfs_buf_rele_cached fs/xfs/xfs_buf.c:1125 [inline]
-BUG: KASAN: slab-use-after-free in xfs_buf_rele+0xd26/0x15b0 fs/xfs/xfs_buf.c:1151
-Read of size 4 at addr ffff888033dd6c08 by task syz.7.96/6977
-
-CPU: 1 UID: 0 PID: 6977 Comm: syz.7.96 Not tainted 6.12.0-syzkaller-10689-g7af08b57bcb9 #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:378 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:489
- kasan_report+0x143/0x180 mm/kasan/report.c:602
- rht_key_hashfn include/linux/rhashtable.h:159 [inline]
- rht_head_hashfn include/linux/rhashtable.h:174 [inline]
- __rhashtable_remove_fast_one include/linux/rhashtable.h:1007 [inline]
- __rhashtable_remove_fast include/linux/rhashtable.h:1093 [inline]
- rhashtable_remove_fast include/linux/rhashtable.h:1122 [inline]
- xfs_buf_rele_cached fs/xfs/xfs_buf.c:1125 [inline]
- xfs_buf_rele+0xd26/0x15b0 fs/xfs/xfs_buf.c:1151
- xfs_buftarg_shrink_scan+0x264/0x300 fs/xfs/xfs_buf.c:2001
- do_shrink_slab+0x72d/0x1160 mm/shrinker.c:437
- shrink_slab+0x1093/0x14d0 mm/shrinker.c:664
- drop_slab_node mm/vmscan.c:414 [inline]
- drop_slab+0x142/0x280 mm/vmscan.c:432
- drop_caches_sysctl_handler+0xbc/0x160 fs/drop_caches.c:68
- proc_sys_call_handler+0x5ec/0x920 fs/proc/proc_sysctl.c:601
- do_iter_readv_writev+0x600/0x880
- vfs_writev+0x376/0xba0 fs/read_write.c:1050
- do_writev+0x1b6/0x360 fs/read_write.c:1096
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd7c0780809
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fd7be5f6058 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
-RAX: ffffffffffffffda RBX: 00007fd7c0945fa0 RCX: 00007fd7c0780809
-RDX: 0000000000000001 RSI: 00000000200000c0 RDI: 0000000000000004
-RBP: 00007fd7c07f393e R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007fd7c0945fa0 R15: 00007fffcac00d18
- </TASK>
-
-Allocated by task 6968:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4283 [inline]
- __kmalloc_node_noprof+0x290/0x4d0 mm/slub.c:4289
- __kvmalloc_node_noprof+0x72/0x190 mm/util.c:650
- bucket_table_alloc lib/rhashtable.c:186 [inline]
- rhashtable_init_noprof+0x534/0xa60 lib/rhashtable.c:1071
- xfs_perag_alloc fs/xfs/libxfs/xfs_ag.c:238 [inline]
- xfs_initialize_perag+0x26a/0x630 fs/xfs/libxfs/xfs_ag.c:279
- xfs_mountfs+0xaaf/0x2410 fs/xfs/xfs_mount.c:831
- xfs_fs_fill_super+0x12db/0x1590 fs/xfs/xfs_super.c:1791
- get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 5852:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2338 [inline]
- slab_free mm/slub.c:4598 [inline]
- kfree+0x196/0x430 mm/slub.c:4746
- rhashtable_free_and_destroy+0x7c6/0x920 lib/rhashtable.c:1169
- xfs_group_free+0xd4/0x230 fs/xfs/libxfs/xfs_group.c:170
- xfs_free_perag_range+0x36/0x60 fs/xfs/libxfs/xfs_ag.c:133
- xfs_unmountfs+0x24d/0x2e0 fs/xfs/xfs_mount.c:1185
- xfs_fs_put_super+0x65/0x150 fs/xfs/xfs_super.c:1149
- generic_shutdown_super+0x139/0x2d0 fs/super.c:642
- kill_block_super+0x44/0x90 fs/super.c:1710
- xfs_kill_sb+0x15/0x50 fs/xfs/xfs_super.c:2089
- deactivate_locked_super+0xc4/0x130 fs/super.c:473
- cleanup_mnt+0x41f/0x4b0 fs/namespace.c:1373
- task_work_run+0x24f/0x310 kernel/task_work.c:239
- resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
- exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x13f/0x340 kernel/entry/common.c:218
- do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-The buggy address belongs to the object at ffff888033dd6c00
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 8 bytes inside of
- freed 512-byte region [ffff888033dd6c00, ffff888033dd6e00)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x33dd4
-head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88801ac41c80 dead000000000100 dead000000000122
-raw: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff88801ac41c80 dead000000000100 dead000000000122
-head: 0000000000000000 0000000000100010 00000001f5000000 0000000000000000
-head: 00fff00000000002 ffffea0000cf7501 ffffffffffffffff 0000000000000000
-head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 2, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5216, tgid 5216 (udevadm), ts 27719249718, free_ts 27704552099
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1556
- prep_new_page mm/page_alloc.c:1564 [inline]
- get_page_from_freelist+0x3651/0x37a0 mm/page_alloc.c:3474
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4751
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x140 mm/slub.c:2408
- allocate_slab+0x5a/0x2f0 mm/slub.c:2574
- new_slab mm/slub.c:2627 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3815
- __slab_alloc+0x58/0xa0 mm/slub.c:3905
- __slab_alloc_node mm/slub.c:3980 [inline]
- slab_alloc_node mm/slub.c:4141 [inline]
- __kmalloc_cache_noprof+0x27b/0x390 mm/slub.c:4309
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- kernfs_fop_open+0x3e0/0xd10 fs/kernfs/file.c:623
- do_dentry_open+0xbe1/0x1b70 fs/open.c:945
- vfs_open+0x3e/0x330 fs/open.c:1075
- do_open fs/namei.c:3828 [inline]
- path_openat+0x2c84/0x3590 fs/namei.c:3987
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_openat fs/open.c:1433 [inline]
- __se_sys_openat fs/open.c:1428 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
-page last free pid 5227 tgid 5227 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_page+0xde3/0x1130 mm/page_alloc.c:2657
- discard_slab mm/slub.c:2673 [inline]
- __put_partials+0xeb/0x130 mm/slub.c:3142
- put_cpu_partial+0x17c/0x250 mm/slub.c:3217
- __slab_free+0x2ea/0x3d0 mm/slub.c:4468
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4104 [inline]
- slab_alloc_node mm/slub.c:4153 [inline]
- kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4160
- alloc_empty_file+0x9e/0x1d0 fs/file_table.c:228
- path_openat+0x107/0x3590 fs/namei.c:3973
- do_filp_open+0x27f/0x4e0 fs/namei.c:4014
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1402
- do_sys_open fs/open.c:1417 [inline]
- __do_sys_openat fs/open.c:1433 [inline]
- __se_sys_openat fs/open.c:1428 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1428
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888033dd6b00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888033dd6b80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
->ffff888033dd6c00: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                      ^
- ffff888033dd6c80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888033dd6d00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
+> And you want setup sta + sap + sap, right?
+> When up the second sap will meet error? Could you pls share the error log=
+s?
+>
+> I'm not very sure if you add all interface with managed type, and do
+> "ifconfig xxx up" before running hostapd.
+>
+> You can try add second and third interface with
+> "iw dev xx interface add xx type __ap".
+>
+>
+> > # iw dev
+> > phy#0
+> >       Interface wlp1s0_1
+> >               ifindex 6
+> >               wdev 0x4
+> >               addr a2:42:d2:1e:89:a3
+> >               type managed
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >       Interface wlp1s0_0
+> >               ifindex 5
+> >               wdev 0x3
+> >               addr 52:e9:be:33:6a:61
+> >               ssid test-qe-wpa2-psk
+> >               type AP
+> >               channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+> >               txpower 14.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >       Interface wlp1s0
+> >               ifindex 3
+> >               wdev 0x1
+> >               addr c8:94:02:b5:fe:fb
+> >               type managed
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> > Or even this with no AP up:
+> > # iw dev
+> > phy#0
+> >       Interface wlp1s0_1
+> >               ifindex 6
+> >               wdev 0x4
+> >               addr ca:e5:84:22:10:ec
+> >               type managed
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >       Interface wlp1s0_0
+> >               ifindex 5
+> >               wdev 0x3
+> >               addr 9e:4e:c5:ea:4c:e9
+> >               type AP
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >       Interface wlp1s0
+> >               ifindex 3
+> >               wdev 0x1
+> >               addr c8:94:02:b5:fe:fb
+> >               type managed
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >
+> > If I use the parameter to ignore the feature and configure the interfac=
+e combination as before:
+> > # iw list | grep -A4 "valid interface combinations:"
+> >       valid interface combinations:
+> >                * #{ managed } <=3D 1, #{ AP, P2P-client, P2P-GO } <=3D =
+16, #{ P2P-device } <=3D 1,
+> >                  total <=3D 16, #channels <=3D 1, STA/AP BI must match,=
+ radar detect widths: { 20 MHz (no HT), 20 MHz, 40 MHz, 80 MHz }
+> >
+> >       HT Capability overrides:
+> > # iw dev
+> > phy#1
+> >       Interface wlp1s0_1
+> >               ifindex 7
+> >               wdev 0x100000004
+> >               addr 82:90:89:90:c1:37
+> >               ssid test-qe-wpa3-psk
+> >               type AP
+> >               channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >       Interface wlp1s0_0
+> >               ifindex 6
+> >               wdev 0x100000003
+> >               addr 6a:ef:d0:db:10:f0
+> >               ssid test-qe-wpa2-psk
+> >               type AP
+> >               channel 13 (2472 MHz), width: 20 MHz, center1: 2472 MHz
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >       Interface wlp1s0
+> >               ifindex 4
+> >               wdev 0x100000001
+> >               addr c8:94:02:b5:fe:fb
+> >               type managed
+> >               txpower 16.00 dBm
+> >               multicast TXQ:
+> >                       qsz-byt qsz-pkt flows   drops   marks   overlmt h=
+ashcol tx-bytes        tx-packets
+> >                       0       0       0       0       0       0       0=
+       0               0
+> >
+> > Thanks
+> >
+> > Best regards
+> > Jose Ignacio
+> >
+>
+>
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+--=20
+Janusz Dziedzic
 
