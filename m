@@ -1,187 +1,167 @@
-Return-Path: <linux-kernel+bounces-438470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B72CE9EA1B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:17:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B96809EA1BF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:19:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5F6A28204F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:17:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC49281CE7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:19:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4DCD46B8;
-	Mon,  9 Dec 2024 22:16:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85AA19E967;
+	Mon,  9 Dec 2024 22:19:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="keUxpGSS"
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CCkAghCC"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5244F19DF77
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 22:16:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 623F219DF77;
+	Mon,  9 Dec 2024 22:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733782617; cv=none; b=YaJVXVGGL9zrt902PNx9AizxjVuletal36oE48+T3q2ARAdw66FMjlIZtPe9iFjjaMcL9vz8KTITRFwicQ585zhdYLj/dRpDEe3x45pacT2m9s1ZlSvT8Op/o2M/xVy45GYeU04OM8OmkiN3DbuZi1MnzSQnHOyX9dONg4VddJY=
+	t=1733782764; cv=none; b=DvHV5PFT7tq78gwBPbbs/OY5OYvbexoNa9/CzGglDmMUdsDO5YUD3vDpCFL896Jjdep6kyjBRAwlbC1KUxApSNzcG+bER8jM7ztxqJUjlO6uMzpu3EXPZCcmz+u9OtI+G4dsZG0bHuJ7p469rN/AdMyaYGwa/CRodtjQ+9yR/rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733782617; c=relaxed/simple;
-	bh=hdrFd76ac7pZ6E0mz3RpRFEh+/RfWGN3pQPQwuwrOeU=;
+	s=arc-20240116; t=1733782764; c=relaxed/simple;
+	bh=UizDA8id5TOzAqzh5MU69ufJkDcioXInDSASuF7B4qg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=afweyg6L5KuhmWOr5Ooplfzn35/lL+3LuYALquWmMyaTU7Tb22b35iBv7LXlZusUWNSeMZA+yO09Cpnhf5dEAt4BQ1O48KjdHfIjsugZsuT2JJfN9gfePsGT79dwqLMNVhulCwa6am+BavSYaKyCh0M0Hhlhtx27FCjcdoVmkf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=keUxpGSS; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e3971be41d8so3441216276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 14:16:55 -0800 (PST)
+	 To:Cc:Content-Type; b=X9spmRc0pOD5KZ313ygNYsmAz4QUsYiIPYPUN6xTRTRcQ871jrssOCXuqHj/m4u6V002lytbUEBrY3dmBRhfzM8DRXmYyewcwBAtJfFpnJ9Fxdw0o2/G59GRyv7IE1Lg4Gq5Sg0b5SrYujm2PmZInNqag4RBQpWVGgpYPGLQXgo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CCkAghCC; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6efea8d5268so2082177b3.1;
+        Mon, 09 Dec 2024 14:19:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733782614; x=1734387414; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GjdBU58GLyG4jXaeGh1WmIo6+crxO9Fl9Blf1+csx7g=;
-        b=keUxpGSSt+6KekKQ+ZoiaiClMLy64zj9n5nGfGFgagb0pZoUMkX+I2QV4uEeJ4xzZo
-         jqKHgT4mb6odILMYFa6+0FY7GBKYCuA9s8egqO4qF8hS9w4hmAeydm4v10Mn7y3BljNr
-         NIlRfLmKhIoOPiEZo8At0Uw2MnfQSpgQrbv+1tgNlaeGCSPMx7svOToVDrUd5Hy7akie
-         p5CIAqH2BzmPFK682mqDBE/+BQCU1+hXyTJdqjLdi4pPlduJRdmwFlPVJnC39VlcY4A0
-         CprsIr9vcEZM8bykplnfPRannYY6zpHwNFjwVgDAwlWrndpUDrMrzP0V16OFaio/6r1m
-         g1mg==
+        d=gmail.com; s=20230601; t=1733782761; x=1734387561; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TBcPGvste8xIaQ/+MJ0w8njhyN9mQHppjBGBCMsNJJ4=;
+        b=CCkAghCC9t1yB29dpj+1BYkO9ZQ8ClX4z38UJbTgQ0kyeiYblqmLcpHlwS5bjMnI4v
+         FlADVreWdi7e7dsVbK+x0YKpjRAMgL2hUEY0i2Sa10TESN8uwUSD0dKep3dR07n/K/JF
+         pMrrN0qEqab1ebZi5PwPXV+CxxDphldDmwjj0dF3W73Zli//XTyPF8ftCjt2zlqYm2eV
+         Jb4Z7h0aSuf9qqaou/oXO9RaXjzl8UUjahK797AWpOWXlWpPTbAvF0fgNEpN52gk+ry/
+         VBB4VUQMmURQ/0YX2VNJjM6Ig7Mz8UJXR1M+9YaducVYc66yHjGBMFeOVRyrqdab75b8
+         44bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733782614; x=1734387414;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GjdBU58GLyG4jXaeGh1WmIo6+crxO9Fl9Blf1+csx7g=;
-        b=qcWhyqijiF3YyUMaHhZsb5FcvQQcb/YBJMMEFHbnDt0PxmWV94kVxUrJCn7bj0Leji
-         w6RdubHmwuNLukoH+75/XmjQvQZk1vXlkhHxiz78XczVS3ZMcdFvpkq+ATQySOWMvJkg
-         7oXWYWIgvlJnmYoNKZJm77dDREAHSmcJWwnjG22XLR/NYtxgzQHnX5X8r6iwnz0Ay5gr
-         YY7aEtNFRGwz7yTp5cPgV5DBUyfUPATwcajMZDkM9TeQABfhqDMx759ncZPJcUUgWIP0
-         6zHJrQgc3kHuVhW/Ejt4LLnA71o0eQWwStc8ZXG7bLOBoQ+SN3CypxTPx9vVJLLLypzW
-         pNdw==
-X-Forwarded-Encrypted: i=1; AJvYcCVccONQ3tGGVJlLS7quup3xGS7y4kyO2iwfWvtDbT1j378WiKCSfzbYhJp4AisovR5DBJC0ISjQiDfLIYs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8Cqj8esBV0QgPF11WErbBNxJ1UCl1PTh7dD0lxpVG8i7oGGAI
-	cIB9AsC3wT6sWjj5SrkA4eAB+VdH0DE7JHLjqIl/zshKz7JXsCPKLVznqNXMH30R4Tpq9xvtcby
-	mNsxEi/0dY2mDCp3C2Tc1orMc5VsPKwPmqC5IqQ==
-X-Gm-Gg: ASbGnctzKVT0wH4osNx1cariBbZp8L4Mddq65x11Hn7DlnFYpgECARTTIEbYmQ44GjE
-	mV7oOb5mqPubmSxlabkeZTOYhVfrt+jYNzPk=
-X-Google-Smtp-Source: AGHT+IE3KVx9ellET6od2Fov33jjRyilDngNFD1e4QdzTDVV+Uuh2NyO57XkBrcDlZwfvuJUuaClqS4lRUo1DxYviZw=
-X-Received: by 2002:a05:6902:2886:b0:e38:bf8b:e2d0 with SMTP id
- 3f1490d57ef6-e3a59d08124mr1793629276.46.1733782614229; Mon, 09 Dec 2024
- 14:16:54 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733782761; x=1734387561;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TBcPGvste8xIaQ/+MJ0w8njhyN9mQHppjBGBCMsNJJ4=;
+        b=MvzUfBrgVeUGEPWCtlwGy5G75sS1AuyAqarzRrDlO/BsjFmg4ydnxdYOMx5muJauk6
+         OGnbMiSL3cUzOnjRi6VAtBzrzGAMsHWvGpwzawh0fwuJjEBlPeOOve43vlIJ6FUwNBI1
+         6MpK79TxuIL6VSoCjqqx9nFngSBXjB8/bXyp48GwBKIm3skhOtykUEUaztrmm5aLEwj4
+         vZl3zJrBzrByIVp/Es8ntHSZNbzoylFUbLnx82M9x0atDs6II6GT0aK8TIA4qbOftk5q
+         +NOC85bvB2C4FYIyCEYOqw7k6t1v9SY2XLU78NRAl5yTBEwTfs3GObs7qQO3jjHwGAvR
+         pJlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLYzW7iYA9D2RJcGTjjDmcI1+3L7zrMC/0kEHosCb/oC/ZxWABYz/FMJrDQX4/OFxxl8Pj9/Ajocc3@vger.kernel.org, AJvYcCXOMK4gyJocZ1CZq1rQoZY8TsyNCE4DWQlUmDZZyxHXxcS8C40W6Kt0BwcPEXFlU0YYyu9UAuNujfaMTzvy@vger.kernel.org, AJvYcCXmcDKAUdK0vBHsB4qhht9s/v1GyIh3fiZt5UCvB1tSuCq9v1sN6hqCVdTu33+C4gCSoXnKTDAWH5p7@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmGOhcJouYnotNrBO1WEm2q2MerH+lQUWLOr6fyBvzU79gufU+
+	Pp+EZz1auWYP+e0FXY/nAQWHK91MHgU5/QID3qEihZoiZQv6NRR+d4sCoYELp5kErwOgGk99tmo
+	lDqp1jD6xX0Usj5T+VIo93gRprHA=
+X-Gm-Gg: ASbGnct/25XcenA2/A2WU2juPNf7TmmFzanDy67uG6v4HkkCjoNHvuMQ+hukVZ/btw/
+	uqh/W5kBHKusVwgyb/umBYamE5IN3ZIItqzQ=
+X-Google-Smtp-Source: AGHT+IH2l+9WfFfXBybh1dyhw89xFdfwcFQxCGPGreisNOmc12R5bHKK18ypQcE+doXoW9vsu8juM6MZZu0tx1DZ6bY=
+X-Received: by 2002:a05:690c:4c13:b0:6ef:53bd:3633 with SMTP id
+ 00721157ae682-6efe3c818bbmr54656567b3.5.1733782761161; Mon, 09 Dec 2024
+ 14:19:21 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-no_3dmux-v1-1-72ad2677a323@quicinc.com>
- <zae7rlojv5iiq2dx7bxhdsmmzj73o65cwk7kmryxsst36gy2of@k3vcm6omcias> <b784049f-a72c-47ff-a618-e7c85c132d28@quicinc.com>
-In-Reply-To: <b784049f-a72c-47ff-a618-e7c85c132d28@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 10 Dec 2024 00:16:43 +0200
-Message-ID: <CAA8EJpojwG+_Q_9GYBFzQ_ReDbnO=+GbTPZscWgS1f=fkU0Anw@mail.gmail.com>
-Subject: Re: [PATCH] drm/msm/dpu: filter out too wide modes if no 3dmux is present
-To: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
+References: <20241205171343.308963-1-l.rubusch@gmail.com> <20241205171343.308963-4-l.rubusch@gmail.com>
+ <20241208133458.4a8428b7@jic23-huawei>
+In-Reply-To: <20241208133458.4a8428b7@jic23-huawei>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Mon, 9 Dec 2024 23:18:45 +0100
+Message-ID: <CAFXKEHbPmFc8DNZW=Ww39j+XkAfLOyFY2qgvz+uEUaBYri_3hA@mail.gmail.com>
+Subject: Re: [PATCH v5 03/10] iio: accel: adxl345: measure right-justified
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, eraretuya@gmail.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Abhinav,
+Dear IIO-ML, Hi Jonathan!
 
-On Mon, 9 Dec 2024 at 22:07, Abhinav Kumar <quic_abhinavk@quicinc.com> wrote:
+On Sun, Dec 8, 2024 at 2:35=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
+wrote:
 >
+> On Thu,  5 Dec 2024 17:13:36 +0000
+> Lothar Rubusch <l.rubusch@gmail.com> wrote:
 >
->
-> On 12/7/2024 9:29 PM, Dmitry Baryshkov wrote:
-> > On Fri, Dec 06, 2024 at 12:00:53PM -0800, Abhinav Kumar wrote:
-> >> On chipsets such as QCS615, there is no 3dmux present. In such
-> >> a case, a layer exceeding the max_mixer_width cannot be split,
-> >> hence cannot be supported.
-> >>
-> >> Filter out the modes which exceed the max_mixer_width when there
-> >> is no 3dmux present. Also, add a check in the dpu_crtc_atomic_check()
-> >> to return failure for such modes.
-> >>
-> >> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-> >> ---
-> >> Note: this was only compile tested, so its pending validation on QCS615
-> >> ---
-> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 13 +++++++++++++
-> >>   1 file changed, 13 insertions(+)
-> >>
-> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> >> index 9f6ffd344693ecfb633095772a31ada5613345dc..e6e5540aae83be7c20d8ae29115b8fdd42056e55 100644
-> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> >> @@ -732,6 +732,13 @@ static int _dpu_crtc_check_and_setup_lm_bounds(struct drm_crtc *crtc,
-> >>      struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
-> >>      int i;
-> >>
-> >> +    /* if we cannot merge 2 LMs (no 3d mux) better to fail earlier
-> >> +     * before even checking the width after the split
-> >> +     */
-> >> +    if (!dpu_kms->catalog->caps->has_3d_merge
-> >> +        && adj_mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
-> >> +            return -E2BIG;
+> > Make measurements right-justified, since it is the default for the
+> > driver and sensor. By not setting the ADXL345_DATA_FORMAT_JUSTIFY bit,
+> > the data becomes right-judstified. This was the original setting, there
+> > is no reason to change it to left-justified, where right-justified
+> > simplifies working on the registers.
 > >
-> > Is it the same as checking that there are LMs which support
-> > DPU_MIXER_SOURCESPLIT ?
+> > Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+>
+> I'm still confused by this one.  Does this change affect the data output
+> to userspace?  If seems like it definitely should. If it does we have
+> an ABI regression somewhere. Is it currently broken and wasn't at some
+> earlier stage, or is this the patch breaking things?
+
+No, it should not affect the userspace.
+
+This setting opens the mask for regmap/update bits to allow for
+changing the data format.
+My point is rather, does it actually makes sense to allow to change
+the data format, since
+the driver will use just one format. The bit was never applied, it's
+just the mask here.
+
+May I ask you, if you could also could give me a brief feedback to the
+three questions in
+the cover letter to this series?
+
+I would really appreciate, since I'm still unsure if I actually
+verified everything correctly.
+From what I did about this bit, I removed and set the justified bit in
+STREAM and in
+BYPASSED mode (current mode), without any difference in the results in
+iio_info or
+iio_readdev. The numbers look generally odd to me, though. And, I'd
+rather like to ask
+to still wait with applying the patches, if this is ok for you? But,
+perhaps with the answers
+of the cover letter items, it could become clearer to me. I'm still
+about to measure and
+verify against the old and the input driver results as comparison.
+
+Best,
+L
+
+
+> If it worked and currently doesn't send a fix.  If this changes a previou=
+sly
+> working ABI then drop this patch.  Alternative being to fix up the scale
+> handling to incorporate this justification change.
+>
+> Jonathan
+>
+> > ---
+> >  drivers/iio/accel/adxl345_core.c | 1 -
+> >  1 file changed, 1 deletion(-)
 > >
+> > diff --git a/drivers/iio/accel/adxl345_core.c b/drivers/iio/accel/adxl3=
+45_core.c
+> > index 88df9547bd6..98ff37271f1 100644
+> > --- a/drivers/iio/accel/adxl345_core.c
+> > +++ b/drivers/iio/accel/adxl345_core.c
+> > @@ -184,7 +184,6 @@ int adxl345_core_probe(struct device *dev, struct r=
+egmap *regmap,
+> >       struct iio_dev *indio_dev;
+> >       u32 regval;
+> >       unsigned int data_format_mask =3D (ADXL345_DATA_FORMAT_RANGE |
+> > -                                      ADXL345_DATA_FORMAT_JUSTIFY |
+> >                                        ADXL345_DATA_FORMAT_FULL_RES |
+> >                                        ADXL345_DATA_FORMAT_SELF_TEST);
+> >       int ret;
 >
-> DPU_MIXER_SOURCESPLIT tells whether we can have more than one SSPP in
-> the same blend stage.
-
-Do we have a feature bit that corresponds to the ability to use 2 LMs?
-I mean, there are other *split topologies, not necessarily the 3DMux
-ones. E.g. PPSPLIT.
-
->
-> 494     if (test_bit(DPU_MIXER_SOURCESPLIT,
-> 495             &ctx->mixer_hw_caps->features))
-> 496             pipes_per_stage = PIPES_PER_STAGE;
-> 497     else
-> 498             pipes_per_stage = 1;
->
-> That is different from this one. Here we are checking if we can actually
-> blend two LM outputs using the 3dmux (so its post blend).
->
-> >> +
-> >>      for (i = 0; i < cstate->num_mixers; i++) {
-> >>              struct drm_rect *r = &cstate->lm_bounds[i];
-> >>              r->x1 = crtc_split_width * i;
-> >> @@ -1251,6 +1258,12 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
-> >>   {
-> >>      struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
-> >>
-> >> +    /* if there is no 3d_mux block we cannot merge LMs so we cannot
-> >> +     * split the large layer into 2 LMs, filter out such modes
-> >> +     */
-> >> +    if (!dpu_kms->catalog->caps->has_3d_merge
-> >> +        && mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
-> >> +            return MODE_BAD;
-> >
-> > This can be more specific, like MODE_BAD_HVALUE.
-> >
->
-> Yes for sure, will fix this up.
->
-> >>      /*
-> >>       * max crtc width is equal to the max mixer width * 2 and max height is 4K
-> >>       */
-> >>
-> >> ---
-> >> base-commit: af2ea8ab7a546b430726183458da0a173d331272
-> >> change-id: 20241206-no_3dmux-521a55ea0669
-> >>
-> >> Best regards,
-> >> --
-> >> Abhinav Kumar <quic_abhinavk@quicinc.com>
-> >>
-> >
-
-
-
--- 
-With best wishes
-Dmitry
 
