@@ -1,107 +1,100 @@
-Return-Path: <linux-kernel+bounces-436813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 098A29E8B3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:56:50 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DE309E8BBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:55:03 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB9BF281574
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:56:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BD28163258
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:55:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5704E210195;
-	Mon,  9 Dec 2024 05:56:42 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D811E21481D;
+	Mon,  9 Dec 2024 06:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b="nlFkzOuf"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB1D207E03;
-	Mon,  9 Dec 2024 05:56:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C951D555;
+	Mon,  9 Dec 2024 06:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733723802; cv=none; b=TectfmXV1q7+Jv+UnFdzQbH3SAM33fVbr57djJHTSSvCzy//0S9vEYBMHMCV+t9qAYeBICzB0biqjfzZTwpq6KBWgY+mYqryyKjTnrchWh48lP7Zqi9Mzk2AqpsYVC36f6M7S0czzM44qo7AZClgrGOjQ47PZQmfVN9bFhaClWc=
+	t=1733727296; cv=none; b=fw+jG09tOpWD9bn3bZbRdJ1mMyXZPMuEpuHu1dvbY4lv4U/FdjH57VaEVQLRJ8HZM2BUZj0Sy9yUAkRfAZk4BMhO5lZL5RGv+aG7iMfvJg18ybm1qWP2N3jIszNs2surx0RsKO6dIua/48sdsSa8LRganjGJHk26Y/Ku6WNTmkw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733723802; c=relaxed/simple;
-	bh=S3ynFn5IQhrduAB8uFXzMnIMijqyL8bdZHhsSiOAqM0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U+4TdTZPtM+I6bp0E/+Oxw3rKb56HD1Nf0sUCBQXl8i5B51uHh+0ZG9oZ5PBiFXJtjyEMEks5NMbcaPErmxOkfd6Mwf9SXIkM8fgDKlIzVNgFlOaaozNQuL5NUKfRV/aFsSRze3F5wPDiaRhGgJrigKQAdZFw8+bC5emiqgQQFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B95pamN011765;
-	Mon, 9 Dec 2024 05:56:25 GMT
-Received: from ala-exchng02.corp.ad.wrs.com (ala-exchng02.wrs.com [147.11.82.254])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4x90tf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 09 Dec 2024 05:56:24 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Sun, 8 Dec 2024 21:56:23 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Sun, 8 Dec 2024 21:56:20 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <fullwaywang@outlook.com>, <gregkh@linuxfoundation.org>
-CC: <stable@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <tiffany.lin@mediatek.com>, <andrew-ct.chen@mediatek.com>,
-        <yunfei.dong@mediatek.com>, <mchehab@kernel.org>,
-        <matthias.bgg@gmail.com>, <linux-media@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Subject: [PATCH 6.1.y] media: mtk-vcodec: potential null pointer deference in SCP
-Date: Mon, 9 Dec 2024 14:54:13 +0800
-Message-ID: <20241209065413.3427435-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733727296; c=relaxed/simple;
+	bh=2mvY0PkgyrPvim+FppH+JlWI+fh1fAdRZ50dodZH00Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=kj5rAV6J//yYWnyIQwJvo5ufHta8eNPYDpaQ5MKMm2tQeJHQDV90i7lf4vhqRAbXSvqPSjh/c/yKUsEUhQ6jodsU9Z2I4rNLUXlRUzAR1dfr1ykmx2W0fCYNGlBOcRfmhzK6luMTjKcGbzcL5daEZ+iqb9QLOrXBk6oaS7bwK+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=temperror (0-bit key) header.d=realtek.com header.i=@realtek.com header.b=nlFkzOuf; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.78 with qID 4B96siVO3175998, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=realtek.com; s=dkim;
+	t=1733727284; bh=2mvY0PkgyrPvim+FppH+JlWI+fh1fAdRZ50dodZH00Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=nlFkzOufbuXtnhENVyHW3uo6JPxnKrHHWHhbpzCw01oElM2pw57smJdSbUNrSuIdo
+	 Iv4olfkBuXrSx065sVlwVNXLSblhTJLK3WZQlJNbLGnhnHO1VVjjyNyTmRuDAG+1Pd
+	 CRgjKbzzuv1d6lN0I3VveLwqK3Sp7BqoQletyL53Q6cOTUZ8EsBy3oQPByBWeNA9A1
+	 DBF0TMkhkowPhNzuQv3310qf6Dc5lrP6p76kWo6iYCdmuNk66sUeYNnMMNMcwRDIhk
+	 V9JZv4fVoDzDMFAEodvM0Gpg9GA49X1K5PkVjAsobVUfRwNdcy6IDNeNV+fUuHfqpw
+	 svhyUMxAatvAA==
+Received: from mail.realtek.com (rtexh36505.realtek.com.tw[172.21.6.25])
+	by rtits2.realtek.com.tw (8.15.2/3.06/5.92) with ESMTPS id 4B96siVO3175998
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 14:54:44 +0800
+Received: from RTEXDAG02.realtek.com.tw (172.21.6.101) by
+ RTEXH36505.realtek.com.tw (172.21.6.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Mon, 9 Dec 2024 14:54:44 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXDAG02.realtek.com.tw (172.21.6.101) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Mon, 9 Dec 2024 14:54:44 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f]) by
+ RTEXMBS04.realtek.com.tw ([fe80::2882:4142:db9:db1f%11]) with mapi id
+ 15.01.2507.035; Mon, 9 Dec 2024 14:54:44 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: liujing <liujing@cmss.chinamobile.com>, kvalo <kvalo@kernel.org>,
+        suhui
+	<suhui@nfschina.com>
+CC: linux-wireless <linux-wireless@vger.kernel.org>,
+        linux-kernel
+	<linux-kernel@vger.kernel.org>
+Subject: RE: RE: [PATCH] rtlwifi: rtl8188ee: fix spelling error in _rtl88e_phy_set_rfpath_switch()
+Thread-Topic: RE: [PATCH] rtlwifi: rtl8188ee: fix spelling error in
+ _rtl88e_phy_set_rfpath_switch()
+Thread-Index: AQHbSf4Bnwk1YuLp4kSNEDFg7w8YhbLddJvggAAFsDA=
+Date: Mon, 9 Dec 2024 06:54:44 +0000
+Message-ID: <f1857a296d324c8c91ec354d99fbbb89@realtek.com>
+References: <2024120913484116132252@cmss.chinamobile.com>
+ <d6b9d0b67dd14032b458c6e568437a39@realtek.com>
+In-Reply-To: <d6b9d0b67dd14032b458c6e568437a39@realtek.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: S3ZoAS84DtwxGV_JxU010U8Iu170Gkmg
-X-Proofpoint-ORIG-GUID: S3ZoAS84DtwxGV_JxU010U8Iu170Gkmg
-X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=67568688 cx=c_pps a=K4BcnWQioVPsTJd46EJO2w==:117 a=K4BcnWQioVPsTJd46EJO2w==:17 a=RZcAm9yDv7YA:10 a=VwQbUJbxAAAA:8 a=UqCG9HQmAAAA:8 a=t7CeM3EgAAAA:8 a=7f2alXSBUxmpNkzq_swA:9 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-09_02,2024-12-09_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 clxscore=1011 malwarescore=0 priorityscore=1501
- phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2411120000 definitions=main-2412090047
 
-From: Fullway Wang <fullwaywang@outlook.com>
-
-[ Upstream commit 53dbe08504442dc7ba4865c09b3bbf5fe849681b ]
-
-The return value of devm_kzalloc() needs to be checked to avoid
-NULL pointer deference. This is similar to CVE-2022-3113.
-
-Link: https://lore.kernel.org/linux-media/PH7PR20MB5925094DAE3FD750C7E39E01BF712@PH7PR20MB5925.namprd20.prod.outlook.com
-Signed-off-by: Fullway Wang <fullwaywang@outlook.com>
-Signed-off-by: Mauro Carvalho Chehab <mchehab@kernel.org>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
-index d8e66b645bd8..27f08b1d34d1 100644
---- a/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
-+++ b/drivers/media/platform/mediatek/vcodec/mtk_vcodec_fw_scp.c
-@@ -65,6 +65,8 @@ struct mtk_vcodec_fw *mtk_vcodec_fw_scp_init(struct mtk_vcodec_dev *dev)
- 	}
- 
- 	fw = devm_kzalloc(&dev->plat_dev->dev, sizeof(*fw), GFP_KERNEL);
-+	if (!fw)
-+		return ERR_PTR(-ENOMEM);
- 	fw->type = SCP;
- 	fw->ops = &mtk_vcodec_rproc_msg;
- 	fw->scp = scp;
--- 
-2.25.1
-
+UGluZy1LZSBTaGloIDxwa3NoaWhAcmVhbHRlay5jb20+IHdyb3RlOg0KPiANCj4gbGl1amluZyA8
+bGl1amluZ0BjbXNzLmNoaW5hbW9iaWxlLmNvbT4gIHdyb3RlOg0KPiANCj4gPiBubyBkdXBsaWNh
+dGUgaXMgc2VudCwgYnV0IHRoZSBwYXRjaCBvZiB0d28gZmlsZXMgaXMgc3VibWl0dGVkLg0KPiA+
+DQo+ID4gT25lOiBkcml2ZXJzL25ldC93aXJlbGVzcy9yZWFsdGVrL3J0bHdpZmkvcnRsODE4OGVl
+L3BoeS5jDQo+ID4gVHdvOsKgZHJpdmVycy9uZXQvd2lyZWxlc3MvcmVhbHRlay9ydGx3aWZpL3J0
+bDgxOTJlZS9waHkuYw0KPiANCj4gQXMgSSBzZWUsIGJvdGggYXJlIHJ0bDgxODhlZToNCj4gDQo+
+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC13aXJlbGVzcy9wYXRj
+aC8yMDI0MTIwOTAzMjEzMy4yOTc0LTEtbGl1amluZ0BjbXNzLmNoaW5hbW9iaQ0KPiBsZS5jb20v
+DQo+IGh0dHBzOi8vcGF0Y2h3b3JrLmtlcm5lbC5vcmcvcHJvamVjdC9saW51eC13aXJlbGVzcy9w
+YXRjaC8yMDI0MTIwOTAzMjU0OC4zMTAwLTEtbGl1amluZ0BjbXNzLmNoaW5hbW9iaQ0KPiBsZS5j
+b20vDQo+IA0KPiANCj4gQWxzbywgcGxlYXNlIG5vIHRvcCBwb3N0aW5nIGFuZCBpbiBwbGFpbiB0
+ZXh0IG1vZGUgZm9yIGxpbnV4LXdpcmVsZXNzLg0KPiBPdGhlcndpc2UsIG1lc3NhZ2VzIHdpbGwg
+YmUgaWdub3JlZCBieSBwYXRjaHdvcmsuDQo+IA0KDQpBbmQgc3ViamVjdCBwcmVmaXggc2hvdWxk
+IGJlICJ3aWZpOiBydGx3aWZpOiAiDQoNCg==
 
