@@ -1,132 +1,168 @@
-Return-Path: <linux-kernel+bounces-436647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0C79E88F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:14:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 778289E88FA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:17:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D92B1188612F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32A8E18861A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4242221364;
-	Mon,  9 Dec 2024 01:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 752FE22066;
+	Mon,  9 Dec 2024 01:17:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPWbGfeT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="i1UwMysJ"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AAB61FB3;
-	Mon,  9 Dec 2024 01:14:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C277D320B;
+	Mon,  9 Dec 2024 01:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733706889; cv=none; b=Qhyfo1cEBogJ31BJtLUIuIsqSU4f0xk5sA4A9jdpGu5iSpTd+3owwM1sPq98JFomm045CTQXfQwL+0UxSVECAxztUVooIWjQ4wspfZWvWqRnMsiGJO9tGHIMGsbjtbrSRSjC6kLAjiGMj9LWaG+p0Ov6Q5poVSDFTUjUpYXGjyM=
+	t=1733707049; cv=none; b=OTK+TBeh6fASAQnlaweaCNRsa/fttV8NdUkXMCiZBySrCpYlui/P2tonTnjI7xXk/lrFq8KjWK8muR6F4Yfnh0P3CmGKc8ZSr27RHKqI1IMlxu1i/HWsUs52OV+tCMmxb5QKX5TUnerE9lNcIF7OKrpt5wSKcJt9NEGja80peHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733706889; c=relaxed/simple;
-	bh=ZtTDcvzOIYHGQGMSxYfM2HcfFnOfvSC95OTzy5bAPTE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AQcdk4UZCLnjC6eEO/f03nXYXyJxyuf535mcgy+oh++sNhiVZ5D7lG07LewdS/tnmk1PBXlUajXMdFrEas+CLhuVGLlQd/JPS/MkJfs/V6ExsWNCiT/AovuRvYZxv8UIdxWU87mdQ21h2ayu2vM0OAVClmACbgjMXL3PZZlZ6Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPWbGfeT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 891E2C4CED2;
-	Mon,  9 Dec 2024 01:14:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733706889;
-	bh=ZtTDcvzOIYHGQGMSxYfM2HcfFnOfvSC95OTzy5bAPTE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UPWbGfeTUm95ED9Iv7Vr5O5Ew51eg1Ak6rLzc/rdtsAjHKq1dF44X355STZsdFX3c
-	 4R/fLxR+XlWuHyMEtiEA9VtstaYgURUKfgwXqcoN+0CZMP3uZCZxB9m1Us95q1shwd
-	 FfTC2O/kI6v4W/ZRVa2ZkhTCQ4Buff0zbw99NjKAUmUyyfPIIwzsDlZHTgwCPujyvL
-	 vbcZZZc5THw92CC/XMdZ+O77Kpa3K/Wlw1TN0bcY7vQEextB+pBK4JzwaUIOZJ32CF
-	 BSfCtjQ+cA87QSM5rAziXjhszn90Om+6Pg2Yk4CdOxLHm7YioekVWrEejv5P/ducrq
-	 fv7zGNePWHHtw==
-Message-ID: <973b3b99-77eb-4a27-9a4a-8547d2a2cc76@kernel.org>
-Date: Mon, 9 Dec 2024 10:14:47 +0900
+	s=arc-20240116; t=1733707049; c=relaxed/simple;
+	bh=dE/jq+z7gEezUtXTwEV7MPXDKrdJF9LEl+KvrvySFbg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=IYGtwAvlvam4SZW+yXH8Ge/C4TDDYVoixq2jfKNNqBtG0yt42SEFxl8tCUZ0NZopZpmC2coy3w/Kv+uWdMPRD9RQO8mExxZIj06AlUb7RlAsbOtDWXsrCZl7mo0wvCI6WgfTrv2L4lyLykNOuOWsa9aSmQUKUpBW7/o0Z/WwJeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=i1UwMysJ; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733707036;
+	bh=t+DmoviSdAlTAk3abSj0RVB34XICUcoxmmWptoeLCtM=;
+	h=Date:From:To:Cc:Subject:From;
+	b=i1UwMysJ1ZO+TD6/r/L/NuH6jt2pIFn/AEYRufyRUxUUSG9XNjWRZbrDr/17Gv8n8
+	 t4GbF1iqZzcKPKr+Y8pHVFtZAI336VhJhZwe+t7Vai5JUOW+rbnRiO4VE9akZ9a8DD
+	 7WoLcmFfKMlzHTSDlv1m7KSIf5oKzPB0bAJm97mDbfqBv4cJZ8qr6+GQA/ShNL1SBg
+	 8SF1uT4bNFkVVDcBY43BwUqSfOp6KqwNbcVBKHl+Hs3bP05YOyDTnta42yW05eKAkl
+	 tw3hdinSvuWLH5khcwbwTYpgyI4m6fEpW+wAO6K/gBdY2aDKbrtO2kZxw/dawa1Aei
+	 kcROYCcYV1kPw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y63qt32kcz4wj1;
+	Mon,  9 Dec 2024 12:17:14 +1100 (AEDT)
+Date: Mon, 9 Dec 2024 12:17:17 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>
+Cc: Peter Zijlstra <peterz@infradead.org>, Dmitry Osipenko
+ <dmitry.osipenko@collabora.com>, Vivek Kasireddy
+ <vivek.kasireddy@intel.com>, Intel Graphics
+ <intel-gfx@lists.freedesktop.org>, DRI <dri-devel@lists.freedesktop.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the drm-misc tree
+Message-ID: <20241209121717.2abe8026@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/3] ATA: Replace deprecated PCI functions
-To: Philipp Stanner <pstanner@redhat.com>, Niklas Cassel <cassel@kernel.org>,
- Mikael Pettersson <mikpelinux@gmail.com>
-Cc: linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241204171033.86804-2-pstanner@redhat.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241204171033.86804-2-pstanner@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/TGxxteLnVPJt1FrtE=UXr.l";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 12/5/24 02:10, Philipp Stanner wrote:
-> Hi,
-> 
-> many of you probably know that I'm trying to remove pcim_iomap_regions()
-> from the kernel. One of the more difficult users is ATA, because it's
-> the only subsystem I've seen so far that accesses that table
-> pcim_iomap_table() administrates.
-> 
-> This series only builds as a whole because of patch 1. That's why I
-> submit it as an RFC.
-> 
-> I want to know whether you agree with the basic idea, and whether your
-> subsystem wants this series to be squashed into a single commit that
-> builds.
+--Sig_/TGxxteLnVPJt1FrtE=UXr.l
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Overall, looks OK to me. But I think that at least patches 1 and 2 need to be
-squashed together. For patch 3, if you can have a minimal "make it compile"
-change in patch 2, you can keep the cleanup separate. Otherwise, squashing all
-patches together seems fine too.
+Hi all,
 
-> Another solution would be to provide a struct ata_host.iomap2 or
-> something like that, phase out the pcim_iomap_regions() users, and then
-> remove iomap2 again.
+After merging the drm-misc tree, today's linux-next build (x86_64
+allmodconfig) failed like this:
 
-That seems unnecessary.
+In file included from include/linux/module.h:22,
+                 from include/linux/device/driver.h:21,
+                 from include/linux/device.h:32,
+                 from include/linux/dma-mapping.h:5,
+                 from include/linux/dma-buf.h:21,
+                 from include/linux/virtio_dma_buf.h:11,
+                 from drivers/gpu/drm/virtio/virtgpu_prime.c:26:
+drivers/gpu/drm/virtio/virtgpu_prime.c:30:18: error: expected ',' or ';' be=
+fore 'DMA_BUF'
+   30 | MODULE_IMPORT_NS(DMA_BUF);
+      |                  ^~~~~~~
+include/linux/moduleparam.h:26:61: note: in definition of macro '__MODULE_I=
+NFO'
+   26 |                 =3D __MODULE_INFO_PREFIX __stringify(tag) "=3D" info
+      |                                                             ^~~~
+include/linux/module.h:299:33: note: in expansion of macro 'MODULE_INFO'
+  299 | #define MODULE_IMPORT_NS(ns)    MODULE_INFO(import_ns, ns)
+      |                                 ^~~~~~~~~~~
+drivers/gpu/drm/virtio/virtgpu_prime.c:30:1: note: in expansion of macro 'M=
+ODULE_IMPORT_NS'
+   30 | MODULE_IMPORT_NS(DMA_BUF);
+      | ^~~~~~~~~~~~~~~~
 
-> 
-> Please tell me your preferred way.
-> 
-> (This is the revived version of an old series from August. In case
-> someone is wondering)
-> 
-> Thx,
-> P.
-> 
-> Philipp Stanner (3):
->   ata: Allocate PCI iomap table statically
->   ata: Replace deprecated PCI functions
->   libata-sff: Simplify request of PCI resources
-> 
->  drivers/ata/ata_piix.c      |   7 +-
->  drivers/ata/libata-sff.c    | 130 +++++++++++++++++++++++-------------
->  drivers/ata/pata_atp867x.c  |  13 ++--
->  drivers/ata/pata_hpt3x3.c   |  10 +--
->  drivers/ata/pata_ninja32.c  |  11 +--
->  drivers/ata/pata_pdc2027x.c |  11 ++-
->  drivers/ata/pata_sil680.c   |  12 ++--
->  drivers/ata/pdc_adma.c      |   9 ++-
->  drivers/ata/sata_inic162x.c |  10 ++-
->  drivers/ata/sata_mv.c       |   9 +--
->  drivers/ata/sata_nv.c       |   8 +--
->  drivers/ata/sata_promise.c  |   8 ++-
->  drivers/ata/sata_qstor.c    |   7 +-
->  drivers/ata/sata_sil.c      |   8 ++-
->  drivers/ata/sata_sil24.c    |  20 +++---
->  drivers/ata/sata_sis.c      |   8 +--
->  drivers/ata/sata_svw.c      |  10 +--
->  drivers/ata/sata_sx4.c      |  19 +++++-
->  drivers/ata/sata_via.c      |  31 +++++----
->  drivers/ata/sata_vsc.c      |   8 ++-
->  include/linux/libata.h      |   7 +-
->  21 files changed, 216 insertions(+), 140 deletions(-)
-> 
+Caused by commit
 
+  25c3fd1183c0 ("drm/virtio: Add a helper to map and note the dma addrs and=
+ lengths")
 
--- 
-Damien Le Moal
-Western Digital Research
+Interacting with commit
+
+  cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
+
+from Linus' tree.
+
+I have applied the following merge fix patch for today.
+
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Mon, 9 Dec 2024 12:08:24 +1100
+Subject: [PATCH] fix up for "drm/virtio: Add a helper to map and note the d=
+ma
+ addrs and lengths"
+
+interacting with commit
+
+  cdd30ebb1b9f ("module: Convert symbol namespace to string literal")
+
+from Linus' tree.
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/gpu/drm/virtio/virtgpu_prime.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/virtio/virtgpu_prime.c b/drivers/gpu/drm/virti=
+o/virtgpu_prime.c
+index 688810d1b611..b3664c12843d 100644
+--- a/drivers/gpu/drm/virtio/virtgpu_prime.c
++++ b/drivers/gpu/drm/virtio/virtgpu_prime.c
+@@ -27,7 +27,7 @@
+=20
+ #include "virtgpu_drv.h"
+=20
+-MODULE_IMPORT_NS(DMA_BUF);
++MODULE_IMPORT_NS("DMA_BUF");
+=20
+ static int virtgpu_virtio_get_uuid(struct dma_buf *buf,
+ 				   uuid_t *uuid)
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/TGxxteLnVPJt1FrtE=UXr.l
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWRR0ACgkQAVBC80lX
+0Gya1gf+L7+ybxyfZSaJhxvqPO9tsfECMUSA6w/dj8rcodhy5CrYOfDWkt/avS49
+F41fQ1QqqvmgOpqT3Rj/mKBlFCNlZAj04bNukZcgy/v3CLGYcQq/QY+n4deKDAUp
+bMnQsChNIXqI/bwyZ7laLU+3HAPim0tF9b6vA2t2vjKRNbeYigrjVc2vW+RXRI0T
+RRRGkGZdepm37Sv1/pzIQFstyPNum6hutFpYvQ/xn0NA5EYzKC0xBfw4Veng9rdU
+bq6xvanR8Ldlsz4kAfR+sUHZepeR6UG3bC0R95vSZsj/1up13gWn09lp7zQvh36z
+L7EugUQRrzyAiojD3i2m8Y2aswKoiA==
+=c+iH
+-----END PGP SIGNATURE-----
+
+--Sig_/TGxxteLnVPJt1FrtE=UXr.l--
 
