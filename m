@@ -1,214 +1,258 @@
-Return-Path: <linux-kernel+bounces-436976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436977-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 747E69E8D78
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:32:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01AC79E8D7B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:33:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E0218853D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:32:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8232161EF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:32:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAC5B215170;
-	Mon,  9 Dec 2024 08:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G9sD4D13"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502C82156E5;
+	Mon,  9 Dec 2024 08:32:52 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6E112CDAE;
-	Mon,  9 Dec 2024 08:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB5F212CDAE;
+	Mon,  9 Dec 2024 08:32:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733733117; cv=none; b=GyN2q3swJFgbQxQvSXe0sMGkkDCvK/7JML3JN5KiQu3aUzsNL4AO7fN4W9qQrprDke4DRqB3Lp47UAa/qZeTaM0RMyz1iGON+dhzxi088j5pEiuA42+61TFcFcMTPlIo4dtKkeN/pTWTz7MZjqNRQQAanJR88ViMFtAs5ZCGS4Q=
+	t=1733733171; cv=none; b=AHayFVwGUFRFLMHhMIBBbZVn8AzVkWJniUubao16h1i/MvtoMij22PTSvj+V5pjXyTWBwh5/MQzP6gzURuVvrgpsC9h4A/vg2TS8Ogkb32wLX85z4hpI5XxH/b9mcWxsOqQmyJyrj4HcHtsSUW+/BCYYUXfxOwy121+nPI37sDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733733117; c=relaxed/simple;
-	bh=OXDcmuj6dJBmZafC8rFQNhhumNNdoBeDEizT1mjedQs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cJd0mtrMDEA3WDO/jCmvy/hepxG3U0Yq+7s3/3sKT7E7zI34mgRBXqxqUKHJzCKfh3wKSrbouH5GlFIYJqjcrLUPj4rASu4Vt4N2PtZG4NGJyXuNAnUo/ngvMOj/08ICvHl7dxV6JJimapOOyO5VpqWZkgYlilPRvoKTYh0KH/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G9sD4D13; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB89AC4CED1;
-	Mon,  9 Dec 2024 08:31:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733733116;
-	bh=OXDcmuj6dJBmZafC8rFQNhhumNNdoBeDEizT1mjedQs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=G9sD4D13Apsbs2y/i67y1IztMC2/fYb3d/k3lTv9i44pvEibLhHW0uk2dVroGUVdL
-	 37ij1KxX9LFj6jezjepyZ+gBd+BmMt7C0qmq5+PyYoMobULxydWhPU6h5MdgyeQpfx
-	 6ffYK8RA6teMWab2+SHov+yzaCMQyExDRURx7JOL1rzhdoqQzRH6FlGyS7oPuxvJcx
-	 iQ8ef/eMb0K5qOuIUkBM0LMxh6yrja6UIqzn/Gkuvw9G4ePZ7fVBQWxMmSQV6DExvP
-	 myG5sgCT+qqCqfAhcaXIXL5j7+UyeKZBMJnF5U6dpYlpuyEKNR+Ljld1UOIDlnzBSc
-	 bokz7daDF3pnQ==
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-5401c52000fso836206e87.2;
-        Mon, 09 Dec 2024 00:31:56 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCV29L5zWvcBiFCWQRQ9Qvm615llkFxIO22JvpAfcpO9hh2gLZqUyGziNW3mL/SU0NZVmaaprae/9imsuFs=@vger.kernel.org, AJvYcCWIo9nmxoLwGchhPfVv99/wXZ3mWcX6WxmxWhnea3Ba8/F9lRZVM0wZwmvDDvsWJRgsMera2s/h5SI7+eFp@vger.kernel.org, AJvYcCWsfc3GIyBIK8XE8tPbUTX1Y187jx0z843Mewb09VPx1nCyAQ/fCvCXM3nmV464O9JNnYHzXTKK@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeF3neRozDYAMl2wfVKTxubFHCVwRdQ2yjQYe0JQBVXCFUzAXK
-	xYNxe7afu27wy3J5BIlzwVgao1WX9TKCrtTyCy9zBH5AI2tyVhb5u5iPdiskTJ/wyKM7txF/6RT
-	jIXjrOb9Wg/lDs0ana0C3PXDZ7SA=
-X-Google-Smtp-Source: AGHT+IGMWZRZQy+J3n8zTwDkOHS4vYSTqxdMj4RkRBjWA19n5LCCT8s31zfp9zMsoNVhKTJA/CXUmvRP8sHSBYw8boA=
-X-Received: by 2002:a05:6512:e9f:b0:53f:5e23:fb72 with SMTP id
- 2adb3069b0e04-53f5e23fd21mr2030810e87.57.1733733114978; Mon, 09 Dec 2024
- 00:31:54 -0800 (PST)
+	s=arc-20240116; t=1733733171; c=relaxed/simple;
+	bh=VUUC3f3CJjdejIJiTZlLnStIkUpffnYCpassVttA12s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=os/cVX6NvvbEVt/huybMbDLu+1Qj3rbzMi4ipHICJc+G1axIVfd1/r2QbEcyI+KK8nO+K4xyCcDQJpxB0W99XulsochhUa1eGnW/fYsBG9uH2nP2E7GEgARkt2TDHvr+4iAkkeE4jqNenlLQkkgZvIUJdqwYYEp0rHh5HcVTFAw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Y6FTz3vwZz4f3lft;
+	Mon,  9 Dec 2024 16:32:23 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B57CE1A0568;
+	Mon,  9 Dec 2024 16:32:43 +0800 (CST)
+Received: from [10.174.179.80] (unknown [10.174.179.80])
+	by APP4 (Coremail) with SMTP id gCh0CgCXc4cpq1ZnvytgEA--.16063S3;
+	Mon, 09 Dec 2024 16:32:43 +0800 (CST)
+Message-ID: <5049c794-9a92-462c-a455-2bdf94cdebef@huaweicloud.com>
+Date: Mon, 9 Dec 2024 16:32:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206085810.112341-1-chenhuacai@loongson.cn>
- <2024120635-wham-campsite-b62b@gregkh> <CAAhV-H4Db0tVrqcfXHceJeODgnK0ggHpx9_6vwXAAV0LohCD-w@mail.gmail.com>
- <2024120748-preaching-reshape-06e9@gregkh> <ccb1fa9034b177042db8fcbe7a95a2a5b466dc30.camel@xry111.site>
-In-Reply-To: <ccb1fa9034b177042db8fcbe7a95a2a5b466dc30.camel@xry111.site>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Mon, 9 Dec 2024 09:31:43 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXEV+HC+2HMLhDaLfAufQLrXRs2J7akMNr1mjejDYc7kdw@mail.gmail.com>
-Message-ID: <CAMj1kXEV+HC+2HMLhDaLfAufQLrXRs2J7akMNr1mjejDYc7kdw@mail.gmail.com>
-Subject: Re: [PATCH 6.1&6.6 0/3] kbuild: Avoid weak external linkage where possible
-To: Xi Ruoyao <xry111@xry111.site>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Huacai Chen <chenhuacai@kernel.org>, 
-	Huacai Chen <chenhuacai@loongson.cn>, Sasha Levin <sashal@kernel.org>, 
-	Xuerui Wang <kernel@xen0n.name>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Nicolas Schier <nicolas@fjasle.eu>, stable@vger.kernel.org, linux-kbuild@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/27] ext4: introduce seq counter for the extent status
+ entry
+To: Jan Kara <jack@suse.cz>
+Cc: linux-ext4@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, tytso@mit.edu, adilger.kernel@dilger.ca,
+ ritesh.list@gmail.com, hch@infradead.org, djwong@kernel.org,
+ david@fromorbit.com, zokeefe@google.com, yi.zhang@huawei.com,
+ chengzhihao1@huawei.com, yukuai3@huawei.com, yangerkun@huawei.com
+References: <20241022111059.2566137-1-yi.zhang@huaweicloud.com>
+ <20241022111059.2566137-13-yi.zhang@huaweicloud.com>
+ <20241204124221.aix7qxjl2n4ya3b7@quack3>
+ <c831732e-38c5-4a82-ab30-de17cff29584@huaweicloud.com>
+ <20241206162102.w4hw35ims5sdf4ik@quack3>
+Content-Language: en-US
+From: Zhang Yi <yi.zhang@huaweicloud.com>
+In-Reply-To: <20241206162102.w4hw35ims5sdf4ik@quack3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-CM-TRANSID:gCh0CgCXc4cpq1ZnvytgEA--.16063S3
+X-Coremail-Antispam: 1UD129KBjvJXoWxtrW8tFyxJry5CFy3JFWfAFb_yoW3WryxpF
+	ZIkF1DKF4DJ340kryIq3W7XFyrK34rGrW7GFnIgr10y3Z8WFyS9F1Ykayj9F18ur4vqw4j
+	vF48K347WayYvFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: d1lo6xhdqjqx5xdzvxpfor3voofrz/
 
-On Sat, 7 Dec 2024 at 11:46, Xi Ruoyao <xry111@xry111.site> wrote:
->
-> On Sat, 2024-12-07 at 10:32 +0100, Greg Kroah-Hartman wrote:
-> > On Sat, Dec 07, 2024 at 05:21:00PM +0800, Huacai Chen wrote:
-> > > Hi, Greg,
-> > >
-> > > On Fri, Dec 6, 2024 at 9:04=E2=80=AFPM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Fri, Dec 06, 2024 at 04:58:07PM +0800, Huacai Chen wrote:
-> > > > > Backport this series to 6.1&6.6 because LoongArch gets build erro=
-rs with
-> > > > > latest binutils which has commit 599df6e2db17d1c4 ("ld, LoongArch=
-: print
-> > > > > error about linking without -fPIC or -fPIE flag in more detail").
-> > > > >
-> > > > >   CC      .vmlinux.export.o
-> > > > >   UPD     include/generated/utsversion.h
-> > > > >   CC      init/version-timestamp.o
-> > > > >   LD      .tmp_vmlinux.kallsyms1
-> > > > > loongarch64-unknown-linux-gnu-ld: kernel/kallsyms.o:(.text+0): re=
-location R_LARCH_PCALA_HI20 against `kallsyms_markers` can not be used when=
- making a PIE object; recompile with -fPIE
-> > > > > loongarch64-unknown-linux-gnu-ld: kernel/crash_core.o:(.init.text=
-+0x984): relocation R_LARCH_PCALA_HI20 against `kallsyms_names` can not be =
-used when making a PIE object; recompile with -fPIE
-> > > > > loongarch64-unknown-linux-gnu-ld: kernel/bpf/btf.o:(.text+0xcc7c)=
-: relocation R_LARCH_PCALA_HI20 against `__start_BTF` can not be used when =
-making a PIE object; recompile with -fPIE
-> > > > > loongarch64-unknown-linux-gnu-ld: BFD (GNU Binutils) 2.43.50.2024=
-1126 assertion fail ../../bfd/elfnn-loongarch.c:2673
-> > > > >
-> > > > > In theory 5.10&5.15 also need this, but since LoongArch get upstr=
-eam at
-> > > > > 5.19, so I just ignore them because there is no error report abou=
-t other
-> > > > > archs now.
-> > > >
-> > > > Odd, why doesn't this affect other arches as well using new binutil=
-s?  I
-> > > > hate to have to backport all of this just for one arch, as that fee=
-ls
-> > > > odd.
-> > > The related binutils commit is only for LoongArch, so build errors
-> > > only occured on LoongArch. I don't know why other archs have no
-> > > problem exactly, but may be related to their CFLAGS (for example, if
-> > > we disable CONFIG_RELOCATABLE, LoongArch also has no build errors
-> > > because CFLAGS changes).
-> >
-> > does LoongArch depend on that option?
->
-> "That option" is -mdirect-extern-access.  Without it we'll use GOT in
-> the kernel image to address anything out of the current TU, bloating the
-> kernel size and making it slower.
->
+On 2024/12/7 0:21, Jan Kara wrote:
+> On Fri 06-12-24 16:55:01, Zhang Yi wrote:
+>> On 2024/12/4 20:42, Jan Kara wrote:
+>>> On Tue 22-10-24 19:10:43, Zhang Yi wrote:
+>>>> From: Zhang Yi <yi.zhang@huawei.com>
+>>>>
+>>>> In the iomap_write_iter(), the iomap buffered write frame does not hold
+>>>> any locks between querying the inode extent mapping info and performing
+>>>> page cache writes. As a result, the extent mapping can be changed due to
+>>>> concurrent I/O in flight. Similarly, in the iomap_writepage_map(), the
+>>>> write-back process faces a similar problem: concurrent changes can
+>>>> invalidate the extent mapping before the I/O is submitted.
+>>>>
+>>>> Therefore, both of these processes must recheck the mapping info after
+>>>> acquiring the folio lock. To address this, similar to XFS, we propose
+>>>> introducing an extent sequence number to serve as a validity cookie for
+>>>> the extent. We will increment this number whenever the extent status
+>>>> tree changes, thereby preparing for the buffered write iomap conversion.
+>>>> Besides, it also changes the trace code style to make checkpatch.pl
+>>>> happy.
+>>>>
+>>>> Signed-off-by: Zhang Yi <yi.zhang@huawei.com>
+>>>
+>>> Overall using some sequence counter makes sense.
+>>>
+>>>> diff --git a/fs/ext4/extents_status.c b/fs/ext4/extents_status.c
+>>>> index c786691dabd3..bea4f87db502 100644
+>>>> --- a/fs/ext4/extents_status.c
+>>>> +++ b/fs/ext4/extents_status.c
+>>>> @@ -204,6 +204,13 @@ static inline ext4_lblk_t ext4_es_end(struct extent_status *es)
+>>>>  	return es->es_lblk + es->es_len - 1;
+>>>>  }
+>>>>  
+>>>> +static inline void ext4_es_inc_seq(struct inode *inode)
+>>>> +{
+>>>> +	struct ext4_inode_info *ei = EXT4_I(inode);
+>>>> +
+>>>> +	WRITE_ONCE(ei->i_es_seq, READ_ONCE(ei->i_es_seq) + 1);
+>>>> +}
+>>>
+>>> This looks potentially dangerous because we can loose i_es_seq updates this
+>>> way. Like
+>>>
+>>> CPU1					CPU2
+>>> x = READ_ONCE(ei->i_es_seq)
+>>> 					x = READ_ONCE(ei->i_es_seq)
+>>> 					WRITE_ONCE(ei->i_es_seq, x + 1)
+>>> 					...
+>>> 					potentially many times
+>>> WRITE_ONCE(ei->i_es_seq, x + 1)
+>>>   -> the counter goes back leading to possibly false equality checks
+>>>
+>>
+>> In my current implementation, I don't think this race condition can
+>> happen since all ext4_es_inc_seq() invocations are under
+>> EXT4_I(inode)->i_es_lock. So I think it works fine now, or was I
+>> missed something?
+> 
+> Hum, as far as I've checked, at least the place in ext4_es_insert_extent()
+> where you call ext4_es_inc_seq() doesn't hold i_es_lock (yet). If you meant
+> to protect the updates by i_es_lock, then move the call sites and please
+> add a comment about it. Also it should be enough to do:
+> 
+> WRITE_ONCE(ei->i_es_seq, ei->i_es_seq + 1);
+> 
+> since we cannot be really racing with other writers.
 
-An alternative to this might be to add
+Oh, sorry, I mentioned the wrong lock. What I intended to say is
+i_data_sem.
 
--include $(srctree)/include/linux/hidden.h
+Currently, all instances where we update the extent status tree will
+hold i_data_sem in write mode, preventing any race conditions in these
+scenarios. However, we may hold i_data_sem in read mode while loading
+a new entry from the extent tree (e.g., ext4_map_query_blocks()). In
+these cases, a race condition could occur, but it doesn't modify the
+extents, and the new loading range should not be related to the
+mapping range we obtained (If it covers with the range we have, it
+must first remove the old extents entry, which is protected by
+i_data_sem, ensuring that i_es_seq increases by at least one).
+Therefore, it should not use stale mapping and trigger any real issues.
 
-to KBUILD_CFLAGS_KERNEL, so that the compiler understands that all
-external references are resolved at link time, not at load/run time.
+However, after thinking about it again, I agree with you that this
+approach is subtle, fragile and make us hard to understand, now I think
+we should move it into i_es_lock.
 
-> The problem is the linker failed to handle a direct access to undefined
-> weak symbol on LoongArch.
-...
-> With Binutils trunk, an error is emitted instead of silently producing
-> buggy executable.  Still I don't think emitting an error is correct when
-> linking a static PIE (our vmlinux is a static PIE).  Instead the linker
-> should just rewrite
->
->     pcalau12i rd, %pc_hi20(undef_weak)
->
-> to
->
->     move rd, $zero
->
+> 
+>>> I think you'll need to use atomic_t and appropriate functions here.
+>>>
+>>>> @@ -872,6 +879,7 @@ void ext4_es_insert_extent(struct inode *inode, ext4_lblk_t lblk,
+>>>>  	BUG_ON(end < lblk);
+>>>>  	WARN_ON_ONCE(status & EXTENT_STATUS_DELAYED);
+>>>>  
+>>>> +	ext4_es_inc_seq(inode);
+>>>
+>>> I'm somewhat wondering: Are extent status tree modifications the right
+>>> place to advance the sequence counter? The counter needs to advance
+>>> whenever the mapping information changes. This means that we'd be
+>>> needlessly advancing the counter (and thus possibly forcing retries) when
+>>> we are just adding new information from ordinary extent tree into cache.
+>>> Also someone can be doing extent tree manipulations without touching extent
+>>> status tree (if the information was already pruned from there). 
+>>
+>> Sorry, I don't quite understand here. IIUC, we can't modify the extent
+>> tree without also touching extent status tree; otherwise, the extent
+>> status tree will become stale, potentially leading to undesirable and
+>> unexpected outcomes later on, as the extent lookup paths rely on and
+>> always trust the status tree. If this situation happens, would it be
+>> considered a bug? Additionally, I have checked the code but didn't find
+>> any concrete cases where this could happen. Was I overlooked something?
+> 
+> What I'm worried about is that this seems a bit fragile because e.g. in
+> ext4_collapse_range() we do:
+> 
+> ext4_es_remove_extent(inode, start, EXT_MAX_BLOCKS - start)
+> <now go and manipulate the extent tree>
+> 
+> So if somebody managed to sneak in between ext4_es_remove_extent() and
+> the extent tree manipulation, he could get a block mapping which is shortly
+> after invalidated by the extent tree changes. And as I'm checking now,
+> writeback code *can* sneak in there because during extent tree
+> manipulations we call ext4_datasem_ensure_credits() which can drop
+> i_data_sem to restart a transaction.
+> 
+> Now we do writeout & invalidate page cache before we start to do these
+> extent tree dances so I don't see how this could lead to *actual* use
+> after free issues but it makes me somewhat nervous. So that's why I'd like
+> to have some clear rules from which it is obvious that the counter makes
+> sure we do not use stale mappings.
 
-Is that transformation even possible at link time? Isn't pc_hi20 part of a =
-pair?
+Yes, I see. I think the rule should be as follows:
 
-> Also the "recompile with -fPIE" suggestion in the error message is
-> completely misleading.  We are *already* compiling relocatable kernel
-> with -fPIE.
->
+First, when the iomap infrastructure is creating or querying file
+mapping information, we must ensure that the mapping information
+always passes through the extent status tree, which means
+ext4_map_blocks(), ext4_map_query_blocks(), and
+ext4_map_create_blocks() should cache the extent status entries that
+we intend to use.
 
-And this is the most important difference between LoongArch and the
-other arches - LoongArch already uses PIC code explicitly. Other
-architectures use ordinary position dependent codegen and linking, or
--in the case of arm64- use position dependent codegen and PIE linking,
-where the fact that this is even possible is a happy accident.
+Second, when updating the extent tree, we must hold the i_data_sem in
+write mode and update the extent status tree atomically. Additionally,
+if we cannot update the extent tree while holding a single i_data_sem,
+we should first remove all related extent status entries within the
+specified range, then manipulate the extent tree, ensuring that the
+extent status entries are always up-to-date if they exist (as
+ext4_collapse_range() does).
 
-...
-> > What happens if it is enabled for other arches?  Why doesn't it break
-> > them?
->
-> The other arches have copy relocation, so their -mdirect-extern-access
-> is intended to work with dynamically linked executable, thus it's the
-> default and not as strong as ours.  On them -mdirect-extern-access still
-> uses GOT to address weak symbols.
->
-> We don't have copy relocation, thus our default is -mno-direct-extern-
-> access, and -mdirect-extern-access is only intended for static
-> executables (including OS kernel, embedded firmware, etc).  So it's
-> designed to be stronger, unfortunately the toolchain failed to implement
-> it correctly.
->
+Finally, if we want to manipulate the extent tree without caching, we
+should also remove the extent status entries first.
 
-This has nothing to do with copy relocations - those are only relevant
-when shared libraries come into play.
+In summary, ensure that the extent status tree and the extent tree are
+consistent under one i_data_sem. If we can't, remove the extent status
+entry before manipulating the extent tree.
 
-Other architectures don't break because they either a) use position
-dependent codegen with absolute addressing, and simply resolve
-undefined weak references as 0x0, or b) use GOT indirection, where the
-reference is a GOT load and the address in the GOT is set to 0x0.
+Do you agree?
 
-So the issue here appears to be that the compiler fails to emit a GOT
-entry for this reference, even though it is performing PIC codegen.
-This is probably due to -mdirect-extern-access being taken into
-account too strictly. The upshot is that a relative reference is
-emitted to an undefined symbol, and it is impossible for a relative
-reference to [reliably] yield NULL, and so the reference produces a
-bogus non-NULL address.
+> 
+>>> So I think
+>>> needs some very good documentation what are the expectations from the
+>>> sequence counter and explanations why they are satisfied so that we don't
+>>> break this in the future.
+>>
+>> Yeah, it's a good suggestion, where do you suggest putting this
+>> documentation, how about in the front of extents_status.c?
+> 
+> I think at the function incrementing the counter would be fine.
+> 
 
-As these patches deal with symbols that are only undefined in the
-preliminary first linker pass, and are guaranteed to exist afterwards,
-silently emitting a bogus relative reference was not a problem in
-these cases. Obviously, throwing an error is.
+Sure, thanks for pointing this out.
 
-The patches should be rather harmless in practice, but I know Masahiro
-did not like the approach for the kallsyms markers, and made some
-subsequent modifications to it.
+Thanks,
+Yi.
 
-Given that this is relatively new toolchain behavior, I'd suggest
-fixing the compiler to emit weak external references via GOT entries
-even when  -mdirect-extern-access is in effect.
 
