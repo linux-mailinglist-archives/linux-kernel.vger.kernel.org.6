@@ -1,177 +1,218 @@
-Return-Path: <linux-kernel+bounces-436927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 950BE9E8CB8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:58:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D258D9E8C96
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:49:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BAC3A160EA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:49:49 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CE6221506E;
+	Mon,  9 Dec 2024 07:49:45 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47412281C1C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:58:00 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B9121507B;
-	Mon,  9 Dec 2024 07:57:56 +0000 (UTC)
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DD3521506F;
-	Mon,  9 Dec 2024 07:57:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D539214A64;
+	Mon,  9 Dec 2024 07:49:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731076; cv=none; b=kyfeeEMbepwSXuECJmuRKe6QEuIbe9dmJQc75UfOA3ejNQ7S12cp6ab12DoF2I2NawF0kXyWLFO6NmaKafLQruYvE8FKvMcFRahKm3YgNf0R8JKSSJ5VrzyOyryiCzsiGPRVcnBxe0c/48isQ080NWU9qIPBcNp8n/AtkFSIt4Y=
+	t=1733730584; cv=none; b=ca6rORfab8RrKMkKJoZo9euXHOWiYqu/Z9P5Zl6+XS0mDSPZuk/57ThCHMWi4vyypPQVON/lNn2laQJsl+Qj62tBM/060DgBfB4vuUwnGVPtpXCJh2xqSq9nUziIJdSjjRbtfR9uhBWVXRmUvVP96SRG0mp2cW3Ea+IQ876DV80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731076; c=relaxed/simple;
-	bh=RIa2kOzACgFkRzY7fcBR76qUkQAYeIrmNbpzmK9NbQg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iDkR7grrMXo70ZX0b9iP9cysBQrAVkUyDCjNvbZqIlUMnWhk+wx+1RcjAnkVVqe0BtJCO734kC/xOOMkyA9xovrHE9DJV0ndy7VGeo2eXDYPHvw8nR703EwSudBz0wFw70D3LmThECpk9AQTwRsk3PrRZM9aTeJkSaU0p/9OswI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b6d08cb7c2so63820285a.2;
-        Sun, 08 Dec 2024 23:57:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733731072; x=1734335872;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qk7zs9BOOihPQGUTMvGHn5Ym+4dxQx5CVpUjftA0HQQ=;
-        b=DfaE6H+EIVEDn5aICzm3VT2nPEudRudn9K3358KK92Gx5vdp97TzJXjZHqi4yorKuC
-         vHrc3rLUepeYGKVuZgpdgsDV3sSMpu0R4rYbbnw3WvMQwmF6YgOJMrbOT6snw4zBRrxu
-         Uif71fp1vMGnUtW9UXzuLjnHJcxP1XqRrTG4eZK85PYAZeEoJb5FQn5szyPXVx/kVsG+
-         lEha7R3sBLxKy/8qiBRJzdP6DxgRg+hRNTHWK3KnNmg/TaOqAZBe2KqOv427BlEEDyKk
-         aetFTPC4WEgwQD4AqQYX0lV+hyEZLYCNRqm6uKf1SlP6W4sT0lccFca0Dx3f1OwYEiEG
-         +zeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUPLtQicr0nxM4FafVz2l0I4ozMqiBpSP7OTN0VebLoBP27DmmEP5C9UCQFN29cjoUabcphekHE9LRz@vger.kernel.org, AJvYcCVO/lgFUkHfxiazDeguEQxx0iH9FobSuqXkj7nj6LfRk7bk9jQiJ2+SeaEiY95+JQr2Pj+ZffCM3S6KCWpXbYTq5uM=@vger.kernel.org, AJvYcCXZrfggQd2L0WylnMGeZ2zBHQZf6brL6BRXkZvDYT3dX4cV4TrPlStp70vOcMRFWsPwlhhLkHq1LYAK@vger.kernel.org, AJvYcCXuRLsFIu6XiE1a03T451dvABVP1Yijcr31E59nZL3fhobyLy0PEAT8VuqFw/7d8WysV6qP3wyQMHZ20bxQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yztk4TRb0jojauNsfJLqA7iKfSteaYMngnBIpAc1R6cAEtI6VM8
-	LFHGqT+CUe5GT9jRpMW4u6RYg+kcy9RY1Quy45ef7Qb9OmKNqXBJd4XZs84c
-X-Gm-Gg: ASbGnctH4E7PC7cViQrFNpE0zl1jZ8mKq0zVLIGX6iT6pc7/9r3fWsAe7+DKRhYcYhY
-	WkUv7WrKgitAAacyjPJHdzEMbqSIJWLkFI72ChqcjVNr+Q4zvZaaF51fK7p+vFykIi/dJUCyTEF
-	Fcj6gVR9JQdWRR4yA1rCgDGHx5TQDljaNvzrF0y+rQklLbjIfDuKY96MxGfNqSKv6hiWSao9hUy
-	+eBihXvug8rSSjrb7jeeE0S3F+vZDbggtMdcqcAHDprmhJvR3JvEWlE9CkHK5BypN/LlLJXB+6k
-	7bWUpJM4O9Ta6Rkd
-X-Google-Smtp-Source: AGHT+IGUnQ97y15elEkOy0iEyVN6f6wNoJWVGV7xDQz21NOXLb90IgiciAMUIzQASbbztlkrcZ3E6g==
-X-Received: by 2002:a05:620a:4897:b0:7b6:c92e:2e6d with SMTP id af79cd13be357-7b6c92e2f11mr949687385a.52.1733731072282;
-        Sun, 08 Dec 2024 23:57:52 -0800 (PST)
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com. [209.85.160.173])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6d4e837a3sm83590585a.65.2024.12.08.23.57.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 08 Dec 2024 23:57:51 -0800 (PST)
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46760d9e4daso5252871cf.0;
-        Sun, 08 Dec 2024 23:57:50 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUIXbnVTtcGyi0l927ur3+fMUXE9ot88QfkeC6Sgj6Uwt4IQqqCfriaJMo7BkERmsC3HAnVVpoW9xd8WnKv@vger.kernel.org, AJvYcCVDNDHnuLQhy/CUJpH27ljuzJwtpKhayGeDVE+rdkC0AYYVW470qQSPi5S8UdsIvw7Vwx5hPWMTPpHV@vger.kernel.org, AJvYcCW0wNJNaBGXhDiv5VaXrCKabbGQMOa94Ke6pcyTK2CQQchUlDdpiyqJuRbkXgaOZY58Zgk3zK1wMo1V6cEw6nXwXB4=@vger.kernel.org, AJvYcCXyMoeCCBrSMt8FWhHL8oD7SWYMbbuUFN81JU3YNRFmQyo23LU2YHRn7T69IUBwiuujOz9v9ma8fNXG@vger.kernel.org
-X-Received: by 2002:a05:6102:1152:b0:4af:e135:1ca9 with SMTP id
- ada2fe7eead31-4afe1356f47mr3950083137.13.1733730570269; Sun, 08 Dec 2024
- 23:49:30 -0800 (PST)
+	s=arc-20240116; t=1733730584; c=relaxed/simple;
+	bh=R8kCdwKbk8Fy59TANbitmY9vXQFcRjYWd5ShkaVdGAs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YcXCDDhwY4gHg1ZQ3oZ+bkTP0zOx6DbnHjLwHCivLVAUxxAbV4nWfVguDDqM3IVnxu3CMHV8uDQIVDBC8jeIlr9KYmNbBlqM6se5TbSKSjN4ranrAs086Z7yWoK0R8TEKueRuxTHo00BvBzmtXVKTzQyDXYpv0w9HpurIOIsmJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Y6DT75Q7Bz11MCC;
+	Mon,  9 Dec 2024 15:46:35 +0800 (CST)
+Received: from kwepemh100008.china.huawei.com (unknown [7.202.181.93])
+	by mail.maildlp.com (Postfix) with ESMTPS id DCAF6180357;
+	Mon,  9 Dec 2024 15:49:38 +0800 (CST)
+Received: from [10.67.121.90] (10.67.121.90) by kwepemh100008.china.huawei.com
+ (7.202.181.93) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Mon, 9 Dec
+ 2024 15:49:38 +0800
+Message-ID: <57e94a65-d9df-4114-bcee-998addb6e60f@huawei.com>
+Date: Mon, 9 Dec 2024 15:49:37 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
- <20241206-rcar-gh-dsi-v3-5-d74c2166fa15@ideasonboard.com> <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
- <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
-In-Reply-To: <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 08:49:18 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
-Message-ID: <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
-Subject: Re: [PATCH v3 05/10] clk: renesas: r8a779h0: Add display clocks
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	LUU HOAI <hoai.luu.ub@renesas.com>, Jagan Teki <jagan@amarulasolutions.com>, 
-	Sam Ravnborg <sam@ravnborg.org>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-clk@vger.kernel.org, 
-	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ACPI: CPPC: Refactor register get and set ABIs
+To: Pierre Gondois <pierre.gondois@arm.com>, <rafael@kernel.org>,
+	<lenb@kernel.org>, <robert.moore@intel.com>, <viresh.kumar@linaro.org>
+CC: <acpica-devel@lists.linux.dev>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	<zhanjie9@hisilicon.com>, <lihuisong@huawei.com>, <fanghao11@huawei.com>,
+	"zhenglifeng (A)" <zhenglifeng1@huawei.com>
+References: <20241114084816.1128647-1-zhenglifeng1@huawei.com>
+ <20241114084816.1128647-2-zhenglifeng1@huawei.com>
+ <0f113d9d-faac-420a-9c75-9b620bf5c3f6@arm.com>
+From: "zhenglifeng (A)" <zhenglifeng1@huawei.com>
+In-Reply-To: <0f113d9d-faac-420a-9c75-9b620bf5c3f6@arm.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemh100008.china.huawei.com (7.202.181.93)
 
-Hi Tomi,
+Hello Pierre，
 
-On Mon, Dec 9, 2024 at 6:26=E2=80=AFAM Tomi Valkeinen
-<tomi.valkeinen@ideasonboard.com> wrote:
-> On 06/12/2024 15:43, Geert Uytterhoeven wrote:
-> > On Fri, Dec 6, 2024 at 10:33=E2=80=AFAM Tomi Valkeinen
-> > <tomi.valkeinen@ideasonboard.com> wrote:
-> >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
-> >>
-> >> Add display related clocks for DU, DSI, FCPVD, and VSPD.
-> >>
-> >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com=
->
-> >> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.c=
-om>
-> >> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > i.e. will queue in renesas-clk for v6.14.
-> >
-> >> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> >> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> >> @@ -179,6 +179,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks=
-[] __initconst =3D {
-> >>          DEF_MOD("canfd0",       328,    R8A779H0_CLK_SASYNCPERD2),
-> >>          DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
-> >>          DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
-> >> +       DEF_MOD("dis0",         411,    R8A779H0_CLK_S0D3),
-> >> +       DEF_MOD("dsitxlink0",   415,    R8A779H0_CLK_DSIREF),
-> >> +       DEF_MOD("fcpvd0",       508,    R8A779H0_CLK_S0D3),
-> >>          DEF_MOD("hscif0",       514,    R8A779H0_CLK_SASYNCPERD1),
-> >>          DEF_MOD("hscif1",       515,    R8A779H0_CLK_SASYNCPERD1),
-> >>          DEF_MOD("hscif2",       516,    R8A779H0_CLK_SASYNCPERD1),
-> >> @@ -227,6 +230,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks=
-[] __initconst =3D {
-> >>          DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D4_VIO),
-> >>          DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D4_VIO),
-> >>          DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D4_VIO),
-> >> +       DEF_MOD("vspd0",        830,    R8A779H0_CLK_S0D1_VIO),
-> >>          DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
-> >>          DEF_MOD("cmt0",         910,    R8A779H0_CLK_R),
-> >>          DEF_MOD("cmt1",         911,    R8A779H0_CLK_R),
-> >
-> > As mentioned by Laurent during his review on v1, all clock parents
-> > should probably be some form of R8A779H0_CLK_S0Dx_VIO.
-> > So I'm inclined to replace all of them by R8A779H0_CLK_VIOBUSD2 while
-> > applying, which would match R-Car V4H.
->
-> What do you mean with the above? First you say the clock parents should
-> be some form of S0Dx_VIO, but then you say you'll use VIOBUSD2. Aren't
-> those unrelated clocks, from different PLLs?
+On 2024/12/6 22:23, Pierre Gondois wrote:
+> Hello Lifeng,
+> 
+> On 11/14/24 09:48, Lifeng Zheng wrote:
+>> Refactor register get and set ABIs using cppc_get_reg() and cppc_set_reg().
+>>
+>> Rename cppc_get_perf() to cppc_get_reg() as a generic function to read cppc
+>> registers, with two changes:
+>>
+>> 1. Change the error kind to "no such device" when pcc_ss_id < 0, which
+>> means that this cpu cannot get a valid pcc_ss_id.
+>>
+>> 2. Add a check to verify if the register is a cpc supported one before
+>> using it.
+>>
+>> Add cppc_set_reg() as a generic function for setting cppc registers. Unlike
+>> other set reg ABIs, this function checks CPC_SUPPORTED right after getting
+>> the register, because the rest of the operations are meaningless if this
+>> register is not a cpc supported one.
+>>
+>> Signed-off-by: Lifeng Zheng <zhenglifeng1@huawei.com>
+>> ---
+>>   drivers/acpi/cppc_acpi.c | 191 +++++++++++++++------------------------
+>>   1 file changed, 72 insertions(+), 119 deletions(-)
+>>
+>> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+>> index c1f3568d0c50..306ced9c3376 100644
+>> --- a/drivers/acpi/cppc_acpi.c
+>> +++ b/drivers/acpi/cppc_acpi.c
+>> @@ -1179,10 +1179,13 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
+>>       return ret_val;
+>>   }
+>>   -static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *perf)
+>> +static int cppc_get_reg(int cpunum, enum cppc_regs reg_idx, u64 *val)
+>>   {
+>>       struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
+>> +    struct cppc_pcc_data *pcc_ss_data = NULL;
+>>       struct cpc_register_resource *reg;
+>> +    int pcc_ss_id;
+>> +    int ret = 0;
+> 
+> NIT: Might not be necessary if we save the value returned by cpc_read(),
+> cf. other comment below.
+> 
+>>         if (!cpc_desc) {
+>>           pr_debug("No CPC descriptor for CPU:%d\n", cpunum);
+>> @@ -1191,20 +1194,23 @@ static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *perf)
+>>         reg = &cpc_desc->cpc_regs[reg_idx];
+>>   +    if (!CPC_SUPPORTED(reg)) {
+>> +        pr_debug("CPC register (reg_idx=%u) is not supported\n", reg_idx);
+>> +        return -EOPNOTSUPP;
+>> +    }
+>> +
+>>       if (CPC_IN_PCC(reg)) {
+>> -        int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
+>> -        struct cppc_pcc_data *pcc_ss_data = NULL;
+>> -        int ret = 0;
+>> +        pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
+>>             if (pcc_ss_id < 0)
+>> -            return -EIO;
+>> +            return -ENODEV;
+> 
+> NIT: Could add here:
+>   pr_debug("Invalid pcc_ss_id\n");
+> just as you did in cppc_set_reg()
 
-Oops, copy-'n-paste went wrong. I did mean R8A779H0_VIOBUSD*.
+Will add it in next version, Thanks.
 
-> > Are you OK with that?
->
-> I'm fine with that. I can't really get much out of the docs wrt.
-> clocking, and the clocks I used were from the BSP. Afaics, it looks
-> similar to V4H, so it's probably best have the same clocks, as you sugges=
-t.
+> 
+>>             pcc_ss_data = pcc_data[pcc_ss_id];
+>>             down_write(&pcc_ss_data->pcc_lock);
+>>             if (send_pcc_cmd(pcc_ss_id, CMD_READ) >= 0)
+>> -            cpc_read(cpunum, reg, perf);
+>> +            cpc_read(cpunum, reg, val);
+> 
+> This was not introduced by your patch, but cpc_read() return a value.
+> Shouldn't we return it instead of 0 ?
 
-Agreed.
+Indeed. Will optimize it, Thanks.
 
-Gr{oetje,eeting}s,
+> 
+>>           else
+>>               ret = -EIO;
+>>   @@ -1213,21 +1219,65 @@ static int cppc_get_perf(int cpunum, enum cppc_regs reg_idx, u64 *perf)
+>>           return ret;
+>>       }
+>>   -    cpc_read(cpunum, reg, perf);
+>> +    cpc_read(cpunum, reg, val);
+> 
+> Same comment as above
+> 
+>>         return 0;
+>>   }
+>>   +static int cppc_set_reg(int cpu, enum cppc_regs reg_idx, u64 val)
+> 
+> Just to have similar functions, maybe 'cpu' should be renamed to 'cpunum' ?
+> Or the other way around.
 
-                        Geert
+I prefer 'cpu', 'cpunum' looks like the number of cpus to me.
+Will rename 'cpunum' to 'cpu' in cppc_get_reg(). Thanks.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+> 
+>> +{
+>> +    struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpu);
+>> +    struct cppc_pcc_data *pcc_ss_data = NULL;
+>> +    struct cpc_register_resource *reg;
+>> +    int pcc_ss_id;
+>> +    int ret;
+>> +
+>> +    if (!cpc_desc) {
+>> +        pr_debug("No CPC descriptor for CPU:%d\n", cpu);
+>> +        return -ENODEV;
+>> +    }
+>> +
+>> +    reg = &cpc_desc->cpc_regs[reg_idx];
+>> +
+>> +    if (!CPC_SUPPORTED(reg)) {
+>> +        pr_debug("CPC register (reg_idx=%u) is not supported\n", reg_idx);
+>> +        return -EOPNOTSUPP;
+>> +    }
+>> +
+>> +    if (CPC_IN_PCC(reg)) {
+>> +        pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpu);
+>> +
+>> +        if (pcc_ss_id < 0) {
+>> +            pr_debug("Invalid pcc_ss_id\n");
+>> +            return -ENODEV;
+>> +        }
+>> +
+>> +        ret = cpc_write(cpu, reg, val);
+>> +        if (ret)
+>> +            return ret;
+>> +
+>> +        pcc_ss_data = pcc_data[pcc_ss_id];
+>> +
+>> +        down_write(&pcc_ss_data->pcc_lock);
+>> +        /* after writing CPC, transfer the ownership of PCC to platform */
+>> +        ret = send_pcc_cmd(pcc_ss_id, CMD_WRITE);
+>> +        up_write(&pcc_ss_data->pcc_lock);
+>> +        return ret;
+>> +    }
+>> +
+>> +    return cpc_write(cpu, reg, val);
+>> +}
+>> +
+> 
+> [snip]
+> 
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
