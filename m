@@ -1,657 +1,245 @@
-Return-Path: <linux-kernel+bounces-436963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84A529E8D2A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:18:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC6F69E8D27
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:18:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4316E164CF6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF926164D05
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:18:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8F4215172;
-	Mon,  9 Dec 2024 08:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AE6721519D;
+	Mon,  9 Dec 2024 08:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="qHeZ7AOT"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="XZ1TKM93";
+	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="BV8Jb3Qp"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F34E214A9D;
-	Mon,  9 Dec 2024 08:18:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733732300; cv=none; b=gj3A1iL8zc0Fz4u1vD/R9eGLwvpSHlA7u6H3atLgkOYeiKhzrh1aWBQ17pxugWp88q99Upel8Rv8jL19BYhm1vtqVCRWX2HoH75j9USLMO8SG0YtPSwXEB6CrhfFFHlRk+FbNH4hOex9G4qjLjVkQRQwFLHrFUYprM1I3S9r4TU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733732300; c=relaxed/simple;
-	bh=RvfLwx83rwtxQsR0lo59JU2B1cVfADgc1NxTCiJ+zwg=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ggGQKagHApMQ4TNcagmSPmr/7hnVpM4Xtod/pI3QHKfmVzxSQhDRl9D32Ce/9ZYl82hCEPnVt/pk6aM2cTH7Vf3HEdRbvwbC0F8TwFTjaMgCB6+8CFWGHU4nGh9nrNiVqAodcDBZG/vrGjHmI8GA22bOQZHSYwV4h3fx/Vy0oH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=qHeZ7AOT; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B970MXN024510;
-	Mon, 9 Dec 2024 08:17:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=IhKAkR
-	BbuSgxLD3v/DHg421/fE+9khw6lByrJXagpYI=; b=qHeZ7AOTOIanE/ioMBg6SP
-	g7Gp01Vb5OnUNgkrk3ZIw4tkz2o5qgJh71IyT8/kGfxAtUKrbX5r1ndSaqrtYWw0
-	bGG2mIW86X+gIS0laUk12FN22z0OnkMdLfTypxiEQMC1ytCS9PznULdNo+LaBUeO
-	PM+IfXihS0F92go4Vm0mAYHPbX3klB410d7Gme0/PNdiJMZUNEsocdadHAXmZvm+
-	hhoXOmbCxayEbVxlURQ0OoFh4BnD1QlyKyXprvfJyigBy3oYqPY6T19AVudC1NGM
-	jtAfFdQCtbC2PF6ZCL8H9T2JZa4FbLo9frBF8ocHTFpzYMcGtyjsjmZDq4hZ3IGg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsj7dcg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 08:17:39 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B98E5W7001257;
-	Mon, 9 Dec 2024 08:17:39 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ccsj7dcb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 08:17:39 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B970Wku018605;
-	Mon, 9 Dec 2024 08:17:38 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26k5k77-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 08:17:38 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B98HaZo53739830
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 08:17:36 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4EFEC2004B;
-	Mon,  9 Dec 2024 08:17:36 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7EEA520043;
-	Mon,  9 Dec 2024 08:17:35 +0000 (GMT)
-Received: from [9.171.77.252] (unknown [9.171.77.252])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  9 Dec 2024 08:17:35 +0000 (GMT)
-Message-ID: <72103fc4-518c-4168-a623-741d557944da@linux.ibm.com>
-Date: Mon, 9 Dec 2024 09:17:38 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E8D5374EA;
+	Mon,  9 Dec 2024 08:17:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733732283; cv=fail; b=erG9gc6OtmP/7wgcgxM8uDAtkcOOJI8vhPkxJ1SmegNtuPMdoPMrF6mMlwaN+GDwPWf4FDDf/Q/mvw/iHpgktZWAdF3IdrE/26kDu2QoFNPpxTpo6oGyGDcIvMoiKd9dmBa87qtSbvC2YFvhmhB2JNut9TIXl0jeyVpwB/k/gms=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733732283; c=relaxed/simple;
+	bh=areaZb7fq3TMkaqnaGgSCG9/6tWpwotDHa8gP4rQjSs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=VzwWalAEkpn8ayo2Qwjj8n6bx0AqtNpXjVB69REen/bWAEza+xTxwat8QghOgvhUwvKkDH7FxXHs96WdqzbLmAXDrVksOh7Nb2lKuIBhagASvOBiMjpA4/83fJaiqdK3TG8jEI0lVaUHfybopy+Ymqeqf7vePxm+SLpdtvV/56A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=XZ1TKM93; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=BV8Jb3Qp; arc=fail smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 15ff20eab60611ef99858b75a2457dd9-20241209
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=areaZb7fq3TMkaqnaGgSCG9/6tWpwotDHa8gP4rQjSs=;
+	b=XZ1TKM93XU3YRw6aVF75GEvQtm11zgER7Iw1wOR4YP6cxoeAmdRqNQomIR9LTAl4m8BvX+HMWiwau7/48HtazPc6KDKH13qytyAg/6AWsvd1S1C8VuvfDtG4QDo00mjnLVahDfAmrp+vUCjR3psJWrmlWLEktowjuA37CFjJCu8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:992c483e-f708-419c-9146-3fdac9ee11bb,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:2d206d04-b3ca-4202-ba41-09fe265db19f,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0,EDM
+	:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0
+	,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 15ff20eab60611ef99858b75a2457dd9-20241209
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <ck.hu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1030421735; Mon, 09 Dec 2024 16:17:52 +0800
+Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
+ mtkmbs11n2.mediatek.inc (172.21.101.187) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Mon, 9 Dec 2024 16:17:51 +0800
+Received: from HK3PR03CU002.outbound.protection.outlook.com (172.21.101.237)
+ by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Mon, 9 Dec 2024 16:17:51 +0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VfEzeoD4oWTZrHnVBj27VOSuJYfr0kTb1oJDYQQAZuaFOgMe5D0UJT9wfLpvyAtekEErY4WbX3IEM4gUEPKNq0eZtz8guXWmJbHEUFm0o+Y4fR5hf0YUgWSsXLNkcWB4NIMhkRIPQPB0JNenJjVc52BkNuG5GOrxhUvzEQlGll7i1UPQICaiPHUiALahcTpa+ZviejIbOTwSBTOUSxSD68vjMS9YMq9NR+VPQUWr+lZ6om7ok7bAn0pst30elZcLPIoUDrXu/UmFyQ/T/A8LpHBWE+zw7jQB8ixLyUoIDacxcjsemp1MKiuSr7gTpk1HUruPRlqVBlStWaULu1S+sg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=areaZb7fq3TMkaqnaGgSCG9/6tWpwotDHa8gP4rQjSs=;
+ b=ROXqU4lTxrLGwwFkw1ZgRQ43ByF1mxEAVuH7e0DgVJknShLD4s9wcoboCPHsFRrvVK0YSjKWal0NdHYXUPs36wVhwvzdz2KP17AFP9Oo1IUoYPwE2HfehzXVRwvyMvbKqgu2HIffM4E1mylIIn6Px62eWPAI7t8Cr1hJDuAvGa1JeOaND8QGJPD+cxfRPYEl9jAYTSovq4+gf0zA7348Sc50y8ULYIIq8M43xrpNDGFjszTqOI5EpKKtBh3uHO/O0z/JD9/QuIULtdr5P2VsBuSszvtNIwtHdgnJ7Ge6QPuShBxWW31spg8bxPt7RcU7EZqpuyQ0gEU+0VjMEBc5Zw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
+ dkim=pass header.d=mediatek.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=areaZb7fq3TMkaqnaGgSCG9/6tWpwotDHa8gP4rQjSs=;
+ b=BV8Jb3Qp0FJSQddroHnIKue6p1qjr37C0IBHNNqNEPi+utRMEN95jGbU3XAq6CJwhMt8ZQrFVbnX2E0uzzLzouFnXy61H+ueo+hhhtaCaIpiJ/E1WqNhHs20koPa6fUVym2cS1josqGnqw6szA7MQt48Xmdruqe4dZ/M5fgdYMc=
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com (2603:1096:400:1f4::13)
+ by TYZPR03MB7345.apcprd03.prod.outlook.com (2603:1096:400:421::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.23; Mon, 9 Dec
+ 2024 08:17:48 +0000
+Received: from TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54]) by TYZPR03MB6624.apcprd03.prod.outlook.com
+ ([fe80::9ce6:1e85:c4a7:2a54%3]) with mapi id 15.20.8207.014; Mon, 9 Dec 2024
+ 08:17:48 +0000
+From: =?utf-8?B?Q0sgSHUgKOiDoeS/iuWFiSk=?= <ck.hu@mediatek.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>
+CC: "robh@kernel.org" <robh@kernel.org>, "jie.qiu@mediatek.com"
+	<jie.qiu@mediatek.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>,
+	"simona@ffwll.ch" <simona@ffwll.ch>, "mripard@kernel.org"
+	<mripard@kernel.org>, =?utf-8?B?Sml0YW8gU2hpICjnn7PorrDmtpsp?=
+	<jitao.shi@mediatek.com>, "linux-mediatek@lists.infradead.org"
+	<linux-mediatek@lists.infradead.org>, "dri-devel@lists.freedesktop.org"
+	<dri-devel@lists.freedesktop.org>, "maarten.lankhorst@linux.intel.com"
+	<maarten.lankhorst@linux.intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "kernel@collabora.com" <kernel@collabora.com>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"airlied@gmail.com" <airlied@gmail.com>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "matthias.bgg@gmail.com"
+	<matthias.bgg@gmail.com>, "junzhi.zhao@mediatek.com"
+	<junzhi.zhao@mediatek.com>
+Subject: Re: [PATCH v2 13/15] drm/mediatek: mtk_hdmi_common: Assign DDC
+ adapter pointer to bridge
+Thread-Topic: [PATCH v2 13/15] drm/mediatek: mtk_hdmi_common: Assign DDC
+ adapter pointer to bridge
+Thread-Index: AQHbRwuBmQ11mvBqP0GoaHTxKcH3kLLdl5GA
+Date: Mon, 9 Dec 2024 08:17:48 +0000
+Message-ID: <c0e144b3a90881066d0974157e66ac23f09a0fc5.camel@mediatek.com>
+References: <20241205114518.53527-1-angelogioacchino.delregno@collabora.com>
+	 <20241205114518.53527-14-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20241205114518.53527-14-angelogioacchino.delregno@collabora.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.52.3-0ubuntu1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=mediatek.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TYZPR03MB6624:EE_|TYZPR03MB7345:EE_
+x-ms-office365-filtering-correlation-id: 41e05251-4cf5-45ee-e6cd-08dd1829f792
+x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?ZVBNMHlaYzYzVDJuQkNBdENTSmgzWDBRbG9rWGJud2V6ekpmUVQxUGN0UXNl?=
+ =?utf-8?B?UEMxenM5TWpTZ3pnQllZMWVkL3Mxb0pLbzFOT1M5d0ovTWFiY1NIaTV0cXhH?=
+ =?utf-8?B?T0FvdFcrbzlIZzFuTWNNeGlOMG1DY0ZaRjVUWDhXWGhOSmpFVEYyaG9XVFM0?=
+ =?utf-8?B?VUt2SzFQYXU4ajJBRW5qZXdJMFp6K1dheXV1UWFIZ3c4QWJmazFNVVRoVk5E?=
+ =?utf-8?B?clNtU2R5S0pGdkR6cWtLRnlVcTZSNllsQ0VFWkhwU0dBWnBwYWpaYWRua0dV?=
+ =?utf-8?B?VEUvb2tlRGkyQTZtOE1YMzZuUmF4YXZmNUhwRFo5M0pGc01HTEcyMFNsNEtT?=
+ =?utf-8?B?eEtGKzE1Tk9HaS9ZSVZ1MnlUNDN5Tk44bzdMVFZJYkVxQUJZenIzeGZwejdI?=
+ =?utf-8?B?bFVDOXg5QmN2TnFEdXU0ZFM4eUw4R2R0N2ZjWlhNRkNsNHhjSGMvSE9wZGx0?=
+ =?utf-8?B?OWJWYTd2OXNaNDFEMkFnTUp0bjFPekJpaUhmRm9EWUJuUGNNbFBOK1JPYzhU?=
+ =?utf-8?B?N3d2SGE0TGx6SVdZcGQyM3hRTEVuOStlSkFUa2RhbUM3OG1ac2NZRVUxTElh?=
+ =?utf-8?B?ODEyTUphTjZON2dCWVlUc3Q0ZWR3LzBYMTNqTDFsLzRTZHR5QlBtRHh1aFA0?=
+ =?utf-8?B?VUdreWJtUGR5T21vdTA5eFZYSllzWGI0THRPMU9aWmV2UHNhSmNRYVloVDN5?=
+ =?utf-8?B?aHo1STM3bHB1QmtPeTIvYVFueEI1L0pqODcvZ0JsOU1KMkxWNkZyRFVCYU1I?=
+ =?utf-8?B?WDcxL0wwWG52N2Z0b29NamlxUktMNUEyQjgxYmxLNWtqV0Z6MDhRL1EyY2xj?=
+ =?utf-8?B?cis3UHVMWFltSStLSE5lWEVQb041cTNHNDRYZjNOa240NXQwbFBsd1pLWjFl?=
+ =?utf-8?B?K0w4bHZBYlVEQ1puR3lrVlVjbWdBWWRXSkxjZnBvRGNTTGxRa1I4aUw3L2Q0?=
+ =?utf-8?B?czIzTlkvWlYzSDh1a2xRRER5ZG1XRnVwVlp3Z0I0eDlrZ0NEcURwNVJOSzJT?=
+ =?utf-8?B?dUV1NHZNNGh5UlREQ3dmZUxsSWh5dFcwd1JMczRuR0NUYmM1ZjJhRGJYRHY2?=
+ =?utf-8?B?OUtmb1FNbXArUGh0Q1hZUzgrK2RlWk5yS2dTajUvOWpoT1NQVE15ODlETTdM?=
+ =?utf-8?B?a0krS3ZMNkxoQllvZm5PZ2pqTTlQKy9YNzI5L3hiRExhcHd6YzIvVThWN25X?=
+ =?utf-8?B?V1JOVHFNSi9mdTAyNUtHWEdpVW1QRC9lSW5aaml5ekdod1BxRGl5UlRESWJq?=
+ =?utf-8?B?bjMzdzcxR3Rhekx6NUpYb2phbDJ2Z1VXMEhPaTVxVEhVdWZhN3JYYlYzZTg3?=
+ =?utf-8?B?QjNiVHpqR1N6Qzc4b0ZmSGY1SU9xQ3lFRjdsUzVLZmt6ZUMxQW04eE0wbld5?=
+ =?utf-8?B?ZENsTlE2anFRY2Y0cEdXdEkwVmt1NjQ4Y1JyT1JkY2VXTzdCTmY0Qk1rWWZ5?=
+ =?utf-8?B?SC9wUWh0YU9WR0IyZ2kvZDYrMWplc0hWbnM5MFMzQU4zcGEyRnpkSy9mSy9J?=
+ =?utf-8?B?L0NVTnBvbkw5em1LeEt3ZmxjeEx5VFdLeWFXVW15WHNXV0lvNHJSNE05bFhw?=
+ =?utf-8?B?UjBhdy9iQVhrUVJGSDYvQlJ2anNHRzdRempNakRZd1NqdVJmUTJPMGdzNHkw?=
+ =?utf-8?B?TXc5U2o3RDNVbk5TbWhDQkhkaDA3MUsvb203akpuZUg3RjlKZkpkWHM5a2Ir?=
+ =?utf-8?B?c1owRTBGeXYzNE82enV5bWlKRVZ6TXFqa1paV09DV1dEcDRDOEc5dmhjMVpm?=
+ =?utf-8?B?bXo0VTJBeDJRaDU2KzVOdlBEZTlBUDExT1pTMWJKT1lRYWhwcldWMEwxRTE0?=
+ =?utf-8?B?NndHdmJINTVYQnloejlQRHNDWnQrKzN3L2sxdmxYNGVFWjgzc1hBandrR0NR?=
+ =?utf-8?B?dCtuYjVIVmxIRllpRk4wVmFneE1tMUxLMHduZjdzSUhPVEE9PQ==?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6624.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?cHl3M3l4QjRjTmVreGd4aUUwTm9yNlVpVlpaV3MxTFptVHdZOEh6NTAwcXJP?=
+ =?utf-8?B?V0d6aC9lS2ZBZW8yU0hSTXg4WEgxYU1wNldpRjJaclhPM2FRVWJuRDVQYmZ4?=
+ =?utf-8?B?eUJVVlZtL1lqL2szSG96NmZVY1FCcnlHWC95azFSa1FoVHFnNm9uazkwTHJD?=
+ =?utf-8?B?cS9SYS90ZytKSXEyVG0wVk5zR1RtVWlkVWFqZ2x3Ri9YTWV1bXliTi80M21l?=
+ =?utf-8?B?L3BWQjEwSDdPSUtjV3MrUXplalo3STFKU0NGeU1sc3ZyMFB6MERJRGpGaWJ6?=
+ =?utf-8?B?N0t0dHd0MElYN2VxeFI4SWphaTU5empQWTZyLzFZV21ScEpVQ3I3cU1UV0h2?=
+ =?utf-8?B?SlZRUGZCRzV5NGFXZVJuOURyTVE1ZUtJeUtmV2FROThOYS9sYkxlcEY4MVdE?=
+ =?utf-8?B?VGlrK2ZMZTg1bFEwVU5GR0x5aWhKa0dTNnFYWEhIcVplUGxncjZGdzl1ejhY?=
+ =?utf-8?B?eW9kRmRsTTRYTlJTMEp4dEtHblZHYjJaRTBRdTgyZjlkYU1KUDFrWGdBK1RP?=
+ =?utf-8?B?SCtvVFNFaE5qUjhUQTJEZUdMRXRvUkZ6cG93N3RiTC9vdC9CYm90Rk1UWkNS?=
+ =?utf-8?B?emVIOXMzNEZsTG1qZFlRRTZFQmlWa2NJd3AzaHBSbnN5UG1Va0hDNHF2MDdn?=
+ =?utf-8?B?YzFnMFlKbWZzcnREQ2dwdHNHOEQ1STRTK1lNVDB6RHhkRmEwd2QrQTllbXpN?=
+ =?utf-8?B?ZjJKWVM2ck94ZTFBY1ZJWEFRb1ExL3lBY2hwNHNRSlM3YWp2OURCNitmeUND?=
+ =?utf-8?B?cmpNNWptVXVzNmlHb1JhRmlqWWVqdkw4NDY0WjI5Y05nUXdrRDZDcUZ3MWZt?=
+ =?utf-8?B?UHBZQ3hOV2pmcTdiWVlRUGFCcW1EUHV6MldwNzJwWjBvWlMwQWxpWWJNL3Zz?=
+ =?utf-8?B?UVlqT2lERUVyZUNQQ0p5OGZ2WjdEWHRLQWl2WnRseFRKSHdiWWhDNmwyeXJW?=
+ =?utf-8?B?S2w0WGp1cjB5L2dRQUpYN2FZWHF0QnNlM21vSlo2OExOeTV4Z1lrTGxuSC9D?=
+ =?utf-8?B?Vm5oWXU0VTdIVXZMeGJNazhxZlFEcjg4M21WWDAwcEVoVVpLYjFrc0pkS0tB?=
+ =?utf-8?B?aGM3UzlNR1pNVlpnZlk5UUhHNkt1T0ZSSEM5L3kzMmYwWkZvMlNhaGZyL3hQ?=
+ =?utf-8?B?K284SnBodm5NRlU3NU9peVJibk5jSDdHWkcycWZMeGhYL3A4S290MVQ5WWw2?=
+ =?utf-8?B?YzRiNUk0dGtQTlVwSXNscmpWeDBVN3JkSWVMam4wL1dzQVNoOVhrdU5xQ1U2?=
+ =?utf-8?B?eXViR3BtVllKejlRWEtJaHE0V0xDOUJPMzBUZzcyUXhGNTFnWmVpZGRQaHpl?=
+ =?utf-8?B?dFl2cU90WWtMazVxU1Q1L0Vvamx2K1ZSUVZXanBzbnFXODQvTHZSVVd0dnVD?=
+ =?utf-8?B?Zno3ODkvbGdkSjZ5MVFLc2RYQmROaVppZ1JLYlR4OVpWS0M0RHo5b3pxSnRP?=
+ =?utf-8?B?ZjVqK2twak4vZDBJcVk5dWZJUERwMndHU2VvZy8vWHB6Wnk0L0o5NWpRbWZx?=
+ =?utf-8?B?RlVFWTk0eGtMcHJsQVhoYmhxQkN4MW56WnZRMEVNMEZCdE5iNzZscW1FR3NX?=
+ =?utf-8?B?WXZFR2dBbWN2TWZXZHcvMHozclZleUFMWlBKd0RCRHd4dkcxOXpPaCtUVWw5?=
+ =?utf-8?B?RlVobDdpUUE4RGtPRU9ZQmErVDNsWWhFRU5rQzE0S2dZdnRUSlg3NmhyMGw4?=
+ =?utf-8?B?NXNBbnJUdllER3pKZnhCUUI5UXJsZVExWXpmNFJTRngrQVR1ckZDWThBRkZJ?=
+ =?utf-8?B?WExhQjBNczRZTVpmam5oRTJlVkZsU2N1V0dzYWdkRW5oTEhtRHRuRUxOQ0dL?=
+ =?utf-8?B?VzVqK3FDdnk1NEZjOGFzanE3RlpmWm50VkU5Y0N0eks1NEk5dmUzSlFmSUY3?=
+ =?utf-8?B?K0Zhb3QwOGNQdHBTNTR6SnNoUEJZRVR2dW9scVJHY3RpUmhyUTZpSzZFaGIw?=
+ =?utf-8?B?aysrS0IwRlZ2anQ3VDNsRmtNeGJWNUV6cVZLN0dKYnUzcSsxczRuT1psTFZv?=
+ =?utf-8?B?ZGxjald6aFhMRVlDbHFWdEljYWF6QnFGVVZCd3ptT3d6UmFXYkZvL0tFQjZU?=
+ =?utf-8?B?emlDdlJ6dUExa016N05CblNwMGsxcFFoemVWS2h3SHpTNkdKMTd0TEtMeHFO?=
+ =?utf-8?B?TnlyZGRrVUFLM0UrTnNUZStvblJlL1pSMmh4bjNOTGdZMWRjaHRMeHBoOE52?=
+ =?utf-8?B?VWc9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <03F504DC72DBD6439C9FF8A3BBB04C29@apcprd03.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tobias Huschle <huschle@linux.ibm.com>
-Subject: Re: [RFC PATCH 1/2] sched/fair: introduce new scheduler group type
- group_parked
-To: Shrikanth Hegde <sshegde@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
-        rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
-        vschneid@redhat.com, linux-s390@vger.kernel.org,
-        linuxppc-dev@lists.ozlabs.org
-References: <20241204112149.25872-1-huschle@linux.ibm.com>
- <20241204112149.25872-2-huschle@linux.ibm.com>
- <5f8584e4-d180-4f65-ab42-9b0348b703d5@linux.ibm.com>
-In-Reply-To: <5f8584e4-d180-4f65-ab42-9b0348b703d5@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Dx5WJGh9W2AdYTM5fEV54A4xE8cISplv
-X-Proofpoint-ORIG-GUID: I7Ekzx-ogqg5jG_E2S5oyEOPW_4hVBBn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- impostorscore=0 spamscore=0 lowpriorityscore=0 bulkscore=0 mlxlogscore=999
- mlxscore=0 priorityscore=1501 suspectscore=0 malwarescore=0 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412090061
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6624.apcprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 41e05251-4cf5-45ee-e6cd-08dd1829f792
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2024 08:17:48.2782
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RyF5PAV0larYD8w/3fxI11i8EkHd+m3cCZZYwBJdx/pK1Ji9gY3CwE0K3pJ7Fs4af6fJ5KPFaBTouecB2zpyIQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR03MB7345
 
-
-
-On 05/12/2024 19:04, Shrikanth Hegde wrote:
-> 
-> 
-> On 12/4/24 16:51, Tobias Huschle wrote:
->> A parked CPU is considered to be flagged as unsuitable to process
->> workload at the moment, but might be become usable anytime. Depending on
->> the necessity for additional computation power and/or available capacity
->> of the underlying hardware.
->>
->> A scheduler group is considered to be parked if it only contains parked
->> CPUs. A parked scheduler group is considered to be busier than another
->> if it runs more tasks than the other parked scheduler group.
->>
->> Indicators whether a CPU should be parked depend on the underlying
->> hardware and must be considered to be architecture dependent.
->> Therefore the check whether a CPU is parked is architecture specific.
->> For architectures not relying on this feature, the check is a NOP.
->>
->> This is more efficient and non-disruptive compared to CPU hotplug in
->> environments where such changes can be necessary on a frequent basis.
->>
->> Signed-off-by: Tobias Huschle <huschle@linux.ibm.com>
->> ---
->>   include/linux/sched/topology.h |  20 ++++++
->>   kernel/sched/core.c            |  10 ++-
->>   kernel/sched/fair.c            | 122 ++++++++++++++++++++++++++-------
->>   3 files changed, 127 insertions(+), 25 deletions(-)
->>
->> diff --git a/include/linux/sched/topology.h b/include/linux/sched/ 
->> topology.h
->> index 4237daa5ac7a..cfe3c59bc329 100644
->> --- a/include/linux/sched/topology.h
->> +++ b/include/linux/sched/topology.h
->> @@ -270,6 +270,26 @@ unsigned long arch_scale_cpu_capacity(int cpu)
->>   }
->>   #endif
->> +#ifndef arch_cpu_parked
->> +/**
->> + * arch_cpu_parked - Check if a given CPU is currently parked.
->> + *
->> + * A parked CPU cannot run any kind of workload since underlying
->> + * physical CPU should not be used at the moment .
->> + *
->> + * @cpu: the CPU in question.
->> + *
->> + * By default assume CPU is not parked
->> + *
->> + * Return: Parked state of CPU
->> + */
->> +static __always_inline
->> +unsigned long arch_cpu_parked(int cpu)
-> 
-> bool instead?
-+1
-> 
->> +{
->> +    return false;
->> +}
->> +#endif
->> +
->>   #ifndef arch_scale_hw_pressure
->>   static __always_inline
->>   unsigned long arch_scale_hw_pressure(int cpu)
->> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->> index 1dee3f5ef940..8f9aeb97c396 100644
->> --- a/kernel/sched/core.c
->> +++ b/kernel/sched/core.c
->> @@ -2437,7 +2437,7 @@ static inline bool is_cpu_allowed(struct 
->> task_struct *p, int cpu)
->>       /* Non kernel threads are not allowed during either online or 
->> offline. */
->>       if (!(p->flags & PF_KTHREAD))
->> -        return cpu_active(cpu);
->> +        return !arch_cpu_parked(cpu) && cpu_active(cpu);
->>       /* KTHREAD_IS_PER_CPU is always allowed. */
->>       if (kthread_is_per_cpu(p))
->> @@ -2447,6 +2447,10 @@ static inline bool is_cpu_allowed(struct 
->> task_struct *p, int cpu)
->>       if (cpu_dying(cpu))
->>           return false;
->> +    /* CPU should be avoided at the moment */
->> +    if (arch_cpu_parked(cpu))
->> +        return false;
->> +
->>       /* But are allowed during online. */
->>       return cpu_online(cpu);
->>   }
->> @@ -3924,6 +3928,10 @@ static inline bool ttwu_queue_cond(struct 
->> task_struct *p, int cpu)
->>       if (task_on_scx(p))
->>           return false;
->> +    /* The task should not be queued onto a parked CPU. */
->> +    if (arch_cpu_parked(cpu))
->> +        return false;
->> +
-> 
-> When it comes here, likely cpu is not parked since wakeup path has those 
-> checks.
-+1
-> 
->>       /*
->>        * Do not complicate things with the async wake_list while the 
->> CPU is
->>        * in hotplug state.
->> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->> index 4283c818bbd1..fa1c19d285de 100644
->> --- a/kernel/sched/fair.c
->> +++ b/kernel/sched/fair.c
->> @@ -7415,6 +7415,9 @@ static int wake_affine(struct sched_domain *sd, 
->> struct task_struct *p,
->>   {
->>       int target = nr_cpumask_bits;
->> +    if (arch_cpu_parked(target))
->> +        return prev_cpu;
->> +
->>       if (sched_feat(WA_IDLE))
->>           target = wake_affine_idle(this_cpu, prev_cpu, sync);
->> @@ -7454,6 +7457,9 @@ sched_balance_find_dst_group_cpu(struct 
->> sched_group *group, struct task_struct *
->>       for_each_cpu_and(i, sched_group_span(group), p->cpus_ptr) {
->>           struct rq *rq = cpu_rq(i);
->> +        if (arch_cpu_parked(i))
->> +            continue;
->> +
->>           if (!sched_core_cookie_match(rq, p))
->>               continue;
->> @@ -7546,10 +7552,14 @@ static inline int 
->> sched_balance_find_dst_cpu(struct sched_domain *sd, struct tas
->>       return new_cpu;
->>   }
->> +static inline bool is_idle_cpu_allowed(int cpu)
->> +{
->> +    return !arch_cpu_parked(cpu) && (available_idle_cpu(cpu) || 
->> sched_idle_cpu(cpu));
->> +}
-> 
-> How about adding below code, it could simplify the code quite a bit. no? 
-> sched_idle_rq also might need the same check though.
-> 
-> +++ b/kernel/sched/syscalls.c
-> @@ -214,6 +214,9 @@ int idle_cpu(int cpu)
->                  return 0;
->   #endif
-> 
-> +       if (arch_cpu_parked(cpu))
-> +               return 0;
-> +
->          return 1;
->   }
-> 
-will give that one a go
-> 
->> +
->>   static inline int __select_idle_cpu(int cpu, struct task_struct *p)
->>   {
->> -    if ((available_idle_cpu(cpu) || sched_idle_cpu(cpu)) &&
->> -        sched_cpu_cookie_match(cpu_rq(cpu), p))
->> +    if (is_idle_cpu_allowed(cpu) && 
->> sched_cpu_cookie_match(cpu_rq(cpu), p))
->>           return cpu;
->>       return -1;
->> @@ -7657,7 +7667,7 @@ static int select_idle_smt(struct task_struct 
->> *p, struct sched_domain *sd, int t
->>            */
->>           if (!cpumask_test_cpu(cpu, sched_domain_span(sd)))
->>               continue;
->> -        if (available_idle_cpu(cpu) || sched_idle_cpu(cpu))
->> +        if (is_idle_cpu_allowed(cpu))
->>               return cpu;
->>       }
->> @@ -7779,7 +7789,7 @@ select_idle_capacity(struct task_struct *p, 
->> struct sched_domain *sd, int target)
->>       for_each_cpu_wrap(cpu, cpus, target) {
->>           unsigned long cpu_cap = capacity_of(cpu);
->> -        if (!available_idle_cpu(cpu) && !sched_idle_cpu(cpu))
->> +        if (!is_idle_cpu_allowed(cpu))
->>               continue;
->>           fits = util_fits_cpu(task_util, util_min, util_max, cpu);
->> @@ -7850,7 +7860,7 @@ static int select_idle_sibling(struct 
->> task_struct *p, int prev, int target)
->>        */
->>       lockdep_assert_irqs_disabled();
->> -    if ((available_idle_cpu(target) || sched_idle_cpu(target)) &&
->> +    if (is_idle_cpu_allowed(target) &&
->>           asym_fits_cpu(task_util, util_min, util_max, target))
->>           return target;
->> @@ -7858,7 +7868,7 @@ static int select_idle_sibling(struct 
->> task_struct *p, int prev, int target)
->>        * If the previous CPU is cache affine and idle, don't be stupid:
->>        */
->>       if (prev != target && cpus_share_cache(prev, target) &&
->> -        (available_idle_cpu(prev) || sched_idle_cpu(prev)) &&
->> +        is_idle_cpu_allowed(prev) &&
->>           asym_fits_cpu(task_util, util_min, util_max, prev)) {
->>           if (!static_branch_unlikely(&sched_cluster_active) ||
->> @@ -7890,7 +7900,7 @@ static int select_idle_sibling(struct 
->> task_struct *p, int prev, int target)
->>       if (recent_used_cpu != prev &&
->>           recent_used_cpu != target &&
->>           cpus_share_cache(recent_used_cpu, target) &&
->> -        (available_idle_cpu(recent_used_cpu) || 
->> sched_idle_cpu(recent_used_cpu)) &&
->> +        is_idle_cpu_allowed(recent_used_cpu) &&
->>           cpumask_test_cpu(recent_used_cpu, p->cpus_ptr) &&
->>           asym_fits_cpu(task_util, util_min, util_max, 
->> recent_used_cpu)) {
->> @@ -9198,7 +9208,12 @@ enum group_type {
->>        * The CPU is overloaded and can't provide expected CPU cycles 
->> to all
->>        * tasks.
->>        */
->> -    group_overloaded
->> +    group_overloaded,
->> +    /*
->> +     * The CPU should be avoided as it can't provide expected CPU cycles
->> +     * even for small amounts of workload.
->> +     */
->> +    group_parked
->>   };
->>   enum migration_type {
->> @@ -9498,7 +9513,7 @@ static int detach_tasks(struct lb_env *env)
->>        * Source run queue has been emptied by another CPU, clear
->>        * LBF_ALL_PINNED flag as we will not test any task.
->>        */
->> -    if (env->src_rq->nr_running <= 1) {
->> +    if (env->src_rq->nr_running <= 1 && !arch_cpu_parked(env- 
->> >src_cpu)) {
->>           env->flags &= ~LBF_ALL_PINNED;
->>           return 0;
->>       }
->> @@ -9511,7 +9526,7 @@ static int detach_tasks(struct lb_env *env)
->>            * We don't want to steal all, otherwise we may be treated 
->> likewise,
->>            * which could at worst lead to a livelock crash.
->>            */
->> -        if (env->idle && env->src_rq->nr_running <= 1)
->> +        if (env->idle && env->src_rq->nr_running <= 1 && ! 
->> arch_cpu_parked(env->src_cpu))
->>               break;
->>           env->loop++;
->> @@ -9870,6 +9885,8 @@ struct sg_lb_stats {
->>       unsigned long group_runnable;        /* Total runnable time over 
->> the CPUs of the group */
->>       unsigned int sum_nr_running;        /* Nr of all tasks running 
->> in the group */
->>       unsigned int sum_h_nr_running;        /* Nr of CFS tasks running 
->> in the group */
->> +    unsigned int sum_nr_parked;
->> +    unsigned int parked_cpus;
-> 
-> Can you please explain why you need two of these? Is it to identify the 
-> group with most parked cpus?  maybe comments is needed.
-> 
-
-parked_cpus counts how many CPUs are parked in a scheduler group, which 
-is used to determine if a scheduler group consists of only parked CPUs.
-
-sum_nr_parked is meant to be the tie-breaker if there are multiple 
-parked scheduler groups. Mind you, a scheduler group is only considered 
-parked if all included CPUs are parked.
-
->>       unsigned int idle_cpus;                 /* Nr of idle 
->> CPUs         in the group */
->>       unsigned int group_weight;
->>       enum group_type group_type;
->> @@ -10127,6 +10144,9 @@ group_type group_classify(unsigned int 
->> imbalance_pct,
->>                 struct sched_group *group,
->>                 struct sg_lb_stats *sgs)
->>   {
->> +    if (sgs->parked_cpus)
->> +        return group_parked;
->> +
->>       if (group_is_overloaded(imbalance_pct, sgs))
->>           return group_overloaded;
->> @@ -10328,10 +10348,15 @@ static inline void update_sg_lb_stats(struct 
->> lb_env *env,
->>           sgs->nr_numa_running += rq->nr_numa_running;
->>           sgs->nr_preferred_running += rq->nr_preferred_running;
->>   #endif
->> +
->> +        if (rq->cfs.h_nr_running) {
->> +            sgs->parked_cpus += arch_cpu_parked(i);
->> +            sgs->sum_nr_parked += arch_cpu_parked(i) * rq- 
->> >cfs.h_nr_running;
->> +        }
->>           /*
->>            * No need to call idle_cpu() if nr_running is not 0
->>            */
->> -        if (!nr_running && idle_cpu(i)) {
->> +        if (!nr_running && idle_cpu(i) && !arch_cpu_parked(i)) {
->>               sgs->idle_cpus++;
->>               /* Idle cpu can't have misfit task */
->>               continue;
->> @@ -10355,7 +10380,14 @@ static inline void update_sg_lb_stats(struct 
->> lb_env *env,
->>       sgs->group_capacity = group->sgc->capacity;
->> -    sgs->group_weight = group->group_weight;
->> +    sgs->group_weight = group->group_weight - sgs->parked_cpus;
->> +
->> +    /*
->> +     * Only a subset of the group is parked, so the group itself has the
->> +     * capability to potentially pull tasks
->> +     */
->> +    if (sgs->parked_cpus < group->group_weight)
->> +        sgs->parked_cpus = 0;
-> 
-> Say you had a group with 4 cpus and 2 were parked CPUs. Now the 
-> group_weight will be 2 and it will be marked as parked. whereas if 1 CPU 
-> is parked group will not be marked as parked. That seems wrong.
-
-sgs->group_weight = group->group_weight - sgs->parked_cpus;
---> that line would need to go or be moved, my train of thought was, 
-that parked CPUs should not contribute to the weight of a group
-
-> 
-> instead mark it as parked and use the parked_cpus number to compare no?
-
-The reasoning behind not marking partially parked groups as parked is 
-that those groups still have the potential to pull tasks to its 
-non-parked CPUs. If those partially parked groups get flagged as parked, 
-the non-parked groups will try to pull tasks, which is not ideal.
-
-Instead, the partially parked group should move all tasks internally to 
-its non-parked CPUs. Those might then get overloaded and only then, the 
-other non-parked groups should start pulling.
-
-> 
->>       /* Check if dst CPU is idle and preferred to this group */
->>       if (!local_group && env->idle && sgs->sum_h_nr_running &&
->> @@ -10422,6 +10454,8 @@ static bool update_sd_pick_busiest(struct 
->> lb_env *env,
->>        */
->>       switch (sgs->group_type) {
->> +    case group_parked:
->> +        return sgs->sum_nr_parked > busiest->sum_nr_parked;
->>       case group_overloaded:
->>           /* Select the overloaded group with highest avg_load. */
->>           return sgs->avg_load > busiest->avg_load;
->> @@ -10633,6 +10667,9 @@ static inline void 
->> update_sg_wakeup_stats(struct sched_domain *sd,
->>           nr_running = rq->nr_running - local;
->>           sgs->sum_nr_running += nr_running;
->> +        sgs->parked_cpus += arch_cpu_parked(i);
->> +        sgs->sum_nr_parked += arch_cpu_parked(i) * rq->cfs.h_nr_running;
->> +
->>           /*
->>            * No need to call idle_cpu_without() if nr_running is not 0
->>            */
->> @@ -10649,7 +10686,14 @@ static inline void 
->> update_sg_wakeup_stats(struct sched_domain *sd,
->>       sgs->group_capacity = group->sgc->capacity;
->> -    sgs->group_weight = group->group_weight;
->> +    sgs->group_weight = group->group_weight - sgs->parked_cpus;
->> +
->> +    /*
->> +     * Only a subset of the group is parked, so the group itself has the
->> +     * capability to potentially pull tasks
->> +     */
->> +    if (sgs->parked_cpus < group->group_weight)
->> +        sgs->parked_cpus = 0;
-> 
-> same comment as above.
-+1
-> 
->>       sgs->group_type = group_classify(sd->imbalance_pct, group, sgs);
->> @@ -10680,6 +10724,8 @@ static bool update_pick_idlest(struct 
->> sched_group *idlest,
->>        */
->>       switch (sgs->group_type) {
->> +    case group_parked:
->> +        return false;
-> 
-> Why not use the parked_cpus to compare?
-
-It doesn't make much sense to determine whether one parked group might 
-be more idle that another. Neither of them should pull tasks (iff the 
-assumption is kept, that only groups that contain only parked CPUs are 
-considered to be parked.
-
-> 
->>       case group_overloaded:
->>       case group_fully_busy:
->>           /* Select the group with lowest avg_load. */
->> @@ -10730,7 +10776,7 @@ sched_balance_find_dst_group(struct 
->> sched_domain *sd, struct task_struct *p, int
->>       unsigned long imbalance;
->>       struct sg_lb_stats idlest_sgs = {
->>               .avg_load = UINT_MAX,
->> -            .group_type = group_overloaded,
->> +            .group_type = group_parked,
->>       };
->>       do {
->> @@ -10788,6 +10834,8 @@ sched_balance_find_dst_group(struct 
->> sched_domain *sd, struct task_struct *p, int
->>           return idlest;
->>       switch (local_sgs.group_type) {
->> +    case group_parked:
->> +        return idlest;
->>       case group_overloaded:
->>       case group_fully_busy:
->> @@ -11039,6 +11087,12 @@ static inline void calculate_imbalance(struct 
->> lb_env *env, struct sd_lb_stats *s
->>       local = &sds->local_stat;
->>       busiest = &sds->busiest_stat;
->> +    if (busiest->group_type == group_parked) {
->> +        env->migration_type = migrate_task;
->> +        env->imbalance = busiest->sum_nr_parked;
->> +        return;
->> +    }
->> +
->>       if (busiest->group_type == group_misfit_task) {
->>           if (env->sd->flags & SD_ASYM_CPUCAPACITY) {
->>               /* Set imbalance to allow misfit tasks to be balanced. */
->> @@ -11207,13 +11261,14 @@ static inline void 
->> calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->>   /*
->>    * Decision matrix according to the local and busiest group type:
->>    *
->> - * busiest \ local has_spare fully_busy misfit asym imbalanced 
->> overloaded
->> - * has_spare        nr_idle   balanced   N/A    N/A  balanced   balanced
->> - * fully_busy       nr_idle   nr_idle    N/A    N/A  balanced   balanced
->> - * misfit_task      force     N/A        N/A    N/A  N/A        N/A
->> - * asym_packing     force     force      N/A    N/A  force      force
->> - * imbalanced       force     force      N/A    N/A  force      force
->> - * overloaded       force     force      N/A    N/A  force      avg_load
->> + * busiest \ local has_spare fully_busy misfit asym imbalanced 
->> overloaded parked
->> + * has_spare        nr_idle   balanced   N/A    N/A  balanced   
->> balanced  balanced
->> + * fully_busy       nr_idle   nr_idle    N/A    N/A  balanced   
->> balanced  balanced
->> + * misfit_task      force     N/A        N/A    N/A  N/A        N/ 
->> A       N/A
->> + * asym_packing     force     force      N/A    N/A  force      
->> force     balanced
->> + * imbalanced       force     force      N/A    N/A  force      
->> force     balanced
->> + * overloaded       force     force      N/A    N/A  force      
->> avg_load  balanced
->> + * parked           force     force      N/A    N/A  force      
->> force     nr_tasks
-> 
-> If i see the code below, if local is parked, it always goes to balanced. 
-> how it is nr_tasks? am i reading this table wrong?
-> 
-
-update_sd_lb_stats ends up calling update_sd_pick_busiest which then 
-compares the number of tasks. But re-reading it I got the comment wrong 
-as it does not describe how the busiest group is defined but only how 
-busiest compares to local.
-
->>    *
->>    * N/A :      Not Applicable because already filtered while updating
->>    *            statistics.
->> @@ -11222,6 +11277,8 @@ static inline void calculate_imbalance(struct 
->> lb_env *env, struct sd_lb_stats *s
->>    * avg_load : Only if imbalance is significant enough.
->>    * nr_idle :  dst_cpu is not busy and the number of idle CPUs is quite
->>    *            different in groups.
->> + * nr_task :  balancing can go either way depending on the number of 
->> running tasks
->> + *            per group
->>    */
->>   /**
->> @@ -11252,6 +11309,13 @@ static struct sched_group 
->> *sched_balance_find_src_group(struct lb_env *env)
->>           goto out_balanced;
->>       busiest = &sds.busiest_stat;
->> +    local = &sds.local_stat;
->> +
->> +    if (local->group_type == group_parked)
->> +        goto out_balanced;
->> +
->> +    if (busiest->group_type == group_parked)
->> +        goto force_balance;
->>       /* Misfit tasks should be dealt with regardless of the avg load */
->>       if (busiest->group_type == group_misfit_task)
->> @@ -11273,7 +11337,6 @@ static struct sched_group 
->> *sched_balance_find_src_group(struct lb_env *env)
->>       if (busiest->group_type == group_imbalanced)
->>           goto force_balance;
->> -    local = &sds.local_stat;
->>       /*
->>        * If the local group is busier than the selected busiest group
->>        * don't try and pull any tasks.
->> @@ -11386,6 +11449,8 @@ static struct rq 
->> *sched_balance_find_src_rq(struct lb_env *env,
->>           enum fbq_type rt;
->>           rq = cpu_rq(i);
->> +        if (arch_cpu_parked(i) && rq->cfs.h_nr_running)
->> +            return rq;
->>           rt = fbq_classify_rq(rq);
->>           /*
->> @@ -11556,6 +11621,9 @@ static int need_active_balance(struct lb_env 
->> *env)
->>   {
->>       struct sched_domain *sd = env->sd;
->> +    if (arch_cpu_parked(env->src_cpu) && !idle_cpu(env->src_cpu))
->> +        return 1;
->> +
->>       if (asym_active_balance(env))
->>           return 1;
->> @@ -11589,6 +11657,9 @@ static int should_we_balance(struct lb_env *env)
->>       struct sched_group *sg = env->sd->groups;
->>       int cpu, idle_smt = -1;
->> +    if (arch_cpu_parked(env->dst_cpu))
->> +        return 0;
->> +
->>       /*
->>        * Ensure the balancing environment is consistent; can happen
->>        * when the softirq triggers 'during' hotplug.
->> @@ -11612,7 +11683,7 @@ static int should_we_balance(struct lb_env *env)
->>       cpumask_copy(swb_cpus, group_balance_mask(sg));
->>       /* Try to find first idle CPU */
->>       for_each_cpu_and(cpu, swb_cpus, env->cpus) {
->> -        if (!idle_cpu(cpu))
->> +        if (!idle_cpu(cpu) || arch_cpu_parked(cpu))
->>               continue;
->>           /*
->> @@ -11707,7 +11778,7 @@ static int sched_balance_rq(int this_cpu, 
->> struct rq *this_rq,
->>       ld_moved = 0;
->>       /* Clear this flag as soon as we find a pullable task */
->>       env.flags |= LBF_ALL_PINNED;
->> -    if (busiest->nr_running > 1) {
->> +    if (busiest->nr_running > 1 || arch_cpu_parked(busiest->cpu)) {
->>           /*
->>            * Attempt to move tasks. If sched_balance_find_src_group 
->> has found
->>            * an imbalance but busiest->nr_running <= 1, the group is
->> @@ -12721,6 +12792,9 @@ static int sched_balance_newidle(struct rq 
->> *this_rq, struct rq_flags *rf)
->>       update_misfit_status(NULL, this_rq);
->> +    if (arch_cpu_parked(this_cpu))
->> +        return 0;
->> +
->>       /*
->>        * There is a task waiting to run. No need to search for one.
->>        * Return 0; the task will be enqueued when switching to idle.
-
+SGksIEFuZ2VsbzoNCg0KT24gVGh1LCAyMDI0LTEyLTA1IGF0IDEyOjQ1ICswMTAwLCBBbmdlbG9H
+aW9hY2NoaW5vIERlbCBSZWdubyB3cm90ZToNCj4gRXh0ZXJuYWwgZW1haWwgOiBQbGVhc2UgZG8g
+bm90IGNsaWNrIGxpbmtzIG9yIG9wZW4gYXR0YWNobWVudHMgdW50aWwgeW91IGhhdmUgdmVyaWZp
+ZWQgdGhlIHNlbmRlciBvciB0aGUgY29udGVudC4NCj4gDQo+IA0KPiBJbiBwcmVwYXJhdGlvbiBm
+b3IgYWRkaW5nIHRoZSBuZXcgSERNSSBUWCB2MiBJUCBkcml2ZXIsIGFzc2lnbiB0aGUNCj4gcG9p
+bnRlciB0byB0aGUgRERDIGFkYXB0ZXIgdG8gc3RydWN0IGRybV9icmlkZ2UgZHVyaW5nIHByb2Jl
+Lg0KPiANCj4gVGhpcyBjb21taXQgYnJpbmdzIG5vIGZ1bmN0aW9uYWwgY2hhbmdlcy4NCj4gDQo+
+IFNpZ25lZC1vZmYtYnk6IEFuZ2Vsb0dpb2FjY2hpbm8gRGVsIFJlZ25vIDxhbmdlbG9naW9hY2No
+aW5vLmRlbHJlZ25vQGNvbGxhYm9yYS5jb20+DQo+IC0tLQ0KPiAgZHJpdmVycy9ncHUvZHJtL21l
+ZGlhdGVrL210a19oZG1pX2NvbW1vbi5jIHwgMSArDQo+ICAxIGZpbGUgY2hhbmdlZCwgMSBpbnNl
+cnRpb24oKykNCj4gDQo+IGRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRr
+X2hkbWlfY29tbW9uLmMgYi9kcml2ZXJzL2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2hkbWlfY29tbW9u
+LmMNCj4gaW5kZXggMWIyM2FiNjk2OWVjLi40ZjcwOGIwNGY1ZTggMTAwNjQ0DQo+IC0tLSBhL2Ry
+aXZlcnMvZ3B1L2RybS9tZWRpYXRlay9tdGtfaGRtaV9jb21tb24uYw0KPiArKysgYi9kcml2ZXJz
+L2dwdS9kcm0vbWVkaWF0ZWsvbXRrX2hkbWlfY29tbW9uLmMNCj4gQEAgLTQxMCw2ICs0MTAsNyBA
+QCBzdHJ1Y3QgbXRrX2hkbWkgKm10a19oZG1pX2NvbW1vbl9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1f
+ZGV2aWNlICpwZGV2KQ0KPiAgICAgICAgIGhkbWktPmJyaWRnZS5vcHMgPSBEUk1fQlJJREdFX09Q
+X0RFVEVDVCB8IERSTV9CUklER0VfT1BfRURJRCB8IERSTV9CUklER0VfT1BfSFBEOw0KPiAgICAg
+ICAgIGhkbWktPmJyaWRnZS50eXBlID0gRFJNX01PREVfQ09OTkVDVE9SX0hETUlBOw0KPiAgICAg
+ICAgIGhkbWktPmJyaWRnZS5vZl9ub2RlID0gcGRldi0+ZGV2Lm9mX25vZGU7DQo+ICsgICAgICAg
+aGRtaS0+YnJpZGdlLmRkYyA9IGhkbWktPmRkY19hZHB0Ow0KDQpJIGRvbid0IGtub3cgd2h5IG9u
+bHkgdjIgZHJpdmVyIG5lZWQgdG8gYXNzaWduIHRoaXM/DQpDb3VsZCB5b3UgcG9pbnQgb3V0IHRo
+ZSBjb2RlIHdoZXJlIGFjY2VzcyB0aGlzIHZhbHVlPw0KDQpSZWdhcmRzLA0KQ0sNCg0KPiANCj4g
+ICAgICAgICByZXQgPSBkZXZtX2RybV9icmlkZ2VfYWRkKGRldiwgJmhkbWktPmJyaWRnZSk7DQo+
+ICAgICAgICAgaWYgKHJldCkNCj4gLS0NCj4gMi40Ny4wDQo+IA0KDQo=
 
