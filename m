@@ -1,160 +1,135 @@
-Return-Path: <linux-kernel+bounces-437368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7CA19E9251
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:30:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D5D9E9249
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:30:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22FB11883932
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:30:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 05948164365
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:30:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0ABF221D84;
-	Mon,  9 Dec 2024 11:29:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D46B321E086;
+	Mon,  9 Dec 2024 11:29:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nSRfBX3N"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PyoGv5+T"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC8921B8F2;
-	Mon,  9 Dec 2024 11:29:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FC2D21B8EA
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733743771; cv=none; b=pm9m2W3fV2OdtMyPa5DWvDB2YvOxrPiKqdCvooLTdoSAoLv7JyQIheJV0mS4dN1fPNLWtHbZ72cfNiBrQOqXof4CzH8fgfRL4AW+lNaS+airjRuNeKyRpqLFJlJ7twjgwc47tnz5JnipuGmbeuNx8gA211u0MX0DfwOxAd1Qh2Y=
+	t=1733743770; cv=none; b=Vc5izNFymzK1YkpgisBA8yR4YGmLutyFiur/6JeJNFSA2VdM3ZxBjYwStxXU5cC/K6WbOu3TD9mWptI0SbZQN+kOtHnNYro7yyvNkoghTCyPEBM5MbEjypIrFpUd+SrgrxVTfSLf1C+Ob2wDV3saP27ElT6XDdwzja0JKtDuZWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733743771; c=relaxed/simple;
-	bh=fBIyqdVrQ2c6cQq+3bT2Bl4NdWWSRV4eYvYtONYZxYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=WamhjMKJjx4eE1KCzTsLJG/SKVZczHUziNVkw+sONwdD/AddoI3LfV7Kjw+0o7bjFZSesupB2dJRzarsj5U+pf+KuIpm4OfgPqNqKiU8ZU2AoDch0P4mw2/2zCK0L3Dpyx9LaW2ZuPQ5ZfGPVeABQzrEgO7x7YfifNCNwwHna78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nSRfBX3N; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733743769; x=1765279769;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=fBIyqdVrQ2c6cQq+3bT2Bl4NdWWSRV4eYvYtONYZxYA=;
-  b=nSRfBX3NBb4AhDIItkNkT/161YrvfvBz5U/5lq/5HzO7RZ9jXleh9fz2
-   /EEMBjAsJkuIm+toRXYvEaOlF9oQKWWH5iDIFsx7oRJXDKeoTpknVc/6F
-   U7uREkNCh3qN5DjpwxiDoDoHjcXCQZkdGe5yDdERWH8E4N1eMsF9mypo0
-   lTogP/BEe/hjqvFlJXIgYEXDKL3Q9wmZuM+b5u2z3SwJ3yxHZlmEiCrsv
-   GObQufHHQwgREEXciFhEKMNZQOS9kZ2r47yL2e3tC5s+4fC2oEBORcX01
-   OjCDnXdjB85xQOeLS7syQ9XFzinKm5pEoP/ecUeQvWN+PvahKdh8bVL7H
-   A==;
-X-CSE-ConnectionGUID: Jz1fnea4Qsui5WhcvW0ueg==
-X-CSE-MsgGUID: dQigyBgESgeI7sVSWIXo2Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="44714047"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="44714047"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 03:29:26 -0800
-X-CSE-ConnectionGUID: DcExK5wjQzCr+hch9JHNYw==
-X-CSE-MsgGUID: dVVi+NIYTHS1/9e0HpM5LQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="95121250"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 03:29:25 -0800
-Message-ID: <8faca5b6-bd8f-4e9f-ba0f-45e78d203667@intel.com>
-Date: Mon, 9 Dec 2024 13:29:19 +0200
+	s=arc-20240116; t=1733743770; c=relaxed/simple;
+	bh=q9UzK737UNSpv0in/GRb9dREm01JbWxa3EvvcBVr0OU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FJPa5+APzI1XzLCoZRVPpCkUAKkdcGtqShnR6gilbtmBipIdW/kceFM7HQAR6XHABpQiQcxjq+mw9hWMNGHck8Uli35MCX8fMr5dcSnNQPJKIALEP+WV3oJdToeyxijHsnWcd/fM25i0Y0kVckzaDrwOQ9ZRpMttzK9mfB2RYuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PyoGv5+T; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d3cfa1da14so209295a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:29:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733743764; x=1734348564; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZaKRkQ++zE9MSO9ISV6gYj3UsACoYvIwFoqWZLd5Wt8=;
+        b=PyoGv5+TK6C/rNw2t5XT2pf9d5fCDBPUZnKSg5j4N6uyZgH2AAwxpKOzV6St+QjkLT
+         yamVmz7VPGhB6vVJxKjjz6uc8o4J0Zh96l7Axf2Ahx/q8TmLf0/jK2Wqgy+mDKexHLZc
+         AznXAUcxfiiCITaEh8zvBoeRft5jdatQSAqJTRgMhBl+rH1v3PO5mnew3P6zvtQzQEvM
+         hu51yrjOCMR1SPnJASiUz3vUh+Eh3iTQIJYqnfeHywU8H4B+h8EslftFnh6AS3yWKsLg
+         iITwjQ3MOKAzqanoVswmbmiYfW07HThdhTsF7DwM8EeKpezoGsYINLri/uBPrlEHN7+4
+         wxzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733743764; x=1734348564;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZaKRkQ++zE9MSO9ISV6gYj3UsACoYvIwFoqWZLd5Wt8=;
+        b=k8cIW1MeIE8WgaEYyAVLTxrV3EDhlmyYmfr4hDQ4KPZAgUe5keCTOXknPXjtSj6r2p
+         ziy6denXoxUetogW57/kjHGyr9eQfnxG6hJ18fzrQziL43VA+AAcmBF9NgVXNDkx8y7K
+         ebxnwn3DEnvKYFURCVQ3DDfWRLP49/fiWN3x2QDppBjlHWehMj/tXSBGQ4oUlKP797HG
+         xEzjGyAdyBuAkAkBt+L2ISXhWcJqdrn6eV+J5a9p/OF0sG8Yuj3RtZKHfQuhGfrse6/B
+         cROaI4ebiItpJEldffaxsQrjmYmCgjhPDYfSacdZmZSn0rcrNf+kFwDD1LJKsGelfePe
+         ocOg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIlWKLgAS41yQgfv3i3vajUNCiSkPBX7hm0UjbpV8k78YBs5aVeye5QvthxSM0e4nQ8mr23C78+Uur2qE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzc6YAnVNF4OGv1koLzlQ6CKGTdPQa4mm3AFai2LqHx2l3cM55g
+	KbQ0EuVKKnyi/1Pl8pj4pCyBOjpxWhmBWmI68Hq7SDsWPu6ccU0ztHmwWG20NJ0=
+X-Gm-Gg: ASbGncsYB5Kg7KEwVujBaagTYMD4SwkBC2ZruSmYvPW8DQV8GcOn5xtvwMFmUc+SEiS
+	7YYTPizZKoSETyLrw4xnZojq+iWP36QpBnzsaB74dX+V6fQxHhbmIlNVE1Khr5N1ThwAzenfR74
+	tjUJAz44HM4IuVcNEpovBy5SIcYrkQ9aPDqC86nBC+i87wsxiM5IvHeR2rpCoB5SZ734f03DkKr
+	97hMJqNk8DzIkwxlPwLyrcWwKTELZTCMZOe1B0ZOdfqPE0AORCViHtu4t1EZigc91SX
+X-Google-Smtp-Source: AGHT+IEnfZKzpVPLUq5YoVunalUaONsSympM3QhF2go/NVblXkK0DCFFX68Kg5WtSW1gpOjQLKqhQA==
+X-Received: by 2002:a05:6402:43cc:b0:5d3:efcf:f163 with SMTP id 4fb4d7f45d1cf-5d3efcff680mr1894926a12.11.1733743764583;
+        Mon, 09 Dec 2024 03:29:24 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d14c7aaa09sm5976741a12.80.2024.12.09.03.29.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 03:29:23 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chen-Yu Tsai <wenst@chromium.org>
+Subject: [RESEND PATCH] arm64: dts: mediatek: mt8183-kukui: align thermal node names with bindings
+Date: Mon,  9 Dec 2024 12:29:20 +0100
+Message-ID: <20241209112920.70060-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] mmc: sdhci-acpi: Tidy up ACPI ID table
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Ulf Hansson <ulf.hansson@linaro.org>,
- Victor Shih <victor.shih@genesyslogic.com.tw>, linux-mmc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241101101441.3518612-1-andriy.shevchenko@linux.intel.com>
- <20241101101441.3518612-6-andriy.shevchenko@linux.intel.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241101101441.3518612-6-andriy.shevchenko@linux.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 1/11/24 12:11, Andy Shevchenko wrote:
-> Tidy up ACPI ID table:
-> - sort entries alphabetically for better maintenance
+Bindings expect thermal zones node name to follow certain pattern.
+This fixes dtbs_check warning:
 
-Not a fan of alphabetical order just for the sake of it.
-In this case, it seems to me more useful to keep different
-vendors IDs together.
+  mt8183-kukui-jacuzzi-burnet.dtb: thermal-zones: 'tboard1', 'tboard2'
+    do not match any of the regexes: '^[a-zA-Z][a-zA-Z0-9\\-]{1,10}-thermal$', 'pinctrl-[0-9]+'
 
-> - drop comma in the terminator entry
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> ---
->  drivers/mmc/host/sdhci-acpi.c | 24 ++++++++++++------------
->  1 file changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/sdhci-acpi.c b/drivers/mmc/host/sdhci-acpi.c
-> index 8e265b53d7ce..c931f506c1b0 100644
-> --- a/drivers/mmc/host/sdhci-acpi.c
-> +++ b/drivers/mmc/host/sdhci-acpi.c
-> @@ -682,33 +682,35 @@ struct sdhci_acpi_uid_slot {
->  };
->  
->  static const struct sdhci_acpi_uid_slot sdhci_acpi_uids[] = {
-> -	{ "80865ACA", NULL, &sdhci_acpi_slot_int_sd },
-> -	{ "80865ACC", NULL, &sdhci_acpi_slot_int_emmc },
-> -	{ "80865AD0", NULL, &sdhci_acpi_slot_int_sdio },
->  	{ "80860F14" , "1" , &sdhci_acpi_slot_int_emmc },
->  	{ "80860F14" , "2" , &sdhci_acpi_slot_int_sdio },
->  	{ "80860F14" , "3" , &sdhci_acpi_slot_int_sd   },
->  	{ "80860F16" , NULL, &sdhci_acpi_slot_int_sd   },
-> +	{ "80865ACA", NULL, &sdhci_acpi_slot_int_sd },
-> +	{ "80865ACC", NULL, &sdhci_acpi_slot_int_emmc },
-> +	{ "80865AD0", NULL, &sdhci_acpi_slot_int_sdio },
-> +	{ "AMDI0040", NULL, &sdhci_acpi_slot_amd_emmc },
-> +	{ "AMDI0041", NULL, &sdhci_acpi_slot_amd_emmc },
->  	{ "INT33BB"  , "2" , &sdhci_acpi_slot_int_sdio },
->  	{ "INT33BB"  , "3" , &sdhci_acpi_slot_int_sd },
->  	{ "INT33C6"  , NULL, &sdhci_acpi_slot_int_sdio },
->  	{ "INT3436"  , NULL, &sdhci_acpi_slot_int_sdio },
->  	{ "INT344D"  , NULL, &sdhci_acpi_slot_int_sdio },
-> -	{ "PNP0FFF"  , "3" , &sdhci_acpi_slot_int_sd   },
->  	{ "PNP0D40"  },
-> +	{ "PNP0FFF"  , "3" , &sdhci_acpi_slot_int_sd   },
->  	{ "QCOM8051", NULL, &sdhci_acpi_slot_qcom_sd_3v },
->  	{ "QCOM8052", NULL, &sdhci_acpi_slot_qcom_sd },
-> -	{ "AMDI0040", NULL, &sdhci_acpi_slot_amd_emmc },
-> -	{ "AMDI0041", NULL, &sdhci_acpi_slot_amd_emmc },
-> -	{ },
-> +	{ }
->  };
->  
->  static const struct acpi_device_id sdhci_acpi_ids[] = {
-> +	{ "80860F14" },
-> +	{ "80860F16" },
->  	{ "80865ACA" },
->  	{ "80865ACC" },
->  	{ "80865AD0" },
-> -	{ "80860F14" },
-> -	{ "80860F16" },
-> +	{ "AMDI0040" },
-> +	{ "AMDI0041" },
->  	{ "INT33BB"  },
->  	{ "INT33C6"  },
->  	{ "INT3436"  },
-> @@ -716,9 +718,7 @@ static const struct acpi_device_id sdhci_acpi_ids[] = {
->  	{ "PNP0D40"  },
->  	{ "QCOM8051" },
->  	{ "QCOM8052" },
-> -	{ "AMDI0040" },
-> -	{ "AMDI0041" },
-> -	{ },
-> +	{ }
->  };
->  MODULE_DEVICE_TABLE(acpi, sdhci_acpi_ids);
->  
+Reviewed-by: Chen-Yu Tsai <wenst@chromium.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+---
+
+Sent in July, then Chen-Yu pinged in October. Can you apply it?
+https://lore.kernel.org/all/CAGXv+5HSZfr14K1sGky4g9Sik987DAisH7KTZn9v_svOwF+y6A@mail.gmail.com/
+---
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+index 4b974bb781b1..2828f34949ae 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi
+@@ -944,13 +944,13 @@ &ssusb {
+ };
+ 
+ &thermal_zones {
+-	tboard1 {
++	tboard1-thermal {
+ 		polling-delay = <1000>; /* milliseconds */
+ 		polling-delay-passive = <0>; /* milliseconds */
+ 		thermal-sensors = <&tboard_thermistor1>;
+ 	};
+ 
+-	tboard2 {
++	tboard2-thermal {
+ 		polling-delay = <1000>; /* milliseconds */
+ 		polling-delay-passive = <0>; /* milliseconds */
+ 		thermal-sensors = <&tboard_thermistor2>;
+-- 
+2.43.0
 
 
