@@ -1,147 +1,129 @@
-Return-Path: <linux-kernel+bounces-436748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 209B09E8A3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:23:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FA0188475C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:23:33 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1D815A864;
-	Mon,  9 Dec 2024 04:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KeT3E5bH"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD579E8A42
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:25:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A08A156F41;
-	Mon,  9 Dec 2024 04:23:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 132772827DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:25:21 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DFA159596;
+	Mon,  9 Dec 2024 04:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jdz6r8ws"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80ADD158534;
+	Mon,  9 Dec 2024 04:25:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733718203; cv=none; b=ewpHhSUUvlct4HPvSioD9+H6EOFzSGpLQqyNPIfMvbzwKPzF5KLXzzG1AkX6kpkg8ZVW/CkYpHlH1tOK65qKsDsl/14lWT5oah0DR1xlHynfHXaswHESANIP38baXdIWgBCojqXkTh6zVEJ5j6slD96QZ1Yp0O/tGR3LFUe8igM=
+	t=1733718316; cv=none; b=dRXpoOSdzhb4KWs5Yomb60DMas2WU7RdPrE6UAganj1j01JVeS8qDZAvRndLptXkasaFLwpgbwpPA0hJaoiETwtS0ZzgISUOthac6Xn3FJXqSVPL2wDCPOD66+dbrmOWE1YgGn2M3edm8Gp7CbiuyQ190pCEw9RgH0unwimJtrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733718203; c=relaxed/simple;
-	bh=iWrUKN2aAIMeQCc+f8mhS9L9J24f9TNKMDk7qd5tRwk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cZOGgI+6FHhcbtXrQQxwYOu6UmY7l6eUp75zg/jSFM1euHMJ84T+59ZS3xM2Gc82u6I0usNllNr6/so1Im62yecWQaFdsiU9U+agN5XXv7VSX2yoJHv1ZDj5lQnKQ9nhO7awomcyonPpnLPsQvKwoJUgFnelEx2e8kjccn2tlus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KeT3E5bH; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B90tFrZ024799;
-	Mon, 9 Dec 2024 04:23:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fsdp49+n36T9gPJ9WNOXXAF+BlRo3wPP4MmbMN7btik=; b=KeT3E5bHaP3nFa3Y
-	gZ7gYePeXa5x0s5Nx7vCvVxGmmEUXMThKzqZnUDmqw8r6UQrvrnu1zYJwJKAs2F9
-	GaDHKuQyu0bmCNyuud5goLyAMZEKpRWQJ8irCHHWJj5IjvjSbOplNS+VMKqf3Tdk
-	GtDNHCS6n0jI1O9qaPCy17ZHEAEdohx1iZoZZzkrc16EO/96Jtn3gR0rVEk/FPhi
-	QFycPP54Dmj34sjIvU0lmcFAA1eBtWQ3JDKQ3eTULs9j5tqM9mWQl1y3fDjeExGf
-	NMYE0etN7hEEosKwyA61Vvv0I/U4FBwbTFIRXxqx7Y6YCAjzpabTDBtZIZIsaBHs
-	5x94QA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdpgkbk0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 04:23:14 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B94ND30018215
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 04:23:13 GMT
-Received: from [10.216.28.219] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 20:23:09 -0800
-Message-ID: <b3581663-8dc0-44d4-9395-df385316bb09@quicinc.com>
-Date: Mon, 9 Dec 2024 09:53:05 +0530
+	s=arc-20240116; t=1733718316; c=relaxed/simple;
+	bh=C5FkjyJ7HvPJ4EqFDqUUuKw1p6YZrLqlh9u/z0GNe1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TxjFuKX1b1fTymFnc7Iv/WkMyY0N1ZE66gyg7RoVLQHlEU4G8v9E7JV63xKZJQ8WffHd1VmWd3Fs8N2BSIAf7UW80TSbR5gO0G/OY07Wp25qg8/lBo1gD8J+0lrGUXw6XFsz7z7Q/udkEeJM/df3whTMEGPsbw4kUkzT9Vn6d9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jdz6r8ws; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733718313; x=1765254313;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=C5FkjyJ7HvPJ4EqFDqUUuKw1p6YZrLqlh9u/z0GNe1w=;
+  b=Jdz6r8ws7y0KonroOkeNd0GR9V8mvkfCpgwLrhQWnwioxdt8UaipeGP/
+   ETtTjAkCtFYVL5xoVsL7HGobeObpmZoULlI4z2fSWeTnT7UoO5X7skQyO
+   gd8O7ghi6akd8coSA3nnkHj17ZdZqzXghMKFIDiAP7VV8+1LXtV34AYFQ
+   mceFv58wuSUW41x7MiS9xAbu6PEToUszFc8kh29nOw2eMKQCM7+VUeor/
+   Px8cGVJST+VfZQD2cP6RDWAkddcVZJJnyaTcuRuJnIHgZ0iVBwxbZvWRw
+   +a7fT3DLb5kHCXqbh0ZzCS4dIiZzNG1/Gd8OAA2p8g6hZgJPBYiG8Ufg1
+   g==;
+X-CSE-ConnectionGUID: QMxuWvyGR8ytVLedgne+eg==
+X-CSE-MsgGUID: 3qEvZvYUTKW6LIXeYINDqg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37930662"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="37930662"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:25:13 -0800
+X-CSE-ConnectionGUID: jE5zo29IQtml4GznslC54w==
+X-CSE-MsgGUID: DyfkoiC7QNaJ65/snZBYdQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95751011"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 08 Dec 2024 20:25:10 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKVKV-0003qb-1R;
+	Mon, 09 Dec 2024 04:25:07 +0000
+Date: Mon, 9 Dec 2024 12:23:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Umer Uddin <umer.uddin@mentallysanemainliners.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	igor.belwon@mentallysanemainliners.org
+Subject: Re: [PATCH v6 4/4] arm64: dts: exynos: Add initial support for
+ Samsung Galaxy S20 (x1slte)
+Message-ID: <202412072223.jniPKsyn-lkp@intel.com>
+References: <20241206184609.2437-5-umer.uddin@mentallysanemainliners.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 15/22] wifi: ath12k: add BDF address in hardware
- parameter
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
- <20241015182637.955753-16-quic_rajkbhag@quicinc.com>
- <142f92d7-72e1-433b-948d-2c7e7d37ecfc@oss.qualcomm.com>
- <0796510c-20bd-4a81-bd60-40aacbcf61c0@quicinc.com>
- <83d216c4-bf9e-4eb4-86d3-e189602f37cc@oss.qualcomm.com>
- <30e5d714-2e52-4a0e-9dc8-b6cacf6ad382@quicinc.com>
- <e63af513-5fd8-40b0-a1b2-daa9821ebf5a@oss.qualcomm.com>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <e63af513-5fd8-40b0-a1b2-daa9821ebf5a@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: MsHpbs_igXCvaoRxMGflt1-jYkn0HTdc
-X-Proofpoint-ORIG-GUID: MsHpbs_igXCvaoRxMGflt1-jYkn0HTdc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 clxscore=1015 suspectscore=0 mlxscore=0 priorityscore=1501
- phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090033
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241206184609.2437-5-umer.uddin@mentallysanemainliners.org>
 
-On 12/6/2024 4:19 PM, Konrad Dybcio wrote:
-> On 6.12.2024 5:34 AM, Raj Kumar Bhagat wrote:
->> On 12/5/2024 11:12 PM, Konrad Dybcio wrote:
->>> On 3.12.2024 10:18 AM, Raj Kumar Bhagat wrote:
->>>> On 11/4/2024 7:46 PM, Konrad Dybcio wrote:
->>>>> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
->>>>>> The Ath2k AHB device (IPQ5332) firmware requests BDF_MEM_REGION_TYPE
->>>>>> memory during QMI memory requests. This memory is part of the
->>>>>> HOST_DDR_REGION_TYPE. Therefore, add the BDF memory address to the
->>>>>> hardware parameter and provide this memory address to the firmware
->>>>>> during QMI memory requests.
->>>>>
->>>>> Sounds like something to put in the device tree, no?
->>>>>
->>>>
->>>> This BDF memory address is the RAM offset. We did add this in device tree in
->>>> version 1. This is removed from device tree in v2 based on the review comment that
->>>> DT should not store RAM offset.
->>>>
->>>> refer below link:
->>>> Link: https://lore.kernel.org/all/f8cd9c3d-47e1-4709-9334-78e4790acef0@kernel.org/
->>>
->>> Right, I think this could be something under /reserved-memory instead
->>>
->>
->> Thanks for the suggestion. However, the BDF_MEM_REGION_TYPE is already within the
->> memory reserved for HOST_DDR_REGION_TYPE through /reserved-memory. Therefore, reserving
->> the memory for BDF_MEM_REGION_TYPE again in the Device Tree (DT) will cause a warning
->> for 'overlapping memory reservation'.
-> 
-> Then you can grab a handle to it with of_reserved_mem_lookup()
-> and of_reserved_mem_device_init_by_idx()
-> 
+Hi Umer,
 
-The memory HOST_DDR_REGION_TYPE is a bigger memory around 43MB, while the memory
-BDF_MEM_REGION_TYPE is smaller around 256KB within HOST_DDR_REGION_TYPE, Using the
-above mentioned API we still have to store the offset in ath12k to point at memory
-BDF_MEM_REGION_TYPE from the start of HOST_DDR_REGION_TYPE.
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on krzk/for-next]
+[also build test ERROR on next-20241206]
+[cannot apply to krzk-dt/for-next pinctrl-samsung/for-next krzk-mem-ctrl/for-next linus/master v6.13-rc1]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Umer-Uddin/dt-bindings-arm-samsung-samsung-boards-Add-bindings-for-SM-G981B-and-SM-G980F-board/20241207-024917
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241206184609.2437-5-umer.uddin%40mentallysanemainliners.org
+patch subject: [PATCH v6 4/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 (x1slte)
+config: arm64-randconfig-003-20241207 (https://download.01.org/0day-ci/archive/20241207/202412072223.jniPKsyn-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241207/202412072223.jniPKsyn-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412072223.jniPKsyn-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> arch/arm64/boot/dts/exynos/exynos990-x1slte.dts:9:10: fatal error: 'exynos990-hubble-common.dtsi' file not found
+       9 | #include "exynos990-hubble-common.dtsi"
+         |          ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   1 error generated.
+
+
+vim +9 arch/arm64/boot/dts/exynos/exynos990-x1slte.dts
+
+   > 9	#include "exynos990-hubble-common.dtsi"
+    10	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
