@@ -1,185 +1,256 @@
-Return-Path: <linux-kernel+bounces-437077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358D89E8ED1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:34:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF96F9E8EDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:37:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35C971639D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:34:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A162C163AB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:37:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F99215716;
-	Mon,  9 Dec 2024 09:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E244C216392;
+	Mon,  9 Dec 2024 09:37:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLOsVyhe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gB2CjFIq"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66412BA4B;
-	Mon,  9 Dec 2024 09:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82506215043;
+	Mon,  9 Dec 2024 09:37:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733736858; cv=none; b=u6edU1FSTVdWw6si69wxwH3KcI0U3iv2SZoWD4y5GxEN+X+59E17BQ4c6YZGqdb4lkmneBED6nz0UepocweBUs5iKkyZ1dG9tXEcYbC5Hey1qR3M5HvglVl2y4NlHmoq5S5mFEREILr7JMT71/AGUErISG7JIWev07GOgihGo98=
+	t=1733737055; cv=none; b=DATVPRTxnJ8BDCv0W2XEzikOxmgIS4Bb1g7DNWNy4Zc/wEniDszW4AjmKrZ5S/fVYtT13NgwH220S9pwXHkAKgb5g9rzdr6crXBZezRw9g5m70EkKY4g3cBPydiDVsO+oC0q2VybpYUCO53Pa4Vl7OhCV5wMRjD0blabm9eAPVE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733736858; c=relaxed/simple;
-	bh=IzV+3HCjgE7OTmGjpz+XMnwaut0tfpKGJVLufWU0mVo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A+wX2Q0V4kBHeEN0IR7WBLqwETvZpkbkslgL+n74hMK2dpuVZ5kCkJ22wVw7G8Xs5Y8T0891aBAzTH3o5UlENUAFTRIniS3EzsPFmpE660MN/BsaWJibUFuNDRWvHYRWy4UVYFU342Yw73ZsDSNrTokQFLjcfdu3Qph7GO7F8+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLOsVyhe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE96EC4CED1;
-	Mon,  9 Dec 2024 09:34:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733736858;
-	bh=IzV+3HCjgE7OTmGjpz+XMnwaut0tfpKGJVLufWU0mVo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZLOsVyheykMvVt0+tlREeXQE2g6gYKe0GjHqgBDNvliriYOD+n4e9Lo6pMBaXlfUp
-	 6Gmki8zPupghf+PE9X7AUPHpkBZ67tdCFG0NXClw14zDZ7suB6RLDdt3wv9cEDOF3A
-	 pGwnT6O/0VBNTVqfQmiPIo90pBmDRQqu3zn7XHIS+7YfW/+T+YBoR/4phy4C5j4m9R
-	 SulkZBRFxQc/a0IKvho+y2yX9VNKBnP135zEifhdvNkmBtU0ksmvM/c4+yXqv+YMfx
-	 1i2D9xH5xX+tpUI6FYj+HGWwzKfWYMZGSUG2zojPx02w/SsPM608q1n//IJHvvMo/p
-	 Yg+l7VSv1GqCA==
-Date: Mon, 9 Dec 2024 10:34:14 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Chen Wang <unicornxw@gmail.com>
-Cc: u.kleine-koenig@baylibre.com, aou@eecs.berkeley.edu, arnd@arndb.de, 
-	unicorn_wang@outlook.com, conor+dt@kernel.org, guoren@kernel.org, inochiama@outlook.com, 
-	krzk+dt@kernel.org, palmer@dabbelt.com, paul.walmsley@sifive.com, robh@kernel.org, 
-	tglx@linutronix.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, chao.wei@sophgo.com, xiaoguang.xing@sophgo.com, 
-	fengchun.li@sophgo.com
-Subject: Re: [PATCH v2 2/3] irqchip: Add the Sophgo SG2042 MSI interrupt
- controller
-Message-ID: <kdwwyx4digujlculbu4ivyiedqbmivuuddpfadpp7tup2gmvjv@6j53b4wqxbd7>
-References: <cover.1733726057.git.unicorn_wang@outlook.com>
- <c882fe329932409131be76ce47b81a6155595ce4.1733726057.git.unicorn_wang@outlook.com>
+	s=arc-20240116; t=1733737055; c=relaxed/simple;
+	bh=RxRYBLw+WWgYQmSch/46WqGOUDRCWArKJMBsXiWOQO0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AkIdo6uYHo8RHxfEfxKJcLKX0n8WkoxIx0ZX7KPIS8Ag+7aX/VLWp9ROZ+SjrDgC4RAeQF4ioirsO4IQwTRVFexxk3cSKSED3Hh4uzjbOq3q7kb0ro/PkkUenyzDe7QW8vt32eGiWb8XxYPZCUUYUVozdKD/k77apStFHE7zLwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gB2CjFIq; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MEiDY029735;
+	Mon, 9 Dec 2024 09:37:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RxW8/76/P1EEJrSeXhAOpajkRfvw7QIqIdReTGQV3/I=; b=gB2CjFIqFT19xcWF
+	MJoKhXP1LX69+2TruZ4bdQSZOzoD/Wb1UjmR7kfXSLhzWXFoSx3uc0gfSlMtlEVy
+	4QnnwDD18tkAWfgd3FXB1AoAOyU9TZjmYhizny78j6jvg7NKcoKZ/s0+H/rAPGmf
+	C8NjJVvbhUA/0UxjWBDmiVITR1uSfahx+X64V9aetaMJdVQxSMEd+p7Q+yBbdJ6A
+	QhkSeeLwUQGO0ciVFym6S4pt/CWQbrEIvOsnjTjz+KVNhlFUPiv0bJEQy+ocVKBT
+	GHThqqA2DnTjGIh5bAhVpEqW5HX5Ptt+e8WODsLuinKi8YeyDireLPajEd/RS5yw
+	DAEo/w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetm3gh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 09:37:22 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B99bKvA011615
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 09:37:20 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 01:37:14 -0800
+Message-ID: <2a113de9-3442-8868-190c-3b361c073a26@quicinc.com>
+Date: Mon, 9 Dec 2024 15:07:11 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <c882fe329932409131be76ce47b81a6155595ce4.1733726057.git.unicorn_wang@outlook.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v6 13/28] media: iris: implement subscribe_event and
+ unsubscribe_event ioctls
+Content-Language: en-US
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Sebastian Fricke <sebastian.fricke@collabora.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Nicolas Dufresne
+	<nicolas@ndufresne.ca>,
+        =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?=
+	<u.kleine-koenig@baylibre.com>,
+        Jianhua Lu <lujianhua000@gmail.com>, <linux-media@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Vedang Nagar
+	<quic_vnagar@quicinc.com>
+References: <20241120-qcom-video-iris-v6-0-a8cf6704e992@quicinc.com>
+ <20241120-qcom-video-iris-v6-13-a8cf6704e992@quicinc.com>
+ <280982a6-8e62-44f8-962b-a126b966a9d1@xs4all.nl>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <280982a6-8e62-44f8-962b-a126b966a9d1@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: fj8QFKNtw43bCly9cTNDcSJkUehu7O66
+X-Proofpoint-ORIG-GUID: fj8QFKNtw43bCly9cTNDcSJkUehu7O66
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
+ spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=999
+ bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090075
 
-On Mon, Dec 09, 2024 at 03:12:00PM +0800, Chen Wang wrote:
-> +static void sg2042_msi_irq_ack(struct irq_data *d)
-> +{
-> +	struct sg2042_msi_data *data  = irq_data_get_irq_chip_data(d);
-> +	int bit_off = d->hwirq - data->irq_first;
-> +
-> +	writel(1 << bit_off, (unsigned int *)data->reg_clr);
-> +
-> +	irq_chip_ack_parent(d);
-> +}
-> +
-> +static void sg2042_msi_irq_compose_msi_msg(struct irq_data *data,
-> +					   struct msi_msg *msg)
-> +{
-> +	struct sg2042_msi_data *priv = irq_data_get_irq_chip_data(data);
-> +
-> +	msg->address_hi = upper_32_bits(priv->doorbell_addr);
-> +	msg->address_lo = lower_32_bits(priv->doorbell_addr);
-> +	msg->data = 1 << (data->hwirq - priv->irq_first);
-> +
-> +	pr_debug("%s hwirq[%ld]: address_hi[%#x], address_lo[%#x], data[%#x]\n",
-> +		 __func__, data->hwirq, msg->address_hi, msg->address_lo, msg->data);
 
-Don't print addresses, it is useless - it will be a constant.
 
-> +}
-> +
-> +static struct irq_chip sg2042_msi_middle_irq_chip = {
-> +	.name			= "SG2042 MSI",
-> +	.irq_ack		= sg2042_msi_irq_ack,
-> +	.irq_mask		= irq_chip_mask_parent,
-> +	.irq_unmask		= irq_chip_unmask_parent,
-> +#ifdef CONFIG_SMP
-> +	.irq_set_affinity	= irq_chip_set_affinity_parent,
-> +#endif
-> +	.irq_compose_msi_msg	= sg2042_msi_irq_compose_msi_msg,
-> +};
+On 12/6/2024 3:24 PM, Hans Verkuil wrote:
+> On 20/11/2024 15:46, Dikshita Agarwal wrote:
+>> From: Vedang Nagar <quic_vnagar@quicinc.com>
+>>
+>> Implement subscribe_event and unsubscribe_event iocts with necessary
+>> hooks.
+>>
+>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>  drivers/media/platform/qcom/iris/iris_instance.h |  2 ++
+>>  drivers/media/platform/qcom/iris/iris_vdec.c     | 25 ++++++++++++++++++++++++
+>>  drivers/media/platform/qcom/iris/iris_vdec.h     |  1 +
+>>  drivers/media/platform/qcom/iris/iris_vidc.c     | 10 ++++++++++
+>>  4 files changed, 38 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/iris_instance.h b/drivers/media/platform/qcom/iris/iris_instance.h
+>> index 1e9a6075357f..ef4515d2086c 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_instance.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_instance.h
+>> @@ -30,6 +30,7 @@
+>>   * @once_per_session_set: boolean to set once per session property
+>>   * @m2m_dev:	a reference to m2m device structure
+>>   * @m2m_ctx:	a reference to m2m context structure
+>> + * @subscriptions: variable to hold current events subscriptions
+>>   */
+>>  
+>>  struct iris_inst {
+>> @@ -48,6 +49,7 @@ struct iris_inst {
+>>  	bool				once_per_session_set;
+>>  	struct v4l2_m2m_dev		*m2m_dev;
+>>  	struct v4l2_m2m_ctx		*m2m_ctx;
+>> +	unsigned int			subscriptions;
+>>  };
+>>  
+>>  #endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
+>> index 742b45432481..9afeb681b7a7 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
+>> @@ -3,6 +3,7 @@
+>>   * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>>   */
+>>  
+>> +#include <media/v4l2-event.h>
+>>  #include <media/v4l2-mem2mem.h>
+>>  
+>>  #include "iris_buffer.h"
+>> @@ -193,3 +194,27 @@ int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>>  
+>>  	return 0;
+>>  }
+>> +
+>> +int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub)
+>> +{
+>> +	int ret = 0;
+>> +
+>> +	switch (sub->type) {
+>> +	case V4L2_EVENT_EOS:
+>> +		ret = v4l2_event_subscribe(&inst->fh, sub, 0, NULL);
+>> +		inst->subscriptions |= V4L2_EVENT_EOS;
+>> +		break;
+>> +	case V4L2_EVENT_SOURCE_CHANGE:
+>> +		ret = v4l2_src_change_event_subscribe(&inst->fh, sub);
+>> +		inst->subscriptions |= V4L2_EVENT_SOURCE_CHANGE;
+>> +		break;
+>> +	case V4L2_EVENT_CTRL:
+>> +		ret = v4l2_ctrl_subscribe_event(&inst->fh, sub);
+>> +		inst->subscriptions |= V4L2_EVENT_CTRL;
+> 
+> No need to keep track of which events are subscribed to. Leave that to the event
+> framework.
+> 
+Noted, will remove.
 
-...
-
-> +static int sg2042_msi_probe(struct platform_device *pdev)
-> +{
-> +	struct of_phandle_args args = {};
-> +	struct sg2042_msi_data *data;
-> +	int ret;
-> +
-> +	data = devm_kzalloc(&pdev->dev, sizeof(struct sg2042_msi_data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->reg_clr = devm_platform_ioremap_resource_byname(pdev, "clr");
-> +	if (IS_ERR(data->reg_clr)) {
-> +		dev_err(&pdev->dev, "Failed to map clear register\n");
-> +		return PTR_ERR(data->reg_clr);
-> +	}
-> +
-> +	if (of_property_read_u64(pdev->dev.of_node, "sophgo,msi-doorbell-addr",
-> +				 &data->doorbell_addr)) {
-> +		dev_err(&pdev->dev, "Unable to parse MSI doorbell addr\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = of_parse_phandle_with_args(pdev->dev.of_node, "msi-ranges",
-> +					 "#interrupt-cells", 0, &args);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Unable to parse MSI vec base\n");
-> +		return ret;
-> +	}
-
-You leak the phandle. You leak much more, btw...
-
-> +	data->irq_first = (u32)args.args[0];
-> +
-> +	ret = of_property_read_u32_index(pdev->dev.of_node, "msi-ranges",
-> +					 args.args_count + 1, &data->num_irqs);
-> +	if (ret) {
-> +		dev_err(&pdev->dev, "Unable to parse MSI vec number\n");
-> +		return ret;
-> +	}
-> +
-> +	if (data->irq_first < SG2042_VECTOR_MIN ||
-> +	    (data->irq_first + data->num_irqs - 1) > SG2042_VECTOR_MAX) {
-> +		dev_err(&pdev->dev, "msi-ranges is incorrect!\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	mutex_init(&data->msi_map_lock);
-> +
-> +	data->msi_map = bitmap_zalloc(data->num_irqs, GFP_KERNEL);
-
-This also leaks during removal.
-
-> +	if (!data->msi_map)
-> +		return -ENOMEM;
-> +
-> +	ret = sg2042_msi_init_domains(data, pdev->dev.of_node);
-> +	if (ret)
-> +		bitmap_free(data->msi_map);
-> +
-> +	return ret;
-> +}
-> +
-> +static const struct of_device_id sg2042_msi_of_match[] = {
-> +	{ .compatible	= "sophgo,sg2042-msi" },
-> +	{}
-> +};
-> +
-> +static struct platform_driver sg2042_msi_driver = {
-> +	.driver = {
-> +		.name		= "sg2042-msi",
-> +		.of_match_table	= of_match_ptr(sg2042_msi_of_match),
-
-Drop of_match_ptr(), unnecessary and might lead to warnings even if this
-is not a module.
-
-Best regards,
-Krzysztof
-
+Thanks,
+Dikshita
+> See also my comment to patch 20/28.
+> 
+> Regards,
+> 
+> 	Hans
+> 
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return ret;
+>> +}
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
+>> index ae456676e578..f64ce3234e6a 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vdec.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
+>> @@ -13,5 +13,6 @@ void iris_vdec_inst_deinit(struct iris_inst *inst);
+>>  int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f);
+>>  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>>  int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>> +int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub);
+>>  
+>>  #endif
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> index bc77dfc2ba67..3a138172e674 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> @@ -4,6 +4,7 @@
+>>   */
+>>  
+>>  #include <linux/pm_runtime.h>
+>> +#include <media/v4l2-event.h>
+>>  #include <media/v4l2-ioctl.h>
+>>  #include <media/v4l2-mem2mem.h>
+>>  
+>> @@ -322,6 +323,13 @@ static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *
+>>  	return 0;
+>>  }
+>>  
+>> +static int iris_subscribe_event(struct v4l2_fh *fh, const struct v4l2_event_subscription *sub)
+>> +{
+>> +	struct iris_inst *inst = container_of(fh, struct iris_inst, fh);
+>> +
+>> +	return iris_vdec_subscribe_event(inst, sub);
+>> +}
+>> +
+>>  static struct v4l2_file_operations iris_v4l2_file_ops = {
+>>  	.owner                          = THIS_MODULE,
+>>  	.open                           = iris_open,
+>> @@ -347,6 +355,8 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+>>  	.vidioc_enum_framesizes         = iris_enum_framesizes,
+>>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+>>  	.vidioc_g_selection             = iris_g_selection,
+>> +	.vidioc_subscribe_event         = iris_subscribe_event,
+>> +	.vidioc_unsubscribe_event       = v4l2_event_unsubscribe,
+>>  };
+>>  
+>>  void iris_init_ops(struct iris_core *core)
+>>
+> 
 
