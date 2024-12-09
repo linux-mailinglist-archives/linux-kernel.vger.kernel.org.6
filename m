@@ -1,151 +1,149 @@
-Return-Path: <linux-kernel+bounces-438437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54DBA9EA14F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:40:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DCC19EA154
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:41:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B81EA16383F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:39:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A540216340B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:40:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6130F19D08F;
-	Mon,  9 Dec 2024 21:39:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 406D919D08F;
+	Mon,  9 Dec 2024 21:40:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="izStOIzB"
-Received: from omta034.useast.a.cloudfilter.net (omta034.useast.a.cloudfilter.net [44.202.169.33])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ZMcQewpj"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09B7046B8
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 21:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F73846B8;
+	Mon,  9 Dec 2024 21:40:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733780395; cv=none; b=py4mG1Ik9Y81A3OFYs4OTiV63es7W5uJlPZhiPRPF7CPMwKiT3QSToUAya7aBjJZkdcGvQ4LH3d+NhCtUR401gCkQXDmgGg+2fC7spUFimWfLnO9GYb/Ko9TxHjT55AgToU2lY5ev8mR7ZjmQKClYO4kAPbOEDFRjUV77qi2YYk=
+	t=1733780455; cv=none; b=JkH2/tGWqhAU9N7341uPbDsw0ZR0OjIyZtWaP6x0vsA+J3nuCyNxOtfffaJBVwCwYHkRI3ghb+qfr4jqdI5H1cYXhqCGbmTVXcvAYoTOF7UDdBvCtXOGGNx/+fLZaDMbsG7u8qTBBKXvOkuFwDkMCnDeJK62YJ2Z/ardl3E/KWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733780395; c=relaxed/simple;
-	bh=YLmWJA9o+SyfJrnsdv3qTnFur5RGm681ZsZPsb16fn4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ligRGPAWQYDuKdr2T9Cjj+LSSE4vC56wYtlKC2fcefYpBYQhYN3SbFN17kKGFrp0Yw+EOdJEm7aa9dkM+kB5QXhX60ZAJgqjtR2aeo1I58Nr990ph/4YmwJDd1SyWhUqOKhVxsaqECp0wGspWkANpLMm55iOG/MPz1j0EIb+H1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=izStOIzB; arc=none smtp.client-ip=44.202.169.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
-Received: from eig-obgw-5002a.ext.cloudfilter.net ([10.0.29.215])
-	by cmsmtp with ESMTPS
-	id KkvDt2eoNrKrbKlTmtenYn; Mon, 09 Dec 2024 21:39:46 +0000
-Received: from gator4166.hostgator.com ([108.167.133.22])
-	by cmsmtp with ESMTPS
-	id KlTlt9eAncEKuKlTmtJdr0; Mon, 09 Dec 2024 21:39:46 +0000
-X-Authority-Analysis: v=2.4 cv=Z7YnH2RA c=1 sm=1 tr=0 ts=675763a2
- a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=GtNDhlRIH4u8wNL3EA3KcA==:17
- a=IkcTkHD0fZMA:10 a=RZcAm9yDv7YA:10 a=7T7KSl7uo7wA:10 a=VwQbUJbxAAAA:8
- a=ZZYOhiE48yz2bGTex4UA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=Xt_RvD8W3m28Mn_h3AK8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QXn0rrOsSXBUaE1ElIYAdbgM/h1YcKYu0JLlnH7xefI=; b=izStOIzB6N6/xFw0N+2qQdShuL
-	D/hpq9yZOIc8Px+kLiCyLq7YZ3ojdVacVJjpR4y4gK1a3c4v033UBaoaE1uwNJJz5GL376n4EqLS6
-	DCNDGeodGuB6l5FmSdJn1i9zNPs3v33Zr0pdU48E+tDi6NlF+4fOEkpGpBePe9LYuAouIXRJ3zh0a
-	ODkNsvUdrZWdwgmBFpK+rE6b0I7XDHdGW0TStUtqRN3qi5zHiVVljvqhjUpEp31zjpNpgBvBUuLNm
-	mAVORWCT/f16e/pfCpoRhZn0TAE/7+INvzXJNc8m2OzjthkFuiPWVf7d1C7qsVMdAJ5H9Xglef9HN
-	UNuwtw+g==;
-Received: from [177.238.21.80] (port=46320 helo=[192.168.0.21])
-	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <gustavo@embeddedor.com>)
-	id 1tKlTi-0030CU-23;
-	Mon, 09 Dec 2024 15:39:43 -0600
-Message-ID: <0e336341-9575-436f-8e41-df190f67bdd7@embeddedor.com>
-Date: Mon, 9 Dec 2024 15:39:22 -0600
+	s=arc-20240116; t=1733780455; c=relaxed/simple;
+	bh=I7z53oMSPeKw57tcADR/kJ8mn9kitYJg4MblUErnws0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f5wsQD72acdykCsoXvTDMSWTCTvyDmJfSJW+p1fEdkWhx6+A15QRoFxdQqYGC1Kb1Hi/ncIW9YGxi/bswm0MnCb6hHwzMU9bYkQHJbor7ukFY2jFU+IlxY9B6T2+Y3VPZ3CIZ/xW/ocnPzog85mnQz7pudgGW9YEHEjRsxd+2aE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ZMcQewpj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 4C47C502;
+	Mon,  9 Dec 2024 22:40:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1733780418;
+	bh=I7z53oMSPeKw57tcADR/kJ8mn9kitYJg4MblUErnws0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZMcQewpjew4EGWseaDIabpzeFj3eQ8ky1BYh35ijVN8a9ywaYOzOLW5aJ8B4+zDRM
+	 CsKSUr7uDb5euSsYbjhqp/7Rj4h/tyLzoHrsMuf+tctX+WWcqSOxIMPAA1WbS1D+N/
+	 NOkXtCxPoJGby5mN8LSjJ3IQ8Mh0uJFrLIZO6qNE=
+Date: Mon, 9 Dec 2024 23:40:35 +0200
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, LUU HOAI <hoai.luu.ub@renesas.com>,
+	Jagan Teki <jagan@amarulasolutions.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+Subject: Re: [PATCH v3 05/10] clk: renesas: r8a779h0: Add display clocks
+Message-ID: <20241209214035.GB26531@pendragon.ideasonboard.com>
+References: <20241206-rcar-gh-dsi-v3-0-d74c2166fa15@ideasonboard.com>
+ <20241206-rcar-gh-dsi-v3-5-d74c2166fa15@ideasonboard.com>
+ <CAMuHMdU+PPeCNb5y75A1YTf1EvvCQEgD1t-=6C_YyK0gDK3R8A@mail.gmail.com>
+ <b0fffc87-a72e-4041-b3f6-7f2a4987916e@ideasonboard.com>
+ <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2][next] UAPI: ethtool: Use __struct_group() in
- struct ethtool_link_settings
-To: Christopher Ferris <cferris@google.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Nick Desaulniers <ndesaulniers@google.com>, Kees Cook <kees@kernel.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- Michael Chan <michael.chan@broadcom.com>, Andrew Lunn
- <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Potnuri Bharat Teja <bharat@chelsio.com>,
- Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
- Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org,
- android-llvm-dev@google.com
-References: <cover.1730238285.git.gustavoars@kernel.org>
- <9e9fb0bd72e5ba1e916acbb4995b1e358b86a689.1730238285.git.gustavoars@kernel.org>
- <20241109100213.262a2fa0@kernel.org>
- <d4f0830f-d384-487a-8442-ca0c603d502b@embeddedor.com>
- <55d62419-3a0c-4f26-a260-06cf2dc44ec1@embeddedor.com>
- <202411151215.B56D49E36@keescook> <Z1HZpe3WE5As8UAz@google.com>
- <CANtHk4mnjE5aATk2r8uOsyLKm+7-tbEv5AaXVWGP_unhLNEvsg@mail.gmail.com>
- <20241209131032.6af473f4@kernel.org>
- <CANtHk4kM-9BDCm69+z3hS58uCrjCmma0aQ+nOqFUROaFhLAkDg@mail.gmail.com>
-Content-Language: en-US
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-In-Reply-To: <CANtHk4kM-9BDCm69+z3hS58uCrjCmma0aQ+nOqFUROaFhLAkDg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 177.238.21.80
-X-Source-L: No
-X-Exim-ID: 1tKlTi-0030CU-23
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.0.21]) [177.238.21.80]:46320
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Org: HG=hgshared;ORG=hostgator;
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfF95LXbzpgS+noiurJQmbe7V+jzjdGh7UDmEmKF04f6wuIUbSh41xrZffmzv4Kq6j1xnO8S3ICxJIXyYQHR1r5WvUZZC2KW6RBPlj0G6GhQUBs71EuwG
- ZvxI/AXgeiLYe7cNATHWp63m9kutQbaYRf7ZxmWgggtt9QtvURt80CGmgrctToWFhLh7hHwxMIyjVsm6keXFXTUfsakGmw5ZEvzrM5iWFO0OBvxUMJZIiepM
+In-Reply-To: <CAMuHMdUmAbnbJ-UouN+dnodVg7+Lw47to-O4rTAcDanQ=NCGpg@mail.gmail.com>
 
-
-
-On 09/12/24 15:14, Christopher Ferris wrote:
-> Yes, when compiling Android, we have a C++ file that includes the pkt_cls.h
-> directly to get access to some of the structures from that file. It
-> currently gets the "types cannot be declared in an anonymous union" error
-> due to the TAG part of the __struct_group usage not being empty in that
-> file.
-
-(sigh) this should be reverted:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=a9c60712d71ff07197b2982899b9db28ed548ded
-
---
-Gustavo
-
+On Mon, Dec 09, 2024 at 08:49:18AM +0100, Geert Uytterhoeven wrote:
+> On Mon, Dec 9, 2024 at 6:26 AM Tomi Valkeinen wrote:
+> > On 06/12/2024 15:43, Geert Uytterhoeven wrote:
+> > > On Fri, Dec 6, 2024 at 10:33 AM Tomi Valkeinen wrote:
+> > >> From: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > >>
+> > >> Add display related clocks for DU, DSI, FCPVD, and VSPD.
+> > >>
+> > >> Signed-off-by: Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>
+> > >> Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> > >> Tested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > >
+> > > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > > i.e. will queue in renesas-clk for v6.14.
+> > >
+> > >> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> > >> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> > >> @@ -179,6 +179,9 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
+> > >>          DEF_MOD("canfd0",       328,    R8A779H0_CLK_SASYNCPERD2),
+> > >>          DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
+> > >>          DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
+> > >> +       DEF_MOD("dis0",         411,    R8A779H0_CLK_S0D3),
+> > >> +       DEF_MOD("dsitxlink0",   415,    R8A779H0_CLK_DSIREF),
+> > >> +       DEF_MOD("fcpvd0",       508,    R8A779H0_CLK_S0D3),
+> > >>          DEF_MOD("hscif0",       514,    R8A779H0_CLK_SASYNCPERD1),
+> > >>          DEF_MOD("hscif1",       515,    R8A779H0_CLK_SASYNCPERD1),
+> > >>          DEF_MOD("hscif2",       516,    R8A779H0_CLK_SASYNCPERD1),
+> > >> @@ -227,6 +230,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
+> > >>          DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D4_VIO),
+> > >>          DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D4_VIO),
+> > >>          DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D4_VIO),
+> > >> +       DEF_MOD("vspd0",        830,    R8A779H0_CLK_S0D1_VIO),
+> > >>          DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
+> > >>          DEF_MOD("cmt0",         910,    R8A779H0_CLK_R),
+> > >>          DEF_MOD("cmt1",         911,    R8A779H0_CLK_R),
+> > >
+> > > As mentioned by Laurent during his review on v1, all clock parents
+> > > should probably be some form of R8A779H0_CLK_S0Dx_VIO.
+> > > So I'm inclined to replace all of them by R8A779H0_CLK_VIOBUSD2 while
+> > > applying, which would match R-Car V4H.
+> >
+> > What do you mean with the above? First you say the clock parents should
+> > be some form of S0Dx_VIO, but then you say you'll use VIOBUSD2. Aren't
+> > those unrelated clocks, from different PLLs?
 > 
-> Christopher
+> Oops, copy-'n-paste went wrong. I did mean R8A779H0_VIOBUSD*.
 > 
-> On Mon, Dec 9, 2024 at 1:10 PM Jakub Kicinski <kuba@kernel.org> wrote:
+> > > Are you OK with that?
+> >
+> > I'm fine with that. I can't really get much out of the docs wrt.
+> > clocking, and the clocks I used were from the BSP. Afaics, it looks
+> > similar to V4H, so it's probably best have the same clocks, as you suggest.
 > 
->> On Mon, 9 Dec 2024 12:59:40 -0800 Christopher Ferris wrote:
->>> It looks like the way this was fixed in the ethtool.h uapi header was to
->>> revert the usage of __struct_group. Should something similar happen for
->>> pkt_cls.h? Or would it be easier to simply remove the usage of the TAG in
->>> the _struct_group macro?
->>
->> Just to state it explicitly - are you running into a compilation issue
->> with existing user space after updating pkt_cls.h?
->>
-> 
+> Agreed.
 
+Works for me too.
+
+-- 
+Regards,
+
+Laurent Pinchart
 
