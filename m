@@ -1,125 +1,106 @@
-Return-Path: <linux-kernel+bounces-437338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 571B69E91FB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:18:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 946B49E9209
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:21:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4FB2281F37
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:18:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38EC9280FEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:21:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77F7219E92;
-	Mon,  9 Dec 2024 11:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA66E219EBA;
+	Mon,  9 Dec 2024 11:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="wbNUEBV7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhCRyQMy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091FB2147FF;
-	Mon,  9 Dec 2024 11:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1868D218AA6;
+	Mon,  9 Dec 2024 11:20:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733743075; cv=none; b=fK8obwUdVRq8ypo4Gk07bPmoMIGXMZY59fn9TleU9lT2sc4CaeXu7kEZzVmQo+rGXT24xuPDRIgu/MPoTIxYIDxQM8QoKxtEhOjrDzOT91frDH4nzi5rB14PP5GXJY7egmE0Mn034otzCxXaGGT0GkboH2RMpbSVG/3IxMo8U5Y=
+	t=1733743237; cv=none; b=WT3NXPzjesEFg+qofdqGSSJcwg57IM+LHEDQlYKQ70VMy2yz0WGEGyzQsX+P3nRtrZXL/2hIsKEpRs4BikCoys7vVvuNPZbT1TkFQbh1sbe3AmVXu6Kv81mUixbW/mOygoWrR5pfMN9ZcWIuDeS9AZeQPytORkfZwruuvMWhlP4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733743075; c=relaxed/simple;
-	bh=gCUPV0kh+sNZWb/Ei12o+FmTpoO1iULqFFxAQL6jImE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A6PdYH8PKN1+L07qjY6IebnTy84pxHx49E8eaHs4YbDXiU94tv9Yeksh04DB2jxnAkdZxVu9uO+VVlUoZbyikAfXGuTJxaNpd1EK65BNlbhvexxnX09DsFyl3Brp2CpIvsgudTMPQzWLD7dVeikfC34yPc7lfVGsCY08doE4IgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=wbNUEBV7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C34EBC4CEE0;
-	Mon,  9 Dec 2024 11:17:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1733743074;
-	bh=gCUPV0kh+sNZWb/Ei12o+FmTpoO1iULqFFxAQL6jImE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=wbNUEBV7Jn7poGXI/9itfx/L/7MbETTFq0Y3keyUMMxiXV2rdYoBtsjTCFreog58M
-	 VDxXhFfevaFcVELajGG1DqIgzDjmPwmlCyIaNGB9dRhVOgOyBJQ6QJqOmlWkCfoZ9a
-	 K+P4fpen5MHEg4PkJQNiqhsLWxF+l5Ik6R6alGr8=
-Date: Mon, 9 Dec 2024 12:17:49 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Arnd Bergmann <arnd@arndb.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <2024120909-yield-celery-4257@gregkh>
-References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
- <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
- <Z1bPYb0nDcUN7SKK@pollux.localdomain>
+	s=arc-20240116; t=1733743237; c=relaxed/simple;
+	bh=11vQLLmphFwGU+kKNcSh9cY4RnEZ6CybkaKni0OR3eE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tKA3ku08DNJIrNVr8MAz4mznxJsa4QiuZqqmwt0RpurM4/7QUADaRf3UVUkF0NI4ZdX7axoolpjYYNWt0GALVGO11+O9X743ULE7Up3tDeC/F+SVil6wPzcseig7FCRNc3mFqknMA+nU79Muy+93N0DLSSnRp4Ma6AcrglZprCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IhCRyQMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E47D9C4CED1;
+	Mon,  9 Dec 2024 11:20:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733743237;
+	bh=11vQLLmphFwGU+kKNcSh9cY4RnEZ6CybkaKni0OR3eE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=IhCRyQMy3NIaBeMIgCV7dcFcIhpN4w+cPr9FSmscCMbqg3DG6c6CPGceUHM1gPZMC
+	 xn4lASh/8mwyq2DOKcc4EMEayGfFJuIss8D5zXGsmtJeJqCL7wllDKrYaXwjZHdBTU
+	 zmLHK4ztJ+eR1hzupos2aYPwEXmf2m5TD75xEG3Qvzll9qDoW8qgP/Ko5Dg9ojcGpA
+	 8wKYfUIRE3zlF+/qpgZOoQgijeZuQFtVJodJNccT/3BFQn9q748nGBVuzS8bTnYptX
+	 nMfjtRS5DdveL/zDfHo++7+YPZiV8MoZnnp6aEl/oNfcIdO6gf/HD2kbTmSvYQzcbS
+	 BoIUBD0iDuAug==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1tKboc-00000000869-1f8e;
+	Mon, 09 Dec 2024 12:20:38 +0100
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH v2 0/2] arm64: dts: qcom: x1e80100: fix USB OTG regressions
+Date: Mon,  9 Dec 2024 12:19:03 +0100
+Message-ID: <20241209111905.31017-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1bPYb0nDcUN7SKK@pollux.localdomain>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 09, 2024 at 12:07:13PM +0100, Danilo Krummrich wrote:
-> On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> > Providing access to the underlying `struct miscdevice` is useful for
-> > various reasons. For example, this allows you access the miscdevice's
-> > internal `struct device` for use with the `dev_*` printing macros.
-> > 
-> > Note that since the underlying `struct miscdevice` could get freed at
-> > any point after the fops->open() call, only the open call is given
-> > access to it. To print from other calls, they should take a refcount on
-> > the device to keep it alive.
-> > 
-> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> > ---
-> >  rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
-> >  1 file changed, 16 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> > index 0cb79676c139..c5af1d5ec4be 100644
-> > --- a/rust/kernel/miscdevice.rs
-> > +++ b/rust/kernel/miscdevice.rs
-> > @@ -104,7 +104,7 @@ pub trait MiscDevice {
-> >      /// Called when the misc device is opened.
-> >      ///
-> >      /// The returned pointer will be stored as the private data for the file.
-> > -    fn open(_file: &File) -> Result<Self::Ptr>;
-> > +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
-> 
-> How is the user of this abstraction supposed to access the underlying struct
-> miscdevice e.g. from other fops? AFAICS, there is no way for the user to store a
-> device pointer / reference in their driver private data.
+A recent change enabling OTG mode on the Lenovo ThinkPad T14s USB-C
+ports can break SuperSpeed device hotplugging.
 
-That should be "hung" off of the miscdevice structure.  In C that's done
-through embedding the miscdevice structure within something else, don't
-know how you all are going to do that in rust :)
+Abel noticed that the corresponding commit for the CRD also triggers a
+hard reset during resume from suspend.
 
-Or, better yet, in your open callback, the rust code can set the file
-private data pointer, that's what is done a lot as well, either could
-work.
+With retimer (and orientation detection) support not even merged yet,
+let's revert at least until we have stable host mode in mainline.
 
-> I also think it's a bit weird to pass the registration structure in open() to
-> access the device.
+Note that Stephan and Dmitry have already identified other problems with
+the offending commits here:
 
-That's what the miscdevice api does today in C.  Well, it's embedded in
-the file private pointer, so I guess just a function to call to get it
-instead would work.
+	https://lore.kernel.org/all/ZxZO6Prrm2ITUZMQ@linaro.org/
+	https://lore.kernel.org/all/hw2pdof4ajadjsjrb44f2q4cz4yh5qcqz5d3l7gjt2koycqs3k@xx5xvd26uyef
 
-> I think we need an actual representation of a struct miscdevice, i.e.
-> `misc::Device`.
+Johan
 
-I thought we have that already?
 
-thanks,
+Changes in v2
+ - revert also the corresponding patch for the CRD which breaks suspend
 
-greg k-h
+
+Johan Hovold (2):
+  Revert "arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports"
+  Revert "arm64: dts: qcom: x1e80100-crd: enable otg on usb ports"
+
+ .../boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts  |  8 ++++++++
+ arch/arm64/boot/dts/qcom/x1e80100-crd.dts            | 12 ++++++++++++
+ 2 files changed, 20 insertions(+)
+
+-- 
+2.45.2
+
 
