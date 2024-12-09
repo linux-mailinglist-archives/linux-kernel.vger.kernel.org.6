@@ -1,78 +1,78 @@
-Return-Path: <linux-kernel+bounces-437477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A69F9E93CB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:24:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77ABC9E93CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:24:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BD8B165D04
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:24:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E36B1887020
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:24:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0A12248B6;
-	Mon,  9 Dec 2024 12:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66A482248A0;
+	Mon,  9 Dec 2024 12:24:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TSkfFdnj"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZwjWWKg/"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64272223703
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2B82224894
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747058; cv=none; b=tvESxeZpE2+cnI53DYVLOH6bDzsWff9MBEBvp+pTvvLh0DFRjqVaKFa7mdC42j9/0PqtH9H3fqyos39zQ28xW366sHKYja30kUdI08ecnhrTTvOxZ5mbF3tAqsORBhizs3dkkDiDzbi+UR0/YMMl/f0Pg/Yc/4I0lZvLdtPPTqc=
+	t=1733747059; cv=none; b=fAAZBxfDgFEPKdaAUi9F+wwjFRLMxCvizU0OezK69bCSD83/W/bZLPt0SzDunDSCXz78PL6Fav+dt5gxRkh6nCyB6zSFLMGN5n882JYRp3kzPq6aiR76FQywQpdoOQWAtpq7NpmkrBvibBSA05gPeZ8jeXThHsP4CvCPGt8GUqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747058; c=relaxed/simple;
-	bh=rkMjCrwS1+wByjVOGZBOyBmwHcPRefAACRVZAjVFMrg=;
+	s=arc-20240116; t=1733747059; c=relaxed/simple;
+	bh=dXTvMwZ3IWa8w/PCirVYpiMdDockPwSZQVUAZm7Ua1o=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uB4z+WJxfNWyennvl4GKfBRVuzG34XJahc+g8dqBWHwZHQA4vcH47FdsJOPTL8BuneHi06pYMzKNXg6oNaXxOEnI6sBxbqNsm+VJNEI8qb5w6Q/cXOqwNUZw16TSl1a8T09hZHgxbMAQTSBwO2wqOsGEgM4exTLUxqWLIC3HQFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TSkfFdnj; arc=none smtp.client-ip=209.85.218.45
+	 In-Reply-To:To:Cc; b=gnxec4hgdcfX4hroVH+Tk3nWonJQtqOfFRKf2FW/pbEoWtDpmlzwZFQD5Z03ELAddr8pv0MIGrc4IR0ZeZUHz4Ms+rBto9P6XT2GnLarbVcJIdIfSn7hrV4jb7ekpWYoVUQ18R53uvCQCPLt7wj1vSR7n5VcOsGx4RfkeDEwAw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZwjWWKg/; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aa65f707419so40886066b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:24:16 -0800 (PST)
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-aa680fafb3eso11770266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 04:24:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733747055; x=1734351855; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1733747056; x=1734351856; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=4VS86PQrU3aNTPQz7X0NdV1vS6PaGx8hn6CNMCEHmEw=;
-        b=TSkfFdnj85CTjX7fstayGkA+yd08BtcXBT/3toiUjY3nBkkYZBXSHhN3uk3kBVpPMc
-         vAexlKp7C2eSDL63Hz7EXl3hZSBshsIx/mqlkgt8AR2Yh2U1JYzuWX4u2GKtPjE/ujVs
-         RAykGzOOb37O2A/EDHjXwX7tWS++CrZI5fNBDrTMVIl55WgvPENwXKfpEq0wKsYToyBG
-         uDkaT0PcH/XRXTTBZhD/RgZzA26FxUcOKXXR/wbkCI8JHxMO3WFFKdnTAIOWpjpKiy02
-         7dhz+75DkHynof/09jlwwFvPdxmM9C33wIwuWayf3bHuZUsMy2WenQKMXRmVSLxNklM5
-         W4SQ==
+        bh=JoCVrD28ayqu5D/DI17RscermoixTp22627F0aNO5EA=;
+        b=ZwjWWKg/iwSlnFS+GTCOaFYbL/Y4ag4IGujXPUwQJ7U5gJfs9Z6M8NxNePkPFWv3y4
+         lMUNLBgNHer3UmMQVJEcXybf/nDsJX81h+juUNafmMuMUtbA6Os0ukHNci4yAnj01pKN
+         tcUr66SbmlX+a+5Ilk4I12bdQKKdIqhMVmubbrVAXwH4cOkBd9ODOwrUuypzD9V0FhWP
+         mLdLzkNrwGwWcJHC8RwRn+sLaFzqqBGYDSQ8rF1O1weHkM/GxDbr6a6oaEla6WbEB+Ta
+         itX9PTo4/Rk2U9dTfYxnc28QEXup+J7jEGlRFvQohb/5aPQc+TjHX+EetdY4fSnk8zrh
+         pshQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733747055; x=1734351855;
+        d=1e100.net; s=20230601; t=1733747056; x=1734351856;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=4VS86PQrU3aNTPQz7X0NdV1vS6PaGx8hn6CNMCEHmEw=;
-        b=dB86OPT1VmMS4kCUfa0wiarzT4xH3gtXrkaR6kB5PuyUHYt7pWUX1zKewoRFZxdYLF
-         lsiMxl4lad929zM48H+5xiVz+OHvGdidfaZrtJHH8cgjn4y5ywmBTZntJfbc6FrVFWVC
-         GQs845mP30QPXCQEIS30HQmx2kwLR3Q7hZyfNwFoO9ShobhyTqutm1MKToNlL5au4Qrn
-         +N6vx7uKQ4ojzyaEQU4ghwXJfXoBkggryCf1zZsqMb/jMla0WjmfdlgbypEs6pPN0Ugb
-         66pkuaflZaA52qye6Ak3fG8ZyIukKNQeipXLuwsSP3ciATuji+bkpysuDw10byvgAlab
-         4Kkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUIA6GPIf8qjQEo1qZ95uuWvZAo5xtWsluvCG8ZAEtgSOTdW5c0XMy3/cJDcFjlXE+tszhGBHkpsoE7so=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmYTMCMsexdFyqeWlEa4Simn5MWTozviF/waF9As/bkotE8ap1
-	asjwpJdA65wMCHfRiBn/oZrt16aTkwkgRqO5vKZbzlRZDlQ5vjeZ98l+eqdpMe4=
-X-Gm-Gg: ASbGncs36dN82I1O4S92uJtC/jS9nFIJVeUS9delkoFsTy617HKoxi6OE+RDbyDcv6R
-	uIN8jrbC70Qqq/F95L/fVrArUEB2wKXzg15m55GIGVCs/YNl7hxjg5YQLYuYGCDWDrHQwMsd03d
-	P4VHPiWy6dcq29lG6dhoWqQXHIqPSr3JnIJ4F1JrWFGE0AfJmxl0eeTZNfaFhPXvy/is3wswFYd
-	LPDba1I6oVvb5MzinT8yADJDcjxPgCgoBH+CgtfnR+PFbW1p10W2dHnjby9omZwZw==
-X-Google-Smtp-Source: AGHT+IHMa1lVKER8h4Ap0+h8iEA/ASsQQiOkTcbxptlpeVP7AhBWBqczT0R0GsKDETc4Mf1TgulAPw==
-X-Received: by 2002:a17:907:874a:b0:aa5:3e81:5aa2 with SMTP id a640c23a62f3a-aa639feb836mr488047766b.4.1733747054666;
-        Mon, 09 Dec 2024 04:24:14 -0800 (PST)
+        bh=JoCVrD28ayqu5D/DI17RscermoixTp22627F0aNO5EA=;
+        b=tvUyV6vi8IMIBDQN6w1yzJgUN4q6maFSgRC6gKxTM9EbeMUmfJNHWFRadNZRQplT6V
+         Ii+XrGgNbKG/1dRP70s9ln2AKjFlpSPUQt81I7lm+lQZQHrwWSuV548bxEXg8f/7BOR4
+         zBtRtyQcbTjF1qkK0sfZJdv7cDQPcbCb/4v2ZD76q98InzsQchKrfsowLkMrvWTGzgMk
+         3iHdqp6luAAMTXyVW+5R1LkA+EDWX/m7Und0L4JVvqaxukdBos1J0Bswn1wxfCbMnFOL
+         /Mh+ySzcGn8wMKaSpLzLeVdJYjZw8tGzWkAL/ONUj4J+5KmEEwWu9BRSVSV3gr1lnqhO
+         fR4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWqBDG2inlAzC3QAagBt+a3xg6em20V51lmP780thR5GK+f6A8OvtvEkWBvTLnSOe8bV8hJBJShI8OjXe4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQO65XhSagqykmq1KOK17eKBG/qPJCVEJ/pTlMXjSuJGAUhUL7
+	bnDDNpzDtcyy83VnWA6PghgAP8wU3HNSbUzMvLyFuWd0cekxM5Q7nnKXEWjL9u8=
+X-Gm-Gg: ASbGnctMBi3bsL/ath597AquSooK6d8L1zSbWz1eSlHni9R4sKtnwS1+6BEl++I7B63
+	1v0mBQTMGjdjAfNLATLvsV/c75A/khV7rdml2wo8PyZYBtHRZt1cctf8KAU3NO8btI6HnhH9to7
+	teC4A2ODvZDgA+TjM1HncHLMMcUShXk8sef7YX47i4m9Ngg4t7PdVh/aQnOt7L6JLC8w+I0EW7R
+	dGRSchh1YIayNTRL8FCCJHleODJxmYi6xVa2HRnGrRqkt3J3rIywNZ/hYNwbRyHUA==
+X-Google-Smtp-Source: AGHT+IEL0p06Hwmo+9E/f1lCO4dyZG2n/TdjzYJd+woyN99M4MYMI2vd+kMHzKES2YH6I7KFGRLVew==
+X-Received: by 2002:a17:907:c008:b0:aa6:79e6:5b03 with SMTP id a640c23a62f3a-aa679e65d87mr176768466b.6.1733747056131;
+        Mon, 09 Dec 2024 04:24:16 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm309925866b.159.2024.12.09.04.24.13
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66b96a249sm309925866b.159.2024.12.09.04.24.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 04:24:14 -0800 (PST)
+        Mon, 09 Dec 2024 04:24:15 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Mon, 09 Dec 2024 13:24:05 +0100
-Subject: [PATCH RESEND 2/3] clk: qcom: smd-rpm: simplify locking with
+Date: Mon, 09 Dec 2024 13:24:06 +0100
+Subject: [PATCH RESEND 3/3] clk: qcom: spmi-pmic-div: simplify locking with
  guard()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -82,7 +82,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-cleanup-h-guard-clk-qcom-v1-2-b1077540230c@linaro.org>
+Message-Id: <20241209-cleanup-h-guard-clk-qcom-v1-3-b1077540230c@linaro.org>
 References: <20241209-cleanup-h-guard-clk-qcom-v1-0-b1077540230c@linaro.org>
 In-Reply-To: <20241209-cleanup-h-guard-clk-qcom-v1-0-b1077540230c@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -92,21 +92,21 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2526;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1606;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=rkMjCrwS1+wByjVOGZBOyBmwHcPRefAACRVZAjVFMrg=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnVuFpiHvV0uVRDjZL66G52Y9rZuBpcDh97yVqm
- 7VCNFzDmjqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ1bhaQAKCRDBN2bmhouD
- 1z6bEACDJRMV3tKG8OzJzEzGyfz0lOZpMOl3jN/tTBoHX1ttuGWTy4ndNdqgrS10DEBZX6AukHR
- 2RkvqWkTyKKdNzNQuzOUVZceVDzp6+14dJh8OmLv9rh3T1CybD01NWxDyX9E7dHwpzdzjKuOzik
- ysttIokEqGs7IBZ/l/nokgkJYYEd29LH5YirY5+WRuNafy79CfiPlh6J+BUxTMaw+qQuWFmoD4t
- PQFyq2OQiBrgTYYxqsxrT4JmK2wXe6+MD2E7A6hE6VJdr1O23cjjMVX3b6+Y0+zZbP6h7VO6cUc
- VyQzxXWG70zOEUW0ncp8VxGy836HsZoZT6XQuxBfOW+3dq2jEzkzDA3JMmNc/gFNaqb2eOHd0ll
- P6LbKNLNdJScsdo+7cCv6RlcXMffERSL6CNnOY62KiEfAIJyXrxcvOL6RvGd7qZA6Dom2kJeNAq
- 6M3qnKP7ZQsFDIENjvEUPMTO95+zN6Ql5fL8pkAPLtsOESS6QvIBV7qnYM+dyTwGeTMJzqk9LZ6
- g/725GdkH60DSX36J3YUYaUjUqos7CJFgBuENmayd8k+e+t3MOOzpeh9pEF0K++9Z8PV1kbpVOP
- LEy2KoplchfXrzS10mQIx+q5O2+boaYrOiH4dh5kiLIoLpYZv1npQMxIclDZpW2qHr0xOE8sctQ
- WzPlTI+EO1P8OkA==
+ bh=dXTvMwZ3IWa8w/PCirVYpiMdDockPwSZQVUAZm7Ua1o=;
+ b=kA0DAAoBwTdm5oaLg9cByyZiAGdW4WqjVaZZPkcN8v9OPTJHUcgo366JtrL28bgL8+92JHHiT
+ okCMwQAAQoAHRYhBN3SYig9ERsjO264qME3ZuaGi4PXBQJnVuFqAAoJEME3ZuaGi4PX+/cQAJk+
+ Nt95XiYbAfyAfpF+qC/Os14df5UkJTTbXxd/sOxHbKrDVc8xSx1fyqDWRaTcOD5Pe0wiD4glAzh
+ FlXAenPqrW8yS3Vsne+gjpl3Yy9MknYypm+Wieyxvw3Uc0WUYJ9J3uf24bzJk/a0RGQIG/lq/Qw
+ oOH6GoFnzTfQCDQeILelFLUkuYrnxQi+k1rs5rdVVL+8JYOBNoOVnjcA3DGFXvHmfWlV+f5xJcF
+ JtcXMOUMZVrhra+7Tp7oLXbgaANGpci3rsCG+1cYV0OHsa0nqSivyPVfaIvX2PeBYJuiRUxbnBM
+ /07FS0Cgmh4IYDM/zGJUQpXv66VARq3957sN/+kxJa3aOGa7KUjn8GQTZiu/pr5vr3QHA81ou76
+ CbqlYK4hEWS59pz/LAp5afj6TZIHqK+4v/oHQfttCrpGI+nojazSGCIlC0oA5Pkvz6rDlllc19n
+ YEo90GQZW5Z06eYCyzJ2UocPPDpWsGI3vU9aNgpXoT4RYLSvrWUXLcLR3WyF72Vsa8mCH/oEVab
+ oDk2Vl6hs7wb/GtKKh2ljMeeXrL1k+JuSnERSXmF7hPTqNNvlJF7bO7xJVX6MJZOtxhuz5ELHyT
+ j8Je7O7bNIj7bs58E1Gfvfdo69Pk9YphLl8kHumVDITdXye1khfPUhziiSbxHT8okOoRoCITbw0
+ ymeVV
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
@@ -114,90 +114,56 @@ Simplify error handling (less gotos) over locks with guard().
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- drivers/clk/qcom/clk-smd-rpm.c | 25 ++++++++++---------------
- 1 file changed, 10 insertions(+), 15 deletions(-)
+ drivers/clk/qcom/clk-spmi-pmic-div.c | 13 +++++--------
+ 1 file changed, 5 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
-index 45c5255bcd11bae69b83138ba1d5e52a8a3f3be8..b8cd9f7301194a539d5fb18f974a5600496a1032 100644
---- a/drivers/clk/qcom/clk-smd-rpm.c
-+++ b/drivers/clk/qcom/clk-smd-rpm.c
-@@ -4,6 +4,7 @@
-  * Copyright (c) 2014, The Linux Foundation. All rights reserved.
+diff --git a/drivers/clk/qcom/clk-spmi-pmic-div.c b/drivers/clk/qcom/clk-spmi-pmic-div.c
+index f394031eb0e520b1b59e863dfbda4312f4f8215b..41a0a4f3b4fb316827365a522079dcd99630c49f 100644
+--- a/drivers/clk/qcom/clk-spmi-pmic-div.c
++++ b/drivers/clk/qcom/clk-spmi-pmic-div.c
+@@ -3,6 +3,7 @@
   */
  
+ #include <linux/bitops.h>
 +#include <linux/cleanup.h>
+ #include <linux/clk.h>
  #include <linux/clk-provider.h>
- #include <linux/err.h>
- #include <linux/export.h>
-@@ -309,10 +310,10 @@ static void clk_smd_rpm_unprepare(struct clk_hw *hw)
- 	unsigned long active_rate, sleep_rate;
+ #include <linux/delay.h>
+@@ -140,30 +141,26 @@ static int clk_spmi_pmic_div_set_rate(struct clk_hw *hw, unsigned long rate,
+ {
+ 	struct clkdiv *clkdiv = to_clkdiv(hw);
+ 	unsigned int div_factor = div_to_div_factor(parent_rate / rate);
+-	unsigned long flags;
+ 	bool enabled;
  	int ret;
  
--	mutex_lock(&rpm_smd_clk_lock);
-+	guard(mutex)(&rpm_smd_clk_lock);
+-	spin_lock_irqsave(&clkdiv->lock, flags);
++	guard(spinlock_irqsave)(&clkdiv->lock);
++
+ 	enabled = is_spmi_pmic_clkdiv_enabled(clkdiv);
+ 	if (enabled) {
+ 		ret = spmi_pmic_clkdiv_set_enable_state(clkdiv, false);
+ 		if (ret)
+-			goto unlock;
++			return ret;
+ 	}
  
- 	if (!r->rate)
--		goto out;
-+		return;
- 
- 	/* Take peer clock's rate into account only if it's enabled. */
- 	if (peer->enabled)
-@@ -322,17 +323,14 @@ static void clk_smd_rpm_unprepare(struct clk_hw *hw)
- 	active_rate = r->branch ? !!peer_rate : peer_rate;
- 	ret = clk_smd_rpm_set_rate_active(r, active_rate);
+ 	ret = regmap_update_bits(clkdiv->regmap, clkdiv->base + REG_DIV_CTL1,
+ 				 DIV_CTL1_DIV_FACTOR_MASK, div_factor);
  	if (ret)
--		goto out;
-+		return;
- 
- 	sleep_rate = r->branch ? !!peer_sleep_rate : peer_sleep_rate;
- 	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
- 	if (ret)
--		goto out;
-+		return;
- 
- 	r->enabled = false;
--
--out:
--	mutex_unlock(&rpm_smd_clk_lock);
- }
- 
- static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -345,10 +343,10 @@ static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	unsigned long peer_rate = 0, peer_sleep_rate = 0;
- 	int ret = 0;
- 
--	mutex_lock(&rpm_smd_clk_lock);
-+	guard(mutex)(&rpm_smd_clk_lock);
- 
- 	if (!r->enabled)
--		goto out;
-+		return 0;
- 
- 	to_active_sleep(r, rate, &this_rate, &this_sleep_rate);
- 
-@@ -360,19 +358,16 @@ static int clk_smd_rpm_set_rate(struct clk_hw *hw, unsigned long rate,
- 	active_rate = max(this_rate, peer_rate);
- 	ret = clk_smd_rpm_set_rate_active(r, active_rate);
- 	if (ret)
--		goto out;
+-		goto unlock;
 +		return ret;
  
- 	sleep_rate = max(this_sleep_rate, peer_sleep_rate);
- 	ret = clk_smd_rpm_set_rate_sleep(r, sleep_rate);
- 	if (ret)
--		goto out;
-+		return ret;
- 
- 	r->rate = rate;
- 
--out:
--	mutex_unlock(&rpm_smd_clk_lock);
+ 	if (enabled)
+ 		ret = __spmi_pmic_clkdiv_set_enable_state(clkdiv, true,
+ 							  div_factor);
 -
--	return ret;
-+	return 0;
+-unlock:
+-	spin_unlock_irqrestore(&clkdiv->lock, flags);
+-
+ 	return ret;
  }
  
- static long clk_smd_rpm_round_rate(struct clk_hw *hw, unsigned long rate,
 
 -- 
 2.43.0
