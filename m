@@ -1,181 +1,115 @@
-Return-Path: <linux-kernel+bounces-438355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F4189EA011
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:07:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EC8EE9EA014
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C8FE9162F88
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:07:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFF06163816
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10904199E8B;
-	Mon,  9 Dec 2024 20:07:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE395199EA1;
+	Mon,  9 Dec 2024 20:08:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CQdVpgKr"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MpTDpgru"
+Received: from mail-oa1-f42.google.com (mail-oa1-f42.google.com [209.85.160.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B16A61991DB;
-	Mon,  9 Dec 2024 20:07:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8FB01991DB;
+	Mon,  9 Dec 2024 20:08:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733774861; cv=none; b=ooQn2eiv441wPwMCwiHbO5WIWsUPXGZuEJ+bInc8K4O9TD4YHUrb23abQ3LBu+8r4ThiXv+y8il0f/xfOejB6vbkWLXP5vW/LCMmY6s/oEAhMPZ0/hi+fMDYIGI4bvHhwHq315o1clEaWE2WZshkzvxDzoXY3h7+xj+XbQmrWCw=
+	t=1733774911; cv=none; b=CRgzeDZqGsuJYWdx2DpOXH6A9pukXC/+rYyohsiiYyQc9bkKtnrjuHENn4FIAT6p5/d5XMbnoIbbh5/WilSQgKQduoSMIa8fX+arR79CV5VXzawvAtYNQ0UUAdATF9GvxDiILfPJ2/a/Zk8YBMNNoHiGkRDhs28c8XHALejjxS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733774861; c=relaxed/simple;
-	bh=cGxOwHUN+Sb0eGOg/Ha582ip8QYOIrSNLFxpSoVmxJk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=RBt6Up6F8TULu1dkVyGUUFQrQb25QWlf/SWYjYCAWOO8YE5TzUKKSbB8SBCumJweEN9aAl3n1eW2r3oO/11cj9LIlSlU7SBZfrDPlNXUecVciOJu4Zv+c9/Y7UTw1fsQ7nZWDynK+3n09kF6zEOBsdKfgme6iorOONC6m0Qise0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CQdVpgKr; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Glrlu027354;
-	Mon, 9 Dec 2024 20:07:33 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fzQmFeVYCaS8lgQUAEQvHPV0BQLNqOHfmCuqpkodPfY=; b=CQdVpgKrXVdA9bzS
-	Z2304VHAVUeZDzNA8zPqX0lGMtPO1gV2ooq2Svnf10eupkY7OYGOdXLFQ2ifXw3A
-	djh2ufW5uh3SCNkwcXVUpGI6kZbFQ0oOUu59TnICQjftEKRPVbSNDXn8ODkkVBdl
-	/HzUdZPzHxLkao7SzZwWHAIiBwffnPhrKZPN/nfcFJLLAgnIRVLvmXno2mRQFSZ+
-	dahrMar15sGsGAHKLaxFP13Uh3jE4wOImuKAdtbDfyqiYNUxasRdVdLoh6WCa9a1
-	4+7A0BE6Ne0NE4gJK8zOxNBtEIPZ2EDo3RYCXvU6zwNRJPDbItBtPndTvlioDy+P
-	CVpmIg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43ceetp7yc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 20:07:33 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9K7W2i031958
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 20:07:32 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 12:07:29 -0800
-Message-ID: <b784049f-a72c-47ff-a618-e7c85c132d28@quicinc.com>
-Date: Mon, 9 Dec 2024 12:07:28 -0800
+	s=arc-20240116; t=1733774911; c=relaxed/simple;
+	bh=/eyyrQhI6CrTR4nLtLXh0b7NqouJwLAL2kJDuVkW1JU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Af6FDlVpKsM4ucZravlQSPALJ83YoJybCDvJLbdBPjc35IlLpzFbVXBcnsPExBKtC80pVlrDgM2R6m9oBUL7SAyDyIGn7nBXmGVLOtfOOGl0B670WGisDjqSaHLiUkbr7VeRmBxd9mrGqLgQR7VeMByiaVkypfB/m8YnWTrclTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MpTDpgru; arc=none smtp.client-ip=209.85.160.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f42.google.com with SMTP id 586e51a60fabf-29e585968a8so2852095fac.3;
+        Mon, 09 Dec 2024 12:08:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733774909; x=1734379709; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UpSA3c70868rkQa80zun5/bralELYwg5L0qKNBXu8ME=;
+        b=MpTDpgruum9st6/h5yhmPuj8qIkvefHf1wIlRpepCyyh9WAaP+c3LS1HSKQl23GfND
+         RWHAmecf7hs+/6OfUR45NDDRwLokE1KAVlXV2EesZ9eRXE7uOTvPVZqlbiZBmStz1+qh
+         jHdAyTRkyKImhdyTi1pZJ/nr9Wm5QUf4Q5OiSYO/5SrqOEpIdXoG7Hpa+L0EqsdngWgM
+         cMJI5u4/E8Du4r/6bPUyFi96J4KsFCqZkGbOqKmcb41kNaPkh4GTyHqkyUWt6g8jG6lT
+         ZiwocOpMKh5fFLwBPwDD3J4WKT7Dc1/DUCFEbrtMR31iCxDru0+Z6GwLqJVc4LZjOKoN
+         +zwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733774909; x=1734379709;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UpSA3c70868rkQa80zun5/bralELYwg5L0qKNBXu8ME=;
+        b=pGWnuQ8eRM9QRaxq/TTrEWC1+cB7IS8Z0f5xeAc+2xlcEf6rPw7k8cB3tCRKkRRGD7
+         WqfxomdCcNnR1Rbb/x1dCmaaQZdx4IWOSIeHVNN8xQCxRdflHgpzP8HE1iymmMlEDZYs
+         0o+s85jwq57u5STvWHW5LqQCY3F3cAZAEdJS/NCkyKD6FbHBp1P6PfyY0cn88+Ft+T0i
+         GEGYzFmJ6gKc4xhVEBGJ/lWq/rp0qP/txSP/OAHmCTSfVou2YafToLjzu77hdOjrM5bB
+         eeUkIzPzwTDajd1FcsAee+5AXZa6RHJZGokb7tp+ayNobx8MioZSvjdkMZJh14/LZGCC
+         dKtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVfX+r2SRqyMStu+6SRyvTnVisSAM1VP+zqYlKGDKMm1n4msU9vUlRku24EVV6di3m5i+7o5wHRmQfExrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKiW487IuAvhCyWTXemZBjsshNXQoA1e5JnwGIJGwtjXXD31QR
+	5HMTC09Y6MbJB4gi/CCU5qCHDyxj5s2zrI7dY3E5IVmFT3w019jrhhKzy7vFxot7FMbgjus+vW0
+	ITrCh0/XPRuwwXrWrAjfSh6LZXkc=
+X-Gm-Gg: ASbGnct983+dDx+2Vr5yiozkE+M7zxquPRpCyYyxQkhAAdYzPR2OPc+J8Hb1uKoFpBq
+	XyEEpWiMyzL/ms/2NUWuqI51J8ZkquwVG5g==
+X-Google-Smtp-Source: AGHT+IFihdqariqJEvsKT4cJi4EG8LL6wAtWLTw19Zq3KExJrPDPu+4WUJifbf9vT6jNFqnOM7IAdMTRH98ocBd0pHM=
+X-Received: by 2002:a05:6870:be89:b0:29e:6c6a:e7e7 with SMTP id
+ 586e51a60fabf-29f733478a9mr11363826fac.21.1733774908875; Mon, 09 Dec 2024
+ 12:08:28 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/msm/dpu: filter out too wide modes if no 3dmux is
- present
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn
- Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-References: <20241206-no_3dmux-v1-1-72ad2677a323@quicinc.com>
- <zae7rlojv5iiq2dx7bxhdsmmzj73o65cwk7kmryxsst36gy2of@k3vcm6omcias>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <zae7rlojv5iiq2dx7bxhdsmmzj73o65cwk7kmryxsst36gy2of@k3vcm6omcias>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: RohcquaB-qGyBMHrlSThfVuIjiJj97GH
-X-Proofpoint-ORIG-GUID: RohcquaB-qGyBMHrlSThfVuIjiJj97GH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- spamscore=0 adultscore=0 clxscore=1015 impostorscore=0 mlxlogscore=756
- bulkscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090156
+References: <20241122180435.1637479-1-alexthreed@gmail.com> <be2f054e-5ff8-4fcb-ad50-0dc0d5c03bf5@broadcom.com>
+In-Reply-To: <be2f054e-5ff8-4fcb-ad50-0dc0d5c03bf5@broadcom.com>
+From: Alex Shumsky <alexthreed@gmail.com>
+Date: Mon, 9 Dec 2024 23:08:18 +0300
+Message-ID: <CAF4oh-NtqAX6gqz3DnLes6oR3RhZyOEvSfOk=rPPPm=1XzGAWQ@mail.gmail.com>
+Subject: Re: [PATCH] wifi: brcmfmac: remove misleading log messages
+To: Arend van Spriel <arend.vanspriel@broadcom.com>
+Cc: linux-wireless@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kalle Valo <kvalo@kernel.org>, brcm80211-dev-list.pdl@broadcom.com, 
+	brcm80211@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Nov 26, 2024 at 2:02=E2=80=AFPM Arend van Spriel
+<arend.vanspriel@broadcom.com> wrote:
+>
+> On 11/22/2024 7:04 PM, Alex Shumsky wrote:
+> > Currently when debug info enabled, dmesg spammed every few minutes with
+> > misleading messages like:
+> >    brcmf_netdev_start_xmit phy0-sta0: insufficient headroom (0)
+> >
+> > Do not log this when headroom is actually sufficient.
+>
+> Thanks for your patch. The message may be misleading, but it is actually
+> information that we need to cow the packet. The zero value indicates
+> that this is needed because skb_header_cloned(skb) is true. So it is
+> still useful in my opinion. If you want to make the message less
+> misleading for that case I would be happy to ack the patch.
+>
+> Regards,
+> Arend
 
-
-On 12/7/2024 9:29 PM, Dmitry Baryshkov wrote:
-> On Fri, Dec 06, 2024 at 12:00:53PM -0800, Abhinav Kumar wrote:
->> On chipsets such as QCS615, there is no 3dmux present. In such
->> a case, a layer exceeding the max_mixer_width cannot be split,
->> hence cannot be supported.
->>
->> Filter out the modes which exceed the max_mixer_width when there
->> is no 3dmux present. Also, add a check in the dpu_crtc_atomic_check()
->> to return failure for such modes.
->>
->> Signed-off-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
->> ---
->> Note: this was only compile tested, so its pending validation on QCS615
->> ---
->>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c | 13 +++++++++++++
->>   1 file changed, 13 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> index 9f6ffd344693ecfb633095772a31ada5613345dc..e6e5540aae83be7c20d8ae29115b8fdd42056e55 100644
->> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
->> @@ -732,6 +732,13 @@ static int _dpu_crtc_check_and_setup_lm_bounds(struct drm_crtc *crtc,
->>   	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
->>   	int i;
->>   
->> +	/* if we cannot merge 2 LMs (no 3d mux) better to fail earlier
->> +	 * before even checking the width after the split
->> +	 */
->> +	if (!dpu_kms->catalog->caps->has_3d_merge
->> +	    && adj_mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
->> +		return -E2BIG;
-> 
-> Is it the same as checking that there are LMs which support
-> DPU_MIXER_SOURCESPLIT ?
-> 
-
-DPU_MIXER_SOURCESPLIT tells whether we can have more than one SSPP in 
-the same blend stage.
-
-494 	if (test_bit(DPU_MIXER_SOURCESPLIT,
-495 		&ctx->mixer_hw_caps->features))
-496 		pipes_per_stage = PIPES_PER_STAGE;
-497 	else
-498 		pipes_per_stage = 1;
-
-That is different from this one. Here we are checking if we can actually 
-blend two LM outputs using the 3dmux (so its post blend).
-
->> +
->>   	for (i = 0; i < cstate->num_mixers; i++) {
->>   		struct drm_rect *r = &cstate->lm_bounds[i];
->>   		r->x1 = crtc_split_width * i;
->> @@ -1251,6 +1258,12 @@ static enum drm_mode_status dpu_crtc_mode_valid(struct drm_crtc *crtc,
->>   {
->>   	struct dpu_kms *dpu_kms = _dpu_crtc_get_kms(crtc);
->>   
->> +	/* if there is no 3d_mux block we cannot merge LMs so we cannot
->> +	 * split the large layer into 2 LMs, filter out such modes
->> +	 */
->> +	if (!dpu_kms->catalog->caps->has_3d_merge
->> +	    && mode->hdisplay > dpu_kms->catalog->caps->max_mixer_width)
->> +		return MODE_BAD;
-> 
-> This can be more specific, like MODE_BAD_HVALUE.
-> 
-
-Yes for sure, will fix this up.
-
->>   	/*
->>   	 * max crtc width is equal to the max mixer width * 2 and max height is 4K
->>   	 */
->>
->> ---
->> base-commit: af2ea8ab7a546b430726183458da0a173d331272
->> change-id: 20241206-no_3dmux-521a55ea0669
->>
->> Best regards,
->> -- 
->> Abhinav Kumar <quic_abhinavk@quicinc.com>
->>
-> 
+Thanks for the review and sorry for the delayed response.
+Do "%s: clone skb header\n" rephrase make sense to you?
+I have no deep knowledge of this code, and if you think the original messag=
+e
+is actually useful, I'm ok to leave a log message as it is.
+Initially I had guessed it was an unintentional log message because it has
+misleading text and logs spammed every few minutes - too rarely to consider
+It as a real performance issue.
 
