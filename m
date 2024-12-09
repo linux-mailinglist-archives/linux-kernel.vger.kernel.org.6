@@ -1,198 +1,315 @@
-Return-Path: <linux-kernel+bounces-437885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FB6E9E9A17
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:11:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 219239E9A2B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:16:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9802D161247
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:11:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C8921887257
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E2EE1C5CA0;
-	Mon,  9 Dec 2024 15:11:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF42B1BEF6E;
+	Mon,  9 Dec 2024 15:16:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i97qv8dI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="gB0RGAeY"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F12233133;
-	Mon,  9 Dec 2024 15:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA6131BEF9C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:16:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733757090; cv=none; b=KbcFbUTZL/ZAczv1d0H1TF1GdqYMNMZ7an2fOvKCD/6/CpUjWTaRazNj7Y+piT7okIBnWTsbgUDSTzNolRi5GIxpEx2Q9LpKoR+oH69D7EOnszo+C/58SpFze2HHDh3FsQL0BwBWPEAwf/ZQ51IKBfI0voZ9BL9ZmjPhEJRijz0=
+	t=1733757364; cv=none; b=aOTnO4SVEUmyINeiUzyBsGL/VHWVAgzQOYWBtmKOh7760ft/q4+MkCRT0Mfp+Dr5DXU9TVk7RK2vJquRwBnSxha7ssFuBocdzSnwzKUaGIrDU7KrUOgu1ISUuOKiugO8Sy68lQwJDTGrRRuRPdxUHfj6Bs7p6XZ64qOnRWK9EHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733757090; c=relaxed/simple;
-	bh=FmOlznKOYOfLj+ux44kcsjBWkD966SYEWmnJtDbp7go=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JnFFWrLTKwNniaGPPGFQaV0EDpKwIDhnAZbo4juijvBxn9sGCkv4Gk4/zDlj850goTSk9VzRlPLXcIKnA52/QpAJ2s7AtEjZQr/me5vFt7uF7xrUilC6oofHr4vvL1mkDSPwbA9Fh5GOhUtDeaRKtHJG50q5I/lsZGxGBWn4lqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i97qv8dI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BE17C4CED1;
-	Mon,  9 Dec 2024 15:11:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733757089;
-	bh=FmOlznKOYOfLj+ux44kcsjBWkD966SYEWmnJtDbp7go=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i97qv8dI3bsdkF3fMLLqdxDvSJu//7KCjFPBEmwgiCgMc5DCA/cMzqVyVN/VqMqun
-	 9RtQwh818sRkQ4BzUm+tOOvexJGcG4h8nXAg7l9WB2mQ2wG0zuG5KxCocU+ViOQ9lo
-	 3eKAz8zww/Fuo0GIWTDGd+H/0Qh5TXT0iXm5EZPwIslrXfuSKLuEVYLrUqVtMP/x3L
-	 g5PyHie/QR5FFJcb/tek5/gP4JEPLyoZrR+ipjSEKJSumGvrUFJdybhYqCL+qyc48+
-	 q1uXg8gVpGJ1a6Udt+sWg+0sVruG/Jk7h8RiNIbevn2Dx/Kue0KMhAR5fHBEgxaaFQ
-	 62PYQtO6bQdiw==
-Date: Mon, 9 Dec 2024 16:11:22 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <Z1cImntcEwsPHQgO@pollux.localdomain>
-References: <2024120954-boring-skeptic-ad16@gregkh>
- <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
- <2024120908-anemic-previous-3db9@gregkh>
- <CAH5fLgjO50OsNb7sYd8fY4VNoHOzX40w3oH-24uqkuL3Ga4iVQ@mail.gmail.com>
- <2024120939-aide-epidermal-076e@gregkh>
- <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
- <2024120951-botanist-exhale-4845@gregkh>
- <CAH5fLgjxMH71fQ5A8F8JaO2c54wxCTCnuMEqnQqpV3L=2BUWEA@mail.gmail.com>
- <Z1cGWBFm0uVA07WN@pollux.localdomain>
- <CAH5fLgisVC15muFB0eThiMveFBoauB4jUVwW9Zez3cKT0Q=_iA@mail.gmail.com>
+	s=arc-20240116; t=1733757364; c=relaxed/simple;
+	bh=FlOZnnyhZDl4Jx61le/rtd5j40fqDeCn/03ML0Xr9Dw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=frBnbAH1tN0LHp4AWRfE2/pa2LBRLTFq77o1BKGeMaEd6lqffp1puQvPn7LmupvArULfaJPGoNUSWAAMI2+ayrsbK2n/7Sa4Ice9pKeT9JustJ1bVMWd8zA+U+9Jii8LpKMvQ0WCwc6d0cettsepPe2PFmY/zKSJctY5hYQk18Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=gB0RGAeY; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AV5Mq010128;
+	Mon, 9 Dec 2024 07:15:48 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=3qSSweucJX/8TrJGv5/gTzn
+	xwtIsZkA5PFiqevTvfxs=; b=gB0RGAeYwfbXy8DPT7cfycfi1NQtkmjlLoutBYt
+	bMFRI0sQ4yWTY8U47nYV7Nbuoh/yQ+sUsmqG8TnIsG8wAOJMSMKYo2eSqQnugpbG
+	l5p9DR9kXy7wgObB9fTc1IbiBv81uS0vM/1+QntX0ihqruMaNCjS4UZome75ZZ52
+	tgQ6q5+fMeuCil2LvCLkyDOdDz16SPUAyIP+q+Xl9fgMKjfCmFJugdfNHDja1TMV
+	IOO1EefeWy9Z8bEVSex8gMaWH9fxX2cC955o5FKEfEKCKPwytjyV6R1gq59ZIPxK
+	JYFs2Xr8l+fEMQjn13mWPc9R4CuTtapBb/Y7ChIq2Fl5q2A==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 43dxv4gk4p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 07:15:48 -0800 (PST)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Mon, 9 Dec 2024 07:15:47 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Mon, 9 Dec 2024 07:15:47 -0800
+Received: from localhost.localdomain (unknown [10.28.34.29])
+	by maili.marvell.com (Postfix) with ESMTP id 74E905B6937;
+	Mon,  9 Dec 2024 07:15:43 -0800 (PST)
+From: Shijith Thotton <sthotton@marvell.com>
+To: <virtualization@lists.linux.dev>, <mst@redhat.com>, <jasowang@redhat.com>,
+        <dan.carpenter@linaro.org>
+CC: Shijith Thotton <sthotton@marvell.com>, <schalla@marvell.com>,
+        <vattunuru@marvell.com>, <ndabilpuram@marvell.com>,
+        <jerinj@marvell.com>, Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+        =?UTF-8?q?Eugenio=20P=C3=A9rez?=
+	<eperezma@redhat.com>,
+        Satha Rao <skoteshwar@marvell.com>,
+        open list
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v3 1/4] vdpa/octeon_ep: enable support for multiple interrupts per device
+Date: Mon, 9 Dec 2024 20:42:13 +0530
+Message-ID: <20241209151427.3720026-1-sthotton@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgisVC15muFB0eThiMveFBoauB4jUVwW9Zez3cKT0Q=_iA@mail.gmail.com>
+Content-Type: text/plain
+X-Proofpoint-GUID: wzhyY3mBojppjOn0cq9BrOqj9I_X8uoh
+X-Proofpoint-ORIG-GUID: wzhyY3mBojppjOn0cq9BrOqj9I_X8uoh
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.687,Hydra:6.0.235,FMLib:17.0.607.475
+ definitions=2020-10-13_15,2020-10-13_02,2020-04-07_01
 
-On Mon, Dec 09, 2024 at 04:04:48PM +0100, Alice Ryhl wrote:
-> On Mon, Dec 9, 2024 at 4:01 PM Danilo Krummrich <dakr@kernel.org> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 02:36:31PM +0100, Alice Ryhl wrote:
-> > > On Mon, Dec 9, 2024 at 2:13 PM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Mon, Dec 09, 2024 at 01:53:42PM +0100, Alice Ryhl wrote:
-> > > > > On Mon, Dec 9, 2024 at 1:08 PM Greg Kroah-Hartman
-> > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Mon, Dec 09, 2024 at 01:00:05PM +0100, Alice Ryhl wrote:
-> > > > > > > On Mon, Dec 9, 2024 at 12:53 PM Greg Kroah-Hartman
-> > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
-> > > > > > > > > On Mon, Dec 9, 2024 at 12:10 PM Greg Kroah-Hartman
-> > > > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrote:
-> > > > > > > > > > > On Mon, Dec 9, 2024 at 9:48 AM Greg Kroah-Hartman
-> > > > > > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > > > > > >
-> > > > > > > > > > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> > > > > > > > > > > > > Providing access to the underlying `struct miscdevice` is useful for
-> > > > > > > > > > > > > various reasons. For example, this allows you access the miscdevice's
-> > > > > > > > > > > > > internal `struct device` for use with the `dev_*` printing macros.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > Note that since the underlying `struct miscdevice` could get freed at
-> > > > > > > > > > > > > any point after the fops->open() call, only the open call is given
-> > > > > > > > > > > > > access to it. To print from other calls, they should take a refcount on
-> > > > > > > > > > > > > the device to keep it alive.
-> > > > > > > > > > > >
-> > > > > > > > > > > > The lifespan of the miscdevice is at least from open until close, so
-> > > > > > > > > > > > it's safe for at least then (i.e. read/write/ioctl/etc.)
-> > > > > > > > > > >
-> > > > > > > > > > > How is that enforced? What happens if I call misc_deregister while
-> > > > > > > > > > > there are open fds?
-> > > > > > > > > >
-> > > > > > > > > > You shouldn't be able to do that as the code that would be calling
-> > > > > > > > > > misc_deregister() (i.e. in a module unload path) would not work because
-> > > > > > > > > > the module reference count is incremented at this point in time due to
-> > > > > > > > > > the file operation module reference.
-> > > > > > > > >
-> > > > > > > > > Oh .. so misc_deregister must only be called when the module is being unloaded?
-> > > > > > > >
-> > > > > > > > Traditionally yes, that's when it is called.  Do you see it happening in
-> > > > > > > > any other place in the kernel today?
-> > > > > > >
-> > > > > > > I had not looked, but I know that Binder allows dynamically creating
-> > > > > > > and removing its devices at runtime. It happens to be the case that
-> > > > > > > this is only supported when binderfs is used, which is when it doesn't
-> > > > > > > use miscdevice, so technically Binder does not call misc_deregister()
-> > > > > > > outside of module unload, but following its example it's not hard to
-> > > > > > > imagine that such removals could happen.
-> > > > > >
-> > > > > > That's why those are files and not misc devices :)
-> > > > >
-> > > > > I grepped for misc_deregister and the first driver I looked at is
-> > > > > drivers/misc/bcm-vk which seems to allow dynamic deregistration if the
-> > > > > pci device is removed.
-> > > >
-> > > > Ah, yeah, that's going to get messy and will be a problem if someone has
-> > > > the file open then.
-> > > >
-> > > > > Another tricky path is error cleanup in its probe function.
-> > > > > Technically, if probe fails after registering the misc device, there's
-> > > > > a brief moment where you could open the miscdevice before it gets
-> > > > > removed in the cleanup path, which seems to me that it could lead to
-> > > > > UAF?
-> > > > >
-> > > > > Or is there something I'm missing?
-> > > >
-> > > > Nope, that too is a window of a problem, luckily you "should" only
-> > > > register the misc device after you know the device is safe to use as
-> > > > once it is registered, it could be used so it "should" be the last thing
-> > > > you do in probe.
-> > > >
-> > > > So yes, you are right, and we do know about these issues (again see the
-> > > > talk I mentioned and some previous ones for many years at plumbers
-> > > > conferences by different people.)  It's just up to someone to do the
-> > > > work to fix them.
-> > > >
-> > > > If you think we can prevent the race in the rust side, wonderful, I'm
-> > > > all for that being a valid fix.
-> > >
-> > > The current patch prevents the race by only allowing access to the
-> > > `struct miscdevice` in fops->open(). That's safe since
-> > > `file->f_op->open` runs with `misc_mtx` held. Do we really need the
-> > > miscdevice to stay alive for longer? You can already take a refcount
-> > > on `this_device` if you want to keep the device alive for longer for
-> > > dev_* printing purposes, but it seems like that is the only field you
-> > > really need from the `struct miscdevice` past fops->open()?
-> >
-> > Good point, I also can't really see anything within struct miscdevice that a
-> > driver could need other than `this_device`.
-> >
-> > How would you provide the `device::Device` within the `MiscDevice` trait
-> > functions?
-> >
-> > If we don't guarantee that the `struct miscdevice` is still alive past open() we
-> > need to take a reference on `this_device` in open().
-> >
-> > I guess the idea would be to let `MiscDeviceRegistration` provide a function to
-> > obtain an `ARef<device::Device>`?
-> 
-> Yes, you take a refcount on the device and store an
-> ARef<device::Device> in your own struct. You would need Lee's accessor
-> to obtain the device refcount:
-> https://lore.kernel.org/all/20241206090515.752267-3-lee@kernel.org/
+Updated the driver to utilize all the MSI-X interrupt vectors supported
+by each OCTEON endpoint VF, instead of relying on a single vector.
+Enabling more interrupts allows packets from multiple rings to be
+distributed across multiple cores, improving parallelism and
+performance.
 
-Sounds good!
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Shijith Thotton <sthotton@marvell.com>
+---
+v1:
+- https://lore.kernel.org/virtualization/20241120070508.789508-1-sthotton@marvell.com
 
-> 
-> Alice
+Changes in v2:
+- Handle reset getting called twice.
+- Use devm_kcalloc to allocate irq array.
+- IRQ is never zero. Adjusted code accordingly.
+
+Changes in v3:
+- Made the interrupt handling independent of device type.
+- Dropped the patch to add crypto device specific interrupt handler.
+- Moved spec specific macro and define to spec header file.
+
+ drivers/vdpa/octeon_ep/octep_vdpa.h      | 12 ++--
+ drivers/vdpa/octeon_ep/octep_vdpa_hw.c   |  2 -
+ drivers/vdpa/octeon_ep/octep_vdpa_main.c | 87 +++++++++++++++---------
+ 3 files changed, 62 insertions(+), 39 deletions(-)
+
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa.h b/drivers/vdpa/octeon_ep/octep_vdpa.h
+index 046710ec4d42..2cadb878e679 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa.h
++++ b/drivers/vdpa/octeon_ep/octep_vdpa.h
+@@ -29,12 +29,12 @@
+ #define OCTEP_EPF_RINFO(x) (0x000209f0 | ((x) << 25))
+ #define OCTEP_VF_MBOX_DATA(x) (0x00010210 | ((x) << 17))
+ #define OCTEP_PF_MBOX_DATA(x) (0x00022000 | ((x) << 4))
+-
+-#define OCTEP_EPF_RINFO_RPVF(val) (((val) >> 32) & 0xF)
+-#define OCTEP_EPF_RINFO_NVFS(val) (((val) >> 48) & 0x7F)
++#define OCTEP_VF_IN_CTRL(x)        (0x00010000 | ((x) << 17))
++#define OCTEP_VF_IN_CTRL_RPVF(val) (((val) >> 48) & 0xF)
+ 
+ #define OCTEP_FW_READY_SIGNATURE0  0xFEEDFEED
+ #define OCTEP_FW_READY_SIGNATURE1  0x3355ffaa
++#define OCTEP_MAX_CB_INTR          8
+ 
+ enum octep_vdpa_dev_status {
+ 	OCTEP_VDPA_DEV_STATUS_INVALID,
+@@ -48,9 +48,8 @@ enum octep_vdpa_dev_status {
+ struct octep_vring_info {
+ 	struct vdpa_callback cb;
+ 	void __iomem *notify_addr;
+-	u32 __iomem *cb_notify_addr;
++	void __iomem *cb_notify_addr;
+ 	phys_addr_t notify_pa;
+-	char msix_name[256];
+ };
+ 
+ struct octep_hw {
+@@ -68,7 +67,8 @@ struct octep_hw {
+ 	u64 features;
+ 	u16 nr_vring;
+ 	u32 config_size;
+-	int irq;
++	int nb_irqs;
++	int *irqs;
+ };
+ 
+ u8 octep_hw_get_status(struct octep_hw *oct_hw);
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
+index 1d4767b33315..d5a599f87e18 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
++++ b/drivers/vdpa/octeon_ep/octep_vdpa_hw.c
+@@ -495,8 +495,6 @@ int octep_hw_caps_read(struct octep_hw *oct_hw, struct pci_dev *pdev)
+ 	if (!oct_hw->vqs)
+ 		return -ENOMEM;
+ 
+-	oct_hw->irq = -1;
+-
+ 	dev_info(&pdev->dev, "Device features : %llx\n", oct_hw->features);
+ 	dev_info(&pdev->dev, "Maximum queues : %u\n", oct_hw->nr_vring);
+ 
+diff --git a/drivers/vdpa/octeon_ep/octep_vdpa_main.c b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+index cd55b1aac151..e9c3e57b321f 100644
+--- a/drivers/vdpa/octeon_ep/octep_vdpa_main.c
++++ b/drivers/vdpa/octeon_ep/octep_vdpa_main.c
+@@ -49,11 +49,25 @@ static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
+ 	struct octep_hw *oct_hw = data;
+ 	int i;
+ 
+-	for (i = 0; i < oct_hw->nr_vring; i++) {
+-		if (oct_hw->vqs[i].cb.callback && ioread32(oct_hw->vqs[i].cb_notify_addr)) {
+-			/* Acknowledge the per queue notification to the device */
+-			iowrite32(0, oct_hw->vqs[i].cb_notify_addr);
+-			oct_hw->vqs[i].cb.callback(oct_hw->vqs[i].cb.private);
++	/* Each device has multiple interrupts (nb_irqs) shared among rings
++	 * (nr_vring). Device interrupts are mapped to the rings in a
++	 * round-robin fashion.
++	 *
++	 * For example, if nb_irqs = 8 and nr_vring = 64:
++	 * 0 -> 0, 8, 16, 24, 32, 40, 48, 56;
++	 * 1 -> 1, 9, 17, 25, 33, 41, 49, 57;
++	 * ...
++	 * 7 -> 7, 15, 23, 31, 39, 47, 55, 63;
++	 */
++
++	for (i = irq - oct_hw->irqs[0]; i < oct_hw->nr_vring; i += oct_hw->nb_irqs) {
++		if (ioread8(oct_hw->vqs[i].cb_notify_addr)) {
++			/* Acknowledge the per ring notification to the device */
++			iowrite8(0, oct_hw->vqs[i].cb_notify_addr);
++
++			if (likely(oct_hw->vqs[i].cb.callback))
++				oct_hw->vqs[i].cb.callback(oct_hw->vqs[i].cb.private);
++			break;
+ 		}
+ 	}
+ 
+@@ -63,44 +77,53 @@ static irqreturn_t octep_vdpa_intr_handler(int irq, void *data)
+ static void octep_free_irqs(struct octep_hw *oct_hw)
+ {
+ 	struct pci_dev *pdev = oct_hw->pdev;
++	int irq;
++
++	if (!oct_hw->irqs)
++		return;
+ 
+-	if (oct_hw->irq != -1) {
+-		devm_free_irq(&pdev->dev, oct_hw->irq, oct_hw);
+-		oct_hw->irq = -1;
++	for (irq = 0; irq < oct_hw->nb_irqs; irq++) {
++		if (!oct_hw->irqs[irq])
++			break;
++
++		devm_free_irq(&pdev->dev, oct_hw->irqs[irq], oct_hw);
+ 	}
++
+ 	pci_free_irq_vectors(pdev);
++	devm_kfree(&pdev->dev, oct_hw->irqs);
++	oct_hw->irqs = NULL;
+ }
+ 
+ static int octep_request_irqs(struct octep_hw *oct_hw)
+ {
+ 	struct pci_dev *pdev = oct_hw->pdev;
+-	int ret, irq;
++	int ret, irq, idx;
+ 
+-	/* Currently HW device provisions one IRQ per VF, hence
+-	 * allocate one IRQ for all virtqueues call interface.
+-	 */
+-	ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_MSIX);
++	oct_hw->irqs = devm_kcalloc(&pdev->dev, oct_hw->nb_irqs, sizeof(int), GFP_KERNEL);
++	if (!oct_hw->irqs)
++		return -ENOMEM;
++
++	ret = pci_alloc_irq_vectors(pdev, 1, oct_hw->nb_irqs, PCI_IRQ_MSIX);
+ 	if (ret < 0) {
+ 		dev_err(&pdev->dev, "Failed to alloc msix vector");
+ 		return ret;
+ 	}
+ 
+-	snprintf(oct_hw->vqs->msix_name, sizeof(oct_hw->vqs->msix_name),
+-		 OCTEP_VDPA_DRIVER_NAME "-vf-%d", pci_iov_vf_id(pdev));
+-
+-	irq = pci_irq_vector(pdev, 0);
+-	ret = devm_request_irq(&pdev->dev, irq, octep_vdpa_intr_handler, 0,
+-			       oct_hw->vqs->msix_name, oct_hw);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Failed to register interrupt handler\n");
+-		goto free_irq_vec;
++	for (idx = 0; idx < oct_hw->nb_irqs; idx++) {
++		irq = pci_irq_vector(pdev, idx);
++		ret = devm_request_irq(&pdev->dev, irq, octep_vdpa_intr_handler, 0,
++				       dev_name(&pdev->dev), oct_hw);
++		if (ret) {
++			dev_err(&pdev->dev, "Failed to register interrupt handler\n");
++			goto free_irqs;
++		}
++		oct_hw->irqs[idx] = irq;
+ 	}
+-	oct_hw->irq = irq;
+ 
+ 	return 0;
+ 
+-free_irq_vec:
+-	pci_free_irq_vectors(pdev);
++free_irqs:
++	octep_free_irqs(oct_hw);
+ 	return ret;
+ }
+ 
+@@ -559,6 +582,7 @@ static void octep_vdpa_setup_task(struct work_struct *work)
+ 	struct device *dev = &pdev->dev;
+ 	struct octep_hw *oct_hw;
+ 	unsigned long timeout;
++	u64 val;
+ 	int ret;
+ 
+ 	oct_hw = &mgmt_dev->oct_hw;
+@@ -590,6 +614,13 @@ static void octep_vdpa_setup_task(struct work_struct *work)
+ 	if (ret)
+ 		return;
+ 
++	val = readq(oct_hw->base[OCTEP_HW_MBOX_BAR] + OCTEP_VF_IN_CTRL(0));
++	oct_hw->nb_irqs = OCTEP_VF_IN_CTRL_RPVF(val);
++	if (!oct_hw->nb_irqs || oct_hw->nb_irqs > OCTEP_MAX_CB_INTR) {
++		dev_err(dev, "Invalid number of interrupts %d\n", oct_hw->nb_irqs);
++		goto unmap_region;
++	}
++
+ 	ret = octep_hw_caps_read(oct_hw, pdev);
+ 	if (ret < 0)
+ 		goto unmap_region;
+@@ -768,12 +799,6 @@ static int octep_vdpa_pf_setup(struct octep_pf *octpf)
+ 		return -EINVAL;
+ 	}
+ 
+-	if (OCTEP_EPF_RINFO_RPVF(val) != BIT_ULL(0)) {
+-		val &= ~GENMASK_ULL(35, 32);
+-		val |= BIT_ULL(32);
+-		writeq(val, addr + OCTEP_EPF_RINFO(0));
+-	}
+-
+ 	len = pci_resource_len(pdev, OCTEP_HW_CAPS_BAR);
+ 
+ 	octpf->vf_stride = len / totalvfs;
+-- 
+2.25.1
+
 
