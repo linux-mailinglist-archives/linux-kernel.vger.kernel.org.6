@@ -1,161 +1,128 @@
-Return-Path: <linux-kernel+bounces-438588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BABA19EA32B
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:51:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1C529EA32F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:52:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68366188761D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:51:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93D97160E8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:52:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FAB9223C6B;
-	Mon,  9 Dec 2024 23:51:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91DB019ABD8;
+	Mon,  9 Dec 2024 23:52:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aDwfwm+3"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KZy/V4FA"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124B01F63F1
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFF8197A8F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733788309; cv=none; b=UQb95obVmYHf20zzPfKo81bmju7HIDjJuoOSbUxho5swPdGyxLcJUSezG1IUtQ8WEaAfT/l0ucINv7yKMrwVxqIYCOrclwwPxoRDZBs11kTI00C5YKB6wWI7jYM91ld8D4XJwIewgSnlP89l3CGq65ZxOVmeotzFE/x+K8need4=
+	t=1733788370; cv=none; b=A+grCHYjKBrnXsH2jz2tuca+6AFknzFw9XWFgo1pPwC1dcNOcja9Gv0bJY6zSmTtIXLHsaI9OeqXRy4jCBnO2ez2Ayb7Fa0QZC0aTqUSWFp0dt3h5oA2qPYRpRsIycHcjz2TEThF/36f8aR11Vi65kMnbeeodP0UndDf75ygFwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733788309; c=relaxed/simple;
-	bh=4Nn+t2Yjyce34wgCQ3ETEjPe8rZLcWfxBP8EUFN0Dy8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AKEGuRAvB8jrXMZFfedhoxyHXIWFPMQXyJKgYQ/7rs5RTd8K+nr6xLgQbN3PI3V462W1WyrC7hNqjIMQV7i5yWv0Cmsx9G/MptRFCikIDMEpyH760GZxarjY6ul23+8OL3dL7HWsvF/66YVAJX9uW9gMer4OWTVDWtMFe42BfsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aDwfwm+3; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2eeb4d643a5so4396002a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:51:47 -0800 (PST)
+	s=arc-20240116; t=1733788370; c=relaxed/simple;
+	bh=ee9Yq/Rd/pSfnwyk+Gw8BNSUwK2jpwcl/Kc8CNSpHtQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O998JJAts2zqveJ3BMHQidad4kTVAFw3oliHSRMxY3fbWjpj6RDX4i9HePgD4uuTCYRtbZxuQ9enRtjjnH7ZZnZFfQ5UoqthmDjqnbUzhhR4KmvRP26jWBTq9FBFpR1H7513ESPpeR771TP1oPfQelWWNqF2HaDyMr9Q8fiLo60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KZy/V4FA; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-3003e203acaso23532161fa.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:52:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1733788307; x=1734393107; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SSUQjXvXCX7n0zlIPB3T1YFCaCdLs1ofM4KWIMrWBKg=;
-        b=aDwfwm+3OsDJ+hy8Yi+maopD92U+iq0Z6QXOZqANjwd6n669vFFVzlPoWRW/0jVQhY
-         SCCEBweGkwc8VMyZRzsQu0Hk2ZBndjIbEyWkAbEzeqdNY138WjEQjvdaB2shwOqwVNHM
-         dFZDRFhOlBnncBM/tK/w5BhXccL9RfamfIMy7RrJS0z5EyjJm0G42BX44Z3WV8Yttnu2
-         i+9cZYl25pvQpmpvn84R3oVANouhiaNIahg+ff1Nl+jA+Alj7MmhVNoqCgFMueuYHaI8
-         ejNunuELGOHp/lGILu0zicsTZWwRp3x6561ivktOwFxl/YZp2UB/2sYiv5S40qh4P+1v
-         PQ/A==
+        d=linaro.org; s=google; t=1733788366; x=1734393166; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8pM7U1GSGMw58mKFSa/5KwQJ4aVmx/cTtBUSfrJJX6Q=;
+        b=KZy/V4FA4JmjcMWKJzC0CMi4z9PMTSG9duuO62z73+pvK95akpS8I8uoMottvAazcu
+         twcSM0ZjqOKjrCNvxkT+/EgkKNc9MZ6DESiy8jAvXyeU4w/AEZ7KuUNGfr1y8kiW8CWp
+         JyTvKEHXSh/0MsyuGriBZFZvL4OdUT6H79g3hpZN9NTPGBsPg3sngiEoHRh91YvHQ6S+
+         wWgMEqD6VEEr4XeJxqzVW/7IsabapXPa/lVHbjEjwFOSHY8e+k/6vxNQFmf9i21rncEo
+         UBgD1mMjKSAGoBNaLzbrUjAJdz+1pI2TUrQap5gXtzDnwr7yqlYtkfSVbIvNl1Jc8QP7
+         mQDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733788307; x=1734393107;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SSUQjXvXCX7n0zlIPB3T1YFCaCdLs1ofM4KWIMrWBKg=;
-        b=LHKft7mNRgwwu0H8WOOBTwwiDYxOCQ86QIROcaBSESXAEA6xq0BxqZOIPXR89uDm6q
-         dLmMIkX645Qz7syuz0xXiu7c0noEr5QysYBsAZcweaMR3zdmmGl6Ci1/mGxBx09Jfys4
-         eWmqACh5Oaxj0GKzg6jJndtrCcwfvDzQxvEA63Gr5oaz6o2T11ZRv6Nxp0pzv7wnwSUh
-         xJRxuUeXjmjCYjH+IfBop/XFDVJ1GuKqRdZoNgKXHaljqrDyyKvoh3yVta/4SZ8chrbV
-         0Zi+Tg7447g/FW1BeTbWmK6UOs+OuKM70SN9ZB4r3KN5TVw9iZy5AWe0rTBWj8iU7dRs
-         xJVA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQ+WfU297BDXOiWiyju2Ckzl+d6RjLeW0xe8R0jGSe+82at32r/d81aL0VsL7VEpqqtxOsIYLzNgyUr3Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyCGfqoy9AoKB1F1fXN9e2JBr/OjtZ51KbU72iRf7tSk4du7Fos
-	vmiJ48X0k9lSbjzsrhHUZhPU9ygho38GVLpB9YadFuHKFF6Fsr6JJpG6Yyu8kZGOrHcOpKoy4uM
-	Vps/6DDM1QhzFFAcRGoWVg6UN1tzmUGbQqmo=
-X-Gm-Gg: ASbGncvCW8V6nn3ZkSE833QjMOdz7hmjCdb6Ct2yQ/tTpj9c+/YWWspoR1Pcj8UcsjR
-	nHbhecm4mAsYNGlBqt+U5jQwJXjchsjmu5zTcEDQpPK8GeBuqHLYjQgLUAiVB1Ooy
-X-Google-Smtp-Source: AGHT+IH/zZbQB//HIrX1JNipWnHUi43H4PwqcC6flKakC4Wp5vy64rAYnKcCmJw4Ryeyp5nKhAclTMf/QPAcT0muhIo=
-X-Received: by 2002:a17:90b:4cce:b0:2ea:696d:732f with SMTP id
- 98e67ed59e1d1-2efcf29a179mr3714478a91.29.1733788307107; Mon, 09 Dec 2024
- 15:51:47 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733788366; x=1734393166;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8pM7U1GSGMw58mKFSa/5KwQJ4aVmx/cTtBUSfrJJX6Q=;
+        b=KHJmrxjDV9BjiUyj512+cpipDfq80gTnnv99+6vIapktuxgucXN1U3ATu7t1ZK/mBN
+         BGv7gIEbiySLpiws7abzCzEHLgF4q0VUigH0yBxzpkTa+fzFLH7tZptdsHBpfrEoLDUJ
+         nakMCsDgSFQeNp1ug/HNFcEelxVq5jgHHWQcJ8UW4roOLSAS5QKMzss8QfvTLOuOM7WI
+         /XBeOZHeOkCU4jrmx8S/+dQzSmMsuhLPl+bw4ZJrVsP/x1AV1lBHeNPE+PzfHFu1RxUy
+         3OEFFb4GR5BH+jH3ZVkoNeCFQrcMYQ540BV6VAHv/GMuOYPN0O+lDVZVy6BQfbrbWaPX
+         3SIA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6Wn+WS5xglnT0A4WJKqaWcf4lCbZKSG65wX7oJW+0uvasAaO9Jppy+zryr2i2+IsmFOadaZ0v40HauGg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/8rpbHGGsf81RyELgPdkdQ2OY8Z1bVprWzK4reNa8N4/opGb+
+	WJxkmidCzvHsNQZ3irhJMjPSumUK/AASZINDFtb8aYKAAYS+AQG9fn2XOfkPYIM=
+X-Gm-Gg: ASbGncsMIasfPJn8GZdims2G+jDFXMBwKGIvd7G61qUaIdW8jk7f89etr8FLgzE7ggq
+	wpfjzRGPm3YrX/jtSeMidyI/Yk99d27UPm7NQacqA7JxgjTikrYWV13Tz6RJhYV80vTr9eCOSGb
+	A+DTxU6ci/EPgmbRxV9xRoRCjE3NqKasR27TOK3nePI6eGCA15BjuM83RGeQ9SfCSkh40JJz7i3
+	dqVXbGJgQtTilR2kNk7tD7xyH/tjvyAiqflzjoj5zlf0B2JD8z0VZelvZqC1cWJIusgDpP5K159
+	mjq4FRM9ts4P35kY8npLNRl2yQAqcq8/Xw==
+X-Google-Smtp-Source: AGHT+IHyF5rktCxD8kY/bacLUOJzx36QikPDeY4Bw3Za1LgYmjbnjgANCIKBZa1aDn+yZRzJ2gM1lA==
+X-Received: by 2002:a2e:b8d0:0:b0:2fb:5035:a03 with SMTP id 38308e7fff4ca-3022fd42e9amr6845101fa.14.1733788366224;
+        Mon, 09 Dec 2024 15:52:46 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3021a5fa257sm6740481fa.81.2024.12.09.15.52.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 15:52:44 -0800 (PST)
+Date: Tue, 10 Dec 2024 01:52:43 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Julius Werner <jwerner@chromium.org>
+Cc: Douglas Anderson <dianders@chromium.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/6] arm64: errata: Add QCOM_KRYO_2XX_GOLD to the
+ spectre_bhb_firmware_mitigated_list
+Message-ID: <w725lby34vpavm3knq3ikz2wb4tzlfr4elbgf25mjbvgamtq5t@zgc52dc2wvsy>
+References: <20241209174430.2904353-1-dianders@chromium.org>
+ <20241209094310.2.Ia3dfc0afadbfbee81bb2efb0672262470973dd08@changeid>
+ <wx6qbdbcrvbq34snzkxawlbpxm6vogt5ccjmdqqyazukfbjy7t@qkvax7tr27bs>
+ <CAODwPW8mq-saJuTYnMhA6bCopcjQwBxEoyWhQB60Jg1m7wUZkw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241118222540.27495-1-yabinc@google.com> <20241209162028.GD12428@willie-the-truck>
- <CAF1bQ=SiHi8oCyo5YnXGpQGofM1zAsnBdqSEet1mS-BYNKVU8A@mail.gmail.com> <20241209185623.GA13084@willie-the-truck>
-In-Reply-To: <20241209185623.GA13084@willie-the-truck>
-From: Yabin Cui <yabinc@google.com>
-Date: Mon, 9 Dec 2024 15:51:34 -0800
-X-Gm-Features: AZHOrDkYQ4V69Y7vLhOpgw-bfrlmqVn8MSQhz800aNeQq_Tq1k4ujC1njQBPuGU
-Message-ID: <CALJ9ZPNfUFF8OrpvziTnTvGU7OxEgyy9ZTc3aF-NhZ5hMbp7RQ@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: Allow CONFIG_AUTOFDO_CLANG to be selected
-To: Will Deacon <will@kernel.org>
-Cc: Rong Xu <xur@google.com>, Han Shen <shenhan@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Kees Cook <kees@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAODwPW8mq-saJuTYnMhA6bCopcjQwBxEoyWhQB60Jg1m7wUZkw@mail.gmail.com>
 
- On Mon, Dec 9, 2024 at 10:56=E2=80=AFAM Will Deacon <will@kernel.org> wrot=
-e:
->
-> (Aside: please try to avoid top-posting on the public lists as it messes =
-up
-> the flow of conversation; I'll try to piece this back together.)
->
-> On Mon, Dec 09, 2024 at 09:30:50AM -0800, Rong Xu wrote:
-> > On Mon, Dec 9, 2024 at 8:20=E2=80=AFAM Will Deacon <will@kernel.org> wr=
-ote:
-> > > On Mon, Nov 18, 2024 at 02:25:40PM -0800, Yabin Cui wrote:
-> > > > diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> > > > index fd9df6dcc593..c3814df5e391 100644
-> > > > --- a/arch/arm64/Kconfig
-> > > > +++ b/arch/arm64/Kconfig
-> > > > @@ -103,6 +103,7 @@ config ARM64
-> > > >       select ARCH_SUPPORTS_PER_VMA_LOCK
-> > > >       select ARCH_SUPPORTS_HUGE_PFNMAP if TRANSPARENT_HUGEPAGE
-> > > >       select ARCH_SUPPORTS_RT
-> > > > +     select ARCH_SUPPORTS_AUTOFDO_CLANG
-> > > >       select ARCH_WANT_BATCHED_UNMAP_TLB_FLUSH
-> > > >       select ARCH_WANT_COMPAT_IPC_PARSE_VERSION if COMPAT
-> > > >       select ARCH_WANT_DEFAULT_BPF_JIT
-> > >
-> > > After this change, both arm64 and x86 select this option unconditiona=
-lly
-> > > and with no apparent support code being added. So what is actually
-> > > required in order to select ARCH_SUPPORTS_AUTOFDO_CLANG and why isn't
-> > > it just available for all architectures instead?
+On Mon, Dec 09, 2024 at 03:34:59PM -0800, Julius Werner wrote:
+> > > NOTE: presumably this patch won't actually do much on its own because
+> > > (I believe) it requires a firmware update to go with it.
+> >
+> > Why? is_spectre_bhb_fw_affected() returns true if (cpu in list OR fw
+> > mitigated)
+> 
+> That affects reporting, but the mitigation works by making an
+> ARM_SMCCC_ARCH_WORKAROUND_3 Secure Monitor Call to firmware, and that
+> only works if that call is implemented in firmware. Trusted-Firmware-A
+> is currently the only open source firmware I'm aware of that
+> implements this call, and it only supports Kryo 4 and 6 upstream (not
+> 2 or 3).
+> 
+> So in order for this patch to actually be able to do anything other
+> than report that the mitigation is missing, it would need to run on
+> devices that either use a downstream fork of TF-A with added Kryo 2/3
+> support (I doubt this exists because AFAIK Kryo 4 was Qualcomm's first
+> attempt to use TF-A) or use some other proprietary kind of Secure
+> Monitor firmware that has this SMC and mitigation implemented
+> separately. (It seems unlikely that Qualcomm did this in their QTEE
+> firmware, since if they had they would have probably also added the
+> MIDRs here to Linux to activate it.)
 
-I think it's similar to ARCH_SUPPORTS_LTO_CLANG, which also doesn't need an=
-y
-support code but requires testing to ensure it works on a specific architec=
-ture.
+Ack, thanks for the detailed explanation.
 
->
-> > Enabling an AutoFDO build requires users to explicitly set CONFIG_AUTOF=
-DO_CLANG.
-> > The support code is in Commit 315ad8780a129e82 (kbuild: Add AutoFDO
-> > support for Clang build).
->
-> Yes, that is precisely my point. The user has to enable
-> CONFIG_AUTOFDO_CLANG anyway, so what is the point in having
-> ARCH_SUPPORTS_AUTOFDO_CLANG. Why would an architecture _not_ want to
-> select that?
->
-> > We are not enabling this for all architectures because AutoFDO's optimi=
-zed build
-> > relies on Last Branch Records (LBR) which aren't available on all archi=
-tectures.
->
-> So? ETM isn't available on all arm64 machines and I doubt whether LBR is
-> available on _all_ x86 machines either. So there's a runtime failure
-> mode that needs to be handled anyway and I don't think the arch-specific
-> Kconfig option is really doing anything useful.
-
-My understanding of the benefits of ARCH_SUPPORTS_AUTOFDO_CLANG is:
-1. Generally, we don't prefer to collect an AutoFDO profile on one
-architecture and use it to build the kernel for another architecture.
-This is because the profile misses data for architecture-dependent
-code. ARCH_SUPPORTS_AUTOFDO_CLANG can partially prevent this from
-happening.
-
-2. Building a kernel with an AutoFDO profile involves using new
-optimization flags for clang.  Having ARCH_SUPPORTS_AUTOFDO_CLANG=3Dy
-for one architecture means someone has tested building a kernel with
-an AutoFDO profile on this architecture.
->
-> Will
+-- 
+With best wishes
+Dmitry
 
