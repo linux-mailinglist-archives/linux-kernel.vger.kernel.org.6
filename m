@@ -1,307 +1,116 @@
-Return-Path: <linux-kernel+bounces-437200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D329E903D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:33:28 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221A39E9041
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:34:17 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69D952819EE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:33:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F27CE162B88
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:34:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C5E218AA6;
-	Mon,  9 Dec 2024 10:32:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B441521764F;
+	Mon,  9 Dec 2024 10:32:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TKnG7n+2";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FWgxZ65r"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="rxCK8EHz"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D6621771F;
-	Mon,  9 Dec 2024 10:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A76D9216E17;
+	Mon,  9 Dec 2024 10:32:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733740342; cv=none; b=ptmuKRVg9aukKz5F+XihLjk9MkXhPdS+hntqDx41z7Lggits73PNVnZyOtYsy3prSKIWU8lKuxB+bhwADpEgV3r4DzTLNkDG3tMQqWYDaasN6c9alUuZTzxsgOBbEhKsFNQoSu6PPeUqOJpdcuzkVi48s/xEgTAaJN7Qm9/jdh8=
+	t=1733740367; cv=none; b=OnWMnFzIF8GjbY4e/SargdVVpJZ0SAIJ9rOQ0T7LgOJzRTh7GDUlfLDWBEqZSsLaF6f1OZqq5ji3snGJ9+p8tYEGWem4L9wS6wmgiprrX02hYKgvUyKplBWnJqYzLXyg99stuwIZ0eLHn8a/cguC1SPcdDR0nAFf83ilmLBbTEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733740342; c=relaxed/simple;
-	bh=BAcGImtkq4rhzU9nEcLugGTLBzdtnoxtOKKiySB6v0M=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=UFlNJ0ZoheC6LexcxZjfFjmBkYTifZWZIREwvoEc5nX8uF7hS48trb5tyHfN/4vDK4lUs9FnjUazhhAlf4W3BohBiixZ3HJ8dA9u07EDQNposJsDhWohRBXOBOdR0N8mhgdXQj16lYWgJYOKd4QIE2fu7GBqkuPDm1qvitBgJZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TKnG7n+2; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FWgxZ65r; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 09 Dec 2024 10:32:12 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733740333;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ceb1xH+Rb+AT+GAWSdRrfbN7bhMvN2NPjXdmasqi9s=;
-	b=TKnG7n+2wvoOk5tpBvmztvXgo8sdpU0K7XsPUBH/O5+//u29BLrhwiIwSAYoLskQrRZL4O
-	X63rHhtwejadQj87ETKYG+2IsTkmqQ98r2FJb2ppMpxGkP8d70S7dvzEM4zx+eNV+frEnt
-	FJNMVzNxT1D0H8lNwnsjMJOWNRo3sQjb3y48ACSGKM8M61HWX17yiwdAcxhrJaRH40WTAN
-	yAqXD4t5/0KrvXKyaDeHVu3Wpavee6fGhk9SFZys/UJhG6ghLApfXA3tB0Cv2BTrAiAwbK
-	gmwVjL/nswNR1CaBlPjSCD6XCkmVAtUfUiE8QPH8sN1s97PUGgMBAlX3nZ7WnQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733740333;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3Ceb1xH+Rb+AT+GAWSdRrfbN7bhMvN2NPjXdmasqi9s=;
-	b=FWgxZ65rRD9czQYoNxHwLRjeSoC6hQ3scY5AO9vT4hbypYz48DMqZ+EJLsHuknGlt9y0VJ
-	vdCzzrCfoQGXKNBg==
-From: "tip-bot2 for Andrii Nakryiko" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] uprobes: Simplify session consumer tracking
-Cc: Andrii Nakryiko <andrii@kernel.org>, Ingo Molnar <mingo@kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Oleg Nesterov <oleg@redhat.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241206002417.3295533-2-andrii@kernel.org>
-References: <20241206002417.3295533-2-andrii@kernel.org>
+	s=arc-20240116; t=1733740367; c=relaxed/simple;
+	bh=IaZmXAaUI3FCLQAuB1Npp/LTLYPPybZ+aVugr6WcA+Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HQs9/q30qfsWlW/jEEwEVDpWvFzrpXwzBCCmBJy/26otHvCbtoQe0+hABX0hfUhzy9LNOh0PSCrpGPVkMVewK43u8/EFzJY/wSerQ1bZEn54wwSEuIZ6omCw+W2MyhomP36OrUUG85wgib0p3NdrskGS/+LlTdLkabAQOoH/FEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=rxCK8EHz; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1733740350; x=1734345150; i=wahrenst@gmx.net;
+	bh=IaZmXAaUI3FCLQAuB1Npp/LTLYPPybZ+aVugr6WcA+Y=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=rxCK8EHzNTk1KR9+KaG2iNQX5+w3OZsr+HRhu+v07NTOmsbRZaufx2q+xrJb4Ete
+	 Wtd9AHyncgqykzcc7yGID+nSS47mrD+0AL0b7+B9atWp7F17+jaa4vzONb+TwK7Ur
+	 e6U40xbgXcS/tG/LwMyTP/w+g5eht45P08sv4t2r8bm+foCbhY6kMIy/LvhnuHVnr
+	 CNKWODzi0+ZOeVqGPiI+TDowtuKNK/cATp8EOKXmYIqJA47ojIYqwBY5CcBb7TKkD
+	 TsiBODkLcvkUJQUhWDczl7yFX5kZAGDAKGMQG8sx6U50B143t8p5QJoZSvg/XoEhC
+	 1xkMsZnUGCMza2XI0Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.106] ([37.4.251.153]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MIMfW-1tNwZF4AwW-001qoh; Mon, 09
+ Dec 2024 11:32:30 +0100
+Message-ID: <c8fd371f-fd36-48c4-ad49-1e8f8db01383@gmx.net>
+Date: Mon, 9 Dec 2024 11:32:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <173374033240.412.4008851577756475967.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/3] ARM: dts: mxs: Add descriptions for imx287 based
+ btt3-[012] devices
+To: Lukasz Majewski <lukma@denx.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241107085705.490940-1-lukma@denx.de>
+ <20241107085705.490940-3-lukma@denx.de> <20241119165236.69438f75@wsk>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241119165236.69438f75@wsk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WT35FUcxkk24pmHWc8SbN7TbdU9tsAN2+EJ+r1nufEZCyVU0DTD
+ LpUn0KYHF8odE8iif7UZ3qkEsIVIWYREq/3CSbPxoRWpo9/4XFBIzmtA2hJsYnCl9ST8Xv+
+ SsGJ5ho7Flmf4F1fdrAi4ZDUiSPZ09qZiEYM8FNGiQofxrmure0utbfJ7gMdSiJ4mXCuBh3
+ xWFlidfqTUrLfwNrK8Bvg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:87TXXS13MfA=;3QWf8OLTUwXBXpKsWpJm8JR9S7T
+ Igl6SlHxcaPbGBuGg7n0haj237PaPA+qn97bMKkt4QahRyMcvSG8H2f67sm2IslbW4oW4yLaM
+ qHTUBaSG1vuAGjkyYgt2GEaDM+NUsB8Y4OM/cKvYyINniEZEqjCg7h+2M87LYIrZry6VPsOb9
+ lN1tdkmbkyVgVK71OEShOTwKlHchKRuXLE4g281fUXAfFKMPMK8Bkjl8MLZXrMagaJm1YUpSP
+ gjKgmKGLOeDnpa0bUYQDshvNi+RH3gTPqJHqZbCctL8k3XXZnRlJMVfETnumbbG8TZJyOSsvM
+ oHIlBbvFvM8etPp7o/BD8vaGmbU86PtxTVNOeblRYUiugZSUt4Kjh6uJm8gPI73nzYooW+ifK
+ Mwrw+T63qWfrq50h6x/xv1FQpodgvjWbYWf8pcmGx3kI4H8FXOHNH+Ijakn2DHEbECgj1YQWp
+ EBjF8tijx3Vom338awhnkLjYXihDM/4qn7/CoZS0epATHVLW9CnkHcaG89Pqu9oDXjjuhS9+l
+ JYIlXT8xERpKbiExA1szYxts1HgEpV9u2nom+kVE43ZQEcoPWTMV4uko2No5vW6d9AJTu7LBD
+ 4v/SAYXSQrucJEc/jHC7NYLjjWyl/elbJkzo+2toK1Vf4i1WJZFApx5OI29HOKGtUoH99FXgd
+ jZpar3SphehSPPJuuLV4K+pm8I+Tq6E3tyP0+BG2tglRGhNZ/UMChHSyp37c+eG5kXomC8mQt
+ 2q4znHrE6kqmctoMFDNZ/xdARwZSkljgoUoZ2VV5Taf/nnXSk+W5O7hPMYfXRRFQkTDl65y1g
+ tF6DS6O/fscb1syiv/jjtIONU6b80XFn04ILFyrItirq/sht2j16P6g/wMoHDyufDYGQdmeK7
+ 1/vk0Yuov0docj3rtbD3E3qthFPEFq9uDWYTuu4DlCbvQADOnR7G8mgQiimjJyxsVggCSxilU
+ 704nfotP/NUB+kV5pbhLcMrkU4Lo3gN6stoZ2EHJ4bUEYn3NyQtgrpDxdnlsqZW/rC8rCaMVa
+ HSPEzJ6t8mkwGZEc3JbUgLcJo8ZWQ4XFRaXegdfIdCKr/qeO5YVb80mNKoiaJ4RHHS41rG1l3
+ 8vd7m/mVzIQQeIkNeliYs1MWtsl0eu
 
-The following commit has been merged into the perf/core branch of tip:
-
-Commit-ID:     f6299532535e62171f545ac59cb2b441ba8786fc
-Gitweb:        https://git.kernel.org/tip/f6299532535e62171f545ac59cb2b441ba8786fc
-Author:        Andrii Nakryiko <andrii@kernel.org>
-AuthorDate:    Thu, 05 Dec 2024 16:24:14 -08:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Mon, 09 Dec 2024 11:18:08 +01:00
-
-uprobes: Simplify session consumer tracking
-
-In practice, each return_instance will typically contain either zero or
-one return_consumer, depending on whether it has any uprobe session
-consumer attached or not. It's highly unlikely that more than one uprobe
-session consumers will be attached to any given uprobe, so there is no
-need to optimize for that case. But the way we currently do memory
-allocation and accounting is by pre-allocating the space for 4 session
-consumers in contiguous block of memory next to struct return_instance
-fixed part. This is unnecessarily wasteful.
-
-This patch changes this to keep struct return_instance fixed-sized with one
-pre-allocated return_consumer, while (in a highly unlikely scenario)
-allowing for more session consumers in a separate dynamically
-allocated and reallocated array.
-
-We also simplify accounting a bit by not maintaining a separate
-temporary capacity for consumers array, and, instead, relying on
-krealloc() to be a no-op if underlying memory can accommodate a slightly
-bigger allocation (but again, it's very uncommon scenario to even have
-to do this reallocation).
-
-All this gets rid of ri_size(), simplifies push_consumer() and removes
-confusing ri->consumers_cnt re-assignment, while containing this
-singular preallocated consumer logic contained within a few simple
-preexisting helpers.
-
-Having fixed-sized struct return_instance simplifies and speeds up
-return_instance reuse that we ultimately add later in this patch set,
-see follow up patches.
-
-Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Link: https://lore.kernel.org/r/20241206002417.3295533-2-andrii@kernel.org
----
- include/linux/uprobes.h | 10 ++++--
- kernel/events/uprobes.c | 72 ++++++++++++++++++++--------------------
- 2 files changed, 45 insertions(+), 37 deletions(-)
-
-diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
-index e0a4c20..1d44997 100644
---- a/include/linux/uprobes.h
-+++ b/include/linux/uprobes.h
-@@ -154,12 +154,18 @@ struct return_instance {
- 	unsigned long		stack;		/* stack pointer */
- 	unsigned long		orig_ret_vaddr; /* original return address */
- 	bool			chained;	/* true, if instance is nested */
--	int			consumers_cnt;
-+	int			cons_cnt;	/* total number of session consumers */
- 
- 	struct return_instance	*next;		/* keep as stack */
- 	struct rcu_head		rcu;
- 
--	struct return_consumer	consumers[] __counted_by(consumers_cnt);
-+	/* singular pre-allocated return_consumer instance for common case */
-+	struct return_consumer	consumer;
-+	/*
-+	 * extra return_consumer instances for rare cases of multiple session consumers,
-+	 * contains (cons_cnt - 1) elements
-+	 */
-+	struct return_consumer	*extra_consumers;
- } ____cacheline_aligned;
- 
- enum rp_check {
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index daf4314..6beac52 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1899,6 +1899,7 @@ static struct return_instance *free_ret_instance(struct return_instance *ri, boo
- 		hprobe_finalize(&ri->hprobe, hstate);
- 	}
- 
-+	kfree(ri->extra_consumers);
- 	kfree_rcu(ri, rcu);
- 	return next;
- }
-@@ -1974,32 +1975,34 @@ static struct uprobe_task *get_utask(void)
- 	return current->utask;
- }
- 
--static size_t ri_size(int consumers_cnt)
--{
--	struct return_instance *ri;
--
--	return sizeof(*ri) + sizeof(ri->consumers[0]) * consumers_cnt;
--}
--
--#define DEF_CNT 4
--
- static struct return_instance *alloc_return_instance(void)
- {
- 	struct return_instance *ri;
- 
--	ri = kzalloc(ri_size(DEF_CNT), GFP_KERNEL);
-+	ri = kzalloc(sizeof(*ri), GFP_KERNEL);
- 	if (!ri)
- 		return ZERO_SIZE_PTR;
- 
--	ri->consumers_cnt = DEF_CNT;
- 	return ri;
- }
- 
- static struct return_instance *dup_return_instance(struct return_instance *old)
- {
--	size_t size = ri_size(old->consumers_cnt);
-+	struct return_instance *ri;
-+
-+	ri = kmemdup(old, sizeof(*ri), GFP_KERNEL);
-+
-+	if (unlikely(old->cons_cnt > 1)) {
-+		ri->extra_consumers = kmemdup(old->extra_consumers,
-+					      sizeof(ri->extra_consumers[0]) * (old->cons_cnt - 1),
-+					      GFP_KERNEL);
-+		if (!ri->extra_consumers) {
-+			kfree(ri);
-+			return NULL;
-+		}
-+	}
- 
--	return kmemdup(old, size, GFP_KERNEL);
-+	return ri;
- }
- 
- static int dup_utask(struct task_struct *t, struct uprobe_task *o_utask)
-@@ -2369,25 +2372,28 @@ static struct uprobe *find_active_uprobe_rcu(unsigned long bp_vaddr, int *is_swb
- 	return uprobe;
- }
- 
--static struct return_instance*
--push_consumer(struct return_instance *ri, int idx, __u64 id, __u64 cookie)
-+static struct return_instance *push_consumer(struct return_instance *ri, __u64 id, __u64 cookie)
- {
-+	struct return_consumer *ric;
-+
- 	if (unlikely(ri == ZERO_SIZE_PTR))
- 		return ri;
- 
--	if (unlikely(idx >= ri->consumers_cnt)) {
--		struct return_instance *old_ri = ri;
--
--		ri->consumers_cnt += DEF_CNT;
--		ri = krealloc(old_ri, ri_size(old_ri->consumers_cnt), GFP_KERNEL);
--		if (!ri) {
--			kfree(old_ri);
-+	if (unlikely(ri->cons_cnt > 0)) {
-+		ric = krealloc(ri->extra_consumers, sizeof(*ric) * ri->cons_cnt, GFP_KERNEL);
-+		if (!ric) {
-+			kfree(ri->extra_consumers);
-+			kfree_rcu(ri, rcu);
- 			return ZERO_SIZE_PTR;
- 		}
-+		ri->extra_consumers = ric;
- 	}
- 
--	ri->consumers[idx].id = id;
--	ri->consumers[idx].cookie = cookie;
-+	ric = likely(ri->cons_cnt == 0) ? &ri->consumer : &ri->extra_consumers[ri->cons_cnt - 1];
-+	ric->id = id;
-+	ric->cookie = cookie;
-+
-+	ri->cons_cnt++;
- 	return ri;
- }
- 
-@@ -2395,14 +2401,17 @@ static struct return_consumer *
- return_consumer_find(struct return_instance *ri, int *iter, int id)
- {
- 	struct return_consumer *ric;
--	int idx = *iter;
-+	int idx;
- 
--	for (ric = &ri->consumers[idx]; idx < ri->consumers_cnt; idx++, ric++) {
-+	for (idx = *iter; idx < ri->cons_cnt; idx++)
-+	{
-+		ric = likely(idx == 0) ? &ri->consumer : &ri->extra_consumers[idx - 1];
- 		if (ric->id == id) {
- 			*iter = idx + 1;
- 			return ric;
- 		}
- 	}
-+
- 	return NULL;
- }
- 
-@@ -2416,7 +2425,6 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
- 	struct uprobe_consumer *uc;
- 	bool has_consumers = false, remove = true;
- 	struct return_instance *ri = NULL;
--	int push_idx = 0;
- 
- 	current->utask->auprobe = &uprobe->arch;
- 
-@@ -2441,18 +2449,12 @@ static void handler_chain(struct uprobe *uprobe, struct pt_regs *regs)
- 			ri = alloc_return_instance();
- 
- 		if (session)
--			ri = push_consumer(ri, push_idx++, uc->id, cookie);
-+			ri = push_consumer(ri, uc->id, cookie);
- 	}
- 	current->utask->auprobe = NULL;
- 
--	if (!ZERO_OR_NULL_PTR(ri)) {
--		/*
--		 * The push_idx value has the final number of return consumers,
--		 * and ri->consumers_cnt has number of allocated consumers.
--		 */
--		ri->consumers_cnt = push_idx;
-+	if (!ZERO_OR_NULL_PTR(ri))
- 		prepare_uretprobe(uprobe, regs, ri);
--	}
- 
- 	if (remove && has_consumers) {
- 		down_read(&uprobe->register_rwsem);
+Am 19.11.24 um 16:52 schrieb Lukasz Majewski:
+> Dear Community,
+>
+>> The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
+>> some extend similar to already upstreamed XEA devices, hence are
+>> using common imx28-lwe.dtsi file.
+>>
+>> New, imx28-btt3.dtsi has been added to embrace common DTS
+>> properties for different HW revisions for this device.
+>>
+>> As a result - changes introduced in imx28-btt3-[012].dts are
+>> minimal.
+>>
+> Are there any more comments / suggestions for this patch set?
+I've send my RB for this patch on October 31th for V10, but it didn't
+made it into V11.
 
