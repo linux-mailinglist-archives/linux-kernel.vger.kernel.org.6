@@ -1,126 +1,157 @@
-Return-Path: <linux-kernel+bounces-437179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF3D9E900A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:22:34 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698039E9014
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:25:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46D811883DD6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:22:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5D7281AF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:25:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C99216E25;
-	Mon,  9 Dec 2024 10:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F355216E25;
+	Mon,  9 Dec 2024 10:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h13awTAM"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c9depuE8"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44F4414F12D;
-	Mon,  9 Dec 2024 10:22:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A63216E02;
+	Mon,  9 Dec 2024 10:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733739746; cv=none; b=SFGynou5XDvKzRa6LeMWa7W5BT4swPBGROkIXljc/rdBzxp5QohTFnzjWiZMGDEwl/j6VPDxUgp1WO+4dx8F80wXx+FWaITQnuMD6t7P0TW5mluDbaTXM+3NT/ZnbT66Rzp7siWYdvrEjY0s5biFEekHo87DJ5IHavdTqUzMfOI=
+	t=1733739912; cv=none; b=GiT7m3wnnULFDNsIl6ghXjbPa5NqEm3wZNQKlKxiYF278b59WdNAfnSbwoXOTxKjb3USagXIZT8R4EQtbrY5ww5Ge55F74Yj30OVPdyO7iXgRjsINKkOL+xkEW5Ii8qzTjaBKi1HxfrOen3+LtutipelBYYOu/Adn/7+1HsgLSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733739746; c=relaxed/simple;
-	bh=psJ6EdfRQDJJZjbhcaypGTvllIk2NcKhIpZ9DYRkbhA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDvLa7QoT8nCly6ZteNYF+gYORos1V9L7rKgGsGP9uSoDjI5Yal7xVnCrTzmky+zdtnk3qN4HfaNdQ59hpasiMH27Cg6mg03VGWmSyLTbUdEVItaf8ilFY0BTdX3zqkv3qGWLgDDtcC4sa38u02aosGnplISI8PmVcIFSARdmlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h13awTAM; arc=none smtp.client-ip=209.85.210.173
+	s=arc-20240116; t=1733739912; c=relaxed/simple;
+	bh=dKVih7aQWpxxyzGvIRBzNpZisx0xR5iWL0AaZXvDHHQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RwTknwaLlrOv9BsIzGofIvwdj7Z2+DygQ9AMNSl0H1BBpcjcRt+3xIxce2gZ7Yk/z76LIGZgHumnXjrshkEOi6gheK32EQvhOKYepM+QKC9bBL85g1mAVBcOiopE4eSRuBFP3DXWb21VZW7jPPxq7gsieN4Cl3kGArn15iWjdaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c9depuE8; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-725dac69699so1137507b3a.0;
-        Mon, 09 Dec 2024 02:22:25 -0800 (PST)
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cf6f804233so5086031a12.2;
+        Mon, 09 Dec 2024 02:25:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733739744; x=1734344544; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JK+YHbwbzYxN2fA6jQpylORDnONEVEdYkbUHx87yE3E=;
-        b=h13awTAM9LmqTzUAjoKJgZH4iGNPtm/3vMgRCTqJqLGq+1NqbJaclrXgn1h2UOf6JC
-         PGNBkGulDqinwnCeW1JMDL1Q+ic4ivebfRWwxGFr/Xjigkf3HHJpogcqPev9lvUZl0yF
-         vUU3qEs2MN5IyCbkKX+gttavP2cPl1CwMcI2btFb2RtTIQ4cZ23huvdIn2v0ozlPbuW2
-         Z5iex0/wvo+MhGSgB+dbqcY7TA3OT82rAMrYEuHX6yIt04BVRzx6LmtPkKwLTDDsResK
-         54VHIF+QunfYIs4Bg/mSFBObDRFUYpYVe0Qb5QpqwZn8yQ5puCOmsU3VMO2j2AEmiJ6b
-         u3/g==
+        d=gmail.com; s=20230601; t=1733739909; x=1734344709; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vvyt7SGgTlfGIaWy3Ul7r6xQmxk08ugT5cb3M3mzApM=;
+        b=c9depuE8RpkcfeJE8XD3MCOw1y5toeY1/HK5Qn5JQYAYMKhFHpHhwOsznvRrl+8I9T
+         afkk47htpGTesuy5/8ilvAYuwedEr0UpYwZ94uDsXO522K/PKM0FRW8SXfr/sXSLqap4
+         UZ+gG+2eW0a+GVXYTNiUTGGJ6bFTnwD6qhQ/H0T0rtUmhAW2Wivn+bsYeONMfMqoU4+D
+         T73n3KS6bYghzZW8P35Eh8Q6nL75e9egC9g07NvF19x9rg8iHU0+agWPExFWTKmr5m+n
+         8J2zIYFGEuuATRgjmfs6P8SxSM0zNxaahiKGhCD4iXv86nWSIeBmeXIz2PVfUW+HGLN1
+         Rxjg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733739744; x=1734344544;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JK+YHbwbzYxN2fA6jQpylORDnONEVEdYkbUHx87yE3E=;
-        b=muPfb6h/Zr9xIwYlUU4G/FFpRy+7+DXUewKztfBvHJS+mhB8T7SY3Aeo7/y9onwDVn
-         p8osqfMV/Q/pjjp3LCYudB3vnFSxBX8EQ8AsPPDluaoDYY49p9V+5f7gkthnsh0wSHsm
-         18It63aHk7DFRED+QIAWfE85ZqK7rF0R5lrRNaD3PGoHWkFgAJl2xeTIEWOfml7flYmg
-         f843Ek1NL7FvS9IWwdoAVswoXixGj8rquxHr3G53LfOX8meW4mg56ZwKhQxHryFQ6xj1
-         Gaueq09D0HoLh9y0dUuriXVv1XTfnCCIGTDKmlnez5dNFp5JECBnWl5v5HzEXjGFUb9k
-         vpJA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrn7MjRoA2CgchGgGlanvZtbOonMSUTzu+outj+EYKAFCCxrBB758vorIlHYb0QgJqPPK3n/TrbRMZ@vger.kernel.org, AJvYcCV88PsI1pP4O8NY4yTXiol9st8DEYJ+oLrdLr5P/SS7m40ttLRoqsBp6p13a/ViSdjHFV1GBr4R5X7ekEuF@vger.kernel.org, AJvYcCX/j13Uy+Kk+BdJ256qbbCnlA9Sk8QlZjPV5xZ3a+YCeNuVjcp7y24398yCq3+XZDqAHxCKCci5AbhKJw==@vger.kernel.org, AJvYcCX9oirflzA8Xc7IEJUKViQlj+5o2mMxqkAlcbDqZ2f3AA7zuE08br0P/Uldo0ioG2OpL6OJdRo+Cr6fi58=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsR1d1hKky2yVTJizFjR8v5D3mtRW5BKlBeNgTTNhX2+LXGbkM
-	+UlLoIJIN4nf+roaZao0/snZwbry1UdbE+3zM3sjCPz5d9uFf7HU
-X-Gm-Gg: ASbGncvjvOJhxuMAYEzTRM1DbscFrez7D+aHoVwOgvAXIKTlMP7rfkFd4geH55g3PCs
-	Vp7RSpUeombUmLc0lMFgi9txK5TXUHvExrbYU1x/yVFY1naCrb/LPBFDQEIBJZv7B1kVO+ed+ZG
-	LLO0OMaVCZidU93zC33gLjl+Xzjn9Zi/6Wz3RUXROe5xrXuRfqlAa34SwEOZthuV73OP/+ibAQH
-	zOZDnov+V2/g4944Rhgl4tBsetaW/uGbUBGqKfGoAUSF0Ol3gMk3ds0QdSlvRTkmBsq
-X-Google-Smtp-Source: AGHT+IGIMaQLW4wct1dsitCDskJol1qDWg2mfuDdPh8GMuIT847eTTcppJMdsxFJj7Ut8lRt0yTYLQ==
-X-Received: by 2002:a05:6a00:4fcc:b0:71d:e93e:f542 with SMTP id d2e1a72fcca58-725b820b43fmr19800743b3a.21.1733739744446;
-        Mon, 09 Dec 2024 02:22:24 -0800 (PST)
-Received: from [192.168.0.115] ([59.188.211.160])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725d6856bf7sm3620294b3a.192.2024.12.09.02.22.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 02:22:24 -0800 (PST)
-Message-ID: <e06c5d7c-de3c-46ff-b2ee-8ed794577e70@gmail.com>
-Date: Mon, 9 Dec 2024 18:22:17 +0800
+        d=1e100.net; s=20230601; t=1733739909; x=1734344709;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vvyt7SGgTlfGIaWy3Ul7r6xQmxk08ugT5cb3M3mzApM=;
+        b=AQWn8C3BhNznDjXnDkDI6dmcyFERA9lG7woeq61cp9iTdoUhYCmhxSSsAs1o4S6VHy
+         Yjsk0bz9V9wrEAVlA2WNqk4lLI9UY8r1YggyR8Ip6TJOESUmd0GluL7i3sV6xh6qrefJ
+         J1wtyshTcH7vVp2pwudavdSWQCe7EhtDFA1noP+HppHuU+Xe/Sr2C7VRKWfwEeu34qVr
+         HIi7dLUHu02cwW2xO3vTpFov17LdC++hPoamLEIZwAX7RA77UAFZHSI5Pyc/TpV83ciN
+         L4WVdWadyT5JO+h5+Ojy5dpty7MTxh7HRp+55VboE0Wv/O1DmZuBeOaATn/6Szhp1B5N
+         Re+w==
+X-Forwarded-Encrypted: i=1; AJvYcCXS79yMkkW6vdxmGjESCNhgRfH/goY3YoN+WyG48t/3Qikk2LTxeuWG6BZ1wd02csFVR68HtySHuLgp/ts=@vger.kernel.org, AJvYcCXyzf8J4IyLf0ELmUMf2RNspO2EMe9uhufZ6AixSIZTBI0LeUy0jzRIIc47sc+3L3EAHNIhegzMyRav@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmhEDagMVFuyC6s8cULx2qDHEaL6JHHLIFNqoQqwrGv6i9gJYj
+	bEt0jMJxWJwwamYVAxBRtdtUOJM8x27CXKdmHkvdCpzCILtDKOTmLycJfCWxUKfxsdzPiOwcRPZ
+	hebmFTeLvY4sUoJwxQePNlcDaZ8knQLfnCzE=
+X-Gm-Gg: ASbGncuiqsTSCGZE1VBF1zUz329GvmC5ZhEnLqB3rXC8UA9dGFOwNx9HaIqPXWS/QLQ
+	KdvOiKIuvAKm4FxU2tSHRecBocX2MUbbY
+X-Google-Smtp-Source: AGHT+IGD+kkm1zje9QQh9lcZlDTqJCN0cwfjYD4RgxRVD4GIz+nEQp5iq01hYDC/sP3WKsV3LpktbOyIXpt02FvJWRo=
+X-Received: by 2002:a05:6402:40ca:b0:5d2:723c:a57e with SMTP id
+ 4fb4d7f45d1cf-5d4185766ccmr27750a12.16.1733739908841; Mon, 09 Dec 2024
+ 02:25:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/3] backlight: dwi_bl: Add Apple DWI backlight driver
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	y@krzk-bin.smtp.subspace.kernel.org
-Cc: Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>,
- Jingoo Han <jingoohan1@gmail.com>, Pavel Machek <pavel@ucw.cz>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Helge Deller <deller@gmx.de>,
- Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, dri-devel@lists.freedesktop.org,
- linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-References: <20241207130433.30351-1-towinchenmi@gmail.com>
- <20241207130433.30351-3-towinchenmi@gmail.com>
- <bqn4tddl3kgle7zlamgaqlh45pizw6gf5qjwlmcsbkb6fx343l@tf5w63xursi2>
-Content-Language: en-US
-From: Nick Chan <towinchenmi@gmail.com>
-In-Reply-To: <bqn4tddl3kgle7zlamgaqlh45pizw6gf5qjwlmcsbkb6fx343l@tf5w63xursi2>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241205114307.1891418-1-wangming01@loongson.cn>
+In-Reply-To: <20241205114307.1891418-1-wangming01@loongson.cn>
+From: Keguang Zhang <keguang.zhang@gmail.com>
+Date: Mon, 9 Dec 2024 18:24:32 +0800
+Message-ID: <CAJhJPsULHY0ps31Z7iLm+Bz=ebokA2LMkOU=DRw=FtYQ__DEUA@mail.gmail.com>
+Subject: Re: [PATCH v2] rtc: loongson: clear TOY_MATCH0_REG in loongson_rtc_isr()
+To: Ming Wang <wangming01@loongson.cn>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Jiaxun Yang <jiaxun.yang@flygoat.com>, 
+	WANG Xuerui <git@xen0n.name>, Binbin Zhou <zhoubinbin@loongson.cn>, 
+	Huacai Chen <chenhuacai@kernel.org>, linux-rtc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, lixuefeng@loongson.cn, gaojuxin@loongson.cn
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+Reviewed-by: Keguang Zhang <keguang.zhang@gmail.com> # on LS1B
+Tested-by: Keguang Zhang <keguang.zhang@gmail.com>
+
+On Thu, Dec 5, 2024 at 7:43=E2=80=AFPM Ming Wang <wangming01@loongson.cn> w=
+rote:
+>
+> The TOY_MATCH0_REG should be cleared to 0 in the RTC interrupt handler,
+> otherwise the interrupt cannot be cleared, which will cause the
+> loongson_rtc_isr() to be triggered multiple times.
+>
+> The previous code cleared TOY_MATCH0_REG in the loongson_rtc_handler(),
+> which is an ACPI interrupt. This did not prevent loongson_rtc_isr()
+> from being triggered multiple times.
+>
+> This commit moves the clearing of TOY_MATCH0_REG to the
+> loongson_rtc_isr() to ensure that the interrupt is properly cleared.
+>
+> Fixes: 1b733a9ebc3d ("rtc: Add rtc driver for the Loongson family chips")
+> Signed-off-by: Ming Wang <wangming01@loongson.cn>
+> ---
+> v1 -> v2: Fix commit message function name format and add missing blank l=
+ine.
+> ---
+>  drivers/rtc/rtc-loongson.c | 13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/rtc/rtc-loongson.c b/drivers/rtc/rtc-loongson.c
+> index e8ffc1ab90b0..90e9d97a86b4 100644
+> --- a/drivers/rtc/rtc-loongson.c
+> +++ b/drivers/rtc/rtc-loongson.c
+> @@ -114,6 +114,13 @@ static irqreturn_t loongson_rtc_isr(int irq, void *i=
+d)
+>         struct loongson_rtc_priv *priv =3D (struct loongson_rtc_priv *)id=
+;
+>
+>         rtc_update_irq(priv->rtcdev, 1, RTC_AF | RTC_IRQF);
+> +
+> +       /*
+> +        * The TOY_MATCH0_REG should be cleared 0 here,
+> +        * otherwise the interrupt cannot be cleared.
+> +        */
+> +       regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
+> +
+>         return IRQ_HANDLED;
+>  }
+>
+> @@ -131,11 +138,7 @@ static u32 loongson_rtc_handler(void *id)
+>         writel(RTC_STS, priv->pm_base + PM1_STS_REG);
+>         spin_unlock(&priv->lock);
+>
+> -       /*
+> -        * The TOY_MATCH0_REG should be cleared 0 here,
+> -        * otherwise the interrupt cannot be cleared.
+> -        */
+> -       return regmap_write(priv->regmap, TOY_MATCH0_REG, 0);
+> +       return ACPI_INTERRUPT_HANDLED;
+>  }
+>
+>  static int loongson_rtc_set_enabled(struct device *dev)
+> --
+> 2.43.0
+>
 
 
+--=20
+Best regards,
 
-Krzysztof Kozlowski 於 2024/12/9 下午5:22 寫道:
->> diff --git a/drivers/video/backlight/dwi_bl.c b/drivers/video/backlight/dwi_bl.c
->> new file mode 100644
->> index 000000000000..d4bfd74b3129
->> --- /dev/null
->> +++ b/drivers/video/backlight/dwi_bl.c
->> @@ -0,0 +1,124 @@
-[...]
->> +
->> +	dwi_bl = devm_kzalloc(&dev->dev, sizeof(struct apple_dwi_bl), GFP_KERNEL);
-> 
-> sizeof(*)
-
-Ack this change as well for v4.
-
-> 
->> +	if (!dwi_bl)
->> +		return -ENOMEM;
-[...]
-
-Nick Chan
+Keguang Zhang
 
