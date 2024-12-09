@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-436825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10FDE9E8B65
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:15:58 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 706819E8B66
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:16:08 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C0E21885B47
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:15:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D30DE28160A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1A71547E3;
-	Mon,  9 Dec 2024 06:15:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD073172BDC;
+	Mon,  9 Dec 2024 06:15:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BXEIq4Wq"
-Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="di1kgpx5"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2A443146
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1751E2147F8
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733724952; cv=none; b=YM+/8MUF2N0Cmi7eC1BVugJrDNMtTlfI+AqGSt9s+TJEM7JI5rGBmTlzsIVCAfWZXr6s6ZEQ9MmAM6XSN/nQ1XljYOrS5tG61yE0s9dqpm+tGFayj0kjOMkICUGzBwqQSWzuASVnEmumVk7GboA7CR9LRmx9z+Iaor0INA1FiLA=
+	t=1733724957; cv=none; b=imWv8XWWHlxa5TqiQe6QG7jg59Wi7deKOgYmUhFh1PjEXMENrhAE3HB1/DLRUSBf0D1RdDfacn/EgqoVzqCaSgbX4IYbKX35sSiwra3gDnezfo+2k2yjxAPkSTxIxUHjbqFOPO0qq3jWN9i+TrRYq7HJmIxLjcq1B3ZN5y/WvKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733724952; c=relaxed/simple;
-	bh=Txl962X9D9KxVCAHDq5L6m6huEZFNRDOQ99W8Ng9mX4=;
+	s=arc-20240116; t=1733724957; c=relaxed/simple;
+	bh=MdDTxfGKx6bu9ZHjfydC1MEn4XRy5nf7GuWie5IjQzA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=sUpK5A71seUyk1r4gvMCAAYYPWucoEkYheK/fRhU60aWMPFXZso8Rz36JzyLsQ9l0tJZOZX7hRBC0M5B1ikQMVPqWSly7Ihau//KZ8Bp0QKEOAlcTOvF8xFt3cNYoN9bgKuVuSK7MNkge7qPaaAe/DrEHPr+yKlZHKt8wkBnfro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BXEIq4Wq; arc=none smtp.client-ip=209.85.167.179
+	 MIME-Version; b=L8bnDvqWQe1qH6xI8rvhnC9NIgt+EU+Wcuh5qxaz9SuQmMZ8mFxCRU1nsZjBBdKcFxBQepVQnk9m1fYKRcTb4HxlRH6xVGaRVnDBVxOVSxRYLdGPesNQ8ANVcX5wUaOXRMrttzLs5fWhl7ILaOu8NNVJmxL6YujXwov17UqLSVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=di1kgpx5; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3eb5a870158so188762b6e.3
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:15:50 -0800 (PST)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-21661be2c2dso944425ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:15:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733724949; x=1734329749; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1733724953; x=1734329753; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pnNhPvtjjeA0SELvFx04GxV15CCO7vm1wX4v8xLLeWc=;
-        b=BXEIq4WqU1bIv2ndIXzVSWUo0LNa6CKXV1b5kbYFG4HwEdF2uAEdYtMLBQIZy7LbAo
-         JeCrHnFM8lkvhzjurHgdwyBIEk+5YOHSeCVLNltM1lo0A0ekplF5NqOmuR34tkYYsLdB
-         M3JUIG45eC5CFK10dFeGTuKjScesNm1LuOu3S7RKJlASZdY11w0VaxkRgb/umnG6i803
-         qTvH9e/THZHstghWupxrMwu2cYe/b+Sn1UaLmN8X/NfjDE1vPC/9YwY7/Lfh+JxS1Fq8
-         c2NBp0FFMoz/3Gx3eTjO/rCvHbgqpmHaA72N+BshhybNvcq40urGsBxoa3bwkRvdLDG2
-         t6cQ==
+        bh=F7kQonWe5l9Kh79FyLWu6pMklDdWxAHpXcrT/0oQHYM=;
+        b=di1kgpx5COvCAir0jmH+q7hzUlbJaavEEbmpsh/unJmkN2XndGEoN1JssHZ0I2jPR2
+         HpqH1FENwjzRsHGcp0U4rsRVgWhfcTUEI5gbk9cuV4WKntz0xEGhhzhH7SIjwwV32O+O
+         VPFED8Uke1hHGv1AKJ0fcDhlfTckJE4apXHV8t6mROHOcyBk4xPrc33gfPRgIIQQ4y76
+         b1SYca2ic3KfsFWxZN4Z4quy+xWcIrJ3QWu8IjkRg+GET5Z/y4ceII8WwPNjUsY1ybRM
+         qmJpRuRD3hJJlN8ocRE/xy6IzLJmShldX+XB1yxTtJisKJxiwAGhGiswGGxzQzIHsaYh
+         hLoA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733724949; x=1734329749;
+        d=1e100.net; s=20230601; t=1733724953; x=1734329753;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pnNhPvtjjeA0SELvFx04GxV15CCO7vm1wX4v8xLLeWc=;
-        b=wu1WFIrySYt+iLO5KTuAKKOgoahTVmI1GolhDvxckJGQAqACgpTOcNBfjdpnLn2+Fi
-         jQgs/8ggv9pZ4loOigZyFF90xHPN9VH288vqqhlKvk1fPqzJAqYkzfx3Zcn1U1NJ/N7C
-         rDnycqNw3BUxMKsKYlgRjLxt1OQFiW/Lq2IyNUeEexU2S6ut5YF6mqhwH6NSw88ezGtM
-         0/kSZXf9k30FZQV25pn21j2HeTUEmV4xBEykJx4LgxCsJ2SHHuo0Xx7KuLkbJQ08Xgkd
-         2mKM/KApioaxHDdbw3EJeyIjVAmC0LjAwHxv1Y8+x9ll31OGs2qMaQJDMxwysQjde5cd
-         R/tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUeqbJxOos308sULarIhuZ9e0MflwGo6UMMjhXEt2Dtz3sRwLeiu6Em8OiU8BCXZjeSU2pY5vSjpuJi3qg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyN2rIx8iSNIC9e41b2TWoVUiklRLEYmJMfFWU1p7lpwmxYiZmK
-	UvqRS/7SIaaafQVraQmlDNHd1yyP79BO+LTLk0uOEY/99JJSsfBS
-X-Gm-Gg: ASbGncvpP0IDpjOpYawirwZ7SegNRBHD6TiX71fMIer6sreGuI2MUkYTIfot6zgrfYF
-	UctORNxLVaIXyog3qnB+SjFNh5PR5134374PTeiGGMGbqx2XnxGGcGoOSv09pgqqDyj4yzR33qa
-	NMSkHRl2Gs5iaRZo39N0aE0y4U8qErEFlCjINzXAkEFtveyK75QhYC4LNaXowu4kdQ6Z1mFWoYY
-	HnWXgsx1VNef+uCEQVOEGV1EaXvkekxL9WasoUjbJzyNdUFQXnIEVnB/DDcZnhEzqRlMKDg+oLY
-	7hEG8w==
-X-Google-Smtp-Source: AGHT+IH0QB16al2MNtCP5J2c9l7nsN7n/OZFeMIS2zGWlp/k5mAHTZrWnn52QUb6jrJW8/Jmsl2a9A==
-X-Received: by 2002:a05:6808:124b:b0:3ea:5809:2835 with SMTP id 5614622812f47-3eb19ce7e2fmr10726413b6e.21.1733724949528;
-        Sun, 08 Dec 2024 22:15:49 -0800 (PST)
+        bh=F7kQonWe5l9Kh79FyLWu6pMklDdWxAHpXcrT/0oQHYM=;
+        b=tnQFrVmP9Ws/9bgbupKXrx0zY0nVyJvU7rb96My0UKThgtLIY0+kJHBUH4lZjsgO7z
+         A2MfpdcPuT8astK+KGw6fSMroDMaX6mwVNgMVkyCtzubNJyF3hi4V07/dUtHxSPQulrb
+         sWJwQ8jVGfaStxvITgBLONcXieTdjPz8JUDDP4YQ29zWqoQOuo5jZ6AEPOFPaWxj0uXX
+         ajBZx/05m+PPs/azDnmvBzGfweS79gawig27ACa+nPUIM0OHFs1UMGk38GhlSu4ezBNH
+         sciy7zRjYX6tpKXXZ4IbXZCA/Nh+vtu58Sx8Wqtv7VnDsHXRDnD0ME/6V+zLasR1Y6Pa
+         JfvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWVzYtyY9N/qVZDl3AsTaxJZPBpHMoYGkgfw8o+XXyoXAjGNIEjN7ndfWcSPs2tNDXPQS8b5vaHmHUair4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSRlK3BhWKv5WUYXL/ou4lMaPxC4/NHv/sWg+fHrIaoawDvUw6
+	RmgjNPaWuBIlak6YX1+IN4M3CQfBxPLHUuobvckJhf1Abe52KAUN
+X-Gm-Gg: ASbGnct+n5z69uhW8H1b7mMWUTktMcfmoucOXt7mwKaWyQLqSHqIZXKeqqkW7unUUE2
+	Sxwe46u+wxot6Rt/32o2ZOog5i4W9WjnhGfqpcL1Fd5E9ULabADErLs2og5gnJF4/rVwcwiP0y3
+	nzuy6xTHgY+q7AHFaG/kBMmHMgBwiei0XWu2g9yeCAlDZaeKR2EG/B6LaT5tYteE85k0LwXYQV6
+	rtyKfOj8FlHeXPi3RWkYLsxfOzXgSD7kf9M+7gio7wnFLMEcO5FmN5RKp/kfV8ONGwgHEYxdg+d
+	Pufz4w==
+X-Google-Smtp-Source: AGHT+IEXT8C2guc2VNHTufgL0ACYxl6+A7855+73rckfBd3nDSUWho4w2D8ilsy0bUA5bU6T1nndZg==
+X-Received: by 2002:a17:902:ea02:b0:216:2b14:b625 with SMTP id d9443c01a7336-2162b14cdfamr132835015ad.31.1733724953257;
+        Sun, 08 Dec 2024 22:15:53 -0800 (PST)
 Received: from localhost ([58.29.143.236])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7fd416536dbsm2054166a12.16.2024.12.08.22.15.48
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2165590a8ebsm6925375ad.271.2024.12.08.22.15.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:15:49 -0800 (PST)
+        Sun, 08 Dec 2024 22:15:52 -0800 (PST)
 From: Changwoo Min <multics69@gmail.com>
 X-Google-Original-From: Changwoo Min <changwoo@igalia.com>
 To: tj@kernel.org,
@@ -80,9 +80,9 @@ To: tj@kernel.org,
 Cc: changwoo@igalia.com,
 	kernel-dev@igalia.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v4 1/6] sched_ext: Relocate scx_enabled() related code
-Date: Mon,  9 Dec 2024 15:15:26 +0900
-Message-ID: <20241209061531.257531-2-changwoo@igalia.com>
+Subject: [PATCH v4 2/6] sched_ext: Implement scx_rq_clock_update/stale()
+Date: Mon,  9 Dec 2024 15:15:27 +0900
+Message-ID: <20241209061531.257531-3-changwoo@igalia.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241209061531.257531-1-changwoo@igalia.com>
 References: <20241209061531.257531-1-changwoo@igalia.com>
@@ -94,59 +94,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-scx_enabled() will be used in scx_rq_clock_update/stale() in the
-following patch, so relocate the scx_enabled() related code to the
-proper location.
+scx_rq_clock_update() and scx_rq_clock_stale() manage the status of an
+rq clock when sched_ext is enabled. scx_rq_clock_update() keeps the rq
+clock in memory and its status valid. scx_rq_clock_stale() invalidates
+the current rq clock not to use the cached rq clock.
 
 Signed-off-by: Changwoo Min <changwoo@igalia.com>
 ---
- kernel/sched/sched.h | 26 +++++++++++++-------------
- 1 file changed, 13 insertions(+), 13 deletions(-)
+ kernel/sched/sched.h | 24 +++++++++++++++++++++++-
+ 1 file changed, 23 insertions(+), 1 deletion(-)
 
 diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 76f5f53a645f..440ecedf871b 100644
+index 440ecedf871b..7e71d8685fcc 100644
 --- a/kernel/sched/sched.h
 +++ b/kernel/sched/sched.h
-@@ -1717,6 +1717,19 @@ struct rq_flags {
+@@ -754,6 +754,7 @@ enum scx_rq_flags {
+ 	SCX_RQ_BAL_PENDING	= 1 << 2, /* balance hasn't run yet */
+ 	SCX_RQ_BAL_KEEP		= 1 << 3, /* balance decided to keep current */
+ 	SCX_RQ_BYPASSING	= 1 << 4,
++	SCX_RQ_CLK_VALID	= 1 << 5, /* RQ clock is fresh and valid */
  
- extern struct balance_callback balance_push_callback;
+ 	SCX_RQ_IN_WAKEUP	= 1 << 16,
+ 	SCX_RQ_IN_BALANCE	= 1 << 17,
+@@ -766,9 +767,11 @@ struct scx_rq {
+ 	unsigned long		ops_qseq;
+ 	u64			extra_enq_flags;	/* see move_task_to_local_dsq() */
+ 	u32			nr_running;
+-	u32			flags;
+ 	u32			cpuperf_target;		/* [0, SCHED_CAPACITY_SCALE] */
+ 	bool			cpu_released;
++	u32			flags;
++	u64			clock;			/* current per-rq clock -- see scx_bpf_now_ns() */
++	u64			prev_clock;		/* previous per-rq clock -- see scx_bpf_now_ns() */
+ 	cpumask_var_t		cpus_to_kick;
+ 	cpumask_var_t		cpus_to_kick_if_idle;
+ 	cpumask_var_t		cpus_to_preempt;
+@@ -1725,9 +1728,28 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
  
-+#ifdef CONFIG_SCHED_CLASS_EXT
-+extern const struct sched_class ext_sched_class;
+ #define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
+ #define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
 +
-+DECLARE_STATIC_KEY_FALSE(__scx_ops_enabled);	/* SCX BPF scheduler loaded */
-+DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
++static inline void scx_rq_clock_update(struct rq *rq, u64 clock)
++{
++	if (scx_enabled()) {
++		rq->scx.prev_clock = rq->scx.clock;
++		rq->scx.clock = clock;
++		rq->scx.flags |= SCX_RQ_CLK_VALID;
++	}
++}
 +
-+#define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
-+#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
-+#else /* !CONFIG_SCHED_CLASS_EXT */
-+#define scx_enabled()		false
-+#define scx_switched_all()	false
-+#endif /* !CONFIG_SCHED_CLASS_EXT */
++static inline void scx_rq_clock_stale(struct rq *rq)
++{
++	if (scx_enabled())
++		rq->scx.flags &= ~SCX_RQ_CLK_VALID;
++}
 +
+ #else /* !CONFIG_SCHED_CLASS_EXT */
+ #define scx_enabled()		false
+ #define scx_switched_all()	false
++
++static inline void scx_rq_clock_update(struct rq *rq, u64 clock) {}
++static inline void scx_rq_clock_stale(struct rq *rq) {}
+ #endif /* !CONFIG_SCHED_CLASS_EXT */
+ 
  /*
-  * Lockdep annotation that avoids accidental unlocks; it's like a
-  * sticky/continuous lockdep_assert_held().
-@@ -2505,19 +2518,6 @@ extern const struct sched_class rt_sched_class;
- extern const struct sched_class fair_sched_class;
- extern const struct sched_class idle_sched_class;
- 
--#ifdef CONFIG_SCHED_CLASS_EXT
--extern const struct sched_class ext_sched_class;
--
--DECLARE_STATIC_KEY_FALSE(__scx_ops_enabled);	/* SCX BPF scheduler loaded */
--DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
--
--#define scx_enabled()		static_branch_unlikely(&__scx_ops_enabled)
--#define scx_switched_all()	static_branch_unlikely(&__scx_switched_all)
--#else /* !CONFIG_SCHED_CLASS_EXT */
--#define scx_enabled()		false
--#define scx_switched_all()	false
--#endif /* !CONFIG_SCHED_CLASS_EXT */
--
- /*
-  * Iterate only active classes. SCX can take over all fair tasks or be
-  * completely disabled. If the former, skip fair. If the latter, skip SCX.
 -- 
 2.47.1
 
