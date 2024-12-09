@@ -1,108 +1,233 @@
-Return-Path: <linux-kernel+bounces-437168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D74D19E8FE3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:15:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39CCC9E8FE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:15:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF03D1883AF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:15:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 209C2164E47
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93E97216E28;
-	Mon,  9 Dec 2024 10:15:16 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F932163B2;
+	Mon,  9 Dec 2024 10:15:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NvdqhXZ8"
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5741B14F12D
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4447E214802
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:15:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733739316; cv=none; b=aA5yfKBDxxW28HDQSFEzPOrjWQCGxKbEVI+trpcqLj2Awc3TcqiAbiE0tPj0dYMex/6mcEgfqM1OI/EW/PHDPIf/7sdKZWBx4fk4XpFrRwiKvAgAr5UtN98GVansRn2cK0F9F3K2m5X2VBQLzvKgXLyBZmwNEYinwxbXj030Shs=
+	t=1733739338; cv=none; b=o5M32JtnviYRUxuywhtoz0i+YW8D86yEaJst8fMGaYqyWsKoS8ivy81ZS0dDfB73n+fBdb2E15CqBR63KVQverZT5Dnzmlm0PbOZC6uRGkjW+h0ktkmuSTako7agoTYn2UfoWaMD941ChLtSn7einoJSoFdVUZm+YCsuZTAP3qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733739316; c=relaxed/simple;
-	bh=e2BIJ6svlRpJT4zzT6x2Si6sF7SK2oPCINx6ChrmOQQ=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pelYYi6fodSMnB1unUHoe0TpEK38lBhZ8I4GD+S0IC4HtloPdtZ72j3z5jLUV/iW08jTH1UEtCGuYl3Ycn4jiD/1f051iT0ctx35j0z8ElUMcxyOQVph/Gppoxpk3fYeNp/LA7QNP9XG+nnKvrvtud82am3+TucBK1PaPX0tiEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Y6HlV2Zj2z6LDHp;
-	Mon,  9 Dec 2024 18:14:14 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6BE9A1402DB;
-	Mon,  9 Dec 2024 18:15:05 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 9 Dec
- 2024 11:15:04 +0100
-Date: Mon, 9 Dec 2024 10:15:03 +0000
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Igor Mammedov <imammedo@redhat.com>
-CC: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>, Shiju Jose
-	<shiju.jose@huawei.com>, "Michael S. Tsirkin" <mst@redhat.com>, Ani Sinha
-	<anisinha@redhat.com>, Dongjiu Geng <gengdongjiu1@gmail.com>,
-	<linux-kernel@vger.kernel.org>, <qemu-arm@nongnu.org>,
-	<qemu-devel@nongnu.org>
-Subject: Re: [PATCH v5 08/16] acpi/ghes: don't check if physical_address is
- not zero
-Message-ID: <20241209101503.000010b9@huawei.com>
-In-Reply-To: <20241204141246.37a7cb9d@imammedo.users.ipa.redhat.com>
-References: <cover.1733297707.git.mchehab+huawei@kernel.org>
-	<95c0fa3fc2969daf3b6bc1f007733f11b715a465.1733297707.git.mchehab+huawei@kernel.org>
-	<20241204141246.37a7cb9d@imammedo.users.ipa.redhat.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1733739338; c=relaxed/simple;
+	bh=Si4/zUf2Y8HHlz3XRMv8pm4MIwvBmAUG2exqZk7HEdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gnJNzSUWfzbmg9CWh24SgvNp4p7ygltIS3W2N/6noTby24CpEi1GptJPfPiPoSUgMTDsk0DrIVj0bUmjRHtN6abvPU2S9+wf7unk4b/VFwjLxvvg+mr4sQ7b1EUS2lnboDS5o3iD+j9MJVvHuELHgXK99Ne/5CIRokomI0fyZf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NvdqhXZ8; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e3a1cfeb711so1534011276.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:15:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733739335; x=1734344135; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=l8vI+mafQJICnkT4ByBE+HuAejFrqMpigPXyZ+V3gfk=;
+        b=NvdqhXZ8EzBNFeu+o9dBkafOZcb486WEq9NgXKy8icEzETYtaIHLN5ZR5SAn8rzd+T
+         RyFhTU6GuQkO559kQdIz31tylRNh0zj3kSVcNJ4y9C+nGKW8QZmm0PQ4j+YGejljIcvU
+         2JiJXu/+hVRHeU1rHQ1DGi8hSKofe8K4a5oR7eUtJUzxz32efU3w0nddyvBAiUFbsxmT
+         4b9YTLhMdxR7q/7eH3XAnDRhY7/TcfBp3bPAhSKERE+aY1zzao5w1WiybrWWRcLJ3a5g
+         X+wVFCfEyqTy2W64Di1CIVnSBcIul7Jlz0v5Ahn40gbR1vzAapnHpFTsX3kRLbEtVp0S
+         C4Kw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733739335; x=1734344135;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l8vI+mafQJICnkT4ByBE+HuAejFrqMpigPXyZ+V3gfk=;
+        b=ePNFbyuQrq5Ls0RXALwxXrQENxqHNWL8BwM0vVjHyUZ5TecN4nhdeCChBK5JZ4B4Io
+         /Xtyg6smupD/5mtk4KpTOcgG2k+wONVTm+vx5eLe3jsxPwmLYyEazwiqlY4eDIs0GFon
+         AR0CSy8ZiNA8L9rSMEW/gVFcREbqDqyk9Agb5D+exJbjMutuk4WPCYb680THhttZIhzt
+         6n67M2HYQb6bfrJUpyl+cVYN6Bn7JU5XuZU4bG1PPo9zJda/jy6mAnilDtfTERSgsapc
+         K9Z9wC9P0U8zpazknR4GNAVXFo8nTDY0r25bC1oJ3XyB/xClXErydqBdnJbCqnJZHCt/
+         ZPfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWamKg/uGaaYuVzc5iP6RY7pyHTfK+E7q+6VZ9j7MPWxtNmFhtUdOpWlwyhtyR7of5A/UtyJOa0ZUVAbgU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9PA2G4/ltf6hf4Gzal9jhT6qSakgD3xzbJFNsGODWoOh0Jf5R
+	q2hG4s8a0htodfdw3Lwooy5xQUn2joodPjf0aT02bQCOReEXsuuWmqMTOreyoMEUvcqHXz7e9JI
+	VfXdf8e6Rxg50CqlxW9hLP+i+DLsiWVYrFfR9Dg==
+X-Gm-Gg: ASbGnctVF1dYy70CtPM0JlZDoe4D0NC/Mo/O3z4CjJOUrv2nY2/HyNU1H0dYfzYzyfd
+	TdOxS6LdYN3IrPmvbf2rc54RDqyfUFYA=
+X-Google-Smtp-Source: AGHT+IEYOHT/dGfysgHNg+sIyk39rFclVXASjoPiptGYgkI+v6pr5kBeW++F6mbWR9LBKnALmvDk24OJ2+AqS/tovSY=
+X-Received: by 2002:a05:6902:727:b0:e3a:4f3f:af41 with SMTP id
+ 3f1490d57ef6-e3a4f3fb32fmr656889276.17.1733739335239; Mon, 09 Dec 2024
+ 02:15:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
+References: <cover.1732627815.git.Sandor.yu@nxp.com> <4ef8252825d7a962b440519fb17fdcd5dd817672.1732627815.git.Sandor.yu@nxp.com>
+ <slkpvbemsrz5jv4cafp7k4pdj3smpl575w2dtmjoheoqqrh32j@2wi5564jzawg> <PAXPR04MB94488CEFA54F8AA193DC2BBDF43C2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB94488CEFA54F8AA193DC2BBDF43C2@PAXPR04MB9448.eurprd04.prod.outlook.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 9 Dec 2024 12:15:26 +0200
+Message-ID: <CAA8EJpoKkOj2pBxi4QcVAVOwzaW=yVAyomOFv7-oAxPYamfa-A@mail.gmail.com>
+Subject: Re: [PATCH v19 6/8] phy: freescale: Add DisplayPort/HDMI Combo-PHY
+ driver for i.MX8MQ
+To: Sandor Yu <sandor.yu@nxp.com>
+Cc: "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
+	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
+	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
+	"daniel@ffwll.ch" <daniel@ffwll.ch>, "robh+dt@kernel.org" <robh+dt@kernel.org>, 
+	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"festevam@gmail.com" <festevam@gmail.com>, "vkoul@kernel.org" <vkoul@kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>, "mripard@kernel.org" <mripard@kernel.org>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, dl-linux-imx <linux-imx@nxp.com>, 
+	Oliver Brown <oliver.brown@nxp.com>, 
+	"alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>, "sam@ravnborg.org" <sam@ravnborg.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 4 Dec 2024 14:12:46 +0100
-Igor Mammedov <imammedo@redhat.com> wrote:
+On Mon, 9 Dec 2024 at 10:38, Sandor Yu <sandor.yu@nxp.com> wrote:
+>
+>
+>
+> > -----Original Message-----
+> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Sent: 2024=E5=B9=B411=E6=9C=8826=E6=97=A5 22:43
+> > To: Sandor Yu <sandor.yu@nxp.com>
+> > Cc: andrzej.hajda@intel.com; neil.armstrong@linaro.org; Laurent Pinchar=
+t
+> > <laurent.pinchart@ideasonboard.com>; jonas@kwiboo.se;
+> > jernej.skrabec@gmail.com; airlied@gmail.com; daniel@ffwll.ch;
+> > robh+dt@kernel.org; krzysztof.kozlowski+dt@linaro.org;
+> > shawnguo@kernel.org; s.hauer@pengutronix.de; festevam@gmail.com;
+> > vkoul@kernel.org; dri-devel@lists.freedesktop.org;
+> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
+> > linux-kernel@vger.kernel.org; linux-phy@lists.infradead.org;
+> > mripard@kernel.org; kernel@pengutronix.de; dl-linux-imx
+> > <linux-imx@nxp.com>; Oliver Brown <oliver.brown@nxp.com>;
+> > alexander.stein@ew.tq-group.com; sam@ravnborg.org
+> > Subject: [EXT] Re: [PATCH v19 6/8] phy: freescale: Add DisplayPort/HDMI
+> > Combo-PHY driver for i.MX8MQ
+> >
+> > Caution: This is an external email. Please take care when clicking link=
+s or
+> > opening attachments. When in doubt, report the message using the 'Repor=
+t
+> > this email' button
+> >
+> >
+> > On Tue, Nov 26, 2024 at 10:11:51PM +0800, Sandor Yu wrote:
+> > > Add Cadence HDP-TX DisplayPort and HDMI PHY driver for i.MX8MQ.
+> > >
+> > > Cadence HDP-TX PHY could be put in either DP mode or
+> > > HDMI mode base on the configuration chosen.
+> > > DisplayPort or HDMI PHY mode is configured in the driver.
+> > >
+> > > Signed-off-by: Sandor Yu <Sandor.yu@nxp.com>
+> > > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> > > ---
+> > > v18->v19:
+> > > - Simplify the PLL tables by removing unused and constant data
+> > > - Remove PHY power management, controller driver will handle them.
+> > > - Remove enum dp_link_rate
+> > > - Introduce read_pll_timeout.
+> > > - Update clock management as devm_clk_get_enabled() introduced.
+> > > - Remove cdns_hdptx_phy_init() and cdns_hdptx_phy_remove().
+> > >
+> > > v17->v18:
+> > > - fix build error as code rebase to latest kernel version.
+> > >
+> > >  drivers/phy/freescale/Kconfig                |   10 +
+> > >  drivers/phy/freescale/Makefile               |    1 +
+> > >  drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c | 1237
+> > ++++++++++++++++++
+> > >  3 files changed, 1248 insertions(+)
+> > >  create mode 100644 drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c
+> > >
+> > > diff --git a/drivers/phy/freescale/Kconfig b/drivers/phy/freescale/Kc=
+onfig
+> > > index dcd9acff6d01a..bbd17e9556cc3 100644
+> > > --- a/drivers/phy/freescale/Kconfig
+> > > +++ b/drivers/phy/freescale/Kconfig
+> > > @@ -35,6 +35,16 @@ config PHY_FSL_IMX8M_PCIE
+> > >         Enable this to add support for the PCIE PHY as found on
+> > >         i.MX8M family of SOCs.
+> > >
+> > > +config PHY_FSL_IMX8MQ_HDPTX
+> > > +     tristate "Freescale i.MX8MQ DP/HDMI PHY support"
+> > > +     depends on OF && HAS_IOMEM
+> > > +     depends on COMMON_CLK
+> > > +     depends on CDNS_MHDP_HELPER
+> >
+> > You should not be depending on the symbol that can not be selected by
+> > the user.
+>
+> OK.
+>
+> >
+> > > +     select GENERIC_PHY
+> > > +     help
+> > > +       Enable this to support the Cadence HDPTX DP/HDMI PHY driver
+> > > +       on i.MX8MQ SOC.
+> > > +
+> > >  config PHY_FSL_IMX8QM_HSIO
+> > >       tristate "Freescale i.MX8QM HSIO PHY"
+> > >       depends on OF && HAS_IOMEM
+> > > diff --git a/drivers/phy/freescale/Makefile b/drivers/phy/freescale/M=
+akefile
+> > > index 658eac7d0a622..a946b87905498 100644
+> > > --- a/drivers/phy/freescale/Makefile
+> > > +++ b/drivers/phy/freescale/Makefile
+> > > @@ -1,4 +1,5 @@
+> > >  # SPDX-License-Identifier: GPL-2.0-only
+> > > +obj-$(CONFIG_PHY_FSL_IMX8MQ_HDPTX)   +=3D phy-fsl-imx8mq-hdptx.o
+> > >  obj-$(CONFIG_PHY_FSL_IMX8MQ_USB)     +=3D phy-fsl-imx8mq-usb.o
+> > >  obj-$(CONFIG_PHY_MIXEL_LVDS_PHY)     +=3D
+> > phy-fsl-imx8qm-lvds-phy.o
+> > >  obj-$(CONFIG_PHY_MIXEL_MIPI_DPHY)    +=3D phy-fsl-imx8-mipi-dphy.o
+> > > diff --git a/drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c
+> > b/drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c
+> > > new file mode 100644
+> > > index 0000000000000..e99487622d43c
+> > > --- /dev/null
+> > > +++ b/drivers/phy/freescale/phy-fsl-imx8mq-hdptx.c
+> > > @@ -0,0 +1,1237 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/*
+> > > + * Cadence DP/HDMI PHY driver
+> > > + *
+> > > + * Copyright (C) 2022-2024 NXP Semiconductor, Inc.
+> > > + */
+> > > +#include <drm/bridge/cdns-mhdp-helper.h>
+> >
+> > Still, I'd ask for drivers/soc instead.
+>
+> If put it in drivers/soc, should I create a new directory called drivers/=
+soc/cadence or put it in drivers/soc/imx?
+>
+> The mhdp helpers will share code between cdns-mhdp8501 and cdns-mhdp8546.
+> I prefer creating a new directory, drivers/soc/cadence, but the problem i=
+s that cadence not a real SoC.
 
-> On Wed,  4 Dec 2024 08:41:16 +0100
-> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> wrote:
-> 
-> > The 'physical_address' value is a faulty page. As such, 0 is
-> > as valid as any other value.
-I'm not sure what a 'faulty page' is. but code looks fine.
+I think drivers/soc/cadence is fine. Please explain your decision in
+the cover letter and in the commit message, this will help other
+maintainers to understand you.
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> > 
-> > Suggested-by: Igor Mammedov <imammedo@redhat.com>
-> > Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>  
-> 
-> Reviewed-by: Igor Mammedov <imammedo@redhat.com>
-> 
-> > ---
-> >  hw/acpi/ghes.c | 4 ----
-> >  1 file changed, 4 deletions(-)
-> > 
-> > diff --git a/hw/acpi/ghes.c b/hw/acpi/ghes.c
-> > index edc74c38bf8a..a3dffd78b012 100644
-> > --- a/hw/acpi/ghes.c
-> > +++ b/hw/acpi/ghes.c
-> > @@ -400,10 +400,6 @@ int acpi_ghes_record_errors(uint16_t source_id, uint64_t physical_address)
-> >  
-> >      start_addr = le64_to_cpu(ags->ghes_addr_le);
-> >  
-> > -    if (!physical_address) {
-> > -        return -1;
-> > -    }
-> > -
-> >      start_addr += source_id * sizeof(uint64_t);
-> >  
-> >      cpu_physical_memory_read(start_addr, &error_block_addr,  
-> 
-> 
-
+--=20
+With best wishes
+Dmitry
 
