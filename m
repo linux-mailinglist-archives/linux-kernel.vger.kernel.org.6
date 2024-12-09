@@ -1,169 +1,244 @@
-Return-Path: <linux-kernel+bounces-438252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 314C59E9EF5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:06:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E0DD188A5F9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:05:22 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C8E15746E;
-	Mon,  9 Dec 2024 19:01:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="XNfTSQyt"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2077.outbound.protection.outlook.com [40.107.223.77])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35D4C9E9F28
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:08:42 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6951233155;
-	Mon,  9 Dec 2024 19:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.77
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733770900; cv=fail; b=is9CwvrHs+zYQ/nUDdY7S6jv+MhlaJBiLHg6lkXrsdqivwynlGL7v3jYOG6u8q8XmWHbr9TVbcqTRcRsudYY6TuyIaNr7gKp6SklBVal4xA7kr7bZfcEdKE4Zm+lXhvLe2ZAKCfuEobb8piWjXpCZOJKS7ILq7AS8/UAxfiPBqM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733770900; c=relaxed/simple;
-	bh=5wS2tUmLh1y05SFvpsTGXNxp0izMCtvqeRcOu5M7BPc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=sKOJpCr8aCGE/UyLV/MkCT29OVdb7LKwPT99wYbaBYMz9ifVVLTRw+wCDS0HVZx2Zg3ucmAH1Wt4kZUqNeSQ5ViigamWk/LYWIN9D0VGuHsA0IXCsVnkC0gnsKILq+fsuPN/lpH9N8aorxm8ioQeckMyrE51OAVdKQ7B76y2k0A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=XNfTSQyt; arc=fail smtp.client-ip=40.107.223.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=jmgeDXG6p3BQGBrkqDPnbW/bKg4iBnRYPhf5/y1RL4HL4MPsrF1BVIDB2g34Z3oc6yx987eYg0VY/YX4kD8MsAyTGcu971uDp88Sjb7Yk+I01VP8sWEryXWsPblp+Ctay28Uf3ycK09KZycA+IYHUQ0g1wnotw7wyteaCCt3baci+JuD7vYOUvQHju1q5uCTtvca1D2vkgKmM+z2px0P0piCclupt8UtYeysXm9G317ZS3Wvqfk2nDyxVHh2KPg6sLmx3N1vw1zAMJJSgMdg+pFKY54EDWS2CfmWrSPNKvZpLrnmnOR8+bJ8saUIuJb62ExkAGvpL6Y2J2JvwE0SWA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=d+ygpNrM+OKLF/AhY2invmluCuLKMSMJl2QBYUQy8NU=;
- b=G8YpLuQe4+pK7nPiQBrekaaLvPfxryuPtpo/SiGcc6CUxP2v9jeFLQeWjuziise8dz0jskwb4iw1u7sVflWVKjq/E6EKr0tLwMWc8zsSIPnRhy/61W+zwl8ASePzLHP3R+wrTjNuct57ELfwFXrssi+Z+Xni1AqnJCI0EMMOJMM1jF2HkBhntnrUyFyCO0pME9qQuygL9DGw1lVh04IgXz7YvpKqABCs9oX6gICcamaONBEtnfkZQ1RwfE/HMH8bXeg45c4zdD5KfgCdcYlMEsv7tY5kFL34OHdKoTBmFuO2tlwvWXNfYSg1ZtpA7hN8UvoFPiAVWS8mbUc5OC38QA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=d+ygpNrM+OKLF/AhY2invmluCuLKMSMJl2QBYUQy8NU=;
- b=XNfTSQyti1vvU49zfXeHLR50qpn0HVbEYtIOoq5dIxwrSGs1MG4KpFWvixQ/9kRh24TuZfrytvqc8Jtnhi96rJoeqQD5nB1DOtuoTf47tgzLMw4yxzFn/kiJfvtkIVVgdrpV9IwJywU0RinGCVE3uys4I9oQlwVsGs7Mda1TrYB5PeysxSSkfOoMyxTFtgNkyWeLioNvczKGOmZ9i3r6kzyhk+ITkpl203KXoBVu+lOufrH56+J9AF1n6xJCDz7yPuETEL0iwMciYGFoluo2euRxwfHsP6BUvVv4J//Eq1E8JBIRZ7xgI8eVoLgY3qZ4NP+K1mUoPmOyE9UGfkIoBA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MW4PR12MB6952.namprd12.prod.outlook.com (2603:10b6:303:207::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.11; Mon, 9 Dec
- 2024 19:01:27 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%5]) with mapi id 15.20.8230.010; Mon, 9 Dec 2024
- 19:01:27 +0000
-Date: Mon, 9 Dec 2024 15:01:25 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Junxian Huang <huangjunxian6@hisilicon.com>
-Cc: leon@kernel.org, linux-rdma@vger.kernel.org, linuxarm@huawei.com,
-	linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-Subject: Re: [PATCH for-next] RDMA/hns: Support mmapping reset state to
- userspace
-Message-ID: <20241209190125.GA2367762@nvidia.com>
-References: <20241014130731.1650279-1-huangjunxian6@hisilicon.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014130731.1650279-1-huangjunxian6@hisilicon.com>
-X-ClientProxiedBy: MN2PR03CA0001.namprd03.prod.outlook.com
- (2603:10b6:208:23a::6) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C62E28593A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:08:40 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 556CD1AAA1A;
+	Mon,  9 Dec 2024 19:03:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="FtCghOzS"
+Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71491AA79C;
+	Mon,  9 Dec 2024 19:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733771009; cv=none; b=trfLwZPG1z6+SYY3Yz0+2ENQW96eMKMLsV9RO1wP7GVDPPOLePhR4llyZFVKpxapC2FB+wFpvxcJL+QX+eVA5n4+YNg0aFX35j29IKmFeq1S8nTQxZOZVO1XBw0l/Hr8pDGQZrvjrI74xzT7q0h+66ycFoTpplXpwe1rFQj2GwY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733771009; c=relaxed/simple;
+	bh=LopA1+IvWP2eQCWrMEcPj0QnPsPJOP2FtkmIgsHz+Kk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RykMUXq7M6yHMJao/oRN9nUkT3akfpPGBjU91ZG8TvGuHpGJxd2S1qmvMEhkhe5K34hgcI5gSPFMkcD9OuAM+8Gt02RoT2vk21TuRg0pKVNC1RF6WUz3wrH52H/p9veBsy/v2IJD/YuErmaIl86jMGnMHr02Zs6b9uDVVS1qJGU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=FtCghOzS; arc=none smtp.client-ip=4.36.192.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=codeweavers.com; s=s1; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EYmxohmW3Euljo+21C7IcZkhjuewdxVzOnKJeke24qQ=; b=FtCghOzSBXYsQrnLgAJlOQfEHu
+	39RU5tvn5XLnqumhONHRiVqK+52i3Y5gGt/ioPKZHt182VKhBGu1YL+yFk+CxfKhJg4uxIpl1Clvp
+	lJSy/fhMv5kdAAYiBg8H5uxeAdaY3j5tXFZGC196xkqMkhMbkiI2ZHAWuOpDbvlxE2bkwLNUBywoK
+	2f2fk4fjs/NdjFbRmDAWeKaaz/J8VYyU7a8cW2wB7t4rURw3t/wR8wMy6NxMRTNojKVtVO7NwtT+0
+	jxW7x1+r/PUsvCElDYhWR0p1WuFivEDzPh4xDc3zNMhpRey0SrUmbKKZmwlIik6dKdDDHe06ZY/q2
+	2/mBnxuA==;
+Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.mn.codeweavers.com)
+	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <zfigura@codeweavers.com>)
+	id 1tKiyX-001Gd5-03;
+	Mon, 09 Dec 2024 12:59:21 -0600
+From: Elizabeth Figura <zfigura@codeweavers.com>
+To: Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Shuah Khan <shuah@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-api@vger.kernel.org,
+	wine-devel@winehq.org,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
+	Wolfram Sang <wsa@kernel.org>,
+	Arkadiusz Hiler <ahiler@codeweavers.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andy Lutomirski <luto@kernel.org>,
+	linux-doc@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	Randy Dunlap <rdunlap@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Elizabeth Figura <zfigura@codeweavers.com>
+Subject: [PATCH v6 00/28] NT synchronization primitive driver
+Date: Mon,  9 Dec 2024 12:58:36 -0600
+Message-ID: <20241209185904.507350-1-zfigura@codeweavers.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW4PR12MB6952:EE_
-X-MS-Office365-Filtering-Correlation-Id: e2c15325-f648-4c66-794c-08dd1883e210
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2dEsVa4+BN01qC7DXLggDQsrzad1XcCOlhQxzMwgKul2dzAKn/kTcSOhb8+B?=
- =?us-ascii?Q?FiUUs9rVqZb9g4Z0DBpf06SnY2XXIMIPA5boEYKLfSbdmEQxxLzmZqfVCrsP?=
- =?us-ascii?Q?ZXetZXI0XdN8JxVHOBsq/6SczCCAC9qe2jxj7uwqULjGjIQnQyUkSdZvs5xg?=
- =?us-ascii?Q?4P3u/bmTcT+uWLrE8eJ5VgnTDUPYsYfnM7yary5sYaDgE3D4DYtgERBoFd4n?=
- =?us-ascii?Q?BCtDbU9j6D7ck/17cK2MDigIFCYxD0TVKcDg6leVxcEIv0LbiNS8zIH9k92D?=
- =?us-ascii?Q?uRocHNlxkcbef9FCWGYadsUZElgqmWKPwOWz9qCmu9KS6ele0BpfiLDJ6Ffd?=
- =?us-ascii?Q?EgerxTk7BQnswVMjkp4++Rh9JLUBUkYEqSqn32Pncscgpm1+MeyUtsOxlGVA?=
- =?us-ascii?Q?KEy6OQ2JcoimnI/hy7QNmDmounqf9Njl4t6Nb9aZPu5XGin7e08z83JDndpw?=
- =?us-ascii?Q?w5ryMgj9Z8e7EleZko1P3gvgJ/ZRmeH2O9e3rrDUsg5OwziYEb02srfIk86f?=
- =?us-ascii?Q?ojiIa+J7zi2yGv7tL4+qbqt5yOgLtZ1kRwGozZF6zJ8BnD+5x4yl7HitkBU2?=
- =?us-ascii?Q?tqH/yeGUv1TrWRNROgRRezyIMaVCIsRrpw1PIogmuvWgVgM64K33AI7mst7r?=
- =?us-ascii?Q?xy9KE33aICVBpYdWonmKnrAmR/ZgVQLXAzlzEjoUkpnM6oxCf0xsmFaYvl+B?=
- =?us-ascii?Q?YIfWN1AE6Wfm2Me1WKIpN2vMiLfS+kj14nG59QHGHgENEnsTBihpLZJPA/Zq?=
- =?us-ascii?Q?mxmyaSjC+Dd7oYhrl/zszoT3g4ppRL4DOFFkfw4PYX0KlWNqETkf3NDGnFaO?=
- =?us-ascii?Q?Z2VzcGhIYgdtEDELPCInGnYVtUenxZ+JWIpRCLTqGiB8gl9szN3G2ScRavJs?=
- =?us-ascii?Q?En0YjFtbvRe0uomYzWdlUtuaXEHcxztLKdZ0Nqy0tmUKJ3W7offbWC2Y2D87?=
- =?us-ascii?Q?/uprg1KLNvKkut4N/I/j5b+5/VtZ84F6NY76gUCA7M0W/GSgQuvry1fw7WLc?=
- =?us-ascii?Q?+uXs27TDOHcGDAJDYtqsZpWd+sW2WeuCGLUnh8qs8k0imPYKYk6LaOSXWo6V?=
- =?us-ascii?Q?V1hANz87dBMzpABYWPRx6IZ9qhBUD1mio7o2OoPOv9lsJHRB2JlMDb8x46/8?=
- =?us-ascii?Q?Op2R2VHvQ/zTZV5f4fTXABHSsvIgoWt2RsZnJJhMJkFdLExws9DZRU6Hmrfh?=
- =?us-ascii?Q?5sq6hfr8FWUL2Z4CkUGP7elROq1U1yPqCk5KC+Pb7OabLYtvnQL8vPNUHYls?=
- =?us-ascii?Q?7RcR1qD1xH94ZbbDUhUNLE6CTeJDe+pPWba0r7WDiBOdsculqXSI0E3qAhPy?=
- =?us-ascii?Q?1upBEiLrk+pvrfhm1lp1ToWbFJ5Jn+zhrKL+6mL1AteTDA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?k28cN095yqSrEoVZ4MTc1bpRJIo5OWJvm48t3eEbejkqg46KeHZNTeCPJjaJ?=
- =?us-ascii?Q?WKmEwP2/ADEpd5Cx2rPq/8STwJKs5K+6D/fH1xwdQbVhTRDDjR5je/8mpwgN?=
- =?us-ascii?Q?GKl8zRbGfc5KCQtqBGj97KlkwlN+VbckQgRL64qy6/0DNCO3zxacRGr2naYD?=
- =?us-ascii?Q?VwvTKV9XGh7OwiGJlt1xftfeBLxxgMq1z97yGfSdZHSYXv1yt7yZSLSgAROc?=
- =?us-ascii?Q?LeHmQLfPsDxjHA5qjMnh7d+dLk+lfsDurlfmtaDkn9ZrnppPsqjKKkQPQ6ut?=
- =?us-ascii?Q?VuIscFiYST1bGjwYs+EyVD/DkRYlo2AyoTWTL9fuTE7Tb3gW2oBrriMPGsKC?=
- =?us-ascii?Q?wxeuRU6RhvTDVT2j70oeX/FmkyQq2BWQ44wV3hEZp41/o+BE5sKqoVSVQcIk?=
- =?us-ascii?Q?pace3qeK+7eRJionbs3rV2S2E71NYLNWFDozM4sn/cn9SrJTL/cfvtUFj7Sh?=
- =?us-ascii?Q?ZtLj6ZaOPusMw+WZCkMB2uC1pEvqXiTsayA6s/gkKfVt0a2n6qtzNns6+t3L?=
- =?us-ascii?Q?EK9KMuwR1DKIGjflhxzi0df4f4ecU/5eeEudLnP+vxFaaZH/DU0vO+ghviRX?=
- =?us-ascii?Q?4/ywqvVTDAvyzSjWle/j+NpDIhEmEZE/p7n7s9XlGLY20Jkc0OfEB27P4FOc?=
- =?us-ascii?Q?k683swkcKRQgcIh+r/FBS0E6mmDgvRut2xCJDwNy/JI8liXlm6MvhcvFbfBN?=
- =?us-ascii?Q?RVs9P7hq6K+7k9xZGZMpkuRYbx9y6ucz18QjFtB296vibfaAlzwNeC2gL9I/?=
- =?us-ascii?Q?quNhvfhjx11RQJxit+2h4FTEY7NeEYiDJIUW3ZoOtIYJascUYDYUOIo2k3HA?=
- =?us-ascii?Q?d9IcRqACFkWusNtXH9a33mrvb57R2M24cgN73razRQlbtPaWGzsDlcBlOlbY?=
- =?us-ascii?Q?VehIcnlkS/QJRcseMjXZrKZDIAEzikEUmTFLmb0wSSUTG1bReZuzJUFz1gE0?=
- =?us-ascii?Q?+Zy0T8Jt5gV7HEm9KK9o/x0QrWtBe3Z3uWQH2msYuyHwWlfPP/39WJ9ki/+Q?=
- =?us-ascii?Q?msdLa10abidrJboGcmRH4wuRcFRTDSx/iAMSyYpSO5qOAr1POQLl+MeOqB7N?=
- =?us-ascii?Q?hG5FTGVSjoctFIS786eKyAHb5NJtxDnxnS+7/IEeIc7wFd2hcxMkm3wYdvhk?=
- =?us-ascii?Q?WiloQz3H0VRGv1+3ZpLENLpLVg0YuE8YRsvQYD+Clyabhr23029vVDA/otqG?=
- =?us-ascii?Q?pDhYwVJrbqY8rW36M7ZJGaxkAQ3fYVYm0D2qRsHAYtl2a9G5f85FzWp7lhE3?=
- =?us-ascii?Q?/f8QaVXEVj/FEDroFV1qKMwlf4uNQfo4XuCn0pkVWVoWuB/rlwLqmxcIQz3j?=
- =?us-ascii?Q?L85fe+TmDWGoBRqqAW+f681PXEJxprNEVD/Mp+KszQ+NC0C6+8tLFpm55rl0?=
- =?us-ascii?Q?NfrhMcK1Mh3rXr3m1TLCR3pqVUgx7F7kR5ApAFpljv7RHawfSY63VxnxlPFk?=
- =?us-ascii?Q?r+sMP8RuqcA3aWQkklKqe6bxachYNJfZ50GOt6asTYRIfAaFWw7kdqOj4zLx?=
- =?us-ascii?Q?B19t/5YvBZygKSimnGD/ldV95EfW15TCNnlyWMjZkmt5A2CJ9pYS7qu8yjaV?=
- =?us-ascii?Q?Uzs8KBcoldBD/IkiFmo5KAhZ2qkUwccL6nVYlOaq?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e2c15325-f648-4c66-794c-08dd1883e210
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 19:01:27.1296
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: PmYuSgjM5QPvztZvJxN2oyGaSAn2JOcswtXeD4p7LkMtjcwdgtxZ0Se9IAIvvdGB
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB6952
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 09:07:31PM +0800, Junxian Huang wrote:
-> From: Chengchang Tang <tangchengchang@huawei.com>
-> 
-> Mmap reset state to notify userspace about HW reset. The mmaped flag
-> hw_ready will be initiated to a non-zero value. When HW is reset,
-> the mmap page will be zapped and userspace will get a zero value of
-> hw_ready.
 
-This needs alot more explanation about *why* does userspace need this
-information and why is hns unique here.
+This patch series implements a new char misc driver, /dev/ntsync, which is used
+to implement Windows NT synchronization primitives.
 
-Usually when the HW is reset there are enough existing system calls
-that will start failing that a driver should not need to do something
-like this.
+NT synchronization primitives are unique in that the wait functions both are
+vectored, operate on multiple types of object with different behaviour (mutex,
+semaphore, event), and affect the state of the objects they wait on. This model
+is not compatible with existing kernel synchronization objects or interfaces,
+and therefore the ntsync driver implements its own wait queues and locking.
 
-Jason
+This patch series is rebased against the "char-misc-next" branch of
+gregkh/char-misc.git.
+
+== Background ==
+
+The Wine project emulates the Windows API in user space. One particular part of
+that API, namely the NT synchronization primitives, have historically been
+implemented via RPC to a dedicated "kernel" process. However, more recent
+applications use these APIs more strenuously, and the overhead of RPC has become
+a bottleneck.
+
+The NT synchronization APIs are too complex to implement on top of existing
+primitives without sacrificing correctness. Certain operations, such as
+NtPulseEvent() or the "wait-for-all" mode of NtWaitForMultipleObjects(), require
+direct control over the underlying wait queue, and implementing a wait queue
+sufficiently robust for Wine in user space is not possible. This proposed
+driver, therefore, implements the problematic interfaces directly in the Linux
+kernel.
+
+This driver was presented at Linux Plumbers Conference 2023. For those further
+interested in the history of synchronization in Wine and past attempts to solve
+this problem in user space, a recording of the presentation can be viewed here:
+
+    https://www.youtube.com/watch?v=NjU4nyWyhU8
+
+
+== Performance ==
+
+The performance measurements described below are copied from earlier versions of
+the patch set. While some of the code has changed, I do not currently anticipate
+that it has changed drastically enough to affect those measurements.
+
+The gain in performance varies wildly depending on the application in question
+and the user's hardware. For some games NT synchronization is not a bottleneck
+and no change can be observed, but for others frame rate improvements of 50 to
+150 percent are not atypical. The following table lists frame rate measurements
+from a variety of games on a variety of hardware, taken by users Dmitry
+Skvortsov, FuzzyQuils, OnMars, and myself:
+
+Game                            Upstream        ntsync          improvement
+===========================================================================
+Anger Foot                       69              99              43%
+Call of Juarez                   99.8           224.1           125%
+Dirt 3                          110.6           860.7           678%
+Forza Horizon 5                 108             160              48%
+Lara Croft: Temple of Osiris    141             326             131%
+Metro 2033                      164.4           199.2            21%
+Resident Evil 2                  26              77             196%
+The Crew                         26              51              96%
+Tiny Tina's Wonderlands         130             360             177%
+Total War Saga: Troy            109             146              34%
+===========================================================================
+
+
+== Patches ==
+
+The intended semantics of the patches are broadly intended to match those of the
+corresponding Windows functions. For those not already familiar with the Windows
+functions (or their undocumented behaviour), patch 27/28 provides a detailed
+specification, and individual patches also include a brief description of the
+API they are implementing.
+
+The patches making use of this driver in Wine can be retrieved or browsed here:
+
+    https://repo.or.cz/wine/zf.git/shortlog/refs/heads/ntsync5
+
+== Previous versions ==
+
+No changes were made from v5 other than rebasing on top of the 6.13-rc1
+char-misc-next tree.
+
+I would like to repeat a question from the last round of review, though. Two
+changes were suggested related to API design, which I did not make because the
+APIs in question were already released in upstream Linux. However, the driver is
+also completely nonfunctional and hidden behind BROKEN, so would this be
+acceptable anyway? The changes in question are:
+
+* rename NTSYNC_IOC_SEM_POST to NTSYNC_IOC_SEM_RELEASE (matching the NT
+  terminology instead of POSIX),
+
+* change object creation ioctls to return the fds directly in the return value
+  instead of through the args struct. I would also still appreciate a
+  clarification on the advice in [1], which is why I didn't do this in the first
+  place.
+
+  [1] https://docs.kernel.org/driver-api/ioctl.html#return-code
+
+* Link to v5: https://lore.kernel.org/lkml/20240519202454.1192826-1-zfigura@codeweavers.com/
+* Link to v4: https://lore.kernel.org/lkml/20240416010837.333694-1-zfigura@codeweavers.com/
+* Link to v3: https://lore.kernel.org/lkml/20240329000621.148791-1-zfigura@codeweavers.com/
+* Link to v2: https://lore.kernel.org/lkml/20240219223833.95710-1-zfigura@codeweavers.com/
+* Link to v1: https://lore.kernel.org/lkml/20240214233645.9273-1-zfigura@codeweavers.com/
+* Link to RFC v2: https://lore.kernel.org/lkml/20240131021356.10322-1-zfigura@codeweavers.com/
+* Link to RFC v1: https://lore.kernel.org/lkml/20240124004028.16826-1-zfigura@codeweavers.com/
+
+Elizabeth Figura (28):
+  ntsync: Introduce NTSYNC_IOC_WAIT_ANY.
+  ntsync: Introduce NTSYNC_IOC_WAIT_ALL.
+  ntsync: Introduce NTSYNC_IOC_CREATE_MUTEX.
+  ntsync: Introduce NTSYNC_IOC_MUTEX_UNLOCK.
+  ntsync: Introduce NTSYNC_IOC_MUTEX_KILL.
+  ntsync: Introduce NTSYNC_IOC_CREATE_EVENT.
+  ntsync: Introduce NTSYNC_IOC_EVENT_SET.
+  ntsync: Introduce NTSYNC_IOC_EVENT_RESET.
+  ntsync: Introduce NTSYNC_IOC_EVENT_PULSE.
+  ntsync: Introduce NTSYNC_IOC_SEM_READ.
+  ntsync: Introduce NTSYNC_IOC_MUTEX_READ.
+  ntsync: Introduce NTSYNC_IOC_EVENT_READ.
+  ntsync: Introduce alertable waits.
+  selftests: ntsync: Add some tests for semaphore state.
+  selftests: ntsync: Add some tests for mutex state.
+  selftests: ntsync: Add some tests for NTSYNC_IOC_WAIT_ANY.
+  selftests: ntsync: Add some tests for NTSYNC_IOC_WAIT_ALL.
+  selftests: ntsync: Add some tests for wakeup signaling with
+    WINESYNC_IOC_WAIT_ANY.
+  selftests: ntsync: Add some tests for wakeup signaling with
+    WINESYNC_IOC_WAIT_ALL.
+  selftests: ntsync: Add some tests for manual-reset event state.
+  selftests: ntsync: Add some tests for auto-reset event state.
+  selftests: ntsync: Add some tests for wakeup signaling with events.
+  selftests: ntsync: Add tests for alertable waits.
+  selftests: ntsync: Add some tests for wakeup signaling via alerts.
+  selftests: ntsync: Add a stress test for contended waits.
+  maintainers: Add an entry for ntsync.
+  docs: ntsync: Add documentation for the ntsync uAPI.
+  ntsync: No longer depend on BROKEN.
+
+ Documentation/userspace-api/index.rst         |    1 +
+ Documentation/userspace-api/ntsync.rst        |  398 +++++
+ MAINTAINERS                                   |    9 +
+ drivers/misc/Kconfig                          |    1 -
+ drivers/misc/ntsync.c                         |  989 +++++++++++-
+ include/uapi/linux/ntsync.h                   |   39 +
+ tools/testing/selftests/Makefile              |    1 +
+ .../selftests/drivers/ntsync/.gitignore       |    1 +
+ .../testing/selftests/drivers/ntsync/Makefile |    7 +
+ tools/testing/selftests/drivers/ntsync/config |    1 +
+ .../testing/selftests/drivers/ntsync/ntsync.c | 1407 +++++++++++++++++
+ 11 files changed, 2850 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/userspace-api/ntsync.rst
+ create mode 100644 tools/testing/selftests/drivers/ntsync/.gitignore
+ create mode 100644 tools/testing/selftests/drivers/ntsync/Makefile
+ create mode 100644 tools/testing/selftests/drivers/ntsync/config
+ create mode 100644 tools/testing/selftests/drivers/ntsync/ntsync.c
+
+
+base-commit: cdd30ebb1b9f36159d66f088b61aee264e649d7a
+-- 
+2.45.2
+
 
