@@ -1,155 +1,162 @@
-Return-Path: <linux-kernel+bounces-437736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9EB19E97D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:52:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EDFA9E97D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:52:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88EB1164A7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:52:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9656F166801
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FE601ACEA2;
-	Mon,  9 Dec 2024 13:52:11 +0000 (UTC)
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78F491ACED6;
+	Mon,  9 Dec 2024 13:52:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H71hXKx0"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BC9523313C;
-	Mon,  9 Dec 2024 13:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3194E233143;
+	Mon,  9 Dec 2024 13:52:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752330; cv=none; b=eUQOZYBjwq0/XxBxDEaL51l9FNEPchrWBW1yxs1t9hsz1SsqtvkENecSzkM5cHDWKBFGdICDwMHRMqchFvj+tZR/yfj0HCy1qKebBXgaSdCfmf4VMbL5lROEQ+ii5cnu3KfyXKzDbA5rJhcug+2kU5UnfI4cOyF3JD8hcHHpsOo=
+	t=1733752331; cv=none; b=BJsEqzkChr2B3Ju2HC80be+eYrur/8FFvw7bzrrsHr5j8agmJ5D/v822JA55j05tg++5Wv7h5jdHYzgfrbtu/AYOBGHiX9m9lYunTfS4uzkVKJMOKM8W06S34lPkQuYkgRaLFMmkE+zCrUwxnM5dWgoOO2wT/Dp32tsRXnYja9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752330; c=relaxed/simple;
-	bh=KVSzxO4n3eVIi2k+dY9vAMYddcYqXvIROSatSRHDyAk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gIR15aOktExbdM0ioAGvKD2JnwRJ/V3hKdvaFf0mu03Kmeg49wZrneQr21Nx2zNipiwmENkq0tBg1qbpENFcBgYPuIausY5hvm6V0RpFiqPSqi/xEbrenOKFiEaf1bVzWOF9/l3bFlMTvUowNS2Sp25p+YJWv8c4zO7Okjiu+3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	s=arc-20240116; t=1733752331; c=relaxed/simple;
+	bh=SNjMhfcOqr/2FO2iF7EA+2wyAorUyazYpsjpQjK7AC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hU6ptD9Yv2N5SDHBEUfC8LMLUReLnk8fSUPRLsBxsJZ6TUx9tVDBS49k7N6f573IE0H5gQZBhq4RZJDsrFq/SBob0gTxUMpKFzl6GqGCEimZU9dbnotAPwfx9oGL/4+23wq3MgBC9YJX3LYz1KXSLIo9ueTZ3vHORsiFvxdK3kw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H71hXKx0; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4affbc4dc74so315630137.0;
-        Mon, 09 Dec 2024 05:52:08 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-aa68d0b9e7bso163551266b.3;
+        Mon, 09 Dec 2024 05:52:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733752328; x=1734357128; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=x3k8PAFjXCzW1A3crmS3iem8JuhgrdJrW/SGusHwGXM=;
+        b=H71hXKx0qimCHzU48LSqs03SUnOzJumhHa/waGuwQHqYOks4OBQDHDy4Zj7mKx9mMh
+         NWvvftrjiLQuGeW1Uu1f0/QXLnmtSrqrrDUQElOdMRzdWtyVDwozev6arNiNkYcs9WHy
+         Pu/qMUYmc9bG/fiqJSZYbt51vnLdKwHjkBLAXuu/rlqnpzfn8Qm6aBiqWXFx89eoDL/Y
+         bJwRfhLHW00HnhJJJySfkAG65/gAPh4Zsbh/SDotKD1uRBc2xLZ2ge1e1WW2n1REDMLd
+         ox+UA1ie4USAzLnYhtX8oozRqvjlpv5zhrQWcff06a8jmrG43clCCapPQ3p42yTymrtp
+         MFqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733752325; x=1734357125;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lHnG1lQA5ML9HkTzWoGAcGw6cp3gHA+KA94RyrtUoYE=;
-        b=UuMJnNKy6NWas75Ncuvz7szgrW/bNaEjYN4ftaARDd7UGKwBAIETsEiXVQxLHUJdIF
-         MeY1IZKoBy+kjVD2O6Vs9kMx1tbKgeTaZE070F3rr92y8rMrg6wmyroOGg/pfO5a/Ptj
-         kod7zpcHUmjRXA/sZrE8Qv9T96Mw4RtYOR+/eRg7h/vi5qSulGcoQBO+mMZFAWOIdDIb
-         UwOBDbeMUso/Bl9GRXoB1UBIsfTy5VIYalbLGdB65yAfTlJ56D20M0kXarSCQQ3rPcUD
-         Zgf9GMajph5WEH/dK2wNlLe0gwCCZDTO9vs9ZYApWVA9RgOx2cWxyQeu6j+5uZOAMwtM
-         Zfcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcuiwqAfs9rZ9chd72e3KQ3HeD/q/5U8pWFhWP5k18cve0obEXl22d86PmgN3mYdZZBz9QQcpZNign@vger.kernel.org, AJvYcCVMImxEQU7UQWBNNr1+rGEFzCpD7jASeaan2e4q9mXatM4hitWrjEGSB9RyzM+Qd1ioyLSkw+LcFjJ7vcc=@vger.kernel.org, AJvYcCVRhO1IZbolat+5zbgz/o5CCkTN++qxrMwkW41sdPaOpKUxV6XhHjoNJGGIgU+f8Wf3cgGYdW5lZatzZw==@vger.kernel.org, AJvYcCXWqDLlByqJORaCbqLjkxheq8KOJWB49HEaVEuciNUVe517gFkGdX3BHILO85DbXt8sCNhvlDidb3Sp@vger.kernel.org, AJvYcCXilZatpuqvHGsvp82ZT+UP5NfMgRQCKs38mlAlR1t7bRm/0Q30W9+KpkT9N8MmJ6xRh54Yg0AZdKpkEbVe7RqhQBE=@vger.kernel.org, AJvYcCXj3TuYWuh2RGz2kRIntzGodHCW+zh5DqGT3SV4oQAz0HJwLHvtKm8S/ucjiJpeTOl3Km41a6u2Dw4qpocX@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5ouJlgYFaYkQWwUzpFQhX8FT8+5aR5X8pqm0m3EcChcZDt53/
-	4KXJH15arRJCmbWx5G/GF5+nml1ybs8BUGaEp4gyPhqz2uEjFtUgdfSTplE6Cfo=
-X-Gm-Gg: ASbGnctyYDn8tHF/5UVTqGbffGZ1zs8RmHaOiFAk9cmdtSDYFWoiZq75nyllcAIi31Z
-	pYxCUYJ+r3Cs7f19ZIGJ1t0vucspdHLqIZiQ57lFe2ByZU0YiVpHdqLqbpZj4QHbki84knVMCYe
-	D0wcRHC3emMi/pBu30p6ViHScr+QnqFg7i1iIglJVnLN+4OfQYtnychMwwJltGlbYyFsEulcXBt
-	cr8GQ3hSqZuCPUe5z85DbmDuXjPbvkNBuzQ1e6dH1PntU1ptQFJPC8TaRRhsaTzQd/41Bt5g17t
-	lOfITXLem59L
-X-Google-Smtp-Source: AGHT+IF0MnpEMx3NOBgUS4egQaYxpLHdES8JkO7lz42wTnWK1UmTyhNbO1MKQd5yZll95UhZLCP06w==
-X-Received: by 2002:a05:6102:5494:b0:4af:df60:8649 with SMTP id ada2fe7eead31-4b116c6eee3mr673534137.9.1733752325003;
-        Mon, 09 Dec 2024 05:52:05 -0800 (PST)
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com. [209.85.222.42])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afe6969140sm553661137.7.2024.12.09.05.52.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 05:52:04 -0800 (PST)
-Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-85c5a91374cso487340241.3;
-        Mon, 09 Dec 2024 05:52:03 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUQR3KBJtVfp5rwtCJpUVo4IxTLcFpslFfbKzxWQBlP0W9xXzDUQ+EAi5Vs652tySijKfjSEXAMR/ZG25Q=@vger.kernel.org, AJvYcCUfaWKfAU+fzw6ddhTsvGYqgpPCWVVsXsgejo9sQeyMMwsqHyX7e/I7iNihCAqrg37tXpJpdj91z6agUg==@vger.kernel.org, AJvYcCVF0aJxX+IQQMOVJ7e6T+c+0lRT1qvWBssP51wYx4s2dvnJFS1clCyxiGIEkSZmZjvF04JvYQEsgp3U@vger.kernel.org, AJvYcCW1VdHQmiUsHTk3ncCjhjwoHwxYPqxYwfc1bcBqY8sQAZSgVlQscbKsKrRhHX63cE/jKOdmWmdo8y8POsYM59ZYNVg=@vger.kernel.org, AJvYcCX/dLmfr/WGZGj5Ocb9xsbiVrn4kn62LPzUpPDld4RZ33UgkA6rcGJ0QaLV37jaxTgZNO7RrzB4d2OQU7ff@vger.kernel.org, AJvYcCXu/peKCbcYb+av4FvlCsknv51gBCFZjYX/lSd/GvhVjkLgSQ4Eeq8n9BA0Jz8CTpNlmBHYwf1NKzUI@vger.kernel.org
-X-Received: by 2002:a05:6102:290c:b0:4b1:11c6:d3d2 with SMTP id
- ada2fe7eead31-4b111c6e527mr1362540137.27.1733752323343; Mon, 09 Dec 2024
- 05:52:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733752328; x=1734357128;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=x3k8PAFjXCzW1A3crmS3iem8JuhgrdJrW/SGusHwGXM=;
+        b=syQ0iT3sDWdwbKFKcJFo2tFjJvCmJdi7zJtvmZDVX4cVuOiWmjMlx9ygTF69D9PeG6
+         XlbMqH+jaVKEVJgjvU4eNVGBIFiW+jy/iBPl+VUxM7V3hAuqVKKavvCdtL8HxwAXtC+O
+         YEnnSrxcN426sOKpQpDWk5+6xqzHpU4+QvDOUpFV3XNxFoUXcD/mS+VRHgf8Pi8DGyZj
+         qJU0fU7s+ah74mEO/F3mua01dYoqMPNRCjX30VZ3X4E+zqNAGij+hiI8VYO6TqPWXoyQ
+         KbLaznVn6TNoXL0RAyB0cXm/IJ+LuyUHBMSfSA9gX1gsQdXuu22bY5YYsnE0u5E90EDZ
+         3yAw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMyaTuAMDFAaujdQ8iC5lvygay72UnzTf/ONE97YE2LWpcRtHVNNLP31mxU1QsSzRVAmDHqH1z@vger.kernel.org, AJvYcCVOz+m0WQzkn0DazLDl3kfDVcbLcTDpc7zRL3yPo5KjeBaY+xpVDktrL82Fup5PtdbYZxBvhCoXXr4k@vger.kernel.org, AJvYcCW3Uymt8T4yMuVOKF2WvgrCoBjRCrn+4BWpGrvUIk8xGPL1OmG2OLE0RM8G6WPRZvd9q70jEO9BGwZbJXoY@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZ78HsdkoHBxa1gRnPWYgYewh8Zx7IbGtU6BuJuVtq6caQpqb/
+	n4WoMb+yAYXt6Ar27PTeJGlekXRn7PRdxgafAE2qw5h4aFpS2Jrd
+X-Gm-Gg: ASbGncvQj9dewgKCoRYbuttpv0gv+GQMEJiKh09cs693E2g4oKMRvM9HP7mtb33XUjJ
+	f1S8HP1i3Abm2CmbIidBChsLXBoTfRWxkNXB53gGQTIgFO0tB4nR+J86zTtFyr2gtm/psHkIEd6
+	6BrF01oLrQ6l+eG7vf4AHl4P5aWUITYVKnjLal7tUe6dGe/89xPcsXTt/+B9jGnlddeIGIZnB4t
+	pSXJHn3GukznCt/aqEH/4dFtiIG+DN5P2EAxoWT61+Iazg=
+X-Google-Smtp-Source: AGHT+IEa1yXgo0YXxleWvB+4nj5F1TeFbIRPkRLnibwvdnklQU4c0P4+RHAg2mE43H/3iqAQt/BhBQ==
+X-Received: by 2002:a17:906:308d:b0:aa5:b1b9:5d6a with SMTP id a640c23a62f3a-aa69ce32f01mr48901366b.54.1733752328120;
+        Mon, 09 Dec 2024 05:52:08 -0800 (PST)
+Received: from debian ([2a00:79c0:660:e900:9a0b:ab67:9301:c43c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa692846b85sm97921066b.127.2024.12.09.05.52.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 05:52:07 -0800 (PST)
+Date: Mon, 9 Dec 2024 14:52:05 +0100
+From: Dimitri Fedrau <dima.fedrau@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: dimitri.fedrau@liebherr.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Andrew Davis <afd@ti.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next 2/2] net: phy: dp83822: Add support for GPIO2
+ clock output
+Message-ID: <20241209135205.GA2891@debian>
+References: <20241209-dp83822-gpio2-clk-out-v1-0-fd3c8af59ff5@liebherr.com>
+ <20241209-dp83822-gpio2-clk-out-v1-2-fd3c8af59ff5@liebherr.com>
+ <bcef90db-ca9d-4c52-9dc5-2f59ae858824@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-15-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241113133540.2005850-15-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 9 Dec 2024 14:51:51 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdU+_NuLp2FuwwcLfJRe2ssMtp=z7fqcsANgYfFehTNJGg@mail.gmail.com>
-Message-ID: <CAMuHMdU+_NuLp2FuwwcLfJRe2ssMtp=z7fqcsANgYfFehTNJGg@mail.gmail.com>
-Subject: Re: [PATCH v3 14/25] ASoC: renesas: rz-ssi: Use goto label names that
- specify their actions
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
-	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
-	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
-	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <bcef90db-ca9d-4c52-9dc5-2f59ae858824@lunn.ch>
 
-Hi Claudiu,
-
-On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Am Mon, Dec 09, 2024 at 02:17:04PM +0100 schrieb Andrew Lunn:
+> >  #define MII_DP83822_RCSR	0x17
+> >  #define MII_DP83822_RESET_CTRL	0x1f
+> >  #define MII_DP83822_GENCFG	0x465
+> > +#define MII_DP83822_IOCTRL2	0x463
+> >  #define MII_DP83822_SOR1	0x467
+> 
+> These are sorted, so the MII_DP83822_IOCTRL2 should go before
+> MII_DP83822_GENCFG.
 >
-> Use goto label names that specify their action. In this way we can have
-> a better understanding of what is the action associated with the label
-> by just reading the label name.
+Will fix it.
+
+> > +	if (dp83822->set_gpio2_clk_out)
+> > +		phy_modify_mmd(phydev, DP83822_DEVADDR, MII_DP83822_IOCTRL2,
+> 
+> I would of preferred MDIO_MMD_VEND2 rather than DP83822_DEVADDR, but
+> having just this one instance correct would look a bit odd.
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Is it worth fixing it in a separate patch, replacing all DP83822_DEVADDR
+with MDIO_MMD_VEND2 ?
 
-Thanks for your patch!
+> > +	ret = of_property_read_u32(dev->of_node, "ti,gpio2-clk-out",
+> > +				   &dp83822->gpio2_clk_out);
+> > +	if (!ret) {
+> > +		dp83822->set_gpio2_clk_out = true;
+> > +		switch (dp83822->gpio2_clk_out) {
+> > +		case DP83822_CLK_SRC_MAC_IF:
+> > +			break;
+> > +		case DP83822_CLK_SRC_XI:
+> > +			break;
+> > +		case DP83822_CLK_SRC_INT_REF:
+> > +			break;
+> > +		case DP83822_CLK_SRC_RMII_MASTER_MODE_REF:
+> > +			break;
+> > +		case DP83822_CLK_SRC_FREE_RUNNING:
+> > +			break;
+> > +		case DP83822_CLK_SRC_RECOVERED:
+> > +			break;
+> 
+> You can list multiple case statements together, and have one break at
+> the end.
+> 
+Will fix it.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> I would personally also only have:
+> 
+> > +		dp83822->set_gpio2_clk_out = true;
+> 
+> if validation passes, not that it really matters because:
+> 
+> 
+> > +		default:
+> > +			phydev_err(phydev, "ti,gpio2-clk-out value %u not valid\n",
+> > +				   dp83822->gpio2_clk_out);
+> > +			return -EINVAL;
+> > +		}
+> > +	}
+> 
+Ok.
 
-> --- a/sound/soc/renesas/rz-ssi.c
-> +++ b/sound/soc/renesas/rz-ssi.c
-> @@ -1084,15 +1084,15 @@ static int rz_ssi_probe(struct platform_device *p=
-dev)
->         /* Error Interrupt */
->         ssi->irq_int =3D platform_get_irq_byname(pdev, "int_req");
->         if (ssi->irq_int < 0) {
-> -               rz_ssi_release_dma_channels(ssi);
-> -               return ssi->irq_int;
-> +               ret =3D ssi->irq_int;
-> +               goto err_release_dma_chs;
->         }
->
->         ret =3D devm_request_irq(dev, ssi->irq_int, &rz_ssi_interrupt,
->                                0, dev_name(dev), ssi);
->         if (ret < 0) {
-> -               rz_ssi_release_dma_channels(ssi);
-> -               return dev_err_probe(dev, ret, "irq request error (int_re=
-q)\n");
-> +               dev_err_probe(dev, ret, "irq request error (int_req)\n");
-> +               goto err_release_dma_chs;
->         }
->
->         if (!rz_ssi_is_dma_enabled(ssi)) {
-
-Inside this block there are several return statements.
-As we know DMA is not available when we get here, these do not
-need to call rz_ssi_release_dma_channels() hence do not use
-"goto err_release_dma_chs".
-However, this may be missed when making future changes.
-So perhaps it may be prudent to make this safer, by moving this inside
-the failure branch of the rz_ssi_dma_request() check above?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+	Dimitri
 
