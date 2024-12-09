@@ -1,126 +1,365 @@
-Return-Path: <linux-kernel+bounces-437787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E88E9E989D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:20:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 828FD9E98A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:22:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3683C1884E46
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:20:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5236C188489F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:22:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21BDC1B0430;
-	Mon,  9 Dec 2024 14:20:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548E41ACED7;
+	Mon,  9 Dec 2024 14:22:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WjzmEVol"
-Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Y/1rUFLF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 847521A2397
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8816735950
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:22:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733754018; cv=none; b=YC+wQBjaplH2IOSm+z1rHNftlhhBsIlmSgBgh1MZ/GF1ecvKwUtHCVxMv5GQ/TnjsPJ5BmoWRK1CPrI3z457VEYJkDhjBcn+x/Lkkv9viOaFlByFmLEo2QxYLWeWmmUmLTL0nEfl/ohx01XRsObw0QnYWDZGHKezaYewEnkfwcw=
+	t=1733754152; cv=none; b=SRbJidrXxuojz5toKtinmrU9QE4frgJERrw8ob5NJZlQPMoQfvYFEXpXPWEZU4aAL3TwrTOCM060upywf3HcKPVpzWevU1VBifKtRVq5U/hi05aehRccXw1EOA8cvUo31moGvkaoUuYc155j7uF/+/dbKsE+gxBWGjKcXeTG8nY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733754018; c=relaxed/simple;
-	bh=1IfxwKOe0K+SXDwRfMDias6ZXlgFg4AGO8kVbL4Ta8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ou6isDMGqtsnaSUm/buxHOiybk9z5Lg8jYNdM3+EH6RZXJp3JK+cS0BVwgH8AnceBSv3GqerkGzCXWkbg3VD4xSzOtovSHgSZ1wyLv7rN+tIFYJZvWaExwGBKqeB66D0HpK0EeEd8RfQjbL/GoQd+EwWrjTVFwmE/Dx5T0joD/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=WjzmEVol; arc=none smtp.client-ip=209.85.219.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6d8878ec049so39339426d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:20:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1733754014; x=1734358814; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=nowhEyl5dI6aIIqwammoplLG7dGCizfgN3AwcDBvNB8=;
-        b=WjzmEVol2HtqNOHDzn89GOi3ABrc8rbz+u0pvZXwDkalIxZVG2aHhGtjGZ2QkNl9W3
-         sbcPg6ZbtF6lwdf9MtUkxlCY7zo2riVzwILSLyWFiQAj/zS48u8EAA70tcMIHvr+Yboi
-         KIAKjJuHxV8r5RcCNk8gHU5W8odM481TXKcM7T3CfDUdPZiabn6B+FbVap1K55xq2Ag7
-         ZOeC9iUJpzJwU7QIibAm5paWKntWlXlR6ZUQsFJzAnXKerYW20mrhmI8GSyGM1DWkOqi
-         wuvwX6nBfBoHr1Ja0aQcz4VtBHK0y4mVIfpmiG3w9lQkJUO7Fwcr8OF1+kOyTrDi+Zpw
-         9hbQ==
+	s=arc-20240116; t=1733754152; c=relaxed/simple;
+	bh=z8i9JE/M2TpoKuzzzLL3ggeMCS3mz6tVCMuopnJHmX0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=h5l/fkIyebiqCVeOzS40DToDmIyFrgtfF8fW0fkSi01gc9X8Zty1pbBYsw+SgPSwkTjfVaBzl12mmUJZu78BoIViKw1/mOy0kS1RnK5lIm8F9Ot8Dmre00G9AzJe58Qb0ljh5VAWe52wmkKoUJ87m7N9RKJn6pozjYvrILWV/24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Y/1rUFLF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733754149;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=e3gNPOLaU3HR9EicQ6QEcIww4JThxb2rt188WRNqvSk=;
+	b=Y/1rUFLFuT1tzddWoMUHfg0h33bsnIPUDOYooae8rmIiqL9JRUg+8MLGUM+AhXayJTKeHc
+	4+Lsq2o1UUdXvw+XtyymD2r0ghrjb8dSFQa9T4eSehCnO9MZQIWrqr7JmxTobiVzU1+zYC
+	IIaZGdjMfwwQAKp8fA+3AzPvodGp1Gs=
+Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
+ [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-275-vPZDDuX7MzSGrbh3u9aopw-1; Mon, 09 Dec 2024 09:22:28 -0500
+X-MC-Unique: vPZDDuX7MzSGrbh3u9aopw-1
+X-Mimecast-MFC-AGG-ID: vPZDDuX7MzSGrbh3u9aopw
+Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-aa676465b44so147101766b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:22:28 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733754014; x=1734358814;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nowhEyl5dI6aIIqwammoplLG7dGCizfgN3AwcDBvNB8=;
-        b=AdmHmTlV/JM4lWbhPsuh5y20Q9LL8+wCAexSeO9k2ui+bov3owU/nXOPsHCXw5ayBm
-         EDgbEaAq1z6GF3iRuj+GAfKkPwprvaC7GZxcLkvLN+0LB3naaa2OoBnyBSQ7maMCGtGM
-         LL7K9zvtDPB/wVFM7Z6rYJm4+qGmCUsX7APYSDh+Yd37SmNZZs6Omk5VnSVHLP3LA40A
-         zdFOhzxbzTQJdQWQe31xEjFSPHA7TIZgz5giOMB1CH8nggKX50qEMec4unDk8+yiPDVc
-         wqjaXarjgepGdTlFbFl/vM38oNZ9CEDRWek34Nqidm36U8PHjWIok4i2/Pa5qLecwE8F
-         x7UA==
-X-Forwarded-Encrypted: i=1; AJvYcCUxtspcyo0Fmjo2J//+gFHdhH2+DJBOeU1ts8k2qwRAky0yjBLkQoWPhJlY8GnS1jlbVgULj4ZW8zTXInY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDOQhrOO/2aI+kk1FFWJ9/2VjlkqPyEaD7bUnWWykeuws73Ktw
-	fvaQsUMVscwxvtdCfxC6q/dZWUImx+HNWMkxgLx8eD5JhCMem6qk3QaCXbvQNRA=
-X-Gm-Gg: ASbGnct66GlrctavbdGEYw44SYb0DJVbCJHMWA38CyMKZn36mQKfEbbZGiSSZnYIujZ
-	HFvJidVHpApRQ7f/JGLr28F8uu3EMK8oad7sXxFt8rq7iBSca7sjE0cTgr1w2p0mVPEwpmr5FIR
-	Hme6xbJchGdub0yvpNrsy2DjpS54xJfo1PRtO3H44v4HZRJgKucbAdKaWIMRJnvq4ogmj/Xr4SM
-	IueqCQMaTEbOLuYXzasVOSI6Ip2+4uA9fnh8mV3sWj2rHHhzMliW5R86KZ17wdf5T3Alu1xc3Ts
-	0dOK2OwR08wp9KUSBz9+HM8=
-X-Google-Smtp-Source: AGHT+IHoY1ZOiHkAJnpdjYQRkeVDy7sffj3Siw+V0OMHlwsl39yE0CXPuxOPKOgDNwcCNM/wgKH60A==
-X-Received: by 2002:a05:6214:1c07:b0:6d8:a76d:b66c with SMTP id 6a1803df08f44-6d8e7170365mr191037006d6.30.1733754014582;
-        Mon, 09 Dec 2024 06:20:14 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da6b2291sm48868886d6.58.2024.12.09.06.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 06:20:14 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tKecP-00000009sI1-2JGA;
-	Mon, 09 Dec 2024 10:20:13 -0400
-Date: Mon, 9 Dec 2024 10:20:13 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Thierry Reding <thierry.reding@gmail.com>,
-	Krishna Reddy <vdumpa@nvidia.com>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-tegra@vger.kernel.org,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	linux-rt-devel@lists.linux.dev
-Subject: Re: [PATCH v2] iommu/tegra241-cmdqv: do not use smp_processor_id in
- preemptible context
-Message-ID: <20241209142013.GC1888283@ziepe.ca>
-References: <Z1L1mja3nXzsJ0Pk@uudg.org>
+        d=1e100.net; s=20230601; t=1733754147; x=1734358947;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=e3gNPOLaU3HR9EicQ6QEcIww4JThxb2rt188WRNqvSk=;
+        b=bGXUvmaiUSQ+Rt6+vEHkoc6Bqk4AJwjz+e/vqEeifek88RDN5lZr7UAS44/aIcsAj7
+         ZAiYxFL08p24YMccLbKkexFsdCk7LHwHiQmMLR22MaXdSfgOzVi9f+PngtLNOXRtbu8m
+         nsrdy+uw8pXSMUlB+9NZLGX2pJUiesy4/GTMBghOE6/ML7QYChZMsX+FIvbNbDEEzVgr
+         ejgsnJh5JAFbEj0Vc9V0lMCR/wkrysv5bg56xCgWJ/j/YmE3tQ8cO1KKGBR4o3kIuJhz
+         vOqfR3nRVJxn/NnU3F449Mq7Hfmy52BM8G/DKTWHhN/IsxT+A88bBYOai9EuXXlQc0Ha
+         1/lA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsIB67mD3hAYdY4QOqwrhOtpH5Fof/3QHTwE8IkoAt8mjVVFe1OyLU5d0WbkIBJFJ8C/jgJItmdWY8Ty4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxt+3FK8cKFZdiw5VxrE5Dl1xJp6g+xARtinIsjj7aa9fINIQNZ
+	f0CbAx3z40NpF9I0cSMG9Bzd5+LMEI4awcPbdR2F8Cu6V66YcXm2LaAcO8NIo+82NEQBi6DtD2r
+	PJ/ZIbpkWbLeCRoRKPBkup0naKBgUlKbmG1jvDVV+hGTv8HwHZVXfp4DFvOz3NQ==
+X-Gm-Gg: ASbGncuoZDDLTS0Z+HnzVOj02stY9PfxdJ7Zyh+Qw/oqR2nXrrSuF5TQeF8hsgmgTyX
+	bGsZTdcc+Jne7+HFZbBBS7RE78dIcHRq3VVHmeD7FNHuNQCItCSRu5GzgWlbkH2xQJnfQxJRgSA
+	jdZHV1l69tgz5RHeRnIa0bmM+BjrVj16J0b9Vn2L+f6svT7kxCYm9x6reSLj+m7lLMBgzNnGUJE
+	/z3Au3Hz9ERXUEA9P5UWF/SSBy2X7XvWpf9kYPI0s3RW9vq+9HdtQ==
+X-Received: by 2002:a17:907:784e:b0:aa6:3de7:f25b with SMTP id a640c23a62f3a-aa69cd5baf3mr63552366b.27.1733754146960;
+        Mon, 09 Dec 2024 06:22:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFfLIzH8P8QC6jIiE6M0pZhPY3N2JInnjTPvTLGiLONNa409y5MOkeiI9bUlAeRTGE3T8Wsbg==
+X-Received: by 2002:a17:907:784e:b0:aa6:3de7:f25b with SMTP id a640c23a62f3a-aa69cd5baf3mr63549666b.27.1733754146546;
+        Mon, 09 Dec 2024 06:22:26 -0800 (PST)
+Received: from [10.40.98.157] ([78.108.130.194])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3c2b0137asm4882560a12.4.2024.12.09.06.22.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 06:22:26 -0800 (PST)
+Message-ID: <2e90c10a-71fe-4e80-9ac3-80393bc8b266@redhat.com>
+Date: Mon, 9 Dec 2024 15:22:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z1L1mja3nXzsJ0Pk@uudg.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 18/19] media: uvcvideo: implement UVC v1.5 ROI
+To: Ricardo Ribalda <ribalda@chromium.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ricardo Ribalda <ribalda@kernel.org>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>
+Cc: Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yunke Cao <yunkec@google.com>
+References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
+ <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org>
+Content-Language: en-US
+From: Hans de Goede <hdegoede@redhat.com>
+In-Reply-To: <20241114-uvc-roi-v15-18-64cfeb56b6f8@chromium.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 06, 2024 at 10:01:14AM -0300, Luis Claudio R. Goncalves wrote:
-> During boot some of the calls to tegra241_cmdqv_get_cmdq() will happen
-> in preemptible context. As this function calls smp_processor_id(), if
-> CONFIG_DEBUG_PREEMPT is enabled, these calls will trigger a series of
-> "BUG: using smp_processor_id() in preemptible" backtraces.
+Hi,
+
+On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
+> From: Yunke Cao <yunkec@google.com>
 > 
-> As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
-> CPU number as a factor to balance out traffic on cmdq usage, it is safe
-> to use raw_smp_processor_id() here.
+> Implement support for ROI as described in UVC 1.5:
+> 4.2.2.1.20 Digital Region of Interest (ROI) Control
 > 
-> v2: Sebastian helped identify that the problem was not exclusive to kernels
->     with PREEMPT_RT enabled. The delta between v1 and v2 is the description.
+> ROI control is implemented using V4L2 control API as
+> two UVC-specific controls:
+> V4L2_CID_UVC_REGION_OF_INTEREST_RECT and
+> V4L2_CID_UVC_REGION_OF_INTEREST_AUTO.
 > 
-> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
+> Reviewed-by: Ricardo Ribalda <ribalda@chromium.org>
+> Signed-off-by: Yunke Cao <yunkec@google.com>
 > ---
->  drivers/iommu/arm/arm-smmu-v3/tegra241-cmdqv.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/media/usb/uvc/uvc_ctrl.c   | 81 ++++++++++++++++++++++++++++++++++++++
+>  drivers/media/usb/uvc/uvcvideo.h   |  7 ++++
+>  include/uapi/linux/usb/video.h     |  1 +
+>  include/uapi/linux/uvcvideo.h      | 13 ++++++
+>  include/uapi/linux/v4l2-controls.h |  9 +++++
+>  5 files changed, 111 insertions(+)
+> 
+> diff --git a/drivers/media/usb/uvc/uvc_ctrl.c b/drivers/media/usb/uvc/uvc_ctrl.c
+> index f262e05ad3a8..5b619ef40dd3 100644
+> --- a/drivers/media/usb/uvc/uvc_ctrl.c
+> +++ b/drivers/media/usb/uvc/uvc_ctrl.c
+> @@ -358,6 +358,24 @@ static const struct uvc_control_info uvc_ctrls[] = {
+>  		.flags		= UVC_CTRL_FLAG_GET_CUR
+>  				| UVC_CTRL_FLAG_AUTO_UPDATE,
+>  	},
+> +	/*
+> +	 * UVC_CTRL_FLAG_AUTO_UPDATE is needed because the RoI may get updated
+> +	 * by sensors.
+> +	 * "This RoI should be the same as specified in most recent SET_CUR
+> +	 * except in the case where the ‘Auto Detect and Track’ and/or
+> +	 * ‘Image Stabilization’ bit have been set."
+> +	 * 4.2.2.1.20 Digital Region of Interest (ROI) Control
+> +	 */
+> +	{
+> +		.entity		= UVC_GUID_UVC_CAMERA,
+> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +		.index		= 21,
+> +		.size		= 10,
+> +		.flags		= UVC_CTRL_FLAG_SET_CUR | UVC_CTRL_FLAG_GET_CUR
+> +				| UVC_CTRL_FLAG_GET_MIN | UVC_CTRL_FLAG_GET_MAX
+> +				| UVC_CTRL_FLAG_GET_DEF
+> +				| UVC_CTRL_FLAG_AUTO_UPDATE,
+> +	},
+>  };
+>  
+>  static const u32 uvc_control_classes[] = {
+> @@ -603,6 +621,44 @@ static const struct uvc_control_mapping *uvc_ctrl_filter_plf_mapping(
+>  	return out_mapping;
+>  }
+>  
+> +static int uvc_get_rect(struct uvc_control_mapping *mapping, u8 query,
+> +			const void *uvc_in, size_t v4l2_size, void *v4l2_out)
+> +{
+> +	const struct uvc_rect *uvc_rect = uvc_in;
+> +	struct v4l2_rect *v4l2_rect = v4l2_out;
+> +
+> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
+> +		return -EINVAL;
+> +
+> +	if (uvc_rect->left > uvc_rect->right ||
+> +	    uvc_rect->top > uvc_rect->bottom)
+> +		return -EIO;
+> +
+> +	v4l2_rect->top = uvc_rect->top;
+> +	v4l2_rect->left = uvc_rect->left;
+> +	v4l2_rect->height = uvc_rect->bottom - uvc_rect->top + 1;
+> +	v4l2_rect->width = uvc_rect->right - uvc_rect->left + 1;
+> +
+> +	return 0;
+> +}
+> +
+> +static int uvc_set_rect(struct uvc_control_mapping *mapping, size_t v4l2_size,
+> +			const void *v4l2_in, void *uvc_out)
+> +{
+> +	struct uvc_rect *uvc_rect = uvc_out;
+> +	const struct v4l2_rect *v4l2_rect = v4l2_in;
+> +
+> +	if (WARN_ON(v4l2_size != sizeof(struct v4l2_rect)))
+> +		return -EINVAL;
+> +
+> +	uvc_rect->top = max(0xffff, v4l2_rect->top);
+> +	uvc_rect->left = max(0xffff, v4l2_rect->left);
+> +	uvc_rect->bottom = max(0xffff, v4l2_rect->height + v4l2_rect->top - 1);
+> +	uvc_rect->right = max(0xffff, v4l2_rect->width + v4l2_rect->left - 1);
 
-Makes sense
+As already remarked all 4 lines should be min() not max()
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Also this might just be me, but I have a preference for writing top + height
+for the bottom rather then writing height + top, since the window starts with
+skippig top pixels and then has height pixels filled in. And same for
+calculating rect->width. IOW I have a preference for writing this as:
 
-Jason
+	uvc_rect->bottom = min(0xffff, v4l2_rect->top + v4l2_rect->height - 1);
+	uvc_rect->right = min(0xffff, v4l2_rect->left + v4l2_rect->width - 1);
+
+As I said this might just be me, but to me the above reads more naturally.
+
+
+
+
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+>  	{
+>  		.id		= V4L2_CID_BRIGHTNESS,
+> @@ -897,6 +953,28 @@ static const struct uvc_control_mapping uvc_ctrl_mappings[] = {
+>  		.selector	= UVC_PU_POWER_LINE_FREQUENCY_CONTROL,
+>  		.filter_mapping	= uvc_ctrl_filter_plf_mapping,
+>  	},
+> +	{
+> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_RECT,
+> +		.entity		= UVC_GUID_UVC_CAMERA,
+> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +		.size		= sizeof(struct uvc_rect) * 8,
+> +		.offset		= 0,
+> +		.v4l2_type	= V4L2_CTRL_TYPE_RECT,
+> +		.data_type	= UVC_CTRL_DATA_TYPE_RECT,
+> +		.get		= uvc_get_rect,
+> +		.set		= uvc_set_rect,
+> +		.name		= "Region Of Interest Rectangle",
+> +	},
+> +	{
+> +		.id		= V4L2_CID_UVC_REGION_OF_INTEREST_AUTO,
+> +		.entity		= UVC_GUID_UVC_CAMERA,
+> +		.selector	= UVC_CT_REGION_OF_INTEREST_CONTROL,
+> +		.size		= 16,
+> +		.offset		= 64,
+> +		.v4l2_type	= V4L2_CTRL_TYPE_BITMASK,
+> +		.data_type	= UVC_CTRL_DATA_TYPE_BITMASK,
+> +		.name		= "Region Of Interest Auto Controls",
+> +	},
+>  };
+>  
+>  /* ------------------------------------------------------------------------
+> @@ -1465,6 +1543,9 @@ static int __uvc_queryctrl_boundaries(struct uvc_video_chain *chain,
+>  
+>  static size_t uvc_mapping_v4l2_size(struct uvc_control_mapping *mapping)
+>  {
+> +	if (mapping->v4l2_type == V4L2_CTRL_TYPE_RECT)
+> +		return sizeof(struct v4l2_rect);
+> +
+>  	if (uvc_ctrl_mapping_is_compound(mapping))
+>  		return DIV_ROUND_UP(mapping->size, 8);
+>  
+> diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+> index 8aca1a2fe587..d910a5e5b514 100644
+> --- a/drivers/media/usb/uvc/uvcvideo.h
+> +++ b/drivers/media/usb/uvc/uvcvideo.h
+> @@ -294,6 +294,13 @@ struct uvc_streaming_header {
+>  	u8 bTriggerUsage;
+>  };
+>  
+> +struct uvc_rect {
+> +	u16 top;
+> +	u16 left;
+> +	u16 bottom;
+> +	u16 right;
+> +} __packed;
+> +
+
+This should probably be grouped togather with uvc_status_* structs which are
+also marked __packed because they represent hw API rather then just host
+in memory structures.
+
+>  enum uvc_buffer_state {
+>  	UVC_BUF_STATE_IDLE	= 0,
+>  	UVC_BUF_STATE_QUEUED	= 1,
+> diff --git a/include/uapi/linux/usb/video.h b/include/uapi/linux/usb/video.h
+> index 2ff0e8a3a683..2afb4420e6c4 100644
+> --- a/include/uapi/linux/usb/video.h
+> +++ b/include/uapi/linux/usb/video.h
+> @@ -104,6 +104,7 @@
+>  #define UVC_CT_ROLL_ABSOLUTE_CONTROL			0x0f
+>  #define UVC_CT_ROLL_RELATIVE_CONTROL			0x10
+>  #define UVC_CT_PRIVACY_CONTROL				0x11
+> +#define UVC_CT_REGION_OF_INTEREST_CONTROL		0x14
+>  
+>  /* A.9.5. Processing Unit Control Selectors */
+>  #define UVC_PU_CONTROL_UNDEFINED			0x00
+> diff --git a/include/uapi/linux/uvcvideo.h b/include/uapi/linux/uvcvideo.h
+> index f86185456dc5..cbe15bca9569 100644
+> --- a/include/uapi/linux/uvcvideo.h
+> +++ b/include/uapi/linux/uvcvideo.h
+> @@ -16,6 +16,7 @@
+>  #define UVC_CTRL_DATA_TYPE_BOOLEAN	3
+>  #define UVC_CTRL_DATA_TYPE_ENUM		4
+>  #define UVC_CTRL_DATA_TYPE_BITMASK	5
+> +#define UVC_CTRL_DATA_TYPE_RECT		6
+>  
+>  /* Control flags */
+>  #define UVC_CTRL_FLAG_SET_CUR		(1 << 0)
+> @@ -38,6 +39,18 @@
+>  
+>  #define UVC_MENU_NAME_LEN 32
+>  
+> +/* V4L2 driver-specific controls */
+> +#define V4L2_CID_UVC_REGION_OF_INTEREST_RECT	(V4L2_CID_USER_UVC_BASE + 1)
+> +#define V4L2_CID_UVC_REGION_OF_INTEREST_AUTO	(V4L2_CID_USER_UVC_BASE + 2)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_EXPOSURE		(1 << 0)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IRIS			(1 << 1)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_WHITE_BALANCE		(1 << 2)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FOCUS			(1 << 3)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_FACE_DETECT		(1 << 4)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_DETECT_AND_TRACK	(1 << 5)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_IMAGE_STABILIZATION	(1 << 6)
+> +#define V4L2_UVC_REGION_OF_INTEREST_AUTO_HIGHER_QUALITY		(1 << 7)
+> +
+
+Hmm, shoudn't these be standardized. At least the ROI rect control seems like
+something which could be standardized ?
+
+Was using driver specific CIDs for this discussed with Hans Verkuil ?
+
+>  struct uvc_menu_info {
+>  	__u32 value;
+>  	__u8 name[UVC_MENU_NAME_LEN];
+> diff --git a/include/uapi/linux/v4l2-controls.h b/include/uapi/linux/v4l2-controls.h
+> index 974fd254e573..6c91d6fa4708 100644
+> --- a/include/uapi/linux/v4l2-controls.h
+> +++ b/include/uapi/linux/v4l2-controls.h
+> @@ -215,6 +215,13 @@ enum v4l2_colorfx {
+>   */
+>  #define V4L2_CID_USER_THP7312_BASE		(V4L2_CID_USER_BASE + 0x11c0)
+>  
+> +/*
+> + * The base for the uvc driver controls.
+> + * See linux/uvcvideo.h for the list of controls.
+> + * We reserve 64 controls for this driver.
+> + */
+> +#define V4L2_CID_USER_UVC_BASE			(V4L2_CID_USER_BASE + 0x11e0)
+> +
+>  /* MPEG-class control IDs */
+>  /* The MPEG controls are applicable to all codec controls
+>   * and the 'MPEG' part of the define is historical */
+> @@ -1089,6 +1096,8 @@ enum v4l2_auto_focus_range {
+>  
+>  #define V4L2_CID_HDR_SENSOR_MODE		(V4L2_CID_CAMERA_CLASS_BASE+36)
+>  
+> +/* CAMERA-class private control IDs */
+> +
+>  /* FM Modulator class control IDs */
+>  
+>  #define V4L2_CID_FM_TX_CLASS_BASE		(V4L2_CTRL_CLASS_FM_TX | 0x900)
+> 
+
+
+Regards,
+
+Hans
+
+
 
