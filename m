@@ -1,57 +1,49 @@
-Return-Path: <linux-kernel+bounces-437086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5930F9E8EF3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:43:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDE69E8EF8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:43:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 470EE1884745
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:43:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CC7161B84
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:43:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD6C02163AC;
-	Mon,  9 Dec 2024 09:42:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjFY/ZF0"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238A02165EB;
+	Mon,  9 Dec 2024 09:43:23 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AC7D215F63;
-	Mon,  9 Dec 2024 09:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6EB216393;
+	Mon,  9 Dec 2024 09:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733737374; cv=none; b=nMT97JD12vl4ycubQd6zATHLhgncZPBdpuNppA9SeLr8NW7zHk5RqFIF/pskGv6QPum+AqWy/1S16wsYRr2k6dbSDB/YZKO7OUMRaQVWp7VuHaCW9eidRCaLUasCp4o3jrXPBCRpNAeFxpxT43LLOYIGcuw3ZKTqGAjNDXMtEfg=
+	t=1733737402; cv=none; b=f8hiUY4q8tA2S50H/6eX5b4ResJhkbSic9xm1aR4EFxi3UlwMUbXpoyDlJAekQ7bRVwkJod7GQYReSxjeYHUpjeDoKV7KF0opZ7c+fimtnRRRH1kGasDiHVmVpe2gfVb2l/NNf8ylfaudlAWhbntCg3nhGgbqRjoLLxoTVVk6Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733737374; c=relaxed/simple;
-	bh=VBMr9LsHSJGPFtGqHFVHYbEn1eiiaJRMceDta957bZ4=;
+	s=arc-20240116; t=1733737402; c=relaxed/simple;
+	bh=nTQf+8Bm+nLKmOhcgiIR8Rb3stUH4S6+wbtV66aWlbA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LMASSAuS06GnJQ6wg2mvOnKpVfZ1AMauEFcPwjep10WK2qgLVaB1Rp8dYMpa2+i8z8o97+357NYATZrefe6JW+A2eSya6vrQv86eVBxUNaFhQM5x0MMTUyNlmiIfjiILfwMbjEGna1te3Jnm0wqu4X7Xr0aI8N1NE0m2P+2zgBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjFY/ZF0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28F73C4CED1;
-	Mon,  9 Dec 2024 09:42:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733737373;
-	bh=VBMr9LsHSJGPFtGqHFVHYbEn1eiiaJRMceDta957bZ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EjFY/ZF0biPlZzHFX8a4yRdYvSt60iFvN7mRVBcIPEcifgQt8w5R7u8h38AxJFA9q
-	 cWAudzQI/acgkYf1+J+L+r7dvU920K5W/YiJz5WK2LS6UC4Ef0/H4u0fVQ6sJ1VXdD
-	 WCzGCJkQ48CHzwfUmYnhD60EkHjxSeKPassSZq6yif1GON0DrBr/w0s/fna1fw9aA8
-	 mKYCOstm9+BSHiX0qpbBwKt0gPF/VfyalxXYshZLZ4MkWh7CWuhCeJsZr4B2/wz0WR
-	 wubHfnCOovIlc9G9HFJfmaIcPEF8do5Bw2jiNQfnx/tOU9hu0xNKdD66z6eV4WqvYq
-	 2lj40laSJfQZg==
-Date: Mon, 9 Dec 2024 10:42:50 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Kever Yang <kever.yang@rock-chips.com>
-Cc: heiko@sntech.de, linux-rockchip@lists.infradead.org, 
-	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko.stuebner@cherry.de>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
+	 Content-Type:Content-Disposition:In-Reply-To; b=XF6fa4UaoTajKsMlwG0+sfFQtD3tswEwb4rbowFPVauVrdA6n+IIFB/fcvyfjEQNpGSYt6lNRObUlmG139QooD2OVUj8IWbN24IMdwaRiiKYCTcmZgy7uYudATjpzGMPQ5Bjdfw9pp1UBQrc2x++wPlzgXwHasygSoE9r88Chrw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95C76C4CED1;
+	Mon,  9 Dec 2024 09:43:21 +0000 (UTC)
+Date: Mon, 9 Dec 2024 10:43:18 +0100
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, 
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: vendor-prefixes: Update rockchip company
- name
-Message-ID: <kwx76ihsftsgw3u53l33z4kodihyfcvpqpl2a2nk7aedgnr6e6@2324w7s7zmio>
-References: <20241205082258.857018-1-kever.yang@rock-chips.com>
+Subject: Re: [PATCH 1/2] ASoC: codecs: wcd9335: Add define for number of DAIs
+Message-ID: <aibjwqdjq7h5in7otsbtrnj67yrv3m4aegvkuk6ljwxpx57ayy@f7fowpequede>
+References: <20241205084021.35610-1-krzysztof.kozlowski@linaro.org>
+ <c3d2477b-f12a-47dd-bf95-927e6c0d8fd5@sirena.org.uk>
+ <CABTCjFA9DyRzca93qoS5_+sfc2RLfNVNqN14WVfKODjHykwGJQ@mail.gmail.com>
+ <08e07421-8a9b-4535-9cd5-9383ca9024b3@sirena.org.uk>
+ <CABTCjFB7XiR6_+r375h0fJipA+OC2i94ruTG-sWB=s=0qYRReQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,14 +52,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241205082258.857018-1-kever.yang@rock-chips.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CABTCjFB7XiR6_+r375h0fJipA+OC2i94ruTG-sWB=s=0qYRReQ@mail.gmail.com>
 
-On Thu, Dec 05, 2024 at 04:22:58PM +0800, Kever Yang wrote:
-> Rockchip company name has update to below name since 2021:
-> Rockchip Electronics Co., Ltd.
+On Fri, Dec 06, 2024 at 11:42:24PM +0300, Dzmitry Sankouski wrote:
+> =D1=87=D1=82, 5 =D0=B4=D0=B5=D0=BA. 2024=E2=80=AF=D0=B3. =D0=B2 16:31, Ma=
+rk Brown <broonie@kernel.org>:
+> >
+> > On Thu, Dec 05, 2024 at 04:29:45PM +0300, Dzmitry Sankouski wrote:
+> >
+> > > This is the 1st patch in series, and NUM_CODEC_DAIS redefine from bin=
+dings
+> > > is deleted in the 2nd one.
+> >
+> > I know, that still means this change is broken.
+>=20
+> How to avoid broken change, when moving constant from dt-binding to*.c
+> file, given we have constraint of separate patch for bindings?
 
-Some reference would be useful. Wikipedia says:
-Fuzhou Rockchip Electronics Co., Ltd.
+There is no problem here, I just screwed, because 6+1 !=3D 7.
 
 Best regards,
 Krzysztof
