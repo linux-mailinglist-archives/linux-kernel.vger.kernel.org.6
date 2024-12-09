@@ -1,226 +1,176 @@
-Return-Path: <linux-kernel+bounces-438270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 351589E9F32
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:09:11 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3609E9F27
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:08:41 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC8A5285E6D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:09:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AF22169A0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:08:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 113AA1AB50D;
-	Mon,  9 Dec 2024 19:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2531C1AA1E6;
+	Mon,  9 Dec 2024 19:03:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b="B9vwEuMU"
-Received: from mail.codeweavers.com (mail.codeweavers.com [4.36.192.163])
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="HEPNurPe"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2079.outbound.protection.outlook.com [40.107.92.79])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95AB1AAE08;
-	Mon,  9 Dec 2024 19:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=4.36.192.163
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733771014; cv=none; b=eBow8sdEh/iVruOvaUWG8ZZy2etIp5IGzzs3kJ3cWfDDomfmAd8U/PQWtdvHrCvPx9c+5ZuKH7akp9+9GIXIcRshpdAjn0uKM3qY3BXVPJV6QHE1SlzlQgkexF1XVcwKxggwRyCjUwXQ/2KmnrYQC5KBtXj8lK/dLcnIFn5/Ebs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733771014; c=relaxed/simple;
-	bh=rJWsvs4U0G6yXgAaGWcQ9pNuvEMrOusrUUu0b1tVjMU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=utBlWinQDlMdT5GyMXwYX7LdQmuWxdtde3oSTrhDRDkhKm/a4W6LnlsyO2mt/2Rptr4TYW30aEskKRln51if7TLSV3+Fqa1ImBbmcvNE0RHVCy75JYm8UXbsSg0tsxgR3JSAJj0saApZYynYo8ugCim6E/DGEWSmGkK1amDLnUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com; spf=pass smtp.mailfrom=codeweavers.com; dkim=pass (2048-bit key) header.d=codeweavers.com header.i=@codeweavers.com header.b=B9vwEuMU; arc=none smtp.client-ip=4.36.192.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeweavers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeweavers.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=codeweavers.com; s=s1; h=Content-Transfer-Encoding:MIME-Version:References:
-	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=TBV3K6DkdEwWEB8hQ4zHRU1jHPbyqEKzqoNldAknSUo=; b=B9vwEuMUxxGznjfGTin+lFv739
-	5W3jBSfwKidqfwLONNFZ+X5Jl+PGIur5G8LKjLPKx+BJ/A5k70PkR2nCphXjCr6QhQvPH3hAi90qs
-	VIjq48BWIYFN2FDchKRY2HNHM/+3nkANcWRKiV5fdWMfSbIAirj8opoewx0eRurgI41JmJ1KQY5oo
-	2ibcmOI9it6BhU/m2vx5MOCaZLIsUXvoDPjsnhklxMZSFMR+aBiGSoggYllLqVm49curtuNh0ZULb
-	HAHRMZW6ebs2vq5goSWhI4fSRu7KfsyBrh3HRYgaHwHkmF9NIWAqFZOmtzShXTiTqh9NFOxzdiiEk
-	lwWfVTCg==;
-Received: from cw137ip160.mn.codeweavers.com ([10.69.137.160] helo=camazotz.mn.codeweavers.com)
-	by mail.codeweavers.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <zfigura@codeweavers.com>)
-	id 1tKiyc-001Gd5-2x;
-	Mon, 09 Dec 2024 12:59:27 -0600
-From: Elizabeth Figura <zfigura@codeweavers.com>
-To: Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Shuah Khan <shuah@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-api@vger.kernel.org,
-	wine-devel@winehq.org,
-	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>,
-	Wolfram Sang <wsa@kernel.org>,
-	Arkadiusz Hiler <ahiler@codeweavers.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	linux-doc@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Elizabeth Figura <zfigura@codeweavers.com>
-Subject: [PATCH v6 16/28] selftests: ntsync: Add some tests for NTSYNC_IOC_WAIT_ANY.
-Date: Mon,  9 Dec 2024 12:58:52 -0600
-Message-ID: <20241209185904.507350-17-zfigura@codeweavers.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241209185904.507350-1-zfigura@codeweavers.com>
-References: <20241209185904.507350-1-zfigura@codeweavers.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF6A219F42C;
+	Mon,  9 Dec 2024 19:03:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.79
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733771004; cv=fail; b=mTknkRy0CKjJ2PVgTZEcBlG7QGjmhqhT3qxIenRzB5c4zBgs9y31hG3fvtiBfLd+jx7P8rXmsLPT+SXjpVwFFG4zlreNo9cojXTtGcZMudDfgMlHBkdCwZfa4FcUfXC3joyI0iJ2LOF9fZzwtLLQvj9p1Uckb80T3kfh4PAdIRE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733771004; c=relaxed/simple;
+	bh=JfV1qMKshxv8dU57xrjXWoZasoUJASBh3mszMCp2voA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hCBoODp9nc8/RQiIfq22tHGiO5gu61UhrgVrdW0A6ImWrARgfjvRNB8ND6MwQsAJ4hIimsuU1TSuzPdFUy+dliBnmj1Hs3edmPPXzW/Ef7wx5J5ZXqI3FGrJFc76m9SaV0rWXuNS/Gv1A04EkGZWDG0vaD0v+yXXEnSo74/6ZJ0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=HEPNurPe; arc=fail smtp.client-ip=40.107.92.79
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ogUGQ9VtCbaC4yMi+rlJSoT8BVI1TX7k1odJIwHhLz5PyoVIs+4YCM0M5k1nIRGAq7mSu+jTX7mbU8XfheGIBbo1eeZHLwcphgw9tchv3hwkH771iy9ozwK2AxEieMqqgGuF2ROwlltAP8RTRW4XAky3uVaqV0HWClM0+Yxlg7H0mZ+HOohydmqgxcbXoJTkGc3SAaniQjqHhQk1NnPht0B2pB+ksTwqg7sZWhPr9IQEGpdBPEjN2/JDohMCu1yo0skPTMTsuWLCfelC0QSv4JgvArQCropSp/haspiPLMAzgujMsELAgwLAEsjmYbvo1KoSZ6ed6CiCjFlLuqRZFw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=23xOGiDXy6NYcLE529NavOt7dzjIrFu9Sh/1RY3aUZA=;
+ b=yqRZmqSeP10NeeoH79GDKwbaPZiews6w8yy2Dvj22d/rw72Lx9xzhIScjRP9YchTOlRNIUb6zbDgw9M1ZrflROiOPea9dFMfh/T5CYelBP76d9MBZL1GpY7LKhSBu4O/QzaYBh8ED0LBneU5iWuPEu4lOcMEZAWYr7FMeiASzHLIhRxyADTseqvNBLMhptYX57FsYRXtCFm7sM5SBGPvAVpJP33PWV1i16ahrTPSrF7RuTS+EshTP6fKo/bWdOExMhGTArl7pa9HcgW+uRiFWkwDoH1S40hx/U2V2uwwtqEMiOn1qssnRD2FetTd6hUSFGNJXOKDV+7niGQD4ENwGw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=redhat.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=23xOGiDXy6NYcLE529NavOt7dzjIrFu9Sh/1RY3aUZA=;
+ b=HEPNurPeXzKmutiubwjAjjwthunpCLFEM0WGc3CgBlyCKl1k0P80cViwjOYkKCOgzUSILax8vaSpcuLkbf0ebagfw5vS+azkPLQnsur2rVBXPixeG0WyLQMi8k0FvRcviNycikzZ5sl1BrinaXLFQHIyur4sx3oKvYaqeMoR5bjsx7ZBXG3K+WmoKf+qB9tcxNQL8vXrWAB34CYvObsZMKr7Zj8+Mlb8kntMVanqacdXAVsBJnWdKrZVbvR+7t0zHHRqpVsUu4vbYCwu6RFsQsgN6bYRJe8P0Vm7lRXHlvfnHm0J+UJAIJNFJqU0hShmp6PI7ml7vSHm6qz+nQrP3g==
+Received: from MW4PR04CA0209.namprd04.prod.outlook.com (2603:10b6:303:86::34)
+ by DM4PR12MB6229.namprd12.prod.outlook.com (2603:10b6:8:a8::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.24; Mon, 9 Dec
+ 2024 19:03:19 +0000
+Received: from SJ5PEPF000001F2.namprd05.prod.outlook.com
+ (2603:10b6:303:86:cafe::d2) by MW4PR04CA0209.outlook.office365.com
+ (2603:10b6:303:86::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.13 via Frontend Transport; Mon,
+ 9 Dec 2024 19:03:18 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001F2.mail.protection.outlook.com (10.167.242.70) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8230.7 via Frontend Transport; Mon, 9 Dec 2024 19:03:18 +0000
+Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 9 Dec 2024
+ 11:03:03 -0800
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail205.nvidia.com
+ (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 9 Dec 2024
+ 11:03:03 -0800
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 9 Dec 2024 11:03:02 -0800
+Date: Mon, 9 Dec 2024 11:03:01 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
+CC: Thierry Reding <thierry.reding@gmail.com>, Krishna Reddy
+	<vdumpa@nvidia.com>, Will Deacon <will@kernel.org>, Robin Murphy
+	<robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>, Jonathan Hunter
+	<jonathanh@nvidia.com>, <linux-kernel@vger.kernel.org>,
+	<iommu@lists.linux.dev>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-tegra@vger.kernel.org>, Sebastian Andrzej Siewior
+	<bigeasy@linutronix.de>, Steven Rostedt <rostedt@goodmis.org>,
+	<linux-rt-devel@lists.linux.dev>
+Subject: Re: [PATCH v2] iommu/tegra241-cmdqv: do not use smp_processor_id in
+ preemptible context
+Message-ID: <Z1c+5dI7fibEZZ/h@Asurada-Nvidia>
+References: <Z1L1mja3nXzsJ0Pk@uudg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <Z1L1mja3nXzsJ0Pk@uudg.org>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F2:EE_|DM4PR12MB6229:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e0dc13d-8373-47f6-5e44-08dd188424a4
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?o6LKtvGDr6448uq8sOsVuQF6SebQb9+7w7BXa2GSvu2g0XvLny+Fa4m0onaH?=
+ =?us-ascii?Q?gB4KgIc3Fb0GT3a9WzOp89CMaaJUGlZ0lNgyD2BJRGqAppRpTE/SilAcGuaM?=
+ =?us-ascii?Q?b2uT15/LNsJOQLxtJr4sWYJoDLUKD/8VzccGfwdQgIGtIEny6tNTqttXk3Mv?=
+ =?us-ascii?Q?MS6FYbYAfKEJx99sNSB4TUzVHrEN216Clsx1eVsc4OvVEfgxH5dIkGaTAb/F?=
+ =?us-ascii?Q?EaKEQz1aLrGM0Q/LXLREX4TP9I/hwsqMJzqW304aiZ/EH8YRbOXfXgbcUq7O?=
+ =?us-ascii?Q?ClzF7Qp0XdMubS1ntqHEea+JlwyPH21t/SehBsg3dPVqzj5V3k70+AKUJ+Jv?=
+ =?us-ascii?Q?8YGiYzUSu6L6zqdvZoZio/gBmB38ZkhurRz66MA0oO5QxrbMp6IJYmQtmDhk?=
+ =?us-ascii?Q?Et7ji9avW15BcyaafcX5xGTO9FA0ZEohILTlWlemzzHUvs/U6tdG0LlNdU6v?=
+ =?us-ascii?Q?X06/hq2ca+QZxVdTmin5MMyS6432WINW9RzK4lgBTj71LF6PqqDcZx/vQbZ0?=
+ =?us-ascii?Q?i3jZ5yINhjUzOAdFe0vHQHrTl8V4PhHQH6vx0AulGuvHQOVGXIPDkV4HgQ7T?=
+ =?us-ascii?Q?2tOtLoeXu9K/Wx8O10bIhNbqh2nyP4+xxcj8tBwNoIQErcHpbdtEa0lJZT5d?=
+ =?us-ascii?Q?3shmtCzGNJYGmOgn0TaVCL3wpuTr4aInAJ6BZ8Vq5nCE+ZqV0/Z6fodF/OMg?=
+ =?us-ascii?Q?CHMU4oJGrwe1Bx8W/L8tOpzV3M7uQOZiRTp1NywGAPtgujFpI2cI+0Hyjdw5?=
+ =?us-ascii?Q?0hm8YbHMPtMxtowXAsKuUN3SRPhxekmKOHAqWTCi9sT9mTZzZs3Jqy9RZZOt?=
+ =?us-ascii?Q?BhyK4WRw7sSmJZUHEvE/U6ERWuVchIM7cUJ8683qsI8p6XxoHgpTSwn+yL3s?=
+ =?us-ascii?Q?d0pIVk6kpwWuJ055ia28/rVLMknuljtKdDcruiZCqm0qihoxSiajWPLYaTvV?=
+ =?us-ascii?Q?nlJQ1Bdl8HyOlcXeY5w5vC6ZUGA59/s/yrOspSel8YO3jpodYK17+k9rFREI?=
+ =?us-ascii?Q?Pi1xfZCdg1MBtsnaIaX5wMXiPJgYp+8djL0psh16gYH0TMW06rea94SNia2w?=
+ =?us-ascii?Q?lCkRHZNCm3VWlT7g5QspJ+9LHXSP38upsqwQSiGn8yz2VeBfQKW0RK6tArWl?=
+ =?us-ascii?Q?jB2HU/22IGu8RwGqNiSbNdo8vYD/7EmDYVrmy4dr2Va0vaVTIc2BK8XnRz4O?=
+ =?us-ascii?Q?Gb34fGjy4tGGTYs8v6kpiSBITwV7e+If6RAYBHXz+q49Ggy7AvUwUTPcBu3g?=
+ =?us-ascii?Q?O1V+F6e+jpTE59RcrvfFQfcZvt1pUQSelwKYnjR7PvX2l6KVb/pE5Gm0qgOo?=
+ =?us-ascii?Q?+zx62pSWqFnBiWqvfaAsKtM5YpgQwzSbe6AEuQWbA9RWhM/YyT76DrJ1QF8J?=
+ =?us-ascii?Q?iGgUFP17ZD0RJcrqSAsfxDCPI07mIpJz7RyaoN9sDQ+yHlzD74Se71CITk9G?=
+ =?us-ascii?Q?hoLgF6u8dRyT+8vGwcpLP4DtjLlat4bt?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 19:03:18.4729
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e0dc13d-8373-47f6-5e44-08dd188424a4
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F2.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6229
 
-Test basic synchronous functionality of NTSYNC_IOC_WAIT_ANY, when objects are
-considered signaled or not signaled, and how they are affected by a successful
-wait.
+On Fri, Dec 06, 2024 at 10:01:14AM -0300, Luis Claudio R. Goncalves wrote:
+> During boot some of the calls to tegra241_cmdqv_get_cmdq() will happen
+> in preemptible context. As this function calls smp_processor_id(), if
+> CONFIG_DEBUG_PREEMPT is enabled, these calls will trigger a series of
+> "BUG: using smp_processor_id() in preemptible" backtraces.
 
-Signed-off-by: Elizabeth Figura <zfigura@codeweavers.com>
----
- .../testing/selftests/drivers/ntsync/ntsync.c | 119 ++++++++++++++++++
- 1 file changed, 119 insertions(+)
+Confirmed the BUG prints. Should we CC stable tree?
 
-diff --git a/tools/testing/selftests/drivers/ntsync/ntsync.c b/tools/testing/selftests/drivers/ntsync/ntsync.c
-index 7cd0f40594fd..40ad8cbd3138 100644
---- a/tools/testing/selftests/drivers/ntsync/ntsync.c
-+++ b/tools/testing/selftests/drivers/ntsync/ntsync.c
-@@ -342,4 +342,123 @@ TEST(mutex_state)
- 	close(fd);
- }
- 
-+TEST(test_wait_any)
-+{
-+	int objs[NTSYNC_MAX_WAIT_COUNT + 1], fd, ret;
-+	struct ntsync_mutex_args mutex_args = {0};
-+	struct ntsync_sem_args sem_args = {0};
-+	__u32 owner, index, count, i;
-+	struct timespec timeout;
-+
-+	clock_gettime(CLOCK_MONOTONIC, &timeout);
-+
-+	fd = open("/dev/ntsync", O_CLOEXEC | O_RDONLY);
-+	ASSERT_LE(0, fd);
-+
-+	sem_args.count = 2;
-+	sem_args.max = 3;
-+	sem_args.sem = 0xdeadbeef;
-+	ret = ioctl(fd, NTSYNC_IOC_CREATE_SEM, &sem_args);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_NE(0xdeadbeef, sem_args.sem);
-+
-+	mutex_args.owner = 0;
-+	mutex_args.count = 0;
-+	mutex_args.mutex = 0xdeadbeef;
-+	ret = ioctl(fd, NTSYNC_IOC_CREATE_MUTEX, &mutex_args);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_NE(0xdeadbeef, mutex_args.mutex);
-+
-+	objs[0] = sem_args.sem;
-+	objs[1] = mutex_args.mutex;
-+
-+	ret = wait_any(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+	check_sem_state(sem_args.sem, 1, 3);
-+	check_mutex_state(mutex_args.mutex, 0, 0);
-+
-+	ret = wait_any(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+	check_sem_state(sem_args.sem, 0, 3);
-+	check_mutex_state(mutex_args.mutex, 0, 0);
-+
-+	ret = wait_any(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(1, index);
-+	check_sem_state(sem_args.sem, 0, 3);
-+	check_mutex_state(mutex_args.mutex, 1, 123);
-+
-+	count = 1;
-+	ret = post_sem(sem_args.sem, &count);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, count);
-+
-+	ret = wait_any(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+	check_sem_state(sem_args.sem, 0, 3);
-+	check_mutex_state(mutex_args.mutex, 1, 123);
-+
-+	ret = wait_any(fd, 2, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(1, index);
-+	check_sem_state(sem_args.sem, 0, 3);
-+	check_mutex_state(mutex_args.mutex, 2, 123);
-+
-+	ret = wait_any(fd, 2, objs, 456, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(ETIMEDOUT, errno);
-+
-+	owner = 123;
-+	ret = ioctl(mutex_args.mutex, NTSYNC_IOC_MUTEX_KILL, &owner);
-+	EXPECT_EQ(0, ret);
-+
-+	ret = wait_any(fd, 2, objs, 456, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EOWNERDEAD, errno);
-+	EXPECT_EQ(1, index);
-+
-+	ret = wait_any(fd, 2, objs, 456, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(1, index);
-+
-+	/* test waiting on the same object twice */
-+	count = 2;
-+	ret = post_sem(sem_args.sem, &count);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, count);
-+
-+	objs[0] = objs[1] = sem_args.sem;
-+	ret = wait_any(fd, 2, objs, 456, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+	check_sem_state(sem_args.sem, 1, 3);
-+
-+	ret = wait_any(fd, 0, NULL, 456, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(ETIMEDOUT, errno);
-+
-+	for (i = 0; i < NTSYNC_MAX_WAIT_COUNT + 1; ++i)
-+		objs[i] = sem_args.sem;
-+
-+	ret = wait_any(fd, NTSYNC_MAX_WAIT_COUNT, objs, 123, &index);
-+	EXPECT_EQ(0, ret);
-+	EXPECT_EQ(0, index);
-+
-+	ret = wait_any(fd, NTSYNC_MAX_WAIT_COUNT + 1, objs, 123, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EINVAL, errno);
-+
-+	ret = wait_any(fd, -1, objs, 123, &index);
-+	EXPECT_EQ(-1, ret);
-+	EXPECT_EQ(EINVAL, errno);
-+
-+	close(sem_args.sem);
-+	close(mutex_args.mutex);
-+
-+	close(fd);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.45.2
+> As tegra241_cmdqv_get_cmdq() only calls smp_processor_id() to use the
+> CPU number as a factor to balance out traffic on cmdq usage, it is safe
+> to use raw_smp_processor_id() here.
+> 
+> v2: Sebastian helped identify that the problem was not exclusive to kernels
+>     with PREEMPT_RT enabled. The delta between v1 and v2 is the description.
+> 
+> Signed-off-by: Luis Claudio R. Goncalves <lgoncalv@redhat.com>
 
+Reviewed-by: Nicolin Chen <nicolinc@nvidia.com>
+Tested-by: Nicolin Chen <nicolinc@nvidia.com>
+
+Thanks
+Nicolin
 
