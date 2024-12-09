@@ -1,85 +1,63 @@
-Return-Path: <linux-kernel+bounces-438034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18F7C9E9C07
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:46:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EA8318873E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:46:49 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F71F14884C;
-	Mon,  9 Dec 2024 16:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MVdGjpfb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDA049E9C0A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:48:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819EA13C908
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DC2283368
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:48:13 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6FA1494DF;
+	Mon,  9 Dec 2024 16:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="plfWaEuQ"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1405733A;
+	Mon,  9 Dec 2024 16:48:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733762802; cv=none; b=FoXfbuc38fTgY75SvfsOZ6C0GwpRhEyf0h4kXAV4M4UQHkM3wS1gr6w40PRlHL3EEI0WeImpzsEr3/BajlhXedx3vLsXk3kH2akMumzfEika8gqlf/V6aqlkNQpIZ5PNeDNmCwosSyp6micfo5gh4NwgXDpfDk8fIUdhwx9a1VM=
+	t=1733762888; cv=none; b=Gh8D9jZ+D+Q48eqDWvkbm+oBeK63w1CRlwejxl1bznyZPqBV7ChQBueyprPuJXJkDZ6CCriAYz8voVfQwLUN+2ojQLZYG3ZrO4NYf0Dq9Cy9mgH1vtcRFRU4ny+12WmTyz4AMbVN7QeTXx+uCwdguRyI0MY/PeKWfvvMs/yVRfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733762802; c=relaxed/simple;
-	bh=N13BCSHzak5uS5rs7WJF8kh9LHJf3n5b7MpEjh/Qa68=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ARkHHYsJwIpgZKZ/api0O45TkO9OltyQ3z61WHkJnaGkEMaC+kROCs/yoErGFa6H3z1Iz1dURwm3blw/rLQEvwicUdvuATElX93S+CtEonql9phmyL34bhGWeLiWWfiCypVz8Q8jk89UpjAChc27uZAULYCYh/Yv33EdISvhFJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MVdGjpfb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733762799;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bf28CO39ovGyTPfztFZ3utKq/b0MD2z7TptwMs0iNHM=;
-	b=MVdGjpfbvfC3J45Y2NJMMVXBcBI2Cuq9xlzyBCiZ+cDWzDZBVrhAuiURsu5FuW8qPm0cjC
-	i9/flAyu3djdeDC6CyV6nVhunXxHi8s/vOSU1MmPpmro/I0n1EI3Lo3rjeJFvsFN/M9PjJ
-	t4thaqpvrFUZpWUOmdJuLwTa05n8CJY=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-257-QS5rtrUDP_C8uR0rk0qszQ-1; Mon, 09 Dec 2024 11:46:38 -0500
-X-MC-Unique: QS5rtrUDP_C8uR0rk0qszQ-1
-X-Mimecast-MFC-AGG-ID: QS5rtrUDP_C8uR0rk0qszQ
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-467659b34f7so26843641cf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:46:37 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733762797; x=1734367597;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bf28CO39ovGyTPfztFZ3utKq/b0MD2z7TptwMs0iNHM=;
-        b=D0hSYMEaecmJpyIgWW8rQyJ7Vvy56BB8IvYS4qvzhBJY1wgAaQIrn4c3EsntGrmIdL
-         SXQj+ygxo85MEVkZjYxY/00Mxn4wx2/qkEkg1bZMoVbQBUDW6KhTCVM/+LKbHb1qKUB6
-         2spVYl6gK+NEC/l7xNh/YOB/5w0ZKLv0QQ6EyhHah0/etRaXsj2uXFaOvTb55jzeciY8
-         UpB5hgYBqoNo/31FIs2qJnU0NYtmzYqCe1F/5PMt/rBvdK0E/9REIm/0lFttaS4qQXu7
-         avBpCwuIP6sJkKXw/c7JG6J/tq+P8KfBn2TWc+qHmklNOSmIDqI9E6Xy32xRFInY9uo+
-         QJWA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtVBw19KvZD/1P7GIqpmGlikyqxF5Mgrz+sOwpSaJBv7n3BIp/CGviFliIPOMY2B9g/8dyNXh0h9BjiWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyuyLh8AX6sucqbGExi9oZsl/9HX3G5T5dmVDYSEJzBr25y6H7v
-	xDzwSep48Oyct0l3N86t+6eyi9SSh1Zzuqwez1mmX2OzpcTF84joLuJ6T4SkfzW7HmD9NPyfGHX
-	1W1UHAq/lQxRrU4AK41gj/nX5TXFT4HjpTgXnZCYSjMdtPk8NsFyq0o8dIhOwUg==
-X-Gm-Gg: ASbGncsUWVKPv+Mx8Lm4nGcwgf974MNDfQLxkPpZPGCqvJIK2zoooH/jjKE0M+LL3fr
-	6HuXCQzGimu1BFmbjd3HSCc7lQIVpxEMWKy4BahfRgxyL9yrZ//FxSpwSoQZnGMunqJhmtLpg8Q
-	fo4qwbwpi6OKnp+YHsJOIPS9v3gz7yYmkWVzGHZhoWQsnzFL48jJp7KabVTpjL3l742xXTVH7fu
-	/Nx6kDhyzfqF1wbwJtGsyeYkPcwJpDJNWjuu6NxT1XxFCsSrdN03ld4dFNifalHglLlTeQ6BUxa
-	Y5RzVaCFKX3cHO5J
-X-Received: by 2002:ac8:7f82:0:b0:467:6019:9569 with SMTP id d75a77b69052e-46760199622mr98743951cf.17.1733762797365;
-        Mon, 09 Dec 2024 08:46:37 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHW4soDtw8HxIFjNK41EdqQnNHAOjJwO6UUujwJSKBvsRzHIOZEJzs+RldkZNVTtdqj3Ba0ag==
-X-Received: by 2002:ac8:7f82:0:b0:467:6019:9569 with SMTP id d75a77b69052e-46760199622mr98743331cf.17.1733762796898;
-        Mon, 09 Dec 2024 08:46:36 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:59e:9d80:527b:9dff:feef:3874? ([2a01:e0a:59e:9d80:527b:9dff:feef:3874])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-467296fcb20sm52927651cf.47.2024.12.09.08.46.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 08:46:36 -0800 (PST)
-Message-ID: <bcb4289b-507c-4ea1-afc7-6febd34d88db@redhat.com>
-Date: Mon, 9 Dec 2024 17:46:30 +0100
+	s=arc-20240116; t=1733762888; c=relaxed/simple;
+	bh=ZdxnxnVZe5p/tnByDnKXy8Z2rRJhWb4NaN76UEl7a8Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=LLgFHi9xeuweH4IMCuxWkRqMHvYfblFMnlQPK6P52j+1kc9+AQTePqiSXM+dqqp3vEr24G9dVlbTqUfOAVCuzDbCp3OupTqrAI8UOY9M/LM/lQY30jA2N2ZbL+VZnIjy43iBbN3XeZaKbDs1telEll6e+gYxFOA5qme8j8R5tAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=plfWaEuQ; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4B9GlpJ72335345
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 10:47:52 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733762872;
+	bh=moRgWpRuMXsSLHrtTMIRtjFHzEe23DdqDsRO7SJspKA=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=plfWaEuQG9M4u97DdR0wLtvx1kjctuR9VI0H5eRUhoAtG7jb5Gn7U1FDGlDjDtBh/
+	 nIoFMkd+5zgztwuNX4DH/kWU++V+mMODsyO6SW83oEoHLxl0rIfehCQmAglXD/a4/v
+	 0fyqLDULJShwXyjRC+NVFPpnvJPqUg09PBP1Ksyc=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4B9GlpwM026050
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 9 Dec 2024 10:47:51 -0600
+Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 9
+ Dec 2024 10:47:51 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 9 Dec 2024 10:47:51 -0600
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4B9Glon7040033;
+	Mon, 9 Dec 2024 10:47:51 -0600
+Message-ID: <5889e0aa-15f9-41fe-9d80-ec59fee2f62b@ti.com>
+Date: Mon, 9 Dec 2024 10:47:50 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,280 +65,197 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer
- expired
+Subject: Re: [PATCH 0/7] of: overlay: Add support for export-symbols node
+ feature
+To: Herve Codina <herve.codina@bootlin.com>,
+        Ayush Singh
+	<ayush@beagleboard.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Saravana Kannan
+	<saravanak@google.com>
+CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Luca
+ Ceresoli <luca.ceresoli@bootlin.com>,
+        Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>
+References: <20241209151830.95723-1-herve.codina@bootlin.com>
 Content-Language: en-US
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Marc Zyngier <maz@kernel.org>
-Cc: kvmarm <kvmarm@lists.linux.dev>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, oliver.upton@linux.dev,
- christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org,
- catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com,
- yuzenghui@huawei.com, darren@os.amperecomputing.com,
- vishnu@os.amperecomputing.com
-References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
- <867c89tc4q.wl-maz@kernel.org>
- <c5b1c3d7-56ca-4afc-a831-045dba4beffa@os.amperecomputing.com>
- <865xntt2kv.wl-maz@kernel.org>
- <8be59ff3-6a68-48e1-8181-0ce4b2e7180f@os.amperecomputing.com>
-From: Eric Auger <eauger@redhat.com>
-In-Reply-To: <8be59ff3-6a68-48e1-8181-0ce4b2e7180f@os.amperecomputing.com>
-Content-Type: text/plain; charset=UTF-8
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20241209151830.95723-1-herve.codina@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi,
-
-On 12/9/24 16:39, Ganapatrao Kulkarni wrote:
+On 12/9/24 9:18 AM, Herve Codina wrote:
+> Hi,
 > 
+> At Linux Plumbers Conference 2024, we (me and Luca Ceresolli) talked
+> about issues we have with runtime hotplug on non-discoverable busses
+> with device tree overlays [1].
 > 
-> On 09-12-2024 06:50 pm, Marc Zyngier wrote:
->> On Mon, 09 Dec 2024 12:25:34 +0000,
->> Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
->>>>>
->>>>> During automated testing of Nested Virtualization using avocado-vt,
->>>>
->>>> Which is not merged upstream. So what branch are you using? Based on
->>>> what kernel version? On what HW? With which virtualisation features?
->>>>
->>>
->>> Testing is done on Ampere's AmpereOne platform using 6.10 based kernel
->>> with NV patches from your repo.
->>
->> Grmbl... *Which* patches? At least give me the SHA1 of the branch,
->> because I have no idea what you are running. And 6.10 is definitely
->> not something I care about. If you're using the NV patches, the
->> *minimum* you should run is 6.13-rc1, because that's what the current
->> code is based on.
->>
+> On our system, a base board has a connector and addon boards can be
+> connected to this connector. Both boards are described using device
+> tree. The base board is described by a base device tree and addon boards
+> are describe by overlays device tree. More details can be found at [2].
 > 
-> I tried 6.13-rc1 based nv-next branch today, which failed to boot
-> UEFI as L1. Yet to debug this.
-
-I confirm am stuck with the same issue with nv-next on AmpereOne.
-
-Thanks
-
-Eric
-
+> This kind of use case can be found also on:
+>    - Grove Sunlight Sensor [3]
+>    - mikroBUS [4]
 > 
+> One of the issue we were facing on was referencing resources available
+> on the base board device tree from the addon overlay device tree.
 > 
-> QEMU from Eric's repo is used for the testing.
-> https://github.com/eauger/qemu/tree/v9.0-nv-rfcv3
+> Using a nexus node [5] helps decoupling resources and avoid the
+> knowledge of the full base board from the overlay. Indeed, with nexus
+> node, the overlay need to know only about the nexus node itself.
 > 
->> Also, does this machine have FEAT_ECV?
+> For instance, suppose a connector where a GPIO is connected at PinA. On
+> the base board this GPIO is connected to the GPIO 12 of the SoC GPIO
+> controller.
 > 
-> Yes!
->>
->>>
->>>>> it has been observed that during some boot test iterations,
->>>>> the Guest-Hypervisor boot was getting crashed with a
->>>>> synchronous exception while it is still booting EDK2.
->>>>>
->>>>> The test is launching Multiple instances of Guest-Hypervisor boot
->>>>
->>>> Is the multiple instance aspect really relevant to the reproduction of
->>>> the problem?
->>>
->>> Not really, but it requires multiple attempts/iterations to hit the
->>> issue. Even with automated test, it was seen at some iteration out of
->>> 10 to 15 iterations.
->>>
->>>>
->>>>> and while booting, QEMU monitor issued the command "info register"
->>>>> at regular intervals to take a register dump. To execute this
->>>>> command, QEMU stops the run and does the register read of various
->>>>> registers. While resuming the run, the function kvm_arm_timer_write()
->>>>> writes back the saved CNTV_CTL_EL0 register with ISTATUS cleared
->>>>> always
->>>>
->>>> It is userspace that causes this write-back, right? AFAICT, KVM never
->>>> does that on its own.
->>>>
->>>>> and resulting in the loss of pending interrupt for emulated timers.
->>>>
->>>> How does a missing interrupt result in a synchronous exception in
->>>> EDK2? In my experience, EDK2 panics if it sees spurious interrupts,
->>>> not when it is missing interrupts (it just locks up, which is
->>>> expected).
->>>
->>> Not sure, why it is hitting exception, rather than hang at EDK2.
->>> However, EDK2 timer handler code is ignoring the interrupt since
->>> ISTATUS is not set and not moving CVAL forward.
->>
->> How is EDK2 getting this exception? Is this injected by KVM? Or is
->> that some EDK2 bug?
->>
->>>
->>>>
->>>>> In hardware based timers, ISTATUS is a RO/WI bit and gets set by the
->>>>> h/w, if the condition is still met. However, in Nested-Virtualization
->>>>> case, the Guest-Hypervisor's EDK2 is using an emulated virtual timer
->>>>> and losing ISTATUS state and the interrupt forever.
->>>>
->>>> Why is this specific to NV? Can't the same thing happen to the
->>>> physical timer in a non-VHE configuration?
->>>>
->>>
->>> You mean, emulated v-timer in non-VHE boot?
->>
->> Emulated *physical* timer.
->>
->>> It might impact non-VHE case as well, not tried though.
->>
->> Can you please try?
+> The base board can describe this GPIO using a nexus node:
+>      soc_gpio: gpio-controller {
+>        #gpio-cells = <2>;
+>      };
 > 
-> Sure, I will try non-VHE as well.
->>
->> [...]
->>
->>>> But overall, this very much looks like it is only papering over the
->>>> real issue, which is that the *emulation* should regenerate the
->>>> pending bit, and not rely on the userspace interface.
->>>>
->>>> As far as I can tell, we already correctly compute the status bit on
->>>> read (read_timer_ctl()), so the guest should always observe something
->>>> consistent when it traps. We also *never* use the status bit as an
->>>> input to the emulation, and always recompute it from scratch (it is
->>>> only there for the benefit of the guest or userspace).
->>>>
->>>
->>> For emulated timers, we are not asserting again by calling
->>> kvm_timer_update_irq in timer_emulate() until the level is down and
->>> ready for trigger again. This was done to fix high rate of spurious
->>> interrupts getting generated to V-Timer. Hence we are not able to
->>> recover, if once ISTATUS is lost.
->>
->> Again, a trapping read should see the correct value, since we populate
->> that bit at read time.
->>
->>>> So I can't see how upstream is broken in at the moment, and you need
->>>> to explain how this actually triggers. Ideally, with a standalone
->>>> reproducer or a selftest.
->>>
->>> We could reproduce the issue with the simple test/script.
->>> On one shell, launch L1 using qemu with add-on option
->>>
->>> "-monitor unix:gh_monitor,server,nowait
->>>
->>> On another shell, while L1 boots and still in UEFI, run repeatedly the
->>> command (or put in a while 1 loop script)
->>>
->>> "echo "info registers" | socat - unix-connect:gh_monitor >
->>> /tmp/info_registers"
->>>
->>> With above steps we were able to hit the issue within few attempts.
->>
->> That's not a standalone reproducer. QEMU doesn't support NV, and
->> kvmtool doesn't have this sort of interface. I was asking for a bit of
->> C code that I could run directly, not something that requires me to
->> drag even more experimental code.
->>
->> So here's my current guess, since you don't give me the needed
->> information. For what you describe to happen, I can only see two
->> possibilities:
->>
->> - either your HW doesn't have FEAT_ECV, in which case the guest
->>    directly reads from memory
->>
+>      connector1: connector1 {
+>          /*
+>           * Nexus node for the GPIO available on the connector.
+>           * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
+>           * controller
+>           */
+>          #gpio-cells = <2>;
+>          gpio-map = <0 0 &soc_gpio 12 0>;
+>          gpio-map-mask = <0xf 0x0>;
+>          gpio-map-pass-thru = <0x0 0xf>;
+>      };
 > 
-> We do have the FEAT_ECV on AmpereOne, I was the one reported/fixed bug
-> with FEAT_ECV(CNTPOFF offset issue) in the past.
+> The connector pin A GPIO can be referenced using:
+>    <&connector1 0 GPIO_ACTIVE_HIGH>
 > 
->> - or you are running with something like this patch [1], and we serve
->>    the guest by reading from memory very early, without returning to
->>    the bulk of the emulation code
+> This implies that the overlay needs to know about exact label that
+> references the connector. This label can be different on a different
+> board and so applying the overlay could failed even if it is used to
+> describe the exact same addon board. Further more, a given base board
+> can have several connectors where the exact same addon board can be
+> connected. In that case, the same overlay cannot be used on both
+> connector. Indeed, the connector labels have to be different.
 > 
-> I see the kernel I am testing has this patch[1].
->>
->> In either case, we only publish the updated status if the current IRQ
->> state is different from the computed output of the timer while
->> performing the emulation.
->>
->> So if you were writing back a status bit set to 0 while the interrupt
->> was already pending, we'd deliver an interrupt, but not recompute the
->> status. The guest would consider the interrupt as spurious, not touch
->> the timer, and we'd never make forward progress. Rinse, repeat.
->>
->> Assuming I got the analysis right, 
+> The export-symbols node introduced by this current series solves this
+> issue.
 > 
-> Yes, this is what I tried to explain. LR shows pending, but UEFI is not
-> consuming and treating it as spurious since ISTATUS is not set.
+> The idea of export-symbols is to have something similar to the global
+> __symbols__ node but local to a specific node. Symbols listed in this
+> export-symbols are local and visible only when an overlay is applied on
+> a node having an export-symbols subnode.
 > 
-> it would only be a matter of
->> hoisting the publication of the status into timer_emulate(), so that
->> it is made up to date on load.
->>
->> Please give the fixup below a go.
->>
+> Using export-symbols, our example becomes:
+>      soc_gpio: gpio-controller {
+>        #gpio-cells = <2>;
+>      };
 > 
-> Sure, I will give a try with below diff and let you know tomorrow.
-> This should work, I remember, this was the one of the option/fix that we
-> tried as fix while debugging.
+>      connector1: connector1 {
+>          /*
+>           * Nexus node for the GPIO available on the connector.
+>           * GPIO 0 (Pin A GPIO) is connected to GPIO 12 of the SoC gpio
+>           * controller
+>           */
+>          #gpio-cells = <2>;
+>          gpio-map = <0 0 &soc_gpio 12 0>;
+>          gpio-map-mask = <0xf 0x0>;
+>          gpio-map-pass-thru = <0x0 0xf>;
 > 
->>
->> [1] https://lore.kernel.org/all/20241202172134.384923-6-maz@kernel.org/
->>
->>  From 2bbd6f9b41a20ad573376c20c158ff3c12db5009 Mon Sep 17 00:00:00 2001
->> From: Marc Zyngier <maz@kernel.org>
->> Date: Mon, 9 Dec 2024 10:58:08 +0000
->> Subject: [PATCH] fixup! KVM: arm64: nv: Publish emulated timer
->> interrupt state
->>   in the in-memory state
->>
->> ---
->>   arch/arm64/kvm/arch_timer.c | 32 +++++++++++++-------------------
->>   1 file changed, 13 insertions(+), 19 deletions(-)
->>
->> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
->> index 895f09658ef83..91bda986c344b 100644
->> --- a/arch/arm64/kvm/arch_timer.c
->> +++ b/arch/arm64/kvm/arch_timer.c
->> @@ -432,25 +432,6 @@ static void kvm_timer_update_irq(struct kvm_vcpu
->> *vcpu, bool new_level,
->>   {
->>       int ret;
->>   -    /*
->> -     * Paper over NV2 brokenness by publishing the interrupt status
->> -     * bit. This still results in a poor quality of emulation (guest
->> -     * writes will have no effect until the next exit).
->> -     *
->> -     * But hey, it's fast, right?
->> -     */
->> -    if (is_hyp_ctxt(vcpu) &&
->> -        (timer_ctx == vcpu_vtimer(vcpu) || timer_ctx ==
->> vcpu_ptimer(vcpu))) {
->> -        u32 ctl = timer_get_ctl(timer_ctx);
->> -
->> -        if (new_level)
->> -            ctl |= ARCH_TIMER_CTRL_IT_STAT;
->> -        else
->> -            ctl &= ~ARCH_TIMER_CTRL_IT_STAT;
->> -
->> -        timer_set_ctl(timer_ctx, ctl);
->> -    }
->> -
->>       timer_ctx->irq.level = new_level;
->>       trace_kvm_timer_update_irq(vcpu->vcpu_id, timer_irq(timer_ctx),
->>                      timer_ctx->irq.level);
->> @@ -471,6 +452,19 @@ static void timer_emulate(struct
->> arch_timer_context *ctx)
->>         trace_kvm_timer_emulate(ctx, should_fire);
->>   +    /*
->> +     * Paper over NV2 brokenness by publishing the interrupt status
->> +     * bit. This still results in a poor quality of emulation (guest
->> +     * writes will have no effect until the next exit).
->> +     *
->> +     * But hey, it's fast, right?
->> +     */
->> +    if (is_hyp_ctxt(ctx->vcpu)) {
->> +        unsigned long val = timer_get_ctl(ctx);
->> +        __assign_bit(__ffs(ARCH_TIMER_CTRL_IT_STAT), &val, should_fire);
->> +        timer_set_ctl(ctx, val);
->> +    }
->> +
->>       if (should_fire != ctx->irq.level) {
->>           kvm_timer_update_irq(ctx->vcpu, should_fire, ctx);
->>           return;
+>          export-symbols {
+>            connector = <&connector1>;
+>          };
+>      };
+> 
+> With that export-symbols node, an overlay applied on connector1 node can
+> have the symbol named 'connector' resolved to connector1. Indeed, the
+> export-symbols node available at connector1 node is used when the
+> overlay is applied. If the overlay has an unresolved 'connector' symbol,
+> it will be resolved to connector1 thanks to export-symbols.
+> 
+> Our overlay using the nexus node can contains:
+>     node {
+>        foo-gpio = <&connector 0 GPIO_ACTIVE_HIGH>;
+>     };
+> It used the GPIO 0 from the connector it is applied on.
+> 
+> A board with two connectors can be described with:
+>      connector1: connector1 {
+>          ...
+>          export-symbols {
+>            connector = <&connector1>;
+>          };
+>      };
+> 
+>      connector2: connector2 {
+>          ...
+>          export-symbols {
+>            connector = <&connector2>;
+>          };
+>      };
+> 
+> In that case, the same overlay with unresolved 'connector' symbol can be
+> applied on both connectors and the correct symbol resolution (connector1
+> or connector2) will be done.
 > 
 
+I might be missing something, but how is the correct connector (connector1
+or connector2) selected? Let's say I connect my addon board to connector2,
+then I apply the addon board's overlay to the base DTB. What connector
+just got referenced?
+
+Andrew
+
+> This current series add support for the export-symbols node feature:
+>    - Patch 1 describes the export-symbols binding
+>    - Patches 2 to 6 prepare and add the support for the export-symbols
+>      feature
+>    - Patch 7 adds an unittest for the export-symbols feature
+> 
+> Best regards,
+> Hervé
+> 
+> [1] https://lpc.events/event/18/contributions/1696/
+> [2] https://lore.kernel.org/lkml/20240917-hotplug-drm-bridge-v4-0-bc4dfee61be6@bootlin.com/
+> [3] https://lore.kernel.org/lkml/20240702164403.29067-1-afd@ti.com/
+> [4] https://lore.kernel.org/lkml/20240627-mikrobus-scratch-spi-v5-0-9e6c148bf5f0@beagleboard.org/
+> [5] https://github.com/devicetree-org/devicetree-specification/blob/v0.4/source/chapter2-devicetree-basics.rst#nexus-nodes-and-specifier-mapping
+> 
+> Herve Codina (7):
+>    dt-bindings: Add support for export-symbols node
+>    of: resolver: Introduce get_phandle_from_symbols_node()
+>    of: resolver: Add export_symbols in of_resolve_phandles() parameters
+>    of: resolver: Add support for the export symbols node
+>    of: overlay: Add export_symbols_name in of_overlay_fdt_apply()
+>      parameters
+>    of: overlay: Add support for the export symbols node
+>    of: unittest: Add tests for export symbols
+> 
+>   .../devicetree/bindings/export-symbols.yaml   | 43 ++++++++++
+>   drivers/misc/lan966x_pci.c                    |  3 +-
+>   drivers/of/of_kunit_helpers.c                 |  2 +-
+>   drivers/of/of_private.h                       |  2 +-
+>   drivers/of/overlay.c                          | 30 ++++++-
+>   drivers/of/resolver.c                         | 80 ++++++++++++++-----
+>   drivers/of/unittest-data/Makefile             |  5 ++
+>   .../unittest-data/overlay_export_symbols.dtso | 15 ++++
+>   .../of/unittest-data/testcases_common.dtsi    |  1 +
+>   .../unittest-data/tests-export-symbols.dtsi   | 30 +++++++
+>   drivers/of/unittest.c                         | 76 ++++++++++++++++--
+>   include/linux/of.h                            |  6 +-
+>   12 files changed, 259 insertions(+), 34 deletions(-)
+>   create mode 100644 Documentation/devicetree/bindings/export-symbols.yaml
+>   create mode 100644 drivers/of/unittest-data/overlay_export_symbols.dtso
+>   create mode 100644 drivers/of/unittest-data/tests-export-symbols.dtsi
+> 
 
