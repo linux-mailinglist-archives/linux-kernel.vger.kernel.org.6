@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-436940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D84879E8CE5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:01:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8E09E8CF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:03:24 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A708318868F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:01:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E0AF280FC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:03:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619CB215172;
-	Mon,  9 Dec 2024 08:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45867215706;
+	Mon,  9 Dec 2024 08:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="ocZHMFtP"
+	dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b="EhZY/I7G"
 Received: from sendmail.purelymail.com (sendmail.purelymail.com [34.202.193.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC1D189B85
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12BA22156E1
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:02:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=34.202.193.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731307; cv=none; b=rztnz5rg578X0H0K6yem0Rl9Mi0y2+Px/IXG/lJ7Py6CVU/n8tgY1gSimanKA2XqFWCeYOhNdYn6Zzz3vr0N1hqHiCF06wpJT6kwdzdwXa8Gnm/Xi0RD5OBo7AhQ/fMrPTfsgIT8jVeTWqHi4tUKgv/y3pizvQ9X1YhRyGEyS84=
+	t=1733731343; cv=none; b=lcapQGM4DdG/5cEOWa0XQGoZW3pvYX180xIVCRxqVH6djrIR6CK/2RzjDIUgkfvqXWjinvqzKKoA6lGQ+W569Foy3a3UVI+SDNMCrzG+3l4ATRf5nJCbzhjg3hDqO83ME6CwZTe+WewQ1+qii2i5Pma3ugZp/7aKo6dkGmFOFmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731307; c=relaxed/simple;
-	bh=hWauk9qmL/orEsyw3cDMnhAaQarIwWnL+OGo5MfiM58=;
+	s=arc-20240116; t=1733731343; c=relaxed/simple;
+	bh=dv0IEtlj/sb10b0r+vjTZHiEAwycDAr94Z3JrfrRY0g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=uf6FAqtFztqPYQ7p1+Bp0Q+Nqjk3dJnvzc8J2vM+YTeZonNj/LshEoUNAzUdQTwQhqRZSx9HqnVUSCbyPCFynx2/qxMkpB/911c9SUIB97DwV1QnzlRccmBmJjSm01Iut4Xrbcg9H/1SuAhW+b+wXKqCbc233cMpWZWORp4NgqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=ocZHMFtP; arc=none smtp.client-ip=34.202.193.197
+	 MIME-Version:Content-Type; b=FsAcuLccqoCALERVfWODilJLxji/a8sOhHLyEn0tNLr63GClX2qgCfSoDxh2ipxbYo+A9Dv5MPomYXkHpLYrsZ0rsDinFFWURKIl9Sk9XxUM4E7JYrcq1+0Pk0WdiKWHLjmZY5wkR+riNpxwbw7fthh1VtcWZSm68vfh7wrYzug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org; spf=pass smtp.mailfrom=mentallysanemainliners.org; dkim=pass (2048-bit key) header.d=purelymail.com header.i=@purelymail.com header.b=EhZY/I7G; arc=none smtp.client-ip=34.202.193.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mentallysanemainliners.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mentallysanemainliners.org
 Authentication-Results: purelymail.com; auth=pass
-DKIM-Signature: a=rsa-sha256; b=ocZHMFtPGn7aP1iRwhCIw7cP4p8boY/4CWQpO6+swdFEUZ+NjmEoj5oE4eJ8sgdHTlzcgDLAM09fcoki+oiv23xrdSze1MY/7yyKmZHYrRqhcxUoQqWp4Dip+ZzLUfRtu7/cOcod5qFXWPlHmCvNQDCtv2xF/tWMDT0PW8gUKTZxPPCbEqQC2vD5T1d9Vx4R6iTF3/1fgndQZ41f/hnunw0bl2cfBZb/aTUREmcDFFnZIO2+liBZmZO0i0QqQyzjOaB3foSyhsTq5FH6mbpTTYZQpWni0SW9REl8piHA0Ljw1muEjqb8qtgiBOHnsetp3nafPvteluANk7vngeM7qA==; s=purelymail2; d=purelymail.com; v=1; bh=hWauk9qmL/orEsyw3cDMnhAaQarIwWnL+OGo5MfiM58=; h=Feedback-ID:Received:From:To:Subject:Date;
+DKIM-Signature: a=rsa-sha256; b=EhZY/I7GA/HHyqXbJkfc0YlaLFMF5FikenFIcoZatxtR/t4RT/I9pXJJSiXNG528ixo3Xbmq5+gRdAuIowkKGTskbYLEBCNQCvm1RE1e2iDr8oBQAyD6weyhAYkQrSSM4nQdfbvYJKrKyZKasRuwxLJbPtqwuJqrFVQ7xKij+GLIG9ovLB5/tpg5zlV8JKboirUzsmLwyEMXqNZEbtm6iRBWsUwAf5P6oupciGWLn2I34x3lQT+Um+ACWNZjma2MGbb975AMvHuknre+knvd1vu5k3Ubzfz4qSCqmC5HTDgtF8JtjgzwtASeL6pFHZcgdIUOR3wC7Vu036tKqH5dZQ==; s=purelymail2; d=purelymail.com; v=1; bh=dv0IEtlj/sb10b0r+vjTZHiEAwycDAr94Z3JrfrRY0g=; h=Feedback-ID:Received:From:To:Subject:Date;
 Feedback-ID: 68229:10037:null:purelymail
 X-Pm-Original-To: linux-kernel@vger.kernel.org
 Received: by smtp.purelymail.com (Purelymail SMTP) with ESMTPSA id 1477585645;
           (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
-          Mon, 09 Dec 2024 08:01:14 +0000 (UTC)
+          Mon, 09 Dec 2024 08:01:16 +0000 (UTC)
 From: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Alim Akhtar <alim.akhtar@samsung.com>,
@@ -47,9 +47,9 @@ Cc: linux-arm-kernel@lists.infradead.org,
 	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	igor.belwon@mentallysanemainliners.org
-Subject: [PATCH v7 2/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 Series boards (x1s-common)
-Date: Mon,  9 Dec 2024 08:00:57 +0000
-Message-ID: <20241209080059.11891-3-umer.uddin@mentallysanemainliners.org>
+Subject: [PATCH v7 3/4] arm64: dts: exynos: Add initial support for Samsung Galaxy S20 5G (x1s)
+Date: Mon,  9 Dec 2024 08:00:58 +0000
+Message-ID: <20241209080059.11891-4-umer.uddin@mentallysanemainliners.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20241209080059.11891-1-umer.uddin@mentallysanemainliners.org>
 References: <20241209080059.11891-1-umer.uddin@mentallysanemainliners.org>
@@ -63,126 +63,68 @@ Content-Transfer-Encoding: quoted-printable
 X-MIME-Autoconverted: from 8bit to quoted-printable by Purelymail
 Content-Type: text/plain; charset=UTF-8
 
-Add initial support for the Samsung Galaxy S20 Series (x1s-common) phones.
-They were launched in 2020, and are based on the Exynos 990 SoC.
-The devices have multiple RAM configurations,
-starting from 8GB going all the way up to 16GB for the S20 Ultra devices.
+Add initial support for the Samsung Galaxy S20 5G (x1s/SM-G981B)
+phone. It was launched in 2020, and it's based on the Exynos 990 SoC. It
+has only one configuration with 12GB of RAM and 128GB of UFS 3.0 storage.
 
 This device tree adds support for the following:
 
 - SimpleFB
-- 8GB RAM (Any more will be mapped in device trees)
+- 12GB RAM
 - Buttons
 
 Signed-off-by: Umer Uddin <umer.uddin@mentallysanemainliners.org>
 ---
- .../boot/dts/exynos/exynos990-x1s-common.dtsi | 98 +++++++++++++++++++
- 1 file changed, 98 insertions(+)
- create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
+ arch/arm64/boot/dts/exynos/Makefile          |  1 +
+ arch/arm64/boot/dts/exynos/exynos990-x1s.dts | 28 ++++++++++++++++++++
+ 2 files changed, 29 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/exynos/exynos990-x1s.dts
 
-diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi b/arch/ar=
-m64/boot/dts/exynos/exynos990-x1s-common.dtsi
+diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exyn=
+os/Makefile
+index 948a2c6cb..fe47aafcd 100644
+--- a/arch/arm64/boot/dts/exynos/Makefile
++++ b/arch/arm64/boot/dts/exynos/Makefile
+@@ -10,5 +10,6 @@ dtb-$(CONFIG_ARCH_EXYNOS) +=3D \
+ =09exynos8895-dreamlte.dtb=09=09\
+ =09exynos990-c1s.dtb=09=09\
+ =09exynos990-r8s.dtb               \
++=09exynos990-x1s.dtb=09=09\
+ =09exynosautov9-sadk.dtb=09=09\
+ =09exynosautov920-sadk.dtb
+diff --git a/arch/arm64/boot/dts/exynos/exynos990-x1s.dts b/arch/arm64/boot=
+/dts/exynos/exynos990-x1s.dts
 new file mode 100644
-index 000000000..55fa8e9e0
+index 000000000..1ae881015
 --- /dev/null
-+++ b/arch/arm64/boot/dts/exynos/exynos990-x1s-common.dtsi
-@@ -0,0 +1,98 @@
++++ b/arch/arm64/boot/dts/exynos/exynos990-x1s.dts
+@@ -0,0 +1,28 @@
 +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 +/*
-+ * Samsung Galaxy S20 Series device tree source
++ * Samsung Galaxy S20 5G (x1s/SM-G981B) device tree source
 + *
 + * Copyright (c) 2024, Umer Uddin <umer.uddin@mentallysanemainliners.org>
 + */
 +
 +/dts-v1/;
-+#include "exynos990.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/input/input.h>
-+#include <dt-bindings/interrupt-controller/irq.h>
++#include "exynos990-x1s-common.dtsi"
 +
 +/ {
-+=09chosen {
-+=09=09#address-cells =3D <2>;
-+=09=09#size-cells =3D <2>;
-+=09=09ranges;
++=09#address-cells =3D <2>;
++=09#size-cells =3D <2>;
 +
-+=09=09framebuffer0: framebuffer@f1000000 {
-+=09=09=09compatible =3D "simple-framebuffer";
-+=09=09=09reg =3D <0 0xf1000000 0 (1440 * 3200 * 4)>;
-+=09=09=09width =3D <1440>;
-+=09=09=09height =3D <3200>;
-+=09=09=09stride =3D <(1440 * 4)>;
-+=09=09=09format =3D "a8r8g8b8";
-+=09=09};
-+=09};
++=09model =3D "Samsung Galaxy S20 5G";
++=09compatible =3D "samsung,x1s", "samsung,exynos990";
 +
-+=09reserved-memory {
-+=09=09#address-cells =3D <2>;
-+=09=09#size-cells =3D <2>;
-+=09=09ranges;
-+
-+=09=09cont_splash_mem: framebuffer@f1000000 {
-+=09=09=09reg =3D <0 0xf1000000 0 0x1194000>;
-+=09=09=09no-map;
-+=09=09};
-+
-+=09=09abox_reserved: audio@f7fb0000 {
-+=09=09=09reg =3D <0 0xf7fb0000 0 0x2a50000>;
-+=09=09=09no-map;
-+=09=09};
-+=09};
-+
-+=09gpio-keys {
-+=09=09compatible =3D "gpio-keys";
-+
-+=09=09pinctrl-0 =3D <&key_power &key_voldown &key_volup>;
-+=09=09pinctrl-names =3D "default";
-+
-+=09=09power-key {
-+=09=09=09label =3D "Power";
-+=09=09=09linux,code =3D <KEY_POWER>;
-+=09=09=09gpios =3D <&gpa2 4 GPIO_ACTIVE_LOW>;
-+=09=09=09wakeup-source;
-+=09=09};
-+
-+=09=09voldown-key {
-+=09=09=09label =3D "Volume Down";
-+=09=09=09linux,code =3D <KEY_VOLUMEDOWN>;
-+=09=09=09gpios =3D <&gpa0 4 GPIO_ACTIVE_LOW>;
-+=09=09};
-+
-+=09=09volup-key {
-+=09=09=09label =3D "Volume Up";
-+=09=09=09linux,code =3D <KEY_VOLUMEUP>;
-+=09=09=09gpios =3D <&gpa0 3 GPIO_ACTIVE_LOW>;
-+=09=09};
-+=09};
-+};
-+
-+&oscclk {
-+=09clock-frequency =3D <26000000>;
-+};
-+
-+&pinctrl_alive {
-+=09key_power: key-power-pins {
-+=09=09samsung,pins =3D "gpa2-4";
-+=09=09samsung,pin-function =3D <EXYNOS_PIN_FUNC_EINT>;
-+=09=09samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
-+=09=09samsung,pin-drv =3D <EXYNOS5420_PIN_DRV_LV1>;
-+=09};
-+
-+=09key_voldown: key-voldown-pins {
-+=09=09samsung,pins =3D "gpa0-4";
-+=09=09samsung,pin-function =3D <EXYNOS_PIN_FUNC_EINT>;
-+=09=09samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
-+=09=09samsung,pin-drv =3D <EXYNOS5420_PIN_DRV_LV1>;
-+=09};
-+
-+=09key_volup: key-volup-pins {
-+=09=09samsung,pins =3D "gpa0-3";
-+=09=09samsung,pin-function =3D <EXYNOS_PIN_FUNC_EINT>;
-+=09=09samsung,pin-pud =3D <EXYNOS_PIN_PULL_NONE>;
-+=09=09samsung,pin-drv =3D <EXYNOS5420_PIN_DRV_LV1>;
++=09memory@80000000 {
++=09=09device_type =3D "memory";
++=09=09reg =3D <0x0 0x80000000 0x0 0x3ab00000>,
++=09=09      /* Memory hole */
++=09=09      <0x0 0xc1200000 0x0 0x1ee00000>,
++=09=09      /* Memory hole */
++=09=09      <0x0 0xe1900000 0x0 0x1e700000>,
++=09=09      /* Memory hole */
++=09=09      <0x8 0x80000000 0x2 0x7e800000>;
 +=09};
 +};
 --=20
