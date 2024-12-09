@@ -1,181 +1,124 @@
-Return-Path: <linux-kernel+bounces-437030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F569E8E44
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:01:38 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 604909E8E4C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:02:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9CEE165750
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A9DF81886582
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:00:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53487216611;
-	Mon,  9 Dec 2024 08:55:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E680215713;
-	Mon,  9 Dec 2024 08:55:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 546BC215F5C;
+	Mon,  9 Dec 2024 08:56:05 +0000 (UTC)
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4990C215F5A;
+	Mon,  9 Dec 2024 08:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734533; cv=none; b=G30N9iiMgW9WSZXIKDy1wrzG9gImLIctktOgItTam2+DwzXO4+8jC9QcC3M/Cca2IfyFpbGJRlVVc2/i3+XZeA8EwOySS4HpuEG8zhEEpM0PC5zPa3yEuveFd/+RKktvazMtiCEkA6naZ8SBKLwSz3SmDQDff6MIiCgqLW1MM5Q=
+	t=1733734565; cv=none; b=Fh1/ZUd/4W+T+7F2Z7x70aQpMJbIoBlUUECEfe8WbTi1QGMkBa1Rk8C4+vl46h5c2JcXrUxq/RltzUz4Lxk4QkZ8gQ7aSZbnfitZi1Q8aDGavFgQmQkdIJfWkZYpYQ22H6dfDG+Tdhtsb6+JISj2sSUNuAQ3f98WHG2HDfkxcgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734533; c=relaxed/simple;
-	bh=j7yWxgVjzEYt+riuTqPpXYEMgNrJHkMXMCMnYcC0HLk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Qgmn3wCudXXSFXsq3tnHjudvT/ubZVrAnYb7ecYbmJPy4V4QqrSImfasIKCuxNuDris8nxshxxxnLEvHw2FjFnGBsOdRoS7kDuD92B22XsU2gKQ41H424LPI7nlx8D+VuMz44hRsu3F7eggCD1JWPGpAUvDJFjvWoS2qdKsbSPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 31B00113E;
-	Mon,  9 Dec 2024 00:55:58 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B9C263F720;
-	Mon,  9 Dec 2024 00:55:29 -0800 (PST)
-Date: Mon, 9 Dec 2024 08:55:24 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	James Clark <james.clark@linaro.org>,
-	Tim Chen <tim.c.chen@linux.intel.com>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kyle Meyer <kyle.meyer@hpe.com>
-Subject: Re: [PATCH v1] perf cpumap: Reduce cpu size from int to int16_t
-Message-ID: <20241209085524.GC5430@e132581.arm.com>
-References: <20241207052133.102829-1-irogers@google.com>
+	s=arc-20240116; t=1733734565; c=relaxed/simple;
+	bh=NFk5AHP1WzcwCnF1yLNTssPwFD+Hxat6kdDIFCsmMUc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e4wfxbcH/b8t66oi5gfDXErQ0O1M7IcNNxFqftq4JYy9MMHFOCdr/aMnrTTwOMaT8Fu9VZQRbtUj7guRm3X6wdCOZgRJ5cPsRApeOGg6ghhrN/P31B7524WJgKN3QDWbAYUEk0zr045DiKQDrjYLVTz/INwIJYPxHorHpqlxfRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f49.google.com with SMTP id a1e0cc1a2514c-85b0a934a17so2686334241.1;
+        Mon, 09 Dec 2024 00:56:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733734561; x=1734339361;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Bzbi+zwrT7LVfp++4Pd6gcn4qoo/SBJnwYE7iRP5rR8=;
+        b=aiFtTj4RIYzmcN7kQUwaxQx0GGoHS6oBg9e/YDT1fnziUmviXEHOCFCEOilqXv4XAp
+         ZdPtRLcu9BsHKHVzu9MuWUy2M6BLLIOpyLhg/66xXNwuBCXoRdpOykYjKWGcYBtp68up
+         nAL6o+Utr1afrhg8hJ7V1uMh/UuyOuuwfI0jij15YknN5ub09FmKjO2Ek+3qJ0P/mNQ8
+         qnjUX807NEEzMyYefU1AXr7riNon3g9bxeE02HbUaD3hHNZd5wxGTukwNkP19JdcGm5N
+         cgdUyCu6zqwV3WqF8QvYp5XkMj8krWGIHOdfWfpjQIVjKOxXmeg3k7i49dHXb7VBUaWH
+         913A==
+X-Forwarded-Encrypted: i=1; AJvYcCUFKAy3RRcX7c5AQQIHgxFrI6i25n49LQBPJRMJnOXTZ5N83mIDXpZEHC5XBQiSiTr/qGJrdNM0DRw8USnh@vger.kernel.org, AJvYcCUmgK7B+JBVs1fydOrd5p/LeHO+ZpiECmGTslJmsFkQIVpj2lbLp3NwnOvkR6aNo14eEahJgP5z9I8a343C5NA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsZ2G9BMaiEzluR5yYMvddazm9ttd5gXZ22mde8rA+d164HG1p
+	pTAh42dR4EyS8yvcdJuAYS8dgjTHVDMpZDCnMkM6j0ar9VVb+vYnwnHxvGQeVbo=
+X-Gm-Gg: ASbGncsS7txEhLEKuFDVBYok0S6X9pEFStdnGaxmJOJLjbPiMmbubnSh2VsyVjAON66
+	eyzX+WSlmzaUcOjZIYtMDbPiwY6TLhQXXer3tRHwr8drGvPQayfUrsfPpVa1WcnrzWkNTsmbO6M
+	3sOUZbm/U/D9+5ZCDtpjuhgh2yLHWjXc3ZqpCm0f1inhJao+2j86+bPjj/UpH7T0FLRGtWD3yAg
+	RSJ2UeWdr0Z0NqZIHnSUtUiemDYF2jcUBUJt8vCqhnT+YxuUcHO53og+O3dYDNx9qifTxTwy2VN
+	/9Te473yH8LU
+X-Google-Smtp-Source: AGHT+IHXxzNiIy7BRb20W61inpirpSwfAcjUeZRNU6HCcVmpqsggHgzPTAiwbVFExv7Bj963KqTlgA==
+X-Received: by 2002:a05:6102:c0a:b0:4af:ef82:ce8d with SMTP id ada2fe7eead31-4afef82de4fmr2559213137.0.1733734561384;
+        Mon, 09 Dec 2024 00:56:01 -0800 (PST)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com. [209.85.217.48])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4afde356522sm683913137.16.2024.12.09.00.56.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 00:56:00 -0800 (PST)
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4aff04f17c7so607711137.0;
+        Mon, 09 Dec 2024 00:56:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVBRN7vpiyE5z0Hu0V1NBK106QlY6gHgiahZ4RpG2tty5ahzZkVNoWcINAkhQ713tbXIkRDU3YFUN47SlgkBL8=@vger.kernel.org, AJvYcCVykIsRgJ87NZzZ2S0SC4u+Jhy4OJzRq27o7lTJScFKoxox8kocWXxwJ0tL346Q/MT5Q+zIOcCyxWtHtqUI@vger.kernel.org
+X-Received: by 2002:a05:6102:3311:b0:4af:dcf3:b384 with SMTP id
+ ada2fe7eead31-4afdcf3b504mr7969626137.11.1733734560816; Mon, 09 Dec 2024
+ 00:56:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241207052133.102829-1-irogers@google.com>
+References: <35fab997bcac76cd4135797a4968c2c72511dcb9.1733523925.git.christophe.jaillet@wanadoo.fr>
+ <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
+In-Reply-To: <f205c8ab886a4e12b2ceda6f89c873a9d921625d.1733523925.git.christophe.jaillet@wanadoo.fr>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 09:55:48 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
+Message-ID: <CAMuHMdVaJyW3bvTxRfcDavA9HaukUDGBaTWRoUtrwjy_rb2DpA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] auxdisplay: img-ascii-lcd: Constify struct img_ascii_lcd_config
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Paul Burton <paulburton@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ian,
-
-On Fri, Dec 06, 2024 at 09:21:33PM -0800, Ian Rogers wrote:
-> 
-> Fewer than 32k CPUs are currently supported by perf. A cpumap stores
-> an int per CPU, so its size is 4 times the number of CPUs in the
-> cpumap.
-
-Maybe I have a stupid question.  An int value has 4 bytes, on the other
-hand, we needs 2 bytes to store a 32k value (even 4096 needs 2 bytes
-for storing the value).
-
-How can conclude "its size is 4 times the number of CPUs"?
-
-> We can reduce the size of the int to an int16_t, saving 2
-> bytes per CPU in the map.
+On Fri, Dec 6, 2024 at 11:26=E2=80=AFPM Christophe JAILLET
+<christophe.jaillet@wanadoo.fr> wrote:
+> 'struct img_ascii_lcd_config' is not modified in this driver.
 >
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/lib/perf/include/perf/cpumap.h |  3 ++-
->  tools/perf/util/cpumap.c             | 13 ++++++++-----
->  tools/perf/util/env.c                |  2 +-
->  3 files changed, 11 insertions(+), 7 deletions(-)
-> 
-> diff --git a/tools/lib/perf/include/perf/cpumap.h b/tools/lib/perf/include/perf/cpumap.h
-> index cbb65e55fc67..760a9aae9884 100644
-> --- a/tools/lib/perf/include/perf/cpumap.h
-> +++ b/tools/lib/perf/include/perf/cpumap.h
-> @@ -4,10 +4,11 @@
-> 
->  #include <perf/core.h>
->  #include <stdbool.h>
-> +#include <stdint.h>
-> 
->  /** A wrapper around a CPU to avoid confusion with the perf_cpu_map's map's indices. */
->  struct perf_cpu {
-> -       int cpu;
-> +       int16_t cpu;
->  };
-> 
->  struct perf_cache {
-> diff --git a/tools/perf/util/cpumap.c b/tools/perf/util/cpumap.c
-> index 27094211edd8..85e224d8631b 100644
-> --- a/tools/perf/util/cpumap.c
-> +++ b/tools/perf/util/cpumap.c
-> @@ -427,7 +427,7 @@ static void set_max_cpu_num(void)
->  {
->         const char *mnt;
->         char path[PATH_MAX];
-> -       int ret = -1;
-> +       int max, ret = -1;
-> 
->         /* set up default */
->         max_cpu_num.cpu = 4096;
-> @@ -444,10 +444,12 @@ static void set_max_cpu_num(void)
->                 goto out;
->         }
-> 
-> -       ret = get_max_num(path, &max_cpu_num.cpu);
-> +       ret = get_max_num(path, &max);
->         if (ret)
->                 goto out;
-> 
-> +       max_cpu_num.cpu = max;
-> +
->         /* get the highest present cpu number for a sparse allocation */
->         ret = snprintf(path, PATH_MAX, "%s/devices/system/cpu/present", mnt);
->         if (ret >= PATH_MAX) {
-> @@ -455,8 +457,9 @@ static void set_max_cpu_num(void)
->                 goto out;
->         }
-> 
-> -       ret = get_max_num(path, &max_present_cpu_num.cpu);
-> -
-> +       ret = get_max_num(path, &max);
-> +       if (!ret)
-> +               max_present_cpu_num.cpu = max;
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+>
+> On a x86_64, with allmodconfig:
+> Before:
+> =3D=3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>    6110     728       0    6838    1ab6 drivers/auxdisplay/img-ascii-lcd.=
+o
+>
+> After:
+> =3D=3D=3D=3D=3D
+>    text    data     bss     dec     hex filename
+>    6198     632       0    6830    1aae drivers/auxdisplay/img-ascii-lcd.=
+o
+>
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-This is an improvement for max CPU number, but it is irrevelant to
-changing the CPU type to int16_t.  It is better to split it into a new
-patch.
+Reviewed-by: Geert Uytterhoeven <geert@linux-m68k.org>
 
-If get an error for max present CPU number, should we rollback to 4096
-for both max_cpu_num and max_present_cpu_num?
+Gr{oetje,eeting}s,
 
-Thanks,
-Leo
+                        Geert
 
->  out:
->         if (ret)
->                 pr_err("Failed to read max cpus, using default of %d\n", max_cpu_num.cpu);
-> @@ -606,7 +609,7 @@ size_t cpu_map__snprint(struct perf_cpu_map *map, char *buf, size_t size)
->  #define COMMA first ? "" : ","
-> 
->         for (i = 0; i < perf_cpu_map__nr(map) + 1; i++) {
-> -               struct perf_cpu cpu = { .cpu = INT_MAX };
-> +               struct perf_cpu cpu = { .cpu = INT16_MAX };
->                 bool last = i == perf_cpu_map__nr(map);
-> 
->                 if (!last)
-> diff --git a/tools/perf/util/env.c b/tools/perf/util/env.c
-> index e2843ca2edd9..f1d7d22e7e98 100644
-> --- a/tools/perf/util/env.c
-> +++ b/tools/perf/util/env.c
-> @@ -531,7 +531,7 @@ int perf_env__numa_node(struct perf_env *env, struct perf_cpu cpu)
-> 
->                 for (i = 0; i < env->nr_numa_nodes; i++) {
->                         nn = &env->numa_nodes[i];
-> -                       nr = max(nr, perf_cpu_map__max(nn->map).cpu);
-> +                       nr = max(nr, (int)perf_cpu_map__max(nn->map).cpu);
->                 }
-> 
->                 nr++;
-> --
-> 2.47.0.338.g60cca15819-goog
-> 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
