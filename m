@@ -1,156 +1,139 @@
-Return-Path: <linux-kernel+bounces-436817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25E239E8B50
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:04:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7B69E8B52
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:04:57 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24658161419
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:04:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F1D4281575
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:04:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479052139C7;
-	Mon,  9 Dec 2024 06:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DAB72135CD;
+	Mon,  9 Dec 2024 06:04:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="LsYQHE49"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EwVdjHka"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16BBB15B115
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1413915B115
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:04:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733724271; cv=none; b=j/aVWaWCYs2ZPBWAbmJcGAcBXTaeLVNI4RnAiZ+ZDUKQdWee++/qtJ59hVVPs1kbHxib6mixokCTwkkdEvCuAWFgXP79XaKT8VdCjlLbFBhQjnh1l1Qay2B2liI1G81CAMwffGFxJJjLwiodrNse3Te/OO7zTc4SvpU2FL5HB2c=
+	t=1733724288; cv=none; b=EPQnKmdg1rLJKHFPsZWzrwa4Qd1MjgLVdU+NiUjTjJ23rqTaMtINBCMsFZrZaY1TmK5Exsxx2HkQVvwJco6sRDorRjoVu2ZWf0iYzyHXWis4N1qdINNlix3Y4c5uEpReb9a8UkBs5+fSRzvHtWpO62kLrtFTesUuQz79dwFO5pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733724271; c=relaxed/simple;
-	bh=F4vouyVtcKW0X8jSdaJkiCxfL9VYGc6mP6tX/c3lWDA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=ROaewrehPGX/mJcWnXWYhkP/V9vBuZfDwf1AX3a0VEZeWxWkyDZMjvh3GItjpgvB0jcTF+mLrbi7jgwhO5hXhithrrZ4B8Z5R6nAbK3dO3NcL2ls+XGGKDiz8c35BppR7yA2lSXS3DnquRiXYeE6hVSC+hBgf8kBAidm9dgXLx4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=LsYQHE49; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7fc88476a02so3329911a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 22:04:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1733724265; x=1734329065; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4xBLZIFuwdPdIo7c9yIdBVJBPUeOE/XllfXOGGCfPYA=;
-        b=LsYQHE496pg9BA6LE2dn9A+BOVKHc0A6jsKr9ryx2Wu1sCkWSdE9HMfuMjw1wPoVgy
-         cqBKdd7Pz6jyI2IOXZKINh+QEfS66jIvn4C8UWKaY4DzQCSm+IUeinD3C6JQtUr9OWBv
-         1Ur22+/g8PHZRxOF1wkPWIKzHgadSlX6/tBmHFAaWoi3UBdUsExajDcYzxBa9zzjUhxK
-         YmxFNUiv31xVoSMY353Kbj++POQRtJnilwfTepjJ89r0G+J3QRvxY7VVE8j1b2HXY/ea
-         +7pE1ZYCuM6OsTkmCSO4CLJ6vIIhwDW5F3DlhDUykHfyB2/Zk5h5jcPcJDuQIcNjRlFL
-         qsUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733724265; x=1734329065;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4xBLZIFuwdPdIo7c9yIdBVJBPUeOE/XllfXOGGCfPYA=;
-        b=wbKNO+qkIbpFZhCsTupHpoG4PFDP6cqL6to0PzqfeQueSM7RvL2w6sXWTOVBgQIPNp
-         7DoU+8ZecHzO+uYt27eRrJHwqs9d/cSeq8bqbI/lVxj/iOrAkIn0ZnOqA0bL7YyA5JXM
-         fHvlXfg9PTsT8XWKjyRhSbzd1/lkGD9Y13wbw2axzAwuwFOKMLQHfc1RMSOMOLmd6q8Y
-         FG4+dnVP+vwWhTw39LuL48cMWQI+siUJ6nIBVxUIkmiT4YL6l+4+TsThNEtO9QhQeyeq
-         kMemnry3BGcnwAc71dTecn/r35waZY7VHguqy5t2JPHKEmGc1ySGtQ/rUjku3noxxl6M
-         oWdw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUgEn4Q8cphkkWwwCBK39EOn2OibCLC6Ytc/DgSX7YpQ/dX/pDuyu1cEL4I5Z5Xua/GKSi7BnlSydakEc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAPS4xW4qGkcvn1Rh3WNChethNNxZxnOrYAVSY27qPlfOYGzxR
-	gkHRrlSrrPBK1VmpZYUXQ1LO5M/aicW3TVSi8DLBLWGv35xMeLsKdVshw51vkzA=
-X-Gm-Gg: ASbGncvr/bdCrlUU5WttCFASA/GIWLz8mUZuW3elKYNEUTDdpwp/cuYob0hK0hvw43B
-	AlNEl7uo14bB0FtX4SdRDqM/52HuPs37lwFOzC31g75xHaMcR0913ERVTruaFG5XlUJexJSImgm
-	/ZCSDwJJr9fBAyGg3ANdRBy7uDR4u535afjjmjw7GmDY1ag3+JKDJ9b003Q6SF2Qc8TKF8tI/ok
-	m+x8Ro2i8DTXylFI8DFlaMig8WYSvFIcd7MGfQSsRvxtUjwFd5NeIsWgWpeJg==
-X-Google-Smtp-Source: AGHT+IGnNpiYR9YRPDiKPN9Q5vTAOHi7xpfdLlQY2S9l/FJYyvgp5XVUlnCd4fDLpn15Z3eTjLxA7A==
-X-Received: by 2002:a05:6a21:7895:b0:1e1:ab63:c5ed with SMTP id adf61e73a8af0-1e1ab63c75cmr2452719637.23.1733724265250;
-        Sun, 08 Dec 2024 22:04:25 -0800 (PST)
-Received: from localhost ([106.38.221.187])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725e34bbb17sm2104894b3a.56.2024.12.08.22.04.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 08 Dec 2024 22:04:24 -0800 (PST)
-From: Jian Zhang <zhangjian.3032@bytedance.com>
-To: wsa+renesas@sang-engineering.com,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] i2c: slave-eeprom: add latch mode
-Date: Mon,  9 Dec 2024 14:04:21 +0800
-Message-ID: <20241209060422.1021512-1-zhangjian.3032@bytedance.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1733724288; c=relaxed/simple;
+	bh=99pe9ksJU69ub4rhHqc+3iWA6ySe6oKqqJXc7JbC3C8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=OeEjVFwMOuUQtVVb2SBB1f+YhJde10bJDnJMp84wpInqqGuitvLMpyIsUGa/ZhrUaSo52jKUhfEMWSk5jJFIRykGHfROo3BOCANpxTedfEjLXlvdG0vuWX/VjbE1EVkGAHa3dFc/lguo6d2JlkpOaCm3Ot6PB/2aHmo2nrHF1jQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EwVdjHka; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MbAle007595;
+	Mon, 9 Dec 2024 06:04:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	l9PuvcdJwOfZRRtqfiDwVA80nV3LXQEx4Lzfhz9vGo8=; b=EwVdjHkatrI5GG3H
+	N73j41v6k6JdMM1M6jCSsmnaSCX9PMvhvR2tlAd6+0VQnqW3oI0MTFnWJn7m5U7q
+	84uhVoHBnH2n/qDOQBjYb6Ekc4VieJ+7SurGa6XCkY1KI84if3LWegxO5NSFlEVI
+	yI0txNFG27Tpp7l3CKQGUgnzdSLSbQMELZsC4xpKqTYp+EKguaKYWvVPY6e7HR/7
+	/ZiSMxKJSf2mU28l4mqXV/PmnT//NcouqEVKF7MqLN4ueay0ooo5Zyir9eMxA7l5
+	co51QRFInPP/RgVCETSByJ/CIcZOLzEWDZaWw6j0J2jBH7JUHUChoOtLCOb2Wda2
+	GGW1ZQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdc6bk5m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 06:04:26 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B964PZD024630
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 06:04:25 GMT
+Received: from [10.239.132.245] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
+ 22:04:22 -0800
+Message-ID: <4d2f42fc-26b3-4924-b855-86bea92c03b0@quicinc.com>
+Date: Mon, 9 Dec 2024 14:04:22 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] Fix subsection vmemmap_populate logic
+To: Andrew Morton <akpm@linux-foundation.org>
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <ardb@kernel.org>,
+        <ryan.roberts@arm.com>, <mark.rutland@arm.com>, <joey.gouly@arm.com>,
+        <dave.hansen@linux.intel.com>, <chenfeiyang@loongson.cn>,
+        <chenhuacai@kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241121071256.487220-1-quic_zhenhuah@quicinc.com>
+ <eb4d6674-494a-4a84-bade-481b0c89eb93@quicinc.com>
+ <b2681eed-d4d5-43c9-90e0-3e706db3e201@quicinc.com>
+ <20241206221446.e5e8ea4ed85d0f2884216b82@linux-foundation.org>
+Content-Language: en-US
+From: Zhenhua Huang <quic_zhenhuah@quicinc.com>
+In-Reply-To: <20241206221446.e5e8ea4ed85d0f2884216b82@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gEA3ebkkEJ32vvvchaRD_vnBfXDIDlXW
+X-Proofpoint-GUID: gEA3ebkkEJ32vvvchaRD_vnBfXDIDlXW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ mlxlogscore=951 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090048
 
-The read operation is locked by byte, while the write operation is
-locked by block (or based on the amount of data written). If we need to
-ensure the integrity of a "block" of data that the other end can read,
-then we need a latch mode, lock the buffer when a read operation is
-requested.
 
-Signed-off-by: Jian Zhang <zhangjian.3032@bytedance.com>
----
- drivers/i2c/i2c-slave-eeprom.c | 23 ++++++++++++++++++++++-
- 1 file changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/i2c-slave-eeprom.c b/drivers/i2c/i2c-slave-eeprom.c
-index 5946c0d0aef9..29246ac7d350 100644
---- a/drivers/i2c/i2c-slave-eeprom.c
-+++ b/drivers/i2c/i2c-slave-eeprom.c
-@@ -33,7 +33,9 @@ struct eeprom_data {
- 	u16 address_mask;
- 	u8 num_address_bytes;
- 	u8 idx_write_cnt;
-+	bool latch;
- 	bool read_only;
-+	u8 *buffer_latch;
- 	u8 buffer[];
- };
- 
-@@ -49,6 +51,11 @@ static int i2c_slave_eeprom_slave_cb(struct i2c_client *client,
- 
- 	switch (event) {
- 	case I2C_SLAVE_WRITE_RECEIVED:
-+		if (eeprom->latch) {
-+			spin_lock(&eeprom->buffer_lock);
-+			memcpy(eeprom->buffer_latch, eeprom->buffer, eeprom->bin.size);
-+			spin_unlock(&eeprom->buffer_lock);
-+		}
- 		if (eeprom->idx_write_cnt < eeprom->num_address_bytes) {
- 			if (eeprom->idx_write_cnt == 0)
- 				eeprom->buffer_idx = 0;
-@@ -69,7 +76,10 @@ static int i2c_slave_eeprom_slave_cb(struct i2c_client *client,
- 		fallthrough;
- 	case I2C_SLAVE_READ_REQUESTED:
- 		spin_lock(&eeprom->buffer_lock);
--		*val = eeprom->buffer[eeprom->buffer_idx & eeprom->address_mask];
-+		if (eeprom->latch)
-+			*val = eeprom->buffer_latch[eeprom->buffer_idx & eeprom->address_mask];
-+		else
-+			*val = eeprom->buffer[eeprom->buffer_idx & eeprom->address_mask];
- 		spin_unlock(&eeprom->buffer_lock);
- 		/*
- 		 * Do not increment buffer_idx here, because we don't know if
-@@ -152,6 +162,17 @@ static int i2c_slave_eeprom_probe(struct i2c_client *client)
- 	if (!eeprom)
- 		return -ENOMEM;
- 
-+	if (of_property_read_bool(client->adapter->dev.of_node, "use-latch")) {
-+		dev_info(&client->dev, "Using latch mode");
-+		eeprom->latch = true;
-+		eeprom->buffer_latch = devm_kzalloc(&client->dev, size, GFP_KERNEL);
-+		if (!eeprom->buffer_latch)
-+			return -ENOMEM;
-+	} else {
-+		eeprom->buffer_latch = NULL;
-+		eeprom->latch = false;
-+	}
-+
- 	eeprom->num_address_bytes = flag_addr16 ? 2 : 1;
- 	eeprom->address_mask = size - 1;
- 	eeprom->read_only = FIELD_GET(I2C_SLAVE_FLAG_RO, id->driver_data);
--- 
-2.47.0
+On 2024/12/7 14:14, Andrew Morton wrote:
+> On Fri, 6 Dec 2024 17:13:39 +0800 Zhenhua Huang <quic_zhenhuah@quicinc.com> wrote:
+> 
+>>
+>>
+>> On 2024/11/28 15:26, Zhenhua Huang wrote:
+>>>
+>>>
+>>> On 2024/11/21 15:12, Zhenhua Huang wrote:
+>>>> To perform memory hotplug operations, the memmap (aka struct page)
+>>>> will be
+>>>> updated. For arm64 with 4K page size, the typical granularity is 128M,
+>>>> which corresponds to a 2M memmap buffer.
+>>>> Commit 2045a3b8911b ("mm/sparse-vmemmap: generalise
+>>>> vmemmap_populate_hugepages()")
+>>>> optimizes this 2M buffer to be mapped with PMD huge pages. However,
+>>>> commit ba72b4c8cf60 ("mm/sparsemem: support sub-section hotplug")
+>>>> which supports 2M subsection hotplug granularity, causes other issues
+>>>> (refer to the change log of patch #1). The logic is adjusted to populate
+>>>> with huge pages only if the hotplug address/size is section-aligned.
+>>>
+>>> Could any expert please help review ?
+>>
+>> Gentle reminder for review..
+>>
+> 
+> 
+> MM developers work on the linux-mm mailing list, which was not cc'ed.
+> 
+> Please address Catalin's review comment
+> (https://lkml.kernel.org/r/Z1Mwo5OajFZQYlOg@arm.com) then resend a v2
+> series with the appropriate cc's.
+
+Thanks Andrew! Will do. I was realizing I couldn't fully rely on 
+get_maintainers script :)
+
+> 
+> 
 
 
