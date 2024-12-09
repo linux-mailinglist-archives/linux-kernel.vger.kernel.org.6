@@ -1,84 +1,158 @@
-Return-Path: <linux-kernel+bounces-438093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 225569E9CB0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:11:42 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE1AA1667B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:11:32 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FBEA152E0C;
-	Mon,  9 Dec 2024 17:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Q8VMzWgb"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF95A9E9CB3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:11:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20822143871;
-	Mon,  9 Dec 2024 17:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60164282AAB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:11:58 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887D3152E0C;
+	Mon,  9 Dec 2024 17:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SKNHG60J"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ABA213AA2F;
+	Mon,  9 Dec 2024 17:11:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764289; cv=none; b=NA6aoFn8A0BUN79kh2DsXjccg4rdcVgOfxQzfDm3cRK4uDxWxaGhtxxrDwNQKT8OHpugf/y0ifDmIK0d04TmH7tkzHqcFfgjdkheg3y8/V1PbWXyn+V0qAOIBFv9HD6Aw/vYzch1QK0rdssq032f8BqAFsjx8zR6DJ6IftQni0E=
+	t=1733764311; cv=none; b=okcIeRyWIvJ1sig6eHiyRUDULCrvAN+5MU2OeoQuKeGqNAcbW/ExnqDz6Lf53eIcTI+4KsHk8M0Hxarkv7aqaifgnAVZFKBOkovx+cug5QIHMkeYi6TvReQUOncDIWTPxvubbk5gtyo7j6n5K+uEUXK3HeLVvw2nj+KEBihMMLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764289; c=relaxed/simple;
-	bh=ngMmvBElSZG0QFrk2B2dVDCtmQH1Qc2tCmNXX3Dvnss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuGxWHPV+aaQdQ+8FQ9gNZpqsk8hWLScFGRh9FrHYjx1csueKM+XJ6qiPO7Y2K1lAJxFJYoBkALrvjAIVi33kNlassxTQIqwKNcGz80z4Y/yisAa39YSXkxlU4BaydKXmaRnaC1Gkppl3uA/VUFOnMSfNVXUth3RE4UGpsibv/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Q8VMzWgb; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=B/1VlGu9aZrC/pPeI68fRvjJG+KMxrkY7sSrAbkXbT8=; b=Q8VMzWgbMvHGCD4qrAQ3Qq7DIt
-	mgvx7hG9QGfxtGtJBscvnUOFD1em46UmyECwC7O47ZQ2ksAEsbHSoQIRJ2B1JqsX2P0JOnulMPImL
-	lMAlabWGvjTFieyK2F8gw0iV0qj/ItbAgYVnxErOjA2KGVkCkcKnzThOHd97IMYK8ePc=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tKhHz-00FhIO-LJ; Mon, 09 Dec 2024 18:11:19 +0100
-Date: Mon, 9 Dec 2024 18:11:19 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Tarun Alle <Tarun.Alle@microchip.com>
-Cc: arun.ramadoss@microchip.com, UNGLinuxDriver@microchip.com,
-	hkallweit1@gmail.com, linux@armlinux.org.uk, davem@davemloft.net,
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: phy: microchip_t1: Autonegotiaion
- support for LAN887x T1 phy
-Message-ID: <1d230d3c-740b-4876-a0f7-e48361b6d238@lunn.ch>
-References: <20241209161427.3580256-1-Tarun.Alle@microchip.com>
- <20241209161427.3580256-3-Tarun.Alle@microchip.com>
+	s=arc-20240116; t=1733764311; c=relaxed/simple;
+	bh=V1IRcBKz+2MDX3a2wbdxLqvqdh2IYyh5G7XBYuuSfLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m/AMynYQq5qYC5qFSLrFaytAbILkKU4pvf31iVqMgWowiQuA9rHqrdljPjCljgOSyL4LHaywIbZB7bEZOiDN6l13Yvvx/BmSpDu1PPRDKOHWVimyDY7srj5vh3qdl28P3+/mUzDNc9OUOse7EP2+B+vb4/C+3vOHWyKSaOls3tE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SKNHG60J; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733764310; x=1765300310;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=V1IRcBKz+2MDX3a2wbdxLqvqdh2IYyh5G7XBYuuSfLY=;
+  b=SKNHG60J4qkKbhDrQNhOzVz27eAYpF/rTuh9QG27phsgSWwOw3IGiAUj
+   wACnwlV8uhplpfP0Xff54KL/S8kO+8cj/xLri7IJTgEvCTikRbP6o/en1
+   QnXLxCZcsYLstTSZWAG0PkGdHD09u5qhFue+kujPXrmCd3w02fqgiFMs6
+   eSgb2lBPpVAItJDQ6xVzgIYfUL4l9VpYeHr02QtO2vPJkiHrGhNhPzT7x
+   hK1s7d24S/KWHL4f9uDGP+7CZghe/hmJ4nLjr33Q5mxnxGBY7mTLAGTfK
+   j0dIRZxh/VnQifIiH36D+qF3TcuEaF0qOT/NsbdFQXRpLfag+qAGj+UGx
+   A==;
+X-CSE-ConnectionGUID: y94XWhsVS4G6EH9zuZIKPA==
+X-CSE-MsgGUID: pfRTDk/PQHe8uFhdbXKwKA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="44753537"
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="44753537"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 09:11:49 -0800
+X-CSE-ConnectionGUID: TajxL1saTNujHZuZO6NrXA==
+X-CSE-MsgGUID: FonTT+X8STypXpMdREj3wg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,220,1728975600"; 
+   d="scan'208";a="99607066"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.89.141])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 09:11:47 -0800
+Message-ID: <4ee01e24-176e-46ac-9ecd-a0976490cbdc@intel.com>
+Date: Mon, 9 Dec 2024 19:11:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241209161427.3580256-3-Tarun.Alle@microchip.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/6] mmc: sdhci: Use EXPORT_PM_FN_NS_GPL() for
+ exporting PM functions
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Ulf Hansson <ulf.hansson@linaro.org>,
+ Victor Shih <victor.shih@genesyslogic.com.tw>, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Linux PM list <linux-pm@vger.kernel.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20241101101441.3518612-1-andriy.shevchenko@linux.intel.com>
+ <20241101101441.3518612-2-andriy.shevchenko@linux.intel.com>
+ <7b5fcb3e-e3e7-4d87-9a7b-5570e2e85a0e@intel.com>
+ <Z1ccjxyxO0NMNbkm@smile.fi.intel.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <Z1ccjxyxO0NMNbkm@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> -	/* First patch only supports 100Mbps and 1000Mbps force-mode.
-> -	 * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
-> -	 */
-> -	linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
-> -
+On 9/12/24 18:36, Andy Shevchenko wrote:
+> On Mon, Dec 09, 2024 at 12:38:59PM +0200, Adrian Hunter wrote:
+>> On 1/11/24 12:11, Andy Shevchenko wrote:
+>>> Switch from ugly ifdeffery to using EXPORT_PM_FN_NS_GPL()
+>>> for exporting PM functions. This helps cleaning up the other
+>>> SDHCI drivers in the future.
+>>
+>> It seems sdhci is the first code in the kernel to use
+>> EXPORT_PM_FN_NS_GPL() but it was not asked for ;-)
+>>
+>> As such, can you fill in a little background.  I am not
+>> sure what it achieves.  Why have CONFIG_PM if not to
+>> #ifdef dependent code behind it?
+> 
+> It makes sure that the code elimination happens at compile time and
 
-What are the backwards compatibility issues here? I would at least
-expect some comments in the commit message. As far as i understand, up
-until this patch, it always required forced configuration. With this
-patch, it suddenly will auto-neg by default? If the link partner is
-not expecting auto-neg, that will fail.
+Does it eliminate the code?  Maybe I am missing something,
+but it looks like it is still there:
 
-> +/* LAN887X Errata: 100M master issue. Dual speed in Aneg is not supported. */
+$ grep CONFIG_PM .config
+# CONFIG_PM is not set
+# CONFIG_PMIC_OPREGION is not set
+# CONFIG_PMBUS is not set
+# CONFIG_PMIC_ADP5520 is not set
+# CONFIG_PMIC_DA903X is not set
+CONFIG_PM_DEVFREQ=y
+# CONFIG_PM_DEVFREQ_EVENT is not set
+CONFIG_PM_OPP=y
+$ objdump -d drivers/mmc/host/sdhci.ko | grep sdhci_suspend_host
+00000000000089f0 <__pfx_sdhci_suspend_host>:
+0000000000008a00 <sdhci_suspend_host>:
+    8a16:       e8 00 00 00 00          call   8a1b <sdhci_suspend_host+0x1b>
+    8a29:       74 0c                   je     8a37 <sdhci_suspend_host+0x37>
+    8a35:       75 54                   jne    8a8b <sdhci_suspend_host+0x8b>
+    8a4c:       0f 85 06 01 00 00       jne    8b58 <sdhci_suspend_host+0x158>
+    8a66:       0f 85 00 01 00 00       jne    8b6c <sdhci_suspend_host+0x16c>
+    8a7b:       e8 00 00 00 00          call   8a80 <sdhci_suspend_host+0x80>
+    8a86:       e9 00 00 00 00          jmp    8a8b <sdhci_suspend_host+0x8b>
+    8a92:       75 0a                   jne    8a9e <sdhci_suspend_host+0x9e>
+    8a98:       0f 84 87 00 00 00       je     8b25 <sdhci_suspend_host+0x125>
+    8aa5:       74 90                   je     8a37 <sdhci_suspend_host+0x37>
+    8ab8:       0f 85 f5 00 00 00       jne    8bb3 <sdhci_suspend_host+0x1b3>
+    8ad8:       0f 85 c0 00 00 00       jne    8b9e <sdhci_suspend_host+0x19e>
+    8af0:       0f 85 93 00 00 00       jne    8b89 <sdhci_suspend_host+0x189>
+    8b06:       e8 00 00 00 00          call   8b0b <sdhci_suspend_host+0x10b>
+    8b14:       0f 85 1d ff ff ff       jne    8a37 <sdhci_suspend_host+0x37>
+    8b20:       e9 00 00 00 00          jmp    8b25 <sdhci_suspend_host+0x125>
+    8b25:       e8 00 00 00 00          call   8b2a <sdhci_suspend_host+0x12a>
+    8b2c:       75 52                   jne    8b80 <sdhci_suspend_host+0x180>
+    8b53:       e9 55 ff ff ff          jmp    8aad <sdhci_suspend_host+0xad>
+    8b62:       e8 00 00 00 00          call   8b67 <sdhci_suspend_host+0x167>
+    8b67:       e9 ef fe ff ff          jmp    8a5b <sdhci_suspend_host+0x5b>
+    8b76:       e8 00 00 00 00          call   8b7b <sdhci_suspend_host+0x17b>
+    8b7b:       e9 f5 fe ff ff          jmp    8a75 <sdhci_suspend_host+0x75>
+    8b84:       e9 15 ff ff ff          jmp    8a9e <sdhci_suspend_host+0x9e>
+    8b94:       e8 00 00 00 00          call   8b99 <sdhci_suspend_host+0x199>
+    8b99:       e9 60 ff ff ff          jmp    8afe <sdhci_suspend_host+0xfe>
+    8ba9:       e8 00 00 00 00          call   8bae <sdhci_suspend_host+0x1ae>
+    8bae:       e9 32 ff ff ff          jmp    8ae5 <sdhci_suspend_host+0xe5>
+    8bbb:       e8 00 00 00 00          call   8bc0 <sdhci_suspend_host+0x1c0>
+    8bc0:       e9 03 ff ff ff          jmp    8ac8 <sdhci_suspend_host+0xc8>
+$ 
 
-Please could you expand on this. We are now doing auto-neg by default,
-and auto-neg is somewhat broken?
+> at the same time gives developer less uglified (by ifdeffery) code.
+> It means there is less risk to miss anything of that which make become
+> a compile-time warning of unused function, or even issues during linking
+> with modules, etc.
+> 
+> Should I update a commit message with that?
 
-	Andrew
 
