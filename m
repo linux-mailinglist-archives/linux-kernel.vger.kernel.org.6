@@ -1,82 +1,98 @@
-Return-Path: <linux-kernel+bounces-437417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F2EC9E92FC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:55:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F8339E930F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:58:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB1AA163CB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:55:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 114E11630C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:58:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CACAE2248B0;
-	Mon,  9 Dec 2024 11:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="Pr8+lrlu"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.15])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85ACC221D9F;
-	Mon,  9 Dec 2024 11:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1437C221DA9;
+	Mon,  9 Dec 2024 11:58:37 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04FB7218592;
+	Mon,  9 Dec 2024 11:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733745287; cv=none; b=G9lmPHAm0aq4M3vniyo4MCBgF5RIr5+qW6XhYxKrzs8+QwuGnTl3BZAz2airGCGHdjkJHfRjWXpLzHWx8OUcPkdk5hU8kRD8Ft+ZVuoRCg7hhyau+PL7Oxglbvy/l6H4WcqAWtOVOsYoNEb58U1pH5Aw0ERVXzMJXthoX9/dH/M=
+	t=1733745516; cv=none; b=DUY05VeMN2jVurwPzQuU86YrQ4vIBHgEElaI1CNX6RPhBOdCsLC3nOK/qRC5J/+YueaEje1cz2ZX0Ht+Do4LsJpYvxXOM4z0ub6WkH2xsAvDCPoqnHcf/cI7IsBH7dFtQ1H5/xZRMb30JhCjOXoxN5sULnJWj9ElC+s/gEUyKug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733745287; c=relaxed/simple;
-	bh=vKgDQVSCZiZVuUoe460Wv+0RAgKUSRH1hgoxUMIGfZs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lCcsq6PE+QdDATufEMnmDPb0AuMncWTWlBVAFdppFvWNc7hwiPCI7cnVqpKfSTNzSGlf3AmLEI2JaowZtju2J3/sYEdEBctpIC8Ae3tdn+aHXq8rv0pxOHDcJ0fykTLC5EeBOoNI9GS6z3lSC2lWPyB45Co9jNiQ26EQZfytQK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=Pr8+lrlu; arc=none smtp.client-ip=1.95.21.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=LIpz7GLi/1VprLwmkdntmiNTbEeJvdJjxSq1eWwxCQo=;
-	b=Pr8+lrlueEgW16+Qc/mVD55zRoidCDKiv6WEF7aoZ3vM7mmkRrl91QI0NFb/s4
-	NpeZ765DFVmE+0bBHaMJ9WLDaYh88fq0lcJTZFhiYnReJIHR4ic92Gqxmi2R+5IZ
-	DgtXGxcqKOFRhpHYbUISnC9SnB13IquQE44qCVzJrXIow=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgCnTOBH2lZn+byPBA--.47585S3;
-	Mon, 09 Dec 2024 19:53:45 +0800 (CST)
-Date: Mon, 9 Dec 2024 19:53:42 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] arm64: dts: imx93-9x9-qsb: add temp-sensor
- nxp,p3t1085
-Message-ID: <Z1baRpmr4MvsU0NQ@dragon>
-References: <20241112-p3t1085-v4-0-a1334314b1e6@nxp.com>
- <20241112-p3t1085-v4-3-a1334314b1e6@nxp.com>
+	s=arc-20240116; t=1733745516; c=relaxed/simple;
+	bh=R/TB68sn1vs2P3kBKeAUtfisWJDEYxhhHSWMShItaes=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WHVr953f64R4QUazDPvmobIOh7dIR06b2qq+//s4Lb4iQrrNZ1sPae0oxWWwt51DUlHrR2u0Rt7Y/blwtx0OS6r7Prj2TECYVc+KlmwiYliyLhNWInypms+W/XgHT0P3ok6oFlSzXAqslM/HwnFIry82WJ1vo3h94wuLsTEVU/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y6L3R1SpYz4f3kFL;
+	Mon,  9 Dec 2024 19:58:11 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 61A3A1A0568;
+	Mon,  9 Dec 2024 19:58:30 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCXc4dk21Zn1extEA--.18505S4;
+	Mon, 09 Dec 2024 19:58:30 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: axboe@kernel.dk,
+	akpm@linux-foundation.org,
+	yang.yang@vivo.com,
+	ming.lei@redhat.com,
+	yukuai3@huawei.com,
+	bvanassche@acm.org,
+	osandov@fb.com,
+	paolo.valente@linaro.org
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC 0/3] lib/sbitmap: fix shallow_depth tag allocation
+Date: Mon,  9 Dec 2024 19:55:19 +0800
+Message-Id: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112-p3t1085-v4-3-a1334314b1e6@nxp.com>
-X-CM-TRANSID:Ms8vCgCnTOBH2lZn+byPBA--.47585S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVdgAUUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiEQiwZWdWofLmhQAAsN
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXc4dk21Zn1extEA--.18505S4
+X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUY97AC8VAFwI0_Gr0_Xr1l1xkIjI8I6I8E
+	6xAIw20EY4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28Cjx
+	kF64kEwVA0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8I
+	cVCY1x0267AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aV
+	CY1x0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAq
+	x4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6x
+	CaFVCjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwAC
+	I402YVCY1x02628vn2kIc2xKxwCF04k20xvY0x0EwIxGrwCF54CYxVCY1x0262kKe7AKxV
+	WUtVW8ZwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUdHUDUUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Tue, Nov 12, 2024 at 11:52:01AM -0500, Frank Li wrote:
-> Add temp-sensor nxp,p3t1085 for imx93-9x9-qsb boards.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+From: Yu Kuai <yukuai3@huawei.com>
 
-Applied, thanks!
+Yu Kuai (3):
+  block/mq-deadline: Revert "block/mq-deadline: Fix the tag reservation
+    code"
+  lib/sbitmap: don't export sbitmap_get_shallow()
+  lib/sbitmap: fix shallow_depth tag allocation
+
+ block/kyber-iosched.c   |  2 +-
+ block/mq-deadline.c     | 20 +++-----------------
+ include/linux/sbitmap.h | 19 +------------------
+ lib/sbitmap.c           | 34 ++++++++++++++++++++++++++--------
+ 4 files changed, 31 insertions(+), 44 deletions(-)
+
+-- 
+2.39.2
 
 
