@@ -1,80 +1,86 @@
-Return-Path: <linux-kernel+bounces-438067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9F59E9C61
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:02:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0164C9E9C4B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:59:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EF501888F13
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:01:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8217A1888DFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:59:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7767A4595B;
-	Mon,  9 Dec 2024 16:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495281F0E51;
+	Mon,  9 Dec 2024 16:57:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IXhqE4ed"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EU55AQJ8"
+Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D301015534B;
-	Mon,  9 Dec 2024 16:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3255C1F0E4B;
+	Mon,  9 Dec 2024 16:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733763481; cv=none; b=VqDPeIqui17jryKw4+r712UuqyNtt5O0rwX4eqeLApyGNdPlBFbRb7JrINZsk9dAP8uAmUfMHG06RKQ+Ai/W7krsSXmw8lVpYb8jWbZ7xvQ+UY3Ll9BZIfgW/7uKR/X9rw31bTXJ6BCrBgq8g5bevBLi+d9LDx3TROdBRa2ZZj8=
+	t=1733763465; cv=none; b=BJb6slSidserJaARFnte4gGdE6WI4itpkXIZP+pIfNVzH9sLpCYp3sTCgMwFC4lihwtpxvKVABkjl9mWP8BBY8hgOV1t3hjxE7gnIuwEOw8890Z7uMVcsmppN+PkbrLV8LkW6p0pXWK268uAJS4gLbUoMAsGTGLOlv4UKKiB/70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733763481; c=relaxed/simple;
-	bh=wQnGWxW/lsCQklEB8sPLffgLUWX4VCLMzTrRwYYaBlM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X8OlRQ+YofqCVr21oZBO7Eg5NTQ/eOxT3/3q8Bf1Ej3uIjdQOnQvVP4zcnw1rV/Ml2OzuGjifuJJsPTvrMy64C/H7Q0QZqQQrIRZlRqrz+H+mwwcFQ/FXXeE9Ep/P3aAybA6QOFxwkbXUaREjLhXHT93L8W0g1ayM8PE2MTyYA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IXhqE4ed; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9Gnpff001738;
-	Mon, 9 Dec 2024 16:57:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8F6IIIUDruDCqpHYbeb8jF26ziBHJJCbUJR/ebXKLX8=; b=IXhqE4edXpWyQzvH
-	93YA6h0T/O+F7b9belOgvFbR9sC1VyJ1yGalEwgs5WXQeakLxjd4K9KvcilyqLnU
-	czoVGIpJ+lyDhs42emcJiBOQpB6usAZLXyqYchGyq0T4kqqIgwRCEqAR2rcsURPg
-	l7yKMYAQjVg8gIARIUUV3ZbfiTRn84sjQAokqOyJnI+QkoxUoT8GFeofZIUCfXLf
-	aQp7fExj5dThO+OyNRHzL86s00Ga65F3kONlbdDa+II+UiW+h9GO0bmjcSga5sJV
-	pJTNibJy3rqwk3xeDO0fM6ppvBahHIUagd7qXEkqhCGSB9yqgKc01qjeH8A7bFWp
-	aMh44w==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdc6dnuk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 16:57:54 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9GvrRJ019445
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 16:57:53 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 9 Dec 2024 08:57:49 -0800
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-To: <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>, <linux-kernel@vger.kernel.org>,
-        Balamurugan S <quic_bselvara@quicinc.com>,
-        "P
- Praneesh" <quic_ppranees@quicinc.com>,
-        Raj Kumar Bhagat
-	<quic_rajkbhag@quicinc.com>
-Subject: [PATCH v3 13/13] wifi: ath12k: enable ath12k AHB support
-Date: Mon, 9 Dec 2024 22:26:44 +0530
-Message-ID: <20241209165644.1680167-14-quic_rajkbhag@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241209165644.1680167-1-quic_rajkbhag@quicinc.com>
-References: <20241209165644.1680167-1-quic_rajkbhag@quicinc.com>
+	s=arc-20240116; t=1733763465; c=relaxed/simple;
+	bh=sb7AVXlwROWK1lMqK7lyHj2zbRgTTECaCNdGLefWzS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qdoV8wH4D2DypeqXYPVNx5QI15FcsTgTVbbeYxJ+6sUqM6lSRhc43AHvUyU2ypY+7X6e2pMb0SduG7orVJC0V72ATvzNpitJDytcTFa/ITok1cILARU/+j1pUPD8OCQAnfVx+CotPLxecKM0rWo9qSIDlLc7IFHNG7W10d01dVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EU55AQJ8; arc=none smtp.client-ip=209.85.210.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-7242f559a9fso4668788b3a.1;
+        Mon, 09 Dec 2024 08:57:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733763463; x=1734368263; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cs031+LjjX7QEYcyeO9AS0x5okeBcuxN8HhhB19UC3w=;
+        b=EU55AQJ8vI1miW5DBFrLeq+c2YOA+RMdOTd+jlj1qXhcfmyVeWNBJFGE7PG4GsEmd5
+         troGVskGI5krxj+OynjrzwUcVj1MHrj7TQ7DhuiYOvbde6af6vj3LHSwb/vHmPqnQeRf
+         AjS5MPrk/e9tdY+U5plPi/nmEHrvxcI3pXJ6Kv36VULEUY7rJVPEvDGpFOLDpEnmyhrS
+         pJv+HMCla6VFaKwN1WlBvARDOfxC+yZWUPB4RXDQKS0TQ5/JMRmqDly+/2qw2SFnOTo+
+         NGkGJalqJluL3RHpa7s89xA9Wa0vIYBT5cGYdLgpmBVuXPNsdwu5cgM8fYfMGSpY+/Fu
+         cb2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733763463; x=1734368263;
+        h=content-transfer-encoding:mime-version:reply-to:message-id:date
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cs031+LjjX7QEYcyeO9AS0x5okeBcuxN8HhhB19UC3w=;
+        b=h6+gQf7YXb5a5Km8NSauZq6fIrpJQVo0MbCVDB/mjekY30VtUHAs1qnQIVwIi0WirR
+         E2bGP6eqcs7EoA8pwmqMfJo1uvxfO7YKljoLG9blm/p5iMhETcju7/uUufj1I6bqtxzU
+         /HZ88d1t6AjyQ14BuUE+j4WO7LvlcmuroVMzW2h6ihdjCpzxDSx0QT+1Q8cpSInTi/s5
+         oCehz5VjQKSMdeGZOtIOQ4igelOa+b+1PDr7YmU1ho3bdToZHJ/iLxKwzoIyj2Ef/fkv
+         a1NvozJNhqgJlsu0400ffP6xBSUSWK4n6ECrHW1EulyyXtT6hvPQhbLJH0ZOmltoJreD
+         iYpA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrxBaoXKxghipDA7iHHSKt72s7g/Zq4kl/unKwD15eTNfUm/S8ZUWAvoCYZiV6UXp8QEoKknPSnK/yPy3N@vger.kernel.org, AJvYcCVUFw+gPKKY3gMZfIYnpnoCLoQPVj5im6BszCL8GRVWznq2BE+J1vkwX/FCFEykU/fZSpVYMzzJI565Bg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr6fhhAiPWeRrpNVmK5N5GTfaS593/39mP8SbTOpgcl7YRMz0m
+	jPbSbOASVV50fgyu55U+UagutNkj/4Y4ZtXNwakWZmt1Rl8P6jaNI9LXuQeX6yo=
+X-Gm-Gg: ASbGncuDPyCGVPpZjWg/UG5omi8yjakhYwpgZI8aHT/6JTgEDnEMlDP8KW80SCySuc8
+	7Yqm8cIZle/FQULTgzKErwRTDEN3T6DtVNxH2MwyJU4MXVQok9QrzrKi7bqPgazXWZSI9tCff7k
+	3NDkybEUyxpii2EBtC98yVwteISMaxodh0YhvjabfdzLR+/AluJ9Egv8eafKk6f5YNzNjA602jQ
+	GTVhL+91AZ0P+YMFBtJjpZnNr7ma+pIHjFobCaFxNWQYdyUSNtGxhm39Hj37UBCFuMQt5A=
+X-Google-Smtp-Source: AGHT+IFT3pkLkxmkwXq1KmRuWWE/3LcEAyp+a28TxyNZrMBn+elZurcvgNklUPnITcsfJ+T1KQv2hQ==
+X-Received: by 2002:a05:6a00:10c5:b0:725:e309:7110 with SMTP id d2e1a72fcca58-725e30974e7mr9859365b3a.5.1733763463355;
+        Mon, 09 Dec 2024 08:57:43 -0800 (PST)
+Received: from KASONG-MC4.tencent.com ([106.37.120.120])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7273c7f3f1fsm514201b3a.13.2024.12.09.08.57.41
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 09 Dec 2024 08:57:42 -0800 (PST)
+From: Kairui Song <ryncsn@gmail.com>
+To: linux-mm@kvack.org
+Cc: Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kairui Song <kasong@tencent.com>
+Subject: [PATCH v2 0/2] zram: fix backing device setup issue
+Date: Tue, 10 Dec 2024 00:57:14 +0800
+Message-ID: <20241209165717.94215-1-ryncsn@gmail.com>
+X-Mailer: git-send-email 2.47.1
+Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,199 +88,29 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: CSsKsfVAGmJqoy_5ZHE7N9rjovRlb9IY
-X-Proofpoint-GUID: CSsKsfVAGmJqoy_5ZHE7N9rjovRlb9IY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- mlxlogscore=999 malwarescore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090132
 
-From: Balamurugan S <quic_bselvara@quicinc.com>
+From: Kairui Song <kasong@tencent.com>
 
-Currently only PCI devices are supported in Ath12k driver. Refactor
-Ath12k module_init and module_exit to include Ath12k AHB support.
+This series fixes two bugs of backing device setting:
 
-Add Ath12k AHB support in Kconfig with dependency on Remoteproc
-driver. Ath12k AHB support relies on remoteproc driver for firmware
-download, power up/down etc.
+- ZRAM should reject using a zero sized (or the uninitialized ZRAM
+  device itself) as the backing device.
+- Fix backing device leaking when removing a uninitialized ZRAM
+  device.
 
-Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
+V1: https://lore.kernel.org/linux-mm/20241204180224.31069-1-ryncsn@gmail.com/
+Update from V1:
+- Collect Review-by.
+- Update fix for issue 2 as suggested by Sergey Senozhatsky.
 
-Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
-Co-developed-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/Kconfig  |  6 ++++
- drivers/net/wireless/ath/ath12k/Makefile |  1 +
- drivers/net/wireless/ath/ath12k/ahb.h    | 12 ++++++++
- drivers/net/wireless/ath/ath12k/core.c   | 35 ++++++++++++++++++++++--
- drivers/net/wireless/ath/ath12k/pci.c    | 12 ++------
- drivers/net/wireless/ath/ath12k/pci.h    |  2 ++
- 6 files changed, 56 insertions(+), 12 deletions(-)
+Kairui Song (2):
+  zram: refuse to use zero sized block device as backing device
+  zram: fix uninitialized ZRAM not releasing backing device
 
-diff --git a/drivers/net/wireless/ath/ath12k/Kconfig b/drivers/net/wireless/ath/ath12k/Kconfig
-index 52a1bb19e3da..b2bfcaca00b3 100644
---- a/drivers/net/wireless/ath/ath12k/Kconfig
-+++ b/drivers/net/wireless/ath/ath12k/Kconfig
-@@ -15,6 +15,12 @@ config ATH12K
- 
- 	  If you choose to build a module, it'll be called ath12k.
- 
-+config ATH12K_AHB
-+	bool "QTI ath12k AHB support"
-+	depends on ATH12K && REMOTEPROC && QCOM_Q6V5_WCSS_SEC
-+	help
-+	  Enable support for Ath12k AHB bus chipsets, example IPQ5332.
-+
- config ATH12K_DEBUG
- 	bool "ath12k debugging"
- 	depends on ATH12K
-diff --git a/drivers/net/wireless/ath/ath12k/Makefile b/drivers/net/wireless/ath/ath12k/Makefile
-index b5bb3e2599cd..4aeb6b95baa4 100644
---- a/drivers/net/wireless/ath/ath12k/Makefile
-+++ b/drivers/net/wireless/ath/ath12k/Makefile
-@@ -23,6 +23,7 @@ ath12k-y += core.o \
- 	    fw.o \
- 	    p2p.o
- 
-+ath12k-$(CONFIG_ATH12K_AHB) += ahb.o
- ath12k-$(CONFIG_ATH12K_DEBUGFS) += debugfs.o debugfs_htt_stats.o
- ath12k-$(CONFIG_ACPI) += acpi.o
- ath12k-$(CONFIG_ATH12K_TRACING) += trace.o
-diff --git a/drivers/net/wireless/ath/ath12k/ahb.h b/drivers/net/wireless/ath/ath12k/ahb.h
-index 0dbbbfd45eab..fc21211c01dd 100644
---- a/drivers/net/wireless/ath/ath12k/ahb.h
-+++ b/drivers/net/wireless/ath/ath12k/ahb.h
-@@ -65,4 +65,16 @@ static inline struct ath12k_ahb *ath12k_ab_to_ahb(struct ath12k_base *ab)
- 	return (struct ath12k_ahb *)ab->drv_priv;
- }
- 
-+#ifdef CONFIG_ATH12K_AHB
-+int ath12k_ahb_init(void);
-+void ath12k_ahb_exit(void);
-+#else
-+static inline int ath12k_ahb_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void ath12k_ahb_exit(void) {};
-+#endif
-+
- #endif
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-index 49d1ac15cb7a..941924630bcb 100644
---- a/drivers/net/wireless/ath/ath12k/core.c
-+++ b/drivers/net/wireless/ath/ath12k/core.c
-@@ -9,15 +9,18 @@
- #include <linux/remoteproc.h>
- #include <linux/firmware.h>
- #include <linux/of.h>
-+#include "ahb.h"
- #include "core.h"
- #include "dp_tx.h"
- #include "dp_rx.h"
- #include "debug.h"
--#include "hif.h"
--#include "fw.h"
- #include "debugfs.h"
-+#include "fw.h"
-+#include "hif.h"
-+#include "pci.h"
- #include "wow.h"
- 
-+static int ahb_err, pci_err;
- unsigned int ath12k_debug_mask;
- module_param_named(debug_mask, ath12k_debug_mask, uint, 0644);
- MODULE_PARM_DESC(debug_mask, "Debugging mask");
-@@ -1685,5 +1688,31 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
- 	return NULL;
- }
- 
--MODULE_DESCRIPTION("Core module for Qualcomm Atheros 802.11be wireless LAN cards.");
-+static int ath12k_init(void)
-+{
-+	ahb_err = ath12k_ahb_init();
-+	if (ahb_err)
-+		pr_warn("Failed to initialize ath12k AHB device: %d\n", ahb_err);
-+
-+	pci_err = ath12k_pci_init();
-+	if (pci_err)
-+		pr_warn("Failed to initialize ath12k PCI device: %d\n", pci_err);
-+
-+	/* If both failed, return one of the failures (arbitrary) */
-+	return ahb_err && pci_err ? ahb_err : 0;
-+}
-+
-+static void ath12k_exit(void)
-+{
-+	if (!pci_err)
-+		ath12k_pci_exit();
-+
-+	if (!ahb_err)
-+		ath12k_ahb_exit();
-+}
-+
-+module_init(ath12k_init)
-+module_exit(ath12k_exit)
-+
-+MODULE_DESCRIPTION("Driver support for Qualcomm Technologies 802.11be WLAN devices");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
-index 06cff3849ab8..a5ae66f0ee1f 100644
---- a/drivers/net/wireless/ath/ath12k/pci.c
-+++ b/drivers/net/wireless/ath/ath12k/pci.c
-@@ -1821,7 +1821,7 @@ static struct pci_driver ath12k_pci_driver = {
- 	.driver.pm = &ath12k_pci_pm_ops,
- };
- 
--static int ath12k_pci_init(void)
-+int ath12k_pci_init(void)
- {
- 	int ret;
- 
-@@ -1832,16 +1832,10 @@ static int ath12k_pci_init(void)
- 		return ret;
- 	}
- 
--	return 0;
-+	return ret;
- }
--module_init(ath12k_pci_init);
- 
--static void ath12k_pci_exit(void)
-+void ath12k_pci_exit(void)
- {
- 	pci_unregister_driver(&ath12k_pci_driver);
- }
--
--module_exit(ath12k_pci_exit);
--
--MODULE_DESCRIPTION("Driver support for Qualcomm Technologies PCIe 802.11be WLAN devices");
--MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.h b/drivers/net/wireless/ath/ath12k/pci.h
-index 31584a7ad80e..18648ca11dfc 100644
---- a/drivers/net/wireless/ath/ath12k/pci.h
-+++ b/drivers/net/wireless/ath/ath12k/pci.h
-@@ -145,4 +145,6 @@ void ath12k_pci_stop(struct ath12k_base *ab);
- int ath12k_pci_start(struct ath12k_base *ab);
- int ath12k_pci_power_up(struct ath12k_base *ab);
- void ath12k_pci_power_down(struct ath12k_base *ab, bool is_suspend);
-+int ath12k_pci_init(void);
-+void ath12k_pci_exit(void);
- #endif /* ATH12K_PCI_H */
+ drivers/block/zram/zram_drv.c | 15 ++++++++++-----
+ 1 file changed, 10 insertions(+), 5 deletions(-)
+
 -- 
-2.34.1
+2.47.1
 
 
