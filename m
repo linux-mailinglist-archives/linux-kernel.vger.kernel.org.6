@@ -1,124 +1,122 @@
-Return-Path: <linux-kernel+bounces-436791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A8C59E8AFE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:29:51 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF8F79E8AFF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:31:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B1628120A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1B271883CD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:31:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B1F21662FA;
-	Mon,  9 Dec 2024 05:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 016821553BC;
+	Mon,  9 Dec 2024 05:30:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="pqlcVzK8"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="acQFSncZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1221B54918;
-	Mon,  9 Dec 2024 05:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4418F1F5F6
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 05:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733722183; cv=none; b=e7ftmrMwyL1EbeL3qvX22ZhDyXx1uMAc0qC+u9gbEMVJ2TStebVqdPzFFkHIHt+5wU3sIl8229qZNBZyQ+MZLUd2uXpus8PqtrV8nT8scApx+l/6tGERm4Z1zWrocAa1OcZqdv8Kk3UlJA9HY/ytHroRuI+AoTTGiY2IvYsSQFg=
+	t=1733722257; cv=none; b=JAnXEyLuEdc3bQ4018TUfNzVkeY3B0xGOH8sG6LMesW2lT/9RLzHYIaeNritbr1BPhZW0RLftu7csB+6m0Dek2eGvBsNa0AuUUhUkVRxunwjzksLAujZzAY3AuunudXg4h25xCDPYTmUEclJRTKOK6O/2GqRlycEWRPPmFQ0OR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733722183; c=relaxed/simple;
-	bh=XWuXN25o8/tV4/i4QfIb6Dsb5ZZ/K2g2SFzaRTZgaUg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=lttUf5HBHtUxP7YLqjK9A3q5ehUNJaPmpAT1Hk01fBUgbsDfKN1ehlesiSwQ1ZmzJ6wjJHpK2Y/t6w7Gu317gygd04DBajwVZbpEYUECYyfWLAu58ac/nAN5ZJaDXAITjyI/Wa5vgYIx9939LRXYf7pYD6e1B92/DxMkoP/AQV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=pqlcVzK8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8NRk06007232;
-	Mon, 9 Dec 2024 05:29:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	1oCWU0Vm9zp3f+UCJJ7u3Pibn8vpF8aDZSqYFlUyQyE=; b=pqlcVzK8PRlttv3C
-	MRWr2pHPv5KnBqrdo9VgwpEclXaZBcOwSDGHm0nVXZmJcAg2HG+Y5zlZPUpS9S8V
-	ArLse2zihHkWB5Lj0Vpo/uJ2LmzcHWPTQoe766vt3N/K9pSkXv9woR43ggoO+5Aw
-	rIohA5zL6YB6WvRGECpNU+B8BafvoTNCPKbAPSlhKxwhhAt4Fm/QmXEzKUx5Wki6
-	msT1bLINec/KC57EAKyLBGKTpljeZFpO8rSrp0tEcTWKB1hw4PE+3lxce8x/fgik
-	4Li0n7KWRSJ33R9NBUIhMZ2cGjnqHEvX6J0qsMPKXjYEm0+xhZ6Ss1quB+OAn2JN
-	XOLjCA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cek1udrm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 05:29:35 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B95TY0m018334
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 05:29:34 GMT
-Received: from [10.151.36.43] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 21:29:31 -0800
-Message-ID: <64be3126-5d07-7490-28fc-20afd2635b8c@quicinc.com>
-Date: Mon, 9 Dec 2024 10:59:28 +0530
+	s=arc-20240116; t=1733722257; c=relaxed/simple;
+	bh=TF4YnwUZfD0BYfFL4Aid0KzbItmkS6wE6a5HcGYoqlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=NEAlE6FkCCNAY7F+1wDo9Gx3FduMce0knyC/wNb5OEivVH6eHV8EQ4L5+YwfYRE9BiwzUWIoZfqFSpWeFPO0T5rbA+lJPVzA+7B6HvzF0DOuBkHG1jYSKiye0y9t+DxwIiGUo3RkJWx2oT5dSafsDc4AYbycUa8UQM4PD7hnqQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=acQFSncZ; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733722255; x=1765258255;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=TF4YnwUZfD0BYfFL4Aid0KzbItmkS6wE6a5HcGYoqlo=;
+  b=acQFSncZWQT/PDW5n/W0S8SGsZZX8hquXtVi2K312uym09ocVedyJkCO
+   Hj76it5HgGLEiTttZAhFilpLiRZnITWz2X17y1xDp1TCb4VOEylyt/5+j
+   Eva7q9YrASMXqgu7RAiN7D79+N1VGHbXwSyufArbabOy9nsZ9w/APfhi9
+   gHS/yzIUN+Qff2l01juNS7eHu7d299l7fSIKc3r8YOCNkYf42ZoJspTPj
+   xEOC4GCoRZwsyUShvPdcj/vMAHROcxIVPcvMiOAm1Pdvws+P3WCCi6CPC
+   cggQbgx6Num+ADXge7JyPS4+4p1N9uvgrwcmkfxJwwe/64vzg96bvadLr
+   Q==;
+X-CSE-ConnectionGUID: 5MlsfFSxQWC7MsNZpNgejw==
+X-CSE-MsgGUID: 7kKnvKUOT7ypTekZUN4Hig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="33895831"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="33895831"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 21:30:55 -0800
+X-CSE-ConnectionGUID: z8oYUA29S2+6SNV9rr32xg==
+X-CSE-MsgGUID: 4+qic6n6QH6s5DjqvYwiTw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95168339"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 08 Dec 2024 21:30:50 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKWM4-0003zJ-0l;
+	Mon, 09 Dec 2024 05:30:48 +0000
+Date: Mon, 9 Dec 2024 13:29:50 +0800
+From: kernel test robot <lkp@intel.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol
+ 'sifive_errata_patch_func.______f.3'; recompile with -fPIC
+Message-ID: <202412091329.zKaAkS8r-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH v2] dmaengine: qcom: bam_dma: Avoid writing unavailable
- register
-Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>, <vkoul@kernel.org>,
-        <martin.petersen@oracle.com>, <kees@kernel.org>, <av2082000@gmail.com>,
-        <fenghua.yu@intel.com>, <linux-arm-msm@vger.kernel.org>,
-        <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-References: <20241205120016.948960-1-quic_mdalam@quicinc.com>
- <2afca6ca-10eb-43b3-8730-386d6ca84b60@linaro.org>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <2afca6ca-10eb-43b3-8730-386d6ca84b60@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6WiF1a7MLFvejCZDk3prUcCz8tLospqK
-X-Proofpoint-ORIG-GUID: 6WiF1a7MLFvejCZDk3prUcCz8tLospqK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- mlxscore=0 adultscore=0 clxscore=1011 malwarescore=0 phishscore=0
- spamscore=0 mlxlogscore=938 lowpriorityscore=0 priorityscore=1501
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090042
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hi Masahiro,
 
+FYI, the error/warning still remains.
 
-On 12/5/2024 5:58 PM, Bryan O'Donoghue wrote:
-> On 05/12/2024 12:00, Md Sadre Alam wrote:
-> 
-> The commit log:
-> 
->> Avoid writing unavailable register in BAM-Lite mode.
->> BAM_DESC_CNT_TRSHLD register is unavailable in BAM-Lite
->> mode. Its only available in BAM-NDP mode. So avoid writing
-> 
-> and the action taken in the code:
-> 
->> +    if (bdev->bam_revision >= BAM_LITE && bdev->bam_revision < BAM_NDP)
->> +        writel_relaxed(DEFAULT_CNT_THRSHLD,
-> 
-> Really don't match up. You've said in your commit log 
-> BAM_DESC_CNT_TRSHLD is unavailable to the LITE module but, then you say 
-> if (bam_revision >= BAM_LITE...)
-> 
-> How can checking if the revision == BAM_LITE match up with the stated 
-> objective in your commit log => _not_ writing to DEFAULT_CNT_THRSHLD in 
-> lite mode ... ?
-Thank you for pointing that out. I'll address this in the next revision.
-> 
-> ---
-> bod
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   fac04efc5c793dccbd07e2d59af9f90b7fc0dca4
+commit: f79dc03fe68c79d388908182e68d702f7f1786bc kconfig: refactor choice value calculation
+date:   5 months ago
+config: riscv-randconfig-002-20241209 (https://download.01.org/0day-ci/archive/20241209/202412091329.zKaAkS8r-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 592c0fe55f6d9a811028b5f3507be91458ab2713)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241209/202412091329.zKaAkS8r-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412091329.zKaAkS8r-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'sifive_errata_patch_func.______f.3'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'sifive_errata_patch_func.______f.3'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_HI20 cannot be used against symbol 'sifive_errata_patch_func.______f'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+--
+>> ld.lld: error: relocation R_RISCV_LO12_I cannot be used against symbol 'sifive_errata_patch_func.______f'; recompile with -fPIC
+   >>> defined in vmlinux.a(arch/riscv/errata/sifive/errata.o)
+   >>> referenced by errata.c
+   >>>               arch/riscv/errata/sifive/errata.o:(sifive_errata_patch_func) in archive vmlinux.a
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
