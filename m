@@ -1,62 +1,86 @@
-Return-Path: <linux-kernel+bounces-437424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D829E9310
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:58:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DC39E9302
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755D216305C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:58:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BD516312B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D2C6221DAE;
-	Mon,  9 Dec 2024 11:58:37 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E853216E29;
+	Mon,  9 Dec 2024 11:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X6JsH1GL"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E948A22069F;
-	Mon,  9 Dec 2024 11:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FABA217727
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733745516; cv=none; b=Cf9nfTPdUZEz2Zl06Df5WvZWJBUmYUo5G1nOdniFOc3UrgHAeRmNk5UodCxFY3JZ7YsPWgXpuFtb0K8bR220Veq+vFQ2LYkhpzvCyCiLVqc2B1YqSvuQikjqtzG+zEevH/vd3cZqhd9D62lTMtMThYG3AaUk8htOMhSfo9/k6Y4=
+	t=1733745387; cv=none; b=GAjCU4UTqiiN8FfuUGTI2MqrXXGYZ7trRPgc46fr3OCBLuB43AGlIjCuoIREfieB44srUXDso7vO+PHbdGkIcC19DY6cCjuxFSko3QxgCGxp82DGgNya3ZSFlodJdn5DuXWw4ymbJeydm+fBGU0+9zPYqJcAoOQT1B3aFmsWsTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733745516; c=relaxed/simple;
-	bh=9V9xeIAC8+LAWsBNoznh8AfBkrZFjIT+yC15uz7ELIc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dkjLxGvtKz2nZhcaJINY86VcdsWqvZ6XVxqNK5rT19itjg9TV637Uisuu9k9P76J3cxmqRkoyjs95P1r84nXt3aAbgiU9YccIca9LG9JRTV6o8dCsANw0wYOnTG76CVfUyM5PENy9BD++dT90Vi0ra7ZyrcRZ+Ba7OF48N5T5TU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Y6L3S5PWgz4f3kFG;
-	Mon,  9 Dec 2024 19:58:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id EBAB21A147E;
-	Mon,  9 Dec 2024 19:58:31 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgCXc4dk21Zn1extEA--.18505S7;
-	Mon, 09 Dec 2024 19:58:31 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: axboe@kernel.dk,
-	akpm@linux-foundation.org,
-	yang.yang@vivo.com,
-	ming.lei@redhat.com,
-	yukuai3@huawei.com,
-	bvanassche@acm.org,
-	osandov@fb.com,
-	paolo.valente@linaro.org
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH RFC 3/3] lib/sbitmap: fix shallow_depth tag allocation
-Date: Mon,  9 Dec 2024 19:55:22 +0800
-Message-Id: <20241209115522.3741093-4-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
-References: <20241209115522.3741093-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1733745387; c=relaxed/simple;
+	bh=0LO2zPYAqi4rqcBhiJ1BLvPKoKw9ftNC08/t+0RUAyY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VgLWrVrbbjQvly5cehyurokOON7idEZw40BoI42pswocEeFzFN5k2WW6+xrSKE2KO8mcP1cYKkpli0Y+ca5JX8BNOzJ9IfkuLCLSkXQ3KytQqIAepPIH1Q8+ZaYpYzHQCMkNUg2fY78iQRKakGBwKkw28A9g0++Rcq9Vb5RrL8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X6JsH1GL; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aa6935b4f35so6714666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:56:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733745384; x=1734350184; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Useh55TM0tjeQrnlgj6s0Ix5hvl08p6sYbXbXf2KJKQ=;
+        b=X6JsH1GLHuoe6kfgGxVKIvfazeDh8iOL85QGHntNsMaBLMUmxlgyTpfb4mBQee9OUK
+         JfO2SL7OxbgJDCbj5RwzwcfkJbwZjW/rNjO7fj7YNqfNBzwEy95ucNsPiDBCfdkgQq8H
+         B2rEnuByrFrlaBqZRp+lJpl+FQEXp4Q4VGHIuYH5kgCrVszfHl980j69SNaVaxcQ4iO9
+         P/lwNGSNuIEzAGR2SeSwmSNQHEdkqPjsqcmH8uIVJ3Rd3ZTRjTwdZGmpAN7oPjd6fFiO
+         DbmIEL61/1AqKEUvXrr4075OWj/uFYvQXXk5EhJdNPhwcyVmRmG9LVTsfo0wpjNKiUZa
+         gWrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733745384; x=1734350184;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Useh55TM0tjeQrnlgj6s0Ix5hvl08p6sYbXbXf2KJKQ=;
+        b=jR/OzjACbwM6d+Rqbxx4aognZP2PHWg2U/524uVsVPoLfnS6F+OepxeoHCClBJBCfW
+         dmLW37UmraTM/gn76AMrhoGhCepUwRc6JRPfTAF0JiD7sMXZ72cJQp+xxVvs2oEiQj+0
+         fuqCaLkV3wUJJ49K9chsinmj0N0q1DfCWwhb4YCvJyNaTVKK7D8HjpUmC1bH+U33h4wb
+         svO55pS9LpfM+JIPpDoDrW6DrHYM4wcPhbLOr/Kd9WCruw9B7U03MyegG6r8JXzBmPJE
+         fhFQp3oXc2IEHCWCTisI9U4J2qcsMIY8kNkqJsycGbU7/xFKw81o9wz/ZndmxKpf3eer
+         9IYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXFl2qaxQLsqSU0BFWemu7x4Vg/LP4wTDtdZFPZpxyzEc1am/FNG2aeIFV9br6WM3U7y6jzMkS/tbB4vaI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9oMTpPngEw9UCjFpR64Cmydexy7D+pW3ohqUKMsZyjhqNrykw
+	RDpT79hr22niH7pEVyrmYt4WpjKadmzA+BLONEYAieS3hQY+FgQRTknlVpVAnBw=
+X-Gm-Gg: ASbGncsrxki7L2+zZw2/FyN5TdlCbxdR4k8U+9pvaoBhoY9lFHXrq9vmfJMMJrvPZXi
+	NFiHClfwaohv/0tcpniZ5du1cHoSuJ6RGV+6sWI/Q5yaBfVG6KcZbeNTAsZS+XIi68DnHENDnvM
+	n13f74wHUMAxx3VvF1Dx0ZpT4Eckqc4zXu2XBHnC3uOO2bvKaYmfOXd+ZqGgRnfO/zQLAg0UdYi
+	seWpq5MSOI9DSUXqWxpJJPGSFyGeRuiEOUzEQ7r21r4KGDnfmxiSqvOpjPtVYVS
+X-Google-Smtp-Source: AGHT+IFy0QEwd71L8F3WWzjmNnwcpld/A/VFpC2mWyELkqnYLuwFzGiop941yEx4OjXTcWiq0BYq5g==
+X-Received: by 2002:a17:907:7d8c:b0:aa6:9b81:e7aa with SMTP id a640c23a62f3a-aa69b81e971mr17438066b.7.1733745384224;
+        Mon, 09 Dec 2024 03:56:24 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa6651c01c5sm343333766b.23.2024.12.09.03.56.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 03:56:23 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Andy Gross <agross@codeaurora.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	stable@vger.kernel.org
+Subject: [PATCH v3 1/4] soc: qcom: pmic_glink: fix scope of __pmic_glink_lock in pmic_glink_rpmsg_probe()
+Date: Mon,  9 Dec 2024 12:56:10 +0100
+Message-ID: <20241209115613.83675-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,111 +88,47 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgCXc4dk21Zn1extEA--.18505S7
-X-Coremail-Antispam: 1UD129KBjvJXoWxuFy8Xw1rZF1rWr4rCFW8tFb_yoW5AFykpF
-	48K3WfKr4Fyr129rs8C34DZFyrGw4DGwnrJFWfWw1Fkr45JanaqryrKFyaqa47CFZ7ZFWj
-	yF4rXry8G34jqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUQv14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JrWl82xGYIkIc2
-	x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2z4x0
-	Y4vE2Ix0cI8IcVAFwI0_Xr0_Ar1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_Gr1UM2
-	8EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0DM2AI
-	xVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjxv20x
-	vE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1lF7xv
-	r2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7M4IIrI8v6xkF7I0E8cxan2IY04
-	v7MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4kS14v2
-	6r1q6r43MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxV
-	Cjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY
-	6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWxJVW8Jr1lIxAIcV
-	CF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIE
-	c7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUHWlkUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Yu Kuai <yukuai3@huawei.com>
+File-scope "__pmic_glink_lock" mutex protects the file-scope
+"__pmic_glink", thus reference to it should be obtained under the lock,
+just like pmic_glink_rpmsg_remove() is doing.  Otherwise we have a race
+during if PMIC GLINK device removal: the pmic_glink_rpmsg_probe()
+function could store local reference before mutex in driver removal is
+acquired.
 
-Currently, shallow_depth is used by bfq, kyber and mq-deadline, they both
-pass in the value for the whole sbitmap, while sbitmap treate the value
-for just one word. Which means, shallow_depth never work as expected,
-and there really is no such functional tests to covert it.
+Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
+Cc: <stable@vger.kernel.org>
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Consider that callers doesn't know which word will be used, and how many
-bits are available in the last word, fix this problem by treating
-shallow_depth for the whole sbitmap in sbitmap_find_bit().
-
-Fixes: 00e043936e9a ("blk-mq: introduce Kyber multiqueue I/O scheduler")
-Fixes: a52a69ea89dc ("block, bfq: limit tags for writes and async I/O")
-Fixes: 07757588e507 ("block/mq-deadline: Reserve 25% of scheduler tags for synchronous requests")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
 ---
- include/linux/sbitmap.h |  2 +-
- lib/sbitmap.c           | 31 +++++++++++++++++++++++++------
- 2 files changed, 26 insertions(+), 7 deletions(-)
 
-diff --git a/include/linux/sbitmap.h b/include/linux/sbitmap.h
-index e1730f5fdf9c..ffb9907c7070 100644
---- a/include/linux/sbitmap.h
-+++ b/include/linux/sbitmap.h
-@@ -461,7 +461,7 @@ unsigned long __sbitmap_queue_get_batch(struct sbitmap_queue *sbq, int nr_tags,
-  * sbitmap_queue, limiting the depth used from each word, with preemption
-  * already disabled.
-  * @sbq: Bitmap queue to allocate from.
-- * @shallow_depth: The maximum number of bits to allocate from a single word.
-+ * @shallow_depth: The maximum number of bits to allocate from the queue.
-  * See sbitmap_get_shallow().
-  *
-  * If you call this, make sure to call sbitmap_queue_min_shallow_depth() after
-diff --git a/lib/sbitmap.c b/lib/sbitmap.c
-index 9d4213ce7916..13831c7536a3 100644
---- a/lib/sbitmap.c
-+++ b/lib/sbitmap.c
-@@ -208,8 +208,27 @@ static int sbitmap_find_bit_in_word(struct sbitmap_word *map,
- 	return nr;
- }
+Changes in v3:
+1. None
+
+Changes in v2:
+1. None
+---
+ drivers/soc/qcom/pmic_glink.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+index caf3f63d940e..11e88053cc11 100644
+--- a/drivers/soc/qcom/pmic_glink.c
++++ b/drivers/soc/qcom/pmic_glink.c
+@@ -236,10 +236,11 @@ static void pmic_glink_pdr_callback(int state, char *svc_path, void *priv)
  
-+static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
-+					     int index,
-+					     unsigned int shallow_depth)
-+{
-+	unsigned int pre_word_bits = 0;
-+
-+	if (shallow_depth >= sb->depth)
-+		return __map_depth(sb, index);
-+
-+	if (index > 0)
-+		pre_word_bits += (index - 1) << sb->shift;
-+
-+	if (shallow_depth <= pre_word_bits)
-+		return 0;
-+
-+	return min_t(unsigned int, __map_depth(sb, index),
-+				   shallow_depth - pre_word_bits);
-+}
-+
- static int sbitmap_find_bit(struct sbitmap *sb,
--			    unsigned int depth,
-+			    unsigned int shallow_depth,
- 			    unsigned int index,
- 			    unsigned int alloc_hint,
- 			    bool wrap)
-@@ -218,12 +237,12 @@ static int sbitmap_find_bit(struct sbitmap *sb,
- 	int nr = -1;
+ static int pmic_glink_rpmsg_probe(struct rpmsg_device *rpdev)
+ {
+-	struct pmic_glink *pg = __pmic_glink;
++	struct pmic_glink *pg;
+ 	int ret = 0;
  
- 	for (i = 0; i < sb->map_nr; i++) {
--		nr = sbitmap_find_bit_in_word(&sb->map[index],
--					      min_t(unsigned int,
--						    __map_depth(sb, index),
--						    depth),
--					      alloc_hint, wrap);
-+		unsigned int depth = __map_depth_with_shallow(sb, index,
-+							      shallow_depth);
- 
-+		if (depth)
-+			nr = sbitmap_find_bit_in_word(&sb->map[index], depth,
-+						      alloc_hint, wrap);
- 		if (nr != -1) {
- 			nr += index << sb->shift;
- 			break;
+ 	mutex_lock(&__pmic_glink_lock);
++	pg = __pmic_glink;
+ 	if (!pg) {
+ 		ret = dev_err_probe(&rpdev->dev, -ENODEV, "no pmic_glink device to attach to\n");
+ 		goto out_unlock;
 -- 
-2.39.2
+2.43.0
 
 
