@@ -1,192 +1,239 @@
-Return-Path: <linux-kernel+bounces-436860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97FEB9E8BC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:58:05 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6770718853CF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:58:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F922214A7A;
-	Mon,  9 Dec 2024 06:58:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BK+mrXeb"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8E979E8BBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:57:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8651D555;
-	Mon,  9 Dec 2024 06:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733727479; cv=none; b=X5QMKanswM7uSYEBiJL7jooQTbW7e1L9uG6TZ6eZ1P22VMrpKcK9T8SSzwtZsBjLB6yCkZEycnxV5M/ST+HEChyD4ylUCFjrWtYbv8ibcoAVdhMpqSOwT+S15TwoC55aAADnug2hCEIn+dhFZOgyFLw+69bnZCiIR78TkpmI0/0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733727479; c=relaxed/simple;
-	bh=qe6Udq2O6ylQ7lKCDT+058J/wzrj9nl+5v4NIjILIzw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VM/HelCmyOaLm9umBGkIM8O5IftiEfnfGwgDVUbr+iuQmZ2zcaiTq9lLhjyDKasGMXOVhDfrg7I/NC+urfMnrBJ/SPDAtCa9ehhFBnTYz2KAF24GmLoZrgvzXThkzO8KzI0ZrJFI/RcM6qC38gqfRvlVDsU9txwyuFpp2481/E8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BK+mrXeb; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MotJN008466;
-	Mon, 9 Dec 2024 06:57:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=6vMnIg568BJtA4W/JJ6yBSKxv2h8U/loKiehbM+EH
-	Z0=; b=BK+mrXebLKo32XdeUVs2F6OhU0s3/LflbVT0YrqOzjnu2cAnV15xXgd/1
-	4/e0UeW+HBzx8CQvDqKsjKk1IuzGpBq8pBldtdA9D5ZUik2pwJVIuqf9fAHpDK6E
-	HRwfxyd3/iTjNcW3o+6y3bAVmRKDW0HpsEnBfmTT82W/ofYXU4+Vop6pTbu7mhKj
-	u9ha03SxsTMOhxmsYkxVxUOImrEzJG5vgIhVpvh0bGld0kYyOTRVLu8Ga5gbpx1F
-	KikVS/lwdOaQhTj8bko8L469TwunhVlNiDt1x62hFSYsIA/uD6jf0gq9Udv5FwBP
-	bHd+pE28v2Jnd+6LCcxILNHhwIj6Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0x6vxb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 06:57:28 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 4B96m85K005033;
-	Mon, 9 Dec 2024 06:57:27 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0x6vx7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 06:57:27 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B96HbH5032496;
-	Mon, 9 Dec 2024 06:57:26 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d1pmwcqh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 06:57:26 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B96vOVP50856424
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 06:57:24 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7A3192004B;
-	Mon,  9 Dec 2024 06:57:24 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 87B0C2004E;
-	Mon,  9 Dec 2024 06:57:21 +0000 (GMT)
-Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.in.ibm.com (unknown [9.109.219.153])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Dec 2024 06:57:21 +0000 (GMT)
-From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-To: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: ast@kernel.org, hbathini@linux.ibm.com, andrii@kernel.org,
-        daniel@iogearbox.net, martin.lau@linux.dev, eddyz87@gmail.com,
-        song@kernel.org, yonghong.song@linux.dev, john.fastabend@gmail.com,
-        kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com,
-        jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org
-Subject: [PATCH] selftests/bpf: Fix fill_link_info selftest on powerpc
-Date: Mon,  9 Dec 2024 12:27:20 +0530
-Message-ID: <20241209065720.234344-1-skb99@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2939F281274
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:57:50 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CFA21481D;
+	Mon,  9 Dec 2024 06:57:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mUgMEV46"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B233D1D555
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 06:57:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.16
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733727466; cv=fail; b=R5GW6vc1Ije6cqXI96y445B2sPpKLodxeFek7TMl+ykj4w86EvkojW4qJFwTW2oMNoU7qobqS6VHbsNTIJwqRziloKDNUY2jBJbfN8il/blOK5aCdGhopi9hXdmlp2WULw4LfEg6043zIh4r3W+1Riaj1Fx2CKlXESsI8J95pTU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733727466; c=relaxed/simple;
+	bh=8Nn7K5D2+X9oUYKmYyWEJ6cX4Vrsi1G0cO2B4Vfsouk=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=EbRQCvMgkfbYCj9fY58zSfNjJqdDXLbLsTELf1+yVcWLt8ovssEKrirAubJcCsFsrFTTam5YQoT6nqWV3IkYwj1jd20F1XFAoDKOjU+sCGlvOa51KNa+tUQOuBVUV/rBo7EWhAGLgHRO6nYWdRETQMZyCZFtfR572Xa1/p8Yp9k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mUgMEV46; arc=fail smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733727465; x=1765263465;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=8Nn7K5D2+X9oUYKmYyWEJ6cX4Vrsi1G0cO2B4Vfsouk=;
+  b=mUgMEV46IUuoKbnC0ttkP32CTQZ0bz1GWtSrFTeM22HOFUkSMNPRn2hB
+   BHZrNmwKjZSaKG0iNIHBFT8kL1MlsaRRQG45ljRkym1JBjEOWM/51PPb7
+   Ek3G8+OVKHEQTiXGFVVYkGfdDZOVWQpR7USfMBY7mv50/miganmaqBBk3
+   c/X3FNgkOYuPkCbe+CIh3wS+DrNq1VxK3HlMxkw4gqhYJ2BKHPnulHVrT
+   w9/ZLzT65ow4lobIvhw/MldQp//jcZWeOiZmgXaDyB2QUiQ1NWy8sFjX/
+   5gprs1ubtSVlnVxWd/ht0ytulCfzY+yCydpTb3vq9UJsyqFSAIFrSZPw/
+   A==;
+X-CSE-ConnectionGUID: 6kuIOTWeTnW9hQNcuCePWA==
+X-CSE-MsgGUID: uz4uN6ODQJilzR/0I344kg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="21600921"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="21600921"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 22:57:44 -0800
+X-CSE-ConnectionGUID: FqpHeuiVTF2eeF4jo22nFg==
+X-CSE-MsgGUID: jXhoLy8IQiaqzYruFSxS+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95321176"
+Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 08 Dec 2024 22:57:42 -0800
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sun, 8 Dec 2024 22:57:42 -0800
+Received: from ORSEDG601.ED.cps.intel.com (10.7.248.6) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Sun, 8 Dec 2024 22:57:42 -0800
+Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.44) by
+ edgegateway.intel.com (134.134.137.102) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Sun, 8 Dec 2024 22:57:41 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bw2yO9k9D9Kisg7gzlYW5MigxvafDKJ8R4F4kX3giS49m6/PFgXuFTtl90DGzk+oYD7iN12FB+Oj36wRUVWvr4KtKXVxVt2Fo3S26lzRif1gVkXkwgXLAchTIMR1e5h4TdvikYq1DmWEBRMtMnC56kHxFoUYMTIlDakXp7AqIBJgpDH8C0IYbAwfJWd4gaEChdZP2wApYemARuJfN+oAfs8osyvWqeC6kFD9gZu3t9sfX1agQb6dDw1R+Pb3yCpRN+qnyrNDpTQIDaq0N7i4/i+Ni5FpFVJB8T5V8/KZANS37LIS3TO6dVy6PTXaHH7MyTCpThkR2gRCLHbpe0XXoQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=8Nn7K5D2+X9oUYKmYyWEJ6cX4Vrsi1G0cO2B4Vfsouk=;
+ b=ALOB4a71rSUu31PBGfGUMXbJOeV3ZcgFuHFmTAkTVu9k/RsszUut5PW+N4X/Sz1ICsIKU4RFDiWnL9txj750PEhYfHghKkeHE/rmcYx6cOknBB1v/ptxe6cMHMUEuz+2KuM20maooOjNiXbvzDMwimmwABMBdbmwl40UjIE7koCsk8n0YjmzICXiX/pQi5NDJ1VcOaLM/37Sn5mftMKkwOgn1oZntI9gR6iyXJY8gQIf+lwUXEQwhjn3LYK+VkOtJcVtxDj2A91Gonf81CDm4KWOu2yDGnjH3M5SuB8oPhQ/vrpnLArKd/jhg1zV5ejuodYZ8bF4d4lNEa40a4Vrjw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com (2603:10b6:208:385::18)
+ by PH0PR11MB7495.namprd11.prod.outlook.com (2603:10b6:510:289::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Mon, 9 Dec
+ 2024 06:57:39 +0000
+Received: from BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b]) by BL1PR11MB5978.namprd11.prod.outlook.com
+ ([fe80::fdb:309:3df9:a06b%4]) with mapi id 15.20.8207.017; Mon, 9 Dec 2024
+ 06:57:38 +0000
+From: "Huang, Kai" <kai.huang@intel.com>
+To: "Hansen, Dave" <dave.hansen@intel.com>, "seanjc@google.com"
+	<seanjc@google.com>, "bp@alien8.de" <bp@alien8.de>, "peterz@infradead.org"
+	<peterz@infradead.org>, "hpa@zytor.com" <hpa@zytor.com>, "mingo@redhat.com"
+	<mingo@redhat.com>, "kirill.shutemov@linux.intel.com"
+	<kirill.shutemov@linux.intel.com>, "tglx@linutronix.de" <tglx@linutronix.de>,
+	"pbonzini@redhat.com" <pbonzini@redhat.com>, "Williams, Dan J"
+	<dan.j.williams@intel.com>
+CC: "nik.borisov@suse.com" <nik.borisov@suse.com>, "Hunter, Adrian"
+	<adrian.hunter@intel.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Edgecombe, Rick P"
+	<rick.p.edgecombe@intel.com>, "x86@kernel.org" <x86@kernel.org>, "Yamahata,
+ Isaku" <isaku.yamahata@intel.com>
+Subject: Re: [PATCH v8 8.1/9] x86/virt/tdx: Reduce TDMR's reserved areas by
+ using CMRs to find memory holes
+Thread-Topic: [PATCH v8 8.1/9] x86/virt/tdx: Reduce TDMR's reserved areas by
+ using CMRs to find memory holes
+Thread-Index: AQHbRxLpcyNtIOXDR0KvQ+0YSsApfLLX87IAgAWNaIA=
+Date: Mon, 9 Dec 2024 06:57:38 +0000
+Message-ID: <626ac144649dd183bc9a9f9b021db3c841a70fec.camel@intel.com>
+References: <23bb421e9bf5443a823e163fb2d899760d9f14a3.1731498635.git.kai.huang@intel.com>
+	 <20241205124005.92615-1-kai.huang@intel.com>
+	 <0efe8492-e0da-4d97-8a6c-9cfe718f2d63@intel.com>
+In-Reply-To: <0efe8492-e0da-4d97-8a6c-9cfe718f2d63@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.54.2 (3.54.2-1.fc41) 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR11MB5978:EE_|PH0PR11MB7495:EE_
+x-ms-office365-filtering-correlation-id: 8f9dc689-b332-46cc-0b16-08dd181ec4fd
+x-ld-processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|921020|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?K1pFVkN6ZzlNaHpoL090UXN3Njc2NVVwd3FLaXI4N3lPdWpXSzNrV2Zsemxq?=
+ =?utf-8?B?RnJzQ3Uvb09jbzhjQWp0blJ6Q3lRL0hXY05NNk5ON0pqWG8vT0FVOXRvV1pY?=
+ =?utf-8?B?QW5JVGdkdEZqb2kyZHdwcVVnSHpsQk9XRTBPK0ZOcjJpYmcvR1NROVBxcXlj?=
+ =?utf-8?B?VUxhUnJNR1BidmdnTXRPWGpXa2FUdlN5UmN1czRTaXBOYU9ITC91akR2bXNx?=
+ =?utf-8?B?RTRFRlQzeEVkc1hKc3BacGNxWUplVk01MW1zdE95bXJqT2NKQlozMmFGamV1?=
+ =?utf-8?B?ZTU4YUM2RXFtVktUR0xUSDVUaVAxNDlwTEMraHhDNjdndlVHSGlQMmpJMDlx?=
+ =?utf-8?B?OXlzSHlaWVNzNC84RWVtUVRzOVA2OW13bjJGZVpVeTY4NnNkaCtRRFg0ZnNX?=
+ =?utf-8?B?WVREZmdDUTJBTHRkY3FPbktXc2svcHNTdC96VDJJaGdjYWJrZWR3b2NVWHk4?=
+ =?utf-8?B?YW9mSEpmK3YxaXZtejhlczJ3Z3NVaXdBY0VNK2ZoMUJxNHdvdGkzQlp4NTh0?=
+ =?utf-8?B?NTlTSzRxOXBMNlVKRGxQb0pjZ1FqU2ppZWFydndEQkk5RE5zQ0RQQ09kZXNo?=
+ =?utf-8?B?WXlrQWpCRUhnd0VGbGRIcFVadTBhaWE1UXdaSzNQNHpkY0lnOXd4eHRZaXRE?=
+ =?utf-8?B?ajE1RGtQM1lCMGtRWXBWV1lveVI2OTl4WnpScHRRV0hYdnU0bEQreHd1Zjh1?=
+ =?utf-8?B?R3ZWZFdGbU43MzVjeCsrOHF3UmR4cFpTZ1JIYzFsOXExaklvUkxudFVPQVpZ?=
+ =?utf-8?B?dmUxOThlL3BNenJCR2VPSENGbG9FUlNyd3hsRW1wdVZRRlJSSzh1b0JyTWlD?=
+ =?utf-8?B?VDBNdVpLamJERmJMUmZsUDFLKzhjUEZOdjFFWG5PdVh4NEFnY1NwYTMyZ1Vk?=
+ =?utf-8?B?VW40QjEyVHU3QTFLQmpqMjl5amJkL0lwWVV1M1d5KzBaTHh6dmdHRTlXS01J?=
+ =?utf-8?B?Mzh5aWhvZVlzbXFUbElqVUtmcFh6djNzT280V003OTdoSXBIMlZXVkJGVEdI?=
+ =?utf-8?B?bG5FT1BvOW02UTFxVXE2amZiUjRjSzZBb1dwTEVFZC9QNkIwU2JnK1BzMjJP?=
+ =?utf-8?B?aE1rZE1zTzc3dlRWRXVZSUFyeDlQQmQvRnNYQkFOVG9zV0IrUFJwR2drdU5U?=
+ =?utf-8?B?ZmZFTzg0Rk1RSVFKMDhKS3pCcG9jeDF0dXV6cjBiWnlRcmZHd2RBOGFUVWJ2?=
+ =?utf-8?B?d3l0OTM0WWpacHI0U2IyL1daK25BU0xFUk1PT1I4cHB6RlBhVWt2VFNzVGR5?=
+ =?utf-8?B?cGc3NFVScGRQUDVEV21TcmZ1SnpTY0IyWE90K0oyUERKMVFYSG9Ra21HRU5C?=
+ =?utf-8?B?SmIyN0N0eTU5Y2plbS9MTFk3dDlvT21iaGcxOCt0anZ3QWdnKzdWbEFGQmxO?=
+ =?utf-8?B?d0ZtL3FYYlZMVWpBbWNiMmdySjkxdWZHWGF1c1NxMXVlejNKb2pUdXNlZFVy?=
+ =?utf-8?B?dWFQSFhrWDJUN1lOdE8yMkNDblQ4c2FGMlZGeTVRMWdoN1ZJQmgvZVhJaFVZ?=
+ =?utf-8?B?NE5TaGxGTWMzNG1VbERwVmd4amZkTU5OSi84NEdsbU1SL2xFdjV0UzFua0Mw?=
+ =?utf-8?B?OGladjJNcm5rdjN3djNwdTZJUE4yZ254WVJYTVB6NXNCcVFyMXljYWY0cmhM?=
+ =?utf-8?B?NnRPNXlkUDF0Y015MGtOK3Bsdm9EYUFscFRMK0tyS3ZEYklmb0U2Rmh0akZh?=
+ =?utf-8?B?U0NMQmhvZEFWSWN6Z0g0bFVybWpOSitHNTRaSXFaVDlRZjA1dExGMGI2VktP?=
+ =?utf-8?B?QkxEMWQ1WXZPcE4vN1doNmhiQ0JhbUJuODkySkhTQUcxenJBVVhjMkUxSUZp?=
+ =?utf-8?B?WFVLTWZCa3VTRUlGdWswS3krcFFiS1IvQ2g2Y0VWK0dsMkJEd0V1SnM3bVp0?=
+ =?utf-8?B?RHpSUDJxUjBwbW9Takk4cG00MzBXdlE0Yk1IQklWUXFFN2NFdnd2Y3BoVzVM?=
+ =?utf-8?Q?pOpfDcdlkKE=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR11MB5978.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?alY5c0xMbmRDNlpKUU5Oc2NSRW4zamlQcWc5akFsY3FZYkJCSyt1S3lPc3RM?=
+ =?utf-8?B?by9McnFxUlQyQnNNb3lJN3dReGF5U2luRDAwNnhGK0s3UDYvaTM1THRoZHV2?=
+ =?utf-8?B?dHBybk9TU3E4MFk2WWNHRTFoa3NkOEpUSkwrVHBEYms5QXBNaGMvaFM4U1BG?=
+ =?utf-8?B?bFNBbWk0NEZ5RHRGZE9DTHNLV3hYcG9xcm1NWmtpUWxxVTY5WnBpOFMxejZF?=
+ =?utf-8?B?QTEvdWRQdFNPbzlKMUUxWlZPSEEzNDl6UEpQRVQ0bmNLd2ZMa2pDV293c0ls?=
+ =?utf-8?B?eE5FWFMyblNhdjA3Vit3aVp3STQzc0pzeERjMmV6VStGSGNFTk1NOFBtb3VS?=
+ =?utf-8?B?VG9pMWFWNFdjaGhCNndCeXRpUy9vcHZGWXNsdnozRDkyZnVla1lnNzdBa1JC?=
+ =?utf-8?B?NnNWbGFjY3VwSVdHUU52SlVXelpIOW1zclpnck9WcmRYK0JiQTVaMlEzeGty?=
+ =?utf-8?B?SWVUL0xxVk5UOXVjeXY2cDJTZ3grek4zN0c0Ym85aDA1aTExQ3RTemlXaEUx?=
+ =?utf-8?B?K001MGkxNnp3TGF2Y0YveWNGU3N2anE0aDZ6dGpRYWdUejdXZTVYd010L1hl?=
+ =?utf-8?B?MCtMM1lhb3NOL3E3bzhUcVFlNUVKOU11N3FvOFJBMkZuYndqYTZyZ2ZnNVRO?=
+ =?utf-8?B?bVNKUVBvdnVIbHJVQUVXMmlmcWw2OFlobG1iQmxOaW9aWDdCS0pLbXY0ZHlr?=
+ =?utf-8?B?cHhaeWhPS0xnY1RNVEZZc0dYTFVWMUY1eEJiK0ZUS1FNZmRsVXJoWXJtSFlm?=
+ =?utf-8?B?T1RUTmt3ellqd2tlSnVWM042TWphT1JFLytjMHR0dmpOeTRTczlXVW1yNVBN?=
+ =?utf-8?B?Tm1vSnZYeXhtMTVTelhZUjhMb1RaS1NVNkJkS3AzVGxCRFlvZ0locVdwb1BT?=
+ =?utf-8?B?cENxQjhmWk8ralo3T1NuSkRrMlMwQ3BHamc1dXh1WUJXci9jVno2YkdBN2Rp?=
+ =?utf-8?B?V2xSUnRqL3hGWEtQdDB2d1JhTmVBUXpIek4vVlZGcFhRVHRCVm5UZkxTUGRD?=
+ =?utf-8?B?azVPT0tDbXI4UVhzbHg1MWxsMG12R2ljMHRObEFIZ2V1UDZ1S1kyUFRHbmdT?=
+ =?utf-8?B?NUhPVXBLTnRBbnBTRHpSamp2ZE1iUkNoUFVOZzRZamtEeDFaY1d5N0JwWWFE?=
+ =?utf-8?B?MytObWRybGRxL1UxLzROdFZPQ2ppQ3FTRko2SUR6N24ySUJxdmRjdG9iQ0Fx?=
+ =?utf-8?B?Mm9mMGh3VHNUakxLZm9kY2hVUG56NjZqWHJHN2JwY0dIM2p4SmEzVFN2aTBu?=
+ =?utf-8?B?ejh0Sy81ekM3NFcxZG9xRjE2OTU0UnpzTnJHYzQ1czYyRHlVKy9sbXpWUWlV?=
+ =?utf-8?B?ckxYaXhvUnZ1Ti9mSVVMbys3ODhMVDBETHRkYUtTRW40VThNSkxpQWhVZ2Vr?=
+ =?utf-8?B?L3ZHL3pqUkw1WDA2SGRnOFRGRVk4NHlIWGdvT00yTndWVnBHWCtveTZUUy9H?=
+ =?utf-8?B?VHpLZHFoOVlUbStJYmw2YUdwYnluZGtqTmcvZnNFZkpJS0w1Q0cxN3NpRW9T?=
+ =?utf-8?B?MXl3ejUrZkZFY0xIQ1cwYlVOdzZKUVBzcHAwVlUyMGU4N3hnZlJ3YW9peWx1?=
+ =?utf-8?B?b0Q5SXIydmsrQXlYRGp1RURIbVBiR05GZzdORWxQUnVnaG5UdkpsSDRMbmRl?=
+ =?utf-8?B?VStIQjlPekxDMFlMQXMxRUw1KzR5eGg4MUlBUkZBbVVUSVZSdHQxNGIwTk51?=
+ =?utf-8?B?N1RFMTBiZnI0bzBmZG1lYjhNMGFzRXYvRDRtTDgxS1RUTkQ4SlNLa3hIcisv?=
+ =?utf-8?B?a0ZOV1dMODZ6Z0x6czY4MWJ0U3JhTkdvVUV6SUVYRElyQ1VpeWUzeDFVU0Ju?=
+ =?utf-8?B?czBYRzkwSmxQT3ZzODkzRzQ5TC9QS1VEVW9sMEtUZXZKWStyWE96UWpUUWlw?=
+ =?utf-8?B?K2NWd0VQYXZBc2NMSDZZTzBReDN2OWpIaFhYMUFpMmlVdTc0Q3lLamIwdnVU?=
+ =?utf-8?B?cWxYaFl5YlpEOTdtOFA4SHZuV3dEdHFoRnA1RW95eVlpbFFQWklrdWN4WUxh?=
+ =?utf-8?B?a2dpYmpFTFV6bldZSGpxVSsxWFBWWlg3emZaZjhBU085M05tQm02RlI0c0hF?=
+ =?utf-8?B?TStGNjVrZ1JiZUVOdGFVNzliTGVKTWpvK3FtQVRiY0NibG44MWM3NldIU1lq?=
+ =?utf-8?Q?qpS6ensIfSoyEdhix8VR6i+9d?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <8DFCCBDC67C97B4FBA70FB568C66819E@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: EndXjGVOXSlKrwYrWNmh4Rw4xjAVbk-f
-X-Proofpoint-ORIG-GUID: oXQiw0sbMxZ9FHQllso9ETUFqqmEUX7S
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=857
- priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090051
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR11MB5978.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8f9dc689-b332-46cc-0b16-08dd181ec4fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 09 Dec 2024 06:57:38.9338
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: 1GGHhMJDUEAQUIeg7N4NZEY72kZ0jYASd16hgUNAxdIdn+IHGq8TTaBuUXbsAko6oPw52BlJGHb2ns5GLSYE6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB7495
+X-OriginatorOrg: intel.com
 
-With CONFIG_KPROBES_ON_FTRACE enabled on powerpc, ftrace_location_range
-returns ftrace location for bpf_fentry_test1 at offset of 4 bytes from
-function entry. This is because branch to _mcount function is at offset
-of 4 bytes in function profile sequence.
-
-To fix this, add entry_offset of 4 bytes while verifying the address for
-kprobe entry address of bpf_fentry_test1 in verify_perf_link_info in
-selftest, when CONFIG_KPROBES_ON_FTRACE is enabled.
-
-Disassemble of bpf_fentry_test1:
-
-c000000000e4b080 <bpf_fentry_test1>:
-c000000000e4b080:       a6 02 08 7c     mflr    r0
-c000000000e4b084:       b9 e2 22 4b     bl      c00000000007933c <_mcount>
-c000000000e4b088:       01 00 63 38     addi    r3,r3,1
-c000000000e4b08c:       b4 07 63 7c     extsw   r3,r3
-c000000000e4b090:       20 00 80 4e     blr
-
-When CONFIG_PPC_FTRACE_OUT_OF_LINE [1] is enabled, these function profile
-sequence is moved out of line with an unconditional branch at offset 0.
-So, the test works without altering the offset for
-'CONFIG_KPROBES_ON_FTRACE && CONFIG_PPC_FTRACE_OUT_OF_LINE' case.
-
-Disassemble of bpf_fentry_test1:
-
-c000000000f95190 <bpf_fentry_test1>:
-c000000000f95190:       00 00 00 60     nop
-c000000000f95194:       01 00 63 38     addi    r3,r3,1
-c000000000f95198:       b4 07 63 7c     extsw   r3,r3
-c000000000f9519c:       20 00 80 4e     blr
-
-[1] https://lore.kernel.org/all/20241030070850.1361304-13-hbathini@linux.ibm.com/
-
-Fixes: 23cf7aa539dc ("selftests/bpf: Add selftest for fill_link_info")
-Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
----
- .../selftests/bpf/prog_tests/fill_link_info.c       |  4 ++++
- .../selftests/bpf/progs/test_fill_link_info.c       | 13 ++++++++++---
- 2 files changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-index d50cbd804..e59af2aa6 100644
---- a/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-+++ b/tools/testing/selftests/bpf/prog_tests/fill_link_info.c
-@@ -171,6 +171,10 @@ static void test_kprobe_fill_link_info(struct test_fill_link_info *skel,
- 		/* See also arch_adjust_kprobe_addr(). */
- 		if (skel->kconfig->CONFIG_X86_KERNEL_IBT)
- 			entry_offset = 4;
-+		if (skel->kconfig->CONFIG_PPC64 &&
-+		    skel->kconfig->CONFIG_KPROBES_ON_FTRACE &&
-+		    !skel->kconfig->CONFIG_PPC_FTRACE_OUT_OF_LINE)
-+			entry_offset = 4;
- 		err = verify_perf_link_info(link_fd, type, kprobe_addr, 0, entry_offset);
- 		ASSERT_OK(err, "verify_perf_link_info");
- 	} else {
-diff --git a/tools/testing/selftests/bpf/progs/test_fill_link_info.c b/tools/testing/selftests/bpf/progs/test_fill_link_info.c
-index 6afa83475..fac33a14f 100644
---- a/tools/testing/selftests/bpf/progs/test_fill_link_info.c
-+++ b/tools/testing/selftests/bpf/progs/test_fill_link_info.c
-@@ -6,13 +6,20 @@
- #include <stdbool.h>
- 
- extern bool CONFIG_X86_KERNEL_IBT __kconfig __weak;
-+extern bool CONFIG_PPC_FTRACE_OUT_OF_LINE __kconfig __weak;
-+extern bool CONFIG_KPROBES_ON_FTRACE __kconfig __weak;
-+extern bool CONFIG_PPC64 __kconfig __weak;
- 
--/* This function is here to have CONFIG_X86_KERNEL_IBT
-- * used and added to object BTF.
-+/* This function is here to have CONFIG_X86_KERNEL_IBT,
-+ * CONFIG_PPC_FTRACE_OUT_OF_LINE, CONFIG_KPROBES_ON_FTRACE,
-+ * CONFIG_PPC6 used and added to object BTF.
-  */
- int unused(void)
- {
--	return CONFIG_X86_KERNEL_IBT ? 0 : 1;
-+	return CONFIG_X86_KERNEL_IBT ||
-+			CONFIG_PPC_FTRACE_OUT_OF_LINE ||
-+			CONFIG_KPROBES_ON_FTRACE ||
-+			CONFIG_PPC64 ? 0 : 1;
- }
- 
- SEC("kprobe")
--- 
-2.45.2
-
+T24gVGh1LCAyMDI0LTEyLTA1IGF0IDEwOjEwIC0wODAwLCBIYW5zZW4sIERhdmUgd3JvdGU6DQo+
+IE9uIDEyLzUvMjQgMDQ6NDAsIEthaSBIdWFuZyB3cm90ZToNCj4gPiBBIFREWCBtb2R1bGUgaW5p
+dGlhbGl6YXRpb24gZmFpbHVyZSB3YXMgcmVwb3J0ZWQgb24gYSBFbWVyYWxkIFJhcGlkcw0KPiA+
+IHBsYXRmb3JtIFsqXToNCj4gPiANCj4gPiAgIHZpcnQvdGR4OiBpbml0aWFsaXphdGlvbiBmYWls
+ZWQ6IFRETVIgWzB4MCwgMHg4MDAwMDAwMCk6IHJlc2VydmVkIGFyZWFzIGV4aGF1c3RlZC4NCj4g
+PiAgIHZpcnQvdGR4OiBtb2R1bGUgaW5pdGlhbGl6YXRpb24gZmFpbGVkICgtMjgpDQo+IA0KPiBU
+aGVyZSdzIGEgKkxPVCogb2YgY2hhbmdlbG9nIGhlcmUsIGJ1dCBJJ20gbm90IHN1cmUgaG93IG11
+Y2ggb2YgaXQgaXMNCj4gYWN0dWFsbHkgcmVsZXZhbnQgdG8gdGhlIHByb2JsZW0gYXQgaGFuZC4g
+SSBhbHNvIHRoaW5rIGl0J3Mgd3JvbmcgdG8gdG8NCj4gcHJlc2VudCB0aGUgcHJvYmxlbSBhcyBv
+bmUgb2YgYmVpbmcgdG9vIGZpbmUtZ3JhaW5lZC4NCj4gDQo+IENvdWxkIHlvdSBwbGVhc2UgcmV3
+b3JrIHRoZSBjaGFuZ2Vsb2cgYW5kIHRoZSBjb21tZW50cyB0byBtYWtlIHRoaXMgbW9yZQ0KPiBz
+dWNjaW5jdD8NCg0KSGkgRGF2ZSwNCg0KSSBzZW50IG91dCB0aGUgIlBBVENIIHY4IDguMi85Ii4g
+IEkgdHJpbW1lZCBkb3duIHRoZSBjaGFuZ2Vsb2cgdG8ga2VlcCBpdA0Kc3VjY2luY3QuICBJIGFs
+c28gdHJpbW1lZCB0aGUgY29tbWVudHMgYXJvdW5kIHRoZSBpc19jbXJfc3ViX3JlZ2lvbigpIGlu
+DQpidWlsZF90ZHhfbWVtb3J5KCkgYW5kIHRoZSB0ZG1yc19wb3B1bGF0ZV9yc3ZkX2FyZWFzX2Fs
+bCgpIGluIGNvbnN0cnVjdF90ZG1ycygpDQp0byBleHBsYWluIHRoZSBjb2RlIGNoYW5nZS4NCg0K
+QXBwcmVjaWF0ZSB5b3VyIHJldmlldy4NCg==
 
