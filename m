@@ -1,329 +1,135 @@
-Return-Path: <linux-kernel+bounces-437941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE4519E9AC4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:42:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C636E9E9AC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:43:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E235B1656A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:42:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84979165710
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FCE81C5CD2;
-	Mon,  9 Dec 2024 15:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ocR2G4cD"
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (mail-dm3nam02on2084.outbound.protection.outlook.com [40.107.95.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4E91E9B2E;
+	Mon,  9 Dec 2024 15:42:50 +0000 (UTC)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6D261B4231
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.95.84
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733758963; cv=fail; b=JzaOAsh+BxX9IeFE/EOubozQ7WktjgaGqhMS4p1fQvpDMSFsXbpdgo2/uzXBNv5YRV8Tm5oeD8UGjX4c7zDOJwLgtxsO4H8csvIpKXzDhss+GL2Xiwu6BnC4EuDiLfQsUOzzix46UIo08tstgNRQDgfeO3wwr6B616OdHoaDOxA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733758963; c=relaxed/simple;
-	bh=x6A2Df1t0JtDXnabSZFdXQJW0MgbUb4lVw/pAvsDKvQ=;
-	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=k+RkjbdGORrLUDOjxTSYpntyCo9i5JRB4b0QQiV7UGrYqkP0c+Ro36GYaHJxDxqHtTiHR2kaQKM5B/o8btLA+BsQegBZqEh6hF10E6dlHLpRLrHLW0yg5zuleNjfcuwpix42NjnhLoV7C5eC2gjdy0L/2xVupchdJ+9WR6nLaes=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ocR2G4cD; arc=fail smtp.client-ip=40.107.95.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KCSZol7hGPztaqqh9+Fzk0Avh0/IgJOXxXaFwGOBdqyO5mvGoan2J91eLnetF4V9Pn8G/+t0jsI6aimqUQ4mtKZmb1P52UbFRSFxtaaNYOqymvqET7XXBeIC4tiI/R+j4kPY+Nn3zqTaS3LJShmHGPAolPkfKzKsYDvHXiYk7eddhHWChtF6OjSW1XrQQ5t2RVkyH81m+vp+cq3KEXrB2SW4jwiZuwAiBPoqcDWyNOH18tV2P/oO5R23+d1rIHWyb0MWuCUZa7cgNTj9Ps9DYZhT+UjcrIbXg9jU40/kn5n8FV9o5TqIWp2AROGm215zelCd+B0GhsSi63DaTrtPrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kztLg4yei5nceQ/Yfz738L4EcNimEvZdXSkHK//aCL4=;
- b=iSRRyNE5fv3drglmRb6IA93OkX2YDGGFeHgk+9IuAELfZ6ge9A/oKF0mvWtTZ6VPKlWUnXnAuWjBczCY449Dzya4vQnOMu4PirNO0wyiPDu6YpQdlWNTk2KX8Phj00I51Ke9Y8ZH6ZpPtuM6zZUC0W8WsALww5Um3IxplIlzvbrfel0ZxgZy2s0c0WocA+sxzDSqc5lCP/cVA/3ygUMWnH9q9JWkDimhr3qCGsp7OVoYLh75skRSoLshFBE9GpQivZDjMNt2qGifn8vXGDjC3hcIA7rASBhzhx0EdS3+qlJxIPM03XFGy5LtojeEJeO1YQpgHGfiMjvYBzJZ8eVW+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kztLg4yei5nceQ/Yfz738L4EcNimEvZdXSkHK//aCL4=;
- b=ocR2G4cDisx57+IvrhIF/i3uBdB2Ukl6KPhsXx6L4myMpN2dKrkm7FYC9hnqSsqUsDepAShEXVLBBl+rE2YtN/E2lkAOwEFMebr8TLIDxXwDWefgK4KJXrherQtdzkWDVHmDzmeTCmen0SUvwbFLh8k2BBefJr+LaMIIrZJdU5w=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by DS7PR12MB9476.namprd12.prod.outlook.com (2603:10b6:8:250::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8230.18; Mon, 9 Dec
- 2024 15:42:39 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%5]) with mapi id 15.20.8207.017; Mon, 9 Dec 2024
- 15:42:39 +0000
-Message-ID: <e4401ab1-0562-407a-a0e9-2f6e43e5ac22@amd.com>
-Date: Mon, 9 Dec 2024 16:42:32 +0100
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 14/26] drm/xe/eudebug: implement userptr_vma access
-To: Mika Kuoppala <mika.kuoppala@linux.intel.com>,
- intel-xe@lists.freedesktop.org, lkml <linux-kernel@vger.kernel.org>,
- Linux MM <linux-mm@kvack.org>, dri-devel@lists.freedesktop.org,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Maciej Patelczyk <maciej.patelczyk@intel.com>,
- Jonathan Cavitt <jonathan.cavitt@intel.com>
-References: <20241209133318.1806472-1-mika.kuoppala@linux.intel.com>
- <20241209133318.1806472-15-mika.kuoppala@linux.intel.com>
- <ec42fe8b-9be0-41cc-96f4-f1869c6bb7e6@amd.com>
- <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <Z1cNQTvGdAUPp4Y-@phenom.ffwll.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: FR0P281CA0052.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:48::20) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044F31E9B12;
+	Mon,  9 Dec 2024 15:42:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733758969; cv=none; b=svrp8Lsspl1l8FXWqUHMf/kEacIxbXxoq3Lx5WflrePu1uWx6wpSdh7QrNFOf8hsctcPIC6CRXp2WWPRAKN/WOAlSmSM6hyIsM1urpGM4xL6t2RrsCDsCy22+7PNiERcAhJln97gPWRrbtFQUxWqp55CMfL8rfphRVeySiAduJY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733758969; c=relaxed/simple;
+	bh=MDtf3KrjN/ZuyRxqOUDdPapgk7TPgg4Z+6jlNqAS+CM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ibxhNbHyr8LUDdlQnpQvvknsNzs8KGqHQCilJfB67jb16/7B/L74t9RHjRxvNnRzQkgaEzFAqaJ8SQib9hGeU8afIbrZpeGkrM+WBIodukIamx/4ezsLhJXk86jnz7o/2Hupbv8Q2j9quhrkGJhWmpatHssIfMxUhiyMXpCk6wM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4afeccfeda2so548417137.1;
+        Mon, 09 Dec 2024 07:42:47 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733758966; x=1734363766;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xxv+gi2b4vb+2PfhKBfiYPC5UhPPhL9JTvs/aZ/ti3E=;
+        b=v4PzPoYrxeu6v9cdFtbnoVkFxsNMDL4CE7bVLXS+9+pC0SuCMLjNWgYjkgtYjfUWzi
+         hjDQoYgp3z+qqrFGICua0f7AwFow/LlcEwhGUYj3JAF6Q13Fx2g/ysIUcTP7G16E+p1A
+         zlymn3y7Xenr0MK39xIGnKb/M3jrShbAJDyjfzUIvLg2tuehQTxzb4qip6NSewheFnBB
+         oRIG+x+h3vPwd2bbbPqW8ZGFdkCeMgCHJDaMUAnJ9mDhr5gG6ys6t49IkL80+TQB442n
+         xM6MOViHc9iovE/8SbRK/gxypNPtcXkG72+FBHEfNNJcfIFuh5sZuo+XzHXWWaGIx6WE
+         CB1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU60khhr/uzHmDy0qgixEZdpKFA0QxPat3kFTPXLKZKYdKEWw2gGUZ19PNyNBPkj+CZLwu1o5PYfanADA==@vger.kernel.org, AJvYcCVmQGmlafiLjD4XYX8dwg3oDBnZh6TAZkeZyLjrbHyZKVoQKx+ZrQnkLA2Lzfl7Z0H0VdN/B/iupcUqyAwc@vger.kernel.org, AJvYcCW/p+pasNrnJjbBKX4k1v8u08/nnlaJhg+UE+vvBof3E0RRFF1s9eP3gHgGm1eKWi/Teeo3qAgnQB8XMXs=@vger.kernel.org, AJvYcCWEUBSdttpvxJhpLW1bQA5pt7NrOsd0eSHAG/Z41W5RQwagv6AMMfYvjrufazDM8ZL1xDH/54AJgGm/@vger.kernel.org, AJvYcCX7qFfL1CBm6Zx3SbrKsLATQbTZzfClbGqp5mfbFkrf8YxkpMgnLH/DkSY6gSI7pI8n5F61vlvpWcj847KOfSXVSQ8=@vger.kernel.org, AJvYcCXLaLV9QP5lclC5/alW2khfgkRVew2QTgopwxrYqWFoZzLCJxIcgA+FUELf29HfCBWpT+Sgv/K8Oe7k@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAR/ziodfLHGiSM4/vo8rXsM6LyX1E/2rnhG3ASqeHRE2pE2pW
+	nu95BDFZrvymqWylog3cdInqDuUTcO1RQF6iOmJuW5ic9h7IjNWjTeksMvxWAVo=
+X-Gm-Gg: ASbGnctiCgJZEerlfJFuRPdOD/K9o8Nvr3rwnGo5IMvFAbTaaAStg3K4pLWp+YXXh+q
+	r/pBWlE16522YZY527/Q4oEPlT7Nv4eP0vc+o6CG0dA+/zRwSXNCY8M7Mb027Fh5lBwgQxRVPwh
+	GdwlHnjtxITaeBHGSvy2+IBv1AxpTzZphEr+8EQWLfjZ5w9zjlh4Kd/3cIu+D5RdqttlolEeAmZ
+	9ZuK4y5pe4NVip8K5D1oXqbZukLe4EPFoSOebdq9dNYrOHgHewxrY79L0qY6cREm81VE9UqGn2P
+	XLn737n2BZ21
+X-Google-Smtp-Source: AGHT+IGqF6wUFSgOO4+KJou6ZjI/bxTh6odQa2c2jWG85N61Nyk3HDWl7WBBNDGhHtfyQAHZukAdWw==
+X-Received: by 2002:a05:6102:5494:b0:4af:df60:8649 with SMTP id ada2fe7eead31-4b116c6eee3mr1567661137.9.1733758966115;
+        Mon, 09 Dec 2024 07:42:46 -0800 (PST)
+Received: from mail-ua1-f44.google.com (mail-ua1-f44.google.com. [209.85.222.44])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-85c2b964991sm1199889241.2.2024.12.09.07.42.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 07:42:45 -0800 (PST)
+Received: by mail-ua1-f44.google.com with SMTP id a1e0cc1a2514c-85ba92b3acfso924763241.1;
+        Mon, 09 Dec 2024 07:42:45 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV/aI3YEp1zjteOsrSM666F+kAiAW7ePL8UjvWEGj0uNtkBlDd8h7zMpNrisO2HRXQoKy8DeUrIVNvfhi8=@vger.kernel.org, AJvYcCV4+bQNAdA1ndJN3bUDnAmcE4wPQ5MA2npyYYflXp0hKNuaJkkO/8tieDFuHLVmzqwkLF4rlDDjEZl/B2hm7WvbR0w=@vger.kernel.org, AJvYcCWPcnOVQGFQaUct/+nV5EnBovIaKjuU6+Qapv2bPPQZ5KKv2NUedAVMCV6wBM3ANX9wMfHkXnkXMB1r@vger.kernel.org, AJvYcCWibF23FmRlaNA/Dnc+222jw0IzrOSZ/u2UBix1U1Xtq18AwYcMSj6C1cEuOBluq1D8X/JjrpMRIilfB8tf@vger.kernel.org, AJvYcCX0cvuLRLs9baUGeI1by/5pS6DxoY7yFQWKCXBvDIIbiyoZ8XZEftRaa4mmmGmcWcZ6VReb6nwJa8eA@vger.kernel.org, AJvYcCXQIDPyzizG4OLFM39tWfJRghba4meu0Jssz0054oEAa0xFUfvAbE5NNY1tn4CtYcKB4veOiE5AkNZfJw==@vger.kernel.org
+X-Received: by 2002:a05:6102:2ef:b0:4af:f5bd:6376 with SMTP id
+ ada2fe7eead31-4aff5bd672dmr3479930137.7.1733758964965; Mon, 09 Dec 2024
+ 07:42:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|DS7PR12MB9476:EE_
-X-MS-Office365-Filtering-Correlation-Id: a28d1f38-9137-4904-c771-08dd18681c86
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?bzV0UEExZTVkcFEvNFlZajF6R1cwT1piT3d1NG9QY1ZKdU82OE1kclg1Vkpa?=
- =?utf-8?B?WkRCVytUT2cwdjNhTzVEL0pSY1NzRWdmQVI5eTlVaWhKL1hXUHoyWDE1cEZM?=
- =?utf-8?B?U2VGa3JQSXVoenZTSzFJVVJ2TWgxQ0xQdHJVZ2ErQ0t1NW1Ob0JHejdCdkFw?=
- =?utf-8?B?V2hiUVRmMXpDc05oVkExTHVmbTY2VmhEVFNVMWJYYnJsTWZORmhQNUU1b1I3?=
- =?utf-8?B?VnNPYU9qY01uVFNHQkxHMXdQdFRiWnZxSzM5ZE1weVlXL1FxcGNuRkNJakV2?=
- =?utf-8?B?ZU5yN1JCSk5qbUhJdnJzRGd1NjR2dzNaZ1JtdHN5cVBrNHd1cnZKdkZ1OVpu?=
- =?utf-8?B?WFFaWnI3ekNkMVcxN2wrU0FJRHFKWTJxOC9relJlc3ZqL1NhYTBFS0RFRldj?=
- =?utf-8?B?WCtPQ2dicktvZGxXUHp1RXltNW1zcFVLdTdCRWpzMGlRSFd1a2FZbFRVc0Uw?=
- =?utf-8?B?L0R2T2I4Sy9tOXF4eTB5SFJFL2FGdXFMcUtxNUZLWVQ4azBkb0gvRnZ6eldM?=
- =?utf-8?B?K0pBRnhyQWZjUVA4bzN5aFhkczRlRk9Vc3I3YVJnV3phaCtOZFhBQnRXWXJ3?=
- =?utf-8?B?c2xPZWlha1RXTUV6aEJlV1hMZGl1bUFQTUlPL3dFRGw2UFhsVDRlWEM0M2xZ?=
- =?utf-8?B?eURHNk5pR2l6b29mOXV6VG1TalA4TG1QNldWejRyTnhaSndsU1VyYzRSNTRm?=
- =?utf-8?B?MnRxdVd1UUoyQmhnMFk3QUgvVFNPMUdXdmNkL21wNDVRbnR0aC9EdHlmVDNp?=
- =?utf-8?B?amFuTllxVUNTc3c5MWlGcHVEaS9VeXl0NEpSWEFZdHFHOHF4UGhKZ0IxMUkr?=
- =?utf-8?B?S0pIeHB2VVJYWXA3dXVlU2JDZElvejd3cGVvTm5jaUhzclZWQVFrSjdLTnBy?=
- =?utf-8?B?aVgvNUpDZXMyYVpGVVo4QWVYUEtTWVNQU1pIWm9KcUZCSzFnQitWS0hNU1gw?=
- =?utf-8?B?WCs2UXNST2FEclc1MFRreDFYQ0Uvc1dVRXJqQUN2d3AxbmpGWHhhRnVrVXo5?=
- =?utf-8?B?Z1AweEN1SE9kVHd3SUMwSkRpRGVzdVV2K2Y4SUlhZW1sVzlTZlk1dEg3c0dM?=
- =?utf-8?B?TlpYUGYwQkJqNFcyK1l1R2VBYWRGMXpHdld4c2ErQURNYWFGOENoYWdCYXlN?=
- =?utf-8?B?dWZIbzQ0Y1JjN3JIaTVlYU0zT3ZmMnl1UThLS2FqckdCZnN1Y2pzQXdYeHhD?=
- =?utf-8?B?cFgwbGZZTTFrbDZlQkQ5UFVNWHRXRFhhTXJqLzk1WDNXOUVwZFEyZHczcEVz?=
- =?utf-8?B?YUJTcmVVTFFuNW5mWGlKaVZzTXdCN21VNENJdW9LUmlOMlNZY0h5dG50S2dk?=
- =?utf-8?B?Y1F5bFg1QmlEMWV0c1pWM1RwdFY1eGphNVFDM3ZCdnVRS1pLek5EQitMdnlO?=
- =?utf-8?B?ME9Wc3ZJYzZ1TVEzaTE3R3V5czFlSzNMRWNhMXgva1RwN2JYT1A2Nzl4VG1P?=
- =?utf-8?B?Yis0cWk2MzdSSTZtK1ZQL3BWTHBidUdqc3Y4eGpUQW81Q09TNGMwa2Z2a25r?=
- =?utf-8?B?MUFJR0t1UmNsT09NMTBhY3RlQWlaWFA3NVRzS3d4aUpWN2tsZjRwblZIRnFJ?=
- =?utf-8?B?U2FvbHlsc2NxZE52d1ZtbWVRekRwNUZaWTFvWVBmY3RWbUlHb3p2bTZrY3hX?=
- =?utf-8?B?Sks4eFRDRXRNTkI5a20rODJSelFLVGg1U3hOR3ZHUmVFSDB6aUJqajErdmtQ?=
- =?utf-8?B?cGhUWUFIWTRXSnJqYnFPd2VLSSswZ1p6dDE2Wk04MTRHMHhwNU1VUHFvME9N?=
- =?utf-8?B?aGRlSlo2SlArWG4wWC9IYWloaHJFekUwMVB3VnNRRUUrNTl5QTRwVnlIc0h6?=
- =?utf-8?B?cDY3UnBYOFkvT0F4eDFqZz09?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?WHU5Vm9wcWtTVDBHc3QrUzQ3TVBhTFhxVXhLV1RGVG9VVjZQdFN0TlpTM1F4?=
- =?utf-8?B?andLNkwyL0FlRXVFTUUyWlE2MnhFdGEyeCsvNEhSeXNZTFNFN1l5YkpIVmx2?=
- =?utf-8?B?ZVUvUVJRVlg3Mm5PTU5qbXVPQUpJd24yOHRpemxrSnJwTE9XUTR4NnNwM1BG?=
- =?utf-8?B?QWlUYVhKTzBlcnUyRUhBNzlIUVltWE52cU9TODVKbjBJVzY0dWRnSnNaWUVT?=
- =?utf-8?B?ZWlhSXBQMjFCSzlIS0gxb1FsTllBS1pZV0hYakkxSXFadzlBMGh3MHAyQjhy?=
- =?utf-8?B?VWg0WWdXUnI3TmxXbkcwNUFvNlN3c1hkT2VNWjJzRExrZ0RuRUgyNWUyblVV?=
- =?utf-8?B?OHJXVDM1NXRWQkRaTWZmUWo1R2czTiszTXl6dlkzM3FMb3lwSUE2dDl2Yk15?=
- =?utf-8?B?R1NqdmtPb3VuYjBKOGZIU3NVRDN0SmlvblRNQmlhdjRjaHpKaVlsd2tsd05G?=
- =?utf-8?B?Q09TaEo2YXliYnRINDN6Tm1hYWFFVVcvU29WT2N5N0FHaEcrQTdNakdVbk9p?=
- =?utf-8?B?c29IcEVoTml0MDFGVXZ0dDhCS2FqcURSb0tHUjJqYUVsTTZVa1paK01hYzNE?=
- =?utf-8?B?TnY3K2JpSjVLY1NSRVhDMWVHcEhhZHNLdmsweWJqYUcwUDl0Ykk1b3dPUVhL?=
- =?utf-8?B?L0RGSmthY3B2TTN1NGVJZzBwdWVLSEIxaExvNmJDRzBPdi8ya0grUGswWllm?=
- =?utf-8?B?a3BoVmlrVU5xRGhZS211TElycXNkcmhpUWtYdHBnVG56aVBJMWNLakxHYWdk?=
- =?utf-8?B?bGl5a3ExNG02K29JVmJFMThIRzBqSVJEQXZ1dEFTeURZTHdWK3YzelBpYVVN?=
- =?utf-8?B?UGFOTHlWN0lkSGZmQVhiZFErUUtmMmx2QjluUmwyRFIvYlFtaDI3RFdhN3hW?=
- =?utf-8?B?OG10MVdDc3hxUElXTzQxenIyeDhzdC9ZWnRMRmhiQzY1emZhWWdweENwcWpS?=
- =?utf-8?B?eDd3R1NMbkpORGNnYjc4dzB6Q0NBVmw1cjJBb3dYNThuZjd0RktVL2UwbVNq?=
- =?utf-8?B?Tmt1Sis4L3EzcjVXblNBZ001R0NhVTUrT3FFNjJLSCtSK3pRb016MDJ5dFZo?=
- =?utf-8?B?eUs4VzRYSm9BVzlUMUoxenQ0V3YrQ2ZENysyMXFJNmhSZjRXbGJWK3RtNEhZ?=
- =?utf-8?B?NnVOM01sYnY3SUhZREV4Q0pXTU5SOHA5Mk5KWWw0U1hUQ3E3OEVzeXd5QlNs?=
- =?utf-8?B?U1BXZy91SWJUWEhQNENMM1IyUlZxcndKV3h0WHRaZjlBQzRweUUxU2ZDM2w2?=
- =?utf-8?B?dlZaMGtHRUNONllES0xrUTNrdHE0c044ZzNXTUdkMDVuVmxKQ1AyQkw1elJ6?=
- =?utf-8?B?bUw1enc2TXgrb215blNtMkd5Um1LY3FGREt6dHZUV3pqbG1FclZPY0cybnZj?=
- =?utf-8?B?WVo5TmRuUW9SWXFtMExSYnZ1QVRldjY3ZDRGMnFFZXRWbGh6MjlSTUlUSVAv?=
- =?utf-8?B?V1E1UTJma29tUnhnK1Y1bXdPVzlOT2ZHV1lURHhMVDdBRUJET0RPVVh5RFBx?=
- =?utf-8?B?blBieHdLR1lHWnhZSWQyQ1VjMTIvemRDOTBLTzZpbTI2MkFlTkNaYkl3ZUxM?=
- =?utf-8?B?c1BxUnFSR09idkRmWjJ0OTJnSWtyTGtBd1Q1Tlo1ZDAwYU9FUnBnUTNDMGNa?=
- =?utf-8?B?Y2FkQ3l3K2h1bUdSWUw1bmxPT2czK2Q0aERBOVpQZWRPM1hCVDNzRC8vQzBp?=
- =?utf-8?B?TjdIYkttMmJXMW04bEZDbmZyTEJwRExvOC95MnpNdlhPMENwZHl4ek9ubGxQ?=
- =?utf-8?B?UEdPbDVielU4T2pzV044Y3ZRWDNBdGNDRk9tR3g5S1V4elJ2SW9FcWd1Q3BP?=
- =?utf-8?B?b1ZuNDE5N05HQ2dDS3A1a3FWc1ZNUWV6dCtrL3VDTG9qcHZ6b1RnZXl5OGsr?=
- =?utf-8?B?TCtVb05JanN1K3RHTjRWMGxFTlpnTE1mSXhlRU9pVTA3NmlxM2V5YTZldWd1?=
- =?utf-8?B?anVvT2ZKLzhsay9aRkJVaHNvZDBJSHRxWUxRa1hNaEpNbmZZNTJrd3RxRE5q?=
- =?utf-8?B?allaT01lbzdrbU1nUzVWR21BbVEyWHJ4MnJTbjI2Zm5jbDJxNkh0YWFITlU1?=
- =?utf-8?B?WTNFazdSZjFjZERseWR2RWZqbm8xNDJGNy9INXBuZHBZOGlBa2dFTGxmcERX?=
- =?utf-8?Q?43LU=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a28d1f38-9137-4904-c771-08dd18681c86
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 15:42:39.2369
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6IKnla4lUGnp6wOoEiCdpbpTeyDH1NwvqdfFZlZlRinLRWiBLTLN/W9rHCCVl1u2
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB9476
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-23-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-23-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 16:42:32 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWa+kmHJRTo_HOiY=LKsoOoG1011O4M5JmKWNCmRuh34w@mail.gmail.com>
+Message-ID: <CAMuHMdWa+kmHJRTo_HOiY=LKsoOoG1011O4M5JmKWNCmRuh34w@mail.gmail.com>
+Subject: Re: [PATCH v3 22/25] arm64: dts: renesas: rzg3s-smarc-som: Add versa3
+ clock generator node
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 09.12.24 um 16:31 schrieb Simona Vetter:
-> On Mon, Dec 09, 2024 at 03:03:04PM +0100, Christian König wrote:
->> Am 09.12.24 um 14:33 schrieb Mika Kuoppala:
->>> From: Andrzej Hajda <andrzej.hajda@intel.com>
->>>
->>> Debugger needs to read/write program's vmas including userptr_vma.
->>> Since hmm_range_fault is used to pin userptr vmas, it is possible
->>> to map those vmas from debugger context.
->> Oh, this implementation is extremely questionable as well. Adding the LKML
->> and the MM list as well.
->>
->> First of all hmm_range_fault() does *not* pin anything!
->>
->> In other words you don't have a page reference when the function returns,
->> but rather just a sequence number you can check for modifications.
-> I think it's all there, holds the invalidation lock during the critical
-> access/section, drops it when reacquiring pages, retries until it works.
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> I think the issue is more that everyone hand-rolls userptr.
-
-Well that is part of the issue.
-
-The general problem here is that the eudebug interface tries to simulate 
-the memory accesses as they would have happened by the hardware.
-
-What the debugger should probably do is to cleanly attach to the 
-application, get the information which CPU address is mapped to which 
-GPU address and then use the standard ptrace interfaces.
-
-The whole interface re-invents a lot of functionality which is already 
-there just because you don't like the idea to attach to the debugged 
-application in userspace.
-
-As far as I can see this whole idea is extremely questionable. This 
-looks like re-inventing the wheel in a different color.
-
-Regards,
-Christian.
-
->   Probably time
-> we standardize that and put it into gpuvm as an optional part, with
-> consistent locking, naming (like not calling it _pin_pages when it's
-> unpinnged userptr), kerneldoc and all the nice things so that we
-> stop consistently getting confused by other driver's userptr code.
+> Add versa3 clock generator node. It provides the clocks for the Ethernet
+> PHY, PCIe, audio devices.
 >
-> I think that was on the plan originally as an eventual step, I guess time
-> to pump that up. Matt/Thomas, thoughts?
-> -Sima
->
->>> v2: pin pages vs notifier, move to vm.c (Matthew)
->>> v3: - iterate over system pages instead of DMA, fixes iommu enabled
->>>       - s/xe_uvma_access/xe_vm_uvma_access/ (Matt)
->>>
->>> Signed-off-by: Andrzej Hajda <andrzej.hajda@intel.com>
->>> Signed-off-by: Maciej Patelczyk <maciej.patelczyk@intel.com>
->>> Signed-off-by: Mika Kuoppala <mika.kuoppala@linux.intel.com>
->>> Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com> #v1
->>> ---
->>>    drivers/gpu/drm/xe/xe_eudebug.c |  3 ++-
->>>    drivers/gpu/drm/xe/xe_vm.c      | 47 +++++++++++++++++++++++++++++++++
->>>    drivers/gpu/drm/xe/xe_vm.h      |  3 +++
->>>    3 files changed, 52 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/gpu/drm/xe/xe_eudebug.c b/drivers/gpu/drm/xe/xe_eudebug.c
->>> index 9d87df75348b..e5949e4dcad8 100644
->>> --- a/drivers/gpu/drm/xe/xe_eudebug.c
->>> +++ b/drivers/gpu/drm/xe/xe_eudebug.c
->>> @@ -3076,7 +3076,8 @@ static int xe_eudebug_vma_access(struct xe_vma *vma, u64 offset_in_vma,
->>>    		return ret;
->>>    	}
->>> -	return -EINVAL;
->>> +	return xe_vm_userptr_access(to_userptr_vma(vma), offset_in_vma,
->>> +				    buf, bytes, write);
->>>    }
->>>    static int xe_eudebug_vm_access(struct xe_vm *vm, u64 offset,
->>> diff --git a/drivers/gpu/drm/xe/xe_vm.c b/drivers/gpu/drm/xe/xe_vm.c
->>> index 0f17bc8b627b..224ff9e16941 100644
->>> --- a/drivers/gpu/drm/xe/xe_vm.c
->>> +++ b/drivers/gpu/drm/xe/xe_vm.c
->>> @@ -3414,3 +3414,50 @@ void xe_vm_snapshot_free(struct xe_vm_snapshot *snap)
->>>    	}
->>>    	kvfree(snap);
->>>    }
->>> +
->>> +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64 offset,
->>> +			 void *buf, u64 len, bool write)
->>> +{
->>> +	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
->>> +	struct xe_userptr *up = &uvma->userptr;
->>> +	struct xe_res_cursor cur = {};
->>> +	int cur_len, ret = 0;
->>> +
->>> +	while (true) {
->>> +		down_read(&vm->userptr.notifier_lock);
->>> +		if (!xe_vma_userptr_check_repin(uvma))
->>> +			break;
->>> +
->>> +		spin_lock(&vm->userptr.invalidated_lock);
->>> +		list_del_init(&uvma->userptr.invalidate_link);
->>> +		spin_unlock(&vm->userptr.invalidated_lock);
->>> +
->>> +		up_read(&vm->userptr.notifier_lock);
->>> +		ret = xe_vma_userptr_pin_pages(uvma);
->>> +		if (ret)
->>> +			return ret;
->>> +	}
->>> +
->>> +	if (!up->sg) {
->>> +		ret = -EINVAL;
->>> +		goto out_unlock_notifier;
->>> +	}
->>> +
->>> +	for (xe_res_first_sg_system(up->sg, offset, len, &cur); cur.remaining;
->>> +	     xe_res_next(&cur, cur_len)) {
->>> +		void *ptr = kmap_local_page(sg_page(cur.sgl)) + cur.start;
->> The interface basically creates a side channel to access userptrs in the way
->> an userspace application would do without actually going through userspace.
->>
->> That is generally not something a device driver should ever do as far as I
->> can see.
->>
->>> +
->>> +		cur_len = min(cur.size, cur.remaining);
->>> +		if (write)
->>> +			memcpy(ptr, buf, cur_len);
->>> +		else
->>> +			memcpy(buf, ptr, cur_len);
->>> +		kunmap_local(ptr);
->>> +		buf += cur_len;
->>> +	}
->>> +	ret = len;
->>> +
->>> +out_unlock_notifier:
->>> +	up_read(&vm->userptr.notifier_lock);
->> I just strongly hope that this will prevent the mapping from changing.
->>
->> Regards,
->> Christian.
->>
->>> +	return ret;
->>> +}
->>> diff --git a/drivers/gpu/drm/xe/xe_vm.h b/drivers/gpu/drm/xe/xe_vm.h
->>> index 23adb7442881..372ad40ad67f 100644
->>> --- a/drivers/gpu/drm/xe/xe_vm.h
->>> +++ b/drivers/gpu/drm/xe/xe_vm.h
->>> @@ -280,3 +280,6 @@ struct xe_vm_snapshot *xe_vm_snapshot_capture(struct xe_vm *vm);
->>>    void xe_vm_snapshot_capture_delayed(struct xe_vm_snapshot *snap);
->>>    void xe_vm_snapshot_print(struct xe_vm_snapshot *snap, struct drm_printer *p);
->>>    void xe_vm_snapshot_free(struct xe_vm_snapshot *snap);
->>> +
->>> +int xe_vm_userptr_access(struct xe_userptr_vma *uvma, u64 offset,
->>> +			 void *buf, u64 len, bool write);
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
+> --- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
+> @@ -152,6 +158,30 @@ &extal_clk {
+>
+>  &i2c1 {
+>         status =3D "okay";
+> +
+> +       versa3: clock-generator@68 {
+
+> +               renesas,settings =3D [
+> +                 80 00 11 19 4c 42 dc 2f 06 7d 20 1a 5f 1e f2 27
+> +                 00 40 00 00 00 00 00 00 06 0c 19 02 3f f0 90 86
+> +                 a0 80 30 30 9c
+> +               ];
+> +       };
+>  };
+
+I did not verify renesas,settings. The rest LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
