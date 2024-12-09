@@ -1,124 +1,109 @@
-Return-Path: <linux-kernel+bounces-438569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59E739EA2CF
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:28:21 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 895669EA2DD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:35:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0161166A13
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:28:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E772828A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C48CB1FD781;
-	Mon,  9 Dec 2024 23:27:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0631622489A;
+	Mon,  9 Dec 2024 23:35:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLSXNKtK"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="adL21zlt"
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C7EE1F63FE;
-	Mon,  9 Dec 2024 23:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E8D721171C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:35:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733786851; cv=none; b=UFelkxWlI6bGoiV1oiMeY80/rHKLZar8tL0EhXImtmPOlQr0yE8V8p9RpNWAkKxOZ7VMxHrLjoAWVONCD0c0ALgyzGpe03FmbGACG+cF1uxcLwOKZ8loortnzc2UwSRzxP2VBBJDKO8G0yZPL6rjWnt4qr7s4VD8j1gPwGJ52uI=
+	t=1733787314; cv=none; b=bnyZ2/Cua/ScqQVN6Hl7Sy0Yv7Cle+8tZRM8BmcO4OzPDAdt4A0aqcXiXfZJelZbKGwSbS/R8scXRJzKv0t8liGXzq8Rp4lq//VA8ZH4OZClDzEMZik4Z8O/5CQsxLbuwAKI0FuwplhfHrO3+5MVaLONPzWMRuQw1cSXlD+dVRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733786851; c=relaxed/simple;
-	bh=sib2JIsnpaJ4xFop5I9w3oSpRI1Wmim0nseZDPgA/uQ=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rSHYC0zdoMdu14F62rtIc07rzeGAofMyJOnsCP579kX8pT/YfKAhCx99s89YOxR/l8n8Uc9GHGQsZVJ43lRFi6FL+6thCYnJa+O/OdHnsNT5+QEtzuTZf5k2c9hBvnDf0yNzwbO6xFQ/sHuHo6E8dXI4u5oPHvv1/1EqZqOFjks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLSXNKtK; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-434f30ba149so12491965e9.0;
-        Mon, 09 Dec 2024 15:27:29 -0800 (PST)
+	s=arc-20240116; t=1733787314; c=relaxed/simple;
+	bh=Ol03no2dvKfCX77dORK9oxswnoxJuMa+LnUc2hkNM0M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oQOrwRH7CFcD/tjSMB9PQUrkKiI/yUwlcLmSr2ccfyXSqSiS8N8A8sQkbILD2oKVRV0qHt9GGkXcse6crS+CxyAAU8I9OOhgL1w+CRXwXFKaX6g7pgkB244k6iQkCRd3sftUM+kIfVFBvBCPCYff2OvqDQS6mbYpVjKYOpBGlQs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=google.com; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=adL21zlt; arc=none smtp.client-ip=209.85.160.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-467431402deso19231cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:35:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733786848; x=1734391648; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=YUkySfBwBkhhjkuJlpR0sFTlCT96jZzoa4DO4d+b/nA=;
-        b=kLSXNKtK2q+jw0s3rWD+pkirSnkLSlmwP2GpmN644Q++gq+5fbK4qJEecsW54iG3Zk
-         HP43JKnahMn5vJN5ZRpbFQb995RWHlnv1KDuSil7zZFmHNY+RmO5yP1bA/y3Y/9z5nbJ
-         EyR/mADCFHNMk02Aj26oT2o8VRfEhQg+Eh8418cfRA+Vr6iSYSh+wUiQrMrOuQCIeHLx
-         YFe8/J51H0WtII4UMoTn8xQQzGp0eXFR7AfrVJ5eEtOQ1T6WYw5ot14DsG8/r+0RvElf
-         F73PyotwUce3NY7akcxnLXHDeHVWsRR7JRBJBB453taNQT1r0qD3J1kMgRuogXJr8Vqq
-         afwA==
+        d=chromium.org; s=google; t=1733787311; x=1734392111; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ol03no2dvKfCX77dORK9oxswnoxJuMa+LnUc2hkNM0M=;
+        b=adL21zltDa0PxxcBgMIHcXc5knaDVGBihaGdNOJBY8kF3OVQKaF5TWcORgJXzScFDc
+         /OjtfOQ8t6SX7FgIAdMgLGqgmYgy4YYUDK8g2Sayky1EeK4X9rYzNM6c9HTrgv3bjDJB
+         t1rX2x7rSqzPceeYeUK+4H3a7kxLCHrtuj1c0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733786848; x=1734391648;
-        h=in-reply-to:content-disposition:mime-version:references:subject:cc
-         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YUkySfBwBkhhjkuJlpR0sFTlCT96jZzoa4DO4d+b/nA=;
-        b=aFPoQIXh3L3lEuSwcLhxqvYzlRdr8d6JSU7fWAU7Hb8Dn723PajE3hug/GHEgxM6ST
-         EXwSogTFIuLvbOCziWjf4S83LrQ3QiL8NJMam0HYVWSnI+Snm07CKbrlSngOxYrA5J7R
-         CpM2N4ny6BZ5Q+QD8rc7ydrSZEH7lFVhevX5wNjA3igc1sdRWvRyLVsSJp8lzQOYaxU7
-         E+mn411ZH1y8aX9ZPD3YbOe/MgWtpBov+NGsAEhpexjT31vtj31nMVCNKciVF3tV0VK3
-         GajbuDbU5H0RvqhBo+CJGiC/NlSmmpU6Lc+wHs56uXXkVY/z++ys1GPEpcpzhnlyNjsf
-         r/wQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUsaJ4Ugaddf0zNpaghCC+wvXRBu+Jknri+87vHgHPWUeThSPnTEys+0yLnwxvfGliOf05+qknkziup@vger.kernel.org, AJvYcCWQB9tR3Xzen7HWuL0pS1zrmRP8uk1jrCxAfP8at7lmwm6KjcFa1T11RDZS8r6E7r6gblcWVkmJODkWxihy@vger.kernel.org, AJvYcCWze0VLOfR6sZ8y9Q2Ta4w7LX41TnSsowZfCcoxA+ODUMb8dNbHGFrFsBblrmTDmb1AL8hRdk6Nq7DpzCDh@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy+x3A1Lp6n8mbGcl+agLweTuGhS9g+Gh58vbcyGBhPCIS3qirL
-	yEobLkcXikCvC8X77oDyR0bouZoIHvN2yBO1wV00ZAHwbs/S5bF+
-X-Gm-Gg: ASbGncsnHiwJ7uUghdAsGWsW9BXxkENDeQbWiDNGYUb2sOHS2Tj+3rjH9PnkMBBM4HS
-	afuB4IqF79FzGtRL8QjZxF/jYq84PfParSgy5tqtk2+vGKfpJaRrsBkApzAJL/d7MRS4yeqq1a8
-	tI/NB0Zh48S6D68CcEn4x4uYQJ6jwBa5hgKUKEABeg8hSLmtS7iwG4GzqsNjrpmRHvgnp0OscS6
-	i9iGu5/1eOA1WuxgmKINJxo1edxHmsddAS8MWa1Y4Wq7+IJ+Pf7tlZfqJyXX+aHYB+OKXdKR4ar
-	WosCkJ1XQg==
-X-Google-Smtp-Source: AGHT+IG+AB1Ph1Dj5geXxUnKA8iVEw8ecVqYIcxVzRThCcrVKOuP+9lqU9OBDnF6U9HvS4qSlC1FZg==
-X-Received: by 2002:a05:6000:1f8c:b0:385:f280:d55 with SMTP id ffacd0b85a97d-386453fe853mr1676974f8f.37.1733786847561;
-        Mon, 09 Dec 2024 15:27:27 -0800 (PST)
-Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-386219096adsm14666431f8f.85.2024.12.09.15.27.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 15:27:26 -0800 (PST)
-Message-ID: <67577cde.df0a0220.128dd3.75a0@mx.google.com>
-X-Google-Original-Message-ID: <Z1d82uNcCx7EcU0n@Ansuel-XPS.>
-Date: Tue, 10 Dec 2024 00:27:22 +0100
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Herbert Xu <herbert@gondor.apana.org.au>,
-	"David S. Miller" <davem@davemloft.net>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Antoine Tenart <atenart@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, upstream@airoha.com
-Cc: Richard van Schagen <vschagen@icloud.com>
-Subject: Re: [PATCH v7 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
- engine support
-References: <20241112015920.22564-1-ansuelsmth@gmail.com>
- <20241112015920.22564-4-ansuelsmth@gmail.com>
+        d=1e100.net; s=20230601; t=1733787311; x=1734392111;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Ol03no2dvKfCX77dORK9oxswnoxJuMa+LnUc2hkNM0M=;
+        b=B1NYZfy6Ss5mCPhEgRoAGY7m0vJItaa/9PFs0kZ0sPqJ0ryc46OVTg6vkj16TsEdO5
+         0Dwozx3iU13RPb1bML7NSeGRfLpzeILGXKmJTNXc8Y75vpcATRg5aZnYeJj2YZgz+Jn1
+         6ACgh6Tm1xFes6AXFFq+K0INoikh+Qv5WHwwkMj3dGXkGPEmE19vEHpEHfJnt6PIhkZq
+         9GhsfY7gE4yRzzJn/4MkkjumWRKZQnbdyEgRc8Ye0FEYFv+X5rG1f+sSoccjWE9Y1TwI
+         jPjq1Qs6pueRs0qtJ9C/iSrnVaK5ky5xmPZRtaXxWS+Wk9HgsnFOjq75/OjZOUhUo+Y7
+         jwsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUs6IROAGUnmzzpmEGGbqyghy/VgswnGliR9x8KKW7agXx8l7GdcFDQFEvM1DgZE11MM9UyiQNk+8H9v18=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl7GiWDvXFIdgDcvQpsQmGjgZkwiH5GR/vTAlQsxHGWgH7YLyB
+	b9RF7AFXCiWI8/N2/NZojalLsBXep0y2kWgSHY7KQKN9evHyIKrD3e+dhXegfgcdbFGAirNU2PG
+	Oz8my7nexppByMqkPpH0p4EG4tp0ujh6XL4Wd
+X-Gm-Gg: ASbGncsoBnD/7rbkoVucHbkCUn6j4LG2yPy/OkfXw5lY5UW4PpCgmK2ICJ+xxD1LBbO
+	uQCC2jec8LL0y2TmMGfPswcGO3KTlD6Uw
+X-Google-Smtp-Source: AGHT+IG6vBSDnyo8DnXzx5kPzDIJg4/9NRCPEUWYVmSZGIix1BOzyQgBNO2RxNpvwUriTGNn5xGsd58zCPlKbjcYd9k=
+X-Received: by 2002:a05:622a:4ccd:b0:466:a3bf:41ab with SMTP id
+ d75a77b69052e-46777683c7bmr441641cf.21.1733787311096; Mon, 09 Dec 2024
+ 15:35:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241112015920.22564-4-ansuelsmth@gmail.com>
+References: <20241209174430.2904353-1-dianders@chromium.org>
+ <20241209094310.2.Ia3dfc0afadbfbee81bb2efb0672262470973dd08@changeid> <wx6qbdbcrvbq34snzkxawlbpxm6vogt5ccjmdqqyazukfbjy7t@qkvax7tr27bs>
+In-Reply-To: <wx6qbdbcrvbq34snzkxawlbpxm6vogt5ccjmdqqyazukfbjy7t@qkvax7tr27bs>
+From: Julius Werner <jwerner@chromium.org>
+Date: Mon, 9 Dec 2024 15:34:59 -0800
+Message-ID: <CAODwPW8mq-saJuTYnMhA6bCopcjQwBxEoyWhQB60Jg1m7wUZkw@mail.gmail.com>
+Subject: Re: [PATCH 2/6] arm64: errata: Add QCOM_KRYO_2XX_GOLD to the spectre_bhb_firmware_mitigated_list
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Douglas Anderson <dianders@chromium.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Julius Werner <jwerner@chromium.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Nov 12, 2024 at 02:59:00AM +0100, Christian Marangi wrote:
-> Add support for the Inside Secure SafeXcel EIP-93 Crypto Engine used on
-> Mediatek MT7621 SoC and new Airoha SoC.
-> 
-> EIP-93 IP supports AES/DES/3DES ciphers in ECB/CBC and CTR modes as well as
-> authenc(HMAC(x), cipher(y)) using HMAC MD5, SHA1, SHA224 and SHA256.
-> 
-> EIP-93 provide regs to signal support for specific chipers and the
-> driver dynamically register only the supported one by the chip.
-> 
-> Signed-off-by: Richard van Schagen <vschagen@icloud.com>
-> Co-developed-by: Christian Marangi <ansuelsmth@gmail.com>
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> > NOTE: presumably this patch won't actually do much on its own because
+> > (I believe) it requires a firmware update to go with it.
+>
+> Why? is_spectre_bhb_fw_affected() returns true if (cpu in list OR fw
+> mitigated)
 
-Any news with this?
+That affects reporting, but the mitigation works by making an
+ARM_SMCCC_ARCH_WORKAROUND_3 Secure Monitor Call to firmware, and that
+only works if that call is implemented in firmware. Trusted-Firmware-A
+is currently the only open source firmware I'm aware of that
+implements this call, and it only supports Kryo 4 and 6 upstream (not
+2 or 3).
 
-
+So in order for this patch to actually be able to do anything other
+than report that the mitigation is missing, it would need to run on
+devices that either use a downstream fork of TF-A with added Kryo 2/3
+support (I doubt this exists because AFAIK Kryo 4 was Qualcomm's first
+attempt to use TF-A) or use some other proprietary kind of Secure
+Monitor firmware that has this SMC and mitigation implemented
+separately. (It seems unlikely that Qualcomm did this in their QTEE
+firmware, since if they had they would have probably also added the
+MIDRs here to Linux to activate it.)
 
