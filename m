@@ -1,120 +1,109 @@
-Return-Path: <linux-kernel+bounces-436938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB3579E8CDD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:01:12 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A84A99E8E46
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BF67280FD3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:01:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 695E9281E59
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:01:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD52218D656;
-	Mon,  9 Dec 2024 08:00:56 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54758215F68;
+	Mon,  9 Dec 2024 09:01:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="YOj+ENX1"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE14F189B85;
-	Mon,  9 Dec 2024 08:00:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09ABA1BC4E;
+	Mon,  9 Dec 2024 09:01:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731256; cv=none; b=BSYMlFA9psuOC7U1qk547giZdp8GChjrgenb2/v5TJFMc7jinLQ0oti3LT+avpL+2v3OzORYvaL+IlqYh4RbLLCSisvX3kXTtEEKaU2pvUdyasAEqki4pm/ESzNiD76n9DLBUGZ13lRfc+aWUtLv1jMAqEzU22+zuoIjpxyy5I4=
+	t=1733734873; cv=none; b=PukS1GsDE3vpZzb4Ps1S2CcwTDIMM8sd5EryfycrHlOajYcSLHayomeLxaFoDof6L9PnLclOAG8yP6dqMxCAqWDhAeJWgCdk8xJp6hOblwZC11H+qUMHv1Tt1xNeG9Ew4tL6LhFm/9vbHFpJp8rhVh39D3rJo18nHw2KydPxtI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731256; c=relaxed/simple;
-	bh=kVo6a6DxVmOCyCoM54sp8e3Cs5dhcsi76qwqIuAEqeg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BKIMcN++7AQHvcuwQz/3Mx7XIT/czjL7F4SruAegOFoV1mq6adN3Tph1OW5iOOcbvZWjexca3d0Ostj/cA4W1Lj+jxtzcY7XK1O3Ko7+P8CxtDzK+/8Lie0LtUKOx/Z1Hc5oxjYWA7PbtVjDA4tAynVPZqCmq5XtsHWGfca5RLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B96NnQX026036;
-	Mon, 9 Dec 2024 08:00:25 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cx4x93q0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 09 Dec 2024 08:00:25 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Mon, 9 Dec 2024 00:00:23 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Mon, 9 Dec 2024 00:00:20 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <pc@manguebit.com>, <gregkh@linuxfoundation.org>
-CC: <stable@vger.kernel.org>, <sfrench@samba.org>, <pc@cjr.nz>,
-        <lsahlber@redhat.com>, <sprasad@microsoft.com>, <tom@talpey.com>,
-        <linux-cifs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <samba-technical@lists.samba.org>
-Subject: [PATCH 6.1.y] smb: client: fix potential UAF in cifs_dump_full_key()
-Date: Mon, 9 Dec 2024 16:58:13 +0800
-Message-ID: <20241209085813.823573-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733734873; c=relaxed/simple;
+	bh=S3YYC/YNeXowK04rNQ9L8jVyWw3ahMBv+v8lUE0Y0QI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FcZMwaWVrVMbkcomU0cpPMJAARGybrquZgD/nhPF1agfzB0jz+T010mJMUu5Wij7LeSOgop0rJmU5bQUwqgLYXhKq4xseaVYaELgaiMiZevtHdRib48t6RFw7xRTMK+3R2ScBXeYdeScesJ+aFh/GHAQ8PBX4lH6FnBEkG6bjXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=YOj+ENX1; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B98VISn028237;
+	Mon, 9 Dec 2024 10:00:26 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	4raHiqxQoPVH+LXWyFUosGW/Q2xLlE6E0wYYvSLxcV8=; b=YOj+ENX1/yu/azn+
+	6f4/j18QK7hxDoTpOMaZeTzmhKvPgOhxJWfZTEinxb4/Iq0tBk2UzJAbMsDJI7ri
+	S42H1yBbQOZmmhXCglpUjzdChmDv8XOs2UTiDQ7M7SwXRvzFyvzpTuugJRkMXo4D
+	u7xCUKFKwoHJdBxfdPUogHgiEDsu3F6upLsENPXtH60KZkJC/Ct1vTBrClM7WEYP
+	My56ygdlFcscpK5ATcFo/LDe3dVxvzGIJFJEIs4qT5rvXvKn9qvWYBZDOZuyuBIp
+	cu6BTwu3YFBT33nroessU5wdkyfdLi8KRSf3oqMkIeYg51xw2Vcgr42NXJKSkzXG
+	2YzWPg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccnkxwrc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 10:00:26 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id F07CC40077;
+	Mon,  9 Dec 2024 09:59:23 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 818D524D44F;
+	Mon,  9 Dec 2024 09:58:59 +0100 (CET)
+Received: from [10.48.87.198] (10.48.87.198) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
+ 2024 09:58:58 +0100
+Message-ID: <18c36a0b-f647-4acd-bed2-d5a09b1694b7@foss.st.com>
+Date: Mon, 9 Dec 2024 09:58:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: aBtpkx96t63i4Swm6i4ajnAlZCZkIIhD
-X-Proofpoint-ORIG-GUID: aBtpkx96t63i4Swm6i4ajnAlZCZkIIhD
-X-Authority-Analysis: v=2.4 cv=Y/UCsgeN c=1 sm=1 tr=0 ts=6756a399 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=Li1AiuEPAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8 a=1_rInJw21EjIxf1COpsA:9
- a=qGKPP_lnpMOaqR3bcYHU:22 a=FdTzh2GWekK77mhwV6Dw:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: dma: st-stm32-dmamux: Add description for
+ dma-cell values
+To: Ken Sloat <ksloat@cornersoftsolutions.com>
+CC: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        <dmaengine@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241206115018.1155149-1-ksloat@cornersoftsolutions.com>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20241206115018.1155149-1-ksloat@cornersoftsolutions.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-09_05,2024-12-09_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- bulkscore=0 mlxscore=0 clxscore=1015 malwarescore=0 priorityscore=1501
- phishscore=0 suspectscore=0 adultscore=0 mlxlogscore=999 spamscore=0
- impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2411120000 definitions=main-2412090061
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-From: Paulo Alcantara <pc@manguebit.com>
 
-[ Upstream commit 58acd1f497162e7d282077f816faa519487be045 ]
 
-Skip sessions that are being teared down (status == SES_EXITING) to
-avoid UAF.
+On 12/6/24 12:50, Ken Sloat wrote:
+> The dma-cell values for the stm32-dmamux are used to craft the DMA spec
+> for the actual controller. These values are currently undocumented
+> leaving the user to reverse engineer the driver in order to determine
+> their meaning. Add a basic description, while avoiding duplicating
+> information by pointing the user to the associated DMA docs that
+> describe the fields in depth.
+> 
+> Signed-off-by: Ken Sloat<ksloat@cornersoftsolutions.com>
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- fs/smb/client/ioctl.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
-
-diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
-index ae9905e2b9d4..7402070b7a06 100644
---- a/fs/smb/client/ioctl.c
-+++ b/fs/smb/client/ioctl.c
-@@ -246,7 +246,9 @@ static int cifs_dump_full_key(struct cifs_tcon *tcon, struct smb3_full_key_debug
- 		spin_lock(&cifs_tcp_ses_lock);
- 		list_for_each_entry(server_it, &cifs_tcp_ses_list, tcp_ses_list) {
- 			list_for_each_entry(ses_it, &server_it->smb_ses_list, smb_ses_list) {
--				if (ses_it->Suid == out.session_id) {
-+				spin_lock(&ses_it->ses_lock);
-+				if (ses_it->ses_status != SES_EXITING &&
-+				    ses_it->Suid == out.session_id) {
- 					ses = ses_it;
- 					/*
- 					 * since we are using the session outside the crit
-@@ -254,9 +256,11 @@ static int cifs_dump_full_key(struct cifs_tcon *tcon, struct smb3_full_key_debug
- 					 * so increment its refcount
- 					 */
- 					ses->ses_count++;
-+					spin_unlock(&ses_it->ses_lock);
- 					found = true;
- 					goto search_end;
- 				}
-+				spin_unlock(&ses_it->ses_lock);
- 			}
- 		}
- search_end:
--- 
-2.25.1
-
+Reviewed-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
 
