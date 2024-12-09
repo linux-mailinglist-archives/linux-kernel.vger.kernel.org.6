@@ -1,151 +1,148 @@
-Return-Path: <linux-kernel+bounces-437512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528B49E9443
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:35:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B839E9432
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05B69188054C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:35:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1AC11887E3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:33:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6253722D4E8;
-	Mon,  9 Dec 2024 12:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD860228C96;
+	Mon,  9 Dec 2024 12:32:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b="U5qXMH55"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="emJLQ8hZ"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A9D22D4F5
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 12:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733747587; cv=pass; b=Ax/0smj6Ni3YTgtks1PHOrtWQnenqdqThUbk3frKoCIKP0Sx6sj7k0yjyqzT3rVtMeEsBQVAMwCStAhDCn0MORGXkpwh1Wu5HDlGPJNT3dvg+avKSfK0Xn3yNSOtArH6C2fGQobbLxKMMXo2g2UvZDzTtCaZoo9BaGROuCe/fkY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733747587; c=relaxed/simple;
-	bh=/v6bNMHP+zmnp/qKT5JgCERbe0Baqa6t+ejdaqoMjIc=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 MIME-Version:Content-Type; b=V1fHDiFu9KvJbuQMHXJAnZ2RJq7kS60p0AXpEICRxt0R95iKTQE0tnEQf+V7kuzroH1U9TiXLSFoTuHLB5Mx2XBILO+7mbQ2vckOcWneMrOIosMEXc6SuP/A4ue+fU7ksdkecI3VauqytV7u8mQaatXS8S4Y0dBy3U2dInMRSSI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=bob.beckett@collabora.com header.b=U5qXMH55; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1733747566; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=i/tNjtfbeMtUCbW3lnkJdxihZ5vsLX38tmuu3i5ocVGSb+2GeIYwuoInW2sh49cBeFdS9n/71b+g7V/Dey+MsOlZFafZDQ5ugSLcrQ1e2T0+nkUqys1SCnQ3f002rTLsNTjeejSOjPskuz4rMZu0bbmfZOBdcmxVyB2xRbZB44g=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1733747566; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=6EVh6ekbWiJ0H+/RPaWmq2DyRBJuGByAGojKHdpcIlI=; 
-	b=XGw2gOoN5FZ2ZPlR/Eca1uM4dLa2t0czZLe+0g0iJ6Lp2pOVthGxQKMflus17M3BKLvW/nvqilzzO37xWvI+aOToaP6SEeXjay19naT5RcPpjhCnNSg7PCn/w8mAub55tBefZQh2IZn2+1xy/fwg+m/n14U3xGBXgG/yZRyt+7A=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=bob.beckett@collabora.com;
-	dmarc=pass header.from=<bob.beckett@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1733747566;
-	s=zohomail; d=collabora.com; i=bob.beckett@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Message-ID:In-Reply-To:References:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=6EVh6ekbWiJ0H+/RPaWmq2DyRBJuGByAGojKHdpcIlI=;
-	b=U5qXMH55yECI6a9fA7hrpOuRZlilSSK2ElWL6qcD/5FkpIteEwAadCQU58kxbP/q
-	njVRhCZ+HMx6AOx7yjbj0bpQqbVLaE2ef/V9sBRz2wBTSvx/bl0+HBqgZSVaXB9JTi2
-	+4qohSQbMkwTfEWN7M6gaSB/BeQ5Ek6Rwpm3HoCw=
-Received: from mail.zoho.com by mx.zohomail.com
-	with SMTP id 173374753370972.00679083416446; Mon, 9 Dec 2024 04:32:13 -0800 (PST)
-Date: Mon, 09 Dec 2024 12:32:13 +0000
-From: Robert Beckett <bob.beckett@collabora.com>
-To: "Keith Busch" <kbusch@kernel.org>
-Cc: "Pawel Anikiel" <panikiel@google.com>, "axboe" <axboe@kernel.dk>,
-	"hch" <hch@lst.de>, "kernel" <kernel@collabora.com>,
-	"linux-kernel" <linux-kernel@vger.kernel.org>,
-	"linux-nvme" <linux-nvme@lists.infradead.org>,
-	"sagi" <sagi@grimberg.me>
-Message-ID: <193ab67e768.1047ccb051074383.2860231262134590879@collabora.com>
-In-Reply-To: <Z0DdU9K9QMFxBIL8@kbusch-mbp.dhcp.thefacebook.com>
-References: <20241112195053.3939762-1-bob.beckett@collabora.com>
- <20241114113803.3571128-1-panikiel@google.com>
- <1932ad8722a.102613bdb3737.769617317074446742@collabora.com>
- <CAM5zL5rKsEd1EhOx1AGj9Au7-FQnJ5fUX2hLPEDQvmcrJXFFBg@mail.gmail.com>
- <1932b818328.ad02576784895.6204301822664878956@collabora.com> <Z0DdU9K9QMFxBIL8@kbusch-mbp.dhcp.thefacebook.com>
-Subject: Re: [PATCH] nvme-pci: 512 byte aligned dma pool segment quirk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6423722756C;
+	Mon,  9 Dec 2024 12:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733747550; cv=none; b=ouRPDH/6HblNWCWDCdk33wrIUcJGhI8TkeVY92bGtIlSLH6ILL/fpNXAZwpuQliymuKIC9PscflUFxX57T3yQ1WoOBb5Ub3Foa8qged83A8qWdL/twps5VPaEGlBzbhuDtBMXoqGE53tduqMuLPC0CcBOELJG+9acnMdCDI5SEo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733747550; c=relaxed/simple;
+	bh=kB3RYhKaW5gjZwwRvCZ6UhMhANIepMJBAcWY0Q8JPmI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TAlR7bzvFjJ5IP1ZVfDKDow+82W88ncpRv1w12XqNyIVAqqBxS+I+ycp+0fY1/8GiI2/O7+GqWMYJCl6wWteqfbdGtzzjZWYOBNgfh5wd46sXUfEcDN80QvC9RuMvTuPHP2ilY/i0EU5coZROjeX1Wpm/I99f9ZB5vS/SwU0jP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=emJLQ8hZ; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-aa66c1345caso45816966b.3;
+        Mon, 09 Dec 2024 04:32:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733747545; x=1734352345; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=HB4h5xGYBYj3eCi9b2ZJAMbBJzOGVJksJuXFxsMtAq8=;
+        b=emJLQ8hZf5Kyt3H6k+GTU+pJwMc3TK2wBCVgGf9e0k/sr5DeOZxPZoRh/4kl4x5Dh3
+         weTJw/prEVRmoNAzhWFlZpY78tZWcQvkFdQa2Vagr7yBtMCnpLznoPtQVnRazFHfqX5L
+         fp9wH2q0wLZbVv2GmqBpKO1CVW7o7uVQMVY81J3GrfaKmcQ5jWLdDW470H9Egl/sAVVJ
+         x9V9/OwOnLFIWKlICcqRHFFTpVKGezWO8TehUnHY41xH8u9GZqaIGtwjuI4xClHUA/Qd
+         L22aoZ76Wm1QJ7gBz4F8Wynb3bIxwSl7LQBMbi1DwaN0b03VYDqMjV2az2EeGZybGlkS
+         9Jyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733747545; x=1734352345;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HB4h5xGYBYj3eCi9b2ZJAMbBJzOGVJksJuXFxsMtAq8=;
+        b=xJgrFjuDqQFFDT/gwahkv4Nj1nh/du8oCf4sS6g7lpzmKLjE8SXc9YyOefZvGIMje/
+         s9okoY3l5k5WlQpNI7TMTYsvVl/770Ci3du3Mjr1fuKVMN/Vyrsgdr5PtnC7knlr8thX
+         wvPUfjnHos7oZ/9gk66NimUueyy6jOA+qcQdm2n4m4cnRGLhw1mTohnBMpcZRbKVnL5R
+         4jUow/DZt4txg7bLQyB30HYxovnrNd5QvovEiBekg24JVwSDKVvrvjZrnyKfHi4tsAj/
+         OWstW3N4j4anubRF22zhyAv5CROlukhXwRDmatLE99iFXQL0lX/2YFRyRd3Nlgu3gJ1z
+         1qEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUAuYbSPbVDHKpZFevzpV8tn2ksdygtjV4qQujXZXTfZmjR8gXV4sOkBEJNla1FNhUUwptZTRefX08WfcKx@vger.kernel.org, AJvYcCXJMnQ8HFkD8ZDgJYitmFtKxe7d2oEDgGl006kxiX4brhAwwDq9VNEY2czpEOy9dvXJhC3OtbLhmgOYO3lr@vger.kernel.org, AJvYcCXuegDRZy5EQ9HfbL8bKQ/I0AEuAtEBThgwbHIz6TC/iHH+KBWH/ZC1vg1+Co6TvGIXLnos6xvcl1mEKlXvsSs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlS0s7AdcOlnQoGER7D866ZQ0/Db6l2ixHtaMjPRokpjxVUQMY
+	xYptrIMTDULg3V/BxmEHDhqlrhTyi1pqu6Tg/bTE9ELGfcJRw2gaCbhfKtlyM4SiI1h7f4LdttO
+	Thcl4lSg5RWGfHb4DgJf4+36sfjs=
+X-Gm-Gg: ASbGncvEGY/O7vxGN0Kxo1mmuzGIIJuIQ8sbE9easBb44KnxP8M+A2wqTXoaJlZQ6oe
+	U/O5e/60bNGfs/LWFVdnqttjEf/NF0uI=
+X-Google-Smtp-Source: AGHT+IFjelp5b6CRvlamva7li7ksyULJr/ZURZRaVo1idystYOkChGCfpprPWdYOncNMp0luUAJecmb6PSVS5WPpxr0=
+X-Received: by 2002:a17:906:3145:b0:aa6:7cae:db98 with SMTP id
+ a640c23a62f3a-aa67caedcf6mr431164766b.10.1733747545303; Mon, 09 Dec 2024
+ 04:32:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241203-is_constexpr-refactor-v1-0-4e4cbaecc216@wanadoo.fr>
+ <20241203-is_constexpr-refactor-v1-5-4e4cbaecc216@wanadoo.fr>
+ <8b8262389bd6484586007d749132346f@AcuMS.aculab.com> <CAMZ6RqJPvbSr5i8N4Dm=2N6D8uSzefCM3TyK8HBNNNrybo5f2Q@mail.gmail.com>
+In-Reply-To: <CAMZ6RqJPvbSr5i8N4Dm=2N6D8uSzefCM3TyK8HBNNNrybo5f2Q@mail.gmail.com>
+From: Vincent Mailhol <vincent.mailhol@gmail.com>
+Date: Mon, 9 Dec 2024 21:32:14 +0900
+Message-ID: <CAMZ6RqLMXaAej75eXrLgvt-Co1yyEg0QNJSxPovzLzb7vdxmdQ@mail.gmail.com>
+Subject: Re: [PATCH 05/10] minmax: simplify __clamp_once() by using is_const_false()
+To: David Laight <David.Laight@aculab.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
+	Justin Stitt <justinstitt@google.com>, Yury Norov <yury.norov@gmail.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Kees Cook <kees@kernel.org>, 
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Jani Nikula <jani.nikula@linux.intel.com>, 
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>, 
+	Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Rikard Falkeborn <rikard.falkeborn@gmail.com>, 
+	Martin Uecker <Martin.Uecker@med.uni-goettingen.de>, 
+	"linux-sparse@vger.kernel.org" <linux-sparse@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"llvm@lists.linux.dev" <llvm@lists.linux.dev>, 
+	"linux-hardening@vger.kernel.org" <linux-hardening@vger.kernel.org>, 
+	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"coresight@lists.linaro.org" <coresight@lists.linaro.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-Importance: Medium
-User-Agent: Zoho Mail
-X-Mailer: Zoho Mail
+
+On Fri. 6 Dec. 2024 at 00:52, Vincent Mailhol
+<mailhol.vincent@wanadoo.fr> wrote:
+> On Thu. 5 Dec. 2024 at 03:54, David Laight <David.Laight@aculab.com> wrote:
+> > From: Vincent Mailhol
+> > > Sent: 02 December 2024 17:33
+> > >
+> > > In __clamp_once(),
+> > >
+> > >   __builtin_choose_expr(__is_constexpr((lo) > (hi)), (lo) <= (hi), true)
+> > >
+> > > is equivalent to:
+> > >
+> > >   !is_const_false((lo) <= (hi))
+> > >
+> > > Apply is_const_false() to simplify __clamp_once().
+> >
+> > There is already a patch 'for next' that changes it use BUILD_BUG_ON_MSG()
+> > and statically_true().
+>
+> Found it!
+>
+>   https://lore.kernel.org/all/34d53778977747f19cce2abb287bb3e6@AcuMS.aculab.com/
+
+I picked up your patch and got two build errors on an allyesconfig.
+
+You already sent a patch for the first one:
+
+  https://lore.kernel.org/all/33893212b1cc4a418cec09aeeed0a9fc@AcuMS.aculab.com/
+
+For the second one, I submitted a patch here:
+
+  https://lore.kernel.org/all/20241209-nfs4state_fix-v1-1-7a66819c60f0@wanadoo.fr/
+
+I will wait for those two to appear in Andrew's mm tree first, and
+only then, I will send a v2 (that will be rebased on the mm tree to
+get your change).
+
+Meanwhile, I think this series will be on hiatus.
 
 
-
-
-
-
- ---- On Fri, 22 Nov 2024 19:36:51 +0000  Keith Busch  wrote ---=20
- > On Thu, Nov 14, 2024 at 04:28:48PM +0000, Robert Beckett wrote:
- > >  ---- On Thu, 14 Nov 2024 14:13:52 +0000  Pawe=C5=82 Anikiel  wrote --=
--=20
- > >  > On Thu, Nov 14, 2024 at 2:24=E2=80=AFPM Robert Beckett
- > >  > bob.beckett@collabora.com> wrote:
- > >  > > This is interesting.
- > >  > > I had the same idea previously. I initially just changed the hard=
- coded 256 / 8 to use 31 instead, which should have ensured the last entry =
-of each segment never gets used.
- > >  > > When I tested that, it not longer failed, which was a good sign. =
-So then I modified it to only do that on the last 256 byte segment of a pag=
-e, but then is started failing again.
- > >  >=20
- > >  > Could you elaborate the "only do that on the last 256 byte segment =
-of
- > >  > a page" part? How did you check which chunk of the page would be
- > >  > allocated before choosing the dma pool?
- > >  >=20
- > >  > > I never saw any bus error during my testing, just wrong data
- > >  > > read, which then fails image verification. I was expecting iommu
- > >  > > error logs if it was trying to access a chain in to nowhere if it
- > >  > > always interpreted last entry in page as a link. I never saw any
- > >  > > iommu errors.
- > >  >=20
- > >  > Maybe I misspoke, the "bus error" part was just my speculation, I
- > >  > didn't look at the IOMMU logs or anything like that.
- > >  >=20
- > >  > > I'd be glad to if you could share your testing method.
- > >  >=20
- > >  > I dumped all the nvme transfers before the crash happened (using
- > >  > tracefs), and I saw a read of size 264 =3D 8 + 256, which led me to=
- the
- > >  > chaining theory. To test this claim, I wrote a simple pci device
- > >  > driver which creates one IO queue and submits a read command where =
-the
- > >  > PRP list is set up in a way that tests if the controller treats it =
-as
- > >  > a chained list or not. I ran it, and it indeed treated the last PRP
- > >  > entry as a chained pointer.
- > > hmm, I guess a simple debugfs trigger file could be used to construct
- > > specially formulated requests. Would work as a debug tool.
- > >
- > > Though at this point, the simple dmapool alignment param usage fixes
- > > both of these scenarios, so it will be kind of academic to continue
- > > putting effort in to understand this. I am trying to get answers out
- > > of the vendor to confirm any of these theories, which I hope will be
- > > more conclusive than our combined inference from testing.
- >=20
- > Any updates on this? I'm satisfied with the quirk patch, so we can move
- > this forward if you're okay with the current understanding.
- >=20
-apologies for late reply, I think this got missed during a holiday. Thanks =
-for prompting on the previous thread.
-
-I have no further updates on this. I have received no further info from the=
- vendor.
-I think we can go ahead and use the alignment patch as is. The only outstan=
-ding question was whether it is an
-implicit last entry per page chain vs simple alisngment requirement. Either=
- way, using the dmapool
-alignment fixes both of these potential causes, so we should just take it a=
-s is.
-If we ever get any better info and can do a more specific patch in future, =
-we can rework it then.
+Yours sincerely,
+Vincent Mailhol
 
