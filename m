@@ -1,106 +1,115 @@
-Return-Path: <linux-kernel+bounces-437312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54F199E91A0
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:09:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B536163EDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:08:54 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B553218ABF;
-	Mon,  9 Dec 2024 11:04:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YtM46qlP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EB969E91A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:09:28 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D972221661A;
-	Mon,  9 Dec 2024 11:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F41802825EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:09:26 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293DF21A43E;
+	Mon,  9 Dec 2024 11:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jlhPltXn"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C4C219E94
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:05:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733742264; cv=none; b=Zk6U14GQJsSjjtfKQvoi6SMzueYuACFIQAzU9li9egfOwvr/qIl1qj7eLEaRj+JQnPy9rE/9urkr6ZpulFSMGyXC8Usg+msujvGTrsGbkm6qQGwf4bOaoX/7fUtlJHIgNvNrABkDcBuDopGl2aSE8ezjPTCc1yfICWqBw/NlRNw=
+	t=1733742350; cv=none; b=BYVyagNDHtphddhzN+LyQtFLvgw7zkv3TCGXMm/bWHppxtQEsLlziSk4mkSINtkhbjjyWO35SIGQRKlIorZWwBE419TBWBjxpvfsMiCunnK83au8V7rGxtytRSKHIAFGInsqV22VMZSC2YUnSo1Thz2MyqxCRu6G+eXfzxmiJLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733742264; c=relaxed/simple;
-	bh=9Sd0lsx/TwXCrq5YbYdHmcrDqJ/fm1yXbjwIQSfj+NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s+/OB6CMIMb/Ib1aMa/rvHmW6HwpH53R0YCMmjUPiy9OKsf440DURdYY3AuiLP1arg6b9wAhMhR2m1Q3S41XzjanVwlmy/8zwb5Qnyy9JfLUXWroZQ87ScbCokfIDrMz4BFIjZHjBxRCcCn5MDIgK5GhltXerIWW7IPUDpXW3Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YtM46qlP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=z6w7NbYaS12zZFu/dPccmWnN6xSZUjRxRHiwMzPEdYw=; b=YtM46qlPP7s8AumUkd/xWcZBQk
-	9QtL9eCAU/aIqfuecGiefB7kellX2CX7Gvo/7O31RQgr/NB1/7fZhRtk48E93TKMeXdlV/TVO8hHy
-	jrpi8+0VXdayWHAzEA/3oMsQTWJhMYbA0IY7J/Ti2PIGDCqUbdrGQOO66wf5opD4QNgKVadWXCJF2
-	+3o+cbS508nXUTRPusjEZACo84CBXrcYaJ2EbXU1fPlWLdbFC7oBjR/3QYoHt9tbWxUK3lCOvk1/1
-	ViBanbReQNqUaCBdiru4iD9gsMoFSz0kb7oF5uj0jvQXgMIC3Okq4qZijA1iuQZqW7ui0K0Bhkq0V
-	4SWz9uYw==;
-Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKbYh-00000001Tsj-3H2Y;
-	Mon, 09 Dec 2024 11:04:12 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 0F70A3003FF; Mon,  9 Dec 2024 12:04:11 +0100 (CET)
-Date: Mon, 9 Dec 2024 12:04:11 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Oleg Nesterov <oleg@redhat.com>,
-	Tzvetomir Stoyanov <tz.stoyanov@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] kprobes: Use guard() for external locks
-Message-ID: <20241209110411.GL21636@noisy.programming.kicks-ass.net>
-References: <173371205755.480397.7893311565254712194.stgit@devnote2>
- <173371208663.480397.7535769878667655223.stgit@devnote2>
+	s=arc-20240116; t=1733742350; c=relaxed/simple;
+	bh=fDLGCHNnvCUBeSFHUfuHIPxsjXABmImXePDSaZv4E1Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ks3Cvc8bRbLq2i5oBmY3DA52o31m1VPKbwjhKv+pB0iFS7NOQ73cXDTb3OCtMywweuJQhNq2f6lUL3fJeTQp7TTxyAtrs2FjDoshN9sNYzg6lnQVCrED6aLGm7PgQSXTE8rDrsqkKC40TMxk8wuLgd+5bz/ZUoZxgy5L9YHBWXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jlhPltXn; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733742345;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=WolgYZMpfkMHRgR0fLb1WnIXgvr5tDlp1x/fhzwycmc=;
+	b=jlhPltXnqDGtTD1/ewQIh4My78FKjyA4eYFNP4PVyHBC8XR84JxecPhvQDWvRRkwoaEQ0z
+	bE1/4CFHbIMCRuqqOrtIDdKtmFNHkrA9+elN6I4CV4EolOKiFRrpQMG1+SHwSN58eMuLha
+	BVy0pY606SP4d5T8W9fpCLiLoBmAhro=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: John Johansen <john.johansen@canonical.com>,
+	Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	apparmor@lists.ubuntu.com,
+	linux-security-module@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [RESEND PATCH] apparmor: Use str_yes_no() helper function
+Date: Mon,  9 Dec 2024 12:05:16 +0100
+Message-ID: <20241209110515.39744-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <173371208663.480397.7535769878667655223.stgit@devnote2>
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Mon, Dec 09, 2024 at 11:41:26AM +0900, Masami Hiramatsu (Google) wrote:
-> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> 
-> Use guard() for text_mutex, cpu_read_lock, and jump_label_lock in
-> the kprobes.
+Remove hard-coded strings by using the str_yes_no() helper function.
 
-> @@ -853,29 +850,24 @@ static void try_to_optimize_kprobe(struct kprobe *p)
->  		return;
->  
->  	/* For preparing optimization, jump_label_text_reserved() is called. */
-> -	cpus_read_lock();
-> -	jump_label_lock();
-> -	mutex_lock(&text_mutex);
-> +	guard(cpus_read_lock)();
-> +	guard(jump_label_lock)();
-> +	guard(mutex)(&text_mutex);
->  
+Fix a typo in a comment: s/unpritable/unprintable/
 
-> @@ -1294,62 +1280,55 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
->  	int ret = 0;
->  	struct kprobe *ap = orig_p;
->  
-> -	cpus_read_lock();
-> -
-> -	/* For preparing optimization, jump_label_text_reserved() is called */
-> -	jump_label_lock();
-> -	mutex_lock(&text_mutex);
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ security/apparmor/apparmorfs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Why does kprobe need jump_label_lock and how does it then not also need
-static_call_lock ?
+diff --git a/security/apparmor/apparmorfs.c b/security/apparmor/apparmorfs.c
+index 2c0185ebc900..1bce9a7d2129 100644
+--- a/security/apparmor/apparmorfs.c
++++ b/security/apparmor/apparmorfs.c
+@@ -997,7 +997,7 @@ static int aa_sfs_seq_show(struct seq_file *seq, void *v)
+ 
+ 	switch (fs_file->v_type) {
+ 	case AA_SFS_TYPE_BOOLEAN:
+-		seq_printf(seq, "%s\n", fs_file->v.boolean ? "yes" : "no");
++		seq_printf(seq, "%s\n", str_yes_no(fs_file->v.boolean));
+ 		break;
+ 	case AA_SFS_TYPE_STRING:
+ 		seq_printf(seq, "%s\n", fs_file->v.string);
+@@ -1006,7 +1006,7 @@ static int aa_sfs_seq_show(struct seq_file *seq, void *v)
+ 		seq_printf(seq, "%#08lx\n", fs_file->v.u64);
+ 		break;
+ 	default:
+-		/* Ignore unpritable entry types. */
++		/* Ignore unprintable entry types. */
+ 		break;
+ 	}
+ 
+@@ -1152,7 +1152,7 @@ static int seq_ns_stacked_show(struct seq_file *seq, void *v)
+ 	struct aa_label *label;
+ 
+ 	label = begin_current_label_crit_section();
+-	seq_printf(seq, "%s\n", label->size > 1 ? "yes" : "no");
++	seq_printf(seq, "%s\n", str_yes_no(label->size > 1));
+ 	end_current_label_crit_section(label);
+ 
+ 	return 0;
+@@ -1175,7 +1175,7 @@ static int seq_ns_nsstacked_show(struct seq_file *seq, void *v)
+ 			}
+ 	}
+ 
+-	seq_printf(seq, "%s\n", count > 1 ? "yes" : "no");
++	seq_printf(seq, "%s\n", str_yes_no(count > 1));
+ 	end_current_label_crit_section(label);
+ 
+ 	return 0;
+-- 
+2.47.1
+
 
