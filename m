@@ -1,92 +1,169 @@
-Return-Path: <linux-kernel+bounces-436808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACCB69E8B25
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:46:01 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AFF99E8B2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:51:14 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E15E2810EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:46:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0BA163FE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:51:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 349EC16190B;
-	Mon,  9 Dec 2024 05:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B29C21018C;
+	Mon,  9 Dec 2024 05:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OTNFDvzx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="a8Q3lzw/"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1DD91C4A1B;
-	Mon,  9 Dec 2024 05:45:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F41020FABE
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 05:51:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733723155; cv=none; b=RtgsL5WmahWpWfBpP/f5DQDUkxy+gfaUVYQk7Z3qq1RQYv6LUSoaITx2Vy9bCn3TLxHQBHOkX6L/FRuzH0m8uTVG6TB/hFrHlKMqVAU/7bZCJ8UI+OU676N6dLNljZrrE/2CIJcz/Nu5CdgrRe1JF8npBI9imwB6ff9kWYK/chs=
+	t=1733723469; cv=none; b=ABtRNPY+nGhQCoUv2SZbdsCxwpHiB/8qVfj6PZQyb1lAGipyi4/ZgbK/jbAkHeZ0Y0aatbcbH2t8m2u5eYS3hhCDYpMHcPLp72FAUq9i7+Lh++k+uecfQNshzHnwQD+w7gPZ/x4bPs1pbjwHc2LZjjhspBilLIcGXOkv1dhTMIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733723155; c=relaxed/simple;
-	bh=3X70tRunR7lYHlKpNIgdPIP119iuLEn/uQ0tKEhyDe0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kk1PVSqheJzwz//VOtHagvxWKDKo1y2Jl+8N+Ojcg2NsM8x4IdLJXf2hbKjl2681wN9O3Pw3Y/8I49z9BZ4Q0DE0zobUBPEOyTx3Z5j8YsdvYl+lhS3TKBkmyTHIefVxlcOMHaSMGCpNOoorWetCdZ9ijLHXz6q0K+MdbMVBNBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OTNFDvzx; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733723154; x=1765259154;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3X70tRunR7lYHlKpNIgdPIP119iuLEn/uQ0tKEhyDe0=;
-  b=OTNFDvzxXKN6lSpN0V6pH2kUaHpC4t9FpQQX4yuxFzC/iK9vTY5LFFrx
-   6qxglRO5wfT1O9PkyNE/yJ/vZg1ntR64fdx63qIPKVnvfRJbCHCY+W2uA
-   mV/zkRLLwunrXLyNdxHEbmlrwIy2DeyRD0LwLU4I7v+QmLtdwjxRshGu7
-   KAS4eAQAQ+06qoLDkul3db8BZhDfmgbIOlQc0Brms33LNHWsS8yHkKmf6
-   4P4sUMHI3E7T5ln4uQp7Yz1POIafzrpHFK5SI8KRm2cPFCu+X9dub43rD
-   +aPm8XrK2nx0+Vz8gTdqNMTG3IpG+nXUDQPkkMCGNS/8AAGzsQr00GGXf
-   Q==;
-X-CSE-ConnectionGUID: M1Z8xtfwSoeKKgoDzpDCWw==
-X-CSE-MsgGUID: xTBJrFfFTJCUjZLx4oQYkg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37934839"
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="37934839"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 21:45:53 -0800
-X-CSE-ConnectionGUID: Jmfx+m5HTp6cwNLutHY53g==
-X-CSE-MsgGUID: Ojm1sNYFT6mihTvGQ9LVPg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="99419996"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 21:45:51 -0800
-Date: Mon, 9 Dec 2024 06:42:49 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: Justin Lai <justinlai0215@realtek.com>, davem@davemloft.net,
-	edumazet@google.com, pabeni@redhat.com, andrew+netdev@lunn.ch,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	horms@kernel.org, michal.kubiak@intel.com, pkshih@realtek.com,
-	larry.chiu@realtek.com
-Subject: Re: [PATCH net-next] rtase: Refine the if statement
-Message-ID: <Z1aDWTa2VzXiPpNf@mev-dev.igk.intel.com>
-References: <20241206084851.760475-1-justinlai0215@realtek.com>
- <Z1LVqssDBEZ7nsWQ@mev-dev.igk.intel.com>
- <20241206084158.172dd06d@kernel.org>
+	s=arc-20240116; t=1733723469; c=relaxed/simple;
+	bh=vL6k/9Dw5bwMXo8gtCIxScl4RjhJ6uE04HEbW4RzQdA=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=TG2qm7CRCpgG3yAV4KQR4F9hD6KDLOhXH6atHTY4yDZm74kNfOpRDMj607Rmqm1DG4m+y4yRq8vSiFujgLiauFyTQjTqMfWAjOH2db3CCNSAk7mLmY0HO7q5COus59cbbRrcgQR/qLkVjkVRUSBVkWy+Rpi+/Qx/6cNU73lhBrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=a8Q3lzw/; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241209055058epoutp0206d5c051abb175548dbfa1835b75b535~PbEzPgjz_1987419874epoutp02h
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 05:50:58 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241209055058epoutp0206d5c051abb175548dbfa1835b75b535~PbEzPgjz_1987419874epoutp02h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1733723458;
+	bh=Ch7x43kvW/RvmoknwdAqGNRWl0toOYy3Zz0NHsQDoss=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=a8Q3lzw/4qcaosezrDLymC2PHZjOpPt5aMq3veWS8BZyYsOWmoD1qnGXMImysll3a
+	 7kqaws8MS6VMRzD1zeLnL0hodsqZv51U6PosYHbjwFzQ/xiG3eZhnoC3/S0XkIo+Gh
+	 jQF0+tx0wn92dLQ7RrMLiOHita49Ej5QdCqNYRsA=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241209055058epcas1p2a305bb37dbbc9197a68fb2320ec8399c~PbEy7-vQb1835618356epcas1p2N;
+	Mon,  9 Dec 2024 05:50:58 +0000 (GMT)
+Received: from epsmgec1p1.samsung.com (unknown [182.195.38.231]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Y69vj2pz9z4x9Q0; Mon,  9 Dec
+	2024 05:50:57 +0000 (GMT)
+X-AuditID: b6c32a33-5b18370000005ad5-c2-6756853f55f0
+Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
+	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CE.9C.23253.F3586576; Mon,  9 Dec 2024 14:50:55 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206084158.172dd06d@kernel.org>
+Mime-Version: 1.0
+Subject: RE: Re: [PATCH] PM / devfreq: Remove unused
+ devm_devfreq_(un)register_notifier
+Reply-To: myungjoo.ham@samsung.com
+Sender: MyungJoo Ham <myungjoo.ham@samsung.com>
+From: MyungJoo Ham <myungjoo.ham@samsung.com>
+To: "Dr. David Alan Gilbert" <linux@treblig.org>
+CC: Kyungmin Park <kyungmin.park@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-doc@vger.kernel.org"
+	<linux-doc@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <Z1RD3Ec1IJ2jY5TZ@gallifrey>
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241209055055epcms1p2b90a71a4fa19ed5fb6870fd052e8a639@epcms1p2>
+Date: Mon, 09 Dec 2024 14:50:55 +0900
+X-CMS-MailID: 20241209055055epcms1p2b90a71a4fa19ed5fb6870fd052e8a639
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrPKsWRmVeSWpSXmKPExsWy7bCmga59a1i6wYszFhbXvzxntTjb9Ibd
+	YmHbEhaLy7vmsFl87j3CaLH++Q0mBzaPvi2rGD1WLp/A7vF5k1wAc1S2TUZqYkpqkUJqXnJ+
+	SmZeuq2Sd3C8c7ypmYGhrqGlhbmSQl5ibqqtkotPgK5bZg7QXiWFssScUqBQQGJxsZK+nU1R
+	fmlJqkJGfnGJrVJqQUpOgWmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsafvmUsBdf4Kt6e/sPe
+	wPiau4uRk0NCwERi2qfj7F2MXBxCAjsYJaa/Xs7WxcjBwSsgKPF3hzBIjbBApMSpHVvYQWwh
+	ASWJhpv7mCHi+hIdD7YxgthsAroSWzfcZQGxRQQMJDb/2s8EMpNZoItJ4uz6M8wQy3glZrQ/
+	ZYGwpSW2L98K1swpoCkx7+VNqBpRiZur37LD2O+PzWeEsEUkWu+dhaoRlHjwczdUXFKi785e
+	sGUSAtsYJXYcmcMG4exnlJjysA1qkr7Embkn2UBsXgFfiabb65lAbBYBVYkPrz5C1bhInJu4
+	EmwDs4C8xPa3c5hBIcEMdN36XfoQYT6Jd197WGGe2THvCROErSZxaPcSqDEyEqenL4Q61ENi
+	/vI2aOj+Z5Q4snw78wRG+VmIAJ6FZNsshG0LGJlXMYqlFhTnpqcmGxYYwuM0OT93EyM45WkZ
+	72C8PP+f3iFGJg7GQ4wSHMxKIrwc3qHpQrwpiZVVqUX58UWlOanFhxhNgf6cyCwlmpwPTLp5
+	JfGGJpYGJmZGxiYWhmaGSuK8Z66UpQoJpCeWpGanphakFsH0MXFwSjUwsX/5LpiTEy+5g/vP
+	pENKX89mFuz+OWdd9kY/mcALMTKXpEx1pbZdVlw73+W4x7Ji3rZaFcFPghXlSzhmrdHK+uS9
+	dn5p+9uN1TF+S5KNT5lJvH7q+YlTZHHT54NH9/+LZtqkflkj592d+y8rfnM4K22/rfBtaXZ/
+	j01S7v5FPnblrEcLRA/vbwg5MnnnrciHG4RZHSZsCpDrWevBe1huCcdbrQ3Nuy4+6jUTeVu5
+	+ZL11qz6A+UrHz+7wCUc9vZq1WN29jBPPu/gCy6tU4XyWw1XX7p6roHdjWODpSnH5x8x25RP
+	xLyrfvtm1b7ObzXKtt2a7r9kU82s3ToWNRhM5iu+dffT8uBfjiHMj2IeKbEUZyQaajEXFScC
+	APlhyVYCBAAA
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241128161146epcas1p46768d7685092deaa817119db30fd12f2
+References: <Z1RD3Ec1IJ2jY5TZ@gallifrey> <Z0iWPCzjv9YQ4kO_@gallifrey>
+	<20241028021344.477984-1-linux@treblig.org>
+	<20241207052209epcms1p45818db425ba84821003b6d735bc0e957@epcms1p4>
+	<CGME20241128161146epcas1p46768d7685092deaa817119db30fd12f2@epcms1p2>
 
-On Fri, Dec 06, 2024 at 08:41:58AM -0800, Jakub Kicinski wrote:
-> On Fri, 6 Dec 2024 11:44:58 +0100 Michal Swiatkowski wrote:
-> > I am not sure if it is worth to change.
-> 
-> True, tho, FWIW, if it's the maintainer of the codebase sending the
-> change it's generally fine. Our "no pointless churn" rule is primarily
-> for randoes.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>* MyungJoo Ham (myungjoo.ham@samsung.com) wrote:
+>> >* linux@treblig.org (linux@treblig.org) wrote:
+>> >> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>> >> 
+>> >> devm_devfreq_register_notifier() and devm_devfreq_unregister_notifier()
+>> >> have been unused since 2019's
+>> >> commit 0ef7c7cce43f ("PM / devfreq: passive: Use non-devm notifiers")
+>> >> 
+>> >> Remove them, and the helpers they used.
+>> >> 
+>> >> Note, devm_devfreq_register_notifier() is still used as an example
+>> >> in Documentation/doc-guide/contributing.rst but that's just
+>> >> an example of an old doc bug rather than anything about the function
+>> >> itself.
+>> >> 
+>> >> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+>> >
+>> >Ping.
+>> >
+>> >Thanks,
+>> >
+>> >Dave
+>> 
+>> When I search github, it appears that vendors are using this API.
+>
+>Hmm OK.
+>Of course there's a lot of random junk on github, so it can be tricky
+>to know what's current/real/relevant.
+>
+>> NVIDIA:
+>> Samsung:
+>> Realtek:
+>> 
+>> Please don't remove ABIs used by vendors even if
+>> they didn't upstream their drivers.
+>
+>Hmm OK.
+>Do you think they should be using this ABI or do they have the same bug as 
+>is fixed in 0ef7c7cce43f ?
+>I guess they don't care.
+>
+>Dave
 
-Sure, thanks for letting me know.
+They will suffer from the same bugs mentioned in 0ef7x7cce43f.
+Anyway, they probably don't care if they build these
+code as built-in for their product binries.
+
+Vendors of embedded devices, including mobile phones, usually
+do not care upstreaming their device drivers, and we have too many
+Linux embedded device vendors.
+Even in my affiliation, we have too many different instances of
+Linux kernel source repositories and binaries built
+simultaneously, and I do not know how they are using the
+given devfreq APIs.
+
+Cheers,
+MyungJoo
 
