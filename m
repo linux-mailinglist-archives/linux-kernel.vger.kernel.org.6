@@ -1,366 +1,160 @@
-Return-Path: <linux-kernel+bounces-437398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0D59E92BD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:50:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21EF99E92C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:50:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D27FB160F91
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:50:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14236161450
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1608722145C;
-	Mon,  9 Dec 2024 11:50:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1C0221D83;
+	Mon,  9 Dec 2024 11:50:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WNkQh9bl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mOs4K6WK"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 349CA1F931;
-	Mon,  9 Dec 2024 11:50:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84AE021D010
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733745015; cv=none; b=ShoQATTqoPwq5Kwf7PilBmH2ZrT08pOvSltRXJ4HM5fLh1+vowGTxVmIHZGVTZclXwMwI8y0Kuf1YhrRimZ4b0M23FsX6Ulph4iT2ky8QN8bEx/65sQR29JVgJM5TTwm9+oOE07NfmOLBgcNnIg2YfAfnJRt8/Z+VMbCdOALMkY=
+	t=1733745036; cv=none; b=oTq4w3dTT0bR1rFnOD1H53KBypNU9sE5n7rW3KnPbJRyRwkyexL08iAUReJ4AEs/5N42q9N1sR/0D78CQ3cyxNjiKqewlFeZwUz3G4hJ6Q8KFAqwle9FcDLTlG2XD7nJY3F7oaKPTqyGjIa9nxV5baad2hZKOOQLSNZzFcyqB+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733745015; c=relaxed/simple;
-	bh=14txjGjcIDe5vTITmnV4BciEgZYyRMnSH2sp/HSo8zo=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=blICJvbvMeh9UrgSCS6pCg1IYJMgavugqbJCUyjNsBKlbqZZliF6VsVvs7RibDW2xTX5t9tFmyKjgaQEOkcgFLqWtpHRsAxbJOb09pIUls5SDtwXoS4a3qiSjjRr+s0LweEZb704XFUpnXbidai6BcAzEeX29erye9QmZVEGE8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WNkQh9bl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD45DC4CEDE;
-	Mon,  9 Dec 2024 11:50:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733745014;
-	bh=14txjGjcIDe5vTITmnV4BciEgZYyRMnSH2sp/HSo8zo=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=WNkQh9bl8khGPw4ZIV31iqvj+YfC2TFaL6FY3iL13nzx4OGqkkqwQ264pog41kIpT
-	 RZLwWSwVy9qLDqWyEMhtJHdH63C9o4ltIiuwWpFAKB4QBP4TaCXiVpD/NJUTOSTM57
-	 Df/kAHJRKgFMb7g4vimJKjKMXi4fMnNCv+VTbwZ0nxJ9IVrtqd0wTzSpK2yF1SnUVm
-	 Mx9ZzqO1mvHk46a86jEJi3uObVRXvxmE4BksbmX2g2aMgH5zwElowzWSxMovnxMeUJ
-	 2ZoWdJWv2vakbVW3aw7q7k2OiS9Afqi++bQmZHBoF+Js+KwU9vEvN6+LBSE/oeWTjh
-	 6C4Zj8UyYRSmA==
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D04581200069;
-	Mon,  9 Dec 2024 06:50:12 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 09 Dec 2024 06:50:12 -0500
-X-ME-Sender: <xms:dNlWZxXbpYRS3pQeF8lm27B2t8YQi_dVACaG4KXYGLriUBa9ng4HPQ>
-    <xme:dNlWZxlCxfLGXYVBk0JZESIdi_K5B7_GZimixRRiKeWwelKMYMNhFWcQaf5tKEInC
-    eVpQNJCTsZqY3CJ67k>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefuddrjeeigddtjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdpuffr
-    tefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnth
-    hsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredttden
-    ucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugeskhgvrhhnvghlrd
-    horhhgqeenucggtffrrghtthgvrhhnpeejteeguefhffevgfehueetudevieeuueffhedv
-    vefhjedthfdutdethefgfeekleenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
-    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhguodhm
-    vghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedtvdegqddvkeejtd
-    dtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrdguvgdpnhgspghr
-    tghpthhtohepuddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmse
-    gurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhl
-    vgdrtghomhdprhgtphhtthhopehlkhhpsehinhhtvghlrdgtohhmpdhrtghpthhtohepkh
-    husggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehstghhnhgvlhhlvgeslhhinhhu
-    gidrihgsmhdrtghomhdprhgtphhtthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnh
-    drtghhpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthho
-    pehgvghrghesuhgtlhhinhhugidrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnh
-    gvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:dNlWZ9byyyvr1VREQ3LqbmiipgoRYg42YSi4OFtL77DbjKD6x0hNjw>
-    <xmx:dNlWZ0UVLpjUgyF5WVwZOUEduz02ufnWAziBVj1MdtjOeFuK8D4vbQ>
-    <xmx:dNlWZ7nQmuCGRwwMKjASklN-uGGEN76aervrMk1ESS7-4F-Er1J8Dw>
-    <xmx:dNlWZxex4xI2DcKJy8hNVekAs09L4Xs2qJFHv8mJbAmZSque9Rjfng>
-    <xmx:dNlWZ1Gi3kF-DIncmUSCFn7XjcmyJZLQ-ulc8JzZBaLjzyXPGr2bq76P>
-Feedback-ID: i36794607:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id A586E2220072; Mon,  9 Dec 2024 06:50:12 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1733745036; c=relaxed/simple;
+	bh=tRg2JG4yWbf9I5B7TpSxC1gfaa7C/jgTm+c+epd0rvA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=n1pgTgeR7r3TOL+CmWqMNQan1ajGflvcMn5g5ObziAzl2UFkaAQ8WA863Fd0JxmVMVV4fSIYPlkVmuHjAdDoqpE1L7CzkxPfa30QHfdmbE1+/KnhImBGQpV+0pzVBoGkyoeWFVVeG9eUrAoO5Tn+IIIbOsEdie/bpMo9ydkrd5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mOs4K6WK; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a0ec0a94fso569856066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:50:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733745033; x=1734349833; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ATPIw4OMF8nAB/PeB65ti7ZSBIJFQfds55Da014vBnU=;
+        b=mOs4K6WKK77THOpTqSZkDQl/Lz7kzvtwMEefQqMLcsjL0jIS51b/9EvcepX6bRhNlB
+         eC6StCJY+QPzu4LQ0kydcf4uWs927Cj5R0ZELooduYc5wrcB83OVgD2tXxPnJ9aQUw2i
+         bYYz5aakyduHFT9CaWN9QM7YQs8V0hzjAkMGrp6EwHkYHMJ0nKHJq6h/fFKJCuFOPf8y
+         uB+/hEHSnzzZd7ZRbiz2SCZOEryyI5iSLIJyB4Jq2SWCUfjXhncIgoWFBD2Bgiu3inj/
+         XvMgPkDCcTZDLiheGa3TbIO2sj6bGmQBjHTIT3GOz08vfHiGIeSbIEvBC6XNwa+UpA9s
+         m92w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733745033; x=1734349833;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ATPIw4OMF8nAB/PeB65ti7ZSBIJFQfds55Da014vBnU=;
+        b=TIkVsOIXW1ew+97YjzTw0TRXW/o0ZXRr2OL98TCztG+G+WOx4uNVJcAyVCpYBHMmWE
+         6LIGnZH/4T2OP6w1lhIoPprcfaZ0AxfuMZl586tRw577ShT4aj8PlkeYC1hhLzBfsxil
+         PCYWPMybFiScLswvD+Jb21ED46hsUAvcRTYAOZfiO2ABhyUDXTM+EICVaFEoZjbVd53+
+         29uZjjHpPuNx1eNCl9IhypKaPNecBYEAWn4FAucdH9RwYZDEvts77HL6ltgjJE7vDxLB
+         R0iF+Z6IUAnLKn9/VlvHrqtbN/iUW8fcMz5WHUpeEofA+u0aXbbUpV8t4R7/t2sq9BZJ
+         7D/w==
+X-Forwarded-Encrypted: i=1; AJvYcCUXU6UykTVP4P+LJCpxQ+u4XmzOKmButhYTCCCSXWKhTmhX57kQvfMdpKjwQbcAkK1xJ/eGy8TmsOTcFCU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc+Vd5wfcb9nZoDpo9niOJEcMaFztqVa6/9qNnjL4zgiMPagqp
+	urDpB5Fvs9SSAEHNE27OpDH37M2JekBnIsegvF7vrXLMYFHvO/Zb8O6U10ZHuS8=
+X-Gm-Gg: ASbGncveMoMwFipWeP95PWa3iPUU7Z+i7FkHdD7MCnFLYieb6kiJ/JJR9hzVrq/YKR8
+	VpZRhIRP8a9EUe3D0/YZFJ71zUoBlgKOmFmSn4YSg0lNB8AvIY20GVBqO6nKF3iS0PBazxBOdw5
+	wO1mWkTIcgScb1zQx8X5TQ5ZLZ3oDOco/+Qcimh1oxcetxyrtd/RWSNmiBrBOmjlwQos53azhgb
+	5Dpe+KbRhm4L9US+pHQu9cCXRG5DBvHY3BvZlKdedchceFhBk8UkAgpLq3AhUWJcYF0T3HbsLeq
+	BRCJRTDNmEFHJTK5g2xPTWmfkA1CHoc/LA==
+X-Google-Smtp-Source: AGHT+IFO2lGH9JL+bzO4sp55jHNpx9YcfkNNqxmiJ5WgXHLLHG24iRvDXE2YESPMaen0HctcojXtcg==
+X-Received: by 2002:a17:906:3cb1:b0:aa6:7df0:b17a with SMTP id a640c23a62f3a-aa67df0b300mr315812866b.34.1733745032872;
+        Mon, 09 Dec 2024 03:50:32 -0800 (PST)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa66d479963sm301854966b.106.2024.12.09.03.50.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 03:50:32 -0800 (PST)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Date: Mon, 09 Dec 2024 11:49:53 +0000
+Subject: [PATCH v2] usb: dwc3: gadget: fix writing NYET threshold
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 09 Dec 2024 12:49:51 +0100
-From: "Arnd Bergmann" <arnd@kernel.org>
-To: "Niklas Schnelle" <schnelle@linux.ibm.com>,
- "Andrew Lunn" <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Greg Ungerer" <gerg@uclinux.org>
-Cc: Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
- "kernel test robot" <lkp@intel.com>
-Message-Id: <3ca55478-a5a9-442b-ae4f-a0a822f786d9@app.fastmail.com>
-In-Reply-To: <20241209-mcf8390_has_ioport-v1-1-f263d573e243@linux.ibm.com>
-References: <20241209-mcf8390_has_ioport-v1-1-f263d573e243@linux.ibm.com>
-Subject: Re: [PATCH] net: ethernet: 8390: Add HAS_IOPORT dependency for mcf8390
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20241209-dwc3-nyet-fix-v2-1-02755683345b@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGDZVmcC/3WMSw7CIBQAr9K8tc8ARVBX3sN0Ufm0LzFgoEGbh
+ ruL3bucSWY2yC6Ry3DtNkiuUKYYGohDB2Yew+SQbGMQTEgumEL7Nj2G1S3o6YOanU9eWc0tk9C
+ aV3JN77/70HimvMS07vvCf/bfqXDkKC79w2jplZT+9qQwpniMaYKh1voFKFSnUasAAAA=
+To: Thinh Nguyen <Thinh.Nguyen@synopsys.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-On Mon, Dec 9, 2024, at 11:28, Niklas Schnelle wrote:
-> Since commit 6f043e757445 ("asm-generic/io.h: Remove I/O port accessors
-> for HAS_IOPORT=n") the I/O port accessors are compile-time optional. As
-> m68k may or may not select HAS_IOPORT the COLDFIRE dependency is not
-> enough to guarantee I/O port access. Add an explicit HAS_IOPORT
-> dependency for mcf8390 to prevent a build failure as seen by the kernel
-> test robot.
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: 
-> https://lore.kernel.org/oe-kbuild-all/202412080511.ORVinTDs-lkp@intel.com/
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
-> ---
+Before writing a new value to the register, the old value needs to be
+masked out for the new value to be programmed as intended, because at
+least in some cases the reset value of that field is 0xf (max value).
 
-Hi Niklas,
+At the moment, the dwc3 core initialises the threshold to the maximum
+value (0xf), with the option to override it via a DT. No upstream DTs
+seem to override it, therefore this commit doesn't change behaviour for
+any upstream platform. Nevertheless, the code should be fixed to have
+the desired outcome.
 
-I think your patch is correct in the sense that the I/O port
-handling on m68k coldfire is only defined for the PCI bus
-the port operations is this driver have nowhere to go when
-PCI is disabled.
+Do so.
 
-However, I suspect what you actually found is a different
-preexisting bug, likely introduced in the addition of PCI
-support in commits 927c28c252dc ("m68k: setup PCI support
-code in io_no.h") and d97cf70af097 ("m68k: use asm-generic/io.h
-for non-MMU io access functions").
+Fixes: 80caf7d21adc ("usb: dwc3: add lpm erratum support")
+Cc: stable@vger.kernel.org # 5.10+ (needs adjustment for 5.4)
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+---
+Changes in v2:
+- change mask definitions to be consistent with other masks (Thinh)
+- udpate commit message to clarify that in some cases the reset value
+  is != 0
+- Link to v1: https://lore.kernel.org/r/20241206-dwc3-nyet-fix-v1-1-293bc74f644f@linaro.org
+---
+For stable-5.4, the if() test is slightly different, so a separate
+patch will be sent for it for the patch to apply.
+---
+ drivers/usb/dwc3/core.h   | 1 +
+ drivers/usb/dwc3/gadget.c | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
-As far as I can tell, the driver predates this patch and
-presumably relied on inb/outb getting redirected to readb/writeb,
-using the port number as a pointer (without the 
-((void __iomem *) PCI_IO_PA) offset).
+diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
+index ee73789326bc..f11570c8ffd0 100644
+--- a/drivers/usb/dwc3/core.h
++++ b/drivers/usb/dwc3/core.h
+@@ -464,6 +464,7 @@
+ #define DWC3_DCTL_TRGTULST_SS_INACT	(DWC3_DCTL_TRGTULST(6))
+ 
+ /* These apply for core versions 1.94a and later */
++#define DWC3_DCTL_NYET_THRES_MASK	(0xf << 20)
+ #define DWC3_DCTL_NYET_THRES(n)		(((n) & 0xf) << 20)
+ 
+ #define DWC3_DCTL_KEEP_CONNECT		BIT(19)
+diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
+index 83dc7304d701..31a654c6f15b 100644
+--- a/drivers/usb/dwc3/gadget.c
++++ b/drivers/usb/dwc3/gadget.c
+@@ -4195,8 +4195,10 @@ static void dwc3_gadget_conndone_interrupt(struct dwc3 *dwc)
+ 		WARN_ONCE(DWC3_VER_IS_PRIOR(DWC3, 240A) && dwc->has_lpm_erratum,
+ 				"LPM Erratum not available on dwc3 revisions < 2.40a\n");
+ 
+-		if (dwc->has_lpm_erratum && !DWC3_VER_IS_PRIOR(DWC3, 240A))
++		if (dwc->has_lpm_erratum && !DWC3_VER_IS_PRIOR(DWC3, 240A)) {
++			reg &= ~DWC3_DCTL_NYET_THRES_MASK;
+ 			reg |= DWC3_DCTL_NYET_THRES(dwc->lpm_nyet_threshold);
++		}
+ 
+ 		dwc3_gadget_dctl_write_safe(dwc, reg);
+ 	} else {
 
-Note that the dev->base_addr that gets passed into inb()/outb()
-is a physical address from a IORESOURCE_MEM resource,
-which is normally different from both 16-bit I/O port numbers
-and from virtual __iomem pointers, though on coldfire nommu
-the three traditionally could be used interchangeably.
+---
+base-commit: c245a7a79602ccbee780c004c1e4abcda66aec32
+change-id: 20241206-dwc3-nyet-fix-7085f6d71d04
 
-Adding Greg Ungerer to Cc, as he maintains the coldfire
-platform and wrote the driver.
-
->  drivers/net/ethernet/8390/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/8390/Kconfig 
-> b/drivers/net/ethernet/8390/Kconfig
-> index 
-> 345f250781c6d9c3c6cbe5445250dc5987803b1a..f2ee99532187d133fdb02bc4b82c7fc4861f90af 
-> 100644
-> --- a/drivers/net/ethernet/8390/Kconfig
-> +++ b/drivers/net/ethernet/8390/Kconfig
-> @@ -87,7 +87,7 @@ config MAC8390
-> 
->  config MCF8390
->  	tristate "ColdFire NS8390 based Ethernet support"
-> -	depends on COLDFIRE
-> +	depends on COLDFIRE && HAS_IOPORT
->  	select CRC32
->  	help
->  	  This driver is for Ethernet devices using an NS8390-compatible
->
-> ---
-
-If I read this right, we would need something like the
-patch below, to actually pass the address through ioremap()
-and use readb/writeb on __iomem pointers.
-
-      Arnd
-
-diff --git a/drivers/net/ethernet/8390/mcf8390.c b/drivers/net/ethernet/8390/mcf8390.c
-index 94ff8364cdf0..0e2a93e9ef59 100644
---- a/drivers/net/ethernet/8390/mcf8390.c
-+++ b/drivers/net/ethernet/8390/mcf8390.c
-@@ -44,19 +44,19 @@ static const char version[] =
-  * Note that the data port accesses are treated a little differently, and
-  * always accessed via the insX/outsX functions.
-  */
--static inline u32 NE_PTR(u32 addr)
-+static inline void __iomem *NE_PTR(void __iomem *addr)
- {
--	if (addr & 1)
-+	if ((uintptr_t)addr & 1)
- 		return addr - 1 + NE2000_ODDOFFSET;
- 	return addr;
- }
- 
--static inline u32 NE_DATA_PTR(u32 addr)
-+static inline void __iomem *NE_DATA_PTR(void __iomem *addr)
- {
- 	return addr;
- }
- 
--void ei_outb(u32 val, u32 addr)
-+void ei_outb(u32 val, void __iomem *addr)
- {
- 	NE2000_BYTE *rp;
- 
-@@ -65,7 +65,7 @@ void ei_outb(u32 val, u32 addr)
- }
- 
- #define	ei_inb	ei_inb
--u8 ei_inb(u32 addr)
-+u8 ei_inb(void __iomem *addr)
- {
- 	NE2000_BYTE *rp, val;
- 
-@@ -74,7 +74,7 @@ u8 ei_inb(u32 addr)
- 	return (u8) (RSWAP(val) & 0xff);
- }
- 
--void ei_insb(u32 addr, void *vbuf, int len)
-+void ei_insb(void __iomem *addr, void *vbuf, int len)
- {
- 	NE2000_BYTE *rp, val;
- 	u8 *buf;
-@@ -87,7 +87,7 @@ void ei_insb(u32 addr, void *vbuf, int len)
- 	}
- }
- 
--void ei_insw(u32 addr, void *vbuf, int len)
-+void ei_insw(void __iomem *addr, void *vbuf, int len)
- {
- 	volatile u16 *rp;
- 	u16 w, *buf;
-@@ -100,7 +100,7 @@ void ei_insw(u32 addr, void *vbuf, int len)
- 	}
- }
- 
--void ei_outsb(u32 addr, const void *vbuf, int len)
-+void ei_outsb(void __iomem *addr, const void *vbuf, int len)
- {
- 	NE2000_BYTE *rp, val;
- 	u8 *buf;
-@@ -113,7 +113,7 @@ void ei_outsb(u32 addr, const void *vbuf, int len)
- 	}
- }
- 
--void ei_outsw(u32 addr, const void *vbuf, int len)
-+void ei_outsw(void __iomem *addr, const void *vbuf, int len)
- {
- 	volatile u16 *rp;
- 	u16 w, *buf;
-@@ -128,12 +128,12 @@ void ei_outsw(u32 addr, const void *vbuf, int len)
- 
- #else /* !NE2000_ODDOFFSET */
- 
--#define	ei_inb		inb
--#define	ei_outb		outb
--#define	ei_insb		insb
--#define	ei_insw		insw
--#define	ei_outsb	outsb
--#define	ei_outsw	outsw
-+#define	ei_inb		readb
-+#define	ei_outb		writeb
-+#define	ei_insb		readsb
-+#define	ei_insw		readsw
-+#define	ei_outsb	writesb
-+#define	ei_outsw	writesw
- 
- #endif /* !NE2000_ODDOFFSET */
- 
-@@ -149,7 +149,7 @@ void ei_outsw(u32 addr, const void *vbuf, int len)
- static void mcf8390_reset_8390(struct net_device *dev)
- {
- 	unsigned long reset_start_time = jiffies;
--	u32 addr = dev->base_addr;
-+	void __iomem *addr = ei_local->mem;
- 	struct ei_device *ei_local = netdev_priv(dev);
- 
- 	netif_dbg(ei_local, hw, dev, "resetting the 8390 t=%ld...\n", jiffies);
-@@ -190,7 +190,7 @@ static void mcf8390_get_8390_hdr(struct net_device *dev,
- 				 struct e8390_pkt_hdr *hdr, int ring_page)
- {
- 	struct ei_device *ei_local = netdev_priv(dev);
--	u32 addr = dev->base_addr;
-+	void __iomem *addr = ei_local->mem;
- 
- 	if (ei_local->dmaing) {
- 		mcf8390_dmaing_err(__func__, dev, ei_local);
-@@ -225,7 +225,7 @@ static void mcf8390_block_input(struct net_device *dev, int count,
- 				struct sk_buff *skb, int ring_offset)
- {
- 	struct ei_device *ei_local = netdev_priv(dev);
--	u32 addr = dev->base_addr;
-+	void __iomem *addr = ei_local->mem;
- 	char *buf = skb->data;
- 
- 	if (ei_local->dmaing) {
-@@ -255,7 +255,7 @@ static void mcf8390_block_output(struct net_device *dev, int count,
- 				 const int start_page)
- {
- 	struct ei_device *ei_local = netdev_priv(dev);
--	u32 addr = dev->base_addr;
-+	void __iomem *addr = ei_local->mem;
- 	unsigned long dma_start;
- 
- 	/* Make sure we transfer all bytes if 16bit IO writes */
-@@ -318,7 +318,7 @@ static int mcf8390_init(struct net_device *dev)
- 	};
- 	struct ei_device *ei_local = netdev_priv(dev);
- 	unsigned char SA_prom[32];
--	u32 addr = dev->base_addr;
-+	void __iomem *addr = ei_local->mem;
- 	int start_page, stop_page;
- 	int i, ret;
- 
-@@ -403,7 +403,8 @@ static int mcf8390_init(struct net_device *dev)
- static int mcf8390_probe(struct platform_device *pdev)
- {
- 	struct net_device *dev;
--	struct resource *mem;
-+	struct ei_device *ei_local;
-+	void __iomem *mem;
- 	resource_size_t msize;
- 	int ret, irq;
- 
-@@ -411,15 +412,11 @@ static int mcf8390_probe(struct platform_device *pdev)
- 	if (irq < 0)
- 		return -ENXIO;
- 
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	if (mem == NULL) {
--		dev_err(&pdev->dev, "no memory address specified?\n");
-+	mem = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(mem)) {
-+		dev_err(&pdev->dev, "failed to map resource\n");
- 		return -ENXIO;
- 	}
--	msize = resource_size(mem);
--	if (!request_mem_region(mem->start, msize, pdev->name))
--		return -EBUSY;
--
- 	dev = ____alloc_ei_netdev(0);
- 	if (dev == NULL) {
- 		release_mem_region(mem->start, msize);
-@@ -430,25 +427,20 @@ static int mcf8390_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, dev);
- 
- 	dev->irq = irq;
--	dev->base_addr = mem->start;
-+	ei_local->mem = mem;
- 
- 	ret = mcf8390_init(dev);
--	if (ret) {
--		release_mem_region(mem->start, msize);
-+	if (ret)
- 		free_netdev(dev);
--		return ret;
--	}
--	return 0;
-+
-+	return ret;
- }
- 
- static void mcf8390_remove(struct platform_device *pdev)
- {
- 	struct net_device *dev = platform_get_drvdata(pdev);
--	struct resource *mem;
- 
- 	unregister_netdev(dev);
--	mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
--	release_mem_region(mem->start, resource_size(mem));
- 	free_netdev(dev);
- }
- 
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
 
 
