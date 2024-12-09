@@ -1,52 +1,74 @@
-Return-Path: <linux-kernel+bounces-437325-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 526599E91D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:13:31 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B1ED31887AB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:13:05 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B9021A939;
-	Mon,  9 Dec 2024 11:10:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="GqlIPUsZ"
-Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7B499E91CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:12:15 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AC45218AA4
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A680E28276A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:12:14 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D5E7218592;
+	Mon,  9 Dec 2024 11:09:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GDNNBuRI"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0586C216E2D;
+	Mon,  9 Dec 2024 11:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733742617; cv=none; b=hCwU+8OYlA8SRMjIHp+2IncgVgrcZiLk4PaBflO+ev5x0N/zbJKZy1TNrolMt/dTIYWm5YVht3Tvrp/DK34pK0GCXXw7MwmzphsOYffTSwcQGEojvrNE+ucOv3hIUVNHR03H99VgVgVmqiB97FbHNokEfCTPMMhPj/9lx8Ntt3E=
+	t=1733742595; cv=none; b=tdB18kZg2FlQMSIxRtj5PGgcUopZZ3SoXvcc1SG/CtnPszHlS4l7J1i1fvQDAGKM6S414B+GwZvwb+LmkMvF4wjO7PxJXf2HBxFETFdPJanaQefbyd0tCDdTLCg1qZl0kHt/U9jt0N7DlpKZHugNUsPtND1cbTqjRUaqAfEbO0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733742617; c=relaxed/simple;
-	bh=VdSKiBu+Rcqkn3++TzGUEBtx2tT3dY6aOPFhyXnz9XE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CKQw5GnTq7hHFKpTyVSzNZ2ZB7h8zGANfrgbJG7XqCCLJFbdPx64m+d7pXl89PDX1DtBG3/xtKrYaccV0bYBYewRRHM3r169JJdwLLYwUhsvKJV/RD4kNHCuU9NHaX88zjb88QUO3f5b3wuCNl75wkxBWFjwXqzq/ON63R+Ho/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=GqlIPUsZ; arc=none smtp.client-ip=91.218.175.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733742612;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=uv++zCxQI5KkY3e/HSPDNpzOsNvtyw72J+e80my38dY=;
-	b=GqlIPUsZ9NCxnB9VbroiBOqIm3wOUdJzcde3RjClNngkXTTk7OsGfop63CdvnOyV5p50xS
-	Y6EqwfXUKeh3ZvrlXPrM3KnZtsNgj699bgmNC6BVRqwQDukoAqWI6QsqOpRB2R8CwoN2RO
-	MdjSVTxk0Fj/X3ynkXV6ozyB4Y5BD+0=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Chris Zankel <chris@zankel.net>,
-	Max Filippov <jcmvbkbc@gmail.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] xtensa: Remove zero-length alignment array
-Date: Mon,  9 Dec 2024 12:08:56 +0100
-Message-ID: <20241209110856.40132-3-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1733742595; c=relaxed/simple;
+	bh=l27QE7eliCxPGBWgHtvJj3oyUGacOWF4rsbwUIOoIgQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=siTVHoNHXGXwqyAVo2LyIahPWq3Q2NcUNWFxBYPXvTTEr2WiO77GEh794lpi70fRfDGMsbYDqT70TtmX0lQDkrnGSJDjDiu4CrEOaTZW4qxL4upgZ++2W0Pqs58GTbimMu/UCxd4HwZBObCtYMhnd+MPUwLIoVwgdg8InznzRjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GDNNBuRI; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733742594; x=1765278594;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=l27QE7eliCxPGBWgHtvJj3oyUGacOWF4rsbwUIOoIgQ=;
+  b=GDNNBuRI/tbnoonEZK6a0IRP7NooLXLGGX2Kt22SOCSDnCjLUJXlqRiq
+   +Q4XTqNmtw6+oz78Mc6S07Od0n2yNF4h1wdt0pgpjQ6HrHYfjPbWyGQ2z
+   QPrseXBfYNR5Dfbh+eTDT9UP3EsNfWWsoLuoYxlrC0QC7KQXOcOcyTMkE
+   ZkxuL8RW31vxFfYpykJqgJhfXw8u7yKTEQ3Bwg1U2Qi4LtZKxKlSpFx8X
+   lObt5qBrHxSRIOgxFwhRbQYAo/tsu9xaNqECd2njK7D3oojStjFQWEYOY
+   ZEahPSftL58Vz+k3DyQh+8k7rOF3nKmpoUBEeIyeXSUuBW8IlseeAfsEF
+   w==;
+X-CSE-ConnectionGUID: nC2feDfRT+CjA9UJYyxEgw==
+X-CSE-MsgGUID: P07312o3Q/OTzP6ZgkLIPg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37958205"
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="37958205"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 03:09:53 -0800
+X-CSE-ConnectionGUID: U/okbNbkSeyRbJbcwgILDA==
+X-CSE-MsgGUID: rEtmbx2aSh+fRaXwTKsnWQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="95384622"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO wieczorr-mobl1.intel.com) ([10.245.245.38])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 03:09:51 -0800
+From: Maciej Wieczor-Retman <maciej.wieczor-retman@intel.com>
+To: shuah@kernel.org,
+	reinette.chatre@intel.com,
+	fenghua.yu@intel.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	ilpo.jarvinen@linux.intel.com,
+	tony.luck@intel.com,
+	maciej.wieczor-retman@intel.com
+Subject: [PATCH v7 0/2] selftests/resctrl: SNC kernel support discovery
+Date: Mon,  9 Dec 2024 12:09:30 +0100
+Message-ID: <cover.1733741950.git.maciej.wieczor-retman@intel.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,31 +76,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Align the whole struct to 16 bytes instead of using a zero-length
-alignment array.
+Changes v7:
+- Include fallthrough in resctrlfs.c.
+- Check fp after opening empty cpus file.
+- Correct a comment and merge strings in snprintf().
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- arch/xtensa/include/asm/processor.h | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+Changes v6:
+- Rebase onto latest kselftest-next.
+- Looking at the two patches with a fresh eye decided to make a split
+  along the lines of:
+	- Patch 1/2 contains all of the code that relates to SNC mode
+	  detection and checking that detection's reliability.
+	- Patch 2/2 contains checking kernel support for SNC and
+	  modifying the messages at the end of affected tests.
 
-diff --git a/arch/xtensa/include/asm/processor.h b/arch/xtensa/include/asm/processor.h
-index 7ed1a2085bd7..5c88c97abe4e 100644
---- a/arch/xtensa/include/asm/processor.h
-+++ b/arch/xtensa/include/asm/processor.h
-@@ -160,9 +160,7 @@ struct thread_struct {
- 	struct perf_event *ptrace_bp[XCHAL_NUM_IBREAK];
- 	struct perf_event *ptrace_wp[XCHAL_NUM_DBREAK];
- #endif
--	/* Make structure 16 bytes aligned. */
--	int align[0] __attribute__ ((aligned(16)));
--};
-+} __aligned(16);
- 
- /* This decides where the kernel will search for a free chunk of vm
-  * space during mmap's.
+Changes v5:
+- Tests are skipped if snc_unreliable was set.
+- Moved resctrlfs.c changes from patch 2/2 to 1/2.
+- Removed CAT changes since it's not impacted by SNC in the selftest.
+- Updated various comments.
+- Fixed a bunch of minor issues pointed out in the review.
+
+Changes v4:
+- Printing SNC warnings at the start of every test.
+- Printing SNC warnings at the end of every relevant test.
+- Remove global snc_mode variable, consolidate snc detection functions
+  into one.
+- Correct minor mistakes.
+
+Changes v3:
+- Reworked patch 2.
+- Changed minor things in patch 1 like function name and made
+  corrections to the patch message.
+
+Changes v2:
+- Removed patches 2 and 3 since now this part will be supported by the
+  kernel.
+
+Sub-Numa Clustering (SNC) allows splitting CPU cores, caches and memory
+into multiple NUMA nodes. When enabled, NUMA-aware applications can
+achieve better performance on bigger server platforms.
+
+SNC support in the kernel was merged into x86/cache [1]. With SNC enabled
+and kernel support in place all the tests will function normally (aside
+from effective cache size). There might be a problem when SNC is enabled
+but the system is still using an older kernel version without SNC
+support. Currently the only message displayed in that situation is a
+guess that SNC might be enabled and is causing issues. That message also
+is displayed whenever the test fails on an Intel platform.
+
+Add a mechanism to discover kernel support for SNC which will add more
+meaning and certainty to the error message.
+
+Add runtime SNC mode detection and verify how reliable that information
+is.
+
+Series was tested on Ice Lake server platforms with SNC disabled, SNC-2
+and SNC-4. The tests were also ran with and without kernel support for
+SNC.
+
+Series applies cleanly on kselftest/next.
+
+[1] https://lore.kernel.org/all/20240628215619.76401-1-tony.luck@intel.com/
+
+Previous versions of this series:
+[v1] https://lore.kernel.org/all/cover.1709721159.git.maciej.wieczor-retman@intel.com/
+[v2] https://lore.kernel.org/all/cover.1715769576.git.maciej.wieczor-retman@intel.com/
+[v3] https://lore.kernel.org/all/cover.1719842207.git.maciej.wieczor-retman@intel.com/
+[v4] https://lore.kernel.org/all/cover.1720774981.git.maciej.wieczor-retman@intel.com/
+[v5] https://lore.kernel.org/all/cover.1730206468.git.maciej.wieczor-retman@intel.com/
+[v6] https://lore.kernel.org/all/cover.1733136454.git.maciej.wieczor-retman@intel.com/
+
+Maciej Wieczor-Retman (2):
+  selftests/resctrl: Adjust effective L3 cache size with SNC enabled
+  selftests/resctrl: Discover SNC kernel support and adjust messages
+
+ tools/testing/selftests/resctrl/Makefile      |   3 +-
+ tools/testing/selftests/resctrl/cmt_test.c    |   4 +-
+ tools/testing/selftests/resctrl/mba_test.c    |   2 +
+ tools/testing/selftests/resctrl/mbm_test.c    |   4 +-
+ tools/testing/selftests/resctrl/resctrl.h     |   6 +
+ .../testing/selftests/resctrl/resctrl_tests.c |   9 +-
+ tools/testing/selftests/resctrl/resctrlfs.c   | 137 ++++++++++++++++++
+ 7 files changed, 159 insertions(+), 6 deletions(-)
+
 -- 
 2.47.1
 
