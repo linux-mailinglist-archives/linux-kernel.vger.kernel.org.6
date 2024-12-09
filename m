@@ -1,123 +1,197 @@
-Return-Path: <linux-kernel+bounces-436794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71F1C9E8B06
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:33:14 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12F459E8B09
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 06:35:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33F67281336
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:33:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8E5A18844E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:35:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A12216DEBB;
-	Mon,  9 Dec 2024 05:33:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB5E61581F8;
+	Mon,  9 Dec 2024 05:35:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="b5Nl68Qq"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qQsKjIJO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B7DD46B8;
-	Mon,  9 Dec 2024 05:33:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2623A46B8;
+	Mon,  9 Dec 2024 05:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733722387; cv=none; b=R08/dsfQY9i5tcx/cmLHnzII2xBBqAXaH0QO0FTAb2P1NyOrV+nG+br+51dlaxc7KpnDSNoX8SJ00bk1qJ8a10b1juwpENDWTUqitso7L8Ya9N1CJmu1/63lwIYtQ2Ezkj6DQ4AjD9zMy62HbJkKXxVttYze63urghPZSc/BCFc=
+	t=1733722528; cv=none; b=Cy09mJ9I2r448fXtzcWPLHwJ7QM0m9KT6Q6seGOeGNDuuwqLF33+w7+r6ubngacQizZfeMMebj4JturXo+HJBWK7l9N2vn3s04JKjR8JBf44aH1aXy+qymSa+ARuOotrvpBBNuw4THA0rPME9H7dI0JuvcA68hKiRmRoLAx17jE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733722387; c=relaxed/simple;
-	bh=/SvwD8JN0GjX1ctSoHfAgDKtmo+5ri9aKVeRjo7ydPI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VnmpOf5/ssiQHpSUNKxzVXyreQdX76PBw5r4hUZ8dnQNYf2qoJPkSzwFH6X+oMgWTLwvDICr6kEpyzjqvhH/2MSa/2er8/PeSvz6d8Bi/zoVaKYqa74GQFSKBlR4jEktKL8WlMhh17NtXNvNZ/q8eFRMuqfAsf2pUl+Ug/RLK+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=b5Nl68Qq; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8Nuj6k009802;
-	Mon, 9 Dec 2024 05:33:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ngJhW1SmIzWJgO3nYROv9EoBHGdmYz3ig7vC9fHLuew=; b=b5Nl68Qq1J9tsnxP
-	CIBtP+Xmp0lgVGy9Oma3wNCQTIS8PRLeb81vZA5bllP+xE0FPHoeJ3lvFZtS1FA3
-	mJVdp9Q4P4sVOvfJRUYsOQVJhoKDioDRFlufamVHDHVy6ZSXvwYZEBs75JLr4nAz
-	w6AjccZmeCjCq5Opa6zzQBvt6qrzGrWOOYKj0ztXbX27u3VRIKQ14q2zNoBmGMi+
-	HK1qyHaBiQopSnnPzr0D+AS/xc2LjZmzyHvPIoS98JtPPrzQ47Ew6b3m32fYSj9P
-	gAXtZ70aN6Q1OVLM1OMDj1yf93Hgx7z+Bdupw7qgDm63nPI5u/ql4XCL/7IZCuuG
-	CcKBgA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdc6bgu1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 05:33:02 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B95X1H1000304
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 05:33:01 GMT
-Received: from [10.151.36.43] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 21:32:57 -0800
-Message-ID: <61a6b28b-02ca-841a-57a1-1aac12729679@quicinc.com>
-Date: Mon, 9 Dec 2024 11:02:54 +0530
+	s=arc-20240116; t=1733722528; c=relaxed/simple;
+	bh=nUUgLUbptz1AhKUO1RHy4Z6m34EzZZbFM8zEr7fGwkQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EDOndmnjWqRvtxu0kifeIAwfQa6JQ/Yo4/WMLB8Tzb+fb8UpQkzVSuIuP5kBM/CraFBAexuGlcFv5eAmmDrXbaoSXQ9hLvoy/yPWgB13kwYObj2AgwaJ/sncSPKyAO8Y5aaY6qPCtUvV93FCfdzrpTBuMeXVLicqQkqurFhGPHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qQsKjIJO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98728C4CED1;
+	Mon,  9 Dec 2024 05:35:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733722525;
+	bh=nUUgLUbptz1AhKUO1RHy4Z6m34EzZZbFM8zEr7fGwkQ=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qQsKjIJOlB8kyDh6XXxkOi8ST2S9C+slarT4O12UGVvdnFHxV70M3pJWhToRrMFIb
+	 mc7nbK5MIQI46OniUgxoFQdleQy80t8Uu3fZGzwmwWC780mopMZ5FnwHUk7fi7WtxS
+	 qGmwDS6bBqWfJ3C+0MDeErbd5c4Rc2BqhnmAQ0Q58x4S8h75TMTj3kAni9dgi135La
+	 W4IkJHr3I8rvYiTjwW/q+LWywpif8uwaNy+2nApjipXzREwgrfhb7PhB9f7JG2kcxr
+	 aWElbDXdclnFjq8fO8cD74kUQkwYFvZQEJI3tjjPbdXbE9/+0GH299YKJ2scWeoRvH
+	 fLiGFiaXNpzbA==
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ffd6af012eso44579751fa.2;
+        Sun, 08 Dec 2024 21:35:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCWu6rLso0GPLzpl2rSsSxPeU3P7jAjZOEpA1y15yrhtQHhbGPBAUGhwFb+/d+NMobhwISacxItkOCctSOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsuWFH5Nd1Z6cbyJRXAKsvRtks5wx+WYSZ5hKXIKwYXKjalAWx
+	hAXliZFHkHObqc7ct0Ib6p47MIaytmkXtr0uoUWDftPFBmVn5cpAAZgX/WPZyZBi2b+uW8b8++O
+	AqciV8BKnhqEb9qpOVZ8Mjgm+Cy4=
+X-Google-Smtp-Source: AGHT+IH3wBq+6UHWTGPTipIPWEarPonH3s5qwpZVRtRaMnBG3p947mT0RhMebhPJK4Aob3VxSdMZyPHrLi3IvLfzqHc=
+X-Received: by 2002:a2e:a803:0:b0:302:189f:ea58 with SMTP id
+ 38308e7fff4ca-302189fec00mr16135091fa.27.1733722524268; Sun, 08 Dec 2024
+ 21:35:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.2.0
-Subject: Re: [PATCH 0/3] Enable TRNG support
-Content-Language: en-US
-To: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_srichara@quicinc.com>, <quic_varada@quicinc.com>
-References: <20241206072057.1508459-1-quic_mdalam@quicinc.com>
- <11d49831-8d20-45ee-94ae-38248340fa1f@quicinc.com>
-From: Md Sadre Alam <quic_mdalam@quicinc.com>
-In-Reply-To: <11d49831-8d20-45ee-94ae-38248340fa1f@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: k3V5GgNpgUqINNNQKj8IVwmnRMIXzVb7
-X-Proofpoint-GUID: k3V5GgNpgUqINNNQKj8IVwmnRMIXzVb7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- mlxlogscore=624 malwarescore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090043
+References: <e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com>
+ <CAK7LNATU2OKEWh6p9QuUXtYmYmqTkN5nspBq9DbCh9yUjqW5xA@mail.gmail.com>
+ <20241204084943.GM1245331@unreal> <CAK7LNATGbTxu9cYGfW6FK5VFfJ2+ut_e1dSFOfo+q6CgM4XHtQ@mail.gmail.com>
+ <20241208163557.GA1245331@unreal>
+In-Reply-To: <20241208163557.GA1245331@unreal>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Mon, 9 Dec 2024 14:34:47 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASYp+LWyfF78rc3V=ZpR1iu9gZBj4npuE6Md86X0KcWOQ@mail.gmail.com>
+Message-ID: <CAK7LNASYp+LWyfF78rc3V=ZpR1iu9gZBj4npuE6Md86X0KcWOQ@mail.gmail.com>
+Subject: Re: [PATCH rdma-next] kbuild: Respect request to silent output when
+ merging configs
+To: Leon Romanovsky <leon@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+
+On Mon, Dec 9, 2024 at 1:36=E2=80=AFAM Leon Romanovsky <leon@kernel.org> wr=
+ote:
+>
+> On Sun, Dec 08, 2024 at 11:49:12PM +0900, Masahiro Yamada wrote:
+> > On Wed, Dec 4, 2024 at 5:49=E2=80=AFPM Leon Romanovsky <leon@kernel.org=
+> wrote:
+> > >
+> > > On Wed, Dec 04, 2024 at 05:25:50PM +0900, Masahiro Yamada wrote:
+> > > > On Tue, Dec 3, 2024 at 10:55=E2=80=AFPM Leon Romanovsky <leon@kerne=
+l.org> wrote:
+> > > > >
+> > > > > From: Leon Romanovsky <leonro@nvidia.com>
+> > > > >
+> > > > > Builds with -s option (silent) are supposed to silence all output
+> > > > > which is not an error. It is the case for target builds but not
+> > > > > for configs. These builds generate prints like this:
+> > > > >
+> > > > > =E2=9E=9C  kernel git:(rdma-next) make -s defconfig debug.config
+> > > > >  Using .config as base
+> > > > >  Merging ./kernel/configs/debug.config
+> > > > >  #
+> > > > >  # merged configuration written to .config (needs make)
+> > > > >  #
+> > > > >  ...
+> > > > >  Value of CONFIG_FUNCTION_TRACER is redefined by fragment ./kerne=
+l/configs/debug.config:
+> > > > >  Previous value: # CONFIG_FUNCTION_TRACER is not set
+> > > > >  New value: CONFIG_FUNCTION_TRACER=3Dy
+> > > > >  ----
+> > > > >
+> > > > > Let's honor -s option and hide all non-error output.
+> > > >
+> > > >
+> > > > Is it necessary to add the --quiet option to every script?
+> > > >
+> > > > Kbuild already provides a generic way to suppress the stdout
+> > > > with 'make -s'.
+> > > >
+> > > > The following code works for me.
+> > > > 'make defconfig debug.config' is as verbose as before.
+> > > > 'make -s defconfig debug.config' is really silent.
+> > >
+> > > This is exactly what I'm doing. I'm using -s option and added -q to v=
+ery
+> > > specific merge_config script, because "-s" is already in use in that
+> > > script.
+> > >
+> > > Before my change on 40384c840ea1 ("Linux 6.13-rc1"):
+> > > [leonro@e534d5fa4327 kernel]$ make -s defconfig debug.config
+> > > Using .config as base
+> > > Merging ./kernel/configs/debug.config
+> > > Value of CONFIG_DYNAMIC_DEBUG is redefined by fragment ./kernel/confi=
+gs/debug.config:
+> > > Previous value: # CONFIG_DYNAMIC_DEBUG is not set
+> > > New value: CONFIG_DYNAMIC_DEBUG=3Dy
+> > >
+> > > Value of CONFIG_PRINTK_CALLER is redefined by fragment ./kernel/confi=
+gs/debug.config:
+> > > Previous value: # CONFIG_PRINTK_CALLER is not set
+> > > New value: CONFIG_PRINTK_CALLER=3Dy
+> > > ...
+> > >
+> > > After my change:
+> > > [leonro@4dd2c2078dff kernel]$ make -s defconfig debug.config <--- sil=
+ent
+> >
+> >
+> > Not sure if you checked the attached code diff in my previous reply.
+> >
+> > To make my question clearer, does this suffice your needs?
+> > https://lore.kernel.org/all/20241208144622.605523-1-masahiroy@kernel.or=
+g/T/#u
+>
+> Unfortunately no, as both my development suite and our CI rely on
+> merge_config script to create right config.
+>
+> In CI, they run add very specific config options to already
+> well-established .config.
+> In my development suite, I'm removing extra options with merge_config
+> script.
+>
+>         subprocess.call(cmd + ['defconfig', 'kvm_guest.config', 'nopm.con=
+fig', 'debug.config'])
+>         subprocess.call(['scripts/kconfig/merge_config.sh', '-y', '-m', '=
+-q',
+>                          '.config', '/plugins/kernel.config'])
+>         subprocess.call(cmd + ['olddefconfig'])
+>
+> https://github.com/Mellanox/mkt/blob/master/plugins/do-build.py#L19
+> https://github.com/Mellanox/mkt/commit/26d7cbd776f508ab506f6d33cfe0e9b0bf=
+44d557
+>
+> I need both chunks, silence make ... and silence merge_config script.
+
+
+You are no longer talking about 'make -s'.
+
+"> /dev/null" is the standard way to suppress stdout, but you do not use it=
+.
+
+Similarly, subprocess.call() supports stdout=3Dsubprocess.DEVNULL
+ https://docs.python.org/3.13/library/subprocess.html#subprocess.call
 
 
 
-On 12/6/2024 12:59 PM, Manikanta Mylavarapu wrote:
-> 
-> 
-> On 12/6/2024 12:50 PM, Md Sadre Alam wrote:
->> This patch series enables support for Truly Random Number
->> Generators (TRNG) across various targets, including IPQ95xx,
->> IPQ32xx, and IPQ54xx.
->>
-> 
-> It should be IPQ53xx, not IPQ32xx.
-Thank you for pointing that out. I'll address this in the next revision
-> 
-> --Manikanta.
-> 
->> Md Sadre Alam (3):
->>    arm64: dts: qcom: ipq5424: Add TRNG node
->>    arm64: dts: qcom: ipq9574: Enable TRNG instead PRNG
->>    arm64: dts: qcom: ipq5332: Enable TRNG instead of PRNG
->>
->>   arch/arm64/boot/dts/qcom/ipq5332.dtsi | 2 +-
->>   arch/arm64/boot/dts/qcom/ipq5424.dtsi | 7 +++++++
->>   arch/arm64/boot/dts/qcom/ipq9574.dtsi | 2 +-
->>   3 files changed, 9 insertions(+), 2 deletions(-)
->>
-> 
+
+
+
+
+> Thanks
+>
+> >
+> >
+> > --
+> > Best Regards
+> > Masahiro Yamada
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
