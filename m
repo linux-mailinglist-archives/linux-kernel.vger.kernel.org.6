@@ -1,154 +1,151 @@
-Return-Path: <linux-kernel+bounces-437781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F6779E988B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:15:40 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9167C9E9889
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:15:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 636F01621AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:15:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43D0A283F6A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9D111B0419;
-	Mon,  9 Dec 2024 14:15:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C62461B0407;
+	Mon,  9 Dec 2024 14:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VidCF00g"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+N09Gyn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D06F135950
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 14:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 291381798F;
+	Mon,  9 Dec 2024 14:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733753729; cv=none; b=AAxLCu+fy31uyRzj8oo8Wn75WQcmaT8RWoy+3Cse974138PgMz/L2D8FfhAppO367d64GS8wEV0kDr0dcyMpbLexJBjZ7RFF9aS8c5jItPitmMnk99l3LWjdrJScb/Rp6qhV7AXPoJfE4hdwx3IhZ2lHj4wRC/Fc2My5upiTeEY=
+	t=1733753720; cv=none; b=e0u/4oQTzybR1ZbsK8VlYyDTLCMA6554Di/46wzRRtnFvGj/b+DJMHSqJ0cgBrqqofcrmq/5hLLfVysixjfy2q7k57vycNucuQ/Psf49A4qVgi7hoK91FMFEiFt8X7JqI3l14oQxFZhyvNNgFVNuW3xAK+yoBgYzp1DEzl3Ur/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733753729; c=relaxed/simple;
-	bh=VFVhE2QTlvv6e1vmvz2TkVwkpNZdis5j2cIivqIwFtM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iQdawRkbPRm2nmNrjWJbrlcDUSe+k+1/BPsvW49ajazv1CL0NeBt76S+UhOq5drwaABApP1nJkD4rYrCiZLTVBzCMBt2FgphKaOrfxe74Rp2HHUTCZXSS7IdK7IzoXQM8uqaNxrWM8x4i4KlLFlD9n8i5JPl8WYzo1WF21jj1kw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=VidCF00g; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-216585cbe1eso8148845ad.3
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:15:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733753726; x=1734358526; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=xzxXRCzTVTG5CQYsalZ5w45qQHvajfokh5rpMY9TcsI=;
-        b=VidCF00gOQoq7h6hJdpJMVWNZscyreCGOmqBKvDuyeoYACS4FRwmr7kBQ5D/tijLr6
-         f3iCo+qXt9A6vSVI7/cgM0+4BOnX1qfS+r1zMA/Hux+FpPeJN4h+/askbgkPATGTi2xc
-         5qOI106DXDj54+Pfe01U2Yk3Kw1wuhvSIQBAo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733753726; x=1734358526;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xzxXRCzTVTG5CQYsalZ5w45qQHvajfokh5rpMY9TcsI=;
-        b=ivreJZlwCEXrD0GTx2SKJxazuOrzdfvfnKdQtpZom1oaTCuLryFWPhce2ZjFhDXCRU
-         wCzrPJ3SnQp6vJGLE9UbZkkKHkvK3Bv7GNa55aNfccoH2nkDLLqn4WPRjAQr4IkLseSP
-         i5cC82QbNZEkjJIkFbWuqcKvnuS7aDOhWh84l0mFb7Byx+3FHUm3/hciy5JLHN30eiEa
-         djjx61kLafw4AEZt8q8ySy8C6Tyo65b8sBEO+l4vvLi5I2KoKSIFdFnQ+BXWkfFYKnh1
-         XBIwi6eU1DrsPWB2J6iQp+OQSAVXrHCOwzxNxHJtzcyNT846EBnU4cx2pWRyCVz4Ax0B
-         DAYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHFtxPv81U8LT1XWM3X+RKr1AdTEHEUPSzNU/A4ijGFCRH1ds/wpmybDeAKPn8vnPsVs3zcfzLi8YFLfE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbZ/dOef00rnDTGM49sjLPEfsStLc3hQRRsro1icFeimRxkCXk
-	y4w7ZAmwYEKo6hsnAlcz5gglpARFP3MJAvC/oNaDAurYl1dbdg3Xuuhs5XpZerz0HWnBY0OjD/k
-	=
-X-Gm-Gg: ASbGncsn0LAd1rZmdn+qmd7lpP2ZiBt/Kv64HmRX27FH3S1dcB8SCBOqQeJzZq5nSYc
-	A1MlZZm2mEITQmwtRdN6+fkixAaQpwCOSKrGMjVGoHYRfrHsrGIPPJw0370Mibm8+mdPO6p2gWj
-	b87s0bNiwtIdpMdLLkHqs9IYmWb1xQ4TzTMFDsSiJYXuJQuGjDW/UxaOCEqpTUYkUYFjsBzMXKr
-	vv+5db6oMs7lP8Hc7v7tS1oRDDBATkfMmpo3fpAC0qIidI1fGRLdr5Hmx6fkfIj5/Cd6IEQHHAf
-	gugNesCjxQ4/
-X-Google-Smtp-Source: AGHT+IF+aqPx9DxqJO3KxHf1ehVT16VzLRszy5Y8v+C0PFD+1PaJDBoF6pbcnZxHl04E7y013pTdZg==
-X-Received: by 2002:a17:902:cec4:b0:216:501e:e314 with SMTP id d9443c01a7336-21669fb7abcmr7420555ad.20.1733753725620;
-        Mon, 09 Dec 2024 06:15:25 -0800 (PST)
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com. [209.85.216.53])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-21622f3a5f1sm48992945ad.37.2024.12.09.06.15.24
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 06:15:24 -0800 (PST)
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2ef87d24c2dso1526873a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 06:15:24 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCU0b9X/yLmHKJ5jTmTWQN0HMAs6fYWpC7Idnttm+HzEYL9t3Vv3L7fdn0pK1za04dxogl8q0Bx28bCXhfw=@vger.kernel.org
-X-Received: by 2002:a17:90b:530b:b0:2ee:fc08:1bc1 with SMTP id
- 98e67ed59e1d1-2efcf2ba6d4mr1028618a91.37.1733753723393; Mon, 09 Dec 2024
- 06:15:23 -0800 (PST)
+	s=arc-20240116; t=1733753720; c=relaxed/simple;
+	bh=0cm5M3lg6mJAUxDr/Ep65Go9irRkUEvfAP97btcPZgs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HRvxxoxvwbaw+A8cTYtPytoQbaswZou53MV4od+rGHQ4a91fAVEI1BHzgLWQzCi2SwA5knFIVOg6QOQXdq3pzldHD9E2AdAyu19WvS9izo9j5Q0hP+NB3zzseDYHTDgZRN9Ezn5+dcqMa+4TWHIk7tM+pQykYCbK9aON+HlDwNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+N09Gyn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D485C4CED1;
+	Mon,  9 Dec 2024 14:15:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733753718;
+	bh=0cm5M3lg6mJAUxDr/Ep65Go9irRkUEvfAP97btcPZgs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K+N09Gyn3XV6XcC61qxzaA4MpbG/WnLTgcJASFSr2nU8x0jU0qbic5pbbWQaqnBQ/
+	 MRIef3iHVnRVaBDUak2Uwi6mvggycRMO/dGMF5U4JKAQQvBwL12NxgbeGXEne944Uh
+	 LitF6g1H4WKQxdqoQeQ8LXU+rbcqChVrWDMwCSJdOTQU1/wNWbfYitOFW7k4LbLynJ
+	 v8SQ6X4lC3oS1vn0WOQLAmSv8tvHgJMzeDGIBu4Vj34IXykfj0K4iqOI+EBTnd57Lr
+	 NnTyDdBqO8YnFWF/NxGbVMB3O9CkrspgGEDL9TuP1dj33MRVJfzBKluaxnA4VQQt6a
+	 9Ow1YqzLVs1fQ==
+Message-ID: <c40bed54-63e9-4535-b17b-fba980f19382@kernel.org>
+Date: Mon, 9 Dec 2024 08:15:16 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241114-uvc-roi-v15-0-64cfeb56b6f8@chromium.org>
- <20241114-uvc-roi-v15-17-64cfeb56b6f8@chromium.org> <8258ce59-cd06-46ba-b275-97eb9ae4d64c@redhat.com>
-In-Reply-To: <8258ce59-cd06-46ba-b275-97eb9ae4d64c@redhat.com>
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 9 Dec 2024 15:15:11 +0100
-X-Gmail-Original-Message-ID: <CANiDSCt_5aArcnhLvAKKfOW4sUBNZtB0QQGkS_-AWmTxh_vKMA@mail.gmail.com>
-X-Gm-Features: AZHOrDnj6sP9Y52Rjxyokva7bCUrrfnBh_aHGTI1dw9kdeFQcdL7UjePmPkl7k0
-Message-ID: <CANiDSCt_5aArcnhLvAKKfOW4sUBNZtB0QQGkS_-AWmTxh_vKMA@mail.gmail.com>
-Subject: Re: [PATCH v15 17/19] media: uvcvideo: Add sanity check to uvc_ioctl_xu_ctrl_map
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Ricardo Ribalda <ribalda@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, Hans Verkuil <hverkuil@xs4all.nl>, 
-	Yunke Cao <yunkec@chromium.org>, linux-media@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thunderbolt: Don't display retimers unless nvm was
+ initialized
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: "open list:THUNDERBOLT DRIVER" <linux-usb@vger.kernel.org>,
+ linux-kernel@vger.kernel.org, Andreas Noever <andreas.noever@gmail.com>,
+ Michael Jamet <michael.jamet@intel.com>,
+ Yehezkel Bernat <YehezkelShB@gmail.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Richard Hughes <hughsient@gmail.com>
+References: <20241206183318.1701180-1-superm1@kernel.org>
+ <20241209062415.GG4955@black.fi.intel.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@kernel.org>
+In-Reply-To: <20241209062415.GG4955@black.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, 9 Dec 2024 at 15:12, Hans de Goede <hdegoede@redhat.com> wrote:
->
-> Hi,
->
-> On 14-Nov-24 8:10 PM, Ricardo Ribalda wrote:
-> > Do not process unknown data types.
-> >
-> > Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
-> > ---
-> >  drivers/media/usb/uvc/uvc_v4l2.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/drivers/media/usb/uvc/uvc_v4l2.c b/drivers/media/usb/uvc/uvc_v4l2.c
-> > index 5000c74271e0..4c88dab15554 100644
-> > --- a/drivers/media/usb/uvc/uvc_v4l2.c
-> > +++ b/drivers/media/usb/uvc/uvc_v4l2.c
-> > @@ -106,6 +106,12 @@ static int uvc_ioctl_xu_ctrl_map(struct uvc_video_chain *chain,
-> >       struct uvc_control_mapping *map;
-> >       int ret;
-> >
-> > +     if (xmap->data_type > UVC_CTRL_DATA_TYPE_BITMASK) {
-> > +             uvc_dbg(chain->dev, CONTROL,
-> > +                     "Unsupported UVC data type %u\n", xmap->data_type);
-> > +             return -ENOTTY;
->
-> This seems like a textbook case for -EINVAL ?
+On 12/9/2024 00:24, Mika Westerberg wrote:
+> Hi Mario,
+> 
+> On Fri, Dec 06, 2024 at 12:33:18PM -0600, Mario Limonciello wrote:
+>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>
+>> The read will never succeed if nvm wasn't initialized.
+> 
+> Okay but we would need to understand why it was not initialized in the
+> first place?
 
-Indeed, :) https://lore.kernel.org/linux-media/8258ce59-cd06-46ba-b275-97eb9ae4d64c@redhat.com/T/#m2d38a4cf184ad3e4ea335e92ea74258d1da267c1
+Oh sorry I should have included that/
 
-Thanks!
+https://gist.github.com/superm1/c3763840fefa54298258a6fbec399007
 
->
-> Otherwise patch looks good to me:
->
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
->
-> Regards,
->
-> Hans
->
->
->
-> > +     }
-> > +
-> >       map = kzalloc(sizeof(*map), GFP_KERNEL);
-> >       if (map == NULL)
-> >               return -ENOMEM;
-> >
->
+As you can see it's an unknown retimer NVM format.  So this ends up down 
+the path of "NVM upgrade disabled".  So that's why I'm thinking the 
+visibility is the right move to adjust here (IE this patch).
 
+> 
+> I see this is ThinkPad Thunderbolt 4 Dock so probably Intel hardware? You
+> say you can reproduce this too so can you send me full dmesg with
+> thunderbolt dynamic debugging enabled? I would like to understand this bit
+> more deeper before we add any workarounds.
+> 
+>> Reported-by: Richard Hughes <hughsient@gmail.com>
+>> Closes: https://github.com/fwupd/fwupd/issues/8200
+>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>> ---
+>>   drivers/thunderbolt/retimer.c | 17 ++++++++++++++---
+>>   1 file changed, 14 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/thunderbolt/retimer.c b/drivers/thunderbolt/retimer.c
+>> index 89d2919d0193e..7be435aee7217 100644
+>> --- a/drivers/thunderbolt/retimer.c
+>> +++ b/drivers/thunderbolt/retimer.c
+>> @@ -321,9 +321,7 @@ static ssize_t nvm_version_show(struct device *dev,
+>>   	if (!mutex_trylock(&rt->tb->lock))
+>>   		return restart_syscall();
+>>   
+>> -	if (!rt->nvm)
+>> -		ret = -EAGAIN;
+>> -	else if (rt->no_nvm_upgrade)
+>> +	if (rt->no_nvm_upgrade)
+>>   		ret = -EOPNOTSUPP;
+>>   	else
+>>   		ret = sysfs_emit(buf, "%x.%x\n", rt->nvm->major, rt->nvm->minor);
+>> @@ -342,6 +340,18 @@ static ssize_t vendor_show(struct device *dev, struct device_attribute *attr,
+>>   }
+>>   static DEVICE_ATTR_RO(vendor);
+>>   
+>> +static umode_t retimer_is_visible(struct kobject *kobj,
+>> +				      struct attribute *attr, int n)
+>> +{
+>> +	struct device *dev = kobj_to_dev(kobj);
+>> +	struct tb_retimer *rt = tb_to_retimer(dev);
+>> +
+>> +	if (!rt->nvm)
+>> +		return 0;
+>> +	return attr->mode;
+>> +
+>> +}
 
---
-Ricardo Ribalda
+I just noticed I had a spurious newline here.  If we end up taking this 
+patch would you mind just fixing it up?  If there is other feedback I'll 
+fix it on a v2.
+
+>> +
+>>   static struct attribute *retimer_attrs[] = {
+>>   	&dev_attr_device.attr,
+>>   	&dev_attr_nvm_authenticate.attr,
+>> @@ -351,6 +361,7 @@ static struct attribute *retimer_attrs[] = {
+>>   };
+>>   
+>>   static const struct attribute_group retimer_group = {
+>> +	.is_visible = retimer_is_visible,
+>>   	.attrs = retimer_attrs,
+>>   };
+>>   
+>> -- 
+>> 2.43.0
+
 
