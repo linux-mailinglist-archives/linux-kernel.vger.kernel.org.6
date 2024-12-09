@@ -1,142 +1,263 @@
-Return-Path: <linux-kernel+bounces-438388-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94DEC9EA094
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:49:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7DFB9EA099
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:52:58 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCD53188558C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:49:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F014281CD9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:52:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3419B3CB;
-	Mon,  9 Dec 2024 20:49:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1614E19B3CB;
+	Mon,  9 Dec 2024 20:52:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e21RIY1V"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fh6vc7Bd"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 372721E515;
-	Mon,  9 Dec 2024 20:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF7F1E515;
+	Mon,  9 Dec 2024 20:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733777369; cv=none; b=B88TnrI0TUI95l7hk0Wu3ymgiTJD/gy/fPKhRHj35PVbnA2BNEWfIRUEHOn5IqNTPLeGeORegKbWEgeSnFeL0s4edI1Tb47S87vWIZyvtpRYTZ+wFk6eyey7SrRIiaPMVBeUns1npLpu3trJeoo8ardH+mtXHEZGz8LLDO7XriE=
+	t=1733777571; cv=none; b=tNr0oTi4F7WUi7rTH/V1Ws5ogyPOXtVCw/FEaE9PPt4Y6iULrpHnCTfzkrjtP5qTHGzXiziDqH+fDg4MfftJUBN5xNPpVOWIIDaG2j5ZR3ZTW0v86OKTau2Dluog1jFG3FhuUxv5azEbV/uOQu3YrnmJXXHH7IZeO/EdswdAuLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733777369; c=relaxed/simple;
-	bh=EVRrlBUan9IJen8L8ZTGEotUSBgDrI7b0HaSIgMYPh8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IXsmyUwFNVJdvygt5tq811O1fFY2XvKwuqR5GSKuT+9BDv0HDW7hvQ3jqP+ynBdj2GvJygPR5w76jucfETn8lCzzMELV87zE+oqRUtGjrIm/caq+UflLRSMv/ZJqERrpRndpHVBPvBAYrPsvh/ErOdAnpiHy4r2+AEmxpy6xvcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e21RIY1V; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5d3d143376dso4274049a12.3;
-        Mon, 09 Dec 2024 12:49:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1733777364; x=1734382164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=LDsdf4awSMe7aA0DWqf+TXfsRJBfTWDAmXcZTcbb9RI=;
-        b=e21RIY1VFhScTzIjN/vlZh4gM9Lzxg21vVMtmZF6F0hzKaEU5IdjFFaLF14g9i1pVX
-         r7gsOwc8rpK4mw7wT72cimMtxK6pwaOhz9IsJuvDFuS+rA610/2iBln6au6QLKmknUuU
-         /Lr6d9gR8Iif3oekfqa5PONaNpyAjbeh5xsFwkwX05PRH2scU4BDt6ptcz980P/t9gZo
-         yXEJaUhyS44+NA9zgNfCcCDt57yyYEJzYn4i4wuEZWRxW+4jOOUUkbK209GmjVjtTcsG
-         /D7yt4RFaRcngUWH2txSsUcPQSmzAk2AsVjC73iace+ZMc+hiZorkLzLoLlZfn7ugQgD
-         X/VA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733777364; x=1734382164;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=LDsdf4awSMe7aA0DWqf+TXfsRJBfTWDAmXcZTcbb9RI=;
-        b=q1u88M8VI6ufO25SopOAKpJT5dVmvZXTwJb7gTOHivZ7mmGYuDrh6HNNSWl2qR1MNf
-         yAJxvtjBXR9z7u8WlFAPsdbFob0W8R60HFgJdExPp9sYrtE+rFVXvqg5rBpuyveIuKq9
-         GC9s356ejzT1w/ltuAmoFwZD9jTpyLeLHVyqB6FImfqmtMFAtC7hURdaV35QaBJHsSdN
-         Ts0eLTC+AGaFetaIZOOQfMqw8qoL+/fajvV6zzjDo4LzK/PNhvWMqaBNqmnwmiRtqw9B
-         X1/8felFn+FY6animm9mczgiQWOFIptNvZlwaz/5WFE3KkAyYyMX8qu0hWOMYLkzBihs
-         dwAA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBHXMh5iIwV3KJwjpIXb5p0CQdJronGVYgjmpCs0v/8s6mOARjOM2p8ICVh/C/iNo6ffivhhL4uJpwS0Q=@vger.kernel.org, AJvYcCW5tfRah6kLlO49W6nh0VTK7Sm3JmZNUVt2YAPB9oSli3OvQqMZEh3hpbPQ0NrU6r+s5oTn6d3k@vger.kernel.org
-X-Gm-Message-State: AOJu0YyT7f9k5D+4IdiWmYPmy9Xe/TJlLBvPj3pbi/KEy8dG4/b5Nslh
-	xOHH8rmgTyaxOYJHIiNloeefHqodrEP06ALi7AdGP9bOl2B5UnA2
-X-Gm-Gg: ASbGncum2OWQNNyVSvd1kXeZQAP70mvwp9kH0SoDxM3aON+YATbh8prlO5w4sU7CUt1
-	yJ+CxSVVMgTGLi9lge5gyfLHkrQoVkSBUL2Hkw54uFegUZiEorjBSkuJOVOW6qUan/t13V0dT4N
-	HA9M+9wJYGG+Ax/8Bi4ejTbhUtdgsG/hl1o9nZx3vljYrgW19MD7/ARbSTj8vijH9od6CQfyKsL
-	oxLpVBrpvsaQoMqz5cruu0hi9F2S5doLR/7zjTrXp9lVCKawV4Rg+feLftg95mY
-X-Google-Smtp-Source: AGHT+IGh5VLwEyyN4rrxLprwiJ8QE3yGZmKhKKNw85NDHq9xP13bymyIefM+JbsyFTHJYS+H/wcotw==
-X-Received: by 2002:a05:6402:4408:b0:5d3:cf08:d64d with SMTP id 4fb4d7f45d1cf-5d41863c2a7mr2255139a12.32.1733777362658;
-        Mon, 09 Dec 2024 12:49:22 -0800 (PST)
-Received: from localhost.localdomain ([83.168.79.145])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5d3ea09245bsm3323202a12.78.2024.12.09.12.49.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 12:49:21 -0800 (PST)
-From: Karol Przybylski <karprzy7@gmail.com>
-To: karprzy7@gmail.com,
-	pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org
-Cc: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org
-Subject: [PATCH] netfilter: nfnetlink_queue: Fix redundant comparison of unsigned value
-Date: Mon,  9 Dec 2024 21:49:18 +0100
-Message-Id: <20241209204918.56943-1-karprzy7@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1733777571; c=relaxed/simple;
+	bh=ah7gsZC561fIdPJEfxGlVf+8miA4aaw9xkaIzYPcYu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ImqC72Ivfjq7qH6BE3LJ+F/07xhmzrPKQ4+eCTC79qoDUCbuRGpbfSeuFvXza84tys7p5nYH5zHZWvgkvIlp8Q3W5NW2h29iVofmM8WF8l3s65L22ggQVLbPGMsImhse8k27OYUmKNQjMM97FLu/pGeD3Wc279wvH6eEHt6sK68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fh6vc7Bd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9HBw7M026370;
+	Mon, 9 Dec 2024 20:52:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZxOAWPODuAk1sE3SwWg8BPU7zLwmRzOQMbXsQJUbQwc=; b=fh6vc7Bdqs1rComL
+	I5RWz6JBGXlPje6HJpg5UJZqxZdqM1fwdTQsvwZRfNsvRGXqEN52qtBKbEcCXyOi
+	6GaOjlw+DET9SZ7Lu3uUuMoyJv9A2VzaJDijuNHZcTN7aYrJR2oya4KOMh2hMpx3
+	05FA5AP6iqpS9PM9Yt3qiMV6mwFPdeZCgZplNssDAtgB9p4Td5/tJAR4Wc6RksUq
+	uLEw2a8NaUe68VcwkBORjon5XjQ9fpIWCEuWQBXxQByCm4wl2l+uViaHZ7FhM55O
+	yCTu/aIvh6yZAGxvqJ3IM/76At3q8jXU5OzDV9cj+vx4qbBsfVLNisCravYjBUTV
+	mXSSQA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdxxe52b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 20:52:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9KqYW1013167
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 20:52:34 GMT
+Received: from [10.216.3.14] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 12:52:30 -0800
+Message-ID: <f4813046-5952-4d16-bae6-37303f22ad1a@quicinc.com>
+Date: Tue, 10 Dec 2024 02:22:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/a6xx: Skip gpu secure fw load in EL2 mode
+To: Rob Clark <robdclark@gmail.com>, Pavan Kondeti <quic_pkondeti@quicinc.com>
+CC: Sean Paul <sean@poorly.run>, Konrad Dybcio <konradybcio@kernel.org>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>,
+        Elliot Berman <quic_eberman@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20241209-drm-msm-kvm-support-v1-1-1c983a8a8087@quicinc.com>
+ <CAF6AEGtKfWOGpd1gMfJ96BjCqwERZzBVmj5GzmjKxw8_vmSrJg@mail.gmail.com>
+Content-Language: en-US
+From: Akhil P Oommen <quic_akhilpo@quicinc.com>
+In-Reply-To: <CAF6AEGtKfWOGpd1gMfJ96BjCqwERZzBVmj5GzmjKxw8_vmSrJg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KezX5qfLT5WnPPDewJY0xvNmqams5dzr
+X-Proofpoint-GUID: KezX5qfLT5WnPPDewJY0xvNmqams5dzr
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 spamscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
+ malwarescore=0 impostorscore=0 bulkscore=0 lowpriorityscore=0 mlxscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090162
 
-The comparison seclen >= 0 in net/netfilter/nfnetlink_queue.c is redundant because seclen is an unsigned value, and such comparisons are always true.
+On 12/10/2024 1:24 AM, Rob Clark wrote:
+> On Mon, Dec 9, 2024 at 12:20 AM Akhil P Oommen <quic_akhilpo@quicinc.com> wrote:
+>>
+>> When kernel is booted in EL2, SECVID registers are accessible to the
+>> KMD. So we can use that to switch GPU's secure mode to avoid dependency
+>> on Zap firmware. Also, we can't load a secure firmware without a
+>> hypervisor that supports it.
+> 
+> Shouldn't we do this based on whether zap node is in dtb (and not disabled)?
 
-This patch removes the unnecessary comparison replacing it with just 'greater than'
+This is better, isn't it? Otherwise, multiple overlays should be
+maintained for each soc/board since EL2 can be toggled from bootloader.
+And this feature is likely going to be more widely available.
 
-Discovered in coverity, CID 1602243
+-Akhil.
 
-Signed-off-by: Karol Przybylski <karprzy7@gmail.com>
----
- net/netfilter/nfnetlink_queue.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/net/netfilter/nfnetlink_queue.c b/net/netfilter/nfnetlink_queue.c
-index 5110f29b2..eacb34ffb 100644
---- a/net/netfilter/nfnetlink_queue.c
-+++ b/net/netfilter/nfnetlink_queue.c
-@@ -643,7 +643,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 
- 	if ((queue->flags & NFQA_CFG_F_SECCTX) && entskb->sk) {
- 		seclen = nfqnl_get_sk_secctx(entskb, &ctx);
--		if (seclen >= 0)
-+		if (seclen > 0)
- 			size += nla_total_size(seclen);
- 	}
- 
-@@ -810,7 +810,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	}
- 
- 	nlh->nlmsg_len = skb->len;
--	if (seclen >= 0)
-+	if (seclen > 0)
- 		security_release_secctx(&ctx);
- 	return skb;
- 
-@@ -819,7 +819,7 @@ nfqnl_build_packet_message(struct net *net, struct nfqnl_instance *queue,
- 	kfree_skb(skb);
- 	net_err_ratelimited("nf_queue: error creating packet message\n");
- nlmsg_failure:
--	if (seclen >= 0)
-+	if (seclen > 0)
- 		security_release_secctx(&ctx);
- 	return NULL;
- }
--- 
-2.34.1
+> 
+> slbounce applies some dtb overlays to disable the zap node when
+> booting in EL2 (and make some other changes due to kernel being in
+> control of the pci smmuv3, or something along those lines).
+> 
+> BR,
+> -R
+> 
+>>
+>> Tested following configurations on sa8775p chipset (Adreno 663 gpu):
+>>
+>> 1. Gunyah (No KVM) - Loads zap shader based on DT
+>> 2. KVM in VHE - Skips zap shader load and programs SECVID register
+>> 3. KVM in nVHE - Loads zap shader based on DT
+>> 4. Kernel in EL2 with CONFIG_KVM=n - Skips zap shader load and
+>>         programs SECVID register
+>>
+>> For (1) and (3) configuration, this patch doesn't have any impact.
+>> Driver loads secure firmware based on other existing hints.
+>>
+>> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+>> ---
+>> ---
+>>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c | 82 +++++++++++++++++++++++------------
+>>  1 file changed, 54 insertions(+), 28 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> index 019610341df1..9dcaa8472430 100644
+>> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+>> @@ -14,6 +14,10 @@
+>>  #include <linux/pm_domain.h>
+>>  #include <linux/soc/qcom/llcc-qcom.h>
+>>
+>> +#ifdef CONFIG_ARM64
+>> +#include <asm/virt.h>
+>> +#endif
+>> +
+>>  #define GPU_PAS_ID 13
+>>
+>>  static inline bool _a6xx_check_idle(struct msm_gpu *gpu)
+>> @@ -998,6 +1002,54 @@ static int a6xx_zap_shader_init(struct msm_gpu *gpu)
+>>         return ret;
+>>  }
+>>
+>> +static int a6xx_switch_secure_mode(struct msm_gpu *gpu)
+>> +{
+>> +       int ret;
+>> +
+>> +#ifdef CONFIG_ARM64
+>> +       /*
+>> +        * We can access SECVID_TRUST_CNTL register when kernel is booted in EL2 mode. So, use it
+>> +        * to switch the secure mode to avoid the dependency on zap shader.
+>> +        */
+>> +       if (is_kernel_in_hyp_mode())
+>> +               goto direct_switch;
+>> +#endif
+>> +
+>> +       /*
+>> +        * Try to load a zap shader into the secure world. If successful
+>> +        * we can use the CP to switch out of secure mode. If not then we
+>> +        * have no resource but to try to switch ourselves out manually. If we
+>> +        * guessed wrong then access to the RBBM_SECVID_TRUST_CNTL register will
+>> +        * be blocked and a permissions violation will soon follow.
+>> +        */
+>> +       ret = a6xx_zap_shader_init(gpu);
+>> +       if (ret == -ENODEV) {
+>> +               /*
+>> +                * This device does not use zap shader (but print a warning
+>> +                * just in case someone got their dt wrong.. hopefully they
+>> +                * have a debug UART to realize the error of their ways...
+>> +                * if you mess this up you are about to crash horribly)
+>> +                */
+>> +               dev_warn_once(gpu->dev->dev,
+>> +                       "Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
+>> +               goto direct_switch;
+>> +       } else if (ret)
+>> +               return ret;
+>> +
+>> +       OUT_PKT7(gpu->rb[0], CP_SET_SECURE_MODE, 1);
+>> +       OUT_RING(gpu->rb[0], 0x00000000);
+>> +
+>> +       a6xx_flush(gpu, gpu->rb[0]);
+>> +       if (!a6xx_idle(gpu, gpu->rb[0]))
+>> +               return -EINVAL;
+>> +
+>> +       return 0;
+>> +
+>> +direct_switch:
+>> +       gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
+>> +       return 0;
+>> +}
+>> +
+>>  #define A6XX_INT_MASK (A6XX_RBBM_INT_0_MASK_CP_AHB_ERROR | \
+>>                        A6XX_RBBM_INT_0_MASK_RBBM_ATB_ASYNCFIFO_OVERFLOW | \
+>>                        A6XX_RBBM_INT_0_MASK_CP_HW_ERROR | \
+>> @@ -1341,35 +1393,9 @@ static int hw_init(struct msm_gpu *gpu)
+>>         if (ret)
+>>                 goto out;
+>>
+>> -       /*
+>> -        * Try to load a zap shader into the secure world. If successful
+>> -        * we can use the CP to switch out of secure mode. If not then we
+>> -        * have no resource but to try to switch ourselves out manually. If we
+>> -        * guessed wrong then access to the RBBM_SECVID_TRUST_CNTL register will
+>> -        * be blocked and a permissions violation will soon follow.
+>> -        */
+>> -       ret = a6xx_zap_shader_init(gpu);
+>> -       if (!ret) {
+>> -               OUT_PKT7(gpu->rb[0], CP_SET_SECURE_MODE, 1);
+>> -               OUT_RING(gpu->rb[0], 0x00000000);
+>> -
+>> -               a6xx_flush(gpu, gpu->rb[0]);
+>> -               if (!a6xx_idle(gpu, gpu->rb[0]))
+>> -                       return -EINVAL;
+>> -       } else if (ret == -ENODEV) {
+>> -               /*
+>> -                * This device does not use zap shader (but print a warning
+>> -                * just in case someone got their dt wrong.. hopefully they
+>> -                * have a debug UART to realize the error of their ways...
+>> -                * if you mess this up you are about to crash horribly)
+>> -                */
+>> -               dev_warn_once(gpu->dev->dev,
+>> -                       "Zap shader not enabled - using SECVID_TRUST_CNTL instead\n");
+>> -               gpu_write(gpu, REG_A6XX_RBBM_SECVID_TRUST_CNTL, 0x0);
+>> -               ret = 0;
+>> -       } else {
+>> +       ret = a6xx_switch_secure_mode(gpu);
+>> +       if (!ret)
+>>                 return ret;
+>> -       }
+>>
+>>  out:
+>>         if (adreno_has_gmu_wrapper(adreno_gpu))
+>>
+>> ---
+>> base-commit: f4a867a46862c1743501bbe8c813238456ec8699
+>> change-id: 20241120-drm-msm-kvm-support-cd6e6744ced6
+>>
+>> Best regards,
+>> --
+>> Akhil P Oommen <quic_akhilpo@quicinc.com>
+>>
 
 
