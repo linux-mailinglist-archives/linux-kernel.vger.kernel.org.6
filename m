@@ -1,189 +1,178 @@
-Return-Path: <linux-kernel+bounces-437867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA5C9E99D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:02:27 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0F039E99F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:04:56 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37D0C284997
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:02:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D76F11882C43
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:03:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2091BEF8C;
-	Mon,  9 Dec 2024 15:01:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC8981C5CBB;
+	Mon,  9 Dec 2024 15:02:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRbzKdkC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="c/YCBUdV"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95CD412FB1B;
-	Mon,  9 Dec 2024 15:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E3A51A23B7;
+	Mon,  9 Dec 2024 15:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733756511; cv=none; b=oCHZayK1BdzNwt/Uvm6BabqWxc8V0/FT23QCw/dKpRpRKoMVIenf021jHcrzKT8jq34b8l1+fE3n/2MmL/Zk85f6B4kTX9yFDDaJDhmUXlt6Wi++3IhaqUKtK9alIrMbEVxe8biasuy16+vpPUtujFpFovSXcNFaC6v9Enrurhw=
+	t=1733756545; cv=none; b=YZfZGnKaQ1ODXOfJwXGAIMHSKY2KkWlDjTmRBsUHFNubRTrvV3bz9fOXZbHUGFFBo/4fAU8TVHMKOrgbSn6OjeTzSrZCd9kVpqYjUn+1BRwxLdGT5x9wsTZyimknZehin6+tOGIARQC5Fsg9gN2Q8H+SIwKCuKcG3jpJeH+p3sU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733756511; c=relaxed/simple;
-	bh=mfvcDe7N+Ar77QJ+nGuU68km7qiz3Sp+f7HMKwLDSWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YjWfP36ABNGFB4ETYThXnXBPYGMw8kZQdQovNn48pPP53ozQ/V1zG5WQ3kLLV10HwmifXkudnqioy2TXHkXjkD85POrh4p18qqUHS0fz8HyRNcbT4suXtctsj3m0hnvGc+oP/ymDqrUNvtjpm4FilYr3W+1hCItpNf7ToPi8I0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRbzKdkC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88D8DC4CED1;
-	Mon,  9 Dec 2024 15:01:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733756511;
-	bh=mfvcDe7N+Ar77QJ+nGuU68km7qiz3Sp+f7HMKwLDSWc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JRbzKdkCTdys7dbWYvTn5AxORvWIMxPcIuw6C0u5pvYeVMmQed91KySsvPd9SHBjD
-	 gwNky0/5crEMFA4kxrrSQGvOkS20vqDTc71rqD9AU7gmTgK0VSwKZdxfQur/0W60Pe
-	 dkUBP0y2K7Rfobvj0rqJaJ6wCp+uOiAxNvsKZ7N/PWzLr2hT0Gb1n6frEssuTy6w9v
-	 xio4QJp6q58uoPWPOGbUMTaOL/w8dTkl8BJZxqBxCvILHfICF6AqMvvPMuM962bB8a
-	 Wc9NHywUUfwDP9tRh0GB/s3MI2uNYLyeM2xlg9PEnZ0oSnw3lMXY8AF5tmVIiPdFrh
-	 F0wVEJ/3jdXFw==
-Date: Mon, 9 Dec 2024 16:01:44 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
- from fops->open()
-Message-ID: <Z1cGWBFm0uVA07WN@pollux.localdomain>
-References: <2024120925-express-unmasked-76b4@gregkh>
- <CAH5fLgigt1SL0qyRwvFe77YqpzEXzKOOrCpNfpb1qLT1gW7S+g@mail.gmail.com>
- <2024120954-boring-skeptic-ad16@gregkh>
- <CAH5fLgh7LsuO86tbPyLTAjHWJyU5rGdj+Ycphn0mH7Qjv8urPA@mail.gmail.com>
- <2024120908-anemic-previous-3db9@gregkh>
- <CAH5fLgjO50OsNb7sYd8fY4VNoHOzX40w3oH-24uqkuL3Ga4iVQ@mail.gmail.com>
- <2024120939-aide-epidermal-076e@gregkh>
- <CAH5fLggWavvdOyH5MEqa56_Ga87V1x0dV9kThUXoV-c=nBiVYg@mail.gmail.com>
- <2024120951-botanist-exhale-4845@gregkh>
- <CAH5fLgjxMH71fQ5A8F8JaO2c54wxCTCnuMEqnQqpV3L=2BUWEA@mail.gmail.com>
+	s=arc-20240116; t=1733756545; c=relaxed/simple;
+	bh=dKlPGxYkwTD/3sIxuE9y+LM1/E1cOyuiFi5A6mgj4nA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QqMOrTRWFmoP2TkyGlKy6qwIGseLBQhvUSVlSUl5XZhV82zL5CAD4UMTmTBtCTpsgWDj/hs+vEX5xV76FrqcHjew7tuxa0Uxk8+2QCE3e4atnVyVXGbe5dKLnNlF8mB1Z1OfGw6Xqr1p/lK4BtZAgUUPWUCve5FT6Gr8V5YPVJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=c/YCBUdV; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AXCM4003487;
+	Mon, 9 Dec 2024 15:02:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dmbJmFBmY5oCW22GTFiwaIUH94lWuVHWFqeXe2H6j60=; b=c/YCBUdVUEskN3qa
+	Ou19cT7IXGamBIjGl4HxR8GqPJcz1j3dRK9u17+FkBKju3XV0EKGuXe9Dt3me+Z2
+	EnxUC2zvZbLpixMNINcxjawARr3kC1SHhxVQXMGL1D9llrgemkFYsdIp195yspBg
+	k1qChwWT5SwzxIwG8oEjuGmHKlcT8wrqM7wcQshPLSj951pNPshApvQLnPPH/wgJ
+	UrCcwWwxsH8UdXHiahVFvOnb2vU8UFzk/QYZ+RRq71HFZ08X0VSJTWgV/c6NbtR8
+	kkxGrSlS+Uh4Zb/ojeveMyYxgh6VlFf58FN3GeARnXzL+IxPWgiNQtsQyEDp6LJR
+	s3KZGw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dxw40xf2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 15:02:13 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9F24n7026925
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 15:02:04 GMT
+Received: from [10.50.34.16] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 07:01:56 -0800
+Message-ID: <e7b4f266-c2dc-4253-a3e5-53716ef006bd@quicinc.com>
+Date: Mon, 9 Dec 2024 20:31:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/4] dt-bindindgs: i2c: qcom,i2c-geni: Document shared
+ flag
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>, <konrad.dybcio@linaro.org>,
+        <andersson@kernel.org>, <andi.shyti@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dmaengine@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
+        <conor+dt@kernel.org>, <agross@kernel.org>,
+        <devicetree@vger.kernel.org>, <vkoul@kernel.org>, <linux@treblig.org>,
+        <dan.carpenter@linaro.org>, <Frank.Li@nxp.com>,
+        <konradybcio@kernel.org>, <bryan.odonoghue@linaro.org>,
+        <krzk+dt@kernel.org>, <robh@kernel.org>
+CC: <quic_vdadhani@quicinc.com>
+References: <20241129144357.2008465-1-quic_msavaliy@quicinc.com>
+ <20241129144357.2008465-2-quic_msavaliy@quicinc.com>
+ <db428697-a9dc-46e1-abbe-73341306403f@kernel.org>
+ <a8b1ccd2-c37b-4a6f-b592-caf1a53be02c@quicinc.com>
+ <fc33c4ed-32e5-46cc-87d6-921f2e58b4ff@kernel.org>
+ <75f2cc08-e3ab-41fb-aa94-22963c4ffd82@quicinc.com>
+ <904ae8ea-d970-4b4b-a30a-cd1b65296a9b@kernel.org>
+ <da2ba3df-eb47-4b55-a0c9-e038a3b9da30@quicinc.com>
+ <a7186553-d8f6-46d4-88da-d042a4a340e2@oss.qualcomm.com>
+Content-Language: en-US
+From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+In-Reply-To: <a7186553-d8f6-46d4-88da-d042a4a340e2@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH5fLgjxMH71fQ5A8F8JaO2c54wxCTCnuMEqnQqpV3L=2BUWEA@mail.gmail.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: fcQXGs8dm37uCG8CvS2f-oOGki1Xx-KR
+X-Proofpoint-GUID: fcQXGs8dm37uCG8CvS2f-oOGki1Xx-KR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 adultscore=0 mlxlogscore=999
+ clxscore=1015 spamscore=0 mlxscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090118
 
-On Mon, Dec 09, 2024 at 02:36:31PM +0100, Alice Ryhl wrote:
-> On Mon, Dec 9, 2024 at 2:13 PM Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org> wrote:
-> >
-> > On Mon, Dec 09, 2024 at 01:53:42PM +0100, Alice Ryhl wrote:
-> > > On Mon, Dec 9, 2024 at 1:08 PM Greg Kroah-Hartman
-> > > <gregkh@linuxfoundation.org> wrote:
-> > > >
-> > > > On Mon, Dec 09, 2024 at 01:00:05PM +0100, Alice Ryhl wrote:
-> > > > > On Mon, Dec 9, 2024 at 12:53 PM Greg Kroah-Hartman
-> > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > >
-> > > > > > On Mon, Dec 09, 2024 at 12:38:32PM +0100, Alice Ryhl wrote:
-> > > > > > > On Mon, Dec 9, 2024 at 12:10 PM Greg Kroah-Hartman
-> > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > >
-> > > > > > > > On Mon, Dec 09, 2024 at 11:50:57AM +0100, Alice Ryhl wrote:
-> > > > > > > > > On Mon, Dec 9, 2024 at 9:48 AM Greg Kroah-Hartman
-> > > > > > > > > <gregkh@linuxfoundation.org> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
-> > > > > > > > > > > Providing access to the underlying `struct miscdevice` is useful for
-> > > > > > > > > > > various reasons. For example, this allows you access the miscdevice's
-> > > > > > > > > > > internal `struct device` for use with the `dev_*` printing macros.
-> > > > > > > > > > >
-> > > > > > > > > > > Note that since the underlying `struct miscdevice` could get freed at
-> > > > > > > > > > > any point after the fops->open() call, only the open call is given
-> > > > > > > > > > > access to it. To print from other calls, they should take a refcount on
-> > > > > > > > > > > the device to keep it alive.
-> > > > > > > > > >
-> > > > > > > > > > The lifespan of the miscdevice is at least from open until close, so
-> > > > > > > > > > it's safe for at least then (i.e. read/write/ioctl/etc.)
-> > > > > > > > >
-> > > > > > > > > How is that enforced? What happens if I call misc_deregister while
-> > > > > > > > > there are open fds?
-> > > > > > > >
-> > > > > > > > You shouldn't be able to do that as the code that would be calling
-> > > > > > > > misc_deregister() (i.e. in a module unload path) would not work because
-> > > > > > > > the module reference count is incremented at this point in time due to
-> > > > > > > > the file operation module reference.
-> > > > > > >
-> > > > > > > Oh .. so misc_deregister must only be called when the module is being unloaded?
-> > > > > >
-> > > > > > Traditionally yes, that's when it is called.  Do you see it happening in
-> > > > > > any other place in the kernel today?
-> > > > >
-> > > > > I had not looked, but I know that Binder allows dynamically creating
-> > > > > and removing its devices at runtime. It happens to be the case that
-> > > > > this is only supported when binderfs is used, which is when it doesn't
-> > > > > use miscdevice, so technically Binder does not call misc_deregister()
-> > > > > outside of module unload, but following its example it's not hard to
-> > > > > imagine that such removals could happen.
-> > > >
-> > > > That's why those are files and not misc devices :)
-> > >
-> > > I grepped for misc_deregister and the first driver I looked at is
-> > > drivers/misc/bcm-vk which seems to allow dynamic deregistration if the
-> > > pci device is removed.
-> >
-> > Ah, yeah, that's going to get messy and will be a problem if someone has
-> > the file open then.
-> >
-> > > Another tricky path is error cleanup in its probe function.
-> > > Technically, if probe fails after registering the misc device, there's
-> > > a brief moment where you could open the miscdevice before it gets
-> > > removed in the cleanup path, which seems to me that it could lead to
-> > > UAF?
-> > >
-> > > Or is there something I'm missing?
-> >
-> > Nope, that too is a window of a problem, luckily you "should" only
-> > register the misc device after you know the device is safe to use as
-> > once it is registered, it could be used so it "should" be the last thing
-> > you do in probe.
-> >
-> > So yes, you are right, and we do know about these issues (again see the
-> > talk I mentioned and some previous ones for many years at plumbers
-> > conferences by different people.)  It's just up to someone to do the
-> > work to fix them.
-> >
-> > If you think we can prevent the race in the rust side, wonderful, I'm
-> > all for that being a valid fix.
+
+
+On 12/2/2024 7:34 PM, Konrad Dybcio wrote:
+> On 2.12.2024 1:55 PM, Mukesh Kumar Savaliya wrote:
+>>
+>>
+>> On 12/2/2024 4:34 PM, Krzysztof Kozlowski wrote:
+>>> On 02/12/2024 11:38, Mukesh Kumar Savaliya wrote:
+>>>>>
+>>>>> Come with one flag or enum, if needed, covering all your cases like this.
+>>>>>
+>>>> Let me explain, this feature is one of the additional software case
+>>>> adding on base protocol support. if we dont have more than one usecase
+>>>> or repurposing this feature, why do we need to add enums ? I see one
+>>>> flag gpi_mode but it's internal to driver not exposed to user or expose
+>>>> any usecase/feature.
+>>>>
+>>>> Below was our earlier context, just wanted to add for clarity.
+>>>> -- 
+>>>>    > Is sharing of IP blocks going to be also for other devices? If yes, then
+>>>>    > this should be one property for all Qualcomm devices. If not, then be
+>>>>    > sure that this is the case because I will bring it up if you come with
+>>>>    > one more solution for something else.
+>>>
+>>>
+>>> You keep repeating the same. You won't receive any other answer.
+>>>
+>> So far i was in context to SEs. I am not sure in qualcomm SOC all cores supporting this feature and if it at all it supports, it may have it's own mechanism then what is followed in SE IP. I was probably thinking on my owned IP core hence i was revolving around.
+>>
+>> Hope this dt-binding i can conclude somewhere by seeking answer from other IP core owners within qualcomm.
+>>>>    >
+>>>> IP blocks like SE can be shared. Here we are talking about I2C sharing.
+>>>> In future it can be SPI sharing. But design wise it fits better to add
+>>>> flag per SE node. Same we shall be adding for SPI too in future.
+>>>
+>>>
+>>> How flag per SE node is relevant? I did not ask to move the property.
+>>>
+>>>>
+>>>> Please let me know your further suggestions.
+>>> We do not talk about I2C or SPI here only. We talk about entire SoC.
+>>> Since beginning. Find other patch proposals and align with rest of
+>>> Qualcomm developers so that you come with only one definition for this
+>>> feature/characteristic. Or do you want to say that I am free to NAK all
+>>> further properties duplicating this one?
 > 
-> The current patch prevents the race by only allowing access to the
-> `struct miscdevice` in fops->open(). That's safe since
-> `file->f_op->open` runs with `misc_mtx` held. Do we really need the
-> miscdevice to stay alive for longer? You can already take a refcount
-> on `this_device` if you want to keep the device alive for longer for
-> dev_* printing purposes, but it seems like that is the only field you
-> really need from the `struct miscdevice` past fops->open()?
-
-Good point, I also can't really see anything within struct miscdevice that a
-driver could need other than `this_device`.
-
-How would you provide the `device::Device` within the `MiscDevice` trait
-functions?
-
-If we don't guarantee that the `struct miscdevice` is still alive past open() we
-need to take a reference on `this_device` in open().
-
-I guess the idea would be to let `MiscDeviceRegistration` provide a function to
-obtain an `ARef<device::Device>`?
-
+> I'm not sure a single property name+description can fit all possible
+> cases here. The hardware being "shared" can mean a number of different
+> things, with some blocks having hardware provisions for that, while
+> others may have totally none and rely on external mechanisms (e.g.
+> a shared memory buffer) to indicate whether an external entity
+> manages power to them.
 > 
-> Alice
+I agree. Also i checked internally with UFS team and other peripheral 
+core. Not heard of core being shared the way SE is being shared.
+> Even here, I'm not particularly sure whether dt is the right place.
+> Maybe we could think about checking for clock_is_enabled()? That's
+> just an idea, as it may fall apart if CCF gets a .sync_state impl.
 > 
+I feel DT flag is the only way as one or other way this leads to some 
+need of prior knowledge. in case of using clock_is_enabled() kind of 
+API, we still need a flag to keep the clock enabled. By the way, we keep 
+pinctrl only enabled for shared SE.
+
+Please let me know if the given binding can be improved further OR this 
+looks fine ?
+> Konrad
+
 
