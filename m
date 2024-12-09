@@ -1,308 +1,137 @@
-Return-Path: <linux-kernel+bounces-436758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C81BB9E8A5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:33:16 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B01779E8A5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:34:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8432B280C71
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:33:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA7AC1620C2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1C416F8E9;
-	Mon,  9 Dec 2024 04:33:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C1316630A;
+	Mon,  9 Dec 2024 04:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="qw1cQJyo"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kQIqotVe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696CB14F126;
-	Mon,  9 Dec 2024 04:33:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2876215B547
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 04:34:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733718789; cv=none; b=LkpU3vdOQwGMHMuKjI1kxEFghxIpHQrVxEWfhcifiwhAebh6nyB6Hk5EhxEt2XB9ZeCGIrz4e9c6Oc1DCh8vZ031bG5DkNQ26hZbrBZ91ZB/GSBA4TRepZkjAuM29EMDivC2CbcPRbNZ0PH23qUxrXQ9VgxDsswwQTR8De4xi/8=
+	t=1733718862; cv=none; b=cbyiZ7n+2fULHwwaYsNNqCgY5R+JqBB3Bdky3j9NGmEkjVE5at9/IzZZgm+EhBlIIG1kLaJPJmKEpQaYZI4TdLCcLMZChLPVFV4DHX3uilEbBavgWGjLVcknRUWXfcwqnEWki3jFH1RCCBGyHZS/Ri9dW3R2M9dqOdh1DCbmU70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733718789; c=relaxed/simple;
-	bh=LY3RsQ2MtH1nNBWndK3puTnO5aAq4/wJBReWAMNoQbQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=TFSlMyRLs8xXyYneANjtB0FYm4WeT8fT+c+rbdjt6xQSl1WYfg1C2tZ/2N+Ika4Td5gKCHnXFPHGI+D0woo1TDf3R+/EgOUyG5NwDAwrpPErQUh0NTmXg2amx9uHMdet8ZK3VpyeX5tBu28S3PWpbAhcNrWEHQpLoLSQJFICqDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=qw1cQJyo; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1733718862; c=relaxed/simple;
+	bh=b86vIT/q6JzXIlYI/ahDRD2UrtWBM6Bein9OcH4SMec=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=JLmXUOTjMVge5srcprq980uRwnN9sZnlO3jFyATeUmdGNPlHJM6wfRVc7emk330+aJb2i+KCziDWXlS8E+5ln4aBL7UrOMTawK6NmZPdEjWqZ2rQz34LsPfM8sfu5c6pEbHUJpIy1osp8OCc84VMaXAeIyheEvkSj/P2gxAXyZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kQIqotVe; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733718787; x=1765254787;
-  h=from:date:subject:mime-version:content-transfer-encoding:
-   message-id:to:cc;
-  bh=LY3RsQ2MtH1nNBWndK3puTnO5aAq4/wJBReWAMNoQbQ=;
-  b=qw1cQJyoXBKw+95R2p3TmCjFBwtofEGky32W79h70xOxWBWhhxPpMe/a
-   Exu16o98/oHzqkX3buRFUnNkTMqeo4LqpD8z0+D/2X/oWy1MCgRq9g1PR
-   DxuaWzMJZQWo2tYVyWEFGLE7McOQFlVc9F88ZicRpzUoOl+uctRdvk/UC
-   20pXwWWged4JtAZ88CFRIiOB0L8ElIy3cnYByXqHJpHRU2eqUZ03l5RRX
-   Z+CHUx+SCZaid6/i8lHkdlezUnpBTfbahvrwObPLf5Sdkhg9mP8DNTGmX
-   0VBBkiCLpjkEM8dX6rVrpW9Pgur+nn/3kYZ8DV03AlkCWoL2rLzf4MVOm
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733718861; x=1765254861;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=b86vIT/q6JzXIlYI/ahDRD2UrtWBM6Bein9OcH4SMec=;
+  b=kQIqotVesYCR0r8eL1UKWu0+lpMf+tRJDE//czEkljNCwSaOsGDdAHit
+   39MYiXaCm5HQzN6ntG39BO9LJUok2sYwCHtOdwZBPTP91F/9zDjrpFPNe
+   S3y9FRJOvrBwkPc12g7iIaclxszOd/1juqqR0QA4WBvHxQrRg6Pc2dp1y
+   g0mQFBBCoLzxjcR8xJPOTEzr1jXe3qUWLFiFpbC0H1L+li+u6TyM9qm85
+   sU0SCsyBGJei/w7l4Sb9EVTUM4NY88g5lx9gYOIWu3b66hlpgYy9+Hm2z
+   jziEBY/8fVVysL8BKqdZZO7GklNaQaO0+mXJ4jXKnXigY42g382AzPDiP
    w==;
-X-CSE-ConnectionGUID: 72IB33lgRjS11USK+WrWBA==
-X-CSE-MsgGUID: mBb2+HZpQcCgbtECVkhTjQ==
+X-CSE-ConnectionGUID: kxwJyuqqSauuLFjtzqUqkA==
+X-CSE-MsgGUID: qgei9kMhQnyjZkW8d7CJ5A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="45014125"
 X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
-   d="scan'208";a="266487019"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 08 Dec 2024 21:32:59 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Sun, 8 Dec 2024 21:32:38 -0700
-Received: from [127.0.0.1] (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Sun, 8 Dec 2024 21:32:34 -0700
-From: Dharma Balasubiramani <dharma.b@microchip.com>
-Date: Mon, 9 Dec 2024 10:02:30 +0530
-Subject: [PATCH v2] dt-bindings: mmc: atmel,hsmci: Convert to json schema
+   d="scan'208";a="45014125"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:34:21 -0800
+X-CSE-ConnectionGUID: p3EViXL9RiKhH1a/IW7NIA==
+X-CSE-MsgGUID: 6T0rdX39TyO94pZRiI0Xew==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="95048928"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 08 Dec 2024 20:34:18 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKVTM-0003sU-1p;
+	Mon, 09 Dec 2024 04:34:16 +0000
+Date: Mon, 9 Dec 2024 12:34:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Julian Vetter <jvetter@kalrayinc.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Arnd Bergmann <arnd@arndb.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Yann Sionneau <ysionneau@kalrayinc.com>
+Subject: drivers/remoteproc/qcom_q6v5_pas.c:137:46: sparse: sparse: incorrect
+ type in argument 2 (different address spaces)
+Message-ID: <202412080800.7u41CGUl-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241209-hsmci-v2-1-b5a6d7c59b67@microchip.com>
-X-B4-Tracking: v=1; b=H4sIAN1yVmcC/13MQQ7CIBCF4as0sxZTRpHoynuYLsgwlVlQGjBE0
- 3B3sUuX/8vLt0HhLFzgNmyQuUqRtPTAwwAU3PJkJb434IhnjaNRoUQSZR2d2F21sdZC/66ZZ3n
- vzmPqHaS8Uv7sbNW/9V+oWmllHBq+IPqZ/T0K5URB1iOlCFNr7QvoOxkSngAAAA==
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni
-	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Aubin Constans <aubin.constans@microchip.com>
-CC: <linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Dharma Balasubiramani <dharma.b@microchip.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733718754; l=5160;
- i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
- bh=LY3RsQ2MtH1nNBWndK3puTnO5aAq4/wJBReWAMNoQbQ=;
- b=wul3xm8moixq7EJMj3Cr78cgKF6RGexFxWRTaDK16ghCA6IYsyHDynh8McreBentzrQrXVIWF
- 0NkUoX9qcPMAHu4NGQFOig6bdl/dT9XYfkkcU8p9opbEZr+d/vdPwbw
-X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
- pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Convert atmel,hsmci documentation to yaml format. The new file will inherit
-from mmc-controller.yaml.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   7503345ac5f5e82fd9a36d6e6b447c016376403a
+commit: 0110feaaf6d0610d0089ae4897387df9a963b5f0 arm64: Use new fallback IO memcpy/memset
+date:   6 weeks ago
+config: arm64-randconfig-r131-20241208 (https://download.01.org/0day-ci/archive/20241208/202412080800.7u41CGUl-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20241208/202412080800.7u41CGUl-lkp@intel.com/reproduce)
 
-Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
----
-Changes in v2:
-- Drop the duplicate properties in the slot node.
-- Link to v1: https://lore.kernel.org/r/20241205-hsmci-v1-1-5a25e622dfed@microchip.com
----
- .../devicetree/bindings/mmc/atmel,hsmci.yaml       | 110 +++++++++++++++++++++
- .../devicetree/bindings/mmc/atmel-hsmci.txt        |  73 --------------
- 2 files changed, 110 insertions(+), 73 deletions(-)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412080800.7u41CGUl-lkp@intel.com/
 
-diff --git a/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
-new file mode 100644
-index 000000000000..26686ada6288
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mmc/atmel,hsmci.yaml
-@@ -0,0 +1,110 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mmc/atmel,hsmci.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Atmel High-Speed MultiMedia Card Interface (HSMCI)
-+
-+description:
-+  The Atmel HSMCI controller provides an interface for MMC, SD, and SDIO memory
-+  cards.
-+
-+maintainers:
-+  - Nicolas Ferre <nicolas.ferre@microchip.com>
-+  - Aubin Constans <aubin.constans@microchip.com>
-+
-+allOf:
-+  - $ref: mmc-controller.yaml
-+
-+properties:
-+  compatible:
-+    const: atmel,hsmci
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  dmas:
-+    maxItems: 1
-+
-+  dma-names:
-+    const: rxtx
-+
-+  clocks:
-+    maxItems: 1
-+
-+  clock-names:
-+    const: mci_clk
-+
-+  "#address-cells":
-+    const: 1
-+    description: Used for slot IDs.
-+
-+  "#size-cells":
-+    const: 0
-+
-+patternProperties:
-+  "^slot@[0-9]+$":
-+    type: object
-+    description: A slot node representing an MMC, SD, or SDIO slot.
-+
-+    allOf:
-+      - $ref: mmc-controller.yaml
-+
-+    properties:
-+      reg:
-+        description: Slot ID.
-+        minimum: 0
-+
-+    required:
-+      - reg
-+      - bus-width
-+
-+    unevaluatedProperties: false
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+  - clock-names
-+  - "#address-cells"
-+  - "#size-cells"
-+
-+anyOf:
-+  - required:
-+      - slot@0
-+  - required:
-+      - slot@1
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/interrupt-controller/irq.h>
-+    #include <dt-bindings/clock/at91.h>
-+    mmc@f0008000 {
-+      compatible = "atmel,hsmci";
-+      reg = <0xf0008000 0x600>;
-+      interrupts = <12 IRQ_TYPE_LEVEL_HIGH>;
-+      clocks = <&mci0_clk>;
-+      clock-names = "mci_clk";
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+
-+      slot@0 {
-+        reg = <0>;
-+        bus-width = <4>;
-+        cd-gpios = <&pioD 15 0>;
-+        cd-inverted;
-+      };
-+
-+      slot@1 {
-+        reg = <1>;
-+        bus-width = <4>;
-+      };
-+    };
-+...
-diff --git a/Documentation/devicetree/bindings/mmc/atmel-hsmci.txt b/Documentation/devicetree/bindings/mmc/atmel-hsmci.txt
-deleted file mode 100644
-index 07ad02075a93..000000000000
---- a/Documentation/devicetree/bindings/mmc/atmel-hsmci.txt
-+++ /dev/null
-@@ -1,73 +0,0 @@
--* Atmel High Speed MultiMedia Card Interface
--
--This controller on atmel products provides an interface for MMC, SD and SDIO
--types of memory cards.
--
--This file documents differences between the core properties described
--by mmc.txt and the properties used by the atmel-mci driver.
--
--1) MCI node
--
--Required properties:
--- compatible: should be "atmel,hsmci"
--- #address-cells: should be one. The cell is the slot id.
--- #size-cells: should be zero.
--- at least one slot node
--- clock-names: tuple listing input clock names.
--	Required elements: "mci_clk"
--- clocks: phandles to input clocks.
--
--The node contains child nodes for each slot that the platform uses
--
--Example MCI node:
--
--mmc0: mmc@f0008000 {
--	compatible = "atmel,hsmci";
--	reg = <0xf0008000 0x600>;
--	interrupts = <12 4>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	clock-names = "mci_clk";
--	clocks = <&mci0_clk>;
--
--	[ child node definitions...]
--};
--
--2) slot nodes
--
--Required properties:
--- reg: should contain the slot id.
--- bus-width: number of data lines connected to the controller
--
--Optional properties:
--- cd-gpios: specify GPIOs for card detection
--- cd-inverted: invert the value of external card detect gpio line
--- wp-gpios: specify GPIOs for write protection
--
--Example slot node:
--
--slot@0 {
--	reg = <0>;
--	bus-width = <4>;
--	cd-gpios = <&pioD 15 0>
--	cd-inverted;
--};
--
--Example full MCI node:
--mmc0: mmc@f0008000 {
--	compatible = "atmel,hsmci";
--	reg = <0xf0008000 0x600>;
--	interrupts = <12 4>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	slot@0 {
--		reg = <0>;
--		bus-width = <4>;
--		cd-gpios = <&pioD 15 0>
--		cd-inverted;
--	};
--	slot@1 {
--		reg = <1>;
--		bus-width = <4>;
--	};
--};
+sparse warnings: (new ones prefixed by >>)
+>> drivers/remoteproc/qcom_q6v5_pas.c:137:46: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void const volatile [noderef] __iomem *src @@     got void * @@
+   drivers/remoteproc/qcom_q6v5_pas.c:137:46: sparse:     expected void const volatile [noderef] __iomem *src
+   drivers/remoteproc/qcom_q6v5_pas.c:137:46: sparse:     got void *
+   drivers/remoteproc/qcom_q6v5_pas.c:575:26: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *mem_region @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/qcom_q6v5_pas.c:575:26: sparse:     expected void *mem_region
+   drivers/remoteproc/qcom_q6v5_pas.c:575:26: sparse:     got void [noderef] __iomem *
+   drivers/remoteproc/qcom_q6v5_pas.c:600:30: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *dtb_mem_region @@     got void [noderef] __iomem * @@
+   drivers/remoteproc/qcom_q6v5_pas.c:600:30: sparse:     expected void *dtb_mem_region
+   drivers/remoteproc/qcom_q6v5_pas.c:600:30: sparse:     got void [noderef] __iomem *
 
----
-base-commit: feffde684ac29a3b7aec82d2df850fbdbdee55e4
-change-id: 20241205-hsmci-7ac3ea915777
+vim +137 drivers/remoteproc/qcom_q6v5_pas.c
 
-Best regards,
+b9e718e950c3df drivers/remoteproc/qcom_adsp_pil.c Bjorn Andersson     2016-08-22  121  
+181da4bcc3d4bb drivers/remoteproc/qcom_q6v5_pas.c Krzysztof Kozlowski 2023-05-07  122  static void adsp_segment_dump(struct rproc *rproc, struct rproc_dump_segment *segment,
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  123  		       void *dest, size_t offset, size_t size)
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  124  {
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  125  	struct qcom_adsp *adsp = rproc->priv;
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  126  	int total_offset;
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  127  
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  128  	total_offset = segment->da + segment->offset + offset - adsp->mem_phys;
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  129  	if (total_offset < 0 || total_offset + size > adsp->mem_size) {
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  130  		dev_err(adsp->dev,
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  131  			"invalid copy request for segment %pad with offset %zu and size %zu)\n",
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  132  			&segment->da, offset, size);
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  133  		memset(dest, 0xff, size);
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  134  		return;
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  135  	}
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  136  
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02 @137  	memcpy_fromio(dest, adsp->mem_region + total_offset, size);
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  138  }
+a376c10d45a8e6 drivers/remoteproc/qcom_q6v5_pas.c Yogesh Lal          2022-11-02  139  
+
+:::::: The code at line 137 was first introduced by commit
+:::::: a376c10d45a8e6ee5ea55791193f90625b35e156 remoteproc: qcom: pas: Adjust the phys addr wrt the mem region
+
+:::::: TO: Yogesh Lal <quic_ylal@quicinc.com>
+:::::: CC: Bjorn Andersson <andersson@kernel.org>
+
 -- 
-Dharma Balasubiramani <dharma.b@microchip.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
