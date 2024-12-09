@@ -1,83 +1,96 @@
-Return-Path: <linux-kernel+bounces-438187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAF0D9E9DF1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:19:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C67159E9DF6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:21:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 98BFB1887652
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:19:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72DED1887024
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:21:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78B1158536;
-	Mon,  9 Dec 2024 18:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8535115749A;
+	Mon,  9 Dec 2024 18:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hd17BUb3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA7B14D283;
-	Mon,  9 Dec 2024 18:19:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="jzb9gdAf"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FCE7143C5D;
+	Mon,  9 Dec 2024 18:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733768388; cv=none; b=nsGmLOm1NbnxsWZIgzgvQe2BAAK/k8agO7hkv2O1nrF7J//ndo4JjrAaSVq/Nur+rxuMKd7cZMOwBT8VggSC4W4Qxo1hvkLdWzaK+h4pKgilpcY+DFzoD7XM3ExeRvxLDjMrlo1mlZyQyeo8coTqKrhEidpEbumX6nAjPf189aw=
+	t=1733768455; cv=none; b=bbmxN+NAJE196VMuQkJAddDN3rE5UJFKlXZGHAa8cikP2Yomrkmt7sVe/oY83UEo9uooVsa7jAiOT/z2stvnAaS6vqQBeIR//fPH6KhmnGY14xK4XphwHet2L1uWNqU4b34LYkxyNk2qYKw7VVbyPXPMIroKRCWFuQ4FWG6Xf9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733768388; c=relaxed/simple;
-	bh=Hd1rQymEODPjoNCaX7qvSHK/dSAqSz+Wx1sGbb+/QXQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F3kxmDawT8s6ORNtA+bdxXJ/aT8WXCSSU2uLn79PIvXOtw9dWsATrjGiiC23MRejuTNDIhDdfdFvH+aLVjPUp830WtSCGshyd8ZUNvl3ZaqlAR2rdsqenLQOl5DFXgzsBqZgcOef4KmwqrUjyYK76V1s1eKsc63V1Sp6sICaSbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hd17BUb3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C439C4CED1;
-	Mon,  9 Dec 2024 18:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733768387;
-	bh=Hd1rQymEODPjoNCaX7qvSHK/dSAqSz+Wx1sGbb+/QXQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hd17BUb3QP6Jqz+JNiWgfDlyBYBM607B2/k2WBFsvw0q9f50irIR4m936S+EWB3+i
-	 EJUuW5NMfmRxoo45xlU/DcIh6GaK+n444FU1aP6Y1/uMhNt6SQ5MBju1MadLlgAtMb
-	 xbXd5x6A8NVzpfkq7LVdRfi6iW49ox9NpBycSlQfxabMndBbfcrmj32Ue3OKzv6+1X
-	 Nwo0j0fIgyO3OdbTayY0CBVdX0RhTiL1XjkVJQUbmbsc5itlGcYb6r8UgE/ZABcrNM
-	 NDorQS7e3ELK5ErHMDBE4kyuqi/n9bvwIii3zdBGuuslQ9NbnKBlNOpqJXNHwIqYxr
-	 70S3atnnLkWvg==
-Date: Mon, 9 Dec 2024 20:19:41 +0200
-From: Leon Romanovsky <leon@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>
-Subject: Re: [PATCH] kbuild: suppress stdout from merge_config for silent
- builds
-Message-ID: <20241209181941.GB1245331@unreal>
-References: <20241208144622.605523-1-masahiroy@kernel.org>
+	s=arc-20240116; t=1733768455; c=relaxed/simple;
+	bh=NK3UFV7EKNpDsXjKqgORVDaoYl9lZUCsUJf7g9bSxcc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hv5jyM4SvUtcLs3pNZsRc7MQyi7K8upkLATgasiNYzAXbf7DlsVobA686WbGhIuXPY+SVdDsyIcFTsqYfio+LYQlOsWtC9ECyYmz4JIGC0SgsBu2KeE4jir0j9FMyGwXFRYV/gjZ664c1GNobl7rM3TgTlkUL/7EgB2bUuN7AY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=jzb9gdAf; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from hm-sls2.corp.microsoft.com (bras-base-toroon4332w-grc-63-70-49-166-4.dsl.bell.ca [70.49.166.4])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 7A24620ACD6A;
+	Mon,  9 Dec 2024 10:20:53 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 7A24620ACD6A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1733768454;
+	bh=5zd+oLHB1Vo8goyu8DBTM7DCBRJbVW6fr4oIy2s1vvo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=jzb9gdAfF9LsvV/GJcBovdYgsXdo+9EgUixG7/cIc2kWyzGy5yanELcKLB8d6/nTa
+	 QQG6EEg9Nlh/JvcJz6cfA/AoSU3+vXl5F2E/2boLIrHbv/gdLXu0heE0rJq4NRp/h+
+	 4akNkzRQYVPpgTr1Dw3Q3dby3cO62aCNpCx0TdeY=
+From: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+To: linux-efi@vger.kernel.org
+Cc: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>,
+	stable@kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Allen Pais <apais@linux.microsoft.com>,
+	Tyler Hicks <code@tyhicks.com>,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] efi: bump up EFI_MMAP_NR_SLACK_SLOTS to 32
+Date: Mon,  9 Dec 2024 13:20:39 -0500
+Message-ID: <20241209182041.60286-1-hamzamahfooz@linux.microsoft.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208144622.605523-1-masahiroy@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Dec 08, 2024 at 11:46:14PM +0900, Masahiro Yamada wrote:
-> merge_config does not respect the Make's -s (--silent) option.
-> 
-> Let's sink the stdout from merge_config for silent builds.
-> 
-> This commit does not cater to the direct invocation of merge_config.sh
-> (e.g. arch/mips/Makefile).
-> 
-> Reported-by: Leon Romanovsky <leon@kernel.org>
-> Closes: https://lore.kernel.org/all/e534ce33b0e1060eb85ece8429810f087b034c88.1733234008.git.leonro@nvidia.com/
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/Makefile.defconf | 13 +++++++------
->  scripts/kconfig/Makefile |  4 +++-
->  2 files changed, 10 insertions(+), 7 deletions(-)
-> 
+Recent platforms require more slack slots than the current value of
+EFI_MMAP_NR_SLACK_SLOTS, otherwise they fail to boot. The current
+workaround is to append `efi=disable_early_pci_dma` to the kernel's
+cmdline. So, bump up EFI_MMAP_NR_SLACK_SLOTS to 32 to allow those
+platforms to boot with the aforementioned workaround.
 
-Thanks,
-Tested-by: Leon Romanovsky <leon@kernel.org>
+Cc: stable@kernel.org
+Cc: Ard Biesheuvel <ardb@kernel.org>
+Cc: Allen Pais <apais@linux.microsoft.com>
+Cc: Tyler Hicks <code@tyhicks.com>
+Signed-off-by: Hamza Mahfooz <hamzamahfooz@linux.microsoft.com>
+---
+ drivers/firmware/efi/libstub/efistub.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/firmware/efi/libstub/efistub.h b/drivers/firmware/efi/libstub/efistub.h
+index 76e44c185f29..e95ce6ae5c26 100644
+--- a/drivers/firmware/efi/libstub/efistub.h
++++ b/drivers/firmware/efi/libstub/efistub.h
+@@ -171,7 +171,7 @@ void efi_set_u64_split(u64 data, u32 *lo, u32 *hi)
+  * the EFI memory map. Other related structures, e.g. x86 e820ext, need
+  * to factor in this headroom requirement as well.
+  */
+-#define EFI_MMAP_NR_SLACK_SLOTS	8
++#define EFI_MMAP_NR_SLACK_SLOTS	32
+ 
+ typedef struct efi_generic_dev_path efi_device_path_protocol_t;
+ 
+-- 
+2.47.1
+
 
