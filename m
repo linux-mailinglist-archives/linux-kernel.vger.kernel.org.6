@@ -1,128 +1,91 @@
-Return-Path: <linux-kernel+bounces-437599-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAC89E959D
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:06:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADB0A9E959F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:06:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C1A281EDA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 405BF28242D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6B4622ACEB;
-	Mon,  9 Dec 2024 12:58:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABA935943;
+	Mon,  9 Dec 2024 12:58:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IztltQZe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bHjd5zGR"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061B722ACE3;
-	Mon,  9 Dec 2024 12:58:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC9DA35946;
+	Mon,  9 Dec 2024 12:58:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733749119; cv=none; b=uVR/AKjCCb7om7ShQhU3qjC7282o09KCD7XvEcYrBpaRvCHJ09WwpZCG6hA7QE9ErnO5Vh4d7sJI3Z9jGTnkilnjRwjvtMUZUHdHUACTqtVXPewDpbtaUeSF3/C307OI5b8hnn3mbCGx/3k1FixaUH0+9fJoKnAQE5OXOGGA7dQ=
+	t=1733749126; cv=none; b=Nsbp00Moe7CDC3LEbpAthRxWf+lvyNnPVVZz5QXu/aphMvXef4Pyl34IQs2HnJe6TUr4Xw32rF9NYUS4OsdERQjS+WW4qoiOq0pRN1WA6cZq1Bk4YXpgEXmfkm2aE6SAFZLJoBOOCw03yTCeIfQXoROj8fo6/KNYA7Ctw7OLpIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733749119; c=relaxed/simple;
-	bh=l6YxVhjjcPNXX3KSThtrFQnv9KW0AjVXF9OlJ6931KE=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=TyhJHGuV7y6kKX6njCQND4HqEIfnGwxoQ2pDBwPv6dPt9mosxMeHmTRHaFleRDWQV+rZyFZe+85DzhSpaLit4vB6Tn4ClLjLsyIzn6AUJCdvVLraZdQIc5ANsLIl7yfp+aS0dUHnaNyWP0ZE1Kss/lYFet8Lj30f+pOZEsdAP2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IztltQZe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48A72C4CED1;
-	Mon,  9 Dec 2024 12:58:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733749118;
-	bh=l6YxVhjjcPNXX3KSThtrFQnv9KW0AjVXF9OlJ6931KE=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=IztltQZeEnfq3iGifVzcriBgdPEb0+E6XtU55bFpXDEhSP3M7o9rZrzcL9SRsLPx/
-	 yxspvMGP9HJ+Sw449LZVeq782KIwxU1t7Ll1WkILEoCUPO92LU+ymmXNdEtiLOCjyr
-	 AGTOudAaNcWNIC5D2LbV1Af5f6A3e5PMoNzOUzjPgJJ1jOO2hpzA2EQ0FUUFJ0Yflv
-	 A00+fDQnz6EEer1inW3rFY4OeO0rhYoP40SrR/yprV9+AhanRVRJq+oBcn0mjS/jq0
-	 7/1q4zPHI59e8VktfH4m/1gv5hAZ/YQJrOX9rF3dXdV89jRNj2gBGoX0uc7DmD1GSM
-	 cqKrM2te6hf/w==
+	s=arc-20240116; t=1733749126; c=relaxed/simple;
+	bh=39XwaRiIOgVyQ9gMcbkLIIec+j+q9bvgkuWvu2oTlm8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NCCsAUu8F0ZiZ+4N+9HpGJhpJwwSKK2DoOHuJophvO7DJjtImTLpndixjZaieCNfwNzuswyGyAiUYXIP86UnUrqzBZ82bUIvrc3XhDPA9Ww181d82/Ptv2zGHmg9bmnq1c5AtQyXLj/e0Z76uB1ZR8Q6byKWV90B1mg0WaInleY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bHjd5zGR; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733749125; x=1765285125;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=39XwaRiIOgVyQ9gMcbkLIIec+j+q9bvgkuWvu2oTlm8=;
+  b=bHjd5zGRteAy0LLE399fg3pKQPlZc9eacFPys0vIJExyLQIdoCt4Y4eI
+   NcsCRhiJqWFUvPzKi5zwXaixv2eurtc/mREzGCoOPNzQ5vAnmfqf3PHrg
+   ugCbPXP4W9wBwfw9e0/FiZ9G6g9DZJ85E/LL+O88bRJuTHNWRa6TvEVfY
+   jTTzUIt9llrva8cEYYziW663Sv5S/HYPr5Bw/EvtQy9++gJbm/UWUYRRE
+   h76RVf/eFIInuNSaAWWgxPVdxKa4oDODhuhv46p4T5kmZospJHto6sg8P
+   IKLqt8w//gQfDWVCEKUl/vvaJd4EQ9Co1P36T6rEk4xdKxyvps7XRW4NY
+   Q==;
+X-CSE-ConnectionGUID: ndVH2g/sSu2R8emXRFpb5A==
+X-CSE-MsgGUID: 9v2ptSVpTVuN8odmOhN0Fw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="56522713"
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="56522713"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 04:58:44 -0800
+X-CSE-ConnectionGUID: N7Z3TsNpQhWTFX+xJ9OpYw==
+X-CSE-MsgGUID: +jSOBsZBSTOSsQitpLUk+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
+   d="scan'208";a="94897752"
+Received: from oandoniu-mobl3.ger.corp.intel.com (HELO [10.245.245.98]) ([10.245.245.98])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 04:58:41 -0800
+Message-ID: <8279ea30-fb41-4dae-966a-799f2d7d2592@linux.intel.com>
+Date: Mon, 9 Dec 2024 13:58:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/4] SRF: Fix offline CPU preventing pc6 entry
+To: "Gautham R. Shenoy" <gautham.shenoy@amd.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ rafael.j.wysocki@intel.com, peterz@infradead.org,
+ dave.hansen@linux.intel.com, tglx@linutronix.de, len.brown@intel.com,
+ artem.bityutskiy@linux.intel.com
+References: <20241127161518.432616-1-patryk.wlazlyn@linux.intel.com>
+ <Z1bDbLZkfrxlie3M@BLRRASHENOY1.amd.com>
+Content-Language: en-US
+From: Patryk Wlazlyn <patryk.wlazlyn@linux.intel.com>
+In-Reply-To: <Z1bDbLZkfrxlie3M@BLRRASHENOY1.amd.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 09 Dec 2024 14:58:33 +0200
-Message-Id: <D676RN3ZW2H1.2JNMSLG0WGS3V@kernel.org>
-Cc: "Peter Huewe" <peterhuewe@gmx.de>, "Jason Gunthorpe" <jgg@ziepe.ca>,
- "James Bottomley" <James.Bottomley@hansenpartnership.com>,
- <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <regressions@lists.linux.dev>
-Subject: Re: [REGRESSION][BISECTED] tpm: Popping noise in USB headphones
- since 1b6d7f9eb150
-From: "Jarkko Sakkinen" <jarkko@kernel.org>
-To: "Stefan Berger" <stefanb@linux.ibm.com>, "Christian Heusel"
- <christian@heusel.eu>
-X-Mailer: aerc 0.18.2
-References: <7d052744-4bfa-40bc-ba06-1b4c47a5eb87@heusel.eu>
- <D54YWMOV7KOO.2X0N035UHEFBD@kernel.org>
- <b3a01060-f59b-430d-afcc-48c5ec628bcb@heusel.eu>
- <D5Z62H0XCOQM.J4V5ZDH9E7C7@kernel.org>
- <ce7fa562-7cb7-4adc-934a-560b94ce44f0@linux.ibm.com>
-In-Reply-To: <ce7fa562-7cb7-4adc-934a-560b94ce44f0@linux.ibm.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue Dec 3, 2024 at 12:15 AM EET, Stefan Berger wrote:
+> FWIW,
 >
+> I have tested the series on AMD platforms and there are no issues.
 >
-> On 11/29/24 9:44 PM, Jarkko Sakkinen wrote:
-> > On Tue Nov 26, 2024 at 1:42 PM EET, Christian Heusel wrote:
-> >> On 24/10/25 05:47PM, Jarkko Sakkinen wrote:
-> >>> Yeah, this is on the list.
-> >>>
-> >>> See: https://bugzilla.kernel.org/show_bug.cgi?id=3D219383#c5
-> >>>
-> >>> I had a fix for the AMD boot-time issue already over a month ago
-> >>> but unfortunately took time to get enough feedback.
-> >>>
-> >>> BR, Jarkko
-> >>
-> >> I'm not sure if this is supposed to be fixed, but AFAIK we hoped that
-> >> the patchset that was mentioned in bugzilla also helped this issue.
-> >>
-> >> The reporter said that the bug is still present in 6.12.1, so this mig=
-ht
-> >> need further poking =F0=9F=A4=94
-> >=20
-> > I'd suggest a workaround for the time being.
-> >=20
-> > In 6.12 we added this for (heavy) IMA use:
-> >=20
-> > tpm.disable_pcr_integrity=3D [HW,TPM]
-> >                          Do not protect PCR registers from unintended p=
-hysical
-> >                          access, or interposers in the bus by the means=
- of
-> >                          having an integrity protected session wrapped =
-around
-> >                          TPM2_PCR_Extend command. Consider this in a si=
-tuation
-> >                          where TPM is heavily utilized by IMA, thus pro=
-tection
-> >                          causing a major performance hit, and the space=
- where
-> >                          machines are deployed is by other means guarde=
-d.
-> >=20
-> > Similarly it might make sense to have "tpm.disable_random_integrity"
-> > that disables the feature introduced by the failing commit.
-> >=20
->
-> I am wondering what could be the not-so-obvious root cause for this?=20
-> Could it be due to a (TPM or RNG-related) lock? I guess the audio=20
-> popping could occur if an application cannot meet timing requirements=20
-> when it runs into some sort of blocking lock...
+> Tested-by: Gautham R. Shenoy <gautham.shenoy@amd.com>
 
-The problem is that we don't know yet but we do know that it previously
-worked.
+Thanks!
 
-Or more importantly: that is the hypothesis. So it would be in all cases
-useful to create such patch for A/B testing at minimum.
-
-BR, Jarkko
 
