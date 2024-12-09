@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-438309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BE69E9F93
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:29:07 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFA9E162B6A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:28:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9D71199E84;
-	Mon,  9 Dec 2024 19:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Qjw34iwM"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6598E9E9F97
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:29:26 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A431A08CC;
-	Mon,  9 Dec 2024 19:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 093A4281E3A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:29:25 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28D21A2C0E;
+	Mon,  9 Dec 2024 19:26:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K9S/Trdl"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C951A0BE3;
+	Mon,  9 Dec 2024 19:26:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733772371; cv=none; b=TtkuPngfWCAqK9E+gryVDAAzg6yOQC+3aI2lENpj3Mi83gZJMVmRr2dqXwWYRCZDKlxVfWavTWFp+Bt7bFFjyJMyy+bFoMXUwRC4oMTBxhSb+X8ByFB4GbqbwYYtfHSwH2QbUMVS+6+p6AJK4U7sUWZbwpr3rwGoIL8mayMx5hM=
+	t=1733772373; cv=none; b=jmt3qL7lTYTUiDaNpkA6R8gklf2Z9ALOukowtZFZoXOTZxTvUrN8DCtLSc2xhubvoDBZZnG7lJPb6vUDZjUXdsY2z6yr9ETZEtIywbDYc0YDLSIC6aIw3DRliTVEjm4zT+Xved/gpvKcb1VHnN0Cfpg1ve3FjEtDnjNRwPtvN6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733772371; c=relaxed/simple;
-	bh=WIi9XoA9A2uc6JbaovPL4q1ymijAA7WpAaKJ8FZuIpk=;
+	s=arc-20240116; t=1733772373; c=relaxed/simple;
+	bh=LPNkuOmebHNuBo/pC6lnaWGMiAhUES4i8Dyjjjq50mk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=f1VUqf14bCZh1HvbdbEUr/mRHseI7D7IOc70nU/HzMj2/OLxi3mlRuipmy1F2D642lVM6Q7+3uC0v8+jV3yK8m5TIoQegdomrJNl695VvMITYN+7TIzkChPAOgdlWqcqfFSrr9vrZnuZZPBrdvVhBOi1SO0nAsaJTnZHTsiTXDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Qjw34iwM; arc=none smtp.client-ip=148.163.158.5
+	 MIME-Version; b=L2JNJlSy5JYu3QP96xSWOQG7NxLp8TZQrCKKanCOrWF9Osuy+ZgQS+O7RplWUf2o+B2ovzRK1LZF9DAHcNhfYCFkx56J0xWWSVmpUGWtb1HCs0RfalIhaoIcAzYJpW7qR4ygMcUXDG6VJPBGHQslKQeVRK4MTUwSDI+Jt1V9HV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K9S/Trdl; arc=none smtp.client-ip=148.163.156.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9B4xUG032677;
-	Mon, 9 Dec 2024 19:26:00 GMT
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9JBHF1024001;
+	Mon, 9 Dec 2024 19:26:02 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
 	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=nSZPheZvpKDOK9A3V
-	LIi74XqV9783u/Q0buFMWqezos=; b=Qjw34iwMaWT6hkQhZaYPsSCSnE033wwbw
-	fymslt49kYNjw+3HPCl970Gfd0LA8R8oE/hkXD/g6RAO+oF6gypaOPOPDvYQRbHy
-	WlVmFLp0ihfmnSkstkVFUc/zj0rDyyZ/jqkN4A1MSnt09Xvf46sYrzIZ7eCb3Ulo
-	vDJp8mlbw3ovQHDoXbaMIjNtQpq2ffFhloUfnm7YRPc+scDwVcmJ4gcbGkg3kdBy
-	IkeAkgsCX8Je0w1ftNHJSuBlGaTYv2yhGJw9h6jeSawKxSvRwChCzImpf9fGGUdu
-	+Vtgy/4m1yyaZuXU8G+xTX9UqdltHl6rsN0x/cTn42Hi/bAAEmWbA==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cbsq2hur-1
+	:mime-version:references:subject:to; s=pp1; bh=FunvrjiwafodM2rLJ
+	eOmhzOHrDQ5GsZcH0APQLk7yY8=; b=K9S/Trdl3Is20Lc7P73REHlus4ftIj1Am
+	ULl4sH8MpE3ok19WtPrzH0iDl4oH5eeHiq/rgj3Ig7gllAfhjyGLb/u1u0wdvhK9
+	xpxSAjWdIdQdFn+kzgYojRQUjp7aN9zDqD4bENK27mKXDb/Gn8fCNQdxpJnvFUt5
+	f6uTDdsG995SCwLKRKhp2liDgkOgZ0g2PqnarVa8wdg2ow2KEBkrVCbpKJG0sOnC
+	J97PKMU7VeDZQaitLRMMkNnfVA6kWsozSUM0Uk7MaYYRGN151n42T1wVefI8eDVN
+	pQfPtktg6NSjVxHPukuKN2bRg46EjF5WB9umuxyheZ1PZ6asxB3pA==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43cdv8k7nr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 19:26:00 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9J74W5018605;
-	Mon, 9 Dec 2024 19:25:59 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 43d26k80hn-1
+	Mon, 09 Dec 2024 19:26:01 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9HRcQc032727;
+	Mon, 9 Dec 2024 19:26:00 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0ps89x0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 19:25:59 +0000
+	Mon, 09 Dec 2024 19:26:00 +0000
 Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9JPwXO15532584
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9JPxHg25428568
 	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 9 Dec 2024 19:25:58 GMT
+	Mon, 9 Dec 2024 19:26:00 GMT
 Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A64858055;
+	by IMSVA (Postfix) with ESMTP id D3F8B58055;
+	Mon,  9 Dec 2024 19:25:59 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BB3A458043;
 	Mon,  9 Dec 2024 19:25:58 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 82A8C58043;
-	Mon,  9 Dec 2024 19:25:57 +0000 (GMT)
 Received: from li-2311da4c-2e09-11b2-a85c-c003041e9174.ibm.com.com (unknown [9.61.107.222])
 	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  9 Dec 2024 19:25:57 +0000 (GMT)
+	Mon,  9 Dec 2024 19:25:58 +0000 (GMT)
 From: Matthew Rosato <mjrosato@linux.ibm.com>
 To: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
         gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
@@ -73,9 +73,9 @@ Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
         svens@linux.ibm.com, borntraeger@linux.ibm.com, clegoate@redhat.com,
         iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
         linux-s390@vger.kernel.org
-Subject: [PATCH 6/7] iommu/s390: support map/unmap for additional table regions
-Date: Mon,  9 Dec 2024 14:25:48 -0500
-Message-ID: <20241209192549.107226-7-mjrosato@linux.ibm.com>
+Subject: [PATCH 7/7] iommu/s390: allow larger region tables
+Date: Mon,  9 Dec 2024 14:25:49 -0500
+Message-ID: <20241209192549.107226-8-mjrosato@linux.ibm.com>
 X-Mailer: git-send-email 2.47.1
 In-Reply-To: <20241209192549.107226-1-mjrosato@linux.ibm.com>
 References: <20241209192549.107226-1-mjrosato@linux.ibm.com>
@@ -87,169 +87,73 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BCmp2h_SP5dqWOkrgzTFC7HPTzhRqxmR
-X-Proofpoint-GUID: BCmp2h_SP5dqWOkrgzTFC7HPTzhRqxmR
+X-Proofpoint-GUID: uCaPcHQf14DWuo35zKYXSM53Mm4iXKLh
+X-Proofpoint-ORIG-GUID: uCaPcHQf14DWuo35zKYXSM53Mm4iXKLh
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
  definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- lowpriorityscore=0 clxscore=1015 phishscore=0 impostorscore=0
- suspectscore=0 spamscore=0 mlxscore=0 priorityscore=1501 malwarescore=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 clxscore=1015 mlxscore=0
+ malwarescore=0 adultscore=0 phishscore=0 suspectscore=0 mlxlogscore=903
  bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090147
+ engine=8.19.0-2411120000 definitions=main-2412090143
 
-Map and unmap ops use the shared dma_walk_cpu_trans routine, update
-this using the origin_type of the dma_table to determine how many
-table levels must be walked.
+Extend the aperture calculation to consider sizes beyond the maximum
+size of a region third table.  Attempt to always use the smallest
+table size possible to avoid unnecessary extra steps during translation.
 
 Signed-off-by: Matthew Rosato <mjrosato@linux.ibm.com>
 ---
- drivers/iommu/s390-iommu.c | 101 ++++++++++++++++++++++++++++++++++---
- 1 file changed, 93 insertions(+), 8 deletions(-)
+ arch/s390/include/asm/pci_dma.h |  1 +
+ drivers/iommu/s390-iommu.c      | 22 +++++++++++++++++-----
+ 2 files changed, 18 insertions(+), 5 deletions(-)
 
+diff --git a/arch/s390/include/asm/pci_dma.h b/arch/s390/include/asm/pci_dma.h
+index 8d8962e4fd58..d12e17201661 100644
+--- a/arch/s390/include/asm/pci_dma.h
++++ b/arch/s390/include/asm/pci_dma.h
+@@ -25,6 +25,7 @@ enum zpci_ioat_dtype {
+ #define ZPCI_KEY			(PAGE_DEFAULT_KEY << 5)
+ 
+ #define ZPCI_TABLE_SIZE_RT	(1UL << 42)
++#define ZPCI_TABLE_SIZE_RS	(1UL << 53)
+ 
+ #define ZPCI_IOTA_STO_FLAG	(ZPCI_IOTA_IOT_ENABLED | ZPCI_KEY | ZPCI_IOTA_DT_ST)
+ #define ZPCI_IOTA_RTTO_FLAG	(ZPCI_IOTA_IOT_ENABLED | ZPCI_KEY | ZPCI_IOTA_DT_RT)
 diff --git a/drivers/iommu/s390-iommu.c b/drivers/iommu/s390-iommu.c
-index cea528bf61db..4924fe9faccb 100644
+index 4924fe9faccb..c6b2bca881c3 100644
 --- a/drivers/iommu/s390-iommu.c
 +++ b/drivers/iommu/s390-iommu.c
-@@ -316,6 +316,60 @@ static unsigned long *dma_alloc_page_table(gfp_t gfp)
- 	return table;
- }
+@@ -953,12 +953,24 @@ int zpci_init_iommu(struct zpci_dev *zdev)
+ 		goto out_sysfs;
  
-+static unsigned long *dma_get_rs_table_origin(unsigned long *rfep, gfp_t gfp)
-+{
-+	unsigned long old_rfe, rfe;
-+	unsigned long *rso;
-+
-+	rfe = READ_ONCE(*rfep);
-+	if (reg_entry_isvalid(rfe)) {
-+		rso = get_rf_rso(rfe);
+ 	zdev->start_dma = PAGE_ALIGN(zdev->start_dma);
+-	aperture_size = min3(s390_iommu_aperture,
+-			     ZPCI_TABLE_SIZE_RT - zdev->start_dma,
+-			     zdev->end_dma - zdev->start_dma + 1);
++	aperture_size = min(s390_iommu_aperture,
++			    zdev->end_dma - zdev->start_dma + 1);
++	if (aperture_size <= (ZPCI_TABLE_SIZE_RT - zdev->start_dma)) {
++		zdev->origin_type = ZPCI_TABLE_TYPE_RTX;
++		zdev->max_table_size = ZPCI_TABLE_SIZE_RT - 1;
++	} else if (aperture_size <= (ZPCI_TABLE_SIZE_RS - zdev->start_dma) &&
++		  (zdev->dtsm & ZPCI_IOTA_DT_RS)) {
++		zdev->origin_type = ZPCI_TABLE_TYPE_RSX;
++		zdev->max_table_size = ZPCI_TABLE_SIZE_RS - 1;
++	} else if (zdev->dtsm & ZPCI_IOTA_DT_RF) {
++		zdev->origin_type = ZPCI_TABLE_TYPE_RFX;
++		zdev->max_table_size = U64_MAX;
 +	} else {
-+		rso = dma_alloc_cpu_table(gfp);
-+		if (!rso)
-+			return NULL;
-+
-+		set_rf_rso(&rfe, virt_to_phys(rso));
-+		validate_rf_entry(&rfe);
-+		entry_clr_protected(&rfe);
-+
-+		old_rfe = cmpxchg(rfep, ZPCI_TABLE_INVALID, rfe);
-+		if (old_rfe != ZPCI_TABLE_INVALID) {
-+			/* Somone else was faster, use theirs */
-+			dma_free_cpu_table(rso);
-+			rso = get_rf_rso(old_rfe);
-+		}
++		/* Assume RTX available */
++		zdev->origin_type = ZPCI_TABLE_TYPE_RTX;
++		zdev->max_table_size = ZPCI_TABLE_SIZE_RT - 1;
 +	}
-+	return rso;
-+}
-+
-+static unsigned long *dma_get_rt_table_origin(unsigned long *rsep, gfp_t gfp)
-+{
-+	unsigned long old_rse, rse;
-+	unsigned long *rto;
-+
-+	rse = READ_ONCE(*rsep);
-+	if (reg_entry_isvalid(rse)) {
-+		rto = get_rs_rto(rse);
-+	} else {
-+		rto = dma_alloc_cpu_table(gfp);
-+		if (!rto)
-+			return NULL;
-+
-+		set_rs_rto(&rse, virt_to_phys(rto));
-+		validate_rs_entry(&rse);
-+		entry_clr_protected(&rse);
-+
-+		old_rse = cmpxchg(rsep, ZPCI_TABLE_INVALID, rse);
-+		if (old_rse != ZPCI_TABLE_INVALID) {
-+			/* Somone else was faster, use theirs */
-+			dma_free_cpu_table(rto);
-+			rto = get_rs_rto(old_rse);
-+		}
-+	}
-+	return rto;
-+}
-+
- static unsigned long *dma_get_seg_table_origin(unsigned long *rtep, gfp_t gfp)
- {
- 	unsigned long old_rte, rte;
-@@ -369,11 +423,45 @@ static unsigned long *dma_get_page_table_origin(unsigned long *step, gfp_t gfp)
- 	return pto;
- }
+ 	zdev->end_dma = zdev->start_dma + aperture_size - 1;
+-	zdev->origin_type = ZPCI_TABLE_TYPE_RTX;
+-	zdev->max_table_size = ZPCI_TABLE_SIZE_RT - 1;
  
--static unsigned long *dma_walk_cpu_trans(unsigned long *rto, dma_addr_t dma_addr, gfp_t gfp)
-+static unsigned long *dma_walk_region_tables(struct s390_domain *domain,
-+					     dma_addr_t dma_addr, gfp_t gfp)
-+{
-+	unsigned long *rfo, *rso;
-+	unsigned int rfx, rsx;
-+
-+	switch (domain->origin_type) {
-+	case ZPCI_TABLE_TYPE_RFX:
-+		rfo = domain->dma_table;
-+		goto walk_rf;
-+	case ZPCI_TABLE_TYPE_RSX:
-+		rso = domain->dma_table;
-+		goto walk_rs;
-+	case ZPCI_TABLE_TYPE_RTX:
-+		return domain->dma_table;
-+	default:
-+		return NULL;
-+	}
-+
-+walk_rf:
-+	rfx = calc_rfx(dma_addr);
-+	rso = dma_get_rs_table_origin(&rfo[rfx], gfp);
-+	if (!rso)
-+		return NULL;
-+walk_rs:
-+	rsx = calc_rsx(dma_addr);
-+	return dma_get_rt_table_origin(&rso[rsx], gfp);
-+}
-+
-+static unsigned long *dma_walk_cpu_trans(struct s390_domain *domain,
-+					 dma_addr_t dma_addr, gfp_t gfp)
- {
--	unsigned long *sto, *pto;
-+	unsigned long *rto, *sto, *pto;
- 	unsigned int rtx, sx, px;
+ 	return 0;
  
-+	rto = dma_walk_region_tables(domain, dma_addr, gfp);
-+	if (!rto)
-+		return NULL;
-+
- 	rtx = calc_rtx(dma_addr);
- 	sto = dma_get_seg_table_origin(&rto[rtx], gfp);
- 	if (!sto)
-@@ -665,8 +753,7 @@ static int s390_iommu_validate_trans(struct s390_domain *s390_domain,
- 	int rc;
- 
- 	for (i = 0; i < nr_pages; i++) {
--		entry = dma_walk_cpu_trans(s390_domain->dma_table, dma_addr,
--					   gfp);
-+		entry = dma_walk_cpu_trans(s390_domain, dma_addr, gfp);
- 		if (unlikely(!entry)) {
- 			rc = -ENOMEM;
- 			goto undo_cpu_trans;
-@@ -681,8 +768,7 @@ static int s390_iommu_validate_trans(struct s390_domain *s390_domain,
- undo_cpu_trans:
- 	while (i-- > 0) {
- 		dma_addr -= PAGE_SIZE;
--		entry = dma_walk_cpu_trans(s390_domain->dma_table,
--					   dma_addr, gfp);
-+		entry = dma_walk_cpu_trans(s390_domain, dma_addr, gfp);
- 		if (!entry)
- 			break;
- 		dma_update_cpu_trans(entry, 0, ZPCI_PTE_INVALID);
-@@ -699,8 +785,7 @@ static int s390_iommu_invalidate_trans(struct s390_domain *s390_domain,
- 	int rc = 0;
- 
- 	for (i = 0; i < nr_pages; i++) {
--		entry = dma_walk_cpu_trans(s390_domain->dma_table, dma_addr,
--					   GFP_ATOMIC);
-+		entry = dma_walk_cpu_trans(s390_domain, dma_addr, GFP_ATOMIC);
- 		if (unlikely(!entry)) {
- 			rc = -EINVAL;
- 			break;
 -- 
 2.47.0
 
