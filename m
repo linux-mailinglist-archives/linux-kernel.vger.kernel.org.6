@@ -1,138 +1,116 @@
-Return-Path: <linux-kernel+bounces-437957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2971C9E9AFB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:57:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 387BF9E9AF5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:55:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DF118874F6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:57:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AD0B165351
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8951369B4;
-	Mon,  9 Dec 2024 15:56:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KMjxD+Gr"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC59413790B;
+	Mon,  9 Dec 2024 15:55:31 +0000 (UTC)
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3810233139;
-	Mon,  9 Dec 2024 15:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DED7578C9C;
+	Mon,  9 Dec 2024 15:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759817; cv=none; b=mZX0I1Fe71Orx3tsYNrEusjCGjPAdkU/YH4Ma+ihBBshBGq/k/HEASMkOyVmfSm+OMpj5gaT9Y96QcMA0rmHfKQJi8XEjY73Fjl42NKcw/dOWg/UkZ5VO0FCvt+UKCJqWA5CSKETlQtwupE39+Xba8VJI7cFQays2bNAwCkBfmk=
+	t=1733759731; cv=none; b=MAgtggmlkD4Dw0UX8HWFnEYMK8uvQraG7pEbOAoCla3uiDBLrbcLfbfClG4BiMDVZJYafF6sUA4E88acm9BrS/foFoO1i6WAATTWWXliutRcMJMsYPw3cEZ3ibo5XlWgaVLQnvGqrl7nPhhLtp5va0MwYBm1vUP3qfh6ssA3BA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759817; c=relaxed/simple;
-	bh=A6wM4VWA9krXQgwIlMNaGA/cVuxsmxetqtEokNetuH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dbkU6uIpJrfafpHHIUnbzoKp2iG4VSKKXMzG2JeyffC+Zp5qH8/JuAFZw++TBOjhZ+TFWYYvQVZc3OE4pCnlFsN813THMTTYIbFXOsRrYLxyLf6K8bSyZBjoCct2OQGCQs7F3auKY9iASuB7xc+e1b0U5gCOZLarxv6Ofadl9Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KMjxD+Gr; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9E3IDX013783;
-	Mon, 9 Dec 2024 16:56:34 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	6q/GQ8e/5AdWnp2sT3tKqIF8BpsMpOI2KwP+899KLBQ=; b=KMjxD+Gr23lmaDkx
-	rxl8Eb/Gr+eMbb6QYtDzJgYhY1oeHFkm1S2UzRgUT9nIwlGldeLVi+PYMgXkBKNn
-	AvmJHJHDlWQUX5+K/iY6G3NtYLFqUvKP+HKCeqfGWS5CqiIX73wb1+kluthGzjwt
-	XNrR/Vzw+uhrnzFqaZjySTFLPNJOT+x3iR7acZhprr5tRo6JAu8PmGkCjhXTuuzx
-	XaMwIxR7uJ5RFQzBJgiedmNXqvcz0V9KfpnnDFH2n2sRdf2gKvKtpHaMYhVSxoYo
-	6rCqcdZ7bvfNmSS6DOeMGuHs86grpt3LaALNmfKEGQXglirqMt9BPmGD2RPrfGgq
-	vHqoeg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccnm0w6p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 16:56:34 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 68A0D4004B;
-	Mon,  9 Dec 2024 16:55:25 +0100 (CET)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 074CA28D444;
-	Mon,  9 Dec 2024 16:54:39 +0100 (CET)
-Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
- 2024 16:54:38 +0100
-Message-ID: <feca2ea8-38f9-41c8-b4c4-1a6cbeec73a4@foss.st.com>
-Date: Mon, 9 Dec 2024 16:54:20 +0100
+	s=arc-20240116; t=1733759731; c=relaxed/simple;
+	bh=XswTRhc2FgsKGapPraVnaq5t3FsVcVZuNOD29axiOxs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rfn1eyeXwquhTVLimTLYejlGocHwmLrMCWrpu6ZQ8OwK4E7hxcEFhi4ybMT1C3XuQOWnsczxS6TuMAq1w6zrjDUCFVF6ER4xOkMUeHyKHqs9R6D09y5YlYUmGJNhImiJw9JUU0SlxTwsNQlsY67S0IFcmTMOMZFOusMM+Dw070g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-517ae9ff6e8so348912e0c.3;
+        Mon, 09 Dec 2024 07:55:29 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733759728; x=1734364528;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=j5iSM4ixQflBoS0B8PVVLYzHGyv6dQ39nvBtZwQMiCA=;
+        b=YybBHg0fMsYDi2NanqK/AjO1ywrpMnIHuo2GWpykaJm7lT+rPmSLK8wqT6yuvEoW1c
+         SleEhtKe2YqVmRCM8pyR/QjYB7jyYAHkmtoGWaBapNYLLeizrW2y4dLO5QtoqdezvkBB
+         MSfXMlgrbrlsQOU42QSFAwMeynEtbpZaGx+Nvh+B6vUL8+DyqoHDZe25jioHu9hwo1nH
+         tMPm4Tnmqn/ic+Tp5XWdQOaw2HwYue5ht0wsU+wckNkgIDerlb0zlw+Y3VlIhIIk/R5t
+         vJIa0ZMLn7DvATifasZSh4B5iCQwpimBsxHMRjJvKg9mlMAtBi7iqWuDTAc7T6b9JX9O
+         RcuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXpJ70HiNQMxWKpL+h9L7iBmRpSasN5mgLOk3y49kE+YJwvhMWAPUipVCXVEIzIWOVgyqpDOzKWrfC@vger.kernel.org, AJvYcCUo2ClH2ztmEbnnYfGvw1XV4GCE0Gswwd97scA1F3ppE00jvObNNgImOgybIQnkKQuAxXPtmXSd7fag3w==@vger.kernel.org, AJvYcCVSgu/Gohv630YRPLqkbNhh7CkJj/u3q+fxbe8CUpmahOGPEM2CEbeHzfqrEP5OXrrvHLs5tjohXxJKVRDR@vger.kernel.org, AJvYcCVzRIJ2cg4nhWqnuGVRo91nWj0AzvgML/HtfvDvv3j2ippz2igMdCbcFIZBoiiY/HhxcukDbrwJkJHz@vger.kernel.org, AJvYcCXCBaip20g7noiEFWS5yicn1ZsCfYWKBLSHsSIcHX+Bu7ZDhIeJ1KFcZGd78y1LEyOgq7UwPoE6+LB6Sh4=@vger.kernel.org, AJvYcCXU8yJ9opNfXz/zH9zLDJ3fu8pHlSJHEqxPr0i6yJfBbYUkMSH4ZaQ+DbygemeynYgmdr03MOaDljWtjyv9doQfpBE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPpzKWhe1F72990pydvi3ZK72h1fVVhqMQwgWPt32125n4lsR/
+	ZZCxwrVHBvBP9iIUmSJoGC5dCNvPD1Zl8HhOZO3/MNcPUQHSC+mNUiBa0HzP4g8=
+X-Gm-Gg: ASbGncuyB6eGkN1ABdrGE2gQL3xa6DS15w9Kc+RyGKB2wNqXZ3hrLEglaV1DU2TfK+n
+	F2x6zksmNFQQezKPDYXX/Vn95RUyQskbODCz3nkWR9wX0iyRNHMLezcQEKA5NPgyAa8OmBit/9w
+	gyd7uq1RXwlYwpS06FXICf8qPEvHCoLUkZ4zRE1wbQJgBenYBMkxLjgX/7ifAZBFq+G+0k8FpXg
+	l1lgNTbQUMx/dM30mu2aHgFQShJnTCO/5Vi4wSQJgxKX1Io6CDnJh4OQ4KgmLOnHOS0lbsfQOzh
+	/C0VJQzrOZigVvVV
+X-Google-Smtp-Source: AGHT+IGauaD9zmQKDL9wEafyogWUEnj70oQrlvS72K1x5VCEWXrwcrqyy+mpdsUDr6XIUPrK1adpbQ==
+X-Received: by 2002:a05:6122:3981:b0:50c:4efb:835a with SMTP id 71dfb90a1353d-515fc9e20c0mr12225599e0c.1.1733759728089;
+        Mon, 09 Dec 2024 07:55:28 -0800 (PST)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-515eae3edfcsm751157e0c.12.2024.12.09.07.55.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 07:55:27 -0800 (PST)
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-515fc723d3eso880287e0c.0;
+        Mon, 09 Dec 2024 07:55:27 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUw/RhNAp/AYkBQEpwdNkUgpY1DZGhn2L/3/C6TLIvHFUN8RTFmWWNcd1p4qK497QWZg3sTKMtiF6Go7sDR@vger.kernel.org, AJvYcCW8MPpHfPgnAYxnIcMqD7KnRnJsc13yqPLHqRi6A1X2BS/YLqVKnjFmqDBgUtmZ62E+mhNMNvFv/WigOscd5Z6y+yk=@vger.kernel.org, AJvYcCWgU16gopZJK1UYBH0RlprdPqWqT1Lsyf5u8v9QWkz3tGDY4avgiU1XNIjRJlCg5YrB/Lih/Ize/9/d6g==@vger.kernel.org, AJvYcCXEt+NdAlGSPCtgOnKWGh6PviiW5tkmQ0k5HNBAnCJ/xE/Tt/AqVohkgabtlqmya/ZlFtWPH5rVx5vj@vger.kernel.org, AJvYcCXJRgndOYF/ypOS+S06kt9WMO0C2+qgb+2vB3hAzMYRlOxpKUvGoovldDUGx9uc/OuYRBnNie3xv41WOdU=@vger.kernel.org, AJvYcCXxpt6wC8FSqidmNxeTW6H/MkC4RPiByOPzsuCy6UN7V/kA8U4c80LiA0BpgyLU39ZYND2rbAqjdqB4@vger.kernel.org
+X-Received: by 2002:a05:6122:308e:b0:517:83d1:d438 with SMTP id
+ 71dfb90a1353d-51783d1d7d7mr3556407e0c.3.1733759727639; Mon, 09 Dec 2024
+ 07:55:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/6] ARM: dts: stm32: lxa-tac: fix gen{1,2} boards and add
- gen3 board
-To: Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>
-CC: <kernel@pengutronix.de>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>
-References: <20241119-lxa-tac-gen3-v1-0-e0ab0a369372@pengutronix.de>
- <20241209-magenta-boobook-of-respect-14ec68-mkl@pengutronix.de>
-Content-Language: en-US
-From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
-In-Reply-To: <20241209-magenta-boobook-of-respect-14ec68-mkl@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-26-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-26-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 16:55:16 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdW0Rg9J+cqoeP_z5Xr5RYCbNG++4o6gRunEhQ3WfSqx=A@mail.gmail.com>
+Message-ID: <CAMuHMdW0Rg9J+cqoeP_z5Xr5RYCbNG++4o6gRunEhQ3WfSqx=A@mail.gmail.com>
+Subject: Re: [PATCH v3 25/25] arm64: dts: renesas: rzg3s-smarc: Add sound card
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Marc
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add sound card with SSI3 as CPU DAI and DA7212 as codec DAI.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On 12/9/24 15:30, Marc Kleine-Budde wrote:
-> Hello Alexandre,
-> 
-> On 19.11.2024 12:34:57, Marc Kleine-Budde wrote:
->> Hello,
->>
->> this series fixes some problems found in the lxa-tac generation 1 and
->> 2 boards and add support for the generation 3 board. It's based on an
->> STM32MP153c, while the generation 1 and 2 are based on the
->> STM32MP157c.
->>
->> regards,
->> Marc
->>
->> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
->> ---
->> Leonard Göhrs (6):
->>        ARM: dts: stm32: lxa-tac: disable the real time clock
->>        ARM: dts: stm32: lxa-tac: extend the alias table
->>        ARM: dts: stm32: lxa-tac: adjust USB gadget fifo sizes for multi function
->>        dt-bindings: arm: stm32: add compatible strings for Linux Automation LXA TAC gen 3
->>        ARM: dts: stm32: lxa-tac: move adc and gpio{e,g} to gen{1,2} boards
->>        ARM: dts: stm32: lxa-tac: Add support for generation 3 devices
->>
->>   .../devicetree/bindings/arm/stm32/stm32.yaml       |   7 +
->>   arch/arm/boot/dts/st/Makefile                      |   1 +
->>   arch/arm/boot/dts/st/stm32mp153c-lxa-tac-gen3.dts  | 267 +++++++++++++++++++++
->>   arch/arm/boot/dts/st/stm32mp157c-lxa-tac-gen1.dts  |  84 +++++++
->>   arch/arm/boot/dts/st/stm32mp157c-lxa-tac-gen2.dts  |  84 +++++++
->>   arch/arm/boot/dts/st/stm32mp15xc-lxa-tac.dtsi      | 100 +-------
->>   6 files changed, 455 insertions(+), 88 deletions(-)
-> 
-> since the merge window is open, can you merge this series please.
+LGTM, so
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Yes sure. It will be in my PR for v6.14.
+Gr{oetje,eeting}s,
 
-regards
-Alex
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-
-> regards,
-> Marc
-> 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
