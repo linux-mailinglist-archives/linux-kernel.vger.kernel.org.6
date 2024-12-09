@@ -1,225 +1,185 @@
-Return-Path: <linux-kernel+bounces-437131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 777619E8F74
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:56:29 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 030961887062
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:56:21 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F585215F60;
-	Mon,  9 Dec 2024 09:54:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ndjpzBnT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 730609E8F78
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:56:40 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF334216606;
-	Mon,  9 Dec 2024 09:54:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AF6C283DBC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:56:39 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD455217642;
+	Mon,  9 Dec 2024 09:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xPX+yPSb"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44812216E2D
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 09:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733738072; cv=none; b=sCnRhwXzyPCq0lMnl1YhYYaOKQeFEcTQkrPBuXqhzTPSG7igKkD2hUvGdhkijn0sQewDbNE112VDA6YeSQVxjOIYou4wAgjufQf8eLVR+yS3VIDxxiHJkeOTTV7iTsujA7yzt+3a+Ca7uWf/e/OyE4U3fiulwJSbVwKF4mr7bdA=
+	t=1733738092; cv=none; b=azKCdaTt2f5AGlGx/3VWOmX5sVdglvng3KLpfHFZCTDy8ufCOYO8lYYjejX88ryqtmn+sl3BeEFyEfFBewgOvlXBMgR3kJvNRep6x5qSrJNZ18qE/bRW2ZVfO79GJI5IRxVnQCUihQlLXLev9hAK1d0V9PzsMLcI08R30/FLpnk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733738072; c=relaxed/simple;
-	bh=8KrOzz1PgbSErfhC2I3kQ/sYbxXPyl6RjlXIVILvOrI=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KF5OokXC3si8WOCeIzk4prxBqP+bZrw0Bvl9ItUcZ6ZcrvhBG2V96vUH1umKi1Q8F3Btl/UaCTVO0mM5jYNlmpHrJhbwg4NjcDGf1ha46GTC7sebw3k6g65lTjuc4/qxsTaiDcENl/g2QK8wcKcBtydztVNJ9VmwBVHMHQmZTqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ndjpzBnT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E781C4CED1;
-	Mon,  9 Dec 2024 09:54:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733738072;
-	bh=8KrOzz1PgbSErfhC2I3kQ/sYbxXPyl6RjlXIVILvOrI=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ndjpzBnT83lfYQeQZCm6qfkczXzMeH7Q3bMaOjhcWbn0YGlmSsOGCwnVpY9rAK+ld
-	 R2VVnNr2zFwgWPZ+y98EZjBx3AAglqflxNZpODD4cr4v58E5TGU/cKEN388ajDIZEE
-	 VXV9LXTsXvNK0RMHoqhbCHXFFvJKP4V3GKRzxnzfO76csJMtY7BwjkkxEg4ult/NmQ
-	 juOXJr+3xJrttFZc0vV8HEcnwczLZ/bLtQVpr0nb2wLAFrCdqWpHnlPKR1Zgw7oPRi
-	 3NAyyySso3/tVzBuQ+gBlqe2P7iv8spop1O/bL49nnjsGhBMAr33xAqRhfyxMT6frT
-	 N7pfEqMpro7tA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tKaTF-001oNM-SO;
-	Mon, 09 Dec 2024 09:54:29 +0000
-Date: Mon, 09 Dec 2024 09:54:29 +0000
-Message-ID: <867c89tc4q.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-Cc: kvmarm <kvmarm@lists.linux.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	oliver.upton@linux.dev,
-	christoffer.dall@arm.com,
-	suzuki.poulose@arm.com,
-	will@kernel.org,
-	catalin.marinas@arm.com,
-	coltonlewis@google.com,
-	joey.gouly@arm.com,
-	yuzenghui@huawei.com,
-	darren@os.amperecomputing.com,
-	vishnu@os.amperecomputing.com
-Subject: Re: [PATCH] KVM: arm64: nv: Set ISTATUS for emulated timers, If timer expired
-In-Reply-To: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
-References: <20241209053201.339939-1-gankulkarni@os.amperecomputing.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1733738092; c=relaxed/simple;
+	bh=brSlrdl20T89H2oF3r14Lo+1EPhuh5vxJjI9q622k/0=;
+	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
+	 MIME-Version:Content-Type; b=oWLknbcjBlsKwZTFOn0m6E1CalfU1pfcv9GLVOvinJXhESv6ymLc8qqxZKJTP7osZcjd5iwOlm2+axDldqX0UnkyamjSaGLA9ShSHmJgOlN1nMFk2IdF7SGCeEVn8X6PrcWECGNozzw5sSd3RuorJINNDrTQjqPIf8az0hiojd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xPX+yPSb; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-72739105e02so163591b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 01:54:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733738089; x=1734342889; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=lY7hPuoQ1eszRWP8btpBTOZvUIP/hTknYJ2k91/KJYQ=;
+        b=xPX+yPSbKjCEXC+UJvG0cIjr50hIH1Q2stPMgIxf90z0RbeCbv+F6KSltEVoGt2S6i
+         z+AftMkm78s61OYSehh1sIz3NKtmWjmCYC/nV4FsxYw5hZ9hvLBAKFZ+ao2lO8TSyZLB
+         aEwqQu7JURJyh1hbqnhbkyvsNeIfw3l3anohXjpwKX07ABAh6Nh/S1aoI07Z3QM2fwEO
+         ExWWku5yucGLEcH1zLU2Rf3vYK3zH8XZErWca+6eLmnbUkXmyl0U/JcRL0lP5XXGDs8i
+         9t6458w0dOAmrNdy+z2jLVGC+wCBSG2zITfa0KPFMj2HHW0pSPTonLL2nw1vrsQc2yiY
+         uesg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733738089; x=1734342889;
+        h=content-transfer-encoding:mime-version:message-id:references
+         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lY7hPuoQ1eszRWP8btpBTOZvUIP/hTknYJ2k91/KJYQ=;
+        b=FraivCaXdeq1cnRYmj9TTUjkgrUvsMmbjykwjzD9ge8BW8GivQ7YgKN429qbUA8sta
+         q+DYzIwEFBuNuRB/zrx/W7O8gpzQ0PTs2ocohQEgY50zjEiBx3Ctwa3dXcevQbfin425
+         1mvn8t6yOd0ZJcALMPnrqmJ6xqt/ibYrwYYpcSGB2+aFF9SNxbCJFduPSBqtj/1OLh71
+         Ln1ACRSiSQ0qQPHeEgKWBIeAcmtg3Tj5Uy5MBOO2s1pEuXdhRkrqBFtZ5R177vo5gBSU
+         VJd7XgQxtniYkyj5TZVqCL582Salzwrc2xqHSb1EQLO/ItrIC0QbY2xynQt2q2au8NiM
+         oxnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWDaOvBvKiamOA17/oFYJ9KHzTnhECgBbFoVs+b6AskifV3XnSKxIFJzL46di4GMLIIu0zXBLMh986ASX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+FF9SequsMkNXZ8rRDWm6qHlA7aYlcWax00k6zJuRNaI/2CBZ
+	m2ITbvZ6LF4JVzhjQQVelD62QlMiRGZ0OTiLAI3rkrPMI63L7KNRi/LY3VKcVA==
+X-Gm-Gg: ASbGncudJ85yf1jj3d59HtjX7l8ioDzqoLyRg7hekb0OhyEBfR49bcw4qFwnRbi26Dr
+	Ut2Z6GxiblPp/Sgbl6auQ4A85M6+cIZrgfPWJAuUFjotF6wEVNk1feuD0+XNNbH/dnUbJbzB0P0
+	i3dJ/bmaQWkiawRyHVVyWEdK1Slkaj0nenJbaP4kVGasbmi3jmpeRjSMsFPyVn0LgD0RyCrv/zd
+	yUIjWQKu3bwUm1u/CMztcgU2JLaSqqE5dAp3A5Hsl6chHJHoQ==
+X-Google-Smtp-Source: AGHT+IFntcqxaX3TaBgS9jyGem5/YtIrpH0Uh1RVsUOPf21x3pzvR9H4bLckULF1udKYYjc2IlTGeA==
+X-Received: by 2002:a05:6a00:189b:b0:71d:f4ef:6b3a with SMTP id d2e1a72fcca58-725b81bdaebmr20355312b3a.21.1733738089497;
+        Mon, 09 Dec 2024 01:54:49 -0800 (PST)
+Received: from ?IPv6:::1? ([2409:40f4:3017:99ae:8000::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-725a2a90339sm7357513b3a.105.2024.12.09.01.54.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 01:54:48 -0800 (PST)
+Date: Mon, 09 Dec 2024 15:24:45 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: "Havalige, Thippeswamy" <thippeswamy.havalige@amd.com>
+CC: Bjorn Helgaas <helgaas@kernel.org>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "lpieralisi@kernel.org" <lpieralisi@kernel.org>,
+ "kw@linux.com" <kw@linux.com>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "jingoohan1@gmail.com" <jingoohan1@gmail.com>,
+ "Simek, Michal" <michal.simek@amd.com>,
+ "Gogada, Bharat Kumar" <bharat.kumar.gogada@amd.com>
+Subject: RE: [PATCH 2/2] PCI: amd-mdb: Add AMD MDB Root Port driver
+User-Agent: K-9 Mail for Android
+In-Reply-To: <SN7PR12MB72012B3F617DCE9BC398227C8B3C2@SN7PR12MB7201.namprd12.prod.outlook.com>
+References: <20241127115804.2046576-3-thippeswamy.havalige@amd.com> <20241129202202.GA2771092@bhelgaas> <SN7PR12MB72011B385AD20A70DB8B56338B352@SN7PR12MB7201.namprd12.prod.outlook.com> <20241208125858.u2f3tk63bxmww3l6@thinkpad> <SN7PR12MB72012B3F617DCE9BC398227C8B3C2@SN7PR12MB7201.namprd12.prod.outlook.com>
+Message-ID: <E73C5B2C-A594-49DB-9AF6-F2E3FDE972A4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
+MIME-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: gankulkarni@os.amperecomputing.com, kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, oliver.upton@linux.dev, christoffer.dall@arm.com, suzuki.poulose@arm.com, will@kernel.org, catalin.marinas@arm.com, coltonlewis@google.com, joey.gouly@arm.com, yuzenghui@huawei.com, darren@os.amperecomputing.com, vishnu@os.amperecomputing.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Ganapatrao,
 
-Did you notice that the Columbia list was killed over two years ago,
-as per ac107abef1976 ("KVM: arm64: Advertise new kvmarm mailing
-list")? Consider that script/get_maintainer.pl is your friend.
 
-Cc'ing the correct list instead,
+On December 9, 2024 3:14:15 PM GMT+05:30, "Havalige, Thippeswamy" <thippes=
+wamy=2Ehavalige@amd=2Ecom> wrote:
+>Hi Sadhasivam,
+>
+>> -----Original Message-----
+>> From: manivannan=2Esadhasivam@linaro=2Eorg <manivannan=2Esadhasivam@lin=
+aro=2Eorg>
+>> Sent: Sunday, December 8, 2024 6:29 PM
+>> To: Havalige, Thippeswamy <thippeswamy=2Ehavalige@amd=2Ecom>
+>> Cc: Bjorn Helgaas <helgaas@kernel=2Eorg>; bhelgaas@google=2Ecom;
+>> lpieralisi@kernel=2Eorg; kw@linux=2Ecom; robh@kernel=2Eorg; krzk+dt@ker=
+nel=2Eorg;
+>> conor+dt@kernel=2Eorg; linux-pci@vger=2Ekernel=2Eorg; devicetree@vger=
+=2Ekernel=2Eorg; linux-
+>> kernel@vger=2Ekernel=2Eorg; jingoohan1@gmail=2Ecom; Simek, Michal
+>> <michal=2Esimek@amd=2Ecom>; Gogada, Bharat Kumar
+>> <bharat=2Ekumar=2Egogada@amd=2Ecom>
+>> Subject: Re: [PATCH 2/2] PCI: amd-mdb: Add AMD MDB Root Port driver
+>>=20
+>> On Mon, Dec 02, 2024 at 08:21:36AM +0000, Havalige, Thippeswamy wrote:
+>>=20
+>> [=2E=2E=2E]
+>>=20
+>> > > > +	d =3D irq_domain_get_irq_data(pcie->mdb_domain, irq);
+>> > > > +	if (intr_cause[d->hwirq]=2Estr)
+>> > > > +		dev_warn(dev, "%s\n", intr_cause[d->hwirq]=2Estr);
+>> > > > +	else
+>> > > > +		dev_warn(dev, "Unknown IRQ %ld\n", d->hwirq);
+>> > > > +
+>> > > > +	return IRQ_HANDLED;
+>> > >
+>> > > I see that some of these messages are "Correctable/Non-Fatal/Fatal =
+error
+>> > > message"; I assume this Root Port doesn't have an AER Capability, a=
+nd this
+>> > > interrupt is the "System Error" controlled by the Root Control Erro=
+r Enable bits in
+>> the
+>> > > PCIe Capability?  (See PCIe r6=2E0, sec 6=2E2=2E6)
+>> > >
+>> > > Is there any way to hook this into the AER handling so we can do so=
+mething
+>> about
+>> > > it, since the devices *below* the Root Port may support AER and may=
+ have
+>> useful
+>> > > information logged?
+>> > >
+>> > > Since this is DWC-based, I suppose these are general questions that=
+ apply to all
+>> > > the similar drivers=2E
+>> >
+>> >
+>> > Thanks for review, We have this in our plan to hook platform specific=
+ error
+>> interrupts
+>> > to AER in future will add this support=2E
+>> >
+>>=20
+>> So on your platform, AER (also PME) interrupts are reported over SPI in=
+terrupt
+>> only and not through MSI/MSI-X? Most of the DWC controllers have this w=
+eird
+>> behavior of reporting AER/PME only through SPI, but that should be lega=
+cy
+>> controllers=2E Newer ones does support MSI=2E
+>
+>Thanks for your comment, Yes our platform supports platform specific Erro=
+r=20
+>Interrupts over SPI=2E
+>
 
-On Mon, 09 Dec 2024 05:32:01 +0000,
-Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com> wrote:
->=20
-> During automated testing of Nested Virtualization using avocado-vt,
+My question was specifically about whether your platform _only_ supports S=
+PI or both SPI and MSI for AER/PME=2E
 
-Which is not merged upstream. So what branch are you using? Based on
-what kernel version? On what HW? With which virtualisation features?
+- Mani
 
-> it has been observed that during some boot test iterations,
-> the Guest-Hypervisor boot was getting crashed with a
-> synchronous exception while it is still booting EDK2.
->=20
-> The test is launching Multiple instances of Guest-Hypervisor boot
-
-Is the multiple instance aspect really relevant to the reproduction of
-the problem?
-
-> and while booting, QEMU monitor issued the command "info register"
-> at regular intervals to take a register dump. To execute this
-> command, QEMU stops the run and does the register read of various
-> registers. While resuming the run, the function kvm_arm_timer_write()
-> writes back the saved CNTV_CTL_EL0 register with ISTATUS cleared always
-
-It is userspace that causes this write-back, right? AFAICT, KVM never
-does that on its own.
-
-> and resulting in the loss of pending interrupt for emulated timers.
-
-How does a missing interrupt result in a synchronous exception in
-EDK2? In my experience, EDK2 panics if it sees spurious interrupts,
-not when it is missing interrupts (it just locks up, which is
-expected).
-
-> In hardware based timers, ISTATUS is a RO/WI bit and gets set by the
-> h/w, if the condition is still met. However, in Nested-Virtualization
-> case, the Guest-Hypervisor's=C2=A0EDK2 is using an emulated virtual timer
-> and losing ISTATUS state and the interrupt forever.
-
-Why is this specific to NV? Can't the same thing happen to the
-physical timer in a non-VHE configuration?
-
->=20
-> Adding fix in kvm_arm_timer_write to set ISTATUS for emulated
-> timers, if the timer expired already.
->=20
-> Fixes: 81dc9504a700 ("KVM: arm64: nv: timers: Support hyp timer emulation=
-")
-
-Where is this coming from? This patch doesn't touch the code you are
-changing, so how can it be the source of your problems? As far as I
-can tell, this has been the case since 5c5196da4e966 ("KVM: arm/arm64:
-Support EL1 phys timer register access in set/get reg").
-
-> Co-developed-by: Vishnu Pajjuri <vishnu@os.amperecomputing.com>
-> Signed-off-by: Vishnu Pajjuri <vishnu@os.amperecomputing.com>
-> Signed-off-by: Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>
-> ---
->  arch/arm64/kvm/arch_timer.c | 11 ++++++++++-
->  1 file changed, 10 insertions(+), 1 deletion(-)
->=20
-> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-> index 1215df590418..aca58113d790 100644
-> --- a/arch/arm64/kvm/arch_timer.c
-> +++ b/arch/arm64/kvm/arch_timer.c
-> @@ -1199,7 +1199,16 @@ static void kvm_arm_timer_write(struct kvm_vcpu *v=
-cpu,
->  		break;
-> =20
->  	case TIMER_REG_CTL:
-> -		timer_set_ctl(timer, val & ~ARCH_TIMER_CTRL_IT_STAT);
-> +		struct timer_map map;
-> +
-> +		val &=3D ~ARCH_TIMER_CTRL_IT_STAT;
-> +		get_timer_map(vcpu, &map);
-> +		/* Set ISTATUS bit for emulated timers, if timer expired. */
-> +		if (timer =3D=3D map.emul_vtimer || timer =3D=3D map.emul_ptimer) {
-> +			if (!kvm_timer_compute_delta(timer))
-> +				val |=3D ARCH_TIMER_CTRL_IT_STAT;
-> +		}
-> +		timer_set_ctl(timer, val);
->  		break;
-
-This really looks awfully complicated, when it is only a matter of
-recomputing the interrupt state, something that is at the core of the
-timer emulation. Why can't the following work:
-
-diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-index 895f09658ef83..bd6efafbe7109 100644
---- a/arch/arm64/kvm/arch_timer.c
-+++ b/arch/arm64/kvm/arch_timer.c
-@@ -1298,13 +1298,17 @@ static void kvm_arm_timer_write(struct kvm_vcpu *vc=
-pu,
- 				enum kvm_arch_timer_regs treg,
- 				u64 val)
- {
-+	unsigned long tmp =3D val;
-+
- 	switch (treg) {
- 	case TIMER_REG_TVAL:
- 		timer_set_cval(timer, kvm_phys_timer_read() - timer_get_offset(timer) + =
-(s32)val);
- 		break;
-=20
- 	case TIMER_REG_CTL:
--		timer_set_ctl(timer, val & ~ARCH_TIMER_CTRL_IT_STAT);
-+		__assign_bit(__ffs(ARCH_TIMER_CTRL_IT_STAT), &tmp,
-+			     kvm_timer_should_fire(timer));
-+		timer_set_ctl(timer, tmp);
- 		break;
-=20
- 	case TIMER_REG_CVAL:
-
-But overall, this very much looks like it is only papering over the
-real issue, which is that the *emulation* should regenerate the
-pending bit, and not rely on the userspace interface.
-
-As far as I can tell, we already correctly compute the status bit on
-read (read_timer_ctl()), so the guest should always observe something
-consistent when it traps. We also *never* use the status bit as an
-input to the emulation, and always recompute it from scratch (it is
-only there for the benefit of the guest or userspace).
-
-So I can't see how upstream is broken in at the moment, and you need
-to explain how this actually triggers. Ideally, with a standalone
-reproducer or a selftest.
-
-Thanks,
-
-	M.
-
---=20
-Without deviation from the norm, progress is not possible.
+=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
+=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
+=E0=AF=8D
 
