@@ -1,118 +1,119 @@
-Return-Path: <linux-kernel+bounces-436622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEFDE9E88B9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:35:02 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC4C4163F26
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:34:59 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D14C4BA45;
-	Mon,  9 Dec 2024 00:34:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VHPBtfME"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EBF9E88BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:44:23 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 387381BDC3;
-	Mon,  9 Dec 2024 00:34:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E022810A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:44:22 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51946DDD3;
+	Mon,  9 Dec 2024 00:44:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mDanIQq/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DBC4409;
+	Mon,  9 Dec 2024 00:44:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733704497; cv=none; b=P/CKZwX0qpr2pBlP15JmZLllnKU/VXV3/x9W/6ck87KALo+7uDr6VmDTqClR6IHfE0bJihbO/2nBUEeol6GLkCGxbSpriLwEAdK20E65F+efApFxiGAZ/Nh0e4EQtY6u/LDRV7gmzv/IBpiAPoxbf97OpFRorrAhvHY3k9ghNac=
+	t=1733705057; cv=none; b=aV16M4gxhMyUy3rkY1zVARQW+Sg6vB2EfwEX5xWBQqkMMIGIVOMZeP0xVCnOoWfXI7uHt1x5WzhptcZbk7cajWzV954s0aBhPNBiPhDJLeHklhu/0MIlEHSCS+1+zhS5beQjynsrmlT34jWT+/rCiUucyULckeHKUaJXtCPU+bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733704497; c=relaxed/simple;
-	bh=W6IOZ3bStO/Ox8Gg2SAak1Z5Iv/I8uEp8nlZMMvJJBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=bhdzYRY6a4s0VdrVFp3yQ63VUdamWqs/ljz63P4hCPeROhzOGsvjl9F0VFma2y2F5bsU9haxB1cfCCjQsHL47j7WOttfLXi9XQJdHgzQEWMpdqW89zAJQxCHy9y5N6qS4AOgkKfjX/0pRLdEiA/ajYOGTQinfmepfB6jiTEwqeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VHPBtfME; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26C3AC4CED2;
-	Mon,  9 Dec 2024 00:34:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733704496;
-	bh=W6IOZ3bStO/Ox8Gg2SAak1Z5Iv/I8uEp8nlZMMvJJBY=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=VHPBtfMETG6MfKrTHGRreGGdINb0UFSHCgKw5iap7K73aFRu9MZAESunDp8/9DO/c
-	 SYSEUd88SolRbP2aCk2SYpYp0r5yj9B2z5gnvJHWAR2Xec5sfvXPzKrcsE+Lh46v5Q
-	 e4v8xw6uGZqzIj1rMW11Iw1DJR33pUBVKHYzNOkeQn9t3RG1gk7xJVrJkUQWHtty/2
-	 r8Van1s4yGN49GtVSV1D6LcNFvAkBg/1zT6PJlKDPmy8s9AFTrHsyc/D24xc6KGgje
-	 XzTwWKamoOSOyCq79V39GFAL1uzTfzpdGBPeLSNAaA8noHpQMlLfrKWVw9EwjX+xMR
-	 7t8OJTPybHMdA==
-Message-ID: <2475124e-d4a1-4836-b5a0-3c00f5a5a94d@kernel.org>
-Date: Mon, 9 Dec 2024 09:34:55 +0900
+	s=arc-20240116; t=1733705057; c=relaxed/simple;
+	bh=HMfX6H6ovWZjnsYBpklr514M8LHt7hqDtKGYaSLqd5E=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n4JZA4TEMtHBVWlJQ8LarPCWvRf80qUcmJGmS7bUfO/XNXzpvmQhP4kYlJtuRoHF9nuub7y9Q5hzMmdkWSvvhzznSq8xkixIYxNN9i1hlxsFr6jZetgWik+WbzdI5m26+tFDhCtZxGztpP11nFdKDiBcAnqY/l7EKqCch7RFkfY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mDanIQq/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733705047;
+	bh=VuSwFZqdOcsQZu89mOF5nFlUiHL0MQb4vOkyE7AqXgY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=mDanIQq/zkrZQoQLLW6W+TVyMVA8a35BSq7eVZzxhBbDC/nPvXDarh7ekFwfXBiw0
+	 l8F2kHW9N/62sy8otBLILFPjmVyZqKDVzjuIWT486+TambAUVvq5kdGA4NGlt1TsEJ
+	 4Itk1u+wYKHa9bnA93SRnnAmlk0L9Ofhw+NneNzzmgkYCUd4BbVpx2ndoW0OfQCeGL
+	 Sf5B0PjXPahEB7tvu/lmcDEtVFlmTDCT98q9Vp4R6B8rjyLDo1Mr/GRqIYEVdkYK54
+	 m5kFyY1+Nhrz5r5NhdKPPczd7xY3UW4Xet5+qlgb3Q+ZEIowtz8pH1n4dhGBgqYvDd
+	 qv+7LeDt1JfLw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y635f01xyz4wc4;
+	Mon,  9 Dec 2024 11:44:05 +1100 (AEDT)
+Date: Mon, 9 Dec 2024 11:44:09 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>
+Subject: linux-next: manual merge of the devfreq tree with the origin tree
+Message-ID: <20241209114409.3cdd6fea@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: BUG: possible deadlock in __ata_sff_interrupt
-To: Juefei Pu <juefei.pu@email.ucr.edu>, cassel@kernel.org,
- linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CANikGpf3VaRCW+m48E+k7CDGKv89gwd12Q1=qM_uP3N=az-T7A@mail.gmail.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <CANikGpf3VaRCW+m48E+k7CDGKv89gwd12Q1=qM_uP3N=az-T7A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/4Z.WLYMMjDCKDgZhT0svLCG";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 8/27/24 05:46, Juefei Pu wrote:
-> Hello,
-> We found the following issue using syzkaller on Linux v6.10.
+--Sig_/4Z.WLYMMjDCKDgZhT0svLCG
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Can you run the same against the latest 6.13-rc2 ?
+Hi all,
 
-> A possible deadlock issue was discovered in function
-> `__ata_sff_interrupt` when it attempted to acquire lock `host->lock`.
-> 
-> Unfortunately, the syzkaller failed to generate a reproducer.
-> But at least we have the report:
-> 
-> sr 1:0:0:0: [sr0] tag#0 FAILED Result: hostbyte=DID_ERROR
-> driverbyte=DRIVER_OK cmd_age=0s
-> sr 1:0:0:0: [sr0] tag#0 CDB: opcode=0x98 98 61 1e 1d 47 a1 77 90 29 76
-> 7f 40 b8 5e 03 63
-> =====================================================
-> WARNING: HARDIRQ-safe -> HARDIRQ-unsafe lock order detected
-> 6.10.0 #13 Not tainted
-> -----------------------------------------------------
-> syz.1.961/19801 [HC0[0]:SC0[0]:HE0:SE1] is trying to acquire:
-> ffff88802d3a4018 (&new->fa_lock){....}-{2:2}, at: kill_fasync_rcu
-> fs/fcntl.c:1028 [inline]
-> ffff88802d3a4018 (&new->fa_lock){....}-{2:2}, at:
-> kill_fasync+0x196/0x4d0 fs/fcntl.c:1049
-> 
-> and this task is already holding:
-> ffff88801ca06018 (&host->lock){-.-.}-{2:2}, at:
-> ata_scsi_queuecmd+0x8a/0x520 drivers/ata/libata-scsi.c:4197
-> which would create a new lock dependency:
->  (&host->lock){-.-.}-{2:2} -> (&new->fa_lock){....}-{2:2}
+Today's linux-next merge of the devfreq tree got conflicts in:
 
-[...]
+  drivers/devfreq/event/exynos-nocp.c
+  drivers/devfreq/event/exynos-ppmu.c
+  drivers/devfreq/mtk-cci-devfreq.c
+  drivers/devfreq/rk3399_dmc.c
+  drivers/devfreq/sun8i-a33-mbus.c
 
-> Chain exists of:
->   &host->lock --> &new->fa_lock --> tasklist_lock
-> 
->  Possible interrupt unsafe locking scenario:
-> 
->        CPU0                    CPU1
->        ----                    ----
->   lock(tasklist_lock);
->                                local_irq_disable();
->                                lock(&host->lock);
->                                lock(&new->fa_lock);
->   <Interrupt>
->     lock(&host->lock);
+between commit:
 
-I fail to see how this can happen given that the first thing that
-kill_fasync+0x196/0x4d0 fs/fcntl.c:1049 is "write_lock_irq(&fa->fa_lock);" so
-IRQs are disabled... Lockdep is confused ?
+  e70140ba0d2b ("Get rid of 'remove_new' relic from platform driver struct")
 
--- 
-Damien Le Moal
-Western Digital Research
+from the origin tree and commit:
+
+  1f8ac4b95fee ("PM / devfreq: Switch back to struct platform_driver::remov=
+e()")
+
+from the devfreq tree.
+
+I fixed it up (I just used the latter versions - only white space changes)
+and can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/4Z.WLYMMjDCKDgZhT0svLCG
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWPVkACgkQAVBC80lX
+0GyFUAgApSp+6urcjF1VTkBgbnBhlR/XtWzqD+gBNKvnKlH6XzXIvw6xeoBw9ggn
+nU888FSJ+6i5caPIg863xS3GjEYj+NSgl9y4dCv78/eVtszM25MWRZLyRCtUARxK
+IVwgxxDwgxjTFyII8Q4cRDETFhkZYWsY7qPbQOJ6YYQW/8s618BVcz28yqX8iUYH
+b0J3C38dFQRb86nrRuSr6YZg+Uql9VSK2cJ5A6TcLpLUT8TPpX23MYJikch5qeoB
+SeNZULlxv5B1n4yq4WV7vIrYt3rtNlNBckr+2ZZhHEiS4xuSefPU6ROTi23+yePr
+hQDht6tAWnD5yaSBeBvbZHvRcFDqVw==
+=ULsB
+-----END PGP SIGNATURE-----
+
+--Sig_/4Z.WLYMMjDCKDgZhT0svLCG--
 
