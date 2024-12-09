@@ -1,145 +1,79 @@
-Return-Path: <linux-kernel+bounces-438185-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4D99E9DEA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:16:56 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EED1A1888A50
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:16:56 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 591D8155C8A;
-	Mon,  9 Dec 2024 18:16:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W8l6J/ln"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36489E9DED
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:18:35 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CECC6155325
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 18:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7326B2834D6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:18:34 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C033B15820C;
+	Mon,  9 Dec 2024 18:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X0jlHCNJ"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A230A146A63;
+	Mon,  9 Dec 2024 18:18:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733768211; cv=none; b=DNJXTJU0hitr3zSzCMF3VFp6EbUFz7rrOjozbb58oyb7P/NNEw6UR7c45KTAvvGik3f8d7i2F3xrUgZpSNpbYHWwUzDWjiKO1n/WUQOuHjzKppAEh8bPwK0vmCR52vNxHfeIJ/WqROuFzPVYqE8TRMtCgPjBt/5GkvwDCMlKnew=
+	t=1733768308; cv=none; b=q0OfJAb7CMGCp/rqhQnvGnxVum1CoMm1JbFhjy5btvIb3YWN+eh0doY4PVZ7bC3KpNqg0mFT35HIhclm1P2lBDk0OwT/gj7XJ/8nB6EzEBEv8HlMlystF4jRcN1r0L0fHXMr73wdwpUYCXM3aW4Sk1n1lomcHHmdHMLP6Ef4xu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733768211; c=relaxed/simple;
-	bh=2VfDOcropUZfH1QIt+3dyo7YbHHKeAjL7dG0EDy4mSA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NFctQXvyueAvGuPa2nEfn3EYoDspgmrraJ83JxpeyylOTaNCw0XQeYUMmHDj3YNrqlCi8Rno+NKLwPsaqsjFZv4Ca3XzmWcWTgjwMSM0P4MCLnNfTHzcKk60kwi6i+ZT3WlQJ2O/T9s4he1QlmYxySZQ+P7ZlCgYPBUsagJsQ3c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W8l6J/ln; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9ATf0g028879;
-	Mon, 9 Dec 2024 18:16:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vnce7T7XEQrPlvinYVL/n1yhtcPoTTfoFaF2vz6MOmA=; b=W8l6J/lnj/iOlWol
-	s07T1SVbHXGzyHmG64Zd4inrJURiK72U72gYXc9e8fpEyVzeEhP4iplkYQOXL3sg
-	8349nMkhNTii7K4sgQOcBAyR5707y91w3cYHgQgwDBtroCs+Z8wF5hcx9i/PPojn
-	wyjuDDjlvD9L1pJhonMoiPXOXgTTJaACfkbOx7MPNSN8ugyZGkdWq0QcXy5VcJcc
-	Utjss5AjiQ5Ke2LUxkwlT52AasRu4i4/uDnoK2b4Td9GgQl2U658wS6UDOgZu+HS
-	6cal1upeuSIBekl9ZRczcJ7IQ64ZsWUwbx1mHfspTUM3R+vkpi6XZVxgE+k4nHIT
-	t+2jbw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cfhkdmt6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 18:16:40 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9IGeCZ022605
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 18:16:40 GMT
-Received: from [10.50.34.16] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
- 10:16:35 -0800
-Message-ID: <54ac6a4f-5ae0-409f-8401-d6e1326d4358@quicinc.com>
-Date: Mon, 9 Dec 2024 23:46:31 +0530
+	s=arc-20240116; t=1733768308; c=relaxed/simple;
+	bh=hQWwJZvCHZ1fjq+iunv+2IF24HIubF4NUtlb9W3UYqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=guzYcUMvOWgzCW4Un2oTM/bFva6xcgRaCdrqbagH6F+3N9xRQ3+URIuoB701YeSzxsvf4+fMOq/d29KhpDVS1paH+jNkpG9m4qQhNIUVAvZIlgqzp0r0ez+Lok0+yhaSEabRYnSC/wVTa0MOZzG2yHlq+gg2+Fx8zxx1rv6frvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X0jlHCNJ; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=U1f1R4UQUo/1xKrAQLvIckcOBM37rVenaV8lQc3Npeo=; b=X0jlHCNJyTEMgRD7CZcEGzt5zx
+	hMvSZXB5Q3TMc/n9neYvA7a50UFIkKf9SmQugpxcaCqtPmBORNoU3u0R/KymJDL9Hs3YnWyJlQqCT
+	WQDZx3nJ8bLnbi1Yf7ss2W/tninWrieCA1QUY0Bt0n2F1P7cSUx7mMAPgHQ/DeO1bkB8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tKiKi-00Fhr1-S3; Mon, 09 Dec 2024 19:18:12 +0100
+Date: Mon, 9 Dec 2024 19:18:12 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: dimitri.fedrau@liebherr.com
+Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Dimitri Fedrau <dima.fedrau@gmail.com>
+Subject: Re: [PATCH net-next] net: phy: dp83822: Replace DP83822_DEVADDR with
+ MDIO_MMD_VEND2
+Message-ID: <5d9d8b8b-9e24-4516-ae4b-a42c37128b1b@lunn.ch>
+References: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] i3c: master: Improve initialization of numbered I2C
- adapters
-To: Defa Li <defa.li@mediatek.com>,
-        Alexandre Belloni
-	<alexandre.belloni@bootlin.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: <linux-i3c@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>, <wsd_upstream@mediatek.com>,
-        <mingchang.jia@mediatek.com>, <yuhan.wei@mediatek.com>,
-        <hao.lin@mediatek.com>
-References: <20241205132934.12110-1-defa.li@mediatek.com>
-Content-Language: en-US
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-In-Reply-To: <20241205132934.12110-1-defa.li@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: OSoeq6sK0chCG1sPbMn_4yX6vW5ijtBe
-X-Proofpoint-GUID: OSoeq6sK0chCG1sPbMn_4yX6vW5ijtBe
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 clxscore=1011 priorityscore=1501 spamscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090142
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209-dp83822-mdio-mmd-vend2-v1-1-4473c7284b94@liebherr.com>
 
-
-
-On 12/5/2024 6:59 PM, Defa Li wrote:
-> Add logic to initialize I2C adapters with a specific ID if available,
-> improving device identification and configuration.
+On Mon, Dec 09, 2024 at 06:50:42PM +0100, Dimitri Fedrau via B4 Relay wrote:
+> From: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 > 
-Could you also provide how exactly to define this into DT to have 
-numbering while registering the adapter ? Kind of sample to which can be 
-defined in DTSI.
-> Signed-off-by: Defa Li <defa.li@mediatek.com>
-> ---
->   drivers/i3c/master.c | 11 +++++++++--
->   1 file changed, 9 insertions(+), 2 deletions(-)
+> Instead of using DP83822_DEVADDR which is locally defined use
+> MDIO_MMD_VEND2.
 > 
-> diff --git a/drivers/i3c/master.c b/drivers/i3c/master.c
-> index 42310c9a00c2..a838cdbb897b 100644
-> --- a/drivers/i3c/master.c
-> +++ b/drivers/i3c/master.c
-> @@ -2486,7 +2486,7 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
->   	struct i2c_adapter *adap = i3c_master_to_i2c_adapter(master);
->   	struct i2c_dev_desc *i2cdev;
->   	struct i2c_dev_boardinfo *i2cboardinfo;
-> -	int ret;
-> +	int ret, id = -ENODEV;
->   
->   	adap->dev.parent = master->dev.parent;
->   	adap->owner = master->dev.parent->driver->owner;
-> @@ -2497,7 +2497,14 @@ static int i3c_master_i2c_adapter_init(struct i3c_master_controller *master)
->   	adap->timeout = 1000;
->   	adap->retries = 3;
->   
-> -	ret = i2c_add_adapter(adap);
-> +	if (master->dev.of_node)
-> +		id = of_alias_get_id(master->dev.of_node, "i2c");
-> +
-> +	if (id >= 0) {
-> +		adap->nr = id;
-> +		ret = i2c_add_numbered_adapter(adap);
-> +	} else
-> +		ret = i2c_add_adapter(adap);
-Please provide braces for else too.
->   	if (ret)
->   		return ret;
->   
+> Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
 
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
 
