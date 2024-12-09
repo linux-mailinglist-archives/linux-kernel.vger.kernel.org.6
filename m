@@ -1,315 +1,112 @@
-Return-Path: <linux-kernel+bounces-437999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D29EB9E9B74
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:20:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BB5E9E9B5B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:16:47 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B4AF2820EB
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:20:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413C51888B69
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:16:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E4714C59C;
-	Mon,  9 Dec 2024 16:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F10C13C81B;
+	Mon,  9 Dec 2024 16:16:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="lSiWm8o/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="wgaEos52"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6497513D638;
-	Mon,  9 Dec 2024 16:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12A317F48C;
+	Mon,  9 Dec 2024 16:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761235; cv=none; b=RL6ig0NdWSc6ZOurOLUMK7qDjKDyZzoMpACdTw3WOQ4x6TBZU7g5dWsP8o31BXNZi4D33zKFwbZ4SvpqHjjFvjgqZIJsQpFW2P/lRcl+HJXX0X82nplAoErFxc32LS0jYlRqd9MV7lLz0QmFxfTXjj9sYdjvnkwalX/qsI8g228=
+	t=1733761000; cv=none; b=XWTMdvqJO37WsNMPJ2Ud3l9H86nT4rRbddUoiQPMHzgbXX1hESEMCvWNP+p8Nrr5VwKnrYhr5aYNggK2oMFyK0+FtiqB6blSjScq9y+YD/R1/xLpwnpTYZ0tUlLF74I7yuh1VjnnVmQQCBw50Z3cK4b0VKKyQ6GEhlx+g7TouPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761235; c=relaxed/simple;
-	bh=zEM5sGwnK8jbcNCd30OlcreC3ZV9KvdarCeo9ahvO/I=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PX2iqFpZjNezkMyihQ4STZyQxwI1oMzrXfVctaJS9dj5Vi6ZoK0EGGGp7BOtMuWXczBAd3mn49u1NI+DueB7pVUnMsznqb2d4jyMfc9p3h8dy6R1dA+EFGevYndFBl2nvNCbK0q2KKZenkFcv41yO8g63bTw4qJAsVTMkOn1C7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=lSiWm8o/; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1733761234; x=1765297234;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=zEM5sGwnK8jbcNCd30OlcreC3ZV9KvdarCeo9ahvO/I=;
-  b=lSiWm8o/MLrgxgmpzwE9xka8AA0JIzzOQIP+lv6rlxszxpsizvWw9VUq
-   WHxkMBSeMWzAG1GX9ZJUGTJZfR0BV4lW0XPpGNt8GafDP3pQ6qo2y3cIl
-   PVO5eiRVnr9cPyOqOQLiEbf8V7Vi2m+WdYXyvOzSEaVd6wVNm8TX95/l5
-   foKqOLRdl82QJFUDf0rKDqFU7ryvHkgFO64YCgTah0ZTIUIj3CoVQA0n9
-   EHm3OtdJ6lhtrwl8AgFXzMLMrsj+ZE83BqCaheGFHtMx3EcD1aa80EAbm
-   DglpLvPv1+bA4CraZGkEcM0DjSc9sbKYiefwLOLU5l+Bgm8US98KFMU9k
-   A==;
-X-CSE-ConnectionGUID: JLL7S6y7ROGYO+q1cU6U3w==
-X-CSE-MsgGUID: wDpFiZV9RvSP4oWuRd5a1A==
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="35311727"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 09 Dec 2024 09:20:31 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Mon, 9 Dec 2024 09:20:25 -0700
-Received: from HYD-DK-UNGSW20.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Mon, 9 Dec 2024 09:20:22 -0700
-From: Tarun Alle <Tarun.Alle@microchip.com>
-To: <arun.ramadoss@microchip.com>, <UNGLinuxDriver@microchip.com>,
-	<andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net-next 2/2] net: phy: microchip_t1: Autonegotiaion support for LAN887x T1 phy
-Date: Mon, 9 Dec 2024 21:44:27 +0530
-Message-ID: <20241209161427.3580256-3-Tarun.Alle@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241209161427.3580256-1-Tarun.Alle@microchip.com>
-References: <20241209161427.3580256-1-Tarun.Alle@microchip.com>
+	s=arc-20240116; t=1733761000; c=relaxed/simple;
+	bh=qPAlXioGw1zBnH/UBkCy036skYuuSw1WeTlI90WTYqA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Rv3aN4SWM6Da4MY4xGqtNYviD8qJlrmxGMQFcS14/K/YKv5RBq3YlWAyayeK2KLN8FKGJ5AIaZOMKijBsuEvw7/15pEiJ20SHqDXFlQXQcFgd1Zc6vBv39fqoC6zwMtY4vZ6goSUd21TpjuRNIh4v7HzAeFRAHjHhK9mwoJ/wu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=wgaEos52; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9G4lW9012527;
+	Mon, 9 Dec 2024 17:16:22 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	6gt6BiM0QgyBm6Yq6Z5iu8g08qp3vEHqvhnzyciWVbM=; b=wgaEos52tZiBCPeN
+	i0JXCrahbIonwvPX8eIV4gJfwtv08sIWTHofWdwonth4MPkaBiXmNtnXi0JUg1ZN
+	TY5//m6DHe3WEBYjkdKEh+749ssbGk5f0r6yDFw2IteVhuy1GloB3Qmeog33dVVM
+	uk/zXnEv11L03lxZI/tAcPs52nSxt6ajCJ3U7FLMr3wi8X4XnDsqAqnZvNRfns3K
+	iX7ofWljFic26qc/AduI1+e2IRdnbnJWNxEt+5emRnyehSZt+iHkvjthrSfP1Lst
+	21ubya6dSX9gaTjYw56ZFLkGRGdjPKl8HS+nIqhVh01EBdYoH1yi4fcuOZGlT3Yn
+	TuVebw==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccc8rrd4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 17:16:22 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id B6BB340061;
+	Mon,  9 Dec 2024 17:15:03 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id E016A26D755;
+	Mon,  9 Dec 2024 17:14:30 +0100 (CET)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
+ 2024 17:14:30 +0100
+Message-ID: <d38f2ea1-17c3-466c-9537-0a5e31a5225e@foss.st.com>
+Date: Mon, 9 Dec 2024 17:14:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: st: add i2s support to stm32mp251
+To: Olivier Moysan <olivier.moysan@foss.st.com>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <devicetree@vger.kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+References: <20241113082510.2354924-1-olivier.moysan@foss.st.com>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20241113082510.2354924-1-olivier.moysan@foss.st.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Adds auto-negotiation support for lan887x T1 phy.
+Hi Olivier
 
-Signed-off-by: Tarun Alle <Tarun.Alle@microchip.com>
----
- drivers/net/phy/microchip_t1.c | 147 +++++++++++++++++++++++++++------
- 1 file changed, 121 insertions(+), 26 deletions(-)
+On 11/13/24 09:25, Olivier Moysan wrote:
+> Add I2S support to STM32MP25 SoCs.
+> 
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> ---
+>   arch/arm64/boot/dts/st/stm32mp251.dtsi | 45 ++++++++++++++++++++++++++
+>   1 file changed, 45 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/st/stm32mp251.dtsi b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> index 6fe12e3bd7dd..8cc0b64e6a16 100644
+> --- a/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> +++ b/arch/arm64/boot/dts/st/stm32mp251.dtsi
+> @@ -237,6 +237,21 @@ rifsc: bus@42080000 {
+>   			#access-controller-cells = <1>;
 
-diff --git a/drivers/net/phy/microchip_t1.c b/drivers/net/phy/microchip_t1.c
-index b17bf6708003..b8e65cb7d29e 100644
---- a/drivers/net/phy/microchip_t1.c
-+++ b/drivers/net/phy/microchip_t1.c
-@@ -268,6 +268,11 @@
- /* End offset of samples */
- #define SQI_INLIERS_END (SQI_INLIERS_START + SQI_INLIERS_NUM)
- 
-+#define LAN887X_VEND_CTRL_STAT_REG		0x8013
-+#define LAN887X_AN_LOCAL_CFG_FAULT		BIT(10)
-+#define LAN887X_AN_LOCAL_SLAVE			BIT(9)
-+#define LAN887X_AN_LOCAL_MASTER			BIT(8)
-+
- #define DRIVER_AUTHOR	"Nisar Sayed <nisar.sayed@microchip.com>"
- #define DRIVER_DESC	"Microchip LAN87XX/LAN937x/LAN887x T1 PHY driver"
- 
-@@ -1259,11 +1264,6 @@ static int lan887x_get_features(struct phy_device *phydev)
- 	/* Enable twisted pair */
- 	linkmode_set_bit(ETHTOOL_LINK_MODE_TP_BIT, phydev->supported);
- 
--	/* First patch only supports 100Mbps and 1000Mbps force-mode.
--	 * T1 Auto-Negotiation (Clause 98 of IEEE 802.3) will be added later.
--	 */
--	linkmode_clear_bit(ETHTOOL_LINK_MODE_Autoneg_BIT, phydev->supported);
--
- 	return 0;
- }
- 
-@@ -1344,25 +1344,34 @@ static int lan887x_phy_setup(struct phy_device *phydev)
- 
- static int lan887x_100M_setup(struct phy_device *phydev)
- {
-+	static const struct lan887x_regwr_map phy_comm_cfg[] = {
-+		{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
-+		{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x0038},
-+		{MDIO_MMD_VEND1,  LAN887X_INIT_COEFF_DFE1_100, 0x000f},
-+	};
- 	int ret;
- 
- 	/* (Re)configure the speed/mode dependent T1 settings */
--	if (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
--	    phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_PREFERRED){
--		static const struct lan887x_regwr_map phy_cfg[] = {
--			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x00b8},
--			{MDIO_MMD_PMAPMD, LAN887X_TX_AMPLT_1000T1_REG, 0x0038},
--			{MDIO_MMD_VEND1,  LAN887X_INIT_COEFF_DFE1_100, 0x000f},
--		};
--
--		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-+	if (phydev->autoneg == AUTONEG_DISABLE) {
-+		if (phydev->master_slave_set == MASTER_SLAVE_CFG_MASTER_FORCE ||
-+		    phydev->master_slave_set ==
-+		    MASTER_SLAVE_CFG_MASTER_PREFERRED) {
-+			ret = lan887x_phy_config(phydev, phy_comm_cfg,
-+						 ARRAY_SIZE(phy_comm_cfg));
-+		} else {
-+			static const struct lan887x_regwr_map phy_cfg[] = {
-+				{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4,
-+				 0x0038},
-+				{MDIO_MMD_VEND1, LAN887X_INIT_COEFF_DFE1_100,
-+				 0x0014},
-+			};
-+
-+			ret = lan887x_phy_config(phydev, phy_cfg,
-+						 ARRAY_SIZE(phy_cfg));
-+		}
- 	} else {
--		static const struct lan887x_regwr_map phy_cfg[] = {
--			{MDIO_MMD_PMAPMD, LAN887X_AFE_PORT_TESTBUS_CTRL4, 0x0038},
--			{MDIO_MMD_VEND1, LAN887X_INIT_COEFF_DFE1_100, 0x0014},
--		};
--
--		ret = lan887x_phy_config(phydev, phy_cfg, ARRAY_SIZE(phy_cfg));
-+		ret = lan887x_phy_config(phydev, phy_comm_cfg,
-+					 ARRAY_SIZE(phy_comm_cfg));
- 	}
- 	if (ret < 0)
- 		return ret;
-@@ -1384,8 +1393,16 @@ static int lan887x_1000M_setup(struct phy_device *phydev)
- 	if (ret < 0)
- 		return ret;
- 
--	return phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
--				LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-+	if (phydev->autoneg == AUTONEG_ENABLE)
-+		ret = phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
-+				       LAN887X_REG_REG26,
-+				       LAN887X_REG_REG26_HW_INIT_SEQ_EN);
-+	else
-+		ret = phy_set_bits_mmd(phydev, MDIO_MMD_PMAPMD,
-+				       LAN887X_DSP_PMA_CONTROL,
-+				       LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-+
-+	return ret;
- }
- 
- static int lan887x_link_setup(struct phy_device *phydev)
-@@ -1407,6 +1424,11 @@ static int lan887x_phy_reset(struct phy_device *phydev)
- {
- 	int ret, val;
- 
-+	/* Disable aneg */
-+	ret = genphy_c45_an_disable_aneg(phydev);
-+	if (ret < 0)
-+		return ret;
-+
- 	/* Clear 1000M link sync */
- 	ret = phy_clear_bits_mmd(phydev, MDIO_MMD_PMAPMD, LAN887X_DSP_PMA_CONTROL,
- 				 LAN887X_DSP_PMA_CONTROL_LNK_SYNC);
-@@ -1435,23 +1457,68 @@ static int lan887x_phy_reset(struct phy_device *phydev)
- 				    5000, 10000, true);
- }
- 
-+/* LAN887X Errata: 100M master issue. Dual speed in Aneg is not supported. */
-+static int lan887x_config_advert(struct phy_device *phydev)
-+{
-+	linkmode_and(phydev->advertising, phydev->advertising,
-+		     phydev->supported);
-+
-+	if (linkmode_test_bit(ETHTOOL_LINK_MODE_1000baseT1_Full_BIT,
-+			      phydev->advertising)) {
-+		linkmode_clear_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-+				   phydev->advertising);
-+		phydev->speed = SPEED_1000;
-+	} else if (linkmode_test_bit(ETHTOOL_LINK_MODE_100baseT1_Full_BIT,
-+				     phydev->advertising)) {
-+		linkmode_clear_bit(ETHTOOL_LINK_MODE_1000baseT1_Full_BIT,
-+				   phydev->advertising);
-+		phydev->speed = SPEED_100;
-+	} else {
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int lan887x_phy_reconfig(struct phy_device *phydev)
- {
- 	int ret;
- 
--	linkmode_zero(phydev->advertising);
-+	if (phydev->autoneg == AUTONEG_ENABLE)
-+		ret = genphy_c45_an_config_aneg(phydev);
-+	else
-+		ret = genphy_c45_pma_setup_forced(phydev);
-+	if (ret < 0)
-+		return ret;
- 
--	ret = genphy_c45_pma_setup_forced(phydev);
-+	/* For link to comeup, (re)configure the speed/mode
-+	 * dependent T1 settings
-+	 */
-+	ret = lan887x_link_setup(phydev);
- 	if (ret < 0)
- 		return ret;
- 
--	return lan887x_link_setup(phydev);
-+	/* Autoneg to be re-started only after all settings are done */
-+	if (phydev->autoneg == AUTONEG_ENABLE) {
-+		ret = genphy_c45_restart_aneg(phydev);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
-+	return 0;
- }
- 
- static int lan887x_config_aneg(struct phy_device *phydev)
- {
- 	int ret;
- 
-+	/* Reject the not support advertisement settings */
-+	if (phydev->autoneg == AUTONEG_ENABLE) {
-+		ret  = lan887x_config_advert(phydev);
-+		if (ret < 0)
-+			return ret;
-+	}
-+
- 	/* LAN887x Errata: speed configuration changes require soft reset
- 	 * and chip soft reset
- 	 */
-@@ -2058,6 +2125,34 @@ static int lan887x_get_sqi(struct phy_device *phydev)
- 	return FIELD_GET(T1_DCQ_SQI_MSK, rc);
- }
- 
-+static int lan887x_read_status(struct phy_device *phydev)
-+{
-+	int rc;
-+
-+	phydev->master_slave_state = MASTER_SLAVE_STATE_UNKNOWN;
-+
-+	rc = genphy_c45_read_status(phydev);
-+	if (rc < 0)
-+		return rc;
-+
-+	if (phydev->autoneg == AUTONEG_ENABLE) {
-+		/* Fetch resolved mode */
-+		rc = phy_read_mmd(phydev, MDIO_MMD_AN,
-+				  LAN887X_VEND_CTRL_STAT_REG);
-+		if (rc < 0)
-+			return rc;
-+
-+		if (rc & LAN887X_AN_LOCAL_MASTER)
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_MASTER;
-+		else if (rc & LAN887X_AN_LOCAL_SLAVE)
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_SLAVE;
-+		else if (rc & LAN887X_AN_LOCAL_CFG_FAULT)
-+			phydev->master_slave_state = MASTER_SLAVE_STATE_ERR;
-+	}
-+
-+	return 0;
-+}
-+
- static struct phy_driver microchip_t1_phy_driver[] = {
- 	{
- 		PHY_ID_MATCH_MODEL(PHY_ID_LAN87XX),
-@@ -2106,7 +2201,7 @@ static struct phy_driver microchip_t1_phy_driver[] = {
- 		.get_strings    = lan887x_get_strings,
- 		.suspend	= genphy_suspend,
- 		.resume		= genphy_resume,
--		.read_status	= genphy_c45_read_status,
-+		.read_status	= lan887x_read_status,
- 		.cable_test_start = lan887x_cable_test_start,
- 		.cable_test_get_status = lan887x_cable_test_get_status,
- 		.config_intr    = lan887x_config_intr,
--- 
-2.34.1
+Applied on stm32-next.
 
+Thanks!
+Alex
 
