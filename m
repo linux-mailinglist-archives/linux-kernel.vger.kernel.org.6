@@ -1,112 +1,111 @@
-Return-Path: <linux-kernel+bounces-437258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 704FE9E90F3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:51:10 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9F059E90F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:51:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1815164216
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:51:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ED7B218E84;
+	Mon,  9 Dec 2024 10:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C0SyphQF"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEE7C2826D5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:51:08 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B355D218E98;
-	Mon,  9 Dec 2024 10:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="YvcwAiGH"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C873218820
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:50:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0791521770F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:50:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733741404; cv=none; b=TR9WRqc1UKvCXs9myUcLlwarxARJWPRrkvYVNlbDR81VHtqANcbhtmZMyQ1f910Fo97yFk7ziNrStYRp9vzcT1Ali0OH5s4VMu4kgptzbZNpG3mB+GwcOPCqlpl/d3vObR47Gmw9wKwyTVqC6iQusEpim/y+oYmR92mQTzIlUPg=
+	t=1733741423; cv=none; b=u0pmj4/jKlTDsX6GUIh1eduJmpJ74QM0L9BTQQFLWqpvap/jAAyaNrGQerLPBvl1ZMPsOW6MTGT17hgX1X4WWHXTkeoNmBxMTWy0Irt4qpMZRnFwR4jl5FFOsxphyc+HWOW2Iyfdf3uYuXF+2/OFCpyPCN7OwRmeRJOOLbGoxYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733741404; c=relaxed/simple;
-	bh=FftsgxtfDTEmsXVnEf6EANLKtzGpTZydxJ/p9GsktPw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GxdnDiuOz/a2U+HvlMmG8VefAQHt8KA40j95S7xxibz5hSY9Ge0FB4ZnIr5ZihfRyG+mCYF+dqxLS/8bc+fwxLTc/vnYhyPZAF7wNjkFla/4sSwKfgrQdOTTb6QVE6Iw1njmBR+RdFrH4ZJ9qta/Jq8exonbQ2ZXZxciqh0BMQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=YvcwAiGH; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-434e8ed6389so936685e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:50:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733741400; x=1734346200; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fRioCcmJDy8djkmiyQ6PlnLYMCijDL6jrj6MyazB2/8=;
-        b=YvcwAiGHxcd0TEUzGpXVC5P7zCmIbxz9Urye04bBoGL5qgyx+uq4+/7xJ2J9411FxY
-         njwNrx2AR2MgrFMr10oy4I6AZJwotGV4PBfZq6Z+BzbFwgsWgRleY14mxKERG6cMvBlU
-         M6v+twTBJkqeshglty6+MKXWJlQyqQB/XPVmvX3m4HB2hwv40Ww5WJdKq0Oy6qCyUuD/
-         0NUxTB/ndU/u/rm6sObn9AdVsJlVhQMPJr/jm76EtI53YKyzMSHRzH3wL1oQA2Rr1RGS
-         c31nQ7C/exqDpXW/78ZgoiMkQmQHS08VhMyxU21M6taFmO+dHC9KMCNcMI67Talo5T4z
-         GAEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733741400; x=1734346200;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fRioCcmJDy8djkmiyQ6PlnLYMCijDL6jrj6MyazB2/8=;
-        b=tSshIkuIU2r3LRRPimFKB0L3Gy+0Gwu1lM4FvqzKfyX7kPTAXKEZZiZahV07FRdu3s
-         l25h8I+9ziqVuEpsCyDm3nyoMf/7LTbLiXukL4alE1x/X29udTdO5skgp1TvzNiAURGB
-         vxjqgWKI3WegmrkEmAh9qvmPKxbwmj2vmrP+bxzVrSpGjIkxQI//X0+thZwvm+y39XJb
-         AluZMe89OntVaxf0DKUBQ4I8lZ6ZMsliVzLI9EwhD5zZZzPTRpHoqEre6+alkvNIV/ye
-         7XoCPeBeuMB6jqie9Kk5hnTC/uJ51xtv10JRNFaUHoOA6WIwjpgbypBUduuJYhQ54T62
-         dHpg==
-X-Gm-Message-State: AOJu0YxbrwBwJRKrjpr7Cz9fkXRUP2xEppZup6XWjs+99aOsDCXGmbJE
-	+tsNdCVntv8lsAmY6CfEgK5g6IIe6A7DoDKNdDiKu24ib85QTecS5jxCF7VQ2BE=
-X-Gm-Gg: ASbGncsBgUFW1CqRrnp9unMwd8/LbsVJQgVlwMjqTXPWLNE1TY6j7mAwUr4vT1wBpv/
-	IRi4qn9XZx8wXOqPABWxHq9ejzQvc3u45lLAJsgMgvB52kSdQLFmbdS+zz7XGz4bHXhvL7ajwBF
-	RK6yZKe9VbbGZLT/vxN96MU1RxGxA7dC93yYce5zd6SKg+du4xIwdKt7EKPbI3/+4L2UMKJ/KDH
-	PZkAG/80RGyzngZuP5EPc897YOOgq7uxohw5gAQpJwQRxluFVNKHkGON0alVR+TVg==
-X-Google-Smtp-Source: AGHT+IE/viVovSPI39lIWcVsezgqXa23ODao8hwSq2oIVnwoBrcfPb0n+9g7Mmj6cCGSK0ndX1fPlQ==
-X-Received: by 2002:a7b:c3d5:0:b0:434:f001:8680 with SMTP id 5b1f17b1804b1-434f00187bfmr20178805e9.2.1733741400471;
-        Mon, 09 Dec 2024 02:50:00 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.223.165])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434ea1ae415sm80301445e9.33.2024.12.09.02.49.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 02:49:59 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-samsung-soc@vger.kernel.org
-In-Reply-To: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
-References: <20241203-gs101-maintainers-v1-1-f287036dbde5@linaro.org>
-Subject: Re: [PATCH] MAINTAINERS: add myself and Tudor as reviewers for
- Google Tensor SoC
-Message-Id: <173374139927.46435.9500356182814320037.b4-ty@linaro.org>
-Date: Mon, 09 Dec 2024 11:49:59 +0100
+	s=arc-20240116; t=1733741423; c=relaxed/simple;
+	bh=Al1nYJcI+WH60uOcfQJpnPEsLD/SNuVV0FT8A72aZh8=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=umopLJHAffMEeB1FWz/jI3EW4igrN0ZijBnsMSzPxF4BW35m8cGV0Lu7aAkkQryAbBl0xMJTotFBvgUErvuAcPIQtVhIo25CwhrwI2MUY5brpT0GEKxjeo2RE5uv+JiONuMjNTEXinfZmtfxVSOJsaOhei61ftksjP0lK5TZhjk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C0SyphQF; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AP99G024521;
+	Mon, 9 Dec 2024 10:50:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=DQHDERoIpTVNFdTrNfwzhA
+	S6rWPsfyTUVsAC0tG+skQ=; b=C0SyphQFvKEUzcErdoVb4MAVnqc4eltzISRguW
+	u4FTbjkcpZYMKcIDa+AkPF6q1U2cNeCLMJWyt/WyGxukHLfs9NDu6TRUTNfLrJwJ
+	oMS7q2jgCIhB5vD49RnSiD1f0dtl1h6wp7AAWnCMTWAA0C6fc9J4u8spFEG6UhJd
+	p0MTkERm3MCf+5Iuu36VKJB9t81L1Dx7vMii3LW2MfuJHR8huSkd+C+Snnb8p1ma
+	vPW2cZfiVFaLMJPdp93M9t8Vb8B6aGxmk8LzD7ybcQFcLYUnT0qgUsa8qmjSmU3X
+	enzkPoXQYOFtBQQLlNLEn1QmzkRZnPQmVpwKLmwATxavKYmw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cc2ecj6d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 10:50:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9Ao9Cq030892
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 10:50:09 GMT
+Received: from [10.231.195.67] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 02:50:07 -0800
+Message-ID: <64931fac-085b-4ff3-9314-84bac2fa9bdb@quicinc.com>
+Date: Mon, 9 Dec 2024 18:50:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.14.2
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Christoph Hellwig <hch@lst.de>,
+        Marek Szyprowski
+	<m.szyprowski@samsung.com>,
+        Robin Murphy <robin.murphy@arm.com>
+CC: linux-kernel <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>
+From: Baochen Qiang <quic_bqiang@quicinc.com>
+Subject: missing clear bdr in check_ram_in_range_map()?
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: A1FLghzP3KIX_hPr8jPVNA5yMhoGy0YP
+X-Proofpoint-GUID: A1FLghzP3KIX_hPr8jPVNA5yMhoGy0YP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
+ mlxlogscore=752 priorityscore=1501 impostorscore=0 lowpriorityscore=0
+ adultscore=0 malwarescore=0 clxscore=1011 suspectscore=0 spamscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090084
 
+Hi,
 
-On Tue, 03 Dec 2024 13:03:52 +0000, André Draszik wrote:
-> Add myself and Tudor as reviewers for the Google Tensor SoC alongside
-> Peter.
-> 
-> While at it, also add our IRC channel.
-> 
-> 
+while checking check_ram_in_range_map() I am confused by the condition set/check on bdr.
+If I am reading the code correctly, if bdr is set once, it would never get cleared, hence
+that function will always returns 0.
 
-Applied, thanks!
+should we clear bdr before each new iteration?
 
-[1/1] MAINTAINERS: add myself and Tudor as reviewers for Google Tensor SoC
-      https://git.kernel.org/krzk/linux/c/da9ca3164d1794660d9ad650beb807b9a47fe18b
+diff --git a/kernel/dma/direct.c b/kernel/dma/direct.c
+index 5b4e6d3bf7bc..1605b956b25e 100644
+--- a/kernel/dma/direct.c
++++ b/kernel/dma/direct.c
+@@ -611,6 +611,7 @@ static int check_ram_in_range_map(unsigned long start_pfn,
+                        return 1;
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+                start_pfn = PFN_DOWN(bdr->cpu_start) + PFN_DOWN(bdr->size);
++               bdr = NULL;
+        }
+
+        return 0;
 
 
