@@ -1,161 +1,155 @@
-Return-Path: <linux-kernel+bounces-436994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D238B9E8DC7
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:48:02 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EDFD9E8DC8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:48:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E197281395
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:48:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A04C28146C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83A6D215705;
-	Mon,  9 Dec 2024 08:47:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28F2A215711;
+	Mon,  9 Dec 2024 08:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UWgfa3uO"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="x8UdDn/o"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9A341EB3D;
-	Mon,  9 Dec 2024 08:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 773671EB3D;
+	Mon,  9 Dec 2024 08:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734075; cv=none; b=cc2CUm34k/P55NbQBxWjGwyuu+KcKoRB2R6cr6L26dpmzLhHYoXyC2vNsVjeqZP0faOWZALTIphyFyWgDWWYC6jvI6+iXwnjX2nNZnP/MWgs6xtBT1+n+n11P6xXDWEHBWiIoLjjnt2QZtoCaYx+j6SQ7DB9xo0cxlps+TnrLos=
+	t=1733734127; cv=none; b=KrJ6O3PIfJ2KJDg6uka05Wfw/BOnGLAxvEuNwhUEzpbMlhiPBTYwxY0Gsz5mRUa1V1Vn+KW89//E/HJnZ4GD7lNDt8Y1T3V0IQJXqgWqSlQpYCibpNzTrVVrYRsIYkx6XvnaBkXPUD0OrWGS/+NW+fcPt5aTvydeau/4c3/Yy4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734075; c=relaxed/simple;
-	bh=MgUCcyHZmhoyWplc1YUsmOsXZYib9lqKSt3lEQKaSYE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dIuwA4JsSrDq7kKvF+ANJJvUwbjMWh9ceMSJaTvQ6DkSbKvG7AT7vaok5y01cSlmCYx2BdRauCSlbBfMfG62Qvsar5gZloV8emRLzZmUJ4GbepF95t06XcPo7vN3ry9ZH+QSqBbeEKQ6vQXs8WmX9F6EOpnBa82wiZlXTFh31RA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UWgfa3uO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85A37C4CED1;
-	Mon,  9 Dec 2024 08:47:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733734074;
-	bh=MgUCcyHZmhoyWplc1YUsmOsXZYib9lqKSt3lEQKaSYE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UWgfa3uOhyHie63mC/kMEM4hrtMmch7j1xGAeIAAqj9diWni7FbORuiA+wCISS1C6
-	 D6Y0nQ7cgF86bK1YGRKKSSVxlCfxnDc+d/r9wPChj1QSQxeXhj/kwJtQxh3rwUdtaU
-	 5LRFAx7SFjjLPjvdmgBWRdjkvdapWFk2gpI9EMu5Bl5BC2JaXsjLdPm1XWfeH8lVaI
-	 GPxpn77tOdi497BRTHrHVSrHWVMYSZ1qbG01ZOkeT9DtQBSD383LRAjp1NMmm+SlGV
-	 KbWE+a3/9mWQ9dE8W+3OxtHYvKvKXaFmYBvq8ORlW+52PfjjIUHxLFfqH7rsOhGTrb
-	 Kz2mKPeGefDBw==
-Message-ID: <48988ec4-06a9-447b-bdd5-be35f31a5488@kernel.org>
-Date: Mon, 9 Dec 2024 17:47:51 +0900
+	s=arc-20240116; t=1733734127; c=relaxed/simple;
+	bh=0puQfJttu0wk+szabfo5NeG637ftnthHgnUH89CbeCw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mZgAWH184DhUq5jPguCfibhigAIgsYxdsxAKnX/6X9+4JW/OphQc4tbtLLefoj28vX7JE4kklTfLA6uYCeuWYfSW3DTqTQhFeev/zWFo9cbIdpKOcXznUFuKW/j9mRwBL0dvIx3CLDXyHHgXo/Me8vG7F+Va3mv5nJAGwfk6p50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=x8UdDn/o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E76EC4CED1;
+	Mon,  9 Dec 2024 08:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1733734127;
+	bh=0puQfJttu0wk+szabfo5NeG637ftnthHgnUH89CbeCw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=x8UdDn/ovjmgS2gKKVJsZBCTALXQ4zWxEN7WKWLcHloMd/wCcBO6UOE3wpwlc1Wkj
+	 FOkATrkz0a/nCHk8g0hz7gvrpaACNJzG07BM8qllN6I43+dyOmgGRuiW8jLzJoNsMn
+	 OURWlgxB4S+etfyHldxRjD9aC6OG0icr0vxH+hD0=
+Date: Mon, 9 Dec 2024 09:48:43 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alexander Viro <viro@zeniv.linux.org.uk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>, Lee Jones <lee@kernel.org>,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] rust: miscdevice: access the `struct miscdevice`
+ from fops->open()
+Message-ID: <2024120925-express-unmasked-76b4@gregkh>
+References: <20241209-miscdevice-file-param-v2-0-83ece27e9ff6@google.com>
+ <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/3] PCI: dwc: Clean up some unnecessary codes in
- dw_pcie_suspend_noirq()
-To: Richard Zhu <hongxing.zhu@nxp.com>, jingoohan1@gmail.com,
- bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
- manivannan.sadhasivam@linaro.org, robh@kernel.org, frank.li@nxp.com,
- quic_krichai@quicinc.com
-Cc: imx@lists.linux.dev, kernel@pengutronix.de, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241209073924.2155933-1-hongxing.zhu@nxp.com>
- <20241209073924.2155933-4-hongxing.zhu@nxp.com>
-From: Damien Le Moal <dlemoal@kernel.org>
-Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <20241209073924.2155933-4-hongxing.zhu@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209-miscdevice-file-param-v2-2-83ece27e9ff6@google.com>
 
-On 12/9/24 16:39, Richard Zhu wrote:
-> Before sending PME_TURN_OFF, don't test the LTSSM state. Since it's safe
-> to send PME_TURN_OFF message regardless of whether the link is up or
-> down. So, there would be no need to test the LTSSM state before sending
-> PME_TURN_OFF message.
+On Mon, Dec 09, 2024 at 07:27:47AM +0000, Alice Ryhl wrote:
+> Providing access to the underlying `struct miscdevice` is useful for
+> various reasons. For example, this allows you access the miscdevice's
+> internal `struct device` for use with the `dev_*` printing macros.
 > 
-> Only print the message when ltssm_stat is not in DETECT and POLL.
-> In the other words, there isn't an error message when no endpoint is
-> connected at all.
-> 
-> Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Note that since the underlying `struct miscdevice` could get freed at
+> any point after the fops->open() call, only the open call is given
+> access to it. To print from other calls, they should take a refcount on
+> the device to keep it alive.
+
+The lifespan of the miscdevice is at least from open until close, so
+it's safe for at least then (i.e. read/write/ioctl/etc.)
+
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 > ---
->  .../pci/controller/dwc/pcie-designware-host.c | 38 +++++++++++--------
->  drivers/pci/controller/dwc/pcie-designware.h  |  1 +
->  2 files changed, 23 insertions(+), 16 deletions(-)
+>  rust/kernel/miscdevice.rs | 19 ++++++++++++++++---
+>  1 file changed, 16 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 14e95c2952bbe..02e0e8c255c70 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -982,25 +982,31 @@ int dw_pcie_suspend_noirq(struct dw_pcie *pci)
->  	if (dw_pcie_readw_dbi(pci, offset + PCI_EXP_LNKCTL) & PCI_EXP_LNKCTL_ASPM_L1)
->  		return 0;
+> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
+> index 0cb79676c139..c5af1d5ec4be 100644
+> --- a/rust/kernel/miscdevice.rs
+> +++ b/rust/kernel/miscdevice.rs
+> @@ -104,7 +104,7 @@ pub trait MiscDevice {
+>      /// Called when the misc device is opened.
+>      ///
+>      /// The returned pointer will be stored as the private data for the file.
+> -    fn open(_file: &File) -> Result<Self::Ptr>;
+> +    fn open(_file: &File, _misc: &MiscDeviceRegistration<Self>) -> Result<Self::Ptr>;
 >  
-> -	/* Only send out PME_TURN_OFF when PCIE link is up */
-> -	if (dw_pcie_get_ltssm(pci) > DW_PCIE_LTSSM_DETECT_ACT) {
-> -		if (pci->pp.ops->pme_turn_off)
-> -			pci->pp.ops->pme_turn_off(&pci->pp);
-> -		else
-> -			ret = dw_pcie_pme_turn_off(pci);
-> -
-> -		if (ret)
-> -			return ret;
-> +	if (pci->pp.ops->pme_turn_off)
-> +		pci->pp.ops->pme_turn_off(&pci->pp);
-> +	else
-> +		ret = dw_pcie_pme_turn_off(pci);
-> +	if (ret)
-> +		return ret;
+>      /// Called when the misc device is released.
+>      fn release(device: Self::Ptr, _file: &File) {
+> @@ -190,14 +190,27 @@ impl<T: MiscDevice> VtableHelper<T> {
+>          return ret;
+>      }
+>  
+> +    // SAFETY: The opwn call of a file can access the private data.
 
-ret is always 0 for the "if (pci->pp.ops->pme_turn_off)" case. So this test of
-"if (ret) return ret" should really go inside the "else", and the initialization
-of ret to 0 on declaration can be removed too.
+s/opwn/open/ :)
 
->  
-> -		ret = read_poll_timeout(dw_pcie_get_ltssm, val, val == DW_PCIE_LTSSM_L2_IDLE,
-> -					PCIE_PME_TO_L2_TIMEOUT_US/10,
-> -					PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
-> -		if (ret) {
-> -			dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
-> -			return ret;
-> -		}
-> +	ret = read_poll_timeout(dw_pcie_get_ltssm, val,
-> +				val == DW_PCIE_LTSSM_L2_IDLE ||
-> +				val <= DW_PCIE_LTSSM_DETECT_WAIT,
-> +				PCIE_PME_TO_L2_TIMEOUT_US/10,
-> +				PCIE_PME_TO_L2_TIMEOUT_US, false, pci);
-> +	if (ret) {
-> +		/* Only dump message when ltssm_stat isn't in DETECT and POLL */
-> +		dev_err(pci->dev, "Timeout waiting for L2 entry! LTSSM: 0x%x\n", val);
-> +		return ret;
->  	}
->  
-> +	/*
-> +	 * Refer to r6.0, sec 5.3.3.2.1, software should wait at least
-> +	 * 100ns after L2/L3 Ready before turning off refclock and
-> +	 * main power. It's harmless too when no endpoint connected.
-> +	 */
-> +	udelay(1);
+> +    let misc_ptr = unsafe { (*file).private_data };
+
+Blank line here?
+
+> +    // SAFETY: This is a miscdevice, so `misc_open()` set the private data to a pointer to the
+> +    // associated `struct miscdevice` before calling into this method. Furthermore, `misc_open()`
+> +    // ensures that the miscdevice can't be unregistered and freed during this call to `fops_open`.
+
+Aren't we wrapping comment lines at 80 columns still?  I can't remember
+anymore...
+
+> +    let misc = unsafe { &*misc_ptr.cast::<MiscDeviceRegistration<T>>() };
 > +
->  	dw_pcie_stop_link(pci);
->  	if (pci->pp.ops->deinit)
->  		pci->pp.ops->deinit(&pci->pp);
-> diff --git a/drivers/pci/controller/dwc/pcie-designware.h b/drivers/pci/controller/dwc/pcie-designware.h
-> index 5c14ed2cb91ed..7efcb4af66da3 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware.h
-> +++ b/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -330,6 +330,7 @@ enum dw_pcie_ltssm {
->  	/* Need to align with PCIE_PORT_DEBUG0 bits 0:5 */
->  	DW_PCIE_LTSSM_DETECT_QUIET = 0x0,
->  	DW_PCIE_LTSSM_DETECT_ACT = 0x1,
-> +	DW_PCIE_LTSSM_DETECT_WAIT = 0x6,
->  	DW_PCIE_LTSSM_L0 = 0x11,
->  	DW_PCIE_LTSSM_L2_IDLE = 0x15,
+>      // SAFETY:
+> -    // * The file is valid for the duration of this call.
+> +    // * The file is valid for the duration of the `T::open` call.
+
+It's valid for the lifespan between open/release.
+
+>      // * There is no active fdget_pos region on the file on this thread.
+> -    let ptr = match T::open(unsafe { File::from_raw_file(file) }) {
+> +    let file = unsafe { File::from_raw_file(file) };
+> +
+> +    let ptr = match T::open(file, misc) {
+>          Ok(ptr) => ptr,
+>          Err(err) => return err.to_errno(),
+>      };
 >  
+> +    // This overwrites the private data from above. It makes sense to not hold on to the misc
+> +    // pointer since the `struct miscdevice` can get unregistered as soon as we return from this
+> +    // call, so the misc pointer might be dangling on future file operations.
+> +    //
 
+Wait, what are we overwriting this here with?  Now private data points
+to the misc device when before it was the file structure.  No other code
+needed to be changed because of that?  Can't we enforce this pointer
+type somewhere so that any casts in any read/write/ioctl also "knows" it
+has the right type?  This feels "dangerous" to me.
 
--- 
-Damien Le Moal
-Western Digital Research
+>      // SAFETY: The open call of a file owns the private data.
+>      unsafe { (*file).private_data = ptr.into_foreign().cast_mut() };
+
+Is this SAFETY comment still correct?
+
+thanks,
+
+greg k-h
 
