@@ -1,123 +1,172 @@
-Return-Path: <linux-kernel+bounces-438453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 955609EA179
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:54:31 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CED09EA183
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:56:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3341662B3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:54:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E671188849F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:56:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E644519D8B7;
-	Mon,  9 Dec 2024 21:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C131C19DF40;
+	Mon,  9 Dec 2024 21:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="G4sMGhD4"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Myr9sil6"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2088.outbound.protection.outlook.com [40.107.223.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C283519C561;
-	Mon,  9 Dec 2024 21:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733781265; cv=none; b=oVyxb2GFr8OrRY0AWBk02xP1wlv9ukO7MI0UvmFFGdRrvPMiUTs0CmaEI4Co6gmHbASYuwrjHPZeDVgtRGgFeeT3fwc5ibVpKJfKrlf7wrk6/KfhtLRLvyu7lw5b50NPbT16FAMgCbMJtv0YgiExR2/NebrSEZV9LdCZqF33JJM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733781265; c=relaxed/simple;
-	bh=ZrRCLe8p7MbTrHB1VAysrsoSnyPE1tTECkyjO7/dNgk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NFXFXreEj1b/QaBKUphuL4Fx/+3wxB9fjnV/OyrSE5T4C/FkcQr70dNy7i6achT1lDsZduicphfUTfIU9ZxgsNIjbwosDH8Cm2Rsv6doW4bN0P0zbY8C33n5MJfc9sZmWuLbUh1k6XyINYhYEzSDt7Rf8IZWdfbMn1/K0M0djXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=G4sMGhD4; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Y6bHK0R8Lzlfflk;
-	Mon,  9 Dec 2024 21:54:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1733781253; x=1736373254; bh=9sgB1Xfr/cwENdJWfeZe9l0S
-	l5Itmk2Pe4rUGDVEgjQ=; b=G4sMGhD4hccjRsO/nkbCoH7XNn58eJmQT9UCRHn+
-	HEnmMYFsfi5YFuMx73ZV8QQ+tOroqtc+jEKUVrscdC9Mj7glMEktcBdlr2f86CYN
-	9ogl1KwZGqXodq6hOiueQpFh1ILyEtQ36C/XGv3SHs/Fg9Wqi5NVdzFNxjU9npZ0
-	nVine2cCHSmuHL694l3j0lLBJtprSEBWwTIZJpEgE2ppBwbE2/K/Vf7lCBSWTise
-	m7x8iSjKELOF+s1Ui4zmadyjVp/snVDTFpNPYXnL8SzwFSGs8rACyhz9BiQ/Nxv0
-	y3LD0x83Qk3qjCQZ44rWdJzxoptLITu0Nz+A0WmDfGICxQ==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id ZFoJCw0eQ_Yx; Mon,  9 Dec 2024 21:54:13 +0000 (UTC)
-Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6bH31xBbzlfflB;
-	Mon,  9 Dec 2024 21:54:06 +0000 (UTC)
-Message-ID: <e2693069-2f8f-458b-98c2-f9d43514061b@acm.org>
-Date: Mon, 9 Dec 2024 13:54:04 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D360176228;
+	Mon,  9 Dec 2024 21:56:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733781412; cv=fail; b=RjTEnUkR4m6HdEDIsvRAisuuSEr5Pb92hkGNuWhpUXyAVEyOplEaXQT3JK+ftRLea8OzcSnBlm5AbnUinPzKRpZg2By783qKvGvcnibDTIB7bpdii+MrcErV3eNKP6Br4sK9uqbypHwWnpJ0qN+c5NppgooW3uHPiuMAyf64nuE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733781412; c=relaxed/simple;
+	bh=F+9XA97JMLvGq/GQsSksjjgp2YB04nPr/0gbIEQBUKg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=fmRM3MsCOB2sOx7tCwcnY/t0jCXLeZqEM7a73MsmwS0PA5h4YdCb0aWZ/A23pMFPqFPNqE6g5syr1Tw6E1wKOhYhhqJ28JhcVRKqzpkPHxbWzRGx682GKnRV2vXGvrzTxzjRaGTXy06gZj8ndcfkKCYAQ63YLNFSA4VeqqaOvQA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Myr9sil6; arc=fail smtp.client-ip=40.107.223.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sxss6MQ0/SjM5px/pJnpam8HWAgms3FoAMvSay2UBHa5VvleI9Cj5g1Y7cxehNlbSrb0kn/zOBg3vPrJIrvhXWmgPkPa5RDjzwmrhwL97nuNitEXAD6j8h/7VfEIOTAvtHP3kF6IGD80TBfEZmoTWeLl5i18MIOTWI2Mx3dlgwK7GtYLUdRWr8bmw4UZow4nYOCr9q6SZdw1i8VMpfmkP6HuSanPOK+NBdV2XqSZ6PKA/P2Ws+H+Ob3FYuH1Ipms9YHVkRi4mOuLpHufNFqyEAXgUxrAeA+3DfOQDbd2QBtAcnauw6hVXdKVFAYZbviANyF6OIC2qb/sc2UqmaJJhA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=cM+mw2DU1F6fFlgSltTBiT6FB8Z1+qK+o/yCC8SB9PA=;
+ b=j+xVfUFwEQilnspCJTQR77UaSj+WF3qChRlAxLXAgFVehYfPkgTqe7XioUaMqfherOMG7UFBhlLruKBS5JToHaCNBGyhv8gMa1m+Ys52+uSXS1mlZDkrWHZpw6l1/weXPmSDyO+e2a9Pc2u5ctt8Z2yW8Y2o/WlmkQ5yePQ5IUM9e2iAZd8IQsN6xyTeYaLrb/MeLOIuvHOLhq9RmS7povURs04uXDyfkmfY92TMyG7Tp+QVheH55NcR/dvyAmTm0NR4GE4VGdRA+H6s0L5G5tRyRsWfOsW8VGuYg2RRe6Wu/KaGUp/I1WC3sxyFJQ1E6Gh8qeWV5mF3QCWDfo+Q7w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=cM+mw2DU1F6fFlgSltTBiT6FB8Z1+qK+o/yCC8SB9PA=;
+ b=Myr9sil6Lw6eZFl1CHSa6ETR0CriROJqBKj/blWZvsEtkMuLooCHJDgMk30hE6VLkFVZemd1LH2wf1bVq5LnUxzhqjHQ1IevDm2r6z61QxK5WiwuhKz56P36Moxy++sAJEspHFR2Rbds8SE+Ciu4D1TqpQTqYRRWq3HXUwoeczE=
+Received: from CH0PR13CA0048.namprd13.prod.outlook.com (2603:10b6:610:b2::23)
+ by PH7PR12MB7212.namprd12.prod.outlook.com (2603:10b6:510:207::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8207.14; Mon, 9 Dec
+ 2024 21:56:43 +0000
+Received: from DS3PEPF0000C37D.namprd04.prod.outlook.com
+ (2603:10b6:610:b2:cafe::88) by CH0PR13CA0048.outlook.office365.com
+ (2603:10b6:610:b2::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8230.9 via Frontend Transport; Mon, 9
+ Dec 2024 21:56:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS3PEPF0000C37D.mail.protection.outlook.com (10.167.23.7) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8230.7 via Frontend Transport; Mon, 9 Dec 2024 21:56:42 +0000
+Received: from titanite-d354host.amd.com (10.180.168.240) by
+ SATLEXMB04.amd.com (10.181.40.145) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Mon, 9 Dec 2024 15:56:41 -0600
+From: Avadhut Naik <avadhut.naik@amd.com>
+To: <linux-edac@vger.kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <bp@alien8.de>, <yazen.ghannam@amd.com>,
+	<avadhut.naik@amd.com>
+Subject: [PATCH] EDAC/amd64: Fix possible module load failure on some UMC usage combinations
+Date: Mon, 9 Dec 2024 21:55:10 +0000
+Message-ID: <20241209215636.2744733-1-avadhut.naik@amd.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] scsi:ufs:core: update compl_time_stamp_local_clock
- after complete a cqe
-To: liuderong@oppo.com, alim.akhtar@samsung.com, avri.altman@wdc.com,
- James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
- peter.wang@mediatek.com, manivannan.sadhasivam@linaro.org,
- ahalaney@redhat.com, beanhuo@micron.com, quic_mnaresh@quicinc.com
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1733470182-220841-1-git-send-email-liuderong@oppo.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <1733470182-220841-1-git-send-email-liuderong@oppo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37D:EE_|PH7PR12MB7212:EE_
+X-MS-Office365-Filtering-Correlation-Id: 59693f01-e16d-48ac-bdd6-08dd189c5def
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?TgIKiFQ6X3rzZYl2caPPR0vVZRfRMK8XJnAQZldPu3D5+LKu87csm2NL7Gdn?=
+ =?us-ascii?Q?GXcMbweyXAsTiupNjIwlu03PxMyjkXcsNBRND2ga/qhVlkB0Bc6k5ZUazWyH?=
+ =?us-ascii?Q?4IGALQDZ0CjldelGyHB765aQS4IxyH9EEOnS+0ZBr/0YQW0YJ9bqlWH4D6jN?=
+ =?us-ascii?Q?IYT0q1g43saaDuyyQtJSpIIWq74OjKbQ1J73u7/rfNVXD3GTfKITp425m6j9?=
+ =?us-ascii?Q?WsNGbGT9nqIHaBAktZi0AUGdUVd7xs9Xe5K5iiFtMxJxPOlao/WArxx3PrXt?=
+ =?us-ascii?Q?w5vnMMQP1Ad6wMktl6SLsO9vXCjyNwPhR8GxtofcZiVV7C2Tf/BN+3IeQ/TY?=
+ =?us-ascii?Q?k/utd2F1EX39H97WBd47ycV02Z2+uufOvbNd8JBEheeYtCWyECNkQg3cu+VY?=
+ =?us-ascii?Q?Odb673L8yTLo3d68JJ23mv/Gr8rfZJ+aSFYp/0CANWIsKqmmR9Yo74MMK35B?=
+ =?us-ascii?Q?sbGR5/t1RN7dZ+o6JNsz1NEt3nR3vCZbczzRi5nb/MZOf2+M1s31hQEY22N1?=
+ =?us-ascii?Q?+XDxKt5ao6jKcCM6x51raeF+NeRjioUCHWqmNxNdVbXC9/Tp+3IyJ8RPbrwh?=
+ =?us-ascii?Q?FCWQx6uxWf3K6BFM7+6uMOhOpNeWrNdMJHvrdyqLgH7gdrI6Appf33XPd2Se?=
+ =?us-ascii?Q?rMlmY/2uxnL+PuVdT0wNpoLSHDkJyUhTFrcq1fQ833nzJwLQoF+hUjaMZ45D?=
+ =?us-ascii?Q?iJuDjUgedcoMAxlKiIYZWRbEEPXbQPmJrV3ruIev6O8kQS6/ILYTxmnAwYpY?=
+ =?us-ascii?Q?KxbnNzAkEFBJfCS8WJD3ZwEXbktW/A3FSfoe+blSjiWZof6XX/4LI++sNZAY?=
+ =?us-ascii?Q?iRNlwjIHHcG9rDvFvQJVjUyTJxTSeIEm3tZrbBzyMVkEUYFW1AtQ+z1ueg9N?=
+ =?us-ascii?Q?11BWumsg9n/FudUl6aLKi5QAqf5G7+iBfe0dzFwSTGqw6kMpSHqhO7FJac8b?=
+ =?us-ascii?Q?xByDGzZt3nUnRGdCeFz7ygNpm1IjuvsS7k8VI5UpsKLka6CDZ2PI9nTaQSA0?=
+ =?us-ascii?Q?HxSQnVaOzYMiJAuEz6mzGFXquhyeaemb8MrrzmHQEn+gtM7TYLspU+fGpW12?=
+ =?us-ascii?Q?jVRBy7QhsqlAsBOV9Bc/JfU/LDO5A7Oc+B73aQlvktJWRjlu6ulKG2HZGjq2?=
+ =?us-ascii?Q?biJ+9N4neu242/lpulVKtWiUOTeukT8+gilklJomLbOg4k+aSnoCNWHg7egt?=
+ =?us-ascii?Q?CvAQBBf+0eEyJqieSQUfaqIX4mULmP70sM11JeNMLajPUEGHsG0yLP7V1cNF?=
+ =?us-ascii?Q?4e4iNK+sUjyJBSDNR4moiGDeWHGkEtQIkYQ0xuaOyM7zWS6Hisn0VjXrV1ni?=
+ =?us-ascii?Q?8PHQXmVjMVDk0tIn9aSvL8dvGZStp/9kLsKCGCzDWT8dnnGUc3YqT4UCyQqO?=
+ =?us-ascii?Q?OwyCreMe2PHctjVgPtX0aFwAj4Qa7DfqKcgUNcrY9D9GfIviKKHDuBl8BaP1?=
+ =?us-ascii?Q?Tys8EoN2LnCpjRI2+josRkHmSzlxri65?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 09 Dec 2024 21:56:42.5342
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 59693f01-e16d-48ac-bdd6-08dd189c5def
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37D.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7212
 
+Starting Zen4, AMD SOCs have 12 Unified Memory Controllers (UMCs) per
+socket.
 
-On 12/5/24 11:29 PM, liuderong@oppo.com wrote:
-> From: liuderong <liuderong@oppo.com>
-> 
-> For now, lrbp->compl_time_stamp_local_clock is set to zero
-> after send a sqe, but it is not updated after complete a cqe,
-> the printed information in ufshcd_print_tr will always be zero.
-> So update lrbp->cmpl_time_stamp_local_clock after complete a cqe.
-> 
-> Log sample:
-> ufshcd-qcom 1d84000.ufshc: UPIU[8] - issue time 8750227249 us
-> ufshcd-qcom 1d84000.ufshc: UPIU[8] - complete time 0 us
-> 
-> Fixes: c30d8d010b5e ("scsi: ufs: core: Prepare for completion in MCQ")
-> Reviewed-by: Bean Huo <beanhuo@micron.com>
-> Reviewed-by: Peter Wang <peter.wang@mediatek.com>
-> Signed-off-by: liuderong <liuderong@oppo.com>
-> ---
-> v1 -> v2: add fixes tag
->   drivers/ufs/core/ufshcd.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index 6a26853..bd70fe1 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -5519,6 +5519,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
->   
->   	lrbp = &hba->lrb[task_tag];
->   	lrbp->compl_time_stamp = ktime_get();
-> +	lrbp->compl_time_stamp_local_clock = local_clock();
->   	cmd = lrbp->cmd;
->   	if (cmd) {
->   		if (unlikely(ufshcd_should_inform_monitor(hba, lrbp)))
+When the amd64_edac module is being loaded, these UMCs are traversed to
+determine if they have SdpInit (SdpCtrl[31]) and EccEnabled (UmcCapHi[30])
+bits set and create masks in umc_en_mask and ecc_en_mask respectively.
 
-Although this patch looks good to me: an infrastructure for gathering
-I/O statistics should not occur in the UFS driver. This functionality
-should be moved into the block layer core.
+However, the current data type of these variables is u8. As a result, if
+only the last 4 UMCs (UMC8 - UMC11) of the system have been utilized,
+umc_ecc_enabled() will return false. Consequently, the module may fail to
+load on these systems.
 
-Thanks,
+Change the data type of these variables to u16.
 
-Bart.
+Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
+---
+ drivers/edac/amd64_edac.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/edac/amd64_edac.c b/drivers/edac/amd64_edac.c
+index ddfbdb66b794..583685e8e60f 100644
+--- a/drivers/edac/amd64_edac.c
++++ b/drivers/edac/amd64_edac.c
+@@ -3362,7 +3362,7 @@ static bool dct_ecc_enabled(struct amd64_pvt *pvt)
+ 
+ static bool umc_ecc_enabled(struct amd64_pvt *pvt)
+ {
+-	u8 umc_en_mask = 0, ecc_en_mask = 0;
++	u16 umc_en_mask = 0, ecc_en_mask = 0;
+ 	u16 nid = pvt->mc_node_id;
+ 	struct amd64_umc *umc;
+ 	u8 ecc_en = 0, i;
+-- 
+2.43.0
+
 
