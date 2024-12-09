@@ -1,86 +1,122 @@
-Return-Path: <linux-kernel+bounces-436662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5EE09E8928
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:20:52 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADAF3188660E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:20:52 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35F63D3B3;
-	Mon,  9 Dec 2024 02:20:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDNHGitm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C07519E892B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:25:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047F2B66E;
-	Mon,  9 Dec 2024 02:20:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78BE0281077
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:25:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218B843179;
+	Mon,  9 Dec 2024 02:24:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="TkfkhObo"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 292299474;
+	Mon,  9 Dec 2024 02:24:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733710847; cv=none; b=IHQvu3tLnE59JQ8ka9rETQTHrmjLODhRwfFZn6JmVNQesNeQip3cEdqQCh4au50n9RKLJf5Rs1964ecqpf1sOdd2E0DwRJe8eAviD76rLl5ekdllUxbOeRQly0qP5QCUX8W/Isv0CVotRs2wf5tiaNE4eRG98OOlIQNN6VSr8iw=
+	t=1733711096; cv=none; b=fObz5hcEElT5Owv2fiSSeqdC6Xtvc2WdDN6Z0QEsdGyESWSKX+NbGpxawYfILwHJNndYfWi5JwZkRzomsJLp/CRa4tj8N1RDVfNemGJciL1m5h8i/n5NrQdp1vQvQ5lGHE2yPcOiiTk9RffOHqC0b1KpaoyLLvhUE88IKO9ZTAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733710847; c=relaxed/simple;
-	bh=NW/0AnpVZYFNsaANc1AZBCYAwwQEYK/rTc7tMz0pn28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i39PKBvy7SDeNxMKERYuhk7/ymo3GMHs4k+5tXDcQ39Fr3OJa42p7AN37rEVoTOiX6R4U5YFilqE6qAoFPkRg6EpN9pi0vR/smIkoX8lhjRa21Dyjb112V2GVAD8QHoq/tfQoiThHt35yXUq+Pq4F/zY0ZDGYad+5ucE4uxIs1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDNHGitm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B41FCC4CED2;
-	Mon,  9 Dec 2024 02:20:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733710846;
-	bh=NW/0AnpVZYFNsaANc1AZBCYAwwQEYK/rTc7tMz0pn28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JDNHGitm/8f2Tk+rbCAS69m0xLhD3B2/tXOJRKU3gFGmznlghGGukbqtNYXqqvPyp
-	 SaDaintKZYAZWOm3GWFKehRUE0gcLNVJms/ka67Dq2nxkmTZ1/4XwcDg/w1ymwn4XH
-	 lEd+s1SxQ+7UVtw7wWy4rxBSNuTyLHsmzwjQHVywoWAgbfQ9FlP9YqvlzvfnOZ0ZpL
-	 i7SKwC4PjyXAQC2Gs7dWbIQrykHoq3+DqmmxHsbqt43gypwaU9XSmqdNRJ3WL6wP3E
-	 gjDPCf249KDJ1RzMI4Uw76Ndj2DJTqRCIZQni9NZnqrz2lC/NYuatFaHwsd/8bux2f
-	 VeFqurysg8Wvg==
-Date: Mon, 9 Dec 2024 02:20:43 +0000
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Dawid Niedzwiecki <dawidn@google.com>
-Cc: Benson Leung <bleung@chromium.org>, chrome-platform@lists.linux.dev,
-	linux-kernel@vger.kernel.org, chromeos-krk-upstreaming@google.com
-Subject: Re: [PATCH v3 0/2] platform/chrome: cros_ec: improve probing for
- RWSIG
-Message-ID: <Z1ZT-ytCFmOvrFu5@google.com>
-References: <20241206091514.2538350-1-dawidn@google.com>
+	s=arc-20240116; t=1733711096; c=relaxed/simple;
+	bh=l8wBarl3KRcwkUlJfSMLf+OI4V0RDXrFf846BNVjBfg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Y0p8tams1I7jmEBvAooVncwIdPeMSdEJNz0IimkFxAPNfAPp37F858qyduhcIPxRMa6JHI2z6Px9nLAmpBX1Q0veOey1yVC5M7NDyl/34DaihuYVy6bKizck4wfODtT2Ev05L+hX7Gdn25uw82lvmMY00/1b7u2XlCucsFS3RIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=TkfkhObo; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1733711084;
+	bh=EsE2NHK2S30FqP7AInRavBptTNivjmfPlKgjkLP5m3o=;
+	h=Date:From:To:Cc:Subject:From;
+	b=TkfkhObojHxIOfho8IdGJzdEFQb6YET1YtaHIZ6iea8FlfPZgVIdUq5LL11wcZxt7
+	 wDKzvedJSTVCkoJUZijqUJRYw//bNoCR1iHYt0W17KgSxJacE/2T2x6lKGjaG6+gl4
+	 pHybteVZy75CcvB9jw5zn8NMRk8VKUOnjHYKlLKeOH6qBf/tjP4lhEJ7a1y1YlhJmo
+	 16PV5aaMg0gpm/CzPyLaXqmJiyzemOF6hBgeNPfn+j5hZKQJ4GB6lTKgjZnsjvTHQg
+	 5UVkK/VUt0AvIJ1qURDiE7LpwkG1WwhbUqzgpBG0Ino1SF5z/XntyNO9RovOVjjZm7
+	 HnPPoNNimPUjw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y65Kl33vkz4wcj;
+	Mon,  9 Dec 2024 13:24:43 +1100 (AEDT)
+Date: Mon, 9 Dec 2024 13:24:46 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, Suren Baghdasaryan
+ <surenb@google.com>
+Subject: linux-next: manual merge of the tip tree with the mm tree
+Message-ID: <20241209132446.77fcb14b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206091514.2538350-1-dawidn@google.com>
+Content-Type: multipart/signed; boundary="Sig_/OK85QY0+UJ4MjZumhsKUP_/";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Dec 06, 2024 at 09:15:12AM +0000, Dawid Niedzwiecki wrote:
-> V2 -> V3:
-> - Move exiting from `cros_ec_rwsig_continue` if `error_count` exceeds
->   `RWSIG_CONTINUE_MAX_ERRORS_IN_ROW` to the `if (rev < 0)` statement when
->   `error_count` is incremented.
-> 
-> V1 -> V2:
-> - Use dev_info instead of dev_warn when cros_ec_rwsig_continue returns
->   an error.
-> - Return immediately from cros_ec_rwsig_continue, if the RWSIG_ACTION
->   command fails itself, not SPI transaction.
-> 
-> [...]
+--Sig_/OK85QY0+UJ4MjZumhsKUP_/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Applied to
+Hi all,
 
-    https://git.kernel.org/pub/scm/linux/kernel/git/chrome-platform/linux.git for-next
+Today's linux-next merge of the tip tree got conflicts in:
 
-[1/2] platform/chrome: cros_ec: jump to RW before probing
-      commit: 4b308a1944b8ff1d50131849372672396a799a37
-[2/2] platform/chrome: cros_ec_proto: remove unnecessary retries
-      commit: bd37caa72a61fea3c1ddf465ed1b122b6a613349
+  include/linux/mm.h
+  include/linux/mm_types.h
+  kernel/fork.c
+  tools/testing/vma/vma_internal.h
 
-Thanks!
+between commits:
+
+  5f0d64389e1f ("mm: convert mm_lock_seq to a proper seqcount")
+  062111898568 ("mm: move per-vma lock into vm_area_struct")
+  85ad413389ae ("mm: make vma cache SLAB_TYPESAFE_BY_RCU")
+
+from the mm-unstable branch of the mm tree and commit:
+
+  eb449bd96954 ("mm: convert mm_lock_seq to a proper seqcount")
+
+from the tip tree.
+
+Note that commits 5f0d64389e1f and eb449bd96954 are identical patches.
+
+I fixed it up (I used the mm tree version) and can carry the fix as
+necessary. This is now fixed as far as linux-next is concerned, but any
+non trivial conflicts should be mentioned to your upstream maintainer
+when your tree is submitted for merging.  You may also want to consider
+cooperating with the maintainer of the conflicting tree to minimise any
+particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/OK85QY0+UJ4MjZumhsKUP_/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWVO4ACgkQAVBC80lX
+0GwV2Af/Qh08sTTeSY9cv3kqmAm64nsqJz9qaG9JrlNXWOAAw07j3oN1JBb7lzOW
+50a8Yodssbr3q3dked36PemxBk1OxmFuQARtEhkdG0Icnf2T/DzAql0SZ2+RJhD4
+8uJOURfe9FK5tfJ3GPful5lrm5Y82l5vnaHg8XXEXD1V4hWk4RBNqeXea418Wz/y
+u/pDEz97yHWy4od6hbWo39ywItm61Kii8BiSS9mv6n4obi8rNfX5DC+L6O2VxMgL
+2Jd8ppuOgfmFhojXVJSMX1+UyXNUYu4RWnz9rq7nGyLOVymuaq0wpxHg0N6ZzIVi
+sMxPpxG7L4V5tPF1kvtLnPBHOWnTfg==
+=1cuV
+-----END PGP SIGNATURE-----
+
+--Sig_/OK85QY0+UJ4MjZumhsKUP_/--
 
