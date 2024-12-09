@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-437743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 459119E97F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:56:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36EA21887FB4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:56:30 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8D71A23B2;
-	Mon,  9 Dec 2024 13:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lidOB0rR"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBAB9E97F0
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 14:56:20 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF3E31A2395
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 13:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 203DB283716
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 13:56:19 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AE71ACED6;
+	Mon,  9 Dec 2024 13:56:07 +0000 (UTC)
+Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com [209.85.221.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F11E61A2395;
+	Mon,  9 Dec 2024 13:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733752572; cv=none; b=gmxz7v8CXlKyLUZ54sEkKK9PZ9ttFay138eeZYZEvA8nsksCxfq8Xvwi4oszQbHzXmVeuBgLCs9qj4VJ3h/oghW73ynAc8EGDvMad3EqpZkq1VkNp0DhyW9CcsRIhJ5nELyJ/nLPiCJMSlI5POeEeS0saQd1r3j6yrcdbwAtHvs=
+	t=1733752566; cv=none; b=GjYEyJhmdOBt5c7VxFHpkLg3IMiacPX32pf0bWUbV/WglBCuRQVFtIg/lrk1aq4wm81/oDsYKnwkAL3Ew72qMycocDqfqIPzh9448UXKV1xxs+M6jzJh/6UUUEG5lDG4Fa2BSGgLcTMNFCOTFF2Dfthn/09idvxCWNlkYRglrmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733752572; c=relaxed/simple;
-	bh=f6XqPaGHJ0jJAPxY8ehyTH9J2e5L1tx3XwidYZzgqb4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=SpqU0TPAMbKy/BV133nLBBiIo60ibSWw/rXyBQ4xhAKgwYvp/EEmPE67m41fx4yhvAMSgpx89gjt+I+50Sb6sr97/vn69uk/xImCY+xg4I3fCeKRCvPAF6wR78hCYuISVCZDslyYnGfjjm+Lrc66oX8n6GYsmynQHWweFWU5RZk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lidOB0rR; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1733752558;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xMD7OR5YZ9oyBrkqZP0zItfH8mnaDJd5RfsgeWQ8jts=;
-	b=lidOB0rRhzPAswU66ZHocV9Yglns74v/VdiF1Z3la7rkMoMWGcma1H3Y3iQ1sOjrxg2x/f
-	lOexU8R0UTdCDDUJYSPVG6UneeSgS0GytGN7jZSxSeijapRANr+T6Nf61J54WsioEoHCBJ
-	ks3owmk0w31XQZnvub6yusy4u9QYmlY=
+	s=arc-20240116; t=1733752566; c=relaxed/simple;
+	bh=/rmlT2wpNFq1G+aKc2WZ8CWg0BcZjh+LRF/81aeW4jU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VhVNSgGncPHAlPtEgq/lxEt4wKXRStGgzvotuvlkYtWAhi+e1KVrqvg8xILonX4wotedr4KUUXM8Fu+E3AK5tkK1+q0I+OwtXceRudvmQbowshtRPaSDfWVA6RAsdnFJ4aqXz+5EO0ktYczUrnQcuFcNPS5JSILVd2Y4+qIWEnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f171.google.com with SMTP id 71dfb90a1353d-518799f2828so367426e0c.0;
+        Mon, 09 Dec 2024 05:56:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733752563; x=1734357363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ELHrjSa+vWaOLPFuylekENu9WyWAOwRP56b3zK4wwcw=;
+        b=HBKnFGeDt27fdYYtCj8GXPQbZm5aUAXlb+7z8C0iXH5BmdFgQ8JmfXAdJVAXd9HJzH
+         U0TbVAogOtsFC6vkPHFoA6oiiBGPv1LHO/SybsL9xG/RF3JC8Zu9nOJdILZP4RZQYOyY
+         dgdIxUQMIaoX9mRfjrfCY3q43/7cn8cyyejbcROqaEFDeG39J7wQ0nxuOIUGOKXGvmSA
+         S+WqqkRIcZAy6n/4LpyQ6KCG5wt+oNttOxznXDddf//9EciNJTnpb03Uc1qI+ekN/Ih9
+         3MNV0t/EnqE5UD9cLjlF0CSniFyOwwa5hG9V+XGxxBsV95gS0e00iBk1h/XvKbYn+lue
+         TKaA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF+YPtvPqj11VN7t8RnBF5NZWfgGXOaDRgzJfHhsXZr6mum732oK4E2Z7xz3nIshZVm/+eqD9SUcbe4WKd@vger.kernel.org, AJvYcCUPN/M6Ekx1tYCUo5BpQ056dRhaurhR/u9uBQBNy0ru8WiX2TgnAArGg3hN2AoNcGt/r1l8qM2rY7Ur@vger.kernel.org, AJvYcCUrdHnh4Q2cQgS6ZGlhHcn/b2Vcb0tjaAKIrjBrGv2rvcNTXrchFrpL9XdPEwv25iKa43aaXNBwozHn@vger.kernel.org, AJvYcCVDgcXDk0h0f+zR1UnEkrpqo9KgCADnvFv8IeYuH+mBRZvTsM2aXNxS8puiv4xntq371EYH6msGOxb3/w==@vger.kernel.org, AJvYcCVOREIQIM/eUgAHk04QTa6eDjjUvIqZRuCXRfvwy4+EXXOTrChCVdM+mfTC4OjI8rBxs0XNBEBXHtJcNFo=@vger.kernel.org, AJvYcCWyTz5kteir8AvRbpz0Q+EDOsGvGNMpR4bU0Kp0y+5mm2uHjxMf6MfbnxbKdkdAXE1wHZP9fveJ8ptaad8G30trV/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYB4/LPcmdFDLM3902LHaHQjcJUuSlfWqqlAJemoV5MjsmBFs/
+	tTBiWg3bA6yVcEdavS//INadK2PZuQ6SLufICZ4JpgicVqgH2nO0G1h5eprdZhQ=
+X-Gm-Gg: ASbGncskpsXFLiKpxWQ/VSIPuRUrT5kuS7vXJj2n/R1KcChojPrZJfjO9RovV0M+J9L
+	MRJLSCLTM/fT/EjKKn26EmkcLFtNiCliLjH5XrwhN2ICSl2Fm2fV89SUUGf+MwCVkxkByZYG6hj
+	pizOemH1PX1dao+rQZlPyow7R+Xzh0Pep3vm4Cc6G6u3rLVgLKtfb5feKmBD8DjRc/0fyJ1U2WA
+	k3/3+j+hTSNPs1qly2ZQ5SCtxKTM4JZTpSYXLeSNSJUnL7M3oANLM+hk5b6qGYxnvlMV/ILTsaB
+	F1TC8nfbAK7NB4OY
+X-Google-Smtp-Source: AGHT+IFDnv5MQPf+CK+SixdS1flBs21q1KJq8+0alW/UyBQQk5oROpk5d9mNQhfsSsnygCeneWRSuw==
+X-Received: by 2002:a1f:c585:0:b0:516:1ab3:700e with SMTP id 71dfb90a1353d-5161ab37746mr3653174e0c.3.1733752563608;
+        Mon, 09 Dec 2024 05:56:03 -0800 (PST)
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com. [209.85.221.169])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-51889c60714sm11389e0c.4.2024.12.09.05.56.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 09 Dec 2024 05:56:00 -0800 (PST)
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-51544e9a0abso2822244e0c.1;
+        Mon, 09 Dec 2024 05:56:00 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUu4orzAHb+P/OiYL/W90bmZWlhF7p0ejtuePQXMCtutT/ysFE84VUyqCgNa+mg8oCFXkb9b+8VOpvuPzE=@vger.kernel.org, AJvYcCV+25LY3tVqG52M94t616nEa0hBlkyiu42DB3LFfnsJMJ+z8ZN0NX+pfAE/4qcOAX8MPt9hJNNe677ZQA==@vger.kernel.org, AJvYcCVJSrHhyFMRA59cGI5+/CPqrBLbTq8ecHMgIzd10bKYHcul2aj/VNnDvZ6NdJp7fQcyRZaesSQiWIYk@vger.kernel.org, AJvYcCW7XEMgpql7BIV2eBHJ/yUACO4AOrLNHYlslSadKfqXvbeQCbMHTEBhzww4GW9S4ve5jwCn3jft1HAj@vger.kernel.org, AJvYcCWDDFZAXCP0VR5eMDT+/XwmqHU4LomoYHvw2K7tLQWpMS1c7s+oYDhs6iikA/bvXSHMlxGN+NIzP1au39IR@vger.kernel.org, AJvYcCWR67EcsL1Si9h7fLpOWA9xFu9ySE0pixl5PWEhtWRtni4S+OUBYSmCo04vzNwGwhEz7VUqHE6ZAaZWK7rAA7DP8z0=@vger.kernel.org
+X-Received: by 2002:a05:6122:1e16:b0:515:d230:f2c6 with SMTP id
+ 71dfb90a1353d-515e7019c2bmr15883433e0c.7.1733752559836; Mon, 09 Dec 2024
+ 05:55:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
-Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
- module directory with M=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Thorsten Blum <thorsten.blum@linux.dev>
-In-Reply-To: <82FA2E02-05A5-4297-B364-9D7D89001D9D@linux.dev>
-Date: Mon, 9 Dec 2024 14:55:44 +0100
-Cc: linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- cocci@inria.fr
+MIME-Version: 1.0
+References: <20241113133540.2005850-1-claudiu.beznea.uj@bp.renesas.com> <20241113133540.2005850-16-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20241113133540.2005850-16-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 9 Dec 2024 14:55:47 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdWnS=XuP8n6-kMHBw_=mpBHPye2_t=4oZs8YEouYq-Atw@mail.gmail.com>
+Message-ID: <CAMuHMdWnS=XuP8n6-kMHBw_=mpBHPye2_t=4oZs8YEouYq-Atw@mail.gmail.com>
+Subject: Re: [PATCH v3 15/25] ASoC: renesas: rz-ssi: Rely on the ASoC
+ subsystem to runtime resume/suspend the SSI
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, biju.das.jz@bp.renesas.com, 
+	prabhakar.mahadev-lad.rj@bp.renesas.com, lgirdwood@gmail.com, 
+	broonie@kernel.org, magnus.damm@gmail.com, linus.walleij@linaro.org, 
+	perex@perex.cz, tiwai@suse.com, p.zabel@pengutronix.de, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-sound@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <1116D946-05F3-4463-A61F-DE221F258A3F@linux.dev>
-References: <20241110013649.34903-1-masahiroy@kernel.org>
- <20241110013649.34903-6-masahiroy@kernel.org>
- <82FA2E02-05A5-4297-B364-9D7D89001D9D@linux.dev>
-To: Masahiro Yamada <masahiroy@kernel.org>
-X-Migadu-Flow: FLOW_OUT
 
-On 9. Dec 2024, at 14:46, Thorsten Blum wrote:
-> On 10. Nov 2024, at 02:34, Masahiro Yamada wrote:
->>=20
->> Currently, Kbuild always operates in the output directory of the =
-kernel,
->> even when building external modules. This increases the risk of =
-external
->> module Makefiles attempting to write to the kernel directory.
->>=20
->> This commit switches the working directory to the external module
->> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix from
->> some build artifacts.
->>=20
->> The command for building external modules maintains backward
->> compatibility, but Makefiles that rely on working in the kernel
->> directory may break. In such cases, $(objtree) and $(srctree) should
->> be used to refer to the output and source directories of the kernel.
->>=20
->> The appearance of the build log will change as follows:
->>=20
->> [Before]
->>=20
->> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
->> make: Entering directory '/path/to/my/linux'
->>   CC [M]  /path/to/my/externel/module/helloworld.o
->>   MODPOST /path/to/my/externel/module/Module.symvers
->>   CC [M]  /path/to/my/externel/module/helloworld.mod.o
->>   CC [M]  /path/to/my/externel/module/.module-common.o
->>   LD [M]  /path/to/my/externel/module/helloworld.ko
->> make: Leaving directory '/path/to/my/linux'
->>=20
->> [After]
->>=20
->> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
->> make: Entering directory '/path/to/my/linux'
->> make[1]: Entering directory '/path/to/my/externel/module'
->>   CC [M]  helloworld.o
->>   MODPOST Module.symvers
->>   CC [M]  helloworld.mod.o
->>   CC [M]  .module-common.o
->>   LD [M]  helloworld.ko
->> make[1]: Leaving directory '/path/to/my/externel/module'
->> make: Leaving directory '/path/to/my/linux'
->>=20
->> Printing "Entering directory" twice is cumbersome. This will be
->> addressed later.
->>=20
->> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
->> ---
->=20
-> Hi Masahiro,
->=20
-> I get the following error since this patch is in master, but only when
-> using COCCI=3D in combination with M=3D<relative or absolute path>.
->=20
-> It works when I either use COCCI=3D or M=3D, but not with both.
+On Wed, Nov 13, 2024 at 2:36=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> The ASoC subsystem takes care of runtime resume/suspend the audio
+> devices when needed. Just enable the runtime PM on the SSI driver and
+> let the subsystem runtime resume/suspend it. While at it use directly
+> the devm_pm_runtime_enable().
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Using the absolute path of the cocci script fixes my problem, but this
-used to work with relative paths too.
+LGTM (assumed the assumption about ASoC Runtime PM is true)
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-$ make coccicheck =
-COCCI=3D$(pwd)/scripts/coccinelle/misc/flexible_array.cocci M=3Darch/
+Gr{oetje,eeting}s,
 
-Thanks,
-Thorsten
+                        Geert
 
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
