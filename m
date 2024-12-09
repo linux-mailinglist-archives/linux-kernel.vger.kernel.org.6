@@ -1,538 +1,426 @@
-Return-Path: <linux-kernel+bounces-437381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DA1A9E9280
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:34:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0EBA9E9285
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31215164EC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:34:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF52818873AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:34:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD63521B8F5;
-	Mon,  9 Dec 2024 11:34:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A929221E095;
+	Mon,  9 Dec 2024 11:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SgxywoBr"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VBoJFHLP"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D4EC21B1B4;
-	Mon,  9 Dec 2024 11:34:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2651A21D01E
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733744044; cv=none; b=tMCUomVML+xIMzcUp7SnklHc+QiiMSwDoj3ZQ9KDCWdtSMoI/GJmgIL8ubYee6s5W2K3krQ07G2K0NO2og8OCNd0NjP8rdx/pT80VcibDSrIrroYqvGutNk/KgIQ5UKcb5SoudYlMWmMW/vzLa5+mHKepAb0QwjjaJruA14u9uE=
+	t=1733744054; cv=none; b=Wxvf3JsPX5+dJ/qH49NjKLD/P17X9OT5DX9aIOALm22nfOG4XmS/qo7Jn7znUF3fFR2kK9GN/B2P8UWyssR2HapmUEoaKbblaIqU4zPaU9exrbOA6LarTqlgpTUW2qXVEAz3m6HcU0TKVhcefz7QEgQMo8cF/AHoizAbJ+oV4/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733744044; c=relaxed/simple;
-	bh=puC0a1HybhHYI50l/dJN0ZjdLbflTz3vkquO7Jj+ESo=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BVzC6GpGCD2APIl5Vhx1fx3qxeswqtcJ7T0HgkqIRQhU7mFkFYijsdaugZd0pqnsGyhcb3x90X1BijLFLVtDdn8wADiwSrq8RgqJPDNqDHrvAeGHjL7s4QgvnWmT8SNGk1wGaN+NAIR8Fh4lBuhUcm252NBin2g2cX2adAXn2Es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SgxywoBr; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733744040;
-	bh=puC0a1HybhHYI50l/dJN0ZjdLbflTz3vkquO7Jj+ESo=;
-	h=Date:From:Subject:To:Cc:References:In-Reply-To:From;
-	b=SgxywoBrL545srH0VFkevgKCoFOEubpM21G7VaHLpbIXbyLpuXB3uthwDhsS5HXcm
-	 HnnJiymvSXb9lbsjL7wnNM2b9iodDBVe3ayI9PRojZGOdRjFkoBX62bJykk5xgLcEO
-	 qJtt8nwU73mfGaSPUTSf/UXeuFcIj75PAEfFL0lk2g3UKcOOdXRefiykxjXRzcZ+2o
-	 wLHRoi7+JcExPm8MGQ3SuCmpd096YJ3Vt5QEdi2ZgXUV2JUee5QR1cjFtRwA5lHaDu
-	 47JhsUvD21EVzj/KLsp8IemdQyfK9Ox9Mde0qPysMd8dRlaVjXTYlMmWM0VgTh1h4l
-	 kz5UjWlHvDbDA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id D8C0317E362F;
-	Mon,  9 Dec 2024 12:33:58 +0100 (CET)
-Message-ID: <3a0512de-bcc0-4253-a8c1-f2e43b5cbfba@collabora.com>
-Date: Mon, 9 Dec 2024 12:33:57 +0100
+	s=arc-20240116; t=1733744054; c=relaxed/simple;
+	bh=LOIAnWwmFuWbefHt/yb5amtmi2kf/iUi+mT7cG4vT6A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dYmPfZTsqC1yLqKx8XiK9vYJlGJt7dvnGKddLYS1Zrt2xz48YcX8Kn7VDfp1iaOdtXWU2Z5mnhRGkSK33jzcVUrojJ6Ixepe7AYbfwt/MEZ7FgTWFtM3LwnPgbMnP4GNCK4vRD6gSt/O0QhsUeSQ8Um5y3gwIhCdhpW4fh81cAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VBoJFHLP; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-aa6965ad2a5so5788266b.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:34:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733744050; x=1734348850; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RqH0dlrlbRQJY6hV8nIShWo9I2kKBRUgR2UyDp6lXjU=;
+        b=VBoJFHLP+WJiZaThLUhCyXNCkAONN3YbJaf9cW4PojEDIvpOdgZwLHgjQtYZ9l+zpR
+         9EciI6RFOLPX1Ay4B9W641//DdEqGkJUNq19GQmfOD14SAYudAwpFAPSpofas4iGQQnl
+         H6htMYs696YsS+lEU25GwBycgTJecbAidW/MRmky0rnj23wu5OHKrj949ZrfgLqKkyeD
+         EdBCaASB3y0KZhbA7W5un/JEV3GAsC6j2Zt80wCCAb2cJGDYNj9QFIOhojOSgMhio22i
+         S7t60KwWeyJOojdo3OgPh5/vJZq5UukFcUk4470HOtbhhME6dkZTxQSj5/bEsqNlNrHk
+         W3wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733744050; x=1734348850;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RqH0dlrlbRQJY6hV8nIShWo9I2kKBRUgR2UyDp6lXjU=;
+        b=uSStAyg7st6q1pm1mE8qYvScbtW4XcO0bO9kwYeBxdrkuWLUEINo5IXJOF6uqUbJmS
+         ixsMeR9SESu96qSFoMpj79lj3v5GMl6XdB8RpRh8Nkkb9+O6/DBnTw0CPoL+/gVozKWy
+         A2p+KiUq//AoLffiHrSSGqa7G2sZNF+vj09ta0XWOjIUb4WrX0vlbmeX0def5f3o70GK
+         rebjIg4e8zeVqG2a3n8HXVkm5nCwegYQIFvHx9lSFDF7CfRFliE0YNftv7xCI4742nHj
+         KyCirXdx8vvrxIV5SN5G7STZoVTNvlr/RphjMMHDhYGSCcSAwxCMIBLl0S2cpUCGMS+e
+         c4CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVY0twmAiG69EzWTkIueqDVm1wCgHO0sFZvgwkSp+xxQoIjN8bXq54JwnwT8mLvFMAdQVcoN3qId8eFbpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyD0xPcLuqq5XGK1ApqC+OdwdnIPz16jqRZrAvytSq8UVFLiedX
+	zGG+nVHB3VR3WR/JHn5j4A5CHzhlGJ58x+CcBbWIvi+zYTsOd3nLSDn0sdl4Enc=
+X-Gm-Gg: ASbGncsIGzVdiabPgQ0WzWZX+iAqwYw8JzXXxPcuVXWr+yVnZtCiYyJcDHfasq/SWKS
+	yQOgYLH4ekRFFQnNgc9jL7KurAQHeADSilcvSyucAWdbLNyHbY9uHEvmMGNoxY3FXXon4prEo3c
+	PBjnVNjkCj4JrkSgkvtPDcNSNR8xlFQ1X7mSKLZmFdj0/0yUyGN5dQbs0uNxcapixxiBw51j4Hr
+	JjCm+t9PCU7zYq5V+ih9DuqVTZrHb+A1Hbo9qe4MiVxA+i9VUweoFkv6XA++b2f
+X-Google-Smtp-Source: AGHT+IEUwOZ9YFvIosvQUmmKdASOWnMUlhYJRR8cEOp3nz5ctbynKBiSrS7H9SVLSEx6wlTFIk5CRQ==
+X-Received: by 2002:a17:907:3dab:b0:aa6:6e2e:b8b with SMTP id a640c23a62f3a-aa66e2e15a6mr265628966b.1.1733744050339;
+        Mon, 09 Dec 2024 03:34:10 -0800 (PST)
+Received: from krzk-bin.. ([178.197.223.165])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-aa695c3ac07sm61789166b.66.2024.12.09.03.34.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 03:34:09 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Ming Qian <ming.qian@nxp.com>,
+	Zhou Peng <eagle.zhou@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Robert Foss <rfoss@kernel.org>,
+	Todor Tomov <todor.too@gmail.com>,
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Viktor Prutyanov <viktor.prutyanov@phystech.edu>,
+	Shijie Qin <shijie.qin@nxp.com>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Emil Velikov <emil.velikov@collabora.com>,
+	Del Regno <angelogioacchino.delregno@somainline.org>,
+	Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
+	linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-mediatek@lists.infradead.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [RESEND PATCH] media: dt-bindings: trivial white-space and example cleanup
+Date: Mon,  9 Dec 2024 12:34:05 +0100
+Message-ID: <20241209113405.74226-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH v2 15/15] drm/mediatek: Introduce HDMI/DDC v2 for
- MT8195/MT8188
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
- simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
- tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com, ck.hu@mediatek.com,
- jitao.shi@mediatek.com, jie.qiu@mediatek.com, junzhi.zhao@mediatek.com,
- dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kernel@collabora.com
-References: <20241205114518.53527-1-angelogioacchino.delregno@collabora.com>
- <20241205114518.53527-16-angelogioacchino.delregno@collabora.com>
- <4lvsvo6vsc7bipcgftsq3mzunwxoka3wjqad42ptr37oz77zub@5uarhvjmcxnc>
- <a4a74f96-29cc-4007-9b03-f634b84d9cc2@collabora.com>
- <m7u6xzm2o4dmcjot4xfk6do4slikpsp6gi3uyiuw4d35kunbc5@jyzgkrp4xjwc>
-Content-Language: en-US
-In-Reply-To: <m7u6xzm2o4dmcjot4xfk6do4slikpsp6gi3uyiuw4d35kunbc5@jyzgkrp4xjwc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 05/12/24 20:35, Dmitry Baryshkov ha scritto:
-> On Thu, Dec 05, 2024 at 02:30:51PM +0100, AngeloGioacchino Del Regno wrote:
->> Il 05/12/24 13:56, Dmitry Baryshkov ha scritto:
->>> On Thu, Dec 05, 2024 at 12:45:17PM +0100, AngeloGioacchino Del Regno wrote:
->>>> Add support for the newer HDMI-TX (Encoder) v2 and DDC v2 IPs
->>>> found in MediaTek's MT8195, MT8188 SoC and their variants, and
->>>> including support for display modes up to 4k60 and for HDMI
->>>> Audio, as per the HDMI 2.0 spec.
->>>>
->>>> HDCP and CEC functionalities are also supported by this hardware,
->>>> but are not included in this commit and that also poses a slight
->>>> difference between the V2 and V1 controllers in how they handle
->>>> Hotplug Detection (HPD).
->>>>
->>>> While the v1 controller was using the CEC controller to check
->>>> HDMI cable connection and disconnection, in this driver the v2
->>>> one does not.
->>>>
->>>> This is due to the fact that on parts with v2 designs, like the
->>>> MT8195 SoC, there is one CEC controller shared between the HDMI
->>>> Transmitter (HDMI-TX) and Receiver (HDMI-RX): before eventually
->>>> adding support to use the CEC HW to wake up the HDMI controllers
->>>> it is necessary to have support for one TX, one RX *and* for both
->>>> at the same time.
->>>>
->>>> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->>>> ---
->>>>    drivers/gpu/drm/mediatek/Kconfig            |    8 +
->>>>    drivers/gpu/drm/mediatek/Makefile           |    4 +
->>>>    drivers/gpu/drm/mediatek/mtk_hdmi_common.c  |    5 +
->>>>    drivers/gpu/drm/mediatek/mtk_hdmi_common.h  |    1 +
->>>>    drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c  |  403 +++++
->>>>    drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h |  263 ++++
->>>>    drivers/gpu/drm/mediatek/mtk_hdmi_v2.c      | 1488 +++++++++++++++++++
->>>>    7 files changed, 2172 insertions(+)
->>>>    create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_ddc_v2.c
->>>>    create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_regs_v2.h
->>>>    create mode 100644 drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
->>>>
->>
->> ..snip..
->>
->>>> diff --git a/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
->>>> new file mode 100644
->>>> index 000000000000..05cbfc45be54
->>>> --- /dev/null
->>>> +++ b/drivers/gpu/drm/mediatek/mtk_hdmi_v2.c
->>>> @@ -0,0 +1,1488 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>
->> ..snip..
->>
->>>> +static int mtk_hdmi_v2_setup_audio_infoframe(struct mtk_hdmi *hdmi)
->>>> +{
->>>> +	struct hdmi_codec_params *params = &hdmi->aud_param.codec_params;
->>>> +	struct hdmi_audio_infoframe frame;
->>>> +	u8 buffer[14];
->>>> +	ssize_t ret;
->>>> +
->>>> +	memcpy(&frame, &params->cea, sizeof(frame));
->>>> +
->>>> +	ret = hdmi_audio_infoframe_pack(&frame, buffer, sizeof(buffer));
->>>> +	if (ret < 0)
->>>> +		return ret;
->>>> +
->>>> +	mtk_hdmi_v2_hw_write_audio_infoframe(hdmi, buffer);
->>>
->>> This should be handled via HDMI Connector framework too. There is
->>> already an interface to set / clear audio infoframes.
->>> als I have been working on an interface to make HDMI codec
->>> implementation more generic, see [1]. Your comments are appreciated.
->>>
->>> [1] https://patchwork.freedesktop.org/series/134927/
->>>
->>
->> I didn't go for that because I was afraid that your series wouldn't actually
->> land in the same window as this driver.
-> 
-> There were two points in my comment (sorry for being not explicit
-> enough). One is to point to the HDMI codec infra (and you are right,
-> it's not yet in the mergeable state). Second one is to use
-> drm_atomic_helper_connector_hdmi_update_audio_infoframe() and
-> drm_atomic_helper_connector_hdmi_clear_audio_infoframe() if possible (it
-> might be hard to do it - in fact it being hard kind of forced me to
-> work on the HDMI codec infra).
-> 
+Minor cleanups without funcitonal impact:
+ - There should not be an empty blank line after SPDX tag,
+ - Convention is to indent DTS examples in coding style with 2- or
+   4-space indentation (4 is preferred),
+ - Drop unused labels in DTS examples.
 
-That *is* indeed hard and adding almost unnecessary complications to my submission.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
->> I am at this point puzzled to whether I should add a commit on top of this
->> submission that switches this driver to using the generic HDMI Codec infra
->> (which could also be helpful as guidance to others trying to do the same on
->> other drivers, I guess), or if I should just rebase on top of that.
-> 
-> I'd say, a completely separate patch might be even better, I can then
-> integrate it into the HDMI codec patchset, adding a soft dependency on
-> your series. If for some reason the codec lands earlier than your
-> patchset, the patch can be dropped and reintegrated into your series. Or
-> just committed separately.
+---
 
-I'd rather get the audio part merged as-is with the old handling at this point...
+No comments since August... Can it be applied?
 
-As you can see, once your HDMI Codec infra gets in a mergeable state the cleanup
-(or conversion, however you prefer to call it) in this driver will be mostly
-trivial.
-
-This means that whenever your series is ready to merge, I'll be able to send a
-(single, most probably) commit updating this driver to use the new helpers in a
-jiffy (or two).
-
-> 
->> I'd rather add a commit on top to mainly avoid risking to delay this driver,
->> but if you're absolutely certain that you can get your series merged in the
->> same window as this driver I have *zero* problems in just rebasing on top.
->>
->> Besides...
->>
->> I'll find the time to review your series - I'm sad it didn't land earlier as
->> I would've written a bit less code otherwise :-)
->>
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>
->> ..snip..
->>
->>>> +
->>>> +	/* Enable the controller at attach time for HPD/Pord feedback */
->>>> +	ret = mtk_hdmi_v2_enable(hdmi);
->>>> +	if (ret)
->>>> +		return ret;
->>>
->>> This looks like a hack. Please use .hpd_enable() / .hpd_disable()
->>> callbacks.
->>>
->>
->> ...but there's no way to power on only the HPD - you can either power on
->> the entire controller, or nothing.
->>
->> I can't call mtk_hdmi_v2_enable/disable() from the HPD callbacks.
-> 
-> Why? Add a powerup refcount if necessary.
-> 
-
-...but this means that I still have to keep the mtk_hdmi_v2_enable() call
-here, but I didn't understand the point of this until you made me think
-about...
-
->>
->> Perhaps the comment should have been
->>
->> "Enable the controller attach time also allows HPD/Pord feedback"?
-> 
-> I think it should still be explicit call from those callbacks. Consider
-> a platform using external GPIO to implement HPD. Then the HDMI
-> controller can stay disabled if it is not necessary.
-
-...this case.
-
-I'm still not sure whether I can actually do what you propose because this
-IP needs another IP (mtk_dpi) to be in a configured state before this one
-gets enabled, or you get a freeze.
-
-I'll check - if that's feasible, I'll add the refcounting and will go for
-the hpd_{en,dis}able callbacks.
-
-> 
->>
->>>> +
->>>> +	/* Enable Hotplug and Pord pins internal debouncing */
->>>> +	regmap_set_bits(hdmi->regs, HPD_DDC_CTRL,
->>>> +			HPD_DDC_HPD_DBNC_EN | HPD_DDC_PORD_DBNC_EN);
->>>> +
->>>> +	irq_clear_status_flags(hdmi->irq, IRQ_NOAUTOEN);
->>>> +	enable_irq(hdmi->irq);
->>>> +
->>>> +	/*
->>>> +	 * Check if any HDMI monitor was connected before probing this driver
->>>> +	 * and/or attaching the bridge, without debouncing: if so, we want to
->>>> +	 * notify the DRM so that we start outputting an image ASAP.
->>>> +	 * Note that calling the ISR thread function will also perform a HW
->>>> +	 * registers write that enables both the HPD and Pord interrupts.
->>>> +	 */
->>>> +	__mtk_hdmi_v2_isr_thread(hdmi);
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>
->> ..snip..
->>
->>>> +static void mtk_hdmi_v2_bridge_pre_enable(struct drm_bridge *bridge,
->>>> +					  struct drm_bridge_state *old_state)
->>>> +{
->>>> +	struct mtk_hdmi *hdmi = hdmi_ctx_from_bridge(bridge);
->>>> +	struct drm_atomic_state *state = old_state->base.state;
->>>> +	struct drm_connector_state *conn_state;
->>>> +	union phy_configure_opts opts = {
->>>> +		.dp = { .link_rate = hdmi->mode.clock * KILO }
->>>> +	};
->>>> +
->>>> +	/* Retrieve the connector through the atomic state */
->>>> +	hdmi->curr_conn = drm_atomic_get_new_connector_for_encoder(state, bridge->encoder);
->>>> +
->>>> +	conn_state = drm_atomic_get_new_connector_state(state, hdmi->curr_conn);
->>>> +	if (WARN_ON(!conn_state))
->>>> +		return;
->>>> +
->>>> +	/*
->>>> +	 * Preconfigure the HDMI controller and the HDMI PHY at pre_enable
->>>> +	 * stage to make sure that this IP is ready and clocked before the
->>>> +	 * mtk_dpi gets powered on and before it enables the output.
->>>> +	 */
->>>> +	hdmi->dvi_mode = !hdmi->curr_conn->display_info.is_hdmi;
->>>
->>> Can you access display_info directly instead?
->>>
->>
->> Nice catch. Yeah, I should've done that from the beginning. Fixed for v3.
->>
->>>> +	mtk_hdmi_v2_output_set_display_mode(hdmi, &hdmi->mode);
->>>> +
->>>> +	/* Reconfigure phy clock link with appropriate rate */
->>>> +	phy_configure(hdmi->phy, &opts);
->>>> +
->>>> +	/* Power on the PHY here to make sure that DPI_HDMI is clocked */
->>>> +	phy_power_on(hdmi->phy);
->>>> +
->>>> +	hdmi->powered = true;
->>>> +}
->>>> +
->>>> +static void mtk_hdmi_v2_bridge_enable(struct drm_bridge *bridge,
->>>> +				      struct drm_bridge_state *old_state)
->>>> +{
->>>> +	struct mtk_hdmi *hdmi = hdmi_ctx_from_bridge(bridge);
->>>> +	struct drm_atomic_state *state = old_state->base.state;
->>>> +	int ret;
->>>> +
->>>> +	ret = drm_atomic_helper_connector_hdmi_update_infoframes(hdmi->curr_conn, state);
->>>> +	if (ret)
->>>> +		dev_err(hdmi->dev, "Could not update infoframes: %d\n", ret);
->>>> +
->>>> +	mtk_hdmi_v2_hw_vid_mute(hdmi, false);
->>>> +	mtk_hdmi_v2_hw_aud_mute(hdmi, false);
->>>> +
->>>> +	/* signal the connect event to audio codec */
->>>> +	mtk_hdmi_v2_handle_plugged_change(hdmi, true);
->>>
->>> I think it was agreed that this should be called from the hotplug path,
->>> see the (linked) HDMI codec infrastructure patchset and dicussions for
->>> the previous revisions.
->>>
->>
->> Okay, I'll check that out.
->>
->>>> +
->>>> +	hdmi->enabled = true;
->>>> +}
->>>> +
->>
->> ..snip..
->>
->>>> +
->>>> +static int mtk_hdmi_v2_hdmi_tmds_char_rate_valid(const struct drm_bridge *bridge,
->>>> +						 const struct drm_display_mode *mode,
->>>> +						 unsigned long long tmds_rate)
->>>> +{
->>>> +	if (mode->clock < MTK_HDMI_V2_CLOCK_MIN)
->>>> +		return MODE_CLOCK_LOW;
->>>> +	else if (mode->clock > MTK_HDMI_V2_CLOCK_MAX)
->>>> +		return MODE_CLOCK_HIGH;
->>>> +	else
->>>> +		return MODE_OK;
->>>> +}
->>>> +
->>>> +static enum drm_mode_status
->>>> +mtk_hdmi_v2_bridge_mode_valid(struct drm_bridge *bridge,
->>>> +			      const struct drm_display_info *info,
->>>> +			      const struct drm_display_mode *mode)
->>>> +{
->>>> +	unsigned long long rate;
->>>> +
->>>> +	rate = drm_hdmi_compute_mode_clock(mode, 8, HDMI_COLORSPACE_RGB);
->>>> +	return mtk_hdmi_v2_hdmi_tmds_char_rate_valid(bridge, mode, rate);
->>>> +}
->>>
->>> Please rebase on top of https://patchwork.freedesktop.org/series/140193/
->>> There should be no need to do this manually.
->>>
->>
->> Oh finally there's a helper for this. Cool, will rebase! Thanks!
-> 
-> And it doesn't even add an extra dependency for you.
-> 
-
-... Which is even cool-er, yes :-)
-
->>
->>>> +
->>>> +static int mtk_hdmi_v2_hdmi_clear_infoframe(struct drm_bridge *bridge,
->>>> +					    enum hdmi_infoframe_type type)
->>>> +{
->>>> +	struct mtk_hdmi *hdmi = hdmi_ctx_from_bridge(bridge);
->>>> +	u32 reg_start, reg_end;
->>>> +
->>>> +	switch (type) {
->>>> +	case HDMI_INFOFRAME_TYPE_AUDIO:
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_EN, AUD_EN | AUD_EN_WR);
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_RPT, AUD_RPT_EN);
->>>> +		reg_start = TOP_AIF_HEADER;
->>>> +		reg_end = TOP_AIF_PKT03;
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_AVI:
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_EN, AVI_EN_WR | AVI_EN);
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_RPT, AVI_RPT_EN);
->>>> +		reg_start = TOP_AVI_HEADER;
->>>> +		reg_end = TOP_AVI_PKT05;
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_SPD:
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_EN, SPD_EN_WR | SPD_EN);
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_RPT, SPD_RPT_EN);
->>>> +		reg_start = TOP_SPDIF_HEADER;
->>>> +		reg_end = TOP_SPDIF_PKT07;
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_VENDOR:
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_EN, VSIF_EN_WR | VSIF_EN);
->>>> +		regmap_clear_bits(hdmi->regs, TOP_INFO_RPT, VSIF_RPT_EN);
->>>> +		reg_start = TOP_VSIF_HEADER;
->>>> +		reg_end = TOP_VSIF_PKT07;
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_DRM:
->>>> +	default:
->>>> +		return 0;
->>>> +	};
->>>> +
->>>> +	for (; reg_start <= reg_end; reg_start += 4)
->>>> +		regmap_write(hdmi->regs, reg_start, 0);
->>>
->>> Interesting. Usually sending of the infoframe is controlled by a
->>> register of a kind.
->>>
->>
->> "This callback clears the infoframes in the hardware during commit"
->>
->> ...and that's exactly what this function does: clears the infoframes
->> in the HW and stops the RPT, making the HW ready for the "next round".
->>
->> Did I get the documentation wrong?
->> Should this function *send* an all-zero infoframe to the external display?
-> 
-> No, it should stop sending the callback. My point was that usually there
-> is a separate register which controls the infoframes. You code just
-> clears the header (which probably is handled as disabling in the IP
-> core).
-> 
-
-No, my code is clearing everything, not just the header.
-
-The registers in this IP are sequential, I'm setting the code to start writing
-at HEADER, and stop writing at PKTxx, where PKTxx registers contain the infoframe.
-
-In any case, disabling in the IP core is managed by clearing the _EN and _EN_WR
-(where WR means "Write", and RPT_EN is "repeat write") bits in the xxx_INFO_EN
-register(s), and that's what I'm doing at the beginning, before actually cleaning
-the infoframe registers.
-
-Actually, I could've just cleared the EN bits and that would've been enough, but
-I wanted to leave the IP in a clean+known state and decided to zero out the entire
-infoframe header/data register set.
-
-....but anyway, what you just said before me explaining how this IP works means
-that I got it right, and that this function does exactly what it is supposed to do.
+---
 
 
-Cheers!
-Angelo
+ .../media/allwinner,sun50i-h6-vpu-g2.yaml     |  1 -
+ .../bindings/media/amlogic,meson-ir-tx.yaml   |  1 -
+ .../bindings/media/amphion,vpu.yaml           |  1 -
+ .../bindings/media/fsl,imx6ull-pxp.yaml       |  1 -
+ .../media/mediatek,vcodec-decoder.yaml        |  1 -
+ .../media/mediatek,vcodec-encoder.yaml        |  1 -
+ .../media/mediatek,vcodec-subdev-decoder.yaml |  1 -
+ .../media/microchip,sama5d4-vdec.yaml         | 17 ++++----
+ .../bindings/media/nxp,imx8mq-vpu.yaml        | 41 +++++++++----------
+ .../bindings/media/qcom,msm8916-camss.yaml    |  1 -
+ .../bindings/media/qcom,msm8996-camss.yaml    |  1 -
+ .../bindings/media/qcom,sdm660-camss.yaml     |  1 -
+ .../bindings/media/qcom,sdm845-camss.yaml     |  1 -
+ .../bindings/media/qcom,sm8250-camss.yaml     |  1 -
+ .../bindings/media/rockchip,rk3568-vepu.yaml  |  1 -
+ .../bindings/media/rockchip-vpu.yaml          | 29 +++++++------
+ 16 files changed, 42 insertions(+), 58 deletions(-)
 
->>
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int mtk_hdmi_v2_hdmi_write_infoframe(struct drm_bridge *bridge,
->>>> +					    enum hdmi_infoframe_type type,
->>>> +					    const u8 *buffer, size_t len)
->>>> +{
->>>> +	struct mtk_hdmi *hdmi = hdmi_ctx_from_bridge(bridge);
->>>> +
->>>> +	switch (type) {
->>>> +	case HDMI_INFOFRAME_TYPE_AUDIO:
->>>> +		mtk_hdmi_v2_hw_write_audio_infoframe(hdmi, buffer);
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_AVI:
->>>> +		mtk_hdmi_v2_hw_write_avi_infoframe(hdmi, buffer);
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_SPD:
->>>> +		mtk_hdmi_v2_hw_write_spd_infoframe(hdmi, buffer);
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_VENDOR:
->>>> +		mtk_hdmi_v2_hw_write_vendor_infoframe(hdmi, buffer);
->>>> +		break;
->>>> +	case HDMI_INFOFRAME_TYPE_DRM:
->>>> +	default:
->>>> +		dev_err(hdmi->dev, "Unsupported HDMI infoframe type %u\n", type);
->>>> +		break;
->>>> +	};
->>>> +
->>>> +	return 0;
->>>> +}
->>>> +
->>>> +static int mtk_hdmi_v2_bridge_atomic_check(struct drm_bridge *bridge,
->>>> +					   struct drm_bridge_state *bridge_state,
->>>> +					   struct drm_crtc_state *crtc_state,
->>>> +					   struct drm_connector_state *conn_state)
->>>> +{
->>>> +	return drm_atomic_helper_connector_hdmi_check(conn_state->connector,
->>>> +						      conn_state->state);
->>>> +}
->>>
->>> Note to myself, probably we can move this to drm_bridge_connector too.
->>>
->>>> +
->>>> +static int mtk_hdmi_v2_set_abist(struct mtk_hdmi *hdmi, bool enable)
->>>> +{
->>>> +	struct drm_display_mode *mode = &hdmi->mode;
->>>> +	int abist_format = -EINVAL;
->>>> +	bool interlaced;
->>>> +
->>>> +	if (!enable) {
->>>> +		regmap_clear_bits(hdmi->regs, TOP_CFG00, HDMI_ABIST_ENABLE);
->>>> +		return 0;
->>>> +	}
->>>> +
->>>> +	if (!mode->hdisplay || !mode->vdisplay)
->>>> +		return -EINVAL;
->>>> +
->>>> +	interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
->>>
->>> The interlaced modes should be filtered, unless you also set
->>> bridge->interlace_allowed to true.
->>>
->>
->> Noted. Many Thanks for the review!
->>
->> I'll wait until next week for more feedback before sending a v3.
-> 
-
-
+diff --git a/Documentation/devicetree/bindings/media/allwinner,sun50i-h6-vpu-g2.yaml b/Documentation/devicetree/bindings/media/allwinner,sun50i-h6-vpu-g2.yaml
+index a4f06bbdfe49..8ba5177ac631 100644
+--- a/Documentation/devicetree/bindings/media/allwinner,sun50i-h6-vpu-g2.yaml
++++ b/Documentation/devicetree/bindings/media/allwinner,sun50i-h6-vpu-g2.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/allwinner,sun50i-h6-vpu-g2.yaml#
+diff --git a/Documentation/devicetree/bindings/media/amlogic,meson-ir-tx.yaml b/Documentation/devicetree/bindings/media/amlogic,meson-ir-tx.yaml
+index 377acce93423..6da8a6aded23 100644
+--- a/Documentation/devicetree/bindings/media/amlogic,meson-ir-tx.yaml
++++ b/Documentation/devicetree/bindings/media/amlogic,meson-ir-tx.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/amlogic,meson-ir-tx.yaml#
+diff --git a/Documentation/devicetree/bindings/media/amphion,vpu.yaml b/Documentation/devicetree/bindings/media/amphion,vpu.yaml
+index 9801de3ed84e..5a920d9e78c7 100644
+--- a/Documentation/devicetree/bindings/media/amphion,vpu.yaml
++++ b/Documentation/devicetree/bindings/media/amphion,vpu.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/amphion,vpu.yaml#
+diff --git a/Documentation/devicetree/bindings/media/fsl,imx6ull-pxp.yaml b/Documentation/devicetree/bindings/media/fsl,imx6ull-pxp.yaml
+index 84a5e894ace4..3f47744459aa 100644
+--- a/Documentation/devicetree/bindings/media/fsl,imx6ull-pxp.yaml
++++ b/Documentation/devicetree/bindings/media/fsl,imx6ull-pxp.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/fsl,imx6ull-pxp.yaml#
+diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml
+index b401c67e3ba0..d726d141a434 100644
+--- a/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml
++++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-decoder.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/mediatek,vcodec-decoder.yaml#
+diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+index b45743d0a9ec..110e8f5f1f9e 100644
+--- a/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
++++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-encoder.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/mediatek,vcodec-encoder.yaml#
+diff --git a/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml b/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml
+index a500a585c692..5865e6f0be89 100644
+--- a/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml
++++ b/Documentation/devicetree/bindings/media/mediatek,vcodec-subdev-decoder.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/mediatek,vcodec-subdev-decoder.yaml#
+diff --git a/Documentation/devicetree/bindings/media/microchip,sama5d4-vdec.yaml b/Documentation/devicetree/bindings/media/microchip,sama5d4-vdec.yaml
+index 59b805ca47c5..ede086d55add 100644
+--- a/Documentation/devicetree/bindings/media/microchip,sama5d4-vdec.yaml
++++ b/Documentation/devicetree/bindings/media/microchip,sama5d4-vdec.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/microchip,sama5d4-vdec.yaml#
+@@ -36,12 +35,12 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-        #include <dt-bindings/clock/at91.h>
+-        #include <dt-bindings/interrupt-controller/irq.h>
++    #include <dt-bindings/clock/at91.h>
++    #include <dt-bindings/interrupt-controller/irq.h>
+ 
+-        vdec0: vdec@300000 {
+-                compatible = "microchip,sama5d4-vdec";
+-                reg = <0x00300000 0x100000>;
+-                interrupts = <19 IRQ_TYPE_LEVEL_HIGH 4>;
+-                clocks = <&pmc PMC_TYPE_PERIPHERAL 19>;
+-        };
++    vdec@300000 {
++        compatible = "microchip,sama5d4-vdec";
++        reg = <0x00300000 0x100000>;
++        interrupts = <19 IRQ_TYPE_LEVEL_HIGH 4>;
++        clocks = <&pmc PMC_TYPE_PERIPHERAL 19>;
++    };
+diff --git a/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml b/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml
+index 3d58f02b0c5d..19528262810a 100644
+--- a/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml
++++ b/Documentation/devicetree/bindings/media/nxp,imx8mq-vpu.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/nxp,imx8mq-vpu.yaml#
+@@ -44,26 +43,26 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-        #include <dt-bindings/clock/imx8mq-clock.h>
+-        #include <dt-bindings/power/imx8mq-power.h>
+-        #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/imx8mq-clock.h>
++    #include <dt-bindings/power/imx8mq-power.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-        vpu_g1: video-codec@38300000 {
+-                compatible = "nxp,imx8mq-vpu-g1";
+-                reg = <0x38300000 0x10000>;
+-                interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
+-                clocks = <&clk IMX8MQ_CLK_VPU_G1_ROOT>;
+-                power-domains = <&vpu_blk_ctrl IMX8MQ_VPUBLK_PD_G1>;
+-        };
++    video-codec@38300000 {
++        compatible = "nxp,imx8mq-vpu-g1";
++        reg = <0x38300000 0x10000>;
++        interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clk IMX8MQ_CLK_VPU_G1_ROOT>;
++        power-domains = <&vpu_blk_ctrl IMX8MQ_VPUBLK_PD_G1>;
++    };
+   - |
+-        #include <dt-bindings/clock/imx8mq-clock.h>
+-        #include <dt-bindings/power/imx8mq-power.h>
+-        #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/clock/imx8mq-clock.h>
++    #include <dt-bindings/power/imx8mq-power.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
+ 
+-        vpu_g2: video-codec@38300000 {
+-                compatible = "nxp,imx8mq-vpu-g2";
+-                reg = <0x38310000 0x10000>;
+-                interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
+-                clocks = <&clk IMX8MQ_CLK_VPU_G2_ROOT>;
+-                power-domains = <&vpu_blk_ctrl IMX8MQ_VPUBLK_PD_G2>;
+-        };
++    video-codec@38300000 {
++        compatible = "nxp,imx8mq-vpu-g2";
++        reg = <0x38310000 0x10000>;
++        interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>;
++        clocks = <&clk IMX8MQ_CLK_VPU_G2_ROOT>;
++        power-domains = <&vpu_blk_ctrl IMX8MQ_VPUBLK_PD_G2>;
++    };
+diff --git a/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml b/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml
+index 9cc0a968a401..3469a43f00d4 100644
+--- a/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,msm8916-camss.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/qcom,msm8916-camss.yaml#
+diff --git a/Documentation/devicetree/bindings/media/qcom,msm8996-camss.yaml b/Documentation/devicetree/bindings/media/qcom,msm8996-camss.yaml
+index 5cb0e337ea6e..644646de338a 100644
+--- a/Documentation/devicetree/bindings/media/qcom,msm8996-camss.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,msm8996-camss.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/qcom,msm8996-camss.yaml#
+diff --git a/Documentation/devicetree/bindings/media/qcom,sdm660-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sdm660-camss.yaml
+index 584106e275f6..68d8670557f5 100644
+--- a/Documentation/devicetree/bindings/media/qcom,sdm660-camss.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,sdm660-camss.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/qcom,sdm660-camss.yaml#
+diff --git a/Documentation/devicetree/bindings/media/qcom,sdm845-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sdm845-camss.yaml
+index d32daaef1b50..289494f561e5 100644
+--- a/Documentation/devicetree/bindings/media/qcom,sdm845-camss.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,sdm845-camss.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/qcom,sdm845-camss.yaml#
+diff --git a/Documentation/devicetree/bindings/media/qcom,sm8250-camss.yaml b/Documentation/devicetree/bindings/media/qcom,sm8250-camss.yaml
+index 06db2c1e6079..a372d991e652 100644
+--- a/Documentation/devicetree/bindings/media/qcom,sm8250-camss.yaml
++++ b/Documentation/devicetree/bindings/media/qcom,sm8250-camss.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/qcom,sm8250-camss.yaml#
+diff --git a/Documentation/devicetree/bindings/media/rockchip,rk3568-vepu.yaml b/Documentation/devicetree/bindings/media/rockchip,rk3568-vepu.yaml
+index 947ad699cc5e..d246f5d38427 100644
+--- a/Documentation/devicetree/bindings/media/rockchip,rk3568-vepu.yaml
++++ b/Documentation/devicetree/bindings/media/rockchip,rk3568-vepu.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/rockchip,rk3568-vepu.yaml#
+diff --git a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
+index 719aeb2dc593..8c2501634080 100644
+--- a/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
++++ b/Documentation/devicetree/bindings/media/rockchip-vpu.yaml
+@@ -1,5 +1,4 @@
+ # SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+-
+ %YAML 1.2
+ ---
+ $id: http://devicetree.org/schemas/media/rockchip-vpu.yaml#
+@@ -92,18 +91,18 @@ additionalProperties: false
+ 
+ examples:
+   - |
+-        #include <dt-bindings/clock/rk3288-cru.h>
+-        #include <dt-bindings/interrupt-controller/arm-gic.h>
+-        #include <dt-bindings/power/rk3288-power.h>
++    #include <dt-bindings/clock/rk3288-cru.h>
++    #include <dt-bindings/interrupt-controller/arm-gic.h>
++    #include <dt-bindings/power/rk3288-power.h>
+ 
+-        vpu: video-codec@ff9a0000 {
+-                compatible = "rockchip,rk3288-vpu";
+-                reg = <0xff9a0000 0x800>;
+-                interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
+-                             <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
+-                interrupt-names = "vepu", "vdpu";
+-                clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
+-                clock-names = "aclk", "hclk";
+-                power-domains = <&power RK3288_PD_VIDEO>;
+-                iommus = <&vpu_mmu>;
+-        };
++    video-codec@ff9a0000 {
++        compatible = "rockchip,rk3288-vpu";
++        reg = <0xff9a0000 0x800>;
++        interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>,
++                     <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
++        interrupt-names = "vepu", "vdpu";
++        clocks = <&cru ACLK_VCODEC>, <&cru HCLK_VCODEC>;
++        clock-names = "aclk", "hclk";
++        power-domains = <&power RK3288_PD_VIDEO>;
++        iommus = <&vpu_mmu>;
++    };
 -- 
-AngeloGioacchino Del Regno
-Senior Software Engineer
+2.43.0
 
-Collabora Ltd.
-Platinum Building, St John's Innovation Park, Cambridge CB4 0DS, UK
-Registered in England & Wales, no. 5513718
 
