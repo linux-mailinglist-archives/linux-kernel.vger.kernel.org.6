@@ -1,50 +1,62 @@
-Return-Path: <linux-kernel+bounces-438458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438453-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D36D9EA18E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:59:59 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955609EA179
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:54:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1BD17282D89
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:59:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B3341662B3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6C719DF47;
-	Mon,  9 Dec 2024 21:59:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E644519D8B7;
+	Mon,  9 Dec 2024 21:54:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b="HIjMhimM"
-Received: from forward501b.mail.yandex.net (forward501b.mail.yandex.net [178.154.239.145])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="G4sMGhD4"
+Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C49E46B8;
-	Mon,  9 Dec 2024 21:59:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C283519C561;
+	Mon,  9 Dec 2024 21:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733781591; cv=none; b=Ddri+Gi9jSp2eeIx0zUCKPItw51KcuB+kjxHYhPXHG7BjDRDKhiV7lNSQxpfUSyKzCE7Ke7elhH2VqHfu9Bynlfu3lk59zdMnUdk1NbpWa0Kr5eP8FzCSI7tHv8C4HRSuRExNcKHd27V7bTX9EXF3e9PxsAfsj9i+mZbqiVy0Ys=
+	t=1733781265; cv=none; b=oVyxb2GFr8OrRY0AWBk02xP1wlv9ukO7MI0UvmFFGdRrvPMiUTs0CmaEI4Co6gmHbASYuwrjHPZeDVgtRGgFeeT3fwc5ibVpKJfKrlf7wrk6/KfhtLRLvyu7lw5b50NPbT16FAMgCbMJtv0YgiExR2/NebrSEZV9LdCZqF33JJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733781591; c=relaxed/simple;
-	bh=xW7ZmK2B0htEycOpCVgUY8dcJBraRFu06QHIgAgRS74=;
+	s=arc-20240116; t=1733781265; c=relaxed/simple;
+	bh=ZrRCLe8p7MbTrHB1VAysrsoSnyPE1tTECkyjO7/dNgk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y5YhJIkCOQYCzw9Hy1nLnSGYHfwVg41fGNK+6reVW6K7/7Wbevb9wzaZXL5ikbmYcc1MSUQLbzTRU1q6UKSS3mQCILl3odz5L/GBxkQiE/9kaOZm9KyioK8+hf+3qQd9RpC7Cut+nsf7+yBFs++OH/VD4yzQQWZaY8cjX3IBcwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru; spf=pass smtp.mailfrom=yandex.ru; dkim=pass (1024-bit key) header.d=yandex.ru header.i=@yandex.ru header.b=HIjMhimM; arc=none smtp.client-ip=178.154.239.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yandex.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yandex.ru
-Received: from mail-nwsmtp-smtp-production-main-44.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-44.sas.yp-c.yandex.net [IPv6:2a02:6b8:c08:df8e:0:640:17d3:0])
-	by forward501b.mail.yandex.net (Yandex) with ESMTPS id 9042060F09;
-	Tue, 10 Dec 2024 00:54:00 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-44.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id wrtY5C7OkOs0-IdUUzKrN;
-	Tue, 10 Dec 2024 00:53:59 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yandex.ru; s=mail;
-	t=1733781239; bh=SmV0sEeOxNWdfnUsqBc8E3RnQowYN4KxbN37yd34Omk=;
-	h=From:In-Reply-To:Cc:Date:References:To:Subject:Message-ID;
-	b=HIjMhimMoBXuxmsVNQoNa25l8d6z1/dm2UK9jcBYoaCseYR34yKIZMYOJi5YKz05/
-	 1nXydnBaccaYP7cuKDh1/8esqYaWwfgpabgLJiBBNTwveMxF3ek/yfSB0c4SpmAYOh
-	 PaqSVCDauoxdPm+ncN0CVIHkD2LmTTdylF+yNMBY=
-Authentication-Results: mail-nwsmtp-smtp-production-main-44.sas.yp-c.yandex.net; dkim=pass header.i=@yandex.ru
-Message-ID: <2472c4bf-c089-4c80-bb45-31014f4acd9f@yandex.ru>
-Date: Tue, 10 Dec 2024 00:53:58 +0300
+	 In-Reply-To:Content-Type; b=NFXFXreEj1b/QaBKUphuL4Fx/+3wxB9fjnV/OyrSE5T4C/FkcQr70dNy7i6achT1lDsZduicphfUTfIU9ZxgsNIjbwosDH8Cm2Rsv6doW4bN0P0zbY8C33n5MJfc9sZmWuLbUh1k6XyINYhYEzSDt7Rf8IZWdfbMn1/K0M0djXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=G4sMGhD4; arc=none smtp.client-ip=199.89.1.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 009.lax.mailroute.net (Postfix) with ESMTP id 4Y6bHK0R8Lzlfflk;
+	Mon,  9 Dec 2024 21:54:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1733781253; x=1736373254; bh=9sgB1Xfr/cwENdJWfeZe9l0S
+	l5Itmk2Pe4rUGDVEgjQ=; b=G4sMGhD4hccjRsO/nkbCoH7XNn58eJmQT9UCRHn+
+	HEnmMYFsfi5YFuMx73ZV8QQ+tOroqtc+jEKUVrscdC9Mj7glMEktcBdlr2f86CYN
+	9ogl1KwZGqXodq6hOiueQpFh1ILyEtQ36C/XGv3SHs/Fg9Wqi5NVdzFNxjU9npZ0
+	nVine2cCHSmuHL694l3j0lLBJtprSEBWwTIZJpEgE2ppBwbE2/K/Vf7lCBSWTise
+	m7x8iSjKELOF+s1Ui4zmadyjVp/snVDTFpNPYXnL8SzwFSGs8rACyhz9BiQ/Nxv0
+	y3LD0x83Qk3qjCQZ44rWdJzxoptLITu0Nz+A0WmDfGICxQ==
+X-Virus-Scanned: by MailRoute
+Received: from 009.lax.mailroute.net ([127.0.0.1])
+ by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ZFoJCw0eQ_Yx; Mon,  9 Dec 2024 21:54:13 +0000 (UTC)
+Received: from [192.168.51.14] (c-73-231-117-72.hsd1.ca.comcast.net [73.231.117.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4Y6bH31xBbzlfflB;
+	Mon,  9 Dec 2024 21:54:06 +0000 (UTC)
+Message-ID: <e2693069-2f8f-458b-98c2-f9d43514061b@acm.org>
+Date: Mon, 9 Dec 2024 13:54:04 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,37 +64,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] tun: fix group permission check
+Subject: Re: [PATCH v2] scsi:ufs:core: update compl_time_stamp_local_clock
+ after complete a cqe
+To: liuderong@oppo.com, alim.akhtar@samsung.com, avri.altman@wdc.com,
+ James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
+ peter.wang@mediatek.com, manivannan.sadhasivam@linaro.org,
+ ahalaney@redhat.com, beanhuo@micron.com, quic_mnaresh@quicinc.com
+Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1733470182-220841-1-git-send-email-liuderong@oppo.com>
 Content-Language: en-US
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, Willem de Bruijn
- <willemdebruijn.kernel@gmail.com>, Jason Wang <jasowang@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>, linux-kernel@vger.kernel.org
-References: <20241205073614.294773-1-stsp2@yandex.ru>
- <20241207174400.6acdd88f@kernel.org>
- <062ab380-ee73-45ad-9519-e71bb3059c13@yandex.ru>
- <20241209134430.5cdefa09@kernel.org>
-From: stsp <stsp2@yandex.ru>
-In-Reply-To: <20241209134430.5cdefa09@kernel.org>
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <1733470182-220841-1-git-send-email-liuderong@oppo.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-10.12.2024 00:44, Jakub Kicinski пишет:
-> On Sun, 8 Dec 2024 09:53:40 +0300 stsp wrote:
->>> I personally put a --- line between SOB and the CCs.
->>> That way git am discards the CCs when patch is applied.
->>>   
->> I simply used the output of
->> get_maintainer.pl and copy/pasted
->> it directly to commit msg.
->> After doing so, git format-patch
->> would put --- after CCs.
->> How to do that properly?
-> You can have multiple --- markers, you can insert your marker and let
-> git format-patch add another.
 
-Thank you.
+On 12/5/24 11:29 PM, liuderong@oppo.com wrote:
+> From: liuderong <liuderong@oppo.com>
+> 
+> For now, lrbp->compl_time_stamp_local_clock is set to zero
+> after send a sqe, but it is not updated after complete a cqe,
+> the printed information in ufshcd_print_tr will always be zero.
+> So update lrbp->cmpl_time_stamp_local_clock after complete a cqe.
+> 
+> Log sample:
+> ufshcd-qcom 1d84000.ufshc: UPIU[8] - issue time 8750227249 us
+> ufshcd-qcom 1d84000.ufshc: UPIU[8] - complete time 0 us
+> 
+> Fixes: c30d8d010b5e ("scsi: ufs: core: Prepare for completion in MCQ")
+> Reviewed-by: Bean Huo <beanhuo@micron.com>
+> Reviewed-by: Peter Wang <peter.wang@mediatek.com>
+> Signed-off-by: liuderong <liuderong@oppo.com>
+> ---
+> v1 -> v2: add fixes tag
+>   drivers/ufs/core/ufshcd.c | 1 +
+>   1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+> index 6a26853..bd70fe1 100644
+> --- a/drivers/ufs/core/ufshcd.c
+> +++ b/drivers/ufs/core/ufshcd.c
+> @@ -5519,6 +5519,7 @@ void ufshcd_compl_one_cqe(struct ufs_hba *hba, int task_tag,
+>   
+>   	lrbp = &hba->lrb[task_tag];
+>   	lrbp->compl_time_stamp = ktime_get();
+> +	lrbp->compl_time_stamp_local_clock = local_clock();
+>   	cmd = lrbp->cmd;
+>   	if (cmd) {
+>   		if (unlikely(ufshcd_should_inform_monitor(hba, lrbp)))
 
+Although this patch looks good to me: an infrastructure for gathering
+I/O statistics should not occur in the UFS driver. This functionality
+should be moved into the block layer core.
+
+Thanks,
+
+Bart.
 
