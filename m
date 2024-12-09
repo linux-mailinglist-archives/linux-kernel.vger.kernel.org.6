@@ -1,159 +1,121 @@
-Return-Path: <linux-kernel+bounces-438303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B811F9E9F87
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:27:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 628C89E9F8A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7264118854B2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A815116155F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1C5D19D897;
-	Mon,  9 Dec 2024 19:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5ABE1991BF;
+	Mon,  9 Dec 2024 19:26:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="esE9m3ti"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="QExH20zW"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F085D19D08A
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 19:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1A811957FC;
+	Mon,  9 Dec 2024 19:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733772346; cv=none; b=IW/ZnDp9UuJ0tY0Gr8PI8nANVTU/4EFWlD5rTJkCMkwO743PR7tk79tY8fLDGERe8NWd5CJ79a/kuyKJFjDvbjhzkYYauKBODJUvdG7EbwU2l3K6E94YyuvM5pMjjXgCYZDpQ7Q6JjyqnLMfTCkhyby9gmwhzAQo9RiSMJilkeQ=
+	t=1733772364; cv=none; b=B91qkIXj/vHmgjRuS3oT+qbeLzcFqWBQ9PCXDJp8EbhA4oyHotISiGYtdaJTew/bEQZ5x55W88mCtMf33CtII+psz1239ZloSGO5nu+OpWm+RkpX2ZBVhpRSAZ2Hp2e1oAEgAEHoMtwCW8Q9T8H3oEBQmgEgiTGSeSY25pWg9bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733772346; c=relaxed/simple;
-	bh=xfUwtSBU2RPjXRdqhWZRl04Dp2rWNk2bKx3bk1pDlLs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RTJNk7narwB6NdG5NAQ58h4fPdJQ8VIadlaOBzkPWZaS/3xekBzqWsHjnOwDOKpramOr6B3SigZ1FC+DEHe4pShiQ80t/XqL/hhoYuudkzTkvW3ULD0w0p1U2pOXq3q70XRnUSNYPcqw1WstNAaPJQ72j2jxmW/qmHSewBe3tn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=esE9m3ti; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4676e45234dso6157861cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 11:25:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1733772343; x=1734377143; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T9/yEI3m3K/0zf7XJobUGHsXsYeP/0tT64hyQf5D30E=;
-        b=esE9m3ti2XEeRVYi97pW99i/YHLerhGwRx3Qtba/kQtVKU5rSUMTfgc2JGXsy9C+2N
-         O0zMu1ORSp6ycYAk6QWV4mDuBUsW9qYPxOB2DBMAeKgae0cQUNgR8A6Z3PHnSBvYqnW7
-         XzUSPjH9wsbzGjk37tVALwJAc2CIH4xnjbnhs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733772343; x=1734377143;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T9/yEI3m3K/0zf7XJobUGHsXsYeP/0tT64hyQf5D30E=;
-        b=DE+7e7yuMk1zK+AV6DUG9m4/dhKnaP1A9UHns8sqo/cYSCmSccukk1hGJgoqzuv5XP
-         okY6cNFSP/pSMyPc8oQaKtHSDW1f78NxLTR/RjvGtHbefMuExRexqCMj+e0Sr/3H5sBf
-         pPt0yQBXna0sF7wu5HlkajoHRybrvkzJJ25rnJi2Rr8RCAjJnCvX7Sid7woViwaR2J/T
-         BCpyL79/E4JED2vC3wfCJVMOlQ3kW+DAeJdCQWRwvEiJuWhkU3J5ZsHFZVE+gJlx6Fb+
-         sKti6nUJsTce85ZtVEgMttqfdsAxxsKNTMqsrtHAbNnyrFpls5T2Ei/2PWJqFRkkxS7s
-         MTvA==
-X-Forwarded-Encrypted: i=1; AJvYcCUloWPZsOjIFZQ9Rf8nBYXeNl1s+kbvrkYyNeeR9PESHZegpQsnuDd7AY4wS4jYl3lwUQRQzmntvgv6q+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzrUsSZxy7HDwOuzo3GJoH2XMmWYNarVAjVgoA73CwNO6xP1UVr
-	EOAl+Q+Ta+V9Mb7qMs67eiPjGHeoEGAl1CQT6tVhrBQjFkV02sdj5uqaK0LyXQ==
-X-Gm-Gg: ASbGnctpG1JoWpnkW5ACFeScDmfIaCsuNf9kDwiaaA2Xe1t7jnm6tFGZ0eWO15GN/bz
-	RBgkZS/5rKAsFyPUY4vwq/n6UZID58Rs7/8/sGGSQBs4bLwyz2wXU/9XTiylyjW8NYH63rrgeYF
-	KU2q8t4R9Hx/bC8Yr5aLQX1xvFR5PEpvS6iRgnflYPs27AuxnH8PooJNZyuBn7BhBSRB9osNXJt
-	SkP9RFsYtFGpSS+/q8L1537XB5KzTDw9IAFQ9f9bc5CxQ0CRBwrZZ05O1ezWweM7aR76nwIfFpv
-	j6SwilqaL+a7gvnZKV80yWRYrr0d
-X-Google-Smtp-Source: AGHT+IHgsfDAcmQoVPz3OqjY4fsfStHe8w+bApIyZU3horEfuMPbagTTxS37mo+7l7Vwk3GrfCkZRA==
-X-Received: by 2002:a05:622a:1647:b0:466:93b9:8356 with SMTP id d75a77b69052e-4677528b6camr10363241cf.22.1733772343653;
-        Mon, 09 Dec 2024 11:25:43 -0800 (PST)
-Received: from denia.c.googlers.com (5.236.236.35.bc.googleusercontent.com. [35.236.236.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b6cc1cf6fesm217433385a.102.2024.12.09.11.25.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 11:25:43 -0800 (PST)
-From: Ricardo Ribalda <ribalda@chromium.org>
-Date: Mon, 09 Dec 2024 19:25:41 +0000
-Subject: [PATCH 10/10] media: v4l2: Remove vidioc_s_ctrl callback
+	s=arc-20240116; t=1733772364; c=relaxed/simple;
+	bh=78V5/KzMvRDdu5358sDQNxa5zJdjBP4Z0iLNQxc+GPs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PP+BmRhyFoYLHqZ0YFzdAtoNHwKUreH2WYOKILDyVWuX7Lc4BRAVnHf9fIiW44s/OnxNfqQDY8Xn0x3Y+q9bLVDycI9JNf0sp0BfhwVqtGhor9VTe2CR68RZ07P889HsOIWJUoH/P/IapYv6M000K6yRVDTyQlOma4uBbz1k264=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=QExH20zW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9AZxsU001905;
+	Mon, 9 Dec 2024 19:25:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=8kw9r4+vm0r844Sw3kUh82R17hA7TKgGuKyyP4jDp
+	RI=; b=QExH20zWqSUOB67yd95OVbl3XKOwAQa9GkNzQL8iASjCue9ldYVkoSeLh
+	mmhORMtd+j7xugwZq5LfX1iZxyOLHj6937CG1yjDzrctfW/xDvru99eFFEGTcpOZ
+	e3lTeZPOesyNcJkVUa5HykGW6hOF7k/qyxbXd1nGprnb6PRFG4XxSgO/hFmoEHw+
+	VKfvEFHh/84Zu+T7I8lWgIJvXTdB8bdt55dWUzModMAn3MxPtulCvY0HdZTT2CoK
+	3FRSF5Zir4foIyD1TsDIk+sBrA/5gjWRIfUoGP8X2+S2Cq17JYN1nv4aZYb6RG5U
+	ZGluB8bQIKnI45bx9GsrVLOYJZqQQ==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 43ce0xa6nq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 19:25:53 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9HUnSi032734;
+	Mon, 9 Dec 2024 19:25:53 GMT
+Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 43d0ps89wq-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 19:25:53 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 4B9JPpaq33948394
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 9 Dec 2024 19:25:51 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4A76658055;
+	Mon,  9 Dec 2024 19:25:51 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 27A5758043;
+	Mon,  9 Dec 2024 19:25:50 +0000 (GMT)
+Received: from li-2311da4c-2e09-11b2-a85c-c003041e9174.ibm.com.com (unknown [9.61.107.222])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  9 Dec 2024 19:25:50 +0000 (GMT)
+From: Matthew Rosato <mjrosato@linux.ibm.com>
+To: joro@8bytes.org, will@kernel.org, robin.murphy@arm.com,
+        gerald.schaefer@linux.ibm.com, schnelle@linux.ibm.com
+Cc: hca@linux.ibm.com, gor@linux.ibm.com, agordeev@linux.ibm.com,
+        svens@linux.ibm.com, borntraeger@linux.ibm.com, clegoate@redhat.com,
+        iommu@lists.linux.dev, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org
+Subject: [PATCH 0/7] iommu/s390: support additional table regions
+Date: Mon,  9 Dec 2024 14:25:42 -0500
+Message-ID: <20241209192549.107226-1-mjrosato@linux.ibm.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241209-queryctrl-v1-10-deff7acfcdcb@chromium.org>
-References: <20241209-queryctrl-v1-0-deff7acfcdcb@chromium.org>
-In-Reply-To: <20241209-queryctrl-v1-0-deff7acfcdcb@chromium.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Mike Isely <isely@pobox.com>, 
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Hans de Goede <hdegoede@redhat.com>, 
- Sakari Ailus <sakari.ailus@linux.intel.com>, 
- Andy Shevchenko <andy@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Hans Verkuil <hverkuil@xs4all.nl>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-staging@lists.linux.dev, Ricardo Ribalda <ribalda@chromium.org>
-X-Mailer: b4 0.13.0
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: V-XUeUEGoEZ-vlH3dkryKPbnzUMnc-YL
+X-Proofpoint-ORIG-GUID: V-XUeUEGoEZ-vlH3dkryKPbnzUMnc-YL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ spamscore=0 clxscore=1015 impostorscore=0 mlxscore=0 mlxlogscore=690
+ priorityscore=1501 malwarescore=0 adultscore=0 bulkscore=0 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090147
 
-All the drivers either use the control framework or provide a
-vidiod_ext_ctrl. We can remove this callback.
+The series extends the maximum table size allowed by s390-iommu by
+increasing the number of table regions supported.  It also adds logic to
+construct the table use the minimum number of regions based upon aperture
+calculation.
 
-Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
----
- drivers/media/v4l2-core/v4l2-dev.c   | 2 +-
- drivers/media/v4l2-core/v4l2-ioctl.c | 2 --
- include/media/v4l2-ioctl.h           | 4 ----
- 3 files changed, 1 insertion(+), 7 deletions(-)
+Matthew Rosato (7):
+  iommu/s390: add initial fields to track table size
+  s390/pci: set appropriate IOTA region type
+  iommu/s390: add basic routines for region 1st and 2nd tables
+  iommu/s390: support cleanup of additional table regions
+  iommu/s390: support iova_to_phys for additional table regions
+  iommu/s390: support map/unmap for additional table regions
+  iommu/s390: allow larger region tables
 
-diff --git a/drivers/media/v4l2-core/v4l2-dev.c b/drivers/media/v4l2-core/v4l2-dev.c
-index 068ee67cd574..b40c08ce909d 100644
---- a/drivers/media/v4l2-core/v4l2-dev.c
-+++ b/drivers/media/v4l2-core/v4l2-dev.c
-@@ -578,7 +578,7 @@ static void determine_valid_ioctls(struct video_device *vdev)
- 		__set_bit(_IOC_NR(VIDIOC_QUERY_EXT_CTRL), valid_ioctls);
- 	if (vdev->ctrl_handler || ops->vidioc_g_ext_ctrls)
- 		__set_bit(_IOC_NR(VIDIOC_G_CTRL), valid_ioctls);
--	if (vdev->ctrl_handler || ops->vidioc_s_ctrl || ops->vidioc_s_ext_ctrls)
-+	if (vdev->ctrl_handler || ops->vidioc_s_ext_ctrls)
- 		__set_bit(_IOC_NR(VIDIOC_S_CTRL), valid_ioctls);
- 	if (vdev->ctrl_handler || ops->vidioc_g_ext_ctrls)
- 		__set_bit(_IOC_NR(VIDIOC_G_EXT_CTRLS), valid_ioctls);
-diff --git a/drivers/media/v4l2-core/v4l2-ioctl.c b/drivers/media/v4l2-core/v4l2-ioctl.c
-index 4e65d50bef27..5a54e796086d 100644
---- a/drivers/media/v4l2-core/v4l2-ioctl.c
-+++ b/drivers/media/v4l2-core/v4l2-ioctl.c
-@@ -2396,8 +2396,6 @@ static int v4l_s_ctrl(const struct v4l2_ioctl_ops *ops,
- 		return v4l2_s_ctrl(vfh, vfh->ctrl_handler, p);
- 	if (vfd->ctrl_handler)
- 		return v4l2_s_ctrl(NULL, vfd->ctrl_handler, p);
--	if (ops->vidioc_s_ctrl)
--		return ops->vidioc_s_ctrl(file, fh, p);
- 	if (ops->vidioc_s_ext_ctrls == NULL)
- 		return -ENOTTY;
- 
-diff --git a/include/media/v4l2-ioctl.h b/include/media/v4l2-ioctl.h
-index 4d69128023f8..c6ec87e88dfe 100644
---- a/include/media/v4l2-ioctl.h
-+++ b/include/media/v4l2-ioctl.h
-@@ -195,8 +195,6 @@ struct v4l2_fh;
-  *	:ref:`VIDIOC_S_OUTPUT <vidioc_g_output>` ioctl
-  * @vidioc_query_ext_ctrl: pointer to the function that implements
-  *	:ref:`VIDIOC_QUERY_EXT_CTRL <vidioc_queryctrl>` ioctl
-- * @vidioc_s_ctrl: pointer to the function that implements
-- *	:ref:`VIDIOC_S_CTRL <vidioc_g_ctrl>` ioctl
-  * @vidioc_g_ext_ctrls: pointer to the function that implements
-  *	:ref:`VIDIOC_G_EXT_CTRLS <vidioc_g_ext_ctrls>` ioctl
-  * @vidioc_s_ext_ctrls: pointer to the function that implements
-@@ -459,8 +457,6 @@ struct v4l2_ioctl_ops {
- 		/* Control handling */
- 	int (*vidioc_query_ext_ctrl)(struct file *file, void *fh,
- 				     struct v4l2_query_ext_ctrl *a);
--	int (*vidioc_s_ctrl)(struct file *file, void *fh,
--			     struct v4l2_control *a);
- 	int (*vidioc_g_ext_ctrls)(struct file *file, void *fh,
- 				  struct v4l2_ext_controls *a);
- 	int (*vidioc_s_ext_ctrls)(struct file *file, void *fh,
+ arch/s390/include/asm/pci.h     |   2 +
+ arch/s390/include/asm/pci_dma.h |   3 +
+ arch/s390/pci/pci.c             |  17 +-
+ drivers/iommu/s390-iommu.c      | 289 +++++++++++++++++++++++++++++---
+ 4 files changed, 285 insertions(+), 26 deletions(-)
 
 -- 
-2.47.0.338.g60cca15819-goog
+2.47.0
 
 
