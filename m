@@ -1,147 +1,91 @@
-Return-Path: <linux-kernel+bounces-436993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15FFA9E8DBE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:47:00 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D3F9E8E4D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:02:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1942281299
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:46:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0B50166C5D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03BED2156E5;
-	Mon,  9 Dec 2024 08:46:55 +0000 (UTC)
-Received: from mail.steuer-voss.de (mail.steuer-voss.de [85.183.69.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A372156EA
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.183.69.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8470F217727;
+	Mon,  9 Dec 2024 08:58:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="lPkb5FsQ"
+Received: from mail-m16.yeah.net (mail-m16.yeah.net [1.95.21.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 547CB215F59;
+	Mon,  9 Dec 2024 08:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=1.95.21.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733734014; cv=none; b=aBw41Toqp5hvSNuo+gl4GtDuUCZVqnmS6sPACSV2U4YWnJsOjpO2zsf9UELo7QoRiRDBBuHu0DRz09fVhpejZa7Bsn4L+YlgzWpJFrD9bP+EoQHbdMvGsWsjg2F/dbzUkctgtaDdhivzageinGo2froJ3Q4TIQfx51aGakIrx2U=
+	t=1733734679; cv=none; b=cZhWdU0pXkQ8ud9gmUu2iCMHYyUAXoIWemj+Sp0mfk5+90gQXCxC85S25NricUjX/n++lhJNyYw0t77ZYaf8PAwXJO+K4wyM9mAA27Bmi9bapaJ87sX4wUipZ2tI9GcgOpRtAzazT+d1KlUoN2cUXXfBIEoY0yLSwPXC/TzL90E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733734014; c=relaxed/simple;
-	bh=WOzESMhvwFcFOdQAuEiGC9hEv3P+/m8JLqWfGEiW5Ok=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=o7WlTrdCIb2OQzX/Hx7a0/oEF3bOF2hyC4vRzIkCtK79y0GIDFLz7SvsXsMBFc9dM7KXyWL1SJggxWg0ew/4q80Fv3gXBuIjmdRk/htBDJM2L6gAw9KAAU+MdYckK+4hUkN9u7ZVRMabibR3yXUF5lEV76wzF/ePkrYewwHfL30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de; spf=pass smtp.mailfrom=vosn.de; arc=none smtp.client-ip=85.183.69.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=vosn.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vosn.de
-X-Virus-Scanned: Debian amavisd-new at mail.steuer-voss.de
-Received: from mail.steuer-voss.de (localhost [127.0.0.1])
-	by mail.steuer-voss.de (Postfix) with ESMTP id 2EA392345;
-	Mon,  9 Dec 2024 09:46:38 +0100 (CET)
+	s=arc-20240116; t=1733734679; c=relaxed/simple;
+	bh=UFKhxK+cDFEI4y3RjLQDe9PWlFuYbRZmoAxoXWWzp5U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OqaAMHLPnXjCwTkf36iqRcFyy+0Pi27zBvT6Eqt5nf5wbENSKbgmMwoZihAvOc0j/Niu3sNJth+YUPwnPA8OiyYMhIRF429zjLHLhrXWO/mccsdxmxG87oyMOQsQJKttVlJmbVWqzlLXBIwDylRe+czTpEp6n1+Nr0z2IcjaabE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=lPkb5FsQ; arc=none smtp.client-ip=1.95.21.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=6At0GdwrBbQRQtGqN9J/OMjpky8vIXhTBbHz6TrbWzE=;
+	b=lPkb5FsQmQQdQWYcOzNMDtKfRo1KvT3RUdQ65WJyafYZMQH73wbDb4z/tBVvXp
+	EPf7uwabkJEdy02G4PoQDCh2m0gVWNxAAgU1Bx319nuoUnhIhRrY5ndrT1KBNsAt
+	janG84vU51iRqBU7JeilP008ItQrUcHMePQOX294kZG0A=
+Received: from dragon (unknown [])
+	by gzsmtp2 (Coremail) with SMTP id Ms8vCgAXPuxxrlZnKVSNBA--.47957S3;
+	Mon, 09 Dec 2024 16:46:43 +0800 (CST)
+Date: Mon, 9 Dec 2024 16:46:41 +0800
+From: Shawn Guo <shawnguo2@yeah.net>
+To: Lukasz Majewski <lukma@denx.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH v11 3/3] ARM: dts: mxs: Add descriptions for imx287 based
+ btt3-[012] devices
+Message-ID: <Z1aucR3ueKIxOjSX@dragon>
+References: <20241107085705.490940-1-lukma@denx.de>
+ <20241107085705.490940-3-lukma@denx.de>
+ <20241119165236.69438f75@wsk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 09 Dec 2024 09:46:38 +0100
-From: Nikolaus Voss <nv@vosn.de>
-To: Marek Vasut <marex@denx.de>
-Cc: Liu Ying <victor.liu@oss.nxp.com>, Alexander Stein
- <alexander.stein@ew.tq-group.com>, Liu Ying <victor.liu@nxp.com>, Luca
- Ceresoli <luca.ceresoli@bootlin.com>, Fabio Estevam <festevam@denx.de>,
- Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
- <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
- Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
- <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, David Airlie
- <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nikolaus.voss@haag-streit.com, miquel.raynal@bootlin.com
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-In-Reply-To: <897b3787-8246-4509-94a1-129488297150@denx.de>
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
- <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
- <000b34cdd1591c82265ce1f9848828d1@vosn.de>
- <2c950130-84b4-4a81-84a2-b5e08af43616@oss.nxp.com>
- <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
- <808d4092a9e97b95480d47c1bd84d930@vosn.de>
- <b86666cc-da63-405d-9036-96cb4e69dafb@denx.de>
- <21ea39dba5e35e99ea499b4408cb1bdf@vosn.de>
- <897b3787-8246-4509-94a1-129488297150@denx.de>
-User-Agent: Roundcube Webmail/1.5.0
-Message-ID: <2d1b404288a6f0b99f26b697df1ff975@vosn.de>
-X-Sender: nv@vosn.de
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241119165236.69438f75@wsk>
+X-CM-TRANSID:Ms8vCgAXPuxxrlZnKVSNBA--.47957S3
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUU8529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU4CD7UUUUU
+X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiAgiwZWdWlR95wQAAsc
 
-Hi Marek,
-
-On 07.12.2024 12:30, Marek Vasut wrote:
-> On 12/4/24 11:55 AM, Nikolaus Voss wrote:
->>>>>>>> I doubt that pixel clock tree cannot find appropriate division 
->>>>>>>> ratios
->>>>>>>> for some pixel clock rates, especially for dual-link LVDS on 
->>>>>>>> i.MX8MP
->>>>>>>> and i.MX93 platforms, because PLL clock rate should be 7x faster 
->>>>>>>> than
->>>>>>>> pixel clock rate and 2x faster than "ldb" clock rate so that the 
->>>>>>>> 3.5
->>>>>>>> folder between "ldb" clock and pixel clock can be met. That 
->>>>>>>> means the
->>>>>>>> PLL clock rate needs to be explicitly set first for this case.
->>>>>>>> 
->>>>>>>> Can you assign the PLL clock rate in DT to satisfy the "ldb" and 
->>>>>>>> pixel
->>>>>>>> clock rates like the below commit does, if you use a LVDS panel?
->>>>>>>> 
->>>>>>>> 4fbb73416b10 ("arm64: dts: imx8mp-phyboard-pollux: Set Video 
->>>>>>>> PLL1
->>>>>>>> frequency to 506.8 MHz")
->>>>>>> 
->>>>>>> I probably could. The point of my patch is you don't have to know 
->>>>>>> in
->>>>>>> advance which LVDS panel is connected, and you don't have to 
->>>>>>> calculate
->>>>>>> the base PLL clock by hand and store it in the device tree.
->>>>>>> 
->>>>>>> In my test system, I have three different LVDS panels with EDID 
->>>>>>> EEPROM,
->>>>>>> none of which worked with the stock driver, but all work with 
->>>>>>> this
->>>>>>> patch.
->>>>>>> With slightly adapted pixel clocks though.
->>>>>> 
->>>>>> If each of the three LVDS panels has only one display mode, you 
->>>>>> may
->>>>>> assign the PLL clock rates in DT overlays for the panels.
->>>>> I temporarily agree.
->>>>> 
->>>>> I also currently use DTOs for various panels including their PLL
->>>>> setting, but in the end, I think/hope the work of Miquel and co. is
->>>>> going to make that PLL setting part unnecessary.
->>>> 
->>>> That is exactly what my patch is about. I want to use one DT for all
->>>> panels
->>> 
->>> Right
->>> 
->>>> and store the panel's timing in EDID EEPROM.
->>> Oh, that is a new one. Does the EDID EEPROM store the entirety of
->>> 'struct display_timing {}' somehow , or is that a custom format ?
->> 
->> Well, sort of ;-). VESA has taken care of this 30 years ago
->> (https://en.wikipedia.org/wiki/Extended_Display_Identification_Data).
->> 
->> DRM handles this with drm_get_edid() and siblings, e.g. :
+On Tue, Nov 19, 2024 at 04:52:36PM +0100, Lukasz Majewski wrote:
+> Dear Community,
 > 
-> EDID can not encode all the information in struct display_timing {} ,
-> or can it ?
+> > The btt3 device' HW revisions from 0 to 2 use imx287 SoC and are to
+> > some extend similar to already upstreamed XEA devices, hence are
+> > using common imx28-lwe.dtsi file.
+> > 
+> > New, imx28-btt3.dtsi has been added to embrace common DTS
+> > properties for different HW revisions for this device.
+> > 
+> > As a result - changes introduced in imx28-btt3-[012].dts are
+> > minimal.
+> > 
 > 
-> I think what you would be missing are bus_flags , bus_format and
-> possibly the single/dual link and channel (odd/even) mapping, won't
-> you ?
+> Are there any more comments / suggestions for this patch set?
 
-Yes, that's right. I use the vendor block for bus_flags and bus_format
-now, but that's not standard and not portable of course.
+Patch #2 and #3 look good to me.  That said, I'm waiting #1 to be
+applied first.
 
-My first idea was to store the DT overlay in the display EEPROM but
-a standard 1k EEPROM is too small for that.
+Shawn
 
--- 
-Nikolaus Voss
 
