@@ -1,54 +1,45 @@
-Return-Path: <linux-kernel+bounces-437391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F5E39E92A4
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:42:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F3539E92AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:43:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26113282589
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:42:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 084822830EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:43:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B7221E0BA;
-	Mon,  9 Dec 2024 11:42:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="V3DMr3sm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60A9722069F;
+	Mon,  9 Dec 2024 11:42:58 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58DA21764E;
-	Mon,  9 Dec 2024 11:42:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DC9F21B1A8;
+	Mon,  9 Dec 2024 11:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733744561; cv=none; b=scID5qIWLP0uNyahTuGET2HrcA8JLgl1VioMGy6rEJzdeH+n74LPQAXaS8xZN1iqEp6mziqF8HL4psW2M5PZRJN14oPFciByJt3uzx79oM7OkVIEa5CTSWH8LdeQrSp35TMBDBiNapGL/DAGX2EQg0DW0HEKiJfETAU4yNGPgQ8=
+	t=1733744577; cv=none; b=GIGo0XxBcOKJuItalhxDQrA4fVreEQKZOSDi9/y+zp1zUtoWDagsyifTrwWEK4IoRPCI2vcKO7Tr7YgRN39gDR0Hq3ebUyXD0di7KKsN027CDH8j6MBsJ1wF/s7U0Mt0Q0onDUX9K3KSf7sjNYjaSe6IzH7JGsbH6uWjygKuYs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733744561; c=relaxed/simple;
-	bh=9b45M2aLM/tuKaAynX20c6dQe6KEzHWb4VICIeqr8Bw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=k8HIP+s7sGPbytQsnndJzEw1fIZWbfx7Gz2E1qAjIdh+Ftgeyj+T6hg0BCWzIMCL8g2EDhY6Rud72mFRWeaLFIEdSaicmnxX9ovB1H9NbzvJzqSQ22wrPKiXdYxq84Rnmvu+nC+tyMYqh13kV6ZtpIFJlyMIuHULp5YYCCNu0IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=V3DMr3sm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1733744557;
-	bh=9b45M2aLM/tuKaAynX20c6dQe6KEzHWb4VICIeqr8Bw=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=V3DMr3smHOeMunv2y7xC+3oTzjuI+VIzjqhvPPOA6Zz78bLi2mdaWKU2hCjAZVj2S
-	 IuCAZq3uaIpN5yTsjLxrERj5xdCEKkrKZ5ZznMZ5tPpR1Dr6UZalDnnw2LgZTn7yTS
-	 1f42MvE5kucasAv3FnDsllunBjPC9E/LMazbsKFseY8VEVOb8bWYfvbN18+4TmRsKG
-	 PHMNyo/AZOFY++835mwVSb59VceodefJ0LcqU8HQEpSrDILAZt1o0q5QiOwLhS0me/
-	 XWmypPVFPK8AxPRNs4NfyIOLeWDK2CzM5cMt3uaaeqfmUmCaNCabpWKHpz6lv/HWSF
-	 cDSWAh6/x9Dag==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 1D04317E0E88;
-	Mon,  9 Dec 2024 12:42:37 +0100 (CET)
-Message-ID: <92328329-e1f4-40e5-b0e6-946a7500a313@collabora.com>
-Date: Mon, 9 Dec 2024 12:42:36 +0100
+	s=arc-20240116; t=1733744577; c=relaxed/simple;
+	bh=q/xw1l31pm0dg5xbojMuIT0wrI+F13QWnG9PMaA0ITY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=myC13TeHJ5lNWc5cMnvnCUh48VZFqpqXVY0ISmkD7nBzgb30XWqislrhMiZlvcy9/h41TN7TR7fMRC3zGqZdrjfLn7VUbuELdV7R9uBvj2A8B1zZH4GCMqvdHq+ZNokTuhqzqhhNmkhay14TxPBmpEJvLoox02wVneamGLLfhP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Y6Kk45b5Dz21lg5;
+	Mon,  9 Dec 2024 19:43:08 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 36C2B1400F4;
+	Mon,  9 Dec 2024 19:42:52 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 9 Dec 2024 19:42:51 +0800
+Message-ID: <3de1b8a3-ae4f-492f-969d-bc6f2c145d09@huawei.com>
+Date: Mon, 9 Dec 2024 19:42:51 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,28 +47,99 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: mediatek: mt8186: Add Starmie device
-To: Wojciech Macek <wmacek@chromium.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Chen-Yu Tsai <wenst@chromium.org>, Rafal Milecki <rafal@milecki.pl>,
- Hsin-Yi Wang <hsinyi@chromium.org>, Sean Wang <sean.wang@mediatek.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-References: <20241129055720.3328681-1-wmacek@chromium.org>
- <20241129055720.3328681-3-wmacek@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH net-next v2 00/10] Replace page_frag with page_frag_cache
+ (Part-2)
+To: Alexander Duyck <alexander.duyck@gmail.com>
+CC: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Shuah Khan
+	<skhan@linuxfoundation.org>, Andrew Morton <akpm@linux-foundation.org>,
+	Linux-MM <linux-mm@kvack.org>
+References: <20241206122533.3589947-1-linyunsheng@huawei.com>
+ <CAKgT0UeXcsB-HOyeA7kYKHmEUM+d_mbTQJRhXfaiFBg_HcWV0w@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <20241129055720.3328681-3-wmacek@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <CAKgT0UeXcsB-HOyeA7kYKHmEUM+d_mbTQJRhXfaiFBg_HcWV0w@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Il 29/11/24 06:57, Wojciech Macek ha scritto:
-> Add support for Starmie Chromebooks.
+On 2024/12/9 5:34, Alexander Duyck wrote:
+
+...
+
+>>
+>> Performance validation for part2:
+>> 1. Using micro-benchmark ko added in patch 1 to test aligned and
+>>    non-aligned API performance impact for the existing users, there
+>>    seems to be about 20% performance degradation for refactoring
+>>    page_frag to support the new API, which seems to nullify most of
+>>    the performance gain in [3] of part1.
 > 
-> Signed-off-by: Wojciech Macek <wmacek@chromium.org>
+> So if I am understanding correctly then this is showing a 20%
+> performance degradation with this patchset. I would argue that it is
+> significant enough that it would be a blocking factor for this patch
+> set. I would suggest bisecting the patch set to identify where the
+> performance degradation has been added and see what we can do to
+> resolve it, and if nothing else document it in that patch so we can
+> identify the root cause for the slowdown.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+The only patch in this patchset affecting the performance of existing API
+seems to be patch 1, only including patch 1 does show ~20% performance
+degradation as including the whole patchset does:
+mm: page_frag: some minor refactoring before adding new API
 
+And the cause seems to be about the binary increasing as below, as the
+performance degradation didn't seems to change much when I tried inlining
+the __page_frag_cache_commit_noref() by moving it to the header file:
 
+./scripts/bloat-o-meter vmlinux_orig vmlinux
+add/remove: 3/2 grow/shrink: 5/0 up/down: 920/-500 (420)
+Function                                     old     new   delta
+__page_frag_cache_prepare                      -     500    +500
+__napi_alloc_frag_align                       68     180    +112
+__netdev_alloc_skb                           488     596    +108
+napi_alloc_skb                               556     624     +68
+__netdev_alloc_frag_align                    196     252     +56
+svc_tcp_sendmsg                              340     376     +36
+__page_frag_cache_commit_noref                 -      32     +32
+e843419@09a6_0000bd47_30                       -       8      +8
+e843419@0369_000044ee_684                      8       -      -8
+__page_frag_alloc_align                      492       -    -492
+Total: Before=34719207, After=34719627, chg +0.00%
+
+./scripts/bloat-o-meter page_frag_test_orig.ko page_frag_test.ko
+add/remove: 0/0 grow/shrink: 2/0 up/down: 78/0 (78)
+Function                                     old     new   delta
+page_frag_push_thread                        508     580     +72
+__UNIQUE_ID_vermagic367                       67      73      +6
+Total: Before=4582, After=4660, chg +1.70%
+
+Patch 1 is about refactoring common codes from __page_frag_alloc_va_align()
+to __page_frag_cache_prepare() and __page_frag_cache_commit(), so that the
+new API can make use of them as much as possible.
+
+Any better idea to reuse common codes as much as possible while avoiding
+the performance degradation as much as possible?
+
+> 
+>> 2. Use the below netcat test case, there seems to be some minor
+>>    performance gain for replacing 'page_frag' with 'page_frag_cache'
+>>    using the new page_frag API after this patchset.
+>>    server: taskset -c 32 nc -l -k 1234 > /dev/null
+>>    client: perf stat -r 200 -- taskset -c 0 head -c 20G /dev/zero | taskset -c 1 nc 127.0.0.1 1234
+> 
+> This test would barely touch the page pool. The fact is most of the
+
+I am guessing you meant page_frag here?
+
+> overhead for this would likely be things like TCP latency and data
+> copy much more than the page allocation. As such fluctuations here are
+> likely not related to your changes.
+
+But it does tell us something that the replacing does not seems to
+cause obvious regression, right?
+
+I tried using a smaller MTU to amplify the impact of page allocation,
+it seemed to have a similar result.
 
