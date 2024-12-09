@@ -1,215 +1,138 @@
-Return-Path: <linux-kernel+bounces-437955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A6D89E9AEF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:53:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2971C9E9AFB
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:57:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B0F81887E2B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:53:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 91DF118874F6
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:57:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53F0132122;
-	Mon,  9 Dec 2024 15:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E8951369B4;
+	Mon,  9 Dec 2024 15:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ykr7Zkxq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="mEGMYqFq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KMjxD+Gr"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4897B12AAE2
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 15:53:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3810233139;
+	Mon,  9 Dec 2024 15:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759614; cv=none; b=mxL+L34/G5jfDeBe3wvvFdWA487Q60xrPa+FRftjj3qWP4jEvlD1rdgi+hyLau7Cx/IIoNUM2mbb7PcY/8uG/5BM1r4bZiEv04EhnMLIOf5m/OhuwMvu5fAi6ihWScZMWkeL59u4Mk9L9aVGxVoXMqZNYaWi+70+4RaHQyI+S38=
+	t=1733759817; cv=none; b=mZX0I1Fe71Orx3tsYNrEusjCGjPAdkU/YH4Ma+ihBBshBGq/k/HEASMkOyVmfSm+OMpj5gaT9Y96QcMA0rmHfKQJi8XEjY73Fjl42NKcw/dOWg/UkZ5VO0FCvt+UKCJqWA5CSKETlQtwupE39+Xba8VJI7cFQays2bNAwCkBfmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759614; c=relaxed/simple;
-	bh=2kEgOq4YANYlbymoL67UkWgy+GutWR7wZUgWNXf9d30=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ejKHqvvO2zvOekseGR4a/S9KGKzmsojR7M/Cf/1zwLuYhWpFec1/XcWiaQi8ehfWZROyEHd2CO50EFxzTd+ivY+FWgL+kahDPcHPdyFUIwpd8r3e4UlCPnlqsuSsVaxaQWlERCkc63Eu1N6jLTQj7PAJ+TldBGYSl7J/WjXX5m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ykr7Zkxq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=mEGMYqFq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1733759610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oa/eRmj9sytyxrud4O4mAvjeRx/S9NypgThFLDmDcCE=;
-	b=Ykr7ZkxqH+rHf85Xrj7aG+Lm+COeUJB7sSvEhIQX7r7g0TwE81qtfgtCxTODRzFZ+NGi7D
-	+SK6ikPzhzfRcle7vTYH8T3Rz11u4xVeLGYboZuoDf/GtrUW0YWdKmcbXyZiuuSPB/i/Gs
-	0cYTX0XvY3sw9SlgygwKpdp7QkhThC5xVdcppxnbCVOAc6QJ5/o5BckCrtPd1O8PdQ8opn
-	mz2pVwzYBL//F6pNBm4DopJCTDMseN2OsoVWmDyqxoa6tFQ28yshIkhV9mPjTD5hv74ERv
-	HOoCreIJah+0eKDO6mwPcDMEyXHV9TUvoyB6Zi8LEsLa2WRxH8P6hGM7yFHS1w==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1733759610;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Oa/eRmj9sytyxrud4O4mAvjeRx/S9NypgThFLDmDcCE=;
-	b=mEGMYqFqXVsV1WU4zD3oERVxJV8xPiOpwHIShLDSIpc44nxTYpe8IO6Y5H/V3ZQV8ipTLT
-	/X781OAzFoM2DGCw==
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Marc Zyngier <maz@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha
- Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Andrew Lunn <andrew@lunn.ch>, Gregory Clement
- <gregory.clement@bootlin.com>, Sebastian Hesselbarth
- <sebastian.hesselbarth@gmail.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Atish Patra
- <atishp@atishpatra.org>, Andrew Jones <ajones@ventanamicro.com>, Sunil V L
- <sunilvl@ventanamicro.com>, Anup Patel <anup@brainfault.org>,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev
-Subject: Re: [PATCH 1/4] irqchip/riscv-imsic: Handle non-atomic MSI updates
- for device
-In-Reply-To: <CAK9=C2VqU2mdLL-R20bdgvDHi0WcuNyUSqRo7Pztsu-8X1wVvw@mail.gmail.com>
-References: <20241208150711.297624-1-apatel@ventanamicro.com>
- <20241208150711.297624-2-apatel@ventanamicro.com> <875xnuq6dc.ffs@tglx>
- <CAK9=C2VqU2mdLL-R20bdgvDHi0WcuNyUSqRo7Pztsu-8X1wVvw@mail.gmail.com>
-Date: Mon, 09 Dec 2024 16:53:29 +0100
-Message-ID: <87r06gq2di.ffs@tglx>
+	s=arc-20240116; t=1733759817; c=relaxed/simple;
+	bh=A6wM4VWA9krXQgwIlMNaGA/cVuxsmxetqtEokNetuH4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dbkU6uIpJrfafpHHIUnbzoKp2iG4VSKKXMzG2JeyffC+Zp5qH8/JuAFZw++TBOjhZ+TFWYYvQVZc3OE4pCnlFsN813THMTTYIbFXOsRrYLxyLf6K8bSyZBjoCct2OQGCQs7F3auKY9iASuB7xc+e1b0U5gCOZLarxv6Ofadl9Y0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KMjxD+Gr; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9E3IDX013783;
+	Mon, 9 Dec 2024 16:56:34 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	6q/GQ8e/5AdWnp2sT3tKqIF8BpsMpOI2KwP+899KLBQ=; b=KMjxD+Gr23lmaDkx
+	rxl8Eb/Gr+eMbb6QYtDzJgYhY1oeHFkm1S2UzRgUT9nIwlGldeLVi+PYMgXkBKNn
+	AvmJHJHDlWQUX5+K/iY6G3NtYLFqUvKP+HKCeqfGWS5CqiIX73wb1+kluthGzjwt
+	XNrR/Vzw+uhrnzFqaZjySTFLPNJOT+x3iR7acZhprr5tRo6JAu8PmGkCjhXTuuzx
+	XaMwIxR7uJ5RFQzBJgiedmNXqvcz0V9KfpnnDFH2n2sRdf2gKvKtpHaMYhVSxoYo
+	6rCqcdZ7bvfNmSS6DOeMGuHs86grpt3LaALNmfKEGQXglirqMt9BPmGD2RPrfGgq
+	vHqoeg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 43ccnm0w6p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 16:56:34 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 68A0D4004B;
+	Mon,  9 Dec 2024 16:55:25 +0100 (CET)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 074CA28D444;
+	Mon,  9 Dec 2024 16:54:39 +0100 (CET)
+Received: from [10.48.86.79] (10.48.86.79) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 9 Dec
+ 2024 16:54:38 +0100
+Message-ID: <feca2ea8-38f9-41c8-b4c4-1a6cbeec73a4@foss.st.com>
+Date: Mon, 9 Dec 2024 16:54:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/6] ARM: dts: stm32: lxa-tac: fix gen{1,2} boards and add
+ gen3 board
+To: Marc Kleine-Budde <mkl@pengutronix.de>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>
+CC: <kernel@pengutronix.de>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        =?UTF-8?Q?Leonard_G=C3=B6hrs?= <l.goehrs@pengutronix.de>
+References: <20241119-lxa-tac-gen3-v1-0-e0ab0a369372@pengutronix.de>
+ <20241209-magenta-boobook-of-respect-14ec68-mkl@pengutronix.de>
+Content-Language: en-US
+From: Alexandre TORGUE <alexandre.torgue@foss.st.com>
+In-Reply-To: <20241209-magenta-boobook-of-respect-14ec68-mkl@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SHFCAS1NODE1.st.com (10.75.129.72) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Anup!
+Hi Marc
 
-On Mon, Dec 09 2024 at 17:38, Anup Patel wrote:
-> On Mon, Dec 9, 2024 at 1:44=E2=80=AFAM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->> There is no guarantee that set_affinity() runs on the original target
->> CPU (CPU 1). Your scheme only works, when CPU1 vector 0x20 is not used
->> by some other device. If it's used, you lost as CPU1 will consume the
->> vector and your pending check is not seeing anything.
+On 12/9/24 15:30, Marc Kleine-Budde wrote:
+> Hello Alexandre,
+> 
+> On 19.11.2024 12:34:57, Marc Kleine-Budde wrote:
+>> Hello,
 >>
->> x86 ensures CPU locality by deferring the affinity move to the next
->> device interrupt on the original target CPU (CPU1 in the above
->> example). See CONFIG_GENERIC_IRQ_PENDING.
->
-> I agree with you.
->
-> The IMSIC driver must do the affinity move upon the next device
-> interrupt on the old CPU. I will update this patch in the next revision.
->
-> BTW, I did not find CONFIG_GENERIC_IRQ_PENDING. Is the
-> name correct ?
+>> this series fixes some problems found in the lxa-tac generation 1 and
+>> 2 boards and add support for the generation 3 board. It's based on an
+>> STM32MP153c, while the generation 1 and 2 are based on the
+>> STM32MP157c.
+>>
+>> regards,
+>> Marc
+>>
+>> Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+>> ---
+>> Leonard Göhrs (6):
+>>        ARM: dts: stm32: lxa-tac: disable the real time clock
+>>        ARM: dts: stm32: lxa-tac: extend the alias table
+>>        ARM: dts: stm32: lxa-tac: adjust USB gadget fifo sizes for multi function
+>>        dt-bindings: arm: stm32: add compatible strings for Linux Automation LXA TAC gen 3
+>>        ARM: dts: stm32: lxa-tac: move adc and gpio{e,g} to gen{1,2} boards
+>>        ARM: dts: stm32: lxa-tac: Add support for generation 3 devices
+>>
+>>   .../devicetree/bindings/arm/stm32/stm32.yaml       |   7 +
+>>   arch/arm/boot/dts/st/Makefile                      |   1 +
+>>   arch/arm/boot/dts/st/stm32mp153c-lxa-tac-gen3.dts  | 267 +++++++++++++++++++++
+>>   arch/arm/boot/dts/st/stm32mp157c-lxa-tac-gen1.dts  |  84 +++++++
+>>   arch/arm/boot/dts/st/stm32mp157c-lxa-tac-gen2.dts  |  84 +++++++
+>>   arch/arm/boot/dts/st/stm32mp15xc-lxa-tac.dtsi      | 100 +-------
+>>   6 files changed, 455 insertions(+), 88 deletions(-)
+> 
+> since the merge window is open, can you merge this series please.
 
-CONFIG_GENERIC_PENDING_IRQ is close enough :)
+Yes sure. It will be in my PR for v6.14.
 
->> The interrupt domains which are not affected (remap) set the
->> IRQ_MOVE_PCNTXT flag to avoid that dance and don't use that affinity
->> setter code path at all.
->
-> Yes, setting the IRQ_MOVE_PCNTXT flag in the remap domain
-> makes perfect sense.
->
-> I suggest adding IRQ_MOVE_PCNTXT usage as part of Drew's
-> irqbypass series which adds a remap domain in the IOMMU
-> driver. Unless you insist on having it as part of this series ?
-
-You need to look at the other RISC-V controllers. Those which do not
-need this should set it. That's historically backwards.
-
-I think we can reverse the logic here. As this needs backporting, I
-can't make a full cleanup of this, but for your problem the patch below
-should just work.
-
-Select GENERIC_PENDING_IRQ and GENERIC_PENDING_IRQ_CHIPFLAGS and set the
-IRQCHIP_MOVE_DEFERRED flag on your interrrupt chip and the core logic
-takes care of the PCNTXT bits.
-
-I'll convert x86 in a seperate step and remove the PCNTXT leftovers and
-the new config knob once the dust has settled.
-
-Thanks,
-
-        tglx
----
---- a/include/linux/irq.h
-+++ b/include/linux/irq.h
-@@ -567,6 +567,7 @@ struct irq_chip {
-  *                                    in the suspend path if they are in d=
-isabled state
-  * IRQCHIP_AFFINITY_PRE_STARTUP:      Default affinity update before start=
-up
-  * IRQCHIP_IMMUTABLE:		      Don't ever change anything in this chip
-+ * IRQCHIP_MOVE_DEFERRED:	      Move the interrupt in actual interrupt con=
-text
-  */
- enum {
- 	IRQCHIP_SET_TYPE_MASKED			=3D (1 <<  0),
-@@ -581,6 +582,7 @@ enum {
- 	IRQCHIP_ENABLE_WAKEUP_ON_SUSPEND	=3D (1 <<  9),
- 	IRQCHIP_AFFINITY_PRE_STARTUP		=3D (1 << 10),
- 	IRQCHIP_IMMUTABLE			=3D (1 << 11),
-+	IRQCHIP_MOVE_DEFERRED			=3D (1 << 12),
- };
-=20
- #include <linux/irqdesc.h>
---- a/kernel/irq/Kconfig
-+++ b/kernel/irq/Kconfig
-@@ -31,6 +31,10 @@ config GENERIC_IRQ_EFFECTIVE_AFF_MASK
- config GENERIC_PENDING_IRQ
- 	bool
-=20
-+# Deduce delayed migration from top-level interrupt chip flags
-+config GENERIC_PENDING_IRQ_CHIPFLAGS
-+	bool
-+
- # Support for generic irq migrating off cpu before the cpu is offline.
- config GENERIC_IRQ_MIGRATION
- 	bool
---- a/kernel/irq/chip.c
-+++ b/kernel/irq/chip.c
-@@ -47,6 +47,13 @@ int irq_set_chip(unsigned int irq, const
- 		return -EINVAL;
-=20
- 	desc->irq_data.chip =3D (struct irq_chip *)(chip ?: &no_irq_chip);
-+
-+	if (IS_ENABLED(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS) && chip) {
-+		if (chip->flags & IRQCHIP_MOVE_DEFERRED)
-+			irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
-+		else
-+			irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
-+	}
- 	irq_put_desc_unlock(desc, flags);
- 	/*
- 	 * For !CONFIG_SPARSE_IRQ make the irq show up in
-@@ -1114,16 +1121,21 @@ void irq_modify_status(unsigned int irq,
- 	trigger =3D irqd_get_trigger_type(&desc->irq_data);
-=20
- 	irqd_clear(&desc->irq_data, IRQD_NO_BALANCING | IRQD_PER_CPU |
--		   IRQD_TRIGGER_MASK | IRQD_LEVEL | IRQD_MOVE_PCNTXT);
-+		   IRQD_TRIGGER_MASK | IRQD_LEVEL);
- 	if (irq_settings_has_no_balance_set(desc))
- 		irqd_set(&desc->irq_data, IRQD_NO_BALANCING);
- 	if (irq_settings_is_per_cpu(desc))
- 		irqd_set(&desc->irq_data, IRQD_PER_CPU);
--	if (irq_settings_can_move_pcntxt(desc))
--		irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
- 	if (irq_settings_is_level(desc))
- 		irqd_set(&desc->irq_data, IRQD_LEVEL);
-=20
-+	/* Keep this around until x86 is converted over */
-+	if (!IS_ENABLED(CONFIG_GENERIC_PENDING_IRQ_CHIPFLAGS)) {
-+		irqd_clear(&desc->irq_data, IRQD_MOVE_PCNTXT);
-+		if (irq_settings_can_move_pcntxt(desc))
-+			irqd_set(&desc->irq_data, IRQD_MOVE_PCNTXT);
-+	}
-+
- 	tmp =3D irq_settings_get_trigger_mask(desc);
- 	if (tmp !=3D IRQ_TYPE_NONE)
- 		trigger =3D tmp;
+regards
+Alex
 
 
 
+> regards,
+> Marc
+> 
 
