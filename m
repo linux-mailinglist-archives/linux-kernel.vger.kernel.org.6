@@ -1,138 +1,94 @@
-Return-Path: <linux-kernel+bounces-438120-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716419E9D19
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:31:06 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 632119E9D1C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:32:16 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7B47281CC3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:31:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2EDA01887060
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34EBE13C807;
-	Mon,  9 Dec 2024 17:30:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="cIRjVzz1"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C52233137;
-	Mon,  9 Dec 2024 17:30:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAA314F9FB;
+	Mon,  9 Dec 2024 17:32:07 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBF4EDDD3
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:32:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733765458; cv=none; b=TWQCg2q8t/eT0+Q/l+jEJ52A7rzfVQSH9PAcJuMEt3ED6VEN08lnr8ZUAtFp3B9zY1UAs42TcRg04kGluYnPT+8nmRnidiMmyd4Q+VURGw5eMSISCH4pexD7PgoOrc6JUprPKUb0KCtHBH3/UIOMgvIF8ITaAjR7/8MeZL565ag=
+	t=1733765527; cv=none; b=Fe+owhikfDkFtsU8YemvHjSe72x/ZkLbGHOEoLDrO9T4rVt8rDaMeOgYLhgZUa8AZlTE6ZxbbVNV74Ksyh+uqFLQOYRM3j8hCtV2SkF3/8lbgxOsMFuiM3sHkiY93nAWFQGPu6o4phtAGXTXkBLiV/JrPWTg8ZAy0y0ICQCIIQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733765458; c=relaxed/simple;
-	bh=MaRBRA8BofakgPUD4dP5c+wZsPmz67UHvD9rdarO1hM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OfhlNlo89blP5S2nF6QkL7KdEfaOJ3ARC9NYo1Wvcxs/QujDicg4U4UfEthZCH+tu3WavhNs2hLHSJDgPmrzl7cRSBBLBKbtKul/ckEpNx9qm8/AY2kC9/yDgrh8itru48wu5orfqOCTp4Q0h0zkj4Umfwc+sRGgh1+ma/gpQmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=cIRjVzz1; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1127)
-	id 93F7120C8BA2; Mon,  9 Dec 2024 09:30:56 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 93F7120C8BA2
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1733765456;
-	bh=bqXOdnQKoVPPZ/PjMw7ad7afClJiAGSulQNBgrrXhEA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cIRjVzz1q2gCsD+C8+qkEhV3jDosgVaBDvKxVTzF7PygGX9KXHEEFSBBwCUqZMVHq
-	 Kpu0BHZW674WkTgs63hmnyzw9Zo/Z2qJsLgY3MguLVW35uy7PDjsL8udC8ngwkgszs
-	 rOF2GCGF9hIC1osMAxkKHxns4Rgw7bsuo0b6AWJ0=
-Date: Mon, 9 Dec 2024 09:30:56 -0800
-From: Saurabh Singh Sengar <ssengar@linux.microsoft.com>
-To: Michael Kelley <mhklinux@outlook.com>
-Cc: "kys@microsoft.com" <kys@microsoft.com>,
-	"haiyangz@microsoft.com" <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>,
-	"decui@microsoft.com" <decui@microsoft.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"vkuznets@redhat.com" <vkuznets@redhat.com>,
-	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 1/2] Drivers: hv: util: Don't force error code to
- ENODEV in util_probe()
-Message-ID: <20241209173056.GA1194@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
-References: <20241106154247.2271-1-mhklinux@outlook.com>
- <20241106154247.2271-2-mhklinux@outlook.com>
- <20241208173049.GA14100@linuxonhyperv3.guj3yctzbm1etfxqx2vob5hsef.xx.internal.cloudapp.net>
- <SN6PR02MB4157ED3DA55558829D6152D5D4332@SN6PR02MB4157.namprd02.prod.outlook.com>
+	s=arc-20240116; t=1733765527; c=relaxed/simple;
+	bh=2dbFz4F3lGyQECKzFO9Edvk8zlb8Isu/2tfm0Nq5Lkc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=nMtTwT20jtIX4KUNCB9mAJ3kWZpCetLJ5HTjrPuJuE1CzRxX9mD0o05NgXG4IUiTZge8jQi5jCm8GLpH2BMXonKZ6BhuNoA3ZNGBXe871WlRT1fP7tanlugRzbHR13/4v4YgXGL+kuYcUspWA9ln47wTOU8FfbO5AmzLwAJDAG4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a9d303a5ccso18804925ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:32:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733765525; x=1734370325;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jT/MGQxDXKDPFnbZPgiB7s7xdACGqnR8EVRt/7/8hDs=;
+        b=pJKc285Vs1K0XFUGJbOTgI/WjMzW8Eb3s0xIhN+necPiNdvNrB4nsAc8YC6HUnDlnE
+         HMpnOvWcMlXhXPWjdi/ESuyFCCAx7Uo4ydWFy0rQEaUWhIqyMvoy6ekF56Eg90dIqiCT
+         1psAvRL+1DHImRwzRlPqmCZ5N67yq7ZBVjBue/aQO1u+Tr8db/0nFgUgaxlyS9Jl6ml+
+         RKUATM8VgCMMAsGlgUocXnpUhxG3OMEL0Hy/XDikXBUt2cbzPuiIOHroObsawGx9JH7p
+         pGKkTFynMt3jt9Evi/9BX/u1vL4p0Vla76kuMIB9VjRde3jiy4OzIC8+UHGGeVkM84qC
+         8AhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8UXTjBg3iirq24IqSxgiW9tMcmuZRZlPIn+kXWSAMq4AsFKdhQkEyj7AFlQ/DBmBC1G3l7b3OXpkCDQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/0dQViqCFWsTcWJeV0Z3rASap6EkvU+/fdhHmLyu0TxqSzQ1B
+	Yon3ih5VqcHLH3A9ELqzsOg1AoCQIC6XPS0XUx66rCxja4urURuE5mvHRearY5u69ksAiEIenhh
+	Yk3YfwGr5NfG0XpO+0x2XcFoB0ZpGsevyydEnJ3X0FcSTPMPlzR0uAvQ=
+X-Google-Smtp-Source: AGHT+IEbmrduPr4KcIVaGH64axnUUJmrCwgpaRUJDoVlmRGbX0Ds5oWWrgEhVPCUxpp251txjlITZJhDfXt2hN60A9Af/5ybn40p
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <SN6PR02MB4157ED3DA55558829D6152D5D4332@SN6PR02MB4157.namprd02.prod.outlook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Received: by 2002:a05:6e02:1745:b0:3a7:e539:c27b with SMTP id
+ e9e14a558f8ab-3a811dfe123mr141144075ab.17.1733765523621; Mon, 09 Dec 2024
+ 09:32:03 -0800 (PST)
+Date: Mon, 09 Dec 2024 09:32:03 -0800
+In-Reply-To: <0000000000001126200614f5c9c4@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67572993.050a0220.a30f1.01ad.GAE@google.com>
+Subject: Re: [syzbot] [hfs?] KASAN: slab-use-after-free Read in
+ hfsplus_read_wrapper (2)
+From: syzbot <syzbot+fa7b3ab32bcb56c10961@syzkaller.appspotmail.com>
+To: brauner@kernel.org, bvanassche@acm.org, cascardo@igalia.com, 
+	chao@kernel.org, jack@suse.cz, josef@toxicpanda.com, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lizhi.xu@windriver.com, rdunlap@infradead.org, sandeen@redhat.com, 
+	syzkaller-bugs@googlegroups.com, viro@zeniv.linux.org.uk, willy@infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Dec 08, 2024 at 11:12:15PM +0000, Michael Kelley wrote:
-> From: Saurabh Singh Sengar <ssengar@linux.microsoft.com> Sent: Sunday, December 8, 2024 9:31 AM
-> > 
-> > On Wed, Nov 06, 2024 at 07:42:46AM -0800, mhkelley58@gmail.com wrote:
-> > > From: Michael Kelley <mhklinux@outlook.com>
-> > >
-> > > If the util_init function call in util_probe() returns an error code,
-> > > util_probe() always return ENODEV, and the error code from the util_init
-> > > function is lost. The error message output in the caller, vmbus_probe(),
-> > > doesn't show the real error code.
-> > >
-> > > Fix this by just returning the error code from the util_init function.
-> > > There doesn't seem to be a reason to force ENODEV, as other errors
-> > > such as ENOMEM can already be returned from util_probe(). And the
-> > > code in call_driver_probe() implies that ENODEV should mean that a
-> > > matching driver wasn't found, which is not the case here.
-> > >
-> > > Suggested-by: Dexuan Cui <decui@microsoft.com>
-> > > Signed-off-by: Michael Kelley <mhklinux@outlook.com>
-> > > ---
-> > > Changes in v2: None. This is the first version of Patch 1 of this series.
-> > > The "v2" is due to changes to Patch 2 of the series.
-> > >
-> > >  drivers/hv/hv_util.c | 4 +---
-> > >  1 file changed, 1 insertion(+), 3 deletions(-)
-> > >
-> > > diff --git a/drivers/hv/hv_util.c b/drivers/hv/hv_util.c
-> > > index c4f525325790..370722220134 100644
-> > > --- a/drivers/hv/hv_util.c
-> > > +++ b/drivers/hv/hv_util.c
-> > > @@ -590,10 +590,8 @@ static int util_probe(struct hv_device *dev,
-> > >  	srv->channel = dev->channel;
-> > >  	if (srv->util_init) {
-> > >  		ret = srv->util_init(srv);
-> > > -		if (ret) {
-> > > -			ret = -ENODEV;
-> > > +		if (ret)
-> > >  			goto error1;
-> > > -		}
-> > 
-> > After reviewing V2 of this series, I couldn’t find any scenario where
-> > 'util_init' in any driver returns a value other than 0. 
-> 
-> Yeah, I noticed the same thing when doing this patch set.
-> 
-> > In such cases,
-> > could we consider making all these functions 'void' ?
-> > 
-> > After this ee can remove the check for util_int return type.
-> 
-> I decided against making these changes. It seemed like code churn
-> for not much benefit. And there's the possibility of some future
-> change reintroducing an error code in one of the util_init functions,
-> in which case we would need to put things back like they are now.
-> Certainly this is a judgment call, but my take was to leave things
-> as they are.
-> 
-> The changes you suggest would probably go as a third patch in
-> the series. Wei Liu has already picked up the two patches as they
-> are, so it would be fine to create an independent patch with the
-> changes you suggest, if we want to go that route. My preference
-> isn't that strong either way.
+syzbot suspects this issue was fixed by commit:
 
-I realized later that the patch is already merged. I believe it's fine
-to leave it as is unless someone feels motivated enough to push this change.
+commit 1c82587cb57687de3f18ab4b98a8850c789bedcf
+Author: Thadeu Lima de Souza Cascardo <cascardo@igalia.com>
+Date:   Thu Nov 7 11:41:09 2024 +0000
 
-- Saurabh
+    hfsplus: don't query the device logical block size multiple times
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17c554df980000
+start commit:   48cf398f15fc Merge tag 'char-misc-6.9-rc5' of git://git.ke..
+git tree:       upstream
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c5d33c579b4e833f
+dashboard link: https://syzkaller.appspot.com/bug?extid=fa7b3ab32bcb56c10961
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10e3d1fd180000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=151a6e73180000
+
+If the result looks correct, please mark the issue as fixed by replying with:
+
+#syz fix: hfsplus: don't query the device logical block size multiple times
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
