@@ -1,186 +1,205 @@
-Return-Path: <linux-kernel+bounces-438096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438097-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58F239E9CB6
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:12:39 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E1549E9CB9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 18:12:52 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E3E9282A9B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:12:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF79166540
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 911BC14A60F;
-	Mon,  9 Dec 2024 17:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6808815252D;
+	Mon,  9 Dec 2024 17:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b="g2G2BVnp"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aCr4t+Aa"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6F914D283
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4F8F13AA2F
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 17:12:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733764350; cv=none; b=LKkFgfXuX1UjIpChujWIGOFxnUPUCmW9BL1GoD7GNl66m7u4G/meRqdcW/rIrvEfh2XG/8RcoMrjCSwc3CjSGm4sdjY684maJsROgoT4RY4ucSMuWfHMRCTINwE2MbDh6BXkyPYXp3YY/MB8XjIcF0Z+gGZ/E2rsBiUC6zUYr5U=
+	t=1733764367; cv=none; b=D2Pjl9ACnWc6SPWz/LqXtDRwVBWJibB4cw2M8okVMSzwDRChnKaIQAGD3em4E7Rm7Te44Zy52reoHyWURMLfpZw/FbLd3Wv078nnDC7plLnehPv3i0X7ngp8FoQRQNDz5Wanne2fXo/o09g5hYj+IJT45Z4zxd5rd6yvo58irl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733764350; c=relaxed/simple;
-	bh=cOzd8+7H/GN0o1zps3NAZOOuJnioPUq6sgRKP597Lz0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MQnuCC+vyFgGX3z6mybNjk/I2r2kj1rwJ7hwmhGh1v8X7mpwSGhbrcFm15Audhxcoko1cuXXLXvtCCzpkT7jTVTOQ7PsJywb8DPtRXEYIeKhZOzI1vKkp3zP1QInarNhr4sgrJtTF1fjfD2yEuYN07pVoLWTcU/3GKyIjMglykA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com; spf=pass smtp.mailfrom=ionos.com; dkim=pass (2048-bit key) header.d=ionos.com header.i=@ionos.com header.b=g2G2BVnp; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ionos.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ionos.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9ec267b879so891312966b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:12:28 -0800 (PST)
+	s=arc-20240116; t=1733764367; c=relaxed/simple;
+	bh=u1pZFNB4IkXAp3g1I5XpeCyNXZT64f/PRCeyjr73mNI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Z0qtpyULbWMocKNAi1A3dGQWWWlXE4a6gEgTus0sYNhuXo4/mCmGqS3nS03rM4B81D1P/B1bM2Mos0JoTCkXgfG3wObJViaIhe1Pfauec0q1qDA5NlAfNhO8Az1uqXFVSQaLGWRWEojSScSuVZybLY+fq8kIlJfYUIppClqk7Bk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aCr4t+Aa; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-434fe0a8cceso6816035e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 09:12:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ionos.com; s=google; t=1733764347; x=1734369147; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vaWyuI+1zfgRvLafZXYRvDDVpYcT2uiI1jU4yIWvFaI=;
-        b=g2G2BVnp/ZCX9zQOKJVBL4UQ7g1WMuWzYTZ3VIC8OvHT/E8XJpCT2fzbglAUes1nAj
-         3MuC2xtpwLl1IE1SzKEs+P+jK5vbpsfeVQSL+xso9TJ5mUAAUh8A6GKEp82jshbFLwVZ
-         WC6vr3X/wcrBQU85U2ah/SE6z6UrXhh6Mas7LaEnpGJWvflQ6N9I8dK0pSSsXN2r7pBd
-         0KvrPzgX0mAtbSmaNtL2YN4yUeeFfUFs6fRlFnPQhOeQ0JIS02nz2XbZuxvT3zq1J3RN
-         aOUioIf+DuYgpW8J5WkSgg0foDmx4ZvClvILOLG3encu5W97MVTXHgRv/iLWif3J5yjB
-         oYMA==
+        d=linaro.org; s=google; t=1733764364; x=1734369164; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=99R/pS+JOAF2fBIm3Oge6FcYNKCOWKCH/F0YLLRaqtY=;
+        b=aCr4t+Aa81gz4opEH8+D79V4EACBWlFTBLxEPiMCDI15AyPVQGKWA6YEm14yZrUYhz
+         eRMep7z3KhSuIFl3uwQnByYw5nGHJ4GJCB/DRtqw3fbmiY+JMevAhQRKJRc0pJIKNOnQ
+         lMUrlYRuHWHejL8iFQkhk/Kr/vNkvKX7fGF5zz78Dy6qSutWOzMOKuH3CmC91ca45XDs
+         bn/skrDh46J7E99mBV/NNOv6Wsaqg0uskrtBoQUEgvQPjKfE6udagP0d/aQxX9HYaKji
+         ElqlDk15/Hb7fzQyQrdtZCVCJbh1tDelq5BO4x99jse3XilpFJtgJd4t0ztQ6E20gE4w
+         uiJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733764347; x=1734369147;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vaWyuI+1zfgRvLafZXYRvDDVpYcT2uiI1jU4yIWvFaI=;
-        b=cuTIoHf+ipswQhhFYKqKmxs9UeVSqSRGvTmhXvVNHCmPnTyd8z9DH6YGUWtEZA7UWW
-         tMDicCZm77k6h9CaXMPsVyL8C4lNx5XCE5wpyf3uvwQuX1Fg4JJodC3dB3unCppPjhOz
-         KXLpE254dzlsk9Hjth0t6SKbGbwERoVMDullf0d2rzFb8WH87IHSPqcNBfrAWAmtBHFq
-         4M36JZOMN+j/WYXeDh2eREBQ/D6UiYA7F4XLxvzpHw/gRvNmpMsUzuymzVuKFAyrijVg
-         tn9WexrlqeCKDiVbcsc92/3HWxvOrUXOOczr4r/6Ao37f1RSMugdj7iD3yOoopcewa3K
-         7+cA==
-X-Forwarded-Encrypted: i=1; AJvYcCVhNHllrq48J+2iGV48GpRJ2AocL5OkzEBfZmhsUNideo87OaS7OhecPBK/Sl2gyMGp7h3qRklErw24yvo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypdCQodoCvT1IFws8Gn0AXAo8YZd8l5LmbdtaHu1uOFRaPIlZq
-	i/6Yo5aFP1UVfXI9F1pfA3vAQNd0/3/Gfs1Ed8Cq7fdOJKUDW6MsRitS47fIMXqIrgG4ogoaY5N
-	2VWGqFhW31+IYaahYJ6sHhA8P9Vdc2WSN8EsI7g==
-X-Gm-Gg: ASbGncsJmGVBucuyIc7sW7DwhWiKAT1lhQfdbwbtaH9CecMpwcC9PiTz6VxgnzcCSFZ
-	BKjpds+ozmd161cMH0uny7J2WKrvFjRKjDjTdMddDEYfhs1q0DxtSTQnQGxEk
-X-Google-Smtp-Source: AGHT+IGjhgia80GwIq5GYW/J/My9MoNCTxyL/+qNp0qo2eVT8TVjbjcgPbng+OjrTZMWEUN4ktGPt5mr5dUK2s5wNHQ=
-X-Received: by 2002:a17:906:c38b:b0:aa6:7b34:c1a8 with SMTP id
- a640c23a62f3a-aa69ce8deddmr107306866b.55.1733764346946; Mon, 09 Dec 2024
- 09:12:26 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733764364; x=1734369164;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=99R/pS+JOAF2fBIm3Oge6FcYNKCOWKCH/F0YLLRaqtY=;
+        b=GfKgmHDoCFRAV9bqWCdezDkbvj4HY3GxWZR/Vilr/ePaMnDpTrvDQ/nruY8+n27gGE
+         SicPKNlao4zGRcGs9TDylX/OHMVK+WiGGh/VmzIiucdnTFTcTSa99/kYaB4NoiAvvkTs
+         AFYETtOH4zZXXMVwJ5P/Z9HL2UYR7gGCWM7m+fZcLpAUXXPRUgcI4nVM1yBN39AsyEBm
+         8KN7CEvAGNX3QaPldb7n1b9fnzEiduymx9hU4fwoe/ievnfJfuuzcl9sZFyfT9xxAIzA
+         QcwquRJqM+odfKJahMKkIGlT+LuZd9bxo3qjr7u/K9dUcsh436TrfvvCp1OJspDVRrUa
+         8YbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvgEW+tBpfyKQfNAvd2Jrq24x8PPJvBI6mA27f2gtAs9AlgdrdHvkigQSDHmeLdJ1m01RWCQhSU7oYhd0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/4EsK2UZZGcjcU2nrQEVDD19/uj3/2i8bIhIj/U9oAzXEr/D3
+	voMBfF1RAY+C+2qUvzMdRwiR9dr/+VsT4KOLQD1gAmu01PrC04Vo/5ZhdPjAXvU=
+X-Gm-Gg: ASbGncu1LcG7r9/QE7w33FhUPjk22UU/+1xfCpSeQkUbcMA5TzKoDSJrsl1+SUJY2A8
+	ivcjJc7Fs1epftwXIoI4xPviZ1u+vfnDyZaMY9cPeeZNkuTS82zVrHbtaOuwunUKvmDZ1VFpYsJ
+	zXVf4rVB2cYTMiaFe07zkzdKAzZEXWxhLKfiXEjJmOJsDKA7HSMZH6hD+kocMJZES7ZBkXaz4Ks
+	PrTKBsrOZFPa8OMJZ9LNR4YkvP4ENCXEtyFD5n/k4iwMKN3Y90=
+X-Google-Smtp-Source: AGHT+IFkm7jj1FED7ocAfVBJOa37YQ3hoNzBuxeY7ZjjgdEVyxL+f/RC6F5mPiRea/S8HR4ulr5jcg==
+X-Received: by 2002:a05:6000:184d:b0:385:f89a:402e with SMTP id ffacd0b85a97d-3862b34e4cdmr8876460f8f.14.1733764364117;
+        Mon, 09 Dec 2024 09:12:44 -0800 (PST)
+Received: from pop-os.. ([209.198.129.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862d7158c4sm10530816f8f.54.2024.12.09.09.12.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 09:12:43 -0800 (PST)
+From: James Clark <james.clark@linaro.org>
+To: linux-perf-users@vger.kernel.org,
+	namhyung@kernel.org,
+	acme@kernel.org
+Cc: James Clark <james.clark@linaro.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Leo Yan <leo.yan@arm.com>,
+	Dima Kogan <dima@secretsauce.net>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] perf probe: Fix uninitialized variable
+Date: Mon,  9 Dec 2024 17:12:21 +0000
+Message-Id: <20241209171222.1422577-1-james.clark@linaro.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-99EL_s0rhz_A@mail.gmail.com>
- <2128544.1733755560@warthog.procyon.org.uk>
-In-Reply-To: <2128544.1733755560@warthog.procyon.org.uk>
-From: Max Kellermann <max.kellermann@ionos.com>
-Date: Mon, 9 Dec 2024 18:12:15 +0100
-Message-ID: <CAKPOu+8LSKtGmtjwRpY9tMnt=1Y7RvrhDxVsfSRQW02_g5-6XA@mail.gmail.com>
-Subject: Re: [PATCH] nfs: Fix oops in nfs_netfs_init_request() when copying to cache
-To: David Howells <dhowells@redhat.com>
-Cc: Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
-	Dave Wysochanski <dwysocha@redhat.com>, Jeff Layton <jlayton@kernel.org>, 
-	Christian Brauner <brauner@kernel.org>, netfs@lists.linux.dev, linux-nfs@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Dec 9, 2024 at 3:46=E2=80=AFPM David Howells <dhowells@redhat.com> =
-wrote:
-> Does this fix the issue?
+Since the linked fixes: commit, err is returned uninitialized due to the
+removal of "return 0". Initialize err to fix it, and rename err to out
+to avoid confusion because buf is still supposed to be freed in non
+error cases.
 
-The issue is with 6.11, but this patch fails to build with 6.11 and
-I'm not sure how to backport that part:
+This fixes the following intermittent test failure on release builds:
 
- fs/nfs/fscache.c: In function =E2=80=98nfs_netfs_init_request=E2=80=99:
- fs/nfs/fscache.c:267:50: error: =E2=80=98NETFS_PGPRIV2_COPY_TO_CACHE=E2=80=
-=99
-undeclared (first use in this function); did you mean
-=E2=80=98NETFS_RREQ_COPY_TO_CACHE=E2=80=99?
-   267 |                 if (WARN_ON_ONCE(rreq->origin !=3D
-NETFS_PGPRIV2_COPY_TO_CACHE))
-       |
-^~~~~~~~~~~~~~~~~~~~~~~~~~~
+ $ perf test "testsuite_probe"
+ ...
+ -- [ FAIL ] -- perf_probe :: test_invalid_options :: mutually exclusive options :: -L foo -V bar (output regexp parsing)
+ Regexp not found: \"Error: switch .+ cannot be used with switch .+\"
+ ...
 
-Our production machines are all 6.11, because 6.12 has that other
-netfs regression that freezes all transfers immediately
-(https://lore.kernel.org/netfs/CAKPOu+_4m80thNy5_fvROoxBm689YtA0dZ-=3Dgcmkz=
-wYSY4syqw@mail.gmail.com/).
-I guess this other bug only affects Ceph and not NFS, but after
-experiencing so many kernel regressions recently, I had to become more
-cautious with kernel updates (the past 2 months had more
-netfs/NFS/Ceph regression than the last 20 years combined).
+Fixes: 080e47b2a237 ("perf probe: Introduce quotation marks support")
+Signed-off-by: James Clark <james.clark@linaro.org>
+---
+ tools/perf/util/probe-event.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 6d51a4c98ad7..35af6570cf9b 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -1370,7 +1370,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ {
+ 	char *buf = strdup(arg);
+ 	char *p;
+-	int err;
++	int err = 0;
+ 
+ 	if (!buf)
+ 		return -ENOMEM;
+@@ -1383,20 +1383,20 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ 		if (p == buf) {
+ 			semantic_error("No file/function name in '%s'.\n", p);
+ 			err = -EINVAL;
+-			goto err;
++			goto out;
+ 		}
+ 		*(p++) = '\0';
+ 
+ 		err = parse_line_num(&p, &lr->start, "start line");
+ 		if (err)
+-			goto err;
++			goto out;
+ 
+ 		if (*p == '+' || *p == '-') {
+ 			const char c = *(p++);
+ 
+ 			err = parse_line_num(&p, &lr->end, "end line");
+ 			if (err)
+-				goto err;
++				goto out;
+ 
+ 			if (c == '+') {
+ 				lr->end += lr->start;
+@@ -1416,11 +1416,11 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ 		if (lr->start > lr->end) {
+ 			semantic_error("Start line must be smaller"
+ 				       " than end line.\n");
+-			goto err;
++			goto out;
+ 		}
+ 		if (*p != '\0') {
+ 			semantic_error("Tailing with invalid str '%s'.\n", p);
+-			goto err;
++			goto out;
+ 		}
+ 	}
+ 
+@@ -1431,7 +1431,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ 			lr->file = strdup_esq(p);
+ 			if (lr->file == NULL) {
+ 				err = -ENOMEM;
+-				goto err;
++				goto out;
+ 			}
+ 		}
+ 		if (*buf != '\0')
+@@ -1439,7 +1439,7 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ 		if (!lr->function && !lr->file) {
+ 			semantic_error("Only '@*' is not allowed.\n");
+ 			err = -EINVAL;
+-			goto err;
++			goto out;
+ 		}
+ 	} else if (strpbrk_esq(buf, "/."))
+ 		lr->file = strdup_esq(buf);
+@@ -1448,10 +1448,10 @@ int parse_line_range_desc(const char *arg, struct line_range *lr)
+ 	else {	/* Invalid name */
+ 		semantic_error("'%s' is not a valid function name.\n", buf);
+ 		err = -EINVAL;
+-		goto err;
++		goto out;
+ 	}
+ 
+-err:
++out:
+ 	free(buf);
+ 	return err;
+ }
+-- 
+2.34.1
 
->
-> David
-> ---
-> nfs: Fix oops in nfs_netfs_init_request() when copying to cache
->
-> When netfslib wants to copy some data that has just been read on behalf o=
-f
-> nfs, it creates a new write request and calls nfs_netfs_init_request() to
-> initialise it, but with a NULL file pointer.  This causes
-> nfs_file_open_context() to oops - however, we don't actually need the nfs
-> context as we're only going to write to the cache.
->
-> Fix this by just returning if we aren't given a file pointer and emit a
-> warning if the request was for something other than copy-to-cache.
->
-> Further, fix nfs_netfs_free_request() so that it doesn't try to free the
-> context if the pointer is NULL.
->
-> Fixes: ee4cdf7ba857 ("netfs: Speed up buffered reading")
-> Reported-by: Max Kellermann <max.kellermann@ionos.com>
-> Closes: https://lore.kernel.org/r/CAKPOu+986mTt1i9xGBXiQPVOmu4ZJTskrCt6f-=
-99EL_s0rhz_A@mail.gmail.com/
-> Signed-off-by: David Howells <dhowells@redhat.com>
-> cc: Trond Myklebust <trondmy@kernel.org>
-> cc: Anna Schumaker <anna@kernel.org>
-> cc: Dave Wysochanski <dwysocha@redhat.com>
-> cc: Jeff Layton <jlayton@kernel.org>
-> cc: linux-nfs@vger.kernel.org
-> cc: netfs@lists.linux.dev
-> cc: linux-fsdevel@vger.kernel.org
-> ---
->  fs/nfs/fscache.c |    9 ++++++++-
->  1 file changed, 8 insertions(+), 1 deletion(-)
->
-> diff --git a/fs/nfs/fscache.c b/fs/nfs/fscache.c
-> index 810269ee0a50..d49e4ce27999 100644
-> --- a/fs/nfs/fscache.c
-> +++ b/fs/nfs/fscache.c
-> @@ -263,6 +263,12 @@ int nfs_netfs_readahead(struct readahead_control *ra=
-ctl)
->  static atomic_t nfs_netfs_debug_id;
->  static int nfs_netfs_init_request(struct netfs_io_request *rreq, struct =
-file *file)
->  {
-> +       if (!file) {
-> +               if (WARN_ON_ONCE(rreq->origin !=3D NETFS_PGPRIV2_COPY_TO_=
-CACHE))
-> +                       return -EIO;
-> +               return 0;
-> +       }
-> +
->         rreq->netfs_priv =3D get_nfs_open_context(nfs_file_open_context(f=
-ile));
->         rreq->debug_id =3D atomic_inc_return(&nfs_netfs_debug_id);
->         /* [DEPRECATED] Use PG_private_2 to mark folio being written to t=
-he cache. */
-> @@ -274,7 +280,8 @@ static int nfs_netfs_init_request(struct netfs_io_req=
-uest *rreq, struct file *fi
->
->  static void nfs_netfs_free_request(struct netfs_io_request *rreq)
->  {
-> -       put_nfs_open_context(rreq->netfs_priv);
-> +       if (rreq->netfs_priv)
-> +               put_nfs_open_context(rreq->netfs_priv);
->  }
->
->  static struct nfs_netfs_io_data *nfs_netfs_alloc(struct netfs_io_subrequ=
-est *sreq)
->
 
