@@ -1,132 +1,140 @@
-Return-Path: <linux-kernel+bounces-436956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8C559E8D12
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:11:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E94E9E8D13
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:12:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DCA31164C05
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:11:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4BE5018852CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:12:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76ED6215172;
-	Mon,  9 Dec 2024 08:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42AD7215078;
+	Mon,  9 Dec 2024 08:12:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UwDvotcZ"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZgNbGlx2"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486B9189B85
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:11:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9B25FEE6
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 08:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731901; cv=none; b=R8jt2+1LR14Ek/aTx2hgf2Bqg41NNXAW3agWmcEBEjvNDiOkZwVnZDC/wMegh/2gdOamb3Lv8qZLWdcOrBojZjzeI9/3pv1XzZfz3UzrtRQHe5heYOkHv+J9YKA6RAmeznbQFLUFozj37XqIszLtxdJXT1DPakPypPI/W4RzObA=
+	t=1733731957; cv=none; b=UakZfhMybJXXD/Ck8NtOlXgxcWcjXzhOR9TtEd3e1IRdddmzAUofjE1RtnStM1z0wH5hg+l0V2lCbJ7nDikrhLwpc3EohEuIkh6vCWRM/hW/Lbec7QI92FobRg6UGWpP+k/5CmQ04GRmEU1WMnTSLTKzmBQgHWNlXFNhIDQaTkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731901; c=relaxed/simple;
-	bh=Rqy1ataKgral7Qwp51f+sXf8c/+cb9+T25l6Ab1PUSQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EUZ0+eJ5RPLo5NHlWXRak6DulNvWXEynYzZ0PaoBdE7EKp/yEfnBdI8yvM4HH4IoFBaRxvPOHDAp5BQ13PDkjclUUXEyRfnfFlfOextMTCgpxpHy1tQBZAx5pkJZpeCp1cgJSN8fIfRzvsVk8ZtzrHM7qtqLAwH3EAPa9Vh292w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UwDvotcZ; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-434f4ccddbdso10659065e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 00:11:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733731898; x=1734336698; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=dTSM1ZL3lya31wOa2eA8/XL6JcurxnBBkRFyqfdvl2E=;
-        b=UwDvotcZGYYNfOCgkjeHOGYEkjL7a43asmkPD0YOXrlmWNyAqleliIkbWvFRyBFHQF
-         PCtTZjGkz/wOh7y+El5pAGYp+rwUciJL64tQ0hHxJ7Ry85AyB05bCcHoEbO+yFLm/lp4
-         tMhuJvroRwKmoUNZktFg47yLx8o+XRBsYkw/ilyAM7xSIHhjoELbNIyNJbGPXWutVFwB
-         gJJIqnLtw2MiOOocoOF9N886fKVV04VsAoe28wuKsPqf7qezcpqPXQ+0lDN1yQTv80jH
-         tw1OJELg/nUIouxwIWY744Qe5gfddXXGUzw3cHtTplvowgHMllLrdrE29dk+2blxMGtd
-         9ScA==
+	s=arc-20240116; t=1733731957; c=relaxed/simple;
+	bh=CIDLRtWxpCTzubiuT1G+hWeLeL6DwBMP+Otf5IDdt24=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ULcuwUdEJzpHME+pl1gOh+BFClq+PHJ6ljPPsctFGrVX/RqlMPyrktcYAMDnl64JSrFhiTRZNfiroDXEoy+oVpd8E9QmyNAjwFyMkV4gHvngmGAIeND3jp/jWoMn2GVRei5z8k6buabJO3NvrgtSvKCUEiOLg8NP5aVHYxQJUTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZgNbGlx2; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733731955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=L5yC7lqUzH5mFK494KvVO6PDaHTHKqMAdkFw5mKAc90=;
+	b=ZgNbGlx2ORIOyHOZRsRU3lDg5dsy3+ObtPGx9KySoAUYOiYKPDzZQBJwlDJBL56M6tWad0
+	m+c56YlHHPzEGaywCqJXuiaPra39Ix4AYs7aMLE07TZyxGtRfmL9jTkUvjaYCvKMNOvsoF
+	7EeiRl875Qp295joI1Fj+RMJSgBs+wE=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-558-6aEoCTNyMD20UTTTIyyIJA-1; Mon, 09 Dec 2024 03:12:33 -0500
+X-MC-Unique: 6aEoCTNyMD20UTTTIyyIJA-1
+X-Mimecast-MFC-AGG-ID: 6aEoCTNyMD20UTTTIyyIJA
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-385e3cbf308so673835f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 00:12:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733731898; x=1734336698;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1733731952; x=1734336752;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:to:from:subject:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=dTSM1ZL3lya31wOa2eA8/XL6JcurxnBBkRFyqfdvl2E=;
-        b=JDph8nuGag5+Xo4NadQq8Q18IaJf3nPRiMt8VwzGznj1DwX33TzTLW6dsYCeWA/Cee
-         iqYA/HDAroyqFmdCcgd60CikQTw1guj6jopncPIzvdam7y5apUeMrKkk9FyeUmqkuNIh
-         lmRzOzWparaYd0+hJKUpiOCPLnFeaUOWcSKoDT2yP71owcBV158InJw0R/6KyC7QoEse
-         tMpwBq+AY9rN0dWRzj9q51p5vN4wjsfSGkyOMMux50vTIR9634OqT0MJcZEQU7ifVYUL
-         MW6+cGFZcJ7qCZ8v0ST63UYyFWIk1bgJt4qtP/Z7DEffdPpxh2SfE7Cqw0JVLB1X4gDC
-         fnkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVHpCBe/SOzrUccx/bXdbYKxJCyST548DIWc8g/sZKPJpvmjPJ7LWR2q68aj+fK5EcLCgN18I0mWnYyJZ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYaWsGf9g/rwAMpQqKkhgLDxivYwk+KAKZjiPjx9/WYHO5E5e8
-	kxIIhma3r1YzR/QYhD2NpvBvQonh6+FQtdwYgB3spbRrCqIt2/yaAzcjAAh+pSY=
-X-Gm-Gg: ASbGncvgvFJa40xBaclc0PRDQmiiYXeWZ9lY9qAJeb4NMfNJxLENQzbnWCKAkDdTGz/
-	UvizbGYXxFwjTk8dIh6Goa9Kd+cyNO0ZINdsuyAlvws3NmOls4rPrq05WH1KMl8C4WFdqABUqV9
-	dhbAnQOsBizbNug6GA4rRJt3blnYTSWYDpsdIZZiwEnD46yvW0Tz53pbW5GywhIbbGEWmht/fzL
-	mNeEWFU2n0oqijKdcsAWD+J8KRAW4HO5OdajufNN0AqEF22OPlNZVg95w==
-X-Google-Smtp-Source: AGHT+IFX24cUkHhTSqFHYkRi7Ptj8ZcdXz5CIVRSOflj14yH1xBA/yL8IBUKGCaXaPHX5jvTE/xqpg==
-X-Received: by 2002:a05:600c:450d:b0:42c:b905:2bf9 with SMTP id 5b1f17b1804b1-434ddeb8ef7mr104821245e9.16.1733731897663;
-        Mon, 09 Dec 2024 00:11:37 -0800 (PST)
-Received: from [192.168.0.14] ([79.115.63.27])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-434da113508sm148897065e9.35.2024.12.09.00.11.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 00:11:37 -0800 (PST)
-Message-ID: <9886429b-1bf3-4dc3-b0d4-294a98e44ff2@linaro.org>
-Date: Mon, 9 Dec 2024 08:11:35 +0000
+        bh=L5yC7lqUzH5mFK494KvVO6PDaHTHKqMAdkFw5mKAc90=;
+        b=T8H/VWjVYnOBnDWZbYwCGLusMnfxBgGCuqbjlG2pIDvRfzaQwqWW5IkXEFp6onK6rl
+         knu41h0mbNYDOMokbX1LKCmWsqfNCyTKJSCUaC7GeeujHIiNk/ygFdxjdvUHFTN/I+YG
+         o+eeMEoFCk7a1ufyxEZM0JY4g3QiPpsF55OU7B2BzvUxm7A8dMf/F0saXc6eImuVzGLx
+         DLKzHAgthGS2jYIcMGALaD958yBBqyRHQsmPrLs5dcXiELXE+sD15KekQmykD+7bEyhL
+         +f+WEps2EN8GVQ4OEtA3cmqFy0RqCEpoY2QPkKBUDy1Y5PaG0OQ2FJDvveZ9NNTIrs8Q
+         iqEA==
+X-Gm-Message-State: AOJu0Yzjf/jSA4w+atjhxqBrXmB9wbiM8UXsZ/LgTCFfmTdBV7FRzZOW
+	8JpgVI1OCbc7sT/QEY3y55MLYOp4XT2n+kfXeyZV+43b6GdF5WW4tUSOw6zMElD6oJn2Au+B0qu
+	8tdfXXkwNChSAknmIrT8poVLcIZIz0BGrEi3sb1TRJEkEgP+eR9M4HwBUz0luJEP+RaVFXEPo9+
+	TeaMTCh4A5N74dZAF3UZ6NQmKBqBEAyTpfkx9z0ipMyypgenU=
+X-Gm-Gg: ASbGncvPAZ5+GcqynwZSXBwe3HPG+IXAzY6IyjoOBU1LsSnexKxFP2R2lqGtP0PdIgH
+	3foh1637A+R3q0/ydAKt4L6boLWsNiezbOcjmKDB29qRE91+EVqIUDlwPu1LtWEJ0Lr0Cryk/Pm
+	wiWe8x5KGFUNKNnwR0qeIz4UAaMIy+pxZu+auSaGfXIdj7lMvGzZVdRCu8B8QrEZ/lIcPA4lmHz
+	HD6iox4+jSiUE6dnQmVuxgWQdBUrBYFKOO/4/+jyrItqbS4yT3zNDwMn+0GFpvYO9Y2xH3hAkYS
+X-Received: by 2002:a05:6000:178a:b0:385:f417:ee46 with SMTP id ffacd0b85a97d-3862b33b786mr8424402f8f.2.1733731952576;
+        Mon, 09 Dec 2024 00:12:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IERxpCGr5FOfh+U40F7TT+UTrCH8cNOIQnKmUp3DkdDwCzxkwMqazGOe3UPcw0ZmgS6DnrG7A==
+X-Received: by 2002:a05:6000:178a:b0:385:f417:ee46 with SMTP id ffacd0b85a97d-3862b33b786mr8424392f8f.2.1733731952258;
+        Mon, 09 Dec 2024 00:12:32 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3862f02f5c3sm8592429f8f.65.2024.12.09.00.12.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 00:12:31 -0800 (PST)
+Message-ID: <94c05164fe0bc0b0f52fec3a1d21e0b836fbdf54.camel@redhat.com>
+Subject: Re: [PATCH] sched: Move task_mm_cid_work to mm delayed work
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: linux-kernel@vger.kernel.org
+Date: Mon, 09 Dec 2024 09:12:30 +0100
+In-Reply-To: <445b4203-940d-4817-bd45-9da757f22450@efficios.com>
+References: <20241205083110.180134-2-gmonaco@redhat.com>
+	 <4c067b75e06aadd34eff5b60fc7c59967aa30809.camel@redhat.com>
+	 <5ba975e2-06b9-4b98-bece-d601b19a06db@efficios.com>
+	 <ead55d690448cbf23677bcc1b4c1a5c129240c90.camel@redhat.com>
+	 <445b4203-940d-4817-bd45-9da757f22450@efficios.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.2 (3.54.2-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: mailbox: add bindings for
- samsung,exynos
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, alim.akhtar@samsung.com, linux-kernel@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, andre.draszik@linaro.org,
- kernel-team@android.com, willmcvicker@google.com, peter.griffin@linaro.org
-References: <20241205174137.190545-1-tudor.ambarus@linaro.org>
- <20241205174137.190545-2-tudor.ambarus@linaro.org>
- <2lkowhldq5i4otniijfw7cb3jm6ttatwji3npw5w7c5fyevnn5@ynojupmdyqy4>
-Content-Language: en-US
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-In-Reply-To: <2lkowhldq5i4otniijfw7cb3jm6ttatwji3npw5w7c5fyevnn5@ynojupmdyqy4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Thanks for the review, Krzysztof!
 
-On 12/9/24 7:52 AM, Krzysztof Kozlowski wrote:
-> On Thu, Dec 05, 2024 at 05:41:35PM +0000, Tudor Ambarus wrote:
->> Add bindings for the Samsung Exynos Mailbox Controller.
->>
->> Signed-off-by: Tudor Ambarus <tudor.ambarus@linaro.org>
->> ---
->>  .../bindings/mailbox/samsung,exynos.yaml      | 70 +++++++++++++++++++
-> 
-> Filename based on compatible, so:
-> google,gs101-acpm-mbox
-> 
-> but then entire binding seems for different device, so you most likely
-> miss here actual Exynos devices.
-> 
+On Fri, 2024-12-06 at 09:06 -0500, Mathieu Desnoyers wrote:
+>
+> Thinking back on this, you'll want a program that does the following
+> on a system with N CPUs:
+>
+> - Phase 1: run one thread per cpu, pinned on each cpu. Print the
+>    mm_cid from each thread with the cpu number every second or so.
+>
+> - Exit all threads except the main thread, join them from the main
+>    thread,
+>
+> - Phase 2: the program is now single-threaded. We'd expect the
+>    mm_cid value to converge towards 0 as the periodic task clears
+>    unused CIDs.
+>
+> So I think in phase 2 we can have an actual automated test: If after
+> an order of magnitude more time than the 100ms delay between periodic
+> tasks we still observe mm_cid > 0 in phase 2, then something is
+> wrong.
+>
+> Thoughts ?
 
-I need some guidance here, please. The mailbox controller can pass the
-mailbox messages either via its own data registers, or via SRAM (like it
-is used by the ACPM protocol).
+Nice idea, that looks neat and fairly simple. Also by printing every
+second we would get the threads running in short bursts and, probably,
+the test would fail with the current implementation, depending how long
+we wait, of course.
+I can try to draft something to test my implementation.
 
-I'm thinking of using the same driver for both cases, and differentiate
-between the two by compatible and `of_device_id.data`. Thus I propose to
-have a "google,gs101-acpm-mbox" compatible for the ACPM SRAM case and in
-the future we may add a "google,gs101-mbox" compatible for the messages
-passed via the controller's data register case.
+Thanks,
+Gabriele
 
-Given this, I shall use the more generic name for the bindings, thus
-maybe "google,gs101-mbox.yaml"? But then exynos850 has the same
-controller, shouldn't we just use "samsung,exynos.yaml"?
-
-Thanks!
-ta
 
