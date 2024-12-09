@@ -1,195 +1,250 @@
-Return-Path: <linux-kernel+bounces-436765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 839029E8A6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:40:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74E7E164000
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:40:20 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0158518EFC1;
-	Mon,  9 Dec 2024 04:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UDE2/tBp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CF059E8A72
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:40:38 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE187156228;
-	Mon,  9 Dec 2024 04:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08A87280A11
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:40:37 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71B48190685;
+	Mon,  9 Dec 2024 04:40:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GLr6rIEq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F215D176AC7;
+	Mon,  9 Dec 2024 04:40:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733719213; cv=none; b=fQm6q84wuoAQkxEdH9tEPbkcRpx/nJ3O8xF2cqsN3xllPR0WVw/aa7C9RbiBDLB9KuNXS/dmBJamtEqQJeKdfLGpew3M4VMEKJKLY8Xf/EjfzbOgkHZAxQfC4YgV9HIR65XuHsr2H234tYQaUTeKBclKwQwqQOXhXxpwqNzCQm0=
+	t=1733719231; cv=none; b=lO7Bh6iUHLUZotIxLvmZZsHS0nVMp58TTVHXTXTkfsC2WhYKzZqG46Am2tCUyN6cz2bqXoKRn4ETXJbiWs61ctWmXhsyFCHKN19HxilTtQO6HgW7RQw1kQwFmuAYR4jwtqFRGaFBUoWKn3NF1w5BL42RRm9fWnPfylSr4vhHcmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733719213; c=relaxed/simple;
-	bh=yZuyfSXF4y3S/DYOnOOMCaPoLzmjtOcnJAWNZlStaOU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kH4RSuVptYI3hEykzZ8qAX1PWVKaTmFbP1lsRVZjc8gMMw3bkN+4DQP2zwGsacP6/eWPy2IF/bWpO5jIQoyGelerYmnRHgfzaabX2DfpnnhQDyncCK6F8DlCKetEcH344XW3ZZKu9IT6+Ge/koBvx6ineODMC8ZWK3+Nnw8Jcso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UDE2/tBp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B8MWKwO017070;
-	Mon, 9 Dec 2024 04:40:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8hP9JT1ZC4yzVeTREhqlUdNj34/+AjB3Aan1CIOV354=; b=UDE2/tBplV1Xt64A
-	ygT0zgHQt1ShDaRird9y34rWuq64mk5IGF3YVm2Pzw3MxIAtwKL1n7WIZaRzGerW
-	Aub/cv6P/0uq6VrUWtWolMDt0wR74QoOUHBwFbHsFrO+QL+P4r9mD6YwLZTyIiiP
-	w9KCU87dEeRX4EdBtX7g2yx4h29ri1vYcnEE22ICneoOUFgmKZGDe+WKZcHRYmz5
-	+csbYgPZV64xegqsAuvbOcAez52IcVHoNnVOuTxYIWczaBNFy5dYqVZXTvhOn8i1
-	V6o8Vj21NWKY9GzHPZRzZX0kgqib7mfOU84lkoFkZOIiELe89TT72oRVWMQF35Z8
-	JxUUmA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cfhkb841-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 09 Dec 2024 04:40:03 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B94e2S4019515
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 9 Dec 2024 04:40:02 GMT
-Received: from [10.216.4.234] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
- 20:39:55 -0800
-Message-ID: <437ad4b9-64d1-6095-8b9d-fc40760b8248@quicinc.com>
-Date: Mon, 9 Dec 2024 10:09:52 +0530
+	s=arc-20240116; t=1733719231; c=relaxed/simple;
+	bh=d5TxygKeLQVwmWX4ir2xJcbJDNYcHfp00n5X8scHlYc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A4Rsn2GYfccE+FLUokhvUYNgjtvlRthXuPJcKpFAY4TiaxBI21AJymuOQUaB75qdOy1CqxxRCv11DxY3gNfUV9BpaPhbheBzE7mywGZ3QIdFeY65FSqtf4k9EGyzkv6YIN6OXqmq/Ezus0OQOJ9djItXu57qTAHtPE84t9MT4qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GLr6rIEq; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733719230; x=1765255230;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=d5TxygKeLQVwmWX4ir2xJcbJDNYcHfp00n5X8scHlYc=;
+  b=GLr6rIEqSpwdBdymfginj1hc0r5TWO/WmJiN4aX17wm7K1dYEeDnoKGT
+   uPGRSQKL+f6PdEysHrxk6ggW2fc4+/J6vfsgZSOtCgTQ5pfv+zV8iMM/k
+   rPMFS8S9pyTKpW03CBZ073YT5+1bnuTStvaHp5hxrGBi0z6qRUwh87ZrT
+   c/H8y2gxMkfP3YSCjPmTbRT+8rjc48MJtGV7AeoUBbHjKGOVm1dvBIvuh
+   Rmc5XctbyYd645yypw2EfI5Tt/J3H+jFEG+0QHNY8AP/4FRtbN6VS9/uT
+   PZ0HVsnAaqqsFmtiilbd5IBi3VBPzSa9U6LE4xDiFTE4zRzayJr1+is7f
+   Q==;
+X-CSE-ConnectionGUID: LCaBT4XjQiWPZuhykaMqdA==
+X-CSE-MsgGUID: DDKICtyYQ2SX+/wfidqLLg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="37931530"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="37931530"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 20:40:29 -0800
+X-CSE-ConnectionGUID: kHGDx7C3SYmhQCzLMVuOcA==
+X-CSE-MsgGUID: lYg68KfIQSi40c+WU75O+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="94827028"
+Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 08 Dec 2024 20:40:24 -0800
+Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tKVZF-0003tR-1S;
+	Mon, 09 Dec 2024 04:40:21 +0000
+Date: Mon, 9 Dec 2024 12:39:54 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Marangi <ansuelsmth@gmail.com>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, upstream@airoha.com
+Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [net-next PATCH v10 9/9] net: phy: Add Airoha AN8855 Internal
+ Switch Gigabit PHY
+Message-ID: <202412081155.xp97LlzV-lkp@intel.com>
+References: <20241208002105.18074-10-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.15.1
-Subject: Re: [PATCH 3/3] PCI: qcom: Enable ECAM feature based on config size
-Content-Language: en-US
-To: Bjorn Helgaas <helgaas@kernel.org>
-CC: <cros-qcom-dts-watchers@chromium.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>,
-        "Manivannan
- Sadhasivam" <manivannan.sadhasivam@linaro.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=c5=84ski?=
-	<kw@linux.com>,
-        Bjorn Helgaas <bhelgaas@google.com>, <quic_vbadigan@quicinc.com>,
-        <quic_ramkri@quicinc.com>, <quic_nitegupt@quicinc.com>,
-        <quic_skananth@quicinc.com>, <quic_vpernami@quicinc.com>,
-        <quic_mrana@quicinc.com>, <mmareddy@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>
-References: <20241204224049.GA3023706@bhelgaas>
-From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-In-Reply-To: <20241204224049.GA3023706@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HRwPjrbGHK-bFzN-IRwbgohjsxA2qANp
-X-Proofpoint-GUID: HRwPjrbGHK-bFzN-IRwbgohjsxA2qANp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 priorityscore=1501 spamscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412090035
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208002105.18074-10-ansuelsmth@gmail.com>
+
+Hi Christian,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on net-next/main]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Marangi/dt-bindings-nvmem-Document-support-for-Airoha-AN8855-Switch-EFUSE/20241208-082533
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241208002105.18074-10-ansuelsmth%40gmail.com
+patch subject: [net-next PATCH v10 9/9] net: phy: Add Airoha AN8855 Internal Switch Gigabit PHY
+config: sh-allmodconfig (https://download.01.org/0day-ci/archive/20241208/202412081155.xp97LlzV-lkp@intel.com/config)
+compiler: sh4-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241208/202412081155.xp97LlzV-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202412081155.xp97LlzV-lkp@intel.com/
+
+All error/warnings (new ones prefixed by >>):
+
+   drivers/net/phy/air_an8855.c: In function 'an8855_probe':
+>> drivers/net/phy/air_an8855.c:100:13: warning: unused variable 'ret' [-Wunused-variable]
+     100 |         int ret;
+         |             ^~~
+   drivers/net/phy/air_an8855.c: In function 'an8855_config_init':
+>> drivers/net/phy/air_an8855.c:154:45: error: 'dev' undeclared (first use in this function); did you mean 'cdev'?
+     154 |                 ret = en8855_get_r50ohm_val(dev, "tx_a", &calibration_data[0]);
+         |                                             ^~~
+         |                                             cdev
+   drivers/net/phy/air_an8855.c:154:45: note: each undeclared identifier is reported only once for each function it appears in
 
 
+vim +154 drivers/net/phy/air_an8855.c
 
-On 12/5/2024 4:10 AM, Bjorn Helgaas wrote:
-> On Wed, Dec 04, 2024 at 07:56:54AM +0530, Krishna Chaitanya Chundru wrote:
->> On 12/4/2024 12:29 AM, Bjorn Helgaas wrote:
->>> On Sun, Nov 17, 2024 at 03:30:20AM +0530, Krishna chaitanya chundru wrote:
->>>> Enable the ECAM feature if the config space size is equal to size required
->>>> to represent number of buses in the bus range property.
->>>>
->>>> The ELBI registers falls after the DBI space, so use the cfg win returned
->>>> from the ecam init to map these regions instead of doing the ioremap again.
->>>> ELBI starts at offset 0xf20 from dbi.
->>>>
->>>> On bus 0, we have only the root complex. Any access other than that should
->>>> not go out of the link and should return all F's. Since the IATU is
->>>> configured for bus 1 onwards, block the transactions for bus 0:0:1 to
->>>> 0:31:7 (i.e., from dbi_base + 4KB to dbi_base + 1MB) from going outside the
->>>> link through ecam blocker through parf registers.
-> 
->>>> +static bool qcom_pcie_check_ecam_support(struct device *dev)
->>>> +{
->>>> +	struct platform_device *pdev = to_platform_device(dev);
->>>> +	struct resource bus_range, *config_res;
->>>> +	u64 bus_config_space_count;
->>>> +	int ret;
->>>> +
->>>> +	/* If bus range is not present, keep the bus range as maximum value */
->>>> +	ret = of_pci_parse_bus_range(dev->of_node, &bus_range);
->>>> +	if (ret) {
->>>> +		bus_range.start = 0x0;
->>>> +		bus_range.end = 0xff;
->>>> +	}
->>>
->>> I would have thought the generic OF parsing would already default to
->>> [bus 00-ff]?
->>>
->> if there is no bus-range of_pci_parse_bus_range is not updating it[1],
->> the bus ranges is being updated to default value in
->> devm_of_pci_get_host_bridge_resources()[2]
-> 
-> Understood.  But qcom uses dw_pcie_host_init(), which calls
-> devm_pci_alloc_host_bridge(), which ultimately calls
-> of_pci_parse_bus_range() and defaults to [bus 00-ff] if there's no
-> bus-range in DT:
-> 
->    qcom_pcie_probe
->      dw_pcie_host_init
->        devm_pci_alloc_host_bridge
->          devm_of_pci_bridge_init
->            pci_parse_request_of_pci_ranges
->              devm_of_pci_get_host_bridge_resources(0, 0xff)
->                of_pci_parse_bus_range
-> 
-> So the question is why you need to do that again here.
-> 
-> I see that qcom_pcie_probe() calls qcom_pcie_check_ecam_support()
-> *before* it calls dw_pcie_host_init(), so I guess that's the immediate
-> answer.
-> 
-> But this is another reason why I think qcom_pcie_check_ecam_support()
-> is kind of a sub-optimal solution here.
-> 
-> I wonder if we should factor the devm_pci_alloc_host_bridge() call out
-> of dw_pcie_host_init() so drivers can take advantage of the DT parsing
-> it does.  It looks like mobiveil does it that way:
-It makes sense to use this way in the next patch in the qcom driver will
-call devm_pci_alloc_host_bridge() before calling dw_pcie_host_init() and
-in dw_pcie_host_init() if the bridge is allocated dwc driver will skip
-allocating the bridge so that other drivers will not be affected.
+    94	
+    95	static int an8855_probe(struct phy_device *phydev)
+    96	{
+    97		struct device *dev = &phydev->mdio.dev;
+    98		struct device_node *node = dev->of_node;
+    99		struct air_an8855_priv *priv;
+ > 100		int ret;
+   101	
+   102		/* If we don't have a node, skip calib */
+   103		if (!node)
+   104			return 0;
+   105	
+   106		priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+   107		if (!priv)
+   108			return -ENOMEM;
+   109	
+   110		phydev->priv = priv;
+   111	
+   112		return 0;
+   113	}
+   114	
+   115	static int an8855_get_downshift(struct phy_device *phydev, u8 *data)
+   116	{
+   117		int val;
+   118	
+   119		val = phy_read_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1, AN8855_PHY_EXT_REG_14);
+   120		if (val < 0)
+   121			return val;
+   122	
+   123		*data = val & AN8855_PHY_EN_DOWN_SHIFT ? DOWNSHIFT_DEV_DEFAULT_COUNT :
+   124							 DOWNSHIFT_DEV_DISABLE;
+   125	
+   126		return 0;
+   127	}
+   128	
+   129	static int an8855_set_downshift(struct phy_device *phydev, u8 cnt)
+   130	{
+   131		u16 ds = cnt != DOWNSHIFT_DEV_DISABLE ? AN8855_PHY_EN_DOWN_SHIFT : 0;
+   132	
+   133		return phy_modify_paged(phydev, AN8855_PHY_PAGE_EXTENDED_1,
+   134					AN8855_PHY_EXT_REG_14, AN8855_PHY_EN_DOWN_SHIFT,
+   135					ds);
+   136	}
+   137	
+   138	static int an8855_config_init(struct phy_device *phydev)
+   139	{
+   140		struct air_an8855_priv *priv = phydev->priv;
+   141		int ret;
+   142	
+   143		/* Enable HW auto downshift */
+   144		ret = an8855_set_downshift(phydev, DOWNSHIFT_DEV_DEFAULT_COUNT);
+   145		if (ret)
+   146			return ret;
+   147	
+   148		/* Apply calibration values, if needed.
+   149		 * AN8855_PHY_FLAGS_EN_CALIBRATION signal this.
+   150		 */
+   151		if (priv && phydev->dev_flags & AN8855_PHY_FLAGS_EN_CALIBRATION) {
+   152			u8 *calibration_data = priv->calibration_data;
+   153	
+ > 154			ret = en8855_get_r50ohm_val(dev, "tx_a", &calibration_data[0]);
+   155			if (ret)
+   156				return ret;
+   157	
+   158			ret = en8855_get_r50ohm_val(dev, "tx_b", &calibration_data[1]);
+   159			if (ret)
+   160				return ret;
+   161	
+   162			ret = en8855_get_r50ohm_val(dev, "tx_c", &calibration_data[2]);
+   163			if (ret)
+   164				return ret;
+   165	
+   166			ret = en8855_get_r50ohm_val(dev, "tx_d", &calibration_data[3]);
+   167			if (ret)
+   168				return ret;
+   169	
+   170			ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_R500HM_RSEL_TX_AB,
+   171					     AN8855_PHY_R50OHM_RSEL_TX_A | AN8855_PHY_R50OHM_RSEL_TX_B,
+   172					     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_A, calibration_data[0]) |
+   173					     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_B, calibration_data[1]));
+   174			if (ret)
+   175				return ret;
+   176			ret = phy_modify_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_R500HM_RSEL_TX_CD,
+   177					     AN8855_PHY_R50OHM_RSEL_TX_C | AN8855_PHY_R50OHM_RSEL_TX_D,
+   178					     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_C, calibration_data[2]) |
+   179					     FIELD_PREP(AN8855_PHY_R50OHM_RSEL_TX_D, calibration_data[3]));
+   180			if (ret)
+   181				return ret;
+   182		}
+   183	
+   184		/* Apply values to reduce signal noise */
+   185		ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_TX_PAIR_DLY_SEL_GBE,
+   186				    FIELD_PREP(AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_A_GBE, 0x4) |
+   187				    FIELD_PREP(AN8855_PHY_CR_DA_TX_PAIR_DELKAY_SEL_C_GBE, 0x4));
+   188		if (ret)
+   189			return ret;
+   190		ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_RXADC_CTRL,
+   191				    AN8855_PHY_RG_AD_SAMNPLE_PHSEL_A |
+   192				    AN8855_PHY_RG_AD_SAMNPLE_PHSEL_C);
+   193		if (ret)
+   194			return ret;
+   195		ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_RXADC_REV_0,
+   196				    FIELD_PREP(AN8855_PHY_RG_AD_RESERVE0_A, 0x1));
+   197		if (ret)
+   198			return ret;
+   199		ret = phy_write_mmd(phydev, MDIO_MMD_VEND1, AN8855_PHY_RXADC_REV_1,
+   200				    FIELD_PREP(AN8855_PHY_RG_AD_RESERVE0_C, 0x1));
+   201		if (ret)
+   202			return ret;
+   203	
+   204		return 0;
+   205	}
+   206	
 
-- Krishna Chaitanya.
-
-> 
->    ls_g4_pcie_probe
->      devm_pci_alloc_host_bridge
->      mobiveil_pcie_host_probe
-> 
->    mobiveil_pcie_probe
->      devm_pci_alloc_host_bridge
->      mobiveil_pcie_host_probe
-> 
->> [1]https://elixir.bootlin.com/linux/v6.12.1/source/drivers/pci/of.c#L193
->> [2]https://elixir.bootlin.com/linux/v6.12.1/source/drivers/pci/of.c#L347
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
