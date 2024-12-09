@@ -1,81 +1,173 @@
-Return-Path: <linux-kernel+bounces-436950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A8A9E8CFF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 09:04:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52E279E8CAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:55:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C8BB164CD1
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 08:04:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52B891632C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 07:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CDB9215170;
-	Mon,  9 Dec 2024 08:04:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D144521506F;
+	Mon,  9 Dec 2024 07:55:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b="jdt+PlMB"
-Received: from mail-m16.yeah.net (mail-m16.yeah.net [220.197.32.18])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F077E481B3;
-	Mon,  9 Dec 2024 08:04:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.18
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ol3X4T9x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322A65588B;
+	Mon,  9 Dec 2024 07:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733731475; cv=none; b=LexkrUrsszp+CxQFAsc/EA+wWJbZ+9Nhyd2hWP2gOi4fiOr+dsNsmqmFkWY7n5W2wdfxfAjLzQG+DpEzconO3lJnMJTjFqq4ZrQKWeh52/m+p7nhdOipwJY8Hqg4jcShrnh8uus3NjTz6Kl0HeiHC0DR6qRG24IXFSKuvlcnBn0=
+	t=1733730921; cv=none; b=N2oz13OErPSGiUozitdjV57sSU4FX/DX3BRU4ozx6IHlrjQihrMSxU95kKA7CuHlThJnMTWtboDaW3myR3tyfNXeVSIFZqhXnOd9/eXJEotNbCaccAKiUU0t4IrP3wAbv5Cp8FIyIw+p7XC9HKk4iw3vIwXG2FrFoGejSxkwkbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733731475; c=relaxed/simple;
-	bh=IetJKfhC1Wng649lB28KvwBLb5pogvRQt/kSK5Cf0D0=;
+	s=arc-20240116; t=1733730921; c=relaxed/simple;
+	bh=0t/Pxb0qevc4gl+uL0DpwiF40jJ+z0RltHyWs0l13JY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l6MEKSh4kLvjYZD0FVRDKL0g3ZZpo0hHdAqh34Jt6Z6gcY6p52YwdTaaSgR7AK6JISRhs/YHHvMAqH3Pxyw+75u2pLFttamGWsPOHxKaQ2gyanuAMtUqT8oxQrnJLfdQMttWDbgwAYjqkrbHq5Y0LSzGKQ4UyImmpP2TALdBP/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net; spf=pass smtp.mailfrom=yeah.net; dkim=pass (1024-bit key) header.d=yeah.net header.i=@yeah.net header.b=jdt+PlMB; arc=none smtp.client-ip=220.197.32.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yeah.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yeah.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yeah.net;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=wDcyAUm7weadxplw3iWC3WRLmtSv74le9OVm0hGb1gc=;
-	b=jdt+PlMB9IkuE4x45jZUUVpzKIJ3Pu3iuarObGCypbL86BoY6PG7ysV7rWsNkQ
-	ghvmrclznVS1oWeqINSA6aCKfaR1o5e3fFgST/KHSUgOSj4EshUORS7x5PINitX/
-	qD8wqG2wNw5ipwMvq8DAlhuXoQYMesXNUAUq2u9d3uRy0=
-Received: from dragon (unknown [])
-	by gzsmtp2 (Coremail) with SMTP id Ms8vCgDHiNsGolZnqoeMBA--.47519S3;
-	Mon, 09 Dec 2024 15:53:44 +0800 (CST)
-Date: Mon, 9 Dec 2024 15:53:42 +0800
-From: Shawn Guo <shawnguo2@yeah.net>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-sound@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 2/2] arm64: dts: imx8-ss-audio: add fallback compatible
- string fsl,imx6ull-esai for esai
-Message-ID: <Z1aiBrlz5qjw7LVY@dragon>
-References: <20241028-esai_fix-v1-0-3c1432a5613c@nxp.com>
- <20241028-esai_fix-v1-2-3c1432a5613c@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KoPNtZMD3mz3lvCt21esmN2jYVwqtxpWuArAS+twfzo8nR+5P5iT2XCekJt/GUemyNxtBIUKva6Gh3Dcwce/z6yfe7qnCNFY2Rm9RvCbFT2c3MRZITYdeDqOkvwi7Qowd/PRFePk7y9Cmb+sHZpME7MazvDC9K56T6nvBd/GvkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ol3X4T9x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED113C4CEDF;
+	Mon,  9 Dec 2024 07:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733730920;
+	bh=0t/Pxb0qevc4gl+uL0DpwiF40jJ+z0RltHyWs0l13JY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ol3X4T9xHkxl0hmXFzlnIo199RB6u+4z4O6GvHJ22rlidiWQxfhay4xtWBunAc+XA
+	 qsfxg+mUdPwKIfV8IRwbifRYMLgZCEb+ul4SgaoXVg3b1FmWP2gPuf+NA8SOw6Gkmm
+	 mNNURwL0zoDTDSbhHIuTB5SYHP+UgynJYnx8wrReIqWn7pGqb9zDLb2FtMpyFW20aE
+	 o9W6sSePFMY6Kvjew67WB4pTUty1AtoyaITtF9IMnGopPndTXFq6G8p8bLHM4/lkQy
+	 1TrOn5aKfKATTnGtZmMMdosj3AjHXh51v6rmuR04lWbA+Q+kCe3pARV6jtayC+b2wF
+	 0RwYw6Ynf825A==
+Date: Mon, 9 Dec 2024 08:55:17 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: jassisinghbrar@gmail.com, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, alim.akhtar@samsung.com, linux-kernel@vger.kernel.org, 
+	linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+	peter.griffin@linaro.org
+Subject: Re: [PATCH v3 2/3] mailbox: add samsung exynos driver
+Message-ID: <c6y4nofsjpjsl7ycsxsfqoizu7qsyf5yzbeao6utu5u5avlwzl@jbl3oqhy7ehb>
+References: <20241205174137.190545-1-tudor.ambarus@linaro.org>
+ <20241205174137.190545-3-tudor.ambarus@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241028-esai_fix-v1-2-3c1432a5613c@nxp.com>
-X-CM-TRANSID:Ms8vCgDHiNsGolZnqoeMBA--.47519S3
-X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxUVdWrDUUUU
-X-CM-SenderInfo: pvkd40hjxrjqh1hdxhhqhw/1tbiCxqwZWdWeOyxRQAAsV
+In-Reply-To: <20241205174137.190545-3-tudor.ambarus@linaro.org>
 
-On Mon, Oct 28, 2024 at 03:49:32PM -0400, Frank Li wrote:
-> The ESAI of i.MX8QM is the same as i.MX6ULL. So add fsl,imx6ull-esai for
-> esai.
-> 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+On Thu, Dec 05, 2024 at 05:41:36PM +0000, Tudor Ambarus wrote:
+> The samsung exynos mailbox controller has 16 flag bits for hardware
 
-Applied for 6.13, thanks!
+
+Here, subject and other text/descriptions:
+s/samsung/Samsung/
+s/exynos/Exynos/
+
+
+> interrupt generation and a shared register for passing mailbox messages.
+> When the controller is used by the ACPM protocol the shared register is
+> ignored and the mailbox controller acts as a doorbell. The controller
+> just raises the interrupt to APM after the ACPM protocol has written
+> the message to SRAM.
+
+...
+
+> +static int exynos_mbox_send_data(struct mbox_chan *chan, void *data)
+> +{
+> +	struct exynos_mbox *exynos_mbox = dev_get_drvdata(chan->mbox->dev);
+> +	int index;
+> +
+> +	index = exynos_mbox_chan_index(chan);
+> +	if (index < 0)
+> +		return index;
+> +
+> +	writel_relaxed(BIT(index), exynos_mbox->regs + EXYNOS_MBOX_INTGR1);
+
+writel()
+
+> +
+> +	return 0;
+> +}
+> +
+> +static const struct mbox_chan_ops exynos_mbox_chan_ops = {
+> +	.send_data = exynos_mbox_send_data,
+> +};
+> +
+> +static const struct of_device_id exynos_mbox_match[] = {
+> +	{ .compatible = "google,gs101-acpm-mbox" },
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(of, exynos_mbox_match);
+> +
+> +static int exynos_mbox_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct exynos_mbox *exynos_mbox;
+> +	struct mbox_controller *mbox;
+> +	struct mbox_chan *chans;
+> +	int i;
+> +
+> +	exynos_mbox = devm_kzalloc(dev, sizeof(*exynos_mbox), GFP_KERNEL);
+> +	if (!exynos_mbox)
+> +		return -ENOMEM;
+> +
+> +	mbox = devm_kzalloc(dev, sizeof(*mbox), GFP_KERNEL);
+> +	if (!mbox)
+> +		return -ENOMEM;
+> +
+> +	chans = devm_kcalloc(dev, EXYNOS_MBOX_CHAN_COUNT, sizeof(*chans),
+> +			     GFP_KERNEL);
+> +	if (!chans)
+> +		return -ENOMEM;
+> +
+> +	exynos_mbox->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(exynos_mbox->regs))
+> +		return PTR_ERR(exynos_mbox->regs);
+> +
+> +	exynos_mbox->pclk = devm_clk_get_enabled(dev, "pclk");
+> +	if (IS_ERR(exynos_mbox->pclk))
+> +		return dev_err_probe(dev, PTR_ERR(exynos_mbox->pclk),
+> +				     "Failed to enable clock.\n");
+> +
+> +	mbox->num_chans = EXYNOS_MBOX_CHAN_COUNT;
+> +	mbox->chans = chans;
+> +	mbox->dev = dev;
+> +	mbox->ops = &exynos_mbox_chan_ops;
+> +
+> +	for (i = 0; i < EXYNOS_MBOX_CHAN_COUNT; i++)
+> +		chans[i].mbox = mbox;
+> +
+> +	exynos_mbox->dev = dev;
+> +	exynos_mbox->mbox = mbox;
+> +
+> +	platform_set_drvdata(pdev, exynos_mbox);
+> +
+> +	/* Mask out all interrupts. We support just polling channels for now. */
+> +	writel_relaxed(EXYNOS_MBOX_INTMR0_MASK,
+
+writel()
+
+> +		       exynos_mbox->regs + EXYNOS_MBOX_INTMR0);
+> +
+> +	return devm_mbox_controller_register(dev, mbox);
+> +}
+> +
+> +static struct platform_driver exynos_mbox_driver = {
+> +	.probe	= exynos_mbox_probe,
+> +	.driver	= {
+> +		.name = "exynos-acpm-mbox",
+> +		.of_match_table	= of_match_ptr(exynos_mbox_match),
+
+Drop of_match_ptr() - unused symbol warnings.
+
+Best regards,
+Krzysztof
 
 
