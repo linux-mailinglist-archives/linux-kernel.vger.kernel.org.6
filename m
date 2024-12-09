@@ -1,333 +1,290 @@
-Return-Path: <linux-kernel+bounces-436683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A9679E8953
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:44:33 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ACBD9E8955
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:45:51 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C971028338C
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:44:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185061659EC
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 02:45:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8823524B4;
-	Mon,  9 Dec 2024 02:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3B742AA4;
+	Mon,  9 Dec 2024 02:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="pWj9OKzj"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SxaUKbGH"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5ED144360;
-	Mon,  9 Dec 2024 02:44:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 464F01F5E6
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 02:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733712255; cv=none; b=CmAyH9Yuchxog3i+tXOAlavLpErBr5IygW1B9WARKuqbLnDJo4vAEqXVP0L2k0LgRNq7+mBq1k6jPOsoqUnDquBlX39BFvNXI/nG6kvyfBr2XROlOi1TYMoxodBCPj4GMGIOhY1i7RLOUD2aJxiz3rGR45VxuYAIhdNdxrSGTR8=
+	t=1733712345; cv=none; b=qPvcV6WxCqXQvtD8b+WXRC9R9L26TvERpCqrpQM97PPcAClrrkUYvM7++3AD9ohKPXdRPHKCekWhLOWFpyUI2TYobl5st/S/woALx9wkmetgQEBITv9s0SQETgract0950xNuzXbX2zI3zuGIhrT3cBaGqGnpKZhyZbVRryGiak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733712255; c=relaxed/simple;
-	bh=zA2nkF0y8Sjf3rsPDrKJaR+atSvDhSlhp4CCwXzKnAU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XOeXXFNtELoiabmpFF0yuvG7DionezCXAsd4nH9ABheJIC95Z+X4nYY+GmjXb0QUBkajoG3dAo0zONQt2OA3qDUWt0xYwJMZlYMSbw6KVEHlMjTVo2zzA6LZYT4O7p/aWBA15AYIxaFhTwNONftZgBK7fbtJMaGbNtg441auSWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=pWj9OKzj; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1733712243; x=1734317043; i=w_armin@gmx.de;
-	bh=FmbZk1a0fMJXf0Nfw0yj1e+EHuahcYj1EelZPGLrDX0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pWj9OKzj5hcM9A9K5OIPH/VdnXJDvzB+sNB9wV1f/xXC9X+OavNwmWQioNmG8t4m
-	 HpbZGEHf+n2Hdw5LcNuHgNpDdrNx9bOtvQxcF4of6KwrZXFCbDCA3S5OD3RJEL0yD
-	 x2RaxDcV165qu647aUFciAvsynBDzYHCTPPJUFiyQPKODGLLHvI6j4EEmwX0PQ8tm
-	 Db8/uFO8xczxckYNszxMlRLlK6x9orgw2BL1sc7YSdkWoNOoNtqgLE05ShllaYmlp
-	 wyEtKnUWT7pJ0Wa1cIfPj3fNXEgHh522+SUWWYzP8xs7NYBW2ooo606AM9zzZY0CU
-	 VfI3OpGIwO0kw1AeZg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.14] ([91.14.230.110]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MJmGP-1t5HBa1Zqj-00L2DY; Mon, 09
- Dec 2024 03:44:03 +0100
-Message-ID: <21edd314-b168-4766-9654-c7ea08d7ac4b@gmx.de>
-Date: Mon, 9 Dec 2024 03:44:01 +0100
+	s=arc-20240116; t=1733712345; c=relaxed/simple;
+	bh=z3vntOns/4hMYw/9IIZvLPuKRPh5l6+lZ8+dfBMsycg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=osy0T6FFg6gzUFX/ICIk1EFmJBLCdTZfuZXQR82NAx24cAT0CgSklckTlgH35D9jaeJ1IdF9g7YBmX7fGiTO1NOW7W4qxtEG26IEowNyKh2ITotqqD5sSCyg0ISlfzbpP9/mmTrN/jqf1pHGNyjoN/lOh+54NVT1NqPTMrO/BC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SxaUKbGH; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1733712342;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cd/jYgOUOBv+IhfHBb5vZ7AAPUWg/MyPqH626Q9KOVg=;
+	b=SxaUKbGHMh3ElSt0Cic3jItB5h9Jni++sY2tL/ezsGdwwRLOk9y3a7rJylmFN6Y41xnKQ4
+	GhcYq7zGS6YGKp8K7NWmwWmZyftIIfvzWnvRsPQv5+/0e7CIMLHHtGORflG9P9ox9M+Z7Y
+	5XxyKADEPhcWg11RsvBnUhMBAgdHqKc=
+Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com
+ [209.85.215.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-307-Ac2tKE1CN_esgga2ScIE8g-1; Sun, 08 Dec 2024 21:45:40 -0500
+X-MC-Unique: Ac2tKE1CN_esgga2ScIE8g-1
+X-Mimecast-MFC-AGG-ID: Ac2tKE1CN_esgga2ScIE8g
+Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-6c8f99fef10so4571879a12.3
+        for <linux-kernel@vger.kernel.org>; Sun, 08 Dec 2024 18:45:40 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733712340; x=1734317140;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cd/jYgOUOBv+IhfHBb5vZ7AAPUWg/MyPqH626Q9KOVg=;
+        b=HM2fw81OEMe0xa5WnpE0arJ1sivyooCTorTy2cDrUSoZxXqUAhu50QiHUj9M/nZVNS
+         5XYMU1FA7D/6ouO5LfoOeczuyOtZOiqMXExIcy/XZHYf3AgfCkCXiWbTiV6LiS98spMh
+         APw9JW3BGCG9RgMZXI6jyQDhsZDIPamwgaVWRvZTcJHL4QNYVFUZD7ygPRqaVIa0lEG/
+         EwuOpwP1Eig0URuJmPHPIR66B0x+JSccfY9FqyYQZJowGTxlA5hrCECOKL3X+MdQgU49
+         dsCwC6qi0KbHN/9XzBHVFJzigL7N7p9ziCn8b0CG5CiQgPfh0T9FbeQdUsQs61jOtBTR
+         gEZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZGukgPKTCg5n5u2BVxdtU9BkBJB6vdiBiI913WxskmIii4xw7ttjFvjQ2c80tnvQM52TntRt3STwP2As=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTL7nZ0xG/mCg0X0gQFTFYd+MegJfRCdtTyJSfsrJvd91fm94D
+	y5ZZGnX6RXHWHKAe1yX74M0e1IPFBpkwA0j+WnNINeusve22Wg1NZEYbbJPZO6wcytauVkt8Ykt
+	wFi6O7Mlzk4HrjDbDUqzK5uVnGdEc+sHfZjkHZ+dlbFlsY3iEg906XAntAK/sbXyUAgWetZ5Lpz
+	DsuGRtIu8JGJMN8gGR9t3CRPy+0+whbxa02B2t
+X-Gm-Gg: ASbGnctR5E2hXBUHFrR3B3KeCVHCG+GRFnPfVflOBwz6coW6IqIOFe/0QcYVKJIhPZ6
+	CqCEQsbzyJBhnSGC2mzbE9c3GlRVnltBW
+X-Received: by 2002:a05:6a21:6da3:b0:1e1:ac4f:d322 with SMTP id adf61e73a8af0-1e1ac4fd461mr1586005637.14.1733712339775;
+        Sun, 08 Dec 2024 18:45:39 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFjPLcfBtOmL3j5UniGxxOt3G2kcnYmikXqIAhu/zHQCoHh6AWX+p74HC8lizELHdOesoXE4GEtpeJ5Dt7XmaY=
+X-Received: by 2002:a05:6a21:6da3:b0:1e1:ac4f:d322 with SMTP id
+ adf61e73a8af0-1e1ac4fd461mr1585970637.14.1733712339260; Sun, 08 Dec 2024
+ 18:45:39 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/5] platform/x86: acer-wmi: Implement proper hwmon
- support
-To: Kurt Borja <kuurtb@gmail.com>
-Cc: jlee@suse.com, farhan.anwar8@gmail.com, rayanmargham4@gmail.com,
- hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241129193359.8392-1-W_Armin@gmx.de>
- <20241129193359.8392-5-W_Armin@gmx.de>
- <la7mxoxn3rawxij4ybdzpf7xzbiidl66ejv6qxb4sh4n5ugsvu@64royvkee6kv>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <la7mxoxn3rawxij4ybdzpf7xzbiidl66ejv6qxb4sh4n5ugsvu@64royvkee6kv>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:RkCUILvIn47xCG9ecO/Pk/tb2RhwzsFIIrFx/e1FyfjS3RLqMXd
- eDwwmn9iNmYJ15jRHoA/cVcIPSimo44/YoidQInx1uD4ysCsV4UTf4KFVGf4gnSmqK2lUXv
- z+nA7cVPsIoPozo8wGoObBvmwNq6ew8XlCq7r99lxcMAXNhROlcCoBzribn0RuMXXSdKRLt
- a6Pqe6pVDKILX1xgGCKxw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5NRrHsSiFjo=;3pTJiaC5McFPr1SEnS+f05u4SS4
- nBN6YGbaCANXBV74V9P7bcXaIisgshnOt06DJ0xY5N3vDXBVvZKZn8FK5vaXpNi12I+vvoZXV
- Ob3T/HqqxQYikcLnUVIW1zX4Alky+JU6DwFF2iTdLeKtYgkfk/4A5Uo1g0MxMjLUJQxg4Cdgi
- d8i/tgup/xWsxHr4jzjM/UxYAd9qjs1Wx0a5wMzB7XOxSBdbNfkgPMe5NyJwxTpz6Qp15/c5K
- wJYw66a44BXt1PFbY27TPgMuXFt3R9nHUgfSakiD6Affn6O1F7KuD+JUsYgPqAggQgh9y4lQE
- 9mECrnWCArIMvhgOscotVcMBD9gx+nlGRkb5kXlgAgeF4oTy9hdQfhzmUqF3Cuq2L/r0iLpMf
- R1BXnCLiXB/rpTZrdddPd5vcUnTu401cWfqnDBHYI3AoS/AffsnSJAFidrKN4x+hWBp9407yi
- C0jPg2Re1jEe71n/6e3v+cJh85SrgtsxJ8eoaHBLPUR5M/7Gq6IA0OTLExgz1gdI/h8szqzbr
- t7lUKDyykz4eESfP8Wg68DmHOf93HJVQkCwdIYH8mI9yFFZ8UPpbjxvvYmZswcSie+Y9eFfFY
- 89o4dgqxfZHmutbGe8hf7ZxbVuyiF7tu5glr0CdIYYN1hAV/83zI3ACaSM84KvH7myj+Z2cDp
- JpX3vbAHA2DkjHRSq4N624sOq9NAqLo/PTKT1S7IjK06aWIps6Q3dy4YP+YGtcItraVf+RzcP
- nEWG+LPstELz2rLuMwmoHmoF0vc8B2xLYTW8hCc5OlrKA9asTRA0TVKdtVRHPgWPkwQ6+05/r
- 4L9kFjA9LpBbp5vMUbCL8nYP8EhIfhSfbI3OC9IFJEBo+QlH5sPsgNsXauGNYVrAPDPuuf1OG
- 2I37zNcF+xSQ2zLBiXAFfglagXICMWHRHG99K7SR2rhuIC9cLrtElPN6v0cnlD/HpDa4PW3af
- 7RB7oZGWBCfz+S1SHCpWhVyt8Fh9ScfT4dEme0EibCeiRx/kQwvPLMcW8F7b3kxpjKAvgo9Ax
- EtVo4JvDNroxPNrPJB0aiaRQgMCa4eZTlh9lSZfTY9eGgfaGCjX47EVtQiqPVHZ0ACgYjcJYG
- dPfS55bS+pMME6jdBx4UrJIv3a9W+Y
+References: <20241206011047.923923-1-koichiro.den@canonical.com>
+In-Reply-To: <20241206011047.923923-1-koichiro.den@canonical.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Mon, 9 Dec 2024 10:45:27 +0800
+Message-ID: <CACGkMEv2iSfYtOP+ktozN2j39-OUCresD3d2mZfKXCiQur9oig@mail.gmail.com>
+Subject: Re: [PATCH net v4 0/6] virtio_net: correct netdev_tx_reset_queue()
+ invocation points
+To: Koichiro Den <koichiro.den@canonical.com>
+Cc: virtualization@lists.linux.dev, mst@redhat.com, xuanzhuo@linux.alibaba.com, 
+	eperezma@redhat.com, andrew+netdev@lunn.ch, davem@davemloft.net, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, jiri@resnulli.us, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 08.12.24 um 21:20 schrieb Kurt Borja:
-
-> On Fri, Nov 29, 2024 at 08:33:58PM +0100, Armin Wolf wrote:
->> After looking at the ACPI AML code, it seems that the command 0x0000
->> used with ACER_WMID_GET_GAMING_SYS_INFO_METHODID returns a bitmap of
->> all supported sensor indices available through the 0x0001 command.
->>
->> Those sensor indices seem to include both temperature and fan speed
->> sensors, with only the fan speed sensors being currently supported.
->>
->> Use the output of this new command to implement reliable sensor
->> detection. This fixes detection of fans which do not spin during
->> probe, as fans are currently being ignored if their speed is 0.
->>
->> Also add support for the new temperature sensor ids.
->>
->> Signed-off-by: Armin Wolf <W_Armin@gmx.de>
->> ---
->>   drivers/platform/x86/acer-wmi.c | 114 ++++++++++++++++++++++----------
->>   1 file changed, 80 insertions(+), 34 deletions(-)
->>
->> diff --git a/drivers/platform/x86/acer-wmi.c b/drivers/platform/x86/acer-wmi.c
->> index ac4500f33b8c..2c1ea6155bd3 100644
->> --- a/drivers/platform/x86/acer-wmi.c
->> +++ b/drivers/platform/x86/acer-wmi.c
->> @@ -30,6 +30,7 @@
->>   #include <linux/input/sparse-keymap.h>
->>   #include <acpi/video.h>
->>   #include <linux/hwmon.h>
->> +#include <linux/units.h>
->>   #include <linux/bitfield.h>
->>
->>   MODULE_AUTHOR("Carlos Corbacho");
->> @@ -71,7 +72,10 @@ MODULE_LICENSE("GPL");
->>   #define ACER_PREDATOR_V4_THERMAL_PROFILE_EC_OFFSET 0x54
->>
->>   #define ACER_PREDATOR_V4_RETURN_STATUS_BIT_MASK GENMASK_ULL(7, 0)
-> Hi Armin!
+On Fri, Dec 6, 2024 at 9:11=E2=80=AFAM Koichiro Den <koichiro.den@canonical=
+.com> wrote:
 >
-> This macro is defined twice.
-
-Good catch, i will send a v4 patch series to correct this.
-
-Thanks,
-Armin Wolf
-
+> When virtnet_close is followed by virtnet_open, some TX completions can
+> possibly remain unconsumed, until they are finally processed during the
+> first NAPI poll after the netdev_tx_reset_queue(), resulting in a crash
+> [1]. Commit b96ed2c97c79 ("virtio_net: move netdev_tx_reset_queue() call
+> before RX napi enable") was not sufficient to eliminate all BQL crash
+> scenarios for virtio-net.
 >
->> -#define ACER_PREDATOR_V4_FAN_SPEED_READ_BIT_MASK GENMASK(20, 8)
->> +#define ACER_PREDATOR_V4_RETURN_STATUS_BIT_MASK GENMASK_ULL(7, 0)
-> Here ^.
+> This issue can be reproduced with the latest net-next master by running:
+> `while :; do ip l set DEV down; ip l set DEV up; done` under heavy networ=
+k
+> TX load from inside the machine.
 >
-> ~ Kurt
+> This patch series resolves the issue and also addresses similar existing
+> problems:
 >
->> +#define ACER_PREDATOR_V4_SENSOR_INDEX_BIT_MASK GENMASK_ULL(15, 8)
->> +#define ACER_PREDATOR_V4_SENSOR_READING_BIT_MASK GENMASK_ULL(23, 8)
->> +#define ACER_PREDATOR_V4_SUPPORTED_SENSORS_BIT_MASK GENMASK_ULL(39, 24)
->>
->>   /*
->>    * Acer ACPI method GUIDs
->> @@ -99,9 +103,17 @@ enum acer_wmi_event_ids {
->>   };
->>
->>   enum acer_wmi_predator_v4_sys_info_command {
->> -	ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STATUS = 0x02,
->> -	ACER_WMID_CMD_GET_PREDATOR_V4_CPU_FAN_SPEED = 0x0201,
->> -	ACER_WMID_CMD_GET_PREDATOR_V4_GPU_FAN_SPEED = 0x0601,
->> +	ACER_WMID_CMD_GET_PREDATOR_V4_SUPPORTED_SENSORS = 0x0000,
->> +	ACER_WMID_CMD_GET_PREDATOR_V4_SENSOR_READING	= 0x0001,
->> +	ACER_WMID_CMD_GET_PREDATOR_V4_BAT_STATUS	= 0x0002,
->> +};
->> +
->> +enum acer_wmi_predator_v4_sensor_id {
->> +	ACER_WMID_SENSOR_CPU_TEMPERATURE	= 0x01,
->> +	ACER_WMID_SENSOR_CPU_FAN_SPEED		= 0x02,
->> +	ACER_WMID_SENSOR_EXTERNAL_TEMPERATURE_2 = 0x03,
->> +	ACER_WMID_SENSOR_GPU_FAN_SPEED		= 0x06,
->> +	ACER_WMID_SENSOR_GPU_TEMPERATURE	= 0x0A,
->>   };
->>
->>   static const struct key_entry acer_wmi_keymap[] __initconst = {
->> @@ -272,6 +284,7 @@ static u16 commun_func_bitmap;
->>   static u8 commun_fn_key_number;
->>   static bool cycle_gaming_thermal_profile = true;
->>   static bool predator_v4;
->> +static u64 supported_sensors;
->>
->>   module_param(mailled, int, 0444);
->>   module_param(brightness, int, 0444);
->> @@ -1779,27 +1792,6 @@ static int acer_gsensor_event(void)
->>   	return 0;
->>   }
->>
->> -static int acer_get_fan_speed(int fan)
->> -{
->> -	u64 fanspeed;
->> -	u32 command;
->> -	int ret;
->> -
->> -	if (!quirks->predator_v4)
->> -		return -EOPNOTSUPP;
->> -
->> -	if (fan == 0)
->> -		command = ACER_WMID_CMD_GET_PREDATOR_V4_CPU_FAN_SPEED;
->> -	else
->> -		command = ACER_WMID_CMD_GET_PREDATOR_V4_GPU_FAN_SPEED;
->> -
->> -	ret = WMID_gaming_get_sys_info(command, &fanspeed);
->> -	if (ret < 0)
->> -		return ret;
->> -
->> -	return FIELD_GET(ACER_PREDATOR_V4_FAN_SPEED_READ_BIT_MASK, fanspeed);
->> -}
->> -
->>   /*
->>    *  Predator series turbo button
->>    */
->> @@ -2688,43 +2680,86 @@ static void __init create_debugfs(void)
->>   			   &interface->debug.wmid_devices);
->>   }
->>
->> +static const enum acer_wmi_predator_v4_sensor_id acer_wmi_temp_channel_to_sensor_id[] = {
->> +	[0] = ACER_WMID_SENSOR_CPU_TEMPERATURE,
->> +	[1] = ACER_WMID_SENSOR_GPU_TEMPERATURE,
->> +	[2] = ACER_WMID_SENSOR_EXTERNAL_TEMPERATURE_2,
->> +};
->> +
->> +static const enum acer_wmi_predator_v4_sensor_id acer_wmi_fan_channel_to_sensor_id[] = {
->> +	[0] = ACER_WMID_SENSOR_CPU_FAN_SPEED,
->> +	[1] = ACER_WMID_SENSOR_GPU_FAN_SPEED,
->> +};
->> +
->>   static umode_t acer_wmi_hwmon_is_visible(const void *data,
->>   					 enum hwmon_sensor_types type, u32 attr,
->>   					 int channel)
->>   {
->> +	enum acer_wmi_predator_v4_sensor_id sensor_id;
->> +	const u64 *supported_sensors = data;
->> +
->>   	switch (type) {
->> +	case hwmon_temp:
->> +		sensor_id = acer_wmi_temp_channel_to_sensor_id[channel];
->> +		break;
->>   	case hwmon_fan:
->> -		if (acer_get_fan_speed(channel) >= 0)
->> -			return 0444;
->> +		sensor_id = acer_wmi_fan_channel_to_sensor_id[channel];
->>   		break;
->>   	default:
->>   		return 0;
->>   	}
->>
->> +	if (*supported_sensors & BIT(sensor_id - 1))
->> +		return 0444;
->> +
->>   	return 0;
->>   }
->>
->>   static int acer_wmi_hwmon_read(struct device *dev, enum hwmon_sensor_types type,
->>   			       u32 attr, int channel, long *val)
->>   {
->> +	u64 command = ACER_WMID_CMD_GET_PREDATOR_V4_SENSOR_READING;
->> +	u64 result;
->>   	int ret;
->>
->>   	switch (type) {
->> +	case hwmon_temp:
->> +		command |= FIELD_PREP(ACER_PREDATOR_V4_SENSOR_INDEX_BIT_MASK,
->> +				      acer_wmi_temp_channel_to_sensor_id[channel]);
->> +
->> +		ret = WMID_gaming_get_sys_info(command, &result);
->> +		if (ret < 0)
->> +			return ret;
->> +
->> +		result = FIELD_GET(ACER_PREDATOR_V4_SENSOR_READING_BIT_MASK, result);
->> +		*val = result * MILLIDEGREE_PER_DEGREE;
->> +		return 0;
->>   	case hwmon_fan:
->> -		ret = acer_get_fan_speed(channel);
->> +		command |= FIELD_PREP(ACER_PREDATOR_V4_SENSOR_INDEX_BIT_MASK,
->> +				      acer_wmi_fan_channel_to_sensor_id[channel]);
->> +
->> +		ret = WMID_gaming_get_sys_info(command, &result);
->>   		if (ret < 0)
->>   			return ret;
->> -		*val = ret;
->> -		break;
->> +
->> +		*val = FIELD_GET(ACER_PREDATOR_V4_SENSOR_READING_BIT_MASK, result);
->> +		return 0;
->>   	default:
->>   		return -EOPNOTSUPP;
->>   	}
->> -
->> -	return 0;
->>   }
->>
->>   static const struct hwmon_channel_info *const acer_wmi_hwmon_info[] = {
->> -	HWMON_CHANNEL_INFO(fan, HWMON_F_INPUT, HWMON_F_INPUT), NULL
->> +	HWMON_CHANNEL_INFO(temp,
->> +			   HWMON_T_INPUT,
->> +			   HWMON_T_INPUT,
->> +			   HWMON_T_INPUT
->> +			   ),
->> +	HWMON_CHANNEL_INFO(fan,
->> +			   HWMON_F_INPUT,
->> +			   HWMON_F_INPUT
->> +			   ),
->> +	NULL
->>   };
->>
->>   static const struct hwmon_ops acer_wmi_hwmon_ops = {
->> @@ -2741,9 +2776,20 @@ static int acer_wmi_hwmon_init(void)
->>   {
->>   	struct device *dev = &acer_platform_device->dev;
->>   	struct device *hwmon;
->> +	u64 result;
->> +	int ret;
->> +
->> +	ret = WMID_gaming_get_sys_info(ACER_WMID_CMD_GET_PREDATOR_V4_SUPPORTED_SENSORS, &result);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	/* Return early if no sensors are available */
->> +	supported_sensors = FIELD_GET(ACER_PREDATOR_V4_SUPPORTED_SENSORS_BIT_MASK, result);
->> +	if (!supported_sensors)
->> +		return 0;
->>
->>   	hwmon = devm_hwmon_device_register_with_info(dev, "acer",
->> -						     &acer_platform_driver,
->> +						     &supported_sensors,
->>   						     &acer_wmi_hwmon_chip_info,
->>   						     NULL);
->>
->> --
->> 2.39.5
->>
+> (a). Drop netdev_tx_reset_queue() from open/close path. This eliminates t=
+he
+>      BQL crashes due to the problematic open/close path.
+>
+> (b). As a result of (a), netdev_tx_reset_queue() is now explicitly requir=
+ed
+>      in freeze/restore path. Add netdev_tx_reset_queue() immediately afte=
+r
+>      free_unused_bufs() invocation.
+>
+> (c). Fix missing resetting in virtnet_tx_resize().
+>      virtnet_tx_resize() has lacked proper resetting since commit
+>      c8bd1f7f3e61 ("virtio_net: add support for Byte Queue Limits").
+>
+> (d). Fix missing resetting in the XDP_SETUP_XSK_POOL path.
+>      Similar to (c), this path lacked proper resetting. Call
+>      netdev_tx_reset_queue() when virtqueue_reset() has actually recycled
+>      unused buffers.
+>
+> This patch series consists of six commits:
+>   [1/6]: Resolves (a) and (b).                      # also -stable 6.11.y
+>   [2/6]: Minor fix to make [4/6] streamlined.
+>   [3/6]: Prerequisite for (c).                      # also -stable 6.11.y
+>   [4/6]: Resolves (c) (incl. Prerequisite for (d))  # also -stable 6.11.y
+>   [5/6]: Preresuisite for (d).
+>   [6/6]: Resolves (d).
+>
+> Changes for v4:
+>   - move netdev_tx_reset_queue() out of free_unused_bufs()
+>   - submit to net, not net-next
+> Changes for v3:
+>   - replace 'flushed' argument with 'recycle_done'
+> Changes for v2:
+>   - add tx queue resetting for (b) to (d) above
+>
+> v3: https://lore.kernel.org/all/20241204050724.307544-1-koichiro.den@cano=
+nical.com/
+> v2: https://lore.kernel.org/all/20241203073025.67065-1-koichiro.den@canon=
+ical.com/
+> v1: https://lore.kernel.org/all/20241130181744.3772632-1-koichiro.den@can=
+onical.com/
+>
+> [1]:
+> ------------[ cut here ]------------
+> kernel BUG at lib/dynamic_queue_limits.c:99!
+> Oops: invalid opcode: 0000 [#1] PREEMPT SMP NOPTI
+> CPU: 7 UID: 0 PID: 1598 Comm: ip Tainted: G    N 6.12.0net-next_main+ #2
+> Tainted: [N]=3DTEST
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), \
+> BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org 04/01/2014
+> RIP: 0010:dql_completed+0x26b/0x290
+> Code: b7 c2 49 89 e9 44 89 da 89 c6 4c 89 d7 e8 ed 17 47 00 58 65 ff 0d
+> 4d 27 90 7e 0f 85 fd fe ff ff e8 ea 53 8d ff e9 f3 fe ff ff <0f> 0b 01
+> d2 44 89 d1 29 d1 ba 00 00 00 00 0f 48 ca e9 28 ff ff ff
+> RSP: 0018:ffffc900002b0d08 EFLAGS: 00010297
+> RAX: 0000000000000000 RBX: ffff888102398c80 RCX: 0000000080190009
+> RDX: 0000000000000000 RSI: 000000000000006a RDI: 0000000000000000
+> RBP: ffff888102398c00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 00000000000000ca R11: 0000000000015681 R12: 0000000000000001
+> R13: ffffc900002b0d68 R14: ffff88811115e000 R15: ffff8881107aca40
+> FS:  00007f41ded69500(0000) GS:ffff888667dc0000(0000)
+> knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000556ccc2dc1a0 CR3: 0000000104fd8003 CR4: 0000000000772ef0
+> PKRU: 55555554
+> Call Trace:
+>  <IRQ>
+>  ? die+0x32/0x80
+>  ? do_trap+0xd9/0x100
+>  ? dql_completed+0x26b/0x290
+>  ? dql_completed+0x26b/0x290
+>  ? do_error_trap+0x6d/0xb0
+>  ? dql_completed+0x26b/0x290
+>  ? exc_invalid_op+0x4c/0x60
+>  ? dql_completed+0x26b/0x290
+>  ? asm_exc_invalid_op+0x16/0x20
+>  ? dql_completed+0x26b/0x290
+>  __free_old_xmit+0xff/0x170 [virtio_net]
+>  free_old_xmit+0x54/0xc0 [virtio_net]
+>  virtnet_poll+0xf4/0xe30 [virtio_net]
+>  ? __update_load_avg_cfs_rq+0x264/0x2d0
+>  ? update_curr+0x35/0x260
+>  ? reweight_entity+0x1be/0x260
+>  __napi_poll.constprop.0+0x28/0x1c0
+>  net_rx_action+0x329/0x420
+>  ? enqueue_hrtimer+0x35/0x90
+>  ? trace_hardirqs_on+0x1d/0x80
+>  ? kvm_sched_clock_read+0xd/0x20
+>  ? sched_clock+0xc/0x30
+>  ? kvm_sched_clock_read+0xd/0x20
+>  ? sched_clock+0xc/0x30
+>  ? sched_clock_cpu+0xd/0x1a0
+>  handle_softirqs+0x138/0x3e0
+>  do_softirq.part.0+0x89/0xc0
+>  </IRQ>
+>  <TASK>
+>  __local_bh_enable_ip+0xa7/0xb0
+>  virtnet_open+0xc8/0x310 [virtio_net]
+>  __dev_open+0xfa/0x1b0
+>  __dev_change_flags+0x1de/0x250
+>  dev_change_flags+0x22/0x60
+>  do_setlink.isra.0+0x2df/0x10b0
+>  ? rtnetlink_rcv_msg+0x34f/0x3f0
+>  ? netlink_rcv_skb+0x54/0x100
+>  ? netlink_unicast+0x23e/0x390
+>  ? netlink_sendmsg+0x21e/0x490
+>  ? ____sys_sendmsg+0x31b/0x350
+>  ? avc_has_perm_noaudit+0x67/0xf0
+>  ? cred_has_capability.isra.0+0x75/0x110
+>  ? __nla_validate_parse+0x5f/0xee0
+>  ? __pfx___probestub_irq_enable+0x3/0x10
+>  ? __create_object+0x5e/0x90
+>  ? security_capable+0x3b/0x7 [I0
+>  rtnl_newlink+0x784/0xaf0
+>  ? avc_has_perm_noaudit+0x67/0xf0
+>  ? cred_has_capability.isra.0+0x75/0x110
+>  ? stack_depot_save_flags+0x24/0x6d0
+>  ? __pfx_rtnl_newlink+0x10/0x10
+>  rtnetlink_rcv_msg+0x34f/0x3f0
+>  ? do_syscall_64+0x6c/0x180
+>  ? entry_SYSCALL_64_after_hwframe+0x76/0x7e
+>  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
+>  netlink_rcv_skb+0x54/0x100
+>  netlink_unicast+0x23e/0x390
+>  netlink_sendmsg+0x21e/0x490
+>  ____sys_sendmsg+0x31b/0x350
+>  ? copy_msghdr_from_user+0x6d/0xa0
+>  ___sys_sendmsg+0x86/0xd0
+>  ? __pte_offset_map+0x17/0x160
+>  ? preempt_count_add+0x69/0xa0
+>  ? __call_rcu_common.constprop.0+0x147/0x610
+>  ? preempt_count_add+0x69/0xa0
+>  ? preempt_count_add+0x69/0xa0
+>  ? _raw_spin_trylock+0x13/0x60
+>  ? trace_hardirqs_on+0x1d/0x80
+>  __sys_sendmsg+0x66/0xc0
+>  do_syscall_64+0x6c/0x180
+>  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> RIP: 0033:0x7f41defe5b34
+> Code: 15 e1 12 0f 00 f7 d8 64 89 02 b8 ff ff ff ff eb bf 0f 1f 44 00 00
+> f3 0f 1e fa 80 3d 35 95 0f 00 00 74 13 b8 2e 00 00 00 0f 05 <48> 3d 00
+> f0 ff ff 77 4c c3 0f 1f 00 55 48 89 e5 48 83 ec 20 89 55
+> RSP: 002b:00007ffe5336ecc8 EFLAGS: 00000202 ORIG_RAX: 000000000000002e
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 00007f41defe5b34
+> RDX: 0000000000000000 RSI: 00007ffe5336ed30 RDI: 0000000000000003
+> RBP: 00007ffe5336eda0 R08: 0000000000000010 R09: 0000000000000001
+> R10: 00007ffe5336f6f9 R11: 0000000000000202 R12: 0000000000000003
+> R13: 0000000067452259 R14: 0000556ccc28b040 R15: 0000000000000000
+>  </TASK>
+> [...]
+> ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>
+> Koichiro Den (6):
+>   virtio_net: correct netdev_tx_reset_queue() invocation point
+>   virtio_net: replace vq2rxq with vq2txq where appropriate
+>   virtio_ring: add a func argument 'recycle_done' to virtqueue_resize()
+>   virtio_net: ensure netdev_tx_reset_queue is called on tx ring resize
+>   virtio_ring: add a func argument 'recycle_done' to virtqueue_reset()
+>   virtio_net: ensure netdev_tx_reset_queue is called on bind xsk for tx
+>
+>  drivers/net/virtio_net.c     | 31 +++++++++++++++++++++++++------
+>  drivers/virtio/virtio_ring.c | 12 ++++++++++--
+>  include/linux/virtio.h       |  6 ++++--
+>  3 files changed, 39 insertions(+), 10 deletions(-)
+>
+> --
+> 2.43.0
+>
+
+For the series,
+
+Acked-by: Jason Wang <jasowang@redhat.com>
+
+Thanks
+
 
