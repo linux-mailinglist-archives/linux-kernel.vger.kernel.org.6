@@ -1,122 +1,147 @@
-Return-Path: <linux-kernel+bounces-436731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ED4F9E8A0E
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:57:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209B09E8A3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 05:23:34 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05A932814C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 03:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65FA0188475C
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 04:23:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FEFF1552FD;
-	Mon,  9 Dec 2024 03:57:46 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B1D815A864;
+	Mon,  9 Dec 2024 04:23:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KeT3E5bH"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF5211547E0;
-	Mon,  9 Dec 2024 03:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A08A156F41;
+	Mon,  9 Dec 2024 04:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733716665; cv=none; b=QicVSaA2xL97oo/HOQJiGLVazapEJ2kGLF7sOc7K7VmzoJAdEF+aXfT8HshJy0E2zdWMsZ36/ZgMmMt+BvVv+1cc7tPse+foj33H0MRezg2gYG1mOPsn1pPzKVqQR3QwAQA63iYaWXQ1+BJRzBXWUkjiOX0XLng+iIkkSYCeFis=
+	t=1733718203; cv=none; b=ewpHhSUUvlct4HPvSioD9+H6EOFzSGpLQqyNPIfMvbzwKPzF5KLXzzG1AkX6kpkg8ZVW/CkYpHlH1tOK65qKsDsl/14lWT5oah0DR1xlHynfHXaswHESANIP38baXdIWgBCojqXkTh6zVEJ5j6slD96QZ1Yp0O/tGR3LFUe8igM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733716665; c=relaxed/simple;
-	bh=09hEUddsuybwb/3hgJNYu8Cbem4ayci3fV2D5RZd7gw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aVrlUSfuNW8C3sdyVbopFz6WiU4ypLk8eDo+1wzONR/v2osBwGYVhOmV94i8FSnAZ1vM4yyAAxjMDrWVzNNNS3cFUJ5V/oxu+ftyQS9mxAN9FRCHEVD7QtlcnVJW7SXoCYxLUwiseqHHVrCVFKcXnRwNPZovFkMAI3sUuGzkpi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B93J35X010788;
-	Mon, 9 Dec 2024 03:24:56 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 43cwy3gx3r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Mon, 09 Dec 2024 03:24:56 +0000 (GMT)
-Received: from ala-exchng01.corp.ad.wrs.com (147.11.82.252) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.43; Sun, 8 Dec 2024 19:24:55 -0800
-Received: from pek-lpg-core1.wrs.com (147.11.136.210) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server id
- 15.1.2507.43 via Frontend Transport; Sun, 8 Dec 2024 19:24:52 -0800
-From: <jianqi.ren.cn@windriver.com>
-To: <pc@manguebit.com>, <gregkh@linuxfoundation.org>
-CC: <stable@vger.kernel.org>, <sfrench@samba.org>, <pc@cjr.nz>,
-        <lsahlber@redhat.com>, <sprasad@microsoft.com>, <tom@talpey.com>,
-        <linux-cifs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <samba-technical@lists.samba.org>
-Subject: [PATCH 6.1.y] smb: client: fix potential UAF in cifs_dump_full_key()
-Date: Mon, 9 Dec 2024 12:22:44 +0800
-Message-ID: <20241209042244.3426179-1-jianqi.ren.cn@windriver.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1733718203; c=relaxed/simple;
+	bh=iWrUKN2aAIMeQCc+f8mhS9L9J24f9TNKMDk7qd5tRwk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cZOGgI+6FHhcbtXrQQxwYOu6UmY7l6eUp75zg/jSFM1euHMJ84T+59ZS3xM2Gc82u6I0usNllNr6/so1Im62yecWQaFdsiU9U+agN5XXv7VSX2yoJHv1ZDj5lQnKQ9nhO7awomcyonPpnLPsQvKwoJUgFnelEx2e8kjccn2tlus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KeT3E5bH; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B90tFrZ024799;
+	Mon, 9 Dec 2024 04:23:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	fsdp49+n36T9gPJ9WNOXXAF+BlRo3wPP4MmbMN7btik=; b=KeT3E5bHaP3nFa3Y
+	gZ7gYePeXa5x0s5Nx7vCvVxGmmEUXMThKzqZnUDmqw8r6UQrvrnu1zYJwJKAs2F9
+	GaDHKuQyu0bmCNyuud5goLyAMZEKpRWQJ8irCHHWJj5IjvjSbOplNS+VMKqf3Tdk
+	GtDNHCS6n0jI1O9qaPCy17ZHEAEdohx1iZoZZzkrc16EO/96Jtn3gR0rVEk/FPhi
+	QFycPP54Dmj34sjIvU0lmcFAA1eBtWQ3JDKQ3eTULs9j5tqM9mWQl1y3fDjeExGf
+	NMYE0etN7hEEosKwyA61Vvv0I/U4FBwbTFIRXxqx7Y6YCAjzpabTDBtZIZIsaBHs
+	5x94QA==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdpgkbk0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 04:23:14 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B94ND30018215
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 04:23:13 GMT
+Received: from [10.216.28.219] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 8 Dec 2024
+ 20:23:09 -0800
+Message-ID: <b3581663-8dc0-44d4-9395-df385316bb09@quicinc.com>
+Date: Mon, 9 Dec 2024 09:53:05 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: WbkC3adcDjBeNNp58r9eAc7T7Y7aK3Fp
-X-Proofpoint-ORIG-GUID: WbkC3adcDjBeNNp58r9eAc7T7Y7aK3Fp
-X-Authority-Analysis: v=2.4 cv=D7O9KuRj c=1 sm=1 tr=0 ts=67566308 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=RZcAm9yDv7YA:10 a=Li1AiuEPAAAA:8 a=VwQbUJbxAAAA:8 a=yMhMjlubAAAA:8 a=t7CeM3EgAAAA:8 a=1_rInJw21EjIxf1COpsA:9
- a=qGKPP_lnpMOaqR3bcYHU:22 a=FdTzh2GWekK77mhwV6Dw:22
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 15/22] wifi: ath12k: add BDF address in hardware
+ parameter
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        "Rob
+ Herring" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241015182637.955753-1-quic_rajkbhag@quicinc.com>
+ <20241015182637.955753-16-quic_rajkbhag@quicinc.com>
+ <142f92d7-72e1-433b-948d-2c7e7d37ecfc@oss.qualcomm.com>
+ <0796510c-20bd-4a81-bd60-40aacbcf61c0@quicinc.com>
+ <83d216c4-bf9e-4eb4-86d3-e189602f37cc@oss.qualcomm.com>
+ <30e5d714-2e52-4a0e-9dc8-b6cacf6ad382@quicinc.com>
+ <e63af513-5fd8-40b0-a1b2-daa9821ebf5a@oss.qualcomm.com>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <e63af513-5fd8-40b0-a1b2-daa9821ebf5a@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MsHpbs_igXCvaoRxMGflt1-jYkn0HTdc
+X-Proofpoint-ORIG-GUID: MsHpbs_igXCvaoRxMGflt1-jYkn0HTdc
 X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1057,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2024-12-08_11,2024-12-06_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- lowpriorityscore=0 bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0
- adultscore=0 priorityscore=1501 mlxscore=0 impostorscore=0 phishscore=0
- clxscore=1011 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2411120000 definitions=main-2412090026
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 clxscore=1015 suspectscore=0 mlxscore=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090033
 
-From: Paulo Alcantara <pc@manguebit.com>
+On 12/6/2024 4:19 PM, Konrad Dybcio wrote:
+> On 6.12.2024 5:34 AM, Raj Kumar Bhagat wrote:
+>> On 12/5/2024 11:12 PM, Konrad Dybcio wrote:
+>>> On 3.12.2024 10:18 AM, Raj Kumar Bhagat wrote:
+>>>> On 11/4/2024 7:46 PM, Konrad Dybcio wrote:
+>>>>> On 15.10.2024 8:26 PM, Raj Kumar Bhagat wrote:
+>>>>>> The Ath2k AHB device (IPQ5332) firmware requests BDF_MEM_REGION_TYPE
+>>>>>> memory during QMI memory requests. This memory is part of the
+>>>>>> HOST_DDR_REGION_TYPE. Therefore, add the BDF memory address to the
+>>>>>> hardware parameter and provide this memory address to the firmware
+>>>>>> during QMI memory requests.
+>>>>>
+>>>>> Sounds like something to put in the device tree, no?
+>>>>>
+>>>>
+>>>> This BDF memory address is the RAM offset. We did add this in device tree in
+>>>> version 1. This is removed from device tree in v2 based on the review comment that
+>>>> DT should not store RAM offset.
+>>>>
+>>>> refer below link:
+>>>> Link: https://lore.kernel.org/all/f8cd9c3d-47e1-4709-9334-78e4790acef0@kernel.org/
+>>>
+>>> Right, I think this could be something under /reserved-memory instead
+>>>
+>>
+>> Thanks for the suggestion. However, the BDF_MEM_REGION_TYPE is already within the
+>> memory reserved for HOST_DDR_REGION_TYPE through /reserved-memory. Therefore, reserving
+>> the memory for BDF_MEM_REGION_TYPE again in the Device Tree (DT) will cause a warning
+>> for 'overlapping memory reservation'.
+> 
+> Then you can grab a handle to it with of_reserved_mem_lookup()
+> and of_reserved_mem_device_init_by_idx()
+> 
 
-[ Upstream commit 58acd1f497162e7d282077f816faa519487be045 ]
-
-Skip sessions that are being teared down (status == SES_EXITING) to
-avoid UAF.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Paulo Alcantara (Red Hat) <pc@manguebit.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
-Signed-off-by: Jianqi Ren <jianqi.ren.cn@windriver.com>
----
- fs/smb/client/ioctl.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/fs/smb/client/ioctl.c b/fs/smb/client/ioctl.c
-index ae9905e2b9d4..173c8c76d31f 100644
---- a/fs/smb/client/ioctl.c
-+++ b/fs/smb/client/ioctl.c
-@@ -246,17 +246,23 @@ static int cifs_dump_full_key(struct cifs_tcon *tcon, struct smb3_full_key_debug
- 		spin_lock(&cifs_tcp_ses_lock);
- 		list_for_each_entry(server_it, &cifs_tcp_ses_list, tcp_ses_list) {
- 			list_for_each_entry(ses_it, &server_it->smb_ses_list, smb_ses_list) {
--				if (ses_it->Suid == out.session_id) {
-+				spin_lock(&ses_it->ses_lock);
-+				if (ses_it->ses_status != SES_EXITING &&
-+				    ses_it->Suid == out.session_id) {
- 					ses = ses_it;
- 					/*
- 					 * since we are using the session outside the crit
- 					 * section, we need to make sure it won't be released
- 					 * so increment its refcount
- 					 */
-+
-+					lockdep_assert_held(&cifs_tcp_ses_lock);
- 					ses->ses_count++;
-+					spin_unlock(&ses_it->ses_lock);
- 					found = true;
- 					goto search_end;
- 				}
-+				spin_unlock(&ses_it->ses_lock);
- 			}
- 		}
- search_end:
--- 
-2.25.1
-
+The memory HOST_DDR_REGION_TYPE is a bigger memory around 43MB, while the memory
+BDF_MEM_REGION_TYPE is smaller around 256KB within HOST_DDR_REGION_TYPE, Using the
+above mentioned API we still have to store the offset in ath12k to point at memory
+BDF_MEM_REGION_TYPE from the start of HOST_DDR_REGION_TYPE.
 
