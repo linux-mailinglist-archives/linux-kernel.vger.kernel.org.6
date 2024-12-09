@@ -1,317 +1,185 @@
-Return-Path: <linux-kernel+bounces-438017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B36D09E9BAF
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:30:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D09089E9BB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:30:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62021166F53
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:30:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF7F1887AA9
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0BE714D2B9;
-	Mon,  9 Dec 2024 16:30:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404D71474A2;
+	Mon,  9 Dec 2024 16:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E3/XxFVX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aLhyV+3q"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92ED0148316;
-	Mon,  9 Dec 2024 16:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C50257C93
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761806; cv=none; b=XhLJbW6SUktcXZDGLcclITrhmsaqlej21YrRAczkl5F01DZyg0r0QbvXv1AvP3WT/nJVYdaZBvdiY9OpxW0njZyblDcRW/h3IVW9eWZerB3ZxkkuHeqdX79Z/Fne32w2jUF388Kg3ACOE35j6NHEmIB8kQcBZotwgY3YpAa6g4I=
+	t=1733761836; cv=none; b=HYnS1T4n2udh3ml8Q7ZTpRWC9w4tJiV2qQSkHD33dTl2PBqEzd19/BnlpyqhJz+DlRlOGEFRbQV88cSp9EJ2XVZxJPyWGpHnZhbwvct6DPEfzaf4fqsf2qY6/Zfrb3SObQGiN5AHrHMJqAhOnUKRIxgkQUB8c6chIz0gl5LCzYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761806; c=relaxed/simple;
-	bh=Lyt9qdOiLP1zElgb7DW5128anurEE4jCACdvrq1D9vQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YITXDIDCuVzGLcq6Fgw+uOUJ8H1019ZLstTSKx/PQayIWtyi2WgQHwRQcM+O0q8VpNEKVMeo15/QqCyVkDAOyAuvvBHwVOFev65AEYsx8jAcG9qj9hfdJfe1C4dpWDk3T6slA5f52EOz70H11pK0jWydkebx0pYtGqPTjptigPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E3/XxFVX; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1733761804; x=1765297804;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Lyt9qdOiLP1zElgb7DW5128anurEE4jCACdvrq1D9vQ=;
-  b=E3/XxFVXDOfw8QVe43hikCWzFNh5Ur+Wr2WskSD3KkVDRu1lGhhQG/Fc
-   PhnjSMCzzJypRpj53tZs8mKZ4EVD+LdM3EdldomrwVV9TtLe2GHDd7i9L
-   621fybhoOaTCZiQUh8jQxl+PE1vRNTKATNvvjutMgphv2DXDQ88B13Qm5
-   ih9EOVcebo4EjhORCRuNB2iafZMia87lpX3CxW/sX3Oz2GnZ1MNvIvmiR
-   TSNUglWLuV3KAa4dsgxk0J3UUg5ATSsqWB222SRXvgSTF1Vzkcq9C8pDK
-   aaW/FfNY9Ldk9afMsnG5nIqIG6VaHGRubYkTjvJzKMAxO2hGV8+4lyZh8
-   g==;
-X-CSE-ConnectionGUID: dg989196TyWG1E1YOL9qsQ==
-X-CSE-MsgGUID: l0QV+HTORhuR6IM1AV9t8A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11281"; a="34306648"
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="34306648"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Dec 2024 08:30:04 -0800
-X-CSE-ConnectionGUID: SDkVm3V4StSPJUjX2sNrCg==
-X-CSE-MsgGUID: ggrtIes9QFy7ULPM/3X3cw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,219,1728975600"; 
-   d="scan'208";a="94824930"
-Received: from lkp-server01.sh.intel.com (HELO 82a3f569d0cb) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 09 Dec 2024 08:29:59 -0800
-Received: from kbuild by 82a3f569d0cb with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tKgdv-0004bb-2m;
-	Mon, 09 Dec 2024 16:29:55 +0000
-Date: Tue, 10 Dec 2024 00:29:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Sebastian Reichel <sre@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Maximilian Luz <luzmaximilian@gmail.com>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Subject: Re: [PATCH 04/14] power: supply: ab8500: use
- power_supply_for_each_psy()
-Message-ID: <202412092219.bRJmBwIP-lkp@intel.com>
-References: <20241208-power-supply-dev_to_psy-v1-4-f95de9117558@weissschuh.net>
+	s=arc-20240116; t=1733761836; c=relaxed/simple;
+	bh=p/dog+0EQRlxBYnOByLywNOoM67TdQ6+XNRRaDprvt8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O95EaGs/se6kuawifub/mXS/h9U/XBkbuBUatCalEoC3hJaKQAwiivKCIcuVB9HHUlYC6fPIvuIPvXDnPI6bio+q+zkawvGi/VrWSsiyBIJzOinOKZHYel+fkoZ3DTTGNE86eIduHOgTd0Ipnx3m3jGxtFURDvH5m3h2cjqykso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aLhyV+3q; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2166022c5caso7263235ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:30:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1733761834; x=1734366634; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=p/dog+0EQRlxBYnOByLywNOoM67TdQ6+XNRRaDprvt8=;
+        b=aLhyV+3qZjNqarC7H8CZcpVsMz3A6+kdHuZ5FbZvviI7oz3gCNbNkgKP2/a9J5jyTm
+         8MPzZ1n2fIiP7QwcH7QQ+9MkQQiIHx9R5lWjycF4JMXfCksJgJlNzfM0hHBt6GkwivKr
+         gqvBLV2wukC+vAtmJ6fzD7RZTmD4R/3kiibzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733761834; x=1734366634;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=p/dog+0EQRlxBYnOByLywNOoM67TdQ6+XNRRaDprvt8=;
+        b=IWzDGH1M9T7Hc3LUipKE0OjS+rfy7oy50mH0uYmb/Mx3kaCDeELuEwhstQch4Bk9/C
+         ohrR57GDKwdiy4j0hsIacmxl+yVBIgmbfFQj4fk2CWFkd/arWqhAIcIjAjdnnDJzFHIS
+         gyfmjnY3mLKJs8mFYiFGtMPYvjKb902tq1RPbPkL3ntVzEI3HZFb0GCiKtLafEjdfrkh
+         S7kf2e/Bb7NBvFKhJQXlEHCHG5PNs27A2Beo/qTxtbOarQFCNgqXCexen+NVbu/TD6oI
+         mHeZqUM0PL7UfXcfMMKF7Oo9lL6QAgGFMeaPRZg7BPLEQdnmHjSEaBmURRdBhPzD4JNI
+         Ycag==
+X-Forwarded-Encrypted: i=1; AJvYcCU5ooEXshNIan65MZltKscp5hcsJRZgmRgAu6K/E9wCYAoLlsVDUalOS7KuObAusKZydojyMae7mr0ZXOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8nniFi9dFFaFEz56STIsamj1E8owkLPocyNL2LR/hb9EIabLm
+	7Sx4y+uhjQTiCcvI/EzEgLAvMFin2TJHtoW1W6cvOvm25m6HugjidMvgnxEs1hS/IO5pP1Y5dEh
+	lwb2XpmJKTDL1qCtcslgEWQ7g9hPCJ1x2oXu/
+X-Gm-Gg: ASbGncvIC+yo7l3cH7BkxeAmS0KWxdAaFrDcnv5j4Ps/RUnjegbyxK6XEd7jLcNqW7d
+	F9PhdD1R07wSt9RafzL6fkigr8Gu7J4W4
+X-Google-Smtp-Source: AGHT+IGKU4+osxj3yQ8d5J9cViXXLJQMJwB+tXxwjf2a8JGnURtoWDDxtIDQI6XFBgNYiUWAryPF/cGK/nKnX8MqZNc=
+X-Received: by 2002:a17:902:fc4d:b0:216:3dc5:1240 with SMTP id
+ d9443c01a7336-2163dc515d4mr98078565ad.45.1733761834275; Mon, 09 Dec 2024
+ 08:30:34 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241208-power-supply-dev_to_psy-v1-4-f95de9117558@weissschuh.net>
+References: <CALjTZvYKHWrD5m+RXimjxODvpFPw7Cq_EOEuzRi1PZT9_JxF+g@mail.gmail.com>
+In-Reply-To: <CALjTZvYKHWrD5m+RXimjxODvpFPw7Cq_EOEuzRi1PZT9_JxF+g@mail.gmail.com>
+From: Pavan Chebbi <pavan.chebbi@broadcom.com>
+Date: Mon, 9 Dec 2024 22:00:20 +0530
+Message-ID: <CALs4sv2vN3+MOzRnK=nQ_uMXbR4Fi8xW9H8LdX79vYA7tHx+2g@mail.gmail.com>
+Subject: Re: [REGRESSION] tg3 is broken since 6.13-rc1
+To: Rui Salvaterra <rsalvaterra@gmail.com>
+Cc: mchan@broadcom.com, kuba@kernel.org, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
+	boundary="0000000000004905280628d8e27a"
 
-Hi Thomas,
+--0000000000004905280628d8e27a
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+On Mon, Dec 9, 2024 at 6:27=E2=80=AFPM Rui Salvaterra <rsalvaterra@gmail.co=
+m> wrote:
+>
+> Greetings,
+>
+> Commit 614f4d166eeeb9bd709b0ad29552f691c0f45776 "tg3: Set coherent DMA
+> mask bits to 31 for BCM57766 chipsets" broke wired Ethernet on my late
+> 2012 Mac Mini, as the device fails to allocate 64-bit DMA. Reverting
+> the aforementioned commit fixes the issue.
 
-[auto build test WARNING on 39f3bd9c9a27d526858da153090376decdf7bfea]
+Thanks Rui for the report. Sorry, I did not expect this side effect.
+I will check and post a fix/revert patch.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Thomas-Wei-schuh/power-supply-mm8013-use-accessor-for-driver-data/20241208-210605
-base:   39f3bd9c9a27d526858da153090376decdf7bfea
-patch link:    https://lore.kernel.org/r/20241208-power-supply-dev_to_psy-v1-4-f95de9117558%40weissschuh.net
-patch subject: [PATCH 04/14] power: supply: ab8500: use power_supply_for_each_psy()
-config: arm-allyesconfig (https://download.01.org/0day-ci/archive/20241209/202412092219.bRJmBwIP-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241209/202412092219.bRJmBwIP-lkp@intel.com/reproduce)
+>
+> Kind regards,
+> Rui Salvaterra
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202412092219.bRJmBwIP-lkp@intel.com/
+--0000000000004905280628d8e27a
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
 
-All warnings (new ones prefixed by >>):
-
->> drivers/power/supply/ab8500_btemp.c:543:49: warning: 'struct power_supply_ext' declared inside parameter list will not be visible outside of this definition or declaration
-     543 | static int ab8500_btemp_get_ext_psy_data(struct power_supply_ext *ext, void *data)
-         |                                                 ^~~~~~~~~~~~~~~~
-   drivers/power/supply/ab8500_btemp.c: In function 'ab8500_btemp_get_ext_psy_data':
-   drivers/power/supply/ab8500_btemp.c:546:54: error: invalid use of undefined type 'struct power_supply_ext'
-     546 |         const char **supplicants = (const char **)ext->supplied_to;
-         |                                                      ^~
-   drivers/power/supply/ab8500_btemp.c:558:42: error: invalid use of undefined type 'struct power_supply_ext'
-     558 |         j = match_string(supplicants, ext->num_supplicants, psy->desc->name);
-         |                                          ^~
-   drivers/power/supply/ab8500_btemp.c:563:28: error: invalid use of undefined type 'struct power_supply_ext'
-     563 |         for (j = 0; j < ext->desc->num_properties; j++) {
-         |                            ^~
-   drivers/power/supply/ab8500_btemp.c:565:27: error: invalid use of undefined type 'struct power_supply_ext'
-     565 |                 prop = ext->desc->properties[j];
-         |                           ^~
-   drivers/power/supply/ab8500_btemp.c:567:47: error: passing argument 1 of 'power_supply_get_property' from incompatible pointer type [-Wincompatible-pointer-types]
-     567 |                 if (power_supply_get_property(ext, prop, &ret))
-         |                                               ^~~
-         |                                               |
-         |                                               struct power_supply_ext *
-   In file included from drivers/power/supply/ab8500_btemp.c:21:
-   include/linux/power_supply.h:855:59: note: expected 'struct power_supply *' but argument is of type 'struct power_supply_ext *'
-     855 | extern int power_supply_get_property(struct power_supply *psy,
-         |                                      ~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/power/supply/ab8500_btemp.c:572:36: error: invalid use of undefined type 'struct power_supply_ext'
-     572 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_btemp.c: In function 'ab8500_btemp_external_power_changed':
-   drivers/power/supply/ab8500_btemp.c:619:40: error: passing argument 2 of 'power_supply_for_each_psy' from incompatible pointer type [-Wincompatible-pointer-types]
-     619 |         power_supply_for_each_psy(psy, ab8500_btemp_get_ext_psy_data);
-         |                                        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                        |
-         |                                        int (*)(struct power_supply_ext *, void *)
-   include/linux/power_supply.h:885:56: note: expected 'int (*)(struct power_supply *, void *)' but argument is of type 'int (*)(struct power_supply_ext *, void *)'
-     885 | extern int power_supply_for_each_psy(void *data, int (*fn)(struct power_supply *psy, void *data));
-         |                                                  ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
---
->> drivers/power/supply/ab8500_chargalg.c:847:52: warning: 'struct power_supply_ext' declared inside parameter list will not be visible outside of this definition or declaration
-     847 | static int ab8500_chargalg_get_ext_psy_data(struct power_supply_ext *ext, void *data)
-         |                                                    ^~~~~~~~~~~~~~~~
-   drivers/power/supply/ab8500_chargalg.c: In function 'ab8500_chargalg_get_ext_psy_data':
-   drivers/power/supply/ab8500_chargalg.c:850:54: error: invalid use of undefined type 'struct power_supply_ext'
-     850 |         const char **supplicants = (const char **)ext->supplied_to;
-         |                                                      ^~
-   drivers/power/supply/ab8500_chargalg.c:859:42: error: invalid use of undefined type 'struct power_supply_ext'
-     859 |         j = match_string(supplicants, ext->num_supplicants, psy->desc->name);
-         |                                          ^~
-   drivers/power/supply/ab8500_chargalg.c:868:40: error: passing argument 1 of 'power_supply_get_property' from incompatible pointer type [-Wincompatible-pointer-types]
-     868 |         if (!power_supply_get_property(ext, POWER_SUPPLY_PROP_CAPACITY, &ret)) {
-         |                                        ^~~
-         |                                        |
-         |                                        struct power_supply_ext *
-   In file included from drivers/power/supply/ab8500_chargalg.c:24:
-   include/linux/power_supply.h:855:59: note: expected 'struct power_supply *' but argument is of type 'struct power_supply_ext *'
-     855 | extern int power_supply_get_property(struct power_supply *psy,
-         |                                      ~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/power/supply/ab8500_chargalg.c:874:28: error: invalid use of undefined type 'struct power_supply_ext'
-     874 |         for (j = 0; j < ext->desc->num_properties; j++) {
-         |                            ^~
-   drivers/power/supply/ab8500_chargalg.c:876:27: error: invalid use of undefined type 'struct power_supply_ext'
-     876 |                 prop = ext->desc->properties[j];
-         |                           ^~
-   drivers/power/supply/ab8500_chargalg.c:882:28: error: invalid use of undefined type 'struct power_supply_ext'
-     882 |                         ext->desc->type == POWER_SUPPLY_TYPE_MAINS)
-         |                            ^~
-   In file included from drivers/power/supply/ab8500_chargalg.c:35:
-   drivers/power/supply/ab8500_chargalg.c:883:59: error: passing argument 1 of 'power_supply_get_drvdata' from incompatible pointer type [-Wincompatible-pointer-types]
-     883 |                         di->ac_chg = psy_to_ux500_charger(ext);
-         |                                                           ^~~
-         |                                                           |
-         |                                                           struct power_supply_ext *
-   drivers/power/supply/ab8500-chargalg.h:18:58: note: in definition of macro 'psy_to_ux500_charger'
-      18 | #define psy_to_ux500_charger(x) power_supply_get_drvdata(x)
-         |                                                          ^
-   include/linux/power_supply.h:883:60: note: expected 'struct power_supply *' but argument is of type 'struct power_supply_ext *'
-     883 | extern void *power_supply_get_drvdata(struct power_supply *psy);
-         |                                       ~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/power/supply/ab8500_chargalg.c:885:28: error: invalid use of undefined type 'struct power_supply_ext'
-     885 |                         ext->desc->type == POWER_SUPPLY_TYPE_USB)
-         |                            ^~
-   drivers/power/supply/ab8500_chargalg.c:886:60: error: passing argument 1 of 'power_supply_get_drvdata' from incompatible pointer type [-Wincompatible-pointer-types]
-     886 |                         di->usb_chg = psy_to_ux500_charger(ext);
-         |                                                            ^~~
-         |                                                            |
-         |                                                            struct power_supply_ext *
-   drivers/power/supply/ab8500-chargalg.h:18:58: note: in definition of macro 'psy_to_ux500_charger'
-      18 | #define psy_to_ux500_charger(x) power_supply_get_drvdata(x)
-         |                                                          ^
-   include/linux/power_supply.h:883:60: note: expected 'struct power_supply *' but argument is of type 'struct power_supply_ext *'
-     883 | extern void *power_supply_get_drvdata(struct power_supply *psy);
-         |                                       ~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/power/supply/ab8500_chargalg.c:888:47: error: passing argument 1 of 'power_supply_get_property' from incompatible pointer type [-Wincompatible-pointer-types]
-     888 |                 if (power_supply_get_property(ext, prop, &ret))
-         |                                               ^~~
-         |                                               |
-         |                                               struct power_supply_ext *
-   include/linux/power_supply.h:855:59: note: expected 'struct power_supply *' but argument is of type 'struct power_supply_ext *'
-     855 | extern int power_supply_get_property(struct power_supply *psy,
-         |                                      ~~~~~~~~~~~~~~~~~~~~~^~~
-   drivers/power/supply/ab8500_chargalg.c:892:36: error: invalid use of undefined type 'struct power_supply_ext'
-     892 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c:939:36: error: invalid use of undefined type 'struct power_supply_ext'
-     939 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c:984:36: error: invalid use of undefined type 'struct power_supply_ext'
-     984 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c:1068:36: error: invalid use of undefined type 'struct power_supply_ext'
-    1068 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c:1084:36: error: invalid use of undefined type 'struct power_supply_ext'
-    1084 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c:1109:36: error: invalid use of undefined type 'struct power_supply_ext'
-    1109 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c:1127:36: error: invalid use of undefined type 'struct power_supply_ext'
-    1127 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c:1143:36: error: invalid use of undefined type 'struct power_supply_ext'
-    1143 |                         switch (ext->desc->type) {
-         |                                    ^~
-   drivers/power/supply/ab8500_chargalg.c: In function 'ab8500_chargalg_algorithm':
-   drivers/power/supply/ab8500_chargalg.c:1233:53: error: passing argument 2 of 'power_supply_for_each_psy' from incompatible pointer type [-Wincompatible-pointer-types]
-    1233 |         power_supply_for_each_psy(di->chargalg_psy, ab8500_chargalg_get_ext_psy_data);
-         |                                                     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-         |                                                     |
-         |                                                     int (*)(struct power_supply_ext *, void *)
-   include/linux/power_supply.h:885:56: note: expected 'int (*)(struct power_supply *, void *)' but argument is of type 'int (*)(struct power_supply_ext *, void *)'
-     885 | extern int power_supply_for_each_psy(void *data, int (*fn)(struct power_supply *psy, void *data));
-         |                                                  ~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-vim +543 drivers/power/supply/ab8500_btemp.c
-
-   542	
- > 543	static int ab8500_btemp_get_ext_psy_data(struct power_supply_ext *ext, void *data)
-   544	{
-   545		struct power_supply *psy;
-   546		const char **supplicants = (const char **)ext->supplied_to;
-   547		struct ab8500_btemp *di;
-   548		union power_supply_propval ret;
-   549		int j;
-   550	
-   551		psy = (struct power_supply *)data;
-   552		di = power_supply_get_drvdata(psy);
-   553	
-   554		/*
-   555		 * For all psy where the name of your driver
-   556		 * appears in any supplied_to
-   557		 */
-   558		j = match_string(supplicants, ext->num_supplicants, psy->desc->name);
-   559		if (j < 0)
-   560			return 0;
-   561	
-   562		/* Go through all properties for the psy */
-   563		for (j = 0; j < ext->desc->num_properties; j++) {
-   564			enum power_supply_property prop;
-   565			prop = ext->desc->properties[j];
-   566	
-   567			if (power_supply_get_property(ext, prop, &ret))
-   568				continue;
-   569	
-   570			switch (prop) {
-   571			case POWER_SUPPLY_PROP_PRESENT:
-   572				switch (ext->desc->type) {
-   573				case POWER_SUPPLY_TYPE_MAINS:
-   574					/* AC disconnected */
-   575					if (!ret.intval && di->events.ac_conn) {
-   576						di->events.ac_conn = false;
-   577					}
-   578					/* AC connected */
-   579					else if (ret.intval && !di->events.ac_conn) {
-   580						di->events.ac_conn = true;
-   581						if (!di->events.usb_conn)
-   582							ab8500_btemp_periodic(di, true);
-   583					}
-   584					break;
-   585				case POWER_SUPPLY_TYPE_USB:
-   586					/* USB disconnected */
-   587					if (!ret.intval && di->events.usb_conn) {
-   588						di->events.usb_conn = false;
-   589					}
-   590					/* USB connected */
-   591					else if (ret.intval && !di->events.usb_conn) {
-   592						di->events.usb_conn = true;
-   593						if (!di->events.ac_conn)
-   594							ab8500_btemp_periodic(di, true);
-   595					}
-   596					break;
-   597				default:
-   598					break;
-   599				}
-   600				break;
-   601			default:
-   602				break;
-   603			}
-   604		}
-   605		return 0;
-   606	}
-   607	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+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
+OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
+dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
+AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
+c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
+AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
+TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
+bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
+L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
+BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
+HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
+fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
+9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
+pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
+25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
+Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
+aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
+EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
+DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIJz5BhR4O8XCo4M3uF5qXyv+Grh7qBfD
+nSGIFxwdELHEMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTIw
+OTE2MzAzNFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
+ATANBgkqhkiG9w0BAQEFAASCAQAHHapfYKGYhqOqE+oB/dcBgcU9L9dDkNFvtjLnaCsftn+Qv5le
+9Jz7vvL4meapnEQZcoOXnKXp98kry2+0xaeaBB0PwP/TQ0J6hVQgwOm8LJRIdcZMm8VoA6xTT6Lx
+YT3ZcxN+PRJt4ZnqHhuLD0bWiSW92IZ2y8OZYq2aG0Cy1lOZBGOU0TMdUP3F4SzJoe4rBizhCfJV
+yewnczGNqNCdi9O40/raA0tKyeNKzZZBcVhrqosmC55uX21a7ORdg6ubaRg+NAq4lM2EDS8xjVDz
+o8qnwpauLqjz70FiL96sKBH2GDUFWtdTDyvb4j+zG1rM9VnXMXT/STq7Z2+RACOI
+--0000000000004905280628d8e27a--
 
