@@ -1,185 +1,138 @@
-Return-Path: <linux-kernel+bounces-438018-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438019-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D09089E9BB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:30:47 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 341DE9E9BB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 17:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF7F1887AA9
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:30:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6931888549
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:30:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 404D71474A2;
-	Mon,  9 Dec 2024 16:30:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D0414D28C;
+	Mon,  9 Dec 2024 16:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="aLhyV+3q"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bYUJ+Zlu"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C50257C93
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 16:30:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670FA148838;
+	Mon,  9 Dec 2024 16:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733761836; cv=none; b=HYnS1T4n2udh3ml8Q7ZTpRWC9w4tJiV2qQSkHD33dTl2PBqEzd19/BnlpyqhJz+DlRlOGEFRbQV88cSp9EJ2XVZxJPyWGpHnZhbwvct6DPEfzaf4fqsf2qY6/Zfrb3SObQGiN5AHrHMJqAhOnUKRIxgkQUB8c6chIz0gl5LCzYA=
+	t=1733761839; cv=none; b=Ll1MNF6ppSSuVjOFO7Q1Pp9D1aVrVt2NBmCTDV6ydyza3+MdN3+LywiCRJFIpb270z+aYLolDViAYH3nrFf7pOcRMf4yk9lOTmCMW1iBTvv7J9H7a8MNZJ8QGJC3w2CksZC9OIpnSVrh4JmTpH/LzC3EuuQbtnaAMlHGaAALjnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733761836; c=relaxed/simple;
-	bh=p/dog+0EQRlxBYnOByLywNOoM67TdQ6+XNRRaDprvt8=;
+	s=arc-20240116; t=1733761839; c=relaxed/simple;
+	bh=UqFmyUyCnqL3Joi4dxVsrc/QHwDIjKuol/h0eu0pRlo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O95EaGs/se6kuawifub/mXS/h9U/XBkbuBUatCalEoC3hJaKQAwiivKCIcuVB9HHUlYC6fPIvuIPvXDnPI6bio+q+zkawvGi/VrWSsiyBIJzOinOKZHYel+fkoZ3DTTGNE86eIduHOgTd0Ipnx3m3jGxtFURDvH5m3h2cjqykso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=aLhyV+3q; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2166022c5caso7263235ad.2
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 08:30:34 -0800 (PST)
+	 To:Cc:Content-Type; b=h3E5UShqSxFEAKc2EPwyeWP9D269/AHHT64GJOCUwc5UPuLJZfDUacroPzAYmQdNOL2iKuVjC9sCIK2gth6txms9KN97tHU77bQSpNxdTj1j/3/wYicnIgDpjQYNueMNa8Xh6Dm3fHaVMbMeLMZ7nLOcejNEr2CfFXud7POVFQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bYUJ+Zlu; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5d3d74363cbso4178717a12.2;
+        Mon, 09 Dec 2024 08:30:37 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1733761834; x=1734366634; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p/dog+0EQRlxBYnOByLywNOoM67TdQ6+XNRRaDprvt8=;
-        b=aLhyV+3qZjNqarC7H8CZcpVsMz3A6+kdHuZ5FbZvviI7oz3gCNbNkgKP2/a9J5jyTm
-         8MPzZ1n2fIiP7QwcH7QQ+9MkQQiIHx9R5lWjycF4JMXfCksJgJlNzfM0hHBt6GkwivKr
-         gqvBLV2wukC+vAtmJ6fzD7RZTmD4R/3kiibzI=
+        d=gmail.com; s=20230601; t=1733761836; x=1734366636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2PXZFahQEQ9+MH6nwCFL4u3GPn69RCf5jv5+RxOCeQE=;
+        b=bYUJ+ZludQOks/rxAghEud8Q2yjTkv9oKUWN7pryXJIsYiXV/+8jRQ5vQDChhiDdmk
+         EzL8nRpfkxrjkYrKOyMfCiaz491xjybt3eDYTcCuU4E4rJHGdbruHAXUHCvf0Z2hQ+en
+         ySoFGSSudfTK/Q46FMQMlAWN3DVk2396QTmcfuXOUYJ4QhFdcUmqWot8TFspr3EF5VPQ
+         /ahrUvWsOe07iY6sWOAY6/fCO17BPT3agEz+TUFb4DJSZIIM433wxmmchONBsCtSIlcb
+         CHidkT79YtXYAVu7n32oW7rfy61smfjYq6yTwbX/ENomBsjjMejlVrZhf2dXzhCzg55v
+         Dzhw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733761834; x=1734366634;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p/dog+0EQRlxBYnOByLywNOoM67TdQ6+XNRRaDprvt8=;
-        b=IWzDGH1M9T7Hc3LUipKE0OjS+rfy7oy50mH0uYmb/Mx3kaCDeELuEwhstQch4Bk9/C
-         ohrR57GDKwdiy4j0hsIacmxl+yVBIgmbfFQj4fk2CWFkd/arWqhAIcIjAjdnnDJzFHIS
-         gyfmjnY3mLKJs8mFYiFGtMPYvjKb902tq1RPbPkL3ntVzEI3HZFb0GCiKtLafEjdfrkh
-         S7kf2e/Bb7NBvFKhJQXlEHCHG5PNs27A2Beo/qTxtbOarQFCNgqXCexen+NVbu/TD6oI
-         mHeZqUM0PL7UfXcfMMKF7Oo9lL6QAgGFMeaPRZg7BPLEQdnmHjSEaBmURRdBhPzD4JNI
-         Ycag==
-X-Forwarded-Encrypted: i=1; AJvYcCU5ooEXshNIan65MZltKscp5hcsJRZgmRgAu6K/E9wCYAoLlsVDUalOS7KuObAusKZydojyMae7mr0ZXOI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8nniFi9dFFaFEz56STIsamj1E8owkLPocyNL2LR/hb9EIabLm
-	7Sx4y+uhjQTiCcvI/EzEgLAvMFin2TJHtoW1W6cvOvm25m6HugjidMvgnxEs1hS/IO5pP1Y5dEh
-	lwb2XpmJKTDL1qCtcslgEWQ7g9hPCJ1x2oXu/
-X-Gm-Gg: ASbGncvIC+yo7l3cH7BkxeAmS0KWxdAaFrDcnv5j4Ps/RUnjegbyxK6XEd7jLcNqW7d
-	F9PhdD1R07wSt9RafzL6fkigr8Gu7J4W4
-X-Google-Smtp-Source: AGHT+IGKU4+osxj3yQ8d5J9cViXXLJQMJwB+tXxwjf2a8JGnURtoWDDxtIDQI6XFBgNYiUWAryPF/cGK/nKnX8MqZNc=
-X-Received: by 2002:a17:902:fc4d:b0:216:3dc5:1240 with SMTP id
- d9443c01a7336-2163dc515d4mr98078565ad.45.1733761834275; Mon, 09 Dec 2024
- 08:30:34 -0800 (PST)
+        d=1e100.net; s=20230601; t=1733761836; x=1734366636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2PXZFahQEQ9+MH6nwCFL4u3GPn69RCf5jv5+RxOCeQE=;
+        b=jI/Ipi8lZtHFuxw34VR+4lxM8j7pT89sEgBYpC8dezruvit2JiSZ5CrmkOuQwuQ45t
+         Owca2TBUDi9jGw4IPfDvcSUHmJGW0VlI3l5UBhuZrZfhA4DLhjHj2qxTtw4wtBoMb5LI
+         LoL8RUnfQ9Oc0BCGjzCmpCYsorQHXjImcLcbAQw+YwyLY59Fd6W3nRO2vUqwD93ixae/
+         Ea067IJ48cecBmj2fBl3AYCmYSAfuqJG8Q+DtbC3+N798og/lELW1Nn+4GAfZaDGCuaB
+         Cz2tPkpJRzFCF8lS9NzTZpalcxvgV2DBL8uzwmaBZAR/I4ELzc4cqtAEheiuiw1JfDPW
+         ySDA==
+X-Forwarded-Encrypted: i=1; AJvYcCUF+Tn8gYKN3QnYZX7CDkw4AzObRYbL9TLWaGi2oBrmbwn1HXct0RbjZpQccHevI5x3PwZe7hKmjiH/@vger.kernel.org, AJvYcCUgurNssaSBkpQJXRK+q5pVlwHSUtqgrJ3X+hgmsn3K8ibWGPKnV/dBsMPYPdm95SGAAwdj1BJX938/GgcN@vger.kernel.org, AJvYcCV1sQUx0So8e25lat80O26/mTlQgkJ3puznTlLdsibTDtFr8mA3511vsbq0bTe2MInG3y3tpUhuJUB4bEVP@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywc9IIoN3Q8wTaBFgN1MDnrap9BZ0SQSLZFzp/v+yN/MPO2t7Oj
+	i7tk21B1LYnQLYUU3lIDSrEOHN4nMzkVUszktBkdMaWO8GCV0T17vmTA5Pod7eeiCmsH4plrEBs
+	dFeCP4q2AG5PMm4ZCYPAPsYP+/SQ=
+X-Gm-Gg: ASbGncsC4NSV/vTZoAmXkmb3CUCGtspKJOCqJw3e5HoLUaWmgAqnNZeXYBBTgrKN5lf
+	OJgFPM63b0sgc2XRz5KBC9adq58vmWwY=
+X-Google-Smtp-Source: AGHT+IGnw3PHTTO0WJEaz4iIAJkEZuaxE+xsctQhUNCPKjQXrjeXNmUhAvEgSjWGkC8LfBFyANkAmmYobwxezgDOiGA=
+X-Received: by 2002:a50:fa81:0:b0:5d0:cfb9:4132 with SMTP id
+ 4fb4d7f45d1cf-5d418567f3emr1520906a12.18.1733761835276; Mon, 09 Dec 2024
+ 08:30:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CALjTZvYKHWrD5m+RXimjxODvpFPw7Cq_EOEuzRi1PZT9_JxF+g@mail.gmail.com>
-In-Reply-To: <CALjTZvYKHWrD5m+RXimjxODvpFPw7Cq_EOEuzRi1PZT9_JxF+g@mail.gmail.com>
-From: Pavan Chebbi <pavan.chebbi@broadcom.com>
-Date: Mon, 9 Dec 2024 22:00:20 +0530
-Message-ID: <CALs4sv2vN3+MOzRnK=nQ_uMXbR4Fi8xW9H8LdX79vYA7tHx+2g@mail.gmail.com>
-Subject: Re: [REGRESSION] tg3 is broken since 6.13-rc1
-To: Rui Salvaterra <rsalvaterra@gmail.com>
-Cc: mchan@broadcom.com, kuba@kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000004905280628d8e27a"
-
---0000000000004905280628d8e27a
+References: <20241201-work-exportfs-v1-0-b850dda4502a@kernel.org>
+ <Z1D2BE2S6FLJ0tTk@infradead.org> <CAOQ4uxjPSmrvy44AdahKjzFOcydKN8t=xBnS_bhV-vC+UBdPUg@mail.gmail.com>
+ <20241206160358.GC7820@frogsfrogsfrogs> <CAOQ4uxgzWZ_X8S6dnWSwU=o5QKR_azq=5fe2Qw8gavLuTOy7Aw@mail.gmail.com>
+ <Z1ahFxFtksuThilS@infradead.org> <CAOQ4uxiEnEC87pVBhfNcjduHOZWfbEoB8HKVbjNHtkaWA5d-JA@mail.gmail.com>
+ <Z1b00KG2O6YMuh_r@infradead.org>
+In-Reply-To: <Z1b00KG2O6YMuh_r@infradead.org>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 9 Dec 2024 17:30:24 +0100
+Message-ID: <CAOQ4uxjcVuq+PCoMos5Vi=t_S1OgJEM5wQ6Za2Ue9_FOq31m9Q@mail.gmail.com>
+Subject: Re: [PATCH 0/4] exportfs: add flag to allow marking export operations
+ as only supporting file handles
+To: Christoph Hellwig <hch@infradead.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Christian Brauner <brauner@kernel.org>, 
+	Jeff Layton <jlayton@kernel.org>, Erin Shepherd <erin.shepherd@e43.eu>, 
+	Chuck Lever <chuck.lever@oracle.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-nfs@vger.kernel.org, 
+	stable <stable@kernel.org>, Greg KH <gregkh@linuxfoundation.org>, 
+	Jens Axboe <axboe@kernel.dk>, Shaohua Li <shli@fb.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Dec 9, 2024 at 6:27=E2=80=AFPM Rui Salvaterra <rsalvaterra@gmail.co=
-m> wrote:
+On Mon, Dec 9, 2024 at 2:46=E2=80=AFPM Christoph Hellwig <hch@infradead.org=
+> wrote:
 >
-> Greetings,
+> On Mon, Dec 09, 2024 at 09:58:58AM +0100, Amir Goldstein wrote:
+> > To be clear, exporting pidfs or internal shmem via an anonymous fd is
+> > probably not possible with existing userspace tools, but with all the n=
+ew
+> > mount_fd and magic link apis, I can never be sure what can be made poss=
+ible
+> > to achieve when the user holds an anonymous fd.
+> >
+> > The thinking behind adding the EXPORT_OP_LOCAL_FILE_HANDLE flag
+> > was that when kernfs/cgroups was added exportfs support with commit
+> > aa8188253474 ("kernfs: add exportfs operations"), there was no intentio=
+n
+> > to export cgroupfs over nfs, only local to uses, but that was never enf=
+orced,
+> > so we thought it would be good to add this restriction and backport it =
+to
+> > stable kernels.
 >
-> Commit 614f4d166eeeb9bd709b0ad29552f691c0f45776 "tg3: Set coherent DMA
-> mask bits to 31 for BCM57766 chipsets" broke wired Ethernet on my late
-> 2012 Mac Mini, as the device fails to allocate 64-bit DMA. Reverting
-> the aforementioned commit fixes the issue.
-
-Thanks Rui for the report. Sorry, I did not expect this side effect.
-I will check and post a fix/revert patch.
-
+> Can you please explain what the problem with exporting these file
+> systems over NFS is?  Yes, it's not going to be very useful.  But what
+> is actually problematic about it?  Any why is it not problematic with
+> a userland nfs server?  We really need to settle that argumet before
+> deciding a flag name or polarity.
 >
-> Kind regards,
-> Rui Salvaterra
 
---0000000000004905280628d8e27a
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+I agree that it is not the end of the world and users do have to explicitly
+use fsid=3D argument to be able to export cgroupfs via nfsd.
 
-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
-OltyqaGBuzv+bJTUL+bmV7E4QBLIqGt4jVr1R9hJdH6KxXwJdyfHZ9C6qXmoe2NQhiFUyBOJ0wgk
-dB9Z1IU7nCwvNKYg2JMoJs93tIgbhPJg/D7pqW8gabkCAwEAAaOCAdowggHWMA4GA1UdDwEB/wQE
-AwIFoDCBowYIKwYBBQUHAQEEgZYwgZMwTgYIKwYBBQUHMAKGQmh0dHA6Ly9zZWN1cmUuZ2xvYmFs
-c2lnbi5jb20vY2FjZXJ0L2dzZ2NjcjNwZXJzb25hbHNpZ24yY2EyMDIwLmNydDBBBggrBgEFBQcw
-AYY1aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyM3BlcnNvbmFsc2lnbjJjYTIwMjAw
-TQYDVR0gBEYwRDBCBgorBgEEAaAyASgKMDQwMgYIKwYBBQUHAgEWJmh0dHBzOi8vd3d3Lmdsb2Jh
-bHNpZ24uY29tL3JlcG9zaXRvcnkvMAkGA1UdEwQCMAAwSQYDVR0fBEIwQDA+oDygOoY4aHR0cDov
-L2NybC5nbG9iYWxzaWduLmNvbS9nc2djY3IzcGVyc29uYWxzaWduMmNhMjAyMC5jcmwwJAYDVR0R
-BB0wG4EZcGF2YW4uY2hlYmJpQGJyb2FkY29tLmNvbTATBgNVHSUEDDAKBggrBgEFBQcDBDAfBgNV
-HSMEGDAWgBSWM9HmWBdbNHWKgVZk1b5I3qGPzzAdBgNVHQ4EFgQUEV6y/89alKPoFbKUaJXsvWu5
-fdowDQYJKoZIhvcNAQELBQADggEBAEHSIB6g652wVb+r2YCmfHW47Jo+5TuCBD99Hla8PYhaWGkd
-9HIyD3NPhb6Vb6vtMWJW4MFGQF42xYRrAS4LZj072DuMotr79rI09pbOiWg0FlRRFt6R9vgUgebu
-pWSH7kmwVXcPtY94XSMMak4b7RSKig2mKbHDpD4bC7eGlwl5RxzYkgrHtMNRmHmQor5Nvqe52cFJ
-25Azqtwvjt5nbrEd81iBmboNTEnLaKuxbbCtLaMEP8xKeDjAKnNOqHUMps0AsQT8c0EGq39YHpjp
-Wn1l67VU0rMShbEFsiUf9WYgE677oinpdm0t2mdCjxr35tryxptoTZXKHDxr/Yy6l6ExggJtMIIC
-aQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQD
-EyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25hbFNpZ24gMiBDQSAyMDIwAgwV/XkICjVscn4SNZMw
-DQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIEIJz5BhR4O8XCo4M3uF5qXyv+Grh7qBfD
-nSGIFxwdELHEMBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTIw
-OTE2MzAzNFowaQYJKoZIhvcNAQkPMVwwWjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
-SAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQC
-ATANBgkqhkiG9w0BAQEFAASCAQAHHapfYKGYhqOqE+oB/dcBgcU9L9dDkNFvtjLnaCsftn+Qv5le
-9Jz7vvL4meapnEQZcoOXnKXp98kry2+0xaeaBB0PwP/TQ0J6hVQgwOm8LJRIdcZMm8VoA6xTT6Lx
-YT3ZcxN+PRJt4ZnqHhuLD0bWiSW92IZ2y8OZYq2aG0Cy1lOZBGOU0TMdUP3F4SzJoe4rBizhCfJV
-yewnczGNqNCdi9O40/raA0tKyeNKzZZBcVhrqosmC55uX21a7ORdg6ubaRg+NAq4lM2EDS8xjVDz
-o8qnwpauLqjz70FiL96sKBH2GDUFWtdTDyvb4j+zG1rM9VnXMXT/STq7Z2+RACOI
---0000000000004905280628d8e27a--
+The idea for this patch started from the claim that Jeff wrote that cgroups
+is not allowed for nfsd export, but I couldn't find where it is not allowed=
+.
+
+I have no issue personally with leaving cgroupfs exportable via nfsd
+and changing restricting only SB_NOUSER and SB_KERNMOUNT fs.
+
+Jeff, Chuck, what is your opinion w.r.t exportability of cgroupfs via nfsd?
+
+Thanks,
+Amir.
 
