@@ -1,145 +1,99 @@
-Return-Path: <linux-kernel+bounces-437958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9018D9E9AFC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:57:53 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C865166486
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:57:48 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B116A136E21;
-	Mon,  9 Dec 2024 15:57:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QRs1yS55"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9144D9E9B06
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 16:59:02 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75AB4132C38;
-	Mon,  9 Dec 2024 15:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733759864; cv=none; b=G48ngoKYlWI5SvJDh1ra7xgbg9eeOMsFeYmnAV3Wy1V6P9j+qYTlLi4qcn53y34syZiT9EDxY36USzoUiQCpvKuvgjxxhyeO2ukawJG/RIicD1U7bqQVmdxtvo+yjx010vEXJJSnxIRCI2MTgN2uJeJifHGiCChnv0iYzF02IRE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733759864; c=relaxed/simple;
-	bh=o8XP06lcYRfWQzEQkKfdzPtBj+LUgBM2Y1u/K1ZzrDU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rdrKsnQKcAKn+Vzyc9kEKK5hId60nQvHLMrMImxokIZkt7Ro0SPsSrvBUmAaPK6EL3hj0jFsygxnbzmiJ4R87WgCsLG6vLUoqfvA5PNBQYOCGAaE+VEblyr8BndhNvbpDtmFQgL/In+jAmVu48Weoa8cBvSLF5Mv5466BnqlGw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QRs1yS55; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 568D940E0288;
-	Mon,  9 Dec 2024 15:57:40 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id uVLnYd3n6KR8; Mon,  9 Dec 2024 15:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1733759856; bh=6wjva+XHkq9WUs9GVSDQBIaFuXyCphV3M7jzddUXB7w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=QRs1yS55QCziw5MZ2uTCQFmkttF4+NM8N3gvI686lroGLEj2vFTGAWDzdfVEGSbFd
-	 VNAKUQJUT1SmQedrYmsm4yQ2UiY9FuDpnspn3hMMUT/ywYR58gYYXLQjCCsW3CdE/a
-	 vewklC69c67GbpsICI2DfzJLqEwwfbVgf7I6U0Z640vHY6TAcoZgsr3mp8YKgmd9G0
-	 viZaLaDVb6R/y2K4jr4/faaf3B18YQPIIYLdYnE6X8NBWJm/q4ogjjV3sZz0MZ2Lov
-	 F+wL+4T8uxGWRyCIXG5QzqBFWGN5PBpHWEpANykv9wS9KCmcr7AFVgd1habVjWuXae
-	 YPzVzwwk2wYPhdEE76tgKHDCQ3P+Zuk6XR2QX3qYMVIgmNqbIdF4itdVRb1cWegfE2
-	 7GiQNVhVZeFUnPdCEgewDN6H/Ax5g6QR9kXLxPzrihX3h7cWW4KIsyp/YS+AMSoXBL
-	 VsfuMck4pU6Eswq5ZEX9oniEH4+f72lRx9ZFP/xV3O7SRs+sGBtCTtAlkjfj0DRipA
-	 BE0wCUUeZOXoY2b1IPIVL3MgmuNuBKbYy9MMusQXDdNyTTiSSwUFTbAQJzG3V/iozR
-	 X3KmAAxm+M0Y9sAWtscJQGx78ZmCrVTMtd5UtQ5HFyeZsfcUqpKjB+2ruo11I0dyGH
-	 9mVd9re+n0z/psRCLjrslIcU=
-Received: from zn.tnic (p200300EA971F9307329c23FFFeA6a903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1817F282BD4
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 15:59:01 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A52A113A3F2;
+	Mon,  9 Dec 2024 15:58:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fg+oFQeO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A82740E015F;
-	Mon,  9 Dec 2024 15:57:25 +0000 (UTC)
-Date: Mon, 9 Dec 2024 16:57:18 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Nikunj A Dadhania <nikunj@amd.com>
-Cc: linux-kernel@vger.kernel.org, thomas.lendacky@amd.com, x86@kernel.org,
-	kvm@vger.kernel.org, mingo@redhat.com, tglx@linutronix.de,
-	dave.hansen@linux.intel.com, pgonda@google.com, seanjc@google.com,
-	pbonzini@redhat.com
-Subject: Re: [PATCH v15 04/13] x86/sev: Change TSC MSR behavior for Secure
- TSC enabled guests
-Message-ID: <20241209155718.GBZ1cTXp2XsgtvUzHm@fat_crate.local>
-References: <20241203090045.942078-1-nikunj@amd.com>
- <20241203090045.942078-5-nikunj@amd.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 064B2233139;
+	Mon,  9 Dec 2024 15:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1733759934; cv=none; b=rBfIBp27g4DEgiIVUFMgRVUJXyQAt8cd3Jjk4lN50Y6dxTm/IhmsJwSBKtoZJnmqGaG12ZRR/gLtxbr5j2D8SR+889lTXUT0t/W+6lrO0TE3zt+UP0ZrUMLyTKeZSq0xm/skEez0p0Y20rKVSXE0ZrzLUgDfq/lBQjQjEfxzzkI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1733759934; c=relaxed/simple;
+	bh=OO/cbnYzf7FBnThMr5HyGBtVFD9nIjTXZEtzGzeppGE=;
+	h=Content-Type:MIME-Version:Subject:From:In-Reply-To:References:To:
+	 Cc:Message-ID:Date; b=H8sdoMoE9z/gkwkcFZX/XXutBYHiuHEambXs95QeRNKqYxYgN2JAYN0YJ6l6wOFRHF1RtnR/K6cqF9UFHmNpGQ/pLCUg/d3NMgDYN+aVi3jvsexwF+0Eo4TXO0DRrQ9kxKHkEO5BUHs9hiuacC66lQkFXBDAy7GeQ+3mM3CFxk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fg+oFQeO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D4C6C4CED1;
+	Mon,  9 Dec 2024 15:58:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1733759932;
+	bh=OO/cbnYzf7FBnThMr5HyGBtVFD9nIjTXZEtzGzeppGE=;
+	h=Subject:From:In-Reply-To:References:To:Cc:Date:From;
+	b=Fg+oFQeO2kxp5YwnqKCYMkxppM0DGUp3qVxQ5sA5nAhg3znZy/eC4jlBglaQcF/pD
+	 1ek0X+lGA/sb+0yV86GarHhJ0//nhWl6/GeurMFilAnXgVNik5+axaVubjfJjqrBrn
+	 86+D1UrJksk/A/x7WQkpy+hnh6fB3EM8+OelfkaB9ESisxtWQuZNPPWc8FbMqDy4kl
+	 8JkRD4kzTEhYQqrCcC5V/LWtyFXz9lTa1eRABmGQQ0yimefBwGiWp9fLGT93pJHCyk
+	 U2M6D7V794lB7TwBTexFvKiGyb5NKZYztjvbcbzPQRSGcT2/O8refdTkfvvj9cWQks
+	 R1eAulDtuAE/Q==
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241203090045.942078-5-nikunj@amd.com>
+Content-Transfer-Encoding: 7bit
+Subject: Re: wifi: wlcore: testmode: Constify strutc nla_policy
+From: Kalle Valo <kvalo@kernel.org>
+In-Reply-To: 
+ <78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr>
+References: 
+ <78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr>
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ linux-wireless@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org
+User-Agent: pwcli/0.1.1-git (https://github.com/kvalo/pwcli/) Python/3.11.2
+Message-ID: <173375992872.157598.4366313738760552668.kvalo@kernel.org>
+Date: Mon,  9 Dec 2024 15:58:50 +0000 (UTC)
 
-On Tue, Dec 03, 2024 at 02:30:36PM +0530, Nikunj A Dadhania wrote:
-> Secure TSC enabled guests should not write to MSR_IA32_TSC(10H) register as
-> the subsequent TSC value reads are undefined.
+Christophe JAILLET <christophe.jaillet@wanadoo.fr> wrote:
 
-What does that mean exactly?
+> 'struct nla_policy' is not modified in this driver.
+> 
+> Constifying this structure moves some data to a read-only section, so
+> increase overall security, especially when the structure holds some
+> function pointers.
+> 
+> On a x86_64, with allmodconfig:
+> Before:
+> ======
+>    text	   data	    bss	    dec	    hex	filename
+>    5062	    528	      0	   5590	   15d6	drivers/net/wireless/ti/wlcore/testmode.o
+> 
+> After:
+> =====
+>    text	   data	    bss	    dec	    hex	filename
+>    5178	    404	      0	   5582	   15ce	drivers/net/wireless/ti/wlcore/testmode.o
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> Reviewed-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-I'd prefer if we issued a WARN_ONCE() there on the write to catch any
-offenders.
+Patch applied to wireless-next.git, thanks.
 
-*NO ONE* should be writing the TSC MSR but that's a different story.
-
-IOW, something like this ontop of yours?
-
----
-
-diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-index c22cb2ea4b99..050170eb28e6 100644
---- a/arch/x86/coco/sev/core.c
-+++ b/arch/x86/coco/sev/core.c
-@@ -1443,9 +1443,15 @@ static enum es_result __vc_handle_msr_tsc(struct pt_regs *regs, bool write)
- {
- 	u64 tsc;
- 
--	if (write)
--		return ES_OK;
-+	if (!(sev_status & MSR_AMD64_SNP_SECURE_TSC))
-+		goto read_tsc;
-+
-+	if (write) {
-+		WARN_ONCE(1, "TSC MSR writes are verboten!\n");
-+		return ES_UNSUPPORTED;
-+	}
- 
-+read_tsc:
- 	tsc = rdtsc_ordered();
- 	regs->ax = lower_32_bits(tsc);
- 	regs->dx = upper_32_bits(tsc);
-@@ -1462,11 +1468,14 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
- 	/* Is it a WRMSR? */
- 	write = ctxt->insn.opcode.bytes[1] == 0x30;
- 
--	if (regs->cx == MSR_SVSM_CAA)
-+	switch(regs->cx) {
-+	case MSR_SVSM_CAA:
- 		return __vc_handle_msr_caa(regs, write);
--
--	if (regs->cx == MSR_IA32_TSC && (sev_status & MSR_AMD64_SNP_SECURE_TSC))
-+	case MSR_IA32_TSC:
- 		return __vc_handle_msr_tsc(regs, write);
-+	default:
-+		break;
-+	}
- 
- 	ghcb_set_rcx(ghcb, regs->cx);
- 	if (write) {
+01e767d6f783 wifi: wlcore: testmode: Constify strutc nla_policy
 
 -- 
-Regards/Gruss,
-    Boris.
+https://patchwork.kernel.org/project/linux-wireless/patch/78810e3ebb74ddbd3a4538f182bf1143b89baba7.1731332414.git.christophe.jaillet@wanadoo.fr/
 
-https://people.kernel.org/tglx/notes-about-netiquette
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
+
 
