@@ -1,110 +1,124 @@
-Return-Path: <linux-kernel+bounces-437184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04A759E9015
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:25:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8545D9E9016
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:26:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD989162690
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:25:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CFE9188676A
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 10:26:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89005216E27;
-	Mon,  9 Dec 2024 10:25:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EC1216E10;
+	Mon,  9 Dec 2024 10:25:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="olaINdmd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KEPJ12QY"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55582165E2;
-	Mon,  9 Dec 2024 10:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EBF2165E2
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 10:25:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733739943; cv=none; b=PnJtLEyF+1RT0eimtsNjslKkIZ3/A+Nnu33trx5+7DFm1SUpS0WmYX/q8oEBZMcLKooQz87pDNwP5y4lqdPVa9YU0GIcQkmJFwg09YvzyhuKWlxWWjPUsF/H3q+JS1rjyaPvmlzw24OLbtDWLcCK/kFcZvibxi6+41ax+b8F/d8=
+	t=1733739952; cv=none; b=HwAAui6rgnPT9vo4YUYje4h5CNDECofBYvZj15xPGH0mYp2xU1Fawk9UlQL+N1DuJKvjjgdMyHai8GLRR5EpShJGQVx/zUYRvxPg9H7gr4GSwBbD98sUIaDadGS9vrc2keTpPLeLJOu4dGu5X5qHR+4W3bC8soM4HoZiXrDz9os=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733739943; c=relaxed/simple;
-	bh=Zac91wHIWu5I5fVoSqr4mhSSxozctAkrU6nEfurb/FA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gT3/O0g1RgIK2wOlKrkNIa5HjWMvc9Hts28VV+n9x8wl4yhXTHp48kqSiHIGGwwxzBw3rNzYskmUP3Io91vU2UCGRDTn+TTOSSCChukxq+B9m0xbXVVt2RQlLdZXkcVfDGo7f0qIqm9bWGcfOr4Teu7WWps6adfRoIMVucYTkwk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=olaINdmd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BBF0C4CED1;
-	Mon,  9 Dec 2024 10:25:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733739942;
-	bh=Zac91wHIWu5I5fVoSqr4mhSSxozctAkrU6nEfurb/FA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=olaINdmdg3SukWAmCa0FJm3x3Hggl44iy+XmhYtH6tVuLl4MVKpfLz8p1QrnhoPCr
-	 JtrOARYh9r/BkPyXM3Yv3XAvTt4Hpa/RSF8DQmCTAaI3buf31452D6vGkVIriW6uTe
-	 i7OAedooY4XjKfghVM4s+DxLuaNwZansBc1ki2D6YSLjRScPUFGoTSMmhxVnlKE3FP
-	 5ZnN9xpyIKn7tNvtxQVGmGn6eAokBU1ls7dHHRJzt900/Jy0u3YU04UDe5wvUnLuQe
-	 PmNl6VwKJyvLUWrSEKbK4idszT0hbr94IdUm5pEFyvOFzq92TouyyxWeQskVjAEQf+
-	 tgfXFm4G3CZOg==
-Date: Mon, 9 Dec 2024 11:25:35 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Miguel Ojeda <ojeda@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 10/14] rust: alloc: add `Box::into_pin`
-Message-ID: <Z1bFn1uvu5M-2H9l@pollux.localdomain>
-References: <20241206-hrtimer-v3-v6-12-rc2-v4-0-6cb8c3673682@kernel.org>
- <20241206-hrtimer-v3-v6-12-rc2-v4-10-6cb8c3673682@kernel.org>
- <BAT3INRKXEYrKMKrPQO7CCEMcwAUeqxMVpEXTwr0bSEtnG28BQbBs3q8gwhSkpJPFO2yGCqUflc7cCxOfSFsmA==@protonmail.internalid>
- <Z1Nb0dQvO0GKlMmb@pollux>
- <87ser0ec7l.fsf@kernel.org>
+	s=arc-20240116; t=1733739952; c=relaxed/simple;
+	bh=UqSQ6Mifgozyf7icnoKIVICTD4AIxwFh8AJ+TaGCpzg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ugrf2S8ZGnT+GeCPcMOVEBIFqc0rjaBkn7tNgpCcBqau6OwiDVn4p5feuz7biSy1Cr9TGN4UIfW1TnmU0PzIsJVy1NOP+qrnTE/HCldFLaTy35M+1Neb/VZBbwl1WuROwKAAwR8qn+da43JaQrYTtYEWEy7Mw/kPMxhLHms5Bh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KEPJ12QY; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5d414b8af7bso276399a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 02:25:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733739950; x=1734344750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dr9Twfm9vrYmy+fDm6h/4IwUd/7v2Bef0z21R8+Bodw=;
+        b=KEPJ12QY3nEcJ6E2Pz8rc3YqYj7MPeLouPtRP3nq3sXm5hzxmiVzl/9SdVtVX810uQ
+         HMVsw0PrY6n+oOkPEBgsVZndnBxLf/hQzxD/VZfxS3eZS0bFWor0xJFjD9YQAuDmwBLr
+         aBPSRR+l11wNkHsdm8JYWVIVW7NWbKlCEsA8lVYM+UenCh6QpuXxW2Q+OPNT16gMaxhj
+         fAyI3EnsqOYQoKoy3XxW3t7gYTuTNTxtddl6JJDDSyuZLmFcYQpx06p4p06Q970ENbqZ
+         vCxZYpAbcE3H5KnkyxwkeIUrZyAHqaOE+kYqWbSY8cZKRCArp/7mkf6ZprklYvck7jv3
+         xTTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733739950; x=1734344750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dr9Twfm9vrYmy+fDm6h/4IwUd/7v2Bef0z21R8+Bodw=;
+        b=nb55GtecQ7gz90Heh0WRDh74w1xJV+9rJrojScgaHNvKyW3GmKAGfCm2U9vSyzddP1
+         IzR6cbz0CqPb1x/x7R3T8iBneaCZyS9dPq1oj00THlQKmxq7LwMi8ERgdKDUkE73VbG9
+         kkdM1wrUjwn9sIQW2eCBu+1QN8dA4ztqOx6S6+r3m+OgQl7dslqBFR4yyPNvVXctERLu
+         +bYdZpmjZszUHjxZVMV5jtOqez4gLa9apfQZyrFETJD2j3LLt8yNGiSgSJkRE2Qq+7XJ
+         AlTlSBo22WttxnrlpyhVBIp1zrYmJBSdVdUjw0iBwpJEceC01GJ6cmTlDSkrjzEwrZUT
+         /1tQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhhS4OuRK4zayCRYZ9hGPE9eVMg2/rIo4iy2+v/dfMEjDpMVPbRS77dXU672009CnbvhIP0stMYeSlC7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaZQJLLI97UI/M3gLZS/5tJVqmW96dT1nmAm1TSqy9PuWGj/xo
+	A/V2wtykqV2jD0MoFnkCOg72pR8uojql19NQA7Vd7rDDgtkSAcXwMQ2Ox6omFLt3MwcUzAv7vwb
+	F+zf0OBs1N4XFfkWlO9paVqAln3w=
+X-Gm-Gg: ASbGncu5sdHfcV9MR5GBg3MjIkZd4zSGeFzLkasorsgE+brTn6QpilqTSLG9P4sWjsU
+	wACA1dTSjd/JDG4O+Lvm8IAlt2ZtBrl4=
+X-Google-Smtp-Source: AGHT+IFDOiSXetDpeoxW0itxt4YB80uVJJ+x7MnO90+xEbOfdXoYtnT8WmgNoYOhPj29jLu6H3v8mMd7Ii2sH/eftt8=
+X-Received: by 2002:a05:6402:254e:b0:5d0:d30b:d53e with SMTP id
+ 4fb4d7f45d1cf-5d3be697749mr12018064a12.19.1733739949366; Mon, 09 Dec 2024
+ 02:25:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87ser0ec7l.fsf@kernel.org>
+References: <20241207082931.1707465-1-mjguzik@gmail.com> <94d0dcbe-2001-4a9c-a767-b337b688b616@redhat.com>
+In-Reply-To: <94d0dcbe-2001-4a9c-a767-b337b688b616@redhat.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Mon, 9 Dec 2024 11:25:37 +0100
+Message-ID: <CAGudoHEggB=F9j7r+ndQs1WxpRWB4O5VdBo+PLx+yd1xrj4-Ew@mail.gmail.com>
+Subject: Re: [PATCH] mm: remove an avoidable load of page refcount in page_ref_add_unless
+To: David Hildenbrand <david@redhat.com>
+Cc: yuzhao@google.com, akpm@linux-foundation.org, willy@infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Dec 06, 2024 at 10:25:02PM +0100, Andreas Hindborg wrote:
-> "Danilo Krummrich" <dakr@kernel.org> writes:
-> 
-> > On Fri, Dec 06, 2024 at 08:33:02PM +0100, Andreas Hindborg wrote:
-> >> Add an associated function to convert a `Box<T>` into a `Pin<Box<T>>`.
-> >
-> > What do you need this function for?
-> >
-> > There is an `impl<T, A> From<Box<T, A>> for Pin<Box<T, A>>` already.
-> >
-> 
-> I didn't realize, but that could work as well. I was rebasing this
-> series from before we did our own `Box`, and rust `Box` has this method,
-> which I was using.
-> 
-> At any rate, I think it would make sense to have `into_pin` as well as
-> the `From` impl, to match the standard library. We could always
-> implement one in terms of the other.
+On Mon, Dec 9, 2024 at 10:28=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
+>
+> On 07.12.24 09:29, Mateusz Guzik wrote:
+> > Explicitly pre-checking the count adds nothing as atomic_add_unless
+> > starts with doing the same thing. iow no functional changes.
+>
+> I recall that we added that check because with the hugetlb vmemmap
+> optimization, some of the tail pages we don't ever expect to be modified
+>   (because they are fake-duplicated) might be mapped R/O.
+>
+> If the arch implementation of atomic_add_unless() would trigger an
+> unconditional write fault, we'd be in trouble. That would likely only be
+> the case if the arch provides a dedicate instruction.
+>
+> atomic_add_unless()->raw_atomic_add_unless()
+>
+> Nobody currently defines arch_atomic_add_unless().
+>
+> raw_atomic_fetch_add_unless()->arch_atomic_fetch_add_unless() is defined
+> on some architectures.
+>
+> I scanned some of the inline-asm, and I think most of them perform a
+> check first.
+>
 
-I'm not against that -- one of my earlier allocator series actually even had
-this function. However, the feedback was to rather not have it at the time.
+Huh.
 
-As mentioned, I'm still fine with including this function though.
+Some arch triggering a write fault despite not changing the value is
+not something I thought about. Sounds pretty broken to me if any arch
+was to do it, but then stranger things did happen.
 
-Please implement `ìnto_pin` using the existing `From` trait for the next
-iteration.
-
-- Danilo
-
-> 
-> 
-> Best regards,
-> Andreas Hindborg
-> 
-> 
+However, if this is seen as a real concern, then I think the best way
+forward is to drop the patch (and maybe instead add a comment what's
+up with the extra load).
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
