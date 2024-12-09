@@ -1,146 +1,122 @@
-Return-Path: <linux-kernel+bounces-438328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 147239E9FCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:41:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF6D9E9FCD
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 20:43:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9EFB164E4A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:41:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CBD118861C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 19:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583E3198823;
-	Mon,  9 Dec 2024 19:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D9A1198A07;
+	Mon,  9 Dec 2024 19:43:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dalAKqOT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="YUos6xh8"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A888E198833
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 19:41:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB5D15853B
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 19:43:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733773277; cv=none; b=eufZ85UzUGqHFSmH9bc/OgkAVJoGkoQCSwWCdv5UA5pnjFI+76hAh0xLilpuLks8RDv40Ma2WEq8jbHWGbI/4XiUHYRSfoigL/nC1zezbssndUkqsxuEHhRhvdhC5mM7khrdyUVo7y6P4OXIMWCz0zq1NDDX+EHtyDEOnyxaots=
+	t=1733773425; cv=none; b=M30xRdFKQGcILslDwkK+0ew89hNlmxb+njn+VAmC61xKpIh4GuuEXdnlPl/LjUdr2du7tsZf2DVHh1GxUuiJd0XNc6HjylED+ZMkgqCwHB0DuhM5NlwR3n0N1iYgnWLQXb4LLowkf770biUAu6AO5FZIHUm+h4S5hJlExXevz2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733773277; c=relaxed/simple;
-	bh=hmR+mlkt61digHQFp4eXW67CNTu7M8yTuvEkJu0EWG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R+MzuYZGnWiRtk2jNyDFU1V+ntIb5llEIg0QlBKHvvEuDkJmt4lzGEtUD/ITd9WMabRRh+XeHI217s+uBP76vZoN1vEI87i07/6cuvl/NDUkO/Wm6RdLiH0ACZKiyUnZqGw8UdqAUkGMXbY5lkBypZ9DuqH3YgzyF81wxkld2tA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dalAKqOT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB75FC4CED1;
-	Mon,  9 Dec 2024 19:41:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733773277;
-	bh=hmR+mlkt61digHQFp4eXW67CNTu7M8yTuvEkJu0EWG0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dalAKqOTHRkOadT2RY/jENdcTgkX1qdGkL1TA1fOogIo4u+eJ5BNlgih1wOyVRVtW
-	 yDEQWLXLbztKM+v2niAZyVLTIXi6qmtDkPMf4u2EUYYnk6d7HUfOiywI3H8cYnjAw9
-	 wFRbQl3MsP3qNkoLAjqOgGgfWWDYeS6Rq/KmMrkX++vS9lths2s6QK1kg9jxPx2jT9
-	 x6PtTuLYaqDeSqXqEipAxjOt4ccDO1PlqLVVsdvyGcstxrg9J4KfQBkQpWxjM0zw5+
-	 v6LlYwN55cZPDIILgYOa5aWpqHRALSx3h3VrwLVL+/RUoLTgjcnBml28DNZJVcHxgH
-	 XV+qDXa4UfEwA==
-Message-ID: <82276301-970e-427b-9fb2-8866881fb487@kernel.org>
-Date: Mon, 9 Dec 2024 20:41:11 +0100
+	s=arc-20240116; t=1733773425; c=relaxed/simple;
+	bh=5cske+h1cwz4/u74zkYKedrFpT+WEKmqbX/AiAELYfM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAW1ZeZ6K8+/oE8hzyVQ7XAuGCts7ZqfQVdH9SsgEIDdgrrb6MYqIyUJsl2CcFuJoGQuNQ24GvjH6gkgiHdfdEg4asI3km1zJ6Ky/za/n7ApVnROAA6ToaknbSzUV2PgsWraiEfxoYccVZd8eJpBE1cmF9g6lO29fENxgd2FgBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=YUos6xh8; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 452BE40E019C;
+	Mon,  9 Dec 2024 19:43:41 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id sECcoUH-ySmI; Mon,  9 Dec 2024 19:43:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1733773417; bh=0OCqH7uQhN2YE4e6oR3q/aP4Snqf341796Sry+Byy4M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YUos6xh8GMVfcRkRdhn84L4phP5O3JYkIK0bZAqsb/k/rwT+W40ux21cWhiYZg73O
+	 0rHy2ehNDOCA2sTgKniooH+17T8s00x6N3R9q3m64d6U8DGtbSBZv+xg5JsX7RuxMV
+	 tLGN9m7nsqDVDMssURIJy2AqCccIKXkAA8CvGi3GM1dt1zztrDqPOws1LA1IB6XipT
+	 zdcBHNOJKqxcv62HDu7mP+GwMCr1LJiPVWBNcWGF0zVJEh14lrELzcx4U3X0jjbLzL
+	 puvx/zkUXR+eHJIWqwWhp9KoGiinyGgYHpzn+uc2njJCzQff3fqEad2mVF+FZo1Onq
+	 fjUyjAQpBPAUI1w9RuNQ+jd7vlQ8vgN5ugAJjRy3n1S6ersl/2RUEgotDdxuXf6kW5
+	 eg44UyfRfx8cRXMbBeRF7UlS4/jf/cDs28AnIHZ//514TuBdZOgVHT1+ZxgbmCf+Ua
+	 25clmsFUIeL6BLi17GP1C7s6akChiMFkwuWbyjfT5KAOYWQw7lzD/OLOJW0s687JSh
+	 G7w3T2nBwemrbI1d0yWnKgp/bD9UVmxAbkwlR2xCNYgQ3eURsXBbGXVBDWdMM8XXzQ
+	 /z6wK90x7NT3odwXE5ZxrcIqpU4u9VliQFRmQluutCS8zSJWJpknuIpNUx7rVVqSGP
+	 2NHxgfl/i3xJUIUTEE1c0g9g=
+Received: from zn.tnic (p200300Ea971f9307329C23fFfea6A903.dip0.t-ipconnect.de [IPv6:2003:ea:971f:9307:329c:23ff:fea6:a903])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 229C240E015E;
+	Mon,  9 Dec 2024 19:43:27 +0000 (UTC)
+Date: Mon, 9 Dec 2024 20:43:20 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>,
+	Ashish Kalra <ashish.kalra@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: Re: [PATCH v6 6/8] x86/sev: Treat the contiguous RMP table as a
+ single RMP segment
+Message-ID: <20241209194320.GCZ1dIWDMPppdXgzxJ@fat_crate.local>
+References: <cover.1733172653.git.thomas.lendacky@amd.com>
+ <8c40fbc9c5217f0d79b37cf861eff03ab0330bef.1733172653.git.thomas.lendacky@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 5/9] memory: ti-aemif: Create aemif_set_cs_timings()
-To: Bastien Curutchet <bastien.curutchet@bootlin.com>,
- Santosh Shilimkar <ssantosh@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>
-Cc: linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
- Herve Codina <herve.codina@bootlin.com>,
- Christopher Cordahi <christophercordahi@nanometrics.ca>
-References: <20241204094319.1050826-1-bastien.curutchet@bootlin.com>
- <20241204094319.1050826-6-bastien.curutchet@bootlin.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241204094319.1050826-6-bastien.curutchet@bootlin.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8c40fbc9c5217f0d79b37cf861eff03ab0330bef.1733172653.git.thomas.lendacky@amd.com>
 
-On 04/12/2024 10:43, Bastien Curutchet wrote:
-> Create an aemif_set_cs_timings() function to isolate the setting of a
-> chip select timing configuration and ease its exportation.
-> 
-> Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
-> Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-> ---
->  drivers/memory/ti-aemif.c | 65 +++++++++++++++++++++++++++++----------
->  1 file changed, 49 insertions(+), 16 deletions(-)
-
-...
-
+On Mon, Dec 02, 2024 at 02:50:51PM -0600, Tom Lendacky wrote:
+>  static struct rmpentry_raw *get_raw_rmpentry(u64 pfn)
+>  {
+> -	if (!rmptable)
+> +	u64 paddr, rst_index, segment_index;
+> +	struct rmp_segment_desc *desc;
+> +
+> +	if (!rmp_segment_table)
+>  		return ERR_PTR(-ENODEV);
 >  
->  /**
->   * struct aemif_cs_timings: structure to hold CS timings
-> @@ -165,6 +165,44 @@ static int aemif_check_cs_timings(struct aemif_cs_timings *timings)
->  	return 0;
->  }
->  
-> +/**
-> + * aemif_set_cs_timings() - Set the timing configuration of a given chip select.
-> + * @aemif: aemif device to configure
-> + * @cs: index of the chip select to configure
-> + * @timings: timings configuration to set
-> + *
-> + * @return: 0 on success, else negative errno.
-> + */
-> +static int aemif_set_cs_timings(struct aemif_device *aemif, u8 cs, struct aemif_cs_timings *timings)
+> -	if (unlikely(pfn > rmptable_max_pfn))
+> +	paddr = pfn << PAGE_SHIFT;
+> +
+> +	rst_index = RST_ENTRY_INDEX(paddr);
+> +	if (unlikely(rst_index >= rst_max_index))
+> +		return ERR_PTR(-EFAULT);
+> +	rst_index = array_index_nospec(rst_index, rst_max_index);
 
-In the future, please stick to 80-char wrapping unless exceeding makes
-code more readable (see Coding style). I fixed it up while applying.
+I think we should collect the deliberation why we're doing this nospec stuff
+from here:
 
-Best regards,
-Krzysztof
+https://lore.kernel.org/r/79be2e29-6487-dd60-9b6f-3daa48a2e93f@amd.com
+
+into a comment around here for future reference.
+
+This is the best example for those: "uff, why did we do it back then"?
+questions when we stare at this months, years from now.
+
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
