@@ -1,119 +1,125 @@
-Return-Path: <linux-kernel+bounces-436623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-436624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92EBF9E88BE
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:44:23 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B149E88C1
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 01:45:59 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 44E022810A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:44:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7E671884F95
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 00:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51946DDD3;
-	Mon,  9 Dec 2024 00:44:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8B4819BBC;
+	Mon,  9 Dec 2024 00:45:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mDanIQq/"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ga2FWLTx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72DBC4409;
-	Mon,  9 Dec 2024 00:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2C6AD2C;
+	Mon,  9 Dec 2024 00:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733705057; cv=none; b=aV16M4gxhMyUy3rkY1zVARQW+Sg6vB2EfwEX5xWBQqkMMIGIVOMZeP0xVCnOoWfXI7uHt1x5WzhptcZbk7cajWzV954s0aBhPNBiPhDJLeHklhu/0MIlEHSCS+1+zhS5beQjynsrmlT34jWT+/rCiUucyULckeHKUaJXtCPU+bg=
+	t=1733705153; cv=none; b=hlGA4BDMUfO1EfBnpTohoW0HQz5A1iP3Ms9JV1o9Mq9q7eJDjdutJQ2/PPqOutty31FjvjOazqM/XU3LOB3aSTqA1pDcC5qtTfEZb2heMAwIJC5Sunqj06YkZzQPmrjfra4SRYCBhxA4CjXMcAumd4dLrLRz1AGcN0VngLy6Z0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733705057; c=relaxed/simple;
-	bh=HMfX6H6ovWZjnsYBpklr514M8LHt7hqDtKGYaSLqd5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n4JZA4TEMtHBVWlJQ8LarPCWvRf80qUcmJGmS7bUfO/XNXzpvmQhP4kYlJtuRoHF9nuub7y9Q5hzMmdkWSvvhzznSq8xkixIYxNN9i1hlxsFr6jZetgWik+WbzdI5m26+tFDhCtZxGztpP11nFdKDiBcAnqY/l7EKqCch7RFkfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mDanIQq/; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1733705047;
-	bh=VuSwFZqdOcsQZu89mOF5nFlUiHL0MQb4vOkyE7AqXgY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=mDanIQq/zkrZQoQLLW6W+TVyMVA8a35BSq7eVZzxhBbDC/nPvXDarh7ekFwfXBiw0
-	 l8F2kHW9N/62sy8otBLILFPjmVyZqKDVzjuIWT486+TambAUVvq5kdGA4NGlt1TsEJ
-	 4Itk1u+wYKHa9bnA93SRnnAmlk0L9Ofhw+NneNzzmgkYCUd4BbVpx2ndoW0OfQCeGL
-	 Sf5B0PjXPahEB7tvu/lmcDEtVFlmTDCT98q9Vp4R6B8rjyLDo1Mr/GRqIYEVdkYK54
-	 m5kFyY1+Nhrz5r5NhdKPPczd7xY3UW4Xet5+qlgb3Q+ZEIowtz8pH1n4dhGBgqYvDd
-	 qv+7LeDt1JfLw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Y635f01xyz4wc4;
-	Mon,  9 Dec 2024 11:44:05 +1100 (AEDT)
-Date: Mon, 9 Dec 2024 11:44:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>
-Subject: linux-next: manual merge of the devfreq tree with the origin tree
-Message-ID: <20241209114409.3cdd6fea@canb.auug.org.au>
+	s=arc-20240116; t=1733705153; c=relaxed/simple;
+	bh=tl5+QzW02aPfcWPQ4ZaRaqsdhZPSr3X+EeSyvSoi8n4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fi7bzEVMluy8KH1P4e4EI7Zh1QmSLk7b/IddWWeutPZKM5ifm1KNSjWPKiSxicBuRZNd0FboYxNr139pt1IUfpBIGGCIGSoc5nGaS7zaj70COcNdolMTrtbH7Kr+t79nXWq7TKF6qfbjYlWJUBTEldGT1eMObsbOQ5IKZFX4Lrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ga2FWLTx; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1733705152; x=1765241152;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=tl5+QzW02aPfcWPQ4ZaRaqsdhZPSr3X+EeSyvSoi8n4=;
+  b=ga2FWLTxrq97Nw2Qgp0CSfNQFeP8eYgrgdUGzdRMPMN0Zqnt74nCHrO6
+   e0wuUsjcqwPoVWuHAtfyNOWjRJJLD+JEQf3NbTOglov2ACy6GTx+U3Ar+
+   s1CLzDbsDiotYihrsTOKP/8q1kp5NlgvJS3enQvj3S7cJvHTqLXIg91I8
+   HaXxgkqcM9UI4rhcQHxGyRQhgP31TEY75nUH95nax1PSh+DUZJSG9f0Z1
+   18W7iLKuBGm5wqNSNmk0nXrISgJanUCdi/E+COLt+ynBrtes8nUgUj5Gc
+   n4zQ6qeN/iLrquzO0BH0QtLxL+a4/zTHjuoJEP49WL1lzQ0w7VLxxx9lE
+   w==;
+X-CSE-ConnectionGUID: TVJcwnFlQF6nzrT4O97Ykg==
+X-CSE-MsgGUID: IkZMFu4CRB2V4bCaC9QpFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11280"; a="34048644"
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="34048644"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 16:45:51 -0800
+X-CSE-ConnectionGUID: sH/fy2TtSmmEgI/pyk1sRg==
+X-CSE-MsgGUID: pJnad/ZET2+wdpbC0Hg8QA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,218,1728975600"; 
+   d="scan'208";a="99866497"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 08 Dec 2024 16:45:49 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tKRuE-00000005WSS-1dA3;
+	Mon, 09 Dec 2024 02:45:46 +0200
+Date: Mon, 9 Dec 2024 02:45:46 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	Lars-Peter Clausen <lars@metafoo.de>, gregkh@linuxfoundation.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v1 1/2] driver core: Split devres APIs to device/devres.h
+Message-ID: <Z1Y9uqGyq-yuxoEe@smile.fi.intel.com>
+References: <20241203195340.855879-1-andriy.shevchenko@linux.intel.com>
+ <20241203195340.855879-2-andriy.shevchenko@linux.intel.com>
+ <20241208171001.4994e749@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/4Z.WLYMMjDCKDgZhT0svLCG";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241208171001.4994e749@jic23-huawei>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
---Sig_/4Z.WLYMMjDCKDgZhT0svLCG
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Dec 08, 2024 at 05:10:01PM +0000, Jonathan Cameron wrote:
+> On Tue,  3 Dec 2024 21:48:51 +0200
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
+> 
+> > device.h is a huge header which is hard to follow and easy to miss
+> > something. Improve that by splitting devres APIs to device/devres.h.
+> > 
+> > In particular this helps to speedup the build of the code that includes
+> > device.h solely for a devres APIs.
 
-Hi all,
+...
 
-Today's linux-next merge of the devfreq tree got conflicts in:
+> > -#include <linux/overflow.h>
+> > +
+> Unrelated change.
 
-  drivers/devfreq/event/exynos-nocp.c
-  drivers/devfreq/event/exynos-ppmu.c
-  drivers/devfreq/mtk-cci-devfreq.c
-  drivers/devfreq/rk3399_dmc.c
-  drivers/devfreq/sun8i-a33-mbus.c
+Which one? Blank line?
 
-between commit:
+...
 
-  e70140ba0d2b ("Get rid of 'remove_new' relic from platform driver struct")
+> > -#include <linux/cleanup.h>
+> This header movement is unrelated.
 
-from the origin tree and commit:
+No problem to let it stay at the same place.
 
-  1f8ac4b95fee ("PM / devfreq: Switch back to struct platform_driver::remov=
-e()")
+> I agree both are good but probably want to be a separate patch.
+> 
+> Otherwise this seems sensible to me, but your cc list seems a little short!
+> 
+> Greg and Rafael seems a good starting point so I've added them.
 
-from the devfreq tree.
+Thanks! I need to check why they were not included into the original
+submission. Perhpas I need to amend MAINTAINERS,
 
-I fixed it up (I just used the latter versions - only white space changes)
-and can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+-- 
+With Best Regards,
+Andy Shevchenko
 
---=20
-Cheers,
-Stephen Rothwell
 
---Sig_/4Z.WLYMMjDCKDgZhT0svLCG
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmdWPVkACgkQAVBC80lX
-0GyFUAgApSp+6urcjF1VTkBgbnBhlR/XtWzqD+gBNKvnKlH6XzXIvw6xeoBw9ggn
-nU888FSJ+6i5caPIg863xS3GjEYj+NSgl9y4dCv78/eVtszM25MWRZLyRCtUARxK
-IVwgxxDwgxjTFyII8Q4cRDETFhkZYWsY7qPbQOJ6YYQW/8s618BVcz28yqX8iUYH
-b0J3C38dFQRb86nrRuSr6YZg+Uql9VSK2cJ5A6TcLpLUT8TPpX23MYJikch5qeoB
-SeNZULlxv5B1n4yq4WV7vIrYt3rtNlNBckr+2ZZhHEiS4xuSefPU6ROTi23+yePr
-hQDht6tAWnD5yaSBeBvbZHvRcFDqVw==
-=ULsB
------END PGP SIGNATURE-----
-
---Sig_/4Z.WLYMMjDCKDgZhT0svLCG--
 
