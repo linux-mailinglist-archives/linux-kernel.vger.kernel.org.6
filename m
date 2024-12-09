@@ -1,138 +1,137 @@
-Return-Path: <linux-kernel+bounces-438536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B70A89EA268
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:05:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA819EA26B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 00:07:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6E081884A9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A704718827A3
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 23:07:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0AC719F103;
-	Mon,  9 Dec 2024 23:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FAC142903;
+	Mon,  9 Dec 2024 23:07:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XvLtqUXn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M1yhHPmS"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CBF19D092
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:05:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71BDF19E97C
+	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 23:07:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733785524; cv=none; b=foTYHTnzrwXJer75U8qpS3QuVI92hpb7fRrghjmXlaHR3yTYlP/XWrtDIcXBnRyb70t872iWpUwnZlV6ps7j3sm4hy05tDjismgUDo2moJ7/4h1t3sAG65P6Ctk0WKREzXV2mOsRUAeKVtFxH/0hFWT/8gYPAEl+pi4uG4zvTFg=
+	t=1733785666; cv=none; b=POezYxpfE3ZvCmrqUbyWo+R+OCWlv5rycSfwHetLJvYz95BTotNtumwsf0rmj/LOpoep3dI6WpcUdQwAXr60MLS4VnWiF3fTw9L1VMIw+X1fmYoZUPo6i4RB3hip3xil7EPWIPn80BEC6QUZ49Mio5dePwASBz46UOLY+zUYrq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733785524; c=relaxed/simple;
-	bh=E2wMVt4XnzSAoCFwFJpocVejZtumHBk9+rnpvzMGxW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VfujxVlJ2L22ekYcpVFFkBaBzjVta5EpsuIlpfR9Sp6tuCrsqXgHRJKDP0/KdLecwPp35Yoa3VOE/7aIKddmqEIprAxvWHpifYuLcvSWtDSOz2Xu0qDxvKv7ckm2IpHuvAhNxDHXMW8TGmyZ4BYE0+4i/C3+uh+AMOPJC58Ua7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XvLtqUXn; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733785520;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rtXPjJ/UW99vVDZpFTpb2RZPeH7PKMqMj5zaKL4gx1k=;
-	b=XvLtqUXn6BjsXb+cYRbcitxs0LFn/xinknuw7IsVp4XjBxhv3KlJahOtrZxBklKqeaVhm3
-	+OFkm/ol080fqQ7zaRZUsASXyOSKXzujafIdQdu3+k3UWHQnFmjcQmQdIjknYnS6XhPwMO
-	RlGTmrtwUyX2y6kDSN9kamruYHc2DOU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-159-5Qd1UnynNSG2n6iOiLw9kg-1; Mon, 09 Dec 2024 18:05:17 -0500
-X-MC-Unique: 5Qd1UnynNSG2n6iOiLw9kg-1
-X-Mimecast-MFC-AGG-ID: 5Qd1UnynNSG2n6iOiLw9kg
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-434fa6d522bso6976435e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:05:17 -0800 (PST)
+	s=arc-20240116; t=1733785666; c=relaxed/simple;
+	bh=DPXFkfmC/HD4F7ixulc1QXQpjTWwM+SQQwdoxybkPHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rlhcyO7jZlaqCDqV9nPYUPJ4v1blPw3GNby3mq6mKhABYadCLPR7nNXPEjLAVxRbeP8y7Qimr2yCmmy6nWFwKjUPehRQg0uWYYWc6yUSs+91b7WRoHwOBx88Fk4TWIIVwtVAZwRofErF0ZBXk7XBmwxclzHtM+asBnGaymbN8XM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M1yhHPmS; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53df6322ea7so5726652e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 15:07:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733785662; x=1734390462; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NpfvxMNcE2evx4GUMkzffrViZXHtVJ3SlF17hKgOXT8=;
+        b=M1yhHPmSz3uro9BTKYJOyOorbBHbXVKo1KmeiwqBo20yjqGjlLnobnHDDTW0VShZcF
+         DXlsDTdl99W1I2wSQROJKgLWsj7OohfRHXJAizawwEsEKYoi7KPu15lMRxWhsw6HJzLf
+         /Xf78vM1GeEikomZuqha0c76tIBc+SGdzKXygZsH6LG7Lgx9WEwEcWULHICcwcDTLLab
+         8bpl8wR26G2n69dGCuhYBsZ3xpxZAenH7EVP3x6zQZAzb3iQDUX6u3Dd92sFDiIOmWpb
+         D/mEJVo6unieguD61rOa9BtrPFjFal/+P763tH798mx92PGwNvy1iRJaV8QEIoI5Ycty
+         LJ2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733785515; x=1734390315;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=rtXPjJ/UW99vVDZpFTpb2RZPeH7PKMqMj5zaKL4gx1k=;
-        b=E4R5HEJ50WD+muUECku71VD05QhVu58IMRkhK+mvbr51kLRfO6Jz682stUzv6LwMJ2
-         yeWVFpylHr/WrZe0OMHgakm/LBydR0Tl4hhFwmJQJEjSilESkzRPH6ctRhktEfOMxvbf
-         UScMAf6oH59BbkOLW7Ox/a0jjkzwqnsRL2ydT9XA0oOiGC6NWjvkXrl4cLvWBlR8ENn8
-         ai/C/l86EyCRVMEbazvZnrCeVpBldeVo2NnvO2XnDtG2gb/Z902bQVnGcWoJvGUXTBty
-         eY+bTtC53vZ5WVUTYeCssnh/QTgJA2AHUBoVubDydr/0iOAm9PU9BnEm4kWtPwBI22rT
-         /Wfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWiLzINS8tUcBujpkGhHY21Wsg+nlZ+HosnJ+iISKdNOm3BUH5G0VaMHGaitG6OCypuj86+Ck0YVlzudX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwzYLH17cK9qrEZ6lUOUsydVMKo4Rav5QBmvd9vitv/F7VtK53
-	hOjaMqMIUIkjWnTRt6q15QlpjtMncKpP2YyHpIHVcdYfV+wXep7yEslZSsYiA7j6C0hS1b43yfp
-	BqBrCAeq1UGEAd7rqK1F+FbemDpQPx2QPiHWZbgEIPCf9UNao1SC6bo24kDxSnA==
-X-Gm-Gg: ASbGncvvA6IJ3dTzIaGvMKkvKvMR4a2YAasxFezujVXh61cX4nNHMWvSlb37wcyMbpZ
-	Lj0YocJz1ivSkFRO8G1k0ormc/MQ85Rf24LMRzQaSGt4qDFqAkWEK1Sg9QitIHbbucsfH4ufuvY
-	yFkDhys8vIp/PUx5ARTUj8QzWqWNLOf7Afhpf/wmP7jxew7od5zGEEA5Y8WbcC8tCsf2O0U5K0i
-	Jlb4Bl72gEzbiCmyEQBU9tu3wwUQ5rl9NLwu0YvkA6M1HxMwgjWuOHQkBcoVCOsDMOKYMZmkuWs
-	PmzmfVbR/6ELb6Amjw==
-X-Received: by 2002:a05:600c:18a6:b0:434:ea1a:e30c with SMTP id 5b1f17b1804b1-435021d9c95mr8234805e9.13.1733785515311;
-        Mon, 09 Dec 2024 15:05:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IErGKM+mO4OjrHPaFMSgaVoG1GHOIII5oaFReyZQhrk1MzggllJFKQWOp6TcUYxwWwXNWck1A==
-X-Received: by 2002:a05:600c:18a6:b0:434:ea1a:e30c with SMTP id 5b1f17b1804b1-435021d9c95mr8234565e9.13.1733785514969;
-        Mon, 09 Dec 2024 15:05:14 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-38636e05568sm8337911f8f.39.2024.12.09.15.05.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 09 Dec 2024 15:05:13 -0800 (PST)
-Message-ID: <e544c1c7-8b00-46d4-8d13-1303fd88dca3@redhat.com>
-Date: Tue, 10 Dec 2024 00:05:11 +0100
+        d=1e100.net; s=20230601; t=1733785662; x=1734390462;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NpfvxMNcE2evx4GUMkzffrViZXHtVJ3SlF17hKgOXT8=;
+        b=CSRZW2+2cvQDfFeXPwMhDwB3G9R57NKnV3CNn47e7JHWwV19CoTlEjZOEl74rTz3+w
+         r3evvdsqXYsO1wYa3EEpaRon36tzSMCh2iUdzjt2D4Iw9jrIahNr+xlsAgIgYWbxWycL
+         HgBHHo/NdtJy7Ppjb6u1MA8WirSZ2tvNCCGPgiIMAQS+RiHaSDVx9kiEZmaGIsyt61ag
+         yxafQ38k7KrPQKZK4T5icWerhuZlTeQeGQAzWA7tC5pM5u67NOF0oWiqdIBtlBoLkQW/
+         5h7/4IzeZmaRxgTerg+8Hei5SzZzM9irCvWdZrpV3NrM9KqXL1PQemX58OfWhhzd8FOP
+         auRA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZs4VqJz13oWDzYYp3cekZzFIiIT3jiQG1FWFn4BGOBnJzmhM7CRw8/iRPttJQgaAoo8w7wNRN57bLBQA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzCOB2ZyZSi9GPzfycgp2JDonOmPghvOn0N8Yd0ic6E9ipHf8s1
+	SLLnrlZ1Ar8Q8q8PaFrQmcYZ9WE/WOa9h+pvEY6ONvAW8lTbtlPly+z7EJXppTo=
+X-Gm-Gg: ASbGncvfHcKTHl1A+6iu9F7WIUDwgcd4MNAFK34tv8kxawxtI0WGW3yqiNLW94rd8HM
+	fCe5kBpAx3iv/TtKt+QAuWtjWJta/xK0YFK6+oWPDB9sVxQLdCDcPt0KXMg2nGtdpqAkJf9GtAA
+	9p6jKCzLAQHPAWxUteXIYdiVF3GWaBOR7zvkxIHhQPcBjdrrFoot0PIKX/7FCXxkWTzq/cUcCXL
+	CzO471N0t2liQMys0YtpPuKDVfrmgFF+LvT1N7+kt1b8CKqM4x3AZmxZYWldbmw289sOGsIXkxO
+	BdzDZEuR+18FGXGsFz8Rv05mkopFH+CEzQ==
+X-Google-Smtp-Source: AGHT+IH/GhAQu8ZUGtenaW6SKJAm4VqyvLWgGVL9JvGyxgiMhFhjNXvESpDyxAefkm3AWRhsFA+KBw==
+X-Received: by 2002:a05:6512:4024:b0:540:1ba5:75d with SMTP id 2adb3069b0e04-540240bd1afmr870079e87.20.1733785662363;
+        Mon, 09 Dec 2024 15:07:42 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e378c4264sm1081287e87.239.2024.12.09.15.07.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 09 Dec 2024 15:07:40 -0800 (PST)
+Date: Tue, 10 Dec 2024 01:07:38 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Douglas Anderson <dianders@chromium.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Julius Werner <jwerner@chromium.org>, Jeffrey Hugo <quic_jhugo@quicinc.com>, 
+	Roxana Bradescu <roxabee@google.com>, bjorn.andersson@oss.qualcomm.com, 
+	linux-arm-kernel@lists.infradead.org, Trilok Soni <quic_tsoni@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/6] arm64: errata: Add QCOM_KRYO_5XX_GOLD to the
+ spectre_bhb_k24_list
+Message-ID: <l5rqbbxn6hktlcxooolkvi5n3arkht6zzhrvdjf6kis322nsup@5hsrak4cgteq>
+References: <20241209174430.2904353-1-dianders@chromium.org>
+ <20241209094310.5.I41e227ed809ea607114027209b57d02dc0e98384@changeid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/panic: remove spurious empty line to clean warning
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- patches@lists.linux.dev, stable@vger.kernel.org
-References: <20241125233332.697497-1-ojeda@kernel.org>
- <fe2a253c-4b2f-4cb3-b58d-66192044555f@redhat.com>
- <CANiq72=PB=r5UV_ekNGV+yewa7tHic8Gs9RTQo=YcB-Lu_nzNQ@mail.gmail.com>
-Content-Language: en-US, fr
-From: Jocelyn Falempe <jfalempe@redhat.com>
-In-Reply-To: <CANiq72=PB=r5UV_ekNGV+yewa7tHic8Gs9RTQo=YcB-Lu_nzNQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241209094310.5.I41e227ed809ea607114027209b57d02dc0e98384@changeid>
 
-On 09/12/2024 22:05, Miguel Ojeda wrote:
-> On Tue, Nov 26, 2024 at 10:04 AM Jocelyn Falempe <jfalempe@redhat.com> wrote:
->>
->> Thanks for this patch, it looks good to me.
->>
->> Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
+On Mon, Dec 09, 2024 at 09:43:15AM -0800, Douglas Anderson wrote:
+> Qualcomm Kryo 500-series Gold cores appear to have a derivative of an
+> ARM Cortex A77 in them. Since A77 needs Spectre mitigation then the
+> Kyro 500-series Gold cores also should need Spectre mitigation.
 > 
-> Thanks Jocelyn. I thought DRM would pick this one -- should I pick it
-> through rust-fixes?
+> Signed-off-by: Douglas Anderson <dianders@chromium.org>
+> ---
+> Yes. I know. This patch DOESN'T COMPILE because
+> MIDR_QCOM_KRYO_5XX_GOLD is not defined. That value needs to come from
+> Qualcomm or from testing on hardware, which I don't have. Qualcomm
+> needs to chime in to confirm that this Spectre mitigation is correct
+> anyway, though. I'm including this patch so it's obvious that I think
+> these cores also need the mitigation.
 
-You can merge it through rust-fixes. I have another patch [1] under 
-review that touches this file, but it shouldn't conflict, as the changes 
-are far from this line.
-
-How do you test clippy, so I can check I won't introduce another warning 
-with this series?
-
-[1]: https://patchwork.freedesktop.org/series/142175/
-
-Best regards,
+Kryo 5xx (SM8250) identify themselves as 0x41/0xd0d (Gold, Prime) and
+0x51/0x805 (Silver)
 
 > 
-> Cheers,
-> Miguel
+>  arch/arm64/kernel/proton-pack.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/arm64/kernel/proton-pack.c b/arch/arm64/kernel/proton-pack.c
+> index b1881964e304..212481726f04 100644
+> --- a/arch/arm64/kernel/proton-pack.c
+> +++ b/arch/arm64/kernel/proton-pack.c
+> @@ -867,6 +867,7 @@ u8 spectre_bhb_loop_affected(int scope)
+>  			MIDR_ALL_VERSIONS(MIDR_CORTEX_A77),
+>  			MIDR_ALL_VERSIONS(MIDR_NEOVERSE_N1),
+>  			MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_4XX_GOLD),
+> +			MIDR_ALL_VERSIONS(MIDR_QCOM_KRYO_5XX_GOLD),
+>  			{},
+>  		};
+>  		static const struct midr_range spectre_bhb_k11_list[] = {
+> -- 
+> 2.47.0.338.g60cca15819-goog
 > 
 
+-- 
+With best wishes
+Dmitry
 
