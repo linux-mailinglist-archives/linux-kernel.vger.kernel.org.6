@@ -1,119 +1,193 @@
-Return-Path: <linux-kernel+bounces-438447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2F159EA16B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:52:13 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBEE59EA15D
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 22:47:22 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7BA71281D7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:52:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE65C165A1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 21:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A74419D098;
-	Mon,  9 Dec 2024 21:52:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="GE+hDsLE"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87A8819CCEA;
+	Mon,  9 Dec 2024 21:47:15 +0000 (UTC)
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1694617BB38
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 21:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AADE0137776;
+	Mon,  9 Dec 2024 21:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733781127; cv=none; b=mBO8aQl9N4yez0t5LSlBlFFZXJRQ0GvJ4MtEfCXSgI8D6SHw+lj1eHcLZV/aBWI97pP733ZJeuOso5OwoW5zvW+6sDH0igP/jiGNOgKZcf41pBfu95YTScNbVTIsdAI9srv6zR6sSctieLWyLC4Kk8qNv8XYmsk5CK7nOZcvCxQ=
+	t=1733780835; cv=none; b=rnMl0VBdPXUsdGmU+uTsZ+Wk4Q8KN9fFXuOIGft7Xiz8IDfCN2Ls/ygbfigA08VjiBPi8gHLfEwAAg1I0TzWB0XUPxrw1Ph5eUXVAE1RL6Mr4bhYDpHxOscSOg0nFT9E3Bc0I6Y10S/Xb1/6KXxCCPgvbVrk6Z+5Hv/S7TJDKx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733781127; c=relaxed/simple;
-	bh=HfuK/pzXzfmh22Fjg28b9H+e5IS56VECBBOeVWVoS7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QlhFyrVYRrR0dErFe9z009koafy0GJ19on1jI51rR2UlQ3uJFwEE85S40xTVH75fmyBbFdYOSm2xhXWflBDsiRlovwET9fOc8BjK4sjBjxOM9K1mYKp8JL8Bp8of3ZOu6dALLVv5UdImx6DsSkihr/eqITKYhMzXLraJuuBCLPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=GE+hDsLE; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 1096F8979D;
-	Mon,  9 Dec 2024 22:52:01 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1733781123;
-	bh=WZ4cH19XV/337JuuxNDsnqomaPcJO85SSvCNVqliB6s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GE+hDsLE/Xc/nsDEVCxPVsTW7x1mp6mKhaHbpoUv7AIVD6lwtrGV3cPk5NEVR+ygP
-	 YV/65nazkJmxNag8j2sYpWFyg25f78FQKaNEgDyFvS3N0lt2nE5jLzvIGhcEYbzUIo
-	 nYIbxzy+oPrD/cNJyKxbCq7pxUjdd87q0W4Et0lS2hXbR9P2Aa0DVKOIUf5tLWEz9N
-	 yjmcjmPIO0sZo8Lp/353JCiUhamX8eEIhKErWCqpQE1p8C0QReVzMXaZuBakWKzBrW
-	 aS1D3e8rrsK5e3eMC6ZQCdXeXuItCfaLO8rlvivYbIjRCIEX9jzNdUUSzHhPGpq+WS
-	 C0VugwOrb2PtQ==
-Message-ID: <a07188ac-0bca-4ae2-8bec-c4ec504af46e@denx.de>
-Date: Mon, 9 Dec 2024 22:46:18 +0100
+	s=arc-20240116; t=1733780835; c=relaxed/simple;
+	bh=Yg4CXnabRinKXFQMCrnq4d2YSEjrZ6y3cOfMDGDCluI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=F0fc1FwSCbSWiq2Kix7nY0L+rzOeoeOUTZQoffFEol3BU+dt8rbzM87Oh55mlGGh3nl5OiB4DlnGjpwYG5aUZhB2xSTAIsHTdGUfJ+sO8oLYZXmBKckwAOYM0pZaM9rZ66yvdHdmBCVq4NwrAZ3CqcvE+VOPjqJKmFAwvaSjz58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-724d23df764so4502181b3a.1;
+        Mon, 09 Dec 2024 13:47:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733780833; x=1734385633;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uXa++zGGJYL4a455JdGSAiaIAFv5ZyUE5oWPMgnQn9Y=;
+        b=ku0TxS4gnMl+TTNq3xwLCgtzSNlHheh9AQa/nqaFO+OgsU28UNS7Ls3xlTnYcr5kz1
+         B6MVLRfu43ncIOIvEa9BuxHSkw9Ibil+V7dNBNs7PaDm59SiN20xhd6BhGzxscGu788E
+         NROkM6s5LUQQ+SEr/wXC5kwJsMWQ7RHKD48LxUhBsuXzeo54ZRGamMi94/lUdFguDU6T
+         3wfONW+6Rq3rNOj9qO0+iQU09hWHKkseTZRZzqw82EKTgzX7R2QBm5/TwzTFM/No8OWx
+         +vqs+mpbN/kzCY0j+xMyhgfG9u3f2HR512qoK0li2kf4r8nm5TC8H1sGj8hc90aw9I1G
+         RfbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyoledLndrTzIgb6LgxLjbhmHDZkRxoe9HQEp3ho4uWw1o6LNnof5eVAd6HcuxZc+ITY9m0cJbDBDT2y64AjF0kw==@vger.kernel.org, AJvYcCWgVaUk9Mj8IeUBZa5ayG7UDtqqKndzJTdrBWRUmfc7AEwREVdhA7s+Qw2O47WvkdZr6UN6pJZn2lyhD70=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjavoSjPKvyyXgaBE/mMznAWrVzFd7i/RzsmKVtXeZ1JW1L1/E
+	89vI5zNh8UDRwXVsDixVrm70tBIT1fkhD7RzMI81Sq1InOP/0tHXexy8oRcwmv2R8HMAud4IGCT
+	ZwC2wDLMXMjfGjOeWnY3Q0PysDtU=
+X-Gm-Gg: ASbGncucKkzPP8/7/P0MtfuDlqulQAHkX2OW3YYhX+RMeIzMsOCPlzLZ+wIPsiOBvNq
+	Yf79aCaQSVFaWl5DGlTWpkCoXCmet5IIY4w==
+X-Google-Smtp-Source: AGHT+IF4s5D7rUHtCf1IZfrvjwowlVkpuV5qAFrOsdMjeGXuibRhic//imibsY9i1uj0cNJ6AnBD8vHfnRW5f1j2LJk=
+X-Received: by 2002:a05:6a00:2e87:b0:725:b347:c3cd with SMTP id
+ d2e1a72fcca58-725b8118dbfmr18029933b3a.9.1733780832855; Mon, 09 Dec 2024
+ 13:47:12 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: bridge: fsl-ldb: fixup mode on freq mismatch
-To: Nikolaus Voss <nv@vosn.de>
-Cc: Liu Ying <victor.liu@oss.nxp.com>,
- Alexander Stein <alexander.stein@ew.tq-group.com>,
- Liu Ying <victor.liu@nxp.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Fabio Estevam <festevam@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- nikolaus.voss@haag-streit.com, miquel.raynal@bootlin.com
-References: <20241126172610.AD8B51622C@mail.steuer-voss.de>
- <1f0a307a-666f-4647-9f73-e9bddd6c7eff@oss.nxp.com>
- <000b34cdd1591c82265ce1f9848828d1@vosn.de>
- <2c950130-84b4-4a81-84a2-b5e08af43616@oss.nxp.com>
- <12a1b86e-8f25-4875-8503-1de98f125a62@denx.de>
- <808d4092a9e97b95480d47c1bd84d930@vosn.de>
- <b86666cc-da63-405d-9036-96cb4e69dafb@denx.de>
- <21ea39dba5e35e99ea499b4408cb1bdf@vosn.de>
- <897b3787-8246-4509-94a1-129488297150@denx.de>
- <2d1b404288a6f0b99f26b697df1ff975@vosn.de>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <2d1b404288a6f0b99f26b697df1ff975@vosn.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+References: <20241206042306.1055913-1-irogers@google.com> <20241206042306.1055913-2-irogers@google.com>
+ <Z1deN2EUjwsRokn9@x1>
+In-Reply-To: <Z1deN2EUjwsRokn9@x1>
+From: Namhyung Kim <namhyung@kernel.org>
+Date: Mon, 9 Dec 2024 13:47:01 -0800
+Message-ID: <CAM9d7chdJyXyCw0MTj=AkF9GL4U6scMtO2a2GMwAAFGUW8kL=Q@mail.gmail.com>
+Subject: Re: [PATCH v1 2/2] perf test hwmon_pmu: Fix event file location
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 12/9/24 9:46 AM, Nikolaus Voss wrote:
+On Mon, Dec 9, 2024 at 1:16=E2=80=AFPM Arnaldo Carvalho de Melo <acme@kerne=
+l.org> wrote:
+>
+> On Thu, Dec 05, 2024 at 08:23:06PM -0800, Ian Rogers wrote:
+> > The temp directory is made and a known fake hwmon PMU created within
+> > it. Prior to this fix the events were being incorrectly written to the
+> > temp directory rather than the fake PMU directory. This didn't impact
+> > the test as the directory fd matched the wrong location, but it
+> > doesn't mirror what a hwmon PMU would actually look like.
+>
+> With these two files the 'perf test 11' for hwmon is successfully
+> completed on my system where I previously reported failures.
+>
+> Thanks, applied,
 
-Hi,
+I think it can go to perf-tools.
 
->>>>> and store the panel's timing in EDID EEPROM.
->>>> Oh, that is a new one. Does the EDID EEPROM store the entirety of
->>>> 'struct display_timing {}' somehow , or is that a custom format ?
->>>
->>> Well, sort of ;-). VESA has taken care of this 30 years ago
->>> (https://en.wikipedia.org/wiki/Extended_Display_Identification_Data).
->>>
->>> DRM handles this with drm_get_edid() and siblings, e.g. :
->>
->> EDID can not encode all the information in struct display_timing {} ,
->> or can it ?
->>
->> I think what you would be missing are bus_flags , bus_format and
->> possibly the single/dual link and channel (odd/even) mapping, won't
->> you ?
-> 
-> Yes, that's right. I use the vendor block for bus_flags and bus_format
-> now, but that's not standard and not portable of course.
-> 
-> My first idea was to store the DT overlay in the display EEPROM but
-> a standard 1k EEPROM is too small for that.
-Understood. I had the same problem, in the end I went for custom 
-encoding in the EEPROM but the amount of panels was limited in my case.
+Thanks,
+Namhyung
 
-Indeed, DTO does not fit the EEPROM and EDID is not really fitting too 
-well to DPI/LVDS panels, it has too many fields that are specific to 
-regular pluggable panels and not useful on DPI/LVDS ones.
+>
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > ---
+> >  tools/perf/tests/hwmon_pmu.c | 29 ++++++++++++++++++-----------
+> >  1 file changed, 18 insertions(+), 11 deletions(-)
+> >
+> > diff --git a/tools/perf/tests/hwmon_pmu.c b/tools/perf/tests/hwmon_pmu.=
+c
+> > index f8bcee9660d5..d2b066a2b557 100644
+> > --- a/tools/perf/tests/hwmon_pmu.c
+> > +++ b/tools/perf/tests/hwmon_pmu.c
+> > @@ -65,7 +65,7 @@ static struct perf_pmu *test_pmu_get(char *dir, size_=
+t sz)
+> >               { "temp2_label", "test hwmon event2\n", },
+> >               { "temp2_input", "50000\n", },
+> >       };
+> > -     int dirfd, file;
+> > +     int hwmon_dirfd =3D -1, test_dirfd =3D -1, file;
+> >       struct perf_pmu *hwm =3D NULL;
+> >       ssize_t len;
+> >
+> > @@ -76,19 +76,24 @@ static struct perf_pmu *test_pmu_get(char *dir, siz=
+e_t sz)
+> >               dir[0] =3D '\0';
+> >               return NULL;
+> >       }
+> > -     dirfd =3D open(dir, O_DIRECTORY);
+> > -     if (dirfd < 0) {
+> > +     test_dirfd =3D open(dir, O_PATH|O_DIRECTORY);
+> > +     if (test_dirfd < 0) {
+> >               pr_err("Failed to open test directory \"%s\"\n", dir);
+> >               goto err_out;
+> >       }
+> >
+> >       /* Create the test hwmon directory and give it a name. */
+> > -     if (mkdirat(dirfd, "hwmon1234", 0755) < 0) {
+> > +     if (mkdirat(test_dirfd, "hwmon1234", 0755) < 0) {
+> >               pr_err("Failed to mkdir hwmon directory\n");
+> >               goto err_out;
+> >       }
+> > -     file =3D openat(dirfd, "hwmon1234/name", O_WRONLY | O_CREAT, 0600=
+);
+> > -     if (!file) {
+> > +     hwmon_dirfd =3D openat(test_dirfd, "hwmon1234", O_DIRECTORY);
+> > +     if (hwmon_dirfd < 0) {
+> > +             pr_err("Failed to open test hwmon directory \"%s/hwmon123=
+4\"\n", dir);
+> > +             goto err_out;
+> > +     }
+> > +     file =3D openat(hwmon_dirfd, "name", O_WRONLY | O_CREAT, 0600);
+> > +     if (file < 0) {
+> >               pr_err("Failed to open for writing file \"name\"\n");
+> >               goto err_out;
+> >       }
+> > @@ -104,8 +109,8 @@ static struct perf_pmu *test_pmu_get(char *dir, siz=
+e_t sz)
+> >       for (size_t i =3D 0; i < ARRAY_SIZE(test_items); i++) {
+> >               const struct test_item *item =3D &test_items[i];
+> >
+> > -             file =3D openat(dirfd, item->name, O_WRONLY | O_CREAT, 06=
+00);
+> > -             if (!file) {
+> > +             file =3D openat(hwmon_dirfd, item->name, O_WRONLY | O_CRE=
+AT, 0600);
+> > +             if (file < 0) {
+> >                       pr_err("Failed to open for writing file \"%s\"\n"=
+, item->name);
+> >                       goto err_out;
+> >               }
+> > @@ -119,16 +124,18 @@ static struct perf_pmu *test_pmu_get(char *dir, s=
+ize_t sz)
+> >       }
+> >
+> >       /* Make the PMU reading the files created above. */
+> > -     hwm =3D perf_pmus__add_test_hwmon_pmu(dirfd, "hwmon1234", test_hw=
+mon_name);
+> > +     hwm =3D perf_pmus__add_test_hwmon_pmu(hwmon_dirfd, "hwmon1234", t=
+est_hwmon_name);
+> >       if (!hwm)
+> >               pr_err("Test hwmon creation failed\n");
+> >
+> >  err_out:
+> >       if (!hwm) {
+> >               test_pmu_put(dir, hwm);
+> > -             if (dirfd >=3D 0)
+> > -                     close(dirfd);
+> > +             if (hwmon_dirfd >=3D 0)
+> > +                     close(hwmon_dirfd);
+> >       }
+> > +     if (test_dirfd >=3D 0)
+> > +             close(test_dirfd);
+> >       return hwm;
+> >  }
+> >
+> > --
+> > 2.47.0.338.g60cca15819-goog
 
