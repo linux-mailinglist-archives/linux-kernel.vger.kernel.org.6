@@ -1,137 +1,172 @@
-Return-Path: <linux-kernel+bounces-437394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-437395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22DFE9E92AC
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:44:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EED29E92B8
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 12:47:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FEA81621D8
-	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:44:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193E4160F7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  9 Dec 2024 11:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4FA021B90F;
-	Mon,  9 Dec 2024 11:44:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B0B22145C;
+	Mon,  9 Dec 2024 11:47:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V2IE4kwr"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EKQoQe/M"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79155213E93
-	for <linux-kernel@vger.kernel.org>; Mon,  9 Dec 2024 11:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891321F931;
+	Mon,  9 Dec 2024 11:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733744672; cv=none; b=H5IeDY/ofqfJuzMfQJqsC9Od4W8GYZKZNiJRNh8wV66KyYY+W2nshNJgB0Xh9b6tB5dJgTsnqQKpNmy5IppefYcYOtKLauq6MODnLVLk/OCHRlQHsJuG0nZEj4/U5bIEy3Yx999wj/RwRCZCVMLS5r8OfEhaxJ1tcDW4tRtWtBg=
+	t=1733744832; cv=none; b=r9PAOVLy3kQDOT7l6Beq7F+wIBXkzYEVhQ+nPgFjtRZaK67zU9ANrlTqU/9gMe7rHhth263ID7vW0x2Kui8ea59TlmUq3uHyCeEMTrm1CitfUAdmbjjsnzuIUP+1FN5gHNa5OJohy1UynLLEfrNedo1G2f2ZUzkUtYNyeGPbu08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733744672; c=relaxed/simple;
-	bh=hq1sueCzqHZNHSbggzIve9g4szap3SyOsz76Fjh+ZmQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZOlbllhFtI4RFJpQKcuYGhqlSfRnKUPpDBsc6GVR9KA4P2oSqznTzVPm4WuqASxKOXKSJX6+FdigvtJ3Qwd0XCLL3dhy/98Ku6gYaN99pG2rRKUZB9e2i3Ya82A27IqrlQKKAn1Tr3W6rYhIMwSVXT7Nj23trI8bzD2zimJmS6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V2IE4kwr; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1733744668;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=D0vf5KmVndTZJOw5WazCUC6iSihWtoQfdxVi1xAN4fU=;
-	b=V2IE4kwriodBJ/i0oMRoFkEZOlp7Dio88DqtYjD6HiJqnUdDORfzk2+D9JtHFTCHJYrSw6
-	OwKU73yMphhuaCsGlDcZWgpK0cV45AV+ZFN7UHvDLonNpbnF5dKbQHThXsKnvMnycFvFJp
-	gUhauEN95iSe22EKifvRzYBI2l1ELpQ=
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com
- [209.85.219.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202-qtVj3slzNxmBUU2oZvRdiA-1; Mon, 09 Dec 2024 06:44:27 -0500
-X-MC-Unique: qtVj3slzNxmBUU2oZvRdiA-1
-X-Mimecast-MFC-AGG-ID: qtVj3slzNxmBUU2oZvRdiA
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6d8858be197so78065736d6.1
-        for <linux-kernel@vger.kernel.org>; Mon, 09 Dec 2024 03:44:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733744666; x=1734349466;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D0vf5KmVndTZJOw5WazCUC6iSihWtoQfdxVi1xAN4fU=;
-        b=fOgVWtmTbIHAfEhXRO9hRk0Y70FbvHwjo7sESoXTZdKdgXXFqH6+8Ajhp7QB7h0NjL
-         pqSPSYFM5IUoU6Er4XPsNaikOE3xpS5NfcOV8UpSS6vLc7mabBO8P4Fr4xygzu2wFeEE
-         +nYStFlzBms8Kqdtvl4/ORU/XjPdEJETAVB4aXcgPljrHx6MqWiRxx637XypLWyTZIX6
-         dKVGyVQJSYKEnxgF2uLtrf5WAwWKfUxdmdkq6Sx3NFEd6pZB90bK/Sua57jNpu/ZRYJH
-         4j5EIQ58h/EaOIfos6RzIS65OJUCsi9JyU4n2XmhSy1wBJ0YbrnFCmvZ/RZF4gRWcYYK
-         q8TQ==
-X-Gm-Message-State: AOJu0YwH+O4TXJxnItD/Rry+FXJGoUICZKx5AvKHBv4lRN0N2bathlzZ
-	Q/1+wfbYzcqhymGgHiFGM+iNqOiqC7bHbBD6g2IqciMHTJ6ASh3CvQaMFuR7hl0BX+l7+D4A9TP
-	KdI2Nfu0U36sIzXti+hYBqTB2m9FQZKfLAASalf3C/bRdbEvIuMfpppj8b2O9Vw==
-X-Gm-Gg: ASbGnctfzrCM42NAmQQRu4agVjhBi1JFj/Q2fZQn50+kNGF1RyaZo448wOeplTH9pGI
-	42M70Ik6jldsbxwy1yCIUM8WTb8PPZYYlu1dopWf5Ys6CovS45qTWWrIdgzlCSq5iuXwUAcsyRC
-	myAEm2TlkwHaK5M+zc46gjgzHcDVveQAWnT1gAsMjkr83v50O5rdoRo941+QTozz4sxLu68gOgz
-	pLkAZCMEMYvq+d7U9nUw6ha3TxIXeKTxnLYk0GZ1cHtPao/5VUiB1q1MDPaJ4aTtnUChtlHXgnq
-	EAo+cbI2L7pHEYnYVyhW/jmwHBdh5NpOgQ==
-X-Received: by 2002:ad4:5be5:0:b0:6d8:9dad:e167 with SMTP id 6a1803df08f44-6d91e33227cmr2124246d6.15.1733744666590;
-        Mon, 09 Dec 2024 03:44:26 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEZSfgWecnDf5VgQgePvtwl2rXZFyY5xP534j8FTsW8r1698u295rs1vz3Npq4Ul3zFXUSxwA==
-X-Received: by 2002:ad4:5be5:0:b0:6d8:9dad:e167 with SMTP id 6a1803df08f44-6d91e33227cmr2123986d6.15.1733744666315;
-        Mon, 09 Dec 2024 03:44:26 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-2-102-14-117.as13285.net. [2.102.14.117])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6d8da696aa2sm48062936d6.42.2024.12.09.03.44.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 09 Dec 2024 03:44:25 -0800 (PST)
-Date: Mon, 9 Dec 2024 11:44:20 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: John Stultz <jstultz@google.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Wanpeng Li <wanpeng.li@linux.intel.com>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Todd Kjos <tkjos@google.com>, kernel-team@android.com
-Subject: Re: [PATCH v2] sched: deadline: Cleanup goto label in
- pick_earliest_pushable_dl_task
-Message-ID: <Z1bYFEJF5lezddFe@jlelli-thinkpadt14gen4.remote.csb>
-References: <20241205211632.1181715-1-jstultz@google.com>
- <20241206000009.1226085-1-jstultz@google.com>
+	s=arc-20240116; t=1733744832; c=relaxed/simple;
+	bh=UIjErGmqfqU1Sd/W91SEMmcgWCt4YKrvAVeLp7upHjY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dvmOo5+QWDiXrYcAGGfseHaBRlc8MCzdzxOnA+Yk3JslplNrhWmgbdEf0aLpi8EHojWPO3KSPWlYPSxfGnW7cCssD4KCiVtSUai2MKBAVh/BMltSTAt+aU65XIdyljcFdiz60cVir/KerKBBPKwKMP4npDi9salVXD9k8v6QH5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EKQoQe/M; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4B9ADOe5007595;
+	Mon, 9 Dec 2024 11:46:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qdPw/W6LeGcWVMLio8NyLtLxoHG6Pis1h/7WcJzxaDY=; b=EKQoQe/MEmgVmKbS
+	+wUtB/96D8F476YM3nv39zqIPRlcDSO+MgNaWMVOdC8LY7garhyaGhBhXQzJmoqb
+	QdEjlgRqmT/axpuOritaDCipl/j6JLAC9sF6/lVzTpPiL0xW42XHPxLswt9R5Iv1
+	3ZB7tuB2hUwh7vAyl5AVCGlXttvgaSpUgFVI3FLA9C5bKQTU7NZW9rqOFoAdCEKN
+	Hd18LbPScFuUpaoST7EjGq/rv1M7YG1DojPsNr/hxBCRPKRpQYp4NXQtTBeSyb+l
+	fqdON4lp2QCrAeIjPEo0JmnGyTbYHHAsVX0EQTtF4IsY2M9AeBhZqGE13AazZMcU
+	DCi9CA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43cdc6cpue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 09 Dec 2024 11:46:56 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4B9Bkt9E027017
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 9 Dec 2024 11:46:55 GMT
+Received: from [10.216.1.80] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 9 Dec 2024
+ 03:46:48 -0800
+Message-ID: <44496510-0dfc-aa14-7793-93abd614fc37@quicinc.com>
+Date: Mon, 9 Dec 2024 17:16:45 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241206000009.1226085-1-jstultz@google.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v3 2/5] ASoC: dt-bindings: wcd937x-sdw: Add static channel
+ mapping support
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>,
+        Pierre-Louis Bossart
+	<pierre-louis.bossart@linux.dev>,
+        Sanyog Kale <sanyog.r.kale@intel.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_rohkumar@quicinc.com>,
+        <kernel@quicinc.com>
+References: <20241126164300.3305903-1-quic_mohs@quicinc.com>
+ <20241126164300.3305903-3-quic_mohs@quicinc.com>
+ <jnetmj5ibmmoiputq52vsvfqjz2auwjeqwt36g7sg4kjrrxyso@nrugsa6px4h7>
+ <6bb8fe59-a1fc-9813-4623-d27e74a1b882@quicinc.com>
+ <2517ef0e-4d13-4c51-b479-863229783223@kernel.org>
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+In-Reply-To: <2517ef0e-4d13-4c51-b479-863229783223@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2vVXxcrrBXQAvSz_CVtLjVu91yy0-gYM
+X-Proofpoint-GUID: 2vVXxcrrBXQAvSz_CVtLjVu91yy0-gYM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ mlxlogscore=999 malwarescore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 spamscore=0 phishscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2411120000 definitions=main-2412090093
 
-Hi John,
-
-On 05/12/24 15:59, John Stultz wrote:
-> Commit 8b5e770ed7c0 ("sched/deadline: Optimize pull_dl_task()")
-> added a goto label seems would be better written as a while
-> loop.
+On 12/5/2024 12:52 PM, Krzysztof Kozlowski wrote:
+> On 05/12/2024 04:56, Mohammad Rafi Shaik wrote:
+>> On 11/27/2024 1:38 PM, Krzysztof Kozlowski wrote:
+>>> On Tue, Nov 26, 2024 at 10:12:57PM +0530, Mohammad Rafi Shaik wrote:
+>>>> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+>>>> index d3cf8f59cb23..7893b1c1f80b 100644
+>>>> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+>>>> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
+>>>> @@ -58,6 +58,44 @@ properties:
+>>>>        items:
+>>>>          enum: [1, 2, 3, 4, 5]
+>>>>    
+>>>> +  qcom,tx-channel-mapping:
+>>>> +    description: |
+>>>> +      Specifies static channel mapping between slave and master tx port
+>>>> +      channels.
+>>>> +      In the order of slave port channels which is adc1, adc2, adc3,
+>>>> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
+>>>> +      The channel map index values are fixed values.
+>>>> +      SWRM_CH1 ==> 1
+>>>> +      SWRM_CH2 ==> 2
+>>>> +      SWRM_CH3 ==> 4
+>>>> +      SWRM_CH4 ==> 8
+>>>
+>>> I am surprised to see here again 1/2/4/8. My comments were not
+>>> addressed. I think we agreed during our off-list talk that you will use
+>>> 1, 2, 3 and 4.
+>>>
+>> Ack,
+>>
+>> Yes right,
+>>
+>> Will add the change in next patch set.
+>>
+>> will add the channel map values starting from 0 based on order of slave
+>> port channels which are starting from 0.
+>>
+>> SWRM_CH1 ==> 0
+>> SWRM_CH2 ==> 1
+>> SWRM_CH3 ==> 2
+>> SWRM_CH4 ==> 3
+> These are supposed to be channels, so 1=1, 2=2 not 1=0.
 > 
-> So replace the goto with a while loop, to make it easier to read.
-> 
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Juri Lelli <juri.lelli@redhat.com>
-> Cc: Vincent Guittot <vincent.guittot@linaro.org>
-> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
-> Cc: Steven Rostedt <rostedt@goodmis.org>
-> Cc: Ben Segall <bsegall@google.com>
-> Cc: Mel Gorman <mgorman@suse.de>
-> Cc: Valentin Schneider <vschneid@redhat.com>
-> Cc: Wanpeng Li <wanpeng.li@linux.intel.com>
-> Cc: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> Cc: Todd Kjos <tkjos@google.com>
-> Cc: kernel-team@android.com
-> Reported-by: Todd Kjos <tkjos@google.com>
-> Signed-off-by: John Stultz <jstultz@google.com>
 
-Acked-by: Juri Lelli <juri.lelli@redhat.com>
+Thanks for comment.
 
-Thanks!
-Juri
+Ack,
+
+i somehow missed this V3 patch mail comment and posted V4 patch set.
+
+will address the comment and update change in v5 patch set
+
+Thanks & Regards,
+Rafi.
+
+> Best regards,
+> Krzysztof
 
 
