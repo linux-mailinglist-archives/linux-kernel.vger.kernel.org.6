@@ -1,141 +1,115 @@
-Return-Path: <linux-kernel+bounces-439685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335719EB2A1
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:05:46 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 504EF9EB28A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:02:50 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A6CF2166567
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:03:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0429B288848
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:02:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 718D61BCA05;
-	Tue, 10 Dec 2024 14:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AD0E1AC450;
+	Tue, 10 Dec 2024 14:02:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mUuKazj7"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="O+Uuf9XX"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415CF1B86DC
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 14:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B09AB1AA1D4;
+	Tue, 10 Dec 2024 14:02:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733839362; cv=none; b=Xh6XbG6uPGcEV2jpLoUZnaIjUOH2pq1oOWoihkMsJDg+mDEE0kHd95py6xaPTLHnYhxKBMWfr4arDRgeAHBRtMHh0G4xRVX7KQm7JrdPRGz7bZcPqVbire1Kb50JDrHgXpYMDb7a29jHsBo8DXUkLT/XII2CGzJdtteidIEUa1c=
+	t=1733839352; cv=none; b=YJItdpsD2Tomvzi8a/J85gnUf2JGDJeLHDOcBFXkZ4BdYJChPoUDLZOADg0EXLK1GEfWD/SKd9hh9lgr868GfCCZIAIdGWYaZA7U5wrOPr/VOwyXYYg4PCO2/kqrpdd7a8Tib3iDtyCnMSppI1lA/TnXH5tSGgYX+u62H1QhZ0w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733839362; c=relaxed/simple;
-	bh=aMYlasDeJRUJ32CNMkhoq5ueHiY13RagJkPagQJl8N8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uvKu9gwsRKIi9iV9AI7BSHeso4wsE2zIUYPD5EONxgHmullEZE7HrSacJJTOMi7VMSbAYCQLceRsu7Y9cEf06bherTeP86DQUOQ7Mi6+ENELQTvnZcx7Vpt8ztqccg6cSiAqrBVPb1sS++watE2sB9N/0hawnnPuS9YLS9qukXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mUuKazj7; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6efa5bf5202so52373457b3.3
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 06:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733839360; x=1734444160; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nf1alUKYDHbJzrOQtPD7/2cDvoI+WL/sLXAyfBpVNbU=;
-        b=mUuKazj7oh0+fOTEh7Tag7gmc0Jyg5J4mXkorkdrP2Zxh/VEwlyzskqutYES5r+lAo
-         hyJuq8fzsbK6BGzFlAM3ItLQqdd4dUeJlCdwxFMzPjXrkZwrTbLZ9630hxXPWZ83hafp
-         7YVpmQDcWinpREjS14P4grJ0l+AITeiNItnXZYyzySQfBPCsmvxWpK97Dd8tAnayMMhv
-         Ph0N5cDYNrpzj/6ee3ejyrt4Brcwnjnn9EF5tPnyVNpfiI5TpeAW+z1oQW1H271/pXAv
-         PqFzBkylbr0UaaCKifiu/7BIL/BvFY42GoVUBGwoKpHsY25XXo7nvckaAinDyjVULsLp
-         m2Qw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733839360; x=1734444160;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nf1alUKYDHbJzrOQtPD7/2cDvoI+WL/sLXAyfBpVNbU=;
-        b=k73VbN1vUTWlDjsXoVj2EzU8+ZNYrDk87yrKmFpoiwe8rKTKahH0r5B6UKJFWWHtHa
-         EgXuzlm7HqeQ0BQG+2AKBGeseHbf3rOlFfLW4MgaLYle9aGRD4G3/mgGHyb0yr4XO0xO
-         WcIYQJisDgixdYA2CaI618jOAa3T1xV7pfYB6v4/V8bR9V/hgU0QYz+Hxyw3COmiygjk
-         WguGmOA+2rufBqBZ1xac5j+zxya58RppJbirzuUAkcNrtbQu1+6Aa4wefxTGr65VJrt9
-         CPm/B5PlvFIwbFmda5uNMps0HMS5KrtLfqDt2P0TJEQL9ngNYocqpbTpxlZ1Rpigx/O3
-         lC4w==
-X-Forwarded-Encrypted: i=1; AJvYcCW9ZqPYDblG/EqP0WELBYw1odpToOuYarJ61ExYhY8no3u6a6OoqT7ctBFMi2wNjiMMYduiCiOwt6gTjHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+CYVhqN3bIZxXqjbe3gUYrEdtkZiD0y//mTFdyWN+tWSpOFA+
-	6jT8e7dVWtfGxUqaoJk1OFgttruP8rn8mmQeordKRod4eX7N3LP4IhaVegr3j5dAioz4LXV2SxQ
-	qmpuC7CP0BF9+4fO2cxvsTrXbPsTh0bWwUo2Bzg==
-X-Gm-Gg: ASbGncvVIJTx7e98BLF42VVi5va3fMzOon+gto4/+WjavEI/VR+EjsyGI5OL1N2bT+u
-	+jQyF/Ysh4fS6sHhYmR41nkGJOProtL2Ky2SW
-X-Google-Smtp-Source: AGHT+IHLRbGi59lCkKe21fHCD52MhJo63vY1GxLN7FsYIjyR+ox+8Qq2xjQAj0m60a2wLlxdHI5Bsw1heijOTMpYZdc=
-X-Received: by 2002:a05:6902:1ac3:b0:e38:dfe:3c88 with SMTP id
- 3f1490d57ef6-e3a0b0bd7cfmr16666843276.12.1733839360151; Tue, 10 Dec 2024
- 06:02:40 -0800 (PST)
+	s=arc-20240116; t=1733839352; c=relaxed/simple;
+	bh=okogMpjxbultBuWEIKWmSjFy9gsNll/FG9p0uJzgv4k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEpiBhiGP/PBkgn07149CBDKl9i6UNxyY1itquE0Ekuojcg0CSaNOojPDywFyFIQT2Dx8gH61siEzpuSN9RlksSUYxYBBj+D1arUp1nhibZ+NPn77wBWHH+WkUopu3mJxLQN5LeYmFePQ302Yh3/iOYSY6aqHXjR3JdYEPSzGAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=O+Uuf9XX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=L0il2+dIsaUdgxtsmaC+6DEd7B+BchXAnUOcw3KtR4E=; b=O+Uuf9XX+7G6fFnNUPYwsOLeGr
+	AcbVO76OT/0Pgd4qd9P/0zICKGrknKGsVTwHlyn2HbT6hNZz07JA89qwymBarUjpyFP+hA+fIrGu6
+	dfJv94RcEX/9yFhVsbhuMW6CudBUvTxkoXVK6bPEbaqgrhesXt4CePOdWcQUwC1+NDF3z0hJRH+ul
+	6curpHKhwp+ZiqBqF6syA6AdjKR3NfEbFsVk2Og5z4VHCP4YTEZ4IqTnse/snQP9EOT+hVGvPUnDW
+	/E/1VbbQ/Q7Y8ZvAUGlfN94OUttIJeQaoZ1xEHNlb52Fiswk5YyzFOgt78RkVO/RNFyBqP3ozndTh
+	JWEmH7NQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:58420)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1tL0oY-0002Qb-0v;
+	Tue, 10 Dec 2024 14:02:14 +0000
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1tL0oU-00030f-03;
+	Tue, 10 Dec 2024 14:02:10 +0000
+Date: Tue, 10 Dec 2024 14:02:09 +0000
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Jonathan Corbet <corbet@lwn.net>, kernel@pengutronix.de,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Simon Horman <horms@kernel.org>,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	linux-doc@vger.kernel.org
+Subject: Re: [PATCH net-next v1 1/1] net: phy: Move callback comments from
+ struct to kernel-doc section
+Message-ID: <Z1hJ4Wopr_4BJzan@shell.armlinux.org.uk>
+References: <20241206113952.406311-1-o.rempel@pengutronix.de>
+ <e6a812ba-b7ea-4f8a-8bdd-1306921c318f@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241206-lpm-v6-10-constraints-pmdomain-v6-0-833980158c68@baylibre.com>
-In-Reply-To: <20241206-lpm-v6-10-constraints-pmdomain-v6-0-833980158c68@baylibre.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 10 Dec 2024 15:02:04 +0100
-Message-ID: <CAPDyKFo9N8M73Z6Ltsbnd-WR-jYAqBedAHndViSD7YaKKYgBsA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/3] pmdomain: ti_sci: collect and send low-power mode constraints
-To: Kevin Hilman <khilman@baylibre.com>
-Cc: linux-pm@vger.kernel.org, Nishanth Menon <nm@ti.com>, Dhruva Gole <d-gole@ti.com>, 
-	Akashdeep Kaur <a-kaur@ti.com>, Sebin Francis <sebin.francis@ti.com>, 
-	Markus Schneider-Pargmann <msp@baylibre.com>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6a812ba-b7ea-4f8a-8bdd-1306921c318f@redhat.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Fri, 6 Dec 2024 at 23:13, Kevin Hilman <khilman@baylibre.com> wrote:
->
-> The latest (10.x) version of the firmware for the PM co-processor (aka
-> device manager, or DM) adds support for a "managed" mode, where the DM
-> firmware will select the specific low power state which is entered
-> when Linux requests a system-wide suspend.
->
-> In this mode, the DM will always attempt the deepest low-power state
-> available for the SoC.
->
-> However, Linux (or OSes running on other cores) may want to constrain
-> the DM for certain use cases.  For example, the deepest state may have
-> a wakeup/resume latency that is too long for certain use cases.  Or,
-> some wakeup-capable devices may potentially be powered off in deep
-> low-power states, but if one of those devices is enabled as a wakeup
-> source, it should not be powered off.
->
-> These kinds of constraints are are already known in Linux by the use
-> of existing APIs such as per-device PM QoS and device wakeup APIs, but
-> now we need to communicate these constraints to the DM.
->
-> For TI SoCs with TI SCI support, all DM-managed devices will be
-> connected to a TI SCI PM domain.  So the goal of this series is to use
-> the PM domain driver for TI SCI devices to collect constraints, and
-> communicate them to the DM via the new TI SCI APIs.
->
-> This is all managed by TI SCI PM domain code.  No new APIs are needed
-> by Linux drivers.  Any device that is managed by TI SCI will be
-> checked for QoS constraints or wakeup capability and the constraints
-> will be collected and sent to the DM.
->
-> This series depends on the support for the new TI SCI APIs (v10) and
-> was also tested with this series to update 8250_omap serial support
-> for AM62x[2].
->
-> [1] https://lore.kernel.org/all/20240801195422.2296347-1-msp@baylibre.com
-> [2] https://lore.kernel.org/all/20240807141227.1093006-1-msp@baylibre.com/
->
-> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
-> ---
-> Changes in v6:
-> - fix build warning on arm32 when building with W=1 and CONFIG_PM_SLEEP=n
-> - rebase onto v6.13-rc1
-> - fix latency units: convert usecs (PM QoS) to msecs (TI SCI)
-> - all dependencies are now merged in v6.13-rc1
-> - Link to v5: https://lore.kernel.org/r/20241101-lpm-v6-10-constraints-pmdomain-v5-0-3011aa04622f@baylibre.com
+On Tue, Dec 10, 2024 at 12:56:07PM +0100, Paolo Abeni wrote:
+> On 12/6/24 12:39, Oleksij Rempel wrote:
+> > +#if 0 /* For kernel-doc purposes only. */
+> > +
+> > +/**
+> > + * soft_reset - Issue a PHY software reset.
+> > + * @phydev: The PHY device to reset.
+> > + *
+> > + * Returns 0 on success or a negative error code on failure.
+> 
+> KDoc is not happy about the lack of ':' after 'Returns':
+> 
+> include/linux/phy.h:1099: warning: No description found for return value
+> of 'soft_reset'
 
-v6 applied for next and by amending patch1 to deal with the sorting of
-include files, thanks!
+We have a huge amount of kernel-doc comments that use "Returns" without
+a colon. I've raised this with Jakub previously, and I think kernel-doc
+folk were quite relaxed about the idea of allowing it if there's enough
+demand.
 
-[...]
+I certainly can't help but write the "returns" statement in natural
+English, rather than kernel-doc "Returns:" style as can be seen from
+my recent patches that have been merged. "Returns" without a colon is
+just way more natural when writing documentation.
 
-Kind regards
-Uffe
+IMHO, kernel-doc has made a wrong decision by requiring the colon.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
