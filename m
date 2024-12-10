@@ -1,166 +1,123 @@
-Return-Path: <linux-kernel+bounces-440169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-440170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B14919EB9A7
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:52:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BA1F9EB9AA
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 19:53:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E4B2163CD5
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:52:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63936188607A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 18:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E7E921420F;
-	Tue, 10 Dec 2024 18:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC472046B8;
+	Tue, 10 Dec 2024 18:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3/EmaGw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZDATLtdn"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8D7823ED41;
-	Tue, 10 Dec 2024 18:52:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35C75198A02;
+	Tue, 10 Dec 2024 18:53:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733856736; cv=none; b=QKNghQBJfZaYBIGJEEibqLqHhqPkgqYFHfaqDiPa6GD6omGe8dD6HR+H2BJj3G18DcqPIHaTVLCl1udn3cxb3jUqV7pVm67D66VChKk1Skr9+Uz8+oum6itvuwaSp+gPIHEBH7zQQR8+FndE/M4Ryjwx5uZMERNtMN2ucWoTCBg=
+	t=1733856820; cv=none; b=tBmQfKjrX7yAQEFU4ALa70ynS/GX/USO6xhDkm2XLl/fJEDLu6xGqvtPat89LmKib29+ndaH9pPlEkBrVR1N8gdaUMHAEG2R13SuIxTuSZHgkePj6yzFzrwmv43fGQu5JRJIxQnhgX3zutwjUpIL2sIHRYYdGrA8dwbleXtAPgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733856736; c=relaxed/simple;
-	bh=K1bCEcql+Dy5pT5rqacU6v95YfdNRaf/sZWArH2Gqpw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RKGKQJZQYTZFRjyr8zV0klSYlkupH+Rw5pUol3x26phLJYtenNENgPc/FeYPOdDEbsU2eyDSC0gZi+QGHollrq36ODvKK+YfeXFrzw03H7DGb9jV0XPK1/K2cGs/8mN77/1JpV09pkGC70DpmNt5BMkY60hWBfTthynJVHGhWFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3/EmaGw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71E28C4CEE6;
-	Tue, 10 Dec 2024 18:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733856736;
-	bh=K1bCEcql+Dy5pT5rqacU6v95YfdNRaf/sZWArH2Gqpw=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=O3/EmaGwKZDvY78qriEolcalnxoWnZ47pF1lY1Rd+7cVtNX9Sc5tG6ZZIiq4FJ+/z
-	 T2UfGfjNNTEDL09gk1+7w3LrfTnaBWYA3ShgrX+/KxtFn5ccrxyDnF2wJkXjW9nfaq
-	 /+NfHzO2xMG/ufhezJW0PhIAnhdtoIGkaUPz3vfpoXvuGWHZeFCvFcpTrP47Bh/jV6
-	 tJ0ma6MG7a3a+CebUGInZQRizdmNk+1W5QFnmoQb0/srllt87g/mw3ZURR8IS7eyRU
-	 Frac+iYvvxbYwDJflV6lq7O94Mqzfqg4Omdwt4LqRpEfKIlDI0GsrkGrw85osXPPHB
-	 KpXsfyIlq2zzg==
-Received: by mail-oo1-f46.google.com with SMTP id 006d021491bc7-5f2abc195f3so1222454eaf.0;
-        Tue, 10 Dec 2024 10:52:16 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUYb/mjjEG6UFVXCT97gHZ+C7EBpLjHE/IvGXlXHI9YkjCfbMNehlOlDZguxHXBHFDn6/gtHRlGKHp1jbLK@vger.kernel.org, AJvYcCV0qyDx93J/sl+H94aOhg6gmxgOQ9aqxmrAJ6E64ehjb0/aSGgjOO475iDJ/WOt4MVgPjqjLo+3/GQ=@vger.kernel.org, AJvYcCVgh+Ec7rL31N8/u+J/YI3CwxhFutK3KszZtq0RpHN5emg8NRwlM3nc5Iduhjgup54i6nULGpMTs37q@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKo+7eNES+S7sbugxp6M02p4xMCwxeBTj0728bUwLndxf6RvX3
-	xRy4Ud8OV93YWxmKe0wZc/f+ZpRso6QKSs6aPI57nqIUeWwtHMkmEIIPWre6N9ZTG8Wk07dd8ZU
-	PnA+cDx5vOyTtNxEOyXl9kAqyzeM=
-X-Google-Smtp-Source: AGHT+IEUVq2DG7knefuD9zoEnH3gP/20KGjUt5uUH68TvgFSufuWrRzLP6Ehja97D/mMTCDN6rSUF1q/wpb/iUTcTrI=
-X-Received: by 2002:a05:6820:1896:b0:5f2:af90:e90 with SMTP id
- 006d021491bc7-5f2da0c2491mr32734eaf.3.1733856735696; Tue, 10 Dec 2024
- 10:52:15 -0800 (PST)
+	s=arc-20240116; t=1733856820; c=relaxed/simple;
+	bh=TzF94QgXzQpaPKyt9mrR4VL7WfvLEsI7X97HOrLI4uo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ngR5fokwy6m1XDDfVMHv+/1WaFmKIY51P/VxhHLixbLQqxIwcvtfyqGM8Qe4QX4pwZLIRubDpDNC9R2kpNlqzkO2+p+kwIeHADaBXXml7BZmgCWC0QwnYn7fqfO56hYLjFvXe+Qlqe3VOIEgSZlDF54iDuf2x+aYmbLyqBH3ISM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZDATLtdn; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-21675fd60feso12871205ad.2;
+        Tue, 10 Dec 2024 10:53:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1733856818; x=1734461618; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rNsyydIwl66sSjjl3CYkU8GYTKtrGgErrtD8xsFywJQ=;
+        b=ZDATLtdn6d27FApQ+7gVz6YLFE8mxGKuCzeMnXY5kO6C5zQMccrbUTa0PhYFRZD9bR
+         h80h+iBniSENtNFcNeHPPaZZGo6K/N92pooK33G3kRrYsCvqulQthhA9oRPhJG0AP9rv
+         NRgIhKAQfQvkkWyU1C5wDZHJWw3p7YOJNSEunSgWF7X3drncWSpW4Jpg0QfP1ZhQXbEP
+         cGr+cXLUHfnx7zo0BJBWiH6rdKBCAJYITzX3W27f1SOUQyCy1mOhtb7ERJguTkOibpYO
+         szx2Spk8n0ZplagtLPeyN5xoGXOcE5NWyASWiPzIXTx2rwlseMVueeav+QlYolVeubyi
+         lBQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1733856818; x=1734461618;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rNsyydIwl66sSjjl3CYkU8GYTKtrGgErrtD8xsFywJQ=;
+        b=eRUBulG/n8/4mXuHmgiyeLwlptcB5lLoMdsBTbVa8eJzG1TXeSCHgIevCbwXcMBD+D
+         MymjmSlDLseLamU4tWsoXhj49c5aaiVSlTgsjC3JG6N3Q16L7q30sMG/k6+8QlWMCeLW
+         EOoxlrtz+wunpbrerXHc1je5fXPXrGypmY5XTvaIghMMyVaIA+ja9JtdEZoj69UaqHpt
+         J5CsrY+6OvLZ43pK3ZfYSzXPXKPRqzxEy6Ac72tghzLapr7rabz+Wx2DXy+D3oxvSFBp
+         /rgtrvdRcXu3345zI8eVwdyXxwWroBGJluiOiRYfe6ZpskZMsD1W5eUlvGKsNUTPBi/Z
+         zA0w==
+X-Forwarded-Encrypted: i=1; AJvYcCV3ZYGKkRvQatLao/Fy/WhHLFmfBbQMmAnIB3wX5BKWNEpnPAmRX5qtuHabWUJDW/GwTTX1iyMaBp4XYmSp@vger.kernel.org, AJvYcCXAE+yGJiIlcyKVzBfqkO3j8Qf7hcRAbDmrrkTNLkqwduFFHqblsv3u2ghiWN8bLMugrps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywDPk+SUiEtAPorG8bdbq2Kvyrimuly+QyJOcNqFmMpOOruadW
+	z6NUS4PMzYGIc56N6420xg6yweDxvt++1bpKZWfpY1pJARF8mVB+
+X-Gm-Gg: ASbGncsyVTyt7opV2Sv2le4F8r4cwBQdzUhxkfzYP1U7I4sAZLTpDXe7NET+dXbi8tR
+	vpmaHsF46o+stR8zWKp86Yd1Xr+vz1UFiKHlq7pORIdT8FQeHGkYitY53O7te0pl839Q4RqRY79
+	hMuDuPnTFjjUqYXChYXHjUoJzpvJcu5W9mkpWP5ksYvTe7JDkEfIsgNj6sD3/t2/ESt4+AXrm6m
+	1YyWphZk49eg8DMipENbNdzIAGaWsl4/JASbAUuJYT/ZyCE1V3Zmatn5B+zWQ==
+X-Google-Smtp-Source: AGHT+IHM+cOqdFD9AUuJcFTyaadANWzTfxErpO9cPW/f/2GLdOnzOxQGcRxuhOxQyri87pGE7nX6Og==
+X-Received: by 2002:a17:903:32ca:b0:215:e98c:c5bc with SMTP id d9443c01a7336-217786973f7mr3343045ad.48.1733856818321;
+        Tue, 10 Dec 2024 10:53:38 -0800 (PST)
+Received: from prabhav.. ([2401:4900:883c:fe07:6a22:81d1:4779:d894])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-215f8e41e52sm92675955ad.3.2024.12.10.10.53.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 10:53:37 -0800 (PST)
+From: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org
+Cc: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next] BPF-Helpers : Correct spelling mistake
+Date: Wed, 11 Dec 2024 00:23:21 +0530
+Message-Id: <20241210185321.23144-1-pvkumar5749404@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241205-power-supply-extensions-v5-0-f0f996db4347@weissschuh.net>
- <20241205-power-supply-extensions-v5-1-f0f996db4347@weissschuh.net> <esivcfgbfewjcnvc3uhsdvxbu5dmh3r5z2hjjagzvfrxxsioav@cx2du3oznvhi>
-In-Reply-To: <esivcfgbfewjcnvc3uhsdvxbu5dmh3r5z2hjjagzvfrxxsioav@cx2du3oznvhi>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Tue, 10 Dec 2024 19:52:04 +0100
-X-Gmail-Original-Message-ID: <CAJZ5v0iSVyfyBS=MtAW-0q8keJa9W=ztZDgPgZiNLNxFUcr6QQ@mail.gmail.com>
-Message-ID: <CAJZ5v0iSVyfyBS=MtAW-0q8keJa9W=ztZDgPgZiNLNxFUcr6QQ@mail.gmail.com>
-Subject: Re: [PATCH v5 1/4] ACPI: battery: Rename extensions to hook in messages
-To: Sebastian Reichel <sebastian.reichel@collabora.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
-Cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas@weissschuh.net>, 
-	Benson Leung <bleung@chromium.org>, Guenter Roeck <groeck@chromium.org>, Len Brown <lenb@kernel.org>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	chrome-platform@lists.linux.dev, linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Dec 6, 2024 at 1:40=E2=80=AFAM Sebastian Reichel
-<sebastian.reichel@collabora.com> wrote:
->
-> Hi,
->
-> On Thu, Dec 05, 2024 at 09:46:35PM +0100, Thomas Wei=C3=9Fschuh wrote:
-> > This functionality is called "hook" everywhere in the code.
-> > For consistency call it the same in the log messages.
-> >
-> > The power supply subsystem is about to get its own extension
-> > functionality. While the two are closely related and will be used
-> > together, the current wording leaves room for misinterpretation.
-> >
-> > Signed-off-by: Thomas Wei=C3=9Fschuh <linux@weissschuh.net>
-> >
-> > ---
-> > This patch can also be applied independently through the ACPI tree.
-> > ---
->
-> Reviewed-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+Changes :
+	- "unsinged" is spelled correctly to "unsigned"
 
-Applied as 6.14 material, thanks!
+Signed-off-by: Prabhav Kumar Vaish <pvkumar5749404@gmail.com>
+---
+ kernel/bpf/helpers.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 532ea74d4850..1493f1daecaa 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -3057,7 +3057,7 @@ __bpf_kfunc int bpf_copy_from_user_str(void *dst, u32 dst__sz, const void __user
+ 	return ret + 1;
+ }
+ 
+-/* Keep unsinged long in prototype so that kfunc is usable when emitted to
++/* Keep unsigned long in prototype so that kfunc is usable when emitted to
+  * vmlinux.h in BPF programs directly, but note that while in BPF prog, the
+  * unsigned long always points to 8-byte region on stack, the kernel may only
+  * read and write the 4-bytes on 32-bit.
+-- 
+2.34.1
 
-> >  drivers/acpi/battery.c | 14 +++++++-------
-> >  1 file changed, 7 insertions(+), 7 deletions(-)
-> >
-> > diff --git a/drivers/acpi/battery.c b/drivers/acpi/battery.c
-> > index 3d5342f8d7b3ae4e259131f9c7b7144a6206cfdb..6760330a8af55d51c82a044=
-7623c2040ffdaab10 100644
-> > --- a/drivers/acpi/battery.c
-> > +++ b/drivers/acpi/battery.c
-> > @@ -717,7 +717,7 @@ static void battery_hook_unregister_unlocked(struct=
- acpi_battery_hook *hook)
-> >       }
-> >       list_del_init(&hook->list);
-> >
-> > -     pr_info("extension unregistered: %s\n", hook->name);
-> > +     pr_info("hook unregistered: %s\n", hook->name);
-> >  }
-> >
-> >  void battery_hook_unregister(struct acpi_battery_hook *hook)
-> > @@ -751,18 +751,18 @@ void battery_hook_register(struct acpi_battery_ho=
-ok *hook)
-> >               if (hook->add_battery(battery->bat, hook)) {
-> >                       /*
-> >                        * If a add-battery returns non-zero,
-> > -                      * the registration of the extension has failed,
-> > +                      * the registration of the hook has failed,
-> >                        * and we will not add it to the list of loaded
-> >                        * hooks.
-> >                        */
-> > -                     pr_err("extension failed to load: %s", hook->name=
-);
-> > +                     pr_err("hook failed to load: %s", hook->name);
-> >                       battery_hook_unregister_unlocked(hook);
-> >                       goto end;
-> >               }
-> >
-> >               power_supply_changed(battery->bat);
-> >       }
-> > -     pr_info("new extension: %s\n", hook->name);
-> > +     pr_info("new hook: %s\n", hook->name);
-> >  end:
-> >       mutex_unlock(&hook_mutex);
-> >  }
-> > @@ -805,10 +805,10 @@ static void battery_hook_add_battery(struct acpi_=
-battery *battery)
-> >       list_for_each_entry_safe(hook_node, tmp, &battery_hook_list, list=
-) {
-> >               if (hook_node->add_battery(battery->bat, hook_node)) {
-> >                       /*
-> > -                      * The notification of the extensions has failed,=
- to
-> > -                      * prevent further errors we will unload the exte=
-nsion.
-> > +                      * The notification of the hook has failed, to
-> > +                      * prevent further errors we will unload the hook=
-.
-> >                        */
-> > -                     pr_err("error in extension, unloading: %s",
-> > +                     pr_err("error in hook, unloading: %s",
-> >                                       hook_node->name);
-> >                       battery_hook_unregister_unlocked(hook_node);
-> >               }
-> >
-> > --
-> > 2.47.1
-> >
 
