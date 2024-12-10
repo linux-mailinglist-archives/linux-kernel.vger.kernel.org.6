@@ -1,166 +1,152 @@
-Return-Path: <linux-kernel+bounces-439684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4305B9EB29F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:05:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA01F9EB2AD
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 15:06:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 726B7165D86
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:03:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53ECE188411E
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02E781BBBFE;
-	Tue, 10 Dec 2024 14:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06CD11ABEBA;
+	Tue, 10 Dec 2024 14:03:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="p7pee7gc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Wfq0ijbv"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FA91B4F04;
-	Tue, 10 Dec 2024 14:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41DDE1AA1D4;
+	Tue, 10 Dec 2024 14:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733839362; cv=none; b=o1sqz2W5uN6IKwrfHClgRVH9H5OKCFSrDkOfaJqCfI4cBfFbS7dBg2f7PpAqW6amdKXuxWLQcYn8nehIoqz0WLP8a8oMrNlkqCnOV5gnjip9IjtXltiI4rG6gyKYsVFBJmQl0nCMDYoOUliXJNLYsagYdxSGL/cmjafWWt91u7w=
+	t=1733839421; cv=none; b=h3kKYnqNwZ+sbuDK7LepUdspwnW5NN7Hmq4IYcP9siMUqzYJjWXkQ1o1N1ugcFb6POdqK8URAhzyNglRjDS9X0FI3ifLNnxMZEoJyruXaG/8XPO0+55dTsRoqW839DtUkObmImy0QutLVbFjROeNMo+RJj2AFXPecYxeWzzmNgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733839362; c=relaxed/simple;
-	bh=qKuGnKrDI8tSu8y0laNgchv/TAlzf72FKxm9pJA01ek=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YgO37iWx0LoeQcCE3u8uHouXdjxA7TeDeiw/OljJzNrmzXnmj+iV+32XdjibkEbz0yXor4E+wxtfPYyJnnQtKaV3ZkZ5OHI58Qn/XSLm11Wx6gThQOQSN4lHFWi+erWhHvBcQixMeOFPGXiLjlAIA3azaZ3FTqo1JNuJ23H1QHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=p7pee7gc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BA8P2I8015737;
-	Tue, 10 Dec 2024 14:02:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	qxWpVhRjhZwE295T3kgsrVOGaciQb5Kgk+jkfYqg6CQ=; b=p7pee7gcu4pMXx5H
-	oDfqgVsDvVoo8msqleGs1OtDwLKxo7COWn80JKt1NCZ2LfgnMh7jpu9dXVT/xz6s
-	N6bn1uIKcceJLucyBabLKtYDQGQzoAoEvAu012X7HEtQdDnwsdXTR1dkR7J3XkRj
-	ZkqvqTUw3TGxRwfCU5UYrtDiualMkEUZbyMobqdcMEHgm9I5P66n0dwgvcWQv39Z
-	BIWGI8Yk7axJ7YwuUs/J6dFzP6F8igWNXp974sLwvInX1lIHfplVpm+xZLcfbpLz
-	+/hEq9TIwhq1SIrwyZGzDqpDpqWSz/3kuE2q8xyMorKj4aOwuB7oVL595AQET7Mm
-	79+sFQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43dy8tv808-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 14:02:32 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAE2VRx014982
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 14:02:31 GMT
-Received: from hu-wasimn-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Dec 2024 06:02:24 -0800
-Date: Tue, 10 Dec 2024 19:32:16 +0530
-From: Wasim Nazir <quic_wasimn@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: Re: [PATCH v3 5/5] arm64: dts: qcom: Add support for QCS9075 Ride &
- Ride-r3
-Message-ID: <Z1hJ6GRB6u50PmlN@hu-wasimn-hyd.qualcomm.com>
-References: <9e351979-be01-4d38-9b94-cc23efac4c3f@kernel.org>
- <Z1LaN9nFr5msfq61@hu-wasimn-hyd.qualcomm.com>
- <cbed17c2-d839-42cb-8a33-b59538bfccf3@oss.qualcomm.com>
- <c639ca40-9e4f-4882-8441-57413e835422@kernel.org>
- <Z1c9wMxQ5xSqvPmf@hu-wasimn-hyd.qualcomm.com>
- <8cf9edc0-a0cb-4fd0-b10e-2138784dfba3@kernel.org>
- <iu6ssjczkdfkhfy2n6vxf3f3c2pepsepslzvnh5z4susxgxgqa@engwsvhu533x>
- <5782d7c6-1a75-4f15-8942-387742e0ae09@kernel.org>
- <Z1gIsrWAT3QftC4c@hu-wasimn-hyd.qualcomm.com>
- <d3f1d92b-cc08-4a7d-a48f-89081a615c48@kernel.org>
+	s=arc-20240116; t=1733839421; c=relaxed/simple;
+	bh=zTG4fHjEg4bJ3Q2xilmwlvZI7iL0vb3vM0NlpL34wL4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Sm98Yi9kPersJlGXE62MRHcKUcBbQzN1k27iqlTGxi2IGkvFd4CqSC1WQPxLIK6wshv9scIHA4thx1ScLFs9xXBfnrWOEpyquRpo7dJeuCtyFcE7urL098q5ot2pF+M4Tp3X6LoxHHwdDkglluNnbmTMd5NgrQwnBESNGF57Hw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Wfq0ijbv; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NyxUnnh8zTea5sHO0VySORIF1YgvOpupsnfvvjozSBg=; b=Wfq0ijbvY1Tc9H4xKq/T+ie90W
+	ZtP7X9ap3/YutKDn7zuYK1iL+DyLRTNxtvZm9KCR99RlUGJdDa2CObnnOcqlc3bmp0qnrbd69GNo4
+	atTxTdNOhMUzG0tgtXBd/KeHd8GNsR7i/m8dEE2sP7AuPgpqGrKaeZ1QZABENMTXDbUibrC6GE8fs
+	0r+t4K6ztNURypWsEhjtjjVR5wtFJI9101qzdE/uZdt/HIDyBdxhAeHFIzs+JZdYmGMYHii5txSe0
+	EdBlmtaLcaliEI4U6u9eAgFaaOhjCDVQk4a6vADkcqq/ZywQGwKH5I0k9g1lRiQfsQPG+6ZZU2xHy
+	x49k4gUQ==;
+Received: from 77-249-17-89.cable.dynamic.v4.ziggo.nl ([77.249.17.89] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tL0pg-00000003gya-3R1x;
+	Tue, 10 Dec 2024 14:03:25 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 0C80330035F; Tue, 10 Dec 2024 15:03:24 +0100 (CET)
+Date: Tue, 10 Dec 2024 15:03:24 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-pm@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 2/5] cpuidle: Introduce CPUIDLE_FLAG_MWAIT
+Message-ID: <20241210140324.GR35539@noisy.programming.kicks-ass.net>
+References: <20241206130408.18690-1-frederic@kernel.org>
+ <20241206130408.18690-3-frederic@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <d3f1d92b-cc08-4a7d-a48f-89081a615c48@kernel.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: gyDQnnuAzdRtmsRSHi2HyCj0R63x__Eb
-X-Proofpoint-GUID: gyDQnnuAzdRtmsRSHi2HyCj0R63x__Eb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- priorityscore=1501 mlxlogscore=790 clxscore=1015 mlxscore=0 spamscore=0
- lowpriorityscore=0 malwarescore=0 bulkscore=0 phishscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2411120000
- definitions=main-2412100105
+In-Reply-To: <20241206130408.18690-3-frederic@kernel.org>
 
-On Tue, Dec 10, 2024 at 12:50:51PM +0100, Krzysztof Kozlowski wrote:
-> On 10/12/2024 10:24, Wasim Nazir wrote:
-> > On Tue, Dec 10, 2024 at 08:25:34AM +0100, Krzysztof Kozlowski wrote:
-> >> On 10/12/2024 00:25, Dmitry Baryshkov wrote:
-> >>>>>>>> 9100 & 9075 are different from “safe” perspective. They differ in
-> >>>>>>>> changes related to thermal which will be added later in devicetree.
-> >>>>>>>
-> >>>>>>> Since this can't be inferred from just looking at the changes, please
-> >>>>>>> make sure to add that to the commit message
-> >>>>>>
-> >>>>>> Any include of other DTS is clear sign something is odd here. Including
-> >>>>>> multiple times without any added nodes is showing these are not real
-> >>>>>> products/boards .
-> >>>>>
-> >>>>> We're adding DTS to reuse the common board changes, with plans to
-> >>>>> include the differences in upcoming patches. To provide more clarity, I
-> >>>>> will include patches in this series to highlight the differences between
-> >>>>> the 9100 and 9075 boards.
-> >>>>
-> >>>> Sure, still do not include DTS. Just like C files don't include C files.
-> >>>
-> >>> So, is the solution simple, rename .dts to .dtsi and include it from
-> >>> both .dts files?
-> >>
-> >> For example. This leads to more questions - what is common here? We do
-> >> not create shared DTSI files just because someone wants, but to really
-> >> note shared components or shared designs.
-> >>
-> > 
-> > We can reuse the common dtsi for ride boards, i.e., sa8775p-ride.dtsi,
-> > and then add board-specific changes in the corresponding files.
+On Fri, Dec 06, 2024 at 02:04:05PM +0100, Frederic Weisbecker wrote:
+> From: Peter Zijlstra <peterz@infradead.org>
 > 
+> Provide a way to tell the cpuidle core about states monitoring
+> TIF_NEED_RESCHED on the hardware level, monitor/mwait users being the
+> only examples in use.
 > 
-> So you will create shared DTSI because "someone wants"? Did you read the
-> question above and valid reasons/answers to it?
+> This will allow cpuidle core to manage TIF_NR_POLLING on behalf of all
+> kinds of TIF_NEED_RESCHED watching states while keeping a necessary
+> distinction for the governors between software loops polling on
+> TIF_NEED_RESCHED and hardware monitored writes to thread flags.
 > 
-
-Sorry, if I couldn't able to answer your question.
-
-We will not be creating any new DTSI files. Since QCS9075 is derived
-from SA8775P, we will be reusing the existing common DTSI files for
-the ride boards of the SA8775P and its derivative SoCs.
-
-Here is the change reference for common ride dtsi:
-https://lore.kernel.org/all/20240627114212.25400-3-brgl@bgdev.pl/
-
-Please let me know if I missed anything.
-
+> [fweisbec: _ Initialize flag from acpi_processor_setup_cstates() instead
+>              of acpi_processor_setup_lpi_states(), as the latter seem to
+>              be about arm64...
+>            _ Rename CPUIDLE_FLAG_NO_IPI to CPUIDLE_FLAG_MWAIT]
 > 
-> > 
-> > If this approach is acceptable, I can proceed with sending the
-> > next patch series. I hope this will help clarify things further.
-> 
-> Best regards,
-> Krzysztof
+> Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
 
-Thanks & Regards,
-Wasim
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+
+> Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> ---
+>  drivers/acpi/processor_idle.c | 3 +++
+>  drivers/idle/intel_idle.c     | 5 ++++-
+>  include/linux/cpuidle.h       | 1 +
+>  3 files changed, 8 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/processor_idle.c b/drivers/acpi/processor_idle.c
+> index 698897b29de2..66cb5536d91e 100644
+> --- a/drivers/acpi/processor_idle.c
+> +++ b/drivers/acpi/processor_idle.c
+> @@ -806,6 +806,9 @@ static int acpi_processor_setup_cstates(struct acpi_processor *pr)
+>  		if (cx->type == ACPI_STATE_C1 || cx->type == ACPI_STATE_C2)
+>  			drv->safe_state_index = count;
+>  
+> +		if (cx->entry_method == ACPI_CSTATE_FFH)
+> +			state->flags |= CPUIDLE_FLAG_MWAIT;
+> +
+>  		/*
+>  		 * Halt-induced C1 is not good for ->enter_s2idle, because it
+>  		 * re-enables interrupts on exit.  Moreover, C1 is generally not
+> diff --git a/drivers/idle/intel_idle.c b/drivers/idle/intel_idle.c
+> index ac4d8faa3886..d52723fbeb04 100644
+> --- a/drivers/idle/intel_idle.c
+> +++ b/drivers/idle/intel_idle.c
+> @@ -1787,7 +1787,8 @@ static void __init intel_idle_init_cstates_acpi(struct cpuidle_driver *drv)
+>  		if (cx->type > ACPI_STATE_C1)
+>  			state->target_residency *= 3;
+>  
+> -		state->flags = MWAIT2flg(cx->address);
+> +		state->flags = MWAIT2flg(cx->address) | CPUIDLE_FLAG_MWAIT;
+> +
+>  		if (cx->type > ACPI_STATE_C2)
+>  			state->flags |= CPUIDLE_FLAG_TLB_FLUSHED;
+>  
+> @@ -2072,6 +2073,8 @@ static bool __init intel_idle_verify_cstate(unsigned int mwait_hint)
+>  
+>  static void state_update_enter_method(struct cpuidle_state *state, int cstate)
+>  {
+> +	state->flags |= CPUIDLE_FLAG_MWAIT;
+> +
+>  	if (state->flags & CPUIDLE_FLAG_INIT_XSTATE) {
+>  		/*
+>  		 * Combining with XSTATE with IBRS or IRQ_ENABLE flags
+> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+> index a9ee4fe55dcf..b8084617aa27 100644
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -85,6 +85,7 @@ struct cpuidle_state {
+>  #define CPUIDLE_FLAG_OFF		BIT(4) /* disable this state by default */
+>  #define CPUIDLE_FLAG_TLB_FLUSHED	BIT(5) /* idle-state flushes TLBs */
+>  #define CPUIDLE_FLAG_RCU_IDLE		BIT(6) /* idle-state takes care of RCU */
+> +#define CPUIDLE_FLAG_MWAIT		BIT(7) /* hardware need_resched() monitoring */
+>  
+>  struct cpuidle_device_kobj;
+>  struct cpuidle_state_kobj;
+> -- 
+> 2.46.0
+> 
 
