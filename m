@@ -1,179 +1,340 @@
-Return-Path: <linux-kernel+bounces-439497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570FE9EB00F
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:42:37 +0100 (CET)
-Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84F8B9EB015
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:43:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
+	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87FBC282C90
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:42:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B7E7166B30
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:43:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB7C210F6B;
-	Tue, 10 Dec 2024 11:42:26 +0000 (UTC)
-Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1560A210F49;
+	Tue, 10 Dec 2024 11:43:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w6ok7z94"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913361DC9A3
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4332578F4E
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:43:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733830946; cv=none; b=baA5KoShM1ukN7JtqXrTfd2Mq9gi+s0uaF3O0R2OFhMKau+lYDTZfF6CaVHDaqFKOY4kklRSHvK2zFZoiAmchgVHmqKeK1tgY8zm0Ji7qdI0D1gdtafOx6Z8yeKihqCTtBecBtwz1M8Y+PML4QreYqdClPUIUSql08S2ZgewF9I=
+	t=1733831006; cv=none; b=LA7NpYvCZq/8rWdkCmxbUPEyFGhQ8SXKpdVZJ42bhIeT51KLMaNw9yAQ4iAjI6Q9qQuaVfguxJeSBgEbEu6xnbb8CCPI2LaWCLTtpeiCSUYDWIP0aMNTSGJFxFrK1qemqAOkXIZeelmicAvOEhuczDwAu9CgJM7TJQTuL9kCnCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733830946; c=relaxed/simple;
-	bh=UW7nVJgMSDsCk5nhpkvy5y90xLmpM24XXSYiM05EBhc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=h+CMXuBVOAP9v3yh/a3z01s/UeVKrsmSmzHDsUviXs7iqnOej+UnNs6u17jl4JulcOncLQLMAPIbxVuVEGjOdx2CZTZnqq8H8ixN5moNtFrQvPSsV3k7XbU1UKHw2Fbo85ZuZET+3Zw7CwsFci3+2opNvG47InUM5uMBdshGxgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3a814406be9so73987685ab.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:42:24 -0800 (PST)
+	s=arc-20240116; t=1733831006; c=relaxed/simple;
+	bh=e8vDgDOcO5RIqHjRBTI9VvF3Ghj3iqWpCsSjLOYAe1w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CZ+3n9hvc4uBz44TfW38F7OGcN7Efb+HVEukJYOjyeU8MKSnVlzPvc+OJ+OxneH/Kgfh7pTbv/6zPTNr6+4s2ConP7jGpm2qPTGDHpTqOxTXMseL9l81QtGlkVv/ZmevTA8aEx/JQh55GtIPzwnxQ9Pe/qNLW73mQe4UWeIWcyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w6ok7z94; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5401c68b89eso2277593e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 03:43:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1733831002; x=1734435802; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=bDuD4vOJTu/+TNrDw776dXillG1+SO1nfewpcnHal5U=;
+        b=w6ok7z94MY2r//v23HeSurYchUtgl9pTqJVejn+rfg+60ZfXd1/joS11BKZLHLQbZQ
+         RdUSPMabIoVbDlgl/3jpS/2sh2nUH6JHN91mqEocmE4qZHfPOn51wzMJTREf7AbQRG80
+         O7zeHvxoIKt1Lr25qKddrgPSv+7FrRzFvgvyC6KsB7rGlmM1zJa7A48EGYVv6v8S9QI1
+         CXAiYUSNZQ5yXdJm7K2ic3/11MPhkZbGhf4b2p6ka3L4zFOun00cRpsOxEyXN8FrQyFn
+         ZxwV3Eth1Edzc7dBwszzFJUGZHlOYg7buLlFWZHqcPrntiKW3VhASD2TFNr/p/ZC/6Wp
+         EhtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733830944; x=1734435744;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5m2IMBwyvKGjD4ASF9enDVMm3TnL+MXwspx2kXIXm4k=;
-        b=NKoWs7STuU9I3MEWUsAZI4g0U7SYUCeFq+OWlz41f7M4nAl+r+7QodeyuNMC+CyXi8
-         Hi2YgeSaB2BdYMhgsT/lybWRUOXRwXa5IsJlkNkYnYrdmQPvI2HvtM3zrDHoddk74IjQ
-         LAvO9TKWLVqUS86lCeeXSFV+K3k0Z/Gw3Dq36fj1DIUPl1ICVtnaio6j6Maq6KR5nKXW
-         RoIC4g7tahJkuW7a9+fRjPnU6N2vcKzdnM8+dzrkLeTqxKLEBGv4K4BCFFC7gKcSNkFm
-         ep6a1n938ABMAdysdamhzui+vc9170ANXe3ZoH1tEtJ/RKUfA1ZhI3OMWYn5zxA9rsY4
-         qiVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUVJtHnHUsa+9oZ5m3m2DqoMWgltBzK9xx40ggjve8zIb7092P0bdJoh2aPjoa9T5XUxuYNgCSMLzBdfFk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQ6fDGDDLYI3wsV++B79EGXfZv+4Rk15ba1X1wRzF5CC5NWsja
-	y7F/qU5ZaDOSvUOTKkL+DW46hZuws11AkSrpOrDj7+bURt+GJDMG58fCvpLvvNMwWRkuxXKeBoH
-	5QTUj3O9KLoOQMfXQGuuZcWSaT358VOp/1lwT1K94GmFiplPP7XjDFyQ=
-X-Google-Smtp-Source: AGHT+IGBQssi01htYmZEm14m55mxtFLRLISagzgoDQduMbwA+tF8VeW+YEPZThfeQGhlh05jVAPdusLO3m/3pIufPA3yEt7k0nn9
+        d=1e100.net; s=20230601; t=1733831002; x=1734435802;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=bDuD4vOJTu/+TNrDw776dXillG1+SO1nfewpcnHal5U=;
+        b=fFcYhqWopsYBjaQrqUcwaT5k8LB70rUCY+6qfojpOVCNjSJpA0V5dD9e0QPG/jKadM
+         N4CLZ6kHEDi/NvaebKPCt3OsKGJrtg1F6UGaUVvl/w49ffmFc+lxKv6ofHEtfTbEaV7d
+         3Uq8bDfLBHWNRCg4rPpG5FSUFM32uCPWD4FWoz7l2gQqA5inmcrK9yNHTsr4DjZMmDZb
+         v1Lk0MrvpF57x8bwvSb/4pH9ACUO6T8hyCc9Pf96ddZC3iy11NqaCF+lwMB0iuLRAb+P
+         FTH7Q7qlYjPgDHerD5Nlh39BkewdgA3gw5EHm9r9BuwjuwAeS3nmnVrAm/Iuo9wCyhMK
+         7OqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVlO1XuvVXyaiSMgMliLBdxw9F2DI+a2Sahqxib2ZWNS70kwfGJ0jETnTellzmE72YtoJxg4iIGdHzSxTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlTDTMCQ3FcJMn3W5o+tUvjyIsazMSPnIEoIa8xSQZglmB+rw6
+	Dr/rInKsdwYd3a2ns0la67azKiYZha6EjhaDuCqj/9/TkaEMpxsklFGRMLNvIkM=
+X-Gm-Gg: ASbGnctGnpxt9HN/D6QqfiCWT+7xLlaKczzhY8uV2uWNPIlIfulA5bT6ZbjWVcRP7VN
+	LMzYBs3KFsvwDUssX9X8tRikU1lOGUpPqnf9Kln+qzz1uBsEQpL6nccVv2xWXZvYU9IxMDvCwYK
+	2GzAfoYToZGBL/7H1QQSFViz6GYsjLIZBUqXzvk7LOqv3l8gfPPlVIpgjJqvt37OlCRKB0Y94im
+	6GQ++KHYN8eVm7Gh4O46YkTtcRwnpoGZmWJ5kiuoCaJZ6/E8bQq3LNOvkuGQcYpilBVp2DlQxBp
+	4S0DbJWVVMqCotZKnHBFQaDM0ARRIfkFnQ==
+X-Google-Smtp-Source: AGHT+IHlLpHoQkMoGAXULRnbsa1CNz7DxSd8e5Kk0AkHyX98cxKn2C9E6+kb+xX37fsZPZiAJHZ8UA==
+X-Received: by 2002:a05:6512:3a8e:b0:53e:2246:c262 with SMTP id 2adb3069b0e04-54024f87ef1mr883959e87.0.1733831002365;
+        Tue, 10 Dec 2024 03:43:22 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53e3a36ee3fsm1127765e87.107.2024.12.10.03.43.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 10 Dec 2024 03:43:21 -0800 (PST)
+Date: Tue, 10 Dec 2024 13:43:19 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Andrej Picej <andrej.picej@norik.com>
+Cc: andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, 
+	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	festevam@gmail.com, marex@denx.de, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, upstream@lists.phytec.de
+Subject: Re: [PATCH v5 2/3] drm/bridge: ti-sn65dsi83: Add ti,lvds-vod-swing
+ optional properties
+Message-ID: <irpmhq7vxjra6vhmdh7p63ajj57n3h2c4br3ija2jmwtoewist@zyxfmx6k5m4e>
+References: <20241210091901.83028-1-andrej.picej@norik.com>
+ <20241210091901.83028-3-andrej.picej@norik.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:178a:b0:3a7:7e0f:777d with SMTP id
- e9e14a558f8ab-3a9dbac727amr36369765ab.11.1733830943814; Tue, 10 Dec 2024
- 03:42:23 -0800 (PST)
-Date: Tue, 10 Dec 2024 03:42:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6758291f.050a0220.a30f1.01ce.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in create_pending_snapshot (2)
-From: syzbot <syzbot+76f08f4610b770486522@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241210091901.83028-3-andrej.picej@norik.com>
 
-Hello,
+On Tue, Dec 10, 2024 at 10:19:00AM +0100, Andrej Picej wrote:
+> Add a optional properties to change LVDS output voltage. This should not
+> be static as this depends mainly on the connected display voltage
+> requirement. We have three properties:
+> - "ti,lvds-termination-ohms", which sets near end termination,
+> - "ti,lvds-vod-swing-data-microvolt" and
+> - "ti,lvds-vod-swing-clock-microvolt" which both set LVDS differential
+> output voltage for data and clock lanes. They are defined as an array
+> with min and max values. The appropriate bitfield will be set if
+> selected constraints can be met.
+> 
+> If "ti,lvds-termination-ohms" is not defined the default of 200 Ohm near
+> end termination will be used. Selecting only one:
+> "ti,lvds-vod-swing-data-microvolt" or
+> "ti,lvds-vod-swing-clock-microvolt" can be done, but the output voltage
+> constraint for only data/clock lanes will be met. Setting both is
+> recommended.
+> 
+> Signed-off-by: Andrej Picej <andrej.picej@norik.com>
+> ---
+> Changes in v5:
+> - specify default values in sn65dsi83_parse_lvds_endpoint,
+> - move sn65dsi83_parse_lvds_endpoint for channel B up, outside if,
+> Changes in v4:
+> - fix typo in commit message bitfiled -> bitfield
+> - use arrays (lvds_vod_swing_conf and lvds_term_conf) in private data, instead
+> of separate variables for channel A/B
+> - add more checks on return value of "of_property_read_u32_array"
+> Changes in v3:
+> - use microvolts for default array values 1000 mV -> 1000000 uV.
+> Changes in v2:
+> - use datasheet tables to get the proper configuration
+> - since major change was done change the authorship to myself
+> ---
+>  drivers/gpu/drm/bridge/ti-sn65dsi83.c | 142 +++++++++++++++++++++++++-
+>  1 file changed, 139 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> index 57a7ed13f996..f9578b38da28 100644
+> --- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> +++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+> @@ -132,6 +132,16 @@
+>  #define  REG_IRQ_STAT_CHA_SOT_BIT_ERR		BIT(2)
+>  #define  REG_IRQ_STAT_CHA_PLL_UNLOCK		BIT(0)
+>  
+> +enum sn65dsi83_channel {
+> +	CHANNEL_A,
+> +	CHANNEL_B
+> +};
+> +
+> +enum sn65dsi83_lvds_term {
+> +	OHM_100,
+> +	OHM_200
+> +};
+> +
+>  enum sn65dsi83_model {
+>  	MODEL_SN65DSI83,
+>  	MODEL_SN65DSI84,
+> @@ -147,6 +157,8 @@ struct sn65dsi83 {
+>  	struct regulator		*vcc;
+>  	bool				lvds_dual_link;
+>  	bool				lvds_dual_link_even_odd_swap;
+> +	int				lvds_vod_swing_conf[2];
+> +	int				lvds_term_conf[2];
+>  };
+>  
+>  static const struct regmap_range sn65dsi83_readable_ranges[] = {
+> @@ -237,6 +249,36 @@ static const struct regmap_config sn65dsi83_regmap_config = {
+>  	.max_register = REG_IRQ_STAT,
+>  };
+>  
+> +static const int lvds_vod_swing_data_table[2][4][2] = {
+> +	{	/* 100 Ohm */
+> +		{ 180000, 313000 },
+> +		{ 215000, 372000 },
+> +		{ 250000, 430000 },
+> +		{ 290000, 488000 },
+> +	},
+> +	{	/* 200 Ohm */
+> +		{ 150000, 261000 },
+> +		{ 200000, 346000 },
+> +		{ 250000, 428000 },
+> +		{ 300000, 511000 },
+> +	},
+> +};
+> +
+> +static const int lvds_vod_swing_clock_table[2][4][2] = {
+> +	{	/* 100 Ohm */
+> +		{ 140000, 244000 },
+> +		{ 168000, 290000 },
+> +		{ 195000, 335000 },
+> +		{ 226000, 381000 },
+> +	},
+> +	{	/* 200 Ohm */
+> +		{ 117000, 204000 },
+> +		{ 156000, 270000 },
+> +		{ 195000, 334000 },
+> +		{ 234000, 399000 },
+> +	},
+> +};
+> +
+>  static struct sn65dsi83 *bridge_to_sn65dsi83(struct drm_bridge *bridge)
+>  {
+>  	return container_of(bridge, struct sn65dsi83, bridge);
+> @@ -435,12 +477,16 @@ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
+>  		val |= REG_LVDS_FMT_LVDS_LINK_CFG;
+>  
+>  	regmap_write(ctx->regmap, REG_LVDS_FMT, val);
+> -	regmap_write(ctx->regmap, REG_LVDS_VCOM, 0x05);
+> +	regmap_write(ctx->regmap, REG_LVDS_VCOM,
+> +			REG_LVDS_VCOM_CHA_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_A]) |
+> +			REG_LVDS_VCOM_CHB_LVDS_VOD_SWING(ctx->lvds_vod_swing_conf[CHANNEL_B]));
+>  	regmap_write(ctx->regmap, REG_LVDS_LANE,
+>  		     (ctx->lvds_dual_link_even_odd_swap ?
+>  		      REG_LVDS_LANE_EVEN_ODD_SWAP : 0) |
+> -		     REG_LVDS_LANE_CHA_LVDS_TERM |
+> -		     REG_LVDS_LANE_CHB_LVDS_TERM);
+> +		     (ctx->lvds_term_conf[CHANNEL_A] ?
+> +			  REG_LVDS_LANE_CHA_LVDS_TERM : 0) |
+> +		     (ctx->lvds_term_conf[CHANNEL_B] ?
+> +			  REG_LVDS_LANE_CHB_LVDS_TERM : 0));
+>  	regmap_write(ctx->regmap, REG_LVDS_CM, 0x00);
+>  
+>  	le16val = cpu_to_le16(mode->hdisplay);
+> @@ -576,10 +622,100 @@ static const struct drm_bridge_funcs sn65dsi83_funcs = {
+>  	.atomic_get_input_bus_fmts = sn65dsi83_atomic_get_input_bus_fmts,
+>  };
+>  
+> +static int sn65dsi83_select_lvds_vod_swing(struct device *dev,
+> +	u32 lvds_vod_swing_data[2], u32 lvds_vod_swing_clk[2], u8 lvds_term)
+> +{
+> +	int i;
+> +
+> +	for (i = 0; i <= 3; i++) {
+> +		if (lvds_vod_swing_data_table[lvds_term][i][0] >= lvds_vod_swing_data[0] &&
+> +		lvds_vod_swing_data_table[lvds_term][i][1] <= lvds_vod_swing_data[1] &&
+> +		lvds_vod_swing_clock_table[lvds_term][i][0] >= lvds_vod_swing_clk[0] &&
+> +		lvds_vod_swing_clock_table[lvds_term][i][1] <= lvds_vod_swing_clk[1])
+> +			return i;
+> +	}
+> +
+> +	dev_err(dev, "failed to find appropriate LVDS_VOD_SWING configuration\n");
+> +	return -EINVAL;
+> +}
+> +
+> +static int sn65dsi83_parse_lvds_endpoint(struct sn65dsi83 *ctx, int channel)
+> +{
+> +	struct device *dev = ctx->dev;
+> +	struct device_node *endpoint;
+> +	int endpoint_reg;
+> +	/* Set so the property can be freely selected if not defined */
+> +	u32 lvds_vod_swing_data[2] = { 0, 1000000 };
+> +	u32 lvds_vod_swing_clk[2] = { 0, 1000000 };
+> +	u32 lvds_term;
+> +	u8 lvds_term_conf = 0x1;
+> +	int lvds_vod_swing_conf = 0x1;
 
-syzbot found the following issue on:
+Magic values
 
-HEAD commit:    5076001689e4 Merge tag 'loongarch-fixes-6.13-1' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14ead0f8580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=50c7a61469ce77e7
-dashboard link: https://syzkaller.appspot.com/bug?extid=76f08f4610b770486522
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+> +	int ret = 0;
+> +	int ret_data;
+> +	int ret_clock;
+> +
+> +	if (channel == CHANNEL_A)
+> +		endpoint_reg = 2;
+> +	else
+> +		endpoint_reg = 3;
+> +
+> +	endpoint = of_graph_get_endpoint_by_regs(dev->of_node, endpoint_reg, -1);
+> +	if (!of_property_read_u32(endpoint, "ti,lvds-termination-ohms", &lvds_term)) {
 
-Unfortunately, I don't have any reproducer for this issue yet.
+The code has been better before:
+provide default for lvds_term, read the property (keeping the default in
+case of an error), then use the lvds_term to set up lvds_term_conf, as
+expected.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-50760016.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/76ef343a98c8/vmlinux-50760016.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/e42b3235bcc3/bzImage-50760016.xz
+> +		if (lvds_term == 100)
+> +			lvds_term_conf = OHM_100;
+> +		else
+> +			lvds_term_conf = OHM_200;
+> +	}
+> +
+> +	ctx->lvds_term_conf[channel] = lvds_term_conf;
+> +
+> +	ret_data = of_property_read_u32_array(endpoint,
+> +			"ti,lvds-vod-swing-data-microvolt", lvds_vod_swing_data,
+> +			ARRAY_SIZE(lvds_vod_swing_data));
+> +	if (ret_data != 0 && ret_data != -EINVAL) {
+> +		ret = ret_data;
+> +		goto exit;
+> +	}
+> +
+> +	ret_clock = of_property_read_u32_array(endpoint,
+> +			"ti,lvds-vod-swing-clock-microvolt", lvds_vod_swing_clk,
+> +			ARRAY_SIZE(lvds_vod_swing_clk));
+> +	if (ret_clock != 0 && ret_clock != -EINVAL) {
+> +		ret = ret_clock;
+> +		goto exit;
+> +	}
+> +
+> +	/* If any of the two properties is defined. */
+> +	if (!ret_data || !ret_clock) {
+> +		lvds_vod_swing_conf = sn65dsi83_select_lvds_vod_swing(dev,
+> +			lvds_vod_swing_data, lvds_vod_swing_clk,
+> +			lvds_term_conf);
+> +		if (lvds_vod_swing_conf < 0) {
+> +			ret = lvds_vod_swing_conf;
+> +			goto exit;
+> +		}
+> +	}
+> +
+> +	ctx->lvds_vod_swing_conf[channel] = lvds_vod_swing_conf;
+> +	ret = 0;
+> +exit:
+> +	of_node_put(endpoint);
+> +	return ret;
+> +}
+> +
+>  static int sn65dsi83_parse_dt(struct sn65dsi83 *ctx, enum sn65dsi83_model model)
+>  {
+>  	struct drm_bridge *panel_bridge;
+>  	struct device *dev = ctx->dev;
+> +	int ret;
+> +
+> +	ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_A);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ret = sn65dsi83_parse_lvds_endpoint(ctx, CHANNEL_B);
+> +	if (ret < 0)
+> +		return ret;
+>  
+>  	ctx->lvds_dual_link = false;
+>  	ctx->lvds_dual_link_even_odd_swap = false;
+> -- 
+> 2.34.1
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+76f08f4610b770486522@syzkaller.appspotmail.com
-
-BTRFS error (device loop0): allocation failed flags 12, wanted 4096 tree-log 0, relocation: 0
-BTRFS info (device loop0): space_info DATA+METADATA has 8323072 free, is full
-BTRFS info (device loop0): space_info total=11534336, used=1114112, pinned=0, reserved=0, may_use=2097152, readonly=0 zone_unusable=0
-BTRFS info (device loop0): global_block_rsv: size 1441792 reserved 1441792
-BTRFS info (device loop0): trans_block_rsv: size 0 reserved 0
-BTRFS info (device loop0): chunk_block_rsv: size 0 reserved 0
-BTRFS info (device loop0): delayed_block_rsv: size 0 reserved 0
-BTRFS info (device loop0): delayed_refs_rsv: size 0 reserved 0
-BTRFS info (device loop0): block group 5242880 has 1638400 bytes, 1114112 used 0 pinned 0 reserved 0 delalloc 0 super 0 zone_unusable (524288 bytes available) 
-BTRFS critical (device loop0): entry offset 5251072, bytes 36864, bitmap no
-BTRFS critical (device loop0): entry offset 5308416, bytes 4096, bitmap no
-BTRFS critical (device loop0): entry offset 5316608, bytes 45056, bitmap no
-BTRFS critical (device loop0): entry offset 6443008, bytes 438272, bitmap no
-BTRFS info (device loop0): block group has cluster?: no
-BTRFS info (device loop0): 4 free space entries at or bigger than 4096 bytes
-BTRFS info (device loop0): block group 6881280 has 1638400 bytes, 0 used 0 pinned 0 reserved 0 delalloc 0 super 0 zone_unusable (1638400 bytes available) 
-BTRFS critical (device loop0): entry offset 6881280, bytes 1638400, bitmap no
-BTRFS info (device loop0): block group has cluster?: no
-BTRFS info (device loop0): 1 free space entries at or bigger than 4096 bytes
-BTRFS info (device loop0): block group 8519680 has 8257536 bytes, 0 used 0 pinned 0 reserved 0 delalloc 0 super 0 zone_unusable (8257536 bytes available) 
-BTRFS critical (device loop0): entry offset 8519680, bytes 8257536, bitmap no
-BTRFS info (device loop0): block group has cluster?: no
-BTRFS info (device loop0): 1 free space entries at or bigger than 4096 bytes
-BTRFS info (device loop0): 10420224 bytes available across all block groups
-------------[ cut here ]------------
-BTRFS: Transaction aborted (error -28)
-WARNING: CPU: 0 PID: 5319 at fs/btrfs/transaction.c:1787 create_pending_snapshot+0x2502/0x2a10 fs/btrfs/transaction.c:1787
-Modules linked in:
-CPU: 0 UID: 0 PID: 5319 Comm: syz.0.0 Not tainted 6.13.0-rc1-syzkaller-00036-g5076001689e4 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:create_pending_snapshot+0x2502/0x2a10 fs/btrfs/transaction.c:1787
-Code: 4b 8c 44 89 fe e8 0e 16 9d fd 90 0f 0b 90 90 e9 55 f9 ff ff e8 af 6e dc fd 90 48 c7 c7 e0 57 4b 8c 44 89 fe e8 ef 15 9d fd 90 <0f> 0b 90 90 e9 5b f9 ff ff e8 90 6e dc fd 90 48 c7 c7 e0 57 4b 8c
-RSP: 0018:ffffc9000d3bf540 EFLAGS: 00010246
-RAX: d3c4d91482e22a00 RBX: ffff88803f5f4001 RCX: ffff88801f728000
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: ffffc9000d3bf830 R08: ffffffff81601c02 R09: fffffbfff1cfa210
-R10: dffffc0000000000 R11: fffffbfff1cfa210 R12: dffffc0000000000
-R13: ffff88800068e000 R14: 0000000000000000 R15: 00000000ffffffe4
-FS:  00007f02809dd6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000000 CR3: 0000000011c06000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- create_pending_snapshots+0x195/0x1d0 fs/btrfs/transaction.c:1919
- btrfs_commit_transaction+0xf11/0x3720 fs/btrfs/transaction.c:2398
- create_snapshot+0x655/0x990 fs/btrfs/ioctl.c:875
- btrfs_mksubvol+0x58f/0x710 fs/btrfs/ioctl.c:1029
- btrfs_mksnapshot+0xae/0xf0 fs/btrfs/ioctl.c:1073
- __btrfs_ioctl_snap_create+0x37d/0x4b0 fs/btrfs/ioctl.c:1337
- btrfs_ioctl_snap_create_v2+0x1ef/0x390 fs/btrfs/ioctl.c:1418
- btrfs_ioctl+0xa07/0xcc0
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:906 [inline]
- __se_sys_ioctl+0xf5/0x170 fs/ioctl.c:892
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f0280f7ff19
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f02809dd058 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f0281146080 RCX: 00007f0280f7ff19
-RDX: 0000000020001480 RSI: 0000000050009417 RDI: 0000000000000006
-RBP: 00007f0280ff3986 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f0281146080 R15: 00007ffc49e40d48
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+With best wishes
+Dmitry
 
