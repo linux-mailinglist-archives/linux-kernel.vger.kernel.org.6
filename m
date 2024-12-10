@@ -1,110 +1,103 @@
-Return-Path: <linux-kernel+bounces-439624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE78D9EB1E2
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:27:54 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07861188A00E
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:27:51 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 743E91AA7A9;
-	Tue, 10 Dec 2024 13:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hpej9FEk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF27A9EB1E9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 14:28:27 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8C5341C64;
-	Tue, 10 Dec 2024 13:27:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94F5128852B
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 13:28:24 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCAAF1A9B47;
+	Tue, 10 Dec 2024 13:28:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="gqg5lyC4"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1594278F5D;
+	Tue, 10 Dec 2024 13:28:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733837249; cv=none; b=fPnE3/JVr575dktGR8BMRph36v+t9ZlPAiFazwg3p3sV3EfaU6ella+6ioJW9xTAkXsjvAOiD6wN/vXDOivUKlogIGvDANpQTQL7sglrbPQnXUNONoQ5nF0cjIpyPV95R7xe1Ozqqf5Fb/DX/0ydlD6aHK3LwouwFd2R3/Su/Mc=
+	t=1733837298; cv=none; b=P13pn87dhXfhtmyCLThEulQWOgZZKajVl05SJIldnxVgXTb12dmM0PM0EVu5eBTKgOdR/2OX+niMTLdBUXhHZXT4C9D6+VS7hSRUOZAwEXJsY43+sDcfj7uDM2d6klLy+U8mRh/TqzADavTnrbmrRDtDv0mD+bjkMOyHN2FzLig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733837249; c=relaxed/simple;
-	bh=xKJFRBNkKx36JPMJ2Eqydxn/VKUnHFFI1tFunwaj/FA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AsygHAt4UHR4oG6iZ6FFpSFClEFNdnPLEPanw+ybV8dT1rEYw/rs22Fx8K9qv8oXtUXGZrMnuGd1V9INAcBCnvm1ch0T0B2SkY2MPW18+NN0CYSDdRl/8iDPcYtdM29laZoxx4pfENJjAULEJ/h5R0ipZ2oVmIuuhVn3LXyIXcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hpej9FEk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EA4DC4CED6;
-	Tue, 10 Dec 2024 13:27:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1733837249;
-	bh=xKJFRBNkKx36JPMJ2Eqydxn/VKUnHFFI1tFunwaj/FA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hpej9FEk32LaoiE/JiWn0CjjiN+vw1q/H+CbqlnE8moxODyTdWs5PmgWnWuPD+KAs
-	 jyzJwgkx+0LOEcWYxlBPzknrCKZdpSNbjKH/11Lkz+AZPk3+sJDh+jloDAo9cHJahR
-	 EHT47KLkDLVMcu7zjjsrJNOjiidqoxTPx18rk9BvMB5FZ+6KQEZszvWBk3ahsXhIGG
-	 XOaNfhe8dgd5c5A0kAY5htAIKCG9t9PkjwejDfhMpkZp1EYxJlIFjuzWTtmcSpfr+f
-	 MHcR/Aoni7d4VdPAE+LVl+G42LPLzN47C9+30fjAcsE1dOXPcc8dWog2HF1Mh7ysuv
-	 2zg8WWaMQPHqQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1tL0Gt-002HGH-9I;
-	Tue, 10 Dec 2024 13:27:27 +0000
-Date: Tue, 10 Dec 2024 13:27:26 +0000
-Message-ID: <86ttbbsm69.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Stephan Gerhold <stephan.gerhold@linaro.org>, Johan Hovold <johan@kernel.org>
-Cc: 	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
+	s=arc-20240116; t=1733837298; c=relaxed/simple;
+	bh=ccNvQpqjr+JUyfSrXZAo24D/1j0K9F9qxyXslbViEUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PBzx4cje2ZdoPi3cbHsH6tolxe40YHtTDXx5EAbWSYJExtLucBmsB4V8xgRe6SG7dMaEp56giBTe2vSDIBb8zZCtr7AQ0k87jKEt12rMvQVZoMpGjddqB9Ro1i7pPHsCVLUJRInOkbX3HTVFb6psPY2iFALAl9+jaEWwLFiBXuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=gqg5lyC4; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=J4SZIWtWFvdEBBxd7ahrqofkskwaW/nYB7tGpgucLH0=; b=gqg5lyC46/+OCgH1rgdFL1T8DF
+	PveoXZ+zpRnN8xUoEDGHbmb1TIqhUS4jyeSsmdvJZP+5dSp988XW2FpPOmXUR2IV1DECQuUFZ5Lcx
+	fpup43NxrOmKbnPf7l/22nAl+WTkAS6AEIJ/2sOpPY2aBH7HuMlecrXogFbhUdkinRM6FWb+hThcf
+	jwJ6zVD/rWN+kf1fSkgV/TlGkShpCBibAdf9MZUnlyBZi46uMx0zzL7mJRODcYazyKxDKzesWlbPW
+	0bRoeKGz8ojqo0N215dkUAehNDWtk2bZEqO2pJ3wZ9CpjoJipN/AdggfmKrfSrWHkUAQXQfuWHWco
+	tR+Ulh7w==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tL04O-000U78-2l;
+	Tue, 10 Dec 2024 21:27:54 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 21:27:53 +0800
+Date: Tue, 10 Dec 2024 21:27:53 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: "David S. Miller" <davem@davemloft.net>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Xilin Wu <wuxilin123@gmail.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/8] arm64: dts: qcom: x1e*: Fix USB QMP PHY supplies
-In-Reply-To: <Z1g_nFhYXrBxHtrb@hovoldconsulting.com>
-References: <20241210-x1e80100-usb-qmp-supply-fix-v1-0-0adda5d30bbd@linaro.org>
-	<Z1g_nFhYXrBxHtrb@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	Antoine Tenart <atenart@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, upstream@airoha.com,
+	Richard van Schagen <vschagen@icloud.com>
+Subject: Re: [PATCH v7 3/3] crypto: Add Inside Secure SafeXcel EIP-93 crypto
+ engine support
+Message-ID: <Z1hB2WftNhyGt9oj@gondor.apana.org.au>
+References: <20241112015920.22564-1-ansuelsmth@gmail.com>
+ <20241112015920.22564-4-ansuelsmth@gmail.com>
+ <Z1e0LHycNGcWqd2q@gondor.apana.org.au>
+ <67582c1b.050a0220.83ef5.c8df@mx.google.com>
+ <Z1guyCJy-Cpo7U11@gondor.apana.org.au>
+ <6758312f.df0a0220.100594.1c3a@mx.google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: stephan.gerhold@linaro.org, johan@kernel.org, andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, quic_sibis@quicinc.com, wuxilin123@gmail.com, abel.vesa@linaro.org, dmitry.baryshkov@linaro.org, alex.vinarskis@gmail.com, srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6758312f.df0a0220.100594.1c3a@mx.google.com>
 
-On Tue, 10 Dec 2024 13:18:20 +0000,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> On Tue, Dec 10, 2024 at 10:07:31AM +0100, Stephan Gerhold wrote:
-> > On the X1E80100 CRD, &vreg_l3e_1p2 only powers &usb_mp_qmpphy0/1
-> > (i.e. USBSS_3 and USBSS_4). The QMP PHYs for USB_0, USB_1 and USB_2
-> > are actually powered by &vreg_l2j_1p2.
-> > 
-> > Since most X1E device trees just mirror the power supplies from the
-> > x1e80100-crd device tree, this series fixes up all the X1E boards with
-> > the same change.
-> 
-> Nice find! I've confirmed that this matches both the CRD and T14s
-> schematics.
+On Tue, Dec 10, 2024 at 01:16:42PM +0100, Christian Marangi wrote:
+>
+> Oh! Ok, that is neat. Just to make sure everything is clear,
+> to complete the request it's the same used for final, the
+> ahash_request_complete(). I tought the -EINPROGRESS,
+> ahash_request_complete() pattern was only for final.
 
-Can someone with access to the schematics confirm that the devkit
-indeed has the same supplies?
+Correct, the same calling convention applies whether you're doing
+update or finup/final.  One difference is that after final/finup
+you don't have to export the hash state because it's no longer
+defined.
 
-Thanks,
-
-	M.
-
+Cheers,
 -- 
-Without deviation from the norm, progress is not possible.
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
