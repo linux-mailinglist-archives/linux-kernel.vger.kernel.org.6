@@ -1,85 +1,190 @@
-Return-Path: <linux-kernel+bounces-438889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B1749EA828
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:49:30 +0100 (CET)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89C89169578
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:49:27 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30534227569;
-	Tue, 10 Dec 2024 05:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="T5d0IlT8"
-Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12A269EA82F
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:53:31 +0100 (CET)
+Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6248AA94D;
-	Tue, 10 Dec 2024 05:49:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1C2528539A
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:53:29 +0000 (UTC)
+Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 372A9226191;
+	Tue, 10 Dec 2024 05:53:28 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6972579FD
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 05:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733809761; cv=none; b=NipMYE3Z5zsa7q2Q5d0FwB/BZeutHG8+o4Hn2Ugs4i1Ui10+276W90rrath3BbLVsSf2WYSHUwrrgfk8wE8ijrsUgcyPePHBXNrNxyBx8ChzeRlSMInuK7mMSJUTrJPe7l/6W5o1L++XYqUgrJAKMYpRedJIEmnFY/zU3wbJK9A=
+	t=1733810007; cv=none; b=KCJNeiRnPOhlF91eyw3F37m3lQ7rtErrHFjRUuRHeS7ezTw4FhBX2MeYd/yNRZWoR8rb1cdBq0pd3REfzXbsU/qbuEFj7E8eCUQTzJ96MWO4HvxDF2aaHzKMAtqncZODYCf7xESmHR/FLoJ/5FLFf/TE/XbAUVHw7jLm4YXvNK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733809761; c=relaxed/simple;
-	bh=UMhfSGvDAo2n3fT6khkxZqhHqGzwcOztP3JLwFstvGk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QRrpl6Uk1cXiTncSo8XddAT9Fyh/Svjvf5a+I1aLUk9fZe3EJKziZicFYs6fRyXfvVkzJ9IMGVj+c2Jxv0r5CCFpAZaqNc2yVHFzT4A9kflZPXrl1S1Np9G3vW1cny7hj8sSH3/xg7MOfLCvAdmqYpRuRH4DokxCkwzIE/JCluQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=T5d0IlT8; arc=none smtp.client-ip=144.6.53.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
-	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=nGSMm76vfOUFKovXKofALU2UQdEMkJR9usNJFgfsWtY=; b=T5d0IlT8mdglKRjur8L54NdmvR
-	gliZRn0VskMByB4804oVHyx8yaUWIpCoPtd86H6jRR84EVeBzZc8Vme6xIs/88GjsDkW/SLZ/E8y9
-	oHRDfGjhvAgT4HdHtCXclOnfl9pZVB5ZJdwHS40vgMzvUX5WnEnzh478Vu475wbqY8aHxnhqHRIgf
-	aFXiOE3XPjQ6P82j+1q6ysjxxXFq5/fWWNSat+xn362vTCNlJWAzKhlNbhFd2NKEkUWEOxuR+TYZ3
-	3ryT/VhDD7tdanKXn1HllXkASMuyCDGzpEMfOivBbp+G/J5chrdiZKP2vPsA7/qi6jHB+bUFwgoLi
-	BnSJyeLA==;
-Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
-	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
-	id 1tKsuZ-000OE2-0W;
-	Tue, 10 Dec 2024 13:49:16 +0800
-Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 13:49:15 +0800
-Date: Tue, 10 Dec 2024 13:49:15 +0800
-From: Herbert Xu <herbert@gondor.apana.org.au>
-To: Chenghai Huang <huangchenghai2@huawei.com>
-Cc: davem@davemloft.net, linux-kernel@vger.kernel.org,
-	linux-crypto@vger.kernel.org, qianweili@huawei.com,
-	wangzhou1@hisilicon.com
-Subject: Re: [PATCH] crypto: hisilicon/debugfs - fix the struct pointer
- incorrectly offset problem
-Message-ID: <Z1fWWw7RuyyADQU3@gondor.apana.org.au>
-References: <20241130080131.906598-1-huangchenghai2@huawei.com>
+	s=arc-20240116; t=1733810007; c=relaxed/simple;
+	bh=J4GBjuMgtQyz8PZ5/mRDYrmnHODH0EKPs0EvY3uVhXI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=N7STVZ75HspDY2y7eRVwdpq8K3g3uOEM+UEgFJCY5qQGcHWy7uYCiH9t0PZxuChXzD1JKouY/Y3CixFodoU0itEws3DWzLI0HoMFIKnnsI/MnQKG/FlAx3hRdlU2sVrtQtFmlqLKx91auYek7wHL3MLvhgjg0Eu7PfeLpXb0HIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 81478113E;
+	Mon,  9 Dec 2024 21:53:51 -0800 (PST)
+Received: from a077893.arm.com (unknown [10.163.48.173])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E512B3F58B;
+	Mon,  9 Dec 2024 21:53:18 -0800 (PST)
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+To: linux-kernel@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	maz@kernel.org
+Cc: ryan.roberts@arm.com,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Brown <broonie@kernel.org>
+Subject: [PATCH V2 00/46] KVM: arm64: Enable FGU (Fine Grained Undefined) for FEAT_FGT2 registers
+Date: Tue, 10 Dec 2024 11:22:25 +0530
+Message-Id: <20241210055311.780688-1-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241130080131.906598-1-huangchenghai2@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Nov 30, 2024 at 04:01:31PM +0800, Chenghai Huang wrote:
-> Offset based on (id * size) is wrong for sqc and cqc.
-> (*sqc/*cqc + 1) can already offset sizeof(struct(Xqc)) length.
-> 
-> Fixes: 15f112f9cef5 ("crypto: hisilicon/debugfs - mask the unnecessary info from the dump")
-> Signed-off-by: Chenghai Huang <huangchenghai2@huawei.com>
-> ---
->  drivers/crypto/hisilicon/debugfs.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+This series enables fine grained undefined for FEAT_FGT2 managed registers
+via adding their respective FGT and CGT trap configuration. But first this
+adds many system register definitions in tools/sysreg, which are required
+there after.
 
-Patch applied.  Thanks.
+patches 1-43: define system registers in tools/sysreg format
+patch     44: enables FEAT_FGT2 registers access from virtual EL2
+patch     45: enables FGT for FEAT_FGT2
+patch     46: enables CGT for FEAT_FGT2
+
+Some notes:
+
+As kvm_has_feat() does not support non-ID registers following replacements
+have been made for validating presence of correspnding features
+
+- ID_AA64DFR0_EL1.ExtTrcBuff is tested for HDFGRTR2_EL2.nPMSDSFR_EL1
+- ID_AA64DFR0_EL1.PMSVer is tested for HDFGRTR2_EL2.nPMSDSFR_EL1
+
+Following FGT enabled registers don't have corresponding CGT requirements
+
+- TRCITECR_EL1
+- PMSSCR_EL1
+- PMCCNTSVR_EL1
+- PMICNTSVR_EL1
+- RCWSMASK_EL1
+- ERXGSR_EL1
+- PFAR_EL1
+
+This series applies on v6.13-rc1
+
+Changes in V2:
+
+- Dropped patches for ID_AA64DFR0_EL1 and ID_AA64DFR2_EL1 (changes merged mainline)
+- Added patch for ID_AA64MMFR4_EL1
+- Updated all tools sysreg definitions as per DDI0601 2024-09
+- Added HFGITR2_EL2 register based fields in encoding_to_fgt[]
+- Updated HFGITR2_EL2_[nDCCIVAPS|TSBCSYNC] in kvm_init_nv_sysregs()
+- Updated HFGITR2_EL2_[nDCCIVAPS|TSBCSYNC] in kvm_calculate_traps()
+- Dropped check_cntr_accessible_N and CGT_CNTR_ACCESSIBLE_N constructs
+- SYS_PMEVCNTSVR_EL1(N) access traps have been forwarded to CGT_MDCR_HPMN
+- Updated check_mdcr_hpmn() to handle SYS_PMEVCNTSVR_EL1(N) registers
+- Changed behaviour as BEHAVE_FORWARD_RW for CGT_MDCR_EnSPM
+
+Changes in V1:
+
+https://lore.kernel.org/all/20241001024356.1096072-1-anshuman.khandual@arm.com/
+
+- Added all system register definitions required for FEAT_FGT2 traps
+- Added all system register access traps managed with new FEAT_FGT2
+  i.e HDFGRTR2_EL2, HDFGWTR2_EL2, HFGRTR2_GROUP, HFGWTR2_GROUP and
+  HFGITR2_GROUP for their VNCR access, FGT and CGT
+- Added all FGT for all register accesses managed with FEAT_FGT2
+- Added all CGT for all register accesses managed with FEAT_FGT2
+
+Changes in RFC V1:
+
+https://lore.kernel.org/linux-arm-kernel/20240620065807.151540-1-anshuman.khandual@arm.com/
+
+Cc: Marc Zyngier <maz@kernel.org>
+Cc: Oliver Upton <oliver.upton@linux.dev>
+Cc: James Morse <james.morse@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Will Deacon <will@kernel.org>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org
+Cc: kvmarm@lists.linux.dev
+Cc: linux-kernel@vger.kernel.org
+
+Anshuman Khandual (46):
+  arm64/sysreg: Update register fields for ID_AA64MMFR0_EL1
+  arm64/sysreg: Update register fields for ID_AA64MMFR4_EL1
+  arm64/sysreg: Update register fields for ID_AA64PFR0_EL1
+  arm64/sysreg: Update register fields for TRBIDR_EL1
+  arm64/sysreg: Add register fields for HDFGRTR2_EL2
+  arm64/sysreg: Add register fields for HDFGWTR2_EL2
+  arm64/sysreg: Add register fields for HFGITR2_EL2
+  arm64/sysreg: Add register fields for HFGRTR2_EL2
+  arm64/sysreg: Add register fields for HFGWTR2_EL2
+  arm64/sysreg: Add register fields for MDSELR_EL1
+  arm64/sysreg: Add register fields for PMSIDR_EL1
+  arm64/sysreg: Add register fields for TRBMPAM_EL1
+  arm64/sysreg: Add register fields for PMSDSFR_EL1
+  arm64/sysreg: Add register fields for SPMDEVAFF_EL1
+  arm64/sysreg: Add register fields for PFAR_EL1
+  arm64/sysreg: Add register fields for PMIAR_EL1
+  arm64/sysreg: Add register fields for PMECR_EL1
+  arm64/sysreg: Add register fields for PMUACR_EL1
+  arm64/sysreg: Add register fields for PMCCNTSVR_EL1
+  arm64/sysreg: Add register fields for SPMSCR_EL1
+  arm64/sysreg: Add register fields for SPMACCESSR_EL1
+  arm64/sysreg: Add register fields for PMICNTR_EL0
+  arm64/sysreg: Add register fields for PMICFILTR_EL0
+  arm64/sysreg: Add register fields for SPMCR_EL0
+  arm64/sysreg: Add register fields for SPMOVSCLR_EL0
+  arm64/sysreg: Add register fields for SPMOVSSET_EL0
+  arm64/sysreg: Add register fields for SPMINTENCLR_EL1
+  arm64/sysreg: Add register fields for SPMINTENSET_EL1
+  arm64/sysreg: Add register fields for SPMCNTENCLR_EL0
+  arm64/sysreg: Add register fields for SPMCNTENSET_EL0
+  arm64/sysreg: Add register fields for SPMSELR_EL0
+  arm64/sysreg: Add register fields for PMICNTSVR_EL1
+  arm64/sysreg: Add register fields for SPMIIDR_EL1
+  arm64/sysreg: Add register fields for SPMDEVARCH_EL1
+  arm64/sysreg: Add register fields for SPMCFGR_EL1
+  arm64/sysreg: Add register fields for PMSSCR_EL1
+  arm64/sysreg: Add register fields for PMZR_EL0
+  arm64/sysreg: Add register fields for SPMCGCR0_EL1
+  arm64/sysreg: Add register fields for SPMCGCR1_EL1
+  arm64/sysreg: Add register fields for MDSTEPOP_EL1
+  arm64/sysreg: Add register fields for ERXGSR_EL1
+  arm64/sysreg: Add register fields for SPMACCESSR_EL2
+  arm64/sysreg: Add remaining debug registers affected by HDFGxTR2_EL2
+  KVM: arm64: nv: Add FEAT_FGT2 registers access from virtual EL2
+  KVM: arm64: nv: Add FEAT_FGT2 registers based FGU handling
+  KVM: arm64: nv: Add trap forwarding for FEAT_FGT2 described registers
+
+ arch/arm64/include/asm/kvm_arm.h        |   20 +
+ arch/arm64/include/asm/kvm_host.h       |   12 +
+ arch/arm64/include/asm/sysreg.h         |   10 +
+ arch/arm64/include/asm/vncr_mapping.h   |    5 +
+ arch/arm64/kvm/emulate-nested.c         |  345 ++++++++
+ arch/arm64/kvm/hyp/include/hyp/switch.h |   26 +
+ arch/arm64/kvm/nested.c                 |   58 ++
+ arch/arm64/kvm/sys_regs.c               |   70 ++
+ arch/arm64/tools/sysreg                 | 1031 ++++++++++++++++++++++-
+ 9 files changed, 1570 insertions(+), 7 deletions(-)
+
 -- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+2.25.1
+
 
