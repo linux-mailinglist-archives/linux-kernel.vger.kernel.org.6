@@ -1,64 +1,60 @@
-Return-Path: <linux-kernel+bounces-438873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-438876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8F7E9EA7CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:28:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A76389EA7D9
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 06:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5228165836
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:28:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 56CC21889687
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 05:29:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74C6F22617A;
-	Tue, 10 Dec 2024 05:28:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B37F9227599;
+	Tue, 10 Dec 2024 05:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="zpiWKH9L"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="r4E/7f7K"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B593B23312A;
-	Tue, 10 Dec 2024 05:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FA05228372;
+	Tue, 10 Dec 2024 05:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733808490; cv=none; b=q+KsSiMBPx0xb3th3qwIqU7rAKpOrZcR9auLhoeqAVe2KUunYRg96RAdIQYmrJbWDZ9IPOHeRRrDPgcxzDJN8RbwuUh4lrQRSxQCdic8yPOMp7LCJL7wbgz1jKc6BPRHYfTu2MvLWuYlOqJiKM+QaMk8x6pcyF/PFandURwm/9A=
+	t=1733808507; cv=none; b=A6ZQTmNmJDeEeBU7I53c+k7rHFD/tMyXzBNP7WjNf9vPdxHY5DZ3scvqEFoGGprQPLRHqRwywYNoR2fmos/CducIbjhLkDwtUGPMjuzNhEBYIEPAszY/QIpK7w5twgjEajkhcmzYb17gEE9lBgbVg/7m1hk3nQRcZ52lKoosCF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733808490; c=relaxed/simple;
-	bh=BEEpQrT/YNe0uS039pd6cvEKm7vNAQNBOCmtwTw3gMc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UDlHHTqxTViYqammjkLis8xzKqw4kYB96QmTpHDwJ+wuXbD53MreE7ySIqeiIbQHsprkNl89CQp33MgeZICvv4+VsIscgMlX+hPEdF9teVRIiUKqFmXRdSCLPAUPACSOdyUvqvuoK6GffyRi6Yan5nTGWYWDk7IcCLksSnwtkaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=zpiWKH9L; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OpKyHr2Bvr0DCtSbzhR4/78Zn86Rkx07+NKBx+P7V0A=; b=zpiWKH9Lm52ytsJhfpmHMz8Vyh
-	Qv0vRPDWQX2P6U6azFylE+zgoqfWeaJng2WwyEz3E9kp5hnRPOqHETXHw+E/Yv/DR+IjBQaW/PS0b
-	ERzhI8WIsAPAA39GkN4HvknguhR9jjoxmqVhdH3lw3urp/1zG3+46DdI3KoUYvBflGX0H6acQMBSO
-	YG2lRo4kKWNSS5vs+ARhAPQLnvTdoYXfXZhsJ6tdnSF0YaYE38kkeiJ45cud6XFSF/L256kEiF5hx
-	q5j/OER7mm5zeWgEd4FkapOK7EmeK3r7lUtTkuoTf5IMgNHHKtvbeaJtsRlG/GY2iIuCelIwJTxcC
-	NT344poQ==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tKsn3-0000000AHYJ-1b7T;
-	Tue, 10 Dec 2024 05:28:09 +0000
-Date: Mon, 9 Dec 2024 21:28:09 -0800
-From: 'Christoph Hellwig' <hch@infradead.org>
-To: Jangsub Yi <jangsub.yi@samsung.com>
-Cc: 'Christoph Hellwig' <hch@infradead.org>, ulf.hansson@linaro.org,
-	linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	junwoo80.lee@samsung.com, sh8267.baek@samsung.com,
-	wkon.kim@samsung.com
-Subject: Re: [PATCH] mmc: Add config_host callback to set a mmc queue
-Message-ID: <Z1fRaeTMz241A8FN@infradead.org>
-References: <CGME20241106051403epcas1p29e983006930bd7b8364b1a1f858ad21c@epcas1p2.samsung.com>
- <20241106051347.969-1-jangsub.yi@samsung.com>
- <ZyxelKdmXXiSVL1g@infradead.org>
- <000001db30f4$4a749770$df5dc650$@samsung.com>
- <ZyzYnw0PgpyViFdf@infradead.org>
- <0b2e01db3410$a05f41c0$e11dc540$@samsung.com>
- <000001db4ac3$b5584260$2008c720$@samsung.com>
+	s=arc-20240116; t=1733808507; c=relaxed/simple;
+	bh=+DwSGOXuuqNabZsdzSbD+HwDHQWTNMD+nwplOuyHAhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=eGSUGyn5fOj6Qb0iawsuQF2xjkBO5ByBx5kSaxmndnFw3dogyTyK69S4uBePMR3gHQ4tZ5Rry/WOnmjlOkBDzF1WqtZsfPN4VMCMPKQNlKSCAG948lcA1E3qKTjjgKcoSzRIvMpA9oH09vCc38txKFLV68KL+pnNvvYr8iQqWBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=r4E/7f7K; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:Message-ID:Subject:Cc:To:
+	From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jS0KRHv3gisGkGaPcXBUeChmcT/fU7BjmCvQPNgWfQg=; b=r4E/7f7KUMd2ELmW7GfAM1kI8d
+	QQhp2W3uyJbFMjHLvboh8hECFZsjD4HMIDaCzI75hoqNLwpaL4/izZtq6898nLEEKaQ6AlFzUetif
+	XZ4uS1YyVVotNo+7EExeCxeRzGcrmy1Ce3Ogr0pvTSty5yljVO2+9Fh2Njbe5yPFctw7wxCqua88J
+	Fn4JntnmlcwqQo+P9DZ8iZBSrsixMqtmSsLJYFPtWDiS7rkhPTsc/e6KUCesTPduCkOTnBfq01giQ
+	Flohwb8YDNApLuvll9GGOWfazxgqAlc5Ln4cSRFjV5jN+4VAvXIIdbJFfRgjpy3U8oSvDhIjw+Ukf
+	eozgGcsw==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1tKsaD-000O2Z-1T;
+	Tue, 10 Dec 2024 13:28:15 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Tue, 10 Dec 2024 13:28:14 +0800
+Date: Tue, 10 Dec 2024 13:28:14 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Pei Xiao <xiaopei01@kylinos.cn>
+Cc: hadar.gat@arm.com, olivia@selenic.com, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, xiaopei01@kylinos.cn,
+	Tian Tao <tiantao6@hisilicon.com>
+Subject: Re: [PATCH] hwrng: cctrng: Add cancel_work_sync before module remove
+Message-ID: <Z1fRbqh2_2gSpgkJ@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,16 +63,46 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <000001db4ac3$b5584260$2008c720$@samsung.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <d71e0bcee781ebe12697df94083f16d651fb30c0.1732786634.git.xiaopei01@kylinos.cn>
+X-Newsgroups: apana.lists.os.linux.cryptoapi,apana.lists.os.linux.kernel
 
-On Tue, Dec 10, 2024 at 02:23:55PM +0900, Jangsub Yi wrote:
-> This is necessary to have separate policies for each device.
-> I will also implement the host modifications related to this content 
-> and try to upstream it. Please review the core modifications.
+Pei Xiao <xiaopei01@kylinos.cn> wrote:
+> Be ensured that the work is canceled before proceeding with
+> the cleanup in cc_trng_pm_fini.
+> 
+> Fixes: a583ed310bb6 ("hwrng: cctrng - introduce Arm CryptoCell driver")
+> Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
+> ---
+> drivers/char/hw_random/cctrng.c | 2 ++
+> 1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/char/hw_random/cctrng.c b/drivers/char/hw_random/cctrng.c
+> index 4db198849695..fd1ee3687782 100644
+> --- a/drivers/char/hw_random/cctrng.c
+> +++ b/drivers/char/hw_random/cctrng.c
+> @@ -127,6 +127,8 @@ static void cc_trng_pm_fini(struct cctrng_drvdata *drvdata)
+> {
+>        struct device *dev = &(drvdata->pdev->dev);
+> 
+> +       cancel_work_sync(&drvdata->compwork);
+> +       cancel_work_sync(&drvdata->startwork);
+>        pm_runtime_disable(dev);
+> }
 
-It is not reviewable without a user and your insistance to waste
-everyones time for a patch that as is adds dead code is highly
-offensive.  Stop it.
+I don't think this is right.  This is a problem with using devres:
+you need to be very careful with unwinding things.  The remove
+occurs before all devm resources are released.  So the device is
+still registered with the hwrng core and potentially live.
 
+These work tasks are created by the ISR.  So they should only be
+cancelled after the IRQ handler has been unregistered.
+
+Perhaps we should just rip out all the devm code and go back to
+manual freeing.
+
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
