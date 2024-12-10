@@ -1,156 +1,182 @@
-Return-Path: <linux-kernel+bounces-439448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B309EAF7D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:14:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2698F9EAF28
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 12:08:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1FFEC188C29D
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5DEC4188B909
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:08:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07E9023A57A;
-	Tue, 10 Dec 2024 11:08:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E310022333B;
+	Tue, 10 Dec 2024 11:06:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P3DwlHtQ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bgDmFAfH"
+Received: from out-172.mta0.migadu.com (out-172.mta0.migadu.com [91.218.175.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9849237A27;
-	Tue, 10 Dec 2024 11:08:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F20C223331
+	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 11:06:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733828918; cv=none; b=j/jggo0YIzIp8ccPSyDSEOIdF499zp9y123wKzJMwTyWTsqQF8FwtiftKGYe3jM3SQGX7c2VSEH8T52e0KJb+XPLMMsHAku2B7DZb9na0I35sHc4FhguFH7r2X7JOr8GkCN+PQAT/xPRd+/jbyFYEdm33M6/JLH7R/6OBXAglyo=
+	t=1733828811; cv=none; b=AFP1W6OtBaf4wVGAZYuy2J3G2CT1gW8P0NrUMwaSkzffBEd/xVhAeD02vrdHFPPpSRPVunnO7sucZCVLQlH0KMU3UlY6EIIP4dmyF56/AsA6I5EW0yTHF0lbLzVSK8vdJYRTub3j5SrFpSeyHRyd0KndJwI0WtyV5jdLr3tOXGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733828918; c=relaxed/simple;
-	bh=ljYka+yEPL7dtoadjp4FCBcNXplDLLPRhCJ9St112Pw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=hSXPqm6ABauLqb5ASkIp7LtT8zpRmdLjBjuDkdzjRXwBWyO1INO3/3e0fL10XA1oWA0pgRZL2v/q7pFGTafd3YLpkfPsGYFVfGsnRfgEtSXsmnxqT0jCKbVGP6y/PMuhKCfejEHtc5lrvjDrGF14fzJYslIp5j2rsGasTP5WxgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P3DwlHtQ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4BAAc7hw018563;
-	Tue, 10 Dec 2024 11:08:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Oxkw5D/JPs2UYjgb4jIX/CzNiPXlr+l6xOKDFt/4wo8=; b=P3DwlHtQ/eGSfeb6
-	qBfBj1YcZQks37csDS6gCHWT0w4CheNLpOVcUSydCT/WcHSs2T1BGX+tcJFLC4Rk
-	vcdNMPj8AuMHEQKRykKS4yjwjIih5lV+mqSRnLXdwSKxxCiP1Kbe/pWvpfvK+uhN
-	Y4GI+UITRaHe8mlUYj6MU2d3PD9JDfbs9QWBL8/CVlr5cDu0jKPkH13FOwntgbpb
-	jOo6XT0BwlowH+n7PbpGoLNfYPpxUauJGCKfBBoahmDSssAeVDc5rknT76Bwben6
-	YjDlGwt/bai5bhvQQShFT2NfaXt8skAeQiYoshib5Ef7tEU5UbwETtEzX6LnK2kM
-	VS/nEQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 43eak39ks0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:08:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 4BAB8RJ7020131
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 10 Dec 2024 11:08:27 GMT
-Received: from hu-dikshita-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 10 Dec 2024 03:08:21 -0800
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-Date: Tue, 10 Dec 2024 16:35:32 +0530
-Subject: [PATCH v8 28/28] media: MAINTAINERS: add Qualcomm iris video
- accelerator driver
+	s=arc-20240116; t=1733828811; c=relaxed/simple;
+	bh=0gidoGIG0z2WaGCB3NApHeDNViXG+QD8VmOG+MOZf48=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=gvadjfzhzNMcsZ4ogwssNxHqO6eB6FsR53QMQFaYKajGIQARYCpXxvTn2+3KzTSq/sFXvghGjIQDVXMrzJnJEOFz8C2WSxBWLd09yvS0tLx/JYtmrxndV92P9Di3gE7aAkiOPLQbeyAeFWeFSXypmBrwQW3wBOa61SKj/PzELhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bgDmFAfH; arc=none smtp.client-ip=91.218.175.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1733828806;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=v8sRqjoiiHcRkTpsPK0hRKSOh3L/dg4EGVpik/b50qU=;
+	b=bgDmFAfHIsHzr0y+kzyxvkRUR1idbJIAeTQN+jNTwl0/hSDFc6j1XsDcCuSlL/quNH8wyU
+	zxlgmPchLnMrRiNKIvU/X4DtRwDw1tePXYqQZW9UkuQZlWc9u5P4FsnekV4FdACKQt+EaL
+	ihH9trlpV79zWoJnOiip+yYEUkCvtnI=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241210-qcom-video-iris-v8-28-42c5403cb1a3@quicinc.com>
-References: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com>
-In-Reply-To: <20241210-qcom-video-iris-v8-0-42c5403cb1a3@quicinc.com>
-To: Vikash Garodia <quic_vgarodia@quicinc.com>,
-        Abhinav Kumar
-	<quic_abhinavk@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: Hans Verkuil <hverkuil@xs4all.nl>,
-        Sebastian Fricke
-	<sebastian.fricke@collabora.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Nicolas Dufresne
-	<nicolas@ndufresne.ca>,
-        =?utf-8?q?Uwe_Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@baylibre.com>,
-        Jianhua Lu <lujianhua000@gmail.com>,
-        "Stefan
- Schmidt" <stefan.schmidt@linaro.org>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Dikshita Agarwal <quic_dikshita@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1733828732; l=1060;
- i=quic_dikshita@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=ljYka+yEPL7dtoadjp4FCBcNXplDLLPRhCJ9St112Pw=;
- b=n4zzM3NJuYrv1JKuZi1WgCne9z7NYRYABAfpTbxXOJoz3fq96eRjxgrxIbJzB6IpVZvzlsxM6
- 6KBSCKVy8pxB6Qtgs9T0GkW53wZyil2FlbDU9uw6NHDYPNefAjx2rq1
-X-Developer-Key: i=quic_dikshita@quicinc.com; a=ed25519;
- pk=EEvKY6Ar1OI5SWf44FJ1Ebo1KuQEVbbf5UNPO+UHVhM=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: zV5rzDJo8oeiXvz_f7fc4JcVIQikUXud
-X-Proofpoint-GUID: zV5rzDJo8oeiXvz_f7fc4JcVIQikUXud
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=840 clxscore=1015 spamscore=0 mlxscore=0 impostorscore=0
- malwarescore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- bulkscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2411120000 definitions=main-2412100083
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [PATCH v2 05/11] kbuild: change working directory to external
+ module directory with M=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <CAK7LNAQ1MvB_wXa6F8aZB_srrLTQupRXNsz6Rav27fyjznXZJQ@mail.gmail.com>
+Date: Tue, 10 Dec 2024 12:06:32 +0100
+Cc: linux-kbuild@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ cocci@inria.fr
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <838D0FCD-EA9C-46C8-BCA7-FECFD3DC04D8@linux.dev>
+References: <20241110013649.34903-1-masahiroy@kernel.org>
+ <20241110013649.34903-6-masahiroy@kernel.org>
+ <82FA2E02-05A5-4297-B364-9D7D89001D9D@linux.dev>
+ <1116D946-05F3-4463-A61F-DE221F258A3F@linux.dev>
+ <CAK7LNAQ1MvB_wXa6F8aZB_srrLTQupRXNsz6Rav27fyjznXZJQ@mail.gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-Add an entry for iris video decoder accelerator driver.
+On 10. Dec 2024, at 11:47, Masahiro Yamada wrote:
+> On Mon, Dec 9, 2024 at 10:56=E2=80=AFPM Thorsten Blum wrote:
+>> On 9. Dec 2024, at 14:46, Thorsten Blum wrote:
+>>> On 10. Nov 2024, at 02:34, Masahiro Yamada wrote:
+>>>>=20
+>>>> Currently, Kbuild always operates in the output directory of the =
+kernel,
+>>>> even when building external modules. This increases the risk of =
+external
+>>>> module Makefiles attempting to write to the kernel directory.
+>>>>=20
+>>>> This commit switches the working directory to the external module
+>>>> directory, allowing the removal of the $(KBUILD_EXTMOD)/ prefix =
+from
+>>>> some build artifacts.
+>>>>=20
+>>>> The command for building external modules maintains backward
+>>>> compatibility, but Makefiles that rely on working in the kernel
+>>>> directory may break. In such cases, $(objtree) and $(srctree) =
+should
+>>>> be used to refer to the output and source directories of the =
+kernel.
+>>>>=20
+>>>> The appearance of the build log will change as follows:
+>>>>=20
+>>>> [Before]
+>>>>=20
+>>>> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
+>>>> make: Entering directory '/path/to/my/linux'
+>>>> CC [M]  /path/to/my/externel/module/helloworld.o
+>>>> MODPOST /path/to/my/externel/module/Module.symvers
+>>>> CC [M]  /path/to/my/externel/module/helloworld.mod.o
+>>>> CC [M]  /path/to/my/externel/module/.module-common.o
+>>>> LD [M]  /path/to/my/externel/module/helloworld.ko
+>>>> make: Leaving directory '/path/to/my/linux'
+>>>>=20
+>>>> [After]
+>>>>=20
+>>>> $ make -C /path/to/my/linux M=3D/path/to/my/externel/module
+>>>> make: Entering directory '/path/to/my/linux'
+>>>> make[1]: Entering directory '/path/to/my/externel/module'
+>>>> CC [M]  helloworld.o
+>>>> MODPOST Module.symvers
+>>>> CC [M]  helloworld.mod.o
+>>>> CC [M]  .module-common.o
+>>>> LD [M]  helloworld.ko
+>>>> make[1]: Leaving directory '/path/to/my/externel/module'
+>>>> make: Leaving directory '/path/to/my/linux'
+>>>>=20
+>>>> Printing "Entering directory" twice is cumbersome. This will be
+>>>> addressed later.
+>>>>=20
+>>>> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+>>>> ---
+>>>=20
+>>> Hi Masahiro,
+>>>=20
+>>> I get the following error since this patch is in master, but only =
+when
+>>> using COCCI=3D in combination with M=3D<relative or absolute path>.
+>>>=20
+>>> It works when I either use COCCI=3D or M=3D, but not with both.
+>>=20
+>> Using the absolute path of the cocci script fixes my problem, but =
+this
+>> used to work with relative paths too.
+>>=20
+>> $ make coccicheck =
+COCCI=3D$(pwd)/scripts/coccinelle/misc/flexible_array.cocci M=3Darch/
+>=20
+> M=3D looks a bit weird for the upstream code, but
+> I think using the absolute path is the right thing to do.
 
-Signed-off-by: Vikash Garodia <quic_vgarodia@quicinc.com>
-Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
----
- MAINTAINERS | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+The documentation[1] uses M=3D and also COCCI=3D with relative paths and
+some of the examples don't work anymore.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 7a14891a8fa9..d647e59d9912 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -19156,6 +19156,16 @@ S:	Maintained
- F:	Documentation/devicetree/bindings/regulator/vqmmc-ipq4019-regulator.yaml
- F:	drivers/regulator/vqmmc-ipq4019-regulator.c
- 
-+QUALCOMM IRIS VIDEO ACCELERATOR DRIVER
-+M:	Vikash Garodia <quic_vgarodia@quicinc.com>
-+M:	Dikshita Agarwal <quic_dikshita@quicinc.com>
-+R:	Abhinav Kumar <quic_abhinavk@quicinc.com>
-+L:	linux-media@vger.kernel.org
-+L:	linux-arm-msm@vger.kernel.org
-+S:	Maintained
-+F:	Documentation/devicetree/bindings/media/qcom,*-iris.yaml
-+F:	drivers/media/platform/qcom/iris/
-+
- QUALCOMM NAND CONTROLLER DRIVER
- M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
- L:	linux-mtd@lists.infradead.org
+Could you try this one?
 
--- 
-2.34.1
+```
+export COCCI=3Dscripts/coccinelle/misc/irqf_oneshot.cocci
+make coccicheck DEBUG_FILE=3D"err.log" MODE=3Dreport SPFLAGS=3D"--profile =
+--show-trying" M=3D./drivers/mfd
+```
+
+I get this:
+
+$ export COCCI=3Dscripts/coccinelle/misc/irqf_oneshot.cocci
+$ make coccicheck DEBUG_FILE=3D"err.log" MODE=3Dreport =
+SPFLAGS=3D"--profile --show-trying" M=3D./drivers/mfd
+make[1]: Entering directory '/home/fedora/linux/drivers/mfd'
+
+Please check for false positives in the output before submitting a =
+patch.
+When using "patch" mode, carefully review the patch before submitting =
+it.
+
+grep: scripts/coccinelle/misc/irqf_oneshot.cocci: No such file or =
+directory
+grep: scripts/coccinelle/misc/irqf_oneshot.cocci: No such file or =
+directory
+coccicheck failed
+make[2]: *** [/home/fedora/linux/Makefile:2089: coccicheck] Error 2
+make[1]: *** [/home/fedora/linux/Makefile:251: __sub-make] Error 2
+make[1]: Leaving directory '/home/fedora/linux/drivers/mfd'
+make: *** [Makefile:251: __sub-make] Error 2
+
+Thanks,
+Thorsten
+
+[1] https://www.kernel.org/doc/html/latest/dev-tools/coccinelle.html
 
 
