@@ -1,127 +1,213 @@
-Return-Path: <linux-kernel+bounces-439389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-439390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 444EC9EAEA4
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:52:32 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 926469EAEA6
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 11:52:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1647161704
-	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:52:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A41162963
+	for <lists+linux-kernel@lfdr.de>; Tue, 10 Dec 2024 10:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F5022153C8;
-	Tue, 10 Dec 2024 10:47:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A91D32080C2;
+	Tue, 10 Dec 2024 10:47:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZVUmsYB6"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jZE1pnzR"
+Received: from fllvem-ot03.ext.ti.com (fllvem-ot03.ext.ti.com [198.47.19.245])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B852C2080EF
-	for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 10:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E67AF2080EF;
+	Tue, 10 Dec 2024 10:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.245
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1733827655; cv=none; b=UzmXFooZ+3MQYDsR+XXI98jSwOmvdF01DZi7FWbux/FVRXqsTyLU8iumuys//lhuBk9wR/iXeMMndY/lI7zAw3qCrgP3LwL6mq3o0rDIV/+ptnfJvIR444dl+a8qQGLWkDblhTijaG5sxMYpZpqC95k6cuoWtpqdrI1kmyCleeg=
+	t=1733827672; cv=none; b=WFJfasSwB9DnF0DYFMXLFZNJFHXhvyH6Od219QNKDIjTtDLmWzoCg4xrygX9l+saTZqptiKbP/HGJAtnpYwBUEi1G0nD1WVTGwiqJgpDSSTidVq3Sfqqgknze+cz6muk2ulcx9653F39f6c7btSdpGcF96ycK6K8IHjQ5qAcjRw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1733827655; c=relaxed/simple;
-	bh=Y6HOPzsah2UWH+doev7j6bx01djyqo2znX5vVNM5uw0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cirZ82mwCRxcTsf6GjnbvZXJ1Y8SiuUUkn1p2DyfPx0f1GFRo34eAt03HmsEWgr8g1Do3rfX8LRVXAzDD8QFwBuJyZQVA3uFNEJtDfmrJD3GnYgkqbwkxaS5r/UwdVZEt471M84QQUluaojsbTpa887A5KjwgbBfe3NFAFVLr2o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZVUmsYB6; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ff976ab0edso51513891fa.1
-        for <linux-kernel@vger.kernel.org>; Tue, 10 Dec 2024 02:47:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1733827651; x=1734432451; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CQDk0aXlh4sHYVGoJtmtywLEY715ubkw6Pu7A3p8NKk=;
-        b=ZVUmsYB6+7B56ej2gFSH+V0OBnFVCs0RIkFjVGUAuReA86A1s2Koz2HnBdnL6NMRbo
-         2OenBL1VX9oNsgxJ1k3k8tESf9wT8dZ942PwT7LMrtdQ2MWgW0elmrQh5Ef5jLogM3u1
-         K2VkBL9NrHmPh6vkHQyudWjRAy0lywhKBZSGwkZ3Id0pPl6mCE36OV8x3zZCqTVrmZlW
-         f007+K7OkMMHeYJfp8/yqt9wiupAJHDY6m4Y0vtUrRHUVc2EalEf90ScN8YpM5gyxPil
-         Ho7uoKj3IWYV8/5VGumItf361dx/wln7qIBRuKIuMeByA+nkotmnSASNayHKFG6D3PFb
-         ysjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1733827651; x=1734432451;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CQDk0aXlh4sHYVGoJtmtywLEY715ubkw6Pu7A3p8NKk=;
-        b=Wm7Fdu6A4nr7mtxvImE+V9R/YkcL+oOu15xhL3rq3qes3anGswbn7BGkRQkhqUcW5a
-         rJ19c6/Ui4Q5RiJ3joswQFYkEML5exQ+vXblOAmYR66QHhLnIXXyn6CsMFmF+MJXxJQN
-         AJ7WXJS50NXw6hX/izFIZ1XlBSpAWz9+FVZsnFWzD0VhWCSnt43u9Rna9ynzQSrUHBTm
-         7BVaIyyacYlPx848P7VwaSRI4l+2e7Y+yVIJ0sFj6BcjebHgFmTsigmcXAZU2RV5h7Kl
-         OTe1lzPHL7u1iN2UUgaORrdsGdn2pkpkJUFvZWv3+mW7uGE+QzgBv+qL4B2NAAOd1isW
-         Qa5A==
-X-Forwarded-Encrypted: i=1; AJvYcCVKEVEkl/Zy4c2B18pgdFc8GKAaN5GTMLNGIWyYR+DXQ0NerjtdIoXuzi3q2zh0kFMv8Gfwvx4LF1sW/gk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzWiYq5jsigSG1la6kgv8+68AcMsrBn6/Py6tkhsdQa3f3lCrcp
-	Se5lxYpLG7IhFvfgxO4u8M5ou8LS53yeTuG+WlqjvoWk69bsllDF5qwMJq3vOk8GSDN8g1srV32
-	NW44=
-X-Gm-Gg: ASbGncvDleg/hTrFS+uH3pOUhaOG2oG8WSkL2xFKZxyAtPPeB/pENcLXFJ59/6lvDuP
-	zvjceEZ5WZd5eqasLiXT3CtJbVSGvdAujYmpnI3v4vcSR7bmEJj9ohBZy1E+mWJCXYXehNlYd+w
-	N30WAkTSnmwrY+S5LuPiomcEGWPJ8Y9pGyFawPNishJeigCS72XaiKRB+aFNFc5bMMGQDlCpDsA
-	gbNTkuLsT7jjN4Shi6ZDh85t5vrRZhjvDSwDynKCE3lQ+lfG2iiJnHxcRhZu3liJ8DdychmZ27D
-	vQejr36H2s8+QTpA6Wy06Q==
-X-Google-Smtp-Source: AGHT+IGF344Ued8JrzMd5L5Ep4dJci9pWWxlvAO7/v42icTHNWYLEYvoA1QE8P0FlmPmE+R6xjI7Qg==
-X-Received: by 2002:a05:651c:154a:b0:302:264e:29e9 with SMTP id 38308e7fff4ca-302264e2d96mr25784281fa.37.1733827650857;
-        Tue, 10 Dec 2024 02:47:30 -0800 (PST)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--b8c.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-3021cbf8d0esm7343141fa.55.2024.12.10.02.47.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 10 Dec 2024 02:47:29 -0800 (PST)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: tomm.merciai@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	biju.das.jz@bp.renesas.com,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	Liu Ying <victor.liu@nxp.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] drm/bridge: ite-it6263: Support VESA-24 input format
-Date: Tue, 10 Dec 2024 12:47:26 +0200
-Message-ID: <173382759311.2854279.4096374868344930210.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241205080210.1285385-1-tommaso.merciai.xr@bp.renesas.com>
-References: <20241205080210.1285385-1-tommaso.merciai.xr@bp.renesas.com>
+	s=arc-20240116; t=1733827672; c=relaxed/simple;
+	bh=IQlkfVohiBszOKxw6iFuII8QZAX6UbMGw1fFirdU+GI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=osw8GySvA18aVY6jwqmxW2xHjIayFz3KFU4Fdmy9h6LVbKZKRNU1uDsgCKqbQBnK1OkYpHgf+ioZmgSeT4FftQDWO5nea24wHiBbctPrg0rpD0jwS0dV3IZkWRMBhIDzDq8N0Y4O7RWQfkfRd3bdRwJjfeYqKrcx1SOIt4mNhEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jZE1pnzR; arc=none smtp.client-ip=198.47.19.245
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllvem-ot03.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 4BAAlbqh2453885
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 10 Dec 2024 04:47:37 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1733827657;
+	bh=0Q2mjqK2utewnwz3SOQOMOSFMFJ6XlJSNAJslzIgiJI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=jZE1pnzR0Y7+n1EAHHaHZVWis7kL5hRKkEDugXvnvg3+fOUgbtObJbND0HWMn3GY+
+	 6gwDkM9zUoUNJtAmqx8ibu5bt2P1th+sdKw35QA8yWLSSLN+jjlOv8nYE8AVTsV5a0
+	 9Z2WYMkVizoD7QvC1tcxSyiIO4MskccTUIeBxpKA=
+Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 4BAAlbiq077159
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Tue, 10 Dec 2024 04:47:37 -0600
+Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
+ (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 10
+ Dec 2024 04:47:37 -0600
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
+ (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Tue, 10 Dec 2024 04:47:36 -0600
+Received: from localhost (lcpd911.dhcp.ti.com [172.24.227.226])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 4BAAla88122432;
+	Tue, 10 Dec 2024 04:47:36 -0600
+Date: Tue, 10 Dec 2024 16:17:35 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: Kevin Hilman <khilman@baylibre.com>
+CC: Ulf Hansson <ulf.hansson@linaro.org>, <linux-pm@vger.kernel.org>,
+        Nishanth
+ Menon <nm@ti.com>, Akashdeep Kaur <a-kaur@ti.com>,
+        Sebin Francis
+	<sebin.francis@ti.com>,
+        Markus Schneider-Pargmann <msp@baylibre.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v6 1/3] pmdomain: ti_sci: add per-device latency
+ constraint management
+Message-ID: <20241210104735.dtzdhdds6l7yjvgk@lcpd911>
+References: <20241206-lpm-v6-10-constraints-pmdomain-v6-0-833980158c68@baylibre.com>
+ <20241206-lpm-v6-10-constraints-pmdomain-v6-1-833980158c68@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241206-lpm-v6-10-constraints-pmdomain-v6-1-833980158c68@baylibre.com>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, 05 Dec 2024 09:02:10 +0100, tomm.merciai@gmail.com wrote:
-> Introduce it6263_is_input_bus_fmt_valid() and refactor the
-> it6263_bridge_atomic_get_input_bus_fmts() function to support VESA-24
-> format by selecting the LVDS input format based on the LVDS data mapping
-> and thereby support both JEIDA-24 and VESA-24 input formats.
+On Dec 06, 2024 at 14:12:50 -0800, Kevin Hilman wrote:
+> For each device in a TI SCI PM domain, check whether the device has
+> any resume latency constraints set via per-device PM QoS.  If
+> constraints are set, send them to DM via the new SCI constraints API.
 > 
+> Checking for constraints happen for each device before system-wide
+> suspend (via ->suspend() hook.)
 > 
+> An important detail here is that the PM domain driver inserts itself
+> into the path of both the ->suspend() and ->resume() hook path
+> of *all* devices in the PM domain.  This allows generic PM domain code
+> to handle the constraint management and communication with TI SCI.
+> 
+> Further, this allows device drivers to use existing PM QoS APIs to
+> add/update constraints.
+> 
+> DM firmware clears constraints during its resume, so Linux has
+> to check/update/send constraints each time system suspends.
+> 
+> Also note that the PM QoS framework uses usecs as the units for
+> latency whereas the TI SCI firmware uses msecs, so a conversion is
+> needed before passing to TI SCI.
+> 
+> Co-developed-by: Vibhore Vardhan <vibhore@ti.com>
+> Signed-off-by: Vibhore Vardhan <vibhore@ti.com>
+> Reviewed-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> Tested-by: Dhruva Gole <d-gole@ti.com>
+> Signed-off-by: Kevin Hilman <khilman@baylibre.com>
+> ---
+>  drivers/pmdomain/ti/ti_sci_pm_domains.c | 55 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+> 
+> diff --git a/drivers/pmdomain/ti/ti_sci_pm_domains.c b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> index 0e4bd749d067309654307484c5bb98711bf06daf..963fe1901c959197d5d8b5d34fd8420dfb180087 100644
+> --- a/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> +++ b/drivers/pmdomain/ti/ti_sci_pm_domains.c
+> @@ -13,6 +13,8 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_domain.h>
+>  #include <linux/slab.h>
+> +#include <linux/pm_qos.h>
+> +#include <linux/pm_runtime.h>
 
-Applied to drm-misc-next, thanks!
+nit: Do we not need to sort these includes alphabetically?
 
-[1/1] drm/bridge: ite-it6263: Support VESA-24 input format
-      commit: 919b1458ccfd33ead891fa4ad1e1d06016f5a20c
+>  #include <linux/soc/ti/ti_sci_protocol.h>
+>  #include <dt-bindings/soc/ti,sci_pm_domain.h>
+>  
+> @@ -51,6 +53,32 @@ struct ti_sci_pm_domain {
+>  
+>  #define genpd_to_ti_sci_pd(gpd) container_of(gpd, struct ti_sci_pm_domain, pd)
+>  
+> +static inline bool ti_sci_pd_is_valid_constraint(s32 val)
+> +{
+> +	return val != PM_QOS_RESUME_LATENCY_NO_CONSTRAINT;
+> +}
+> +
+> +#ifdef CONFIG_PM_SLEEP
+> +static void ti_sci_pd_set_lat_constraint(struct device *dev, s32 val)
+> +{
+> +	struct generic_pm_domain *genpd = pd_to_genpd(dev->pm_domain);
+> +	struct ti_sci_pm_domain *pd = genpd_to_ti_sci_pd(genpd);
+> +	const struct ti_sci_handle *ti_sci = pd->parent->ti_sci;
+> +	u16 val_ms;
+> +	int ret;
+> +
+> +	/* PM QoS latency unit is usecs, TI SCI uses msecs */
+> +	val_ms = val / USEC_PER_MSEC;
+> +	ret = ti_sci->ops.pm_ops.set_latency_constraint(ti_sci, val_ms, TISCI_MSG_CONSTRAINT_SET);
+> +	if (ret)
+> +		dev_err(dev, "ti_sci_pd: set latency constraint failed: ret=%d\n",
+> +			ret);
+> +	else
+> +		dev_dbg(dev, "ti_sci_pd: ID:%d set latency constraint %d\n",
+> +			pd->idx, val);
+> +}
+> +#endif
+> +
+>  /*
+>   * ti_sci_pd_power_off(): genpd power down hook
+>   * @domain: pointer to the powerdomain to power off
+> @@ -79,6 +107,26 @@ static int ti_sci_pd_power_on(struct generic_pm_domain *domain)
+>  		return ti_sci->ops.dev_ops.get_device(ti_sci, pd->idx);
+>  }
+>  
+> +#ifdef CONFIG_PM_SLEEP
+> +static int ti_sci_pd_suspend(struct device *dev)
+> +{
+> +	int ret;
+> +	s32 val;
+> +
+> +	ret = pm_generic_suspend(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val = dev_pm_qos_read_value(dev, DEV_PM_QOS_RESUME_LATENCY);
+> +	if (ti_sci_pd_is_valid_constraint(val))
+> +		ti_sci_pd_set_lat_constraint(dev, val);
+> +
+> +	return 0;
+> +}
+> +#else
+> +#define ti_sci_pd_suspend		NULL
+> +#endif
+> +
+>  /*
+>   * ti_sci_pd_xlate(): translation service for TI SCI genpds
+>   * @genpdspec: DT identification data for the genpd
+> @@ -182,6 +230,13 @@ static int ti_sci_pm_domain_probe(struct platform_device *pdev)
+>  				pd->pd.flags |= GENPD_FLAG_ACTIVE_WAKEUP;
+>  				pd->idx = args.args[0];
+>  				pd->parent = pd_provider;
+> +				/*
+> +				 * If SCI constraint functions are present, then firmware
+> +				 * supports the constraints API.
+> +				 */
+> +				if (pd_provider->ti_sci->ops.pm_ops.set_device_constraint &&
+> +				    pd_provider->ti_sci->ops.pm_ops.set_latency_constraint)
+> +					pd->pd.domain.ops.suspend = ti_sci_pd_suspend;
 
-Best regards,
+Rest looks good.
+Reviewed-by: Dhruva Gole <d-gole@ti.com>
+
 -- 
-With best wishes
-Dmitry
-
+Best regards,
+Dhruva Gole
+Texas Instruments Incorporated
 
